@@ -418,9 +418,17 @@ function get3ColLayout() {
 function get6ColLayout() {
    $return = '';
 
-   $return .= '<section class="content-panel six-column">';
-
    $panelTitle = get_sub_field('panel_title');
+	$imageHeight = ($acf_blocks ? get_field('image_height') : get_sub_field('image_height'));
+	$padding = ($acf_blocks ? get_field('padding') : get_sub_field('padding'));
+	$linkPosition = ($acf_blocks ? get_field('link_position') : get_sub_field('link_position'));
+	
+	if($padding == TRUE) {
+   	$return .= '<section class="content-panel six-column with-padding">';
+	} else {
+		$return .= '<section class="content-panel six-column">';
+	}
+	
    if ($panelTitle) {
       $return .= ' <div class="row">
                     <div class="col-xs-12 text-center padbottom">
@@ -432,10 +440,8 @@ function get6ColLayout() {
    $return .= '   <div class="image-grid-row">'; //start row
    //get requested data for each column
    $columns = get_sub_field('column');
-   //$columnsCount = count($columns);
-   //print_r($columns);
    foreach ($columns as $column) {
-      $return .= '   <div class="image-grid-col">'; //start column
+      $return .= '   <div class="image-grid-col" style="flex-direction:'.$linkPosition.';">'; //start column
       $data = $column['data'];
       
       $imageArr = $data['column_image_field'];
@@ -445,7 +451,8 @@ function get6ColLayout() {
       //$image = '<img height="" width="" alt="'.$imageArr['alt'].'" class="ximg-responsive" src="' . $imageArr['url'] . '" />';
       //echo $imageArr['url'];
 
-      $imgStyle = 'data-bg="'.$imageArr['url'].'"';
+      $imgBg = 'data-bg="'.$imageArr['url'].'"';
+		$imgStyle = 'style="height:'.$imageHeight.';"';
 
       $cta_link = $data['image_cta'];
       $ctaText = $data['image_cta_text'];
@@ -459,13 +466,13 @@ function get6ColLayout() {
 
       if (!empty($cta_link)) {
 			if(!empty($imageArr['url'])) {
-         	$columnInfo = '<a class="six-col-img lazyload" href="' . $cta_link . '" '.$imgStyle.' target="'.$target.'"></a>';
+         	$columnInfo = '<a class="six-col-img lazyload" href="' . $cta_link . '" '.$imgBg.' '.$imgStyle.' target="'.$target.'"></a>';
 			}
          if (!empty($ctaText)) {
-            $columnInfo .= '<p class="text-center sub-caption-bottom ' . $bgColor . '"><a href="' . $cta_link . '" target="'.$target.'">' . $ctaText . '</a></p>';
+            $columnInfo .= '<h4 class="text-center sub-caption-bottom ' . $bgColor . '"><a href="' . $cta_link . '" target="'.$target.'">' . $ctaText . '</a></h4>';
          }
       } else {
-         $columnInfo = $image;
+         $columnInfo = '<div class="six-col-img" '.$imgStyle.'></div>';
       }            
                         
       $return .= $columnInfo;

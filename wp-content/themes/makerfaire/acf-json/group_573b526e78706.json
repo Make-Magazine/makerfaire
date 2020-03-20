@@ -128,27 +128,6 @@
                     "display": "row",
                     "sub_fields": [
                         {
-                            "key": "field_572d8358fe8e3",
-                            "label": "Newsletter Text",
-                            "name": "newsletter_panel_text",
-                            "type": "text",
-                            "instructions": "Please enter the text displayed on the left side of the panel.<br\/>100 character limit.",
-                            "required": 1,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": 100,
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "readonly": 0,
-                            "disabled": 0
-                        },
-                        {
                             "key": "field_572d8358fe8e2",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
@@ -171,6 +150,27 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
+                        },
+                        {
+                            "key": "field_572d8358fe8e3",
+                            "label": "Newsletter Text",
+                            "name": "newsletter_panel_text",
+                            "type": "text",
+                            "instructions": "Please enter the text displayed on the left side of the panel.<br\/>100 character limit.",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": 100,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "readonly": 0,
+                            "disabled": 0
                         }
                     ],
                     "min": "",
@@ -182,27 +182,6 @@
                     "label": "1 Column WYSIWYG",
                     "display": "block",
                     "sub_fields": [
-                        {
-                            "key": "field_572bac2b2d757d",
-                            "label": "CTA Button Text",
-                            "name": "cta_button",
-                            "type": "text",
-                            "instructions": "Optional Call To Action button to add underneath the content. i.e. \"Learn More\" or \"Buy Now\". Leave blank to hide.",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "readonly": 0,
-                            "disabled": 0
-                        },
                         {
                             "key": "field_572bac2b2d757e",
                             "label": "CTA Button URL",
@@ -282,6 +261,27 @@
                             "layout": "horizontal",
                             "return_format": "value",
                             "save_other_choice": 0
+                        },
+                        {
+                            "key": "field_572bac2b2d757d",
+                            "label": "CTA Button Text",
+                            "name": "cta_button",
+                            "type": "text",
+                            "instructions": "Optional Call To Action button to add underneath the content. i.e. \"Learn More\" or \"Buy Now\". Leave blank to hide.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "readonly": 0,
+                            "disabled": 0
                         }
                     ],
                     "min": "",
@@ -293,30 +293,6 @@
                     "label": "2 Column WYSIWYG",
                     "display": "block",
                     "sub_fields": [
-                        {
-                            "key": "field_5d9f7e57873ec",
-                            "label": "Active\/Inactive",
-                            "name": "activeinactive",
-                            "type": "radio",
-                            "instructions": "Activate or Inactivate this panel",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "choices": {
-                                "Active": "Active",
-                                "Inactive": "Inactive"
-                            },
-                            "allow_null": 0,
-                            "other_choice": 0,
-                            "save_other_choice": 0,
-                            "default_value": "",
-                            "layout": "vertical",
-                            "return_format": "value"
-                        },
                         {
                             "key": "field_5d9f7d71873e7",
                             "label": "Columns",
@@ -410,6 +386,30 @@
                                     "delay": 0
                                 }
                             ]
+                        },
+                        {
+                            "key": "field_5d9f7e57873ec",
+                            "label": "Active\/Inactive",
+                            "name": "activeinactive",
+                            "type": "radio",
+                            "instructions": "Activate or Inactivate this panel",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "Active": "Active",
+                                "Inactive": "Inactive"
+                            },
+                            "allow_null": 0,
+                            "other_choice": 0,
+                            "save_other_choice": 0,
+                            "default_value": "",
+                            "layout": "vertical",
+                            "return_format": "value"
                         }
                     ],
                     "min": "",
@@ -421,25 +421,6 @@
                     "label": "Featured Items",
                     "display": "row",
                     "sub_fields": [
-                        {
-                            "key": "field_56fcb5958152f",
-                            "label": "Panel Title",
-                            "name": "title",
-                            "type": "text",
-                            "instructions": "i.e. \"Featured Items\"",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": ""
-                        },
                         {
                             "key": "field_56fc6fc3dc4a3",
                             "label": "Featured Items",
@@ -660,23 +641,13 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "579924c93b1b9": {
-                    "key": "579924c93b1b9",
-                    "name": "featured_makers_panel_dynamic",
-                    "label": "Featured Makers - Dynamic",
-                    "display": "row",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_579924c93b1bb",
+                            "key": "field_56fcb5958152f",
                             "label": "Panel Title",
                             "name": "title",
                             "type": "text",
-                            "instructions": "i.e. \"Featured Makers\"",
+                            "instructions": "i.e. \"Featured Items\"",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -689,7 +660,17 @@
                             "prepend": "",
                             "append": "",
                             "maxlength": ""
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "579924c93b1b9": {
+                    "key": "579924c93b1b9",
+                    "name": "featured_makers_panel_dynamic",
+                    "label": "Featured Makers - Dynamic",
+                    "display": "row",
+                    "sub_fields": [
                         {
                             "key": "field_579924c93b1bc",
                             "label": "Number of Makers to show",
@@ -828,6 +809,25 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
+                        },
+                        {
+                            "key": "field_579924c93b1bb",
+                            "label": "Panel Title",
+                            "name": "title",
+                            "type": "text",
+                            "instructions": "i.e. \"Featured Makers\"",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
                         }
                     ],
                     "min": "",
@@ -839,27 +839,6 @@
                     "label": "Featured Faires - Dynamic",
                     "display": "row",
                     "sub_fields": [
-                        {
-                            "key": "field_571518b722bb0d",
-                            "label": "Title",
-                            "name": "featured_faires_title",
-                            "type": "text",
-                            "instructions": "Displayed above the faires.",
-                            "required": 1,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "readonly": 0,
-                            "disabled": 0,
-                            "maxlength": ""
-                        },
                         {
                             "key": "field_571518b722bb0e",
                             "label": "Num of Faires to show",
@@ -963,6 +942,27 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
+                        },
+                        {
+                            "key": "field_571518b722bb0d",
+                            "label": "Title",
+                            "name": "featured_faires_title",
+                            "type": "text",
+                            "instructions": "Displayed above the faires.",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "readonly": 0,
+                            "disabled": 0,
+                            "maxlength": ""
                         }
                     ],
                     "min": "",
@@ -974,22 +974,6 @@
                     "label": "Sponsors",
                     "display": "row",
                     "sub_fields": [
-                        {
-                            "key": "field_5727a9d21b20c",
-                            "label": "Sponsors Page URL",
-                            "name": "sponsors_page_url",
-                            "type": "url",
-                            "instructions": "This is used for pulling in the sponsor data for this faire.",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": ""
-                        },
                         {
                             "key": "field_5727a9d21b20d",
                             "label": "Text",
@@ -1034,6 +1018,22 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
+                        },
+                        {
+                            "key": "field_5727a9d21b20c",
+                            "label": "Sponsors Page URL",
+                            "name": "sponsors_page_url",
+                            "type": "url",
+                            "instructions": "This is used for pulling in the sponsor data for this faire.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": ""
                         }
                     ],
                     "min": "",
@@ -1045,32 +1045,6 @@
                     "label": "Star Ribbon Panel",
                     "display": "row",
                     "sub_fields": [
-                        {
-                            "key": "field_5775a4459a43g",
-                            "label": "Background Color",
-                            "name": "background_color",
-                            "type": "radio",
-                            "instructions": "Background color of this panel. Choose blue, light blue, red or orange.",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "layout": "horizontal",
-                            "choices": {
-                                "Blue": "Blue",
-                                "Light Blue": "Light Blue",
-                                "Red": "Red",
-                                "Orange": "Orange"
-                            },
-                            "default_value": "Blue",
-                            "other_choice": 0,
-                            "save_other_choice": 0,
-                            "allow_null": 0,
-                            "return_format": "value"
-                        },
                         {
                             "key": "field_571e86b7082c3",
                             "label": "Text",
@@ -1131,6 +1105,32 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
+                        },
+                        {
+                            "key": "field_5775a4459a43g",
+                            "label": "Background Color",
+                            "name": "background_color",
+                            "type": "radio",
+                            "instructions": "Background color of this panel. Choose blue, light blue, red or orange.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layout": "horizontal",
+                            "choices": {
+                                "Blue": "Blue",
+                                "Light Blue": "Light Blue",
+                                "Red": "Red",
+                                "Orange": "Orange"
+                            },
+                            "default_value": "Blue",
+                            "other_choice": 0,
+                            "save_other_choice": 0,
+                            "allow_null": 0,
+                            "return_format": "value"
                         }
                     ],
                     "min": "",
@@ -1142,6 +1142,30 @@
                     "label": "Ribbon Separator Panel",
                     "display": "row",
                     "sub_fields": [
+                        {
+                            "key": "field_57f8dfh89hsndjn",
+                            "label": "Active\/Inactive",
+                            "name": "activeinactive",
+                            "type": "radio",
+                            "instructions": "Activate or Inactivate this panel",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "activeinactive",
+                                "id": ""
+                            },
+                            "layout": "horizontal",
+                            "choices": {
+                                "Active": "Active",
+                                "Inactive": "Inactive"
+                            },
+                            "default_value": "Active",
+                            "other_choice": 0,
+                            "save_other_choice": 0,
+                            "allow_null": 0,
+                            "return_format": "value"
+                        },
                         {
                             "key": "field_577sda89s8hiuhi87d",
                             "label": "Background Color",
@@ -1167,30 +1191,6 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        },
-                        {
-                            "key": "field_57f8dfh89hsndjn",
-                            "label": "Active\/Inactive",
-                            "name": "activeinactive",
-                            "type": "radio",
-                            "instructions": "Activate or Inactivate this panel",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "activeinactive",
-                                "id": ""
-                            },
-                            "layout": "horizontal",
-                            "choices": {
-                                "Active": "Active",
-                                "Inactive": "Inactive"
-                            },
-                            "default_value": "Active",
-                            "other_choice": 0,
-                            "save_other_choice": 0,
-                            "allow_null": 0,
-                            "return_format": "value"
                         }
                     ],
                     "min": "",
@@ -1202,27 +1202,6 @@
                     "label": "Hero Panel",
                     "display": "block",
                     "sub_fields": [
-                        {
-                            "key": "field_572bad2b2d757",
-                            "label": "Hero Title",
-                            "name": "column_title",
-                            "type": "wysiwyg",
-                            "instructions": "This title is displayed over the content with a semi transparent white background",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "tabs": "all",
-                            "toolbar": "full",
-                            "media_upload": 1,
-                            "default_value": "",
-                            "delay": 0,
-                            "readonly": 0,
-                            "disabled": 0
-                        },
                         {
                             "key": "field_572bad2b2d751",
                             "label": "Hero image Repeater",
@@ -1315,6 +1294,27 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
+                        },
+                        {
+                            "key": "field_572bad2b2d757",
+                            "label": "Hero Title",
+                            "name": "column_title",
+                            "type": "wysiwyg",
+                            "instructions": "This title is displayed over the content with a semi transparent white background",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "tabs": "all",
+                            "toolbar": "full",
+                            "media_upload": 1,
+                            "default_value": "",
+                            "delay": 0,
+                            "readonly": 0,
+                            "disabled": 0
                         }
                     ],
                     "min": "",
@@ -1326,25 +1326,6 @@
                     "label": "News Block Panel",
                     "display": "row",
                     "sub_fields": [
-                        {
-                            "key": "field_571fsd78hbhj",
-                            "label": "Title",
-                            "name": "title",
-                            "type": "text",
-                            "instructions": "Type the News Block title here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": 256
-                        },
                         {
                             "key": "field_5c93bfbbd73ec",
                             "label": "Link",
@@ -1406,23 +1387,13 @@
                             "save_other_choice": 0,
                             "allow_null": 0,
                             "return_format": "value"
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "5b4e51639ab7e": {
-                    "key": "5b4e51639ab7e",
-                    "name": "3_column",
-                    "label": "3 column",
-                    "display": "block",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5b4e70905d7d6",
-                            "label": "Panel Title",
-                            "name": "panel_title",
+                            "key": "field_571fsd78hbhj",
+                            "label": "Title",
+                            "name": "title",
                             "type": "text",
-                            "instructions": "Optional: 50 character limit.",
+                            "instructions": "Type the News Block title here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -1434,8 +1405,18 @@
                             "placeholder": "",
                             "prepend": "",
                             "append": "",
-                            "maxlength": 50
-                        },
+                            "maxlength": 256
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "5b4e51639ab7e": {
+                    "key": "5b4e51639ab7e",
+                    "name": "3_column",
+                    "label": "3 column",
+                    "display": "block",
+                    "sub_fields": [
                         {
                             "key": "field_5b4e5bec567f5",
                             "label": "Columns",
@@ -1756,6 +1737,25 @@
                             "default_value": "active",
                             "layout": "horizontal",
                             "return_format": "value"
+                        },
+                        {
+                            "key": "field_5b4e70905d7d6",
+                            "label": "Panel Title",
+                            "name": "panel_title",
+                            "type": "text",
+                            "instructions": "Optional: 50 character limit.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": 50
                         }
                     ],
                     "min": "",
@@ -1767,6 +1767,30 @@
                     "label": "6 column navigation panel",
                     "display": "block",
                     "sub_fields": [
+                        {
+                            "key": "field_5b4e70cd5d7d8",
+                            "label": "Active\/Inactive",
+                            "name": "activeinactive",
+                            "type": "radio",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "Active": "Active",
+                                "Inactive": "Inactive"
+                            },
+                            "allow_null": 0,
+                            "other_choice": 0,
+                            "save_other_choice": 0,
+                            "default_value": "active",
+                            "layout": "horizontal",
+                            "return_format": "value"
+                        },
                         {
                             "key": "field_5b4e70cd5d7d9",
                             "label": "Panel Title",
@@ -1785,6 +1809,80 @@
                             "prepend": "",
                             "append": "",
                             "maxlength": 50
+                        },
+                        {
+                            "key": "field_5e74f1633d641",
+                            "label": "Padding",
+                            "name": "padding",
+                            "type": "true_false",
+                            "instructions": "Whether the columns should have padding",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "33",
+                                "class": "",
+                                "id": ""
+                            },
+                            "message": "",
+                            "default_value": 1,
+                            "ui": 0,
+                            "ui_on_text": "",
+                            "ui_off_text": ""
+                        },
+                        {
+                            "key": "field_5e74f17c3d642",
+                            "label": "Image Height",
+                            "name": "image_height",
+                            "type": "select",
+                            "instructions": "Default height of container image will be fit into",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "33",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "200px": "200px",
+                                "300px": "300px",
+                                "400px": "400px"
+                            },
+                            "default_value": [
+                                "200px"
+                            ],
+                            "allow_null": 0,
+                            "multiple": 0,
+                            "ui": 0,
+                            "return_format": "value",
+                            "ajax": 0,
+                            "placeholder": ""
+                        },
+                        {
+                            "key": "field_5e74f1e43d643",
+                            "label": "Link Position",
+                            "name": "link_position",
+                            "type": "select",
+                            "instructions": "Whether the link text should appear above or below the image",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "33",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "column": "Bottom",
+                                "column-reverse": "Top"
+                            },
+                            "default_value": [
+                                "Top"
+                            ],
+                            "allow_null": 0,
+                            "multiple": 0,
+                            "ui": 0,
+                            "return_format": "value",
+                            "ajax": 0,
+                            "placeholder": ""
                         },
                         {
                             "key": "field_5b4e70cd5d7d0",
@@ -1896,7 +1994,8 @@
                                                 "blue-bg": "Blue",
                                                 "darkblue-bg": "Dark Blue",
                                                 "grey-bg": "Grey",
-                                                "darkgrey-bg": "Dark Grey"
+                                                "darkgrey-bg": "Dark Grey",
+                                                "white-bg yellow-underline": "White"
                                             },
                                             "default_value": [
                                                 "Blue"
@@ -1930,30 +2029,6 @@
                                     ]
                                 }
                             ]
-                        },
-                        {
-                            "key": "field_5b4e70cd5d7d8",
-                            "label": "Active\/Inactive",
-                            "name": "activeinactive",
-                            "type": "radio",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "choices": {
-                                "Active": "Active",
-                                "Inactive": "Inactive"
-                            },
-                            "allow_null": 0,
-                            "other_choice": 0,
-                            "save_other_choice": 0,
-                            "default_value": "active",
-                            "layout": "horizontal",
-                            "return_format": "value"
                         }
                     ],
                     "min": "",
@@ -1965,25 +2040,6 @@
                     "label": "Tint Social Block Panel",
                     "display": "block",
                     "sub_fields": [
-                        {
-                            "key": "field_5c93e72eaf467",
-                            "label": "Title",
-                            "name": "title",
-                            "type": "text",
-                            "instructions": "Defaults to \"Share Your Maker Faire Experience\"",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": ""
-                        },
                         {
                             "key": "field_5c93e75baf469",
                             "label": "Hashtags",
@@ -2045,23 +2101,13 @@
                             "layout": "horizontal",
                             "return_format": "value",
                             "save_other_choice": 0
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_5c9c04e3aafde": {
-                    "key": "layout_5c9c04e3aafde",
-                    "name": "makey_banner",
-                    "label": "Makey Banner",
-                    "display": "block",
-                    "sub_fields": [
+                        },
                         {
-                            "key": "field_5c9c0560aafe2",
-                            "label": "Link URL",
-                            "name": "link_url",
+                            "key": "field_5c93e72eaf467",
+                            "label": "Title",
+                            "name": "title",
                             "type": "text",
-                            "instructions": "The link URL. For example, \"\/map\/\"",
+                            "instructions": "Defaults to \"Share Your Maker Faire Experience\"",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -2074,7 +2120,17 @@
                             "prepend": "",
                             "append": "",
                             "maxlength": ""
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_5c9c04e3aafde": {
+                    "key": "layout_5c9c04e3aafde",
+                    "name": "makey_banner",
+                    "label": "Makey Banner",
+                    "display": "block",
+                    "sub_fields": [
                         {
                             "key": "field_5cb8e4a1f339b",
                             "label": "Background Color",
@@ -2147,6 +2203,25 @@
                             "layout": "horizontal",
                             "return_format": "value",
                             "save_other_choice": 0
+                        },
+                        {
+                            "key": "field_5c9c0560aafe2",
+                            "label": "Link URL",
+                            "name": "link_url",
+                            "type": "text",
+                            "instructions": "The link URL. For example, \"\/map\/\"",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
                         }
                     ],
                     "min": "",
@@ -2158,6 +2233,30 @@
                     "label": "2 Column Video",
                     "display": "block",
                     "sub_fields": [
+                        {
+                            "key": "field_5c9c04bb25737",
+                            "label": "Active\/Inactive",
+                            "name": "activeinactive",
+                            "type": "radio",
+                            "instructions": "Activate or Inactivate this panel",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "Active": "Active",
+                                "Inactive": "Inactive"
+                            },
+                            "allow_null": 0,
+                            "other_choice": 0,
+                            "default_value": "",
+                            "layout": "vertical",
+                            "return_format": "value",
+                            "save_other_choice": 0
+                        },
                         {
                             "key": "field_5c9c050725738",
                             "label": "Video Row",
@@ -2270,9 +2369,19 @@
                                     "maxlength": ""
                                 }
                             ]
-                        },
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_5c9d3b0285ad0": {
+                    "key": "layout_5c9d3b0285ad0",
+                    "name": "2_column_images",
+                    "label": "2 Column Images",
+                    "display": "block",
+                    "sub_fields": [
                         {
-                            "key": "field_5c9c04bb25737",
+                            "key": "field_5c9d3b2985ad1",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
                             "type": "radio",
@@ -2294,17 +2403,7 @@
                             "layout": "vertical",
                             "return_format": "value",
                             "save_other_choice": 0
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_5c9d3b0285ad0": {
-                    "key": "layout_5c9d3b0285ad0",
-                    "name": "2_column_images",
-                    "label": "2 Column Images",
-                    "display": "block",
-                    "sub_fields": [
+                        },
                         {
                             "key": "field_5c9d3b9485ad2",
                             "label": "Image Row",
@@ -2525,30 +2624,6 @@
                                     "placeholder": ""
                                 }
                             ]
-                        },
-                        {
-                            "key": "field_5c9d3b2985ad1",
-                            "label": "Active\/Inactive",
-                            "name": "activeinactive",
-                            "type": "radio",
-                            "instructions": "Activate or Inactivate this panel",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "choices": {
-                                "Active": "Active",
-                                "Inactive": "Inactive"
-                            },
-                            "allow_null": 0,
-                            "other_choice": 0,
-                            "default_value": "",
-                            "layout": "vertical",
-                            "return_format": "value",
-                            "save_other_choice": 0
                         }
                     ],
                     "min": "",
@@ -2560,25 +2635,6 @@
                     "label": "Image Slider",
                     "display": "block",
                     "sub_fields": [
-                        {
-                            "key": "field_5cb5092dc6d4d",
-                            "label": "Slideshow Title",
-                            "name": "slideshow_title",
-                            "type": "text",
-                            "instructions": "Optional header to appear above Slideshow",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": ""
-                        },
                         {
                             "key": "field_5cb505f11189f",
                             "label": "Slideshow Name",
@@ -2845,6 +2901,25 @@
                             "layout": "vertical",
                             "return_format": "value",
                             "save_other_choice": 0
+                        },
+                        {
+                            "key": "field_5cb5092dc6d4d",
+                            "label": "Slideshow Title",
+                            "name": "slideshow_title",
+                            "type": "text",
+                            "instructions": "Optional header to appear above Slideshow",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
                         }
                     ],
                     "min": "",
@@ -2909,5 +2984,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1571342275
+    "modified": 1584725232
 }

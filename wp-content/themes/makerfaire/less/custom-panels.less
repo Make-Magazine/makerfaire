@@ -192,7 +192,7 @@
 	
 	// new hotness 
 	.slider-panel {
-		padding: 25px;
+		padding: 0px;
 		.slideshow-title {
 			display: flex;
 			justify-content: center;
@@ -265,7 +265,7 @@
 			&.columns-1 {
 				.slide-title { font-size: 22px; font-weight: bold; }
 				.slide-text { font-size: 18px; }
-				@media screen and (min-width: 767px) {
+				/*@media screen and (min-width: 767px) {
 					.item.slide {
 						.slide-image-section, .slide-info-section {
 							width: 50%;
@@ -276,7 +276,7 @@
 							color: #fff;
 						}
 					}
-				}
+				}*/
 				@media screen and (max-width: 768px) {
 					.slide-info-section { margin-top: 15px; }
 				}
@@ -1278,27 +1278,44 @@
    
    // Common elements
 	.content-panel.six-column {
-      margin: 30px 0px 20px;
+      &.with-padding {
+			.image-grid-row {
+				.image-grid-col {
+					padding: 5px;
+					display: flex;
+					flex-direction: column;
+					&:first-of-type { padding-left: 0px; }
+					&:last-of-type { padding-right: 0px; }
+				}
+			}
+		}
+		.row { margin: 0px; }
       .image-grid-row {
          display: flex;
-         margin: 0px -10px;
-         padding: 0 20px;
          @media screen and (max-width: 1200px) {
             flex-wrap: wrap;
          }
          .image-grid-col {
-            padding: 10px;
             flex: 1 1 0;
             a.six-col-img {
                display: block;
-               height: 200px;
                max-width: 100%;
                background-repeat: no-repeat;
                background-size: cover;
                background-position: 50% 50%;
             }
+				h4 { 
+					margin-bottom: 0px;
+					&.yellow-underline {
+						width:80%;
+						margin: 0 auto;
+						margin-bottom: 10px;
+					}
+				}
             .sub-caption-bottom {
                text-transform: uppercase;
+					padding: 10px;
+					a { font-weight: 600; }
             }
             @media screen and (max-width: 1200px) {
                flex: 1 1 33.3%;
@@ -1312,13 +1329,6 @@
          }
       }
 	}
-   .sub-caption-bottom {
-      padding: 5px 10px;
-      a {
-         color: white;
-         font-size: 16px;
-      }
-   }
    .content-panel {
       .container {
          padding-top: 10px;

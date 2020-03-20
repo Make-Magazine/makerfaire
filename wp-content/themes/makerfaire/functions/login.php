@@ -97,21 +97,7 @@ function display_recaptcha_on_login() {
 
 add_filter('wp_authenticate_user', 'verify_recaptcha_on_login', 10, 2);
 
-function verify_recaptcha_on_login($user, $password) {
-    if (isset($_POST['g-recaptcha-response'])) {
-        $response = wp_remote_get('https://www.google.com/recaptcha/api/siteverify?secret=6Lf_-kEUAAAAAHtDfGBAleSvWSynALMcgI1hc_tP&response=' . $_POST['g-recaptcha-response']);
-        $response = json_decode($response['body'], true);
 
-        if (true == $response['success']) {
-            return $user;
-        } else {
-            // FIXME: This one fires if your password is incorrect... Check if password was incorrect before returning this error...
-            return new WP_Error( 'Captcha Invalid', __('<strong>ERROR</strong>: You are a bot') );
-        }
-    } else {
-        return new WP_Error('Captcha Invalid', __('<strong>ERROR</strong>: You are a bot. If not then enable JavaScript.'));
-    }
-}
 
 add_action( 'login_form_lostpassword', 'wpse45134_filter_option' );
 add_action( 'login_form_retrievepassword', 'wpse45134_filter_option' );
