@@ -301,7 +301,11 @@ jQuery(document).ready(function () {
       getLocation: function getLocation() {
         // first, clear all other searches and data
         this.filterVal = '';
-        this.filteredData = this.tableData;
+        this.filteredData = this.tableData.filter(function (values) {
+          if (typeFilters.includes(values.category)) {
+            return values;
+          }
+        });
         this.addMarkers(); // now get zooming on our location
 
         var infoWindow = new google.maps.InfoWindow(),
