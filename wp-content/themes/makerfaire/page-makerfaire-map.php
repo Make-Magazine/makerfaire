@@ -48,11 +48,17 @@ get_header();
                   <form action="" class="" @submit="filterOverride">
 							<label for="filter">Explore Faires</label>
 							<input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="searchFilter" placeholder="Search by Name, Date or Location">
-							
                   </form>
                </div>
             </div>
          </div>
+			
+			<div v-if="!filteredData.length" class="no-results-modal">
+				<h5>Haven't found what you're looking for?</h5>
+			   <div id="nearby-faires-btn">
+					<button v-on:click="getLocation" class="btn universal-btn">Find Nearby Faires</button>
+				</div>
+			</div>
 
          <div class="row">
             <div class="col-md-12">
@@ -66,27 +72,13 @@ get_header();
                </v-client-table>
             </div>
          </div>
-<div id="past-faires-btn">
-								<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="psFilter"><span>{{buttonMessage}}</span></label>
-							</div>
+         <div id="past-faires-btn">
+				<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="psFilter"><span>{{buttonMessage}}</span></label>
+			</div>
       </div>  <!-- end map-table-wrapper -->
 
    </div>
 
-<!--<div class="container-fluid light-blue">
-   <div class="container">
-      <div class="row">
-         <div class="col-md-6 col-sm-6 col-xs-12 makerfaire-bottom-nav">
-            <h4>Join our global network of Maker Faires</h4>
-            <a class="btn btn-blue" href="/register">Add your Maker Faire</a>
-         </div>
-         <div class="col-md-6 col-sm-6 col-xs-12 makerfaire-bottom-nav">
-            <h4>See an error or need to update your info?</h4>
-            <a class="btn btn-blue" href="/edit-your-makerfaire">Manage your listing</a>					
-         </div>
-      </div>
-   </div>
-</div>  -->
 
 
 
