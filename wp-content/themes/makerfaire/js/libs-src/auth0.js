@@ -3,7 +3,6 @@ window.addEventListener('load', function() {
 	if ( jQuery( "#wp-admin-bar-logout" ).length ) {
 		jQuery( "#wp-admin-bar-logout" ).remove();
 	}
-	
 	if ( !jQuery( "#LoginBtn" ).length ) {
 		var loginBtn = document.createElement('div');
 		loginBtn.setAttribute("id", "LoginBtn");
