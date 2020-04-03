@@ -1,7 +1,21 @@
 window.addEventListener('load', function() {
-
+	
 	if ( jQuery( "#wp-admin-bar-logout" ).length ) {
 		jQuery( "#wp-admin-bar-logout" ).remove();
+	}
+	
+	if ( !jQuery( "#LoginBtn" ).length ) {
+		var loginBtn = document.createElement('div');
+		loginBtn.setAttribute("id", "LoginBtn");
+	}else{
+		var loginBtn    = document.getElementById('LoginBtn');
+	}
+
+	if ( !jQuery( "#LogoutBtn" ).length ) {
+		var logoutBtn = document.createElement('div');
+		logoutBtn.setAttribute("id", "LogoutBtn");
+	}else{
+		var logoutBtn    = document.getElementById('LogoutBtn');
 	}
 
 	if ( !jQuery( "#profile-view" ).length ) {
@@ -10,10 +24,21 @@ window.addEventListener('load', function() {
 	}else{
 		var profileView    = document.getElementById('profile-view');
 	}
-
+	
+	//default profile view to hidden
+	loginBtn.style.display    = 'none';
+	profileView.style.display = 'none';
+	
 	var userProfile;
 	
-   var webAuth = new auth0.WebAuth({
+	var progressBar = jQuery(".progress .progress-bar");
+	function updateProgressBar(percent) {
+		if ( jQuery( '#authenticated-redirect' ).length ) {
+			progressBar.attr("aria-valuenow", percent).css("width", percent).text(percent);
+		}
+	}
+	
+	var webAuth = new auth0.WebAuth({
 		domain: AUTH0_DOMAIN,
 		clientID: AUTH0_CLIENT_ID,
 		redirectUri: AUTH0_CALLBACK_URL,
@@ -21,13 +46,35 @@ window.addEventListener('load', function() {
 		responseType: 'token id_token',
 		scope: 'openid profile email user_metadata', //scope of data pulled by auth0
 		leeway: 60
-   });
+	});
 	
 	function clearLocalStorage() {
 		 localStorage.removeItem('access_token');
 		 localStorage.removeItem('id_token');
 		 localStorage.removeItem('expires_at');
-  }
+	}
+	
+	loginBtn.addEventListener('click', function(e) {
+		e.preventDefault();
+		if(location.href.indexOf('authenticated') >= 0){
+			localStorage.setItem('redirect_to', templateUrl);
+		}else{
+			localStorage.setItem('redirect_to',location.href);
+		}
+		webAuth.authorize(); //login to auth0
+	});
+
+	logoutBtn.addEventListener('click', function(e) {
+		e.preventDefault();
+
+		// Remove tokens and expiry time from localStorage
+		localStorage.removeItem('access_token');
+		localStorage.removeItem('id_token');
+		localStorage.removeItem('expires_at');
+
+		//redirect to auth0 logout page
+		window.location.href = 'https://makermedia.auth0.com/v2/logout?returnTo='+templateUrl+ '&client_id='+AUTH0_CLIENT_ID;
+	});
 
 	function setSession(authResult) {
 		if ( authResult ) {
@@ -55,18 +102,29 @@ window.addEventListener('load', function() {
 
 	function displayButtons() {
 		if (isAuthenticated()) {
-			profileView.style.display = 'flex';
-			getProfile();
+		  loginBtn.style.display = 'none';
 
-			//login to wordpress if not already
-			//check for wordpress cookie
-			if ( !jQuery( '.logged-in' ).length ) { // is the user logged in?
-				//wait .5 second for auth0 data to be returned from getProfile
-				setTimeout(function(){ WPlogin(); }, 0500); //login to wordpress
+		  //get user profile from auth0
+		  profileView.style.display = 'flex';
+		  updateProgressBar("50%");
+		  getProfile();
+
+		  //login redirect
+		  if ( jQuery( '#authenticated-redirect' ).length ) { //are we on the authentication page?
+			if(localStorage.getItem('redirect_to')){    //redirect
+			  var redirect_url = localStorage.getItem('redirect_to'); //retrieve redirect URL
+			  localStorage.removeItem('redirect_to'); //unset after retrieved
+			  location.href=redirect_url;
+			}else{  //redirect to home page
+			  location.href=templateUrl;
 			}
+		  }
 		} else {
-			profileView.style.display = 'none';
-			//WPlogout();
+		  loginBtn.style.display = 'flex';
+		  profileView.style.display = 'none';
+			if ( jQuery( '#authenticated-redirect' ).length ) { 
+				jQuery(".redirect-message").html("<a href='javascript:location.reload();'>Try your login again</a>");
+			}
 		}
 	}
 
@@ -93,12 +151,11 @@ window.addEventListener('load', function() {
 				if(userProfile['http://makershare.com/first_name'] != undefined && userProfile['http://makershare.com/last_name'] != undefined) {
 					document.querySelector('.profile-info .profile-name').innerHTML = userProfile['http://makershare.com/first_name'] + " " + userProfile['http://makershare.com/last_name'];
 				}
-				// automatically login to wordpress by clicking the login btn after webauth
-				if(document.querySelector(".logged-in") === null) {
-					console.log("Test");
-					document.querySelector("#LoginBtn").click();
-				}
+				updateProgressBar("75%");
 
+			}
+			if (err) {
+				errorMsg("There was an issue logging in at the getProfile phase. That error was: " + JSON.stringify(err));
 			}
 		});
 
