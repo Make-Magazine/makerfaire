@@ -151,7 +151,7 @@ window.addEventListener('load', function() {
 					document.querySelector('.profile-info .profile-name').innerHTML = userProfile['http://makershare.com/first_name'] + " " + userProfile['http://makershare.com/last_name'];
 				}
 				updateProgressBar("75%");
-
+				WPlogin();
 			}
 			if (err) {
 				errorMsg("There was an issue logging in at the getProfile phase. That error was: " + JSON.stringify(err));
