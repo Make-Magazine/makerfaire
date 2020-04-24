@@ -32,6 +32,38 @@ function makerfaire_category_init() {
 			'menu_name'                  =>  __( 'MF Categories', 'makerfaire' ),
 		),
 	) );
+                //Make Project Categories
+        register_taxonomy( 'makeprojects_category', array( 'post', 'page' ), array(
+		'hierarchical'            => true,
+		'public'                  => true,
+		'show_in_nav_menus'       => true,
+		'show_ui'                 => true,
+		'query_var'               => 'makeprojects_category',
+		'rewrite'                 => true,
+		'capabilities'            => array(
+			'manage_terms'  => 'edit_posts',
+			'edit_terms'    => 'edit_posts',
+			'delete_terms'  => 'edit_posts',
+			'assign_terms'  => 'edit_posts'
+		),
+		'labels'                  => array(
+			'name'                       =>  __( 'makeprojects categories', 'makerfaire' ),
+			'singular_name'              =>  __( 'makeprojects category', 'makerfaire' ),
+			'search_items'               =>  __( 'Search makeprojects categories', 'makerfaire' ),
+			'popular_items'              =>  __( 'Popular makeprojects categories', 'makerfaire' ),
+			'all_items'                  =>  __( 'All makeprojects categories', 'makerfaire' ),
+			'parent_item'                =>  __( 'Parent makeprojects category', 'makerfaire' ),
+			'parent_item_colon'          =>  __( 'Parent makeprojects category:', 'makerfaire' ),
+			'edit_item'                  =>  __( 'Edit makeprojects category', 'makerfaire' ),
+			'update_item'                =>  __( 'Update makeprojects category', 'makerfaire' ),
+			'add_new_item'               =>  __( 'New makeprojects category', 'makerfaire' ),
+			'new_item_name'              =>  __( 'New makeprojects category', 'makerfaire' ),
+			'separate_items_with_commas' =>  __( 'makerfaire makeprojects separated by comma', 'makerfaire' ),
+			'add_or_remove_items'        =>  __( 'Add or remove makeprojects categories', 'makerfaire' ),
+			'choose_from_most_used'      =>  __( 'Choose from the most used makeprojects categories', 'makerfaire' ),
+			'menu_name'                  =>  __( 'MP Categories', 'makerfaire' ),
+		),
+	) );
 
 }
 add_action( 'init', 'makerfaire_category_init' );
