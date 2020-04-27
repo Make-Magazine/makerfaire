@@ -3,7 +3,7 @@
 Plugin Name: WordPress Notification Bar
 Plugin URI: http://seedprod.com/wordpress-notification-bar/
 Description: Global Notification Bar for WordPress
-Version:  1.3.9
+Version:  1.3.10
 Text Domain: wordpress-notification-bar
 Domain Path: /languages
 Author: SeedProd

@@ -185,14 +185,25 @@ class SEED_WNB
                     $this->options[ $k ][ 'menu_slug' ] = $v[ 'menu_slug' ];
                 }
                 if ( $v[ 'menu_type' ] == 'add_submenu_page' ) {
-                    $this->pages[ ] = call_user_func_array( $v[ 'menu_type' ], array(
+                    // $this->pages[ ] = call_user_func_array( $v[ 'menu_type' ], array(
+                    //     $v[ 'parent_slug' ],
+                    //     $v[ 'page_name' ],
+                    //     $v[ 'menu_name' ],
+                    //     $v[ 'capability' ],
+                    //     $v[ 'menu_slug' ],
+                    //     $v[ 'callback' ],
+                    //     10
+                    // ) );
+
+                    $this->pages[ ] = add_submenu_page(
                         $v[ 'parent_slug' ],
                         $v[ 'page_name' ],
                         $v[ 'menu_name' ],
                         $v[ 'capability' ],
                         $v[ 'menu_slug' ],
-                        $v[ 'callback' ]
-                    ) );
+                        $v[ 'callback' ],
+                        10
+                    );
                 } else {
                     $this->pages[ ] = call_user_func_array( $v[ 'menu_type' ], array(
                         $v[ 'page_name' ],
@@ -200,7 +211,7 @@ class SEED_WNB
                         $v[ 'capability' ],
                         $v[ 'menu_slug' ],
                         $v[ 'callback' ],
-                        $v[ 'icon_url' ]
+                        10
                     ) );
                 }
             }
@@ -294,7 +305,7 @@ class SEED_WNB
         $layout = $this->get_page_layout();
         ?>
         <div class="wrap columns-2 seed_wnb">
-        <?php screen_icon(); ?>
+     
             <h2><?php echo $this->plugin_name; ?></h2>
             <?php $this->plugin_options_tabs(); ?>
 
