@@ -270,10 +270,18 @@ window.gvDTButtons = window.gvDTButtons || {};
 				var matches = name.match( /(.*?)\[(.*)\]/ );
 				if ( matches ) {
 					if ( ! getData[ matches[ 1 ] ] ) {
-						getData[ matches[ 1 ] ] = {};
+						if ( matches[ 2 ] ) {
+							getData[ matches[ 1 ] ] = {};
+						} else {
+							getData[ matches[ 1 ] ] = [];
+						}
 					}
 
-					getData[ matches[ 1 ] ][ matches[ 2 ] ] = value;
+					if ( matches[ 2 ] ) {
+						getData[ matches[ 1 ] ][ matches[ 2 ] ] = value;
+					} else {
+						getData[ matches[ 1 ] ].push( value );
+					}
 				} else {
 					getData[ name ] = value;
 				}

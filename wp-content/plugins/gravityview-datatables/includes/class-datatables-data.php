@@ -323,6 +323,15 @@ class GV_Extension_DataTables_Data {
 		}
 
 		$view->settings->update( $atts );
+		
+		// Force shortcode parametrization
+		if ( $shortcode_atts = \GV\Utils::_POST( 'shortcode_atts' ) ) {
+			foreach ( $shortcode_atts as $att => $value ) {
+				if ( in_array( $att, array( 'search_key', 'search_value' ) ) ) {
+					$view->settings->update( array( $att => $value ) );
+				}
+			}
+		}
 
 		$atts = $view->settings->as_atts();
 
@@ -885,6 +894,11 @@ class GV_Extension_DataTables_Data {
 			'hideUntilSearched' => $view->settings->get( 'hide_until_searched' ),
             'setUrlOnSearch' => apply_filters('gravityview/search/method', 'get') === 'get',
 		);
+
+		// apply shortcode atts
+		if ( $view->settings->get( 'shortcode_atts' ) ) {
+			$ajax_settings['shortcode_atts'] = $view->settings->get( 'shortcode_atts' );
+		}
 
 		// Prepare DataTables init config
 		$dt_config =  array(
