@@ -4,7 +4,7 @@ class GP_Read_Only extends GWPerk {
 
 	public $version = GP_READ_ONLY_VERSION;
 	protected $min_gravity_perks_version = '1.0-beta-3';
-	protected $min_gravity_forms_version = '1.6.11';
+	protected $min_gravity_forms_version = '2.4';
 	protected $min_wp_version = '3.0';
 
 	private $unsupported_field_types = array( 'hidden', 'html', 'captcha', 'page', 'section' );
@@ -281,7 +281,7 @@ class GP_Read_Only extends GWPerk {
 		$field_values = $submitted_values = false;
 
 		if ( isset( $_GET['gf_token'] ) ) {
-			$incomplete_submission_info = GFFormsModel::get_incomplete_submission_values( $_GET['gf_token'] );
+			$incomplete_submission_info = GFFormsModel::get_draft_submission_values( $_GET['gf_token'] );
 			if ( $incomplete_submission_info['form_id'] == $field['formId'] ) {
 				$submission_details_json                = $incomplete_submission_info['submission'];
 				$submission_details                     = json_decode( $submission_details_json, true );
