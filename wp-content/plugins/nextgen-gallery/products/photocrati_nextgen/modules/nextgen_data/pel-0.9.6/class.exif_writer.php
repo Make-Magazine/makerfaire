@@ -112,7 +112,7 @@ class C_Exif_Writer
      */
     static public function write_metadata($filename, $metadata)
     {
-        if (!self::is_jpeg_file($filename))
+        if (!self::is_jpeg_file($filename) || !is_array($metadata))
             return FALSE;
 
         try {

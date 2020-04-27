@@ -26,7 +26,7 @@ class M_NextGen_Admin extends C_Base_Module
             'photocrati-nextgen_admin',
             'NextGEN Administration',
             'Provides a framework for adding Administration pages',
-            '3.2.21',
+            '3.3.2',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
@@ -410,9 +410,9 @@ class M_NextGen_Admin extends C_Base_Module
         return C_NextGen_Admin_Page_Manager::is_requested_post_type() ? "$classes ngg-post-type" : $classes;
     }
 
-    function remove_post_type_screen_options()
+    function remove_post_type_screen_options($show)
     {
-        return C_NextGen_Admin_Page_Manager::is_requested_post_type() ? FALSE : TRUE;
+        return C_NextGen_Admin_Page_Manager::is_requested_post_type() ? FALSE : $show;
     }
 
     /* Add common admin markup to top of custom post type pages */

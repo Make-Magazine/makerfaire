@@ -185,7 +185,15 @@ class C_NextGen_Shortcode_Manager
 			}
 		}
 
-		if ($this->is_rest_request()) ob_end_clean();
+		if ($this->is_rest_request())
+        {
+            // Pre-generating displayed gallery cache by executing shortcodes in the REST API can prevent users
+            // from being able to add and save blocks with lots of images and no pagination (for example a very large
+            // basic slideshow or pro masonry / mosaic / tile display)
+            if (apply_filters('ngg_disable_shortcodes_in_request_api', FALSE))
+                return $content;
+            ob_start();
+        }
 
         return $content;
 	}

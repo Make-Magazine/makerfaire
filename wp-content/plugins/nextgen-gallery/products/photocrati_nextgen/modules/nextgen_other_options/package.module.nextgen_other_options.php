@@ -441,6 +441,15 @@ class A_Reset_Form extends Mixin
         wp_redirect(get_admin_url());
         exit;
     }
+    /*
+    	function uninstall_action()
+    	{
+    		$installer = C_Photocrati_Installer::get_instance();
+    		$installer->uninstall(NGG_PLUGIN_BASENAME, TRUE);
+    		deactivate_plugins(NGG_PLUGIN_BASENAME);
+    		wp_redirect(admin_url('/plugins.php'));
+    	}
+    */
 }
 /**
  * Class A_Roles_Form
@@ -711,9 +720,10 @@ class A_Watermarks_Form extends Mixin
     }
     function render()
     {
+        /** @var C_Photocrati_Settings_Manager $settings */
         $settings = $this->get_model();
         $image = $this->object->_get_preview_image();
-        return $this->render_partial('photocrati-nextgen_other_options#watermarks_tab', array('notice' => __('Please note: You can only activate the watermark under Manage Gallery. This action cannot be undone.', 'nggallery'), 'watermark_source_label' => __('How will you generate a watermark?', 'nggallery'), 'watermark_sources' => $this->object->_get_watermark_sources(), 'watermark_fields' => $this->object->_get_watermark_source_fields($settings), 'watermark_source' => $settings->wmType, 'position_label' => __('Position:', 'nggallery'), 'position' => $settings->wmPos, 'offset_label' => __('Offset:', 'nggallery'), 'offset_x' => $settings->wmXpos, 'offset_y' => $settings->wmYpos, 'hidden_label' => __('(Show Customization Options)', 'nggallery'), 'active_label' => __('(Hide Customization Options)', 'nggallery'), 'thumbnail_url' => $image['url'], 'preview_label' => __('Preview of saved settings:', 'nggallery'), 'refresh_label' => __('Refresh preview image', 'nggallery'), 'refresh_url' => $settings->ajax_url), TRUE);
+        return $this->render_partial('photocrati-nextgen_other_options#watermarks_tab', array('watermark_automatically_at_upload_value' => $settings->get('watermark_automatically_at_upload', 0), 'watermark_automatically_at_upload_label' => __('Automatically watermark images during upload:', 'nggallery'), 'watermark_automatically_at_upload_label_yes' => __('Yes', 'nggallery'), 'watermark_automatically_at_upload_label_no' => __('No', 'nggallery'), 'notice' => __('Please note: You can only activate the watermark under Manage Gallery. This action cannot be undone.', 'nggallery'), 'watermark_source_label' => __('How will you generate a watermark?', 'nggallery'), 'watermark_sources' => $this->object->_get_watermark_sources(), 'watermark_fields' => $this->object->_get_watermark_source_fields($settings), 'watermark_source' => $settings->wmType, 'position_label' => __('Position:', 'nggallery'), 'position' => $settings->wmPos, 'offset_label' => __('Offset:', 'nggallery'), 'offset_x' => $settings->wmXpos, 'offset_y' => $settings->wmYpos, 'hidden_label' => __('(Show Customization Options)', 'nggallery'), 'active_label' => __('(Hide Customization Options)', 'nggallery'), 'thumbnail_url' => $image['url'], 'preview_label' => __('Preview of saved settings:', 'nggallery'), 'refresh_label' => __('Refresh preview image', 'nggallery'), 'refresh_url' => $settings->ajax_url), TRUE);
     }
     function save_action()
     {

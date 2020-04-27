@@ -168,7 +168,7 @@ class C_Widget_Gallery extends WP_Widget
         // HTML of random galleries the following is a bit of a workaround: for random widgets we create a displayed
         // gallery object and then cache the results of get_entities() so that, for at least as long as
         // NGG_RENDERING_CACHE_TTL seconds, widgets will be temporarily cached
-        if (in_array($params['source'], array('random', 'random_images')) && (double) $settings->random_widget_cache_ttl > 0) {
+        if (in_array($params['source'], array('random', 'random_images')) && (float) $settings->random_widget_cache_ttl > 0) {
             $displayed_gallery = $renderer->params_to_displayed_gallery($params);
             if (is_null($displayed_gallery->id())) {
                 $displayed_gallery->id(md5(json_encode($displayed_gallery->get_entity())));
@@ -186,7 +186,7 @@ class C_Widget_Gallery extends WP_Widget
                     $ids[] = $item->{$item->id_field};
                 }
                 $params['image_ids'] = implode(',', $ids);
-                $transientM->set($key, $params['image_ids'], (double) $settings->random_widget_cache_ttl * 60);
+                $transientM->set($key, $params['image_ids'], (float) $settings->random_widget_cache_ttl * 60);
             }
             $params['source'] = 'images';
             unset($params['container_ids']);

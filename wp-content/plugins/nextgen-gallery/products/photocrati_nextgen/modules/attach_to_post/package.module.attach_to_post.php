@@ -273,8 +273,10 @@ class Mixin_Attach_To_Post extends Mixin
             $this->object->_displayed_gallery = $mapper->find($id, TRUE);
         } else {
             if (isset($_REQUEST['shortcode'])) {
-                $params = str_replace('ngg_images', '', base64_decode($_REQUEST['shortcode']));
-                $params = str_replace('ngg', '', base64_decode($_REQUEST['shortcode']));
+                // Fetch the displayed gallery by shortcode
+                $shortcode = base64_decode($_REQUEST['shortcode']);
+                // $shortcode lacks the opening and closing brackets but still begins with 'ngg ' or 'ngg_images ' which are not parameters
+                $params = preg_replace('/^(ngg|ngg_images) /i', '', $shortcode, 1);
                 $params = stripslashes($params);
                 $params = str_replace(array('[', ']'), array('&#91;', '&#93;'), $params);
                 $params = shortcode_parse_atts($params);

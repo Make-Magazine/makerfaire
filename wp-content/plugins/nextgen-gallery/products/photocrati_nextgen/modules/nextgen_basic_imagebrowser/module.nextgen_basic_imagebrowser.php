@@ -1,19 +1,10 @@
 <?php
-/***
-{
-	Module:		photocrati-nextgen_basic_imagebrowser,
-	Depends:	{ photocrati-nextgen_gallery_display }
-}
-***/
 
-define(
-	'NGG_BASIC_IMAGEBROWSER',
-	'photocrati-nextgen_basic_imagebrowser'
-);
+define('NGG_BASIC_IMAGEBROWSER', 'photocrati-nextgen_basic_imagebrowser');
 
 class M_NextGen_Basic_ImageBrowser extends C_Base_Module
 {
-	function define($id = 'pope-module',
+    function define($id = 'pope-module',
                     $name = 'Pope Module',
                     $description = '',
                     $version = '',
@@ -21,82 +12,59 @@ class M_NextGen_Basic_ImageBrowser extends C_Base_Module
                     $author = '',
                     $author_uri = '',
                     $context = FALSE)
-	{
-		parent::define(
-			'photocrati-nextgen_basic_imagebrowser',
-			'NextGEN Basic ImageBrowser',
-			'Provides the NextGEN Basic ImageBrowser Display Type',
-            '3.1.8',
+    {
+        parent::define(
+            NGG_BASIC_IMAGEBROWSER,
+            'NextGEN Basic ImageBrowser',
+            'Provides the NextGEN Basic ImageBrowser Display Type',
+            '3.3.2',
             'https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/',
             'Imagely',
             'https://www.imagely.com'
-		);
+        );
 
-		C_Photocrati_Installer::add_handler($this->module_id, 'C_NextGen_Basic_ImageBrowser_Installer');
-	}
+        C_Photocrati_Installer::add_handler($this->module_id, 'C_NextGen_Basic_ImageBrowser_Installer');
+    }
 
     function initialize()
     {
         parent::initialize();
-        if (is_admin()) {
+        
+        if (is_admin())
+        {
             $forms = C_Form_Manager::get_instance();
-            $forms->add_form(
-                NGG_DISPLAY_SETTINGS_SLUG, NGG_BASIC_IMAGEBROWSER
-            );
+            $forms->add_form(NGG_DISPLAY_SETTINGS_SLUG, NGG_BASIC_IMAGEBROWSER);
         }
     }
 
-	/**
-	 * Register adapters required for the NextGen Basic ImageBrowser
-	 */
-	function _register_adapters()
-	{
-		$this->get_registry()->add_adapter(
-		  'I_Display_Type_Mapper',		'A_NextGen_Basic_ImageBrowser_Mapper'
-		);
-
-		// Add validation for the display type
-		$this->get_registry()->add_adapter(
-		  'I_Display_Type',			    'A_NextGen_Basic_ImageBrowser'
-		);
-
-		// Add imagebrowser ngglegacy-compatible urls
-		$this->get_registry()->add_adapter(
-			'I_Routing_App',			'A_NextGen_Basic_ImageBrowser_Urls'
-		);
+    /**
+     * Register adapters required for the NextGen Basic ImageBrowser
+     */
+    function _register_adapters()
+    {
+        $registry = $this->get_registry();
+        $registry->add_adapter('I_Display_Type_Mapper', 'A_NextGen_Basic_ImageBrowser_Mapper');
+        $registry->add_adapter('I_Display_Type',        'A_NextGen_Basic_ImageBrowser');
+        $registry->add_adapter('I_Routing_App',         'A_NextGen_Basic_ImageBrowser_Urls');
 
         if (M_Attach_To_Post::is_atp_url() || is_admin())
-        {
-            // Provide the imagebrowser form
-            $this->get_registry()->add_adapter(
-                'I_Form',
-                'A_NextGen_Basic_ImageBrowser_Form',
-                $this->module_id
-            );
-        }
+            $registry->add_adapter('I_Form', 'A_NextGen_Basic_ImageBrowser_Form', $this->module_id);
 
-		if (!is_admin() && apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
-		{
-            // Add rendering logic
-            $this->get_registry()->add_adapter(
-                'I_Display_Type_Controller',
-	            'A_NextGen_Basic_ImageBrowser_Controller',
-                $this->module_id
-            );
-        }
-	}
+        if (!is_admin() && apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id))
+            $registry->add_adapter('I_Display_Type_Controller', 'A_NextGen_Basic_ImageBrowser_Controller', $this->module_id);
+    }
 
-	function _register_hooks()
-	{
-		if (apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id)
+    function _register_hooks()
+    {
+        if (apply_filters('ngg_load_frontend_logic', TRUE, $this->module_id)
         && (!defined('NGG_DISABLE_LEGACY_SHORTCODES') || !NGG_DISABLE_LEGACY_SHORTCODES))
-		{
-            C_NextGen_Shortcode_Manager::add('imagebrowser', array(&$this, 'render_shortcode'));
-            C_NextGen_Shortcode_Manager::add('nggimagebrowser', array(&$this, 'render_shortcode'));
+        {
+            C_NextGen_Shortcode_Manager::add('imagebrowser',    array($this, 'render_shortcode'));
+            C_NextGen_Shortcode_Manager::add('nggimagebrowser', array($this, 'render_shortcode'));
         }
 
         add_action('ngg_routes', array(&$this, 'define_routes'));
-	}
+    }
 
     function define_routes($router)
     {
@@ -117,7 +85,7 @@ class M_NextGen_Basic_ImageBrowser extends C_Base_Module
         return (isset($params[$name])) ? $params[$name] : $default;
     }
 
-	function render_shortcode($params, $inner_content=NULL)
+    function render_shortcode($params, $inner_content=NULL)
     {
         $params['gallery_ids']  = $this->_get_param('id', NULL, $params);
         $params['source']       = $this->_get_param('source', 'galleries', $params);
@@ -132,12 +100,12 @@ class M_NextGen_Basic_ImageBrowser extends C_Base_Module
     function get_type_list()
     {
         return array(
-            'A_Nextgen_Basic_Imagebrowser' => 'adapter.nextgen_basic_imagebrowser.php',
+            'A_Nextgen_Basic_Imagebrowser'            => 'adapter.nextgen_basic_imagebrowser.php',
             'A_Nextgen_Basic_Imagebrowser_Controller' => 'adapter.nextgen_basic_imagebrowser_controller.php',
-            'A_Nextgen_Basic_Imagebrowser_Form' => 'adapter.nextgen_basic_imagebrowser_form.php',
-            'C_Nextgen_Basic_Imagebrowser_Installer' => 'class.nextgen_basic_imagebrowser_installer.php',
-            'A_Nextgen_Basic_Imagebrowser_Mapper' => 'adapter.nextgen_basic_imagebrowser_mapper.php',
-            'A_Nextgen_Basic_Imagebrowser_Urls' => 'adapter.nextgen_basic_imagebrowser_urls.php',
+            'A_Nextgen_Basic_Imagebrowser_Form'       => 'adapter.nextgen_basic_imagebrowser_form.php',
+            'A_Nextgen_Basic_Imagebrowser_Mapper'     => 'adapter.nextgen_basic_imagebrowser_mapper.php',
+            'A_Nextgen_Basic_Imagebrowser_Urls'       => 'adapter.nextgen_basic_imagebrowser_urls.php',
+            'C_Nextgen_Basic_Imagebrowser_Installer'  => 'class.nextgen_basic_imagebrowser_installer.php'
         );
     }
 }
@@ -150,14 +118,14 @@ class M_NextGen_Basic_ImageBrowser extends C_Base_Module
  */
 function nggShowImageBrowser($galleryID, $template = '')
 {
-	$renderer = C_Displayed_Gallery_Renderer::get_instance();
-	$retval = $renderer->display_images(array(
-		'gallery_ids'   =>  array($galleryID),
-		'display_type'  =>  'photocrati-nextgen_basic_imagebrowser',
-		'template'      =>  $template
-	));
+    $renderer = C_Displayed_Gallery_Renderer::get_instance();
+    $retval = $renderer->display_images(array(
+        'gallery_ids'   =>  array($galleryID),
+        'display_type'  =>  NGG_BASIC_IMAGEBROWSER,
+        'template'      =>  $template
+    ));
 
-	return apply_filters('ngg_show_imagebrowser_content', $retval, $galleryID);
+    return apply_filters('ngg_show_imagebrowser_content', $retval, $galleryID);
 }
 
 /**
@@ -168,35 +136,38 @@ function nggShowImageBrowser($galleryID, $template = '')
  */
 function nggCreateImageBrowser($picturelist, $template = '')
 {
-	$renderer = C_Displayed_Gallery_Renderer::get_instance();
-	$image_ids = array();
-	foreach ($picturelist as $image) $image_ids[] = $image->pid;
-	return $renderer->display_images(array(
-		'image_ids'     =>  $image_ids,
-		'display_type'  =>  'photocrati-nextgen_basic_imagebrowser',
-		'template'      =>  $template
-	));
+    $renderer = C_Displayed_Gallery_Renderer::get_instance();
+    $image_ids = array();
+    foreach ($picturelist as $image) $image_ids[] = $image->pid;
+    return $renderer->display_images(array(
+        'image_ids'     =>  $image_ids,
+        'display_type'  =>  NGG_BASIC_IMAGEBROWSER,
+        'template'      =>  $template
+    ));
 }
 
+/**
+ * @mixin C_Display_Type_Installer
+ */
 class C_NextGen_Basic_ImageBrowser_Installer extends C_Gallery_Display_Installer
 {
-	function install($reset = FALSE)
-	{
-		$this->install_display_type(
-			NGG_BASIC_IMAGEBROWSER, array(
-				'title'					=>	__('NextGEN Basic ImageBrowser', 'nggallery'),
-				'entity_types'			=>	array('image'),
-				'preview_image_relpath'	=>	'photocrati-nextgen_basic_imagebrowser#preview.jpg',
-				'default_source'		=>	'galleries',
-				'view_order' 			=> NGG_DISPLAY_PRIORITY_BASE + 20,
-				'aliases'				=> array(
-					'basic_imagebrowser',
-					'imagebrowser',
-					'nextgen_basic_imagebrowser'
-				)
-			)
-		);
-	}
+    function install($reset = FALSE)
+    {
+        $this->install_display_type(
+            NGG_BASIC_IMAGEBROWSER, array(
+                'title'                 => __('NextGEN Basic ImageBrowser', 'nggallery'),
+                'entity_types'          => array('image'),
+                'preview_image_relpath' => NGG_BASIC_IMAGEBROWSER . '#preview.jpg',
+                'default_source'        => 'galleries',
+                'view_order'            => NGG_DISPLAY_PRIORITY_BASE + 20,
+                'aliases'               => array(
+                    'basic_imagebrowser',
+                    'imagebrowser',
+                    'nextgen_basic_imagebrowser'
+                )
+            )
+        );
+    }
 }
 
 new M_NextGen_Basic_ImageBrowser();

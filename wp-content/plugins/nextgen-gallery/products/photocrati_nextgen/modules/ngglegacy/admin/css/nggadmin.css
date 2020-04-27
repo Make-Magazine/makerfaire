@@ -314,20 +314,49 @@ a.switch-expert {
 #ngg_page_content .ngg_manage_images .tablenav.top > div {
     margin-bottom: 10px;
 }
-#ngg_page_content .ngg_manage_galleries .search-box {
-    margin-bottom: 10px;
-    float: none;
-    position: relative;
-    left: 470px;
-    top: 47px;
-    margin-top: -40px;
-    width: 360px;
+
+#ngg_page_content .ngg_manage_galleries .search-box-wrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	width: 100%;
 }
+#ngg_page_content .ngg_manage_galleries div.search-box {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+#ngg_page_content .ngg_manage_galleries div.search-box:last-of-type {
+}
+#ngg_page_content .ngg_manage_galleries .search-box input[type=text] {
+	width: calc(100% - 150px) !important;
+	height: 35px !important;
+	margin-right: 4px !important;
+}
+#ngg_page_content .ngg_manage_galleries .search-box input[type=submit].button-primary {
+	width: 150px !important;
+	height: 35px !important;
+	padding: 0 !important;
+}
+
+#ngg_page_content .ngg_manage_galleries form.search-form {
+	width: 100%;
+}
+#ngg_page_content .ngg_manage_galleries form.search-form:first-of-type {
+	padding-right: 25px;
+}
+
 #ngg_page_content #editgalleries .displaying-num {
     margin-right: 7px !important;
     font-size: 14px;
     letter-spacing: 1px;
 }
+
+#ngg_page_content #editgalleries #bulkaction {
+	min-height: 35px;
+	max-height: 35px;
+}
+
 #ngg_page_content .ngg_manage_galleries .tablenav.bottom {
     margin: 15px 0 0;
 }
@@ -1128,9 +1157,10 @@ DIV that shows the image as you drag it
 }
 
 @media (max-width: 1420px) {
-	#ngg_page_content .ngg_manage_galleries .search-box {
-	    position: static;
-	}
+}
+
+@media (max-width: 1100px) {
+
 }
 
 @media (max-width: 1080px) {
@@ -1297,6 +1327,31 @@ DIV that shows the image as you drag it
 	#ngg_page_content .ngg_manage_galleries .tablenav .tablenav-pages {
 	    margin-top: 20px;
 	    margin-bottom: 28px !important;
+	}
+	#ngg_page_content .ngg_manage_galleries .search-box input[type=text] {
+		width: calc(100% - 150px) !important;
+	}
+	#ngg_page_content .ngg_manage_galleries .search-box input[type=submit].button-primary {
+		height: 40px !important;
+	}
+	#ngg_page_content .ngg_manage_galleries .search-box-wrapper {
+		flex-direction: column;
+	}
+	#ngg_page_content .ngg_manage_galleries form.search-form {
+		width: 100%;
+	}
+	#ngg_page_content #editgalleries div.tablenav.top div.alignleft.actions input.button-primary {
+		width: auto !important;
+		display: inline-block;
+	}
+	#ngg_page_content #editgalleries div.tablenav.top div.alignleft.actions input.button-primary:first-of-type {
+		margin-left: 5px;
+	}
+	#ngg_page_content #editgalleries div.tablenav.top div.tablenav-pages {
+		display: none;
+	}
+	#ngg_page_content #editgalleries #bulkaction {
+		width: auto !important;
 	}
 }
 

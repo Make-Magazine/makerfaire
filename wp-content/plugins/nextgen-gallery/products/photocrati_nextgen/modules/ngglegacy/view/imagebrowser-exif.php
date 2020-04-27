@@ -65,8 +65,3 @@ Please note : A Image resize or watermarking operation will remove all meta info
 </div>	
 
 <?php endif; ?>
-<script type='text/javascript'>
-	jQuery(function($) {
-		new NggPaginatedGallery('<?php echo $displayed_gallery->id() ?>', '.ngg-imagebrowser');
-	});
-</script>

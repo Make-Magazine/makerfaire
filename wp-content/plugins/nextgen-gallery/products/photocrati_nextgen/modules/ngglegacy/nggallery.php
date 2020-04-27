@@ -9,9 +9,11 @@ class nggLoader
 	var $dbversion   = '1.8.1';
 	var $minimum_WP  = '3.6.1';
 	var $options     = '';
+    var $add_PHP5_notice = false;
+    var $plugin_name = '';
+
+	/** @var nggManageGallery|nggManageAlbum $manage_page */
 	var $manage_page;
-	var $add_PHP5_notice = false;
-	var $plugin_name = '';
 
 	function __construct()
 	{

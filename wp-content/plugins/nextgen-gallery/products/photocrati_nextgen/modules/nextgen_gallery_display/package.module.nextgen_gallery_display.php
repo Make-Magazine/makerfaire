@@ -1405,10 +1405,14 @@ class Mixin_Displayed_Gallery_Queries extends Mixin
      * Sorts the results of an album query
      * @param stdClass $a
      * @param stdClass $b
+     * @return int
      */
     function _sort_album_result($a, $b)
     {
         $key = $this->object->order_by;
+        if (!isset($a->{$key}) || !isset($b->{$key})) {
+            return 0;
+        }
         return strcmp($a->{$key}, $b->{$key});
     }
 }

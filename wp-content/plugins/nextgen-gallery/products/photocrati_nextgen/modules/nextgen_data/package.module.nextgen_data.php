@@ -714,7 +714,7 @@ class Mixin_NextGen_Gallery_Validation
         }
         $ABSPATH = wp_normalize_path(ABSPATH);
         // Disallow galleries from being under these directories at all
-        $not_ever_in = array('plugins' => wp_normalize_path(WP_PLUGIN_DIR), 'must use plugins' => wp_normalize_path(WPMU_PLUGIN_DIR), 'wp-admin' => $fs->join_paths($ABSPATH, 'wp-admin'), 'wp-includes' => $fs->join_paths($ABSPATH, 'wp-admin'), 'themes' => get_theme_root());
+        $not_ever_in = array('plugins' => wp_normalize_path(WP_PLUGIN_DIR), 'must use plugins' => wp_normalize_path(WPMU_PLUGIN_DIR), 'wp-admin' => $fs->join_paths($ABSPATH, 'wp-admin'), 'wp-includes' => $fs->join_paths($ABSPATH, 'wp-includes'), 'themes' => get_theme_root());
         foreach ($not_ever_in as $label => $dir) {
             if (strpos($abspath, $dir) === 0) {
                 $this->object->add_error(sprintf(__("Gallery path cannot be under %s directory", 'nggallery'), $label), 'gallerypath');
@@ -4256,7 +4256,7 @@ class Mixin_GalleryStorage_Base_Getters extends Mixin
     }
     function get_gallery_root()
     {
-        return wp_normalize_path(NGG_GALLERY_ROOT_TYPE == 'content' ? WP_CONTENT_DIR : ABSPATH);
+        return wp_normalize_path(C_Fs::get_instance()->get_document_root('galleries'));
     }
     function _get_computed_gallery_abspath($gallery)
     {
@@ -4349,7 +4349,6 @@ class Mixin_GalleryStorage_Base_Getters extends Mixin
                         $size = 'thumbnail';
                         $folder = 'thumbs';
                         $prefix = 'thumbs';
-                        // deliberately no break here
                     // deliberately no break here
                     default:
                         // NGG 2.0 stores relative filenames in the meta data of
@@ -4839,6 +4838,7 @@ class Mixin_GalleryStorage_Base_Management extends Mixin
      * Backs up an image file
      *
      * @param int|object $image
+     * @param bool $save
      * @return bool
      */
     function backup_image($image, $save = TRUE)
@@ -4867,6 +4867,11 @@ class Mixin_GalleryStorage_Base_Management extends Mixin
         }
         return $retval;
     }
+    /**
+     * @param C_Image[]|int[] $images
+     * @param C_Gallery|int $dst_gallery
+     * @return int[]
+     */
     function copy_images($images, $dst_gallery)
     {
         $retval = array();
@@ -4894,13 +4899,13 @@ class Mixin_GalleryStorage_Base_Management extends Mixin
                     $tags = array_map('intval', $tags);
                     wp_set_object_terms($new_image_id, $tags, 'ngg_tag', true);
                     // Copy all of the generated versions (resized versions, watermarks, etc)
-                    foreach ($this->get_image_sizes($image) as $named_size) {
+                    foreach ($this->object->get_image_sizes($image) as $named_size) {
                         if (in_array($named_size, array('full', 'thumbnail'))) {
                             continue;
                         }
                         $old_abspath = $this->object->get_image_abspath($image, $named_size);
                         $new_abspath = $this->object->get_image_abspath($new_image, $named_size);
-                        if (is_array(stat($old_abspath))) {
+                        if (is_array(@stat($old_abspath))) {
                             $new_dir = dirname($new_abspath);
                             // Ensure the target directory exists
                             if (@stat($new_dir) === FALSE) {
@@ -4920,12 +4925,11 @@ class Mixin_GalleryStorage_Base_Management extends Mixin
      * Moves images from to another gallery
      * @param array $images
      * @param int|object $gallery
-     * @param boolean $db optionally only move the image files, not the db entries
-     * @return boolean
+     * @return int[]
      */
     function move_images($images, $gallery)
     {
-        $retval = $this->object->copy_images($images, $gallery, TRUE);
+        $retval = $this->object->copy_images($images, $gallery);
         if ($images) {
             foreach ($images as $image_id) {
                 $this->object->delete_image($image_id);
@@ -4933,6 +4937,10 @@ class Mixin_GalleryStorage_Base_Management extends Mixin
         }
         return $retval;
     }
+    /**
+     * @param string $abspath
+     * @return bool
+     */
     function delete_directory($abspath)
     {
         $retval = FALSE;
@@ -4983,7 +4991,7 @@ class Mixin_GalleryStorage_Base_Management extends Mixin
                     $this->object->_image_mapper->save($image);
                 }
             } else {
-                foreach ($this->get_image_sizes($image) as $named_size) {
+                foreach ($this->object->get_image_sizes($image) as $named_size) {
                     $image_abspath = $this->object->get_image_abspath($image, $named_size);
                     @unlink($image_abspath);
                 }
@@ -5220,6 +5228,7 @@ class Mixin_GalleryStorage_Base_Upload extends Mixin
     public function is_allowed_image_extension($filename)
     {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $extension = strtolower($extension);
         $allowed_extensions = apply_filters('ngg_allowed_file_types', array('jpeg', 'jpg', 'png', 'gif'));
         return in_array($extension, $allowed_extensions);
     }
@@ -5409,6 +5418,11 @@ class Mixin_GalleryStorage_Base_Upload extends Mixin
             $this->object->generate_thumbnail($image);
             // Set gallery preview image if missing
             C_Gallery_Mapper::get_instance()->set_preview_image($dst_gallery, $image_id, TRUE);
+            // Automatically watermark the main image if requested
+            if ($settings->get('watermark_automatically_at_upload', 0)) {
+                $image_abspath = $this->object->get_image_abspath($image, 'full');
+                $this->object->generate_image_clone($image_abspath, $image_abspath, array('watermark' => TRUE));
+            }
             // Notify other plugins that an image has been added
             do_action('ngg_added_new_image', $image);
             // delete dirsize after adding new images

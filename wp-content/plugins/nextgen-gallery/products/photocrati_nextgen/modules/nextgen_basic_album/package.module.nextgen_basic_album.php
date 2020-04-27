@@ -64,7 +64,7 @@ class A_NextGen_Album_Breadcrumbs extends Mixin
             }
             // Prevent galleries with the same ID as the parent album being displayed as the root
             // breadcrumb when viewing the album page
-            if (count($ids) == 1 && strpos($ids[0], 'a') !== 0) {
+            if (is_array($ids) && count($ids) == 1 && strpos($ids[0], 'a') !== 0) {
                 $ids = array();
             }
             if (!empty($ds['original_album_entities'])) {

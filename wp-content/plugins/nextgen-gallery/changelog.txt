@@ -1,6 +1,36 @@
 NextGEN Gallery
 by Imagely
 
+= V3.3.5 - 04.09.2020 =
+* Fixed:   Broken dynamic images
+
+= V3.3.2 - 04.07.2020 =
+* Fixed:   Gallery paths were calculated incorrectly on wordpress.com hosting
+* Fixed:   Insert Gallery Window could not edit an existing displayed gallery with a legacy template without breaking the displayed gallery
+* Fixed:   Manage Albums page could generate lengthy PHP warnings if galleries or other albums did not have a preview image assigned
+* Fixed:   NextGen was forcing the 'screen_options_show_screen' filter to always be true
+* Fixed:   Plugin would not load and would throw an error due to C_Component_Registry not being found
+* Fixed:   Removed last traces of javascript that were in display type templates
+
+= V3.3.0 - 03.10.2020 =
+* NEW:     Added feature on Manage Galleries page to search gallery names
+* NEW:     Added filter 'ngg_disable_shortcodes_in_request_api' to disable rendering of NextGen shortcodes in REST
+* NEW:     Added option to automatically watermark images during upload
+* Changed: Minimum PHP version supported is now 5.4
+* Changed: Pope framework now included via Composer
+* Changed: Removed use of 'contextual_help' filter which is deprecated
+* Changed: Renamed nggallery.po to nggallery.pot for better compatibility with Loco Translate
+* Fixed:   Compatibility with Divi Booster
+* Fixed:   Copying images to another gallery caused a PHP warning
+* Fixed:   Featured Image feature was not working
+* Fixed:   Fixed PHP warning sometimes displayed with album breadcrumbs
+* Fixed:   Fixed PHP warning when displaying certain albums
+* Fixed:   No notification was given when moving or copying images on Manage Gallery
+* Fixed:   PHP warning would be displayed when MediaRSS feature was enabled
+* Fixed:   SimpleLightbox would not use image alttext attribute for titles
+* Fixed:   Uploading zip files containing images with uppercase file extensions would fail to extract any images
+* Fixed:   Uploading images with invalid EXIF would reject the image entirely
+
 = V3.2.23 - 12.02.2019 =
 * NEW:     There is a new setting under Other Options > Misc to disable enqueueing FontAwesome entirely
 * Changed: WP-CLI commands have been namespaced and numerous new commands have been added

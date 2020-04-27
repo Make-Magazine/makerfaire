@@ -751,10 +751,43 @@ class nggManageGallery {
 
 			switch ($_POST['TB_bulkaction']) {
 				case 'copy_to':
-                    C_Gallery_Storage::get_instance()->copy_images($pic_ids, $dest_gid);
+				    $destination = C_Gallery_Mapper::get_instance()->find($dest_gid);
+                    $new_ids     = C_Gallery_Storage::get_instance()->copy_images($pic_ids, $dest_gid);
+
+                    if (!empty($new_ids))
+                    {
+                        $admin_url = admin_url();
+                        $title     = esc_html($destination->title);
+                        $link      = "<a href='{$admin_url}admin.php?page=nggallery-manage-gallery&mode=edit&gid={$destination->gid}'>{$title}</a>";
+                        nggGallery::show_message(
+                            sprintf(__('Copied %1$s picture(s) to gallery: %2$s .','nggallery'), count($new_ids), $link)
+                        );
+                    }
+                    else {
+                        nggGallery::show_error(
+                            __('Failed to copy images', 'nggallery')
+                        );
+                    }
+
 					break;
 				case 'move_to':
-                    C_Gallery_Storage::get_instance()->move_images($pic_ids, $dest_gid);
+                    $destination = C_Gallery_Mapper::get_instance()->find($dest_gid);
+                    $new_ids     = C_Gallery_Storage::get_instance()->move_images($pic_ids, $dest_gid);
+
+                    if (!empty($new_ids))
+                    {
+                        $admin_url = admin_url();
+                        $title     = esc_html($destination->title);
+                        $link      = "<a href='{$admin_url}admin.php?page=nggallery-manage-gallery&mode=edit&gid={$destination->gid}'>{$title}</a>";
+                        nggGallery::show_message(
+                            sprintf(__('Moved %1$s picture(s) to gallery: %2$s .','nggallery'), count($new_ids), $link)
+                        );
+                    }
+                    else {
+                        nggGallery::show_error(
+                            __('Failed to move images', 'nggallery')
+                        );
+                    }
 					break;
 			}
 		}

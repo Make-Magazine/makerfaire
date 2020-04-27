@@ -108,6 +108,7 @@ class C_NextGen_Settings_Installer
 			'thumbEffectContext'  => 'nextgen_images', // select effect
 
 			// Watermark settings
+            'watermark_automatically_at_upload' => 0,
 			'wmPos'    => 'midCenter',            // Postion
 			'wmXpos'   => 15,                     // X Pos
 			'wmYpos'   => 5,                      // Y Pos

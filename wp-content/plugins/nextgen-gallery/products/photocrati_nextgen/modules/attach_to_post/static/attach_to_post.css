@@ -22,12 +22,13 @@
 /* 1. Overall IGW Window */
 
 html, body {
-	width: 100%;
-	height: 100%;
-	padding: 0px;
-	margin: 0px;
-	font-size: 13px;
-	overflow: hidden;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    font-size: 13px;
+    overflow: hidden;
 }
 
 body {

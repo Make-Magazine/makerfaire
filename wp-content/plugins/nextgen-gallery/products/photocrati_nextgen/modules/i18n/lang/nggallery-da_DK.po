@@ -3499,10 +3499,10 @@ msgstr "Galleriet ID =%s findes ikke."
 #. Description of the plugin
 msgid ""
 "The most popular gallery plugin for WordPress and one of the most popular "
-"plugins of all time with over 27 million downloads."
+"plugins of all time with over 28 million downloads."
 msgstr ""
 "Den mest populære galleri plugin til WordPress og et af de mest populære "
-"plugins igennem tiden med over 27 millioner downloads."
+"plugins igennem tiden med over 28 millioner downloads."
 
 #: products/photocrati_nextgen/modules/ngglegacy/admin/overview.php:290
 msgid "The most powerful gallery system ever built for WordPress. "

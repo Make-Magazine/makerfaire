@@ -129,21 +129,6 @@ html#iframely {
     vertical-align: top;
 }
 
-
-#iframely #ngg_page_content .ngg_manage_galleries .search-form {
-    margin-top: -20px;
-}
-
-#iframely #ngg_page_content .ngg_manage_galleries p.search-box {
-    margin: 0;
-    position: relative;
-    float: none;
-    top: 37px;
-    left: 460px;
-    width: 350px;
-}
-
-#iframely .search-box input[name="s"], 
 #iframely #bulkaction {
     width: 140px !important;
 }

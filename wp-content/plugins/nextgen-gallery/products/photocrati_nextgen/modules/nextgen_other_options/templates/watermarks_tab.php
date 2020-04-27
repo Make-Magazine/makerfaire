@@ -1,4 +1,51 @@
+<?php
+/**
+ * @var array $watermark_fields
+ * @var array $watermark_sources
+ * @var int $offset_x
+ * @var int $offset_y
+ * @var string $active_label
+ * @var string $hidden_label
+ * @var string $offset_label
+ * @var string $position_label
+ * @var string $preview_label
+ * @var string $refresh_url
+ * @var string $refresh_label
+ * @var string $thumbnail_url
+ * @var string $watermark_automatically_at_upload_label
+ * @var string $watermark_automatically_at_upload_label_no
+ * @var string $watermark_automatically_at_upload_label_yes
+ * @var string $watermark_automatically_at_upload_value
+ * @var string $watermark_source
+ * @var string $watermark_source_label
+ */
+?>
 <table>
+    <tr>
+        <td class="column1">
+            <label for="watermark_automatically_at_upload">
+                <?php print esc_html($watermark_automatically_at_upload_label); ?>
+            </label>
+        </td>
+        <td>
+            <label for="watermark_automatically_at_upload">
+                <?php print esc_html($watermark_automatically_at_upload_label_yes); ?>
+            </label>
+            <input id='watermark_automatically_at_upload'
+                   type="radio"
+                   name="watermark_options[watermark_automatically_at_upload]"
+                   value="1"
+                   <?php checked(TRUE, $watermark_automatically_at_upload_value ? TRUE : FALSE)?>/>
+            <label for="watermark_automatically_at_upload_no">
+                <?php print esc_html($watermark_automatically_at_upload_label_no); ?>
+            </label>
+            <input id='watermark_automatically_at_upload_no'
+                   type="radio"
+                   name="watermark_options[watermark_automatically_at_upload]"
+                   value="0"
+                   <?php checked(FALSE, $watermark_automatically_at_upload_value ? TRUE : FALSE)?>/>
+        </td>
+    </tr>
 	<tr>
 		<td class="column1">
 			<label for="watermark_source">
@@ -9,10 +56,10 @@
 			<div class="column_wrapper">
 				<select name="watermark_options[wmType]" id="watermark_source">
 				<?php foreach ($watermark_sources as $label => $value): ?>
-					<option
-						value="<?php echo esc_attr($value)?>"
-						<?php selected($value, $watermark_source) ?>
-						><?php esc_html_e($label)?></option>
+					<option value="<?php echo esc_attr($value)?>"
+						    <?php selected($value, $watermark_source) ?>>
+                        <?php esc_html_e($label)?>
+                    </option>
 				<?php endforeach ?>
 				</select>
 			</div>
