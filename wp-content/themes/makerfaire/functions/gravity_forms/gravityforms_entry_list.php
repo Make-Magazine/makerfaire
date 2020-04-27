@@ -2,10 +2,9 @@
 /*
  * Custom MF modifications to the gravity forms entry listy view
  */
-add_filter('gform_toolbar_menu', 'mf_custom_toolbar', 10, 2);
+add_filter('gform_pre_entry_list', 'mf_custom_toolbar', 10, 2);
 
-function mf_custom_toolbar($menu_items, $form_id) {
-   $menu_items = array(); //empty out the gravity form toolbar.  this will be replaced by a custom MF toolbar
+function mf_custom_toolbar($form_id) {      
    $view = (isset($_GET['view']) ? $_GET['view'] : '');
    $page = (isset($_GET['page']) ? $_GET['page'] : '');
    if (($view == '' || $view == 'entries') && $page == 'gf_entries') {
@@ -81,7 +80,6 @@ function mf_custom_toolbar($menu_items, $form_id) {
       $output .= '</span>';
       echo $output;
    }
-   return $menu_items;
 }
 
 function return_MF_navigation() {
