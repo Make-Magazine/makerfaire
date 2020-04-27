@@ -22,7 +22,7 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 	function add_html_class( $classes = '' ) {
 
 		// we don't pass the 'responsive' class here to prevent enabling the Responsive extension too soon.
-		
+
 		if( $this->is_enabled() ) {
 			$classes .= '  nowrap';
 		}
@@ -69,6 +69,10 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 								'type' => 'checkbox',
 								'value' => 1,
 								'tooltip' => 'gv_datatables_responsive',
+                                'article' => array(
+                                    'id' => '5ea744fd2c7d3a7e9aebb7ab',
+                                    'url' => 'https://docs.gravityview.co/article/712-responsive-datatables',
+                                ),
 							), $ds['responsive'] );
 					?>
 				</td>

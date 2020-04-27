@@ -14,12 +14,12 @@
     "datatables": ">=1.10.8"
   },
   "homepage": "https://github.com/DataTables/Buttons",
-  "version": "1.6.0",
-  "_release": "1.6.0",
+  "version": "1.6.1",
+  "_release": "1.6.1",
   "_resolution": {
     "type": "version",
-    "tag": "1.6.0",
-    "commit": "683d4d5cbe970c3a4a50aa08d7ea1a98e158670c"
+    "tag": "1.6.1",
+    "commit": "5ad12cfab9c514082f4f86c96afcf9aa7350c3ae"
   },
   "_source": "https://github.com/DataTables/Buttons.git",
   "_target": ">=1.0.3",

@@ -49,6 +49,10 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 								'type' => 'checkbox',
 								'value' => 1,
 								'tooltip' => 'gv_datatables_buttons',
+                                'article' => array(
+                                    'id' => '5ea73bab04286364bc9914ba',
+                                    'url' => 'https://docs.gravityview.co/article/710-datatables-buttons',
+                                ),
 							), $ds['buttons'] );
 					?>
 				</td>
@@ -115,7 +119,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 		 * @since 2.4
 		 */
 		$button_labels = apply_filters( 'gravityview_datatables_button_labels', $button_labels, $context );
-		
+
 		return $button_labels;
 	}
 

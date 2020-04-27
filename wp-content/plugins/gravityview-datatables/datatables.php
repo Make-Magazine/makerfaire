@@ -8,13 +8,13 @@
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
  * @link      https://gravityview.co
- * @copyright Copyright 2018, Katz Web Services, Inc.
+ * @copyright Copyright 2020, Katz Web Services, Inc.
  *
  * @wordpress-plugin
  * Plugin Name:       	GravityView - DataTables Extension
  * Plugin URI:        	https://gravityview.co/extensions/datatables/
  * Description:       	Display entries in a dynamic table powered by DataTables & GravityView.
- * Version:          	2.4.2
+ * Version:          	2.4.3
  * Author:            	GravityView
  * Author URI:        	https://gravityview.co
  * Text Domain:       	gv-datatables
@@ -27,7 +27,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'GV_DT_VERSION', '2.4.2' );
+define( 'GV_DT_VERSION', '2.4.3' );
 
 /** @define "GV_DT_FILE" "./" */
 define( 'GV_DT_FILE', __FILE__ );

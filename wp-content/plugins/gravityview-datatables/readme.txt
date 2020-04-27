@@ -1,7 +1,7 @@
 === GravityView - DataTables Extension ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 5.2.3
+Tested up to: 5.4
 Stable tag: trunk
 Contributors: katzwebservices, luistinygod, soulseekah
 License: GPL 3 or higher
@@ -15,6 +15,16 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.4.3 on April 27, 2020 =
+
+* Fixed: Multi-sorting not working
+
+__Developer Updates:__
+
+* Updated scripts:
+    - DataTables 1.10.19 to 1.10.20
+    - Buttons 1.6.0 to 1.6.1
 
 = 2.4.2 on December 12, 2019 =
 

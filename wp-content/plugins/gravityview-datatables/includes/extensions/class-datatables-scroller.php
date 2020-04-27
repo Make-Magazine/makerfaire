@@ -53,6 +53,10 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 								'type' => 'checkbox',
 								'value' => 1,
 								'tooltip' => 'gv_datatables_scroller',
+                                'article' => array(
+	                                'id' => '5ea73c1a04286364bc9914c0',
+                                    'url' => 'https://docs.gravityview.co/article/711-datatables-scroller',
+                                ),
 							), $ds['scroller'] );
 					?>
 				</td>

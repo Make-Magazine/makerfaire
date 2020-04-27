@@ -1,7 +1,7 @@
 # GravityView - DataTables Extension #
 **Tags:** gravityview  
 **Requires at least:** 4.4  
-**Tested up to:** 5.2.3  
+**Tested up to:** 5.4  
 **Stable tag:** trunk  
 **Contributors:** katzwebservices, luistinygod, soulseekah  
 **License:** GPL 3 or higher  
@@ -16,12 +16,27 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 ## Changelog ##
 
+### 2.4.3 on April 27, 2020 ###
+
+* Fixed: Multi-sorting not working
+
+__Developer Updates:__
+
+* Updated scripts:
+    - DataTables 1.10.19 to 1.10.20
+    - Buttons 1.6.0 to 1.6.1
+
+### 2.4.2 on December 12, 2019 ###
+
+* Fixed: DataTables not working with Multiselect, Checkbox searches
+* Fixed: The `{get}` Merge Tag doesn't work in the `[gravityview]` shortcode when rendering a DataTables layout
+
 ### 2.4.1 on October 9, 2019 ###
 
 * Fixed: Fields added using [Multiple Forms](https://gravityview.co/extensions/multiple-forms/) don't display on a Single Entry page
 * Updated translations:
     - Russian (Thanks, Viktor S!)
-    - Polish (Thanks, Dariusz Zielonka!)
+    - Polish (Thanks, Dariusz Z!)
     - French
 
 __Developer Updates:__
@@ -29,7 +44,7 @@ __Developer Updates:__
 * Updated DataTables scripts:
     - Scroller 2.0 to 2.0.1
     - FixedHeader 3.1.5 to 3.1.6
-    - FixedColumns 3.2.6 - 3.3.0
+    - FixedColumns 3.2.6 to 3.3.0
     - Buttons 1.5.6 to 1.6.0
 
 ### 2.4 on April 2, 2019 ###

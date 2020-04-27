@@ -5,7 +5,7 @@
  * @global \GV\Template_Context $gravityview
  */
 
-\GV\Mocks\Legacy_Context::push( array( 'view' => $gravityview->view ) )
+\GV\Mocks\Legacy_Context::push( array( 'view' => $gravityview->view ) );
 
 ?>
 
@@ -17,7 +17,7 @@
 <div class="gv-table-view gv-container gv-table-single-container">
 	<table class="gv-table-view-content">
 		<?php
-        
+
         if ( $gravityview->fields->by_position( 'single_table-columns' )->by_visible()->count() ): ?>
 			<thead>
 				<?php gravityview_header(); ?>
