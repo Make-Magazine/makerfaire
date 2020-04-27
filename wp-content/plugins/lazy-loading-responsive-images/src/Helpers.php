@@ -116,6 +116,34 @@ class Helpers {
 	}
 
 	/**
+	 * Check if the displayed content is something that the plugin should process.
+	 * 
+	 * @return bool
+	 */
+	public function is_post_to_process() {
+		if ( $this->is_disabled_for_post() ) {
+			return false;
+		}
+
+		// Check if we are on a feed page.
+		if ( is_feed() ) {
+			return false;
+		}
+
+		// Check if this is a request in the backend.
+		if ( $this->is_admin_request() ) {
+			return false;
+		}
+
+		// Check for AMP page.
+		if ( $this->is_amp_page() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Sanitize comma separated list of class names.
 	 *
 	 * @param string $class_names Comma separated list of HTML class names.
@@ -126,24 +154,54 @@ class Helpers {
 		// Get array of the class names.
 		$class_names_array = explode( ',', $class_names );
 
-		// Check if we have an array and not false.
-		if ( false !== $class_names_array ) {
-			$counter = 0;
-
-			// Loop through the class names.
-			foreach ( $class_names_array as $class_name ) {
-				// Save the sanitized class name.
-				$class_names_array[ $counter ] = sanitize_html_class( $class_name );
-				$counter ++;
-			}
-
-			// Implode the class names.
-			$class_names = implode( ',', $class_names_array );
-
-			return $class_names;
-		} else {
+		if ( false === $class_names_array ) {
 			return '';
 		}
+
+		// Loop through the class names.
+		foreach ( $class_names_array as $i => $class_name ) {
+			// Save the sanitized class name.
+			$class_names_array[ $i ] = sanitize_html_class( $class_name );
+		}
+
+		// Implode the class names.
+		$class_names = implode( ',', $class_names_array );
+
+		return $class_names;
+	}
+
+	/**
+	 * Sanitize list of filter names.
+	 *
+	 * @param string $filters One or more WordPress filters, one per line.
+	 *
+	 * @return string Sanitized list.
+	 */
+	public function sanitize_filter_name_list( $filters ) {
+		// Get array of the filter names.
+		$filters_array = explode( "\n", $filters );
+
+		if ( false === $filters_array ) {
+			return '';
+		}
+
+		// Loop through the filter names.
+		foreach ( $filters_array as $i => $filter ) {
+			$function_name_regex = '/^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$/';
+			
+			$filters_array[$i] = trim( $filters_array[$i] );
+			
+			// Check if the filter is a valid PHP function name.
+			if ( preg_match( $function_name_regex, $filters_array[$i] ) !== 1 ) {
+				unset( $filters_array[$i] );
+				continue;
+			}
+		}
+
+		// Implode the filter names.
+		$filters = implode( "\n", $filters_array );
+
+		return $filters;
 	}
 
 	/**
@@ -183,7 +241,8 @@ class Helpers {
 		if ( null !== $sanitized && '' !== $sanitized ) {
 			return $value;
 		} else {
-			return Settings::$loading_spinner_color_default;
+			$settings = new Settings();
+			return $settings->get_loading_spinner_color_default();
 		} // End if().
 	}
 
@@ -194,20 +253,21 @@ class Helpers {
 	 * Replacement of doctype, html, and body from archon810\SmartDOMDocument.
 	 *
 	 * @param \DOMDocument $dom DOMDocument object of the dom.
+	 * @param Masterminds\HTML5 $html5 HTML5 object.
 	 *
 	 * @return string DOM or empty string.
 	 */
-	public function save_html( \DOMDocument $dom ) {
+	public function save_html( \DOMDocument $dom, $html5 ) {
 		$xpath      = new \DOMXPath( $dom );
 		$first_item = $xpath->query( '/' )->item( 0 );
 
 		return preg_replace(
 			array(
-				'/^\<\!DOCTYPE.*?<html><body>/si',
-				'!</body></html>$!si',
+				'/^\<\!DOCTYPE html>.*?<html>/si',
+				'/<\/html>[\n\r]?$/si',
 			),
 			'',
-			$dom->saveHTML( $first_item )
+			$html5->saveHTML( $first_item )
 		);
 	}
 }

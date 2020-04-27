@@ -28,105 +28,131 @@ class Settings {
 	 *
 	 * @var array
 	 */
-	public $options;
+	private $options;
 
 	/**
 	 * Classes which should not be lazy loaded.
 	 *
 	 * @var array
 	 */
-	public $disabled_classes;
+	private $disabled_classes;
 
 	/**
 	 * Value of settings for enabling lazy loading for iFrames.
 	 *
 	 * @var string
 	 */
-	public $enable_for_iframes;
+	private $enable_for_iframes;
 
 	/**
 	 * Value of setting for loading the unveilhooks plugin.
 	 *
 	 * @var string
 	 */
-	public $load_native_loading_plugin;
+	private $load_native_loading_plugin;
 
 	/**
 	 * Value of setting for loading the unveilhooks plugin.
 	 *
 	 * @var string
 	 */
-	public $load_unveilhooks_plugin;
+	private $load_unveilhooks_plugin;
 
 	/**
 	 * Value of settings for enabling lazy loading for background images.
 	 *
 	 * @var string
 	 */
-	public $enable_for_background_images;
+	private $enable_for_background_images;
 
 	/**
 	 * Value of settings for enabling lazy loading for videos.
 	 *
 	 * @var string
 	 */
-	public $enable_for_videos;
+	private $enable_for_videos;
 
 	/**
 	 * Value of settings for enabling lazy loading for audios.
 	 *
 	 * @var string
 	 */
-	public $enable_for_audios;
+	private $enable_for_audios;
 
 	/**
 	 * Value of setting for loading the aspectratio plugin.
 	 *
 	 * @var string
 	 */
-	public $load_aspectratio_plugin;
+	private $load_aspectratio_plugin;
 
 	/**
 	 * Value of setting for displaying a loading spinner.
 	 *
 	 * @var string
 	 */
-	public $loading_spinner;
+	private $loading_spinner;
 
 	/**
 	 * Default loading spinner color.
 	 *
 	 * @var string
 	 */
-	public static $loading_spinner_color_default = '#333333';
+	private $loading_spinner_color_default = '#333333';
 
 	/**
 	 * Value of setting for loading spinner color.
 	 *
 	 * @var string
 	 */
-	public $loading_spinner_color;
+	private $loading_spinner_color;
 
 	/**
 	 * Value of setting for displaying the option to disable the plugin per page/post.
 	 *
 	 * @var string
 	 */
-	public $granular_disable_option;
+	private $granular_disable_option;
 
 	/**
 	 * Array of object types that should show the checkbox to disable lazy loading.
-	 * 
+	 *
 	 * @var array
 	 */
-	public $disable_option_object_types = array();
+	private $disable_option_object_types = array();
 
 	/**
 	 * String to modify lazysizes config.
-	 * 
+	 *
 	 * @var string
 	 */
-	public $lazysizes_config = '';
+	private $lazysizes_config = '';
+
+	/**
+	 * Value of setting for processing the complete website markup.
+	 *
+	 * @var string
+	 */
+	private $process_complete_markup;
+
+	/**
+	 * Value of setting for additional filters to process.
+	 *
+	 * @var array
+	 */
+	private $additional_filters;
+
+	/**
+	 * Allowed HTML tags in descriptions.
+	 *
+	 * @var array
+	 */
+	private $allowed_description_html = array(
+		'a' => array( 'href' => array() ),
+		'br' => array(),
+		'code' => array(),
+		'strong' => array(),
+	);
 
 	/**
 	 * Settings constructor.
@@ -139,11 +165,21 @@ class Settings {
 			'lazy_load_responsive_images_disabled_classes'      => array(
 				'value'             => get_option( 'lazy_load_responsive_images_disabled_classes', '' ),
 				'label'             => __( 'CSS classes to exclude', 'lazy-loading-responsive-images' ),
-				'description'       => __( 'Enter one or more CSS classes to exclude them from lazy loading (separated by comma).', 'lazy-loading-responsive-images' ),
+				'description'       => __( 'Enter one or more CSS classes to exclude them from lazy loading (separated by comma). This works only if the element that would get lazy loaded has the class, not on wrapper elements. To exclude an element and its children, use the <code>skip-lazy</code> class or the <code>data-skip-lazy</code> attribute.', 'lazy-loading-responsive-images' ),
 				'field_callback'    => array( $this, 'text_field_cb' ),
 				'sanitize_callback' => array(
 					$this->helpers,
 					'sanitize_class_name_list',
+				),
+			),
+			'lazy_load_responsive_images_additional_filters'      => array(
+				'value'             => get_option( 'lazy_load_responsive_images_additional_filters', '' ),
+				'label'             => __( 'Additional filters', 'lazy-loading-responsive-images' ),
+				'description'       => __( 'Enter one or more additional WordPress filters that should be processed (one per line). Anything that does not match the regular expression for PHP function names will be removed.', 'lazy-loading-responsive-images' ),
+				'field_callback'    => array( $this, 'textarea_field_cb' ),
+				'sanitize_callback' => array(
+					$this->helpers,
+					'sanitize_filter_name_list',
 				),
 			),
 			'lazy_load_responsive_images_enable_for_iframes'    => array(
@@ -231,7 +267,7 @@ class Settings {
 				),
 			),
 			'lazy_load_responsive_images_loading_spinner_color' => array(
-				'value'             => get_option( 'lazy_load_responsive_images_loading_spinner_color', self::$loading_spinner_color_default ),
+				'value'             => get_option( 'lazy_load_responsive_images_loading_spinner_color', $this->loading_spinner_color_default ),
 				'label'             => __( 'Color of the spinner', 'lazy-loading-responsive-images' ),
 				'description'       => __( 'Spinner color in hex format. Default: #333333', 'lazy-loading-responsive-images' ),
 				'field_callback'    => array( $this, 'color_field_cb' ),
@@ -244,6 +280,16 @@ class Settings {
 				'value'             => get_option( 'lazy_load_responsive_images_granular_disable_option', '0' ),
 				'label'             => __( 'Enable option to disable plugin per page/post', 'lazy-loading-responsive-images' ),
 				'description'       => __( 'Displays a checkbox in the publish area of all post types (pages/posts/CPTs) that lets you disable the plugin on that specific post. To make it work for CPTs, they must support <code>custom-fields</code>.', 'lazy-loading-responsive-images' ),
+				'field_callback'    => array( $this, 'checkbox_field_cb' ),
+				'sanitize_callback' => array(
+					$this->helpers,
+					'sanitize_checkbox',
+				),
+			),
+			'lazy_load_responsive_images_process_complete_markup' => array(
+				'value'             => get_option( 'lazy_load_responsive_images_process_complete_markup', '0' ),
+				'label'             => __( 'Process the complete markup', 'lazy-loading-responsive-images' ),
+				'description'       => __( 'Instead of just modifying specific parts of the page (for example, the post content, post thumbnail), the complete generated markup is processed. With that, all images (and other media, if you enabled it) will be lazy loaded. Because the plugin needs to process more markup with that option enabled, it might slow down the page generation time a bit. If your page contains HTML errors, like unclosed tags, this might lead to unwanted behavior, because the DOM parser used by Lazy Loader tries to correct that.', 'lazy-loading-responsive-images' ),
 				'field_callback'    => array( $this, 'checkbox_field_cb' ),
 				'sanitize_callback' => array(
 					$this->helpers,
@@ -276,6 +322,8 @@ class Settings {
 		$this->loading_spinner         = $this->options['lazy_load_responsive_images_loading_spinner']['value'];
 		$this->loading_spinner_color   = $this->options['lazy_load_responsive_images_loading_spinner_color']['value'];
 		$this->granular_disable_option = $this->options['lazy_load_responsive_images_granular_disable_option']['value'];
+		$this->process_complete_markup = $this->options['lazy_load_responsive_images_process_complete_markup']['value'];
+		$this->additional_filters = explode( "\n", $this->options['lazy_load_responsive_images_additional_filters']['value'] );
 		$this->lazysizes_config = $this->options['lazy_load_responsive_images_lazysizes_config']['value'];
 		$this->enable_for_background_images = $this->options['lazy_load_responsive_images_enable_for_background_images']['value'];
 
@@ -362,14 +410,14 @@ class Settings {
 		$option_value = $args['value'];
 
 		// Get label for.
-		$label_for = esc_attr( $args['label_for'] ); ?>
-		<input id="<?php echo $label_for; ?>" name="<?php echo $label_for; ?>"
-		       type="checkbox" <?php echo ( $option_value == '1' || $option_value == 'on' ) ? 'checked="checked"' : ''; ?>>
+		?>
+		<input id="<?php echo esc_attr( $args['label_for'] ); ?>" name="<?php echo esc_attr( $args['label_for'] ); ?>"
+			   type="checkbox" <?php echo ( $option_value == '1' || $option_value == 'on' ) ? 'checked="checked"' : ''; ?>>
 		<?php
 		// Check for description.
 		if ( '' !== $args['description'] ) { ?>
 			<p class="description">
-				<?php echo $args['description']; ?>
+				<?php echo wp_kses( $args['description'], $this->allowed_description_html  ); ?>
 			</p>
 			<?php
 		}
@@ -391,14 +439,14 @@ class Settings {
 		$option_value = $args['value'];
 
 		// Get label for.
-		$label_for = esc_attr( $args['label_for'] ); ?>
-		<input id="<?php echo $label_for; ?>" name="<?php echo $label_for; ?>"
-		       type="text" value="<?php echo $option_value; ?>">
+		?>
+		<input id="<?php echo esc_attr( $args['label_for'] ); ?>" name="<?php echo esc_attr( $args['label_for'] ); ?>"
+			   type="text" value="<?php echo esc_attr( $option_value ); ?>">
 		<?php
 		// Check for description.
 		if ( '' !== $args['description'] ) { ?>
 			<p class="description">
-				<?php echo $args['description']; ?>
+				<?php echo wp_kses( $args['description'], $this->allowed_description_html  ); ?>
 			</p>
 			<?php
 		}
@@ -419,14 +467,13 @@ class Settings {
 		// Get option value.
 		$option_value = $args['value'];
 
-		// Get label for.
-		$label_for = esc_attr( $args['label_for'] ); ?>
-		<textarea id="<?php echo $label_for; ?>" name="<?php echo $label_for; ?>" style="width: 100%;"><?php echo $option_value; ?></textarea>
+		?>
+		<textarea id="<?php echo esc_attr( $args['label_for'] ); ?>" name="<?php echo esc_attr( $args['label_for'] ); ?>" style="width: 100%;"><?php echo esc_textarea( $option_value ); ?></textarea>
 		<?php
 		// Check for description.
 		if ( '' !== $args['description'] ) { ?>
 			<p class="description">
-				<?php echo $args['description']; ?>
+				<?php echo wp_kses( $args['description'], $this->allowed_description_html  ); ?>
 			</p>
 			<?php
 		}
@@ -449,16 +496,16 @@ class Settings {
 		$option_value = $args['value'];
 
 		// Get label for.
-		$label_for = esc_attr( $args['label_for'] ); ?>
-		<input id="<?php echo $label_for; ?>" name="<?php echo $label_for; ?>"
-		       type="text" value="<?php echo $option_value; ?>"
-		       data-default-color="<?php echo self::$loading_spinner_color_default; ?>"
-		       class="lazy-load-responsive-images-color-field">
+		?>
+		<input id="<?php echo esc_attr( $args['label_for'] ); ?>" name="<?php echo esc_attr( $args['label_for'] ); ?>"
+			   type="text" value="<?php echo esc_attr( $option_value ); ?>"
+			   data-default-color="<?php echo esc_attr( $this->loading_spinner_color_default ); ?>"
+			   class="lazy-load-responsive-images-color-field">
 		<?php
 		// Check for description.
 		if ( '' !== $args['description'] ) { ?>
 			<p class="description">
-				<?php echo $args['description']; ?>
+				<?php echo wp_kses( $args['description'], array( 'a', 'strong', 'code', 'br' ) ); ?>
 			</p>
 			<?php
 		}
@@ -500,7 +547,7 @@ class Settings {
 		 * Filter for the object types that should show the checkbox
 		 * for disabling the lazy loading functionality. By default, all
 		 * public post types (except attachment) are included.
-		 * 
+		 *
 		 * @param array $public_post_types An array of post types that should have the option
 		 *                                 for disabling.
 		 */
@@ -511,19 +558,21 @@ class Settings {
 	 * Register post meta for disabling plugin per
 	 */
 	public function register_post_meta() {
-		if ( is_array( $this->disable_option_object_types ) ) {
-			foreach ( $this->disable_option_object_types as $object_type ) {
-				\register_post_meta(
-					$object_type,
-					'lazy_load_responsive_images_disabled',
-					array(
-						'type' => 'boolean',
-						'description' => __( 'If the Lazy Loader plugin should be disabled for this page/post/CPT entry', 'lazy-loading-responsive-images' ),
-						'single' => true,
-						'show_in_rest' => true,
-					)
-				);
-			}
+		if ( ! is_array( $this->disable_option_object_types ) ) {
+			return;
+		}
+
+		foreach ( $this->disable_option_object_types as $object_type ) {
+			\register_post_meta(
+				$object_type,
+				'lazy_load_responsive_images_disabled',
+				array(
+					'type' => 'boolean',
+					'description' => __( 'If the Lazy Loader plugin should be disabled for this page/post/CPT entry', 'lazy-loading-responsive-images' ),
+					'single' => true,
+					'show_in_rest' => true,
+				)
+			);
 		}
 	}
 
@@ -552,7 +601,7 @@ class Settings {
 			</div>',
 			$maybe_enabled ? '' : 'disabled',
 			$value === 1 ? 'checked' : '',
-			__( 'Disable Lazy Loader', 'lazy-loading-responsive-images' )
+			esc_html__( 'Disable Lazy Loader', 'lazy-loading-responsive-images' )
 		);
 	}
 
@@ -587,5 +636,140 @@ class Settings {
 			\add_post_meta( $post_id, 'lazy_load_responsive_images_disabled', true, true );
 		}
 		return $post_id;
+	}
+
+	/**
+	 * Return disabled classes setting value.
+	 * 
+	 * @return array
+	 */
+	public function get_disabled_classes() {
+		return $this->disabled_classes;
+	}
+
+	/**
+	 * Return load_unveilhooks_plugin value.
+	 * 
+	 * @return string
+	 */
+	public function get_load_unveilhooks_plugin() {
+		return $this->load_unveilhooks_plugin;
+	}
+
+	/**
+	 * Return enable_for_audios value.
+	 * 
+	 * @return string
+	 */
+	public function get_enable_for_audios() {
+		return $this->enable_for_audios;
+	}
+
+	/**
+	 * Return enable_for_videos value.
+	 * 
+	 * @return string
+	 */
+	public function get_enable_for_videos() {
+		return $this->enable_for_videos;
+	}
+
+	/**
+	 * Return enable_for_iframes value.
+	 * 
+	 * @return string
+	 */
+	public function get_enable_for_iframes() {
+		return $this->enable_for_iframes;
+	}
+
+	/**
+	 * Return enable_for_background_images value.
+	 * 
+	 * @return string
+	 */
+	public function get_enable_for_background_images() {
+		return $this->enable_for_background_images;
+	}
+
+	/**
+	 * Return load_aspectratio_plugin value.
+	 * 
+	 * @return string
+	 */
+	public function get_load_aspectratio_plugin() {
+		return $this->load_aspectratio_plugin;
+	}
+
+	/**
+	 * Return load_native_loading_plugin value.
+	 * 
+	 * @return string
+	 */
+	public function get_load_native_loading_plugin() {
+		return $this->load_native_loading_plugin;
+	}
+
+	/**
+	 * Return lazysizes_config value.
+	 * 
+	 * @return string
+	 */
+	public function get_lazysizes_config() {
+		return $this->lazysizes_config;
+	}
+
+	/**
+	 * Return loading_spinner_color value.
+	 * 
+	 * @return string
+	 */
+	public function get_loading_spinner_color() {
+		return $this->loading_spinner_color;
+	}
+
+	/**
+	 * Return loading_spinner_color_default value.
+	 * 
+	 * @return string
+	 */
+	public function get_loading_spinner_color_default() {
+		return $this->loading_spinner_color_default;
+	}
+
+	/**
+	 * Return loading_spinner value.
+	 * 
+	 * @return string
+	 */
+	public function get_loading_spinner() {
+		return $this->loading_spinner;
+	}
+
+	/**
+	 * Return disable_option_object_types value.
+	 * 
+	 * @return array
+	 */
+	public function get_disable_option_object_types() {
+		return $this->disable_option_object_types;
+	}
+
+	/**
+	 * Return process_complete_markup value.
+	 * 
+	 * @return string
+	 */
+	public function get_process_complete_markup() {
+		return $this->process_complete_markup;
+	}
+
+	/**
+	 * Return additional_filters value.
+	 * 
+	 * @return array
+	 */
+	public function get_additional_filters() {
+		return $this->additional_filters;
 	}
 }
