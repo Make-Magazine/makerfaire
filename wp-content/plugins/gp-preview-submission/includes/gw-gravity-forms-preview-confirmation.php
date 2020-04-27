@@ -392,7 +392,7 @@ class GWPreviewConfirmation {
             GFCache::flush();
 
 	        if ( isset( $_GET['gf_token'] ) ) {
-		        $incomplete_submission_info = GFFormsModel::get_incomplete_submission_values( $_GET['gf_token'] );
+		        $incomplete_submission_info = GFFormsModel::get_draft_submission_values( $_GET['gf_token'] );
 		        if ( $incomplete_submission_info['form_id'] == $form['id'] ) {
 			        $submission_details_json = $incomplete_submission_info['submission'];
 			        $submission_details      = json_decode( $submission_details_json, true );
@@ -465,6 +465,10 @@ class GWPreviewConfirmation {
     }
 
     public static function preview_replace_variables( $content, $form, $entry = null ) {
+
+    	if( gp_preview_submission()->has_gppa_parent_merge_tag( $content ) ) {
+    		return $content;
+		}
 
         if ( $entry == null ) {
             $entry = self::create_lead( $form );

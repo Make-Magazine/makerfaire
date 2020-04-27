@@ -4,7 +4,7 @@ class GP_Preview_Submission extends GWPerk {
 
     public $version = GP_PREVIEW_SUBMISSION_VERSION;
     public $min_gravity_perks_version = '2.0.11';
-    public $min_gravity_forms_version = '1.8';
+    public $min_gravity_forms_version = '2.4';
     public $min_wp_version = '3.7';
 
     private static $instance = null;
@@ -119,6 +119,10 @@ class GP_Preview_Submission extends GWPerk {
     function has_any_merge_tag( $string ) {
         return preg_match_all( '/{.+}/', $string, $matches, PREG_SET_ORDER );
     }
+
+    function has_gppa_parent_merge_tag( $text ) {
+    	return is_callable( 'gpnf_parent_merge_tag' ) && preg_match( '/\{Parent:(.*?)\}/i', $text );
+	}
 
 }
 
