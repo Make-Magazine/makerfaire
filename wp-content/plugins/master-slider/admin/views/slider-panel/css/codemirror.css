@@ -36,7 +36,6 @@
   min-width: 20px;
   text-align: right;
   color: #999;
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
 
@@ -65,13 +64,7 @@
   width: auto;
   border: 0;
   -webkit-animation: blink 1.06s steps(1) infinite;
-  -moz-animation: blink 1.06s steps(1) infinite;
   animation: blink 1.06s steps(1) infinite;
-}
-@-moz-keyframes blink {
-  0% { background: #7e7; }
-  50% { background: none; }
-  100% { background: #7e7; }
 }
 @-webkit-keyframes blink {
   0% { background: #7e7; }
@@ -158,13 +151,11 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   height: 100%;
   outline: none; /* Prevent dragging from highlighting the element */
   position: relative;
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
 .CodeMirror-sizer {
   position: relative;
   border-right: 30px solid transparent;
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
 
@@ -201,7 +192,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 .CodeMirror-gutter {
   white-space: normal;
   height: 100%;
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
   padding-bottom: 30px;
   margin-bottom: -32px;
@@ -226,8 +216,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   min-height: 1px; /* prevents collapsing before first draw */
 }
 .CodeMirror pre {
-  /* Reset some styles that the rest of the page might have set */
-  -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0;
+  /* Reset some styles that the rest of the page might have set */ border-radius: 0;
   border-width: 0;
   background: transparent;
   font-family: inherit;

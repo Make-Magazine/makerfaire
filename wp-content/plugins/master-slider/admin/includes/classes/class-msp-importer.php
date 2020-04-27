@@ -69,7 +69,7 @@ class MSP_Importer {
    */
   function header() {
     echo '<div class="wrap">';
-    screen_icon();
+
     echo '<h2>' . __( 'Importing Master Slider', 'wordpress-importer' ) . '</h2><br />';
   }
 
@@ -659,7 +659,7 @@ class MSP_Importer {
       return new WP_Error( 'upload_dir_error', $upload['error'] );
 
     // fetch the remote url and write it to the placeholder file
-    $headers = wp_get_http( $url, $upload['file'] );
+    $headers = WP_Http::get( $url, $upload['file'] );
 
     // request failed
     if ( ! $headers ) {

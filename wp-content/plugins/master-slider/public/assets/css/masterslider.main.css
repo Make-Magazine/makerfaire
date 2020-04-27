@@ -22,19 +22,16 @@
 .ms-ie8 * {opacity:inherit;filter:inherit;}
 .ms-ie7   {zoom:1;}
 
-.ms-moz .ms-slide-bgcont>img { transform: translateX(0px); }
+.ms-moz .ms-slide-bgcont>img { -webkit-transform: translateX(0px); -ms-transform: translateX(0px); transform: translateX(0px); }
 
 .master-slider a,
 .master-slider a:hover {
 	-webkit-transition: none;
-	-o-transition: none;
 	transition: none;
 }
 
 .wpb_row .master-slider-parent *,
 .master-slider-parent * {
-	 -webkit-box-sizing: content-box;
-	 -moz-box-sizing: content-box;
 	 box-sizing: content-box;
 }
 
@@ -86,7 +83,6 @@
 
 	position:relative;
 	-webkit-perspective: 2000px;
-	-moz-perspective: 2000px;
 	-ms-perspective: 2000px;
 	perspective: 2000px;
 }
@@ -98,7 +94,6 @@
 	height:100%;
 	-webkit-transform: translateZ(0px);
 	-ms-transform: translateZ(0px);
-	-o-transform: translateZ(0px);
 	transform: translateZ(0px);
 }
 
@@ -150,7 +145,6 @@
 .ms-inner-controls-cont, .ms-container {position: relative; margin:0 auto;}
 .ms-slide .ms-slide-bgcont img , .ms-container , .ms-inner-controls-cont{
 	-webkit-user-select:none;
-	-moz-user-select:none;
 	-ms-user-select:none;
 	user-select:none;
 }
@@ -258,9 +252,6 @@
 	overflow: hidden;
 	opacity: 0.5;
 	-webkit-transition: opacity 300ms;
-	-moz-transition: opacity 300ms;
-	-ms-transition: opacity 300ms;
-	-o-transition: opacity 300ms;
 	transition: opacity 300ms;
 }
 .ms-thumb-frame-selected{ opacity: 1; }
@@ -275,9 +266,6 @@
 	position: relative;
 	opacity: 1;
 	-webkit-transition: all 300ms ease-out;
-    -moz-transition: all 300ms ease-out;
-    -ms-transition: all 300ms ease-out;
-    -o-transition: all 300ms ease-out;
     transition: all 300ms ease-out;
 }
 
@@ -293,9 +281,6 @@
     position: absolute;
     opacity: 0;
     -webkit-transition: all 300ms ease-out;
-    -moz-transition: all 300ms ease-out;
-    -ms-transition: all 300ms ease-out;
-    -o-transition: all 300ms ease-out;
     transition: all 300ms ease-out;
 }
 
@@ -486,9 +471,6 @@
 .ms-sbar .ms-bar{
 	position:relative;
 	-webkit-transition: opacity 300ms;
-	-moz-transition: opacity 300ms;
-	-ms-transition: opacity 300ms;
-	-o-transition: opacity 300ms;
 	transition: opacity 300ms;
 }
 
@@ -509,9 +491,6 @@
 
 .ms-time-bar{
 	-webkit-transition: width 120ms linear;
-	-moz-transition: width 120ms linear;
-	-ms-transition: width 120ms linear;
-	-o-transition: width 120ms linear;
 	transition: width 120ms linear;
 }
 
@@ -924,7 +903,8 @@ only screen and (                min-resolution: 2dppx) {
     top: 50%;
     left: 50%;
     margin: -27px 0 0 -27px;
-    transition: background-color 300ms;
+    -webkit-transition: background-color 300ms;
+            transition: background-color 300ms;
 }
 .ms-skin-minimal .ms-slide .ms-slide-vcbtn:hover,
 .ms-skin-minimal .ms-slide .ms-slide-vpbtn:hover,
@@ -940,7 +920,8 @@ only screen and (                min-resolution: 2dppx) {
     border: solid 1px #3d3d3d;
     top: 18px;
     right: 30px;
-    transition: background-color 300ms;
+    -webkit-transition: background-color 300ms;
+            transition: background-color 300ms;
 }
 
 /* controls */
@@ -959,7 +940,8 @@ only screen and (                min-resolution: 2dppx) {
     margin-top: -27px;
     position: absolute;
     z-index: 110;
-    transition: background-color 300ms;
+    -webkit-transition: background-color 300ms;
+            transition: background-color 300ms;
 }
 
 .ms-skin-minimal .ms-nav-next:hover,
@@ -1136,8 +1118,6 @@ only screen and (                min-resolution: 2dppx) {
 	width: 45px;
 	height: 45px;
 	background: url(skins/black-skin-2.png) black;
-	-webkit-background-clip: padding-box;
-	-moz-background-clip: padding-box;
 	background-clip: padding-box;
 	background-position: -88px -26px;
 	border: solid 3px rgb(255, 255, 255);
@@ -2137,8 +2117,6 @@ only screen and (                min-resolution: 2dppx) {
 	width: 45px;
 	height: 45px;
 	background: url(skins/light-skin-6.png) white;
-	-webkit-background-clip: padding-box;
-	-moz-background-clip: padding-box;
 	background-clip: padding-box;
 	background-position: -88px -26px;
 	border: solid 3px rgb(112, 112, 112);

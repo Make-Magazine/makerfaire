@@ -346,13 +346,12 @@
     position: relative;
     top: 40%;
     -webkit-transform: scale(2) rotate(80deg);
-    -o-transform: scale(2) rotate(80deg);
-    transform: scale(2) rotate(80deg);
+    -ms-transform: scale(2) rotate(80deg);
+        transform: scale(2) rotate(80deg);
 }
 
 .msp-pf-thumb-ol, .msp-pf-thumb-ol>img {
 	-webkit-transition: all 260ms ease-out;
-	-o-transition: all 260ms ease-out;
 	transition: all 260ms ease-out;
 }
 
@@ -362,8 +361,8 @@
 
 .msp-pf-thumb-ol:hover >img {
     -webkit-transform: scale(1) rotate(0);
-    -o-transform: scale(1) rotate(0);
-    transform: scale(1) rotate(0);
+    -ms-transform: scale(1) rotate(0);
+        transform: scale(1) rotate(0);
 }
 
 
@@ -469,7 +468,6 @@ a.msp-pf-btn.msp-pf-more-btn:hover {
 	display: inline-block;
 	margin-left: 5px;
 	-webkit-transition: opacity 500ms;
-	-o-transition: opacity 500ms;
 	transition: opacity 500ms;
 	opacity: 100;
 }
@@ -649,8 +647,6 @@ a.msp-pf-btn.msp-pf-more-btn:hover {
 	outline: 0;
 	padding: 0 7px;
 	box-shadow: 5px 5px #F0F0F0 inset;
-	-webkit-box-sizing: content-box;
-	-moz-box-sizing: content-box;
 	box-sizing: content-box;
 	display: inline-block;
 	vertical-align: middle;
@@ -1468,8 +1464,6 @@ button.msp-img-btn {
 }
 
 .msp-layer-row.active {
-	-webkit-box-shadow: 1px 0px 0px 1px #2EA2CC inset;
-	-moz-box-shadow: 1px 0px 0px 1px #2EA2CC inset;
 	box-shadow: 1px 0px 0px 1px #2EA2CC inset;
 }
 
@@ -1525,8 +1519,6 @@ button.msp-img-btn {
 }
 
 .msp-frames-row.active {
-	-webkit-box-shadow: -1px 0px 0px 1px #2EA2CC inset;
-	-moz-box-shadow: -1px 0px 0px 1px #2EA2CC inset;
 	box-shadow: -1px 0px 0px 1px #2EA2CC inset;
 }
 
@@ -1632,7 +1624,6 @@ button.msp-img-btn {
 /*disable native selection*/
 .msp-slide-stage, .msp-slide-stage *{
 	-webkit-user-select: none;
-	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
 }
@@ -1925,7 +1916,6 @@ button.msp-savepreset {
 	width: 26px;
 	border-radius:100%;
 	-webkit-user-select: none;
-	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
 }
@@ -2430,12 +2420,14 @@ New pro tab styles
     width: 50%;
     max-width: 940px;
     height: 520px;
+    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 40%, #5b30d8 80%);
     background: linear-gradient(to right, rgba(255, 255, 255, 0) 40% , #5b30d8 80%);
 }
 
 .msp-new-pro-headerBg::before {
     left: auto;
     right: 50%;
+    background: -webkit-linear-gradient(right, rgba(255, 255, 255, 0) 40%, #5b30d8 80%);
     background: linear-gradient(to left, rgba(255, 255, 255, 0) 40% , #5b30d8 80%);
 }
 
