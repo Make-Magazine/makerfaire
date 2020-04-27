@@ -190,13 +190,17 @@ abstract class Field_Template extends Template {
 				$specifics []= sprintf( '%spost-%d-field-%s.php', $slug_dir, $post->ID, $slug_name );
 				$specifics []= sprintf( '%spost-%d-field.php', $slug_dir, $post->ID );
 			}
-			
+
 			/** Field-specific */
 			if ( $field_id && $form_id ) {
 
 				if ( $field_id ) {
 					$specifics []= sprintf( '%sform-%d-field-%d-%s.php', $slug_dir, $form_id, $field_id, $slug_name );
 					$specifics []= sprintf( '%sform-%d-field-%d.php', $slug_dir, $form_id, $field_id );
+
+					if ( $view_id ) {
+						$specifics []= sprintf( '%sview-%d-field-%d.php', $slug_dir, $view_id, $field_id );
+					}
 				}
 
 				if ( $field_type ) {
@@ -250,7 +254,10 @@ abstract class Field_Template extends Template {
 	 * @return void
 	 */
 	public function render() {
-		$entry = $this->entry->from_field( $this->field );
+		if ( ! $entry = $this->entry->from_field( $this->field ) ) {
+			gravityview()->log->error( 'Entry is invalid for field. Returning empty.' );
+			return;
+		}
 
 		/** Retrieve the value. */
 		$display_value = $value = $this->field->get_value( $this->view, $this->source, $entry );
@@ -345,6 +352,8 @@ abstract class Field_Template extends Template {
 		/**
 		 * Wrap output in a link, if enabled in the field settings
 		 *
+		 * @todo Cleanup
+		 *
 		 * @param string $output HTML value output
 		 * @param \GV\Template_Context $context
 		 *
@@ -401,6 +410,7 @@ abstract class Field_Template extends Template {
 			return $output;
 		};
 
+		// TODO Cleanup
 		$post_link_compat_callback = function( $output, $context ) use ( $field_compat ) {
 			$field = $context->field;
 

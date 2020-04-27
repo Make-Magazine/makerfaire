@@ -446,7 +446,7 @@ class GravityView_API {
 		 * @filter `gravityview/view/links/directory` Modify the URL to the View "directory" context
 		 * @since 2.0
 		 * @param string $link URL to the View's "directory" context (Multiple Entries screen)
-		 * @param \GV\Template_Context $context 
+		 * @param \GV\Template_Context $context
 		 */
 		return apply_filters( 'gravityview/view/links/directory', $link, $context );
 	}
@@ -588,12 +588,18 @@ class GravityView_API {
 
 	/**
 	 * return href for single entry
+	 *
+	 * @since 1.7.3 Added $add_directory_args parameter
+	 * @since 2.7.2 Added $view_id parameter
+	 *
 	 * @param  array|int $entry   Entry array or entry ID
 	 * @param  int|null $post_id If wanting to define the parent post, pass a post ID
-	 * @param boolean $add_directory_args True: Add args to help return to directory; False: only include args required to get to entry {@since 1.7.3}
-	 * @return string          Link to the entry with the directory parent slug, or empty string if embedded post or View doesn't exist
+	 * @param boolean $add_directory_args True: Add args to help return to directory; False: only include args required to get to entry
+	 * @param int $view_id
+	 *
+	 * @return string Link to the entry with the directory parent slug, or empty string if embedded post or View doesn't exist
 	 */
-	public static function entry_link( $entry, $post_id = NULL, $add_directory_args = true ) {
+	public static function entry_link( $entry, $post_id = NULL, $add_directory_args = true, $view_id = 0 ) {
 
 		if ( ! empty( $entry ) && ! is_array( $entry ) ) {
 			$entry = GVCommon::get_entry( $entry );
@@ -619,13 +625,33 @@ class GravityView_API {
 
 		if ( ! empty( $entry['_multi'] ) ) {
 			$entry_slugs = array();
+
 			foreach ( $entry['_multi'] as $_multi ) {
-				$entry_slugs[] = self::get_entry_slug( $_multi['id'], $_multi );
+
+				if( $gv_multi = \GV\GF_Entry::from_entry( $_multi ) ) {
+					$entry_slugs[] = $gv_multi->get_slug();
+				} else {
+					// TODO: This path isn't covered by unit tests
+					$entry_slugs[] = \GravityView_API::get_entry_slug( $_multi['id'], $_multi );
+				}
+
+				unset( $gv_multi );
+
 				$forms[] = $_multi['form_id'];
 			}
+
 			$entry_slug = implode( ',', $entry_slugs );
 		} else {
-			$entry_slug = self::get_entry_slug( $entry['id'], $entry );
+
+			// Fallback when
+			if( $gv_entry = \GV\GF_Entry::from_entry( $entry ) ) {
+				$entry_slug = $gv_entry->get_slug();
+			} else {
+				// TODO: This path isn't covered by unit tests
+				$entry_slug = \GravityView_API::get_entry_slug( $entry['id'], $entry );
+			}
+
+			unset( $gv_entry );
 		}
 
 		if ( get_option('permalink_structure') && !is_preview() ) {
@@ -675,7 +701,7 @@ class GravityView_API {
 		}
 
 		if ( $has_multiple_views ) {
-			$args['gvid'] = gravityview_get_view_id();
+			$args['gvid'] = $view_id ? $view_id : gravityview_get_view_id();
 		}
 
 		return add_query_arg( $args, $directory_link );
@@ -1011,10 +1037,19 @@ function gravityview_get_current_views() {
 /**
  * Get data for a specific view
  *
+ * @deprecated use \GV\View API instead
+ * @since 2.5
+ *
  * @see  GravityView_View_Data::get_view()
  * @return array View data with `id`, `view_id`, `form_id`, `template_id`, `atts`, `fields`, `widgets`, `form` keys.
  */
 function gravityview_get_current_view_data( $view_id = 0 ) {
+	if ( $view_id ) {
+		if ( $view = \GV\View::by_id( $view_id ) ) {
+			return $view; // implements ArrayAccess
+		}
+		return array();
+	}
 
 	$fe = GravityView_frontend::getInstance();
 

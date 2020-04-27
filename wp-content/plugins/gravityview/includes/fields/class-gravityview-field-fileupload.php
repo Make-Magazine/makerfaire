@@ -22,7 +22,7 @@ class GravityView_Field_FileUpload extends GravityView_Field {
 		parent::__construct();
 	}
 
-	function field_options( $field_options, $template_id, $field_id, $context, $input_type ) {
+	public function field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
 
 		unset( $field_options['search_filter'] );
 
@@ -35,6 +35,14 @@ class GravityView_Field_FileUpload extends GravityView_Field {
 			'label' => __( 'Display as a Link:', 'gravityview' ),
 			'desc' => __('Display the uploaded files as links, rather than embedded content.', 'gravityview'),
 			'value' => false,
+			'merge_tags' => false,
+		);
+
+		$add_options['image_width'] = array(
+			'type' => 'text',
+			'label' => __( 'Custom Width:', 'gravityview' ),
+			'desc' => __( 'Override the default image width (250).', 'gravityview' ),
+			'value' => '250',
 			'merge_tags' => false,
 		);
 
@@ -78,7 +86,7 @@ class GravityView_Field_FileUpload extends GravityView_Field {
 	 * @return array           Array of file output, with `file_path` and `html` keys (see comments above)
 	 */
 	static function get_files_array( $value, $gv_class, $context = null ) {
-		
+
 		if ( $context instanceof \GV\Template_Context ) {
 			$field = $context->field->field;
 			$field_settings = $context->field->as_configuration();
@@ -260,11 +268,12 @@ class GravityView_Field_FileUpload extends GravityView_Field {
 
 			// Images
 			} else if ( in_array( $extension, array( 'jpg', 'jpeg', 'jpe', 'gif', 'png' ) ) ) {
+				$width = \GV\Utils::get( $field_settings, 'image_width', 250 );
 				$image_atts = array(
 					'src'   => $file_path,
 					'class' => 'gv-image gv-field-id-' . $field_settings['id'],
 					'alt'   => $field_settings['label'],
-					'width' => ( $is_single ? null : 250 )
+					'width' => ( $is_single ? null : ( $width ? $width: 250 ) )
 				);
 
 				if ( $is_secure ) {
@@ -283,7 +292,11 @@ class GravityView_Field_FileUpload extends GravityView_Field {
 
 				$image = new GravityView_Image( $image_atts );
 
-				$entry_slug = GravityView_API::get_entry_slug( $entry['id'], $entry );
+				$gv_entry = \GV\GF_Entry::from_entry( $entry );
+
+				$entry_slug = $gv_entry->get_slug();
+
+				unset( $gv_entry );
 
 				/**
 				 * @filter `gravityview/fields/fileupload/allow_insecure_lightbox` Allow insecure links to be shown for the lighbox.
@@ -331,7 +344,7 @@ class GravityView_Field_FileUpload extends GravityView_Field {
 			 */
 			$disable_wrapped_link = apply_filters( 'gravityview/fields/fileupload/disable_link', false, $field_compat, $context );
 
-			// Output textualized content where 
+			// Output textualized content where
 			if ( ! $disable_wrapped_link && ( ! empty( $field_settings['link_to_file'] ) || ! empty( $field_settings['show_as_link'] ) ) ) {
 				/**
 				 * Modify the link text (defaults to the file name)
