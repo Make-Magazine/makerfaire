@@ -53,9 +53,9 @@ class WPSEO_Schema_FAQ_Questions {
 	}
 
 	/**
-	 * Find an image based on its URL and generate a Schema object for it.
+	 * Returns the Question and Answers schema data.
 	 *
-	 * @return array The Schema with Questions added.
+	 * @return array The Schema with Questions and Answers added.
 	 */
 	public function generate() {
 		foreach ( $this->block['attrs']['questions'] as $question ) {
@@ -68,24 +68,45 @@ class WPSEO_Schema_FAQ_Questions {
 	}
 
 	/**
-	 * Generate a Question piece.
+	 * Generates a Question and Answer piece.
 	 *
 	 * @param array $question The question to generate schema for.
 	 *
 	 * @return array Schema.org Question piece.
 	 */
 	protected function generate_question_block( $question ) {
-		return array(
+		$url = $this->context->canonical . '#' . esc_attr( $question['id'] );
+
+		$data = [
 			'@type'          => 'Question',
-			'@id'            => $this->context->canonical . '#' . $question['id'],
+			'@id'            => $url,
 			'position'       => $this->position ++,
-			'url'            => $this->context->canonical . '#' . $question['id'],
+			'url'            => $url,
 			'name'           => wp_strip_all_tags( $question['jsonQuestion'] ),
 			'answerCount'    => 1,
-			'acceptedAnswer' => array(
-				'@type' => 'Answer',
-				'text'  => strip_tags( $question['jsonAnswer'], '<h1><h2><h3><h4><h5><h6><br><ol><ul><li><a><p><b><strong><i><em>' ),
-			),
-		);
+			'acceptedAnswer' => $this->add_accepted_answer_property( $question ),
+		];
+
+		$data = WPSEO_Schema_Utils::add_piece_language( $data );
+
+		return $data;
+	}
+
+	/**
+	 * Adds the Questions `acceptedAnswer` property.
+	 *
+	 * @param array $question The question to add the acceptedAnswer to.
+	 *
+	 * @return array Schema.org Question piece.
+	 */
+	protected function add_accepted_answer_property( $question ) {
+		$data = [
+			'@type' => 'Answer',
+			'text'  => strip_tags( $question['jsonAnswer'], '<h1><h2><h3><h4><h5><h6><br><ol><ul><li><a><p><b><strong><i><em>' ),
+		];
+
+		$data = WPSEO_Schema_Utils::add_piece_language( $data );
+
+		return $data;
 	}
 }

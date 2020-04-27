@@ -89,7 +89,9 @@ class WPSEO_Taxonomy_Fields_Presenter {
 			case 'div':
 				$field .= '<div id="' . $field_name . '"></div>';
 				break;
-
+			case 'url':
+				$field .= '<input name="' . $field_name . '" id="' . $field_name . '" ' . $class . ' type="url" value="' . esc_attr( urldecode( $field_value ) ) . '" size="40"' . $aria_describedby . '/>';
+				break;
 			case 'text':
 				$field .= '<input name="' . $field_name . '" id="' . $field_name . '" ' . $class . ' type="text" value="' . esc_attr( $field_value ) . '" size="40"' . $aria_describedby . '/>';
 				break;
@@ -128,7 +130,7 @@ class WPSEO_Taxonomy_Fields_Presenter {
 					' />';
 				break;
 			case 'select':
-				if ( is_array( $options ) && $options !== array() ) {
+				if ( is_array( $options ) && $options !== [] ) {
 					$field .= '<select name="' . $field_name . '" id="' . $field_name . '"' . $aria_describedby . '>';
 
 					$select_options = ( array_key_exists( 'options', $options ) ) ? $options['options'] : $options;

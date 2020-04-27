@@ -55,16 +55,17 @@ class WPSEO_Schema_WebPage implements WPSEO_Graph_Piece {
 	 * @return array WebPage schema data.
 	 */
 	public function generate() {
-		$data = array(
-			'@type'      => $this->determine_page_type(),
-			'@id'        => $this->context->canonical . WPSEO_Schema_IDs::WEBPAGE_HASH,
-			'url'        => $this->context->canonical,
-			'inLanguage' => get_bloginfo( 'language' ),
-			'name'       => $this->context->title,
-			'isPartOf'   => array(
+		$data = [
+			'@type'    => $this->determine_page_type(),
+			'@id'      => $this->context->canonical . WPSEO_Schema_IDs::WEBPAGE_HASH,
+			'url'      => $this->context->canonical,
+			'name'     => $this->context->title,
+			'isPartOf' => [
 				'@id' => $this->context->site_url . WPSEO_Schema_IDs::WEBSITE_HASH,
-			),
-		);
+			],
+		];
+
+		$data = WPSEO_Schema_Utils::add_piece_language( $data );
 
 		if ( is_front_page() ) {
 			if ( $this->context->site_represents_reference ) {
@@ -89,10 +90,12 @@ class WPSEO_Schema_WebPage implements WPSEO_Graph_Piece {
 		}
 
 		if ( $this->add_breadcrumbs() ) {
-			$data['breadcrumb'] = array(
+			$data['breadcrumb'] = [
 				'@id' => $this->context->canonical . WPSEO_Schema_IDs::BREADCRUMB_HASH,
-			);
+			];
 		}
+
+		$data = $this->add_potential_action( $data );
 
 		return $data;
 	}
@@ -107,7 +110,7 @@ class WPSEO_Schema_WebPage implements WPSEO_Graph_Piece {
 	 */
 	public function add_author( $data, $post ) {
 		if ( $this->context->site_represents === false ) {
-			$data['author'] = array( '@id' => WPSEO_Schema_Utils::get_user_schema_id( $post->post_author, $this->context ) );
+			$data['author'] = [ '@id' => WPSEO_Schema_Utils::get_user_schema_id( $post->post_author, $this->context ) ];
 		}
 		return $data;
 	}
@@ -119,7 +122,7 @@ class WPSEO_Schema_WebPage implements WPSEO_Graph_Piece {
 	 */
 	public function add_image( &$data ) {
 		if ( $this->context->has_image ) {
-			$data['primaryImageOfPage'] = array( '@id' => $this->context->canonical . WPSEO_Schema_IDs::PRIMARY_IMAGE_HASH );
+			$data['primaryImageOfPage'] = [ '@id' => $this->context->canonical . WPSEO_Schema_IDs::PRIMARY_IMAGE_HASH ];
 		}
 	}
 
@@ -168,5 +171,32 @@ class WPSEO_Schema_WebPage implements WPSEO_Graph_Piece {
 		 * @api string $type The WebPage type.
 		 */
 		return apply_filters( 'wpseo_schema_webpage_type', $type );
+	}
+
+	/**
+	 * Adds the potential action JSON LD code to a WebPage Schema piece.
+	 *
+	 * @param array $data The WebPage data array.
+	 *
+	 * @return array $data
+	 */
+	private function add_potential_action( $data ) {
+		if ( $this->determine_page_type() !== 'WebPage' ) {
+			return $data;
+		}
+
+		/**
+		 * Filter: 'wpseo_schema_webpage_potential_action_target' - Allows filtering of the schema WebPage potentialAction target.
+		 *
+		 * @api array $targets The URLs for the WebPage potentialAction target.
+		 */
+		$targets = apply_filters( 'wpseo_schema_webpage_potential_action_target', [ $this->context->canonical ] );
+
+		$data['potentialAction'][] = [
+			'@type'  => 'ReadAction',
+			'target' => $targets,
+		];
+
+		return $data;
 	}
 }
