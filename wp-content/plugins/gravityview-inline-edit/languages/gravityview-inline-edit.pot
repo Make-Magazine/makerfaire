@@ -1,14 +1,14 @@
-# Copyright (C) 2018 GravityView
+# Copyright (C) 2019 GravityView
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GravityView Inline Edit 1.2\n"
+"Project-Id-Version: GravityView Inline Edit 1.4\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Katz Web Services, Inc. <support@katz.co>\n"
 "Language-Team: Katz Web Services, Inc. <support@katz.co>\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
@@ -56,7 +56,7 @@ msgstr ""
 msgid "Please enter a valid time."
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-ajax.php:379
+#: includes/class-gravityview-inline-edit-ajax.php:382
 msgid "Invalid value. Please try again."
 msgstr ""
 
@@ -71,8 +71,8 @@ msgid ""
 msgstr ""
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:115
-#: includes/class-gravityview-inline-edit-gravityview.php:311
-#: includes/class-gravityview-inline-edit-render-abstract.php:209
+#: includes/class-gravityview-inline-edit-gravityview.php:351
+#: includes/class-gravityview-inline-edit-render-abstract.php:208
 msgid "Enable Inline Edit"
 msgstr ""
 
@@ -85,17 +85,17 @@ msgstr ""
 msgid "Inline Edit"
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-gravityview.php:312
+#: includes/class-gravityview-inline-edit-gravityview.php:352
 msgid "Adds a link to toggle Inline Editing capabilities."
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-gravityview.php:394
+#: includes/class-gravityview-inline-edit-gravityview.php:434
 #: includes/class-gravityview-inline-edit-settings.php:92
 #: includes/class-gravityview-inline-edit-settings.php:443
 msgid "Popup: The edit form will appear above the content."
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-gravityview.php:398
+#: includes/class-gravityview-inline-edit-gravityview.php:438
 #: includes/class-gravityview-inline-edit-settings.php:96
 #: includes/class-gravityview-inline-edit-settings.php:451
 msgid ""
@@ -103,41 +103,41 @@ msgid ""
 "content."
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-gravityview.php:430
+#: includes/class-gravityview-inline-edit-gravityview.php:470
 #: includes/class-gravityview-inline-edit-settings.php:433
 msgid "Inline Edit Mode"
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-gravityview.php:432
+#: includes/class-gravityview-inline-edit-gravityview.php:472
 #: includes/class-gravityview-inline-edit-settings.php:436
 msgid ""
 "Change where the Inline Edit form appears &ndash; above the content or in "
 "its place."
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-gravityview.php:432
+#: includes/class-gravityview-inline-edit-gravityview.php:472
 msgid "Hover over the ? above for examples of each mode."
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-gravityview.php:438
+#: includes/class-gravityview-inline-edit-gravityview.php:478
 #: includes/class-gravityview-inline-edit-settings.php:442
 msgid "Popup"
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-gravityview.php:443
+#: includes/class-gravityview-inline-edit-gravityview.php:483
 #: includes/class-gravityview-inline-edit-settings.php:450
 msgid "In-Place"
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-render-abstract.php:208
+#: includes/class-gravityview-inline-edit-render-abstract.php:207
 msgid "Toggle Inline Edit"
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-render-abstract.php:210
+#: includes/class-gravityview-inline-edit-render-abstract.php:209
 msgid "Disable Inline Edit"
 msgstr ""
 
-#: includes/class-gravityview-inline-edit-scripts.php:106
+#: includes/class-gravityview-inline-edit-scripts.php:149
 msgid "Empty"
 msgstr ""
 

@@ -1,14 +1,18 @@
 # Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2.
+# Translators:
+# Zachary Katz <zack@katz.co>, 2019
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView Inline Edit 1.2.3\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2017-06-25 23:56+0000\n"
+"Last-Translator: Zachary Katz <zack@katz.co>, 2019\n"
 "Language-Team: German (Germany) (https://www.transifex.com/katzwebservices/teams/18775/de_DE/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -217,12 +221,16 @@ msgstr ""
 msgid ""
 "There is a new version of %1$s available. %2$sView version %3$s details%4$s."
 msgstr ""
+"Es gibt eine neue Version von %1$s. %2$sVersionsinformationen %3$s "
+"ansehen%4$s."
 
 #: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
 "There is a new version of %1$s available. %2$sView version %3$s details%4$s "
 "or %5$supdate now%6$s."
 msgstr ""
+"Es gibt eine neue Version von %1$s. %2$sVersionsinformationen %3$s "
+"ansehen%4$s oder %5$sjetzt aktualisieren%6$s."
 
 #: lib/EDD_SL_Plugin_Updater.php:396
 msgid "You do not have permission to install plugin updates"

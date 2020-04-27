@@ -90,7 +90,10 @@ abstract class GravityView_Inline_Edit_Field {
 
 		$template_name = $form_id && $field_id ? "{$type}_{$form_id}_{$field_id}" : $type;
 
-		self::$_field_templates[ $template_name ] = $template;
+		if ( empty( self::$_field_templates[ $template_name ] ) ) {
+
+			self::$_field_templates[ $template_name ] = $template;
+		}
 	}
 
 	/**

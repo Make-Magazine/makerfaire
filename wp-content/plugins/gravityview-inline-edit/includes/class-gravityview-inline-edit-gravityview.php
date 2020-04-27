@@ -277,7 +277,47 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		$gf_field = is_a( $current_field, 'GF_Field' ) ? GVCommon::get_field( $form, $current_field->id ) : null;
 
-		return parent::wrap_field_value( $output, $entry, $field_settings['id'], $gf_field, $form );
+		add_filter( 'gravityview-inline-edit/wrapper-attributes', array( $this, 'filter_wrapper_attribute_add_entry_link' ), 10, 7 );
+
+		$return = parent::wrap_field_value( $output, $entry, $field_settings['id'], $gf_field, $form );
+
+		remove_filter( 'gravityview-inline-edit/wrapper-attributes', array( $this, 'filter_wrapper_attribute_add_entry_link' ), 10 );
+
+		return $return;
+	}
+
+	/**
+	 * If the View field is linking to the single entry, set the data attribute for use in the UI to fix the link being stripped by Editable when changing the field value
+	 *
+	 * @since 1.4
+	 *
+	 * @param $wrapper_attributes
+	 * @param $input_type
+	 * @param $gf_field_id
+	 * @param $entry
+	 * @param $form
+	 * @param $gf_field
+	 * @param $output
+	 *
+	 * @return array Modified attributes, with 'data-viewid' and 'data-entry-link' (optional) keys
+	 */
+	public function filter_wrapper_attribute_add_entry_link( $wrapper_attributes, $input_type, $gf_field_id, $entry, $form, $gf_field, $output ) {
+
+		if ( ! class_exists( 'GravityView_frontend' ) ) {
+			return $wrapper_attributes;
+		}
+
+		$view_id = GravityView_frontend::getInstance()->get_context_view_id();
+
+		$wrapper_attributes['data-viewid'] = $view_id;
+
+		$entry_link = gv_entry_link( $entry, $view_id );
+
+		if ( strpos( $output, $entry_link ) !== false) {
+			$wrapper_attributes['data-entry-link'] = $entry_link;
+		}
+
+		return $wrapper_attributes;
 	}
 
 	/**

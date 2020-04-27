@@ -118,8 +118,6 @@ abstract class GravityView_Inline_Edit_Render {
 			return '<div class="gv-inline-editable-disabled editable-disabled">' . $output . '</div>';
 		}
 
-		$view_id = class_exists( 'GravityView_frontend' ) ? GravityView_frontend::getInstance()->get_context_view_id() : null;
-
 		// TODO: Add dynamic `title` to show the label of the field being edited
 		$wrapper_attributes = array(
 			'id'           => str_replace( '.', '-', "gv-inline-editable-{$entry['id']}-{$form['id']}-{$field_id}" ),
@@ -128,7 +126,6 @@ abstract class GravityView_Inline_Edit_Render {
 			'data-entryid' => $entry['id'],
 			'data-fieldid' => $gf_field_id,
 			'data-inputid' => $input_id,
-			'data-viewid'  => $view_id,
 		);
 
 		if ( ! empty( $source ) ) {
@@ -144,6 +141,7 @@ abstract class GravityView_Inline_Edit_Render {
 		 * @filter `gravityview-inline-edit/wrapper-attributes` Modify the attributes being added to an inline editable wrapper HTML tag
 		 *
 		 * @since 1.0
+		 * @since 1.4 added $output parameter
 		 *
 		 * @param array $wrapper_attributes The attributes of the container <div> or <span>
 		 * @param string $field_input_type The field input type
@@ -151,8 +149,9 @@ abstract class GravityView_Inline_Edit_Render {
 		 * @param array $entry The entry
 		 * @param array $form The current Form
 		 * @param GF_Field $gf_field Gravity Forms field object.
+		 * @param string $output The original field value HTML
 		 */
-		$wrapper_attributes = apply_filters( "gravityview-inline-edit/wrapper-attributes", $wrapper_attributes, $input_type, $gf_field_id, $entry, $form, $gf_field );
+		$wrapper_attributes = apply_filters( "gravityview-inline-edit/wrapper-attributes", $wrapper_attributes, $input_type, $gf_field_id, $entry, $form, $gf_field, $output );
 
 		/**
 		 * @filter `gravityview-inline-edit/{$input_type}-wrapper-attributes` Modify the attributes being added to an inline editable link for a specific input type

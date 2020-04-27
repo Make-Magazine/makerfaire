@@ -9,21 +9,40 @@
  */
 
 /* global gv_inline_x */ // PhpStorm helper
-( function ( jQuery ) {
-	"use strict";
+( function( jQuery ) {
+	'use strict';
 
-	jQuery( document ).ready( function ( $ ) {
+	jQuery( document ).ready( function( $ ) {
 
 		var self = {};
 
 		/**
 		 * Set inline edit defaults and initialize everything
 		 */
-		self.init = function () {
+		self.init = function() {
 			$.fn.editable.defaults.mode = gv_inline_x.mode;
 			$.fn.editableform.buttons = gv_inline_x.buttons;
-			$.fn.editableContainer.Inline.prototype.containerClass = "gv-editable-container gform_wrapper editable-container editable-inline";
-			$.fn.editableContainer.Popup.prototype.containerClass = "gv-editable-container gform_wrapper editable-container editable-popup";
+			$.fn.editableContainer.Inline.prototype.containerClass = 'gv-editable-container gform_wrapper editable-container editable-inline';
+			$.fn.editableContainer.Popup.prototype.containerClass = 'gv-editable-container gform_wrapper editable-container editable-popup gv-editable-popover';
+			$.fn.popover.Constructor.DEFAULTS.template = '<div class="gv-editable-popover popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>';
+			$.fn.popover.Constructor.prototype.destroy = function() {
+				var that = this;
+				clearTimeout( this.timeout );
+				this.hide( function() {
+					// editable('destroy') method removes the element before Bootstrap's popover destroy method fires, so a check for "null" is needed or else "cannot read property 'off' of null" is thrown
+					if ( that.$element == null ) {
+						return;
+					}
+					that.$element.off( '.' + that.type ).removeData( 'bs.' + that.type );
+					if ( that.$tip ) {
+						that.$tip.detach();
+					}
+					that.$tip = null;
+					that.$arrow = null;
+					that.$viewport = null;
+					that.$element = null;
+				} );
+			};
 			self.setInlineEditableFields();
 			self.setInlineEditableInitialState();
 			self.toggleInlineEdit();
@@ -36,9 +55,9 @@
 		 * From an instance of WP_Error, get the first error message
 		 * Like the equivalent WP_Error method, get the first item from the first error
 		 *
-		 * @returns {string} WP_Error message
+		 * @return {string} WP_Error message
 		 */
-		self.getWPErrorMessage = function ( $wpError ) {
+		self.getWPErrorMessage = function( $wpError ) {
 			for ( var error in $wpError ) {
 				if ( $wpError.hasOwnProperty( error ) ) {
 					return $wpError[ error ][ 0 ];
@@ -52,13 +71,12 @@
 		 *
 		 * @param {array} updateResponse  AJAX response
 		 */
-		self.updateFieldsOnEdit = function ( updateResponse ) {
-
-			if ( !$.isArray( updateResponse ) ) {
+		self.updateFieldsOnEdit = function( updateResponse ) {
+			if ( ! $.isArray( updateResponse ) ) {
 				return;
 			}
 
-			$.each( updateResponse, function ( i, response ) {
+			$.each( updateResponse, function( i, response ) {
 				if ( response.value && response.selector ) {
 
 					var maybe_json = $.parseJSON( response.value );
@@ -70,16 +88,15 @@
 					}
 				}
 			} );
-
 		};
 
 		/**
 		 * Convert the GF date format into a friendly X-editable format
 		 *
 		 * @param  {string} $GFdateFormat The GF date format
-		 * @returns {string} X-editable date format
+		 * @return {string} X-editable date format
 		 */
-		self.convertDateFormat = function ( $GFdateFormat ) {
+		self.convertDateFormat = function( $GFdateFormat ) {
 			var $formatName;
 
 			switch ( $GFdateFormat ) {
@@ -108,101 +125,197 @@
 			return $formatName;
 		};
 
-
 		/**
 		 * Iterate through all fields with class `gv-inline-editable-view` and
 		 * ID `gv-inline-editable-*` and convert them into inline-editable fields
-		 *
 		 */
-		self.setInlineEditableFields = function () {
+		self.setInlineEditableFields = function() {
+			$( '.gv-inline-editable-view [id^=gv-inline-editable-]' ).each( function( i, val ) {
+
+				self.initializeEditableField( $( this ) );
+			} );
+		};
+
+		/**
+		 * Make field editable
+		 *
+		 * @param {Object} $field Field DOM object
+		 */
+		self.initializeEditableField = function( $field ) {
 			var editableOptions, tplName;
 
-			$( '.gv-inline-editable-view [id^=gv-inline-editable-]' ).each( function ( i, val ) {
+			var form_id = $field.data( 'formid' ), field_id = $field.data( 'fieldid' );
+			var view_id = $field.data( 'viewid' );
+			var entry_id = $field.data( 'entryid' );
+			var field_type = $field.data( 'type' );
 
-				var form_id = $( this ).data( 'formid' ), field_id = $( this ).data( 'fieldid' ),
-					view_id = $( this ).data( 'viewid' );
-
-				editableOptions = {
-					pk: $( this ).data( 'entryid' ),
-					url: gv_inline_x.url,
-					container: gv_inline_x.container,
-					showbuttons: gv_inline_x.showbuttons,
-					onblur: gv_inline_x.onblur,
-					params: {
-						gv_inline_edit_field: 'true',
-						nonce: gv_inline_x.nonce,
-						type: $( this ).data( 'type' ),
-						form_id: form_id,
-						field_id: field_id,
-						view_id: view_id
-					},
-					success: function ( response, newValue ) {
-						if ( response.errors ) {
-							return self.getWPErrorMessage( response.errors );
-						}
-						self.updateFieldsOnEdit( response );
+			editableOptions = {
+				pk: entry_id,
+				url: gv_inline_x.url,
+				container: gv_inline_x.container,
+				showbuttons: gv_inline_x.showbuttons,
+				onblur: gv_inline_x.onblur,
+				success: function( response ) {
+					if ( response.errors ) {
+						return self.getWPErrorMessage( response.errors );
 					}
+					self.updateFieldsOnEdit( response );
+				},
+				savenochange: true,
+			};
+
+			// This is a datepicker field
+			if ( $field.data( 'dateformat' ) ) {
+				editableOptions.format = 'yyyy-mm-dd';
+				editableOptions.viewformat = self.convertDateFormat( $field.data( 'dateformat' ) );
+				editableOptions.datepicker = {
+					firstDay: 1,
+					showOn: 'focus',
+				};
+			}
+
+			// Set templates
+			tplName = field_type;
+			if ( $field.data( 'tplmode' ) && 'address' !== field_type ) {
+				tplName += $field.data( 'tplmode' );
+			}
+
+			if ( gv_inline_x.templates.hasOwnProperty( tplName + '_' + form_id + '_' + field_id ) ) {
+				var template = gv_inline_x.templates[ tplName + '_' + form_id + '_' + field_id ];
+				var fieldValue = $field.attr( 'data-value' );
+				var fieldValueOther = $field.attr( 'data-other-choice' ) || '';
+
+				// Since we're using 1 template for all radio fields, it will contain a hardcoded value for "Other" choice of whichever last entry that's displayed.
+				// To correct this, we need to replace the value in the template with the one associated with the entry.
+				if ( fieldValue === 'gf_other_choice' && fieldValueOther.length ) {
+					template = template.replace( /(_other.*?value=')(.*?)'/, '$1' + fieldValueOther + '\'' );
+				}
+
+				editableOptions.tpl = template;
+			} else if ( gv_inline_x.templates.hasOwnProperty( tplName ) ) {
+				editableOptions.tpl = gv_inline_x.templates[ tplName ];
+			}
+
+			// Switch template to single-field equivalanes where applicable
+			var singleModeDetails = self.getSingleFieldModeTemplate( $field, field_type, editableOptions.tpl );
+
+			if ( singleModeDetails ) {
+				if ( singleModeDetails.disableField ) {
+					$field.parent().html( '' );
+
+					return true;
+				}
+				editableOptions.tpl = singleModeDetails.tpl;
+			}
+
+			// Set parameters passed to the server when the field is saved
+			editableOptions.params = function( fieldParms ) {
+				var defaultParams = {
+					gv_inline_edit_field: 'true',
+					nonce: gv_inline_x.nonce,
+					type: field_type,
+					form_id: form_id,
+					field_id: field_id,
+					view_id: view_id,
 				};
 
-				//This is a datepicker field
-				if ( $( this ).data( 'dateformat' ) ) {
-					editableOptions.format = 'yyyy-mm-dd';
-					editableOptions.viewformat = self.convertDateFormat( $( this ).data( 'dateformat' ) );
-					editableOptions.datepicker = {
-						firstDay: 1,
-						showOn: "focus"
-					};
-				}
-
-				//Set templates
-				tplName = editableOptions.params.type;
-				if ( $( this ).data( 'tplmode' ) && 'address' !== editableOptions.params.type ) {
-					tplName += $( this ).data( 'tplmode' );
-				}
-
-				if ( gv_inline_x.templates.hasOwnProperty( tplName + '_' + form_id + '_' + field_id ) ) {
-					editableOptions.tpl = gv_inline_x.templates[ tplName + '_' + form_id + '_' + field_id ];
-				} else if ( gv_inline_x.templates.hasOwnProperty( tplName ) ) {
-					editableOptions.tpl = gv_inline_x.templates[ tplName ];
-				}
-
-				//Switch template to single-field equivalanes where applicable
-				var singleModeDetails = self.getSingleFieldModeTemplate( $( this ), editableOptions.params.type, editableOptions.tpl );
-
 				if ( singleModeDetails ) {
-					if ( singleModeDetails.disableField ) {
-						$( this ).parent().html( '' );
-						return true;
-					}
-					editableOptions.tpl = singleModeDetails.tpl;
 					editableOptions.params.inputNumber = singleModeDetails.inputNumber;
 				}
 
-				$( this ).editable( editableOptions );
+				// Make sure that we're passing the actual "Other" Text input value and not "gf_other_choice" that's detected by Editable
+				if ( field_type === 'radiolist' ) {
 
-				//For textarea fields
-				if ( $( this ).data( 'maxLength' ) ) {
-					editableOptions.params.maxlength = $( this ).data( 'maxLength' );
+					// "Other" Text input element is located multiple locations based on whether we're editing inline (there's also difference between Entries and View screens) or inside a popup
+					var popupId = $( '#' + fieldParms.name ).attr( 'aria-describedby' );
+
+					if ( popupId ) {
+						var $input = $( '#' + popupId ).find( 'input:checked' );
+					} else {
+						var $input = ( window.pagenow === 'forms_page_gf_entries' ) ? $( this ).parents( 'td' ).find( '.gv-editable-container input:checked' ) : $( this ).next( '.gv-editable-container' ).find( 'input:checked' );
+					}
+
+					// Set or clear "data-other-choice" attribute when "Other" choice is selected, so that we're properly initializing this field when it's recreated after each update/close
+					if ( $input.val() === 'gf_other_choice' ) {
+						fieldParms.value = $input.next().val();
+
+						$( '#' + fieldParms.name ).attr( 'data-other-choice', $input.next().val() );
+					} else {
+
+						$( '#' + fieldParms.name ).removeAttr( 'data-other-choice' );
+					}
 				}
 
-				//For gvlist, multicolumn support
-				if ( 'gvlist' === editableOptions.params.type && 'multi' === $( this ).data( 'tplmode' ) ) {
-					$( this ).editable( 'option', 'multicolumn', true );
-					$( this ).editable( 'option', 'colcount', $( this ).data( 'colcount' ) );
-					self.setGvListEmpty( $( this ) );
+				return Object.assign( {}, defaultParams, fieldParms );
+			};
+
+			$field
+				.editable( editableOptions )
+				.off( 'hidden' )
+				.on( 'hidden', function() { self.recreateEditableInstance( $field );} );
+
+			// For textarea fields
+			if ( $field.data( 'maxLength' ) ) {
+				editableOptions.params.maxlength = $field.data( 'maxLength' );
+			}
+
+			// For gvlist, multicolumn support
+			if ( 'gvlist' === field_type && 'multi' === $field.data( 'tplmode' ) ) {
+				$field.editable( 'option', 'multicolumn', true );
+				$field.editable( 'option', 'colcount', $field.data( 'colcount' ) );
+				self.setGvListEmpty( $field );
+			}
+
+			$field.on( 'shown', self.inlineEditFieldsOnShown );
+		};
+
+		/**
+		 * Destroy and recreate editable instance with default options - this prevents "stuck" popup instances and fixes other quirks
+		 *
+		 * @param {Object} $field Editable field DOM object
+		 *
+		 * @return {void}
+		 */
+		self.recreateEditableInstance = function( $field ) {
+			var val = $field.editable( 'getValue' );
+			val = val[ Object.keys( val )[ 0 ] ];
+			var otherValue = $field.attr( 'data-other-choice' );
+			var dataSource = $field.attr( 'data-source' );
+			var entryLink = $field.attr( 'data-entry-link' );
+			var inputId = $field.attr( 'data-inputid' );
+
+			$field.attr( 'data-value', val );
+
+			$field.editable( 'destroy' );
+
+			self.initializeEditableField( $field );
+
+			// If the destroyed instance had a value set, apply it to the recreated instance
+			if ( val ) {
+				$field.editable( 'setValue', val );
+				$field.attr( 'data-source', dataSource );
+
+				// We need to display the actual value instead of "gf_other_choice" that identifies the "Other" Radio input
+				val = otherValue ? otherValue : val;
+
+				if ( typeof val === 'object' && inputId !== 'undefined' ) {
+					val = val[ inputId ];
 				}
 
-				$( this ).on( 'shown', self.inlineEditFieldsOnShown );
-			} );
+				if ( entryLink ) {
+					val = $( '<a />', { href: entryLink, text: val } );
+				}
 
+				$field.html( val );
+
+				$field.removeClass( 'editable-empty' );
+			}
 		};
 
 		/**
 		 * Runs after all inline edit fields are shown
-		 *
 		 */
-		self.inlineEditFieldsOnShown = function ( e, editable ) {
-
+		self.inlineEditFieldsOnShown = function( e, editable ) {
 			// We're in Entries. The first column has a link, so we need to move the form up one level.
 			if ( 'inline' === editable.options.mode ) {
 				if ( editable.container.$element.parents( '.column-primary' ).length ) {
@@ -224,14 +337,14 @@
 		 *
 		 * @param {Object} $gvList DOM object of the gvlist entry to be examined
 		 */
-		self.setGvListEmpty = function ( $gvList ) {
+		self.setGvListEmpty = function( $gvList ) {
 			var gvListSourceData = $gvList.data( 'source' );
 
 			if ( null === gvListSourceData[ 0 ] || 'object' !== typeof gvListSourceData[ 0 ] ) {
 				return;
 			}
 
-			var valueArray = $.map( gvListSourceData[ 0 ], function ( val, index ) {
+			var valueArray = $.map( gvListSourceData[ 0 ], function( val, index ) {
 				if ( val.length > 0 ) {
 					return [ val ];
 				}
@@ -242,7 +355,6 @@
 			}
 		};
 
-
 		/**
 		 * For some advanced fields, it's possible to use one of their input fields as
 		 * a stand-alone field in a view e.g. For an address, you can use the 'Country' field
@@ -252,10 +364,10 @@
 		 *
 		 * @param {Object} $field    The field being evaluated
 		 * @param {string} fieldType The field type
-		 * @returns {Object|boolean} false if the field isn't eligible for single-field mode or an object containing the template and input number for the single field
+		 * @return {Object|boolean} false if the field isn't eligible for single-field mode or an object containing the template and input number for the single field
 		 */
-		self.getSingleFieldModeTemplate = function ( $field, fieldType, template ) {
-			var eligibleFieldsSingleFieldMode = [ 'name', 'address', 'gvtime', 'checklist' ];//Which fields do we enable this mode on
+		self.getSingleFieldModeTemplate = function( $field, fieldType, template ) {
+			var eligibleFieldsSingleFieldMode = [ 'name', 'address', 'gvtime', 'checklist' ]; // Which fields do we enable this mode on
 
 			var inputNumber = $field.data( 'inputid' );
 
@@ -268,14 +380,13 @@
 				return false;
 			}
 
-
 			inputNumber = inputNumber * 1;
 			var singleFieldModeTpl = '';
 			var disableField = false;
 
 			switch ( fieldType ) {
 				case 'name':
-					if ( 2 === inputNumber ) {//prefix input
+					if ( 2 === inputNumber ) { // prefix input
 						singleFieldModeTpl += '<span class="gv-inline-edit-single-field-mode" data-inputnumber="' + inputNumber + '">' + gv_inline_x.templates[ fieldType + 'prefixes' ] + '</span>';
 					}
 					break;
@@ -290,36 +401,36 @@
 					singleFieldModeTpl += '<div data-inputnumber="' + inputNumber + '">' + single_checkbox_html + '</div>';
 					break;
 				case 'address':
-					//Hide disabled inputs
+					// Hide disabled inputs
 					var hiddenFields = $field.data( 'hidden' );
 					if ( $.isArray( hiddenFields ) ) {
-						$.each( hiddenFields, function ( i, val ) {//$.inArray does strict comparison so it'll fail
+						$.each( hiddenFields, function( i, val ) { // $.inArray does strict comparison so it'll fail
 							if ( inputNumber === val ) {
 								disableField = true;
 							}
 						} );
 					}
-					if ( 4 === inputNumber && 'international' !== $field.data( 'tplmode' ) && gv_inline_x.templates.hasOwnProperty( fieldType + $field.data( 'tplmode' ) ) ) {//canadian provinces, US states and any custom states added via filters. Differentiated using $field.data( 'tplmode' )
+					if ( 4 === inputNumber && 'international' !== $field.data( 'tplmode' ) && gv_inline_x.templates.hasOwnProperty( fieldType + $field.data( 'tplmode' ) ) ) { // canadian provinces, US states and any custom states added via filters. Differentiated using $field.data( 'tplmode' )
 						singleFieldModeTpl += '<select class="gv-inline-edit-single-field-mode" data-inputnumber="' + inputNumber + '">' + gv_inline_x.templates[ fieldType + $field.data( 'tplmode' ) ] + '</select>';
 					}
-					if ( 6 === inputNumber ) {//country input
+					if ( 6 === inputNumber ) { // country input
 						singleFieldModeTpl += '<select class="gv-inline-edit-single-field-mode" data-inputnumber="' + inputNumber + '">' + gv_inline_x.templates[ fieldType + 'international' ] + '</select>';
 					}
 					break;
 				case 'gvtime':
-					if ( 3 === inputNumber ) {//am/pm selector
+					if ( 3 === inputNumber ) { // am/pm selector
 						singleFieldModeTpl += '<select class="gv-inline-edit-single-field-mode" data-inputnumber="' + inputNumber + '">' + '<option value="am">AM</option>' + '<option value="pm">PM</option>' + '</select>';
 					}
 					break;
 			}
 
-			if ( !singleFieldModeTpl ) {
+			if ( ! singleFieldModeTpl ) {
 				singleFieldModeTpl += '<input type="text" class="gv-inline-edit-single-field-mode" data-inputnumber="' + inputNumber + '"/>';
 			}
 			return {
 				tpl: '<div>' + singleFieldModeTpl + '</div>',
 				inputNumber: inputNumber,
-				disableField: disableField
+				disableField: disableField,
 			};
 		};
 
@@ -327,9 +438,9 @@
 		 * Override the default inline-edit error method to support
 		 * HTML in the error message
 		 */
-		$.fn.editableform.Constructor.prototype.error = function ( msg ) {
+		$.fn.editableform.Constructor.prototype.error = function( msg ) {
 			var $group = this.$form.find( '.control-group' ),
-				$block = this.$form.find( '.editable-error-block' );
+					$block = this.$form.find( '.editable-error-block' );
 
 			if ( msg === false ) {
 				$group.removeClass( $.fn.editableform.errorGroupClass );
@@ -343,13 +454,12 @@
 		/**
 		 * Set the editable state for a View on load
 		 *
-		 * @returns {void}
+		 * @return {void}
 		 */
-		self.setInlineEditableInitialState = function () {
+		self.setInlineEditableInitialState = function() {
+			$( '.gv-inline-editable-view' ).each( function() {
 
-			$( '.gv-inline-editable-view' ).each( function () {
-
-				if ( !$.cookie ) {
+				if ( ! $.cookie ) {
 					self.setEditableState( $( this ), 'enabled', false );
 					return;
 				}
@@ -366,7 +476,6 @@
 				self.setEditableState( $( this ), stored_state, false );
 
 			} );
-
 		};
 
 		/**
@@ -376,9 +485,9 @@
 		 * @param {string} state
 		 * @param {bool} set_cookie
 		 *
-		 * @returns {void}
+		 * @return {void}
 		 */
-		self.setEditableState = function ( $views, state, set_cookie ) {
+		self.setEditableState = function( $views, state, set_cookie ) {
 
 			$views.find( '.gv-inline-editable-disabled' ).toggleClass( 'editable-disabled', ( state === 'enabled' ) );
 
@@ -401,7 +510,7 @@
 				$views.find( '[id^=gv-inline-editable-]' ).editable( 'disable' );
 			}
 
-			$views.find( '.inline-edit-enable' ).text( function () {
+			$views.find( '.inline-edit-enable' ).text( function() {
 				return $( this ).attr( 'data-label-' + state );
 			} );
 
@@ -409,7 +518,7 @@
 				var view_id = $views.find( '.gravityview-inline-edit-id' ).val();
 				$.cookie( 'gv-inline-edit-' + view_id, state, {
 					domain: gv_inline_x.cookie_domain,
-					path: gv_inline_x.cookiepath
+					path: gv_inline_x.cookiepath,
 				} );
 			}
 
@@ -418,7 +527,7 @@
 			 */
 			$( document ).trigger( 'gravityview-inline-edit/set-state', {
 				'state': state,
-				'views': $views
+				'views': $views,
 			} );
 		};
 
@@ -427,11 +536,11 @@
 		 *
 		 * // TODO: Toggle body class to allow better Bootstrap popover namespacing
 		 *
-		 * @returns {void}
+		 * @return {void}
 		 */
-		self.toggleInlineEdit = function () {
+		self.toggleInlineEdit = function() {
 
-			$( '.inline-edit-enable' ).click( function ( e ) {
+			$( '.inline-edit-enable' ).click( function( e ) {
 
 				e.preventDefault();
 
@@ -454,14 +563,14 @@
 		 *
 		 * @since 1.0
 		 *
-		 * @returns {void}
+		 * @return {void}
 		 */
-		self.initColumnToggle = function () {
+		self.initColumnToggle = function() {
 
-			$( '.wp-admin .gf_entries, .gv-table-view' ).find( 'thead th, tfoot th' ).on( 'click', function ( e ) {
+			$( '.wp-admin .gf_entries, .gv-table-view' ).find( 'thead th, tfoot th' ).on( 'click', function( e ) {
 
 				// If Inline Edit isn't enabled, act normal
-				if ( !$( this ).parents( '.gv-inline-edit-on' ).length ) {
+				if ( ! $( this ).parents( '.gv-inline-edit-on' ).length ) {
 					return true;
 				}
 
@@ -478,7 +587,7 @@
 
 				// We only want the one matching CSS name
 				var css_class_name = false;
-				$.each( class_list, function ( index, column_class_name ) {
+				$.each( class_list, function( index, column_class_name ) {
 					if ( column_class_name.match( regex_search ) ) {
 						css_class_name = column_class_name;
 						return false;
@@ -486,7 +595,7 @@
 				} );
 
 				// Something's gone wrong, the class wasn't found
-				if ( !css_class_name ) {
+				if ( ! css_class_name ) {
 					return false;
 				}
 
@@ -498,15 +607,25 @@
 					.find( 'td[class~="' + css_class_name + '"]' )
 					.find( '[id^=gv-inline-editable-]' );
 
+				// Fixes various quirks associated with inline and popup Editable instances co-existing together
+				$.each( $editables, function() {
+					self.recreateEditableInstance( $( this ) );
+				} );
+
 				$editables
-					.editable( 'hide' ) // Prevent weird toggle behavior
-					.editable( 'option', 'showbuttons', is_column_on ? false : gv_inline_x.showbuttons )
+					.editable( 'option', 'showbuttons', gv_inline_x.showbuttons )
 					.editable( 'option', 'mode', is_column_on ? 'inline' : gv_inline_x.mode )
 					.editable( 'option', 'onblur', is_column_on ? 'ignore' : gv_inline_x.onblur );
+
+				$( 'html, body' ).css( { overflow: 'hidden', height: '100%' } );
 
 				if ( is_column_on ) {
 					$editables.editable( 'show' );
 				}
+
+				$( ':focus' ).blur();
+
+				$( 'html, body' ).css( { overflow: 'auto', height: 'auto' } );
 
 				return false;
 			} );
@@ -514,18 +633,18 @@
 
 		/**
 		 * When in the WP Admin "Entries" screen, allow our script to disable links by adding `disabled="disabled` to them
-		 * @returns {void}
+		 * @return {void}
 		 */
-		self.gfMoveToggleButton = function () {
+		self.gfMoveToggleButton = function() {
 			$( '.wp-admin .inline-edit-enable' ).insertAfter( '.tablenav.top .bulkactions' );
 		};
 
 		/**
 		 * When Inline Editing is active and a field isn't editable, prevent link clicking
-		 * @returns {void}
+		 * @return {void}
 		 */
-		self.preventClicks = function () {
-			$( '.gv-inline-editable-disabled a' ).on( 'click', function ( e ) {
+		self.preventClicks = function() {
+			$( '.gv-inline-editable-disabled a' ).on( 'click', function( e ) {
 				if ( $( this ).parents( '.editable-disabled' ).length ) {
 					e.preventDefault();
 					return false;
@@ -537,24 +656,23 @@
 		/**
 		 * Trigger to extend global gv_inline_x object's templates data
 		 */
-		$( window ).on( 'gravityview-inline-edit/extend-template-data', function ( e, data ) {
+		$( window ).on( 'gravityview-inline-edit/extend-template-data', function( e, data ) {
 			window.gv_inline_x.templates = $.extend( {}, window.gv_inline_x.templates, data );
 		} );
 
 		/**
 		 * Trigger to initialize plugin
 		 */
-		$( window ).on( 'gravityview-inline-edit/init', function () {
+		$( window ).on( 'gravityview-inline-edit/init', function() {
 			$( self.init );
 		} );
 
 		/**
 		 * Initialize plugin on load if disableInitOnLoad parameter is not set
 		 */
-		if ( !!!+gv_inline_x.disableInitOnLoad ) {
+		if ( !!! +gv_inline_x.disableInitOnLoad ) {
 			$( self.init );
 		}
-
 	} );
 
 }( jQuery ) );

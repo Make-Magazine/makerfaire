@@ -38,7 +38,7 @@
 		str2value: function ( str ) {
 			return str;
 		},
-
+		
 		//set the inputs
 		value2input: function ( value ) {
 			var sourceData = this.sourceData;
@@ -57,7 +57,7 @@
 
 			if ( ( $.isArray( sourceData ) && sourceData.length ) ) {
 				//Create empty fields for all the list items.
-				$addButton = this.$tpl.find( 'img.add_list_item' );
+				$addButton = this.$tpl.find( '.add_list_item' );
 				for ( var i = 1; i < sourceData.length; i++ ) {
 					gformAddListItem( $addButton, 0 );
 				}

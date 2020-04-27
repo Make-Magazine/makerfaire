@@ -1,17 +1,21 @@
 # Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2.
+# Translators:
+# Zachary Katz <zack@katz.co>, 2019
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView Inline Edit 1.2.3\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2017-06-25 23:56+0000\n"
+"Last-Translator: Zachary Katz <zack@katz.co>, 2019\n"
 "Language-Team: Persian (Iran) (https://www.transifex.com/katzwebservices/teams/18775/fa_IR/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: fa_IR\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: grunt-wp-i18n 0.5.4\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-Bookmarks: \n"
@@ -226,25 +230,27 @@ msgstr ""
 
 #: lib/EDD_SL_Plugin_Updater.php:396
 msgid "You do not have permission to install plugin updates"
-msgstr ""
+msgstr "شما مجوز نصب به‌روزرسانی‌های افزونه را ندارید"
 
 #: lib/EDD_SL_Plugin_Updater.php:396
 msgid "Error"
-msgstr ""
+msgstr "خطا"
 
 #: lib/class-gravityview-extension.php:351
 msgid "Could not activate the %s Extension; GravityView is not active."
-msgstr ""
+msgstr "امکان فعال‌کردن %s الحاقی وجود ندارد؛ GravityView فعال نیست."
 
 #: lib/class-gravityview-extension.php:355
 msgid "The %s Extension requires GravityView Version %s or newer."
-msgstr ""
+msgstr "الحاقی %s نیاز به نسخه GravityView %s یا نسخه تازه‌تر دارد."
 
 #: lib/class-gravityview-extension.php:359
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
 msgstr ""
+"الحاقی %s نیاز به PHP نسخه %s یا تازه‌تر دارد. لطفاُ از هاست خود بخواهید تا "
+"PHP سرور را ارتقا دهد."
 
 #. Plugin URI of the plugin/theme
 msgid "https://gravityview.co/extensions/inline-edit/"

@@ -1,17 +1,18 @@
 # Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2.
 # Translators:
-# Süha Karalar <suhakaralar@gmail.com>, 2017
+# Süha Karalar <suhakaralar@gmail.com>, 2019
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView Inline Edit 1.2.3\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Süha Karalar <suhakaralar@gmail.com>, 2017\n"
+"PO-Revision-Date: 2017-06-25 23:56+0000\n"
+"Last-Translator: Süha Karalar <suhakaralar@gmail.com>, 2019\n"
 "Language-Team: Turkish (Turkey) (https://www.transifex.com/katzwebservices/teams/18775/tr_TR/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: tr_TR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -227,7 +228,7 @@ msgstr ""
 
 #: includes/class-gravityview-inline-edit-settings.php:426
 msgid "Enter your license key here"
-msgstr "Lisans anahtarını burya girin"
+msgstr "Lisans anahtarını buraya girin"
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""

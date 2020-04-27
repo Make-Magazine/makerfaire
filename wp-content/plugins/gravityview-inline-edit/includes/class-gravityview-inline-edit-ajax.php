@@ -322,6 +322,9 @@ final class GravityView_Inline_Edit_AJAX {
 			remove_all_actions( 'gform_post_update_entry_' . $form_id );
 		}
 
+		// Clear entry's "date_updated" value in order for it to be populated with the current date
+		unset( $entry['date_updated'] );
+
 		$update_result = GFAPI::update_entry( $entry );
 
 		/**

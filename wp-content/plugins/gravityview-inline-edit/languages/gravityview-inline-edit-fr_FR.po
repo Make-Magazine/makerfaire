@@ -1,14 +1,19 @@
 # Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2.
+# Translators:
+# Zachary Katz <zack@katz.co>, 2019
+# a270031086f2a0d3514bc0cb507b48f6, 2019
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView Inline Edit 1.2.3\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2017-06-25 23:56+0000\n"
+"Last-Translator: a270031086f2a0d3514bc0cb507b48f6, 2019\n"
 "Language-Team: French (France) (https://www.transifex.com/katzwebservices/teams/18775/fr_FR/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -23,74 +28,79 @@ msgstr ""
 
 #: class-gravityview-inline-edit.php:76 class-gravityview-inline-edit.php:360
 msgid "Inline Edit by GravityView"
-msgstr ""
+msgstr "Modification en ligne par GravityView"
 
 #: class-gravityview-inline-edit.php:261
 msgid "Update"
-msgstr ""
+msgstr "Mettre à jour"
 
 #: class-gravityview-inline-edit.php:266
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: class-gravityview-inline-edit.php:358
 msgid "The plugin requires Gravity Forms."
-msgstr ""
+msgstr "Le plugin nécessite Gravity Forms."
 
 #: includes/class-gravityview-inline-edit-ajax.php:119
 msgid "Gravity Forms is not active."
-msgstr ""
+msgstr "Gravity Forms n'est pas actif"
 
 #: includes/class-gravityview-inline-edit-ajax.php:130
 msgid "You are not allowed to edit this entry."
-msgstr ""
+msgstr "Vous n'êtes pas autorisé à modifier cette entrée."
 
 #: includes/class-gravityview-inline-edit-ajax.php:222
 msgid "This field is required."
-msgstr ""
+msgstr "Ce champ est requis."
 
 #: includes/class-gravityview-inline-edit-ajax.php:258
 msgid "Please enter a valid time."
-msgstr ""
+msgstr "S'il vous plaît entrer une heure valide."
 
 #: includes/class-gravityview-inline-edit-ajax.php:373
 msgid "Invalid value. Please try again."
-msgstr ""
+msgstr "Valeur invalide. Veuillez réessayer."
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:58
 msgid "An Inline Edit button will be added"
-msgstr ""
+msgstr "Un bouton d'édition en ligne sera ajouté"
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:60
 msgid ""
 "If enabled, a button to toggle on and off inline editing will be added to "
 "the Gravity Forms Entries screen. If disabled, the button will not be added."
 msgstr ""
+"Si cette option est activée, un bouton permettant d'activer ou de désactiver"
+" l'édition en ligne sera ajouté à l'écran Gravity Forms Entries. S'il est "
+"désactivé, le bouton ne sera pas ajouté."
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:115
 #: includes/class-gravityview-inline-edit-gravityview.php:306
 #: includes/class-gravityview-inline-edit-render-abstract.php:205
 msgid "Enable Inline Edit"
-msgstr ""
+msgstr "Activer la modification en ligne"
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:120
 msgid "Allow Inline Edit when viewing this form's entries in Gravity Forms"
 msgstr ""
+"Autoriser l'édition en ligne lors de l'affichage des entrées de ce "
+"formulaire dans Gravity Forms"
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:124
 #: includes/class-gravityview-inline-edit-settings.php:45
 msgid "Inline Edit"
-msgstr ""
+msgstr "Modification en ligne"
 
 #: includes/class-gravityview-inline-edit-gravityview.php:307
 msgid "Adds a link to toggle Inline Editing capabilities."
-msgstr ""
+msgstr "Ajoute un lien pour basculer les capacités d'édition en ligne."
 
 #: includes/class-gravityview-inline-edit-gravityview.php:390
 #: includes/class-gravityview-inline-edit-settings.php:92
 #: includes/class-gravityview-inline-edit-settings.php:443
 msgid "Popup: The edit form will appear above the content."
-msgstr ""
+msgstr "Popup: Le formulaire de modification apparaîtra au-dessus du contenu."
 
 #: includes/class-gravityview-inline-edit-gravityview.php:394
 #: includes/class-gravityview-inline-edit-settings.php:96
@@ -99,11 +109,13 @@ msgid ""
 "In-Place: The edit form for the field will show in the same place as the "
 "content."
 msgstr ""
+"En place: le formulaire de modification du champ s'affichera au même endroit"
+" que le contenu."
 
 #: includes/class-gravityview-inline-edit-gravityview.php:426
 #: includes/class-gravityview-inline-edit-settings.php:433
 msgid "Inline Edit Mode"
-msgstr ""
+msgstr "Mode d'édition en ligne"
 
 #: includes/class-gravityview-inline-edit-gravityview.php:428
 #: includes/class-gravityview-inline-edit-settings.php:436
@@ -111,151 +123,166 @@ msgid ""
 "Change where the Inline Edit form appears &ndash; above the content or in "
 "its place."
 msgstr ""
+"Modifier l'emplacement du formulaire d'édition en ligne &ndash; au-dessus du"
+" contenu ou à sa place."
 
 #: includes/class-gravityview-inline-edit-gravityview.php:428
 msgid "Hover over the ? above for examples of each mode."
-msgstr ""
+msgstr "Survolez le ci-dessus le ? pour des exemples de chaque mode."
 
 #: includes/class-gravityview-inline-edit-gravityview.php:434
 #: includes/class-gravityview-inline-edit-settings.php:442
 msgid "Popup"
-msgstr ""
+msgstr "Popup"
 
 #: includes/class-gravityview-inline-edit-gravityview.php:439
 #: includes/class-gravityview-inline-edit-settings.php:450
 msgid "In-Place"
-msgstr ""
+msgstr "En place"
 
 #: includes/class-gravityview-inline-edit-render-abstract.php:204
 msgid "Toggle Inline Edit"
-msgstr ""
+msgstr "Basculer en ligne modifier"
 
 #: includes/class-gravityview-inline-edit-render-abstract.php:206
 msgid "Disable Inline Edit"
-msgstr ""
+msgstr "Désactiver la modification en ligne"
 
 #: includes/class-gravityview-inline-edit-scripts.php:102
 msgid "Empty"
-msgstr ""
+msgstr "Vide"
 
 #: includes/class-gravityview-inline-edit-settings.php:290
 msgid "Status"
-msgstr ""
+msgstr "Statut"
 
 #: includes/class-gravityview-inline-edit-settings.php:291
 msgid "There was an error processing the request."
-msgstr ""
+msgstr "Il ya eu une erreur lors du traitement de la demande."
 
 #: includes/class-gravityview-inline-edit-settings.php:292
 msgid ""
 "Could not deactivate the license. The license key you attempted to "
 "deactivate may not be active or valid."
 msgstr ""
+"Impossible de désactiver la licence. La clé de licence que vous avez tenté "
+"de désactiver peut ne pas être active ou valide."
 
 #: includes/class-gravityview-inline-edit-settings.php:293
 msgid "The license key is valid, but it has not been activated for this site."
 msgstr ""
+"La clé de licence est valide, mais elle n'a pas été activée pour ce site."
 
 #: includes/class-gravityview-inline-edit-settings.php:294
 msgid "Invalid: this license has reached its activation limit."
-msgstr ""
+msgstr "Non valide: cette licence a atteint sa limite d'activation."
 
 #: includes/class-gravityview-inline-edit-settings.php:295
 msgid "The license has been deactivated."
-msgstr ""
+msgstr "La licence a été désactivée."
 
 #: includes/class-gravityview-inline-edit-settings.php:296
 msgid "The license key is valid and active."
-msgstr ""
+msgstr "La clé de licence est valide et active."
 
 #: includes/class-gravityview-inline-edit-settings.php:297
 #: includes/class-gravityview-inline-edit-settings.php:298
 msgid "The license key entered is invalid."
-msgstr ""
+msgstr "La clé de licence entrée n'est pas valide."
 
 #: includes/class-gravityview-inline-edit-settings.php:299
 msgid "This license key has been revoked."
-msgstr ""
+msgstr "Cette clé de licence a été révoquée."
 
 #: includes/class-gravityview-inline-edit-settings.php:300
 msgid ""
 "This license key has expired. %sRenew your license on the GravityView "
 "website%s"
 msgstr ""
+"Cette clé de licence a expiré. %sRenouvelez votre licence sur le site Web de"
+" GravityView%s"
 
 #: includes/class-gravityview-inline-edit-settings.php:301
 msgid "Verifying license&hellip;"
-msgstr ""
+msgstr "Vérification de la licence&hellip;"
 
 #: includes/class-gravityview-inline-edit-settings.php:302
 msgid "Activate License"
-msgstr ""
+msgstr "Activer la licence"
 
 #: includes/class-gravityview-inline-edit-settings.php:303
 msgid "Deactivate License"
-msgstr ""
+msgstr "Désactiver la licence"
 
 #: includes/class-gravityview-inline-edit-settings.php:304
 msgid "Verify License"
-msgstr ""
+msgstr "Vérifier la licence"
 
 #: includes/class-gravityview-inline-edit-settings.php:422
 msgid "Support License Key"
-msgstr ""
+msgstr "Clé de licence de support"
 
 #: includes/class-gravityview-inline-edit-settings.php:423
 msgid ""
 "Enter the license key that was sent to you on purchase. This enables plugin "
 "updates &amp; support."
 msgstr ""
+"Entrez la clé de licence qui vous a été envoyée lors de l'achat. Cela active"
+" les mises à jour de plugin et amp; soutien."
 
 #: includes/class-gravityview-inline-edit-settings.php:426
 msgid "Enter your license key here"
-msgstr ""
+msgstr "Entrez votre clé de licence ici"
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
 "There is a new version of %1$s available. %2$sView version %3$s details%4$s."
 msgstr ""
+"Une nouvelle version de %1$s est disponible. Détails%4$s de la version %3$s "
+"de %2$sView."
 
 #: lib/EDD_SL_Plugin_Updater.php:209
 msgid ""
 "There is a new version of %1$s available. %2$sView version %3$s details%4$s "
 "or %5$supdate now%6$s."
 msgstr ""
+"Une nouvelle version de %1$s est disponible. Détails%4$s de la version %3$s "
+"de %2$sView ou procédez à la %5$mise à niveau maintenant%6$s."
 
 #: lib/EDD_SL_Plugin_Updater.php:396
 msgid "You do not have permission to install plugin updates"
-msgstr ""
+msgstr "Vous n'êtes pas autorisé à installer les mises à jour du plugin"
 
 #: lib/EDD_SL_Plugin_Updater.php:396
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 #: lib/class-gravityview-extension.php:351
 msgid "Could not activate the %s Extension; GravityView is not active."
-msgstr ""
+msgstr "Impossible d'activer le %s Extension; GravityView n'est pas actif."
 
 #: lib/class-gravityview-extension.php:355
 msgid "The %s Extension requires GravityView Version %s or newer."
-msgstr ""
+msgstr "Le %s L'extension nécessite la version GravityView %s Ou plus récent."
 
 #: lib/class-gravityview-extension.php:359
 msgid ""
 "The %s Extension requires PHP Version %s or newer. Please ask your host to "
 "upgrade your server's PHP."
 msgstr ""
+"Le %s L'extension nécessite la version PHP %s Ou plus récent. S'il vous "
+"plaît demander à votre hôte pour mettre à jour PHP de votre serveur."
 
 #. Plugin URI of the plugin/theme
 msgid "https://gravityview.co/extensions/inline-edit/"
-msgstr ""
+msgstr "https://gravityview.co/extensions/inline-edit/"
 
 #. Description of the plugin/theme
 msgid "Edit your fields inline in Gravity Forms and GravityView."
-msgstr ""
+msgstr "Modifiez vos champs en ligne dans Gravity Forms et GravityView."
 
 #: class-gravityview-inline-edit.php:359
 msgctxt ""
 "1st replacement is the plugin name; 2nd replacement is the reason why"
 msgid "Could not activate %s: %s"
-msgstr ""
+msgstr "Impossible d'activer %s: %s"

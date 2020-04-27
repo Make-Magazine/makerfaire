@@ -1,7 +1,7 @@
 === Inline Edit by GravityView ===
 Tags: gravity forms
 Requires at least: 3.3
-Tested up to: 4.9.8
+Tested up to: 5.3
 Stable tag: trunk
 Contributors: The GravityView Team
 License: GPL 2
@@ -19,6 +19,26 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 1.3.2 on December 5, 2019 =
+
+Lots of bug fixes!
+
+* Fixed: Editing multi-column List fields
+* Fixed: Duplicate "Other" radio button inputs
+* Fixed: "Other" input field can't be updated if it's already selected
+* Fixed: Update and Cancel buttons not appearing
+* Fixed: Inline edit mode could get "stuck" on or off
+* Fixed: Set `date_updated` entry property when updating entry
+* Fixed: When activating column editing by clicking a field's column header in Gravity Forms, the page no longer scrolls to the last row
+* Fixed: In GravityView, when Inline Editing is activated for a View using a DataTables layout, the Approval field popup does not render
+* Fixed: In GravityView, after editing a field that links to a single entry, the link would be removed
+* Fixed: Performance issue
+* Updated: French translation, Russian translation (thanks, Viktor S!), and Turkish translation (thanks, Süha Karalar)
+
+__Developer Updates:__
+
+* Added: `$output` attribute to `gravityview-inline-edit/wrapper-attributes` filter
 
 = 1.3.1 on October 3, 2018 =
 
