@@ -4,24 +4,10 @@ module.exports = function(grunt) {
 
 		pkg: grunt.file.readJSON('package.json'),
 
-		uglify: {
-			options: { mangle: false },
-			advanced_filter: {
-				files: [{
-		          expand: true,
-		          cwd: 'assets',
-		          src: ['**/*.js','!**/*.min.js'],
-		          dest: 'assets',
-		          ext: '.min.js',
-		          extDot: 'last'
-		      }],
-			},
-		},
-
 		watch: {
 			advanced_filter: {
 				files: ['assets/js/*.js','!assets/js/*.min.js','readme.txt'],
-				tasks: ['uglify:advanced_filter','wp_readme_to_markdown']
+				tasks: ['wp_readme_to_markdown']
 			}
 		},
 
@@ -120,7 +106,7 @@ module.exports = function(grunt) {
 
 		// Pull in the latest translations
 		exec: {
-			transifex: 'tx pull -a',
+			transifex: 'tx pull -a --parallel',
 
 			// Create a ZIP file
 			zip: {
@@ -146,14 +132,13 @@ module.exports = function(grunt) {
 
 	grunt.loadNpmTasks('grunt-wp-i18n');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-wp-readme-to-markdown');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-potomo');
 	grunt.loadNpmTasks('grunt-exec');
 
 
-	grunt.registerTask( 'default', ['uglify','exec:transifex','potomo', 'addtextdomain', 'makepot', 'watch'] );
+	grunt.registerTask( 'default', ['exec:transifex','potomo', 'addtextdomain', 'makepot', 'watch'] );
 	grunt.registerTask( 'translate', ['exec:transifex','potomo', 'addtextdomain', 'makepot' ] );
 
 };

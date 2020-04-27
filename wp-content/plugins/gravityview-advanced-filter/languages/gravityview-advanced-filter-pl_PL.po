@@ -1,0 +1,124 @@
+# Copyright (C) 2018 GravityView
+# This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
+# Translators:
+# Dariusz Zielonka <info@dariusz-zielonka.pl>, 2018
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView Advanced Filter\n"
+"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
+"POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
+"PO-Revision-Date: 2018-09-18 23:45+0000\n"
+"Last-Translator: Zachary Katz <zack@katz.co>\n"
+"Language-Team: Polish (Poland) (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/pl_PL/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Textdomain-Support: yes\n"
+
+#: advanced-filter.php:415 partials/metabox.php:2
+msgid "Advanced Filter"
+msgstr "Filtr zaawansowany"
+
+#: advanced-filter.php:417
+msgid ""
+"Limit what entries are visible based on entry values. The entries are "
+"filtered before the View is displayed. When users perform a search, results "
+"will first be filtered by these settings."
+msgstr "Ograniczaj widoczność pozycji na podstawie wartości pozycji. Pozycje są filtrowane przed wyświetleniem Widoku. Kiedy użytkownicy przeprowadzają wyszukiwanie, najpierw zostaną przefiltrowane przez te ustawienia."
+
+#: advanced-filter.php:418
+msgid "Limit to Logged-in User Entries"
+msgstr "Ogranicz do pozycji zalogowanego Użytkownika"
+
+#: advanced-filter.php:419 advanced-filter.php:751
+msgid "Created By"
+msgstr "Utworzono przez"
+
+#: advanced-filter.php:419 advanced-filter.php:759
+msgid "Currently Logged-in User"
+msgstr "Obecnie zalogowany Użytkownik"
+
+#: advanced-filter.php:420 advanced-filter.php:755
+msgid "Currently Logged-in User (Disabled for Administrators)"
+msgstr "Aktualnie zalogowany użytkownik (wyłączone dla administratorów)"
+
+#: advanced-filter.php:625
+msgid "Any Role of Current User"
+msgstr "Dowolna rola bieżącego użytkownika"
+
+#: advanced-filter.php:663
+msgid "Created By User Role"
+msgstr "Utworzone przez Rolę Użytkownika"
+
+#: advanced-filter.php:830
+msgid "Entry Approval Status"
+msgstr "Status zatwierdzenia pozycji"
+
+#: lib/EDD_SL_Plugin_Updater.php:201
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
+msgstr "Jest dostępna nowa wersja %1$s. %1$s. %2$sZobacz szczegóły wersji%3$s %4$s."
+
+#: lib/EDD_SL_Plugin_Updater.php:209
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
+msgstr "Jest dostępna nowa wersja %1$s. %1$s. %2$sZobacz szczegóły wersji%3$s %4$s lub %5$saktualizuj teraz%6$s."
+
+#: lib/EDD_SL_Plugin_Updater.php:396
+msgid "You do not have permission to install plugin updates"
+msgstr "Nie masz uprawnień do instalowania aktualizacji wtyczek"
+
+#: lib/EDD_SL_Plugin_Updater.php:396
+msgid "Error"
+msgstr "Błąd"
+
+#: lib/class-gravityview-extension.php:351
+msgid "Could not activate the %s Extension; GravityView is not active."
+msgstr "Nie można aktywować wtyczki %s, GravityView nie jest aktywny."
+
+#: lib/class-gravityview-extension.php:355
+msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr "Wtyczka %s wymaga GravityView w wersji %s lub nowszej."
+
+#: lib/class-gravityview-extension.php:359
+msgid ""
+"The %s Extension requires PHP Version %s or newer. Please ask your host to "
+"upgrade your server's PHP."
+msgstr "Wtyczka %s wymaga PHP w wersji %s lub nowszej. Proszę zwrócić się do dostawcy hostingu o aktualizację wersji PHP serwera."
+
+#: partials/metabox.php:4
+msgid "You must save the View before you can configure Advanced Filters."
+msgstr "Musisz zapisać Widok, zanim będzie można skonfigurować zaawansowane filtry."
+
+#: partials/metabox.php:5
+msgid "Advanced Filtering requires Javascript to be enabled."
+msgstr "Filtr zaawansowany wymaga włączenia obsługi JavaScript w Twojej przeglądarce."
+
+#: advanced-filter.php:419
+msgctxt ""
+"First placeholder is \"Created By\" and second is \"Currently Logged-in "
+"User\""
+msgid ""
+"To limit entries to those created by the current user, select \"%s\", \"is\""
+" &amp; \"%s\" from the drop-down menus."
+msgstr "Aby ograniczyć pozycje do tych utworzonych przez bieżącego użytkownika, wybierz \"%s\", \"jest\" i \"%s\" z rozwijanych menu."
+
+#: advanced-filter.php:420
+msgctxt ""
+"The placeholder is \"Currently Logged-in User (Disabled for "
+"Administrators)\""
+msgid ""
+"If you want to limit entries to those created by the current user, but allow"
+" the administrators to view all the entries, select \"%s\" from the drop-"
+"down menu."
+msgstr "Jeśli chcesz ograniczyć pozycje do tych utworzonych przez bieżącego użytkownika, ale zezwolić administratorom na przeglądanie wszystkich pozycji, wybierz \"%s\" z menu rozwijanego."

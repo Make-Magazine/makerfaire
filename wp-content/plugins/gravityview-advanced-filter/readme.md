@@ -1,9 +1,9 @@
 # GravityView - Advanced Filter Extension #
 **Tags:** gravityview  
-**Requires at least:** 3.3  
-**Tested up to:** 4.9.7  
+**Requires at least:** 4.4  
+**Tested up to:** 5.3.2  
 **Stable tag:** trunk  
-**Contributors:** katzwebservices  
+**Contributors:** The GravityView Team  
 **License:** GPL 3 or higher  
 
 Filter which entries are shown in a View based on their values.
@@ -14,7 +14,33 @@ Filter which entries are shown in a View based on their values.
 2. Activate the plugin
 3. Follow the instructions
 
+**For Developers:**
+
+UI was written using [Svelte](https://svelte.dev/) and requires compilation. Make sure that you have [Node.js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com/) installed, then:
+
+1. Navigate to `[path to plugin]/assets/js/src`
+2. Install dependencies by running `yarn install`
+3. Compile assets by running `npm run build`
+
 ## Changelog ##
+
+### 2.0.1 on February 20, 2020 ###
+
+* Added: Date Updated to the available filters
+* Fixed: Pre-existing filters created using Version 1.x and using the "All" mode were not able to be deleted
+
+### 2.0 on February 18, 2020 ###
+
+* Updated: Brand new interface!
+* Added: Create **seriously powerful** filters using "AND" and "OR" together with nested conditions
+* Added: Use relative dates with "Date Updated" and "Payment Date" entry details
+* Fixed: The combination of search modes (Search Bar "All" mode in combination with Advanced Filter "Any" mode)
+* Fixed: "Show only approved entries" forces uses "All" search mode, even when Search Bar is set to "Any"
+* Fixed: When editing a View using Quick Edit, configured Advanced Filters are deleted
+* Translations: Added Polish translation. Thank you, Dariusz Z!
+* Updated: Now requires GravityView 2.0 and WordPress 4.4
+* No longer works with the [Internet Explorer browser](https://www.microsoft.com/en-us/microsoft-365/windows/end-of-ie-support)
+* Developers: [Read what changed from 1.3 to 2.0](https://docs.gravityview.co/article/677-advanced-filters-upgrade)
 
 ### 1.3 on July 11, 2018 ###
 
