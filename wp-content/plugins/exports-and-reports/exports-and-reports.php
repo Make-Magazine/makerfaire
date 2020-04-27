@@ -3,7 +3,7 @@
 Plugin Name: Exports and Reports
 Plugin URI: https://www.scottkclark.com/
 Description: Define custom exports / reports for users by creating each export / report and defining the fields as well as custom MySQL queries to run.
-Version: 0.8.3
+Version: 0.8.5
 Author: Scott Kingsley Clark
 Author URI: https://www.scottkclark.com/
 GitHub Plugin URI: https://github.com/sc0ttkclark/exports-and-reports
@@ -13,7 +13,7 @@ GitHub Plugin URI: https://github.com/sc0ttkclark/exports-and-reports
 global $wpdb;
 
 define( 'EXPORTS_REPORTS_TBL', $wpdb->prefix . 'exportsreports_' );
-define( 'EXPORTS_REPORTS_VERSION', '083' );
+define( 'EXPORTS_REPORTS_VERSION', '085' );
 define( 'EXPORTS_REPORTS_URL', plugin_dir_url( __FILE__ ) );
 define( 'EXPORTS_REPORTS_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -1011,7 +1011,8 @@ function exports_reports_report_field_save( $value, $column, $attributes, $obj )
 				'filter_default'         => $_POST['field_filter_default'][ $key ],
 				'filter_ongoing'         => $_POST['field_filter_ongoing'][ $key ],
 				'filter_ongoing_default' => $_POST['field_filter_ongoing_default'][ $key ],
-				'total_field'            => absint( $_POST['field_total_field'][ $key ] ),
+				'total_field'            => '',
+				//'total_field'            => absint( $_POST['field_total_field'][ $key ] ),
 				'related'                => $_POST['field_related'][ $key ],
 				'related_field'          => $_POST['field_related_field'][ $key ],
 				'related_sql'            => $_POST['field_related_sql'][ $key ],
