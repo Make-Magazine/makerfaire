@@ -24,11 +24,9 @@ class ESSBSocialImageShare {
 	}
 	
 	public function essbis_class_names( $classes ) {
-		// add 'class-name' to the $classes array
 		if ($this->can_run()) {
 			$classes[] = 'essbis_site';
 		}
-		// return the $classes array
 		return $classes;
 	}
 	

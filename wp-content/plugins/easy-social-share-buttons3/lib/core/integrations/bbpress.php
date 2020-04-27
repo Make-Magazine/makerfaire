@@ -17,7 +17,7 @@ if (!function_exists('essb_bbpress_integration')) {
 		essb_depend_load_function('essb_check_applicability_module', 'lib/core/extenders/essb-core-extender-check-applicability-module.php');
 		
 		if (essb_check_applicability_module('bbpress', $essb_options, essb_option_value('display_exclude_from'))) {
-			printf('%1$s<div style="clear: both;"></div>', essb_core()->generate_share_buttons('bbpress', 'share', array('only_share' => false, 'post_type' => 'bbpress')));
+			printf('%1$s<div class="essb_clear"></div>', essb_core()->generate_share_buttons('bbpress', 'share', array('only_share' => false, 'post_type' => 'bbpress')));
 		}
 	}	
 }

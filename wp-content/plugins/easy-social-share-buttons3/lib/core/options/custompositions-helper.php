@@ -44,6 +44,8 @@ class ESSBCustomPositionsManager {
 		add_filter('essb4_custom_method_list', array($this, 'essb_interface_custom_positions'));
 		add_filter('essb4_custom_positions', array($this, 'essb_display_register_mycustom_position'));
 		add_filter('essb4_button_positions', array($this, 'essb_display_mycustom_position'));
+		//@since 7.0 - register also on mobile devices
+		add_filter('essb4_button_positions_mobile', array($this, 'essb_display_mycustom_position'));
 		add_action('init', array($this, 'essb_custom_methods_register'), 99);
 	}
 	
@@ -96,7 +98,12 @@ class ESSBCustomPositionsManager {
 				foreach ($this->hooks as $key => $name) {						
 					if ($name != '') {
 						$count++;
-						essb_prepare_location_advanced_customization('where', 'display-'.$key, $key);
+						if (class_exists('ESSBControlCenter')) {
+							essb_prepare_location_advanced_customization('where', 'positions|display-'.$key, $key);
+						}
+						else {
+							essb_prepare_location_advanced_customization('where', 'display-'.$key, $key);
+						}
 					}
 				}
 			}

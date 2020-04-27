@@ -89,3 +89,26 @@ class ESSBDisplayMethodBottomBar {
 		return $output;
 	}
 }
+
+if (!function_exists('essb_bottombar_extender')) {
+
+	function essb_bottombar_extender($extra_options = '', $position = '', $style = array()) {
+
+		if ($position == 'bottombar') {
+			
+			$bottombar_appear_pos = essb_sanitize_option_value('bottombar_top_onscroll');
+			$bottombar_hide = essb_sanitize_option_value('bottombar_hide');
+			
+			if ($bottombar_appear_pos != '') {
+				$extra_options .= ' data-bottombar-appear="'.esc_attr($bottombar_appear_pos).'"';
+			}
+			if ($bottombar_hide != '') {
+				$extra_options .= ' data-bottombar-disappear="'.esc_attr($bottombar_hide).'"';
+			}
+		}
+
+		return $extra_options;
+	}
+
+	add_filter('essb_sharebuttons_open_element', 'essb_bottombar_extender', 10, 3);
+}

@@ -103,6 +103,8 @@ if (!function_exists('essb5_generate_pinterest_gallery')) {
 		$adjust = isset($atts['adjust']) ? $atts['adjust'] : '';
 		$spacing = isset($atts['spacing']) ? $atts['spacing'] : '';
 		
+		$pinsc_lazyloading = essb_option_bool_value('pinsc_lazyloading'); 
+		
 		
 		$selected_images = explode(',', $images);
 		$salt = mt_rand();
@@ -115,7 +117,7 @@ if (!function_exists('essb5_generate_pinterest_gallery')) {
 			$custom_class .= ' essb-pin-adjust';
 		}
 		
-		$output = '<div class="essb-pin-gallery columns-'.esc_attr($columns).' '.esc_attr($custom_class).'" data-adjust="'.esc_attr($adjust).'" data-spacing="'.esc_attr($spacing).'">';
+		$output = '<div class="essb-pin-gallery columns-'.esc_attr($columns).' '.esc_attr($custom_class).'" data-adjust="'.esc_attr($adjust).'" data-spacing="'.esc_attr($spacing).'" data-lazy="'.esc_attr($pinsc_lazyloading).'">';
 		
 		$share_url = get_permalink();
 		$post_title = get_the_title();

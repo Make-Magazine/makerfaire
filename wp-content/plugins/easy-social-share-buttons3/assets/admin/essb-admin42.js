@@ -1,6 +1,7 @@
 var essb_disable_ajax_submit = false;
 
 jQuery(document).ready(function($){
+	"use strict";
 	
 	var essb_admin_deactivate_all = function(oSender) {
 		$("#section").val("");
@@ -44,7 +45,6 @@ jQuery(document).ready(function($){
 		});
 
 		jQuery(options_selector).find(".essb-data-container").each(function() {
-			//jQuery(this).fadeOut("50");
 			jQuery(this).hide();
 		});
 	}
@@ -57,7 +57,6 @@ jQuery(document).ready(function($){
 		});
 
 		jQuery(".essb-options-container").find(".essb-data-container").each(function() {
-			//jQuery(this).fadeOut("50");
 			jQuery(this).hide();
 
 		});
@@ -110,7 +109,7 @@ jQuery(document).ready(function($){
 	
 	$(".essb-options-group-menu").find(".essb-menu-item").each(function() {
 		
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
 			
 			if ($(this).hasClass("active")) return;
@@ -146,7 +145,6 @@ jQuery(document).ready(function($){
 				if (!activate_first_sub) {
 					if ($("#essb-container-"+has_field_id).length) {
 						$("#essb-container-"+has_field_id).fadeIn("100");
-						//$("#essb-container-"+has_field_id).show();
 						essb_fix_width_of_radio_and_checkboxes("#essb-container-"+has_field_id);
 						activate_code_editors("#essb-container-"+has_field_id);
 						$("#essb-scroll-top").scrollintoview({
@@ -166,7 +164,7 @@ jQuery(document).ready(function($){
 
 	$(".essb-options-group-menu").find(".essb-submenu-item.essb-submenu-with-action").each(function() {
 		if ($(this).hasClass("essb-submenu-menuitem")) {
-			$(this).click(function(e) {
+			$(this).on('click', function(e) {
 				e.preventDefault();
 				var has_field_id = $(this).attr("data-menu") || "";
 				
@@ -190,7 +188,6 @@ jQuery(document).ready(function($){
 					if ($("#essb-container-"+has_field_id).length) {
 						
 						$("#essb-container-"+has_field_id).fadeIn("100");
-						//$("#essb-container-"+has_field_id).show();
 						essb_fix_width_of_radio_and_checkboxes();
 						activate_code_editors("#essb-container-"+has_field_id);
 						$("#essb-scroll-top").scrollintoview({
@@ -203,7 +200,7 @@ jQuery(document).ready(function($){
 			});
 		}
 		else {
-			$(this).click(function(e) {
+			$(this).on('click', function(e) {
 				e.preventDefault();
 				var has_field_id = $(this).attr("data-menu") || "";
 				var data_menu_action = $(this).attr("data-menu-action") || "";
@@ -226,7 +223,7 @@ jQuery(document).ready(function($){
 		}
 	});
 	
-	$('.essb-button-backtotop').click(function(e) {
+	$('.essb-button-backtotop').on('click', function(e) {
 		e.preventDefault();
 		$("#essb-scroll-top").scrollintoview({
 		      duration: "slow",
@@ -234,7 +231,7 @@ jQuery(document).ready(function($){
 	});
 	
 	$(".essb-options-header").find(".essb-wizard-next").each(function() {
-		$(this).click(function(e) {			
+		$(this).on('click', function(e) {			
 			e.preventDefault();
 			var current_section = $("#section").val();
 			
@@ -249,7 +246,7 @@ jQuery(document).ready(function($){
 	});
 	
 	$(".essb-options-header").find(".essb-wizard-prev").each(function() {
-		$(this).click(function(e) {			
+		$(this).on('click', function(e) {			
 			e.preventDefault();
 			var current_section = $("#section").val();
 			
@@ -268,11 +265,9 @@ jQuery(document).ready(function($){
 	var initial_active_section = $("#section").val();
 	var initial_active_subsection = $("#subsection").val();
 	if (initial_active_section != '') {
-		//alert('has initial section = '+initial_active_section);
 		$(".essb-options-group-menu").find("#essb-menu-"+initial_active_section).first().trigger('click');
 
 		$(".essb-options-group-menu").find("#essb-menu-"+initial_active_subsection).first().trigger('click');
-		//alert('has initial subsection = '+initial_active_subsection);
 		essb_fix_width_of_radio_and_checkboxes();
 		setTimeout(essb_fix_width_of_radio_and_checkboxes, 1000);
 	}
@@ -280,7 +275,7 @@ jQuery(document).ready(function($){
 		$(".essb-options-group-menu").find(".essb-menu-item").first().trigger('click');
 	}
 	
-	$(".essb-switch .cb-enable").click(function(){
+	$(".essb-switch .cb-enable").on('click', function(){
 		var parent = $(this).parents('.essb-switch');
 		$('.cb-disable',parent).removeClass('selected');
 		$(this).addClass('selected');
@@ -289,7 +284,7 @@ jQuery(document).ready(function($){
 		if ($(parent).hasClass('essb-switch-submit'))
 			$('#essb_options_form').submit();
 	});
-	$(".essb-switch .cb-disable").click(function(){
+	$(".essb-switch .cb-disable").on('click', function(){
 		var parent = $(this).parents('.essb-switch');
 		$('.cb-enable',parent).removeClass('selected');
 		$(this).addClass('selected');
@@ -309,7 +304,7 @@ jQuery(document).ready(function($){
 			$(this).parent().find('.essb_checkbox_label').width(width);
 		}
 		
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
 			
 			var checkbox_id = $(this).attr('data-field') || "";
@@ -340,10 +335,8 @@ jQuery(document).ready(function($){
 			$(this).parent().find('.essb_radio_label').width(width);
 		}
 		
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
-			
-			//alert($(this).parent().parent().prop("tagName"));
 			
 			$(this).parent().parent().find('.essb_radio').each(function(){
 				var clickable_element = $(this).find('.essb_image_radio');
@@ -388,7 +381,7 @@ jQuery(document).ready(function($){
 	$(".essb-options-container").find(".essb-internal-navigation-item").each(function() {
 		
 		
-			$(this).click(function(e) {
+			$(this).on('click', function(e) {
 				e.preventDefault();
 				var has_field_id = $(this).attr("data-goto") || "";
 				if (has_field_id != '') {
@@ -407,7 +400,7 @@ jQuery(document).ready(function($){
 	$(".essb-options-container").find(".essb-internal-navigation-close").each(function() {
 		
 		
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
 			$(".essb-options-container").find(".essb-internal-navigation").each(function() {
 				$(this).hide();
@@ -418,10 +411,9 @@ jQuery(document).ready(function($){
 	
 	// portlet toggle style
 	$('.essb-options-container').find('.essb-portlet-toggle').find('.essb-portlet-heading').each(function(){
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
-			//console.log('toggle click');
-			
+
 			// closed
 			if ($(this).hasClass('essb-portlet-heading-closed')) {
 				$(this).removeClass('essb-portlet-heading-closed');
@@ -456,14 +448,13 @@ jQuery(document).ready(function($){
 	});
 	
 	$('.essb-options-container').find('.essb-portlet-switch').find('.essb-switch').each(function(){
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
 			
 			var state_checkbox = $(this).find('input');
 			if (!state_checkbox.length) return;
 			
 			var state = $(state_checkbox).is(':checked');
-			//console.log('switch click = ' + state);
 			
 			var parent_heading = $(this).parent().parent();
 			
@@ -476,7 +467,6 @@ jQuery(document).ready(function($){
 			if (state) {
 				$(parent_heading).removeClass('essb-portlet-heading-closed');
 				var content = $(parent_heading).parent().find('.essb-portlet-content');
-				//console.log(content.length);
 				if (content.length > 1) content = content[0];
 				$(content).slideDown("fast", function() {
 					$(content).removeClass('essb-portlet-content-closed');
@@ -497,7 +487,6 @@ jQuery(document).ready(function($){
 				});
 				
 				$(parent_heading).parent().find('.essb_image_checkbox').each(function() {
-					//console.log('parsing checkbox image');
 					var image = $(this).find('.checkbox-image img');
 					if (image) {
 						var width = image.width();
@@ -521,9 +510,8 @@ jQuery(document).ready(function($){
 	
 	// portlet toggle style
 	$('.essb-options-container').find('.essb-section-tabs').find('li').each(function(){
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
-			//console.log('tab click');
 			
 			var parent = $(this).parent();
 			parent.find('li').each(function(){
@@ -557,7 +545,7 @@ jQuery(document).ready(function($){
 	});
 	
 	$('.essb-options-container').find('.essb-main-network-order').find('.essb-clickable-order').each(function(){
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			var state = $(this).is(':checked');
 			
 			if (state) {
@@ -630,7 +618,7 @@ jQuery(document).ready(function($){
 		});
 	}
 	
-	$(".essb-options .input-filter").keyup(debounce(quickFilterDebounceRun, 300));
+	$(".essb-options .input-filter").on('keyup', debounce(quickFilterDebounceRun, 300));
 
 });
 

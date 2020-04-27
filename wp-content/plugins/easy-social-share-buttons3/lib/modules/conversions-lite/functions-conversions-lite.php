@@ -26,7 +26,7 @@ function essb_conversion_position_name($position) {
 
 	$r = '';
 	if ($position == 'shortcode') {
-		$r = __('Shortcode', 'essb');
+		$r = esc_html__('Shortcode', 'essb');
 	}
 	else {
 		foreach ($content_positions as $key => $data) {
@@ -49,7 +49,7 @@ function essb_conversion_position_name($position) {
 	}
 	
 	if ($position == 'more_popup') {
-		$r = __('More Button Social Networks Pop-up', 'essb');
+		$r = esc_html__('More Button Social Networks Pop-up', 'essb');
 	}
 	
 	if ($r == '') {
@@ -96,7 +96,6 @@ function essb_conversions_dashboard_report() {
 		
 		delete_option('essb-conversions-lite');
 		update_option('essb-conversions-lite', $conversions_data, 'no', 'no');
-		//update_option('essb-conversions-lite', $conversions_data);
 		
 		echo '<script type="text/javascript">';
 		echo 'location.href = "admin.php?page=essb_redirect_conversions&section=share&subsection";';
@@ -132,43 +131,6 @@ function essb_conversions_dashboard_report() {
 		$total_percent = 0;
 	}
 	
-	?>
-	<style type="text/css">
-		.overall-total { padding: 30px 25px; position: relative; }
-		.overall-total .total-value { width: 25%; margin: 0 padding: 10px; display: inline-block; text-align: center; vertical-align: top; position: relative; }
-		.overall-total .total-value .percent { font-size: 64px; font-weight: 700; line-height: 64px; }
-		.overall-total .total-value .text { font-size: 13px; font-weight: 600; text-transform: uppercase; }
-		.overall-total .icon-heading { color: #2C82C9; position: absolute; bottom: -30px; left: 0px; font-size: 120px; opacity: 0.1; }
-		.overall-total .total-value.left { text-align: left; }
-		.overall-total .total-value .title { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
-		.conversion-wrap { padding: 40px; }
-		.conversion-title { margin: 0; margin-top: 40px; }
-		.conversion-title i { font-size: 21px; line-height: 32px; }
-		.conversion-title span { font-size: 21px; line-height: 32px; margin-left: 10px; }
-		.conversion-row { padding: 10px; background: rgba(0,0,0,0.01); margin-bottom: 3px;  }
-		.conversion-row.first { box-shadow: 0 1px 10px 0 rgba(0,0,0,0.1); background: #fff; }
-		.conversion-row > div { display: inline-block; }
-		.conversion-row .conversion-heading { width: 40%; font-weight: 400; }
-		.conversion-row .conversion-heading span { font-size: 18px; width: 24px; height: 18px; float: left; display: block; }
-		.conversion-row .conversion-value { width: 20%; text-align: center; font-weight: 600; }
-		.conversion-row.headings { background: #fff; font-weight: 700; text-align: center; }
-		.conversion-wrap .essb-section-tabs-single { border-right: 0px !important; }
-		.conversion-wrap .essb-section-tabs-navigation ul { border-right: 0px !important; }
-		
-		.overall-total .desc.summary { margin-top: 30px; font-size: 14px; }
-		
-		.conversion-wrap .essb-section-tabs-single { font-weight: bold !important; font-size: 14px; }
-		.conversion-wrap .essb-section-tabs-single.active, .conversion-wrap .essb-section-tabs-single:hover {
-			background-color: #fafafa !important;
-			border-radius: 4px;
-			box-shadow: 0 1px 10px 0 rgba(0,0,0,0.15);
-		}
-		
-		.conversion-wrap .essb-section-tabs-container .conversion-title { margin-top: 0px !important; }
-		.reset-row { padding-bottom: 20px; text-align: right; }
-	</style>
-	<?php 
-	
 	$best_position = array('key' => '', 'value' => 0);
 	$best_network = array('key' => '', 'value' => 0);
 	
@@ -180,7 +142,12 @@ function essb_conversions_dashboard_report() {
 			$single_views = isset($data['views']) ? intval($data['views']) : 0;
 			$single_clicks = isset($data['clicks']) ? intval($data['clicks']) : 0;
 				
-			$single_percent = $single_clicks * 100 / $single_views;
+			if ($single_views > 0) {
+				$single_percent = $single_clicks * 100 / $single_views;
+			}
+			else {
+				$single_percent = 0;
+			}
 			
 			if ($best_position['key'] == '') {
 				$best_position['key'] = $key;
@@ -207,7 +174,12 @@ function essb_conversions_dashboard_report() {
 			$single_views = isset($data['views']) ? intval($data['views']) : 0;
 			$single_clicks = isset($data['clicks']) ? intval($data['clicks']) : 0;
 	
-			$single_percent = $single_clicks * 100 / $single_views;
+			if (intval($single_views) != 0) {
+				$single_percent = $single_clicks * 100 / $single_views;
+			}
+			else {
+				$single_percent = 0;
+			}
 				
 			if ($best_network['key'] == '') {
 				$best_network['key'] = $key;
@@ -235,7 +207,7 @@ function essb_conversions_dashboard_report() {
 	';
 	echo '</script>';
 	
-	echo '<a href="#" class="essb-btn essb-btn-red" onclick="essb_reset_confirmation(); return false;">'.__('Reset Stored Conversion Data', 'essb').'</a>';
+	echo '<a href="#" class="essb-btn essb-btn-red" onclick="essb_reset_confirmation(); return false;">'.esc_html__('Reset Stored Conversion Data', 'essb').'</a>';
 	
 	echo '</div>';
 	

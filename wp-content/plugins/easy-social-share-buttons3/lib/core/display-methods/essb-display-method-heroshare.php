@@ -143,7 +143,7 @@ class ESSBDisplayMethodHeroShare {
 		$output .= '</div>';
 		
 		if ($popup_window_popafter != '') {
-			$output .= '<div style="display: none;" id="essb_settings_heroafter_counter"></div>';
+			$output .= '<div class="essb-forced-hidden" id="essb_settings_heroafter_counter"></div>';
 		}
 		
 		
@@ -156,47 +156,7 @@ class ESSBDisplayMethodHeroShare {
 	
 	
 	public static function leading_posts_from_analytics_for7days() {
-		global $wpdb;
-		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
-	
-		$toDate = date ( "Y-m-d" );
-		$fromDate = date ( "Y-m-d", strtotime ( date ( "Y-m-d", strtotime ( date ( "Y-m-d" ) ) ) . "-8 days" ) );
-	
-		$query = "";
-		//foreach($essb_networks as $k => $v) {
-		$query .= "SELECT essb_post_id, COUNT( essb_post_id ) AS cnt";
-	
-		$query .= ' FROM  '.$table_name .'
-		WHERE essb_date BETWEEN "'.$fromDate.'" AND "'.$toDate.'"
-		GROUP BY essb_post_id
-		ORDER BY cnt DESC';
-	
-		$post_stats = $wpdb->get_results ( $query );
-	
-		$limit = 3;
-		$cnt = 0;
-		$result_posts = array();
-	
-		if (isset($post_stats)) {
-			foreach ( $post_stats as $rec ) {
-	
-				$post_permalink = get_permalink($rec->essb_post_id);
-				$post_title = get_the_title($rec->essb_post_id);
-				$post_excerpt = essb_core_helper_get_excerpt_by_id($rec->essb_post_id);
-	
-				$post_image = has_post_thumbnail( $rec->essb_post_id ) ? wp_get_attachment_image_src( get_post_thumbnail_id( $rec->essb_post_id ), 'single-post-thumbnail' ) : '';
-				$image = ($post_image != '') ? $post_image[0] : '';
-				$cnt++;
-	
-				$result_posts[] = array("title" => $post_title, "url" => $post_permalink, "excerpt" => $post_excerpt, "image" => $image);
-	
-				if ($limit < $cnt) {
-					break;
-				}
-			}
-		}
-	
-		return $result_posts;
+		return array();
 	}
 	
 	
@@ -208,10 +168,10 @@ class ESSBDisplayMethodHeroShare {
 			$output .= '<div class="essb-heroshare-leading-post">';
 				
 			if (!empty($post_object['image'])) {
-				$output .= '<a href="'.$post_object['url'].'"><img src="'.$post_object['image'].'" class="essb-heroshare-leading-post-image"/></a>';
+				$output .= '<a href="'.esc_url($post_object['url']).'"><img src="'.esc_url($post_object['image']).'" class="essb-heroshare-leading-post-image"/></a>';
 			}
 				
-			$output .= '<a href="'.$post_object['url'].'"><h4>'.$post_object['title'].'</h4>';
+			$output .= '<a href="'.esc_url($post_object['url']).'"><h4>'.$post_object['title'].'</h4>';
 			$output .= $post_object['excerpt'].'</a>';
 				
 			$output .= '</div>';

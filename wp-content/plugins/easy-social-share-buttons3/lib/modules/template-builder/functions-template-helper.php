@@ -17,26 +17,26 @@ function essb_mytemplatebuilder_generate_css() {
 	$customizer_totalfontsize_beforeafter =  essb_mytemplatebuilder_value($current_options, 'mytemplate_totalfontsize_beforeafter' );
 	
 	if ($customizer_totalbgcolor != '') {
-		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount { background: ' . $customizer_totalbgcolor . ' !important;} ');
+		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount { background: ' . esc_attr($customizer_totalbgcolor) . ' !important;} ');
 	}
 	if ($customizer_totalnobgcolor == 'true') {
 		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount { background: none !important;} ');
 	}
 	if ($customizer_totalcolor != '') {
-		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount, .essb_totalcount .essb_t_nb_after { color: ' . $customizer_totalcolor . ' !important;} ');
+		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount, .essb_totalcount .essb_t_nb_after { color: ' . esc_attr($customizer_totalcolor) . ' !important;} ');
 	}
 	if ($customizer_totalfontsize != '') {
-		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount .essb_t_nb { font-size: ' . $customizer_totalfontsize . '!important; line-height:' . $customizer_totalfontsize . '!important;}');
+		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount .essb_t_nb { font-size: ' . esc_attr($customizer_totalfontsize) . '!important; line-height:' . $customizer_totalfontsize . '!important;}');
 	}
 	if ($customizer_totalfontsize_after != '') {
-		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount .essb_t_nb_after { font-size: ' . $customizer_totalfontsize_after . '!important; }');
+		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount .essb_t_nb_after { font-size: ' . esc_attr($customizer_totalfontsize_after) . '!important; }');
 	}
 	if ($customizer_totalfontsize_after_color != '') {
-		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount .essb_t_nb_after { color: ' . $customizer_totalfontsize_after_color . '!important; }');
+		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount .essb_t_nb_after { color: ' . esc_attr($customizer_totalfontsize_after_color) . '!important; }');
 	}
 	
 	if ($customizer_totalfontsize_beforeafter != '') {
-		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount_item_before .essb_t_before, .essb_totalcount_item_after .essb_t_before { font-size: ' . $customizer_totalfontsize_beforeafter . '!important; }');
+		$snippet .= ('.essb_links.'.$template_class.' .essb_totalcount_item_before .essb_t_before, .essb_totalcount_item_after .essb_t_before { font-size: ' . esc_attr($customizer_totalfontsize_beforeafter) . '!important; }');
 	}
 	
 	
@@ -56,11 +56,11 @@ function essb_mytemplatebuilder_generate_css() {
 	
 	$iconsize_with_gutter = intval($mytemplate_iconsize) + (2 * intval($mytemplate_iconspace));
 	
-	$snippet .= '.essb_links.'.$template_class.' .essb_icon:before { font-size: '.$mytemplate_iconsize.'px!important; top: '.$mytemplate_iconspace.'px !important; left:'.$mytemplate_iconspace.'px!important;}';
-	$snippet .= '.essb_links.'.$template_class.' .essb_icon { width:'.$iconsize_with_gutter.'px !important; height:'.$iconsize_with_gutter.'px!important;}';
+	$snippet .= '.essb_links.'.$template_class.' .essb_icon:before { font-size: '.esc_attr($mytemplate_iconsize).'px!important; top: '.esc_attr($mytemplate_iconspace).'px !important; left:'.esc_attr($mytemplate_iconspace).'px!important;}';
+	$snippet .= '.essb_links.'.$template_class.' .essb_icon { width:'.esc_attr($iconsize_with_gutter).'px !important; height:'.esc_attr($iconsize_with_gutter).'px!important;}';
 	
 	if ($mytemplate_namesize != '') {
-		$snippet .= '.essb_links.'.$template_class.' .essb_network_name { font-size: '.$mytemplate_namesize.'!important;}';
+		$snippet .= '.essb_links.'.$template_class.' .essb_network_name { font-size: '.esc_attr($mytemplate_namesize).'!important;}';
 	}
 	
 	if ($mytemplate_nameweight != '') {
@@ -85,7 +85,7 @@ function essb_mytemplatebuilder_generate_css() {
 	}
 	
 	if ($mytemplate_padding != '') {
-		$snippet .= '.essb_links.'.$template_class.' li a { padding: '.$mytemplate_padding.'!important;}';
+		$snippet .= '.essb_links.'.$template_class.' li a { padding: '.esc_attr($mytemplate_padding).'!important;}';
 	}
 	
 	if ($mytemplate_effect != '') {
@@ -107,8 +107,8 @@ function essb_mytemplatebuilder_generate_css() {
 				$size = 'inset 0 -4px 0';
 			}
 			
-			$snippet .= '.essb_links.'.$template_class.' li a { '.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
-			$snippet .= '.essb_links.'.$template_class.' li a { -webkit-'.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
+			$snippet .= '.essb_links.'.$template_class.' li a { '.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
+			$snippet .= '.essb_links.'.$template_class.' li a { -webkit-'.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
 		}
 
 		if ($mytemplate_effect == 'shadow') {
@@ -126,8 +126,8 @@ function essb_mytemplatebuilder_generate_css() {
 				$size = '3px 3px 15px -2px';
 			}
 				
-			$snippet .= '.essb_links.'.$template_class.' li a { '.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
-			$snippet .= '.essb_links.'.$template_class.' li a { -webkit-'.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
+			$snippet .= '.essb_links.'.$template_class.' li a { '.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
+			$snippet .= '.essb_links.'.$template_class.' li a { -webkit-'.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
 				
 		}
 
@@ -146,8 +146,8 @@ function essb_mytemplatebuilder_generate_css() {
 				$size = '0px 0px 18px 0';
 			}
 				
-			$snippet .= '.essb_links.'.$template_class.' li a { '.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
-			$snippet .= '.essb_links.'.$template_class.' li a { -webkit-'.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
+			$snippet .= '.essb_links.'.$template_class.' li a { '.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
+			$snippet .= '.essb_links.'.$template_class.' li a { -webkit-'.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
 		
 		}
 		
@@ -159,7 +159,7 @@ function essb_mytemplatebuilder_generate_css() {
 				
 		}
 		if ($mytemplate_shape == 'round') {
-			$snippet .= '.essb_links.'.$template_class.' li a { border-radius: '.$iconsize_with_gutter.'px!important; -webkit-border-radius: '.$iconsize_with_gutter.'px!important;}';
+			$snippet .= '.essb_links.'.$template_class.' li a { border-radius: '.esc_attr($iconsize_with_gutter).'px!important; -webkit-border-radius: '.esc_attr($iconsize_with_gutter).'px!important;}';
 				
 		}
 		if ($mytemplate_shape == 'leaf') {
@@ -240,7 +240,7 @@ function essb_mytemplatebuilder_generate_css() {
 			$network_text_color = $mytemplate_default_textcolor_custom;
 		}
 		
-		$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.$key.' a { background-color: '.$network_color.'!important; color:'.$network_text_color.'!important;}';
+		$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.esc_attr($key).' a { background-color: '.esc_attr($network_color).'!important; color:'.esc_attr($network_text_color).'!important;}';
 		
 		if ($mytemplate_default_outlinesize != '') {
 			$network_outline_color = $stored_network_color;
@@ -255,7 +255,7 @@ function essb_mytemplatebuilder_generate_css() {
 				$network_outline_color = $mytemplate_default_outlinecolor_custom;
 			}
 			
-			$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.$key.' a { border: '.$mytemplate_default_outlinesize.'px solid '.$network_outline_color.'}';
+			$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.esc_attr($key).' a { border: '.esc_attr($mytemplate_default_outlinesize).'px solid '.esc_attr($network_outline_color).'}';
 				
 		}
 		
@@ -319,7 +319,7 @@ function essb_mytemplatebuilder_generate_css() {
 			$network_text_color = $mytemplate_default_textcolor_custom;
 		}
 		
-		$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.$key.' a:hover { background-color: '.$network_color.'!important; color:'.$network_text_color.'!important;}';
+		$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.esc_attr($key).' a:hover { background-color: '.esc_attr($network_color).'!important; color:'.esc_attr($network_text_color).'!important;}';
 		
 		if ($mytemplate_default_outlinesize != '') {
 			$network_outline_color = $stored_network_color;
@@ -334,7 +334,7 @@ function essb_mytemplatebuilder_generate_css() {
 				$network_outline_color = $mytemplate_default_outlinecolor_custom;
 			}
 				
-			$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.$key.' a:hover { border: '.$mytemplate_default_outlinesize.'px solid '.$network_outline_color.'}';
+			$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.esc_attr($key).' a:hover { border: '.esc_attr($mytemplate_default_outlinesize).'px solid '.esc_attr($network_outline_color).'}';
 		
 		}
 		
@@ -355,7 +355,7 @@ function essb_mytemplatebuilder_generate_css() {
 		
 			}
 			if ($mytemplate_shape == 'round') {
-				$snippet .= '.essb_links.'.$template_class.' li a:hover { border-radius: '.$iconsize_with_gutter.'px!important; -webkit-border-radius: '.$iconsize_with_gutter.'px!important;}';
+				$snippet .= '.essb_links.'.$template_class.' li a:hover { border-radius: '.esc_attr($iconsize_with_gutter).'px!important; -webkit-border-radius: '.esc_attr($iconsize_with_gutter).'px!important;}';
 		
 			}
 			if ($mytemplate_shape == 'leaf') {
@@ -383,8 +383,8 @@ function essb_mytemplatebuilder_generate_css() {
 					$size = 'inset 0 -4px 0';
 				}
 				
-				$snippet .= '.essb_links.'.$template_class.' li a:hover { '.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
-				$snippet .= '.essb_links.'.$template_class.' li a:hover { -webkit-'.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
+				$snippet .= '.essb_links.'.$template_class.' li a:hover { '.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
+				$snippet .= '.essb_links.'.$template_class.' li a:hover { -webkit-'.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
 			}
 		
 			if ($mytemplate_effect == 'shadow') {
@@ -403,8 +403,8 @@ function essb_mytemplatebuilder_generate_css() {
 				}
 				
 		
-				$snippet .= '.essb_links.'.$template_class.' li a:hover { '.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
-				$snippet .= '.essb_links.'.$template_class.' li a:hover { -webkit-'.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
+				$snippet .= '.essb_links.'.$template_class.' li a:hover { '.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
+				$snippet .= '.essb_links.'.$template_class.' li a:hover { -webkit-'.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
 		
 			}
 		
@@ -423,8 +423,8 @@ function essb_mytemplatebuilder_generate_css() {
 					$size = '0px 0px 18px 0';
 				}
 		
-				$snippet .= '.essb_links.'.$template_class.' li a:hover { '.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
-				$snippet .= '.essb_links.'.$template_class.' li a:hover { -webkit-'.$default_effect_key.': '.$size.' '.$default_effect_color.'!important;}';
+				$snippet .= '.essb_links.'.$template_class.' li a:hover { '.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
+				$snippet .= '.essb_links.'.$template_class.' li a:hover { -webkit-'.esc_attr($default_effect_key).': '.esc_attr($size).' '.esc_attr($default_effect_color).'!important;}';
 		
 			}
 		

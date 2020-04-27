@@ -2163,6 +2163,10 @@ font-weight: 400;
 	font-size: 13px;
 }
 
+.essb-subscribe-form-content .essb-subscribe-confirm .confirmation-link-after {
+	margin-left: 5px;
+}
+
 /** Adding Userbased Core Styles */
 .essb-userform .essb-subscribe-form-result-message { display: none; }
 .essb-userform .essb-subscribe-form-content-footer { font-size: 0.8em; }
@@ -2288,4 +2292,8 @@ font-weight: 400;
 		display: block;
 	}
 
+}
+
+.essb-subscribe-poweredby {
+	font-size: 12px; text-align: center;
 }

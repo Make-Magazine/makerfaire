@@ -135,7 +135,7 @@ if ($calculated_total != 0) {
   </div>
 </div>
 
-<div class="stat-welcome-graph" style="magin-top: 30px;">
+<div class="stat-welcome-graph">
 	<div class="dashboard-head">
 		<h4>Networks</h4>
 		<p>View how the positions on site perform. Usage of many social networks may lead to lower shares due to paradox of choice.</p>
@@ -172,11 +172,11 @@ if ($calculated_total != 0) {
 				$percent = round ( $percent );
 				
 				echo '<div class="position-row">';
-				echo '<div class="name" style="display: inline-block; width: 20%;"><i class="network-icon essb_icon_'.$k.'"></i>'.$v['name'].'</div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
-				echo '<div class="percent" style="display: inline-block; width: 8%;">'.$print_percent.'%'.'</div>';
-				echo '<div class="graph" style="display: inline-block; width: 49%;"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
+				echo '<div class="name"><i class="network-icon essb_icon_'.$k.'"></i>'.$v['name'].'</div>';
+				echo '<div class="value">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
+				echo '<div class="value"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
+				echo '<div class="percent">'.$print_percent.'%'.'</div>';
+				echo '<div class="graph"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
 				echo '</div>';
 			}
 		}

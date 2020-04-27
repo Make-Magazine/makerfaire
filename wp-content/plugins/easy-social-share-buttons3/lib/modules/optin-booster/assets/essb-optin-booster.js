@@ -1,8 +1,13 @@
 jQuery(document).ready(function($){
-
+	"use strict";
 	var optin_triggered = false,
 		optin_percent = 0,
 		optin_time = 0;
+	
+	var essb_manualform_show = window.essb_manualform_show = function() {
+		essb_optin_booster_show('manual');
+		optin_triggered = false;
+	}
 
 	var essb_optin_booster_show = function(event) {
 
@@ -65,40 +70,6 @@ jQuery(document).ready(function($){
 	}
 
 	if ($('.essb-optinbooster-exit')) {
-		// Exit intent
-		/*function addEvent(obj, evt, fn) {
-		  if (obj.addEventListener) {
-		    obj.addEventListener(evt, fn, false);
-		  } else if (obj.attachEvent) {
-		    obj.attachEvent("on" + evt, fn);
-		  }
-		}*/
-
-		// Exit intent trigger
-		/*addEvent(document, 'mouseout', function(evt) {
-
-			evt = evt ? evt : window.event;
-
-			// If this is an autocomplete element.
-			if(evt.target.tagName.toLowerCase() == "input")
-				return;
-
-			// Get the current viewport width.
-			var vpWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-
-			// If the current mouse X position is within 50px of the right edge
-			// of the viewport, return.
-			if(evt.clientX >= (vpWidth - 50))
-				return;
-
-			// If the current mouse Y position is not within 50px of the top
-			// edge of the viewport, return.
-			if(evt.clientY >= 50)
-				return;
-		  if (evt.toElement === null && evt.relatedTarget === null) {
-			  essb_optin_booster_show('exit');
-		  }
-		});*/
 
 		jQuery(document).on('mouseleave', function(e) {
 
@@ -123,7 +94,7 @@ jQuery(document).ready(function($){
 	if ($('.essb-optinbooster-scroll')) {
 		optin_percent = $('.essb-optinbooster-scroll').attr("data-scroll") || "";
 		optin_percent = parseFloat(optin_percent);
-		$(window).scroll(essb_booster_scroll);
+		$(window).on('scroll', essb_booster_scroll);
 	}
 
 	if ($('.essb-optinbooster-time')) {
@@ -132,11 +103,19 @@ jQuery(document).ready(function($){
 		optin_time = optin_time * 1000;
 		setTimeout(function(){ essb_optin_booster_show('time'); }, optin_time);
 	}
+	
+	if ($('.essb-optinbooster-manual').length) {
+		var selector = $('.essb-optinbooster-manual').data('manual-selector') || '';
+		if (selector != '' && $(selector).length) $(selector).on('click', function(e) {
+			e.preventDefault();
+			essb_manualform_show();
+		});
+	}
 
 
 	$('.essb-optinbooster-overlay').each(function() {
 
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
 
 			essb_optinbooster_close();
@@ -145,7 +124,7 @@ jQuery(document).ready(function($){
 
 	$('.essb-optinbooster-close').each(function() {
 
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
 
 			essb_optinbooster_close();

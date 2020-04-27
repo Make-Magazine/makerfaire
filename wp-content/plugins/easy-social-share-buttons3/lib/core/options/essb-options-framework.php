@@ -69,7 +69,6 @@ class ESSBOptionsFramework {
 		$shortcode = isset($option['shortcode']) ? $option['shortcode'] : '';
 		$alpha = isset($option['alpha']) ? $option['alpha'] : '';
 		
-		//$settings_group = "essb_options";
 		$settings_group = self::$default_settings_group;
 		$is_fans_counter = false;
 		if (strpos($id, 'essb3fans_') !== false) {
@@ -259,19 +258,16 @@ class ESSBOptionsFramework {
 			case "image_checkbox":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
 				self::draw_image_checkbox_field($id, $listOfValues, $settings_group, $option_value);
-				//self::draw_image_checkbox_field($id, $listOfValues, 'essb_options', array("checkbox_option2" => true));
 				self::draw_options_row_end();
 				break;
 			case "html_checkbox_buttons":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
 				self::draw_image_checkbox_field($id, $listOfValues, $settings_group, $option_value, array('html' => 'true', 'shortcode' => $shortcode, 'width' => $width, 'buttons' => 'true'));
-				//self::draw_image_checkbox_field($id, $listOfValues, 'essb_options', array("checkbox_option2" => true));
 				self::draw_options_row_end();
 				break;
 			case "image_radio":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
 				self::draw_image_radio_field($id, $listOfValues, $settings_group, $option_value);
-				//self::draw_image_radio_field($id, $listOfValues, 'essb_options', 'checkbox_option1');
 				self::draw_options_row_end();
 				break;
 			case "html_radio":
@@ -651,9 +647,6 @@ class ESSBOptionsFramework {
 								</div>';
 		}
 		
-		//printf('<tr class="%1$s table-border-bottom">', $row_class);
-		//printf('<td class="bold" valign="top">%1$s%3$s%2$s</td>', $title, $description, $recommended);
-		//echo '<td valign="top">';
 		if ($vertical == 'true') {
 			printf('<div class="essb-flex-grid-r %1$s table-border-bottom essb-flex-grid-nomargin">', $row_class);
 			printf('<div class="essb-flex-grid-c c12 bold">%1$s%3$s%2$s</div>', $title, $description, $recommended);
@@ -678,8 +671,6 @@ class ESSBOptionsFramework {
 		
 		if ($class != '') { $row_class .= ' '.$class; }
 		
-		//printf('<tr class="%1$s table-border-bottom">', $row_class);
-		//echo '<td valign="top" colspan="2">';
 		printf('<div class="essb-flex-grid-r %1$s table-border-bottom">', $row_class);
 		print '<div class="essb-flex-grid-c c12">';
 	}
@@ -729,7 +720,6 @@ class ESSBOptionsFramework {
 	
 	public static function draw_heading($title, $level = '1', $submenu_link = '') {
 		$css_class_heading = "";
-		//print $title.'|'.$level.'|'.$submenu_link;
 		switch ($level) {
 			case "1":
 				$css_class_heading = "sub";
@@ -761,10 +751,7 @@ class ESSBOptionsFramework {
 			self::$heading_navigations[] = array("id" => $navigation_id, "title" => $title, "level" => $level);
 			$submenu_link = sprintf('id="%1$s"', $navigation_id);
 		}
-		
-		/*printf( '<tr class="table-border-bottom" %1$s>', $submenu_link);
-		printf('<td colspan="2" class="%1$s"><div>%2$s</div></td>', $css_class_heading, $title);
-		echo '</tr>';*/
+
 		printf('<div class="essb-flex-grid-r" %1$s>', $submenu_link);
 		printf('<div class="essb-flex-grid-c c12 essb-heading %1$s"><div>%2$s</div></div>', $css_class_heading, $title);
 		print '</div>';
@@ -847,9 +834,7 @@ class ESSBOptionsFramework {
 	public static function draw_image_radio_field($field, $listOfValues, $settings_group = 'essb_options', $value = '', $element_options = array()) {		
 		$exist_user_value = false;
 		
-		//if ($value != '') {
-			$exist_user_value = true;
-		//}
+		$exist_user_value = true;
 		
 		if (!isset($element_options)) { $element_options = array(); }
 		$html_values = isset($element_options['html']) ? $element_options['html'] : '';
@@ -918,8 +903,6 @@ class ESSBOptionsFramework {
 	public static function draw_wpeditor_field($field, $settings_group = 'essb_options', $value = '') {
 		$value =  ( stripslashes($value));
 
-		
-		//printf('<div id="wpeditor_%1$s"></div>', $field);
 		printf('<textarea id="essb_options_%1$s" name="%2$s[%1$s]" class="input-element stretched essb-hidden-element" rows="5">%3$s</textarea>', $field, $settings_group, $value);
 		$editor_options = array('textarea_name' => $settings_group.'['.$field.']', 'editor_height' => '200');
 		wp_editor($value, sprintf('wpeditor_%1$s', $field), $editor_options);
@@ -942,27 +925,15 @@ class ESSBOptionsFramework {
     });
 				};
   </script>', $field, $mode);
-  		/*printf('<script>
-				function activate__%1$s() {
-				console.log("activating %1$s");
-    var editor_%1$s = CodeMirror.fromTextArea(document.getElementById("essb_options_%1$s"), {
-      lineNumbers: true,
-      mode: "%2$s",
-      lineWrapping: true,      
-      matchBrackets: true,
-      foldGutter: true,
-      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-    });
-				};
-  </script>', $field, $mode);*/
+
 	}
 	
 	
 	public static function draw_switch_field($field, $settings_group = 'essb_options', $value = '', $on_text = '', $off_text = '', $switch_submit = '') {
 		if ($settings_group == '') { $settings_group = "essb_options"; }
 		
-		if ($on_text == "") { $on_text = __('On', 'essb'); }
-		if ($off_text == "") { $off_text = __('Off', 'essb'); }
+		if ($on_text == "") { $on_text = esc_html__('On', 'essb'); }
+		if ($off_text == "") { $off_text = esc_html__('Off', 'essb'); }
 		
 		if ($value == "true") {
 			$on_switch = " selected";
@@ -1015,8 +986,8 @@ class ESSBOptionsFramework {
 	
 		echo '<div class="default-preview-image '.$field_id.'">
 			<div class="'.$field_id.'-placeholder image-placeholder"'.$css_background.'>&nbsp;</div>
-			<a href="#" class="essb-btn essb-btn-blue image-picker-button" id="essb_fileselect_' . $field_id . '" title="'.__('Select Image', 'essb').'"><i class="fa fa-picture-o"></i></a>
-			<a href="#" class="essb-btn essb-btn-red image-picker-clear-button" id="essb_clearselect_' . $field_id . '"  title="'.__('Remove Image', 'essb').'"><i class="fa fa-times"></i></a>
+			<a href="#" class="essb-btn essb-btn-blue image-picker-button" id="essb_fileselect_' . $field_id . '" title="'.esc_html__('Select Image', 'essb').'"><i class="fa fa-picture-o"></i></a>
+			<a href="#" class="essb-btn essb-btn-red image-picker-clear-button" id="essb_clearselect_' . $field_id . '"  title="'.esc_html__('Remove Image', 'essb').'"><i class="fa fa-times"></i></a>
 			</div>';
 		echo '<input id="essb_options_' . $field_id . '" type="text" name="' . $settings_group . '[' . $field_id . ']" value="' . $value . '" class="input-element small-stretched media-select '.$class.'" />';
 		?>
@@ -1124,7 +1095,7 @@ class ESSBOptionsFramework {
 		}
 		
 		echo '<input id="essb_options_' . $field_id . '" type="text" name="' . $settings_group . '[' . $field_id . ']" value="' . $value . '" class="input-element small-stretched '.$class.'" />';
-		echo '<a href="#" class="essb-btn essb-btn-blue" id="essb_fileselect_' . $field_id . '" style="margin-left: 5px; margin-top: -2px;">'.__('Select File', 'essb').'</a>';
+		echo '<a href="#" class="essb-btn essb-btn-blue" id="essb_fileselect_' . $field_id . '" style="margin-left: 5px; margin-top: -2px;">'.esc_html__('Select File', 'essb').'</a>';
 		?>
 		
 		<script type="text/javascript">

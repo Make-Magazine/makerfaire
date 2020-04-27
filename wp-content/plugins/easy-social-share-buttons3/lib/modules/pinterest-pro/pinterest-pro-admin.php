@@ -4,32 +4,75 @@ if (!class_exists('ESSBPinterestProAdmin')) {
 	class ESSBPinterestProAdmin {
 		
 		public function __construct() {
-			add_action ( 'admin_init', array ($this, 'tinymce_loader' ) );
-			add_action ( 'admin_enqueue_scripts', array ($this, 'tinymce_css' ), 10 );
-				
 			add_filter( 'attachment_fields_to_edit', array( $this, 'edit_custom_field'), 10, 2 );
 			add_filter( 'attachment_fields_to_save', array( $this, 'save_custom_field'), 10, 2 );
-			add_filter( 'image_send_to_editor', array( $this, 'add_pin_description'), 10, 8 );
+			add_filter( 'image_send_to_editor', array( $this, 'add_pin_description'), 10, 8 );		
+			
+			if (!essb_option_bool_value('gutenberg_disable_pinterenst')) {
+				add_action( 'enqueue_block_editor_assets', array($this, 'extend_block_example_enqueue_block_editor_assets' ));
+			}
+		}		
+		
+		
+		public function extend_block_example_enqueue_block_editor_assets() {
+			// Enqueue our script
+			wp_enqueue_script(
+					'essb-pinterest-images',
+					esc_url( plugins_url( '/assets/essb-pinterest-images.js', __FILE__ ) ),
+					array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' ),
+					'1.0.0',
+					true // Enqueue the script in the footer.
+			);
 		}
+		
 		
 		public function add_pin_description($html, $image_id, $caption, $title, $alignment, $url, $size, $alt) {
 			$custom_desc = get_post_meta( $image_id, 'essb_pin_description', true );
+			$pin_id = get_post_meta( $image_id, 'essb_pin_id', true);
+			$pin_nopin = get_post_meta ($image_id, 'essb_pin_nopin', true);
 			
-			if ($custom_desc == '') {
-				return $html;
+			$data = '';
+			
+			if ($custom_desc != '') {
+				$data .= ' data-pin-description="'.esc_attr($custom_desc).'" ';
 			}
-			else {
-				$data = ' data-pin-description="'.esc_attr($custom_desc).'" ';
+			if ($pin_id != '') {
+				$data .= ' data-pin-id="'.esc_attr($pin_id).'" ';
+			}
+			
+			if ($pin_nopin == 'true') {
+				$data .= ' data-pin-nopin="true" ';
+			}
+			
+			if ($data != '') {
 				$html = str_replace( "<img src", "<img{$data}src", $html );
-				return $html;
 			}
+			
+			return $html;
 		}
 		
 		public function edit_custom_field($form_fields, $post) {
 			$form_fields['essb_pin_description'] = array(
-					'label' => 'Pin Message for Easy Social Share Buttons',
+					'label' => 'Pinterest Text',
 					'input' => 'textarea',
 					'value' => get_post_meta( $post->ID, 'essb_pin_description', true )
+			);
+			
+			$form_fields['essb_pin_id'] = array(
+					'label' => 'Pinterest Repin ID',
+					'input' => 'text',
+					'value' => get_post_meta( $post->ID, 'essb_pin_id', true )
+			);
+			
+			$form_fields['essb_pin_nopin'] = array(
+					'label' => 'Disable Pinning',
+					'input' => 'html',
+					'html' => "
+<select name='attachments[{$post->ID}][essb_pin_nopin]' id='attachments[{$post->ID}][essb_pin_nopin]'>
+    <option value='false'>No</option>
+    <option value='true'>Yes</option>
+</select>",
+					'value' => (bool) get_post_meta( $post->ID, 'essb_pin_nopin', true )
 			);
 			
 			return $form_fields;
@@ -40,70 +83,15 @@ if (!class_exists('ESSBPinterestProAdmin')) {
 				update_post_meta( $post['ID'], 'essb_pin_description', $attachment['essb_pin_description'] );
 			}
 			
-			return $post;
-		}
-		
-		/**
-		 * load our CSS file
-		 *
-		 * @return [type] [description]
-		 */
-		public function tinymce_css() {
-				
-			wp_enqueue_style ( 'essb-pp-admin', plugins_url ( '/assets/essb-pp-admin.css', __FILE__ ), array (), null, 'all' );
-		}
-		
-		/**
-		 * load the TinyMCE button
-		 *
-		 * @return [type] [description]
-		 */
-		public function tinymce_loader() {
-			$can_use = true;
-				
-			if (essb_option_bool_value('limit_editor_fields') && function_exists('essb_editor_capability_can')) {
-				$can_use = essb_editor_capability_can();
+			if (isset($attachment) && isset($attachment['essb_pin_id'])) {
+				update_post_meta( $post['ID'], 'essb_pin_id', $attachment['essb_pin_id'] );
 			}
 			
-			if ($can_use) {
-				add_filter ( 'mce_external_plugins', array (__class__, 'essb_pp_tinymce_core' ) );
-				add_filter ( 'mce_buttons', array (__class__, 'essb_pp_tinymce_buttons' ) );
+			if (isset($attachment) && isset($attachment['essb_pin_nopin'])) {
+				update_post_meta( $post['ID'], 'essb_pin_nopin', $attachment['essb_pin_nopin'] );
 			}
-		}
-		
-		/**
-		 * loader for the required JS
-		 *
-		 * @param $plugin_array [type]
-		 *       	 [description]
-		 * @return [type] [description]
-		 */
-		public static function essb_pp_tinymce_core($plugin_array) {
-				
-			// add our JS file
-			$plugin_array ['essb_pp'] = plugins_url ( '/assets/tinymce-essb-pp.js', __FILE__ );
-			$plugin_array ['essb_ppg'] = plugins_url ( '/assets/tinymce-essb-ppg.js', __FILE__ );
-				
-			// return the array
-			return $plugin_array;
-		}
-		
-		/**
-		 * Add the button key for event link via JS
-		 *
-		 * @param $buttons [type]
-		 *       	 [description]
-		 * @return [type] [description]
-		 */
-		public static function essb_pp_tinymce_buttons($buttons) {
-				
-			// push our buttons to the end
-			array_push ( $buttons, 'essb_pp' );
-			array_push ( $buttons, 'essb_ppg' );
-				
-			// now add back the sink
-			// send them back
-			return $buttons;
+			
+			return $post;
 		}
 		
 	}

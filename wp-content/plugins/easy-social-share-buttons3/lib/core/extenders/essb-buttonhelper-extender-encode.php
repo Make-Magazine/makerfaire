@@ -1,4 +1,10 @@
 <?php
+/**
+ * Encode custom symbols only of the URL
+ * 
+ * @param unknown_type $share
+ * @return mixed
+ */
 function essb_buttonhelper_encode_url_sharing($share) {
 	$share['short_url_twitter'] = urlencode($share['short_url_twitter']);
 	$share['full_url'] = urlencode($share['full_url']);

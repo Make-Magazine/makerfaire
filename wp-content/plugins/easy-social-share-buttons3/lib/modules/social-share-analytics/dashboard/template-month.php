@@ -5,8 +5,6 @@ $month = isset ( $_GET ['essb_month'] ) ? $_GET ['essb_month'] : '';
 $date = isset ( $_GET ['date'] ) ? $_GET ['date'] : '';
 $position = isset($_GET['position']) ? $_GET['position'] : '';
 
-//ESSBSocialShareAnalyticsBackEnd::init_addional_settings ();
-
 // overall stats by social network
 if ($date != '' || $position != '') {
 	$overall_stats = ESSBSocialShareAnalyticsBackEnd::essb_stats_by_networks ( '', '', $date, $position );
@@ -51,7 +49,6 @@ if ($essb_date_from == '') {
 
 if ($mode == "1") {
 	$sqlObject = ESSBSocialShareAnalyticsBackEnd::getDateRangeRecords ( $essb_date_from, $essb_date_to );
-	// print_r($sqlObject);
 	$dataPeriodObject = ESSBSocialShareAnalyticsBackEnd::sqlDateRangeRecordConvert ( $essb_date_from, $essb_date_to, $sqlObject );
 	
 	$sqlMonthsData = ESSBSocialShareAnalyticsBackEnd::essb_stats_by_networks_by_months ();
@@ -60,7 +57,7 @@ if ($mode == "1") {
 ?>
 
 
-<div class="stat-welcome-graph" style="magin-top: 30px;">
+<div class="stat-welcome-graph">
 	<div class="dashboard-head">
 		<h4>Networks</h4>
 		<p>View how the positions on site perform. Usage of many social networks may lead to lower shares due to paradox of choice.</p>
@@ -97,11 +94,11 @@ if ($mode == "1") {
 				$percent = round ( $percent );
 				
 				echo '<div class="position-row">';
-				echo '<div class="name" style="display: inline-block; width: 20%;"><i class="network-icon essb_icon_'.$k.'"></i>'.$v['name'].'</div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
-				echo '<div class="percent" style="display: inline-block; width: 8%;">'.$print_percent.'%'.'</div>';
-				echo '<div class="graph" style="display: inline-block; width: 49%;"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
+				echo '<div class="name"><i class="network-icon essb_icon_'.$k.'"></i>'.$v['name'].'</div>';
+				echo '<div class="value">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
+				echo '<div class="value"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
+				echo '<div class="percent">'.$print_percent.'%'.'</div>';
+				echo '<div class="graph"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
 				echo '</div>';
 			}
 		}
@@ -112,7 +109,7 @@ if ($mode == "1") {
 	
 </div>
 
-<div class="stat-welcome-graph" style="magin-top: 30px;">
+<div class="stat-welcome-graph">
 	<div class="dashboard-head">
 		<h4>Positions</h4>
 		<p>View how the positions on site perform. Usage of many positions may lead to lower shares due to paradox of choice.</p>
@@ -147,11 +144,11 @@ if ($mode == "1") {
 				$percent = round ( $percent );
 				
 				echo '<div class="position-row">';
-				echo '<div class="name" style="display: inline-block; width: 20%;"><a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=position&position='.$k.'">'.ESSBSocialShareAnalyticsBackEnd::position_name($k).'</a></div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
-				echo '<div class="percent" style="display: inline-block; width: 8%;">'.$print_percent.'%'.'</div>';
-				echo '<div class="graph" style="display: inline-block; width: 49%;"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
+				echo '<div class="name"><a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=position&position='.$k.'">'.ESSBSocialShareAnalyticsBackEnd::position_name($k).'</a></div>';
+				echo '<div class="value">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
+				echo '<div class="value"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
+				echo '<div class="percent">'.$print_percent.'%'.'</div>';
+				echo '<div class="graph"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
 				echo '</div>';
 			}
 		}
@@ -163,7 +160,7 @@ if ($mode == "1") {
 </div>
 
 <?php if ($mode == 'month'): ?>
-<div class="stat-welcome-graph" style="magin-top: 30px;">
+<div class="stat-welcome-graph">
 	<div class="dashboard-head">
 		<h4>Day by Day Report for <?php echo $month; ?></h4>
 		<p></p>
@@ -184,7 +181,7 @@ if ($mode == "1") {
 <?php endif; ?>
 
 <?php if ($mode == 'date'): ?>
-<div class="stat-welcome-graph" style="magin-top: 30px;">
+<div class="stat-welcome-graph">
 	<div class="dashboard-head">
 		<h4>Content Report for Date <?php echo $date; ?></h4>
 		<p></p>

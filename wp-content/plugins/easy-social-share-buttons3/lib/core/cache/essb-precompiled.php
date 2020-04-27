@@ -186,7 +186,6 @@ class ESSBPrecompiledResources {
 				unlink ( $file );
 			}
 		}
-		//rmdir ( $directory );
 	}
 	
 	public static function get_asset_relative_path( $base_url, $item_url ) {

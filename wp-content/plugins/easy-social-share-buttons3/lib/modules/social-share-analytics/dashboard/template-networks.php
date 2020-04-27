@@ -109,7 +109,7 @@ if ($calculated_total != 0) {
     <h4>Best Position: <strong><?php echo ESSBSocialShareAnalyticsBackEnd::position_name ($best_position_key); ?></strong></h4>
 
     <div class="bold-value"><?php echo ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($best_position_value); ?>
-      <a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=positions" class="essb-btn essb-btn-green1" style="float: right; padding: 6px 12px;">View All</a>
+      <a href="<?php echo esc_url(admin_url('admin.php?page=essb_redirect_analytics&tab=analytics&mode=positions'));?>" class="essb-btn essb-btn-green1 right-btn">View All</a>
     </div>
 
     <div class="footer">
@@ -127,7 +127,7 @@ if ($calculated_total != 0) {
     <h4>Best Social Network: <strong><?php echo $best_network_key; ?></strong></h4>
 
     <div class="bold-value"><?php echo ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($best_network_value); ?>
-	<a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=networks" class="essb-btn essb-btn-green1" style="float: right; padding: 6px 12px;">View All</a>
+		<a href="<?php echo esc_url( admin_url('admin.php?page=essb_redirect_analytics&tab=analytics&mode=networks') ); ?>" class="essb-btn essb-btn-green1 right-btn">View All</a>
     </div>
 
     <div class="footer">
@@ -181,11 +181,11 @@ if ($calculated_total != 0) {
 				$percent = round ( $percent );
 				
 				echo '<div class="position-row">';
-				echo '<div class="name" style="display: inline-block; width: 20%;"><a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=network&network='.$k.'"><i class="network-icon essb_icon_'.$k.'"></i>'.$v['name'].'</a></div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
-				echo '<div class="percent" style="display: inline-block; width: 8%;">'.$print_percent.'%'.'</div>';
-				echo '<div class="graph" style="display: inline-block; width: 49%;"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
+				echo '<div class="name"><a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=network&network='.$k.'"><i class="network-icon essb_icon_'.$k.'"></i>'.$v['name'].'</a></div>';
+				echo '<div class="value">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
+				echo '<div class="value"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
+				echo '<div class="percent">'.$print_percent.'%'.'</div>';
+				echo '<div class="graph"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
 				echo '</div>';
 			}
 		}

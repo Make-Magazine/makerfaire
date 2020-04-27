@@ -1,11 +1,13 @@
 <?php
-
-function init_wp_widget_essb_followers_counter() {
+/**
+ * Register the plugin social followers counter widgets
+ */
+function essb_followers_counter_register_plugin_widgets() {
 	register_widget( 'ESSBSocialFollowersCounterWidget' );
 	register_widget( 'ESSBSocialFollowersCounterWidgetLayout' );
 }
 
-add_action( 'widgets_init', 'init_wp_widget_essb_followers_counter' );
+add_action( 'widgets_init', 'essb_followers_counter_register_plugin_widgets' );
 
 /**
  * Social Followers Widget
@@ -19,8 +21,8 @@ class ESSBSocialFollowersCounterWidget extends WP_Widget {
 
 	public function __construct() {
 
-		$options = array( 'description' => __( 'Social Followers Counter' , 'essb' ) );
-		parent::__construct( false , __( 'Easy Social Share Buttons: Followers Counter' , 'essb' ) , $options );
+		$options = array( 'description' => esc_html__( 'Social Followers Counter' , 'essb' ) );
+		parent::__construct( false , esc_html__( 'Easy Social Share Buttons: Followers Counter' , 'essb' ) , $options );
 	}
 	
 	public function form( $instance ) {
@@ -96,16 +98,16 @@ class ESSBSocialFollowersCounterWidget extends WP_Widget {
 		$output = "";
 		
 		$output .= '<p>';
-		$output .= '<label for="'.$this->get_field_id($field).'">'.$title.'</label>';
-		$output .= '<select name="'.$this->get_field_name( $field ).'" id="'.$this->get_field_id( $field ).'" class="widefat">';
+		$output .= '<label for="'.esc_attr($this->get_field_id($field)).'">'.$title.'</label>';
+		$output .= '<select name="'.esc_attr($this->get_field_name( $field )).'" id="'.esc_attr($this->get_field_id( $field )).'" class="widefat">';
 		
 		foreach ($list_of_values as $key => $text) {
-			$output .= '<option value="'.$key.'" '.($key == $value ? 'selected="selected"' : '').'>'.$text.'</option>';
+			$output .= '<option value="'.esc_attr($key).'" '.($key == $value ? 'selected="selected"' : '').'>'.esc_attr($text).'</option>';
 		}
 		
 		$output .= '</select>';
 		if (!empty($description)) {
-			$output .= '<span style="font-weight: 300; font-size: 0.9em"><br /><em>'. __( $description , 'essb' ).'</em></span>';
+			$output .= '<br /><em>'. esc_html__( $description , 'essb' ).'</em>';
 		}
 		$output .= '</p>';
 		
@@ -113,17 +115,17 @@ class ESSBSocialFollowersCounterWidget extends WP_Widget {
 	}
 	
 	private function generate_separator($title) {
-		echo '<h5 style="background-color: #efefef; padding: 6px 6px;">'.$title.'</h5>';
+		echo '<h5 class="essb-widget-title-separator">'.$title.'</h5>';
 	}
 	
 	private function generate_textbox_field($field, $title, $description, $value) {
 		$output = "";
 		
 		$output .= '<p>';
-		$output .= '<label for="'.$this->get_field_id($field).'">'.$title.'</label>';
-		$output .= '<input type="text" name="'.$this->get_field_name( $field ).'" id="'.$this->get_field_id( $field ).'" class="widefat" value="'.$value.'" />';
+		$output .= '<label for="'.esc_attr($this->get_field_id($field)).'">'.$title.'</label>';
+		$output .= '<input type="text" name="'.esc_attr($this->get_field_name( $field )).'" id="'.esc_attr($this->get_field_id( $field )).'" class="widefat" value="'.esc_attr($value).'" />';
 		if (!empty($description)) {
-			$output .= '<span style="font-weight: 300; font-size: 0.9em"><br /><em>'. __( $description , 'essb' ).'</em></span>';
+			$output .= '<br /><em>'. esc_html__( $description , 'essb' ).'</em>';
 		}
 		$output .= '</p>';
 		
@@ -134,10 +136,10 @@ class ESSBSocialFollowersCounterWidget extends WP_Widget {
 		$output = "";
 		
 		$output .= '<p>';
-		$output .= '<label for="'.$this->get_field_id($field).'">'.$title.'</label>&nbsp;';
-		$output .= '<input type="checkbox" name="'.$this->get_field_name( $field ).'" id="'.$this->get_field_id( $field ).'" class="widefat" value="1" '.($value == 1 ? ' checked="checked"' : '').' />';
+		$output .= '<label for="'.esc_attr($this->get_field_id($field)).'">'.$title.'</label>&nbsp;';
+		$output .= '<input type="checkbox" name="'.esc_attr($this->get_field_name( $field )).'" id="'.esc_attr($this->get_field_id( $field )).'" class="widefat" value="1" '.($value == 1 ? ' checked="checked"' : '').' />';
 		if (!empty($description)) {
-			$output .= '<span style="font-weight: 300; font-size: 0.9em"><br /><em>'. __( $description , 'essb' ).'</em></span>';
+			$output .= '<br /><em>'. esc_html__( $description , 'essb' ).'</em>';
 		}
 		$output .= '</p>';
 		
@@ -158,8 +160,8 @@ class ESSBSocialFollowersCounterWidgetLayout extends WP_Widget {
 
 	public function __construct() {
 
-		$options = array( 'description' => __( 'Display Custom Layout Builder in Social Followers' , 'essb' ) );
-		parent::__construct( false , __( 'Easy Social Share Buttons: Followers Counter (Custom Layout)' , 'essb' ) , $options );
+		$options = array( 'description' => esc_html__( 'Display Custom Layout Builder in Social Followers' , 'essb' ) );
+		parent::__construct( false , esc_html__( 'Easy Social Share Buttons: Followers Counter (Custom Layout)' , 'essb' ) , $options );
 	}
 
 	public function form( $instance ) {
@@ -240,53 +242,53 @@ class ESSBSocialFollowersCounterWidgetLayout extends WP_Widget {
 
 	private function generate_select_field($field, $title, $description, $value, $list_of_values) {
 		$output = "";
-
+		
 		$output .= '<p>';
-		$output .= '<label for="'.$this->get_field_id($field).'">'.$title.'</label>';
-		$output .= '<select name="'.$this->get_field_name( $field ).'" id="'.$this->get_field_id( $field ).'" class="widefat">';
-
+		$output .= '<label for="'.esc_attr($this->get_field_id($field)).'">'.$title.'</label>';
+		$output .= '<select name="'.esc_attr($this->get_field_name( $field )).'" id="'.esc_attr($this->get_field_id( $field )).'" class="widefat">';
+		
 		foreach ($list_of_values as $key => $text) {
-			$output .= '<option value="'.$key.'" '.($key == $value ? 'selected="selected"' : '').'>'.$text.'</option>';
+			$output .= '<option value="'.esc_attr($key).'" '.($key == $value ? 'selected="selected"' : '').'>'.esc_attr($text).'</option>';
 		}
-
+		
 		$output .= '</select>';
 		if (!empty($description)) {
-			$output .= '<span style="font-weight: 300; font-size: 0.9em"><br /><em>'. __( $description , 'essb' ).'</em></span>';
+			$output .= '<br /><em>'. esc_html__( $description , 'essb' ).'</em>';
 		}
 		$output .= '</p>';
-
+		
 		echo $output;
 	}
-
+	
 	private function generate_separator($title) {
-		echo '<h5 style="background-color: #efefef; padding: 6px 6px;">'.$title.'</h5>';
+		echo '<h5 class="essb-widget-title-separator">'.$title.'</h5>';
 	}
-
+	
 	private function generate_textbox_field($field, $title, $description, $value) {
 		$output = "";
-
+		
 		$output .= '<p>';
-		$output .= '<label for="'.$this->get_field_id($field).'">'.$title.'</label>';
-		$output .= '<input type="text" name="'.$this->get_field_name( $field ).'" id="'.$this->get_field_id( $field ).'" class="widefat" value="'.$value.'" />';
+		$output .= '<label for="'.esc_attr($this->get_field_id($field)).'">'.$title.'</label>';
+		$output .= '<input type="text" name="'.esc_attr($this->get_field_name( $field )).'" id="'.esc_attr($this->get_field_id( $field )).'" class="widefat" value="'.esc_attr($value).'" />';
 		if (!empty($description)) {
-			$output .= '<span style="font-weight: 300; font-size: 0.9em"><br /><em>'. __( $description , 'essb' ).'</em></span>';
+			$output .= '<br /><em>'. esc_html__( $description , 'essb' ).'</em>';
 		}
 		$output .= '</p>';
-
+		
 		echo $output;
 	}
 
 	private function generate_checkbox_field($field, $title, $description, $value) {
 		$output = "";
-
+		
 		$output .= '<p>';
-		$output .= '<label for="'.$this->get_field_id($field).'">'.$title.'</label>&nbsp;';
-		$output .= '<input type="checkbox" name="'.$this->get_field_name( $field ).'" id="'.$this->get_field_id( $field ).'" class="widefat" value="1" '.($value == 1 ? ' checked="checked"' : '').' />';
+		$output .= '<label for="'.esc_attr($this->get_field_id($field)).'">'.$title.'</label>&nbsp;';
+		$output .= '<input type="checkbox" name="'.esc_attr($this->get_field_name( $field )).'" id="'.esc_attr($this->get_field_id( $field )).'" class="widefat" value="1" '.($value == 1 ? ' checked="checked"' : '').' />';
 		if (!empty($description)) {
-			$output .= '<span style="font-weight: 300; font-size: 0.9em"><br /><em>'. __( $description , 'essb' ).'</em></span>';
+			$output .= '<br /><em>'. esc_html__( $description , 'essb' ).'</em>';
 		}
 		$output .= '</p>';
-
+		
 		echo $output;
 	}
 }

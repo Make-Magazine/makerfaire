@@ -15,9 +15,9 @@ function essb_stylemanager_clear_positions($options) {
 
 function essb_stylemanager_dropdown_positions($values) {
 	$r = array();
-	$r['content'] = __('Content Positions', 'essb');
-	$r['horizonal'] = __('Horizontal Layout', 'essb');
-	$r['vertical'] = __('Vertical Layout', 'essb');
+	$r['content'] = esc_html__('Content Positions', 'essb');
+	$r['horizonal'] = esc_html__('Horizontal Layout', 'essb');
+	$r['vertical'] = esc_html__('Vertical Layout', 'essb');
 
 	foreach ($values as $key => $data) {
 		$r[$key] = $data['label'];
@@ -36,7 +36,7 @@ function essb_stylemanager_dropdown_positions($values) {
 function essb_stylemanager_get_all_positions() {
 	$r = array();
 
-	$r['content'] = __('Content Positions', 'essb');
+	$r['content'] = esc_html__('Content Positions', 'essb');
 
 	$positions_source = essb_stylemanager_clear_positions(essb5_available_content_positions(true));
 	foreach ($positions_source as $key => $data) {
@@ -85,16 +85,22 @@ function essb_stylemanager_inject_site($values) {
 	return $r;
 }
 
-$opts_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 'essb_options';
-wp_nonce_field( 'essb_styleoptions_setup', 'essb_styleoptions_token' );
-?>
+function essb_stylemanager_generate_scripts() {
+	$opts_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 'essb_options';
+	
+	$code = '
+	var essb_styles_ajaxurl = "'. esc_url(admin_url ('admin-ajax.php')).'",
+		essb_styles_reloadurl = "'.esc_url(admin_url ('admin.php?page='.esc_attr($opts_page))).'",
+		essb_styles_positions_source = '.json_encode(essb_stylemanager_get_all_positions()).',
+		essb_styles_templates_source = '.json_encode(essb_stylemanager_get_all_tempates()).';';
+	
+	return $code;
+}
 
-<script type="text/javascript">
-var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>",
-	essb_styles_reloadurl = "<?php echo esc_url(admin_url ('admin.php?page='.$opts_page)); ?>",
-	essb_styles_positions_source = <?php echo json_encode(essb_stylemanager_get_all_positions()); ?>,
-	essb_styles_templates_source = <?php echo json_encode(essb_stylemanager_get_all_tempates()); ?>;
-</script>
+wp_nonce_field( 'essb_styleoptions_setup', 'essb_styleoptions_token' );
+wp_add_inline_script('essb-admin5', essb_stylemanager_generate_scripts());
+
+?>
 
 <!-- notifications -->
 <div class="styles-modal"></div>
@@ -152,7 +158,7 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 						<?php
 						$positions = essb_stylemanager_clear_positions(essb_stylemanager_dropdown_positions(essb5_available_button_positions(true)));
 						foreach ($positions as $key => $value) {
-							echo '<option value="'.$key.'">'.$value.'</option>';
+							echo '<option value="'.esc_attr($key).'">'.$value.'</option>';
 						}
 
 						?>
@@ -194,7 +200,7 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 						<?php
 						$positions = essb_stylemanager_clear_positions(essb_stylemanager_dropdown_positions(essb5_available_button_positions(true)));
 						foreach ($positions as $key => $value) {
-							echo '<option value="'.$key.'">'.$value.'</option>';
+							echo '<option value="'.esc_attr($key).'">'.$value.'</option>';
 						}
 
 						?>
@@ -219,19 +225,19 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 
 				// column 1
 				ESSBOptionsFramework::draw_structure_section_start('c6');
-				ESSBOptionsFramework::draw_title(__('Template', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('Template', 'essb'), '', 'inner-row');
 				essb_component_template_select('managestyle', 'manage_style');
 
-				ESSBOptionsFramework::draw_title(__('Button Style', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('Button Style', 'essb'), '', 'inner-row');
 				essb_component_buttonstyle_select('managestyle', 'manage_style');
 
-				ESSBOptionsFramework::draw_title(__('Button Align', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('Button Align', 'essb'), '', 'inner-row');
 				$select_values = array('' => array('title' => 'Left', 'content' => '<i class="ti-align-left"></i>'),
 						'center' => array('title' => 'Center', 'content' => '<i class="ti-align-center"></i>'),
 						'right' => array('title' => 'Right', 'content' => '<i class="ti-align-right"></i>'));
 				ESSBOptionsFramework::draw_toggle_field('managestyle_button_pos', $select_values, 'manage_style');
 
-				ESSBOptionsFramework::draw_title(__('Button Size', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('Button Size', 'essb'), '', 'inner-row');
 				$select_values = array('' => array('title' => 'Default', 'content' => 'Default', 'isText'=>true),
 						'xs' => array('title' => 'Extra Small', 'content' => 'XS', 'isText'=>true),
 						's' => array('title' => 'Small', 'content' => 'S', 'isText'=>true),
@@ -242,10 +248,10 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 				);
 				ESSBOptionsFramework::draw_toggle_field('managestyle_button_size', $select_values, 'manage_style');
 
-				ESSBOptionsFramework::draw_title(__('Animations', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('Animations', 'essb'), '', 'inner-row');
 				essb_component_animation_select('managestyle', 'manage_style');
 
-				ESSBOptionsFramework::draw_options_row_start(__('Without Space Between Share Buttons', 'essb'), '', '', '8');
+				ESSBOptionsFramework::draw_options_row_start(esc_html__('Without Space Between Share Buttons', 'essb'), '', '', '8');
 				ESSBOptionsFramework::draw_switch_field('managestyle_nospace', 'manage_style');
 				ESSBOptionsFramework::draw_options_row_end();
 
@@ -254,17 +260,17 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 				// column 2
 				ESSBOptionsFramework::draw_structure_section_start('c6');
 
-				ESSBOptionsFramework::draw_options_row_start(__('Show Share Counter', 'essb'), '', '', '8');
+				ESSBOptionsFramework::draw_options_row_start(esc_html__('Show Share Counter', 'essb'), '', '', '8');
 				ESSBOptionsFramework::draw_switch_field('managestyle_show_counter', 'manage_style');
 				ESSBOptionsFramework::draw_options_row_end();
 
-				ESSBOptionsFramework::draw_title(__('Individual Button Share Counter Position', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('Individual Button Share Counter Position', 'essb'), '', 'inner-row');
 				essb_component_counterpos_select('managestyle', 'manage_style');
 
-				ESSBOptionsFramework::draw_title(__('Total Share Counter Position', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('Total Share Counter Position', 'essb'), '', 'inner-row');
 				essb_component_totalcounterpos_select('managestyle', 'manage_style');
 
-				ESSBOptionsFramework::draw_title(__('Button Width', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('Button Width', 'essb'), '', 'inner-row');
 				$select_values = array('' => array('title' => 'Automatic Width', 'content' => 'AUTO', 'isText'=>true),
 					'fixed' => array('title' => 'Fixed Width', 'content' => 'Fixed', 'isText'=>true),
 					'full' => array('title' => 'Full Width', 'content' => 'Full', 'isText'=>true),
@@ -275,44 +281,44 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 				//-- width controlers --
 				// fixed
 				ESSBOptionsFramework::draw_holder_start(array('class' => 'managestyle-essb-fixed-width essb-hidden-open', 'user_id' => 'managestyle-essb-fixed-width'));
-				ESSBOptionsFramework::draw_settings_panel_start(__('Custom Button Width', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Custom Button Width', 'essb'));
 				ESSBOptionsFramework::draw_input_field('managestyle_fixed_width_value', false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
-				ESSBOptionsFramework::draw_settings_panel_start(__('Alignment', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Alignment', 'essb'));
 				ESSBOptionsFramework::draw_select_field('managestyle_fixed_width_align', array("" => "Left", "center" => "Center", "right" => "Right"), false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 				ESSBOptionsFramework::draw_holder_end();
 
 				// full
 				ESSBOptionsFramework::draw_holder_start(array('class' => 'managestyle-essb-full-width essb-hidden-open', 'user_id' => 'managestyle-essb-full-width'));
-				ESSBOptionsFramework::draw_settings_panel_start(__('Button Width Correction', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Button Width Correction', 'essb'));
 				ESSBOptionsFramework::draw_input_field('managestyle_fullwidth_share_buttons_correction', false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
-				ESSBOptionsFramework::draw_settings_panel_start(__('Alignment', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Alignment', 'essb'));
 				ESSBOptionsFramework::draw_select_field('managestyle_fullwidth_align', array("" => "Left", "center" => "Center", "right" => "Right"), false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 				ESSBOptionsFramework::draw_holder_end();
 
 				// columns
 				ESSBOptionsFramework::draw_holder_start(array('class' => 'managestyle-essb-column-width essb-hidden-open', 'user_id' => 'managestyle-essb-column-width'));
-				ESSBOptionsFramework::draw_settings_panel_start(__('Columns', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Columns', 'essb'));
 				$listOfOptions = array("1" => "1", "2" => "2", "3" => "3", "4" => "4", "5" => "5", "6" => "6", "7" => "7", "8" => "8", "9" => "9", "10" => "10");
 				ESSBOptionsFramework::draw_select_field('managestyle_fullwidth_share_buttons_columns', $listOfOptions, false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
-				ESSBOptionsFramework::draw_settings_panel_start(__('Alignment', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Alignment', 'essb'));
 				ESSBOptionsFramework::draw_select_field('managestyle_fullwidth_share_buttons_columns_align', array("" => "Left", "center" => "Center", "right" => "Right"), false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 				ESSBOptionsFramework::draw_holder_end();
 
 				// flex
 				ESSBOptionsFramework::draw_holder_start(array('class' => 'managestyle-essb-flex-width essb-hidden-open', 'user_id' => 'managestyle-essb-flex-width'));
-				ESSBOptionsFramework::draw_settings_panel_start(__('Preserve Space For Total Counter Area (%)', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Preserve Space For Total Counter Area (%)', 'essb'));
 				ESSBOptionsFramework::draw_input_field('managestyle_flex_width_value', false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
-				ESSBOptionsFramework::draw_settings_panel_start(__('Assign a Specific Button Width (%)', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Assign a Specific Button Width (%)', 'essb'));
 				ESSBOptionsFramework::draw_input_field('managestyle_flex_button_value', false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
-				ESSBOptionsFramework::draw_settings_panel_start(__('Alignment', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Alignment', 'essb'));
 				ESSBOptionsFramework::draw_select_field('managestyle_flex_width_align', array("" => "Left", "center" => "Center", "right" => "Right"), false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 				ESSBOptionsFramework::draw_holder_end();
@@ -377,24 +383,24 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 			<div class="inner-content-title">Additional Network Options</div>
 			<div class="inner-content">
 				<?php
-				ESSBOptionsFramework::draw_title(__('More Button', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('More Button', 'essb'), '', 'inner-row');
 				ESSBOptionsFramework::draw_holder_start();
 
-				ESSBOptionsFramework::draw_settings_panel_start(__('More Button Action', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('More Button Action', 'essb'));
 				ESSBOptionsFramework::draw_select_field('managestyle_more_button_func', essb_available_more_button_commands(), false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 
 				$select_values = array('plus' => array('title' => 'Plus Icon', 'content' => '<i class="essb_icon_more"></i>'),
 						'dots' => array('title' => 'Dots Icon', 'content' => '<i class="essb_icon_more_dots"></i>'));
-				ESSBOptionsFramework::draw_settings_panel_start(__('More Button Icon', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('More Button Icon', 'essb'));
 				ESSBOptionsFramework::draw_toggle_field('managestyle_more_button_icon', $select_values, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 				ESSBOptionsFramework::draw_holder_end();
 
 
-				ESSBOptionsFramework::draw_title(__('Share Button', 'essb'), '', 'inner-row');
+				ESSBOptionsFramework::draw_title(esc_html__('Share Button', 'essb'), '', 'inner-row');
 				ESSBOptionsFramework::draw_holder_start();
-				ESSBOptionsFramework::draw_settings_panel_start(__('Share Button Action', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Share Button Action', 'essb'));
 				ESSBOptionsFramework::draw_select_field('managestyle_share_button_func', essb_available_more_button_commands(), false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 
@@ -406,17 +412,17 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 						'share-tiny' => array('title' => '', 'content' => '<i class="essb_icon_share-tiny"></i>'),
 						'share-outline' => array('title' => '', 'content' => '<i class="essb_icon_share-outline"></i>')
 				);
-				ESSBOptionsFramework::draw_settings_panel_start(__('Share Button Icon', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Share Button Icon', 'essb'));
 				ESSBOptionsFramework::draw_toggle_field('managestyle_share_button_icon', $select_values, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 
 				$more_options = array ("" => "Default from settings (like other share buttons)", "icon" => "Icon only", "button" => "Button", "text" => "Text only" );
-				ESSBOptionsFramework::draw_settings_panel_start(__('Share Button Style', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Share Button Style', 'essb'));
 				ESSBOptionsFramework::draw_select_field('managestyle_share_button_style', $more_options, false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 
 				$share_counter_pos = array("hidden" => "No counter", "inside" => "Inside button without text", "insidename" => "Inside button after text", "insidebeforename" => "Inside button before text", "topn" => "Top", "bottom" => "Bottom");
-				ESSBOptionsFramework::draw_settings_panel_start(__('Share Button Counter', 'essb'));
+				ESSBOptionsFramework::draw_settings_panel_start(esc_html__('Share Button Counter', 'essb'));
 				ESSBOptionsFramework::draw_select_field('managestyle_share_button_counter', $share_counter_pos, false, 'manage_style');
 				ESSBOptionsFramework::draw_settings_panel_end('', '');
 
@@ -427,15 +433,15 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 			<div class="inner-content-title">Additional Code Before/After Share Buttons</div>
 			<div class="inner-content">
 				<?php
-				ESSBOptionsFramework::draw_options_row_start(__('Use Custom Code', 'essb'), '', '', '8');
+				ESSBOptionsFramework::draw_options_row_start(esc_html__('Use Custom Code', 'essb'), '', '', '8');
 				ESSBOptionsFramework::draw_switch_field('managestyle_code', 'manage_style');
 				ESSBOptionsFramework::draw_options_row_end();
 
-				ESSBOptionsFramework::draw_options_row_start(__('Custon Code Above', 'essb'), '', '', '');
+				ESSBOptionsFramework::draw_options_row_start(esc_html__('Custon Code Above', 'essb'), '', '', '');
 				ESSBOptionsFramework::draw_textarea_field('managestyle_code_before', 'manage_style');
 				ESSBOptionsFramework::draw_options_row_end();
 
-				ESSBOptionsFramework::draw_options_row_start(__('Custon Code Below', 'essb'), '', '', '');
+				ESSBOptionsFramework::draw_options_row_start(esc_html__('Custon Code Below', 'essb'), '', '', '');
 				ESSBOptionsFramework::draw_textarea_field('managestyle_code_after', 'manage_style');
 				ESSBOptionsFramework::draw_options_row_end();
 				?>
@@ -511,7 +517,7 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 					</div>
 				</div>
 				<div class="hint">
-					<?php _e('The style preview may be different from actual preview on site. For a best result you can apply this on a location and test the front-end display of site.', 'essb'); ?>
+					<?php esc_html_e('The style preview may be different from actual preview on site. For a best result you can apply this on a location and test the front-end display of site.', 'essb'); ?>
 				</div>
 				<?php
 				$position = 'managepreview';
@@ -563,7 +569,7 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 			<div class="float-right">
 				<a href="#" class="manage-back style-btn inline"><i class="ti-close"></i><span>Back</span></a>
 			</div>
-			<div class="title-func" id="style-preview-title"><?php _e('Export Style', 'essb'); ?></div>
+			<div class="title-func" id="style-preview-title"><?php esc_html_e('Export Style', 'essb'); ?></div>
 
 			<div class="inner-content-title">Style Content</div>
 			<div class="inner-content">
@@ -579,12 +585,12 @@ var essb_styles_ajaxurl = "<?php echo esc_url(admin_url ('admin-ajax.php')); ?>"
 				<a href="#" class="manage-import-style style-btn inline"><i class="ti-check"></i><span>Import Style</span></a>
 				<a href="#" class="manage-back style-btn inline"><i class="ti-close"></i><span>Back</span></a>
 			</div>
-			<div class="title-func" id="style-preview-title"><?php _e('Import Style', 'essb'); ?></div>
+			<div class="title-func" id="style-preview-title"><?php esc_html_e('Import Style', 'essb'); ?></div>
 
 			<div class="inner-content-title">Style Content</div>
 			<div class="inner-content">
 				<div class="inner-content-title">Paste Generated Code for Style to Import in The Library</div>
-				<textarea id="import-style-content" style="width:100%; height: 350px;"></textarea>
+				<textarea id="import-style-content"></textarea>
 		</div>
 		</div>
 		<!-- end importing style -->

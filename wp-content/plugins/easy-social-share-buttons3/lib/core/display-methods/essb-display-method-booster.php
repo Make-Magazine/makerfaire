@@ -41,7 +41,7 @@ if (!function_exists('essb5_generate_booster')) {
 		}
 		
 		if ($booster_manualclose_text == '') {
-			$booster_manualclose_text = __('I am not interested. Take me back to content', 'essb');
+			$booster_manualclose_text = esc_html__('I am not interested. Take me back to content', 'essb');
 		}
 		
 		$custom_styles = "";
@@ -92,7 +92,7 @@ if (!function_exists('essb5_generate_booster')) {
 		}
 		
 		if ($booster_autoclose != '') {
-			$output .= '<div class="essb-sharebooster-autoclose">'.__('This window will automatically close in ', 'essb').$booster_autoclose.__(' seconds', 'essb').'</div>';
+			$output .= '<div class="essb-sharebooster-autoclose">'.esc_html__('This window will automatically close in ', 'essb').$booster_autoclose.esc_html__(' seconds', 'essb').'</div>';
 		}
 		
 		$output .= '</div>';

@@ -1,9 +1,16 @@
 <?php
+/**
+ * Manage plugin activations
+ * 
+ * @author appscreo
+ * @since 4.2
+ * @package EasySocialShareButtons
+ */
 
 class ESSBActivationManager {
 	private static $option = 'essb4-activation';
-	private static $api = 'https://api.socialsharingplugin.com/'; //"http://localhost:8081/work/activation/";
-	private static $manager_url = 'http://activation.socialsharingplugin.com/manage/'; //"http://localhost:8081/work/activation_front/manage/";
+	private static $api = 'https://api.socialsharingplugin.com/'; 
+	private static $manager_url = 'http://activation.socialsharingplugin.com/manage/'; 
 	private static $activate_url = 'https://activation.socialsharingplugin.com/';
 	private static $option_data;
 	private static $option_latest_version = 'essb4-latest-version';
@@ -11,7 +18,6 @@ class ESSBActivationManager {
 	private static $benefit_url = "https://socialsharingplugin.com/direct-customer-benefits/";
 	
 	private static function load() {
-		//if (!self::$option_data) {
 		$activation_data = get_option(self::$option);
 			
 		if (!$activation_data) {
@@ -19,7 +25,6 @@ class ESSBActivationManager {
 		}
 			
 		self::$option_data = $activation_data;
-		//}
 		
 		self::$latest_version = get_option(self::$option_latest_version);
 		if (!self::$latest_version) {
@@ -227,11 +232,11 @@ class ESSBActivationManager {
 add_action ( 'wp_ajax_essb_process_activation', 'essb_action_process_activation' );
 
 function essb_action_process_activation() {
-	$purchase_code = isset($_REQUEST['purchase_code']) ? $_REQUEST['purchase_code'] : '';
-	$activation_code = isset($_REQUEST['activation_code']) ? $_REQUEST['activation_code'] : '';
-	$state = isset($_REQUEST['activation_state']) ? $_REQUEST['activation_state'] : '';
-	$domain = isset($_REQUEST['domain']) ? $_REQUEST['domain'] : '';
-	$version = isset($_REQUEST['version']) ? $_REQUEST['version'] : '';
+	$purchase_code = sanitize_text_field(isset($_REQUEST['purchase_code']) ? $_REQUEST['purchase_code'] : '');
+	$activation_code = sanitize_text_field(isset($_REQUEST['activation_code']) ? $_REQUEST['activation_code'] : '');
+	$state = sanitize_text_field(isset($_REQUEST['activation_state']) ? $_REQUEST['activation_state'] : '');
+	$domain = sanitize_text_field(isset($_REQUEST['domain']) ? $_REQUEST['domain'] : '');
+	$version = sanitize_text_field(isset($_REQUEST['version']) ? $_REQUEST['version'] : '');
 	
 	$execute_code = -1;
 	

@@ -8,7 +8,7 @@ class ESSB_Elementor_Share_Action_Button_Widget extends Widget_Base {
 	}
 	
 	public function get_title() {
-		return __( 'Share Action Button', 'essb' );
+		return esc_html__( 'Share Action Button', 'essb' );
 	}
 	
 	public function get_icon() {
@@ -31,7 +31,7 @@ class ESSB_Elementor_Share_Action_Button_Widget extends Widget_Base {
 		$this->add_control(
 				'text',
 				[
-				'label' => __( 'Text', 'essb' ),
+				'label' => esc_html__( 'Text', 'essb' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				]
@@ -40,7 +40,7 @@ class ESSB_Elementor_Share_Action_Button_Widget extends Widget_Base {
 		$this->add_control(
 				'background',
 				[
-				'label' => __( 'Button Background', 'essb' ),
+				'label' => esc_html__( 'Button Background', 'essb' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'default' => '',
 				]
@@ -49,7 +49,7 @@ class ESSB_Elementor_Share_Action_Button_Widget extends Widget_Base {
 		$this->add_control(
 				'color',
 				[
-				'label' => __( 'Button Text', 'essb' ),
+				'label' => esc_html__( 'Button Text', 'essb' ),
 				'type' => \Elementor\Controls_Manager::COLOR,
 				'default' => '',
 				]
@@ -58,7 +58,7 @@ class ESSB_Elementor_Share_Action_Button_Widget extends Widget_Base {
 		$this->add_control(
 				'style',
 				[
-				'label' => __( 'Style', 'essb' ),
+				'label' => esc_html__( 'Style', 'essb' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' =>  array('' => 'Button with background color', 'outline' => 'Outline button', 'modern' => 'Modern button')
@@ -68,7 +68,7 @@ class ESSB_Elementor_Share_Action_Button_Widget extends Widget_Base {
 		$this->add_control(
 				'icon',
 				[
-				'label' => __( 'Icon', 'essb' ),
+				'label' => esc_html__( 'Icon', 'essb' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' =>  array(
@@ -84,10 +84,10 @@ class ESSB_Elementor_Share_Action_Button_Widget extends Widget_Base {
 		$this->add_control(
 				'stretched',
 				[
-				'label' => __( 'Full Width Button', 'essb' ),
+				'label' => esc_html__( 'Full Width Button', 'essb' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'No', 'essb' ),
-				'label_on' => __( 'Yes', 'essb' ),
+				'label_off' => esc_html__( 'No', 'essb' ),
+				'label_on' => esc_html__( 'Yes', 'essb' ),
 				'default' => 'no',
 				]
 		);
@@ -95,10 +95,10 @@ class ESSB_Elementor_Share_Action_Button_Widget extends Widget_Base {
 		$this->add_control(
 				'total',
 				[
-				'label' => __( 'Show Total Counter', 'essb' ),
+				'label' => esc_html__( 'Show Total Counter', 'essb' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'No', 'essb' ),
-				'label_on' => __( 'Yes', 'essb' ),
+				'label_off' => esc_html__( 'No', 'essb' ),
+				'label_on' => esc_html__( 'Yes', 'essb' ),
 				'default' => 'no',
 				]
 		);
@@ -129,7 +129,7 @@ class ESSB_Elementor_Share_Action_Button_Widget extends Widget_Base {
 					'total' => ($total == 'yes' ? 'true' : '')));
 		}
 		else {
-			echo __('Cannot render the action button', 'essb');
+			echo esc_html__('Cannot render the action button', 'essb');
 		}
 	}
 	

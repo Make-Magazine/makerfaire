@@ -51,15 +51,26 @@ class ESSBLightModeHelper {
 			
 			if ($style['show_counter']) {
 				$style['counter_pos'] = 'insidename';
-				$style['total_counter_pos'] = 'before';
+				$style['total_counter_pos'] = 'leftbig';
 			}
 		}
 		
 		if ($position == 'sidebar' || $position == 'postfloat') {
-			$style['button_width'] = '';
+			$style['button_width'] = '';			
+			$style['button_align'] = 'center';		
+			$style['button_style'] = 'icon';	
+			$style['nospace'] = 'true';
+			
+			if ($position == 'sidebar' && $style['button_size'] == '' && essb_sanitize_option_value('sidebar_icon_space') == '') {
+				$style['button_width'] = 'fixed';
+				$style['button_width_fixed_value'] = '52';
+				$style['button_width_fixed_align'] = 'center';
+			}
 			
 			if ($style['show_counter']) {
-				$style['button_style'] = 'button';
+				if ($style['counter_pos'] != 'hidden') {
+					$style['button_style'] = 'button';
+				}
 				
 				if ($position == 'sidebar') {
 					$style['counter_pos'] = 'bottom';
@@ -67,9 +78,10 @@ class ESSBLightModeHelper {
 				}
 				if ($position == 'postfloat') {
 					$style['counter_pos'] = 'inside';
+					$style['button_align'] = 'left';
 					$style['button_width'] = 'fixed';
-					$style['button_width_fixed_value'] = '50';
-					$style['button_width_fixed_align'] = 'right';
+					$style['button_width_fixed_value'] = '80';
+					$style['button_width_fixed_align'] = 'left';
 					$style['total_counter_pos'] = 'hidden';
 				}
 			}

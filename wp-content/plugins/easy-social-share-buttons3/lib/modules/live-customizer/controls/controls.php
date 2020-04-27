@@ -2,7 +2,7 @@
 class ESSBLiveCustomizerControls {
 	
 	public static function draw_textbox_field($update_param, $update_at, $value, $placeholder = '') {
-		echo '<input type="text" name="'.$update_param.'" id="'.$update_param.'" class="section-save" data-update="'.$update_at.'" data-field="'.$update_param.'" value="'.$value.'" placeholder="'.$placeholder.'" />';
+		echo '<input type="text" name="'.esc_attr($update_param).'" id="'.esc_attr($update_param).'" class="section-save" data-update="'.esc_attr($update_at).'" data-field="'.esc_attr($update_param).'" value="'.esc_attr($value).'" placeholder="'.esc_attr($placeholder).'" />';
 	}
 	
 	public static function draw_switch_field2($field, $value = '', $update_at = '', $update_param = '') {
@@ -20,8 +20,8 @@ class ESSBLiveCustomizerControls {
 	
 	public static function draw_switch_field($field, $value = '', $update_at = '', $update_param = '') {
 
-		$on_text = __('Yes', 'essb');
-		$off_text = __('No', 'essb');
+		$on_text = esc_html__('Yes', 'essb');
+		$off_text = esc_html__('No', 'essb');
 	
 		$on_switch = '';
 		$off_switch = '';
@@ -49,10 +49,10 @@ class ESSBLiveCustomizerControls {
 		if ($user_update_param == '') {
 			$user_update_param = $update_param;
 		}
-		echo '<select id="'.$update_param.'" class="section-save" data-update="'.$update_at.'" data-field="'.$user_update_param.'">';
+		echo '<select id="'.esc_attr($update_param).'" class="section-save" data-update="'.esc_attr($update_at).'" data-field="'.esc_attr($user_update_param).'">';
 		
 		foreach ($values as $key => $single) {
-			echo '<option value="'.$key.'"'.($key == $value ? ' selected="selected"' : '').'>'.$single.'</option>';
+			echo '<option value="'.esc_attr($key).'"'.($key == $value ? ' selected="selected"' : '').'>'.$single.'</option>';
 		}
 		
 		echo '</select>';
@@ -61,10 +61,10 @@ class ESSBLiveCustomizerControls {
 	public static function draw_image_select($preview_field, $update_param, $update_at, $value) {
 		?>
 		
-		<div class="default-preview-image <?php echo $preview_field ?>">
-			<img src="<?php echo $value; ?>" class="<?php echo $preview_field; ?>-placeholder"/>
+		<div class="default-preview-image <?php echo esc_attr($preview_field) ?>">
+			<img src="<?php echo esc_url($value); ?>" class="<?php echo esc_attr($preview_field); ?>-placeholder"/>
 					
-				<a href="#" class="essb-composer-button essb-composer-blue image-picker-button" id="<?php echo $preview_field;?>-button"><i class="fa fa-upload"></i></a>
+				<a href="#" class="essb-composer-button essb-composer-blue image-picker-button" id="<?php echo esc_attr($preview_field);?>-button"><i class="fa fa-upload"></i></a>
 		</div>
 
 		<script type="text/javascript">
@@ -155,30 +155,15 @@ class ESSBLiveCustomizerControls {
 			}
 	
 			echo '<div class="essb_radio">';
-			echo '<div class="essb_image_radio'.$active_state.' essb_image_radio_'.$position.'" data-field="'.$field.$position.'">';
-			echo '<span class="checkbox-image"><img src="'.$pathToImages.$singleValue['image'].'"/></span>';
+			echo '<div class="essb_image_radio'.$active_state.' essb_image_radio_'.$position.'" data-field="'.esc_attr($field.$position).'">';
+			echo '<span class="checkbox-image"><img src="'.esc_url($pathToImages.$singleValue['image']).'"/></span>';
 			echo '<span class="checkbox-state"><i class="fa fa-lg fa-check-circle"></i></span>';
-			echo '<input type="radio" id="essb_options_'.$field.$position.'" name="'.$field.'" class="section-save" value="'.$singleValueCode.'"'.$active_element.' data-update="'.$update_at.'" data-field="'.$field.'" data-format="array"/>';
+			echo '<input type="radio" id="essb_options_'.esc_attr($field.$position).'" name="'.esc_attr($field).'" class="section-save" value="'.$singleValueCode.'"'.$active_element.' data-update="'.esc_attr($update_at).'" data-field="'.esc_attr($field).'" data-format="array"/>';
 			echo $label;
 			echo '</div></div>';
 			
 			$position++;
 		}
 		echo '</div>';
-	}
-	
-	public static function draw_checkbox_list_sortable_field($field, $listOfValues, $update_at, $value = '', $network_selection = false) {
-		if (!is_array($value)) {
-			$value = array();
-		}
-		
-		echo '<input type="text" class="input-element input-filter stretched-50" placeholder="Quick Filter Networks ..." data-filter="essb-sortable-'.$field.'"/>';
-	
-		printf('<ul class="essb_sortable" id="essb-sortable-%1$s">', $field);
-		foreach ($listOfValues as $key => $text) {
-			$is_checked = in_array($key, $value) ? ' checked="checked"' : '';
-			echo '<li data-filter-value="'.$text.'"><i class="'.($network_selection ? 'essb_icon_'.$key : 'fa fa-bars').'" style="margin-right: 5px; margin-left: 3px;"></i><span class="essb_checkbox_list_item"><input id="essb_options_' . $field . '" type="checkbox" class="section-save" name="" value="'.$key.'" ' . $is_checked . ' data-update="'.$update_at.'" data-field="'.$field.'" data-format="array" />'.$text.'<input type="hidden" class="section-save" name="' . $field . '_order[]" value="'.$key.'|'.$text.'" data-update="'.$update_at.'" data-field="' . $field . '_order" data-format="array"/></span></li>';
-		}
-		echo '</ul>';
 	}
 }

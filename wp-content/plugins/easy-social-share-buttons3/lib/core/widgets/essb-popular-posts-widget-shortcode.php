@@ -1,36 +1,6 @@
 <?php
-
-if (!function_exists('essb_rs_css_popular_posts')) {
-	function essb_rs_css_popular_posts() {
-		$snippet = '';
-		
-		$snippet .= '.essb-popular-posts ul, .essb-popular-posts li, .essb-popular-posts ul li {list-style: none; margin: 0;}';
-		$snippet .= '.widget_essb_popular_posts ul, .widget_essb_popular_posts li, .widget_essb_popular_posts ul li {list-style: none; margin: 0;}';
-		$snippet .= '.essb-popular-posts li, .widget_essb_popular_posts li { padding-top: 4px; padding-bottom: 4px; }';
-		$snippet .= '.essb-popular-posts a, .widget_essb_popular_posts a {
-	font-weight: bold;
-	text-decoration: none;	
-}';
-		$snippet .= '.essb-popular-posts .essb-widget-popular-posts-number, .widget_essb_popular_posts .essb-widget-popular-posts-number {
-	font-size: 12px;
-	font-weight: normal;
-	display: block;
-}';
-		
-		$snippet .= '.essb-popular-posts .essb-widget-popular-posts-number-text, .widget_essb_popular_posts .essb-widget-popular-posts-number-text { margin-left: 4px; text-transform: uppercase; }';
-		
-		$snippet .= '.essbasc-popup-content .essb-popular-posts ul { width: 100%; }';
-		$snippet .= '.essbasc-popup-content .essb-popular-posts li { width: 45%; display: inline-block; margin-bottom: 15px; text-align: left; }';
-		$snippet .= '.essbasc-popup-content .essb-popular-posts h3 { background: none; text-align: left; }';
-		$snippet .= '.essbasc-popup-content .essb-popular-posts .entry-image { margin-bottom: 10px; }';
-		
-		return $snippet;
-	}
-}
-
 if (! function_exists ( 'essb_popular_posts' )) {
-	//add_shortcode ( 'easy-popular-posts', 'essb_popular_posts_code' );
-	
+
 	function essb_popular_posts_code($atts) {
 		return essb_popular_posts($atts);
 	}
@@ -48,7 +18,8 @@ if (! function_exists ( 'essb_popular_posts' )) {
 				'thumb_size' => '',
 				'nothumb' => '',
 				'date_range' => '',
-				'only_pt' => '' 
+				'only_pt' => '',
+				'only_id' => '' 
 				), $atts );
 		
 				
@@ -76,6 +47,7 @@ if (! function_exists ( 'essb_popular_posts' )) {
 		$nothumb = isset($attributes['nothumb']) ? $attributes['nothumb'] : '';
 		$date_range = isset($attributes['date_range']) ? $attributes['date_range'] : '';
 		$only_pt = isset($attributes['only_pt']) ? $attributes['only_pt'] : '';
+		$only_id = isset($attributes['only_id']) ? $attributes['only_id'] : '';
 		
 		if ($nothumb == 'true') {
 			$show_thumb = '';
@@ -124,6 +96,11 @@ if (! function_exists ( 'essb_popular_posts' )) {
 				);
 			}
 			
+			if ($only_id != '') {
+				$filter_ids = explode(',', $only_id);
+				$args_query['post__in'] = $filter_ids;
+			}
+			
 			$r = new WP_Query( $args_query );
 		}
 		else {
@@ -150,6 +127,10 @@ if (! function_exists ( 'essb_popular_posts' )) {
 				$args_query['post_type'] = $only_pt;
 			}
 			
+			if ($only_id != '') {
+				$filter_ids = explode(',', $only_id);
+				$args_query['post__in'] = $filter_ids;
+			}
 			
 			$r = new WP_Query($args_query );
 		}
@@ -202,7 +183,7 @@ if (! function_exists ( 'essb_popular_posts' )) {
   				<?php
   				// Reset the global $the_post as this query will have stomped on it
   				wp_reset_postdata();
-  				essb_resource_builder()->add_css(essb_rs_css_popular_posts(), 'essb-popular-posts-style', 'footer');
+				essb_resource_builder()->add_static_resource_footer(ESSB3_PLUGIN_URL .'/assets/css/essb-popular-posts.css', 'easy-social-share-buttons-popular-posts', 'css');
   				endif;
   				$html = ob_get_contents();
   				ob_end_clean();
@@ -226,8 +207,8 @@ class ESSBPopularPostsWidget extends WP_Widget {
 	 * @access public
 	 */
 	public function __construct() {
-		$widget_ops = array('classname' => 'widget_essb_popular_posts', 'description' => __( "Your site&#8217;s most popular posts.") );
-		parent::__construct('essb-popular-posts', __('Easy Social Share Buttons: Popular Posts'), $widget_ops);
+		$widget_ops = array('classname' => 'widget_essb_popular_posts', 'description' => esc_html__( "Your site&#8217;s most popular posts.") );
+		parent::__construct('essb-popular-posts', esc_html__('Easy Social Share Buttons: Popular Posts'), $widget_ops);
 		$this->alt_option_name = 'widget_essb_popular_posts';
 	}
 
@@ -297,14 +278,14 @@ class ESSBPopularPostsWidget extends WP_Widget {
 		$date_range    = isset( $instance['date_range'] ) ? esc_attr( $instance['date_range'] ) : '';
 		$only_pt = isset($instance['only_pt']) ? esc_attr( $instance['only_pt'] ) : '';
 		
-		$date_ranges = array("" => __('Any time', 'essb'), '1 week ago' => __('Last 7 days', 'essb'), '2 weeks ago' => __('Last 14 days', 'essb'), '1 month ago' => __('Last month', 'essb'), '1 year ago' => __('Last year', 'essb'));		
+		$date_ranges = array("" => esc_html__('Any time', 'essb'), '1 week ago' => esc_html__('Last 7 days', 'essb'), '2 weeks ago' => esc_html__('Last 14 days', 'essb'), '1 month ago' => esc_html__('Last month', 'essb'), '1 year ago' => esc_html__('Last year', 'essb'));		
 		
 		$sizes = get_intermediate_image_sizes();
 		
 		$pts	 = get_post_types( array('show_ui' => true, '_builtin' => true) );
 		$cpts	 = get_post_types( array('show_ui' => true, '_builtin' => false) );
 		$list_of_pts = array();
-		$list_of_pts[""] = __('All', 'essb');
+		$list_of_pts[""] = esc_html__('All', 'essb');
 		foreach ( $pts as $pt ) { 
 			$list_of_pts[$pt] = $wp_post_types [$pt]->label;
 		}
@@ -313,19 +294,19 @@ class ESSBPopularPostsWidget extends WP_Widget {
 		}
 		
 		?>
-		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e( 'Title:' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
 
-		<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php _e( 'Number of posts to show:' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php esc_html_e( 'Number of posts to show:' ); ?></label>
 		<input class="tiny-text" id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="number" step="1" min="1" value="<?php echo $number; ?>" size="3" /></p>
 
 		<p><input class="checkbox" type="checkbox"<?php checked( $show_num ); ?> id="<?php echo $this->get_field_id( 'show_num' ); ?>" name="<?php echo $this->get_field_name( 'show_num' ); ?>" />
-		<label for="<?php echo $this->get_field_id( 'show_num' ); ?>"><?php _e( 'Display value for selected source?' ); ?></label></p>
+		<label for="<?php echo $this->get_field_id( 'show_num' ); ?>"><?php esc_html_e( 'Display value for selected source?' ); ?></label></p>
 
-		<p><label for="<?php echo $this->get_field_id( 'show_num_text' ); ?>"><?php _e( 'Display text after value:' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'show_num_text' ); ?>"><?php esc_html_e( 'Display text after value:' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'show_num_text' ); ?>" name="<?php echo $this->get_field_name( 'show_num_text' ); ?>" type="text" value="<?php echo $show_num_text; ?>" /></p>
 
-		<p><label for="<?php echo $this->get_field_id( 'source' ); ?>"><?php _e( 'Display value from:' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'source' ); ?>"><?php esc_html_e( 'Display value from:' ); ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'source' ); ?>" name="<?php echo $this->get_field_name( 'source' ); ?>">
 			<option value="shares" <?php if ($source == "shares") { echo "selected"; } ?>>Total number of shares (require cache counters to be active)</option>
 			<option value="loves" <?php if ($source == "loves") { echo "selected"; } ?>>Total number of loves (data is generated from Love button)</option>
@@ -334,20 +315,20 @@ class ESSBPopularPostsWidget extends WP_Widget {
 		</p>
 		
 		<p><input class="checkbox" type="checkbox"<?php checked( $same_cat ); ?> id="<?php echo $this->get_field_id( 'same_cat' ); ?>" name="<?php echo $this->get_field_name( 'same_cat' ); ?>" />
-		<label for="<?php echo $this->get_field_id( 'same_cat' ); ?>"><?php _e( 'Display posts from same category only?' ); ?></label></p>
+		<label for="<?php echo $this->get_field_id( 'same_cat' ); ?>"><?php esc_html_e( 'Display posts from same category only?' ); ?></label></p>
 
 		<p><input class="checkbox" type="checkbox"<?php checked( $show_thumb ); ?> id="<?php echo $this->get_field_id( 'show_thumb' ); ?>" name="<?php echo $this->get_field_name( 'show_thumb' ); ?>" />
-		<label for="<?php echo $this->get_field_id( 'show_thumb' ); ?>"><?php _e( 'Include featured image of post?', 'essb' ); ?></label></p>
-		<p><label for="<?php echo $this->get_field_id( 'thumb_size' ); ?>"><?php _e( 'Featured image size:', 'essb' ); ?></label>
+		<label for="<?php echo $this->get_field_id( 'show_thumb' ); ?>"><?php esc_html_e( 'Include featured image of post?', 'essb' ); ?></label></p>
+		<p><label for="<?php echo $this->get_field_id( 'thumb_size' ); ?>"><?php esc_html_e( 'Featured image size:', 'essb' ); ?></label>
 		<select id="<?php echo $this->get_field_id('thumb_size'); ?>" name="<?php echo $this->get_field_name('thumb_size'); ?>" class="widefat">
               <?php foreach ($sizes as $size) : ?>
                 <option value="<?php echo $size; ?>"<?php if ($thumb_size == $size) echo ' selected'; ?>><?php echo $size; ?></option>
               <?php endforeach; ?>
-              <option value="full"<?php if ($thumb_size == $size) echo ' selected'; ?>><?php _e('full'); ?></option>
+              <option value="full"<?php if ($thumb_size == $size) echo ' selected'; ?>><?php esc_html_e('full'); ?></option>
             </select>
 		</p>
 		
-		<p><label for="<?php echo $this->get_field_id( 'date_range' ); ?>"><?php _e( 'Date range filter:', 'essb' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'date_range' ); ?>"><?php esc_html_e( 'Date range filter:', 'essb' ); ?></label>
 		<select id="<?php echo $this->get_field_id('date_range'); ?>" name="<?php echo $this->get_field_name('date_range'); ?>" class="widefat">
               <?php foreach ($date_ranges as $size => $name) : ?>
                 <option value="<?php echo $size; ?>"<?php if ($date_range == $size) echo ' selected'; ?>><?php echo $name; ?></option>
@@ -355,7 +336,7 @@ class ESSBPopularPostsWidget extends WP_Widget {
             </select>
 		</p>
 		
-		<p><label for="<?php echo $this->get_field_id( 'only_pt' ); ?>"><?php _e( 'Display Post Types:', 'essb' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'only_pt' ); ?>"><?php esc_html_e( 'Display Post Types:', 'essb' ); ?></label>
 		<select id="<?php echo $this->get_field_id('only_pt'); ?>" name="<?php echo $this->get_field_name('only_pt'); ?>" class="widefat">
               <?php foreach ($list_of_pts as $pt => $name) : ?>
                 <option value="<?php echo $pt; ?>"<?php if ($only_pt == $pt) echo ' selected'; ?>><?php echo $name; ?></option>
@@ -368,9 +349,11 @@ class ESSBPopularPostsWidget extends WP_Widget {
 	}
 }
 
-  function init_wp_widget_essb_popular_posts() {
+
+
+  function essb_popular_posts_init_wp_widget() {
     register_widget( 'ESSBPopularPostsWidget' );
     
   }
 
-  add_action( 'widgets_init', 'init_wp_widget_essb_popular_posts' );
+  add_action( 'widgets_init', 'essb_popular_posts_init_wp_widget' );

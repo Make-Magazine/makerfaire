@@ -8,7 +8,7 @@ class ESSB_Elementor_Custom_Positions_Widget extends Widget_Base {
 	}
 	
 	public function get_title() {
-		return __( 'Social Share Buttons Display', 'essb' );
+		return esc_html__( 'Social Share Buttons Display', 'essb' );
 	}
 	
 	public function get_icon() {
@@ -32,7 +32,7 @@ class ESSB_Elementor_Custom_Positions_Widget extends Widget_Base {
 		$this->add_control(
 			'display',
 			[
-				'label' => __( 'Custom Design', 'essb' ),
+				'label' => esc_html__( 'Custom Design', 'essb' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => essb5_get_custom_positions()
@@ -43,7 +43,7 @@ class ESSB_Elementor_Custom_Positions_Widget extends Widget_Base {
 				'always_show_desc',
 				[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'The custon display will appear based on position settings inside Easy Social Share Buttons for WordPress. If the selected design is not activated inside Positions menu, plugin will not generate share buttons. If you wish to bypass this check and always show the share buttons no matter of position selection set the below option to Yes.', 'essb' ),
+				'raw' => esc_html__( 'The custon display will appear based on position settings inside Easy Social Share Buttons for WordPress. If the selected design is not activated inside Positions menu, plugin will not generate share buttons. If you wish to bypass this check and always show the share buttons no matter of position selection set the below option to Yes.', 'essb' ),
 				'content_classes' => 'elementor-descriptor',
 				]
 		);
@@ -51,10 +51,10 @@ class ESSB_Elementor_Custom_Positions_Widget extends Widget_Base {
 		$this->add_control(
 				'force',
 				[
-				'label' => __( 'Always Show', 'essb' ),
+				'label' => esc_html__( 'Always Show', 'essb' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'No', 'essb' ),
-				'label_on' => __( 'Yes', 'essb' ),
+				'label_off' => esc_html__( 'No', 'essb' ),
+				'label_on' => esc_html__( 'Yes', 'essb' ),
 				'default' => 'no',
 				]
 		);
@@ -63,7 +63,7 @@ class ESSB_Elementor_Custom_Positions_Widget extends Widget_Base {
 				'colors_warning',
 				[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'Note: If you need to add additional displays you can do this from Where to Display -> Custom Position/Displays', 'essb' ),
+				'raw' => esc_html__( 'Note: If you need to add additional displays you can do this from Where to Display -> Custom Position/Displays', 'essb' ),
 				'content_classes' => 'elementor-descriptor',
 				]
 		);

@@ -31,15 +31,17 @@ if (!function_exists('essb_skype_register')) {
 			}
 		}
 		
-		if (essb_option_bool_value('skype_posttypes')) {
-			$posttypes = $this->option_value('posttypes');
-			if (!is_array($posttypes)) {
-				$posttypes = array();
-			}
-		
-			if (!is_singular($posttypes)) {
-				$is_deactivated = true;
-			}
+		/**
+		 * Changing the check for post types as of options interface change (fbmessenger_posttypes is removed)
+		 */
+		$posttypes = essb_option_value('skype_posttypes');
+		if (!is_array($posttypes)) {
+			$posttypes = array();
+		}
+			
+		$current_post_type = get_post_type();
+		if ($current_post_type && count($posttypes) > 0 && !in_array($current_post_type, $posttypes)) {
+			$is_deactivated = true;
 		}
 		
 		// deactivate display of the functions
@@ -53,8 +55,12 @@ if (!function_exists('essb_skype_register')) {
 		if ($skype_type == '') { $skype_type = 'bubble'; }
 		$skype_text = essb_option_value('skype_text');
 		
+		/**
+		 * Loading Skype API required to run the chat
+		 */
+		
 		echo '<span class="skype-button '.esc_attr($skype_type).'" data-contact-id="'.esc_attr($skype_user).'" data-text="'.esc_attr($skype_text).'"></span>
-<script src="https://swc.cdn.skype.com/sdk/v1/sdk.min.js"></script>';
+			<script src="https://swc.cdn.skype.com/sdk/v1/sdk.min.js"></script>';
 		
 	}
 	

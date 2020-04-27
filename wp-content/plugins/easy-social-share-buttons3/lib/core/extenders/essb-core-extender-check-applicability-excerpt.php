@@ -11,6 +11,7 @@
  */
 
 if (!function_exists('essb_check_applicability_excerpt')) {
+	
 	function essb_check_applicability_excerpt($post_types = array(), $location = '', $options, $general_options) {
 		global $post;
 		
@@ -68,8 +69,6 @@ if (!function_exists('essb_check_applicability_excerpt')) {
 				$is_singular = false;
 			}
 		}
-		
-		
 		
 		if ($general_options['display_exclude_from'] != "") {
 			$excule_from = explode(',', $general_options['display_exclude_from']);

@@ -18,12 +18,11 @@ class ESSBElementorCustomDisplayElement {
 	}
 	public function widgets_registered() {
 		// We check if the Elementor plugin has been installed / activated.
+		
 		if(defined('ELEMENTOR_PATH') && class_exists('Elementor\Widget_Base')){
 			// We look for any theme overrides for this custom Elementor element.
 			// If no theme overrides are found we use the default one in this plugin.
 			//
-
-
 			$template_file = plugin_dir_path(__FILE__).'elementor-custompositions-widget.php';
 
 			if ( $template_file && is_readable( $template_file ) ) {
@@ -32,18 +31,6 @@ class ESSBElementorCustomDisplayElement {
 
 			$widget_manager = \Elementor\Plugin::instance()->widgets_manager;
 			$widget_manager->register_widget_type( new Elementor\ESSB_Elementor_Custom_Positions_Widget() );
-
-			/*if ( class_exists( 'Elementor\Plugin' ) ) {
-				if ( is_callable( 'Elementor\Plugin', 'instance' ) ) {
-					$elementor = Elementor\Plugin::instance();
-					if ( isset( $elementor->widgets_manager ) ) {
-						if ( method_exists( $elementor->widgets_manager, 'register_widget_type' ) ) {
-
-							Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor\ESSB_Elementor_Custom_Positions_Widget() );
-						}
-					}
-				}
-			}*/
 		}
 	}
 }

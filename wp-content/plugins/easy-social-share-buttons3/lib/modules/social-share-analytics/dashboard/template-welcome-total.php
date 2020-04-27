@@ -105,7 +105,7 @@ if ($calculated_total != 0) {
     <h4>Best Position: <strong><?php echo ESSBSocialShareAnalyticsBackEnd::position_name ($best_position_key); ?></strong></h4>
 
     <div class="bold-value"><?php echo ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($best_position_value); ?>
-      <a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=positions" class="essb-btn essb-btn-green1" style="float: right; padding: 6px 12px;">View All</a>
+      <a href="<?php echo esc_url( admin_url('admin.php?page=essb_redirect_analytics&tab=analytics&mode=positions') );?>" class="essb-btn essb-btn-green1" style="float: right; padding: 6px 12px;">View All</a>
     </div>
 
     <div class="footer">
@@ -123,7 +123,7 @@ if ($calculated_total != 0) {
     <h4>Best Social Network: <strong><?php echo $best_network_key; ?></strong></h4>
 
     <div class="bold-value"><?php echo ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($best_network_value); ?>
-	<a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=networks" class="essb-btn essb-btn-green1" style="float: right; padding: 6px 12px;">View All</a>
+	<a href="<?php echo esc_url( admin_url('admin.php?page=essb_redirect_analytics&tab=analytics&mode=networks') ); ?>" class="essb-btn essb-btn-green1" style="float: right; padding: 6px 12px;">View All</a>
     </div>
 
     <div class="footer">
@@ -140,7 +140,7 @@ if ($calculated_total != 0) {
   </div>
 </div>
 
-<div class="stat-welcome-graph" style="magin-top: 30px;">
+<div class="stat-welcome-graph">
 	<div class="dashboard-head">
 		<h4>Activity for the last 30 days</h4>
 		<p>View the number of share button clicks in the past 30 days. By clicking on date you can also start a detailed date report.</p>

@@ -8,62 +8,14 @@ $esml_data->get_posts();
 
 ?>
 
-<style type="text/css">
-.essb-version {
-	background: rgba(0, 0, 0, 0.3);
-	display: block;
-	position: absolute;
-	padding: 5px 0px;
-	width: 100%;
-	bottom: 0;
-	left: 0;
-	font-size: 12px;
-	text-transform: uppercase;
-}
-
-.essb-page-welcome .wp-badge {
-	padding-top: 70px;
-	width: 100px;
-	background-size: 48px;
-	background-position: center 20px;
-	border-radius: 5px;
-	-webkit-border-radius: 5px;
-}
-
-.about-wrap { max-width: 100%; }
-.about-wrap .wp-badge { right: 20px; }
-
-.essb-welcome { margin-top: 10px; }
-
-.essb-welcome-close { margin-bottom: 1em; }
-
-.about-wrap h1 { font-size: 24px; font-weight: 600; }
-.about-wrap .about-text { margin: 1em 180px 0 0; font-size: 16px; }
-
-.essb_status_icon {
-	font-size: 18px;
-	line-height: 18px;
-	padding: 5px; 
-}
-
-.up-bg {
-	background-color: #D9F5BE !important;
-}
-
-.down-bg {
-	background-color: #F3C9BF !important;
-}
-
-</style>
-
-<div class="wrap essb-page-welcome about-wrap essb-wrap-welcome">
+<div class="wrap essb-page-welcome about-wrap essb-wrap-metricslite">
 	<h1>Social Metrics by Easy Social Share Buttons for WordPress</h1>
 
 	<div class="about-text">
 		Social Metrics data provide details for shares over social networks you are using on your site. To collect and update data you need to have share counters working on site.
 	</div>
 	<div class="wp-badge essb-page-logo essb-logo">
-		<span class="essb-version"><?php echo sprintf( __( 'Version %s', 'essb' ), ESSB3_VERSION )?></span>
+		<span class="essb-version"><?php echo sprintf( esc_html__( 'Version %s', 'essb' ), ESSB3_VERSION )?></span>
 	</div>
 </div>
 
@@ -112,7 +64,7 @@ $esml_data->get_posts();
 			<div class="onecol">
 				<div class="essb-dashboard-panel">
 					<div class="essb-dashboard-panel-title">
-						<h4><?php _e('Networks', 'essb'); ?></h4>
+						<h4><?php esc_html_e('Networks', 'essb'); ?></h4>
 					</div>
 					<div class="essb-dashboard-panel-content">
 					<?php
@@ -170,10 +122,4 @@ $esml_data->get_posts();
 
 	</div>
 </div>
-
-<script type="text/javascript">
-jQuery(document).ready(function() {
-	jQuery('#esml-result').DataTable({ pageLength: 50});
-} );
-</script>
 

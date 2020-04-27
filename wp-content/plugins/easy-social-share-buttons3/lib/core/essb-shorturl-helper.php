@@ -32,9 +32,9 @@ function essb_short_rebrandly($url, $post_id = '', $deactivate_cache = false, $a
 		}
 	}
 	
-	$domain_id = essb_option_value('shorturl_rebrandpi_domain');
+	$domain_id = essb_sanitize_option_value('shorturl_rebrandpi_domain');
+	$api_key = sanitize_text_field($api_key);
 
-	//$encoded_url = urlencode($url);
 	$encoded_url = $url;
 	
 	if ($domain_id != '') {
@@ -78,8 +78,9 @@ function essb_short_post($url, $post_id = '', $deactivate_cache = false, $api_ke
 			return $exist_shorturl;
 		}
 	}
+	
+	$api_key = sanitize_text_field($api_key);
 
-	//$encoded_url = urlencode($url);
 	$encoded_url = $url;
 	
 	$result = wp_remote_get('http://po.st/api/shorten?longUrl='.esc_url_raw ( $encoded_url ).'&apiKey='.$api_key);
@@ -113,30 +114,11 @@ function essb_short_googl($url, $post_id = '', $deactivate_cache = false, $api_k
 		}
 	}
 
-	//$encoded_url = urlencode($url);
-	$encoded_url = $url;
-	if (!empty($api_key)) {
-		$result = wp_remote_post ( 'https://www.googleapis.com/urlshortener/v1/url?key='.($api_key), array ('body' => json_encode ( array ('longUrl' => esc_url_raw ( $encoded_url ) ) ), 'headers' => array ('Content-Type' => 'application/json' ) ) );
-	}
-	else {
-		$result = wp_remote_post ( 'https://www.googleapis.com/urlshortener/v1/url', array ('body' => json_encode ( array ('longUrl' => esc_url_raw ( $encoded_url ) ) ), 'headers' => array ('Content-Type' => 'application/json' ) ) );
-	}
+	/**
+	 * Goo.gl is no loger operating. No new short URLs will be generated or outgoing calls will be set. But plugin
+	 * will return if stored and exist short as they are working.
+	 */
 	
-	// Return the URL if the request got an error.
-	if (is_wp_error ( $result ))
-		return $url;
-
-	$result = json_decode ( $result ['body'] );
-	$shortlink = $result->id;
-	if ($shortlink) {
-		if ($post_id != '') {
-			update_post_meta ( $post_id, 'essb_shorturl_googl', $shortlink );
-
-		}
-
-		return $shortlink;
-	}
-
 	return $url;
 }
 
@@ -149,8 +131,9 @@ function essb_short_bitly($url, $user = '', $api = '', $post_id = '', $deactivat
 			return $exist_shorturl;
 		}
 	}
+	
+	$api = sanitize_text_field($api);
 
-	//$encoded_url = urlencode($url);
 	$encoded_url = ($url);
 
 	if ($bitly_api_version == 'new') {
@@ -173,10 +156,6 @@ function essb_short_bitly($url, $user = '', $api = '', $post_id = '', $deactivat
 				)
 		);
 	}
-
-	/*if ($jmp == 'true') {
-	 $params['domain'] = "j.mp";
-	}*/
 		
 	$result = $url;
 
@@ -187,7 +166,6 @@ function essb_short_bitly($url, $user = '', $api = '', $post_id = '', $deactivat
 	if( !is_wp_error( $response ) ) {
 
 		$json = json_decode( wp_remote_retrieve_body( $response ) );
-		//print_r($json);
 		if( isset( $json->data->url ) ) {
 
 			$result = $json->data->url;

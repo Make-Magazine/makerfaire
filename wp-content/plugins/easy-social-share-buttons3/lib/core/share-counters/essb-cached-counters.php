@@ -12,11 +12,17 @@
 
 class ESSBCachedCounters {
 	
+	/**
+	 * Generate list of all social networks that has a share counter support
+	 * 
+	 * @param unknown_type $networks
+	 * @param unknown_type $active_networks_list
+	 */
 	public static function prepare_list_of_networks_with_counter($networks, $active_networks_list) {		
 		$basic_network_list = 'twitter,linkedin,facebook,pinterest,google,stumbleupon,vk,reddit,buffer,love,ok,mwp,xing,mail,print,comments,yummly';
 		
 		// updated in version 4.2 - now we have only avoid with counter networks
-		$avoid_network_list = 'more,share,subscribe';
+		$avoid_network_list = 'more,share,subscribe,copy';
 		
 		$internal_counters = essb_option_bool_value('active_internal_counters');
 		$no_mail_print_counter = essb_option_bool_value('deactive_internal_counters_mail');
@@ -29,6 +35,14 @@ class ESSBCachedCounters {
 		
 		$basic_array = explode(',', $basic_network_list);
 		$avoid_array = explode(',', $avoid_network_list);
+		
+		// Facebook like button counter
+		if (!essb_option_bool_value('facebook_likebtn_counter')) {
+			$avoid_array[] = 'facebook_like';
+		}
+		else {
+			$basic_array[] = 'facebook_like';
+		}
 
 		$count_networks = array();
 		
@@ -268,12 +282,21 @@ class ESSBCachedCounters {
 				$cached_counters[$k] = get_post_meta($post_id, 'essb_c_'.$k, true);
 				$cached_counters['total'] += intval($cached_counters[$k]);
 			}
-		}		
+		}	
 		
-		
+
+		if (essb_option_bool_value('homepage_total_allposts') && has_filter('essb_homepage_get_cached_counters')) {
+			$cached_counters = apply_filters('essb_homepage_get_cached_counters', $cached_counters);
+		}
+				
 		if (has_filter('essb4_get_cached_counters')) {
 			$cached_counters = apply_filters('essb4_get_cached_counters', $cached_counters);
 		}
+
+		if (essb_option_bool_value('facebook_likebtn_counter') && in_array('facebook_like', $networks) && isset($cached_counters['facebook'])) {
+			$cached_counters['facebook_like'] = $cached_counters['facebook'];
+			$cached_counters['total'] += intval($cached_counters['facebook']);
+		}		
 		
 		return $cached_counters;
 	}
@@ -288,6 +311,11 @@ class ESSBCachedCounters {
 		}
 		
 		$async_update_mode = essb_option_bool_value('cache_counter_refresh_async');
+		
+		if (essb_option_bool_value('counter_remove_query_string')) {
+			$url = preg_replace('/\?.*/', '', $url);
+			$full_url = preg_replace('/\?.*/', '', $full_url);
+		}
 		
 		if (!$async_update_mode) {
 			essb_depend_load_function('essb_counter_request', 'lib/core/share-counters/essb-counter-update.php');

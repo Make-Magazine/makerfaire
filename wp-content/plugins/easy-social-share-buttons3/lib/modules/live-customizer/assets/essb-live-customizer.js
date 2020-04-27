@@ -1,24 +1,24 @@
 var debugMode = false;
 
 jQuery(document).ready(function($){
-		
+	"use strict";
 	// Assign open of plugin settings	
 	if ($('.essb-customizer-toggle').length) 
-		$('.essb-customizer-toggle').click(function(e) {
+		$('.essb-customizer-toggle').on('click', function(e) {
 			e.preventDefault();
 			
 			essbLiveCustomizer.toggle(e);
 		});
 	
 	if ($('.essb-live-customizer-close-icon').length) 
-		$('.essb-live-customizer-close-icon').click(function(e){
+		$('.essb-live-customizer-close-icon').on('click', function(e){
 			e.preventDefault();
 			
 			essbLiveCustomizer.toggle(e);
 		});
 	
 	if ($('.essb-live-button-customizer-close-icon').length) 
-		$('.essb-live-button-customizer-close-icon').click(function(e){
+		$('.essb-live-button-customizer-close-icon').on('click', function(e){
 			e.preventDefault();
 			
 			if ($(essbLiveCustomizer.buttonCustomizer).hasClass('active'))
@@ -26,7 +26,7 @@ jQuery(document).ready(function($){
 		});
 	
 	if ($('.essb-live-customizer-back').length)
-		$('.essb-live-customizer-back').click(function(e){
+		$('.essb-live-customizer-back').on('click', function(e){
 			e.preventDefault();
 			
 			essbLiveCustomizer.backToIcons();
@@ -41,6 +41,8 @@ jQuery(document).ready(function($){
 			var position = $(this).attr('data-essb-position') || '';
 			if (position == 'more' || position == 'more_popup') return;
 			if ($(this).hasClass('location-setup-done')) return;
+			
+			if (!essb_live_customizer_positions[position]) return;
 			
 			$(this).append('<div class="essb-location-customize" title="Change display settings for this plugin location" data-position="'+position+'" onclick="essbLiveCustomizer.positionSettingsClick(\''+position+'\');"><i class="fa fa-cog"></i> Customize</div>');
 			$(this).addClass('location-setup-done');			
@@ -71,15 +73,18 @@ jQuery(document).ready(function($){
 		
 		if (essbLiveCustomizer.icons) {
 			$(essbLiveCustomizer.icons).find('.customizer-box').each(function() {
-				$(this).click(function(e) {
+				$(this).on('click', function(e) {
 					e.preventDefault();
 					
 					var sectionTitle = $(this).attr('data-title') || '',
-						sectionID = $(this).attr('data-options') || '';
+						sectionID = $(this).attr('data-options') || '',
+						sectionURL = $(this).attr('data-url') || '';
 					
 					var options = {'title': sectionTitle, 'section': sectionID};
-					if (sectionID != 'close')
+					if (sectionID != 'close' && sectionURL == '')
 						essbLiveCustomizer.iconClick(options);
+					else if (sectionID != 'close' && sectionURL != '')
+						window.open(sectionURL);
 					else
 						essbLiveCustomizer.toggle(e);
 					
@@ -123,8 +128,10 @@ jQuery(document).ready(function($){
 	}
 	
 	essbLiveCustomizer.positionSettingsClick = function(dataPosition) {
-		essbLiveCustomizer.toggleButtonsPanel();
-		essbLiveCustomizer.request('livecustomizer_options', { 'position': dataPosition, 'section': 'position-settings'}, essbLiveCustomizer.showPositionSetup);
+		var settingsScreen = essb_live_customizer_positions[dataPosition] || '',
+			settingsURL = essb_live_settings || '';
+		
+		if (settingsScreen != '' && settingsURL != '') window.open(settingsURL + '&tab=where&section=positions&subsection='+ settingsScreen);
 	}
 	
 	essbLiveCustomizer.iconClick = function(options) {
@@ -204,9 +211,6 @@ jQuery(document).ready(function($){
 				console.log('request responce = ' + data);
 			
 			if (action) {
-				//if (debugMode)
-				//	console.log('calling action = ' + action)
-				
 				action(data);
 			}
 		});
@@ -214,7 +218,7 @@ jQuery(document).ready(function($){
 	
 	essbLiveCustomizer.assingSaveSettings = function() {
 		$('body').find('.essb-section-save').each(function() {
-			$(this).click(function(e) {
+			$(this).on('click', function(e) {
 				e.preventDefault();
 				
 				var section = $(this).attr('data-section') || '';
@@ -228,9 +232,8 @@ jQuery(document).ready(function($){
 	}
 	
 	essbLiveCustomizer.assingPreviewButton = function() {
-		//essb-update-preview
 		$('body').find('.essb-update-preview').each(function() {
-			$(this).click(function(e) {
+			$(this).on('click', function(e) {
 				e.preventDefault();
 				
 				var section = $(this).attr('data-section') || '';
@@ -248,7 +251,7 @@ jQuery(document).ready(function($){
 	}
 	
 	essbLiveCustomizer.assignControlEvents = function() {
-		$(".essb-switch .cb-enable").click(function(){
+		$(".essb-switch .cb-enable").on('click', function(){
 			var parent = $(this).parents('.essb-switch');
 			$('.cb-disable',parent).removeClass('selected');
 			$(this).addClass('selected');
@@ -256,7 +259,7 @@ jQuery(document).ready(function($){
 			
 		});
 
-		$(".essb-switch .cb-disable").click(function(){
+		$(".essb-switch .cb-disable").on('click', function(){
 			var parent = $(this).parents('.essb-switch');
 			$('.cb-enable',parent).removeClass('selected');
 			$(this).addClass('selected');
@@ -277,7 +280,7 @@ jQuery(document).ready(function($){
 				$(this).parent().find('.essb_checkbox_label').width(width);
 			}
 			
-			$(this).click(function(e) {
+			$(this).on('click', function(e) {
 				e.preventDefault();
 				
 				var checkbox_id = $(this).attr('data-field') || "";
@@ -301,17 +304,9 @@ jQuery(document).ready(function($){
 		$('.essb_image_radio').each(function() {
 			
 			var image = $(this).find('.checkbox-image img');
-			/*if (image) {
-				var width = image.width();
-				width += 10;
-				
-				$(this).parent().find('.essb_radio_label').width(width);
-			}*/
 			
-			$(this).click(function(e) {
+			$(this).on('click', function(e) {
 				e.preventDefault();
-				
-				//alert($(this).parent().parent().prop("tagName"));
 				
 				$(this).parent().parent().find('.essb_radio').each(function(){
 					var clickable_element = $(this).find('.essb_image_radio');
@@ -362,7 +357,6 @@ jQuery(document).ready(function($){
 			if (isCheckbox && !$(this).is(':checked'))
 				dataValue = '';
 			
-			//params.push({'update': dataUpdate, 'field': dataField, 'value': dataValue});
 			if (dataFormat == 'array') {
 				if (!params[dataField]) {
 					params[dataField] = {'update': dataUpdate, 'value': []};
@@ -403,7 +397,6 @@ jQuery(document).ready(function($){
 			if (isCheckbox && !$(this).is(':checked'))
 				dataValue = '';
 			
-			//params.push({'update': dataUpdate, 'field': dataField, 'value': dataValue});
 			if (dataFormat == 'array') {
 				if (!params[dataField])
 					params[dataField] = {'update': dataUpdate, 'value': []};

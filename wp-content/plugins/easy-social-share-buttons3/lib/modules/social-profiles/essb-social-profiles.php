@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Manages the social profiles display
+ * 
+ * @author appscreo
+ * @package EasySocialShareButtons
+ *
+ */
 class ESSBSocialProfiles {
 	private static $instance = null;
 	
@@ -223,14 +229,20 @@ class ESSBSocialProfiles {
 		$instance_animation = isset ( $options ['animation'] ) ? $options ['animation'] : '';
 		$instance_nospace = isset ( $options ['nospace'] ) ? $options ['nospace'] : 0;
 		$instance_networks = isset($options['networks']) ? $options['networks'] : array();
+		$instance_networks_text = isset($options['networks_text']) ? $options['networks_text'] : array();
 		
 		$instance_align = isset($options['align']) ? $options['align'] : '';
 		$instance_size = isset($options['size']) ? $options['size'] : '';
 		$instance_class = isset($options['class']) ? $options['class'] : '';
 		$instance_show_text = isset($options['show_text'])? $options['show_text'] : '';
+		$cta = isset($options['cta']) ? $options['cta'] : '';
+		$cta_vertical = isset($options['cta_vertical']) ? $options['cta_vertical'] : '';
+		$columns = isset($options['columns']) ? $options['columns'] : '';		
+		
 		if ($instance_show_text == 'true') {
 			$instance_show_text = 'yes';
 		}
+	
 
 		// compatibility with previous template slugs
 		if (!empty($instance_template)) {
@@ -247,6 +259,45 @@ class ESSBSocialProfiles {
 		
 		if ($instance_show_text == 'yes') {
 			$instance_class .= ' essbfc-profiles-button';
+		}
+		
+		if ($cta == 'yes') {
+			$instance_class .= ' essbfc-profiles-cta';
+		}
+		else {
+			$instance_class .= ' essbfc-profiles-nocta';
+		}
+		
+		if ($cta_vertical == 'yes' && $cta == 'yes') {
+			$instance_class .= ' essbfc-profiles-ctavert';
+		}
+		else if ($cta_vertical != 'yes' && $cta == 'yes') {
+			$instance_class .= ' essbfc-profiles-ctah';
+		}
+		
+		if ($columns != '') {
+			$instance_class .= ' essbfc-profiles-columns essbfc-profiles-columns-'.esc_attr($columns);
+		}
+		
+		// adding additional template classes
+		$global_extra_class = true;
+		if ($instance_template == 'color' || $instance_template == 'grey' || $instance_template == 'light') {
+			$instance_class .= ' essbfc-profiles-design-icon';
+			$global_extra_class = false;
+		}
+		
+		if ($instance_template == 'roundcolor' || $instance_template == 'roundgrey' || $instance_template == 'roundlight') {
+			$instance_class .= ' essbfc-profiles-design-roundicon';
+			$global_extra_class = false;
+		}
+		
+		if ($instance_template == 'outlinecolor' || $instance_template == 'outlinegrey' || $instance_template == 'outlinelight') {
+			$instance_class .= ' essbfc-profiles-design-outlineicon';
+			$global_extra_class = false;
+		}
+		
+		if ($global_extra_class) {
+			$instance_class .= ' essbfc-profiles-design-general';
 		}
 		
 		$names = ESSBSocialProfilesHelper::get_text_of_buttons();
@@ -288,12 +339,16 @@ class ESSBSocialProfiles {
 			if ($social_display == "instgram") {
 				$social_display = "instagram";
 			}
+			
+			/**
+			 * Apply additional user texts that can be part of the shortcode or widget
+			 */
+			$user_text = isset($instance_networks_text[$social]) ? $instance_networks_text[$social] : '';
+			if ($user_text != '') {
+				$names[$social] = $user_text;
+			}
 
 			$social_custom_icon = '';
-			
-			if ($social == 'xing') {
-				$social_custom_icon = ' essb_icon_xing';
-			}
 		
 			$code .= sprintf ( '<li class="essbfc-%1$s">', esc_attr($social_display) );
 			
@@ -321,6 +376,14 @@ class ESSBSocialProfiles {
 			if ($instance_show_text == 'yes' && $network_text != '' ) {
 				$code .= '<span class="essbfc-profile-cta">'.$network_text.'</span>';
 			}
+			
+			/**
+			 * New CTA button design
+			 */
+			if ($cta == 'yes' && $network_text != '') {
+				$code .= '<span class="essbfc-profile-cta_text">'.$network_text.'</span>';
+			}
+			
 			$code .= '</div>';
 		
 			if (! empty ( $follow_url )) {
@@ -335,66 +398,6 @@ class ESSBSocialProfiles {
 		
 		return $code;
 	}
-	
-	public static function _deprecated_generate_social_profile_icons($profiles = array(), $button_type = 'square', 
-			$button_size = 'small', $button_fill = 'colored', $nospace = true, $position = '', $profiles_text = false, 
-			$profiles_texts = array(), $button_width = '') {
-		
-		$output = "";
-		
-		
-		$nospace_class = ($nospace) ? " essb-profiles-nospace" : "";
-		$position_classs = (!empty($position)) ? " essb-profiles-".$position : "";
-		
-		if (!empty($position)) {
-			if ($position != "left" && $position != "right") {
-				$position_classs .= " essb-profiles-horizontal";
-			}
- 		}
- 		
- 		$single_width = "";
- 		// @since 3.0.4
- 		if (!$profiles_text) {
- 			$button_width = "";
- 		}
- 		
- 		if (!empty($button_width)) {
- 			if (strpos($button_width, 'px') === false && strpos($button_width, '%') === false) {
- 				$button_width .= 'px';
- 			}
- 			
- 			$button_width = ' style="width:'.$button_width.'; display: inline-block;"';
- 			$single_width = ' style="width:100%"';
- 		}
-		
-		$output .= sprintf('<div class="essb-profiles essb-profiles-%1$s essb-profiles-size-%2$s%3$s%4$s">', esc_attr($button_type), esc_attr($button_size),
-				esc_attr($nospace_class), esc_attr($position_classs));
-		
-		$output .= '<ul class="essb-profile">';
-				
-		
-		foreach ($profiles as $network => $address) {
-			
-			if ($profiles_text) {
-				$text = isset($profiles_texts[$network]) ? $profiles_texts[$network] : '';
-				
-				if (!empty($text)) {
-					$text = '<span class="essb-profile-text">'.$text.'</span>';
-				}
-				
-				$output .= sprintf('<li class="essb-single-profile" %6$s><a href="%1$s" target="_blank" rel="nofollow" class="essb-profile-all essb-profile-%2$s-%3$s" %5$s><span class="essb-profile-icon essb-profile-%2$s"></span>%4$s</a></li>', $address, $network, $button_fill, $text, $single_width, $button_width);
-			}
-			else {
-				$output .= sprintf('<li class="essb-single-profile"><a href="%1$s" target="_blank" rel="nofollow" class="essb-profile-all essb-profile-%2$s-%3$s"><span class="essb-profile-icon essb-profile-%2$s"></span></a></li>', $address, $network, $button_fill);
-			}
-		}
-		
-		$output .= '</ul>';
-		$output .= "</div>";
-
-		return $output;
-	}
-	
 }
 
 ?>

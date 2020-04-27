@@ -6,12 +6,10 @@ function essb_post_details_to_content($content) {
 	if (isset($post)) {
 		$url = get_permalink();
 		$title_plain = $post->post_title;
-		$post_image = has_post_thumbnail( $post->ID ) ? wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' ) : '';
-		$image = ($post_image != '') ? $post_image[0] : '';
-		$description = $post->post_excerpt;
+		$image = essb_core_get_post_featured_image($post->ID);
+		$description = essb_core_get_post_excerpt($post->ID);
 			
 		$content = preg_replace(array('#%%title%%#', '#%%url%%#', '#%%image%%#', '#%%excerpt%%#'), array($title_plain, $url, $image, $description), $content);
-
 	}
 
 	return $content;
@@ -223,24 +221,6 @@ function essb_template_folder ($template_id) {
 	return $folder;
 }
 
-function essb_core_helper_get_excerpt_by_id($post_id) {
-	$the_post = get_post ( $post_id ); // Gets post ID
-	$the_excerpt = $the_post->post_content; // Gets post_content to be used as
-	// a basis for the excerpt
-	$excerpt_length = 35; // Sets excerpt length by word count
-	$the_excerpt = strip_tags ( strip_shortcodes ( $the_excerpt ) ); // Strips tags
-	// and images
-	$words = explode ( ' ', $the_excerpt, $excerpt_length + 1 );
-	if (count ( $words ) > $excerpt_length) :
-	array_pop ( $words );
-	array_push ( $words, '…' );
-	$the_excerpt = implode ( ' ', $words );
-
-	endif;
-	$the_excerpt = '<p>' . $the_excerpt . '</p>';
-	return $the_excerpt;
-}
-
 function essb_core_get_post_featured_image($post_id) {
 	$post_cached_image = get_post_meta($post_id, 'essb_cached_image', true);
 
@@ -377,12 +357,11 @@ function essb_core_helper_generate_network_list() {
 	return $network_order;
 }
 
-function essb_core_helper_urlencode($str) {
+function essb_core_helper_textencode($str) {
 	$str = str_replace(' ', '%20', $str);
 	$str = str_replace("'", '%27', $str);
 	$str = str_replace("\"", '%22', $str);
 	$str = str_replace('#', '%23', $str);
-	$str = str_replace('+', '%2B', $str);
 	$str = str_replace('$', '%24', $str);
 	$str = str_replace('&', '%26', $str);
 	$str = str_replace(',', '%2C', $str);
@@ -392,9 +371,14 @@ function essb_core_helper_urlencode($str) {
 	$str = str_replace('=', '%3D', $str);
 	$str = str_replace('?', '%3F', $str);
 	$str = str_replace('@', '%40', $str);
+	$str = str_replace('|', '%7C', $str);
 	$str = str_replace('\%27', '%27', $str);
-
+	
 	return $str;
+}
+
+function essb_core_helper_urlencode($str) {
+	return essb_core_helper_textencode($str);
 }
 
 /**
@@ -407,8 +391,6 @@ function essb_core_helper_urlencode($str) {
  */
 function essb_get_post_share_details($position) {
 	global $post;
-
-	//timer_start();
 	
 	if (essb_option_bool_value('reset_postdata')) {
 		wp_reset_postdata();
@@ -454,7 +436,7 @@ function essb_get_post_share_details($position) {
 
 
 	if (isset($post)) {
-		$title = esc_attr(urlencode($post->post_title));
+		$title = $post->post_title;
 		$title_plain = $post->post_title;
 		$image = essb_core_get_post_featured_image($post->ID);
 		$description = $post->post_excerpt;
@@ -552,24 +534,22 @@ function essb_get_post_share_details($position) {
 				$post_pin_image = $sw_setup['pin_image'];
 			}	
 		}
+		
+		/**
+		 * Adding additional option check for the integration with Yoast SEO (if it is not disabled)
+		 */
+		if (defined('WPSEO_VERSION') && !essb_option_bool_value('deactivate_pair_yoast_sso')) {	
 			
-		if (defined('WPSEO_VERSION')) {	
+			essb_depend_load_function('essb_yoast_custom_data', 'lib/core/integrations/yoast.php');
+			$yoast_setup = essb_yoast_custom_data();
 			
-			$yoast_title = get_post_meta( $post->ID, '_yoast_wpseo_title', true);
-			$yoast_description = get_post_meta( $post->ID, '_yoast_wpseo_metadesc', true);
-			
-			if ($yoast_title != '') {
-				// include WPSEO replace vars
-				if (strpos($yoast_title, '%%') !== false && function_exists('wpseo_replace_vars')) {
-					$yoast_title = wpseo_replace_vars($yoast_title, $post);
-				}
-				
-				$title = $yoast_title;
-				$title_plain = $yoast_title;
-				$twitter_customtweet = $yoast_title;
+			if ($yoast_setup['title'] != '') {
+				$title = $yoast_setup['title'];
+				$title_plain = $yoast_setup['title'];
+				$twitter_customtweet = $yoast_setup['title'];
 			}
-			if ($yoast_description != '') {
-				$description = $yoast_description;
+			if ($yoast_setup['description'] != '') {
+				$description = $yoast_setup['description'];
 			}
 		}
 		
@@ -621,6 +601,12 @@ function essb_get_post_share_details($position) {
 	$description= str_replace("'", "\'", $description);
 	$twitter_customtweet= str_replace("'", "\'", $twitter_customtweet);
 	$title_plain= str_replace("'", "\'", $title_plain);
+	
+	// 6.4.2
+	// Removing the extra @ in front of the Twitter username
+	if (!empty($twitter_user)) {
+		$twitter_user = str_replace('@', '', $twitter_user);
+	}
 	
 	return array('url' => $url, 'title' => $title, 'image' => $image, 'description' => $description, 'twitter_user' => $twitter_user,
 			'twitter_hashtags' => $twitter_hashtags, 'twitter_tweet' => $twitter_customtweet, 'post_id' => isset($post) ? $post->ID : 0, 'user_image_url' => '', 'title_plain' => $title_plain,
@@ -699,4 +685,23 @@ function essb_get_native_button_settings($position = '', $only_share = false) {
 	}
 
 	return $native_options;
+}
+
+function essb_remove_network_from_list($social_networks, $remove_key = '') {
+	if (in_array($remove_key, $social_networks)) {
+		if(($key = array_search($remove_key, $social_networks)) !== false) {
+			unset($social_networks[$key]);
+		}
+	}
+	
+	return $social_networks;
+}
+
+function essb_exist_in_array($values, $key) {
+	if (!empty($values) && is_array($values)) {
+		return in_array($key, $values);
+	}
+	else {
+		return false;
+	}
 }

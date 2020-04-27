@@ -33,13 +33,10 @@ function essb_sso_metabox_interface_facebook($post_id) {
 	essb_depend_load_class('ESSB_FrontMetaDetails', 'lib/modules/social-share-optimization/class-metadetails.php');
 	$sso_data = ESSB_FrontMetaDetails::get_instance();
 	
-	?>
-	<div class="essb-flex-grid-r">
-		<div class="essb-heading sub5"><span><i class="fa fa-share-alt"></i> Social Media Message</span></div>
-	</div>
-	<?php 
+	$show_preview_image_class = essb_option_bool_value('sso_external_images') ? 'media-visible' : '';
+	
 	ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-	ESSBOptionsFramework::draw_help(__('Optimize your social share message on all social networks', 'essb'), __('Social Sharing Optimization is important for each site. Without using it you have no control over shared information on social networks. We highly recommend to activate it (Facebook sharing tags are used on almost all social networks so they are the minimal required).', 'essb'), '', array('buttons' => array('How to customize shared information' => 'https://docs.socialsharingplugin.com/knowledgebase/how-to-customize-personalize-shared-information-on-social-networks/', 'I see wrong share information' => 'https://docs.socialsharingplugin.com/knowledgebase/facebook-is-showing-the-wrong-image-title-or-description/', 'Test & Fix Facebook Showing Wrong Information' => 'https://docs.socialsharingplugin.com/knowledgebase/how-to-test-and-fix-facebook-sharing-wrong-information-using-facebook-open-graph-debugger/')));
+	ESSBOptionsFramework::draw_help(esc_html__('Optimize your social share message on all social networks', 'essb'), esc_html__('Social Sharing Optimization is important for each site. Without using it you have no control over shared information on social networks. We highly recommend to activate it (Facebook sharing tags are used on almost all social networks so they are the minimal required).', 'essb'), '', array('buttons' => array('How to customize shared information' => 'https://docs.socialsharingplugin.com/knowledgebase/how-to-customize-personalize-shared-information-on-social-networks/', 'I see wrong share information' => 'https://docs.socialsharingplugin.com/knowledgebase/facebook-is-showing-the-wrong-image-title-or-description/', 'Test & Fix Facebook Showing Wrong Information' => 'https://docs.socialsharingplugin.com/knowledgebase/how-to-test-and-fix-facebook-sharing-wrong-information-using-facebook-open-graph-debugger/')));
 	ESSBOptionsFramework::draw_options_row_end();	
 	?>
 
@@ -53,9 +50,15 @@ function essb_sso_metabox_interface_facebook($post_id) {
 	<div class="essb-flex-grid-r">
 		<div class="essb-flex-grid-c c12">
 			
-			<div class="sso-preview">
-				<?php 				
+			<div class="sso-preview <?php echo esc_attr($show_preview_image_class); ?>">
+				<?php 	
 				ESSBOptionsFramework::draw_fileselect_image_field('essb_post_og_image', 'essb_metabox', $essb_post_og_image, '', '', $sso_data->single_image($post_id));
+				
+				if (essb_option_bool_value('sso_external_images')) {
+					echo '<div class="label">';
+					esc_html_e('Custom image URL for Social Media Optimization. The field will have value in the case of custom image selection. The field will remain blank if the default image is used.', 'essb');
+					echo '</div>';
+				}
 				?>
 			
 				<div class="sso-title carret-mark "><?php echo esc_html($sso_data->single_title($post_id)); ?></div>
@@ -77,46 +80,46 @@ function essb_sso_metabox_interface_facebook($post_id) {
 	<?php } ?>
 	
 	<?php 
-	ESSBOptionsFramework::draw_title(__('Social Media Title', 'essb'), __('Add a title that will populate the open graph meta tag which will be used when users share your content onto most social networks. If nothing is provided here, we will use the post title as a backup. We recommend usage of titles that does not exceed 60 characters', 'essb'), 'inner-row');
+	ESSBOptionsFramework::draw_title(esc_html__('Social Media Title', 'essb'), esc_html__('Add a title that will populate the open graph meta tag which will be used when users share your content onto most social networks. If nothing is provided here, we will use the post title as a backup. We recommend usage of titles that does not exceed 60 characters', 'essb'), 'inner-row');
 	ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 	ESSBOptionsFramework::draw_input_field('essb_post_og_title', true, 'essb_metabox', $essb_post_og_title);
 	ESSBOptionsFramework::draw_options_row_end();
 	
 	
-	ESSBOptionsFramework::draw_title(__('Social Media Description', 'essb'), __('Add a description that will populate the open graph meta tag which will be used when users share your content onto most social networks.<span class="essb-inner-recommend">We recommend usage of description that does not exceed 160 characters</span>', 'essb'), 'inner-row');
+	ESSBOptionsFramework::draw_title(esc_html__('Social Media Description', 'essb'), esc_html__('Add a description that will populate the open graph meta tag which will be used when users share your content onto most social networks.<span class="essb-inner-recommend">We recommend usage of description that does not exceed 160 characters</span>', 'essb'), 'inner-row');
 	ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 	ESSBOptionsFramework::draw_textarea_field('essb_post_og_desc', 'essb_metabox', $essb_post_og_desc);
 	ESSBOptionsFramework::draw_options_row_end();
 
-	ESSBOptionsFramework::draw_title(__('Article Author Profile', 'essb'), __('Add link to Facebook profile page of article author if you wish it to appear in shared information. Example: https://facebook.com/author', 'essb'), 'inner-row');
+	ESSBOptionsFramework::draw_title(esc_html__('Article Author Profile', 'essb'), esc_html__('Add link to Facebook profile page of article author if you wish it to appear in shared information. Example: https://facebook.com/author', 'essb'), 'inner-row');
 	ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 	ESSBOptionsFramework::draw_input_field('essb_post_og_author', true, 'essb_metabox', $essb_post_og_author, '', '', '', essb_option_value('opengraph_tags_fbauthor'));
 	ESSBOptionsFramework::draw_options_row_end();
 	
-	ESSBOptionsFramework::draw_title(__('Customize Open Graph URL', 'essb'), __('Important! This field is needed only if you made a change in your URL structure and you need to customize og:url tag to preserve shares you have. Do not fill here anything unless you are completely sure you need it - not proper usage will lead to loose of your current social shares and comments.', 'essb'), 'inner-row');
+	ESSBOptionsFramework::draw_title(esc_html__('Customize Open Graph URL', 'essb'), esc_html__('Important! This field is needed only if you made a change in your URL structure and you need to customize og:url tag to preserve shares you have. Do not fill here anything unless you are completely sure you need it - not proper usage will lead to loose of your current social shares and comments.', 'essb'), 'inner-row');
 	ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 	ESSBOptionsFramework::draw_input_field('essb_post_og_url', true, 'essb_metabox', $essb_post_og_url);
 	ESSBOptionsFramework::draw_options_row_end();
 	
 	if (essb_option_bool_value('sso_multipleimages')) {
-		ESSBOptionsFramework::draw_heading(__('Additional Facebook Images', 'essb'), '5');
+		ESSBOptionsFramework::draw_heading(esc_html__('Additional Facebook Images', 'essb'), '5');
 			
-		ESSBOptionsFramework::draw_title(__('Additional Social Media Image #1', 'essb'), __('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
+		ESSBOptionsFramework::draw_title(esc_html__('Additional Social Media Image #1', 'essb'), esc_html__('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
 		ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 		ESSBOptionsFramework::draw_fileselect_field('essb_post_og_image1', 'essb_metabox', $essb_post_og_image1);
 		ESSBOptionsFramework::draw_options_row_end();
 	
-		ESSBOptionsFramework::draw_title(__('Additional Social Media Image #2', 'essb'), __('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
+		ESSBOptionsFramework::draw_title(esc_html__('Additional Social Media Image #2', 'essb'), esc_html__('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
 		ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 		ESSBOptionsFramework::draw_fileselect_field('essb_post_og_image2', 'essb_metabox', $essb_post_og_image2);
 		ESSBOptionsFramework::draw_options_row_end();
 			
-		ESSBOptionsFramework::draw_title(__('Additional Social Media Image #3', 'essb'), __('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
+		ESSBOptionsFramework::draw_title(esc_html__('Additional Social Media Image #3', 'essb'), esc_html__('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
 		ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 		ESSBOptionsFramework::draw_fileselect_field('essb_post_og_image3', 'essb_metabox', $essb_post_og_image3);
 		ESSBOptionsFramework::draw_options_row_end();
 			
-		ESSBOptionsFramework::draw_title(__('Additional Social Media Image #4', 'essb'), __('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
+		ESSBOptionsFramework::draw_title(esc_html__('Additional Social Media Image #4', 'essb'), esc_html__('Add an image that is optimized for maximum exposure on most social networks.<span class="essb-inner-recommend">We recommend 1200px by 628px</span>', 'essb'), 'inner-row');
 		ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 		ESSBOptionsFramework::draw_fileselect_field('essb_post_og_image4', 'essb_metabox', $essb_post_og_image4);
 		ESSBOptionsFramework::draw_options_row_end();
@@ -172,13 +175,13 @@ function essb_sso_metabox_interface_twitter($post_id) {
 		
 	<?php 
 	
-	ESSBOptionsFramework::draw_title(__('Twitter Card Title', 'essb'), __('Add a title that will populate the Twitter card meta tag which will be used when users share your content on Twitter. If nothing is provided here, we will use the post title as a backup. We recommend usage of titles that does not exceed 60 characters', 'essb'), 'inner-row');
+	ESSBOptionsFramework::draw_title(esc_html__('Twitter Card Title', 'essb'), esc_html__('Add a title that will populate the Twitter card meta tag which will be used when users share your content on Twitter. If nothing is provided here, we will use the post title as a backup. We recommend usage of titles that does not exceed 60 characters', 'essb'), 'inner-row');
 	ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 	ESSBOptionsFramework::draw_input_field('essb_post_twitter_title', true, 'essb_metabox', $essb_post_twitter_title);
 	ESSBOptionsFramework::draw_options_row_end();
 	
 	
-	ESSBOptionsFramework::draw_title(__('Twitter Card Description', 'essb'), __('Add a description that will populate the Twitter card tag which will be used when users share your content on Twitter.<span class="essb-inner-recommend">We recommend usage of description that does not exceed 160 characters</span>', 'essb'), 'inner-row');
+	ESSBOptionsFramework::draw_title(esc_html__('Twitter Card Description', 'essb'), esc_html__('Add a description that will populate the Twitter card tag which will be used when users share your content on Twitter.<span class="essb-inner-recommend">We recommend usage of description that does not exceed 160 characters</span>', 'essb'), 'inner-row');
 	ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 	ESSBOptionsFramework::draw_textarea_field('essb_post_twitter_desc', 'essb_metabox', $essb_post_twitter_desc);
 	ESSBOptionsFramework::draw_options_row_end();

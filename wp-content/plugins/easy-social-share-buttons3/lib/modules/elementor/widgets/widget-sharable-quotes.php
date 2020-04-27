@@ -8,7 +8,7 @@ class ESSB_Elementor_Sharable_Qutotes_Widget extends Widget_Base {
 	}
 	
 	public function get_title() {
-		return __( 'Sharable Quotes', 'essb' );
+		return esc_html__( 'Sharable Quotes', 'essb' );
 	}
 	
 	public function get_icon() {
@@ -32,7 +32,7 @@ class ESSB_Elementor_Sharable_Qutotes_Widget extends Widget_Base {
 		$this->add_control(
 			'quote',
 			[
-				'label' => __( 'Quote', 'essb' ),
+				'label' => esc_html__( 'Quote', 'essb' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'default' => '',
 			]
@@ -41,7 +41,7 @@ class ESSB_Elementor_Sharable_Qutotes_Widget extends Widget_Base {
 		$this->add_control(
 				'user',
 				[
-				'label' => __( 'Include the following user in quote', 'essb' ),
+				'label' => esc_html__( 'Include the following user in quote', 'essb' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				]
@@ -50,7 +50,7 @@ class ESSB_Elementor_Sharable_Qutotes_Widget extends Widget_Base {
 		$this->add_control(
 				'tags',
 				[
-				'label' => __( 'Hashtags', 'essb' ),
+				'label' => esc_html__( 'Hashtags', 'essb' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				]
@@ -59,8 +59,8 @@ class ESSB_Elementor_Sharable_Qutotes_Widget extends Widget_Base {
 		$this->add_control(
 				'url',
 				[
-				'label' => __( 'URL', 'essb' ),
-				'title' => __('Include URL that you wish to appear inside the quote', 'essb'),
+				'label' => esc_html__( 'URL', 'essb' ),
+				'title' => esc_html__('Include URL that you wish to appear inside the quote', 'essb'),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				]
@@ -69,7 +69,7 @@ class ESSB_Elementor_Sharable_Qutotes_Widget extends Widget_Base {
 		$this->add_control(
 				'template',
 				[
-				'label' => __( 'Template', 'essb' ),
+				'label' => esc_html__( 'Template', 'essb' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => array(

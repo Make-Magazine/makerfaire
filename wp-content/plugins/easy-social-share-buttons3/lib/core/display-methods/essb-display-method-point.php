@@ -134,7 +134,6 @@ class ESSBDisplayMethodPoint {
 				
 				$working_post_content = $prev_post->post_content;
 					
-				//$essb_post_og_desc = strip_shortcodes($essb_post_og_desc);
 				$post_shortdesc = $prev_post->post_excerpt;
 				if ($post_shortdesc != '') {
 					$working_post_content = $post_shortdesc;
@@ -175,7 +174,6 @@ class ESSBDisplayMethodPoint {
 				
 				$working_post_content = $next_post->post_content;
 					
-				//$essb_post_og_desc = strip_shortcodes($essb_post_og_desc);
 				$post_shortdesc = $next_post->post_excerpt;
 				if ($post_shortdesc != '') {
 					$working_post_content = $post_shortdesc;

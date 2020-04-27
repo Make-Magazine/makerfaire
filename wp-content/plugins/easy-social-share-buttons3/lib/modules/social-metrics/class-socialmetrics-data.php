@@ -25,7 +25,6 @@ class ESSBSocialMetricsDataHolder {
 		
 		$data = array ();
 		
-		// foreach ($querydata as $querydatum ) {
 		if ($querydata->have_posts ()) {
 			while ( $querydata->have_posts () ) {
 				$querydata->the_post ();
@@ -135,7 +134,7 @@ class ESSBSocialMetricsDataHolder {
 		arsort($this->network_totals);
 		
 		// creating trending posts
-					$this->trending_content[$service] = array('value' => 0, 'title' => '', 'permalink' => '');
+		$this->trending_content[$service] = array('value' => 0, 'title' => '', 'permalink' => '');
 	}
 	
 	function date_range_filter($where = '') {
@@ -248,9 +247,9 @@ class ESSBSocialMetricsDataHolder {
 	
 	
 			echo '<tr>';
-			echo '<td><i class="essb_status_icon essb_icon_'.$key.'"></i>'.$this->network_name($key).'</td>';
+			echo '<td><i class="essb_status_icon essb_icon_'.esc_attr($key).'"></i>'.$this->network_name($key).'</td>';
 			echo '<td align="right"><strong>'.number_format($single_value).'</strong></td>';
-			echo '<td><a href="'.$permalink.'" target="_blank">'.$title.'</a></td>';
+			echo '<td><a href="'.esc_url($permalink).'" target="_blank">'.$title.'</a></td>';
 			echo '</tr>';
 		}
 	
@@ -275,9 +274,9 @@ class ESSBSocialMetricsDataHolder {
 	
 	
 			echo '<tr>';
-			echo '<td><i class="essb_status_icon essb_icon_'.$key.'"></i>'.$this->network_name($key).'</td>';
+			echo '<td><i class="essb_status_icon essb_icon_'.esc_attr($key).'"></i>'.$this->network_name($key).'</td>';
 			echo '<td align="right"><strong>'.number_format($single_value).'</strong></td>';
-			echo '<td><a href="'.$permalink.'" target="_blank">'.$title.'</a></td>';
+			echo '<td><a href="'.esc_url($permalink).'" target="_blank">'.$title.'</a></td>';
 			echo '</tr>';
 		}
 	
@@ -337,10 +336,10 @@ class ESSBSocialMetricsDataHolder {
 			
 		?>
 		<div
-						class="essb-stats-panel essb-stat-network shadow panel20 widget-color-<?php echo $key; ?>">
+						class="essb-stats-panel essb-stat-network shadow panel20 widget-color-<?php echo esc_attr($key); ?>">
 						<div class="essb-stats-panel-inner">
 							<div class="essb-stats-panel-text">
-								<i class="essb_icon_<?php echo $key; ?>"></i> <span
+								<i class="essb_icon_<?php echo esc_attr($key); ?>"></i> <span
 									class="details"><?php echo $this->network_name($key); echo ' '; echo $this->compare_value_change($past_value, $value); ?><br /> <span
 									class="percent"><?php echo $percent;?> %</span></span>
 							</div>
@@ -482,34 +481,6 @@ class ESSBSocialMetricsDataHolder {
 			
 			echo '</tr>';
 		}
-		
-		/*foreach ($this->data_report as $item) {
-				
-			$total_value = number_format(intval($item['esml_socialcount_total']));
-				
-			$item_actions = sprintf('<a href="post.php?post=%s&action=edit">Edit Post</a>',$item['ID'],'edit',$item['ID']) .
-			'&nbsp;<a href="'.esc_url(add_query_arg( 'esml_sync_now', $item['ID'])).'">Update Stats</a>&nbsp;' .
-			sprintf('Updated %s',EasySocialMetricsLite::timeago($item['esml_socialcount_LAST_UPDATED']));
-				
-			echo '<tr>';
-				
-			echo '<td>';
-			printf('%1$s <br/><span class="esml-navigation-item">(id:%2$s) %3$s</span>',
-					 $item['post_title'],
-					 $item['ID'],
-					 $item_actions);
-			echo '</td>';
-			echo '<td align="right">'.$total_value.'</td>';
-				
-			foreach ($this->services as $key => $text) {
-				if ($key == "diggs") {
-					continue;
-				}
-				echo '<td align="right">'.number_format(intval($item['esml_socialcount_'.$key])).'</td>';
-			}
-				
-			echo '</tr>';
-		}*/
 	
 		echo '</tbody>';
 	

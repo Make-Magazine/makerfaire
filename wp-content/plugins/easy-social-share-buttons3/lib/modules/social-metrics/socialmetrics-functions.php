@@ -12,7 +12,6 @@ function essb_sm_store_data($post_id, $counter_data = array()) {
 		$previous_data = array();
 	}
 	
-	// logging date inside snippet
 	$log_date = date('Y-m-d');
 	
 	$has_record = essb_sm_has_record($previous_data, $log_date);

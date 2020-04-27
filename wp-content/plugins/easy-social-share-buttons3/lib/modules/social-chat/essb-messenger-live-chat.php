@@ -30,23 +30,30 @@ if (!function_exists('essb_register_messenger')) {
 			}
 		}
 		
-		if (essb_option_bool_value('fbmessenger_posttypes')) {
-			$posttypes = $this->option_value('posttypes');
-			if (!is_array($posttypes)) {
-				$posttypes = array();
-			}
-				
-			if (!is_singular($posttypes)) {
-				$is_deactivated = true;
-			}
+		/**
+		 * Changing the check for post types as of options interface change (fbmessenger_posttypes is removed)
+		 */
+		$posttypes = essb_option_value('fbmessenger_posttypes');
+		if (!is_array($posttypes)) {
+			$posttypes = array();
+		}
+			
+		$current_post_type = get_post_type();			
+		if ($current_post_type && count($posttypes) > 0 && !in_array($current_post_type, $posttypes)) {
+			$is_deactivated = true;
 		}
 		
 		// deactivate display of the functions
 		if ($is_deactivated) { return; }
 		
-		$fbmessenger_logged_greeting = essb_option_value('fbmessenger_logged_greeting');
-		$fbmessenger_loggedout_greeting = essb_option_value('fbmessenger_loggedout_greeting');
+		$fbmessenger_logged_greeting = stripslashes(essb_option_value('fbmessenger_logged_greeting'));
+		$fbmessenger_loggedout_greeting = stripslashes(essb_option_value('fbmessenger_loggedout_greeting'));
 		$fbmessenger_color = essb_option_value('fbmessenger_color');
+		
+		$fbmessenger_language = essb_sanitize_option_value('fbmessenger_language');
+		if ($fbmessenger_language == '') {
+			$fbmessenger_language = 'en_US';
+		}
 		
 		$extra_options = '';
 		
@@ -62,23 +69,27 @@ if (!function_exists('essb_register_messenger')) {
 		
 		$minimized_state = essb_option_bool_value('fbmessenger_minimized');				
 		echo '<div class="fb-customerchat" page_id="'.esc_attr(essb_option_value('fbmessenger_pageid')).'" '.($minimized_state ? 'minimized="true"' : '').$extra_options.'></div>';
-
-		if (essb_option_bool_value('fbmessenger_left')) {
-			echo '<style type="text/css">.fb_dialog, .fb-customerchat:not(.fb_iframe_widget_fluid) iframe { left: 18pt !important; right: auto !important; }</style>';
-		}
 		
-		// loading Facebook API required for the function to run
-		//essb_resource_builder()->add_social_api('facebook');
+		/**
+		 * Loading Facebook API required to run the chat app
+		 */
 		echo '
 		<script type="text/javascript">
 		(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
-  js.src = "https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12&autoLogAppEvents=1";
+  js.src = "https://connect.facebook.net/'.esc_attr($fbmessenger_language).'/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12&autoLogAppEvents=1";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, \'script\', \'facebook-jssdk\'));</script>';
 	}
 	
+	add_action('wp_enqueue_scripts', 'essb_register_messenger_styles', 1 );
 	add_action('wp_footer', 'essb_register_messenger');
+	
+	function essb_register_messenger_styles() {
+		if (essb_option_bool_value('fbmessenger_left')) {
+			essb_resource_builder()->add_css('.fb_dialog, .fb-customerchat:not(.fb_iframe_widget_fluid) iframe { left: 18pt !important; right: auto !important; }', 'fbmessenger-chat');
+		}
+	}
 }

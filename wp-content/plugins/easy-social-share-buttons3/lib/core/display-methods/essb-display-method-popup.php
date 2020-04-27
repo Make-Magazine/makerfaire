@@ -13,8 +13,6 @@
 class ESSBDisplayMethodPopup {
 	
 	public static function generate_popup_code($options, $share_buttons, $is_shortcode, $shortcode_options = array()) {
-		// loading popup display settings
-		
 		$output = '';
 		
 		$popup_window_title = ESSBOptionValuesHelper::options_value($options, 'popup_window_title');
@@ -39,7 +37,6 @@ class ESSBDisplayMethodPopup {
 				$popup_window_popafter = $shortcode_popafter;
 			}
 			
-		
 			$shortcode_window_title = isset($shortcode_options['popup_title']) ? $shortcode_options['popup_title'] : '';
 			$shortcode_window_message = isset($shortcode_options['popup_message']) ? $shortcode_options['popup_message'] : '';
 			$shortcode_pop_on_percent = isset($shortcode_options['popup_percent']) ? $shortcode_options['popup_percent'] : '';
@@ -118,10 +115,10 @@ class ESSBDisplayMethodPopup {
 		$output .= '<div class="essb-popup-shadow" onclick="essb.popup_close(); return false;"></div>';
 			
 		if ($popup_window_popafter != '') {
-			$output .= '<div style="display: none;" id="essb_settings_popafter_counter"></div>';
+			$output .= '<div class="essb-forced-hidden" id="essb_settings_popafter_counter"></div>';
 		}
 		if ($popup_user_autoclose != '') {
-			$output .= sprintf('<div id="essb_settings_popup_user_autoclose" style="display: none;">%1$s</div>', $popup_user_autoclose);
+			$output .= sprintf('<div id="essb_settings_popup_user_autoclose" class="essb-forced-hidden">%1$s</div>', $popup_user_autoclose);
 		}
 		
 		return $output;

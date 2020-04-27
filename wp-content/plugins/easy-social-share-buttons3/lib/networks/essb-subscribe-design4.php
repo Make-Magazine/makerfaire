@@ -12,14 +12,14 @@ if (!function_exists('essb_subscribe_form_design4')) {
 		}
 		
 		$default_texts = array(
-				"title" => __('Join our list', 'essb'),
-				"text" => __('Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'),
-				"email" => __('Enter your email here', 'essb'),
-				"name" => __('Enter your name here', 'essb'),
-				"button" => __('Sign Up Now', 'essb'),
-				"footer" => __('We respect your privacy and take protecting it seriously', 'essb'),
-				"success" => __('Thank you for subscribing.', 'essb'),
-				"error" => __('Something went wrong.', 'essb')
+				"title" => esc_html__('Join our list', 'essb'),
+				"text" => esc_html__('Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'),
+				"email" => esc_html__('Enter your email here', 'essb'),
+				"name" => esc_html__('Enter your name here', 'essb'),
+				"button" => esc_html__('Sign Up Now', 'essb'),
+				"footer" => esc_html__('We respect your privacy and take protecting it seriously', 'essb'),
+				"success" => esc_html__('Thank you for subscribing.', 'essb'),
+				"error" => esc_html__('Something went wrong.', 'essb')
 		);
 		
 		$subscribe_mc_title = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_title4');

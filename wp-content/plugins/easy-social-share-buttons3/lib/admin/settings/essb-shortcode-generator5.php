@@ -385,7 +385,7 @@ class ESSBShortcodeGenerator5 {
 		echo '<tr class="'.$cssClass.' table-border-bottom">';
 		echo '<td class="bold" valign="top">'.$text.'<br/><span class="label">'.$comment.'</span></td>';
 		echo '<td class="essb_general_options">';
-		echo '<ul id="'.$param.'">';
+		echo '<ul id="'.$param.'" class="essb-sc-sortable">';
 		$y = $n = '';
 		
 		if (is_array ( $essb_networks )) {
@@ -403,16 +403,7 @@ class ESSBShortcodeGenerator5 {
 			}
 		
 		}
-		echo '</ul>';
-		
-		
-		
-		echo '<script type="text/javascript">
-jQuery(document).ready(function(){
-    jQuery(\'#'.$param.'\').sortable();
-});
-</script>';
-		
+		echo '</ul>';		
 		echo '</td>';
 		echo '</tr>';
 	}
@@ -435,7 +426,7 @@ jQuery(document).ready(function(){
 		echo '<tr class="'.$cssClass.' table-border-bottom">';
 		echo '<td class="bold" valign="top">'.$text.'<br/><span class="label">'.$comment.'</span></td>';
 		echo '<td class="essb_general_options">';
-		echo '<ul id="'.$param.'">';
+		echo '<ul id="'.$param.'" class="essb-sc-sortable">';
 		$y = $n = '';
 		
 		if (is_array ( $list_of_networks )) {
@@ -457,14 +448,6 @@ jQuery(document).ready(function(){
 		}
 		echo '</ul>';
 		
-		
-		
-		echo '<script type="text/javascript">
-		jQuery(document).ready(function(){
-		jQuery(\'#'.$param.'\').sortable();
-		});
-		</script>';
-		
 		echo '</td>';
 		echo '</tr>';
 	}
@@ -482,7 +465,7 @@ jQuery(document).ready(function(){
 		echo '<tr class="'.$cssClass.' table-border-bottom">';
 		echo '<td class="bold" valign="top">'.$text.'<br/><span class="label">'.$comment.'</span></td>';
 		echo '<td class="essb_general_options">';
-		echo '<ul id="'.$param.'">';
+		echo '<ul id="'.$param.'" class="essb-sc-sortable">';
 		$y = $n = '';
 	
 		if (is_array ( essb_available_social_profiles() )) {
@@ -501,14 +484,6 @@ jQuery(document).ready(function(){
 	
 		}
 		echo '</ul>';
-	
-	
-	
-		echo '<script type="text/javascript">
-		jQuery(document).ready(function(){
-		jQuery(\'#'.$param.'\').sortable();
-	});
-	</script>';
 	
 		echo '</td>';
 		echo '</tr>';
@@ -1092,6 +1067,7 @@ jQuery(document).ready(function(){
 		$this->register("twitter_user", array("type" => "textbox", "text" => "Twitter username:", "comment" => "Provide custom twitter username to include into tweet message", "value" => "", "fullwidth" => "true"));
 		$this->register("twitter_hashtags", array("type" => "textbox", "text" => "Twitter hashtags:", "comment" => "Provide custom hashtags for that message", "value" => "", "fullwidth" => "true"));
 		$this->register("twitter_tweet", array("type" => "textbox", "text" => "Tweet message:", "comment" => "Provide custom tweet message", "value" => "", "fullwidth" => "true"));
+		$this->register("noaffiliate", array("type" => "checkbox", "text" => "Don't generate an affiliate link for the URL (when the option is enabled in the settings):", "comment" => "", "value" => "yes"));
 		
 		$this->register('section4', array("type" => "section", "text" => "Additional display options"));
 		$this->register("sidebar", array("type" => "checkbox", "text" => "Display social buttons as sidebar:", "comment" => "", "value" => "yes"));

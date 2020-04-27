@@ -57,7 +57,7 @@ class ESSBMyCredIntegration {
 			$result = mycred_create_token( array( $points, $group, $salt ) );
 				
 			if ($result != '') {
-				$result = ' data-token="' . $result . '" data-type="'.$group.'"';
+				$result = ' data-token="' . esc_attr($result) . '" data-type="'.esc_attr($group).'"';
 			}
 		}
 	

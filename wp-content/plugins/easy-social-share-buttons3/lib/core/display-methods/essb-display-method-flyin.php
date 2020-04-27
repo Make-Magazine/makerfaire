@@ -110,10 +110,10 @@ class ESSBDisplayMethodFlyin {
 		$output .= "</div>";
 		
 		if ($flyin_window_popafter != '') {
-			$output .= '<div style="display: none;" id="essb_settings_flyafter_counter"></div>';
+			$output .= '<div class="essb-forced-hidden" id="essb_settings_flyafter_counter"></div>';
 		}
 		if ($flyin_user_autoclose != '') {
-			$output .= sprintf('<div id="essb_settings_flyin_user_autoclose" style="display: none;">%1$s</div>', $flyin_user_autoclose);
+			$output .= sprintf('<div id="essb_settings_flyin_user_autoclose" class="essb-forced-hidden">%1$s</div>', $flyin_user_autoclose);
 		}
 		
 		return $output;

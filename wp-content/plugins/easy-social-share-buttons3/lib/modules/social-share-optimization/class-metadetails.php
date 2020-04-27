@@ -145,7 +145,7 @@ class ESSB_FrontMetaDetails {
 				 }
 			}
 			elseif ( is_search() ) {
-				$this->title = sprintf( __( 'Search for "%s"', 'essb' ), esc_html( get_search_query() ) );
+				$this->title = sprintf( esc_html__( 'Search for "%s"', 'essb' ), esc_html( get_search_query() ) );
 			}
 			elseif ( is_category() || is_tag() || is_tax() ) {
 				if ( is_category() ) {

@@ -39,12 +39,6 @@ class ESSBStyleLibraryManager {
 	 */
 	public function request_parser() {
 
-		/*if (! isset( $_REQUEST['essb_styleoptions_token'] ) || !wp_verify_nonce( $_REQUEST['essb_styleoptions_token'], 'essb_styleoptions_setup' )) {
-			print 'Sorry, your nonce did not verify.';
-			wp_die();
-		}*/
-
-
 		$cmd = isset($_REQUEST['cmd']) ? $_REQUEST['cmd'] : '';
 
 		if ($cmd == 'get') {
@@ -151,7 +145,7 @@ class ESSBStyleLibraryManager {
 				else {
 					$key = 'user_network_name_' . $network;
 				}
-				//$key = $original_location.'_'.$network.'_name';
+
 				$value = isset($essb_options[$key]) ? $essb_options[$key] : '';
 
 				if ($value != '') {

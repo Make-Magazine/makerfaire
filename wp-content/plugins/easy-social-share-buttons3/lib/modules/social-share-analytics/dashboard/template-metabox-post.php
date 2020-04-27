@@ -1,6 +1,4 @@
 <?php
-//ESSBSocialShareAnalyticsBackEnd::init_addional_settings();
-
 global $post_id, $post;
 
 if (isset($post)) {
@@ -66,111 +64,10 @@ if ($calculated_total != 0) {
 	$best_network_percent = round ( $best_network_percent, 1 );
 }
 
+wp_enqueue_style ( 'essb-admin5-metrics', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin5-stats.css', array (), ESSB3_VERSION);
+
 ?>
 
-<style type="text/css">
-
-.essb-page-stats { padding: 25px; }
-.essb-page-stats h3 { font-size: 24px; font-weight: 400; letter-spacing: -1px; margin: 0;}
-
-.essb-page-stats .one-half {
-	width: calc(50% - 60px);
-	margin: 20px;
-	display: inline-block;
-	vertical-align: top;
-	position: relative;
-}
-
-.essb-page-stats .dataTables_length, .essb-page-stats .dataTables_filter,
-.dataTables_info, .dataTables_paginate {
-	font-size: 12px;
-}
-
-.dataTables_wrapper .sub2 { font-size: 12px; text-align: left; text-transform: uppercase; border-bottom: 0; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1); }
-table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd { background: #fff; }
-table.dataTable.display tbody tr.odd > .sorting_1, table.dataTable.order-column.stripe tbody tr.odd > .sorting_1 { background: #fafafa; }
-table.dataTable.display tbody tr > .sorting_1 { font-weight: 600; }
-.dataTables_scrollBody { border-bottom: 0 !important; box-shadow: 0 0 30px 0 rgba(0,0,0,0.1); margin-bottom: 20px; }
-
-.stats-head { margin-top: 30px; }
-
-.stats-head .panel {
-  width: calc(33% - 60px);
-  margin: 0 10px;
-  padding: 20px;
-  box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
-  display: inline-block;
-  vertical-align: top;
-  position: relative;
-}
-
-.essb-page-stats h4 { font-size: 16px; font-weight: 400; }
-
-.dashboard-head {
-	padding: 20px;
-	margin-top: 30px;
-}
-
-.dashboard-head h4 {
-	font-weight: 600;
-	font-size: 20px;
-	margin: 0;
-	letter-spacing: -0.5px;
-}
-
-.dashboard-head p {
-	margin-top: 5px;
-	color: #999;
-}
-
-.stats-head .panel strong { font-weight: 700; }
-.stats-head .panel h4 { margin: 0; font-size: 16px; font-weight: 400; }
-.stats-head .panel .bold-value { font-size: 32px; font-weight: bold; letter-spacing: -1px; margin: 30px 0; }
-.stats-head .panel .footer { border-top: 1px solid #f1f3f3; padding-top: 10px; }
-.stats-head .panel .footer .value { font-weight: 700; margin-right: 10px; }
-.stats-head .panel .footer .desc { color: #787878; }
-
-.position-row { padding: 15px 20px; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1); }
-.position-row .name { font-size: 15px; }
-.position-row .value, .position-row .percent { font-size: 16px; text-align: right; font-weight: bold; padding-right: 10px; }
-.position-row .graph span {
-	background: #f39558; line-height: 24px; }
-.position-row .value span {
-	    margin-left: 10px;
-    background: #f1f1f1;
-    padding: 8px;
-    font-size: 13px;
-    font-weight: 400;
-    min-width: 100px;
-}
-
-.position-row .value span i {
-	font-size: 16px;
-	margin: 0 5px;
-}
-
-.position-row .name .network-icon {
-	font-size: 21px;
-	margin-right: 10px;
-}
-
-.position-row:hover {
-	background: #d5e6f7;
-}
-
-.date-reports-dates .day-value {
-	display: inline-block;
-	padding: 6px 10px;
-	margin: 10px;
-	background: #f1f3f5;
-}
-
-@media screen and (max-width: 1200px) {
-	.essb-page-stats .one-half { width: 100%; display: block; }
-	.stats-head .panel { margin: 20px 10px; width: 90%; }
-}
-
-</style>
 
 <div class="stats-head">
   <div class="panel">
@@ -215,8 +112,8 @@ table.dataTable.display tbody tr > .sorting_1 { font-weight: 600; }
   </div>
 </div>
 
-<div class="stats-full-report" style="margin-top: 30px; padding-left: 20px;">
-	<a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=single&post_id=<?php echo $post_id; ?>" target="_blank" class="essb-btn essb-btn-red" style="font-size:15px; text-transform: capitalize; padding: 15px 20px;">Open Detailed Post Report &rarr;</a>
+<div class="stats-full-report">
+	<a href="<?php echo esc_url( admin_url('admin.php?page=essb_redirect_analytics&tab=analytics&mode=single&post_id='.$post_id) );?>" target="_blank" class="essb-btn essb-btn-red post-stat-btn">Open Detailed Post Report &rarr;</a>
 </div>
 
 <!-- Positions -->
@@ -256,11 +153,11 @@ table.dataTable.display tbody tr > .sorting_1 { font-weight: 600; }
 				$percent = round ( $percent );
 				
 				echo '<div class="position-row">';
-				echo '<div class="name" style="display: inline-block; width: 20%;"><a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=position&position='.$k.'" target="_blank">'.ESSBSocialShareAnalyticsBackEnd::position_name($k).'</a></div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
-				echo '<div class="percent" style="display: inline-block; width: 8%;">'.$print_percent.'%'.'</div>';
-				echo '<div class="graph" style="display: inline-block; width: 49%;"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
+				echo '<div class="name"><a href="admin.php?page=essb_redirect_analytics&tab=analytics&mode=position&position='.$k.'" target="_blank">'.ESSBSocialShareAnalyticsBackEnd::position_name($k).'</a></div>';
+				echo '<div class="value">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
+				echo '<div class="value"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
+				echo '<div class="percent">'.$print_percent.'%'.'</div>';
+				echo '<div class="graph"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
 				echo '</div>';
 			}
 		}
@@ -272,7 +169,7 @@ table.dataTable.display tbody tr > .sorting_1 { font-weight: 600; }
 </div>
 
 <!-- Networks -->
-<div class="stat-welcome-graph" style="magin-top: 30px;">
+<div class="stat-welcome-graph">
 	<div class="dashboard-head">
 		<h4>Networks</h4>
 		<p>View how the positions on site perform. Usage of many social networks may lead to lower shares due to paradox of choice.</p>
@@ -309,11 +206,11 @@ table.dataTable.display tbody tr > .sorting_1 { font-weight: 600; }
 				$percent = round ( $percent );
 				
 				echo '<div class="position-row">';
-				echo '<div class="name" style="display: inline-block; width: 20%;"><i class="network-icon essb_icon_'.$k.'"></i>'.$v['name'].'</div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
-				echo '<div class="value" style="display: inline-block; width: 10%;"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
-				echo '<div class="percent" style="display: inline-block; width: 8%;">'.$print_percent.'%'.'</div>';
-				echo '<div class="graph" style="display: inline-block; width: 49%;"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
+				echo '<div class="name"><i class="network-icon essb_icon_'.$k.'"></i>'.$v['name'].'</div>';
+				echo '<div class="value">'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single).'</div>';
+				echo '<div class="value"><span class="devices"><i class="ti-desktop"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_d).'<i class="ti-mobile"></i>'.ESSBSocialShareAnalyticsBackEnd::prettyPrintNumber($single_m).'</span></div>';
+				echo '<div class="percent">'.$print_percent.'%'.'</div>';
+				echo '<div class="graph"><span style="width: '.$percent.'%; display: inline-block; ">&nbsp;</span></div>';
 				echo '</div>';
 			}
 		}
