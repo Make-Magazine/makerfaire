@@ -2,7 +2,7 @@
 /*
  * Used to ask the logged in maker if they want to copy entries from previous faires
  */
-add_filter( 'gform_pre_render', 'maybe_copyEntry',999 );
+//add_filter( 'gform_pre_render', 'maybe_copyEntry',999 );
 function maybe_copyEntry( $form ) {
   if(!isset($form['form_type'])){
     return $form;
@@ -36,7 +36,7 @@ function maybe_copyEntry( $form ) {
 
           if(!empty($tableData['data'])){
             //show modal offering to copy previous entries
-            echo getModalData($tableData);
+            //echo getModalData($tableData);
           }else{
            // echo 'You do not have previous entries';
           }
