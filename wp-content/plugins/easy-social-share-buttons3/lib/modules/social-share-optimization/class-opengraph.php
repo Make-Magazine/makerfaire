@@ -19,6 +19,7 @@ class ESSB_OpenGraph {
 	public function __construct() {
 		
 		if (!is_admin()) {
+			// Generte all required for sharing details
 			$this->meta_details = ESSB_FrontMetaDetails::get_instance();
 			
 			add_filter( 'language_attributes', array( $this, 'add_opengraph_namespace' ), 15 );

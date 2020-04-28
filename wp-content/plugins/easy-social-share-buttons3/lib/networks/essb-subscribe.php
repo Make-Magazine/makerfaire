@@ -16,15 +16,9 @@ class ESSBNetworks_Subscribe {
 	
 	public static function register_assets() { 
 		if (!self::$assets_registered) {
+			//essb_resource_builder()->add_static_resource_footer(ESSB3_PLUGIN_URL .'/assets/js/essb-subscribe'.(ESSBGlobalSettings::$use_minified_js ? ".min": "").'.js', 'easy-social-share-buttons-subscribe', 'js');
 			essb_resource_builder()->add_static_resource_footer(ESSB3_PLUGIN_URL .'/assets/css/essb-subscribe'.(ESSBGlobalSettings::$use_minified_css ? ".min": "").'.css', 'easy-social-share-buttons-subscribe', 'css');
 			self::$assets_registered = true;
-			
-			/**
-			 * Register the reCaptcha if enabled on display
-			 */			
-			if (self::should_add_recaptcha()) {
-				self::prepare_include_recaptha();
-			}
 		}
 	}
 	
@@ -33,33 +27,14 @@ class ESSBNetworks_Subscribe {
 		
 		if (essb_option_bool_value('subscribe_terms')) {
 			$text = essb_option_value('subscribe_terms_text');
-			$confirmation_url = essb_option_value('subscribe_terms_link');
-			$subscribe_terms_link_text = essb_sanitize_option_value('subscribe_terms_link_text');
 			
 			if ($text == '') {
-				$text = esc_html__('I agree to the privacy policy and terms', 'essb');
-			}
-			
-			if ($confirmation_url != '') {
-				
-				if ($subscribe_terms_link_text != '') {
-					$text .= '<a href="'.esc_url($confirmation_url).'" target="_blank" class="confirmation-link-after" rel="nofollow noopener noreferrer">'.$subscribe_terms_link_text.'</a>';
-				}
-				else {
-					$text = '<a href="'.esc_url($confirmation_url).'" target="_blank" class="confirmation-link" rel="nofollow noopener noreferrer">'.$text.'</a>';
-				}
+				$text = __('I agree to the privacy policy and terms', 'essb');
 			}
 			
 			$code = '<div class="essb-subscribe-confirm">';
 			$code .= '<input type="checkbox" class="essb-subscribe-confirm" id="essb-subscribe-confirm"/><label for="essb-subscribe-confirm">'.do_shortcode(stripslashes($text)).'</label>';
 			$code .= '</div>';
-		}
-		
-		/**
-		 * Include the google recaptcha
-		 */
-		if (self::should_add_recaptcha()) {
-			$code .= self::generate_recaptcha_field();
 		}
 		
 		return $code;
@@ -85,7 +60,7 @@ class ESSBNetworks_Subscribe {
 		$output .= '</div>';
 		
 		if ($popup_mode) {
-			$output .= '<div class="essb-subscribe-form-overlay essb-subscribe-form-overlay-'.esc_attr($salt).'" onclick="essb.subscribe_popup_close(\''.$salt.'\');"></div>';
+			$output .= '<div class="essb-subscribe-form-overlay essb-subscribe-form-overlay-'.$salt.'" onclick="essb.subscribe_popup_close(\''.$salt.'\');"></div>';
 		}
 		
 		if (!self::$assets_registered) {
@@ -99,7 +74,7 @@ class ESSBNetworks_Subscribe {
 		if (empty($mode)) $mode = ESSBGlobalSettings::$subscribe_function;
 		$salt = mt_rand();
 		
-		$output = '<div class="essb-subscribe-form essb-subscribe-form-'.esc_attr($salt).' essb-subscribe-form-inline">';
+		$output = '<div class="essb-subscribe-form essb-subscribe-form-'.$salt.' essb-subscribe-form-inline">';
 				
 		if ($mode == "form") {
 			$output .= do_shortcode(ESSBGlobalSettings::$subscribe_content);
@@ -123,7 +98,8 @@ class ESSBNetworks_Subscribe {
 	
 		$salt = mt_rand();
 	
-		$output .= '<div class="essb-subscribe-form essb-aftershare-subscribe-form essb-subscribe-form-'.esc_attr($salt).' essb-subscribe-form-popup" data-salt="'.esc_attr($salt).'" style="display:none;" data-popup="1">';
+		$output = '<script type="text/javascript">var after_share_easyoptin = "'.$salt.'";</script>';
+		$output .= '<div class="essb-subscribe-form essb-subscribe-form-'.esc_attr($salt).' essb-subscribe-form-popup" style="display:none;" '.($two_step_inline == 'true' ? 'data-popup="0"' : 'data-popup="1"').'>';
 	
 		if ($mode == "form") {
 			$output .= do_shortcode(ESSBGlobalSettings::$subscribe_content);
@@ -134,7 +110,7 @@ class ESSBNetworks_Subscribe {
 	
 		$output .= '<button type="button" class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');">x</button>';
 		$output .= '</div>';
-		$output .= '<div class="essb-subscribe-form-overlay essb-subscribe-form-overlay-'.esc_attr($salt).'" onclick="essb.subscribe_popup_close(\''.$salt.'\');"></div>';
+		$output .= '<div class="essb-subscribe-form-overlay essb-subscribe-form-overlay-'.$salt.'" onclick="essb.subscribe_popup_close(\''.$salt.'\');"></div>';
 	
 		if (!self::$assets_registered) {
 			self::register_assets();
@@ -177,7 +153,7 @@ class ESSBNetworks_Subscribe {
 	
 		$output .= '<button type="button" class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');">x</button>';
 		$output .= '</div>';
-		$output .= '<div class="essb-subscribe-form-overlay essb-subscribe-form-overlay-'.esc_attr($salt).'" onclick="essb.subscribe_popup_close(\''.$salt.'\');"></div>';
+		$output .= '<div class="essb-subscribe-form-overlay essb-subscribe-form-overlay-'.$salt.'" onclick="essb.subscribe_popup_close(\''.$salt.'\');"></div>';
 
 		if (!self::$assets_registered) {
 			self::register_assets();
@@ -324,38 +300,4 @@ class ESSBNetworks_Subscribe {
 	
 		return essb_subscribe_form_design9($salt, $is_widget, $position);
 	}	
-	
-	public static function should_add_recaptcha() {
-		$recaptcha = essb_option_bool_value('subscribe_recaptcha') && ! empty( essb_sanitize_option_value('subscribe_recaptcha_site') ) && ! empty( essb_sanitize_option_value('subscribe_recaptcha_secret') );
-		
-		return $recaptcha;
-	}
-	
-	public static function prepare_include_recaptha() {
-		$recaptcha = essb_option_bool_value('subscribe_recaptcha') && ! empty( essb_sanitize_option_value('subscribe_recaptcha_site') ) && ! empty( essb_sanitize_option_value('subscribe_recaptcha_secret') );
-		if ( $recaptcha ) {
-			wp_enqueue_script(
-				'recaptcha',
-				'https://www.google.com/recaptcha/api.js',
-				array(),
-				'2.0',
-				true
-			);
-						
-			$args = array();
-			$args['recaptchaSitekey'] = sanitize_text_field( essb_sanitize_option_value('subscribe_recaptcha_site') );
-			wp_localize_script( 'recaptcha', 'essb_subscribe_recaptcha', $args );
-		}
-	}
-	
-	public static function generate_recaptcha_field() {
-		$recaptcha = essb_option_bool_value('subscribe_recaptcha') && ! empty( essb_sanitize_option_value('subscribe_recaptcha_site') ) && ! empty( essb_sanitize_option_value('subscribe_recaptcha_secret') );
-		$code = '';
-		
-		if ($recaptcha) {
-			$code = '<div id="essb-subscribe-captcha-'.mt_rand().'" class="essb-subscribe-captcha"></div>';
-		}
-		
-		return $code;
-	}
 }

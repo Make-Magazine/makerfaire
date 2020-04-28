@@ -31,13 +31,13 @@ class ESSBSocialShareAnalytics {
 		$counters = isset($_POST['counter']) ? $_POST['counter'] : '';
 		
 		$rows_affected = $wpdb->insert ( $wpdb->prefix.ESSB3_TRACKER_TABLE, 
-				array ('essb_blog_id' => sanitize_text_field($blog_id), 
-						'essb_post_id' => sanitize_text_field($post_id), 
-						'essb_service' => sanitize_text_field($service_id),
-						'essb_mobile' => sanitize_text_field($mobile),
-						'essb_position' => sanitize_text_field($position),
-						'essb_template' => sanitize_text_field($template),
-						'essb_button' => sanitize_text_field($button_style) ) );
+				array ('essb_blog_id' => $blog_id, 
+						'essb_post_id' => $post_id, 
+						'essb_service' => $service_id,
+						'essb_mobile' => $mobile,
+						'essb_position' => $position,
+						'essb_template' => $template,
+						'essb_button' => $button_style ) );
 		sleep ( 1 );
 		die ( json_encode ( array ("success" => 'Log handled' ) ) );
 		

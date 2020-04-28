@@ -67,6 +67,8 @@ class ESSBCoreExtenderPostVisualOptions {
 				// manually activate and deactivate native buttons
 				if (!defined('ESSB3_NATIVE_ACTIVE')) {
 					
+					//$resource_builder = ESSBResourceBuilder::get_instance();
+					
 					include_once (ESSB3_PLUGIN_ROOT . 'lib/core/native-buttons/essb-skinned-native-button.php');
 					include_once (ESSB3_PLUGIN_ROOT . 'lib/core/native-buttons/essb-social-privacy.php');
 					include_once (ESSB3_PLUGIN_ROOT . 'lib/core/native-buttons/essb-native-buttons-helper.php');
@@ -81,6 +83,8 @@ class ESSBCoreExtenderPostVisualOptions {
 						essb_resource_builder()->add_static_resource($object["file"], $object["key"], $object["type"]);
 					}
 					essb_resource_builder()->add_css(ESSBSkinnedNativeButtons::generate_skinned_custom_css(), 'essb-skinned-native-buttons');
+						
+					// asign instance of native buttons privacy class to helper
 						
 					// register active social network apis
 					foreach (ESSBNativeButtonsHelper::get_list_of_social_apis() as $key => $code) {
@@ -131,6 +135,8 @@ class ESSBCoreExtenderPostVisualOptions {
 		
 		return $output_modifier;
 	}
+	
+	
 }
 
 ?>

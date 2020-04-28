@@ -317,7 +317,7 @@ class ESSBNativeButtonsHelper {
 				if ($pos_margintop !== false) {
 					if ($margin_top != '') {
 						$injected_margintop = true;
-						$newAppendValue = "margin-top:".esc_attr($margin_top).'px !important';
+						$newAppendValue = "margin-top:".$margin_top.'px !important';
 					}
 					else {
 						$newAppendValue = $singleRule;
@@ -327,7 +327,7 @@ class ESSBNativeButtonsHelper {
 				if ($pos_height !== false) {
 					if ($height != '') {
 						$injected_height = true;
-						$newAppendValue = "height:".esc_attr($height). 'px !important';
+						$newAppendValue = "height:".$height. 'px !important';
 					}
 					else {
 						$newAppendValue = $singleRule;
@@ -337,7 +337,7 @@ class ESSBNativeButtonsHelper {
 				if ($pos_height !== false) {
 					if ($height != '') {
 						$injected_maxheight = true;
-						$newAppendValue = "max-height:".esc_attr($height). 'px !important';
+						$newAppendValue = "max-height:".$height. 'px !important';
 					}
 					else {
 						$newAppendValue = $singleRule;
@@ -349,13 +349,13 @@ class ESSBNativeButtonsHelper {
 		}
 	
 		if ($margin_top != '' && !$injected_margintop) {
-			$output .= 'margin-top:'.esc_attr($margin_top).'px !important;';
+			$output .= 'margin-top:'.$margin_top.'px !important;';
 		}
 		if ($height != '' && !$injected_height) {
-			$output .= 'height:'.esc_attr($height).'px !important;';
+			$output .= 'height:'.$height.'px !important;';
 		}
 		if ($height != '' && !$injected_maxheight) {
-			$output .= 'max-height:'.esc_attr($height).'px !important;';
+			$output .= 'max-height:'.$height.'px !important;';
 		}
 	
 		return $output;
@@ -443,7 +443,7 @@ class ESSBNativeButtonsHelper {
 		$button_url = isset($settings['url']) ? $settings['url'] : '';
 		$button_text = isset($settings['text']) ? $settings['text'] : '';
 		
-		return '<script src="http://managewp.org/share.js" data-type="small" data-title="'.esc_attr($button_text).'" data-url="'.esc_url($button_url).'"></script>';
+		return '<script src="http://managewp.org/share.js" data-type="small" data-title="'.$button_text.'" data-url="'.$button_url.'"></script>';
 	}
 	
 	public static function pinterest_button_code($settings = array(), $counters = false) {
@@ -454,7 +454,7 @@ class ESSBNativeButtonsHelper {
 		$code = '';
 		
 		if ($pinterest_type == "follow") {
-			$code = '<a data-pin-do="buttonFollow" href="'.esc_url($pinterest_url).'">'.$pinterest_text.'</a>';
+			$code = '<a data-pin-do="buttonFollow" href="'.$pinterest_url.'">'.$pinterest_text.'</a>';
 		}
 		else {
 			$code = '<a href="//www.pinterest.com/pin/create/button/" data-pin-do="buttonBookmark" ><img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_gray_20.png" /></a>';
@@ -466,7 +466,7 @@ class ESSBNativeButtonsHelper {
 	public static function linkedin_button_code($settings = array(), $counters = false) {
 		$linkedin_company = isset($settings['linkedin_company']) ? $settings['linkedin_company'] : '';
 		
-		$code = '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script><script type="IN/FollowCompany" data-id="'.esc_attr($linkedin_company).'" data-counter="'.($counters ? "right" : "none").'"></script>';
+		$code = '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script><script type="IN/FollowCompany" data-id="'.$linkedin_company.'" data-counter="'.($counters ? "right" : "none").'"></script>';
 		
 		return $code;
 	}
@@ -482,7 +482,11 @@ class ESSBNativeButtonsHelper {
 	public static function vk_button_code($settings = array(), $counters = false) {
 		$salt = mt_rand();
 		$code = '<div id="vk_like' . $salt . '" style="float: left; poistion: relative;"></div>';
-		$code .= '<script type="text/javascript">jQuery(document).ready(function($){VK.Widgets.Like("vk_like' . $salt . '", {type: "button", height: 20});});</script>';
+		$code .= '<script type="text/javascript">
+		jQuery(document).ready(function($){
+		VK.Widgets.Like("vk_like' . $salt . '", {type: "button", height: 20});
+		});
+		</script>';
 		
 		return $code;
 	}

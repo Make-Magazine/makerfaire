@@ -52,6 +52,7 @@ class ESSBWordPressNotifications {
 		$this->notifications = array();
 
 		add_action('admin_notices', array($this, 'generate_active_notices'));
+
 		add_action( 'wp_ajax_essb_notice_dismiss', array( $this, 'notice_dismiss' ) );
 	}
 
@@ -156,7 +157,10 @@ class ESSBWordPressNotifications {
 				$type = 'info';
 			}
 
-			echo '<div class="notice-'.esc_attr($type).' notice essb-notice essb-notice-'.esc_attr($key).'" data-key="'.esc_attr($key).'">';
+
+			//type = warning, error, success, info
+
+			echo '<div class="notice-'.$type.' notice essb-notice essb-notice-'.$key.'" data-key="'.$key.'">';
 			echo '<p><strong>Easy Social Share Buttons for WordPress:</strong> '.$data['text'].'</p>';
 			echo '<div class="actions">';
 			foreach ($data['buttons'] as $button) {
@@ -170,7 +174,7 @@ class ESSBWordPressNotifications {
 					$button['class'] = '';
 				}
 
-				echo '<a href="'.esc_url($button['url']).'" class="'.esc_attr($button['class']).($is_dismiss == '1' ? ' essb-notice-dismiss' : '').'" data-notice="'.esc_attr($key).'">'.$button['text'].'</a>';
+				echo '<a href="'.$button['url'].'" class="'.$button['class'].($is_dismiss == '1' ? ' essb-notice-dismiss' : '').'" data-notice="'.$key.'">'.$button['text'].'</a>';
 			}
 
 			echo '</div>';
@@ -194,9 +198,10 @@ class ESSBWordPressNotifications {
 				$type = 'info';
 			}
 
+
 			//type = warning, error, success, info
 			echo '<div class="essb-header-status">';
-			echo '<div class="if-notice-'.esc_attr($type).' if-notice essb-options-hint essb-options-hint-status  essb-notice essb-notice-'.$key.'" data-key="'.$key.'">';
+			echo '<div class="if-notice-'.$type.' if-notice essb-options-hint essb-options-hint-status  essb-notice essb-notice-'.$key.'" data-key="'.$key.'">';
 			echo '<p>'.$data['text'].'</p>';
 			echo '<div class="actions">';
 			foreach ($data['buttons'] as $button) {
@@ -214,7 +219,7 @@ class ESSBWordPressNotifications {
 					$button['target'] = '';
 				}
 
-				echo '<a href="'.esc_attr($button['url']).'" class="'.esc_attr($button['class']).($is_dismiss == '1' ? ' essb-notice-dismiss' : '').'" '.($button['target'] != '' ? 'target="'.$button['target'].'"' : '' ).' data-notice="'.esc_attr($key).'">'.$button['text'].'</a>';
+				echo '<a href="'.$button['url'].'" class="'.$button['class'].($is_dismiss == '1' ? ' essb-notice-dismiss' : '').'" '.($button['target'] != '' ? 'target="'.$button['target'].'"' : '' ).' data-notice="'.$key.'">'.$button['text'].'</a>';
 			}
 
 			echo '</div>';
@@ -257,7 +262,7 @@ class ESSBWordPressNotifications {
 			$buttons = array();
 
 			if ($dismiss_text == '') {
-				$dismiss_text = esc_html__('Thank You. I understand.', 'essb');
+				$dismiss_text = __('Thank You. I understand.', 'essb');
 			}
 
 			$buttons[] = array('text' => $dismiss_text, 'url' => '', 'target' => '', 'class' => '', 'dismiss' => '1');

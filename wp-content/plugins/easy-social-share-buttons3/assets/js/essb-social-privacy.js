@@ -1,6 +1,5 @@
 jQuery(document).ready(function($){
-	"use strict";
-	
+
 	jQuery.fn.essb_privacy_button = function(){
 		return this.each(function(){
 			$(this).click(function(){

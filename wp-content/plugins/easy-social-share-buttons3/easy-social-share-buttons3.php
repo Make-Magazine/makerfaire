@@ -2,9 +2,9 @@
 
 /*
 * Plugin Name: Easy Social Share Buttons for WordPress
-* Description: The first true all in one social media plugin for WordPress, including social share buttons, social followers counter, social profile links, click to tweet, Pinnable images, after share events, subscribe forms, Instagram feed, social proof notifications and much more.
+* Description: Easy Social Share Buttons automatically adds beautiful share buttons to all your content with support of Facebook, Twitter, Google+, LinkedIn, Pinterest, Digg, StumbleUpon, VKontakte, Tumblr, Reddit, Print, E-mail and more than 40 other social networks and mobile messengers. Easy show on 27+ automatic display locations or use powerful shortcodes. Compatible with most popular e-commerce plugins, social plugins and affiliate plugins
 * Plugin URI: https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo
-* Version: 7.0.1
+* Version: 6.2.9
 * Author: CreoApps
 * Author URI: https://codecanyon.net/user/appscreo/portfolio?ref=appscreo
 */
@@ -13,7 +13,7 @@
 if (! defined ( 'WPINC' ))
 	die ();
 
-define ( 'ESSB3_VERSION', '7.0.1' );
+define ( 'ESSB3_VERSION', '6.2.9' );
 define ( 'ESSB3_PLUGIN_ROOT', dirname ( __FILE__ ) . '/' );
 define ( 'ESSB3_PLUGIN_URL', plugins_url () . '/' . basename ( dirname ( __FILE__ ) ) );
 define ( 'ESSB3_PLUGIN_BASE_NAME', plugin_basename ( __FILE__ ) );
@@ -111,7 +111,7 @@ class ESSB_Manager {
 				function essb_page_welcome_redirect() {
 					$redirect = get_transient( '_essb_page_welcome_redirect' );
 					delete_transient( '_essb_page_welcome_redirect' );
-					$redirect && wp_redirect( esc_url(admin_url( 'admin.php?page=essb_redirect_about' )) );
+					$redirect && wp_redirect( admin_url( 'admin.php?page=essb_redirect_about' ) );
 				}
 				add_action( 'init', 'essb_page_welcome_redirect' );
 			}
@@ -202,7 +202,6 @@ class ESSB_Manager {
 		if (!defined('ESSB3_LIGHTMODE')) {
 			if (defined('ESSB3_SOCIALPROFILES_ACTIVE')) {
 				$this->factoryOnlyActivate('essbsp', 'ESSBSocialProfiles');
-				essb_depend_load_function('essb_rs_css_build_followerscounter_customizer', 'lib/core/resource-snippets/essb_rs_css_build_profiles_customizer.php');
 			}
 		}
 
@@ -210,14 +209,6 @@ class ESSB_Manager {
 		if (defined('ESSB3_SOCIALFANS_ACTIVE')) {
 			$this->factoryActivate('essbfc', 'ESSBSocialFollowersCounter');
 			essb_depend_load_function('essb_rs_css_build_followerscounter_customizer', 'lib/core/resource-snippets/essb_rs_css_build_followerscounter_customizer.php');
-		}
-		
-		if (!essb_option_bool_value('deactivate_module_instagram') && class_exists('ESSBInstagramFeed')) {
-			$this->factoryActivate('instagram', 'ESSBInstagramFeed');
-		}
-		
-		if (!essb_option_bool_value('deactivate_module_proofnotifications') && class_exists('ESSBSocialProofNotificationsLite')) {
-			$this->factoryActivate('spn-lite', 'ESSBSocialProofNotificationsLite');
 		}
 
 		if (!defined('ESSB3_LIGHTMODE')) {
@@ -274,10 +265,10 @@ class ESSB_Manager {
 
 			$deactivate_updates = essb_option_bool_value('deactivate_updates');
 
+			//if (!empty($exist_user_purchase_code) && !$this->isInTheme()) {
 			if (ESSBActivationManager::isActivated() && !$this->isInTheme() && !$deactivate_updates) {
 
 				include (ESSB3_PLUGIN_ROOT . 'lib/external/autoupdate/plugin-update-checker.php');
-				
 				$update_url = 'http://update.creoworx.com/essb3/';
 				$user_update_source = essb_option_value('update_source');
 				if ($user_update_source == 'minor') {
@@ -285,8 +276,7 @@ class ESSB_Manager {
 				}
 				if ($user_update_source == 'beta') {
 					$update_url = 'http://update.creoworx.com/essb3beta/';
-				}				
-				
+				}
 				// @since 1.3.3
 				// autoupdate
 				// activating autoupdate option
@@ -370,14 +360,6 @@ class ESSB_Manager {
 
 		return $this->factory['essbfc'];
 	}
-	
-	public function instagramFeed() {
-		if (!isset($this->factory['instagram'])) {
-			$this->factoryActivate('instagram', 'ESSBInstagramFeed');
-		}
-		
-		return $this->factory['instagram'];
-	}
 
 	public function deactiveExecution() {
 		$this->essb()->temporary_deactivate_content_filters();
@@ -416,11 +398,6 @@ class ESSB_Manager {
 	 */
 	public function isMobile() {
 		if (!$this->mobile_checked) {
-			
-			if (!class_exists('ESSB_Mobile_Detect')) {
-				include_once (ESSB3_PLUGIN_ROOT . 'lib/external/mobile-detect/mobile-detect.php');
-			}
-			
 			$this->mobile_checked = true;
 			$mobile_detect = new ESSB_Mobile_Detect();
 
@@ -441,9 +418,6 @@ class ESSB_Manager {
 
 	public function isTablet() {
 		if (!$this->mobile_checked) {
-			if (!class_exists('ESSB_Mobile_Detect')) {
-				include_once (ESSB3_PLUGIN_ROOT . 'lib/external/mobile-detect/mobile-detect.php');
-			}
 			$this->mobile_checked = true;
 			$mobile_detect = new ESSB_Mobile_Detect();
 
@@ -516,10 +490,6 @@ class ESSB_Manager {
 		}
 	}
 
-	/**
-	 * @param unknown $options
-	 * @return mixed|NULL
-	 */
 	public static function convert_ready_made_option($options) {
 		$options = base64_decode ( $options );
 

@@ -101,7 +101,7 @@ class ESSBCoreExtenderShortcodeTotalShares {
 		}
 		$css_hide_total_counter = "";
 		if ($total_counter_hidden != '') {
-			$css_hide_total_counter = ' style="display: none !important;" data-essb-hide-till="' . esc_attr($total_counter_hidden) . '"';
+			$css_hide_total_counter = ' style="display: none !important;" data-essb-hide-till="' . $total_counter_hidden . '"';
 		}
 		
 		if ($cached_counters_active) {
@@ -119,7 +119,7 @@ class ESSBCoreExtenderShortcodeTotalShares {
 		
 		$tag = ($inline == 'yes') ? 'span' : 'div';
 		
-		$output .= '<'.$tag.' class="essb-total '.esc_attr($css_class_align).'" data-network-list="'.esc_attr($buttons).'" data-url="'.esc_url($data_url).'" data-full-number="'.esc_attr($data_full_number).'" data-post="'.esc_attr($data_post_id).'" '.$css_hide_total_counter.'>';
+		$output .= '<'.$tag.' class="essb-total '.$css_class_align.'" data-network-list="'.$buttons.'" data-url="'.$data_url.'" data-full-number="'.$data_full_number.'" data-post="'.$data_post_id.'" '.$css_hide_total_counter.'>';
 		
 		if ($message != '') {
 			$output .= '<'.$tag.' class="essb-message essb-block">'.$message.'</'.$tag.'>';

@@ -36,7 +36,7 @@ if (!function_exists('essb5_generate_share_button')) {
 		}
 		
 		if ($button_text == '') {
-			$button_text = esc_html__('Share', 'essb');
+			$button_text = __('Share', 'essb');
 		}
 		
 		// -- passing shortcode options

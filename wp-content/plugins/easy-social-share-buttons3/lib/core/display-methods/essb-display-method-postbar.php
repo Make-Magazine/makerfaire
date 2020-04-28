@@ -70,6 +70,7 @@ class ESSBDisplayMethodPostBar {
 				
 				$working_post_content = $prev_post->post_content;
 		
+				//$essb_post_og_desc = strip_shortcodes($essb_post_og_desc);
 				$post_shortdesc = $prev_post->post_excerpt;
 				if ($post_shortdesc != '') {
 					$working_post_content = $post_shortdesc;
@@ -119,7 +120,7 @@ class ESSBDisplayMethodPostBar {
 			$author_id = get_post_field( 'post_author', $post->ID );
 			$author_name = get_the_author_meta( 'display_name', $author_id );
 		
-			$output .= '<span class="essb-postbar-author">'.esc_html__('by', 'easy-social-share-buttons').' '.$author_name.'</span>';
+			$output .= '<span class="essb-postbar-author">'.__('by', 'easy-social-share-buttons').' '.$author_name.'</span>';
 		
 		}
 		
@@ -158,7 +159,7 @@ class ESSBDisplayMethodPostBar {
 				$ttr = '<1';
 			}
 		
-			$output .= '<span class="essb-postbar-time"><i class="essb_icon_clock"></i><span class="essb-postbar-number">'.$ttr.' '.esc_html__('min', 'easy-social-share-buttons').'</span></span>';
+			$output .= '<span class="essb-postbar-time"><i class="essb_icon_clock"></i><span class="essb-postbar-number">'.$ttr.' '.__('min', 'easy-social-share-buttons').'</span></span>';
 			$one_icon = true;
 		}
 		if (!$one_icon) {
@@ -202,6 +203,7 @@ class ESSBDisplayMethodPostBar {
 				$output .= '</span>';
 				$working_post_content = $next_post->post_content;
 					
+				//$essb_post_og_desc = strip_shortcodes($essb_post_og_desc);
 				$post_shortdesc = $next_post->post_excerpt;
 				if ($post_shortdesc != '') {
 					$working_post_content = $post_shortdesc;

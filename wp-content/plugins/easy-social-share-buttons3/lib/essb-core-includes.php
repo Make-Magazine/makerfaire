@@ -1,18 +1,10 @@
 <?php
-/**
- * Loading the default plugin components for running 
- */
 
+// inialize plugin options
 global $essb_options, $essb_networks, $essb_translate_options;
 $essb_options = get_option(ESSB3_OPTIONS_NAME);
+$essb_translate_options = get_option(ESSB3_WPML_OPTIONS_NAME);
 $essb_networks = essb_available_social_networks();
-
-/**
- * Since 7.0
- * Apply Additional Feature checks that will enable or disable module work based
- * on additional working factors on site
- */
-include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-disabled-modules.php');
 
 if (has_filter('essb4_options_extender')) {
 	$essb_options = apply_filters('essb4_options_extender', $essb_options);
@@ -34,7 +26,7 @@ include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-global-settings.php');
 include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-url-helper.php');
 
 // @since 4.0 - activation of widget and shortcodes require to activate widget display method
-if (essb_is_active_feature('sharingwidget')) {
+if (ESSBOptionValuesHelper::is_active_module('sharingwidget')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/widgets/essb-share-widget.php');
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/widgets/essb-popular-posts-widget-shortcode.php');
 }
@@ -43,15 +35,14 @@ if (essb_option_bool_value('subscribe_widget')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/widgets/essb-share-subscribe-widget.php');
 }
 
-if (essb_option_bool_value('instagram_widget') && !essb_option_bool_value('deactivate_instagram_feed')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/instagram-feed/class-instagram-feed-widget.php');
-}
-
 // initialize global plugin settings from version 3.4.1
 ESSBGlobalSettings::load($essb_options);
 
+// init admin bar menu
+// admin bar menu
+$disable_admin_menu = ESSBOptionValuesHelper::options_bool_value($essb_options, 'disable_adminbar_menu');
 // update relted to WordPress 4.4 changes
-if (!essb_option_bool_value('disable_adminbar_menu')) {
+if (!$disable_admin_menu) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-adminbar-menu.php');
 	add_action ( 'init', 'ESSBAdminMenuInit3' );
 
@@ -66,7 +57,7 @@ if (!essb_option_bool_value('disable_adminbar_menu')) {
 
 if (essb_option_bool_value('essb_cache')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/cache/essb-dynamic-cache.php');
-	$cache_mode = essb_sanitize_option_value('essb_cache_mode');
+	$cache_mode = ESSBOptionValuesHelper::options_value($essb_options, 'essb_cache_mode');
 	ESSBDynamicCache::activate($cache_mode);
 }
 
@@ -84,9 +75,12 @@ if (essb_options_bool_value('essb_cache_static') || essb_options_bool_value('ess
 // dynamic resource builder
 include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-resource-builder.php');
 include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-resource-builder-core.php');
+//include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-resource-builder-snippets.php');
+
+include_once (ESSB3_PLUGIN_ROOT . 'lib/external/mobile-detect/mobile-detect.php');
 
 if (!defined('ESSB3_LIGHTMODE')) {
-	if (essb_options_bool_value('native_active') && !essb_option_bool_value('deactivate_module_natives')) {
+	if (essb_options_bool_value('native_active')) {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/core/native-buttons/essb-skinned-native-button.php');
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/core/native-buttons/essb-social-privacy.php');
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/core/native-buttons/essb-native-buttons-helper.php');
@@ -98,39 +92,36 @@ if (essb_options_bool_value('opengraph_tags') || essb_options_bool_value('twitte
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/class-metadetails.php');
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/class-taxonomy.php');
 
-	if (essb_options_bool_value('opengraph_tags') && !essb_option_bool_value('deactivate_module_shareoptimize')) {
+	if (essb_options_bool_value('opengraph_tags')) {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/class-opengraph.php');
 
 		if (class_exists('WooCommerce', false) && !essb_option_bool_value('sso_deactivate_woocommerce')) {
 			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/class-woocommerce.php');
 		}
 	}
-	if (essb_options_bool_value('twitter_card') && !essb_options_bool_value('deactivate_module_shareoptimize')) {
+	if (essb_options_bool_value('twitter_card')) {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-optimization/class-twittercards.php');
 	}
-	
-	if (!essb_options_bool_value('deactivate_module_shareoptimize')) {
-		define('ESSB3_SSO_ACTIVE', true);
-	}
+	define('ESSB3_SSO_ACTIVE', true);
 }
 
-if (essb_options_bool_value('stats_active') && !essb_options_bool_value('deactivate_module_analytics')) {
+if (essb_options_bool_value('stats_active')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-analytics/essb-social-share-analytics.php');
 	define('ESSB3_SSA_ACTIVE', true);
 }
 
-if (essb_options_bool_value('mycred_activate') && !essb_options_bool_value('deactivate_module_affiliate')) {
+if (essb_options_bool_value('mycred_activate')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/mycred/essb-mycred-integration.php');
 	define('ESSB3_MYCRED_ACTIVE', true);
 	ESSBMyCredIntegration::get_instance();
 }
 
-if (essb_options_bool_value('mycred_activate_custom') && !essb_options_bool_value('deactivate_module_affiliate')) {
+if (essb_options_bool_value('mycred_activate_custom')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/mycred/essb-mycred-custom-hook.php');
 	define('ESSB3_MYCRED_CUSTOM_ACTIVE', true);
 }
 
-if (essb_options_bool_value('afterclose_active') && !essb_options_bool_value('deactivate_module_aftershare')) {
+if (essb_options_bool_value('afterclose_active')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/after-share-close/essb-after-share-close.php');
 	define('ESSB3_AFTERSHARE_ACTIVE', true);
 }
@@ -145,12 +136,12 @@ else{
 	}
 }
 
-if (essb_is_active_feature('imageshare')) {
+if (ESSBOptionValuesHelper::is_active_module('imageshare')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-image-share/essb-social-image-share.php');
 	define('ESSB3_IMAGESHARE_ACTIVE', true);
 }
 
-if (!defined('ESSB3_LIGHTMODE') && !essb_options_bool_value('deactivate_module_profiles')) {
+if (!defined('ESSB3_LIGHTMODE')) {
 	if (essb_options_bool_value('profiles_display') || essb_options_bool_value('profiles_post_display')) {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles.php');
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles-helper.php');
@@ -162,7 +153,7 @@ if (!defined('ESSB3_LIGHTMODE') && !essb_options_bool_value('deactivate_module_p
 	}
 }
 
-if (essb_options_bool_value('fanscounter_active') && !essb_options_bool_value('deactivate_module_followers')) {
+if (essb_options_bool_value('fanscounter_active')) {
 	define('ESSB3_SOCIALFANS_ACTIVE', 'true');
 
 	global $essb_socialfans_options;
@@ -185,15 +176,16 @@ if (essb_options_bool_value('fanscounter_active') && !essb_options_bool_value('d
 		$essb_socialfans_options = ESSBSocialFollowersCounterHelper::create_default_options_from_structure($essb_socialfans_options);
 	}
 
+		// include widget class
+
 	if (!essb_option_bool_value('fanscounter_widget_deactivate')) {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-widget.php');
 	}
-	
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter.php');
 }
 
 if (!defined('ESSB3_LIGHTMODE')) {
-	if (essb_options_bool_value('esml_active') && !essb_option_bool_value('deactivate_module_metrics')) {
+	if (essb_options_bool_value('esml_active')) {
 		if (!defined('ESSB3_ESML_ACTIVE')) {
 			define('ESSB3_ESML_ACTIVE', 'true');
 		}
@@ -204,23 +196,19 @@ if (!defined('ESSB3_LIGHTMODE')) {
 		include_once(ESSB3_PLUGIN_ROOT . 'lib/modules/social-metrics/socialmetrics-functions.php');
 	}
 
+	if (essb_options_bool_value('esml_top_posts_widget')) {
+		define('ESSB3_ESML_TOPPOSTS_ACTIVE', 'true');
+		include_once(ESSB3_PLUGIN_ROOT . 'lib/modules/top-posts-widget/essb-top-posts-widget.php');
+	}
 }
 
-if (essb_is_active_feature('cachedcounters')) {
+if (ESSBOptionValuesHelper::is_active_module('cachedcounters')) {
 	define('ESSB3_CACHED_COUNTERS', true);
 	include_once(ESSB3_PLUGIN_ROOT . 'lib/core/share-counters/essb-cached-counters.php');
 
 	if (essb_options_bool_value('counter_recover_active')) {
 		define('ESSB3_SHARED_COUNTER_RECOVERY', true);
 		include_once(ESSB3_PLUGIN_ROOT . 'lib/core/share-counters/essb-sharecounter-recovery.php');
-	}
-	
-	if (essb_option_bool_value('homepage_total_allposts') || essb_option_bool_value('site_total_allposts')) {
-		include_once(ESSB3_PLUGIN_ROOT . 'lib/core/share-counters/essb-homepage-counters.php');
-	}
-	
-	if (essb_option_bool_value('hide_counter_homepage') || essb_option_bool_value('hide_counter_archive')) {
-		include_once(ESSB3_PLUGIN_ROOT . 'lib/core/share-counters/essb-hidden-counters.php');
 	}
 }
 
@@ -229,27 +217,28 @@ if (!essb_options_bool_value('deactivate_ctt')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/click-to-tweet/essb-click-to-tweet.php');
 }
 
-if (essb_option_bool_value('optin_content_activate') && !essb_option_bool_value('deactivate_module_subscribe')) {
+if (essb_option_bool_value('optin_content_activate')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/optin-below-content/optin-below-content.php');
 }
 
-if (essb_option_bool_value('optin_flyout_activate') && !essb_option_bool_value('deactivate_module_subscribe')) {
+
+if (essb_option_bool_value('optin_flyout_activate')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/optin-flyout/class-optin-flyout.php');
 }
 
-if (essb_option_bool_value('optin_booster_activate') && !essb_options_bool_value('deactivate_module_subscribe')) {
+if (essb_option_bool_value('optin_booster_activate')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/optin-booster/class-optin-booster.php');
 }
 
-if (essb_option_bool_value('fbmessenger_active') && !essb_options_bool_value('deactivate_module_facebookchat')) {
+if (essb_option_bool_value('fbmessenger_active')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-chat/essb-messenger-live-chat.php');
 }
 
-if (essb_option_bool_value('skype_active') && !essb_options_bool_value('deactivate_module_skypechat')) {
+if (essb_option_bool_value('skype_active')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-chat/essb-skype-live-chat.php');
 }
 
-if (essb_option_bool_value('click2chat_activate') && !essb_options_bool_value('deactivate_module_clicktochat')) {
+if (essb_option_bool_value('click2chat_activate')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-chat/essb-click2chat.php');
 }
 
@@ -261,7 +250,6 @@ if (function_exists('vc_map')) {
 
 // WPML Bridge
 if (essb_installed_wpml() || essb_installed_polylang()) {
-	$essb_translate_options = get_option(ESSB3_WPML_OPTIONS_NAME);
 	include_once(ESSB3_PLUGIN_ROOT . 'lib/core/essb-wpml-bridge.php');
 	if (!is_admin()) {
 		if (has_filter('essb4_options_multilanguage')) {
@@ -282,7 +270,7 @@ if (essb_option_bool_value('amp_positions')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/amp-sharing/essb-amp-sharebuttons.php');
 }
 
-if (essb_option_value('functions_mode_mobile') == 'auto' || essb_option_bool_value('activate_automatic_mobile')) {
+if (essb_option_value('functions_mode_mobile') == 'auto') {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/extenders/essb-core-extender-automatic-mobile.php');
 }
 
@@ -290,16 +278,8 @@ if (essb_option_bool_value('activate_networks_manage')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/extenders/essb-core-extender-manage-networks.php');
 }
 
-if (essb_sanitize_option_value('css_mode') == 'slim') {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/extenders/essb-core-extender-slim-styles.php');
-}
-
 if (essb_option_bool_value('activate_fake')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/fake-share-counters/fakesharecounters-front.php');
-}
-
-if (essb_option_bool_value('activate_fake_counters')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/fake-share-counters/fakesharecounters-adaptive.php');
 }
 
 if (essb_option_bool_value('activate_minimal')) {
@@ -311,11 +291,11 @@ if (essb_option_bool_value('activate_hooks')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/custom-hooks-integration/hookintegrations-class.php');
 }
 
-if (essb_option_bool_value('conversions_lite_run') && !essb_options_bool_value('deactivate_module_conversions')) {
+if (essb_option_bool_value('conversions_lite_run')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-lite/class-conversions-lite.php');
 }
 
-if (essb_option_bool_value('conversions_subscribe_lite_run') && !essb_options_bool_value('deactivate_module_conversions')) {
+if (essb_option_bool_value('conversions_subscribe_lite_run')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-lite/class-subscribe-conversions-lite.php');
 }
 
@@ -325,10 +305,6 @@ if (class_exists('REALLY_SIMPLE_SSL')) {
 
 if (essb_option_bool_value('activate_sw_bridge')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/integrations/warfare.php');
-}
-
-if (essb_option_bool_value('rankmath_og_deactivate')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/integrations/rankmath.php');
 }
 
 if (!essb_option_bool_value('deactivate_custompositions')) {
@@ -345,28 +321,10 @@ if (defined('ELEMENTOR_PATH') && !essb_option_bool_value('remove_elementor_widge
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/elementor/class-elementor-loader.php');
 }
 
-if (essb_option_bool_value('mytemplate_activate')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/template-builder/essb-templatebuilder-bridge.php');
-}
-
-if (!essb_option_bool_value('deactivate_module_instagram')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/instagram-feed/class-instagram-feed.php');
-}
-
-if (!essb_option_bool_value('deactivate_module_proofnotifications')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-proof-notifications-lite/class-spn.php');
-}
-
-if (!essb_option_bool_value('deactivate_custombuttons') && essb_option_bool_value('custombuttons_enable')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/extenders/essb-core-extender-custombuttons.php');
-}
+include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/template-builder/essb-templatebuilder-bridge.php');
 
 if (has_filter('essb4_options_extender_after_load')) {
 	$essb_options = apply_filters('essb4_options_extender_after_load', $essb_options);
-}
-
-if (essb_option_bool_value('activate_automatic_position')) {
-	define('ESSB3_ADAPTIVE_STYLES', true);
 }
 
 include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-core-helper.php');

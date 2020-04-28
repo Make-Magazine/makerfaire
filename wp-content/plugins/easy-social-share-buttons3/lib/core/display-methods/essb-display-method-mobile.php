@@ -36,7 +36,7 @@ class ESSBDisplayMethodMobile {
 	
 		$mobile_sharebar_text = ESSBOptionValuesHelper::options_value($options, 'mobile_sharebar_text');
 		if ($mobile_sharebar_text == "") {
-			$mobile_sharebar_text = esc_html__("Share this", 'essb');
+			$mobile_sharebar_text = __("Share this", 'essb');
 		}
 			
 		$output = "";

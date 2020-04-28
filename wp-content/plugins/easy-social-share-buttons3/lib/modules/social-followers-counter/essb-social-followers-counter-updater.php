@@ -139,21 +139,16 @@ class ESSBSocialFollowersCounterUpdater {
 	}
 	
 	private function update_facebook_without_token($id) {
-		$social_id = $id;
+		$data = $this->remote_update( "https://www.facebook.com/plugins/likebox.php?href=https://facebook.com/".$id."&show_faces=true&header=false&stream=false&show_border=false&locale=en_US", false);
 		
-		$get_request = wp_remote_get( "https://www.facebook.com/plugins/likebox.php?href=https://facebook.com/$social_id&show_faces=true&header=false&stream=false&show_border=false&locale=en_US", array( 'timeout' => 20 ) );
-		$the_request = wp_remote_retrieve_body( $get_request );
+		$counter = 0;
 		
 		$pattern = '/_1drq[^>]+>(.*?)<\/a/s';
-		preg_match( $pattern, $the_request, $matches );
-				
-		$counter = 0;
+		preg_match( $pattern, $data, $matches );
 		
 		if ( ! empty( $matches[1] ) ) {
 			$number  = strip_tags( $matches[1] );
 			$counter = '';
-			
-
 		
 			foreach ( str_split( $number ) as $char ) {
 				if ( is_numeric( $char ) ){
@@ -181,7 +176,8 @@ class ESSBSocialFollowersCounterUpdater {
 	}
 	
 	private function update_facebook_page() {
-		try {			
+		try {
+			
 			$response = $this->remote_update ( 'https://graph.facebook.com/v2.8/' . ESSBSocialFollowersCounterHelper::get_option ( 'facebook_id' ) . '?fields=fan_count&access_token=' . ESSBSocialFollowersCounterHelper::get_option ( 'facebook_access_token' ) );
 
 			if (isset ( $response ['fan_count'] )) {
@@ -204,14 +200,49 @@ class ESSBSocialFollowersCounterUpdater {
 		}
 	}
 	
-	/**
-	 * Get the number of followers for Google+
-	 * 
-	 * @since 6.3
-	 * Deprecated. Google+ removes their social followers counter and function will return 0 
-	 */
 	public function update_googleplus() {
-		return 0;
+		$api_key = ESSBSocialFollowersCounterHelper::get_option ( 'google_api_key' );
+		if (trim ( $api_key ) == '') {
+			// no followers value can be taken without access token
+			return 0;
+		} else {
+			return $this->update_googleplus_api ();
+		}
+	}
+	
+	public function update_googleplus_api() {
+		$id = ESSBSocialFollowersCounterHelper::get_option ( 'google_id' );
+		if (empty ( $id )) {
+			return 0;
+		}
+		$api_key = ESSBSocialFollowersCounterHelper::get_option ( 'google_api_key' );
+		$value_type = ESSBSocialFollowersCounterHelper::get_option ( 'google_value_type' );
+		
+		$url = "https://www.googleapis.com/plus/v1/people/" . $id . "?key=" . $api_key;
+		
+		$data = $this->remote_update_curl ( $url );
+		$circleCount = 0;
+		$plusOneCount = 0;
+		if (! empty ( $data )) {
+			$jsonData = json_decode ( $data, true );
+			if (! empty ( $jsonData ['plusOneCount'] )) {
+				$count ['plusOneCount'] = $jsonData ['plusOneCount'];
+				$plusOneCount = intval ( $jsonData ['plusOneCount'] );
+			}
+			if (! empty ( $jsonData ['circledByCount'] )) {
+				$count ['circledByCount'] = $jsonData ['circledByCount'];
+				$circleCount = intval ( $jsonData ['circledByCount'] );
+			}
+		
+		}
+		
+		if ($value_type == "plusOneCount") {
+			return $plusOneCount;
+		} else if ($value_type == "circledByCount") {
+			return $circleCount;
+		} else {
+			return ($circleCount + $plusOneCount);
+		}
 	}
 	
 	public function update_pinterest() {
@@ -221,23 +252,21 @@ class ESSBSocialFollowersCounterUpdater {
 		if (empty ( $id )) {
 			return 0;
 		}
+		
 		try {
-			$request = $this->remote_update_curl ( 'https://api.pinterest.com/v3/pidgets/users/'.$id.'/pins/' );
-			
+			$request = @$this->remote_update ( 'https://www.pinterest.com/' . $id, false );
 			if (false == $request) {
 				return null;
 			}
 			
-			$response = @json_decode ( $request );
+			@preg_match ( ' <meta property="pinterestapp:followers" name="pinterestapp:followers" content="(\d+)" data-app>', $request, $matches );
 			
-			if (isset($response->data) && isset($response->data->user) && isset($response->data->user->follower_count)) {
-				return intval($response->data->user->follower_count);
+			if (count ( $matches) > 0 && isset ( $matches [1] )) {
+				return $matches [1];
 			}
-		
-		}
-		catch (Exception $e) {
+		} catch ( Exception $e ) {
 			return 0;
-		}		
+		}
 	}
 	
 	/**
@@ -277,6 +306,7 @@ class ESSBSocialFollowersCounterUpdater {
 
 				try {
 					$data = $this->remote_get( $page_id, true, $args);
+	//print_r($data);
 					if( !is_array( $data )){
 						$result = $data;
 					}
@@ -403,7 +433,7 @@ class ESSBSocialFollowersCounterUpdater {
 		}
 		
 		try {
-			$response = $this->remote_update ( 'https://marketplace.envato.com/api/edge/user:' . $id . '.json' );
+			$response = $this->remote_update ( 'http://marketplace.envato.com/api/edge/user:' . $id . '.json' );
 			if (isset ( $response['user'] ) && isset ( $response['user']['followers'] )) {
 				return $response['user']['followers'];
 			}
@@ -473,10 +503,6 @@ class ESSBSocialFollowersCounterUpdater {
 		$username = ESSBSocialFollowersCounterHelper::get_option ( 'instgram_username' );
 		$api_key = ESSBSocialFollowersCounterHelper::get_option ( 'instgram_api_key' );
 		
-		if (empty($api_key) && !empty($username)) {
-			return $this->update_instagram_without_token();
-		}
-		
 		if (empty ( $id ) || empty ( $username ) || empty ( $api_key )) {
 			return 0;
 		}
@@ -490,40 +516,6 @@ class ESSBSocialFollowersCounterUpdater {
 		} catch ( Exception $e ) {
 			return 0;
 		}
-	}
-	
-	public function update_instagram_without_token() {
-		$username = ESSBSocialFollowersCounterHelper::get_option ( 'instgram_username' );
-		$url = 'https://www.instagram.com/' . str_replace( '@', '', $username ) . '?__a=1';
-		
-		$count = 0;
-		
-		$remote = wp_remote_get( $url, array(
-				'user-agent' => 'Instagram/' . ESSB3_VERSION . '; ' . home_url()
-		) );
-		
-		if ( is_wp_error( $remote ) ) {
-			return 0;
-		}
-		
-		if ( 200 !== wp_remote_retrieve_response_code( $remote ) ) {
-			return 0;
-		}
-		
-		$insta_array = json_decode( $remote['body'], true );
-		
-		if ( ! $insta_array ) {
-			return 0;
-		}
-			
-		
-			
-		$profile_data = array();
-		if (isset($insta_array['graphql']['user'])) {
-			$count = $insta_array['graphql']['user']['edge_followed_by']['count'];
-		}
-		
-		return $count;
 	}
 	
 	public function update_youtube() {

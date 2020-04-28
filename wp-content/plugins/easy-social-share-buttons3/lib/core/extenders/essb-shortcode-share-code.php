@@ -110,8 +110,7 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 				'email_message' => 'string',
 				'postid' => 'string',
 				'size' => 'string',
-				'manualonly' => 'bool',
-				'noaffiliate' => 'bool' );
+				'manualonly' => 'bool' );
 		$shortcode_options = array (
 				'buttons' => '', 
 				'counters' => 0, 
@@ -161,7 +160,7 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 				'bottombar' => 'no', 
 				'twitter_user' => '', 
 				'twitter_hashtags' => '',
-				'twitter_tweet' => '', 
+				 'twitter_tweet' => '', 
 				'nospace' => 'false', 
 				'post_float' => '', 
 				'hide_icons' => '', 
@@ -187,13 +186,23 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 				'email_message' => '',
 				'postid' => '',
 				'size' => '',
-				'manualonly' => 'no',
-				'noaffiliate' => 'no' );
+				'manualonly' => 'no' );
 		
 		$atts = shortcode_atts ( $shortcode_options, $atts );
 		
-		$hide_mobile = essb_unified_true(isset ( $atts ['hide_mobile'] ) ? $atts ['hide_mobile'] : '');
-		$only_mobile = essb_unified_true(isset ( $atts ['only_mobile'] ) ? $atts ['only_mobile'] : '');
+		$hide_mobile = isset ( $atts ['hide_mobile'] ) ? $atts ['hide_mobile'] : '';
+		$hide_mobile = ESSBOptionValuesHelper::unified_true ( $hide_mobile );
+		
+		$only_mobile = isset ( $atts ['only_mobile'] ) ? $atts ['only_mobile'] : '';
+		$only_mobile = ESSBOptionValuesHelper::unified_true ( $only_mobile );
+		
+		if ($hide_mobile && essb_is_mobile ()) {
+			return "";
+		}
+		
+		if ($only_mobile && ! essb_is_mobile ()) {
+			return "";
+		}
 		
 		// initialize list of availalbe networks
 		if ($atts ['buttons'] == '') {
@@ -209,13 +218,6 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 		$shortcode_parameters ['networks'] = $networks;
 		$shortcode_parameters ['customize_texts'] = $exist_personalization;
 		$shortcode_parameters ['network_texts'] = $shortcode_custom_display_texts;
-		if ($only_mobile) {
-			$shortcode_parameters ['responsive_only_mobile'] = 'true';
-		}
-		
-		if ($hide_mobile) {
-			$shortcode_parameters ['responsive_hide_mobile'] = 'true';
-		}
 		
 		foreach ( $shortcode_automatic_parse_args as $key => $type ) {
 			$value = isset ( $atts [$key] ) ? $atts [$key] : '';
@@ -238,6 +240,8 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 			$shortcode_parameters [$key] = $value;
 		}
 		
+		
+		
 		if (! empty ( $shortcode_parameters ['post_float'] )) {
 			$shortcode_parameters ['postfloat'] = ESSBOptionValuesHelper::unified_true ( $shortcode_parameters ['post_float'] );
 		}
@@ -250,8 +254,11 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 				}
 			}
 		}
+
+		///print_r($shortcode_parameters);
 		
-		// @since 3.0 query handling parameters is set as default in shortcode	
+		// @since 3.0 query handling parameters is set as default in shortcode
+		
 		if ($shortcode_parameters ['query']) {
 			$query_url = isset ( $_REQUEST ['url'] ) ? $_REQUEST ['url'] : '';
 			if (! empty ( $query_url )) {
@@ -389,7 +396,6 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 			
 			}
 		}
-		
 		if ($shortcode_parameters ['point']) {
 			$display_as_key = "point";
 			
@@ -460,6 +466,8 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 			$special_shortcode_options ['only_share'] = true;
 		}
 		
+		//print_r($shortcode_parameters);
+		
 		if ($display_as_key == "sidebar") {
 			return essb_core ()->display_sidebar ( true, $shortcode_parameters, $special_shortcode_options );
 		} else if ($display_as_key == "popup") {
@@ -485,5 +493,6 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 		} else {
 			return essb_core ()->generate_share_buttons ( $display_as_key, 'share', $special_shortcode_options, true, $shortcode_parameters );
 		}
+	
 	}
 }

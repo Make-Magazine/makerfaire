@@ -119,11 +119,37 @@ class ESSBSocialConversionsLite {
 				
 				$first = substr($first, 0, 4) . '-' . substr($first, 4, 2) . '-' . substr($first, 6, 2);
 				
+				//$first = array_shift ($keys);
 				unset($ab_stats['dates'][$first]);
 			}
 			
+			/*
+			 * stdClass Object
+(
+    [positions] => stdClass Object
+        (
+            [shortcode] => 1
+            [bottom] => 1
+        )
+
+    [networks] => stdClass Object
+        (
+            [facebook] => 2
+            [twitter] => 2
+            [google] => 2
+            [linkedin] => 2
+            [pinterest] => 2
+            [messenger] => 1
+            [mail] => 1
+        )
+
+)
+			 */
+			
+			
 			delete_option($this->data_holder);
 			update_option($this->data_holder, $ab_stats, 'no', 'no');
+			//update_option ( $this->data_holder, $ab_stats );
 			die();
 		}
 		
@@ -147,6 +173,8 @@ class ESSBSocialConversionsLite {
 			if (!$ab_stats || !is_array($ab_stats)) {
 				$ab_stats = array( 'totals' => array(), 'dates' => array());
 			}
+
+			
 			
 			if (!isset($ab_stats['dates'][$log_date])) {
 				$ab_stats['dates'][$log_date] = array('positions' => array(), 'networks' => array());
@@ -194,6 +222,7 @@ class ESSBSocialConversionsLite {
 				
 			delete_option($this->data_holder);
 			update_option($this->data_holder, $ab_stats, 'no', 'no');
+			//update_option ( $this->data_holder, $ab_stats );
 			die();
 		}
 	}
@@ -262,7 +291,6 @@ class ESSBSocialConversionsLite {
 		}
 		
 		jQuery(document).ready(function() {
-			"use strict";
 			essbConversionsLiteLog();
 	    });
 		

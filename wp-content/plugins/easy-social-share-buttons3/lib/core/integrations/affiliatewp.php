@@ -8,6 +8,7 @@
  * @copyright 2016 AppsCreo
  * @since 4.2
  * @modified 6.2
+ *
  */
 
 if (! function_exists ( 'essb_generate_affiliatewp_referral_link' )) {
@@ -41,6 +42,7 @@ if (! function_exists ( 'essb_generate_affiliatewp_referral_link' )) {
 		// append referral variable and affiliate ID to sharing links in ESSB
 		if ($affwp_active_mode == 'name') {
 			if ($affwp_active_pretty) {
+				//$aff_append_data = affiliate_wp ()->tracking->get_referral_var () . '/' . affwp_get_affiliate_username ();
 				$aff_append_data = '/' . affiliate_wp ()->tracking->get_referral_var () . '/';
 				if (strpos($permalink, $aff_append_data) === false) {
 					$permalink .= affiliate_wp ()->tracking->get_referral_var () . '/' . affwp_get_affiliate_username ();
@@ -50,6 +52,7 @@ if (! function_exists ( 'essb_generate_affiliatewp_referral_link' )) {
 			}
 		} else {
 			if ($affwp_active_pretty) {
+				//$aff_append_data = affiliate_wp ()->tracking->get_referral_var () . '/' . affwp_get_affiliate_id ();
 				$aff_append_data = '/' . affiliate_wp ()->tracking->get_referral_var () . '/';
 				if (strpos($permalink, $aff_append_data) === false) {
 					$permalink .= affiliate_wp ()->tracking->get_referral_var () . '/' . affwp_get_affiliate_id ();

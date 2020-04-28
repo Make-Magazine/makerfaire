@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Main Plugin Admin Controller
- * 
- * @package EasySocialShareButtons
- * @since 1.0
- * @author appscreo
- */
-
-
+// since version 5 we store by default last 10 saved setups of plugin
 define('ESSB5_SETTINGS_ROLLBACK', 'essb-settings-history');
 
 class ESSBAdminControler {
@@ -22,15 +14,15 @@ class ESSBAdminControler {
 
 		return self::$instance;
 
-	} 
+	} // end get_instance;
 
 	function __construct() {
 		global $pagenow;
 		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
 
-		/**
-		 * Validate access to plugin settings. Require if user limits the setup
-		 */
+		$deactivate_appscreo = essb_option_bool_value('deactivate_appscreo');
+
+		// determine access level to setup
 		$essb_settings_access = essb_option_value('essb_access');
 		if ($essb_settings_access == '') {
 			$essb_settings_access = 'manage_options';
@@ -58,6 +50,7 @@ class ESSBAdminControler {
 			}
 		}
 
+		// admin meta boxes
 		/**
 		 * Since version 6.2 it is possible to modify the access to the plugin metabox editing options on the
 		 * editor. In case the limitation is set in Administrative settings the metaboxes will not be loaded
@@ -68,30 +61,21 @@ class ESSBAdminControler {
 		if (essb_option_bool_value('limit_editor_fields') && function_exists('essb_editor_capability_can')) {
 			$can_use_meta = essb_editor_capability_can();
 		}
-		
-		/**
-		 * Since 6.3 user will be able to fully deactivate metabox fields added by plugin
-		 */
-		if ($can_use_meta && !essb_option_bool_value('disable_meta_editor_fields')) {
+		if ($can_use_meta) {
 			add_action('add_meta_boxes', array ($this, 'handle_essb_metabox' ) );
 			add_action('save_post',  array ($this, 'handle_essb_save_metabox'));
 		}
-		
-		/**
-		 * Since 6.3 the total shares column appears inside the admin area
-		 */
-		if (!essb_option_bool_value('deactivate_column_shares')) {
-			$this->add_total_shares_column();
-		}
 
-		if (!essb_option_bool_value('deactivate_appscreo')) {
+		if (!$deactivate_appscreo) {
 			add_action( 'wp_dashboard_setup', array( $this, 'add_dashboard_widget' ) );
 		}
-		
-		/**
-		 * Display notification message inside the plugin list if plugin is not activated
-		 * and it is not marked as a theme integrated state
-		 */
+
+
+		if (ESSB3_ADDONS_ACTIVE) {
+			include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/addons/essb-addons-helper4.php');
+			ESSBAddonsHelper::get_instance();
+		}
+
  		if(isset($pagenow) && $pagenow == 'plugins.php' && !ESSBActivationManager::isActivated()){
  			if (!ESSBActivationManager::isThemeIntegrated()) {
  				add_action('admin_notices', array($this, 'add_plugins_page_notices'));
@@ -100,58 +84,38 @@ class ESSBAdminControler {
 
 	}
 
-	/**
-	 * Register plugin notice if Easy Social Share Buttons is not activated. That is to show
-	 * the user that no automatic updates will be delivered
-	 * 
-	 * @since 3.0
-	 */
 	public function add_plugins_page_notices(){
 		$plugins = get_plugins();
-		
+
 		foreach($plugins as $plugin_id => $plugin){
 
 			$slug = dirname($plugin_id);
-			if(empty($slug)) {
-				continue;
-			}
-			
-			if($slug !== 'easy-social-share-buttons3') {
-				continue;
-			}
+			if(empty($slug)) continue;
+			if($slug !== 'easy-social-share-buttons3' && $slug !== 'easy-social-share-buttons3-ver4') continue;
 
-			if(!ESSBActivationManager::isActivated()) { //activate for updates and support
+			if(!ESSBActivationManager::isActivated()){ //activate for updates and support
 				add_action( "after_plugin_row_" . $plugin_id, array($this, 'show_purchase_notice'), 10, 3);
 			}
 		}
 	}
 
-	/**
-	 * Generate and show the purchase notification if plugin is not activated
-	 * 
-	 * @since 3.0
-	 */
-	public function show_purchase_notice($plugin_file, $plugin_data, $plugin_status){
-		$activate_url = admin_url('admin.php?page=essb_redirect_update&tab=update');		
+	public function show_purchase_notice(){
 		$wp_list_table = _get_list_table('WP_Plugins_List_Table');
-		$slug = 'easy-social-share-buttons-for-wordpress';
-		if(is_network_admin()){
-			$active_class = is_plugin_active_for_network($plugin_file) ? ' active' : '';
-		}else{
-			$active_class = is_plugin_active($plugin_file) ? ' active' : '';
-		}
-		
-		?>
-				<tr class="plugin-update-tr<?php echo $active_class; ?>" id="<?php echo $slug; ?>-update" data-plugin="<?php echo $plugin_file; ?>">
-					<td colspan="<?php echo $wp_list_table->get_column_count(); ?>" class="plugin-update colspanchange">
-						<div class="update-message notice inline notice-warning notice-alt">
-							<p>Activate Easy Social Share Buttons for WordPress to <a href="<?php echo esc_url($activate_url); ?>"><b>unlock automatic plugin updates</b></a>.</p>
-						</div>
-					</td>
-				</tr>
-		<?php		
+		$activate_url = admin_url('admin.php?page=essb_redirect_update&tab=update');
 
-	}
+		$new_version_code = '';
+		if (ESSBActivationManager::existNewVersion()) {
+			$new_version_code = ' <b>New version '.ESSBActivationManager::getLatestVersion().' is available.</b>';
+		}
+
+		?>
+	        <tr class="plugin-update-tr essb-plugin-update"><td colspan="<?php echo $wp_list_table->get_column_count(); ?>" class="plugin-update colspanchange">
+	            <div class="update-message notice inline notice-warning notice-alt">
+	            <p>Activate Easy Social Share Buttons for WordPress to <a href="<?php echo esc_url($activate_url); ?>"><b>unlock automatic plugin updates</b></a>. You can <a href="<?php echo esc_url($activate_url); ?>"><b>Enter an existing licence key</b></a> or <a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo&license=regular&open_purchase_for_item_id=6394476&purchasable=source" target="_blank"><b>Purchase a licence key</b></a>. <?php echo esc_html($new_version_code); ?></p>
+	            </div>
+	        </tr>
+	        <?php
+		}
 
 	/**
 	 * Add news dashboard widget
@@ -160,7 +124,7 @@ class ESSBAdminControler {
 	 */
 	public function add_dashboard_widget() {
 		// Create the widget
-		wp_add_dashboard_widget( 'appscreo_news', apply_filters( 'appscreo_dashboard_widget_title', esc_html__( 'AppsCreo Overview', 'essb' ) ), array( $this, 'display_news_dashboard_widget' ) );
+		wp_add_dashboard_widget( 'appscreo_news', apply_filters( 'appscreo_dashboard_widget_title', __( 'AppsCreo Overview', 'essb' ) ), array( $this, 'display_news_dashboard_widget' ) );
 
 		// Make sure our widget is on top off all others
 		global $wp_meta_boxes;
@@ -179,12 +143,58 @@ class ESSBAdminControler {
 		$wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
 	}
 
-	/**
-	 * Register the actual code of the news widget
-	 * 
-	 */
 	public function display_news_dashboard_widget() {
 		?>
+
+		<style type="text/css">
+
+			.essb-admindash-overview {
+				display: table;
+				box-shadow: 0 5px 8px rgba(0,0,0,.05);
+				-webkit-box-shadow: 0 5px 8px rgba(0,0,0,.05);
+				margin: 0 -12px 8px;
+				padding: 0 12px 12px;
+				width: 100%;
+}
+
+	        .essb-admindash-overview-logo {
+	        background-color: #2B6A94; background: linear-gradient(to right, #2b6a94 1%,#23577a 100%); width: 42px; height: 42px;
+	        display: table-cell;
+	        border-radius: 3px;
+	        position: relative;
+			 }
+
+			 .essb-admindash-overview-logo .essb-logo {
+			 	position: absolute; display: block; width: 28px; height: 28px; top: 0; left: 0; margin:7px; background-size: 28px; }
+
+			 .essb-admindash-overview-ver { display: table-cell; padding: 0 10px; vertical-align: middle; font-size: 0.9em; }
+
+			 .essb-admindash-row .essb-admindash-heading {
+			 		font-weight: 700;
+			 	border-bottom: 1px solid #eee;
+			 	margin: 0 -12px;
+			 	padding: 6px 12px;
+}
+.essb-admindash-footer {
+	border-top: 1px solid #eee;
+	margin: 0 -12px -12px;
+	padding: 12px;
+	margin-top: 20px;
+}
+
+.essb-admindash-footer ul { margin: 0; padding: 0; }
+.essb-admindash-footer ul li {
+	padding: 0 5px;
+	margin: 0;
+	border-left: 1px solid #eee;
+	display: inline-block;
+}
+
+.essb-admindash-footer ul li:first-child {
+	padding-left: 0;
+	border-left: 0;
+}
+	    </style>
 
 		<div class="essb-admin-dashboard-widget">
 			<div class="essb-admindash-overview">
@@ -195,13 +205,13 @@ class ESSBAdminControler {
 					Easy Social Share Buttons for WordPress v<?php echo ESSB3_VERSION; ?><br/>
 					Activation Status: <?php
 					if (ESSBActivationManager::isActivated()) {
-						echo '<span class="activated">Activated</span>';
+						echo '<span style="color:#71BA51; font-weight: bold;">Activated</span>';
 					}
 					else if (ESSBActivationManager::isThemeIntegrated()) {
-						echo '<span class="theme-integrated">Theme Integrated</span>';
+						echo '<span style="color:#FD5B03; font-weight: bold;">Theme Integrated</span>';
 					}
 					else {
-						echo '<span class="not-activated">Not Activated</span>';
+						echo '<span style="color:#CF000F; font-weight: bold;">Not Activated</span>';
 					}
 					?>
 				</div>
@@ -209,22 +219,21 @@ class ESSBAdminControler {
 
 			<?php
 			if (!ESSBActivationManager::isActivated()) {
+				echo '<div class="essb-admindash-row">';
 				$activate_url = admin_url('admin.php?page=essb_redirect_update&tab=update');
-				?>
-				<div class="essb-admindash-row">
-				<?php if (!ESSBActivationManager::isThemeIntegrated()) { ?>
-					<p>Activate Easy Social Share Buttons for WordPress to 
-					<a href="https://socialsharingplugin.com/direct-customer-benefits/" target="_blank"><b>unlock automatic plugin updates and direct customer benefits</b></a>. 
-					You can <a href="<?php echo esc_url($activate_url); ?>"><b>Enter an existing licence key</b></a> or <a href="https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo&license=regular&open_purchase_for_item_id=6394476&purchasable=source" target="_blank"><b>Purchase a licence key</b></a>.</p>
-				<?php } else { ?>
-					<p>Your copy of Easy Social Share Buttons for WordPress is theme integrated. To <a href="https://socialsharingplugin.com/direct-customer-benefits/" target="_blank"><b>unlock automatic plugin updates and direct customer benefits</b></a> you can <a href="<?php echo esc_url($activate_url); ?>"><b>Enter an existing Easy Social Share Buttons for WordPress licence key</b></a> or <a href="https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo&license=regular&open_purchase_for_item_id=6394476&purchasable=source" target="_blank"><b>Purchase a new Easy Social Share Buttons for WordPress licence key</b></a>.</p>
-				<?php } ?>
-				</div>
-			<?php }
+
+				if (!ESSBActivationManager::isThemeIntegrated()) {
+					echo '<p>Activate Easy Social Share Buttons for WordPress to <a href="https://socialsharingplugin.com/direct-customer-benefits/" target="_blank"><b>unlock automatic plugin updates and direct customer benefits</b></a>. You can <a href="'.$activate_url.'"><b>Enter an existing licence key</b></a> or <a href="https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo&license=regular&open_purchase_for_item_id=6394476&purchasable=source" target="_blank"><b>Purchase a licence key</b></a>.</p>';
+				}
+				else {
+					echo '<p>Your copy of Easy Social Share Buttons for WordPress is theme integrated. To <a href="https://socialsharingplugin.com/direct-customer-benefits/" target="_blank"><b>unlock automatic plugin updates and direct customer benefits</b></a> you can <a href="'.$activate_url.'"><b>Enter an existing Easy Social Share Buttons for WordPress licence key</b></a> or <a href="https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo&license=regular&open_purchase_for_item_id=6394476&purchasable=source" target="_blank"><b>Purchase a new Easy Social Share Buttons for WordPress licence key</b></a>.</p>';
+				}
+				echo '</div>';
+			}
 			?>
 
 			<div class="essb-admindash-row">
-				<div class="essb-admindash-heading">News & Updates</div>
+				<div class="essb-admindash-heading" style="margin-bottom: 10px;">News & Updates</div>
 			</div>
 
 			<?php
@@ -232,7 +241,7 @@ class ESSBAdminControler {
 					'first' => array(
 							'link'         => 'https://appscreo.com/',
 							'url'          => 'https://appscreo.com/feed/',
-							'title'        => esc_html__( 'AppsCreo News', 'essb' ),
+							'title'        => __( 'AppsCreo News', 'essb' ),
 							'items'        => 4,
 							'show_summary' => 0,
 							'show_author'  => 0,
@@ -243,87 +252,36 @@ class ESSBAdminControler {
 
 			wp_dashboard_primary_output( 'appscreo_news', $feeds );
 			?>
-			<div class="essb-admindash-row">
-				<div class="essb-admindash-heading">Subscribe for News & Updates</div>
+			<div class="essb-admindash-row" style="margin-top: 20px;">
+				<div class="essb-admindash-heading" style="margin-bottom: 10px; border-bottom:0;">Subscribe for News & Updates</div>
 			</div>
 			<!-- Begin MailChimp Signup Form -->
-			<div id="mc_embed_signup">
-			<form action="https://appscreo.us13.list-manage.com/subscribe/post?u=a1d01670c240536f6a70e7778&amp;id=c896311986" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-			    <div id="mc_embed_signup_scroll">
-			
-				<input style="width: 62%; display: inline-block;" type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
-			    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-			    <div style="position: absolute; left: -5000px; width:60%; display: inline-block;" aria-hidden="true"><input type="text" name="b_a1d01670c240536f6a70e7778_c896311986" tabindex="-1" value=""></div>
-			    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button button-primary" style="display: inline-block; width: 35%;">
-			    </div>
-			</form>
-			</div>
+<div id="mc_embed_signup">
+<form action="https://appscreo.us13.list-manage.com/subscribe/post?u=a1d01670c240536f6a70e7778&amp;id=c896311986" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
 
-			<!--End mc_embed_signup-->
-			
+	<input style="width: 62%; display: inline-block;" type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+    <div style="position: absolute; left: -5000px; width:60%; display: inline-block;" aria-hidden="true"><input type="text" name="b_a1d01670c240536f6a70e7778_c896311986" tabindex="-1" value=""></div>
+    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button button-primary" style="display: inline-block; width: 35%;">
+    </div>
+</form>
+</div>
+
+<!--End mc_embed_signup-->
 			<div class="essb-admindash-footer">
 				<ul>
 				<li class=""><a href="https://socialsharingplugin.com/version-changes/" target="_blank">What's New <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
 				<li class=""><a href="https://docs.socialsharingplugin.com" target="_blank">Docs <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
 				<li class=""><a href="http://support.creoworx.com" target="_blank">Get Support <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
-				<li class=""><a href="http://go.appscreo.com/portfolio" class="portfolio-button" target="_blank">Our Products <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+				<li class=""><a href="http://go.appscreo.com/portfolio" target="_blank" style="color:#FD5B03;">Our Products <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
 				</ul>
 			</div>
 		</div>
 
 		<?php
 	}
-	
-	/**
-	 * Add a total shares column inside plugin settings
-	 * 
-	 * @since 6.3
-	 */
-	public function add_total_shares_column() {
-		add_action ( "manage_posts_custom_column", array($this, 'generate_total_shares_column' ));
-		add_filter ( "manage_posts_columns", array($this, 'register_total_shares_column' ));
-		add_action ( "manage_pages_custom_column", array($this, 'generate_total_shares_column' ));
-		add_filter ( "manage_pages_columns", array($this, 'register_total_shares_column' ));
-		add_filter ( 'manage_edit-post_sortable_columns', array($this, 'sort_totalshares_column' ));
-		add_filter ( 'manage_edit-page_sortable_columns', array($this, 'sort_totalshares_column' ));
-		add_action ( 'pre_get_posts', array($this, 'sort_totalshares' ));
-	}
-	
-	public function sort_totalshares($query) {
-		if (! is_admin ()) {
-			return;
-		}
-		
-		$orderby = $query->get ( 'orderby' );
-		if ('essb_c_total' == $orderby) {
-			$query->set ( 'meta_key', 'essb_c_total' );
-			$query->set ( 'orderby', 'meta_value_num' );
-		}
-	}
-	
-	public function sort_totalshares_column($defaults) {
-		$defaults['essb_shares'] = 'essb_c_total';
-		
-		return $defaults;
-	}
-	
-	public function register_total_shares_column($defaults) {
-		$defaults['essb_shares'] = esc_html__('Shares', 'essb');
-		
-		return $defaults;
-	}
-	
-	public function generate_total_shares_column($column_name) {
-		if ($column_name == 'essb_shares') {
-			echo intval ( get_post_meta ( get_the_ID(), 'essb_c_total', true ) );
-		}
-	}
 
-	/**
-	 * Register the activated from plugin metaboxes
-	 * 
-	 * @since 1.0
-	 */
 	public function handle_essb_metabox() {
 		$display_in_types = essb_option_value('display_in_types');
 		$turnoff_essb_optimize_box = essb_option_bool_value('turnoff_essb_optimize_box');
@@ -344,52 +302,52 @@ class ESSBAdminControler {
 		$pts	 = get_post_types( array('show_ui' => true, '_builtin' => true) );
 		$cpts	 = get_post_types( array('show_ui' => true, '_builtin' => false) );
 		foreach ( $pts as $pt ) {
-			if ((defined('ESSB3_SSO_ACTIVE') && !$turnoff_essb_optimize_box) || (in_array($pt, $display_in_types) && !$turnoff_essb_optimize_box)) {
-				add_meta_box('essb_metabox_optmize', esc_html__('Easy Social Share Buttons: Share Options', 'essb'), 'essb_register_settings_metabox_optimize', $pt, 'normal', 'high');
+			if ((defined('ESSB3_SSO_ACTIVE') && !$turnoff_essb_optimize_box) || in_array($pt, $display_in_types)) {
+				add_meta_box('essb_metabox_optmize', __('Easy Social Share Buttons: Share Options', 'essb'), 'essb_register_settings_metabox_optimize', $pt, 'normal', 'high');
 			}
 
 			if (in_array($pt, $display_in_types)) {
 
 				if (!$turnoff_essb_main_box) {
-					add_meta_box('essb_metabox', esc_html__('Easy Social Share Buttons', 'essb'), 'essb_register_settings_metabox_onoff', $pt, 'side', 'high');
+					add_meta_box('essb_metabox', __('Easy Social Share Buttons', 'essb'), 'essb_register_settings_metabox_onoff', $pt, 'side', 'high');
 				}
 
 				if (!$turnoff_essb_advanced_box) {
-					add_meta_box('essb_metabox_visual', esc_html__('Easy Social Share Buttons: Visual Customization', 'essb'), 'essb_register_settings_metabox_visual', $pt, 'normal', 'high');
+					add_meta_box('essb_metabox_visual', __('Easy Social Share Buttons: Visual Customization', 'essb'), 'essb_register_settings_metabox_visual', $pt, 'normal', 'high');
 				}
 
 				if (!$turnoff_essb_stats_box) {
-					add_meta_box('essb_metabox_stats', esc_html__('Easy Social Share Buttons: Stats', 'essb'), 'essb_register_settings_metabox_stats', $pt, 'normal', 'core');
+					add_meta_box('essb_metabox_stats', __('Easy Social Share Buttons: Stats', 'essb'), 'essb_register_settings_metabox_stats', $pt, 'normal', 'core');
 				}
+
+
 			}
+
 		}
 
 		foreach ( $cpts as $cpt ) {
 
 			if ((defined('ESSB3_SSO_ACTIVE') && !$turnoff_essb_optimize_box) || in_array($cpt, $display_in_types)) {
-				add_meta_box('essb_metabox_optmize', esc_html__('Easy Social Share Buttons: Social Share Optimization', 'essb'), 'essb_register_settings_metabox_optimize', $cpt, 'normal', 'high');
+				add_meta_box('essb_metabox_optmize', __('Easy Social Share Buttons: Social Share Optimization', 'essb'), 'essb_register_settings_metabox_optimize', $cpt, 'normal', 'high');
 			}
 
 			if (in_array($cpt, $display_in_types)) {
 				if (!$turnoff_essb_main_box) {
-					add_meta_box('essb_metabox', esc_html__('Easy Social Share Buttons', 'essb'), 'essb_register_settings_metabox_onoff', $cpt, 'side', 'high');
+					add_meta_box('essb_metabox', __('Easy Social Share Buttons', 'essb'), 'essb_register_settings_metabox_onoff', $cpt, 'side', 'high');
 				}
 
 				if (!$turnoff_essb_advanced_box) {
-					add_meta_box('essb_metabox_visual', esc_html__('Easy Social Share Buttons: Visual Customization', 'essb'), 'essb_register_settings_metabox_visual', $cpt, 'normal', 'high');
+					add_meta_box('essb_metabox_visual', __('Easy Social Share Buttons: Visual Customization', 'essb'), 'essb_register_settings_metabox_visual', $cpt, 'normal', 'high');
 				}
 
 				if (!$turnoff_essb_stats_box) {
-					add_meta_box('essb_metabox_stats', esc_html__('Easy Social Share Buttons: Stats', 'essb'), 'essb_register_settings_metabox_stats', $cpt, 'normal', 'core');
+					add_meta_box('essb_metabox_stats', __('Easy Social Share Buttons: Stats', 'essb'), 'essb_register_settings_metabox_stats', $cpt, 'normal', 'core');
 				}
 
 			}
 		}
 	}
 
-	/**
-	 * Save the plugin metaboxes data when saving a post
-	 */
 	public function handle_essb_save_metabox() {
 		global $post, $post_id;
 
@@ -430,8 +388,6 @@ class ESSBAdminControler {
 		$this->save_metabox_value ( $post_id, 'essb_post_share_text', $essb_metabox, 'textarea' );
 		$this->save_metabox_value ( $post_id, 'essb_post_pin_image', $essb_metabox, 'text' );
 		$this->save_metabox_value ( $post_id, 'essb_post_pin_desc', $essb_metabox, 'text');
-		$this->save_metabox_value ( $post_id, 'essb_post_pin_id', $essb_metabox, 'text');
-
 		$this->save_metabox_value ( $post_id, 'essb_post_fb_url', $essb_metabox, 'text' );
 		$this->save_metabox_value ( $post_id, 'essb_post_plusone_url', $essb_metabox, 'text' );
 		$this->save_metabox_value ( $post_id, 'essb_post_twitter_hashtags', $essb_metabox, 'text' );
@@ -587,13 +543,17 @@ class ESSBAdminControler {
 			add_menu_page ( "Easy Social Share Buttons", "Easy Social Share Buttons", $essb_access, "essb_options", array ($this, 'essb_settings_load' ) );
 
 			$is_first = true;
-			
-			$navigation_items = ESSBControlCenter::get_navigation_sections();
 
 
-			foreach ( $navigation_items as $name => $options ) {
-				$label = $options['name'];
-				$is_hidden = $options['hide'];
+			foreach ( $essb_navigation_tabs as $name => $label ) {
+
+				$is_hidden = false;
+
+				if (defined('ESSB3_SETTING5')) {
+					$key_section_settings = isset($essb_sidebar_sections[$name]) ? $essb_sidebar_sections[$name] : array();
+					$is_hidden = isset($key_section_settings['hide_menu']) ? $key_section_settings['hide_menu'] : false;
+
+				}
 
 				if ($is_first) {
 					add_submenu_page( 'essb_options', $label, $label, $essb_access, 'essb_options', array ($this, 'essb_settings_load' ));
@@ -644,18 +604,7 @@ class ESSBAdminControler {
 		wp_enqueue_style ( 'essb-admin5' );
 
 		wp_enqueue_script ( 'essb-admin5', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin5.js', array ('jquery' ), ESSB3_VERSION, true );
-		
-		wp_register_script ( 'essb-admin7', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin7.js', array ('jquery' ), ESSB3_VERSION, true );
-		wp_enqueue_style ( 'essb-admin7', ESSB3_PLUGIN_URL.'/assets/admin/essb-admin7.css' );
-		
-		wp_localize_script('essb-admin7', 'essbcc_strings', ESSBControlCenter::translations());
-		wp_enqueue_script('essb-admin7');
 
-		wp_enqueue_script ( 'essb-shortcode', ESSB3_PLUGIN_URL . '/assets/admin/essb-shortcode-generator.js', array ('jquery' ), ESSB3_VERSION, true );
-		wp_enqueue_style ( 'essb-shortcode', ESSB3_PLUGIN_URL.'/assets/admin/essb-shortcode-generator.css' );
-		
-		wp_enqueue_script( 'jquery-ui-sortable' );		
-		
 		$deactivate_fa = ESSBOptionValuesHelper::options_bool_value($essb_admin_options, 'deactivate_fa');
 		// styles
 
@@ -664,45 +613,19 @@ class ESSBAdminControler {
 		}
 		wp_enqueue_style ( 'essb-themifyicons', ESSB3_PLUGIN_URL . '/assets/admin/themify-icons.css', array (), ESSB3_VERSION );
 
-		/**
-		 * Register additional plugin scripts based on page
-		 */
-		if ($requested == 'essb_redirect_quick') {
-			wp_enqueue_script ( 'essb-admin5-wizard', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin5-wizard.js', array ('jquery' ), ESSB3_VERSION, true );
-		}
-		if ($requested == 'essb_redirect_extensions') {
-			wp_enqueue_script ( 'essb-admin5-extensions', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin5-extensions.js', array ('jquery' ), ESSB3_VERSION, true );
-		}
-		
-		if ($requested == 'easy-social-metrics-lite') {
-			wp_enqueue_style ( 'essb-admin5-metrics', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin5-metrics.css', array (), ESSB3_VERSION);
-			wp_enqueue_script ( 'essb-admin5-metrics', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin5-metrics.js', array ('jquery' ), ESSB3_VERSION, true );
-		}
-		
-		if ($requested == 'essb_redirect_analytics') {
-			wp_enqueue_style ( 'essb-admin5-metrics', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin5-stats.css', array (), ESSB3_VERSION);
-		}
-		
-		
 		// register global admin assets only on required plugin settings pages
 		if (strpos($requested, 'essb_') === false && strpos($requested, 'easy-social-metrics-lite') === false) {
-			add_action('admin_footer', array($this, 'generate_shortcode_outside_settings'));
 			return;
 		}
-		
-		add_action('admin_footer', array($this, 'generate_shortcode_settings'));
-		
 
 		wp_register_style ( 'essb-admin3-style', ESSB3_PLUGIN_URL . '/assets/css/easy-social-share-buttons.css', array (), ESSB3_VERSION );
 		wp_enqueue_style ( 'essb-admin3-style' );
-		
-		wp_register_style ( 'essbfc-admin3-style', ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/essb-followers-counter.css', array (), ESSB3_VERSION );
-		wp_enqueue_style ( 'essbfc-admin3-style' );
 
 		wp_register_style ( 'essb-admin3-style-animations', ESSB3_PLUGIN_URL . '/assets/css/essb-animations.css', array (), ESSB3_VERSION );
 		wp_enqueue_style ( 'essb-admin3-style-animations' );
 
 
+		wp_enqueue_script( 'jquery-ui-sortable' );
 		wp_enqueue_style( 'wp-color-picker');
 		wp_enqueue_script( 'wp-color-picker');
 
@@ -717,9 +640,8 @@ class ESSBAdminControler {
 		wp_enqueue_script ( 'essb-morris', ESSB3_PLUGIN_URL . '/assets/admin/morris.min.js', array ('jquery' ), ESSB3_VERSION );
 		wp_enqueue_script ( 'essb-raphael', ESSB3_PLUGIN_URL . '/assets/admin/raphael-min.js', array ('jquery' ), ESSB3_VERSION );
 		wp_enqueue_style ( 'essb-opensans', 'https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,latin-ext' );
-		wp_enqueue_style ( 'essb-roboto', 'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap&subset=latin-ext' );
-		
-		wp_enqueue_style ( 'essb-admin5-core', ESSB3_PLUGIN_URL.'/assets/admin/essb-admin5-core.css' );
+
+		wp_enqueue_style ( 'essb-sweetalerts', ESSB3_PLUGIN_URL.'/assets/admin/essb-admin5-core.css' );
 
 		wp_enqueue_script ( 'essb-sweetalerts', ESSB3_PLUGIN_URL . '/assets/admin/sweetalert.min.js', array ('jquery' ), ESSB3_VERSION, true );
 		wp_enqueue_style ( 'essb-sweetalerts', ESSB3_PLUGIN_URL.'/assets/admin/sweetalert.css' );
@@ -742,37 +664,23 @@ class ESSBAdminControler {
 		wp_enqueue_script ( 'essb-codemirror-bracefold', ESSB3_PLUGIN_URL . '/assets/admin/codemirror/addon/fold/brace-fold.js', array ('jquery' ), ESSB3_VERSION, true );
 		wp_enqueue_script ( 'essb-codemirror-commentfold', ESSB3_PLUGIN_URL . '/assets/admin/codemirror/addon/fold/comment-fold.js', array ('jquery' ), ESSB3_VERSION, true );
 
-		if ($requested != 'easy-social-metrics-lite') {
-			wp_enqueue_style ( 'essb-advancedoptions', ESSB3_PLUGIN_URL.'/lib/admin/advanced-options/advancedoptions-core.css' );
-			wp_enqueue_script ( 'essb-advancedoptions', ESSB3_PLUGIN_URL . '/lib/admin/advanced-options/advancedoptions-core.js', array ('jquery' ), ESSB3_VERSION, true );
-	
-			wp_enqueue_style ( 'essb-toast', ESSB3_PLUGIN_URL.'/assets/admin/jquery.toast.css' );
-			wp_enqueue_script ( 'essb-toast', ESSB3_PLUGIN_URL . '/assets/admin/jquery.toast.js', array ('jquery' ), ESSB3_VERSION, true );
-	
-			wp_enqueue_style ( 'essb-styleoptions', ESSB3_PLUGIN_URL.'/lib/admin/styles-library/styles-core.css' );
-			wp_enqueue_script ( 'essb-styleoptions', ESSB3_PLUGIN_URL . '/lib/admin/styles-library/styles-core.js', array ('jquery' ), ESSB3_VERSION, true );
-	
-			wp_enqueue_style ( 'select2', ESSB3_PLUGIN_URL.'/assets/admin/select2/select2.min.css' );
-			wp_enqueue_script ( 'select2', ESSB3_PLUGIN_URL . '/assets/admin/select2/select2.min.js', array ('jquery' ), ESSB3_VERSION, true );
-				
-			
-			$is_for_firsttime = get_option ( ESSB3_FIRST_TIME_NAME );
-			if (!$is_for_firsttime) { $is_for_firsttime = 'false'; }
-			if ($is_for_firsttime == 'true') {
-				wp_enqueue_style ( 'essb-anno', ESSB3_PLUGIN_URL.'/assets/admin/anno.css' );
-	
-				wp_enqueue_script ( 'essb-anno', ESSB3_PLUGIN_URL . '/assets/admin/anno.js', array ('jquery' ), ESSB3_VERSION, true );
-				wp_enqueue_script ( 'essb-annos-scrollToView', ESSB3_PLUGIN_URL . '/assets/admin/jquery.scrollintoview.min.js', array ('jquery' ), ESSB3_VERSION, true );
-			}
+		wp_enqueue_style ( 'essb-advancedoptions', ESSB3_PLUGIN_URL.'/lib/admin/advanced-options/advancedoptions-core.css' );
+		wp_enqueue_script ( 'essb-advancedoptions', ESSB3_PLUGIN_URL . '/lib/admin/advanced-options/advancedoptions-core.js', array ('jquery' ), ESSB3_VERSION, true );
+
+		wp_enqueue_style ( 'essb-toast', ESSB3_PLUGIN_URL.'/assets/admin/jquery.toast.css' );
+		wp_enqueue_script ( 'essb-toast', ESSB3_PLUGIN_URL . '/assets/admin/jquery.toast.js', array ('jquery' ), ESSB3_VERSION, true );
+
+		wp_enqueue_style ( 'essb-styleoptions', ESSB3_PLUGIN_URL.'/lib/admin/styles-library/styles-core.css' );
+		wp_enqueue_script ( 'essb-styleoptions', ESSB3_PLUGIN_URL . '/lib/admin/styles-library/styles-core.js', array ('jquery' ), ESSB3_VERSION, true );
+
+		$is_for_firsttime = get_option ( ESSB3_FIRST_TIME_NAME );
+		if (!$is_for_firsttime) { $is_for_firsttime = 'false'; }
+		if ($is_for_firsttime == 'true') {
+			wp_enqueue_style ( 'essb-anno', ESSB3_PLUGIN_URL.'/assets/admin/anno.css' );
+
+			wp_enqueue_script ( 'essb-anno', ESSB3_PLUGIN_URL . '/assets/admin/anno.js', array ('jquery' ), ESSB3_VERSION, true );
+			wp_enqueue_script ( 'essb-annos-scrollToView', ESSB3_PLUGIN_URL . '/assets/admin/jquery.scrollintoview.min.js', array ('jquery' ), ESSB3_VERSION, true );
 		}
-	}
-	
-	public function generate_shortcode_outside_settings() {
-		ESSBControlCenterShortcodes::draw_screen(false);
-	}
-	
-	public function generate_shortcode_settings() {
-		ESSBControlCenterShortcodes::draw_screen(true);
 	}
 
 	public function handle_save_settings() {
@@ -813,10 +721,6 @@ class ESSBAdminControler {
 				if (function_exists ( 'purge_essb_cache_static_cache' )) {
 					purge_essb_cache_static_cache ();
 				}
-				
-				if (function_exists ( 'essb_clear_homepage_sharecounter' )) {
-					essb_clear_homepage_sharecounter();
-				}
 
 				// actions to hook on saving
 				do_action('essb_after_admin_save_settings');
@@ -831,6 +735,7 @@ class ESSBAdminControler {
 						$fanscounter_clear_on_save = ESSBOptionValuesHelper::options_bool_value($current_options, 'fanscounter_clear_on_save');
 						if ($fanscounter_clear_on_save) {
 							essb_followers_counter()->clear_stored_values();
+							//print "clear active";
 						}
 					}
 				}
@@ -844,17 +749,37 @@ class ESSBAdminControler {
 					wp_redirect ( $goback );
 				}
 				else {
+				//$goback = add_query_arg ( 'settings-updated', 'true', wp_get_referer () );
 					$goback = esc_url_raw(add_query_arg(array('settings-updated' => 'true', 'section' => $user_section, 'subsection' => $user_subsection), wp_get_referer ()));
+
+					//$goback = str_replace('#038;', '', $goback);
+					//*** TODO - Uncomment this
 					wp_redirect ( $goback );
 				}
+				//print  (int) $_SERVER['CONTENT_LENGTH'];
 
 				die ();
 			}
 		}
 
+		/*if (@$_REQUEST && isset($_REQUEST['ready_style'])) {
+			$this->apply_readymade();
+
+			$user_section = isset($_REQUEST['section']) ? $_REQUEST['section'] : '';
+			$user_subsection = isset($_REQUEST['subsection']) ? $_REQUEST['subsection'] : '';
+
+			//$goback = add_query_arg ( 'settings-updated', 'true', wp_get_referer () );
+			$goback = remove_query_arg('ready_style');
+			$goback = esc_url_raw(add_query_arg(array('settings-imported' => 'true', 'section' => $user_section, 'subsection' => $user_subsection), wp_get_referer ()));
+
+			//$goback = str_replace('#038;', '', $goback);
+			wp_redirect ( $goback );
+			die ();
+		}*/
 	}
 
 	public function restore_settings() {
+		//essb_backup[configuration]
 		$result = false;
 
 		$backup_element = isset($_REQUEST['essb_backup']) ? $_REQUEST['essb_backup'] : array();
@@ -875,7 +800,7 @@ class ESSBAdminControler {
 		if (isset($_FILES['essb_backup_file'])) {
 			$import_file = $_FILES['essb_backup_file']['tmp_name'];
 			if( !empty( $import_file ) ) {
-				// Retrieve the settings from the file and convert the json object to an array.
+			// Retrieve the settings from the file and convert the json object to an array.
 				$settings = (array) json_decode( file_get_contents( $import_file ) );
 				update_option( ESSB3_OPTIONS_NAME, $settings );
 			}
@@ -983,6 +908,8 @@ class ESSBAdminControler {
 				}
 
 				$current_options = $this->clean_blank_values($current_options);
+
+				//print_r($current_options);
 				update_option($settings_key, $current_options);
 			}
 		}
@@ -1131,6 +1058,7 @@ class ESSBAdminControler {
 				}
 			}
 		}
+		//print_r($current_options);
 		update_option(ESSB3_WPML_OPTIONS_NAME, $current_options);
 
 	}
@@ -1339,7 +1267,7 @@ class ESSBAdminControler {
 						 * Sanitizing the values before save
 						 */
 
-						if ($type == 'text' || $type == 'text-in-panel' || $type == 'text-in-panel-stretched' || $type == 'text-stretched' || $type == 'color' ||
+						if ($type == 'text' || $type == 'text-in-panel' || $type == 'text-stretched' || $type == 'color' ||
 								$type == 'color-in-panel') {
 							$option_value = sanitize_text_field($option_value);
 						}
@@ -1540,20 +1468,20 @@ class ESSBAdminControler {
 	function temporary_activate_positions_by_posttypes() {
 		global $wp_post_types;
 
-		ESSBOptionsStructureHelper::panel_start('where', 'display-2', esc_html__('I wish to have different button position for different post types', 'essb'), esc_html__('Activate this option if you wish to setup different positions for each post type.', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'positions_by_pt', 'switch_on' => esc_html__('Yes', 'essb'), 'switch_off' => esc_html__('No', 'essb')));
+		ESSBOptionsStructureHelper::panel_start('where', 'display-2', __('I wish to have different button position for different post types', 'essb'), __('Activate this option if you wish to setup different positions for each post type.', 'essb'), 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'positions_by_pt', 'switch_on' => __('Yes', 'essb'), 'switch_off' => __('No', 'essb')));
 		$pts = get_post_types ( array ('show_ui' => true, '_builtin' => true ) );
 		$cpts = get_post_types ( array ('show_ui' => true, '_builtin' => false ) );
 		$first_post_type = "";
 		$key = 1;
 		foreach ( $pts as $pt ) {
 
-			ESSBOptionsStructureHelper::field_heading('where', 'display-2', 'heading5', esc_html__('Customize button positions for: '.$wp_post_types [$pt]->label, 'essb'));
+			ESSBOptionsStructureHelper::field_heading('where', 'display-2', 'heading5', __('Customize button positions for: '.$wp_post_types [$pt]->label, 'essb'));
 			ESSBOptionsStructureHelper::structure_row_start('where', 'display-2');
-			ESSBOptionsStructureHelper::structure_section_start('where', 'display-2', 'c6', esc_html__('Primary content display position', 'essb'), esc_html__('Choose default in content position that will be used for that post type', 'essb'));
+			ESSBOptionsStructureHelper::structure_section_start('where', 'display-2', 'c6', __('Primary content display position', 'essb'), __('Choose default in content position that will be used for that post type', 'essb'));
 			ESSBOptionsStructureHelper::field_select('where', 'display-2', 'content_position_'.$pt, '', '', essb_simplified_radio_check_list(essb_avaliable_content_positions(), true));
 			ESSBOptionsStructureHelper::structure_section_end('where', 'display-2');
 
-			ESSBOptionsStructureHelper::structure_section_start('where', 'display-2', 'c6', esc_html__('Additional button display positions', 'essb'), esc_html__('Choose additional site display position that will be used for that post type', 'essb'));
+			ESSBOptionsStructureHelper::structure_section_start('where', 'display-2', 'c6', __('Additional button display positions', 'essb'), __('Choose additional site display position that will be used for that post type', 'essb'));
 			ESSBOptionsStructureHelper::field_checkbox_list('where', 'display-2', 'button_position_'.$pt, '', '', essb_simplified_radio_check_list(essb_available_button_positions()));
 			ESSBOptionsStructureHelper::structure_section_end('where', 'display-2');
 			ESSBOptionsStructureHelper::structure_row_end('where', 'display-2');
@@ -1561,13 +1489,13 @@ class ESSBAdminControler {
 
 		foreach ( $cpts as $cpt ) {
 
-			ESSBOptionsStructureHelper::field_heading('where', 'display-2', 'heading5', esc_html__('Customize button positions for: '.$wp_post_types [$pt]->label, 'essb'));
+			ESSBOptionsStructureHelper::field_heading('where', 'display-2', 'heading5', __('Customize button positions for: '.$wp_post_types [$pt]->label, 'essb'));
 			ESSBOptionsStructureHelper::structure_row_start('where', 'display-2');
-			ESSBOptionsStructureHelper::structure_section_start('where', 'display-2', 'c6', esc_html__('Primary content display position', 'essb'), esc_html__('Choose default in content position that will be used for that post type', 'essb'));
+			ESSBOptionsStructureHelper::structure_section_start('where', 'display-2', 'c6', __('Primary content display position', 'essb'), __('Choose default in content position that will be used for that post type', 'essb'));
 			ESSBOptionsStructureHelper::field_select('where', 'display-2', 'content_position_'.$cpt, '', '', essb_simplified_radio_check_list(essb_avaliable_content_positions(), true));
 			ESSBOptionsStructureHelper::structure_section_end('where', 'display-2');
 
-			ESSBOptionsStructureHelper::structure_section_start('where', 'display-2', 'c6', esc_html__('Additional button display positions', 'essb'), esc_html__('Choose additional site display position that will be used for that post type', 'essb'));
+			ESSBOptionsStructureHelper::structure_section_start('where', 'display-2', 'c6', __('Additional button display positions', 'essb'), __('Choose additional site display position that will be used for that post type', 'essb'));
 			ESSBOptionsStructureHelper::field_checkbox_list('where', 'display-2', 'button_position_'.$cpt, '', '', essb_simplified_radio_check_list(essb_available_button_positions()));
 			ESSBOptionsStructureHelper::structure_section_end('where', 'display-2');
 			ESSBOptionsStructureHelper::structure_row_end('where', 'display-2');
@@ -1588,18 +1516,18 @@ class ESSBAdminControler {
 		foreach ( $pts as $pt ) {
 			if (empty ( $first_post_type )) {
 				$first_post_type = $pt;
-				ESSBOptionsStructureHelper::menu_item ( 'advanced', 'advancedpost', esc_html__ ( 'Display Settings by Post Type', 'essb' ), 'default', 'activate_first', 'advancedpost-1' );
+				ESSBOptionsStructureHelper::menu_item ( 'advanced', 'advancedpost', __ ( 'Display Settings by Post Type', 'essb' ), 'default', 'activate_first', 'advancedpost-1' );
 			}
 			ESSBOptionsStructureHelper::submenu_item ( 'advanced', 'advancedpost-' . $key, $wp_post_types [$pt]->label );
 
-			ESSBOptionsStructureHelper::field_heading('advanced', 'advancedpost-' . $key, 'heading1', esc_html__('Advanced settings for post type: '.$wp_post_types [$pt]->label, 'essb'));
+			ESSBOptionsStructureHelper::field_heading('advanced', 'advancedpost-' . $key, 'heading1', __('Advanced settings for post type: '.$wp_post_types [$pt]->label, 'essb'));
 			essb_prepare_location_advanced_customization ( 'advanced', 'advancedpost-' . $key, 'post-type-'.$pt, true );
 			$key ++;
 		}
 
 		foreach ( $cpts as $cpt ) {
 			ESSBOptionsStructureHelper::submenu_item ( 'advanced', 'advancedpost-' . $key, $wp_post_types [$cpt]->label );
-			ESSBOptionsStructureHelper::field_heading('advanced', 'advancedpost-' . $key, 'heading1', esc_html__('Advanced settings for post type: '.$wp_post_types [$cpt]->label, 'essb'));
+			ESSBOptionsStructureHelper::field_heading('advanced', 'advancedpost-' . $key, 'heading1', __('Advanced settings for post type: '.$wp_post_types [$cpt]->label, 'essb'));
 			essb_prepare_location_advanced_customization ( 'advanced', 'advancedpost-' . $key, 'post-type-'.$cpt, true );
 			$key ++;
 		}
@@ -1608,42 +1536,42 @@ class ESSBAdminControler {
 		$cpt = 'woocommerce';
 		$cpt_title = 'WooCommerce';
 		ESSBOptionsStructureHelper::submenu_item ( 'advanced', 'advancedmodule-' . $key, $cpt_title );
-		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', esc_html__ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
+		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', __ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
 		essb_prepare_location_advanced_customization ( 'advanced', 'advancedmodule-' . $key, 'post-type-' . $cpt, true );
 		$key ++;
 
 		$cpt = 'wpecommerce';
 		$cpt_title = 'WP e-Commerce';
 		ESSBOptionsStructureHelper::submenu_item ( 'advanced', 'advancedmodule-' . $key, $cpt_title );
-		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', esc_html__ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
+		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', __ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
 		essb_prepare_location_advanced_customization ( 'advanced', 'advancedmodule-' . $key, 'post-type-' . $cpt, true );
 		$key ++;
 
 		$cpt = 'jigoshop';
 		$cpt_title = 'JigoShop';
 		ESSBOptionsStructureHelper::submenu_item ( 'advanced', 'advancedmodule-' . $key, $cpt_title );
-		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', esc_html__ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
+		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', __ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
 		essb_prepare_location_advanced_customization ( 'advanced', 'advancedmodule-' . $key, 'post-type-' . $cpt, true );
 		$key ++;
 
 		$cpt = 'ithemes';
 		$cpt_title = 'iThemes Exchange';
 		ESSBOptionsStructureHelper::submenu_item ( 'advanced', 'advancedmodule-' . $key, $cpt_title );
-		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', esc_html__ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
+		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', __ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
 		essb_prepare_location_advanced_customization ( 'advanced', 'advancedmodule-' . $key, 'post-type-' . $cpt, true );
 		$key ++;
 
 		$cpt = 'bbpress';
 		$cpt_title = 'bbPress';
 		ESSBOptionsStructureHelper::submenu_item ( 'advanced', 'advancedmodule-' . $key, $cpt_title );
-		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', esc_html__ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
+		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', __ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
 		essb_prepare_location_advanced_customization ( 'advanced', 'advancedmodule-' . $key, 'post-type-' . $cpt, true );
 		$key ++;
 
 		$cpt = 'buddypress';
 		$cpt_title = 'BuddyPress';
 		ESSBOptionsStructureHelper::submenu_item ( 'advanced', 'advancedmodule-' . $key, $cpt_title );
-		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', esc_html__ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
+		ESSBOptionsStructureHelper::field_heading ( 'advanced', 'advancedmodule-' . $key, 'heading1', __ ( 'Advanced settings for plugin: ' . $cpt_title, 'essb' ) );
 		essb_prepare_location_advanced_customization ( 'advanced', 'advancedmodule-' . $key, 'post-type-' . $cpt, true );
 		$key ++;
 	}

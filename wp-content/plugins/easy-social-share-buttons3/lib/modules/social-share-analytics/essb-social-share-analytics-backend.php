@@ -33,7 +33,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 		}
 		
 		if ($position == 'pinit') {
-			$r = esc_html__('Pinable Image', 'essb');
+			$r = __('Pinable Image', 'essb');
 		}
 
 		return $r;
@@ -89,34 +89,51 @@ class ESSBSocialShareAnalyticsBackEnd {
 		); ";
 
 		require_once (ABSPATH . 'wp-admin/includes/upgrade.php');
-		dbDelta ( $sql );
+				dbDelta ( $sql );
 	}
 
 	public static function essb_stats_by_position_for_period($position = '', $date_from = '', $date_to = '') {
-		global $wpdb;
+		global $wpdb, $essb_options, $essb_networks;
 
+		$query = "";
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
-		$query = "SELECT COUNT( essb_post_id ) AS cnt, essb_position FROM $table_name WHERE DATE_FORMAT( essb_date,  \"%s\" ) >= '%s' AND DATE_FORMAT( essb_date,  \"%s\" ) <= '%s' AND essb_position = '%s'";		
-		$network_stats = $wpdb->get_row ( $wpdb->prepare($query, '%Y-%m-%d', $date_from, '%Y-%m-%d', $date_to, $position) );
+		//foreach($essb_networks as $k => $v) {
+		$query .= "SELECT COUNT( essb_post_id ) AS cnt, essb_position";
+
+		$query .= " FROM  ".$table_name;
+
+
+		$query .= " WHERE DATE_FORMAT( essb_date,  \"%Y-%m-%d\" ) >= '".$date_from."' AND DATE_FORMAT( essb_date,  \"%Y-%m-%d\" ) <= '".$date_to."' AND essb_position = '".$position."'";
+
+		$network_stats = $wpdb->get_row ( $query );
 
 		return $network_stats;
 	}
 
 	public static function essb_stats_by_network_for_period($network = '', $date_from = '', $date_to = '') {
-		global $wpdb;
+		global $wpdb, $essb_options, $essb_networks;
 
+		$query = "";
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
-		$query = "SELECT COUNT( essb_post_id ) AS cnt, essb_position FROM $table_name WHERE DATE_FORMAT( essb_date,  \"%s\" ) >= '%s' AND DATE_FORMAT( essb_date,  \"%s\" ) <= '%s' AND essb_service = '%s'";
-		$network_stats = $wpdb->get_row ( $wpdb->prepare($query, '%Y-%m-%d', $date_from, '%Y-%m-%d', $date_to, $network) );
-				
+		//foreach($essb_networks as $k => $v) {
+		$query .= "SELECT COUNT( essb_post_id ) AS cnt, essb_service";
+
+		$query .= " FROM  ".$table_name;
+
+
+		$query .= " WHERE DATE_FORMAT( essb_date,  \"%Y-%m-%d\" ) >= '".$date_from."' AND DATE_FORMAT( essb_date,  \"%Y-%m-%d\" ) <= '".$date_to."' AND essb_service = '".$network."'";
+
+		$network_stats = $wpdb->get_row ( $query );
+
 		return $network_stats;
 	}
 
 	public static function essb_stats_by_networks($month = '', $post_id = '', $date = '', $position = '', $network = '') {
-		global $wpdb, $essb_networks;
+		global $wpdb, $essb_options, $essb_networks;
 
 		$query = "";
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
+		//foreach($essb_networks as $k => $v) {
 		$query .= "SELECT COUNT( essb_post_id ) AS cnt";
 
 		foreach($essb_networks as $k => $v) {
@@ -166,10 +183,11 @@ class ESSBSocialShareAnalyticsBackEnd {
 	}
 
 	public static function essb_stats_by_position($month = '', $post_id = '', $date = '', $position = '', $network = '') {
-		global $wpdb;
+		global $wpdb, $essb_options, $essb_networks;
 
 		$query = "";
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
+		//foreach($essb_networks as $k => $v) {
 		$query .= "SELECT COUNT( essb_post_id ) AS cnt";
 
 		foreach(self::$positions as $k) {
@@ -202,6 +220,8 @@ class ESSBSocialShareAnalyticsBackEnd {
 
 		$network_stats = $wpdb->get_row ( $query );
 
+		//print $query;
+
 		return $network_stats;
 
 	}
@@ -211,6 +231,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 
 		$query = "";
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
+		//foreach($essb_networks as $k => $v) {
 		$query .= "SELECT COUNT( essb_post_id ) AS cnt";
 
 
@@ -265,9 +286,9 @@ class ESSBSocialShareAnalyticsBackEnd {
 		$toDate = date ( "Y-m-d", strtotime ( date ( "Y-m-d", strtotime ( $toDate ) ) . "+1 day" ) );
 
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
-		$query_date_stats = 'SELECT DATE_FORMAT(essb_date, "%s") AS essb_date, COUNT( essb_post_id ) AS cnt FROM '.$table_name.' WHERE essb_date BETWEEN "%s" AND "%s" GROUP BY DATE_FORMAT(essb_date, "%s") ORDER BY essb_date DESC';
+		$query_date_stats = 'SELECT DATE_FORMAT(essb_date, "%Y-%m-%d") AS essb_date, COUNT( essb_post_id ) AS cnt FROM '.$table_name.' WHERE essb_date BETWEEN "'.$fromDate.'" AND "'.$toDate.'" GROUP BY DATE_FORMAT(essb_date, "%Y-%m-%d") ORDER BY essb_date DESC';
 
-		return $wpdb->get_results($wpdb->prepare($query_date_stats, '%Y-%m-%d', $fromDate, $toDate, '%Y-%m-%d'));
+		return $wpdb->get_results($query_date_stats);
 	}
 
 	public static function sqlDateRangeRecordConvert($fromDate, $toDate, $object) {
@@ -306,9 +327,12 @@ class ESSBSocialShareAnalyticsBackEnd {
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
 
 		$query = "";
+
+		//foreach($essb_networks as $k => $v) {
 		$query .= "SELECT COUNT( essb_post_id ) AS cnt";
 
 		foreach($essb_networks as $k => $v) {
+			//$query .= ",SUM( IF( essb_service =  '".$k."', 1, 0 ) ) AS ".$k;
 			if ($k == "facebook") {
 				$query .= ",SUM( IF( essb_service =  '".$k."' OR essb_service =  'facebook_advanced', 1, 0 ) ) AS ".$k;
 			}
@@ -323,6 +347,8 @@ class ESSBSocialShareAnalyticsBackEnd {
 		$query .= ", DATE_FORMAT( essb_date,  \"%Y-%m\" ) AS month FROM  ".$table_name . "
 		GROUP BY month ORDER BY month DESC ";
 
+		//print $query;
+
 		$network_stats = $wpdb->get_results ( $query );
 
 		return $network_stats;
@@ -334,9 +360,12 @@ class ESSBSocialShareAnalyticsBackEnd {
 		$toDate = date ( "Y-m-d", strtotime ( date ( "Y-m-d", strtotime ( $toDate ) ) . "+1 day" ) );
 
 		$query = "";
+
+		//foreach($essb_networks as $k => $v) {
 		$query .= "SELECT COUNT( essb_post_id ) AS cnt";
 
 		foreach($essb_networks as $k => $v) {
+			//$query .= ",SUM( IF( essb_service =  '".$k."', 1, 0 ) ) AS ".$k;
 			if ($k == "facebook") {
 				$query .= ",SUM( IF( essb_service =  '".$k."' OR essb_service =  'facebook_advanced', 1, 0 ) ) AS ".$k;
 			}
@@ -352,6 +381,8 @@ class ESSBSocialShareAnalyticsBackEnd {
 		WHERE essb_post_id='".$post_id."' AND essb_date BETWEEN '".$fromDate."' AND '".$toDate."'
 		GROUP BY DATE_FORMAT( essb_date,  \"%Y-%m-%d\" ) ORDER BY essb_date DESC ";
 
+		//print $query;
+
 		$network_stats = $wpdb->get_results ( $query );
 
 		return $network_stats;
@@ -362,9 +393,11 @@ class ESSBSocialShareAnalyticsBackEnd {
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;	
 		$query = "";
 	
+		//foreach($essb_networks as $k => $v) {
 		$query .= "SELECT COUNT( essb_post_id ) AS cnt";
 	
 		foreach($essb_networks as $k => $v) {
+			//$query .= ",SUM( IF( essb_service =  '".$k."', 1, 0 ) ) AS ".$k;
 			if ($k == "facebook") {
 				$query .= ",SUM( IF( essb_service =  '".$k."' OR essb_service =  'facebook_advanced', 1, 0 ) ) AS ".$k;
 			}
@@ -379,7 +412,9 @@ class ESSBSocialShareAnalyticsBackEnd {
 		$query .= ", DATE_FORMAT( essb_date,  \"%Y-%m-%d\" ) AS month FROM  ".$table_name . "
 		WHERE essb_post_id='".$post_id."'
 		GROUP BY DATE_FORMAT( essb_date,  \"%Y-%m-%d\" ) ORDER BY essb_date DESC ";
-
+	
+		//print $query;
+	
 		$network_stats = $wpdb->get_results ( $query );
 	
 		return $network_stats;
@@ -431,7 +466,11 @@ class ESSBSocialShareAnalyticsBackEnd {
 	public static function essb_stat_admin_detail_by_month($post_stats, $networks_with_data, $month = '', $month_title = 'Month') {
 		global $wpdb, $essb_networks;
 
+		//print_r($post_stats);
+
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
+
+
 
 		print '<table border="0" cellpadding="5" cellspacing="0" width="100%" class="post-table display hover row-border stripe" id="table-month">';
 
@@ -456,6 +495,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 		if (isset($post_stats)) {
 			$cnt = 0;
 			foreach ( $post_stats as $rec ) {
+				//print_r($rec);
 				$cnt++;
 
 				$class= "";
@@ -495,6 +535,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
 	
 		$query = "";
+		//foreach($essb_networks as $k => $v) {
 		$query .= "SELECT essb_post_id, COUNT( essb_post_id ) AS cnt";
 		
 		if ($month == '' && $date == '' && $position == '') {
@@ -524,6 +565,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 			}
 		}
 	
+		//print $query;
 		$post_stats = $wpdb->get_results ( $query );
 	
 		print '<table border="0" cellpadding="5" cellspacing="0" width="100%" class="post-table display hover row-border stripe" id="table-posts">';
@@ -553,7 +595,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 	
 				print "<tr class=\"".$class."\">";
 	
-				print "<td><a href=\"".esc_url(get_permalink($rec->essb_post_id))."\">".get_the_title($rec->essb_post_id).'</a></td>';
+				print "<td><a href=\"".get_permalink($rec->essb_post_id)."\">".get_the_title($rec->essb_post_id).'</a></td>';
 				print "<td align=\"right\" class=\"bold\">".$rec->cnt.'</td>';
 	
 			
@@ -576,9 +618,11 @@ class ESSBSocialShareAnalyticsBackEnd {
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
 
 		$query = "";
+		//foreach($essb_networks as $k => $v) {
 		$query .= "SELECT essb_post_id, COUNT( essb_post_id ) AS cnt";
 
 		foreach($essb_networks as $k => $v) {
+			//$query .= ",SUM( IF( essb_service =  '".$k."', 1, 0 ) ) AS ".$k;
 			if ($k == "facebook") {
 				$query .= ",SUM( IF( essb_service =  '".$k."' OR essb_service =  'facebook_advanced', 1, 0 ) ) AS ".$k;
 			}
@@ -623,6 +667,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 			}
 		}
 
+		//print $query;
 		$post_stats = $wpdb->get_results ( $query );
 
 		print '<table border="0" cellpadding="5" cellspacing="0" width="100%" class="post-table display hover row-border stripe" id="table-posts">';
@@ -662,7 +707,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 
 				print "<tr class=\"".$class."\">";
 
-				print "<td><a href=\"".esc_url(get_permalink($rec->essb_post_id))."\">".get_the_title($rec->essb_post_id).'</a></td>';
+				print "<td><a href=\"".get_permalink($rec->essb_post_id)."\">".get_the_title($rec->essb_post_id).'</a></td>';
 				print "<td align=\"right\" class=\"bold\">".$rec->cnt.'</td>';
 
 				foreach($essb_networks as $k => $v) {
@@ -762,6 +807,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 
 			$today = $month . "-" . $day;
 			if (isset($result_array[$today])) {
+				//print "exist " . $today;
 				$rec = $result_array[$today];
 				$graph_data .= "{ y: '".$today."', a:".intval($rec->cnt)."}";
 				$report_html .= '<div class="day-value"><a href="#" onclick="essb_analytics_date_report(\''.$today.'\'); return false;">'.$today.' <span class="value">('.intval($rec->cnt).')</span></a></div>';

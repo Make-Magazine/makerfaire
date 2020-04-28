@@ -99,9 +99,6 @@ if (!function_exists('essb_is_plugin_activated_on')) {
 }
 
 if (!function_exists('essb_is_plugin_deactivated_on')) {
-	/**
-	 * @return boolean
-	 */
 	function essb_is_plugin_deactivated_on() {
 		if (is_admin()) {
 			return;
@@ -121,12 +118,6 @@ if (!function_exists('essb_is_plugin_deactivated_on')) {
 		
 		if (!$is_deactivated) {
 			if (essb_is_mobile() && essb_option_bool_value('deactivate_mobile')) {
-				$is_deactivated = true;
-			}
-		}
-		
-		if (!$is_deactivated && ESSBGlobalSettings::$url_deactivate_full_running) {
-			if (essb_is_deactivated_on_uri(ESSBGlobalSettings::$url_deactivate_full)) {
 				$is_deactivated = true;
 			}
 		}
@@ -179,13 +170,6 @@ if (!function_exists('essb_is_module_deactivated_on')) {
 				$is_deactivated = true;
 			}
 		}
-		
-		if (!$is_deactivated && $module == 'share' && ESSBGlobalSettings::$url_deactivate_share_running) {
-			if (essb_is_deactivated_on_uri(ESSBGlobalSettings::$url_deactivate_share)) {
-				$is_deactivated = true;
-			}
-		}
-		
 		return $is_deactivated;
 	}
 }
@@ -218,62 +202,6 @@ if (!function_exists('essb_option_value')) {
 		}
 
 		return isset($options[$param]) ? $options[$param] : '';
-	}
-}
-
-if (!function_exists('essb_is_position_active')) {
-	/**
-	 * Check if the position that is selected is active inside plugin settings
-	 * 
-	 * @param unknown_type $position
-	 * @return boolean
-	 */
-	function essb_is_position_active($position = '') {
-		global $post;
-		
-		$content_position = essb_option_value('content_position');
-		$button_positions = essb_option_value('button_position');
-		
-		if (!is_array($button_positions)) {
-			$button_positions = array();
-		}
-		
-		if (essb_option_bool_value('positions_by_pt') && isset($post)) {
-			$current_post_type = $post->post_type;
-			
-			$content_position_by_pt = essb_option_value('content_position_'.$current_post_type);
-			$button_position_by_pt = essb_option_value('button_position_'.$current_post_type);
-			
-			if (!empty($content_position_by_pt)) {
-				$content_position = $content_position_by_pt;
-			}
-			
-			if (is_array($button_position_by_pt) && count($button_position_by_pt) > 0) {
-				$button_positions = $button_position_by_pt;
-			}
-		}
-		
-		return $content_position == $position || in_array($position, $button_positions);
-	}
-}
-
-if (!function_exists('essb_sanitize_option_value')) {
-	/**
-	 * Return an option non-boolean value with applied sanitize_text_field function
-	 * 
-	 * @param unknown_type $param
-	 * @param unknown_type $options
-	 */
-	function essb_sanitize_option_value($param, $options = null) {
-		global $essb_options;
-	
-		if (!$options || !is_array($options)) {
-			$options = $essb_options;
-		}
-	
-		$value = isset($options[$param]) ? $options[$param] : '';
-		
-		return sanitize_text_field($value);
 	}
 }
 
@@ -314,7 +242,7 @@ if (!function_exists('essb_depend_load_class')) {
 if (!function_exists('essb_installed_wpml')) {
 	function essb_installed_wpml() {
 		
-		if (essb_option_bool_value('deactivate_multilang')) {
+		if (essb_option_bool_value('deactivate_wpml_bridge')) {
 			return false;
 		}
 		else {
@@ -329,7 +257,7 @@ if (!function_exists('essb_installed_wpml')) {
 if (!function_exists('essb_installed_polylang')) {
 	function essb_installed_polylang() {
 		
-		if (essb_option_bool_value('deactivate_multilang')) {
+		if (essb_option_bool_value('deactivate_wpml_bridge')) {
 			return false;
 		}
 		else {
@@ -400,73 +328,5 @@ if (!function_exists('essb_internal_cache_remove')) {
 if (!function_exists('essb_internal_cache_flush')) {
 	function essb_internal_cache_flush() {
 		ESSBGlobalSettings::$internal_cache = array();
-	}
-}
-
-if (!function_exists('essb_is_deactivated_on_uri')) {
-	function essb_is_deactivated_on_uri($uris = array()) {
-		
-		$request_uri = explode( '?', $_SERVER['REQUEST_URI'] );
-		$request_uri = reset( $request_uri );
-		
-		$is_deactivated = false;
-		
-		$reject_list = essb_generate_deactivate_running_uri($uris);
-		if (preg_match( '#^(' . $reject_list . ')$#', $request_uri ) ) {
-			$is_deactivated = true;
-		}
-		
-		return $is_deactivated;
-	}
-}
-
-if (!function_exists('essb_generate_deactivate_running_uri')) {
-	function essb_generate_deactivate_running_uri($uris = array()) {
-		
-		$home_url = home_url('/');
-		$home_root = wp_parse_url($home_url);
-		
-		if ( ! empty( $home_root['path'] ) ) {
-			$home_root = '/' . trim( $home_root['path'], '/' );
-			$home_root = rtrim( $home_root, '/' );
-		} else {
-			$home_root = '';
-		}		
-		
-		if ( '' !== $home_root ) {
-			$home_root_escaped = preg_quote( $home_root, '/' );
-			$home_root_len     = strlen( $home_root );
-		
-			foreach ( $uris as $i => $uri ) {
-				if ( ! preg_match( '/' . $home_root_escaped . '\(?\//', $uri ) ) {
-					unset( $uris[ $i ] );
-					continue;
-				}
-		
-				$uris[ $i ] = substr( $uri, $home_root_len );
-			}
-		}
-		
-		$uris = array_filter( $uris );
-		
-		if ( ! $uris ) {
-			return '';
-		}
-		
-		if ( '' !== $home_root ) {
-			foreach ( $uris as $i => $uri ) {
-				if ( preg_match( '/' . $home_root_escaped . '\(?\//', $uri ) ) {
-					$uris[ $i ] = substr( $uri, $home_root_len );
-				}
-			}
-		}
-		
-		$uris = implode( '|', $uris );
-		
-		if ( '' !== $home_root ) {
-			$uris = $home_root . '(' . $uris . ')';
-		}
-		
-		return $uris;
 	}
 }

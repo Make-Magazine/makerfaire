@@ -13,14 +13,17 @@ class ESSBOptionsInterface {
 		
 		$admin_template = '';
 		
+		echo '<script type="text/javascript">var loadedEditorControls = {};</script>';
 		echo '<form id="essb_options_form" enctype="multipart/form-data" method="post" action="">';
 		if ($custom && !empty($group)) {
+			//settings_fields( $group );
 			echo '<input type="hidden" name="action" value="update"/>';
 			echo '<input type="hidden" name="option_page" value="'.$group.'"/>';
 			wp_nonce_field( 'essb_setup', 'essb_token' );
 			echo '<input type="hidden" name="essb_salt" value="'.sanitize_text_field(essb_admin_setting_token()).'"/>';
 		}
 		else {
+			//settings_fields( 'essb_settings_group' );
 			echo '<input type="hidden" name="action" value="update"/>';
 			echo '<input type="hidden" name="option_page" value="essb_settings_group"/>';
 			wp_nonce_field( 'essb_setup', 'essb_token' );
@@ -41,10 +44,9 @@ class ESSBOptionsInterface {
 		if ($hide_update_button) {
 			echo '<div class="essb-options-header" id="essb-options-header">
 			'.$custom_code.'
-			<a href="#" text="Back to top" class="essb-btn essb-btn-plain essb-button-backtotop" id="essb-btn-backtotop">' . esc_html__ ( 'Back To Top', 'essb' ) . '</a>				
+			<a href="#" text="Back to top" class="essb-btn essb-btn-plain essb-button-backtotop" id="essb-btn-backtotop">' . __ ( 'Back To Top', 'essb' ) . '</a>
+				
 			</div>';
-			
-			echo '<div class="essb-options-scrollable"> <!-- begin of the scroll area -->'; 
 			
 			echo '<div class="essb-options-title">
 			'.$header_icon . $title . '
@@ -53,22 +55,20 @@ class ESSBOptionsInterface {
 		
 		}
 		else {
-			$update_button_text = esc_html__('Update Settings', 'essb');
+			$update_button_text = __('Update Settings', 'essb');
 			$next_prev_buttons = "";
 			if ($wizard_tab) {
-				$update_button_text = esc_html__('Save Settings', 'essb');
+				$update_button_text = __('Save Settings', 'essb');
 				$next_prev_buttons = '<a name="prevbutton" id="prevbutton" class="essb-btn essb-wizard-prev">< Previous</a>&nbsp;<a name="nextbutton" id="nextbutton" class="essb-btn essb-wizard-next">Next ></a>&nbsp;&nbsp;&nbsp;';
 			}
 				
 			echo '<div class="essb-options-header" id="essb-options-header">
 			'.$custom_code.'
 			<input type="Submit" name="Submit" value="' . $update_button_text . '" class="essb-btn essb-btn-red" id="essb-btn-update" />
-			<a href="#" text="Back to top" class="essb-btn essb-btn-plain essb-button-backtotop" id="essb-btn-backtotop"><i class="fa fa-arrow-up"></i> ' . esc_html__ ( 'Back To Top', 'essb' ) . '</a>
+			<a href="#" text="Back to top" class="essb-btn essb-btn-plain essb-button-backtotop" id="essb-btn-backtotop"><i class="fa fa-arrow-up"></i> ' . __ ( 'Back To Top', 'essb' ) . '</a>
 			'.$next_prev_buttons.'
 			</div>';
 			
-			echo '<div class="essb-options-scrollable"> <!-- begin of the scroll area -->';
-				
 			echo '<div class="essb-options-title">
 			' .$header_icon. $title . '<span class="essb-options-subtitle"></span>
 			'.($advanced_settings != '' ? $advanced_settings : '').'
@@ -84,23 +84,29 @@ class ESSBOptionsInterface {
 			<div class="essb-options-title">
 			' . $title . '
 			</div>
-			<a href="#" text="Back to top" class="essb-btn essb-btn-light essb-button-backtotop">' . esc_html__ ( 'Back To Top', 'essb' ) . '</a>
+			<a href="#" text="Back to top" class="essb-btn essb-btn-light essb-button-backtotop">' . __ ( 'Back To Top', 'essb' ) . '</a>
+			
 			</div>';
 		
 		} 
 		else {
-			$update_button_text = esc_html__('Update Settings', 'essb');
+			$update_button_text = __('Update Settings', 'essb');
 			$next_prev_buttons = "";
 			if ($wizard_tab) {
-				$update_button_text = esc_html__('Save Settings', 'essb');
+				$update_button_text = __('Save Settings', 'essb');
 				$next_prev_buttons = '<a name="prevbutton" id="prevbutton" class="essb-btn essb-wizard-prev">< Previous</a>&nbsp;<a name="nextbutton" id="nextbutton" class="essb-btn essb-wizard-next">Next ></a>&nbsp;&nbsp;&nbsp;';
+			}
+			else {
+				//if (!essb_options_bool_value('deactivate_ajaxsubmit')) {
+				//	$next_prev_buttons = '<a name="search-button" id="essb-search-button" class="essb-btn essb-wizard-prev"><i class="fa fa-search"></i> '.__('Search Options', 'essb').'</a>';
+				//}
 			}
 			
 			echo '<div class="essb-options-header" id="essb-options-header">
 				<div class="essb-options-title">
 			  	' . $title . '<span class="essb-options-subtitle"></span>
 				</div>		
-				<a href="#" text="Back to top" class="essb-btn essb-btn-light essb-button-backtotop"><i class="fa fa-arrow-up"></i> ' . esc_html__ ( 'Back To Top', 'essb' ) . '</a>
+				<a href="#" text="Back to top" class="essb-btn essb-btn-light essb-button-backtotop"><i class="fa fa-arrow-up"></i> ' . __ ( 'Back To Top', 'essb' ) . '</a>
 				'.$next_prev_buttons.'
 				<input type="Submit" name="Submit" value="' . $update_button_text . '" class="essb-btn essb-btn-red" id="essb-btn-update" />				
 			</div>';
@@ -126,6 +132,7 @@ class ESSBOptionsInterface {
 			$related_menu = isset($single['related_menu']) ? $single['related_menu'] : '';
 			
 			if ($icon == 'default') {
+				//$icon = 'gear';
 				$icon = 'circle essb-navigation-small-icon';
 			}
 			
@@ -213,8 +220,6 @@ class ESSBOptionsInterface {
 		}
 		
 		echo '</div>';
-		
-		echo '</div> <!-- end: scrollable area -->';
 	}	
 	
 	public static function draw_form_end() {

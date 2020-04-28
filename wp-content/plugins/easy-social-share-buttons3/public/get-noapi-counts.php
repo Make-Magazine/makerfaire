@@ -1,6 +1,8 @@
 <?php
 	header('content-type: application/json');
 
+	// parse() function
+
 	function getManagedWPUpVote($url) {
 		$buttonURL = sprintf('https://managewp.org/share/frame/small?url=%s', urlencode($url));
 		$data  = parse($buttonURL);
@@ -26,6 +28,7 @@
 	}
 	
 	function getXingCount($url) {
+		//- Get Xing Shares counter from this https://www.xing-share.com/app/share?op=get_share_button;url=https://blog.xing.com/2012/01/the-shiny-new-xing-share-button-how-to-implement-it-in-your-blog-or-website/;counter=top;lang=en;type=iframe;hovercard_position=2;shape=rectangle
 		$buttonURL = sprintf('https://www.xing-share.com/app/share?op=get_share_button;url=%s;counter=top;lang=en;type=iframe;hovercard_position=2;shape=rectangle', urlencode($url));
 		$data  = parse($buttonURL);
 		$shares = array();
@@ -65,6 +68,7 @@
 		$options = array(
 				CURLOPT_RETURNTRANSFER	=> true, 	// return web page
 				CURLOPT_HEADER 			=> false, 	// don't return headers
+				//CURLOPT_FOLLOWLOCATION	=> true, 	// follow redirects
 				CURLOPT_ENCODING	 	=> "", 		// handle all encodings
 				CURLOPT_USERAGENT	 	=> isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'essb', 	// who am i
 				CURLOPT_AUTOREFERER 	=> true, 	// set referer on redirect
@@ -125,6 +129,7 @@
 	function getGplusShares1($url)
 	{
 		$buttonUrl = sprintf('https://plusone.google.com/u/0/_/+1/fastbutton?url=%s', urlencode($url));
+		//$htmlData  = file_get_contents($buttonUrl);
 		$htmlData  = parse($buttonUrl);
 			
 		@preg_match_all('#{c: (.*?),#si', $htmlData, $matches);
@@ -144,6 +149,7 @@
 		$data   = parse( $check_url );
 		$shares = array();
 	
+		//print $check_url . ' = ' .$data;
 		preg_match( '/^ODKL\.updateCount\(\'odklcnt0\',\'(\d+)\'\);$/i', $data, $shares );
 	
 		return (int)$shares[ 1 ];
@@ -198,6 +204,7 @@
 		$options = array(
 			CURLOPT_RETURNTRANSFER	=> true, 	// return web page
 			CURLOPT_HEADER 			=> false, 	// don't return headers
+			//CURLOPT_FOLLOWLOCATION	=> true, 	// follow redirects
 			CURLOPT_ENCODING	 	=> "", 		// handle all encodings
 			CURLOPT_USERAGENT	 	=> 'essb', 	// who am i
 			CURLOPT_AUTOREFERER 	=> true, 	// set referer on redirect

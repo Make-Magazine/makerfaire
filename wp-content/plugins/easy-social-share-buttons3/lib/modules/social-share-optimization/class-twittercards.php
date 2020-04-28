@@ -110,16 +110,16 @@ class ESSB_TwitterCards {
 			}
 			
 			if (!empty($twitter_title)) {
-				$this->output_metatag('title', esc_attr($twitter_title));
+				$this->output_metatag('title', $twitter_title);
 				
 			}
 			if (!empty($twitter_description)) {
-				$this->output_metatag('description', esc_attr($twitter_description));				
+				$this->output_metatag('description', $twitter_description);				
 			}
 			$this->output_metatag('url', $this->meta_details->url());
 			
 			if (!empty($twitter_image) && is_string($twitter_image) && $this->image_card) {
-				$this->output_metatag('image:src', esc_url($twitter_image));
+				$this->output_metatag('image:src', $twitter_image);
 			}
 		}
 	}

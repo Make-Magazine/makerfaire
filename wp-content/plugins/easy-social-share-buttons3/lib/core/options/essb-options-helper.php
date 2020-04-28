@@ -15,7 +15,44 @@ class ESSBOptionValuesHelper {
 			return false;
 		}
 	
-	}		
+	}	
+	
+	public static function is_active_module($module = '') {
+		global $essb_options;
+		
+		$is_active = false;
+		
+		switch ($module) {			
+			case "imageshare":
+				$positions = essb_options_value('button_position');
+				
+				if (is_array($positions)) {
+					if (in_array('onmedia', $positions)) {
+						$is_active = true;
+					}
+				}
+				break;
+			case "cachedcounters":
+				$counter_mode = essb_options_value('counter_mode');
+				
+				// changed since version 4 to different from empty
+				if ($counter_mode != "") {
+					$is_active = true;
+				}
+				break;
+			case "sharingwidget":
+				$button_positions = essb_options_value('button_position');
+				if (is_array($button_positions)) {
+					if (in_array('widget', $button_positions)) {
+						$is_active = true;
+					}
+				}
+				break;
+		}
+		
+		return $is_active;
+	}
+	
 	
 	public static function advanced_array_to_simple_array($values) {
 		$new = array();
@@ -28,52 +65,19 @@ class ESSBOptionValuesHelper {
 	}
 	
 	public static function unified_true($value) {
-		return essb_unified_true($value);
+		$result = '';
+		
+		if ($value == 'true' || $value == 'yes') {
+			$result = true;
+		}
+		else {
+			$result = false;		
+		}
+		
+		return $result;
 	}	
 }
 
-function essb_is_active_feature($feature) {
-	$is_active = false;
-	
-	switch ($feature) {
-		case "imageshare":
-			$positions = essb_options_value('button_position');
-	
-			if (is_array($positions)) {
-				if (in_array('onmedia', $positions)) {
-					$is_active = true;
-				}
-			}
-			break;
-		case "cachedcounters":
-			$counter_mode = essb_options_value('counter_mode');
-	
-			// changed since version 4 to different from empty
-			if ($counter_mode != "") {
-				$is_active = true;
-			}
-			break;
-		case "sharingwidget":
-			$button_positions = essb_options_value('button_position');
-			if (is_array($button_positions)) {
-				if (in_array('widget', $button_positions)) {
-					$is_active = true;
-				}
-			}
-			break;
-	}
-	
-	return $is_active;
-}
-
-function essb_unified_true($value = '') {
-	if ($value == 'true' || $value == 'yes' || $value == '1') {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
 
 function essb_apply_position_network_names($position, $network_names) {
 	
@@ -90,26 +94,12 @@ function essb_apply_position_network_names($position, $network_names) {
 	return $network_names;
 }
 
-function essb_is_position_without_automatic_options($position) {
-	if ($position == 'mobile' || $position == 'sharebottom' || $position == 'sharebar' || $position == 'sharepoint') {
+function essb_active_position_settings ($position = '') {
+	if (essb_option_bool_value($position.'_activate')) {
 		return true;
 	}
 	else {
 		return false;
-	}
-}
-
-function essb_active_position_settings ($position = '') {
-	if (essb_option_bool_value('activate_automatic_position') && !essb_is_position_without_automatic_options($position)) {
-		return false;
-	}
-	else {
-		if (essb_option_bool_value($position.'_activate')) {
-			return true;
-		}
-		else {
-			return false;
-		}
 	}
 }
 
@@ -211,40 +201,6 @@ function essb_apply_required_mobile_style_settings($position, $button_style) {
 		$button_style['button_width_columns'] = "1";
 	}
 	
-	if ($position == 'sharebottom') {
-		$button_style['button_style'] = 'icon';
-		$button_style['show_counter'] = false;
-		$button_style['nospace'] = true;
-		$button_style['button_width'] = 'column';
-		
-		// @since 3.6
-		// allow total counter to appear
-		$button_count_correction_when_total = 0;
-		if (essb_option_bool_value('mobile_sharebuttonsbar_total')) {
-			$button_style['show_counter'] = true;
-			$button_style['total_counter_pos'] = 'leftbig';
-			$button_style['counter_pos'] = 'hidden';
-			$button_count_correction_when_total = 1;
-		}
-		
-		if (essb_option_bool_value('mobile_sharebuttonsbar_counter')) {
-			$button_style['show_counter'] = true;
-			$button_style['counter_pos'] = 'inside';
-			$button_style['button_style'] = 'button';
-				
-			if (!essb_option_bool_value('mobile_sharebuttonsbar_total')) {
-				$button_style['total_counter_pos'] = 'hidden';
-			}
-		}
-		
-		$mobile_sharebuttonsbar_names = essb_option_bool_value( 'mobile_sharebuttonsbar_names');
-		if ($mobile_sharebuttonsbar_names) {
-			$button_style['button_style'] = 'button';
-		}
-		
-		$button_style['button_count_correction_when_total'] = $button_count_correction_when_total;
-	}
-	
 	return $button_style;
 }
 
@@ -264,44 +220,6 @@ function essb_apply_postbar_position_style_settings($postion, $basic_style) {
 		$basic_style['button_style'] = 'icon';
 	}
 
-	return $basic_style;
-}
-
-/**
- * Specific settings to modify the follow me bar appearance 
- * 
- * @param unknown_type $position
- * @param unknown_type $basic_style
- * @return unknown
- */
-function essb_apply_followme_bottom_position_styles($position, $basic_style) {
-	$followme_pos = essb_option_value('followme_pos');
-	if ($followme_pos == 'left') {
-		$use_counter = essb_option_value($position.'_show_counter');
-		$single_counter_pos = essb_option_value($position.'_counter_pos');
-		$total_counter_pos = essb_option_value($position.'_total_counter_pos');
-		
-		$basic_style['show_counter'] = false;
-		$basic_style['button_align'] = 'center';
-		$basic_style['button_width'] = 'fixed';
-		$basic_style['button_width_fixed_align'] = 'center';
-		$basic_style['button_width_fixed_value'] = '64';
-		$basic_style['button_style'] = 'icon';
-		
-		if ($use_counter) {
-			$basic_style['show_counter'] = $use_counter;
-			
-			if ($single_counter_pos != 'hidden') {
-				$basic_style['counter_pos'] = 'insidem';
-				$basic_style['button_style'] = 'vertical';
-			}
-			
-			if ($total_counter_pos != 'hidden') {
-				$basic_style['total_counter_pos'] = 'leftbig';
-			}
-		}
-	}
-	
 	return $basic_style;
 }
 
@@ -372,17 +290,6 @@ function essb_get_active_social_networks_by_position($position) {
 	$result = array();
 
 	$result = essb_option_value($position.'_networks');
-	
-	/**
-	 * Additional check to the mobile display methods to read the selected networks if set
-	 */
-	
-	if ($position == 'sharebottom' || $position == 'sharebar' || $position == 'sharepoint') {
-		if ((empty($result) || !is_array($result)) && ESSBGlobalSettings::$mobile_networks_active) {
-			$result = ESSBGlobalSettings::$mobile_networks;
-		}
-	}
-	
 	if (!is_array($result)) {
 		return array();
 	}
@@ -392,5 +299,14 @@ function essb_get_active_social_networks_by_position($position) {
 }
 
 function essb_get_order_of_social_networks_by_position($position) {
-	return essb_get_active_social_networks_by_position($position);
+	
+	$result = array();
+	
+	$result = essb_option_value($position.'_networks');
+	if (!is_array($result)) {
+		return array();
+	}
+	else {
+		return $result;
+	}
 }

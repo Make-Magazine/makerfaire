@@ -21,16 +21,10 @@ class ESSBCoreExtenderShortcodeProfiles {
 		$sc_class = isset($atts['class']) ? $atts['class'] : '';
 		$sc_align = isset($atts['align']) ? $atts['align'] : '';
 		$sc_size = isset($atts['size']) ? $atts['size'] : '';
-		$sc_cta = isset($atts['cta']) ? $atts['cta'] : '';
-		$sc_cta_vertical = isset($atts['cta_vertical']) ? $atts['cta_vertical'] : '';
-		$sc_columns = isset($atts['columns']) ? $atts['columns'] : '';
 				
-		$sc_nospace = ESSBOptionValuesHelper::unified_true($sc_nospace);	
-		$sc_cta = ESSBOptionValuesHelper::unified_true($sc_cta);
-		$sc_cta_vertical = ESSBOptionValuesHelper::unified_true($sc_cta_vertical);
+		$sc_nospace = ESSBOptionValuesHelper::unified_true($sc_nospace);		
 		
 		$profile_networks = array();
-		$profile_networks_text = array();
 		if ($sc_networks != '') {
 			$profile_networks = explode(',', $sc_networks);
 		}
@@ -43,7 +37,6 @@ class ESSBCoreExtenderShortcodeProfiles {
 		$sc_network_address = array();
 		foreach ($profile_networks as $network) {
 			$value = isset($atts[$network]) ? $atts[$network] : '';
-			$text = isset($atts['profile_text_'.$network]) ? $atts['profile_text_'.$network] : '';
 				
 			if (empty($value)) {
 				$value = isset($atts['profile_'.$network]) ? $atts['profile_'.$network] : '';
@@ -52,17 +45,9 @@ class ESSBCoreExtenderShortcodeProfiles {
 			if (empty($value)) {
 				$value = ESSBOptionValuesHelper::options_value($options, 'profile_'.$network);
 			}
-			
-			if (empty($text)) {
-				$text = ESSBOptionValuesHelper::options_value($options, 'profile_text_'.$network);
-			}
 				
 			if (!empty($value)) {
 				$sc_network_address[$network] = $value;
-			}
-			
-			if (!empty($text)) {
-				$profile_networks_text[$network] = $text;
 			}
 		}
 		
@@ -87,16 +72,15 @@ class ESSBCoreExtenderShortcodeProfiles {
 				'animation' => $sc_animation,
 				'nospace' => $sc_nospace,
 				'networks' => $sc_network_address,
-				'networks_text' => $profile_networks_text,
 				'class' => $sc_class,
 				'align' => $sc_align,
-				'size' => $sc_size,
-				'cta' => $sc_cta,
-				'cta_vertical' => $sc_cta_vertical,
-				'columns' => $sc_columns
+				'size' => $sc_size
 		);
 		
 		return ESSBSocialProfiles::draw_social_profiles($options);
+		
+		//return ESSBSocialProfiles::generate_social_profile_icons($sc_network_address, $sc_button_type, $sc_button_size, $sc_button_fill,
+		//		$sc_nospace, '', $sc_usetexts, $sc_network_texts, $sc_width);
 	}
 	
 }

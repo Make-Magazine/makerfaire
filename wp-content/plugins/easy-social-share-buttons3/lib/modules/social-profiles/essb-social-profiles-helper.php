@@ -17,11 +17,6 @@ class ESSBSocialProfilesHelper {
 	
 	public static function simplify_order_list($order) {
 		$result = array();
-		
-		if (!is_array($order)) {
-			$order = array();
-		}
-		
 		foreach ($order as $network) {
 			$network_details = explode('|', $network);
 			$result[] = $network_details[0];
@@ -41,16 +36,13 @@ class ESSBSocialProfilesHelper {
 		
 		return $names;
 	}
-
-	/**
-	 * @since 6.3
-	 * Google+ removed as of service shut down
-	 */
+	
 	public static function available_social_networks() {
 		$socials = array ();
-
+			$socials = array ();
 		$socials['facebook'] = 'Facebook';
 		$socials['twitter'] = 'Twitter';
+		$socials['google'] = 'Google';
 		$socials['pinterest'] = 'Pinterest';
 		$socials['linkedin'] = 'LinkedIn';
 		$socials['github'] = 'GitHub';
@@ -94,12 +86,6 @@ class ESSBSocialProfilesHelper {
 		$socials['tripadvisor'] = 'Tripadvisor';
 		$socials['snapchat'] = 'Snapchat';
 		$socials['telegram'] = 'Telegram';
-		$socials['xing'] = 'Xing'; // version 6.2.3
-		$socials['medium'] = 'Medium'; // version 6.2.3
-		$socials['tiktok'] = 'TikTok'; // version 6.2.3
-		$socials['mixer'] = 'Mixer'; // version 6.2.3
-		$socials['patreon'] = 'Patreon'; // version 6.2.3
-		$socials['ok'] = 'Odnoklassniki';
 		
 		if (has_filter('essb4_follower_networks')) {
 			$socials = apply_filters('essb4_follower_networks', $socials);
@@ -115,7 +101,7 @@ class ESSBSocialProfilesHelper {
 	}
 	
 	public static function available_alignments() {
-		$alignments = array('left' => 'Left', 'center' => 'Center', 'right' => 'Right');
+		$alignments = array('' => 'Left', 'center' => 'Center', 'right' => 'Right');
 		
 		return $alignments;
 	}

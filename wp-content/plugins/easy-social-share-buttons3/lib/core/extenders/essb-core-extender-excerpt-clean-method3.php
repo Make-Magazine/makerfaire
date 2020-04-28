@@ -14,6 +14,8 @@ if (!function_exists('essb_excerpt_clean_method3')) {
 	function essb_excerpt_clean_method3($text, $options, $networks, $default_names) {
 		global $essb_networks;
 		
+		
+		//print_r($this->network_options['networks']);
 		foreach ($essb_networks as $k => $data) {
 			$network_name = $data['name'];
 		

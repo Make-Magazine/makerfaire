@@ -91,25 +91,3 @@ class ESSBDisplayMethodTopBar {
 		return $output;
 	}
 }
-
-if (!function_exists('essb_topbar_extender')) {
-
-	function essb_topbar_extender($extra_options = '', $position = '', $style = array()) {
-
-		if ($position == 'topbar') {
-			$topbar_appear_pos = essb_sanitize_option_value('topbar_top_onscroll');
-			$topbar_hide = essb_sanitize_option_value('topbar_hide');
-	
-			if ($topbar_appear_pos != '') {
-				$extra_options .= ' data-topbar-appear="'.esc_attr($topbar_appear_pos).'"';
-			}
-			if ($topbar_hide != '') {
-				$extra_options .= ' data-topbar-disappear="'.esc_attr($topbar_hide).'"';
-			}
-		}
-
-		return $extra_options;
-	}
-
-	add_filter('essb_sharebuttons_open_element', 'essb_topbar_extender', 10, 3);
-}
