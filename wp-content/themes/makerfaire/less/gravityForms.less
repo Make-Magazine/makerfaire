@@ -44,6 +44,9 @@
 				border-top-right-radius: 5px;
 				max-width: 100%;
 				text-align: center;
+				&:hover {
+					background: rgba(0, 94, 154, .8);
+				}
 			}
 		}
 		input[type=radio] {
@@ -53,5 +56,36 @@
 				color: #005e9a;
 			}
 		}
+	}
+}
+
+.description-box-wrapper {
+	display: flex;
+	justify-content: space-between;
+	.description-box {
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: 0;
+		text-align: center; 
+		border: solid #005e9a;
+		padding: 20px;
+		border-radius: 10px;
+		h5 { font-weight: bold; }
+	}
+}
+
+#gform_wrapper_243 {
+	.gform_description {
+		h2 {
+			width: 200%;
+			margin: 0px;
+			margin-left: 0px;
+			margin-left: -50%;
+			text-align: center;
+			background: #151733;
+			color: #fff;
+			padding: 30px;
+		}
+		color: #fff;
 	}
 }
