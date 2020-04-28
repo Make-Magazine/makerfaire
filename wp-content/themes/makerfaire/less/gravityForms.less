@@ -19,3 +19,38 @@
 		}
 	}
 }
+
+.gform_wrapper .top_label {
+	.tabs > .gfield_label {
+		display: none;
+	}
+
+	.tabs {
+		border-bottom: solid 1px #ccc;
+		margin-bottom: 30px;
+		li {
+			float: left;
+			margin-bottom:0;
+			label {
+				margin: 0 10px 0 0;
+				padding: 10px 20px;
+				font-size: 18px;
+				border: 1px solid #CCC;
+				border-bottom: 0;
+				background: #CCC;
+				color: white;
+				border-top-left-radius: 5px;
+				border-top-right-radius: 5px;
+				max-width: 100%;
+				text-align: center;
+			}
+		}
+		input[type=radio] {
+			display: none;
+			&:checked ~ label {
+				background: white;
+				color: black;
+			}
+		}
+	}
+}
