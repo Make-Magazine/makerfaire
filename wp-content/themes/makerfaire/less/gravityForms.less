@@ -21,58 +21,31 @@
 }
 
 .gform_wrapper .top_label {
-	.tabs > .gfield_label {
-		display: none;
-	}
-
-	.tabs {
+	.gf_page_steps {
 		border-bottom: solid 1px #005e9a;
 		margin-bottom: 30px;
-		display: flex;
-		li {
-			float: left;
-			margin-bottom: 0;
-			label {
-				margin: 0 10px 0 0;
-				padding: 10px 20px;
-				font-size: 18px;
-				border: 1px solid #005e9a;
-				border-bottom: 0;
-				background: #005e9a;
-				color: white;
-				border-top-left-radius: 5px;
-				border-top-right-radius: 5px;
-				max-width: 100%;
-				text-align: center;
-				&:hover {
-					background: rgba(0, 94, 154, .8);
-				}
+		.gf_step {
+			margin: 0 10px 0 0;
+			padding: 10px 20px;
+			font-size: 18px;
+			border: 1px solid #005e9a;
+			border-bottom: 0;
+			background: #005e9a;
+			color: white;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+			max-width: 100%;
+			text-align: center;
+			&:hover {
+				background: rgba(0, 94, 154, .8);
 			}
 		}
-		input[type=radio] {
-			display: none;
-			&:checked ~ label {
-				background: white;
-				color: #005e9a;
-			}
-		}
-		// when the screen gets small, turn those tabs into pills
-		@media screen and (max-width: 580px) {
-			border-bottom: 0px;
-			.ginput_container {
-				width: 100%;
-				li {
-					width: 100%;
-					margin-bottom: 8px;
-					label {
-						width: 100%;
-						border-radius: 5px;
-						border-bottom: 1px solid #005e9a;
-					}
-				}
-			}
+		.gf_step_active {
+			background: white;
+			color: #005e9a;
 		}
 	}
+
 	select { 
 		height: 36px;
 		border-radius: 0px;
