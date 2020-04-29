@@ -57,7 +57,7 @@
 			}
 		}
 		// when the screen gets small, turn those tabs into pills
-		@media screen and (max-width: 768px) {
+		@media screen and (max-width: 580px) {
 			border-bottom: 0px;
 			.ginput_container {
 				width: 100%;
@@ -65,6 +65,7 @@
 					width: 100%;
 					margin-bottom: 8px;
 					label {
+						width: 100%;
 						border-radius: 5px;
 						border-bottom: 1px solid #005e9a;
 					}
@@ -81,6 +82,10 @@
 		border-radius: 5px;
 		&.universal-btn-navy {
 			width: 100%;
+		}
+		&.gpnf-add-entry {
+			margin: 3px;
+			margin-top: 10px;
 		}
 	}
 	input[type=submit] {
