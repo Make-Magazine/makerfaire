@@ -57,11 +57,17 @@
 			}
 		}
 	}
+	select { 
+		height: 36px;
+		border-radius: 0px;
+		border: solid 1px #ccc;
+	}
 }
 
 .description-box-wrapper {
 	display: flex;
 	justify-content: space-between;
+	margin-top: 20px;
 	.description-box {
 		flex-grow: 1;
 		flex-shrink: 1;
@@ -70,6 +76,13 @@
 		border: solid #005e9a;
 		padding: 20px;
 		border-radius: 10px;
+		text-align: left;
+		&:first-of-type {
+			margin-left:10px;
+		}
+		&:last-of-type {
+			margin-right:10px;
+		}
 		h5 { font-weight: bold; }
 	}
 }
@@ -86,6 +99,6 @@
 			color: #fff;
 			padding: 30px;
 		}
-		color: #fff;
+		small { color: #fff; }
 	}
 }
