@@ -38,6 +38,7 @@
 			max-width: 100%;
 			text-align: center;
 			height: auto;
+			opacity: 1;
 			&:hover {
 				background: rgba(0, 94, 154, .8);
 				color: #fff;
@@ -51,6 +52,7 @@
 			background: white;
 			color: #005e9a;
 		}
+		.gf_step_clear { height: 0px; }
 	}
 	select { 
 		height: 36px;
@@ -68,7 +70,8 @@
 		}
 	}
 	input[type=submit], .gform_previous_button, .gform_next_button {
-		background-color: #005e9a;
+		background: #005e9a;
+		box-shadow: none;
 		color: #fff;
 		display: inline-flex;
 		border: solid 1px #005e9a;
@@ -79,11 +82,12 @@
 		border-radius: 2px;
 		-webkit-border-radius: 2px;
 		text-transform: uppercase;
-		font-size: 16px;
+		font-size: 16px !important;
 		font-weight: 300;      
-		height: 50px;
+		height: 49px;
 		padding: 15px;
 		border-radius: 5px;
+		margin-bottom: 0px;
 		&:focus, &:active, &:visited {
 			color: #fff;
 			text-decoration: none;
@@ -91,6 +95,9 @@
 		&:hover {
 		  background: #fff;
 		  color: #005e9a
+		}
+		&::after {
+			display: none;
 		}
 	}
 	.gform_save_link {
