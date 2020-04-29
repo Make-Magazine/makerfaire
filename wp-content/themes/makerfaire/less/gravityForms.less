@@ -31,7 +31,7 @@
 		display: flex;
 		li {
 			float: left;
-			margin-bottom:0;
+			margin-bottom: 0;
 			label {
 				margin: 0 10px 0 0;
 				padding: 10px 20px;
@@ -54,6 +54,23 @@
 			&:checked ~ label {
 				background: white;
 				color: #005e9a;
+			}
+		}
+		// when the screen gets small, turn those tabs into pills
+		@media screen and (max-width: 768px) {
+			.tabs {
+				border-bottom: 0px;
+				.ginput_container {
+					width: 100%;
+					li {
+						width: 100%;
+						margin-bottom: 8px;
+						label {
+							border-radius: 5px;
+							border-bottom: 1px solid #005e9a;
+						}
+					}
+				}
 			}
 		}
 	}
