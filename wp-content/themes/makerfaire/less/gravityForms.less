@@ -46,6 +46,7 @@
 			}
 			@media screen and (max-width: 640px) {
 				border-radius: 5px;
+				border-bottom: 1px solid #005e9a;
 				margin-bottom: 5px;
 			}
 			.gf_step_number { display: none; }
@@ -146,6 +147,9 @@
 		display: flex;
 		justify-content: space-between;
 		margin-top: 20px;
+		@media screen and (max-width: 768px) {
+			flex-direction: column;
+		}
 		.description-box {
 			flex-grow: 1;
 			flex-shrink: 1;
