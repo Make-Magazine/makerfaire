@@ -68,7 +68,8 @@
 	input[type=submit] {
 		background-color: #005e9a;
 		color: #fff;
-		display: inline-flex;
+		display: inline-flex !important;
+		border: solid 1px #005e9a;
 	    justify-content: center;
 	    align-content: center;
 		align-items: center;
@@ -84,16 +85,15 @@
 			text-decoration: none;
 		}
 		&:hover {
-			background: #fff;
-		  color: #005e9a;
-		  border-color: #005e9a;
+		  background: #fff;
+		  color: #005e9a
 		}
 	}
 	.gform_save_link {
 		background-color: #fff;
-		border-color: #005e9a;
-		color: #fff;
-		display: inline-flex;
+		border: solid 1px #005e9a;
+		color: #005e9a;
+		display: inline-flex !important;
 	    justify-content: center;
 	    align-content: center;
 		align-items: center;
@@ -134,7 +134,7 @@
 }
 
 .gform_wrapper.gf_browser_chrome .gfield_checkbox li input, .gform_wrapper.gf_browser_chrome .gfield_checkbox li input[type=checkbox], .gform_wrapper.gf_browser_chrome .gfield_radio li input[type=radio] {
-    margin-top: 0px;
+    margin-top: 0px !important;
 }
 
 .gpnf-nested-entries {
