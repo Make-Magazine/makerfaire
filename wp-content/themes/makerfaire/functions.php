@@ -129,6 +129,7 @@ function set_universal_asset_constants() {
    $universal_asset_proto = 'https://';
    $universal_asset_user = false;
    $universal_asset_pass = false;
+   /*
    $host = $_SERVER['HTTP_HOST'];
    // dev environments
    if(strpos($host, 'dev.') === 0) {
@@ -152,7 +153,7 @@ function set_universal_asset_constants() {
    else if(strpos($host, ':8888') > -1) {
       $universal_asset_env = 'makeco.local'; // this will require that we use `makeco` as our local
       $universal_asset_proto = 'http://';
-   }
+   }*/
    // Set the important bits as CONSTANTS that can easily be used elsewhere
    define('UNIVERSAL_ASSET_URL_PREFIX', $universal_asset_proto . $universal_asset_env);
    define('UNIVERSAL_ASSET_USER', $universal_asset_user);
