@@ -58,17 +58,15 @@
 		}
 		// when the screen gets small, turn those tabs into pills
 		@media screen and (max-width: 768px) {
-			.tabs {
-				border-bottom: 0px;
-				.ginput_container {
+			border-bottom: 0px;
+			.ginput_container {
+				width: 100%;
+				li {
 					width: 100%;
-					li {
-						width: 100%;
-						margin-bottom: 8px;
-						label {
-							border-radius: 5px;
-							border-bottom: 1px solid #005e9a;
-						}
+					margin-bottom: 8px;
+					label {
+						border-radius: 5px;
+						border-bottom: 1px solid #005e9a;
 					}
 				}
 			}
