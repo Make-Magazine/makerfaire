@@ -39,14 +39,15 @@
 			text-align: center;
 			height: auto;
 			opacity: 1;
+			a, a:hover { color: #fff; }
 			&:hover {
 				background: rgba(0, 94, 154, .8);
-				color: #fff;
 			}
 			@media screen and (max-width: 640px) {
 				border-radius: 5px;
 				margin-bottom: 5px;
 			}
+			.gf_step_number { display: none; }
 		}
 		.gf_step_active {
 			background: white;
@@ -87,6 +88,7 @@
 		height: 49px;
 		border-radius: 5px;
 		margin-bottom: 0px !important;
+		padding-left: 17px !important;
 		&:focus, &:active, &:visited {
 			color: #fff;
 			text-decoration: none;
@@ -117,7 +119,8 @@
 		padding: 15px;
 		border-radius: 5px;
 		margin-left: 0px !important;
-		margin-top: -20px;
+		position: relative;
+		top: 2px;
 		&:focus, &:active, &:visited {
 			color: #fff;
 			text-decoration: none;
