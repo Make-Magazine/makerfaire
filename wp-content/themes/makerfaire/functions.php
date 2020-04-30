@@ -53,9 +53,6 @@ include_once dirname(__FILE__) . '/api/admin-settings.php';
 // Load the functions for the Applications API
 include_once dirname(__FILE__) . '/api/v2/functions.php';
 
-// Gravity Forms Specific Plugins and Classes
-include_once TEMPLATEPATH . '/classes/gf-limit-checkboxes.php';
-
 //include_once TEMPLATEPATH. '/classes/gf-entry-datatables.php';
 include_once TEMPLATEPATH . '/classes/gf-helper.php';
 include_once TEMPLATEPATH . '/classes/makerfaire-helper.php';
