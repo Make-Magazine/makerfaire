@@ -469,7 +469,7 @@
                                     "label": "Name",
                                     "name": "maker_name",
                                     "type": "text",
-                                    "instructions": "Optional field. 24 character limit.",
+                                    "instructions": "Optional field. 40 character limit.",
                                     "required": 0,
                                     "conditional_logic": 0,
                                     "wrapper": {
@@ -478,12 +478,10 @@
                                         "id": ""
                                     },
                                     "default_value": "",
-                                    "maxlength": 19,
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "readonly": 0,
-                                    "disabled": 0
+                                    "maxlength": 40
                                 },
                                 {
                                     "key": "field_56fc71a0dc4a6",
@@ -2985,5 +2983,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1588270965
+    "modified": 1588281981
 }
