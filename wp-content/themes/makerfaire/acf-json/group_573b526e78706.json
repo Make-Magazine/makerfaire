@@ -1119,18 +1119,19 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "layout": "horizontal",
                             "choices": {
                                 "Blue": "Blue",
                                 "Light Blue": "Light Blue",
                                 "Red": "Red",
-                                "Orange": "Orange"
+                                "Orange": "Orange",
+                                "Navy": "Navy"
                             },
-                            "default_value": "Blue",
-                            "other_choice": 0,
-                            "save_other_choice": 0,
                             "allow_null": 0,
-                            "return_format": "value"
+                            "other_choice": 0,
+                            "default_value": "Blue",
+                            "layout": "horizontal",
+                            "return_format": "value",
+                            "save_other_choice": 0
                         }
                     ],
                     "min": "",
@@ -1875,7 +1876,7 @@
                                 "column-reverse": "Top"
                             },
                             "default_value": [
-                                "Top"
+                                "column-reverse"
                             ],
                             "allow_null": 0,
                             "multiple": 0,
@@ -2984,5 +2985,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1584725232
+    "modified": 1588270965
 }
