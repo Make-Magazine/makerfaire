@@ -5,7 +5,6 @@
 /* **************************************************** */
 function dispLayout($row_layout) {
    $return = '';
-   GLOBAL $acf_blocks;
    $activeinactive = get_sub_field('activeinactive');
 	
    if ($activeinactive == 'Active') {
@@ -421,9 +420,9 @@ function get6ColLayout() {
    $return = '';
 
     $panelTitle = get_sub_field('panel_title');
-	$imageHeight = ($acf_blocks ? get_field('image_height') : get_sub_field('image_height'));
-	$padding = ($acf_blocks ? get_field('padding') : get_sub_field('padding'));
-	$linkPosition = ($acf_blocks ? get_field('link_position') : get_sub_field('link_position'));
+	$imageHeight = get_sub_field('image_height');
+	$padding = get_sub_field('padding');
+	$linkPosition = get_sub_field('link_position');
 	
 	if($padding == TRUE) {
    	$return .= '<section class="content-panel six-column with-padding">';
