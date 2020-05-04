@@ -56,8 +56,9 @@ $entries   = $tableData['data'];
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
             <ul class="bulletless">
-              <li><a class="dropdown-item" href="/new-york/call-for-makers/" target="_blank">World Maker Faire New York</a></li>
-              <li><a class="dropdown-item" href="/bay-area/call-for-makers/" target="_blank">Maker Faire Bay Area</a></li>
+                <li><a class="dropdown-item" href="/virtually-maker-faire-call-2020-for-makers/" target="_blank">Virtually Maker Faire</a></li>
+              <!--<li><a class="dropdown-item" href="/new-york/call-for-makers/" target="_blank">World Maker Faire New York</a></li>-->
+              <!--<li><a class="dropdown-item" href="/bay-area/call-for-makers/" target="_blank">Maker Faire Bay Area</a></li>-->
             </ul>
           </div>
         </div>
