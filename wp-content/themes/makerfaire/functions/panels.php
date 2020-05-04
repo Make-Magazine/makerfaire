@@ -418,6 +418,7 @@ function get3ColLayout() {
 /*  Function to return 6_column_photo_and_text_panel     */
 /* * *************************************************** */
 function get6ColLayout() {
+   global $acf_blocks;
    $return = '';
 
     $panelTitle = get_sub_field('panel_title');
