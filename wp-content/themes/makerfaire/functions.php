@@ -158,6 +158,9 @@ function set_universal_asset_constants() {
 set_universal_asset_constants();
 
 function load_scripts() {
+	
+	$my_theme = wp_get_theme();
+    $my_version = $my_theme->get('Version');
 
 	// Styles
 	wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
@@ -180,8 +183,6 @@ function load_scripts() {
 	//auth0
 	wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false, true);
 
-   $my_theme = wp_get_theme();
-   $my_version = $my_theme->get('Version');
    if (strpos($_SERVER['REQUEST_URI'], "authenticate-redirect") !== false) {
       wp_enqueue_script('billboard', get_stylesheet_directory_uri() . '/js/libs/billboard.js', array('jquery'), $my_version, true);
    }
