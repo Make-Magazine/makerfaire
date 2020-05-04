@@ -501,7 +501,7 @@ function handsOnMarker($entry) {
 function getSocial($entrySocial) {
     $socialArray = [];
     if (isset($entrySocial)) {
-        $socialArray = unserialize($entrySocial);
+        $socialArray = unserialize(base64_decode($entrySocial));
     }
     $socialBlock = '';
     if (!empty($socialArray)) {
