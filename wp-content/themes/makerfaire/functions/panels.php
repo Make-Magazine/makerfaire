@@ -5,11 +5,13 @@
 /* **************************************************** */
 function dispLayout($row_layout) {
    $return = '';
+   GLOBAL $acf_blocks;
    $activeinactive = get_sub_field('activeinactive');
+	
    if ($activeinactive == 'Active') {
       switch ($row_layout) {
          case 'buy_tickets_float': //floating buy tickets banner
-            $return = getBuyTixPanel($row_layout);            
+		$return = getBuyTixPanel($row_layout);            
             break;
          case 'featured_makers_panel':                // FEATURED MAKERS (SQUARE)
          case 'featured_makers_panel_dynamic':        // FEATURED MAKERS (SQUARE) - dynamic
@@ -418,7 +420,7 @@ function get3ColLayout() {
 function get6ColLayout() {
    $return = '';
 
-   $panelTitle = get_sub_field('panel_title');
+    $panelTitle = get_sub_field('panel_title');
 	$imageHeight = ($acf_blocks ? get_field('image_height') : get_sub_field('image_height'));
 	$padding = ($acf_blocks ? get_field('padding') : get_sub_field('padding'));
 	$linkPosition = ($acf_blocks ? get_field('link_position') : get_sub_field('link_position'));
