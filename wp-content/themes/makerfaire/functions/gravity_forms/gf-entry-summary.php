@@ -587,7 +587,8 @@ function getmetaData($entry_id, $type = '') {
                                 //ignore product fields as they will be grouped together at the end of the grid
                                 if (GFCommon::is_product_field($formFields->type)) {
                                     $has_product_fields = true;
-                                    continue;
+                                    //continue 2;
+                                    break;
                                 }
 
                                 $value = RGFormsModel::get_lead_field_value($entry, $formFields);
