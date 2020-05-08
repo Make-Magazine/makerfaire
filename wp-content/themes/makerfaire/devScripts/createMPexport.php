@@ -282,7 +282,7 @@ function exportEntries($form) {
         20676 => 'Students',
     );
 
-    $CSVData['fieldHeaders'] = array('title', 'path', 'created', 'teaser', 'image', 'difficulty', 'duration', 'visibility', 'Video', 'ah-ha', 'uh-oh', 'story', 'howto', 'Maker Category', 'tools', 'materials', 'boardsKits', 'resources', 'team', 'collaborators', 'Public');
+    $CSVData['fieldHeaders'] = array('title', 'path', 'created', 'teaser', 'image', 'difficulty', 'duration', 'visibility', 'Video', 'ah-ha', 'uh-oh', 'story', 'howto', 'Maker Category', 'tools', 'materials', 'boardsKits', 'resources', 'team', 'owner', 'Public');
 
     //entry data
     $sql = "SELECT wp_gf_entry.id as entry_id, wp_gf_entry.date_created, 
@@ -355,7 +355,7 @@ function exportEntries($form) {
     $entries = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
     $entryData = array();
     foreach ($entries as $entry) {
-        if ($entry['status'] == 'Accepted') {
+        if ($entry['status'] == 'Accepted' &&$entry['maker1_email']!='') {
             $entry_id = $entry['entry_id'];
             //build html for team field
             $team = createTeam($entry);
@@ -416,7 +416,7 @@ function exportEntries($form) {
                 'boardsKits' => '',
                 'resources' => '',
                 'team' => $team,
-                'collaborators' => implode(",", $collaborators),
+                'collaborators' => $entry['maker1_email'],
                 'Public' => 'Yes');
         }
     }
