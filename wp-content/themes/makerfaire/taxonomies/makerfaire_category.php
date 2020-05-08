@@ -133,7 +133,7 @@ add_action( 'init', 'prelim_loc_init' );
 function get_CPT_name($category){
   $cat_id = (int) $category;
   if($cat_id!=0){
-    $typeArr = array('makerfaire_category','ny_prelim_loc','ba_prelim_loc');
+    $typeArr = array('makerfaire_category','ny_prelim_loc','ba_prelim_loc','makeprojects_category');
 
     foreach($typeArr as $type){
       $cat = get_term( $cat_id, $type );
