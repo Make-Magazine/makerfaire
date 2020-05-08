@@ -1,6 +1,4 @@
-(function($, undefined){
-    var count = 0;
-
+(function(jQuery, undefined){
     window.kendoConsole = {
         log: function(message, isError, container) {
             var lastContainer = $(".console div:first", container),
@@ -126,5 +124,5 @@
         window.location.href = href;
     }
 
-    jQuery("#culture").change(onlocalizationchange);
+    $("#culture").change(onlocalizationchange);
 })(jQuery);

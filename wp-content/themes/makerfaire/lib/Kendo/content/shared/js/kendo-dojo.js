@@ -1,11 +1,3 @@
-/*
-* Kendo UI v2015.2.624 (http://www.telerik.com/kendo-ui)
-* Copyright 2015 Telerik AD. All rights reserved.
-*
-* Kendo UI commercial licenses may be obtained at
-* http://www.telerik.com/purchase/license-agreement/kendo-ui-complete
-* If you do not own a commercial license, this file shall be governed by the trial license terms.
-*/
  (function($, window) {
     var dojo = {
         postSnippet: function (snippet, baseUrl) {
@@ -28,14 +20,22 @@
         },
         replaceCommon: function(code, common) {
             if (common) {
-                code = code.replace(/common\.min\.css/, common + ".min.css");
+                if (/-empty/.test(common)) {
+                    code = code.replace(/&#10;\s*<link[^>]*common\.min\.css[^>]*>/, "");
+                } else {
+                    code = code.replace(/common\.min\.css/, common + ".min.css");
+                }
             }
 
             return code;
         },
         replaceTheme: function(code, theme) {
             if (theme) {
-                code = code.replace(/default\.min\.css/g, theme + ".min.css");
+                if (/(default-v2|bootstrap-v4|material-v2)/.test(theme)) {
+                    code = code.replace(/&#10;\s*<link[^>]*default\.mobile\.min\.css[^>]*>/, "");
+                }
+
+                code = code.replace(/default(\.mobile)?\.min\.css/g, theme + "$1.min.css");
             }
 
             return code;
@@ -45,7 +45,7 @@
                 '<head>',
                 '<head>\n' +
                 '    <base href="' + baseUrl + '">\n' +
-                '    <style>html { font-size: 12px; font-family: Arial, Helvetica, sans-serif; }</style>'
+                '    <style>html { font-size: 14px; font-family: Arial, Helvetica, sans-serif; }</style>'
             );
         },
         addConsoleScript: function (code) {
@@ -63,7 +63,7 @@
         fixCDNReferences: function (code) {
             return code.replace(/<head>[\s\S]*<\/head>/, function (match) {
                 return match
-                    .replace(/src="\/?/g, "src=\"" + dojo.configuration.cdnRoot + "/")
+                    .replace(/src="js\//g, "src=\"" + dojo.configuration.cdnRoot + "/js/")
                     .replace(/href="\/?/g, "href=\"" + dojo.configuration.cdnRoot + "/");
             });
         }
