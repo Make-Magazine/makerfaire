@@ -1,6 +1,6 @@
 {
    "name": "makerfaire",
-   "version": "4.33.196",
+   "version": "4.33.197",
    "description": "Maker Faire",
    "main": "",
    "private": true,
@@ -39,7 +39,7 @@
       "js:admin:uglify": "uglifyjs node_modules/bootstrap/dist/js/bootstrap.min.js node_modules/bootstrap-dialog/dist/js/bootstrap-dialog.min.js js/src-admin-scripts/*.js -o js/built-admin-scripts.min.js -c -m --source-map \"root='../', url='built-admin-scripts.min.js.map'\"",
       "js:globalmap:uglify": "uglifyjs js/angular/global-faires-map-app/faireMapsApp.js js/angular/global-faires-map-app/*.js -o js/angular/global-faires-map-app.min.js -c -m --source-map \"root='../', url='global-faires-map-app.min.js.map'\"",
       "js:kendo:uglify": "uglifyjs lib/Kendo/woahbar/woahbar.js lib/Kendo/content/js/kendo.all.min.js lib/Kendo/content/js/kendo.timezones.min.js lib/Kendo/content/shared/js/console.js lib/Kendo/content/shared/js/prettify.js lib/Kendo/content/shared/js/pako.min.js -o lib/Kendo/built-kendo-scripts.min.js -c -m --source-map \"root='../', url='built-kendo-scripts.min.js.map'\"",
-      "concat:kendo:css": "concat -o lib/Kendo/kendo.min.css lib/Kendo/content/css/web/kendo.common.min.css lib/Kendo/content/css/web/kendo.rtl.min.css lib/Kendo/content/css/web/kendo.material.min.css lib/Kendo/content/css/web/kendo.material.mobile.min.css lib/Kendo/content/css/dataviz/kendo.dataviz.min.css lib/Kendo/content/css/dataviz/kendo.dataviz.default.min.css lib/Kendo/styles/examples.css lib/Kendo/woahbar/woahbar.css",
+      "concat:kendo:css": "concat -o lib/Kendo/kendo.min.css lib/Kendo/content/css/web/kendo.common-material.min.css lib/Kendo/content/css/web/kendo.rtl.min.css lib/Kendo/content/css/web/kendo.material.min.css lib/Kendo/content/css/web/kendo.material.mobile.min.css lib/Kendo/content/css/dataviz/kendo.dataviz.min.css lib/Kendo/content/css/dataviz/kendo.dataviz.default.min.css lib/Kendo/styles/examples.css lib/Kendo/woahbar/woahbar.css",
       "onchange:less:bs": "onchange 'less/bootstrap/*.less' -- npm run less:bs:compile",
       "onchange:less:mf": "onchange 'less/*.less' -- npm run less:mf:compile",
       "onchange:less:ar": "onchange '../../../resource-mgmt/css/main.css' 'less/angular-reporting-style.less' -- npm run less:ar:compile",

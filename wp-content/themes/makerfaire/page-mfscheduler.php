@@ -69,28 +69,68 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             src="/wp-content/themes/makerfaire/lib/Kendo/woahbar/woahbar-down-arrow.png" />
       </a>
    </div>
-   <style>
-      /*
-              Use the DejaVu Sans font for display and embedding in the PDF file.
-              The standard PDF fonts have no support for Unicode characters.
-      */
-      .mf-entry-template p,
-      .mf-entry-template a,
-      .k-scheduler-table a
-      {
-         color: #1989C7;
-      }
-      .k-scheduler {
-         font-family: "DejaVu Sans", "Arial", sans-serif;
-         font-size: 80%;
-      }
+	<style>
+		/*
+			  Use the DejaVu Sans font for display and embedding in the PDF file.
+			  The standard PDF fonts have no support for Unicode characters.
+		*/
+		body { margin-top: 5px !important; }
+		.k-floatwrap .k-header .k-scheduler-toolbar { padding: 0px !important; }
+		.k-block, .k-draghandle, .k-grid-header, .k-grouping-header, .k-header, .k-pager-wrap, .k-treemap-tile, .k-scheduler .k-header .k-link, .k-scheduler .k-header .k-button {
+			background-color: #005E9A !important;
+		}
+		.k-scheduler-toolbar > .k-scheduler-tools { margin-top: 10px; }
+		.k-scheduler-toolbar > .k-scheduler-tools .k-button { border-color: #fff; border-radius: 10px; }
+		.k-scheduler-toolbar > .k-scheduler-tools .k-button:hover { border-color: #151733; color: #151733; background-color: #fff !important;}
+		.k-scheduler .k-header .k-link, .k-scheduler .k-header li { border-color: #005E9A; }
+		.k-scheduler-views li {
+			margin-left: 10px;
+		}
+		.k-scheduler-views li a {
+			border: solid 1px #151733;
+		}
+		.mf-entry-template p,
+		.k-scheduler-table a
+		{
+			color: #fff;
+			overflow: hidden;
+			font-weight: bold; 
+		}
+		.mf-entry-template a { color: #151733; font-weight: bold; }
+		.k-scheduler {
+			font-family: "DejaVu Sans", "Arial", sans-serif;
+			font-size: 80%;
+		}
+		.mf-entry-template { 
+			border-radius: 3px;
+			padding: 3px;
+			border: 1px solid #151733;
+		}
+		.k-event {
+			border: 0px;
+			background: transparent;
+			text-align: center;
+			overflow: visible;
+		}
+		.k-event-delete { 
+			display: block !important;
+			color: #151733 !important;
+			border: solid 1px #151733;
+			border-radius: 10px !important;
+			background: #fff;
+			position: absolute;
+			top: -10px;
+			right: -10px;
+		 }
+		.k-widget.k-window { border-radius: 10px; }
+		.k-edit-field input[type="checkbox"] { margin: 20px; }
 
-      /* Hide toolbar, navigation and footer during export */
-      .woahbar,.k-pdf-export .k-scheduler-toolbar,.k-pdf-export .k-scheduler-navigation .k-nav-today,.k-pdf-export .k-scheduler-navigation .k-nav-prev,.k-pdf-export .k-scheduler-navigation .k-nav-next,.k-pdf-export .k-scheduler-footer
-      {
-         display: none;
-      }
-   </style>
+		/* Hide toolbar, navigation and footer during export */
+		.woahbar,.k-pdf-export .k-scheduler-toolbar,.k-pdf-export .k-scheduler-navigation .k-nav-today,.k-pdf-export .k-scheduler-navigation .k-nav-prev,.k-pdf-export .k-scheduler-navigation .k-nav-next,.k-pdf-export .k-scheduler-footer
+		{
+			display: none;
+		}
+	</style>
 
 
    <style>
@@ -101,7 +141,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
       .k-scheduler-layout>tbody>tr>td:first-child {
          width: 10%;
       }
-
+	   .k-scheduler-header-wrap th { color: #151733; }
       .k-scheduler-times-all-day, .k-scheduler-header-all-day { display: none;}
 
       /* .k-scheduler-content .k-scheduler-table,.k-scheduler-header .k-scheduler-table
@@ -242,22 +282,22 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
 
    function status_to_color($entry_status) {
       $result = '';
-      switch ($entry_status) {
-         case 'Accepted' :
-            $result = '#90EE90'; // $result = $result->createWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
-            break;
-         case 'Proposed' :
-         case 'Wait List' :
-            $result = '#FAFAD2'; // $result = $result->updateWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
-            break;
-         case 'Cancelled' :
-         case 'No Show' :
-         case 'Rejected' :
-            $result = '#F08080'; // $result = $result->destroyWithAssociation('Meetings', 'MeetingAttendees', $request->models, 'MeetingID');
-            break;
-         default :
-            $result = '#E0FFFF'; // $result = $result->readWithAssociation('Meetings', 'MeetingAttendees', 'MeetingID', array('AttendeeID' => 'Attendees'), array('MeetingID', 'RoomID'), $request);
-            break;
+	  switch ($entry_status) {
+		case 'Accepted' :
+		  $result = '#3fafed'; // $result = $result->createWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
+		  break;
+		case 'Proposed' :
+		case 'Wait List' :
+		  $result = '#005E9A'; // $result = $result->updateWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
+		  break;
+		case 'Cancelled' :
+		case 'No Show' :
+		case 'Rejected' :
+		  $result = '#ed1d21'; // $result = $result->destroyWithAssociation('Meetings', 'MeetingAttendees', $request->models, 'MeetingID');
+		  break;
+		default :
+		  $result = '#333'; // $result = $result->readWithAssociation('Meetings', 'MeetingAttendees', 'MeetingID', array('AttendeeID' => 'Attendees'), array('MeetingID', 'RoomID'), $request);
+		  break;
       }
 
       return $result;
