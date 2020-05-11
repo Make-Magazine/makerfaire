@@ -33,9 +33,9 @@
 			margin: 0 10px 0 0;
 			padding: 10px 20px;
 			font-size: 18px;
-			border: 1px solid #005e9a;
+			border: 1px solid #ccc;
 			border-bottom: 0;
-			background: #005e9a;
+			background: #ccc;
 			color: white;
 			border-top-left-radius: 5px;
 			border-top-right-radius: 5px;
@@ -44,16 +44,20 @@
 			height: auto;
 			opacity: 1;
 			a, a:hover { color: #fff; text-decoration: none; }
-			&:hover {
-				background: rgba(0, 94, 154, .8);
-				color: #fff;
-			}
 			@media screen and (max-width: 640px) {
 				border-radius: 5px;
 				border-bottom: 1px solid #005e9a;
 				margin-bottom: 5px;
 			}
 			.gf_step_number { display: none; }
+			&.gpmpn-step-linked {
+				background: #005e9a;
+				border: 1px solid #005e9a;
+				&:hover {
+					background: rgba(0, 94, 154, .8);
+					color: #fff;
+				}
+			}
 		}
 		.gf_step_active {
 			background: white;
@@ -84,7 +88,7 @@
 		background: #005e9a;
 		box-shadow: none;
 		color: #fff;
-		display: inline-flex;
+		display: inline-flex !important;
 		border: solid 1px #005e9a;
 	    justify-content: center;
 	    align-content: center;
