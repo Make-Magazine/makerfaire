@@ -23,6 +23,15 @@ class Slider extends \Kendo\UI\Widget {
     }
 
     /**
+    * The title of the drag handle of the Slider.
+    * @param string $value
+    * @return \Kendo\UI\Slider
+    */
+    public function dragHandleTitle($value) {
+        return $this->setProperty('dragHandleTitle', $value);
+    }
+
+    /**
     * The title of the increase button of the Slider.
     * @param string $value
     * @return \Kendo\UI\Slider
@@ -32,8 +41,7 @@ class Slider extends \Kendo\UI\Widget {
     }
 
     /**
-    * The delta with which the value will change when the user presses the Page Up or Page Down key (the drag
-handle must be focused). Note: The allied largeStep will also set large tick for every large step.
+    * The delta with which the value will change when the user presses the Page Up or Page Down key (the drag handle must be focused). Note: largeStep will also set a large tick for every large step.Must be a positive number, larger than smallStep.
     * @param float $value
     * @return \Kendo\UI\Slider
     */
@@ -69,8 +77,7 @@ handle must be focused). Note: The allied largeStep will also set large tick for
     }
 
     /**
-    * Can be used to show (true) or hide (false) the
-increase and decrease buttons of a Slider.
+    * Can be used to show (true) or hide (false) the increase and decrease buttons of a Slider.
     * @param boolean $value
     * @return \Kendo\UI\Slider
     */
@@ -79,9 +86,7 @@ increase and decrease buttons of a Slider.
     }
 
     /**
-    * The small step value of the Slider. The underlying value will be changed when the end user
-(1) clicks on the increase or decrease buttons of the Slider, (2) presses the arrow keys
-(the drag handle must be focused), or (3) drags the drag handle.
+    * The small step value of the Slider. Must be a positive number, otherwise an Javascript exception will be thrown.The small step value determines the amount of Slider value change when the end user clicks on the increase or decrease buttons of the Slider;; presses the arrow keys (the drag handle must be focused); or drags the drag handle..
     * @param float $value
     * @return \Kendo\UI\Slider
     */
@@ -90,7 +95,7 @@ increase and decrease buttons of a Slider.
     }
 
     /**
-    * Denotes the location of the tick marks in the Slider. The available options are:
+    * Denotes the location of the tick marks in the Slider. The available options are: topLeft - Tick marks are located on the top of the horizontal widget or on the left of the vertical widget.; bottomRight - Tick marks are located on the bottom of the horizontal widget or on the right side of the vertical widget.; both - Tick marks are located on both sides of the widget. or none - Tick marks are not visible..
     * @param string $value
     * @return \Kendo\UI\Slider
     */
@@ -147,3 +152,5 @@ increase and decrease buttons of a Slider.
 
 //<< Properties
 }
+
+?>

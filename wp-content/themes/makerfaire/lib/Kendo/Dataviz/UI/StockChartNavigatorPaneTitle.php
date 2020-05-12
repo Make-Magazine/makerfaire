@@ -51,7 +51,7 @@ class StockChartNavigatorPaneTitle extends \Kendo\SerializableObject {
     }
 
     /**
-    * The position of the title.The supported values are:
+    * The position of the title.The supported values are: "left" - the axis title is positioned on the left (applicable to horizontal axis); "right" - the axis title is positioned on the right (applicable to horizontal axis) or "center" - the axis title is positioned in the center.
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartNavigatorPaneTitle
     */

@@ -6,8 +6,7 @@ class SparklineCategoryAxisItemMajorTicks extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The axis major tick size. This is the length of the line in pixels that is drawn to indicate the tick
-on the chart.
+    * The axis major tick size. This is the length of the line in pixels that is drawn to indicate the tick on the chart.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineCategoryAxisItemMajorTicks
     */

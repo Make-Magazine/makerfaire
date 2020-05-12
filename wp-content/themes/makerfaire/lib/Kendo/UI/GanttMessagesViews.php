@@ -61,3 +61,5 @@ class GanttMessagesViews extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

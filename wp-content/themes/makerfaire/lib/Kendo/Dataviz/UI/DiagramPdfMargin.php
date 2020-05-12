@@ -6,7 +6,7 @@ class DiagramPdfMargin extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The bottom margin. Numbers are considered as "pt" units.
+    * The bottom margin. Numbers are assumed to be in pt units.
     * @param float|string $value
     * @return \Kendo\Dataviz\UI\DiagramPdfMargin
     */
@@ -15,7 +15,7 @@ class DiagramPdfMargin extends \Kendo\SerializableObject {
     }
 
     /**
-    * The left margin. Numbers are considered as "pt" units.
+    * The left margin. Numbers are assumed to be in pt units.
     * @param float|string $value
     * @return \Kendo\Dataviz\UI\DiagramPdfMargin
     */
@@ -24,7 +24,7 @@ class DiagramPdfMargin extends \Kendo\SerializableObject {
     }
 
     /**
-    * The right margin. Numbers are considered as "pt" units.
+    * The right margin. Numbers are assumed to be in pt units.
     * @param float|string $value
     * @return \Kendo\Dataviz\UI\DiagramPdfMargin
     */
@@ -33,7 +33,7 @@ class DiagramPdfMargin extends \Kendo\SerializableObject {
     }
 
     /**
-    * The top margin. Numbers are considered as "pt" units.
+    * The top margin. Numbers are assumed to be in pt units.
     * @param float|string $value
     * @return \Kendo\Dataviz\UI\DiagramPdfMargin
     */

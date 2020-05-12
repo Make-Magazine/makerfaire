@@ -15,7 +15,7 @@ class SchedulerMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the format string used to populate the aria-label attribute value of the selected event element.The arguments which can be used in the format string are:
+    * Specifies the format string used to populate the aria-label attribute value of the selected event element.The arguments which can be used in the format string are: {0} - represents the title of the selected event.; {1} - represents the start date of the event. or {2} - represents the start time of the event..
     * @param string $value
     * @return \Kendo\UI\SchedulerMessages
     */
@@ -24,7 +24,7 @@ class SchedulerMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the format string used to populate the aria-label attribute value of the selected slot element.The arguments which can be used in the format string are:
+    * Specifies the format string used to populate the aria-label attribute value of the selected slot element.The arguments which can be used in the format string are: {0} - represents the start date of the slot. or {1} - represents the end date of the slot..
     * @param string $value
     * @return \Kendo\UI\SchedulerMessages
     */
@@ -87,12 +87,39 @@ class SchedulerMessages extends \Kendo\SerializableObject {
     }
 
     /**
+    * The tooltip of the next navigation button.
+    * @param string $value
+    * @return \Kendo\UI\SchedulerMessages
+    */
+    public function next($value) {
+        return $this->setProperty('next', $value);
+    }
+
+    /**
     * The text displayed by the PDF export button.
     * @param string $value
     * @return \Kendo\UI\SchedulerMessages
     */
     public function pdf($value) {
         return $this->setProperty('pdf', $value);
+    }
+
+    /**
+    * The tooltip of the previous navigation button.
+    * @param string $value
+    * @return \Kendo\UI\SchedulerMessages
+    */
+    public function previous($value) {
+        return $this->setProperty('previous', $value);
+    }
+
+    /**
+    * The text of the reset series button.
+    * @param string $value
+    * @return \Kendo\UI\SchedulerMessages
+    */
+    public function resetSeries($value) {
+        return $this->setProperty('resetSeries', $value);
     }
 
     /**
@@ -141,6 +168,15 @@ class SchedulerMessages extends \Kendo\SerializableObject {
     }
 
     /**
+    * The configuration of the scheduler editable messages. Use this option to customize or localize the scheduler editable messages.
+    * @param \Kendo\UI\SchedulerMessagesEditable|array $value
+    * @return \Kendo\UI\SchedulerMessages
+    */
+    public function editable($value) {
+        return $this->setProperty('editable', $value);
+    }
+
+    /**
     * The configuration of the scheduler editor messages. Use this option to customize or localize the scheduler editor messages.
     * @param \Kendo\UI\SchedulerMessagesEditor|array $value
     * @return \Kendo\UI\SchedulerMessages
@@ -178,3 +214,5 @@ class SchedulerMessages extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

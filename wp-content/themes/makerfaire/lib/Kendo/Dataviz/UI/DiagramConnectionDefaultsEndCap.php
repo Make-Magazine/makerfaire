@@ -6,7 +6,7 @@ class DiagramConnectionDefaultsEndCap extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The connection end cap fill options or color.
+    * The connections end cap fill options or color.
     * @param string|\Kendo\Dataviz\UI\DiagramConnectionDefaultsEndCapFill|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaultsEndCap
     */
@@ -15,7 +15,7 @@ class DiagramConnectionDefaultsEndCap extends \Kendo\SerializableObject {
     }
 
     /**
-    * The connection end cap stroke options or color.
+    * The connections end cap stroke options or color.
     * @param string|\Kendo\Dataviz\UI\DiagramConnectionDefaultsEndCapStroke|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaultsEndCap
     */
@@ -24,7 +24,7 @@ class DiagramConnectionDefaultsEndCap extends \Kendo\SerializableObject {
     }
 
     /**
-    * The connection end cap type.The supported values are:
+    * The end cap type used in connections.The supported values are: "none": no cap; "ArrowEnd": a filled arrow or "FilledCircle": a filled circle.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaultsEndCap
     */

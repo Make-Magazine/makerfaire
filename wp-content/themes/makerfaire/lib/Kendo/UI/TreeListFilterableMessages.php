@@ -6,7 +6,7 @@ class TreeListFilterableMessages extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The text of the option which represents the "and" logical operation.
+    * The text of the option which represents the AND logical operation.
     * @param string $value
     * @return \Kendo\UI\TreeListFilterableMessages
     */
@@ -33,7 +33,7 @@ class TreeListFilterableMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text of the information message on the top of the filter menu.
+    * The text of the information message on top of the filter menu.
     * @param string $value
     * @return \Kendo\UI\TreeListFilterableMessages
     */
@@ -42,7 +42,16 @@ class TreeListFilterableMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text of the radio button for false values. Displayed when filtering Boolean fields.
+    * The text that is rendered for the title attribute of the filter menu form.
+    * @param string $value
+    * @return \Kendo\UI\TreeListFilterableMessages
+    */
+    public function title($value) {
+        return $this->setProperty('title', $value);
+    }
+
+    /**
+    * The text of the radio button for false values. Displayed when the user filters Boolean fields.
     * @param string $value
     * @return \Kendo\UI\TreeListFilterableMessages
     */
@@ -51,7 +60,7 @@ class TreeListFilterableMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text of the radio button for true values. Displayed when filtering Boolean fields.
+    * The text of the radio button for true values. Displayed when the user filters Boolean fields.
     * @param string $value
     * @return \Kendo\UI\TreeListFilterableMessages
     */
@@ -60,39 +69,12 @@ class TreeListFilterableMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text of the option which represents the "or" logical operation.
+    * The text of the option which represents the OR logical operation.
     * @param string $value
     * @return \Kendo\UI\TreeListFilterableMessages
     */
     public function _or($value) {
         return $this->setProperty('or', $value);
-    }
-
-    /**
-    * The text of the DropDownList displayed in the filter menu for columns whose values option is set.
-    * @param string $value
-    * @return \Kendo\UI\TreeListFilterableMessages
-    */
-    public function selectValue($value) {
-        return $this->setProperty('selectValue', $value);
-    }
-
-    /**
-    * The text of the cancel button in the filter menu header (available in mobile mode only).
-    * @param string $value
-    * @return \Kendo\UI\TreeListFilterableMessages
-    */
-    public function cancel($value) {
-        return $this->setProperty('cancel', $value);
-    }
-
-    /**
-    * The text of the operator item in filter menu (available in mobile mode only).
-    * @param string $value
-    * @return \Kendo\UI\TreeListFilterableMessages
-    */
-    public function operator($value) {
-        return $this->setProperty('operator', $value);
     }
 
 //<< Properties

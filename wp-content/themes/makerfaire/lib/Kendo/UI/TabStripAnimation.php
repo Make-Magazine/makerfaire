@@ -25,3 +25,5 @@ class TabStripAnimation extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

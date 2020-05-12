@@ -51,7 +51,7 @@ class ChartXAxisItemLabels extends \Kendo\SerializableObject {
     }
 
     /**
-    * The font style of the labels.
+    * The font style of the labels. Accepts a valid CSS color string, for example "20px 'Courier New'".
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItemLabels
     */
@@ -96,6 +96,15 @@ class ChartXAxisItemLabels extends \Kendo\SerializableObject {
     }
 
     /**
+    * The position of the axis labels. By default, labels are positioned next to the axis. When position is set to end, the labels are placed at the end of the crossing axis— typically, at the top or right end of the Chart unless the crossing axis was reversed. or When position is set to start, the labels are placed at the start of the crossing axis— typically, at the left or bottom end of the Chart unless the crossing axis was reversed..
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\ChartXAxisItemLabels
+    */
+    public function position($value) {
+        return $this->setProperty('position', $value);
+    }
+
+    /**
     * The rotation angle of the labels. By default the labels are not rotated. Can be set to "auto" in which case the labels will be rotated only if the slot size is not sufficient for the entire labels.
     * @param float|string|\Kendo\Dataviz\UI\ChartXAxisItemLabelsRotation|array $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItemLabels
@@ -124,7 +133,7 @@ class ChartXAxisItemLabels extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the ChartXAxisItemLabels.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.The fields which can be used in the template are: value - the category value.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\ChartXAxisItemLabels
     */
@@ -136,7 +145,7 @@ class ChartXAxisItemLabels extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the ChartXAxisItemLabels.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.The fields which can be used in the template are: value - the category value.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\ChartXAxisItemLabels
     */
@@ -155,7 +164,7 @@ class ChartXAxisItemLabels extends \Kendo\SerializableObject {
 
     /**
     * Sets the visual option of the ChartXAxisItemLabels.
-    * A function that can be used to create a custom visual for the labels. The available argument fields are:
+    * A function that can be used to create a custom visual for the labels. The available argument fields are: createVisual - a function that can be used to get the default visual.; culture - the default culture (if set) on the label; format - the default format of the label; options - the label options.; rect - the kendo.geometry.Rect that defines where the visual should be rendered.; sender - the chart instance (may be undefined).; text - the label text. or value - the category value.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\ChartXAxisItemLabels
     */

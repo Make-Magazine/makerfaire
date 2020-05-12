@@ -16,3 +16,5 @@ class SchedulerFooter extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

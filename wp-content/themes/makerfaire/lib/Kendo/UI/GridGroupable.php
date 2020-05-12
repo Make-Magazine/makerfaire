@@ -6,7 +6,7 @@ class GridGroupable extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * When set  to false grouping is considered disabled.
+    * When set to false grouping is considered disabled.
     * @param boolean $value
     * @return \Kendo\UI\GridGroupable
     */
@@ -24,6 +24,15 @@ class GridGroupable extends \Kendo\SerializableObject {
     }
 
     /**
+    * Sets the sort configuration when grouping.
+    * @param \Kendo\UI\GridGroupableSort|array $value
+    * @return \Kendo\UI\GridGroupable
+    */
+    public function sort($value) {
+        return $this->setProperty('sort', $value);
+    }
+
+    /**
     * The text messages displayed during grouping.
     * @param \Kendo\UI\GridGroupableMessages|array $value
     * @return \Kendo\UI\GridGroupable
@@ -34,3 +43,5 @@ class GridGroupable extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

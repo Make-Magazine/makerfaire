@@ -33,10 +33,16 @@ class Editor extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * Relaxes the same-origin policy when using the iframe-based editor.
-This is done automatically for all cases except when the policy is relaxed by document.domain = document.domain.
-In that case, this property must be used to allow the editor to function properly across browsers.
-This property has been introduced in internal builds after 2014.1.319.
+    * Fine-tune deserialization in the Editor widget. Deserialization is the process of parsing the HTML string input from the value() method or from the viewHtml dialog into editable content.
+    * @param \Kendo\UI\EditorDeserialization|array $value
+    * @return \Kendo\UI\Editor
+    */
+    public function deserialization($value) {
+        return $this->setProperty('deserialization', $value);
+    }
+
+    /**
+    * Relaxes the same-origin policy when using the iframe-based editor. This is done automatically for all cases except when the policy is relaxed by document.domain = document.domain. In that case, this property must be used to allow the editor to function properly across browsers. This property has been introduced in internal builds after 2014.1.319.
     * @param string $value
     * @return \Kendo\UI\Editor
     */
@@ -54,6 +60,15 @@ This property has been introduced in internal builds after 2014.1.319.
     }
 
     /**
+    * If enabled, the editor disables the editing and command execution in elements marked with editablecontent="false" attribute.
+    * @param boolean|\Kendo\UI\EditorImmutables|array $value
+    * @return \Kendo\UI\Editor
+    */
+    public function immutables($value) {
+        return $this->setProperty('immutables', $value);
+    }
+
+    /**
     * Defines the text of the labels that are shown within the editor. Used primarily for localization.
     * @param \Kendo\UI\EditorMessages|array $value
     * @return \Kendo\UI\Editor
@@ -63,12 +78,30 @@ This property has been introduced in internal builds after 2014.1.319.
     }
 
     /**
+    * Options for controlling how the pasting content is modified before it is added in the editor.
+    * @param \Kendo\UI\EditorPasteCleanup|array $value
+    * @return \Kendo\UI\Editor
+    */
+    public function pasteCleanup($value) {
+        return $this->setProperty('pasteCleanup', $value);
+    }
+
+    /**
     * Configures the Kendo UI Editor PDF export settings.
     * @param \Kendo\UI\EditorPdf|array $value
     * @return \Kendo\UI\Editor
     */
     public function pdf($value) {
         return $this->setProperty('pdf', $value);
+    }
+
+    /**
+    * The hint displayed by the widget when it is empty. Not set by default.
+    * @param string $value
+    * @return \Kendo\UI\Editor
+    */
+    public function placeholder($value) {
+        return $this->setProperty('placeholder', $value);
     }
 
     /**
@@ -90,8 +123,7 @@ This property has been introduced in internal builds after 2014.1.319.
     }
 
     /**
-    * Allows custom stylesheets to be included within the editing area. This setting is applicable only when the Editor is initialized from a textarea
-and a contenteditable iframe is generated.
+    * Allows custom stylesheets to be included within the editing area. This setting is applicable only when the Editor is initialized from a textarea and a contenteditable iframe is generated.
     * @param array $value
     * @return \Kendo\UI\Editor
     */
@@ -259,3 +291,5 @@ and a contenteditable iframe is generated.
 
 //<< Properties
 }
+
+?>

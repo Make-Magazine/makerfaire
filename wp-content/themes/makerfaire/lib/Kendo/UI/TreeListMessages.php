@@ -6,7 +6,7 @@ class TreeListMessages extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Defines the text for the command buttons used across the widget.
+    * Defines the text for the command buttons that are used across the widget.
     * @param \Kendo\UI\TreeListMessagesCommands|array $value
     * @return \Kendo\UI\TreeListMessages
     */
@@ -15,7 +15,7 @@ class TreeListMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the text of the "Loading..." message when the widget loads its root-level items.
+    * Defines the text of the Loading... message when the widget loads its root-level items.
     * @param string $value
     * @return \Kendo\UI\TreeListMessages
     */
@@ -24,7 +24,7 @@ class TreeListMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the text of "No records to display" message when the widget does not show any items.
+    * Defines the text of No records to display message when the widget does not show any items.
     * @param string $value
     * @return \Kendo\UI\TreeListMessages
     */
@@ -33,7 +33,7 @@ class TreeListMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the text of "Request failed." message when the widget fails to load its root-level items.
+    * Defines the text of Request failed message when the widget fails to load its root-level items.
     * @param string $value
     * @return \Kendo\UI\TreeListMessages
     */
@@ -42,7 +42,7 @@ class TreeListMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the text of "Retry" message assigned to the button that tries to load root-level items again.
+    * Defines the text of Retry message for the button which triggers the reloading of the TreeList root-level items.
     * @param string $value
     * @return \Kendo\UI\TreeListMessages
     */

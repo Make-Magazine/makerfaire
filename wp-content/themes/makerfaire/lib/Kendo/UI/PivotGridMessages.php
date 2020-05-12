@@ -43,3 +43,5 @@ class PivotGridMessages extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

@@ -107,9 +107,7 @@ class Pager extends \Kendo\UI\Widget {
     }
 
     /**
-    * If set to true the pager will display a drop-down which allows the user to pick a page size.
-By default the page size drop-down is not displayed.Can be set to an array of predefined page sizes to override the default list.
-A special all value is supported. It sets the page size to the total number of records.If a pageSize setting is provided for the data source then this value will be selected initially.
+    * If set to true the pager will display a drop-down which allows the user to pick a page size. By default the page size drop-down is not displayed.Can be set to an array of predefined page sizes to override the default list. A special all value is supported. It sets the page size to the total number of records.If a pageSize setting is provided for the data source then this value will be selected initially.
     * @param boolean|array $value
     * @return \Kendo\UI\Pager
     */
@@ -133,6 +131,15 @@ A special all value is supported. It sets the page size to the total number of r
     */
     public function refresh($value) {
         return $this->setProperty('refresh', $value);
+    }
+
+    /**
+    * Defines if the pager will be responsive.
+    * @param boolean $value
+    * @return \Kendo\UI\Pager
+    */
+    public function responsive($value) {
+        return $this->setProperty('responsive', $value);
     }
 
     /**
@@ -161,3 +168,5 @@ A special all value is supported. It sets the page size to the total number of r
 
 //<< Properties
 }
+
+?>

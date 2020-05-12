@@ -6,13 +6,7 @@ class ChartCategoryAxisItem extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The discrete categoryAxis.baseUnitStep values when
-either categoryAxis.baseUnit is set to "fit" or
-categoryAxis.baseUnitStep is set to "auto".The axis will try to divide the active period into successively larger intervals.
-It will start from x-second intervals, where x is picked from the autoBaseUnitSteps.seconds array.
-Then it will move to minutes, seconds and so on.
-This will continue until the number of intervals is less than
-maxDateGroups.
+    * The discrete categoryAxis.baseUnitStep values when either categoryAxis.baseUnit is set to "fit" orcategoryAxis.baseUnitStep is set to "auto".The axis will try to divide the active period into successively larger intervals. It will start from x-second intervals, where x is picked from the autoBaseUnitSteps.seconds array. Then it will move to minutes, seconds and so on. This will continue until the number of intervals is less thanmaxDateGroups.
     * @param \Kendo\Dataviz\UI\ChartCategoryAxisItemAutoBaseUnitSteps|array $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -39,9 +33,7 @@ maxDateGroups.
     }
 
     /**
-    * The base time interval for the date axis. The default base unit is determined automatically from the minimum difference
-between subsequent categories.The supported values are:Setting baseUnit to "fit" will set such base unit and categoryAxis.baseUnitStep
-that the total number of categories does not exceed categoryAxis.maxDateGroups.Series data is aggregated for the specified base unit using the series.aggregate function.
+    * The base time interval for the date axis. The default base unit is determined automatically from the minimum difference between subsequent categories.The supported values are: "fit"; "milliseconds"; "seconds"; "minutes"; "hours"; "days"; "weeks"; "months" or "years". Setting baseUnit to "fit" will set such base unit and categoryAxis.baseUnitStep that the total number of categories does not exceed categoryAxis.maxDateGroups.Series data is aggregated for the specified base unit using the series.aggregate function.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -50,9 +42,8 @@ that the total number of categories does not exceed categoryAxis.maxDateGroups.S
     }
 
     /**
-    * The step (interval) between categories in base units. Setting it to "auto" will set the step to such value
-that the total number of categories does not exceed categoryAxis.maxDateGroups.This option is ignored if categoryAxis.baseUnit is set to "fit".
-    * @param  $value
+    * The step (interval) between categories in base units. Setting it to "auto" will set the step to such value that the total number of categories does not exceed categoryAxis.maxDateGroups.This option is ignored if categoryAxis.baseUnit is set to "fit".
+    * @param float|string $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
     public function baseUnitStep($value) {
@@ -69,8 +60,7 @@ that the total number of categories does not exceed categoryAxis.maxDateGroups.T
     }
 
     /**
-    * The color to apply to all axis elements. Accepts a valid CSS color string, including hex and rgb. Can be overridden by categoryAxis.labels.color and
-categoryAxis.line.color.
+    * The color to apply to all axis elements. Accepts a valid CSS color string, including hex and rgb. Can be overridden by categoryAxis.labels.color andcategoryAxis.line.color.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -88,7 +78,7 @@ categoryAxis.line.color.
     }
 
     /**
-    * The data item field which contains the category name. Requires the dataSource option to be set.
+    * The data item field which contains the category name. Requires the dataSource option to be set. The field name should be a valid Javascript identifier and should contain only alphanumeric characters (or "$" or "_"), and may not start with a digit.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -97,7 +87,7 @@ categoryAxis.line.color.
     }
 
     /**
-    * If set to true the chart will position categories and series points on major ticks. This removes the empty space before and after the series.The default value is false except for "area" and "verticalArea".
+    * If set to true the chart will position categories and series points on major ticks. This removes the empty space before and after the series.The default value is false except for "area", "verticalArea", "rangeArea" and "verticalRangeArea".
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -124,8 +114,7 @@ categoryAxis.line.color.
     }
 
     /**
-    * The configuration of the major grid lines. These are the lines that are an extension of the major ticks through the
-body of the chart.
+    * The configuration of the major grid lines. These are the lines that are an extension of the major ticks through the body of the chart.
     * @param \Kendo\Dataviz\UI\ChartCategoryAxisItemMajorGridLines|array $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -143,9 +132,7 @@ body of the chart.
     }
 
     /**
-    * The last date displayed on the category date axis. By default, the minimum date is the same as the last category.
-This is often used in combination with the categoryAxis.min and categoryAxis.roundToBaseUnit options to
-set up a fixed date range.
+    * The last date displayed on the category date axis. By default, the minimum date is the same as the last category. This is often used in combination with the categoryAxis.min and categoryAxis.roundToBaseUnit options to set up a fixed date range.
     * @param  $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -154,9 +141,7 @@ set up a fixed date range.
     }
 
     /**
-    * The maximum number of groups (categories) to display when
-categoryAxis.baseUnit is set to "fit" or
-categoryAxis.baseUnitStep is set to "auto".
+    * The maximum number of groups (categories) to display whencategoryAxis.baseUnit is set to "fit" orcategoryAxis.baseUnitStep is set to "auto".
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -165,9 +150,16 @@ categoryAxis.baseUnitStep is set to "auto".
     }
 
     /**
-    * The first date displayed on the category date axis. By default, the minimum date is the same as the first category.
-This is often used in combination with the categoryAxis.min and categoryAxis.roundToBaseUnit options to
-set up a fixed date range.
+    * The maximum number of ticks, labels and grid lines to display. Applicable for date category axis. You can combine this property with a bigger value of the maxDateGroups property to increase the number of rendered data points in the Chart without drawing too many labels, ticks, and grid lines.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
+    */
+    public function maxDivisions($value) {
+        return $this->setProperty('maxDivisions', $value);
+    }
+
+    /**
+    * The first date displayed on the category date axis. By default, the minimum date is the same as the first category. This is often used in combination with the categoryAxis.min and categoryAxis.roundToBaseUnit options to set up a fixed date range.
     * @param  $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -176,8 +168,7 @@ set up a fixed date range.
     }
 
     /**
-    * The configuration of the minor grid lines. These are the lines that are an extension of the minor ticks through the
-body of the chart.
+    * The configuration of the minor grid lines. These are the lines that are an extension of the minor ticks through the body of the chart.
     * @param \Kendo\Dataviz\UI\ChartCategoryAxisItemMinorGridLines|array $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -204,8 +195,7 @@ body of the chart.
     }
 
     /**
-    * The name of the pane that the category axis should be rendered in.
-The axis will be rendered in the first (default) pane if not set.
+    * The name of the pane that the category axis should be rendered in. The axis will be rendered in the first (default) pane if not set.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -241,9 +231,7 @@ The axis will be rendered in the first (default) pane if not set.
     }
 
     /**
-    * The selected axis range. If set, axis selection will be enabled.The range is index based, starting from 0.
-Categories with indexes in the range [select.from, select.to) will be selected.
-That is, the last category in the range will not be included in the selection.If the categories are dates, the range must also be specified with date values.
+    * The selected axis range. If set, axis selection will be enabled.The range is index based, starting from 0. Categories with indexes in the range [select.from, select.to) will be selected. That is, the last category in the range will not be included in the selection.If the categories are dates, the range must also be specified with date values.
     * @param \Kendo\Dataviz\UI\ChartCategoryAxisItemSelect|array $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -270,7 +258,7 @@ That is, the last category in the range will not be included in the selection.If
     }
 
     /**
-    * The category axis type.The supported values are:
+    * The category axis type.The supported values are: "category" - discrete category axis. or "date" - specialized axis for displaying chronological data..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */
@@ -288,7 +276,7 @@ That is, the last category in the range will not be included in the selection.If
     }
 
     /**
-    * The week start day when categoryAxis.baseUnit is set to "weeks".The supported values are:
+    * The week start day when categoryAxis.baseUnit is set to "weeks".The supported values are: kendo.days.Sunday - equal to 0; kendo.days.Monday - equal to 1; kendo.days.Tuesday - equal to 2; kendo.days.Wednesday - equal to 3; kendo.days.Thursday - equal to 4; kendo.days.Friday - equal to 5 or kendo.days.Saturday - equal to 6.
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItem
     */

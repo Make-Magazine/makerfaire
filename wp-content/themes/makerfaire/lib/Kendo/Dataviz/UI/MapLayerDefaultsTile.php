@@ -7,7 +7,7 @@ class MapLayerDefaultsTile extends \Kendo\SerializableObject {
 
     /**
     * Sets the urlTemplate option of the MapLayerDefaultsTile.
-    * The URL template for tile layers. Template variables:
+    * The URL template for tile layers. Template variables: x - X coordinate of the tile; y - Y coordinate of the tile; zoom - zoom level or subdomain - Subdomain for this tile. See subdomains.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\MapLayerDefaultsTile
     */
@@ -19,7 +19,7 @@ class MapLayerDefaultsTile extends \Kendo\SerializableObject {
 
     /**
     * Sets the urlTemplate option of the MapLayerDefaultsTile.
-    * The URL template for tile layers. Template variables:
+    * The URL template for tile layers. Template variables: x - X coordinate of the tile; y - Y coordinate of the tile; zoom - zoom level or subdomain - Subdomain for this tile. See subdomains.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\MapLayerDefaultsTile
     */

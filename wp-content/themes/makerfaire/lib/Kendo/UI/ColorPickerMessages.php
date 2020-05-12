@@ -23,6 +23,15 @@ class ColorPickerMessages extends \Kendo\SerializableObject {
         return $this->setProperty('cancel', $value);
     }
 
+    /**
+    * Allows customization of the "Color Hexadecimal Code" preview input title.
+    * @param string $value
+    * @return \Kendo\UI\ColorPickerMessages
+    */
+    public function previewInput($value) {
+        return $this->setProperty('previewInput', $value);
+    }
+
 //<< Properties
 }
 

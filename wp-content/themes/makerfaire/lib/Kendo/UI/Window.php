@@ -26,8 +26,7 @@ class Window extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * The buttons for interacting with the window. Predefined array values are "Close", "Refresh", "Minimize",
-and "Maximize".
+    * The buttons for interacting with the Window.The predefined array values are: Close; Refresh; Minimize; Maximize or Pin.
     * @param array $value
     * @return \Kendo\UI\Window
     */
@@ -36,9 +35,8 @@ and "Maximize".
     }
 
     /**
-    * A collection of {Animation} objects, used to change default animations. A value of false
-will disable all animations in the widget.
-    * @param \Kendo\UI\WindowAnimation|array $value
+    * A collection of {Animation} objects that is used to change the default animations. When set to false, all animations will be disabled.
+    * @param boolean|\Kendo\UI\WindowAnimation|array $value
     * @return \Kendo\UI\Window
     */
     public function animation($value) {
@@ -46,8 +44,7 @@ will disable all animations in the widget.
     }
 
     /**
-    * The element that the Window will be appended to. Beneficial if the Window is used together with a form.
-Note that this does not constrain the window dragging within the given element.
+    * The element to which the Window will be appended. It is beneficial to use the Window together with a form which does not constrain the dragging of the Window within the specific element. For such scenarios, use the draggable.containment setting.
     * @param |string $value
     * @return \Kendo\UI\Window
     */
@@ -56,7 +53,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * Determines whether the Window will be focused automatically when opened. The property also influences the focus behavior when the Window is clicked when already opened.
+    * Determines whether the Window will be focused automatically when opened. The property also influences the focus behavior when an already opened Window is clicked.
     * @param boolean $value
     * @return \Kendo\UI\Window
     */
@@ -65,8 +62,8 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * Enables (true) or disables (false) the ability for users to move/drag the widget.
-    * @param boolean $value
+    * Enables (true) or disables (false) the dragging of the widget.
+    * @param boolean|\Kendo\UI\WindowDraggable|array $value
     * @return \Kendo\UI\Window
     */
     public function draggable($value) {
@@ -74,7 +71,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * Explicitly states whether a content iframe should be created. For more information, please read Using iframes.
+    * Explicitly states whether a content iframe will be created. For more information, refer to the documentation on using iframes.
     * @param boolean $value
     * @return \Kendo\UI\Window
     */
@@ -83,7 +80,16 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * The maximum height (in pixels) that may be achieved by resizing the window.
+    * Specifies the height of the Window.
+    * @param float|string $value
+    * @return \Kendo\UI\Window
+    */
+    public function height($value) {
+        return $this->setProperty('height', $value);
+    }
+
+    /**
+    * The maximum height (in pixels) that may be achieved by resizing the Window.
     * @param float $value
     * @return \Kendo\UI\Window
     */
@@ -92,7 +98,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * The maximum width (in pixels) that may be achieved by resizing the window.
+    * The maximum width (in pixels) that may be achieved by resizing the Window.
     * @param float $value
     * @return \Kendo\UI\Window
     */
@@ -101,7 +107,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * The minimum height (in pixels) that may be achieved by resizing the window.
+    * The minimum height (in pixels) that may be achieved by resizing the Window.
     * @param float $value
     * @return \Kendo\UI\Window
     */
@@ -110,7 +116,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * The minimum width (in pixels) that may be achieved by resizing the window.
+    * The minimum width (in pixels) that may be achieved by resizing the Window.
     * @param float $value
     * @return \Kendo\UI\Window
     */
@@ -119,8 +125,8 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * Specifies whether the window should show a modal overlay over the page.
-    * @param boolean $value
+    * Specifies whether the Window will display a modal overlay over the page.
+    * @param boolean|\Kendo\UI\WindowModal|array $value
     * @return \Kendo\UI\Window
     */
     public function modal($value) {
@@ -128,7 +134,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * Specifies whether the window should be pinned, i.e. it will not move together with the page content during scrolling.
+    * Specifies whether the Window will be pinned, that is, that it will not move together with the page content during scrolling.
     * @param boolean $value
     * @return \Kendo\UI\Window
     */
@@ -137,7 +143,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * A collection of one or two members, which define the initial Window's top and/or left position on the page.
+    * A collection of one or two members which define the initial top and/or left position of the Window or the position of the containment element on the page.
     * @param \Kendo\UI\WindowPosition|array $value
     * @return \Kendo\UI\Window
     */
@@ -146,7 +152,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * Enables (true) or disables (false) the ability for users to resize a Window.
+    * Enables (true) or disables (false) the resizing of the Window.
     * @param boolean $value
     * @return \Kendo\UI\Window
     */
@@ -155,8 +161,17 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * The text in the window title bar. If false, the window will be displayed without a title bar. Note that this will prevent the window from being dragged, and the window titlebar buttons will not be shown.
-    * @param string|boolean $value
+    * Enables (true) or disables (false) the scrolling of the Window contents.
+    * @param boolean $value
+    * @return \Kendo\UI\Window
+    */
+    public function scrollable($value) {
+        return $this->setProperty('scrollable', $value);
+    }
+
+    /**
+    * The text in the title bar of the Window. If set to false, the Window will be displayed without a title bar.
+    * @param string|boolean|\Kendo\UI\WindowTitle|array $value
     * @return \Kendo\UI\Window
     */
     public function title($value) {
@@ -164,7 +179,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * Specifies whether the window will be initially visible.
+    * Specifies whether the Window will be initially visible.
     * @param boolean $value
     * @return \Kendo\UI\Window
     */
@@ -173,7 +188,7 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * Specifies width of the window.
+    * Specifies the width of the Window.
     * @param float|string $value
     * @return \Kendo\UI\Window
     */
@@ -182,12 +197,12 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
-    * Specifies height of the window.
-    * @param float|string $value
+    * Sets a predefined size to the Window. The width and height configuration options override the predefined size.The supported values are: auto; small; medium or large.
+    * @param string $value
     * @return \Kendo\UI\Window
     */
-    public function height($value) {
-        return $this->setProperty('height', $value);
+    public function size($value) {
+        return $this->setProperty('size', $value);
     }
 
     /**
@@ -206,7 +221,7 @@ Note that this does not constrain the window dragging within the given element.
 
     /**
     * Sets the close event of the Window.
-    * Triggered when a Window is closed (by a user or through the close() method).
+    * Triggered when a Window is closed either by the user or through the close() method.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Window
     */
@@ -234,7 +249,7 @@ Note that this does not constrain the window dragging within the given element.
 
     /**
     * Sets the dragend event of the Window.
-    * Triggered when a Window has been moved by a user.
+    * Triggered when a Window has been moved by the user.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Window
     */
@@ -248,7 +263,7 @@ Note that this does not constrain the window dragging within the given element.
 
     /**
     * Sets the dragstart event of the Window.
-    * Triggered when the user starts to move the window.
+    * Triggered when the user starts to move the Window.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Window
     */
@@ -262,7 +277,7 @@ Note that this does not constrain the window dragging within the given element.
 
     /**
     * Sets the error event of the Window.
-    * Triggered when an AJAX request for content fails.
+    * Triggered when an Ajax request for content fails.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Window
     */
@@ -275,8 +290,36 @@ Note that this does not constrain the window dragging within the given element.
     }
 
     /**
+    * Sets the maximize event of the Window.
+    * Triggered when the user maximizes the Window. Introduced in 2016.Q1.SP1.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\Window
+    */
+    public function maximize($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('maximize', $value);
+    }
+
+    /**
+    * Sets the minimize event of the Window.
+    * Triggered when the user minimizes the Window. Introduced in 2016.Q1.SP1.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\Window
+    */
+    public function minimize($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('minimize', $value);
+    }
+
+    /**
     * Sets the open event of the Window.
-    * Triggered when a Window is opened (i.e. the open() method is called).
+    * Triggered when a Window is opened, that is, when the open() method is called.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Window
     */
@@ -290,9 +333,7 @@ Note that this does not constrain the window dragging within the given element.
 
     /**
     * Sets the refresh event of the Window.
-    * Triggered when the content of a Window has finished loading via AJAX,
-when the window iframe has finished loading, or when the refresh button
-has been clicked on a window with static content.
+    * Triggered when the content of a Window has finished loading via Ajax, when the Window iframe has finished loading, or when the Refresh button has been clicked on a Window with static content.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Window
     */
@@ -306,7 +347,7 @@ has been clicked on a window with static content.
 
     /**
     * Sets the resize event of the Window.
-    * Triggered when a window has been resized by a user.
+    * Triggered when the user resizes the Window.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Window
     */
@@ -344,3 +385,5 @@ has been clicked on a window with static content.
 
 //<< Properties
 }
+
+?>

@@ -6,7 +6,7 @@ class DiagramShapeContent extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The alignment of the text inside the shape.
+    * The alignment of the text inside the shape. You can do combinations between "top", "middle" and "bottom" for vertical align and "right", "center" and "left" for horizontal align. For example, "top right", "middle left", "bottom center", and so on.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramShapeContent
     */
@@ -42,8 +42,26 @@ class DiagramShapeContent extends \Kendo\SerializableObject {
     }
 
     /**
+    * The font style of the shape content text.
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\DiagramShapeContent
+    */
+    public function fontStyle($value) {
+        return $this->setProperty('fontStyle', $value);
+    }
+
+    /**
+    * The font weight of the shape content text.
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\DiagramShapeContent
+    */
+    public function fontWeight($value) {
+        return $this->setProperty('fontWeight', $value);
+    }
+
+    /**
     * Sets the template option of the DiagramShapeContent.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\DiagramShapeContent
     */
@@ -55,7 +73,7 @@ class DiagramShapeContent extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the DiagramShapeContent.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\DiagramShapeContent
     */

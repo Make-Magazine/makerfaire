@@ -6,8 +6,7 @@ class StockChartValueAxisItemLine extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The color of the line. This will also effect the major and minor ticks, but
-not the grid lines.
+    * The color of the line. This will also effect the major and minor ticks, but not the grid lines.
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartValueAxisItemLine
     */
@@ -34,8 +33,7 @@ not the grid lines.
     }
 
     /**
-    * The width of the line. This will also effect the major and minor ticks, but
-not the grid lines.
+    * The width of the line. This will also effect the major and minor ticks, but not the grid lines.
     * @param float $value
     * @return \Kendo\Dataviz\UI\StockChartValueAxisItemLine
     */

@@ -6,8 +6,7 @@ class SparklineValueAxisItemLabels extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The background color of the labels. Any valid CSS color string will work here, including
-hex and rgb
+    * The background color of the labels. Any valid CSS color string will work here, including hex and rgb
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItemLabels
     */
@@ -61,9 +60,7 @@ hex and rgb
     }
 
     /**
-    * Mirrors the axis labels and ticks.
-If the labels are normally on the left side of the axis,
-mirroring the axis will render them to the right.
+    * Mirrors the axis labels and ticks. If the labels are normally on the left side of the axis, mirroring the axis will render them to the right.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItemLabels
     */
@@ -90,8 +87,7 @@ mirroring the axis will render them to the right.
     }
 
     /**
-    * Number of labels to skip.
-Skips rendering the first n labels.
+    * Number of labels to skip. Skips rendering the first n labels.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItemLabels
     */
@@ -100,8 +96,7 @@ Skips rendering the first n labels.
     }
 
     /**
-    * Label rendering step.
-Every n-th label is rendered where n is the step
+    * Label rendering step. Every n-th label is rendered where n is the step
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItemLabels
     */
@@ -111,8 +106,7 @@ Every n-th label is rendered where n is the step
 
     /**
     * Sets the template option of the SparklineValueAxisItemLabels.
-    * The label template.
-Template variables:
+    * The label template. Template variables: value- the value.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItemLabels
     */
@@ -124,8 +118,7 @@ Template variables:
 
     /**
     * Sets the template option of the SparklineValueAxisItemLabels.
-    * The label template.
-Template variables:
+    * The label template. Template variables: value- the value.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItemLabels
     */

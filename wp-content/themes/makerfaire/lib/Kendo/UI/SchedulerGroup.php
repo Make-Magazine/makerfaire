@@ -6,6 +6,15 @@ class SchedulerGroup extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
+    * If set to true and the group.resources has some resources set the view is grouped by date.
+    * @param boolean $value
+    * @return \Kendo\UI\SchedulerGroup
+    */
+    public function date($value) {
+        return $this->setProperty('date', $value);
+    }
+
+    /**
     * An array of resource names by which the scheduler events will be grouped.
     * @param array $value
     * @return \Kendo\UI\SchedulerGroup
@@ -25,3 +34,5 @@ class SchedulerGroup extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

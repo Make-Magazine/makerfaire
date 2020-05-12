@@ -25,3 +25,5 @@ class TimePickerAnimationClose extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

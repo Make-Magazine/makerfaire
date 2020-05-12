@@ -6,7 +6,7 @@ class DropDownListAnimation extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    *
+    * 
     * @param \Kendo\UI\DropDownListAnimationClose|array $value
     * @return \Kendo\UI\DropDownListAnimation
     */
@@ -25,3 +25,5 @@ class DropDownListAnimation extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

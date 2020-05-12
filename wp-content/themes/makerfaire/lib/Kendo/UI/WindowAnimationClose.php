@@ -6,7 +6,7 @@ class WindowAnimationClose extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Effect to be used for closing of the popup.
+    * The effect that will be used when the popup closes.
     * @param string $value
     * @return \Kendo\UI\WindowAnimationClose
     */
@@ -15,7 +15,7 @@ class WindowAnimationClose extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the close animation duration.
+    * Defines the duration of the closing animation.
     * @param float $value
     * @return \Kendo\UI\WindowAnimationClose
     */
@@ -25,3 +25,5 @@ class WindowAnimationClose extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

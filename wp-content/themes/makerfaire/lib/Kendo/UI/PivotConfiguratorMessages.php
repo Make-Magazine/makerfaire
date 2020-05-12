@@ -79,3 +79,5 @@ class PivotConfiguratorMessages extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

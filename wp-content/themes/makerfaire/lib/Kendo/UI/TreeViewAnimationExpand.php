@@ -6,8 +6,7 @@ class TreeViewAnimationExpand extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The number of milliseconds used for the animation when a
-node is expanded.
+    * The number of milliseconds used for the animation when a node is expanded.
     * @param float $value
     * @return \Kendo\UI\TreeViewAnimationExpand
     */
@@ -16,8 +15,7 @@ node is expanded.
     }
 
     /**
-    * A whitespace-delimited string of animation effects that are used when expanding nodes.
-The supported effects are "expandVertical" and "fadeIn".
+    * A whitespace-delimited string of animation effects that are used when expanding nodes. The supported effects are "expandVertical" and "fadeIn".
     * @param string $value
     * @return \Kendo\UI\TreeViewAnimationExpand
     */
@@ -27,3 +25,5 @@ The supported effects are "expandVertical" and "fadeIn".
 
 //<< Properties
 }
+
+?>

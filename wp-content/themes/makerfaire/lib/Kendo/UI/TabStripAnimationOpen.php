@@ -15,8 +15,7 @@ class TabStripAnimationOpen extends \Kendo\SerializableObject {
     }
 
     /**
-    * A whitespace-separated string of animation effects that are used when a new tab is shown. Options include
-"expand:vertical" and "fadeIn".
+    * A whitespace-separated string of animation effects that are used when a new tab is shown. Options include"expand:vertical" and "fadeIn".
     * @param string $value
     * @return \Kendo\UI\TabStripAnimationOpen
     */
@@ -26,3 +25,5 @@ class TabStripAnimationOpen extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

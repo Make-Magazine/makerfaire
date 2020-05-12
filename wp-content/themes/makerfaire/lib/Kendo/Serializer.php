@@ -70,8 +70,11 @@ class Serializer {
             } else {
                 $this->serializeArray($out, $value);
             }
-        } else {
+        }else if(is_int($value) || is_float($value)){
             $out[] = json_encode($value, JSON_NUMERIC_CHECK);
+        }
+         else {
+            $out[] = json_encode($value);
         }
     }
 }

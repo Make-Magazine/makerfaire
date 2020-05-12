@@ -6,8 +6,7 @@ class LinearGaugeScaleLabels extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The background color of the labels.
-Any valid CSS color string will work here, including hex and rgb
+    * The background color of the labels. Any valid CSS color string will work here, including hex and rgb
     * @param string $value
     * @return \Kendo\Dataviz\UI\LinearGaugeScaleLabels
     */
@@ -25,8 +24,7 @@ Any valid CSS color string will work here, including hex and rgb
     }
 
     /**
-    * The text color of the labels.
-Any valid CSS color string will work here, including hex and rgb.
+    * The text color of the labels. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\LinearGaugeScaleLabels
     */
@@ -72,8 +70,7 @@ Any valid CSS color string will work here, including hex and rgb.
 
     /**
     * Sets the template option of the LinearGaugeScaleLabels.
-    * The label template.
-Template variables:
+    * The label template. Template variables: value - the value.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\LinearGaugeScaleLabels
     */
@@ -85,8 +82,7 @@ Template variables:
 
     /**
     * Sets the template option of the LinearGaugeScaleLabels.
-    * The label template.
-Template variables:
+    * The label template. Template variables: value - the value.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\LinearGaugeScaleLabels
     */

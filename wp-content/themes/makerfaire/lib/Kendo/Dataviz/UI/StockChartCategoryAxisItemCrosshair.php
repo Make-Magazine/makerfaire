@@ -51,7 +51,7 @@ class StockChartCategoryAxisItemCrosshair extends \Kendo\SerializableObject {
     }
 
     /**
-    * The crosshar tooltip configuration options.
+    * The crosshair tooltip configuration options.
     * @param \Kendo\Dataviz\UI\StockChartCategoryAxisItemCrosshairTooltip|array $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemCrosshair
     */

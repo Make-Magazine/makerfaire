@@ -7,3 +7,5 @@ class EditorImageBrowserSchema extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

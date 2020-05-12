@@ -6,12 +6,12 @@ class StockChartNavigator extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Adds StockChartNavigatorCategoryAxisItem to the StockChartNavigator.
-    * @param \Kendo\Dataviz\UI\StockChartNavigatorCategoryAxisItem|array,... $value one or more StockChartNavigatorCategoryAxisItem to add.
+    * The category axis configuration options.
+    * @param \Kendo\Dataviz\UI\StockChartNavigatorCategoryAxis|array $value
     * @return \Kendo\Dataviz\UI\StockChartNavigator
     */
-    public function addCategoryAxisItem($value) {
-        return $this->add('categoryAxis', func_get_args());
+    public function categoryAxis($value) {
+        return $this->setProperty('categoryAxis', $value);
     }
 
     /**
@@ -24,8 +24,7 @@ class StockChartNavigator extends \Kendo\SerializableObject {
     }
 
     /**
-    * Indicates whether the navigator will call read on the data source initially.
-Applicable only when using a dedicated navigator data source.
+    * Indicates whether the navigator will call read on the data source initially. Applicable only when using a dedicated navigator data source.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\StockChartNavigator
     */
@@ -34,8 +33,7 @@ Applicable only when using a dedicated navigator data source.
     }
 
     /**
-    * The field containing the point date.
-It is used as a default field for the navigator axis.The data item field value must be either:
+    * The field containing the point date. It is used as a default field for the navigator axis.The data item field value must be either:
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartNavigator
     */
@@ -50,15 +48,6 @@ It is used as a default field for the navigator axis.The data item field value m
     */
     public function pane($value) {
         return $this->setProperty('pane', $value);
-    }
-
-    /**
-    * The visibility of the navigator.
-    * @param boolean $value
-    * @return \Kendo\Dataviz\UI\StockChartNavigator
-    */
-    public function visible($value) {
-        return $this->setProperty('visible', $value);
     }
 
     /**
@@ -86,6 +75,15 @@ It is used as a default field for the navigator axis.The data item field value m
     */
     public function hint($value) {
         return $this->setProperty('hint', $value);
+    }
+
+    /**
+    * The visibility of the navigator.
+    * @param boolean $value
+    * @return \Kendo\Dataviz\UI\StockChartNavigator
+    */
+    public function visible($value) {
+        return $this->setProperty('visible', $value);
     }
 
 //<< Properties

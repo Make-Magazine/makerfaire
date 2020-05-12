@@ -47,6 +47,24 @@ class EditorTool extends \Kendo\SerializableObject {
     }
 
     /**
+    * Specifies the color palette for "foreColor" and "backColor" tools.
+    * @param string|array $value
+    * @return \Kendo\UI\EditorTool
+    */
+    public function palette($value) {
+        return $this->setProperty('palette', $value);
+    }
+
+    /**
+    * Specifies the colors columns for "foreColor" and "backColor" tools when list of colors are defined.
+    * @param float $value
+    * @return \Kendo\UI\EditorTool
+    */
+    public function columns($value) {
+        return $this->setProperty('columns', $value);
+    }
+
+    /**
     * Sets the template option of the EditorTool.
     * The kendo template that will be used for rendering the given tool.
     * @param string $value The id of the element which represents the kendo template.
@@ -70,3 +88,5 @@ class EditorTool extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

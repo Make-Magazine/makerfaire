@@ -60,9 +60,7 @@ class StockChartCategoryAxisItemLabels extends \Kendo\SerializableObject {
     }
 
     /**
-    * Mirrors the axis labels and ticks.
-If the labels are normally on the left side of the axis,
-mirroring the axis will render them to the right.
+    * Mirrors the axis labels and ticks. If the labels are normally on the left side of the axis, mirroring the axis will render them to the right.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemLabels
     */
@@ -89,8 +87,7 @@ mirroring the axis will render them to the right.
     }
 
     /**
-    * Number of labels to skip.
-Skips rendering the first n labels.
+    * Number of labels to skip. Skips rendering the first n labels.
     * @param float $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemLabels
     */
@@ -99,8 +96,7 @@ Skips rendering the first n labels.
     }
 
     /**
-    * Label rendering step.
-Every n-th label is rendered where n is the step
+    * Label rendering step. Every n-th label is rendered where n is the step
     * @param float $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemLabels
     */
@@ -110,7 +106,7 @@ Every n-th label is rendered where n is the step
 
     /**
     * Sets the template option of the StockChartCategoryAxisItemLabels.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.The fields which can be used in the template are: value - the category value or dataItem - the data item, in case a field has been specified.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemLabels
     */
@@ -122,7 +118,7 @@ Every n-th label is rendered where n is the step
 
     /**
     * Sets the template option of the StockChartCategoryAxisItemLabels.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.The fields which can be used in the template are: value - the category value or dataItem - the data item, in case a field has been specified.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemLabels
     */
@@ -140,8 +136,7 @@ Every n-th label is rendered where n is the step
     }
 
     /**
-    * Culture to use for formatting the dates. See Globalization for more information.
-It defaults to the global culture.
+    * Culture to use for formatting the dates. See Globalization for more information. It defaults to the global culture.
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemLabels
     */

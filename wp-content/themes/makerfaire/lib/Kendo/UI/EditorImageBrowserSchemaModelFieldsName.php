@@ -30,3 +30,5 @@ class EditorImageBrowserSchemaModelFieldsName extends \Kendo\SerializableObject 
 
 //<< Properties
 }
+
+?>

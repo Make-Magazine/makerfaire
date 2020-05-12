@@ -7,7 +7,7 @@ class TreeListColumnSortable extends \Kendo\SerializableObject {
 
     /**
     * Sets the compare option of the TreeListColumnSortable.
-    * A JavaScript function which is used to compare the values - should return -1 if first argument is less than second one, 0 if both are the same or +1 if the first one is greater than second one.
+    * A JavaScript function for comparing the values. If the first argument is less than the second one, returns -1.; If both arguments are the same, returns 0. or If the first argument is greater than the second one, returns +1..
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeListColumnSortable
     */
@@ -21,3 +21,5 @@ class TreeListColumnSortable extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

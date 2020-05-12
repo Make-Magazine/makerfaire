@@ -57,20 +57,10 @@ class TabStrip extends \Kendo\UI\Widget {
         return $wrapper->outerHtml();
     }
 
-    /**
-    * Sets the data of the TabStrip.
-    * @param array $value
-    * @return \Kendo\UI\TabStrip
-    */
-    public function dataSource(array $value) {
-        return $this->setProperty('dataSource', $value);
-    }
-
 //>> Properties
 
     /**
-    * A collection of visual animations used when TabStrip tab are selected through
-user interactions. Setting this option to false will disable all animations.
+    * A collection of visual animations used when TabStrip tab are selected through user interactions. Setting this option to false will disable all animations. is not a valid configuration.
     * @param boolean|\Kendo\UI\TabStripAnimation|array $value
     * @return \Kendo\UI\TabStrip
     */
@@ -124,6 +114,15 @@ user interactions. Setting this option to false will disable all animations.
     }
 
     /**
+    * Sets the data source of the TabStrip.
+    * @param array|\Kendo\Data\DataSource $value
+    * @return \Kendo\UI\TabStrip
+    */
+    public function dataSource($value) {
+        return $this->setProperty('dataSource', $value);
+    }
+
+    /**
     * Sets the field of the data item that provides the CSS class of the tab.
     * @param string $value
     * @return \Kendo\UI\TabStrip
@@ -160,7 +159,7 @@ user interactions. Setting this option to false will disable all animations.
     }
 
     /**
-    * If enabled, the TabStrip will display buttons that will scroll the tabs horizontally, when they cannot fit the TabStrip width. By default scrolling is enabled.The feature requires "top" or "bottom" tabPosition.Unless disabled, scrollable must be set to a JavaScript object, which represents the scrolling configuration.
+    * If enabled, the TabStrip will display buttons that will scroll the tabs horizontally, when they cannot fit the TabStrip width. By default scrolling is enabled.The feature requires "top" or "bottom" tabPosition.Unless disabled, scrollable must be set to a JavaScript object, which represents the scrolling configuration.See Scrollable Tabs for more information.
     * @param boolean|\Kendo\UI\TabStripScrollable|array $value
     * @return \Kendo\UI\TabStrip
     */
@@ -169,13 +168,21 @@ user interactions. Setting this option to false will disable all animations.
     }
 
     /**
-    * Specifies the position of the widget tabs. Valid values are "top" (default), "left", "right" and "bottom".
-A fade animation is highly recommended with any of the non-default tab position settings.
+    * Specifies the position of the widget tabs. Valid values are "top" (default), "left", "right" and "bottom". A fade animation is highly recommended with any of the non-default tab position settings.
     * @param string $value
     * @return \Kendo\UI\TabStrip
     */
     public function tabPosition($value) {
         return $this->setProperty('tabPosition', $value);
+    }
+
+    /**
+    * Specifies the selected tab. Should be corresponding to the dataTextField configuration and used when bound to a DataSource component.
+    * @param string $value
+    * @return \Kendo\UI\TabStrip
+    */
+    public function value($value) {
+        return $this->setProperty('value', $value);
     }
 
     /**

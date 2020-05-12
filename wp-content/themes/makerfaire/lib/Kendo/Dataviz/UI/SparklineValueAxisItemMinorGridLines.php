@@ -6,7 +6,7 @@ class SparklineValueAxisItemMinorGridLines extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The color of the lines.Note that this has no effect if the visibility of the minor grid lines is not set to true.
+    * The color of the lines.Note that this has no effect if the visibility of the minor grid lines is not set totrue.
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItemMinorGridLines
     */
@@ -33,7 +33,7 @@ class SparklineValueAxisItemMinorGridLines extends \Kendo\SerializableObject {
     }
 
     /**
-    * The width of the lines.Note that this settings has no effect if the visibility of the minor grid lines is not set to true.
+    * The width of the lines.Note that this settings has no effect if the visibility of the minor grid lines is not set totrue.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItemMinorGridLines
     */

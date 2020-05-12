@@ -6,7 +6,7 @@ class DiagramConnection extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Defines the shapes content settings.
+    * Defines the connection content settings.
     * @param \Kendo\Dataviz\UI\DiagramConnectionContent|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnection
     */
@@ -33,12 +33,21 @@ class DiagramConnection extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the source of the connection.
+    * Defines the source of the connection. You can set this property to a value matching a shape id or to an object with XY-coordinates.
     * @param string|float|\Kendo\Dataviz\UI\DiagramConnectionFrom|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnection
     */
     public function from($value) {
         return $this->setProperty('from', $value);
+    }
+
+    /**
+    * Specifies the name of the source shape connector that should be used by the connection.
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\DiagramConnection
+    */
+    public function fromConnector($value) {
+        return $this->setProperty('fromConnector', $value);
     }
 
     /**
@@ -87,7 +96,7 @@ class DiagramConnection extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the connection to.
+    * Defines the target of the connection. You can set this property to a value matching a shape id or to an object with XY-coordinates.
     * @param string|float|\Kendo\Dataviz\UI\DiagramConnectionTo|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnection
     */
@@ -96,7 +105,16 @@ class DiagramConnection extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the connection type. The supported values are "polyline" and "cascading".
+    * Specifies the name of the target shape connector that should be used by the connection.
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\DiagramConnection
+    */
+    public function toConnector($value) {
+        return $this->setProperty('toConnector', $value);
+    }
+
+    /**
+    * The connection type.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramConnection
     */

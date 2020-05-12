@@ -37,7 +37,7 @@ class QRCode extends \Kendo\UI\Widget {
     }
 
     /**
-    * The encoding mode used to encode the value.The possible values are:
+    * The encoding mode used to encode the value.The possible values are: "ISO_8859_1" - supports all characters from the ISO/IEC 8859-1 character set. or "UTF_8" - supports all Unicode characters..
     * @param string $value
     * @return \Kendo\Dataviz\UI\QRCode
     */
@@ -46,7 +46,7 @@ class QRCode extends \Kendo\UI\Widget {
     }
 
     /**
-    * The error correction level used to encode the value.The possible values are:
+    * The error correction level used to encode the value.The possible values are: "L" - approximately 7% of the codewords can be restored.; "M" - approximately 15% of the codewords can be restored.; "Q" - approximately 25% of the codewords can be restored. or "H" - approximately 30% of the codewords can be restored..
     * @param string $value
     * @return \Kendo\Dataviz\UI\QRCode
     */
@@ -64,8 +64,7 @@ class QRCode extends \Kendo\UI\Widget {
     }
 
     /**
-    * Sets the preferred rendering engine.
-If it is not supported by the browser, the QRCode will switch to the first available mode.The supported values are:
+    * Sets the preferred rendering engine. If it is not supported by the browser, the QRCode will switch to the first available mode.The supported values are: "canvas" - renders the widget as a Canvas element, if available. or "svg" - renders the widget as inline SVG document, if available.
     * @param string $value
     * @return \Kendo\Dataviz\UI\QRCode
     */
@@ -74,9 +73,7 @@ If it is not supported by the browser, the QRCode will switch to the first avail
     }
 
     /**
-    * Specifies the size of a QR code in pixels (i.e. "200px"). Numeric values are treated as pixels.
-If no size is specified, it will be determined from the element width and height.
-In case the element has width or height of zero, a default value of 200 pixels will be used.
+    * Specifies the size of a QR code in pixels (i.e. "200px"). Numeric values are treated as pixels. If no size is specified, it will be determined from the element width and height. In case the element has width or height of zero, a default value of 200 pixels will be used.
     * @param float|string $value
     * @return \Kendo\Dataviz\UI\QRCode
     */

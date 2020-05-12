@@ -15,8 +15,7 @@ class RadialGaugeScaleMajorTicks extends \Kendo\SerializableObject {
     }
 
     /**
-    * The major tick size.
-This is the length of the line in pixels that is drawn to indicate the tick on the scale.
+    * The major tick size. This is the length of the line in pixels that is drawn to indicate the tick on the scale.
     * @param float $value
     * @return \Kendo\Dataviz\UI\RadialGaugeScaleMajorTicks
     */
@@ -25,8 +24,7 @@ This is the length of the line in pixels that is drawn to indicate the tick on t
     }
 
     /**
-    * The visibility of the major ticks.
-Any valid CSS color string will work here, including hex and rgb.
+    * The visibility of the major ticks. Any valid CSS color string will work here, including hex and rgb.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\RadialGaugeScaleMajorTicks
     */

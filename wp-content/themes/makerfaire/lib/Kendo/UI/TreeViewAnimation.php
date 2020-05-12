@@ -1,4 +1,5 @@
 <?php
+
 namespace Kendo\UI;
 
 class TreeViewAnimation extends \Kendo\SerializableObject {
@@ -24,3 +25,5 @@ class TreeViewAnimation extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

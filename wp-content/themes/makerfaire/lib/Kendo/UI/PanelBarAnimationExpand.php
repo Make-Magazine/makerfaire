@@ -15,8 +15,7 @@ class PanelBarAnimationExpand extends \Kendo\SerializableObject {
     }
 
     /**
-    * A whitespace-delimited string of animation effects that are used when an item is expanded. Options include
-"expandVertical" and "fadeIn".
+    * A whitespace-delimited string of animation effects that are used when an item is expanded. Options include"expandVertical" and "fadeIn".
     * @param string $value
     * @return \Kendo\UI\PanelBarAnimationExpand
     */
@@ -26,3 +25,5 @@ class PanelBarAnimationExpand extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

@@ -6,7 +6,7 @@ class TreeListColumnMenuMessages extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The text message displayed for the column selection menu item.
+    * The text message that is displayed for the column selection menu item.
     * @param string $value
     * @return \Kendo\UI\TreeListColumnMenuMessages
     */
@@ -15,7 +15,7 @@ class TreeListColumnMenuMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text message displayed for the filter menu item.
+    * The text message that is displayed for the filter menu item.
     * @param string $value
     * @return \Kendo\UI\TreeListColumnMenuMessages
     */
@@ -24,7 +24,7 @@ class TreeListColumnMenuMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text message displayed for the menu item which performs ascending sort.
+    * The text message that is displayed for the menu item which performs the ascending sort mode.
     * @param string $value
     * @return \Kendo\UI\TreeListColumnMenuMessages
     */
@@ -33,7 +33,7 @@ class TreeListColumnMenuMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text message displayed for the menu item which performs descending sort.
+    * The text message that is displayed for the menu item which performs the descending sort mode.
     * @param string $value
     * @return \Kendo\UI\TreeListColumnMenuMessages
     */
@@ -41,5 +41,34 @@ class TreeListColumnMenuMessages extends \Kendo\SerializableObject {
         return $this->setProperty('sortDescending', $value);
     }
 
+    /**
+    * The text message that is displayed in the menu header.
+    * @param string $value
+    * @return \Kendo\UI\TreeListColumnMenuMessages
+    */
+    public function settings($value) {
+        return $this->setProperty('settings', $value);
+    }
+
+    /**
+    * The text message that is displayed in the column menu when locking a column.
+    * @param string $value
+    * @return \Kendo\UI\TreeListColumnMenuMessages
+    */
+    public function lock($value) {
+        return $this->setProperty('lock', $value);
+    }
+
+    /**
+    * The text message that is displayed in the column menu for unlocking a column.
+    * @param string $value
+    * @return \Kendo\UI\TreeListColumnMenuMessages
+    */
+    public function unlock($value) {
+        return $this->setProperty('unlock', $value);
+    }
+
 //<< Properties
 }
+
+?>

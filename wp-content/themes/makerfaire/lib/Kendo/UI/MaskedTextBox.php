@@ -31,7 +31,7 @@ class MaskedTextBox extends \Kendo\UI\Widget {
     }
 
     /**
-    * Specifies the input mask. The following mask rules are supported:
+    * Specifies the input mask. The following mask rules are supported: 0 - Digit. Accepts any digit between 0 and 9.; 9 - Digit or space. Accepts any digit between 0 and 9, plus space.; # - Digit or space. Like 9 rule, but allows also (+) and (-) signs.; L - Letter. Restricts input to letters a-z and A-Z. This rule is equivalent to [a-zA-Z] in regular expressions.; ? - Letter or space. Restricts input to letters a-z and A-Z. This rule is equivalent to [a-zA-Z] in regular expressions.; & - Character. Accepts any character. The rule is equivalent to \S in regular expressions.; C - Character or space. Accepts any character. The rule is equivalent to . in regular expressions.; A - Alphanumeric. Accepts letters and digits only.; a - Alphanumeric or space. Accepts letters, digits and space only.; . - Decimal placeholder. The decimal separator will be gotten from the current culture used by Kendo.; , - Thousands placeholder. The display character will be gotten from the current culture used by Kendo. or $ - Currency symbol. The display character will be gotten from the current culture used by Kendo..
     * @param string $value
     * @return \Kendo\UI\MaskedTextBox
     */

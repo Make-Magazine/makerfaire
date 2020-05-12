@@ -15,8 +15,7 @@ class MapMarkerTooltip extends \Kendo\SerializableObject {
     }
 
     /**
-    * A collection of {Animation} objects, used to change default animations. A value of false
-will disable all animations in the widget.
+    * A collection of {Animation} objects, used to change default animations. A value of false will disable all animations in the widget.
     * @param \Kendo\Dataviz\UI\MapMarkerTooltipAnimation|array $value
     * @return \Kendo\Dataviz\UI\MapMarkerTooltip
     */
@@ -25,8 +24,7 @@ will disable all animations in the widget.
     }
 
     /**
-    * The text or a function which result will be shown within the tooltip.
-By default the tooltip will display the target element title attribute content.
+    * The text or a function which result will be shown within the tooltip. By default the tooltip will display the target element title attribute content.
     * @param string|\Kendo\JavaScriptFunction|\Kendo\Dataviz\UI\MapMarkerTooltipContent|array $value
     * @return \Kendo\Dataviz\UI\MapMarkerTooltip
     */
@@ -36,7 +34,7 @@ By default the tooltip will display the target element title attribute content.
 
     /**
     * Sets the template option of the MapMarkerTooltip.
-    * The template which renders the tooltip content.The fields which can be used in the template are:
+    * The template which renders the tooltip content.The fields which can be used in the template are: location - the marker location (kendo.dataviz.map.Location instance) or marker - the marker instance.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\MapMarkerTooltip
     */
@@ -48,7 +46,7 @@ By default the tooltip will display the target element title attribute content.
 
     /**
     * Sets the template option of the MapMarkerTooltip.
-    * The template which renders the tooltip content.The fields which can be used in the template are:
+    * The template which renders the tooltip content.The fields which can be used in the template are: location - the marker location (kendo.dataviz.map.Location instance) or marker - the marker instance.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\MapMarkerTooltip
     */

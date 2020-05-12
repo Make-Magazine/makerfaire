@@ -33,10 +33,7 @@ class SparklineCategoryAxisItemNotesDataItemIcon extends \Kendo\SerializableObje
     }
 
     /**
-    * The icon shape.The supported values are:
-* "circle" - the marker shape is circle.
-* "square" - the marker shape is square.
-* "triangle" - the marker shape is triangle.
+    * The icon shape.The supported values are: * "circle" - the marker shape is circle. * "square" - the marker shape is square. * "triangle" - the marker shape is triangle.
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineCategoryAxisItemNotesDataItemIcon
     */

@@ -30,6 +30,15 @@ class Button extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
+    * If set to true a default overlay badge will be displayed. If set to a string, an ovelay with content set to the specified string will be displayed. Can be set to a JavaScript object which represents the configuration of the Badge widget.
+    * @param boolean|string|\Kendo\UI\ButtonBadge|array $value
+    * @return \Kendo\UI\Button
+    */
+    public function badge($value) {
+        return $this->setProperty('badge', $value);
+    }
+
+    /**
     * Indicates whether the Button should be enabled or disabled. By default, it is enabled, unless a disabled="disabled" attribute is detected.
     * @param boolean $value
     * @return \Kendo\UI\Button
@@ -39,14 +48,21 @@ class Button extends \Kendo\UI\Widget {
     }
 
     /**
-    * Defines a name of an existing icon in the Kendo UI theme sprite. The icon will be applied as background image of a span element inside the Button.
-The span element can be added automatically by the widget, or an existing element can be used, if it has a k-icon CSS class applied.
-For a list of available icon names, please refer to the Icons demo.
+    * Defines a name of an existing icon in the Kendo UI theme sprite. The icon will be applied as background image of a span element inside the Button. The span element can be added automatically by the widget, or an existing element can be used, if it has a k-icon CSS class applied. For a list of available icon names, please refer to the Icons demo.
     * @param string $value
     * @return \Kendo\UI\Button
     */
     public function icon($value) {
         return $this->setProperty('icon', $value);
+    }
+
+    /**
+    * Defines a CSS class - or multiple classes separated by spaced - which are applied to a span element inside the Button. Allows the usage of custom icons.
+    * @param string $value
+    * @return \Kendo\UI\Button
+    */
+    public function iconClass($value) {
+        return $this->setProperty('iconClass', $value);
     }
 
     /**
@@ -59,8 +75,7 @@ For a list of available icon names, please refer to the Icons demo.
     }
 
     /**
-    * Defines a CSS class (or multiple classes separated by spaces), which will be used for applying a background image to a span element inside the Button.
-In case you want to use an icon from the Kendo UI theme sprite background image, it is easier to use the icon property.The span element can be added automatically by the widget, or an existing element can be used, if it has a k-sprite CSS class applied.
+    * Defines a CSS class (or multiple classes separated by spaces), which will be used for applying a background image to a span element inside the Button. In case you want to use an icon from the Kendo UI theme sprite background image, it is easier to use the icon property.The span element can be added automatically by the widget, or an existing element can be used, if it has a k-sprite CSS class applied.
     * @param string $value
     * @return \Kendo\UI\Button
     */
@@ -118,3 +133,5 @@ In case you want to use an icon from the Kendo UI theme sprite background image,
     }
 
 }
+
+?>

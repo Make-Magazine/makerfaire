@@ -15,7 +15,7 @@ class DataSourceFilterItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * The nested filter expressions. Suppor the same options as filter. Filters can be nested indefinitely.
+    * The nested filter expressions. Supports the same options as filter. Filters can be nested indefinitely.
     * @param array $value
     * @return \Kendo\Data\DataSourceFilterItem
     */
@@ -24,7 +24,7 @@ class DataSourceFilterItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * The logical operation to use when the filter.filters option is set. The supported values are "and" and "or".
+    * The logical operation to use when the filter.filters option is set.The supported values are: "and" or "or".
     * @param string $value
     * @return \Kendo\Data\DataSourceFilterItem
     */
@@ -33,9 +33,8 @@ class DataSourceFilterItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * The filter operator (comparison). The supported operators are: "eq" (equal to), "neq" (not equal to), "lt" (less than), "lte" (less than or equal to), "gt" (greater than), "gte" (greater than or equal to),
-"startswith", "endswith", "contains". The last three are supported only for string fields.
-    * @param string $value
+    * The filter operator (comparison).The supported operators are: "eq" (equal to); "neq" (not equal to); "isnull" (is equal to null); "isnotnull" (is not equal to null); "lt" (less than); "lte" (less than or equal to); "gt" (greater than); "gte" (greater than or equal to); "startswith"; "doesnotstartwith"; "endswith"; "doesnotendwith"; "contains"; "doesnotcontain"; "isempty" or "isnotempty". The last five are supported only for string fields.
+    * @param string|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Data\DataSourceFilterItem
     */
     public function operator($value) {
@@ -43,7 +42,7 @@ class DataSourceFilterItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * The value to which the field is compared. The value must be from the same type as the field.
+    * The value to which the field is compared. The value has to be of the same type as the field.
     * @param  $value
     * @return \Kendo\Data\DataSourceFilterItem
     */
@@ -53,3 +52,5 @@ class DataSourceFilterItem extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

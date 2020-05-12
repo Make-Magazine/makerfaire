@@ -43,3 +43,5 @@ class GridColumnMenu extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

@@ -24,6 +24,24 @@ class GridFilterableOperatorsDate extends \Kendo\SerializableObject {
     }
 
     /**
+    * The text of the "isnull" filter operator.
+    * @param string $value
+    * @return \Kendo\UI\GridFilterableOperatorsDate
+    */
+    public function isnull($value) {
+        return $this->setProperty('isnull', $value);
+    }
+
+    /**
+    * The text of the "isnotnull" filter operator.
+    * @param string $value
+    * @return \Kendo\UI\GridFilterableOperatorsDate
+    */
+    public function isnotnull($value) {
+        return $this->setProperty('isnotnull', $value);
+    }
+
+    /**
     * The text of the "greater than or equal" filter operator.
     * @param string $value
     * @return \Kendo\UI\GridFilterableOperatorsDate
@@ -61,3 +79,5 @@ class GridFilterableOperatorsDate extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

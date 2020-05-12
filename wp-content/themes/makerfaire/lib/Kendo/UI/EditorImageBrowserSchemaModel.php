@@ -15,7 +15,7 @@ class EditorImageBrowserSchemaModel extends \Kendo\SerializableObject {
     }
 
     /**
-    *
+    * 
     * @param \Kendo\UI\EditorImageBrowserSchemaModelFields|array $value
     * @return \Kendo\UI\EditorImageBrowserSchemaModel
     */
@@ -25,3 +25,5 @@ class EditorImageBrowserSchemaModel extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

@@ -6,8 +6,7 @@ class MapLayerDefaultsShapeStyleFill extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The default fill color for layer shapes.
-Accepts a valid CSS color string, including hex and rgb.
+    * The default fill color for layer shapes. Accepts a valid CSS color string, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\MapLayerDefaultsShapeStyleFill
     */

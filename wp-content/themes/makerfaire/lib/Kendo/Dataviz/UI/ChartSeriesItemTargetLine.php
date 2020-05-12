@@ -7,7 +7,7 @@ class ChartSeriesItemTargetLine extends \Kendo\SerializableObject {
 
     /**
     * The width of the line.
-    * @param |\Kendo\JavaScriptFunction $value
+    * @param float|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Dataviz\UI\ChartSeriesItemTargetLine
     */
     public function width($value) {

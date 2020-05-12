@@ -15,7 +15,7 @@ class ChartXAxisItemLine extends \Kendo\SerializableObject {
     }
 
     /**
-    * The dash type of the line.The following dash types are supported:
+    * The dash type of the line.The following dash types are supported: "dash" - a line consisting of dashes; "dashDot" - a line consisting of a repeating pattern of dash-dot; "dot" - a line consisting of dots; "longDash" - a line consisting of a repeating pattern of long-dash; "longDashDot" - a line consisting of a repeating pattern of long-dash-dot; "longDashDotDot" - a line consisting of a repeating pattern of long-dash-dot-dot or "solid" - a solid line.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItemLine
     */
@@ -33,8 +33,7 @@ class ChartXAxisItemLine extends \Kendo\SerializableObject {
     }
 
     /**
-    * The width of the line in pixels. Also affects the major and minor ticks, but not the grid lines.
-#### Example - set the scatter chart x axis line width
+    * The width of the line in pixels. Also affects the major and minor ticks, but not the grid lines. #### Example - set the scatter chart x axis line width
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItemLine
     */

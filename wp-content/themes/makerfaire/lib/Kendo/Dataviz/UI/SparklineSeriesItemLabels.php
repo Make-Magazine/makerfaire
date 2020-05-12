@@ -6,7 +6,7 @@ class SparklineSeriesItemLabels extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Defines the alignment of the labels.** Available for pie series. **
+    * Defines the alignment of the labels.Available for pie series.
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemLabels
     */
@@ -42,7 +42,7 @@ class SparklineSeriesItemLabels extends \Kendo\SerializableObject {
     }
 
     /**
-    * The distance of the labels.** Available for pie series. **
+    * The distance of the labels.Available for pie series.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemLabels
     */
@@ -97,7 +97,7 @@ class SparklineSeriesItemLabels extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the SparklineSeriesItemLabels.
-    * The template which renders the chart series label.The fields which can be used in the template are:
+    * The template which renders the chart series label.The fields which can be used in the template are: category - the category name. Available for area, bar, column, bubble, donut, line and pie series.; dataItem - the original data item used to construct the point. Will be null if binding to array.; percentage - the point value represented as a percentage value. Available only for donut, pie and 100% stacked charts.; series - the data series or value - the point value. Can be a number or object containing each bound field..
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemLabels
     */
@@ -109,7 +109,7 @@ class SparklineSeriesItemLabels extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the SparklineSeriesItemLabels.
-    * The template which renders the chart series label.The fields which can be used in the template are:
+    * The template which renders the chart series label.The fields which can be used in the template are: category - the category name. Available for area, bar, column, bubble, donut, line and pie series.; dataItem - the original data item used to construct the point. Will be null if binding to array.; percentage - the point value represented as a percentage value. Available only for donut, pie and 100% stacked charts.; series - the data series or value - the point value. Can be a number or object containing each bound field..
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemLabels
     */

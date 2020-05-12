@@ -15,7 +15,16 @@ class GridColumnFilterable extends \Kendo\SerializableObject {
     }
 
     /**
-    * Use this options to enable the MultiCheck filtering support for that column.
+    * If set to true the filter menu of the column allows the user to input a second criterion.
+    * @param boolean $value
+    * @return \Kendo\UI\GridColumnFilterable
+    */
+    public function extra($value) {
+        return $this->setProperty('extra', $value);
+    }
+
+    /**
+    * Use this option to enable the MultiCheck filtering support for that column.
     * @param boolean $value
     * @return \Kendo\UI\GridColumnFilterable
     */
@@ -43,24 +52,43 @@ class GridColumnFilterable extends \Kendo\SerializableObject {
 
     /**
     * Sets the itemTemplate option of the GridColumnFilterable.
-    * Allows customization on the logic that renderes the checkboxes when using checkbox filtering.
-    * @param string $value The id of the element which represents the kendo template.
+    * Allows customization on the logic that renders the checkboxes when using checkbox filtering.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\GridColumnFilterable
     */
-    public function itemTemplateId($value) {
-        $value = new \Kendo\Template($value);
+    public function itemTemplate($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
 
         return $this->setProperty('itemTemplate', $value);
     }
 
     /**
-    * Sets the itemTemplate option of the GridColumnFilterable.
-    * Allows customization on the logic that renderes the checkboxes when using checkbox filtering.
-    * @param string $value The template content.
+    * The property is identical to filterable.operators, but is used for a specific column.
+    * @param  $value
     * @return \Kendo\UI\GridColumnFilterable
     */
-    public function itemTemplate($value) {
-        return $this->setProperty('itemTemplate', $value);
+    public function operators($value) {
+        return $this->setProperty('operators', $value);
+    }
+
+    /**
+    * Controls whether to show a search box when checkbox filtering is enabled.
+    * @param boolean $value
+    * @return \Kendo\UI\GridColumnFilterable
+    */
+    public function search($value) {
+        return $this->setProperty('search', $value);
+    }
+
+    /**
+    * Toggles between case-insensitive (default) and case-sensitive searching.
+    * @param boolean $value
+    * @return \Kendo\UI\GridColumnFilterable
+    */
+    public function ignoreCase($value) {
+        return $this->setProperty('ignoreCase', $value);
     }
 
     /**
@@ -74,3 +102,5 @@ class GridColumnFilterable extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

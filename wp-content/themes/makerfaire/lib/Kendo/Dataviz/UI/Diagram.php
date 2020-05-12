@@ -9,8 +9,7 @@ class Diagram extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the
-data source is fired. By default the widget will bind to the data source specified in the configuration.
+    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. By default the widget will bind to the data source specified in the configuration.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -55,7 +54,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * Defines how the diagram behaves when the user attempts to edit shape content, create new connections, edit connection labels and so on.
+    * A set of settings to configure the Diagram behavior when the user attempts to: edit, delete or create shapes and connections.; drag shapes.; resize shapes. or rotate shapes..
     * @param boolean|\Kendo\Dataviz\UI\DiagramEditable|array $value
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -64,7 +63,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * The layout of a diagram consists in arranging the shapes (sometimes also the connections) in some fashion in order to achieve an aesthetically pleasing experience to the user. It aims at giving a more direct insight in the information contained within the diagram and its relational structure.On a technical level, layout consists of a multitude of algorithms and optimizations:and various ad-hoc calculations which depend on the type of layout. The criteria on which an algorithm is based vary but the common denominator is:Kendo diagram includes three of the most used layout algorithms which should cover most of your layout needs - tree layout, force-directed layout and layered layout. Please, check the type property for more details regarding each type.The generic way to apply a layout is by calling the layout() method on the diagram. The method has a single parameter options. It is an object, which can contain parameters which are specific to the layout as well as parameters customizing the global grid layout. Parameters which apply to other layout algorithms can be included but are overlooked if not applicable to the chose layout type. This means that you can define a set of parameters which cover all possible layout types and simply pass it in the method whatever the layout define in the first parameter.
+    * The layout of a diagram consists in arranging the shapes (sometimes also the connections) in some fashion in order to achieve an aesthetically pleasing experience to the user. It aims at giving a more direct insight in the information contained within the diagram and its relational structure.On a technical level, layout consists of a multitude of algorithms and optimizations: analysis of the relational structure (loops, multi-edge occurrence...); connectedness of the diagram and the splitting into disconnected components; crossings of connections or bends and length of links. and various ad-hoc calculations which depend on the type of layout. The criteria on which an algorithm is based vary but the common denominator is: a clean separation of connected components (subgraphs); an orderly organization of the shapes in such a way that siblings are close to another, i.e. a tight packing of shapes which belong together (parent of child relationship) or a minimum of connection crossings. Kendo diagram includes three of the most used layout algorithms which should cover most of your layout needs - tree layout, force-directed layout and layered layout. Please, check the type property for more details regarding each type.The generic way to apply a layout is by calling the layout() method on the diagram. The method has a single parameter options. It is an object, which can contain parameters which are specific to the layout as well as parameters customizing the global grid layout. Parameters which apply to other layout algorithms can be included but are overlooked if not applicable to the chose layout type. This means that you can define a set of parameters which cover all possible layout types and simply pass it in the method whatever the layout define in the first parameter.
     * @param \Kendo\Dataviz\UI\DiagramLayout|array $value
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -73,7 +72,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * Defines the pannable options.
+    * Defines the pannable options. Use this setting to disable Diagram pan or change the key that activates the pan behavior.
     * @param boolean|\Kendo\Dataviz\UI\DiagramPannable|array $value
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -91,7 +90,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * Defines the selectable options.
+    * Defines the Diagram selection options.By default, you can select shapes in the Diagram in one of two ways: Clicking a single shape to select it and deselect any previously selected shapes. or Holding the Ctrl key while clicking multiple shapes to select them and any other shapes between them.. Using the selectable configuration, you can enable single selection only, enable selection by drawing a rectangular area with the mouse around shapes in the canvas, or disable selection altogether.
     * @param boolean|\Kendo\Dataviz\UI\DiagramSelectable|array $value
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -100,7 +99,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * Defines the shape options.
+    * Defines the default options that will be applied to all shapes in the Diagram.
     * @param \Kendo\Dataviz\UI\DiagramShapeDefaults|array $value
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -119,7 +118,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the template option of the Diagram.
-    * The template which renders the content of the shape when bound to a dataSource. The names you can use in the template correspond to the properties used in the dataSource. See the dataSource topic below for a concrete example.
+    * The template which renders the content of the shape when bound to a dataSource. The names you can use in the template correspond to the properties used in the dataSource. For an example, refer to the dataSource topic below.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -131,7 +130,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the template option of the Diagram.
-    * The template which renders the content of the shape when bound to a dataSource. The names you can use in the template correspond to the properties used in the dataSource. See the dataSource topic below for a concrete example.
+    * The template which renders the content of the shape when bound to a dataSource. The names you can use in the template correspond to the properties used in the dataSource. For an example, refer to the dataSource topic below.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -140,7 +139,16 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * The zoom level in percentages.
+    * The diagram theme. This can be either a built-in theme or "sass". When set to "sass" the diagram will read the variables from a Sass-based theme.The supported values are: * "sass" - works only when a custom Sass theme is loaded in the page * "black" * "blueopal" * "bootstrap" * "bootstrap-v4" - works only with the Bootstrap-v4 Sass theme loaded in the page * "default" * "default-v2" - works only with the Default-v2 Sass theme loaded in the page * "fiori" * "flat" * "highcontrast" * "material" * "materialBlack" * "metro" * "metroblack" * "moonlight" * "nova" * "office365" * "silver" * "uniform"
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\Diagram
+    */
+    public function theme($value) {
+        return $this->setProperty('theme', $value);
+    }
+
+    /**
+    * The default zoom level of the Diagram in percentages.
     * @param float $value
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -149,7 +157,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * The zoom max level in percentages.
+    * The maximum zoom level in percentages. The user will not be allowed to zoom in past this level.
     * @param float $value
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -158,7 +166,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * The zoom min level in percentages.
+    * The minimum zoom level in percentages. The user will not be allowed to zoom out past this level. You can see an example in zoomMax.
     * @param float $value
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -303,7 +311,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the itemBoundsChange event of the Diagram.
-    * Fired when the location or size of an item are changed.
+    * Fired when the location or size of a shape are changed.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -317,7 +325,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the itemRotate event of the Diagram.
-    * Fired when an item is rotated.
+    * Fired when a shape is rotated.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -387,7 +395,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the save event of the Diagram.
-    * Fired when the user saved a shape or a connection.
+    * Fired when the user saves a shape or a connection.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\Diagram
     */
@@ -411,6 +419,20 @@ data source is fired. By default the widget will bind to the data source specifi
         }
 
         return $this->setProperty('select', $value);
+    }
+
+    /**
+    * Sets the toolBarClick event of the Diagram.
+    * Fired when the user clicks an item in the toolbar.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Diagram
+    */
+    public function toolBarClick($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('toolBarClick', $value);
     }
 
     /**

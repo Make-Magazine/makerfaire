@@ -6,8 +6,7 @@ class StockChartPaneTitleBorder extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The color of the border. Any valid CSS color string will work here, including
-hex and rgb.
+    * The color of the border. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartPaneTitleBorder
     */

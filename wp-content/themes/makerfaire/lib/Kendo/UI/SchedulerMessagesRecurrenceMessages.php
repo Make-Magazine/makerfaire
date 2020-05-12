@@ -77,5 +77,16 @@ class SchedulerMessagesRecurrenceMessages extends \Kendo\SerializableObject {
         return $this->setProperty('editWindowTitle', $value);
     }
 
+    /**
+    * The title of the prompt dialog opened to confirm the resetting of a series event.
+    * @param string $value
+    * @return \Kendo\UI\SchedulerMessagesRecurrenceMessages
+    */
+    public function resetSeriesWindowTitle($value) {
+        return $this->setProperty('resetSeriesWindowTitle', $value);
+    }
+
 //<< Properties
 }
+
+?>

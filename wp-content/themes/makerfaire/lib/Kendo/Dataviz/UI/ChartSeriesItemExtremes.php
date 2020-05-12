@@ -33,11 +33,7 @@ class ChartSeriesItemExtremes extends \Kendo\SerializableObject {
     }
 
     /**
-    * The extremes shape.The supported values are:
-* "circle" - the marker shape is circle.
-* "square" - the marker shape is square.
-* "triangle" - the marker shape is triangle.
-* "cross" - the marker shape is cross.
+    * The extremes shape.The supported values are: * "circle" - the marker shape is circle. * "square" - the marker shape is square. * "triangle" - the marker shape is triangle. * "cross" - the marker shape is cross.
     * @param string|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Dataviz\UI\ChartSeriesItemExtremes
     */

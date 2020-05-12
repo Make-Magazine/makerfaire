@@ -15,8 +15,7 @@ class RangeSliderTooltip extends \Kendo\SerializableObject {
     }
 
     /**
-    * Format string for the text of the tooltip. Note: The applied format will also influence the appearance of
-the RangeSlider tick labels.
+    * Format string for the text of the tooltip. Note: The applied format will also influence the appearance of the RangeSlider tick labels.
     * @param string $value
     * @return \Kendo\UI\RangeSliderTooltip
     */
@@ -26,7 +25,7 @@ the RangeSlider tick labels.
 
     /**
     * Sets the template option of the RangeSliderTooltip.
-    * Template of the tooltip.
+    * Template of the tooltip. selectionStart - the current selectionStart. or selectionEnd - the current selectionEnd..
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\RangeSliderTooltip
     */
@@ -38,7 +37,7 @@ the RangeSlider tick labels.
 
     /**
     * Sets the template option of the RangeSliderTooltip.
-    * Template of the tooltip.
+    * Template of the tooltip. selectionStart - the current selectionStart. or selectionEnd - the current selectionEnd..
     * @param string $value The template content.
     * @return \Kendo\UI\RangeSliderTooltip
     */
@@ -48,3 +47,5 @@ the RangeSlider tick labels.
 
 //<< Properties
 }
+
+?>

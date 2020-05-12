@@ -25,3 +25,5 @@ class WindowAnimation extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

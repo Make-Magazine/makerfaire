@@ -6,9 +6,7 @@ class SparklineCategoryAxisItemMinorGridLines extends \Kendo\SerializableObject 
 //>> Properties
 
     /**
-    * The color of the lines. Any valid CSS color string will work here, including hex and
-rgb.Note that this setting has no effect if the visibility of the minor
-grid lines is not set to true.
+    * The color of the lines. Any valid CSS color string will work here, including hex and rgb.Note that this setting has no effect if the visibility of the minor grid lines is not set totrue.
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineCategoryAxisItemMinorGridLines
     */
@@ -35,8 +33,7 @@ grid lines is not set to true.
     }
 
     /**
-    * The width of the lines.Note that this setting has no effect if the visibility of the minor
-grid lines is not set to true.
+    * The width of the lines.Note that this setting has no effect if the visibility of the minor grid lines is not set totrue.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineCategoryAxisItemMinorGridLines
     */

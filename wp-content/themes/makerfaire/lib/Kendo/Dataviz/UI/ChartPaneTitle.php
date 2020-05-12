@@ -51,7 +51,7 @@ class ChartPaneTitle extends \Kendo\SerializableObject {
     }
 
     /**
-    * The position of the title.The supported values are:
+    * The position of the title.The supported values are: "left" - the axis title is positioned on the left (applicable to horizontal axis); "right" - the axis title is positioned on the right (applicable to horizontal axis) or "center" - the axis title is positioned in the center.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartPaneTitle
     */
@@ -79,7 +79,7 @@ class ChartPaneTitle extends \Kendo\SerializableObject {
 
     /**
     * Sets the visual option of the ChartPaneTitle.
-    * A function that can be used to create a custom visual for the title. The available argument fields are:
+    * A function that can be used to create a custom visual for the title. The available argument fields are: text - the label text.; rect - the kendo.geometry.Rect that defines where the visual should be rendered.; sender - the chart instance (may be undefined).; options - the label options. or createVisual - a function that can be used to get the default visual..
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\ChartPaneTitle
     */

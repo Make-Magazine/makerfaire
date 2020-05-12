@@ -6,8 +6,7 @@ class SparklineSeriesDefaultsLabels extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The background color of the labels. Any valid CSS color string will work here,
-including hex and rgb.
+    * The background color of the labels. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineSeriesDefaultsLabels
     */
@@ -25,8 +24,7 @@ including hex and rgb.
     }
 
     /**
-    * The text color of the labels. Any valid CSS color string will work here, including hex
-and rgb.
+    * The text color of the labels. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineSeriesDefaultsLabels
     */
@@ -35,8 +33,7 @@ and rgb.
     }
 
     /**
-    * The font style of the labels.
-labels
+    * The font style of the labels. labels
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineSeriesDefaultsLabels
     */
@@ -73,8 +70,7 @@ labels
 
     /**
     * Sets the template option of the SparklineSeriesDefaultsLabels.
-    * The label template.
-Template variables:
+    * The label template. Template variables: value- the point value; category- the category name; series- the data series or dataItem- the original data item used to construct the point.      Will be null if binding to array..
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\SparklineSeriesDefaultsLabels
     */
@@ -86,8 +82,7 @@ Template variables:
 
     /**
     * Sets the template option of the SparklineSeriesDefaultsLabels.
-    * The label template.
-Template variables:
+    * The label template. Template variables: value- the point value; category- the category name; series- the data series or dataItem- the original data item used to construct the point.      Will be null if binding to array..
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\SparklineSeriesDefaultsLabels
     */

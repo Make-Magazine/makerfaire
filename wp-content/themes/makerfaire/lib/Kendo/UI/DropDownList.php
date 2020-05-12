@@ -6,15 +6,15 @@ class DropDownList extends \Kendo\UI\Widget {
     protected function name() {
         return 'DropDownList';
     }
-
+    
     protected function createElement() {
         return new \Kendo\Html\Element('input', true);
-    }
+    }    
 //>> Properties
 
     /**
-    * Configures the opening and closing animations of the suggestion popup. Setting the animation option to false will disable the opening and closing animations. As a result the suggestion popup will open and close instantly.
-    * @param \Kendo\UI\DropDownListAnimation|array $value
+    * Configures the opening and closing animations of the suggestion popup. Setting the animation option to false will disable the opening and closing animations. As a result the suggestion popup will open and close instantly. is not a valid configuration.
+    * @param boolean|\Kendo\UI\DropDownListAnimation|array $value
     * @return \Kendo\UI\DropDownList
     */
     public function animation($value) {
@@ -31,8 +31,16 @@ class DropDownList extends \Kendo\UI\Widget {
     }
 
     /**
-    * Use it to set the Id of the parent DropDownList widget.
-Help topic showing how cascading functionality works
+    * If set to true, the widget automatically adjusts the width of the popup element and does not wrap up the item label.
+    * @param boolean $value
+    * @return \Kendo\UI\DropDownList
+    */
+    public function autoWidth($value) {
+        return $this->setProperty('autoWidth', $value);
+    }
+
+    /**
+    * Use it to set the Id of the parent DropDownList widget.Help topic showing how cascading functionality works
     * @param string $value
     * @return \Kendo\UI\DropDownList
     */
@@ -41,13 +49,21 @@ Help topic showing how cascading functionality works
     }
 
     /**
-    * Defines the field to be used to filter the data source. If not defined the parent's dataValueField option will be used.
-Help topic showing how cascading functionality works
+    * Defines the field to be used to filter the data source. If not defined the parent's dataValueField option will be used.Help topic showing how cascading functionality works
     * @param string $value
     * @return \Kendo\UI\DropDownList
     */
     public function cascadeFromField($value) {
         return $this->setProperty('cascadeFromField', $value);
+    }
+
+    /**
+    * Defines the parent field to be used to retain value from. This value will be used further to filter the dataSource. If not defined the value from the parent's dataValueField will be used.
+    * @param string $value
+    * @return \Kendo\UI\DropDownList
+    */
+    public function cascadeFromParentField($value) {
+        return $this->setProperty('cascadeFromParentField', $value);
     }
 
     /**
@@ -78,7 +94,7 @@ Help topic showing how cascading functionality works
     }
 
     /**
-    * Specifies the delay in milliseconds before the search-text typed by the end user is cleared.
+    * Specifies the delay in milliseconds before the search-text typed by the end user is sent for filtering.
     * @param float $value
     * @return \Kendo\UI\DropDownList
     */
@@ -96,8 +112,16 @@ Help topic showing how cascading functionality works
     }
 
     /**
-    * The filtering method used to determine the suggestions for the current value. Filtration is turned off by default.
-The supported filter values are startswith, endswith and contains.
+    * If set to true the widget will not show all items when the text of the search input cleared. By default the widget shows all items when the text of the search input is cleared. Works in conjunction with minLength.
+    * @param boolean $value
+    * @return \Kendo\UI\DropDownList
+    */
+    public function enforceMinLength($value) {
+        return $this->setProperty('enforceMinLength', $value);
+    }
+
+    /**
+    * The filtering method used to determine the suggestions for the current value. Filtration is turned off by default, and can be performed over string values only (either the widget's data has to be an array of strings, or over the field, configured in the dataTextField option). The supported filter values are startswith, endswith and contains.
     * @param string $value
     * @return \Kendo\UI\DropDownList
     */
@@ -125,6 +149,28 @@ The supported filter values are startswith, endswith and contains.
     */
     public function fixedGroupTemplate($value) {
         return $this->setProperty('fixedGroupTemplate', $value);
+    }
+
+    /**
+    * Sets the footerTemplate option of the DropDownList.
+    * The template used to render the footer template. The footer template receives the widget itself as a part of the data argument. Use the widget fields directly in the template.
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\DropDownList
+    */
+    public function footerTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('footerTemplate', $value);
+    }
+
+    /**
+    * Sets the footerTemplate option of the DropDownList.
+    * The template used to render the footer template. The footer template receives the widget itself as a part of the data argument. Use the widget fields directly in the template.
+    * @param string $value The template content.
+    * @return \Kendo\UI\DropDownList
+    */
+    public function footerTemplate($value) {
+        return $this->setProperty('footerTemplate', $value);
     }
 
     /**
@@ -160,7 +206,7 @@ The supported filter values are startswith, endswith and contains.
 
     /**
     * If set to false case-sensitive search will be performed to find suggestions. The widget performs case-insensitive searching by default.
-    * @param string $value
+    * @param boolean $value
     * @return \Kendo\UI\DropDownList
     */
     public function ignoreCase($value) {
@@ -177,6 +223,15 @@ The supported filter values are startswith, endswith and contains.
     }
 
     /**
+    * The text messages displayed in the widget. Use this option to customize or localize the messages.
+    * @param \Kendo\UI\DropDownListMessages|array $value
+    * @return \Kendo\UI\DropDownList
+    */
+    public function messages($value) {
+        return $this->setProperty('messages', $value);
+    }
+
+    /**
     * The minimum number of characters the user must type before a filter is performed. Set to higher value than 1 if the search could match a lot of items.
     * @param float $value
     * @return \Kendo\UI\DropDownList
@@ -186,9 +241,30 @@ The supported filter values are startswith, endswith and contains.
     }
 
     /**
-    * The options that will be used for the popup initialization. For more details about the available options
-refer to Popup documentation.
-    * @param  $value
+    * Sets the noDataTemplate option of the DropDownList.
+    * The template used to render the "no data" template, which will be displayed if no results are found or the underlying data source is empty. The noData template receives the widget itself as a part of the data argument. The template will be evaluated on every widget data bound.
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\DropDownList
+    */
+    public function noDataTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('noDataTemplate', $value);
+    }
+
+    /**
+    * Sets the noDataTemplate option of the DropDownList.
+    * The template used to render the "no data" template, which will be displayed if no results are found or the underlying data source is empty. The noData template receives the widget itself as a part of the data argument. The template will be evaluated on every widget data bound.
+    * @param string $value The template content.
+    * @return \Kendo\UI\DropDownList
+    */
+    public function noDataTemplate($value) {
+        return $this->setProperty('noDataTemplate', $value);
+    }
+
+    /**
+    * The options that will be used for the popup initialization. For more details about the available options refer to Popup documentation.
+    * @param \Kendo\UI\DropDownListPopup|array $value
     * @return \Kendo\UI\DropDownList
     */
     public function popup($value) {
@@ -196,8 +272,7 @@ refer to Popup documentation.
     }
 
     /**
-    * Define the text of the default empty item. If the value is an object, then the widget will use it as a valid data item.
- Note that the optionLabel will not be available if the widget is empty.
+    * Define the text of the default empty item. If the value is an object, then the widget will use it as a valid data item.  Note that the optionLabel will not be available if the widget is empty.
     * @param string| $value
     * @return \Kendo\UI\DropDownList
     */
@@ -207,7 +282,7 @@ refer to Popup documentation.
 
     /**
     * Sets the optionLabelTemplate option of the DropDownList.
-    * The template used to render the option label.
+    * The template used to render the option label. Use optionLabelTemplate if you want to customize the markup of the optionLabel.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\DropDownList
     */
@@ -219,7 +294,7 @@ refer to Popup documentation.
 
     /**
     * Sets the optionLabelTemplate option of the DropDownList.
-    * The template used to render the option label.
+    * The template used to render the option label. Use optionLabelTemplate if you want to customize the markup of the optionLabel.
     * @param string $value The template content.
     * @return \Kendo\UI\DropDownList
     */
@@ -321,7 +396,7 @@ refer to Popup documentation.
     }
 
     /**
-    * Enables the virtualization feature of the widget.
+    * Enables the virtualization feature of the widget. The configuration can be set on an object, which contains two properties - itemHeight and valueMapper.For detailed information, refer to the article on virtualization.
     * @param boolean|\Kendo\UI\DropDownListVirtual|array $value
     * @return \Kendo\UI\DropDownList
     */
@@ -331,7 +406,7 @@ refer to Popup documentation.
 
     /**
     * Sets the change event of the DropDownList.
-    * Fired when the value of the widget is changed by the user.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fired when the value of the widget is changed by the user. As of 2015 Q3 SP1 cascading widget will trigger change event when its value is changed due to parent update.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\DropDownList
     */
@@ -430,3 +505,5 @@ refer to Popup documentation.
 
 //<< Properties
 }
+
+?>

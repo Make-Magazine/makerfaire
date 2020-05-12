@@ -6,7 +6,7 @@ class DataSourceGroupItemAggregate extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The name of the aggregate function. Specifies the aggregate function. The supported aggregates are "average", "count", "max", "min" and "sum".
+    * The name of the aggregate function. Specifies the aggregate function.The supported aggregates are: "average"; "count"; "max"; "min" or "sum".
     * @param string $value
     * @return \Kendo\Data\DataSourceGroupItemAggregate
     */
@@ -25,3 +25,5 @@ class DataSourceGroupItemAggregate extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

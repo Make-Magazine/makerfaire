@@ -6,7 +6,7 @@ class DiagramSelectableStroke extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Defines the selection stroke color.
+    * Defines the selection stroke color. Accepts valid CSS colors.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramSelectableStroke
     */
@@ -15,7 +15,7 @@ class DiagramSelectableStroke extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the selection dash type.
+    * Defines the selection dash type. The following dash types are supported: "dash" - a line consisting of dashes; "dashDot" - a line consisting of a repeating pattern of dash-dot; "dot" - a line consisting of dots; "longDash" - a line consisting of long dashes; "longDashDot" - a line consisting of a repeating pattern of long dash-dot; "longDashDotDot" - a line consisting of a repeating pattern of long dash-dot-dot or "solid" - a solid line.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramSelectableStroke
     */

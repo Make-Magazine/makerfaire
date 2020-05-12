@@ -10,11 +10,22 @@ class DateTimePicker extends \Kendo\UI\Widget {
     protected function createElement() {
         return new \Kendo\Html\Element('input', true);
     }
+	/**
+    * An array or function that will be used to determine which dates to be disabled in the widget.
+    * @param array|\Kendo\JavaScriptFunction $value
+    * @return \Kendo\UI\DateTimePicker
+    */
+    public function disableDates($value) {
+		if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+        return $this->setProperty('disableDates', $value);
+    }
 //>> Properties
 
     /**
-    * Configures the opening and closing animations of the popups. Setting the animation option to false will disable the opening and closing animations. As a result the popup will open and close instantly.
-    * @param \Kendo\UI\DateTimePickerAnimation|array $value
+    * Configures the opening and closing animations of the popups. Setting the animation option to false will disable the opening and closing animations. As a result the popup will open and close instantly. is not a valid configuration.
+    * @param boolean|\Kendo\UI\DateTimePickerAnimation|array $value
     * @return \Kendo\UI\DateTimePicker
     */
     public function animation($value) {
@@ -53,6 +64,15 @@ class DateTimePicker extends \Kendo\UI\Widget {
     }
 
     /**
+    * Specifies if the DateTimePicker will use DateInput for editing value
+    * @param boolean $value
+    * @return \Kendo\UI\DateTimePicker
+    */
+    public function dateInput($value) {
+        return $this->setProperty('dateInput', $value);
+    }
+
+    /**
     * Specifies a list of dates, which will be passed to the month template of the DateView. All dates, which match the date portion of the selected date will be used to re-bind the TimeView.
     * @param array $value
     * @return \Kendo\UI\DateTimePicker
@@ -62,8 +82,7 @@ class DateTimePicker extends \Kendo\UI\Widget {
     }
 
     /**
-    * Specifies the navigation depth of the calendar. The following
-settings are available for the depth value:
+    * Specifies the navigation depth of the calendar. The following settings are available for the depth value: "month" - Shows the days of the month.; "year" - Shows the months of the year.; "decade" - Shows the years of the decade. or "century" - Shows the decades from the century..
     * @param string $value
     * @return \Kendo\UI\DateTimePicker
     */
@@ -81,7 +100,7 @@ settings are available for the depth value:
     }
 
     /**
-    * Specifies the format, which is used to format the value of the DateTimePicker displayed in the input. The format also will be used to parse the input.
+    * Specifies the format, which is used to format the value of the DateTimePicker displayed in the input. The format also will be used to parse the input.For more information on date and time formats please refer to Date Formatting.
     * @param string $value
     * @return \Kendo\UI\DateTimePicker
     */
@@ -126,8 +145,25 @@ settings are available for the depth value:
     }
 
     /**
-    * Specifies the formats, which are used to parse the value set with value() method or by direct input. If not set the value of the options.format and options.timeFormat will be used.
- Note that value of the format option is always used. The timeFormat value also will be used if defined.
+    * The options that will be used for the popup initialization. For more details about the available options refer to Popup documentation.
+    * @param \Kendo\UI\DateTimePickerPopup|array $value
+    * @return \Kendo\UI\DateTimePicker
+    */
+    public function popup($value) {
+        return $this->setProperty('popup', $value);
+    }
+
+    /**
+    * If set to true a week of the year will be shown on the left side of the calendar. It is possible to define a template in order to customize what will be displayed.
+    * @param boolean $value
+    * @return \Kendo\UI\DateTimePicker
+    */
+    public function weekNumber($value) {
+        return $this->setProperty('weekNumber', $value);
+    }
+
+    /**
+    * Specifies the formats, which are used to parse the value set with value() method or by direct input. If not set the value of the options.format and options.timeFormat will be used.  Note that value of the format option is always used. The timeFormat value also will be used if defined.
     * @param array $value
     * @return \Kendo\UI\DateTimePicker
     */
@@ -136,8 +172,7 @@ settings are available for the depth value:
     }
 
     /**
-    * Specifies the start view of the calendar.
- The following settings are available for the start value:
+    * Specifies the start view of the calendar.  The following settings are available for the start value: "month" - Shows the days of the month.; "year" - Shows the months of the year.; "decade" - Shows the years of the decade. or "century" - Shows the decades from the century..
     * @param string $value
     * @return \Kendo\UI\DateTimePicker
     */
@@ -208,3 +243,5 @@ settings are available for the depth value:
 
 //<< Properties
 }
+
+?>

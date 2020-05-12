@@ -27,9 +27,8 @@ class Menu extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * A collection of Animation objects, used to change default animations. A value of false will disable all animations in the widget.Available animations for the Menu are listed below.  Each animation has a reverse options which is used for the close effect by default, but can be over-ridden
-by setting the close animation.  Each animation also has a direction which can be set off the animation (i.e. slideIn:Down).
-    * @param \Kendo\UI\MenuAnimation|array $value
+    * A collection of Animation objects, used to change default animations. A value of false will disable all animations in the widget. is not a valid configuration.Available animations for the Menu are listed below.  Each animation has a reverse options which is used for the close effect by default, but can be over-ridden by setting the close animation.  Each animation also has a direction which can be set off the animation (i.e. slideIn:Down).
+    * @param boolean|\Kendo\UI\MenuAnimation|array $value
     * @return \Kendo\UI\Menu
     */
     public function animation($value) {
@@ -46,9 +45,8 @@ by setting the close animation.  Each animation also has a direction which can b
     }
 
     /**
-    * The data source of the widget which is used to render its items. Can be a JSON object/Array that contains an item or an Array of items to be rendered.
-Refer to the example below for a list of the supported properties.
-    * @param |array $value
+    * The data source of the widget which is used to render its items. Can be a JSON object/Arra/kendo.data.HierarchicalDataSource that contains an item or an Array of items to be rendered. Refer to the example below for a list of the supported properties.
+    * @param |array| $value
     * @return \Kendo\UI\Menu
     */
     public function dataSource($value) {
@@ -56,9 +54,52 @@ Refer to the example below for a list of the supported properties.
     }
 
     /**
-    * Specifies Menu opening direction. Can be "top", "bottom", "left", "right".
-You can also specify different direction for root and sub menu items, separating them with space. The example below will initialize the root menu to open upwards and
-its sub menus to the left.
+    * Sets the field of the data item that provides the text of the menu items.
+    * @param string $value
+    * @return \Kendo\UI\Menu
+    */
+    public function dataTextField($value) {
+        return $this->setProperty('dataTextField', $value);
+    }
+
+    /**
+    * Sets the field of the data item that provides the url of the menu items.
+    * @param string $value
+    * @return \Kendo\UI\Menu
+    */
+    public function dataUrlField($value) {
+        return $this->setProperty('dataUrlField', $value);
+    }
+
+    /**
+    * Sets the field of the data item that provides the sprite css class of the menu items.
+    * @param string $value
+    * @return \Kendo\UI\Menu
+    */
+    public function dataSpriteCssClassField($value) {
+        return $this->setProperty('dataSpriteCssClassField', $value);
+    }
+
+    /**
+    * Sets the field of the data item that provides the image url of the menu items.
+    * @param string $value
+    * @return \Kendo\UI\Menu
+    */
+    public function dataImageUrlField($value) {
+        return $this->setProperty('dataImageUrlField', $value);
+    }
+
+    /**
+    * Sets the field of the data item that provides the content of the menu items.
+    * @param string $value
+    * @return \Kendo\UI\Menu
+    */
+    public function dataContentField($value) {
+        return $this->setProperty('dataContentField', $value);
+    }
+
+    /**
+    * Specifies Menu opening direction. Can be "top", "bottom", "left", "right". You can also specify different direction for root and sub menu items, separating them with space. The example below will initialize the root menu to open upwards and its sub menus to the left.
     * @param string $value
     * @return \Kendo\UI\Menu
     */
@@ -77,7 +118,7 @@ its sub menus to the left.
 
     /**
     * Specifies that the root sub menus will be opened on item click.
-    * @param boolean $value
+    * @param boolean|\Kendo\UI\MenuOpenOnClick|array $value
     * @return \Kendo\UI\Menu
     */
     public function openOnClick($value) {
@@ -94,14 +135,21 @@ its sub menus to the left.
     }
 
     /**
-    * Specifies how Menu should adjust to screen boundaries. By default the strategy is "fit" for a sub menu with a horizontal parent,
-meaning it will move to fit in screen boundaries in all directions, and "fit flip" for a sub menu with vertical parent, meaning it will fit vertically and flip over
-its parent horizontally. You can also switch off the screen boundary detection completely if you set the popupCollision to false.
+    * Specifies how Menu should adjust to screen boundaries. By default the strategy is "fit" for a sub menu with a horizontal parent, meaning it will move to fit in screen boundaries in all directions, and "fit flip" for a sub menu with vertical parent, meaning it will fit vertically and flip over its parent horizontally. You can also switch off the screen boundary detection completely if you set the popupCollision to false.
     * @param string $value
     * @return \Kendo\UI\Menu
     */
     public function popupCollision($value) {
         return $this->setProperty('popupCollision', $value);
+    }
+
+    /**
+    * If enabled, the Menu displays buttons that scroll the items when they cannot fit the width or the popups' height of the Menu. By default, scrolling is disabled.The following example demonstrates how to enable the scrolling functionality.
+    * @param boolean|\Kendo\UI\MenuScrollable|array $value
+    * @return \Kendo\UI\Menu
+    */
+    public function scrollable($value) {
+        return $this->setProperty('scrollable', $value);
     }
 
     /**
@@ -125,6 +173,20 @@ its parent horizontally. You can also switch off the screen boundary detection c
         }
 
         return $this->setProperty('close', $value);
+    }
+
+    /**
+    * Sets the dataBound event of the Menu.
+    * Fires when the Menu is bound to the set DataSource.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\Menu
+    */
+    public function dataBound($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('dataBound', $value);
     }
 
     /**
@@ -186,3 +248,5 @@ its parent horizontally. You can also switch off the screen boundary detection c
 
 //<< Properties
 }
+
+?>

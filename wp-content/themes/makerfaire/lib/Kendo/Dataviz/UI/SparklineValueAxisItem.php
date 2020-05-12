@@ -15,8 +15,7 @@ class SparklineValueAxisItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * Color to apply to all axis elements.
-Individual color settings for line and labels take priority. Any valid CSS color string will work here, including hex and rgb.
+    * Color to apply to all axis elements. Individual color settings for line and labels take priority. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItem
     */
@@ -43,8 +42,7 @@ Individual color settings for line and labels take priority. Any valid CSS color
     }
 
     /**
-    * Configures the major grid lines. These are the lines that are an extension of the major ticks through the
-body of the chart.
+    * Configures the major grid lines. These are the lines that are an extension of the major ticks through the body of the chart.
     * @param \Kendo\Dataviz\UI\SparklineValueAxisItemMajorGridLines|array $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItem
     */
@@ -71,8 +69,7 @@ body of the chart.
     }
 
     /**
-    * The maximum value of the axis.
-This is often used in combination with the min configuration option.
+    * The maximum value of the axis. This is often used in combination with theminconfiguration option.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItem
     */
@@ -81,8 +78,7 @@ This is often used in combination with the min configuration option.
     }
 
     /**
-    * The minimum value of the axis.
-This is often used in combination with the max configuration option.
+    * The minimum value of the axis. This is often used in combination with themaxconfiguration option.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItem
     */
@@ -109,8 +105,7 @@ This is often used in combination with the max configuration option.
     }
 
     /**
-    * The interval between minor divisions.
-It defaults to 1/5th of the majorUnit.
+    * The interval between minor divisions. It defaults to 1/5th of the majorUnit.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItem
     */
@@ -146,8 +141,7 @@ It defaults to 1/5th of the majorUnit.
     }
 
     /**
-    * Reverses the axis direction -
-values increase from right to left and from top to bottom.
+    * Reverses the axis direction - values increase from right to left and from top to bottom.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\SparklineValueAxisItem
     */

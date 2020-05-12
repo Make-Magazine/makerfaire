@@ -43,7 +43,7 @@ class ChartXAxisItemNotesLabel extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the ChartXAxisItemNotesLabel.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.The fields which can be used in the template are: value - the axis value.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\ChartXAxisItemNotesLabel
     */
@@ -55,7 +55,7 @@ class ChartXAxisItemNotesLabel extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the ChartXAxisItemNotesLabel.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.The fields which can be used in the template are: value - the axis value.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\ChartXAxisItemNotesLabel
     */
@@ -91,7 +91,7 @@ class ChartXAxisItemNotesLabel extends \Kendo\SerializableObject {
     }
 
     /**
-    * The position of the labels.
+    * The position of the labels. "inside" - the label is positioned inside of the icon. or "outside" - the label is positioned outside of the icon..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItemNotesLabel
     */

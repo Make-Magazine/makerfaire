@@ -51,7 +51,7 @@ class SparklineCategoryAxisItemCrosshair extends \Kendo\SerializableObject {
     }
 
     /**
-    * The crosshar tooltip configuration options.
+    * The crosshair tooltip configuration options.
     * @param \Kendo\Dataviz\UI\SparklineCategoryAxisItemCrosshairTooltip|array $value
     * @return \Kendo\Dataviz\UI\SparklineCategoryAxisItemCrosshair
     */

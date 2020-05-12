@@ -15,7 +15,7 @@ class DiagramConnectionStartCapStroke extends \Kendo\SerializableObject {
     }
 
     /**
-    * The connection start cap stroke dash type.
+    * The connection start cap stroke dash type.The following dash types are supported: "dash" - A line that consists of dashes; "dashDot" - A line that consists of a repeating pattern of dash-dot; "dot" - A line that consists of dots; "longDash" - A line that consists of a repeating pattern of long-dash; "longDashDot" - A line that consists of a repeating pattern of long-dash-dot; "longDashDotDot" - A line that consists of a repeating pattern of long-dash-dot-dot or "solid" - A solid line.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionStartCapStroke
     */

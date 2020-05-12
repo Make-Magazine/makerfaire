@@ -6,7 +6,7 @@ class WindowPosition extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Specifies the initial top position of the window. Numeric values are treated as pixels. String values can specify pixels, percentages, ems or other valid values.
+    * Specifies the initial top position of the Window. Numeric values are treated as pixels. String values can specify pixels, percentages, ems, or other valid values.
     * @param float|string $value
     * @return \Kendo\UI\WindowPosition
     */
@@ -15,7 +15,7 @@ class WindowPosition extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the initial left position of the window. Numeric values are treated as pixels. String values can specify pixels or percentages, ems or other valid values.
+    * Specifies the initial left position of the Window. Numeric values are treated as pixels. String values can specify pixels, percentages, ems or other valid values.
     * @param float|string $value
     * @return \Kendo\UI\WindowPosition
     */
@@ -25,3 +25,5 @@ class WindowPosition extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

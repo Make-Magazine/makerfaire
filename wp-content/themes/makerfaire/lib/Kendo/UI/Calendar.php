@@ -6,6 +6,18 @@ class Calendar extends \Kendo\UI\Widget {
     protected function name() {
         return 'Calendar';
     }
+	
+    /**
+    * An array or function that will be used to determine which dates to be disabled in the calendar.
+    * @param array|\Kendo\JavaScriptFunction $value
+    * @return \Kendo\UI\Calendar
+    */
+    public function disableDates($value) {
+		if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+        return $this->setProperty('disableDates', $value);
+    }
 //>> Properties
 
     /**
@@ -27,8 +39,7 @@ class Calendar extends \Kendo\UI\Widget {
     }
 
     /**
-    * Specifies the navigation depth. The following
-settings are available for the depth value:
+    * Specifies the navigation depth. The following settings are available for the depth value: "month" - Shows the days of the month.; "year" - Shows the months of the year.; "decade" - Shows the years of the decade. or "century" - Shows the decades from the century..
     * @param string $value
     * @return \Kendo\UI\Calendar
     */
@@ -64,6 +75,15 @@ settings are available for the depth value:
     }
 
     /**
+    * Allows localization of the strings that are used in the widget.
+    * @param \Kendo\UI\CalendarMessages|array $value
+    * @return \Kendo\UI\Calendar
+    */
+    public function messages($value) {
+        return $this->setProperty('messages', $value);
+    }
+
+    /**
     * Specifies the minimum date, which the calendar can show.
     * @param date $value
     * @return \Kendo\UI\Calendar
@@ -82,8 +102,34 @@ settings are available for the depth value:
     }
 
     /**
-    * Specifies the start view.
-The following settings are available for the start value:
+    * By default user is able to select a single date. The property can also be set to "multiple" in order the multiple  date selection to be enabled. More information about multiple selection can be found in the Selection article.
+    * @param string $value
+    * @return \Kendo\UI\Calendar
+    */
+    public function selectable($value) {
+        return $this->setProperty('selectable', $value);
+    }
+
+    /**
+    * Specifies which dates to be selected when the calendar is initialized.
+    * @param array $value
+    * @return \Kendo\UI\Calendar
+    */
+    public function selectDates($value) {
+        return $this->setProperty('selectDates', $value);
+    }
+
+    /**
+    * If set to true a week of the year will be shown on the left side of the calendar.
+    * @param boolean $value
+    * @return \Kendo\UI\Calendar
+    */
+    public function weekNumber($value) {
+        return $this->setProperty('weekNumber', $value);
+    }
+
+    /**
+    * Specifies the start view. The following settings are available for the start value: "month" - Shows the days of the month.; "year" - Shows the months of the year.; "decade" - Shows the years of the decade. or "century" - Shows the decades from the century..
     * @param string $value
     * @return \Kendo\UI\Calendar
     */
@@ -131,3 +177,5 @@ The following settings are available for the start value:
 
 //<< Properties
 }
+
+?>

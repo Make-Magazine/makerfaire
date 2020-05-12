@@ -15,7 +15,7 @@ class ChartXAxisItemMajorGridLines extends \Kendo\SerializableObject {
     }
 
     /**
-    * The dash type of the line.The following dash types are supported:
+    * The dash type of the line.The following dash types are supported: "dash" - a line consisting of dashes; "dashDot" - a line consisting of a repeating pattern of dash-dot; "dot" - a line consisting of dots; "longDash" - a line consisting of a repeating pattern of long-dash; "longDashDot" - a line consisting of a repeating pattern of long-dash-dot; "longDashDotDot" - a line consisting of a repeating pattern of long-dash-dot-dot or "solid" - a solid line.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItemMajorGridLines
     */
@@ -24,7 +24,7 @@ class ChartXAxisItemMajorGridLines extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to true the chart will display the x major grid liness. By default the x major grid liness are visible.
+    * If set to false the chart will not display the x major grid lines. By default the x major grid lines are visible.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItemMajorGridLines
     */
@@ -33,8 +33,7 @@ class ChartXAxisItemMajorGridLines extends \Kendo\SerializableObject {
     }
 
     /**
-    * The width of the line in pixels. Also affects the major and minor ticks, but not the grid lines.
-#### Example - set the scatter chart x major grid lines width
+    * The width of the line in pixels. Also affects the major and minor ticks, but not the grid lines. #### Example - set the scatter chart x major grid lines width
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItemMajorGridLines
     */

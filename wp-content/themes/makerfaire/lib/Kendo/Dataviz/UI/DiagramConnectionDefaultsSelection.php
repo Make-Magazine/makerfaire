@@ -6,7 +6,7 @@ class DiagramConnectionDefaultsSelection extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Defines the connection selection handles configuration.
+    * Defines default handles configuration for selected connections.
     * @param \Kendo\Dataviz\UI\DiagramConnectionDefaultsSelectionHandles|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaultsSelection
     */

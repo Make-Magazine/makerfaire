@@ -6,8 +6,7 @@ class RadialGaugeScaleMinorTicks extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The color of the minor ticks.
-Any valid CSS color string will work here, including hex and rgb.
+    * The color of the minor ticks. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\RadialGaugeScaleMinorTicks
     */
@@ -16,8 +15,7 @@ Any valid CSS color string will work here, including hex and rgb.
     }
 
     /**
-    * The minor tick size.
-This is the length of the line in pixels that is drawn to indicate the tick on the scale.
+    * The minor tick size. This is the length of the line in pixels that is drawn to indicate the tick on the scale.
     * @param float $value
     * @return \Kendo\Dataviz\UI\RadialGaugeScaleMinorTicks
     */

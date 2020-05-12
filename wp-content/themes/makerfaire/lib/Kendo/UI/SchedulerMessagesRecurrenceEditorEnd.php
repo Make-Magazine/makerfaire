@@ -61,3 +61,5 @@ class SchedulerMessagesRecurrenceEditorEnd extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

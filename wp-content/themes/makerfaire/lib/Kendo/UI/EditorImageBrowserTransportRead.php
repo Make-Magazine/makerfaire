@@ -6,8 +6,7 @@ class EditorImageBrowserTransportRead extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The content-type HTTP header sent to the server. Use "application/json" if the content is JSON.
-Refer to the jQuery.ajax documentation for further info.
+    * The content-type HTTP header sent to the server. Use "application/json" if the content is JSON. Refer to the jQuery.ajax documentation for further info.
     * @param string $value
     * @return \Kendo\UI\EditorImageBrowserTransportRead
     */
@@ -16,8 +15,7 @@ Refer to the jQuery.ajax documentation for further info.
     }
 
     /**
-    * Data to be send to the server.
-Refer to the jQuery.ajax documentation for further info.
+    * Data to be send to the server. Refer to the jQuery.ajax documentation for further info.
     * @param |string|\Kendo\JavaScriptFunction $value
     * @return \Kendo\UI\EditorImageBrowserTransportRead
     */
@@ -26,8 +24,7 @@ Refer to the jQuery.ajax documentation for further info.
     }
 
     /**
-    * The type of data that you're expecting back from the server. Commonly used values are "json" and "jsonp".
-Refer to the jQuery.ajax documentation for further info.
+    * The type of data that you're expecting back from the server. Commonly used values are "json" and "jsonp". Refer to the jQuery.ajax documentation for further info.
     * @param string $value
     * @return \Kendo\UI\EditorImageBrowserTransportRead
     */
@@ -36,8 +33,7 @@ Refer to the jQuery.ajax documentation for further info.
     }
 
     /**
-    * The type of request to make ("POST", "GET", "PUT" or "DELETE"), default is "GET".
-Refer to the jQuery.ajax documentation for further info.
+    * The type of request to make ("POST", "GET", "PUT" or "DELETE"), default is "POST". Refer to the jQuery.ajax documentation for further info.
     * @param string $value
     * @return \Kendo\UI\EditorImageBrowserTransportRead
     */
@@ -56,3 +52,5 @@ Refer to the jQuery.ajax documentation for further info.
 
 //<< Properties
 }
+
+?>

@@ -16,3 +16,5 @@ class GridGroupableMessages extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

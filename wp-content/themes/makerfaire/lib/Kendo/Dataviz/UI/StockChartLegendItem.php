@@ -16,7 +16,7 @@ class StockChartLegendItem extends \Kendo\SerializableObject {
 
     /**
     * Sets the visual option of the StockChartLegendItem.
-    * A function that can be used to create a custom visual for the legend items. The available argument fields are:
+    * A function that can be used to create a custom visual for the legend items. The available argument fields are: options - the item options. or createVisual - a function that can be used to get the default visual..
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\StockChartLegendItem
     */

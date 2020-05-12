@@ -42,7 +42,7 @@ class SparklineSeriesItemTooltip extends \Kendo\SerializableObject {
     }
 
     /**
-    * The tooltip format. Format variables depend on the series type:
+    * The tooltip format. Format variables depend on the series type: Area, bar, column, line and pie0- value.
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemTooltip
     */
@@ -61,8 +61,7 @@ class SparklineSeriesItemTooltip extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the SparklineSeriesItemTooltip.
-    * The tooltip template.
-Template variables:
+    * The tooltip template. Template variables: value- the point value (either a number or an object); category- the category name; series- the data series or dataItem- the original data item used to construct the point.      Will be null if binding to array..
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemTooltip
     */
@@ -74,8 +73,7 @@ Template variables:
 
     /**
     * Sets the template option of the SparklineSeriesItemTooltip.
-    * The tooltip template.
-Template variables:
+    * The tooltip template. Template variables: value- the point value (either a number or an object); category- the category name; series- the data series or dataItem- the original data item used to construct the point.      Will be null if binding to array..
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemTooltip
     */

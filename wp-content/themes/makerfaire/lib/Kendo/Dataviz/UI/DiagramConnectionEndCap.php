@@ -24,7 +24,7 @@ class DiagramConnectionEndCap extends \Kendo\SerializableObject {
     }
 
     /**
-    * The connection end cap type.The supported values are:Note that you can also use the "ArrowStart" for the endCap but its direction will be inversed.
+    * The connection end cap type.The supported values are: "none": no cap; "ArrowEnd": a filled arrow or "FilledCircle": a filled circle. You can also use "ArrowStart" for the endCap but its direction will be inversed.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionEndCap
     */

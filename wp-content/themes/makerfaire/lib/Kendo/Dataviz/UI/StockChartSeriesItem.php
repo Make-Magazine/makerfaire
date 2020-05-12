@@ -6,7 +6,7 @@ class StockChartSeriesItem extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The type of the series. Available types:
+    * The type of the series. Available types: area; column; line; candlestick, ohlc or bullet.
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */
@@ -24,7 +24,7 @@ class StockChartSeriesItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * Array of data items. The data item type can be either a:
+    * Array of data items. The data item type can be either a: Array of objects. Each point is bound to the specified series fields.; Array of numbers. Available for area, column and line series. or Array of arrays of numbers. Available for:OHLC and candlestick series (open, high, low, close).
     * @param array $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */
@@ -96,8 +96,7 @@ class StockChartSeriesItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * The aggregate function to apply for date series.This function is used when a category (an year, month, etc.) contains two or more points.
-The function return value is displayed instead of the individual points.The supported values are:
+    * The aggregate function to apply for date series.This function is used when a category (an year, month, etc.) contains two or more points. The function return value is displayed instead of the individual points.The supported values are: "avg" - the average of all values for the date period.; "count" - the number of values for the date period.; "max" - the highest value for the date period.; "min" - the lowest value for the date period.; "sum" - the sum of all values for the date period. Defaults to 0 if no data points are defined.; "sumOrNull" - the sum of all values for the date period. Defaults to null if no data points are defined.; "first" - the first value; function(values, series, dataItems, category) - user-defined aggregate function. Returns single value or data item. or object  - (compound aggregate) Applicable to "candlestick" and ohlc "series". Specifies the aggregate for each data item field..
     * @param string|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */
@@ -133,7 +132,7 @@ The function return value is displayed instead of the individual points.The supp
     }
 
     /**
-    * The series base color. The supported values are:
+    * The series base color. The supported values are: CSS color string, including hex and rgb or function(point) - user-defined function that will be evaluated for each point. Returning undefined will assume the default series color..
     * @param string|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */
@@ -151,7 +150,7 @@ The function return value is displayed instead of the individual points.The supp
     }
 
     /**
-    * The series color when open value is smoller then close value.** Available for candlestick series only **
+    * The series color when the open value is greater than the close value.** Available for candlestick series only **
     * @param string|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */
@@ -160,7 +159,7 @@ The function return value is displayed instead of the individual points.The supp
     }
 
     /**
-    * The data field containing the body color.** Available for candlestick series only **
+    * The data field containing the color applied when the open value is greater than the close value.** Available for candlestick series only **
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */
@@ -214,7 +213,7 @@ The function return value is displayed instead of the individual points.The supp
     }
 
     /**
-    * The behavior for handling missing values. The supported values are:
+    * The behavior for handling missing values. The supported values are: "gap" - the plot stops before the missing point and continues after it.; "interpolate" - the value is interpolated from neighboring points. or "zero" - the value is assumed to be zero..
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */
@@ -223,7 +222,7 @@ The function return value is displayed instead of the individual points.The supp
     }
 
     /**
-    * The supported values are:
+    * The supported values are: "normal" - The values will be connected with straight line.; "step" - The values will be connected with a line at right. or "smooth" - The values will be connected with a smooth line..
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */
@@ -277,8 +276,7 @@ The function return value is displayed instead of the individual points.The supp
     }
 
     /**
-    * A boolean value indicating if the series should be stacked.
-A string value is interpreted as series.stack.group.
+    * A boolean value indicating if the series should be stacked. A string value is interpreted as series.stack.group.
     * @param boolean|string|\Kendo\Dataviz\UI\StockChartSeriesItemStack|array $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */
@@ -332,8 +330,7 @@ A string value is interpreted as series.stack.group.
     }
 
     /**
-    * An optional Z-index that can be used to change the default stacking order of series.The series with the highest Z-index will be placed on top.Series with no Z-index will use the default stacking order based on series type.
-For example line series will be on top with bar and area following below.
+    * An optional Z-index that can be used to change the default stacking order of series.The series with the highest Z-index will be placed on top.Series with no Z-index will use the default stacking order based on series type. For example line series will be on top with bar and area following below.
     * @param float $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItem
     */

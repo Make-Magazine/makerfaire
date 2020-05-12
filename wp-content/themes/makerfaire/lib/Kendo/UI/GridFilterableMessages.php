@@ -42,6 +42,15 @@ class GridFilterableMessages extends \Kendo\SerializableObject {
     }
 
     /**
+    * The text rendered for the title attribute of the filter menu form.
+    * @param string $value
+    * @return \Kendo\UI\GridFilterableMessages
+    */
+    public function title($value) {
+        return $this->setProperty('title', $value);
+    }
+
+    /**
     * The text of the radio button for false values. Displayed when filtering Boolean fields.
     * @param string $value
     * @return \Kendo\UI\GridFilterableMessages
@@ -69,6 +78,15 @@ class GridFilterableMessages extends \Kendo\SerializableObject {
     }
 
     /**
+    * The placeholder of the search input for columns with the search option set to true.
+    * @param string $value
+    * @return \Kendo\UI\GridFilterableMessages
+    */
+    public function search($value) {
+        return $this->setProperty('search', $value);
+    }
+
+    /**
     * The text of the DropDownList displayed in the filter menu for columns whose values option is set.
     * @param string $value
     * @return \Kendo\UI\GridFilterableMessages
@@ -87,7 +105,16 @@ class GridFilterableMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text of the operator item in filter menu (available in mobile mode only).
+    * The format string for selected items count in filter menu when search option set to true.
+    * @param string $value
+    * @return \Kendo\UI\GridFilterableMessages
+    */
+    public function selectedItemsFormat($value) {
+        return $this->setProperty('selectedItemsFormat', $value);
+    }
+
+    /**
+    * The text displayed in the tooltip of the operator item in filter menu.
     * @param string $value
     * @return \Kendo\UI\GridFilterableMessages
     */
@@ -96,12 +123,39 @@ class GridFilterableMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text of the value item in filter menu (available in mobile mode only).
+    * The text displayed in the tooltip of the additional operator item in filter menu.
+    * @param string $value
+    * @return \Kendo\UI\GridFilterableMessages
+    */
+    public function additionalOperator($value) {
+        return $this->setProperty('additionalOperator', $value);
+    }
+
+    /**
+    * The text displayed in the tooltip of the value item in filter menu.
     * @param string $value
     * @return \Kendo\UI\GridFilterableMessages
     */
     public function value($value) {
         return $this->setProperty('value', $value);
+    }
+
+    /**
+    * The text displayed in the tooltip of the additional value item in filter menu.
+    * @param string $value
+    * @return \Kendo\UI\GridFilterableMessages
+    */
+    public function additionalValue($value) {
+        return $this->setProperty('additionalValue', $value);
+    }
+
+    /**
+    * The text displayed in the tooltip of the logic item in filter menu.
+    * @param string $value
+    * @return \Kendo\UI\GridFilterableMessages
+    */
+    public function logic($value) {
+        return $this->setProperty('logic', $value);
     }
 
     /**
@@ -115,3 +169,5 @@ class GridFilterableMessages extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

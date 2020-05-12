@@ -9,8 +9,7 @@ class FlatColorPicker extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * Specifies whether we should display the opacity slider to allow
-selection of transparency.
+    * Specifies whether we should display the opacity slider to allow selection of transparency.
     * @param boolean $value
     * @return \Kendo\UI\FlatColorPicker
     */
@@ -37,8 +36,7 @@ selection of transparency.
     }
 
     /**
-    * Specifies whether we should display the preview bar which displays the
-current color and the input field.
+    * Specifies whether we should display the preview bar which displays the current color and the input field.
     * @param boolean $value
     * @return \Kendo\UI\FlatColorPicker
     */
@@ -47,9 +45,7 @@ current color and the input field.
     }
 
     /**
-    * Specifies whether the UI should be updated while the user is typing in
-the input field, whenever a valid color can be parsed.  If you pass
-false for this, the widget will update only when ENTER is pressed.
+    * Specifies whether the UI should be updated while the user is typing in the input field, whenever a valid color can be parsed.  If you passfalse for this, the widget will update only when ENTER is pressed.
     * @param boolean $value
     * @return \Kendo\UI\FlatColorPicker
     */
@@ -83,3 +79,5 @@ false for this, the widget will update only when ENTER is pressed.
 
 //<< Properties
 }
+
+?>

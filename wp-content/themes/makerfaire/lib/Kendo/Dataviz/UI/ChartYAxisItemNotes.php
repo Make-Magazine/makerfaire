@@ -6,7 +6,7 @@ class ChartYAxisItemNotes extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The position of the y axis notes.
+    * The position of the y axis notes. "top" - The note is positioned on the top.; "bottom" - The note is positioned on the bottom.; "left" - The note is positioned on the left. or "right" - The note is positioned on the right..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartYAxisItemNotes
     */
@@ -24,7 +24,7 @@ class ChartYAxisItemNotes extends \Kendo\SerializableObject {
     }
 
     /**
-    * The label of the notes.
+    * The label configuration of the notes.
     * @param \Kendo\Dataviz\UI\ChartYAxisItemNotesLabel|array $value
     * @return \Kendo\Dataviz\UI\ChartYAxisItemNotes
     */
@@ -52,7 +52,7 @@ class ChartYAxisItemNotes extends \Kendo\SerializableObject {
 
     /**
     * Sets the visual option of the ChartYAxisItemNotes.
-    * A function that can be used to create a custom visual for the notes. The available argument fields are:
+    * A function that can be used to create a custom visual for the notes. The available argument fields are: rect - the kendo.geometry.Rect that defines the note target rect.; options - the note options.; createVisual - a function that can be used to get the default visual. or value - the note value..
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\ChartYAxisItemNotes
     */

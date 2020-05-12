@@ -24,7 +24,7 @@ class DiagramConnectionDefaultsStartCap extends \Kendo\SerializableObject {
     }
 
     /**
-    * The connection start cap type.The supported values are:
+    * The connection start cap type.The supported values are: "none": no cap; "ArrowStart": a filled arrow or "FilledCircle": a filled circle.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaultsStartCap
     */

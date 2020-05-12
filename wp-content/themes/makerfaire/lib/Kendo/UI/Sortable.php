@@ -82,8 +82,7 @@ class Sortable extends \Kendo\UI\Widget {
     }
 
     /**
-    * If set, specifies the offset of the hint relative to the mouse cursor/finger.
-By default, the hint is initially positioned on top of the draggable source offset. The option accepts an object with two keys: top and left.
+    * If set, specifies the offset of the hint relative to the mouse cursor/finger. By default, the hint is initially positioned on top of the draggable source offset. The option accepts an object with two keys: top and left.
     * @param \Kendo\UI\SortableCursorOffset|array $value
     * @return \Kendo\UI\Sortable
     */
@@ -119,8 +118,7 @@ By default, the hint is initially positioned on top of the draggable source offs
     }
 
     /**
-    * Provides a way for customization of the sortable item hint. If a function is supplied, it receives one argument - the draggable element's jQuery object.
-If hint function is not provided the widget will clone dragged item and use it as a hint.
+    * Provides a way for customization of the sortable item hint. If a function is supplied, it receives one argument - the draggable element's jQuery object. If hint function is not provided the widget will clone dragged item and use it as a hint.
     * @param \Kendo\JavaScriptFunction|string| $value
     * @return \Kendo\UI\Sortable
     */
@@ -129,8 +127,7 @@ If hint function is not provided the widget will clone dragged item and use it a
     }
 
     /**
-    * Suitable for touch oriented user interface, in order to avoid collision with the touch scrolling gesture. When set to true, the item will be activated after the user taps and holds the finger on the element for a short amount of time.
-The item will also be activated by pressing, holding and lifting the finger without any movement. Dragging it afterwards will initiate the drag immediately.
+    * Suitable for touch oriented user interface, in order to avoid collision with the touch scrolling gesture. When set to true, the item will be activated after the user taps and holds the finger on the element for a short amount of time. The item will also be activated by pressing, holding and lifting the finger without any movement. Dragging it afterwards will initiate the drag immediately.
     * @param boolean $value
     * @return \Kendo\UI\Sortable
     */
@@ -148,8 +145,7 @@ The item will also be activated by pressing, holding and lifting the finger with
     }
 
     /**
-    * Provides a way for customization of the sortable item placeholder. If a function is supplied, it receives one argument - the draggable element's jQuery object.
-If placeholder function is not provided the widget will clone dragged item, remove its ID attribute, set its visibility to hidden and use it as a placeholder.
+    * Provides a way for customization of the sortable item placeholder. If a function is supplied, it receives one argument - the draggable element's jQuery object. If placeholder function is not provided the widget will clone dragged item, remove its ID attribute, set its visibility to hidden and use it as a placeholder.
     * @param \Kendo\JavaScriptFunction|string| $value
     * @return \Kendo\UI\Sortable
     */

@@ -10,7 +10,7 @@ class Scheduler extends \Kendo\UI\Widget {
 
     /**
     * Sets the allDayEventTemplate option of the Scheduler.
-    * The template used to render the "all day" scheduler events.The fields which can be used in the template are:
+    * The template used to render the "all day" scheduler events.The fields which can be used in the template are: description String - the event description; end Date - the event end date; isAllDay Boolean - if true the event is "all day"; resources Array - the event resources; start Date - the event start date or title String - the event title.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\Scheduler
     */
@@ -22,7 +22,7 @@ class Scheduler extends \Kendo\UI\Widget {
 
     /**
     * Sets the allDayEventTemplate option of the Scheduler.
-    * The template used to render the "all day" scheduler events.The fields which can be used in the template are:
+    * The template used to render the "all day" scheduler events.The fields which can be used in the template are: description String - the event description; end Date - the event end date; isAllDay Boolean - if true the event is "all day"; resources Array - the event resources; start Date - the event start date or title String - the event title.
     * @param string $value The template content.
     * @return \Kendo\UI\Scheduler
     */
@@ -40,8 +40,7 @@ class Scheduler extends \Kendo\UI\Widget {
     }
 
     /**
-    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the
-data source is fired. By default the widget will bind to the data source specified in the configuration.
+    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. That will also apply for data sources for the resources used in the widget. By default the widget will bind to the data source specified in the configuration.
     * @param boolean $value
     * @return \Kendo\UI\Scheduler
     */
@@ -78,9 +77,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the dateHeaderTemplate option of the Scheduler.
-    * The template used to render the date header cells.By default the scheduler renders the date using a custom date format - "ddd M/dd".
-The "ddd" specifier represents the abbreviated name of the week day and will be localized using the current Kendo UI culture.
-If the developer wants to control the day and month order, then one needs to define a custom template.The fields which can be used in the template are:
+    * The template used to render the date header cells.By default the scheduler renders the date using a custom date format - "ddd M/dd". The "ddd" specifier represents the abbreviated name of the week day and will be localized using the current Kendo UI culture. If the developer wants to control the day and month order, then one needs to define a custom template.The fields which can be used in the template are: date - represents the major tick date..
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\Scheduler
     */
@@ -92,9 +89,7 @@ If the developer wants to control the day and month order, then one needs to def
 
     /**
     * Sets the dateHeaderTemplate option of the Scheduler.
-    * The template used to render the date header cells.By default the scheduler renders the date using a custom date format - "ddd M/dd".
-The "ddd" specifier represents the abbreviated name of the week day and will be localized using the current Kendo UI culture.
-If the developer wants to control the day and month order, then one needs to define a custom template.The fields which can be used in the template are:
+    * The template used to render the date header cells.By default the scheduler renders the date using a custom date format - "ddd M/dd". The "ddd" specifier represents the abbreviated name of the week day and will be localized using the current Kendo UI culture. If the developer wants to control the day and month order, then one needs to define a custom template.The fields which can be used in the template are: date - represents the major tick date..
     * @param string $value The template content.
     * @return \Kendo\UI\Scheduler
     */
@@ -122,7 +117,7 @@ If the developer wants to control the day and month order, then one needs to def
 
     /**
     * Sets the eventTemplate option of the Scheduler.
-    * The template used to render the scheduler events.The fields which can be used in the template are:
+    * The template used to render the scheduler events.The fields which can be used in the template are: description String - the event description; end Date - the event end date; resources Array - the event resources; start Date - the event start date or title String - the event title.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\Scheduler
     */
@@ -134,7 +129,7 @@ If the developer wants to control the day and month order, then one needs to def
 
     /**
     * Sets the eventTemplate option of the Scheduler.
-    * The template used to render the scheduler events.The fields which can be used in the template are:
+    * The template used to render the scheduler events.The fields which can be used in the template are: description String - the event description; end Date - the event end date; resources Array - the event resources; start Date - the event start date or title String - the event title.
     * @param string $value The template content.
     * @return \Kendo\UI\Scheduler
     */
@@ -161,6 +156,28 @@ If the developer wants to control the day and month order, then one needs to def
     }
 
     /**
+    * Sets the groupHeaderTemplate option of the Scheduler.
+    * The template used to render the group headers of scheduler day, week, workWeek and timeline views.The fields which can be used in the template are: text String - the group text; color String - the group color; value - the group value; field String - the field of the scheduler event which contains the resource id; title String - the 'title' option of the resource or name  String - the 'name' option of the resource.
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\Scheduler
+    */
+    public function groupHeaderTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('groupHeaderTemplate', $value);
+    }
+
+    /**
+    * Sets the groupHeaderTemplate option of the Scheduler.
+    * The template used to render the group headers of scheduler day, week, workWeek and timeline views.The fields which can be used in the template are: text String - the group text; color String - the group color; value - the group value; field String - the field of the scheduler event which contains the resource id; title String - the 'title' option of the resource or name  String - the 'name' option of the resource.
+    * @param string $value The template content.
+    * @return \Kendo\UI\Scheduler
+    */
+    public function groupHeaderTemplate($value) {
+        return $this->setProperty('groupHeaderTemplate', $value);
+    }
+
+    /**
     * The height of the widget. Numeric values are treated as pixels.
     * @param float|string $value
     * @return \Kendo\UI\Scheduler
@@ -180,7 +197,7 @@ If the developer wants to control the day and month order, then one needs to def
 
     /**
     * Sets the majorTimeHeaderTemplate option of the Scheduler.
-    * The template used to render the major ticks.By default the scheduler renders the time using the current culture time format.The fields which can be used in the template are:
+    * The template used to render the major ticks.By default the scheduler renders the time using the current culture time format.The fields which can be used in the template are: date - represents the major tick date..
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\Scheduler
     */
@@ -192,7 +209,7 @@ If the developer wants to control the day and month order, then one needs to def
 
     /**
     * Sets the majorTimeHeaderTemplate option of the Scheduler.
-    * The template used to render the major ticks.By default the scheduler renders the time using the current culture time format.The fields which can be used in the template are:
+    * The template used to render the major ticks.By default the scheduler renders the time using the current culture time format.The fields which can be used in the template are: date - represents the major tick date..
     * @param string $value The template content.
     * @return \Kendo\UI\Scheduler
     */
@@ -238,7 +255,7 @@ If the developer wants to control the day and month order, then one needs to def
 
     /**
     * Sets the minorTimeHeaderTemplate option of the Scheduler.
-    * The template used to render the minor ticks.By default the scheduler renders a "&nbsp;".The fields which can be used in the template are:
+    * The template used to render the minor ticks.By default the scheduler renders a "&nbsp;".The fields which can be used in the template are: date - represents the major tick date..
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\Scheduler
     */
@@ -250,7 +267,7 @@ If the developer wants to control the day and month order, then one needs to def
 
     /**
     * Sets the minorTimeHeaderTemplate option of the Scheduler.
-    * The template used to render the minor ticks.By default the scheduler renders a "&nbsp;".The fields which can be used in the template are:
+    * The template used to render the minor ticks.By default the scheduler renders a "&nbsp;".The fields which can be used in the template are: date - represents the major tick date..
     * @param string $value The template content.
     * @return \Kendo\UI\Scheduler
     */
@@ -322,9 +339,7 @@ If the developer wants to control the day and month order, then one needs to def
     }
 
     /**
-    * The timezone which the scheduler will use to display the scheduler appointment dates. By default the current system timezone is used. This is an acceptable default when the
-scheduler widget is bound to local array of events. It is advisable to specify a timezone if the scheduler is bound to a remote service.
-That way all users would see the same dates and times no matter their configured system timezone.The complete list of the supported timezones is available in the List of IANA time zones Wikipedia page.
+    * The timezone which the scheduler will use to display the scheduler appointment dates. By default the current system timezone is used. This is an acceptable default when the scheduler widget is bound to local array of events. It is advisable to specify a timezone if the scheduler is bound to a remote service. That way all users would see the same dates and times no matter their configured system timezone.The complete list of the supported timezones is available in the List of IANA time zones Wikipedia page.
     * @param string $value
     * @return \Kendo\UI\Scheduler
     */
@@ -348,28 +363,6 @@ That way all users would see the same dates and times no matter their configured
     */
     public function addView($value) {
         return $this->add('views', func_get_args());
-    }
-
-    /**
-    * Sets the groupHeaderTemplate option of the Scheduler.
-    * The template used to render the group headers of scheduler day, week, workWeek and timeline views.The fields which can be used in the template are:
-    * @param string $value The id of the element which represents the kendo template.
-    * @return \Kendo\UI\Scheduler
-    */
-    public function groupHeaderTemplateId($value) {
-        $value = new \Kendo\Template($value);
-
-        return $this->setProperty('groupHeaderTemplate', $value);
-    }
-
-    /**
-    * Sets the groupHeaderTemplate option of the Scheduler.
-    * The template used to render the group headers of scheduler day, week, workWeek and timeline views.The fields which can be used in the template are:
-    * @param string $value The template content.
-    * @return \Kendo\UI\Scheduler
-    */
-    public function groupHeaderTemplate($value) {
-        return $this->setProperty('groupHeaderTemplate', $value);
     }
 
     /**
@@ -643,3 +636,5 @@ That way all users would see the same dates and times no matter their configured
         return $this->setProperty('add', $value);
     }
 }
+
+?>

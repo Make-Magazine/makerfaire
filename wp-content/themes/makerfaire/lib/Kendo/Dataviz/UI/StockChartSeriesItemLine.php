@@ -33,7 +33,7 @@ class StockChartSeriesItemLine extends \Kendo\SerializableObject {
     }
 
     /**
-    * The supported values are:
+    * The supported values are: "normal" - The values will be connected with straight line.; "step" - The values will be connected with a line with right angle. or "smooth" - The values will be connected with a smooth line..
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItemLine
     */

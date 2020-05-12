@@ -9,8 +9,7 @@ class TreeList extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the
-data source is fired. By default the widget will bind to the data source specified in the configuration.
+    * If set to false, the TreeList will not bind to the specified DataSource during initialization. In this case, data binding will occur when the change event of the DataSource fires. By default, the TreeList will bind to the DataSource that is specified in the configuration.
     * @param boolean $value
     * @return \Kendo\UI\TreeList
     */
@@ -28,7 +27,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * If set to true allows users to resize columns by dragging their header borders. By default resizing is disabled.
+    * If set to true, the user can resize columns by dragging their header borders. By default, resizing is disabled.
     * @param boolean $value
     * @return \Kendo\UI\TreeList
     */
@@ -37,7 +36,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * If set to true the user could reorder the columns by dragging their header cells. By default reordering is disabled.
+    * If set to true, the user can reorder the columns by dragging their header cells. By default, reordering is disabled.
     * @param boolean $value
     * @return \Kendo\UI\TreeList
     */
@@ -46,8 +45,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * If set to true the treelist will display the column menu when the user clicks the chevron icon in the column headers. The column menu allows the user to show and hide columns, filter and sort (if filtering and sorting are enabled).
-By default the column menu is not enabled.Can be set to a JavaScript object which represents the column menu configuration.
+    * If set to true, the TreeList displays the column menu when the user clicks the Chevron icon in the column headers. The column menu allows the user to show and hide columns, and, if filtering and sorting are enabled, filter and sort the data. By default, the column menu is disabled. Can be set to a JavaScript object which represents the column menu configuration.
     * @param boolean|\Kendo\UI\TreeListColumnMenu|array $value
     * @return \Kendo\UI\TreeList
     */
@@ -65,7 +63,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
-    * If set to true the user would be able to edit the data to which the treelist is bound. By default editing is disabled.Can be set to a string ("inline" or "popup") to specify the editing mode. The default editing mode is "inline".Can be set to a JavaScript object which represents the editing configuration.
+    * If set to true, the user will be able to edit the data to which the TreeList is bound. By default, editing is disabled. can be set to a JavaScript object (which represents the editing configuration) or to a string (which specifies the edit mode).The supported string values are: (Default) inline; popup or incell.
     * @param boolean|\Kendo\UI\TreeListEditable|array $value
     * @return \Kendo\UI\TreeList
     */
@@ -74,7 +72,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
-    * Configures the Kendo UI TreeList Excel export settings.
+    * Configures the Excel export settings of the TreeList.
     * @param \Kendo\UI\TreeListExcel|array $value
     * @return \Kendo\UI\TreeList
     */
@@ -83,7 +81,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
-    * If set to true the user can filter the data source using the treelist filter menu. Filtering is disabled by default.Can be set to a JavaScript object which represents the filter menu configuration.
+    * If set to true, the user can filter the data source by using the TreeList filter menu. By default, filtering is disabled. Can be set to a JavaScript object which represents the filter menu configuration.
     * @param boolean|\Kendo\UI\TreeListFilterable|array $value
     * @return \Kendo\UI\TreeList
     */
@@ -92,7 +90,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
-    * The height of the treelist. Numeric values are treated as pixels.
+    * The height of the TreeList. Numeric values are treated as pixels.
     * @param float|string $value
     * @return \Kendo\UI\TreeList
     */
@@ -110,7 +108,25 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
-    * Configures the Kendo UI TreeList PDF export settings.
+    * If set to true, the user can navigate the widget with the keyboard. By default, keyboard navigation is disabled. For a runnable example, refer to the demo on keyboard navigation in the TreeList.
+    * @param boolean $value
+    * @return \Kendo\UI\TreeList
+    */
+    public function navigatable($value) {
+        return $this->setProperty('navigatable', $value);
+    }
+
+    /**
+    * If set to true, the TreeList displays a pager. By default, paging is disabled. Only client-side paging is supported which means that all data items are expected to be available when the TreeList is initialized. Can be set to a JavaScript object which represents the pager configuration.
+    * @param boolean|\Kendo\UI\TreeListPageable|array $value
+    * @return \Kendo\UI\TreeList
+    */
+    public function pageable($value) {
+        return $this->setProperty('pageable', $value);
+    }
+
+    /**
+    * Configures the PDF export settings of the TreeList.
     * @param \Kendo\UI\TreeListPdf|array $value
     * @return \Kendo\UI\TreeList
     */
@@ -119,7 +135,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
-    * If set to true the treelist will display a scrollbar when the total row height (or width) exceeds the treelist height (or width). By default scrolling is enabled.Can be set to a JavaScript object which represents the scrolling configuration.
+    * If set to true, the TreeList will display a scrollbar when the total row height or width exceeds the TreeList height or width. By default, scrolling is enabled. Scrolling renders separate tables for the header and data area. For accessibility-conscious applications, disable scrolling.
     * @param boolean| $value
     * @return \Kendo\UI\TreeList
     */
@@ -128,7 +144,16 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
-    * If set to true the user would be able to select treelist rows. By default selection is disabled.Can also be set to the following string values:
+    * Configures the Kendo UI TreeList search bar settings.
+    * @param \Kendo\UI\TreeListSearch|array $value
+    * @return \Kendo\UI\TreeList
+    */
+    public function search($value) {
+        return $this->setProperty('search', $value);
+    }
+
+    /**
+    * If set to true, the user will be able to select TreeList rows. By default, selection is disabled.Can also be set to the following string values: row - The user can select a single row.; cell - The user can select a single cell.; multiple, row - The user can select multiple rows. or multiple, cell - The user can select multiple cells..
     * @param boolean|string $value
     * @return \Kendo\UI\TreeList
     */
@@ -137,7 +162,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
-    * If set to true the user could sort the treelist by clicking the column header cells. By default sorting is disabled.Can be set to a JavaScript object which represents the sorting configuration.
+    * If set to true, the user is able to sort the TreeList by clicking the column header cells. By default, sorting is disabled. Can be set to a JavaScript object which represents the sorting configuration.
     * @param boolean|\Kendo\UI\TreeListSortable|array $value
     * @return \Kendo\UI\TreeList
     */
@@ -155,8 +180,22 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
+    * Sets the beforeEdit event of the TreeList.
+    * Fires when the user tries to edit or creates a data item before the editor is created. Can be used for preventing the editing depending on custom logic. The event handler function context (available through the this keyword) will be set to the widget instance. The event will be fired only when the TreeList is editable.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function beforeEdit($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('beforeEdit', $value);
+    }
+
+    /**
     * Sets the cancel event of the TreeList.
-    * Fired when the user clicks the "cancel" button (in inline or popup editing mode) or closes the popup window.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the user clicks the Cancel button (in inline or popup edit mode) or closes the popup window. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -169,8 +208,22 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
+    * Sets the cellClose event of the TreeList.
+    * Fires when the incell edit mode is used and the cell will be closed. The event is triggered after saving or canceling the changes but before the cell is closed. The event handler function context (available through the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function cellClose($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('cellClose', $value);
+    }
+
+    /**
     * Sets the change event of the TreeList.
-    * Fired when the user selects a table row or cell in the treelist.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the user selects a table row or cell in the TreeList. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -184,7 +237,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the collapse event of the TreeList.
-    * Fired when an item is about to be collapsed.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when an item is about to be collapsed. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -198,7 +251,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the dataBinding event of the TreeList.
-    * Fired before the widget binds to its data source.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires before the widget binds to its data source. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -212,7 +265,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the dataBound event of the TreeList.
-    * Fired when the widget is bound to data from its data source.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the widget is bound to data from its data source. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -225,8 +278,64 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
+    * Sets the dragstart event of the TreeList.
+    * (Available as of the 2015.3.1014 release) Fires when the user attempts to drag an item. If prevented, the item is not allowed to move. The event handler function context (available through the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function dragstart($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('dragstart', $value);
+    }
+
+    /**
+    * Sets the drag event of the TreeList.
+    * (Available as of the 2015.3.1014 release) Fires while the user is dragging and item. This event is triggered on every mouse move. The event handler function context (available through the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function drag($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('drag', $value);
+    }
+
+    /**
+    * Sets the dragend event of the TreeList.
+    * (Available as of the 2015.3.1014 release) Fires when the user finishes dragging an item and the model was updated. The event handler function context (available through the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function dragend($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('dragend', $value);
+    }
+
+    /**
+    * Sets the drop event of the TreeList.
+    * (Available as of the 2015.3.1014 release) Fires when the user drops an item. If prevented, the source row will not be moved. The event handler function context (available through the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function drop($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('drop', $value);
+    }
+
+    /**
     * Sets the edit event of the TreeList.
-    * Fired when the user edits or creates a data item.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the user edits or creates a data item. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -240,7 +349,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the excelExport event of the TreeList.
-    * Fired when the user clicks the "Export to Excel" toolbar button.
+    * Fires when the user clicks the Export to Excel toolbar button.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -254,7 +363,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the expand event of the TreeList.
-    * Fired when an item is about to be expanded.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when an item is about to be expanded. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -268,7 +377,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the filterMenuInit event of the TreeList.
-    * Fired when the treelist filter menu is initialized.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the TreeList filter menu is initialized. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -281,8 +390,22 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
+    * Sets the filterMenuOpen event of the TreeList.
+    * Fires when the TreeList filter menu is opened. The event handler function context (available through the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function filterMenuOpen($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('filterMenuOpen', $value);
+    }
+
+    /**
     * Sets the pdfExport event of the TreeList.
-    * Fired when the user clicks the "Export to PDF" toolbar button.
+    * Fires  when the user clicks the Export to PDF toolbar button.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -296,7 +419,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the remove event of the TreeList.
-    * Fired when the user clicks the "destroy" command button.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the user clicks the Destroy command button. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -310,7 +433,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the save event of the TreeList.
-    * Fired when a data item is saved.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when a data item is saved. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -323,8 +446,22 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
+    * Sets the saveChanges event of the TreeList.
+    * Fires when the user clicks the Save command button. The event handler function context (available through the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function saveChanges($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('saveChanges', $value);
+    }
+
+    /**
     * Sets the columnShow event of the TreeList.
-    * Fired when the user shows a column.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the user shows a column. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -338,7 +475,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the columnHide event of the TreeList.
-    * Fired when the user hides a column.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the user hides a column. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -352,7 +489,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the columnReorder event of the TreeList.
-    * Fired when the user changes the order of a column.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the user changes the order of a column. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -365,8 +502,22 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
+    * Sets the columnResize event of the TreeList.
+    * Fires when the user resizes a column. The event handler function context (available through the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function columnResize($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('columnResize', $value);
+    }
+
+    /**
     * Sets the columnMenuInit event of the TreeList.
-    * Fired when the column menu is initialized.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the column menu is initialized. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -379,8 +530,22 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
     }
 
     /**
+    * Sets the columnMenuOpen event of the TreeList.
+    * Fires when the column menu is opened. The event handler function context (available through the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\TreeList
+    */
+    public function columnMenuOpen($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('columnMenuOpen', $value);
+    }
+
+    /**
     * Sets the columnLock event of the TreeList.
-    * Fired when the user lock a column.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the user lock a column. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -394,7 +559,7 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 
     /**
     * Sets the columnUnlock event of the TreeList.
-    * Fired when the user unlock a column.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the user unlock a column. The event handler function context (available through the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeList
     */
@@ -410,3 +575,4 @@ By default the column menu is not enabled.Can be set to a JavaScript object whic
 //<< Properties
 }
 
+?>

@@ -6,7 +6,7 @@ class TooltipAnimationOpen extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Effect to be used for opening of the Tooltip.
+    * The effect that will be used for opening the Tooltip.
     * @param string $value
     * @return \Kendo\UI\TooltipAnimationOpen
     */
@@ -15,7 +15,7 @@ class TooltipAnimationOpen extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the animation duration.
+    * Defines the duration of the open animation.
     * @param float $value
     * @return \Kendo\UI\TooltipAnimationOpen
     */
@@ -25,3 +25,5 @@ class TooltipAnimationOpen extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

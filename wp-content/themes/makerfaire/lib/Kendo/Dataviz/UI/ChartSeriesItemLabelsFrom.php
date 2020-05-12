@@ -69,7 +69,7 @@ class ChartSeriesItemLabelsFrom extends \Kendo\SerializableObject {
     }
 
     /**
-    * The position of the from labels.
+    * The position of the from labels. "center" - the label is positioned at the point center.; "insideBase" - the label is positioned inside, near the base of the bar.; "insideEnd" - the label is positioned inside, near the end of the point.; "outsideEnd" - the label is positioned outside, near the end of the point.; "above" - the label is positioned at the top of the marker. Applicable for "rangeArea" and "verticalRangeArea" series.; "below" - the label is positioned at the bottom of the marker. Applicable for "rangeArea" and "verticalRangeArea" series.; "left" - the label is positioned to the left of the marker. Applicable for "rangeArea" and "verticalRangeArea" series. or "right" - the label is positioned to the right of the marker. Applicable for "rangeArea" and "verticalRangeArea" series..
     * @param string|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Dataviz\UI\ChartSeriesItemLabelsFrom
     */
@@ -79,7 +79,7 @@ class ChartSeriesItemLabelsFrom extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the ChartSeriesItemLabelsFrom.
-    * The template which renders the chart series from label.The fields which can be used in the template are:
+    * The template which renders the chart series from label.The fields which can be used in the template are: category - the category name.; dataItem - the original data item used to construct the point. Will be null if binding to array.; series - the data series or value - the point value. An object containing from and to values..
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\ChartSeriesItemLabelsFrom
     */
@@ -91,7 +91,7 @@ class ChartSeriesItemLabelsFrom extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the ChartSeriesItemLabelsFrom.
-    * The template which renders the chart series from label.The fields which can be used in the template are:
+    * The template which renders the chart series from label.The fields which can be used in the template are: category - the category name.; dataItem - the original data item used to construct the point. Will be null if binding to array.; series - the data series or value - the point value. An object containing from and to values..
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\ChartSeriesItemLabelsFrom
     */

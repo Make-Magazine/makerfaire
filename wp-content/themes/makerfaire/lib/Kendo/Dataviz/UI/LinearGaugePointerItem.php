@@ -34,7 +34,6 @@ class LinearGaugePointerItem extends \Kendo\SerializableObject {
 
     /**
     * The opacity of the pointer.
-Any valid CSS color string will work here, including hex and rgb.
     * @param float $value
     * @return \Kendo\Dataviz\UI\LinearGaugePointerItem
     */
@@ -61,8 +60,7 @@ Any valid CSS color string will work here, including hex and rgb.
     }
 
     /**
-    * The element arround/under the pointer.
-(available only for 'barIndicator' shape)
+    * The element arround/under the pointer. (available only for 'barIndicator' shape)
     * @param \Kendo\Dataviz\UI\LinearGaugePointerItemTrack|array $value
     * @return \Kendo\Dataviz\UI\LinearGaugePointerItem
     */

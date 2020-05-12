@@ -6,7 +6,7 @@ class DiagramConnectionDefaultsSelectionHandlesFill extends \Kendo\SerializableO
 //>> Properties
 
     /**
-    * Defines the handles fill color.
+    * Defines the handles fill color when connections are selected.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaultsSelectionHandlesFill
     */

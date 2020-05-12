@@ -6,7 +6,7 @@ class StockChartSeriesItemNotes extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The position of the series note.
+    * The position of the series note. "top" - The note is positioned on the top.; "bottom" - The note is positioned on the bottom.; "left" - The note is positioned on the left. or "right" - The note is positioned on the right..
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartSeriesItemNotes
     */

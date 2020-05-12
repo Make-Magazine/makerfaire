@@ -15,7 +15,7 @@ class DiagramShapeConnector extends \Kendo\SerializableObject {
     }
 
     /**
-    * The connector name. Predefined names include:
+    * The connector name. The predefined names are: "top" - top connector; "right" - right connector; "bottom" - bottom connector; "bottomRight" - bottom right connector; "left" - left connector or "auto" - auto connector.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramShapeConnector
     */
@@ -25,7 +25,7 @@ class DiagramShapeConnector extends \Kendo\SerializableObject {
 
     /**
     * Sets the position option of the DiagramShapeConnector.
-    * The function that positions the connector.
+    * The function that positions the connector. The function is passed a shape as parameter and should return a kendo.dataviz.diagram.Point indicating where the connector should be placed.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\DiagramShapeConnector
     */
@@ -35,6 +35,51 @@ class DiagramShapeConnector extends \Kendo\SerializableObject {
         }
 
         return $this->setProperty('position', $value);
+    }
+
+    /**
+    * Defines the width of the shape connectors.  See shapes.connectors for an example.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\DiagramShapeConnector
+    */
+    public function width($value) {
+        return $this->setProperty('width', $value);
+    }
+
+    /**
+    * Defines the height of the shape connectors. See shapes.connectors for an example.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\DiagramShapeConnector
+    */
+    public function height($value) {
+        return $this->setProperty('height', $value);
+    }
+
+    /**
+    * Defines the hover configuration of the shape connectors.
+    * @param \Kendo\Dataviz\UI\DiagramShapeConnectorHover|array $value
+    * @return \Kendo\Dataviz\UI\DiagramShapeConnector
+    */
+    public function hover($value) {
+        return $this->setProperty('hover', $value);
+    }
+
+    /**
+    * Defines the fill options of the shape connectors.
+    * @param string|\Kendo\Dataviz\UI\DiagramShapeConnectorFill|array $value
+    * @return \Kendo\Dataviz\UI\DiagramShapeConnector
+    */
+    public function fill($value) {
+        return $this->setProperty('fill', $value);
+    }
+
+    /**
+    * Defines the stroke options of the shape connectors.
+    * @param string|\Kendo\Dataviz\UI\DiagramShapeConnectorStroke|array $value
+    * @return \Kendo\Dataviz\UI\DiagramShapeConnector
+    */
+    public function stroke($value) {
+        return $this->setProperty('stroke', $value);
     }
 
 //<< Properties

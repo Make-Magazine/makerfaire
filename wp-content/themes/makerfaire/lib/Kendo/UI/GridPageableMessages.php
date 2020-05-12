@@ -6,10 +6,7 @@ class GridPageableMessages extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The pager info text. Uses kendo.format.Contains three placeholders:
-- {0} - the first data item index
-- {1} - the last data item index
-- {2} - the total number of data items
+    * The pager info text. Uses kendo.format.Contains three placeholders: - {0} - the first data item index - {1} - the last data item index - {2} - the total number of data items
     * @param string $value
     * @return \Kendo\UI\GridPageableMessages
     */
@@ -109,3 +106,5 @@ class GridPageableMessages extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

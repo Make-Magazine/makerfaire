@@ -6,7 +6,7 @@ class DiagramConnectionDefaultsSelectionHandlesStroke extends \Kendo\Serializabl
 //>> Properties
 
     /**
-    * Defines the handles stroke color.
+    * Defines the handles stroke color when connections are selected.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaultsSelectionHandlesStroke
     */

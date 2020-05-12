@@ -15,7 +15,7 @@ class ChartCategoryAxisItemSelectMousewheel extends \Kendo\SerializableObject {
     }
 
     /**
-    * The zoom direction.The supported values are:
+    * The zoom direction.The supported values are: "both" - zooming expands and contracts the selection both sides; "left" - zooming expands and contracts the selection left side only or "right" - zooming expands and contracts the selection right side only.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItemSelectMousewheel
     */

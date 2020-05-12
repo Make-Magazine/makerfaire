@@ -34,3 +34,5 @@ class SchedulerViewEditable extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

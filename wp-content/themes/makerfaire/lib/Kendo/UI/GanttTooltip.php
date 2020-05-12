@@ -7,7 +7,7 @@ class GanttTooltip extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the GanttTooltip.
-    * The template which renders the tooltip.The fields which can be used in the template are:
+    * The template which renders the tooltip.The fields which can be used in the template are: task - the gantt task, for which the template is shown.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\GanttTooltip
     */
@@ -19,7 +19,7 @@ class GanttTooltip extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the GanttTooltip.
-    * The template which renders the tooltip.The fields which can be used in the template are:
+    * The template which renders the tooltip.The fields which can be used in the template are: task - the gantt task, for which the template is shown.
     * @param string $value The template content.
     * @return \Kendo\UI\GanttTooltip
     */
@@ -38,3 +38,5 @@ class GanttTooltip extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

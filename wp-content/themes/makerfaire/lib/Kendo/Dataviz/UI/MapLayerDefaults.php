@@ -33,6 +33,15 @@ class MapLayerDefaults extends \Kendo\SerializableObject {
     }
 
     /**
+    * The size of the image tile in pixels.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\MapLayerDefaults
+    */
+    public function tileSize($value) {
+        return $this->setProperty('tileSize', $value);
+    }
+
+    /**
     * The default configuration for tile layers.
     * @param \Kendo\Dataviz\UI\MapLayerDefaultsTile|array $value
     * @return \Kendo\Dataviz\UI\MapLayerDefaults

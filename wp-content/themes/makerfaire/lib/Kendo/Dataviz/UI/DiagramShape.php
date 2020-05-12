@@ -15,6 +15,15 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
+    * Defines default options for all connectors belonging to a given shape.
+    * @param \Kendo\Dataviz\UI\DiagramShapeConnectorDefaults|array $value
+    * @return \Kendo\Dataviz\UI\DiagramShape
+    */
+    public function connectorDefaults($value) {
+        return $this->setProperty('connectorDefaults', $value);
+    }
+
+    /**
     * Defines the shapes content settings.
     * @param \Kendo\Dataviz\UI\DiagramShapeContent|array $value
     * @return \Kendo\Dataviz\UI\DiagramShape
@@ -33,7 +42,7 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the fill options of the shape.
+    * Defines the background fill options of the shape.
     * @param string|\Kendo\Dataviz\UI\DiagramShapeFill|array $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -42,7 +51,7 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the height of the shape when added to the diagram.
+    * Defines the height of the shape when added to the Diagram.
     * @param float $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -60,7 +69,7 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
-    * The unique identifier for a Shape.
+    * The unique identifier for a Shape. The id value is used to identify shapes in connection configurations. The connection to and from properties usually point to shape id values.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -69,7 +78,7 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the minimum height the shape should have, i.e. it cannot be resized to a value smaller than the given one.
+    * Defines the minimum height the shape should have, that is, it cannot be resized to a value smaller than the given one.
     * @param float $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -78,7 +87,7 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the minimum width the shape should have, i.e. it cannot be resized to a value smaller than the given one.
+    * Defines the minimum width the shape should have, that is, it cannot be resized to a value smaller than the given one. See example at shapes.minHeight.
     * @param float $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -87,7 +96,7 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
-    * The path option of a Shape is a description of a custom geometry. The format follows the standard SVG format (http://www.w3.org/TR/SVG/paths.html#PathData "SVG Path data.").
+    * The path option of a Shape is a description of a custom geometry. The format follows the standard SVG format (https://www.w3.org/TR/SVG/paths.html#PathData "SVG Path data.").
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -96,7 +105,7 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
-    * The function that positions the connector.
+    * Specifies a rotation angle for the shape.
     * @param \Kendo\Dataviz\UI\DiagramShapeRotation|array $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -114,7 +123,7 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the stroke configuration.
+    * Defines the shape border stroke configuration.
     * @param \Kendo\Dataviz\UI\DiagramShapeStroke|array $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -123,7 +132,7 @@ class DiagramShape extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the type of the Shape using any of the built-in shape type.
+    * Specifies the type of the Shape using any of the built-in shape type. "rectangle" - The default option; "circle" - A circle/ellipse or "image" - An image.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -133,8 +142,7 @@ class DiagramShape extends \Kendo\SerializableObject {
 
     /**
     * Sets the visual option of the DiagramShape.
-    * A function returning a visual element to render for this shape.
-See visual.
+    * A function returning a visual element to render for this shape. For more information, refer to visual.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -147,7 +155,7 @@ See visual.
     }
 
     /**
-    * Defines the width of the shape when added to the diagram.
+    * Defines the width of the shape when added to the Diagram.
     * @param float $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -156,7 +164,7 @@ See visual.
     }
 
     /**
-    * Defines the x-coordinate of the shape when added to the diagram.
+    * Defines the x-coordinate of the shape when added to the Diagram. Does not take effect if the Diagram is using a pre-defined layout.
     * @param float $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */
@@ -165,7 +173,7 @@ See visual.
     }
 
     /**
-    * Defines the y-coordinate of the shape when added to the diagram.
+    * Defines the y-coordinate of the shape when added to the Diagram. Does not take effect if the Diagram is using a pre-defined layout. You can see an example at shapes.x
     * @param float $value
     * @return \Kendo\Dataviz\UI\DiagramShape
     */

@@ -51,6 +51,15 @@ class SchedulerMessagesRecurrenceEditor extends \Kendo\SerializableObject {
     }
 
     /**
+    * The text of the Recurence editor dropdown title.
+    * @param string $value
+    * @return \Kendo\UI\SchedulerMessagesRecurrenceEditor
+    */
+    public function recurrenceEditorTitle($value) {
+        return $this->setProperty('recurrenceEditorTitle', $value);
+    }
+
+    /**
     * The configuration of the scheduler recurrence editor weekly messages. Use this option to customize or localize the scheduler recurrence editor weekly messages.
     * @param \Kendo\UI\SchedulerMessagesRecurrenceEditorWeekly|array $value
     * @return \Kendo\UI\SchedulerMessagesRecurrenceEditor
@@ -79,3 +88,5 @@ class SchedulerMessagesRecurrenceEditor extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>
