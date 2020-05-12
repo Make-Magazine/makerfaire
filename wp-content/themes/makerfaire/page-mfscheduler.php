@@ -74,7 +74,6 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
 			  Use the DejaVu Sans font for display and embedding in the PDF file.
 			  The standard PDF fonts have no support for Unicode characters.
 		*/
-		body { margin-top: 5px !important; }
 		.k-floatwrap .k-header .k-scheduler-toolbar { padding: 0px !important; }
 		.k-block, .k-draghandle, .k-grid-header, .k-grouping-header, .k-header, .k-pager-wrap, .k-treemap-tile, .k-scheduler .k-header .k-link, .k-scheduler .k-header .k-button {
 			background-color: #005E9A !important;
