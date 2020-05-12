@@ -327,8 +327,8 @@ add_action('wp_enqueue_scripts', 'angular_scripts');
  * SMTP server. This improves reliability of wp_mail, and
  * avoids many potential problems.
  */
-add_action('phpmailer_init', 'send_smtp_email');
-function send_smtp_email($phpmailer) {
+/*add_action('phpmailer_init', 'send_smtp_email');
+function send_smtp_email($phpmailer) {    
    // Define that we are sending with SMTP
    $phpmailer->isSMTP();
    // The hostname of the mail server
@@ -343,7 +343,7 @@ function send_smtp_email($phpmailer) {
    $phpmailer->Password = "VyprCy78ZO0LRNwCTMVn2Q";
    // Encryption system to use - ssl or tls
    $phpmailer->SMTPSecure = "";
-}
+}*/
 add_filter('gform_enable_field_label_visibility_settings', '__return_true');
 
 
