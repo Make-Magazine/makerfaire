@@ -308,20 +308,28 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
       if ($mysqli->connect_errno) {
          echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
       }
-      $sqlForDate = "SELECT `wp_mf_faire`.`start_dt` FROM  wp_mf_faire where faire='$faire_id'";
+      $sqlForDate = "SELECT `wp_mf_faire`.`start_dt`, `wp_mf_faire`.`end_dt` FROM  wp_mf_faire where faire='$faire_id'";
       $result = $mysqli->query($sqlForDate) or trigger_error($mysqli->error);
       $start_dt = '';
+	  $end_dt = '';
+      $start_dow = 0;
+      $end_dow = 0;
       if ($result) {
-         while ($row = $result->fetch_row()) {
-            $start_dt = DateTime::createFromFormat('Y-m-d H:i:s', $row [0]); // your original DTO
-            
-            //DEBUG: Interval looks like it is no longer needed.
-            //Why do we need to add 7 days to make this work??? 
-				// see if we can add default beginning and ending time
-            $start_dt->add(new DateInterval('P7D'));
+         while ($row = $result->fetch_array()) {
+			$start_dt = DateTime::createFromFormat('Y-m-d H:i:s', $row ['start_dt']); // your original DTO
+			$start_dow = $start_dt->format('N');
+			$start_dt = $start_dt->format('Y/m/d'); // your newly formatted date ready to be substituted into JS new Date();
 
-            $start_dt = $start_dt->format('Y/m/d'); // your newly formatted date ready to be substituted into JS new Date();
-         }
+			$end_dt = DateTime::createFromFormat('Y-m-d H:i:s', $row ['end_dt']); // your original DTO
+			$end_dow = $end_dt->format('N');
+			$end_dt = $end_dt->format('Y/m/d'); // your newly formatted date ready to be substituted into JS new Date();
+
+			//DEBUG: Interval looks like it is no longer needed.
+			//Why do we need to add 7 days to make this work???
+			// see if we can add default beginning and ending time
+			//$start_dt->add(new DateInterval(‘P7D’));
+		}
+
       }
       $transport = new \Kendo\Data\DataSourceTransport ();
 
@@ -416,33 +424,30 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
       $scheduler = new \Kendo\UI\Scheduler('scheduler');
 
       $scheduler->eventTemplateId('presentation-template')
-              ->timezone('UTC')
-              ->currentTimeMarker(false)
-              ->date(new DateTime($start_dt))
-              ->height(900)->pdf($pdf)
-              ->addToolbarItem(new \Kendo\UI\SchedulerToolbarItem('pdf'))
-              ->addResource($subareasResource, $entriesResource, $typesResource)
-              ->group(array(
-                  'resources' => array(
-                      'Stages'
-                  )
-              ))->addView(array(
-          'type' => 'day',
-          'majorTick' => 30,
-          'showWorkHours' => true,
-          'workWeekEnd' => 7,
-          'workDayStart' => new DateTime('2016/5/20 17:00', new DateTimeZone('UTC')),
-          'workDayEnd' => new DateTime('2016/5/22 02:00', new DateTimeZone('UTC'))
-              ), array(
-          'type' => 'workWeek',
-          'majorTick' => 30,
-          'selected' => true,
-          'workWeekStart' => 5,
-          'workWeekEnd' => 7,
-          'showWorkHours' => true,
-          'workDayStart' => new DateTime('2016/5/20 17:00', new DateTimeZone('UTC')),
-          'workDayEnd' => new DateTime('2016/5/22 02:00', new DateTimeZone('UTC'))
-              ), 'agenda')->dataSource($dataSource);
+			  ->timezone('America/Los_Angeles')
+			  ->currentTimeMarker(false)
+			  ->date(new DateTime($start_dt))
+			  ->height(900)->pdf($pdf)
+			  ->addToolbarItem(new \Kendo\UI\SchedulerToolbarItem('pdf'))
+			  ->addResource($subareasResource, $entriesResource, $typesResource)
+			  ->group(array('resources' => array('Stages')
+					 ))->addView(array(
+								'type' => 'day',
+								'majorTick' => 30,
+								'showWorkHours' => true,
+								'workWeekEnd' => $end_dow,
+								'workDayStart' => new DateTime('2016/5/20 17:00', new DateTimeZone('UTC')),
+								'workDayEnd' => new DateTime('2016/5/22 02:00', new DateTimeZone('UTC'))
+									), array(
+								'type' => 'workWeek',
+								'majorTick' => 30,
+								'selected' => true,
+								'workWeekStart' => $start_dow,
+								'workWeekEnd' => $end_dow,
+								'showWorkHours' => true,
+								'workDayStart' => new DateTime('2016/5/20 17:00', new DateTimeZone('UTC')),
+								'workDayEnd' => new DateTime('2016/5/22 02:00', new DateTimeZone('UTC'))
+						), 'agenda')->dataSource($dataSource);
 
       return $scheduler;
    }
