@@ -104,6 +104,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             border-radius: 3px;
             padding: 3px;
             border: 1px solid #151733;
+			height: calc(100% - 10px);
         }
         .k-event {
             border: 0px;
