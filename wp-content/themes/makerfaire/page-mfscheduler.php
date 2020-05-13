@@ -95,7 +95,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             overflow: hidden;
             font-weight: bold; 
         }
-        .mf-entry-template a { color: #151733; font-weight: bold; }
+        .mf-entry-template a { color: #f1f1f1; font-weight: bold; text-decoration: underline; }
         .k-scheduler {
             font-family: "DejaVu Sans", "Arial", sans-serif;
             font-size: 80%;
@@ -105,6 +105,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             padding: 3px;
             border: 1px solid #151733;
 			height: calc(100% - 10px);
+			overflow: hidden;
         }
         .k-event {
             border: 0px;
