@@ -51,8 +51,7 @@ class SchedulerResource extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to true the scheduler event can be assigned multiple instances of the resource. The scheduler event field specified via the field option will contain an array of resources.
-By default only one resource instance can be assigned to an event.
+    * If set to true the scheduler event can be assigned multiple instances of the resource. The scheduler event field specified via the field option will contain an array of resources. By default only one resource instance can be assigned to an event.
     * @param boolean $value
     * @return \Kendo\UI\SchedulerResource
     */
@@ -79,8 +78,7 @@ By default only one resource instance can be assigned to an event.
     }
 
     /**
-    * Set to false if the scheduler event field specified via the field option contains a resource data item.
-By default the scheduler expects that field to contain a primitive value (string, number) which corresponds to the "value" of the resource (specified via dataValueField).
+    * Set to false if the scheduler event field specified via the field option contains a resource data item. By default the scheduler expects that field to contain a primitive value (string, number) which corresponds to the "value" of the resource (specified via dataValueField).
     * @param boolean $value
     * @return \Kendo\UI\SchedulerResource
     */
@@ -90,3 +88,5 @@ By default the scheduler expects that field to contain a primitive value (string
 
 //<< Properties
 }
+
+?>

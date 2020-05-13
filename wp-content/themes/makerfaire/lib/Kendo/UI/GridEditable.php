@@ -15,8 +15,7 @@ class GridEditable extends \Kendo\SerializableObject {
     }
 
     /**
-    * If confirmation is enabled the grid will display a confirmation dialog when the user clicks the "destroy" command button.
-If the grid is in mobile mode this text will be used for the cancel button.
+    * If confirmation is enabled the grid will display a confirmation dialog when the user clicks the "destroy" command button. If the grid is in mobile mode this text will be used for the cancel button.
     * @param string $value
     * @return \Kendo\UI\GridEditable
     */
@@ -25,8 +24,7 @@ If the grid is in mobile mode this text will be used for the cancel button.
     }
 
     /**
-    * If confirmation is enabled the grid will display a confirmation dialog when the user clicks the "destroy" command button.
-If the grid is in mobile mode this text will be used for the confirm button.
+    * If confirmation is enabled the grid will display a confirmation dialog when the user clicks the "destroy" command button. If the grid is in mobile mode this text will be used for the confirm button.
     * @param string $value
     * @return \Kendo\UI\GridEditable
     */
@@ -63,8 +61,7 @@ If the grid is in mobile mode this text will be used for the confirm button.
 
     /**
     * Sets the template option of the GridEditable.
-    * The template which renders popup editor.The template should contain elements whose name HTML attributes are set as the editable fields. This is how the grid will know
-which field to update. The other option is to use MVVM bindings in order to bind HTML elements to data item fields.
+    * The template which renders popup editor.The template should contain elements whose name HTML attributes are set as the editable fields. This is how the grid will know which field to update. The other option is to use MVVM bindings in order to bind HTML elements to data item fields.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\GridEditable
     */
@@ -76,8 +73,7 @@ which field to update. The other option is to use MVVM bindings in order to bind
 
     /**
     * Sets the template option of the GridEditable.
-    * The template which renders popup editor.The template should contain elements whose name HTML attributes are set as the editable fields. This is how the grid will know
-which field to update. The other option is to use MVVM bindings in order to bind HTML elements to data item fields.
+    * The template which renders popup editor.The template should contain elements whose name HTML attributes are set as the editable fields. This is how the grid will know which field to update. The other option is to use MVVM bindings in order to bind HTML elements to data item fields.
     * @param string $value The template content.
     * @return \Kendo\UI\GridEditable
     */
@@ -105,3 +101,5 @@ which field to update. The other option is to use MVVM bindings in order to bind
 
 //<< Properties
 }
+
+?>

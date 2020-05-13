@@ -43,7 +43,7 @@ class ChartSeriesItemHighlight extends \Kendo\SerializableObject {
 
     /**
     * Sets the toggle option of the ChartSeriesItemHighlight.
-    * A function that can be used to handle toggling the points highlight. The available argument fields are:
+    * A function that can be used to handle toggling the points highlight. The available argument fields are: preventDefault - a function that can be used to prevent showing the default highlight overlay.; show - a boolean value indicating whether the highlight should be shown.; visual - the visual element that should be highlighted.; category - the point category.; dataItem - the point dataItem.; value - the point value. or series - the point series..
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\ChartSeriesItemHighlight
     */
@@ -56,8 +56,7 @@ class ChartSeriesItemHighlight extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to true the chart will highlight the series when the user hovers it with the mouse.
-By default chart series highlighting is enabled.
+    * If set to true the chart will highlight the series when the user hovers it with the mouse. By default chart series highlighting is enabled.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\ChartSeriesItemHighlight
     */
@@ -67,7 +66,7 @@ By default chart series highlighting is enabled.
 
     /**
     * Sets the visual option of the ChartSeriesItemHighlight.
-    * A function that can be used to set custom visual for the point highlight.The available argument fields are:
+    * A function that can be used to set custom visual for the point highlight.The available argument fields are: createVisual - a function that can be used to get the default highlight visual.; rect - the kendo.geometry.Rect that defines where the visual should be rendered.; visual - the visual element that should be highlighted.; options - the point options.; category - the point category.; dataItem - the point dataItem.; value - the point value.; sender - the chart instance.; series - the point series.; stackValue - the cumulative point value on the stack. Available only for stackable series.; percentage - the point value represented as a percentage value. Available only for donut, pie and 100% stacked charts.; runningTotal - the sum of point values since the last "runningTotal" summary point. Available for waterfall series.; total - the sum of all previous series values. Available for waterfall series.; from - the "from" point highlight visual options. Available for "rangeArea" and "verticalRangeArea" series. or to - the "to" point highlight visual options. Available for "rangeArea" and "verticalRangeArea" series..
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\ChartSeriesItemHighlight
     */

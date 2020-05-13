@@ -33,6 +33,15 @@ class MapLayerDefaultsBing extends \Kendo\SerializableObject {
     }
 
     /**
+    * The culture to be used for the bing map tiles.
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\MapLayerDefaultsBing
+    */
+    public function culture($value) {
+        return $this->setProperty('culture', $value);
+    }
+
+    /**
     * The bing map tile types. Possible options.
     * @param string $value
     * @return \Kendo\Dataviz\UI\MapLayerDefaultsBing

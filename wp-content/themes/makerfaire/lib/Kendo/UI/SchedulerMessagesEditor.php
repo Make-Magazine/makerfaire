@@ -124,3 +124,5 @@ class SchedulerMessagesEditor extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

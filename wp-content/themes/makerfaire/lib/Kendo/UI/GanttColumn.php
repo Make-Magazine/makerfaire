@@ -6,8 +6,7 @@ class GanttColumn extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The field to which the column is bound. The value of this field is displayed by the column during data binding.
-The field name should be a valid Javascript identifier and should contain no spaces, no special characters, and the first character should be a letter.
+    * The field to which the column is bound. The value of this field is displayed by the column during data binding.The field name should be a valid Javascript identifier and should contain only alphanumeric characters (or "$" or "_"), and may not start with a digit.
     * @param string $value
     * @return \Kendo\UI\GanttColumn
     */
@@ -25,8 +24,7 @@ The field name should be a valid Javascript identifier and should contain no spa
     }
 
     /**
-    * The format that is applied to the value before it is displayed. Takes the form "{0:format}" where "format" is a standard number format,
-custom number format, standard date format or a custom date format.
+    * The format that is applied to the value before it is displayed. Takes the form "{0:format}" where "format" is a standard number format,custom number format, standard date format or a custom date format.
     * @param string $value
     * @return \Kendo\UI\GanttColumn
     */
@@ -64,3 +62,4 @@ custom number format, standard date format or a custom date format.
 //<< Properties
 }
 
+?>

@@ -15,8 +15,7 @@ class PanelBarAnimationCollapse extends \Kendo\SerializableObject {
     }
 
     /**
-    * A whitespace-delimited string of animation effects that are utilized when a PanelBar item
-is closed. Options include "fadeOut".
+    * A whitespace-delimited string of animation effects that are utilized when a PanelBar item is closed. Options include "fadeOut".
     * @param string $value
     * @return \Kendo\UI\PanelBarAnimationCollapse
     */
@@ -26,3 +25,5 @@ is closed. Options include "fadeOut".
 
 //<< Properties
 }
+
+?>

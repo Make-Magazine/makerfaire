@@ -6,8 +6,7 @@ class RadialGaugeScale extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The end angle of the gauge.
-The gauge is rendered clockwise(0 degrees are the 180 degrees in the polar coordinat system)
+    * The end angle of the gauge. The gauge is rendered clockwise(0 degrees are the 180 degrees in the polar coordinate system)
     * @param float $value
     * @return \Kendo\Dataviz\UI\RadialGaugeScale
     */
@@ -124,8 +123,7 @@ The gauge is rendered clockwise(0 degrees are the 180 degrees in the polar coord
     }
 
     /**
-    * The start angle of the gauge.
-The gauge is rendered clockwise(0 degrees are the 180 degrees in the polar coordinat system)
+    * The start angle of the gauge. The gauge is rendered clockwise(0 degrees are the 180 degrees in the polar coordinate system)
     * @param float $value
     * @return \Kendo\Dataviz\UI\RadialGaugeScale
     */

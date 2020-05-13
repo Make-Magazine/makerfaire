@@ -9,8 +9,7 @@ class Chart extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the
-data source is fired. By default the widget will bind to the data source specified in the configuration.
+    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. By default the widget will bind to the data source specified in the configuration.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\Chart
     */
@@ -20,7 +19,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * The default options for all chart axes. Accepts the options supported by categoryAxis, valueAxis, xAxis and yAxis.
-    * @param  $value
+    * @param \Kendo\Dataviz\UI\ChartAxisDefaults|array $value
     * @return \Kendo\Dataviz\UI\Chart
     */
     public function axisDefaults($value) {
@@ -73,12 +72,30 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
+    * Specifies if the chart can be panned.
+    * @param boolean|\Kendo\Dataviz\UI\ChartPannable|array $value
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function pannable($value) {
+        return $this->setProperty('pannable', $value);
+    }
+
+    /**
     * Configures the export settings for the saveAsPDF method.
     * @param \Kendo\Dataviz\UI\ChartPdf|array $value
     * @return \Kendo\Dataviz\UI\Chart
     */
     public function pdf($value) {
         return $this->setProperty('pdf', $value);
+    }
+
+    /**
+    * Specifies if the series visible option should be persisted when changing the dataSource data.
+    * @param boolean $value
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function persistSeriesVisibility($value) {
+        return $this->setProperty('persistSeriesVisibility', $value);
     }
 
     /**
@@ -91,8 +108,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * Sets the preferred rendering engine.
-If it is not supported by the browser, the Chart will switch to the first available mode.The supported values are:
+    * Sets the preferred rendering engine. If it is not supported by the browser, the Chart will switch to the first available mode.The supported values are: "svg" - renders the widget as inline SVG document, if available or "canvas" - renders the widget as a Canvas element, if available..
     * @param string $value
     * @return \Kendo\Dataviz\UI\Chart
     */
@@ -128,7 +144,7 @@ If it is not supported by the browser, the Chart will switch to the first availa
     }
 
     /**
-    * The chart theme.The supported values are:
+    * The chart theme. This can be either a built-in theme or "sass". When set to "sass" the chart will read the variables from the Sass-based themes. More information on the built-in themes could be found in the Less-based themes article.The supported values are: "sass" - special value, see notes; "black"; "blueopal"; "bootstrap"; "default"; "highcontrast"; "metro"; "metroblack"; "moonlight"; "silver" or "uniform".
     * @param string $value
     * @return \Kendo\Dataviz\UI\Chart
     */
@@ -191,6 +207,15 @@ If it is not supported by the browser, the Chart will switch to the first availa
     }
 
     /**
+    * Specifies if the chart can be zoomed.
+    * @param boolean|\Kendo\Dataviz\UI\ChartZoomable|array $value
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function zoomable($value) {
+        return $this->setProperty('zoomable', $value);
+    }
+
+    /**
     * Sets the axisLabelClick event of the Chart.
     * Fired when the user clicks an axis label.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
@@ -202,35 +227,6 @@ If it is not supported by the browser, the Chart will switch to the first availa
         }
 
         return $this->setProperty('axisLabelClick', $value);
-    }
-
-    /**
-    * Sets the legendItemClick event of the Chart.
-    * Fires when an legend item is clicked, before the selected series visibility is toggled.
-Can be cancelled.
-    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
-    * @return \Kendo\Dataviz\UI\Chart
-    */
-    public function legendItemClick($value) {
-        if (is_string($value)) {
-            $value = new \Kendo\JavaScriptFunction($value);
-        }
-
-        return $this->setProperty('legendItemClick', $value);
-    }
-
-    /**
-    * Sets the legendItemHover event of the Chart.
-    * Fires when an legend item is hovered.
-    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
-    * @return \Kendo\Dataviz\UI\Chart
-    */
-    public function legendItemHover($value) {
-        if (is_string($value)) {
-            $value = new \Kendo\JavaScriptFunction($value);
-        }
-
-        return $this->setProperty('legendItemHover', $value);
     }
 
     /**
@@ -290,6 +286,48 @@ Can be cancelled.
     }
 
     /**
+    * Sets the legendItemClick event of the Chart.
+    * Fires when an legend item is clicked, before the selected series visibility is toggled. Can be cancelled.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function legendItemClick($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('legendItemClick', $value);
+    }
+
+    /**
+    * Sets the legendItemHover event of the Chart.
+    * Fires when an legend item is hovered.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function legendItemHover($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('legendItemHover', $value);
+    }
+
+    /**
+    * Sets the legendItemLeave event of the Chart.
+    * Fires when the cursor leaves a legend item.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function legendItemLeave($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('legendItemLeave', $value);
+    }
+
+    /**
     * Sets the noteClick event of the Chart.
     * Fired when the user clicks one of the notes.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
@@ -318,6 +356,34 @@ Can be cancelled.
     }
 
     /**
+    * Sets the noteLeave event of the Chart.
+    * Fired when the cursor leaves a note.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function noteLeave($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('noteLeave', $value);
+    }
+
+    /**
+    * Sets the paneRender event of the Chart.
+    * Fires when a pane is rendered because the chart is rendered, or the chart performs panning or zooming, or because the chart is exported with different options. The event can be used to render custom visuals in the panes.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function paneRender($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('paneRender', $value);
+    }
+
+    /**
     * Sets the plotAreaClick event of the Chart.
     * Fired when the user clicks the plot area.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
@@ -332,8 +398,36 @@ Can be cancelled.
     }
 
     /**
+    * Sets the plotAreaHover event of the Chart.
+    * Fired when the user hovers the plot area.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function plotAreaHover($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('plotAreaHover', $value);
+    }
+
+    /**
+    * Sets the plotAreaLeave event of the Chart.
+    * Fired when the cursor leaves the plotArea.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function plotAreaLeave($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('plotAreaLeave', $value);
+    }
+
+    /**
     * Sets the render event of the Chart.
-    * Fired when the chart is ready to render on screen.Can be used, for example, to remove loading indicators. Changes to options will be ignored.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fired when the chart is ready to render on screen.Can be used, for example, to remove loading indicators.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\Chart
     */
@@ -347,7 +441,7 @@ Can be cancelled.
 
     /**
     * Sets the select event of the Chart.
-    * Fired when the user modifies the selection.The range units are:The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fired when the user modifies the selection.The range units are: Generic axis - Category index (0-based) or Date axis - Date instance. The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\Chart
     */
@@ -361,7 +455,7 @@ Can be cancelled.
 
     /**
     * Sets the selectEnd event of the Chart.
-    * Fired when the user completes modifying the selection.The range units are:The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fired when the user completes modifying the selection.The range units are: Generic axis - Category index (0-based) or Date axis - Date instance. The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\Chart
     */
@@ -375,7 +469,7 @@ Can be cancelled.
 
     /**
     * Sets the selectStart event of the Chart.
-    * Fired when the user starts modifying the axis selection.The range units are:The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fired when the user starts modifying the axis selection.The range units are: Generic axis - Category index (0-based) or Date axis - Date instance. The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\Chart
     */
@@ -413,6 +507,34 @@ Can be cancelled.
         }
 
         return $this->setProperty('seriesHover', $value);
+    }
+
+    /**
+    * Sets the seriesOver event of the Chart.
+    * Fired when the cursor is over the chart series.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function seriesOver($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('seriesOver', $value);
+    }
+
+    /**
+    * Sets the seriesLeave event of the Chart.
+    * Fired when the cursor leaves a chart series.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\Dataviz\UI\Chart
+    */
+    public function seriesLeave($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('seriesLeave', $value);
     }
 
     /**

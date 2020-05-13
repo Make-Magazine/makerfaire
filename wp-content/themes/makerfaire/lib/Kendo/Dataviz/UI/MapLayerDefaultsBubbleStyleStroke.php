@@ -6,8 +6,7 @@ class MapLayerDefaultsBubbleStyleStroke extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The default stroke color for bubble layer symbols.
-Accepts a valid CSS color string, including hex and rgb.
+    * The default stroke color for bubble layer symbols. Accepts a valid CSS color string, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\MapLayerDefaultsBubbleStyleStroke
     */
@@ -16,8 +15,7 @@ Accepts a valid CSS color string, including hex and rgb.
     }
 
     /**
-    * The default dash type for layer symbols.
-The following dash types are supported:
+    * The default dash type for layer symbols. The following dash types are supported: "dash" - a line consisting of dashes; "dashDot" - a line consisting of a repeating pattern of dash-dot; "dot" - a line consisting of dots; "longDash" - a line consisting of a repeating pattern of long-dash; "longDashDot" - a line consisting of a repeating pattern of long-dash-dot; "longDashDotDot" - a line consisting of a repeating pattern of long-dash-dot-dot or "solid" - a solid line.
     * @param string $value
     * @return \Kendo\Dataviz\UI\MapLayerDefaultsBubbleStyleStroke
     */

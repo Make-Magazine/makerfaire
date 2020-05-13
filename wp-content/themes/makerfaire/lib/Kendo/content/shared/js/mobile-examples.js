@@ -7,10 +7,12 @@ var currentExample,
 
 var TITLES = {
     "actionsheet": "ActionSheet",
+    "grid": "Grid",
+    "scheduler": "Scheduler",
     "application": "Application",
-    "buttongroup": "ButtonGroup",
+    "mobile-buttongroup": "ButtonGroup",
     "collapsible": "Collapsilble",
-    "drawer": "Drawer",
+    "mobile-drawer": "Drawer",
     "mobile-button": "Button",
     "mobile-forms": "Forms",
     "mobile-layout": "Layout",
@@ -21,10 +23,10 @@ var TITLES = {
     "navbar": "NavBar",
     "popover": "PopOver",
     "scroller": "Scroller",
-    "scrollview": "ScrollView",
+    "mobile-scrollview": "ScrollView",
     "splitview": "SplitView",
     "mobile-styling": "Styling",
-    "switch": "Switch",
+    "mobile-switch": "Switch",
     "touchevents": "Touch Events"
 };
 
@@ -94,10 +96,18 @@ function initSearch(e) {
     });
 }
 
+var desktop = !kendo.support.mobileOS;
+
 function showSearch() {
     $("#normal").addClass("navbar-hidden");
     $("#search").removeClass("navbar-hidden");
-    $("#demos-search").focus();
+    if (desktop) {
+       setTimeout(function() {
+            $("#demos-search").focus();
+       });
+    } else {
+        $("#demos-search").focus();
+    }
 }
 
 function hideSearch() {
@@ -133,11 +143,6 @@ function showDemoLayout(e) {
 }
 
 var sourceCode;
-
-dojo.configuration = {
-    url: "@Html.DojoRoot()",
-    cdnRoot: '@Html.CdnRoot()'
-};
 
 function openDojo(e) {
     window.dojo.postSnippet(sourceCode, window.location.href.replace(window.location.hash, ""));

@@ -32,8 +32,16 @@ class ComboBox extends \Kendo\UI\Widget {
     }
 
     /**
-    * Use it to set the Id of the parent ComboBox widget.
-Help topic showing how cascading functionality works
+    * If set to true, the widget automatically adjusts the width of the popup element and does not wrap up the item label.
+    * @param boolean $value
+    * @return \Kendo\UI\ComboBox
+    */
+    public function autoWidth($value) {
+        return $this->setProperty('autoWidth', $value);
+    }
+
+    /**
+    * Use it to set the Id of the parent ComboBox widget.Help topic showing how cascading functionality works
     * @param string $value
     * @return \Kendo\UI\ComboBox
     */
@@ -42,13 +50,30 @@ Help topic showing how cascading functionality works
     }
 
     /**
-    * Defines the field to be used to filter the data source. If not defined the parent's dataValueField option will be used.
-Help topic showing how cascading functionality works
+    * Defines the field to be used to filter the data source. If not defined, it is set to a field with the same name as the parent's dataValueField option.Help topic showing how cascading functionality works
     * @param string $value
     * @return \Kendo\UI\ComboBox
     */
     public function cascadeFromField($value) {
         return $this->setProperty('cascadeFromField', $value);
+    }
+
+    /**
+    * Defines the parent field to be used to retain value from. This value will be used further to filter the dataSource. If not defined the value from the parent's dataValueField will be used.
+    * @param string $value
+    * @return \Kendo\UI\ComboBox
+    */
+    public function cascadeFromParentField($value) {
+        return $this->setProperty('cascadeFromParentField', $value);
+    }
+
+    /**
+    * Unless this options is set to false, a button will appear when hovering the widget. Clicking that button will reset the widget's value and will trigger the change event.
+    * @param boolean $value
+    * @return \Kendo\UI\ComboBox
+    */
+    public function clearButton($value) {
+        return $this->setProperty('clearButton', $value);
     }
 
     /**
@@ -97,8 +122,16 @@ Help topic showing how cascading functionality works
     }
 
     /**
-    * The filtering method used to determine the suggestions for the current value. Filtration is turned off by default.
-The supported filter values are startswith, endswith and contains.
+    * If set to true the widget will not show all items when the text of the search input cleared. By default the widget shows all items when the text of the search input is cleared. Works in conjunction with minLength.
+    * @param boolean $value
+    * @return \Kendo\UI\ComboBox
+    */
+    public function enforceMinLength($value) {
+        return $this->setProperty('enforceMinLength', $value);
+    }
+
+    /**
+    * The filtering method used to determine the suggestions for the current value. Filtration is turned off by default, and can be performed over string values only (either the widget's data has to be an array of strings, or over the field, configured in the dataTextField option). The supported filter values are startswith, endswith and contains.
     * @param string $value
     * @return \Kendo\UI\ComboBox
     */
@@ -126,6 +159,28 @@ The supported filter values are startswith, endswith and contains.
     */
     public function fixedGroupTemplate($value) {
         return $this->setProperty('fixedGroupTemplate', $value);
+    }
+
+    /**
+    * Sets the footerTemplate option of the ComboBox.
+    * The template used to render the footer template. The footer template receives the widget itself as a part of the data argument. Use the widget fields directly in the template.
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\ComboBox
+    */
+    public function footerTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('footerTemplate', $value);
+    }
+
+    /**
+    * Sets the footerTemplate option of the ComboBox.
+    * The template used to render the footer template. The footer template receives the widget itself as a part of the data argument. Use the widget fields directly in the template.
+    * @param string $value The template content.
+    * @return \Kendo\UI\ComboBox
+    */
+    public function footerTemplate($value) {
+        return $this->setProperty('footerTemplate', $value);
     }
 
     /**
@@ -170,7 +225,7 @@ The supported filter values are startswith, endswith and contains.
 
     /**
     * If set to false case-sensitive search will be performed to find suggestions. The widget performs case-insensitive searching by default.
-    * @param string $value
+    * @param boolean $value
     * @return \Kendo\UI\ComboBox
     */
     public function ignoreCase($value) {
@@ -187,12 +242,43 @@ The supported filter values are startswith, endswith and contains.
     }
 
     /**
+    * The text messages displayed in the widget. Use this option to customize or localize the messages.
+    * @param \Kendo\UI\ComboBoxMessages|array $value
+    * @return \Kendo\UI\ComboBox
+    */
+    public function messages($value) {
+        return $this->setProperty('messages', $value);
+    }
+
+    /**
     * The minimum number of characters the user must type before a search is performed. Set to higher value than 1 if the search could match a lot of items.
     * @param float $value
     * @return \Kendo\UI\ComboBox
     */
     public function minLength($value) {
         return $this->setProperty('minLength', $value);
+    }
+
+    /**
+    * Sets the noDataTemplate option of the ComboBox.
+    * The template used to render the "no data" template, which will be displayed if no results are found or the underlying data source is empty. The noData template receives the widget itself as a part of the data argument. The template will be evaluated on every widget data bound.
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\ComboBox
+    */
+    public function noDataTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('noDataTemplate', $value);
+    }
+
+    /**
+    * Sets the noDataTemplate option of the ComboBox.
+    * The template used to render the "no data" template, which will be displayed if no results are found or the underlying data source is empty. The noData template receives the widget itself as a part of the data argument. The template will be evaluated on every widget data bound.
+    * @param string $value The template content.
+    * @return \Kendo\UI\ComboBox
+    */
+    public function noDataTemplate($value) {
+        return $this->setProperty('noDataTemplate', $value);
     }
 
     /**
@@ -205,9 +291,8 @@ The supported filter values are startswith, endswith and contains.
     }
 
     /**
-    * The options that will be used for the popup initialization. For more details about the available options
-refer to Popup documentation.
-    * @param  $value
+    * The options that will be used for the popup initialization. For more details about the available options refer to Popup documentation.
+    * @param \Kendo\UI\ComboBoxPopup|array $value
     * @return \Kendo\UI\ComboBox
     */
     public function popup($value) {
@@ -221,6 +306,15 @@ refer to Popup documentation.
     */
     public function suggest($value) {
         return $this->setProperty('suggest', $value);
+    }
+
+    /**
+    * When set to true the widget will automatically set selected value to the typed custom text. Set the option to false to clear the selected value but keep the custom text.
+    * @param boolean $value
+    * @return \Kendo\UI\ComboBox
+    */
+    public function syncValueAndText($value) {
+        return $this->setProperty('syncValueAndText', $value);
     }
 
     /**
@@ -295,7 +389,7 @@ refer to Popup documentation.
     }
 
     /**
-    * Enables the virtualization feature of the widget.
+    * Enables the virtualization feature of the widget. The configuration can be set on an object, which contains two properties - itemHeight and valueMapper.For detailed information, refer to the article on virtualization.
     * @param boolean|\Kendo\UI\ComboBoxVirtual|array $value
     * @return \Kendo\UI\ComboBox
     */
@@ -305,7 +399,7 @@ refer to Popup documentation.
 
     /**
     * Sets the change event of the ComboBox.
-    * Fired when the value of the widget is changed by the user.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fired when the value of the widget is changed by the user. As of 2015 Q3 SP1 cascading widget will trigger change event when its value is changed due to parent update.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\ComboBox
     */
@@ -404,3 +498,5 @@ refer to Popup documentation.
 
 //<< Properties
 }
+
+?>

@@ -6,8 +6,7 @@ class SliderTooltip extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Disables (false) or enables (true) the tooltip of
-the Slider.
+    * Disables (false) or enables (true) the tooltip of the Slider.
     * @param boolean $value
     * @return \Kendo\UI\SliderTooltip
     */
@@ -16,9 +15,7 @@ the Slider.
     }
 
     /**
-    * Format string for the text of the tooltip. Note: The applied
-format will also influence the appearance of the Slider
-tick labels.
+    * Format string for the text of the tooltip. Note: The applied format will also influence the appearance of the Slider tick labels.The slider widget supports precision of up-to 10 digits after the decimals point.
     * @param string $value
     * @return \Kendo\UI\SliderTooltip
     */
@@ -28,7 +25,7 @@ tick labels.
 
     /**
     * Sets the template option of the SliderTooltip.
-    * Template of the tooltip. The following variables are passed by the Slider and are ready to be used inside the template:
+    * Template of the tooltip. The following variables are passed by the Slider and are ready to be used inside the template: value - the current value when using a regular slider or selectionStart and selectionEnd - the current values when using a range slider.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\SliderTooltip
     */
@@ -40,7 +37,7 @@ tick labels.
 
     /**
     * Sets the template option of the SliderTooltip.
-    * Template of the tooltip. The following variables are passed by the Slider and are ready to be used inside the template:
+    * Template of the tooltip. The following variables are passed by the Slider and are ready to be used inside the template: value - the current value when using a regular slider or selectionStart and selectionEnd - the current values when using a range slider.
     * @param string $value The template content.
     * @return \Kendo\UI\SliderTooltip
     */
@@ -50,3 +47,5 @@ tick labels.
 
 //<< Properties
 }
+
+?>

@@ -15,7 +15,7 @@ class ChartCategoryAxisItemNotesDataItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * The position of the category axis note.
+    * The position of the category axis note. "top" - The note is positioned on the top.; "bottom" - The note is positioned on the bottom.; "left" - The note is positioned on the left. or "right" - The note is positioned on the right..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItemNotesDataItem
     */

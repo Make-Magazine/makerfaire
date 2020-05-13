@@ -6,7 +6,7 @@ class SparklineCategoryAxisItemLine extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The color of the lines. Any valid CSS color string will work here, including hex and rgb.Note: This will also effect the major and minor ticks, but not the grid lines.
+    * The color of the lines. Any valid CSS color string will work here, including hex and rgb.Note:This will also effect the major and minor ticks, but not the grid lines.
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineCategoryAxisItemLine
     */
@@ -33,8 +33,7 @@ class SparklineCategoryAxisItemLine extends \Kendo\SerializableObject {
     }
 
     /**
-    * The width of the line. This will also effect the major and minor ticks, but
-not the grid lines.
+    * The width of the line. This will also effect the major and minor ticks, but not the grid lines.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineCategoryAxisItemLine
     */

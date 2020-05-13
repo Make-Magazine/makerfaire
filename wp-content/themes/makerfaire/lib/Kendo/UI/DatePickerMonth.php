@@ -15,6 +15,15 @@ class DatePickerMonth extends \Kendo\SerializableObject {
     }
 
     /**
+    * The template to be used for rendering the cells in "week" column. By default, the widget renders the calculated week of the year.  The properties available in the data object are: currentDate - returns the first date of the current week. or weekNumber - calculated week number.. These properties can be used in the template to make additional calculations.
+    * @param string $value
+    * @return \Kendo\UI\DatePickerMonth
+    */
+    public function weekNumber($value) {
+        return $this->setProperty('weekNumber', $value);
+    }
+
+    /**
     * The template used for rendering cells in the "month" view, which are outside the min/max range.
     * @param string $value
     * @return \Kendo\UI\DatePickerMonth
@@ -25,3 +34,5 @@ class DatePickerMonth extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

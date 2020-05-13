@@ -69,6 +69,15 @@ class GridMessagesCommands extends \Kendo\SerializableObject {
     }
 
     /**
+    * Allows the customization of the placeholder text in the grid search panel.
+    * @param string $value
+    * @return \Kendo\UI\GridMessagesCommands
+    */
+    public function search($value) {
+        return $this->setProperty('search', $value);
+    }
+
+    /**
     * Defines the text of the "Update" button that is rendered in inline or popup editing mode.
     * @param string $value
     * @return \Kendo\UI\GridMessagesCommands

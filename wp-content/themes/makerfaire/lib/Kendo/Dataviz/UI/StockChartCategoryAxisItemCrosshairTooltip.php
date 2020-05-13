@@ -61,8 +61,7 @@ class StockChartCategoryAxisItemCrosshairTooltip extends \Kendo\SerializableObje
 
     /**
     * Sets the template option of the StockChartCategoryAxisItemCrosshairTooltip.
-    * The tooltip template.
-Template variables:
+    * The tooltip template. Template variables: value - the point value (either a number or an object).
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemCrosshairTooltip
     */
@@ -74,8 +73,7 @@ Template variables:
 
     /**
     * Sets the template option of the StockChartCategoryAxisItemCrosshairTooltip.
-    * The tooltip template.
-Template variables:
+    * The tooltip template. Template variables: value - the point value (either a number or an object).
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemCrosshairTooltip
     */

@@ -25,7 +25,7 @@ class ChartSeriesItemLine extends \Kendo\SerializableObject {
 
     /**
     * The line width in pixels.
-    * @param string $value
+    * @param float $value
     * @return \Kendo\Dataviz\UI\ChartSeriesItemLine
     */
     public function width($value) {
@@ -33,7 +33,7 @@ class ChartSeriesItemLine extends \Kendo\SerializableObject {
     }
 
     /**
-    * The supported values are:
+    * The supported values are: "normal" - The values will be connected with straight line.; "step" - The values will be connected with a line with right angle. or "smooth" - The values will be connected with a smooth line..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartSeriesItemLine
     */

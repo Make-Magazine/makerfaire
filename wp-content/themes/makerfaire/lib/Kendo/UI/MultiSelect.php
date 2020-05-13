@@ -13,8 +13,8 @@ class MultiSelect extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * Configures the opening and closing animations of the suggestion popup. Setting the animation option to false will disable the opening and closing animations. As a result the suggestion popup will open and close instantly.
-    * @param \Kendo\UI\MultiSelectAnimation|array $value
+    * Configures the opening and closing animations of the suggestion popup. Setting the animation option to false will disable the opening and closing animations. As a result the suggestion popup will open and close instantly. is not a valid configuration.
+    * @param boolean|\Kendo\UI\MultiSelectAnimation|array $value
     * @return \Kendo\UI\MultiSelect
     */
     public function animation($value) {
@@ -37,6 +37,24 @@ class MultiSelect extends \Kendo\UI\Widget {
     */
     public function autoClose($value) {
         return $this->setProperty('autoClose', $value);
+    }
+
+    /**
+    * If set to true, the widget automatically adjusts the width of the popup element and does not wrap up the item label.
+    * @param boolean $value
+    * @return \Kendo\UI\MultiSelect
+    */
+    public function autoWidth($value) {
+        return $this->setProperty('autoWidth', $value);
+    }
+
+    /**
+    * Unless this options is set to false, a button will appear when hovering the widget. Clicking that button will reset the widget's value and will trigger the change event.
+    * @param boolean $value
+    * @return \Kendo\UI\MultiSelect
+    */
+    public function clearButton($value) {
+        return $this->setProperty('clearButton', $value);
     }
 
     /**
@@ -85,8 +103,16 @@ class MultiSelect extends \Kendo\UI\Widget {
     }
 
     /**
-    * The filtering method used to determine the suggestions for the current value. Filtration is turned of by default.
-The supported filter values are startswith, endswith and contains.
+    * If set to true the widget will not show all items when the text of the search input cleared. By default the widget shows all items when the text of the search input is cleared. Works in conjunction with minLength.
+    * @param boolean $value
+    * @return \Kendo\UI\MultiSelect
+    */
+    public function enforceMinLength($value) {
+        return $this->setProperty('enforceMinLength', $value);
+    }
+
+    /**
+    * The filtering method used to determine the suggestions for the current value. Filtration is turned of by default, and can be performed over string values only (either the widget's data has to be an array of strings, or over the field, configured in the dataTextField option). The supported filter values are startswith, endswith and contains.
     * @param string $value
     * @return \Kendo\UI\MultiSelect
     */
@@ -114,6 +140,28 @@ The supported filter values are startswith, endswith and contains.
     */
     public function fixedGroupTemplate($value) {
         return $this->setProperty('fixedGroupTemplate', $value);
+    }
+
+    /**
+    * Sets the footerTemplate option of the MultiSelect.
+    * The template used to render the footer template. The footer template receives the widget itself as a part of the data argument. Use the widget fields directly in the template.
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\MultiSelect
+    */
+    public function footerTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('footerTemplate', $value);
+    }
+
+    /**
+    * Sets the footerTemplate option of the MultiSelect.
+    * The template used to render the footer template. The footer template receives the widget itself as a part of the data argument. Use the widget fields directly in the template.
+    * @param string $value The template content.
+    * @return \Kendo\UI\MultiSelect
+    */
+    public function footerTemplate($value) {
+        return $this->setProperty('footerTemplate', $value);
     }
 
     /**
@@ -158,7 +206,7 @@ The supported filter values are startswith, endswith and contains.
 
     /**
     * If set to false case-sensitive search will be performed to find suggestions. The widget performs case-insensitive searching by default.
-    * @param string $value
+    * @param boolean $value
     * @return \Kendo\UI\MultiSelect
     */
     public function ignoreCase($value) {
@@ -166,8 +214,16 @@ The supported filter values are startswith, endswith and contains.
     }
 
     /**
-    * The minimum number of characters the user must type before a search is performed. Set to a higher value if the search could match a lot of items.
-A zero value means that a request will be made as soon as the user focuses the widget.
+    * The text messages displayed in the widget. Use this option to customize or localize the messages.
+    * @param \Kendo\UI\MultiSelectMessages|array $value
+    * @return \Kendo\UI\MultiSelect
+    */
+    public function messages($value) {
+        return $this->setProperty('messages', $value);
+    }
+
+    /**
+    * The minimum number of characters the user must type before a search is performed. Set to a higher value if the search could match a lot of items. A zero value means that a request will be made as soon as the user focuses the widget.
     * @param float $value
     * @return \Kendo\UI\MultiSelect
     */
@@ -185,6 +241,28 @@ A zero value means that a request will be made as soon as the user focuses the w
     }
 
     /**
+    * Sets the noDataTemplate option of the MultiSelect.
+    * The template used to render the "no data" template, which will be displayed if no results are found or the underlying data source is empty. The noData template receives the widget itself as a part of the data argument. The template will be evaluated on every widget data bound.
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\MultiSelect
+    */
+    public function noDataTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('noDataTemplate', $value);
+    }
+
+    /**
+    * Sets the noDataTemplate option of the MultiSelect.
+    * The template used to render the "no data" template, which will be displayed if no results are found or the underlying data source is empty. The noData template receives the widget itself as a part of the data argument. The template will be evaluated on every widget data bound.
+    * @param string $value The template content.
+    * @return \Kendo\UI\MultiSelect
+    */
+    public function noDataTemplate($value) {
+        return $this->setProperty('noDataTemplate', $value);
+    }
+
+    /**
     * The hint displayed by the widget when it is empty. Not set by default.
     * @param string $value
     * @return \Kendo\UI\MultiSelect
@@ -194,9 +272,8 @@ A zero value means that a request will be made as soon as the user focuses the w
     }
 
     /**
-    * The options that will be used for the popup initialization. For more details about the available options
-refer to Popup documentation.
-    * @param  $value
+    * The options that will be used for the popup initialization. For more details about the available options refer to Popup documentation.
+    * @param \Kendo\UI\MultiSelectPopup|array $value
     * @return \Kendo\UI\MultiSelect
     */
     public function popup($value) {
@@ -270,9 +347,7 @@ refer to Popup documentation.
     }
 
     /**
-    * The mode used to render the selected tags. The available modes are:
-- multiple - renders a tag for every selected value
-- single - renders only one tag that shows the number of the selected values
+    * The mode used to render the selected tags. The available modes are: - multiple - renders a tag for every selected value - single - renders only one tag that shows the number of the selected values
     * @param string $value
     * @return \Kendo\UI\MultiSelect
     */
@@ -299,7 +374,7 @@ refer to Popup documentation.
     }
 
     /**
-    * Enables the virtualization feature of the widget.
+    * Enables the virtualization feature of the widget. The configuration can be set on an object, which contains two properties - itemHeight and valueMapper.For detailed information, refer to the article on virtualization.
     * @param boolean|\Kendo\UI\MultiSelectVirtual|array $value
     * @return \Kendo\UI\MultiSelect
     */
@@ -391,6 +466,22 @@ refer to Popup documentation.
         return $this->setProperty('select', $value);
     }
 
+    /**
+    * Sets the deselect event of the MultiSelect.
+    * Fired when an item is deselected or tag is removed.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\MultiSelect
+    */
+    public function deselect($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('deselect', $value);
+    }
+
 
 //<< Properties
 }
+
+?>

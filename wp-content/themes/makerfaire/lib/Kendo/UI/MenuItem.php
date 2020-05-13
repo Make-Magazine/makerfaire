@@ -29,6 +29,11 @@ class MenuItem extends \Kendo\UI\NavigationalItem {
             $element->attr('disabled', 'disabled');
         }
 
+        $select = $this->getProperty('select');
+        if ($select) {
+             $element->attr('onclick', $select);
+        }
+
         if ($this->getProperty('separator')) {
             $element->attr('class', 'k-separator');
         } else {
@@ -44,7 +49,7 @@ class MenuItem extends \Kendo\UI\NavigationalItem {
     * @return \Kendo\UI\ContextMenuItem
     */
     public function separator() {
-        return $this->setProperty('separator', $value);
+        return $this->setProperty('separator', true);
     }
 
 //>> Properties
@@ -101,6 +106,15 @@ class MenuItem extends \Kendo\UI\NavigationalItem {
     */
     public function selected($value) {
         return $this->setProperty('selected', $value);
+    }
+
+    /**
+    * Specifies the select event handler of an item.
+    * @param string $value
+    * @return \Kendo\UI\MenuItem
+    */
+    public function select($value) {
+        return $this->setProperty('select', $value);
     }
 
     /**

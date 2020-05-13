@@ -10,8 +10,7 @@ class DataSourceSchema extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The field from the response which contains the aggregate results. Can be set to a function which is called to
-return the aggregate results from the response.The result of the function should be a JavaScript object which contains the aggregate results for every fields in the following format:For example if the data source is configured like this:The aggregate results should have the following format:
+    * The field from the response which contains the aggregate results. Can be set to a function which is called to return the aggregate results from the response.The result of the function should be a JavaScript object which contains the aggregate results for every field in the following format:For example, if the data source is configured like this:The aggregate results should have the following format:
     * @param \Kendo\JavaScriptFunction|string $value
     * @return \Kendo\Data\DataSourceSchema
     */
@@ -20,8 +19,7 @@ return the aggregate results from the response.The result of the function should
     }
 
     /**
-    * The field from the server response which contains the data items. Can be set to a function which is called to
-return the data items for the response.
+    * The field from the server response which contains the data items. Can be set to a function which is called to return the data items for the response.
     * @param \Kendo\JavaScriptFunction|string $value
     * @return \Kendo\Data\DataSourceSchema
     */
@@ -30,8 +28,7 @@ return the data items for the response.
     }
 
     /**
-    * The field from the server response which contains server-side errors. Can be set to a function which is called to
-return the errors for response. If there are any errors the error event will be fired.
+    * The field from the server response which contains server-side errors. Can be set to a function which is called to return the errors for response. If there are any errors, the error event will be fired.
     * @param \Kendo\JavaScriptFunction|string $value
     * @return \Kendo\Data\DataSourceSchema
     */
@@ -40,8 +37,7 @@ return the errors for response. If there are any errors the error event will be 
     }
 
     /**
-    * The field from the server response which contains the groups. Can be set to a function which is called to
-return the groups from the response.The result should have the following format:
+    * The field from the server response which contains the groups. Can be set to a function which is called to return the groups from the response.The result should have the following format:
     * @param \Kendo\JavaScriptFunction|string $value
     * @return \Kendo\Data\DataSourceSchema
     */
@@ -64,8 +60,7 @@ return the groups from the response.The result should have the following format:
     }
 
     /**
-    * The field from the server response which contains the total number of data items. Can be set to a function which is called to
-return the total number of data items for the response.
+    * The field from the server response which contains the total number of data items. Can be set to a function which is called to return the total number of data items for the response.
     * @param \Kendo\JavaScriptFunction|string $value
     * @return \Kendo\Data\DataSourceSchema
     */
@@ -74,7 +69,7 @@ return the total number of data items for the response.
     }
 
     /**
-    * The type of the response. The supported values are "xml" and "json". By default the schema interprets the server response as JSON.
+    * The type of the response.The supported values are: "xml"  or "json". By default, the schema interprets the server response as JSON.
     * @param string $value
     * @return \Kendo\Data\DataSourceSchema
     */
@@ -84,3 +79,5 @@ return the total number of data items for the response.
 
 //<< Properties
 }
+
+?>

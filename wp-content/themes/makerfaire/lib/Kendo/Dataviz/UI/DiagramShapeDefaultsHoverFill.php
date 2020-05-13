@@ -6,7 +6,7 @@ class DiagramShapeDefaultsHoverFill extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Hover's fill color.
+    * Defines the hover fill color.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramShapeDefaultsHoverFill
     */
@@ -15,7 +15,7 @@ class DiagramShapeDefaultsHoverFill extends \Kendo\SerializableObject {
     }
 
     /**
-    * Hover's fill opacity.
+    * Defines the hover fill opacity.
     * @param float $value
     * @return \Kendo\Dataviz\UI\DiagramShapeDefaultsHoverFill
     */

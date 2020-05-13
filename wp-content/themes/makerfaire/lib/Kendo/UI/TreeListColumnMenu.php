@@ -6,7 +6,7 @@ class TreeListColumnMenu extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * If set to true the column menu would allow the user to select (show and hide) treelist columns. By default the column menu allows column selection.
+    * If set to true, the column menu allows the user to select (show and hide) TreeList columns. By default, the column menu allows column selection.
     * @param boolean $value
     * @return \Kendo\UI\TreeListColumnMenu
     */
@@ -15,7 +15,7 @@ class TreeListColumnMenu extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to true the column menu would allow the user to filter the treelist. By default the column menu allows the user to filter if filtering is enabled via the filterable.
+    * If set to true, the column menu will allow the user to filter the TreeList. By default, if filtering is enabled through filterable, the column menu allows the user to filter.
     * @param boolean $value
     * @return \Kendo\UI\TreeListColumnMenu
     */
@@ -24,7 +24,7 @@ class TreeListColumnMenu extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to true the column menu would allow the user to sort the treelist by the column field. By default the column menu allows the user to sort if sorting is enabled via the sortable option.
+    * If set to true, the column menu will allow the user to sort the TreeList by the column field. By default, if sorting is enabled through sortable, the column menu allows the user to sort the data.
     * @param boolean $value
     * @return \Kendo\UI\TreeListColumnMenu
     */
@@ -33,7 +33,7 @@ class TreeListColumnMenu extends \Kendo\SerializableObject {
     }
 
     /**
-    * The text messages displayed in the column menu. Use it to customize or localize the column menu messages.
+    * The text messages that is played in the column menu. Use it to customize or localize the column menu messages.
     * @param \Kendo\UI\TreeListColumnMenuMessages|array $value
     * @return \Kendo\UI\TreeListColumnMenu
     */
@@ -43,3 +43,5 @@ class TreeListColumnMenu extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

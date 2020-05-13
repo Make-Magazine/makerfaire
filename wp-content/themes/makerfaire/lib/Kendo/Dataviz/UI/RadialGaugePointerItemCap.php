@@ -6,8 +6,7 @@ class RadialGaugePointerItemCap extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The color of the cap.
-Any valid CSS color string will work here, including hex and rgb.
+    * The color of the cap. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\RadialGaugePointerItemCap
     */

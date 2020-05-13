@@ -16,8 +16,7 @@ class StockChartNavigatorHint extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the StockChartNavigatorHint.
-    * The hint template.
-Template variables:
+    * The hint template. Template variables: from - The lower boundary of the selected range or to - Theupper boundary of the selected range.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\StockChartNavigatorHint
     */
@@ -29,8 +28,7 @@ Template variables:
 
     /**
     * Sets the template option of the StockChartNavigatorHint.
-    * The hint template.
-Template variables:
+    * The hint template. Template variables: from - The lower boundary of the selected range or to - Theupper boundary of the selected range.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\StockChartNavigatorHint
     */

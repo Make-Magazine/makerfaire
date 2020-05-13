@@ -15,8 +15,7 @@ class MapLayer extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to false the layer will not bind to the data source during initialization. In this case data binding will occur when the change event of the
-data source is fired. By default the widget will bind to the data source specified in the configuration.
+    * If set to false the layer will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. By default the widget will bind to the data source specified in the configuration.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\MapLayer
     */
@@ -34,9 +33,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * Specifies the extent of the region covered by this layer.
-The layer will be hidden when the specified area is out of view.Accepts a four-element array that specifies the extent covered by this layer:
-North-West lat, longitude, South-East latitude, longitude.If not specified, the layer is always visible.
+    * Specifies the extent of the region covered by this layer. The layer will be hidden when the specified area is out of view.Accepts a four-element array that specifies the extent covered by this layer: North-West lat, longitude, South-East latitude, longitude.If not specified, the layer is always visible.
     * @param array| $value
     * @return \Kendo\Dataviz\UI\MapLayer
     */
@@ -54,8 +51,16 @@ North-West lat, longitude, South-East latitude, longitude.If not specified, the 
     }
 
     /**
-    * The data item field which contains the marker (symbol) location.
-The field should be an array with two numbers - latitude and longitude in decimal degrees.Requires the dataSource option to be set.Only applicable to "marker" and "bubble" layers.
+    * The culture to be used for the bing map tiles.
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\MapLayer
+    */
+    public function culture($value) {
+        return $this->setProperty('culture', $value);
+    }
+
+    /**
+    * The data item field which contains the marker (symbol) location. The field should be an array with two numbers - latitude and longitude in decimal degrees.Requires the dataSource option to be set.Only applicable to "marker" and "bubble" layers.
     * @param string $value
     * @return \Kendo\Dataviz\UI\MapLayer
     */
@@ -64,8 +69,16 @@ The field should be an array with two numbers - latitude and longitude in decima
     }
 
     /**
-    * The data item field which contains the marker title.
-Requires the dataSource option to be set.
+    * The size of the image tile in pixels.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\MapLayer
+    */
+    public function tileSize($value) {
+        return $this->setProperty('tileSize', $value);
+    }
+
+    /**
+    * The data item field which contains the marker title. Requires the dataSource option to be set.
     * @param string $value
     * @return \Kendo\Dataviz\UI\MapLayer
     */
@@ -101,6 +114,24 @@ Requires the dataSource option to be set.
     }
 
     /**
+    * The maximum zoom level at which to show this layer.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\MapLayer
+    */
+    public function maxZoom($value) {
+        return $this->setProperty('maxZoom', $value);
+    }
+
+    /**
+    * The minimum zoom level at which to show this layer.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\MapLayer
+    */
+    public function minZoom($value) {
+        return $this->setProperty('minZoom', $value);
+    }
+
+    /**
     * The the opacity for the layer.
     * @param float $value
     * @return \Kendo\Dataviz\UI\MapLayer
@@ -110,8 +141,7 @@ Requires the dataSource option to be set.
     }
 
     /**
-    * A list of subdomains to use for loading tiles.
-Alternating between different subdomains allows more requests to be executed in parallel.
+    * A list of subdomains to use for loading tiles. Alternating between different subdomains allows more requests to be executed in parallel.
     * @param array $value
     * @return \Kendo\Dataviz\UI\MapLayer
     */
@@ -130,7 +160,7 @@ Alternating between different subdomains allows more requests to be executed in 
 
     /**
     * Sets the urlTemplate option of the MapLayer.
-    * The URL template for tile layers. Template variables:
+    * The URL template for tile layers. Template variables: x - X coordinate of the tile; y - Y coordinate of the tile; zoom - zoom level or subdomain - Subdomain for this tile. See subdomains.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\MapLayer
     */
@@ -142,7 +172,7 @@ Alternating between different subdomains allows more requests to be executed in 
 
     /**
     * Sets the urlTemplate option of the MapLayer.
-    * The URL template for tile layers. Template variables:
+    * The URL template for tile layers. Template variables: x - X coordinate of the tile; y - Y coordinate of the tile; zoom - zoom level or subdomain - Subdomain for this tile. See subdomains.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\MapLayer
     */
@@ -151,8 +181,7 @@ Alternating between different subdomains allows more requests to be executed in 
     }
 
     /**
-    * The value field for bubble layer symbols.
-The data item field should be a number.
+    * The value field for bubble layer symbols. The data item field should be a number.
     * @param string $value
     * @return \Kendo\Dataviz\UI\MapLayer
     */

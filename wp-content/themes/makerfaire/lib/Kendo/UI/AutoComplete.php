@@ -13,12 +13,21 @@ class AutoComplete extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * Configures the opening and closing animations of the suggestion popup. Setting the animation option to false will disable the opening and closing animations. As a result the suggestion popup will open and close instantly.
-    * @param \Kendo\UI\AutoCompleteAnimation|array $value
+    * Configures the opening and closing animations of the suggestion popup. Setting the animation option to false will disable the opening and closing animations. As a result the suggestion popup will open and close instantly. is not a valid configuration.
+    * @param boolean|\Kendo\UI\AutoCompleteAnimation|array $value
     * @return \Kendo\UI\AutoComplete
     */
     public function animation($value) {
         return $this->setProperty('animation', $value);
+    }
+
+    /**
+    * If set to true, the widget automatically adjusts the width of the popup element and does not wrap up the item label.
+    * @param boolean $value
+    * @return \Kendo\UI\AutoComplete
+    */
+    public function autoWidth($value) {
+        return $this->setProperty('autoWidth', $value);
     }
 
     /**
@@ -28,6 +37,15 @@ class AutoComplete extends \Kendo\UI\Widget {
     */
     public function dataSource($value) {
         return $this->setProperty('dataSource', $value);
+    }
+
+    /**
+    * Unless this options is set to false, a button will appear when hovering the widget. Clicking that button will reset the widget's value and will trigger the change event.
+    * @param boolean $value
+    * @return \Kendo\UI\AutoComplete
+    */
+    public function clearButton($value) {
+        return $this->setProperty('clearButton', $value);
     }
 
     /**
@@ -58,8 +76,16 @@ class AutoComplete extends \Kendo\UI\Widget {
     }
 
     /**
-    * The filtering method used to determine the suggestions for the current value. The default filter is "startswith" -
-all data items which begin with the current widget value are displayed in the suggestion popup. The supported filter values are startswith, endswith and contains.
+    * If set to true the widget will not show all items when the text of the search input cleared. By default the widget shows all items when the text of the search input is cleared. Works in conjunction with minLength.
+    * @param boolean $value
+    * @return \Kendo\UI\AutoComplete
+    */
+    public function enforceMinLength($value) {
+        return $this->setProperty('enforceMinLength', $value);
+    }
+
+    /**
+    * The filtering method used to determine the suggestions for the current value. The default filter is "startswith" - all data items which begin with the current widget value are displayed in the suggestion popup. The supported filter values are startswith, endswith and contains.
     * @param string $value
     * @return \Kendo\UI\AutoComplete
     */
@@ -87,6 +113,28 @@ all data items which begin with the current widget value are displayed in the su
     */
     public function fixedGroupTemplate($value) {
         return $this->setProperty('fixedGroupTemplate', $value);
+    }
+
+    /**
+    * Sets the footerTemplate option of the AutoComplete.
+    * The template used to render the footer template. The footer template receives the widget itself as a part of the data argument. Use the widget fields directly in the template.
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\AutoComplete
+    */
+    public function footerTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('footerTemplate', $value);
+    }
+
+    /**
+    * Sets the footerTemplate option of the AutoComplete.
+    * The template used to render the footer template. The footer template receives the widget itself as a part of the data argument. Use the widget fields directly in the template.
+    * @param string $value The template content.
+    * @return \Kendo\UI\AutoComplete
+    */
+    public function footerTemplate($value) {
+        return $this->setProperty('footerTemplate', $value);
     }
 
     /**
@@ -139,12 +187,43 @@ all data items which begin with the current widget value are displayed in the su
     }
 
     /**
+    * The text messages displayed in the widget. Use this option to customize or localize the messages.
+    * @param \Kendo\UI\AutoCompleteMessages|array $value
+    * @return \Kendo\UI\AutoComplete
+    */
+    public function messages($value) {
+        return $this->setProperty('messages', $value);
+    }
+
+    /**
     * The minimum number of characters the user must type before a search is performed. Set to higher value than 1 if the search could match a lot of items.
     * @param float $value
     * @return \Kendo\UI\AutoComplete
     */
     public function minLength($value) {
         return $this->setProperty('minLength', $value);
+    }
+
+    /**
+    * Sets the noDataTemplate option of the AutoComplete.
+    * The template used to render the "no data" template, which will be displayed if no results are found or the underlying data source is empty. The noData template receives the widget itself as a part of the data argument. The template will be evaluated on every widget data bound.
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\AutoComplete
+    */
+    public function noDataTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('noDataTemplate', $value);
+    }
+
+    /**
+    * Sets the noDataTemplate option of the AutoComplete.
+    * The template used to render the "no data" template, which will be displayed if no results are found or the underlying data source is empty. The noData template receives the widget itself as a part of the data argument. The template will be evaluated on every widget data bound.
+    * @param string $value The template content.
+    * @return \Kendo\UI\AutoComplete
+    */
+    public function noDataTemplate($value) {
+        return $this->setProperty('noDataTemplate', $value);
     }
 
     /**
@@ -157,8 +236,7 @@ all data items which begin with the current widget value are displayed in the su
     }
 
     /**
-    * The options that will be used for the popup initialization. For more details about the available options
-refer to Popup documentation.
+    * The options that will be used for the popup initialization. For more details about the available options refer to Popup documentation.
     * @param  $value
     * @return \Kendo\UI\AutoComplete
     */
@@ -168,7 +246,7 @@ refer to Popup documentation.
 
     /**
     * The character used to separate multiple values. Empty by default.
-    * @param string $value
+    * @param string|array $value
     * @return \Kendo\UI\AutoComplete
     */
     public function separator($value) {
@@ -229,6 +307,15 @@ refer to Popup documentation.
     }
 
     /**
+    * The value of the widget.
+    * @param string $value
+    * @return \Kendo\UI\AutoComplete
+    */
+    public function value($value) {
+        return $this->setProperty('value', $value);
+    }
+
+    /**
     * Specifies the value binding behavior for the widget when the initial model value is null. If set to true, the View-Model field will be updated with the selected item text field. If set to false, the View-Model field will be updated with the selected item.
     * @param boolean $value
     * @return \Kendo\UI\AutoComplete
@@ -238,7 +325,7 @@ refer to Popup documentation.
     }
 
     /**
-    * Enables the virtualization feature of the widget.
+    * Enables the virtualization feature of the widget. The configuration can be set on an object, which contains two properties - itemHeight and valueMapper.For detailed information, refer to the article on virtualization.
     * @param boolean|\Kendo\UI\AutoCompleteVirtual|array $value
     * @return \Kendo\UI\AutoComplete
     */
@@ -333,3 +420,5 @@ refer to Popup documentation.
 
 //<< Properties
 }
+
+?>

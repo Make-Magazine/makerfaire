@@ -23,6 +23,24 @@ class DiagramConnectionSelectionHandles extends \Kendo\SerializableObject {
         return $this->setProperty('stroke', $value);
     }
 
+    /**
+    * The width of the handle elements.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\DiagramConnectionSelectionHandles
+    */
+    public function width($value) {
+        return $this->setProperty('width', $value);
+    }
+
+    /**
+    * The height of the handle elements.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\DiagramConnectionSelectionHandles
+    */
+    public function height($value) {
+        return $this->setProperty('height', $value);
+    }
+
 //<< Properties
 }
 

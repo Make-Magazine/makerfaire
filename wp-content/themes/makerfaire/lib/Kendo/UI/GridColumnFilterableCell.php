@@ -42,7 +42,7 @@ class GridColumnFilterableCell extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the AutoComplete filter option. Possible values are same as the one for the AutoComplete filter option- "startswidht", "endswith", "contains".
+    * Specifies the AutoComplete filter option. The possible values are the same as the ones for the AutoComplete filter option - "startswith", "endswith", "contains". The "contains" operator performs a case-insensitive search. To perform a case-sensitive filtering, set a custom filtering function through the dataSource.filter.operator option.
     * @param string $value
     * @return \Kendo\UI\GridColumnFilterableCell
     */
@@ -88,25 +88,15 @@ class GridColumnFilterableCell extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the GridColumnFilterableCell.
-    * JavaScript function which will customize how the input for the filter value is rendered.
-The function receives an object argument with two fields:
-    * @param string $value The id of the element which represents the kendo template.
-    * @return \Kendo\UI\GridColumnFilterableCell
-    */
-    public function templateId($value) {
-        $value = new \Kendo\Template($value);
-
-        return $this->setProperty('template', $value);
-    }
-
-    /**
-    * Sets the template option of the GridColumnFilterableCell.
-    * JavaScript function which will customize how the input for the filter value is rendered.
-The function receives an object argument with two fields:
-    * @param string $value The template content.
+    * JavaScript function which will customize how the input for the filter value is rendered. The function receives an object argument with two fields: element - the default input inside the filter cell; or dataSource - a Kendo UI DataSource instance, which has the same settings as the Grid dataSource, but will only contain data items with unique values for the current column. This instance is also used by the default AutoComplete widget, which is used inside the filter cell if no template is set. Keep in mind that the passed dataSource instance may still not be populated at the time the template function is called, if the Grid uses remote binding..
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\GridColumnFilterableCell
     */
     public function template($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
         return $this->setProperty('template', $value);
     }
 

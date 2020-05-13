@@ -6,8 +6,7 @@ class StockChartPaneTitle extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The background color of the title. Any valid CSS color string will work here, including
-hex and rgb.
+    * The background color of the title. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartPaneTitle
     */

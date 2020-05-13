@@ -7,7 +7,7 @@ class DiagramEditable extends \Kendo\SerializableObject {
 
     /**
     * Sets the connectionTemplate option of the DiagramEditable.
-    * Specifies the connection editor template which shows up when editing the connection via a pop-up editor much like 'editable.template' configuration of the Kendo UI Grid widget.
+    * Specifies the connection editor template which shows up when editing the connection. A template can be used to change the default editors for the connection fields or to prevent some fields from being edited by not rendering an editor input for them.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\DiagramEditable
     */
@@ -19,7 +19,7 @@ class DiagramEditable extends \Kendo\SerializableObject {
 
     /**
     * Sets the connectionTemplate option of the DiagramEditable.
-    * Specifies the connection editor template which shows up when editing the connection via a pop-up editor much like 'editable.template' configuration of the Kendo UI Grid widget.
+    * Specifies the connection editor template which shows up when editing the connection. A template can be used to change the default editors for the connection fields or to prevent some fields from being edited by not rendering an editor input for them.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\DiagramEditable
     */
@@ -46,7 +46,7 @@ class DiagramEditable extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the look-and-feel of the resizing handles.
+    * Defines the look-and-feel of the shape resizing handles.
     * @param boolean|\Kendo\Dataviz\UI\DiagramEditableResize|array $value
     * @return \Kendo\Dataviz\UI\DiagramEditable
     */
@@ -65,7 +65,7 @@ class DiagramEditable extends \Kendo\SerializableObject {
 
     /**
     * Sets the shapeTemplate option of the DiagramEditable.
-    * Specifies the shape editor template. See the 'editable.connectionTemplate' for an example.
+    * Specifies the shape editor template. You can use it to customize the editing UI of the shape or to display editor controls only for certain fields of the shape data item.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\DiagramEditable
     */
@@ -77,7 +77,7 @@ class DiagramEditable extends \Kendo\SerializableObject {
 
     /**
     * Sets the shapeTemplate option of the DiagramEditable.
-    * Specifies the shape editor template. See the 'editable.connectionTemplate' for an example.
+    * Specifies the shape editor template. You can use it to customize the editing UI of the shape or to display editor controls only for certain fields of the shape data item.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\DiagramEditable
     */

@@ -61,8 +61,7 @@ class SparklineSeriesDefaultsTooltip extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the SparklineSeriesDefaultsTooltip.
-    * The tooltip template.
-Template variables:
+    * The tooltip template. Template variables: value- the point value; category- the category name; series- the data series or dataItem- the original data item used to construct the point.      Will be null if binding to array..
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\SparklineSeriesDefaultsTooltip
     */
@@ -74,8 +73,7 @@ Template variables:
 
     /**
     * Sets the template option of the SparklineSeriesDefaultsTooltip.
-    * The tooltip template.
-Template variables:
+    * The tooltip template. Template variables: value- the point value; category- the category name; series- the data series or dataItem- the original data item used to construct the point.      Will be null if binding to array..
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\SparklineSeriesDefaultsTooltip
     */

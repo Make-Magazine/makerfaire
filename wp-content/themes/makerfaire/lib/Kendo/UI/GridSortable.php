@@ -15,6 +15,24 @@ class GridSortable extends \Kendo\SerializableObject {
     }
 
     /**
+    * If set to true the user will see sort sequence indicators for sorted columns.
+    * @param boolean $value
+    * @return \Kendo\UI\GridSortable
+    */
+    public function showIndexes($value) {
+        return $this->setProperty('showIndexes', $value);
+    }
+
+    /**
+    * Determines the inital (from un-sorted to sorted state) sort direction. The supported values are asc and desc.
+    * @param string $value
+    * @return \Kendo\UI\GridSortable
+    */
+    public function initialDirection($value) {
+        return $this->setProperty('initialDirection', $value);
+    }
+
+    /**
     * The sorting mode. If set to "single" the user can sort by one column. If set to "multiple" the user can sort by multiple columns.
     * @param string $value
     * @return \Kendo\UI\GridSortable
@@ -25,3 +43,5 @@ class GridSortable extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

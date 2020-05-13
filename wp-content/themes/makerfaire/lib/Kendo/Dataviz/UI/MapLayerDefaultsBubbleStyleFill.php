@@ -6,8 +6,7 @@ class MapLayerDefaultsBubbleStyleFill extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The default fill color for bubble layer symbols.
-Accepts a valid CSS color string, including hex and rgb.
+    * The default fill color for bubble layer symbols. Accepts a valid CSS color string, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\MapLayerDefaultsBubbleStyleFill
     */

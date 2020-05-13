@@ -43,3 +43,5 @@ class EditorPdfMargin extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

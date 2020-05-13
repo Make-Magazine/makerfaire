@@ -9,8 +9,7 @@ class Barcode extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * Sets the preferred rendering engine.
-If it is not supported by the browser, the Barcode will switch to the first available mode.The supported values are:
+    * Sets the preferred rendering engine. If it is not supported by the browser, the Barcode will switch to the first available mode.The supported values are: "canvas" - renders the widget as a Canvas element, if available. or "svg" - renders the widget as inline SVG document, if available.
     * @param string $value
     * @return \Kendo\Dataviz\UI\Barcode
     */
@@ -19,8 +18,7 @@ If it is not supported by the browser, the Barcode will switch to the first avai
     }
 
     /**
-    * The background of the barcode area.
-Any valid CSS color string will work here, including hex and rgb.
+    * The background of the barcode area. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\Barcode
     */
@@ -38,7 +36,7 @@ Any valid CSS color string will work here, including hex and rgb.
     }
 
     /**
-    * If set to true the barcode will not display the checksum digit next to the value in the text area.
+    * If set to true, the Barcode will display the checksum digit next to the value in the text area.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\Barcode
     */
@@ -47,8 +45,7 @@ Any valid CSS color string will work here, including hex and rgb.
     }
 
     /**
-    * The color of the bar elements.
-Any valid CSS color string will work here, including hex and rgb.
+    * The color of the bar elements. Any valid CSS color string will work here, including hex and rgb.
     * @param string $value
     * @return \Kendo\Dataviz\UI\Barcode
     */
@@ -84,7 +81,7 @@ Any valid CSS color string will work here, including hex and rgb.
     }
 
     /**
-    * The symbology (encoding) the barcode will use.The supported values are:
+    * The symbology (encoding) the barcode will use.The supported values are: EAN8; EAN13; UPCE; UPCA; Code11; Code39; Code39Extended; Code93; Code93Extended; Code128; Code128A; Code128B; Code128C; GS1-128; MSImod10; MSImod11; MSImod1010; MSImod1110 or POSTNET.
     * @param string $value
     * @return \Kendo\Dataviz\UI\Barcode
     */

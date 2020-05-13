@@ -52,3 +52,5 @@ class NotificationPosition extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

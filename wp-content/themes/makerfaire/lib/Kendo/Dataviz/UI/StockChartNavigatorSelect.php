@@ -15,6 +15,15 @@ class StockChartNavigatorSelect extends \Kendo\SerializableObject {
     }
 
     /**
+    * The mousewheel configuration of the selection.If set to false the mousewheel will not update the selection.
+    * @param boolean|\Kendo\Dataviz\UI\StockChartNavigatorSelectMousewheel|array $value
+    * @return \Kendo\Dataviz\UI\StockChartNavigatorSelect
+    */
+    public function mousewheel($value) {
+        return $this->setProperty('mousewheel', $value);
+    }
+
+    /**
     * The upper boundary of the selected range.
     * @param date $value
     * @return \Kendo\Dataviz\UI\StockChartNavigatorSelect

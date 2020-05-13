@@ -6,8 +6,7 @@ class SparklineCategoryAxisItemMinorTicks extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The axis minor tick size. This is the length of the line in pixels that is drawn to indicate the tick
-on the chart.
+    * The axis minor tick size. This is the length of the line in pixels that is drawn to indicate the tick on the chart.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineCategoryAxisItemMinorTicks
     */

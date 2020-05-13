@@ -6,18 +6,17 @@ class TreeListEditable extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The editing mode to use. The supported editing modes are "inline" and "popup".
-    * @param string $value
+    * Enables the drag-and-drop UI of rows between parents.
+    * @param boolean $value
     * @return \Kendo\UI\TreeListEditable
     */
-    public function mode($value) {
-        return $this->setProperty('mode', $value);
+    public function move($value) {
+        return $this->setProperty('move', $value);
     }
 
     /**
     * Sets the template option of the TreeListEditable.
-    * The template which renders the popup editor.The template should contain elements whose name HTML attributes are set as the editable fields. This is how the treelist will know
-which field to update. The other option is to use MVVM bindings in order to bind HTML elements to data item fields.
+    * The template which renders the popup editor.The template has to contain elements whose name HTML attribute is set to the name of the editable field. In this way, the TreeList recognizes the field to which it has to bind the each editor. Alternatively, use MVVM bindings for binding HTML elements to data item fields.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\TreeListEditable
     */
@@ -29,8 +28,7 @@ which field to update. The other option is to use MVVM bindings in order to bind
 
     /**
     * Sets the template option of the TreeListEditable.
-    * The template which renders the popup editor.The template should contain elements whose name HTML attributes are set as the editable fields. This is how the treelist will know
-which field to update. The other option is to use MVVM bindings in order to bind HTML elements to data item fields.
+    * The template which renders the popup editor.The template has to contain elements whose name HTML attribute is set to the name of the editable field. In this way, the TreeList recognizes the field to which it has to bind the each editor. Alternatively, use MVVM bindings for binding HTML elements to data item fields.
     * @param string $value The template content.
     * @return \Kendo\UI\TreeListEditable
     */
@@ -39,7 +37,7 @@ which field to update. The other option is to use MVVM bindings in order to bind
     }
 
     /**
-    * Configures the Kendo UI Window instance, which is used when the TreeList edit mode is "popup". The configuration is optional.For more information, please refer to the Window configuration API.
+    * Configures the Kendo UI Window instance which is used when the TreeList edit mode is set to popup. For more information, refer to the configuration API of the Window.
     * @param  $value
     * @return \Kendo\UI\TreeListEditable
     */
@@ -47,5 +45,16 @@ which field to update. The other option is to use MVVM bindings in order to bind
         return $this->setProperty('window', $value);
     }
 
+    /**
+    * The editing mode to use. The supported editing modes are "inline", "popup" and "incell".
+    * @param string $value
+    * @return \Kendo\UI\TreeListEditable
+    */
+    public function mode($value) {
+        return $this->setProperty('mode', $value);
+    }
+
 //<< Properties
 }
+
+?>

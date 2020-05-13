@@ -6,8 +6,7 @@ class GanttResources extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The field of the resource data item containing the format of the resource value, which could be assigned to a gantt task.
-The data item format value could be any valid kendo format.
+    * The field of the resource data item containing the format of the resource value, which could be assigned to a gantt task. The data item format value could be any valid kendo format.
     * @param string $value
     * @return \Kendo\UI\GanttResources
     */
@@ -53,3 +52,5 @@ The data item format value could be any valid kendo format.
 
 //<< Properties
 }
+
+?>

@@ -36,8 +36,9 @@ h1 {
 
 h1.header {
     margin: 0;
-    height: 150px;
-    line-height: 150px;
+    min-height: 50px;
+    padding: 50px 0;
+    line-height: 55px;
     vertical-align: middle;
     font-size: 50px;
     font-weight: bold;
@@ -56,8 +57,7 @@ h2 {
 }
 
 #page {
-    width:72%;
-    min-width: 960px;
+    max-width:72%;
     margin: 2% auto;
     padding: 3% 5% 0;
     background: #fff;
@@ -99,12 +99,16 @@ li {
 
 #page > ul > li {
     float: left;
-    clear: left;
+    max-width: 31%;
     width: 30%;
-    min-width: 375px;
+    min-width: 320px;
     padding: 20px 0 40px;
     margin: 0 3% 0 0;
     border-top: 1px solid #dfdfdf;
+}
+
+#page > ul > li:nth-child(3n+1) {
+    clear: left;
 }
 
 #page > ul:after,
@@ -125,7 +129,7 @@ li {
 .box
 {
     float:left;
-    width:290px;
+    max-width:290px;
     color:#6f6f6f;
     margin-left:35px;
     margin-right:0;
@@ -191,13 +195,8 @@ h2+.box
 
 /* Suites on Homepage */
 .suites {
-    min-width: 960px;
     text-align: center;
-    margin: 0 -5% 3%;
-}
-
-.suite-column:first-child {
-    border-right: 1px solid #e0e0e0;
+    margin: 0 0 3%;
 }
 .suite-column {
     display: inline-block;
@@ -259,22 +258,21 @@ h2 .beta-widget {
     margin-top: 8px;
 }
 
-@media screen and (min-width: 1000px) {
-    #page > ul > li {
-        clear: none;
-    }
-
-    #page > ul > li:nth-child(2n+1) {
-        clear: left;
-    }
+@media screen and (max-width: 1480px) {
+  #page {
+    max-width:100%;
+    margin: 0;
+    padding: 10px;
+    background: #fff;
+    border: 0;
+  }
 }
 
-@media screen and (min-width: 1480px) {
-    #page > ul > li:nth-child(2n+1) {
-        clear: none;
-    }
-
-    #page > ul > li:nth-child(3n+1) {
-        clear: left;
-    }
+@media screen and (max-width: 1100px) {
+  #page > ul > li:nth-child(3n+1) {
+      clear: none;
+  }
+  #page > ul > li:nth-child(2n+1) {
+    clear: left;
+  }
 }

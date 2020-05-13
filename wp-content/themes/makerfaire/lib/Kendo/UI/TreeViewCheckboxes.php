@@ -6,8 +6,7 @@ class TreeViewCheckboxes extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Indicates whether checkboxes of child items should get checked when the checkbox of a parent item is checked. This
-also enables tri-state checkboxes with an indeterminate state.
+    * Indicates whether checkboxes of child items should get checked when the checkbox of a parent item is checked. This also enables tri-state checkboxes with an indeterminate state.
     * @param boolean $value
     * @return \Kendo\UI\TreeViewCheckboxes
     */
@@ -26,8 +25,7 @@ also enables tri-state checkboxes with an indeterminate state.
 
     /**
     * Sets the template option of the TreeViewCheckboxes.
-    * The template which renders the checkboxes. Can be used to allow posting of
-additional information along the TreeView checkboxes.The fields which can be used in the template are:
+    * The template which renders the checkboxes. Can be used to allow posting of additional information along the TreeView checkboxes.The fields which can be used in the template are: item - the data item of the given node or treeview - the TreeView options.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\TreeViewCheckboxes
     */
@@ -39,8 +37,7 @@ additional information along the TreeView checkboxes.The fields which can be use
 
     /**
     * Sets the template option of the TreeViewCheckboxes.
-    * The template which renders the checkboxes. Can be used to allow posting of
-additional information along the TreeView checkboxes.The fields which can be used in the template are:
+    * The template which renders the checkboxes. Can be used to allow posting of additional information along the TreeView checkboxes.The fields which can be used in the template are: item - the data item of the given node or treeview - the TreeView options.
     * @param string $value The template content.
     * @return \Kendo\UI\TreeViewCheckboxes
     */
@@ -50,3 +47,5 @@ additional information along the TreeView checkboxes.The fields which can be use
 
 //<< Properties
 }
+
+?>

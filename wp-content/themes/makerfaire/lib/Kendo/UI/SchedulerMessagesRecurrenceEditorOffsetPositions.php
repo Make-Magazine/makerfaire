@@ -52,3 +52,5 @@ class SchedulerMessagesRecurrenceEditorOffsetPositions extends \Kendo\Serializab
 
 //<< Properties
 }
+
+?>

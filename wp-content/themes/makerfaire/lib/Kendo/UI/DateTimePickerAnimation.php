@@ -25,3 +25,5 @@ class DateTimePickerAnimation extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

@@ -15,8 +15,7 @@ class TabStripAnimationClose extends \Kendo\SerializableObject {
     }
 
     /**
-    * A whitespace-delimited string of animation effects that are utilized when the current tab
-is closed. By default not specified - uses the opening animation with reverse.
+    * A whitespace-delimited string of animation effects that are utilized when the current tab is closed. By default not specified - uses the opening animation with reverse.
     * @param string $value
     * @return \Kendo\UI\TabStripAnimationClose
     */
@@ -26,3 +25,5 @@ is closed. By default not specified - uses the opening animation with reverse.
 
 //<< Properties
 }
+
+?>

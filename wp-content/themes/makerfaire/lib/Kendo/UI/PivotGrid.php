@@ -18,8 +18,7 @@ class PivotGrid extends \Kendo\UI\Widget {
     }
 
     /**
-    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the
-data source is fired. By default the widget will bind to the data source specified in the configuration.
+    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. By default the widget will bind to the data source specified in the configuration.
     * @param boolean $value
     * @return \Kendo\UI\PivotGrid
     */
@@ -92,7 +91,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the columnHeaderTemplate option of the PivotGrid.
-    * The template which renders the content of the column header cell. By default it renders the caption of the tuple member.The fields which can be used in the template are:For information about the tuple structure check this link.
+    * The template which renders the content of the column header cell. By default it renders the caption of the tuple member.The fields which can be used in the template are: member - the member of the corresponding column header cell or tuple - the tuple of the corresponding column header cell. For information about the tuple structure check this link.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\PivotGrid
     */
@@ -104,7 +103,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the columnHeaderTemplate option of the PivotGrid.
-    * The template which renders the content of the column header cell. By default it renders the caption of the tuple member.The fields which can be used in the template are:For information about the tuple structure check this link.
+    * The template which renders the content of the column header cell. By default it renders the caption of the tuple member.The fields which can be used in the template are: member - the member of the corresponding column header cell or tuple - the tuple of the corresponding column header cell. For information about the tuple structure check this link.
     * @param string $value The template content.
     * @return \Kendo\UI\PivotGrid
     */
@@ -114,8 +113,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the dataCellTemplate option of the PivotGrid.
-    * The template which renders the content of the data cell. By default renders the formatted value (fmtValue) of the data item.The fields which can be used in the template are:For information about the tuple structure check this link.
-About the data item structure review this help topic.
+    * The template which renders the content of the data cell. By default renders the formatted value (fmtValue) of the data item.The fields which can be used in the template are: columnTuple - the tuple of the corresponding column header cell; rowTuple - the tuple of the corresponding row header cell; measure - the value of the data cell measure or dataItem - the data item itself. For information about the tuple structure check this link. About the data item structure review this help topic.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\PivotGrid
     */
@@ -127,8 +125,7 @@ About the data item structure review this help topic.
 
     /**
     * Sets the dataCellTemplate option of the PivotGrid.
-    * The template which renders the content of the data cell. By default renders the formatted value (fmtValue) of the data item.The fields which can be used in the template are:For information about the tuple structure check this link.
-About the data item structure review this help topic.
+    * The template which renders the content of the data cell. By default renders the formatted value (fmtValue) of the data item.The fields which can be used in the template are: columnTuple - the tuple of the corresponding column header cell; rowTuple - the tuple of the corresponding row header cell; measure - the value of the data cell measure or dataItem - the data item itself. For information about the tuple structure check this link. About the data item structure review this help topic.
     * @param string $value The template content.
     * @return \Kendo\UI\PivotGrid
     */
@@ -138,8 +135,7 @@ About the data item structure review this help topic.
 
     /**
     * Sets the kpiStatusTemplate option of the PivotGrid.
-    * The template which renders the content of the KPI Status value. By default renders "open", "hold" and "denied" status icons.The fields which can be used in the template are:For information about the tuple structure check this link.
-About the data item structure review this help topic.
+    * The template which renders the content of the KPI Status value. By default renders "open", "hold" and "denied" status icons.The fields which can be used in the template are: columnTuple - the tuple of the corresponding column header cell; rowTuple - the tuple of the corresponding row header cell; measure - the value of the data cell measure or dataItem - the data item itself. For information about the tuple structure check this link. About the data item structure review this help topic.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\PivotGrid
     */
@@ -151,8 +147,7 @@ About the data item structure review this help topic.
 
     /**
     * Sets the kpiStatusTemplate option of the PivotGrid.
-    * The template which renders the content of the KPI Status value. By default renders "open", "hold" and "denied" status icons.The fields which can be used in the template are:For information about the tuple structure check this link.
-About the data item structure review this help topic.
+    * The template which renders the content of the KPI Status value. By default renders "open", "hold" and "denied" status icons.The fields which can be used in the template are: columnTuple - the tuple of the corresponding column header cell; rowTuple - the tuple of the corresponding row header cell; measure - the value of the data cell measure or dataItem - the data item itself. For information about the tuple structure check this link. About the data item structure review this help topic.
     * @param string $value The template content.
     * @return \Kendo\UI\PivotGrid
     */
@@ -162,8 +157,7 @@ About the data item structure review this help topic.
 
     /**
     * Sets the kpiTrendTemplate option of the PivotGrid.
-    * The template which renders the content of the KPI Trend value. By default renders "increase", "decrease" and "equal" status icons.The fields which can be used in the template are:For information about the tuple structure check this link.
-About the data item structure review this help topic.
+    * The template which renders the content of the KPI Trend value. By default renders "increase", "decrease" and "equal" status icons.The fields which can be used in the template are: columnTuple - the tuple of the corresponding column header cell; rowTuple - the tuple of the corresponding row header cell; measure - the value of the data cell measure or dataItem - the data item itself. For information about the tuple structure check this link. About the data item structure review this help topic.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\PivotGrid
     */
@@ -175,8 +169,7 @@ About the data item structure review this help topic.
 
     /**
     * Sets the kpiTrendTemplate option of the PivotGrid.
-    * The template which renders the content of the KPI Trend value. By default renders "increase", "decrease" and "equal" status icons.The fields which can be used in the template are:For information about the tuple structure check this link.
-About the data item structure review this help topic.
+    * The template which renders the content of the KPI Trend value. By default renders "increase", "decrease" and "equal" status icons.The fields which can be used in the template are: columnTuple - the tuple of the corresponding column header cell; rowTuple - the tuple of the corresponding row header cell; measure - the value of the data cell measure or dataItem - the data item itself. For information about the tuple structure check this link. About the data item structure review this help topic.
     * @param string $value The template content.
     * @return \Kendo\UI\PivotGrid
     */
@@ -186,7 +179,7 @@ About the data item structure review this help topic.
 
     /**
     * Sets the rowHeaderTemplate option of the PivotGrid.
-    * The template which renders the content of the row header cell. By default it renders the caption of the tuple member.The fields which can be used in the template are:For information about the tuple structure check this link.
+    * The template which renders the content of the row header cell. By default it renders the caption of the tuple member.The fields which can be used in the template are: member - the member of the corresponding row header cell or tuple - the tuple of the corresponding row header cell. For information about the tuple structure check this link.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\UI\PivotGrid
     */
@@ -198,7 +191,7 @@ About the data item structure review this help topic.
 
     /**
     * Sets the rowHeaderTemplate option of the PivotGrid.
-    * The template which renders the content of the row header cell. By default it renders the caption of the tuple member.The fields which can be used in the template are:For information about the tuple structure check this link.
+    * The template which renders the content of the row header cell. By default it renders the caption of the tuple member.The fields which can be used in the template are: member - the member of the corresponding row header cell or tuple - the tuple of the corresponding row header cell. For information about the tuple structure check this link.
     * @param string $value The template content.
     * @return \Kendo\UI\PivotGrid
     */
@@ -308,3 +301,5 @@ About the data item structure review this help topic.
         return $this->setProperty('configurator', $selector);
     }
 }
+
+?>

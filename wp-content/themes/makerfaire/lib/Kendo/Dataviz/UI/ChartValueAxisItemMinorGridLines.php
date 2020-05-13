@@ -15,7 +15,7 @@ class ChartValueAxisItemMinorGridLines extends \Kendo\SerializableObject {
     }
 
     /**
-    * The dash type of the minor grid lines.The following dash types are supported:
+    * The dash type of the minor grid lines.The following dash types are supported: "dash" - a line consisting of dashes; "dashDot" - a line consisting of a repeating pattern of dash-dot; "dot" - a line consisting of dots; "longDash" - a line consisting of a repeating pattern of long-dash; "longDashDot" - a line consisting of a repeating pattern of long-dash-dot; "longDashDotDot" - a line consisting of a repeating pattern of long-dash-dot-dot or "solid" - a solid line.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItemMinorGridLines
     */
@@ -24,7 +24,7 @@ class ChartValueAxisItemMinorGridLines extends \Kendo\SerializableObject {
     }
 
     /**
-    * The type of grid lines to draw for radar charts:The default type is "line" except for "radarColumn" charts.
+    * The type of grid lines to draw for radar charts: "line" - draws straight lines. or "arc" - draws arcs.. The default type is "line" except for "radarColumn" charts.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItemMinorGridLines
     */

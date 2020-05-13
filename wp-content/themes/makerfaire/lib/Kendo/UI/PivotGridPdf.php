@@ -15,6 +15,15 @@ class PivotGridPdf extends \Kendo\SerializableObject {
     }
 
     /**
+    * A flag indicating whether to produce actual hyperlinks in the exported PDF file.It's also possible to pass a CSS selector as argument. All matching links will be ignored.
+    * @param boolean|string $value
+    * @return \Kendo\UI\PivotGridPdf
+    */
+    public function avoidLinks($value) {
+        return $this->setProperty('avoidLinks', $value);
+    }
+
+    /**
     * The creator of the PDF document.
     * @param string $value
     * @return \Kendo\UI\PivotGridPdf
@@ -69,8 +78,7 @@ class PivotGridPdf extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the margins of the page (numbers or strings with units). Supported
-units are "mm", "cm", "in" and "pt" (default).
+    * Specifies the margins of the page (numbers or strings with units). Supported units are "mm", "cm", "in" and "pt" (default).
     * @param \Kendo\UI\PivotGridPdfMargin|array $value
     * @return \Kendo\UI\PivotGridPdf
     */
@@ -79,8 +87,7 @@ units are "mm", "cm", "in" and "pt" (default).
     }
 
     /**
-    * Specifies the paper size of the PDF document.
-The default "auto" means paper size is determined by content.Supported values:
+    * Specifies the paper size of the PDF document. The default "auto" means paper size is determined by content.Supported values: A predefined size: "A4", "A3" etc; An array of two numbers specifying the width and height in points (1pt = 1/72in) or An array of two strings specifying the width and height in units. Supported units are "mm", "cm", "in" and "pt"..
     * @param string|array $value
     * @return \Kendo\UI\PivotGridPdf
     */
@@ -89,8 +96,7 @@ The default "auto" means paper size is determined by content.Supported values:
     }
 
     /**
-    * The URL of the server side proxy which will stream the file to the end user.A proxy will be used when the browser isn't capable of saving files locally e.g. Internet Explorer 9 and Safari. PDF export is not supported in Internet Explorer 8 and below.The developer is responsible for implementing the server-side proxy.The proxy will receive a POST request with the following parameters in the request body:The proxy should return the decoded file with the "Content-Disposition" header set to
-attachment; filename="<fileName.pdf>".
+    * The URL of the server side proxy which will stream the file to the end user.A proxy will be used when the browser is not capable of saving files locally, for example, Internet Explorer 9 and Safari.The developer is responsible for implementing the server-side proxy.The proxy will receive a POST request with the following parameters in the request body: contentType: The MIME type of the file; base64: The base-64 encoded file content or fileName: The file name, as requested by the caller.. The proxy should return the decoded file with the "Content-Disposition" header set toattachment; filename="<fileName.pdf>".
     * @param string $value
     * @return \Kendo\UI\PivotGridPdf
     */
@@ -99,8 +105,7 @@ attachment; filename="<fileName.pdf>".
     }
 
     /**
-    * A name or keyword indicating where to display the document returned from the proxy.If you want to display the document in a new window or iframe,
-the proxy should set the "Content-Disposition" header to inline; filename="<fileName.pdf>".
+    * A name or keyword indicating where to display the document returned from the proxy.If you want to display the document in a new window or iframe, the proxy should set the "Content-Disposition" header to inline; filename="<fileName.pdf>".
     * @param string $value
     * @return \Kendo\UI\PivotGridPdf
     */

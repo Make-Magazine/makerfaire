@@ -123,6 +123,15 @@ class ChartSeriesDefaults extends \Kendo\SerializableObject {
     }
 
     /**
+    * The range area chart series options. Accepts all values supported by the series option.
+    * @param  $value
+    * @return \Kendo\Dataviz\UI\ChartSeriesDefaults
+    */
+    public function rangeArea($value) {
+        return $this->setProperty('rangeArea', $value);
+    }
+
+    /**
     * The scatter chart series options. Accepts all values supported by the series option.
     * @param  $value
     * @return \Kendo\Dataviz\UI\ChartSeriesDefaults
@@ -159,7 +168,7 @@ class ChartSeriesDefaults extends \Kendo\SerializableObject {
     }
 
     /**
-    * The default type of the series.The supported values are:
+    * The default type of the series.The supported values are: area; bar; bubble; bullet; candlestick; column; donut; funnel; line; ohlc; pie; polarArea; polarLine; polarScatter; radarArea; radarColumn; radarLine; rangeArea; rangeBar; rangeColumn; scatter; scatterLine; waterfall; verticalArea; verticalBullet; verticalLine or verticalRangeArea.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartSeriesDefaults
     */
@@ -195,8 +204,17 @@ class ChartSeriesDefaults extends \Kendo\SerializableObject {
     }
 
     /**
+    * The verticalRangeArea chart series options. Accepts all values supported by the series option.
+    * @param  $value
+    * @return \Kendo\Dataviz\UI\ChartSeriesDefaults
+    */
+    public function verticalRangeArea($value) {
+        return $this->setProperty('verticalRangeArea', $value);
+    }
+
+    /**
     * Sets the visual option of the ChartSeriesDefaults.
-    * A function that can be used to create a custom visual for the points. Applicable for bar and column series. The available argument fields are:
+    * A function that can be used to create a custom visual for the points. Applicable for bar, column, pie, donut, funnel, line, scatterLine, rangeBar, rangeColumn and waterfall series. The available argument fields are: rect - the kendo.geometry.Rect that defines where the visual should be rendered.; options - the point options.; createVisual - a function that can be used to get the default visual.; category - the point category.; dataItem - the point dataItem.; value - the point value.; stackValue - the cumulative point value on the stack. Available only for stackable series.; sender - the chart instance.; series - the point series.; percentage - the point value represented as a percentage value. Available only for donut, pie and 100% stacked charts.; runningTotal - the sum of point values since the last "runningTotal" summary point. Available for waterfall series.; total - the sum of all previous series values. Available for waterfall series.; radius - the segment radius. Available for donut and pie series.; innerRadius - the segment inner radius. Available for donut series.; startAngle - the segment start angle. Available for donut and pie series.; endAngle - the segment end angle. Available for donut and pie series.; center - the segment center point. Available for donut and pie series. or points - the segment points. Available for funnel, line and scatterLine series..
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\ChartSeriesDefaults
     */

@@ -10,7 +10,7 @@ class ProgressBar extends \Kendo\UI\Widget {
 
     /**
     * Configures the progress animation. Currently only the duration of the animation could be set.
-    * @param \Kendo\UI\ProgressBarAnimation|array $value
+    * @param boolean|\Kendo\UI\ProgressBarAnimation|array $value
     * @return \Kendo\UI\ProgressBar
     */
     public function animation($value) {
@@ -129,3 +129,5 @@ class ProgressBar extends \Kendo\UI\Widget {
 
 //<< Properties
 }
+
+?>

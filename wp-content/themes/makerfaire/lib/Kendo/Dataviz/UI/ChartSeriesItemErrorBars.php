@@ -6,7 +6,7 @@ class ChartSeriesItemErrorBars extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The error bars value.The following value types are supported:
+    * The error bars value.The following value types are supported: "stderr" - the standard error of the series values will be used to calculate the point low and high value; "stddev(n)" - the standard deviation of the series values will be used to calculate the point low and high value. A number can be specified between the parentheses, that will be multiplied by the calculated standard deviation.; "percentage(n)" - a percentage of the point value; A number that will be subtracted/added to the point value; An array that holds the low and high difference from the point value or A function that returns the errorBars point value.
     * @param string|float|array|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Dataviz\UI\ChartSeriesItemErrorBars
     */
@@ -16,7 +16,7 @@ class ChartSeriesItemErrorBars extends \Kendo\SerializableObject {
 
     /**
     * Sets the visual option of the ChartSeriesItemErrorBars.
-    * A function that can be used to create a custom visual for the error bars. The available argument fields are:
+    * A function that can be used to create a custom visual for the error bars. The available argument fields are: rect - the kendo.geometry.Rect that defines where the visual should be rendered.; options - the error bar options.; createVisual - a function that can be used to get the default visual.; low - the error bar low value.; high - the error bar high value. or sender - the chart instance..
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\Dataviz\UI\ChartSeriesItemErrorBars
     */

@@ -6,7 +6,7 @@ class ChartLegend extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The legend horizontal alignment when the legend.position is "top" or "bottom" and the vertical alignment when the legend.position is "left" or "right".The supported values are:
+    * The legend horizontal alignment when the legend.position is "top" or "bottom" and the vertical alignment when the legend.position is "left" or "right".The supported values are: "start" - the legend is aligned to the start.; "center" - the legend is aligned to the center. or "end" - the legend is aligned to the end..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartLegend
     */
@@ -78,9 +78,7 @@ class ChartLegend extends \Kendo\SerializableObject {
     }
 
     /**
-    * The X offset of the chart legend. The offset is relative to the default position of the legend.
-For instance, a value of 20 will move the legend 20 pixels to the right of its initial position.
-A negative value will move the legend to the left of its current position.
+    * The X offset of the chart legend. The offset is relative to the default position of the legend. For instance, a value of 20 will move the legend 20 pixels to the right of its initial position. A negative value will move the legend to the left of its current position.
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartLegend
     */
@@ -89,9 +87,7 @@ A negative value will move the legend to the left of its current position.
     }
 
     /**
-    * The Y offset of the chart legend.  The offset is relative to the current position of the legend.
-For instance, a value of 20 will move the legend 20 pixels down from its initial position.
-A negative value will move the legend upwards from its current position.
+    * The Y offset of the chart legend.  The offset is relative to the current position of the legend. For instance, a value of 20 will move the legend 20 pixels down from its initial position. A negative value will move the legend upwards from its current position.
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartLegend
     */
@@ -100,7 +96,7 @@ A negative value will move the legend upwards from its current position.
     }
 
     /**
-    * The orientation of the legend items.The supported values are:
+    * The orientation of the legend items.The supported values are: "vertical" - the legend items are added vertically. or "horizontal" - the legend items are added horizontally..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartLegend
     */
@@ -118,7 +114,7 @@ A negative value will move the legend upwards from its current position.
     }
 
     /**
-    * The positions of the chart legend.The supported values are:
+    * The positions of the chart legend.The supported values are: "top" - the legend is positioned on the top.; "bottom" - the legend is positioned on the bottom.; "left" - the legend is positioned on the left.; "right" - the legend is positioned on the right. or "custom" - the legend is positioned using legend.offsetX and legend.offsetY..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartLegend
     */
@@ -133,6 +129,15 @@ A negative value will move the legend upwards from its current position.
     */
     public function reverse($value) {
         return $this->setProperty('reverse', $value);
+    }
+
+    /**
+    * The spacing between the labels in pixels when the legend.orientation is "horizontal".
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\ChartLegend
+    */
+    public function spacing($value) {
+        return $this->setProperty('spacing', $value);
     }
 
     /**

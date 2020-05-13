@@ -6,6 +6,15 @@ class ChartCategoryAxisItemAutoBaseUnitSteps extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
+    * The milliseconds unit steps.
+    * @param array $value
+    * @return \Kendo\Dataviz\UI\ChartCategoryAxisItemAutoBaseUnitSteps
+    */
+    public function milliseconds($value) {
+        return $this->setProperty('milliseconds', $value);
+    }
+
+    /**
     * The seconds unit steps.
     * @param array $value
     * @return \Kendo\Dataviz\UI\ChartCategoryAxisItemAutoBaseUnitSteps

@@ -61,7 +61,7 @@ class ChartValueAxisItemCrosshairTooltip extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the ChartValueAxisItemCrosshairTooltip.
-    * The template which renders the tooltip.The fields which can be used in the template are:
+    * The template which renders the tooltip.The fields which can be used in the template are: value - the value value.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\ChartValueAxisItemCrosshairTooltip
     */
@@ -73,7 +73,7 @@ class ChartValueAxisItemCrosshairTooltip extends \Kendo\SerializableObject {
 
     /**
     * Sets the template option of the ChartValueAxisItemCrosshairTooltip.
-    * The template which renders the tooltip.The fields which can be used in the template are:
+    * The template which renders the tooltip.The fields which can be used in the template are: value - the value value.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\ChartValueAxisItemCrosshairTooltip
     */

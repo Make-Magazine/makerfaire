@@ -7,7 +7,7 @@ class EditorFileBrowserTransport extends \Kendo\SerializableObject {
 
     /**
     * Options or URL for remote file retrieval.
-    * @param string|\Kendo\UI\EditorFileBrowserTransportRead|array $value
+    * @param string|\Kendo\JavaScriptFunction|\Kendo\UI\EditorFileBrowserTransportRead|array $value
     * @return \Kendo\UI\EditorFileBrowserTransport
     */
     public function read($value) {

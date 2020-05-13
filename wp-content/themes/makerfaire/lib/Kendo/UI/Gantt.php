@@ -18,13 +18,21 @@ class Gantt extends \Kendo\UI\Widget {
     }
 
     /**
-    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the
-data source is fired. By default the widget will bind to the data source specified in the configuration.
+    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. By default the widget will bind to the data source specified in the configuration.
     * @param boolean $value
     * @return \Kendo\UI\Gantt
     */
     public function autoBind($value) {
         return $this->setProperty('autoBind', $value);
+    }
+
+    /**
+    * Defines the width of the column resize handle in pixels. Apply a larger value for easier grasping.
+    * @param float $value
+    * @return \Kendo\UI\Gantt
+    */
+    public function columnResizeHandleWidth($value) {
+        return $this->setProperty('columnResizeHandleWidth', $value);
     }
 
     /**
@@ -55,8 +63,16 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * The data source of the widget which contains the dependencies. Can be a JavaScript object which represents a valid data source configuration, a JavaScript array or an existing kendo.data.GanttDependencyDataSource
-instance.If the dependencies option is set to a JavaScript object or array the widget will initialize a new kendo.data.GanttDependencyDataSource instance using that value as data source configuration.If the dependencies option is an existing kendo.data.GanttDependencyDataSource instance the widget will use that instance and will not initialize a new one.
+    * If set to some date and it is between the range start and range end of the selected view, the timeline of the currently selected view is scrolled to start from this date.
+    * @param date $value
+    * @return \Kendo\UI\Gantt
+    */
+    public function date($value) {
+        return $this->setProperty('date', $value);
+    }
+
+    /**
+    * The data source of the widget which contains the dependencies. Can be a JavaScript object which represents a valid data source configuration, a JavaScript array or an existing kendo.data.GanttDependencyDataSource instance.If the dependencies option is set to a JavaScript object or array the widget will initialize a new kendo.data.GanttDependencyDataSource instance using that value as data source configuration.If the dependencies option is an existing kendo.data.GanttDependencyDataSource instance the widget will use that instance and will not initialize a new one.
     * @param |array| $value
     * @return \Kendo\UI\Gantt
     */
@@ -173,6 +189,24 @@ instance.If the dependencies option is set to a JavaScript object or array the w
     }
 
     /**
+    * Configures the Kendo UI Gantt range settings.
+    * @param \Kendo\UI\GanttRange|array $value
+    * @return \Kendo\UI\Gantt
+    */
+    public function range($value) {
+        return $this->setProperty('range', $value);
+    }
+
+    /**
+    * If set to true allows users to resize columns by dragging their header borders. By default resizing is disabled.
+    * @param boolean $value
+    * @return \Kendo\UI\Gantt
+    */
+    public function resizable($value) {
+        return $this->setProperty('resizable', $value);
+    }
+
+    /**
     * If set to false the user won't be able to select tasks in the Gantt. By default selection is enabled and triggers the change event.
     * @param boolean $value
     * @return \Kendo\UI\Gantt
@@ -197,6 +231,28 @@ instance.If the dependencies option is set to a JavaScript object or array the w
     */
     public function showWorkHours($value) {
         return $this->setProperty('showWorkHours', $value);
+    }
+
+    /**
+    * Sets the taskTemplate option of the Gantt.
+    * The template used to render the gantt tasks.The fields which can be used in the template are the task fields
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\Gantt
+    */
+    public function taskTemplateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('taskTemplate', $value);
+    }
+
+    /**
+    * Sets the taskTemplate option of the Gantt.
+    * The template used to render the gantt tasks.The fields which can be used in the template are the task fields
+    * @param string $value The template content.
+    * @return \Kendo\UI\Gantt
+    */
+    public function taskTemplate($value) {
+        return $this->setProperty('taskTemplate', $value);
     }
 
     /**
@@ -227,13 +283,21 @@ instance.If the dependencies option is set to a JavaScript object or array the w
     }
 
     /**
-    * The configuration of the gantt resource(s). A gantt resource is optional metadata that can be associated
-with a gantt task.
+    * The configuration of the gantt resource(s). A gantt resource is optional metadata that can be associated with a gantt task.
     * @param \Kendo\UI\GanttResources|array $value
     * @return \Kendo\UI\Gantt
     */
     public function resources($value) {
         return $this->setProperty('resources', $value);
+    }
+
+    /**
+    * The height of the table rows. Numeric values are treated as pixels.
+    * @param float|string $value
+    * @return \Kendo\UI\Gantt
+    */
+    public function rowHeight($value) {
+        return $this->setProperty('rowHeight', $value);
     }
 
     /**
@@ -346,6 +410,20 @@ with a gantt task.
         }
 
         return $this->setProperty('change', $value);
+    }
+
+    /**
+    * Sets the columnResize event of the Gantt.
+    * Fired when the user resizes a column.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\Gantt
+    */
+    public function columnResize($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('columnResize', $value);
     }
 
     /**
@@ -463,3 +541,5 @@ with a gantt task.
 
 //<< Properties
 }
+
+?>

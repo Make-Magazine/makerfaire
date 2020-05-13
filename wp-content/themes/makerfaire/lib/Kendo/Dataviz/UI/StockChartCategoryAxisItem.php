@@ -6,8 +6,7 @@ class StockChartCategoryAxisItem extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Category index at which the first value axis crosses this axis. (Only for object)Category indicies at which the value axes cross the category axis. (Only for array)Note: Specify an index greater than or equal to the number
-of categories to denote the far end of the axis.
+    * Category index at which the first value axis crosses this axis. (Only for object)Category indicies at which the value axes cross the category axis. (Only for array)Note: Specify an index greater than or equal to the number of categories to denote the far end of the axis.
     * @param |date|array $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -25,8 +24,7 @@ of categories to denote the far end of the axis.
     }
 
     /**
-    * Color to apply to all axis elements. Any valid CSS color string will work here, including hex and rgb.
-Individual color settings for line and labels take priority.
+    * Color to apply to all axis elements. Any valid CSS color string will work here, including hex and rgb. Individual color settings for line and labels take priority.
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -71,8 +69,7 @@ Individual color settings for line and labels take priority.
     }
 
     /**
-    * Configures the major grid lines. These are the lines that are an extension of the major ticks through the
-body of the chart.
+    * Configures the major grid lines. These are the lines that are an extension of the major ticks through the body of the chart.
     * @param \Kendo\Dataviz\UI\StockChartCategoryAxisItemMajorGridLines|array $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -90,8 +87,7 @@ body of the chart.
     }
 
     /**
-    * Configures the minor grid lines.  These are the lines that are an extension of the minor ticks through
-the body of the chart.Note that minor grid lines are not visible by default, therefore none of these settings will take effect with the minor grid lines visibility being set to true.
+    * Configures the minor grid lines.  These are the lines that are an extension of the minor ticks through the body of the chart.Note that minor grid lines are not visible by default, therefore none of these settings will take effect with the minor grid lines visibility being set to true.
     * @param \Kendo\Dataviz\UI\StockChartCategoryAxisItemMinorGridLines|array $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -118,8 +114,7 @@ the body of the chart.Note that minor grid lines are not visible by default, the
     }
 
     /**
-    * The name of the pane that the axis should be rendered in.
-The axis will be rendered in the first (default) pane if not set.
+    * The name of the pane that the axis should be rendered in. The axis will be rendered in the first (default) pane if not set.
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -137,8 +132,7 @@ The axis will be rendered in the first (default) pane if not set.
     }
 
     /**
-    * Reverses the axis direction -
-categories are listed from right to left and from top to bottom.
+    * Reverses the axis direction - categories are listed from right to left and from top to bottom.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -147,7 +141,7 @@ categories are listed from right to left and from top to bottom.
     }
 
     /**
-    * The selected axis range. If configured, axis selection will be enabled.** Available only for vertical axes **The range units are:
+    * The selected axis range. If configured, axis selection will be enabled.
     * @param \Kendo\Dataviz\UI\StockChartCategoryAxisItemSelect|array $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -174,9 +168,7 @@ categories are listed from right to left and from top to bottom.
     }
 
     /**
-    * The discrete categoryAxis.baseUnitStep values when
-either categoryAxis.baseUnit is set to "fit" or
-categoryAxis.baseUnitStep is set to "auto".
+    * The discrete categoryAxis.baseUnitStep values when either categoryAxis.baseUnit is set to "fit" orcategoryAxis.baseUnitStep is set to "auto".
     * @param \Kendo\Dataviz\UI\StockChartCategoryAxisItemAutoBaseUnitSteps|array $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -194,9 +186,7 @@ categoryAxis.baseUnitStep is set to "auto".
     }
 
     /**
-    * The base time interval for the date axis. The default base unit is determined automatically from the minimum difference
-between subsequent categories.The supported values are:Setting baseUnit to "fit" will set such base unit and categoryAxis.baseUnitStep
-that the total number of categories does not exceed categoryAxis.maxDateGroups.Series data is aggregated for the specified base unit using the series.aggregate function.
+    * The base time interval for the date axis. The default base unit is determined automatically from the minimum difference between subsequent categories.The supported values are: "days"; "fit"; "hours"; "minutes"; "months"; "weeks" or "years". Setting baseUnit to "fit" will set such base unit and categoryAxis.baseUnitStep that the total number of categories does not exceed categoryAxis.maxDateGroups.Series data is aggregated for the specified base unit using the series.aggregate function.
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -205,8 +195,7 @@ that the total number of categories does not exceed categoryAxis.maxDateGroups.S
     }
 
     /**
-    * The step (interval) between categories in base units. Setting it to "auto" will set the step to such value
-that the total number of categories does not exceed categoryAxis.maxDateGroups.This option is ignored if categoryAxis.baseUnit is set to "fit".
+    * The step (interval) between categories in base units. Setting it to "auto" will set the step to such value that the total number of categories does not exceed categoryAxis.maxDateGroups.This option is ignored if categoryAxis.baseUnit is set to "fit".
     * @param  $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -215,10 +204,7 @@ that the total number of categories does not exceed categoryAxis.maxDateGroups.T
     }
 
     /**
-    * The last date displayed on the axis.
-By default, the minimum date is the same as the last category.
-This is often used in combination with the min and roundToBaseUnit configuration options to
-set up a fixed date range.
+    * The last date displayed on the axis. By default, the minimum date is the same as the last category. This is often used in combination with the min and roundToBaseUnit configuration options to set up a fixed date range.
     * @param  $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -227,10 +213,7 @@ set up a fixed date range.
     }
 
     /**
-    * The first date displayed on the axis.
-By default, the minimum date is the same as the first category.
-This is often used in combination with the max and roundToBaseUnit configuration options to
-set up a fixed date range.
+    * The first date displayed on the axis. By default, the minimum date is the same as the first category. This is often used in combination with the max and roundToBaseUnit configuration options to set up a fixed date range.
     * @param  $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -239,8 +222,7 @@ set up a fixed date range.
     }
 
     /**
-    * By default, the first and last dates will be rounded off to the nearest base unit.
-Specifying false for this option will disable this behavior.This option is most useful in combination with explicit min and max dates.It will be ignored if either column, ohlc or candlestick series are plotted on the axis.
+    * By default, the first and last dates will be rounded off to the nearest base unit. Specifying false for this option will disable this behavior.This option is most useful in combination with explicit min and max dates.It will be ignored if either column, ohlc or candlestick series are plotted on the axis.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -249,8 +231,7 @@ Specifying false for this option will disable this behavior.This option is most 
     }
 
     /**
-    * Specifies the week start day when baseUnit is set to "weeks".
-Use the kendo.days constants to specify the day by name.
+    * Specifies the week start day when baseUnit is set to "weeks". Use the kendo.days constants to specify the day by name. kendo.days.Sunday (0); kendo.days.Monday (1); kendo.days.Tuesday (2); kendo.days.Wednesday (3); kendo.days.Thursday (4); kendo.days.Friday (5) or kendo.days.Saturday (6).
     * @param float $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
@@ -259,13 +240,21 @@ Use the kendo.days constants to specify the day by name.
     }
 
     /**
-    * Specifies the maximum number of groups (categories) to produce when
-either baseUnit is set to "fit" or baseUnitStep is set to "auto".This option is ignored in all other cases.The default value is approximately equal to [widget width, px] / 30
+    * Specifies the maximum number of groups (categories) to produce when either baseUnit is set to "fit" or baseUnitStep is set to "auto".This option is ignored in all other cases.The default value is approximately equal to [widget width, px] / 30
     * @param float $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
     */
     public function maxDateGroups($value) {
         return $this->setProperty('maxDateGroups', $value);
+    }
+
+    /**
+    * The maximum number of ticks and labels to display.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItem
+    */
+    public function maxDivisions($value) {
+        return $this->setProperty('maxDivisions', $value);
     }
 
     /**

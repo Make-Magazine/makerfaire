@@ -91,13 +91,13 @@ function onlineExamples(section, product, reject) {
 }
 
 function mobileExamples(section) {
-    return onlineExamples(section, navProduct, function(item) {
+    return onlineExamples(section, product, function (item) {
         return false;
     });
 }
 
 function desktopExamples(section) {
-    return onlineExamples(section, navProduct, function(item) {
+    return onlineExamples(section, product, function (item) {
         return false;
     });
 }
@@ -120,7 +120,7 @@ function searchExamplesFor(value, product) {
             var text = "";
 
             if (title) {
-                text = title[product] || title["kendo-ui"];
+                text = title[product] || title["kendo-ui"] || title["aspnet-mvc"] || title["aspnet-core"];
             }
 
             return text.indexOf(value) >= 0;
@@ -155,8 +155,6 @@ kendo.ui.plugin(kendo.ui.AutoComplete.extend({
             element,
             $.extend(true, { dataSource: searchDataSource }, options)
         );
-
-        this.wrapper.append('<span class="k-uniE600" />');
     },
     options: {
         name: "ExampleSearch"

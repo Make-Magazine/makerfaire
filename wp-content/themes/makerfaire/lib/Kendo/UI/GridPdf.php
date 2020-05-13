@@ -24,6 +24,15 @@ class GridPdf extends \Kendo\SerializableObject {
     }
 
     /**
+    * A flag indicating whether to produce actual hyperlinks in the exported PDF file.It's also possible to pass a CSS selector as argument. All matching links will be ignored.
+    * @param boolean|string $value
+    * @return \Kendo\UI\GridPdf
+    */
+    public function avoidLinks($value) {
+        return $this->setProperty('avoidLinks', $value);
+    }
+
+    /**
     * The creator of the PDF document.
     * @param string $value
     * @return \Kendo\UI\GridPdf
@@ -78,8 +87,7 @@ class GridPdf extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the margins of the page (numbers or strings with units). Supported
-units are "mm", "cm", "in" and "pt" (default).
+    * Specifies the margins of the page (numbers or strings with units). Supported units are "mm", "cm", "in" and "pt" (default).
     * @param \Kendo\UI\GridPdfMargin|array $value
     * @return \Kendo\UI\GridPdf
     */
@@ -88,8 +96,7 @@ units are "mm", "cm", "in" and "pt" (default).
     }
 
     /**
-    * Specifies the paper size of the PDF document.
-The default "auto" means paper size is determined by content.Supported values:
+    * Specifies the paper size of the PDF document. The default "auto" means paper size is determined by content.Supported values: A predefined size: "A4", "A3" etc; An array of two numbers specifying the width and height in points (1pt = 1/72in) or An array of two strings specifying the width and height in units. Supported units are "mm", "cm", "in" and "pt"..
     * @param string|array $value
     * @return \Kendo\UI\GridPdf
     */
@@ -98,8 +105,47 @@ The default "auto" means paper size is determined by content.Supported values:
     }
 
     /**
-    * The URL of the server side proxy which will stream the file to the end user.A proxy will be used when the browser isn't capable of saving files locally e.g. Internet Explorer 9 and Safari. PDF export is not supported in Internet Explorer 8 and below.The developer is responsible for implementing the server-side proxy.The proxy will receive a POST request with the following parameters in the request body:The proxy should return the decoded file with the "Content-Disposition" header set to
-attachment; filename="<fileName.pdf>".
+    * Sets the template option of the GridPdf.
+    * A piece of HTML to be included in each page.  Can be used to display headers and footers.  See the documentation in drawDOM.Available template variables include: * pageNum * totalPages
+    * @param string $value The id of the element which represents the kendo template.
+    * @return \Kendo\UI\GridPdf
+    */
+    public function templateId($value) {
+        $value = new \Kendo\Template($value);
+
+        return $this->setProperty('template', $value);
+    }
+
+    /**
+    * Sets the template option of the GridPdf.
+    * A piece of HTML to be included in each page.  Can be used to display headers and footers.  See the documentation in drawDOM.Available template variables include: * pageNum * totalPages
+    * @param string $value The template content.
+    * @return \Kendo\UI\GridPdf
+    */
+    public function template($value) {
+        return $this->setProperty('template', $value);
+    }
+
+    /**
+    * Set this to true to repeat the grid headers on each page.
+    * @param boolean $value
+    * @return \Kendo\UI\GridPdf
+    */
+    public function repeatHeaders($value) {
+        return $this->setProperty('repeatHeaders', $value);
+    }
+
+    /**
+    * A scale factor.  In many cases, text size on screen will be too big for print, so you can use this option to scale down the output in PDF.  See the documentation in drawDOM.
+    * @param float $value
+    * @return \Kendo\UI\GridPdf
+    */
+    public function scale($value) {
+        return $this->setProperty('scale', $value);
+    }
+
+    /**
+    * The URL of the server side proxy which will stream the file to the end user.A proxy will be used when the browser is not capable of saving files locally, for example, Internet Explorer 9 and Safari.The developer is responsible for implementing the server-side proxy.The proxy will receive a POST request with the following parameters in the request body: contentType: The MIME type of the file; base64: The base-64 encoded file content or fileName: The file name, as requested by the caller.. The proxy should return the decoded file with the "Content-Disposition" header set toattachment; filename="<fileName.pdf>".
     * @param string $value
     * @return \Kendo\UI\GridPdf
     */
@@ -108,8 +154,7 @@ attachment; filename="<fileName.pdf>".
     }
 
     /**
-    * A name or keyword indicating where to display the document returned from the proxy.If you want to display the document in a new window or iframe,
-the proxy should set the "Content-Disposition" header to inline; filename="<fileName.pdf>".
+    * A name or keyword indicating where to display the document returned from the proxy.If you want to display the document in a new window or iframe, the proxy should set the "Content-Disposition" header to inline; filename="<fileName.pdf>".
     * @param string $value
     * @return \Kendo\UI\GridPdf
     */

@@ -78,8 +78,7 @@ class LinearGaugeScale extends \Kendo\SerializableObject {
     }
 
     /**
-    * Mirrors the scale labels and ticks.
-If the labels are normally on the left side of the scale, mirroring the scale will render them to the right.
+    * Mirrors the scale labels and ticks. If the labels are normally on the left side of the scale, mirroring the scale will render them to the right.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\LinearGaugeScale
     */

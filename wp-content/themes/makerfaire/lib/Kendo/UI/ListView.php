@@ -37,14 +37,16 @@ class ListView extends \Kendo\UI\Widget {
         unset($properties['tagName']);
 
         //adjust pager settings
-        $pageable = $properties['pageable'];
-        if ($pageable) {
-            if (!is_array($pageable)) {
-                $pageable = array();
-            }
+        if(array_key_exists("pageable", $properties)) {
+            $pageable = $properties['pageable'];
+            if ($pageable) {
+                if (!is_array($pageable)) {
+                    $pageable = array();
+                }
 
-            $pageable['pagerId'] = "{$this->id}_pager";
-            $properties['pageable'] = $pageable;
+                $pageable['pagerId'] = "{$this->id}_pager";
+                $properties['pageable'] = $pageable;
+            }
         }
 
         return $properties;
@@ -53,8 +55,7 @@ class ListView extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the
-data source is fired. By default the widget will bind to the data source specified in the configuration.
+    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. By default the widget will bind to the data source specified in the configuration.
     * @param boolean $value
     * @return \Kendo\UI\ListView
     */
@@ -69,6 +70,24 @@ data source is fired. By default the widget will bind to the data source specifi
     */
     public function dataSource($value) {
         return $this->setProperty('dataSource', $value);
+    }
+
+    /**
+    * The height of the listview. Numeric values are treated as pixels.
+    * @param float|string $value
+    * @return \Kendo\UI\ListView
+    */
+    public function height($value) {
+        return $this->setProperty('height', $value);
+    }
+
+    /**
+    * If set to true the listview will display a scrollbar when the content exceeds the listview height value. By default scrolling is disabled.It could be also set to endless in order to enable the endless scrolling functionality. In endless scrolling mode the height should be configured to display a scrollbar. Scrolling to the end of the scrollbar will load more items (equal to the pageSize number) and append them to the listview DOM element utill all items are loaded and displayed.
+    * @param boolean|string $value
+    * @return \Kendo\UI\ListView
+    */
+    public function scrollable($value) {
+        return $this->setProperty('scrollable', $value);
     }
 
     /**
@@ -189,7 +208,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the change event of the ListView.
-    * Fires when the list view selection has changed.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the ListView selection has changed.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\ListView
     */
@@ -203,7 +222,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the dataBound event of the ListView.
-    * Fires when the list view has received data from the data source and it is already rendered.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the ListView has received data from the DataSource and it is already rendered.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\ListView
     */
@@ -217,7 +236,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the dataBinding event of the ListView.
-    * Fires when the list view is about to be rendered.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the ListView is about to be bound.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\ListView
     */
@@ -231,7 +250,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the edit event of the ListView.
-    * Fires when the list view enters edit mode.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires when the ListView enters edit mode.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\ListView
     */
@@ -245,7 +264,7 @@ data source is fired. By default the widget will bind to the data source specifi
 
     /**
     * Sets the remove event of the ListView.
-    * Fires before the list view item is removed. If it is not prevented will call DataSource sync method.The event handler function context (available via the this keyword) will be set to the widget instance.
+    * Fires before the list view item is put in edit mode. If the event is not prevented, the ListView will call the DataSource sync method.The event handler function context (available via the this keyword) will be set to the widget instance.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\ListView
     */
@@ -274,3 +293,5 @@ data source is fired. By default the widget will bind to the data source specifi
 
 //<< Properties
 }
+
+?>

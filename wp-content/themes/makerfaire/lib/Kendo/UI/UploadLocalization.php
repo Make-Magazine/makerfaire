@@ -6,7 +6,7 @@ class UploadLocalization extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Sets the text of the cancel button text.
+    * Sets the text of the Cancel button.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -15,7 +15,16 @@ class UploadLocalization extends \Kendo\SerializableObject {
     }
 
     /**
-    * Sets the drop zone hint.
+    * Sets the text of the Clear button.
+    * @param string $value
+    * @return \Kendo\UI\UploadLocalization
+    */
+    public function clearSelectedFiles($value) {
+        return $this->setProperty('clearSelectedFiles', $value);
+    }
+
+    /**
+    * Sets the hint of the drop-zone.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -24,7 +33,7 @@ class UploadLocalization extends \Kendo\SerializableObject {
     }
 
     /**
-    * Sets the header status message for uploaded files.
+    * Sets the status message of the header for the uploaded files.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -33,7 +42,7 @@ class UploadLocalization extends \Kendo\SerializableObject {
     }
 
     /**
-    * Sets the header status message for files that are being uploaded.
+    * Sets the status message of the header for the files that are in the process of upload.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -42,7 +51,43 @@ class UploadLocalization extends \Kendo\SerializableObject {
     }
 
     /**
-    * Sets the text of the remove button text.
+    * Sets the text of the validation message for an invalid file extension.
+    * @param string $value
+    * @return \Kendo\UI\UploadLocalization
+    */
+    public function invalidFileExtension($value) {
+        return $this->setProperty('invalidFileExtension', $value);
+    }
+
+    /**
+    * Sets the text of the validation messages for invalid files when the batch property is set to true and two or more files fail the validation.
+    * @param string $value
+    * @return \Kendo\UI\UploadLocalization
+    */
+    public function invalidFiles($value) {
+        return $this->setProperty('invalidFiles', $value);
+    }
+
+    /**
+    * Sets the text of the validation message for an invalid maximum file size.
+    * @param string $value
+    * @return \Kendo\UI\UploadLocalization
+    */
+    public function invalidMaxFileSize($value) {
+        return $this->setProperty('invalidMaxFileSize', $value);
+    }
+
+    /**
+    * Sets the text of the validation message for an invalid minimum file size.
+    * @param string $value
+    * @return \Kendo\UI\UploadLocalization
+    */
+    public function invalidMinFileSize($value) {
+        return $this->setProperty('invalidMinFileSize', $value);
+    }
+
+    /**
+    * Sets the text of the Remove button.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -51,7 +96,7 @@ class UploadLocalization extends \Kendo\SerializableObject {
     }
 
     /**
-    * Sets the text of the retry button text.
+    * Sets the text of the Retry button.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -60,7 +105,7 @@ class UploadLocalization extends \Kendo\SerializableObject {
     }
 
     /**
-    * Sets the "Select..." button text.
+    * Sets the text of the Select... button.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -78,7 +123,7 @@ class UploadLocalization extends \Kendo\SerializableObject {
     }
 
     /**
-    * Sets the status message for uploaded files.
+    * Sets the status message for successful uploads.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -87,7 +132,7 @@ class UploadLocalization extends \Kendo\SerializableObject {
     }
 
     /**
-    * Sets the status message for files that are being uploaded.
+    * Sets the status message for files that are in the process of upload.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -96,7 +141,7 @@ class UploadLocalization extends \Kendo\SerializableObject {
     }
 
     /**
-    * Sets the text of the "Upload files" button.
+    * Sets the text of the Upload files button.
     * @param string $value
     * @return \Kendo\UI\UploadLocalization
     */
@@ -106,3 +151,5 @@ class UploadLocalization extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

@@ -32,9 +32,16 @@ class ColorPicker extends \Kendo\UI\Widget {
     }
 
     /**
-    * The number of columns to show in the color dropdown when a pallete is specified.
-This is automatically initialized for the "basic" and "websafe" palettes.
-If you use a custom palette then you can set this to some value that makes sense for your colors.
+    * Specifies whether the widget should display the 'Clear color' button.Applicable only for the HSV selector, when a pallete is not specified.
+    * @param boolean $value
+    * @return \Kendo\UI\ColorPicker
+    */
+    public function clearButton($value) {
+        return $this->setProperty('clearButton', $value);
+    }
+
+    /**
+    * The number of columns to show in the color dropdown when a pallete is specified. This is automatically initialized for the "basic" and "websafe" palettes. If you use a custom palette then you can set this to some value that makes sense for your colors.
     * @param float $value
     * @return \Kendo\UI\ColorPicker
     */
@@ -61,9 +68,7 @@ If you use a custom palette then you can set this to some value that makes sense
     }
 
     /**
-    * When a non-null palette argument is supplied, the drop-down will be
-a simple color picker that lists the colors. The following are supported:If palette is missing or null, the widget will display the HSV
-selector.
+    * When a non-null palette argument is supplied, the drop-down will be a simple color picker that lists the colors. The following are supported: "basic" -- displays 20 basic colors; "websafe" -- display the "web-safe" color palette or otherwise, pass a string with colors in HEX representation separated with commas, or an array of colors, and it will display that palette instead. If you pass an array it can contain strings supported by parseColor orColor objects.. If palette is missing or null, the widget will display the HSV selector.
     * @param string|array $value
     * @return \Kendo\UI\ColorPicker
     */
@@ -72,8 +77,7 @@ selector.
     }
 
     /**
-    * Only for the HSV selector.  If true, the widget will display the opacity slider.
-Note that currently in HTML5 the <input type="color"> does not support opacity.
+    * Only for the HSV selector.  If true, the widget will display the opacity slider. Note that currently in HTML5 the <input type="color"> does not support opacity.
     * @param boolean $value
     * @return \Kendo\UI\ColorPicker
     */
@@ -91,8 +95,7 @@ Note that currently in HTML5 the <input type="color"> does not support opacity.
     }
 
     /**
-    * A CSS class name to display an icon in the color picker button.  If
-specified, the HTML for the element will look like this:
+    * A CSS class name to display an icon in the color picker button.  If specified, the HTML for the element will look like this:
     * @param string $value
     * @return \Kendo\UI\ColorPicker
     */
@@ -101,8 +104,7 @@ specified, the HTML for the element will look like this:
     }
 
     /**
-    * The initially selected color.
-Note that when initializing the widget from an <input> element, the initial color will be decided by the field instead.
+    * The initially selected color. Note that when initializing the widget from an <input> element, the initial color will be decided by the field instead.
     * @param string $value
     * @return \Kendo\UI\ColorPicker
     */
@@ -112,9 +114,7 @@ Note that when initializing the widget from an <input> element, the initial colo
 
     /**
     * Sets the change event of the ColorPicker.
-    * Fires when a color was selected, either by clicking on it (in the
-simple picker), by clicking ENTER or by pressing "Apply" in the HSV
-picker.
+    * Fires when a color was selected, either by clicking on it (in the simple picker), by clicking ENTER or by pressing "Apply" in the HSV picker.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\ColorPicker
     */
@@ -128,11 +128,7 @@ picker.
 
     /**
     * Sets the select event of the ColorPicker.
-    * Fires as a new color is displayed in the drop-down picker.  This is
-not necessarily the "final" value; for example this event triggers
-when the sliders in the HSV selector are dragged, but then pressing
-ESC would cancel the selection and the color will revert to the
-original value.
+    * Fires as a new color is displayed in the drop-down picker.  This is not necessarily the "final" value; for example this event triggers when the sliders in the HSV selector are dragged, but then pressing ESC would cancel the selection and the color will revert to the original value.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\ColorPicker
     */
@@ -175,3 +171,5 @@ original value.
 
 //<< Properties
 }
+
+?>

@@ -24,7 +24,7 @@ class DiagramConnectionDefaults extends \Kendo\SerializableObject {
     }
 
     /**
-    * The connection end cap configuration or type name.
+    * The connections end cap configuration. Can be set to a configuration object or a string that represents the endCap.type value.
     * @param string|\Kendo\Dataviz\UI\DiagramConnectionDefaultsEndCap|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaults
     */
@@ -33,7 +33,16 @@ class DiagramConnectionDefaults extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the hover configuration.
+    * Specifies the name of the source shape connector that should be used by default. Valid values are "top", "right", "bottom", "left" and "auto".
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\DiagramConnectionDefaults
+    */
+    public function fromConnector($value) {
+        return $this->setProperty('fromConnector', $value);
+    }
+
+    /**
+    * Defines the default styling that is applied when the user hovers over a connection.
     * @param \Kendo\Dataviz\UI\DiagramConnectionDefaultsHover|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaults
     */
@@ -42,7 +51,7 @@ class DiagramConnectionDefaults extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies if the connection can be selected.
+    * Specifies if connections can be selected.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaults
     */
@@ -51,7 +60,7 @@ class DiagramConnectionDefaults extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the connection selection configuration.
+    * Defines the connections selection configuration.
     * @param \Kendo\Dataviz\UI\DiagramConnectionDefaultsSelection|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaults
     */
@@ -69,7 +78,7 @@ class DiagramConnectionDefaults extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the stroke configuration.
+    * Defines the connection line configuration.
     * @param \Kendo\Dataviz\UI\DiagramConnectionDefaultsStroke|array $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaults
     */
@@ -78,7 +87,16 @@ class DiagramConnectionDefaults extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the connections type. The supported values are "polyline" and "cascading".
+    * Specifies the name of the target shape connector that should be used by default. Valid values are "top", "right", "bottom", "left" and "auto".
+    * @param string $value
+    * @return \Kendo\Dataviz\UI\DiagramConnectionDefaults
+    */
+    public function toConnector($value) {
+        return $this->setProperty('toConnector', $value);
+    }
+
+    /**
+    * The connections type.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaults
     */

@@ -25,3 +25,5 @@ class DateTimePickerAnimationClose extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

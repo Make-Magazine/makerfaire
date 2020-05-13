@@ -15,6 +15,15 @@ class TreeListPdf extends \Kendo\SerializableObject {
     }
 
     /**
+    * (Available as of the 2015.3.1020 release) A flag which indicates whether to produce actual hyperlinks in the exported PDF file. You can also pass a CSS selector as an argument. All matching links will be ignored.
+    * @param boolean|string $value
+    * @return \Kendo\UI\TreeListPdf
+    */
+    public function avoidLinks($value) {
+        return $this->setProperty('avoidLinks', $value);
+    }
+
+    /**
     * The creator of the PDF document.
     * @param string $value
     * @return \Kendo\UI\TreeListPdf
@@ -42,7 +51,7 @@ class TreeListPdf extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to true, the content will be forwarded to proxyURL even if the browser supports saving files locally.
+    * If set to true, the content will be forwarded to proxyURL even if the browser supports the local saving of files.
     * @param boolean $value
     * @return \Kendo\UI\TreeListPdf
     */
@@ -60,7 +69,7 @@ class TreeListPdf extends \Kendo\SerializableObject {
     }
 
     /**
-    * Set to true to reverse the paper dimensions such that width is the larger edge.
+    * If set to true, reverses the paper dimensions in such a way that the width becomes the larger edge.
     * @param boolean $value
     * @return \Kendo\UI\TreeListPdf
     */
@@ -69,8 +78,7 @@ class TreeListPdf extends \Kendo\SerializableObject {
     }
 
     /**
-    * Specifies the margins of the page (numbers or strings with units). Supported
-units are "mm", "cm", "in" and "pt" (default).
+    * Specifies the margins of the page and accepts numbers or strings with units.The supported units are: mm; cm; in or (Default) pt.
     * @param \Kendo\UI\TreeListPdfMargin|array $value
     * @return \Kendo\UI\TreeListPdf
     */
@@ -79,8 +87,7 @@ units are "mm", "cm", "in" and "pt" (default).
     }
 
     /**
-    * Specifies the paper size of the PDF document.
-The default "auto" means the paper size is determined by the content.Supported values:
+    * Specifies the paper size of the PDF document. The default auto setting means that the paper size is determined by the content.The supported values are: A predefined size such as A4, A3, and so on.; An array of two numbers which specify the width and height in points (1pt = 1/72in). or An array of two strings which specify the width and height in units. The supported units are:mmcminpt.
     * @param string|array $value
     * @return \Kendo\UI\TreeListPdf
     */
@@ -89,9 +96,7 @@ The default "auto" means the paper size is determined by the content.Supported v
     }
 
     /**
-    * The URL of the server side proxy which will stream the file to the end user.A proxy will be used when the browser isn't capable of saving files locally.
-Such browsers are IE version 9 and lower, and Safari.The developer is responsible for implementing the server-side proxy.The proxy will receive a POST request with the following parameters in the request body:The proxy should return the decoded file with the "Content-Disposition" header set to
-attachment; filename="<fileName.pdf>".
+    * The URL of the server side proxy which will stream the file to the end user. A proxy will be used when the browser is not capable of saving files locally. Such browsers are IE version 9 and earlier, and Safari. The developer is responsible for implementing the server-side proxy. The proxy will return the decoded file with the Content-Disposition header set to attachment; filename="<fileName.pdf>".The proxy will receive a POST request with the following parameters in the request body: contentType - The MIME type of the file.; base64 - The base-64 encoded file content. or fileName - The file name, as requested by the caller..
     * @param string $value
     * @return \Kendo\UI\TreeListPdf
     */
@@ -100,8 +105,7 @@ attachment; filename="<fileName.pdf>".
     }
 
     /**
-    * A name or keyword indicating where to display the document returned from the proxy.If you want to display the document in a new window or iframe,
-the proxy should set the "Content-Disposition" header to inline; filename="<fileName.pdf>".
+    * A name or keyword whcih indicates where to display the document that was returned by the proxy. To display the document in a new window or iframe, the proxy will set the Content-Disposition header to inline; filename="<fileName.pdf>".
     * @param string $value
     * @return \Kendo\UI\TreeListPdf
     */

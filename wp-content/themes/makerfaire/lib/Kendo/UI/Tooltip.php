@@ -37,7 +37,7 @@ class Tooltip extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * Specifies if the Tooltip will be hidden when mouse leaves the target element. If set to false a close button will be shown within Tooltip. If set to false, showAfter is specified and the showOn is set to "mouseenter" the Tooltip will be displayed after the given timeout even if the element is no longer hovered.
+    * Specifies if the Tooltip will be hidden when the mouse leaves the target element. If set to false, a Close button will be shown within Tooltip. If set to false, showAfter is specified, and showOn is set to mouseenter, the Tooltip will be displayed after the given timeout even if the element is no longer hovered.
     * @param boolean $value
     * @return \Kendo\UI\Tooltip
     */
@@ -46,9 +46,8 @@ class Tooltip extends \Kendo\UI\Widget {
     }
 
     /**
-    * A collection of {Animation} objects, used to change default animations. A value of false
-will disable all animations in the widget.
-    * @param \Kendo\UI\TooltipAnimation|array $value
+    * A collection of {Animation} objects which are used to change the default animations. If set to false, all widget animations will be disabled. animation:true is not a valid configuration.
+    * @param boolean|\Kendo\UI\TooltipAnimation|array $value
     * @return \Kendo\UI\Tooltip
     */
     public function animation($value) {
@@ -65,7 +64,7 @@ will disable all animations in the widget.
     }
 
     /**
-    * Specifies a selector for elements, within the container, for which the Tooltip will be displayed.
+    * Specifies a selector for the elements within the container which will display the Tooltip.
     * @param string $value
     * @return \Kendo\UI\Tooltip
     */
@@ -74,7 +73,7 @@ will disable all animations in the widget.
     }
 
     /**
-    * Explicitly states whether content iframe should be created.
+    * Explicitly states whether a content iframe will be created.
     * @param boolean $value
     * @return \Kendo\UI\Tooltip
     */
@@ -101,7 +100,7 @@ will disable all animations in the widget.
     }
 
     /**
-    * The position relative to the target element, at which the Tooltip will be shown. Predefined values are "bottom", "top", "left", "right", "center".
+    * The position that is relative to the target element at which the Tooltip will be shown.The supported values are: bottom; top; left; right or center.
     * @param string $value
     * @return \Kendo\UI\Tooltip
     */
@@ -110,7 +109,7 @@ will disable all animations in the widget.
     }
 
     /**
-    * Specify the delay in milliseconds before the Tooltip is shown. This option is ignored if showOn is set to "click" or "focus".
+    * Specifies the delay (in milliseconds) before the Tooltip shows. This option is ignored if showOn is set to click or focus.
     * @param float $value
     * @return \Kendo\UI\Tooltip
     */
@@ -119,7 +118,7 @@ will disable all animations in the widget.
     }
 
     /**
-    * The event on which the Tooltip will be shown. Predefined values are "mouseenter", "click" and "focus".
+    * The event on which the Tooltip will be shown.The supported values are: mouseenter; click or focus.
     * @param string $value
     * @return \Kendo\UI\Tooltip
     */
@@ -128,8 +127,26 @@ will disable all animations in the widget.
     }
 
     /**
+    * Specifies the delay (in milliseconds) before the Tooltip is hidden.
+    * @param float $value
+    * @return \Kendo\UI\Tooltip
+    */
+    public function hideAfter($value) {
+        return $this->setProperty('hideAfter', $value);
+    }
+
+    /**
+    * Specifies the offset (in pixels) between the Tooltip and the anchor. If the callout property is set to true, the offset is rendered from the callout arrow. If the callout property is set to false, the offset is rendered from the content of the Tooltip.
+    * @param float $value
+    * @return \Kendo\UI\Tooltip
+    */
+    public function offset($value) {
+        return $this->setProperty('offset', $value);
+    }
+
+    /**
     * Sets the contentLoad event of the Tooltip.
-    * Triggered when an AJAX request for content completes.
+    * Fires when an AJAX request for the content completes.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Tooltip
     */
@@ -143,7 +160,7 @@ will disable all animations in the widget.
 
     /**
     * Sets the show event of the Tooltip.
-    * Triggered when a Tooltip is shown.
+    * Fires when a Tooltip is shown.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Tooltip
     */
@@ -157,7 +174,7 @@ will disable all animations in the widget.
 
     /**
     * Sets the hide event of the Tooltip.
-    * Triggered when a Tooltip is hidden
+    * Fires when a Tooltip is hidden.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Tooltip
     */
@@ -171,7 +188,7 @@ will disable all animations in the widget.
 
     /**
     * Sets the requestStart event of the Tooltip.
-    * Triggered before an AJAX request started. Note that this event is triggered only when an AJAX request, instead of an iframe, is used.
+    * Fires before an AJAX request starts. Note that this event is triggered only when an AJAX request is used instead of an iframe.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Tooltip
     */
@@ -185,7 +202,7 @@ will disable all animations in the widget.
 
     /**
     * Sets the error event of the Tooltip.
-    * Triggered when an AJAX request for content fails.
+    * Fires when an AJAX request for content fails.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\Tooltip
     */
@@ -223,3 +240,5 @@ will disable all animations in the widget.
 
 //<< Properties
 }
+
+?>

@@ -9,8 +9,17 @@ class Popup extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * Configures the opening and closing animations of the popup. Setting the animation option to false will disable the opening and closing animations. As a result the popup will open and close instantly.
-    * @param \Kendo\UI\PopupAnimation|array $value
+    * Configures the margins, which will be added to the popup size, if its position should end up being next to the viewport edges. By default, the adjustment amount in both dimensions is zero.The property takes effect only if collision is set to "fit" for the respective dimension (width or height).
+    * @param  $value
+    * @return \Kendo\UI\Popup
+    */
+    public function adjustSize($value) {
+        return $this->setProperty('adjustSize', $value);
+    }
+
+    /**
+    * Configures the opening and closing animations of the popup. Setting the animation option to false will disable the opening and closing animations. As a result the popup will open and close instantly. is not a valid configuration.
+    * @param boolean|\Kendo\UI\PopupAnimation|array $value
     * @return \Kendo\UI\Popup
     */
     public function animation($value) {
@@ -19,7 +28,7 @@ class Popup extends \Kendo\UI\Widget {
 
     /**
     * Specifies the element that will be used as an anchor. The widget will open next to that element.
-    * @param  $value
+    * @param string| $value
     * @return \Kendo\UI\Popup
     */
     public function anchor($value) {
@@ -27,8 +36,8 @@ class Popup extends \Kendo\UI\Widget {
     }
 
     /**
-    * Which element the popup will be appended to.
-    * @param  $value
+    * Which element the popup will be appended to. The element needs to be relatively positioned.
+    * @param string| $value
     * @return \Kendo\UI\Popup
     */
     public function appendTo($value) {
@@ -36,14 +45,16 @@ class Popup extends \Kendo\UI\Widget {
     }
 
     /**
-    * Specifies how to position the popup element based on achor point. The value is
-space separated "y" plus "x" position.The available "y" positions are:
-- "bottom"
-- "center"
-- "top"The available "x" positions are:
-- "left"
-- "center"
-- "right"
+    * Configures how the popup should behave when it cannot be properly displayed and fully visible, if its origin and position settings are obeyed.Valid values are: "fit", "flip", "flip fit" and "fit flip". "Fit" allows the popup to be shifted (moved) until it is fully visible. "Flip" allows the popup to switch its position, according to its anchor. If two words are used, the first one applies to the horizontal dimension and the second one - to the vertical dimension. If one word is used, the setting is applied to both dimensions.
+    * @param string $value
+    * @return \Kendo\UI\Popup
+    */
+    public function collision($value) {
+        return $this->setProperty('collision', $value);
+    }
+
+    /**
+    * Specifies how to position the popup element based on anchor point. The value is space separated "y" plus "x" position.The available "y" positions are: - "bottom" - "center" - "top"The available "x" positions are: - "left" - "center" - "right"
     * @param string $value
     * @return \Kendo\UI\Popup
     */
@@ -52,14 +63,7 @@ space separated "y" plus "x" position.The available "y" positions are:
     }
 
     /**
-    * Specifies which point of the popup element to attach to the anchor's origin point. The value is
-space separated "y" plus "x" position.The available "y" positions are:
-- "bottom"
-- "center"
-- "top"The available "x" positions are:
-- "left"
-- "center"
-- "right"
+    * Specifies which point of the popup element to attach to the anchor's origin point. The value is space separated "y" plus "x" position.The available "y" positions are: - "bottom" - "center" - "top"The available "x" positions are: - "left" - "center" - "right"
     * @param string $value
     * @return \Kendo\UI\Popup
     */

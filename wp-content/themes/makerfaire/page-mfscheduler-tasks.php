@@ -282,7 +282,7 @@ function read_schedule($faire_id, $subarea_id, &$total) {
           'Event' => $maker_name,
           'Title' => $title,
           'StatusColor' => status_to_color($status),
-          'PresentationType' => $sched_type);
+          'PresentationTyp' => $sched_type);
     }
   } else {
     echo ('Error :' . $select_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
@@ -295,19 +295,19 @@ function status_to_color($entry_status) {
   $result = '';
   switch ($entry_status) {
     case 'Accepted' :
-      $result = '#90EE90'; // $result = $result->createWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
+      $result = '#3fafed'; // $result = $result->createWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
       break;
     case 'Proposed' :
     case 'Wait List' :
-      $result = '#FAFAD2'; // $result = $result->updateWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
+      $result = '#005E9A'; // $result = $result->updateWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
       break;
     case 'Cancelled' :
     case 'No Show' :
     case 'Rejected' :
-      $result = '#F08080'; // $result = $result->destroyWithAssociation('Meetings', 'MeetingAttendees', $request->models, 'MeetingID');
+      $result = '#ed1d21'; // $result = $result->destroyWithAssociation('Meetings', 'MeetingAttendees', $request->models, 'MeetingID');
       break;
     default :
-      $result = '#E0FFFF'; // $result = $result->readWithAssociation('Meetings', 'MeetingAttendees', 'MeetingID', array('AttendeeID' => 'Attendees'), array('MeetingID', 'RoomID'), $request);
+      $result = '#333'; // $result = $result->readWithAssociation('Meetings', 'MeetingAttendees', 'MeetingID', array('AttendeeID' => 'Attendees'), array('MeetingID', 'RoomID'), $request);
       break;
   }
 

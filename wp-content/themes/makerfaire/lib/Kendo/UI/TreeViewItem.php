@@ -14,6 +14,15 @@ class TreeViewItem extends \Kendo\UI\NavigationalItem {
 //>> Properties
 
     /**
+    * Specifies the id of the item
+    * @param string $value
+    * @return \Kendo\UI\TreeViewItem
+    */
+    public function id($value) {
+        return $this->setProperty('id', $value);
+    }
+
+    /**
     * Specifies the text displayed by the item
     * @param string $value
     * @return \Kendo\UI\TreeViewItem
@@ -115,3 +124,5 @@ class TreeViewItem extends \Kendo\UI\NavigationalItem {
     }
 //<< Properties
 }
+
+?>

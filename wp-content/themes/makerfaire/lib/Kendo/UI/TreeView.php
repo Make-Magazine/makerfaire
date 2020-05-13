@@ -27,8 +27,7 @@ class TreeView extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * A collection of visual animations used when items are expanded or collapsed through user interaction.
-Setting this option to false will disable all animations.
+    * A collection of visual animations used when items are expanded or collapsed through user interaction. Setting this option to false will disable all animations. is not a valid configuration.
     * @param boolean|\Kendo\UI\TreeViewAnimation|array $value
     * @return \Kendo\UI\TreeView
     */
@@ -37,8 +36,7 @@ Setting this option to false will disable all animations.
     }
 
     /**
-    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the
-data source is fired. By default the widget will bind to the data source specified in the configuration.
+    * If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. By default the widget will bind to the data source specified in the configuration.
     * @param boolean $value
     * @return \Kendo\UI\TreeView
     */
@@ -83,8 +81,7 @@ data source is fired. By default the widget will bind to the data source specifi
     }
 
     /**
-    * Sets the field of the data item that provides the sprite CSS class of the nodes.
-If an array, each level uses the field that is at the same index in the array, or the last item in the array.
+    * Sets the field of the data item that provides the sprite CSS class of the nodes. If an array, each level uses the field that is at the same index in the array, or the last item in the array.
     * @param string $value
     * @return \Kendo\UI\TreeView
     */
@@ -93,8 +90,7 @@ If an array, each level uses the field that is at the same index in the array, o
     }
 
     /**
-    * Sets the field of the data item that provides the text content of the nodes.
-If an array, each level uses the field that is at the same index in the array, or the last item in the array.
+    * Sets the field of the data item that provides the text content of the nodes. If an array, each level uses the field that is at the same index in the array, or the last item in the array.
     * @param string|array $value
     * @return \Kendo\UI\TreeView
     */
@@ -121,8 +117,7 @@ If an array, each level uses the field that is at the same index in the array, o
     }
 
     /**
-    * Indicates whether the child DataSources should be fetched lazily when parent groups get expanded.
-Setting this to false causes all child DataSources to be loaded at initialization time.
+    * Indicates whether the child DataSources should be fetched lazily when parent groups get expanded. Setting this to false causes all child DataSources to be loaded at initialization time.
     * @param boolean $value
     * @return \Kendo\UI\TreeView
     */
@@ -186,9 +181,7 @@ Setting this to false causes all child DataSources to be loaded at initializatio
 
     /**
     * Sets the check event of the TreeView.
-    * Triggered after the user has checked or unchecked a checkbox.
-If checkChildren is true, the event is triggered after all checked states are updated.
-This event has been introduced in internal builds after 2014.2.828.
+    * Triggered after the user has checked or unchecked a checkbox. If checkChildren is true, the event is triggered after all checked states are updated. This event has been introduced in internal builds after 2014.2.828.
     * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
     * @return \Kendo\UI\TreeView
     */
@@ -329,3 +322,5 @@ This event has been introduced in internal builds after 2014.2.828.
 
 //<< Properties
 }
+
+?>

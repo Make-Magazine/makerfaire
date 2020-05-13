@@ -24,7 +24,7 @@ class ChartXAxisItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * The base time interval for the axis labels. The default baseUnit is determined automatically from the value range. Available options:
+    * The base time interval for the axis labels. The default baseUnit is determined automatically from the value range. Available options: milliseconds; seconds; minutes; hours; days; weeks; months or years.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItem
     */
@@ -69,8 +69,7 @@ class ChartXAxisItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * The configuration of the major grid lines. These are the lines that are an extension of the major ticks through the
-body of the chart.
+    * The configuration of the major grid lines. These are the lines that are an extension of the major ticks through the body of the chart.
     * @param \Kendo\Dataviz\UI\ChartXAxisItemMajorGridLines|array $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItem
     */
@@ -79,8 +78,7 @@ body of the chart.
     }
 
     /**
-    * The configuration of the minor grid lines. These are the lines that are an extension of the minor ticks through the
-body of the chart.
+    * The configuration of the minor grid lines. These are the lines that are an extension of the minor ticks through the body of the chart.
     * @param \Kendo\Dataviz\UI\ChartXAxisItemMinorGridLines|array $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItem
     */
@@ -107,9 +105,7 @@ body of the chart.
     }
 
     /**
-    * The interval between major divisions.
-If this is a date axis the value represents the number of xAxis.baseUnits between major divisions.
-If the xAxis.type is set to "log", the majorUnit value will be used for the base of the logarithm.
+    * The interval between major divisions. If this is a date axis the value represents the number of xAxis.baseUnits between major divisions. If the xAxis.type is set to "log", the majorUnit value will be used for the base of the logarithm.
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItem
     */
@@ -136,8 +132,7 @@ If the xAxis.type is set to "log", the majorUnit value will be used for the base
     }
 
     /**
-    * The interval between minor divisions. It defaults to 1/5th of the xAxis.majorUnit.
-If the xAxis.type is set to "log", the minorUnit value represents the number of divisions between two major units and defaults to the major unit minus one.
+    * The interval between minor divisions. It defaults to 1/5 of the xAxis.majorUnit. If the xAxis.type is set to "log", the minorUnit value represents the number of divisions between two major units and defaults to the major unit minus one.
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItem
     */
@@ -155,8 +150,7 @@ If the xAxis.type is set to "log", the minorUnit value represents the number of 
     }
 
     /**
-    * If set to true the chart will prevent the automatic axis range from snapping to 0.
-Setting it to false will force the automatic axis range to snap to 0.
+    * If set to true the chart will prevent the automatic axis range from snapping to 0. Setting it to false will force the automatic axis range to snap to 0.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItem
     */
@@ -165,8 +159,7 @@ Setting it to false will force the automatic axis range to snap to 0.
     }
 
     /**
-    * The name of the pane that the axis should be rendered in.
-The axis will be rendered in the first (default) pane if not set.
+    * The name of the pane that the axis should be rendered in. The axis will be rendered in the first (default) pane if not set.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItem
     */
@@ -193,7 +186,7 @@ The axis will be rendered in the first (default) pane if not set.
     }
 
     /**
-    * The angle (degrees) where the 0 value is placed.Angles increase counterclockwise and zero is to the right. Negative values are acceptable.
+    * The angle (degrees) where the 0 value is placed. Applicable to polar series.Angles increase counterclockwise and zero is to the right. Negative values are acceptable.
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItem
     */
@@ -211,7 +204,7 @@ The axis will be rendered in the first (default) pane if not set.
     }
 
     /**
-    * The axis type.The supported values are:
+    * The axis type.The supported values are: "numeric" - numeric axis.; "date" - specialized axis for displaying chronological data. or "log" - logarithmic axis..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartXAxisItem
     */

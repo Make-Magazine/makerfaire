@@ -6,7 +6,7 @@ class DiagramShapeDefaultsHover extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Hover's fill options.
+    * Defines the hover fill options.
     * @param string|\Kendo\Dataviz\UI\DiagramShapeDefaultsHoverFill|array $value
     * @return \Kendo\Dataviz\UI\DiagramShapeDefaultsHover
     */

@@ -6,8 +6,7 @@ class MapLayerDefaultsShapeStyle extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The default fill for layer shapes.
-Accepts a valid CSS color string or object with detailed configuration.
+    * The default fill for layer shapes. Accepts a valid CSS color string or object with detailed configuration.
     * @param \Kendo\Dataviz\UI\MapLayerDefaultsShapeStyleFill|array $value
     * @return \Kendo\Dataviz\UI\MapLayerDefaultsShapeStyle
     */
@@ -16,8 +15,7 @@ Accepts a valid CSS color string or object with detailed configuration.
     }
 
     /**
-    * The default stroke for layer shapes.
-Accepts a valid CSS color string or object with detailed configuration.
+    * The default stroke for layer shapes. Accepts a valid CSS color string or object with detailed configuration.
     * @param \Kendo\Dataviz\UI\MapLayerDefaultsShapeStyleStroke|array $value
     * @return \Kendo\Dataviz\UI\MapLayerDefaultsShapeStyle
     */

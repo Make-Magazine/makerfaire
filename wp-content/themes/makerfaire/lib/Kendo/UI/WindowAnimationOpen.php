@@ -6,7 +6,7 @@ class WindowAnimationOpen extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Effect to be used for opening of the popup.
+    * The effect that will be used when the popup opens.
     * @param string $value
     * @return \Kendo\UI\WindowAnimationOpen
     */
@@ -15,7 +15,7 @@ class WindowAnimationOpen extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines the open animation duration.
+    * Defines the duration of the opening animation.
     * @param float $value
     * @return \Kendo\UI\WindowAnimationOpen
     */
@@ -25,3 +25,5 @@ class WindowAnimationOpen extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

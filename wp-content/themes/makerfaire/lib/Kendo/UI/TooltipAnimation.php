@@ -6,7 +6,7 @@ class TooltipAnimation extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The animation that will be used when a Tooltip closes.
+    * The animation that will be used when the Tooltip closes.
     * @param \Kendo\UI\TooltipAnimationClose|array $value
     * @return \Kendo\UI\TooltipAnimation
     */
@@ -15,7 +15,7 @@ class TooltipAnimation extends \Kendo\SerializableObject {
     }
 
     /**
-    * The animation that will be used when a Tooltip opens.
+    * The animation that will be used when the Tooltip opens.
     * @param \Kendo\UI\TooltipAnimationOpen|array $value
     * @return \Kendo\UI\TooltipAnimation
     */
@@ -25,3 +25,5 @@ class TooltipAnimation extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

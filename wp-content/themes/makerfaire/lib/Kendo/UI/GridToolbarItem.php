@@ -9,8 +9,16 @@ class GridToolbarItem extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The name of the toolbar command. Either a built-in ("cancel", "create", "save", "excel", "pdf") or custom. The name is reflected in one of the CSS classes, which is applied to the button - k-grid-name.
-This class can be used to obtain reference to the button after Grid initialization and attach click handlers.
+    * The class for the web font icon of the button that will be rendered in the toolbar.
+    * @param string $value
+    * @return \Kendo\UI\GridToolbarItem
+    */
+    public function iconClass($value) {
+        return $this->setProperty('iconClass', $value);
+    }
+
+    /**
+    * The name of the toolbar command. Either a built-in ("cancel", "create", "save", "excel", "pdf") or custom. The name is reflected in one of the CSS classes, which is applied to the button - k-grid-name. This class can be used to obtain reference to the button after Grid initialization and attach click handlers.
     * @param string $value
     * @return \Kendo\UI\GridToolbarItem
     */
@@ -51,3 +59,5 @@ This class can be used to obtain reference to the button after Grid initializati
 
 //<< Properties
 }
+
+?>

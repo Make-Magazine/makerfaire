@@ -6,7 +6,7 @@ class UploadAsync extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The selected files will be uploaded immediately by default. You can change this behavior by setting autoUpload to false.
+    * By default, the selected files are uploaded immediately. To change this behavior, set autoUpload to false.
     * @param boolean $value
     * @return \Kendo\UI\UploadAsync
     */
@@ -15,9 +15,7 @@ class UploadAsync extends \Kendo\SerializableObject {
     }
 
     /**
-    * The selected files will be uploaded in separate requests, if this is supported by the browser.
-You can change this behavior by setting batch to true.The batch mode applies to multiple files, which are selected at the same time.
-Files selected one after the other will be uploaded in separate requests.
+    * By default and if supported by the browser, the selected files are uploaded in separate requests. To change this behavior, set batch to true. As a result, all selected files are uploaded in one request.The batch mode applies to multiple files which are selected simultaneously. Files that are selected one after the other are uploaded in separate requests.
     * @param boolean $value
     * @return \Kendo\UI\UploadAsync
     */
@@ -26,7 +24,43 @@ Files selected one after the other will be uploaded in separate requests.
     }
 
     /**
-    * The name of the form field submitted to the Remove URL.
+    * When async.chunkSize is set, the selected files are uploaded chunk by chunk with the declared size. Each request sends a separate file blob and additional string metadata to the server. This metadata is in a stringified JSON format and contains the fileName, relativePath, chunkIndex, contentType, totalFileSize, totalChunks, and uploadUid properties. These properties enable the validation and combination of the file on the server side. The response also returns a JSON object with the uploaded and fileUid properties, which notifies the client what the next chunk is.
+    * @param float $value
+    * @return \Kendo\UI\UploadAsync
+    */
+    public function chunkSize($value) {
+        return $this->setProperty('chunkSize', $value);
+    }
+
+    /**
+    * By default, the selected files are uploaded one after the other. When async.concurrent is set to true, all selected files start to upload simultaneously.
+    * @param boolean $value
+    * @return \Kendo\UI\UploadAsync
+    */
+    public function concurrent($value) {
+        return $this->setProperty('concurrent', $value);
+    }
+
+    /**
+    * If async.autoRetryAfter is set, the failed upload request is repeated after the declared amount of time in miliseconds.
+    * @param float $value
+    * @return \Kendo\UI\UploadAsync
+    */
+    public function autoRetryAfter($value) {
+        return $this->setProperty('autoRetryAfter', $value);
+    }
+
+    /**
+    * Sets the maximum number of attempts that are performed if an upload fails.
+    * @param float $value
+    * @return \Kendo\UI\UploadAsync
+    */
+    public function maxAutoRetries($value) {
+        return $this->setProperty('maxAutoRetries', $value);
+    }
+
+    /**
+    * The name of the form field that is submitted to removeUrl.
     * @param string $value
     * @return \Kendo\UI\UploadAsync
     */
@@ -35,8 +69,7 @@ Files selected one after the other will be uploaded in separate requests.
     }
 
     /**
-    * The URL of the handler responsible for removing uploaded files (if any). The handler must accept POST
-requests containing one or more "fileNames" fields specifying the files to be deleted.
+    * The URL of the handler which is responsible for the removal of the uploaded files (if any). The handler must accept POST requests with one or more "fileNames" fields which specify the files that will be deleted.
     * @param string $value
     * @return \Kendo\UI\UploadAsync
     */
@@ -45,7 +78,7 @@ requests containing one or more "fileNames" fields specifying the files to be de
     }
 
     /**
-    * The HTTP verb to be used by the remove action.
+    * The HTTP verb that will be used by the remove action.
     * @param string $value
     * @return \Kendo\UI\UploadAsync
     */
@@ -54,7 +87,7 @@ requests containing one or more "fileNames" fields specifying the files to be de
     }
 
     /**
-    * The name of the form field submitted to the save URL. The default value is the input name.
+    * The name of the form field which is submitted to saveUrl. The default value is the input name.
     * @param string $value
     * @return \Kendo\UI\UploadAsync
     */
@@ -63,8 +96,7 @@ requests containing one or more "fileNames" fields specifying the files to be de
     }
 
     /**
-    * The URL of the handler that will receive the submitted files. The handler must accept POST requests
-containing one or more fields with the same name as the original input name.
+    * The URL of the handler that will receive the submitted files. The handler must accept POST requests which contain one or more fields with the same name as the original input name.
     * @param string $value
     * @return \Kendo\UI\UploadAsync
     */
@@ -73,8 +105,16 @@ containing one or more fields with the same name as the original input name.
     }
 
     /**
+    * By default, the files are uploaded as file data. When set to true, the files are read as a file buffer by using FileReader. This buffer is sent in the request body.
+    * @param boolean $value
+    * @return \Kendo\UI\UploadAsync
+    */
+    public function useArrayBuffer($value) {
+        return $this->setProperty('useArrayBuffer', $value);
+    }
+
+    /**
     * Controls whether to send credentials (cookies, headers) for cross-site requests.
-This option will be ignored if the browser doesn't support File API.
     * @param boolean $value
     * @return \Kendo\UI\UploadAsync
     */
@@ -84,3 +124,5 @@ This option will be ignored if the browser doesn't support File API.
 
 //<< Properties
 }
+
+?>

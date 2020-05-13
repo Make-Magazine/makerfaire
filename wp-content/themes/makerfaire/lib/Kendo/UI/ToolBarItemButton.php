@@ -47,6 +47,15 @@ class ToolBarItemButton extends \Kendo\SerializableObject {
     }
 
     /**
+    * Determines if the button is visible or hidden. By default the buttons are visible.
+    * @param boolean $value
+    * @return \Kendo\UI\ToolBarItemButton
+    */
+    public function hidden($value) {
+        return $this->setProperty('hidden', $value);
+    }
+
+    /**
     * Sets icon for the menu button. The icon should be one of the existing in the Kendo UI theme sprite.
     * @param string $value
     * @return \Kendo\UI\ToolBarItemButton

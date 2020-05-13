@@ -15,8 +15,7 @@ class DiagramLayout extends \Kendo\SerializableObject {
     }
 
     /**
-    * Each layout algorithm has a different set of parameters customizing the layout but they also all have a common collection of parameters which relate to the way 'pieces' of a diagram are organized.
-A diagram can have in general disconnected pieces, known as components, which can be organized in a way independent of the way a component on its own is arranged. In the picture above, this is one diagram consisting of four components.When you apply a certain layout an analysis will first split the diagram in components, arrange each component individually and thereafter organize the components in a grid. The common parameters referred above deal with this grid layout, they define the width, margin and padding of the (invisible) grid used to organize the components.
+    * Each layout algorithm has a different set of parameters customizing the layout but they also all have a common collection of parameters which relate to the way 'pieces' of a diagram are organized.A diagram can have in general disconnected pieces, known as components, which can be organized in a way independent of the way a component on its own is arranged. In the picture above, this is one diagram consisting of four components.When you apply a certain layout an analysis will first split the diagram in components, arrange each component individually and thereafter organize the components in a grid. The common parameters referred above deal with this grid layout, they define the width, margin and padding of the (invisible) grid used to organize the components.
     * @param \Kendo\Dataviz\UI\DiagramLayoutGrid|array $value
     * @return \Kendo\Dataviz\UI\DiagramLayout
     */
@@ -52,7 +51,7 @@ A diagram can have in general disconnected pieces, known as components, which ca
     }
 
     /**
-    * In the force-directed layout this setting defines the optimal length between 2 nodes, which directly correlates to the state of the link between them. If a link is longer than there will be a force pulling the nodes together, if the link is shorter the force will push the nodes apart. The optimal length is more and indication in the algorithm than a guarantee that all nodes will be at this distance. The result of the layout is really a combination of the incidence structure of the diagram, the initial topology (positions of the nodes) and the number of iterations.In the layered layout it defines the minimum distance between nodes on the same level. Due to the nature of the algorithm this distance will only be respected if the the whole crossing of links and optimimzation does not induce a shift of the siblings.This setting is specific to the force-directed layout and layered layout
+    * In the force-directed layout this setting defines the optimal length between 2 nodes, which directly correlates to the state of the link between them. If a link is longer than there will be a force pulling the nodes together, if the link is shorter the force will push the nodes apart. The optimal length is more and indication in the algorithm than a guarantee that all nodes will be at this distance. The result of the layout is really a combination of the incidence structure of the diagram, the initial topology (positions of the nodes) and the number of iterations.In the layered layout it defines the minimum distance between nodes on the same level. Due to the nature of the algorithm this distance will only be respected if the the whole crossing of links and optimization does not induce a shift of the siblings.This setting is specific to the force-directed layout and layered layout
     * @param float $value
     * @return \Kendo\Dataviz\UI\DiagramLayout
     */
@@ -85,6 +84,15 @@ A diagram can have in general disconnected pieces, known as components, which ca
     */
     public function startRadialAngle($value) {
         return $this->setProperty('startRadialAngle', $value);
+    }
+
+    /**
+    * Specifies the start level when the subtype is tipOver.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\DiagramLayout
+    */
+    public function tipOverTreeStartLevel($value) {
+        return $this->setProperty('tipOverTreeStartLevel', $value);
     }
 
     /**

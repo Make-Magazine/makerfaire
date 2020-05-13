@@ -6,7 +6,7 @@ class SparklineSeriesItemHighlight extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The border of highlighted points. The color is computed automatically from the base point color.** Applicable to pie series. **
+    * The border of highlighted points. The color is computed automatically from the base point color.Applicable to pie series.
     * @param \Kendo\Dataviz\UI\SparklineSeriesItemHighlightBorder|array $value
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemHighlight
     */
@@ -15,7 +15,7 @@ class SparklineSeriesItemHighlight extends \Kendo\SerializableObject {
     }
 
     /**
-    * The highlight color.** Available only for pie series **
+    * The highlight color.Available only for pie series
     * @param string $value
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemHighlight
     */
@@ -24,7 +24,7 @@ class SparklineSeriesItemHighlight extends \Kendo\SerializableObject {
     }
 
     /**
-    * The opacity of the highlighted points.** Applicable to pie series. **
+    * The opacity of the highlighted points.Applicable to pie series.
     * @param float $value
     * @return \Kendo\Dataviz\UI\SparklineSeriesItemHighlight
     */

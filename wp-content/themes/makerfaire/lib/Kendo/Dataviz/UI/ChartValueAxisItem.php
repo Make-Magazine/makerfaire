@@ -60,8 +60,7 @@ class ChartValueAxisItem extends \Kendo\SerializableObject {
     }
 
     /**
-    * The configuration of the major grid lines. These are the lines that are an extension of the major ticks through the
-body of the chart.
+    * The configuration of the major grid lines. These are the lines that are an extension of the major ticks through the body of the chart.
     * @param \Kendo\Dataviz\UI\ChartValueAxisItemMajorGridLines|array $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItem
     */
@@ -70,8 +69,7 @@ body of the chart.
     }
 
     /**
-    * The interval between major divisions.
-If the valueAxis.type is set to "log", the majorUnit value will be used for the base of the logarithm.
+    * The interval between major divisions. If the valueAxis.type is set to "log", the majorUnit value will be used for the base of the logarithm.
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItem
     */
@@ -89,7 +87,7 @@ If the valueAxis.type is set to "log", the majorUnit value will be used for the 
     }
 
     /**
-    * The minimum value of the axis.
+    * The minimum value of the axis. Under certain conditions, the narrowRange setting can overwrite this setting. To give priority to the min setting of your choice, set valueAxis.narrowRange to false.
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItem
     */
@@ -98,8 +96,7 @@ If the valueAxis.type is set to "log", the majorUnit value will be used for the 
     }
 
     /**
-    * The configuration of the minor grid lines. These are the lines that are an extension of the minor ticks through the
-body of the chart.
+    * The configuration of the minor grid lines. These are the lines that are an extension of the minor ticks through the body of the chart.
     * @param \Kendo\Dataviz\UI\ChartValueAxisItemMinorGridLines|array $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItem
     */
@@ -126,8 +123,7 @@ body of the chart.
     }
 
     /**
-    * The interval between minor divisions. It defaults to 1/5th of the valueAxis.majorUnit.
-If the valueAxis.type is set to "log", the minorUnit value represents the number of divisions between two major units and defaults to the major unit minus one.
+    * The interval between minor divisions. It defaults to 1/5 of the valueAxis.majorUnit. If the valueAxis.type is set to "log", the minorUnit value represents the number of divisions between two major units and defaults to the major unit minus one.
     * @param float $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItem
     */
@@ -145,8 +141,7 @@ If the valueAxis.type is set to "log", the minorUnit value represents the number
     }
 
     /**
-    * If set to true the chart will prevent the automatic axis range from snapping to 0.
-Setting it to false will force the automatic axis range to snap to 0.
+    * If set to true the Chart will narrow the value axis range in order to display data points in better detail. Setting it to false will force the automatic axis range to start from 0 or the explicitly specified valueAxis.min value.
     * @param boolean $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItem
     */
@@ -155,8 +150,7 @@ Setting it to false will force the automatic axis range to snap to 0.
     }
 
     /**
-    * The name of the pane that the value axis should be rendered in.
-The axis will be rendered in the first (default) pane if not set.
+    * The name of the pane that the value axis should be rendered in. The axis will be rendered in the first (default) pane if not set.
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItem
     */
@@ -192,7 +186,7 @@ The axis will be rendered in the first (default) pane if not set.
     }
 
     /**
-    * The axis type.The supported values are:
+    * The axis type.The supported values are: "numeric" - numeric axis. or "log" - logarithmic axis..
     * @param string $value
     * @return \Kendo\Dataviz\UI\ChartValueAxisItem
     */
@@ -216,6 +210,15 @@ The axis will be rendered in the first (default) pane if not set.
     */
     public function notes($value) {
         return $this->setProperty('notes', $value);
+    }
+
+    /**
+    * An optional Z-index that can be used to change the default stacking position of the valueAxis.
+    * @param float $value
+    * @return \Kendo\Dataviz\UI\ChartValueAxisItem
+    */
+    public function zIndex($value) {
+        return $this->setProperty('zIndex', $value);
     }
 
 //<< Properties

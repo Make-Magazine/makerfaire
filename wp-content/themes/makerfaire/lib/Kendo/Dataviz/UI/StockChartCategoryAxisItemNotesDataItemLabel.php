@@ -43,7 +43,7 @@ class StockChartCategoryAxisItemNotesDataItemLabel extends \Kendo\SerializableOb
 
     /**
     * Sets the template option of the StockChartCategoryAxisItemNotesDataItemLabel.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.The fields which can be used in the template are: value - the category value.
     * @param string $value The id of the element which represents the kendo template.
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemNotesDataItemLabel
     */
@@ -55,7 +55,7 @@ class StockChartCategoryAxisItemNotesDataItemLabel extends \Kendo\SerializableOb
 
     /**
     * Sets the template option of the StockChartCategoryAxisItemNotesDataItemLabel.
-    * The template which renders the labels.The fields which can be used in the template are:
+    * The template which renders the labels.The fields which can be used in the template are: value - the category value.
     * @param string $value The template content.
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemNotesDataItemLabel
     */
@@ -100,7 +100,7 @@ class StockChartCategoryAxisItemNotesDataItemLabel extends \Kendo\SerializableOb
     }
 
     /**
-    * The position of the category axis note label.
+    * The position of the category axis note label. "inside" - the label is positioned inside of the icon. or "outside" - the label is positioned outside of the icon..
     * @param string $value
     * @return \Kendo\Dataviz\UI\StockChartCategoryAxisItemNotesDataItemLabel
     */

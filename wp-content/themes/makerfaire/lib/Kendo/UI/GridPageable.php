@@ -6,7 +6,16 @@ class GridPageable extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The number of data items which will be displayed in the grid.
+    * By default the grid will show the pager even when total amount of items in the DataSource is less than the pageSize.If set to false the grid will toggle the pager visibility as follows: when the total amount of items initially set in the DataSource is less than the pageSize number the pager will be hidden.; when the total amount of items initially set in the DataSource is greater than or equal to the pageSize number the pager will be shown.; when the total amount of items in the DataSource becomes less than the pageSize number (after delete, filter operation or pageSize change) the pager will be hidden. or when the total amount of items in the DataSource becomes greater than or equal to the pageSize number (after an insert, filter operation or pageSize change) the pager will be shown.. Introduced in the Kendo UI 2017 R3 release.
+    * @param boolean $value
+    * @return \Kendo\UI\GridPageable
+    */
+    public function alwaysVisible($value) {
+        return $this->setProperty('alwaysVisible', $value);
+    }
+
+    /**
+    * The number of data items which will be displayed in the grid. This setting will not work if the Grid is assigned an already existing Kendo UI DataSource instance.
     * @param float $value
     * @return \Kendo\UI\GridPageable
     */
@@ -24,7 +33,7 @@ class GridPageable extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to true the pager will display buttons for navigating to specific pages. By default those buttons are displayed.
+    * If set to true the pager will display buttons for navigating to specific pages. By default those buttons are displayed.Using pageable.numeric and pageable.input at the same time is not recommended.
     * @param boolean $value
     * @return \Kendo\UI\GridPageable
     */
@@ -42,7 +51,7 @@ class GridPageable extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to true the pager will display an input element which allows the user to type a specific page number. By default the page input is not displayed.
+    * If set to true the pager will display an input element which allows the user to type a specific page number. By default the page input is not displayed.Using pageable.input and pageable.numeric at the same time is not recommended.
     * @param boolean $value
     * @return \Kendo\UI\GridPageable
     */
@@ -51,9 +60,7 @@ class GridPageable extends \Kendo\SerializableObject {
     }
 
     /**
-    * If set to true the pager will display a drop-down which allows the user to pick a page size.
-By default the page size drop-down is not displayed.Can be set to an array of predefined page sizes to override the default list.
-A special all value is supported. It sets the page size to the total number of records.If a pageSize setting is provided for the data source then this value will be selected initially.
+    * If set to true the pager will display a drop-down which allows the user to pick a page size. By default the page size drop-down is not displayed.Can be set to an array of predefined page sizes to override the default list. A special all value is supported. It sets the page size to the total number of records.If a pageSize setting is provided for the data source then this value will be selected initially.
     * @param boolean|array $value
     * @return \Kendo\UI\GridPageable
     */
@@ -68,6 +75,15 @@ A special all value is supported. It sets the page size to the total number of r
     */
     public function refresh($value) {
         return $this->setProperty('refresh', $value);
+    }
+
+    /**
+    * If set to false the pager will not be responsive. By default the pager is responsive.
+    * @param boolean $value
+    * @return \Kendo\UI\GridPageable
+    */
+    public function responsive($value) {
+        return $this->setProperty('responsive', $value);
     }
 
     /**
@@ -90,3 +106,5 @@ A special all value is supported. It sets the page size to the total number of r
 
 //<< Properties
 }
+
+?>

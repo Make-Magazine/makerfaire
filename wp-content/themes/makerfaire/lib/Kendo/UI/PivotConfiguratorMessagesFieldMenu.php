@@ -107,3 +107,4 @@ class PivotConfiguratorMessagesFieldMenu extends \Kendo\SerializableObject {
 //<< Properties
 }
 
+?>

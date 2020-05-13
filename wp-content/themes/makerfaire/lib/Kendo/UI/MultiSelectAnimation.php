@@ -6,7 +6,7 @@ class MultiSelectAnimation extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    *
+    * 
     * @param \Kendo\UI\MultiSelectAnimationClose|array $value
     * @return \Kendo\UI\MultiSelectAnimation
     */
@@ -25,3 +25,5 @@ class MultiSelectAnimation extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

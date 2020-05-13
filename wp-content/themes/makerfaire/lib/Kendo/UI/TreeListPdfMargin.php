@@ -6,7 +6,7 @@ class TreeListPdfMargin extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * The bottom margin. Numbers are considered as "pt" units.
+    * The bottom margin. Numbers are considered as pt units.
     * @param float|string $value
     * @return \Kendo\UI\TreeListPdfMargin
     */
@@ -15,7 +15,7 @@ class TreeListPdfMargin extends \Kendo\SerializableObject {
     }
 
     /**
-    * The left margin. Numbers are considered as "pt" units.
+    * The left margin. Numbers are considered as pt units.
     * @param float|string $value
     * @return \Kendo\UI\TreeListPdfMargin
     */
@@ -24,7 +24,7 @@ class TreeListPdfMargin extends \Kendo\SerializableObject {
     }
 
     /**
-    * The right margin. Numbers are considered as "pt" units.
+    * The right margin. Numbers are considered as pt units.
     * @param float|string $value
     * @return \Kendo\UI\TreeListPdfMargin
     */
@@ -33,7 +33,7 @@ class TreeListPdfMargin extends \Kendo\SerializableObject {
     }
 
     /**
-    * The top margin. Numbers are considered as "pt" units.
+    * The top margin. Numbers are considered as pt units.
     * @param float|string $value
     * @return \Kendo\UI\TreeListPdfMargin
     */

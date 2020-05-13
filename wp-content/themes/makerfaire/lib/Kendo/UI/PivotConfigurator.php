@@ -56,3 +56,5 @@ class PivotConfigurator extends \Kendo\UI\Widget {
 
 //<< Properties
 }
+
+?>

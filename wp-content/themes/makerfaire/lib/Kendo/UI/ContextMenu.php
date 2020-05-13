@@ -34,13 +34,21 @@ class ContextMenu extends \Kendo\UI\Widget {
     }
 
     /**
-    * A collection of Animation objects, used to change default animations. A value of false will disable all animations in the widget.Available animations for the ContextMenu are listed below.  Each animation has a reverse options which is used for the close effect by default, but can be over-ridden
-by setting the close animation. Each animation also has a direction which can be set off the animation (i.e. slideIn:Down).
-    * @param \Kendo\UI\ContextMenuAnimation|array $value
+    * A collection of Animation objects, used to change default animations. A value of false will disable all animations in the widget. is not a valid configuration.Available animations for the ContextMenu are listed below.  Each animation has a reverse options which is used for the close effect by default, but can be over-ridden by setting the close animation. Each animation also has a direction which can be set off the animation (i.e. slideIn:Down).
+    * @param boolean|\Kendo\UI\ContextMenuAnimation|array $value
     * @return \Kendo\UI\ContextMenu
     */
     public function animation($value) {
         return $this->setProperty('animation', $value);
+    }
+
+    /**
+    * The DOM element to which the ContextMenu will be appended. The element needs to be relatively positioned.
+    * @param string| $value
+    * @return \Kendo\UI\ContextMenu
+    */
+    public function appendTo($value) {
+        return $this->setProperty('appendTo', $value);
     }
 
     /**
@@ -53,9 +61,17 @@ by setting the close animation. Each animation also has a direction which can be
     }
 
     /**
-    * The data source of the widget which is used to render its items. Can be a JSON object/Array that contains an item or an Array of items to be rendered.
-Refer to the example below for a list of the supported properties.
-    * @param |array $value
+    * Copies and uses the styles from the anchor.
+    * @param boolean $value
+    * @return \Kendo\UI\ContextMenu
+    */
+    public function copyAnchorStyles($value) {
+        return $this->setProperty('copyAnchorStyles', $value);
+    }
+
+    /**
+    * The data source of the widget which is used to render its items. Can be a JSON object/Array/kendo.data.HierarchicalDataSource that contains an item or an Array of items to be rendered. Refer to the example below for a list of the supported properties.
+    * @param |array| $value
     * @return \Kendo\UI\ContextMenu
     */
     public function dataSource($value) {
@@ -63,8 +79,52 @@ Refer to the example below for a list of the supported properties.
     }
 
     /**
-    * Specifies ContextMenu's sub menu opening direction. Can be "top", "bottom", "left", "right".
-The example below will initialize the sub menus to open to the left.
+    * Sets the field of the data item that provides the text of the ContextMenu items.
+    * @param string $value
+    * @return \Kendo\UI\ContextMenu
+    */
+    public function dataTextField($value) {
+        return $this->setProperty('dataTextField', $value);
+    }
+
+    /**
+    * Sets the field of the data item that provides the url of the ContextMenu items.
+    * @param string $value
+    * @return \Kendo\UI\ContextMenu
+    */
+    public function dataUrlField($value) {
+        return $this->setProperty('dataUrlField', $value);
+    }
+
+    /**
+    * Sets the field of the data item that provides the sprite css class of the ContextMenu items.
+    * @param string $value
+    * @return \Kendo\UI\ContextMenu
+    */
+    public function dataSpriteCssClassField($value) {
+        return $this->setProperty('dataSpriteCssClassField', $value);
+    }
+
+    /**
+    * Sets the field of the data item that provides the image url of the ContextMenu items.
+    * @param string $value
+    * @return \Kendo\UI\ContextMenu
+    */
+    public function dataImageUrlField($value) {
+        return $this->setProperty('dataImageUrlField', $value);
+    }
+
+    /**
+    * Sets the field of the data item that provides the content of the ContextMenu items.
+    * @param string $value
+    * @return \Kendo\UI\ContextMenu
+    */
+    public function dataContentField($value) {
+        return $this->setProperty('dataContentField', $value);
+    }
+
+    /**
+    * Specifies ContextMenu's sub menu opening direction. Can be "top", "bottom", "left", "right". The example below will initialize the sub menus to open to the left.
     * @param string $value
     * @return \Kendo\UI\ContextMenu
     */
@@ -100,9 +160,7 @@ The example below will initialize the sub menus to open to the left.
     }
 
     /**
-    * Specifies how ContextMenu should adjust to screen boundaries. By default the strategy is "fit" for a sub menu with a horizontal parent or the root menu,
-meaning it will move to fit in screen boundaries in all directions, and "fit flip" for a sub menu with vertical parent, meaning it will fit vertically and flip over
-its parent horizontally. You can also switch off the screen boundary detection completely if you set the popupCollision to false.
+    * Specifies how ContextMenu should adjust to screen boundaries. By default the strategy is "fit" for a sub menu with a horizontal parent or the root menu, meaning it will move to fit in screen boundaries in all directions, and "fit flip" for a sub menu with vertical parent, meaning it will fit vertically and flip over its parent horizontally. You can also switch off the screen boundary detection completely if you set the popupCollision to false.
     * @param string $value
     * @return \Kendo\UI\ContextMenu
     */
@@ -111,8 +169,16 @@ its parent horizontally. You can also switch off the screen boundary detection c
     }
 
     /**
-    * Specifies the event or events on which ContextMenu should open. By default ContextMenu will show on contextmenu event on desktop and hold event on touch devices.
-Could be any pointer/mouse/touch event, also several, separated by spaces.
+    * If enabled, the ContextMenu displays buttons that scroll the items when they cannot fit the viewport height. By default, scrolling is disabled.
+    * @param boolean|\Kendo\UI\ContextMenuScrollable|array $value
+    * @return \Kendo\UI\ContextMenu
+    */
+    public function scrollable($value) {
+        return $this->setProperty('scrollable', $value);
+    }
+
+    /**
+    * Specifies the event or events on which ContextMenu should open. By default ContextMenu will show on contextmenu event on desktop and hold event on touch devices. Could be any pointer/mouse/touch event, also several, separated by spaces.
     * @param string $value
     * @return \Kendo\UI\ContextMenu
     */
@@ -150,6 +216,20 @@ Could be any pointer/mouse/touch event, also several, separated by spaces.
         }
 
         return $this->setProperty('close', $value);
+    }
+
+    /**
+    * Sets the dataBound event of the ContextMenu.
+    * Fires when the ContextMenu is bound to the set DataSource.
+    * @param string|\Kendo\JavaScriptFunction $value Can be a JavaScript function definition or name.
+    * @return \Kendo\UI\ContextMenu
+    */
+    public function dataBound($value) {
+        if (is_string($value)) {
+            $value = new \Kendo\JavaScriptFunction($value);
+        }
+
+        return $this->setProperty('dataBound', $value);
     }
 
     /**

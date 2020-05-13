@@ -88,3 +88,5 @@ class ListViewPageable extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

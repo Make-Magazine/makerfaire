@@ -51,9 +51,7 @@ class StockChartLegend extends \Kendo\SerializableObject {
     }
 
     /**
-    * The X offset from its position.  The offset is relative to the current position of the legend.
-For instance, a value of 20 will move the legend 20 pixels to the right of it's initial position.  A negative value will move the legend
-to the left of the current position.
+    * The X offset from its position.  The offset is relative to the current position of the legend. For instance, a value of 20 will move the legend 20 pixels to the right of it's initial position.  A negative value will move the legend to the left of the current position.
     * @param float $value
     * @return \Kendo\Dataviz\UI\StockChartLegend
     */
@@ -62,9 +60,7 @@ to the left of the current position.
     }
 
     /**
-    * The Y offset from its position.  The offset is relative to the current position of the legend.
-For instance, a value of 20 will move the legend 20 pixels down from it's initial position.  A negative value will move the legend
-upwards from the current position.
+    * The Y offset from its position.  The offset is relative to the current position of the legend. For instance, a value of 20 will move the legend 20 pixels down from it's initial position.  A negative value will move the legend upwards from the current position.
     * @param float $value
     * @return \Kendo\Dataviz\UI\StockChartLegend
     */

@@ -97,3 +97,5 @@ class GanttMessages extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

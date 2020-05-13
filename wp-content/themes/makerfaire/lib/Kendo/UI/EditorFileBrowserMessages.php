@@ -87,7 +87,7 @@ class EditorFileBrowserMessages extends \Kendo\SerializableObject {
     }
 
     /**
-    * Defines text for search box pleaceholder.
+    * Defines text for search box placeholder.
     * @param string $value
     * @return \Kendo\UI\EditorFileBrowserMessages
     */

@@ -128,3 +128,5 @@ class Splitter extends \Kendo\UI\Widget {
 
 //<< Properties
 }
+
+?>

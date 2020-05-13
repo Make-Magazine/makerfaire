@@ -6,7 +6,7 @@ class DiagramConnectionDefaultsHoverStroke extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * Defines the highlight color when the pointer is hovering over the connection.
+    * Defines the highlight color when the mouse pointer hovers over connections.
     * @param string $value
     * @return \Kendo\Dataviz\UI\DiagramConnectionDefaultsHoverStroke
     */

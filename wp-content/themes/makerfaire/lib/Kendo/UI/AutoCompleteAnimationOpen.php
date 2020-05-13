@@ -25,3 +25,5 @@ class AutoCompleteAnimationOpen extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

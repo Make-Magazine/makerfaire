@@ -25,3 +25,5 @@ class MenuAnimationOpen extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

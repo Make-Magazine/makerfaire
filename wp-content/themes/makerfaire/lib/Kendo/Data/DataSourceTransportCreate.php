@@ -6,8 +6,7 @@ class DataSourceTransportCreate extends \Kendo\SerializableObject {
 //>> Properties
 
     /**
-    * If set to false the request result will not be cached by the browser. Setting cache to false will only work correctly with HEAD and GET requests. It works by appending "_={timestamp}" to the GET parameters.
-By default "jsonp" requests are not cached.Refer to the jQuery.ajax documentation for further info.
+    * If set to false, the request result will not be cached by the browser. Setting cache to false will only work correctly with HEAD and GET requests. It works by appending "_={timestamp}" to the GET parameters. By default, "jsonp" requests are not cached.Refer to the jQuery.ajax documentation for further information.
     * @param boolean $value
     * @return \Kendo\Data\DataSourceTransportCreate
     */
@@ -16,8 +15,7 @@ By default "jsonp" requests are not cached.Refer to the jQuery.ajax documentatio
     }
 
     /**
-    * The content-type HTTP header sent to the server. Default is "application/x-www-form-urlencoded". Use "application/json" if the content is JSON.
-Refer to the jQuery.ajax documentation for further info.
+    * The content-type HTTP header sent to the server. The default is "application/x-www-form-urlencoded". Use "application/json" if the content is JSON. Refer to the jQuery.ajax documentation for further information.
     * @param string $value
     * @return \Kendo\Data\DataSourceTransportCreate
     */
@@ -26,8 +24,7 @@ Refer to the jQuery.ajax documentation for further info.
     }
 
     /**
-    * Additional parameters which are sent to the remote service. The parameter names must not match reserved words, which are used by the Kendo UI DataSource for
-sorting, filtering, paging and grouping.Refer to the jQuery.ajax documentation for further info.
+    * Additional parameters that are sent to the remote service. The parameter names must not match reserved words, which are used by the Kendo UI DataSource for sorting, filtering, paging, and grouping.Refer to the jQuery.ajax documentation for further information.
     * @param |\Kendo\JavaScriptFunction $value
     * @return \Kendo\Data\DataSourceTransportCreate
     */
@@ -36,7 +33,7 @@ sorting, filtering, paging and grouping.Refer to the jQuery.ajax documentation f
     }
 
     /**
-    * The type of result expected from the server. Commonly used values are "json" and "jsonp".Refer to the jQuery.ajax documentation for further info.
+    * The type of result expected from the server. Commonly used values are "json" and "jsonp".Refer to the jQuery.ajax documentation for further information.
     * @param string $value
     * @return \Kendo\Data\DataSourceTransportCreate
     */
@@ -45,7 +42,7 @@ sorting, filtering, paging and grouping.Refer to the jQuery.ajax documentation f
     }
 
     /**
-    * The type of request to make ("POST", "GET", "PUT" or "DELETE"), default is "GET".Refer to the jQuery.ajax documentation for further info.
+    * The type of request to make ("POST", "GET", "PUT" or "DELETE"). The default request is "GET".Refer to the jQuery.ajax documentation for further information.
     * @param string $value
     * @return \Kendo\Data\DataSourceTransportCreate
     */
@@ -54,7 +51,7 @@ sorting, filtering, paging and grouping.Refer to the jQuery.ajax documentation f
     }
 
     /**
-    * The URL to which the request is sent.If set to function the data source will invoke it and use the result as the URL.
+    * The URL to which the request is sent.If set to a function, the data source will invoke it and use the result as the URL.
     * @param string|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Data\DataSourceTransportCreate
     */
@@ -64,3 +61,5 @@ sorting, filtering, paging and grouping.Refer to the jQuery.ajax documentation f
 
 //<< Properties
 }
+
+?>

@@ -13,8 +13,8 @@ class TimePicker extends \Kendo\UI\Widget {
 //>> Properties
 
     /**
-    * Configures the opening and closing animations of the popup. Setting the animation option to false will disable the opening and closing animations. As a result the popup will open and close instantly.
-    * @param \Kendo\UI\TimePickerAnimation|array $value
+    * Configures the opening and closing animations of the popup. Setting the animation option to false will disable the opening and closing animations. As a result the popup will open and close instantly. is not a valid configuration.
+    * @param boolean|\Kendo\UI\TimePickerAnimation|array $value
     * @return \Kendo\UI\TimePicker
     */
     public function animation($value) {
@@ -31,6 +31,15 @@ class TimePicker extends \Kendo\UI\Widget {
     }
 
     /**
+    * Specifies if the TimePicker will use DateInput for editing value
+    * @param boolean $value
+    * @return \Kendo\UI\TimePicker
+    */
+    public function dateInput($value) {
+        return $this->setProperty('dateInput', $value);
+    }
+
+    /**
     * Specifies a list of dates, which are shown in the time drop-down list. If not set, the TimePicker will auto-generate the available times.
     * @param array $value
     * @return \Kendo\UI\TimePicker
@@ -40,7 +49,7 @@ class TimePicker extends \Kendo\UI\Widget {
     }
 
     /**
-    * Specifies the format, which is used to format the value of the TimePicker displayed in the input. The format also will be used to parse the input.
+    * Specifies the format, which is used to format the value of the TimePicker displayed in the input. The format also will be used to parse the input.For more information on date and time formats please refer to Date Formatting.
     * @param string $value
     * @return \Kendo\UI\TimePicker
     */
@@ -82,6 +91,15 @@ class TimePicker extends \Kendo\UI\Widget {
     */
     public function parseFormats($value) {
         return $this->setProperty('parseFormats', $value);
+    }
+
+    /**
+    * The options that will be used for the popup initialization. For more details about the available options refer to Popup documentation.
+    * @param \Kendo\UI\TimePickerPopup|array $value
+    * @return \Kendo\UI\TimePicker
+    */
+    public function popup($value) {
+        return $this->setProperty('popup', $value);
     }
 
     /**
@@ -138,3 +156,5 @@ class TimePicker extends \Kendo\UI\Widget {
 
 //<< Properties
 }
+
+?>

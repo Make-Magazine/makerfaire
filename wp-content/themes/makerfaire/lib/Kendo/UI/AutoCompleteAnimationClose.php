@@ -25,3 +25,5 @@ class AutoCompleteAnimationClose extends \Kendo\SerializableObject {
 
 //<< Properties
 }
+
+?>

@@ -33,11 +33,7 @@ class ChartSeriesItemOutliers extends \Kendo\SerializableObject {
     }
 
     /**
-    * The outliers shape.The supported values are:
-* "circle" - the marker shape is circle.
-* "square" - the marker shape is square.
-* "triangle" - the marker shape is triangle.
-* "cross" - the marker shape is cross.
+    * The outliers shape.The supported values are: * "circle" - the marker shape is circle. * "square" - the marker shape is square. * "triangle" - the marker shape is triangle. * "cross" - the marker shape is cross.
     * @param string|\Kendo\JavaScriptFunction $value
     * @return \Kendo\Dataviz\UI\ChartSeriesItemOutliers
     */

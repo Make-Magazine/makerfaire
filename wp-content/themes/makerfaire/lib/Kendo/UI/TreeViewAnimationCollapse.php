@@ -15,8 +15,7 @@ class TreeViewAnimationCollapse extends \Kendo\SerializableObject {
     }
 
     /**
-    * A whitespace-delimited string of animation effects that are used when collapsing nodes.
-The supported effects are fadeOut and collapseVertical.
+    * A whitespace-delimited string of animation effects that are used when collapsing nodes. The supported effects are fadeOut and collapseVertical.
     * @param string $value
     * @return \Kendo\UI\TreeViewAnimationCollapse
     */
@@ -26,3 +25,5 @@ The supported effects are fadeOut and collapseVertical.
 
 //<< Properties
 }
+
+?>
