@@ -455,3 +455,7 @@ function shapeSpace_remove_toolbar_node($wp_admin_bar) {
 	$wp_admin_bar->remove_node('stats');
 }
 add_action('admin_bar_menu', 'shapeSpace_remove_toolbar_node', 999);
+
+// Never expire orphaned entries.
+// Set the expiration date to 100 years in the future effectively never expiring the entries.
+add_filter( 'gpnf_expiration_modifier', function() { return 100 * YEAR_IN_SECONDS; } );
