@@ -87,7 +87,7 @@
 	}
 	.gform_page_footer {
 		display: flex;
-		input[type=submit], .gform_previous_button, .gform_next_button, .gform_last_page_button {
+		input[type=submit], .gform_previous_button, .gform_next_button, .button.gform_button.gform_last_page_button {
 			background: #005e9a;
 			box-shadow: none;
 			color: #fff;
@@ -117,7 +117,7 @@
 			  color: #005e9a
 			}
 		}
-		input[type=submit], .gform_previous_button {
+		.gform_previous_button {
 			margin-top: -2px !important;
 		}
 	}
@@ -147,8 +147,6 @@
 		padding: 15px;
 		border-radius: 5px;
 		margin-left: 0px !important;
-		position: relative;
-		top: 2px;
 		&:focus, &:active, &:visited {
 			color: #fff;
 			text-decoration: none;
