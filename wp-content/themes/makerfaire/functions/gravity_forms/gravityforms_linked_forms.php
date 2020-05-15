@@ -27,10 +27,9 @@ function custom_validation($validation_result) {
       //finding Field with ID of 1 and marking it as failed validation
       foreach ($form['fields'] as &$field) {
         if ($field->id == $contact_email['id']) {     //contact_email
-          $entryForm = GFAPI::get_form($entry['form_id']);
-          $ef_email = get_value_by_label('contact-email', $entryForm, $entry);
-          $contactEmail = $ef_email['value'];
-
+          //pull contact email from original entry
+          $contactEmail = (isset($entry['98'])? $entry['98']:'');
+          
           if (strtolower($sub_email) != strtolower($contactEmail)) {
             // set the form validation to false
             $validation_result['is_valid'] = false;
