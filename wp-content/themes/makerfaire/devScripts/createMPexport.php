@@ -1,8 +1,8 @@
 <?php
 include 'db_connect.php';
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 $form = '';
 if (!isset($_POST['formID'])) {
     ?>
@@ -21,8 +21,8 @@ if (!isset($_POST['formID'])) {
                 <input type="radio" id="male" name="exportType" value="entries">
                 <label for="entries">Entries</label><br>
                 <input type="radio" id="makers" name="exportType" value="makers">
-                <label for="makers">Makers</label><br>
-                <br/>
+                <label for="makers">Makers</label><br>                
+                <br>
                 <input type="submit" value="Export" name="submit">
             </form>
         </body>
@@ -36,16 +36,16 @@ if (!isset($_POST['formID'])) {
     if ($form == '') {
         die();
     }
-    
+
     if ($exportType == 'makers') {
         $CSVData = exportMFMakers($form);
     } else {
         $CSVData = exportEntries($form);
     }
-
+    //die('stop');
     // output headers so that the file is downloaded rather than displayed
     header('Content-type: text/csv');
-    header('Content-Disposition: attachment; filename="exportForm' . $form . '-'.$exportType.'.csv"');
+    header('Content-Disposition: attachment; filename="exportForm' . $form . '-' . $exportType . '.csv"');
 
     // do not cache the file
     header('Pragma: no-cache');
@@ -69,7 +69,7 @@ if (!isset($_POST['formID'])) {
 function exportMFMakers($form) {
     GLOBAL $mysqli;
     $CSVData = array();
-    
+
     $CSVData['fieldHeaders'] = array('Username', 'Photo', 'Email', 'Full Name', 'Bio', 'Location', 'Interests', 'Role', 'Last login', 'Active');
     //entry data
     $sql = "SELECT wp_gf_entry.id as entry_id, wp_gf_entry.date_created, 
@@ -204,12 +204,12 @@ function exportMFMakers($form) {
     foreach ($entries as $entry) {
         if ($entry['status'] == 'Accepted') {
             for ($i = 1; $i <= 7; $i++) {
-                $makerName = 'maker' . $i . '_name';                
+                $makerName = 'maker' . $i . '_name';
                 $makerEmail = 'maker' . $i . '_email';
                 $makerPhoto = 'maker' . $i . '_photo';
                 $makerBio = 'maker' . $i . '_bio';
                 $makerLocation = 'maker' . $i . '_location';
-                if ($entry[$makerEmail] != '') {                                        
+                if ($entry[$makerEmail] != '') {
                     $CSVData['entryData'][] = array('Username' => '',
                         'Photo' => $entry[$makerPhoto],
                         'Email' => $entry[$makerEmail],
@@ -224,202 +224,118 @@ function exportMFMakers($form) {
             }
         }
     }
-    
+
     return $CSVData;
 }
 
 function exportEntries($form) {
     GLOBAL $mysqli;
     $CSVData = array();
-    //define category xref
-    $catXref = array(
-        20637 => '3D Printing and Imaging',
-        20638 => '3D Printing and Imaging',
-        20639 => 'Energy & Sustainability',
-        20640 => 'Arduino',
-        20641 => 'Art & Sculpture',
-        21319 => 'Emerging Tech',
-        21318 => 'Emerging Tech',
-        20642 => 'Bikes',
-        20643 => 'Teachers',
-        21328 => 'Energy & Sustainability',
-        20644 => 'Computers & Mobile',
-        21297 => 'Cosplay',
-        20645 => 'Crafting',
-        20646 => 'Drones',
-        20647 => 'Teachers',
-        20649 => 'Other Boards',
-        20650 => 'Teachers',
-        20651 => 'Teachers',
-        20652 => 'Wearables',
-        20653 => 'Planes',
-        20654 => 'Food & Beverage',
-        20655 => 'Fun & Games',
-        20656 => 'Gaming',
-        20657 => 'Teachers',
-        20658 => 'Health & Biohacking',
-        20659 => 'Connected Home',
-        21233 => 'Internet of Things',
-        20660 => 'Students',
-        20661 => 'Students',
-        20662 => 'Art & Sculpture',
-        20663 => 'Teachers',
-        20664 => 'Teachers',
-        20665 => 'Other Boards',
-        20666 => 'Music',
-        20667 => 'Computers & Mobile',
-        20668 => 'Photography & Video',
-        20669 => 'Raspberry Pi',
-        20670 => 'Robotics',
-        20671 => 'Rockets',
-        20672 => 'Teachers',
-        21321 => 'Space',
-        20673 => 'Energy & Sustainability',
-        20648 => 'Cars',
-        21235 => 'Emerging Tech',
-        20674 => 'Wearables',
-        20675 => 'Woodworking',
-        20676 => 'Students',
+
+    $catXref = array(21344 => array('3D Printing and Imaging', ''),
+        21386 => array('', ''),
+        21346 => array('Arduino', ''),
+        21387 => array('Teachers', ''),
+        21349 => array('CAD', ''),
+        21351 => array('CNC & Machining', ''),
+        21352 => array('Computers & Mobile', ''),
+        21388 => array('', ''),
+        21358 => array('Emerging Tech', ''),
+        21359 => array('Energy & Sustainability', ''),
+        21339 => array('Health and Bio Hacking', 'Face Masks'),
+        21338 => array('Health and Bio Hacking', 'Face Shields'),
+        21366 => array('Health & Biohacking', ''),
+        21367 => array('Internet of Things', ''),
+        21368 => array('Laser Cutting', ''),
+        21389 => array('health and Bio Hacking', ''),
+        21372 => array('Other Boards', ''),
+        21390 => array('', ''),
+        21343 => array('Health and Bio Hacking', 'Protective Suits and Gowns'),
+        21376 => array('Raspberry Pi', ''),
+        21391 => array('Energy & Sustainability', 'Renewable Energy'),
+        21340 => array('Health and Bio Hacking', 'Respirators'),
+        21377 => array('Robotics', ''),
+        21341 => array('Health and Bio Hacking', 'Sanitation and Sterilization'),
+        21392 => array('Energy & Sustainability', 'Sustainable Living'),
+        21393 => array('', ''),
+        21342 => array('Health and Bio Hacking', 'Ventilators'),
+        21383 => array('Wearables', ''),
+        21394 => array('Emerging Tech', ''),
+        21372 => array('Other Boards', '')
     );
 
-    $CSVData['fieldHeaders'] = array('title', 'path', 'created', 'teaser', 'image', 'difficulty', 'duration', 'visibility', 'Video', 'ah-ha', 'uh-oh', 'story', 'howto', 'Maker Category', 'tools', 'materials', 'boardsKits', 'resources', 'team', 'owner', 'Public');
-
+    $CSVData['fieldHeaders'] = array('title', 'created', 'image', 'description', 'owner', 'team', 'categories', 'tags', 'postBody1', 'postBody2', 'postBody3', 'postVideo1', 'postVideo2', 'postBody4');
     //entry data
     $sql = "SELECT wp_gf_entry.id as entry_id, wp_gf_entry.date_created, 
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='303')as status,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='151')as title,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='319')as teaser,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='22')as image,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='32')as video,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='16')as short_desc,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='287')as inspire,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='27')as website,
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='303' limit 1)as status,
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='151' limit 1)as title,            
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='22' limit 1)as image,
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='16' limit 1)as description,
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='98' limit 1)as owner,    
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='32' limit 1)as video,
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='386' limit 1)as video2,
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='287' limit 1)as problems_solve,
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='123' limit 1)as challenges,                        
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='27' limit 1)as website,
             (select group_concat(meta_value) 
                 from wp_gf_entry_meta 
                 where wp_gf_entry_meta.entry_id = wp_gf_entry.id and 
-                (meta_key like '%320%'or meta_key like '%321%') )as categories,
-            concat(
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='160.3'),
-                \" \",
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='160.6')
-                ) as maker1_name,            
-            concat(
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='158.3'),
-                \" \",
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='158.6')
-                ) as maker2_name,
-            concat(
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='155.3'),
-                \" \",
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='155.6')
-                ) as maker3_name,
-            concat(
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='156.3'),
-                \" \",
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='156.6')
-                ) as maker4_name,
-            concat(
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='157.3'),
-                \" \",
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='157.6')
-                ) as maker5_name,
-            concat(
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='159.3'),
-                \" \",
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='159.6')
-                ) as maker6_name,
-            concat(
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='154.3'),
-                \" \",
-                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='154.6')
-                ) as maker7_name,    
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='443')as maker1_role,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='444')as maker2_role,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='445')as maker3_role,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='446')as maker4_role,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='447')as maker5_role,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='448')as maker6_role,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='449')as maker7_role,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='161')as maker1_email,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='162')as maker2_email,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='167')as maker3_email,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='166')as maker4_email,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='165')as maker5_email,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='164')as maker6_email,
-            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='163')as maker7_email
+                (meta_key like '%321%') )as categories        
         from wp_gf_entry
         where wp_gf_entry.form_id = $form
         and wp_gf_entry.status='active'";
 
-//loop thru entry data
+    //loop thru entry data
     $entries = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
     $entryData = array();
     foreach ($entries as $entry) {
-        if ($entry['status'] == 'Accepted' &&$entry['maker1_email']!='') {
+        if ($entry['status'] == 'Accepted') {
             $entry_id = $entry['entry_id'];
             //build html for team field
-            $team = createTeam($entry);
-
+            //$team = createTeam($entry);
             //gt categories
             $entry_cat = (string) $entry['categories'];
             $categories = explode(',', $entry_cat); //place comma separated list into an array
             //get unique values only
             $categories = array_unique($categories);
             $output_category = array();
-            ;
+            $output_tags = array();
             foreach ($categories as $category) {
-                if (isset($catXref[$category])) {
-                    $value = $catXref[$category];
-                } else {
-                    die('missing category id ' . $category);
-                    $value = htmlspecialchars_decode(get_CPT_name($category));
+                if ($category != '') {
+                    if (isset($catXref[$category])) {
+                        $catValue = $catXref[$category][0];
+                        $tagValue = $catXref[$category][1];
+                    } else {
+                        die('missing category id ' . $category);
+                        $value = htmlspecialchars_decode(get_CPT_name($category));
+                        $tagValue = '';
+                    }
+                    $output_category[] = $catValue;
+                    $output_tags[] = $tagValue;
                 }
-                $output_category[] = $value;
             }
-
+            $output_category = array_unique($output_category);
+            $output_tags = array_unique($output_tags);
+            
             $collaborators = array();
-            if ($entry['maker1_email'] != '')
-                $collaborators[] = $entry['maker1_email'];
-            if ($entry['maker2_email'] != '')
-                $collaborators[] = $entry['maker2_email'];
-            if ($entry['maker3_email'] != '')
-                $collaborators[] = $entry['maker3_email'];
-            if ($entry['maker4_email'] != '')
-                $collaborators[] = $entry['maker4_email'];
-            if ($entry['maker5_email'] != '')
-                $collaborators[] = $entry['maker5_email'];
-            if ($entry['maker6_email'] != '')
-                $collaborators[] = $entry['maker6_email'];
-            if ($entry['maker7_email'] != '')
-                $collaborators[] = $entry['maker7_email'];
-
 
             $entryData[] = array('title' => $entry['title'],
-                'path' => 'https://makerfaire.com/maker/entry/' . $entry_id . '/',
-                'created' => $entry['date_created'],
-                'teaser' => ($entry['teaser'] != '' ? 'At my exhibit, you can learn how to ' . $entry['teaser'] : ''),
+                'created' => date("l, F n Y - H:i", strtotime($entry['date_created'])),
                 'image' => $entry['image'],
-                'difficulty' => '',
-                'duration' => '',
-                'visibility' => 'Public',
-                'video' => $entry['video'],
-                'ahha' => '',
-                'uhoh' => '',
-                'story' => '<div><div>' . $entry['short_desc'] . '</div>' .
-                ($entry['inspire'] != '' ? '<div>Project Inspiration: ' . $entry['inspire'] . '</div>' : '') .
-                ($entry['website'] != '' ? '<div><a href="' . $entry['website'] . '">Project Website</a></div>' : '') .
-                '</div>',
-                'howto' => '',
-                'category' => implode(",", $output_category),
-                'tools' => '',
-                'materials' => '',
-                'boardsKits' => '',
-                'resources' => '',
-                'team' => $team,
-                'collaborators' => $entry['maker1_email'],
-                'Public' => 'Yes');
+                'description' => $entry['website'],
+                'owner' => $entry['owner'],
+                'team' => '',
+                'categories' => implode(",", $output_category),
+                'tags' => implode(",", $output_tags),
+                'postBody1' => $entry['description'],
+                'postBody2' => $entry['problems_solve'],
+                'postBody3' => $entry['challenges'],
+                'postVideo1' => $entry['video'],
+                'postVideo2' => $entry['video2'],
+                'postBody4' => '');
         }
     }
+
     $CSVData['entryData'] = $entryData;
     return $CSVData;
 }
