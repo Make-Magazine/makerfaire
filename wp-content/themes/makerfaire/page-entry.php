@@ -161,10 +161,12 @@ if (array_intersect(array('administrator', 'editor'), $user->roles)) {
 //decide if we should display this entry
 $validEntry = false;
 if (is_array($entry) && !empty($entry)) { //is this a valid entry?
-    if ((isset($entry['status']) && $entry['status'] === 'active' && //is the entry not trashed
-            isset($entry[303]) && $entry[303] == 'Accepted') || //is the entry accepted?
-            $adminView == true) {                                         // OR, if user is an administrator or editor they can see it all
-        $validEntry = true; //display the entry
+    if(isset($entry[151])&& $entry[151]!=''){
+        if ((isset($entry['status']) && $entry['status'] === 'active' && //is the entry not trashed
+                isset($entry[303]) && $entry[303] == 'Accepted') || //is the entry accepted?
+                $adminView == true) {                                         // OR, if user is an administrator or editor they can see it all
+            $validEntry = true; //display the entry
+        }
     }
 }
 
