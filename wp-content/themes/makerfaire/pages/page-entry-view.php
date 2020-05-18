@@ -12,9 +12,11 @@
             <div class="entry-header">
 
                 <div class="entry-type">
-                    <?php if ($displayFormType == true) {
+                    <?php
+                    if ($displayFormType == true) {
                         echo $formType;
-                    } ?>
+                    }
+                    ?>
                 </div>
 
                 <h1>
@@ -33,10 +35,18 @@
             </p>
 
             <!-- Project Short Description -->
-            <p id="project_short" class="lead"><?php echo nl2br($project_short); ?></p>
-
+            <div id="project_short" class="lead">
+                <p><?php echo nl2br($project_short); ?></p>                
+                <?php if (isset($project_problems) && $project_problems != '') { ?>
+                    <p><b>What are the problems you aim to help solve with this project?:</b><br/><?php echo nl2br($project_problems); ?></p>
+                <?php } ?>
+                <?php if (isset($project_challenges) && $project_challenges != '') { ?>
+                    <p><b>What are some of the major challenges you have encountered and how did you address them?:</b><br/><?php echo nl2br($project_challenges); ?></p>
+            <?php } ?>
+            </div>
             <?php
             echo $video;    //project Video
+            echo $video2; //field386
             if (!empty($project_website)) {
                 ?> <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" >Project Website</a><?php
             }
@@ -46,10 +56,10 @@
 
             if (display_group($entryId)) {
                 ?><div class="group-entry"><?php echo display_group($entryId); ?></div><?php
-            }
-            if (display_groupEntries($entryId)) {
-                ?><div class="group-entries"><?php echo display_groupEntries($entryId); ?></div><?php }
-            ?>
+                }
+                if (display_groupEntries($entryId)) {
+                    ?><div class="group-entries"><?php echo display_groupEntries($entryId); ?></div><?php }
+                ?>
         </div>
 
         <div class="col-md-4 col-sm-12 col-xs-12" id="entrySidebar">
@@ -69,22 +79,11 @@
 
 
             <div class="sidebar-type"> <!-- Maker/Group/Worskhop etc -->
-<?php if ($dispMakerInfo) { ?>
-                    <div class="entry-header">
-                        <h2><?php
-                            if ($isGroup) {
-                                echo 'Group';
-                            } elseif ($isList) {
-                                echo 'Makers';
-                            } else {
-                                echo 'Maker';
-                            }
-                            ?>
-                        </h2>
-                    </div>
+                <?php if ($dispMakerInfo) { ?>                    
                     <?php
                     if ($isGroup) {
                         ?>
+                        <div class="entry-header"><h2>GROUP</h2></div>
                         <div class="entry-page-maker-info">
                             <div class="row padbottom">
                                 <div class="col-xs-12">
@@ -104,7 +103,13 @@
                             </div>
                         </div>
                         <?php
-                    } else {
+                    }
+                    if (count($makers) > 0) {
+                        if (count($makers) == 1) {
+                            echo '<div class="entry-header"><h2>MAKER</h2></div>';                            
+                        } else {
+                            echo '<div class="entry-header"><h2>MAKERS</h2></div>';
+                        }
                         foreach ($makers as $key => $maker) {
                             if ($maker['firstname'] != '') {
                                 ?>

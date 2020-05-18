@@ -71,13 +71,7 @@ if (isset($entry->errors)) {
         }
     }
 
-    //get makers info
-    $makers = getMakerInfo($entry);
 
-    $groupname = (isset($entry['109']) ? $entry['109'] : '');
-    $groupphoto = (isset($entry['111']) ? $entry['111'] : '');
-    $groupbio = (isset($entry['110']) ? $entry['110'] : '');
-    $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
 
     // build array of categories
     $mainCategory = '';
@@ -95,21 +89,17 @@ if (isset($entry->errors)) {
     }
     $categoryDisplay = display_categories($categories);
 
-    // One maker
-    // A list of makers (7 max)
-    // A group or association
-    $displayType = (isset($entry['105']) ? $entry['105'] : '');
-
-    $isGroup = $isList = $isSingle = false;
-    $isGroup = (strpos($displayType, 'group') !== false);
-    $isList = (strpos($displayType, 'list') !== false);
-    $isSingle = (strpos($displayType, 'One') !== false);
+    //get makers info        
+    $makers = getMakerInfo($entry);
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
+    $project_problems = (isset($entry['287']) ? $entry['287'] : ''); //What are the problems you aim to help solve with this project?
+    $project_challenges = (isset($entry['123']) ? $entry['123'] : ''); //What are some of the major challenges you have encountered and how did you address them?
     $project_website = (isset($entry['27']) ? $entry['27'] : '');  //Website
     $project_video = (isset($entry['32']) ? $entry['32'] : '');     //Video
+    $project_video2 = (isset($entry['386']) ? $entry['386'] : '');     //Video2
     $project_title = (isset($entry['151']) ? esc_html($entry['151']) : ''); //Title
     $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
 }
@@ -183,19 +173,21 @@ $displayMakers = true;
 
 
 $displayFormType = true;
-foreach($entry as $key=>$field ) {
-  $pos = strpos($key, '304.');
-  if ($pos !== false ) {
-    if($field=='no-public-view' )    $validEntry    = false;
-    if($field=='no-maker-display' )  $displayMakers = false;
-    if($field=='hide-form-type')     $displayFormType = false;
-  }
+foreach ($entry as $key => $field) {
+    $pos = strpos($key, '304.');
+    if ($pos !== false) {
+        if ($field == 'no-public-view')
+            $validEntry = false;
+        if ($field == 'no-maker-display')
+            $displayMakers = false;
+        if ($field == 'hide-form-type')
+            $displayFormType = false;
+    }
 }
 
 
 // Project Inline video
 $video = '';
-
 if (!empty($project_video)) {
     $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video);
     //youtube has two type of url formats we need to look for and change
@@ -204,6 +196,21 @@ if (!empty($project_video)) {
         $dispVideo = 'https://www.youtube.com/embed/' . $videoID;
     }
     $video = '<div class="entry-video">
+              <div class="embed-youtube">
+                <iframe class="lazyload" src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+              </div>
+            </div>';
+}
+
+$video2 = '';
+if (!empty($project_video2)) {
+    $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video2);
+    //youtube has two type of url formats we need to look for and change
+    $videoID = parse_yturl($dispVideo);
+    if ($videoID != false) {
+        $dispVideo = 'https://www.youtube.com/embed/' . $videoID;
+    }
+    $video2 = '<div class="entry-video">
               <div class="embed-youtube">
                 <iframe class="lazyload" src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
               </div>
@@ -444,6 +451,43 @@ function display_categories($catArray) {
 //return makers info
 function getMakerInfo($entry) {
     $makers = array();
+    if (isset($entry['gpnf_entry_parent'])&&$entry['gpnf_entry_parent']!='') { //is this a nested form with parent information
+        //pull maker information from nested form        
+        $makers = getMakerInfoNested($entry);
+    } else {
+        //pull information from legacy        
+        $makers = getMakerInfoLegacy($entry);
+    }
+    
+    return $makers;
+}
+
+function getMakerInfoLegacy($entry) {
+    //set group information    
+    global $isGroup;
+    global $isList;
+    global $isSingle;
+    global $groupname;
+    global $groupphoto;
+    global $groupbio;
+    global $groupsocial;
+    $groupname = (isset($entry['109']) ? $entry['109'] : '');
+    $groupphoto = (isset($entry['111']) ? $entry['111'] : '');
+    $groupbio = (isset($entry['110']) ? $entry['110'] : '');
+    $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
+
+    // One maker
+    // A list of makers (7 max)
+    // A group or association
+    $displayType = (isset($entry['105']) ? $entry['105'] : '');
+
+    $isGroup = $isList = $isSingle = false;
+    $isGroup = (strpos($displayType, 'group') !== false);
+    $isList = (strpos($displayType, 'list') !== false);
+    $isSingle = (strpos($displayType, 'One') !== false);
+
+    $makers = array();
+    //set maker information
     if (isset($entry['160.3']) && $entry['160.3'] != "")
         $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
             'bio' => (isset($entry['234']) ? $entry['234'] : ''),
@@ -636,6 +680,7 @@ function displayEntryFooter() {
     global $wpdb;
     global $faireID;
     global $faire;
+
     global $faire_year;
     global $show_sched;
     global $backMsg;
@@ -649,6 +694,10 @@ function displayEntryFooter() {
     if (strpos($faire, 'new-york') !== false) {
         $faire_location = "New York";
         $faire_link = "/new-york";
+    }
+    if (strpos($faire, 'virtual') !== false) {
+        $faire_location = "Virtual Maker Faire";
+        $faire_link = "/virtual";
     }
 
     // we're going to check if the schedule page exists
@@ -697,4 +746,52 @@ function displayEntryFooter() {
     $return .= '</div>';
 
     return $return;
+}
+
+function getMakerInfoNested($entry) {
+    global $isGroup;
+
+    global $groupname;
+    global $groupphoto;
+    global $groupbio;
+    global $groupsocial;
+    global $entryId;
+
+    //get parent information
+    $parent_entry_ID = $entry['gpnf_entry_parent'];
+    $parent_entry = GFAPI::get_entry($parent_entry_ID);
+    if (is_wp_error($parent_entry)) {
+        echo 'there is an error';
+        var_dump($parent_entry);
+    } else {
+        //pull group information from parent
+        if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
+            $isGroup = true;
+            $groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
+            $groupphoto = (isset($parent_entry['111']) ? $parent_entry['111'] : '');
+            $groupbio = (isset($parent_entry['110']) ? $parent_entry['110'] : '');
+            $groupsocial = getSocial(isset($parent_entry['828']) ? $parent_entry['828'] : '');
+        }
+    }
+
+    //get maker information    
+    $makers = array();
+
+    $child_entryID_array = explode(",", $parent_entry[854]);
+
+    foreach ($child_entryID_array as $child_entryID) {
+        if ($child_entryID != $entryId) { //no need to process the entry we are looking at
+            $child_entry = GFAPI::get_entry($child_entryID);
+
+            if (!is_wp_error($parent_entry) && $child_entry['form_id'] == 246) {
+                $makers[] = array('firstname' => $child_entry['160.3'], 'lastname' => $child_entry['160.6'],
+                    'bio' => (isset($child_entry['234']) ? $child_entry['234'] : ''),
+                    'photo' => (isset($child_entry['217']) ? $child_entry['217'] : ''),
+                    'social' => getSocial(isset($child_entry['821']) ? $child_entry['821'] : '')
+                );
+            }
+        }
+    }
+
+    return $makers;
 }
