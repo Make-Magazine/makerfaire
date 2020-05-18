@@ -785,7 +785,7 @@ function getMakerInfoNested($entry) {
         if ($child_entryID != $entryId) { //no need to process the entry we are looking at
             $child_entry = GFAPI::get_entry($child_entryID);
 
-            if (!is_wp_error($parent_entry) && $child_entry['form_id'] == 246) {
+            if (!is_wp_error($child_entry) && $child_entry['form_id'] == 246) {
                 $makers[] = array('firstname' => $child_entry['160.3'], 'lastname' => $child_entry['160.6'],
                     'bio' => (isset($child_entry['234']) ? $child_entry['234'] : ''),
                     'photo' => (isset($child_entry['217']) ? $child_entry['217'] : ''),
