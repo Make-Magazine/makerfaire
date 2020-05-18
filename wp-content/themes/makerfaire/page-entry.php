@@ -696,8 +696,8 @@ function displayEntryFooter() {
         $faire_link = "/new-york";
     }
     if (strpos($faire, 'virtual') !== false) {
-        $faire_location = "Virtual Maker Faire";
-        $faire_link = "/virtual";
+        $faire_location = "";
+        $faire_link = "";
     }
 
     // we're going to check if the schedule page exists
@@ -738,7 +738,7 @@ function displayEntryFooter() {
 		        <a class="btn universal-btn" href="' . $faire_map . '"><h4>Download Map</h4></a>
 		    </div>';
     }
-    if ($faire != '') {
+    if ($faire != '' && $faire_location!='') {
         $return .= '<div class="faireAction-box">
 		         <a class="btn universal-btn" href="' . $faire_link . '"><h4>' . $faire_location . ' Home</h4></a>
                     </div>';
