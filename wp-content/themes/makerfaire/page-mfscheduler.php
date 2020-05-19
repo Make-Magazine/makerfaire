@@ -328,7 +328,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                 //DEBUG: Interval looks like it is no longer needed.
                 //Why do we need to add 7 days to make this work???
                 // see if we can add default beginning and ending time
-                //$start_dt->add(new DateInterval(‘P7D’));
+                $start_dt->add(new DateInterval(‘P7D’));
             }
         }
         $transport = new \Kendo\Data\DataSourceTransport ();
