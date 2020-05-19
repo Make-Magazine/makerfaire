@@ -424,8 +424,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
 
         $scheduler = new \Kendo\UI\Scheduler('scheduler');
 
-        $scheduler->eventTemplateId('presentation-template')
-                ->timezone('America/Los_Angeles')
+        $scheduler->eventTemplateId('presentation-template')                
+                ->timezone('UTC')
                 ->currentTimeMarker(false)
                 ->date(new DateTime($start_dt))
                 ->height(900)->pdf($pdf)
