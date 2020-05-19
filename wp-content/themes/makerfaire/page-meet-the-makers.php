@@ -62,7 +62,7 @@ if ($noMakerText == '')
                             </li>   
                         </ul>   
                     </div>
-                    <div class="faux-checkbox">
+                    <div class="faux-checkbox" style='display:none'>
                         <label>Hands-On Activities</label>
                         <ul class="nav nav-pills">
                             <li class="nav-item">
@@ -78,7 +78,7 @@ if ($noMakerText == '')
                     <div class="dropdown" ng-if="locations.length > 0">
                         <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                       
                             <span ng-show="makerSearch.location != ''">{{makerSearch.location}}</span>
-                            <span ng-show="makerSearch.location == ''">All Locations</span>
+                            <span ng-show="makerSearch.location == ''">All <?php echo (get_field('faire')=='VMF2020'?'Tracks':'Locations');?></span>
                             <i class="fa fa-chevron-down" aria-hidden="true"></i>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">

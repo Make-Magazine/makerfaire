@@ -81,9 +81,11 @@ app.controller('mtmMakers', ['$scope', '$filter', '$http', function ($scope, $fi
                     });
 
                     $scope.tags = catList;
-                    if (locList.length > 0)
+                    $scope.locations = [];
+                    if (locList.length > 0) {
                         var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-                    $scope.locations = locList.sort(collator.compare);
+                        $scope.locations = locList.sort(collator.compare);
+                    }
                 },
                         function errorCallback(error) {
                             console.log(error);

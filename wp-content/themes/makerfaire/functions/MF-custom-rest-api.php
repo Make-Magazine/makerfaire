@@ -210,7 +210,46 @@ function getMTMentries($formIDs, $faireID) {
               FROM   wp_gf_entry AS lead 
               WHERE  lead.status = 'active' 
                      AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
-
+    if($faireID=='VMF2020'){
+         $query = "SELECT  lead.id                         AS entry_id, 
+                     (SELECT meta_value 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 303 
+                             AND entry_id = lead.id) AS entry_status, 
+                     (SELECT meta_value 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 22 
+                             AND entry_id = lead.id) AS proj_photo, 
+                     (SELECT meta_value 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 151 
+                             AND entry_id = lead.id) AS proj_name, 
+                     (SELECT meta_value 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 16 
+                             AND entry_id = lead.id) AS short_desc, 
+                     (SELECT '' 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 320 
+                             AND entry_id = lead.id) AS prime_cat, 
+                     (SELECT Group_concat(meta_value) 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key LIKE'%321%' 
+                             AND entry_id = lead.id 
+                      GROUP  BY entry_id)            AS second_cat, 
+                     (SELECT Group_concat(meta_value) 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key LIKE'%304%' 
+                             AND entry_id = lead.id 
+                      GROUP  BY entry_id)            AS flags,
+                     (SELECT meta_value 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 320 
+                             AND entry_id = lead.id) AS area
+              FROM   wp_gf_entry AS lead 
+              WHERE  lead.status = 'active' 
+                     AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
+    }
     $results = $wpdb->get_results($query);
 
     //build entry array
@@ -255,7 +294,9 @@ function getMTMentries($formIDs, $faireID) {
             if ($showLoc && $result->area != NULL) {
                 $locations = array_unique(explode(',', $result->area));
             }
-
+            if($faireID=='VMF2020'){
+                $locations = array(html_entity_decode(get_CPT_name($result->area)));
+            }
             $data['entity'][] = array(
                 'id' => $result->entry_id,
                 'name' => $result->proj_name,
