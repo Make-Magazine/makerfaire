@@ -11,6 +11,8 @@ $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($w
 $schedule_ids = get_field('schedule_ids');
 $schedule_ids_trimmed = preg_replace('/\s+/', '', $schedule_ids);
 
+error_log(get_field('faire_type'));
+
 $displayNav = get_field('display_left_nav');
 if ($displayNav) {
     ?>
@@ -53,13 +55,12 @@ if ($displayNav) {
                     <input type="hidden" id="faire"     value="<?php echo $faire; ?>" />
                     <input type="hidden" id="faire_st"  value="<?php echo $faireData->start_dt; ?>" />
                     <input type="hidden" id="faire_end" value="<?php echo $faireData->end_dt; ?>" />
-                    <?php if (have_posts()) { ?>
-                        <div class="schedule-header container-fluid">
-                            <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
-                        </div><?php }
-                    ?>
+      
                     <div class="schedule-wrapper">			
                         <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+								<div class="schedule-header container-fluid">
+									<h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
+								</div>
                                 <div class="schedule-description">
                                     <?php the_content(); ?>
                                 </div>
@@ -118,13 +119,14 @@ if ($displayNav) {
                                             <div class="dropdown">
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                     <span ng-show="schedSearch.nicename != ''">{{schedSearch.nicename}}</span>
-                                                    <span ng-show="schedSearch.nicename == ''">All Stages</span>
+                                                    <span ng-show="schedSearch.nicename == ''">All <?php echo (get_field('faire_type')=='VMF'?'Tracks':'Stages');?></span>
+
                                                     <i class="fa fa-chevron-down" aria-hidden="true"></i>
                                                 </button>
 
                                                 <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
                                                     <li>
-                                                        <a class="pointer-on-hover" ng-click="schedSearch.nicename = ''"><?php _e("All Stages", 'makerfaire') ?></a>
+                                                        <a class="pointer-on-hover" ng-click="schedSearch.nicename = ''">All <?php echo (get_field('faire_type')=='VMF'?'Tracks':'Stages');?></a>
                                                     </li>
                                                     <li ng-repeat="stage in stages">                     
                                                         <a class="pointer-on-hover" ng-click="schedSearch.nicename = stage">{{stage}}</a>

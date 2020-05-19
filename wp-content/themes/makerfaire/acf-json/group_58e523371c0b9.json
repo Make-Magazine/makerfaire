@@ -20,6 +20,32 @@
             "prepend": "",
             "append": "",
             "maxlength": ""
+        },
+        {
+            "key": "field_5ec437868baaf",
+            "label": "Faire Type",
+            "name": "faire_type",
+            "type": "select",
+            "instructions": "Faire Type may determine some layout options",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "BA": "Bay Area",
+                "NY": "New York",
+                "VMF": "Virtual"
+            },
+            "default_value": [],
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0,
+            "return_format": "value",
+            "ajax": 0,
+            "placeholder": ""
         }
     ],
     "location": [
@@ -39,7 +65,6 @@
     "hide_on_screen": [
         "the_content",
         "excerpt",
-        "custom_fields",
         "discussion",
         "comments",
         "slug",
@@ -50,5 +75,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1535568387
+    "modified": 1589918325
 }

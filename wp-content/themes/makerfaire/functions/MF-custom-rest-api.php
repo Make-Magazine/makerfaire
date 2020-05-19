@@ -143,7 +143,7 @@ function mf_fairedata(WP_REST_Request $request) {
                 $data = getCategories($formIDs);
                 break;
             case 'schedule':
-                $data = getSchedule($formIDs);
+                $data = getSchedule($formIDs, $faireID);
                 break;
         }
     } else {
@@ -343,7 +343,7 @@ function getCategories($formIDs) {
     return $data;
 }
 
-function getSchedule($formIDs) {
+function getSchedule($formIDs, $faireID) {
     global $wpdb;
     $data = array();
     $data['schedule'] = array();
@@ -370,6 +370,50 @@ function getSchedule($formIDs) {
             /* code to hide scheduled items as they occur
               . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " */
             . "order by subarea.sort_order";
+	if($faireID=='VMF2020'){
+         $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
+              lead_detail.form_id, area.area, subarea.subarea, subarea.nicename, subarea.sort_order,
+              lead_detail.meta_value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
+              location.latitude, location.longitude, 
+                     (SELECT meta_value as value
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 303 
+                             AND entry_id = schedule.entry_id) AS entry_status, 
+                     (SELECT meta_value 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 22 
+                             AND entry_id = schedule.entry_id) AS photo, 
+                     (SELECT meta_value 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 151 
+                             AND entry_id = schedule.entry_id) AS name, 
+                     (SELECT meta_value 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 16 
+                             AND entry_id = schedule.entry_id) AS short_desc, 
+                     (SELECT group_concat( meta_value separator ',') AS cat 
+					  FROM wp_gf_entry_meta 
+					  WHERE entry_id = schedule.entry_id
+					   		 AND (meta_key like '%320%' 
+							 OR meta_key like '%321%'))  AS category, 
+                     (SELECT Group_concat(meta_value) 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key LIKE'%304%' 
+                             AND entry_id = schedule.entry_id 
+                      GROUP  BY entry_id)            AS flags,
+                     (SELECT meta_value 
+                      FROM   wp_gf_entry_meta 
+                      WHERE  meta_key = 320 
+                             AND entry_id = schedule.entry_id) AS area
+              FROM wp_mf_schedule as schedule
+				   left outer join wp_mf_location as location on location_id = location.id
+				   left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
+				   left outer join wp_mf_faire_area area on area.id = subarea.area_id
+				   left outer join wp_gf_entry as lead on schedule.entry_id = lead.id
+				   left outer join wp_gf_entry_meta as lead_detail on schedule.entry_id = lead_detail.entry_id and lead_detail.meta_key = '303'
+              WHERE  lead.status = 'active' 
+                     AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
+    }
 
     $schedule = $wpdb->get_results($query);
     //retrieve project name, img (22), maker list, topics
@@ -377,7 +421,8 @@ function getSchedule($formIDs) {
         $form = GFAPI::get_form($row->form_id);
         $form_type = $form['form_type'];
 
-        $makerList = getMakerList($row->entry_id);
+        $makerList = getMakerList($row->entry_id, $faireID);
+		
         $makerArr = array();
 
         //get array of categories. set name based on category id
@@ -451,7 +496,7 @@ function getSchedule($formIDs) {
     return $data;
 }
 
-function getMakerList($entryID) {
+function getMakerList($entryID, $faireID) {
     $makerList = '';
     $data = array();
     global $wpdb;
@@ -460,7 +505,15 @@ function getMakerList($entryID) {
               where lead_detail.entry_id = $entryID "
             . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
             . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
-
+	if($faireID=='VMF2020'){
+		$query = "SELECT *
+              FROM wp_gf_entry_meta
+              where entry_id = $entryID "
+            . "and cast(meta_key as char) in('96.3', '96.6')";
+		$entryData = $wpdb->get_results($query);
+		$maker_name = $entryData[0]->meta_value . " " . $entryData[1]->meta_value;
+		return $maker_name;
+	} 
     $entryData = $wpdb->get_results($query);
     //field 105 - who would you like listed
     //    one maker, a group or association, a list of makers

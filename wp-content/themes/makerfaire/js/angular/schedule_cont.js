@@ -22,6 +22,7 @@ weekday[6] = "Saturday";
 
 
 scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
+	    console.log($scope);
         $scope.inFaire = false; //are we during the faire?
         inFaire = false;
         //infinite scroll
