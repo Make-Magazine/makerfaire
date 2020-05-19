@@ -296,7 +296,7 @@ function get_schedule($lead,$locsOnly = false){
               if($locsOnly){
                 $schedule .= ($schedule!=''?',':'').$subarea;
               }else{
-                $schedule .= $row->area.' '.$subarea;
+                $schedule .= $row->area.' - '.$subarea;
                 $schedule .= '<br/>';
                 $schedule .= '<span>'.date("l, n/j/y, g:i A",$start_dt).' to '.date("l, n/j/y, g:i A",$end_dt).'</span><br/>';
               }
