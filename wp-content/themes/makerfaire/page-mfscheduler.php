@@ -319,6 +319,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
         if ($result) {
             while ($row = $result->fetch_array()) {
                 $start_dt = DateTime::createFromFormat('Y-m-d H:i:s', $row ['start_dt']); // your original DTO
+                $start_dt->add(new DateInterval('P7D'));
                 $start_dow = $start_dt->format('N');
                 $start_dt = $start_dt->format('Y/m/d'); // your newly formatted date ready to be substituted into JS new Date();
 
@@ -328,7 +329,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                 //DEBUG: Interval looks like it is no longer needed.
                 //Why do we need to add 7 days to make this work???
                 // see if we can add default beginning and ending time
-                $start_dt->add(new DateInterval(‘P7D’));
+                
             }
         }
         $transport = new \Kendo\Data\DataSourceTransport ();
