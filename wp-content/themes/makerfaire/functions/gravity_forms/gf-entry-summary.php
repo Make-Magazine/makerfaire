@@ -274,6 +274,7 @@ function gf_collapsible_sections($form, $lead) {
 
     //email fields
     $emailArray = array();
+    
     if (isset($lead['98']) && $lead['98'] != '')
         $emailArray[$lead['98']]['Contact'] = $lead['96.3'] . ' ' . $lead['96.6'];
     if (isset($lead['161']) && $lead['161'] != '')
@@ -291,6 +292,13 @@ function gf_collapsible_sections($form, $lead) {
     if (isset($lead['163']) && $lead['163'] != '')
         $emailArray[$lead['163']]['Maker 7'] = $makerfirstname7 . ' ' . $makerlastname7;
 
+    //for supplement forms, let's see if there is a field set to pull in email
+    $return = get_value_by_label('contact-email', $form, array());
+    if(isset($return['id'])){
+        $emailArray[$lead[$return['id']]]['contact-email'] = $lead[$return['id']];
+    }
+    
+    
     foreach ($form['fields'] as $field) {
         $fieldData[$field['id']] = $field;
     }
@@ -317,17 +325,9 @@ function gf_collapsible_sections($form, $lead) {
     $addEntriesCnt = 0;
     foreach ($emailArray as $key => $email) {
         $results = $wpdb->get_results('SELECT  *,
-                                            (SELECT meta_value
-                                               FROM wp_gf_entry_meta detail2
-                                              WHERE detail2.entry_id = wp_gf_entry_meta.entry_id
-                                                AND meta_key = 151 ) as projectName,
-                                            (SELECT meta_value
-                                               FROM wp_gf_entry_meta detail2
-                                              WHERE detail2.entry_id = wp_gf_entry_meta.entry_id
-                                                AND meta_key = 303 ) as status,
-                                            (SELECT status
-                                               FROM wp_gf_entry
-                                              WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status
+                                            (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName,
+                                            (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status,
+                                            (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status
                                       FROM wp_gf_entry_meta
                                       JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id
                                      WHERE meta_value = "' . $key . '"' .
