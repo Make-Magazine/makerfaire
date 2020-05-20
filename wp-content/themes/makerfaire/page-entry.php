@@ -765,6 +765,7 @@ function getMakerInfoNested($entry) {
     if (is_wp_error($parent_entry)) {
         echo 'there is an error';
         var_dump($parent_entry);
+        return array();
     } else {
         //pull group information from parent
         if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
@@ -778,8 +779,8 @@ function getMakerInfoNested($entry) {
 
     //get maker information    
     $makers = array();
-
-    $child_entryID_array = explode(",", $parent_entry[854]);
+    
+    $child_entryID_array = explode(",", $entry['gpnf_entry_nested_form_field']);
 
     foreach ($child_entryID_array as $child_entryID) {
         if ($child_entryID != $entryId) { //no need to process the entry we are looking at
