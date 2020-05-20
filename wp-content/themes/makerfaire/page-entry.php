@@ -780,7 +780,7 @@ function getMakerInfoNested($entry) {
     //get maker information    
     $makers = array();
     
-    $child_entryID_array = explode(",", $entry['854']); //field 854 contains the makers, 852 contains the projects
+    $child_entryID_array = explode(",", $parent_entry['854']); //field 854 contains the makers, 852 contains the projects
 
     foreach ($child_entryID_array as $child_entryID) {
         if ($child_entryID != $entryId) { //no need to process the entry we are looking at
