@@ -390,7 +390,6 @@
 			  .sched-description {
 				 line-height: 1.3em;
 				 max-height: 90px;
-				 overflow: hidden;
 				 display: -webkit-box;
 				 -webkit-line-clamp: 2;
 				 -webkit-box-orient: vertical;
@@ -437,7 +436,7 @@
             padding-right: 0;
             width: 100%;
             margin-left: 0;
-            //padding-left: 110px;
+            padding-left: 0px;
           }
           .panel-heading {
             padding-bottom: 0;
@@ -457,6 +456,17 @@
             }
           }
         }
+	   .sched-col-2 { 
+		    display: flex;
+			flex-flow: column wrap;
+			justify-content: flex-start;
+			min-height: 100%;
+		   .stage-track {
+			   margin-top: auto;
+			   margin-bottom: 0px;
+			   font-family: "Roboto Bold";
+		   }
+	   }
       }
     }
   }

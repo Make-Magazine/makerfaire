@@ -209,11 +209,7 @@ if ($displayNav) {
                                                         <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a>
                                                     </h3>
                                                     <p class="sched-description" ng-bind-html="trust(schedule.maker_list)"></p>
-
-                                                    <div class="sched-registration" ng-show="schedule.flags != NULL && schedule.flags.indexOf('Registration Required') != -1 && schedule.registration != NULL">
-                                                        <hr />
-                                                        <a href="{{schedule.registration}}" target="_blank">Register Here</a>
-                                                    </div>
+													<p class="stage-track stage-{{schedule.stageOrder}}">{{schedule.nicename}}</p>
                                                 </div>
 
                                                 <div class="sched-col-3">
@@ -229,7 +225,12 @@ if ($displayNav) {
                                                     </div>
                                                 </div>
 
-                                                <div class="sched-col-4">{{schedule.nicename}}</div>
+                                                <div class="sched-col-4">
+													<div class="sched-registration" ng-show="schedule.flags != NULL && schedule.flags.indexOf('Registration Required') != -1 && schedule.registration != NULL">
+                                                        <hr />
+                                                        <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>
+                                                    </div>
+												</div>
 
                                                 <div class="col-xs-10 col-xs-offset-2 sched-more-info">
                                                     <div class="panel-heading">
