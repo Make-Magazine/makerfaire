@@ -368,7 +368,7 @@ function getSchedule($formIDs, $faireID) {
         $endDate = date_create($row->time_end);
         $endDate = date_format($endDate, 'Y-m-d') . 'T' . date_format($endDate, 'H:i:s');
 
-
+		//set default values for schedule type if not set
         if ($row->type == '') {
             //demo, performance, talk, workshop
             if ($form_type == 'Performance') {
@@ -400,8 +400,6 @@ function getSchedule($formIDs, $faireID) {
                 $viewNow      = (isset($linked_entry['52'])  ? $linked_entry['52']  : '');
             }
         }
-
-        
 
         //set stage name
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
