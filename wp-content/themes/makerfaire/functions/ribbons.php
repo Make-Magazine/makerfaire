@@ -15,6 +15,7 @@ function getRibbons($year){
    *
    */
   $return = array();
+  $faireID = ''; // blank for now, until we can pull in this info
 
   $sql = "SELECT entry_id, location, year, "
               . "wp_mf_ribbons.project_name as ribbon_proj_name, "
@@ -52,7 +53,7 @@ function getRibbons($year){
         //overwrites
         $project_name   = ($ribbon['ribbon_proj_name']  != '' && !is_null($ribbon['ribbon_proj_name'])  ? $ribbon['ribbon_proj_name']  : $ribbon['project_name']);
         $project_photo  = ($ribbon['ribbon_proj_photo'] != '' && !is_null($ribbon['ribbon_proj_photo']) ? $ribbon['ribbon_proj_photo'] : $ribbon['project_photo']);
-        $maker_name     = ($ribbon['maker_name']        != '' && !is_null($ribbon['maker_name'])        ? $ribbon['maker_name']        : getMakerList($entry_id));
+        $maker_name     = ($ribbon['maker_name']        != '' && !is_null($ribbon['maker_name'])        ? $ribbon['maker_name']        : getMakerList($entry_id, $faireID));
       }else{
         $link           = "/mfarchives/". $post_id;
         $project_name   = ($ribbon['ribbon_proj_name']  != '' && !is_null($ribbon['ribbon_proj_name'])  ? $ribbon['ribbon_proj_name']  : '');
