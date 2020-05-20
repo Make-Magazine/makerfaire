@@ -229,4 +229,3 @@ function schedScroll($window) {
         }
     };
 }
-;
