@@ -21,8 +21,8 @@ weekday[5] = "Friday";
 weekday[6] = "Saturday";
 
 
-scheduleApp.controller('scheduleCtrl', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
-	    console.log($scope);
+scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
+	    $scope.trust = $sce.trustAsHtml; // for rendering html
         $scope.inFaire = false; //are we during the faire?
         inFaire = false;
         //infinite scroll

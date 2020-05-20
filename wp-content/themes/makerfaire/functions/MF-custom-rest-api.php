@@ -520,7 +520,7 @@ function getMakerList($entryID, $faireID) {
 				if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
 					$isGroup = true;
 					$groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
-					return $groupname;
+					$makerList .= "<p style='font-weight:600;margin-bottom:5px;font-size:15px;'>" . $groupname . "</p>";
 				}
 			}
 			//get maker information
@@ -537,12 +537,13 @@ function getMakerList($entryID, $faireID) {
 						
 						$makers = array('firstname' => $child_entry['160.3'], 'lastname' => $child_entry['160.6']
 						);
-						
-						$makerList = implode(", ", $makers);
+						$makerList .= implode(" ", $makers) . ", ";
 					}
 				}
 			}
-			return $makers;
+			if(!$child_entryID_array[0] || $child_entryID_array[0] == "") $makerList = rtrim($makerList, ":");
+			$makerList = rtrim($makerList, ", ");
+	
 		}
 
 	} 

@@ -11,8 +11,6 @@ $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($w
 $schedule_ids = get_field('schedule_ids');
 $schedule_ids_trimmed = preg_replace('/\s+/', '', $schedule_ids);
 
-error_log(get_field('faire_type'));
-
 $displayNav = get_field('display_left_nav');
 if ($displayNav) {
     ?>
@@ -210,7 +208,7 @@ if ($displayNav) {
                                                     <h3>
                                                         <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a>
                                                     </h3>
-                                                    <p class="sched-description">{{schedule.maker_list}}</p>
+                                                    <p class="sched-description" ng-bind-html="trust(schedule.maker_list)"></p>
 
                                                     <div class="sched-registration" ng-show="schedule.flags != NULL && schedule.flags.indexOf('Registration Required') != -1 && schedule.registration != NULL">
                                                         <hr />
