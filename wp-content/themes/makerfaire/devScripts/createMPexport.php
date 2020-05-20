@@ -15,8 +15,8 @@ if (!isset($_POST['formID'])) {
             <form method="post" enctype="multipart/form-data">
                 What form would you like to export?<br/>
                 <input type="text" name="formID" />
-                <br/>
 
+                Note: This only works for form 245                
                 Export File:<br/>
                 <input type="radio" id="male" name="exportType" value="entries">
                 <label for="entries">Entries</label><br>
@@ -31,18 +31,19 @@ if (!isset($_POST['formID'])) {
     <?php
 } else {
     //form id must be passed
-    $form = (isset($_POST['formID']) ? $_POST['formID'] : '');
+    $form = (isset($_POST['formID']) ? $_POST['formID'] : '245');
+    
     $exportType = (isset($_POST['exportType']) ? $_POST['exportType'] : 'entries');
     if ($form == '') {
-        die();
+        die('form is empty');
     }
-
+    
     if ($exportType == 'makers') {
         $CSVData = exportMFMakers($form);
     } else {
         $CSVData = exportEntries($form);
     }
-    //die('stop');
+    
     // output headers so that the file is downloaded rather than displayed
     header('Content-type: text/csv');
     header('Content-Disposition: attachment; filename="exportForm' . $form . '-' . $exportType . '.csv"');
@@ -233,13 +234,13 @@ function exportEntries($form) {
     $CSVData = array();
 
     $catXref = array(21344 => array('3D Printing and Imaging', ''),
-        21386 => array('', ''),
+        21386 => array('3D Printing and Imaging', 'Additive Manufacturing'),
         21346 => array('Arduino', ''),
         21387 => array('Teachers', ''),
         21349 => array('CAD', ''),
         21351 => array('CNC & Machining', ''),
         21352 => array('Computers & Mobile', ''),
-        21388 => array('', ''),
+        21388 => array('Health and Bio Hacking', 'Distributed Manufacturing'),
         21358 => array('Emerging Tech', ''),
         21359 => array('Energy & Sustainability', ''),
         21339 => array('Health and Bio Hacking', 'Face Masks'),
@@ -249,7 +250,7 @@ function exportEntries($form) {
         21368 => array('Laser Cutting', ''),
         21389 => array('health and Bio Hacking', ''),
         21372 => array('Other Boards', ''),
-        21390 => array('', ''),
+        21390 => array('Health and Bio Hacking', 'Process/Distributed Networks'),
         21343 => array('Health and Bio Hacking', 'Protective Suits and Gowns'),
         21376 => array('Raspberry Pi', ''),
         21391 => array('Energy & Sustainability', 'Renewable Energy'),
@@ -257,14 +258,14 @@ function exportEntries($form) {
         21377 => array('Robotics', ''),
         21341 => array('Health and Bio Hacking', 'Sanitation and Sterilization'),
         21392 => array('Energy & Sustainability', 'Sustainable Living'),
-        21393 => array('', ''),
+        21393 => array('Health and Bio Hacking', ''),
         21342 => array('Health and Bio Hacking', 'Ventilators'),
-        21383 => array('Wearables', ''),
+        21383 => array('Wearables', 'Textiles'),
         21394 => array('Emerging Tech', ''),
         21372 => array('Other Boards', '')
     );
 
-    $CSVData['fieldHeaders'] = array('title', 'created', 'image', 'description', 'owner', 'team', 'categories', 'tags', 'postBody1', 'postBody2', 'postBody3', 'postVideo1', 'postVideo2', 'postBody4');
+    $CSVData['fieldHeaders'] = array('title', 'created', 'image', 'description', 'owner', 'team', 'categories', 'tags', 'postBody1', 'postBody2', 'postBody3', 'postVideo1', 'postVideo2', 'postBody4', 'status', 'format', 'entryID');
     //entry data
     $sql = "SELECT wp_gf_entry.id as entry_id, wp_gf_entry.date_created, 
             (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='303' limit 1)as status,
@@ -277,6 +278,7 @@ function exportEntries($form) {
             (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='287' limit 1)as problems_solve,
             (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='123' limit 1)as challenges,                        
             (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='27' limit 1)as website,
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_gf_entry.id and meta_key ='387' limit 1)as format,
             (select group_concat(meta_value) 
                 from wp_gf_entry_meta 
                 where wp_gf_entry_meta.entry_id = wp_gf_entry.id and 
@@ -289,10 +291,12 @@ function exportEntries($form) {
     $entries = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
     $entryData = array();
     foreach ($entries as $entry) {
-        if ($entry['status'] == 'Accepted') {
+        if(trim($entry['format'])=='Online Exhibit'){
+        //if ($entry['status'] == 'Accepted') {
             $entry_id = $entry['entry_id'];
             //build html for team field
-            //$team = createTeam($entry);
+            //$team = getMakerInfoNested($entry);
+            $team="";
             //gt categories
             $entry_cat = (string) $entry['categories'];
             $categories = explode(',', $entry_cat); //place comma separated list into an array
@@ -324,7 +328,7 @@ function exportEntries($form) {
                 'image' => $entry['image'],
                 'description' => $entry['website'],
                 'owner' => $entry['owner'],
-                'team' => '',
+                'team' => $team,
                 'categories' => implode(",", $output_category),
                 'tags' => implode(",", $output_tags),
                 'postBody1' => $entry['description'],
@@ -332,7 +336,10 @@ function exportEntries($form) {
                 'postBody3' => $entry['challenges'],
                 'postVideo1' => $entry['video'],
                 'postVideo2' => $entry['video2'],
-                'postBody4' => '');
+                'postBody4' => '',
+                'status'=>$entry['status'],
+                'format'=>$entry['format'],
+                'entryID'=>$entry_id);
         }
     }
 
@@ -344,7 +351,22 @@ function cmp($a, $b) {
     return $a["id"] - $b["id"];
 }
 
+//return makers info
+function getMakerInfo($entry) {
+    $makers = array();
+    if (isset($entry['gpnf_entry_parent'])&&$entry['gpnf_entry_parent']!='') { //is this a nested form with parent information
+        //pull maker information from nested form        
+        $makers = getMakerInfoNested($entry);
+    } else {
+        //pull information from legacy        
+        $makers = getMakerInfoLegacy($entry);
+    }
+    
+    return $makers;
+}
+
 function createTeam($entry) {
+    //format owner@email.com, Team Lead, contributor@email.com, Designer
     $output = "";
     for ($i = 1; $i <= 7; $i++) {
         $makerName = 'maker' . $i . '_name';
@@ -384,4 +406,34 @@ function teamInnerContent($makerName, $makerRole) {
     </ul>
 </div>';
     return $output;
+}
+
+function getMakerInfoNested($entry) {
+    //format owner@email.com, Team Lead, contributor@email.com, Designer    
+    global $entryId;
+    $entry = GFAPI::get_entry($entryId);
+    //get parent information
+    $parent_entry_ID = $entry['gpnf_entry_parent'];
+    $parent_entry = GFAPI::get_entry($parent_entry_ID);
+    if (is_wp_error($parent_entry)) {
+        echo 'there is an error';
+        var_dump($parent_entry);
+    } else {
+        //get maker information    
+        $makers = array();
+
+        $child_entryID_array = explode(",", $parent_entry[852]);
+
+        foreach ($child_entryID_array as $child_entryID) {
+            if ($child_entryID != $entryId) { //no need to process the entry we are looking at
+                $child_entry = GFAPI::get_entry($child_entryID);
+
+                if (!is_wp_error($child_entry) && $child_entry['form_id'] == 246) {                
+                    $makers[] = array($child_entry['161'], $child_entry['443']);
+                }
+            }
+        }
+    }
+   
+    return $makers;
 }
