@@ -230,7 +230,7 @@ function getMTMentries($formIDs, $faireID) {
             if ($fitPhoto == NULL)
                 $fitPhoto = $projPhoto;
 
-            $makerList = getMakerList($result->entry_id);
+            $makerList = getMakerList($result->entry_id, $faireID);
 
             //get array of categories. set name based on category id
             $category = array();
