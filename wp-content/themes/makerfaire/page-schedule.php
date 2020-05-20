@@ -11,6 +11,8 @@ $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($w
 $schedule_ids = get_field('schedule_ids');
 $schedule_ids_trimmed = preg_replace('/\s+/', '', $schedule_ids);
 
+$faireType = get_field('faire_type');
+
 $displayNav = get_field('display_left_nav');
 if ($displayNav) {
     ?>
@@ -135,7 +137,32 @@ if ($displayNav) {
                                                 </ul>
                                             </div>
                                         </div>
-                                        <?php /*<div class="sched-col-4">
+                                        <?php 
+										if($faireType == "VMF") { ?>
+										<div class="sched-col-4">
+                                            <div class="dropdown">
+												
+                                                <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                    <span ng-show="schedSearch.region != ''">{{schedSearch.region}}</span>
+                                                    <span ng-show="schedSearch.region == null || schedSearch.region == ''">All Regions</span>
+                                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                                </button>
+
+                                                <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+                                                    <li>
+                                                        <a class="pointer-on-hover" ng-click="schedSearch.region = ''">All Regions</a>
+                                                    </li>
+                                                    <li ng-repeat="stage in stages">                     
+                                                        <a class="pointer-on-hover" ng-click="schedSearch.region = ''"><?php _e("All Regions", 'makerfaire') ?></a>
+                                                    </li>
+                                                    <li ng-repeat="schedule in schedules| filter:schedSearch | dateFilter: filterdow |  orderBy: 'region' | unique: 'region'">
+                                                        <a ng-click="schedSearch.region = schedule.region">{{schedule.region}}</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+										<?php }
+										/*<div class="sched-col-4">
                                             <div class="dropdown">
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                        
                                                     <span ng-show="filterdow != ''">{{filterdow}}</span>
@@ -224,7 +251,6 @@ if ($displayNav) {
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="sched-col-4">
 													<div class="sched-registration" ng-show="schedule.flags != NULL && schedule.flags.indexOf('Registration Required') != -1 && schedule.registration != NULL">
                                                         <hr />
