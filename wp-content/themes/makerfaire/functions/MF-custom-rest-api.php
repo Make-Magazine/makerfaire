@@ -324,6 +324,7 @@ function getSchedule($formIDs, $faireID) {
             . "order by subarea.sort_order";    
 
     $schedule = $wpdb->get_results($query);
+	
     //retrieve project name, img (22), maker list, topics
     foreach ($schedule as $row) {
         $form = GFAPI::get_form($row->form_id);
@@ -366,7 +367,7 @@ function getSchedule($formIDs, $faireID) {
         $endDate = date_create($row->time_end);
         $endDate = date_format($endDate, 'Y-m-d') . 'T' . date_format($endDate, 'H:i:s');
 
-        //set default values for schedule type if not set
+
         if ($row->type == '') {
             //demo, performance, talk, workshop
             if ($form_type == 'Performance') {
@@ -374,9 +375,19 @@ function getSchedule($formIDs, $faireID) {
             } else {
                 $type = 'talk';
             }
-        } else {
+		} else {
             $type = $row->type;
         }
+		//set default values for schedule type if not set
+        if ( strpos($faireID, "VMF") === 0 ) { // special for virtual faires
+			if( $row->type == 'talk' || $row->type == '' ) {
+				$type = 'presentation';
+			}else if( $row->type == 'demo' ) {
+				$type = 'demonstration';
+			}
+		}
+		
+		error_log($type);
 
         //set stage name
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);

@@ -102,7 +102,7 @@ if ($displayNav) {
                                                     <i class="fa fa-chevron-down" aria-hidden="true"></i>
                                                 </button>
 
-                                                <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+                                                <ul class="dropdown-menu type" aria-labelledby="mtm-dropdownMenu">
                                                     <li>
                                                         <a class="pointer-on-hover" ng-click="schedSearch.type = ''"><?php _e("All Types", 'makerfaire') ?></a>
                                                     </li>
