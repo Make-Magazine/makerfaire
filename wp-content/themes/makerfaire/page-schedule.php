@@ -135,7 +135,7 @@ if ($displayNav) {
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="sched-col-4">
+                                        <?php /*<div class="sched-col-4">
                                             <div class="dropdown">
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                        
                                                     <span ng-show="filterdow != ''">{{filterdow}}</span>
@@ -153,8 +153,8 @@ if ($displayNav) {
                                                     </li>
                                                 </ul>
                                             </div>                               
-                                        </div>
-                                    </div>
+                                        </div> */ ?>
+                                    </div> 
                                 </div>
                                 <div class="calendar-wrapper">
                                     <form class="calendar" method="post" action="/wp-content/themes/makerfaire/download-ics.php">
