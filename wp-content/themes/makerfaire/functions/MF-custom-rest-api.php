@@ -506,13 +506,45 @@ function getMakerList($entryID, $faireID) {
             . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
             . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
 	if($faireID=='VMF2020'){
-		$query = "SELECT *
-              FROM wp_gf_entry_meta
-              where entry_id = $entryID "
-            . "and cast(meta_key as char) in('96.3', '96.6')";
-		$entryData = $wpdb->get_results($query);
-		$maker_name = $entryData[0]->meta_value . " " . $entryData[1]->meta_value;
-		return $maker_name;
+		$entry = GFAPI::get_entry($entryID);
+		if (isset($entry['gpnf_entry_parent']) &&$entry['gpnf_entry_parent']!='') {
+			//get parent information
+			$parent_entry_ID = $entry['gpnf_entry_parent'];
+			$parent_entry = GFAPI::get_entry($parent_entry_ID);
+			if (is_wp_error($parent_entry)) {
+				echo 'there is an error';
+				var_dump($parent_entry);
+				return array();
+			} else {
+				//pull group information from parent
+				if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
+					$isGroup = true;
+					$groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
+					return $groupname;
+				}
+			}
+			//get maker information
+			$makers = array();
+
+			$child_entryID_array = explode(",", $parent_entry[854]);
+
+			// pull the individual maker names... or at least the first one!
+			foreach ($child_entryID_array as $child_entryID) {
+				if ($child_entryID != $entryId) { //no need to process the entry we are looking at
+					$child_entry = GFAPI::get_entry($child_entryID);
+					//error_log(print_r($child_entry, TRUE));
+					if (!is_wp_error($child_entry) && $child_entry['form_id'] == 246) {
+						
+						$makers = array('firstname' => $child_entry['160.3'], 'lastname' => $child_entry['160.6']
+						);
+						
+						$makerList = implode(", ", $makers);
+					}
+				}
+			}
+			return $makers;
+		}
+
 	} 
     $entryData = $wpdb->get_results($query);
     //field 105 - who would you like listed
