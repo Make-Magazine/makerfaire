@@ -171,36 +171,13 @@ function getMTMentries($formIDs, $faireID) {
 
     //find all active entries for selected forms
     $query = "SELECT  lead.id                         AS entry_id, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 303 
-                             AND entry_id = lead.id) AS entry_status, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 22 
-                             AND entry_id = lead.id) AS proj_photo, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 151 
-                             AND entry_id = lead.id) AS proj_name, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 16 
-                             AND entry_id = lead.id) AS short_desc, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 320 
-                             AND entry_id = lead.id) AS prime_cat, 
-                     (SELECT Group_concat(meta_value) 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key LIKE'%321%' 
-                             AND entry_id = lead.id 
-                      GROUP  BY entry_id)            AS second_cat, 
-                     (SELECT Group_concat(meta_value) 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key LIKE'%304%' 
-                             AND entry_id = lead.id 
-                      GROUP  BY entry_id)            AS flags,
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 303 AND entry_id = lead.id) AS entry_status, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 22  AND entry_id = lead.id) AS proj_photo, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 151 AND entry_id = lead.id) AS proj_name, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 16  AND entry_id = lead.id) AS short_desc, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 320 AND entry_id = lead.id) AS prime_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE'%321%' AND entry_id = lead.id GROUP  BY entry_id) AS second_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE'%304%' AND entry_id = lead.id GROUP  BY entry_id) AS flags,
                      (SELECT Group_concat(wp_mf_faire_area.area)      
                       FROM `wp_mf_location` 
                       left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.id 
@@ -210,42 +187,17 @@ function getMTMentries($formIDs, $faireID) {
               FROM   wp_gf_entry AS lead 
               WHERE  lead.status = 'active' 
                      AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
-    if($faireID=='VMF2020'){
-         $query = "SELECT  lead.id                         AS entry_id, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 303 
-                             AND entry_id = lead.id) AS entry_status, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 22 
-                             AND entry_id = lead.id) AS proj_photo, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 151 
-                             AND entry_id = lead.id) AS proj_name, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 16 
-                             AND entry_id = lead.id) AS short_desc, 
-                     (SELECT '' 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 320 
-                             AND entry_id = lead.id) AS prime_cat, 
-                     (SELECT Group_concat(meta_value) 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key LIKE'%321%' 
-                             AND entry_id = lead.id 
-                      GROUP  BY entry_id)            AS second_cat, 
-                     (SELECT Group_concat(meta_value) 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key LIKE'%304%' 
-                             AND entry_id = lead.id 
-                      GROUP  BY entry_id)            AS flags,
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 320 
-                             AND entry_id = lead.id) AS area
+    //legacy faires have location set, virtual faires do not. 
+    if ($faireID == 'VMF2020') {
+        $query = "SELECT  lead.id                         AS entry_id, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 303 AND entry_id = lead.id) AS entry_status, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 22  AND entry_id = lead.id) AS proj_photo, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 151 AND entry_id = lead.id) AS proj_name, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 16  AND entry_id = lead.id) AS short_desc, 
+                     (SELECT '' FROM   wp_gf_entry_meta WHERE  meta_key = 320 AND entry_id = lead.id) AS prime_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE'%321%' AND entry_id = lead.id GROUP  BY entry_id) AS second_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE'%304%' AND entry_id = lead.id GROUP  BY entry_id) AS flags,
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 320 AND entry_id = lead.id) AS area
               FROM   wp_gf_entry AS lead 
               WHERE  lead.status = 'active' 
                      AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
@@ -294,7 +246,7 @@ function getMTMentries($formIDs, $faireID) {
             if ($showLoc && $result->area != NULL) {
                 $locations = array_unique(explode(',', $result->area));
             }
-            if($faireID=='VMF2020'){
+            if ($faireID == 'VMF2020') {
                 $locations = array(html_entity_decode(get_CPT_name($result->area)));
             }
             $data['entity'][] = array(
@@ -369,51 +321,7 @@ function getSchedule($formIDs, $faireID) {
             . " and lead_detail.form_id in(" . implode(",", $formIDarr) . ") "
             /* code to hide scheduled items as they occur
               . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " */
-            . "order by subarea.sort_order";
-	if($faireID=='VMF2020'){
-         $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
-              lead_detail.form_id, area.area, subarea.subarea, subarea.nicename, subarea.sort_order,
-              lead_detail.meta_value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
-              location.latitude, location.longitude, 
-                     (SELECT meta_value as value
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 303 
-                             AND entry_id = schedule.entry_id) AS entry_status, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 22 
-                             AND entry_id = schedule.entry_id) AS photo, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 151 
-                             AND entry_id = schedule.entry_id) AS name, 
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 16 
-                             AND entry_id = schedule.entry_id) AS short_desc, 
-                     (SELECT group_concat( meta_value separator ',') AS cat 
-					  FROM wp_gf_entry_meta 
-					  WHERE entry_id = schedule.entry_id
-					   		 AND (meta_key like '%320%' 
-							 OR meta_key like '%321%'))  AS category, 
-                     (SELECT Group_concat(meta_value) 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key LIKE'%304%' 
-                             AND entry_id = schedule.entry_id 
-                      GROUP  BY entry_id)            AS flags,
-                     (SELECT meta_value 
-                      FROM   wp_gf_entry_meta 
-                      WHERE  meta_key = 320 
-                             AND entry_id = schedule.entry_id) AS area
-              FROM wp_mf_schedule as schedule
-				   left outer join wp_mf_location as location on location_id = location.id
-				   left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
-				   left outer join wp_mf_faire_area area on area.id = subarea.area_id
-				   left outer join wp_gf_entry as lead on schedule.entry_id = lead.id
-				   left outer join wp_gf_entry_meta as lead_detail on schedule.entry_id = lead_detail.entry_id and lead_detail.meta_key = '303'
-              WHERE  lead.status = 'active' 
-                     AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
-    }
+            . "order by subarea.sort_order";    
 
     $schedule = $wpdb->get_results($query);
     //retrieve project name, img (22), maker list, topics
@@ -422,7 +330,7 @@ function getSchedule($formIDs, $faireID) {
         $form_type = $form['form_type'];
 
         $makerList = getMakerList($row->entry_id, $faireID);
-		
+
         $makerArr = array();
 
         //get array of categories. set name based on category id
@@ -435,6 +343,7 @@ function getSchedule($formIDs, $faireID) {
         $catList = implode(',', $category);
 
         // NOTE (ts): For 'Workshop' update... this may be the spot where the image is set... TBD
+        //we do not have maker 1 photo for vmf2020. need to pull it differently
         if ($form_type == 'Presentation') {
             $projPhoto = ($row->mkr1_photo != '' ? $row->mkr1_photo : $row->photo);
         } else {
@@ -500,95 +409,93 @@ function getMakerList($entryID, $faireID) {
     $makerList = '';
     $data = array();
     global $wpdb;
-    $query = "SELECT *
+    
+    if ($faireID == 'VMF2020') {
+        $entry = GFAPI::get_entry($entryID);
+        if (isset($entry['gpnf_entry_parent']) && $entry['gpnf_entry_parent'] != '') {
+            //get parent information
+            $parent_entry_ID = $entry['gpnf_entry_parent'];
+            $parent_entry = GFAPI::get_entry($parent_entry_ID);
+            if (is_wp_error($parent_entry)) {
+                //echo 'there is an error';
+                //var_dump($parent_entry);
+                return array();
+            } else {
+                //pull group information from parent
+                if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
+                    $isGroup = true;
+                    $groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
+                    $makerList .= "<p style='font-weight:600;margin-bottom:5px;font-size:15px;'>" . $groupname . "</p>";
+                }
+            }
+            //get maker information
+            $makers = array();
+
+            $child_entryID_array = explode(",", $parent_entry[854]);
+
+            // pull the individual maker names... or at least the first one!
+            foreach ($child_entryID_array as $child_entryID) {
+                if ($child_entryID != $entryId) { //no need to process the entry we are looking at
+                    $child_entry = GFAPI::get_entry($child_entryID);
+                    //error_log(print_r($child_entry, TRUE));
+                    if (!is_wp_error($child_entry) && $child_entry['form_id'] == 246) {
+                        $makers = array('firstname' => $child_entry['160.3'], 'lastname' => $child_entry['160.6']);
+                        $makerList .= implode(" ", $makers) . ", ";
+                    }
+                }
+            }
+            if (!$child_entryID_array[0] || $child_entryID_array[0] == "")
+                $makerList = rtrim($makerList, ":");
+            $makerList = rtrim($makerList, ", ");
+        }
+    } else {
+        $query = "SELECT *
               FROM wp_gf_entry_meta as lead_detail
               where lead_detail.entry_id = $entryID "
             . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
             . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
-	if($faireID=='VMF2020'){
-		$entry = GFAPI::get_entry($entryID);
-		if (isset($entry['gpnf_entry_parent']) &&$entry['gpnf_entry_parent']!='') {
-			//get parent information
-			$parent_entry_ID = $entry['gpnf_entry_parent'];
-			$parent_entry = GFAPI::get_entry($parent_entry_ID);
-			if (is_wp_error($parent_entry)) {
-				echo 'there is an error';
-				var_dump($parent_entry);
-				return array();
-			} else {
-				//pull group information from parent
-				if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
-					$isGroup = true;
-					$groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
-					$makerList .= "<p style='font-weight:600;margin-bottom:5px;font-size:15px;'>" . $groupname . "</p>";
-				}
-			}
-			//get maker information
-			$makers = array();
+        $entryData = $wpdb->get_results($query);
+        //field 105 - who would you like listed
+        //    one maker, a group or association, a list of makers
+        /* Maker Name field #'s -> 1 - 160, 2 - 158, 3 - 155, 4 - 156, 5 - 157, 6 - 159, 7 - 154
+         * Group Name - 109
+         */
+        $fieldData = array();
+        foreach ($entryData as $field) {
+            $fieldData[$field->meta_key] = $field->meta_value;
+        }
 
-			$child_entryID_array = explode(",", $parent_entry[854]);
+        if (isset($fieldData['105'])) {
+            $whoListed = strtolower($fieldData['105']);
+            $isGroup = false;
+            $isGroup = (strpos($whoListed, 'group') !== false);
+            $isOneMaker = false;
+            $isOneMaker = (strpos($whoListed, 'one') !== false);
 
-			// pull the individual maker names... or at least the first one!
-			foreach ($child_entryID_array as $child_entryID) {
-				if ($child_entryID != $entryId) { //no need to process the entry we are looking at
-					$child_entry = GFAPI::get_entry($child_entryID);
-					//error_log(print_r($child_entry, TRUE));
-					if (!is_wp_error($child_entry) && $child_entry['form_id'] == 246) {
-						
-						$makers = array('firstname' => $child_entry['160.3'], 'lastname' => $child_entry['160.6']
-						);
-						$makerList .= implode(" ", $makers) . ", ";
-					}
-				}
-			}
-			if(!$child_entryID_array[0] || $child_entryID_array[0] == "") $makerList = rtrim($makerList, ":");
-			$makerList = rtrim($makerList, ", ");
-	
-		}
+            if ($isGroup) {
+                $makerList = (isset($fieldData['109']) ? $fieldData['109'] : '');
+            } elseif ($isOneMaker) {
+                $makerList = (isset($fieldData['160.3']) ? $fieldData['160.3'] : '') . (isset($fieldData['160.6']) ? ' ' . $fieldData['160.6'] : '');
+            } else {
+                $makerArr = array();
+                if (isset($fieldData['160.3']))
+                    $makerArr[] = (isset($fieldData['160.3']) ? $fieldData['160.3'] . ' ' : '') . (isset($fieldData['160.6']) ? $fieldData['160.6'] : '');
+                if (isset($fieldData['158.3']))
+                    $makerArr[] = $fieldData['158.3'] . ' ' . (isset($fieldData['158.6']) ? $fieldData['158.6'] : '');
+                if (isset($fieldData['155.3']))
+                    $makerArr[] = $fieldData['155.3'] . ' ' . (isset($fieldData['155.6']) ? $fieldData['155.6'] : '');
+                if (isset($fieldData['156.3']))
+                    $makerArr[] = $fieldData['156.3'] . ' ' . (isset($fieldData['156.6']) ? $fieldData['156.6'] : '');
+                if (isset($fieldData['157.3']))
+                    $makerArr[] = $fieldData['157.3'] . ' ' . (isset($fieldData['157.6']) ? $fieldData['157.6'] : '');
+                if (isset($fieldData['159.3']))
+                    $makerArr[] = $fieldData['159.3'] . ' ' . (isset($fieldData['159.6']) ? $fieldData['159.6'] : '');
+                if (isset($fieldData['154.3']))
+                    $makerArr[] = $fieldData['154.3'] . ' ' . (isset($fieldData['154.6']) ? $fieldData['154.6'] : '');
 
-	} 
-    $entryData = $wpdb->get_results($query);
-    //field 105 - who would you like listed
-    //    one maker, a group or association, a list of makers
-    /* Maker Name field #'s -> 1 - 160, 2 - 158, 3 - 155, 4 - 156, 5 - 157, 6 - 159, 7 - 154
-     * Group Name - 109
-     */
-    $fieldData = array();
-    foreach ($entryData as $field) {
-        $fieldData[$field->meta_key] = $field->meta_value;
-    }
-
-    if (isset($fieldData['105'])) {
-        $whoListed = strtolower($fieldData['105']);
-        $isGroup = false;
-        $isGroup = (strpos($whoListed, 'group') !== false);
-        $isOneMaker = false;
-        $isOneMaker = (strpos($whoListed, 'one') !== false);
-
-        if ($isGroup) {
-            $makerList = (isset($fieldData['109']) ? $fieldData['109'] : '');
-        } elseif ($isOneMaker) {
-            $makerList = (isset($fieldData['160.3']) ? $fieldData['160.3'] : '') . (isset($fieldData['160.6']) ? ' ' . $fieldData['160.6'] : '');
-        } else {
-            $makerArr = array();
-            if (isset($fieldData['160.3']))
-                $makerArr[] = (isset($fieldData['160.3']) ? $fieldData['160.3'] . ' ' : '') . (isset($fieldData['160.6']) ? $fieldData['160.6'] : '');
-            if (isset($fieldData['158.3']))
-                $makerArr[] = $fieldData['158.3'] . ' ' . (isset($fieldData['158.6']) ? $fieldData['158.6'] : '');
-            if (isset($fieldData['155.3']))
-                $makerArr[] = $fieldData['155.3'] . ' ' . (isset($fieldData['155.6']) ? $fieldData['155.6'] : '');
-            if (isset($fieldData['156.3']))
-                $makerArr[] = $fieldData['156.3'] . ' ' . (isset($fieldData['156.6']) ? $fieldData['156.6'] : '');
-            if (isset($fieldData['157.3']))
-                $makerArr[] = $fieldData['157.3'] . ' ' . (isset($fieldData['157.6']) ? $fieldData['157.6'] : '');
-            if (isset($fieldData['159.3']))
-                $makerArr[] = $fieldData['159.3'] . ' ' . (isset($fieldData['159.6']) ? $fieldData['159.6'] : '');
-            if (isset($fieldData['154.3']))
-                $makerArr[] = $fieldData['154.3'] . ' ' . (isset($fieldData['154.6']) ? $fieldData['154.6'] : '');
-
-            $makerList = implode(", ", $makerArr);
+                $makerList = implode(", ", $makerArr);
+            }
         }
     }
-
     return $makerList;
 }
