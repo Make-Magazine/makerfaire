@@ -369,7 +369,7 @@ function getSchedule($formIDs, $faireID) {
         $endDate = date_create($row->time_end);
         $endDate = date_format($endDate, 'Y-m-d') . 'T' . date_format($endDate, 'H:i:s');
 
-		//set default values for schedule type if not set
+        //set default values for schedule type if not set
         if ($row->type == '') {
             //demo, performance, talk, workshop
             if ($form_type == 'Performance') {
@@ -380,7 +380,7 @@ function getSchedule($formIDs, $faireID) {
         } else {
             $type = $row->type;
         }
-        
+
         $registration = $row->registration;
         $viewNow = $row->viewNow;
         //set default values for schedule type if not set
@@ -390,15 +390,17 @@ function getSchedule($formIDs, $faireID) {
             } else if ($row->type == 'demo') {
                 $type = 'demonstration';
             }
-            
-            //check if supplemental form was submitted
-            $linkedSQL = 'select entry_id from wp_gf_entry_meta where meta_key="entry_id" and meta_value = '.$row->entry_id." limit 1";
-            $linked_results = $wpdb->get_row($linkedSQL,ARRAY_A);
-            if(isset($linked_results['entry_id'])){
-                $linked_entryID = $linked_results['entry_id'];
-                $linked_entry = GFAPI::get_entry($linked_entryID);
-                $registration = (isset($linked_entry['829']) && $linked_entry['829']!='' ? $linked_entry['829'] : $registration);
-                $viewNow      = (isset($linked_entry['52']) && $linked_entry['52']!='' ? $linked_entry['52']  : $viewNow);
+
+            $linkedSQL = 'select entry_id from wp_gf_entry_meta where meta_key="entry_id" and meta_value = ' . $row->entry_id;
+
+            $linked_results = $wpdb->get_results($linkedSQL, ARRAY_A);
+            foreach ($linked_results as $linked_result) {
+                if (isset($linked_result['entry_id'])) {
+                    $linked_entryID = $linked_result['entry_id'];
+                    $linked_entry = GFAPI::get_entry($linked_entryID);
+                    $registration = (isset($linked_entry['829']) && $linked_entry['829'] != '' ? $linked_entry['829'] : $registration);
+                    $viewNow = (isset($linked_entry['52']) && $linked_entry['52'] != '' ? $linked_entry['52'] : $viewNow);
+                }
             }
         }
 

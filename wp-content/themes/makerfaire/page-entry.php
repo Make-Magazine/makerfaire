@@ -155,14 +155,16 @@ $viewNow = (isset($entry[837]) ? $entry[837] : '');
 //if this is a virtual faire, check if supplemental form was subimitted with links
 if (strpos($faireShort, "VMF") === 0) { // special for virtual faires
     //check if supplemental form was submitted
-    $linkedSQL = 'select entry_id from wp_gf_entry_meta where meta_key="entry_id" and meta_value = ' . $entryId . " limit 1";
+    $linkedSQL = 'select entry_id from wp_gf_entry_meta where meta_key="entry_id" and meta_value = ' . $entryId;
     
-    $linked_results = $wpdb->get_row($linkedSQL, ARRAY_A);
-    if (isset($linked_results['entry_id'])) {
-        $linked_entryID = $linked_results['entry_id'];
-        $linked_entry = GFAPI::get_entry($linked_entryID);
-        $registerLink = (isset($linked_entry['829']) && $linked_entry['829'] != '' ? $linked_entry['829'] : $registerLink);
-        $viewNow = (isset($linked_entry['52']) && $linked_entry['52'] != '' ? $linked_entry['52'] : $viewNow);
+    $linked_results = $wpdb->get_results($linkedSQL, ARRAY_A);
+    foreach ($linked_results as $linked_result) {
+        if (isset($linked_result['entry_id'])) {
+            $linked_entryID = $linked_result['entry_id'];
+            $linked_entry = GFAPI::get_entry($linked_entryID);
+            $registerLink = (isset($linked_entry['829']) && $linked_entry['829'] != '' ? $linked_entry['829'] : $registerLink);
+            $viewNow = (isset($linked_entry['52']) && $linked_entry['52'] != '' ? $linked_entry['52'] : $viewNow);
+        }
     }
 }
 
