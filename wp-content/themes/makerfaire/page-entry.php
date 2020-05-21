@@ -161,7 +161,7 @@ if (strpos($faireShort, "VMF") === 0) { // special for virtual faires
     if (isset($linked_results['entry_id'])) {
         $linked_entryID = $linked_results['entry_id'];
         $linked_entry = GFAPI::get_entry($linked_entryID);
-        $registration = (isset($linked_entry['829']) && $linked_entry['829'] != '' ? $linked_entry['829'] : $registration);
+        $registerLink = (isset($linked_entry['829']) && $linked_entry['829'] != '' ? $linked_entry['829'] : $registerLink);
         $viewNow = (isset($linked_entry['52']) && $linked_entry['52'] != '' ? $linked_entry['52'] : $viewNow);
     }
 }
