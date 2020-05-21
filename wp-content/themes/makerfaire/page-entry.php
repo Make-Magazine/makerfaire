@@ -802,8 +802,8 @@ function getMakerInfoNested($entry) {
     $parent_entry_ID = $entry['gpnf_entry_parent'];
     $parent_entry = GFAPI::get_entry($parent_entry_ID);
     if (is_wp_error($parent_entry)) {
-        echo 'there is an error';
-        var_dump($parent_entry);
+        //echo 'there is an error';
+        //var_dump($parent_entry);
         return array();
     } else {
         //pull group information from parent
