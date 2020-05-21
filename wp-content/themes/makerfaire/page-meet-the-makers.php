@@ -17,19 +17,25 @@ if ($noMakerText == '')
         <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
         <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
+
         <div class="container">
             <div class="col-md-3 col-sm-12 col-xs-12">
                 <?php
                 echo get_faire_backlink();
                 ?>
             </div>
-            <div class="col-md-6 col-sm-12 col-xs-12">
+            <div class="col-md-6 col-sm-12 col-xs-12">                
                 <h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
             </div>
             <div class="col-md-3 col-sm-12">
-            </div>
+            </div>            
         </div>
-
+        <?php if (have_posts()) : while (have_posts()) : the_post(); ?>                
+                <div class="schedule-description">
+                    <?php the_content(); ?>
+                </div>
+            <?php endwhile; ?>			
+        <?php endif; ?>
         <div class="flag-banner"></div>
 
         <div class="mtm-search">
@@ -78,7 +84,7 @@ if ($noMakerText == '')
                     <div class="dropdown" ng-if="locations.length > 0">
                         <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                       
                             <span ng-show="makerSearch.location != ''">{{makerSearch.location}}</span>
-                            <span ng-show="makerSearch.location == ''">All <?php echo (get_field('faire')=='VMF2020'?'Tracks':'Locations');?></span>
+                            <span ng-show="makerSearch.location == ''">All <?php echo (get_field('faire') == 'VMF2020' ? 'Tracks' : 'Locations'); ?></span>
                             <i class="fa fa-chevron-down" aria-hidden="true"></i>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
@@ -99,11 +105,11 @@ if ($noMakerText == '')
                         </button>
 
                         <ul>
-      <li ng-repeat="maker in makers | filter:{categories: {id}}"> 
-        {{ maker.categories }}
-      </li>
-      
-    </ul>
+                            <li ng-repeat="maker in makers| filter:{categories: {id}}"> 
+                                {{ maker.categories}}
+                            </li>
+
+                        </ul>
                         <ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
                             <li>
                                 <a class="pointer-on-hover" ng-click="makerSearch.categories = ''"><?php _e("All", 'makerfaire') ?></a>
