@@ -8,6 +8,9 @@
 		color: #4A4A4A;
 		font-family: "Roboto-Light";
 		margin-bottom: 0px;
+		@media (max-width: 767px) {
+			margin-left: 15px;
+		}
 	}
 	margin-left: 0px;
 	padding-left: 0px;
@@ -33,15 +36,12 @@
 		width: 100%;
 	}
 	.timezone-wrapper {
-		position: absolute;
-		top: 40px;
-		right: 0px;
+		float: right;
 		timezone-label {
 			margin-right: 10px;
 		}
 		@media (max-width: 767px) {
-			position: relative;
-			top: 0px;
+			float: none;
 			text-align: center;
 			margin-bottom: 15px;
 		}
