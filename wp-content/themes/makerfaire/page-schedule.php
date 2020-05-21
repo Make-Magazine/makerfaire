@@ -28,6 +28,7 @@ if ($displayNav) {
 <?php
 }
 
+
 //set faire
             $post_data = get_post($post->post_parent);
             $parent_slug = $post_data->post_name;
@@ -64,6 +65,9 @@ if ($displayNav) {
                                     <div class="schedule-description">
                                         <?php the_content(); ?>
                                     </div>
+									<div class='timezone-wrapper' ng-show="showSchedules">
+										<span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone("America/Los_Angeles"); ?>
+									</div>
                                 <?php endwhile; ?>			
                             <?php endif; ?>
 
@@ -245,9 +249,11 @@ if ($displayNav) {
                                                             {{schedule.time_start| date: "EEEE"}}
                                                         </div>
                                                         <div class="col-xs-9 col-sm-12">
-                                                            {{schedule.time_start| date: "shortTime"}} -
+                                                            <span class="dispStartTime">{{schedule.time_start| date: "shortTime"}}</span> -
                                                             <span class="lineBr"><br/></span>
-                                                            {{schedule.time_end| date: "shortTime"}}
+															<span class="dispEndTime">{{schedule.time_end| date: "shortTime"}}</span>
+															<div class="start_dt hidden">{{schedule.time_start| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
+															<div class="end_dt hidden">{{schedule.time_end| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
                                                         </div>
                                                     </div>
                                                 </div>

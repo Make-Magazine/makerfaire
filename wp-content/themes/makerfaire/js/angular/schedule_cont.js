@@ -62,7 +62,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         filterdow = "";
 
         if (todaysDate.getTime() > faire_start.getTime() &&
-                todaysDate.getTime() <= faire_end.getTime()) {
+            todaysDate.getTime() <= faire_end.getTime()) {
             $scope.inFaire = true;
             inFaire = true;
             //todayDOW = weekday[todaysDate.getDay()];
@@ -223,9 +223,32 @@ function schedScroll($window) {
                     if (bottom_of_screen > top_of_element) {
                         scope.$apply(attrs.schedScroll);
                     }
+					changeTimeZone(jQuery(".timeZoneSelect").value);
                 }
             };
             $window.on('scroll', handler);
         }
     };
 }
+
+function changeTimeZone(tz) {
+	jQuery('.sched-col-3').each(function () {
+		//start time
+		var s = spacetime(jQuery(this).find(".start_dt").text(), 'America/Los_Angeles');   
+		s = s.goto(tz);       
+		var dispStartTime = s.format('time');      
+		jQuery(this).find(".dispStartTime").text(dispStartTime);
+
+		//end time        
+		var e = spacetime(jQuery(this).find(".end_dt").text(), 'America/Los_Angeles');                        
+		e = e.goto(tz);                  
+		dispEndTime = e.format('time');        
+		jQuery(this).find(".dispEndTime").text(dispEndTime);
+	});
+}
+
+jQuery(document).ready(function () {    
+    jQuery(".timeZoneSelect").on("change", function () {
+		changeTimeZone(this.value);
+    });
+});
