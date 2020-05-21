@@ -222,8 +222,9 @@ function schedScroll($window) {
                     var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
                     if (bottom_of_screen > top_of_element) {
                         scope.$apply(attrs.schedScroll);
+						changeTimeZone(jQuery(".timeZoneSelect").val());
                     }
-					changeTimeZone(jQuery(".timeZoneSelect").value);
+					
                 }
             };
             $window.on('scroll', handler);
