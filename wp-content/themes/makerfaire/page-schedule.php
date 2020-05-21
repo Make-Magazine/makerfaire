@@ -245,7 +245,7 @@ if ($displayNav) {
 
                                                 <div class="sched-col-3">
                                                     <div class="row">
-                                                        <div class="col-xs-3 col-sm-12">
+                                                        <div class="col-xs-3 col-sm-12 dispDay">
                                                             {{schedule.time_start| date: "EEEE"}}
                                                         </div>
                                                         <div class="col-xs-9 col-sm-12">

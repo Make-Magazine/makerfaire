@@ -245,6 +245,11 @@ function changeTimeZone(tz) {
 		e = e.goto(tz);                  
 		dispEndTime = e.format('time');        
 		jQuery(this).find(".dispEndTime").text(dispEndTime);
+		
+		// the day
+		var day = s.dayName();
+		jQuery(this).find(".dispDay").text(day);
+
 	});
 }
 
