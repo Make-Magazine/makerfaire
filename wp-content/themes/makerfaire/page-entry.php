@@ -150,6 +150,21 @@ $handsOn = handsOnMarker($entry);
 
 // check if there's the potential to have a register field
 $registerLink = (isset($entry[829]) ? $entry[829] : '');
+$viewNow = (isset($entry[837]) ? $entry[837] : '');
+
+//if this is a virtual faire, check if supplemental form was subimitted with links
+if (strpos($faireShort, "VMF") === 0) { // special for virtual faires
+    //check if supplemental form was submitted
+    $linkedSQL = 'select entry_id from wp_gf_entry_meta where meta_key="entry_id" and meta_value = ' . $entryId . " limit 1";
+    echo 'i am here';
+    $linked_results = $wpdb->get_row($linkedSQL, ARRAY_A);
+    if (isset($linked_results['entry_id'])) {
+        $linked_entryID = $linked_results['entry_id'];
+        $linked_entry = GFAPI::get_entry($linked_entryID);
+        $registration = (isset($linked_entry['829']) && $linked_entry['829'] != '' ? $linked_entry['829'] : $registration);
+        $viewNow = (isset($linked_entry['52']) && $linked_entry['52'] != '' ? $linked_entry['52'] : $viewNow);
+    }
+}
 
 // give admin and editor users special ability to see all entries
 $user = wp_get_current_user();
@@ -161,7 +176,7 @@ if (array_intersect(array('administrator', 'editor'), $user->roles)) {
 //decide if we should display this entry
 $validEntry = false;
 if (is_array($entry) && !empty($entry)) { //is this a valid entry?
-    if(isset($entry[151])&& $entry[151]!=''){
+    if (isset($entry[151]) && $entry[151] != '') {
         if ((isset($entry['status']) && $entry['status'] === 'active' && //is the entry not trashed
                 isset($entry[303]) && $entry[303] == 'Accepted') || //is the entry accepted?
                 $adminView == true) {                                         // OR, if user is an administrator or editor they can see it all
@@ -231,26 +246,26 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
 ?>
 <div class="clear"></div>
 <script type="text/javascript">
-    jQuery(document).ready(function () {    
-    
-    jQuery(".timeZoneSelect").on("change", function () {
-        //start time
-        var s = spacetime(jQuery("#start_dt").val(), 'America/Los_Angeles');                
-        s = s.goto(this.value);                  
-        var dispStartTime = s.format('time');        
-        jQuery("#dispStartTime").text(dispStartTime);
-        
-        //set date
-        var dispDate = s.format("{day}, {month} {date}");
-        jQuery("#startDT").text(dispDate);
-        
-        //end time        
-        var e = spacetime(jQuery("#end_dt").val(), 'America/Los_Angeles');                        
-        e = e.goto(this.value);                  
-        dispEndTime = e.format('time');        
-        jQuery("#dispEndTime").text(dispEndTime);
+    jQuery(document).ready(function () {
+
+        jQuery(".timeZoneSelect").on("change", function () {
+            //start time
+            var s = spacetime(jQuery("#start_dt").val(), 'America/Los_Angeles');
+            s = s.goto(this.value);
+            var dispStartTime = s.format('time');
+            jQuery("#dispStartTime").text(dispStartTime);
+
+            //set date
+            var dispDate = s.format("{day}, {month} {date}");
+            jQuery("#startDT").text(dispDate);
+
+            //end time        
+            var e = spacetime(jQuery("#end_dt").val(), 'America/Los_Angeles');
+            e = e.goto(this.value);
+            dispEndTime = e.format('time');
+            jQuery("#dispEndTime").text(dispEndTime);
+        });
     });
-});
 </script>
 <div class="container-fluid entry-page">
     <div class="row">
@@ -365,11 +380,11 @@ function display_entry_schedule($entry_id) {
                     $prev_location = $current_location;
                     $return .= '<small class="text-muted">' . $current_location . '</small><br />';
                 }
-                
+
                 $return .= '<small class="text-muted">Time:</small> <span id="dispStartTime">' . date("g:i a", $start_dt) . '</span> - <span id="dispEndTime">' . date("g:i a", $end_dt) . '</span></small><br />';
                 //spacetime tool wants date in ISO format - July 2, 2017 5:01:00
-                $return .='<input id="start_dt" name="start_dt" value="'.date("F j, Y H:i:s",$start_dt).'" type="hidden">';                
-                $return .='<input id="end_dt" name="end_dt" value="'.date("F j, Y H:i:s",$end_dt).'" type="hidden">';
+                $return .= '<input id="start_dt" name="start_dt" value="' . date("F j, Y H:i:s", $start_dt) . '" type="hidden">';
+                $return .= '<input id="end_dt" name="end_dt" value="' . date("F j, Y H:i:s", $end_dt) . '" type="hidden">';
                 $return .= select_Timezone("America/Los_Angeles");
             } else {
                 global $faire_start;
@@ -477,14 +492,14 @@ function display_categories($catArray) {
 //return makers info
 function getMakerInfo($entry) {
     $makers = array();
-    if (isset($entry['gpnf_entry_parent'])&&$entry['gpnf_entry_parent']!='') { //is this a nested form with parent information
+    if (isset($entry['gpnf_entry_parent']) && $entry['gpnf_entry_parent'] != '') { //is this a nested form with parent information
         //pull maker information from nested form        
         $makers = getMakerInfoNested($entry);
     } else {
         //pull information from legacy        
         $makers = getMakerInfoLegacy($entry);
     }
-    
+
     return $makers;
 }
 
@@ -764,7 +779,7 @@ function displayEntryFooter() {
 		        <a class="btn universal-btn" href="' . $faire_map . '"><h4>Download Map</h4></a>
 		    </div>';
     }
-    if ($faire != '' && $faire_location!='') {
+    if ($faire != '' && $faire_location != '') {
         $return .= '<div class="faireAction-box">
 		         <a class="btn universal-btn" href="' . $faire_link . '"><h4>' . $faire_location . ' Home</h4></a>
                     </div>';
@@ -803,7 +818,7 @@ function getMakerInfoNested($entry) {
 
     //get maker information    
     $makers = array();
-    
+
     $child_entryID_array = explode(",", $parent_entry['854']); //field 854 contains the makers, 852 contains the projects
 
     foreach ($child_entryID_array as $child_entryID) {
