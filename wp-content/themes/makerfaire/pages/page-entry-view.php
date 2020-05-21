@@ -74,7 +74,11 @@
                 if (!empty($registerLink)) {
                     ?>
                     <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
-<?php } ?>
+                <?php } 
+                if (!empty($viewNow)) {
+                    ?>
+                    <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
+                <?php } ?>    
             </div>
 
 

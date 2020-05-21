@@ -397,8 +397,8 @@ function getSchedule($formIDs, $faireID) {
             if(isset($linked_results['entry_id'])){
                 $linked_entryID = $linked_results['entry_id'];
                 $linked_entry = GFAPI::get_entry($linked_entryID);
-                $registration = (isset($linked_entry['829']) && $linked_entry['829']!='' ? $linked_entry['829'] : '');
-                $viewNow      = (isset($linked_entry['52']) && $linked_entry['52']!='' ? $linked_entry['52']  : '');
+                $registration = (isset($linked_entry['829']) && $linked_entry['829']!='' ? $linked_entry['829'] : $registration);
+                $viewNow      = (isset($linked_entry['52']) && $linked_entry['52']!='' ? $linked_entry['52']  : $viewNow);
             }
         }
 
