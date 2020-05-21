@@ -322,10 +322,10 @@ function getSchedule($formIDs, $faireID) {
             . " and lead_detail.form_id in(" . implode(",", $formIDarr) . ") "
             /* code to hide scheduled items as they occur
               . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " */
-            . "order by subarea.sort_order";    
+            . "order by subarea.sort_order";
 
     $schedule = $wpdb->get_results($query);
-	
+
     //retrieve project name, img (22), maker list, topics
     foreach ($schedule as $row) {
         $form = GFAPI::get_form($row->form_id);
@@ -376,16 +376,30 @@ function getSchedule($formIDs, $faireID) {
             } else {
                 $type = 'talk';
             }
-		} else {
+        } else {
             $type = $row->type;
         }
-        if ( strpos($faireID, "VMF") === 0 ) { // special for virtual faires
-			if( $row->type == 'talk' || $row->type == '' ) {
-				$type = 'presentation';
-			}else if( $row->type == 'demo' ) {
-				$type = 'demonstration';
-			}
-		}
+        
+        $registration = $row->registration;
+        $viewNow = '';
+        //set default values for schedule type if not set
+        if (strpos($faireID, "VMF") === 0) { // special for virtual faires
+            if ($row->type == 'talk' || $row->type == '') {
+                $type = 'presentation';
+            } else if ($row->type == 'demo') {
+                $type = 'demonstration';
+            }
+            
+            //check if supplemental form was submitted
+            $linkedSQL = 'select entry_id from wp_gf_entry_meta where meta_key="entry_id" and meta_value = '.$row->entry_id." limit 1";
+            $linked_results = $wpdb->get_row($linkedSQL,ARRAY_A);
+            if(isset($linked_results['entry_id'])){
+                $linked_entryID = $linked_results['entry_id'];
+                $linked_entry = GFAPI::get_entry($linked_entryID);
+                $registration = (isset($linked_entry['829']) ? $linked_entry['829'] : '');
+                $viewNow      = (isset($linked_entry['52'])  ? $linked_entry['52']  : '');
+            }
+        }
 
         //set stage name
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
@@ -406,8 +420,9 @@ function getSchedule($formIDs, $faireID) {
             'desc' => htmlspecialchars_decode($row->short_desc, ENT_QUOTES),
             'type' => ucwords($type),
             'flags' => $row->flags,
-            'registration' => $row->registration,
-            'region'       => $row->region
+            'registration' => $registration,
+            'view_now' => $viewNow,
+            'region' => $row->region
         );
     }
     //error_log(print_r($data, TRUE));
@@ -419,7 +434,7 @@ function getMakerList($entryID, $faireID) {
     $makerList = '';
     $data = array();
     global $wpdb;
-    
+
     if ($faireID == 'VMF2020') {
         $entry = GFAPI::get_entry($entryID);
         if (isset($entry['gpnf_entry_parent']) && $entry['gpnf_entry_parent'] != '') {
@@ -435,7 +450,7 @@ function getMakerList($entryID, $faireID) {
                 if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
                     $isGroup = true;
                     $groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
-                    $makerList .= "<p style='font-weight:600;margin-bottom:5px;font-size:15px;'>" . $groupname . "</p>";
+                    $makerList .= "<p style='font-weight:600;margin-bottom:0px;font-size:15px;'>" . $groupname . "</p>";
                 }
             }
             //get maker information
@@ -462,8 +477,8 @@ function getMakerList($entryID, $faireID) {
         $query = "SELECT *
               FROM wp_gf_entry_meta as lead_detail
               where lead_detail.entry_id = $entryID "
-            . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
-            . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
+                . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
+                . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
         $entryData = $wpdb->get_results($query);
         //field 105 - who would you like listed
         //    one maker, a group or association, a list of makers

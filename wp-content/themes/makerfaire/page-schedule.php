@@ -252,9 +252,11 @@ if ($displayNav) {
                                                     </div>
                                                 </div>
                                                 <div class="sched-col-4">
-													<div class="sched-registration" ng-show="schedule.flags != NULL && schedule.flags.indexOf('Registration Required') != -1 && schedule.registration != NULL">
-                                                        <hr />
+													<div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
                                                         <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>
+                                                    </div>
+													<div class="sched-viewNow" ng-show="schedule.view_now != NULL && schedule.view_now != ''">
+                                                        <a class="btn universal-btn" href="{{schedule.view_now}}" target="_blank">Watch Live</a>
                                                     </div>
 												</div>
 
