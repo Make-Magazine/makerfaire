@@ -467,3 +467,15 @@ function keep_incomplete_submissions( $expiration_days ) {
     $expiration_days = 365;
     return $expiration_days;
 }
+
+function select_Timezone($selected = '') {
+    $OptionsArray = timezone_identifiers_list();
+        $select= '<select class="timeZoneSelect">';
+        while (list ($key, $row) = each ($OptionsArray) ){
+            $select .='<option value="'.$row.'"';
+            $select .= ($row == $selected ? ' selected' : '');
+            $select .= '>'.$row.'</option>';
+        }  // endwhile;
+        $select.='</select>';
+return $select;
+}

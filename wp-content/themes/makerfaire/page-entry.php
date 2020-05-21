@@ -230,7 +230,28 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
 /* JS used only if the person visiting this page can edit the information on it */
 ?>
 <div class="clear"></div>
-
+<script type="text/javascript">
+    jQuery(document).ready(function () {    
+    
+    jQuery(".timeZoneSelect").on("change", function () {
+        //start time
+        var s = spacetime(jQuery("#start_dt").val(), 'America/Los_Angeles');                
+        s = s.goto(this.value);                  
+        var dispStartTime = s.format('time');        
+        jQuery("#dispStartTime").text(dispStartTime);
+        
+        //set date
+        var dispDate = s.format("{day}, {month} {date}");
+        jQuery("#startDT").text(dispDate);
+        
+        //end time        
+        var e = spacetime(jQuery("#end_dt").val(), 'America/Los_Angeles');                        
+        e = e.goto(this.value);                  
+        dispEndTime = e.format('time');        
+        jQuery("#dispEndTime").text(dispEndTime);
+    });
+});
+</script>
 <div class="container-fluid entry-page">
     <div class="row">
         <div class="content col-xs-12">
@@ -334,7 +355,7 @@ function display_entry_schedule($entry_id) {
                     if ($prev_start_dt != NULL) {
                         $return .= '</div><div class="entry-date-time col-xs-12">';
                     }
-                    $return .= '<h5>' . $current_start_dt . '</h5>';
+                    $return .= '<h5><span id="startDT">' . $current_start_dt . '</span></h5><br/>';
                     $prev_start_dt = $current_start_dt;
                     $prev_location = null;
                     $multipleLocations = TRUE;
@@ -342,11 +363,14 @@ function display_entry_schedule($entry_id) {
                 // this is a new location
                 if ($prev_location != $current_location) {
                     $prev_location = $current_location;
-                    $return .= '<small class="text-muted">LOCATION: ' . $current_location . '</small><br />';
+                    $return .= '<small class="text-muted">' . $current_location . '</small><br />';
                 }
-
-
-                $return .= '<small class="text-muted">TIME:</small> ' . date("g:i a", $start_dt) . ' - ' . date("g:i a", $end_dt) . '</small><br />';
+                
+                $return .= '<small class="text-muted">Time:</small> <span id="dispStartTime">' . date("g:i a", $start_dt) . '</span> - <span id="dispEndTime">' . date("g:i a", $end_dt) . '</span></small><br />';
+                //spacetime tool wants date in ISO format - July 2, 2017 5:01:00
+                $return .='<input id="start_dt" name="start_dt" value="'.date("F j, Y H:i:s",$start_dt).'" type="hidden">';                
+                $return .='<input id="end_dt" name="end_dt" value="'.date("F j, Y H:i:s",$end_dt).'" type="hidden">';
+                $return .= select_Timezone("America/Los_Angeles");
             } else {
                 global $faire_start;
                 global $faire_end;
@@ -548,8 +572,8 @@ function getSocial($entrySocial) {
     $socialArray = [];
     if (isset($entrySocial)) {
         $entrySocial = (string) $entrySocial;
-//error_log(print_r($entrySocial,true));
-        $socialArray = unserialize(base64_decode($entrySocial));
+        //error_log(print_r($entrySocial,true));
+        $socialArray = unserialize($entrySocial);
     }
     $socialBlock = '';
     if (!empty($socialArray)) {
