@@ -57,15 +57,15 @@ if ($displayNav) {
                     <input type="hidden" id="faire_end" value="<?php echo $faireData->end_dt; ?>" />
       
                     <div class="schedule-wrapper">			
-                        <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-								<div class="schedule-header container-fluid">
-									<h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
-								</div>
-                                <div class="schedule-description">
-                                    <?php the_content(); ?>
-                                </div>
-                            <?php endwhile; ?>			
-                        <?php endif; ?>
+                            <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+                                    <div class="schedule-header container-fluid">
+                                        <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
+                                    </div>
+                                    <div class="schedule-description">
+                                        <?php the_content(); ?>
+                                    </div>
+                                <?php endwhile; ?>			
+                            <?php endif; ?>
 
                         <div>
                             <div class="mtm-search">

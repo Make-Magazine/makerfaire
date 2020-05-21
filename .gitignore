@@ -109,3 +109,4 @@ wp-content/plugins/filter-page-by-template
 .netbeans.xml
 FixFor Users.sql
 wp-content/themes/twentyseventeen
+debug.log.*
