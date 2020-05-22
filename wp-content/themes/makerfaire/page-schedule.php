@@ -5,7 +5,6 @@
 get_header();
 
 //look for day of week or type filter variables
-$sched_dow = (isset($wp_query->query_vars['sched_dow']) ? ucfirst(urldecode($wp_query->query_vars['sched_dow'])) : 'All Days');
 $sched_type = (isset($wp_query->query_vars['sched_type']) ? ucfirst(urldecode($wp_query->query_vars['sched_type'])) : 'All Types');
 
 $schedule_ids = get_field('schedule_ids');
@@ -54,8 +53,7 @@ if ($displayNav) {
             if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new schedule page
                 ?>   
                 <div id="page-schedule" class="schedule-table  ng-cloak <?php if ($displayNav) { ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">                    
-                    <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
-                    <input type="hidden" id="schedDOW"  value="<?php echo $sched_dow; ?>" />
+                    <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />                    
                     <input type="hidden" id="faire"     value="<?php echo $faire; ?>" />
                     <input type="hidden" id="faire_st"  value="<?php echo $faireData->start_dt; ?>" />
                     <input type="hidden" id="faire_end" value="<?php echo $faireData->end_dt; ?>" />
@@ -64,7 +62,7 @@ if ($displayNav) {
                     <div class="schedule-wrapper">			
                             <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
                                     <div class="schedule-header container-fluid">
-                                        <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
+                                        <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
                                     </div>
                                     <div class="schedule-description">
                                         <?php the_content(); ?>
@@ -194,8 +192,7 @@ if ($displayNav) {
                                 </div>
                                 <div class="calendar-wrapper">
                                     <form class="calendar" method="post" action="/wp-content/themes/makerfaire/download-ics.php">
-                                        <input type="hidden" name="forms2use" id="forms2use" value="<?php echo $schedule_ids_trimmed; ?>" />
-                                        <input type="hidden" name="filter_day"      value="{{filterdow}}">
+                                        <input type="hidden" name="forms2use" id="forms2use" value="<?php echo $schedule_ids_trimmed; ?>" />                                        
                                         <input type="hidden" name="filter_type"     value="{{schedSearch.type}}">
                                         <input type="hidden" name="filter_topic"    value="{{schedSearch.category}}">
                                         <input type="hidden" name="filter_stage"    value="{{schedSearch.nicename}}">
@@ -230,7 +227,7 @@ if ($displayNav) {
                                 <div class="sched-col-1"></div>               
                                 <div class="sched-body">
                                     <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
-                                    <div ng-repeat="schedule in schedules | filter : schedSearch | dateFilter: filterdow | inFaireFilter: todaysDate | orderBy: ['time_start', 'time_end'] | limitTo: limit">  
+                                    <div ng-repeat="schedule in schedules | filter : schedSearch | inFaireFilter: todaysDate | orderBy: ['time_start', 'time_end'] | limitTo: limit">  
 		
                                         <div class="row sched-row">
                                             <div class="sched-col-1">
