@@ -31,11 +31,13 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         $scope.loadMore = function () {
             $scope.limit += 5;
         };
+	    console.log($scope);
         $scope.category = '';
         $scope.showSchedules = false;
         $scope.schedSearch = [];
         $scope.schedSearch.nicename = '';
         $scope.schedSearch.category = '';
+		$scope.schedSearch.flags = '';
         if (topicParam != undefined) {
             $scope.schedSearch.category = topicParam;
         }
@@ -141,6 +143,11 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
             filterdow = $filter('date')(date, "EEEE");
             buildPrintSchedURL();//add day variable to 
         };
+	
+	 	$scope.setFlagFilter = function (flags) {
+            $scope.flags = flags;
+        };
+	
         // console.log("Scope is ", + $scope);
         function buildPrintSchedURL() {
             var faire = jQuery('#faire').val();

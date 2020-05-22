@@ -187,6 +187,19 @@ if ($displayNav) {
                                                 </ul>
                                             </div>                               
                                         </div> */ ?>
+										<div class="sched-col-4">
+											<div class="faux-checkbox">
+												<label>Featured</label>
+												<ul class="nav nav-pills">
+													<li class="nav-item">
+														<button ng-class="{'ng-hide':showFeatured == 'Featured Maker'}" type="button" ng-click="schedSearch.flags = 'Featured';showFeatured = 'Featured';" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
+													</li>
+													<li class="nav-item">
+														<button ng-init="showFeatured = schedSearch.flags" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="schedSearch.flags = '';showFeatured = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
+													</li>   
+												</ul>   
+											</div>
+										</div>
                                     </div> 
                                 </div>
                                 <div class="calendar-wrapper">
