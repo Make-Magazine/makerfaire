@@ -59,8 +59,8 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         var todaysDate = new Date();
         $scope.todaysDate = todaysDate;
 
-        $scope.filterdow = "";
-        filterdow = "";
+        //$scope.filterdow = "";
+        //filterdow = "";
 
         if (todaysDate.getTime() > faire_start.getTime() &&
             todaysDate.getTime() <= faire_end.getTime()) {
@@ -72,14 +72,14 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         }
 
         //if day of the week URL parameter is passed, default the day to this
-        if (dayParam != undefined && dayParam != "") {
+        /*if (dayParam != undefined && dayParam != "") {
             $scope.filterdow = dayParam;
             filterdow = dayParam;
-        }
+        }*/
 
         var formIDs = jQuery('#forms2use').val();
         var defType = jQuery('#schedType').val();
-        var defDOW = jQuery('#schedDOW').val();
+        //var defDOW = jQuery('#schedDOW').val();
         var faire = jQuery('#faire').val();
 
         if (formIDs == '')
@@ -92,10 +92,10 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
                     var dateList = [];
                     var catList = [];
                     angular.forEach($scope.schedules, function (schedule) {
-                        defDOW = $filter('date')(schedule.time_start, "EEEE");
+                        //defDOW = $filter('date')(schedule.time_start, "EEEE");
 
-                        if (dateList.indexOf(defDOW) == -1)
-                            dateList.push(defDOW);
+                        //if (dateList.indexOf(defDOW) == -1)
+                        //    dateList.push(defDOW);
 
                         var categories = schedule.category;
                         if (categories != null) {
@@ -120,18 +120,20 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
 		
 
         $scope.setDateFilter = function (date) {
-            $scope.filterdow = $filter('date')(date, "EEEE");
-            filterdow = $filter('date')(date, "EEEE");
+            //$scope.filterdow = $filter('date')(date, "EEEE");
+            //filterdow = $filter('date')(date, "EEEE");
             buildPrintSchedURL();//add day variable to 
         };
         // console.log("Scope is ", + $scope);
         function buildPrintSchedURL() {
             var faire = jQuery('#faire').val();
             var builtURL = '/stage-schedule/?faire=' + faire + '&orderBy=time&qr=true';
+            /*
+              
             var schedDOW = $scope.filterdow;
             if (schedDOW !== '') {
                 builtURL = builtURL + '&day=' + schedDOW;
-            }
+            }*/
 
             var type = $scope.schedSearch.type;
             if (type !== '') {
@@ -173,17 +175,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
 scheduleApp.filter('dateFilter', function ($filter) {
     // Create the return function and set the required parameter name to **input**
     return function (schedules, dayOfWeek) {
-        if (filterdow != '') {
-            var out = [];
-            // Loop thru the schedule and return only items that meet the selected date         
-            angular.forEach(schedules, function (schedule) {
-                if (filterdow === $filter('date')(schedule.time_start, "EEEE")) {
-                    out.push(schedule);
-                }
-            });
-        } else {
-            var out = schedules;
-        }
+        
         return out;
     }
 });
