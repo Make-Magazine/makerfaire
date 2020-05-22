@@ -166,7 +166,7 @@ if ($displayNav) {
 
                                             </div>
                                             <div class="sched-col-4">
-                                                <div class="faux-checkbox" style='display:none'>
+                                                <div class="faux-checkbox">
                                                     <label>Featured</label>
                                                     <ul class="nav nav-pills">
                                                         <li class="nav-item">
