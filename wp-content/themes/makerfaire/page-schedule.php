@@ -160,7 +160,23 @@ if ($displayNav) {
                                                         </li>
                                                     </ul>
                                                 </div>
+
                                             </div>
+										<?php } ?>
+											<div class="sched-col-4">
+                                                <div class="faux-checkbox" style='display:none'>
+                                                    <label>Featured</label>
+                                                    <ul class="nav nav-pills">
+                                                        <li class="nav-item">
+                                                            <button ng-class="{'ng-hide':showFeatured == 'Featured'}" type="button" ng-click="schedSearch.featured = 'Featured';showFeatured = 'Featured';" class="btn btn-default">&nbsp;</button>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <button ng-init="showFeatured = schedSearch.featured" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="schedSearch.featured = '';showFeatured = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
+                                                        </li>   
+                                                    </ul>
+                                                </div>
+                                            </div>
+										<?php if ($faireType == "VMF") { ?>
 											<div class="sched-col-4">
 												<div class='timezone-wrapper' ng-show="showSchedules">
 													<span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone("America/Los_Angeles"); ?>
@@ -168,11 +184,12 @@ if ($displayNav) {
 											</div>
                                         <?php } 
 										if ($faireType != "VMF") { ?>
+
                                         <div class="sched-col-4">
-                                            <div class="dropdown">
+                                            <div class="dropdown" ng-hide="true">
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                     <span ng-show="filterdow != ''">{{filterdow}}</span>
-                                                    <span ng-show="filterdow == ''">All Days</span>
+                                                    <span ng-hide="true">All Days</span>
                                                     <i class="fa fa-chevron-down" aria-hidden="true"></i>
                                                 </button>
 
@@ -261,7 +278,7 @@ if ($displayNav) {
                                                     </div>
                                                 </div>
                                                 <div class="sched-col-4">
-                                                    <span class="featured"ng-show="schedule.featured != NULL && schedule.featured != 'false'">Featured</span>
+                                                    <h4 class="featured" ng-show="schedule.featured != NULL && schedule.featured == 'Featured'">Featured</h4>
                                                     <div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
                                                         <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>
                                                     </div>

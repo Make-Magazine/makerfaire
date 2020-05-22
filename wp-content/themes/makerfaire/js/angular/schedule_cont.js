@@ -20,7 +20,7 @@ weekday[4] = "Thursday";
 weekday[5] = "Friday";
 weekday[6] = "Saturday";
 
-
+var featured = "";
 scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
         $scope.trust = $sce.trustAsHtml; // for rendering html
         $scope.inFaire = false; //are we during the faire?
@@ -36,6 +36,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         $scope.schedSearch = [];
         $scope.schedSearch.nicename = '';
         $scope.schedSearch.category = '';
+        $scope.schedSearch.featured = '';
 
         if (topicParam != undefined) {
             $scope.schedSearch.category = topicParam;
@@ -45,7 +46,11 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         if (stageParam != undefined) {
             $scope.schedSearch.nicename = stageParam;
         }
-
+        
+        if (featured == "true") {
+            $scope.schedSearch.featured = "Featured";
+        }
+        
         $scope.schedSearch.type = '';
         //if type URL parameter is passed, default the type to this
         if (typeParam != undefined) {
@@ -118,7 +123,9 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         });
 
 
-
+        $scope.setFeaturedFilter = function (featured) {
+            $scope.featured = featured;
+        };
         $scope.setDateFilter = function (date) {
             $scope.filterdow = $filter('date')(date, "EEEE");
             filterdow = $filter('date')(date, "EEEE");
