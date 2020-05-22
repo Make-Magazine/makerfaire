@@ -279,7 +279,7 @@ if ($displayNav) {
                                                     </div>
                                                     <div collapse="schedule.isCollapsed">
                                                         <div ng-show="!schedule.isCollapsed" class="panel-body">
-                                                            <p ng-bind-html="schedule.desc"></p>
+                                                            <p ng-bind-html="trust(schedule.desc)"></p>
                                                             <a href="/maker/entry/{{schedule.id}}" target="none"><?php _e('full details', 'MiniMakerFaire'); ?></a>
                                                         </div>
                                                     </div>
