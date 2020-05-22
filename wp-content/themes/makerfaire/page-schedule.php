@@ -37,9 +37,7 @@ if ($displayNav) {
             $sql = 'select * from wp_mf_faire where url_path="' . $parent_slug . '";';
             $faireData = $wpdb->get_row($sql);            
             $faire= $faireData->faire;
-
-			//let’s create the schedule data and hide it in an element field. this is a temporary fix until we can figure out why the WP API is so slow
-			$data = getSchedule($schedule_ids, $faire);
+            
             ?>			
             <script type="text/javascript">
                 printScheduleEvent = function () {
@@ -60,8 +58,7 @@ if ($displayNav) {
                     <input type="hidden" id="faire"     value="<?php echo $faire; ?>" />
                     <input type="hidden" id="faire_st"  value="<?php echo $faireData->start_dt; ?>" />
                     <input type="hidden" id="faire_end" value="<?php echo $faireData->end_dt; ?>" />
-					<div id="faire_data" class="hidden"><?php echo json_encode($data); ?></div>
-      
+					
                     <div class="schedule-wrapper">			
                             <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
                                     <div class="schedule-header container-fluid">
@@ -347,4 +344,9 @@ if ($displayNav) {
 ?>
 
 <iframe src="/stage-schedule/?faire=<?php echo $faire;?>&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
+<?php //let’s create the schedule data and hide it in an element field. this is a temporary fix until we can figure out why the WP API is so slow
+$data = getSchedule($schedule_ids, $faire);?>
+
+<div id="faire_data" class="hidden"><?php echo json_encode($data); ?></div>
+      
 <?php get_footer(); ?>
