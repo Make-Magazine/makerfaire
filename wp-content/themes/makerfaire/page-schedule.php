@@ -347,5 +347,8 @@ if ($displayNav) {
 ?>
 
 <iframe src="/stage-schedule/?faire=<?php echo $faire;?>&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
-
+<?php 
+//let’s create the schedule data and hide it in an element field. this is a temporary fix until we can figure out why the WP API is so slow
+$data = getSchedule($schedule_ids, $faire); ?>
+<div id="faire_data" class="hidden"><?php echo json_encode($data); ?></div>
 <?php get_footer(); ?>

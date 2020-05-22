@@ -84,7 +84,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
 
         if (formIDs == '')
             alert('error!  Please set the form to pull from on the admin page.');
-        // alert('before the call');
+        /*alert('before the call');
         $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs + '/' + faire)
                 .then(function successCallback(response) {
                     //alert('success');
@@ -108,14 +108,32 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
                     });
                     $scope.tags = catList;
                     $scope.dates = dateList.sort();
-                }, function errorCallback(error) {
-                    //alert('error');
-                    //alert(error);
-                    console.log(error);
-                }).finally(function () {
-            //alert('finally');
+
             $scope.showSchedules = true;
-        });
+        });*/
+	
+        // running it from the api was so slow, we wanted to try it out from a front loaded hidden field
+			$scope.schedules = JSON.parse(jQuery("#faire_data").text())['schedule'];
+			var dateList = [];
+			var catList = [];
+			angular.forEach($scope.schedules, function (schedule) {
+				defDOW = $filter('date')(schedule.time_start, "EEEE");
+	
+				if (dateList.indexOf(defDOW) == -1)
+					dateList.push(defDOW);
+
+				var categories = schedule.category;
+				if (categories != null) {
+					var catArray = categories.split(",");
+					angular.forEach(catArray, function (cat) {
+						if (catList.indexOf(cat) == -1)
+							catList.push(cat);
+					});
+				}
+			});
+			$scope.tags = catList;
+			$scope.dates = dateList.sort();
+			$scope.showSchedules = true;
 			 
 		
 
