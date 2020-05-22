@@ -587,6 +587,7 @@ function handsOnMarker($entry) {
 
 function getSocial($entrySocial) {
     $socialArray = [];
+    /*
     if (isset($entrySocial)) {
         $entrySocial = (string) $entrySocial;
         //error_log(print_r($entrySocial,true));
@@ -627,7 +628,7 @@ function getSocial($entrySocial) {
             }
         }
         $socialBlock .= '</div>';
-    }
+    }*/
     return $socialBlock;
 }
 
