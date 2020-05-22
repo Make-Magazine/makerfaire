@@ -36,6 +36,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         $scope.schedSearch = [];
         $scope.schedSearch.nicename = '';
         $scope.schedSearch.category = '';
+	
         if (topicParam != undefined) {
             $scope.schedSearch.category = topicParam;
         }

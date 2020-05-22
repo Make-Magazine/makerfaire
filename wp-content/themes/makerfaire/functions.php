@@ -470,13 +470,45 @@ function keep_incomplete_submissions( $expiration_days ) {
 }
 
 function select_Timezone($selected = '') {
-    $OptionsArray = timezone_identifiers_list();
-        $select= '<select class="timeZoneSelect">';
-        while (list ($key, $row) = each ($OptionsArray) ){
-            $select .='<option value="'.$row.'"';
-            $select .= ($row == $selected ? ' selected' : '');
-            $select .= '>'.$row.'</option>';
-        }  // endwhile;
-        $select.='</select>';
-return $select;
+    //$selected = "US/Pacific";
+    $timeZone = array('Africa/Cairo' => 'Africa/Cairo',
+        'America/Argentina/Buenos_Aires' => 'America/Buenos_Aires',
+        'America/Caracas' => 'America/Caracas',
+        'Asia/Almaty' => 'Asia/Almaty',
+        'Asia/Baku' => 'Asia/Baku',
+        'Asia/Bangkok' => 'Asia/Bangkok',
+        'Asia/Hong_Kong' => 'Asia/Hong_Kong',
+        'Asia/Kabul' => 'Asia/Kabul',
+        'Asia/Kathmandu' => 'Asia/Kathmandu',
+        'Asia/Kolkata' => 'Asia/Kolkata',
+        'Asia/Tashkent' => 'Asia/Tashkent',
+        'Asia/Tehran' => 'Asia/Tehran',
+        'Asia/Tokyo' => 'Asia/Tokyo',
+        'Asia/Vladivostok' => 'Asia/Vladivostok',
+        'Atlantic/Cape_Verde' => 'Atlantic/Cape_Verde',
+        'Atlantic/Stanley' => 'Atlantic/Stanley',
+        'Australia/Darwin' => 'Australia/Darwin',
+        'Australia/Sydney' => 'Australia/Sydney',
+        'America/Lower_Princes' => 'Canada/Atlantic',
+        'America/St_Johns' => 'Canada/Newfoundland',
+        'Europe/Brussels' => 'Europe/Brussels',
+        'Europe/London' => 'Europe/London',
+        'Europe/Moscow' => 'Europe/Moscow',
+        'Pacific/Fiji' => 'Pacific/Fiji',
+        'Pacific/Midway' => 'Pacific/Midway',
+        'America/Anchorage' => 'US/Alaska',
+        'America/Phoenix' => 'US/Arizona',
+        'America/Chicago' => 'US/Central',
+        'America/New_York' => 'US/Eastern',
+        'Pacific/Honolulu' => 'US/Hawaii',
+        'America/Denver' => 'US/Mountain',
+        'America/Los_Angeles' => 'US/Pacific',);
+    $select = '<select class="timeZoneSelect">';
+    foreach ($timeZone as $key=>$row) {
+        $select .= '<option value="' . $key . '"';
+        $select .= ($key === $selected ? ' selected' : '');
+        $select .= '>' . $row . '</option>';
+    }
+    $select .= '</select>';
+    return $select;
 }
