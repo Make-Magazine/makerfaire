@@ -164,28 +164,28 @@ if ($displayNav) {
                                                     </ul>
                                                 </div>
                                             </div>
-                                        <?php
-                                        }
-                                        /* <div class="sched-col-4">
-                                          <div class="dropdown">
-                                          <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                          <span ng-show="filterdow != ''">{{filterdow}}</span>
-                                          <span ng-show="filterdow == ''">All Days</span>
-                                          <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                                          </button>
-
-                                          <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
-                                          <li>
-                                          <a ng-click="setDateFilter('')" class="pointer-on-hover"><?php _e("All Days", 'makerfaire') ?></a>
-                                          </li>
-
-                                          <li ng-repeat="dayOfWeek in dates">
-                                          <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
-                                          </li>
-                                          </ul>
-                                          </div>
-                                          </div> */
+                                            <?php }
                                         ?>
+                                        <div class="sched-col-4">
+                                            <div class="dropdown">
+                                                <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                    <span ng-show="filterdow != ''">{{filterdow}}</span>
+                                                    <span ng-show="filterdow == ''">All Days</span>
+                                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                                </button>
+
+                                                <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+                                                    <li>
+                                                        <a ng-click="setDateFilter('')" class="pointer-on-hover"><?php _e("All Days", 'makerfaire') ?></a>
+                                                    </li>
+
+                                                    <li ng-repeat="dayOfWeek in dates">
+                                                        <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div> 
+
 
                                     </div> 
                                 </div>
@@ -260,6 +260,7 @@ if ($displayNav) {
                                                     </div>
                                                 </div>
                                                 <div class="sched-col-4">
+                                                    <span class="featured"ng-show="schedule.featured != NULL && schedule.featured != 'false'">Featured</span>
                                                     <div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
                                                         <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>
                                                     </div>
@@ -310,7 +311,7 @@ if ($displayNav) {
     ?>
     <div class="clear"></div>
     <div class="post-thumbnail">
-    <?php the_post_thumbnail(); ?>
+        <?php the_post_thumbnail(); ?>
     </div><!-- .post-thumbnail -->
     <div class="container">
         <div class="row">
@@ -321,7 +322,7 @@ if ($displayNav) {
                         the_post();
                         ?>
                         <article <?php post_class(); ?>>
-                        <?php the_content(); ?>
+                            <?php the_content(); ?>
                         </article>
                     <?php }
                     ?>

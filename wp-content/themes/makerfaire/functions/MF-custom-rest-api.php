@@ -380,7 +380,9 @@ function getSchedule($formIDs, $faireID) {
         } else {
             $type = $row->type;
         }
-
+        //featured maker
+        $featured = (strpos($row->flags, 'Featured Maker') !== false);
+        
         $registration = $row->registration;
         $viewNow = $row->viewNow;
         //set default values for schedule type if not set
@@ -423,6 +425,7 @@ function getSchedule($formIDs, $faireID) {
             'desc' => htmlspecialchars_decode($row->short_desc, ENT_QUOTES),
             'type' => ucwords($type),
             'flags' => $row->flags,
+            'featured' =>$featured,
             'registration' => $registration,
             'view_now' => $viewNow,
             'region' => $row->region

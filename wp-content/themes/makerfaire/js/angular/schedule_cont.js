@@ -22,7 +22,7 @@ weekday[6] = "Saturday";
 
 
 scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
-	    $scope.trust = $sce.trustAsHtml; // for rendering html
+        $scope.trust = $sce.trustAsHtml; // for rendering html
         $scope.inFaire = false; //are we during the faire?
         inFaire = false;
         //infinite scroll
@@ -36,7 +36,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         $scope.schedSearch = [];
         $scope.schedSearch.nicename = '';
         $scope.schedSearch.category = '';
-	
+
         if (topicParam != undefined) {
             $scope.schedSearch.category = topicParam;
         }
@@ -59,11 +59,11 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         var todaysDate = new Date();
         $scope.todaysDate = todaysDate;
 
-        //$scope.filterdow = "";
-        //filterdow = "";
+        $scope.filterdow = "";
+        filterdow = "";
 
         if (todaysDate.getTime() > faire_start.getTime() &&
-            todaysDate.getTime() <= faire_end.getTime()) {
+                todaysDate.getTime() <= faire_end.getTime()) {
             $scope.inFaire = true;
             inFaire = true;
             //todayDOW = weekday[todaysDate.getDay()];
@@ -72,14 +72,14 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         }
 
         //if day of the week URL parameter is passed, default the day to this
-        /*if (dayParam != undefined && dayParam != "") {
+        if (dayParam != undefined && dayParam != "") {
             $scope.filterdow = dayParam;
             filterdow = dayParam;
-        }*/
+        }
 
         var formIDs = jQuery('#forms2use').val();
         var defType = jQuery('#schedType').val();
-        //var defDOW = jQuery('#schedDOW').val();
+        var defDOW = jQuery('#schedDOW').val();
         var faire = jQuery('#faire').val();
 
         if (formIDs == '')
@@ -92,10 +92,10 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
                     var dateList = [];
                     var catList = [];
                     angular.forEach($scope.schedules, function (schedule) {
-                        //defDOW = $filter('date')(schedule.time_start, "EEEE");
+                        defDOW = $filter('date')(schedule.time_start, "EEEE");
 
-                        //if (dateList.indexOf(defDOW) == -1)
-                        //    dateList.push(defDOW);
+                        if (dateList.indexOf(defDOW) == -1)
+                            dateList.push(defDOW);
 
                         var categories = schedule.category;
                         if (categories != null) {
@@ -116,24 +116,23 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
             //alert('finally');
             $scope.showSchedules = true;
         });
-			 
-		
+
+
 
         $scope.setDateFilter = function (date) {
-            //$scope.filterdow = $filter('date')(date, "EEEE");
-            //filterdow = $filter('date')(date, "EEEE");
+            $scope.filterdow = $filter('date')(date, "EEEE");
+            filterdow = $filter('date')(date, "EEEE");
             buildPrintSchedURL();//add day variable to 
         };
         // console.log("Scope is ", + $scope);
         function buildPrintSchedURL() {
             var faire = jQuery('#faire').val();
             var builtURL = '/stage-schedule/?faire=' + faire + '&orderBy=time&qr=true';
-            /*
-              
+
             var schedDOW = $scope.filterdow;
             if (schedDOW !== '') {
                 builtURL = builtURL + '&day=' + schedDOW;
-            }*/
+            }
 
             var type = $scope.schedSearch.type;
             if (type !== '') {
@@ -175,7 +174,17 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
 scheduleApp.filter('dateFilter', function ($filter) {
     // Create the return function and set the required parameter name to **input**
     return function (schedules, dayOfWeek) {
-        
+        if (filterdow != '') {
+            var out = [];
+            // Loop thru the schedule and return only items that meet the selected date         
+            angular.forEach(schedules, function (schedule) {
+                if (filterdow === $filter('date')(schedule.time_start, "EEEE")) {
+                    out.push(schedule);
+                }
+            });
+        } else {
+            var out = schedules;
+        }
         return out;
     }
 });
@@ -217,9 +226,9 @@ function schedScroll($window) {
                     var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
                     if (bottom_of_screen > top_of_element) {
                         scope.$apply(attrs.schedScroll);
-						changeTimeZone(jQuery(".timeZoneSelect").val());
+                        changeTimeZone(jQuery(".timeZoneSelect").val());
                     }
-					
+
                 }
             };
             $window.on('scroll', handler);
@@ -228,28 +237,28 @@ function schedScroll($window) {
 }
 
 function changeTimeZone(tz) {
-	jQuery('.sched-col-3').each(function () {
-		//start time
-		var s = spacetime(jQuery(this).find(".start_dt").text(), 'America/Los_Angeles');   
-		s = s.goto(tz);       
-		var dispStartTime = s.format('time');      
-		jQuery(this).find(".dispStartTime").text(dispStartTime);
+    jQuery('.sched-col-3').each(function () {
+        //start time
+        var s = spacetime(jQuery(this).find(".start_dt").text(), 'America/Los_Angeles');
+        s = s.goto(tz);
+        var dispStartTime = s.format('time');
+        jQuery(this).find(".dispStartTime").text(dispStartTime);
 
-		//end time        
-		var e = spacetime(jQuery(this).find(".end_dt").text(), 'America/Los_Angeles');                        
-		e = e.goto(tz);                  
-		dispEndTime = e.format('time');        
-		jQuery(this).find(".dispEndTime").text(dispEndTime);
-		
-		// the day
-		var day = s.dayName();
-		jQuery(this).find(".dispDay").text(day);
+        //end time        
+        var e = spacetime(jQuery(this).find(".end_dt").text(), 'America/Los_Angeles');
+        e = e.goto(tz);
+        dispEndTime = e.format('time');
+        jQuery(this).find(".dispEndTime").text(dispEndTime);
 
-	});
+        // the day
+        var day = s.dayName();
+        jQuery(this).find(".dispDay").text(day);
+
+    });
 }
 
-jQuery(document).ready(function () {    
+jQuery(document).ready(function () {
     jQuery(".timeZoneSelect").on("change", function () {
-		changeTimeZone(this.value);
+        changeTimeZone(this.value);
     });
 });
