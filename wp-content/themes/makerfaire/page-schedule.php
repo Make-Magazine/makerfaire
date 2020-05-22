@@ -26,18 +26,17 @@ if ($displayNav) {
                 ?>
             </div>
             <div class="content col-md-9">
-<?php
-}
+                <?php
+            }
 
 
 //set faire
             $post_data = get_post($post->post_parent);
             $parent_slug = $post_data->post_name;
-            
+
             $sql = 'select * from wp_mf_faire where url_path="' . $parent_slug . '";';
-            $faireData = $wpdb->get_row($sql);            
-            $faire= $faireData->faire;
-            
+            $faireData = $wpdb->get_row($sql);
+            $faire = $faireData->faire;
             ?>			
             <script type="text/javascript">
                 printScheduleEvent = function () {
@@ -58,20 +57,20 @@ if ($displayNav) {
                     <input type="hidden" id="faire"     value="<?php echo $faire; ?>" />
                     <input type="hidden" id="faire_st"  value="<?php echo $faireData->start_dt; ?>" />
                     <input type="hidden" id="faire_end" value="<?php echo $faireData->end_dt; ?>" />
-					
+
                     <div class="schedule-wrapper">			
-                            <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-                                    <div class="schedule-header container-fluid">
-                                        <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
-                                    </div>
-                                    <div class="schedule-description">
-                                        <?php the_content(); ?>
-                                    </div>
-									<div class='timezone-wrapper' ng-show="showSchedules">
-										<span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone("America/Los_Angeles"); ?>
-									</div>
-                                <?php endwhile; ?>			
-                            <?php endif; ?>
+                        <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+                                <div class="schedule-header container-fluid">
+                                    <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="filterdow != ''"> on {{filterdow}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
+                                </div>
+                                <div class="schedule-description">
+                                    <?php the_content(); ?>
+                                </div>
+                                <div class='timezone-wrapper' ng-show="showSchedules">
+                                    <span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone("America/Los_Angeles"); ?>
+                                </div>
+                            <?php endwhile; ?>
+                        <?php endif; ?>
 
                         <div>
                             <div class="mtm-search">
@@ -125,14 +124,14 @@ if ($displayNav) {
                                             <div class="dropdown">
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                     <span ng-show="schedSearch.nicename != ''">{{schedSearch.nicename}}</span>
-                                                    <span ng-show="schedSearch.nicename == ''">All <?php echo (get_field('faire_type')=='VMF'?'Tracks':'Stages');?></span>
+                                                    <span ng-show="schedSearch.nicename == ''">All <?php echo (get_field('faire_type') == 'VMF' ? 'Tracks' : 'Stages'); ?></span>
 
                                                     <i class="fa fa-chevron-down" aria-hidden="true"></i>
                                                 </button>
 
                                                 <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
                                                     <li>
-                                                        <a class="pointer-on-hover" ng-click="schedSearch.nicename = ''">All <?php echo (get_field('faire_type')=='VMF'?'Tracks':'Stages');?></a>
+                                                        <a class="pointer-on-hover" ng-click="schedSearch.nicename = ''">All <?php echo (get_field('faire_type') == 'VMF' ? 'Tracks' : 'Stages'); ?></a>
                                                     </li>
                                                     <li ng-repeat="stage in stages">                     
                                                         <a class="pointer-on-hover" ng-click="schedSearch.nicename = stage">{{stage}}</a>
@@ -143,63 +142,63 @@ if ($displayNav) {
                                                 </ul>
                                             </div>
                                         </div>
-                                        <?php 
-										if($faireType == "VMF") { ?>
-										<div class="sched-col-4">
-                                            <div class="dropdown">
-												
-                                                <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                    <span ng-show="schedSearch.region != ''">{{schedSearch.region}}</span>
-                                                    <span ng-show="schedSearch.region == null || schedSearch.region == ''">All Regions</span>
-                                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                                                </button>
+                                        <?php if ($faireType == "VMF") { ?>
+                                            <div class="sched-col-4">
+                                                <div class="dropdown">
 
-                                                <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
-                                                    <li>
-                                                        <a class="pointer-on-hover" ng-click="schedSearch.region = ''">All Regions</a>
+                                                    <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                        <span ng-show="schedSearch.region != ''">{{schedSearch.region}}</span>
+                                                        <span ng-show="schedSearch.region == null || schedSearch.region == ''">All Regions</span>
+                                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+                                                        <li>
+                                                            <a class="pointer-on-hover" ng-click="schedSearch.region = ''">All Regions</a>
+                                                        </li>
+                                                        <li ng-repeat="stage in stages">                     
+                                                            <a class="pointer-on-hover" ng-click="schedSearch.region = ''"><?php _e("All Regions", 'makerfaire') ?></a>
+                                                        </li>
+                                                        <li ng-repeat="schedule in schedules| filter:schedSearch | dateFilter: filterdow |  orderBy: 'region' | unique: 'region'">
+                                                            <a ng-click="schedSearch.region = schedule.region">{{schedule.region}}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+    <?php }
+    /* <div class="sched-col-4">
+      <div class="dropdown">
+      <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      <span ng-show="filterdow != ''">{{filterdow}}</span>
+      <span ng-show="filterdow == ''">All Days</span>
+      <i class="fa fa-chevron-down" aria-hidden="true"></i>
+      </button>
+
+      <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+      <li>
+      <a ng-click="setDateFilter('')" class="pointer-on-hover"><?php _e("All Days", 'makerfaire') ?></a>
+      </li>
+
+      <li ng-repeat="dayOfWeek in dates">
+      <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
+      </li>
+      </ul>
+      </div>
+      </div> */
+    ?>
+                                        <div class="sched-col-4">
+                                            <div class="faux-checkbox">
+                                                <label>Featured</label>
+                                                <ul class="nav nav-pills">
+                                                    <li class="nav-item">
+                                                        <button ng-class="{'ng-hide':showFeatured == 'Featured Maker'}" type="button" ng-click="schedSearch.flags = 'Featured';showFeatured = 'Featured';" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
                                                     </li>
-                                                    <li ng-repeat="stage in stages">                     
-                                                        <a class="pointer-on-hover" ng-click="schedSearch.region = ''"><?php _e("All Regions", 'makerfaire') ?></a>
-                                                    </li>
-                                                    <li ng-repeat="schedule in schedules| filter:schedSearch | dateFilter: filterdow |  orderBy: 'region' | unique: 'region'">
-                                                        <a ng-click="schedSearch.region = schedule.region">{{schedule.region}}</a>
-                                                    </li>
-                                                </ul>
+                                                    <li class="nav-item">
+                                                        <button ng-init="showFeatured = schedSearch.flags" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="schedSearch.flags = '';showFeatured = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
+                                                    </li>   
+                                                </ul>   
                                             </div>
                                         </div>
-										<?php }
-										/*<div class="sched-col-4">
-                                            <div class="dropdown">
-                                                <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                        
-                                                    <span ng-show="filterdow != ''">{{filterdow}}</span>
-                                                    <span ng-show="filterdow == ''">All Days</span>
-                                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                                                </button>
-
-                                                <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
-                                                    <li>
-                                                        <a ng-click="setDateFilter('')" class="pointer-on-hover"><?php _e("All Days", 'makerfaire') ?></a>
-                                                    </li>
-
-                                                    <li ng-repeat="dayOfWeek in dates">
-                                                        <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
-                                                    </li>
-                                                </ul>
-                                            </div>                               
-                                        </div> */ ?>
-										<div class="sched-col-4">
-											<div class="faux-checkbox">
-												<label>Featured</label>
-												<ul class="nav nav-pills">
-													<li class="nav-item">
-														<button ng-class="{'ng-hide':showFeatured == 'Featured Maker'}" type="button" ng-click="schedSearch.flags = 'Featured';showFeatured = 'Featured';" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
-													</li>
-													<li class="nav-item">
-														<button ng-init="showFeatured = schedSearch.flags" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="schedSearch.flags = '';showFeatured = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
-													</li>   
-												</ul>   
-											</div>
-										</div>
                                     </div> 
                                 </div>
                                 <div class="calendar-wrapper">
@@ -210,7 +209,7 @@ if ($displayNav) {
                                         <input type="hidden" name="filter_topic"    value="{{schedSearch.category}}">
                                         <input type="hidden" name="filter_stage"    value="{{schedSearch.nicename}}">
                                         <input type="hidden" name="filter_text"     value="{{schedSearch.$}}">
-                                        <input type="hidden" name="parent_slug"     value="<?php echo $parent_slug;?>">
+                                        <input type="hidden" name="parent_slug"     value="<?php echo $parent_slug; ?>">
 
                                         <span class="fa-stack fa-sm">
                                             <i class="fa fa-circle fa-stack-2x"></i>
@@ -234,14 +233,14 @@ if ($displayNav) {
                             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
                             <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
                         </div>
-							  	
+
                         <div class="sched-table" sched-scroll="loadMore()">     
                             <div class="row sched-header">
                                 <div class="sched-col-1"></div>               
                                 <div class="sched-body">
                                     <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
-                                    <div ng-repeat="schedule in schedules | filter : schedSearch | dateFilter: filterdow | inFaireFilter: todaysDate | orderBy: ['time_start', 'time_end'] | limitTo: limit">  
-		
+                                    <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | inFaireFilter: todaysDate | orderBy: ['time_start', 'time_end'] | limitTo: limit">  
+
                                         <div class="row sched-row">
                                             <div class="sched-col-1">
                                                 <a href="/maker/entry/{{schedule.id}}">
@@ -255,7 +254,7 @@ if ($displayNav) {
                                                         <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a>
                                                     </h3>
                                                     <p class="sched-description" ng-bind-html="trust(schedule.maker_list)"></p>
-													<p class="stage-track stage-{{schedule.stageOrder}}">{{schedule.nicename}}</p>
+                                                    <p class="stage-track stage-{{schedule.stageOrder}}">{{schedule.nicename}}</p>
                                                 </div>
 
                                                 <div class="sched-col-3">
@@ -266,20 +265,21 @@ if ($displayNav) {
                                                         <div class="col-xs-9 col-sm-12">
                                                             <span class="dispStartTime">{{schedule.time_start| date: "shortTime"}}</span> -
                                                             <span class="lineBr"><br/></span>
-															<span class="dispEndTime">{{schedule.time_end| date: "shortTime"}}</span>
-															<div class="start_dt hidden">{{schedule.time_start| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
-															<div class="end_dt hidden">{{schedule.time_end| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
+                                                            <span class="dispEndTime">{{schedule.time_end| date: "shortTime"}}</span>
+                                                            <div class="start_dt hidden">{{schedule.time_start| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
+                                                            <div class="end_dt hidden">{{schedule.time_end| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="sched-col-4">
-													<div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
+                                                    <h4 style="text-align: center" class="stage-featured" ng-show="schedule.flags != NULL && schedule.flags.indexOf('Featured') != -1">Featured</h4>
+                                                    <div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
                                                         <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>
                                                     </div>
-													<div class="sched-viewNow" ng-show="schedule.view_now != NULL && schedule.view_now != ''">
+                                                    <div class="sched-viewNow" ng-show="schedule.view_now != NULL && schedule.view_now != ''">
                                                         <a class="btn universal-btn" href="{{schedule.view_now}}" target="_blank">Watch Live</a>
                                                     </div>
-												</div>
+                                                </div>
 
                                                 <div class="col-xs-10 col-xs-offset-2 sched-more-info">
                                                     <div class="panel-heading">
@@ -298,14 +298,14 @@ if ($displayNav) {
                                         </div>
 
                                     </div>
-											  	<div class="no-results" ng-show="schedules.length">
-													There is nothing else scheduled for today. Be sure to check back tomorrow!
-												</div>
+                                    <div class="no-results" ng-show="schedules.length">
+                                        There is nothing else scheduled for today. Be sure to check back tomorrow!
+                                    </div>
                                 </div><!-- .sched-body -->
                                 <div class="load-trigger"></div>
                             </div>
                         </div>
-							  
+
 
                     </div>
                 </div>
@@ -356,10 +356,11 @@ if ($displayNav) {
 }
 ?>
 
-<iframe src="/stage-schedule/?faire=<?php echo $faire;?>&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
+<iframe src="/stage-schedule/?faire=<?php echo $faire; ?>&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
 <?php //let’s create the schedule data and hide it in an element field. this is a temporary fix until we can figure out why the WP API is so slow
-$data = getSchedule($schedule_ids, $faire);?>
+$data = getSchedule($schedule_ids, $faire);
+?>
 
 <div id="faire_data" class="hidden"><?php echo json_encode($data); ?></div>
-      
+
 <?php get_footer(); ?>
