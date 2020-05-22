@@ -30,7 +30,7 @@ if ($displayNav) {
             }
 
 
-//set faire
+            //set faire
             $post_data = get_post($post->post_parent);
             $parent_slug = $post_data->post_name;
 
@@ -231,6 +231,7 @@ if ($displayNav) {
 
                         <div ng-show="!schedules.length" class="container loading">
                             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                            <br/><b style="font-size: 25px;padding-top: 15px;display: block;">Please Wait While We Load Your Virtually Maker Faire Experience</b>
                             <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
                         </div>
 
@@ -357,10 +358,5 @@ if ($displayNav) {
 ?>
 
 <iframe src="/stage-schedule/?faire=<?php echo $faire; ?>&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
-<?php //let’s create the schedule data and hide it in an element field. this is a temporary fix until we can figure out why the WP API is so slow
-$data = getSchedule($schedule_ids, $faire);
-?>
-
-<div id="faire_data" class="hidden"><?php echo json_encode($data); ?></div>
 
 <?php get_footer(); ?>

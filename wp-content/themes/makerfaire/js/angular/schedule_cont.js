@@ -22,7 +22,8 @@ weekday[6] = "Saturday";
 
 
 scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
-	    $scope.trust = $sce.trustAsHtml; // for rendering html
+        //alert('here');
+        $scope.trust = $sce.trustAsHtml; // for rendering html
         $scope.inFaire = false; //are we during the faire?
         inFaire = false;
         //infinite scroll
@@ -31,13 +32,13 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         $scope.loadMore = function () {
             $scope.limit += 5;
         };
-	    console.log($scope);
         $scope.category = '';
         $scope.showSchedules = false;
         $scope.schedSearch = [];
         $scope.schedSearch.nicename = '';
         $scope.schedSearch.category = '';
-		$scope.schedSearch.flags = '';
+        $scope.schedSearch.flags = '';
+
         if (topicParam != undefined) {
             $scope.schedSearch.category = topicParam;
         }
@@ -64,7 +65,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         filterdow = "";
 
         if (todaysDate.getTime() > faire_start.getTime() &&
-            todaysDate.getTime() <= faire_end.getTime()) {
+                todaysDate.getTime() <= faire_end.getTime()) {
             $scope.inFaire = true;
             inFaire = true;
             //todayDOW = weekday[todaysDate.getDay()];
@@ -85,7 +86,8 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
 
         if (formIDs == '')
             alert('error!  Please set the form to pull from on the admin page.');
-        /*alert('before the call');
+        //alert('before the call');
+        
         $http.get('/wp-json/makerfaire/v2/fairedata/schedule/' + formIDs + '/' + faire)
                 .then(function successCallback(response) {
                     //alert('success');
@@ -109,45 +111,25 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
                     });
                     $scope.tags = catList;
                     $scope.dates = dateList.sort();
-
+                }, function errorCallback(error) {
+                    //alert('error');
+                    //alert(error);
+                    console.log(error);
+                }).finally(function () {
+            //alert('finally');
             $scope.showSchedules = true;
-        });*/
-	
-        // running it from the api was so slow, we wanted to try it out from a front loaded hidden field
-			$scope.schedules = JSON.parse(jQuery("#faire_data").text())['schedule'];
-			var dateList = [];
-			var catList = [];
-			angular.forEach($scope.schedules, function (schedule) {
-				defDOW = $filter('date')(schedule.time_start, "EEEE");
-	
-				if (dateList.indexOf(defDOW) == -1)
-					dateList.push(defDOW);
-
-				var categories = schedule.category;
-				if (categories != null) {
-					var catArray = categories.split(",");
-					angular.forEach(catArray, function (cat) {
-						if (catList.indexOf(cat) == -1)
-							catList.push(cat);
-					});
-				}
-			});
-			$scope.tags = catList;
-			$scope.dates = dateList.sort();
-			$scope.showSchedules = true;
-			 
-		
+        });
 
         $scope.setDateFilter = function (date) {
             $scope.filterdow = $filter('date')(date, "EEEE");
             filterdow = $filter('date')(date, "EEEE");
             buildPrintSchedURL();//add day variable to 
         };
-	
-	 	$scope.setFlagFilter = function (flags) {
+        
+        $scope.setFlagFilter = function (flags) {
             $scope.flags = flags;
         };
-	
+
         // console.log("Scope is ", + $scope);
         function buildPrintSchedURL() {
             var faire = jQuery('#faire').val();
@@ -249,9 +231,9 @@ function schedScroll($window) {
                     var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
                     if (bottom_of_screen > top_of_element) {
                         scope.$apply(attrs.schedScroll);
-						changeTimeZone(jQuery(".timeZoneSelect").val());
+                        changeTimeZone(jQuery(".timeZoneSelect").val());
                     }
-					
+
                 }
             };
             $window.on('scroll', handler);
@@ -260,28 +242,28 @@ function schedScroll($window) {
 }
 
 function changeTimeZone(tz) {
-	jQuery('.sched-col-3').each(function () {
-		//start time
-		var s = spacetime(jQuery(this).find(".start_dt").text(), 'America/Los_Angeles');   
-		s = s.goto(tz);       
-		var dispStartTime = s.format('time');      
-		jQuery(this).find(".dispStartTime").text(dispStartTime);
+    jQuery('.sched-col-3').each(function () {
+        //start time
+        var s = spacetime(jQuery(this).find(".start_dt").text(), 'America/Los_Angeles');
+        s = s.goto(tz);
+        var dispStartTime = s.format('time');
+        jQuery(this).find(".dispStartTime").text(dispStartTime);
 
-		//end time        
-		var e = spacetime(jQuery(this).find(".end_dt").text(), 'America/Los_Angeles');                        
-		e = e.goto(tz);                  
-		dispEndTime = e.format('time');        
-		jQuery(this).find(".dispEndTime").text(dispEndTime);
-		
-		// the day
-		var day = s.dayName();
-		jQuery(this).find(".dispDay").text(day);
+        //end time        
+        var e = spacetime(jQuery(this).find(".end_dt").text(), 'America/Los_Angeles');
+        e = e.goto(tz);
+        dispEndTime = e.format('time');
+        jQuery(this).find(".dispEndTime").text(dispEndTime);
 
-	});
+        // the day
+        var day = s.dayName();
+        jQuery(this).find(".dispDay").text(day);
+
+    });
 }
 
-jQuery(document).ready(function () {    
+jQuery(document).ready(function () {
     jQuery(".timeZoneSelect").on("change", function () {
-		changeTimeZone(this.value);
+        changeTimeZone(this.value);
     });
 });
