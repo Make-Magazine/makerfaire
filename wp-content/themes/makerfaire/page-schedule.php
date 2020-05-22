@@ -65,9 +65,6 @@ if ($displayNav) {
                                 <div class="schedule-description">
                                     <?php the_content(); ?>
                                 </div>
-                                <div class='timezone-wrapper' ng-show="showSchedules">
-                                    <span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone("America/Los_Angeles"); ?>
-                                </div>
                             <?php endwhile; ?>			
                         <?php endif; ?>
 
@@ -164,8 +161,13 @@ if ($displayNav) {
                                                     </ul>
                                                 </div>
                                             </div>
-                                            <?php }
-                                        ?>
+											<div class="sched-col-4">
+												<div class='timezone-wrapper' ng-show="showSchedules">
+													<span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone("America/Los_Angeles"); ?>
+												</div>
+											</div>
+                                        <?php } 
+										if ($faireType != "VMF") { ?>
                                         <div class="sched-col-4">
                                             <div class="dropdown">
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -185,8 +187,7 @@ if ($displayNav) {
                                                 </ul>
                                             </div>
                                         </div> 
-
-
+										<?php } ?>
                                     </div> 
                                 </div>
                                 <div class="calendar-wrapper">

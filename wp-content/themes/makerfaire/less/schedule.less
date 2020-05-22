@@ -24,6 +24,12 @@
 	}
 }
 
+h4.featured {
+	text-align: center;
+	font-size: 24px;
+	padding: 0px 0px 10px;
+}
+
 .schedule-header {
 	h1 {
 		font-size: 36px;
@@ -63,11 +69,13 @@
 		width: 100%;
 	}
 	.timezone-wrapper {
-		float: right;
 		margin-bottom: 15px;
-		timezone-label {
+		margin-top: 7px;
+		.timezone-label {
+			color:#fff;
 			margin-right: 10px;
 		}
+		.timeZoneSelect { color: #333; }
 		@media (max-width: 767px) {
 			float: none;
 			text-align: center;
@@ -185,7 +193,7 @@
       font-weight: 600;
       cursor: pointer; 
    }
-	.calendar-wrapper { padding-top: 5px; }
+	.calendar-wrapper { padding-top: 5px;clear: both; }
    .calendar {
       font-size: 14px;
       padding: 0px 15px;
