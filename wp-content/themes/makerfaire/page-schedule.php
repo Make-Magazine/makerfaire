@@ -77,7 +77,7 @@ if ($displayNav) {
                                     </form>
                                 </div>
                                 <div class="filter-wrapper">
-                                    <div class="schedule-filters" ng-if="showSchedules">
+                                    <div class="schedule-filters" ng-show="showSchedules">
                                         <div class="sched-col-4">Filter by:</div>
                                         <div class="sched-col-4">
                                             <div class="dropdown">
@@ -178,7 +178,7 @@ if ($displayNav) {
                                             </div>
 										<?php if ($faireType == "VMF") { ?>
 											<div class="sched-col-4">
-												<div class='timezone-wrapper' ng-show="showSchedules">
+												<div class='timezone-wrapper'>
 													<span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone("America/Los_Angeles"); ?>
 												</div>
 											</div>
@@ -295,7 +295,7 @@ if ($displayNav) {
                                                     </div>
                                                     <div collapse="schedule.isCollapsed">
                                                         <div ng-show="!schedule.isCollapsed" class="panel-body">
-                                                            <p ng-bind-html="trust(schedule.desc)"></p>
+                                                            <p ng-bind-html="schedule.desc"></p>
                                                             <a href="/maker/entry/{{schedule.id}}" target="none"><?php _e('full details', 'MiniMakerFaire'); ?></a>
                                                         </div>
                                                     </div>
