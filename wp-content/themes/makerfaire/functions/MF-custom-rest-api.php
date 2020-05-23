@@ -321,8 +321,8 @@ function getSchedule($formIDs, $faireID) {
                left outer join wp_gf_entry_meta as lead_detail on schedule.entry_id = lead_detail.entry_id and lead_detail.meta_key = '303'
                where lead.status = 'active' and lead_detail.meta_value='Accepted' "
             . " and lead_detail.form_id in(" . implode(",", $formIDarr) . ") "
-            /* code to hide scheduled items as they occur
-              . "   and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " */
+            /* code to hide scheduled items as they occur */
+                . " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " 
             . "order by subarea.sort_order";
 
     $schedule = $wpdb->get_results($query);
