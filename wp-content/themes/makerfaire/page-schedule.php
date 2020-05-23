@@ -245,7 +245,7 @@ if ($displayNav) {
                                 <div class="sched-col-1"></div>               
                                 <div class="sched-body">
                                     <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
-                                    <div ng-repeat="schedule in schedules| filter : schedSearch | inFaireFilter: todaysDate | orderBy: ['time_start', 'time_end'] | limitTo: limit">  
+                                    <div ng-repeat="schedule in schedules| filter : schedSearch | orderBy: ['time_start', 'time_end'] | limitTo: limit">  
 
                                         <div class="row sched-row">
                                             <div class="sched-col-1">
