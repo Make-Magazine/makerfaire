@@ -50,7 +50,7 @@ if ($displayNav) {
             <?php
             if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new schedule page
                 ?>   
-                <div id="page-schedule" class="schedule-table  ng-cloak <?php if ($displayNav) { ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">                    
+                <div id="page-schedule" class="page-content schedule-table  ng-cloak <?php if ($displayNav) { ?>left-nav-active<?php } ?>" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">                    
                     <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />                    
                     <input type="hidden" id="faire"     value="<?php echo $faire; ?>" />
                     <input type="hidden" id="faire_st"  value="<?php echo $faireData->start_dt; ?>" />
