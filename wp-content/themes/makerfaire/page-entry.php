@@ -150,6 +150,7 @@ $handsOn = handsOnMarker($entry);
 
 // check if there's the potential to have a register field
 $registerLink = (isset($entry[829]) ? $entry[829] : '');
+$registerLink = ''; //post faire return blank for register link
 $viewNow = (isset($entry[837]) ? $entry[837] : '');
 
 //if this is a virtual faire, check if supplemental form was subimitted with links
