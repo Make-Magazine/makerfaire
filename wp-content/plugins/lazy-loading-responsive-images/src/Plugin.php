@@ -183,7 +183,7 @@ class Plugin {
 	 *
 	 * @return string Modified HTML.
 	 */
-	public function filter_markup( $content ) {
+	public function filter_markup( $content = '' ) {
 		// If this is no content we should process, exit as early as possible.
 		if ( ! $this->helpers->is_post_to_process() ) {
 			return $content;
@@ -699,6 +699,13 @@ class Plugin {
 	public function enqueue_script() {
 		if ( $this->helpers->is_disabled_for_post() ) {
 			return;
+		}
+
+		// Check if something (like Avada) already included a lazysizes script. If that is the case, deregister it.
+		$lazysizes = wp_script_is( 'lazysizes' );
+
+		if ( $lazysizes ) {
+			wp_deregister_script( 'lazysizes' );
 		}
 
 		// Enqueue lazysizes.
