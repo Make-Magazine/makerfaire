@@ -126,8 +126,12 @@ class GFCoupons extends GFFeedAddOn {
 	 * @return array
 	 */
 	public function add_discounts( $product_info, $form, $entry ) {
+		$field = $this->get_coupon_field( $form );
+		if ( ! $field ) {
+			return $product_info;
+		}
 
-		$coupon_codes = $this->get_submitted_coupon_codes( $form, $entry );
+		$coupon_codes = $this->get_submitted_coupon_codes( $field, $entry );
 		if ( ! $coupon_codes ) {
 			return $product_info;
 		}
@@ -138,20 +142,22 @@ class GFCoupons extends GFFeedAddOn {
 		$discounts = $this->get_discounts( $coupons, $total, $discount_total, $entry );
 
 		foreach ( $coupons as $coupon ) {
+			$key   = sprintf( '%d|%s', $field->id, $coupon['code'] );
+			$price = GFCommon::to_number( $discounts[ $coupon['code'] ]['discount'] );
 
-			$price                                       = GFCommon::to_number( $discounts[ $coupon['code'] ]['discount'] );
-			$product_info['products'][ $coupon['code'] ] = array(
-				'name'     => $coupon['name'],
-				'price'    => - $price,
-				'quantity' => 1,
-				'options'  => array(
+			$product_info['products'][ $key ] = array(
+				'name'       => $coupon['name'],
+				'price'      => - $price,
+				'quantity'   => 1,
+				'options'    => array(
 					array(
 						'option_name'  => $coupon['name'],
 						'option_label' => esc_html__( 'Coupon Code:', 'gravityformscoupons' ) . ' ' . $coupon['code'],
 						'price'        => 0,
 					),
 				),
-				'isCoupon' => true,
+				'isCoupon'   => true,
+				'couponCode' => $coupon['code'],
 			);
 		}
 
@@ -432,7 +438,7 @@ class GFCoupons extends GFFeedAddOn {
 		<input type="hidden" name="gf_feed_id" value="<?php echo esc_attr( $feed_id ) ?>"/>
 
 		<?php
-		$this->set_settings( $feed['meta'] );
+		$this->set_settings( rgar( $feed, 'meta', array() ) );
 
 		GFCommon::display_admin_message( '', $messages );
 
@@ -1011,23 +1017,27 @@ class GFCoupons extends GFFeedAddOn {
 	/**
 	 * Retrieves the feed object for the requested coupon code.
 	 *
-	 * @param array $form The form currently being processed.
+	 * @since unknown
+	 * @since 2.10 Added support for passing the form or form ID.
+	 *
+	 * @param array  $form_or_id  The form ID or form object currently being processed.
 	 * @param string $coupon_code The coupon code.
 	 *
 	 * @return mixed Returns an array containing the feed object for the requested coupon code or false if invalid.
 	 */
-	public function get_config( $form, $coupon_code ) {
-		$coupon_code = trim( $coupon_code );
-
+	public function get_config( $form_or_id, $coupon_code ) {
 		$feeds = $this->get_feeds();
 
 		if ( ! $feeds ) {
 			return false;
 		}
 
+		$coupon_code = trim( $coupon_code );
+		$form_id     = absint( is_numeric( $form_or_id ) ? $form_or_id : rgar( $form_or_id, 'id', 0 ) );
+
 		foreach ( $feeds as $feed ) {
 			//form must match or be zero for any form
-			if ( strtoupper( $feed['meta']['couponCode'] ) == $coupon_code && ( $feed['form_id'] == '0' || $feed['form_id'] == $form['id'] ) ) {
+			if ( strtoupper( $feed['meta']['couponCode'] ) == $coupon_code && ( $feed['form_id'] == '0' || $feed['form_id'] == $form_id ) ) {
 				return $feed;
 			}
 		}
@@ -1137,12 +1147,15 @@ class GFCoupons extends GFFeedAddOn {
 	/**
 	 * Retrieves an array of coupon details for the specified coupons, or false if no coupon feeds were found.
 	 *
-	 * @param string|array $codes The codes for the coupons to be retrieved.
-	 * @param array $form The form object currently being processed.
+	 * @since unknown
+	 * @since 2.10 Added support for passing the form or form ID.
+	 *
+	 * @param string|array $codes      The codes for the coupons to be retrieved.
+	 * @param array|int    $form_or_id The form ID or form object currently being processed.
 	 *
 	 * @return array|bool
 	 */
-	public function get_coupons_by_codes( $codes, $form ) {
+	public function get_coupons_by_codes( $codes, $form_or_id ) {
 
 		if ( ! is_array( $codes ) ) {
 			$codes = explode( ',', $codes );
@@ -1151,7 +1164,7 @@ class GFCoupons extends GFFeedAddOn {
 		$coupons = array();
 		foreach ( $codes as $coupon_code ) {
 			$coupon_code = strtoupper( trim( $coupon_code ) );
-			$feed        = $this->get_config( $form, $coupon_code );
+			$feed        = $this->get_config( $form_or_id, $coupon_code );
 			if ( $feed ) {
 				$coupons[ $coupon_code ] = $this->get_coupon_by_code( $feed );
 			}
@@ -1220,7 +1233,7 @@ class GFCoupons extends GFFeedAddOn {
 	 *
 	 * @param array $form The form object currently being processed.
 	 *
-	 * @return object|false
+	 * @return GF_Field_Coupon|false
 	 */
 	public function get_coupon_field( $form ) {
 		$coupons = GFCommon::get_fields_by_type( $form, array( 'coupon' ) );
@@ -1231,15 +1244,18 @@ class GFCoupons extends GFFeedAddOn {
 	/**
 	 * Retrieves the submitted coupon codes from the entry object.
 	 *
-	 * @param array $form The form object currently being processed.
-	 * @param array $entry The entry object currently being processed.
+	 * @since unknown
+	 * @since 2.10 Updated the first argument to also support being passed a field object.
+	 *
+	 * @param array|GF_Field_Coupon $form_or_field The form or field object currently being processed.
+	 * @param array                 $entry         The entry object currently being processed.
 	 *
 	 * @return array|bool|string
 	 */
-	public function get_submitted_coupon_codes( $form, $entry = array() ) {
-		$coupon_field = $this->get_coupon_field( $form );
+	public function get_submitted_coupon_codes( $form_or_field, $entry = array() ) {
+		$coupon_field = is_object( $form_or_field ) ? $form_or_field : $this->get_coupon_field( $form_or_field );
 
-		if ( ! is_object( $coupon_field ) ) {
+		if ( ! $coupon_field instanceof GF_Field_Coupon ) {
 			return false;
 		}
 
