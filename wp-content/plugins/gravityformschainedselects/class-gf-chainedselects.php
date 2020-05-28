@@ -1,5 +1,7 @@
 <?php
-	
+
+defined( 'ABSPATH' ) || die();
+
 GFForms::include_feed_addon_framework();
 
 class GFChainedSelects extends GFAddOn {
@@ -149,12 +151,12 @@ class GFChainedSelects extends GFAddOn {
 			'fileUploadUrl'  => trailingslashit( site_url() ) . '?gf_page=' . GFCommon::get_upload_page_slug(),
 			'maxFileSize' => $this->get_max_file_size(),
 			'strings' => array(
-				'errorProcessingFile'      => esc_html__( 'There was an error processing this file.', 'gravityformschainedselects' ),
-				'errorUploadingFile'       => esc_html__( 'There was an error uploading this file.', 'gravityformschainedselects' ),
-				'errorFileType'            => esc_html__( 'Only CSV files are allowed.', 'gravityformschainedselects' ),
-				'errorFileSize'            => sprintf( esc_html__( 'This file is too big. Max file size is %dMB.', 'gravityformschainedselects' ), round( $this->get_max_file_size() / 1000000 ) ),
-				'importedFilterFile'       => sprintf( esc_html__( 'This file is imported via %sa filter%s and cannot be modified here.', 'gravityformschainedselects' ), '<a href="@todo">', '</a>' ),
-				'errorImportingFilterFile' => sprintf( esc_html__( 'There was an error importing the file via %sthe filter%s.', 'gravityformschainedselects' ), '<a href="@todo">', '</a>' ),
+				'errorProcessingFile'      => wp_strip_all_tags( __( 'There was an error processing this file.', 'gravityformschainedselects' ) ),
+				'errorUploadingFile'       => wp_strip_all_tags( __( 'There was an error uploading this file.', 'gravityformschainedselects' ) ),
+				'errorFileType'            => wp_strip_all_tags( __( 'Only CSV files are allowed.', 'gravityformschainedselects' ) ),
+				'errorFileSize'            => sprintf( wp_strip_all_tags( __( 'This file is too big. Max file size is %dMB.', 'gravityformschainedselects' ) ), round( $this->get_max_file_size() / 1000000 ) ),
+				'importedFilterFile'       => sprintf( wp_strip_all_tags( __( 'This file is imported via %sa filter%s and cannot be modified here.', 'gravityformschainedselects' ) ), '<a href="@todo">', '</a>' ),
+				'errorImportingFilterFile' => sprintf( wp_strip_all_tags( __( 'There was an error importing the file via %sthe filter%s.', 'gravityformschainedselects' ) ), '<a href="@todo">', '</a>' ),
 			)
 		) );
 
@@ -163,8 +165,8 @@ class GFChainedSelects extends GFAddOn {
 			'nonce'       => wp_create_nonce( 'gform_get_next_chained_select_choices' ),
 			'spinner'     => GFCommon::get_base_url() . '/images/spinner.gif',
 			'strings'     => array(
-				'loading'   => __( 'Loading', 'gravityformschainedselects' ),
-				'noOptions' => __( 'No options', 'gravityformschainedselects' ),
+				'loading'   => wp_strip_all_tags( __( 'Loading', 'gravityformschainedselects' ) ),
+				'noOptions' => wp_strip_all_tags( __( 'No options', 'gravityformschainedselects' ) ),
 			),
 		) );
 
@@ -174,67 +176,67 @@ class GFChainedSelects extends GFAddOn {
 		// ids are set in JS based on newly created field
 		return  array(
 			array(
-				'text'       => __( 'Parent 1', 'gravityformschainedselects' ),
-				'value'      => __( 'Parent 1', 'gravityformschainedselects' ),
+				'text'       => wp_strip_all_tags( __( 'Parent 1', 'gravityformschainedselects' ) ),
+				'value'      => wp_strip_all_tags( __( 'Parent 1', 'gravityformschainedselects' ) ),
 				'isSelected' => true,
 				'choices' => array(
 					array(
-						'text'       => __( 'Child 1', 'gravityformschainedselects' ),
-						'value'      => __( 'Child 1', 'gravityformschainedselects' ),
+						'text'       => wp_strip_all_tags( __( 'Child 1', 'gravityformschainedselects' ) ),
+						'value'      => wp_strip_all_tags( __( 'Child 1', 'gravityformschainedselects' ) ),
 						'isSelected' => true,
 					),
 					array(
-						'text'       => __( 'Child 2', 'gravityformschainedselects' ),
-						'value'      => __( 'Child 2', 'gravityformschainedselects' ),
+						'text'       => wp_strip_all_tags( __( 'Child 2', 'gravityformschainedselects' ) ),
+						'value'      => wp_strip_all_tags( __( 'Child 2', 'gravityformschainedselects' ) ),
 						'isSelected' => false,
 					),
 					array(
-						'text'       => __( 'Child 3', 'gravityformschainedselects' ),
-						'value'      => __( 'Child 3', 'gravityformschainedselects' ),
+						'text'       => wp_strip_all_tags( __( 'Child 3', 'gravityformschainedselects' ) ),
+						'value'      => wp_strip_all_tags( __( 'Child 3', 'gravityformschainedselects' ) ),
 						'isSelected' => false,
 					)
 				)
 			),
 			array(
-				'text'       => __( 'Parent 2', 'gravityformschainedselects' ),
-				'value'      => __( 'Parent 2', 'gravityformschainedselects' ),
+				'text'       => wp_strip_all_tags( __( 'Parent 2', 'gravityformschainedselects' ) ),
+				'value'      => wp_strip_all_tags( __( 'Parent 2', 'gravityformschainedselects' ) ),
 				'isSelected' => false,
 				'choices' => array(
 					array(
-						'text'       => __( 'Child 4', 'gravityformschainedselects' ),
-						'value'      => __( 'Child 4', 'gravityformschainedselects' ),
+						'text'       => wp_strip_all_tags( __( 'Child 4', 'gravityformschainedselects' ) ),
+						'value'      => wp_strip_all_tags( __( 'Child 4', 'gravityformschainedselects' ) ),
 						'isSelected' => false,
 					),
 					array(
-						'text'       => __( 'Child 5', 'gravityformschainedselects' ),
-						'value'      => __( 'Child 5', 'gravityformschainedselects' ),
+						'text'       => wp_strip_all_tags( __( 'Child 5', 'gravityformschainedselects' ) ),
+						'value'      => wp_strip_all_tags( __( 'Child 5', 'gravityformschainedselects' ) ),
 						'isSelected' => false,
 					),
 					array(
-						'text'       => __( 'Child 6', 'gravityformschainedselects' ),
-						'value'      => __( 'Child 6', 'gravityformschainedselects' ),
+						'text'       => wp_strip_all_tags( __( 'Child 6', 'gravityformschainedselects' ) ),
+						'value'      => wp_strip_all_tags( __( 'Child 6', 'gravityformschainedselects' ) ),
 						'isSelected' => false,
 					)
 				)
 			),
 			array(
-				'text'       => __( 'Parent 3', 'gravityformschainedselects' ),
-				'value'      => __( 'Parent 3', 'gravityformschainedselects' ),
+				'text'       => wp_strip_all_tags( __( 'Parent 3', 'gravityformschainedselects' ) ),
+				'value'      => wp_strip_all_tags( __( 'Parent 3', 'gravityformschainedselects' ) ),
 				'isSelected' => false,
 				'choices' => array(
 					array(
-						'text'       => __( 'Child 7', 'gravityformschainedselects' ),
-						'value'      => __( 'Child 7', 'gravityformschainedselects' ),
+						'text'       => wp_strip_all_tags( __( 'Child 7', 'gravityformschainedselects' ) ),
+						'value'      => wp_strip_all_tags( __( 'Child 7', 'gravityformschainedselects' ) ),
 						'isSelected' => false,
 					),
 					array(
-						'text'       => __( 'Child 8', 'gravityformschainedselects' ),
-						'value'      => __( 'Child 8', 'gravityformschainedselects' ),
+						'text'       => wp_strip_all_tags( __( 'Child 8', 'gravityformschainedselects' ) ),
+						'value'      => wp_strip_all_tags( __( 'Child 8', 'gravityformschainedselects' ) ),
 						'isSelected' => false,
 					),
 					array(
-						'text'       => __( 'Child 9', 'gravityformschainedselects' ),
-						'value'      => __( 'Child 9', 'gravityformschainedselects' ),
+						'text'       => wp_strip_all_tags( __( 'Child 9', 'gravityformschainedselects' ) ),
+						'value'      => wp_strip_all_tags( __( 'Child 9', 'gravityformschainedselects' ) ),
 						'isSelected' => false,
 					)
 				)
@@ -245,11 +247,11 @@ class GFChainedSelects extends GFAddOn {
 	public function get_default_inputs() {
 		return array(
 			array(
-				'label' => __( 'Parents', 'gravityformschainedselects' ),
+				'label' => wp_strip_all_tags( __( 'Parents', 'gravityformschainedselects' ) ),
 				'id'    => '',
 			),
 			array(
-				'label' => __( 'Children', 'gravityformschainedselects' ),
+				'label' => wp_strip_all_tags( __( 'Children', 'gravityformschainedselects' ) ),
 				'id'    => '',
 			)
 		);

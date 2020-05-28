@@ -368,7 +368,7 @@
 			$error.slideUp( function() {
 				$error.remove();
 			} );
-		}, 5000 );
+		}, 10000 );
 
 	}
 

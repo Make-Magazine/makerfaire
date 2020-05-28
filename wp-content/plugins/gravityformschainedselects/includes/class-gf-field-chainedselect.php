@@ -38,49 +38,64 @@ class GF_Chained_Field_Select extends GF_Field {
 
 	public static function create_custom_file_upload_field( $field, $form, $field_id ) {
 
-	    // The $field will be null for a newly created Chained Select field.
-        $is_valid_field = $field == null || $field->get_input_type() == 'chainedselect';
-	    if( ! $is_valid_field ) {
-            return $field;
-        }
+		// The $field will be null for a newly created Chained Select field.
+		$is_valid_field = $field == null || $field->get_input_type() == 'chainedselect';
+		if ( ! $is_valid_field ) {
+			return $field;
+		}
 
-        $field = new GF_Field_FileUpload( array(
-            'id'                => $field_id, // $field may be null so always use $field_id
-            'multipleFiles'     => true,
-            'maxFiles'          => 1,
-            'maxFileSize'       => '',
-            'allowedExtensions' => 'csv',
-            'isChainedSelect'   => true // custom flag used to indicate that this is a custom upload field for a chained select
-        ) );
+		$field = new GF_Field_FileUpload( array(
+			'id'                => $field_id, // $field may be null so always use $field_id
+			'multipleFiles'     => true,
+			'maxFiles'          => 1,
+			'maxFileSize'       => '',
+			'allowedExtensions' => 'csv',
+			'isChainedSelect'   => true, // custom flag used to indicate that this is a custom upload field for a chained select
+			'inputs'            => rgobj( $field, 'inputs' ),
+		) );
 
-	    return $field;
-    }
+		return $field;
+	}
 
 	public static function import_choices_from_uploaded_file( $form, $field, $uploaded_filename, $tmp_file_name, $file_path ) {
 
-	    // We create a custom file upload field as part of the upload process; check if our custom flag is set.
-	    if( ! $field->isChainedSelect ) {
-            return;
-        }
+		// We create a custom file upload field as part of the upload process; check if our custom flag is set.
+		if ( ! $field->isChainedSelect ) {
+			return;
+		}
 
-        $import = self::import_choices( $file_path, $field );
+		if ( ! wp_verify_nonce( rgpost( '_gform_file_upload_nonce_' . $form['id'] ), 'gform_file_upload_' . $form['id'] ) ) {
+			GFAsyncUpload::die_error( 403, esc_html__( 'Permission denied.', 'gravityforms' ) );
+		}
 
-	    if( is_wp_error( $import ) ) {
-	        $status_code = rgar( $import->get_error_data( $import->get_error_code() ), 'status_header', 500 );
-		    GFAsyncUpload::die_error( $status_code, $import->get_error_message() );
-        }
+		gf_chained_selects()->log_debug( __METHOD__ . '(): Processing ' . $uploaded_filename );
+		$import = self::import_choices( $file_path, $field );
+
+		if ( is_wp_error( $import ) ) {
+			gf_chained_selects()->log_error( __METHOD__ . '(): ' . $import->get_error_message() );
+			$status_code = rgar( $import->get_error_data( $import->get_error_code() ), 'status_header', 500 );
+			GFAsyncUpload::die_error( $status_code, $import->get_error_message() );
+		}
 
 		$output = array(
 			'status' => 'ok',
 			'data'   => array(
 				'temp_filename'     => $tmp_file_name,
 				'uploaded_filename' => str_replace( "\\'", "'", urldecode( $uploaded_filename ) ), //Decoding filename to prevent file name mismatch.
-                'choices'           => $import['choices'],
-                'inputs'            => $import['inputs'],
+				'choices'           => $import['choices'],
+				'inputs'            => $import['inputs'],
 			)
 		);
 
-	    die( json_encode( $output ) );
+		$encoded = json_encode( $output );
+		if ( $encoded === false ) {
+			$json_error = json_last_error_msg();
+			gf_chained_selects()->log_error( __METHOD__ . '(): ' . $json_error );
+			GFAsyncUpload::die_error( 422, $json_error );
+		}
+
+		gf_chained_selects()->log_debug( __METHOD__ . '(): Processing completed.' );
+		die( $encoded );
 
     }
 
@@ -113,8 +128,8 @@ class GF_Chained_Field_Select extends GF_Field {
 					    }
 					    $inputs[] = array(
 						    'id'    => $field->id . '.' . $i,
-						    'label' => $item,
-						    'name'  => ''
+						    'label' => wp_strip_all_tags( $item ),
+						    'name'  => isset( $field->inputs[ $index ]['name'] ) ? $field->inputs[ $index ]['name'] : '',
 					    );
 					    $i++;
 				    }
@@ -130,7 +145,7 @@ class GF_Chained_Field_Select extends GF_Field {
 				    }
 
 				    if( ! isset( $parent[ $item ] ) ) {
-				    	$item = self::sanitize_choice_value( $item );
+				    	$item = self::sanitize_choice_value( trim( $item ) );
 					    $parent[ $item ] = array(
 						    'text'       => $item,
 						    'value'      => $item,
@@ -585,7 +600,7 @@ class GF_Chained_Field_Select extends GF_Field {
 
 		$id       = $this->id;
 		$field_id = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
-		$logic_event   = sprintf( 'onchange="gf_input_change( this, %d, %d );"', $form_id, $this->id ); //$this->get_conditional_logic_event( 'change' );
+		$logic_event   = gf_chained_selects()->is_gravityforms_supported( '2.4.15.5' ) ? '' : sprintf( 'onchange="gf_input_change( this, %d, %d );"', $form_id, $this->id );
 		$disabled_attr = $is_form_editor ? 'disabled="disabled"' : '';
 		$markup = '';
 
@@ -648,15 +663,20 @@ class GF_Chained_Field_Select extends GF_Field {
 		return $markup;
 	}
 
-	public function get_choices( $value, $input ) {
-		$field    = clone $this;
-		$is_first = $this->get_input_index( $input['id'] ) == 1;
+	public function get_choices( &$value, $input ) {
+
+		$field = clone $this;
+
 		// temporarily adjust placeholder to current input's label to play nice with GFCommon::get_select_choices()
 		$field->placeholder = $input['label'];
-		if ( $value || $is_first ) {
-			$field->choices = $this->get_input_choices( $value, $input['id'] );
-		} else {
-			$field->choices = null;
+		$field->choices = $this->get_input_choices( $value, $input['id'] );
+
+		if ( is_array( $field->choices ) ) {
+			foreach( $field->choices as $choice ) {
+				if ( rgar( $choice, 'isSelected' ) && ! rgar( $value, $input['id'] ) ) {
+					$value[ $input['id'] ] = $choice['value'];
+				}
+			}
 		}
 
 		return GFCommon::get_select_choices( $field, rgar( $value, $input['id'], '' ) );
@@ -726,7 +746,7 @@ class GF_Chained_Field_Select extends GF_Field {
 
 	public function get_value_entry_detail( $value, $currency = '', $use_text = false, $format = 'html', $media = 'screen' ) {
 
-		$filtered = array_filter( $value );
+		$filtered = is_array( $value ) ? array_filter( $value ) : '';
 		if( empty( $filtered ) ) {
 			return '';
 		}
@@ -814,6 +834,45 @@ class GF_Chained_Field_Select extends GF_Field {
 		$prev_input_value = rgar( $full_chain_value, $prev_input_id );
 
 		return $prev_input_value;
+	}
+
+	// # FIELD FILTER UI HELPERS ---------------------------------------------------------------------------------------
+
+	/**
+	 * Returns the sub-filters for the current field.
+	 *
+	 * @since
+	 *
+	 * @return array
+	 */
+	public function get_filter_sub_filters() {
+		$sub_filters = array();
+		$inputs      = $this->inputs;
+
+		foreach ( $inputs as $input ) {
+			$sub_filters[] = array(
+				'key'             => rgar( $input, 'id' ),
+				'text'            => rgar( $input, 'label' ),
+				'preventMultiple' => false,
+				'operators'       => $this->get_filter_operators(),
+			);
+		}
+
+		return $sub_filters;
+	}
+
+	/**
+	 * Returns the filter operators for the current field.
+	 *
+	 * @since
+	 *
+	 * @return array
+	 */
+	public function get_filter_operators() {
+		$operators   = parent::get_filter_operators();
+		$operators[] = 'contains';
+
+		return $operators;
 	}
 
 }

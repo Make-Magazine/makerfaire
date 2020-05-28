@@ -117,8 +117,15 @@
 
                 } else {
 
+                    var hasSelectedChoice = false;
+
                     $.each( choices, function( i, choice ) {
                     	var selected = choice.isSelected ? 'selected="selected"' : '';
+
+                    	if ( selected )  {
+                    	    hasSelectedChoice = true;
+                        }
+
                         optionsMarkup += '<option value="' + choice.value + '"' + selected + '>' + choice.text + '</option>';
                     } );
 
@@ -142,7 +149,11 @@
                         $nextSelect
                             .removeClass( 'gf_no_options' )
                             //.prop( 'disabled', false ).show();
-                            .toggleSelect( false, self )
+                            .toggleSelect( false, self );
+
+                        if ( hasSelectedChoice ) {
+                            $nextSelect.change();
+                        }
                     }
 
                 }
@@ -222,7 +233,7 @@
 
         self.isValueMatch = function( isMatch, formId, rule ) {
 
-            if( rule.fieldId != self.fieldId || self.isDoingConditionalLogic ) {
+            if( formId != self.formId || rule.fieldId != self.fieldId || self.isDoingConditionalLogic ) {
                 return isMatch;
             }
 
