@@ -150,7 +150,7 @@ $handsOn = handsOnMarker($entry);
 
 // check if there's the potential to have a register field
 $registerLink = (isset($entry[829]) ? $entry[829] : '');
-$registerLink = ''; //post faire return blank for register link
+
 $viewNow = (isset($entry[837]) ? $entry[837] : '');
 
 //if this is a virtual faire, check if supplemental form was subimitted with links
@@ -168,7 +168,8 @@ if (strpos($faireShort, "VMF") === 0) { // special for virtual faires
         }
     }
 }
-
+$registerLink = ''; //post faire return blank for register link
+//
 // give admin and editor users special ability to see all entries
 $user = wp_get_current_user();
 $adminView = false;
