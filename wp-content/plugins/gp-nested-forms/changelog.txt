@@ -1,6 +1,36 @@
 
 # Changelog
 
+## 1.0-beta-8.52
+
+	- Fixed issue where child entries would not be attached to the proper entry when used in conjunction with the WooCommerce Gravity Forms Product Add-ons plugin.
+
+## 1.0-beta-8.51
+
+	- Fixed issue where GP Nested Forms would cause the form buttons to change when using multiple forms on a given page in conjunction with GravityView.
+	- Fixed issue where scrollbar did not work correctly when the modal was open by updating Tingle to v0.15.3.
+	- Reverted stop-gap fix for {Parent} merge tag compatibility with Populate Anything. Fixed in Populate Anything 1.0-beta-4.54.
+
+## 1.0-beta-8.50
+
+	- Fixed issue where {Parent} merge tag replacement did not trigger Populate Anything population in legacy jQuery UI modal as well.
+
+## 1.0-beta-8.49
+
+	- Fixed issue where {Parent} merge tag replacement did not trigger Populate Anything population.
+
+## 1.0-beta-8.48
+
+	- Fixed issue where {Parent} merge tag that targeted non-existent parent form field would return "undefined" rather than an empty string. This change allows a child form to be used on different parent forms.
+	- Fixed issue where displayOnly fields (e.g. HTML, Section) were available in form exports.
+
+## 1.0-beta-8.47
+
+	- Improved {Parent} merge tag. (#18)
+	- Added support for including custom content alongside {Parent} merge tags (e.g. "Name: {Parent:3}").
+	- Added support for multiple parent merge tags (e.g. "{Parent:3.3} {Parent:3.6}").
+	- Updated Nested Form field input markup to no longer apply the gform_pre_render filter if the child form is not set, does not exist, or if the Nested Form field is being rendered on the form editor view.
+
 ## 1.0-beta-8.46
 
 	- Fixed noticed caused by check for $_GET property that may not be present.

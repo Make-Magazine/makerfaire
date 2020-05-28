@@ -46,8 +46,13 @@ class GP_Field_Nested_Form extends GF_Field {
 			return ob_get_clean();
 		}
 
-		$nested_form_id   = rgar( $this, 'gpnfForm' );
-		$nested_form      = gf_apply_filters( array( 'gform_pre_render', $nested_form_id ), GFAPI::get_form( $nested_form_id ), false, null );
+		$nested_form_id = rgar( $this, 'gpnfForm' );
+
+		$nested_form = $nested_form_id ? GFAPI::get_form( $nested_form_id ) : false;
+		if( $nested_form && GFForms::get_page() !== 'form_editor' && rgpost( 'action' ) !== 'rg_refresh_field_preview' ) {
+			$nested_form = gf_apply_filters( array( 'gform_pre_render', $nested_form_id ), GFAPI::get_form( $nested_form_id ), false, null );
+		}
+
 		$nested_field_ids = rgar( $this, 'gpnfFields', array() );
 		$column_count     = count( $nested_field_ids ) + 1; // + 1 for actions column
 

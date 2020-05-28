@@ -591,18 +591,19 @@
 					return true;
 				}
 
-				var inputId = parentMergeTagMatches[1];
+				for( var i = 0; i < parentMergeTagMatches.length; i++ ) {
 
-				if (isNaN(inputId)) {
-					return true;
-				}
+					var inputId = parentMergeTagMatches[i][1];
 
-				var $parentInput = self.$parentFormContainer.find('#input_' + self.formId + '_' + inputId.split('.').join('_'));
-				if( $parentInput.hasClass( 'gfield_radio' ) ) {
-					$parentInput = $parentInput.find( 'input:checked' );
-				}
+					if (isNaN(inputId)) {
+						return true;
+					}
 
-				var currentValue = $(this).val(),
+					var $parentInput = self.$parentFormContainer.find('#input_' + self.formId + '_' + inputId.split('.').join('_'));
+					if( $parentInput.hasClass( 'gfield_radio' ) ) {
+						$parentInput = $parentInput.find( 'input:checked' );
+					}
+
 					/**
 					 * Filter the value of the parent merge tag before it is replaced in the field.
 					 *
@@ -613,10 +614,18 @@
 					 * @param int             formId          ID of the current form.
 					 * @param {GPNestedForms} gpnf            Current instance of the GPNestedForms object.
 					 */
-					parentValue = gform.applyFilters( 'gpnf_parent_merge_tag_value', $parentInput.val(), inputId, self.formId, self );
+					var parentValue = gform.applyFilters( 'gpnf_parent_merge_tag_value', $parentInput.length ? $parentInput.val() : '', inputId, self.formId, self );
 
-				if (currentValue != parentValue) {
-					$(this).val(parentValue).change();
+					value = value.replace( parentMergeTagMatches[i][0], parentValue );
+
+				}
+
+				value = value.trim();
+
+				var currentValue = $( this ).val();
+
+				if ( currentValue != value ) {
+					$( this ).val( value ).change();
 				}
 
 				$(this).on( 'change', function ( event ) {
@@ -630,7 +639,17 @@
 		};
 
 		self.getParentMergeTags = function( string ) {
-			return /{Parent:(\d+(\.\d+)?)}/gi.exec( string );
+
+			var matches = [],
+				pattern = /{Parent:(\d+(\.\d+)?)}/i;
+
+			while( pattern.test( string ) ) {
+				var i = matches.length;
+				matches[i] = pattern.exec( string );
+				string = string.replace( '' + matches[i][0], '' );
+			}
+
+			return matches;
 		};
 
 		self.getCurrentPage = function() {

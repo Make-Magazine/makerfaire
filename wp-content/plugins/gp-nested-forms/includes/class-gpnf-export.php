@@ -49,6 +49,10 @@ class GPNF_Export {
 			/* @var GF_Field $child_field */
 			foreach ( $this->get_child_fields( $field ) as $child_field ) {
 
+				if ( $child_field->displayOnly ) {
+					continue;
+				}
+
 				$field->set_context_property( 'use_admin_label', true );
 				$child_field->set_context_property( 'use_admin_label', true );
 

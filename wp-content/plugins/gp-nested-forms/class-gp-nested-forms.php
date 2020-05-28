@@ -63,6 +63,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		require_once( 'includes/class-gp-field-nested-form.php' );
 		require_once( 'includes/class-gpnf-feed-processing.php' );
 		require_once( 'includes/class-gpnf-gravityview.php' );
+		require_once( 'includes/class-gpnf-wc-product-addons.php' );
 		require_once( 'includes/class-gpnf-merge-tags.php' );
 		require_once( 'includes/class-gpnf-parent-merge-tag.php' );
 		require_once( 'includes/class-gpnf-notification-processing.php' );
@@ -92,6 +93,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		gpnf_notification_processing();
 		gpnf_zapier();
 		gpnf_merge_tags();
+		gpnf_wc_product_addons();
 
 		// General Hooks
 		add_action( 'gform_pre_validation',      array( $this, 'maybe_load_nested_form_hooks' ) );
