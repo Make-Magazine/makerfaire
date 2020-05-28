@@ -53,15 +53,15 @@ class ESSBCoreExtenderShortcodeTotalShares {
 		
 		$data_url = $post ? get_permalink() : essb_get_current_url( 'raw' );
 		
-		if (ESSBOptionValuesHelper::options_bool_value($options, 'avoid_nextpage')) {
+		if (essb_object_bool_value($options, 'avoid_nextpage')) {
 			$data_url = $post ? get_permalink(get_the_ID()) : essb_get_current_url( 'raw' );
 		}
 		
-		if (ESSBOptionValuesHelper::options_bool_value($options, 'force_wp_fullurl')) {
+		if (essb_object_bool_value($options, 'force_wp_fullurl')) {
 			$data_url = essb_get_current_page_url();
 		}
 		
-		if (ESSBOptionValuesHelper::options_bool_value($options, 'always_use_http')) {
+		if (essb_object_bool_value($options, 'always_use_http')) {
 			$data_url = str_replace("https://", "http://", $data_url);
 		}
 		
@@ -82,7 +82,7 @@ class ESSBCoreExtenderShortcodeTotalShares {
 			$css_class_align = $align;
 		}
 		
-		$total_counter_hidden = ESSBOptionValuesHelper::options_value($options, 'total_counter_hidden_till');
+		$total_counter_hidden = essb_object_value($options, 'total_counter_hidden_till');
 		
 		// @since 3.3 support for cached counters
 		$cached_counters = array();
@@ -101,7 +101,7 @@ class ESSBCoreExtenderShortcodeTotalShares {
 		}
 		$css_hide_total_counter = "";
 		if ($total_counter_hidden != '') {
-			$css_hide_total_counter = ' style="display: none !important;" data-essb-hide-till="' . $total_counter_hidden . '"';
+			$css_hide_total_counter = ' style="display: none !important;" data-essb-hide-till="' . esc_attr($total_counter_hidden) . '"';
 		}
 		
 		if ($cached_counters_active) {
@@ -119,7 +119,7 @@ class ESSBCoreExtenderShortcodeTotalShares {
 		
 		$tag = ($inline == 'yes') ? 'span' : 'div';
 		
-		$output .= '<'.$tag.' class="essb-total '.$css_class_align.'" data-network-list="'.$buttons.'" data-url="'.$data_url.'" data-full-number="'.$data_full_number.'" data-post="'.$data_post_id.'" '.$css_hide_total_counter.'>';
+		$output .= '<'.$tag.' class="essb-total '.esc_attr($css_class_align).'" data-network-list="'.esc_attr($buttons).'" data-url="'.esc_url($data_url).'" data-full-number="'.esc_attr($data_full_number).'" data-post="'.esc_attr($data_post_id).'" '.$css_hide_total_counter.'>';
 		
 		if ($message != '') {
 			$output .= '<'.$tag.' class="essb-message essb-block">'.$message.'</'.$tag.'>';

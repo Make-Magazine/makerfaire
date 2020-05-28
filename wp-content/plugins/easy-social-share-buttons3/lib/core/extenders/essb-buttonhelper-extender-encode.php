@@ -1,4 +1,10 @@
 <?php
+/**
+ * Encode custom symbols only of the URL
+ * 
+ * @param unknown_type $share
+ * @return mixed
+ */
 function essb_buttonhelper_encode_url_sharing($share) {
 	$share['short_url_twitter'] = urlencode($share['short_url_twitter']);
 	$share['full_url'] = urlencode($share['full_url']);
@@ -25,7 +31,6 @@ function essb_buttonhelper_encode_text($share) {
 }
 
 function essb_correct_url_on_tracking_code($share, $network) {
-	
 	if ($share['full_url'] != 'http://socialsharingplugin.com' && $share['full_url'] != '') {
 		
 		$utm_title = $share['title'];
@@ -48,14 +53,14 @@ function essb_correct_url_on_tracking_code($share, $network) {
 		if (essb_option_bool_value('shorturl_activate' )) {
 			$global_provider = essb_options_value( 'shorturl_type' );
 			if (essb_option_bool_value('twitter_shareshort' )) {
-				essb_depend_load_function('essb_short_url', 'lib/core/essb-shorturl-helper.php');
+			    essb_helper_maybe_load_feature('short-url');
 				$global_shorturl = essb_short_url ( $share ['full_url'], $global_provider, get_the_ID (), essb_options_value( 'shorturl_bitlyuser' ), essb_options_value( 'shorturl_bitlyapi' ) );
 	
 				$share ['short_url_twitter'] = $global_shorturl;
 				$share ['short_url_whatsapp'] = $global_shorturl;
 			}
 			else {
-				essb_depend_load_function('essb_short_url', 'lib/core/essb-shorturl-helper.php');
+			    essb_helper_maybe_load_feature('short-url');
 				$share ['short_url'] = essb_short_url ( $share ['full_url'], $global_provider, get_the_ID (), essb_options_value( 'shorturl_bitlyuser' ), essb_options_value('shorturl_bitlyapi' ) );
 	
 				$share ['short_url_twitter'] = $share ['short_url'];

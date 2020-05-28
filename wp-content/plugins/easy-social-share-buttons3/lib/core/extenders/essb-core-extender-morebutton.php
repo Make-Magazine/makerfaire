@@ -11,6 +11,7 @@ if (!function_exists('essb_generate_morebutton_code')) {
 		
 		$user_set_style_ofpop = essb_option_value('more_button_popstyle');
 		$user_set_template_ofpop = essb_option_value('more_button_poptemplate');
+		$user_title = essb_sanitize_option_value('more_button_title');
 					
 		// @since 3.3 - option to change more button style on each display position
 		if (isset($button_style['location_more_button_func'])) {
@@ -23,6 +24,11 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			$user_set_morebutton_func = $button_style['share_button_func'];
 			$user_set_style_ofpop = essb_option_value('share_button_popstyle');
 			$user_set_template_ofpop = essb_option_value('share_button_poptemplate');
+			$user_title = essb_sanitize_option_value('share_button_title');
+		}
+		
+		if (empty($user_title)) {
+			$user_title = esc_html__('Share via', 'essb');
 		}
 		
 		// correcting mobile popup style of mobile share buttons - it should be default classic style
@@ -30,15 +36,8 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			$user_set_style_ofpop = '';
 		}
 		
-		if ($user_set_morebutton_func == '1') {
-			//essb_resource_builder()->add_js(ESSBResourceBuilderSnippets::js_build_generate_more_button_inline(), true, 'essb-inlinemore-code');
-			//essb_depend_load_function('essb_rs_js_build_generate_more_button_inline', 'lib/core/resource-snippets/essb_rs_js_build_generate_more_button_inline.php');
-				
-		}
-		if (($user_set_morebutton_func == '2' || $user_set_morebutton_func == '3' || $user_set_morebutton_func == '4' || $user_set_morebutton_func == '5')) {
-			//essb_resource_builder()->add_js(ESSBResourceBuilderSnippets::js_build_generate_more_button_popup(), true, 'essb-popupmore-code');
-			//essb_depend_load_function('essb_rs_js_build_generate_more_button_popup', 'lib/core/resource-snippets/essb_rs_js_build_generate_more_button_popup.php');
-				
+
+		if (($user_set_morebutton_func == '2' || $user_set_morebutton_func == '3' || $user_set_morebutton_func == '4' || $user_set_morebutton_func == '5')) {				
 		
 			$listAllNetworks = ($user_set_morebutton_func == '2') ? true: false;
 			$more_social_networks = essb_core_helper_generate_list_networks($listAllNetworks);
@@ -57,7 +56,6 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			
 			if ($user_set_morebutton_func == '4' || $user_set_morebutton_func == '5') {
 				$more_social_networks = essb_core_helper_generate_list_networks_with_more(false);
-				//$more_social_networks = essb_core_helper_networks_after_more($more_social_networks);
 			}
 			
 			if ($user_set_morebutton_func != '2') {
@@ -84,7 +82,6 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			}
 				
 			if ($user_set_morebutton_func == '4' || $user_set_morebutton_func == '5') {
-				//$more_social_networks = essb_core_helper_generate_list_networks_with_more(false);
 				$more_social_networks = essb_core_helper_networks_after_more($more_social_networks);
 			}
 			
@@ -99,14 +96,13 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			}
 			
 			if (in_array("love", $more_social_networks)) {
-				essb_depend_load_function('essb_love_generate_js_code', 'lib/networks/essb-loveyou.php');
+			    essb_depend_load_function('essb_love_generate_js_code', 'lib/core/helpers/helpers-loveyou-jscode.php');
 			}
 				
 		
 			if ($position == "sharebottom") {
 				$more_social_networks = $share_bottom_networks;
 				$more_social_networks_order = $social_networks_order;
-				//$button_style['more_button_icon'] = "dots";
 			}
 		
 			$button_style['button_style'] = "button";
@@ -153,8 +149,10 @@ if (!function_exists('essb_generate_morebutton_code')) {
 
 				$user_message_inpop .= '<div class="essb-morepopup-modern-message">';
 				$user_message_inpop .= '<div class="essb-morepopup-modern-title">'.$sharing_title.'</div>';
-				$user_message_inpop .= '<div class="essb-morepopup-modern-link"><a href="'.esc_url($sharing_url).'" target="_blank">'.$sharing_url.'</a></div>';
+				$user_message_inpop .= '<div class="essb-morepopup-modern-link"><a href="'.esc_url($sharing_url).'" target="_blank">'.esc_url($sharing_url).'</a></div>';
 				$user_message_inpop .= '</div>';
+			}
+			else {
 			}
 			
 			$user_message_inpop = apply_filters('essb_morepopup_message', $user_message_inpop);			
@@ -164,16 +162,17 @@ if (!function_exists('essb_generate_morebutton_code')) {
 				$add_pointer = '<div class="modal-pointer modal-pointer-up-left"><div class="modal-pointer-conceal"></div></div>';
 			}				
 			
-			$code .= sprintf('<div class="essb_morepopup essb_morepopup_%1$s essb_morepopup_%3$s%4$s" style="display:none;">
-					<a href="#" class="essb_morepopup_close" onclick="essb.toggle_less_popup(\'%1$s\'); return false;"><i class="essb_icon_close"></i></a>
+			$code .= sprintf('<div class="essb_morepopup essb_morepopup_%1$s essb_morepopup_%3$s%4$s essb-forced-hidden">
+					<div class="essb_morepopup_header">
+						<span>'.$user_title.'</span>
+						<a href="#" class="essb_morepopup_close" onclick="essb.toggle_less_popup(\'%1$s\'); return false;"><i class="essb_icon_close"></i></a>
+					</div>
 					<div class="essb_morepopup_content essb_morepopup_content_%1$s">%2$s</div>%5$s</div>
 					<div class="essb_morepopup_shadow essb_morepopup_shadow_%1$s%6$s" onclick="essb.toggle_less_popup(\'%1$s\'); return false;"></div>',
 					$salt,
 					$user_message_inpop.essb_draw_share_buttons($post_share_details, $button_style,
 							$more_social_networks, $more_social_networks_order, $social_networks_names, "more_popup", $more_salt, 'share'),
-					$position, $additional_popup, $add_pointer, $additional_popup_shadow);
-		
-			//print $more_salt."|";
+					esc_attr($position), esc_attr($additional_popup), $add_pointer, esc_attr($additional_popup_shadow));
 		
 			// fix for not workin mail in more button
 			if (!isset($post_share_details['mail_subject'])) {
@@ -196,7 +195,6 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			}
 		
 		}
-		
 		return $code;
 	}
 }

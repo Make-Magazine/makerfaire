@@ -19,26 +19,16 @@ class ESSBLiveCustomizer {
 		add_action ( 'wp_ajax_essb_livecustomizer_options', array ($this, 'customizer_options' ) );
 		add_action ( 'wp_ajax_essb_livecustomizer_save', array ($this, 'customizer_options_save' ) );
 		add_action ( 'wp_ajax_essb_livecustomizer_get', array ($this, 'customizer_get' ) );
-		add_action ( 'wp_ajax_essb_livecustomizer_set', array ($this, 'customizer_set' ) );
 		add_action ( 'wp_ajax_essb_livecustomizer_get_meta', array ($this, 'customizer_get_meta' ) );
-		add_action ( 'wp_ajax_essb_livecustomizer_set_meta', array ($this, 'customizer_set_meta' ) );
-		add_action ( 'wp_ajax_essb_livecustomizer_preview', array($this, 'customizer_preview'));
-		add_action ( 'wp_ajax_essb_livecustomizer_module', array($this, 'module_activation'));
 		
 	}
 	
-	public function enqueue_scripts_and_styles() {
-		//	wp_enqueue_script ( 'essb-social-image-share', ESSB3_PLUGIN_URL . '/lib/modules/social-image-share/assets/js/easy-social-image-share.min.js', array ('jquery' ), false, true );
-		//  wp_enqueue_style ( 'essb-fontawsome', ESSB3_PLUGIN_URL . '/assets/admin/font-awesome.min.css', array (), ESSB3_VERSION );
-		
+	public function enqueue_scripts_and_styles() {		
 		if (essb_is_mobile()) {
 			return;
 		}
 		
-		// loading icons fonts used for customizer
-		//if (!essb_option_bool_value('deactivate_fa')) {
-			wp_enqueue_style ( 'essb-fontawsome', ESSB3_PLUGIN_URL . '/assets/admin/font-awesome.min.css', array (), ESSB3_VERSION );
-		//}
+		wp_enqueue_style ( 'essb-fontawsome', ESSB3_PLUGIN_URL . '/assets/admin/font-awesome.min.css', array (), ESSB3_VERSION );
 
 		wp_enqueue_style ( 'essb-live-customizer-alerts', ESSB3_PLUGIN_URL.'/assets/admin/sweetalert.css', array (), ESSB3_VERSION );
 		wp_enqueue_script ( 'essb-live-customizer-alerts', ESSB3_PLUGIN_URL . '/assets/admin/sweetalert.min.js', array ('jquery'), false, true);
@@ -49,9 +39,10 @@ class ESSBLiveCustomizer {
 		wp_enqueue_style ( 'essb-live-customizer-animations', ESSB3_PLUGIN_URL.'/assets/css/essb-animations.min.css', array (), ESSB3_VERSION );
 		wp_enqueue_style ( 'essb-live-customizer-display-methods', ESSB3_PLUGIN_URL.'/assets/css/essb-display-methods.min.css', array (), ESSB3_VERSION );
 		
+		wp_localize_script ('essb-live-customizer', 'essb_live_customizer_positions', $this->generate_positions_map());
+		wp_add_inline_script ('essb-live-customizer', $this->prepare_position_setup_link());
 		
-		wp_enqueue_media ();
-		
+		wp_enqueue_media ();	
 	}
 	
 	public function can_run() {
@@ -73,7 +64,6 @@ class ESSBLiveCustomizer {
 	}	
 		
 	//-- Internal Options Read & Save
-	
 	public function customizer_get() {
 		$params = isset($_REQUEST['params']) ? $_REQUEST['params'] : '';
 		$response = array();
@@ -130,13 +120,6 @@ class ESSBLiveCustomizer {
 		die();
 	}
 	
-	public function customizer_set() {
-		
-	}
-	
-	public function customizer_set_meta() {
-	
-	}
 	
 	public function customizer_options_save() {
 		global $essb_options;
@@ -186,9 +169,6 @@ class ESSBLiveCustomizer {
 						$exist_options = true;
 					}
 				}
-				else {
-					//$debug_output[$param] = $value;
-				}
 			}
 		}
 		
@@ -219,112 +199,33 @@ class ESSBLiveCustomizer {
 		}
 	}
 	
-	public function customizer_preview() {
-		send_nosniff_header();
-		header('Cache-Control: no-cache');
-		header('Pragma: no-cache');
+	private function generate_positions_map() {
+		$r = array();
 		
-		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/live-customizer/controls/section-livepreview.php');
-		die();
+		$r['top'] = 'display-4';
+		$r['bottom'] = 'display-5';
+		$r['float'] = 'display-6';
+		$r['followme'] = 'display-18';
+		$r['sidebar'] = 'display-8';
+		$r['popup'] = 'display-11';
+		$r['flyin'] = 'display-12';
+		$r['postfloat'] = 'display-7';
+		$r['topbar'] = 'display-9';
+		$r['bottombar'] = 'display-10';
+		$r['onmedia'] = 'display-13';
+		$r['heroshare'] = 'display-14';
+		$r['postbar'] = 'display-15';
+		$r['point'] = 'display-16';
+		$r['cornerbar'] = 'display-19';
+		$r['booster'] = 'display-20';
+		$r['sharebutton'] = 'display-21';
+
+		return $r;
 	}
 	
-	public function module_activation() {
-		send_nosniff_header();
-		header('Cache-Control: no-cache');
-		header('Pragma: no-cache');
+	private function prepare_position_setup_link() {
+		$r = 'var essb_live_settings = "'. esc_url(admin_url('admin.php?page=essb_redirect_where')). '"';
 		
-		$module = isset($_REQUEST['feature']) ? $_REQUEST['feature'] : '';
-		$command = isset($_REQUEST['command']) ? $_REQUEST['command'] : '';
-		
-		$debug_output = array('module' => $module, 'command' => $command);
-		
-		$debug_output['result'] = $this->module_boolean_activate($module, $command);
-		
-		echo json_encode($debug_output);
-		
-		die();
-	}
-	
-	private function module_boolean_activate($module, $command) {
-		global $essb_options;
-		
-		$value = ($command == 'activate') ? 'true': '';
-		$result = '';
-		
-		if ($module == 'share_optmize') {
-			$essb_options['opengraph_tags'] = $value;
-		}
-		if ($module == 'analytics') {
-			$essb_options['stats_active'] = $value;
-		}
-		if ($module == 'aftershare') {
-			$essb_options['afterclose_active'] = $value;
-		}
-		if ($module == 'shorturl') {
-			$essb_options['shorturl_activate'] = $value;
-		}
-		if ($module == 'optin') {
-			$essb_options['subscribe_widget'] = $value;
-		}
-		if ($module == 'followers') {
-			$essb_options['fanscounter_active'] = $value;
-		}
-		if ($module == 'profiles') {
-			$essb_options['profiles_widget'] = $value;
-		}
-		if ($module == 'native') {
-			$essb_options['native_active'] = $value;
-		}
-		if ($module == 'recovery') {
-			$essb_options['counter_recover_active'] = $value;
-		}
-		
-		if ($module == 'cct') {
-			$essb_options['deactivate_ctt'] = ($command == 'activate') ? '' : 'true';
-		}
-		
-		if ($module == 'widget' || $module == 'onmedia') {
-			$button_positions = essb_option_value ( 'button_position' );
-			if (!is_array($button_positions)) {
-				$button_positions = array();
-			}
-			
-			$result .= json_encode($button_positions)."|||";
-			
-			if ($value == 'true') {
-				$pos = array_search($module, $button_positions, true);
-				if (!in_array($module, $button_positions)) {
-					$button_positions[] = $module;
-					$result .= "| adding";
-				}
-			}
-			else {
-				if (in_array($module, $button_positions)) {
-					$button_positions = $this->remove_position($module, $button_positions);
-					$result .= "| removing";
-				}
-			}
-			
-			$result .= json_encode($button_positions);
-			
-			$essb_options['button_position'] = $button_positions;
-		}
-		
-		update_option(ESSB3_OPTIONS_NAME, $essb_options);
-		
-		return $result;
-	}
-	
-	private function remove_position($position, $positions) {
-		$new_positions = array();
-		
-		foreach ($positions as $key) {
-			if ($key != $position) {
-				$new_positions[] = $key;
-			}
-		}
-		
-		return $new_positions;
-		
+		return $r;
 	}
 }

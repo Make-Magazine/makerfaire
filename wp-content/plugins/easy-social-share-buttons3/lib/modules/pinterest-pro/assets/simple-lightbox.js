@@ -627,11 +627,16 @@ jQuery(document).ready(function($){
 				if (Number(elementHeight) < Number(smallestHeight)) elementHeight = smallestHeight;
 			});
 			
+			if (smallestHeight < 100) return;
+			
 			$(this).find('.essb-pin').each(function() {
 				$(this).css('max-height', smallestHeight+'px');
 			});
+			
+			var isLazy = $(this).attr('data-lazy') || '';
+			if (isLazy == '1') $(window).on('scroll', essbAdjustableGallery());
 		});
-	}
+	};
 	
 	if ($('.essb-pin-adjust').length) {
 		setTimeout(essbAdjustableGallery(), 100);

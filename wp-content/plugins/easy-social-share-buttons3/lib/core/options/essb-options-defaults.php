@@ -11,9 +11,8 @@ global $essb_available_button_positions_mobile, $essb_avaliable_content_position
 if (!function_exists('essb_default_native_buttons')) {
 	function essb_default_native_buttons() {
 		$essb_default_native_buttons = array();
-		$essb_default_native_buttons[] = 'google';
-		$essb_default_native_buttons[] = 'twitter';
 		$essb_default_native_buttons[] = 'facebook';
+		$essb_default_native_buttons[] = 'twitter';
 		$essb_default_native_buttons[] = 'linkedin';
 		$essb_default_native_buttons[] = 'pinterest';
 		$essb_default_native_buttons[] = 'youtube';
@@ -42,7 +41,7 @@ if (!function_exists('essb_available_tempaltes4')) {
 	function essb_available_tempaltes4($add_default_option = false) {
 		$essb_available_tempaltes = array ();
 		if ($add_default_option) {
-			$essb_available_tempaltes [''] = __('Default template from settings', 'essb');
+			$essb_available_tempaltes [''] = esc_html__('Default template from settings', 'essb');
 		}
 		$essb_available_tempaltes ['6'] = 'Metro (Retina)';
 		$essb_available_tempaltes ['7'] = 'Big (Retina)';
@@ -115,6 +114,7 @@ if (!function_exists('essb_available_social_networks')) {
 	function essb_available_social_networks($always_show_all = false) {
 		$essb_available_social_networks = array (
 				'facebook' => array ('name' => 'Facebook', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
+				'facebook_like' => array ('name' => 'Like', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
 				'twitter' => array ('name' => 'Twitter', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
 				'google' => array ('name' => 'Google+', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
 				'pinterest' => array ('name' => 'Pinterest', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
@@ -150,10 +150,6 @@ if (!function_exists('essb_available_social_networks')) {
 				'mailru' => array ('name' => 'Mail.ru', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only' ),
 				'viadeo' => array ('name' => 'Viadeo', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only' ),
 				'line' => array ('name' => 'Line', 'type' => 'buildin', 'supports' => 'mobile,retina templates only' ),
-				/*'embedly' => array(
-				 'name' => 'embed.ly',
-						'type' => 'buildin'
-				),*/
 				'flipboard' => array ('name' => 'Flipboard', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only'),
 				'comments' => array( 'name' => 'Comments', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only'),
 				'yummly' => array( 'name' => 'Yummly', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only'),
@@ -170,7 +166,8 @@ if (!function_exists('essb_available_social_networks')) {
 				'meetedgar' => array('name' => 'Edgar', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only'),
 				'fintel' => array('name' => 'Fintel', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only'),
 				'mix' => array('name' => 'Mix', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only'),
-				'instapaper' => array('name' => 'Instapaper', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only')
+				'instapaper' => array('name' => 'Instapaper', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only'),
+				'copy' => array('name' => 'Copy Link', 'type' => 'buildin', 'supports' => 'desktop,mobile,retina templates only')
 		);
 		
 		if (has_filter('essb4_social_networks')) {
@@ -242,8 +239,11 @@ if (!function_exists('essb_avaliable_counter_positions')) {
 		$essb_avaliable_counter_positions ['left'] = 'Left';
 		$essb_avaliable_counter_positions ['right'] = 'Right';
 		$essb_avaliable_counter_positions ['inside'] = 'Inside button instead of network name';
+		$essb_avaliable_counter_positions ['insidem'] = 'Inside button instead of network name (mini)';
 		$essb_avaliable_counter_positions ['insidename'] = 'Inside button after network name';
+		$essb_avaliable_counter_positions ['insidenamem'] = 'Inside button after network name (mini)';
 		$essb_avaliable_counter_positions ['insidebeforename'] = 'Inside button before network name';
+		$essb_avaliable_counter_positions ['insidebeforenamem'] = 'Inside button before network name (mini)';
 		$essb_avaliable_counter_positions ['leftm'] = 'Left Modern';
 		$essb_avaliable_counter_positions ['rightm'] = 'Right Modern';
 		$essb_avaliable_counter_positions ['topm'] = 'Top Mini';
@@ -252,12 +252,13 @@ if (!function_exists('essb_avaliable_counter_positions')) {
 		$essb_avaliable_counter_positions ['topn'] = 'Top';
 		$essb_avaliable_counter_positions ['insidehover'] = 'Inside button and appear when you hover button over the network name';
 		
+		if (has_filter('essb_avaliable_counter_positions')) {
+			$essb_avaliable_counter_positions = apply_filters('essb_avaliable_counter_positions', $essb_avaliable_counter_positions);
+		}
+		
 		return $essb_avaliable_counter_positions;
 	}
 }
-
-
-
 
 if (!function_exists('essb_avaiable_total_counter_position')) {
 	function essb_avaiable_total_counter_position() {
@@ -272,11 +273,13 @@ if (!function_exists('essb_avaiable_total_counter_position')) {
 		$essb_avaiable_total_counter_position ['after'] = 'After social share buttons';
 		$essb_avaiable_total_counter_position ['hidden'] = 'This will hide the total counter and make only button counters be visible';
 		
+		if (has_filter('essb_avaiable_total_counter_position')) {
+			$essb_avaiable_total_counter_position = apply_filters('essb_avaiable_total_counter_position', $essb_avaiable_total_counter_position);
+		}
+		
 		return $essb_avaiable_total_counter_position;
 	}
 }
-
-
 
 if (!function_exists('essb_avaiable_button_style')) {
 	function essb_avaiable_button_style() {
@@ -287,12 +290,13 @@ if (!function_exists('essb_avaiable_button_style')) {
 		$essb_avaiable_button_style ['icon_hover'] = 'Display share buttons as icon with network name appear when button is pointed';
 		$essb_avaiable_button_style ['vertical'] = 'Display icon above network name (vertical buttons)';
 		
+		if (has_filter('essb_avaiable_button_style')) {
+			$essb_avaiable_button_style = apply_filters('essb_avaiable_button_style', $essb_avaiable_button_style);
+		}
+		
 		return $essb_avaiable_button_style;
 	}
 }
-
-
-
 
 if (!function_exists('essb_avaliable_content_positions')) {
 	function essb_avaliable_content_positions() {
@@ -369,8 +373,6 @@ if (!function_exists('essb_available_button_positions')) {
 	}
 }
 
-
-
 if (!function_exists('essb_available_button_positions_mobile')) {
 	function essb_available_button_positions_mobile() {
 		$essb_available_button_positions_mobile = array ();
@@ -405,7 +407,6 @@ if (!function_exists('essb_available_social_profiles')) {
 
 		$socials['facebook'] = 'Facebook';
 		$socials['twitter'] = 'Twitter';
-		$socials['google'] = 'Google';
 		$socials['pinterest'] = 'Pinterest';
 		$socials['linkedin'] = 'LinkedIn';
 		$socials['github'] = 'GitHub';
@@ -427,9 +428,6 @@ if (!function_exists('essb_available_social_profiles')) {
 		$socials['slideshare'] = 'SlideShare';
 		$socials['500px'] = '500px';
 		$socials['flickr'] = 'Flickr';
-		$socials['wp_posts'] = 'WordPress Posts';
-		$socials['wp_comments'] = 'WordPress Comments';
-		$socials['wp_users'] = 'WordPress Users';
 		$socials['audioboo'] = 'Audioboo';
 		$socials['steamcommunity'] = 'Steam';
 		$socials['weheartit'] = 'WeHeartit';
@@ -449,6 +447,15 @@ if (!function_exists('essb_available_social_profiles')) {
 		$socials['tripadvisor'] = 'Tripadvisor';
 		$socials['snapchat'] = 'Snapchat';
 		$socials['telegram'] = 'Telegram';
+		$socials['xing'] = 'Xing'; // version 6.2.3
+		
+		$socials['medium'] = 'Medium';
+		$socials['patreon'] = 'Patreon';
+		$socials['mixer'] = 'Mixer';
+		$socials['tiktok'] = 'TikTok';
+		$socials['ok'] = 'Odnoklassniki';
+		
+		$socials['subscribe_form'] = 'Subscribe Form'; // version 7.1
 		
 		if (has_filter('essb4_follower_networks')) {
 			$socials = apply_filters('essb4_follower_networks', $socials);
@@ -544,7 +551,6 @@ if (! function_exists ( 'essb_optin_designs' )) {
 		$periods ['design8'] = 'Design #8';
 		$periods ['design9'] = 'Design #9';
 
-		// load user designs 
 		/**
 		 * Loading the form designer functios that are required to work and deal
 		 * with load save and update. But load only if we have not done than in the past.

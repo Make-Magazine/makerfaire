@@ -3,15 +3,14 @@ if (!function_exists('essb_rs_css_build_mobile_compatibility')) {
 	add_filter('essb_css_buffer_head', 'essb_rs_css_build_mobile_compatibility');
 	
 	function essb_rs_css_build_mobile_compatibility($buffer) {
-		global $essb_options;
 		
-		$mobile_css_screensize = ESSBOptionValuesHelper::options_value($essb_options, 'mobile_css_screensize');
+		$mobile_css_screensize = essb_sanitize_option_value('mobile_css_screensize');
 		if (empty($mobile_css_screensize)) {
 			$mobile_css_screensize = "750";
 		}
-		$mobile_css_readblock = ESSBOptionValuesHelper::options_bool_value($essb_options, 'mobile_css_readblock');
-		$mobile_css_all = ESSBOptionValuesHelper::options_value($essb_options, 'mobile_css_all');
-		$mobile_css_optimized = ESSBOptionValuesHelper::options_bool_value($essb_options, 'mobile_css_optimized');
+		$mobile_css_readblock =  essb_option_bool_value('mobile_css_readblock');
+		$mobile_css_all = essb_option_bool_value('mobile_css_all');
+		$mobile_css_optimized = essb_option_bool_value('mobile_css_optimized');
 		
 		$snippet = '';
 		

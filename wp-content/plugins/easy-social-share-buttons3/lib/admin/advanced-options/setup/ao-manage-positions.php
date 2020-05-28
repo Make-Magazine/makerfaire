@@ -3,25 +3,25 @@ if (function_exists('essb_advancedopts_settings_group')) {
 	essb_advancedopts_settings_group('essb_options');
 }
 
-essb5_draw_heading(__('Mobile Appearance', 'essb'), '5', __('Use those options to deactivate plugin on mobile', 'essb'));
-essb5_draw_switch_option('deactivate_mobile', __('Deactivate plugin on mobile', 'essb'), __('Use this option to completely deactivate plugin usage on mobile devices inlcuding all of its modules.', 'essb'));
-essb5_draw_switch_option('deactivate_mobile_share', __('Deactivate social share buttons on mobile', 'essb'), __('This option will deactivate share function on mobile devices but it will keep up showing all other modules.', 'essb'));
+essb_advancedopts_section_open('ao-small-values');
 
-essb5_draw_heading(__('Turn Off Display Methods', 'essb'), '5', __('Set to Yes option for the positions you does not wish to use on your site. This will deactivate the marked positions from the settings screen and code.', 'essb'));
-essb5_draw_switch_option('deactivate_method_float', __('Turn off Float from Top', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_postfloat', __('Turn off Post Vertical Float', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_sidebar', __('Turn off Sidebar', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_topbar', __('Turn off Top Bar', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_bottombar', __('Turn off Bottom Bar', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_popup', __('Turn off Pop Up', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_flyin', __('Turn off Fly In', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_heroshare', __('Turn off Full Screen Hero Share', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_postbar', __('Turn off Post Bar', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_point', __('Turn off Point', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_image', __('Turn off On Media', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_native', __('Turn off Methods with native buttons', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_followme', __('Turn off Follow me bar', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_corner', __('Turn off Corner Bar', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_booster', __('Turn off Share Booster', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_sharebutton', __('Turn off Share Button', 'essb'), __('', 'essb'));
-essb5_draw_switch_option('deactivate_method_integrations', __('Turn off Plugin Integrations', 'essb'), __('', 'essb'));
+essb5_draw_heading(esc_html__('Deactivated display methods', 'essb'), '5', esc_html__('Display methods with Yes are deactivated and you will not be able to select them from the list. This makes easy to operate just with the positions you need. If you wish to add a position that is deactivated just change to No.', 'essb'));
+essb5_draw_switch_option('deactivate_method_float', esc_html__('Float from Above The Content', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_postfloat', esc_html__('Post Vertical Float', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_sidebar', esc_html__('Sidebar', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_topbar', esc_html__('Top Bar', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_bottombar', esc_html__('Bottom Bar', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_popup', esc_html__('Pop Up', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_flyin', esc_html__('Fly In', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_heroshare', esc_html__('Full Screen Hero Share', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_postbar', esc_html__('Post Bar', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_point', esc_html__('Point', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_image', esc_html__('On Media', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_native', esc_html__('Native Social Button Display Methods', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_followme', esc_html__('Follow Me Bar', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_corner', esc_html__('Corner Bar', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_booster', esc_html__('Share Booster', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_sharebutton', esc_html__('Share Button', 'essb'), '');
+essb5_draw_switch_option('deactivate_method_integrations', esc_html__('Integrations with Other Plugins', 'essb'), '');
+
+essb_advancedopts_section_close();

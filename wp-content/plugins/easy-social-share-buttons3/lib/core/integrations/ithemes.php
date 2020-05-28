@@ -17,7 +17,7 @@ if (!function_exists('essb_ithemes_integration')) {
 		essb_depend_load_function('essb_check_applicability_module', 'lib/core/extenders/essb-core-extender-check-applicability-module.php');
 		
 		if (essb_check_applicability_module('ithemes', $essb_options, essb_option_value('display_exclude_from'))) {
-			printf('%1$s<div style="clear: both;"></div>', essb_core()->generate_share_buttons('ithemes', 'share', array('only_share' => false, 'post_type' => 'ithemes')));
+			printf('%1$s<div class="essb_clear"></div>', essb_core()->generate_share_buttons('ithemes', 'share', array('only_share' => false, 'post_type' => 'ithemes')));
 		}
 	}	
 }
@@ -33,7 +33,7 @@ if (!function_exists('essb_ithemes_integration_purchase')) {
 			$activity_title =  it_exchange( 'transaction', 'product-attribute', array( 'attribute' => 'title', 'return' => true ) );
 			$activity_link = get_permalink($activity_link);
 				
-			printf('%1$s<div style="clear: both;"></div>', essb_core()->generate_share_buttons('ithemes', 'share', array('only_share' => false, 'post_type' => 'ithemes', 'url' => $activity_link, 'title' => $activity_title)));
+			printf('%1$s<div class="essb_clear"</div>', essb_core()->generate_share_buttons('ithemes', 'share', array('only_share' => false, 'post_type' => 'ithemes', 'url' => $activity_link, 'title' => $activity_title)));
 			
 		}
 	}

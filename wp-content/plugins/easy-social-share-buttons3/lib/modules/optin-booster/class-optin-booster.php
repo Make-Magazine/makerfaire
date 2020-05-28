@@ -8,10 +8,6 @@ if (!defined('ESSB3_OFOB_PLUGIN_URL')) {
 	define ( 'ESSB3_OFOB_PLUGIN_URL', ESSB3_PLUGIN_URL . '/lib/modules/optin-booster/' );
 }
 
-if (!defined('ESSB3_OFOB_PLUGIN_BASE_NAME')) {
-	define ( 'ESSB3_OFOB_PLUGIN_BASE_NAME', plugin_basename ( __FILE__ ) );
-}
-
 if (!defined('ESSB3_OFOB_OPTIONS_NAME')) {
 	define ( 'ESSB3_OFOB_OPTIONS_NAME', 'essb3-ofob' );
 }
@@ -35,7 +31,8 @@ class ESSBOptinBooster {
 			$essb3ofob_options['ofob_exit'] = 'true';
 		}
 		
-		if ($this->option_bool_value('ofob_time') || $this->option_bool_value('ofob_scroll') || $this->option_bool_value('ofob_exit')) {
+		if ($this->option_bool_value('ofob_time') || $this->option_bool_value('ofob_scroll') || 
+				$this->option_bool_value('ofob_exit') || $this->option_bool_value('ofob_manual')) {
 			add_action ( 'wp_footer', array(&$this, 'draw_forms'), 99);
 			add_action('init', array(&$this, 'load_assets'), 99);
 				
@@ -164,10 +161,10 @@ class ESSBOptinBooster {
 			$of_time_bgcolor = $this->option_value('of_time_bgcolor');
 			
 			if ($ofob_time_delay != '') {
-				$callback = ' data-delay="'.$ofob_time_delay.'" data-single="'.$ofob_single.'"';
+				$callback = ' data-delay="'.esc_attr($ofob_time_delay).'" data-single="'.esc_attr($ofob_single).'"';
 				
 				if ($ofob_single_time != '') {
-					$callback .= ' data-single-days="'.$ofob_single_time.'"';
+					$callback .= ' data-single-days="'.esc_attr($ofob_single_time).'"';
 				}
 				
 				$this->draw_form_code('time', $of_time_design, $of_time_bgcolor, $callback, $ofob_creditlink);
@@ -180,10 +177,10 @@ class ESSBOptinBooster {
 			$of_scroll_bgcolor = $this->option_value('of_scroll_bgcolor');
 				
 			if ($ofob_scroll_percent != '') {
-				$callback = ' data-scroll="'.$ofob_scroll_percent.'" data-single="'.$ofob_single.'"';
+				$callback = ' data-scroll="'.esc_attr($ofob_scroll_percent).'" data-single="'.esc_attr($ofob_single).'"';
 				
 				if ($ofob_single_time != '') {
-					$callback .= ' data-single-days="'.$ofob_single_time.'"';
+					$callback .= ' data-single-days="'.esc_attr($ofob_single_time).'"';
 				}
 				
 				$this->draw_form_code('scroll', $of_scroll_design, $of_scroll_bgcolor, $callback, $ofob_creditlink);
@@ -193,24 +190,28 @@ class ESSBOptinBooster {
 		if ($this->option_bool_value('ofob_exit')) {			
 			$of_exit_design = $this->option_value('of_exit_design');
 			$of_exit_bgcolor = $this->option_value('of_exit_bgcolor');				
-			$callback = ' data-exit="1" data-single="'.$ofob_single.'"';
+			$callback = ' data-exit="1" data-single="'.esc_attr($ofob_single).'"';
 			
 			if ($ofob_single_time != '') {
-				$callback .= ' data-single-days="'.$ofob_single_time.'"';
+				$callback .= ' data-single-days="'.esc_attr($ofob_single_time).'"';
 			}
 				
 			$this->draw_form_code('exit', $of_exit_design, $of_exit_bgcolor, $callback, $ofob_creditlink);
-				
+		}
+		
+		if ($this->option_bool_value('ofob_manual')) {
+			$of_manual_design = $this->option_value('of_manual_design');
+			$of_manual_bgcolor = $this->option_value('of_manual_bgcolor');
+			$of_manual_selector = $this->option_value('of_manual_selector');
+			$callback = ' data-manual="1" data-manual-selector="'.esc_attr($of_manual_selector).'"';
+			
+			$this->draw_form_code('manual', $of_manual_design, $of_manual_bgcolor, $callback, $ofob_creditlink);
 		}
 	}
 	
 	public function draw_form_code($event = '', $design = '', $overlay_color = '', $event_fire = '', $credit_link = false) {
 		$output = '';
 		
-		$affiliate_user = $this->option_value('ofob_creditlink_user');
-		if ($affiliate_user == '') {
-			$affiliate_user = 'appscreo';
-		}
 		
 		$close_type = $this->option_value('of_'.$event.'_close');
 		$close_color = $this->option_value('of_'.$event.'_closecolor');
@@ -218,7 +219,7 @@ class ESSBOptinBooster {
 		
 		$css_color = '';
 		if ($close_color != '') {
-			$css_color = ' style="color:'.$close_color.'!important;"';
+			$css_color = ' style="color:'.esc_attr($close_color).'!important;"';
 		}
 		
 		if ($close_type == '') {
@@ -226,7 +227,7 @@ class ESSBOptinBooster {
 		}
 		
 		if ($close_text == '') {
-			$close_text = __("No thanks. I don't want.");
+			$close_text = esc_html__("No thanks. I don't want.", 'essb');
 		}
 		
 		$output .= '<div class="essb-optinbooster essb-optinbooster-'.esc_attr($event).'" '.$event_fire.'>';
@@ -237,13 +238,13 @@ class ESSBOptinBooster {
 		
 		$output .= do_shortcode('[easy-subscribe design="'.$design.'" mode="mailchimp" conversion="booster-'.esc_attr($event).'"]');
 		if ($close_type != 'icon') {
-			$output .= '<div class="essb-optinbooster-close essb-optinbooster-closetext" '.esc_attr($css_color).'>'.$close_text.'</div>';
+			$output .= '<div class="essb-optinbooster-close essb-optinbooster-closetext" '.$css_color.'>'.$close_text.'</div>';
 		}
 		
 		$output .= '</div>';
 		$output .= '<div class="essb-optinbooster-overlay essb-optinbooster-overlay-'.esc_attr($event).'"'.($overlay_color != '' ? ' style="background-color:'.esc_attr($overlay_color).'!important;"' : '').'>';
 		if ($credit_link) {
-			$output .= '<div class="promo">Powered by <a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref='.$affiliate_user.'" target="_blank">Best Social Sharing Plugin for WordPress</a> Easy Social Share Buttons</div>';
+			$output .= '<div class="promo">Powered by <a href="http://go.appscreo.com/essb" target="_blank">Best Social Sharing Plugin for WordPress</a> Easy Social Share Buttons</div>';
 		}
 		
 		$output .= '</div>';

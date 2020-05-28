@@ -1,11 +1,7 @@
 <?php
 
 include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/essb-admin-helpers.php');
-
-if (!class_exists('ESSBNetworks_Flattr')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/networks/essb-flattr.php');
-}
-
+include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-control-center-base.php');
 
 include_once (ESSB3_PLUGIN_ROOT . 'lib/core/cache/essb-cache-detector.php');
 include_once (ESSB3_PLUGIN_ROOT . 'lib/core/options/essb-options-structure-shared.php');
@@ -28,6 +24,10 @@ if (!essb_option_bool_value('deactivate_module_pinterestpro')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/pinterest-pro/pinterest-pro-admin.php');
 }
 
+if (!essb_option_bool_value('deactivate_module_pinterestpro') || !essb_option_bool_value('essb_deactivate_ctt')) {
+    include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/class-essb-tinymce-loader.php');
+}
+
 
 include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-analytics/essb-social-share-analytics-backend.php');
 include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-options-structure5.php');
@@ -38,6 +38,13 @@ include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/essb-admin.php');
 
 include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/essb-global-wordpress-notifications.php');
 include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/essb-trigger-notifications.php');
+
+if (!class_exists('ESSBControlCenterShortcodes')) {
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-control-center-shortcodes.php');
+	ESSBControlCenterShortcodes::add_plugin_shortcodes();
+	
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/essb-media-buttons.php');
+}
 
 
 ?>

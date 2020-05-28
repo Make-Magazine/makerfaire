@@ -34,16 +34,16 @@ class ESSBSkinnedNativeButtons {
 			if ($net == "fb") { $selector = "facebook"; }
 
 			if ($color != '') {
-				$css .= '.essb-native-'.$selector.' .essb-native-text { background-color: '.$color.'!important;}';
+				$css .= '.essb-native-'.esc_attr($selector).' .essb-native-text { background-color: '.esc_attr($color).'!important;}';
 			}
 			if ($hovercolor != '') {
-				$css .= '.essb-native-'.$selector.' { background-color: '.$hovercolor.'!important;}';
+				$css .= '.essb-native-'.esc_attr($selector).' { background-color: '.esc_attr($hovercolor).'!important;}';
 			}
 			if ($textcolor != '') {
-				$css .= '.essb-native-'.$selector.' .essb-native-text { color: '.$textcolor.'!important;}';
+				$css .= '.essb-native-'.esc_attr($selector).' .essb-native-text { color: '.esc_attr($textcolor).'!important;}';
 			}
 			if ($width != '') {
-				$css .= '.essb-native-'.$selector.' { width: '.$width.'px!important;}';
+				$css .= '.essb-native-'.esc_attr($selector).' { width: '.esc_attr($width).'px!important;}';
 			}
 			
 			$text = isset($options['skinned_'.$net.'_text']) ? $options['skinned_'.$net.'_text'] : '';
@@ -69,10 +69,10 @@ class ESSBSkinnedNativeButtons {
 		$output = "";
 		
 		$css_width = "";
-		if ($width != '') { $css_width = ' style="width:'.$width.'px!important;"'; }
+		if ($width != '') { $css_width = ' style="width:'.esc_attr($width).'px!important;"'; }
 		
-		$output = '<div class="essb-native-skinned-button'.$user_skin.'">';
-		$output .= '<div class="essb-native-outsite'.$user_skin.' essb-native-' . $type . '"'.$css_width.'>';
+		$output = '<div class="essb-native-skinned-button'.esc_attr($user_skin).'">';
+		$output .= '<div class="essb-native-outsite'.esc_attr($user_skin).' essb-native-' . esc_attr($type) . '"'.$css_width.'>';
 		
 		$output_text = "";
 		
@@ -80,7 +80,7 @@ class ESSBSkinnedNativeButtons {
 			$output_text = '<span class="essb-native-text-inner">' . $text . '</span>';
 		}
 		
-		$output .= '<div class="essb-native-text'.$user_skin.'"><span class="' . self::get_icon( $type ) . '"></span>' . $output_text . '</div>';
+		$output .= '<div class="essb-native-text'.esc_attr($user_skin).'"><span class="' . self::get_icon( $type ) . '"></span>' . $output_text . '</div>';
 		$output .= '<div class="essb-native-click">' . $code . '</div>';
 		
 		$output .= '</div>';
@@ -126,12 +126,9 @@ class ESSBSkinnedNativeButtons {
 	public static function get_assets() {
 		global $essb_options;
 		
-		$deactivate_fa = ESSBOptionValuesHelper::options_bool_value($essb_options, 'deactivate_fa');
+		$deactivate_fa = essb_object_bool_value($essb_options, 'deactivate_fa');
 		
 		self::$resouce_files[] = array("key" => "easy-social-share-buttons-nativeskinned", "file" => ESSB3_PLUGIN_URL . '/assets/css/essb-native-skinned.min.css', "type" => "css");
-		//if (!$deactivate_fa) {
-		//	self::$resouce_files[] = array("key" => "essb-fontawsome", "file" => ESSB3_PLUGIN_URL . '/assets/css/font-awesome.min.css', "type" => "css");
-		//}
 
 		return self::$resouce_files;
 	}

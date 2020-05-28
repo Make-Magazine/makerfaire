@@ -54,7 +54,6 @@ class ESSBSocialFollowersCounter {
 			return $content;
 		}
 		
-		
 		if (!is_singular()) {
 			return $content;
 		}
@@ -74,11 +73,9 @@ class ESSBSocialFollowersCounter {
 	}
 	
 	public function register_plugin_shortcodes($attrs) {
-		$default_options = ESSBSocialFollowersCounterHelper::default_instance_settings();
-		
+		$default_options = ESSBSocialFollowersCounterHelper::default_instance_settings();	
 		
 		$attrs = shortcode_atts( $default_options , $attrs );
-		//print_r($attrs);
 		
 		ob_start();
 		ESSBSocialFollowersCounterDraw::draw_followers($attrs, true);
@@ -93,7 +90,6 @@ class ESSBSocialFollowersCounter {
 		
 		
 		$attrs = shortcode_atts( $default_options , $attrs );
-		//print_r($attrs);
 		
 		ob_start();
 		ESSBSocialFollowersCounterDraw::draw_followers($attrs, false, true);
@@ -125,7 +121,6 @@ class ESSBSocialFollowersCounter {
 		return ESSBSocialFollowersCounterDraw::followers_number($total);
 	}
 	
-	// -- social counters updater
 	/**
 	 * require_counter_update
 	 * 
@@ -338,6 +333,13 @@ class ESSBSocialFollowersCounter {
 				case 'snapchat':
 				case 'telegram':
 				case 'subscribe':
+				case 'xing':
+				case 'medium':
+				case 'tiktok':
+				case 'mixer':
+				case 'patreon':
+				case 'ok':
+				case 'subscribe_form':
 					$count = $this->update_manual_value($social);
 					break;
 				default :
@@ -432,7 +434,10 @@ class ESSBSocialFollowersCounter {
 	private function is_properly_configured($social) {
 	
 		switch ($social) {
-				
+			case 'instagram':
+			case 'instgram':
+				return ESSBSocialFollowersCounterHelper::get_option ( $social . '_username' );
+				break;
 			case 'mailchimp' :
 				return ESSBSocialFollowersCounterHelper::get_option ( $social . '_list_id' );
 				break;
@@ -454,6 +459,7 @@ class ESSBSocialFollowersCounter {
 			case 'wp_comments' :
 			case 'wp_users' :
 			case 'love':
+			case 'subscribe_form':
 				return true;
 				break;
 				
@@ -465,6 +471,12 @@ class ESSBSocialFollowersCounter {
 			case 'snapchat':
 			case 'telegram':
 			case 'subscribe':
+			case 'xing':
+			case 'medium':
+			case 'tiktok':
+			case 'mixer':
+			case 'patreon':
+			case 'ok':
 				return ESSBSocialFollowersCounterHelper::get_option ( $social . '_url' );
 				break;
 			default :
@@ -646,16 +658,25 @@ class ESSBSocialFollowersCounter {
 			case 'mailerlite':
 				return ESSBSocialFollowersCounterHelper::get_option ( $social . '_id' );
 				break;
-				case 'itunes':
-				case 'deviantart':
-				case 'paypal':
-				case 'whatsapp':
-				case 'tripadvisor':
-				case 'snapchat':
-				case 'telegram':
-				case 'subscribe':
-					return ESSBSocialFollowersCounterHelper::get_option ( $social . '_url' );
-					break;				
+			case 'subscribe_form':
+			    return ESSBSocialFollowersCounterHelper::get_option ( $social . '_design' );
+			    break;
+			case 'itunes':
+			case 'deviantart':
+			case 'paypal':
+			case 'whatsapp':
+			case 'tripadvisor':
+			case 'snapchat':
+			case 'telegram':
+			case 'subscribe':
+			case 'xing':
+			case 'medium':
+			case 'tiktok':
+			case 'mixer':
+			case 'patreon':
+			case 'ok':
+				return ESSBSocialFollowersCounterHelper::get_option ( $social . '_url' );
+				break;				
 		}
 		
 		if (has_filter("essb4_followers_{$social}_url")) {
@@ -664,6 +685,7 @@ class ESSBSocialFollowersCounter {
 	}
 	
 	public function draw_followers_sidebar() {
+		
 		$options = array('position' => '', 'template' => '', 'animation' => '', 'nospace' => '', 'width' => '');
 		
 		$sidebar_template = ESSBSocialFollowersCounterHelper::get_option('sidebar_template');
@@ -672,6 +694,8 @@ class ESSBSocialFollowersCounter {
 		$sidebar_position = ESSBSocialFollowersCounterHelper::get_option('sidebar_position');
 		$sidebar_width = ESSBSocialFollowersCounterHelper::get_option('sidebar_width');
 		$sidebar_orientation = ESSBSocialFollowersCounterHelper::get_option('sidebar_orientation');
+		$sidebar_total = ESSBSocialFollowersCounterHelper::get_option('sidebar_total');
+		
 		if ($sidebar_orientation == '') { $sidebar_orientation = 'h'; }
 		
 		if ($sidebar_template != '') {
@@ -686,6 +710,8 @@ class ESSBSocialFollowersCounter {
 		$options['position'] = ($sidebar_position != '') ? $sidebar_position: 'left';
 		$options['width'] = $sidebar_width;
 		$options['button'] = $sidebar_orientation;
+		
+		$options['total'] = ($sidebar_total == 'true') ? 1 : 0;
 		
 		ESSBSocialFollowersCounterDraw::draw_followers_sidebar($options);
 	}

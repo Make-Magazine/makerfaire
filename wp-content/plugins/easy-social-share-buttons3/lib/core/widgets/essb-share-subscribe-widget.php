@@ -9,8 +9,8 @@ class ESSBSubscribeButtonWidget extends WP_Widget {
 	 * @access public
 	 */
 	public function __construct() {
-		$widget_ops = array('classname' => 'widget_essb_subscribe', 'description' => __( "Draw subscribe form (opt-in form) as widget.") );
-		parent::__construct('easy-subscribe-widget', __('Easy Social Share Buttons: Subscribe Form'), $widget_ops);
+		$widget_ops = array('classname' => 'widget_essb_subscribe', 'description' => esc_html__( "Draw subscribe form (opt-in form) as widget.") );
+		parent::__construct('easy-subscribe-widget', esc_html__('Easy Social Share Buttons: Subscribe Form'), $widget_ops);
 		$this->alt_option_name = 'widget_essb_subscribe';
 	}
 
@@ -88,16 +88,16 @@ class ESSBSubscribeButtonWidget extends WP_Widget {
 		$existing_forms = essb_optin_designs();
 		
 ?>
-		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e( 'Title:' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
 
-		<p><label for="<?php echo $this->get_field_id( 'mode' ); ?>"><?php _e( 'Form type:' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'mode' ); ?>"><?php esc_html_e( 'Form type:' ); ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'mode' ); ?>" name="<?php echo $this->get_field_name( 'mode' ); ?>">
-			<option value="form" <?php if ($mode == "form") echo 'selected="selected"'; ?>>Custom code form</option>
 			<option value="mailchimp" <?php if ($mode == "mailchimp") echo 'selected="selected"'; ?>>Service integrated subscribe form</option>
+			<option value="form" <?php if ($mode == "form") echo 'selected="selected"'; ?>>Custom code form</option>
 		</select></p>
 
-		<p><label for="<?php echo $this->get_field_id( 'design' ); ?>"><?php _e( 'Design:' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'design' ); ?>"><?php esc_html_e( 'Design:' ); ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'design' ); ?>" name="<?php echo $this->get_field_name( 'design' ); ?>">
 		
 			<?php 
@@ -115,9 +115,9 @@ class ESSBSubscribeButtonWidget extends WP_Widget {
 	}
 }
 
-  function init_wp_widget_essb_subscribe_button() {
+  function essb_subscribe_init_wp_widget() {
     register_widget( 'ESSBSubscribeButtonWidget' );
   }
 
-  add_action( 'widgets_init', 'init_wp_widget_essb_subscribe_button' );
+  add_action( 'widgets_init', 'essb_subscribe_init_wp_widget' );
 

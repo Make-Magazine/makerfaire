@@ -1,5 +1,6 @@
 jQuery(document).ready(function($){
-
+	"use strict";
+	
 	var basic_network_list = "twitter,linkedin,facebook,pinterest,google,stumbleupon,vk,reddit,buffer,love,ok,mwp,xing,pocket,mail,print,comments,yummly";
 	var extended_network_list = "del,digg,weibo,flattr,tumblr,whatsapp,meneame,blogger,amazon,yahoomail,gmail,aol,newsvine,hackernews,evernote,myspace,mailru,viadeo,line,flipboard,sms,viber,telegram";
 	
@@ -139,15 +140,14 @@ jQuery(document).ready(function($){
 				
 				switch (network) {
 				case "facebook":
-					//var facebook_url = "https://api.facebook.com/restserver.php?method=links.getStats&format=json&urls="+url;
-					var facebook_url = "https://graph.facebook.com/?id="+url;
+					var facebook_url = "https://graph.facebook.com/?id="+url+'&fields=og_object{engagement}';
 					$.getJSON(facebook_url)
 					.done(function(data){
 						if (fb_value) {
-							counter_display(counter_pos, operating_elements['facebook'+instance_id], operating_elements['facebook_inside'+instance_id], data['share'].share_count);
+							counter_display(counter_pos, operating_elements['facebook'+instance_id], operating_elements['facebook_inside'+instance_id], data['og_object'].og_object.engagement.count || 0);
 						}
 						else {
-							counter_display(counter_pos, operating_elements['facebook'+instance_id], operating_elements['facebook_inside'+instance_id], data['share'].share_count);	
+							counter_display(counter_pos, operating_elements['facebook'+instance_id], operating_elements['facebook_inside'+instance_id], data['og_object'].og_object.engagement.count || 0);	
 						}
 					});
 					break;

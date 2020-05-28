@@ -5,7 +5,7 @@
  * @since 3.6
  *
  * @package EasySocialShareButtons
- * @author  appscreo <http://codecanyon.net/user/appscreo/portfolio>
+ * @author  appscreo <https://codecanyon.net/user/appscreo/portfolio>
  */
 
 class ESSBNetworks_SubscribeActions {
@@ -28,10 +28,21 @@ class ESSBNetworks_SubscribeActions {
 		$user_email = isset ( $_REQUEST ['mailchimp_email'] ) ? $_REQUEST ['mailchimp_email'] : '';
 		$user_name = isset ($_REQUEST['mailchimp_name']) ? $_REQUEST['mailchimp_name'] : '';
 		$output['request_mail'] = $user_email;
+		
+		$validate_captcha = isset($_REQUEST['validate_recaptcha']) ? $_REQUEST['validate_recaptcha'] : '';
+		$recaptcha = isset($_REQUEST['recaptcha']) ? $_REQUEST['recaptcha'] : '';
+		
+		if ($validate_captcha == 'true') {
+			$result = self::validate_recaptha($recaptcha);
+			if (!$result['valid']) {
+				$output['code'] = '90';
+				$output['message'] = $result['error'];
+			}
+		}
 
 		if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
 			$output['code'] = "90";
-			$output['message'] = __('Invalid email address', 'essb');
+			$output['message'] = esc_html__('Invalid email address', 'essb');
 
 			$translate_subscribe_invalidemail = essb_option_value('translate_subscribe_invalidemail');
 			if ($translate_subscribe_invalidemail != '') {
@@ -45,13 +56,32 @@ class ESSBNetworks_SubscribeActions {
 
 		print json_encode($output);
 	}
+	
+	public static function validate_recaptha($recaptcha = '') {
+		$valid = true;
+		$error = '';
+		
+		if ( empty( $recaptcha ) ) {
+			$valid = false;
+			$error = esc_html__('Code not filled', 'essb');
+		}
+		
+		$api_results = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . essb_sanitize_option_value('subscribe_recaptcha_secret') . '&response=' . $recaptcha );
+		$results     = json_decode( wp_remote_retrieve_body( $api_results ) );
+		if ( empty( $results->success ) ) {
+			$valid = false;
+			$error = esc_html__( 'Incorrect reCAPTCHA, please try again.', 'essb' );		
+		}
+
+		return array('valid' => $valid, 'error' => $error );
+	}
 
 	public static function subscribe($user_email, $user_name = '') {
 		global $essb_options;
 
 		$debug_mode = isset($_REQUEST['debug']) ? $_REQUEST['debug'] : '';
 
-		$connector = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_connector', 'mailchimp' );
+		$connector = essb_object_value ( $essb_options, 'subscribe_connector', 'mailchimp' );
 		if ($connector == '') {
 			$connector = 'mailchimp';
 		}
@@ -77,10 +107,15 @@ class ESSBNetworks_SubscribeActions {
 					$mc_list = apply_filters('essb_custom_mailing_list_mailchimp', $mc_list);
 				}
 
-				$mc_api = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_mc_api' );
-				$mc_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_mc_list' );
-				$mc_welcome = ESSBOptionValuesHelper::options_bool_value($essb_options, 'subscribe_mc_welcome');
-				$mc_double = ESSBOptionValuesHelper::options_bool_value($essb_options, 'subscribe_mc_double');
+				$mc_api = essb_object_value ( $essb_options, 'subscribe_mc_api' );
+				$mc_list = essb_object_value ( $essb_options, 'subscribe_mc_list' );
+				$mc_welcome = essb_object_bool_value($essb_options, 'subscribe_mc_welcome');
+				$mc_double = essb_object_bool_value($essb_options, 'subscribe_mc_double');
+				
+				$custom_list = self::design_specific_list();
+				if ($custom_list != '') {
+					$mc_list = $custom_list;
+				}
 
 				$result = self::subscribe_mailchimp($mc_api, $mc_list, $user_email, $mc_double, $mc_welcome, $user_name);
 
@@ -100,73 +135,92 @@ class ESSBNetworks_SubscribeActions {
 					}
 					else {
 						$output['code'] = "99";
-						$output['message'] = __('Missing connection', 'essb');
+						$output['message'] = esc_html__('Missing connection', 'essb');
 
 					}
 				}
 				else {
 					$output['code'] = "99";
-					$output['message'] = __('Missing connection', 'essb');
+					$output['message'] = esc_html__('Missing connection', 'essb');
 
 				}
 				break;
 			case "getresponse":
-				$gr_api = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_gr_api' );
-				$gr_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_gr_list' );
-
+				$gr_api = essb_object_value ( $essb_options, 'subscribe_gr_api' );
+				$gr_list = essb_object_value ( $essb_options, 'subscribe_gr_list' );
+				$custom_list = self::design_specific_list();
+				if ($custom_list != '') {
+					$gr_list = $custom_list;
+				}
 
 				$output = self::subscribe_getresponse($gr_api, $gr_list, $user_email, $user_name);
 				break;
 			case "mymail":
-				$mm_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_mm_list' );
+				$mm_list = essb_object_value ( $essb_options, 'subscribe_mm_list' );
 				$output = self::subscribe_mymail($mm_list, $user_email, $user_name);
 				break;
 			case "mailpoet":
-				$mp_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_mp_list' );
+				$mp_list = essb_object_value ( $essb_options, 'subscribe_mp_list' );
 				$output = self::subscribe_mailpoet($mp_list, $user_email, $user_name);
 				break;
 			case "mailerlite":
-				$ml_api = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_ml_api' );
-				$ml_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_ml_list' );
+				$ml_api = essb_object_value ( $essb_options, 'subscribe_ml_api' );
+				$ml_list = essb_object_value ( $essb_options, 'subscribe_ml_list' );
+				$custom_list = self::design_specific_list();
+				if ($custom_list != '') {
+					$ml_list = $custom_list;
+				}
 				$output = self::subscribe_mailerlite($ml_api, $ml_list, $user_email, $user_name);
 				break;
 			case "activecampaign":
-				$ac_api_url = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_ac_api_url' );
-				$ac_api = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_ac_api' );
-				$ac_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_ac_list' );
+				$ac_api_url = essb_object_value ( $essb_options, 'subscribe_ac_api_url' );
+				$ac_api = essb_object_value ( $essb_options, 'subscribe_ac_api' );
+				$ac_list = essb_object_value ( $essb_options, 'subscribe_ac_list' );
 				$ac_form = essb_option_value('subscribe_ac_form');
-
+				$custom_list = self::design_specific_list();
+				if ($custom_list != '') {
+					$ac_list = $custom_list;
+				}
 				$output = self::subscribe_activecampaign($ac_api_url, $ac_api, $ac_list, $user_email, $user_name, $ac_form);
 				break;
 			case "campaignmonitor":
-				$cm_api = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_cm_api' );
-				$cm_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_cm_list' );
-
+				$cm_api = essb_object_value ( $essb_options, 'subscribe_cm_api' );
+				$cm_list = essb_object_value ( $essb_options, 'subscribe_cm_list' );
+				$custom_list = self::design_specific_list();
+				if ($custom_list != '') {
+					$cm_list = $custom_list;
+				}
 				$output = self::subscribe_campaignmonitor($cm_api, $cm_list, $user_email, $user_name);
 				break;
 			case "sendinblue":
-				$sib_api = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_sib_api' );
-				$sib_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_sib_list' );
-
+				$sib_api = essb_object_value ( $essb_options, 'subscribe_sib_api' );
+				$sib_list = essb_object_value ( $essb_options, 'subscribe_sib_list' );
+				$custom_list = self::design_specific_list();
+				if ($custom_list != '') {
+					$sib_list = $custom_list;
+				}
 				$output = self::subscribe_sendinblue($sib_api, $sib_list, $user_email, $user_name);
 				break;
 			case "madmimi":
-				$subscribe_madmimi_login = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_madmimi_login' );
-				$subscribe_madmimi_api = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_madmimi_api' );
-				$subscribe_madmimi_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_madmimi_list' );
-
+				$subscribe_madmimi_login = essb_object_value ( $essb_options, 'subscribe_madmimi_login' );
+				$subscribe_madmimi_api = essb_object_value ( $essb_options, 'subscribe_madmimi_api' );
+				$subscribe_madmimi_list = essb_object_value ( $essb_options, 'subscribe_madmimi_list' );
+				$custom_list = self::design_specific_list();
+				if ($custom_list != '') {
+					$subscribe_madmimi_list = $custom_list;
+				}
 				$output = self::subscribe_madmimi($subscribe_madmimi_login, $subscribe_madmimi_api, $subscribe_madmimi_list, $user_email, $user_name);
 				break;
-				case "conversio":
-					$subscribe_conv_api = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_conv_api' );
-					$subscribe_conv_list = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_conv_list' );
-					$subscribe_conv_text = ESSBOptionValuesHelper::options_value ( $essb_options, 'subscribe_conv_text' );
+			case "conversio":
+				$subscribe_conv_api = essb_object_value ( $essb_options, 'subscribe_conv_api' );
+				$subscribe_conv_list = essb_object_value ( $essb_options, 'subscribe_conv_list' );
+				$subscribe_conv_text = essb_object_value ( $essb_options, 'subscribe_conv_text' );
 
-					$output = self::subscribe_conversio($subscribe_conv_api, $subscribe_conv_list, $subscribe_conv_text, $user_email, $user_name);
-					break;
+				$output = self::subscribe_conversio($subscribe_conv_api, $subscribe_conv_list, $subscribe_conv_text, $user_email, $user_name);
+				break;
 			default:
 				$output['code'] = '99';
-				$output['message'] = __('Service is not supported', 'essb');
+				$output['message'] = esc_html__('Service is not supported', 'essb');
 
 				if (in_array($connector, $external_connectors)) {
 					$output['external_connector'] = $connector;
@@ -252,7 +306,6 @@ class ESSBNetworks_SubscribeActions {
 			curl_setopt ( $curl, CURLOPT_RETURNTRANSFER, 1 );
 			curl_setopt ( $curl, CURLOPT_FORBID_REUSE, 1 );
 			curl_setopt ( $curl, CURLOPT_FRESH_CONNECT, 1 );
-			// curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt ( $curl, CURLOPT_SSL_VERIFYHOST, 0 );
 			curl_setopt ( $curl, CURLOPT_SSL_VERIFYPEER, 0 );
 
@@ -309,7 +362,7 @@ class ESSBNetworks_SubscribeActions {
 		}
 		else {
 			$response ['code'] = "99";
-			$response ['message'] = __ ( 'Missing connection', 'essb' );
+			$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 
 		}
 
@@ -337,7 +390,6 @@ class ESSBNetworks_SubscribeActions {
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($curl, CURLOPT_FORBID_REUSE, 1);
 			curl_setopt($curl, CURLOPT_FRESH_CONNECT, 1);
-			//curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
@@ -350,7 +402,7 @@ class ESSBNetworks_SubscribeActions {
 		}
 		catch (Exception $e) {
 			$response ['code'] = "99";
-			$response ['message'] = __ ( 'Missing connection', 'essb' );
+			$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 		}
 
 		return $response;
@@ -360,7 +412,7 @@ class ESSBNetworks_SubscribeActions {
 		$response = array();
 
 
-		if (function_exists('mymail_subscribe') || function_exists('mymail')) {
+		if (function_exists('mymail_subscribe') || function_exists('mymail') || function_exists('mailster')) {
 			$response ['code'] = '1';
 			$response ['message'] = 'Thank you';
 
@@ -401,7 +453,7 @@ class ESSBNetworks_SubscribeActions {
 		}
 		else {
 			$response ['code'] = "99";
-			$response ['message'] = __ ( 'Missing connection', 'essb' );
+			$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 		}
 
 		return $response;
@@ -431,7 +483,7 @@ class ESSBNetworks_SubscribeActions {
 					$helper_user->addSubscriber($data_subscriber);
 				} catch (Exception $e) {
 					$response['code'] = '99';
-					$response ['message'] = __ ( 'Missing connection', 'essb' );
+					$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 				}
 			}
 
@@ -456,7 +508,7 @@ class ESSBNetworks_SubscribeActions {
 					$subscriber = \MailPoet\API\API::MP('v1')->addSubscriber($user_data, array($list_id));
 				} catch (Exception $e) {
 					$response['code'] = '99';
-					$response ['message'] = __ ( 'Missing connection', 'essb' );
+					$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 				}
 			}
 
@@ -509,7 +561,7 @@ class ESSBNetworks_SubscribeActions {
 		}
 		catch (Exception $e) {
 			$response ['code'] = "99";
-			$response ['message'] = __ ( 'Missing connection', 'essb' );
+			$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 		}
 
 		return $response;
@@ -533,9 +585,10 @@ class ESSBNetworks_SubscribeActions {
 
 			$post = json_encode($options);
 
-			$curl = curl_init('http://api.createsend.com/api/v3/subscribers/'.urlencode($list_id).'.json');
+			$curl = curl_init('http://api.createsend.com/api/v3.2/subscribers/'.urlencode($list_id).'.json');
 			curl_setopt($curl, CURLOPT_POST, 1);
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
+			
 
 			$header = array(
 				'Content-Type: application/json',
@@ -543,12 +596,9 @@ class ESSBNetworks_SubscribeActions {
 				'Authorization: Basic '.base64_encode($api_key)
 				);
 
-			//curl_setopt($curl, CURLOPT_PORT, 443);
 			curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
 			curl_setopt($curl, CURLOPT_TIMEOUT, 10);
 			curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC ) ;
-			//curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1); // verify certificate
-			//curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2); // check existence of CN and verify that it matches hostname
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($curl, CURLOPT_FORBID_REUSE, 1);
 			curl_setopt($curl, CURLOPT_FRESH_CONNECT, 1);
@@ -556,13 +606,12 @@ class ESSBNetworks_SubscribeActions {
 			$server_response = curl_exec($curl);
 			curl_close($curl);
 
-
 			$response ['code'] = '1';
 			$response ['message'] = 'Thank you';
 		}
 		catch (Exception $e) {
 			$response ['code'] = "99";
-			$response ['message'] = __ ( 'Missing connection', 'essb' );
+			$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 		}
 
 		return $response;
@@ -614,7 +663,7 @@ class ESSBNetworks_SubscribeActions {
 		}
 		catch (Exception $e) {
 			$response ['code'] = "99";
-			$response ['message'] = __ ( 'Missing connection', 'essb' );
+			$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 		}
 
 		return $response;
@@ -651,7 +700,7 @@ class ESSBNetworks_SubscribeActions {
 		}
 		catch (Exception $e) {
 			$response ['code'] = "99";
-			$response ['message'] = __ ( 'Missing connection', 'essb' );
+			$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 		}
 
 		return $response;
@@ -693,9 +742,68 @@ class ESSBNetworks_SubscribeActions {
 		}
 		catch (Exception $e) {
 			$response ['code'] = "99";
-			$response ['message'] = __ ( 'Missing connection', 'essb' );
+			$response ['message'] = esc_html__( 'Missing connection', 'essb' );
 		}
 
 		return $response;
 	}
+	
+	/**
+	 * Getting the custom form list if set
+	 * 
+	 * @return string
+	 */
+	public static function design_specific_list() {
+		$r = '';
+		
+		$custom_list = '';
+		$design = isset($_REQUEST['design']) ? $_REQUEST['design'] : '';
+		if ($design != '') {
+			if ($design == 'design1') {
+				$custom_list = essb_option_value('subscribe_mc_customlist');
+			}
+			else if ($design == 'design2') {
+				$custom_list = essb_option_value('subscribe_mc_customlist2');
+			}
+			else if ($design == 'design3') {
+				$custom_list = essb_option_value('subscribe_mc_customlist3');
+			}
+			else if ($design == 'design4') {
+				$custom_list = essb_option_value('subscribe_mc_customlist4');
+			}
+			else if ($design == 'design5') {
+				$custom_list = essb_option_value('subscribe_mc_customlist5');
+			}
+			else if ($design == 'design6') {
+				$custom_list = essb_option_value('subscribe_mc_customlist6');
+			}
+			else if ($design == 'design7') {
+				$custom_list = essb_option_value('subscribe_mc_customlist7');
+			}
+			else if ($design == 'design8') {
+				$custom_list = essb_option_value('subscribe_mc_customlist8');
+			}
+			else if ($design == 'design9') {
+				$custom_list = essb_option_value('subscribe_mc_customlist9');
+			}
+			else {
+				// custom design
+				if (! function_exists ( 'essb5_get_form_designs' )) {
+					include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/helpers/formdesigner-helper.php');
+				}
+				
+				$key = str_replace('userdesign-', '', $design);
+				$user_forms = essb5_get_form_designs();
+				$options = isset($user_forms[$key]) ? $user_forms[$key] : array();
+				
+				$custom_list = stripslashes(essb_array_value('customlist', $options));
+			}
+		}
+		
+		if ($custom_list != '') { $r = $custom_list; }
+		
+		return $r;
+	}
+	
+
 }

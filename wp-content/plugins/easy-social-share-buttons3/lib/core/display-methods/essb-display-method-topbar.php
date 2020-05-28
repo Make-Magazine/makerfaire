@@ -14,14 +14,14 @@ class ESSBDisplayMethodTopBar {
 	public static function generate_topbar_code($options, $share_buttons, $is_shortcode, $shortcode_options = array()) {
 		$output = '';
 		
-		$topbar_content_area = ESSBOptionValuesHelper::options_bool_value($options, 'topbar_contentarea');
-		$topbar_content_area_pos = ESSBOptionValuesHelper::options_value($options, 'topbar_contentarea_pos');
-		$topbar_buttons_align = ESSBOptionValuesHelper::options_value($options, 'topbar_buttons_align', 'left');
-		$topbar_usercontent = ESSBOptionValuesHelper::options_value($options, 'topbar_usercontent');
+		$topbar_content_area = essb_object_bool_value($options, 'topbar_contentarea');
+		$topbar_content_area_pos = essb_object_value($options, 'topbar_contentarea_pos');
+		$topbar_buttons_align = essb_object_value($options, 'topbar_buttons_align', 'left');
+		$topbar_usercontent = essb_object_value($options, 'topbar_usercontent');
 		
 		if ($is_shortcode) {
 			if (!empty($shortcode_options['topbar_contentarea'])){
-				$topbar_content_area = ESSBOptionValuesHelper::unified_true($shortcode_options['topbar_contentarea']);
+				$topbar_content_area = essb_unified_true($shortcode_options['topbar_contentarea']);
 			}
 			if (!empty($shortcode_options['topbar_contentarea_pos'])) {
 				$topbar_contentarea_pos = $shortcode_options['topbar_contentarea_pos'];
@@ -90,4 +90,26 @@ class ESSBDisplayMethodTopBar {
 			
 		return $output;
 	}
+}
+
+if (!function_exists('essb_topbar_extender')) {
+
+	function essb_topbar_extender($extra_options = '', $position = '', $style = array()) {
+
+		if ($position == 'topbar') {
+			$topbar_appear_pos = essb_sanitize_option_value('topbar_top_onscroll');
+			$topbar_hide = essb_sanitize_option_value('topbar_hide');
+	
+			if ($topbar_appear_pos != '') {
+				$extra_options .= ' data-topbar-appear="'.esc_attr($topbar_appear_pos).'"';
+			}
+			if ($topbar_hide != '') {
+				$extra_options .= ' data-topbar-disappear="'.esc_attr($topbar_hide).'"';
+			}
+		}
+
+		return $extra_options;
+	}
+
+	add_filter('essb_sharebuttons_open_element', 'essb_topbar_extender', 10, 3);
 }

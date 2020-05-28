@@ -10,7 +10,10 @@
 
 class ESSB_TaxonomyOptimizations {
 	
-	private $fields = array('sso_title' => array('text' => 'Social Media Title', 'type' => 'text'), 'sso_desc' => array('text' => 'Social Media Description', 'type' => 'textarea'), 'sso_image' => array('text' => 'Social Media Image', 'type' => 'image'));
+	private $fields = array(
+			'sso_title' => array('text' => 'Social Media Title', 'type' => 'text'), 
+			'sso_desc' => array('text' => 'Social Media Description', 'type' => 'textarea'), 
+			'sso_image' => array('text' => 'Social Media Image', 'type' => 'image'));
 	
 	public function __construct() {		
 		add_action ( 'admin_init', array($this, 'init') );
@@ -29,7 +32,6 @@ class ESSB_TaxonomyOptimizations {
 				add_action( $wptm_taxonomy . '_edit_form', array($this, 'add_meta_textinput') );
 		
 			}
-		
 		}
 	}
 	
@@ -67,7 +69,7 @@ class ESSB_TaxonomyOptimizations {
 		}
 		
 		?>
-		<h3 class='hndle'><span><?php _e('Social Sharing Optimization', 'essb');?></span></h3>
+		<h3 class='hndle'><span><?php esc_html_e('Social Sharing Optimization', 'essb');?></span></h3>
         
         <div class="inside">
             
@@ -120,12 +122,12 @@ class ESSB_TaxonomyOptimizations {
 			                                <br />
 			                                <a href="" onclick="essb_select_tax_image('<?php echo "essb_wptm_".$field_id;?>'); return false;" title="Add an Image"> 
 			                                    <strong>
-			                                        <?php echo _e('Select Image', 'essb');?>
+			                                        <?php echo esc_html_e('Select Image', 'essb');?>
 			                                    </strong>
 			                        		</a>  |  
-			                        		<a href="#" onclick="remove_image_url('<?php echo "essb_wptm_".$field_id;?>','<?php _e('No image selected', 'essb');?>');return false;">
+			                        		<a href="#" onclick="remove_image_url('<?php echo "essb_wptm_".$field_id;?>','<?php esc_html_e('No image selected', 'essb');?>');return false;">
 			                                    <strong>
-			                                        <?php _e('Clear Selected Image', 'essb');?>
+			                                        <?php esc_html_e('Clear Selected Image', 'essb');?>
 			                                    </strong>
 			                        		</a><br />
 			                            </td>

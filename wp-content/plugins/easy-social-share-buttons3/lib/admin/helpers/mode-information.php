@@ -1,21 +1,11 @@
 <?php
 ?>
-<style type="text/css">
-
-.mode-details { margin-top: 20px; }
-.mode-details th { text-align: center; font-size: 14px; background: rgba(0,0,0,0.035); padding: 10px !important; }
-.mode-details .feature { padding: 10px;  font-weight: 600; }
-.mode-details tr:nth-of-type(2n) { background-color: rgba(0,0,0,0.025); }
-.mode-details .value { font-weight: bold; text-align: center; }
-.essb-feature-mode.closed { display: none; }
-</style>
-
-<div style="margin-top:20px;">
+<div class="essb-mt20">
 	<a href="#" class="essb-btn essb-button-openmodes">Open Mode Comparison</a>
 </div>
 <div class="essb-feature-mode closed">
 
-<table width="100%" cellpadding="5" cellspacing="2" width="100%" class="mode-details">
+<table width="100%" cellpadding="5" cellspacing="2" width="100%" class="essb-modes-detail mode-details">
 	<col width="25%"/>
 	<col width="15%"/>
 	<col width="15%"/>

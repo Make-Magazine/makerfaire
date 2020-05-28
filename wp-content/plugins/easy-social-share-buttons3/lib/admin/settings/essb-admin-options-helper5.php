@@ -22,19 +22,20 @@ function essb_get_post_types() {
 if (!function_exists('essb5_available_content_positions')) {
 	function essb5_available_content_positions($wizard_mode = false) {
 		$essb_avaliable_content_positions = array ();
-		$essb_avaliable_content_positions ['content_top'] = array ('image' => 'assets/images/display-positions-02.png', 'label' => 'Content top', 'desc' => 'Display share buttons at the top of content', 'link' => 'essb-menu-display|essb-menu-display-4' );
-		$essb_avaliable_content_positions ['content_bottom'] = array ('image' => 'assets/images/display-positions-03.png', 'label' => 'Content bottom', 'desc' => 'Display share buttons at the bottom of content', 'link' => 'essb-menu-display|essb-menu-display-5' );
+		$essb_avaliable_content_positions ['content_top'] = array ('image' => 'assets/images/display-positions-02.png', 'label' => 'Content top', 'desc' => 'Display share buttons at the top of content', 'link' => 'essb-menu-display|essb-menu-display-4|essb-inner-menu-item-display-4' );
+		$essb_avaliable_content_positions ['content_bottom'] = array ('image' => 'assets/images/display-positions-03.png', 'label' => 'Content bottom', 'desc' => 'Display share buttons at the bottom of content', 'link' => 'essb-menu-display|essb-menu-display-5|essb-inner-menu-item-display-5' );
 		$essb_avaliable_content_positions ['content_both'] = array ('image' => 'assets/images/display-positions-04.png', 'label' => 'Content top and bottom', 'desc' => 'Display share buttons on top and at the bottom of content' );
 		if (!essb_options_bool_value('deactivate_method_float')) {
-			$essb_avaliable_content_positions ['content_float'] = array ('image' => 'assets/images/display-positions-05.png', 'label' => 'Float from content top', 'desc' => 'Display share buttons initially on top of content and during scroll they will stick on the top of window', 'link' => 'essb-menu-display|essb-menu-display-6' );
+			$essb_avaliable_content_positions ['content_float'] = array ('image' => 'assets/images/display-positions-05.png', 'label' => 'Float from content top', 'desc' => 'Display share buttons initially on top of content and during scroll they will stick on the top of window', 'link' => 'essb-menu-display|essb-menu-display-6|essb-inner-menu-item-display-6' );
 			$essb_avaliable_content_positions ['content_floatboth'] = array ('image' => 'assets/images/display-positions-06.png', 'label' => 'Float from content top and bottom' , 'desc' => 'Display share buttons initially on top of content and during scroll they will stick on the top of window in combination with static bottom share buttons' );
 		}
 
 		if (!essb_options_bool_value('deactivate_method_followme')) {
-			$essb_avaliable_content_positions ['content_followme'] = array ('image' => 'assets/images/display-positions-26.png', 'label' => 'Follow me bar' , 'desc' => 'Display share buttons inside content (top, bottom or both) in combination with fixed bar, appearing when you scroll down the post/page and in content buttons are not visible inside.', 'link' => 'essb-menu-display|essb-menu-display-18' );
+			$essb_avaliable_content_positions ['content_followme'] = array ('image' => 'assets/images/display-positions-26.png', 'label' => 'Follow me bar' , 'desc' => 'Display share buttons inside content (top, bottom or both) in combination with fixed bar, appearing when you scroll down the post/page and in content buttons are not visible inside.', 'link' => 'essb-menu-display|essb-menu-display-18|essb-inner-menu-item-display-18' );
 		}
 		
-		if (!essb_option_bool_value('deactivate_method_native')) {
+		// 6.4.1 - the display positions with natives will show only if they are not deactivated and natitves are used
+		if (!essb_option_bool_value('deactivate_method_native') && essb_option_bool_value('native_active')) {
 			$essb_avaliable_content_positions ['content_nativeshare'] = array ('image' => 'assets/images/display-positions-07.png', 'label' => 'Native social buttons top, share buttons bottom', 'desc' => 'This method will show activated inside Social Follow native buttons on top along with share buttons at the bottom' );
 			$essb_avaliable_content_positions ['content_sharenative'] = array ('image' => 'assets/images/display-positions-08.png', 'label' => 'Share buttons top, native buttons bottom', 'desc' => 'This method will show activated inside Social Follow native buttons at the bottom of content along with share buttons on the top' );
 		}
@@ -59,47 +60,47 @@ if (!function_exists('essb5_available_button_positions')) {
 	function essb5_available_button_positions($wizard_mode = false) {
 		$essb_available_button_positions = array ();
 		if (!essb_options_bool_value('deactivate_method_sidebar')) {
-			$essb_available_button_positions ['sidebar'] = array ('image' => 'assets/images/display-positions-10.png', 'label' => 'Sidebar', 'link' => 'essb-menu-display|essb-menu-display-8', 'desc' => 'Display share buttons attached on the left or right edge of your screen as sidebar'  );
+			$essb_available_button_positions ['sidebar'] = array ('image' => 'assets/images/display-positions-10.png', 'label' => 'Sidebar', 'link' => 'essb-menu-display|essb-menu-display-8|essb-inner-menu-item-display-8', 'desc' => 'Display share buttons attached on the left or right edge of your screen as sidebar'  );
 		}
 		if (!essb_options_bool_value('deactivate_method_popup')) {
-			$essb_available_button_positions ['popup'] = array ('image' => 'assets/images/display-positions-11.png', 'label' => 'Pop up', 'link' => 'essb-menu-display|essb-menu-display-11', 'desc' => 'Display share buttons as pop up based on various conditions - time delay, scroll down, end of content and etc.'  );
+			$essb_available_button_positions ['popup'] = array ('image' => 'assets/images/display-positions-11.png', 'label' => 'Pop up', 'link' => 'essb-menu-display|essb-menu-display-11|essb-inner-menu-item-display-11', 'desc' => 'Display share buttons as pop up based on various conditions - time delay, scroll down, end of content and etc.'  );
 		}
 		if (!essb_options_bool_value('deactivate_method_flyin')) {
-			$essb_available_button_positions ['flyin'] = array ('image' => 'assets/images/display-positions-12.png', 'label' => 'Fly in', 'link' => 'essb-menu-display|essb-menu-display-12'  );
+			$essb_available_button_positions ['flyin'] = array ('image' => 'assets/images/display-positions-12.png', 'label' => 'Fly in', 'link' => 'essb-menu-display|essb-menu-display-12|essb-inner-menu-item-display-12'  );
 		}
 		if (!essb_options_bool_value('deactivate_method_postfloat')) {
-			$essb_available_button_positions ['postfloat'] = array ('image' => 'assets/images/display-positions-13.png', 'label' => 'Post vertical float', 'link' => 'essb-menu-display|essb-menu-display-7'  );
+			$essb_available_button_positions ['postfloat'] = array ('image' => 'assets/images/display-positions-13.png', 'label' => 'Post vertical float', 'link' => 'essb-menu-display|essb-menu-display-7|essb-inner-menu-item-display-7'  );
 		}
 		if (!essb_options_bool_value('deactivate_method_topbar')) {
-			$essb_available_button_positions ['topbar'] = array ('image' => 'assets/images/display-positions-14.png', 'label' => 'Top bar', 'link' => 'essb-menu-display|essb-menu-display-9'  );
+			$essb_available_button_positions ['topbar'] = array ('image' => 'assets/images/display-positions-14.png', 'label' => 'Top bar', 'link' => 'essb-menu-display|essb-menu-display-9|essb-inner-menu-item-display-9'  );
 		}
 		if (!essb_options_bool_value('deactivate_method_bottombar')) {
-			$essb_available_button_positions ['bottombar'] = array ('image' => 'assets/images/display-positions-15.png', 'label' => 'Bottom bar', 'link' => 'essb-menu-display|essb-menu-display-10'  );
+			$essb_available_button_positions ['bottombar'] = array ('image' => 'assets/images/display-positions-15.png', 'label' => 'Bottom bar', 'link' => 'essb-menu-display|essb-menu-display-10|essb-inner-menu-item-display-10'  );
 		}
 
 		if (!essb_option_bool_value('deactivate_method_image')) {
-			$essb_available_button_positions ['onmedia'] = array ('image' => 'assets/images/display-positions-16.png', 'label' => 'On media', 'link' => 'essb-menu-display|essb-menu-display-13'  );
+			$essb_available_button_positions ['onmedia'] = array ('image' => 'assets/images/display-positions-16.png', 'label' => 'On media', 'link' => 'essb-menu-display|essb-menu-display-13|essb-inner-menu-item-display-13'  );
 		}
 
 		if (!essb_options_bool_value('deactivate_method_heroshare')) {
-			$essb_available_button_positions ['heroshare'] = array ('image' => 'assets/images/display-positions-22.png', 'label' => 'Full screen hero share', 'link' => 'essb-menu-display|essb-menu-display-14'  );
+			$essb_available_button_positions ['heroshare'] = array ('image' => 'assets/images/display-positions-22.png', 'label' => 'Full screen hero share', 'link' => 'essb-menu-display|essb-menu-display-14|essb-inner-menu-item-display-14'  );
 		}
 		if (!essb_options_bool_value('deactivate_method_postbar')) {
-			$essb_available_button_positions ['postbar'] = array ('image' => 'assets/images/display-positions-23.png', 'label' => 'Post share bar', 'link' => 'essb-menu-display|essb-menu-display-15'  );
+			$essb_available_button_positions ['postbar'] = array ('image' => 'assets/images/display-positions-23.png', 'label' => 'Post share bar', 'link' => 'essb-menu-display|essb-menu-display-15|essb-inner-menu-item-display-15'  );
 		}
 		if (!essb_options_bool_value('deactivate_method_point')) {
-			$essb_available_button_positions ['point'] = array ('image' => 'assets/images/display-positions-24.png', 'label' => 'Share Point (Advanced Version)', 'link' => 'essb-menu-display|essb-menu-display-16'  );
+			$essb_available_button_positions ['point'] = array ('image' => 'assets/images/display-positions-24.png', 'label' => 'Share Point (Advanced Version)', 'link' => 'essb-menu-display|essb-menu-display-16|essb-inner-menu-item-display-16'  );
 		}
 		if (!essb_options_bool_value('deactivate_method_corner')) {
-			$essb_available_button_positions ['cornerbar'] = array ('image' => 'assets/images/display-positions-27.png', 'label' => 'Corner Bar', 'link' => 'essb-menu-display|essb-menu-display-19'  );
+			$essb_available_button_positions ['cornerbar'] = array ('image' => 'assets/images/display-positions-27.png', 'label' => 'Corner Bar', 'link' => 'essb-menu-display|essb-menu-display-19|essb-inner-menu-item-display-19'  );
 		}
 		
 		if (!essb_options_bool_value('deactivate_method_booster')) {
-			$essb_available_button_positions ['booster'] = array ('image' => 'assets/images/display-positions-28.png', 'label' => 'Share Booster', 'link' => 'essb-menu-display|essb-menu-display-20' );
+			$essb_available_button_positions ['booster'] = array ('image' => 'assets/images/display-positions-28.png', 'label' => 'Share Booster', 'link' => 'essb-menu-display|essb-menu-display-20|essb-inner-menu-item-display-20' );
 		}
 
 		if (!essb_options_bool_value('deactivate_method_sharebutton')) {
-			$essb_available_button_positions ['sharebutton'] = array ('image' => 'assets/images/display-positions-29.png', 'label' => 'Share Button', 'link' => 'essb-menu-display|essb-menu-display-21' );
+			$essb_available_button_positions ['sharebutton'] = array ('image' => 'assets/images/display-positions-29.png', 'label' => 'Share Button', 'link' => 'essb-menu-display|essb-menu-display-21|essb-inner-menu-item-display-21' );
 		}
 		
 		
@@ -163,6 +164,42 @@ if (!function_exists('essb5_available_button_positions_mobile')) {
 		}
 
 		return $essb_available_button_positions_mobile;
+	}
+}
+
+if (!function_exists('essb5_available_positions_mobile_only')) {
+	function essb5_available_positions_mobile_only() {
+		$essb_available_button_positions_mobile = array ();
+		$essb_available_button_positions_mobile ['sharebottom'] = array ('image' => 'assets/images/display-positions-17.png', 'label' => 'Share buttons bar (Mobile Only Display Method)' );
+		$essb_available_button_positions_mobile ['sharebar'] = array ('image' => 'assets/images/display-positions-18.png', 'label' => 'Share bar (Mobile Only Display Method)' );
+		$essb_available_button_positions_mobile ['sharepoint'] = array ('image' => 'assets/images/display-positions-19.png', 'label' => 'Share point (Mobile Only Display Method)' );
+		
+		if (has_filter('essb_positions_mobile_only')) {
+			$essb_available_button_positions_mobile = apply_filters('essb_positions_mobile_only', $essb_available_button_positions_mobile);
+		}
+		
+		return $essb_available_button_positions_mobile;
+	}
+}
+
+if (!function_exists('essb_get_all_networks_source')) {
+	function essb_get_all_networks_source($add_all = false) {
+		$networks = essb_available_social_networks();
+		$r = array();
+		
+		if ($add_all) {
+			$r[''] = esc_html__('All networks', 'essb');
+		}
+		
+		foreach ($networks as $key => $data) {
+			$r[$key] = $data['name'];
+			
+			if ($key == 'pinterest') {
+				$r['pinpro'] = 'Pinterest Pro';
+			}
+		}
+		
+		return $r;
 	}
 }
 
@@ -235,12 +272,13 @@ class ESSBOptionsStructureHelper {
 		}
 	}
 
-	public static function field_heading($tab_id, $menu_id, $level = 'heading1', $title = '', $desc = '') {
+	public static function field_heading($tab_id, $menu_id, $level = 'heading1', $title = '', $desc = '', $class = '') {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'type' => $level,
 				'title' => $title,
-				'description' => $desc
+				'description' => $desc,
+				'class' => $class
 		);
 
 	}
@@ -276,7 +314,7 @@ class ESSBOptionsStructureHelper {
 		);
 	}
 
-	public static function field_textbox ($tab_id, $menu_id, $id, $title, $description, $recommended = '', $class = '', $icon = '', $icon_position = '', $col_width = '') {
+	public static function field_textbox ($tab_id, $menu_id, $id, $title, $description, $recommended = '', $class = '', $icon = '', $icon_position = '', $col_width = '', $multiple = array()) {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'id' => $id,
@@ -287,7 +325,8 @@ class ESSBOptionsStructureHelper {
 				'class' => $class,
 				'icon' => $icon,
 				'icon_position' => $icon_position,
-				'col_width' => $col_width
+				'col_width' => $col_width,
+				'element_options' => array('multiple' => $multiple )
 		);
 	}
 
@@ -296,6 +335,20 @@ class ESSBOptionsStructureHelper {
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'id' => $id,
 				'type' => 'text-in-panel',
+				'title' => $title,
+				'description' => $description,
+				'recommeded' => $recommended,
+				'class' => $class,
+				'icon' => $icon,
+				'icon_position' => $icon_position
+		);
+	}
+	
+	public static function field_textbox_stretched_panel ($tab_id, $menu_id, $id, $title, $description, $recommended = '', $class = '', $icon = '', $icon_position = '') {
+		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
+		$essb_section_options[$tab_id][$menu_id][] = array(
+				'id' => $id,
+				'type' => 'text-in-panel-stretched',
 				'title' => $title,
 				'description' => $description,
 				'recommeded' => $recommended,
@@ -331,7 +384,7 @@ class ESSBOptionsStructureHelper {
 		);
 	}
 
-	public static function field_checkbox_list ($tab_id, $menu_id, $id, $title, $description, $values, $recommended = '') {
+	public static function field_checkbox_list ($tab_id, $menu_id, $id, $title, $description, $values, $recommended = '', $element_options = array()) {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'id' => $id,
@@ -339,7 +392,8 @@ class ESSBOptionsStructureHelper {
 				'title' => $title,
 				'description' => $description,
 				'recommeded' => $recommended,
-				'values' => $values
+				'values' => $values,
+		        'element_options' => $element_options
 		);
 	}
 
@@ -357,7 +411,7 @@ class ESSBOptionsStructureHelper {
 		);
 	}
 
-	public static function field_select ($tab_id, $menu_id, $id, $title, $description, $values, $recommended = '', $col_width = '') {
+	public static function field_select ($tab_id, $menu_id, $id, $title, $description, $values, $recommended = '', $col_width = '', $multiple = '') {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'id' => $id,
@@ -366,7 +420,8 @@ class ESSBOptionsStructureHelper {
 				'description' => $description,
 				'recommeded' => $recommended,
 				'values' => $values,
-				'col_width' => $col_width
+				'col_width' => $col_width,
+				'element_options' => array('multiple' => $multiple )
 		);
 	}
 
@@ -577,7 +632,6 @@ class ESSBOptionsStructureHelper {
 		);
 	}
 
-	//								array ('type' => 'section_start', 'title' => __('Section Start', 'essb'), 'description' => 'Demo section description'),
 	public static function field_section_start ($tab_id, $menu_id, $title, $description, $recommended = '') {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
@@ -627,7 +681,7 @@ class ESSBOptionsStructureHelper {
 		);
 	}
 
-	public static function structure_section_start($tab_id, $menu_id, $width = '', $title = '', $description = '', $position = 'top', $colwidth = '') {
+	public static function structure_section_start($tab_id, $menu_id, $width = '', $title = '', $description = '', $position = 'top', $colwidth = '', $add_class = '') {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'type' => 'structure_section_start',
@@ -635,7 +689,8 @@ class ESSBOptionsStructureHelper {
 				'title' => $title,
 				'description' => $description,
 				'title_position' => $position,
-				'colwidth' => $colwidth
+				'colwidth' => $colwidth,
+				'element_options' => array('additional_class' => $add_class)
 		);
 	}
 
@@ -765,7 +820,7 @@ class ESSBOptionsStructureHelper {
 		);
 	}
 
-	public static function field_toggle ($tab_id, $menu_id, $id, $title, $description, $values, $recommended = '', $col_width = '', $size = '') {
+	public static function field_toggle ($tab_id, $menu_id, $id, $title, $description, $values, $recommended = '', $col_width = '', $size = '', $add_class = '') {
 		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
 		$essb_section_options[$tab_id][$menu_id][] = array(
 				'id' => $id,
@@ -775,7 +830,7 @@ class ESSBOptionsStructureHelper {
 				'recommeded' => $recommended,
 				'values' => $values,
 				'col_width' => $col_width,
-				'element_options' => array('size' => $size)
+				'element_options' => array('size' => $size, 'add_class' => $add_class)
 		);
 	}
 	
@@ -888,6 +943,23 @@ class ESSBOptionsStructureHelper {
 				'id' => $id,
 				'type' => 'multi-position-select',
 				'element_options' => array('values' => $values)
+		);
+	}
+	
+	public static function advanced_settings_panel_open ($tab_id, $menu_id, $title = '', $desc = '', $class = '') {
+		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
+		$essb_section_options[$tab_id][$menu_id][] = array(
+				'title' => $title,
+				'description' => $desc,
+				'type' => 'advanced-settings-panel-open',
+				'element_options' => $class
+		);
+	}
+	
+	public static function advanced_settings_panel_close ($tab_id, $menu_id) {
+		global $essb_navigation_tabs, $essb_sidebar_sections, $essb_section_options;
+		$essb_section_options[$tab_id][$menu_id][] = array(
+				'type' => 'advanced-settings-panel-close',
 		);
 	}
 }

@@ -79,7 +79,6 @@ class ESSBOptionsFramework {
 		$alpha = isset($option['alpha']) ? $option['alpha'] : '';
 		$row_wrap = isset($option['row_wrap']) ? $option['row_wrap'] : ''; 
 		
-		//$settings_group = "essb_options";
 		$settings_group = self::$default_settings_group;
 		$is_fans_counter = false;
 		if (strpos($id, 'essb3fans_') !== false) {
@@ -106,48 +105,51 @@ class ESSBOptionsFramework {
 		
 		switch ($type) {
 			case "heading1":
-				self::draw_heading($title, '1', $submenu_link);
+				self::draw_heading($title, '1', $submenu_link, '', $class);
 				break;
 			case "heading2":
-				self::draw_heading($title, '2', $submenu_link);
+				self::draw_heading($title, '2', $submenu_link, '', $class);
 				break;
 			case "heading3":
-				self::draw_heading($title, '3', $submenu_link);
+				self::draw_heading($title, '3', $submenu_link, '', $class);
 				break;		
 			case "heading4":
-				self::draw_heading($title, '4', $submenu_link, $description);
+				self::draw_heading($title, '4', $submenu_link, $description, $class);
 				break;		
 			case "heading5":
-				self::draw_heading($title, '5', $submenu_link, $description);
+				self::draw_heading($title, '5', $submenu_link, $description, $class);
 				break;		
+			case "heading6":
+				self::draw_heading($title, '6', $submenu_link, $description, $class);
+				break;				
 			case "switch":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
 				self::draw_switch_field($id, $settings_group, $option_value, $on_text, $off_text, $class);
 				self::draw_options_row_end();
 				break;		
 			case "switch-in-panel":
-				//self::draw_settings_panel_start($title);
 				self::draw_advanced_options_panel_start($title, 'ao-panel-'.$id, true);
 				self::draw_switch_field($id, $settings_group, $option_value, $on_text, $off_text, $class);
-				//self::draw_settings_panel_end($description, $recommended, $col_width);
 				self::draw_advanced_options_panel_end($description, true);
 				break;		
 			case "text":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
-				self::draw_input_field($id, false, $settings_group, $option_value, $icon, $class, $icon_position);
+				self::draw_input_field($id, false, $settings_group, $option_value, $icon, $class, $icon_position, '', $element_options);
 				self::draw_options_row_end();
 				break;		
 			case "text-in-panel":
-				///self::draw_settings_panel_start($title);
 				self::draw_advanced_options_panel_start($title, 'ao-panel-'.$id);
-				self::draw_input_field($id, false, $settings_group, $option_value, $icon, $class, $icon_position);
-				//self::draw_settings_panel_end( $description, $recommended);
+				self::draw_input_field($id, false, $settings_group, $option_value, $icon, $class, $icon_position, '', $element_options);
 				self::draw_advanced_options_panel_end($description);
 				break;
-				
+			case "text-in-panel-stretched":
+				self::draw_advanced_options_panel_start($title, 'ao-panel-'.$id, false, array('class' => 'stretched'));
+				self::draw_input_field($id, true, $settings_group, $option_value, $icon, $class, $icon_position, '', $element_options);
+				self::draw_advanced_options_panel_end($description);
+				break;				
 			case "text-stretched":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
-				self::draw_input_field($id, true, $settings_group, $option_value, $icon, $class, $icon_position);
+				self::draw_input_field($id, true, $settings_group, $option_value, $icon, $class, $icon_position, '', $element_options);
 				self::draw_options_row_end();
 				break;		
 			case "checkbox":
@@ -157,7 +159,7 @@ class ESSBOptionsFramework {
 				break;		
 			case "checkbox_list":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
-				self::draw_checkbox_list_field($id, $listOfValues, $settings_group, $option_value);
+				self::draw_checkbox_list_field($id, $listOfValues, $settings_group, $option_value, $element_options);
 				self::draw_options_row_end();
 				break;		
 			case "checkbox_list_sortable":
@@ -229,14 +231,12 @@ class ESSBOptionsFramework {
 				break;		
 			case "select":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
-				self::draw_select_field($id, $listOfValues, false, $settings_group, $option_value);
+				self::draw_select_field($id, $listOfValues, false, $settings_group, $option_value, $element_options);
 				self::draw_options_row_end();
 				break;	
 			case "select-in-panel":
-				//self::draw_settings_panel_start($title, 'settings-panel-'.$id);
 				self::draw_advanced_options_panel_start($title, 'settings-panel-'.$id);
-				self::draw_select_field($id, $listOfValues, false, $settings_group, $option_value);
-				//self::draw_settings_panel_end( $description, $recommended);
+				self::draw_select_field($id, $listOfValues, false, $settings_group, $option_value, $element_options);
 				self::draw_advanced_options_panel_end($description);
 				break;	
 			case "textarea":
@@ -265,7 +265,6 @@ class ESSBOptionsFramework {
 				self::draw_options_row_end();
 				break;
 			case "color-in-panel":
-				//self::draw_settings_panel_start($title);
 				self::draw_advanced_options_panel_start($title, 'settings-panel-'.$id);
 				if ($alpha == 'true') {
 					self::draw_acolor_field($id, $settings_group, $option_value);
@@ -273,25 +272,21 @@ class ESSBOptionsFramework {
 				else {
 					self::draw_color_field($id, $settings_group, $option_value);
 				}
-				//self::draw_settings_panel_end($description, $recommended);
 				self::draw_advanced_options_panel_end($description);
 				break;
 			case "image_checkbox":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
 				self::draw_image_checkbox_field($id, $listOfValues, $settings_group, $option_value);
-				//self::draw_image_checkbox_field($id, $listOfValues, 'essb_options', array("checkbox_option2" => true));
 				self::draw_options_row_end();
 				break;
 			case "html_checkbox_buttons":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
 				self::draw_image_checkbox_field($id, $listOfValues, $settings_group, $option_value, array('html' => 'true', 'shortcode' => $shortcode, 'width' => $width, 'buttons' => 'true'));
-				//self::draw_image_checkbox_field($id, $listOfValues, 'essb_options', array("checkbox_option2" => true));
 				self::draw_options_row_end();
 				break;
 			case "image_radio":
 				self::draw_options_row_start($title, $description, $recommended, $col_width);
 				self::draw_image_radio_field($id, $listOfValues, $settings_group, $option_value);
-				//self::draw_image_radio_field($id, $listOfValues, 'essb_options', 'checkbox_option1');
 				self::draw_options_row_end();
 				break;
 			case "html_radio":
@@ -393,7 +388,7 @@ class ESSBOptionsFramework {
 				self::$section_active = false;
 				break;
 			case 'structure_section_start':
-				self::draw_structure_section_start($width, $title, $description, $title_position, $colwidth);
+				self::draw_structure_section_start($width, $title, $description, $title_position, $colwidth, $element_options);
 				break;
 			case 'structure_section_end':
 				self::draw_structure_section_end($title_position);
@@ -498,7 +493,13 @@ class ESSBOptionsFramework {
 				self::draw_options_row_start_full('');
 				self::draw_multi_position_select($id, $settings_group, $element_options);
 				self::draw_options_row_end();
-				break;				
+				break;	
+			case "advanced-settings-panel-open":
+				echo essb5_generate_code_advanced_setting_panel_open($title, $description, $element_options);
+				break;		
+			case "advanced-settings-panel-close":
+				echo essb5_generate_code_advanced_setting_panel_close();
+				break;	
 		}
 	}
 
@@ -551,8 +552,9 @@ class ESSBOptionsFramework {
 	
 	public static function draw_toggle_field($field, $listOfValues, $group = 'essb_options', $value = '', $element_options = array()) {
 		$user_size = isset($element_options['size']) ? $element_options['size'] : '';
+		$add_class = isset($element_options['add_class']) ? $element_options['add_class'] : '';
 		
-		essb_component_options_group_select($field, $listOfValues, $user_size, $value, $group);
+		essb_component_options_group_select($field, $listOfValues, $user_size, $value, $group, $add_class);
 	}
 	
 	public static function draw_group_select_field($field, $listOfValues, $group = 'essb_options', $value = '', $element_options = array()) {
@@ -657,6 +659,10 @@ class ESSBOptionsFramework {
 		$switch_off = isset($element_options['switch_off']) ? $element_options['switch_off'] : '';
 		$switch_submit = isset($element_options['switch_submit']) ? $element_options['switch_submit'] : '';
 		$css_class = isset($element_options['css_class']) ? $element_options['css_class'] : '';
+		
+		if ($description == '') { 
+			$css_class .= ' essb-portlet-notdesc';
+		}
 
 		print '<div class="essb-portlet'.($style != "" ? " essb-portlet-".esc_attr($style) : "").($mode != '' ? ' essb-portlet-'.$mode : '').($switch_submit == 'true' ? ' essb-portlet-submit' : '').($css_class != '' ? ' '.esc_attr($css_class): '').'">';
 		
@@ -735,8 +741,55 @@ class ESSBOptionsFramework {
 		
 		self::draw_options_row_end();
 	}
-
+	
 	public static function draw_help($title = '', $description = '', $in_section = 'false', $element_options = array()) {
+		$buttons = isset($element_options['buttons']) ? $element_options['buttons'] : array();
+		
+		if (count($buttons) == 0) {
+			return;
+		}
+				
+		$callback_url = '';
+		
+		if (count($buttons) == 1) {
+			foreach ($buttons as $title => $url) {
+				$callback_url = $url;
+			}
+		}
+		
+		echo '<div class="essb-options-helprow" data-url="'.esc_url($callback_url).'">';
+		
+		echo '<div class="help-heading">';
+		echo '<div class="help-action-btn">';
+		echo '<div class="icon"><i class="fa32 ti-help-alt"></i></div>';
+		echo '<div class="cta">'.esc_html__('Need Help?', 'essb').'</div>';
+		echo '</div>'; // help-action-btn
+		echo '</div>';
+		
+		if (count($buttons) > 1) {
+			echo '<div class="help-details">';
+			
+			if ($title != '') {
+				echo '<div class="title">'.$title.'</div>';
+			}
+			
+			if ($description != '') {
+				echo '<div class="desc">'.$description.'</div>';
+			}
+			
+			echo '<div class="buttons">';
+			foreach ($buttons as $title => $url) {
+				echo '<div class="single-button"><a href="'.esc_url($url).'" target="_blank" class="button-help">'.($title).'<i class="fa fa-external-link"></i></a></div>';
+			}
+			echo '</div>';
+			
+			echo '</div>';
+		}
+		
+		echo '</div>';
+	}
+
+	public static function draw_help_legacy($title = '', $description = '', $in_section = 'false', $element_options = array()) {
 			
 		$buttons = isset($element_options['buttons']) ? $element_options['buttons'] : array();		
 		
@@ -761,6 +814,8 @@ class ESSBOptionsFramework {
 			}
 			print '</div>';
 		}
+		
+		echo '<span class="deactivate-link deactivate-help-hint">'.esc_html__('Hide help hints', 'essb').'</span>';
 	
 	
 		print '</div>';
@@ -795,9 +850,13 @@ class ESSBOptionsFramework {
 		print '</div>';
 	}
 	
-	public static function draw_structure_section_start($width = '', $title = '', $description = '', $position = 'top', $colwidth = '') {
+	public static function draw_structure_section_start($width = '', $title = '', $description = '', $position = 'top', $colwidth = '', $element_options = array()) {
 		if ($width == '') {
 			$width = 'c12'; // full row if no custom width is applied;
+		}
+		
+		if (isset($element_options) && isset($element_options['additional_class'])) {
+			$width .= ' '.$element_options['additional_class'];
 		}
 
 		printf('<div class="essb-flex-grid-c %1$s">', $width);
@@ -829,7 +888,6 @@ class ESSBOptionsFramework {
 				} 
 				
 				print '<div class="essb-flex-grid-c c'.esc_attr($col1).' bold">';
-				//print $title;
 				echo '<span class="title">'.esc_html($title).'</span>';
 				
 				if ($description != '') {
@@ -849,8 +907,8 @@ class ESSBOptionsFramework {
 			return;
 		}
 		
-		$basic_param_col = '3';
-		$basic_value_col = '9';
+		$basic_param_col = '4';
+		$basic_value_col = '8';
 		
 		if (intval($col_width) > 0) {
 			$basic_param_col = $col_width;
@@ -884,6 +942,11 @@ class ESSBOptionsFramework {
 				
 		}
 		else {
+		    
+		    if ($description == '' && $recommended == '') {
+		        $row_class .= ' no-description';
+		    }
+		    
 			printf('<div class="essb-flex-grid-r %1$s table-border-bottom">', esc_attr($row_class));
 			printf('<div class="essb-flex-grid-c c'.esc_attr($basic_param_col).' bold"><span class="title">%1$s</span>%3$s%2$s</div>', esc_html($title), $description, $recommended);
 			echo '<div class="essb-flex-grid-c c'.esc_attr($basic_value_col).'">';
@@ -992,9 +1055,8 @@ class ESSBOptionsFramework {
 		echo '</table>';
 	}
 	
-	public static function draw_heading($title, $level = '1', $submenu_link = '', $desc = '') {
+	public static function draw_heading($title, $level = '1', $submenu_link = '', $desc = '', $class = '') {
 		$css_class_heading = "";
-		//print $title.'|'.$level.'|'.$submenu_link;
 		switch ($level) {
 			case "1":
 				$css_class_heading = "sub";
@@ -1010,6 +1072,9 @@ class ESSBOptionsFramework {
 				break;
 			case "5":
 				$css_class_heading = "sub5";
+				break;
+			case "6":
+				$css_class_heading = 'sub6';
 				break;
 			default:
 				$css_class_heading = "sub";
@@ -1031,7 +1096,7 @@ class ESSBOptionsFramework {
 			$title .= '<span class="label">'.$desc.'</span>';
 		}
 		
-		printf('<div class="essb-flex-grid-r" %1$s>', $submenu_link);
+		printf('<div class="essb-flex-grid-r'.($class != '' ? ' '.esc_attr($class) : '').'" %1$s>', $submenu_link);
 		printf('<div class="essb-flex-grid-c c12 essb-heading %1$s"><div>%2$s</div></div>', esc_attr($css_class_heading), $title);
 		print '</div>';
 	}
@@ -1113,9 +1178,7 @@ class ESSBOptionsFramework {
 	public static function draw_image_radio_field($field, $listOfValues, $settings_group = 'essb_options', $value = '', $element_options = array()) {		
 		$exist_user_value = false;
 		
-		//if ($value != '') {
-			$exist_user_value = true;
-		//}
+		$exist_user_value = true;
 		
 		if (!isset($element_options)) { $element_options = array(); }
 		$html_values = isset($element_options['html']) ? $element_options['html'] : '';
@@ -1183,9 +1246,7 @@ class ESSBOptionsFramework {
 
 	public static function draw_wpeditor_field($field, $settings_group = 'essb_options', $value = '') {
 		$value =  ( stripslashes($value));
-
 		
-		//printf('<div id="wpeditor_%1$s"></div>', $field);
 		printf('<textarea id="essb_options_%1$s" name="%2$s[%1$s]" class="input-element stretched essb-hidden-element" rows="5">%3$s</textarea>', $field, $settings_group, $value);
 		$editor_options = array('textarea_name' => $settings_group.'['.$field.']', 'editor_height' => '200');
 		wp_editor($value, sprintf('wpeditor_%1$s', $field), $editor_options);
@@ -1197,7 +1258,6 @@ class ESSBOptionsFramework {
 		printf('<script>
 				var editor_%1$s;
 				function activate__%1$s() {
-				console.log("actiting %1$s");
       loadedEditorControls["editor_%1$s"] = CodeMirror.fromTextArea(document.getElementById("essb_options_%1$s"), {
       lineNumbers: true,
       mode: "%2$s",
@@ -1215,8 +1275,8 @@ class ESSBOptionsFramework {
 	public static function draw_switch_field($field, $settings_group = 'essb_options', $value = '', $on_text = '', $off_text = '', $switch_submit = '') {
 		if ($settings_group == '') { $settings_group = "essb_options"; }
 		
-		if ($on_text == "") { $on_text = __('On', 'essb'); }
-		if ($off_text == "") { $off_text = __('Off', 'essb'); }
+		if ($on_text == "") { $on_text = esc_html__('On', 'essb'); }
+		if ($off_text == "") { $off_text = esc_html__('Off', 'essb'); }
 		
 		if ($value == "true") {
 			$on_switch = " selected";
@@ -1237,17 +1297,33 @@ class ESSBOptionsFramework {
 		</div>';
 	}
 	
-	public static function draw_input_field($field_id, $fullwidth = false, $settings_group = 'essb_options', $value = '', $icon = '', $class = '', $icon_position = '', $placeholder_text = '') {
-		
-		$value = esc_attr ( stripslashes($value));
-		if ($icon != '' && $icon_position != 'right') {
-			printf('<span class="essb-input-prefix-icon"><i class="fa %1$s"></i></span>', $icon);
+	public static function draw_input_field($field_id, $fullwidth = false, $settings_group = 'essb_options', $value = '', $icon = '', $class = '', $icon_position = '', $placeholder_text = '', $element_options = array()) {
+		$multiple = isset($element_options['multiple']) ? $element_options['multiple'] : array();
+		if (!is_array($multiple)) {
+			$multiple = array();
 		}
 		
-		echo '<input id="essb_options_' . $field_id . '" type="text" name="' . $settings_group . '[' . $field_id . ']" value="' . $value . '" class="input-element' . ($fullwidth ? ' stretched' : '') . ' '.$class.'" placeholder="'.$placeholder_text.'" />';
-
-		if ($icon != '' && $icon_position == 'right') {
-			printf('<span class="essb-input-suffix-icon"><i class="fa %1$s"></i></span>', $icon);
+		if (count($multiple) == 0) {
+			$value = esc_attr ( stripslashes($value));
+			if ($icon != '' && $icon_position != 'right') {
+				printf('<span class="essb-input-prefix-icon"><i class="fa %1$s"></i></span>', $icon);
+			}
+			
+			echo '<input id="essb_options_' . $field_id . '" type="text" name="' . $settings_group . '[' . $field_id . ']" value="' . $value . '" class="input-element' . ($fullwidth ? ' stretched' : '') . ' '.$class.'" placeholder="'.$placeholder_text.'" />';
+	
+			if ($icon != '' && $icon_position == 'right') {
+				printf('<span class="essb-input-suffix-icon"><i class="fa %1$s"></i></span>', $icon);
+			}
+		}
+		else {
+			
+			foreach ($multiple as $multi_field_id => $multi_field_title) {
+				$value = stripslashes(essb_option_value($multi_field_id));
+				echo '<div class="single-multivalue">';
+				printf('<span class="essb-input-prefix-icon essb-input-textprefix">%1$s</span>', $multi_field_title);
+				echo '<input id="essb_options_' . $multi_field_id . '" type="text" name="' . $settings_group . '[' . $multi_field_id . ']" value="' . $value . '" class="input-element' . ($fullwidth ? ' stretched' : '') . ' '.$class.'" placeholder="'.$placeholder_text.'" />';
+				echo '</div>';
+			}
 		}
 	}
 	
@@ -1276,8 +1352,8 @@ class ESSBOptionsFramework {
 	
 		echo '<div class="default-preview-image '.$field_id.'">
 			<div class="'.$field_id.'-placeholder image-placeholder"'.$css_background.'>&nbsp;</div>
-			<a href="#" class="essb-btn essb-btn-blue image-picker-button" id="essb_fileselect_' . $field_id . '" title="'.__('Select Image', 'essb').'"><i class="fa fa-picture-o"></i></a>
-			<a href="#" class="essb-btn essb-btn-red image-picker-clear-button" id="essb_clearselect_' . $field_id . '"  title="'.__('Remove Image', 'essb').'"><i class="fa fa-times"></i></a>
+			<a href="#" class="essb-btn essb-btn-blue image-picker-button" id="essb_fileselect_' . $field_id . '" title="'.esc_html__('Select Image', 'essb').'"><i class="fa fa-picture-o"></i></a>
+			<a href="#" class="essb-btn essb-btn-red image-picker-clear-button" id="essb_clearselect_' . $field_id . '"  title="'.esc_html__('Remove Image', 'essb').'"><i class="fa fa-times"></i></a>
 			</div>';
 		echo '<input id="essb_options_' . $field_id . '" type="text" name="' . $settings_group . '[' . $field_id . ']" value="' . $value . '" class="input-element small-stretched media-select '.$class.'" />';
 		?>
@@ -1388,7 +1464,7 @@ class ESSBOptionsFramework {
 		}
 		
 		echo '<input id="essb_options_' . $field_id . '" type="text" name="' . $settings_group . '[' . $field_id . ']" value="' . $value . '" class="input-element small-stretched '.$class.'" />';
-		echo '<a href="#" class="essb-btn essb-btn-blue" id="essb_fileselect_' . $field_id . '" style="margin-left: 5px; margin-top: -2px;">'.__('Select File', 'essb').'</a>';
+		echo '<a href="#" class="essb-btn essb-btn-blue" id="essb_fileselect_' . $field_id . '" style="margin-left: 5px; margin-top: -2px;">'.esc_html__('Select File', 'essb').'</a>';
 		?>
 		
 		<script type="text/javascript">
@@ -1436,9 +1512,19 @@ class ESSBOptionsFramework {
 	}
 	
 	
-	public static function draw_select_field($field, $listOfValues, $simpleList = false, $group = 'essb_options', $value = '') {
+	public static function draw_select_field($field, $listOfValues, $simpleList = false, $group = 'essb_options', $value = '', $element_options = array()) {
 		
-		echo '<select name="' . $group . '[' . $field . ']" class="input-element" id="essb_options_' . $field . '">';
+		$multiple = isset($element_options['multiple']) ? $element_options['multiple'] : '';
+		
+		if ($multiple == 'true') {
+			if (!is_array($value)) {
+				$value = array();
+			}
+			echo '<select name="' . $group . '[' . $field . '][]" class="input-element essb-select2" id="essb_options_' . $field . '" data-values="'.implode (',', $value).'" multiple="multiple">';
+		} 
+		else {
+			echo '<select name="' . $group . '[' . $field . ']" class="input-element" id="essb_options_' . $field . '">';
+		}
 		
 		if ($simpleList) {
 			foreach ( $listOfValues as $singleValue ) {
@@ -1487,8 +1573,14 @@ class ESSBOptionsFramework {
 		echo '<input id="essb_options_' . $field . '" type="checkbox" name="' . $group . '[' . $field . ']" value="true" ' . $is_checked . ' />';
 	}
 
-	public static function draw_checkbox_list_field($field, $listOfValues, $group = 'essb_options', $value = '') {
+	public static function draw_checkbox_list_field($field, $listOfValues, $group = 'essb_options', $value = '', $element_options = array()) {
 		if (!is_array($value)) { $value = array(); }
+		
+		if (isset($element_options) && isset($element_options['source'])) {
+		    if ($element_options['source'] == 'post_types') {
+		        $listOfValues = essb_get_post_types();
+		    }
+		}
 		
 		foreach ($listOfValues as $key => $text) {
 			$is_checked = in_array($key, $value) ? ' checked="checked"' : '';
@@ -1525,18 +1617,20 @@ class ESSBOptionsFramework {
 		
 		$value = stripslashes ( $value );
 		
-		echo '<input id="essb_options_' . $field . '" type="text" name="' . $group . '[' . $field . ']" value="' . $value . '" class="input-element stretched input-colorselector" data-default-color="' . $value . '" />';
+		$css_id = (($group != 'essb_options') ? $group.'_' : '').$field;
 		
-		array_push ( self::$color_fields, 'essb_options_' . $field );
+		echo '<input id="essb_options_' . $css_id . '" type="text" name="' . $group . '[' . $field . ']" value="' . $value . '" class="input-element stretched input-colorselector" data-default-color="' . $value . '" />';
+		
+		array_push ( self::$color_fields, 'essb_options_' . $css_id );
 	}
 	
 	public static function draw_acolor_field($field, $group = 'essb_options', $value = '') {
 	
 		$value = stripslashes ( $value );
+		$css_id = (($group != 'essb_options') ? $group.'_' : '').$field;
+		echo '<input id="essb_options_' . $css_id . '" type="text" name="' . $group . '[' . $field . ']" value="' . $value . '" class="input-element stretched input-colorselector" data-default-color="' . $value . '" data-alpha="true" />';
 	
-		echo '<input id="essb_options_' . $field . '" type="text" name="' . $group . '[' . $field . ']" value="' . $value . '" class="input-element stretched input-colorselector" data-default-color="' . $value . '" data-alpha="true" />';
-	
-		array_push ( self::$color_fields, 'essb_options_' . $field );
+		array_push ( self::$color_fields, 'essb_options_' . $css_id );
 	}
 	
 	public static function reset_color_selector() {

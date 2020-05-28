@@ -4,30 +4,37 @@ if (function_exists('essb_advancedopts_settings_group')) {
 	essb_advancedopts_settings_group('essb_options');
 }
 
-essb5_draw_heading(__('Customize Form Texts', 'essb'), '5');
+$connector = essb_option_value('subscribe_connector');
+if ($connector != 'mymail' && $connector != 'mailster' && $connector != 'mailpoet' && $connector != 'conversio') {
+	essb5_draw_heading(esc_html__('Custom Form List', 'essb'), '5');
+	essb5_draw_input_option('subscribe_mc_customlist', esc_html__('List ID', 'essb'), esc_html__('Optional you can set a different list for this form only. To get the list ID you can follow the instructions on the subscribe connector.', 'essb'), true);
+}
 
-essb5_draw_switch_option('subscribe_mc_namefield', __('Display name field', 'essb'), __('Activate this option to allow customers enter their name.', 'essb'));
-essb5_draw_input_option('subscribe_mc_title', __('Custom Form Title Text', 'essb'), __('Setup your own custom text for the title (ex.: Join Our List)', 'essb'), true);
-essb5_draw_editor_option('subscribe_mc_text', __('Form Text', 'essb'), __('Customize the default form text (ex.: Subscribe to our list and get awesome news.)', 'essb'));
 
-essb5_draw_input_option('subscribe_mc_name', __('Name Field Placeholder Text', 'essb'), '', true);
-essb5_draw_input_option('subscribe_mc_email', __('Email Field Placeholder Text', 'essb'), '', true);
-essb5_draw_input_option('subscribe_mc_button', __('Subscribe Button Text', 'essb'), '', true);
+essb5_draw_heading(esc_html__('Customize Form Texts', 'essb'), '5');
 
-essb5_draw_input_option('subscribe_mc_footer', __('Footer Text', 'essb'), __('Add a footer text that will appear below form (ex.: We respect your privacy'), true);
+essb5_draw_switch_option('subscribe_mc_namefield', esc_html__('Display name field', 'essb'), esc_html__('Activate this option to allow customers enter their name.', 'essb'));
+essb5_draw_input_option('subscribe_mc_title', esc_html__('Custom Form Title Text', 'essb'), esc_html__('Setup your own custom text for the title (ex.: Join Our List)', 'essb'), true);
+essb5_draw_editor_option('subscribe_mc_text', esc_html__('Form Text', 'essb'), esc_html__('Customize the default form text (ex.: Subscribe to our list and get awesome news.)', 'essb'));
 
-essb5_draw_input_option('subscribe_mc_success', __('Success subscribe messsage', 'essb'), '', true);
-essb5_draw_input_option('subscribe_mc_error', __('Error message', 'essb'), '', true);
+essb5_draw_input_option('subscribe_mc_name', esc_html__('Name Field Placeholder Text', 'essb'), '', true);
+essb5_draw_input_option('subscribe_mc_email', esc_html__('Email Field Placeholder Text', 'essb'), '', true);
+essb5_draw_input_option('subscribe_mc_button', esc_html__('Subscribe Button Text', 'essb'), '', true);
 
-essb5_draw_heading(__('Customize Colors', 'essb'), '5');
+essb5_draw_input_option('subscribe_mc_footer', esc_html__('Footer Text', 'essb'), esc_html__('Add a footer text that will appear below form (ex.: We respect your privacy'), true);
 
-essb5_draw_switch_option('activate_mailchimp_customizer', __('Activate Color Changing', 'essb'), __('Set option to Yes for generating of color change', 'essb'));
-essb5_draw_color_option('customizer_subscribe_bgcolor1', __('Background color', 'essb'));
-essb5_draw_color_option('customizer_subscribe_textcolor1', __('Text color', 'essb'));
-essb5_draw_color_option('customizer_subscribe_hovercolor1', __('Accent color', 'essb'));
-essb5_draw_color_option('customizer_subscribe_hovertextcolor1', __('Accent Text Color', 'essb'));
-essb5_draw_color_option('customizer_subscribe_emailcolor1', __('Email/Name field background color', 'essb'));
+essb5_draw_input_option('subscribe_mc_success', esc_html__('Success subscribe messsage', 'essb'), '', true);
+essb5_draw_input_option('subscribe_mc_error', esc_html__('Error message', 'essb'), '', true);
 
-essb5_draw_switch_option('customizer_subscribe_noborder1', __('Remove form top border', 'essb'));
+essb5_draw_heading(esc_html__('Customize Colors', 'essb'), '5');
+
+essb5_draw_switch_option('activate_mailchimp_customizer', esc_html__('Activate Color Changing', 'essb'), esc_html__('Set option to Yes for generating of color change', 'essb'));
+essb5_draw_color_option('customizer_subscribe_bgcolor1', esc_html__('Background color', 'essb'));
+essb5_draw_color_option('customizer_subscribe_textcolor1', esc_html__('Text color', 'essb'));
+essb5_draw_color_option('customizer_subscribe_hovercolor1', esc_html__('Accent color', 'essb'));
+essb5_draw_color_option('customizer_subscribe_hovertextcolor1', esc_html__('Accent Text Color', 'essb'));
+essb5_draw_color_option('customizer_subscribe_emailcolor1', esc_html__('Email/Name field background color', 'essb'));
+
+essb5_draw_switch_option('customizer_subscribe_noborder1', esc_html__('Remove form top border', 'essb'));
 
 ?>

@@ -1,5 +1,6 @@
 jQuery(document).ready(function($){
-
+	"use strict";
+	
 	var optin_triggered = false,
 		optin_percent = 0,
 		optin_time = 0;
@@ -40,10 +41,8 @@ jQuery(document).ready(function($){
 		$(base_element).css( { width: base_width+'px'});
 		
 		$(base_element).slideDown(400);
-		//$(base_overlay_element).fadeIn(200);
 		
 		$(base_element).addClass('active-flyout');
-		//$(base_overlay_element).addClass('active-flyout-overlay');
 		
 		optin_triggered = true;
 	}
@@ -53,9 +52,6 @@ jQuery(document).ready(function($){
 
 		$(".active-flyout").fadeOut(200);
 		$('.active-flyout').removeClass('active-flyout');
-		
-		//$(".active-flyout-overlay").fadeOut(400);
-		//$('.active-flyout-overlay').removeClass('active-flyout-overlay');
 	}
 
 	var essb_booster_exit = function() {
@@ -87,7 +83,7 @@ jQuery(document).ready(function($){
 	if ($('.essb-optinflyout-scroll')) {
 		optin_percent = $('.essb-optinflyout-scroll').attr("data-scroll") || "";
 		optin_percent = parseFloat(optin_percent);
-		$(window).scroll(essb_flyout_scroll);
+		$(window).on('scroll', essb_flyout_scroll);
 	}
 	
 	if ($('.essb-optinflyout-time')) {
@@ -100,7 +96,7 @@ jQuery(document).ready(function($){
 	
 	$('.essb-optinflyout-overlay').each(function() {
 		
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
 			
 			essb_optinflyout_close();
@@ -109,7 +105,7 @@ jQuery(document).ready(function($){
 	
 	$('.essb-optinflyout-close').each(function() {
 		
-		$(this).click(function(e) {
+		$(this).on('click', function(e) {
 			e.preventDefault();
 			
 			essb_optinflyout_close();

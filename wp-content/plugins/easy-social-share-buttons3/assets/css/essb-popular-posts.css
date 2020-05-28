@@ -1,0 +1,54 @@
+.essb-popular-posts ul,.essb-popular-posts li,.essb-popular-posts ul li
+	{
+	list-style: none;
+	margin: 0;
+}
+
+.widget_essb_popular_posts ul,.widget_essb_popular_posts li,.widget_essb_popular_posts ul li
+	{
+	list-style: none;
+	margin: 0;
+}
+
+.essb-popular-posts li,.widget_essb_popular_posts li {
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.essb-popular-posts a,.widget_essb_popular_posts a {
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.essb-popular-posts .essb-widget-popular-posts-number,.widget_essb_popular_posts .essb-widget-popular-posts-number
+	{
+	font-size: 12px;
+	font-weight: normal;
+	display: block;
+}
+
+.essb-popular-posts .essb-widget-popular-posts-number-text,.widget_essb_popular_posts .essb-widget-popular-posts-number-text
+	{
+	margin-left: 4px;
+	text-transform: uppercase;
+}
+
+.essbasc-popup-content .essb-popular-posts ul {
+	width: 100%;
+}
+
+.essbasc-popup-content .essb-popular-posts li {
+	width: 45%;
+	display: inline-block;
+	margin-bottom: 15px;
+	text-align: left;
+}
+
+.essbasc-popup-content .essb-popular-posts h3 {
+	background: none;
+	text-align: left;
+}
+
+.essbasc-popup-content .essb-popular-posts .entry-image {
+	margin-bottom: 10px;
+}

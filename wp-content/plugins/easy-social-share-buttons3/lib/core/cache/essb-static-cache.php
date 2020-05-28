@@ -6,14 +6,13 @@ class ESSBStaticCache {
 
 	static $instance;
 	private $essb_cache_static_done = array();
-	private $async_queue = array();
 
 
 	private function __construct() {
 		global $essb_options;
 				
-		$essb_cache_static = ESSBOptionValuesHelper::options_bool_value($essb_options, 'essb_cache_static');
-		$essb_cache_static_js = ESSBOptionValuesHelper::options_bool_value($essb_options, 'essb_cache_static_js');
+		$essb_cache_static = essb_options_bool_value('essb_cache_static');
+		$essb_cache_static_js = essb_options_bool_value('essb_cache_static_js');
 		
 		if ($essb_cache_static_js) {
 			add_filter( 'print_scripts_array', array( $this, 'init_essb_cache_static_js' ) );
@@ -75,10 +74,7 @@ class ESSBStaticCache {
 		$ver = array();
 
 		// Bust cache on ESSBCacheStaticResources plugin update
-		$ver[] = 'essb_cache_static-ver-1.0.0';
-
-		// Debug enable
-		// $ver[] = 'debug-' . time();
+		$ver[] = 'essb_cache_static-ver-2.0.0';
 
 		// Use different cache key for SSL and non-SSL
 		$ver[] = 'is_ssl-' . is_ssl();
@@ -185,61 +181,41 @@ class ESSBStaticCache {
 		extract( $status );
 
 		switch ( $extension ) {
-
 			case 'css':
-
-				wp_enqueue_style(
-				'essb_cache_static-' . $cache_ver,
-				$url,
-				null,
-				null
-				);
+				wp_enqueue_style('essb_cache_static-' . $cache_ver, $url, null, null);
 
 				// Add inline styles for all essb_cache_staticed styles
 				foreach ( $done as $script ) {
-
 					$inline_style = $object->get_data( $script, 'after' );
-
-					if ( ! empty( $inline_style ) )
+					if ( ! empty( $inline_style ) ) {
+						if (is_array($inline_style)) {
+							$inline_style = implode(' ', $inline_style);
+						}
 						$object->add_inline_style( 'essb_cache_static-' . $cache_ver, $inline_style );
-
+					}
 				}
-
 				break;
 
 			case 'js':
-
-				wp_enqueue_script(
-				'essb_cache_static-' . $cache_ver,
-				$url,
-				null,
-				null,
-				apply_filters( 'essb_cache_static-js-in-footer', true )
-				);
+				wp_enqueue_script('essb_cache_static-' . $cache_ver, $url, null, null, apply_filters( 'essb_cache_static-js-in-footer', true ));
 
 				// Add to the correct
-				$object->set_group(
-						'essb_cache_static-' . $cache_ver,
-						false,
-						apply_filters( 'essb_cache_static-js-in-footer', true )
-				);
-
+				$object->set_group('essb_cache_static-' . $cache_ver, false, apply_filters( 'essb_cache_static-js-in-footer', true ));
 				$inline_data = array();
 
 				// Add inline scripts for all essb_cache_staticed scripts
-				foreach ( $done as $script )
+				foreach ( $done as $script ) {
 					$inline_data[] = $object->get_data( $script, 'data' );
-
+				}
+				
 				// Filter out empty elements
 				$inline_data = array_filter( $inline_data );
-
-				if ( ! empty( $inline_data ) )
+				if ( ! empty( $inline_data ) ) {
 					$object->add_data( 'essb_cache_static-' . $cache_ver, 'data', implode( "\n", $inline_data ) );
-
+				}
 				break;
 
 			default:
-
 				return $todo;
 
 		}
@@ -261,16 +237,12 @@ class ESSBStaticCache {
 
 
 	function set_done( $handle ) {
-
 		$this->essb_cache_static_done[] = 'essb_cache_static-' . $handle;
-
 	}
 
 
 	function get_done() {
-
 		return $this->essb_cache_static_done;
-
 	}
 
 
@@ -291,79 +263,6 @@ class ESSBStaticCache {
 		return $maybe_relative;
 
 	}
-
-
-	public function async_init() {
-
-		global $wp_scripts;
-
-		if ( ! is_object( $wp_scripts ) || empty( $wp_scripts->queue ) )
-			return;
-
-		$base_url = site_url();
-		$essb_cache_static_exclude = (array) apply_filters( 'essb_cache_static-exclude-js', array() );
-
-		foreach ( $wp_scripts->queue as $handle ) {
-
-			// Skip asyncing explicitly excluded script handles
-			if ( in_array( $handle, $essb_cache_static_exclude ) ) {
-				continue;
-			}
-
-			$script_relative_path = ESSBStaticCache::get_asset_relative_path(
-					$base_url,
-					$wp_scripts->registered[$handle]->src
-			);
-
-			if ( ! $script_relative_path ) {
-				// Add this script to our async queue
-				$this->async_queue[] = $handle;
-
-				// Remove this script from being printed the regular way
-				wp_dequeue_script( $handle );
-			}
-
-		}
-
-	}
-
-
-	public function async_print() {
-
-		global $wp_scripts;
-
-		if ( empty( $this->async_queue ) )
-			return;
-
-		?>
-		<!-- Asynchronous scripts by ESSBCacheStaticResources -->
-		<script id="essb_cache_static-async-scripts" type="text/javascript">
-		(function() {
-			var js, fjs = document.getElementById('essb_cache_static-async-scripts'),
-				add = function( url, id ) {
-					js = document.createElement('script');
-					js.type = 'text/javascript';
-					js.src = url;
-					js.async = true;
-					js.id = id;
-					fjs.parentNode.insertBefore(js, fjs);
-				};
-			<?php
-			foreach ( $this->async_queue as $handle ) {
-				printf(
-					'add("%s", "%s"); ',
-					$wp_scripts->registered[$handle]->src,
-					'async-script-' . esc_attr( $handle )
-				);
-			}
-			?>
-		})();
-		</script>
-		<?php
-
-	}
-
-
 }
 
 
@@ -485,35 +384,11 @@ function essb_cache_static_maybe_ssl_url( $url ) {
 
 }
 
-
-// Add a Purge Cache link to the plugin list
-//add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'essb_cache_static_cache_purge_admin_link' );
-
-//function essb_cache_static_cache_purge_admin_link( $links ) {
-
-//	$links[] = sprintf(
-//			'<a href="%s">%s</a>',
-//			wp_nonce_url( add_query_arg( 'purge_essb_cache_static', true ), 'purge_essb_cache_static' ),
-//			__( 'Purge cache', 'essb_cache_static' )
-//		);
-
-//	return $links;
-
-//}
-
-
 /**
  * Maybe purge essb_cache_static cache
  */
-//add_action( 'admin_init', 'purge_essb_cache_static_cache' );
 
 function purge_essb_cache_static_cache() {
-
-	//if ( ! isset( $_GET['purge_essb_cache_static'] ) )
-	//	return;
-
-	//if ( ! check_admin_referer( 'purge_essb_cache_static' ) )
-	//	return;
 
 	// Use this as a global cache version number
 	update_option( 'essb_cache_static_cache_ver', time() );
@@ -533,7 +408,6 @@ function purge_essb_cache_static_transients() {
 	
 	$time_now = time();
 	$expired  = $wpdb->get_col( "SELECT option_name FROM $wpdb->options where (option_name LIKE '_transient_timeout_essb_cache_static-%') OR (option_name LIKE '_transient_essb_cache_static-%')" );
-	//print_r($expired);
 	if( empty( $expired ) ) {
 		return false;
 	}
@@ -554,7 +428,7 @@ function essb_cache_static_cache_purged_success() {
 
 	printf(
 		'<div class="updated"><p>%s</p></div>',
-		__( 'Success: ESSBCacheStaticResources cache purged.', 'essb_cache_static' )
+		esc_html__( 'Success: ESSBCacheStaticResources cache purged.', 'essb_cache_static' )
 	);
 
 }

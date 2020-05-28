@@ -15,18 +15,18 @@ class ESSBDisplayMethodPoint {
 	public static function generate_point_code($options, $share_buttons, $total_shares_code, $is_shortcode = false, $shortcode_options = array()) {
 		
 		$output = '';
-		$point_position = ESSBOptionValuesHelper::options_value($options, 'point_position', 'bottomright');
-		$point_display_style = ESSBOptionValuesHelper::options_value($options, 'point_style', 'simple');
-		$point_shape = ESSBOptionValuesHelper::options_value($options, 'point_shape', 'round');
-		$point_display_total = ESSBOptionValuesHelper::options_bool_value($options, 'point_total');
-		$point_articles = ESSBOptionValuesHelper::options_bool_value($options, 'point_articles');
+		$point_position = essb_object_value($options, 'point_position', 'bottomright');
+		$point_display_style = essb_object_value($options, 'point_style', 'simple');
+		$point_shape = essb_object_value($options, 'point_shape', 'round');
+		$point_display_total = essb_object_bool_value($options, 'point_total');
+		$point_articles = essb_object_bool_value($options, 'point_articles');
 		
-		$point_top_content = ESSBOptionValuesHelper::options_value($options, 'point_top_content');
-		$point_bottom_content = ESSBOptionValuesHelper::options_value($options, 'point_bottom_content');
+		$point_top_content = essb_object_value($options, 'point_top_content');
+		$point_bottom_content = essb_object_value($options, 'point_bottom_content');
 		
-		$point_open_end = ESSBOptionValuesHelper::options_value($options, 'point_open_auto');
+		$point_open_end = essb_object_value($options, 'point_open_auto');
 		
-		$point_animation = ESSBOptionValuesHelper::options_value($options, 'point_animation');
+		$point_animation = essb_object_value($options, 'point_animation');
 		
 		$point_autoclose = essb_option_value('point_close');
 		
@@ -49,10 +49,10 @@ class ESSBDisplayMethodPoint {
 		}
 		
 		// colors
-		$point_bgcolor = ESSBOptionValuesHelper::options_value($options, 'point_bgcolor');
-		$point_color = ESSBOptionValuesHelper::options_value($options, 'point_color');
-		$point_accentcolor = ESSBOptionValuesHelper::options_value($options, 'point_accentcolor');
-		$point_altcolor = ESSBOptionValuesHelper::options_value($options, 'point_altcolor');
+		$point_bgcolor = essb_object_value($options, 'point_bgcolor');
+		$point_color = essb_object_value($options, 'point_color');
+		$point_accentcolor = essb_object_value($options, 'point_accentcolor');
+		$point_altcolor = essb_object_value($options, 'point_altcolor');
 		
 		$point_style = "";
 		$total_style = "";
@@ -134,7 +134,6 @@ class ESSBDisplayMethodPoint {
 				
 				$working_post_content = $prev_post->post_content;
 					
-				//$essb_post_og_desc = strip_shortcodes($essb_post_og_desc);
 				$post_shortdesc = $prev_post->post_excerpt;
 				if ($post_shortdesc != '') {
 					$working_post_content = $post_shortdesc;
@@ -175,7 +174,6 @@ class ESSBDisplayMethodPoint {
 				
 				$working_post_content = $next_post->post_content;
 					
-				//$essb_post_og_desc = strip_shortcodes($essb_post_og_desc);
 				$post_shortdesc = $next_post->post_excerpt;
 				if ($post_shortdesc != '') {
 					$working_post_content = $post_shortdesc;

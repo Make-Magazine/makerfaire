@@ -4,6 +4,8 @@
  * @since 2.0
  */
 jQuery(function($) {
+	"use strict";
+	
 	var mycred_click = function( href, title, target, skey, ctype ) {
 		$.ajax({
 			type : "POST",

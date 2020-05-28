@@ -1,28 +1,24 @@
 <?php
 if (! function_exists ( 'essb_rs_css_build_customizer' )) {
-	function essb_rs_css_build_customizer() {
-		global $post, $essb_options, $essb_networks;
-		
-		$options = $essb_options;
-		
+	function essb_rs_css_build_customizer() {		
 		$snippet = '';
 		
-		$global_bgcolor = isset ( $options ['customizer_bgcolor'] ) ? $options ['customizer_bgcolor'] : '';
-		$global_textcolor = isset ( $options ['customizer_textcolor'] ) ? $options ['customizer_textcolor'] : '';
-		$global_hovercolor = isset ( $options ['customizer_hovercolor'] ) ? $options ['customizer_hovercolor'] : '';
-		$global_hovertextcolor = isset ( $options ['customizer_hovertextcolor'] ) ? $options ['customizer_hovertextcolor'] : '';
+		$global_bgcolor = essb_sanitize_option_value('customizer_bgcolor');
+		$global_textcolor = essb_sanitize_option_value('customizer_textcolor');
+		$global_hovercolor = essb_sanitize_option_value('customizer_hovercolor');
+		$global_hovertextcolor = essb_sanitize_option_value('customizer_hovertextcolor');
 		
-		$global_remove_bg_effects = ESSBOptionValuesHelper::options_bool_value ( $options, 'customizer_remove_bg_hover_effects' );
+		$global_remove_bg_effects = essb_option_bool_value('customizer_remove_bg_hover_effects');
 		$css = '';
 		
 		// @since 2.0
-		$customizer_totalbgcolor = ESSBOptionValuesHelper::options_value ( $options, 'customizer_totalbgcolor' );
-		$customizer_totalcolor = ESSBOptionValuesHelper::options_value ( $options, 'customizer_totalcolor' );
-		$customizer_totalnobgcolor = ESSBOptionValuesHelper::options_value ( $options, 'customizer_totalnobgcolor' );
-		$customizer_totalfontsize = ESSBOptionValuesHelper::options_value ( $options, 'customizer_totalfontsize' );
-		$customizer_totalfontsize_after = ESSBOptionValuesHelper::options_value ( $options, 'customizer_totalfontsize_after' );
+		$customizer_totalbgcolor = essb_sanitize_option_value('customizer_totalbgcolor');
+		$customizer_totalcolor = essb_sanitize_option_value('customizer_totalcolor');
+		$customizer_totalnobgcolor = essb_sanitize_option_value('customizer_totalnobgcolor');
+		$customizer_totalfontsize = essb_sanitize_option_value('customizer_totalfontsize');
+		$customizer_totalfontsize_after = essb_sanitize_option_value('customizer_totalfontsize_after');
 		
-		$customizer_totalfontsize_beforeafter = ESSBOptionValuesHelper::options_value ( $options, 'customizer_totalfontsize_beforeafter' );
+		$customizer_totalfontsize_beforeafter = essb_sanitize_option_value('customizer_totalfontsize_beforeafter');
 		
 		if ($customizer_totalbgcolor != '') {
 			$snippet .= ('.essb_totalcount { background: ' . $customizer_totalbgcolor . ' !important;} ');
@@ -107,7 +103,7 @@ if (! function_exists ( 'essb_rs_css_build_customizer' )) {
 			}
 		}
 		
-		$global_customizer_iconsize = essb_option_value('customizer_iconsize');
+		$global_customizer_iconsize = essb_sanitize_option_value('customizer_iconsize');
 		if ($global_customizer_iconsize != '') {
 			$icon_wh = intval($global_customizer_iconsize) * 2;
 			$icon_lt = intval($global_customizer_iconsize) / 2;
@@ -117,7 +113,7 @@ if (! function_exists ( 'essb_rs_css_build_customizer' )) {
 			$snippet .= '.essb_links.essb_share .essb_icon:before { font-size:'.$global_customizer_iconsize.'px!important;left:'.$icon_lt.'px!important;top:'.$icon_lt.'px!important;}';
 		}
 		
-		$global_customizer_namesize = essb_option_value('customizer_namesize');
+		$global_customizer_namesize = essb_sanitize_option_value('customizer_namesize');
 		$global_customizer_namebold = essb_option_bool_value('customizer_namebold');
 		$global_customizer_nameupper = essb_option_bool_value('customizer_nameupper');
 		if ($global_customizer_namesize != '' || $global_customizer_namebold || $global_customizer_nameupper) {
@@ -139,15 +135,15 @@ if (! function_exists ( 'essb_rs_css_build_customizer' )) {
 		// single network color customization
 		foreach ( $parse_network_list as $k => $v ) {
 			if ($k != '') {
-				$network_bgcolor = isset ( $options ['customizer_' . $k . '_bgcolor'] ) ? $options ['customizer_' . $k . '_bgcolor'] : '';
-				$network_textcolor = isset ( $options ['customizer_' . $k . '_textcolor'] ) ? $options ['customizer_' . $k . '_textcolor'] : '';
-				$network_hovercolor = isset ( $options ['customizer_' . $k . '_hovercolor'] ) ? $options ['customizer_' . $k . '_hovercolor'] : '';
-				$network_hovertextcolor = isset ( $options ['customizer_' . $k . '_hovertextcolor'] ) ? $options ['customizer_' . $k . '_hovertextcolor'] : '';
+				$network_bgcolor = essb_sanitize_option_value('customizer_' . $k . '_bgcolor');
+				$network_textcolor = essb_sanitize_option_value('customizer_' . $k . '_textcolor');
+				$network_hovercolor = essb_sanitize_option_value('customizer_' . $k . '_hovercolor');
+				$network_hovertextcolor = essb_sanitize_option_value('customizer_' . $k . '_hovertextcolor');
 				
-				$network_icon = isset ( $options ['customizer_' . $k . '_icon'] ) ? $options ['customizer_' . $k . '_icon'] : '';
-				$network_hovericon = isset ( $options ['customizer_' . $k . '_hovericon'] ) ? $options ['customizer_' . $k . '_hovericon'] : '';
-				$network_iconbgsize = isset ( $options ['customizer_' . $k . '_iconbgsize'] ) ? $options ['customizer_' . $k . '_iconbgsize'] : '';
-				$network_hovericonbgsize = isset ( $options ['customizer_' . $k . '_hovericonbgsize'] ) ? $options ['customizer_' . $k . '_hovericonbgsize'] : '';
+				$network_icon = essb_sanitize_option_value('customizer_' . $k . '_icon');
+				$network_hovericon = essb_sanitize_option_value('customizer_' . $k . '_hovericon');
+				$network_iconbgsize = essb_sanitize_option_value('customizer_' . $k . '_iconbgsize');
+				$network_hovericonbgsize = essb_sanitize_option_value('customizer_' . $k . '_hovericonbgsize');
 				
 				$sigleCss = "";
 				

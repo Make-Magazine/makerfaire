@@ -17,17 +17,17 @@ class ESSBDisplayMethodPostBar {
 		
 		$output = '';
 		
-		$postbar_deactivate_prevnext = ESSBOptionValuesHelper::options_bool_value($options, 'postbar_deactivate_prevnext');
-		$postbar_deactivate_progress = ESSBOptionValuesHelper::options_bool_value($options, 'postbar_deactivate_progress');
-		$postbar_deactivate_title = ESSBOptionValuesHelper::options_bool_value($options, 'postbar_deactivate_title');
+		$postbar_deactivate_prevnext = essb_object_bool_value($options, 'postbar_deactivate_prevnext');
+		$postbar_deactivate_progress = essb_object_bool_value($options, 'postbar_deactivate_progress');
+		$postbar_deactivate_title = essb_object_bool_value($options, 'postbar_deactivate_title');
 			
-		$postbar_activate_category = ESSBOptionValuesHelper::options_bool_value($options, 'postbar_activate_category');
-		$postbar_activate_author = ESSBOptionValuesHelper::options_bool_value($options, 'postbar_activate_author');
-		$postbar_activate_total = ESSBOptionValuesHelper::options_bool_value($options, 'postbar_activate_total');
-		$postbar_activate_comments = ESSBOptionValuesHelper::options_bool_value($options, 'postbar_activate_comments');
-		$postbar_activate_time = ESSBOptionValuesHelper::options_bool_value($options, 'postbar_activate_time');
-		$postbar_activate_total = ESSBOptionValuesHelper::options_bool_value($options, 'postbar_activate_total');
-		$postbar_activate_time_words = ESSBOptionValuesHelper::options_value($options, 'postbar_activate_time_words');
+		$postbar_activate_category = essb_object_bool_value($options, 'postbar_activate_category');
+		$postbar_activate_author = essb_object_bool_value($options, 'postbar_activate_author');
+		$postbar_activate_total = essb_object_bool_value($options, 'postbar_activate_total');
+		$postbar_activate_comments = essb_object_bool_value($options, 'postbar_activate_comments');
+		$postbar_activate_time = essb_object_bool_value($options, 'postbar_activate_time');
+		$postbar_activate_total = essb_object_bool_value($options, 'postbar_activate_total');
+		$postbar_activate_time_words = essb_object_value($options, 'postbar_activate_time_words');
 			
 		$output .= '<div id="essb-postbar" class="essb-postbar">';
 			
@@ -70,7 +70,6 @@ class ESSBDisplayMethodPostBar {
 				
 				$working_post_content = $prev_post->post_content;
 		
-				//$essb_post_og_desc = strip_shortcodes($essb_post_og_desc);
 				$post_shortdesc = $prev_post->post_excerpt;
 				if ($post_shortdesc != '') {
 					$working_post_content = $post_shortdesc;
@@ -120,7 +119,7 @@ class ESSBDisplayMethodPostBar {
 			$author_id = get_post_field( 'post_author', $post->ID );
 			$author_name = get_the_author_meta( 'display_name', $author_id );
 		
-			$output .= '<span class="essb-postbar-author">'.__('by', 'easy-social-share-buttons').' '.$author_name.'</span>';
+			$output .= '<span class="essb-postbar-author">'.esc_html__('by', 'easy-social-share-buttons').' '.$author_name.'</span>';
 		
 		}
 		
@@ -159,7 +158,7 @@ class ESSBDisplayMethodPostBar {
 				$ttr = '<1';
 			}
 		
-			$output .= '<span class="essb-postbar-time"><i class="essb_icon_clock"></i><span class="essb-postbar-number">'.$ttr.' '.__('min', 'easy-social-share-buttons').'</span></span>';
+			$output .= '<span class="essb-postbar-time"><i class="essb_icon_clock"></i><span class="essb-postbar-number">'.$ttr.' '.esc_html__('min', 'easy-social-share-buttons').'</span></span>';
 			$one_icon = true;
 		}
 		if (!$one_icon) {
@@ -203,7 +202,6 @@ class ESSBDisplayMethodPostBar {
 				$output .= '</span>';
 				$working_post_content = $next_post->post_content;
 					
-				//$essb_post_og_desc = strip_shortcodes($essb_post_og_desc);
 				$post_shortdesc = $next_post->post_excerpt;
 				if ($post_shortdesc != '') {
 					$working_post_content = $post_shortdesc;

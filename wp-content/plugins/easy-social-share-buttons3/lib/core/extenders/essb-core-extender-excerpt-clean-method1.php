@@ -22,9 +22,9 @@ if (!function_exists('essb_excerpt_clean_method1')) {
 			}
 			$text = str_replace($k, '', $text);
 				
-			$position_top_name = ESSBOptionValuesHelper::options_value($options, 'top_'.$k.'_name');
-			$position_float_name = ESSBOptionValuesHelper::options_value($options, 'float_'.$k.'_name');
-			$position_postfloat_name = ESSBOptionValuesHelper::options_value($options, 'postfloat_'.$k.'_name');
+			$position_top_name = essb_object_value($options, 'top_'.$k.'_name');
+			$position_float_name = essb_object_value($options, 'float_'.$k.'_name');
+			$position_postfloat_name = essb_object_value($options, 'postfloat_'.$k.'_name');
 				
 			$default_name = $default_names[$k];
 				
@@ -51,12 +51,12 @@ if (!function_exists('essb_excerpt_clean_method1')) {
 		}
 		
 		if (defined('ESSB3_NATIVE_ACTIVE')) {
-			$skin_native = ESSBOptionValuesHelper::options_bool_value($options, 'skin_native');
+			$skin_native = essb_object_bool_value($options, 'skin_native');
 			if (ESSB3_NATIVE_ACTIVE && $skin_native) {
 				$native_buttons = ESSBNativeButtonsHelper::active_native_buttons();
 		
 				foreach ($native_buttons as $network) {
-					$skinned_text = ESSBOptionValuesHelper::options_value($options, $network.'_text');
+					$skinned_text = essb_object_value($options, $network.'_text');
 					if (!empty($skinned_text)) {
 						$text = str_replace($skinned_text, '', $text);
 					}

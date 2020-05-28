@@ -13,33 +13,30 @@
 class ESSBDisplayMethodPopup {
 	
 	public static function generate_popup_code($options, $share_buttons, $is_shortcode, $shortcode_options = array()) {
-		// loading popup display settings
-		
 		$output = '';
 		
-		$popup_window_title = ESSBOptionValuesHelper::options_value($options, 'popup_window_title');
-		$popup_user_message = ESSBOptionValuesHelper::options_value($options, 'popup_user_message');
-		$popup_user_autoclose = ESSBOptionValuesHelper::options_value($options, 'popup_user_autoclose');
+		$popup_window_title = essb_object_value($options, 'popup_window_title');
+		$popup_user_message = essb_object_value($options, 'popup_user_message');
+		$popup_user_autoclose = essb_object_value($options, 'popup_user_autoclose');
 			
 		// display settings
-		$popup_user_width = ESSBOptionValuesHelper::options_value($options, 'popup_user_width');
-		$popup_window_popafter = ESSBOptionValuesHelper::options_value($options, 'popup_window_popafter');
-		$popup_user_percent = ESSBOptionValuesHelper::options_value($options, 'popup_user_percent');
-		$popup_display_end = ESSBOptionValuesHelper::options_bool_value($options, 'popup_display_end');
-		$popup_user_manual_show = ESSBOptionValuesHelper::options_bool_value($options, 'popup_user_manual_show');
-		$popup_window_close_after = ESSBOptionValuesHelper::options_value($options, 'popup_window_close_after');
-		$popup_user_notshow_onclose = ESSBOptionValuesHelper::options_bool_value($options, 'popup_user_notshow_onclose');
-		$popup_user_notshow_onclose_all = ESSBOptionValuesHelper::options_bool_value($options, 'popup_user_notshow_onclose_all');
+		$popup_user_width = essb_object_value($options, 'popup_user_width');
+		$popup_window_popafter = essb_object_value($options, 'popup_window_popafter');
+		$popup_user_percent = essb_object_value($options, 'popup_user_percent');
+		$popup_display_end = essb_object_bool_value($options, 'popup_display_end');
+		$popup_user_manual_show = essb_object_bool_value($options, 'popup_user_manual_show');
+		$popup_window_close_after = essb_object_value($options, 'popup_window_close_after');
+		$popup_user_notshow_onclose = essb_object_bool_value($options, 'popup_user_notshow_onclose');
+		$popup_user_notshow_onclose_all = essb_object_bool_value($options, 'popup_user_notshow_onclose_all');
 			
 		// new @3.3
-		$popup_display_exit = ESSBOptionValuesHelper::options_bool_value($options, 'popup_display_exit');
+		$popup_display_exit = essb_object_bool_value($options, 'popup_display_exit');
 			
 		if ($is_shortcode) {
 			if (!empty($shortcode_popafter)) {
 				$popup_window_popafter = $shortcode_popafter;
 			}
 			
-		
 			$shortcode_window_title = isset($shortcode_options['popup_title']) ? $shortcode_options['popup_title'] : '';
 			$shortcode_window_message = isset($shortcode_options['popup_message']) ? $shortcode_options['popup_message'] : '';
 			$shortcode_pop_on_percent = isset($shortcode_options['popup_percent']) ? $shortcode_options['popup_percent'] : '';
@@ -57,7 +54,7 @@ class ESSBDisplayMethodPopup {
 				$popup_user_percent = $shortcode_pop_on_percent;
 			}
 			if (!empty($shortcode_pop_end)) {
-				$popup_display_end = ESSBOptionValuesHelper::unified_true($shortcode_pop_end);
+				$popup_display_end = essb_unified_true($shortcode_pop_end);
 			}
 			
 			//
@@ -79,7 +76,7 @@ class ESSBDisplayMethodPopup {
 			$popup_window_title = essb_post_details_to_content($popup_window_title);
 		}
 			
-		$popup_trigger_oncomment = ESSBOptionValuesHelper::options_bool_value($options, 'popup_display_comment') ? " essb-popup-oncomment" : "";
+		$popup_trigger_oncomment = essb_object_bool_value($options, 'popup_display_comment') ? " essb-popup-oncomment" : "";
 			
 		if (essb_option_bool_value('popup_mobile_deactivate')) {
 			$popup_trigger_oncomment .= ' essb_mobile_hidden';
@@ -118,10 +115,10 @@ class ESSBDisplayMethodPopup {
 		$output .= '<div class="essb-popup-shadow" onclick="essb.popup_close(); return false;"></div>';
 			
 		if ($popup_window_popafter != '') {
-			$output .= '<div style="display: none;" id="essb_settings_popafter_counter"></div>';
+			$output .= '<div class="essb-forced-hidden" id="essb_settings_popafter_counter"></div>';
 		}
 		if ($popup_user_autoclose != '') {
-			$output .= sprintf('<div id="essb_settings_popup_user_autoclose" style="display: none;">%1$s</div>', $popup_user_autoclose);
+			$output .= sprintf('<div id="essb_settings_popup_user_autoclose" class="essb-forced-hidden">%1$s</div>', $popup_user_autoclose);
 		}
 		
 		return $output;

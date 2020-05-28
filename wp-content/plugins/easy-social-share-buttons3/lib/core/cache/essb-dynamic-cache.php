@@ -13,6 +13,10 @@ class ESSBDynamicCache {
 	public static $isActive = false;
 	
 	public static function activate($cache_mode) {
+		
+		if ($cache_mode == '') {
+			$cache_mode = 'full';
+		}
 				
 		$upload_dir = wp_upload_dir ();
 		
@@ -137,9 +141,8 @@ class ESSBDynamicCache {
 		
 		if (is_dir ( $base_path )) {
 			self::recursiveRemoveDirectory ( $base_path );			
-			//self::activate ();
-		
 		}
+		
 		return false;
 	}
 	
@@ -163,7 +166,6 @@ class ESSBDynamicCache {
 				unlink ( $file );
 			}
 		}
-		//rmdir ( $directory );
 	}
 }
 

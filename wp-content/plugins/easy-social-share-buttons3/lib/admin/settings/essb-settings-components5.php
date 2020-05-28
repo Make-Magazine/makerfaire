@@ -2,12 +2,10 @@
 
 function essb_component_network_selection($position = '', $options_group = 'essb_options', $show_all = false) {
 	$active_networks = array();
-	//$active_networks_order = array();
 	$essb_networks = essb_available_social_networks($show_all);
 	
 	if ($position == '') {
 		$active_networks = essb_option_value('networks');
-		//$active_networks_order = essb_option_value('networks_order');
 	}
 	else {
 		$active_networks = essb_option_value($position.'_networks');
@@ -25,7 +23,7 @@ function essb_component_network_selection($position = '', $options_group = 'essb
 		$active_networks = array();
 	}
 	
-	echo '<ul class="essb-component-networkselect essb-sortable essb-componentkey-'.$salt.' essb-component-networkselect-'.$position.'" id="essb-componentkey-'.$salt.'" data-position="'.$position.'" data-group="'.$options_group.'">';
+	echo '<ul class="essb-component-networkselect essb-sortable essb-componentkey-'.esc_attr($salt).' essb-component-networkselect-'.esc_attr($position).'" id="essb-componentkey-'.esc_attr($salt).'" data-position="'.esc_attr($position).'" data-group="'.esc_attr($options_group).'">';
 	
 	foreach ($active_networks as $network) {
 	
@@ -46,32 +44,32 @@ function essb_component_network_selection($position = '', $options_group = 'essb
 			$user_network_name = ESSBOptionsFramework::external_options_value($options_group, $position.'_'.$network.'_name');
 		}
 	
-		echo '<li class="essb-admin-networkselect-single essb-network-color-'.$network.'" data-network="'.$network.'" data-key="'.$salt.'">';
+		echo '<li class="essb-admin-networkselect-single essb-network-color-'.esc_attr($network).'" data-network="'.esc_attr($network).'" data-key="'.esc_attr($salt).'">';
 		if ($position != '') {
-			echo '<input type="hidden" name="'.$options_group.'['.$position.'_networks][]" value="'.$network.'"/>';
+			echo '<input type="hidden" name="'.esc_attr($options_group).'['.esc_attr($position).'_networks][]" value="'.esc_attr($network).'"/>';
 		}
 		else {
-			echo '<input type="hidden" name="'.$options_group.'[networks][]" value="'.$network.'"/>';
+			echo '<input type="hidden" name="'.esc_attr($options_group).'[networks][]" value="'.esc_attr($network).'"/>';
 		}
 		echo '<span class="essb-icon-remove fa fa-times" onclick="essbSettingsHelper.removeNetwork(this); return false;"></span>';
-		echo '<span class="essb_icon essb_icon_'.$network.'"></span>';
-		echo '<span class="essb-sns-name">'.$current_network_name.'</span>';
+		echo '<span class="essb_icon essb_icon_'.esc_attr($network).'"></span>';
+		echo '<span class="essb-sns-name">'.esc_html($current_network_name).'</span>';
 		echo '<span class="essb-single-network-name">';
 
 		if ($position != '') {
-			echo __('Personalize text on button:', 'essb').'<br/><input type="text" class="input-element" name="'.$options_group.'['.$position.'_'.$network.'_name]" value="'.$user_network_name.'"/>';
+			echo esc_html__('Personalize text on button:', 'essb').'<br/><input type="text" class="input-element" name="'.esc_attr($options_group).'['.esc_attr($position).'_'.esc_attr($network).'_name]" value="'.esc_attr($user_network_name).'"/>';
 		}
 		else {
-			echo __('Personalize text on button:', 'essb').'<br/><input type="text" class="input-element" name="essb_options_names['.$network.']" value="'.$user_network_name.'"/>';
+			echo esc_html__('Personalize text on button:', 'essb').'<br/><input type="text" class="input-element" name="essb_options_names['.esc_attr($network).']" value="'.esc_attr($user_network_name).'"/>';
 		}
 		echo '</span>';	
 		echo '</li>';
 	}
 
 	$network = 'add';
-	echo '<li class="essb-admin-networkselect-single essb-network-color-'.$network.'" data-network="'.$network.'" data-key="'.$salt.'" onclick="essbSettingsHelper.startNetworkSelection(\''.$salt.'\'); return false;">';
+	echo '<li class="essb-admin-networkselect-single essb-network-color-'.esc_attr($network).'" data-network="'.esc_attr($network).'" data-key="'.esc_attr($salt).'" onclick="essbSettingsHelper.startNetworkSelection(\''.$salt.'\'); return false;">';
 	echo '<span class="essb_icon fa fa-plus-square"></span>';
-	echo '<span class="essb-sns-name">'.__('Add more networks', 'essb').'</span>';
+	echo '<span class="essb-sns-name">'.esc_html__('Add more networks', 'essb').'</span>';
 	echo '</li>';
 	
 	
@@ -151,13 +149,13 @@ function essb_component_template_select($position = '', $options_group = 'essb_o
 	
 	
 	if ($show_buttons == 'pinterest') {
-		echo '<div class="essb-popup-select essb-popup-select-'.$value_field_id.'" data-field="'.$value_field_id.'" data-field-text="'.$value_text_id.'" data-field-window="#essb-pintemplateselect" data-field-buttons="'.$show_buttons.'">';
+		echo '<div class="essb-popup-select essb-popup-select-'.esc_attr($value_field_id).'" data-field="'.esc_attr($value_field_id).'" data-field-text="'.esc_attr($value_text_id).'" data-field-window="#essb-pintemplateselect" data-field-buttons="'.esc_attr($show_buttons).'">';
 	}
 	else {
-		echo '<div class="essb-popup-select essb-popup-select-'.$value_field_id.'" data-field="'.$value_field_id.'" data-field-text="'.$value_text_id.'" data-field-window="#essb-templateselect" data-field-buttons="'.$show_buttons.'">';
+		echo '<div class="essb-popup-select essb-popup-select-'.esc_attr($value_field_id).'" data-field="'.esc_attr($value_field_id).'" data-field-text="'.esc_attr($value_text_id).'" data-field-window="#essb-templateselect" data-field-buttons="'.esc_attr($show_buttons).'">';
 	}
-	echo '<input type="hidden" id="essb_field_'.$value_field_id.'" class="essb_field_'.$value_field_id.'" value="'.$selected.'" name="'.$options_group.'['.$value_field_id.']">';
-	echo '<div class="inner" id="'.$value_field_id.'_text">';
+	echo '<input type="hidden" id="essb_field_'.esc_attr($value_field_id).'" class="essb_field_'.esc_attr($value_field_id).'" value="'.esc_attr($selected).'" name="'.esc_attr($options_group).'['.esc_attr($value_field_id).']">';
+	echo '<div class="inner" id="'.esc_attr($value_field_id).'_text">';
 	echo $selected_name;
 	echo '</div>';
 	echo '<div class="picker"><i class="fa fa-ellipsis-h"></i></div>';
@@ -192,13 +190,13 @@ function essb_component_base_template_selection($position = '', $field_id = '', 
 	
 	$button_style = essb_component_base_dummy_style();
 	
-	echo '<div class="essb-component-clickholder" data-field="'.$field_id.'" data-field-text="'.$field_text_id.'">';
+	echo '<div class="essb-component-clickholder" data-field="'.esc_attr($field_id).'" data-field-text="'.esc_attr($field_text_id).'">';
 	
 	foreach ($list_of_templates as $key => $name) {
 		
 		$button_style['template'] = $key;
 		
-		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-template-select-'.$key.'" data-value="'.$key.'" data-text="'.$name.'">';
+		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-template-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
 		echo '<div class="inner-content">'.ESSBButtonHelper::draw_share_buttons(essb_component_base_dummy_share(), $button_style, $buttons, $order_buttons, $button_texts, "shortcode", "1112233").'</div>';
 		echo '</div>';
@@ -209,11 +207,11 @@ function essb_component_base_template_selection($position = '', $field_id = '', 
 
 function essb_component_base_button_style_selection($position = '', $pinterest_mode = false) {
 	$essb_available_buttons_style = array();
-	$essb_available_buttons_style ['button'] = __('Regular share buttons with icon & name/text', 'essb'); 
-	$essb_available_buttons_style ['button_name'] = __('Share button with name/text only (no icon)', 'essb');
-	$essb_available_buttons_style ['icon'] = __('Share button with icon only', 'essb');
-	$essb_available_buttons_style ['icon_hover'] = __('Share button with icon and name/text appearing on hover', 'essb');
-	$essb_available_buttons_style ['vertical'] = __('Vertical button', 'essb');
+	$essb_available_buttons_style ['button'] = esc_html__('Regular share buttons with icon & name/text', 'essb'); 
+	$essb_available_buttons_style ['button_name'] = esc_html__('Share button with name/text only (no icon)', 'essb');
+	$essb_available_buttons_style ['icon'] = esc_html__('Share button with icon only', 'essb');
+	$essb_available_buttons_style ['icon_hover'] = esc_html__('Share button with icon and name/text appearing on hover', 'essb');
+	$essb_available_buttons_style ['vertical'] = esc_html__('Vertical button', 'essb');
 	
 	$selected = essb_option_value('button_style');
 	$template = essb_option_value('style');
@@ -245,7 +243,7 @@ function essb_component_base_button_style_selection($position = '', $pinterest_m
 		$button_style['template'] = $template;
 		$button_style['button_style'] = $key;
 	
-		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-template-select-'.$key.'" data-value="'.$key.'" data-text="'.$name.'">';
+		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-template-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
 		echo '<div class="inner-content">'.ESSBButtonHelper::draw_share_buttons(essb_component_base_dummy_share(), $button_style, $buttons, $buttons, $buttons_text, "shortcode", "1112233").'</div>';
 		echo '</div>';
@@ -277,11 +275,11 @@ function essb_component_buttonstyle_select($position = '', $options_group = 'ess
 	$selected_name = '';
 
 	$essb_available_buttons_style = array();
-	$essb_available_buttons_style ['button'] = __('Regular share buttons with icon & name/text', 'essb'); 
-	$essb_available_buttons_style ['button_name'] = __('Share button with name/text only (no icon)', 'essb');
-	$essb_available_buttons_style ['icon'] = __('Share button with icon only', 'essb');
-	$essb_available_buttons_style ['icon_hover'] = __('Share button with icon and name/text appearing on hover', 'essb');
-	$essb_available_buttons_style ['vertical'] = __('Vertical button', 'essb');
+	$essb_available_buttons_style ['button'] = esc_html__('Regular share buttons with icon & name/text', 'essb'); 
+	$essb_available_buttons_style ['button_name'] = esc_html__('Share button with name/text only (no icon)', 'essb');
+	$essb_available_buttons_style ['icon'] = esc_html__('Share button with icon only', 'essb');
+	$essb_available_buttons_style ['icon_hover'] = esc_html__('Share button with icon and name/text appearing on hover', 'essb');
+	$essb_available_buttons_style ['vertical'] = esc_html__('Vertical button', 'essb');
 	foreach ($essb_available_buttons_style as $key => $name) {
 		if ($key == $selected ) {
 			$selected_name = $name;
@@ -289,13 +287,13 @@ function essb_component_buttonstyle_select($position = '', $options_group = 'ess
 	}
 
 	if ($pinterest_mode) {
-		echo '<div class="essb-popup-select essb-popup-select-'.$value_field_id.'" data-field="'.$value_field_id.'" data-field-text="'.$value_text_id.'" data-field-window="#essb-pinbuttonstyleselect">';
+		echo '<div class="essb-popup-select essb-popup-select-'.esc_attr($value_field_id).'" data-field="'.esc_attr($value_field_id).'" data-field-text="'.esc_attr($value_text_id).'" data-field-window="#essb-pinbuttonstyleselect">';
 	}
 	else {
-		echo '<div class="essb-popup-select essb-popup-select-'.$value_field_id.'" data-field="'.$value_field_id.'" data-field-text="'.$value_text_id.'" data-field-window="#essb-buttonstyleselect">';
+		echo '<div class="essb-popup-select essb-popup-select-'.esc_attr($value_field_id).'" data-field="'.esc_attr($value_field_id).'" data-field-text="'.esc_attr($value_text_id).'" data-field-window="#essb-buttonstyleselect">';
 	}
-	echo '<input type="hidden" id="essb_field_'.$value_field_id.'" class="essb_field_'.$value_field_id.'" value="'.$selected.'" name="'.$options_group.'['.$value_field_id.']">';
-	echo '<div class="inner" id="'.$value_field_id.'_text">';
+	echo '<input type="hidden" id="essb_field_'.esc_attr($value_field_id).'" class="essb_field_'.esc_attr($value_field_id).'" value="'.esc_attr($selected).'" name="'.esc_attr($options_group).'['.esc_attr($value_field_id).']">';
+	echo '<div class="inner" id="'.esc_attr($value_field_id).'_text">';
 	echo $selected_name;
 	echo '</div>';
 	echo '<div class="picker"><i class="fa fa-ellipsis-h"></i></div>';
@@ -320,7 +318,7 @@ function essb_component_base_counter_position_selection($position = '', $field_i
 	}
 
 
-	echo '<div class="essb-component-clickholder" data-field="'.$field_id.'" data-field-text="'.$field_text_id.'">';
+	echo '<div class="essb-component-clickholder" data-field="'.esc_attr($field_id).'" data-field-text="'.esc_attr($field_text_id).'">';
 
 	foreach ($list_of_templates as $key => $name) {
 
@@ -328,7 +326,7 @@ function essb_component_base_counter_position_selection($position = '', $field_i
 		$button_style['template'] = $template;
 		$button_style['counter_pos'] = $key;
 
-		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-counterpos-select-'.$key.'" data-value="'.$key.'" data-text="'.$name.'">';
+		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-counterpos-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
 		echo '<div class="inner-content">'.ESSBButtonHelper::draw_share_buttons(essb_component_base_dummy_share(), $button_style, array("facebook","twitter"), array("facebook","twitter","google"), array("facebook" => "Facebook", "twitter" => "Twitter", "google" => "Google"), "shortcode", "1112233").'</div>';
 		echo '</div>';
@@ -366,9 +364,9 @@ function essb_component_counterpos_select($position = '', $options_group = 'essb
 		}
 	}
 
-	echo '<div class="essb-popup-select essb-popup-select-'.$value_field_id.'" data-field="'.$value_field_id.'" data-field-text="'.$value_text_id.'" data-field-window="#essb-counterposselect">';
-	echo '<input type="hidden" id="essb_field_'.$value_field_id.'" class="essb_field_'.$value_field_id.'" value="'.$selected.'" name="'.$options_group.'['.$value_field_id.']">';
-	echo '<div class="inner" id="'.$value_field_id.'_text">';
+	echo '<div class="essb-popup-select essb-popup-select-'.esc_attr($value_field_id).'" data-field="'.esc_attr($value_field_id).'" data-field-text="'.esc_attr($value_text_id).'" data-field-window="#essb-counterposselect">';
+	echo '<input type="hidden" id="essb_field_'.esc_attr($value_field_id).'" class="essb_field_'.esc_attr($value_field_id).'" value="'.esc_attr($selected).'" name="'.esc_attr($options_group).'['.esc_attr($value_field_id).']">';
+	echo '<div class="inner" id="'.esc_attr($value_field_id).'_text">';
 	echo $selected_name;
 	echo '</div>';
 	echo '<div class="picker"><i class="fa fa-ellipsis-h"></i></div>';
@@ -393,7 +391,7 @@ function essb_component_base_total_counter_position_selection($position = '', $f
 	}
 
 
-	echo '<div class="essb-component-clickholder" data-field="'.$field_id.'" data-field-text="'.$field_text_id.'">';
+	echo '<div class="essb-component-clickholder" data-field="'.esc_attr($field_id).'" data-field-text="'.esc_attr($field_text_id).'">';
 
 	foreach ($list_of_templates as $key => $name) {
 
@@ -401,7 +399,7 @@ function essb_component_base_total_counter_position_selection($position = '', $f
 		$button_style['template'] = $template;
 		$button_style['total_counter_pos'] = $key;
 
-		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-counterpos-select-'.$key.'" data-value="'.$key.'" data-text="'.$name.'">';
+		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-counterpos-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
 		echo '<div class="inner-content">'.ESSBButtonHelper::draw_share_buttons(essb_component_base_dummy_share(), $button_style, array("facebook","twitter"), array("facebook","twitter","google"), array("facebook" => "Facebook", "twitter" => "Twitter", "google" => "Google"), "shortcode", "1112233").'</div>';
 		echo '</div>';
@@ -439,16 +437,16 @@ function essb_component_totalcounterpos_select($position = '', $options_group = 
 		}
 	}
 
-	echo '<div class="essb-popup-select essb-popup-select-'.$value_field_id.'" data-field="'.$value_field_id.'" data-field-text="'.$value_text_id.'" data-field-window="#essb-totalcounterposselect">';
-	echo '<input type="hidden" id="essb_field_'.$value_field_id.'" class="essb_field_'.$value_field_id.'" value="'.$selected.'" name="'.$options_group.'['.$value_field_id.']">';
-	echo '<div class="inner" id="'.$value_field_id.'_text">';
+	echo '<div class="essb-popup-select essb-popup-select-'.esc_attr($value_field_id).'" data-field="'.esc_attr($value_field_id).'" data-field-text="'.esc_attr($value_text_id).'" data-field-window="#essb-totalcounterposselect">';
+	echo '<input type="hidden" id="essb_field_'.esc_attr($value_field_id).'" class="essb_field_'.esc_attr($value_field_id).'" value="'.esc_attr($selected).'" name="'.esc_attr($options_group).'['.esc_attr($value_field_id).']">';
+	echo '<div class="inner" id="'.esc_attr($value_field_id).'_text">';
 	echo $selected_name;
 	echo '</div>';
 	echo '<div class="picker"><i class="fa fa-ellipsis-h"></i></div>';
 	echo '</div>';
 }
 
-function essb_component_options_group_select($field = '', $values = array(), $size = '', $default_value = '', $options_group = 'essb_options') {
+function essb_component_options_group_select($field = '', $values = array(), $size = '', $default_value = '', $options_group = 'essb_options', $custom_class = '') {
 	$value = essb_option_value($field);
 	
 	if ($default_value != '' && $value == '') {
@@ -459,8 +457,12 @@ function essb_component_options_group_select($field = '', $values = array(), $si
 		$size = ' '.$size;
 	}
 	
-	echo '<div class="essb-component-toggleselect essb-component-'.$field.$size.'">';
-	echo '<input type="hidden" name="'.$options_group.'['.$field.']" id="essb_options_'.$field.'" value="'.$value.'" class="toggleselect-holder"/>';
+	if ($custom_class != '') {
+		$custom_class = ' '.$custom_class;
+	}
+	
+	echo '<div class="essb-component-toggleselect essb-component-'.esc_attr($field).esc_attr($size).esc_attr($custom_class).'">';
+	echo '<input type="hidden" name="'.esc_attr($options_group).'['.esc_attr($field).']" id="essb_options_'.esc_attr($field).'" value="'.esc_attr($value).'" class="toggleselect-holder"/>';
 	
 	foreach ($values as $key => $data) {
 		$title = isset($data['title']) ? $data['title'] : '';
@@ -476,7 +478,7 @@ function essb_component_options_group_select($field = '', $values = array(), $si
 			$content = '<span class="text">'.$content.'</span>';
 		}
 		
-		echo '<span class="toggleselect-item'.($key == $value ? ' active': '').'" data-value="'.$key.'" title="'.$title.'"'.$customPadding.'>';
+		echo '<span class="toggleselect-item toggleselect-item-'.esc_attr($field).esc_attr($key).($key == $value ? ' active': '').'" data-value="'.esc_attr($key).'" title="'.esc_attr($title).'"'.$customPadding.'>';
 		echo $content;
 		echo '</span>';
 	}
@@ -495,7 +497,7 @@ function essb_component_options_group_select_multiple($field = '', $values = arr
 		$size = ' '.$size;
 	}
 
-	echo '<div class="essb-component-groupselect essb-component-'.$field.$size.'">';	
+	echo '<div class="essb-component-groupselect essb-component-'.esc_attr($field).esc_attr($size).'">';	
 
 	foreach ($values as $key => $data) {
 		$title = isset($data['title']) ? $data['title'] : '';
@@ -513,9 +515,9 @@ function essb_component_options_group_select_multiple($field = '', $values = arr
 
 		$isChecked = in_array($key, $default_value);
 		
-		echo '<span class="toggleselect-item'.($isChecked ? ' active': '').'" data-value="'.$key.'" title="'.$title.'"'.$customPadding.'>';
+		echo '<span class="toggleselect-item'.($isChecked ? ' active': '').'" data-value="'.esc_attr($key).'" title="'.esc_attr($title).'"'.$customPadding.'>';
 		echo $content;
-		echo '<input type="checkbox" name="'.$options_group.'['.$field.'][]" id="essb_options_'.$field.'_'.$key.'" value="'.$key.'" class="toggleselect-holder" '.($isChecked ? 'checked="checked"': '').'/>';
+		echo '<input type="checkbox" name="'.esc_attr($options_group).'['.esc_attr($field).'][]" id="essb_options_'.esc_attr($field).'_'.esc_attr($key).'" value="'.esc_attr($key).'" class="toggleselect-holder" '.($isChecked ? 'checked="checked"': '').'/>';
 		echo '</span>';
 	}
 
@@ -534,7 +536,7 @@ function essb_component_base_animation_selection($position = '', $field_id = '',
 	}
 
 
-	echo '<div class="essb-component-clickholder" data-field="'.$field_id.'" data-field-text="'.$field_text_id.'">';
+	echo '<div class="essb-component-clickholder" data-field="'.esc_attr($field_id).'" data-field-text="'.esc_attr($field_text_id).'">';
 
 	foreach ($list_of_templates as $key => $name) {
 
@@ -542,7 +544,7 @@ function essb_component_base_animation_selection($position = '', $field_id = '',
 		$button_style['template'] = $template;
 		$button_style['button_animation'] = $key;
 
-		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-counterpos-select-'.$key.'" data-value="'.$key.'" data-text="'.$name.'">';
+		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-counterpos-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
 		echo '<div class="inner-content">'.ESSBButtonHelper::draw_share_buttons(essb_component_base_dummy_share(), $button_style, array("facebook","twitter"), array("facebook","twitter","google"), array("facebook" => "Facebook", "twitter" => "Twitter", "google" => "Google"), "shortcode", "1112233").'</div>';
 		echo '</div>';
@@ -580,9 +582,9 @@ function essb_component_animation_select($position = '', $options_group = 'essb_
 		}
 	}
 
-	echo '<div class="essb-popup-select essb-popup-select-'.$value_field_id.'" data-field="'.$value_field_id.'" data-field-text="'.$value_text_id.'" data-field-window="#essb-animationsselect">';
-	echo '<input type="hidden" id="essb_field_'.$value_field_id.'" class="essb_field_'.$value_field_id.'" value="'.$selected.'" name="'.$options_group.'['.$value_field_id.']">';
-	echo '<div class="inner" id="'.$value_field_id.'_text">';
+	echo '<div class="essb-popup-select essb-popup-select-'.esc_attr($value_field_id).'" data-field="'.esc_attr($value_field_id).'" data-field-text="'.esc_attr($value_text_id).'" data-field-window="#essb-animationsselect">';
+	echo '<input type="hidden" id="essb_field_'.esc_attr($value_field_id).'" class="essb_field_'.esc_attr($value_field_id).'" value="'.esc_attr($selected).'" name="'.$options_group.'['.$value_field_id.']">';
+	echo '<div class="inner" id="'.esc_attr($value_field_id).'_text">';
 	echo $selected_name;
 	echo '</div>';
 	echo '<div class="picker"><i class="fa fa-ellipsis-h"></i></div>';
@@ -590,7 +592,6 @@ function essb_component_animation_select($position = '', $options_group = 'essb_
 }
 
 function essb_component_single_position_select($positions, $field_id = '', $options_group = 'essb_options') {
-	//var_dump($positions);
 	$value = essb_option_value($field_id);
 	
 	echo '<div class="essb-position-select essb-single-position-select">';
@@ -602,21 +603,18 @@ function essb_component_single_position_select($positions, $field_id = '', $opti
 		$desc = isset($data['desc']) ? $data['desc'] : '';
 		$link = isset($data['link']) ? $data['link'] : '';
 		
-		//$link = 'test';
-		//$desc = 'Display share buttons at the begining of post content';
-		
 		$pathToImages = ESSB3_PLUGIN_URL.'/';
 		if (strpos($image, 'http://') !== false || strpos($image, 'https://') !== false) {
 			$pathToImages = '';
 		}
 		
-		echo '<div class="essb-single essb-single-'.$key.($key == $value ? ' active' : '').'" data-value="'.$key.'">';
-		echo '<div class="icon"><img src="'.$pathToImages.$image.'" title="'.$label.'"/>';
+		echo '<div class="essb-single essb-single-'.esc_attr($key).($key == $value ? ' active' : '').'" data-value="'.esc_attr($key).'">';
+		echo '<div class="icon"><img src="'.esc_url($pathToImages.$image).'" title="'.esc_attr($label).'"/>';
 		echo '<div class="active-mark" title="Active Position"><i class="ti-check-box"></i></div>';
 
 		if ($link != '') {
 			$link_parts = explode('|', $link);
-			echo '<div class="customize" title="Personalize Display Options" data-menu="'.$link_parts[0].'" data-sub-menu="'.$link_parts[1].'"><i class="ti-settings"></i></div>';
+			echo '<div class="customize" title="Personalize Display Options" data-menu="'.esc_attr($link_parts[0]).'" data-sub-menu="'.esc_attr($link_parts[1]).'" data-tab="'.esc_attr($link_parts[2]).'"><i class="ti-settings"></i></div>';
 		}
 		
 		
@@ -632,7 +630,7 @@ function essb_component_single_position_select($positions, $field_id = '', $opti
 		echo '</div>';
 	}
 	
-	echo '<input type="hidden" name="'.$options_group.'['.$field_id.']" id="essb_component_'.$field_id.'" value="'.$value.'" class="value-holder"/>';
+	echo '<input type="hidden" name="'.$options_group.'['.$field_id.']" id="essb_component_'.$field_id.'" value="'.esc_attr($value).'" class="value-holder"/>';
 	
 	echo '</div>';
 }
@@ -658,13 +656,13 @@ function essb_component_multi_position_select($positions, $field_id = '', $optio
 			$pathToImages = '';
 		}
 
-		echo '<div class="essb-single essb-single-'.$key.($active ? ' active' : '').'" data-value="'.$key.'">';
-		echo '<div class="icon"><img src="'.$pathToImages.$image.'" title="'.$label.'"/>';
+		echo '<div class="essb-single essb-single-'.esc_attr($key).($active ? ' active' : '').'" data-value="'.esc_attr($key).'">';
+		echo '<div class="icon"><img src="'.esc_url($pathToImages.$image).'" title="'.esc_attr($label).'"/>';
 		echo '<div class="active-mark" title="Active Position"><i class="ti-check-box"></i></div>';
 
 		if ($link != '') {
 			$link_parts = explode('|', $link);
-			echo '<div class="customize" title="Personalize Display Options" data-menu="'.$link_parts[0].'" data-sub-menu="'.$link_parts[1].'"><i class="ti-settings"></i></div>';
+			echo '<div class="customize" title="Personalize Display Options" data-menu="'.esc_attr($link_parts[0]).'" data-sub-menu="'.esc_attr($link_parts[1]).'" data-tab="'.esc_attr($link_parts[2]).'"><i class="ti-settings"></i></div>';
 		}
 
 
@@ -697,18 +695,20 @@ function essb5_stylemanager_include_buttons($options = array()) {
 	
 	?>
 <div class="essb-options-hint essb-options-hint-glowstyles">
-	<div class="essb-options-hint-icon"><i class="fa32 ti-brush"></i></div>
+	<div class="essb-options-hint-icon"><i class="fa32 ti-paint-roller"></i></div>
 	<div class="essb-options-hint-withicon">
 		<div class="content-part">
-			<div class="essb-options-hint-title">Save or Apply a Already Build Style From The Library</div>
-			<div class="essb-options-hint-desc">With the help of style library you can easy save and re-use styles. And you can also add ready made styles with a single click to speed up the design process.</div>
+			<div class="essb-options-hint-title"><?php esc_html_e('Style Library', 'essb'); ?></div>
+			<div class="essb-options-hint-desc"><?php esc_html_e('Save and reuse again already configured styles and network list. Saved in the library you can also move the style to a new site. Try also one of 40+ already configured styles if you wonder how to start.', 'essb'); ?></div>
 		</div>
 		<div class="essb-options-hint-buttons button-part">
-			<a href="#" class="essb-style-apply" data-position="<?php echo $position;?>"><i class="ti-ruler-pencil"></i> <span>Apply Style From Library</span></a>
+			<a href="#" class="essb-style-apply" data-position="<?php echo esc_attr($position);?>"><i class="ti-ruler-pencil"></i> <span>Apply</span></a>
 			<?php if ($show_save == 'true'): ?>
-				<a href="#" class="essb-style-save" data-position="<?php echo $position;?>"><i class="ti-save"></i> <span>Save to Library</span></a>
+				<a href="#" class="essb-style-save" data-position="<?php echo esc_attr($position);?>"><i class="ti-save"></i> <span>Save</span></a>
 			<?php endif; ?>
 		</div>
+		
+		<span class="deactivate-link deactivate-styles-panel"><?php esc_html_e('Remove styles library', 'essb'); ?></span>
 	</div>
 </div>	
 	<?php 
@@ -727,8 +727,9 @@ function essb5_stylemanager_include_buttons($options = array()) {
  * @package EasySocialShareButtons
  */
 function essb5_stylemanager_include_menu($tab_id, $menu_id, $location = '', $show_save = '') {
-	
-	ESSBOptionsStructureHelper::field_func($tab_id, $menu_id, 'essb5_stylemanager_include_buttons', '', '', '', array('position' => $location, 'show_save' => $show_save));
+	if (!essb_option_bool_value('deactivate_stylelibrary')) {
+		ESSBOptionsStructureHelper::field_func($tab_id, $menu_id, 'essb5_stylemanager_include_buttons', '', '', '', array('position' => $location, 'show_save' => $show_save));
+	}
 }
 
 /**
@@ -785,7 +786,7 @@ function essb5_advanced_options_small_settings_tile($parameters = array()) {
 	$button_center = isset($options['button_center']) ? $options['button_center'] : '';
 	$icon = isset($options['icon']) ? $options['icon'] : '';
 	$ao_option = isset($options['ao_option']) ? $options['ao_option'] : '';
-	$ao_option_text = isset($options['ao_option_text']) ? $options['ao_option_text'] : __('Configure', 'essb');
+	$ao_option_text = isset($options['ao_option_text']) ? $options['ao_option_text'] : esc_html__('Configure', 'essb');
 	$ao_window_text = isset($options['ao_window_text']) ? $options['ao_window_text'] : '';
 	$tag = isset($options['tag']) ? $options['tag'] : '';
 	$custom_buttons = isset($options['custom_buttons']) ? $options['custom_buttons'] : '';
@@ -804,7 +805,7 @@ function essb5_advanced_options_small_settings_tile($parameters = array()) {
 	echo '</div>'; // closing head
 	
 	if ($icon != '') {
-		echo '<div class="advnacedoptions-tile-icon"><i class="'.$icon.'"></i></div>';
+		echo '<div class="advnacedoptions-tile-icon"><i class="'.esc_attr($icon).'"></i></div>';
 	}
 	
 	if ($subtitle != '') {
@@ -817,7 +818,7 @@ function essb5_advanced_options_small_settings_tile($parameters = array()) {
 	
 	if ($ao_option != '') {
 		echo '<div class="advancedoptions-tile-foot'.($button_center == 'true'? ' center-b': '').'">';
-		echo '<a href="#" class="essb-btn tile-config ao-option-callback" data-option="'.$ao_option.'" data-window-title="'.$ao_window_text.'"><i class="fa fa-cog"></i>'.$ao_option_text.'</a>';
+		echo '<a href="#" class="essb-btn tile-config ao-option-callback" data-option="'.esc_attr($ao_option).'" data-window-title="'.esc_attr($ao_window_text).'"><i class="fa fa-cog"></i>'.$ao_option_text.'</a>';
 		if ($custom_buttons != '') {
 			echo $custom_buttons;
 		}
@@ -910,6 +911,13 @@ function essb5_draw_switch_option($field_id, $title = '', $description = '', $us
 	ESSBOptionsFramework::draw_options_row_end();
 }
 
+function essb5_draw_help($title = '', $description = '', $buttons = array(), $in_section = 'false') {
+	$element_options = array();
+	$element_options['buttons'] = $buttons;
+	
+	ESSBOptionsFramework::draw_help($title, $description, $in_section, $element_options);
+}
+
 /**
  * Output a simple heading
  * 
@@ -918,6 +926,14 @@ function essb5_draw_switch_option($field_id, $title = '', $description = '', $us
  */
 function essb5_draw_heading($title = '', $level = '5', $desc = '') {
 	ESSBOptionsFramework::draw_heading($title, $level, '', $desc);
+}
+
+function essb5_draw_hint($title = '', $description = '', $icon = '', $style = '', $in_section = 'false') {
+	ESSBOptionsFramework::draw_hint($title, $description, $icon, $style, $in_section);
+}
+
+function essb5_draw_network_select($id = '', $position = '', $all_networks = false) {
+	essb_component_network_selection($position, 'essb_options', $all_networks);
 }
 
 /**
@@ -957,6 +973,23 @@ function essb5_draw_file_option($field_id = '', $title = '', $description = '', 
 }
 
 /**
+ * 
+ * 
+ * @param unknown_type $field_id
+ * @param unknown_type $title
+ * @param unknown_type $description
+ * @param unknown_type $user_value
+ * @param unknown_type $value
+ */
+function essb5_draw_toggle_option($field_id = '', $title = '', $description = '', $values = array(), $user_value = false, $value = '') {
+	$value = $user_value ? $value : essb_option_value($field_id);
+	$value = stripslashes($value);
+	ESSBOptionsFramework::draw_options_row_start($title, $description);
+	ESSBOptionsFramework::draw_toggle_field($field_id, $values, 'essb_options', $value);
+	ESSBOptionsFramework::draw_options_row_end();
+}
+
+/**
  * Generate select value field
  * 
  * @param unknown_type $field_id
@@ -979,9 +1012,281 @@ function essb5_draw_panel_end() {
 	ESSBOptionsFramework::draw_panel_end();
 }
 
-function essb5_generate_code_advanced_button($text = '', $icon = '', $ao_option = '', $class = '', $title = '', $reload = '') {
+function essb5_generate_code_advanced_button($text = '', $icon = '', $ao_option = '', $class = '', $title = '', $reload = '', 
+		$width = '', $hide_save = false) {
 	$code = '';	
-	$code .= '<a href="#" class="ao-options-btn '.esc_attr($class).'" data-option="'.esc_attr($ao_option).'" data-reload="'.esc_attr($reload).'" data-title="'.esc_attr($title).'"><span class="essb_icon '.esc_attr($icon).'"></span><span>'.esc_html($text).'</span></a>';
+	$code .= '<a href="#" class="ao-options-btn '.esc_attr($class).'" data-option="'.esc_attr($ao_option).'" data-reload="'.esc_attr($reload).'" data-title="'.esc_attr($title).'" data-width="'.esc_attr($width).'" data-hidesave="'.($hide_save ? 'yes': 'no').'"><span class="essb_icon '.esc_attr($icon).'"></span><span>'.esc_html($text).'</span></a>';
 	
 	return $code;
 }
+
+function essb5_generate_code_advanced_setting_panel_open($title = '', $desc = '', $class = '') {
+	$code = '';
+	$code .= '<div class="ao-settings-section ao-settings-section-panel '.esc_attr($class).'">';
+	
+	if ($title != '' || $desc != '') {
+	$code .= '<div class="panel-title">';
+		if ($title != '') {
+			$code .= '<span class="title">'.esc_html($title).$running_code_state.'</span>';
+		}
+		if ($desc != '') {
+			$code .= '<span class="label">'.esc_html($desc).'</span>';
+		}
+		$code .= '</div>';
+	}
+
+	$code .= '<div class="panel-content">';
+	
+	return $code;
+}
+
+function essb5_generate_code_advanced_setting_panel_close() {
+	$code = '</div></div>';
+	
+	return $code;
+}
+
+function essb5_generate_code_advanced_deactivate_panel($title = '', $desc = '', $field = '', $class = '', $button_text = '', $button_icon = '', $panel_icon = '') {
+	if ($class == '') {
+		$class = 'ao-'.$field;
+	}
+	$panel_class = $class . '-panel';
+	
+	if ($panel_icon != '') {
+		$panel_icon = '<i class="ao-panel-icon '.esc_attr($panel_icon).'"></i>';
+	}
+	
+	$code = '';
+	$code .= '<div class="ao-settings-section ao-settings-section-deactivate '.esc_attr($panel_class).'">';
+	
+	$code .= '<div class="title-col">';
+	if ($title != '') {
+		$code .= '<span class="title">'.$panel_icon.esc_html($title).'</span>';
+	}
+	if ($desc != '') {
+		$code .= '<span class="label">'.esc_html($desc).'</span>';
+	}
+	$code .= '</div>';
+	$code .= '<div class="action-col">';
+	$code .= '<a href="#" class="ao-options-btn-deactivate" data-field="'.esc_attr($field).'"><span class="essb_icon '.esc_attr($button_icon).'"></span><span>'.esc_html($button_text).'</span></a>';
+	$code .= '</div>';
+	$code .= '</div>';
+	
+	return $code;
+}
+
+function essb5_generate_code_advanced_activate_panel($title = '', $desc = '', $field = '', $class = '', $button_text = '', $button_icon = '', $panel_icon = '', $extra_panel_class = '', $custom_activate_value = '') {
+	if ($class == '') {
+		$class = 'ao-'.$field;
+	}
+	$panel_class = $class . '-panel';
+	
+	if ($extra_panel_class != '') {
+		$panel_class .= ' ' . $extra_panel_class;
+	}
+
+	if ($panel_icon != '') {
+		$panel_icon = '<i class="ao-panel-icon '.esc_attr($panel_icon).'"></i>';
+	}
+
+	$code = '';
+	$code .= '<div class="ao-settings-section ao-settings-section-activate '.esc_attr($panel_class).'">';
+
+	$code .= '<div class="title-col">';
+	if ($title != '') {
+		$code .= '<span class="title">'.$panel_icon.esc_html($title).'</span>';
+	}
+	if ($desc != '') {
+		$code .= '<span class="label">'.esc_html($desc).'</span>';
+	}
+	$code .= '</div>';
+	$code .= '<div class="action-col">';
+	$code .= '<a href="#" class="ao-options-btn-activate" data-field="'.esc_attr($field).'" '.($custom_activate_value != '' ? 'data-uservalue="'.esc_attr($custom_activate_value).'"' : '').'><span class="essb_icon '.esc_attr($button_icon).'"></span><span>'.esc_html($button_text).'</span></a>';
+	$code .= '</div>';
+	$code .= '</div>';
+
+	return $code;
+}
+
+function essb5_generate_help_link($help_link = '') {
+	$code = '';
+	
+	if ($help_link != '') {
+		$code .= '<div class="essb-help-hint">';
+		$code .= '<a href="'.esc_url($help_link).'" target="_blank">'.esc_html__('Learn more', 'essb').' <i class="fa fa-external-link"></i></a>';
+		$code .= '</div>';
+	}
+	
+	return $code;
+}
+
+/**
+ * Generate a settings panel with Advanced Options button
+ * 
+ * @param unknown_type $title
+ * @param unknown_type $desc
+ * @param unknown_type $ao_option
+ * @param unknown_type $class
+ * @param unknown_type $button_text
+ * @param unknown_type $button_icon
+ * @param unknown_type $reload
+ * @return string
+ */
+function essb5_generate_code_advanced_settings_panel($title = '', $desc = '', $ao_option = '', 
+		$class = '', $button_text = '', $button_icon = '', $reload = '', $width = '', 
+		$running_tag = '', $panel_icon = '', $window_title = '', $hide_save = false, $help_link = '',
+        $automation_action = '', $automation_message = '') {
+	if ($class == '') {
+		$class = 'ao-'.$ao_option;
+	}
+	$panel_class = $class . '-panel';
+	
+	if ($panel_icon != '') {
+		$panel_icon = '<i class="ao-panel-icon '.esc_attr($panel_icon).'"></i>';
+	}
+	
+	/**
+	 * Provide a check for the active state of the panel option
+	 */
+	
+	$has_check_settings = essb5_advanced_settings_running_checks($ao_option);
+	$running_code_state = '';
+	
+	if ($has_check_settings['active']) {
+		$advanced_option_running = essb5_has_setting_values($has_check_settings['value'], $has_check_settings['switch']);
+		if ($advanced_option_running) {
+			$running_code_state = '<span class="running">'.esc_html__('Running', 'essb').'</span>';
+			
+			if (!empty($running_tag)) {
+				$running_code_state = '<span class="running">'.$running_tag.'</span>';
+			}
+		}
+	}
+	
+	if ($desc == '') {
+	    $panel_class .= ' ao-settings-nodesc';
+	}
+	
+	$code = '';
+	$code .= '<div class="ao-settings-section '.esc_attr($panel_class).'">';
+	$code .= '<div class="title-col">';
+	if ($title != '') {
+		$code .= '<span class="title">'.$panel_icon.esc_html($title).$running_code_state.'</span>';
+	}
+	if ($desc != '') {
+		$code .= '<span class="label">'.esc_html($desc).'</span>';
+	}
+	
+	if ($help_link != '' || $automation_action != '') {
+		$code .= '<div class="help-hint">';
+		if ($help_link != '') {
+		  $code .= '<a href="'.esc_url($help_link).'" target="_blank" class="ao-internal-help-hint">'.esc_html__('Learn more', 'essb').' <i class="fa fa-external-link"></i></a>';
+		}
+		if ($automation_action != '') {
+		    $code .= '<a href="#'.esc_attr($automation_action).'" class="ao-automation-action" data-automation="'.esc_attr($automation_action).'">'.$automation_message.' <i class="fa fa-bolt"></i></a>';
+		}
+		
+		$code .= '</div>';
+	}
+	
+	if ($window_title == '') { 
+		$window_title = $title;
+	}
+	
+	$code .= '</div>';
+	$code .= '<div class="action-col">';
+	$code .= essb5_generate_code_advanced_button($button_text, $button_icon, $ao_option, $class, $window_title, $reload, $width, $hide_save);
+	$code .= '</div>';
+	$code .= '</div>';
+	
+	return $code;
+}
+
+function essb5_advanced_settings_running_checks($ao_option = '') {
+	$has_settings = false;
+	$value_checks = array();
+	$switch_checks = array();
+	
+	if ($ao_option == 'advanced-networks') {
+		$has_settings = true;
+		$switch_checks[] = 'activate_networks_manage';
+	}
+	
+	if ($ao_option == 'advanced-networks-visibility') {
+		$has_settings = true;
+		$switch_checks[] = 'activate_networks_responsive';
+	}
+	
+	if ($ao_option == 'avoid-negative-proof') {
+		$has_settings = true;
+		$switch_checks[] = 'social_proof_enable';
+	}
+	
+	if ($ao_option == 'share-recovery') {
+		$has_settings = true;
+		$switch_checks[] = 'counter_recover_active';
+	}
+	
+	if ($ao_option == 'adaptive-styles') {
+		$has_settings = true;
+		$switch_checks[] = 'activate_automatic_position';
+		$switch_checks[] = 'activate_automatic_mobile';
+		$switch_checks[] = 'activate_automatic_mobile_content';
+	}
+	
+	if ($ao_option == 'share-fake') {
+		$has_settings = true;
+		$switch_checks[] = 'activate_fake_counters';
+	}
+	
+	if ($ao_option == 'integration-mycred') {
+		$has_settings = true;
+		$switch_checks[] = 'mycred_activate';
+		$switch_checks[] = 'mycred_activate_custom';
+		$switch_checks[] = 'mycred_referral_activate';
+		$switch_checks[] = 'mycred_referral_activate_shortcode';
+	}
+	
+	if ($ao_option == 'integration-affiliatewp') {
+		$has_settings = true;
+		$switch_checks[] = 'affwp_active';
+	}
+	
+	if ($ao_option == 'integration-affiliates') {
+		$has_settings = true;
+		$switch_checks[] = 'affs_active';
+	}
+	
+	if ($ao_option == 'analytics') {
+		$has_settings = true;
+		$switch_checks[] = 'stats_active';
+	}
+	
+	if ($ao_option == 'share-conversions') {
+		$has_settings = true;
+		$switch_checks[] = 'conversions_lite_run';
+	}
+	
+	if ($ao_option == 'metrics-lite') {
+		$has_settings = true;
+		$switch_checks[] = 'esml_active';
+	}
+	
+	if ($ao_option == 'share-google-analytics') {
+		$has_settings = true;
+		$switch_checks[] = 'activate_ga_tracking';
+	}
+	
+	if ($ao_option == 'excerpts') {
+		$has_settings = true;
+		$switch_checks[] = 'display_excerpt';
+	}
+	
+	if ($ao_option == 'style-builder') {
+		$has_settings = true;
+		$switch_checks[] = 'use_stylebuilder';
+	}
+	
+	return array('active' => $has_settings, 'value' => $value_checks, 'switch' => $switch_checks);
+}
+

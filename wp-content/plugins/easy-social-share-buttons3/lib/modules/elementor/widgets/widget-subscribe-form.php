@@ -8,7 +8,7 @@ class ESSB_Elementor_Subscribe_Form_Widget extends Widget_Base {
 	}
 	
 	public function get_title() {
-		return __( 'Subscribe Form', 'essb' );
+		return esc_html__( 'Subscribe Form', 'essb' );
 	}
 	
 	public function get_icon() {
@@ -31,7 +31,7 @@ class ESSB_Elementor_Subscribe_Form_Widget extends Widget_Base {
 		$this->add_control(
 				'template',
 				[
-				'label' => __( 'Template', 'essb' ),
+				'label' => esc_html__( 'Template', 'essb' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => essb_optin_designs()

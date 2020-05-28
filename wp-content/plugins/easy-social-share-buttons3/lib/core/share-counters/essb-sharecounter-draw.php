@@ -38,5 +38,5 @@ function essb_draw_share_counter_code($position, $counter, $counter_hidden) {
 		$position .= ' essb_animated';
 	}
 
-	return '<span class="essb_counter'.$position.'" data-cnt="' .$counter. '"'.$css_hidden_negative.' data-cnt-short="'.$original_counter_short.'">' .$counter_short. '</span>';
+	return '<span class="essb_counter'.esc_attr($position).'" data-cnt="' .esc_attr($counter). '"'.$css_hidden_negative.' data-cnt-short="'.esc_attr($original_counter_short).'">' .$counter_short. '</span>';
 }

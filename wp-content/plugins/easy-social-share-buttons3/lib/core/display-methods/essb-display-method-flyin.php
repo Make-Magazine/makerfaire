@@ -15,24 +15,24 @@ class ESSBDisplayMethodFlyin {
 	public static function generate_flyin_code($options, $share_buttons, $is_shortcode, $shortcode_options = array()) {
 		$output = '';
 		// loading flyin display settings
-		$flyin_window_title = ESSBOptionValuesHelper::options_value($options, 'flyin_window_title');
-		$flyin_user_message = ESSBOptionValuesHelper::options_value($options, 'flyin_user_message');
-		$flyin_user_autoclose = ESSBOptionValuesHelper::options_value($options, 'flyin_user_autoclose');
-		$flyin_position = ESSBOptionValuesHelper::options_value($options, 'flyin_position');
+		$flyin_window_title = essb_object_value($options, 'flyin_window_title');
+		$flyin_user_message = essb_object_value($options, 'flyin_user_message');
+		$flyin_user_autoclose = essb_object_value($options, 'flyin_user_autoclose');
+		$flyin_position = essb_object_value($options, 'flyin_position');
 		// display settings
-		$flyin_user_width = ESSBOptionValuesHelper::options_value($options, 'flyin_user_width');
-		$flyin_window_popafter = ESSBOptionValuesHelper::options_value($options, 'flyin_window_popafter');
-		$flyin_user_percent = ESSBOptionValuesHelper::options_value($options, 'flyin_user_percent');
-		$flyin_display_end = ESSBOptionValuesHelper::options_bool_value($options, 'flyin_display_end');
-		$flyin_user_manual_show = ESSBOptionValuesHelper::options_bool_value($options, 'flyin_user_manual_show');
-		$flyin_window_close_after = ESSBOptionValuesHelper::options_value($options, 'flyin_window_close_after');
-		$flyin_user_notshow_onclose = ESSBOptionValuesHelper::options_bool_value($options, 'flyin_user_notshow_onclose');
-		$flyin_user_notshow_onclose_all = ESSBOptionValuesHelper::options_bool_value($options, 'flyin_user_notshow_onclose_all');
+		$flyin_user_width = essb_object_value($options, 'flyin_user_width');
+		$flyin_window_popafter = essb_object_value($options, 'flyin_window_popafter');
+		$flyin_user_percent = essb_object_value($options, 'flyin_user_percent');
+		$flyin_display_end = essb_object_bool_value($options, 'flyin_display_end');
+		$flyin_user_manual_show = essb_object_bool_value($options, 'flyin_user_manual_show');
+		$flyin_window_close_after = essb_object_value($options, 'flyin_window_close_after');
+		$flyin_user_notshow_onclose = essb_object_bool_value($options, 'flyin_user_notshow_onclose');
+		$flyin_user_notshow_onclose_all = essb_object_bool_value($options, 'flyin_user_notshow_onclose_all');
 		
-		$flyin_trigger_oncomment = ESSBOptionValuesHelper::options_bool_value($options, 'flyin_display_comment') ? " essb-flyin-oncomment" : "";
+		$flyin_trigger_oncomment = essb_object_bool_value($options, 'flyin_display_comment') ? " essb-flyin-oncomment" : "";
 		
 		// if the message is set to appear after comment it will have automatically manual display mode
-		if (ESSBOptionValuesHelper::options_bool_value($options, 'flyin_display_comment')) {
+		if (essb_object_bool_value($options, 'flyin_display_comment')) {
 			$flyin_user_manual_show = true;
 		}
 			
@@ -52,7 +52,7 @@ class ESSBDisplayMethodFlyin {
 				$flyin_user_percent = $shortcode_pop_on_percent;
 			}
 			if (!empty($shortcode_pop_end)) {
-				$flyin_display_end = ESSBOptionValuesHelper::unified_true($shortcode_pop_end);
+				$flyin_display_end = essb_unified_true($shortcode_pop_end);
 			}
 		}
 			
@@ -93,7 +93,7 @@ class ESSBDisplayMethodFlyin {
 		}
 		
 		if (!$is_shortcode) {
-			$flyin_noshare = ESSBOptionValuesHelper::options_bool_value($options, 'flyin_noshare');
+			$flyin_noshare = essb_object_bool_value($options, 'flyin_noshare');
 			if (!$flyin_noshare) {
 				$output .= $share_buttons;
 			}
@@ -110,10 +110,10 @@ class ESSBDisplayMethodFlyin {
 		$output .= "</div>";
 		
 		if ($flyin_window_popafter != '') {
-			$output .= '<div style="display: none;" id="essb_settings_flyafter_counter"></div>';
+			$output .= '<div class="essb-forced-hidden" id="essb_settings_flyafter_counter"></div>';
 		}
 		if ($flyin_user_autoclose != '') {
-			$output .= sprintf('<div id="essb_settings_flyin_user_autoclose" style="display: none;">%1$s</div>', $flyin_user_autoclose);
+			$output .= sprintf('<div id="essb_settings_flyin_user_autoclose" class="essb-forced-hidden">%1$s</div>', $flyin_user_autoclose);
 		}
 		
 		return $output;

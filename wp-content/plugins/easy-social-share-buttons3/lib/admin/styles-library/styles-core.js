@@ -1,5 +1,6 @@
 jQuery(document).ready(function($){
-
+	"use strict";
+	
 	jQuery.fn.extend({
         centerWithAdminBar: function () {
             return this.each(function() {
@@ -13,15 +14,17 @@ jQuery(document).ready(function($){
             });
         }
     });
+	
+	if (typeof(essb_styles_ajaxurl) == 'undefied') return;
 
 	var essbStylesManager = window.essbStylesManager = {
-		ajax_url: essb_styles_ajaxurl,
+		ajax_url: essb_styles_ajaxurl || '',
 		debug_mode: false,
 		styles: null,
 		location: '',
 		selected_key: '',
 		locationReload: false
-	}
+	};
 
 	essbStylesManager.post = function(action, options, callback) {
 		if (!options) options = {};
@@ -42,7 +45,7 @@ jQuery(document).ready(function($){
 	            if (callback) callback(data);
             }
     	});
-	}
+	};
 
 	essbStylesManager.read = function(action, options, callback) {
 		if (!options) options = {};
@@ -63,7 +66,7 @@ jQuery(document).ready(function($){
 	            if (callback) callback(data);
             }
     	});
-	}
+	};
 
 	essbStylesManager.correctWidthAndPosition = function() {
 		var baseWidth = 1200, wWidth = $(window).width(),
@@ -83,7 +86,7 @@ jQuery(document).ready(function($){
 			$('#essb-styleselect').find('.essb-helper-popup-content').css({overflowY: 'auto'});
 
 		}
-	}
+	};
 
 	essbStylesManager.startConvert = function(forLocation) {
 		essbStylesManager.correctWidthAndPosition();
@@ -100,7 +103,7 @@ jQuery(document).ready(function($){
 		if (!forLocation) forLocation = '';
 
 		essbStylesManager.location = forLocation;
-	}
+	};
 
 	essbStylesManager.show = function(forLocation) {
 
@@ -120,13 +123,13 @@ jQuery(document).ready(function($){
 		essbStylesManager.location = forLocation;
 		essbStylesManager.locationReload = (forLocation != '') ? true : false;
 
-		essbStylesManager.read('get', {}, essbStylesManager.load)
-	}
+		essbStylesManager.read('get', {}, essbStylesManager.load);
+	};
 
 	essbStylesManager.close = function() {
 		$('.styles-modal').fadeOut();
 		$('#essb-styleselect').fadeOut(200);
-	}
+	};
 
 	essbStylesManager.load = function(json) {
 		if (essbStylesManager.debug_mode) console.log(json);
@@ -136,7 +139,7 @@ jQuery(document).ready(function($){
 
 		essbStylesManager.updateCategories();
 		essbStylesManager.updateStyles();
-	}
+	};
 
 	essbStylesManager.updateStyles = function(filterCat) {
 		var output = [], styleObj;
@@ -195,7 +198,7 @@ jQuery(document).ready(function($){
 
 		// updating grid events after render
 
-		$('#style-grid-container .remove-button').click(function(e) {
+		$('#style-grid-container .remove-button').on('click', function(e) {
 			e.preventDefault();
 
 			var key = $(this).data('key') || '';
@@ -234,7 +237,7 @@ jQuery(document).ready(function($){
 
 		});
 
-		$('#style-grid-container .apply-button').click(function(e) {
+		$('#style-grid-container .apply-button').on('click', function(e) {
 			e.preventDefault();
 
 			var key = $(this).data('key') || '';
@@ -258,7 +261,7 @@ jQuery(document).ready(function($){
 			}
 		});
 
-		$('#style-grid-container .export-save-button').click(function(e) {
+		$('#style-grid-container .export-save-button').on('click', function(e) {
 			e.preventDefault();
 
 			$('#styles-list-screen').hide(100);
@@ -275,7 +278,7 @@ jQuery(document).ready(function($){
 
 		});
 
-		$('#style-grid-container .view-button').click(function(e) {
+		$('#style-grid-container .view-button').on('click', function(e) {
 			e.preventDefault();
 
 			var key = $(this).data('key') || '';
@@ -305,7 +308,7 @@ jQuery(document).ready(function($){
 						essb_managepreview_global_preview.networks = networksSource;
 					}
 					else {
-						essb_managepreview_global_preview.networks = [ {'key': 'facebook', 'name': 'Facebook'}, {'key': 'twitter', 'name': 'Twitter'}, {'key': 'google', 'name': 'Google'}, {'key': 'pinterest', 'name': 'Pinterest'}, {'key': 'linkedin', 'name': 'LinkedIn'}];
+						essb_managepreview_global_preview.networks = [ {'key': 'facebook', 'name': 'Facebook'}, {'key': 'twitter', 'name': 'Twitter'}, {'key': 'pinterest', 'name': 'Pinterest'}, {'key': 'linkedin', 'name': 'LinkedIn'}];
 					}
 				}
 
@@ -320,12 +323,9 @@ jQuery(document).ready(function($){
 					var basicID = id.replace('essb_options_managepreview_', '').replace('essb_field_managepreview_', ''),
 						value = opts.options[basicID] || '';
 
-					//if (basicID == 'template')
-					//	value = essb_styles_templates_source[value] || value;
-					//console.log('id = ' + id+', basicID = ' + basicID +', value = '+ value);
 					if (type == 'checkbox') $(this).prop('checked', value == 'true');
 					else
-						$(this).val(value);
+						$(this).val(value);					
 
 					$(this).trigger('change');
 				});
@@ -335,10 +335,10 @@ jQuery(document).ready(function($){
 				}, 1);
 			}
 		});
-	}
+	};
 
 	essbStylesManager.getCategoryCount = function(filterCat) {
-		var r = 0;
+		var r = 0, styleObj;
 
 		for (var key in essbStylesManager.styles.styles) {
 			styleObj = essbStylesManager.styles.styles[key] || {};
@@ -352,10 +352,10 @@ jQuery(document).ready(function($){
 		}
 
 		return r;
-	}
+	};
 
 	essbStylesManager.getAllCount = function() {
-		var r = 0;
+		var r = 0, styleObj;
 
 		for (var key in essbStylesManager.styles.styles) {
 			styleObj = essbStylesManager.styles.styles[key] || {};
@@ -365,7 +365,7 @@ jQuery(document).ready(function($){
 		}
 
 		return r;
-	}
+	};
 
 	essbStylesManager.updateCategories = function() {
 		var output = [];
@@ -393,7 +393,7 @@ jQuery(document).ready(function($){
 
 		if ($('#essb-styleselect .styles-cats .list').length) $('#essb-styleselect .styles-cats .list').html(output.join(''));
 
-		$('#essb-styleselect .styles-cats .list li').click(function(e) {
+		$('#essb-styleselect .styles-cats .list li').on('click', function(e) {
 			e.preventDefault();
 
 			$('#essb-styleselect .styles-cats .list li').removeClass('active');
@@ -403,7 +403,7 @@ jQuery(document).ready(function($){
 
 			essbStylesManager.updateStyles(activeCat);
 		});
-	}
+	};
 
 	essbStylesManager.updateAfterSave = function(data) {
 		if (data != '') {
@@ -411,7 +411,7 @@ jQuery(document).ready(function($){
 			for (var key in data) {
 				essbStylesManager.styles.styles[key] = data[key];
 			}
-		}
+		};
 
 		essbStylesManager.updateCategories();
 		essbStylesManager.updateStyles();
@@ -685,20 +685,27 @@ jQuery(document).ready(function($){
 
 	//-- actions assigned to components
 
-	$('#essb-styleselect .styleselect-close').click(function(e) {
+	$('#essb-styleselect .styleselect-close').on('click', function(e) {
 		e.preventDefault();
 		essbStylesManager.close();
 	});
 
 	if ($('.essb-tab-readymade').length) {
-		$('.essb-tab-readymade').click(function(e) {
+		$('.essb-tab-readymade').on('click', function(e) {
 			e.preventDefault();
 			essbStylesManager.show();
 		});
 	}
 
+	if ($('.essb-cc-readymade').length) {
+		$('.essb-cc-readymade').on('click', function(e) {
+			e.preventDefault();
+			essbStylesManager.show();
+		});
+	}	
+	
 	if ($('.essb-style-apply').length) {
-		$('.essb-style-apply').click(function(e) {
+		$('.essb-style-apply').on('click', function(e) {
 			e.preventDefault();
 
 			var location = $(this).data('position') || '';
@@ -707,7 +714,7 @@ jQuery(document).ready(function($){
 	}
 
 	if ($('.essb-style-save').length) {
-		$('.essb-style-save').click(function(e) {
+		$('.essb-style-save').on('click', function(e) {
 			e.preventDefault();
 
 			var location = $(this).data('position') || '';
@@ -718,7 +725,7 @@ jQuery(document).ready(function($){
 
 	// attaching create new style button
 	if ($('.create-new').length) {
-		$('.create-new').click(function(e) {
+		$('.create-new').on('click', function(e) {
 			e.preventDefault();
 
 			$('#styles-list-screen').hide(100);
@@ -729,7 +736,7 @@ jQuery(document).ready(function($){
 		});
 	}
 
-	$('.import-new').click(function(e){
+	$('.import-new').on('click', function(e){
 		e.preventDefault();
 		$('#styles-list-screen').hide(100);
 		$('#style-import').fadeIn(200);
@@ -737,7 +744,7 @@ jQuery(document).ready(function($){
 	});
 
 	if ($('.manage-back').length) {
-		$('.manage-back').click(function(e){
+		$('.manage-back').on('click', function(e){
 			e.preventDefault();
 
 			$('#styles-manage').hide(100);
@@ -751,33 +758,33 @@ jQuery(document).ready(function($){
 	}
 
 	if ($('.manage-save').length) {
-		$('.manage-save').click(function(e) {
+		$('.manage-save').on('click', function(e) {
 			essbStylesManager.save();
 		});
 	}
 
 	if ($('.manage-import-style').length) {
-		$('.manage-import-style').click(function(e) {
+		$('.manage-import-style').on('click', function(e) {
 			e.preventDefault();
 			essbStylesManager.import();
 		});
 	}
 
 	if ($('.manage-new-save').length) {
-		$('.manage-new-save').click(function(e){
+		$('.manage-new-save').on('click', function(e){
 			e.preventDefault();
 			essbStylesManager.convert();
 		});
 	}
 
 	if ($('.manage-apply').length) {
-		$('.manage-apply').click(function(e) {
+		$('.manage-apply').on('click', function(e) {
 			essbStylesManager.apply();
 		});
 	}
 
 	if ($('.manage-apply-select').length) {
-		$('.manage-apply-select').click(function(e) {
+		$('.manage-apply-select').on('click', function(e) {
 			e.preventDefault();
 
 			/**
@@ -799,7 +806,7 @@ jQuery(document).ready(function($){
 	}
 
 	if ($('#essb_options_change-orientation').length) {
-		$('#essb_options_change-orientation').change(function() {
+		$('#essb_options_change-orientation').on('change', function() {
 			var value = $(this).val();
 
 			if (value != '') $('.essb-style-livepreview').addClass('vertical');
@@ -808,7 +815,7 @@ jQuery(document).ready(function($){
 	}
 
 	if ($('.manage-new-close').length) {
-		$('.manage-new-close').click(function(e){
+		$('.manage-new-close').on('click', function(e){
 			e.preventDefault();
 			essbStylesManager.close();
 		});

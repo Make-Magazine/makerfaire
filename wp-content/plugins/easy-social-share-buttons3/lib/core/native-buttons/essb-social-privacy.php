@@ -33,7 +33,7 @@ class ESSBSocialPrivacyNativeButtons {
 		global $essb_options;
 
 		$this->options = $essb_options;		
-		$this->active = ESSBOptionValuesHelper::options_bool_value($this->options, 'native_privacy_active');
+		$this->active = essb_object_bool_value($this->options, 'native_privacy_active');
 		
 		if (ESSB3_DEMO_MODE) {
 			$is_active_option = isset($_REQUEST['nativemode']) ? $_REQUEST['nativemode'] : '';
@@ -158,11 +158,11 @@ class ESSBSocialPrivacyNativeButtons {
 		
 		$css_width = "";
 		if ($width != '') {
-			$css_width = ' style="width:'.$width.'px!important;"';
+			$css_width = ' style="width:'.esc_attr($width).'px!important;"';
 		}
 		
-		$output = '<div class="essb-privacy-button'.$user_skin.'" data-button-type="'.$type.'">';
-		$output .= '<div class="essb-privacy-outsite'.$user_skin.' essb-privacy-' . $type . '"'.$css_width.'>';
+		$output = '<div class="essb-privacy-button'.esc_attr($user_skin).'" data-button-type="'.esc_attr($type).'">';
+		$output .= '<div class="essb-privacy-outsite'.esc_attr($user_skin).' essb-privacy-' . esc_attr($type) . '"'.esc_attr($css_width).'>';
 		
 		$output_text = "";
 		
@@ -170,7 +170,7 @@ class ESSBSocialPrivacyNativeButtons {
 			$output_text = '<span class="essb-privacy-text-inner">' . $text . '</span>';
 		}
 		
-		$output .= '<div class="essb-privacy-text'.$user_skin.'"><span class="essb-privacy-icon ' . $this->get_icon($type) . '"></span>' . $output_text . '</div>';
+		$output .= '<div class="essb-privacy-text'.esc_attr($user_skin).'"><span class="essb-privacy-icon ' . $this->get_icon($type) . '"></span>' . $output_text . '</div>';
 		
 		$output .= '</div>';
 		$output .= '</div>';

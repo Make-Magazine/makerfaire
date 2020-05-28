@@ -17,32 +17,32 @@ class ESSBNativeButtonsHelper {
 			return $social_apis;
 		}
 		
-		if (ESSBOptionValuesHelper::options_value($essb_options, 'facebook_like_button') && !ESSBOptionValuesHelper::options_bool_value($essb_options, 'facebook_like_button_api')) {
+		if (essb_object_value($essb_options, 'facebook_like_button') && !essb_object_bool_value($essb_options, 'facebook_like_button_api')) {
 			if (self::$essb_spb->is_active('facebook')) {
 				$social_apis['facebook'] = "facebook";
 			}
 		}
 
-		if (ESSBOptionValuesHelper::options_value($essb_options, 'googleplus') || ESSBOptionValuesHelper::options_bool_value($essb_options, 'youtubesub')) {
+		if (essb_object_value($essb_options, 'googleplus') || essb_object_bool_value($essb_options, 'youtubesub')) {
 			if (self::$essb_spb->is_active('google') || self::$essb_spb->is_active('youtube')) {
 				$social_apis['google'] = "google";
 			}
 		}
 
-		if (ESSBOptionValuesHelper::options_value($essb_options, 'vklike')) {
+		if (essb_object_value($essb_options, 'vklike')) {
 			if (self::$essb_spb->is_active('vk')) {
 				$social_apis['vk'] = "vk";
 			}
 		}
 		
 		
-		if (ESSBOptionValuesHelper::options_value($essb_options, 'twitterfollow')) {
+		if (essb_object_value($essb_options, 'twitterfollow')) {
 			if (self::$essb_spb->is_active('twitter')) {
 				$social_apis['twitter'] = "twitter";
 			}
 		}
 		
-		if (ESSBOptionValuesHelper::options_bool_value($essb_options, 'pinterestfollow')) {
+		if (essb_object_bool_value($essb_options, 'pinterestfollow')) {
 			if (self::$essb_spb->is_active('pinterest')) {
 				$social_apis['pinterest'] = "pinterest";
 			}
@@ -63,34 +63,34 @@ class ESSBNativeButtonsHelper {
 	public static function active_native_buttons() {
 		global $essb_options;
 		
-		$current_order = ESSBOptionValuesHelper::options_value($essb_options, 'native_order');
+		$current_order = essb_object_value($essb_options, 'native_order');
 		
 		$active_networks = array();
 		
 		if (is_array($current_order)) {
 			foreach ($current_order as $network) {
-				if ($network == "facebook" && ESSBOptionValuesHelper::options_bool_value($essb_options, 'facebook_like_button')) {
+				if ($network == "facebook" && essb_object_bool_value($essb_options, 'facebook_like_button')) {
 					$active_networks[] = 'facebook';
 				}
-				if ($network == "google" && ESSBOptionValuesHelper::options_bool_value($essb_options, 'googleplus')) {
+				if ($network == "google" && essb_object_bool_value($essb_options, 'googleplus')) {
 					$active_networks[] = 'google';
 				}
-				if ($network == "twitter" && ESSBOptionValuesHelper::options_bool_value($essb_options, 'twitterfollow')) {
+				if ($network == "twitter" && essb_object_bool_value($essb_options, 'twitterfollow')) {
 					$active_networks[] = 'twitter';
 				}
-				if ($network == "youtube" && ESSBOptionValuesHelper::options_bool_value($essb_options, 'youtubesub')) {
+				if ($network == "youtube" && essb_object_bool_value($essb_options, 'youtubesub')) {
 					$active_networks[] = 'youtube';
 				}
-				if ($network == "pinterest" && ESSBOptionValuesHelper::options_bool_value($essb_options, 'pinterestfollow')) {
+				if ($network == "pinterest" && essb_object_bool_value($essb_options, 'pinterestfollow')) {
 					$active_networks[] = 'pinterest';
 				}
-				if ($network == "linkedin" && ESSBOptionValuesHelper::options_bool_value($essb_options, 'linkedin_follow')) {
+				if ($network == "linkedin" && essb_object_bool_value($essb_options, 'linkedin_follow')) {
 					$active_networks[] = 'linkedin';
 				}
-				if ($network == "managewp" && ESSBOptionValuesHelper::options_bool_value($essb_options, 'managedwp_button')) {
+				if ($network == "managewp" && essb_object_bool_value($essb_options, 'managedwp_button')) {
 					$active_networks[] = 'managewp';
 				}
-				if ($network == "vk" && ESSBOptionValuesHelper::options_bool_value($essb_options, 'vklike')) {
+				if ($network == "vk" && essb_object_bool_value($essb_options, 'vklike')) {
 					$active_networks[] = 'vk';
 				}
 				
@@ -105,53 +105,53 @@ class ESSBNativeButtonsHelper {
 		
 		$defaults = array();
 		
-		$facebook_type = ESSBOptionValuesHelper::options_value($essb_options, 'facebook_like_type', 'like');
+		$facebook_type = essb_object_value($essb_options, 'facebook_like_type', 'like');
 		$facebook_url = '';
 		if ($facebook_type == 'like') {
-			$facebook_url = ESSBOptionValuesHelper::options_value($essb_options, 'custom_url_like_address');
+			$facebook_url = essb_object_value($essb_options, 'custom_url_like_address');
 		}
 		else {
-			$facebook_url = ESSBOptionValuesHelper::options_value($essb_options, 'facebook_follow_profile');
+			$facebook_url = essb_object_value($essb_options, 'facebook_follow_profile');
 		}
 		
 		$defaults['facebook_type'] = $facebook_type;
 		$defaults['facebook_url'] = $facebook_url;
 
-		$google_type = ESSBOptionValuesHelper::options_value($essb_options, 'google_like_type', 'plus');
+		$google_type = essb_object_value($essb_options, 'google_like_type', 'plus');
 		$google_url = '';
 		if ($google_type == 'plus') {
-			$google_url = ESSBOptionValuesHelper::options_value($essb_options, 'custom_url_plusone_address');
+			$google_url = essb_object_value($essb_options, 'custom_url_plusone_address');
 		}
 		else {
-			$google_url = ESSBOptionValuesHelper::options_value($essb_options, 'google_follow_profile');
+			$google_url = essb_object_value($essb_options, 'google_follow_profile');
 		}
 		
 		$defaults['google_type'] = $google_type;
 		$defaults['google_url'] = $google_url;
 		
-		$twitter_type = ESSBOptionValuesHelper::options_value($essb_options, 'twitter_tweet');
-		$twitter_user = ESSBOptionValuesHelper::options_value($essb_options, 'twitterfollowuser');
+		$twitter_type = essb_object_value($essb_options, 'twitter_tweet');
+		$twitter_user = essb_object_value($essb_options, 'twitterfollowuser');
 		
 		$defaults['twitter_type'] = $twitter_type;
 		$defaults['twitter_user'] = $twitter_user;
 		
-		$pinterest_type = ESSBOptionValuesHelper::options_value($essb_options, 'pinterest_native_type');
-		$pinterest_url = ESSBOptionValuesHelper::options_value($essb_options, 'pinterestfollow_url');
-		$pinterest_text = ESSBOptionValuesHelper::options_value($essb_options, 'pinterestfollow_disp');
+		$pinterest_type = essb_object_value($essb_options, 'pinterest_native_type');
+		$pinterest_url = essb_object_value($essb_options, 'pinterestfollow_url');
+		$pinterest_text = essb_object_value($essb_options, 'pinterestfollow_disp');
 		
 		$defaults['pinterest_type'] = $pinterest_type;
 		$defaults['pinterest_url'] = $pinterest_url;
 		$defaults['pinterest_display'] = $pinterest_text;
 		
-		$linkedin_company = ESSBOptionValuesHelper::options_value($essb_options, 'linkedin_follow_id');
+		$linkedin_company = essb_object_value($essb_options, 'linkedin_follow_id');
 		$defaults['linkedin_company'] = $linkedin_company;
 		
-		$youtube_channel = ESSBOptionValuesHelper::options_value($essb_options, 'youtubechannel');
+		$youtube_channel = essb_object_value($essb_options, 'youtubechannel');
 		$defaults['youtube_channel'] = $youtube_channel;
 		
-		$defaults['sameline'] = ESSBOptionValuesHelper::options_bool_value($essb_options, 'otherbuttons_sameline');
-		$defaults['counters'] = ESSBOptionValuesHelper::options_bool_value($essb_options, 'allnative_counters');
-		$defaults['skinned'] = ESSBOptionValuesHelper::options_bool_value($essb_options, 'skin_native');
+		$defaults['sameline'] = essb_object_bool_value($essb_options, 'otherbuttons_sameline');
+		$defaults['counters'] = essb_object_bool_value($essb_options, 'allnative_counters');
+		$defaults['skinned'] = essb_object_bool_value($essb_options, 'skin_native');
 		
 		return $defaults;
 	}
@@ -160,7 +160,7 @@ class ESSBNativeButtonsHelper {
 		global $essb_options;
 		
 		if (!isset($settings['skin']) || empty($settings['skin'])) {
-			$settings['skin'] = ESSBOptionValuesHelper::options_value($essb_options, 'skin_native_skin');
+			$settings['skin'] = essb_object_value($essb_options, 'skin_native_skin');
 		}
 		
 		if (!isset( $settings['image'])) {
@@ -202,10 +202,10 @@ class ESSBNativeButtonsHelper {
 					$skinned_width = isset($settings[$network.'_width']) ? $settings[$network.'_width'] : '';
 					
 					if (empty($skinned_text)) {
-						$skinned_text = ESSBOptionValuesHelper::options_value($essb_options, 'skinned_'.$network.'_text', $network);
+						$skinned_text = essb_object_value($essb_options, 'skinned_'.$network.'_text', $network);
 					}
 					if (empty($skinned_text)) {
-						$skinned_width = ESSBOptionValuesHelper::options_value($essb_options, 'skinned_'.$network.'_width', '80');
+						$skinned_width = essb_object_value($essb_options, 'skinned_'.$network.'_width', '80');
 					}
 					
 					$output .= ESSBSkinnedNativeButtons::generate_skinned_button($network, $button_code, $network, $skinned_text, $skinned_width, $settings['skin']);
@@ -242,10 +242,10 @@ class ESSBNativeButtonsHelper {
 				$skinned_width = isset($settings[$network.'_width']) ? $settings[$network.'_width'] : '';
 					
 				if (empty($skinned_text)) {
-					$skinned_text = ESSBOptionValuesHelper::options_value($essb_options, 'skinned_'.$network.'_text', $network);
+					$skinned_text = essb_object_value($essb_options, 'skinned_'.$network.'_text', $network);
 				}
 				if (empty($skinned_text)) {
-					$skinned_width = ESSBOptionValuesHelper::options_value($essb_options, 'skinned_'.$network.'_width', '80');
+					$skinned_width = essb_object_value($essb_options, 'skinned_'.$network.'_width', '80');
 				}
 					
 				$output .= ESSBSkinnedNativeButtons::generate_skinned_button($network, $button_code, $network, $skinned_text, $skinned_width, $settings['skin']);
@@ -317,7 +317,7 @@ class ESSBNativeButtonsHelper {
 				if ($pos_margintop !== false) {
 					if ($margin_top != '') {
 						$injected_margintop = true;
-						$newAppendValue = "margin-top:".$margin_top.'px !important';
+						$newAppendValue = "margin-top:".esc_attr($margin_top).'px !important';
 					}
 					else {
 						$newAppendValue = $singleRule;
@@ -327,7 +327,7 @@ class ESSBNativeButtonsHelper {
 				if ($pos_height !== false) {
 					if ($height != '') {
 						$injected_height = true;
-						$newAppendValue = "height:".$height. 'px !important';
+						$newAppendValue = "height:".esc_attr($height). 'px !important';
 					}
 					else {
 						$newAppendValue = $singleRule;
@@ -337,7 +337,7 @@ class ESSBNativeButtonsHelper {
 				if ($pos_height !== false) {
 					if ($height != '') {
 						$injected_maxheight = true;
-						$newAppendValue = "max-height:".$height. 'px !important';
+						$newAppendValue = "max-height:".esc_attr($height). 'px !important';
 					}
 					else {
 						$newAppendValue = $singleRule;
@@ -349,13 +349,13 @@ class ESSBNativeButtonsHelper {
 		}
 	
 		if ($margin_top != '' && !$injected_margintop) {
-			$output .= 'margin-top:'.$margin_top.'px !important;';
+			$output .= 'margin-top:'.esc_attr($margin_top).'px !important;';
 		}
 		if ($height != '' && !$injected_height) {
-			$output .= 'height:'.$height.'px !important;';
+			$output .= 'height:'.esc_attr($height).'px !important;';
 		}
 		if ($height != '' && !$injected_maxheight) {
-			$output .= 'max-height:'.$height.'px !important;';
+			$output .= 'max-height:'.esc_attr($height).'px !important;';
 		}
 	
 		return $output;
@@ -367,9 +367,9 @@ class ESSBNativeButtonsHelper {
 		$facebook_type = isset($settings['facebook_type']) ? $settings['facebook_type'] : 'like';
 		$facebook_url = isset($settings['facebook_url']) ? $settings['facebook_url'] : '';
 	
-		$facebook_margin_top = ESSBOptionValuesHelper::options_value($essb_options, 'facebook_like_button_margin_top');
-		$facebook_height = ESSBOptionValuesHelper::options_value($essb_options, 'facebook_like_button_height');
-		$facebook_width = ESSBOptionValuesHelper::options_value($essb_options, 'facebook_like_button_width');
+		$facebook_margin_top = essb_object_value($essb_options, 'facebook_like_button_margin_top');
+		$facebook_height = essb_object_value($essb_options, 'facebook_like_button_height');
+		$facebook_width = essb_object_value($essb_options, 'facebook_like_button_width');
 		
 		$facebook_share_button = essb_option_bool_value('facebook_like_button_share');
 		$fb_share_tag = "false";
@@ -443,7 +443,7 @@ class ESSBNativeButtonsHelper {
 		$button_url = isset($settings['url']) ? $settings['url'] : '';
 		$button_text = isset($settings['text']) ? $settings['text'] : '';
 		
-		return '<script src="http://managewp.org/share.js" data-type="small" data-title="'.$button_text.'" data-url="'.$button_url.'"></script>';
+		return '<script src="http://managewp.org/share.js" data-type="small" data-title="'.esc_attr($button_text).'" data-url="'.esc_url($button_url).'"></script>';
 	}
 	
 	public static function pinterest_button_code($settings = array(), $counters = false) {
@@ -454,7 +454,7 @@ class ESSBNativeButtonsHelper {
 		$code = '';
 		
 		if ($pinterest_type == "follow") {
-			$code = '<a data-pin-do="buttonFollow" href="'.$pinterest_url.'">'.$pinterest_text.'</a>';
+			$code = '<a data-pin-do="buttonFollow" href="'.esc_url($pinterest_url).'">'.$pinterest_text.'</a>';
 		}
 		else {
 			$code = '<a href="//www.pinterest.com/pin/create/button/" data-pin-do="buttonBookmark" ><img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_gray_20.png" /></a>';
@@ -466,7 +466,7 @@ class ESSBNativeButtonsHelper {
 	public static function linkedin_button_code($settings = array(), $counters = false) {
 		$linkedin_company = isset($settings['linkedin_company']) ? $settings['linkedin_company'] : '';
 		
-		$code = '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script><script type="IN/FollowCompany" data-id="'.$linkedin_company.'" data-counter="'.($counters ? "right" : "none").'"></script>';
+		$code = '<script src="//platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script><script type="IN/FollowCompany" data-id="'.esc_attr($linkedin_company).'" data-counter="'.($counters ? "right" : "none").'"></script>';
 		
 		return $code;
 	}
@@ -482,11 +482,7 @@ class ESSBNativeButtonsHelper {
 	public static function vk_button_code($settings = array(), $counters = false) {
 		$salt = mt_rand();
 		$code = '<div id="vk_like' . $salt . '" style="float: left; poistion: relative;"></div>';
-		$code .= '<script type="text/javascript">
-		jQuery(document).ready(function($){
-		VK.Widgets.Like("vk_like' . $salt . '", {type: "button", height: 20});
-		});
-		</script>';
+		$code .= '<script type="text/javascript">jQuery(document).ready(function($){VK.Widgets.Like("vk_like' . $salt . '", {type: "button", height: 20});});</script>';
 		
 		return $code;
 	}

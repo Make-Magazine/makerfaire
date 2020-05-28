@@ -5,12 +5,12 @@ class ESSBMetaboxInterface {
 	public static function draw_form_start($metabox_id) {
 		global $essb_options;
 		
-		$admin_template = ESSBOptionValuesHelper::options_value($essb_options, 'admin_template');
+		$admin_template = essb_object_value($essb_options, 'admin_template');
 		if (!empty($admin_template)) {
 			$admin_template = "essb-template-".$admin_template;
 		}
 		
-		echo '<div class="essb-options essb-metabox-options '.$admin_template.'" id="'.$metabox_id.'">';
+		echo '<div class="essb-options essb-metabox-options '.esc_attr($admin_template).'" id="'.esc_attr($metabox_id).'">';
 	}
 		
 	public static function draw_sidebar($options = array(), $data_instance_id = '') {
@@ -22,9 +22,9 @@ class ESSBMetaboxInterface {
 			$data_instance_menu_class = " essb-options-group-menu-".$data_instance_id;
 		}
 		
-		echo '<div class="essb-options-sidebar'.$data_instance_class.'" id="essb-options-sidebar" data-instance="'.$data_instance_id.'">';
+		echo '<div class="essb-options-sidebar'.esc_attr($data_instance_class).'" id="essb-options-sidebar" data-instance="'.esc_attr($data_instance_id).'">';
 
-		echo '<ul class="essb-options-group-menu'.$data_instance_menu_class.'" id="sticky-navigation">';
+		echo '<ul class="essb-options-group-menu'.esc_attr($data_instance_menu_class).'" id="sticky-navigation">';
 		
 		foreach ($options as $single) {
 			$type = $single['type'];
@@ -80,7 +80,7 @@ class ESSBMetaboxInterface {
 		if ($data_instance_id != '') {
 			$data_instance_class = " essb-options-container-".$data_instance_id;
 		}
-		echo '<div class="essb-options-container'.$data_instance_class.'" style="min-height: '.$min_height.'px;" data-instance="'.$data_instance_id.'">';
+		echo '<div class="essb-options-container'.esc_attr($data_instance_class).'" style="min-height: '.esc_attr($min_height).'px;" data-instance="'.esc_attr($data_instance_id).'">';
 	}
 	
 	public static function draw_content_end() {
@@ -118,8 +118,6 @@ class ESSBMetaboxInterface {
 	
 	public static function draw_content($options = array(), $min_height = '840') {
 		echo '<div class="essb-options-container" style="min-height: '.$min_height.'px;">';
-		
-		//print_r($options);
 		
 		foreach($options as $section => $fields) {
 			printf('<div id="essb-container-%1$s" class="essb-data-container">',$section);

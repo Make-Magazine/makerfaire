@@ -15,13 +15,13 @@ class ESSBDisplayMethodHeroShare {
 	public static function generate_heroshare_code($options, $share_buttons, $is_shortcode, $shortcode_options = array(), $post_details = array()) {
 		
 		// loading popup display settings
-		$popup_window_title = ESSBOptionValuesHelper::options_value($options, 'heroshare_window_title');
-		$popup_user_message = ESSBOptionValuesHelper::options_value($options, 'heroshare_user_message');
+		$popup_window_title = essb_object_value($options, 'heroshare_window_title');
+		$popup_user_message = essb_object_value($options, 'heroshare_user_message');
 		
-		$popup_second_title = ESSBOptionValuesHelper::options_value($options, 'heroshare_second_title');
-		$popup_second_type = ESSBOptionValuesHelper::options_value($options, 'heroshare_second_type');
-		$popup_second_fans = ESSBOptionValuesHelper::options_value($options, 'heroshare_second_fans');
-		$popup_second_html = ESSBOptionValuesHelper::options_value($options, 'heroshare_second_message');
+		$popup_second_title = essb_object_value($options, 'heroshare_second_title');
+		$popup_second_type = essb_object_value($options, 'heroshare_second_type');
+		$popup_second_fans = essb_object_value($options, 'heroshare_second_fans');
+		$popup_second_html = essb_object_value($options, 'heroshare_second_message');
 			
 		if (ESSB3_DEMO_MODE) {
 			$is_active_option = isset($_REQUEST['heroshare']) ? $_REQUEST['heroshare'] : '';
@@ -36,16 +36,16 @@ class ESSBDisplayMethodHeroShare {
 		}
 			
 		// display settings
-		$popup_user_width = ESSBOptionValuesHelper::options_value($options, 'heroshare_user_width');
-		$popup_window_popafter = ESSBOptionValuesHelper::options_value($options, 'heroshare_window_popafter');
-		$popup_user_percent = ESSBOptionValuesHelper::options_value($options, 'heroshare_user_percent');
-		$popup_display_end = ESSBOptionValuesHelper::options_bool_value($options, 'heroshare_display_end');
-		$popup_user_manual_show = ESSBOptionValuesHelper::options_bool_value($options, 'heroshare_user_manual_show');
-		$popup_user_notshow_onclose = ESSBOptionValuesHelper::options_bool_value($options, 'heroshare_user_notshow_onclose');
-		$popup_user_notshow_onclose_all = ESSBOptionValuesHelper::options_bool_value($options, 'heroshare_user_notshow_onclose_all');
+		$popup_user_width = essb_object_value($options, 'heroshare_user_width');
+		$popup_window_popafter = essb_object_value($options, 'heroshare_window_popafter');
+		$popup_user_percent = essb_object_value($options, 'heroshare_user_percent');
+		$popup_display_end = essb_object_bool_value($options, 'heroshare_display_end');
+		$popup_user_manual_show = essb_object_bool_value($options, 'heroshare_user_manual_show');
+		$popup_user_notshow_onclose = essb_object_bool_value($options, 'heroshare_user_notshow_onclose');
+		$popup_user_notshow_onclose_all = essb_object_bool_value($options, 'heroshare_user_notshow_onclose_all');
 		
 		// new @3.3
-		$popup_display_exit = ESSBOptionValuesHelper::options_bool_value($options, 'heroshare_display_exit');
+		$popup_display_exit = essb_object_bool_value($options, 'heroshare_display_exit');
 		
 		if ($is_shortcode) {
 		
@@ -64,7 +64,7 @@ class ESSBDisplayMethodHeroShare {
 				$popup_user_percent = $shortcode_pop_on_percent;
 			}
 			if (!empty($shortcode_pop_end)) {
-				$popup_display_end = ESSBOptionValuesHelper::unified_true($shortcode_pop_end);
+				$popup_display_end = essb_unified_true($shortcode_pop_end);
 			}
 		}
 		
@@ -143,7 +143,7 @@ class ESSBDisplayMethodHeroShare {
 		$output .= '</div>';
 		
 		if ($popup_window_popafter != '') {
-			$output .= '<div style="display: none;" id="essb_settings_heroafter_counter"></div>';
+			$output .= '<div class="essb-forced-hidden" id="essb_settings_heroafter_counter"></div>';
 		}
 		
 		
@@ -156,47 +156,7 @@ class ESSBDisplayMethodHeroShare {
 	
 	
 	public static function leading_posts_from_analytics_for7days() {
-		global $wpdb;
-		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
-	
-		$toDate = date ( "Y-m-d" );
-		$fromDate = date ( "Y-m-d", strtotime ( date ( "Y-m-d", strtotime ( date ( "Y-m-d" ) ) ) . "-8 days" ) );
-	
-		$query = "";
-		//foreach($essb_networks as $k => $v) {
-		$query .= "SELECT essb_post_id, COUNT( essb_post_id ) AS cnt";
-	
-		$query .= ' FROM  '.$table_name .'
-		WHERE essb_date BETWEEN "'.$fromDate.'" AND "'.$toDate.'"
-		GROUP BY essb_post_id
-		ORDER BY cnt DESC';
-	
-		$post_stats = $wpdb->get_results ( $query );
-	
-		$limit = 3;
-		$cnt = 0;
-		$result_posts = array();
-	
-		if (isset($post_stats)) {
-			foreach ( $post_stats as $rec ) {
-	
-				$post_permalink = get_permalink($rec->essb_post_id);
-				$post_title = get_the_title($rec->essb_post_id);
-				$post_excerpt = essb_core_helper_get_excerpt_by_id($rec->essb_post_id);
-	
-				$post_image = has_post_thumbnail( $rec->essb_post_id ) ? wp_get_attachment_image_src( get_post_thumbnail_id( $rec->essb_post_id ), 'single-post-thumbnail' ) : '';
-				$image = ($post_image != '') ? $post_image[0] : '';
-				$cnt++;
-	
-				$result_posts[] = array("title" => $post_title, "url" => $post_permalink, "excerpt" => $post_excerpt, "image" => $image);
-	
-				if ($limit < $cnt) {
-					break;
-				}
-			}
-		}
-	
-		return $result_posts;
+		return array();
 	}
 	
 	
@@ -208,10 +168,10 @@ class ESSBDisplayMethodHeroShare {
 			$output .= '<div class="essb-heroshare-leading-post">';
 				
 			if (!empty($post_object['image'])) {
-				$output .= '<a href="'.$post_object['url'].'"><img src="'.$post_object['image'].'" class="essb-heroshare-leading-post-image"/></a>';
+				$output .= '<a href="'.esc_url($post_object['url']).'"><img src="'.esc_url($post_object['image']).'" class="essb-heroshare-leading-post-image"/></a>';
 			}
 				
-			$output .= '<a href="'.$post_object['url'].'"><h4>'.$post_object['title'].'</h4>';
+			$output .= '<a href="'.esc_url($post_object['url']).'"><h4>'.$post_object['title'].'</h4>';
 			$output .= $post_object['excerpt'].'</a>';
 				
 			$output .= '</div>';

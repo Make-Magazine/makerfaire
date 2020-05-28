@@ -57,7 +57,7 @@ if (!function_exists('essb5_generate_corner_bar')) {
 		return $output;
 	}
 	
-	add_filter('essb4_draw_style_details', 'essb5_cornerbar_customtext');
+	add_filter('essb4_draw_style_details', 'essb5_cornerbar_customtext');	
 	function essb5_cornerbar_customtext($styles) {
 		
 		$cornerbar_text = essb_option_value('cornerbar_text');

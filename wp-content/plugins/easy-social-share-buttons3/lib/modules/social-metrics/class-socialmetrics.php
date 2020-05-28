@@ -26,13 +26,12 @@ class ESSBSocialMetrics {
 			$visibility = 'manage_options';
 		}
 		
-		add_menu_page( __('Social Metrics by ESSB'), __('Social Metrics by ESSB'), $visibility, 'easy-social-metrics-lite', array($this, 'render_view'), 'dashicons-chart-bar' );
+		add_menu_page( esc_html__('Social Metrics by ESSB'), esc_html__('Social Metrics by ESSB'), $visibility, 'easy-social-metrics-lite', array($this, 'render_view'), 'dashicons-chart-bar' );
 	}
 	
 	public function render_view() {
 		require(ESSB3_PLUGIN_ROOT .'lib/modules/social-metrics/class-socialmetrics-data.php');
 		require(ESSB3_PLUGIN_ROOT .'lib/modules/social-metrics/socialmetrics-draw.php');
-		//esml_render_dashboard_view($this->options);
 	} 
 	
 	

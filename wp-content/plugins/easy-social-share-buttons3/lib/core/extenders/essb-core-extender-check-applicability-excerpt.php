@@ -11,6 +11,7 @@
  */
 
 if (!function_exists('essb_check_applicability_excerpt')) {
+	
 	function essb_check_applicability_excerpt($post_types = array(), $location = '', $options, $general_options) {
 		global $post;
 		
@@ -69,8 +70,6 @@ if (!function_exists('essb_check_applicability_excerpt')) {
 			}
 		}
 		
-		
-		
 		if ($general_options['display_exclude_from'] != "") {
 			$excule_from = explode(',', $general_options['display_exclude_from']);
 		
@@ -111,7 +110,7 @@ if (!function_exists('essb_check_applicability_excerpt')) {
 		
 		// deactivate on mobile devices if selected
 		if (essb_is_mobile()) {
-			if (ESSBOptionValuesHelper::options_value($options, $location.'_mobile_deactivate')) {
+			if (essb_object_value($options, $location.'_mobile_deactivate')) {
 				$is_singular = false;
 				$is_lists_authorized = false;
 			}

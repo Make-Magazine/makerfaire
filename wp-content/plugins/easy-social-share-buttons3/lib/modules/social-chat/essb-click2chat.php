@@ -9,9 +9,10 @@
  */
 
 if (!function_exists('essb_click2chat_register')) {
-	function essb_click2chat_register() {
+	
+	function essb_click2chat_can_run() {
 		if (is_admin() || is_feed()) {
-			return;
+			return false;
 		}
 		
 		$is_deactivated = false;
@@ -44,11 +45,40 @@ if (!function_exists('essb_click2chat_register')) {
 		
 		// deactivate display of the functions
 		if ($is_deactivated) {
-			return;
+			return false;
 		}
 		
+		return true;
+	}
 	
-		essb_click2chat_draw();
+	function essb_click2chat_register() {
+		if (essb_click2chat_can_run()) {
+			essb_click2chat_draw();
+		}
+	}
+	
+	function essb_click2chat_register_styles() {
+		if (essb_click2chat_can_run()) {
+			$styles = '';
+			
+			$click2chat_text = essb_sanitize_option_value('click2chat_text');
+			$click2chat_bgcolor = essb_sanitize_option_value('click2chat_bgcolor');
+			$click2chat_color = essb_option_value('click2chat_color');
+			
+			if ($click2chat_bgcolor != '' || $click2chat_color != '') {
+				if ($click2chat_bgcolor != '') {
+					$styles .= '.essb-click2chat, .essb-click2chat-window .window-header { background-color: '.esc_attr($click2chat_bgcolor).';}';
+				}
+					
+				if ($click2chat_color != '') {
+					$styles .= '.essb-click2chat, .essb-click2chat-window .window-header { color: '.esc_attr($click2chat_color).';}';
+				}
+			}
+			
+			if ($styles != '') {
+				essb_resource_builder()->add_css($styles, 'click2chat');
+			}
+		}
 	}
 	
 	function essb_click2chat_draw($settings = array()) {
@@ -56,28 +86,15 @@ if (!function_exists('essb_click2chat_register')) {
 		global $post;
 		
 		$shortcode_call = false;
+
+		$application_names = array('' => 'WhatsApp', 'whatsapp' => 'WhatsApp', 'viber' => 'Viber', 'email' => 'Email', 'phone' => 'Phone');
 		
-		$click2chat_text = essb_option_value('click2chat_text');
-		$click2chat_bgcolor = essb_option_value('click2chat_bgcolor');
-		$click2chat_color = essb_option_value('click2chat_color');
 		$click2chat_icon = essb_option_value('click2chat_icon');
 		$click2chat_location = essb_option_value('click2chat_location');
 		$click2chat_welcome_text = essb_option_value('click2chat_welcome_text');
-		
-		if ($click2chat_bgcolor != '' || $click2chat_color != '') {
-			echo '<style type="text/css">';
-			
-			if ($click2chat_bgcolor != '') {
-				echo '.essb-click2chat, .essb-click2chat-window .window-header { background-color: '.esc_attr($click2chat_bgcolor).';}';
-			}
-			
-			if ($click2chat_color != '') {
-				echo '.essb-click2chat, .essb-click2chat-window .window-header { color: '.esc_attr($click2chat_color).';}';
-			}
-			
-			echo '</style>';
-		}
-		
+		$click2chat_text = essb_sanitize_option_value('click2chat_text');
+		$click2chat_bgcolor = essb_sanitize_option_value('click2chat_bgcolor');
+		$click2chat_color = essb_option_value('click2chat_color');
 		if (isset($settings['shortcode'])) {
 			$shortcode_call = true;
 			
@@ -107,7 +124,7 @@ if (!function_exists('essb_click2chat_register')) {
 		}
 		
 		if ($click2chat_text == '') {
-			$click2chat_text = __('Chat With Us', 'essb');
+			$click2chat_text = esc_html__('Chat With Us', 'essb');
 			
 			
 		}
@@ -139,7 +156,7 @@ if (!function_exists('essb_click2chat_register')) {
 			echo '</div>';
 		}
 		
-		echo '<div class="essb-click2chat-window">';
+		echo '<div class="essb-click2chat-window essb-click2chat-'.esc_attr($click2chat_location).'">';
 		
 		echo '<div class="window-header">';
 		echo '<i class="essb_icon_close chat-close"></i>';
@@ -168,6 +185,8 @@ if (!function_exists('essb_click2chat_register')) {
 					$app = 'whatsapp';
 				}
 				
+				$display_name = isset($application_names[$app]) ? $application_names[$app] : '';
+				
 				if ($image == '') {
 					$image = '
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -194,14 +213,14 @@ if (!function_exists('essb_click2chat_register')) {
 				}
 				
 				else {
-					$image = '<img src="'.$image.'"/>';
+					$image = '<img src="'.esc_url($image).'"/>';
 				}
 				
 				if ($text != '' && isset($post)) {
 					$url = get_permalink();
 					$title_plain = $post->post_title;			
 					$text = str_replace('[title]', $title_plain, $text);
-					$text = str_replace('[url]', $url, $text);
+					$text = str_replace('[url]', esc_url($url), $text);
 				}
 				
 				echo '<div class="operator operator-app-'.esc_attr($app).'" data-app="'.esc_attr($app).'" data-number="'.esc_attr($number).'" data-message="'.esc_attr($text).'">';
@@ -209,7 +228,7 @@ if (!function_exists('essb_click2chat_register')) {
 				echo '<div class="data">';
 				echo '<span class="title">'.$title.'</span>';
 				echo '<span class="name">'.$name.'</span>';
-				echo '<span class="title app"><span>'.($app == 'viber' ? __('Viber', 'essb') : __('WhatsApp', 'essb')).'</span></span>';
+				echo '<span class="title app"><span>'.esc_html($display_name).'</span></span>';
 				echo '</div>';
 				echo '</div>';
 			}
@@ -221,6 +240,7 @@ if (!function_exists('essb_click2chat_register')) {
 	}
 	
 	if (essb_option_bool_value('click2chat_activate')) {
+		add_action('wp_enqueue_scripts', 'essb_click2chat_register_styles', 1 );
 		add_action('wp_footer', 'essb_click2chat_register');
 	}
 	

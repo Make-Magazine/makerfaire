@@ -58,7 +58,7 @@ function essb_socialapi_generate_pinterst_code() {
 function essb_socialapi_generate_vk_api_code($appid = '') {
 	echo '<script type="text/javascript" src="//vk.com/js/api/openapi.js?115"></script>
 	<script type="text/javascript">
-	VK.init({apiId: '.$appid.', onlyWidgets: true});
+	VK.init({apiId: '.esc_attr($appid).', onlyWidgets: true});
 	</script>';
 }
 
@@ -76,20 +76,14 @@ function essb_socialapi_generate_google_api_code() {
 
 function essb_socialapi_generate_facebook_api_code($lang = 'en_US', $app_id = '', $async_load = 'false') {
 	if ($app_id != '') {
-		$app_id = "&appId=".$app_id;
+		$app_id = "&appId=".esc_attr($app_id);
 	}
 
 	$js_async = "";
 	if ($async_load == 'true') {
 		$js_async = " js.async = true;";
 	}
-
+	
 	echo '<div id="fb-root"></div>
-	<script>(function(d, s, id) {
-	var js, fjs = d.getElementsByTagName(s)[0];
-	if (d.getElementById(id)) return;
-	js = d.createElement(s); js.id = id; '.$js_async.'
-	js.src = "//connect.facebook.net/'.$lang.'/sdk.js#version=v2.11&xfbml=1'.$app_id.'"
-	fjs.parentNode.insertBefore(js, fjs);
-}(document, \'script\', \'facebook-jssdk\'));</script>';
+	<script async defer crossorigin="anonymous" src="https://connect.facebook.net/'.esc_attr($lang).'/all.js#xfbml=1&version=v5.0&appId='.esc_attr($app_id).'&autoLogAppEvents=1"></script>';	
 }

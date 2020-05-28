@@ -50,7 +50,7 @@ class ESSBCoreExtenderPostVisualOptions {
 			$output_modifier[] = array("type" => "design_options", "param" => "button_style", "value" => $essb_post_button_style);
 		}
 		if (!empty($essb_post_counters)) {
-			$output_modifier[] = array("type" => "button_style", "param" => "show_counter", "value" => ESSBOptionValuesHelper::unified_true($essb_post_counters));
+			$output_modifier[] = array("type" => "button_style", "param" => "show_counter", "value" => essb_unified_true($essb_post_counters));
 		}
 		if (!empty($essb_post_counter_pos)) {
 			$output_modifier[] = array("type" => "button_style", "param" => "counter_pos", "value" => $essb_post_counter_pos);
@@ -61,13 +61,11 @@ class ESSBCoreExtenderPostVisualOptions {
 		
 		// native activate or deactivate based on post settings
 		if (!empty($essb_post_native)) {
-			$essb_options['native_active'] = ESSBOptionValuesHelper::unified_true($essb_post_native);
+			$essb_options['native_active'] = essb_unified_true($essb_post_native);
 		
 			if ($essb_options['native_active']) {
 				// manually activate and deactivate native buttons
 				if (!defined('ESSB3_NATIVE_ACTIVE')) {
-					
-					//$resource_builder = ESSBResourceBuilder::get_instance();
 					
 					include_once (ESSB3_PLUGIN_ROOT . 'lib/core/native-buttons/essb-skinned-native-button.php');
 					include_once (ESSB3_PLUGIN_ROOT . 'lib/core/native-buttons/essb-social-privacy.php');
@@ -84,8 +82,6 @@ class ESSBCoreExtenderPostVisualOptions {
 					}
 					essb_resource_builder()->add_css(ESSBSkinnedNativeButtons::generate_skinned_custom_css(), 'essb-skinned-native-buttons');
 						
-					// asign instance of native buttons privacy class to helper
-						
 					// register active social network apis
 					foreach (ESSBNativeButtonsHelper::get_list_of_social_apis() as $key => $code) {
 						essb_resource_builder()->add_social_api($key);
@@ -99,14 +95,14 @@ class ESSBCoreExtenderPostVisualOptions {
 		
 		// end native buttons loader
 		if (!empty($essb_post_native_skin)) {
-			$essb_options['skin_native'] = ESSBOptionValuesHelper::unified_true($essb_post_native_skin);
+			$essb_options['skin_native'] = essb_unified_true($essb_post_native_skin);
 		}
 		
 		// change active button positions
 		$modified_global_button_position = false;
 		$new_button_positions_set = array();
 		foreach ($essb_post_button_position as $position => $active) {
-			if (ESSBOptionValuesHelper::unified_true($active)) {
+			if (essb_unified_true($active)) {
 				$new_button_positions_set[] = $position;
 				$modified_global_button_position = true;
 			}
@@ -135,8 +131,6 @@ class ESSBCoreExtenderPostVisualOptions {
 		
 		return $output_modifier;
 	}
-	
-	
 }
 
 ?>

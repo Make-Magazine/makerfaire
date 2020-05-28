@@ -59,9 +59,10 @@ foreach ($wpml_options as $key => $data) {
 	
 	if ($type == 'menu') {
 		ESSBOptionsStructureHelper::menu_item('translate', $key, $title, 'globe');		
+		ESSBControlCenter::register_sidebar_section_menu('translate', $key, $title);
 		
 		if (!ESSBActivationManager::isActivated()) {
-			ESSBOptionsStructureHelper::hint('translate', $key, __('Unlock usage of Multilangual Translate!', 'essb'), 'Hello! Please <a href="admin.php?page=essb_redirect_update&tab=update">activate your copy</a> of Easy Social Share Buttons for WordPress to unlock all 35+ ready made presents that you will be able to install on your site.', 'fa fa-lock', 'status essb-status-activate essb-status-activate-presents');		
+			ESSBOptionsStructureHelper::hint('translate', $key, esc_html__('Unlock usage of Multilangual Translate!', 'essb'), 'Hello! Please <a href="admin.php?page=essb_redirect_update&tab=update">activate your copy</a> of Easy Social Share Buttons for WordPress to unlock all 35+ ready made presents that you will be able to install on your site.', 'fa fa-lock', 'status essb-status-activate essb-status-activate-presents');		
 		}
 		
 	}
@@ -77,7 +78,7 @@ foreach ($wpml_options as $key => $data) {
 			$name = isset($data['name']) ? $data['name'] : $network;
 			$key = 'translate_'.$network;
 			
-			ESSBOptionsStructureHelper::panel_start('translate', $group, $name, __('Customize texts for this social network'), 'fa21 fa fa-globe', array("mode" => "toggle", 'state' => 'closed'));
+			ESSBOptionsStructureHelper::panel_start('translate', $group, $name, esc_html__('Customize texts for this social network'), 'fa21 fa fa-globe', array("mode" => "toggle", 'state' => 'closed'));
 				
 			ESSBOptionsStructureHelper::tabs_start('translate', $group, $key.'-translate', $wpml_langs_tabs);
 			
@@ -85,8 +86,8 @@ foreach ($wpml_options as $key => $data) {
 			foreach ($wpml_langs as $lang => $lang_name) {
 				ESSBOptionsStructureHelper::tab_start('translate', $group, $key.'-translate-'.$tab_count, ($tab_count == 0 ? true: false));
 			
-				ESSBOptionsStructureHelper::field_textbox_stretched('translate', $group, 'wpml_user_network_name_'.$network.'_'.$lang, __('Network name', 'essb'), __('Customize text that is used as network name on button', 'essb'));
-				ESSBOptionsStructureHelper::field_textbox_stretched('translate', $group, 'wpml_hovertext_'.$network.'_'.$lang, __('Hover text', 'essb'), __('Customize text that will appear on button hover', 'essb'));				
+				ESSBOptionsStructureHelper::field_textbox_stretched('translate', $group, 'wpml_user_network_name_'.$network.'_'.$lang, esc_html__('Network name', 'essb'), esc_html__('Customize text that is used as network name on button', 'essb'));
+				ESSBOptionsStructureHelper::field_textbox_stretched('translate', $group, 'wpml_hovertext_'.$network.'_'.$lang, esc_html__('Hover text', 'essb'), esc_html__('Customize text that will appear on button hover', 'essb'));				
 				
 				ESSBOptionsStructureHelper::tab_end('translate', $group);
 				$tab_count++;
@@ -120,6 +121,31 @@ foreach ($wpml_options as $key => $data) {
 		ESSBOptionsStructureHelper::tabs_end('translate', $group);
 		ESSBOptionsStructureHelper::panel_end('translate', $group);
 		
+	}
+	
+	if ($type == 'textarea') {
+		ESSBOptionsStructureHelper::panel_start('translate', $group, $title, $description, 'fa21 fa fa-globe', array("mode" => "toggle", 'state' => 'closed'));
+			
+		ESSBOptionsStructureHelper::tabs_start('translate', $group, $key.'-translate', $wpml_langs_tabs);
+	
+		$tab_count = 0;
+		foreach ($wpml_langs as $lang => $lang_name) {
+			ESSBOptionsStructureHelper::tab_start('translate', $group, $key.'-translate-'.$tab_count, ($tab_count == 0 ? true: false));
+	
+	
+			$new_field_data = array();
+			$new_field_data['type'] = 'textarea';
+			$new_field_data['title'] = '';
+			$new_field_data['description'] = '';
+			$new_field_data['id'] = 'wpml_'.$key.'_'.$lang;
+			$essb_section_options['translate'][$group][] = $new_field_data;
+	
+			ESSBOptionsStructureHelper::tab_end('translate', $group);
+			$tab_count++;
+		}
+		ESSBOptionsStructureHelper::tabs_end('translate', $group);
+		ESSBOptionsStructureHelper::panel_end('translate', $group);
+	
 	}
 	
 	if ($type == 'field') {

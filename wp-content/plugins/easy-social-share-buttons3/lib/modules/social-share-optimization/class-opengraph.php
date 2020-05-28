@@ -16,10 +16,12 @@ class ESSB_OpenGraph {
 	 */
 	private $meta_details = null;
 	
+	/**
+	 * Create instance of social media optimization tags
+	 */
 	public function __construct() {
 		
 		if (!is_admin()) {
-			// Generte all required for sharing details
 			$this->meta_details = ESSB_FrontMetaDetails::get_instance();
 			
 			add_filter( 'language_attributes', array( $this, 'add_opengraph_namespace' ), 15 );
@@ -326,7 +328,7 @@ class ESSB_OpenGraph {
 	
 		if ( is_string( $type ) && $type !== '' ) {
 			if ( $echo !== false ) {
-				$this->og_tag( 'og:type', $type );
+				$this->og_tag( 'og:type', $type );			
 			}
 			else {
 				return $type;
@@ -520,6 +522,11 @@ class ESSB_OpenGraph {
 		if (!empty($img) && is_string($img)) {
 			$this->og_tag( 'og:image', esc_url( $img ) );
 			
+			// Adding secure image too
+			if ( strpos( $img, 'https://' ) === 0 ) {
+			    $this->og_tag( 'og:image:secure_url', esc_url( $img ) );
+			}
+			
 			if (essb_option_bool_value('sso_gifimages')) {
 				if ($this->is_gif($img)) {
 					add_filter( 'essb_opengraph_type', array( $this, 'return_type_gif' ) );
@@ -532,6 +539,10 @@ class ESSB_OpenGraph {
 			
 			foreach ($images as $img) {
 				$this->og_tag( 'og:image', esc_url( $img ) );
+				
+				if ( strpos( $img, 'https://' ) === 0 ) {
+				    $this->og_tag( 'og:image:secure_url', esc_url( $img ) );
+				}
 			}
 		}
 		

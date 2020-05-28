@@ -145,7 +145,7 @@ foreach ( $listOfMappedShortcodes as $shortcode => $data ) {
 			"name" => $data ['name'], 
 			"base" => $shortcode, 
 			"icon" => 'vc-' . $shortcode, 
-			"category" => __ ( 'Easy Social Share Buttons', 'essb' ), 
+			"category" => esc_html__( 'Easy Social Share Buttons', 'essb' ), 
 			"description" => $data ['description'], 
 			"value" => $data ['description'], 
 			"params" => $vc_shortcode_settings [$shortcode] ) );
@@ -264,16 +264,13 @@ function essb_register_grid_shortcodes($shortcodes) {
 				$vc_shortcode_settings [$shortcode] [] = $singleParam;
 			}
 		}
-	
-		// if ($shortcode == "easy-total-shares") {
-		// print_r($vc_shortcode_settings[$shortcode]);
-		// }
+
 	
 		$shortcodes[$shortcode] = array (
 				"name" => $data ['name'],
 				"base" => $shortcode,
 				"icon" => 'vc-' . $shortcode,
-				"category" => __ ( 'Easy Social Share Buttons', 'essb' ),
+				"category" => esc_html__( 'Easy Social Share Buttons', 'essb' ),
 				"description" => $data ['description'],
 				"value" => $data ['description'],
 				'post_type' => Vc_Grid_Item_Editor::postType(),

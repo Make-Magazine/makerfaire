@@ -1520,7 +1520,7 @@ class Parsedown
 
     protected $StrongRegex = array(
         '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
-        '_' => '/^__((?:\\\\_|[^_]|_[^_]*_)+?)__(?!_)/us',
+        '_' => '/^esc_html__((?:\\\\_|[^_]|_[^_]*_)+?)esc_html__(?!_)/us',
     );
 
     protected $EmRegex = array(

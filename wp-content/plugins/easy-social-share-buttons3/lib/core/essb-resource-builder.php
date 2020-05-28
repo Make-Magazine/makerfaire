@@ -1,17 +1,21 @@
 <?php
 /**
- * Resource Builder 
+ * Resource builder class. Compiles the plugin generating generated javascript
+ * and CSS output. Distributed between below and above the fold (depends on plugin optimization settings).
+ * 
+ * The resource load is certified by the WP Rocket <https://wp-rocket.me> to ensure that all cache and resources
+ * are working properly on all sites and uses the latest technologies.
  * 
  * @author appscreo
  * @package EasySocialShareButtons
  * @since 3.0
- * @version 4.0
- *
+ * @version 5.0
+ * @modified 6.3
  */
 
 class ESSBResourceBuilder {
 
-	private $class_version = '4.0';
+	private $class_version = '5.0';
 	
 	public $resource_version = ESSB3_VERSION;
 
@@ -46,11 +50,18 @@ class ESSBResourceBuilder {
 	
 	public $active_resources = array();
 	
+	public $inline_styles = '';
+	
 	private $precompile_css = false;
 	private $precompile_js = false;
 	
-	private static $instance = null;
+	private $precompile_css_loaded = false;
 	
+	private static $instance = null;
+
+	/**
+	 * Prevent multiple class instances
+	 */
 	public static function get_instance() {
 	
 		if ( null == self::$instance ) {
@@ -66,7 +77,11 @@ class ESSBResourceBuilder {
 		
 		$this->inline_css_footer = essb_option_bool_value('load_css_footer');
 		
-		// dynamic CSS in footer
+		/**
+		 * Determine the state of the pre-compiled mode. Pre-compiled mode collects all styles
+		 * and scripts and load them below the fold. Action is the same that cache plugins
+		 * does to optimize page load.
+		 */		
 		$precompiled_mode = false;
 		$precompiled_mode_css = false;
 		$precompiled_mode_js = false;
@@ -91,16 +106,16 @@ class ESSBResourceBuilder {
 			$this->precompile_js = $precompiled_mode_js;
 			
 		}
-		
-		add_action('wp_head', array($this, 'header'));
-		add_action('wp_footer', array($this, 'footer'), 999);
-		
+				
+		/**
+		 * Generating the dynamic CSS code 
+		 */
 		if (!$precompiled_mode_css) {
 			if ($this->inline_css_footer) {
 				add_action('essb_rs_footer', array($this, 'generate_custom_css'), 997);
 			}
 			else {
-				add_action('essb_rs_head', array($this, 'generate_custom_css'));
+				add_action('essb_rs_head_enqueue', array($this, 'generate_custom_css'));
 			}
 			add_action('essb_rs_footer', array($this, 'generate_custom_footer_css'), 998);
 		}
@@ -116,31 +131,59 @@ class ESSBResourceBuilder {
 		else {
 			add_action('essb_rs_footer', array($this, 'generte_custom_js_precompiled'), 996);
 		}
-		// static CSS and javascripts sources enqueue
-		add_action ( 'wp_enqueue_scripts', array ($this, 'register_front_assets' ), 10 );
-		
-		add_action ( 'wp_enqueue_scripts', array ($this, 'check_optimized_load' ), 1 );
 		
 		// initalize resource builder options based on settings
 		$this->js_head = essb_option_bool_value('scripts_in_head');
 		$this->js_async = essb_option_bool_value('load_js_async');
 		$this->js_defer = essb_option_bool_value('load_js_defer');
-
+		
+		// static CSS and javascripts sources enqueue
+		add_action ( 'wp_enqueue_scripts', array ($this, 'register_front_assets' ), 10 );
+		
+		add_action ( 'wp_enqueue_scripts', array ($this, 'check_optimized_load' ), 1 );
+		
+		// load pre-compiled mode cache if exist
+		if ($precompiled_mode_css) {
+			add_action ( 'wp_enqueue_scripts', array ($this, 'register_precompile_styles' ), 11 );
+		}
 				
+		add_action('wp_head', array($this, 'header'));
+		add_action('wp_footer', array($this, 'footer'), 999);
+					
 		$remove_ver_resource = essb_option_bool_value('remove_ver_resource');
 		if ($remove_ver_resource) { 
 			$this->resource_version = '';
 		}
-		
-
 	}
 	
+	/**
+	 * Check if reCAPTCHA script needs to be loaded
+	 */
+	public function should_load_recaptcha() {
+		$recaptcha = essb_option_bool_value('mail_recaptcha') && ! empty( essb_sanitize_option_value('mail_recaptcha_site') ) && ! empty( essb_sanitize_option_value('mail_recaptcha_secret') );
+		
+		if ($recaptcha && essb_sanitize_option_value('mail_function') == 'form') {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Additional check if the settings are made to load resources only posts where plugin is running
+	 */
 	public function check_optimized_load() {
 		if ($this->is_optimized_deactivated()) {
 			$this->deactivate_actions();
 		}
 	}
 	
+	/**
+	 * Is plugin deactivated on the current loading content
+	 * 
+	 * @return boolean
+	 */
 	public function is_optimized_deactivated() {
 		$r = false;
 		
@@ -166,14 +209,38 @@ class ESSBResourceBuilder {
 				}
 			}
 		}
+		else if (essb_option_value('optimize_load') == 'post') {
+			$optimize_load_id = essb_sanitize_option_value('optimize_load_id');
+			if ($optimize_load_id != '') {
+				$excule_from = explode(',', $optimize_load_id);
+			
+				$excule_from = array_map('trim', $excule_from);
+				if (!in_array(get_the_ID(), $excule_from, false)) {
+					$r = true;
+				}
+			}
+		}
+		
+		/**
+		 * Supporting user deactivation of the resource load using a filter call
+		 */
+		if (has_filter('essb_resource_builder_deactivate')) {
+			$r = apply_filters('essb_resource_builder_deactivate', $r);
+		}
 		
 		return $r;
 	}
 	
+	/**
+	 * Generate code that is required to run on the page header
+	 */
 	public function header() {	
 		do_action('essb_rs_head');
 	}
 	
+	/**
+	 * Generate code that is to run on the footer
+	 */
 	public function footer() {
 		
 		// since version 4 we introduce new mail form code added here
@@ -203,14 +270,14 @@ class ESSBResourceBuilder {
 	public function __wakeup() {
 	}
 	
-		
+
+	/**
+	 * Deactivate plugin actions that are responsible for the optimized resource loading
+	 */
 	public function deactivate_actions() { 
-		
 		remove_action('wp_head', array($this, 'header'));
 		remove_action('wp_footer', array($this, 'footer'), 999);
 		remove_action ('wp_enqueue_scripts', array ($this, 'register_front_assets' ), 10 );
-		
-		
 	}
 	
 	public function activate_resource($key) {
@@ -337,30 +404,126 @@ class ESSBResourceBuilder {
 		}
 	}
 	
-	/*
+	/**
 	 * Enqueue all front CSS and javascript files
-	 */
-	
-	
+	 */	
 	function enqueue_style_single_css($key, $file, $version) {
 		if (!$this->precompile_css) {
 			wp_enqueue_style ( $key, $file, false, $this->resource_version, 'all' );
+			
+			if ($key == $this->core_style_id() && $this->inline_styles != '') {
+				wp_add_inline_style($key, $this->inline_styles);
+			}
 		}
 		else {
 			$this->precompiled_css_queue[$key] = $file;
 		}
 	}
+	
+	function core_style_id() {
+		return 'easy-social-share-buttons';
+	}
+	
+	function core_script_id() {
+		return 'easy-social-share-buttons-core';
+	}
+	
+	function is_static_cache_running() {
+		return class_exists('ESSBStaticCache');
+	}
+	
+	/**
+	 * Check if the core style of plugin is loaded to determine the custom resource
+	 * load mode
+	 * 
+	 * @return boolean
+	 */
+	function is_core_style_loaded() {
+		$r = false;
 		
+		if (!essb_option_bool_value('use_stylebuilder') && !$this->precompile_css && !$this->inline_css_footer) {		 
+			foreach ($this->css_static as $key => $file) {
+				if ($key === $this->core_style_id()) {
+					$r = true;
+				}
+			}
+		}
+		
+		return $r;
+	}
+	
+	function sanitize_css_output($code) {
+		return wp_strip_all_tags($code);
+	}
+	
+	/**
+	 * Checking if the plugin core script is loaded with the enqueue functions
+	 * @return boolean
+	 */
+	function is_core_script_loaded() {
+		$r = false;
+		
+		if (!$this->precompile_js && !$this->js_async && !$this->js_defer) {
+			foreach ($this->js_static as $key => $file) {
+				if ($key === $this->core_script_id()) {
+					$r = true;
+				}
+			}
+		}
+		
+		return $r;
+	}
+	
+	function register_precompile_styles() {
+		if (essb_is_plugin_deactivated_on()) {
+			return;
+		}
+		
+		$cache_key = 'essb-precompiled'.(essb_is_mobile() ? '-mobile': '');
+		
+		if (essb_option_bool_value('precompiled_unique')) {
+			$cache_key .= ESSBPrecompiledResources::get_unique_identifier();
+		}
+		
+		$cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'css');
+			
+		if ($cached_data != '') {
+			wp_enqueue_style ( 'essb-compiledcache', $cached_data, false, $this->resource_version, 'all' );
+			$this->precompile_css_loaded = true;
+		}
+	}
+		
+	/**
+	 * Register plugin front assets
+	 */
 	function register_front_assets() {
 		if (essb_is_plugin_deactivated_on()) {
 			return;
 		}	
 		
+		/**
+		 * Loading inline the custom plugin styles. They will load based on the settings for optimization of the user
+		 */
+		do_action('essb_rs_head_enqueue');
+		
 		$load_in_footer = ($this->js_head) ? false : true;
 		
 		if (!essb_option_bool_value('use_stylebuilder')) {
 			// enqueue all css registered files
+			
+			/**
+			 * Registering static CSS styles. The core style ID will be loaded
+			 * last in the queue to prevent visual issues
+			 */
+			$loading_core = array('active' => false, 'key' => '', 'file' => '');
 			foreach ($this->css_static as $key => $file) {
+				if ($key == $this->core_style_id()) {
+					$loading_core['active'] = true;
+					$loading_core['key'] = $key;
+					$loading_core['file'] = $file;
+					continue;
+				}
+				
 				if ($key == 'easy-social-share-buttons-profles') {
 					if (!essb_is_module_deactivated_on('profiles')) {
 						$this->enqueue_style_single_css($key, $file, $this->resource_version);
@@ -374,6 +537,10 @@ class ESSBResourceBuilder {
 				else {
 					$this->enqueue_style_single_css($key, $file, $this->resource_version);
 				}				
+			}
+			
+			if ($loading_core['active']) {
+				$this->enqueue_style_single_css($loading_core['key'], $loading_core['file'], $this->resource_version);
 			}
 		}
 		else {
@@ -403,14 +570,20 @@ class ESSBResourceBuilder {
 				}
 			}
 		}
+		
+		/** 
+		 * reCAPTCHA
+		 */
+		if ($this->should_load_recaptcha()) {
+			essb_depend_load_function('essb_rs_mailform_build', 'lib/core/resource-snippets/essb_rs_code_mailform.php');
+			essb_register_mail_recaptcha();
+		}
 	}
 	
-	/*
-	 *  Code generation functions: CSS
-	 */
 	
 	/**
-	 * generate_custom_css
+	 * Compile the custom CSS generated by addition changes inside plugin settings
+	 * 
 	 */
 	function generate_custom_css() {
 		global $post;
@@ -418,9 +591,7 @@ class ESSBResourceBuilder {
 		if (essb_is_plugin_deactivated_on ()) {
 			return;
 		}
-		
-		//$this->add_css ( ESSBResourceBuilderSnippets::css_build_customizer (), 'essb-customcss-header' );
-		
+				
 		$cache_slug = 'essb-css-head';
 		
 		if (defined ( 'ESSB3_CACHE_ACTIVE_RESOURCE' )) {
@@ -433,19 +604,20 @@ class ESSBResourceBuilder {
 			}
 		}
 		
-		// if (count($this->css_head) > 0) {
+		
 		$css_code = '';
 		foreach ( $this->css_head as $single ) {
 			$css_code .= $single;
 		}
 		
 		$css_code = apply_filters ( 'essb_css_buffer_head', $css_code );
-		//print "header css = ".$css_code;
 		$css_code = trim ( preg_replace ( '/\s+/', ' ', $css_code ) );
 		
-
-		
 		if ($css_code != '') {
+			/**
+			 * Checking the current cache state. If the internal cache runs than the plugin
+			 * will store the data in a static resource
+			 */
 			if (defined ( 'ESSB3_CACHE_ACTIVE_RESOURCE' )) {
 				if (isset ( $post )) {
 					$cache_key = $cache_slug . $post->ID;
@@ -453,15 +625,20 @@ class ESSBResourceBuilder {
 					essb_dynamic_cache_load_css ( $cache_key );
 					return;
 				}
+			}			
+	
+			if ($this->is_core_style_loaded()) {
+				$this->inline_styles = $this->sanitize_css_output($css_code);
 			}
-			
-			echo '<style type="text/css">';
-			echo $css_code;
-			echo '</style>';
+			else {
+				echo '<style type="text/css" id="easy-social-share-buttons-inline-css" media="all">'.$this->sanitize_css_output($css_code).'</style>';
+			}
 		}
-		// }
 	}
 	
+	/**
+	 * Generate additional CSS code below the fold (from the page footer)
+	 */
 	function generate_custom_footer_css() {
 		global $post;
 		
@@ -469,18 +646,15 @@ class ESSBResourceBuilder {
 			return;
 		}
 		
-		//$this->add_css ( ESSBResourceBuilderSnippets::css_build_footer_css (), 'essb-footer-css', 'footer' );
-		
 		if (count ( $this->css_static_footer ) > 0) {
 			foreach ( $this->css_static_footer as $key => $file ) {
-				printf ( '<link rel="stylesheet" id="%1$s"  href="%2$s" type="text/css" media="all" />', $key, $file );
+				printf ( '<link rel="stylesheet" id="%1$s" href="%2$s" type="text/css" media="all" />', $key, esc_url($file) );
+				
 			}
 		}
 		
-		$cache_slug = 'essb-css-footer';
-		
+		$cache_slug = 'essb-css-footer';		
 		if (isset ( $post )) {
-			
 			if (defined ( 'ESSB3_CACHE_ACTIVE_RESOURCE' )) {
 				$cache_key = $cache_slug . $post->ID;
 				
@@ -490,18 +664,13 @@ class ESSBResourceBuilder {
 			}
 		}
 		
-		// $css_code = implode(" ", $this->css_footer);
 		$css_code = '';
 		foreach ( $this->css_footer as $single ) {
 			$css_code .= $single;
 		}
 		
-		//print "footer code = ".$css_code;
-		
-		$css_code = apply_filters ( 'essb_css_buffer_footer', $css_code );
-		
+		$css_code = apply_filters ( 'essb_css_buffer_footer', $css_code );		
 		$css_code = trim ( preg_replace ( '/\s+/', ' ', $css_code ) );
-		
 		if ($css_code != '') {
 			if (isset ( $post )) {
 				
@@ -514,9 +683,7 @@ class ESSBResourceBuilder {
 					return;
 				}
 			}
-			echo '<style type="text/css">';
-			echo $css_code;
-			echo '</style>';
+			echo '<style type="text/css" id="easy-social-share-buttons-footer-inline-css" media="all">'.$this->sanitize_css_output($css_code).'</style>';
 		}
 	
 	}
@@ -530,6 +697,10 @@ class ESSBResourceBuilder {
 			return;
 		}
 		
+		if ($this->precompile_css_loaded) {
+			return;
+		}
+		
 		$cache_key = 'essb-precompiled'.(essb_is_mobile() ? '-mobile': '');
 		
 		if (essb_option_bool_value('precompiled_unique')) {
@@ -539,7 +710,7 @@ class ESSBResourceBuilder {
 		$cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'css');
 			
 		if ($cached_data != '') {
-			echo "<link rel='stylesheet' id='essb-compiled-css'  href='".$cached_data."' type='text/css' media='all' />";
+			echo "<link rel='stylesheet' id='essb-compiled-css'  href='".esc_url($cached_data)."' type='text/css' media='all' />";
 			return;
 		}
 		
@@ -618,17 +789,14 @@ class ESSBResourceBuilder {
 		$cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'css');
 		
 		if ($cached_data != '') {
-			echo "<link rel='stylesheet' id='essb-compiled-css'  href='".$cached_data."' type='text/css' media='all' />";
+			echo "<link rel='stylesheet' id='essb-compiled-css' href='".esc_url($cached_data)."' type='text/css' media='all' />";
 			return;
 		}
 	}
 
-	/*
-	 *  Code generation functions: Javascript
-	*/
 	
 	/**
-	 * generate_custom_js
+	 * generte_custom_js_precompiled
 	 * 
 	 * Generate custom javascript code in head of page that will not be cached
 	 */
@@ -661,9 +829,13 @@ class ESSBResourceBuilder {
 		}
 		
 		$cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'js');
-			
+		
+		/**
+		 * Check for already stored cache. If so than the code will generate the static link to the file
+		 * and stop further loading
+		 */
 		if ($cached_data != '') {
-			echo "<script type='text/javascript' src='".$cached_data."' async></script>";
+			echo "<script type='text/javascript' src='".esc_url($cached_data)."' async></script>";
 			return;
 		}
 				
@@ -711,10 +883,14 @@ class ESSBResourceBuilder {
 		$cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'js');
 		
 		if ($cached_data != '') {
-			echo "<script type='text/javascript' src='".$cached_data."' async></script>";
+			echo "<script type='text/javascript' src='".esc_url($cached_data)."' async></script>";
 		}
 	}
 	
+	/**
+	 * Generate the plugin setup data that will load the custom setup scripts. They are critical and non-cached
+	 * 
+	 */
 	function generate_custom_js() {
 		if (essb_is_plugin_deactivated_on()) {
 			return;
@@ -723,25 +899,32 @@ class ESSBResourceBuilder {
 		$js_code = '';
 		
 		if (count($this->js_code_head) > 0) {
-			//$js_code = implode(" ", $this->js_code_head);
 			$js_code = '';
 			foreach ($this->js_code_head as $code) {
 				$js_code .= $code;
-			}
-			
-			
+			}			
 		}
 		$js_code = apply_filters('essb_js_buffer_head', $js_code);
-			
-		if ($js_code != '') {
-			print "\n";
-			printf('<script type="text/javascript">%1$s</script>', $js_code);
+
+		if ($this->is_core_script_loaded() && $js_code != '' && !$this->is_static_cache_running()) {
+			wp_add_inline_script($this->core_script_id(), $js_code);
+		}
+		else if ($js_code != '') {
+			echo "\n";
+			echo sprintf('<script type="text/javascript">%1$s</script>', $js_code);
 		}
 	}
 	
+	/**
+	 * Additional footer scripts that will be loaded
+	 */
 	function generate_custom_footer_js() {
 		global $post;
 		
+		/**
+		 * Validating plugin runtime. If plugin is deactivated we will not continue
+		 * to run anymore
+		 */		
 		if (essb_is_plugin_deactivated_on()) {
 			return;
 		}
@@ -755,13 +938,19 @@ class ESSBResourceBuilder {
 				}
 			}
 		}
-		// load of static scripts async or deferred
+		
+		/**
+		 * Optimized script include as async or deferred (if active from control panel)
+		 */
 		if (count($this->js_static) > 0) {
 			if ($this->js_defer || $this->js_async) {
 				essb_load_static_script($this->js_static, $this->js_async);
 			}
 		}
 		
+		/**
+		 * Loading additional scripts that are included on the runtime process
+		 */
 		if (count($this->js_static_footer)) {
 			if ($this->js_defer || $this->js_async) {
 				essb_load_static_script($this->js_static_footer, $this->js_async);
@@ -773,6 +962,9 @@ class ESSBResourceBuilder {
 			}
 		}
 		
+		/**
+		 * Critical non-async scripts (async may prevent plugin from work)
+		 */
 		if (count($this->js_static_noasync_footer)) {
 			foreach ($this->js_static_noasync_footer as $key => $file) {
 				$this->manual_script_load($key, $file);
@@ -795,7 +987,6 @@ class ESSBResourceBuilder {
 		}
 			
 			
-		//$js_code = implode(" ", $this->js_code);
 		$js_code = '';
 		foreach ($this->js_code as $single) {
 			$js_code .= $single;
@@ -811,12 +1002,15 @@ class ESSBResourceBuilder {
 				return;
 			}
 		}
-		echo '<script type="text/javascript">';
-		echo $js_code;
-		echo '</script>';	
+		echo '<script type="text/javascript">'.$js_code.'</script>';	
 			
 	}
 	
+	/**
+	 * Function manually enqueue script used by plugin
+	 * @param unknown_type $key
+	 * @param unknown_type $file
+	 */
 	public function manual_script_load($key, $file) {
 		$ver_string = "";
 		
@@ -830,15 +1024,17 @@ class ESSBResourceBuilder {
 
 /** static called functions for resource generation **/
 
-function essb_manual_script_load($key, $file, $ver_string = '') {
-	echo '<script type="text/javascript" src="'.$file.$ver_string.'"></script>';
+if (!function_exists('essb_manual_script_load')) {
+	function essb_manual_script_load($key, $file, $ver_string = '') {
+		echo '<script type="text/javascript" src="'.$file.$ver_string.'"></script>';
+	}
 }
 
 function essb_dynamic_cache_load_css($cache_key = '') {
 	$cached_data = ESSBDynamicCache::get_resource($cache_key, 'css');
 	
 	if ($cached_data != '') {
-		echo "<link rel='stylesheet' id='".$cache_key."'  href='".$cached_data."' type='text/css' media='all' />";
+		echo "<link rel='stylesheet' id='".esc_attr($cache_key)."' href='".esc_url($cached_data)."' type='text/css' media='all' />";
 		return true;
 	}
 	else {
@@ -851,7 +1047,7 @@ function essb_dynamic_cache_load_js($cache_key) {
 	$cached_data = ESSBDynamicCache::get_resource($cache_key, 'js');
 	
 	if ($cached_data != '') {
-		echo "<script type='text/javascript' src='".$cached_data."' defer></script>";
+		echo "<script type='text/javascript' src='".esc_url($cached_data)."' defer></script>";
 		return true;
 	}
 	else {
@@ -864,12 +1060,7 @@ function essb_load_static_script($list, $async) {
 	$load_mode = ($async) ? "po.async=true;" : "po.defer=true;";
 	
 	foreach ($list as $key => $file) {
-		$result .= ('
-				(function() {
-				var po = document.createElement(\'script\'); po.type = \'text/javascript\'; '.$load_mode.';
-				po.src = \''.$file.'\';
-				var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(po, s);
-		})();');
+		$result .= ('(function() { var po = document.createElement(\'script\'); po.type = \'text/javascript\'; '.$load_mode.'; po.src = \''.esc_url($file).'\'; var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(po, s); })();');
 	}
 	
 	if ($result != '') {

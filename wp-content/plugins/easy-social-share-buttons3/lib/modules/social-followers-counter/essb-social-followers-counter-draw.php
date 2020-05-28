@@ -11,6 +11,12 @@
  *
  */
 class ESSBSocialFollowersCounterDraw {
+	
+	public static function network_additional_icon ($social) {
+		$r = '';
+		
+		return $r;
+	}
 
 	public static function followers_number($count) {
 		$format = essb_followers_option ( 'format' );
@@ -24,6 +30,9 @@ class ESSBSocialFollowersCounterDraw {
 			case 'fulldot' :
 				$result = number_format ( $count, 0, '', '.' );
 				break;
+			case 'fullspace':
+			    $result = number_format( $count, 0, '', ' ');
+			    break;
 			case 'short' :
 				$result = self::followers_number_shorten ( $count );
 				break;
@@ -59,10 +68,11 @@ class ESSBSocialFollowersCounterDraw {
 	 * @since 4.0
 	 */
 	public static function draw_followers_sidebar($options) {
+
 		$instance_position = isset ( $options ['position'] ) ? $options ['position'] : '';
 		$instance_new_window = 1;
 		$instance_nofollow = 1;
-		$instance_show_total = 0;
+		$instance_show_total = isset($options['total']) ? $options['total'] : 0;
 		$instance_columns = 1;
 		$instance_template = isset ( $options ['template'] ) ? $options ['template'] : 'flat';
 		$instance_animation = isset ( $options ['animation'] ) ? $options ['animation'] : '';
@@ -115,9 +125,9 @@ class ESSBSocialFollowersCounterDraw {
 		if (! empty ( $class_animation )) {
 			essb_resource_builder ()->add_static_footer_css ( ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/hover.css', 'essb-social-followers-counter-animations', 'css' );
 		}
-
+		
 		// followers main element
-		printf ( '<div class="essbfc-container essbfc-container-sidebar essbfc-container-sidebar-transition%1$s%2$s%3$s%4$s%5$s">', '', esc_attr($class_columns), esc_attr($class_template), esc_attr($class_nospace), esc_attr($class_position) );
+		printf ( '<div class="essbfc-container essb-followers-counter essbfc-container-sidebar essbfc-container-sidebar-transition%1$s%2$s%3$s%4$s%5$s">', '', esc_attr($class_columns), esc_attr($class_template), esc_attr($class_nospace), esc_attr($class_position) );
 
 		// get current state of followers counter
 		$followers_count = essb_followers_counter ()->get_followers ();
@@ -134,6 +144,10 @@ class ESSBSocialFollowersCounterDraw {
 
 		echo '<ul>';
 
+		$subscribe_salt = mt_rand();
+		$draw_subscribe_form = false;
+		$subscribe_design = '';
+		
 		foreach ( essb_followers_counter ()->active_social_networks () as $social ) {
 			$social_followers_text = essb_followers_option ( $social . '_text' );
 			$social_custom_icon = essb_followers_option($social.'_icon_type');
@@ -141,6 +155,9 @@ class ESSBSocialFollowersCounterDraw {
 			if ($social_custom_icon != '') {
 				$social_custom_icon = ' essbfc-icon-'.$social.'-'.$social_custom_icon;
 			}
+			
+			$social_custom_icon .= self::network_additional_icon($social);
+			
 			$social_followers_counter = isset ( $followers_count [$social] ) ? $followers_count [$social] : 0;
 
 			$social_display = $social;
@@ -153,13 +170,20 @@ class ESSBSocialFollowersCounterDraw {
 
 			$follow_url = essb_followers_counter ()->create_follow_address ( $social );
 			if (! empty ( $follow_url )) {
-				printf ( '<a href="%1$s"%2$s%3$s>', esc_url($follow_url), $link_newwindow, $link_nofollow );
+			    if ($social == 'subscribe_form') {
+			        printf ( '<a href="#"%2$s%3$s data-subscribe-form="%1$s" onclick="essb.toggle_subscribe(\'%4$s\'); return false;">', esc_attr($follow_url), $link_newwindow, $link_nofollow, $subscribe_salt );
+			        $subscribe_design = $follow_url;
+			        $draw_subscribe_form = true;
+			    }
+			    else {
+				    printf ( '<a href="%1$s"%2$s%3$s>', esc_url($follow_url), $link_newwindow, $link_nofollow );
+			    }
 			}
 
 			echo '<div class="essbfc-network">';
 			printf ( '<i class="essbfc-icon essbfc-icon-%1$s%2$s%3$s"></i>', esc_attr($social_display), esc_attr($class_animation), esc_attr($social_custom_icon) );
 			if (intval($social_followers_counter) > 0) {
-				printf ( '<span class="essbfc-followers-count">%1$s</span>', self::followers_number ( $social_followers_counter ) );
+				printf ( '<span class="essbfc-followers-count">%1$s</span>', esc_attr(self::followers_number ( $social_followers_counter )) );
 			}
 			else {
 				printf ( '<span class="essbfc-followers-count">%1$s</span>', $social_followers_counter );
@@ -172,31 +196,30 @@ class ESSBSocialFollowersCounterDraw {
 			}
 			echo '</li>';
 		}
+		
+		if ($display_total) {
+		    $social = 'total';
+		    printf ( '<li class="essbfc-%1$s">', esc_attr($social) );
+		    echo '<div class="essbfc-network">';
+		    printf ( '<i class="essbfc-icon  essbfc-icon-%1$s%2$s"></i>', esc_attr($social), esc_attr($class_animation) );
+		    printf ( '<span class="essbfc-followers-count">%1$s</span>', self::followers_number ( $total_followers ) );
+		    printf ( '<span class="essbfc-followers-text">%1$s</span>', essb_followers_option ( 'total_text' ) );
+		    echo '</div>';
+		    echo '</li>';
+		}
 
 		echo '</ul>';
 
 		echo '</div>';
-
-		echo '
-		<script type="text/javascript">
-		(function( $ ) {
-	$(document).ready(function() {
-		var essb_reveal_follower_sidebar_transition = function() {
-			$(".essbfc-container-sidebar").each(function() {
-				if ($(this).hasClass("essbfc-container-sidebar-transition")) {
-					$(this).removeClass("essbfc-container-sidebar-transition");
-				}
-			});
-		}
-
-		essb_reveal_follower_sidebar_transition();
-
-	});
-
-})( jQuery );
-		</script>';
 		// followers: end
-
+		
+		if ($draw_subscribe_form) {
+		    if (!class_exists('ESSBNetworks_Subscribe')) {
+		        include_once (ESSB3_PLUGIN_ROOT . 'lib/networks/essb-subscribe.php');
+		    }
+		    echo ESSBNetworks_Subscribe::draw_popup_subscribe_form($subscribe_design, $subscribe_salt);
+		    
+		}
 	}
 
 	public static function covert_boolean_value($value) {
@@ -268,7 +291,7 @@ class ESSBSocialFollowersCounterDraw {
 		$class_columns = (! empty ( $instance_columns )) ? " essbfc-col-" . $instance_columns : '';
 		$class_nospace = (intval ( $instance_nospace ) == 1) ? " essbfc-nospace" : "";
 
-		$style_bgcolor = (! empty ( $instance_bgcolor )) ? ' style="background-color:' . $instance_bgcolor . ';"' : '';
+		$style_bgcolor = (! empty ( $instance_bgcolor )) ? ' style="background-color:' . esc_attr($instance_bgcolor) . ';"' : '';
 
 		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="nofollow"' : '';
 		$link_newwindow = (intval ( $instance_new_window ) == 1) ? ' target="_blank"' : '';
@@ -285,9 +308,12 @@ class ESSBSocialFollowersCounterDraw {
 		if (! empty ( $class_animation )) {
 			essb_resource_builder ()->add_static_footer_css ( ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/hover.css', 'essb-social-followers-counter-animations', 'css' );
 		}
-
+		$subscribe_salt = mt_rand();
+		$draw_subscribe_form = false;
+		$subscribe_design = '';
+		
 		// followers main element
-		printf ( '<div class="essbfc-container%1$s%2$s%3$s%5$s"%4$s>', '', esc_attr($class_columns), esc_attr($class_template), $style_bgcolor, esc_attr($class_nospace) );
+		printf ( '<div class="essbfc-container essb-followers-counter %1$s%2$s%3$s%5$s"%4$s>', '', esc_attr($class_columns), esc_attr($class_template), $style_bgcolor, esc_attr($class_nospace) );
 
 		if ($draw_title && ! empty ( $instance_title )) {
 			printf ( '<h3>%1$s</h3>', $instance_title );
@@ -370,6 +396,8 @@ class ESSBSocialFollowersCounterDraw {
 			$social_custom_icon = essb_followers_option($social.'_icon_type');
 
 			if ($social_custom_icon != '') { $social_custom_icon = ' essbfc-icon-'.$social.'-'.$social_custom_icon; }
+			$social_custom_icon .= self::network_additional_icon($social);
+			
 			$social_followers_counter = isset ( $followers_count [$social] ) ? $followers_count [$social] : 0;
 
 			$social_display = $social;
@@ -389,7 +417,14 @@ class ESSBSocialFollowersCounterDraw {
 
 			$follow_url = essb_followers_counter ()->create_follow_address ( $social );
 			if (! empty ( $follow_url )) {
-				printf ( '<a href="%1$s"%2$s%3$s>', esc_url($follow_url), $link_newwindow, $link_nofollow );
+			    if ($social == 'subscribe_form') {
+			        printf ( '<a href="#"%2$s%3$s data-subscribe-form="%1$s" onclick="essb.toggle_subscribe(\'%4$s\'); return false;">', esc_attr($follow_url), $link_newwindow, $link_nofollow, $subscribe_salt );
+			        $subscribe_design = $follow_url;
+			        $draw_subscribe_form = true;
+			    }
+			    else {
+				    printf ( '<a href="%1$s"%2$s%3$s>', esc_url($follow_url), $link_newwindow, $link_nofollow );
+			    }
 			}
 
 			echo '<div class="essbfc-network">';
@@ -443,6 +478,14 @@ class ESSBSocialFollowersCounterDraw {
 
 		echo '</div>';
 		// followers: end
+		
+		if ($draw_subscribe_form) {
+		    if (!class_exists('ESSBNetworks_Subscribe')) {
+		        include_once (ESSB3_PLUGIN_ROOT . 'lib/networks/essb-subscribe.php');
+		    }
+		    echo ESSBNetworks_Subscribe::draw_popup_subscribe_form($subscribe_design, $subscribe_salt);
+		    
+		}
 	}
 
 	/**
@@ -507,7 +550,7 @@ class ESSBSocialFollowersCounterDraw {
 		}
 
 		// followers main element
-		$output .= sprintf ( '<div class="essbfc-container%1$s%2$s%3$s%5$s"%4$s>', '', $class_columns, $class_template, '', $class_nospace );
+		$output .= sprintf ( '<div class="essbfc-container essb-followers-counter %1$s%2$s%3$s%5$s"%4$s>', '', esc_attr($class_columns), esc_attr($class_template), '', esc_attr($class_nospace) );
 		$cover = essb_followers_option('profile_c_show');
 
 		if ($cover) {
@@ -564,6 +607,10 @@ class ESSBSocialFollowersCounterDraw {
 			$output .= sprintf ( '<div class="essbfc-totalastext">%1$s %2$s</div>', self::followers_number ( $total_followers ), essb_followers_option ( 'total_text' ) );
 		}
 
+		$subscribe_salt = mt_rand();
+		$draw_subscribe_form = false;
+		$subscribe_design = '';
+		
 		$output .= '<ul>';
 
 		foreach ( essb_followers_counter ()->active_social_networks () as $social ) {
@@ -573,6 +620,7 @@ class ESSBSocialFollowersCounterDraw {
 			if ($social_custom_icon != '') {
 				$social_custom_icon = ' essbfc-icon-'.$social.'-'.$social_custom_icon;
 			}
+			$social_custom_icon .= self::network_additional_icon($social);
 			$social_followers_counter = isset ( $followers_count [$social] ) ? $followers_count [$social] : 0;
 
 			$social_display = $social;
@@ -586,7 +634,14 @@ class ESSBSocialFollowersCounterDraw {
 
 			$follow_url = essb_followers_counter ()->create_follow_address ( $social );
 			if (! empty ( $follow_url )) {
-				$output .= sprintf ( '<a href="%1$s"%2$s%3$s>', $follow_url, $link_newwindow, $link_nofollow );
+			    if ($social == 'subscribe_form') {
+			        $output .= sprintf ( '<a href="#"%2$s%3$s data-subscribe-form="%1$s" onclick="essb.toggle_subscribe(\'%4$s\'); return false;">', esc_attr($follow_url), $link_newwindow, $link_nofollow, $subscribe_salt );
+			        $subscribe_design = $follow_url;
+			        $draw_subscribe_form = true;
+			    }
+			    else {
+				    $output .= sprintf ( '<a href="%1$s"%2$s%3$s>', $follow_url, $link_newwindow, $link_nofollow );
+			    }
 			}
 
 			$output .= '<div class="essbfc-network">';
@@ -610,6 +665,14 @@ class ESSBSocialFollowersCounterDraw {
 
 		$output .= '</div>';
 		// followers: end
+		
+		if ($draw_subscribe_form) {
+		    if (!class_exists('ESSBNetworks_Subscribe')) {
+		        include_once (ESSB3_PLUGIN_ROOT . 'lib/networks/essb-subscribe.php');
+		    }
+		    $output .= ESSBNetworks_Subscribe::draw_popup_subscribe_form($subscribe_design, $subscribe_salt);
+		    
+		}
 
 		return $output;
 	}

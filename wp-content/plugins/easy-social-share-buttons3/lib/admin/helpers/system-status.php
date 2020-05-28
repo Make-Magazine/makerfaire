@@ -44,12 +44,12 @@ foreach ( $active_plugins as $plugin ) {
 		$plugin_name = esc_html( $plugin_data['Name'] );
 
 		if ( ! empty( $plugin_data['PluginURI'] ) ) {
-			$plugin_name = '<a href="' . esc_url( $plugin_data['PluginURI'] ) . '" title="' . __( 'Visit plugin homepage' , 'passionblogger' ) . '">' . $plugin_name . '</a>';
+			$plugin_name = '<a href="' . esc_url( $plugin_data['PluginURI'] ) . '" title="' . esc_html__( 'Visit plugin homepage' , 'passionblogger' ) . '">' . $plugin_name . '</a>';
 		}
 		$pluginList .= '
 						<tr class="even table-border-bottom">
 							<td><b>' . $plugin_data ['Name'] . '</b><br/><span class="label">slug: ' . $plugin_data ['TextDomain'] . ', author: <a href="' . $plugin_data ['AuthorURI'] . '" target="_blank">' . $plugin_data ['Author'] . '</a></span></td>
-							<td><b>' . $plugin_data ['Version'] . '</b><br/><a href="' . $plugin_data ['PluginURI'] . '" target="_blank">' . $plugin_data ['PluginURI'] . '</a></td>
+							<td><b>' . $plugin_data ['Version'] . '</b><br/><a href="' . esc_url($plugin_data ['PluginURI']) . '" target="_blank">' . $plugin_data ['PluginURI'] . '</a></td>
 						</tr>
 						';
 					}
@@ -60,10 +60,10 @@ foreach ( $active_plugins as $plugin ) {
 $remote_get_status = '';
 $remote_post_status = '';
 
-$response = wp_safe_remote_get( 'https://build.envato.com/api/', array( 'decompress' => false, 'user-agent' => 'passionblogger-remote-get-test' ) );
+$response = wp_safe_remote_get( 'https://build.envato.com/api/', array( 'decompress' => false, 'user-agent' => 'essb-remote-get-test' ) );
 $remote_get_status = ( ! is_wp_error( $response ) && $response['response']['code'] >= 200 && $response['response']['code'] < 300 ) ? '<mark class="yes">&#10004;</mark>' : '<mark class="error">wp_remote_get() failed. Some theme features may not work. Please contact your hosting provider for additional information.</mark>';
 
-$response = wp_safe_remote_post( 'https://envato.com/', array( 'decompress' => false, 'user-agent' => 'passionblogger-remote-get-test' ) );
+$response = wp_safe_remote_post( 'https://developers.facebook.com/', array( 'decompress' => false, 'user-agent' => 'essb-remote-get-test' ) );
 $remote_post_status = ( ! is_wp_error( $response ) && $response['response']['code'] >= 200 && $response['response']['code'] < 300 ) ? '<mark class="yes">&#10004;</mark>' : '<mark class="error">wp_remote_get() failed. Some theme features may not work. Please contact your hosting provider for additional information.</mark>';
 
 if (function_exists ( 'fsockopen' )) {
@@ -82,18 +82,18 @@ $theme = wp_get_theme ();
 $time_limit = ini_get( 'max_execution_time' );
 
 if ( 180 > $time_limit && 0 != $time_limit ) {
-	$time_limit = '<mark class="error">' . sprintf( __( '%1$s - We recommend setting max execution time to at least 180 if you use share counters or share counter recovery.<br />See: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing max execution to PHP</a>', 'passionblogger' ), $time_limit, 'http://codex.wordpress.org/Common_WordPress_Errors#Maximum_execution_time_exceeded' ) . '</mark>';
+	$time_limit = '<mark class="error">' . sprintf( esc_html__( '%1$s - We recommend setting max execution time to at least 180 if you use share counters or share counter recovery.<br />See: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing max execution to PHP</a>', 'passionblogger' ), $time_limit, 'http://codex.wordpress.org/Common_WordPress_Errors#Maximum_execution_time_exceeded' ) . '</mark>';
 } else {
 	$time_limit = '<mark class="yes">' . $time_limit . '</mark>';
 }
 
 $memory = let_to_num( WP_MEMORY_LIMIT );
 if ( $memory < 64000000 ) {
-	$memory = '<mark class="error">' . sprintf( __( '%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br /> Please define memory limit in <strong>wp-config.php</strong> file. To learn how, see: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing memory allocated to PHP.</a>', 'passionblogger' ), size_format( $memory ), 'http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP' ) . '</mark>';
+	$memory = '<mark class="error">' . sprintf( esc_html__( '%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br /> Please define memory limit in <strong>wp-config.php</strong> file. To learn how, see: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing memory allocated to PHP.</a>', 'passionblogger' ), size_format( $memory ), 'http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP' ) . '</mark>';
 } else {
 	$memory = '<mark class="yes">' . size_format( $memory ) . '</mark>';
 	if ( $memory < 128000000 ) {
-		$memory .= '<br /><mark class="message">' . __( 'Your current memory limit is sufficient, but if you use lot of plugins on site or you have many posts you may need to exceed it.', 'passionblogger' ) . '</mark>';
+		$memory .= '<br /><mark class="message">' . esc_html__( 'Your current memory limit is sufficient, but if you use lot of plugins on site or you have many posts you may need to exceed it.', 'passionblogger' ) . '</mark>';
 	}
 }
 
@@ -109,7 +109,7 @@ if ( ! is_numeric( $memory_php ) ) {
 }
 
 if ( $memory_php < 64000000 ) {
-	$memory_php = '<mark class="error">' . sprintf( __( '%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br /> Please define memory limit in <strong>wp-config.php</strong> file. To learn how, see: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing memory allocated to PHP.</a>', 'passionblogger' ), size_format( $memory_php ), 'http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP' ) . '</mark>';
+	$memory_php = '<mark class="error">' . sprintf( esc_html__( '%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br /> Please define memory limit in <strong>wp-config.php</strong> file. To learn how, see: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing memory allocated to PHP.</a>', 'passionblogger' ), size_format( $memory_php ), 'http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP' ) . '</mark>';
 } else {
 	$memory_php = '<mark class="yes">' . size_format( $memory_php ) . '</mark>';
 }
@@ -124,11 +124,11 @@ if ($max_input_vars > 999 && $max_input_vars < 5000) {
 
 
 $system_status = '
-<table style="width:100%; margin-top: 20px;" cellspacing="0" cellpadding="3" border="0" class="system-status">
+<table cellspacing="0" cellpadding="3" border="0" class="system-status">
 <col width="30%"/><col width="70%"/>
 <tr><td class="sub4" colspan="2"><div>Environment Statuses</div></td><td></td></tr>
-<tr class="even table-border-bottom"><td ><b>Home URL</b></td><td>' . get_home_url () . '</td></tr>
-<tr class="odd table-border-bottom"><td ><b>Site URL</b></td><td>' . get_site_url () . '</td></tr>
+<tr class="even table-border-bottom"><td ><b>Home URL</b></td><td>' . esc_url(get_home_url ()) . '</td></tr>
+<tr class="odd table-border-bottom"><td ><b>Site URL</b></td><td>' . esc_url(get_site_url ()) . '</td></tr>
 <tr class="even table-border-bottom"><td><b>WordPress Version</b></td><td>' . get_bloginfo ( 'version' ) . '</td></tr>
 <tr class="odd table-border-bottom"><td><b>PHP Version</b></td><td>' . phpversion () . '</td></tr>
 <tr class="even table-border-bottom"><td><b>Easy Social Share Buttons version</b></td><td>' . ESSB3_VERSION . '</td></tr>
@@ -144,9 +144,9 @@ $system_status = '
 <tr class="even table-border-bottom"><td><b>WP Remote Get</b></td><td>' . $remote_get_status . '</td></tr>
 <tr class="odd table-border-bottom"><td><b>WP Remote Post</b></td><td>' . $remote_post_status . '</td></tr>
 <tr><td class="sub4" colspan="2"><div>Active Theme</div></td><td></td></tr>
-<tr class="even table-border-bottom"><td><b>Theme Name</b></td><td><a href="'.$theme->get ('ThemeURI').'" target="_blank">' . $theme ['Name'] . '</a></td></tr>
+<tr class="even table-border-bottom"><td><b>Theme Name</b></td><td><a href="'.esc_url($theme->get ('ThemeURI')).'" target="_blank">' . $theme ['Name'] . '</a></td></tr>
 <tr class="odd table-border-bottom"><td><b>Theme Version</b></td><td>' . $theme ['Version'] . '</td></tr>
-<tr class="even table-border-bottom"><td><b>Theme Author</b></td><td><a href="'.$theme->get ('AuthorURI').'" target="_blank">' . $theme->get ('Author') . '</a></td></tr>
+<tr class="even table-border-bottom"><td><b>Theme Author</b></td><td><a href="'.esc_url($theme->get ('AuthorURI')).'" target="_blank">' . $theme->get ('Author') . '</a></td></tr>
 <tr><td class="sub4" colspan="2"><div>Active Plugins</div></td><td></td></tr>
 <tr class="even table-border-bottom"><td><b>Number of Active Plugins</b></td><td><b>' . count( (array) get_option( 'active_plugins' ) ) . '</b></td></tr>
 ' . $pluginList . '

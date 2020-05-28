@@ -73,7 +73,7 @@ class ESSBCoreExtenderShortcodeNative {
 		), $atts );
 		
 		$hide_mobile = isset ( $atts ['hide_mobile'] ) ? $atts ['hide_mobile'] : '';
-		$hide_mobile_state = ESSBOptionValuesHelper::unified_true($hide_mobile);
+		$hide_mobile_state = essb_unified_true($hide_mobile);
 		
 		if ($hide_mobile_state && essb_is_mobile()) {
 			return "";
@@ -184,7 +184,6 @@ class ESSBCoreExtenderShortcodeNative {
 				essb_resource_builder()->add_static_resource_footer($object["file"], $object["key"], $object["type"]);
 			}
 			essb_resource_builder()->add_css(ESSBSkinnedNativeButtons::generate_skinned_custom_css(), 'essb-skinned-native-buttons', 'footer');
-		
 			// asign instance of native buttons privacy class to helper
 		
 			// register active social network apis
@@ -192,12 +191,10 @@ class ESSBCoreExtenderShortcodeNative {
 				essb_resource_builder()->add_social_api($key);
 			}
 		}
-		
-		
-		$counters_bool = ESSBOptionValuesHelper::unified_true($counters);
-		$skinned_buttons = ESSBOptionValuesHelper::unified_true($skinned);
-		
-		
+			
+		$counters_bool = essb_unified_true($counters);
+		$skinned_buttons = essb_unified_true($skinned);
+			
 		$text = esc_attr ( urlencode ( $post->post_title ) );
 		$url = $post ? get_permalink () : essb_get_current_url ( 'raw' );
 		
@@ -206,7 +203,7 @@ class ESSBCoreExtenderShortcodeNative {
 		}
 		
 		$output = "";
-		$output .= '<div class="essb-like ' . $css_class_align . '">';
+		$output .= '<div class="essb-like ' . esc_attr($css_class_align) . '">';
 		
 		if ($message != '') {
 			$output .= '<div class="essb-message">' . $message . '</div>';
@@ -223,7 +220,7 @@ class ESSBCoreExtenderShortcodeNative {
 		foreach ( $networks as $network ) {
 				
 			if ($network == "facebook") {
-				if (ESSBOptionValuesHelper::unified_true ( $facebook )) {
+				if (essb_unified_true ( $facebook )) {
 					if ($facebook_url == "") {
 						$facebook_url = $url;
 					}
@@ -235,7 +232,7 @@ class ESSBCoreExtenderShortcodeNative {
 					$native_button_options['facebook_text'] = $facebook_skinned_text;
 					$native_button_options['skin'] = $skin;
 						
-					$output .= '<div class="essb-like-facebook essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-facebook essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('facebook', $native_button_options, $counters_bool, $skinned_buttons, $facebook_size);
 					$output .= '</div>';
 						
@@ -246,7 +243,7 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "facebook_follow") {
-				if (ESSBOptionValuesHelper::unified_true ( $facebook_follow )) {
+				if (essb_unified_true ( $facebook_follow )) {
 						
 					$native_button_options = array();
 					$native_button_options['facebook_type'] = 'follow';
@@ -254,7 +251,7 @@ class ESSBCoreExtenderShortcodeNative {
 					$native_button_options['facebook_width'] = $facebook_follow_skinned_width;
 					$native_button_options['facebook_text'] = $facebook_follow_skinned_text;
 					$native_button_options['skin'] = $skin;
-					$output .= '<div class="essb-like-facebook essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-facebook essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('facebook', $native_button_options, $counters_bool, $skinned_buttons, $facebook_size);
 					$output .= '</div>';
 					if (ESSBNativeButtonsHelper::is_active_network('facebook')) {
@@ -265,7 +262,7 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "twitter_tweet") {
-				if (ESSBOptionValuesHelper::unified_true ( $twitter_tweet )) {
+				if (essb_unified_true ( $twitter_tweet )) {
 						
 					$native_button_options = array();
 					$native_button_options['twitter_type'] = 'tweet';
@@ -276,7 +273,7 @@ class ESSBCoreExtenderShortcodeNative {
 					$native_button_options['twitter_text'] = $twitter_tweet_skinned_text;
 					$native_button_options['skin'] = $skin;
 						
-					$output .= '<div class="essb-like-twitter essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-twitter essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('twitter', $native_button_options, $counters_bool, $skinned_buttons);
 					$output .= '</div>';
 					if (ESSBNativeButtonsHelper::is_active_network('twitter')) {
@@ -287,7 +284,7 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "twitter_follow") {
-				if (ESSBOptionValuesHelper::unified_true ( $twitter_follow )) {
+				if (essb_unified_true ( $twitter_follow )) {
 					$native_button_options = array();
 					$native_button_options['twitter_type'] = 'follow';
 					$native_button_options['twitter_user'] = $twitter_follow_user;
@@ -297,7 +294,7 @@ class ESSBCoreExtenderShortcodeNative {
 					$native_button_options['twitter_text'] = $twitter_follow_skinned_text;
 					$native_button_options['skin'] = $skin;
 						
-					$output .= '<div class="essb-like-twitter-follow essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-twitter-follow essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('twitter', $native_button_options, $counters_bool, $skinned_buttons);
 					$output .= '</div>';
 					if (ESSBNativeButtonsHelper::is_active_network('twitter')) {
@@ -307,7 +304,7 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "google") {
-				if (ESSBOptionValuesHelper::unified_true ( $google )) {
+				if (essb_unified_true ( $google )) {
 					if ($google_url == "") {
 						$google_url = $url;
 					}
@@ -318,7 +315,7 @@ class ESSBCoreExtenderShortcodeNative {
 					$native_button_options['google_width'] = $google_skinned_width;
 					$native_button_options['google_text'] = $google_skinned_text;
 					$native_button_options['skin'] = $skin;
-					$output .= '<div class="essb-like-google essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-google essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('google', $native_button_options, $counters_bool, $skinned_buttons, $google_size);
 					$output .= '</div>';
 					if (ESSBNativeButtonsHelper::is_active_network('google')) {
@@ -328,14 +325,14 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "google_follow") {
-				if (ESSBOptionValuesHelper::unified_true ( $google_follow )) {
+				if (essb_unified_true ( $google_follow )) {
 					$native_button_options = array();
 					$native_button_options['google_type'] = 'follow';
 					$native_button_options['google_url'] = $google_follow_url;
 					$native_button_options['google_width'] = $google_follow_skinned_width;
 					$native_button_options['google_text'] = $google_follow_skinned_text;
 					$native_button_options['skin'] = $skin;
-					$output .= '<div class="essb-like-google essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-google essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('google', $native_button_options, $counters_bool, $skinned_buttons, $google_size);
 					$output .= '</div>';
 					if (ESSBNativeButtonsHelper::is_active_network('google')) {
@@ -345,13 +342,13 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "vk") {
-				if (ESSBOptionValuesHelper::unified_true ( $vk )) {
+				if (essb_unified_true ( $vk )) {
 					$native_button_options = array();
 					$native_button_options['vk_width'] = $google_follow_skinned_width;
 					$native_button_options['vk_text'] = $google_follow_skinned_text;
 					$native_button_options['skin'] = $skin;
 						
-					$output .= '<div class="essb-like-vk essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-vk essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('vk', $native_button_options, $counters_bool, $skinned_buttons);
 					$output .= '</div>';
 						
@@ -362,13 +359,13 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "youtube") {
-				if (ESSBOptionValuesHelper::unified_true ( $youtube )) {
+				if (essb_unified_true ( $youtube )) {
 					$native_button_options = array();
 					$native_button_options['youtube_channel'] = $youtube_chanel;
 					$native_button_options['youtube_width'] = $youtube_skinned_width;
 					$native_button_options['youtube_text'] = $youtube_skinned_text;
 					$native_button_options['skin'] = $skin;
-					$output .= '<div class="essb-like-youtube essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-youtube essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('youtube', $native_button_options, $counters_bool, $skinned_buttons);
 					$output .= '</div>';
 					if (ESSBNativeButtonsHelper::is_active_network('google')) {
@@ -378,7 +375,7 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "pinterest_pin") {
-				if (ESSBOptionValuesHelper::unified_true ( $pinterest_pin )) {
+				if (essb_unified_true ( $pinterest_pin )) {
 					$native_button_options = array();
 					$native_button_options['pinterest_type'] = 'pin';
 					$native_button_options['pinterest_url'] = $pinterest_follow_url;
@@ -387,7 +384,7 @@ class ESSBCoreExtenderShortcodeNative {
 					$native_button_options['pinterest_text'] = $pinterest_pin_skinned_text;
 					$native_button_options['skin'] = $skin;
 						
-					$output .= '<div class="essb-like-pin essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-pin essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('pinterest', $native_button_options, $counters_bool, $skinned_buttons);
 					$output .= '</div>';
 						
@@ -398,7 +395,7 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "pinterest_follow") {
-				if (ESSBOptionValuesHelper::unified_true ( $pinterest_follow )) {
+				if (essb_unified_true ( $pinterest_follow )) {
 					$native_button_options = array();
 					$native_button_options['pinterest_type'] = 'follow';
 					$native_button_options['pinterest_url'] = $pinterest_follow_url;
@@ -406,7 +403,7 @@ class ESSBCoreExtenderShortcodeNative {
 					$native_button_options['pinterest_width'] = $pinterest_follow_skinned_width;
 					$native_button_options['pinterest_text'] = $pinterest_follow_skinned_text;
 					$native_button_options['skin'] = $skin;
-					$output .= '<div class="essb-like-pin-follow essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-pin-follow essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('pinterest', $native_button_options, $counters_bool, $skinned_buttons);
 					$output .= '</div>';
 						
@@ -417,14 +414,14 @@ class ESSBCoreExtenderShortcodeNative {
 			}
 				
 			if ($network == "linkedin") {
-				if (ESSBOptionValuesHelper::unified_true ( $linkedin )) {
+				if (essb_unified_true ( $linkedin )) {
 					$native_button_options = array();
 					$native_button_options['linkedin_company'] = $linkedin_comapny;
 					$native_button_options['linkedin_width'] = $linkedin_skinned_width;
 					$native_button_options['linkedin_text'] = $linkedin_skinned_text;
 					$native_button_options['skin'] = $skin;
 		
-					$output .= '<div class="essb-like-linkedin essb-block' . $css_class_noskin . '">';
+					$output .= '<div class="essb-like-linkedin essb-block' . esc_attr($css_class_noskin) . '">';
 					$output .= ESSBNativeButtonsHelper::draw_single_native_button('linkedin', $native_button_options, $counters_bool, $skinned_buttons);
 					$output .= '</div>';
 						

@@ -3,7 +3,7 @@ if (!function_exists('essb_subscribe_form_design3')) {
 	function essb_subscribe_form_design3($salt, $is_widget = false, $position = '') {
 		global $essb_options;
 		
-		$subscribe_mc_namefield = ESSBOptionValuesHelper::options_bool_value($essb_options, 'subscribe_mc_namefield3');
+		$subscribe_mc_namefield = essb_object_bool_value($essb_options, 'subscribe_mc_namefield3');
 		
 		// demo mode using name field
 		$demo_mode_name = isset($_REQUEST['usename']) ? $_REQUEST['usename'] : '';
@@ -12,27 +12,27 @@ if (!function_exists('essb_subscribe_form_design3')) {
 		}
 		
 		$default_texts = array(
-				"title" => __('Join our list', 'essb'),
-				"text" => __('Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'),
-				"email" => __('Enter your email here', 'essb'),
-				"name" => __('Enter your name here', 'essb'),
-				"button" => __('Sign Up Now', 'essb'),
-				"footer" => __('We respect your privacy and take protecting it seriously', 'essb'),
-				"success" => __('Thank you for subscribing.', 'essb'),
-				"error" => __('Something went wrong.', 'essb')
+				"title" => esc_html__('Join our list', 'essb'),
+				"text" => esc_html__('Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'),
+				"email" => esc_html__('Enter your email here', 'essb'),
+				"name" => esc_html__('Enter your name here', 'essb'),
+				"button" => esc_html__('Sign Up Now', 'essb'),
+				"footer" => esc_html__('We respect your privacy and take protecting it seriously', 'essb'),
+				"success" => esc_html__('Thank you for subscribing.', 'essb'),
+				"error" => esc_html__('Something went wrong.', 'essb')
 		);
 		
-		$subscribe_mc_title = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_title3');
-		$subscribe_mc_text = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_text3');
-		$subscribe_mc_email = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_email3');
-		$subscribe_mc_name = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_name3');
-		$subscribe_mc_button = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_button3');
-		$subscribe_mc_footer = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_footer3');
-		$subscribe_mc_success = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_success3');
-		$subscribe_mc_error = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_error3');
+		$subscribe_mc_title = essb_object_value($essb_options, 'subscribe_mc_title3');
+		$subscribe_mc_text = essb_object_value($essb_options, 'subscribe_mc_text3');
+		$subscribe_mc_email = essb_object_value($essb_options, 'subscribe_mc_email3');
+		$subscribe_mc_name = essb_object_value($essb_options, 'subscribe_mc_name3');
+		$subscribe_mc_button = essb_object_value($essb_options, 'subscribe_mc_button3');
+		$subscribe_mc_footer = essb_object_value($essb_options, 'subscribe_mc_footer3');
+		$subscribe_mc_success = essb_object_value($essb_options, 'subscribe_mc_success3');
+		$subscribe_mc_error = essb_object_value($essb_options, 'subscribe_mc_error3');
 		
-		$subscribe_mc_image3 = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_image3');
-		$subscribe_mc_imagealign3 = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_imagealign3');
+		$subscribe_mc_image3 = essb_object_value($essb_options, 'subscribe_mc_image3');
+		$subscribe_mc_imagealign3 = essb_object_value($essb_options, 'subscribe_mc_imagealign3');
 		
 		
 		$subscribe_mc_title = stripslashes($subscribe_mc_title);
@@ -76,8 +76,8 @@ if (!function_exists('essb_subscribe_form_design3')) {
 		if ($subscribe_mc_image3 != '' && $subscribe_mc_imagealign3 == 'right') {
 			$output .= '<img src="'.esc_url($subscribe_mc_image3).'" class="essb-subscribe-form-content-top-image-right"/>';
 		}
-		$output .= '<h4 class="essb-subscribe-form-content-title">'.$subscribe_mc_title.'</h4>';
-		$output .= '<p class="essb-subscribe-form-content-text">'.$subscribe_mc_text.'</p>';
+		$output .= '<h4 class="essb-subscribe-form-content-title">'.ESSBNetworks_Subscribe::sanitize_html($subscribe_mc_title).'</h4>';
+		$output .= '<p class="essb-subscribe-form-content-text">'.ESSBNetworks_Subscribe::sanitize_html($subscribe_mc_text).'</p>';
 		
 		$output .= '</div>';
 		
@@ -110,11 +110,11 @@ if (!function_exists('essb_subscribe_form_design3')) {
 		</svg>
 		</div>';
 		
-		$output .= '<p class="essb-subscribe-form-content-success essb-subscribe-form-result-message">'.$subscribe_mc_success.'</p>';
-		$output .= '<p class="essb-subscribe-form-content-error essb-subscribe-form-result-message">'.$subscribe_mc_error.'</p>';
+		$output .= '<p class="essb-subscribe-form-content-success essb-subscribe-form-result-message">'.ESSBNetworks_Subscribe::sanitize_html($subscribe_mc_success).'</p>';
+		$output .= '<p class="essb-subscribe-form-content-error essb-subscribe-form-result-message">'.ESSBNetworks_Subscribe::sanitize_html($subscribe_mc_error).'</p>';
 		
 		$output .= '<div class="clear"></div>';
-		$output .= '<p class="essb-subscribe-form-content-footer">'.$subscribe_mc_footer.'</p>';
+		$output .= '<p class="essb-subscribe-form-content-footer">'.ESSBNetworks_Subscribe::sanitize_html($subscribe_mc_footer).'</p>';
 		
 		$output .= '</div>';
 		

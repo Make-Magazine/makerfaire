@@ -18,10 +18,11 @@ add_shortcode ( 'easy-social-share-flyin', 'essb_shortcode_share_flyin');
 add_shortcode ( 'easy-total-shares', 'essb_shortcode_total_shares');
 add_shortcode ( 'easy-social-share-cta', 'essb_shortcode_share_cta');
 add_shortcode ( 'share-action-button', 'essb_shortcode_share_cta');
-// shortcodes
+
 add_shortcode ( 'essb', 'essb_shortcode_share');
 add_shortcode ( 'easy-share', 'essb_shortcode_share');
 add_shortcode ( 'easy-social-share-buttons', 'essb_shortcode_share');
+add_shortcode ( 'social-share', 'essb_shortcode_share_short');
 
 add_shortcode ( 'easy-social-share', 'essb_shortcode_share_vk');
 
@@ -168,11 +169,8 @@ function essb_shortcode_subscribe($atts, $content = '') {
 	}
 }
 
-function essb_shortcode_popular_posts($atts) {
-	
-	if (!function_exists('essb_popular_posts')) {
-		include_once (ESSB3_PLUGIN_ROOT . 'lib/core/widgets/essb-popular-posts-widget-shortcode.php');		
-	}
+function essb_shortcode_popular_posts($atts) {	
+	essb_depend_load_function('essb_popular_posts', 'lib/core/widgets/essb-popular-posts-widget-shortcode.php');
 	
 	$exist_ukey = isset($atts['ukey']) ? $atts['ukey'] : '';
 	if ($exist_ukey != '') {
@@ -192,6 +190,16 @@ function essb_shortcode_share_popup($atts) {
 		$atts = essb_shortcode_ukey_options('easy-social-share-popup', $exist_ukey);
 	}
 	
+	$mobile_app = essb_object_value($atts, 'mobile_app');
+	if ($mobile_app == 'mobile') {
+		$atts['only_mobile'] = 'yes';
+		$atts['hide_mobile'] = '';
+	}
+	else if ($mobile_app == 'desktop') {
+		$atts['hide_mobile'] = 'yes';
+		$atts['only_mobile'] = '';
+	}
+	
 	$shortcode_options = essb_shortcode_share_popup_prepare($atts);
 	
 	return essb_shortcode_share($shortcode_options);
@@ -204,6 +212,16 @@ function essb_shortcode_share_flyin($atts) {
 	if ($exist_ukey != '') {
 		essb_depend_load_function('essb_shortcode_ukey_options', 'lib/core/extenders/essb-shortcode-ukey.php');
 		$atts = essb_shortcode_ukey_options('easy-social-share-flyin', $exist_ukey);
+	}
+	
+	$mobile_app = essb_object_value($atts, 'mobile_app');
+	if ($mobile_app == 'mobile') {
+		$atts['only_mobile'] = 'yes';
+		$atts['hide_mobile'] = '';
+	}
+	else if ($mobile_app == 'desktop') {
+		$atts['hide_mobile'] = 'yes';
+		$atts['only_mobile'] = '';
 	}
 	
 	$shortcode_options = essb_shortcode_share_flyin_prepare($atts);
@@ -229,8 +247,6 @@ function essb_shortcode_total_shares($atts) {
 }
 
 function essb_shortcode_share_vk($atts) {
-	//$atts['native'] = "no";
-
 	$exist_ukey = isset($atts['ukey']) ? $atts['ukey'] : '';
 	if ($exist_ukey != '') {
 		essb_depend_load_function('essb_shortcode_ukey_options', 'lib/core/extenders/essb-shortcode-ukey.php');
@@ -250,12 +266,60 @@ function essb_shortcode_share_vk($atts) {
 	return essb_shortcode_share($atts);
 }
 
+function essb_shortcode_share_short($atts) {
+	$exist_ukey = isset($atts['ukey']) ? $atts['ukey'] : '';
+	if ($exist_ukey != '') {
+		essb_depend_load_function('essb_shortcode_ukey_options', 'lib/core/extenders/essb-shortcode-ukey.php');
+		$atts = essb_shortcode_ukey_options('social-share', $exist_ukey);
+	}
+
+	$total_counter_pos = essb_object_value($atts, 'total_counter_pos');
+	if ($total_counter_pos == "none") {
+		$atts['hide_total'] = "yes";
+	}
+
+	$counter_pos = essb_object_value($atts, 'counter_pos');
+	if ($counter_pos == "none") {
+		$atts['counter_pos'] = "hidden";
+	}
+	
+	$counters = essb_object_value($atts, 'counters');
+	if ($counters == 'no') {
+		$atts['counters'] = '0';
+	}
+	else if ($counters == 'yes') {
+		$atts['counters'] = '1';
+	}
+	
+	$mobile_app = essb_object_value($atts, 'mobile_app');
+	if ($mobile_app == 'mobile') {
+		$atts['only_mobile'] = 'yes';
+		$atts['hide_mobile'] = '';
+	}
+	else if ($mobile_app == 'desktop') {
+		$atts['hide_mobile'] = 'yes';
+		$atts['only_mobile'] = '';
+	}
+
+	return essb_shortcode_share($atts);
+}
+
 function essb_shortcode_share($atts) {
 	
 	$exist_ukey = isset($atts['ukey']) ? $atts['ukey'] : '';
 	if ($exist_ukey != '') {
 		essb_depend_load_function('essb_shortcode_ukey_options', 'lib/core/extenders/essb-shortcode-ukey.php');
 		$atts = essb_shortcode_ukey_options('easy-social-share', $exist_ukey);
+	}
+	
+	$mobile_app = essb_object_value($atts, 'mobile_app');
+	if ($mobile_app == 'mobile') {
+		$atts['only_mobile'] = 'yes';
+		$atts['hide_mobile'] = '';
+	}
+	else if ($mobile_app == 'desktop') {
+		$atts['hide_mobile'] = 'yes';
+		$atts['only_mobile'] = '';
 	}
 	
 	essb_depend_load_function('essb_shortcode_share_prepare', 'lib/core/extenders/essb-shortcode-share-code.php');

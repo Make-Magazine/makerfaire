@@ -14,8 +14,6 @@ if (!function_exists('essb_excerpt_clean_method3')) {
 	function essb_excerpt_clean_method3($text, $options, $networks, $default_names) {
 		global $essb_networks;
 		
-		
-		//print_r($this->network_options['networks']);
 		foreach ($essb_networks as $k => $data) {
 			$network_name = $data['name'];
 		
@@ -27,9 +25,9 @@ if (!function_exists('essb_excerpt_clean_method3')) {
 				continue;
 			}
 				
-			$position_top_name = ESSBOptionValuesHelper::options_value($options, 'top_'.$k.'_name');
-			$position_float_name = ESSBOptionValuesHelper::options_value($options, 'float_'.$k.'_name');
-			$position_postfloat_name = ESSBOptionValuesHelper::options_value($options, 'postfloat_'.$k.'_name');
+			$position_top_name = essb_object_value($options, 'top_'.$k.'_name');
+			$position_float_name = essb_object_value($options, 'float_'.$k.'_name');
+			$position_postfloat_name = essb_object_value($options, 'postfloat_'.$k.'_name');
 		
 			$default_name = $default_names[$k];
 		
@@ -55,7 +53,7 @@ if (!function_exists('essb_excerpt_clean_method3')) {
 			}
 		}
 		
-		$message_before_buttons = ESSBOptionValuesHelper::options_value($options, 'message_share_before_buttons');
+		$message_before_buttons = essb_object_value($options, 'message_share_before_buttons');
 		$message_before_buttons = trim($message_before_buttons);
 		
 		if (!empty($message_before_buttons)) {
@@ -63,12 +61,12 @@ if (!function_exists('essb_excerpt_clean_method3')) {
 		}
 		
 		if (defined('ESSB3_NATIVE_ACTIVE')) {
-			$skin_native = ESSBOptionValuesHelper::options_bool_value($options, 'skin_native');
+			$skin_native = essb_object_bool_value($options, 'skin_native');
 			if (ESSB3_NATIVE_ACTIVE && $skin_native) {
 				$native_buttons = ESSBNativeButtonsHelper::active_native_buttons();
 		
 				foreach ($native_buttons as $network) {
-					$skinned_text = ESSBOptionValuesHelper::options_value($options, $network.'_text');
+					$skinned_text = essb_object_value($options, $network.'_text');
 					if (!empty($skinned_text)) {
 						$text = str_replace($skinned_text, '', $text);
 					}

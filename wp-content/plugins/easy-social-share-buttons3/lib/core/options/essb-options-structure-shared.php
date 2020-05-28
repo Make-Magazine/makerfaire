@@ -294,7 +294,6 @@ class ESSBOptionsStructureHelperShared {
 		);
 	}
 
-	//								array ('type' => 'section_start', 'title' => __('Section Start', ESSB3_TEXT_DOMAIN), 'description' => 'Demo section description'),
 	public function field_section_start ($tab_id, $menu_id, $title, $description, $recommended = '') {
 		
 		$this->sidebar_section_options[$tab_id][$menu_id][] = array(

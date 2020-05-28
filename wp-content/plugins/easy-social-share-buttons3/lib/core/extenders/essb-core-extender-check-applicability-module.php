@@ -60,7 +60,7 @@ if (!function_exists('essb_check_applicability_module')) {
 		
 		// deactivate on mobile devices if selected
 		if (essb_is_mobile()) {
-			if (ESSBOptionValuesHelper::options_value($options, $location.'_mobile_deactivate')) {
+			if (essb_object_value($options, $location.'_mobile_deactivate')) {
 				$is_singular = false;
 				$is_lists_authorized = false;
 			}

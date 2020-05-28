@@ -3,15 +3,12 @@
 
 $current_list = array ();
 
+if (!class_exists ( 'ESSBAddonsHelper' )) {
+	include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/addons/essb-addons-helper4.php');
+}
+
 if (class_exists ( 'ESSBAddonsHelper' )) {
-
 	$essb_addons = ESSBAddonsHelper::get_instance ();
-
-	$check = isset($_REQUEST['check']) ? $_REQUEST['check'] : '';
-	if ($check == 'true') {
-		$essb_addons->call_remove_addon_list_update ();
-	}
-
 	$current_list = $essb_addons->get_addons ();
 }
 
@@ -22,477 +19,100 @@ if (! isset ( $current_list )) {
 
 ?>
 
-<style type="text/css">
-.essb-column-compatibility { width: 100% !important; float: none !important; text-align: left !important; font-size: 12px; margin-bottom: 5px;  }
-.essb-column-downloaded { width: 100% !important; max-width: 100% !important; text-align: right; }
-.essb-addon-price { font-size: 15px; margin-bottom: 5px; }
-.essb-addon-price b { font-weight: 800; }
-.plugin-card-top { padding: 10px 20px 10px; height: 320px; }
-.plugin-card-top h4 { font-size: 16px; font-weight: 700; margin-top: 5px; margin-bottom: 10px;}
-.plugin-card { width: calc(33% - 16px); }
-.essb-column-compatibility { width: 100%; }
-.essb-column-compatibility .button { margin-right: 5px; }
-.essb-column-compatibility .button-no-margin { margin-right: 0px !important; }
-.plugin-card-top h4 { height: 35px; }
-.plugin-card-top p.essb-description { min-height: 80px; }
-.plugin-card:nth-child(3n+1) { clear: none !important; margin-left: 8px; }
-.plugin-card:nth-child(4n+1) { clear: none !important; margin-right: 8px; }
-.plugin-card:nth-child(even) { clear: none !important; }
-.plugin-card:nth-child(odd) { clear: none !important; }
-.plugin-card:nth-child(3n) { margin-right: 8px; }
-.essb-free { background-color: #27AE60; color: #fff; margin-left: 5px; border-radius: 4px; padding: 2px 6px; font-size: 14px; font-weight: bold; }
-.essb-paid { background-color: #D33257; color: #fff; margin-left: 5px; border-radius: 4px; padding: 2px 6px; font-size: 14px; font-weight: bold; }
-.essb-free, .essb-paid {
-	padding: 5px 8px;
-	float: right;
-}
-
-.essb-addon-category {
-	color: #fff;
-	    margin-right: 5px;
-	    padding: 3px 5px;
-	    font-size: 11px;
-	    text-transform: uppercase;
-	    font-weight: 600;
-	    background-color: #D33257;
-	    position: absolute;
-	    top: 0px;
-	    left: 0px;
-	    letter-spacing: 0.5px;
-}
-
-.essb-addon-tag {
-	color: #fff;
-	margin-right: 5px; border-radius: 4px; padding: 2px 6px; font-size: 11px;
-	text-transform: uppercase;
-	font-weight: bold;
-}
-
-.essb-addon-unique {
-	background-color:#D8335B;
-}
-
-.essb-addon-new {
-	background-color: #2C82C9;
-}
-
-.essb-addon-popular {
-	background-color: #00B5B5;
-}
-.essb-addon-updated {
-	background-color: #FD5B03;
-}
-.essb-options-hint-addonhint {
-	background-color: #fff !important;
-}
-
-.essb-options-hint-glow i {
-	font-size: 28px !important;
-	margin-right: 10px;
-}
-
-.essb-options-hint-addonhint a { font-weight: bold; }
-.essb-btn-installed, .essb-btn-installed:hover { background-color: #D4D4D4; color: #666 !important;}
-.essb-filter-links, .essb-filter-links li {
-	display: inline-block;
-	margin: 0;
-}
-.essb-filter-links li { margin-right: 5px;}
-.essb-filter-links { padding: 15px 10px; }
-.essb-filter-links a {
-	font-size: 12px;
-	border: 1px solid #ddd;
-	color: #444;
-	padding: 3px 6px;
-	border-radius: 4px;
-}
-
-.essb-filter-links a.current, .essb-filter-links a:hover, .essb-filter-links a:focus {
-	color: #009cdd;
-	border-color: #009cdd;
-	box-shadow: none;
-}
-
-.essb-addon-count {
-	float: right;
-	margin-top: 15px;
-	font-size: 12px;
-}
-
-.essb-wp-filters { margin-top: 0px; }
-
-.essb-title-panel-buttons {
-	padding: 10px 0px;
-	text-align: right;
-}
-
-.sweet-alert h2 { font-size: 21px; font-weight: bold; font-family: "Open Sans"; color: #333; }
-.sweet-alert p { font-weight: 400; font-family: "Open Sans"; color: #333; }
-
-</style>
-
-<div class="wrap">
-
-  <?php
-
-	ESSBOptionsFramework::draw_hint(__('Extensions Download & Install', 'essb'), __('All free plugin extensions you can download from this screen and install like a regular WordPress plugin. You can find the all installation files inside the full plugin package too. The direct download button will remain locked for all versions of plugin that are not activated with purchase code.', 'essb'), 'fa fa-download', 'glow');
-
+<div class="essb-extension-list">
+	<div class="essb-inner-breadcrumb"><i class="title-icon ti-package"></i><?php esc_html_e('Extensions', 'essb'); ?></div>
+	
+	<?php 
+	ESSBOptionsFramework::draw_help('', '', '', array('buttons' => array(esc_html__('Need Help?') => 'https://docs.socialsharingplugin.com/knowledgebase/working-with-plugin-extensions-add-ons-installation-and-update/')));
 	?>
+	
+	<div class="list">
+	<?php 
+	
+	foreach ($current_list as $key => $data) {
+		$price = $data['price'];
+		$check_exist = $data ['check'];
+		$require = isset($data['requires']) ? $data['requires'] : '';
+		$version7 = isset($data['version7']) ? $data['version7'] : '';
+		$actual_version = isset($data['actual_version']) ? $data['actual_version'] : '';
+		$url = $data['page'];
+		
+		$price_tag = ($price == 'free' || $price == 'Free' || $price == 'FREE') ? '<span class="free-tag">'.esc_html__('Free', 'essb').'</span>' : '<span class="paid-tag">'.esc_html__('Paid', 'essb').'</span>';
+		$is_free = ($price == 'free' || $price == 'Free' || $price == 'FREE');
+		
+		$is_installed = false;
 
-	<?php
-
-	$exist_filters = isset($current_list['filters']) ? $current_list['filters'] : array();
-
-	$count = 0;
-	foreach ( $current_list as $addon_key => $addon_data ) {
-
-		if ($addon_key == "filters") continue;
-		$count++;
-	}
-
-	if (count($exist_filters) > 0) {
-		echo '<div class="wp-filter essb-wp-filters">';
-		echo '<ul class="essb-filter-links">';
-
-		foreach ($exist_filters as $key => $text) {
-			echo '<li><a href="#" class="essb-filter-addon'.($key == 'all' ? ' current' : '').'" data-filter="'.$key.'">'.$text.'</a>';
+		if (!is_array($check_exist)) {
+			$check_exist = array();
 		}
-
-		echo '</ul>';
-		echo '<div class="essb-addon-count">Showing <b><span class="essb-active-count">'.$count.'</span></b> of <b>'.$count.'</b> extensions</div>';
-		echo '</div>';
-	}
-
-	?>
-
-	<style type="text/css">
-
-	.extension {
-		width: 100%;
-		max-width: 400px;
-		margin: 1%;
-		display: inline-block;
-		box-shadow: 0 1px 15px 0 rgba(0,0,0,0.1);
-		padding: 15px;
-		vertical-align: top;
-	}
-
-	.extension .title { margin-bottom: 15px; min-height: 32px; }
-
-	.extension h4 {
-		margin: 0;
-		font-size: 16px;
-		font-weight: 700;
-		color: #333;
-	}
-
-
-	.extension .bottom { border-top: 1px solid rgba(0, 0,0,0.05); padding-top: 15px;}
-
-	.extension h4 a { color: #333; }
-
-	.extensions-list .extensions-title { font-size: 21px; }
-
-	.extensions-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-column-gap: 30px; grid-row-gap: 30px; }
-	.extensions-grid .extension { max-width: 100%; margin: 0; padding: 0; }
-	.extensions-grid .extension .inner { padding: 15px; }
-
-	@media screen and (max-width: 1280px) {
-		.extensions-grid { grid-template-columns: 1fr 1fr; }
-	}
-
-	@media screen and (max-width: 960px) {
-		.extensions-grid { grid-template-columns: 1fr; }
-	}
-
-	.essb-options-title, .essb-options-header { display: none; }
-	</style>
-
-	<div class="widefat plugin-install extensions-list">
-
-	<?php
-
-	$site_url = get_bloginfo('url');
-
-
-	echo '<h3 class="extensions-title">Premium Extensions</h3>';
-	echo '<div class="extensions-grid">';
-	foreach ( $current_list as $addon_key => $addon_data ) {
-
-		if ($addon_key == "filters") continue;
-		if ($addon_data ['price'] == 'FREE') continue;
-
-		$filters = isset($addon_data['filters']) ? $addon_data['filters'] : '';
-		$filters_lists = explode(',', $filters);
-
-		$filters_class = " essb-addon-filter-all";
-		foreach ($filters_lists as $filter) {
-			$filters_class .= ' essb-addon-filter-'.$filter;
+		
+		$check_type = isset($check_exist['type']) ? $check_exist['type'] : 'param';
+		$check_for = isset($check_exist['param']) ? $check_exist['param'] : '';
+		
+		if ($check_for != '' && $check_type != '') {
+			$is_installed = $check_type == 'param' ? defined($check_for) : function_exists($check_for);
 		}
-
-		$demo_url = isset ( $addon_data ['demo_url'] ) ? $addon_data ['demo_url'] : '';
-
-		echo '<div class="extension'.$filters_class.'">';
-		echo '<div class="inner">';
-		echo '<div class="title">';
-		echo '<h4>';
-		echo (($addon_data ['price'] == 'FREE') ? '<span class="essb-free">FREE</span>' : '<span class="essb-paid">'.$addon_data ['price'].'</span>' );
-		echo '<a href="' . $addon_data ['page'] . '" target="_blank">' . $addon_data ["name"] . '</a>';
-		echo '</h4>';
-		echo '</div>';
-		echo '<a href="' . $addon_data ['page'] . '" target="_blank">';
-		echo '<div style="position:relative; text-align: center;">';
-		echo '<img src="' . $addon_data ["image"] . '" style="max-width: 100%;"/>';
-
-		if (isset($addon_data['category'])) {
-			if ($addon_data['category'] != '') {
-				$tags = explode(',', $addon_data['category']);
-				foreach ($tags as $tag) {
-					print '<span class="essb-addon-category">'.$tag.'</span>';
+		
+		
+		echo '<div class="addon-card '.($is_installed ? 'addon-card-installed' : '').'">';
+		echo '<div class="header"><img src="'.esc_url(ESSB3_PLUGIN_URL .'/assets/images/'.$data['icon'].'.svg' ).'"/>'.$price_tag.'</div>';
+		
+		echo '<div class="main">';
+		echo '<div class="title">'.$data['name'].'</div>';
+		echo '<div class="desc">'.$data['description'].'</div>';
+		
+		if ($actual_version != '') {
+		    echo '<div class="essb-column-compatibility column-version">';
+		    echo '<span class="compatibility-compatible">'.esc_html__('Latest Version: ', 'essb').'<b>'.esc_attr($actual_version).'</b>'.'</span>';
+		    echo '</div>';
+		}
+		
+		if ($require != '' || $version7 == '') {
+		echo '<div class="essb-column-compatibility column-compatibility">';
+			if ($version7 == '') {
+				echo '<span class="compatibility-untested2">'.esc_html__('The extension is not tested with the version 7 interface update and may not work properly.', 'essb').'</span>';
+			}
+			else {
+				if (version_compare ( ESSB3_VERSION, $require, '<' )) {
+					echo '<span class="compatibility-untested">Requires plugin version <b>' . $require . '</b> or newer</span>';
+				} else {
+					echo '<span class="compatibility-compatible"><b>Compatible</b> with your version of plugin</span>';
+				
 				}
 			}
+			echo '</div>';
 		}
-
+		
 		echo '</div>';
-		echo '</a>';
-		echo '<p class="essb-description">';
-		echo  $addon_data ['description'];
-		echo '</p>';
-
-		if ($addon_data ['price'] != 'FREE') {
-			print '<div class="button-row" style="margin-bottom: 15px; text-align: right;">';
-			print '<a class="essb-btn essb-btn-red" target="_blank"  href="' . $addon_data ['page'] . '">Learn more &rarr;</a>';
-			print '</div>';
+		
+		echo '<div class="footer">';
+		echo '<div class="price">'.$data['price'].'</div>';
+		echo '<div class="action">';
+		
+		if (!$is_free) {
+			echo '<a class="action-btn action-open-btn" target="_blank" href="'.esc_url($url).'">'.esc_html__('Learn More', 'essb').' &rarr;</a>';
 		}
-
-
-		echo '<div class="bottom">';
-
-		echo '<div class="essb-column-compatibility column-compatibility">';
-		$addon_requires = $addon_data ['requires'];
-		if (version_compare ( ESSB3_VERSION, $addon_requires, '<' )) {
-			echo '<span class="compatibility-untested">Requires plugin version <b>' . $addon_requires . '</b> or newer</span>';
-		} else {
-			echo '<span class="compatibility-compatible"><b>Compatible</b> with your version of plugin</span>';
-
-		}
-		echo '</div>';
-
-		// download/purchase buttons
-		print '<div class="column-compatibility essb-column-compatibility">';
-
-
-		$check_exist = $addon_data ['check'];
-		$is_installed = false;
-		$check_function = isset($addon_data['check_function']) ? $addon_data['check_function'] : '';
-
-		if (! empty ( $check_exist )) {
-			if (defined ( $check_exist )) {
-				$is_installed = true;
-			}
-		}
-
-		if (!empty($check_function)) {
-			if (function_exists($check_function)) {
-				$is_installed = true;
-			}
-		}
-
-		if (! $is_installed) {
-			if ($addon_data ['price'] != 'FREE') {
-				print '<a class="essb-btn" target="_blank"  href="' . $addon_data ['page'] . '">Get it now ' . $addon_data ['price'] . ' &rarr;</a>';
+		else {
+			if ($is_installed) {
+				echo '<span class="installed">'.esc_html__('Installed', 'essb').'</span>';
 			}
 			else {
 				if (ESSBActivationManager::isActivated()) {
-					print '<a class="essb-btn" target="_blank"  href="' . $addon_data ['page'] .'&url='.$site_url .'&code='.ESSBActivationManager::getActivationCode() . '" onclick="essbShowFreeAddonInstallation();">Download Free &rarr;</a>';
+					echo '<a class="action-btn action-download-btn" target="_blank"  href="' . esc_url($url) .'&url='.get_bloginfo('url') .'&code='.ESSBActivationManager::getActivationCode() . '" onclick="essbShowFreeAddonInstallation();">Download &rarr;</a>';
 				}
 				else {
-					//print '<span class="button button-primary button-disabled">Download Free</span>';
-					echo ESSBAdminActivate::activateToUnlock('Activate plugin to download');
-
+					echo '<span class="not-activated">'.ESSBAdminActivate::activateToUnlock(esc_html__('Activate plugin to download', 'essb')).'</span>';
 				}
 			}
-		} else {
-			print '<span class="essb-btn essb-btn-installed" disabled="disabled">Installed</span>';
 		}
-
-		if (! empty ( $demo_url )) {
-			print '<a class="essb-btn essb-btn-orange button-no-margin" target="_blank" style="float: right;" href="' . $demo_url . '">Try live demo &rarr;</a>';
-		}
-
-
-		print '</div>';
-
-
+		
 		echo '</div>';
-		echo '</div>'; // inner
 		echo '</div>';
-
+		
+		echo '</div>';
 	}
-	echo '</div>';
-
-	echo '<h3 class="extensions-title">Free Extensions</h3>';
-	echo '<div class="extensions-grid">';
-
-
-
-	foreach ( $current_list as $addon_key => $addon_data ) {
-
-		if ($addon_key == "filters") continue;
-		if ($addon_data ['price'] != 'FREE') continue;
-
-		$filters = isset($addon_data['filters']) ? $addon_data['filters'] : '';
-		$filters_lists = explode(',', $filters);
-
-		$filters_class = " essb-addon-filter-all";
-		foreach ($filters_lists as $filter) {
-			$filters_class .= ' essb-addon-filter-'.$filter;
-		}
-
-		$demo_url = isset ( $addon_data ['demo_url'] ) ? $addon_data ['demo_url'] : '';
-
-		echo '<div class="extension'.$filters_class.'">';
-		echo '<div class="inner">';
-		echo '<div class="title">';
-		echo '<h4>';
-		echo (($addon_data ['price'] == 'FREE') ? '<span class="essb-free">FREE</span>' : '<span class="essb-paid">'.$addon_data ['price'].'</span>' );
-		echo '<a href="' . $addon_data ['page'] . '" target="_blank">' . $addon_data ["name"] . '</a>';
-		echo '</h4>';
-		echo '</div>';
-		echo '<a href="' . $addon_data ['page'] . '" target="_blank">';
-		echo '<div style="position:relative;text-align:center;">';
-		echo '<img src="' . $addon_data ["image"] . '" style="max-width: 100%;"/>';
-
-		if (isset($addon_data['category'])) {
-			if ($addon_data['category'] != '') {
-				$tags = explode(',', $addon_data['category']);
-				foreach ($tags as $tag) {
-					print '<span class="essb-addon-category">'.$tag.'</span>';
-				}
-			}
-		}
-
-		echo '</div>';
-		echo '</a>';
-		echo '<p class="essb-description">';
-		echo  $addon_data ['description'];
-		echo '</p>';
-
-		if ($addon_data ['price'] != 'FREE') {
-			print '<div class="button-row" style="margin-bottom: 15px; text-align: right;">';
-			print '<a class="essb-btn essb-btn-red" target="_blank"  href="' . $addon_data ['page'] . '">Learn more &rarr;</a>';
-			print '</div>';
-		}
-
-
-		echo '<div class="bottom">';
-
-		echo '<div class="essb-column-compatibility column-compatibility">';
-		$addon_requires = $addon_data ['requires'];
-		if (version_compare ( ESSB3_VERSION, $addon_requires, '<' )) {
-			echo '<span class="compatibility-untested">Requires plugin version <b>' . $addon_requires . '</b> or newer</span>';
-		} else {
-			echo '<span class="compatibility-compatible"><b>Compatible</b> with your version of plugin</span>';
-
-		}
-		echo '</div>';
-
-		// download/purchase buttons
-		print '<div class="column-compatibility essb-column-compatibility">';
-
-
-		$check_exist = $addon_data ['check'];
-		$is_installed = false;
-
-		if (! empty ( $check_exist )) {
-			if (defined ( $check_exist )) {
-				$is_installed = true;
-			}
-		}
-
-		if (! $is_installed) {
-			if ($addon_data ['price'] != 'FREE') {
-				print '<a class="essb-btn" target="_blank"  href="' . $addon_data ['page'] . '">Get it now ' . $addon_data ['price'] . ' &rarr;</a>';
-			}
-			else {
-				if (ESSBActivationManager::isActivated()) {
-					print '<a class="essb-btn" target="_blank"  href="' . $addon_data ['page'] .'&url='.$site_url .'&code='.ESSBActivationManager::getActivationCode() . '" onclick="essbShowFreeAddonInstallation();">Download Free &rarr;</a>';
-				}
-				else {
-					//print '<span class="button button-primary button-disabled">Download Free</span>';
-					echo ESSBAdminActivate::activateToUnlock('Activate plugin to download');
-
-				}
-			}
-		} else {
-			print '<span class="essb-btn essb-btn-installed" disabled="disabled">Installed</span>';
-		}
-
-		if (! empty ( $demo_url )) {
-			print '<a class="essb-btn essb-btn-orange button-no-margin" target="_blank" style="float: right;" href="' . $demo_url . '">Try live demo &rarr;</a>';
-		}
-
-
-		print '</div>';
-
-
-		echo '</div>';
-		echo '</div>'; // inner
-		echo '</div>';
-
-	}
-	echo '</div>';
+	
 	?>
-
 	</div>
-
+	
 </div>
-
-<script type="text/javascript">
-var essbShowFreeAddonInstallation = function() {
-	console.log('message');
-
-		swal('Thank you for downloading a free extension!', 'When the file download is completed go to your WordPress plugin menu and install the file like other plugins. All settings of the extension will appear integrated inside plugin or under plugin menu Easy Social Share Buttons for WordPress.', 'success');
-}
-jQuery(document).ready(function($){
-
-
-
-	var essbRemoveFilterActiveState = function() {
-		$('.essb-wp-filters').find('.essb-filter-addon').each(function() {
-			if ($(this).hasClass('current'))
-				$(this).removeClass('current');
-		});
-	}
-
-	if ($('.essb-wp-filters').length) {
-		$('.essb-wp-filters').find('.essb-filter-addon').each(function() {
-			$(this).click(function(e) {
-				e.preventDefault();
-
-				if ($(this).hasClass('current')) return;
-
-				essbRemoveFilterActiveState();
-				$(this).addClass('current');
-
-				var filterFor = $(this).attr("data-filter") || "";
-				var filterClass = 'essb-addon-filter-'+filterFor;
-
-				$('.extensions-list').hide();
-
-				var count = 0;
-				$('.extensions-list').find('.extension').each(function() {
-					if ($(this).hasClass(filterClass)) {
-						$(this).show();
-						count++;
-					}
-					else
-						$(this).hide();
-				});
-				$('.essb-active-count').text(count);
-				$('.extensions-list').show();
-			});
-		});
-	}
-});
-</script>

@@ -173,7 +173,7 @@ function essb_recovery_get_alt_permalink($past_url, $post_id) {
 }
 
 function essb_recovery_get_alternate_permalink($url, $id) {
-	_deprecated_function( __FUNCTION__, 'ESSB 5.0', 'Please use <code>essb_recovery_get_alt_permalink</code>' );
+	_deprecated_function( __FUNCTION__, 'Easy Social Share Buttons for WordPress 5.0', 'Please use <code>essb_recovery_get_alt_permalink</code>' );
 	
 	return essb_recovery_get_alt_permalink($url, $id);
 	

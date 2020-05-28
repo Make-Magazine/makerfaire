@@ -1,11 +1,11 @@
 <?php
 /**
- * Actions Mapper
- *
+ * Map extra ajax plugin actions for usage
+ * 
  * @author appsreo
  * @package EasySocialShareButtons
  * @since 4.0
- *
+ * 
  */
 
 if (!essb_option_bool_value('deactivate_postcount')) {
@@ -14,30 +14,45 @@ if (!essb_option_bool_value('deactivate_postcount')) {
 }
 
 if (essb_option_bool_value('cache_counter_facebook_async')) {
+	essb_depend_load_function('essb_actions_update_facebook_count', 'lib/core/extenders/essb-actions-facebookcount.php');	
 	add_action ( 'wp_ajax_nopriv_essb_facebook_counter_update', 'essb_actions_update_facebook_count' );
 	add_action ( 'wp_ajax_essb_facebook_counter_update', 'essb_actions_update_facebook_count' );
 }
 
 if (essb_option_bool_value('cache_counter_pinterest_async')) {
+	essb_depend_load_function('essb_actions_update_pinterest_count', 'lib/core/extenders/essb-actions-pinterestcount.php');	
 	add_action ( 'wp_ajax_nopriv_essb_pinterest_counter_update', 'essb_actions_update_pinterest_count' );
 	add_action ( 'wp_ajax_essb_pinterest_counter_update', 'essb_actions_update_pinterest_count' );
 }
 
 
-// loading events only if real time counters are used - @since 5.0
+/**
+ * Real time share counter action adding only if the counter mode is set.
+ */
 if (essb_option_value('counter_mode') == '') {
+	essb_depend_load_function('essb_actions_get_share_counts', 'lib/core/extenders/essb-actions-realsharecounts.php');	
 	add_action ( 'wp_ajax_nopriv_essb_counts', 'essb_actions_get_share_counts' );
 	add_action ( 'wp_ajax_essb_counts', 'essb_actions_get_share_counts' );
 }
 
+/**
+ * Additional ajax update requests that can run over the site
+ */
 add_action ( 'template_redirect', 'essb_process_additional_ajax_requests', 1 );
 
-add_action ( 'wp_ajax_nopriv_essb_love_action', 'essb_love_logclick');
-add_action ( 'wp_ajax_essb_love_action', 'essb_love_logclick');
+/**
+ * Love this button code (only when the button is active on site)
+ */
+if (essb_is_active_social_network('love')) {
+	add_action ( 'wp_ajax_nopriv_essb_love_action', 'essb_love_logclick');
+	add_action ( 'wp_ajax_essb_love_action', 'essb_love_logclick');
+}
 
-// send mail action will only work if the user setup mail form inside settings
-// otherwise action will be removed
-if (essb_option_value('mail_function') == 'form') {
+/**
+ * Adding mail sending action only when the form is configured to work
+ */
+if (essb_option_value('mail_function') == 'form' && essb_is_active_social_network('mail')) {
+	essb_depend_load_function('essb_actions_sendmail', 'lib/core/extenders/essb-actions-sendmail.php');	
 	add_action ( 'wp_ajax_nopriv_essb_mail_action', 'essb_actions_sendmail' );
 	add_action ( 'wp_ajax_essb_mail_action', 'essb_actions_sendmail' );
 }
@@ -49,26 +64,8 @@ if (essb_option_value('mail_function') == 'form') {
 
 if (!function_exists('essb_love_logclick')) {
 	function essb_love_logclick() {
-		global $blog_id;
-
-		$post_id = isset ( $_POST ['post_id'] ) ? $_POST ['post_id'] : '';
-		$service_id = isset ( $_POST ['service'] ) ? $_POST ['service'] : '';
-
-		$post_id = sanitize_text_field($post_id);
-		$service_id = sanitize_text_field($service_id);
-
-		$love_count = get_post_meta($post_id, '_essb_love', true);
-		if( isset($_COOKIE['essb_love_'. $post_id]) ) die( $love_count);
-		if (!isset($love_count)) {
-			$love_count = 0;
-		}
-		$love_count = intval($love_count);
-		$love_count++;
-		update_post_meta($post_id, '_essb_love', $love_count);
-		$cookie_information = 'essb_love_'. $post_id.' = '.$love_count;
-		setcookie('essb_love_'. $post_id, $cookie_information, time()+(3600 * 24), "/", "",  0);
-
-		die ( json_encode ( array ("success" => 'Log handled - post_id = '.$post_id.' count = '.$love_count ) ) );
+		essb_depend_load_function('essb_actions_extender_lovethis', 'lib/core/extenders/essb-actions-lovethis.php');
+		essb_actions_extender_lovethis();
 	}
 }
 
@@ -80,9 +77,9 @@ function essb_process_additional_ajax_requests() {
 		if (!class_exists('ESSBNetworks_SubscribeActions')) {
 			include_once (ESSB3_PLUGIN_ROOT . 'lib/networks/essb-subscribe-actions.php');
 		}
-
+			
 		ESSBNetworks_SubscribeActions::process_subscribe();
-
+			
 		die();
 	}
 
@@ -97,21 +94,21 @@ function essb_process_additional_ajax_requests() {
 				die();
 			}
 		}
-
+		
 		$full_counter_update = isset($_REQUEST['essb_clear_cached_counters']) ? $_REQUEST['essb_clear_cached_counters'] : '';
 		if ($full_counter_update == 'true') {
 			delete_post_meta_by_key('essb_cache_expire');
 		}
-
+		
 		$full_history_clear = isset($_REQUEST['essb_clear_counters_history']) ? $_REQUEST['essb_clear_counters_history'] : '';
 		if ($full_history_clear == 'true') {
 			delete_post_meta(get_the_ID(), 'essb_cache_expire');
 			$networks = essb_available_social_networks();
-
+			
 			foreach ($networks as $key => $data) {
 				delete_post_meta(get_the_ID(), 'essb_c_'.$key);
-			}
-
+			} 
+			
 			delete_post_meta(get_the_ID(), 'essb_c_total');
 		}
 	}
@@ -133,8 +130,8 @@ function essb_process_additional_ajax_requests() {
 
 		exit;
 	}
-
-
+	
+	
 	$design_preview = isset($_REQUEST['subscribe-preview']) ? $_REQUEST['subscribe-preview'] : '';
 	if ($design_preview == 'true') {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/networks/essb-subscribe-preview.php');
@@ -142,285 +139,28 @@ function essb_process_additional_ajax_requests() {
 	}
 }
 
-function essb_actions_update_facebook_count() {
-	$post_id = $_POST['post_id'];
-	$count = $_POST['count'];
-
-	$post_id = sanitize_text_field($post_id);
-	$count = sanitize_text_field($count);
-
-	$past_shares = intval(get_post_meta($post_id, 'essb_c_facebook', true));
-
-	if ( $count > $past_shares || essb_option_bool_value('cache_counter_force') ) {
-		delete_post_meta( $post_id, 'essb_c_facebook' );
-		update_post_meta( $post_id, 'essb_c_facebook', $count );
-	}
-
-	echo json_encode(array('network' => 'facebook', 'past_shares' => $past_shares, 'new_shares' => $count));
-
-	wp_die();
-}
-
-function essb_actions_update_pinterest_count() {
-	$post_id = $_POST['post_id'];
-	$count = $_POST['count'];
-
-	$post_id = sanitize_text_field($post_id);
-	$count = sanitize_text_field($count);
-
-	$past_shares = intval(get_post_meta($post_id, 'essb_c_pinterest', true));
-
-	if ( $count > $past_shares || essb_option_bool_value('cache_counter_force') ) {
-		delete_post_meta( $post_id, 'essb_c_pinterest' );
-		update_post_meta( $post_id, 'essb_c_pinterest', $count );
-	}
-
-	echo json_encode(array('network' => 'pinterest', 'past_shares' => $past_shares, 'new_shares' => $count));
-
-	wp_die();
-}
-
 function essb_actions_update_post_count() {
-	$post_id = isset($_POST["post_id"]) ? $_POST["post_id"] : '';
-	$service_id = isset($_POST["service"]) ? $_POST["service"] : '';
+	essb_depend_load_function('essb_actions_extender_postcount', 'lib/core/extenders/essb-actions-postcount.php');
+	$r = essb_actions_extender_postcount();
 
-	$post_id = sanitize_text_field($post_id);
-	$service_id = sanitize_text_field($service_id);
-
-	$post_id = intval($post_id);
-
-
-	if ($service_id == "print_friendly") {
-		$service_id = "print";
-	}
-
-	$all_networks_object = essb_available_social_networks(true);
-	$all_networks = array();
-	foreach ($all_networks_object as $social => $data) {
-		$all_networks[] = $social;
-	}
-
-	if (in_array($service_id, $all_networks)) {
-		$current_value = get_post_meta($post_id, 'essb_pc_'.$service_id, true);
-		$current_value = intval($current_value) + 1;
-		update_post_meta ( $post_id, 'essb_pc_'.$service_id, $current_value );
-
-		// since 5.6
-		if (essb_is_internal_counted($service_id)) {
-			delete_post_meta( $post_id, 'essb_c_'.$service_id );
-			update_post_meta( $post_id, 'essb_c_'.$service_id, $current_value );
-		}
-
-		// @since 3.6
-		// adding custom hook to execute when click on share buttons
-		// @revision 5.6 - adding to event as a parameter the shared post_id and network
-
-		$action_options = array('post_id' => $post_id, 'network' => $service_id);
-
-		do_action('essb_after_sharebutton_click', $action_options);
-	}
-	else {
-		$post_id = '';
-		$service_id = '';
-		$current_value = '';
-	}
-
-	die(json_encode(array("post_id" => $post_id, "service" => $service_id, "current_value" => $current_value)));
+	die(json_encode($r));
 }
 
-function essb_actions_get_share_counts() {
-	$networks = isset($_REQUEST['nw']) ? $_REQUEST['nw'] : '';
-	$url = isset($_REQUEST['url']) ? $_REQUEST['url'] : '';
-	$instance = isset($_REQUEST['instance']) ? $_REQUEST['instance'] : '';
-	$post = isset($_REQUEST['post']) ? $_REQUEST['post'] : '';
 
-	$networks = sanitize_text_field($networks);
-
-	header('content-type: application/json');
-
-	// check if cache is present
-
-	$is_active_cache =  essb_option_bool_value('admin_ajax_cache');
-	$cache_ttl = intval(essb_option_value('admin_ajax_cache_time'));
-	if ($cache_ttl == 0) {
-		$cache_ttl = 600;
-	}
-
-	$list = explode(',', $networks);
-	$output = array();
-	$output['url'] = sanitize_text_field($url);
-	$output['instance'] = sanitize_text_field($instance);
-	$output['post'] = sanitize_text_field($post);
-	$output['network'] = $networks;
-
-	if (!class_exists('ESSBCounterHelper')) {
-		include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-counters-helper.php');
-	}
-
-	foreach ($list as $nw) {
-		$transient_key = 'essb_'.$nw.'_'.$url;
-		$exist_in_cache = false;
-		if ($is_active_cache) {
-			$cached_value = get_transient($transient_key);
-			if ($cached_value) {
-				$output[$nw] = $cached_value;
-				$exist_in_cache = true;
-			}
-		}
-
-		if (!$exist_in_cache) {
-			$count = ESSBCountersHelper::get_shared_counter($nw, $url, $post);
-			$output[$nw] = $count;
-			if ($is_active_cache) {
-				delete_transient($transient_key);
-				set_transient( $transient_key, $count, $cache_ttl );
-			}
-		}
-	}
-
-	echo str_replace('\\/','/',json_encode($output));
-
-	die();
-}
-
-if (!function_exists('essb_actions_sendmail')) {
-	function essb_actions_sendmail() {
-		$exist_captcha = essb_option_value('mail_captcha_answer');
-		$mail_function_security = essb_option_value('mail_function_security');
-
-		$post_id = essb_object_value($_REQUEST, 'post_id');
-		$from = essb_object_value($_REQUEST, 'from');
-		$to = essb_object_value($_REQUEST, 'to');
-		$c = essb_object_value($_REQUEST, 'c');
-		$mail_salt = essb_object_value($_REQUEST, 'salt');
-		$cu = essb_object_value($_REQUEST, 'cu');
-
-		$post_id = sanitize_text_field($post_id);
-		$from = sanitize_email($from);
-		$to = sanitize_email($to);
-		$c = sanitize_text_field($c);
-		$mail_salt = sanitize_text_field($mail_salt);
-
-		$translate_mail_message_sent = essb_option_value('translate_mail_message_sent');
-		$translate_mail_message_invalid_captcha = essb_option_value('translate_mail_message_invalid_captcha');
-		$translate_mail_message_error_send = essb_option_value('translate_mail_message_error_send');
-		$translate_mail_message_error_mail = essb_option_value('translate_mail_message_error_mail');
-
-
-		$output = array("code" => "", "message" => "");
-		$valid = true;
-
-		if ($exist_captcha != '' && $exist_captcha != $c) {
-			$valid = false;
-			$output["code"] = "101";
-			$output["message"] = $translate_mail_message_invalid_captcha != '' ? $translate_mail_message_invalid_captcha : __("Invalid captcha code", "essb");
-		}
-
-		if (strlen($to) > 80) {
-			$valid = false;
-			$output["code"] = "102";
-			$output["message"] = translate_mail_message_error_mail != '' ? translate_mail_message_error_mail : __('Invalid recepient email', 'essb');
-		}
-
-		$mail_salt_check = get_option(ESSB3_MAIL_SALT);
-		if ($mail_function_security == 'level2') {
-			$mail_salt = "salt";
-			$mail_salt_check = "salt";
-		}
-
-		if ($mail_salt != $mail_salt_check) {
-			$valid = false;
-			$output["code"] = "103";
-			$output["message"] = __('Invalid security key provided', 'essb');
-		}
-
-		if (filter_var($from, FILTER_VALIDATE_EMAIL) === false) {
-			$valid = false;
-			$output["code"] = "104";
-			$output["message"] = __('Invalid sender email', 'essb');
-		}
-
-		if (filter_var($to, FILTER_VALIDATE_EMAIL) === false) {
-			$valid = false;
-			$output["code"] = "102";
-			$output["message"] = translate_mail_message_error_mail != '' ? translate_mail_message_error_mail : __('Invalid recepient email', 'essb');
-		}
-
-		if ($valid) {
-			$message_subject = essb_option_value('mail_subject');
-			$message_body = essb_option_value('mail_body');
-
-			$post = get_post($post_id);
-			$url = get_permalink($post_id);
-
-			if (has_filter('essb_mailshare_url')) {
-				$url = apply_filters('essb_mailshare_url', $url);
-			}
-
-
-			$base_post_url = $url;
-
-			$site_url = get_site_url();
-
-			if (has_filter('essb_mailshare_siteurl')) {
-				$site_url = apply_filters('essb_mailshare_siteurl', $site_url);
-			}
-
-			$base_site_url = $site_url;
-
-			$site_url = '<a href="'.esc_url($site_url).'">'.$site_url.'</a>';
-			$url = '<a href="'.esc_url($url).'">'.$url.'</a>';
-
-			$title = $post->post_title;
-			$image = essb_core_get_post_featured_image($post->ID);
-			$description = $post->post_excerpt;
-
-			if ($image != '') {
-				$image = '<img src="'.$image.'" />';
-			}
-
-
-			$parsed_address = parse_url($base_site_url);
-
-			$message_subject = preg_replace(array('#%%title%%#', '#%%siteurl%%#', '#%%permalink%%#', '#%%image%%#'), array($title, $base_site_url, $base_post_url, $image), $message_subject);
-			$message_body = preg_replace(array('#%%title%%#', '#%%siteurl%%#', '#%%permalink%%#', '#%%image%%#'), array($title, $site_url, $url, $image), $message_body);
-
-			if ($cu != '') {
-				$message_body = $cu . $message_body;
-			}
-
-			$copy_address = essb_option_value('mail_copyaddress');
-			$message_body = str_replace("\r\n", "<br />", $message_body);
-
-			$headers = array();
-			$headers[] = "MIME-Version: 1.0";
-			$headers[] = "Content-type: text/html; charset=utf-8";
-			$headers[] = "Reply-to: ".$from;
-			//$headers[] = "From: ".$from." <no-reply@".$parsed_address['host'].'>';//admin_email
-			//$headers[] = "From: ".$from.' <'.get_bloginfo('admin_email').'>';//admin_email
-			$headers[] = "From: ".get_bloginfo('name').' <'.get_bloginfo('admin_email').'>';//admin_email
-			if ($copy_address != '') {
-				$headers[] = 'Bcc: '. $copy_address;
-			}
-
-			wp_mail($to, $message_subject, $message_body, $headers);
-			$output["code"] = "1";
-			$output["message"] = $translate_mail_message_sent != '' ? $translate_mail_message_sent : __("Message sent!", "essb");
-		}
-
-		echo str_replace('\\/','/',json_encode($output));
-		die();
-	}
-}
-
+/**
+ * Control the networks with internal share counters
+ * 
+ * @param unknown $network
+ * @return boolean
+ */
 function essb_is_internal_counted($network) {
 	$api_counters = array();
 	$api_counters[] = 'facebook';
-
+	
 	if (essb_option_value('twitter_counters') != 'self') {
 		$api_counters[] = 'twitter';
 	}
-
+	
 	$api_counters[] = 'pinterest';
 	$api_counters[] = 'vk';
 	$api_counters[] = 'reddit';
@@ -429,7 +169,8 @@ function essb_is_internal_counted($network) {
 	$api_counters[] = 'mwp';
 	$api_counters[] = 'xing';
 	$api_counters[] = 'yummly';
-
+	$api_counters[] = 'comments'; // added 7.0.4
+	
 	if (in_array($network, $api_counters)) {
 		return false;
 	}

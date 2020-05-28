@@ -4,7 +4,7 @@
  */
 ?>
 
-<div class="essb-customizer-toggle" title="<?php _e('Quick Setup of Your Social Share Buttons', 'essb'); ?>">
+<div class="essb-customizer-toggle" title="<?php esc_html_e('Quick Setup of Your Social Share Buttons', 'essb'); ?>">
 	<div class="essb-customizer-icon essb-customizer-icon-size"></div>
 </div>
 

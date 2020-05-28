@@ -71,7 +71,6 @@ class ESSBMetaboxOptionsFramework {
 			case "checkbox_list_sortable":
 				
 				$ordered_values = isset($essb_admin_options[$id.'_order']) ? $essb_admin_options[$id.'_order'] : array();
-				//print_r($ordered_values);
 				if (is_array($ordered_values)) {
 					if (count($ordered_values) > 0) {
 						$listOfValues = $ordered_values;
@@ -111,13 +110,11 @@ class ESSBMetaboxOptionsFramework {
 			case "image_checkbox":
 				self::draw_options_row_start($title, $description, $recommended);
 				self::draw_image_checkbox_field($id, $listOfValues, $settings_group, $option_value);
-				//self::draw_image_checkbox_field($id, $listOfValues, 'essb_options', array("checkbox_option2" => true));
 				self::draw_options_row_end();
 				break;
 			case "image_radio":
 				self::draw_options_row_start($title, $description, $recommended);
 				self::draw_image_radio_field($id, $listOfValues, $settings_group, $option_value);
-				//self::draw_image_radio_field($id, $listOfValues, 'essb_options', 'checkbox_option1');
 				self::draw_options_row_end();
 				break;
 			case "func":
@@ -208,7 +205,6 @@ class ESSBMetaboxOptionsFramework {
 	
 	public static function draw_heading($title, $level = '1', $submenu_link = '') {
 		$css_class_heading = "";
-		//print $title.'|'.$level.'|'.$submenu_link;
 		switch ($level) {
 			case "1":
 				$css_class_heading = "sub";
@@ -328,8 +324,6 @@ class ESSBMetaboxOptionsFramework {
 	public static function draw_wpeditor_field($field, $settings_group = 'essb_options', $value = '') {
 		$value =  ( stripslashes($value));
 
-		
-		//printf('<div id="wpeditor_%1$s"></div>', $field);
 		printf('<textarea id="essb_options_%1$s" name="%2$s[%1$s]" class="input-element stretched essb-hidden-element" rows="5">%3$s</textarea>', $field, $settings_group, $value);
 		$editor_options = array('textarea_name' => $settings_group.'['.$field.']');
 		wp_editor($value, sprintf('wpeditor_%1$s', $field), $editor_options);
@@ -351,27 +345,15 @@ class ESSBMetaboxOptionsFramework {
     });
 				};
   </script>', $field, $mode);
-  		/*printf('<script>
-				function activate__%1$s() {
-				console.log("activating %1$s");
-    var editor_%1$s = CodeMirror.fromTextArea(document.getElementById("essb_options_%1$s"), {
-      lineNumbers: true,
-      mode: "%2$s",
-      lineWrapping: true,      
-      matchBrackets: true,
-      foldGutter: true,
-      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-    });
-				};
-  </script>', $field, $mode);*/
+
 	}
 	
 	
 	public static function draw_switch_field($field, $settings_group = 'essb_options', $value = '', $on_text = '', $off_text = '') {
 		if ($settings_group == '') { $settings_group = "essb_options"; }
 		
-		if ($on_text == "") { $on_text = __('On', ESSB3_TEXT_DOMAIN); }
-		if ($off_text == "") { $off_text = __('Off', ESSB3_TEXT_DOMAIN); }
+		if ($on_text == "") { $on_text = esc_html__('On', ESSB3_TEXT_DOMAIN); }
+		if ($off_text == "") { $off_text = esc_html__('Off', ESSB3_TEXT_DOMAIN); }
 		
 		if ($value == "true") {
 			$on_switch = " selected";
@@ -415,7 +397,7 @@ class ESSBMetaboxOptionsFramework {
 		}
 		
 		echo '<input id="essb_options_' . $field_id . '" type="text" name="' . $settings_group . '[' . $field_id . ']" value="' . $value . '" class="input-element small-stretched '.$class.'" />';
-		echo '<a href="#" class="button" id="essb_fileselect_' . $field_id . '">'.__('Select File', ESSB3_TEXT_DOMAIN).'</a>';
+		echo '<a href="#" class="button" id="essb_fileselect_' . $field_id . '">'.esc_html__('Select File', ESSB3_TEXT_DOMAIN).'</a>';
 		?>
 		
 		<script type="text/javascript">
@@ -501,12 +483,6 @@ class ESSBMetaboxOptionsFramework {
 		}
 	
 		echo '</select>';
-		
-		echo '<script type="text/javascript">jQuery(document).ready(function($){
-		jQuery("#essb_options_' . $field . '").select2({
-  placeholder: "'.$placeholder.'",
-  allowClear: '.$allow_clear_state.'
-});});</script>';
 	}
 	
 	public static function draw_checkbox_field($field, $group = 'essb_options', $value = '') {
@@ -527,16 +503,7 @@ class ESSBMetaboxOptionsFramework {
 		if (!is_array($value)) {
 			$value = array();
 		}
-	
-		/*
-		 * printf('<ul class="essb_sortable" id="essb-sortable-%1$s">', $field);
-		
-		foreach ($value as $single) {
-			printf('<li>%1$s<input type="hidden" name="%2$s[%3$s][]" value="%1$s"/></li>', $single, $settings_group, $field);
-		}
-		
-		echo '</ul>';
-		 */
+
 		printf('<ul class="essb_sortable" id="essb-sortable-%1$s">', $field);
 		foreach ($listOfValues as $key => $text) {
 			$is_checked = in_array($key, $value) ? ' checked="checked"' : '';

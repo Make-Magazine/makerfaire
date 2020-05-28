@@ -8,7 +8,7 @@ class ESSB_Elementor_Pinterest_Image_Widget extends Widget_Base {
 	}
 	
 	public function get_title() {
-		return __( 'Pinable Image', 'essb' );
+		return esc_html__( 'Pinable Image', 'essb' );
 	}
 	
 	public function get_icon() {
@@ -31,7 +31,7 @@ class ESSB_Elementor_Pinterest_Image_Widget extends Widget_Base {
 		$this->add_control(
 				'message',
 				[
-				'label' => __( 'Custom Pin Text', 'essb' ),
+				'label' => esc_html__( 'Custom Pin Text', 'essb' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'default' => '',
 				]
@@ -40,7 +40,7 @@ class ESSB_Elementor_Pinterest_Image_Widget extends Widget_Base {
 		$this->add_control(
 				'type',
 				[
-				'label' => __( 'Pin Type', 'essb' ),
+				'label' => esc_html__( 'Pin Type', 'essb' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => array('' => 'Custom Selected Image', 'post' => 'Pin Post Custom Pinterest Data')
@@ -50,7 +50,7 @@ class ESSB_Elementor_Pinterest_Image_Widget extends Widget_Base {
 		$this->add_control(
 				'align',
 				[
-				'label' => __( 'Image Align', 'essb' ),
+				'label' => esc_html__( 'Image Align', 'essb' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => array('' => 'Default', 'left' => 'Left', 'center' => 'Center', 'right' => 'Right')
@@ -60,7 +60,7 @@ class ESSB_Elementor_Pinterest_Image_Widget extends Widget_Base {
 		$this->add_control(
 				'image',
 				[
-				'label' => __( 'Image', 'essb' ),
+				'label' => esc_html__( 'Image', 'essb' ),
 				'type' => \Elementor\Controls_Manager::MEDIA,
 				'default' => [
 					'url' => \Elementor\Utils::get_placeholder_image_src(),
@@ -71,7 +71,7 @@ class ESSB_Elementor_Pinterest_Image_Widget extends Widget_Base {
 		$this->add_control(
 				'custom_classes',
 				[
-				'label' => __( 'Custom Image CSS Classes', 'essb' ),
+				'label' => esc_html__( 'Custom Image CSS Classes', 'essb' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				]
@@ -81,7 +81,7 @@ class ESSB_Elementor_Pinterest_Image_Widget extends Widget_Base {
 				'custom_image_explanation',
 				[
 				'type' => Controls_Manager::RAW_HTML,
-				'raw' => __( 'The selected image you choose will appear on screen and also in Pinterest share. If you need to specify a different Pinterest image (for example optimized for screen and optimized for share) choose below the image inside Pin.', 'essb' ),
+				'raw' => esc_html__( 'The selected image you choose will appear on screen and also in Pinterest share. If you need to specify a different Pinterest image (for example optimized for screen and optimized for share) choose below the image inside Pin.', 'essb' ),
 				'content_classes' => 'elementor-descriptor',
 				]
 		);
@@ -89,7 +89,7 @@ class ESSB_Elementor_Pinterest_Image_Widget extends Widget_Base {
 		$this->add_control(
 				'custom_image',
 				[
-				'label' => __( 'Custom Pin Image', 'essb' ),
+				'label' => esc_html__( 'Custom Pin Image', 'essb' ),
 				'type' => \Elementor\Controls_Manager::MEDIA,
 				'default' => [
 				'url' => \Elementor\Utils::get_placeholder_image_src(),
@@ -125,7 +125,7 @@ class ESSB_Elementor_Pinterest_Image_Widget extends Widget_Base {
 			));	
 		}
 		else {
-			echo __('Pinterest Pro feature of Easy Social Share Buttons for WordPress is not active right now on your site', 'essb');
+			echo esc_html__('Pinterest Pro feature of Easy Social Share Buttons for WordPress is not active right now on your site', 'essb');
 		}
 	}
 	

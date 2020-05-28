@@ -3,7 +3,7 @@ if (!function_exists('essb_subscribe_form_design5')) {
 	function essb_subscribe_form_design5($salt, $is_widget = false, $position = '') {
 		global $essb_options;
 		
-		$subscribe_mc_namefield = ESSBOptionValuesHelper::options_bool_value($essb_options, 'subscribe_mc_namefield5');
+		$subscribe_mc_namefield = essb_object_bool_value($essb_options, 'subscribe_mc_namefield5');
 		
 		// demo mode using name field
 		$demo_mode_name = isset($_REQUEST['usename']) ? $_REQUEST['usename'] : '';
@@ -12,24 +12,24 @@ if (!function_exists('essb_subscribe_form_design5')) {
 		}
 		
 		$default_texts = array(
-				"title" => __('Join our list', 'essb'),
-				"text" => __('Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'),
-				"email" => __('Enter your email here', 'essb'),
-				"name" => __('Enter your name here', 'essb'),
-				"button" => __('Sign Up Now', 'essb'),
-				"footer" => __('We respect your privacy and take protecting it seriously', 'essb'),
-				"success" => __('Thank you for subscribing.', 'essb'),
-				"error" => __('Something went wrong.', 'essb')
+				"title" => esc_html__('Join our list', 'essb'),
+				"text" => esc_html__('Subscribe to our mailing list and get interesting stuff and updates to your email inbox.', 'essb'),
+				"email" => esc_html__('Enter your email here', 'essb'),
+				"name" => esc_html__('Enter your name here', 'essb'),
+				"button" => esc_html__('Sign Up Now', 'essb'),
+				"footer" => esc_html__('We respect your privacy and take protecting it seriously', 'essb'),
+				"success" => esc_html__('Thank you for subscribing.', 'essb'),
+				"error" => esc_html__('Something went wrong.', 'essb')
 		);
 		
-		$subscribe_mc_title = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_title5');
-		$subscribe_mc_text = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_text5');
-		$subscribe_mc_email = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_email5');
-		$subscribe_mc_name = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_name5');
-		$subscribe_mc_button = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_button5');
-		$subscribe_mc_footer = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_footer5');
-		$subscribe_mc_success = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_success5');
-		$subscribe_mc_error = ESSBOptionValuesHelper::options_value($essb_options, 'subscribe_mc_error5');
+		$subscribe_mc_title = essb_object_value($essb_options, 'subscribe_mc_title5');
+		$subscribe_mc_text = essb_object_value($essb_options, 'subscribe_mc_text5');
+		$subscribe_mc_email = essb_object_value($essb_options, 'subscribe_mc_email5');
+		$subscribe_mc_name = essb_object_value($essb_options, 'subscribe_mc_name5');
+		$subscribe_mc_button = essb_object_value($essb_options, 'subscribe_mc_button5');
+		$subscribe_mc_footer = essb_object_value($essb_options, 'subscribe_mc_footer5');
+		$subscribe_mc_success = essb_object_value($essb_options, 'subscribe_mc_success5');
+		$subscribe_mc_error = essb_object_value($essb_options, 'subscribe_mc_error5');
 		
 		$subscribe_mc_title = stripslashes($subscribe_mc_title);
 		$subscribe_mc_text = stripslashes($subscribe_mc_text);
@@ -65,7 +65,7 @@ if (!function_exists('essb_subscribe_form_design5')) {
 		
 		$output = '<div class="essb-subscribe-form-content essb-subscribe-from-design5'.($is_widget ? " essb-subscribe-form-inwidget" :"").'" data-position="'.esc_attr($position).'" data-design="design5">';
 		$output .= '<div class="essb-subscribe-forced">';
-		$output .= '<h4 class="essb-subscribe-form-content-title">'.$subscribe_mc_title.'</h4>';
+		$output .= '<h4 class="essb-subscribe-form-content-title">'.ESSBNetworks_Subscribe::sanitize_html($subscribe_mc_title).'</h4>';
 		
 		// generating form output
 		$output .= '<form action="'.esc_url(add_query_arg('essb-malchimp-signup', '1', $current_url)).'" method="post" class="essb-subscribe-from-content-form" id="essb-subscribe-from-content-form-mailchimp">';
@@ -81,7 +81,7 @@ if (!function_exists('essb_subscribe_form_design5')) {
 		$output .= '<input class="submit '.$submit_width.'" name="submit" type="submit" value="'.esc_attr($subscribe_mc_button).'" onclick="essb.ajax_subscribe(\''.$salt.'\', event);">';
 		$output .= '</form>';
 		
-		$output .= '<p class="essb-subscribe-form-content-text">'.$subscribe_mc_text.'</p>';
+		$output .= '<p class="essb-subscribe-form-content-text">'.ESSBNetworks_Subscribe::sanitize_html($subscribe_mc_text).'</p>';
 		$output .= '<div class="essb-subscribe-loader">
 		<svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
 		<path fill="#000" d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z">
@@ -100,7 +100,7 @@ if (!function_exists('essb_subscribe_form_design5')) {
 		$output .= '<p class="essb-subscribe-form-content-error essb-subscribe-form-result-message">'.$subscribe_mc_error.'</p>';
 		
 		$output .= '<div class="clear"></div>';
-		$output .= '<p class="essb-subscribe-form-content-footer">'.$subscribe_mc_footer.'</p>';
+		$output .= '<p class="essb-subscribe-form-content-footer">'.ESSBNetworks_Subscribe::sanitize_html($subscribe_mc_footer).'</p>';
 		
 		$output .= '</div>';
 		$output .= '</div>';

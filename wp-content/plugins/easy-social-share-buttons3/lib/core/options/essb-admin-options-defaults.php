@@ -3,14 +3,18 @@ if (!function_exists('essb_available_more_button_commands')) {
 	function essb_available_more_button_commands($add_default = false) {
 		$commands = array ();
 		if ($add_default) {
-			$commands[''] = __('Default value from settings', 'essb');
+			$commands[''] = esc_html__('Default value from settings', 'essb');
 		}
-		$commands['1'] = __('Display all active networks after more button', 'essb');
-		$commands['2'] = __('Display all social networks as pop up', 'essb');
-		$commands['3'] = __('Display only active social networks as pop up', 'essb');
-		$commands['4'] = __('Inline pop of all active networks after more button (icon style)', 'essb');
-		$commands['5'] = __('Inline pop of all active networks after more button (button style)', 'essb');
+		$commands['1'] = esc_html__('Display all active networks after more button', 'essb');
+		$commands['2'] = esc_html__('Display all social networks as pop up', 'essb');
+		$commands['3'] = esc_html__('Display only active social networks as pop up', 'essb');
+		$commands['4'] = esc_html__('Inline pop of all active networks after more button (icon style)', 'essb');
+		$commands['5'] = esc_html__('Inline pop of all active networks after more button (button style)', 'essb');
 
+		if (has_filter('essb_available_more_button_commands')) {
+			$commands = apply_filters('essb_available_more_button_commands', $commands);
+		}
+		
 		return $commands;
 	}
 }
@@ -196,57 +200,52 @@ if (!function_exists('essb_stylebuilder_css_files')) {
 		$files = array();
 
 		$files['easy-social-share-buttons'] = array(
-				'name' => __('Main styles (including templates, mobile display, social networks)', 'essb'),
+				'name' => esc_html__('Main styles (including templates, mobile display, social networks)', 'essb'),
 				'default' => 'true',
 				'file' => 'assets/css/easy-social-share-buttons.min.css');
 
-		$files['essb-aftershare'] = array(
-				'name' => __('After share actions', 'essb'),
-				'default' => 'false',
-				'file' => 'assets/css/essb-after-share-close.min.css');
-
 		$files['essb-animations'] = array(
-				'name' => __('Button animations', 'essb'),
+				'name' => esc_html__('Button animations', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/css/essb-animations.min.css');
 
 		$files['essb-displaymethods'] = array(
-				'name' => __('Additional display method styles - Sidebar, Post Vertical Float, Fly in, Pop up, Hero share, Point, Post Bar', 'essb'),
+				'name' => esc_html__('Additional display method styles - Sidebar, Post Vertical Float, Fly in, Pop up, Hero share, Point, Post Bar', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/css/essb-display-methods.min.css');
 
 		$files['essb-subscribe'] = array(
-				'name' => __('Subscribe Forms', 'essb'),
+				'name' => esc_html__('Subscribe Forms', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/css/essb-subscribe.min.css');
 
 		$files['essb-imageshare'] = array(
-				'name' => __('On media sharing', 'essb'),
+				'name' => esc_html__('On media sharing', 'essb'),
 				'default' => 'false',
 				'file' => 'lib/modules/social-image-share/assets/css/easy-social-image-share.min.css');
 
 		$files['essb-followers'] = array(
-				'name' => __('Followers counter, Social Profiles', 'essb'),
+				'name' => esc_html__('Followers counter, Social Profiles', 'essb'),
 				'default' => 'false',
 				'file' => 'lib/modules/social-followers-counter/assets/css/essb-followers-counter.min.css');
 
 		$files['essb-clicktotweet'] = array(
-				'name' => __('Click to Tweet', 'essb'),
+				'name' => esc_html__('Click to Tweet', 'essb'),
 				'default' => 'false',
 				'file' => 'lib/modules/click-to-tweet/assets/css/styles.css');
 
 		$files['essb-nativebuttons'] = array(
-				'name' => __('Native social buttons', 'essb'),
+				'name' => esc_html__('Native social buttons', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/css/essb-social-like-buttons.min.css');
 
 		$files['essb-nativebuttons-skin'] = array(
-				'name' => __('Native social buttons - skinned mode', 'essb'),
+				'name' => esc_html__('Native social buttons - skinned mode', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/css/essb-native-skinned.min.css');
 
 		$files['essb-nativebuttons-privacy'] = array(
-				'name' => __('Native social buttons - privacy mode', 'essb'),
+				'name' => esc_html__('Native social buttons - privacy mode', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/css/essb-native-privacy.min.css');
 
@@ -260,47 +259,43 @@ if (!function_exists('essb_stylebuilder_js_files')) {
 		$files = array();
 
 		$files['essb-core'] = array(
-				'name' => __('Core Script (required to run properly plugin)', 'essb'),
+				'name' => esc_html__('Core Script (required to run properly plugin)', 'essb'),
 				'default' => 'true',
 				'file' => 'assets/js/essb-core.min.js');
 
 		$files['essb-realtime-counter'] = array(
-				'name' => __('Real time share counters script (required only if you are using real time share counters)', 'essb'),
+				'name' => esc_html__('Real time share counters script (required only if you are using real time share counters)', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/js/easy-social-share-buttons.min.js');
 
 		$files['essb-realtime-counter-total'] = array(
-				'name' => __('Real time total share counter script (required only if you are using real time share counters)', 'essb'),
+				'name' => esc_html__('Real time total share counter script (required only if you are using real time share counters)', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/js/easy-social-share-buttons-total.min.js');
 
-		$files['essb-aftershare'] = array(
-				'name' => __('After share actions', 'essb'),
-				'default' => 'false',
-				'file' => 'assets/js/essb-after-share-close.min.js');
 
 		$files['essb-heroshare'] = array(
-				'name' => __('Hero share display method (activate only if you use this display method)', 'essb'),
+				'name' => esc_html__('Hero share display method (activate only if you use this display method)', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/js/essb-heroshare.min.js');
 
 		$files['essb-animatecounter'] = array(
-				'name' => __('Animated share counters (activate only if you use this plugin function)', 'essb'),
+				'name' => esc_html__('Animated share counters (activate only if you use this plugin function)', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/js/jquery.animateNumber.min.js');
 		
 		$files['essb-onmedia'] = array(
-				'name' => __('On media sharing script (activate only if you will use this plugin function)', 'essb'),
+				'name' => esc_html__('On media sharing script (activate only if you will use this plugin function)', 'essb'),
 				'default' => 'false',
 				'file' => 'lib/modules/social-image-share/assets/js/easy-social-image-share.min.js');
 
 		$files['essb-mycred'] = array(
-				'name' => __('MyCred integration (activate only if you use myCred integration)', 'essb'),
+				'name' => esc_html__('MyCred integration (activate only if you use myCred integration)', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/js/essb-mycred.js');
 		
 		$files['essb-socialprivacy'] = array(
-				'name' => __('Privacy Native Buttons (activate only if you use Native Social Buttons and you activate Privacy option)', 'essb'),
+				'name' => esc_html__('Privacy Native Buttons (activate only if you use Native Social Buttons and you activate Privacy option)', 'essb'),
 				'default' => 'false',
 				'file' => 'assets/js/essb-social-privacy.min.js');
 		

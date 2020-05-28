@@ -1,4 +1,11 @@
 <?php
+/**
+ * AMP share buttons generation. The buttons will appear only if the official WordPress AMP plugin is installed
+
+ * @author appscreo
+ * @since 5.0
+ * @package EasySocialShareButtons
+ */
 
 if (! defined ( 'WPINC' ))
 	die ();
@@ -42,9 +49,7 @@ class ESSBAmpSupport {
 	}
 	
 	public function activate_amp_support() {
-		
 		$is_mobile = true;
-		
 		
 		if ($is_mobile) {
 			$this->options = get_option ( 'easy-social-share-buttons3' );

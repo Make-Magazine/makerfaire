@@ -47,34 +47,29 @@ if ($shareoptimization_state) {
 
 ?>
 
-<style type="text/css">
-.essb-live-customizer .col1-2 { width: 48%; vertical-align: top; }
-.essb-live-customizer .col1-2:nth-child(odd) { margin-right: 15px; }
-
-</style>
-
 <div class="section-share">
-	<div class="customizer-inner-title"><span>Optimize Information That Social Networks Will Share for current post/page</span></div>
+	<div class="customizer-inner-title"><span>
+		<?php esc_html_e('Optimize information for sharing on social networks', 'essb'); ?></span></div>
 	
 	<?php if (!$shareoptimization_state): ?>
 	<div class="row">
-		Social Share Optimization tags are not active on your site. To activate them visit plugin options menu Social Sharing and navigate to <b>Sharing Optimization</b>.
+		<?php esc_html_e('Social Share optimization tags are not active on your site. The social share optimization tags allow you to control shared information for the networks. The tags may be inactive because you already have them generated on your site. If you are not sure should you act or not, you can refer to our support team for assistance.', 'essb'); ?>
 	</div>
 	<div class="row">
-		<a href="<?php echo admin_url('admin.php?page=essb_redirect_social&section=optimize-7'); ?>" class="essb-composer-button essb-composer-blue" target="_blank"><i class="fa fa-cog"></i> Open Required Settings</a>
+		<a href="<?php echo esc_url(admin_url('admin.php?page=essb_options&tab=social&section=optimize')); ?>" class="essb-composer-button essb-composer-blue" target="_blank"><i class="fa fa-cog"></i> Open Required Settings</a>
 	</div>
 	
-	<?php else:?>
+	<?php else: ?>
 	
 	<div class="row">
 		<div class="col1-2">
 		<!-- first column -->
 			<div class="row field">
-		Share Image
-	</div>
+			<?php esc_html_e('Social Image', 'essb'); ?>
+			</div>
 	<div class="row param">
 		<div class="facebook-image-preview">
-			<img src="<?php echo ($essb_post_og_image != '') ? $essb_post_og_image: $sso_post_image; ?>" class="facebook-image-preview-placeholder"/>
+			<img src="<?php echo esc_url(($essb_post_og_image != '') ? $essb_post_og_image: $sso_post_image); ?>" class="facebook-image-preview-placeholder"/>
 					
 				<a href="#" class="essb-composer-button essb-composer-blue" id="essb_fileselect_og_image_button"><i class="fa fa-upload"></i></a>
 		</div>
@@ -138,7 +133,7 @@ if ($shareoptimization_state) {
 		<input type="text" name="essb_fileselect_og_image" id="essb_fileselect_og_image" class="section-save" data-update="meta" data-field="essb_post_og_image" value="<?php echo $essb_post_og_image; ?>" placeholder="<?php echo $sso_post_image; ?>" style="display: none; " />
 	</div>
 	<div class="row description">
-		Add an image that is optimized for maximum exposure on social networks. We recommend 1,200px by 628px.
+		<?php esc_html_e('Add an image that is optimized for maximum exposure on social networks. We recommend 1,200px by 628px', 'essb'); ?>
 	</div>
 		<!-- end first column -->
 	
@@ -147,24 +142,24 @@ if ($shareoptimization_state) {
 		<!-- second column -->
 
 	<div class="row field">
-		Share Title
+		<?php esc_html_e('Share Title', 'essb'); ?>
 	</div>
 	<div class="row param">
-		<input type="text" name="sso_title" class="section-save" data-update="meta" data-field="essb_post_og_title" value="<?php echo $essb_post_og_title; ?>" placeholder="<?php echo $sso_post_title; ?>" />
+		<input type="text" name="sso_title" class="section-save" data-update="meta" data-field="essb_post_og_title" value="<?php echo esc_attr($essb_post_og_title); ?>" placeholder="<?php echo esc_attr($sso_post_title); ?>" />
 	</div>
 	<div class="row description">
-		Fill in custom sharing title which will appear in Oper Graph Tags. 
+		<?php esc_html_e('Fill the title for sharing. It will be used by almost all social networks as a title (some of them may show only the title).', 'essb'); ?> 
 	</div>
 
 	
 	<div class="row field">
-		Share Description
+		<?php esc_html_e('Share Description', 'essb'); ?>
 	</div>
 	<div class="row param">
-		<textarea name="sso_title" class="section-save" data-update="meta" data-field="essb_post_og_desc" rows="4" placeholder="<?php echo $sso_post_desc; ?>"><?php echo $essb_post_og_desc; ?></textarea>
+		<textarea name="sso_title" class="section-save" data-update="meta" data-field="essb_post_og_desc" rows="4" placeholder="<?php echo esc_attr($sso_post_desc); ?>"><?php echo esc_textarea($essb_post_og_desc); ?></textarea>
 	</div>
 	<div class="row description">
-		Fill in custom sharing title which will appear in Oper Graph Tags. 
+		<?php esc_html_e('The custom description will appear as an addition to the shared information. The share description may not be read by all networks.', 'essb'); ?>
 	</div>
 		
 		<!-- end second column -->
@@ -179,36 +174,37 @@ if ($shareoptimization_state) {
 	<div class="row">
 		<div class="col1-2">
 		<!-- first column -->
-			<div class="customizer-inner-title"><span>Tweet Optimizations</span></div>
+			<div class="customizer-inner-title"><span><?php esc_html_e('Custom Tweet', 'essb'); ?></span></div>
+			<div class="row description"><?php esc_html_e('The custom Tweet settings can be used only if the Twitter button is active on your site.', 'essb'); ?></div>
 
 	<div class="row field">
-		Hashtags
+		<?php esc_html_e('Hashtags', 'essb'); ?>
 	</div>
 	<div class="row param">
-		<input type="text" class="section-save" name="sso_title" data-update="meta" data-field="essb_post_twitter_hashtags" value="<?php echo $essb_post_twitter_hashtags; ?>" placeholder="<?php echo $settings_twitterhash; ?>" />
+		<input type="text" class="section-save" name="sso_title" data-update="meta" data-field="essb_post_twitter_hashtags" value="<?php echo esc_attr($essb_post_twitter_hashtags); ?>" placeholder="<?php echo esc_attr($settings_twitterhash); ?>" />
 	</div>
 	<div class="row description">
-		Personalize hashtags that will appear into Tweet. The default hashtags you can fill in Social Sharing -> Social Networks -> Additional Network Options
+		<?php esc_html_e('Enter custom hashtags that will appear inside the Tweet for this post. If the field is blank the global tags will appear (if configured). You can also fill custom hashtags inside the Tweet itself.', 'essb'); ?>
 	</div>
 	
 	<div class="row field">
-		Via Twitter User
+		<?php esc_html_e('Mention Username', 'essb'); ?>
 	</div>
 	<div class="row param">
-		<input type="text" class="section-save" name="sso_title" data-update="meta" data-field="essb_post_twitter_username" value="<?php echo $essb_post_twitter_username; ?>" placeholder="<?php echo $settings_twitteruser; ?>" />
+		<input type="text" class="section-save" name="sso_title" data-update="meta" data-field="essb_post_twitter_username" value="<?php echo esc_attr($essb_post_twitter_username); ?>" placeholder="<?php echo esc_attr($settings_twitteruser); ?>" />
 	</div>
 	<div class="row description">
-		Personalize via username that will appear into Tweet. The default username you can fill in Social Sharing -> Social Networks -> Additional Network Options
+		<?php esc_html_e('Enter a custom Twitter username to be mentioned for this post only. If blank the site username will appear. ', 'essb'); ?>
 	</div>
 	
 	<div class="row field">
-		Tweet
+		<?php esc_html_e('Tweet', 'essb'); ?>
 	</div>
 	<div class="row param">
-		<textarea name="sso_title" class="section-save" data-update="meta" data-field="essb_post_twitter_tweet" rows="4" placeholder="<?php echo $sso_post_title; ?>"><?php echo $essb_post_twitter_tweet; ?></textarea>
+		<textarea name="sso_title" class="section-save" data-update="meta" data-field="essb_post_twitter_tweet" rows="4" placeholder="<?php echo esc_attr($sso_post_title); ?>"><?php echo esc_textarea($essb_post_twitter_tweet); ?></textarea>
 	</div>
 	<div class="row description">
-		Tweet is build using post title. Fill in here your own custom Tweet to get better social reach.
+		<?php esc_html_e('The Tweet is automatically building from the post title. You can personalize and set a custom Tweet using the field here. ', 'essb'); ?>
 	</div>
 		
 		<!-- end: first column -->
@@ -216,21 +212,17 @@ if ($shareoptimization_state) {
 
 		<div class="col1-2">
 		<!-- second column -->
-			<div class="customizer-inner-title"><span>Share Message</span></div>
-	<div class="row field">
-		Customized shared message
-	</div>
+			<div class="customizer-inner-title"><span><?php esc_html_e('Custom Share Message', 'essb'); ?></span></div>
 	<div class="row param">
-		<textarea name="sso_title" class="section-save" data-update="meta" data-field="essb_post_share_message" rows="4" placeholder="<?php echo $sso_post_title; ?>"><?php echo $essb_post_share_message; ?></textarea>
+		<textarea name="sso_title" class="section-save" data-update="meta" data-field="essb_post_share_message" rows="4" placeholder="<?php echo esc_attr($sso_post_title); ?>"><?php echo esc_textarea($essb_post_share_message); ?></textarea>
 	</div>
 	<div class="row description">
-		This is message is used by some social networks as option for the sharing. For example all mobile messanger applications, Pinterest as descriptio of Pin when you turn off option to Pin any image and etc. All major social
-		networks read the sharing message from social sharing optimization tags which is why they are important to be active on site.
+		<?php esc_html_e('The custom share message is an additional component of share personalization. This message will not appear in the social share optimization tags or the custom Tweet but it will read by networks that support such - for example, Mobile Messenger.', 'essb'); ?>
 	</div>
 
-	<div class="customizer-inner-title"><span>Pinterest</span></div>
+	<div class="customizer-inner-title"><span><?php esc_html_e('Pinterest', 'essb'); ?></span></div>
 	<div class="row field">
-		Pin only selected image
+		<?php esc_html_e('Pin a selected image only', 'essb'); ?>
 	</div>
 	<div class="row">
 		<?php 
@@ -238,17 +230,17 @@ if ($shareoptimization_state) {
 		?>
 	</div>
 	<div class="row description">
-		Default plugin setup allows to pin any image from your site. If you wish to change this you can do it here and set pin of only one image that you set.
+		<?php esc_html_e('The default mode of the Pinterest button is to share any possible image from your site. If you need to have full control over the generated shared message and image, you can stop this function. The activation of the custom Pin image will give you the chance to select a fully optimized Pinterest image and set a custom Pin.', 'essb'); ?>
 	</div>
 	<div class="pinterest-custom-image" <?php if ($pinterest_sniff_disable == '') { echo 'style="display: none;"'; } ?>>
 		<div class="row field">
-			Pinterest Image
+			<?php esc_html_e('Pinable Image', 'essb'); ?>
 		</div>
 		<div class="row param">
 			<?php ESSBLiveCustomizerControls::draw_image_select('pinterest-preview-image', 'essb_post_pin_image', 'meta', $essb_post_pin_image); ?>
 		</div>
 		<div class="row description">
-			Choose optimized for pin image that plugin will use once user press Pinterest sharing button.
+			<?php esc_html_e('Optimized Pinterest image is formatted at 2:3 aspect ratio like 735 x 1102.', 'essb'); ?>
 		</div>
 	
 	</div>
@@ -261,7 +253,7 @@ if ($shareoptimization_state) {
 	
 	
 	<div class="row">
-		<a href="#" class="essb-composer-button essb-composer-blue essb-section-save" data-section="section-share"><i class="fa fa-save"></i> Save Settings</a>
+		<a href="#" class="essb-composer-button essb-composer-blue essb-section-save" data-section="section-share"><i class="fa fa-save"></i> <?php esc_html_e('Save Settings', 'essb'); ?></a>
 	</div>
 </div>
 

@@ -12,19 +12,11 @@ function essb_mytemplatebuilder_init() {
 
 
 function essb_mytemplatebuilder_initialze($templates = array()) {
-	$templates['998'] = __('User Template', 'essb');
+	$templates['998'] = esc_html__('User Template', 'essb');
 	
 	return $templates;
 }
 
-add_action('admin_head', 'essb_mytemplatebuilder_custom');
-
-function essb_mytemplatebuilder_custom() {
-	echo '<style type="text/css">
-	.essb-mytemplate-network { padding: 20px; }
-}
-</style>';
-}
 
 add_action('essb_after_admin_save_settings', 'essb_mytemplatebuilder_generate_custom_styles');
 
@@ -63,8 +55,8 @@ function essb_mytemplatebuilder_class($class, $template_id) {
 	return $class;
 }
 
-add_action('plugins_loaded', 'essb_mytemplatebuilder_initialize_styles', 999);
-add_action ('admin_enqueue_scripts', 'essb_mytemplatebuilder_initialize_styles_admin', 999 );
+add_action ( 'plugins_loaded', 'essb_mytemplatebuilder_initialize_styles', 999);
+add_action ( 'admin_enqueue_scripts', 'essb_mytemplatebuilder_initialize_styles_admin', 999 );
 
 function essb_mytemplatebuilder_initialize_styles() {
 

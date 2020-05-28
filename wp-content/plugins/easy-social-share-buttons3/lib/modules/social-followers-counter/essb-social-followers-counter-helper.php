@@ -98,6 +98,11 @@ class ESSBSocialFollowersCounterHelper {
 	
 	public static function simplify_order_list($order) {
 		$result = array();
+		
+		if (!is_array($order)) {
+			$order = array();
+		}
+		
 		foreach ($order as $network) {
 			$network_details = explode('|', $network);
 			$result[] = $network_details[0];
@@ -106,12 +111,20 @@ class ESSBSocialFollowersCounterHelper {
 		return $result;
 	}
 	
+	/**
+	 * Generate list of all available networks
+	 * @param unknown_type $display_total
+	 * 
+	 * @since 6.3
+	 * Google+ is removed from the list to ensure that it will not appear inside the settings or dispaly
+	 * even if it is configured (due to potential issues in display)
+	 */
+	
 	public static function available_social_networks ($display_total = true) {
 	
 		$socials = array ();
 		$socials['facebook'] = 'Facebook';
 		$socials['twitter'] = 'Twitter';
-		$socials['google'] = 'Google';
 		$socials['pinterest'] = 'Pinterest';
 		$socials['linkedin'] = 'LinkedIn';
 		$socials['github'] = 'GitHub';
@@ -158,6 +171,15 @@ class ESSBSocialFollowersCounterHelper {
 		
 		$socials['subscribe'] = 'Generic Subscribe Button';
 		
+		$socials['xing'] = 'Xing';
+		$socials['medium'] = 'Medium';
+		$socials['patreon'] = 'Patreon';
+		$socials['mixer'] = 'Mixer';
+		$socials['tiktok'] = 'TikTok';
+		$socials['ok'] = 'Odnoklassniki';
+		
+		$socials['subscribe_form'] = 'Subscribe Form'; // since 7.1
+		
 		if (has_filter('essb4_follower_networks')) {
 			$socials = apply_filters('essb4_follower_networks', $socials);
 		}
@@ -192,12 +214,19 @@ class ESSBSocialFollowersCounterHelper {
 	
 		$format = array ();
 		$format['full'] = '1,000, 10,000'; 
-		$format['fulldot'] = '1.000, 10.000'; 
+		$format['fulldot'] = '1.000, 10.000';
+		$format['fullspace'] = '1 000, 10 000'; 
 		$format['short'] = '1k, 10k, 100k, 1m'; 
 	
 		return $format;
 	}
 	
+	/**
+	 * Generate options for all social networks inside the Socail Followers Counter
+	 * 
+	 * @since 6.3
+	 * Google+ removed from the settings
+	 */
 	public static function options_structure() {
 		$settings = array ();
 		
@@ -215,13 +244,7 @@ class ESSBSocialFollowersCounterHelper {
 		$settings['twitter']['access_token_secret'] = array('type' => 'textbox', 'text' => 'Access token secret', 'authfield' => true);
 		$settings['twitter']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
 		$settings['twitter']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers');
-		
-		$settings['google']['id'] = array('type' => 'textbox', 'text' => 'Page ID/Name');
-		$settings['google']['api_key'] = array('type' => 'textbox', 'text' => 'API Key', 'authfield' => true);
-		$settings['google']['value_type'] = array('type' => 'select', 'text' => 'Google+ display value type', 'values' => array("circledByCount+plusOneCount" => "circledByCount+plusOneCount", "circledByCount" => "circledByCount", "plusOneCount" => "plusOneCount"));
-		$settings['google']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
-		$settings['google']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers');
-		
+				
 		$settings['pinterest']['id'] = array('type' => 'textbox', 'text' => 'Username');
 		$settings['pinterest']['text'] = array('type' => 'textbox', 'text' => 'Fans text', 'default' => 'Followers');
 		$settings['pinterest']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers');
@@ -282,7 +305,7 @@ class ESSBSocialFollowersCounterHelper {
 		
 		$settings['instgram']['id'] = array('type' => 'textbox', 'text' => 'User ID');
 		$settings['instgram']['username'] = array('type' => 'textbox', 'text' => 'Username');
-		$settings['instgram']['api_key'] = array('type' => 'textbox', 'text' => 'Access Token', 'authfield' => true);
+		$settings['instgram']['api_key'] = array('type' => 'textbox', 'text' => 'Access Token', 'authfield' => true, 'description' => 'Inside the plugin, you have two different methods of counter update. If you have a problem with the counter, remove token and try without it (public update).');
 		$settings['instgram']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
 		$settings['instgram']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers');
 		
@@ -385,8 +408,8 @@ class ESSBSocialFollowersCounterHelper {
 		$settings['mymail']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers');
 		
 		$mailpoet_lists = self::mailpoet_get_lists();
-		$mailpoet_lists = array_merge( array( array( 'list_id' => 'all', 'name' => __(' Total Subscribers from All Lists', ESSB3_TEXT_DOMAIN ))), $mailpoet_lists);
-		$mailpoet_lists = array_merge( array( array( 'list_id' => '', 'name' => __(' ', 'essb' ))), $mailpoet_lists);
+		$mailpoet_lists = array_merge( array( array( 'list_id' => 'all', 'name' => esc_html__(' Total Subscribers from All Lists', ESSB3_TEXT_DOMAIN ))), $mailpoet_lists);
+		$mailpoet_lists = array_merge( array( array( 'list_id' => '', 'name' => esc_html__(' ', 'essb' ))), $mailpoet_lists);
 		
 		$parsed_lists = array();
 		foreach ($mailpoet_lists as $list) {
@@ -438,6 +461,35 @@ class ESSBSocialFollowersCounterHelper {
 		$settings['subscribe']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Subscribers');
 		$settings['subscribe']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers or custom text (provided networks does not support social counter update)');
 		$settings['subscribe']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
+
+		$settings['xing']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+		$settings['xing']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers or custom text (provided networks does not support social counter update)');
+		$settings['xing']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
+
+		$settings['medium']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+		$settings['medium']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers or custom text (provided networks does not support social counter update)');
+		$settings['medium']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
+		
+		$settings['patreon']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+		$settings['patreon']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers or custom text (provided networks does not support social counter update)');
+		$settings['patreon']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
+		
+		$settings['mixer']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+		$settings['mixer']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers or custom text (provided networks does not support social counter update)');
+		$settings['mixer']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
+
+		$settings['tiktok']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+		$settings['tiktok']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers or custom text (provided networks does not support social counter update)');
+		$settings['tiktok']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
+
+		$settings['ok']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+		$settings['ok']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers or custom text (provided networks does not support social counter update)');
+		$settings['ok']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
+		
+		$settings['subscribe_form']['design'] = array('type' => 'select', 'text' => 'Design', 'values' => essb_optin_designs());
+		$settings['subscribe_form']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+		$settings['subscribe_form']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers or custom text (provided networks does not support social counter update)');
+		
 		
 		if (has_filter('essb4_follower_networks_settings')) {
 			$settings = apply_filters('essb4_follower_networks_settings', $settings);

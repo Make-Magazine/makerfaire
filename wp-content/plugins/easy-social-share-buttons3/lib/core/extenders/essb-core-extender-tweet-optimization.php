@@ -17,7 +17,7 @@ class ESSBCoreExtenderTweetOptimization {
 		global $essb_options;
 		$max_message_length = 280;
 	
-		$twitter_message_optimize_dots = ESSBOptionValuesHelper::options_bool_value($essb_options, 'twitter_message_optimize_dots');
+		$twitter_message_optimize_dots = essb_object_bool_value($essb_options, 'twitter_message_optimize_dots');
 	
 		$current_message_length = self::twitter_message_length($tweet, $url, $user, $hashtags);
 	

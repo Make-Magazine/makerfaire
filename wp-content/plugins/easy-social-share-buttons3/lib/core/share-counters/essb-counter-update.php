@@ -32,6 +32,11 @@ function essb_counter_update_simple($post_id, $url, $full_url, $networks = array
 			case 'facebook' :
 				$cached_counters [$k] = essb_get_facebook_count($url);
 				break;
+			case "facebook_like":
+				if (essb_option_bool_value('facebook_likebtn_counter') && !in_array('facebook', $networks)) {
+					$cached_counters ['facebook'] = essb_get_facebook_count($url);
+				}
+				break;
 			case 'twitter' :
 				if ($twitter_counter == 'api') {
 					$cached_counters [$k] = 0;
@@ -58,35 +63,25 @@ function essb_counter_update_simple($post_id, $url, $full_url, $networks = array
 				break;
 			case 'linkedin' :
 				
-				//if (essb_option_value('linkedin_counter_type') != 'self') {
-				//	$cached_counters [$k] = essb_get_linkedin_count( $url );
-				//}
-				//else {
 					if (!$recover_mode) {
 						$cached_counters [$k] = essb_get_internal_count( $post_id, $k );
 					}
 					else {
 						$cached_counters[$k] = 0;
-					}
-				//}				
+					}			
 			
 				break;
 			case 'pinterest' :
 				$cached_counters [$k] = essb_get_pinterest_count( $url );
 				break;
 			case 'google' :
-				
-				//if (essb_option_value('google_counter_type') == 'api') {
-				//	$cached_counters [$k] = essb_get_google_count_api($url);
-				//}
-				//else {
+
 					if (!$recover_mode) {
 						$cached_counters [$k] = essb_get_internal_count( $post_id, $k );
 					}
 					else {
 						$cached_counters[$k] = 0;
 					}					
-				//}
 				break;
 			case 'stumbleupon' :
 				$cached_counters [$k] = essb_get_stumbleupon_count($url);
@@ -129,7 +124,16 @@ function essb_counter_update_simple($post_id, $url, $full_url, $networks = array
 				$cached_counters [$k] = essb_get_yummly_count($url);
 				break;
 			case 'addthis' :
-				$cached_counters [$k] = essb_get_addthis_count($url);
+				// @since 7.0
+				// According to customers addthis stores the internal counter no matter of 
+				// the URL version. In the recovery there is no need to callback again counter 
+				// update
+				if (!$recover_mode) {
+					$cached_counters [$k] = essb_get_addthis_count($url);
+				}
+				else {
+					$cached_counters[$k] = 0;
+				}
 				break;				
 			default:
 				if (!$recover_mode) {
@@ -155,7 +159,6 @@ function essb_counter_request( $encUrl ) {
 	$options = array(
 			CURLOPT_RETURNTRANSFER	=> true, 	// return web page
 			CURLOPT_HEADER 			=> false, 	// don't return headers
-			//CURLOPT_FOLLOWLOCATION	=> true, 	// follow redirects
 			CURLOPT_ENCODING	 	=> "", 		// handle all encodings
 			CURLOPT_USERAGENT	 	=> isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'essb', 	// who am i
 			CURLOPT_AUTOREFERER 	=> true, 	// set referer on redirect
@@ -177,7 +180,6 @@ function essb_counter_request( $encUrl ) {
 	curl_setopt_array($ch, $options);
 	// force ip v4 - uncomment this
 	try {
-		//print 'curl state = '.$counter_curl_fix;
 		if ($counter_curl_fix != 'true') {
 			curl_setopt( $ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 		}
@@ -194,7 +196,6 @@ function essb_counter_request( $encUrl ) {
 	curl_close( $ch );
 
 	if ($errmsg != '' || $err != '') {
-		//print_r($errmsg);
 	}
 	return $content;
 }
@@ -255,89 +256,16 @@ function essb_get_internal_count($postID, $service) {
 }
 
 function essb_get_google_count($url) {
-	$buttonUrl = sprintf('https://plusone.google.com/u/0/_/+1/fastbutton?url=%s', urlencode($url));
-	$htmlData  = essb_counter_request($buttonUrl);
-
-	@preg_match_all('#{c: (.*?),#si', $htmlData, $matches);
-	$ret = isset($matches[1][0]) && strlen($matches[1][0]) > 0 ? trim($matches[1][0]) : 0;
-	if(0 != $ret) {
-		$ret = str_replace('.0', '', $ret);
-	}
-
-	return ($ret);
+	return 0;
 }
 
+/**
+ * Google+ has removed their counter and button
+ * @param unknown_type $url
+ * @return number
+ */
 function essb_get_google_count_api($url) {
-	$counter_curl_fix = essb_option_value('counter_curl_fix');
-	
-	$options = array(
-			CURLOPT_RETURNTRANSFER	=> true, 	// return web page
-			CURLOPT_HEADER 			=> false, 	// don't return headers
-			//CURLOPT_FOLLOWLOCATION	=> true, 	// follow redirects
-			CURLOPT_ENCODING	 	=> "", 		// handle all encodings
-			CURLOPT_USERAGENT	 	=> isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'essb', 	// who am i
-			CURLOPT_AUTOREFERER 	=> true, 	// set referer on redirect
-			CURLOPT_CONNECTTIMEOUT 	=> 5, 		// timeout on connect
-			CURLOPT_TIMEOUT 		=> 10, 		// timeout on response
-			CURLOPT_MAXREDIRS 		=> 3, 		// stop after 3 redirects
-			CURLOPT_SSL_VERIFYHOST 	=> 0,
-			CURLOPT_SSL_VERIFYPEER 	=> false,
-			CURLOPT_FAILONERROR => false,
-			CURLOPT_NOSIGNAL => 1,
-	);
-	$ch = curl_init();
-	
-	if (ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) {
-		$options[CURLOPT_FOLLOWLOCATION] = true;
-	}
-	
-	$options[CURLOPT_URL] = 'https://clients6.google.com/rpc';
-	
-	$api_key = essb_option_value('google_counter_token');
-	if ($api_key != '') {
-		$options[CURLOPT_URL] = 'https://clients6.google.com/rpc?key='.$api_key;
-	}
-	
-	$options[CURLOPT_POST] = true;
-	$options[CURLOPT_POSTFIELDS] = '[{"method":"pos.plusones.get","id":"p","params":{"nolog":true,"id":"' . rawurldecode( $url ) . '","source":"widget","userId":"@viewer","groupId":"@self"},"jsonrpc":"2.0","key":"p","apiVersion":"v1"}]';
-	$options[CURLOPT_HTTPHEADER] = array( 'Content-type: application/json' );
-	
-	
-	curl_setopt_array($ch, $options);
-	// force ip v4 - uncomment this
-	try {
-		//print 'curl state = '.$counter_curl_fix;
-		if ($counter_curl_fix != 'true') {
-			curl_setopt( $ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-		}
-	}
-	catch (Exception $e) {
-	
-	}
-	
-	
-	$content	= curl_exec( $ch );
-	$err 		= curl_errno( $ch );
-	$errmsg 	= curl_error( $ch );
-	
-	curl_close( $ch );
-	
-	if ($errmsg != '' || $err != '') {
-		print_r($errmsg);
-	}
-	
-	$result = 0;
-	
-	try {
-		$response = json_decode( $content, true );
-		$result = isset( $response[0]['result']['metadata']['globalCounts']['count'] )?intval( $response[0]['result']['metadata']['globalCounts']['count'] ):0;
-		
-	}
-	catch (Exception $e) {
-		$result = 0;
-	}
-	
-	return $result;
+	return 0;
 }
 
 function essb_get_odnoklassniki_count( $url ) {
@@ -404,14 +332,12 @@ function essb_get_reddit_count($url) {
 	$content = essb_counter_request( $reddit_url );
 	if($content) {
 		if($format == 'json') {
-			//print "result ".$content;
 			$json = json_decode($content,true);
 
 			if (isset($json['data']) && isset($json['data']['children'])) {
 				foreach($json['data']['children'] as $child) { // we want all children for this example
 					$ups+= (int) $child['data']['ups'];
 					$downs+= (int) $child['data']['downs'];
-					//$score+= (int) $child['data']['score']; //if you just want to grab the score directly
 				}
 				$score = $ups - $downs;
 			}
@@ -424,9 +350,11 @@ function essb_get_reddit_count($url) {
 function essb_get_facebook_count($url) {
 	$api3 = true;
 	$api2 = false;
+	$api4 = false;
 	$parse_url = 'https://graph.facebook.com/?id='.$url.'&fields=og_object{engagement}';
 
 	$facebook_token = essb_option_value('facebook_counter_token');
+	$sharedcount_token = essb_option_value('sharedcount_token');
 	
 	if (has_filter('essb4_facebook_token_randomizer')) {
 		$facebook_token = apply_filters('essb4_facebook_token_randomizer', $facebook_token);
@@ -438,10 +366,15 @@ function essb_get_facebook_count($url) {
 	
 	// Applying method API #2 only if token is also provided. Otherwise the method will not return any data
 	if (essb_option_value('facebook_counter_api') == 'api2' && $facebook_token != '') {
-		//$parse_url = 'https://graph.facebook.com/?fields=og_object%7Blikes.summary(true).limit(0)%7D,share&id='.$url;
-		$parse_url = 'https://graph.facebook.com/v3.0/?fields=engagement&id='.$url.'&access_token='.sanitize_text_field($facebook_token);
+		$parse_url = 'https://graph.facebook.com/?fields=engagement&id='.$url.'&access_token='.sanitize_text_field($facebook_token);
 		$api2 = true;
 		$api3 = false;
+	}
+	if (essb_option_value('facebook_counter_api') == 'sharedcount' && $sharedcount_token != '') {
+		$api2 = false;
+		$api3 = false;
+		$api4 = true;
+		$parse_url = 'https://api.sharedcount.com/v1.0/?apikey=' . sanitize_text_field( $sharedcount_token ) . '&url='.$url;
 	}
 
 		
@@ -469,6 +402,13 @@ function essb_get_facebook_count($url) {
 			}
 			
 			$result = $likes + $comments + $shares + $comments_plugin;
+		}
+		else if ($api4) {
+			if ( isset( $data_parsers->Facebook )) {
+				if ( isset( $data_parsers->Facebook->total_count ) ) {
+					$result = intval( $data_parsers->Facebook->total_count );
+				}
+			}	
 		}
 		else {
 			$result = isset( $data_parsers['og_object']['engagement']['count']) ? intval ( $data_parsers['og_object']['engagement']['count'] ) : 0;

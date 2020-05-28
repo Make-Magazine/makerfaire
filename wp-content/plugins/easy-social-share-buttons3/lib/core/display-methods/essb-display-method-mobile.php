@@ -34,9 +34,9 @@ class ESSBDisplayMethodMobile {
 	public static function generate_sharebar_code($options, $share_buttons, $is_shortcode, $shortcode_options = array()) {
 		$output = '';
 	
-		$mobile_sharebar_text = ESSBOptionValuesHelper::options_value($options, 'mobile_sharebar_text');
+		$mobile_sharebar_text = essb_object_value($options, 'mobile_sharebar_text');
 		if ($mobile_sharebar_text == "") {
-			$mobile_sharebar_text = __("Share this", 'essb');
+			$mobile_sharebar_text = esc_html__("Share this", 'essb');
 		}
 			
 		$output = "";

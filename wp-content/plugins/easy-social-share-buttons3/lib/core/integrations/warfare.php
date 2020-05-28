@@ -1,11 +1,16 @@
 <?php
 
 if (!function_exists('essb_sw_custom_data')) {
+	/**
+	 * Read previous set data in Social Warfare plugin
+	 * 
+	 * @return string[]|NULL[]|unknown[]
+	 */
 	function essb_sw_custom_data() {
 		
 		global $post;
 		
-		$result = array('og_title' => '', 'og_description' => '', 'og_image' => '', 'custom_tweet' => '', 'pin_image' => '' );
+		$result = array('og_title' => '', 'og_description' => '', 'og_image' => '', 'custom_tweet' => '', 'pin_image' => '', 'pin_description' => '' );
 		
 		if (isset($post)) {
 			$swp_custom_tweet = get_post_meta($post->ID, 'swp_custom_tweet', true);
@@ -31,6 +36,11 @@ if (!function_exists('essb_sw_custom_data')) {
 			$swp_pinterest_image = get_post_meta($post->ID, 'swp_pinterest_image', true);
 			if ($swp_pinterest_image != '') {
 				$result['pin_image'] = wp_get_attachment_url($swp_pinterest_image);	
+			}
+			
+			$swp_pinterest_description = get_post_meta($post->ID, 'swp_pinterest_description', true);
+			if ($swp_pinterest_description != '') {
+			    $result['pin_description'] = $swp_pinterest_description;
 			}
 		
 		}

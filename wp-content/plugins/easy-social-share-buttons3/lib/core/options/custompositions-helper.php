@@ -44,6 +44,8 @@ class ESSBCustomPositionsManager {
 		add_filter('essb4_custom_method_list', array($this, 'essb_interface_custom_positions'));
 		add_filter('essb4_custom_positions', array($this, 'essb_display_register_mycustom_position'));
 		add_filter('essb4_button_positions', array($this, 'essb_display_mycustom_position'));
+		//@since 7.0 - register also on mobile devices
+		add_filter('essb4_button_positions_mobile', array($this, 'essb_display_mycustom_position'));
 		add_action('init', array($this, 'essb_custom_methods_register'), 99);
 	}
 	
@@ -96,7 +98,12 @@ class ESSBCustomPositionsManager {
 				foreach ($this->hooks as $key => $name) {						
 					if ($name != '') {
 						$count++;
-						essb_prepare_location_advanced_customization('where', 'display-'.$key, $key);
+						if (class_exists('ESSBControlCenter')) {
+							essb_prepare_location_advanced_customization('where', 'positions|display-'.$key, $key);
+						}
+						else {
+							essb_prepare_location_advanced_customization('where', 'display-'.$key, $key);
+						}
 					}
 				}
 			}
@@ -170,8 +177,8 @@ if (!function_exists('essb_custom_position_draw')) {
 	 * @param string $position
 	 */
 
-	function essb_custom_position_draw($position = '', $force = false) {
-		echo essb_custom_position_generate($position, $force);
+	function essb_custom_position_draw($position = '', $force = false, $archive = false) {
+	    echo essb_custom_position_generate($position, $force, $archive);
 	}
 }
 
@@ -183,10 +190,16 @@ if (!function_exists('essb_custom_position_generate')) {
 	 * @param string $position
 	 * @return string
 	 */
-	function essb_custom_position_generate($position = '', $force = false) {
+	function essb_custom_position_generate($position = '', $force = false, $archive = false) {
 		$r = '';
 		if (function_exists('essb_core')) {
 			$general_options = essb_core()->get_general_options();
+						
+			// Forcing archive mode (mainly used in Elementor)
+			if ($archive) {
+			    ESSB_Runtime_Cache::set('force-archive-'.$position, true);
+			}
+			
 			if ($force) {
 				$r = essb_core()->generate_share_buttons($position);
 			}
@@ -206,8 +219,9 @@ if (!function_exists('essb_custom_position_generate')) {
 function essb_shortcode_show_custom_position($atts = array()) {
 	$display = isset($atts['display']) ? $atts['display'] : '';
 	$force = isset($atts['force']) ? $atts['force'] : '';
+	$archive = isset($atts['archive']) ? $atts['archive'] : '';
 	
-	return essb_custom_position_generate($display, $force == 'true' ? true : false);
+	return essb_custom_position_generate($display, $force == 'true' ? true : false, $archive == 'true' ? true : false);
 }
 
 

@@ -158,7 +158,8 @@ function get_url_parameter( param_name ) {
 }
 
 jQuery(document).ready(function($){
-
+	"use strict";
+	
 	var element = $('.essb-heroshare');
 	if (!element.length) {
 		console.log('no heroshare');
@@ -192,7 +193,7 @@ jQuery(document).ready(function($){
 		heroshareTriggeredOnScroll = false;
 		heroshareTriggerEnd = (popOnEnd == "1") ? true : false;
 		console.log('scroll event heroshareTriggerPercent = ' + heroshareTriggerPercent + ', heroshareTriggeredOnScroll = ' + heroshareTriggeredOnScroll+', heroshareTriggerEnd = ' + heroshareTriggerEnd)
-		$(window).scroll(essb_heroshare_onscroll);
+		$(window).on('scroll', essb_heroshare_onscroll);
 		return;
 	}
 	

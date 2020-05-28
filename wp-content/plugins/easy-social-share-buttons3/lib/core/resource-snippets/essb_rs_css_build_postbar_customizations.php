@@ -2,12 +2,11 @@
 if (!function_exists('essb_rs_css_build_postbar_customizations')) {
 	add_filter('essb_css_buffer_head', 'essb_rs_css_build_postbar_customizations');
 	function essb_rs_css_build_postbar_customizations($buffer) {
-		global $essb_options;
 		
-		$postbar_bgcolor = ESSBOptionValuesHelper::options_value($essb_options, 'postbar_bgcolor');
-		$postbar_color = ESSBOptionValuesHelper::options_value($essb_options, 'postbar_color');
-		$postbar_accentcolor = ESSBOptionValuesHelper::options_value($essb_options, 'postbar_accentcolor');
-		$postbar_altcolor = ESSBOptionValuesHelper::options_value($essb_options, 'postbar_altcolor');
+		$postbar_bgcolor = essb_sanitize_option_value('postbar_bgcolor');
+		$postbar_color = essb_sanitize_option_value('postbar_color');
+		$postbar_accentcolor = essb_sanitize_option_value('postbar_accentcolor');
+		$postbar_altcolor = essb_sanitize_option_value('postbar_altcolor');
 		
 		$snippet = '';
 		

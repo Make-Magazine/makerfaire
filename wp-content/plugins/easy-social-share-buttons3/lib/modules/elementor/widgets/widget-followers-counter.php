@@ -8,7 +8,7 @@ class ESSB_Elementor_Followers_Counter_Widget extends Widget_Base {
 	}
 	
 	public function get_title() {
-		return __( 'Followers Counter', 'essb' );
+		return esc_html__( 'Followers Counter', 'essb' );
 	}
 	
 	public function get_icon() {
@@ -74,8 +74,8 @@ class ESSB_Elementor_Followers_Counter_Widget extends Widget_Base {
 						[
 						'label' => $title,
 						'type' => Controls_Manager::SWITCHER,
-						'label_off' => __( 'No', 'essb' ),
-						'label_on' => __( 'Yes', 'essb' ),
+						'label_off' => esc_html__( 'No', 'essb' ),
+						'label_on' => esc_html__( 'Yes', 'essb' ),
 						'default' => 'no',
 						]
 				);
@@ -85,7 +85,7 @@ class ESSB_Elementor_Followers_Counter_Widget extends Widget_Base {
 				$values = isset($options['values']) ? $options['values'] : array();
 				
 				if ($field == 'columns') {
-					$values['layout'] = __('User Layout Builder', 'essb');
+					$values['layout'] = esc_html__('User Layout Builder', 'essb');
 				}
 				
 				$this->add_control(
@@ -115,6 +115,10 @@ class ESSB_Elementor_Followers_Counter_Widget extends Widget_Base {
 		
 		if (!class_exists('\ESSBSocialFollowersCounterDraw')) {
 			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-draw.php');
+		}
+		
+		if (!class_exists('\ESSBSocialFollowersCounter')) {
+			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter.php');
 		}
 		
 		$default_options = \ESSBSocialFollowersCounterHelper::default_instance_settings();		

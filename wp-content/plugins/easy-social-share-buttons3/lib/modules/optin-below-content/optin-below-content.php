@@ -43,7 +43,7 @@ if (!function_exists('essb_optin_below_content')) {
 			return $content;
 		}
 		
-		if (!is_main_query() || !in_the_loop()) {
+		if (!is_main_query() || !in_the_loop() || is_search() || is_feed()) {
 			return $content;
 		}
 		
@@ -51,16 +51,15 @@ if (!function_exists('essb_optin_below_content')) {
 		$of_creditlink = isset($essb3of_options['of_creditlink']) ? $essb3of_options['of_creditlink'] : 'false';
 		$of_posts = isset($essb3of_options['of_posts']) ? $essb3of_options['of_posts'] : 'false';
 		$of_pages = isset($essb3of_options['of_pages']) ? $essb3of_options['of_pages'] : 'false';
-		$of_creditlink_user = isset($essb3of_options['of_creditlink_user']) ? $essb3of_options['of_creditlink_user'] : 'appscreo';
 		
 		$output = '';
 		$output .= "<!-- Best social sharing plugin for WordPress has subscribe forms integrated inside : http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo -->";
 		
 		
-		if ( (is_single() && $of_posts == 'true') || (is_page() && $of_pages == 'true') ) {
+		if ( (is_singular('post') && $of_posts == 'true') || (is_page() && $of_pages == 'true') ) {
 			$output .= do_shortcode('[easy-subscribe design="'.$of_design.'" mode="mailchimp" conversion="belowcontent"]');
 			if ($of_creditlink == 'true') {
-				$output .= '<p style="font-size: 12px; text-align: center;">Powered by <a href="http://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref='.$of_creditlink_user.'" target="_blank">Best Social Sharing Plugin for WordPress</a> Easy Social Shre Buttons</p>';
+				$output .= '<p class="essb-subscribe-poweredby">Powered by <a href="http://go.appscreo.com/essb" target="_blank">Best Social Sharing Plugin for WordPress</a> Easy Social Shre Buttons</p>';
 			}
 			
 			$content .= $output ;
