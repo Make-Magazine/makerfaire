@@ -95,8 +95,10 @@ if (isset($entry->errors)) {
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
-    $project_problems = (isset($entry['287']) ? $entry['287'] : ''); //What are the problems you aim to help solve with this project?
-    $project_challenges = (isset($entry['123']) ? $entry['123'] : ''); //What are some of the major challenges you have encountered and how did you address them?
+    if (strpos($faireShort, "VMF") === 0) {
+        $project_problems = (isset($entry['287']) ? $entry['287'] : ''); //What are the problems you aim to help solve with this project?
+        $project_challenges = (isset($entry['123']) ? $entry['123'] : ''); //What are some of the major challenges you have encountered and how did you address them?
+    }
     $project_website = (isset($entry['27']) ? $entry['27'] : '');  //Website
     $project_video = (isset($entry['32']) ? $entry['32'] : '');     //Video
     $project_video2 = (isset($entry['386']) ? $entry['386'] : '');     //Video2
