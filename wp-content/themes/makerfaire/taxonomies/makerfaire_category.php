@@ -3,6 +3,7 @@
 function makerfaire_category_init() {
 	register_taxonomy( 'makerfaire_category', array( 'post', 'page' ), array(
 		'hierarchical'            => true,
+                'show_in_rest'            => true,
 		'public'                  => true,
 		'show_in_nav_menus'       => true,
 		'show_ui'                 => true,
@@ -36,6 +37,7 @@ function makerfaire_category_init() {
         register_taxonomy( 'makeprojects_category', array( 'post', 'page' ), array(
 		'hierarchical'            => true,
 		'public'                  => true,
+                'show_in_rest'            => true,
 		'show_in_nav_menus'       => true,
 		'show_ui'                 => true,
 		'query_var'               => 'makeprojects_category',
