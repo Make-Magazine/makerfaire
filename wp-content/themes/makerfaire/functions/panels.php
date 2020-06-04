@@ -752,7 +752,8 @@ function getCTApanel() {
       "Light Blue" => ' light-blue-ribbon',
       "Red" => ' red-ribbon',
       "Orange" => ' orange-ribbon',
-	  "Navy" => ' navy-ribbon'
+	  "Navy" => ' navy-ribbon',
+	  "Grey" => ' grey-ribbon'
    );
    $return .= '<a href="' . $cta_url . '">';
    $return .= '<section class="cta-panel' . $bg_color_class_map[$background_color] . '">';

@@ -280,8 +280,6 @@ function load_admin_scripts() {
 
 add_action('admin_enqueue_scripts', 'load_admin_scripts');
 
-// Remove richedit
-// add_filter('user_can_richedit', '__return_false', 50);
 
 //this function is used to enqueue the VUE map
 function mf_map() {

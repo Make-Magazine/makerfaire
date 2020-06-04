@@ -581,9 +581,7 @@
                                 "darkgrey-bg": "Dark Grey",
                                 "darkblue-bg": "Dark Blue"
                             },
-                            "default_value": [
-                                "blue-bg"
-                            ],
+                            "default_value": "blue-bg",
                             "allow_null": 0,
                             "multiple": 0,
                             "ui": 0,
@@ -751,9 +749,7 @@
                                 "darkgrey-bg": "Dark Grey",
                                 "darkblue-bg": "Dark Blue"
                             },
-                            "default_value": [
-                                "blue-bg"
-                            ],
+                            "default_value": "blue-bg",
                             "allow_null": 0,
                             "multiple": 0,
                             "ui": 0,
@@ -1122,7 +1118,8 @@
                                 "Light Blue": "Light Blue",
                                 "Red": "Red",
                                 "Orange": "Orange",
-                                "Navy": "Navy"
+                                "Navy": "Navy",
+                                "Grey": "Grey"
                             },
                             "allow_null": 0,
                             "other_choice": 0,
@@ -1846,9 +1843,7 @@
                                 "300px": "300px",
                                 "400px": "400px"
                             },
-                            "default_value": [
-                                "200px"
-                            ],
+                            "default_value": "200px",
                             "allow_null": 0,
                             "multiple": 0,
                             "ui": 0,
@@ -1873,9 +1868,7 @@
                                 "column": "Bottom",
                                 "column-reverse": "Top"
                             },
-                            "default_value": [
-                                "column-reverse"
-                            ],
+                            "default_value": "column-reverse",
                             "allow_null": 0,
                             "multiple": 0,
                             "ui": 0,
@@ -1996,9 +1989,7 @@
                                                 "darkgrey-bg": "Dark Grey",
                                                 "white-bg yellow-underline": "White"
                                             },
-                                            "default_value": [
-                                                "Blue"
-                                            ],
+                                            "default_value": "Blue",
                                             "allow_null": 0,
                                             "multiple": 0,
                                             "ui": 0,
@@ -2150,9 +2141,7 @@
                                 "blue-bg": "Blue",
                                 "darkblue-bg": "Dark Blue"
                             },
-                            "default_value": [
-                                "darkblue-bg"
-                            ],
+                            "default_value": "darkblue-bg",
                             "allow_null": 0,
                             "multiple": 0,
                             "ui": 0,
@@ -2612,9 +2601,7 @@
                                         "blue-bg": "Blue",
                                         "darkblue-bg": "Dark Blue"
                                     },
-                                    "default_value": [
-                                        "white-bg"
-                                    ],
+                                    "default_value": "white-bg",
                                     "allow_null": 0,
                                     "multiple": 0,
                                     "ui": 0,
@@ -2769,7 +2756,7 @@
                                         "grey-bg": "Grey",
                                         "darkgrey-bg": "Dark Grey"
                                     },
-                                    "default_value": [],
+                                    "default_value": false,
                                     "allow_null": 0,
                                     "multiple": 0,
                                     "ui": 0,
@@ -2818,9 +2805,7 @@
                                 "blue-bg": "Blue",
                                 "darkblue-bg": "Dark Blue"
                             },
-                            "default_value": [
-                                "white-bg"
-                            ],
+                            "default_value": "white-bg",
                             "allow_null": 0,
                             "multiple": 0,
                             "ui": 0,
@@ -2846,9 +2831,7 @@
                                 "center": "Center",
                                 "bottom": "Bottom"
                             },
-                            "default_value": [
-                                "top"
-                            ],
+                            "default_value": "top",
                             "allow_null": 0,
                             "multiple": 0,
                             "ui": 0,
@@ -2983,5 +2966,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1588281981
+    "modified": 1591304862
 }
