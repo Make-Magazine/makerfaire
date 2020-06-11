@@ -179,13 +179,12 @@ function load_scripts() {
     wp_enqueue_style('jquery-ui', '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css', '', '', true);
     wp_enqueue_style('universal.css', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/css/universal.min.css', array(), $my_version);
 
-    // jquery from Wordpress core (with no-conflict mode flag enabled):
+    // font awesome load script
+	wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true ); 
     //auth0
     wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false, true);
     // space time for timezone hijinks
     wp_enqueue_script('spacetime', 'https://unpkg.com/spacetime', array(), false, true);
-	// font awesome load script
-	wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true ); 
 
     if (strpos($_SERVER['REQUEST_URI'], "authenticate-redirect") !== false) {
         wp_enqueue_script('billboard', get_stylesheet_directory_uri() . '/js/libs/billboard.js', array('jquery'), $my_version, true);
