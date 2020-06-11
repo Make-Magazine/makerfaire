@@ -45,8 +45,8 @@ foreach($yearSql as $year) {
           <div ng-controller="ribbonController" class="my-controller" ng-init='loadData(<?php echo $firstYear;?>, [<?php echo $yearJSON;?>])'>
             <div class="ribbonFilter">
               <div class="pull-left">
-                <div ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="box gallery"><i class="fa fa-picture-o"></i>Gallery</div>
-                <div ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="box list"><i class="fa fa-list"></i>List</div>
+                <div ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="box gallery"><i class="far fa-image"></i>Gallery</div>
+                <div ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="box list"><i class="fas fa-list"></i>List</div>
               </div>
               <div class="ribbonHeader pull-right">
                 <select ng-model="faireYear" ng-init="faireYear = '<?php echo $firstYear;?>'" ng-change="loadData(faireYear)">

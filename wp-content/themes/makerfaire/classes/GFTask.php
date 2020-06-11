@@ -273,7 +273,7 @@ Class GFTask {
 		$add_new_url = add_query_arg( array( 'tid' => 0 ) );
 		?>
 
-		<h3><span><i class="fa fa-check-square-o"></i> <?php esc_html_e( 'Tasks', 'makerfaire' ) ?>
+		<h3><span><i class="far fa-check"></i> <?php esc_html_e( 'Tasks', 'makerfaire' ) ?>
 				<a id="add-new-confirmation" class="add-new-h2" href="<?php echo esc_url( $add_new_url ) ?>"><?php esc_html_e( 'Add New', 'gravityforms' ) ?></a></span>
 		</h3>
 

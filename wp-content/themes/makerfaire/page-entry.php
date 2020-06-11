@@ -283,7 +283,7 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
                 <div class="makerEditHead">
                     <input type="hidden" id="entry_id" value="<?php echo $entryId; ?>" />
                     <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>/">
-                        <i class="fa fa-file-image-o" aria-hidden="true"></i>View Your Maker Sign
+                        <i class="far fa-file-image" aria-hidden="true"></i>View Your Maker Sign
                     </a>
 
                     <?php
@@ -291,7 +291,7 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
                     $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
                     ?>
                     <span class="editLink pull-right">
-                        <a href="<?php echo $GVeditLink; ?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit Public information</a>
+                        <a href="<?php echo $GVeditLink; ?>"><i class="fas fa-edit" aria-hidden="true"></i>Edit Public information</a>
                     </span>
                     <div class="clear"></div>
                 </div>
@@ -603,31 +603,31 @@ function getSocial($entrySocial) {
         foreach ($socialArray as $value) {
             if ($value['Your Link'] != "") { // make sure there's a link to be had, then assign that link by plateform
                 if ($value['Plateform'] == "Facebook") {
-                    $socialBlock .= '<a class="social-link facebook-share" href="' . $value['Your Link'] . '"><i class="fa fa-facebook-square"></i></a>';
+                    $socialBlock .= '<a class="social-link facebook-share" href="' . $value['Your Link'] . '"><i class="fab fa-facebook-square"></i></a>';
                 }
                 if ($value['Plateform'] == "Twitter") {
-                    $socialBlock .= '<a class="social-link twitter-share" href="' . $value['Your Link'] . '"><i class="fa fa-twitter"></i></a>';
+                    $socialBlock .= '<a class="social-link twitter-share" href="' . $value['Your Link'] . '"><i class="fab fa-twitter"></i></a>';
                 }
                 if ($value['Plateform'] == "Instagram") {
-                    $socialBlock .= '<a class="social-link instagram-share" href="' . $value['Your Link'] . '"><i class="fa fa-instagram"></i></a>';
+                    $socialBlock .= '<a class="social-link instagram-share" href="' . $value['Your Link'] . '"><i class="fab fa-instagram"></i></a>';
                 }
                 if ($value['Plateform'] == "YouTube") {
-                    $socialBlock .= '<a class="social-link youtube-share" href="' . $value['Your Link'] . '"><i class="fa fa-youtube-play"></i></a>';
+                    $socialBlock .= '<a class="social-link youtube-share" href="' . $value['Your Link'] . '"><i class="fab fa-youtube-play"></i></a>';
                 }
                 if ($value['Plateform'] == "LinkedIn") {
-                    $socialBlock .= '<a class="social-link linkedin-share" href="' . $value['Your Link'] . '"><i class="fa fa-linkedin-square"></i></a>';
+                    $socialBlock .= '<a class="social-link linkedin-share" href="' . $value['Your Link'] . '"><i class="fab fa-linkedin-square"></i></a>';
                 }
                 if ($value['Plateform'] == "Pinterest") {
-                    $socialBlock .= '<a class="social-link pinterest-share" href="' . $value['Your Link'] . '"><i class="fa fa-pinterest-square"></i></a>';
+                    $socialBlock .= '<a class="social-link pinterest-share" href="' . $value['Your Link'] . '"><i class="fab fa-pinterest-square"></i></a>';
                 }
                 if ($value['Plateform'] == "Snapchat") {
-                    $socialBlock .= '<a class="social-link snapchat-share" href="' . $value['Your Link'] . '"><i class="fa fa-snapchat"></i></a>';
+                    $socialBlock .= '<a class="social-link snapchat-share" href="' . $value['Your Link'] . '"><i class="fab fa-snapchat"></i></a>';
                 }
                 if ($value['Plateform'] == "Patreon") {
-                    $socialBlock .= '<a class="social-link patreon-share" href="' . $value['Your Link'] . '"><i class="fa fa-patreon"></i></a>';
+                    $socialBlock .= '<a class="social-link patreon-share" href="' . $value['Your Link'] . '"><i class="fab fa-patreon"></i></a>';
                 }
                 if ($value['Plateform'] == "Other") {
-                    $socialBlock .= '<a class="social-link other-share" href="' . $value['Your Link'] . '"><i class="fa fa-globe"></i></a>';
+                    $socialBlock .= '<a class="social-link other-share" href="' . $value['Your Link'] . '"><i class="fab fa-globe"></i></a>';
                 }
             }
         }

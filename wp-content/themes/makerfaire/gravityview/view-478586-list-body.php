@@ -144,7 +144,7 @@ $entries   = $tableData['data'];
         //RMT edit link
         $RMTeditLink = '<span class="editLink">
                           <button type="button" class="btn btn-default btn-no-border edit-button toggle-popover" data-toggle="popover">
-                            <i class="fa fa-eye" aria-hidden="true"></i>View/Edit Setup
+                            <i class="far fa-eye" aria-hidden="true"></i>View/Edit Setup
                           </button>
                           <div class="popover-content hidden">'.
                             $entryData['mat_res_modal_layout'].'
@@ -196,7 +196,7 @@ $entries   = $tableData['data'];
               if($dispEditPub) { ?>
                 <span class="editLink">
                   <a href="<?php echo $viewEditLink;?>">
-                    <i class="fa fa-eye" aria-hidden="true"></i>
+                    <i class="far fa-eye" aria-hidden="true"></i>
                     View/Edit Public Information
                   </a>
                 </span>
@@ -207,7 +207,7 @@ $entries   = $tableData['data'];
               }elseif($dispGVeditLink){
                 ?>
                 <span class="editLink">
-                  <a href="<?php echo $GVeditLink;?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit Entry</a>
+                  <a href="<?php echo $GVeditLink;?>"><i class="fas fa-edit" aria-hidden="true"></i>Edit Entry</a>
                 </span>
                 <?php
               }
@@ -227,7 +227,7 @@ $entries   = $tableData['data'];
                 if(!empty($entryData['ticketing']) && $entryData['status'] == 'Accepted'){ ?>
                   <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
                     <span class="hideSmall">GET YOUR </span>ENTRY PASSES
-                    <div class="fa fa-ticket fa-lg toggle-popover" data-toggle="popover"></div>
+                    <div class="fas fa-ticket fa-lg toggle-popover" data-toggle="popover"></div>
                   </button>
                   <div class="popover-content hidden">
                     <?php
@@ -240,7 +240,7 @@ $entries   = $tableData['data'];
                         </div>
                         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                           <a target="_blank" href="<?php echo $ticket['link'];?>">
-                            <i class="fa fa-chevron-circle-right fa-2x" aria-hidden="true"></i>
+                            <i class="fas fa-chevron-circle-right fa-2x" aria-hidden="true"></i>
                           </a>
                         </div>
                       </div>
@@ -270,7 +270,7 @@ $entries   = $tableData['data'];
                         <div class="manage-links">
                           <?php
                           foreach($tasks['toDo'] as $task) { ?>
-                            <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="todoTasks" style="color:red"><i class="fa fa-arrow-right" aria-hidden="true"></i>To Do</span></a>
+                            <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="todoTasks" style="color:red"><i class="fas fa-arrow-right" aria-hidden="true"></i>To Do</span></a>
                             <?php
                           }
                           ?>
@@ -279,7 +279,7 @@ $entries   = $tableData['data'];
                           <!--<h4 class="tasks"><i class="fa fa-check" aria-hidden="true"></i>Done</h4>-->
                           <?php
                           foreach($tasks['done'] as $task) { ?>
-                            <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="doneTasks" style="color:green"><i class="fa fa-check" aria-hidden="true"></i>Done</span></a>
+                            <a target="_blank" href="<?php echo $task['action_url'];?>"><?php echo $task['description'];?> <span class="doneTasks" style="color:green"><i class="fas fa-check" aria-hidden="true"></i>Done</span></a>
                             <?php
                           }
                           ?>
@@ -293,7 +293,7 @@ $entries   = $tableData['data'];
 
                 <!-- Manage Entry links -->
                 <button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">MANAGE
-                  <div class="toggle-popover fa fa-cog fa-lg" data-toggle="popover"></div>
+                  <div class="toggle-popover fas fa-cog fa-lg" data-toggle="popover"></div>
                 </button>
                 <div class="popover-content hidden">
                   <div class="manage-entry-popover row">

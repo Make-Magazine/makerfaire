@@ -110,7 +110,7 @@ jQuery( document ).ready(function() {
     var meta_field = jQuery(this).attr('id');
 
     //set meta field status to a processing spinner
-    jQuery("#"+meta_field+'Status').html('<i class="fa fa-spinner fa-spin"></i>');
+    jQuery("#"+meta_field+'Status').html('<i class="fas fa-spinner fa-spin"></i>');
 
     //update meta field on GF entry screen
     var entry_id = jQuery("input[name=entry_info_entry_id]").val();
@@ -124,10 +124,10 @@ jQuery( document ).ready(function() {
     jQuery.post(ajaxurl, data, function(response) {
       if(response=='updated'){
         //after update - set meta field status to success
-        jQuery("#"+meta_field+'Status').html('<i style="color:green" class="fa fa-check"></i>');
+        jQuery("#"+meta_field+'Status').html('<i style="color:green" class="fas fa-check"></i>');
       }else{
         //after update - set meta field status to failed
-        jQuery("#"+meta_field+'Status').html('<i style="color:red" class="fa fa-times"></i>');
+        jQuery("#"+meta_field+'Status').html('<i style="color:red" class="fas fa-times"></i>');
       }
     });
   });
@@ -239,10 +239,10 @@ function addRow(addTo){
   //add action row
   tableRow += '<td id="actions" class="noSend delete">'+
                 '<span onclick="insertRowDB(\''+type+'\')">'+
-                  '<i class="fa fa-check"></i>'+
+                  '<i class="fas fa-check"></i>'+
                 '</span>'+
                 '<span onclick="jQuery(\'#'+type+'RowNew\').remove();">'+
-                  '<i class="fa fa-ban"></i>'+
+                  '<i class="fas fa-ban"></i>'+
                 '</span>'+
               '</td>';
   tableRow += '</tr>';
@@ -348,9 +348,9 @@ function resAttLock(currentEle,lock){
     lockBit = 1;
   }
 
-  var newLock = '<i class="fa fa-unlock-alt fa-lg"></i>';
+  var newLock = '<i class="fas fa-unlock-alt fa-lg"></i>';
   if(lock==0){
-    newLock  = '<i class="fa fa-lock fa-lg"></i>';
+    newLock  = '<i class="fas fa-lock fa-lg"></i>';
   }
   var lockHtml = '<span class="lockIcon" onclick="resAttLock(\''+currentEle+'\','+ lockBit+')">'+newLock+'</span>';
   jQuery(currentEle+' .lock').html(lockHtml);
@@ -420,10 +420,10 @@ function insertRowDB(type){
       };
   jQuery.post(ajaxurl, data, function(response) {
     //set actions column
-    jQuery('#'+type+'RowNew #actions').html('<span onclick="resAttDelete(\'#'+type+'Row'+response.ID+'\')"><i class="fa fa-minus-circle fa-lg"></i></span></td>');
+    jQuery('#'+type+'RowNew #actions').html('<span onclick="resAttDelete(\'#'+type+'Row'+response.ID+'\')"><i class="fas fa-minus-circle fa-lg"></i></span></td>');
 
     //set item to locked
-    jQuery('#'+type+'RowNew .lock').html( '<span class="lockIcon" onclick="resAttLock(\'#'+type+'Row'+response.ID+'\,0)">'+'<i class="fa fa-lock fa-lg"></i>'+'</span>');
+    jQuery('#'+type+'RowNew .lock').html( '<span class="lockIcon" onclick="resAttLock(\'#'+type+'Row'+response.ID+'\,0)">'+'<i class="fas fa-lock fa-lg"></i>'+'</span>');
     //update fields with returned row id
     for (i = 0; i < dataArray.length; i++) {
       jQuery('#'+type+'RowNew #'+dataArray[i]['id']).attr('id',dataArray[i]['id']+'_'+response.ID);
@@ -482,11 +482,11 @@ function hiddenTicket(accessCode) {
   var checkObj = jQuery('#HT'+accessCode);
 
   if(checkObj.hasClass('checked')){
-    checkObj.html('<i class="fa fa-square-o" aria-hidden="true"></i>');
+    checkObj.html('<i class="far fa-square" aria-hidden="true"></i>');
     checkObj.removeClass('checked');
     var checked  = 1;
   }else{
-    checkObj.html('<i class="fa fa-check-square-o" aria-hidden="true"></i>');
+    checkObj.html('<i class="far fa-check-square" aria-hidden="true"></i>');
     checkObj.addClass('checked');
     var checked  = 0;
   }
@@ -508,7 +508,7 @@ function hiddenTicket(accessCode) {
 
   function updateMgmt(action) {
     //set the processing icon
-    jQuery("span."+action+'Msg').html('<i class="fa fa-spinner fa-spin"></i>');
+    jQuery("span."+action+'Msg').html('<i class="fas fa-spinner fa-spin"></i>');
 
     var entry_id = jQuery("input[name=entry_info_entry_id]").val();
     var data = {
@@ -517,7 +517,7 @@ function hiddenTicket(accessCode) {
       'entry_id': entry_id
     };
 
-    var processing_icon = '<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>';
+    var processing_icon = '<i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>';
     //add additional data for each action
     if(action=='update_entry_status') {
       data.entry_info_status_change = jQuery("select[name=entry_info_status_change]").val();
@@ -611,10 +611,10 @@ function hiddenTicket(accessCode) {
     jQuery.post(ajaxurl, data, function(r) {
       if(r.result === 'updated'){
         //after update - set meta field status to success
-        jQuery("span."+action+'Msg').html('<i style="color:green" class="fa fa-check"></i>');
+        jQuery("span."+action+'Msg').html('<i style="color:green" class="fas fa-check"></i>');
       }else{
         //after update - set meta field status to failed
-        jQuery("span."+action+'Msg').html('<i style="color:red" class="fa fa-times"></i>');
+        jQuery("span."+action+'Msg').html('<i style="color:red" class="fas fa-times"></i>');
       }
       if(r.rebuild !== '' && r.rebuildHTML !== ''){
         jQuery("."+r.rebuild).replaceWith(r.rebuildHTML);

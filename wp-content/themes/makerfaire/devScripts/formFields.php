@@ -151,10 +151,10 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
               }
               ?>
             </td>
-            <td class="tcenter"><?php echo (isset($field['visibility']) && $field['visibility']=='administrative'?'<i class="fa fa-check" aria-hidden="true"></i>':'');?></td>
-            <td class="tcenter"><?php echo ($field['isRequired']?'<i class="fa fa-check" aria-hidden="true"></i>':'');?></td>
-            <td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'<i class="fa fa-check" aria-hidden="true"></i>':'');?></td>
-            <td class="tcenter"><?php echo (in_array($field['id'],$msFieldArr)?'<i class="fa fa-check" aria-hidden="true"></i>':'');?></td>
+            <td class="tcenter"><?php echo (isset($field['visibility']) && $field['visibility']=='administrative'?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
+            <td class="tcenter"><?php echo ($field['isRequired']?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
+            <td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
+            <td class="tcenter"><?php echo (in_array($field['id'],$msFieldArr)?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
 
           </tr>
           <?php

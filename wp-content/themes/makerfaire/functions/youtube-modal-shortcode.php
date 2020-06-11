@@ -15,7 +15,7 @@ function youtube_shortcode_modal($atts){
 
     <a class="fancytube fancybox.iframe" href="https://www.youtube.com/embed/<?php echo $id; ?>?autoplay=1">
       <img class="img-responsive" src="https://img.youtube.com/vi/<?php echo $id; ?>/mqdefault.jpg" alt="Maker Faire Video" />
-      <i class="fa fa-play-circle-o fa-3x" aria-hidden="true"></i>
+      <i class="far fa-play-circle fa-3x" aria-hidden="true"></i>
     </a>
 
   <?php

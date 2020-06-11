@@ -169,8 +169,6 @@ function load_scripts() {
     wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
     wp_enqueue_style('make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css', true);
     // wp_enqueue_style('wpb-google-fonts', 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Condensed:400', false);
-    //wp_enqueue_style('font-awesome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', false);
-    wp_enqueue_style('font-awesome', get_stylesheet_directory_uri() . '/css/libs/Font-Awesome-4.4.0/css/font-awesome.min.css', false);
     wp_enqueue_style('linearicons', 'https://cdn.linearicons.com/free/1.0.0/icon-font.min.css', '', 'all', true);
     wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.min.css', array(), $my_version);
     // wp_enqueue_style('ytv', get_stylesheet_directory_uri() . '/css/ytv.css');
@@ -186,6 +184,8 @@ function load_scripts() {
     wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false, true);
     // space time for timezone hijinks
     wp_enqueue_script('spacetime', 'https://unpkg.com/spacetime', array(), false, true);
+	// font awesome load script
+	wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true ); 
 
     if (strpos($_SERVER['REQUEST_URI'], "authenticate-redirect") !== false) {
         wp_enqueue_script('billboard', get_stylesheet_directory_uri() . '/js/libs/billboard.js', array('jquery'), $my_version, true);

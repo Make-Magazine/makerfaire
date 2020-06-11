@@ -17,7 +17,7 @@ get_header(); ?>
       <h2>Open daily, 10am to 7pm</h2>
       <p>(Closed Thanksgiving, Christmas, and New Year's Day)
     </div>
-    <i class="fa fa-chevron-down"></i>
+    <i class="fas fa-chevron-down"></i>
   </div>
 </header>
 
@@ -59,7 +59,7 @@ get_header(); ?>
                 </a>
                 <p><em>Pop-up Roundup - Cuyana, Hunter, Make: & more</em></p>
                 <blockquote>
-                  <i class="fa fa-quote-left"></i><p>Makers and DIYers in San Francisco are in for a treat: Maker Media, the team behind Make: magazine and Maker Faire, has opened its first pop-up shop near Union Square.</p>
+                  <i class="fas fa-quote-left"></i><p>Makers and DIYers in San Francisco are in for a treat: Maker Media, the team behind Make: magazine and Maker Faire, has opened its first pop-up shop near Union Square.</p>
                 </blockquote>
               </div>
               <div class="col-xs-4 hidden-xs">
@@ -81,7 +81,7 @@ get_header(); ?>
                 </a>
                 <p><em>Maker movement opens holiday pop-up store near Union Square</em></p>
                 <blockquote>
-                  <i class="fa fa-quote-left"></i><p>The San Francisco company, which helped launch a worldwide push toward DIY and creativity, is funneling that ethos into its first brick-and-mortar outpost, a holiday pop-up called Make: Store. It’s stocked with kits and tools to help kids and adults get their hands on projects in everything from robotics to crafting.</p>
+                  <i class="fas fa-quote-left"></i><p>The San Francisco company, which helped launch a worldwide push toward DIY and creativity, is funneling that ethos into its first brick-and-mortar outpost, a holiday pop-up called Make: Store. It’s stocked with kits and tools to help kids and adults get their hands on projects in everything from robotics to crafting.</p>
                 </blockquote>
               </div>
               <div class="col-xs-4 hidden-xs">

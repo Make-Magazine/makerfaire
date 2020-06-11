@@ -18,7 +18,7 @@
               ng-model="$ctrl.filterText"
               ng-model-options="{debounce: 500}"
               ng-change="$ctrl.applyMapFilters()" />
-            <div class="fa fa-times-circle cursor-pointer"
+            <div class="fas fa-times-circle cursor-pointer"
               ng-click="$ctrl.filterText = ''; $ctrl.applyMapFilters();">
             </div>
           </div>
@@ -43,7 +43,7 @@
     <div class="container">
       <div class="col-md-12">
         <div class="loading-spinner" ng-if="!$ctrl.faireMarkers">
-          <i class="fa fa-circle-o-notch fa-spin"></i>
+          <i class="fas fa-circle-notch fa-spin"></i>
         </div>
         <!-- Map Angular Component -->
         <faires-google-map
@@ -120,7 +120,7 @@
             </tr>
             <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 20">
               <td>{{row.annual | ordinal}}</td>
-              <td class="map-category-{{row.category}}"><i class="fa fa-circle"></i> {{row.category}}</td>
+              <td class="map-category-{{row.category}}"><i class="fas fa-circle"></i> {{row.category}}</td>
               <td>{{row.event_dt}}</td>
               <td>
                 <a target="_blank" ng-if="row.faire_url" href="{{row.faire_url}}">{{row.name}}</a>

@@ -84,7 +84,7 @@ if ($displayNav) {
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                     <span ng-show="schedSearch.category != ''">{{schedSearch.category}}</span>
                                                     <span ng-show="schedSearch.category == ''">All Topics</span>
-                                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                                 </button>
 
                                                 <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
@@ -102,7 +102,7 @@ if ($displayNav) {
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                     <span ng-show="schedSearch.type != ''">{{schedSearch.type}}</span>
                                                     <span ng-show="schedSearch.type == ''">All Types</span>
-                                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                                 </button>
 
                                                 <ul class="dropdown-menu type" aria-labelledby="mtm-dropdownMenu">
@@ -122,7 +122,7 @@ if ($displayNav) {
                                                     <span ng-show="schedSearch.nicename != ''">{{schedSearch.nicename}}</span>
                                                     <span ng-show="schedSearch.nicename == ''">All <?php echo (get_field('faire_type') == 'VMF' ? 'Tracks' : 'Stages'); ?></span>
 
-                                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                                 </button>
 
                                                 <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
@@ -145,7 +145,7 @@ if ($displayNav) {
                                                     <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                         <span ng-show="schedSearch.region != ''">{{schedSearch.region}}</span>
                                                         <span ng-show="schedSearch.region == null || schedSearch.region == ''">All Regions</span>
-                                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                                     </button>
 
                                                     <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
@@ -171,7 +171,7 @@ if ($displayNav) {
                                                             <button ng-class="{'ng-hide':showFeatured == 'Featured'}" type="button" ng-click="schedSearch.featured = 'Featured';showFeatured = 'Featured';" class="btn btn-default">&nbsp;</button>
                                                         </li>
                                                         <li class="nav-item">
-                                                            <button ng-init="showFeatured = schedSearch.featured" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="schedSearch.featured = '';showFeatured = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
+                                                            <button ng-init="showFeatured = schedSearch.featured" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="schedSearch.featured = '';showFeatured = '';" class="btn btn-default"><i class="fas fa-check"></i></button>
                                                         </li>   
                                                     </ul>
                                                 </div>
@@ -190,7 +190,7 @@ if ($displayNav) {
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                     <span ng-show="filterdow != ''">{{filterdow}}</span>
                                                     <span ng-hide="true">All Days</span>
-                                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                                 </button>
 
                                                 <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
@@ -217,16 +217,16 @@ if ($displayNav) {
                                         <input type="hidden" name="parent_slug"     value="<?php echo $parent_slug; ?>">
 
                                         <span class="fa-stack fa-sm">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-calendar fa-stack-1x fa-inverse"></i>
+                                            <i class="fas fa-circle fa-stack-2x"></i>
+                                            <i class="far fa-calendar-alt fa-stack-1x fa-inverse"></i>
                                         </span> 
                                         <input type="submit" value="Download Filtered Calendar">
                                     </form>
 
                                     <a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
                                         <span class="fa-stack fa-sm">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-print fa-stack-1x fa-inverse"></i>
+                                            <i class="fas fa-circle fa-stack-2x"></i>
+                                            <i class="fas fa-print fa-stack-1x fa-inverse"></i>
                                         </span>
                                         Print filtered schedule
                                     </a>
@@ -235,7 +235,7 @@ if ($displayNav) {
                         </div>
 
                         <div ng-show="!schedules.length" class="container loading">
-                            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                            <i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i>
                             <br/><b style="font-size: 25px;padding-top: 15px;display: block;">Please Wait While We Load Your Virtually Maker Faire Experience</b>
                             <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
                         </div>
@@ -290,7 +290,7 @@ if ($displayNav) {
                                                 <div class="col-xs-10 col-xs-offset-2 sched-more-info">
                                                     <div class="panel-heading">
                                                         <span ng-click="schedule.isCollapsed = !schedule.isCollapsed" ng-init="schedule.isCollapsed = true"><?php _e('quick view', 'MiniMakerFaire'); ?>
-                                                            <i class="fa fa-lg" ng-class="{'fa-angle-down': schedule.isCollapsed, 'fa-angle-up': !schedule.isCollapsed}"></i>
+                                                            <i class="fas fa-lg" ng-class="{'fa-angle-down': schedule.isCollapsed, 'fa-angle-up': !schedule.isCollapsed}"></i>
                                                         </span>
                                                     </div>
                                                     <div collapse="schedule.isCollapsed">

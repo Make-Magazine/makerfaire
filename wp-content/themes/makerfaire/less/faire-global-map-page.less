@@ -66,7 +66,7 @@
         max-width: 215px;
         padding-right: 23px;
       }
-      .fa.fa-times-circle {
+      .fas.fa-times-circle {
         font-size: 20px;
         color: rgba(0,0,0,0.5);
         padding: 7px 4px 4px 4px;
@@ -149,25 +149,24 @@
       // input circle checkbox with fontawesome:
       .checkbox-fa-icon {
         display: none;
-        &~.fa.fa-circle {
+        &~.fas.fa-circle {
           display: none;
           color: inherit;
         }
-        &~.fa.fa-circle-o {
+        &~.far.fa-circle {
           display: inline;
           color: inherit;
         }
         &:checked {
-          &~.fa.fa-circle {
+          &~.fas.fa-circle {
             display: inline;
           }
-          &~.fa.fa-circle-o {
+          &~.far.fa-circle {
             display: none;
           }
         }
       }
-      .fa.fa-circle,
-      .fa.fa-circle-o {
+      .fa-circle {
         font-size: 22px;
         vertical-align: middle;
         &:before {
@@ -191,8 +190,7 @@
       @media all and (max-width: 480px) {
         margin: 0px 5px 5px -5px;
         font-size: 14px;
-        .fa.fa-circle-o,
-        .fa.fa-circle {
+        .fa-circle {
           font-size: 18px;
           &:before {
             position: static;

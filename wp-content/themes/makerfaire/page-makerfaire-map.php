@@ -14,15 +14,15 @@ get_header();
          <div class="col-md-12 map-header-inner">
             <h1>Maker Faires Around the World</h1>
             <!--<div class="admin-buttons">
-               <a class="btn btn-blue" href="/register">Add yours <i class="fa fa-plus"></i></a>
-					<a class="btn btn-blue" href="/edit-your-makerfaire">Manage <i class="fa fa-pencil-square-o"></i></a>
+               <a class="btn btn-blue" href="/register">Add yours <i class="fas fa-plus"></i></a>
+					<a class="btn btn-blue" href="/edit-your-makerfaire">Manage <i class="fas fa-edit"></i></a>
             </div>-->
             <ul id="type-filters">Select by Type:
 					<li v-for="type in types">
 					  <label v-bind:for="type.name" data-toggle="tooltip" v-bind:title="type.description" data-placement="bottom">
 					  <input type="checkbox" v-on:click="typeFilter" v-bind:name="type.name" v-bind:value="type.name" v-bind:id="type.name" checked  />
-						  <i class="fa fa-fw fa-circle-o unchecked"></i>
-    					  <i class="fa fa-fw fa-circle checked"></i>
+						  <i class="far fa-fw fa-circle unchecked"></i>
+    					  <i class="fas fa-fw fa-circle checked"></i>
 						  <span>{{type.name}}</span>
 					  </label>
 					</li>
@@ -30,8 +30,8 @@ get_header();
          </div>
       </div>
       <div class="message-container">
-         <div class="loading-indicator" ref="loadingIndicator">Loading... <i class="fa fa-spinner"></i></div>
-         <div class="error-indicator hidden text-danger" ref="errorIndicator">Sorry! We couldn't load the map... please try again later. <i class="fa fa-exclamation-triangle"></i></div>
+         <div class="loading-indicator" ref="loadingIndicator">Loading... <i class="fas fa-spinner"></i></div>
+         <div class="error-indicator hidden text-danger" ref="errorIndicator">Sorry! We couldn't load the map... please try again later. <i class="fas fa-exclamation-triangle"></i></div>
       </div>
       <div class="map-table-hidden" ref="mapTableWrapper" >
 

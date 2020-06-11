@@ -1034,8 +1034,8 @@ function getSliderPanel(){
 							  margin: 15,
 							  nav: true,
 							  navText: [
-								 "<i class=\'fa fa-caret-left\'></i>",
-								 "<i class=\'fa fa-caret-right\'></i>"
+								 "<i class=\'fas fa-caret-left\'></i>",
+								 "<i class=\'fas fa-caret-right\'></i>"
 							  ],
 							  autoplay: true,
 							  autoplayHoverPause: true,
@@ -1122,8 +1122,8 @@ function getNewsletterPanel() {
     <div class="fancybox-thx" style="display:none;">
       <div class="col-sm-4 hidden-xs nl-modal">
         <span class="fa-stack fa-4x">
-        <i class="fa fa-circle-thin fa-stack-2x"></i>
-        <i class="fa fa-thumbs-o-up fa-stack-1x"></i>
+        <i class="far fa-circle fa-stack-2x"></i>
+        <i class="far fa-thumbs-up fa-stack-1x"></i>
         </span>
       </div>
       <div class="col-sm-8 col-xs-12 nl-modal">

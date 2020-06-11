@@ -192,7 +192,7 @@ function getModalData($tableData){
     jQuery("#copyModal").modal("show");
     //replace Start from scratch button with a spinner on click
     jQuery("#startScratch").click(function() {
-      jQuery("div#modal-footer").html("<i class=\'fa fa-spinner fa-spin  fa-2x\'></i>");
+      jQuery("div#modal-footer").html("<i class=\'fas fa-spinner fa-spin  fa-2x\'></i>");
     });
 
 

@@ -37,7 +37,7 @@
           <a href="mailto:support@makerfaire.com">Email us</a>
         </div>'>
         Settings &amp; Help
-        <i class="fa fa-cog"></i>
+        <i class="fas fa-cog"></i>
       </button>
     </div>
   </div>
@@ -75,7 +75,7 @@
               data-content='<div class="manage-entry-popover"><a>Pay Commercial Maker Fee etc</a></div>'>
               NOTIFICATIONS
               <span class="fa-stack fa-lg">
-              <i class="fa fa-circle"></i>
+              <i class="fas fa-circle"></i>
               <span class="notification-counter">3</span>
               </span>
             </button>
@@ -87,7 +87,7 @@
                 <a href="http://local.wordpress.dev/manage-entries/entry/53541/">View</a>
               </div>'>
               MANAGE
-              <i class="fa fa-cog"></i>
+              <i class="fas fa-cog"></i>
             </button>
           </div>
         </div>
