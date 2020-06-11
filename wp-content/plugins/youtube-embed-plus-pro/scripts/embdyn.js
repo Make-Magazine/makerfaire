@@ -191,10 +191,12 @@
                     if (isInView)
                     {
                         var $vid = $(this);
-                        $vid.attr('src', $vid.attr('data-ep-src'));
-                        $vid.removeAttr('data-ep-src');
+                        var srcTemp = $vid.attr('data-ep-src');
+                        srcTemp = window._EPADashboard_.cleanSrc(srcTemp);
+                        $vid.attr('src', srcTemp);
                         window._EPADashboard_.loadYTAPI();
                         window._EPADashboard_.setupevents(this.id);
+                        $vid.removeAttr('data-ep-src');
                         setTimeout(function ()
                         {
                             $vid.addClass('animated ' + $vid.attr('data-ep-a'));

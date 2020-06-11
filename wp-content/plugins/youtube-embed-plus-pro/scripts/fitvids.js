@@ -66,7 +66,7 @@ var epdofitvids = epdofitvids || function ($)
                 {
                     $this.attr('height', $this.data('origheight'));
                 }
-                
+
                 var height = (this.tagName.toLowerCase() === 'object' || ($this.attr('height') && !isNaN(parseInt($this.attr('height'), 10)))) ? parseInt($this.attr('height'), 10) : $this.height(),
                         width = !isNaN(parseInt($this.attr('width'), 10)) ? parseInt($this.attr('width'), 10) : $this.width(),
                         aspectRatio = height / width;
@@ -77,12 +77,24 @@ var epdofitvids = epdofitvids || function ($)
                     $this.attr('id', videoID);
                 }
 
+                var attrWidth = $this.attr('width');
+                var attrHeight = $this.attr('height');
                 if ($this.parent().hasClass('epyt-video-wrapper'))
                 {
                     try
                     {
                         $this.parent().addClass('fluid-width-video-wrapper').attr('style', 'padding-top: ' + (aspectRatio * 100) + "% !important;");
                         $this.removeAttr('height').removeAttr('width');
+
+                        setTimeout(function ()
+                        {
+                            if (parseInt($this.parent().css('padding-top'), 10) > $this.height() + 20)
+                            {
+                                $this.parent().removeClass('fluid-width-video-wrapper').css('padding-top', '');
+                                $this.attr('width', attrWidth);
+                                $this.attr('height', attrHeight);
+                            }
+                        }, 100);
                     }
                     catch (wraperr)
                     {
@@ -96,6 +108,16 @@ var epdofitvids = epdofitvids || function ($)
                     {
                         $this.wrap(fwvwrap).parent('.fluid-width-video-wrapper').attr('style', 'padding-top: ' + (aspectRatio * 100) + "% !important;");
                         $this.removeAttr('height').removeAttr('width');
+
+                        setTimeout(function ()
+                        {
+                            if (parseInt($this.parent().css('padding-top'), 10) > $this.height() + 20)
+                            {
+                                $this.parent().removeClass('fluid-width-video-wrapper').css('padding-top', '');
+                                $this.attr('width', attrWidth);
+                                $this.attr('height', attrHeight);
+                            }
+                        }, 100);
                     }
                     catch (wraperr)
                     {

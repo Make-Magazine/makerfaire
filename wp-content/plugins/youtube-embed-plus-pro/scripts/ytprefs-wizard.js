@@ -336,6 +336,11 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
                         $scope.model.gallery_hidethumbimg = parseInt($scope.model.gallery_hidethumbimg) === 0 ? 1 : 0;
                     };
 
+                    $scope.gallery_channelsubChange = function ()
+                    {
+                        $scope.model.gallery_channelsub = parseInt($scope.model.gallery_channelsub) === 0 ? 1 : 0;
+                    };
+
                     $scope.live_chatChange = function ()
                     {
                         $scope.model.live_chat = parseInt($scope.model.live_chat) === 0 ? 1 : 0;
@@ -557,6 +562,11 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
                                 {
                                     paramsyt += "&gallery_hidethumbimg=" + $scope.model.gallery_hidethumbimg;
                                 }
+                            }
+                            
+                            if ($scope.model.gallery_channelsub != $scope.myytdefaults.gallery_channelsub)
+                            {
+                                paramsyt += "&gallery_channelsub=" + $scope.model.gallery_channelsub;
                             }
 
                             if ($scope.model.gallery_columns != $scope.myytdefaults.gallery_columns)

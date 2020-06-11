@@ -161,7 +161,7 @@
                             else
                             {
                                 var $iframeTemp = $(ifm).clone(true).off();
-                                $iframeTemp.attr('src', $iframeTemp.attr('src').replace('autoplay=1', 'autoplay=0'));
+                                $iframeTemp.attr('src', window._EPADashboard_.cleanSrc($iframeTemp.attr('src').replace('autoplay=1', 'autoplay=0')));
                                 $(ifm).replaceWith($iframeTemp);
                                 window._EPADashboard_.setupevents($iframeTemp.attr('id'));
                                 ifm = $iframeTemp.get(0);
@@ -249,10 +249,21 @@
                                         if ($chatWrapper.width() > 964)
                                         {
                                             $chatWrapper.addClass('epyt-live-chat-wrapper--wide');
+                                            if (navigator.userAgent.indexOf('MSIE') !== -1
+                                                    || navigator.appVersion.indexOf('Trident/') > -1)
+                                            {
+// ie 11 doesn't do height: 100%;
+                                            }
+
                                         }
                                         else
                                         {
                                             $chatWrapper.removeClass('epyt-live-chat-wrapper--wide');
+                                            if (navigator.userAgent.indexOf('MSIE') !== -1
+                                                    || navigator.appVersion.indexOf('Trident/') > -1)
+                                            {
+// ie 11 doesn't do height: 100%;
+                                            }
                                         }
                                     });
                                 }
@@ -419,9 +430,14 @@
                     },
                     setVidSrc: function ($iframe, vidSrc)
                     {
-                        $iframe.attr('src', vidSrc);
+                        $iframe.attr('src', window._EPADashboard_.cleanSrc(vidSrc));
                         $iframe.get(0).epytsetupdone = false;
                         window._EPADashboard_.setupevents($iframe.attr('id'));
+                    },
+                    cleanSrc: function (srcInput)
+                    {
+                        var cleanedUrl = srcInput.replace('enablejsapi=1?enablejsapi=1', 'enablejsapi=1');
+                        return cleanedUrl;
                     },
                     loadYTAPI: function ()
                     {

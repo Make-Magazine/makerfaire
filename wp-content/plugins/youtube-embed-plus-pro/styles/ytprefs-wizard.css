@@ -249,7 +249,7 @@ a.ythealth:hover .tip {
 #ytpreviewbox {
     position: fixed;
     z-index: 10;
-    max-width: 100%;
+    width: calc(50% - 20px);
 }
 
 #ep-wizard-customizer h2 {
@@ -267,6 +267,15 @@ a.ythealth:hover .tip {
     display: inline-block;
     padding: 5px;
 }
+
+#wpwrap .ep-wizard-preview-video-wrapper {
+    position: relative; padding-top: 56.25%; width: 100%;
+}
+
+#wpwrap .ep-wizard-preview-video-wrapper iframe {
+    width: 100%; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+}
+
 
 /***** final step */
 .container-step-get-code {

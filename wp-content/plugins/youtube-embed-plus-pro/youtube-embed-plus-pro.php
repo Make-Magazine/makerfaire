@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Pro - Gallery, Channel, Playlist, Live Stream
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Pro Plugin. Customize and embed a responsive video, YouTube channel gallery, playlist gallery, or live stream from YouTube.com
-  Version: 13.3.1
+  Version: 13.4
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
  */
@@ -21,7 +21,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '13.3.1';
+    public static $version = '13.4';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -50,6 +50,7 @@ class YouTubePrefsPro
     public static $opt_hl = 'hl';
     public static $opt_ogvideo = 'ogvideo';
     public static $opt_nocookie = 'nocookie';
+    public static $opt_gb_compat = 'gb_compat';
     public static $opt_gdpr_consent = 'gdpr_consent';
     public static $opt_gdpr_consent_message = 'gdpr_consent_message';
     public static $opt_gdpr_consent_button = 'gdpr_consent_button';
@@ -126,7 +127,6 @@ class YouTubePrefsPro
     public static $yt_options = array();
     public static $dft_bpts = array(array('bp' => array('min' => 0, 'max' => 767), 'cols' => 1));
     public static $dft_roles = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
-    //public static $epbase = 'https://localhost:44328';
     public static $epbase = 'https://www.embedplus.com';
     public static $double_plugin = false;
     public static $scriptsprinted = 0;
@@ -199,6 +199,10 @@ class YouTubePrefsPro
 
     public function __construct()
     {
+        if (defined('EMBEDPLUS_BASE_URL'))
+        {
+            self::$epbase = EMBEDPLUS_BASE_URL;
+        }
         self::$vi_default_date = date('Y-m-d H:i:s', strtotime('2000-01-01'));
         register_deactivation_hook(__FILE__, array(get_class(), 'on_deactivation'));
         add_action('admin_init', array(get_class(), 'check_double_plugin_warning'));
@@ -209,14 +213,14 @@ class YouTubePrefsPro
         {
             self::$alloptions = get_option(self::$opt_alloptions);
 
-            if ((defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) || self::$alloptions[self::$opt_debugmode] == 1)
-            {
-                self::$min = '';
-            }
-
             if (self::$alloptions == false || version_compare(self::$alloptions[self::$opt_version], self::$version, '<'))
             {
                 self::initoptions();
+            }
+
+            if ((defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) || self::$alloptions[self::$opt_debugmode] == 1)
+            {
+                self::$min = '';
             }
 
             if (self::$alloptions[self::$opt_oldspacing] == 1)
@@ -844,8 +848,8 @@ class YouTubePrefsPro
                                             <span class="copycode">[embedyt] https://www.youtube.com/watch?v=<?php echo esc_attr($theytid) ?>[/embedyt]</span>
                                             <div class="clearboth" style="height: 10px;">
                                             </div>
-                                            <div class="center relative">
-                                                <iframe src="https://www.youtube.com/embed/<?php echo esc_attr($theytid) ?>?rel=0" allowfullscreen="" width="854" height="480" frameborder="0"></iframe>
+                                            <div class="ep-wizard-preview-video-wrapper">
+                                                <iframe src="https://www.youtube.com/embed/<?php echo esc_attr($theytid) ?>?rel=0" allowfullscreen="" frameborder="0"></iframe>
                                             </div>
 
                                         </div>
@@ -958,8 +962,8 @@ class YouTubePrefsPro
                                         </p>
                                         <div class="clearboth" style="height: 10px;">
                                         </div>
-                                        <div class="center relative">
-                                            <iframe src="<?php echo $rel; ?>" allowfullscreen="" width="854" height="480" frameborder="0"></iframe>
+                                        <div class="ep-wizard-preview-video-wrapper">
+                                            <iframe src="<?php echo $rel; ?>" allowfullscreen="" frameborder="0"></iframe>
                                         </div>
                                     </div>
                                     <?php
@@ -1064,8 +1068,8 @@ class YouTubePrefsPro
                                         </p>
                                         <div class="clearboth" style="height: 10px;">
                                         </div>
-                                        <div class="center relative">
-                                            <iframe src="<?php echo $rel; ?>" allowfullscreen="" width="854" height="480" frameborder="0"></iframe>
+                                        <div class="ep-wizard-preview-video-wrapper">
+                                            <iframe src="<?php echo $rel; ?>" allowfullscreen="" frameborder="0"></iframe>
                                         </div>
                                     </div>
                                     <?php
@@ -1138,8 +1142,11 @@ class YouTubePrefsPro
                                         <span class="copycode">[embedyt] https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>[/embedyt]</span>
                                         <div class="clearboth" style="height: 10px;">
                                         </div>
-                                        <div class="center relative">
-                                            <iframe src="https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>" allowfullscreen="" width="854" height="480" frameborder="0"></iframe>
+                                        <p>
+                                            If you see a black/empty YouTube player, then it's likely that your channel is not yet approved by YouTube/Google for embedding live streams.  You can live stream and have viewers watch directly on YouTube.com, but embedding the live stream on your own site requires meeting thresholds <a href="https://www.embedplus.com/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">described here</a>.
+                                        </p>
+                                        <div class="ep-wizard-preview-video-wrapper">
+                                            <iframe src="https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>" allowfullscreen="" frameborder="0"></iframe>
                                         </div>
                                     </div>
                                     <?php
@@ -1226,8 +1233,8 @@ class YouTubePrefsPro
                                 if ($if_live_preview)
                                 {
                                     ?>
-                                    <div class="center relative">
-                                        <iframe src="https://www.youtube.com/embed/<?php echo esc_attr($if_live_preview) ?>?rel=0" allowfullscreen="" width="854" height="480" frameborder="0"></iframe>
+                                    <div class="ep-wizard-preview-video-wrapper">
+                                        <iframe src="https://www.youtube.com/embed/<?php echo esc_attr($if_live_preview) ?>?rel=0" allowfullscreen="" frameborder="0"></iframe>
                                     </div>
                                     <?php
                                 }
@@ -1499,7 +1506,9 @@ class YouTubePrefsPro
                     <div class="wizoptionbox">
                         <div id="wizoptionboxLeft">
                             <div id="ytpreviewbox">
-                                <iframe ng-src="{{iframePreviewUrl()}}" id="ifPreview" title="YouTube video player" width="430" height="242" frameborder="0" allowfullscreen=""></iframe>
+                                <div class="ep-wizard-preview-video-wrapper">
+                                    <iframe ng-src="{{iframePreviewUrl()}}" id="ifPreview" title="YouTube video player" frameborder="0" allowfullscreen=""></iframe>
+                                </div>
                             </div>
                         </div>
                         <div id="wizoptionboxRight">
@@ -1555,6 +1564,7 @@ class YouTubePrefsPro
                                     <label ng-if="['grid', 'listview', 'carousel'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_autonextChange()" <?php checked($wiz_defaults[self::$opt_gallery_autonext], 1); ?>>Automatically play next video</label>
                                     <label ng-if="['listview'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_showdscChange()" <?php checked($wiz_defaults[self::$opt_gallery_showdsc], 1); ?>>Show gallery thumbnail descriptions</label>
                                     <label ng-if="['grid', 'listview'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_hidethumbimgChange()" <?php checked($wiz_defaults[self::$opt_gallery_hidethumbimg], 1); ?>>Hide thumbnail images</label>
+                                    <label ng-if="!!model.gallery_style"><input type="checkbox" ng-click="gallery_channelsubChange()" <?php checked($wiz_defaults[self::$opt_gallery_channelsub], 1); ?>>Show subscribe button</label>
                                     <div ng-if="['grid', 'listview', 'carousel'].indexOf(model.gallery_style) >= 0" id="panGalleryPagesize" class="boxGalleryPagesize">
                                         Thumbnails per page:
                                         <select ng-model="model.gallery_pagesize" convert-to-number>
@@ -1595,7 +1605,7 @@ class YouTubePrefsPro
                                     <input ng-click="autoplayChange()" <?php checked($wiz_defaults[self::$opt_autoplay], 1); ?> id="chkAutoplay" type="checkbox" name="chkAutoplay">Autoplay the video
                                     <span class="ui-icon ui-icon-info" ng-if="model.autoplay == 1"></span>
                                     <span class="tip" ng-if="model.autoplay == 1">
-                                        <strong>Note about autoplay:</strong> Desktop browsers like <a href="https://developers.google.com/youtube/iframe_api_reference#Mobile_considerations" target="_blank">Chrome and Safari are moving towards preventing autoplay for any video</a>. So this general feature may be deprecated by most browsers in the near future.
+                                        <strong>Note about autoplay:</strong> Desktop browsers like <a href="https://developers.google.com/youtube/iframe_api_reference#Mobile_considerations" target="_blank">Chrome and Safari are moving towards preventing autoplay for any video</a>. But, your chances are improved if you set your videos to initially start muted. 
                                     </span>
                                 </label>
                                 <label><input ng-click="cc_load_policyChange()" <?php checked($wiz_defaults[self::$opt_cc_load_policy], 1); ?> id="chkCC" type="checkbox" name="chkCC">Turn on closed-captioning</label>
@@ -2137,11 +2147,14 @@ class YouTubePrefsPro
 
     public static function initoptions()
     {
+        global $wpdb;
         $arroptions = get_option(self::$opt_alloptions);
         if ($arroptions !== false)
         {
             $bak = str_replace('.', '_', $arroptions[self::$opt_version]);
-            add_option(self::$opt_alloptions . '_backup_' . $bak, $arroptions);
+            add_option(self::$opt_alloptions . '_backup_' . $bak, $arroptions, '', 'no');
+            $sql = "update " . $wpdb->options . " set autoload = 'no' where option_name like '" . self::$opt_alloptions . "\_backup\_%'";
+            $wpdb->query($sql);
         }
 
         //vanilla defaults
@@ -2159,6 +2172,7 @@ class YouTubePrefsPro
         $_autohide = 2;
         $_pro = '';
         $_nocookie = 0;
+        $_gb_compat = 1;
         $_gdpr_consent = 0;
         $_gdpr_consent_message = self::$dft_gdpr_consent_message;
         $_gdpr_consent_button = 'Accept YouTube Content';
@@ -2223,7 +2237,7 @@ class YouTubePrefsPro
         $_gallery_thumbcrop = 'box';
         $_gallery_disptype = 'default';
         $_not_live_content = '';
-        $_not_live_on = 1;
+        $_not_live_on = 0;
         $_live_chat = 0;
         $_debugmode = 0;
         $_admin_off_scripts = 0;
@@ -2295,6 +2309,7 @@ class YouTubePrefsPro
             $_autohide = self::tryget($arroptions, self::$opt_autohide, 2);
             $_pro = self::tryget($arroptions, self::$opt_pro, '');
             $_nocookie = self::tryget($arroptions, self::$opt_nocookie, 0);
+            $_gb_compat = self::tryget($arroptions, self::$opt_gb_compat, $_gb_compat);
             $_gdpr_consent = self::tryget($arroptions, self::$opt_gdpr_consent, $_gdpr_consent);
             $_gdpr_consent_message = self::tryget($arroptions, self::$opt_gdpr_consent_message, $_gdpr_consent_message);
             $_gdpr_consent_button = self::tryget($arroptions, self::$opt_gdpr_consent_button, $_gdpr_consent_button);
@@ -2308,8 +2323,8 @@ class YouTubePrefsPro
             $_controls = $_controls == 2 ? 1 : $_controls;
             $_oldspacing = self::tryget($arroptions, self::$opt_oldspacing, 1);
             $_frontend_only = self::tryget($arroptions, self::$opt_frontend_only, $_frontend_only);
-            $_responsive = self::tryget($arroptions, self::$opt_responsive, 0);
-            $_responsive_all = self::tryget($arroptions, self::$opt_responsive_all, 1);
+            $_responsive = self::tryget($arroptions, self::$opt_responsive, $_responsive);
+            $_responsive_all = self::tryget($arroptions, self::$opt_responsive_all, $_responsive_all);
             $_widgetfit = self::tryget($arroptions, self::$opt_widgetfit, 1);
             $_evselector_light = self::tryget($arroptions, self::$opt_evselector_light, 0);
             $_stop_mobile_buffer = self::tryget($arroptions, self::$opt_stop_mobile_buffer, 1);
@@ -2361,7 +2376,7 @@ class YouTubePrefsPro
             $_gallery_showdsc = self::tryget($arroptions, self::$opt_gallery_showdsc, $_gallery_showdsc);
             $_not_live_content = self::tryget($arroptions, self::$opt_not_live_content, $_not_live_content);
             $_not_live_content = empty($_not_live_content) ? $_not_live_content : trim($_not_live_content);
-            $_not_live_on = self::tryget($arroptions, self::$opt_not_live_on, empty($_not_live_content) ? 0 : 1);
+            $_not_live_on = self::tryget($arroptions, self::$opt_not_live_on, empty($_not_live_content) ? 0 : $_not_live_on);
             $_live_chat = self::tryget($arroptions, self::$opt_live_chat, $_live_chat);
             $_admin_off_scripts = self::tryget($arroptions, self::$opt_admin_off_scripts, $_admin_off_scripts);
             $_defer_js = self::tryget($arroptions, self::$opt_defer_js, $_defer_js);
@@ -2411,6 +2426,7 @@ class YouTubePrefsPro
             self::$opt_color => $_color,
             self::$opt_pro => $_pro,
             self::$opt_nocookie => $_nocookie,
+            self::$opt_gb_compat => $_gb_compat,
             self::$opt_gdpr_consent => $_gdpr_consent,
             self::$opt_gdpr_consent_message => $_gdpr_consent_message,
             self::$opt_gdpr_consent_button => $_gdpr_consent_button,
@@ -2610,7 +2626,7 @@ class YouTubePrefsPro
         $currfilter = current_filter();
         if (preg_match(self::$justurlregex, $content))
         {
-            return self::get_html(array($content), strpos($currfilter, 'widget_text') === 0 ? false : true);
+            return self::get_html(array($content), strpos($currfilter, 'widget_text') === 0 ? false : true, false);
         }
         return '';
     }
@@ -2621,7 +2637,7 @@ class YouTubePrefsPro
         $currfilter = current_filter();
         if (preg_match(self::$justurlregex, $content))
         {
-            return self::get_html(array($content), $currfilter == 'widget_text' ? false : true);
+            return self::get_html(array($content), $currfilter == 'widget_text' ? false : true, false);
         }
         return '';
     }
@@ -2654,7 +2670,7 @@ class YouTubePrefsPro
             $currfilter = current_filter();
             if (preg_match(self::$justurlregex, $url))
             {
-                return self::get_html(array($url), $currfilter == 'widget_text' ? false : true);
+                return self::get_html(array($url), $currfilter == 'widget_text' ? false : true, false);
             }
         }
         return '';
@@ -2674,12 +2690,12 @@ class YouTubePrefsPro
 
     public static function get_html_content($m)
     {
-        return self::get_html($m, true);
+        return self::get_html($m, true, true);
     }
 
     public static function get_html_widget($m)
     {
-        return self::get_html($m, false);
+        return self::get_html($m, false, true);
     }
 
     public static function get_gallery_page($options)
@@ -3023,7 +3039,7 @@ class YouTubePrefsPro
         }
     }
 
-    public static function get_html($m, $iscontent)
+    public static function get_html($m, $iscontent, $isoverride)
     {
         //$time_start = microtime(true);
 
@@ -3209,7 +3225,7 @@ class YouTubePrefsPro
                 $schemaorgoutput = self::getschemaorgoutput($finalparams['v']);
             }
 
-            if (self::$alloptions[self::$opt_dynload] == 1)
+            if (self::$alloptions[self::$opt_dynload] == 1 && stripos($_SERVER['REQUEST_URI'], 'vcv-ajax=1') === false)
             {
                 $dynsrc = 'data-ep-';
                 $dyntype = ' data-ep-a="' . self::$alloptions[self::$opt_dyntype] . '" ';
@@ -3350,7 +3366,7 @@ class YouTubePrefsPro
             $galleryid_ifm_data = ' data-epytgalleryid="' . $galleryid . '" ';
 
             $subbutton = '';
-            if (self::$alloptions[self::$opt_gallery_channelsub] == 1)
+            if (isset($finalparams[self::$opt_gallery_channelsub]) && $finalparams[self::$opt_gallery_channelsub] == 1)
             {
                 $subbutton = '<div class="epyt-gallery-subscribe"><a target="_blank" class="epyt-gallery-subbutton" href="' .
                         esc_url(self::$alloptions[self::$opt_gallery_channelsublink]) . '?sub_confirmation=1"><img alt="subscribe" src="' . plugins_url('images/play-subscribe.png', __FILE__) . '" />' .
@@ -3392,7 +3408,7 @@ class YouTubePrefsPro
         $end_live_chat = '';
         if (((!empty($finalparams['live']) && $finalparams['live'] == 1) || !empty($finalparams['live_stream'])) && !empty($finalparams[self::$opt_live_chat]) && $finalparams[self::$opt_live_chat] == 1)
         {
-            $begin_live_chat = '<div class="epyt-live-chat-wrapper">';
+            $begin_live_chat = '<div class="epyt-live-chat-wrapper ' . ($iscontent && $finalparams[self::$opt_gb_compat] == 1 && current_theme_supports('responsive-embeds') ? ' wp-block-embed' : '') . '">';
             $begin_live_chat_video = '<div class="epyt-live-chat-video">';
             $begin_live_chat_box = '<div class="epyt-live-chat-box">';
             $end_live_chat = $end_live_chat_box = $end_live_chat_video = '</div>';
@@ -3401,23 +3417,30 @@ class YouTubePrefsPro
         $begin_responsive = '';
         $end_responsive = '';
         $dim_attrs = ' width="' . self::$defaultwidth . '" height="' . self::$defaultheight . '" ';
+
         if ($finalparams[self::$opt_responsive] == 1)
         {
-            // wrap with fluid wrapper on server side code
-            //$dim_attrs = ' ';
-            //$begin_responsive = '<div class="fluid-width-video-wrapper" style="padding-top: ' . (100.0 * self::$defaultheight / self::$defaultwidth) . '% !important;">';
             $begin_responsive = '<div class="epyt-video-wrapper">';
             $end_responsive = '</div>';
         }
 
+        $begin_gb_wrapper = '';
+        $end_gb_wrapper = '';
+        if ($iscontent && !$isoverride && $finalparams[self::$opt_gb_compat] == 1 && empty($begin_live_chat) && empty($beginlb) && current_theme_supports('responsive-embeds'))// self::using_gutenberg())
+        {
+            // don't do the following if: overriding default YT, is widget, is livechat, is popup
+            $begin_gb_wrapper = '<figure class="wp-block-embed wp-block-embed-youtube is-type-video is-provider-youtube"><div class="wp-block-embed__wrapper">';
+            //wp-block-embed-youtube is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio
+            $end_gb_wrapper = '</div></figure>';
+        }
         $iframe_id = rand(10000, 99999);
 
-        $code1 = $beginlb . $begin_live_chat . $begin_live_chat_video . $begin_responsive . '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs .
+        $code1 = $begin_gb_wrapper . $beginlb . $begin_live_chat . $begin_live_chat_video . $begin_responsive . '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs .
                 ' data-origwidth="' . self::$defaultwidth . '" data-origheight="' . self::$defaultheight . '" ' . $relstop .
                 $dynsrc . 'src="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
-        $code2 = '" class="__youtube_prefs__' . ($iscontent ? '' : ' __youtube_prefs_widget__') . $disptypeif .
+        $code2 = '" class="__youtube_prefs__ ' . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif .
                 ' no-lazyload"' . $voloutput . $acctitle . $galleryid_ifm_data . ' allow="autoplay; encrypted-media" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll=""></iframe>' .
-                $end_responsive . $end_live_chat_video . $begin_live_chat_box . $end_live_chat_box . $end_live_chat . $endlb . $schemaorgoutput;
+                $end_responsive . $end_live_chat_video . $begin_live_chat_box . $end_live_chat_box . $end_live_chat . $endlb . $end_gb_wrapper . $schemaorgoutput;
 
         $origin = '';
 
@@ -3494,6 +3517,16 @@ class YouTubePrefsPro
             //self::debuglog((microtime(true) - $time_start) . "\t" . $spdckey . "\t" . $code . "\r\n");
         }
         return $code;
+    }
+
+    public static function using_gutenberg()
+    {
+        global $wp_version;
+        if ((version_compare($wp_version, '5.0', '>=') && !is_plugin_active('classic-editor/classic-editor.php')) || is_plugin_active('gutenberg/gutenberg.php'))
+        {
+            return true;
+        }
+        return false;
     }
 
     public static function gdpr_mode()
@@ -4349,7 +4382,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This version fixes a simultaneous playback control issue, and adds YouTube Premieres embedding functionality to Free and Pro versions.";
+        $new_pointer_content .= "This update allows you to turn on or off the channel subscribe button within the wizard, and provides better compatibility with themes that use the Gutenberg block editor (see the Compatibility tab).";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -4661,6 +4694,13 @@ class YouTubePrefsPro
                 height: 100%;
             }
 
+            .wiztab-pagebuilder {
+                width: 50%;
+                float: left;
+                padding: 20px;
+                box-sizing: border-box;
+            }
+
         </style>        
 
         <div class="wrap wrap-ytprefs">
@@ -4681,7 +4721,7 @@ class YouTubePrefsPro
                             echo ' &nbsp;<input type="submit" name="showkey" class="button-primary" style="vertical-align: 15%;" id="showprokey" value="View my PRO key" />';
                             echo "</h3>";
                             echo '<p>';
-                            _e('If you wish to add more licenses to your current key and activate Pro on other sites, contact us in the Support tab for discounted pricing.', 'youtube-embed-plus-pro');
+                            _e('If you wish to add more licenses to your current key and activate Pro on other sites, contact us contact us at bizdev@embedplus.com for discounted pricing.', 'youtube-embed-plus-pro');
                             echo '</p>';
                             ?>
                             <?php
@@ -4781,7 +4821,7 @@ class YouTubePrefsPro
 
                             <br>
                             <span style="display: none;" id="prokeyloading" class="orange bold">Verifying...</span>
-                            <span  class="orange bold" style="display: none;" id="prokeysuccess">Success! Please refresh this page.</span>
+                            <span  class="orange bold" style="display: none;" id="prokeysuccess">Success! Please refresh this page. If you wish to add more licenses to your current key and activate Pro on other sites, contact us at contact us at bizdev@embedplus.com for discounted pricing.</span>
                             <span class="orange bold" style="display: none;" id="prokeyfailed">Sorry, that seems to be an invalid key, or it has been used already. If you're behind a firewall, you may need to try activating on another network.</span>
                             <span class="orange bold" style="display: none;" id="prokeycancel">Your request is being processed. Response code: CR1.</span>
 
@@ -4832,7 +4872,7 @@ class YouTubePrefsPro
                                     <a href="https://support.google.com/youtube/answer/132596?hl=en" target="_blank">https://support.google.com/youtube/answer/132596?hl=en</a>
                                     You'll see that videos that you want to monetize "should be embedded using the standard click-to-play embed and NOT a scripted play."
                                     Unchecking this option guarantees standard click-to-play gallery embedding.
-                                    (Another Note: Desktop browsers like <a href="https://developers.google.com/youtube/iframe_api_reference#Mobile_considerations" target="_blank">Chrome and Safari are moving towards preventing autoplay for any video</a>. So this general feature may be deprecated by most browsers in the near future)
+                                    (Another Note: Desktop browsers like <a href="https://developers.google.com/youtube/iframe_api_reference#Mobile_considerations" target="_blank">Chrome and Safari are moving towards preventing autoplay for any video</a>. But, your chances are improved if you set your videos to initially start muted.)
                                 </label>
                             </p>
                             <p>
@@ -4883,7 +4923,7 @@ class YouTubePrefsPro
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_responsive; ?>" id="<?php echo self::$opt_responsive; ?>" <?php checked($all[self::$opt_responsive], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_responsive; ?>"><?php _e('<b class="chktitle">Responsive Video Sizing:</b> Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet). NOTE: While this is checked, any custom hardcoded widths and heights you may have set will dynamically change too. <b>Do not check this if your theme already handles responsive video sizing.</b>') ?></label>
+                                <label for="<?php echo self::$opt_responsive; ?>"><?php _e('<b class="chktitle">Responsive Video Sizing:</b> Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet). NOTE: While this is checked, any custom hardcoded widths and heights you may have set will dynamically change too. <b>Uncheck this if your theme already properly handles responsive video sizing.</b>') ?></label>
                             <div id="boxresponsive_all">
                                 <input type="radio" name="<?php echo self::$opt_responsive_all; ?>" id="<?php echo self::$opt_responsive_all; ?>1" value="1" <?php checked($all[self::$opt_responsive_all], 1); ?> >
                                 <label for="<?php echo self::$opt_responsive_all; ?>1">Responsive for all YouTube videos</label> &nbsp;&nbsp;
@@ -5104,6 +5144,7 @@ class YouTubePrefsPro
                         <h2>Visual YouTube Wizard Directions</h2>
                         <p>
                             While you're writing your post or page, you have the ability to search YouTube and insert videos, playlists, and even galleries right from your editor. Below are directions for each type of WordPress editor.
+                            For pagebuilder instructions, scroll down to the "Pagebuilder Tips" section.
                         </p>
                         <h3>Classic Editor</h3>
                         <img class="wiztab-screenshots" src="<?php echo plugins_url('images/ss-wiz-classic.png', __FILE__) ?>">
@@ -5146,6 +5187,32 @@ class YouTubePrefsPro
                             Simply click the "Customize" button in the wizard to further personalize each of your embeds without having to manually add special codes yourself. 
                             The customize button will allow you to easily override most of the above default options for that embed.
                         </p>
+                        <hr class="clearboth"/>
+                        <h2 id="jumppagebuilder">Pagebuilder Tips</h2>
+                        <p>
+                            Most page builders have a text widget in which our plugin's wizard can be launched.  Watch the videos below for  some popular ones, namely Elementor, Beaver Builder, and SiteOrigin.
+                        </p>
+                        <p>
+                            <em>Note: Please do not check the "Also Defer jQuery" option if you use a pagebuilder. Some pagebuilders cannot work if jQuery is deferred.</em>
+                        </p>
+                        <div class="wiztab-pagebuilder">
+                            <h3>Beaver Builder</h3>
+                            <div class="epyt-fitvid">
+                                <iframe src="https://www.youtube.com/embed/bPgz0jyt7TE?rel=0" allowfullscreen="" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                        <div class="wiztab-pagebuilder">
+                            <h3>Elementor</h3>
+                            <div class="epyt-fitvid">
+                                <iframe src="https://www.youtube.com/embed/ldNfIGRTxDU?rel=0" allowfullscreen="" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                        <div class="wiztab-pagebuilder">
+                            <h3>Site Origin</h3>
+                            <div class="epyt-fitvid">
+                                <iframe src="https://www.youtube.com/embed/7QNYw_g-7WM?rel=0" allowfullscreen="" frameborder="0"></iframe>
+                            </div>
+                        </div>
                     </section>
                     <section class="pattern" id="jumpgallery">
                         <h2>Gallery Settings and Directions</h2>
@@ -5226,7 +5293,7 @@ class YouTubePrefsPro
                             <p>
                                 <input name="<?php echo self::$opt_gallery_channelsub; ?>" id="<?php echo self::$opt_gallery_channelsub; ?>" <?php checked($all[self::$opt_gallery_channelsub], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_gallery_channelsub; ?>">
-                                    <b class="chktitle">Show Subscribe Button: </b> Are you the channel owner for all your galleries? Check this box to add a "Subscribe" button to all your galleries as shown below.  This might help you convert your site's visitors to YouTube subscribers of your channel.
+                                    <b class="chktitle">Show Subscribe Button: </b> Are you the channel owner for all your galleries? Check this box to add a "Subscribe" button to all your galleries as shown below.  This might help you convert your site's visitors to YouTube subscribers of your channel. 
                                 </label>
                                 <span id="boxchannelsub">
                                     Paste Channel URL: <input type="text" placeholder="Example: https://www.youtube.com/user/YourChannel" name="<?php echo self::$opt_gallery_channelsublink; ?>" id="<?php echo self::$opt_gallery_channelsublink; ?>" value="<?php echo esc_url(trim($all[self::$opt_gallery_channelsublink])); ?>" class="textinput regular-text"> &nbsp;
@@ -5288,8 +5355,9 @@ class YouTubePrefsPro
                                     <input name="<?php echo self::$opt_dynload; ?>" id="<?php echo self::$opt_dynload; ?>" <?php checked($all[self::$opt_dynload], 1); ?> type="checkbox" class="checkbox">                        
                                     <label for="<?php echo self::$opt_dynload; ?>">
                                         <b>(PRO)</b>  <b class="chktitle">Lazy-Loading for Performance:</b>
-                                        Lazy-loading can speed up your page loads by loading the player only until it is visible on the screen.
-                                        You have the choice of several types of eye-catching lazy-loading effects that will make your YouTube embeds bounce, flip, pulse, or slide as they lazy load on the screen. Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
+                                        Lazy-loading can speed up your page loads by loading the player only until it is visible on the screen. 
+                                        <a href="https://www.youtube.com/watch?v=omNdJvXDCLo" target="_blank">See an example here</a>. 
+                                        An added bonus to this option is that you have the choice of several types of eye-catching lazy-loading effects that will make your YouTube embeds bounce, flip, pulse, or slide as they lazy load on the screen. Check this box to select your desired effect. <a target="_blank" href="<?php echo self::$epbase ?>/add-special-effects-to-youtube-embeds-in-wordpress.aspx">Read more here &raquo;</a>
                                     </label>
                                     <br>
                                     <span id="boxdyn">
@@ -5672,6 +5740,13 @@ class YouTubePrefsPro
                                 </label>
                             </p>
                             <p>
+                                <input name="<?php echo self::$opt_gb_compat; ?>" id="<?php echo self::$opt_gb_compat; ?>" <?php checked($all[self::$opt_gb_compat], 1); ?> type="checkbox" class="checkbox">
+                                <label for="<?php echo self::$opt_gb_compat; ?>">
+                                    <b class="chktitle">Gutenberg Block Editor Theme Spacing: </b> <sup class="orange">new</sup>
+                                    Check this option to fix possible issues with spacing below your videos. You may also want to try combining this option with Responsive Sizing.
+                                </label>
+                            </p>
+                            <p>
                                 <input name="<?php echo self::$opt_old_script_method; ?>" id="<?php echo self::$opt_old_script_method; ?>" <?php checked($all[self::$opt_old_script_method], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_old_script_method; ?>">
                                     <b class="chktitle">Use Legacy Scripts: </b>
@@ -5725,7 +5800,7 @@ class YouTubePrefsPro
                                 <label for="<?php echo self::$opt_stop_mobile_buffer; ?>">
                                     <b class="chktitle">Mobile Autoplay Problems: </b> 
                                     Autoplay works for desktop, but mobile devices don't allow autoplay due to network carrier data charges. For mobile devices, this option may help the player to properly display the video for the visitor to click on.
-                                    (<strong>Note:</strong> Desktop browsers like Chrome and Safari are moving towards preventing autoplay for any video. So this general feature may be deprecated by most browsers in the near future)
+                                    (<strong>Note:</strong> Desktop browsers like Chrome and Safari are moving towards preventing autoplay for any video. But, your chances are improved if you set your videos to initially start muted.)
                                 </label>
                             </p>
                             <p>
@@ -5803,7 +5878,7 @@ class YouTubePrefsPro
                         _e('<ul class="reglist">');
                         _e("<li><strong>width</strong> - Sets the width of your player. If omitted, the default width will be the width of your theme's content.<em> Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&width=500</strong>&height=350</em></li>");
                         _e("<li><strong>height</strong> - Sets the height of your player. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA&width=500<strong>&height=350</strong></em> </li>");
-                        _e("<li><strong>autoplay</strong> - Set this to 1 to autoplay the video (or 0 to play the video once). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autoplay=1</strong></em> (Note: Desktop browsers like Chrome and Safari are moving towards preventing autoplay for any video. So this general feature may be deprecated by most browsers in the near future) </li>");
+                        _e("<li><strong>autoplay</strong> - Set this to 1 to autoplay the video (or 0 to play the video once). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&autoplay=1</strong></em> (Note: Desktop browsers like Chrome and Safari are moving towards preventing autoplay for any video. But, your chances are improved if you set your videos to initially start muted. ) </li>");
                         _e("<li><strong>cc_load_policy</strong> - Set this to 1 to turn on closed captioning (or 0 to leave them off). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&cc_load_policy=1</strong></em> </li>");
                         _e("<li><strong>iv_load_policy</strong> - Set this to 3 to turn off annotations (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&iv_load_policy=3</strong></em> </li>");
                         _e("<li><strong>loop</strong> - Set this to 1 to loop the video (or 0 to not loop). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&loop=1</strong></em> </li>");
@@ -5839,7 +5914,7 @@ class YouTubePrefsPro
                                 <label for="<?php echo self::$opt_defer_jquery ?>">
                                     <b class="chktitle"><?php _e('Also Defer jQuery:', 'youtube-embed-plus-pro'); ?></b>
                                     <span style="color: red;">
-                                        <?php _e('Note: Defering jQuery may improve your GTMetrix score even more, but might not be compatible with your theme or other plugins (especially if they are not defering their own scripts). Use this option with caution.', 'youtube-embed-plus-pro'); ?>
+                                        <?php _e('Note: Do NOT check this option if you are using a pagebuilder. Furthermore, defering jQuery may improve your GTMetrix score even more, but might not be compatible with your theme or other plugins (especially if they are not defering their own scripts). Use this option with caution.', 'youtube-embed-plus-pro'); ?>
                                     </span>
                                 </label>
                             </div>
@@ -6473,6 +6548,7 @@ class YouTubePrefsPro
         $new_options[self::$opt_controls] = self::postchecked(self::$opt_controls) ? 1 : 0;
         $new_options[self::$opt_color] = self::postchecked(self::$opt_color) ? 'red' : 'white';
         $new_options[self::$opt_nocookie] = self::postchecked(self::$opt_nocookie) ? 1 : 0;
+        $new_options[self::$opt_gb_compat] = self::postchecked(self::$opt_gb_compat) ? 1 : 0;
         $new_options[self::$opt_gdpr_consent] = self::postchecked(self::$opt_gdpr_consent) ? 1 : 0;
         $new_options[self::$opt_playlistorder] = self::postchecked(self::$opt_playlistorder) ? 1 : 0;
         $new_options[self::$opt_acctitle] = self::postchecked(self::$opt_acctitle) ? 1 : 0;
@@ -7092,7 +7168,7 @@ class YouTubePrefsPro
                             <li><label><input type="checkbox" data-obfilter="yob-single" /> Single videos.</label></li>
                             <li><label><input type="checkbox" data-obfilter="yob-gallery" /> Galleries of playlists or channels (displays thumbnails and a player).</label></li>
                             <li><label><input type="checkbox" data-obfilter="yob-standalone" /> Self-contained playlists or channels (no thumbnails, just YouTube's standard playlist player).</label></li>
-                            <li><label><input type="checkbox" data-obfilter="yob-live" /> Live streams.</label></li>
+                            <li><label><input type="checkbox" data-obfilter="yob-live" /> Live streams or premieres.</label></li>
                             <li style="display: none;"><label><input type="checkbox" data-obfilter="yob-privacy" /> With GDPR / privacy features.</label></li>
         <!--                            <li><label><input type="checkbox" data-obfilter="yob-monetize" /> Relevant video ads that earn me up to 10x higher CPMs (revenue) than display advertising.</label></li>-->
                         </ul>
