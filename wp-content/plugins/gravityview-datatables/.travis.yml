@@ -25,6 +25,9 @@ env:
   - WP_VERSION=latest WP_MULTISITE=0
   - WP_VERSION=latest WP_MULTISITE=1
 
+before_install:
+  - echo 'memory_limit = 2048M' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+
 before_script:
   - bash tests/bin/install.sh gravityview_test root '' localhost $WP_VERSION
   - bash tests/bin/travis.sh before

@@ -629,6 +629,10 @@ class GV_Extension_DataTables_Data {
 			return '';
 		}
 
+		if ( isset( $_GET['cache'] ) ) {
+			return '';
+		}
+
 		/**
 		 * @see wp_get_session_token()
 		 */
@@ -746,9 +750,13 @@ class GV_Extension_DataTables_Data {
 	 * Get the data for the language parameter used by DataTables
 	 *
 	 * @since 1.2.3
+     * @since 2.4.4 Added $view parameter; made private
+     *
+     * @param \GV\View $view The View
+     *
 	 * @return array Array of strings, as used by the DataTables extension's `language` setting
 	 */
-	function get_language() {
+	private function get_language( $view = null ) {
 
 		$translations = $this->get_translations();
 
@@ -763,7 +771,6 @@ class GV_Extension_DataTables_Data {
 
 		// If a translation exists
 		if ( isset( $translations[ $locale ] ) ) {
-
 
 			ob_start();
 
@@ -792,10 +799,13 @@ class GV_Extension_DataTables_Data {
 				/**
 				 * @filter `gravityview_datatables_loading_text` Modify the text shown when DataTables is loaded
 				 *
-				 * @param string $loading_text Default: Loading data...
+                 * @since 2.5 Added $view parameter
+                 *
+				 * @param string $loading_text Default: Loading data…
+                 * @param \GV\View $view The View
 				 */
-				'processing' => apply_filters( 'gravityview_datatables_loading_text', __( 'Loading data&hellip;', 'gv-datatables' ) ),
-				'emptyTable' => __( 'No entries match your request.', 'gv-datatables' )
+				'processing' => esc_html( apply_filters( 'gravityview_datatables_loading_text', __( 'Loading data&hellip;', 'gv-datatables' ), $view ) ),
+				'emptyTable' => esc_html( $view->settings->get( 'no_results_text', __( 'No entries match your request.', 'gv-datatables' ) ) ),
 			);
 
 		}
@@ -935,13 +945,13 @@ class GV_Extension_DataTables_Data {
 			'serverSide'    => true,
 			'retrieve'      => true,
 			// Only initialize each table once
-			'stateSave'     => gravityview()->request->is_search() ? false : true,
+			'stateSave'     => gravityview()->request->is_search() ? false : ! isset( $_GET['cache'] ),
 			// On refresh (and on single entry view, then clicking "go back"), save the page you were on.
 			'stateDuration' => - 1,
 			// Only save the state for the session. Use to time in seconds (like the DAY_IN_SECONDS WordPress constant) if you want to modify.
 			'lengthMenu'    => $this->get_length_menu( $view ),
 			// Dropdown pagination length menu
-			'language'      => $this->get_language(),
+			'language'      => $this->get_language( $view ),
 			'ajax'          => array(
 				'url'  => $this->get_ajax_url(),
 				'type' => 'POST',
@@ -985,20 +995,18 @@ class GV_Extension_DataTables_Data {
 		}
 		$dt_config['columns'] = $columns;
 
-		$sort_field_setting = $view->settings->get( 'sort_field' );
+		$sort_field_setting = (array) $view->settings->get( 'sort_field', array() );
 
 		// set default order
-		if ( ! empty( $sort_field_setting ) ) {
+		foreach ( $sort_field_setting as $l => $sort_field ) {
 			foreach ( $columns as $k => $column ) {
-				foreach ( (array) $view->settings->get( 'sort_field' ) as $l => $sort_field ) {
-					if ( $column['name'] === 'gv_' . $sort_field ) {
-						$dir = (array) $view->settings->get( 'sort_direction', 'asc' );
+				if ( $column['name'] === 'gv_' . $sort_field ) {
+					$dir = (array) $view->settings->get( 'sort_direction', 'asc' );
 
-						$dt_config['order'][] = array(
-							'column' => $k,
-							'dir'    => strtolower( \GV\Utils::get( $dir, $l, 'asc' ) )
-						);
-					}
+					$dt_config['order'][] = array(
+						$k,
+						strtolower( \GV\Utils::get( $dir, $l, 'asc' ) ),
+					);
 				}
 			}
 		}

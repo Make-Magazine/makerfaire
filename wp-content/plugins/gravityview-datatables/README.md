@@ -16,6 +16,20 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 ## Changelog ##
 
+### 2.4.5 on April 29, 2020 ###
+
+* Truly fixed: Multi-sorting not working
+
+### 2.4.4 on April 29, 2020 ###
+
+* Fixed: Revert the broken 2.4.3 release. Sorry!
+
+__Developer Updates:__
+
+* Added: Prevent saving session data in browser when adding `?cache` to URL
+* Added: Support for modifying "No entries match your request" string using View Settings, coming soon to GravityView
+* Modified: "No entries match your request." and "Loading data..." are now sanitized using `esc_html()`
+
 ### 2.4.3 on April 27, 2020 ###
 
 * Fixed: Multi-sorting not working
