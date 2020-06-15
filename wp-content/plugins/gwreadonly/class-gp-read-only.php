@@ -154,7 +154,7 @@ class GP_Read_Only extends GWPerk {
 			 * @param GF_Field_Date $field       GF_Field_Date The current Date field object.
 			 * @param int           $entry_id    The current entry ID; 0 when no entry ID is provided.
 			 */
-			$disable_datepicker = gf_apply_filters( array( 'gpro_disable_datepicker', $form_id, $field->id ), false, $field, $entry_id );
+			$disable_datepicker = gf_apply_filters( array( 'gpro_disable_datepicker', $form_id, $field->id ), true, $field, $entry_id );
 			if( $disable_datepicker ) {
 				// Find 'datepicker' CSS class and replace it with our custom class indicating that we've disabled it.
 				// This class is used by Conditional Logic Dates to identify read-only Datepicker fields.
