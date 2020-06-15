@@ -241,7 +241,8 @@
 				var $button = $( this );
 				if( $button.css( 'display' ) !== 'none' ) {
 
-					var label      = $button.attr( 'type' ) === 'submit' ? self.getModalTitle() : $button.val(),
+					var useModalTitleText = ($button.attr( 'type' ) === 'submit' || $button.attr( 'type' ) === 'image');
+					var label      = useModalTitleText ? self.getModalTitle() : $button.val(),
 						classes    = [ 'tingle-btn', 'tingle-btn--primary' ],
 						isDisabled = false;
 
@@ -309,7 +310,7 @@
 		};
 
 		self.getDefaultButtons = function() {
-			return $( '#gform_page_{0}_{1} .gform_page_footer, #gform_{0} .gform_footer'.format( self.nestedFormId, self.getCurrentPage() ) ).find( 'input[type="button"], input[type="submit"]' );
+			return $( '#gform_page_{0}_{1} .gform_page_footer, #gform_{0} .gform_footer'.format( self.nestedFormId, self.getCurrentPage() ) ).find( 'input[type="button"], input[type="submit"], input[type="image"]' );
 		};
 
 		self.handleCancelClick = function( $button ) {
@@ -724,6 +725,14 @@
         var self = this;
 
         self.entries = ko.observableArray( entries );
+
+		/**
+		 * Trigger change event on the form when entries change. This helps notify other plugins that the form has
+		 * updated if they're listening to the form 'change' events.
+		 */
+		self.entries.subscribe(function () {
+			gpnf.$parentFormContainer.children('form').trigger('change');
+		});
 
         self.isMaxed = ko.computed( function() {
         	var max = gform.applyFilters( 'gpnf_entry_limit_max', gpnf.entryLimitMax, gpnf.formId, gpnf.fieldId, gpnf );

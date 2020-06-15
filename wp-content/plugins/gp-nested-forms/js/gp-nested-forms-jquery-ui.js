@@ -488,6 +488,14 @@
 
         self.entries = ko.observableArray( entries );
 
+		/**
+		 * Trigger change event on the form when entries change. This helps notify other plugins that the form has
+		 * updated if they're listening to the form 'change' events.
+		 */
+		self.entries.subscribe(function () {
+			gpnf.parentFormContainer.children('form').trigger('change');
+		});
+
         self.isMaxed = ko.computed( function() {
         	var max = gform.applyFilters( 'gpnf_entry_limit_max', gpnf.entryLimitMax, gpnf.formId, gpnf.fieldId, gpnf );
 
