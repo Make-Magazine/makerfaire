@@ -461,7 +461,7 @@ function getMakerList($entryID, $faireID) {
                 if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
                     $isGroup = true;
                     $groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
-                    $makerList .= "<p style='font-weight:600;margin-bottom:0px;font-size:15px;'>" . $groupname . "</p>";
+                    $makerList .= "<p class='group-name'>" . $groupname . "</p>";
                 }
             }
             //get maker information
