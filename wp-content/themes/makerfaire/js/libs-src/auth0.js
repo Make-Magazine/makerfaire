@@ -12,7 +12,7 @@ window.addEventListener('load', function() {
 
 	var userProfile;
 	
-   var webAuth = new auth0.WebAuth({
+	var webAuth = new auth0.WebAuth({
 		domain: AUTH0_DOMAIN,
 		clientID: AUTH0_CLIENT_ID,
 		redirectUri: AUTH0_CALLBACK_URL,
@@ -20,13 +20,13 @@ window.addEventListener('load', function() {
 		responseType: 'token id_token',
 		scope: 'openid profile email user_metadata', //scope of data pulled by auth0
 		leeway: 60
-   });
+	});
 	
 	function clearLocalStorage() {
-		 localStorage.removeItem('access_token');
-		 localStorage.removeItem('id_token');
-		 localStorage.removeItem('expires_at');
-  }
+		localStorage.removeItem('access_token');
+		localStorage.removeItem('id_token');
+		localStorage.removeItem('expires_at');
+	}
 
 	function setSession(authResult) {
 		if ( authResult ) {
@@ -61,7 +61,7 @@ window.addEventListener('load', function() {
 			//check for wordpress cookie
 			if ( !jQuery( '.logged-in' ).length ) { // is the user logged in?
 				//wait .5 second for auth0 data to be returned from getProfile
-				setTimeout(function(){ WPlogin(); }, 0500); //login to wordpress
+				setTimeout(function(){ WPlogin(); }, 0500); location.href=redirect_url;
 			}
 		} else {
 			profileView.style.display = 'none';
@@ -94,7 +94,6 @@ window.addEventListener('load', function() {
 				}
 				// automatically login to wordpress by clicking the login btn after webauth
 				if(document.querySelector(".logged-in") === null) {
-					console.log("Test");
 					document.querySelector("#LoginBtn").click();
 				}
 
