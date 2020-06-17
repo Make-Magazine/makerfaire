@@ -153,23 +153,23 @@ msgstr ""
 msgid "Oops! You don't have permission to do this."
 msgstr ""
 
-#: ../class-gp-nested-forms.php:1687, ../class-gp-nested-forms.php:1706, ../class-gp-nested-forms.php:1714, ../includes/class-gp-field-nested-form.php:72
+#: ../class-gp-nested-forms.php:1691, ../class-gp-nested-forms.php:1710, ../class-gp-nested-forms.php:1718, ../includes/class-gp-field-nested-form.php:72
 msgid "Add %s"
 msgstr ""
 
-#: ../class-gp-nested-forms.php:1688, ../class-gp-nested-forms.php:1707, ../class-gp-nested-forms.php:1719
+#: ../class-gp-nested-forms.php:1692, ../class-gp-nested-forms.php:1711, ../class-gp-nested-forms.php:1723
 msgid "Edit %s"
 msgstr ""
 
-#: ../class-gp-nested-forms.php:1689
+#: ../class-gp-nested-forms.php:1693
 msgid "Cancel"
 msgstr ""
 
-#: ../class-gp-nested-forms.php:1690, ../includes/class-gp-field-nested-form.php:91
+#: ../class-gp-nested-forms.php:1694, ../includes/class-gp-field-nested-form.php:91
 msgid "Delete"
 msgstr ""
 
-#: ../class-gp-nested-forms.php:1691
+#: ../class-gp-nested-forms.php:1695
 msgid "Are you sure?"
 msgstr ""
 

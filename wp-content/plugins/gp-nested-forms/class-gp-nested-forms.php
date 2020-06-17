@@ -1081,6 +1081,10 @@ class GP_Nested_Forms extends GP_Plugin {
 		 */
 		$args = gf_apply_filters( array( 'gpnf_template_args', $field->formId, $field->id ), $args, $this );
 
+		if ( ! $args['entries'] ) {
+			return null;
+		}
+
 		$markup = $template->parse_template( array(
 			sprintf( '%s-%s-%s.php', $args['template'], $field->formId, $field->id ),
 			sprintf( '%s-%s.php',    $args['template'], $field->formId ),
@@ -1891,7 +1895,19 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		}
 
-		return $field_id ? rgar( $all_entries, $field_id ) : $all_entries;
+		$return_entries = $field_id ? rgar( $all_entries, $field_id ) : $all_entries;
+		/**
+		 * Filter nested form submitted child entries.
+		 *
+		 * @since 1.0-beta-8.57
+		 * @param array                $return_entries  Current submitted entries
+		 * @param GP_Field_Nested_Form $nested_form     Nested form entries belong to
+		 * @param bool                 $display_values  Array contains a simplified version of entries
+		 *                                              if false, array contains a list of GPNF_Entry objects.
+		 */
+		$return_entries = gf_apply_filters( array( 'gpnf_submitted_nested_entries' ),
+																										$return_entries, $nested_form, $display_values );
+		return $return_entries;
 	}
 
 	public function remove_extra_other_choices( $form ) {

@@ -1,6 +1,26 @@
 
 # Changelog
 
+## 1.0-beta-8.57
+
+	- Added `gpnf_submitted_nested_entries` hook. (#20)
+
+## 1.0-beta-8.56
+
+	- Improved compatibility with Gravity PDF Previewer when using legacy jQuery UI modal.
+
+## 1.0-beta-8.55
+
+	- Improved compatibility with Gravity PDF Previewer.
+
+## 1.0-beta-8.54
+
+	- Fixed issue where Nested Forms would show a blank row in the {all_fields} merge tag if no entries are provided.
+
+## 1.0-beta-8.53
+
+	- Fixed submit button on modal when nested form is configured to use an image. (#19)
+
 ## 1.0-beta-8.52
 
 	- Fixed issue where child entries would not be attached to the proper entry when used in conjunction with the WooCommerce Gravity Forms Product Add-ons plugin.
