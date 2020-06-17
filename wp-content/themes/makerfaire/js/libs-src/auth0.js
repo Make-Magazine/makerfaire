@@ -12,7 +12,7 @@ window.addEventListener('load', function() {
 
 	var userProfile;
 	
-	var webAuth = new auth0.WebAuth({
+   var webAuth = new auth0.WebAuth({
 		domain: AUTH0_DOMAIN,
 		clientID: AUTH0_CLIENT_ID,
 		redirectUri: AUTH0_CALLBACK_URL,
@@ -20,13 +20,13 @@ window.addEventListener('load', function() {
 		responseType: 'token id_token',
 		scope: 'openid profile email user_metadata', //scope of data pulled by auth0
 		leeway: 60
-	});
+   });
 	
 	function clearLocalStorage() {
-		localStorage.removeItem('access_token');
-		localStorage.removeItem('id_token');
-		localStorage.removeItem('expires_at');
-	}
+		 localStorage.removeItem('access_token');
+		 localStorage.removeItem('id_token');
+		 localStorage.removeItem('expires_at');
+  }
 
 	function setSession(authResult) {
 		if ( authResult ) {
@@ -94,6 +94,7 @@ window.addEventListener('load', function() {
 				}
 				// automatically login to wordpress by clicking the login btn after webauth
 				if(document.querySelector(".logged-in") === null) {
+					console.log("Test");
 					document.querySelector("#LoginBtn").click();
 				}
 
@@ -103,7 +104,6 @@ window.addEventListener('load', function() {
 	}
 
 	function WPlogin(){
-		console.log("confirm changes");
 		if (typeof userProfile !== 'undefined') {
 			var user_id      = userProfile.sub;
 			var access_token = localStorage.getItem('access_token');
@@ -123,25 +123,20 @@ window.addEventListener('load', function() {
 				data: data,
 				timeout: 10000,
 				success: function(data){
-					alert("this is the other thing");
-					e.preventDefault();
-					
 				},
 			}).fail(function(xhr, status, error) {
 				if(status === 'timeout') {
 					 alert( "Your login has timed out. Please try the login again." );
 					 errorMsg(userProfile.email + " ran over the timeout limit of 10 seconds. Error was: " + JSON.stringify(error));
-					 e.preventDefault();
+					 location.href = templateUrl;
 				} else {
 					 alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
 					 errorMsg(userProfile.email + " had an issue logging in at the WP Login phase. That error is: " + JSON.stringify(error));
-					 e.preventDefault();
 				}
 			});
 
 		}else{
-			alert("what's happening here");
-			e.preventDefault();
+
 		}
 	}
 
