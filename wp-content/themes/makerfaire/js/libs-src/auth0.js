@@ -61,7 +61,7 @@ window.addEventListener('load', function() {
 			//check for wordpress cookie
 			if ( !jQuery( '.logged-in' ).length ) { // is the user logged in?
 				//wait .5 second for auth0 data to be returned from getProfile
-				setTimeout(function(){ WPlogin(); }, 0500); location.href=redirect_url;
+				setTimeout(function(){ WPlogin(); }, 0500); //login to wordpress
 			}
 		} else {
 			profileView.style.display = 'none';
@@ -103,6 +103,7 @@ window.addEventListener('load', function() {
 	}
 
 	function WPlogin(){
+		console.log("confirm changes");
 		if (typeof userProfile !== 'undefined') {
 			var user_id      = userProfile.sub;
 			var access_token = localStorage.getItem('access_token');
@@ -122,20 +123,25 @@ window.addEventListener('load', function() {
 				data: data,
 				timeout: 10000,
 				success: function(data){
+					alert("this is the other thing");
+					e.preventDefault();
+					
 				},
 			}).fail(function(xhr, status, error) {
 				if(status === 'timeout') {
 					 alert( "Your login has timed out. Please try the login again." );
 					 errorMsg(userProfile.email + " ran over the timeout limit of 10 seconds. Error was: " + JSON.stringify(error));
-					 location.href = templateUrl;
+					 e.preventDefault();
 				} else {
 					 alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
 					 errorMsg(userProfile.email + " had an issue logging in at the WP Login phase. That error is: " + JSON.stringify(error));
+					 e.preventDefault();
 				}
 			});
 
 		}else{
-
+			alert("what's happening here");
+			e.preventDefault();
 		}
 	}
 
