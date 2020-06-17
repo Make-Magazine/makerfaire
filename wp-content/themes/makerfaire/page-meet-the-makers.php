@@ -152,7 +152,7 @@ if ($noMakerText == '')
                     <a href="/maker/entry/{{maker.id}}">
                         <article class="mtm-maker lazyload" data-bg="{{maker.large_img_url}}">
                             <h3>{{ maker.name}}</h3>
-                            <h6 style="font-weight: lighter;padding-left: 21px;" ng-bind-html="trust(maker.makerList)"></h6>
+                            <h6 ng-bind-html="trust(maker.makerList)"></h6>
                         </article>
                     </a>
                 </div>
