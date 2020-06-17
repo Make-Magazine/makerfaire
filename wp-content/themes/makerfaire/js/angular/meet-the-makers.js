@@ -13,7 +13,8 @@ if (getUrlParam("featured")) {
     featured = getUrlParam("featured");
 }
 
-app.controller('mtmMakers', ['$scope', '$filter', '$http', function ($scope, $filter, $http) {
+app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
+		$scope.trust = $sce.trustAsHtml; // for rendering html
         //infinite scroll
         $scope.limit = 20;
         var counter = 0;
