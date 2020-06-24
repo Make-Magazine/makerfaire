@@ -62,7 +62,7 @@
   </script>
 	
   <?php // Tracking pixels users can turn off through the cookie law checkbox -- defaults to yes
-	if($_COOKIE['cookielawinfo-checkbox-non-necessary']== "yes" ) {
+	if(!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes" ) {
 		get_template_part('dfp'); 
   ?>
 	  <!-- Facebook Pixel Code -->
@@ -106,7 +106,7 @@
 
 <body id="makerfaire" <?php body_class('no-js'); ?>>
 	<?php // Tracking pixels users can turn off through the cookie law checkbox
-		if($_COOKIE['cookielawinfo-checkbox-non-necessary']== "yes" ) {
+		if(!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary']== "yes" ) {
 	?>
 		<!-- Google Tag Manager MakerFaire -->
 		<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
