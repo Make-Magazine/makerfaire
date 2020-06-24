@@ -250,8 +250,10 @@ function make_new_gallery_shortcode($attr) {
         jQuery(".viewall").click(function() {
           jQuery(".carousel-inner").removeClass("carousel-inner");
           jQuery(".carousel-control").hide();
-          googletag.pubads().refresh();
-          ga(\'send\', \'pageview\');
+		  if (typeof googletag === "undefined" || googletag === null) {
+          	googletag.pubads().refresh();
+          	ga(\'send\', \'pageview\');
+		  }
           urlref = location.href;
           PARSELY.beacon.trackPageView({
             url: urlref,

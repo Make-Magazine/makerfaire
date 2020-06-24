@@ -68,46 +68,20 @@
     });
   });
 </script>
-<div id="fb-root"></div>
-<script>
-  (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=216859768380573";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-</script>
-<!-- Quantcast Tag -->
-<script type="text/javascript">
-  var _qevents = _qevents || [];
-  (function() {
-  var elem = document.createElement('script');
-  elem.src = (document.location.protocol == "https:" ? "https://secure" : "http://edge") + ".quantserve.com/quant.js";
-  elem.async = true;
-  elem.type = "text/javascript";
-  var scpt = document.getElementsByTagName('script')[0];
-  scpt.parentNode.insertBefore(elem, scpt);
-  })();
-  _qevents.push({
-  qacct:"p-c0y51yWFFvFCY"
-  });
-</script>
-<noscript>
-  <div style="display:none;">
-    <img src="//pixel.quantserve.com/pixel/p-c0y51yWFFvFCY.gif" border="0" height="1" width="1" alt="Quantcast"/>
-  </div>
-</noscript>
-<!-- End Quantcast tag -->
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=131038253638769";
-  fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-</script>
+
+<?php // Tracking pixels users can turn off through the cookie law checkbox -- defaults to yes
+	if($_COOKIE['cookielawinfo-checkbox-non-necessary']== "yes" ) {
+?>
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=131038253638769";
+	  fjs.parentNode.insertBefore(js, fjs);
+	  }(document, 'script', 'facebook-jssdk'));
+	</script>
+<?php } // end of cookie law if ?>
 
 <script type="text/javascript">
   jQuery(document).ready(function() {
@@ -141,31 +115,9 @@
   });
 </script>
 
-<!-- Media Math Tracking Pixel -->
-<script language='JavaScript1.1' async src='//pixel.mathtag.com/event/js?mt_id=1311192&mt_adid=208330&mt_exem=&mt_excl=&v1=&v2=&v3=&s1=&s2=&s3='></script>
-
-<!-- Crazy Egg tracking
-  <?php ?>
-  <script type="text/javascript">
-  setTimeout(function(){var a=document.createElement("script");
-  var b=document.getElementsByTagName("script")[0];
-  a.src=document.location.protocol+"//dnn506yrbagrg.cloudfront.net/pages/scripts/0013/2533.js?"+Math.floor(new Date().getTime()/3600000);
-  a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
-  </script>-->
 
 <?php wp_footer(); ?>
-<script type="text/javascript">
-	
-  (function() {
-    window._pa = window._pa || {};
-    // _pa.orderId = ""; // OPTIONAL: attach unique conversion identifier to conversions
-    // _pa.revenue = ""; // OPTIONAL: attach dynamic purchase values to conversions
-    // _pa.productId = ""; // OPTIONAL: Include product ID for use with dynamic ads
-    var pa = document.createElement('script'); pa.type = 'text/javascript'; pa.async = true;
-    pa.src = ('https:' == document.location.protocol ? 'https:' : 'http:') + "//tag.marinsm.com/serve/558d98991eb60ba078000001.js";
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(pa, s);
-  })();
-</script>
+
 
 
 <iframe id="auth0Logout" style="display: none;" ></iframe>

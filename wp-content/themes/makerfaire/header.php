@@ -47,7 +47,7 @@
     }());
   </script>
 
-  <?php get_template_part('dfp'); ?>
+  
 
   <script>
     var _prum = [['id', '53fcea2fabe53d341d4ae0eb'],
@@ -60,39 +60,44 @@
         s.parentNode.insertBefore(p, s);
     })();
   </script>
+	
+  <?php // Tracking pixels users can turn off through the cookie law checkbox -- defaults to yes
+	if($_COOKIE['cookielawinfo-checkbox-non-necessary']== "yes" ) {
+		get_template_part('dfp'); 
+  ?>
+	  <!-- Facebook Pixel Code -->
+	  <script>
+	  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+	  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+	  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+	  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+	  document,'script','https://connect.facebook.net/en_US/fbevents.js');
 
-  <!-- Facebook Pixel Code -->
-  <script>
-  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+	  fbq('init', '399923000199419');
+	  fbq('track', "PageView");
+	  </script>
+	  <noscript></noscript>
+	  <!-- End Facebook Pixel Code -->
 
-  fbq('init', '399923000199419');
-  fbq('track', "PageView");
-  </script>
-  <noscript></noscript>
-  <!-- End Facebook Pixel Code -->
+	  <script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		ga('create', 'UA-51157-7', 'auto');
+		ga('send', 'pageview', {
+		'page': location.pathname + location.search  + location.hash
+		});
+	  </script>
 
-    ga('create', 'UA-51157-7', 'auto');
-    ga('send', 'pageview', {
-    'page': location.pathname + location.search  + location.hash
-    });
-  </script>
-
-  <?php if ( is_404() ) : // Load this last. ?>
-    <script>
-      // Track our 404 errors and log them to GA
-      ga('send', 'event', '404', 'URL', document.location.pathname + document.location.search);
-    </script>
-  <?php endif; ?>
+	  <?php if ( is_404() ) : // Load this last. ?>
+		<script>
+		  // Track our 404 errors and log them to GA
+		  ga('send', 'event', '404', 'URL', document.location.pathname + document.location.search);
+		</script>
+	  <?php endif; ?>
+	<?php } // end cookie law if ?>
 
   <script type="text/javascript">
     dataLayer = [];
@@ -100,59 +105,62 @@
 </head>
 
 <body id="makerfaire" <?php body_class('no-js'); ?>>
-  <!-- Google Tag Manager MakerFaire -->
-
-  <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-PCDDDV');</script>
-  <!-- End Google Tag Manager -->
-  <script type="text/javascript">document.body.className = document.body.className.replace('no-js','js');</script>
-
-<a name="topofpage"></a>
-<header id="universal-nav" class="universal-nav">
-
-	<?php // Nav Level 1 and Hamburger
-      $context = null;
-      if(UNIVERSAL_ASSET_USER && UNIVERSAL_ASSET_PASS) {
-         $context = stream_context_create(array(
-               'http' => array(
-                  'header'  => "Authorization: Basic " . base64_encode(UNIVERSAL_ASSET_USER.':'.UNIVERSAL_ASSET_PASS)
-               )
-         ));
-      }
-      echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-topnav.html', false, $context);
+	<?php // Tracking pixels users can turn off through the cookie law checkbox
+		if($_COOKIE['cookielawinfo-checkbox-non-necessary']== "yes" ) {
 	?>
-	
-  <div id="nav-level-2" class="nav-level-2">
-    <div class="container">
-        <div class="nav-2-banner">
-        <?php
-          wp_nav_menu( array(
-              'menu'              => 'secondary_universal_menu',
-              'theme_location'    => 'secondary_universal_menu',
-              'depth'             => 1,
-              'container'         => '',
-              'container_class'   => '',
-              'link_before'       => '<span>',
-              'link_after'        => '</span>',
-              'menu_class'        => 'nav navbar-nav',
-              'fallback_cb'       => 'wp_bootstrap_navwalker::fallback',
-              'walker'            => new wp_bootstrap_navwalker())
-          );
-        ?>
-        </div>
-    </div>
-  </div>
+		<!-- Google Tag Manager MakerFaire -->
+		<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
+		height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+		j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+		'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','GTM-PCDDDV');</script>
+		<!-- End Google Tag Manager -->
+		<script type="text/javascript">document.body.className = document.body.className.replace('no-js','js');</script>
+	<?php } // end cookie law if ?>
 
-  <div id="nav-flyout">
-   <?php
-      echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context);
-   ?>
-  </div>
+	<a name="topofpage"></a>
+	<header id="universal-nav" class="universal-nav">
 
-</header>
-<div class="nav-flyout-underlay"></div>
+		<?php // Nav Level 1 and Hamburger
+		  $context = null;
+		  if(UNIVERSAL_ASSET_USER && UNIVERSAL_ASSET_PASS) {
+			 $context = stream_context_create(array(
+				   'http' => array(
+					  'header'  => "Authorization: Basic " . base64_encode(UNIVERSAL_ASSET_USER.':'.UNIVERSAL_ASSET_PASS)
+				   )
+			 ));
+		  }
+		  echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-topnav.html', false, $context);
+		?>
+
+	  <div id="nav-level-2" class="nav-level-2">
+		<div class="container">
+			<div class="nav-2-banner">
+			<?php
+			  wp_nav_menu( array(
+				  'menu'              => 'secondary_universal_menu',
+				  'theme_location'    => 'secondary_universal_menu',
+				  'depth'             => 1,
+				  'container'         => '',
+				  'container_class'   => '',
+				  'link_before'       => '<span>',
+				  'link_after'        => '</span>',
+				  'menu_class'        => 'nav navbar-nav',
+				  'fallback_cb'       => 'wp_bootstrap_navwalker::fallback',
+				  'walker'            => new wp_bootstrap_navwalker())
+			  );
+			?>
+			</div>
+		</div>
+	  </div>
+
+	  <div id="nav-flyout">
+	   <?php
+		  echo file_get_contents( UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context);
+	   ?>
+	  </div>
+
+	</header>
+	<div class="nav-flyout-underlay"></div>

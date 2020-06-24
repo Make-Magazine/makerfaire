@@ -37,17 +37,20 @@ global $slug;
     </div>
         <?php }?>
 
-<!-- Beginning Sync AdSlot 2 for Ad unit header ### size: [[300,250]]  -->
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-12">
-      <div id='div-gpt-ad-664089004995786621-2' class="adblock">
-        <script type='text/javascript'>
-          googletag.cmd.push(function(){googletag.display('div-gpt-ad-664089004995786621-2')});
-        </script>
-      </div>
-    </div>
-  </div>
-  <!-- End AdSlot 2 -->
+  <?php if($_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes" ) { // if GDPR consent isn't given, we won't have access to this function ?>
+	  <!-- Beginning Sync AdSlot 2 for Ad unit header ### size: [[300,250]]  -->
+	  <div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-12">
+		  <div id='div-gpt-ad-664089004995786621-2' class="adblock">
+			<script type='text/javascript'>
+				googletag.cmd.push(function(){googletag.display('div-gpt-ad-664089004995786621-2')});
+			</script>
+		  </div>
+		</div>
+	  </div>
+	  <!-- End AdSlot 2 -->
+  <?php } ?>
+
 
   <div class="center twitter">
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -56,16 +59,19 @@ global $slug;
     <a href="https://twitter.com/makerfaire" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @makerfaire</a>
   </div>
 
-  <!-- Beginning Sync AdSlot 3 for Ad unit header ### size: [[300,250]]  -->
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-12">
-      <div id='div-gpt-ad-664089004995786621-3' class="adblock">
-        <script type='text/javascript'>
-          googletag.cmd.push(function(){googletag.display('div-gpt-ad-664089004995786621-3')});
-        </script>
-      </div>
-    </div>
-  </div>
-  <!-- End AdSlot 2 -->
+  
+  <?php if($_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes" ) { // if GDPR consent isn't given, we won't have access to this function ?>
+	  <!-- Beginning Sync AdSlot 3 for Ad unit header ### size: [[300,250]]  -->
+	  <div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-12">
+		  <div id='div-gpt-ad-664089004995786621-3' class="adblock">
+			<script type='text/javascript'>
+			  googletag.cmd.push(function(){googletag.display('div-gpt-ad-664089004995786621-3')});
+			</script>
+		  </div>
+		</div>
+	  </div>
+      <!-- End AdSlot 2 -->
+   <?php } ?>
 </div>
 

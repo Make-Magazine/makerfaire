@@ -394,6 +394,28 @@ ul.bulletless {
     right: 8px;
   }
 }
+
+// GDPR Cookie Modal
+#cookie-law-info-bar {
+	padding: 25px !important;
+	.cli-plugin-button {
+		border: solid 1px;
+		border-radius: 5px;
+		min-width: 150px;
+		font-size: 16px;
+		margin-top: 30px !important;
+	}
+	&::before {
+		content: url("https://makerfaire.com/wp-content/themes/makerfaire/img/make_logo.png");
+	}
+}
+#universal-nav {
+	.tooltip {
+		.tooltip-inner {
+			font-size: 12px;
+		}
+	}
+}
 .dropdown-menu {
    z-index: 998;
 	cursor: pointer;
@@ -516,33 +538,6 @@ input[type=checkbox].fa-checkbox {
   border-radius: 0
 }
 
-// Google recatpcha modifications to make the team happy
-// .g-recaptcha {
-//   display: none;
-// }
-// .new-footer .g-recaptcha {
-//   display: block;
-//   z-index: 99;
-// }
-// .new-footer .grecaptcha-badge {
-//   z-index: 99;
-//   position: absolute !important;
-//   right: -207px !important;
-//   transform:scale(0.7);
-//   -webkit-transform:scale(0.7);
-//   transform-origin:0 0;
-//   -webkit-transform-origin:0 0;
-//   &:hover {
-//     right: -77px !important;
-//   }
-// }
-.new-footer {
-  position: relative;
-  overflow: hidden;
-  .social-foot-col {
-    position: unset;
-  }
-}
 
 #makerfaire {
   .cursor-pointer {
@@ -574,13 +569,7 @@ input[type=checkbox].fa-checkbox {
   }
 }
 
-#universal-nav {
-	.tooltip {
-		.tooltip-inner {
-			font-size: 12px;
-		}
-	}
-}
+
 
 // SOCIAL MEDIA ROUND ICONS
 .social-network-container {
