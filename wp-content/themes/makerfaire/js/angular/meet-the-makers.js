@@ -57,7 +57,7 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         $scope.makers = [];
         var showMakeProjects = jQuery('#showMakeProjects').val();
         var MPCategory = jQuery('#MPCategory').val();
-alert(showMakeProjects);
+
         if (showMakeProjects !== 'mfonly') {
             //call to make projects
             $http.get('https://makeprojects.com/api/projects/category/' + MPCategory + '?limit=200&offset=0&sort=recent_activity&platform=projects')
@@ -112,14 +112,11 @@ alert(showMakeProjects);
                         console.log(error);
                         jQuery('.mtm .loading').html(noMakerText);
                     }).finally(function () {
-                        alert('all done');
-
             });
         }
 
         //call to MF custom rest API
-        if (showMakeProjects !== 'mponly') { //don't pull mf data if admin selected to display projects from makeprojects only
-            alert('not mponly');
+        if (showMakeProjects !== 'mponly') { //don't pull mf data if admin selected to display projects from makeprojects only            
             $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs + '/' + faireID)
                     .then(function successCallback(response) {
                         if (response.data.entity.length <= 0) {
