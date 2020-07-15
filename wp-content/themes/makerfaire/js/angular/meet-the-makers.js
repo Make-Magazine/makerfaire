@@ -57,13 +57,18 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         $scope.makers = [];
         var showMakeProjects = jQuery('#showMakeProjects').val();
         var MPCategory = jQuery('#MPCategory').val();
+        var MPCategory = jQuery('#MPCategory').val();
         if (showMakeProjects !== 'mfonly') {
             //call to make projects
             $http.get('https://makeprojects.com/api/projects/category/' + MPCategory + '?limit=200&offset=0&sort=recent_activity&platform=projects')
                     .then(function successCallback(response) {
                         if (response.data.code == 200) {
                             //alert(response.data.result.total + ' projects found');
+                            if (response.data.result.projects <= 0) {
+                                jQuery('.mtm .loading').html(noMakerText);
+                            }
                             var mp_projects = response.data.result.projects;
+                            
                             //build $scope.makers;                        
                             angular.forEach(mp_projects, function (projects) {
                                 //set maker name
@@ -89,12 +94,15 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                                     'makerList': makerName,
                                     'name': projects.title});
                             });
-
+                            
+                            
                             if (showMakeProjects === 'mfandmp') {
                                 jQuery.merge($scope.makers, mp_array);
                             } else if (showMakeProjects === 'mponly') {
-                                $scope.makers = mp_array;
+                                //$scope.makers = mp_array;
+                                jQuery.merge($scope.makers, mp_array);
                             }
+                            jQuery.merge($scope.makers, mp_array);
                             if (response.data.result.hasMore) {
                                 alert('There are more projects to pull');
                             }
@@ -107,54 +115,57 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
 
             });
         }
-        
+
         //call to MF custom rest API
-        $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs + '/' + faireID)
-                .then(function successCallback(response) {
-                    if (response.data.entity.length <= 0) {
-                        jQuery('.mtm .loading').html(noMakerText);
-                    }
-
-                    jQuery.merge($scope.makers, response.data.entity);
-
-                    var catList = [];
-                    var locList = [];
-                    angular.forEach($scope.makers, function (maker) {
-                        var location = maker.location;
-                        if (location != null) {
-                            angular.forEach(location, function (loc) {
-                                if (locList.indexOf(loc) === -1 && loc !== '') {
-                                    locList.push(loc);
-                                }
-                            });
-                        }
-
-                        var categories = maker.categories;
-						//reset the category ids to the category names
-						maker.category_id_refs = categories;
-                        if (categories != null) {
-                            angular.forEach(categories, function (cat) {
-                                if (catList.indexOf(cat) == -1)
-                                    catList.push(cat);
-                            });
-                        }
-                    });
-
-                    $scope.tags = catList;
-                    $scope.locations = [];
-                    if (locList.length > 0) {
-                        var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-                        $scope.locations = locList.sort(collator.compare);
-                    }
-                },
-                        function errorCallback(error) {
-                            console.log(error);
+        if (showMakeProjects !== 'mponly') { //don't pull mf data if admin selected to display projects from makeprojects only
+            $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs + '/' + faireID)
+                    .then(function successCallback(response) {
+                        if (response.data.entity.length <= 0) {
                             jQuery('.mtm .loading').html(noMakerText);
-                        })
-                .finally(function () {
-					
-                });
+                        }
 
+                        jQuery.merge($scope.makers, response.data.entity);
+
+                        var catList = [];
+                        var locList = [];
+                        angular.forEach($scope.makers, function (maker) {
+                            var location = maker.location;
+                            if (location != null) {
+                                angular.forEach(location, function (loc) {
+                                    if (locList.indexOf(loc) === -1 && loc !== '') {
+                                        locList.push(loc);
+                                    }
+                                });
+                            }
+
+                            var categories = maker.categories;
+							//reset the category ids to the category names
+							maker.category_id_refs = categories;
+
+                            if (categories != null) {
+                                angular.forEach(categories, function (cat) {
+                                    if (catList.indexOf(cat) == -1)
+                                        catList.push(cat);
+                                });
+                            }
+                        });
+
+                        $scope.tags = catList;
+                        $scope.locations = [];
+                        if (locList.length > 0) {
+                            var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+                            $scope.locations = locList.sort(collator.compare);
+                        }
+                    },
+                            function errorCallback(error) {
+                                console.log(error);
+                                jQuery('.mtm .loading').html(noMakerText);
+                            })
+                    .finally(function () {
+
+                    });
+        }
+        
         $scope.setLocFilter = function (location) {
             $scope.makerSearch.location = location;
         };
@@ -230,7 +241,7 @@ function mtmScroll($window) {
         link: function (scope, element, attrs) {
             var handler;
             var raw = element[0];
-            console.log(raw);
+            //console.log(raw);
             $window = angular.element($window);
             handler = function () {
                 if (jQuery(".loading").hasClass("ng-hide")) { // don't start adding to the limit until the loading is done

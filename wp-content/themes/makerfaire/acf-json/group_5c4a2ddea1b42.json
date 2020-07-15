@@ -96,7 +96,7 @@
                     {
                         "field": "field_5f0f67efe80eb",
                         "operator": "!=",
-                        "value": "mponly"
+                        "value": "mfonly"
                     }
                 ]
             ],
@@ -129,5 +129,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1594845273
+    "modified": 1594852391
 }
