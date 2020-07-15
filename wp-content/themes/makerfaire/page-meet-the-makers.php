@@ -158,7 +158,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
             </div>
 
             <!-- List View -->
-            <div ng-show="layout == 'list'" class="mtm-results-cont container">
+            <div ng-show="layout == 'list'" class="mtm-results-cont-list container">
                 <div class="filter-alpha-wrapper">
                     <span class="filterAlpha" ng-repeat="searchLetter in alphabet.split('') track by $index">
                         <a href=""  target="none" class="pointer-on-hover" ng-click="setLetter(searchLetter)">{{ searchLetter}}</a>
@@ -170,6 +170,9 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                         <article class="mtm-maker">
                             <h3>{{ maker.name}}</h3>
                             <h6 ng-bind-html style="font-weight: lighter;padding-left: 21px;">{{maker.makerList}}</h6>
+							<span>
+								{{maker.category_id_refs.join(', ')}}
+							</span>
                         </article>
                     </a>
                 </div>

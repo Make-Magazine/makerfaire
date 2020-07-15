@@ -130,6 +130,8 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                         }
 
                         var categories = maker.categories;
+						//reset the category ids to the category names
+						maker.category_id_refs = categories;
                         if (categories != null) {
                             angular.forEach(categories, function (cat) {
                                 if (catList.indexOf(cat) == -1)
@@ -150,7 +152,7 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                             jQuery('.mtm .loading').html(noMakerText);
                         })
                 .finally(function () {
-
+					
                 });
 
         $scope.setLocFilter = function (location) {

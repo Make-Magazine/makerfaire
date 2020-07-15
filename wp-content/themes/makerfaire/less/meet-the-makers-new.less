@@ -293,6 +293,9 @@
 							opacity: 1;
 						}
 					}
+					&:hover {
+						text-decoration: none;
+					}
 				}
 			}
 			.mtm-maker {
@@ -309,8 +312,8 @@
 					padding: 1.3rem 1.3rem 0;
 					height: 50%;
 					display: flex;
-                                         flex-direction: column;
-					--lh: 1.45rem;
+                    flex-direction: column;
+					--lh: 2rem;
 					.top-line{
 						white-space: nowrap;
 						font-size: .8rem;
@@ -321,6 +324,7 @@
 						.mtm-cat {
 							color: #00adee;
 							font-weight: 500;
+							font-size: 1.2rem;
 							margin-right: .25rem;
 							float: left;
 						}
@@ -336,8 +340,8 @@
 						word-break: break-word;
 						color: #0a0a0a;
 						font-weight: 600;
-						font-size: 1rem;
-						line-height: 1.45;
+						font-size: 1.6rem;
+						line-height: var(--lh);
 						position: relative;
 						padding-right: 15px;
 						--max-lines: 4;
@@ -353,7 +357,7 @@
 							content: "";
 							position: absolute;
 							right: 0;
-							width: 1rem;
+							width: 1.5rem;
 							height: 2rem;
 							background: white;
 						}
@@ -373,20 +377,19 @@
 			
 		}
 		.mtm-results-cont-list {
+			& > .ng-scope:nth-of-type(even) {
+				background: #fff;
+			}
 			.mtm-maker {
 				width: 100%;
 				height: 100%;
 				padding: 15px 10px;
-				border-bottom: 1px solid #eee;
-				background-image: none !important;
-				background-size: cover;
-				background-repeat: no-repeat;
-				background-position: center center;
 				float: none;
 				position: static;
 				transition: all 0.2s ease;
 				h3 {
 					margin-bottom: 0;
+					margin-top: 5px;
 					position: static;
 					padding: 0;
 					color: inherit;
@@ -400,6 +403,7 @@
 					display: none;
 					margin-top: 8px;
 				}
+				span { font-size: 1.2rem; }
 			}
 		}
 	}
