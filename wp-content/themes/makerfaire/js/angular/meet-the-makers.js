@@ -14,7 +14,7 @@ if (getUrlParam("featured")) {
 }
 
 app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
-		$scope.trust = $sce.trustAsHtml; // for rendering html
+        $scope.trust = $sce.trustAsHtml; // for rendering html
         //infinite scroll
         $scope.limit = 20;
         var counter = 0;
@@ -36,6 +36,7 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         $scope.makerSearch.categories = '';
         $scope.makerSearch.location = '';
         $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
         catJson = [];
         var noMakerText = jQuery('#noMakerText').val();
         var formIDs = jQuery('#forms2use').val();
@@ -52,13 +53,69 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             $scope.makerSearch.flag = "Featured Maker";
         }
 
+        var mp_array = [];
+        $scope.makers = [];
+        var showMakeProjects = jQuery('#showMakeProjects').val();
+        var MPCategory = jQuery('#MPCategory').val();
+        if (showMakeProjects !== 'mfonly') {
+            //call to make projects
+            $http.get('https://makeprojects.com/api/projects/category/' + MPCategory + '?limit=200&offset=0&sort=recent_activity&platform=projects')
+                    .then(function successCallback(response) {
+                        if (response.data.code == 200) {
+                            //alert(response.data.result.total + ' projects found');
+                            var mp_projects = response.data.result.projects;
+                            //build $scope.makers;                        
+                            angular.forEach(mp_projects, function (projects) {
+                                //set maker name
+                                var makerName = projects.user.fullName;
+                                if (makerName == '') {
+                                    makerName = projects.user.userName;
+                                }
+
+                                //categories
+                                var categories = projects.categories;
+                                var catName = [];
+                                jQuery.each(categories, function (key, category) {
+                                    catName.push(category.name);
+                                });
+
+                                //set data
+                                mp_array.push({'category_id_refs': catName,
+                                    'description': projects.description,
+                                    'featured_img': projects.image,
+                                    'flag': '',
+                                    'link': 'https://makeprojects.com/project/' + projects.id,
+                                    'large_img_url': projects.image,
+                                    'makerList': makerName,
+                                    'name': projects.title});
+                            });
+
+                            if (showMakeProjects === 'mfandmp') {
+                                jQuery.merge($scope.makers, mp_array);
+                            } else if (showMakeProjects === 'mponly') {
+                                $scope.makers = mp_array;
+                            }
+                            if (response.data.result.hasMore) {
+                                alert('There are more projects to pull');
+                            }
+                        }
+                    }, function errorCallback(error) {
+                        alert('Error occured in call to Make: Projects. ' + error.data.code + ' - ' + error.data.messages[0]);
+                        console.log(error);
+                        jQuery('.mtm .loading').html(noMakerText);
+                    }).finally(function () {
+
+            });
+        }
+        
         //call to MF custom rest API
         $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs + '/' + faireID)
                 .then(function successCallback(response) {
                     if (response.data.entity.length <= 0) {
                         jQuery('.mtm .loading').html(noMakerText);
                     }
-                    $scope.makers = response.data.entity;
+
+                    jQuery.merge($scope.makers, response.data.entity);
 
                     var catList = [];
                     var locList = [];

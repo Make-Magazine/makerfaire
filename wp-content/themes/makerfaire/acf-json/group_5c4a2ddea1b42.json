@@ -58,6 +58,58 @@
             "prepend": "",
             "append": "",
             "maxlength": ""
+        },
+        {
+            "key": "field_5f0f67efe80eb",
+            "label": "Show Make Projects?",
+            "name": "show_make_projects",
+            "type": "radio",
+            "instructions": "Please select if you want to show projects from Make: Projects in the Meet the Makers Page",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "mfonly": "Pull projects only from current makerfaire site (default)",
+                "mponly": "Pull projects only from Make: Projects",
+                "mfandmp": "Pull projects from both the current maker faire site AND Make: Projects"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "mfonly",
+            "layout": "vertical",
+            "return_format": "value",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_5f0f6834e80ec",
+            "label": "Make: Projects Category to pull from",
+            "name": "make:_projects_category_to_pull_from",
+            "type": "text",
+            "instructions": "Please enter the Make: Projects category that your projects will be found under. This field is required to pull from Make: Projects.",
+            "required": 1,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_5f0f67efe80eb",
+                        "operator": "!=",
+                        "value": "mponly"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
         }
     ],
     "location": [
@@ -77,5 +129,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1589850549
+    "modified": 1594845273
 }

@@ -10,6 +10,14 @@ $faire_forms_trimmed = preg_replace('/\s+/', '', $faire_forms);
 $noMakerText = get_field('no_makers_found_text');
 if ($noMakerText == '')
     $noMakerText = 'No makers found';
+
+//Pull from Make: Projects
+$showMakeProjects = get_field('show_make_projects');
+$MPCategory = get_field('make:_projects_category_to_pull_from');
+
+if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCategory == '') {
+    echo 'Category cannot be blank';
+}
 ?>
 
 <div class="mtm" ng-app="mtm">
@@ -17,6 +25,8 @@ if ($noMakerText == '')
         <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
         <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
+        <input type="hidden" id="showMakeProjects" value="<?php echo $showMakeProjects; ?>" />
+        <input type="hidden" id="MPCategory" value="<?php echo $MPCategory; ?>" />
 
         <div class="container">
             <div class="col-md-3 col-sm-12 col-xs-12">
@@ -131,9 +141,16 @@ if ($noMakerText == '')
             <!-- Grid View -->
             <div ng-show="layout == 'grid'" class="mtm-results-cont">
                 <div ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
-                    <a target="none" href="/maker/entry/{{maker.id}}">
-                        <article class="mtm-maker lazyload" data-bg="{{maker.large_img_url}}">
-                            <h3>{{ maker.name}}</h3>
+                    <a href="{{maker.link}}" target="_blank">            
+                        <article class="mtm-maker">
+                            <div class="mtm-info">
+                                <div class="top-line">
+                                    <div class="mtm-cat">{{maker.category_id_refs[0]}}</div>
+                                    <span ng-bind-html>{{maker.makerList}}</span>
+                                </div>
+                                <h3>{{ maker.name}}</h3>
+                            </div>
+                            <div class="mtm-image lazyload" style="background-image: url('{{ maker.large_img_url}}');"></div>
                         </article>
                     </a>
                 </div>
@@ -149,10 +166,10 @@ if ($noMakerText == '')
                     <span class="filterAlpha" ><a href=""  class="pointer-on-hover" ng-click="setLetter('')">Reset</a></span>
                 </div>
                 <div ng-repeat="maker in makers| filter : makerSearch | orderBy: 'name' | startsWithLetter:letter">
-                    <a href="/maker/entry/{{maker.id}}">
-                        <article class="mtm-maker lazyload" data-bg="{{maker.large_img_url}}">
+                    <a href="{{maker.link}}" target="_blank">            
+                        <article class="mtm-maker">
                             <h3>{{ maker.name}}</h3>
-                            <h6 ng-bind-html="trust(maker.makerList)"></h6>
+                            <h6 ng-bind-html style="font-weight: lighter;padding-left: 21px;">{{maker.makerList}}</h6>
                         </article>
                     </a>
                 </div>
