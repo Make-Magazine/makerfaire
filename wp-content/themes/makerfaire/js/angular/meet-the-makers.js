@@ -185,10 +185,10 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                 var categories = maker.categories;
                 //reset the category ids to the category names
                 maker.category_id_refs = categories;
-				if(maker.makerList || Array.isArray(maker.makerList)) {
+				// sometimes we get arrays for some reason, and that causes unsightly ng errors
+				if(maker.makerList && Array.isArray(maker.makerList)) {
 					maker.makerList = " ";
 				}
-				console.log(maker.makerList);
 
                 if (categories != null) {
                     angular.forEach(categories, function (cat) {
