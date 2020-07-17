@@ -146,10 +146,10 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                             <div class="mtm-info">     
                                 <div class="top-line">
                                     <div class="mtm-cat">{{maker.category_id_refs[0]}}</div>
-                                    <span ng-bind-html="trust(maker.makerList)"></span>
+                                    <span ng-bind-html="trust(maker.maker_list) | trustFilter"></span>
 
                                 </div>
-                                <h3>{{ maker.name}}</h3>
+                                <h3>{{maker.name}}</h3>
                             </div>
                             <div class="mtm-image lazyload" style="background-image: url('{{ maker.large_img_url}}');"></div>
                         </article>
@@ -170,8 +170,8 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                 <div ng-repeat="maker in makers| filter : makerSearch | orderBy: 'name' | startsWithLetter:letter">
                     <a href="{{maker.link}}" target="_blank">            
                         <article class="mtm-maker">
-                            <h3>{{ maker.name}}</h3>
-                            <h4 ng-bind-html="trust(maker.makerList)"></h4>
+                            <h3>{{maker.name}}</h3>
+                            <h4 ng-bind-html="trust(maker.maker_list) | trustFilter"></h4>
                             <span>
                                 {{maker.category_id_refs.join(', ')}}
                             </span>

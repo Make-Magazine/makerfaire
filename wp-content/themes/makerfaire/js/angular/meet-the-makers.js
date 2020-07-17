@@ -14,7 +14,6 @@ if (getUrlParam("featured")) {
 }
 
 mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
-        $scope.trust = $sce.trustAsHtml; // for rendering html
         //infinite scroll
         $scope.limit = 20;
         var counter = 0;
@@ -203,7 +202,11 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         }, true);
     }]);
 
-
+mtm.filter('trustFilter', ['$sce', function($sce){
+    return function(text) {
+        return $sce.trustAsHtml(text);
+    };
+}]);
 
 mtm.filter('startsWithLetter', function () {
     return function (items, letter) {
