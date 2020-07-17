@@ -147,11 +147,10 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                                 <div class="top-line">
                                     <div class="mtm-cat">{{maker.category_id_refs[0]}}</div>
                                     <span ng-bind-html="trust(maker.makerList)"></span>
-
                                 </div>
                                 <h3>{{maker.name}}</h3>
                             </div>
-                            <div class="mtm-image lazyload" style="background-image: url('{{ maker.large_img_url}}');"></div>
+                            <div class="mtm-image lazyload" data-bg="{{maker.large_img_url}}"></div>
                         </article>
                     </a>
                 </div>
@@ -172,7 +171,6 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                         <article class="mtm-maker">
                             <h3>{{maker.name}}</h3>
                             <h4 ng-bind-html="trust(maker.makerList)"></h4>
-
                             <span>
                                 {{maker.category_id_refs.join(', ')}}
                             </span>

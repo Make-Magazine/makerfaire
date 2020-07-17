@@ -185,6 +185,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                 var categories = maker.categories;
                 //reset the category ids to the category names
                 maker.category_id_refs = categories;
+				console.log(maker.makerList);
 
                 if (categories != null) {
                     angular.forEach(categories, function (cat) {
