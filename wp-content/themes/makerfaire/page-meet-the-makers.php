@@ -146,7 +146,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                             <div class="mtm-info">     
                                 <div class="top-line">
                                     <div class="mtm-cat">{{maker.category_id_refs[0]}}</div>
-                                    <span ng-bind-html="trust(maker.maker_list) | trustFilter"></span>
+                                    <span ng-bind-html="trust(maker.makerList)"></span>
 
                                 </div>
                                 <h3>{{maker.name}}</h3>
@@ -162,16 +162,17 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
             <div ng-show="layout == 'list'" class="mtm-results-cont-list container">
                 <div class="filter-alpha-wrapper">
                     <span class="filterAlpha" ng-repeat="searchLetter in alphabet.split('') track by $index">
-                        <a href=""  target="none" class="pointer-on-hover" ng-click="setLetter(searchLetter)">{{ searchLetter}}</a>
+                        <a href="" target="none" class="pointer-on-hover" ng-click="setLetter(searchLetter)">{{ searchLetter}}</a>
                     </span>
-                    <span class="filterAlpha" ><a href=""  class="pointer-on-hover" ng-click="setLetter('')">Reset</a></span>
+                    <span class="filterAlpha"><a href=""  class="pointer-on-hover" ng-click="setLetter('')">Reset</a></span>
                 </div>
                
                 <div ng-repeat="maker in makers| filter : makerSearch | orderBy: 'name' | startsWithLetter:letter">
                     <a href="{{maker.link}}" target="_blank">            
                         <article class="mtm-maker">
                             <h3>{{maker.name}}</h3>
-                            <h4 ng-bind-html="trust(maker.maker_list) | trustFilter"></h4>
+                            <h4 ng-bind-html="trust(maker.makerList)"></h4>
+
                             <span>
                                 {{maker.category_id_refs.join(', ')}}
                             </span>
