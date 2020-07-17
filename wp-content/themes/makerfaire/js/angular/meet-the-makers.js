@@ -1,4 +1,4 @@
-var app = angular.module('mtm', ['angular.filter']);
+var mtm = angular.module('mtm', ['angular.filter', 'ngSanitize']);
 
 var initialCategory = "";
 if (getUrlParam("category")) {
@@ -13,7 +13,7 @@ if (getUrlParam("featured")) {
     featured = getUrlParam("featured");
 }
 
-app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
+mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
         $scope.trust = $sce.trustAsHtml; // for rendering html
         //infinite scroll
         $scope.limit = 20;
@@ -203,35 +203,9 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         }, true);
     }]);
 
-app.filter('byCategory', function () {
-    // leaving the param in the url would look awkward once users start selecting different filters so let's get rid of it
-    if (getUrlParam("category")) {
-        window.history.replaceState({}, document.title, window.location.href.split('?')[0]);
-    }
-    return function (items, maker) {
-        return items;
-        if (items) {
-            var filtered = [];
 
-            if (!maker || !items.length) {
-                return items;
-            }
 
-            items.forEach(function (itemElement, itemIndex) {
-                itemElement.category_id_refs.forEach(function (categoryElement, categoryIndex) {
-                    if (categoryElement === maker) {
-                        filtered.push(itemElement);
-                        return false;
-                    }
-                });
-            });
-        }
-        return filtered;
-    };
-
-});
-
-app.filter('startsWithLetter', function () {
+mtm.filter('startsWithLetter', function () {
     return function (items, letter) {
         var filtered = [];
         var letterMatch = new RegExp(letter, 'i');
@@ -247,7 +221,7 @@ app.filter('startsWithLetter', function () {
     };
 });
 
-app.directive('mtmScroll', ['$window', mtmScroll]);
+mtm.directive('mtmScroll', ['$window', mtmScroll]);
 function mtmScroll($window) {
     return {
         link: function (scope, element, attrs) {
