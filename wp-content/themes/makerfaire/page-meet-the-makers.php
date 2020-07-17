@@ -48,7 +48,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
         <?php endif; ?>
         <div class="flag-banner"></div>
 
-        <div class="mtm-search">
+        <div class="mtm-search">            
             <form class="form-inline">
                 <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or maker name", 'makerfaire') ?></label><br/>
                 <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">        
@@ -118,7 +118,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                             <li ng-repeat="maker in makers| filter:{categories: {id}}"> 
                                 {{ maker.categories}}
                             </li>
-
+                                        
                         </ul>
                         <ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
                             <li>
@@ -139,14 +139,16 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                 <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
             </div>
             <!-- Grid View -->
-            <div ng-show="layout == 'grid'" class="mtm-results-cont">
-                <div ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
+            <div ng-show="layout == 'grid'| limitTo: limit" class="mtm-results-cont">
+                <div ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">                
                     <a href="{{maker.link}}" target="_blank">            
                         <article class="mtm-maker">
-                            <div class="mtm-info">
+                            <div class="mtm-info">     
                                 <div class="top-line">
                                     <div class="mtm-cat">{{maker.category_id_refs[0]}}</div>
+                                    <span>{{maker.makerList}}</span>
                                     <span ng-bind-html>{{maker.makerList}}</span>
+
                                 </div>
                                 <h3>{{ maker.name}}</h3>
                             </div>
@@ -165,14 +167,16 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                     </span>
                     <span class="filterAlpha" ><a href=""  class="pointer-on-hover" ng-click="setLetter('')">Reset</a></span>
                 </div>
+               
                 <div ng-repeat="maker in makers| filter : makerSearch | orderBy: 'name' | startsWithLetter:letter">
                     <a href="{{maker.link}}" target="_blank">            
                         <article class="mtm-maker">
                             <h3>{{ maker.name}}</h3>
-                            <h6 ng-bind-html style="font-weight: lighter;padding-left: 21px;">{{maker.makerList}}</h6>
-							<span>
-								{{maker.category_id_refs.join(', ')}}
-							</span>
+                            <h6 style="font-weight: lighter;padding-left: 21px;">{{maker.makerList}}</h6>
+
+                            <span>
+                                {{maker.category_id_refs.join(', ')}}
+                            </span>
                         </article>
                     </a>
                 </div>

@@ -1,4 +1,4 @@
-var app = angular.module('mtm', ['ngAnimate', 'ui.bootstrap', 'angular.filter', 'ngSanitize']);
+var app = angular.module('mtm', ['angular.filter']);
 
 var initialCategory = "";
 if (getUrlParam("category")) {
@@ -22,23 +22,28 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             $scope.limit += 5;
         };
 
-        $scope.layout = 'grid';
-        $scope.category = '';
         $scope.location = '';
         $scope.flag = '';
+        $scope.showHandsOn = '';
         $scope.handson = '';
-        $scope.tags = [];
         $scope.locations = [];
         $scope.letter = '';
-        $scope.makerSearch = [];
+        $scope.makerSearch = {};
         $scope.makerSearch.flag = '';
         $scope.makerSearch.handson = '';
         $scope.makerSearch.categories = '';
         $scope.makerSearch.location = '';
         $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
+        $scope.layout = 'grid';
+        $scope.category = '';
+        $scope.tags = [];
+        $scope.makers = [];
         catJson = [];
+        var mp_array = [];
+        var catName = [];
         var noMakerText = jQuery('#noMakerText').val();
+
         var formIDs = jQuery('#forms2use').val();
         var faireID = jQuery('#mtm-faire').val();
         formIDs = replaceAll(formIDs, ",", "-");
@@ -46,6 +51,7 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         if (initialCategory) {
             $scope.makerSearch.categories = initialCategory;
         }
+
         if (handsOn == "true") {
             $scope.makerSearch.handson = "Featured HandsOn";
         }
@@ -53,22 +59,22 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             $scope.makerSearch.flag = "Featured Maker";
         }
 
-        var mp_array = [];
-        $scope.makers = [];
         var showMakeProjects = jQuery('#showMakeProjects').val();
         var MPCategory = jQuery('#MPCategory').val();
 
         if (showMakeProjects !== 'mfonly') {
+            //console.log('pulling makeprojects data');
             //call to make projects
+
             $http.get('https://makeprojects.com/api/projects/category/' + MPCategory + '?limit=200&offset=0&sort=recent_activity&platform=projects')
                     .then(function successCallback(response) {
                         if (response.data.code == 200) {
-                            //alert(response.data.result.total + ' projects found');
                             if (response.data.result.projects <= 0) {
                                 jQuery('.mtm .loading').html(noMakerText);
                             }
+
                             var mp_projects = response.data.result.projects;
-                            
+
                             //build $scope.makers;                        
                             angular.forEach(mp_projects, function (projects) {
                                 //set maker name
@@ -78,31 +84,27 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                                 }
 
                                 //categories
-                                var categories = projects.categories;
+                                var MPcategories = projects.categories;
                                 var catName = [];
-                                jQuery.each(categories, function (key, category) {
+                                angular.forEach(MPcategories, function (category) {
                                     catName.push(category.name);
                                 });
-
+                                
                                 //set data
-                                mp_array.push({'category_id_refs': catName,
+                                mp_array.push({'id': projects.id,
+                                    'categories': catName,
+                                    'category_id_refs': catName,
                                     'description': projects.description,
                                     'featured_img': projects.image,
                                     'flag': '',
+                                    'handson': '',
+                                    'location': ['Make: Projects'],
                                     'link': 'https://makeprojects.com/project/' + projects.id,
                                     'large_img_url': projects.image,
                                     'makerList': makerName,
                                     'name': projects.title});
                             });
-                            
-                            
-                            if (showMakeProjects === 'mfandmp') {
-                                jQuery.merge($scope.makers, mp_array);
-                            } else if (showMakeProjects === 'mponly') {
-                                //$scope.makers = mp_array;
-                                jQuery.merge($scope.makers, mp_array);
-                            }
-                            jQuery.merge($scope.makers, mp_array);
+
                             if (response.data.result.hasMore) {
                                 alert('There are more projects to pull');
                             }
@@ -111,13 +113,19 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                         alert('Error occured in call to Make: Projects. ' + error.data.code + ' - ' + error.data.messages[0]);
                         console.log(error);
                         jQuery('.mtm .loading').html(noMakerText);
-                    }).finally(function () {
-
-            });
+                    })
+                    .finally(function () {
+                        if (showMakeProjects === 'mfandmp') {
+                            jQuery.merge($scope.makers, mp_array);
+                        } else if (showMakeProjects === 'mponly') {
+                            $scope.makers = mp_array;
+                        }                        
+                    });
         }
 
         //call to MF custom rest API
         if (showMakeProjects !== 'mponly') { //don't pull mf data if admin selected to display projects from makeprojects only
+            //console.log('pulling makerfaire data');
             $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs + '/' + faireID)
                     .then(function successCallback(response) {
                         if (response.data.entity.length <= 0) {
@@ -125,47 +133,15 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                         }
 
                         jQuery.merge($scope.makers, response.data.entity);
-
-                        var catList = [];
-                        var locList = [];
-                        angular.forEach($scope.makers, function (maker) {
-                            var location = maker.location;
-                            if (location != null) {
-                                angular.forEach(location, function (loc) {
-                                    if (locList.indexOf(loc) === -1 && loc !== '') {
-                                        locList.push(loc);
-                                    }
-                                });
-                            }
-
-                            var categories = maker.categories;
-							//reset the category ids to the category names
-							maker.category_id_refs = categories;
-
-                            if (categories != null) {
-                                angular.forEach(categories, function (cat) {
-                                    if (catList.indexOf(cat) == -1)
-                                        catList.push(cat);
-                                });
-                            }
-                        });
-
-                        $scope.tags = catList;
-                        $scope.locations = [];
-                        if (locList.length > 0) {
-                            var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-                            $scope.locations = locList.sort(collator.compare);
-                        }
-                    },
-                            function errorCallback(error) {
-                                console.log(error);
-                                jQuery('.mtm .loading').html(noMakerText);
-                            })
+                    }, function errorCallback(error) {
+                        console.log(error);
+                        jQuery('.mtm .loading').html(noMakerText);
+                    })
                     .finally(function () {
-
+                        //console.log($scope.makers);
                     });
         }
-        
+
         $scope.setLocFilter = function (location) {
             $scope.makerSearch.location = location;
         };
@@ -191,6 +167,40 @@ app.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         $scope.clearFilter = function () {
             $scope.category = '';
         };
+
+        //watch the maker variable, if it changes update the location and category drop down
+        $scope.$watch("makers", function (newValue, oldValue) {
+            var catList = [];
+            var locList = [];
+            angular.forEach($scope.makers, function (maker) {
+                var location = maker.location;
+                if (location != null) {
+                    angular.forEach(location, function (loc) {
+                        if (locList.indexOf(loc) === -1 && loc !== '') {
+                            locList.push(loc);
+                        }
+                    });
+                }
+
+                var categories = maker.categories;
+                //reset the category ids to the category names
+                maker.category_id_refs = categories;
+
+                if (categories != null) {
+                    angular.forEach(categories, function (cat) {
+                        if (catList.indexOf(cat) == -1)
+                            catList.push(cat);
+                    });
+                }
+            });
+
+            $scope.tags = catList;
+            $scope.locations = [];
+            if (locList.length > 0) {
+                var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+                $scope.locations = locList.sort(collator.compare);
+            }           
+        }, true);
     }]);
 
 app.filter('byCategory', function () {
@@ -199,21 +209,23 @@ app.filter('byCategory', function () {
         window.history.replaceState({}, document.title, window.location.href.split('?')[0]);
     }
     return function (items, maker) {
-        var filtered = [];
+        return items;
+        if (items) {
+            var filtered = [];
 
-        if (!maker || !items.length) {
-            return items;
-        }
+            if (!maker || !items.length) {
+                return items;
+            }
 
-        items.forEach(function (itemElement, itemIndex) {
-            itemElement.category_id_refs.forEach(function (categoryElement, categoryIndex) {
-                if (categoryElement === maker) {
-                    filtered.push(itemElement);
-                    return false;
-                }
+            items.forEach(function (itemElement, itemIndex) {
+                itemElement.category_id_refs.forEach(function (categoryElement, categoryIndex) {
+                    if (categoryElement === maker) {
+                        filtered.push(itemElement);
+                        return false;
+                    }
+                });
             });
-        });
-
+        }
         return filtered;
     };
 
