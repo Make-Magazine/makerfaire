@@ -534,8 +534,6 @@ function getMakerList($entryID, $faireID) {
             }
         }
     }
-	if( is_array($makerList) || empty($makerList) ) {
-		$makerList = " ";
-	}
+
     return $makerList;
 }
