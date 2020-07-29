@@ -6,7 +6,7 @@ class WP_Auth0_Embed_Widget extends WP_Widget {
 		parent::__construct(
 			$this->getWidgetId(),
 			$this->getWidgetName(),
-			array( 'description' => $this->getWidgetDescription() )
+			[ 'description' => $this->getWidgetDescription() ]
 		);
 	}
 
@@ -31,11 +31,12 @@ class WP_Auth0_Embed_Widget extends WP_Widget {
 		wp_enqueue_script( 'wpa0_admin' );
 		wp_enqueue_style( 'media' );
 		require WPA0_PLUGIN_DIR . 'templates/a0-widget-setup-form.php';
+		return 'form';
 	}
 
 	public function widget( $args, $instance ) {
 
-		if ( WP_Auth0::ready() ) {
+		if ( wp_auth0_is_ready() ) {
 
 			$instance['show_as_modal']      = $this->showAsModal();
 			$instance['modal_trigger_name'] = isset( $instance['modal_trigger_name'] )
@@ -43,12 +44,13 @@ class WP_Auth0_Embed_Widget extends WP_Widget {
 				: __( 'Login', 'wp-auth0' );
 
 			if ( ! isset( $instance['redirect_to'] ) || empty( $instance['redirect_to'] ) ) {
-				$instance['redirect_to'] = home_url( $_SERVER['REQUEST_URI'] );
+				// Null coalescing validates the input variable.
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+				$instance['redirect_to'] = home_url( $_SERVER['REQUEST_URI'] ?? '' );
 			}
 
 			echo $args['before_widget'];
-			require_once WPA0_PLUGIN_DIR . 'templates/login-form.php';
-			renderAuth0Form( false, $instance );
+			\WP_Auth0_Lock::render( false, $instance );
 			echo $args['after_widget'];
 
 		} else {
@@ -73,11 +75,10 @@ class WP_Auth0_Embed_Widget extends WP_Widget {
 				new WP_Auth0_Routes( WP_Auth0_Options::Instance() )
 			);
 
-			$validated_opts              = $admin_advanced->loginredirection_validation(
-				array( 'default_login_redirection' => $old_instance['redirect_to'] ),
-				array( 'default_login_redirection' => $new_instance['redirect_to'] )
+			$new_instance['redirect_to'] = $admin_advanced->validate_login_redirect(
+				$new_instance['redirect_to'],
+				$old_instance['redirect_to']
 			);
-			$new_instance['redirect_to'] = $validated_opts['default_login_redirection'];
 		}
 
 		return $new_instance;

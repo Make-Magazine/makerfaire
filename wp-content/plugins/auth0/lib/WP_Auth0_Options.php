@@ -1,15 +1,244 @@
 <?php
 
-class WP_Auth0_Options extends WP_Auth0_Options_Generic {
+class WP_Auth0_Options {
 
+	/**
+	 * Name used in options table option_name column.
+	 *
+	 * @var string
+	 */
+	protected $_options_name = 'wp_auth0_settings';
+
+	/**
+	 * Current array of options stored in memory.
+	 *
+	 * @var null|array
+	 */
+	private $_opts = null;
+
+	/**
+	 * Array of options overridden by constants.
+	 *
+	 * @var array
+	 */
+	protected $constant_opts = [];
+
+	/**
+	 * @var WP_Auth0_Options
+	 */
 	protected static $_instance = null;
-	protected $_options_name    = 'wp_auth0_settings';
 
+	/**
+	 * WP_Auth0_Options constructor.
+	 * Finds and stores all constant-defined settings values.
+	 */
+	public function __construct() {
+		$option_keys = $this->get_defaults( true );
+		foreach ( $option_keys as $key ) {
+			$setting_const = $this->get_constant_name( $key );
+			if ( defined( $setting_const ) ) {
+				$this->constant_opts[ $key ] = constant( $setting_const );
+			}
+		}
+	}
+
+	/**
+	 * @return WP_Auth0_Options
+	 */
 	public static function Instance() {
 		if ( null === self::$_instance ) {
-			self::$_instance = new WP_Auth0_Options;
+			self::$_instance = new self();
 		}
 		return self::$_instance;
+	}
+
+	/**
+	 * Takes an option key and creates the constant name to look for.
+	 *
+	 * @param string $key - Option key to transform.
+	 *
+	 * @return string
+	 */
+	public function get_constant_name( $key ) {
+		// NOTE: the add_filter call must load before WP_Auth0::init() so it cannot be used in a theme.
+		$constant_prefix = apply_filters( 'auth0_settings_constant_prefix', 'AUTH0_ENV_' );
+		return $constant_prefix . strtoupper( $key );
+	}
+
+	/**
+	 * Does a certain option pull from a constant?
+	 *
+	 * @param string $key - Option key to check.
+	 *
+	 * @return boolean
+	 */
+	public function has_constant_val( $key ) {
+		return isset( $this->constant_opts[ $key ] );
+	}
+
+	/**
+	 * Get the value of an overriding constant if one is set, return null if not.
+	 *
+	 * @param string $key - Option key to look for.
+	 *
+	 * @return string|null
+	 */
+	public function get_constant_val( $key ) {
+		return $this->has_constant_val( $key ) ? constant( $this->get_constant_name( $key ) ) : null;
+	}
+
+	/**
+	 * Get all the keys for constant-overridden settings.
+	 *
+	 * @return array
+	 */
+	public function get_all_constant_keys() {
+		return array_keys( $this->constant_opts );
+	}
+
+	/**
+	 * Get the option_name for the settings array.
+	 *
+	 * @return string
+	 */
+	public function get_options_name() {
+		return $this->_options_name;
+	}
+
+	/**
+	 * Return options from memory, database, defaults, or constants.
+	 *
+	 * @return array
+	 */
+	public function get_options() {
+		if ( empty( $this->_opts ) ) {
+			$options = get_option( $this->_options_name, [] );
+			// Brand new install, no saved options so get all defaults.
+			if ( empty( $options ) || ! is_array( $options ) ) {
+				$options = $this->defaults();
+			}
+
+			// Check for constant overrides and replace.
+			if ( ! empty( $this->constant_opts ) ) {
+				$options = array_replace_recursive( $options, $this->constant_opts );
+			}
+			$this->_opts = $options;
+		}
+		return $this->_opts;
+	}
+
+	/**
+	 * Return a filtered settings value or default.
+	 *
+	 * @param string $key - Settings key to get.
+	 * @param mixed  $default - Default value to return if not found.
+	 *
+	 * @return mixed
+	 *
+	 * @link https://auth0.com/docs/cms/wordpress/extending#wp_auth0_get_option
+	 */
+	public function get( $key, $default = null ) {
+		$options = $this->get_options();
+		$value   = isset( $options[ $key ] ) ? $options[ $key ] : $default;
+		return apply_filters( 'wp_auth0_get_option', $value, $key );
+	}
+
+	/**
+	 * Update a setting if not already stored in a constant.
+	 * This method will fail silently if the option is already set in a constant.
+	 *
+	 * @param string $key - Option key name to update.
+	 * @param mixed  $value - Value to update with.
+	 * @param bool   $should_update - Flag to update DB options array with value stored in memory.
+	 *
+	 * @return bool
+	 */
+	public function set( $key, $value, $should_update = true ) {
+
+		// Cannot set a setting that is being overridden by a constant.
+		if ( $this->has_constant_val( $key ) ) {
+			return false;
+		}
+
+		$options         = $this->get_options();
+		$options[ $key ] = $value;
+		$this->_opts     = $options;
+
+		// No database update so process completed successfully.
+		if ( ! $should_update ) {
+			return true;
+		}
+
+		return $this->update_all();
+	}
+
+	/**
+	 * Remove a setting from the options array in memory.
+	 *
+	 * @param string $key - Option key name to remove.
+	 */
+	public function remove( $key ) {
+
+		// Cannot remove a setting that is being overridden by a constant.
+		if ( $this->has_constant_val( $key ) ) {
+			return;
+		}
+
+		$options = $this->get_options();
+		unset( $options[ $key ] );
+		$this->_opts = $options;
+	}
+
+	/**
+	 * Save the options array as it exists in memory.
+	 *
+	 * @return bool
+	 */
+	public function update_all() {
+		$options = $this->get_options();
+
+		foreach ( $this->get_all_constant_keys() as $key ) {
+			unset( $options[ $key ] );
+		}
+		return update_option( $this->_options_name, $options );
+	}
+
+	/**
+	 * Save the options array for the first time.
+	 */
+	public function save() {
+		$this->get_options();
+		$this->update_all();
+	}
+
+	/**
+	 * Delete the options array.
+	 *
+	 * @return bool
+	 */
+	public function delete() {
+		return delete_option( $this->_options_name );
+	}
+
+	/**
+	 * Reset options to defaults.
+	 */
+	public function reset() {
+		$this->_opts = null;
+		$this->delete();
+		$this->save();
+	}
+
+	/**
+	 * Return default options as key => value or just keys.
+	 *
+	 * @param bool $keys_only - Only return the array keys for the default options.
+	 *
+	 * @return array
+	 */
+	public function get_defaults( $keys_only = false ) {
+		$default_opts = $this->defaults();
+		return $keys_only ? array_keys( $default_opts ) : $default_opts;
 	}
 
 	public function is_wp_registration_enabled() {
@@ -19,49 +248,6 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 	public function get_default( $key ) {
 		$defaults = $this->defaults();
 		return $defaults[ $key ];
-	}
-
-	/**
-	 * Get the stored token signing algorithm
-	 *
-	 * @return string
-	 */
-	public function get_client_signing_algorithm() {
-		return $this->get( 'client_signing_algorithm', WP_Auth0_Api_Client::DEFAULT_CLIENT_ALG );
-	}
-
-	/**
-	 * Get the currently-stored client ID as a JWT key
-	 *
-	 * @param bool $legacy - legacy installs did not provide RS256, forces HS256
-	 *
-	 * @return bool|string
-	 */
-	public function get_client_secret_as_key( $legacy = false ) {
-		return $this->convert_client_secret_to_key(
-			$this->get( 'client_secret', '' ),
-			$this->get( 'client_secret_b64_encoded', false ),
-			( $legacy ? false : $this->get_client_signing_algorithm() === 'RS256' ),
-			$this->get_auth_domain()
-		);
-	}
-
-	/**
-	 * Convert a client_secret value into a JWT key
-	 *
-	 * @param string $secret - client_secret value
-	 * @param bool   $is_encoded - is the client_secret base64 encoded?
-	 * @param bool   $is_RS256 - if true, use RS256; if false, use HS256
-	 * @param string $domain - tenant domain
-	 *
-	 * @return array|bool|mixed|string
-	 */
-	public function convert_client_secret_to_key( $secret, $is_encoded, $is_RS256, $domain ) {
-		if ( $is_RS256 ) {
-			return WP_Auth0_Api_Client::JWKfetch( $domain );
-		} else {
-			return $is_encoded ? JWT::urlsafeB64Decode( $secret ) : $secret;
-		}
 	}
 
 	/**
@@ -81,39 +267,23 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 			: site_url();
 
 		return $home_url_origin === $site_url_origin
-			? array( $home_url_origin )
-			: array( $home_url_origin, $site_url_origin );
+			? [ $home_url_origin ]
+			: [ $home_url_origin, $site_url_origin ];
 	}
 
 	/**
 	 * Get the main site URL for Auth0 processing
 	 *
 	 * @param string|null $protocol - forced URL protocol, use default if empty
-	 * @param bool        $implicit - use the implicit flow in the callback
 	 *
 	 * @return string
 	 */
-	public function get_wp_auth0_url( $protocol = null, $implicit = false ) {
+	public function get_wp_auth0_url( $protocol = null ) {
+		if ( is_null( $protocol ) && $this->get( 'force_https_callback' ) ) {
+			$protocol = 'https';
+		}
 		$site_url = site_url( 'index.php', $protocol );
-		return add_query_arg( 'auth0', ( $implicit ? 'implicit' : '1' ), $site_url );
-	}
-
-	/**
-	 * Get get_cross_origin_loc URL for new Clients
-	 *
-	 * @return string
-	 */
-	public function get_cross_origin_loc() {
-		return add_query_arg( 'auth0fallback', '1', site_url( 'index.php', 'https' ) );
-	}
-
-	/**
-	 * Get the main site logout URL, minus a nonce
-	 *
-	 * @return string
-	 */
-	public function get_logout_url() {
-		return add_query_arg( 'action', 'logout', site_url( 'wp-login.php', 'login' ) );
+		return add_query_arg( 'auth0', 1, $site_url );
 	}
 
 	/**
@@ -123,7 +293,7 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 	 */
 	public function get_lock_url() {
 		$cdn_url = $this->get( 'cdn_url' );
-		return $cdn_url && $this->get( 'custom_cdn_url' ) ? $cdn_url : WPA0_LOCK_CDN_URL;
+		return ( $cdn_url && $this->get( 'custom_cdn_url' ) ) ? $cdn_url : WPA0_LOCK_CDN_URL;
 	}
 
 	/**
@@ -146,7 +316,7 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 	 */
 	public function get_lock_connections() {
 		$connections = $this->get( 'lock_connections' );
-		$connections = empty( $connections ) ? array() : explode( ',', $connections );
+		$connections = empty( $connections ) ? [] : explode( ',', $connections );
 		return array_map( 'trim', $connections );
 	}
 
@@ -190,128 +360,59 @@ class WP_Auth0_Options extends WP_Auth0_Options_Generic {
 	}
 
 	/**
-	 * @deprecated - 3.11.0, use wp_auth0_can_show_wp_login_form() instead.
-	 *
-	 * @return bool
-	 *
-	 * @codeCoverageIgnore
-	 */
-	public function can_show_wp_login_form() {
-		return wp_auth0_can_show_wp_login_form();
-	}
-
-	/**
 	 * Default settings when plugin is installed or reset
 	 *
 	 * @return array
 	 */
 	protected function defaults() {
-		return array(
+		return [
 
 			// System
 			'version'                   => 1,
 			'last_step'                 => 1,
-			'migration_token_id'        => null,
-			'jwt_auth_integration'      => false,
+			'db_connection_name'        => '',
 
 			// Basic
 			'domain'                    => '',
 			'custom_domain'             => '',
 			'client_id'                 => '',
 			'client_secret'             => '',
-			'client_secret_b64_encoded' => null,
 			'client_signing_algorithm'  => WP_Auth0_Api_Client::DEFAULT_CLIENT_ALG,
 			'cache_expiration'          => 1440,
 			'wordpress_login_enabled'   => 'link',
 			'wle_code'                  => '',
 
 			// Features
-			'sso'                       => 0,
-			'singlelogout'              => 1,
-			'override_wp_avatars'       => 1,
+			'auto_login'                => true,
+			'auto_login_method'         => '',
+			'singlelogout'              => true,
+			'override_wp_avatars'       => true,
 
-			// Appearance
+			// Embedded
+			'passwordless_enabled'      => false,
 			'icon_url'                  => '',
 			'form_title'                => '',
 			'gravatar'                  => true,
 			'username_style'            => '',
 			'primary_color'             => '',
-			'language'                  => '',
-			'language_dictionary'       => '',
+			'extra_conf'                => '',
+			'custom_cdn_url'            => false,
+			'cdn_url'                   => WPA0_LOCK_CDN_URL,
+			'lock_connections'          => '',
 
 			// Advanced
 			'requires_verified_email'   => true,
 			'skip_strategies'           => '',
 			'remember_users_session'    => false,
 			'default_login_redirection' => home_url(),
-			'passwordless_enabled'      => false,
 			'force_https_callback'      => false,
-			'cdn_url'                   => WPA0_LOCK_CDN_URL,
-			'custom_cdn_url'            => null,
-			'lock_connections'          => '',
 			'auto_provisioning'         => false,
 			'migration_ws'              => false,
-			'migration_token'           => null,
+			'migration_token'           => '',
 			'migration_ips_filter'      => false,
-			'migration_ips'             => null,
-			'auto_login'                => 1,
-			'auto_login_method'         => '',
-			'auth0_implicit_workflow'   => false,
-			'valid_proxy_ip'            => null,
-			'custom_signup_fields'      => '',
-			'extra_conf'                => '',
+			'migration_ips'             => '',
+			'valid_proxy_ip'            => '',
 			'auth0_server_domain'       => 'auth0.auth0.com',
-		);
-	}
-
-	/*
-	 *
-	 * DEPRECATED
-	 *
-	 */
-
-	/**
-	 * @deprecated - 3.8.0, not used and no replacement provided. Connection settings now live in top-level settings.
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	public function set_connection( $key, $value ) {
-		// phpcs:ignore
-		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
-
-		$options                        = $this->get_options();
-		$options['connections'][ $key ] = $value;
-
-		$this->set( 'connections', $options['connections'] );
-	}
-
-	/**
-	 * @deprecated - 3.8.0, not used and no replacement provided. Connection settings now live in top-level settings.
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	public function get_connection( $key, $default = null ) {
-		// phpcs:ignore
-		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
-
-		$options = $this->get_options();
-
-		if ( ! isset( $options['connections'][ $key ] ) ) {
-			return apply_filters( 'wp_auth0_get_option', $default, $key );
-		}
-		return apply_filters( 'wp_auth0_get_option', $options['connections'][ $key ], $key );
-	}
-
-	/**
-	 * @deprecated - 3.6.0, social connections are no longer set during initial setup so this data is no longer needed.
-	 *
-	 * @return array
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	public function get_enabled_connections() {
-		// phpcs:ignore
-		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
-		return array( 'facebook', 'twitter', 'google-oauth2' );
+		];
 	}
 }

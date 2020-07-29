@@ -16,12 +16,14 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 
 	use DomDocumentHelpers;
 
+	use TokenHelper;
+
 	use UsersHelper;
 
 	/**
-	 * Instance of WP_Auth0_Admin_Advanced.
+	 * Instance of WP_Auth0_Admin.
 	 *
-	 * @var WP_Auth0_Admin_Advanced
+	 * @var WP_Auth0_Admin
 	 */
 	public static $admin;
 
@@ -31,7 +33,7 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 	public function setUp() {
 		parent::setUp();
 		$router      = new WP_Auth0_Routes( self::$opts );
-		self::$admin = new WP_Auth0_Admin_Advanced( self::$opts, $router );
+		self::$admin = new WP_Auth0_Admin( self::$opts, $router );
 	}
 
 	/**
@@ -42,10 +44,12 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 			'label_for' => 'wpa0_migration_ws',
 			'opt_name'  => 'migration_ws',
 		];
+		$router     = new WP_Auth0_Routes( self::$opts );
+		$admin      = new WP_Auth0_Admin_Advanced( self::$opts, $router );
 
 		// Get the field HTML.
 		ob_start();
-		self::$admin->render_migration_ws( $field_args );
+		$admin->render_migration_ws( $field_args );
 		$field_html = ob_get_clean();
 
 		$input = $this->getDomListFromTagName( $field_html, 'input' );
@@ -66,12 +70,14 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 			'label_for' => 'wpa0_migration_ws',
 			'opt_name'  => 'migration_ws',
 		];
+		$router     = new WP_Auth0_Routes( self::$opts );
+		$admin      = new WP_Auth0_Admin_Advanced( self::$opts, $router );
 
 		$this->assertFalse( self::$opts->get( $field_args['opt_name'] ) );
 
 		// Get the field HTML.
 		ob_start();
-		self::$admin->render_migration_ws( $field_args );
+		$admin->render_migration_ws( $field_args );
 		$field_html = ob_get_clean();
 
 		$this->assertContains( 'User migration endpoints deactivated', $field_html );
@@ -90,9 +96,12 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 
 		self::$opts->set( $field_args['opt_name'], 1 );
 
+		$router = new WP_Auth0_Routes( self::$opts );
+		$admin  = new WP_Auth0_Admin_Advanced( self::$opts, $router );
+
 		// Get the field HTML.
 		ob_start();
-		self::$admin->render_migration_ws( $field_args );
+		$admin->render_migration_ws( $field_args );
 		$field_html = ob_get_clean();
 
 		$this->assertContains( 'User migration endpoints activated', $field_html );
@@ -119,55 +128,14 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 	}
 
 	/**
-	 * Test that the AJAX rotate token endpoint fails when there is a bad nonce value.
-	 */
-	public function testThatAjaxTokenRotationFailsWithBadNonce() {
-		$this->startAjaxHalting();
-
-		$caught_exception = false;
-		$error_msg        = 'No exception';
-		try {
-			$_REQUEST['_ajax_nonce'] = uniqid();
-			self::$admin->auth0_rotate_migration_token();
-		} catch ( Exception $e ) {
-			$error_msg        = $e->getMessage();
-			$caught_exception = ( 'bad_nonce' === $error_msg );
-		}
-		$this->assertTrue( $caught_exception, $error_msg );
-	}
-
-	/**
-	 * Test that the AJAX rotate token endpoint saves a new token when the endpoint succeeds.
-	 */
-	public function testThatAjaxTokenRotationSavesNewToken() {
-		$this->startAjaxReturn();
-
-		$old_token = uniqid();
-		self::$opts->set( 'migration_token', $old_token );
-
-		ob_start();
-		$_REQUEST['_ajax_nonce'] = wp_create_nonce( 'auth0_rotate_migration_token' );
-		self::$admin->auth0_rotate_migration_token();
-		$return_json = explode( PHP_EOL, ob_get_clean() );
-
-		$this->assertEquals( '{"success":true}', end( $return_json ) );
-		$this->assertNotEquals( $old_token, self::$opts->get( 'migration_token' ) );
-		$this->assertGreaterThanOrEqual( 64, strlen( self::$opts->get( 'migration_token' ) ) );
-	}
-
-	/**
 	 * Test that turning migration endpoints off does not affect new input.
 	 */
 	public function testThatChangingMigrationToOffKeepsTokenData() {
 		self::$opts->set( 'migration_token', 'existing_token' );
-		$input     = [
-			'migration_ws'       => 0,
-			'migration_token_id' => 'existing_token_id',
-		];
-		$validated = self::$admin->migration_ws_validation( [], $input );
+		$validated = self::$admin->input_validator( [] );
 
-		$this->assertEquals( $input['migration_ws'], $validated['migration_ws'] );
-		$this->assertEquals( $input['migration_token_id'], $validated['migration_token_id'] );
+		$this->assertArrayHasKey( 'migration_ws', $validated );
+		$this->assertEmpty( $validated['migration_ws'] );
 		$this->assertEquals( 'existing_token', $validated['migration_token'] );
 	}
 
@@ -177,14 +145,13 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 	public function testThatChangingMigrationToOnKeepsToken() {
 		self::$opts->set( 'migration_token', 'new_token' );
 		$input = [
-			'migration_ws'  => 1,
+			'migration_ws'  => '1',
 			'client_secret' => '__test_client_secret__',
 		];
 
-		$validated = self::$admin->migration_ws_validation( [], $input );
+		$validated = self::$admin->input_validator( $input );
 
 		$this->assertEquals( 'new_token', $validated['migration_token'] );
-		$this->assertNull( $validated['migration_token_id'] );
 		$this->assertEquals( $input['migration_ws'], $validated['migration_ws'] );
 	}
 
@@ -193,47 +160,28 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 	 */
 	public function testThatChangingMigrationToOnKeepsWithJwtSetsId() {
 		$client_secret   = '__test_client_secret__';
-		$migration_token = JWT::encode( [ 'jti' => '__test_token_id__' ], $client_secret );
+		$migration_token = self::makeHsToken( [ 'jti' => '__test_token_id__' ], $client_secret );
 		self::$opts->set( 'migration_token', $migration_token );
 		$input = [
-			'migration_ws'  => 1,
+			'migration_ws'  => '1',
 			'client_secret' => $client_secret,
 		];
 
-		$validated = self::$admin->migration_ws_validation( [], $input );
+		$validated = self::$admin->input_validator( $input );
 
 		$this->assertEquals( $input['migration_ws'], $validated['migration_ws'] );
 		$this->assertEquals( $migration_token, $validated['migration_token'] );
-		$this->assertEquals( '__test_token_id__', $validated['migration_token_id'] );
-	}
-
-	/**
-	 * Test that turning on migration keeps the existing token and sets an admin notification.
-	 */
-	public function testThatChangingMigrationToOnKeepsWithBase64JwtSetsId() {
-		$client_secret = '__test_client_secret__';
-		self::$opts->set( 'migration_token', JWT::encode( [ 'jti' => '__test_token_id__' ], $client_secret ) );
-		$input = [
-			'migration_ws'              => 1,
-			'client_secret'             => JWT::urlsafeB64Encode( $client_secret ),
-			'client_secret_b64_encoded' => 1,
-		];
-
-		$validated = self::$admin->migration_ws_validation( [], $input );
-
-		$this->assertEquals( '__test_token_id__', $validated['migration_token_id'] );
 	}
 
 	/**
 	 * Test that turning on migration endpoints without a stored token will generate one.
 	 */
 	public function testThatChangingMigrationToOnGeneratesNewToken() {
-		$input = [ 'migration_ws' => 1 ];
+		$input = [ 'migration_ws' => '1' ];
 
-		$validated = self::$admin->migration_ws_validation( [], $input );
+		$validated = self::$admin->input_validator( $input );
 
 		$this->assertGreaterThan( 64, strlen( $validated['migration_token'] ) );
-		$this->assertNull( $validated['migration_token_id'] );
 		$this->assertEquals( $input['migration_ws'], $validated['migration_ws'] );
 	}
 
@@ -246,7 +194,7 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 		define( 'AUTH0_ENV_MIGRATION_TOKEN', '__test_constant_setting__' );
 		self::$opts->set( 'migration_token', '__test_saved_setting__' );
 		$input = [
-			'migration_ws'  => 1,
+			'migration_ws'  => '1',
 			'client_secret' => '__test_client_secret__',
 		];
 
@@ -254,9 +202,8 @@ class TestOptionMigrationWs extends WP_Auth0_Test_Case {
 		$router = new WP_Auth0_Routes( $opts );
 		$admin  = new WP_Auth0_Admin_Advanced( $opts, $router );
 
-		$validated = $admin->migration_ws_validation( [], $input );
+		$validated = $admin->migration_ws_validation( $input );
 
-		$this->assertNull( $validated['migration_token_id'] );
 		$this->assertEquals( $input['migration_ws'], $validated['migration_ws'] );
 		$this->assertEquals( AUTH0_ENV_MIGRATION_TOKEN, $validated['migration_token'] );
 	}

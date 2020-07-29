@@ -25,8 +25,8 @@ class WP_Auth0_Ip_Check {
 	 *
 	 * @link https://auth0.com/docs/rules/current#outbound-calls
 	 */
-	protected $valid_webtask_ips = array(
-		'us' => array(
+	protected $valid_webtask_ips = [
+		'us' => [
 			'3.211.189.167',
 			'18.233.90.226',
 			'34.195.142.251',
@@ -46,8 +46,8 @@ class WP_Auth0_Ip_Check {
 			'54.183.64.135',
 			'54.183.204.205',
 			'138.91.154.99',
-		),
-		'eu' => array(
+		],
+		'eu' => [
 			'34.253.4.94',
 			'35.156.51.163',
 			'35.157.221.52',
@@ -67,8 +67,8 @@ class WP_Auth0_Ip_Check {
 			'52.213.74.69',
 			'52.213.216.142',
 			'54.76.184.103',
-		),
-		'au' => array(
+		],
+		'au' => [
 			'13.54.254.182',
 			'13.55.232.24',
 			'13.210.52.131',
@@ -80,8 +80,8 @@ class WP_Auth0_Ip_Check {
 			'54.66.205.24',
 			'54.79.46.4',
 			'54.153.131.0',
-		),
-	);
+		],
+	];
 
 	/**
 	 * Options object.
@@ -111,7 +111,7 @@ class WP_Auth0_Ip_Check {
 		if ( empty( $domain ) ) {
 			$domain = $this->a0_options->get( 'domain' );
 		}
-		$region = WP_Auth0::get_tenant_region( $domain );
+		$region = wp_auth0_get_tenant_region( $domain );
 		return $this->get_ip_by_region( $region, $glue );
 	}
 
@@ -136,13 +136,18 @@ class WP_Auth0_Ip_Check {
 	protected function get_request_ip() {
 		$valid_proxy_ip = $this->a0_options->get( 'valid_proxy_ip' );
 
-		if ( $valid_proxy_ip ) {
-			if ( $_SERVER['REMOTE_ADDR'] == $valid_proxy_ip ) {
-				return $_SERVER['HTTP_X_FORWARDED_FOR'];
-			}
+		// Null coalescing validates the input variable.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		$remote_addr = $_SERVER['REMOTE_ADDR'] ?? null;
+
+		if ( $valid_proxy_ip && $remote_addr === $valid_proxy_ip ) {
+
+			// Null coalescing validates the input variable.
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+			return $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $remote_addr;
 		}
 
-		return $_SERVER['REMOTE_ADDR'];
+		return $remote_addr;
 	}
 
 	/**
@@ -155,20 +160,20 @@ class WP_Auth0_Ip_Check {
 	protected function process_ip_list( $ip_list ) {
 		$raw = is_array( $ip_list ) ? $ip_list : explode( self::IP_STRING_GLUE, $ip_list );
 
-		$ranges = array();
+		$ranges = [];
 		foreach ( $raw as $r ) {
 			$d = explode( '-', $r );
 
 			if ( count( $d ) < 2 ) {
-				$ranges[] = array(
+				$ranges[] = [
 					'from' => trim( $d[0] ),
 					'to'   => trim( $d[0] ),
-				);
+				];
 			} else {
-				$ranges[] = array(
+				$ranges[] = [
 					'from' => trim( $d[0] ),
 					'to'   => trim( $d[1] ),
-				);
+				];
 			}
 		}
 		return $ranges;
@@ -210,85 +215,5 @@ class WP_Auth0_Ip_Check {
 		$ip   = ip2long( $ip );
 
 		return $ip >= $from && $ip <= $to;
-	}
-
-	/*
-	 * DEPRECATED
-	 */
-
-	/**
-	 * @deprecated - 3.9.0, unused
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	public function init() {
-		if ( ! WP_Auth0_Options::Instance()->get( 'ip_range_check' ) || is_admin() ) {
-			return;
-		}
-
-		add_filter( 'wp_auth0_get_option', array( $this, 'check_activate' ), 10, 2 );
-	}
-
-	/**
-	 * @deprecated - 3.9.0, unused
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	public function check_activate( $val, $key ) {
-		if ( 'active' !== $key ) {
-			return $val;
-		}
-		$is_active = $this->validate_ip() ? 1 : 0;
-		return $is_active;
-	}
-
-	/**
-	 * @deprecated - 3.9.0, unused
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	private function validate_ip() {
-		$ranges = $this->get_ranges();
-		$ip     = $_SERVER['REMOTE_ADDR'];
-
-		foreach ( $ranges as $range ) {
-			$in_range = $this->in_range( $ip, $range );
-			if ( $in_range ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * @deprecated - 3.9.0, unused
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	private function get_ranges() {
-		$data = WP_Auth0_Options::Instance()->get( 'ip_ranges' );
-		$data = str_replace( "\r\n", "\n", $data );
-
-		$raw = explode( "\n", $data );
-
-		$ranges = array();
-		foreach ( $raw as $r ) {
-			$d = explode( '-', $r );
-
-			if ( count( $d ) < 2 ) {
-				$ranges[] = array(
-					'from' => trim( $d[0] ),
-					'to'   => trim( $d[0] ),
-				);
-			} else {
-				$ranges[] = array(
-					'from' => trim( $d[0] ),
-					'to'   => trim( $d[1] ),
-				);
-			}
-		}
-
-		return $ranges;
 	}
 }

@@ -8,11 +8,14 @@ class WP_Auth0_Admin_Generic {
 
 	protected $_option_name;
 
-	protected $_description;
-
 	protected $_textarea_rows = 4;
 
-	protected $actions_middlewares = array();
+	/**
+	 * Validation methods to run in individual settings classes.
+	 *
+	 * @var array
+	 */
+	protected $actions_middlewares = [ 'basic_validation' ];
 
 	/**
 	 * WP_Auth0_Admin_Generic constructor.
@@ -38,7 +41,7 @@ class WP_Auth0_Admin_Generic {
 		add_settings_section(
 			$section_id,
 			$section_name,
-			array( $this, 'render_description' ),
+			null,
 			$options_name
 		);
 
@@ -47,7 +50,7 @@ class WP_Auth0_Admin_Generic {
 		foreach ( $options as $setting ) {
 			$callback = function_exists( $setting['function'] )
 				? $setting['function']
-				: array( $this, $setting['function'] );
+				: [ $this, $setting['function'] ];
 
 			add_settings_field(
 				$setting['id'],
@@ -55,30 +58,18 @@ class WP_Auth0_Admin_Generic {
 				$callback,
 				$options_name,
 				$section_id,
-				array(
+				[
 					'label_for' => $setting['id'],
 					'opt_name'  => isset( $setting['opt'] ) ? $setting['opt'] : null,
-				)
+				]
 			);
 		}
 	}
 
-	/**
-	 * Render description at the top of the settings block
-	 */
-	public function render_description() {
-		if ( ! empty( $this->_description ) ) {
-			printf( '<p class="a0-step-text">%s</p>', $this->_description );
-		}
-	}
-
-	public function input_validator( $input, $old_options = null ) {
-		if ( empty( $old_options ) ) {
-			$old_options = $this->options->get_options();
-		}
+	public function input_validator( $input ) {
 
 		foreach ( $this->actions_middlewares as $action ) {
-			$input = $this->$action( $old_options, $input );
+			$input = $this->$action( $input );
 		}
 
 		return $input;
@@ -97,37 +88,6 @@ class WP_Auth0_Admin_Generic {
 			$error,
 			$type
 		);
-	}
-
-	/**
-	 * @deprecated - 3.10.0, no longer used.
-	 *
-	 * @codeCoverageIgnore - Deprecated.
-	 */
-	protected function rule_validation( $old_options, $input, $key, $rule_name, $rule_script ) {
-		// phpcs:ignore
-		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
-		$input[ $key ] = ( isset( $input[ $key ] ) ? $input[ $key ] : null );
-
-		if ( ( $input[ $key ] !== null && $old_options[ $key ] === null ) || ( $input[ $key ] === null && $old_options[ $key ] !== null ) ) {
-
-			try {
-
-				$operations    = new WP_Auth0_Api_Operations( $this->options );
-				$input[ $key ] = $operations->toggle_rule(
-					$this->options->get( 'auth0_app_token' ),
-					( is_null( $input[ $key ] ) ? $old_options[ $key ] : null ),
-					$rule_name,
-					$rule_script
-				);
-
-			} catch ( Exception $e ) {
-				$this->add_validation_error( $e->getMessage() );
-				$input[ $key ] = null;
-			}
-		}
-
-		return $input;
 	}
 
 	/**
@@ -250,7 +210,7 @@ class WP_Auth0_Admin_Generic {
 	 * @param string $text - description text to display
 	 */
 	protected function render_field_description( $text ) {
-		$period = ! in_array( $text[ strlen( $text ) - 1 ], array( '.', ':' ) ) ? '.' : '';
+		$period = ! in_array( $text[ strlen( $text ) - 1 ], [ '.', ':' ] ) ? '.' : '';
 		printf( '<div class="subelement"><span class="description">%s%s</span></div>', $text, $period );
 	}
 
@@ -297,13 +257,17 @@ class WP_Auth0_Admin_Generic {
 	}
 
 	/**
-	 * @deprecated - 3.6.0, use WP_Auth0_Admin_Generic::render_switch() instead
+	 * Strict-check passed values against possible truth-y ones.
 	 *
-	 * @codeCoverageIgnore - Deprecated
+	 * @param mixed $val Value to check.
+	 *
+	 * @return bool
 	 */
-	protected function render_a0_switch( $id, $name, $value, $checked ) {
-		// phpcs:ignore
-		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
-		$this->render_switch( $id, $name );
+	protected function sanitize_switch_val( $val ) {
+		return in_array( $val, [ 1, '1', true ], true ) ? true : false;
+	}
+
+	protected function sanitize_text_val( $val ) {
+		return sanitize_text_field( trim( strval( $val ) ) );
 	}
 }

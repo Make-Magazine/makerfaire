@@ -94,7 +94,6 @@ window.addEventListener('load', function() {
 				}
 				// automatically login to wordpress by clicking the login btn after webauth
 				if(document.querySelector(".logged-in") === null) {
-					console.log("Test");
 					document.querySelector("#LoginBtn").click();
 				}
 

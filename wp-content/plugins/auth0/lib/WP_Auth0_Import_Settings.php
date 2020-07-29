@@ -2,177 +2,72 @@
 
 class WP_Auth0_Import_Settings {
 
+	const IMPORT_NONCE_ACTION = 'wp_auth0_import_settings';
+
+	const EXPORT_NONCE_ACTION = 'wp_auth0_export_settings';
+
 	protected $a0_options;
 
 	public function __construct( WP_Auth0_Options $a0_options ) {
 		$this->a0_options = $a0_options;
 	}
 
-	/**
-	 * @deprecated - 3.10.0, will move add_action calls out of this class in the next major.
-	 *
-	 * @codeCoverageIgnore - Deprecated.
-	 */
-	public function init() {
-		add_action( 'admin_action_wpauth0_export_settings', array( $this, 'export_settings' ) );
-		add_action( 'admin_action_wpauth0_import_settings', array( $this, 'import_settings' ) );
-
-		if ( isset( $_REQUEST['error'] ) && isset( $_REQUEST['page'] ) && $_REQUEST['page'] === 'wpa0-import-settings' ) {
-			add_action( 'admin_notices', array( $this, 'show_error' ) );
-		}
-	}
-
-	public function show_error() {
-		printf(
-			'<div class="notice notice-error"><p><strong>%s</strong></p></div>',
-			sanitize_text_field( $_REQUEST['error'] )
-		);
-	}
-
 	public function render_import_settings_page() {
-
 		include WPA0_PLUGIN_DIR . 'templates/import_settings.php';
-
 	}
 
 	public function import_settings() {
 
-		if ( ! function_exists( 'wp_handle_upload' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
+		// Null coalescing validates input variable.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		if ( ! wp_verify_nonce( wp_unslash( $_POST['_wpnonce'] ?? '' ), self::IMPORT_NONCE_ACTION ) ) {
+			wp_nonce_ays( self::IMPORT_NONCE_ACTION );
+			exit;
 		}
 
-		if ( isset( $_FILES['settings-file'] ) && $_FILES['settings-file']['error'] !== 4 ) {
-
-			if ( $_FILES['settings-file']['error'] === 0 ) {
-				$uploadedfile     = $_FILES['settings-file'];
-				$upload_overrides = array(
-					'test_form' => false,
-					'mimes'     => array( 'json' => 'application/json' ),
-				);
-
-				$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
-
-				if ( $movefile && ! isset( $movefile['error'] ) ) {
-
-					$settings_json = file_get_contents( $movefile['file'] );
-					unlink( $movefile['file'] );
-
-					if ( empty( $settings_json ) ) {
-						exit(
-							wp_redirect(
-								admin_url(
-									'admin.php?page=wpa0-import-settings&error=' .
-									rawurlencode( __( 'The settings file is empty.', 'wp-auth0' ) )
-								)
-							)
-						);
-					}
-
-					$settings = json_decode( $settings_json, true );
-
-					if ( empty( $settings ) ) {
-						exit(
-							wp_redirect(
-								admin_url(
-									'admin.php?page=wpa0-import-settings&error=' .
-									rawurlencode( __( 'The settings file is not valid.', 'wp-auth0' ) )
-								)
-							)
-						);
-					}
-				} else {
-					exit(
-						wp_redirect(
-							admin_url(
-								'admin.php?page=wpa0-import-settings&error=' .
-								rawurlencode( $movefile['error'] )
-							)
-						)
-					);
-				}
-			} else {
-				switch ( $_FILES['settings-file']['error'] ) {
-					case 1:
-					case 2:
-						exit(
-							wp_redirect(
-								admin_url(
-									'admin.php?page=wpa0-import-settings&error=' .
-									rawurlencode( __( 'The file you are uploading is too big.', 'wp-auth0' ) )
-								)
-							)
-						);
-					break;
-					case 3:
-						exit(
-							wp_redirect(
-								admin_url(
-									'admin.php?page=wpa0-import-settings&error=' .
-									rawurlencode( __( 'There was an error uploading the file.', 'wp-auth0' ) )
-								)
-							)
-						);
-					break;
-					case 6:
-					case 7:
-					case 8:
-						exit(
-							wp_redirect(
-								admin_url(
-									'admin.php?page=wpa0-import-settings&error=' .
-									rawurlencode( __( 'There was an error importing your settings, please try again.', 'wp-auth0' ) )
-								)
-							)
-						);
-					break;
-				}
-			}
-		} else {
-			$settings_json = trim( stripslashes( $_POST['settings-json'] ) );
-
-			if ( empty( $settings_json ) ) {
-				exit(
-					wp_redirect(
-						admin_url(
-							'admin.php?page=wpa0-import-settings&error=' .
-							rawurlencode( __( 'Please upload the Auth0 for WordPress setting file or copy the content.', 'wp-auth0' ) )
-						)
-					)
-				);
-			}
-
-			$settings = json_decode( $settings_json, true );
-
-			if ( empty( $settings ) ) {
-				exit(
-					wp_redirect(
-						admin_url(
-							'admin.php?page=wpa0-import-settings&error=' .
-							rawurlencode( __( 'The settings json is not valid.', 'wp-auth0' ) )
-						)
-					)
-				);
-			}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( __( 'Unauthorized.', 'wp-auth0' ) );
+			exit;
 		}
 
-		foreach ( $settings as $key => $value ) {
-			$this->a0_options->set( $key, $value, false );
+		// Null coalescing validates input variable.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		$settings_json = trim( stripslashes( $_POST['settings-json'] ?? '' ) );
+		if ( empty( $settings_json ) ) {
+			wp_safe_redirect( $this->make_error_url( __( 'No settings JSON entered.', 'wp-auth0' ) ) );
+			exit;
+		}
+
+		$settings = json_decode( $settings_json, true );
+		if ( ! $settings || ! is_array( $settings ) ) {
+			wp_safe_redirect( $this->make_error_url( __( 'Settings JSON entered is not valid.', 'wp-auth0' ) ) );
+			exit;
+		}
+
+		// Keep original settings keys so we only save imported values.
+		$settings_keys = array_keys( $settings );
+
+		$admin = new WP_Auth0_Admin( $this->a0_options, new WP_Auth0_Routes( $this->a0_options ) );
+
+		// Default setting values will be added to the array.
+		$settings_validated = $admin->input_validator( $settings );
+
+		foreach ( $settings_keys as $settings_key ) {
+			// Invalid settings keys are removed in WP_Auth0_Admin::input_validator().
+			if ( isset( $settings_validated[ $settings_key ] ) ) {
+				$this->a0_options->set( $settings_key, $settings_validated[ $settings_key ], false );
+			}
 		}
 
 		$this->a0_options->update_all();
-
-		exit( wp_redirect( admin_url( 'admin.php?page=wpa0' ) ) );
-	}
-
-	public function export_settings() {
-		header( 'Content-Type: application/json' );
-		$name = urlencode( get_auth0_curatedBlogName() );
-		header( "Content-Disposition: attachment; filename=auth0_for_wordpress_settings-$name.json" );
-		header( 'Pragma: no-cache' );
-
-		$settings = get_option( $this->a0_options->get_options_name() );
-		echo json_encode( $settings );
+		wp_safe_redirect( admin_url( 'admin.php?page=wpa0' ) );
 		exit;
 	}
 
+	/**
+	 * @codeCoverageIgnore
+	 */
+	private function make_error_url( $error ) {
+		return admin_url( 'admin.php?page=wpa0-import-settings&error=' . rawurlencode( $error ) );
+	}
 }

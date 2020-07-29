@@ -71,9 +71,9 @@ class TestWpLoginHooks extends WP_Auth0_Test_Case {
 	}
 
 	public function testThatWpLoginOverrideUrlIsModifiedIfWle() {
-		$_REQUEST['wle'] = '__test_wle_code__';
+		$_REQUEST['wle'] = 'link';
 		$this->assertEquals(
-			'http://login.org?wle=__test_wle_code__',
+			'http://login.org?wle=link',
 			wp_auth0_filter_login_override_url( 'http://login.org' )
 		);
 	}
@@ -124,4 +124,11 @@ class TestWpLoginHooks extends WP_Auth0_Test_Case {
 		$this->assertEquals( '<input type="hidden" name="wle" value="__test_wle_code__" />', ob_get_clean() );
 	}
 
+	public function testThatInputFieldAvoidsXss() {
+		self::auth0Ready();
+		$_REQUEST['wle'] = '"><svg onload=alert`xss`>';
+		ob_start();
+		wp_auth0_filter_login_override_form();
+		$this->assertNotContains( '<svg onload=alert`xss`>', ob_get_clean() );
+	}
 }

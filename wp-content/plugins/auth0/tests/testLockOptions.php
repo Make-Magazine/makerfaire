@@ -23,7 +23,7 @@ class TestLockOptions extends WP_Auth0_Test_Case {
 	 */
 	public function testThatLockConfigBaseUrlIsBuiltProperly() {
 		self::$opts->set( 'domain', 'test.auth0.com' );
-		$lock_options     = new WP_Auth0_Lock10_Options( [], self::$opts );
+		$lock_options     = new WP_Auth0_Lock( [], self::$opts );
 		$lock_options_arr = $lock_options->get_lock_options();
 		$this->assertArrayNotHasKey( 'configurationBaseUrl', $lock_options_arr );
 
@@ -38,42 +38,11 @@ class TestLockOptions extends WP_Auth0_Test_Case {
 	}
 
 	/**
-	 * Test that callback URLs are built properly
-	 */
-	public function testThatAuthCallbacksAreCorrect() {
-		$lock_options = new WP_Auth0_Lock10_Options( [], self::$opts );
-
-		$this->assertEquals( 'http://example.org/index.php?auth0=implicit', $lock_options->get_implicit_callback_url() );
-		$this->assertEquals( 'http://example.org/index.php?auth0=1', $lock_options->get_code_callback_url() );
-
-		self::$opts->set( 'force_https_callback', 1 );
-		$lock_options = new WP_Auth0_Lock10_Options( [], self::$opts );
-
-		$this->assertEquals( 'https://example.org/index.php?auth0=implicit', $lock_options->get_implicit_callback_url() );
-		$this->assertEquals( 'https://example.org/index.php?auth0=1', $lock_options->get_code_callback_url() );
-	}
-
-	/**
-	 * Test that the SSO options are built properly.
-	 */
-	public function testThatDefaultSsoOptionsAreCorrect() {
-		$lock_options = new WP_Auth0_Lock10_Options( [], self::$opts );
-
-		$sso_opts = $lock_options->get_sso_options();
-		$this->assertEquals( 'openid email profile', $sso_opts['scope'] );
-		$this->assertEquals( 'id_token', $sso_opts['responseType'] );
-		$this->assertEquals( 'http://example.org/index.php?auth0=implicit', $sso_opts['redirectUri'] );
-		$this->assertEquals( WP_Auth0_Nonce_Handler::get_instance()->get_unique(), $sso_opts['nonce'] );
-		$this->assertEquals( $lock_options->get_state_obj(), $sso_opts['state'] );
-		$this->assertArrayNotHasKey( 'authParams', $sso_opts );
-	}
-
-	/**
 	 * Test that the social_big_buttons option is not used.
 	 */
 	public function testThatSocialButtonStyleStaysBig() {
 		self::$opts->set( 'social_big_buttons', false );
-		$lock_options = new WP_Auth0_Lock10_Options( [], self::$opts );
+		$lock_options = new WP_Auth0_Lock( [], self::$opts );
 
 		$lock_opts = $lock_options->get_lock_options();
 		$this->assertEquals( 'big', $lock_opts['socialButtonStyle'] );
@@ -83,25 +52,9 @@ class TestLockOptions extends WP_Auth0_Test_Case {
 	 * Test that the social_big_buttons option cannot be overridden.
 	 */
 	public function testThatSocialButtonStyleCannotBeOverridden() {
-		$lock_options = new WP_Auth0_Lock10_Options( [ 'social_big_buttons' => false ], self::$opts );
+		$lock_options = new WP_Auth0_Lock( [ 'social_big_buttons' => false ], self::$opts );
 
 		$lock_opts = $lock_options->get_lock_options();
 		$this->assertEquals( 'big', $lock_opts['socialButtonStyle'] );
-	}
-
-	public function testThatLockOptionsFilterWorks() {
-		$lock_options = new WP_Auth0_Lock10_Options( [ 'language' => '__test_language__' ], self::$opts );
-
-		$lock_opts = $lock_options->get_lock_options();
-		$this->assertEquals( '__test_language__', $lock_opts['language'] );
-
-		add_filter( 'auth0_lock_options', [ __CLASS__, 'setLockLanguage' ] );
-		$lock_opts = $lock_options->get_lock_options();
-		$this->assertEquals( '__test_filtered_language__', $lock_opts['language'] );
-	}
-
-	public static function setLockLanguage( $options ) {
-		$options['language'] = '__test_filtered_language__';
-		return $options;
 	}
 }

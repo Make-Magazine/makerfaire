@@ -23,22 +23,13 @@ class WP_Auth0_InitialSetup_Consent {
 	 *
 	 * @param string $domain - Auth0 domain for the Application.
 	 * @param string $access_token - Management API access token.
-	 * @param string $type - Installation type, "social" (AKA standard) or "enterprise".
 	 * @param bool   $hasInternetConnection - True if the installing site be reached by Auth0, false if not.
 	 */
-	public function callback_with_token( $domain, $access_token, $type, $hasInternetConnection = true ) {
+	public function callback_with_token( $domain, $access_token, $hasInternetConnection = true ) {
 
 		$this->a0_options->set( 'domain', $domain );
 		$this->access_token          = $access_token;
-		$this->state                 = $type;
 		$this->hasInternetConnection = $hasInternetConnection;
-
-		if ( ! in_array( $this->state, array( 'social', 'enterprise' ) ) ) {
-			wp_redirect( admin_url( 'admin.php?page=wpa0-setup&error=invalid_state' ) );
-			exit;
-		}
-
-		$this->a0_options->set( 'account_profile', $this->state );
 
 		$name = get_auth0_curatedBlogName();
 		$this->consent_callback( $name );
@@ -46,40 +37,41 @@ class WP_Auth0_InitialSetup_Consent {
 	}
 
 	public function callback() {
-
 		$access_token = $this->exchange_code();
 
 		if ( $access_token === null ) {
-			wp_redirect( admin_url( 'admin.php?page=wpa0-setup&error=cant_exchange_token' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=wpa0-setup&error=cant_exchange_token' ) );
 			exit;
 		}
 
 		$app_domain = $this->parse_token_domain( $access_token );
 
-		if ( ! isset( $_REQUEST['state'] ) ) {
-			wp_redirect( admin_url( 'admin.php?page=wpa0-setup&error=missing_state' ) );
-			exit;
-		}
-
-		$this->callback_with_token( $app_domain, $access_token, $_REQUEST['state'] );
+		$this->callback_with_token( $app_domain, $access_token );
 	}
 
 	protected function parse_token_domain( $token ) {
 		$parts   = explode( '.', $token );
-		$payload = json_decode( JWT::urlsafeB64Decode( $parts[1] ) );
-		return trim( str_replace( array( '/api/v2', 'https://' ), '', $payload->aud ), ' /' );
+		$payload = json_decode( wp_auth0_url_base64_decode( $parts[1] ) );
+		return trim( str_replace( [ '/api/v2', 'https://' ], '', $payload->aud ), ' /' );
 	}
 
 	public function exchange_code() {
+		// Not processing form data, using a redirect from Auth0.
+		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
+
 		if ( ! isset( $_REQUEST['code'] ) ) {
 			return null;
 		}
 
-		$client_id    = site_url();
-		$redirect_uri = home_url();
+		$exchange_api = new WP_Auth0_Api_Exchange_Code( $this->a0_options, $this->domain );
 
-		$exchange_api       = new WP_Auth0_Api_Exchange_Code( $this->a0_options, $this->domain );
-		$exchange_resp_body = $exchange_api->call( $_REQUEST['code'], $client_id, $redirect_uri );
+		$exchange_resp_body = $exchange_api->call(
+			// Validated above and only sent to the change signup API endpoint.
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			wp_unslash( $_REQUEST['code'] ),
+			WP_Auth0_InitialSetup::get_setup_client_id(),
+			WP_Auth0_InitialSetup::get_setup_redirect_uri()
+		);
 
 		if ( ! $exchange_resp_body ) {
 			return null;
@@ -87,6 +79,8 @@ class WP_Auth0_InitialSetup_Consent {
 
 		$tokens = json_decode( $exchange_resp_body );
 		return isset( $tokens->access_token ) ? $tokens->access_token : null;
+
+		// phpcs:enable WordPress.Security.NonceVerification.NoNonceVerification
 	}
 
 	/**
@@ -104,15 +98,15 @@ class WP_Auth0_InitialSetup_Consent {
 		 * Create Client
 		 */
 
-		$should_create_and_update_connection = false;
+		$should_create_connection = false;
 
 		if ( empty( $client_id ) ) {
-			$should_create_and_update_connection = true;
+			$should_create_connection = true;
 
 			$client_response = WP_Auth0_Api_Client::create_client( $domain, $this->access_token, $name );
 
 			if ( $client_response === false ) {
-				wp_redirect( admin_url( 'admin.php?page=wpa0&error=cant_create_client' ) );
+				wp_safe_redirect( admin_url( 'admin.php?page=wpa0-setup&error=cant_create_client' ) );
 				exit;
 			}
 
@@ -126,63 +120,31 @@ class WP_Auth0_InitialSetup_Consent {
 		 * Create Connection
 		 */
 
-		$db_connection_name    = 'DB-' . get_auth0_curatedBlogName();
-		$connection_exists     = false;
-		$connection_pwd_policy = null;
-
-		$connections = WP_Auth0_Api_Client::search_connection( $domain, $this->access_token, 'auth0' );
-
-		if ( $should_create_and_update_connection && ! empty( $connections ) && is_array( $connections ) ) {
-			foreach ( $connections as $connection ) {
-
-				// We only want to check/update connections that are active for this Application.
-				if ( ! in_array( $client_id, $connection->enabled_clients ) ) {
-					continue;
-				}
-
-				// Connection with the same name, use it below.
-				if ( $db_connection_name === $connection->name ) {
-					$connection_exists = $connection->id;
-					if ( isset( $connection->options ) && isset( $connection->options->passwordPolicy ) ) {
-						$connection_pwd_policy = $connection->options->passwordPolicy;
-					}
-					continue;
-				}
-
-				// Different Connection, update to remove the Application created above.
-				$u_connection                  = clone $connection;
-				$u_connection->enabled_clients = array_diff( $u_connection->enabled_clients, array( $client_id ) );
-				WP_Auth0_Api_Client::update_connection( $domain, $this->access_token, $u_connection->id, $u_connection );
+		$db_connection_name = 'DB-' . get_auth0_curatedBlogName();
+		if ( $should_create_connection ) {
+			$connections = WP_Auth0_Api_Client::search_connection( $domain, $this->access_token, null, $db_connection_name );
+			if ( $connections && is_array( $connections ) && in_array( $client_id, $connections[0]->enabled_clients ) ) {
+				$this->a0_options->set( 'db_connection_name', $db_connection_name );
+				$should_create_connection = false;
 			}
 		}
 
-		if ( $should_create_and_update_connection ) {
-
-			if ( $connection_exists === false ) {
-				$migration_token = $this->a0_options->get( 'migration_token' );
-				if ( empty( $migration_token ) ) {
-					$migration_token = JWT::urlsafeB64Encode( openssl_random_pseudo_bytes( 64 ) );
-				}
-				$operations = new WP_Auth0_Api_Operations( $this->a0_options );
-				$response   = $operations->create_wordpress_connection(
-					$this->access_token,
-					$this->hasInternetConnection,
-					'fair',
-					$migration_token
-				);
-
-				$this->a0_options->set( 'migration_ws', $this->hasInternetConnection );
-				$this->a0_options->set( 'migration_token', $migration_token );
-				$this->a0_options->set( 'migration_token_id', null );
-				$this->a0_options->set( 'db_connection_enabled', $response ? 1 : 0 );
-				$this->a0_options->set( 'db_connection_id', $response );
-
-			} else {
-
-				$this->a0_options->set( 'db_connection_enabled', 1 );
-				$this->a0_options->set( 'db_connection_id', $connection_exists );
-
+		if ( $should_create_connection ) {
+			$migration_token = $this->a0_options->get( 'migration_token' );
+			if ( empty( $migration_token ) ) {
+				$migration_token = wp_auth0_generate_token();
 			}
+			$operations = new WP_Auth0_Api_Operations( $this->a0_options );
+			$operations->create_wordpress_connection(
+				$this->access_token,
+				$this->hasInternetConnection,
+				'fair',
+				$migration_token
+			);
+
+			$this->a0_options->set( 'migration_ws', $this->hasInternetConnection );
+			$this->a0_options->set( 'migration_token', $migration_token );
+			$this->a0_options->set( 'db_connection_name', $db_connection_name );
 		}
 
 		/*
@@ -192,11 +154,11 @@ class WP_Auth0_InitialSetup_Consent {
 		$grant_response = WP_Auth0_Api_Client::create_client_grant( $this->access_token, $client_id );
 
 		if ( false === $grant_response ) {
-			wp_redirect( admin_url( 'admin.php?page=wpa0&error=cant_create_client_grant' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=wpa0-setup&error=cant_create_client_grant' ) );
 			exit;
 		}
 
-		wp_redirect( admin_url( 'admin.php?page=wpa0-setup&step=2&profile=' . $this->state ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=wpa0-setup&step=2' ) );
 		exit;
 	}
 }

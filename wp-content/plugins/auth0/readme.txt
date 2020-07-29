@@ -1,11 +1,11 @@
 === Login by Auth0 ===
-Tags: login, oauth, authentication, single sign on, ldap, active directory, saml, windows azure ad, google apps, two factor, two-factor, facebook, google, twitter, baidu, renren, linkedin, github, paypal, yahoo, amazon, vkontakte, salesforce, box, dwolla, yammer, passwordless, sms, magiclink, totp, social
-Tested up to: 5.2.2
-Requires at least: 3.8
-Requires PHP: 5.3
+Tags: OIDC, OpenID Connect, Single Sign On, SSO, SAML, Passwordless, OAuth2, Auth0
+Tested up to: 5.3.2
+Requires at least: 4.9
+Requires PHP: 7.0
 License: GPLv2
 License URI: https://github.com/auth0/wp-auth0/blob/master/LICENSE
-Stable tag: trunk
+Stable tag: 4.1.0
 Contributors: auth0, auth0josh
 
 Login by Auth0 provides improved username/password login, Passwordless login, Social login and Single Sign On for all your sites.
@@ -31,14 +31,6 @@ This plugin requires a [free or paid](https://auth0.com/pricing) Auth0 account.
 
 1. [Sign up here](https://auth0.com/signup).
 2. Follow the [installation instructions here](https://auth0.com/docs/cms/wordpress/installation).
-
-== Screenshots ==
-
-1. The new login page on WordPress
-2. Twenty Seventeen theme with login widget
-3. The admin to configure the plugin
-4. Set up Enterprise connections
-5. Set up the Auth0 widget
 
 == Technical Notes ==
 
@@ -70,8 +62,6 @@ Like widgets, shortcode login forms will use the main plugins settings. It can b
 - `form_title` - Text to appear at top of the login form
 - `gravatar` - Display the user's Gravatar; set to `1` for yes
 - `redirect_to` - A direct URL to use after successful login
-- `custom_css` - Valid CSS to alter the login form
-- `custom_js` - Valid JS to alter the login form
 - `dict` - Valid JSON to override form text ([see options here](https://github.com/auth0/lock/blob/master/src/i18n/en.js))
 - `extra_conf` - Valid JSON to override Lock configuration ([see options here](https://auth0.com/docs/libraries/lock/v11/configuration))
 - `show_as_modal` - Display a button which triggers the login form in a modal; set to `1` for yes
@@ -119,14 +109,5 @@ All is not lost!
 * You can see additional documentation and answers on our [support site](https://support.auth0.com/). Customers on a paid Auth0 plan can [submit a trouble ticket](https://support.auth0.com/tickets) for a fast response.
 
 == Changelog ==
-
-**v3.11.1**
-
-- Check state in specific global based on callback type [\#708](https://github.com/auth0/wp-auth0/pull/708) ([joshcanhelp](https://github.com/joshcanhelp))
-- Fix sensitive field handling; add Basic settings tab validations [\#703](https://github.com/auth0/wp-auth0/pull/703) ([joshcanhelp](https://github.com/joshcanhelp))
-- Add new Auth0 IPs; do not save duplicate or whitelisted IPs [\#700](https://github.com/auth0/wp-auth0/pull/700) ([joshcanhelp](https://github.com/joshcanhelp))
-- Fix post passwords getting redirected [\#698](https://github.com/auth0/wp-auth0/pull/698) ([joshcanhelp](https://github.com/joshcanhelp))
-
-... and more!
 
 [Complete list of changes for this and other releases](https://github.com/auth0/wp-auth0/releases)
