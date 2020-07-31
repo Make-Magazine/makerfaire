@@ -110,3 +110,10 @@ wp-content/plugins/filter-page-by-template
 FixFor Users.sql
 wp-content/themes/twentyseventeen
 debug.log.*
+.wpe-devkit
+.wpengine-conf
+.wpe-pull-ignore
+.wpe-push-ignore
+googled013dbd6063e50f3.html
+robots.txt
+wp-content/mu-plugins-bk

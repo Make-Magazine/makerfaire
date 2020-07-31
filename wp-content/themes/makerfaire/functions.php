@@ -147,9 +147,13 @@ function set_universal_asset_constants() {
         $universal_asset_pass = 'memberships';
     }
     // local environments
-    else if (strpos($host, ':8888') > -1) {
+    else if (strpos($host, ':8888') > -1 ) {
         $universal_asset_env = 'makeco.local'; // this will require that we use `makeco` as our local
         $universal_asset_proto = 'http://';
+    }
+    // wpengine local environments
+    else if (strpos($host, '.local') > -1 ) {
+        $universal_asset_env = 'makeco.local'; // this will require that we use `makeco` as our local        
     }
     // Set the important bits as CONSTANTS that can easily be used elsewhere
     define('UNIVERSAL_ASSET_URL_PREFIX', $universal_asset_proto . $universal_asset_env);
