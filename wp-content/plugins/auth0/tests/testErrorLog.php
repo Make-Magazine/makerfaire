@@ -13,6 +13,14 @@
  */
 class TestErrorLog extends WP_Auth0_Test_Case {
 
+	use HookHelpers;
+
+	use RedirectHelpers;
+
+	use UsersHelper;
+
+	use WpDieHelper;
+
 	/**
 	 * Test log entry section.
 	 */
@@ -22,13 +30,6 @@ class TestErrorLog extends WP_Auth0_Test_Case {
 	 * Test log entry message.
 	 */
 	const BASIC_LOG_ENTRY_MESSAGE = '__test_error_message__';
-
-	/**
-	 * WP_Auth0_ErrorManager instance.
-	 *
-	 * @var WP_Auth0_ErrorManager
-	 */
-	public static $error_manager;
 
 	/**
 	 * Default log entry array.
@@ -42,12 +43,24 @@ class TestErrorLog extends WP_Auth0_Test_Case {
 	 */
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
-		self::$error_manager     = new WP_Auth0_ErrorManager();
 		self::$default_log_entry = [
 			'section' => self::BASIC_LOG_ENTRY_SECTION,
 			'code'    => 'unknown_code',
 			'message' => self::BASIC_LOG_ENTRY_MESSAGE,
 		];
+	}
+
+	/**
+	 * Test that the error log option name did not change.
+	 */
+	public function testThatClearAdminActionFunctionIsHooked() {
+		$expect_hooked = [
+			'wp_auth0_errorlog_clear_error_log' => [
+				'priority'      => 10,
+				'accepted_args' => 1,
+			],
+		];
+		$this->assertHookedFunction( 'admin_action_wpauth0_clear_error_log', $expect_hooked );
 	}
 
 	/**
@@ -130,7 +143,7 @@ class TestErrorLog extends WP_Auth0_Test_Case {
 		$error_code = 999;
 		$error_msg  = uniqid();
 		$wp_error   = new WP_Error( $error_code, $error_msg );
-		WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, $wp_error );
+		WP_Auth0_ErrorLog::insert_error( __METHOD__, $wp_error );
 		$log = self::$error_log->get();
 
 		$this->assertCount( 1, $log );
@@ -146,7 +159,7 @@ class TestErrorLog extends WP_Auth0_Test_Case {
 		$error_code = 999;
 		$error_msg  = uniqid();
 		$exception  = new Exception( $error_msg, $error_code );
-		WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, $exception );
+		WP_Auth0_ErrorLog::insert_error( __METHOD__, $exception );
 		$log = self::$error_log->get();
 
 		$this->assertCount( 1, $log );
@@ -165,7 +178,7 @@ class TestErrorLog extends WP_Auth0_Test_Case {
 				'message' => uniqid(),
 			],
 		];
-		WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, $error );
+		WP_Auth0_ErrorLog::insert_error( __METHOD__, $error );
 		$log = self::$error_log->get();
 
 		$this->assertCount( 1, $log );
@@ -182,13 +195,32 @@ class TestErrorLog extends WP_Auth0_Test_Case {
 			'code'    => mt_rand( 111, 999 ),
 			'message' => uniqid(),
 		];
-		WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, $error );
+		WP_Auth0_ErrorLog::insert_error( __METHOD__, $error );
 		$log = self::$error_log->get();
 
 		$this->assertCount( 1, $log );
 		$this->assertEquals( __METHOD__, $log[0]['section'] );
 		$this->assertEquals( 'unknown_code', $log[0]['code'] );
 		$this->assertEquals( serialize( $error ), $log[0]['message'] );
+	}
+
+	public function testLogEntryAction() {
+		$error = new WP_Error( '__test_error_code__', '__test_error_msg__' );
+
+		add_action( 'auth0_insert_error', [ $this, 'insertErrorException' ], 1, 3 );
+		try {
+			WP_Auth0_ErrorLog::insert_error( '__test_method__', $error );
+			$result = 'Nothing';
+		} catch ( Exception $e ) {
+			$result = json_decode( $e->getMessage(), true );
+		}
+		remove_action( 'auth0_insert_error', [ $this, 'insertErrorException' ] );
+
+		$this->assertEquals( '__test_method__', $result['method'] );
+		$this->assertEquals( '__test_method__', $result['section'] );
+		$this->assertArrayHasKey( 'errors', $result['error'] );
+		$this->assertArrayHasKey( '__test_error_code__', $result['error']['errors'] );
+		$this->assertEquals( '__test_error_msg__', $result['error']['errors']['__test_error_code__'][0] );
 	}
 
 	/**
@@ -216,5 +248,69 @@ class TestErrorLog extends WP_Auth0_Test_Case {
 		wp_cache_delete( WP_Auth0_ErrorLog::OPTION_NAME, 'options' );
 
 		$this->assertFalse( get_option( WP_Auth0_ErrorLog::OPTION_NAME ) );
+	}
+
+	public function testThatBadNonceStopsProcess() {
+		$this->startWpDieHalting();
+		$error_log = new WP_Auth0_ErrorLog();
+		$error_log::insert_error( uniqid(), uniqid() );
+
+		$this->assertCount( 1, $error_log->get() );
+
+		try {
+			wp_auth0_errorlog_clear_error_log();
+			$caught = 'Nothing caught';
+		} catch ( \Exception $e ) {
+			$caught = $e->getMessage();
+		}
+
+		$this->assertEquals( 'Not allowed.', $caught );
+		$this->assertCount( 1, $error_log->get() );
+	}
+
+	public function testThatNonAdminStopsProcess() {
+		$this->startWpDieHalting();
+		$_POST['_wpnonce'] = wp_create_nonce( 'wp_auth0_clear_error_log' );
+		$error_log      = new WP_Auth0_ErrorLog();
+		$error_log::insert_error( uniqid(), uniqid() );
+
+		$this->assertCount( 1, $error_log->get() );
+
+		try {
+			wp_auth0_errorlog_clear_error_log();
+			$caught = 'Nothing caught';
+		} catch ( \Exception $e ) {
+			$caught = $e->getMessage();
+		}
+
+		$this->assertEquals( 'Not authorized.', $caught );
+		$this->assertCount( 1, $error_log->get() );
+	}
+
+	public function testThatErrorLogCanBeCleared() {
+		$this->startRedirectHalting();
+		$this->setGlobalUser();
+		$_POST['_wpnonce'] = wp_create_nonce( 'wp_auth0_clear_error_log' );
+		$error_log      = new WP_Auth0_ErrorLog();
+		$error_log::insert_error( uniqid(), uniqid() );
+
+		$this->assertCount( 1, $error_log->get() );
+
+		try {
+			wp_auth0_errorlog_clear_error_log();
+			$caught = [ 'Nothing caught' ];
+		} catch ( \Exception $e ) {
+			$caught = unserialize( $e->getMessage() );
+		}
+
+		$this->assertEquals( 'http://example.org/wp-admin/admin.php?page=wpa0-errors&cleared=1', $caught['location'] );
+		$this->assertEquals( 302, $caught['status'] );
+		$this->assertEmpty( $error_log->get() );
+	}
+
+	public function insertErrorException( $entry, $error, $method ) {
+		$entry['method'] = $method;
+		$entry['error']  = $error;
+		throw new Exception( json_encode( $entry ) );
 	}
 }

@@ -47,49 +47,6 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 	}
 
 	/**
-	 * Test that authorize URL params are built and filtered properly.
-	 */
-	public function testAuthorizeParams() {
-		$test_client_id  = uniqid();
-		$test_connection = uniqid();
-		$auth_params     = WP_Auth0_LoginManager::get_authorize_params();
-
-		$this->assertEquals( 'openid email profile', $auth_params['scope'] );
-		$this->assertEquals( 'code', $auth_params['response_type'] );
-		$this->assertEquals( site_url( 'index.php?auth0=1' ), $auth_params['redirect_uri'] );
-		$this->assertArrayNotHasKey( 'auth0Client', $auth_params );
-		$this->assertNotEmpty( $auth_params['state'] );
-
-		$auth_params = WP_Auth0_LoginManager::get_authorize_params( $test_connection );
-		$this->assertEquals( $test_connection, $auth_params['connection'] );
-
-		self::$opts->set( 'client_id', $test_client_id );
-
-		$auth_params = WP_Auth0_LoginManager::get_authorize_params();
-		$this->assertEquals( $test_client_id, $auth_params['client_id'] );
-
-		self::$opts->set( 'auth0_implicit_workflow', 1 );
-		$auth_params = WP_Auth0_LoginManager::get_authorize_params();
-		$this->assertEquals( add_query_arg( 'auth0', 'implicit', site_url( 'index.php' ) ), $auth_params['redirect_uri'] );
-		$this->assertEquals( 'id_token', $auth_params['response_type'] );
-		$this->assertNotEmpty( $auth_params['nonce'] );
-		$this->assertEquals( 'form_post', $auth_params['response_mode'] );
-
-		add_filter(
-			'auth0_authorize_url_params',
-			function( $params, $connection, $redirect_to ) {
-				$params[ $connection ] = $redirect_to;
-				return $params;
-			},
-			10,
-			3
-		);
-
-		$auth_params = WP_Auth0_LoginManager::get_authorize_params( 'auth0', 'https://auth0.com' );
-		$this->assertEquals( 'https://auth0.com', $auth_params['auth0'] );
-	}
-
-	/**
 	 * Test that the authorize URL is built properly.
 	 */
 	public function testBuildAuthorizeUrl() {
@@ -150,7 +107,7 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 
 		// Configure Auth0.
 		self::auth0Ready();
-		$this->assertTrue( WP_Auth0::ready() );
+		$this->assertTrue( wp_auth0_is_ready() );
 
 		// Set the current user to admin.
 		$this->setGlobalUser();
@@ -161,7 +118,7 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 			'status'   => null,
 		];
 		try {
-			$login_manager->login_auto();
+			wp_auth0_login_ulp_redirect();
 		} catch ( Exception $e ) {
 			$caught_redirect = unserialize( $e->getMessage() );
 		}
@@ -179,7 +136,7 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 			'status'   => null,
 		];
 		try {
-			$login_manager->login_auto();
+			wp_auth0_login_ulp_redirect();
 		} catch ( Exception $e ) {
 			$caught_redirect = unserialize( $e->getMessage() );
 		}
@@ -194,15 +151,13 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 	 */
 	public function testUlpRedirect() {
 		$this->startRedirectHalting();
-
-		$login_manager = new WP_Auth0_LoginManager( self::$users_repo, self::$opts );
-		$this->assertFalse( $login_manager->login_auto() );
+		$this->assertFalse( wp_auth0_login_ulp_redirect() );
 
 		// Activate settings that result in a ULP redirect.
-		self::$opts->set( 'auto_login', 1 );
+		self::$opts->set( 'auto_login', true );
 		self::auth0Ready( true );
 		self::$opts->set( 'domain', 'test-wp.auth0.com' );
-		$this->assertTrue( WP_Auth0::ready() );
+		$this->assertTrue( wp_auth0_is_ready() );
 
 		$caught_redirect = [
 			'location' => null,
@@ -211,7 +166,7 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 		try {
 			// Need to hide error messages here because a cookie is set.
 			// phpcs:ignore
-			@$login_manager->login_auto();
+			@wp_auth0_login_ulp_redirect();
 		} catch ( Exception $e ) {
 			$caught_redirect = unserialize( $e->getMessage() );
 		}
@@ -226,17 +181,15 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 	public function testThatUlpRedirectIsSkippedForNonGetMethod() {
 		$this->startRedirectHalting();
 
-		$login_manager = new WP_Auth0_LoginManager( self::$users_repo, self::$opts );
-
 		// First, check that a redirect is happening.
-		self::$opts->set( 'auto_login', 1 );
+		self::$opts->set( 'auto_login', true );
 		self::auth0Ready( true );
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$caught_redirect           = [];
 		try {
 			// Need to hide error messages here because a cookie is set.
 			// phpcs:ignore
-			@$login_manager->login_auto();
+			@wp_auth0_login_ulp_redirect();
 		} catch ( Exception $e ) {
 			$caught_redirect = unserialize( $e->getMessage() );
 		}
@@ -249,17 +202,16 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 	public function testThatUlpRedirectIsSkippedForWleOverride() {
 		$this->startRedirectHalting();
 
-		$login_manager = new WP_Auth0_LoginManager( self::$users_repo, self::$opts );
-		$this->assertFalse( $login_manager->login_auto() );
+		$this->assertFalse( wp_auth0_login_ulp_redirect() );
 
 		// First, check that a redirect is happening.
-		self::$opts->set( 'auto_login', 1 );
+		self::$opts->set( 'auto_login', true );
 		self::auth0Ready( true );
 		$caught_redirect = [];
 		try {
 			// Need to hide error messages here because a cookie is set.
 			// phpcs:ignore
-			@$login_manager->login_auto();
+			@wp_auth0_login_ulp_redirect();
 		} catch ( Exception $e ) {
 			$caught_redirect = unserialize( $e->getMessage() );
 		}
@@ -267,7 +219,7 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 
 		// Test that WP login override will skip the redirect.
 		$_REQUEST['wle'] = 1;
-		$this->assertFalse( $login_manager->login_auto() );
+		$this->assertFalse( wp_auth0_login_ulp_redirect() );
 	}
 
 	/**
@@ -276,17 +228,16 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 	public function testThatUlpRedirectIsSkippedForLogout() {
 		$this->startRedirectHalting();
 
-		$login_manager = new WP_Auth0_LoginManager( self::$users_repo, self::$opts );
-		$this->assertFalse( $login_manager->login_auto() );
+		$this->assertFalse( wp_auth0_login_ulp_redirect() );
 
 		// First, check that a redirect is happening.
-		self::$opts->set( 'auto_login', 1 );
+		self::$opts->set( 'auto_login', true );
 		self::auth0Ready( true );
 		$caught_redirect = [];
 		try {
 			// Need to hide error messages here because a cookie is set.
 			// phpcs:ignore
-			@$login_manager->login_auto();
+			@wp_auth0_login_ulp_redirect();
 		} catch ( Exception $e ) {
 			$caught_redirect = unserialize( $e->getMessage() );
 		}
@@ -295,6 +246,6 @@ class TestLoginManager extends WP_Auth0_Test_Case {
 		// Test that logout will skip the redirect.
 		$GLOBALS['pagenow'] = 'wp-login.php';
 		$_REQUEST['action'] = 'logout';
-		$this->assertFalse( $login_manager->login_auto() );
+		$this->assertFalse( wp_auth0_login_ulp_redirect() );
 	}
 }

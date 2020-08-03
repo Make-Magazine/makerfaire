@@ -28,15 +28,6 @@ class WP_Auth0_Api_Client_Credentials extends WP_Auth0_Api_Abstract {
 	const SCOPE_TRANSIENT_KEY = 'auth0_api_token_scope';
 
 	/**
-	 * Decoded token received.
-	 *
-	 * @deprecated - 3.10.0, not used.
-	 *
-	 * @var null|object
-	 */
-	protected $token_decoded = null;
-
-	/**
 	 * WP_Auth0_Api_Client_Credentials constructor.
 	 *
 	 * @param WP_Auth0_Options $options - WP_Auth0_Options instance.
@@ -60,19 +51,6 @@ class WP_Auth0_Api_Client_Credentials extends WP_Auth0_Api_Abstract {
 	}
 
 	/**
-	 * Return the decoded API token received.
-	 *
-	 * @deprecated - 3.10.0, not used.
-	 *
-	 * @return null|object
-	 *
-	 * @codeCoverageIgnore - Deprecated.
-	 */
-	public function get_token_decoded() {
-		return $this->token_decoded;
-	}
-
-	/**
 	 * Handle API response.
 	 *
 	 * @param string $method - Method that called the API.
@@ -93,7 +71,7 @@ class WP_Auth0_Api_Client_Credentials extends WP_Auth0_Api_Abstract {
 
 		// If we have no access token, something went wrong upstream.
 		if ( empty( $response_body->access_token ) ) {
-			WP_Auth0_ErrorManager::insert_auth0_error( $method, __( 'No access_token returned.', 'wp-auth0' ) );
+			WP_Auth0_ErrorLog::insert_error( $method, __( 'No access_token returned.', 'wp-auth0' ) );
 			return self::RETURN_ON_FAILURE;
 		}
 

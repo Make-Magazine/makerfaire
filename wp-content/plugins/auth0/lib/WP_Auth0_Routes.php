@@ -14,11 +14,15 @@
 class WP_Auth0_Routes {
 
 	/**
+	 * WP_Auth0_Options instance for this class.
+	 *
 	 * @var WP_Auth0_Options
 	 */
 	protected $a0_options;
 
 	/**
+	 * WP_Auth0_Ip_Check instance for this class.
+	 *
 	 * @var WP_Auth0_Ip_Check
 	 */
 	protected $ip_check;
@@ -35,14 +39,8 @@ class WP_Auth0_Routes {
 	}
 
 	/**
-	 * @deprecated - 3.10.0, will move add_action calls out of this class in the next major.
-	 *
-	 * @codeCoverageIgnore - Deprecated.
+	 * Add rewrite tags and rules.
 	 */
-	public function init() {
-		add_action( 'parse_request', array( $this, 'custom_requests' ) );
-	}
-
 	public function setup_rewrites() {
 		add_rewrite_tag( '%auth0%', '([^&]+)' );
 		add_rewrite_tag( '%auth0fallback%', '([^&]+)' );
@@ -51,7 +49,6 @@ class WP_Auth0_Routes {
 		add_rewrite_tag( '%auth0_error%', '([^&]+)' );
 		add_rewrite_tag( '%a0_action%', '([^&]+)' );
 
-		add_rewrite_rule( '^auth0', 'index.php?auth0=1', 'top' );
 		add_rewrite_rule( '^\.well-known/oauth2-client-configuration', 'index.php?a0_action=oauth2-config', 'top' );
 	}
 
@@ -106,7 +103,7 @@ class WP_Auth0_Routes {
 		}
 
 		if ( $json_header ) {
-			add_filter( 'wp_headers', array( $this, 'add_json_header' ) );
+			add_filter( 'wp_headers', [ $this, 'add_json_header' ] );
 			$wp->send_headers();
 		}
 
@@ -134,17 +131,22 @@ class WP_Auth0_Routes {
 			auth0.crossOriginAuthenticationCallback();
 			</script></head><body></body></html>',
 			esc_url( apply_filters( 'auth0_coo_auth0js_url', WPA0_AUTH0_JS_CDN_URL ) ),
-			sanitize_text_field( $this->a0_options->get( 'client_id' ) ),
-			sanitize_text_field( $this->a0_options->get_auth_domain() ),
+			esc_attr( $this->a0_options->get( 'client_id' ) ),
+			esc_attr( $this->a0_options->get_auth_domain() ),
 			esc_url( $this->a0_options->get_wp_auth0_url( $protocol ) )
 		);
 	}
 
 	protected function getAuthorizationHeader() {
+		// Nonce is not needed here as this is an API endpoint.
+		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
+
 		$authorization = false;
 
 		if ( isset( $_POST['access_token'] ) ) {
-			$authorization = $_POST['access_token'];
+			// No need to sanitize, value is returned and checked.
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$authorization = wp_unslash( $_POST['access_token'] );
 		} elseif ( function_exists( 'getallheaders' ) ) {
 			$headers = getallheaders();
 			if ( isset( $headers['Authorization'] ) ) {
@@ -153,12 +155,16 @@ class WP_Auth0_Routes {
 				$authorization = $headers['authorization'];
 			}
 		} elseif ( isset( $_SERVER['Authorization'] ) ) {
-			$authorization = $_SERVER['Authorization'];
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$authorization = wp_unslash( $_SERVER['Authorization'] );
 		} elseif ( isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
-			$authorization = $_SERVER['HTTP_AUTHORIZATION'];
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$authorization = wp_unslash( $_SERVER['HTTP_AUTHORIZATION'] );
 		}
 
 		return $authorization;
+
+		// phpcs:enable WordPress.Security.NonceVerification.NoNonceVerification
 	}
 
 	/**
@@ -169,6 +175,8 @@ class WP_Auth0_Routes {
 	 * @see lib/scripts-js/db-login.js
 	 */
 	protected function migration_ws_login() {
+		// Nonce is not needed here as this is an API endpoint.
+		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
 
 		$code = $this->check_endpoint_access_error();
 		if ( $code ) {
@@ -178,6 +186,8 @@ class WP_Auth0_Routes {
 		try {
 			$this->check_endpoint_request( true );
 
+			// Input is sanitized by core wp_authenticate function.
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			$user = wp_authenticate( $_POST['username'], $_POST['password'] );
 
 			if ( is_wp_error( $user ) ) {
@@ -188,12 +198,14 @@ class WP_Auth0_Routes {
 			return apply_filters( 'auth0_migration_ws_authenticated', $user );
 
 		} catch ( Exception $e ) {
-			WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, $e );
-			return array(
+			WP_Auth0_ErrorLog::insert_error( __METHOD__, $e );
+			return [
 				'status' => $e->getCode() ?: 400,
 				'error'  => $e->getMessage(),
-			);
+			];
 		}
+
+		// phpcs:enable WordPress.Security.NonceVerification.NoNonceVerification
 	}
 
 	/**
@@ -205,6 +217,8 @@ class WP_Auth0_Routes {
 	 * @see lib/scripts-js/db-get-user.js
 	 */
 	protected function migration_ws_get_user() {
+		// Nonce is not needed here as this is an API endpoint.
+		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
 
 		$code = $this->check_endpoint_access_error();
 		if ( $code ) {
@@ -214,9 +228,9 @@ class WP_Auth0_Routes {
 		try {
 			$this->check_endpoint_request();
 
-			$username = $_POST['username'];
-
-			$user = get_user_by( 'email', $username );
+			// Input is sanitized by core get_user_by function.
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$user = get_user_by( 'email', $_POST['username'] );
 
 			if ( ! $user ) {
 				throw new Exception( __( 'User not found', 'wp-auth0' ), 401 );
@@ -224,31 +238,32 @@ class WP_Auth0_Routes {
 
 			$updated_email = WP_Auth0_UsersRepo::get_meta( $user->ID, WP_Auth0_Profile_Change_Email::UPDATED_EMAIL );
 			if ( $updated_email === $user->data->user_email ) {
-				return array(
+				return [
 					'status' => 200,
 					'error'  => 'Email update in process',
-				);
+				];
 			}
 
 			unset( $user->data->user_pass );
 			return apply_filters( 'auth0_migration_ws_authenticated', $user );
 
 		} catch ( Exception $e ) {
-			WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, $e );
-			return array(
+			WP_Auth0_ErrorLog::insert_error( __METHOD__, $e );
+			return [
 				'status' => $e->getCode() ?: 400,
 				'error'  => $e->getMessage(),
-			);
+			];
 		}
+
+		// phpcs:enable WordPress.Security.NonceVerification.NoNonceVerification
 	}
 
 	protected function oauth2_config() {
 
-		return array(
+		return [
 			'client_name'   => get_bloginfo( 'name' ),
-			'redirect_uris' => array( admin_url( 'admin.php?page=wpa0-setup&callback=1' ) ),
-		);
-
+			'redirect_uris' => [ WP_Auth0_InitialSetup::get_setup_redirect_uri() ],
+		];
 	}
 
 	/**
@@ -282,6 +297,9 @@ class WP_Auth0_Routes {
 	 * @throws Exception
 	 */
 	private function check_endpoint_request( $require_password = false ) {
+		// Nonce is not needed here as this is an API endpoint.
+		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
+
 		$authorization = $this->getAuthorizationHeader();
 		$authorization = trim( str_replace( 'Bearer ', '', $authorization ) );
 
@@ -289,7 +307,7 @@ class WP_Auth0_Routes {
 			throw new Exception( __( 'Unauthorized: missing authorization header', 'wp-auth0' ), 401 );
 		}
 
-		if ( ! $this->valid_token( $authorization ) ) {
+		if ( $authorization !== $this->a0_options->get( 'migration_token' ) ) {
 			throw new Exception( __( 'Invalid token', 'wp-auth0' ), 401 );
 		}
 
@@ -300,6 +318,8 @@ class WP_Auth0_Routes {
 		if ( $require_password && empty( $_POST['password'] ) ) {
 			throw new Exception( __( 'Password is required', 'wp-auth0' ) );
 		}
+
+		// phpcs:enable WordPress.Security.NonceVerification.NoNonceVerification
 	}
 
 	/**
@@ -313,42 +333,17 @@ class WP_Auth0_Routes {
 
 		switch ( $code ) {
 			case 401:
-				return array(
+				return [
 					'status' => 401,
 					'error'  => __( 'Unauthorized', 'wp-auth0' ),
-				);
+				];
 
 			default:
-				return array(
+				return [
 					'status' => 403,
 					'error'  => __( 'Forbidden', 'wp-auth0' ),
-				);
+				];
 				break;
-		}
-	}
-
-	/**
-	 * Check if a token or token JTI is the same as what is stored.
-	 *
-	 * @param string $authorization - Incoming migration token.
-	 *
-	 * @return bool
-	 */
-	private function valid_token( $authorization ) {
-		$token = $this->a0_options->get( 'migration_token' );
-		if ( $token === $authorization ) {
-			return true;
-		}
-		$client_secret = $this->a0_options->get( 'client_secret' );
-		if ( $this->a0_options->get( 'client_secret_base64_encoded' ) ) {
-			$client_secret = JWT::urlsafeB64Decode( $client_secret );
-		}
-
-		try {
-			$decoded = JWT::decode( $token, $client_secret, array( 'HS256' ) );
-			return isset( $decoded->jti ) && $decoded->jti === $this->a0_options->get( 'migration_token_id' );
-		} catch ( Exception $e ) {
-			return false;
 		}
 	}
 }

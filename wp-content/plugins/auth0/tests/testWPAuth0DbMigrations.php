@@ -21,7 +21,6 @@ class TestWPAuth0DbMigrations extends WP_Auth0_Test_Case {
 
 		update_option( 'auth0_db_version', $test_version - 1 );
 		$db_manager = new WP_Auth0_DBManager( self::$opts );
-		$db_manager->init();
 
 		// Set a US domain.
 		self::$opts->set( 'domain', 'test.auth0.com' );
@@ -52,7 +51,6 @@ class TestWPAuth0DbMigrations extends WP_Auth0_Test_Case {
 
 		update_option( 'auth0_db_version', $test_version - 1 );
 		$db_manager = new WP_Auth0_DBManager( self::$opts );
-		$db_manager->init();
 
 		// Set CDN URL to previous default.
 		self::$opts->set( 'auth0js-cdn', uniqid() );
@@ -94,7 +92,6 @@ class TestWPAuth0DbMigrations extends WP_Auth0_Test_Case {
 
 		update_option( 'auth0_db_version', $test_version - 1 );
 		$db_manager = new WP_Auth0_DBManager( self::$opts );
-		$db_manager->init();
 
 		// Set the previous default CDN URL.
 		self::$opts->set( 'cdn_url', 'https://cdn.auth0.com/js/lock/11.5/lock.min.js' );
@@ -103,12 +100,11 @@ class TestWPAuth0DbMigrations extends WP_Auth0_Test_Case {
 
 		// Check that Lock URL was updated.
 		$this->assertEquals( WPA0_LOCK_CDN_URL, self::$opts->get( 'cdn_url' ) );
-		$this->assertNull( self::$opts->get( 'custom_cdn_url' ) );
+		$this->assertFalse( self::$opts->get( 'custom_cdn_url' ) );
 
 		self::$opts->reset();
 		update_option( 'auth0_db_version', $test_version - 1 );
 		$db_manager = new WP_Auth0_DBManager( self::$opts );
-		$db_manager->init();
 
 		// Set CDN URL to something other than previous version.
 		self::$opts->set( 'cdn_url', 'https://cdn.auth0.com/js/lock/12.0/lock.min.js' );
@@ -117,7 +113,7 @@ class TestWPAuth0DbMigrations extends WP_Auth0_Test_Case {
 
 		// Check that Lock URL was not updated.
 		$this->assertEquals( 'https://cdn.auth0.com/js/lock/12.0/lock.min.js', self::$opts->get( 'cdn_url' ) );
-		$this->assertEquals( 1, self::$opts->get( 'custom_cdn_url' ) );
+		$this->assertTrue( self::$opts->get( 'custom_cdn_url' ) );
 	}
 
 	/**
@@ -125,17 +121,16 @@ class TestWPAuth0DbMigrations extends WP_Auth0_Test_Case {
 	 */
 	public function testThatV21UpdatesWle() {
 		$test_version = 21;
+		$db_manager   = new WP_Auth0_DBManager( self::$opts );
 
 		update_option( 'auth0_db_version', $test_version - 1 );
-		$db_manager = new WP_Auth0_DBManager( self::$opts );
-		$db_manager->init();
-
 		self::$opts->set( 'wordpress_login_enabled', 1 );
 		$db_manager->install_db( $test_version );
 		$wle_code_1 = self::$opts->get( 'wle_code' );
 		$this->assertEquals( 'link', self::$opts->get( 'wordpress_login_enabled' ) );
 		$this->assertGreaterThan( 24, strlen( $wle_code_1 ) );
 
+		update_option( 'auth0_db_version', $test_version - 1 );
 		self::$opts->set( 'wordpress_login_enabled', 0 );
 		self::$opts->set( 'wle_code', '' );
 		$db_manager->install_db( $test_version );
@@ -152,10 +147,124 @@ class TestWPAuth0DbMigrations extends WP_Auth0_Test_Case {
 
 		update_option( 'auth0_db_version', $test_version - 1 );
 		$db_manager = new WP_Auth0_DBManager( self::$opts );
-		$db_manager->init();
 
 		self::$opts->set( 'social_big_buttons', '__test_val__' );
 		$db_manager->install_db( $test_version );
 		$this->assertNull( self::$opts->get( 'social_big_buttons' ) );
+	}
+
+	/**
+	 * Test that 22 -> 23 DB migration deletes removed settings from the options.
+	 */
+	public function testThatV23RemovesSettings() {
+		$test_version = 23;
+
+		update_option( 'auth0_db_version', $test_version - 1 );
+		$db_manager = new WP_Auth0_DBManager( self::$opts );
+
+		self::$opts->set( 'jwt_auth_integration', 1 );
+		self::$opts->set( 'link_auth0_users', 1 );
+		self::$opts->set( 'custom_css', '__test_css__' );
+		self::$opts->set( 'custom_js', '__test_js__' );
+		self::$opts->set( 'auth0_implicit_workflow', 1 );
+		self::$opts->set( 'client_secret_b64_encoded', 1 );
+		self::$opts->set( 'custom_signup_fields', '__test_fields__' );
+		self::$opts->set( 'migration_token_id', '__test_jti__' );
+		$db_manager->install_db( $test_version );
+		$this->assertNull( self::$opts->get( 'jwt_auth_integration' ) );
+		$this->assertNull( self::$opts->get( 'link_auth0_users' ) );
+		$this->assertNull( self::$opts->get( 'custom_css' ) );
+		$this->assertNull( self::$opts->get( 'custom_js' ) );
+		$this->assertNull( self::$opts->get( 'auth0_implicit_workflow' ) );
+		$this->assertNull( self::$opts->get( 'client_secret_b64_encoded' ) );
+		$this->assertNull( self::$opts->get( 'custom_signup_fields' ) );
+		$this->assertNull( self::$opts->get( 'migration_token_id' ) );
+	}
+
+	/**
+	 * Test that 22 -> 23 DB migration adds the language setting into extra Lock conf.
+	 */
+	public function testThatV23AddsLanguageValue() {
+		$test_version = 23;
+
+		update_option( 'auth0_db_version', $test_version - 1 );
+		$db_manager = new WP_Auth0_DBManager( self::$opts );
+
+		self::$opts->set( 'language', 'es' );
+
+		$db_manager->install_db( $test_version );
+		$this->assertNull( self::$opts->get( 'language' ) );
+
+		$extra_conf = json_decode( self::$opts->get( 'extra_conf' ), true );
+		$this->assertEquals( 'es', $extra_conf['language'] );
+	}
+
+	/**
+	 * Test that 22 -> 23 DB migration does not replace an existing language value in the extra Lock conf.
+	 */
+	public function testThatV23ReplacesLanguageValue() {
+		$test_version = 23;
+
+		update_option( 'auth0_db_version', $test_version - 1 );
+		$db_manager = new WP_Auth0_DBManager( self::$opts );
+
+		self::$opts->set( 'language', 'es' );
+		self::$opts->set( 'extra_conf', json_encode( [ 'language' => 'pt' ] ) );
+
+		$db_manager->install_db( $test_version );
+		$this->assertNull( self::$opts->get( 'language' ) );
+
+		$extra_conf = json_decode( self::$opts->get( 'extra_conf' ), true );
+		$this->assertEquals( 'es', $extra_conf['language'] );
+	}
+
+	/**
+	 * Test that 22 -> 23 DB migration adds the language_dictionary setting into extra Lock conf.
+	 */
+	public function testThatV23AddsLanguageDictionaryValue() {
+		$test_version = 23;
+
+		update_option( 'auth0_db_version', $test_version - 1 );
+		$db_manager = new WP_Auth0_DBManager( self::$opts );
+
+		self::$opts->set( 'language_dictionary', json_encode( [ 'key' => 'value' ] ) );
+
+		$db_manager->install_db( $test_version );
+		$this->assertNull( self::$opts->get( 'language_dictionary' ) );
+
+		$extra_conf = json_decode( self::$opts->get( 'extra_conf' ), true );
+		$this->assertArrayHasKey( 'languageDictionary', $extra_conf );
+		$this->assertArrayHasKey( 'key', $extra_conf['languageDictionary'] );
+		$this->assertEquals( 'value', $extra_conf['languageDictionary']['key'] );
+	}
+
+	/**
+	 * Test that 22 -> 23 DB migration does not replace an existing language_dictionary value in the extra Lock conf.
+	 */
+	public function testThatV23ReplacesLanguageDictionaryValue() {
+		$test_version = 23;
+
+		update_option( 'auth0_db_version', $test_version - 1 );
+		$db_manager = new WP_Auth0_DBManager( self::$opts );
+
+		self::$opts->set( 'language_dictionary', json_encode( [ '__migrate_key__' => '__migrate_value__' ] ) );
+		self::$opts->set(
+			'extra_conf',
+			json_encode(
+				[
+					'languageDictionary' => [
+						'__existing_key__' => '__existing_value__',
+					],
+				]
+			)
+		);
+
+		$db_manager->install_db( $test_version );
+		$this->assertNull( self::$opts->get( 'language_dictionary' ) );
+
+		$extra_conf = json_decode( self::$opts->get( 'extra_conf' ), true );
+		$this->assertArrayNotHasKey( '__existing_key__', $extra_conf['languageDictionary'] );
+		$this->assertArrayHasKey( '__migrate_key__', $extra_conf['languageDictionary'] );
+		$this->assertEquals( '__migrate_value__', $extra_conf['languageDictionary']['__migrate_key__'] );
 	}
 }

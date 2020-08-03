@@ -1,5 +1,120 @@
 # Change Log
 
+## [4.1.0](https://github.com/auth0/wp-auth0/tree/4.1.0) (2020-05-21)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/4.0.0...4.1.0)
+
+**Closed issues**
+- With a custom domain, JWKs aren't being fetched from the correct domain [\#790](https://github.com/auth0/wp-auth0/issues/790)
+
+**Changed**
+- Load ourselves with Composer autoloader [\#787](https://github.com/auth0/wp-auth0/pull/787) ([szepeviktor](https://github.com/szepeviktor))
+
+**Fixed**
+- Fix incorrect function in uninstall hook [\#795](https://github.com/auth0/wp-auth0/pull/795) ([joshcanhelp](https://github.com/joshcanhelp))
+- Align the client ID and redirect URI used in the setup wizard [\#794](https://github.com/auth0/wp-auth0/pull/794) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fix custom domain not being used in JWKS [\#792](https://github.com/auth0/wp-auth0/pull/792) ([joshcanhelp](https://github.com/joshcanhelp))
+- Pass shortcode atts to the handler [\#789](https://github.com/auth0/wp-auth0/pull/789) ([drobin03](https://github.com/drobin03))
+- PHPStan Level 2 fixes [\#785](https://github.com/auth0/wp-auth0/pull/785) ([szepeviktor](https://github.com/szepeviktor))
+
+## [4.0.0](https://github.com/auth0/wp-auth0/tree/4.0.0) (2020-03-31)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.11.3...4.0.0)
+
+**This is a major release with breaking changes!**
+
+In addition to the minimum PHP version being updated from 5.3 to 7.0, there are many breaking removals and changes that are covered in the [migration guide](MIGRATE-v3-TO-v4.md) included in this release.
+
+**Closed issues**
+- pt-BR language is not being installed [\#760](https://github.com/auth0/wp-auth0/issues/760)
+- Authorization Extension, groups, roles not showing up [\#701](https://github.com/auth0/wp-auth0/issues/701)
+- Using the auth0 word in the URL path triggers an authorization code exchange [\#351](https://github.com/auth0/wp-auth0/issues/351)
+
+**Added**
+- PHPCS security scan, sanitization and escaping improvements, and removed custom admin styling (see commits for details)
+- Add settings validation to import [\#777](https://github.com/auth0/wp-auth0/pull/777) ([joshcanhelp](https://github.com/joshcanhelp))
+- Add ability to break cache if RS256 ID token kid is not found [\#770](https://github.com/auth0/wp-auth0/pull/770) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove error_log calls and add auth0_insert_error action [\#763](https://github.com/auth0/wp-auth0/pull/763) ([joshcanhelp](https://github.com/joshcanhelp))
+- Get new access token via refresh token API [\#730](https://github.com/auth0/wp-auth0/pull/730) ([albeja](https://github.com/albeja))
+- feature/Adding Brazilian Portuguese translations [\#729](https://github.com/auth0/wp-auth0/pull/729) ([niugait](https://github.com/niugait))
+- Add wpa0_user_data filter before creating WP_User [\#717](https://github.com/auth0/wp-auth0/pull/717) ([horike37](https://github.com/horike37))
+- Add check for GET and POST globals for state validation [\#707](https://github.com/auth0/wp-auth0/pull/707) ([joshcanhelp](https://github.com/joshcanhelp))
+
+**Changed**
+- Update Spanish and BR Portuguese translations [\#780](https://github.com/auth0/wp-auth0/pull/780) ([joshcanhelp](https://github.com/joshcanhelp))
+- Merge in 3.11.2 and 3.11.3 [\#779](https://github.com/auth0/wp-auth0/pull/779) ([joshcanhelp](https://github.com/joshcanhelp))
+- Update Embedded settings validation and defaults [\#776](https://github.com/auth0/wp-auth0/pull/776) ([joshcanhelp](https://github.com/joshcanhelp))
+- Update Basic settings validation and defaults [\#775](https://github.com/auth0/wp-auth0/pull/775) ([joshcanhelp](https://github.com/joshcanhelp))
+- Update Feature settings validation and defaults [\#774](https://github.com/auth0/wp-auth0/pull/774) ([joshcanhelp](https://github.com/joshcanhelp))
+- Update Advanced settings validation and defaults [\#773](https://github.com/auth0/wp-auth0/pull/773) ([joshcanhelp](https://github.com/joshcanhelp))
+- Change all redirects to wp_safe_redirect [\#771](https://github.com/auth0/wp-auth0/pull/771) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated from WP_Auth0_InitialSetup [\#754](https://github.com/auth0/wp-auth0/pull/754) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated from errorlog [\#753](https://github.com/auth0/wp-auth0/pull/753) ([joshcanhelp](https://github.com/joshcanhelp))
+- Move actions from methods to functions for profile delete and change email [\#751](https://github.com/auth0/wp-auth0/pull/751) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated from User and Change Password [\#750](https://github.com/auth0/wp-auth0/pull/750) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated from email verification [\#749](https://github.com/auth0/wp-auth0/pull/749) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated from admin [\#748](https://github.com/auth0/wp-auth0/pull/748) ([joshcanhelp](https://github.com/joshcanhelp))
+- Move WP_Auth0_Routes initialize method to function [\#745](https://github.com/auth0/wp-auth0/pull/745) ([joshcanhelp](https://github.com/joshcanhelp))
+- Merge WP_Auth0_Options_Generic into WP_Auth0_Options [\#741](https://github.com/auth0/wp-auth0/pull/741) ([joshcanhelp](https://github.com/joshcanhelp))
+- Rename Lock option class and remove deprecated [\#739](https://github.com/auth0/wp-auth0/pull/739) ([joshcanhelp](https://github.com/joshcanhelp))
+- Improve OIDC Compliance [\#734](https://github.com/auth0/wp-auth0/pull/734) ([joshcanhelp](https://github.com/joshcanhelp))
+- Update minimum PHP to 7.0 and WP to 4.9 [\#732](https://github.com/auth0/wp-auth0/pull/732) ([joshcanhelp](https://github.com/joshcanhelp))
+- Update auth params method to add filters [\#716](https://github.com/auth0/wp-auth0/pull/716) ([joshcanhelp](https://github.com/joshcanhelp))
+- Move WooCommerce hooks to global functions and remove init method [\#705](https://github.com/auth0/wp-auth0/pull/705) ([joshcanhelp](https://github.com/joshcanhelp))
+- Bump PHP version to 5.6; auto-adjust array syntax [\#696](https://github.com/auth0/wp-auth0/pull/696) ([joshcanhelp](https://github.com/joshcanhelp))
+
+**Removed**
+- Remove migration JWT JTI check [\#778](https://github.com/auth0/wp-auth0/pull/778) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove custom signup fields setting [\#765](https://github.com/auth0/wp-auth0/pull/765) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove Bootstrap, fonts, and descriptions from admin pages [\#764](https://github.com/auth0/wp-auth0/pull/764) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove connection deactivation on setup [\#762](https://github.com/auth0/wp-auth0/pull/762) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove future iat check [\#757](https://github.com/auth0/wp-auth0/pull/757) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove class WP-Auth0 and move methods to functions [\#756](https://github.com/auth0/wp-auth0/pull/756) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated from import settings [\#752](https://github.com/auth0/wp-auth0/pull/752) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove user export functionality [\#747](https://github.com/auth0/wp-auth0/pull/747) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated from WP_Auth0_DBManager and move init to function [\#746](https://github.com/auth0/wp-auth0/pull/746) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated from WP_Auth0_UsersRepo [\#744](https://github.com/auth0/wp-auth0/pull/744) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove WP_Auth0_EditProfile [\#743](https://github.com/auth0/wp-auth0/pull/743) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove client_secret_b64_encoded setting [\#742](https://github.com/auth0/wp-auth0/pull/742) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated WP_Auth0_Api_Operations methods [\#740](https://github.com/auth0/wp-auth0/pull/740) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated IP and referrer checks [\#738](https://github.com/auth0/wp-auth0/pull/738) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated Management API functionality [\#737](https://github.com/auth0/wp-auth0/pull/737) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove class WP_Auth0_RulesLib [\#736](https://github.com/auth0/wp-auth0/pull/736) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove implicit login flow [\#735](https://github.com/auth0/wp-auth0/pull/735) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated WP_Auth0_Metrics class [\#728](https://github.com/auth0/wp-auth0/pull/728) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated WP_Auth0_Lock_Options class [\#727](https://github.com/auth0/wp-auth0/pull/727) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated WP_Auth0_CustomDBLib class [\#726](https://github.com/auth0/wp-auth0/pull/726) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated WP_Auth0_Api_Client methods [\#725](https://github.com/auth0/wp-auth0/pull/725) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove login manager deprecated [\#724](https://github.com/auth0/wp-auth0/pull/724) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove features including SSO on wp-login/php [\#723](https://github.com/auth0/wp-auth0/pull/723) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove deprecated basic settings; centralize validation declaration [\#722](https://github.com/auth0/wp-auth0/pull/722) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove appearance settings [\#721](https://github.com/auth0/wp-auth0/pull/721) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove all unused and deprecated advanced setting functionality [\#720](https://github.com/auth0/wp-auth0/pull/720) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove unused setup wizard classes, methods, and templates [\#719](https://github.com/auth0/wp-auth0/pull/719) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove JWT auth plugin integration [\#715](https://github.com/auth0/wp-auth0/pull/715) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove Social Amplificator and related assets [\#714](https://github.com/auth0/wp-auth0/pull/714) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove dashboard widgets [\#713](https://github.com/auth0/wp-auth0/pull/713) ([joshcanhelp](https://github.com/joshcanhelp))
+- Remove feedback form from help tab [\#712](https://github.com/auth0/wp-auth0/pull/712) ([joshcanhelp](https://github.com/joshcanhelp))
+
+**Fixed**
+- Fix include path for functions file [\#755](https://github.com/auth0/wp-auth0/pull/755) ([joshcanhelp](https://github.com/joshcanhelp))
+- Merge in released 3.11.1 version [\#709](https://github.com/auth0/wp-auth0/pull/709) ([joshcanhelp](https://github.com/joshcanhelp))
+- Fix auth0 in paths triggering callback [\#697](https://github.com/auth0/wp-auth0/pull/697) ([joshcanhelp](https://github.com/joshcanhelp))
+
+## [3.11.3](https://github.com/auth0/wp-auth0/tree/3.11.3) (2020-01-30)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.11.2...3.11.3)
+
+**Closed issues**
+- wle parameter allows for possible XSS attack [\#767](https://github.com/auth0/wp-auth0/issues/767)
+
+**Security**
+- Fix potential XSS on wp-login.php override page [\#768](https://github.com/auth0/wp-auth0/pull/768) ([kinabalu](https://github.com/kinabalu))
+
+## [3.11.2](https://github.com/auth0/wp-auth0/tree/3.11.2) (2020-01-17)
+[Full Changelog](https://github.com/auth0/wp-auth0/compare/3.11.1...3.11.2)
+
+**Fixed**
+- Add path to functions.php include [\#759](https://github.com/auth0/wp-auth0/pull/759) ([joshcanhelp](https://github.com/joshcanhelp))
+- Patch samesite for implicit [\#758](https://github.com/auth0/wp-auth0/pull/758) ([joshcanhelp](https://github.com/joshcanhelp))
+
 ## [3.11.1](https://github.com/auth0/wp-auth0/tree/3.11.1) (2019-08-05)
 [Full Changelog](https://github.com/auth0/wp-auth0/compare/3.11.0...3.11.1)
 
@@ -13,7 +128,6 @@
 - Improve setup wizard documentation [\#699](https://github.com/auth0/wp-auth0/pull/699) ([joshcanhelp](https://github.com/joshcanhelp))
 - Fix post passwords getting redirected [\#698](https://github.com/auth0/wp-auth0/pull/698) ([joshcanhelp](https://github.com/joshcanhelp))
 
-
 ## [3.11.0](https://github.com/auth0/wp-auth0/tree/3.11.0) (2019-05-30)
 [Full Changelog](https://github.com/auth0/wp-auth0/compare/3.10.0...3.11.0)
 
@@ -21,10 +135,10 @@
 
 - Lock was updated from 11.15 to 11.16. The option to display social connections in small styled buttons is no longer available due to branding compliance reasons with third party identity providers. All the social connections will now be displayed as large styled buttons.
 - New installs using user migration will now have a namespaced user ID returned to Auth0 on first login. If you have or plan on having multiple custom databases, please see the [User Migration documentation](https://auth0.com/docs/cms/wordpress/user-migration) for more information. New installs will also use configuration variables instead of hard-coded values for the URL, migration token, and user namespace.
-- The WordPress core login override has been refactored to improve the user experience and overall security. 
+- The WordPress core login override has been refactored to improve the user experience and overall security.
 - Added more complete ID token validation during login.
 - Sites using VIP Go are now able to use MFA.
-- Fixed a bug that prevented sites using user migration from changing the WordPress user's email. 
+- Fixed a bug that prevented sites using user migration from changing the WordPress user's email.
 
 **Closed issues**
 - WordPress.com VIP Go MFA incompatibility [\#687](https://github.com/auth0/wp-auth0/issues/687)
@@ -73,7 +187,7 @@
 - The "FullContact," "Store Geolocation", and "Store Zipcode Income" settings on the **Features** tab have been removed. These settings must be managed in [Rules](https://manage.auth0.com/#/rules) going forward. No changes were made to how these features work, just the ability to manage them in WordPress.
 - The "Custom CSS" and "Custom JS" fields on the **Appearance** tab have been deprecated. If you already have CSS and/or JS stored, the setting will continue to work until the next major release. If not, these fields have been removed. Custom styles and scripts should be loaded in an external file using [the instructions here](https://auth0.com/docs/cms/wordpress/troubleshoot#how-can-i-modify-the-embedded-auth0-login-form-).
 - The "Link Users with Same Email" setting on the **Advanced** tab has been removed. This functionality must be managed in the Auth0 dashboard going forward. More information on this feature can be found [here](https://auth0.com/docs/link-accounts). No changes were made to how this works, just the ability to manage it in WordPress.
-- The **Delete MFA Data** control on the User Profile has been removed. Please use the Auth0 Dashboard to manage MFA for users. 
+- The **Delete MFA Data** control on the User Profile has been removed. Please use the Auth0 Dashboard to manage MFA for users.
 - An Auth0 login form (or link to login) will now appear on the WooCommerce Checkout page for sites that allow or require an account to check out.  
 - The connection with the WP JWT Auth plugin has been deprecated and will be removed in the next major.
 
@@ -81,7 +195,7 @@
 
 - A `wp_auth0_get_option()` function has been added to get an option value. Please use this going forward instead of `WP_Auth0_Options::Instance()->get()`.
 - As mentioned above, a Management API token can no longer be provided manually (except in the Setup Wizard). The token is now obtained automatically using a Client Credentials grant and stored in a transient along with the allowed scopes. You can get the existing token with `WP_Auth0_Api_Client_Credentials::get_stored_token()` and check for necessary scopes with `WP_Auth0_Api_Client_Credentials::check_stored_scope()`. If you need to get a new token, use `\WP_Auth0_Api_Client_Credentials::call()`.
-- If you are using any of the `WP_Auth_*` classes in a custom plugin or theme, please note that there have been many deprecations in the last several releases. All deprecated classes, methods, and functions will be removed in the next major release so please review your custom code and make the appropriate changes. 
+- If you are using any of the `WP_Auth_*` classes in a custom plugin or theme, please note that there have been many deprecations in the last several releases. All deprecated classes, methods, and functions will be removed in the next major release so please review your custom code and make the appropriate changes.
 - The `auth0_sso_auth0js_url` filter has been added that lets you override the default CDN URL for Auth0.js when doing an SSO check on the `wp-login.php` page.
 - The `auth0_coo_auth0js_url` filter has been added that lets you override the default CDN URL for Auth0.js when loading the COO fallback page.
 - The `auth0_slo_return_to` filter has been added that lets you override the default `returnTo` URL when logging out of Auth0.
@@ -145,11 +259,11 @@
 ### Notes on this release
 
 - Added a complete Spanish translation!
-- Email changes for WordPress users now work properly and are rejected clearly if Auth0 rejects the change. This does not affect the email verification process in WordPress; the email is changed only after the verification happens. A current API token is not required but your Application does need to allow for a Client Credentials grant with the Management API (this configured for you by default, [more information here](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-application-for-the-management-api)). 
-- Sibling sub-domains are now allowed for the Login Redirect URL. Anything within the same domain name as the site URL can now be saved. 
-- Default Auth0 IP addresses are now allowed by default on the user migration endpoints. Adding or changing the IP addresses for the "Migration IPs Whitelist" field will not affect default IPs. 
+- Email changes for WordPress users now work properly and are rejected clearly if Auth0 rejects the change. This does not affect the email verification process in WordPress; the email is changed only after the verification happens. A current API token is not required but your Application does need to allow for a Client Credentials grant with the Management API (this configured for you by default, [more information here](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-application-for-the-management-api)).
+- Sibling sub-domains are now allowed for the Login Redirect URL. Anything within the same domain name as the site URL can now be saved.
+- Default Auth0 IP addresses are now allowed by default on the user migration endpoints. Adding or changing the IP addresses for the "Migration IPs Whitelist" field will not affect default IPs.
 - User migration endpoints were improved to provide better errors when requests are rejected and more clear custom database scripts that can be used as an example when setting up the migration manually. Switching this setting on or off does not make any changes in the Auth0 dashboard or to the existing token, it only makes the endpoints available or not.  
-- The Social Amplificator functionality has been removed. 
+- The Social Amplificator functionality has been removed.
 
 **Added**
 - Update Translations [\#615](https://github.com/auth0/wp-auth0/pull/615) ([joshcanhelp](https://github.com/joshcanhelp))
@@ -209,13 +323,13 @@
 
 ### Notes on this release
 
-- Administrators can now mark certain strategies as able to skip email verification. This is typically used for Enterprise strategies that do not provide an email verification flag. This should be used sparingly and only for connections that do not provide this flag. 
-- Password changes for WordPress users now work properly and are rejected clearly if Auth0 rejects the change (typically because the password does not conform to the password policy). A current API token is not required but your Application does need to allow for a Client Credentials grant with the Management API (this configured for you by default, [more information here](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-application-for-the-management-api)). 
+- Administrators can now mark certain strategies as able to skip email verification. This is typically used for Enterprise strategies that do not provide an email verification flag. This should be used sparingly and only for connections that do not provide this flag.
+- Password changes for WordPress users now work properly and are rejected clearly if Auth0 rejects the change (typically because the password does not conform to the password policy). A current API token is not required but your Application does need to allow for a Client Credentials grant with the Management API (this configured for you by default, [more information here](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-application-for-the-management-api)).
 - The `wp-login.php` page is no longer used for any callback processing. If you are using this page to process callbacks in a custom plugin or theme, please update to use the main callback URL for the implicit flow `/index.php?auth0=implicit`. In addition, users that are already logged in will be redirected to the default login page when accessing `wp-login.php`.
-- Error logging has been improved in general, along with improvements to the error log display. Consecutive, duplicate errors are now combined, the error log now shows more entries, and entries can be cleared from the admin. 
+- Error logging has been improved in general, along with improvements to the error log display. Consecutive, duplicate errors are now combined, the error log now shows more entries, and entries can be cleared from the admin.
 - The "Auto-Login" setting has been renamed to "Universal Login Page" and moved from the Advanced tab to the Features tab. The functionality is the same as before and will retain the existing setting.
 
-### Issues and PRs 
+### Issues and PRs
 
 **Closed issues**
 - Plugin tries to create a user if they log in a different way [\#539](https://github.com/auth0/wp-auth0/issues/539)
@@ -276,6 +390,8 @@
 - Fix migration token display to allow copying [\#540](https://github.com/auth0/wp-auth0/pull/540) ([joshcanhelp](https://github.com/joshcanhelp))
 - Change and improve user profile [\#532](https://github.com/auth0/wp-auth0/pull/532) ([joshcanhelp](https://github.com/joshcanhelp))
 
+=======
+>>>>>>> d5c5c0d... Add CHANGELOG entry for 3.7.1
 ## [3.7.1](https://github.com/auth0/wp-auth0/tree/3.7.1) (2018-10-08)
 [Full Changelog](https://github.com/auth0/wp-auth0/compare/3.7.0...3.7.1)
 
@@ -351,14 +467,14 @@
 
 **NOTES**
 
-- Passwordless was reconfigured completely to use the combined Lock library (currently hard-coded to 11.5). All current settings will be migrated to the new configuration so your login process should not change. Lock initiation has also been refactored to improve maintainability and adhere to WordPress standards. 
+- Passwordless was reconfigured completely to use the combined Lock library (currently hard-coded to 11.5). All current settings will be migrated to the new configuration so your login process should not change. Lock initiation has also been refactored to improve maintainability and adhere to WordPress standards.
 - The Setup Wizard has been adjusted to more clearly explain the process and options available. This only affects new installations using the Setup Wizard for configuration.
 - The settings page has been rearranged and improved overall. New settings descriptions have also been added along with links to documentation, where appropriate.
-- State validation was added to both login flows; nonce validation was added to sites using Implicit flow. 
-- OIDC compliant Applications should now function as expected (though this setting is not yet activated by default on installation). OpenID Connect login is now possible by turning off the Client Credentials grant for your WordPress Application. 
-- Dashboard widgets have been removed. This can easily be added back as a plugin, if needed. Please [contact support](https://support.auth0.com/) if you need assistance with this. 
-- A number of new hooks have been added, please see our [docs page on extension](https://auth0.com/docs/cms/wordpress/extending) for a complete inventory with examples. This includes the ability to support refresh tokens. 
-- Federated logout has been removed. 
+- State validation was added to both login flows; nonce validation was added to sites using Implicit flow.
+- OIDC compliant Applications should now function as expected (though this setting is not yet activated by default on installation). OpenID Connect login is now possible by turning off the Client Credentials grant for your WordPress Application.
+- Dashboard widgets have been removed. This can easily be added back as a plugin, if needed. Please [contact support](https://support.auth0.com/) if you need assistance with this.
+- A number of new hooks have been added, please see our [docs page on extension](https://auth0.com/docs/cms/wordpress/extending) for a complete inventory with examples. This includes the ability to support refresh tokens.
+- Federated logout has been removed.
 
 
 **Closed issues**
@@ -483,7 +599,7 @@
 ## [3.5.0](https://github.com/auth0/wp-auth0/tree/3.5.0) (2018-01-25)
 [Full Changelog](https://github.com/auth0/wp-auth0/compare/3.4.0...3.5.0)
 
-**Please note:** This is a major update that requires changes to your Auth0 Dashboard to be completed. You can save a new [API token](https://auth0.com/docs/api/management/v2/tokens#get-a-token-manually) in your Basic settings in wp-admin before upgrading and the changes will be made automatically during the update. Otherwise, after upgrading, please review your [Application Advanced Settings](https://auth0.com/docs/cms/wordpress/configuration#application-setup), specifically your Grant Types, and [authorize your Client for the Management API](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-client-for-the-management-api). 
+**Please note:** This is a major update that requires changes to your Auth0 Dashboard to be completed. You can save a new [API token](https://auth0.com/docs/api/management/v2/tokens#get-a-token-manually) in your Basic settings in wp-admin before upgrading and the changes will be made automatically during the update. Otherwise, after upgrading, please review your [Application Advanced Settings](https://auth0.com/docs/cms/wordpress/configuration#application-setup), specifically your Grant Types, and [authorize your Client for the Management API](https://auth0.com/docs/cms/wordpress/configuration#authorize-the-client-for-the-management-api).
 
 **Changed**
 - updating CDN URLs for Lock and Auth.js [\#365](https://github.com/auth0/wp-auth0/pull/365) ([joshcanhelp](https://github.com/joshcanhelp))
@@ -525,7 +641,7 @@
 - Implicit mode in auto login ([glena](https://github.com/glena))
 
 **Notes**
-There is a jump in version due to a release issue which required bumping the version a few times. 
+There is a jump in version due to a release issue which required bumping the version a few times.
 
 ## [3.2.24](https://github.com/auth0/wp-auth0/tree/3.2.23) (2017-08-14)
 [Full Changelog](https://github.com/auth0/wp-auth0/compare/3.2.23...3.2.24)

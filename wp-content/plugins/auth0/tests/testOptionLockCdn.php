@@ -16,9 +16,9 @@ class TestOptionLockCdn extends WP_Auth0_Test_Case {
 	use DomDocumentHelpers;
 
 	/**
-	 * WP_Auth0_Admin_Advanced instance.
+	 * WP_Auth0_Admin_Appearance instance.
 	 *
-	 * @var WP_Auth0_Admin_Advanced
+	 * @var WP_Auth0_Admin_Appearance
 	 */
 	public static $admin;
 
@@ -27,7 +27,7 @@ class TestOptionLockCdn extends WP_Auth0_Test_Case {
 	 */
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
-		self::$admin = new WP_Auth0_Admin_Appearance( self::$opts, new WP_Auth0_Routes( self::$opts ) );
+		self::$admin = new WP_Auth0_Admin_Appearance( self::$opts );
 	}
 
 	/**
@@ -36,8 +36,6 @@ class TestOptionLockCdn extends WP_Auth0_Test_Case {
 	public function testThatCdnConstantsAreValidValues() {
 		$this->assertEquals( WPA0_LOCK_CDN_URL, filter_var( WPA0_LOCK_CDN_URL, FILTER_VALIDATE_URL ) );
 		$this->assertEquals( 'https://', substr( WPA0_LOCK_CDN_URL, 0, 8 ) );
-		$this->assertEquals( WPA0_AUTH0_JS_CDN_URL, filter_var( WPA0_AUTH0_JS_CDN_URL, FILTER_VALIDATE_URL ) );
-		$this->assertEquals( 'https://', substr( WPA0_AUTH0_JS_CDN_URL, 0, 8 ) );
 	}
 
 	/**
@@ -121,7 +119,7 @@ class TestOptionLockCdn extends WP_Auth0_Test_Case {
 			$input->item( 0 )->getAttribute( 'name' )
 		);
 
-		// Input should be a checkbox.
+		// Input should be a text field.
 		$this->assertEquals( 'text', $input->item( 0 )->getAttribute( 'type' ) );
 
 		// Check that saving a custom domain appears in the field value.
@@ -141,38 +139,40 @@ class TestOptionLockCdn extends WP_Auth0_Test_Case {
 	 * Test that the Custom Lock CDN URL setting is validated properly.
 	 */
 	public function testThatCustomLockCdnIsValidatedOnSave() {
+		$admin = new WP_Auth0_Admin( self::$opts, new WP_Auth0_Routes( self::$opts ) );
 
-		$validated = self::$admin->basic_validation( [], [ 'custom_cdn_url' => false ] );
-		$this->assertEquals( 0, $validated['custom_cdn_url'] );
+		$validated = $admin->input_validator( [ 'custom_cdn_url' => false ] );
+		$this->assertEquals( false, $validated['custom_cdn_url'] );
 
-		$validated = self::$admin->basic_validation( [], [ 'custom_cdn_url' => 0 ] );
-		$this->assertEquals( 0, $validated['custom_cdn_url'] );
+		$validated = $admin->input_validator( [ 'custom_cdn_url' => 0 ] );
+		$this->assertEquals( false, $validated['custom_cdn_url'] );
 
-		$validated = self::$admin->basic_validation( [], [ 'custom_cdn_url' => 1 ] );
-		$this->assertEquals( 1, $validated['custom_cdn_url'] );
+		$validated = $admin->input_validator( [ 'custom_cdn_url' => 1 ] );
+		$this->assertEquals( true, $validated['custom_cdn_url'] );
 
-		$validated = self::$admin->basic_validation( [], [ 'custom_cdn_url' => uniqid() ] );
-		$this->assertEquals( 1, $validated['custom_cdn_url'] );
+		$validated = $admin->input_validator( [ 'custom_cdn_url' => '1' ] );
+		$this->assertEquals( true, $validated['custom_cdn_url'] );
+
+		$validated = $admin->input_validator( [ 'custom_cdn_url' => uniqid() ] );
+		$this->assertEquals( false, $validated['custom_cdn_url'] );
 	}
 
 	/**
 	 * Test that the Custom Lock CDN URL setting does not change the Lock CDN URL.
 	 */
 	public function testThatCustomLockCdnDoesNotChangeSavedCdnUrl() {
+		$admin = new WP_Auth0_Admin( self::$opts, new WP_Auth0_Routes( self::$opts ) );
 
-		$validated = self::$admin->basic_validation(
-			[],
+		$validated = $admin->input_validator(
 			[
-				'custom_cdn_url' => 0,
-				'cdn_url'        => WPA0_LOCK_CDN_URL,
+				'cdn_url' => WPA0_LOCK_CDN_URL,
 			]
 		);
 		$this->assertEquals( WPA0_LOCK_CDN_URL, $validated['cdn_url'] );
 
-		$validated = self::$admin->basic_validation(
-			[],
+		$validated = $admin->input_validator(
 			[
-				'custom_cdn_url' => 1,
+				'custom_cdn_url' => '1',
 				'cdn_url'        => WPA0_LOCK_CDN_URL,
 			]
 		);
@@ -183,25 +183,31 @@ class TestOptionLockCdn extends WP_Auth0_Test_Case {
 	 * Test that the Lock CDN URL setting is validated properly.
 	 */
 	public function testThatLockCdnUrlIsValidatedOnSave() {
+		$admin = new WP_Auth0_Admin( self::$opts, new WP_Auth0_Routes( self::$opts ) );
 
-		$validated = self::$admin->basic_validation(
-			[ 'cdn_url' => uniqid() ],
+		$validated = $admin->input_validator(
 			[ 'cdn_url' => WPA0_LOCK_CDN_URL ]
 		);
 		$this->assertEquals( WPA0_LOCK_CDN_URL, $validated['cdn_url'] );
 
-		$validated = self::$admin->basic_validation( [], [ 'cdn_url' => ' ' . WPA0_LOCK_CDN_URL . ' ' ] );
+		$validated = $admin->input_validator( [ 'cdn_url' => ' ' . WPA0_LOCK_CDN_URL . ' ' ] );
 		$this->assertEquals( WPA0_LOCK_CDN_URL, $validated['cdn_url'] );
 
-		$validated = self::$admin->basic_validation(
-			[ 'cdn_url' => '__old_cdn_url__' ],
-			[ 'cdn_url' => '__invalid_cdn_url__' ]
+		self::$opts->set( 'cdn_url', '__old_cdn_url__' );
+		$validated = $admin->input_validator(
+			[
+				'custom_cdn_url' => true,
+				'cdn_url'        => '__invalid_cdn_url__',
+			]
 		);
 		$this->assertEquals( '__old_cdn_url__', $validated['cdn_url'] );
 
-		$validated = self::$admin->basic_validation(
-			[ 'cdn_url' => '__old_cdn_url__' ],
-			[ 'cdn_url' => '' ]
+		self::$opts->set( 'cdn_url', null );
+		$validated = $admin->input_validator(
+			[
+				'custom_cdn_url' => true,
+				'cdn_url'        => '',
+			]
 		);
 		$this->assertEquals( WPA0_LOCK_CDN_URL, $validated['cdn_url'] );
 	}
@@ -213,7 +219,7 @@ class TestOptionLockCdn extends WP_Auth0_Test_Case {
 		self::$opts->set( 'cdn_url', 'https://auth0.com' );
 		$this->assertEquals( WPA0_LOCK_CDN_URL, self::$opts->get_lock_url() );
 
-		self::$opts->set( 'custom_cdn_url', 1 );
+		self::$opts->set( 'custom_cdn_url', true );
 		$this->assertEquals( 'https://auth0.com', self::$opts->get_lock_url() );
 
 		self::$opts->set( 'cdn_url', '' );

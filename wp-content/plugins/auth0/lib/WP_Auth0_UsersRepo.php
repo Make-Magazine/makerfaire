@@ -1,123 +1,49 @@
 <?php
+/**
+ * Contains class WP_Auth0_UsersRepo.
+ *
+ * @package WP-Auth0
+ *
+ * @since 1.2.0
+ */
 
+/**
+ * Class WP_Auth0_UsersRepo.
+ */
 class WP_Auth0_UsersRepo {
 
+	/**
+	 * Options instance used in this class.
+	 *
+	 * @var WP_Auth0_Options
+	 */
 	protected $a0_options;
 
+	/**
+	 * WP_Auth0_UsersRepo constructor.
+	 *
+	 * @param WP_Auth0_Options $a0_options - Options instance used in this class.
+	 */
 	public function __construct( WP_Auth0_Options $a0_options ) {
 		$this->a0_options = $a0_options;
 	}
 
 	/**
-	 * @deprecated - 3.10.0, JWT Auth plugin is deprecated and removed from the WP plugin repo.
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	public function init() {
-		if ( $this->a0_options->get( 'jwt_auth_integration' ) == 1 ) {
-			add_filter( 'wp_jwt_auth_get_user', array( $this, 'getUser' ), 0, 2 );
-		}
-	}
-
-	/**
-	 * @deprecated - 3.10.0, JWT Auth plugin is deprecated and removed from the WP plugin repo.
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	public function getUser( $jwt, $encodedJWT ) {
-		// phpcs:ignore
-		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
-
-		$userRow = $this->find_auth0_user( $jwt->sub );
-
-		$domain = $this->a0_options->get( 'domain' );
-
-		$response = WP_Auth0_Api_Client::get_user( $domain, $encodedJWT, $jwt->sub );
-
-		if ( $response['response']['code'] != 200 ) {
-			return null;
-		}
-
-		if ( is_null( $userRow ) ) {
-
-			if ( $this->tokenHasRequiredScopes( $jwt ) ) {
-				$auth0User = $jwt;
-			} else {
-				$auth0User = json_decode( $response['body'] );
-			}
-
-			try {
-				$user_id = $this->create( $auth0User, $encodedJWT );
-
-				do_action( 'auth0_user_login', $user_id, $response, true, $encodedJWT, null );
-
-				return new WP_User( $user_id );
-			} catch ( WP_Auth0_CouldNotCreateUserException $e ) {
-				return null;
-			} catch ( WP_Auth0_RegistrationNotEnabledException $e ) {
-				return null;
-			}
-
-			return null;
-		} elseif ( $userRow instanceof WP_Error ) {
-			WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, $userRow );
-			return null;
-		} else {
-
-			do_action( 'auth0_user_login', $userRow->ID, $response, false, $encodedJWT, null );
-
-			return $userRow;
-		}
-
-	}
-
-	/**
-	 * @deprecated - 3.10.0, JWT Auth plugin is deprecated and removed from the WP plugin repo.
-	 *
-	 * @codeCoverageIgnore - Deprecated
-	 */
-	public function tokenHasRequiredScopes( $jwt ) {
-		// phpcs:ignore
-		@trigger_error( sprintf( __( 'Method %s is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
-
-		return (
-			( isset( $jwt->email ) || isset( $jwt->nickname ) )
-			&& isset( $jwt->identities )
-		);
-
-	}
-
-	/**
 	 * Create or join a WP user with an incoming Auth0 one or reject with an exception.
 	 *
-	 * @param object      $userinfo - Profile object from Auth0.
-	 * @param string      $token - ID token from Auth0.
-	 * @param null|string $access_token - @deprecated - 3.8.0.
-	 * @param null|string $role - @deprecated - 3.8.0.
-	 * @param bool        $skip_email_verified - @deprecated - 3.8.0.
+	 * @param object $userinfo - Profile object from Auth0.
+	 * @param string $token - ID token from Auth0.
 	 *
 	 * @return int|null|WP_Error
 	 *
-	 * @throws WP_Auth0_CouldNotCreateUserException
-	 * @throws WP_Auth0_EmailNotVerifiedException
-	 * @throws WP_Auth0_RegistrationNotEnabledException
+	 * @throws WP_Auth0_CouldNotCreateUserException - When the user could not be created.
+	 * @throws WP_Auth0_EmailNotVerifiedException - When a users's email is not verified but the site requires it.
+	 * @throws WP_Auth0_RegistrationNotEnabledException - When registration is not turned on for this site.
 	 */
-	public function create( $userinfo, $token, $access_token = null, $role = null, $skip_email_verified = false ) {
-
-		if ( func_num_args() > 2 ) {
-			// phpcs:ignore
-			@trigger_error(
-				sprintf(
-					__( '$access_token, $role, and $skip_email_verified params are deprecated.', 'wp-auth0' ),
-					__METHOD__
-				),
-				E_USER_DEPRECATED
-			);
-		}
+	public function create( $userinfo, $token ) {
 
 		$auth0_sub      = $userinfo->sub;
 		list($strategy) = explode( '|', $auth0_sub );
-		$opts           = WP_Auth0_Options::Instance();
 		$wp_user        = null;
 		$user_id        = null;
 
@@ -134,8 +60,7 @@ class WP_Auth0_UsersRepo {
 
 		// Email is considered verified if flagged as such, if we ignore the requirement, or if the strategy is skipped.
 		$email_verified = ! empty( $userinfo->email_verified )
-			|| $skip_email_verified
-			|| $opts->strategy_skips_verified_email( $strategy );
+			|| $this->a0_options->strategy_skips_verified_email( $strategy );
 
 		// WP user to join with incoming Auth0 user.
 		if ( ! empty( $userinfo->email ) ) {
@@ -156,11 +81,11 @@ class WP_Auth0_UsersRepo {
 			if ( ! empty( $current_auth0_id ) && $auth0_sub !== $current_auth0_id ) {
 				throw new WP_Auth0_CouldNotCreateUserException( __( 'There is a user with the same email.', 'wp-auth0' ) );
 			}
-		} elseif ( $opts->is_wp_registration_enabled() || $opts->get( 'auto_provisioning' ) ) {
+		} elseif ( $this->a0_options->is_wp_registration_enabled() || $this->a0_options->get( 'auto_provisioning' ) ) {
 			// WP user does not exist and registration is allowed.
-			$user_id = WP_Auth0_Users::create_user( $userinfo, $role );
+			$user_id = WP_Auth0_Users::create_user( $userinfo );
 
-			// Check if user was created
+			// Check if user was created.
 			if ( is_wp_error( $user_id ) ) {
 				throw new WP_Auth0_CouldNotCreateUserException( $user_id->get_error_message() );
 			} elseif ( -2 === $user_id ) {
@@ -182,7 +107,7 @@ class WP_Auth0_UsersRepo {
 	/**
 	 * Look for and return a user with an Auth0 ID
 	 *
-	 * @param string $id - An Auth0 user ID, like "provider|id"
+	 * @param string $id - An Auth0 user ID, like "provider|id".
 	 *
 	 * @return null|WP_User
 	 */
@@ -190,21 +115,25 @@ class WP_Auth0_UsersRepo {
 		global $wpdb;
 
 		if ( empty( $id ) ) {
-			WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__, __( 'Empty user id', 'wp-auth0' ) );
+			WP_Auth0_ErrorLog::insert_error( __METHOD__, __( 'Empty user id', 'wp-auth0' ) );
 
 			return null;
 		}
 
-		$query = array(
+		$query = [
+			// Limiting the returned number and this happens on login so some delay is acceptable.
+			// phpcs:ignore WordPress.DB.SlowDBQuery
 			'meta_key'   => $wpdb->prefix . 'auth0_id',
+			// phpcs:ignore WordPress.DB.SlowDBQuery
 			'meta_value' => $id,
+			'number'     => 1,
 			'blog_id'    => 0,
-		);
+		];
 
 		$users = get_users( $query );
 
 		if ( $users instanceof WP_Error ) {
-			WP_Auth0_ErrorManager::insert_auth0_error( __METHOD__ . ' => get_users() ', $users->get_error_message() );
+			WP_Auth0_ErrorLog::insert_error( __METHOD__ . ' => get_users() ', $users->get_error_message() );
 
 			return null;
 		}
@@ -230,22 +159,10 @@ class WP_Auth0_UsersRepo {
 	}
 
 	/**
-	 * Delete all Auth0 meta fields for a WordPress user.
-	 *
-	 * @param int $user_id - WordPress user ID.
-	 */
-	public function delete_auth0_object( $user_id ) {
-		self::delete_meta( $user_id, 'auth0_id' );
-		self::delete_meta( $user_id, 'auth0_obj' );
-		self::delete_meta( $user_id, 'last_update' );
-		self::delete_meta( $user_id, 'auth0_transient_email_update' );
-	}
-
-	/**
 	 * Get a user's Auth0 meta data.
 	 *
-	 * @param integer  $user_id - WordPress user ID.
-	 * @param string - $key - Usermeta key to get.
+	 * @param integer $user_id - WordPress user ID.
+	 * @param string  $key - Usermeta key to get.
 	 *
 	 * @return mixed
 	 *

@@ -69,19 +69,6 @@ jQuery(document).ready(function($) {
     });
 
     /*
-    Import and Export settings tabs
-     */
-    $('.js-a0-upload-toggle').click(function(){
-        $('#js-a0-upload-file').toggle();
-        $('#js-a0-paste-json').toggle();
-    });
-
-    $('.js-a0-import-export-tabs').click(function (e) {
-        e.preventDefault();
-        $(this).tab('show');
-    });
-
-    /*
     Admin settings tab switching
      */
     var currentTab;
@@ -95,22 +82,45 @@ jQuery(document).ready(function($) {
         currentTab = 'features';
     }
 
-    // Uses the Bootstrap tab plugin
-    $('#tab-' + currentTab).tab('show');
+    togglePanelVisibility(currentTab);
+    togglePanelVisibility('import');
 
     // Controls whether the submit button is showing or not
     var $settingsForm = $( '#js-a0-settings-form' );
     $settingsForm.attr( 'data-tab-showing', currentTab );
 
     // Set the tab showing on the form and persist the tab
-    $( '.js-a0-settings-tabs' ).click( function () {
+    $( '.js-a0-settings-tabs' ).click( function (e) {
+        e.preventDefault();
         window.location.hash = '';
-        var tabHref = $( this ).attr( 'aria-controls' ).trim();
-        $settingsForm.attr( 'data-tab-showing', tabHref );
+        var tabName = $( this ).attr( 'id' ).trim().replace( 'tab-', '' );
+        $settingsForm.attr( 'data-tab-showing', tabName );
+
         if ( localStorageAvailable() ) {
-            window.localStorage.setItem( 'Auth0WPSettingsTab', tabHref );
+            window.localStorage.setItem( 'Auth0WPSettingsTab', tabName );
         }
+
+        togglePanelVisibility(tabName);
     } );
+
+    // Set the tab showing on the form and persist the tab
+    $( '.js-a0-import-export-tabs' ).click( function (e) {
+        e.preventDefault();
+        window.location.hash = '';
+        var tabName = $( this ).attr( 'id' ).trim().replace( 'tab-', '' );
+        togglePanelVisibility(tabName);
+    } );
+
+    function togglePanelVisibility(activeId) {
+      var $showPanel = $('#panel-' + activeId);
+      if (!$showPanel.length) {
+        return;
+      }
+      $('.tab-pane').hide();
+      $('.nav-tabs a').removeClass( 'a0-active-tab' );
+      $showPanel.show();
+      $('#tab-' + activeId).addClass( 'a0-active-tab' );
+    }
 
     /*
     Clear cache button on Basic settings page
@@ -152,34 +162,6 @@ jQuery(document).ready(function($) {
             $rotateTokenButton.remove();
         }, 'json');
     } );
-
-    /*
-    Initial setup
-     */
-    $('.js-a0-setup-input').keydown(function(e){
-        // Do not submit the form if the enter key is pressed.
-        if(13 === e.keyCode) {
-            e.preventDefault();
-            return false;
-        }
-    });
-
-    $('.js-a0-select-setup').click(function (e) {
-        e.preventDefault();
-        $('#profile-type').val($(this).attr('data-profile-type'));
-        $('#connectionSelectedModal').modal();
-    });
-
-    $('#manuallySetToken').click(function (e) {
-        e.preventDefault();
-        $('#enterTokenModal').modal();
-        $('#connectionSelectedModal').modal('hide');
-    });
-
-    $('#automaticSetup').click(function (e) {
-        e.preventDefault();
-        $('#profile-form').submit();
-    });
 
   /**
    * Show a JS confirm box to give a chance to cancel an on-page action.

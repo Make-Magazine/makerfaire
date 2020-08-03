@@ -54,24 +54,6 @@ abstract class WP_Auth0_Api_Abstract {
 	protected $api_client_creds;
 
 	/**
-	 * API token from plugin settings or Client Credentials call.
-	 *
-	 * @deprecated - 3.10.0, not used.
-	 *
-	 * @var string
-	 */
-	protected $api_token;
-
-	/**
-	 * Decoded API token from plugin settings.
-	 *
-	 * @deprecated - 3.10.0, not used.
-	 *
-	 * @var object
-	 */
-	protected $api_token_decoded;
-
-	/**
 	 * API path.
 	 *
 	 * @var string
@@ -83,14 +65,14 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @var array
 	 */
-	protected $headers = array();
+	protected $headers = [];
 
 	/**
 	 * Body to send with the request.
 	 *
 	 * @var array
 	 */
-	protected $body = array();
+	protected $body = [];
 
 	/**
 	 * API response.
@@ -137,15 +119,15 @@ abstract class WP_Auth0_Api_Abstract {
 	 * @return array
 	 */
 	public static function get_info_headers() {
-		$header_value = array(
+		$header_value = [
 			'name'    => 'wp-auth0',
 			'version' => WPA0_VERSION,
-			'env'     => array(
+			'env'     => [
 				'php' => phpversion(),
 				'wp'  => get_bloginfo( 'version' ),
-			),
-		);
-		return array( 'Auth0-Client' => base64_encode( wp_json_encode( $header_value ) ) );
+			],
+		];
+		return [ 'Auth0-Client' => base64_encode( wp_json_encode( $header_value ) ) ];
 	}
 
 	/**
@@ -209,7 +191,7 @@ abstract class WP_Auth0_Api_Abstract {
 		}
 
 		// API token is missing the required scope.
-		WP_Auth0_ErrorManager::insert_auth0_error(
+		WP_Auth0_ErrorLog::insert_error(
 			__METHOD__,
 			new WP_Error(
 				'insufficient_scope',
@@ -334,7 +316,7 @@ abstract class WP_Auth0_Api_Abstract {
 	 */
 	protected function handle_wp_error( $method ) {
 		if ( $this->response instanceof WP_Error ) {
-			WP_Auth0_ErrorManager::insert_auth0_error( $method, $this->response );
+			WP_Auth0_ErrorLog::insert_error( $method, $this->response );
 			return true;
 		}
 		return false;
@@ -366,7 +348,7 @@ abstract class WP_Auth0_Api_Abstract {
 			if ( isset( $response_body['errorCode'] ) ) {
 				$message .= ' [' . sanitize_text_field( $response_body['errorCode'] ) . ']';
 			}
-			WP_Auth0_ErrorManager::insert_auth0_error( $method, new WP_Error( $response_body['statusCode'], $message ) );
+			WP_Auth0_ErrorLog::insert_error( $method, new WP_Error( $response_body['statusCode'], $message ) );
 			return true;
 		}
 
@@ -374,38 +356,12 @@ abstract class WP_Auth0_Api_Abstract {
 			if ( isset( $response_body['error_description'] ) ) {
 				$message .= ' - ' . sanitize_text_field( $response_body['error_description'] );
 			}
-			WP_Auth0_ErrorManager::insert_auth0_error( $method, new WP_Error( $response_body['error'], $message ) );
+			WP_Auth0_ErrorLog::insert_error( $method, new WP_Error( $response_body['error'], $message ) );
 			return true;
 		}
 
-		WP_Auth0_ErrorManager::insert_auth0_error( $method, $this->response_body );
+		WP_Auth0_ErrorLog::insert_error( $method, $this->response_body );
 		return true;
-	}
-
-	/**
-	 * Decode an RS256 Auth0 Management API token.
-	 *
-	 * @deprecated - 3.10.0, not used.
-	 *
-	 * @param string $token - API JWT to decode.
-	 *
-	 * @return object
-	 *
-	 * @throws DomainException              Algorithm was not provided.
-	 * @throws UnexpectedValueException     Provided JWT was invalid.
-	 * @throws SignatureInvalidException    Provided JWT was invalid because the signature verification failed.
-	 * @throws BeforeValidException         Provided JWT used before it's eligible as defined by 'nbf'.
-	 * @throws BeforeValidException         Provided JWT used before it's been created as defined by 'iat'.
-	 * @throws ExpiredException             Provided JWT has since expired, as defined by the 'exp' claim.
-	 *
-	 * @codeCoverageIgnore - Deprecated.
-	 */
-	protected function decode_jwt( $token ) {
-		return JWT::decode(
-			$token,
-			WP_Auth0_Api_Client::JWKfetch( $this->domain ),
-			array( 'RS256' )
-		);
 	}
 
 	/**
@@ -419,11 +375,11 @@ abstract class WP_Auth0_Api_Abstract {
 	 */
 	private function request( $method ) {
 		$remote_url = $this->build_url();
-		$http_args  = array(
+		$http_args  = [
 			'headers' => $this->headers,
 			'method'  => $method,
 			'body'    => ! empty( $this->body ) ? json_encode( $this->body ) : null,
-		);
+		];
 
 		$this->response      = wp_remote_request( $remote_url, $http_args );
 		$this->response_code = (int) wp_remote_retrieve_response_code( $this->response );

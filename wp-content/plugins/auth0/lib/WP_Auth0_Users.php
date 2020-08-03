@@ -4,12 +4,11 @@ class WP_Auth0_Users {
 	/**
 	 * Create a WordPress user with Auth0 data.
 	 *
-	 * @param object       $userinfo - User profile data from Auth0.
-	 * @param null|boolean $role - Set the role as administrator - @deprecated - 3.8.0.
+	 * @param object $userinfo - User profile data from Auth0.
 	 *
 	 * @return int|WP_Error
 	 */
-	public static function create_user( $userinfo, $role = null ) {
+	public static function create_user( $userinfo ) {
 		$email = null;
 		if ( isset( $userinfo->email ) ) {
 			$email = $userinfo->email;
@@ -74,7 +73,7 @@ class WP_Auth0_Users {
 			}
 		}
 		// Create the user data array for updating first- and lastname
-		$user_data = array(
+		$user_data = [
 			'user_email'   => $email,
 			'user_login'   => $username,
 			'user_pass'    => $password,
@@ -82,13 +81,9 @@ class WP_Auth0_Users {
 			'last_name'    => $lastname,
 			'display_name' => $username,
 			'description'  => $description,
-		);
+		];
 
-		if ( $role ) {
-			// phpcs:ignore
-			@trigger_error( sprintf( __( '$role parameter is deprecated.', 'wp-auth0' ), __METHOD__ ), E_USER_DEPRECATED );
-			$user_data['role'] = 'administrator';
-		}
+		$user_data = apply_filters( 'auth0_create_user_data', $user_data, $userinfo );
 
 		// Update the user
 		$user_id = wp_insert_user( $user_data );

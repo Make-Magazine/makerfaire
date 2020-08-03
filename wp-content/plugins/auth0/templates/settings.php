@@ -1,58 +1,40 @@
-<div class="a0-wrap settings">
-
-	<?php require WPA0_PLUGIN_DIR . 'templates/initial-setup/partials/header.php'; ?>
+<div class="a0-wrap settings wrap">
 
 	<div class="container-fluid">
 
-		<div class="row">
-			<h1><?php _e( 'Auth0 WordPress Plugin Settings', 'wp-auth0' ); ?></h1>
-
-			<div class="row a0-message a0-warning manage">
-				<?php _e( 'For your Auth0 dashboard with more settings and connection options click', 'wp-auth0' ); ?>
-				<a target="_blank" href="https://manage.auth0.com/#/clients/<?php echo wp_auth0_get_option( 'client_id' ); ?>/connections"><?php _e( 'here', 'wp-auth0' ); ?></a>.
-			</div>
+			<h1><?php _e( 'Login by Auth0 Settings', 'wp-auth0' ); ?></h1>
 
 			<?php settings_errors(); ?>
 
-			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation">
-					<a id="tab-basic" href="#basic" aria-controls="basic" role="tab" data-toggle="tab" class="js-a0-settings-tabs">
+			<p class="nav nav-tabs" role="tablist">
+					<a id="tab-basic" href="#basic" class="js-a0-settings-tabs">
 						<?php _e( 'Basic', 'wp-auth0' ); ?>
 					</a>
-				</li>
-				<li role="presentation">
-					<a id="tab-features" href="#features" aria-controls="features" role="tab" data-toggle="tab" class="js-a0-settings-tabs">
+					<a id="tab-features" href="#features" class="js-a0-settings-tabs">
 						<?php _e( 'Features', 'wp-auth0' ); ?>
 					</a>
-				</li>
-				<li role="presentation">
-					<a id="tab-appearance" href="#appearance" aria-controls="appearance" role="tab" data-toggle="tab" class="js-a0-settings-tabs">
+					<a id="tab-appearance" href="#appearance" class="js-a0-settings-tabs">
 						<?php _e( 'Embedded', 'wp-auth0' ); ?>
 					</a>
-				</li>
-				<li role="presentation">
-					<a id="tab-advanced" href="#advanced" aria-controls="advanced" role="tab" data-toggle="tab" class="js-a0-settings-tabs">
+					<a id="tab-advanced" href="#advanced" class="js-a0-settings-tabs">
 						<?php _e( 'Advanced', 'wp-auth0' ); ?>
 					</a>
-				</li>
-				<li role="presentation">
-					<a id="tab-help" href="#help" aria-controls="help" role="tab" data-toggle="tab" class="js-a0-settings-tabs">
+					<a id="tab-help" href="#help" class="js-a0-settings-tabs">
 						<?php _e( 'Help', 'wp-auth0' ); ?>
 					</a>
-				</li>
-			</ul>
-		</div>
+			</p>
+
 		<form action="options.php" method="post" id="js-a0-settings-form" class="a0-settings-form">
 			<?php settings_fields( WP_Auth0_Options::Instance()->get_options_name() . '_basic' ); ?>
 
 			<div class="tab-content">
-				<?php foreach ( array( 'basic', 'features', 'appearance', 'advanced' ) as $tab ) : ?>
-					<div role="tabpanel" class="tab-pane row" id="<?php echo $tab; ?>">
+				<?php foreach ( WP_Auth0_Admin::OPT_SECTIONS as $tab ) : ?>
+					<div class="tab-pane" id="panel-<?php echo $tab; ?>">
 						<?php do_settings_sections( WP_Auth0_Options::Instance()->get_options_name() . '_' . $tab ); ?>
 					</div>
 				<?php endforeach; ?>
 
-				<div role="tabpanel" class="tab-pane row" id="help">
+				<div class="tab-pane" id="panel-help">
 
 					<p>
 						<?php
@@ -113,71 +95,12 @@
 							<?php _e( 'Customers on a paid Auth0 plan can submit trouble tickets for a quick response.', 'wp-auth0' ); ?>
 						</li>
 					</ul>
-
-					<div class="a0-feedback">
-						<div>
-
-							<h2><?php _e( 'How is the Auth0 WP plugin working for you?', 'wp-auth0' ); ?></h2>
-
-							<div>
-								<input type="radio" name="feedback_calification" class="feedback_calification" id="feedback_calification_1" value="1" />
-								<label for="feedback_calification_1" class="feedback-face calification-1"></label>
-
-								<input type="radio" name="feedback_calification" class="feedback_calification" id="feedback_calification_2" value="2" />
-								<label for="feedback_calification_2" class="feedback-face calification-2"></label>
-
-								<input type="radio" name="feedback_calification" class="feedback_calification" id="feedback_calification_3" value="3" />
-								<label for="feedback_calification_3" class="feedback-face calification-3"></label>
-
-								<input type="radio" name="feedback_calification" class="feedback_calification" id="feedback_calification_4" value="4" />
-								<label for="feedback_calification_4" class="feedback-face calification-4"></label>
-
-								<input type="radio" name="feedback_calification" class="feedback_calification" id="feedback_calification_5" value="5" />
-								<label for="feedback_calification_5" class="feedback-face calification-5"></label>
-							</div>
-						</div>
-
-						<div class="a0-separator"></div>
-
-						<div>
-							<h2><?php _e( 'What one thing would you change?', 'wp-auth0' ); ?></h2>
-							<textarea id="feedback_text" placeholder="
-							<?php
-							_e( 'Be as brief or detailed as you like!', 'wp-auth0' )
-							?>
-			  "></textarea>
-						</div>
-
-						<div>
-							<div class="a0-buttons">
-								<span class="a0-button primary" onclick="send_feedback()"><?php _e( 'Send Feedback', 'wp-auth0' ); ?></span>
-							</div>
-						</div>
-					</div>
-
 				</div>
 			</div>
 
-			<div class="row">
 				<div class="a0-buttons">
-					<input type="submit" name="submit" id="submit" class="a0-button primary" value="<?php _e( 'Save Changes', 'wp-auth0' ); ?>" />
+					<input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e( 'Save Changes', 'wp-auth0' ); ?>" />
 				</div>
-			</div>
 		</form>
 	</div>
 </div>
-
-<script type="text/javascript">
-	function send_feedback() {
-		var url = 'https://sandbox.it.auth0.com/api/run/wptest/wp-auth0-slack?webtask_no_cache=1';
-		var data = {
-			"score": jQuery('.feedback_calification:checked').val(),
-			"account": '<?php echo WP_Auth0::get_tenant(); ?>',
-			"feedback": jQuery('#feedback_text').val()
-		};
-		var successMsg = "<?php _e( 'Done! Thank you for your feedback.', 'wp-auth0' ); ?>";
-		jQuery.post(url, data, function(response) {
-			jQuery('.a0-feedback').html('<h2 class="message">' + successMsg + '</h2>')
-		});
-	}
-</script>

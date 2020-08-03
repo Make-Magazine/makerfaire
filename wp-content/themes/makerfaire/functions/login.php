@@ -21,14 +21,6 @@ function cookie_login_warning() { ?>
 
 /* redirect wp-login.php to the auth0 login page */
 
-function load_auth0_js() {
-    //auth0
-    wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false);
-    wp_enqueue_script('auth0Login', get_stylesheet_directory_uri() . '/auth0/js/auth0login.js', array(), false);
-}
-
-//add_action('login_enqueue_scripts', 'load_auth0_js', 10);
-
 /** Set up the Ajax Logout */
 add_action('wp_ajax_mm_wplogout', 'MM_wordpress_logout');
 add_action('wp_ajax_nopriv_mm_wplogout', 'MM_wordpress_logout');

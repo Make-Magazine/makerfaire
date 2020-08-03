@@ -29,25 +29,6 @@ class WP_Auth0_Profile_Change_Password {
 	}
 
 	/**
-	 * Add actions and filters for the profile page.
-	 *
-	 * @deprecated - 3.10.0, will move add_action calls out of this class in the next major.
-	 *
-	 * @codeCoverageIgnore - Deprecated.
-	 */
-	public function init() {
-
-		// Used during profile update in wp-admin.
-		add_action( 'user_profile_update_errors', array( $this, 'validate_new_password' ), 10, 2 );
-
-		// Used during password reset on wp-login.php.
-		add_action( 'validate_password_reset', array( $this, 'validate_new_password' ), 10, 2 );
-
-		// Used during WooCommerce edit account save.
-		add_action( 'woocommerce_save_account_details_errors', array( $this, 'validate_new_password' ), 10, 2 );
-	}
-
-	/**
 	 * Update the user's password at Auth0
 	 * Hooked to: user_profile_update_errors, validate_password_reset, woocommerce_save_account_details_errors
 	 * IMPORTANT: Internal callback use only, do not call this function directly!
@@ -58,6 +39,8 @@ class WP_Auth0_Profile_Change_Password {
 	 * @return boolean
 	 */
 	public function validate_new_password( $errors, $user ) {
+		// Nonce was verified during core process this is hooked to.
+		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
 
 		// Exit if we're not changing the password.
 		// The pass1 key is for core WP, password_1 is WooCommerce.
@@ -65,30 +48,36 @@ class WP_Auth0_Profile_Change_Password {
 			return false;
 		}
 
-		$field_name   = ! empty( $_POST['pass1'] ) ? 'pass1' : 'password_1';
-		$new_password = wp_unslash( $_POST[ $field_name ] );
-
-		if ( isset( $_POST['user_id'] ) ) {
-			// Input field from user edit or profile update.
-			$wp_user_id = absint( $_POST['user_id'] );
-		} elseif ( is_object( $user ) && ! empty( $user->ID ) ) {
-			// User object passed in from an action.
-			$wp_user_id = absint( $user->ID );
-		} else {
+		// Do we have a user to edit?
+		$is_user_from_hook = is_object( $user ) && ! empty( $user->ID );
+		if ( ! $is_user_from_hook && ! isset( $_POST['user_id'] ) ) {
 			return false;
 		}
 
-		// Exit if this is not an Auth0 user.
+		$wp_user_id = absint( $is_user_from_hook ? $user->ID : $_POST['user_id'] );
+
+		// Does the current user have permission to edit this user?
+		if ( ! current_user_can( 'edit_users' ) && $wp_user_id !== get_current_user_id() ) {
+			return false;
+		}
+
+		// Is the user being edited an Auth0 user?
 		$auth0_id = WP_Auth0_UsersRepo::get_meta( $wp_user_id, 'auth0_id' );
 		if ( empty( $auth0_id ) ) {
 			return false;
 		}
-		$strategy = WP_Auth0_Users::get_strategy( $auth0_id );
 
-		// Exit if this is not a database strategy user.
+		// Is the user being edited a DB strategy user?
+		$strategy = WP_Auth0_Users::get_strategy( $auth0_id );
 		if ( 'auth0' !== $strategy ) {
 			return false;
 		}
+
+		$field_name = ! empty( $_POST['pass1'] ) ? 'pass1' : 'password_1';
+
+		// Validated above and only sent to the change password API endpoint.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		$new_password = wp_unslash( $_POST[ $field_name ] );
 
 		$result = $this->api_change_password->call( $auth0_id, $new_password );
 
@@ -104,7 +93,9 @@ class WP_Auth0_Profile_Change_Password {
 
 		// Add an error message to appear at the top of the page.
 		$error_msg = is_string( $result ) ? $result : __( 'Password could not be updated.', 'wp-auth0' );
-		$errors->add( 'auth0_password', $error_msg, array( 'form-field' => $field_name ) );
+		$errors->add( 'auth0_password', $error_msg, [ 'form-field' => $field_name ] );
 		return false;
+
+		// phpcs:enable WordPress.Security.NonceVerification.NoNonceVerification
 	}
 }
