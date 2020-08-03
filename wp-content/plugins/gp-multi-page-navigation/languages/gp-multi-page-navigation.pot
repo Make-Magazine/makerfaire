@@ -1,4 +1,4 @@
-# Copyright (C) 2019 GP Multi-page Navigation
+# Copyright (C) 2020 GP Multi-page Navigation
 # This file is distributed under the same license as the GP Multi-page Navigation package.
 msgid ""
 msgstr ""
@@ -45,23 +45,23 @@ msgstr ""
 msgid "after reaching the last page"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:302
+#: ../class-gp-multi-page-navigation.php:305
 msgid "Back to Last Page"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:303
+#: ../class-gp-multi-page-navigation.php:306
 msgctxt "Option to submit multi-page form after validation error"
 msgid "Submit"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:304
+#: ../class-gp-multi-page-navigation.php:307
 msgid "Next Page with Errors"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:359
+#: ../class-gp-multi-page-navigation.php:362
 msgid "There are multiple pages with errors."
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:360
+#: ../class-gp-multi-page-navigation.php:363
 msgid "You have been redirected to the first page with errors."
 msgstr ""

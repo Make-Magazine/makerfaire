@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.0.8
+
+	- Fixed issue where GF Multi-Page Navigation settings would not show in the Page settings when using Gravity Forms 2.5 or newer.
+
 ## 1.0.7
 
 	- Added support for custom page links outside of Gravity Forms implemented via the WC GF Product Add-ons plugin.

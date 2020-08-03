@@ -137,13 +137,16 @@ class GP_Multi_Page_Navigation extends GWPerk {
 
                 window.gpmpn = {
 
-                    $pageOptionsTabProps: $( '#gform_pagination_settings_tab_1' ),
+                    $pageOptionsTabProps: $( '.editor-sidebar #general_tab' ).length
+                        ? $( '.editor-sidebar #general_tab' )
+                        : $( '#gform_pagination_settings_tab_1 ul' ), // GF <=2.4 form editor selector
+
                     $settingsElem:        $( '#gpmpn-settings' ).show(),
 
                     init: function() {
 
                         // add our custom pagination settings to the "Start Paging" settings
-                        gpmpn.$pageOptionsTabProps.children( 'ul' ).append( gpmpn.$settingsElem );
+                        gpmpn.$pageOptionsTabProps.append( gpmpn.$settingsElem );
 
                         // take control of GFs InitPaginationOptions() function so we can mark our inputs as checked (if applicable)
                         gpmpn.overrideInitPaginationOptionsFunction();
