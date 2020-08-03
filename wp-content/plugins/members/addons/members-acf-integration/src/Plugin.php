@@ -159,8 +159,13 @@ class Plugin {
 			return;
 		}
 
-		remove_action( 'admin_menu', [ acf()->admin, 'admin_menu' ]    );
-		add_action( 'admin_menu',    [ acf()->admin, 'admin_menu' ], 8 );
+		global $acf_instances;
+		$admin = $acf_instances['ACF_Admin'];
+
+		if ( ! empty( $admin ) ) {
+			remove_action( 'admin_menu', [ $admin, 'admin_menu' ]    );
+			add_action( 'admin_menu',    [ $admin, 'admin_menu' ], 8 );
+		}
 	}
 
 	/**
