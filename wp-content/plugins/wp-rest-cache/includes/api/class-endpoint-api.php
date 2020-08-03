@@ -63,6 +63,14 @@ class Endpoint_Api {
 	private $request_headers = array();
 
 	/**
+	 * The request object for the current request.
+	 *
+	 * @access private
+	 * @var    \WP_REST_Request $request The request object.
+	 */
+	private $request;
+
+	/**
 	 * The default WordPress REST endpoints, that can be cached.
 	 *
 	 * @access private
@@ -87,7 +95,10 @@ class Endpoint_Api {
 		// No filter_input, see https://stackoverflow.com/questions/25232975/php-filter-inputinput-server-request-method-returns-null/36205923.
 		$request_uri = filter_var( $_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL );
 		// Remove home_url from request_uri for uri's with WordPress in a subdir (like /wp).
-		$request_uri  = str_replace( get_home_url(), '', $request_uri );
+		$request_uri = str_replace( get_home_url(), '', $request_uri );
+		if ( '//' === substr( $request_uri, 0, 2 ) ) {
+			$request_uri = substr( $request_uri, 1 );
+		}
 		$uri_parts    = wp_parse_url( $request_uri );
 		$request_path = rtrim( $uri_parts['path'], '/' );
 
@@ -114,16 +125,16 @@ class Endpoint_Api {
 	 * Create an array of cacheable request headers based upon settings and hooks.
 	 */
 	private function set_cacheable_request_headers() {
-		$request = new \WP_REST_Request();
-		$server  = new \WP_REST_Server();
-		$request->set_headers( $server->get_headers( wp_unslash( $_SERVER ) ) );
+		$this->request = new \WP_REST_Request();
+		$server        = new \WP_REST_Server();
+		$this->request->set_headers( $server->get_headers( wp_unslash( $_SERVER ) ) );
 
 		$cacheable_headers = \WP_Rest_Cache_Plugin\Includes\Caching\Caching::get_instance()->get_global_cacheable_request_headers();
 		$cacheable_headers = explode( ',', $cacheable_headers );
 		if ( count( $cacheable_headers ) ) {
 			foreach ( $cacheable_headers as $header ) {
 				if ( strlen( $header ) ) {
-					$this->request_headers[ $header ] = $request->get_header( $header );
+					$this->request_headers[ $header ] = $this->request->get_header( $header );
 				}
 			}
 		}
@@ -140,7 +151,7 @@ class Endpoint_Api {
 				if ( count( $cacheable_headers ) ) {
 					foreach ( $cacheable_headers as $header ) {
 						if ( strlen( $header ) ) {
-							$this->request_headers[ $header ] = $request->get_header( $header );
+							$this->request_headers[ $header ] = $this->request->get_header( $header );
 						}
 					}
 				}
@@ -237,6 +248,24 @@ class Endpoint_Api {
 	 */
 	public function skip_caching() {
 		$use_parameter = false;
+
+		/**
+		 * Allow for programmatically disabling of caching.
+		 *
+		 * Allows to programmatically skip caching.
+		 *
+		 * @since 2020.2.0
+		 *
+		 * @param bool $skip_caching True if cache should be skipped.
+		 */
+		if ( apply_filters( 'wp_rest_cache/skip_caching', false ) ) {
+			return true;
+		}
+
+		$wp_nonce = $this->request->get_header( 'x_wp_nonce' );
+		if ( ! is_null( $wp_nonce ) ) {
+			return true;
+		}
 
 		// Default only cache GET-requests.
 		$allowed_request_methods = get_option( 'wp_rest_cache_allowed_request_methods', [ 'GET' ] );
@@ -421,6 +450,21 @@ class Endpoint_Api {
 		$uncached_parameters = apply_filters( 'wp_rest_cache/uncached_parameters', $original_uncached_parameters );
 		if ( $original_uncached_parameters !== $uncached_parameters ) {
 			update_option( 'wp_rest_cache_uncached_parameters', $uncached_parameters, false );
+		}
+
+		$original_cache_hit_recording = get_option( 'wp_rest_cache_hit_recording', true );
+		/**
+		 * Filter to disable cache hit recording.
+		 *
+		 * Allows to override the cache hit recording.
+		 *
+		 * @since 2020.2.0
+		 *
+		 * @param boolean $original_uncached_parameters An array of query parameters that should be omitted from the cacheable query string.
+		 */
+		$cache_hit_recording = apply_filters( 'wp_rest_cache/cache_hit_recording', $original_cache_hit_recording );
+		if ( (int) $original_cache_hit_recording !== (int) $cache_hit_recording ) {
+			update_option( 'wp_rest_cache_hit_recording', (int) $cache_hit_recording, true );
 		}
 	}
 
