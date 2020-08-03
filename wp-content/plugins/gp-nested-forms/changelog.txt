@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.0-beta-8.59
+
+	- Added support for filtering child entries by the Parent Entry ID in the Entries list view in addition to filtering by the Parent Entry ID in the Gravity Flow Form Connector plugin.
+
+## 1.0-beta-8.58
+
+	- Fixed an issue where GPNF won't recognize HTML button elements. (#21)
+
 ## 1.0-beta-8.57
 
 	- Added `gpnf_submitted_nested_entries` hook. (#20)

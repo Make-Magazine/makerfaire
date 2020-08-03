@@ -126,6 +126,8 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_filter( 'gform_get_entries_args_entry_list', array( $this, 'filter_entry_list' ) );
 		// Add support for processing nested forms in Gravity Forms preview.
 		add_action( 'wp', array( $this, 'handle_core_preview_ajax' ), 9 );
+		// Add support for filtering by Parent Entry ID in Entries List or and plugins like Gravity Flow Form Connector
+		add_filter( 'gform_field_filters', array( $this, 'add_parent_form_filter' ), 10, 2 );
 
 		// Integrations.
 		add_filter( 'gform_webhooks_request_data', array( $this, 'add_full_child_entry_data_for_webhooks' ), 10, 4 );
@@ -505,6 +507,22 @@ class GP_Nested_Forms extends GP_Plugin {
 			echo GFForms::get_form( rgpost( 'gform_submit' ), true, true, true, null, true );
 			exit;
 		}
+	}
+
+	public function add_parent_form_filter( $field_filters, $form ) {
+
+		$field_filters[] = array(
+			'key'             => GPNF_Entry::ENTRY_PARENT_KEY,
+			'text'            => __( 'Parent Entry ID', 'gp-nested-forms' ),
+			'preventMultiple' => false,
+			'operators'       => array(
+				'is',
+				'isnot',
+			),
+		);
+
+		return $field_filters;
+
 	}
 
 	public function filter_entry_list( $args ) {

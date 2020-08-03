@@ -309,8 +309,23 @@
 
 		};
 
+		/**
+		 * Gets nested form's submit button
+		 *
+		 * Looks for HTML elements in the nested form's footer and returns them in
+		 * a jQuery object.
+		 *
+		 * This will match the following elements:
+		 * <input type="button">
+		 * <input type="submit">
+		 * <input type="image">
+		 * <button>
+		 *
+		 * @param void
+		 * @return object   jQuery object containing default buttons
+		 */
 		self.getDefaultButtons = function() {
-			return $( '#gform_page_{0}_{1} .gform_page_footer, #gform_{0} .gform_footer'.format( self.nestedFormId, self.getCurrentPage() ) ).find( 'input[type="button"], input[type="submit"], input[type="image"]' );
+			return $( '#gform_page_{0}_{1} .gform_page_footer, #gform_{0} .gform_footer'.format( self.nestedFormId, self.getCurrentPage() ) ).find( 'input[type="button"], input[type="submit"], input[type="image"], button' );
 		};
 
 		self.handleCancelClick = function( $button ) {
