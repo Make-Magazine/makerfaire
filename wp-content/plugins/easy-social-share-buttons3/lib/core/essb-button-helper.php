@@ -151,7 +151,10 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 			if ($single == 'no') { continue; }
 			
 			// since version 7 Google+ and StumbleUpon won't show even choosed
-			if ($single == 'google' || $single == 'stumbleupon') { continue; }
+			/**
+			 * @since 7.3 - remove also ManageWP (network closed)
+			 */
+			if ($single == 'google' || $single == 'stumbleupon' || $single == 'mwp') { continue; }
 
 			$count_displayed++;
 
@@ -305,6 +308,15 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 					$api_command = "essb.tracking_only('', '".$single."', '".$salt."', true);";
 				}
 			}
+			
+			/**
+			 * @since 7.3 
+			 * 
+			 * Allow external change of any network target
+			 */
+			if (has_filter("essb_network_target_{$single}")) {
+			    $link_target = apply_filters("essb_network_target_{$single}", $link_target);
+			}
 
 			$name = isset($network_names[$single]) ? $network_names[$single] : '';
 			$noname_class = '';
@@ -431,8 +443,8 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 	if ($ga_tracking_code != '' || isset($share['ga_mode'])) {
 		essb_depend_load_function('essb_correct_url_on_tracking_code', 'lib/core/extenders/essb-buttonhelper-extender-encode.php');
 		$share = essb_correct_url_on_tracking_code($share, $network);
-	}
-
+	}	
+	
 	if (!isset($share['query'])) {
 		if (isset($share['essb_encode_url'])) {
 			if ($share['essb_encode_url']) {
@@ -455,13 +467,24 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			}
 		}
 	}
-
-	$share['url'] = rawurlencode(esc_url($share['url']));
+	
+	$share['url'] = rawurlencode(esc_url($share['url']));		
 	$share['short_url'] = rawurlencode(esc_url($share['short_url']));
+	$share['short_url_twitter'] = rawurlencode(esc_url($share['short_url_twitter']));
 	$share['full_url'] = rawurlencode(esc_url($share['full_url']));
 	$share['title'] = urlencode(esc_attr($share['title']));
 	$share['image'] = esc_attr($share['image']);
-	$share['description'] = urlencode(esc_attr($share['description']));	
+	$share['description'] = urlencode(esc_attr($share['description']));		
+	
+	/**
+	 * 7.2.2 Fix the wrong encoded URLs in UTM options
+	 */
+	if (strpos($share['url'], '%26%23038%3B') !== false) {
+	    $share['url'] = str_replace('%26%23038%3B', '%26', $share['url']);
+	    $share['full_url'] = str_replace('%26%23038%3B', '%26', $share['full_url']);
+	    $share['short_url'] = str_replace('%26%23038%3B', '%26', $share['short_url']);
+	    $share['short_url_twitter'] = str_replace('%26%23038%3B', '%26', $share['short_url_twitter']);	  
+	}
 
 	// adding additional support for hashtags everywhere
 	$share['title'] = str_replace('#', '%23', $share['title']);
@@ -504,7 +527,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 
 	switch ($network) {
 		case 'facebook':
-			$url = sprintf ( 'https://www.facebook.com/sharer/sharer.php?u=%1$s&t=%2$s', $share ['url'], $share ['title'] );
+			$url = sprintf ( 'https://www.facebook.com/sharer/sharer.php?u=%1$s&t=%2$s', $share ['url'], $share ['title'] );			
 			break;
 		case 'facebook_like':
 			$url = sprintf ( 'https://www.facebook.com/plugins/like.php?href=%1$s', $share ['url'] );
@@ -532,7 +555,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			/**
 			 * Changing econding of options to happen via the included inside plugin function instead of 
 			 * replacing all one
-			 */
+			 */			
 			$use_tweet = essb_core_helper_textencode( $share ['twitter_tweet'] );
 
 			// @since 3.1 Twitter message optimization
@@ -668,6 +691,12 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			$url = str_replace('\n', '%0A', $url);
 			$url = str_replace('\r', '%0D', $url);
 			$url = str_replace('%26%23039%3B', '%27', $url); // unicode quote
+			
+			/**
+			 * Fix for the AMP in the subject and mail
+			 */
+			$url = str_replace('%26amp;', '%26', $url);
+			$url = str_replace('%26amp%3B', '%26', $url);
 			
 			$api_command = "essb.tracking_only('', 'mail', '".$salt."', true);";
 			break;
@@ -834,6 +863,13 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 				$url = apply_filters("essb4_shareapi_url_{$network}", $share);
 			}
 			break;
+	}
+	
+	/**
+	 * Support of Twitter button for AMP
+	 */
+	if ($network == 'twitter' && $amp_endpoint) {
+	    $network = 'twitter_amp';
 	}
 	
 	if ($network == 'twitter') {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @deprecated 7.3
+ */
+
 if (!function_exists('essb_rs_css_build_fixedwidth_button')) {
 	function essb_rs_css_build_fixedwidth_button($salt, $width, $align) {
 		$snippet = '';

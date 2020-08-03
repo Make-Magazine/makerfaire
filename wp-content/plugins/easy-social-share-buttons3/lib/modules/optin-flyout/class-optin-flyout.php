@@ -96,7 +96,7 @@ class ESSBOptinFlyout {
 	
 	public function load_assets() {
 		if (function_exists ( 'essb_resource_builder' )) {
-			essb_resource_builder ()->add_static_resource_footer ( ESSB3_OFOF_PLUGIN_URL . '/assets/essb-optin-flyout.min.js', 'essb-optin-flyout', 'js' );
+			essb_resource_builder ()->add_static_resource_footer ( ESSB3_OFOF_PLUGIN_URL . 'assets/essb-optin-flyout.min.js', 'essb-optin-flyout', 'js' );
 		}
 	}
 	

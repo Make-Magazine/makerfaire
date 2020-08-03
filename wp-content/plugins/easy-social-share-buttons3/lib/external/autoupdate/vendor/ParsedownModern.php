@@ -448,7 +448,7 @@ class Parsedown
             return $Block;
         }
 
-        $Block['element']['text']['text'] .= "\n".$Line['body'];
+        $Block['element']['text']['text'] .= "\n".$Line['body'];;
 
         return $Block;
     }
@@ -514,16 +514,6 @@ class Parsedown
                     'handler' => 'elements',
                 ),
             );
-
-            if($name === 'ol') 
-            {
-                $listStart = stristr($matches[0], '.', true);
-                
-                if($listStart !== '1')
-                {
-                    $Block['element']['attributes'] = array('start' => $listStart);
-                }
-            }
 
             $Block['li'] = array(
                 'name' => 'li',
@@ -1204,7 +1194,7 @@ class Parsedown
 
         $remainder = $Excerpt['text'];
 
-        if (preg_match('/\[((?:[^][]++|(?R))*+)\]/', $remainder, $matches))
+        if (preg_match('/\[((?:[^][]|(?R))*)\]/', $remainder, $matches))
         {
             $Element['text'] = $matches[1];
 
@@ -1217,7 +1207,7 @@ class Parsedown
             return;
         }
 
-        if (preg_match('/^[(]\s*+((?:[^ ()]++|[(][^ )]+[)])++)(?:[ ]+("[^"]*"|\'[^\']*\'))?\s*[)]/', $remainder, $matches))
+        if (preg_match('/^[(]((?:[^ ()]|[(][^ )]+[)])+)(?:[ ]+("[^"]*"|\'[^\']*\'))?[)]/', $remainder, $matches))
         {
             $Element['attributes']['href'] = $matches[1];
 
@@ -1520,7 +1510,7 @@ class Parsedown
 
     protected $StrongRegex = array(
         '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*[*])+?)[*]{2}(?![*])/s',
-        '_' => '/^esc_html__((?:\\\\_|[^_]|_[^_]*_)+?)esc_html__(?!_)/us',
+        '_' => '/^__((?:\\\\_|[^_]|_[^_]*_)+?)__(?!_)/us',
     );
 
     protected $EmRegex = array(

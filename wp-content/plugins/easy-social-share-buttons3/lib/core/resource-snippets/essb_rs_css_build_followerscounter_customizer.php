@@ -1,4 +1,7 @@
 <?php
+/**
+ * @deprecated 7.3
+ */
 if (!function_exists('essb_rs_css_build_followerscounter_customizer')) {
 	add_filter('essb_css_buffer_head', 'essb_rs_css_build_followerscounter_customizer');
 	function essb_rs_css_build_followerscounter_customizer($buffer) {

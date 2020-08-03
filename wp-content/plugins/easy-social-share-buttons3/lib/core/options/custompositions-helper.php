@@ -13,6 +13,9 @@ define('ESSB_CUSTOM_POSITIONS', 'essb_custom_positions');
 add_shortcode('social-share-display', 'essb_shortcode_show_custom_position');
 
 
+/**
+ * @author appscreo
+ */
 class ESSBCustomPositionsManager {
 	
 	public $hooks = array();
@@ -224,8 +227,5 @@ function essb_shortcode_show_custom_position($atts = array()) {
 	return essb_custom_position_generate($display, $force == 'true' ? true : false, $archive == 'true' ? true : false);
 }
 
-
-global $essb_positions_manager;
-if (!$essb_positions_manager) {
-	$essb_positions_manager = new ESSBCustomPositionsManager();
-}
+// Enable the instance of manager class
+ESSB_Factory_Loader::activate('positions-manager', 'ESSBCustomPositionsManager');

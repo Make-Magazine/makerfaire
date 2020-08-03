@@ -118,7 +118,7 @@ class ESSBSocialFollowersCounterDraw {
 
 		$class_position = $instance_position == "right" ? " essbfc-sidebar-right" : " essbfc-sidebar-left";
 
-		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="nofollow"' : '';
+		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="noreferrer noopener nofollow"' : '';
 		$link_newwindow = (intval ( $instance_new_window ) == 1) ? ' target="_blank"' : '';
 
 		// loading animations
@@ -165,8 +165,18 @@ class ESSBSocialFollowersCounterDraw {
 				$social_display = "instagram";
 			}
 
+			$extra_options = "";
+			
+			if ($social == 'instgram') {
+			    $extra_options .= ' data-profile="'.esc_attr(ESSBSocialFollowersCounterHelper::get_option ( $social . '_username' )).'"';
+			    
+			    if (ESSB_Runtime_Cache::is('followers_counter_update')) {
+			        $extra_options .= ' data-call-update="true"';
+			        essb_resource_builder ()->add_static_resource_footer ( ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/essb-social-followers-counter.js', 'essb-instagram-social-followers', 'js' );
+			    }
+			}
 
-			printf ( '<li class="essbfc-%1$s"%2$s>', esc_attr($social_display), $width_style );
+			printf ( '<li class="essbfc-%1$s"%2$s %3$s>', esc_attr($social_display), $width_style, $extra_options );
 
 			$follow_url = essb_followers_counter ()->create_follow_address ( $social );
 			if (! empty ( $follow_url )) {
@@ -293,7 +303,7 @@ class ESSBSocialFollowersCounterDraw {
 
 		$style_bgcolor = (! empty ( $instance_bgcolor )) ? ' style="background-color:' . esc_attr($instance_bgcolor) . ';"' : '';
 
-		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="nofollow"' : '';
+		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="noreferrer noopener nofollow"' : '';
 		$link_newwindow = (intval ( $instance_new_window ) == 1) ? ' target="_blank"' : '';
 
 		if (intval($instance_hide_value) == 1) {
@@ -412,8 +422,19 @@ class ESSBSocialFollowersCounterDraw {
 					$custom_li_class = ' blocksize-'.$network_columns;
 				}
 			}
+			
+			$extra_options = "";
+			
+			if ($social == 'instgram') {
+			    $extra_options .= ' data-profile="'.esc_attr(ESSBSocialFollowersCounterHelper::get_option ( $social . '_username' )).'"';
+			    
+			    if (ESSB_Runtime_Cache::is('followers_counter_update')) {
+			        $extra_options .= ' data-call-update="true"';
+			        essb_resource_builder ()->add_static_resource_footer ( ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/essb-social-followers-counter.js', 'essb-instagram-social-followers', 'js' );
+			    }
+			}
 
-			printf ( '<li class="essbfc-%1$s%2$s">', esc_attr($social_display), esc_attr($custom_li_class) );
+			printf ( '<li class="essbfc-%1$s%2$s"%3$s>', esc_attr($social_display), esc_attr($custom_li_class), $extra_options );
 
 			$follow_url = essb_followers_counter ()->create_follow_address ( $social );
 			if (! empty ( $follow_url )) {
@@ -531,7 +552,7 @@ class ESSBSocialFollowersCounterDraw {
 		$class_columns = (! empty ( $instance_columns )) ? " essbfc-col-" . $instance_columns : '';
 		$class_nospace = (intval ( $instance_nospace ) == 1) ? " essbfc-nospace" : "";
 
-		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="nofollow"' : '';
+		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="noreferrer noopener nofollow"' : '';
 		$link_newwindow = (intval ( $instance_new_window ) == 1) ? ' target="_blank"' : '';
 
 		if (intval($instance_hide_value) == 1) {
@@ -629,8 +650,19 @@ class ESSBSocialFollowersCounterDraw {
 			}
 
 			$custom_li_class = '';
+			
+			$extra_options = "";
+			
+			if ($social == 'instgram') {
+			    $extra_options .= ' data-profile="'.esc_attr(ESSBSocialFollowersCounterHelper::get_option ( $social . '_username' )).'"';
+			    
+			    if (ESSB_Runtime_Cache::is('followers_counter_update')) {
+			        $extra_options .= ' data-call-update="true"';
+			        essb_resource_builder ()->add_static_resource_footer ( ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/essb-social-followers-counter.js', 'essb-instagram-social-followers', 'js' );
+			    }
+			}
 
-			$output .= sprintf ( '<li class="essbfc-%1$s%2$s">', $social_display, $custom_li_class );
+			$output .= sprintf ( '<li class="essbfc-%1$s%2$s" %3$s>', $social_display, $custom_li_class, $extra_options );
 
 			$follow_url = essb_followers_counter ()->create_follow_address ( $social );
 			if (! empty ( $follow_url )) {

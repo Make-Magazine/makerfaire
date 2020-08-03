@@ -107,7 +107,7 @@ function essb_counter_update_simple($post_id, $url, $full_url, $networks = array
 				$cached_counters [$k] = essb_get_odnoklassniki_count( $url );
 				break;
 			case 'mwp' :
-				$cached_counters [$k] = essb_get_managewp_count($url );
+				$cached_counters [$k] = 0;
 				break;
 			case 'xing' :
 				$cached_counters [$k] = essb_get_xing_count($url);
@@ -276,7 +276,11 @@ function essb_get_odnoklassniki_count( $url ) {
 	$data   = essb_counter_request( $check_url );
 	$shares = array();
 	try {
-		preg_match( '/^ODKL\.updateCount\(\'odklcnt0\',\'(\d+)\'\);$/i', $data, $shares );
+	    /**
+	     * Updating the API callback from
+	     * preg_match( '/^ODKL\.updateCount\(\'odklcnt0\',\'(\d+)\'\);$/i', $data, $shares );
+	     */
+	    preg_match( '/^ODKL\.updateCount\(\'\',\'(\d+)\'\);$/i', $data, $shares );
 
 		return (int)$shares[ 1 ];
 	}
@@ -298,7 +302,11 @@ function essb_get_vkontake_count( $url ) {
 	return $shares[ 1 ];
 }
 
-function essb_get_managewp_count($url) {
+function essb_get_managewp_count($url = '') {
+    return 0;
+}
+
+function _deprecated_essb_get_managewp_count($url) {
 	$buttonURL = sprintf('https://managewp.org/share/frame/small?url=%s', urlencode($url));
 	$data  = essb_counter_request($buttonURL);
 	$shares = array();

@@ -4,7 +4,7 @@
 * Plugin Name: Easy Social Share Buttons for WordPress
 * Description: The first true all in one social media plugin for WordPress, including social share buttons, social followers counter, social profile links, click to tweet, Pinnable images, after share events, subscribe forms, Instagram feed, social proof notifications and much more.
 * Plugin URI: https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo
-* Version: 7.2
+* Version: 7.3
 * Author: CreoApps
 * Author URI: https://codecanyon.net/user/appscreo/portfolio?ref=appscreo
 */
@@ -20,7 +20,7 @@ if (defined('ESSB3_VERSION')) {
     return;
 }
 
-define ( 'ESSB3_VERSION', '7.2' );
+define ( 'ESSB3_VERSION', '7.3' );
 define ( 'ESSB3_PLUGIN_ROOT', dirname ( __FILE__ ) . '/' );
 define ( 'ESSB3_PLUGIN_URL', plugins_url () . '/' . basename ( dirname ( __FILE__ ) ) );
 define ( 'ESSB3_PLUGIN_BASE_NAME', plugin_basename ( __FILE__ ) );
@@ -104,7 +104,7 @@ class ESSB_Manager {
 	    include_once (ESSB3_HELPERS_PATH . 'helpers-priority-load.php');
 	    
 	    // include the helper factory to get access to main plugin component
-		include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-helpers-factory.php');		
+	    include_once (ESSB3_HELPERS_PATH . 'helpers-core.php');
 
 		// default plugin options
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/core/options/essb-options-defaults.php');
@@ -135,7 +135,7 @@ class ESSB_Manager {
 	 *
 	 * @return ESSB_Manager
 	 */
-	public static function getInstance() {
+	public static function instance() {
 		if ( ! ( self::$_instance instanceof self ) ) {
 			self::$_instance = new self();
 		}
@@ -215,18 +215,16 @@ class ESSB_Manager {
 		if (!defined('ESSB3_LIGHTMODE')) {
 			if (defined('ESSB3_SOCIALPROFILES_ACTIVE')) {
 				ESSB_Factory_Loader::activate('essbsp', 'ESSBSocialProfiles');
-				essb_depend_load_function('essb_rs_css_build_followerscounter_customizer', 'lib/core/resource-snippets/essb_rs_css_build_profiles_customizer.php');
 			}
 		}
 
 		// Followers Counter
 		if (defined('ESSB3_SOCIALFANS_ACTIVE')) {
 			ESSB_Factory_Loader::activate('essbfc', 'ESSBSocialFollowersCounter');
-			essb_depend_load_function('essb_rs_css_build_followerscounter_customizer', 'lib/core/resource-snippets/essb_rs_css_build_followerscounter_customizer.php');
 		}
 		
 		if (!essb_option_bool_value('deactivate_module_instagram') && class_exists('ESSBInstagramFeed')) {
-		    ESSB_Factory_Loader::activate('instagram', 'ESSBInstagramFeed');
+		    ESSB_Factory_Loader::activate_instance('instagram', 'ESSBInstagramFeed');
 		}
 		
 		if (!essb_option_bool_value('deactivate_module_proofnotifications') && class_exists('ESSBSocialProofNotificationsLite')) {
@@ -287,12 +285,12 @@ class ESSB_Manager {
 
 				include (ESSB3_PLUGIN_ROOT . 'lib/external/autoupdate/plugin-update-checker.php');
 				
-				$update_url = 'https://update.creoworx.com/essb3/';
+				$update_url = 'https://update.creoworx.com/easy-social-share-buttons3/?action=get_metadata&slug=easy-social-share-buttons3';
 				
 				// @since 1.3.3
 				// autoupdate
 				// activating autoupdate option
-				$essb_autoupdate = PucFactory::buildUpdateChecker ( $update_url, __FILE__, 'easy-social-share-buttons3' );
+				$essb_autoupdate = Puc_v4_Factory::buildUpdateChecker ( $update_url, __FILE__, 'easy-social-share-buttons3' );
 				// @since 1.3.7.2 - update to avoid issues with other plugins that uses same
 				// method
 				function addSecretKeyESSB3($query) {
@@ -331,7 +329,8 @@ class ESSB_Manager {
 	 */
 	public function resourceBuilder() {		
 	    if (!ESSB_Factory_Loader::running('resource-builder')) {
-	        ESSB_Factory_Loader::activate('resource-builder', 'ESSBResourceBuilder');
+	        ESSB_Factory_Loader::activate('resource-builder', 'ESSB_Plugin_Assets');
+	        //ESSB_Factory_Loader::activate('resource-builder', 'ESSBResourceBuilder');
 	    }
 	    
 	    return ESSB_Factory_Loader::get('resource-builder');
@@ -457,20 +456,6 @@ class ESSB_Manager {
 		}
 	}
 
-	/**
-	 * Activate secondary class inside factory loader but without store in memory
-	 *
-	 * @param string $module
-	 * @param string $class_name
-	 * @since 4.2
-	 */
-	public function factoryOnlyActivate($module = '', $class_name) {
-		if (!empty($module) && !isset($this->factory[$module])) {
-			$this->factory[$module] = true;
-			new $class_name;
-		}
-	}
-
 	/*
 	 * Static activation/deactivation hooks
 	 */
@@ -515,8 +500,4 @@ class ESSB_Manager {
  *
  * @since 3.4
  */
-
-global $essb_manager;
-if (!$essb_manager) {
-	$essb_manager = ESSB_Manager::getInstance();
-}
+ESSB_Manager::instance();

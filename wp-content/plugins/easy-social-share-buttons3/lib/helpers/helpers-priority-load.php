@@ -18,5 +18,11 @@ include_once (ESSB3_CLASS_PATH . 'share-information/class-abstract-post-informat
 include_once (ESSB3_CLASS_PATH . 'share-information/class-single-post-information.php');
 include_once (ESSB3_CLASS_PATH . 'share-information/class-site-share-information.php');
 
+// Static Resources
+include_once (ESSB3_CLASS_PATH . 'assets/class-dynamic-css-builder.php');
+include_once (ESSB3_CLASS_PATH . 'assets/class-static-css-loader.php');
+
+include_once (ESSB3_CLASS_PATH . 'assets/class-plugin-assets.php');
+
 // Post loading events (running before plugin real code
 ESSB_Plugin_Options::load();

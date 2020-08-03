@@ -484,7 +484,6 @@ function essb_mytemplatebuilder_network_colors() {
 	$networks['more'] = '#c5c5c5';
 	$networks['meneame'] = '#FF7D12';
 	$networks['whatsapp'] = '#1D9E11';
-	$networks['mwp'] = '#056CAD';
 	$networks['flattr'] = '#8CB55B';
 	$networks['ok'] = '#F4731C';
 	$networks['xing'] = '#135a5b';

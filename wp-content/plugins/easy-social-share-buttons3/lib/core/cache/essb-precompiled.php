@@ -255,6 +255,12 @@ class ESSBPrecompiledResources {
 	
 	
 	
+	/**
+	 * Generate an unique string with a number of symbols
+	 * 
+	 * @param number $strength
+	 * @return string
+	 */
 	public static function generate_string($strength = 16) {
 		$input = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$input_length = strlen($input);

@@ -22,7 +22,7 @@ class ESSBAmpSupport {
 		add_action ( 'amp_init', array (&$this, 'activate_amp_support' ) );
 	}
 	
-	public static function getInstance() {
+	public static function instance() {
 		if (! (self::$_instance instanceof self)) {
 			self::$_instance = new self ();
 		}
@@ -105,12 +105,6 @@ class ESSBAmpSupport {
 	}
 }
 
-/**
- * main code *
- */
-
-global $essb_amp_mobile_support;
-if (! isset ( $essb_amp_mobile_support )) {
-	$essb_amp_mobile_support = ESSBAmpSupport::getInstance ();
-}
+// Loading the class for AMP display
+ESSB_Factory_Loader::activate_instance('amp-support', 'ESSBAmpSupport');
 

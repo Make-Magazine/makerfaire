@@ -7,77 +7,15 @@ add_filter('essb_js_buffer_head', 'essb_js_build_admin_ajax_access_code');
 
 
 /**
- * Add customized generated styles to the output, based on the user changes inside settings
- */
-add_filter('essb_css_buffer_footer', 'essb_css_build_footer_css');
-add_filter('essb_css_buffer_head', 'essb_css_build_customizer');
-add_filter('essb_css_buffer_head', 'essb_css_build_compile_display_locations_code');
-
-/**
- * Generate the customized CSS code for various locations, based on user input
- * @param unknown_type $buffer
- */
-function essb_css_build_compile_display_locations_code($buffer) {
-	$snippet = '';
-	/**
-	 * Sidebar
-	 */
-	if (essb_should_add_position_styles('sidebar')) {
-		essb_depend_load_function('essb_rs_css_sidebar', 'lib/core/resource-snippets/essb_rs_css_sidebar.php');
-		$snippet .= essb_rs_css_sidebar();
-	}
-	
-	/**
-	 * Top Bar
-	 */
-	if (essb_should_add_position_styles('topbar')) {
-		essb_depend_load_function('essb_rs_css_topbar', 'lib/core/resource-snippets/essb_rs_css_topbar.php');
-		$snippet .= essb_rs_css_topbar();
-	}
-	
-	/**
-	 * Bottom Bar
-	 */
-	if (essb_should_add_position_styles('bottombar')) {
-		essb_depend_load_function('essb_rs_css_bottombar', 'lib/core/resource-snippets/essb_rs_css_bottombar.php');
-		$snippet .= essb_rs_css_bottombar();
-	}
-	
-	/**
-	 * Float From Top
-	 */	
-	if (essb_should_add_position_styles('content_float')) {
-		essb_depend_load_function('essb_rs_css_float', 'lib/core/resource-snippets/essb_rs_css_float.php');
-		$snippet .= essb_rs_css_float();
-	}
-		
-	/**
-	 * Post Vertical Float
-	 */
-	if (essb_should_add_position_styles('postfloat')) {
-		essb_depend_load_function('essb_rs_css_postfloat', 'lib/core/resource-snippets/essb_rs_css_postfloat.php');
-		$snippet .= essb_rs_css_postfloat();
-	}
-	
-	return $buffer.$snippet;
-}
-
-/**
  * Generate the CSS code for the customizer menu if active
  * @param unknown_type $buffer
+ * 
+ * @deprecated 7.3
  */
 function essb_css_build_customizer($buffer) {
-		
-	$is_active = essb_option_bool_value('customizer_is_active');
-	
-	$snippet = '';
-	if ($is_active) {
-		if (!function_exists('essb_rs_css_build_customizer')) {
-			include_once (ESSB_RESOURCE_BUILDER_FOLDER . 'essb_rs_css_build_customizer.php');
-		}
 			
-		$snippet .= essb_rs_css_build_customizer();
-	}
+	$snippet = '';
+
 	
 	$is_active_subscribe = essb_option_bool_value('activate_mailchimp_customizer');
 	$is_active_subscribe2 = essb_option_bool_value( 'activate_mailchimp_customizer2');
@@ -108,40 +46,9 @@ function essb_css_build_customizer($buffer) {
 				'design8' => $is_active_subscribe8,
 				'design9' => $is_active_subscribe9)));
 	}
-	
-	
-	$global_user_defined_css = essb_option_value('customizer_css');
-	
-	
-	if ($global_user_defined_css != '') {
-		$global_user_defined_css = stripslashes ( $global_user_defined_css );
-		$snippet .= $global_user_defined_css;
-	}
-	
-	if (essb_option_bool_value('activate_cct_customizer')) {
-		if (!function_exists('essb_rs_css_build_cct_customizer')) {
-			include_once (ESSB_RESOURCE_BUILDER_FOLDER . 'essb_rs_css_build_cct_customizer.php');
-		}
 		
-		$snippet .= essb_rs_css_build_cct_customizer();
-	}
-	
 	
 	return $buffer.$snippet;
-}
-
-/**
- * Include additional custom CSS footer below the fold
- * @param unknown_type $buffer
- * @return string
- */
-function essb_css_build_footer_css($buffer) {
-
-	$global_user_defined_css = essb_option_value('customizer_css_footer');
-	if ($global_user_defined_css != '') {
-		$global_user_defined_css = stripslashes ( $global_user_defined_css );
-	}
-	return $buffer.$global_user_defined_css;
 }
 
 /**
@@ -327,15 +234,6 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 	return $buffer.$output;
 }
 
-function essb_should_add_position_styles($position = '') {
-	$r = true;
-	
-	if (essb_option_bool_value('load_css_active')) {
-		$r = essb_is_position_active($position);
-	}
-	
-	return $r;
-}
 
 function essb_hex2rgba($color, $opacity = false) {
 

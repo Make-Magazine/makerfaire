@@ -1,4 +1,9 @@
 <?php
+/**
+ * Deprecated
+ * @deprecated 7.3
+ */
+
 function essb_rs_css_bottombar() {
 	$snippet = '';
 	

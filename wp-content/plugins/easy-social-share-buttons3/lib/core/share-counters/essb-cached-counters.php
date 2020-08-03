@@ -19,10 +19,10 @@ class ESSBCachedCounters {
 	 * @param unknown_type $active_networks_list
 	 */
 	public static function prepare_list_of_networks_with_counter($networks, $active_networks_list) {		
-		$basic_network_list = 'twitter,linkedin,facebook,pinterest,google,stumbleupon,vk,reddit,buffer,love,ok,mwp,xing,mail,print,comments,yummly';
+		$basic_network_list = 'twitter,linkedin,facebook,pinterest,google,stumbleupon,vk,reddit,buffer,love,ok,xing,mail,print,comments,yummly';
 		
 		// updated in version 4.2 - now we have only avoid with counter networks
-		$avoid_network_list = 'more,share,subscribe,copy';
+		$avoid_network_list = 'more,share,subscribe,copy,mwp';
 		
 		$internal_counters = essb_option_bool_value('active_internal_counters');
 		$no_mail_print_counter = essb_option_bool_value('deactive_internal_counters_mail');
@@ -287,10 +287,13 @@ class ESSBCachedCounters {
 
 		if (essb_option_bool_value('homepage_total_allposts') && has_filter('essb_homepage_get_cached_counters')) {
 			$cached_counters = apply_filters('essb_homepage_get_cached_counters', $cached_counters);
+			
+			self::rebuild_totals($cached_counters, $networks);
 		}
 				
 		if (has_filter('essb4_get_cached_counters')) {
 			$cached_counters = apply_filters('essb4_get_cached_counters', $cached_counters);
+			self::rebuild_totals($cached_counters, $networks);
 		}
 
 		if (essb_option_bool_value('facebook_likebtn_counter') && in_array('facebook_like', $networks) && isset($cached_counters['facebook'])) {
@@ -299,6 +302,22 @@ class ESSBCachedCounters {
 		}		
 		
 		return $cached_counters;
+	}
+	
+	/**
+	 * Recalculate the total share values
+	 * 
+	 * @param array $cached_counters
+	 * @param array $networks
+	 */
+	public static function rebuild_totals ($cached_counters = array(), $networks = array()) {
+	    $cached_counters['total'] = 0;
+	    
+	    foreach ($networks as $k) {
+	        $cached_counters['total'] += isset($cached_counters[$k]) ? intval($cached_counters[$k]) : 0;
+	    }
+	    
+	    return $cached_counters;
 	}
 	
 	public static function update_counters($post_id, $url, $full_url, $networks = array(), $recover_mode = false) {

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @deprecated 7.3
+ */
 if (! function_exists ( 'essb_rs_css_build_customizer' )) {
 	function essb_rs_css_build_customizer() {		
 		$snippet = '';

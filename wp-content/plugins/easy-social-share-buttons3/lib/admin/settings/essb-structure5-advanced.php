@@ -63,6 +63,7 @@ ESSBOptionsStructureHelper::field_switch_panel('advanced', 'optimization', 'prec
 ESSBOptionsStructureHelper::field_select_panel('advanced', 'optimization', 'precompiled_mode', esc_html__('Optimize', 'essb'), '', array('' => 'CSS and Javascript', 'css' => 'CSS only', 'js' => 'Javascript only'));
 ESSBOptionsStructureHelper::field_select_panel('advanced', 'optimization', 'precompiled_folder', esc_html__('Cache data storage', 'essb'), '', array('' => 'WordPress Content Folder', 'uploads' => 'WordPress Uploads Folder', 'plugin' => 'Plugin Folder'));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'optimization', 'precompiled_unique', esc_html__('Generate unique filename', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+ESSBOptionsStructureHelper::field_switch_panel('advanced', 'optimization', 'precompiled_footer', esc_html__('Move loading of the CSS styles to the footer', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 
 ESSBOptionsStructureHelper::field_heading('advanced', 'optimization', 'heading4', esc_html__('Global Optimization', 'essb'));
 ESSBOptionsStructureHelper::field_section_start_full_panels('advanced', 'optimization');
@@ -190,6 +191,7 @@ ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'di
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'deactivate_updates', esc_html__('Stop automatic updates', 'essb'), esc_html__('Registered versions of plugin do an automated check for updates using the WordPress update. The update happens from external server and in case your host does not allow that you can set this option to Yes and do a manual plugin updates.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'deactivate_helphints', esc_html__('Deactivate internal help hints', 'essb'), esc_html__('Inside plugin you have a help hint sections that provide useful links to the knowledge base. If you already know the features and that panel bothers you just hit Yes to hide them.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'deactivate_column_shares', esc_html__('Remove shares column from posts list', 'essb'), esc_html__('Remove the shares column from the administrative list of posts. The value of the column is generated from the update of shares when the counter is used.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'deactivate_column_shareinfo', esc_html__('Remove the setup share options column from the post list', 'essb'), esc_html__('Remove the column showing the customized sharing options done on each post inside the plugin fields.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 
 ESSBOptionsStructureHelper::panel_end('advanced', 'administrative');
 

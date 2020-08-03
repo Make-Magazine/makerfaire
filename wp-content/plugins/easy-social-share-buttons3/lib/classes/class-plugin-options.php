@@ -37,6 +37,9 @@ class ESSB_Plugin_Options {
         
         // Backward compatibility
         self::compatibility_depracated_plugin_options();
+        
+        // Conflicting options check
+        self::compatibility_conflict_options();
                 
         // New after loading options event
         if (has_filter('essb_after_options_load')) {
@@ -145,5 +148,40 @@ class ESSB_Plugin_Options {
         if (isset(self::$core_options['activate_automatic_mobile'])) {
             unset (self::$core_options['activate_automatic_mobile']);
         }
+    }
+    
+    /**
+     * Check for conflicting options and disable them inside settings
+     */
+    private static function compatibility_conflict_options() {
+        
+        /**
+         * Disable internal cache when pre-compiled is used
+         */
+        if (isset(self::$core_options['precompiled_resources']) && self::$core_options['precompiled_resources'] == 'true') {
+            if (isset(self::$core_options['essb_cache_runtime'])) {
+                unset (self::$core_options['essb_cache_runtime']);
+            }
+            
+            if (isset(self::$core_options['essb_cache'])) {
+                unset (self::$core_options['essb_cache']);
+            }
+            
+            if (isset(self::$core_options['essb_cache_static'])) {
+                unset (self::$core_options['essb_cache_static']);
+            }
+            
+            if (isset(self::$core_options['essb_cache_static_js'])) {
+                unset (self::$core_options['essb_cache_static_js']);
+            }
+        }
+        
+        /**
+         * Automating Elementor integration
+         */
+        if (defined('ELEMENTOR_VERSION')) {
+            self::$core_options['using_elementor'] = 'true';
+        }
+        
     }
 }

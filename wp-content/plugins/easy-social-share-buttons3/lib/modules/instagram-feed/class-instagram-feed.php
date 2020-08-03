@@ -14,12 +14,12 @@ class ESSBInstagramFeed {
 	
 	private $resources = false;
 	private $optimized = false;
-	private $cache_ttl = 6;
+	private $cache_ttl = 24;
 	
 	/**
 	 * Get static instance of class
 	 */
-	public static function getInstance() {
+	public static function instance() {
 		if (! (self::$_instance instanceof self)) {
 			self::$_instance = new self ();
 		}
@@ -57,8 +57,12 @@ class ESSBInstagramFeed {
 		else {
 		    add_shortcode('essb-instagram-feed', array($this, 'generate_shortcode'));
 		}
+		
 		add_shortcode('instagram-photo', array($this, 'generate_image_code'));
 		add_shortcode('instagram-image', array($this, 'generate_image_code'));
+		
+		add_action( 'wp_ajax_essb-instagram-request-cache', array( $this, 'ajax_load_cache_js') );
+		add_action( 'wp_ajax_nopriv_essb-instagram-request-cache', array( $this, 'ajax_load_cache_js') );
 		
 		/** 
 		 * Check if need to load resources
@@ -75,7 +79,7 @@ class ESSBInstagramFeed {
 		 * Setting user cache expiration if present
 		 */
 		$user_cache_ttl = essb_sanitize_option_value('instagram_cache');
-		if ($user_cache_ttl != '') {
+		if ($user_cache_ttl != '' && intval($user_cache_ttl) > 0) {
 			$this->cache_ttl = intval($user_cache_ttl);
 		}
 		
@@ -86,6 +90,63 @@ class ESSBInstagramFeed {
 		if (essb_option_bool_value('instagramfeed_popup')) {
 			add_action ( 'wp_footer', array($this, 'draw_widget_popup'), 101);
 		}
+		
+		add_action('wp_footer', array($this, 'initialize_update'));
+	}
+	
+	/**
+	 * Assign required javascript code for the ajax update
+	 */
+	public function initialize_update() {
+	    
+	    $options = array('nonce' => esc_js( wp_create_nonce( 'essb-instagram' ) ),
+	        'ajaxurl' => esc_url(admin_url('admin-ajax.php'))
+	    );
+	    
+        echo '<script> var essbInstagramUpdater = '.json_encode($options).';</script>';
+	}
+	
+	public function ajax_load_cache_js() {
+	    $nonce_key = 'essb-instagram';	    
+	    check_ajax_referer( $nonce_key, 'security' );
+	    
+	    $data = $_REQUEST['data'];
+	    $options = $data['options'];
+	    $source = $data['data'];
+	    
+	    echo self::draw_instagram(
+	        $options['username_tag'],
+	        $options['type'],
+	        $options['show'],
+	        $options['space'],
+	        $options['profile'] == 'true',
+	        $options['follow_button'] == 'true',
+	        $options['link_mode'],
+	        $options['post_data'],
+	        $options['image_size'],
+	        $options['masonry'] == 'true',
+	        $options['widget'] == 'true',
+	        $options['profile_size'],
+	        $source
+        );
+	    
+	    $username = trim( strtolower( $options['username_tag']) );
+	    $use_hashtag = false;
+	    
+	    switch ( substr( $username, 0, 1 ) ) {
+	        case '#':
+	            $transient_prefix = 'h';
+	            $use_hashtag = true;
+	            break;	            
+	        default:
+	            $transient_prefix = 'u';
+	            break;
+	    }
+	    
+	    $instagram = base64_encode( serialize( $source ) );
+	    set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ), $instagram, $this->cache_ttl * HOUR_IN_SECONDS );
+	    	    
+	    die();
 	}
 	
 	public function can_add_automatic_content_widget() {
@@ -281,6 +342,7 @@ class ESSBInstagramFeed {
 		}
 		
 		$instagram_widget = '';
+		
 		/**
 		 * Reading settings of the widget
 		 */
@@ -416,10 +478,36 @@ class ESSBInstagramFeed {
 	
 	public function draw_instagram($username_tag = '', $type = '3cols', $show = 12, $space = '', $profile = false, 
 			$follow_button = false, $link_mode = 'direct', $post_data = '', $image_size = 'original', $masonry = false,
-			$widget = false, $profile_size = '') {
+			$widget = false, $profile_size = '', $update_source = '') {
 	    
-		$data = $this->scrape_instagram($username_tag);
+        if (empty($update_source)) {
+            $data = $this->scrape_instagram($username_tag);
+            $force_update = false;
+        }
+        else {
+            $data = $update_source;
+            $force_update = false;           
+        }
+		
+		if (!isset($data['images']) || count($data['images']) == 0) {
+		    $force_update = true;
+		}			
 				
+		// Test mode
+		$section_update_options = array('username_tag' => $username_tag,
+		    'type' => $type,
+		    'show' => $show,
+		    'space' => $space,
+		    'profile' => $profile ? 'true' : 'false',
+		    'follow_button' => $follow_button ? 'true' : 'false',
+		    'link_mode' => $link_mode,
+		    'post_data' => $post_data,
+		    'image_size' => $image_size,
+		    'masonry' => $masonry ? 'true': 'false',
+		    'widget' => $widget ? 'true' : 'false',
+		    'profile_size' => $profile_size
+		);
+		
 		/**
 		 * The profile card and follow button can appear only for the personal profiles
 		 */
@@ -471,8 +559,12 @@ class ESSBInstagramFeed {
 		
 		$parent_classes[] = 'essb-forced-hidden';		
 		
-		$output = '<div class="'.esc_attr(join(' ', $parent_classes)).'">';
+		$output = '';
 		
+		//
+		if (empty($update_source)) {
+            $output = '<div class="'.esc_attr(join(' ', $parent_classes)).'" data-source="'.esc_attr(json_encode($section_update_options)).'" data-update="'.($force_update ? 'true' : 'false').'">';
+		}
 		/**
 		 * Profile card if shown
 		 */
@@ -593,8 +685,11 @@ class ESSBInstagramFeed {
 		}
 		
 		$output .= '</div>'; // -images
-		$output .= '</div>';
-
+		
+		if (empty($update_source)) {
+            $output .= '</div>';
+		}
+		
 		if (function_exists ( 'essb_resource_builder' ) && !$this->resources) {
 			essb_resource_builder ()->add_static_resource_footer ( ESSB3_PLUGIN_URL . '/lib/modules/instagram-feed/assets/essb-instagramfeed'.($this->optimized ? '.min': '').'.css', 'essb-instagram-feed', 'css' );
 			essb_resource_builder ()->add_static_resource_footer ( ESSB3_PLUGIN_URL . '/lib/modules/instagram-feed/assets/essb-instagramfeed'.($this->optimized ? '.min': '').'.js', 'essb-instagram-feed', 'js' );
@@ -627,21 +722,21 @@ class ESSBInstagramFeed {
 			) );
 		
 			if ( is_wp_error( $remote ) ) {
-				return new WP_Error( 'site_down', esc_html__( 'Unable to communicate with Instagram.', 'essb' ) );
+				return $this->blank_instagram_feed( 'site_down', esc_html__( 'Unable to communicate with Instagram.', 'essb' ) );
 			}
 		
 			if ( 200 !== wp_remote_retrieve_response_code( $remote ) ) {
-				return new WP_Error( 'invalid_response', esc_html__( 'Instagram did not return a 200.', 'essb' ) );
+			    return $this->blank_instagram_feed( 'invalid_response', esc_html__( 'Instagram did not return a 200.', 'essb' ) );
 			}
 		
 			$insta_array = json_decode( $remote['body'], true );
 		
 			if ( ! $insta_array ) {
-				return new WP_Error( 'bad_json', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
+			    return $this->blank_instagram_feed( 'bad_json', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
 			}
 			
 			if (!isset($insta_array['graphql']) || !isset($insta_array['graphql']['shortcode_media'])) {
-				return new WP_Error( 'bad_json_2', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
+			    return $this->blank_instagram_feed( 'bad_json_2', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
 			}
 				
 			$media_data = $insta_array['graphql']['shortcode_media'];
@@ -688,11 +783,130 @@ class ESSBInstagramFeed {
 		
 	}
 	
+	
+	public function scrape_instagram($username_or_tag = '') {
+	    $username = trim( strtolower( $username_or_tag ) );
+	    $use_hashtag = false;
+	    
+	    switch ( substr( $username, 0, 1 ) ) {
+	        case '#':
+	            $url = 'https://www.instagram.com/explore/tags/' . str_replace( '#', '', $username ) . '';
+	            $transient_prefix = 'h';
+	            $use_hashtag = true;
+	            break;
+	            
+	        default:
+	            $url = 'https://www.instagram.com/' . str_replace( '@', '', $username ) . '';
+	            $transient_prefix = 'u';
+	            break;
+	    }
+	    
+	    if ( false === ( $instagram = get_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ) ) ) ) {
+	        
+	        $remote = wp_remote_get( $url, array(
+	            'user-agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+	            'timeout' => 120,
+	            'sslverify' => false
+	        ) );
+	        
+	        if ( is_wp_error( $remote ) ) {
+	            return $this->blank_instagram_feed( 'site_down', esc_html__( 'Unable to communicate with Instagram.', 'essb' ) );
+	        }
+	        
+	        if ( 200 !== wp_remote_retrieve_response_code( $remote ) ) {
+	            return $this->blank_instagram_feed( 'invalid_response', esc_html__( 'Instagram did not return a 200.', 'essb' ) );
+	        }	        
+	        
+	        $shared_data = explode( 'window._sharedData = ', $remote['body'] );
+	        $insta_json = explode( ';</script>', $shared_data[1] );
+	        $insta_array = json_decode( $insta_json[0], TRUE );
+
+	        if ( ! $insta_array ) {
+	            return $this->blank_instagram_feed( 'bad_json', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
+	        }
+	            
+	        $hash_tag_media = 'edge_hashtag_to_media';
+	        if($use_hashtag) {
+	            $hash_tag_media = 'edge_hashtag_to_top_posts';
+	        }
+	        
+	        
+	        $images = array();
+	        
+	        if (!$use_hashtag && isset( $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges'] ) ) {
+	            $images = $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges'];
+	        }
+	        else if ($use_hashtag && isset( $insta_array['entry_data']['TagPage'][0]['graphql']['hashtag'][$hash_tag_media]['edges'] ) ) {
+	            $images = $insta_array['entry_data']['TagPage'][0]['graphql']['hashtag'][$hash_tag_media]['edges'];
+	        }
+	        else {
+	            return $this->blank_instagram_feed( 'bad_json_2', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
+	        }
+	        
+	        
+	        $profile_data = array();
+	        if (isset($insta_array['entry_data']['ProfilePage'][0]['graphql']['user'])) {
+	            $profile_data = array(
+	                'bio' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['biography'],
+	                'external' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['external_url'],
+	                'followers' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_followed_by']['count'],
+	                'profile' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['profile_pic_url'],
+	                'profile_hd' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['profile_pic_url_hd'],
+	            );
+	        }
+	        
+	        $instagram = array();
+	        
+	        foreach ( $images as $image ) {
+	            if ( true === $image['node']['is_video'] ) {
+	                $type = 'video';
+	            } else {
+	                $type = 'image';
+	            }
+	            
+	            $caption = esc_html__( 'Instagram Image', 'essb' );
+	            if ( ! empty( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'] ) ) {
+	                $caption = wp_kses( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'], array() );
+	            }
+	            
+	            $instagram[] = array(
+	                'description' => $caption,
+	                'link'        => trailingslashit( '//www.instagram.com/p/' . $image['node']['shortcode'] ),
+	                'time'        => $image['node']['taken_at_timestamp'],
+	                'comments'    => $image['node']['edge_media_to_comment']['count'],
+	                'likes'       => $image['node']['edge_liked_by']['count'],
+	                'thumbnail'   => preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][0]['src'] ),
+	                'small'       => preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][2]['src'] ),
+	                'large'       => preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][4]['src'] ),
+	                'original'    => preg_replace( '/^https?\:/i', '', $image['node']['display_url'] ),
+	                'type'        => $type,
+	            );
+	        } // End foreach().
+	        
+	        // do not set an empty transient - should help catch private or empty accounts. Set a shorter transient in other cases to stop hammering Instagram
+	        if ( ! empty( $instagram ) ) {
+	            $data = array('profile' => $profile_data, 'images' => $instagram);
+	            $instagram = base64_encode( serialize( $data ) );
+	            set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ), $instagram, $this->cache_ttl * HOUR_IN_SECONDS );
+	        } else {
+	            $data = array('profile' => array(), 'images' => array());
+	            $instagram = base64_encode( serialize( $data ) );
+	            set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ), $instagram, MINUTE_IN_SECONDS * 1 );
+	        }
+	    }
+	    
+	    if ( ! empty( $instagram ) ) {
+	        return unserialize( base64_decode( $instagram ) );
+	    } else {
+	        return $this->blank_instagram_feed( 'no_images', esc_html__( 'Instagram did not return any images.', 'essb' ) );
+	    }
+	}
+	
 	/**
 	 * Scrape data from instagram for tag or username
 	 * @param string $username_or_tag (@user or #hashtag)
 	 */
-	public function scrape_instagram($username_or_tag = '') {
+	public function scrape_instagram_json($username_or_tag = '') {
 		$username = trim( strtolower( $username_or_tag ) );
 				
 		switch ( substr( $username, 0, 1 ) ) {
@@ -763,7 +977,7 @@ class ESSBInstagramFeed {
 					$type = 'image';
 				}
 		
-				$caption = __( 'Instagram Image', 'essb' );
+				$caption = esc_html__( 'Instagram Image', 'essb' );
 				if ( ! empty( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'] ) ) {
 					$caption = wp_kses( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'], array() );
 				}

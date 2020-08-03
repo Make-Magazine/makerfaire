@@ -1,23 +1,25 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Easy Social Share Buttons for WordPress\n"
-"POT-Creation-Date: 2020-04-09 21:15+0300\n"
-"PO-Revision-Date: \n"
+"POT-Creation-Date: 2020-04-09 21:26+0300\n"
+"PO-Revision-Date: 2020-05-27 06:01+0000\n"
 "Last-Translator: \n"
-"Language-Team: AppsCreo Customer\n"
-"Language: es\n"
+"Language-Team: Spanish (Spain)\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Loco https://localise.biz/\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: .\n"
+"Report-Msgid-Bugs-To: \n"
+"X-Loco-Version: 2.4.0; wp-5.4.1"
 
 #: lib/admin/advanced-options/setup/ao-adaptive-styles.php:8
 msgid "Position Setup"
-msgstr ""
+msgstr "Configuración de posición"
 
 #: lib/admin/advanced-options/setup/ao-adaptive-styles.php:9
 msgid "Activate Adaptive Position Styles"
@@ -74,9 +76,9 @@ msgstr "Botones sociales compartir"
 #: lib/admin/advanced-options/setup/ao-advanced-deactivate.php:17
 #: lib/admin/advanced-options/setup/ao-advanced-deactivate.php:18
 msgid ""
-"Deactivate function on posts/pages with these IDs? Comma separated: \"11, "
-"15, 125\". Deactivating plugin will make no style or scripts to be executed "
-"for those pages/posts related to this function"
+"Deactivate function on posts/pages with these IDs? Comma separated: \"11, 15,"
+" 125\". Deactivating plugin will make no style or scripts to be executed for "
+"those pages/posts related to this function"
 msgstr ""
 
 #: lib/admin/advanced-options/setup/ao-advanced-deactivate.php:9
@@ -85,8 +87,8 @@ msgstr ""
 
 #: lib/admin/advanced-options/setup/ao-advanced-deactivate.php:9
 msgid ""
-"Deactivate function on selected categories. Comma separated category IDs: "
-"11, 15, 125"
+"Deactivate function on selected categories. Comma separated category IDs: 11,"
+" 15, 125"
 msgstr ""
 
 #: lib/admin/advanced-options/setup/ao-advanced-deactivate.php:10
@@ -900,8 +902,8 @@ msgstr "Ancho de mensaje emergente"
 
 #: lib/admin/advanced-options/setup/ao-after-share.php:8
 msgid ""
-"Provide custom width in pixels for pop up window (number value with px in "
-"it. Example: 400). Default pop up width is 400."
+"Provide custom width in pixels for pop up window (number value with px in it."
+" Example: 400). Default pop up width is 400."
 msgstr ""
 "Proporcione el ancho personalizado en píxeles para la ventana emergente "
 "(valor de número con px en el mismo ejemplo: 400). El ancho de pop-up "
@@ -979,8 +981,8 @@ msgstr ""
 #: lib/admin/advanced-options/setup/ao-after-share.php:16
 msgid ""
 "Activate this option if you do not wish code for after share module to be "
-"added on pages where buttons are set to be off into settings (via on post/"
-"page options or from Display Settings)."
+"added on pages where buttons are set to be off into settings (via on "
+"post/page options or from Display Settings)."
 msgstr ""
 "Active esta opción si no desea que el código para el módulo después de "
 "compartir se agregue en las páginas en las que los botones están "
@@ -1057,9 +1059,9 @@ msgid ""
 "option is active only when you enter value in this field - if blank total "
 "counter is always displayed."
 msgstr ""
-"Puede ocultar su contador total hasta que se alcance la cantidad de "
-"acciones. Esta opción sólo está activa cuando se introduce un valor en este "
-"campo - si el contador total en blanco siempre se muestra."
+"Puede ocultar su contador total hasta que se alcance la cantidad de acciones."
+" Esta opción sólo está activa cuando se introduce un valor en este campo - "
+"si el contador total en blanco siempre se muestra."
 
 #: lib/admin/advanced-options/setup/ao-avoid-negative.php:6
 msgid "Avoid social negative proof"
@@ -2196,10 +2198,10 @@ msgid ""
 "option is not compatible with share counters because adding referral id to "
 "url will reset social share counters to zero."
 msgstr ""
-"Esa opción requiere que tengas habilitado el ganador Puntos para "
-"referencias. Esa opción no es compatible con los contadores de acciones, ya "
-"que la adición de referencia de identificación a url restablecerá los "
-"contadores de acciones sociales a cero."
+"Esa opción requiere que tengas habilitado el ganador Puntos para referencias."
+" Esa opción no es compatible con los contadores de acciones, ya que la "
+"adición de referencia de identificación a url restablecerá los contadores de "
+"acciones sociales a cero."
 
 #: lib/admin/advanced-options/setup/ao-integration-mycred.php:17
 msgid "Activate myCred Referral usage in shortcodes"
@@ -2475,8 +2477,8 @@ msgid ""
 "(requires Google Analytics to be active on this site)."
 msgstr ""
 "Active el seguimiento de los botones de uso compartido social haciendo clic "
-"en Google Analytics (requiere que Google Analytics esté activo en este "
-"sitio)."
+"en Google Analytics (requiere que Google Analytics esté activo en este sitio)"
+"."
 
 #: lib/admin/advanced-options/setup/ao-share-google-analytics.php:29
 msgid "Google Analytics Tracking Method"
@@ -2517,8 +2519,8 @@ msgid ""
 msgstr ""
 "Pegue sus parámetros de campaña personalizados en este campo y se agregarán "
 "automáticamente a direcciones compartidas en redes sociales. Tenga en cuenta "
-"que las redes sociales cuentan las acciones a través de URL como clave "
-"única, esta opción no es compatible con los contadores activos de acciones "
+"que las redes sociales cuentan las acciones a través de URL como clave única,"
+" esta opción no es compatible con los contadores activos de acciones "
 "sociales ya que hará que empiece desde cero."
 
 #: lib/admin/advanced-options/setup/ao-share-recovery.php:9
@@ -3775,18 +3777,19 @@ msgstr ""
 #, php-format
 msgid ""
 "%1$s - We recommend setting max execution time to at least 180 if you use "
-"share counters or share counter recovery.<br />See: <a href=\"%2$s\" target="
-"\"_blank\" rel=\"noopener noreferrer\">Increasing max execution to PHP</a>"
+"share counters or share counter recovery.<br />See: <a href=\"%2$s\" "
+"target=\"_blank\" rel=\"noopener noreferrer\">Increasing max execution to "
+"PHP</a>"
 msgstr ""
 
 #: lib/admin/helpers/system-status.php:92
 #: lib/admin/helpers/system-status.php:112
 #, php-format
 msgid ""
-"%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br /"
-"> Please define memory limit in <strong>wp-config.php</strong> file. To "
-"learn how, see: <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer"
-"\">Increasing memory allocated to PHP.</a>"
+"%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br />"
+" Please define memory limit in <strong>wp-config.php</strong> file. To learn "
+"how, see: <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">"
+"Increasing memory allocated to PHP.</a>"
 msgstr ""
 
 #: lib/admin/helpers/system-status.php:96
@@ -3835,9 +3838,9 @@ msgstr "Descripción de los medios sociales"
 #: lib/admin/metabox/sso-tags.php:89
 msgid ""
 "Add a description that will populate the open graph meta tag which will be "
-"used when users share your content onto most social networks.<span class="
-"\"essb-inner-recommend\">We recommend usage of description that does not "
-"exceed 160 characters</span>"
+"used when users share your content onto most social networks.<span "
+"class=\"essb-inner-recommend\">We recommend usage of description that does "
+"not exceed 160 characters</span>"
 msgstr ""
 "Agregue una descripción que llene la etiqueta meta de gráfico abierto que se "
 "utilizará cuando los usuarios compartan su contenido en la mayoría de las "
@@ -3854,8 +3857,8 @@ msgid ""
 "in shared information. Example: https://facebook.com/author"
 msgstr ""
 "Agregue un enlace a la página de perfil de Facebook del autor del artículo "
-"si desea que aparezca en la información compartida. Ejemplo: https://"
-"facebook.com/author"
+"si desea que aparezca en la información compartida. Ejemplo: https:"
+"//facebook.com/author"
 
 #: lib/admin/metabox/sso-tags.php:99
 msgid "Customize Open Graph URL"
@@ -3918,9 +3921,9 @@ msgstr ""
 #: lib/admin/metabox/sso-tags.php:184
 msgid ""
 "Add a description that will populate the Twitter card tag which will be used "
-"when users share your content on Twitter.<span class=\"essb-inner-recommend"
-"\">We recommend usage of description that does not exceed 160 characters</"
-"span>"
+"when users share your content on Twitter.<span class=\"essb-inner-"
+"recommend\">We recommend usage of description that does not exceed 160 "
+"characters</span>"
 msgstr ""
 
 #: lib/admin/settings/essb-admin-options-helper5.php:191
@@ -4880,8 +4883,8 @@ msgstr ""
 
 #: lib/admin/settings/essb-structure5-advanced.php:92
 msgid ""
-"This option will combine all plugin static javacsript files into single "
-"file. This option will not work if scripts are set to load asynchronous or "
+"This option will combine all plugin static javacsript files into single file."
+" This option will not work if scripts are set to load asynchronous or "
 "deferred."
 msgstr ""
 "Esta opción combinará todos los archivos javascript estáticos de plugin en "
@@ -5142,9 +5145,9 @@ msgstr ""
 
 #: lib/admin/settings/essb-structure5-advanced.php:128
 msgid ""
-"Enable option if you need to hide share buttons on the preview mode of "
-"pages. The option will affect only automated share button locations - it "
-"will not hide those buttons generated with shortcode, widget, etc."
+"Enable option if you need to hide share buttons on the preview mode of pages."
+" The option will affect only automated share button locations - it will not "
+"hide those buttons generated with shortcode, widget, etc."
 msgstr ""
 
 #: lib/admin/settings/essb-structure5-advanced.php:132
@@ -5229,8 +5232,8 @@ msgstr ""
 
 #: lib/admin/settings/essb-structure5-advanced.php:139
 msgid ""
-"This option will remove the appearing on the hover title \"Share on Network"
-"\"."
+"This option will remove the appearing on the hover title \"Share on "
+"Network\"."
 msgstr ""
 
 #: lib/admin/settings/essb-structure5-advanced.php:143
@@ -5866,12 +5869,11 @@ msgid ""
 "that will act like a regular display method on the site. This allows "
 "integrateion of share buttons almost anywhere when that is supported by "
 "theme and custom plugins without touching code. The method can also be used "
-"to create a custom hook that can be easy embed inside theme.<br/></"
-"br><b>Important! Once a hook integration is created it will not show on site "
-"only if you activate it for display. Each hook runs as a display position "
-"and to see it on site you need to activate it from Positions menu inside "
-"Where to Display. This allows to switch on or off any of integrations when "
-"needed</b>"
+"to create a custom hook that can be easy embed inside theme.<br/></br><b>"
+"Important! Once a hook integration is created it will not show on site only "
+"if you activate it for display. Each hook runs as a display position and to "
+"see it on site you need to activate it from Positions menu inside Where to "
+"Display. This allows to switch on or off any of integrations when needed</b>"
 msgstr ""
 
 #: lib/admin/settings/essb-structure5-developer.php:101
@@ -6341,8 +6343,8 @@ msgid ""
 "Enter your Facebook Page ID to connect live page with it (live chat cannot "
 "connect to personal profiles). To use live chat you also need to whitelist "
 "your domain in the Page settings. To do this visit your Facebook Page "
-"Settings and add/remove whitelisted domains (you need to add a valid domain "
-"- example: https://socialsharingplugin.com). Live chat works only if your "
+"Settings and add/remove whitelisted domains (you need to add a valid domain -"
+" example: https://socialsharingplugin.com). Live chat works only if your "
 "site uses SSL protocol and can run only on a real domain (no IP address or "
 "localhost enviroment)."
 msgstr ""
@@ -6573,14 +6575,14 @@ msgid ""
 "If you wish to change your native Facebook button language code from English "
 "you need to enter here your own code like es_ES. Full list of code can be "
 "found here: <a href=\"https://www.facebook.com/translations/FacebookLocales."
-"xml\" target=\"_blank\">https://www.facebook.com/translations/"
-"FacebookLocales.xml</a>"
+"xml\" target=\"_blank\">https://www.facebook."
+"com/translations/FacebookLocales.xml</a>"
 msgstr ""
 "Si desea cambiar su código de idioma de botón de Facebook nativo de Inglés "
 "debe introducir aquí su propio código como es_ES. La lista completa del "
-"código se puede encontrar aquí: <a href=\"https://www.facebook.com/"
-"translations/FacebookLocales.xml\" target=\"_blank\">https://www.facebook."
-"com/translations/FacebookLocales.xml</a>"
+"código se puede encontrar aquí: <a href=\"https://www.facebook."
+"com/translations/FacebookLocales.xml\" target=\"_blank\">https://www."
+"facebook.com/translations/FacebookLocales.xml</a>"
 
 #: lib/admin/settings/essb-structure5-follow.php:236
 #: lib/admin/settings/essb-structure5-follow.php:244
@@ -6667,8 +6669,8 @@ msgstr "URL del perfil cuando se selecciona el tipo de seguimiento"
 
 #: lib/admin/settings/essb-structure5-follow.php:258
 msgid ""
-"Provide your Pinterest URL as it is seen at the browser, for example https://"
-"www.pinterest.com/appscreo."
+"Provide your Pinterest URL as it is seen at the browser, for example https:"
+"//www.pinterest.com/appscreo."
 msgstr ""
 "Proporcione su URL de Pinterest como se ve en el navegador, por ejemplo "
 "https://www.pinterest.com/appscreo."
@@ -6725,8 +6727,8 @@ msgid ""
 "php?method=Like and follow instructions on page"
 msgstr ""
 "Si no tiene una identificación de aplicación para su sitio, debe generar uno "
-"en VKontakte (vk.com) Dev Site. Para ello visite esta página http://vk.com/"
-"dev.php?method=Like Y siga las instrucciones en la página"
+"en VKontakte (vk.com) Dev Site. Para ello visite esta página http://vk."
+"com/dev.php?method=Like Y siga las instrucciones en la página"
 
 #: lib/admin/settings/essb-structure5-follow.php:277
 msgid "Activate usage of skinned native buttons"
@@ -7001,8 +7003,8 @@ msgstr ""
 #: lib/admin/settings/essb-structure5-follow.php:353
 #: lib/admin/settings/essb-structure5-follow.php:379
 msgid ""
-"Set own personalized title (shortcodes supported). Use [easy-total-"
-"followers] if you wish to display total number of followers in text"
+"Set own personalized title (shortcodes supported). Use [easy-total-followers]"
+" if you wish to display total number of followers in text"
 msgstr ""
 
 #: lib/admin/settings/essb-structure5-follow.php:354
@@ -7363,8 +7365,8 @@ msgstr ""
 #: lib/admin/settings/essb-structure5-follow.php:538
 msgid ""
 "Automatically show the number of followers for 30+ social networks with "
-"shortcode, widget, floating sidebar, content bar, page builder elements, "
-"etc. The correct display of followers requires activation of required access "
+"shortcode, widget, floating sidebar, content bar, page builder elements, etc."
+" The correct display of followers requires activation of required access "
 "token and keys to receive the values."
 msgstr ""
 
@@ -8657,9 +8659,9 @@ msgstr ""
 #: lib/admin/settings/essb-structure5-sharing.php:384
 #: lib/admin/settings/essb-structure5-where.php:1098
 msgid ""
-"Full width share buttons uses formula to calculate the best width of "
-"buttons. In some cases based on other site styles you may need to "
-"personalize some of the values in here"
+"Full width share buttons uses formula to calculate the best width of buttons."
+" In some cases based on other site styles you may need to personalize some "
+"of the values in here"
 msgstr ""
 
 #: lib/admin/settings/essb-structure5-sharing.php:385
@@ -9605,8 +9607,8 @@ msgstr ""
 
 #: lib/admin/settings/essb-structure5-sharing.php:734
 msgid ""
-"To get this ID login to your vk profile and visit this page: https://vk.com/"
-"dev/Subscribe (copy numbers after http://vk.com/id in the field)."
+"To get this ID login to your vk profile and visit this page: https://vk."
+"com/dev/Subscribe (copy numbers after http://vk.com/id in the field)."
 msgstr ""
 
 #: lib/admin/settings/essb-structure5-sharing.php:739
@@ -10374,8 +10376,8 @@ msgstr "Tamaño de ícono"
 
 #: lib/admin/settings/essb-structure5-style.php:63
 msgid ""
-"Provide custom icon size value. Default value for almost all templates is "
-"18. Please enter value without any symbols before/after it - example: 22"
+"Provide custom icon size value. Default value for almost all templates is 18."
+" Please enter value without any symbols before/after it - example: 22"
 msgstr ""
 "Proporcionar valor de tamaño de icono personalizado. El valor predeterminado "
 "para casi todas las plantillas es 18. Por favor, introduzca el valor sin "
@@ -10938,8 +10940,8 @@ msgstr ""
 #: lib/admin/settings/essb-structure5-where.php:238
 msgid ""
 "Exclude buttons on posts/pages with these IDs. Comma separated: \"11, 15, "
-"125\". This will deactivate automated display of buttons on selected posts/"
-"pages but you are able to use shortcode on them."
+"125\". This will deactivate automated display of buttons on selected "
+"posts/pages but you are able to use shortcode on them."
 msgstr ""
 "Excluya los botones de las publicaciones / páginas con estos ID. Separado "
 "por comas: \"11, 15, 125\". Esto desactivará la visualización automática de "
@@ -11213,8 +11215,8 @@ msgstr ""
 
 #: lib/admin/settings/essb-structure5-subscribe.php:158
 msgid ""
-"Use this area if you wish to make function work for selected post types "
-"only. Otherwise it will appear everywhere on your site."
+"Use this area if you wish to make function work for selected post types only."
+" Otherwise it will appear everywhere on your site."
 msgstr ""
 
 #: lib/admin/settings/essb-structure5-subscribe.php:164
@@ -11961,8 +11963,8 @@ msgstr ""
 msgid ""
 "The option will deactivate only the share buttons. All other plugin "
 "components will continue to work. One per line without the domain name. Use "
-"(.*) wildcards to address multiple URLs under a given path. Example: /"
-"profile/(.*)"
+"(.*) wildcards to address multiple URLs under a given path. Example: "
+"/profile/(.*)"
 msgstr ""
 
 #: lib/admin/settings/essb-structure5-where.php:247
@@ -11992,10 +11994,10 @@ msgid ""
 "type that they use is not marked as active."
 msgstr ""
 "Proporcionar una lista de post / página ids donde los botones se mostrará no "
-"importa que el tipo de mensaje está activo o no. Valores separados por "
-"comas: \"11, 15, 125\". Esto activará la visualización automatizada de "
-"botones en las publicaciones / páginas seleccionadas aunque el tipo de "
-"publicación que utilicen no esté marcado como activo."
+"importa que el tipo de mensaje está activo o no. Valores separados por comas:"
+" \"11, 15, 125\". Esto activará la visualización automatizada de botones en "
+"las publicaciones / páginas seleccionadas aunque el tipo de publicación que "
+"utilicen no esté marcado como activo."
 
 #: lib/admin/settings/essb-structure5-where.php:258
 msgid "WooCommerce"
@@ -12220,8 +12222,8 @@ msgstr "Ancho máximo del área de botones"
 
 #: lib/admin/settings/essb-structure5-where.php:332
 msgid ""
-"Provide custom max width of buttons area when full width float bar is "
-"active. Provide number value in pixels without the px (example 960)"
+"Provide custom max width of buttons area when full width float bar is active."
+" Provide number value in pixels without the px (example 960)"
 msgstr ""
 "Proporcione el ancho máximo personalizado del área de botones cuando la "
 "barra de flotador de ancho completo esté activa. Proporcione el valor "
@@ -12282,8 +12284,8 @@ msgid ""
 "You can provide custom left offset from content. Leave blank to use default "
 "value."
 msgstr ""
-"Puede proporcionar desplazamiento izquierdo personalizado desde el "
-"contenido. Deje en blanco para utilizar el valor predeterminado."
+"Puede proporcionar desplazamiento izquierdo personalizado desde el contenido."
+" Deje en blanco para utilizar el valor predeterminado."
 
 #: lib/admin/settings/essb-structure5-where.php:351
 msgid "Vertical offset from content start"
@@ -13639,9 +13641,9 @@ msgstr ""
 
 #: lib/admin/settings/essb-structure5-where.php:734
 msgid ""
-"Choose where you wish to display the static content share buttons in "
-"content. The default is above and below content but you can set above or "
-"bottom only too."
+"Choose where you wish to display the static content share buttons in content."
+" The default is above and below content but you can set above or bottom only "
+"too."
 msgstr ""
 
 #: lib/admin/settings/essb-structure5-where.php:735
@@ -14049,8 +14051,8 @@ msgstr "Mostrar nombres de red"
 
 #: lib/admin/settings/essb-structure5-where.php:874
 msgid ""
-"Activate this option to display network names (default display is icons "
-"only)."
+"Activate this option to display network names (default display is icons only)"
+"."
 msgstr ""
 "Active esta opción para mostrar los nombres de red (la visualización "
 "predeterminada es sólo iconos)."
@@ -16347,9 +16349,9 @@ msgstr ""
 
 #: lib/modules/live-customizer/controls/section-counters.php:84
 msgid ""
-"The button will clear any stored counters on site and the last update "
-"period. This will make the entire counter information to update with the "
-"next load of a post."
+"The button will clear any stored counters on site and the last update period."
+" This will make the entire counter information to update with the next load "
+"of a post."
 msgstr ""
 
 #: lib/modules/live-customizer/controls/section-share.php:52
@@ -16426,10 +16428,10 @@ msgstr ""
 
 #: lib/modules/live-customizer/controls/section-share.php:220
 msgid ""
-"The custom share message is an additional component of share "
-"personalization. This message will not appear in the social share "
-"optimization tags or the custom Tweet but it will read by networks that "
-"support such - for example, Mobile Messenger."
+"The custom share message is an additional component of share personalization."
+" This message will not appear in the social share optimization tags or the "
+"custom Tweet but it will read by networks that support such - for example, "
+"Mobile Messenger."
 msgstr ""
 
 #: lib/modules/live-customizer/controls/section-share.php:225
@@ -16732,3006 +16734,3 @@ msgstr "CreoApps"
 #. Author URI of the plugin/theme
 msgid "https://codecanyon.net/user/appscreo/portfolio?ref=appscreo"
 msgstr ""
-
-#~ msgid "Easy Optin (Subscribe Forms)"
-#~ msgstr "Easy Optin (Subscribe Forms)"
-
-#~ msgid "Connectors"
-#~ msgstr "Conectores"
-
-#~ msgid "Followers Sidebar"
-#~ msgstr "Sidebar de Seguidores"
-
-#~ msgid "Choose your service"
-#~ msgstr "Elija su servicio"
-
-#~ msgid ""
-#~ "Select service that you wish to integrate with Easy Optin forms. Please "
-#~ "note that for correct work you need to fill all required authorizations "
-#~ "details for it below"
-#~ msgstr ""
-#~ "Seleccione el servicio que desea integrar con formularios Easy Optin. "
-#~ "Tenga en cuenta que para un trabajo correcto debe rellenar todos los "
-#~ "detalles de las autorizaciones requeridas a continuación"
-
-#~ msgid "Activate subscribe widget & shortcode"
-#~ msgstr "Activar widget de suscripción & código corto"
-
-#~ msgid ""
-#~ "Activation of this option will allow you to use subscribe widget and "
-#~ "shortcode anywhere on your site not connected with subscribe button "
-#~ "inside share buttons"
-#~ msgstr ""
-#~ "La activación de esta opción le permitirá utilizar el widget de "
-#~ "suscripción y el shortcode en cualquier parte de su sitio no conectado "
-#~ "con el botón de suscripción dentro de los botones de compartir"
-
-#~ msgid ""
-#~ "<a href=\"http://kb.mailchimp.com/accounts/management/about-api-"
-#~ "keys#Finding-or-generating-your-API-key\" target=\"_blank\">Find your API "
-#~ "key</a>"
-#~ msgstr ""
-#~ "<a href=\"http://kb.mailchimp.com/es/integrations/api-integrations/about-"
-#~ "api-keys\" target=\"_blank\">Encuentra tu clave de API</a>"
-
-#~ msgid "Mailchimp List ID"
-#~ msgstr "ID de la lista de Mailchimp"
-
-#~ msgid ""
-#~ "<a href=\"http://kb.mailchimp.com/lists/managing-subscribers/find-your-"
-#~ "list-id\" target=\"_blank\">Find your List ID</a>"
-#~ msgstr ""
-#~ "<a href=\"http://kb.mailchimp.com/es/lists/managing-subscribers/find-your-"
-#~ "list-id\" target=\"_blank\">Encuentra tu ID de la lista</a>"
-
-#~ msgid "Send welcome message:"
-#~ msgstr "Enviar mensaje de bienvenida:"
-
-#~ msgid "Allow Mailchimp send welcome mssage upon subscribe."
-#~ msgstr ""
-#~ "Permitir que Mailchimp envíe un mensaje de bienvenida al suscribirse."
-
-#~ msgid "Use double opt in:"
-#~ msgstr "Utilizar double opt para:"
-
-#~ msgid "Display name field:"
-#~ msgstr "Mostrar nombre:"
-
-#~ msgid ""
-#~ "<a href=\"http://support.getresponse.com/faq/where-i-find-api-key\" "
-#~ "target=\"_blank\">Find your API key</a>"
-#~ msgstr ""
-#~ "<a href=\"https://support.getresponse.com/es/faq/donde-encuentro-la-llave-"
-#~ "api\" target=\"_blank\">Encuentra tu clave de API</a>"
-
-#~ msgid ""
-#~ "<a href=\"http://support.getresponse.com/faq/can-i-change-the-name-of-a-"
-#~ "campaign\" target=\"_blank\">Find your campaign name</a>"
-#~ msgstr ""
-#~ "<a href=\"http://support.getresponse.com/faq/can-i-change-the-name-of-a-"
-#~ "campaign\" target=\"_blank\">Buscar el nombre de la campaña</a>"
-
-#~ msgid ""
-#~ "Entery your MailerLite API key. To get your key visit this page <a href="
-#~ "\"https://app.mailerlite.com/subscribe/api\" target=\"_blank\">https://"
-#~ "app.mailerlite.com/subscribe/api</a> and look under API key."
-#~ msgstr ""
-#~ "Introduzca su clave API MailerLite. Para obtener su clave visite esta "
-#~ "página <a href=\"https://app.mailerlite.com/subscribe/api\" target="
-#~ "\"_blank\">https://app.mailerlite.com/subscribe/api</a> Y mirar bajo "
-#~ "clave de API."
-
-#~ msgid "MyMail"
-#~ msgstr "MyMail"
-
-#~ msgid "MyMail List"
-#~ msgstr "Lista de MyMail"
-
-#~ msgid "Select your list. Please ensure that MyMail plugin is installed."
-#~ msgstr "Seleccione su lista. Asegúrese de que MyMail plugin está instalado."
-
-#~ msgid "Customize default title: Join our list"
-#~ msgstr "Personalizar título predeterminado: Únete a nuestra lista"
-
-#~ msgid ""
-#~ "Customize default text: Subscribe to our mailing list and get interesting "
-#~ "stuff and updates to your email inbox."
-#~ msgstr ""
-#~ "Personalizar el texto por defecto: Suscríbase a nuestra lista de correo y "
-#~ "obtenga cosas interesantes y actualizaciones a su bandeja de entrada de "
-#~ "correo electrónico."
-
-#~ msgid "Name placeholder text"
-#~ msgstr "Texto de marcador de posición de nombre"
-
-#~ msgid "Customize default name placeholder text: Enter your name here"
-#~ msgstr ""
-#~ "Personalizar el nombre predeterminado de texto de marcador de posición: "
-#~ "Introduzca su nombre aquí"
-
-#~ msgid "Email placeholder text"
-#~ msgstr "Texto del marcador de correo electrónico"
-
-#~ msgid "Customize default email placeholder text: Enter your email here"
-#~ msgstr ""
-#~ "Personalizar texto de marcador de posición predeterminado de correo "
-#~ "electrónico: escriba su correo electrónico aquí"
-
-#~ msgid "Customize default button text: Sign Up Now"
-#~ msgstr "Personalizar el texto del botón predeterminado: Regístrese ahora"
-
-#~ msgid ""
-#~ "Customize default footer text: We respect your privacy and take "
-#~ "protecting it seriously"
-#~ msgstr ""
-#~ "Personalizar el texto del pie de página predeterminado: respetamos su "
-#~ "privacidad y la tomamos en serio"
-
-#~ msgid "Success messsage"
-#~ msgstr "Mensaje existoso"
-
-#~ msgid "Customize Success Message: Thank you for subscribing."
-#~ msgstr "Personalizar mensaje de éxito: Gracias por suscribirse."
-
-#~ msgid "Customize Error Message: Something went wrong."
-#~ msgstr "Mensaje de error personalizado: Algo salió mal."
-
-#~ msgid "Style Customization"
-#~ msgstr "Personalización del estilo"
-
-#~ msgid "Activate color customizer"
-#~ msgstr "Activar personalizador de color"
-
-#~ msgid ""
-#~ "Color customizations will not be included unless you activate this option."
-#~ msgstr ""
-#~ "Las personalizaciones de color no se incluirán a menos que active esta "
-#~ "opción."
-
-#~ msgid "Replace form background color"
-#~ msgstr "Reemplazar color del fondo de formulario"
-
-#~ msgid "Replace form text color"
-#~ msgstr "Reemplazar el color del texto del formulario"
-
-#~ msgid "Replace form accent color"
-#~ msgstr "Reemplazar color acentado del formulario"
-
-#~ msgid "Accent text color"
-#~ msgstr "Acentuar color de texto"
-
-#~ msgid "Replace form accent text color"
-#~ msgstr "Reemplazar color acentuado del formulario"
-
-#~ msgid "Email field background color"
-#~ msgstr "Color del fondo del campo de email"
-
-#~ msgid "Replace email field background color"
-#~ msgstr "Remplazar el color de fondo del campo de email"
-
-#~ msgid "Remove top border of form"
-#~ msgstr "Quitar el borde superior del formulario"
-
-#~ msgid ""
-#~ "Activate this option if you wish to remove the tiny top border from the "
-#~ "top of form."
-#~ msgstr ""
-#~ "Active esta opción si desea quitar el pequeño borde superior de la parte "
-#~ "superior del formulario."
-
-#~ msgid "Remove border of form"
-#~ msgstr "Eliminar el borde del formulario"
-
-#~ msgid ""
-#~ "Activate this option if you wish to remove the tiny border from the form."
-#~ msgstr "Active esta opción si desea quitar el pequeño borde del formulario."
-
-#~ msgid "Choose image"
-#~ msgstr "Elegir imagen"
-
-#~ msgid ""
-#~ "Image parameter is optional but if you choose such it will appear in the "
-#~ "top part of form on the left or right side of content."
-#~ msgstr ""
-#~ "El parámetro de imagen es opcional, pero si elige tal, aparecerá en la "
-#~ "parte superior del formulario en el lado izquierdo o derecho del "
-#~ "contenido."
-
-#~ msgid "Image will appear on:"
-#~ msgstr "La imagen se mostrará en:"
-
-#~ msgid "Choose where image will appear according to your top content"
-#~ msgstr ""
-#~ "Elige dónde aparecerá la imagen de acuerdo con tu contenido principal."
-
-#~ msgid "Background color top area"
-#~ msgstr "Área de color de fondo superior"
-
-#~ msgid "Text color top area"
-#~ msgstr "Área de color del texto superior"
-
-#~ msgid "Background color bottom area"
-#~ msgstr "Área de fondo de color de fondo"
-
-#~ msgid "Text color bottom area"
-#~ msgstr "Área del fondo del color del texto"
-
-#~ msgid "Background color of content area"
-#~ msgstr "Color de fondo del área de contenido"
-
-#~ msgid "Text color of content area"
-#~ msgstr "Color del texto del área de contenido"
-
-#~ msgid "Background color subscribe area"
-#~ msgstr "Área de suscripción de color de fondo"
-
-#~ msgid "Text color subscribe area"
-#~ msgstr "Área de suscripción de color de texto"
-
-#~ msgid "Include native Facebook button"
-#~ msgstr "Incluir botón nativo de Facebook"
-
-#~ msgid "Google button"
-#~ msgstr "Botón de Google"
-
-#~ msgid "Include Google native button in your site"
-#~ msgstr "Incluye el botón nativo de Google en tu sitio"
-
-#~ msgid "Include Google +1/Follow Button"
-#~ msgstr "Incluir Google + 1 / Botón Seguidores"
-
-#~ msgid "Google+ Follow Profile Page URL"
-#~ msgstr "URL de la página de perfil de Google+"
-
-#~ msgid "Custom Google +1 button address"
-#~ msgstr "Dirección personalizada del botón +1 de Google"
-
-#~ msgid ""
-#~ "Provide custom address in case you wish +1 to be added to that page - "
-#~ "example profile page. Otherwise +1s will be counted to page where button "
-#~ "is displayed."
-#~ msgstr ""
-#~ "Proporcione una dirección personalizada en caso de que desee añadir +1 a "
-#~ "esa página - página de perfil de ejemplo. De lo contrario + 1s se contará "
-#~ "a la página donde se muestra el botón."
-
-#~ msgid ""
-#~ "This option will hide\n"
-#~ "\t\tnative buttons inside nice flat style boxes and show them on\n"
-#~ "\t\thover."
-#~ msgstr ""
-#~ "Esta opción se ocultará\n"
-#~ "\t\tBotones nativos dentro de agradables cajas de estilo plano y "
-#~ "mostrarlos en\n"
-#~ "\t\tflotar."
-
-#~ msgid "Activate Social Followers Counter"
-#~ msgstr "Activar Seguidores Sociales Contador"
-
-#~ msgid "Activate this option to use followers counter widget and shortcodes"
-#~ msgstr ""
-#~ "Activar esta opción para utilizar los seguidores de contador widget y "
-#~ "códigos cortos"
-
-#~ msgid "Update period"
-#~ msgstr "período de actualización"
-
-#~ msgid ""
-#~ "Choose the time when counters will be updated. Default is 1 day if "
-#~ "nothing is selected."
-#~ msgstr ""
-#~ "Elegir el momento en que se actualizarán los contadores. Por defecto es "
-#~ "de 1 día si no hay nada seleccionado."
-
-#~ msgid "Choose default number format"
-#~ msgstr "Elija los formatos de número por defecto"
-
-#~ msgid "Allow user values"
-#~ msgstr "Permitir valores de usuarios"
-
-#~ msgid ""
-#~ "Activate this option to allow enter of user values for each social "
-#~ "network. In this case when automatic value is less than user value the "
-#~ "user value will be used"
-#~ msgstr ""
-#~ "Activar esta opción para permitir ingresar valores de usuario por cada "
-#~ "red social. En este caso al valor automático es menor que el valor de "
-#~ "usuario el valor de usuario se utilizará"
-
-#~ msgid ""
-#~ "Mark yes to tell plugin clear previous updated values that are stored "
-#~ "into database. You need this option if current stored value in database "
-#~ "is greater than your current value of followers and you wish to make it "
-#~ "update."
-#~ msgstr ""
-#~ "Marque sí al plugin claro anteriores valores actualizados que se "
-#~ "almacenan en la base de datos. Necesita esta opción si el valor "
-#~ "almacenado en la base de datos es mayor que su valor actual de todos y "
-#~ "desea que sea actualizar."
-
-#~ msgid "Social Profile Details"
-#~ msgstr "Datos de perfil social"
-
-#~ msgid "Display social followers as sidebar"
-#~ msgstr "Mostrar seguidores sociales como barra lateral"
-
-#~ msgid ""
-#~ "Activate this option to get followers counter appear as sidebar attached "
-#~ "to left or right side of screen. This is a great way to encorage users "
-#~ "visit your social profiles (profile buttons on steroids)."
-#~ msgstr ""
-#~ "Activar esta opción para obtener seguidores contador aparecen como "
-#~ "sidebar a la izquierda o la derecha de la pantalla. Esto es una gran "
-#~ "manera de los usuarios recomienda visitar sus perfiles sociales (botones "
-#~ "de Perfil)."
-
-#~ msgid "Activate social profiles widget and shortcode"
-#~ msgstr "Activar código y perfiles sociales widget"
-
-#~ msgid "Activate this option to install and use social profiles widget."
-#~ msgstr ""
-#~ "Active esta opción para instalar y utilizar el widget de perfiles "
-#~ "sociales."
-
-#~ msgid "Automatically generate and assing social profiles as sidebar"
-#~ msgstr ""
-#~ "Generar automáticamente y administraremos perfiles sociales como barra "
-#~ "lateral"
-
-#~ msgid ""
-#~ "Activate this option to automatically generate sidebar with your social "
-#~ "profile links"
-#~ msgstr ""
-#~ "Activar esta opción para generar automáticamente la barra lateral con tus "
-#~ "enlaces de perfil social"
-
-#~ msgid "Position of social profiles"
-#~ msgstr "Posición de perfiles sociales"
-
-#~ msgid "Choose your social profiles position"
-#~ msgstr "Elegir su posición de perfiles sociales"
-
-#~ msgid "Deactivate social profiles on mobile"
-#~ msgstr "Desactivar perfiles sociales en el móvil"
-
-#~ msgid "Activate this option to turn off display on mobile devices."
-#~ msgstr ""
-#~ "Activar esta opción para desactivar la visualización en dispositivos "
-#~ "móviles."
-
-#~ msgid "Change the order of social profiles"
-#~ msgstr "Cambiar el orden de perfiles sociales"
-
-#~ msgid "Customize order of social profile networks"
-#~ msgstr "Personalizar el orden de las redes sociales"
-
-#~ msgid "Configure social network details"
-#~ msgstr "Configurar los datos de red social"
-
-#~ msgid ""
-#~ "To activate automatic plugin updates you need to fill your purchase code."
-#~ msgstr ""
-#~ "Para activar actualizaciones automáticas plugin que es necesario rellenar "
-#~ "el código de compra."
-
-#~ msgid "Deactivate Functions & Modules"
-#~ msgstr "Desactivar funciones y módulos"
-
-#~ msgid "Advanced Custom Share"
-#~ msgstr "Personalización avanzada de compartir"
-
-#~ msgid "Color Customization"
-#~ msgstr "Personalización de color"
-
-#~ msgid "Followers Counter Color Customization"
-#~ msgstr "Seguidores contador personalización de Color"
-
-#~ msgid "Image Share Color Customization"
-#~ msgstr "Imagen parte Color personalización"
-
-#~ msgid "Activate Social Metrics Lite"
-#~ msgstr "Activar indicadores de Social Lite"
-
-#~ msgid ""
-#~ "Activate Social Metrics Lite to start collect information for social "
-#~ "shares."
-#~ msgstr ""
-#~ "Active Social Metrics Lite para comenzar a recopilar información para las "
-#~ "acciones sociales."
-
-#~ msgid "Monitor following post types"
-#~ msgstr "Supervisar los siguientes tipos de publicaciones"
-
-#~ msgid ""
-#~ "Choose for which\n"
-#~ "\t\tpost types you want to collect information."
-#~ msgstr ""
-#~ "Elige para qué\n"
-#~ "\t\tPost tipos que desea recopilar información."
-
-#~ msgid "Data refresh time"
-#~ msgstr "Tiempo de actualización de datos"
-
-#~ msgid ""
-#~ "Length of time to store\n"
-#~ "\t\tthe statistics locally before downloading new data. A lower\n"
-#~ "\t\tvalue will use more server resources. High values are\n"
-#~ "\t\trecommended for blogs with over 50 posts."
-#~ msgstr ""
-#~ "Duración del tiempo de almacenamiento\n"
-#~ "\t\tLas estadísticas localmente antes de descargar nuevos datos. Una "
-#~ "baja\n"
-#~ "\t\tValor utilizará más recursos del servidor. Los valores altos son\n"
-#~ "\t\tRecomendado para blogs con más de 50 puestos."
-
-#~ msgid "Choose update provider"
-#~ msgstr "Elegir proveedor de actualización"
-
-#~ msgid ""
-#~ "Choose default metrics update\n"
-#~ "\t\tprovider. You can use sharedcount.com where all data is\n"
-#~ "\t\textracted with single call. According to high load of\n"
-#~ "\t\tsharedcount you can use the another update method with native\n"
-#~ "\t\tcalls from your WordPress instance."
-#~ msgstr ""
-#~ "Elija la actualización de métricas predeterminada\n"
-#~ "\t\tproveedor. Puede utilizar sharedcount.com donde todos los datos\n"
-#~ "\t\tExtraído con una sola llamada. Según la alta carga de\n"
-#~ "\t\tCuenta compartida puede utilizar el otro método de actualización con\n"
-#~ "\t\tLlamadas desde su instancia de WordPress."
-
-#~ msgid "SharedCount.com API key"
-#~ msgstr "Clave de la API de SharedCount.com"
-
-#~ msgid ""
-#~ "Provide your free SharedCount.com API access key. To get this key create "
-#~ "account in SharedCount.com (in case you do not have such) and login into "
-#~ "<a href=\"https://admin.sharedcount.com/admin/user/home.php\" target="
-#~ "\"_blank\">your profile settings</a> to find it."
-#~ msgstr ""
-#~ "Proporcione su clave gratuita de acceso a la API de SharedCount.com. Para "
-#~ "obtener esta clave, cree una cuenta en SharedCount.com (en caso de que no "
-#~ "la tenga) y acceda a <a href = \"https://admin.sharedcount.com/admin/user/"
-#~ "home.php\" target = \"_ blank\" > Tu configuración de perfil </a> para "
-#~ "encontrarla."
-
-#~ msgid "Plugin access"
-#~ msgstr "Acceso a complementos"
-
-#~ msgid ""
-#~ "Make settings available for the following user roles (if you use multiple "
-#~ "user roles on your site we recommend to select Administrator to disallow "
-#~ "other users change settings of plugin)."
-#~ msgstr ""
-#~ "Configure los ajustes disponibles para las siguientes funciones de "
-#~ "usuario (si utiliza varios roles de usuario en su sitio, recomendamos que "
-#~ "seleccione Administrador para no permitir que otros usuarios cambien la "
-#~ "configuración del complemento)."
-
-#~ msgid "Activate top social posts widget"
-#~ msgstr "Activar widget de los puestos sociales superiores"
-
-#~ msgid ""
-#~ "Activate usage of top social posts widget. Widget requires Social Metrics "
-#~ "Lite to be active for data update."
-#~ msgstr ""
-#~ "Activar el uso del widget de mensajes sociales superiores. Widget "
-#~ "requiere que Social Metrics Lite esté activo para la actualización de "
-#~ "datos."
-
-#~ msgid "Static resource optimizations"
-#~ msgstr "Optimización estática de recursos"
-
-#~ msgid "CSS Styles Optimizations"
-#~ msgstr "Optimizaciones de estilos CSS"
-
-#~ msgid "Activate option that will optimize load of static css resources"
-#~ msgstr ""
-#~ "Activar la opción que optimizará la carga de los recursos css estáticos"
-
-#~ msgid ""
-#~ "Minified CSS files will improve speed of load. Activate this option to "
-#~ "use them."
-#~ msgstr ""
-#~ "Minificar archivos CSS mejorará la velocidad de carga. Active esta opción "
-#~ "para usarlos."
-
-#~ msgid "Load plugin inline styles into footer"
-#~ msgstr "Cargar estilos complementarios de plugin en el pie de página"
-
-#~ msgid ""
-#~ "Activating this option will load dynamic plugin inline styles into footer."
-#~ msgstr ""
-#~ "Al activar esta opción se cargarán los estilos dinámicos de complemento "
-#~ "dinámico en el pie de página."
-
-#~ msgid "Scripts load optimization"
-#~ msgstr "Optimización de la carga de scripts"
-
-#~ msgid ""
-#~ "Activate option that will optimize load of static resources - css and "
-#~ "javascript"
-#~ msgstr ""
-#~ "Activar la opción que optimizará la carga de los recursos estáticos - css "
-#~ "y javascript"
-
-#~ msgid ""
-#~ "Minified javascript files will improve speed of load. Activate this "
-#~ "option to use them."
-#~ msgstr ""
-#~ "Minificar archivos javascript mejorará la velocidad de carga. Active esta "
-#~ "opción para usarlos."
-
-#~ msgid "Load scripts in head element"
-#~ msgstr "Cargar scripts en el elemento head"
-
-#~ msgid ""
-#~ "If you are using caching plugin like W3 Total Cache you may need to "
-#~ "activate this option if counters, send mail form or float do not work."
-#~ msgstr ""
-#~ "Si utiliza el plugin de almacenamiento en caché como W3 Total Cache, "
-#~ "puede que tenga que activar esta opción si los contadores, envíe el "
-#~ "formulario electrónico o un flotador no funciona."
-
-#~ msgid "Global resource load optimizations"
-#~ msgstr "Optimizaciones de la carga global de recursos"
-
-#~ msgid ""
-#~ "Activate option that will optimize load of static javascript resources"
-#~ msgstr ""
-#~ "Activar la opción que optimizará la carga de recursos javascript estáticos"
-
-#~ msgid "Remove version number from static resource files"
-#~ msgstr "Quitar número de versión de archivos de recursos estáticos"
-
-#~ msgid ""
-#~ "Activating this option will remove added to resources version number ?"
-#~ "ver= which will allow these files to be cached."
-#~ msgstr ""
-#~ "La activación de esta opción se eliminará añadido al número de versión de "
-#~ "recursos? Ver =, que permitirá que estos archivos se almacenen en caché."
-
-#~ msgid "Use plugin precompiled resources"
-#~ msgstr "Utilizar complementos precompilados"
-
-#~ msgid ""
-#~ "Activating this option will precompile and cache plugin dynamic resources "
-#~ "to save load time. Precompiled resources can be used only when you use "
-#~ "same configuration on your entire site."
-#~ msgstr ""
-#~ "Al activar esta opción, se precompilarán y cacharán los recursos "
-#~ "dinámicos del complemento para ahorrar tiempo de carga. Los recursos "
-#~ "precompilados sólo se pueden utilizar cuando se utiliza la misma "
-#~ "configuración en todo el sitio."
-
-#~ msgid ""
-#~ "Activate build in cache functions to improve speed of load. If you use a "
-#~ "site cache plugin activation of those options is not needed as that "
-#~ "plugin will do the cache work."
-#~ msgstr ""
-#~ "Active las funciones de compilación en caché para mejorar la velocidad de "
-#~ "carga. Si utiliza un plugin de caché de sitio la activación de esas "
-#~ "opciones no es necesaria ya que el complemento hará el trabajo de caché."
-
-#~ msgid "Activate WordPress cache"
-#~ msgstr "Activar cache de WordPress"
-
-#~ msgid "Activate cache"
-#~ msgstr "Activar cache"
-
-#~ msgid ""
-#~ "This option is in beta and if you find any problems using it please "
-#~ "report at our <a href=\"http://support.creoworx.com\" target=\"_blank"
-#~ "\">support portal</a>. To clear cache you can simply press Update "
-#~ "Settings button in Main Settings (cache expiration time is 1 hour)"
-#~ msgstr ""
-#~ "Esta opción está en versión beta y si encuentra algún problema al "
-#~ "utilizarla, informe en nuestro <a href=\"http://support.creoworx.com\" "
-#~ "target=\"_blank\"> portal de asistencia </a>. Para borrar la memoria "
-#~ "caché, simplemente puede presionar el botón Update Settings en Main "
-#~ "Settings (el tiempo de caducidad de la caché es 1 hora)"
-
-#~ msgid ""
-#~ "Choose between caching full render of share buttons and resources or "
-#~ "cache only dynamic resources (CSS and Javascript)."
-#~ msgstr ""
-#~ "Elija entre el caché de procesamiento completo de compartir los botones y "
-#~ "recursos o caché sólo los recursos dinámicos (CSS y Javascript)."
-
-#~ msgid ""
-#~ "Very rear you may see buttons appearing on not associated parts of "
-#~ "content. Activate this option to prevent it."
-#~ msgstr ""
-#~ "Es muy raro ver los botones que aparecen en partes no relacionadas del "
-#~ "contenido. Active esta opción para evitarlo."
-
-#~ msgid "Deactivate short url cache"
-#~ msgstr "Desactivar caché de URL corto"
-
-#~ msgid ""
-#~ "Activate this option to stop cache of short url (mainly it is used if "
-#~ "incorrect address was initially cached)."
-#~ msgstr ""
-#~ "Active esta opción para detener la caché de la URL corta (principalmente "
-#~ "se utiliza si la dirección incorrecta se almacenó inicialmente en caché)."
-
-#~ msgid "Other rearly appear problems"
-#~ msgstr "Otros problemas de apariencia posterior"
-
-#~ msgid ""
-#~ "Fixes for rearly appearing problems related to counters or button "
-#~ "appearance."
-#~ msgstr ""
-#~ "Correcciones para problemas de aparición posterior relacionados con los "
-#~ "contadores o la apariencia del botón."
-
-#~ msgid "Dublicate check to avoid buttons appear on not associated post types"
-#~ msgstr ""
-#~ "Comprobación duplicada para evitar que los botones aparezcan en tipos de "
-#~ "publicación no asociados"
-
-#~ msgid "Include class names in CSS from version 2.x"
-#~ msgstr "Incluir nombres de clase en CSS desde la versión 2.x"
-
-#~ msgid ""
-#~ "Activate this option if you use class names for customization that do not "
-#~ "exist in new version."
-#~ msgstr ""
-#~ "Active esta opción si utiliza nombres de clase para personalización que "
-#~ "no existan en la nueva versión."
-
-#~ msgid "Activate custom share by social network"
-#~ msgstr "Activar recurso compartido personalizado por red social"
-
-#~ msgid ""
-#~ "Activation of this option will add additional menu settings for message "
-#~ "share customization by social network."
-#~ msgstr ""
-#~ "La activación de esta opción agregará ajustes de menú adicionales para la "
-#~ "personalización de los mensajes compartidos por la red social."
-
-#~ msgid "Control access to various plugin settings"
-#~ msgstr "Controlar el acceso a varios ajustes de complemento"
-
-#~ msgid "Disable menu in WordPress admin bar"
-#~ msgstr "Desactivar menú en la barra de administración de WordPress"
-
-#~ msgid ""
-#~ "Activation of this option will remove the quick access plugin menu from "
-#~ "WordPress top admin bar."
-#~ msgstr ""
-#~ "La activación de esta opción eliminará el menú de complementos de acceso "
-#~ "rápido de la barra de administración superior de WordPress."
-
-#~ msgid "Control access to plugin metaboxes"
-#~ msgstr "Controlar el acceso a las metaboxes del plugin"
-
-#~ msgid "Reset plugin settings"
-#~ msgstr "Restablecer configuración de complemento"
-
-#~ msgid ""
-#~ "Warning! Pressing this button will restore initial plugin configuration "
-#~ "values and all settings that you apply after plugin activation will be "
-#~ "removed."
-#~ msgstr ""
-#~ "¡Advertencia! Al presionar este botón se restablecerán los valores "
-#~ "iniciales de configuración del complemento y se eliminarán todos los "
-#~ "ajustes que se apliquen después de la activación del complemento."
-
-#~ msgid "Modules"
-#~ msgstr "Modulos"
-
-#~ msgid ""
-#~ "Turn off build in modules that does not have option in their settings"
-#~ msgstr ""
-#~ "Desactivar la generación de módulos que no tienen opción en su "
-#~ "configuración"
-
-#~ msgid "Deactivate Sharable Quotes module"
-#~ msgstr "Desactivar el módulo de cotizaciones compartibles"
-
-#~ msgid ""
-#~ "This option will deactivate and remove code used by click to tweet module"
-#~ msgstr ""
-#~ "Esta opción desactivará y eliminará el código utilizado por el módulo de "
-#~ "clic para tweet"
-
-#~ msgid "Plugin Functions"
-#~ msgstr "Funciones del complemento"
-
-#~ msgid "Deactivate functions of plugin on selected pages"
-#~ msgstr "Desactivar funciones del complemento en las páginas seleccionadas"
-
-#~ msgid ""
-#~ "Deactivate function on posts/pages with these IDs? Comma seperated: \"11, "
-#~ "15, 125\". Deactivating plugin will make no style or scripts to be "
-#~ "executed for those pages/posts related to this function"
-#~ msgstr ""
-#~ "Desactivar la función en las publicaciones / páginas con estos ID? "
-#~ "Separado por comas: \"11, 15, 125\". Desactivar el complemento no hará "
-#~ "que ningún estilo o scripts se ejecuten para aquellas páginas / "
-#~ "publicaciones relacionadas con esta función"
-
-#~ msgid "Twitter Counter Setup"
-#~ msgstr "Configuración del contador de Twitter"
-
-#~ msgid "Set initial Twitter share counter value"
-#~ msgstr "Establecer el valor inicial del contador de partes de Twitter"
-
-#~ msgid ""
-#~ "Preload your Twitter share counter with value when self-hosted counter is "
-#~ "set to be used. You have also option on each post/page to modify the "
-#~ "Twitter share counter value individually."
-#~ msgstr ""
-#~ "Precarga su contador de Twitter compartir con el valor cuando el contador "
-#~ "auto-alojado está configurado para ser utilizado. También tiene opción en "
-#~ "cada publicación / página para modificar el valor del contador de Twitter "
-#~ "compartido individualmente."
-
-#~ msgid ""
-#~ "Share counter recovery is not active untill you switch to cached share "
-#~ "counters"
-#~ msgstr ""
-#~ "La recuperación del contador de acciones no está activa hasta que cambie "
-#~ "a los contadores compartidos en caché"
-
-#~ msgid ""
-#~ "Share counter recovery can work only when you activate cached update mode "
-#~ "of share counters. Till you activate this options below will not work. "
-#~ "This is required to prevent server from hangout when recovery connections "
-#~ "are executed. <br/><br/><b>To change mode of share counters update please "
-#~ "visit Social Sharing -> Counters and choose from top right corner update "
-#~ "method to be something different from Real Time share counters</b>"
-#~ msgstr ""
-#~ "La recuperación del contador de partes sólo puede funcionar cuando se "
-#~ "activa el modo de actualización en caché de los contadores de recursos "
-#~ "compartidos. Hasta que actives estas opciones a continuación, no "
-#~ "funcionará. Esto es necesario para evitar que el servidor del hangout se "
-#~ "ejecute cuando se ejecutan las conexiones de recuperación. <br/> <br/> "
-#~ "<b> Para cambiar el modo de actualización de los contadores de acciones, "
-#~ "por favor visite Social Sharing -> Counters y elija el método de "
-#~ "actualización de la esquina superior derecha para ser algo diferente de "
-#~ "los contadores de tiempo real </ b>"
-
-#~ msgid "Activate share counter recovery"
-#~ msgstr "Activar la recuperación del contador de recursos compartidos"
-
-#~ msgid ""
-#~ "Share counter recovery allows you recover share counters when you move to "
-#~ "secure server or from different domain."
-#~ msgstr ""
-#~ "Share counter recovery le permite recuperar contadores de recursos "
-#~ "compartidos cuando se mueve a un servidor seguro o desde un dominio "
-#~ "diferente."
-
-#~ msgid "Previous url format or domain"
-#~ msgstr "Formato de URL o dominio anterior"
-
-#~ msgid "Choose how your site address is changed"
-#~ msgstr "Elija cómo se cambia la dirección de su sitio"
-
-#~ msgid "My previous url does not have trailing slash"
-#~ msgstr "Mi URL anterior no tiene barra de arrastre"
-
-#~ msgid ""
-#~ "Activate this option if your previous url does not contain trailing slash "
-#~ "at the end."
-#~ msgstr ""
-#~ "Active esta opción si su URL anterior no contiene barra inclinada al "
-#~ "final."
-
-#~ msgid ""
-#~ "If you have changed your domain name please fill in this field previous "
-#~ "domain name with protocol (example http://example.com) and choose "
-#~ "recovery mode to be <b>Change domain name</b>"
-#~ msgstr ""
-#~ "Si ha cambiado su nombre de dominio, por favor, rellene este campo nombre "
-#~ "de dominio anterior con el protocolo (ejemplo http://example.com) y elija "
-#~ "el modo de recuperación para ser <b> Cambiar nombre de dominio </ b>"
-
-#~ msgid ""
-#~ "Fill out date when change was made. Once you fill it share counter "
-#~ "recovery will be made for all posts that are published before this date. "
-#~ "Date shoud be filled in format <b>yyyy-mm-dd</b>."
-#~ msgstr ""
-#~ "Llene la fecha cuando se hizo el cambio. Una vez que usted lo llene, la "
-#~ "recuperación del contador de partes se hará para todos los posts que se "
-#~ "publiquen antes de esta fecha. La fecha debe rellenarse en el formato <b> "
-#~ "aaaa-mm-dd </ b>."
-
-#~ msgid "Convert and import settings from previous version 2.x/1.x"
-#~ msgstr ""
-#~ "Convertir e importar configuraciones de la versión anterior 2.x / 1.x"
-
-#~ msgid "Import settings for"
-#~ msgstr "Importar configuración para"
-
-#~ msgid ""
-#~ "Warning! Pressing this button will convert and apply settings from "
-#~ "previous versions of product. All your current options will be replaced. "
-#~ "Please note that not all options can be automatically imported and "
-#~ "applied like Advanced options by post type and button position because of "
-#~ "different available settings."
-#~ msgstr ""
-#~ "¡Advertencia! Al pulsar este botón se convertirán y aplicarán ajustes de "
-#~ "versiones anteriores del producto. Todas sus opciones actuales serán "
-#~ "reemplazadas. Tenga en cuenta que no todas las opciones se pueden "
-#~ "importar y aplicar automáticamente como opciones avanzadas por tipo de "
-#~ "puesto y la posición del botón debido a diferentes configuraciones "
-#~ "disponibles."
-
-#~ msgid "Translate mail form texts"
-#~ msgstr "Traducir los textos del formulario de correo"
-
-#~ msgid "Translate love this button messages"
-#~ msgstr "Traducir los mensajes de este mensaje de amor"
-
-#~ msgid "Enter custom texts that will appear on button hover"
-#~ msgstr "Introduce textos personalizados que aparecerán en el botón"
-
-#~ msgid "Plugin module texts"
-#~ msgstr "Textos del módulo de complementos"
-
-#~ msgid ""
-#~ "Include options to translate build in module texts that have no field in "
-#~ "module settings"
-#~ msgstr ""
-#~ "Incluir opciones para traducir construir en textos de módulo que no "
-#~ "tienen ningún campo en la configuración del módulo"
-
-#~ msgid "Activate customization of template"
-#~ msgstr "Activar la personalización de la plantilla"
-
-#~ msgid ""
-#~ "Customization allows you to change colors of each button or total "
-#~ "counter. Your are also able to activate customizer for specific pages "
-#~ "only via on post styles."
-#~ msgstr ""
-#~ "La personalización le permite cambiar los colores de cada botón o "
-#~ "contador total. También son capaces de activar personalizador para "
-#~ "páginas específicas sólo a través de estilos de post."
-
-#~ msgid "Total Counter"
-#~ msgstr "Contador Total"
-
-#~ msgid "Customize the total counter"
-#~ msgstr "Personalizar el contador total"
-
-#~ msgid "Color customization for all social networks"
-#~ msgstr "Personalización del color para todas las redes sociales"
-
-#~ msgid "Choose color settings that will be applied for all social networks"
-#~ msgstr ""
-#~ "Elige la configuración de color que se aplicará a todas las redes sociales"
-
-#~ msgid "Additional custom CSS"
-#~ msgstr "CSS personalizado adicional"
-
-#~ msgid ""
-#~ "Provide your own custom CSS code that will be used only when plugin is "
-#~ "active"
-#~ msgstr ""
-#~ "Proporcione su propio código CSS personalizado que se utilizará sólo "
-#~ "cuando el complemento esté activo"
-
-#~ msgid "Additional custom CSS that will be added to footer"
-#~ msgstr "CSS personalizado adicional que se agregará al pie de página"
-
-#~ msgid ""
-#~ "Add custom CSS code here if you wish that code to be included into footer "
-#~ "of site"
-#~ msgstr ""
-#~ "Añadir código CSS personalizado aquí si desea que el código se incluya en "
-#~ "el pie de página"
-
-#~ msgid "Activate customization of followers counter colors"
-#~ msgstr ""
-#~ "Activar la personalización de los colores de los contadores de seguidores"
-
-#~ msgid ""
-#~ "Activate this option to get range of options to change color for each "
-#~ "network into followers counter. The change will be applied on selected "
-#~ "template and on any instance of follower buttons"
-#~ msgstr ""
-#~ "Active esta opción para obtener un rango de opciones para cambiar el "
-#~ "color de cada red en el contador de seguidores. El cambio se aplicará en "
-#~ "la plantilla seleccionada y en cualquier instancia de los botones "
-#~ "seguidores"
-
-#~ msgid "Display Settings for Plugin Integration"
-#~ msgstr "Configuración de visualización para la integración de complementos"
-
-#~ msgid "Advanced custom share message by social network"
-#~ msgstr "Mensaje compartido personalizado avanzado por red social"
-
-#~ msgid "URL:"
-#~ msgstr "URL:"
-
-#~ msgid "Message:"
-#~ msgstr "Mensaje:"
-
-#~ msgid "Image:"
-#~ msgstr "Imagen:"
-
-#~ msgid "Description:"
-#~ msgstr "Descripción:"
-
-#~ msgid "Big"
-#~ msgstr "Grande"
-
-#~ msgid "Metro (Retina)"
-#~ msgstr "Metro (Retina)"
-
-#~ msgid "Big (Retina)"
-#~ msgstr "Big (Retina)"
-
-#~ msgid "Light (Retina)"
-#~ msgstr "Light (Retina)"
-
-#~ msgid "Flat (Retina)"
-#~ msgstr "Flat (Retina)"
-
-#~ msgid "Tiny (Retina)"
-#~ msgstr "Tiny (Retina)"
-
-#~ msgid "Round (Retina)"
-#~ msgstr "Round (Retina)"
-
-#~ msgid "Modern (Retina)"
-#~ msgstr "Moderno (Retina)"
-
-#~ msgid "Circles (Retina)"
-#~ msgstr "Círculos (Retina)"
-
-#~ msgid "Blocks (Retina)"
-#~ msgstr "Bloques (Retina)"
-
-#~ msgid "Dark (Retina)"
-#~ msgstr "Oscuro (Retina)"
-
-#~ msgid "Grey Circles (Retina)"
-#~ msgstr "Círculos Grises (Retina)"
-
-#~ msgid "Grey Blocks (Retina)"
-#~ msgstr "Bloques Grises (Retina)"
-
-#~ msgid "Clear (Retina)"
-#~ msgstr "Claro (Retina)"
-
-#~ msgid "Copy (Retina)"
-#~ msgstr "Copia (Retina)"
-
-#~ msgid "Dimmed (Retina)"
-#~ msgstr "Dimmed (Retina)"
-
-#~ msgid "Grey (Retina)"
-#~ msgstr "Gris (Retina)"
-
-#~ msgid "Default 3.0 (Retina)"
-#~ msgstr "Por defecto 3.0 (Retina)"
-
-#~ msgid "Jumbo (Retina)"
-#~ msgstr "Jumbo (Retina)"
-
-#~ msgid "Jumbo Rounded (Retina)"
-#~ msgstr "Jumbo Redondeado (Retina)"
-
-#~ msgid "Fancy (Retina)"
-#~ msgstr "Fancy (Retina)"
-
-#~ msgid "Deluxe (Retina)"
-#~ msgstr "Deluxe (Retina)"
-
-#~ msgid "Modern Slim (Retina)"
-#~ msgstr "Moderno Slim (Retina)"
-
-#~ msgid "Bold (Retina)"
-#~ msgstr "Negrita (Retina)"
-
-#~ msgid "Fancy Bold (Retina)"
-#~ msgstr "Fancy Negrita (Retina)"
-
-#~ msgid "Retro (Retina)"
-#~ msgstr "Retro (Retina)"
-
-#~ msgid "Metro Bold (Retina)"
-#~ msgstr "Metro Bold (Retina)"
-
-#~ msgid "Import posts settings"
-#~ msgstr "Importar configuración de publicaciones"
-
-#~ msgid "Import followers counter settings"
-#~ msgstr "Importar configuración del contador de seguidores"
-
-#~ msgid "Import click log data from previous versions"
-#~ msgstr "Importar datos de registro de clics de versiones anteriores"
-
-#~ msgid "Style, Align & Width"
-#~ msgstr "Estilo, Alinear y Ancho"
-
-#~ msgid "Affiliate & Point Plugin Integration"
-#~ msgstr "Integración de complementos de afiliados y puntos"
-
-#~ msgid "Message before/after/above buttons"
-#~ msgstr "Botones de mensaje antes / después / arriba"
-
-#~ msgid "Where to display"
-#~ msgstr "Dónde mostrar"
-
-#~ msgid "Post Types & Plugins"
-#~ msgstr "Tipos de post y complementos"
-
-#~ msgid "Display Position Settings"
-#~ msgstr "Configuración de la posición de visualización"
-
-#~ msgid "Action Type"
-#~ msgstr "tipo de acción"
-
-#~ msgid "Like/Follow Options"
-#~ msgstr "Opciones de Me gusta / Seguidores"
-
-#~ msgid "Custom HTML Message"
-#~ msgstr "Mensaje HTML personalizado"
-
-#~ msgid "Custom Code"
-#~ msgstr "Código personalizado"
-
-#~ msgid "Optin form from Easy Optin"
-#~ msgstr "Forma de Easy Optin"
-
-#~ msgid "Choose your default button styles"
-#~ msgstr "Elija los estilos de botón predeterminados"
-
-#~ msgid ""
-#~ "Default button style and width will be used if you did not make any "
-#~ "customizations for position, post type or via shortcode. The previews "
-#~ "below are rendered based on last saved template in settings (if you "
-#~ "change the template but did not save options do it now to see how buttons "
-#~ "will look with it)."
-#~ msgstr ""
-#~ "El estilo y el ancho del botón predeterminado se utilizarán si no ha "
-#~ "realizado ninguna personalización para la posición, el tipo de "
-#~ "publicación o el código abreviado. Las vistas preliminares a continuación "
-#~ "se procesan en función de la última plantilla guardada en la "
-#~ "configuración (si cambia la plantilla pero no guarda opciones, hágalo "
-#~ "ahora para ver cómo se verán los botones con ella)."
-
-#~ msgid "Button presentation style"
-#~ msgstr "Estilo de presentación del botón"
-
-#~ msgid ""
-#~ "Choose general button placement and presentation styles that will be used "
-#~ "as default if no customization is made"
-#~ msgstr ""
-#~ "Elija la colocación general de botones y los estilos de presentación que "
-#~ "se usarán como predeterminados si no se realiza ninguna personalización."
-
-#~ msgid "Buttons display style"
-#~ msgstr "Estilo de visualización de botones"
-
-#~ msgid "Select your default button style"
-#~ msgstr "Seleccione el estilo de botón predeterminado"
-
-#~ msgid ""
-#~ "Choose how buttons\n"
-#~ "\t\tto be aligned. Default position is left but you can also select\n"
-#~ "\t\tRight or Center"
-#~ msgstr ""
-#~ "Elija cómo los botones\n"
-#~ "\t\tPara alinearse. La posición predeterminada está a la izquierda pero "
-#~ "también puede seleccionar\n"
-#~ "\t\tDerecho o Centro"
-
-#~ msgid ""
-#~ "Animations\n"
-#~ "\t\tare provided with CSS transitions and work on best with retina\n"
-#~ "\t\ttemplates."
-#~ msgstr ""
-#~ "Animaciones\n"
-#~ "\t\tSe proporcionan con transiciones CSS y trabajan mejor con la retina\n"
-#~ "\t\tplantillas."
-
-#~ msgid "Width of share buttons"
-#~ msgstr "Ancho de los botones de acciones"
-
-#~ msgid ""
-#~ "Choose between automatic width, pre defined width or display in columns."
-#~ msgstr ""
-#~ "Elija entre ancho automático, ancho predefinido o mostrar en columnas."
-
-#~ msgid ""
-#~ "Personalize settings for each width style that you can use for buttons"
-#~ msgstr ""
-#~ "Personalizar la configuración de cada estilo de ancho que puede utilizar "
-#~ "para los botones"
-
-#~ msgid ""
-#~ "If you decide to use dinamically order please note that it will not work "
-#~ "with real time share counters."
-#~ msgstr ""
-#~ "Si decide utilizar dinámicamente la orden, tenga en cuenta que no "
-#~ "funcionará con contadores de acciones en tiempo real."
-
-#~ msgid "Additional network settings"
-#~ msgstr "Configuración de red adicional"
-
-#~ msgid "Click on network name to expand additional advanced settings"
-#~ msgstr ""
-#~ "Haga clic en el nombre de la red para ampliar la configuración avanzada "
-#~ "adicional"
-
-#~ msgid "Username and Hashtags"
-#~ msgstr "Nombre de usuario y Hashtags"
-
-#~ msgid ""
-#~ "Provide default Twitter username and hashtags to be included into "
-#~ "messages."
-#~ msgstr ""
-#~ "Proporcione el nombre de usuario y los hashtags predeterminados de "
-#~ "Twitter para incluirlos en los mensajes."
-
-#~ msgid "Username to be mentioned:"
-#~ msgstr "Nombre de usuario a ser mencionado:"
-
-#~ msgid ""
-#~ "If you wish a twitter username to be mentioned in tweet write it here. "
-#~ "Enter your username without @ - example twittername. This text will be "
-#~ "appended to tweet message at the end. Please note that if you activate "
-#~ "custom share address option this will be added to custom share message."
-#~ msgstr ""
-#~ "Si desea que un nombre de usuario de Twitter sea mencionado en tweet, "
-#~ "escríbalo aquí. Ingrese su nombre de usuario sin @ - ejemplo twittername. "
-#~ "Este texto se añadirá al mensaje de tweet al final. Tenga en cuenta que "
-#~ "si activa la opción de dirección compartida personalizada, ésta se "
-#~ "agregará al mensaje compartido personalizado."
-
-#~ msgid "Hashtags to be added:"
-#~ msgstr "Hashtags que se añadirán:"
-
-#~ msgid ""
-#~ "If you wish hashtags to be added to message write them here. You can set "
-#~ "one or more (if more then one separate them with comma (,)) Example: "
-#~ "demotag1,demotag2."
-#~ msgstr ""
-#~ "Si desea que los hashtags se añadan al mensaje, escríbalos aquí. Puede "
-#~ "establecer uno o más (si más de uno se separan con coma (,)) Ejemplo: "
-#~ "demotag1, demotag2."
-
-#~ msgid "Use post tags as hashtags"
-#~ msgstr "Usar etiquetas de publicación como hashtags"
-
-#~ msgid ""
-#~ "Activate this option to use your current post tags as hashtags. When this "
-#~ "option is active the default hashtags will be replaced with post tags "
-#~ "when there are such post tags."
-#~ msgstr ""
-#~ "Active esta opción para utilizar sus etiquetas de publicación actuales "
-#~ "como hashtags. Cuando esta opción está activa, los hashtags "
-#~ "predeterminados se reemplazarán con etiquetas de publicación cuando "
-#~ "existan dichas etiquetas de publicación."
-
-#~ msgid "Twitter message optimization"
-#~ msgstr "Optimización de mensajes de Twitter"
-
-#~ msgid ""
-#~ "Twitter message optimization allows you to truncate your message if it "
-#~ "exceeds the 140 characters length of message."
-#~ msgstr ""
-#~ "La optimización de mensajes de Twitter le permite truncar su mensaje si "
-#~ "excede los 140 caracteres de longitud del mensaje."
-
-#~ msgid "Activate message optimization."
-#~ msgstr "Traducción:"
-
-#~ msgid ""
-#~ "Choose the order of components to be removed till reaching the limit of "
-#~ "characters"
-#~ msgstr ""
-#~ "Elija el orden de los componentes que se van a eliminar hasta llegar al "
-#~ "límite de caracteres"
-
-#~ msgid "Add ... (read more dots) to truncated tweets."
-#~ msgstr "Añadir ... (leer más puntos) a tweets truncados."
-
-#~ msgid "Facebook Advanced Sharing"
-#~ msgstr "Compartición Avanzada de Facebook"
-
-#~ msgid ""
-#~ "For proper work of advanced Facebook sharing you need to provide "
-#~ "application id. If you don't have you need to create one. To create "
-#~ "Facebook Application use this link: http://developers.facebook.com/apps/"
-#~ msgstr ""
-#~ "Para el trabajo adecuado de Facebook compartido avanzado que necesita "
-#~ "para proporcionar id de aplicación. Si no lo tienes, necesitas crear uno. "
-#~ "Para crear una aplicación Facebook, utilice este enlace: http://"
-#~ "developers.facebook.com/apps/"
-
-#~ msgid "Disable Pinterest Pin any image:"
-#~ msgstr "Desactivar Pin de Pinterest cualquier imagen:"
-
-#~ msgid ""
-#~ "If you disable Pinterest sniff for images plugin will use for share post "
-#~ "featured image or custom share image you provide in post settings."
-#~ msgstr ""
-#~ "Si deshabilita Pinterest sniff para imágenes plugin se utilizará para la "
-#~ "imagen compartida compartir la imagen o compartir la imagen que usted "
-#~ "proporciona en la configuración de post."
-
-#~ msgid ""
-#~ "Specify if the subscribe button is opening a content box below the button "
-#~ "or if the button is linked to the \"subscribe url\" below."
-#~ msgstr ""
-#~ "Especifique si el botón de suscripción está abriendo un cuadro de "
-#~ "contenido debajo del botón o si el botón está vinculado al \"url de "
-#~ "suscripción\" a continuación."
-
-#~ msgid "Subscribe URL"
-#~ msgstr "URL de suscripción"
-
-#~ msgid ""
-#~ "Link the Subscribe button to this URL. This can be the url to your "
-#~ "subscribe page, facebook fanpage, RSS feed etc. e.g. http://yoursite.com/"
-#~ "subscribe"
-#~ msgstr ""
-#~ "Vincule el botón Suscribirse a esta dirección URL. Esta puede ser la URL "
-#~ "de su página de suscripción, página de fans de Facebook, RSS, etc., etc. "
-#~ "http://sitioweb.com/subscribe"
-
-#~ msgid "Subscribe content box"
-#~ msgstr "Suscribirse a contenido en modo caja"
-
-#~ msgid ""
-#~ "Define the content of the opening toggle subscribe window here. Use "
-#~ "formulars, like button, links or any other text. Shortcodes are "
-#~ "supported, e.g.: [contact-form-7]. Note that if you use subscribe button "
-#~ "outside content display positions content will open as popup"
-#~ msgstr ""
-#~ "Defina aquí el contenido de la ventana de suscripción de conmutación de "
-#~ "apertura. Utilice formularios, como el botón, los acoplamientos o "
-#~ "cualquier otro texto. Se apoyan los códigos cortos, por ejemplo: [contact-"
-#~ "form-7]. Tenga en cuenta que si utiliza el botón de suscripción fuera de "
-#~ "las posiciones de visualización de contenido, el contenido se abrirá como "
-#~ "pop-up"
-
-#~ msgid "Specify subscribe button Easy Optin design for content"
-#~ msgstr ""
-#~ "Especificar el botón de suscripción Easy Optin diseño para el contenido"
-
-#~ msgid ""
-#~ "Choose default design that you will use with Easy Optin for content "
-#~ "display methods"
-#~ msgstr ""
-#~ "Elija el diseño predeterminado que utilizará con Easy Option para los "
-#~ "métodos de visualización de contenido"
-
-#~ msgid "Specify subscribe button Easy Optin design for popup"
-#~ msgstr "Especifique el botón de suscripción Easy Optin diseño para popup"
-
-#~ msgid "Email button send options"
-#~ msgstr "Opciones de envío del botón de  email"
-
-#~ msgid ""
-#~ "Choose how you wish mail button to operate. By default it uses the build "
-#~ "in pop up window with sendmail option but you can change this to link "
-#~ "option to force use of client mail program."
-#~ msgstr ""
-#~ "Elija cómo desea que funcione el botón Correo. De forma predeterminada "
-#~ "utiliza la ventana de creación en pop-up con la opción sendmail, pero "
-#~ "puede cambiar esta opción para vincular a la fuerza de uso del programa "
-#~ "de correo del cliente."
-
-#~ msgid "Pop up mail form options"
-#~ msgstr "Opciones de formulario de correo Pop up"
-
-#~ msgid "Antispam Captcha Verification"
-#~ msgstr "Antispam Captcha Verificación"
-
-#~ msgid ""
-#~ "Fill both fields for question and answer to prevent sending message "
-#~ "without entering the correct answer."
-#~ msgstr ""
-#~ "Rellene los dos campos de pregunta y respuesta para evitar enviar "
-#~ "mensajes sin introducir la respuesta correcta."
-
-#~ msgid "Customize default mail message"
-#~ msgstr "Personalizar mensaje de correo predeterminado"
-
-#~ msgid ""
-#~ "You can customize texts to display when visitors share your content by "
-#~ "mail button. To perform customization, you can use %%title%%, %%siteurl%"
-#~ "%, %%permalink%% or %%image%% variables."
-#~ msgstr ""
-#~ "Puede personalizar los textos para que se muestren cuando los visitantes "
-#~ "comparten su contenido por correo. Para realizar la personalización, "
-#~ "puede utilizar %%title%%, %%siteurl%%, %%permalink%% or %%image%% "
-#~ "variables."
-
-#~ msgid "Use for printing printfreidly.com"
-#~ msgstr "Uso para impresión printfreidly.com"
-
-#~ msgid "StumbleUpon"
-#~ msgstr "StumbleUpon"
-
-#~ msgid "Do not generate shortlinks"
-#~ msgstr "No genere vínculos abreviados"
-
-#~ msgid "Flattr"
-#~ msgstr "Flattr"
-
-#~ msgid "Flattr Username"
-#~ msgstr "Nombre de usuario Flattr"
-
-#~ msgid "The Flattr account to which the buttons will be assigned."
-#~ msgstr "La cuenta Flattr a la que se asignarán los botones."
-
-#~ msgid "Additional Flattr tags for your posts"
-#~ msgstr "Etiquetas adicionales de Flattr para sus publicaciones"
-
-#~ msgid "Comma separated list of additional tags to use in Flattr buttons."
-#~ msgstr ""
-#~ "Lista separada por comas de etiquetas adicionales para utilizar en los "
-#~ "botones Flattr."
-
-#~ msgid "Default category for your posts"
-#~ msgstr "Categoría predeterminada para tus publicaciones"
-
-#~ msgid "Default language for your posts"
-#~ msgstr "Idioma predeterminado para tus publicaciones"
-
-#~ msgid "Counter update mode"
-#~ msgstr "Modo de actualización del contador"
-
-#~ msgid ""
-#~ "Choose how your counters will update. Real time share counter will update "
-#~ "on each page load and on high traffic sites they can produce extreme load "
-#~ "over admin-ajax WordPress component. Cached counters will update once on "
-#~ "chosen interval (if you use cache plugin and they do not update "
-#~ "frequently you can activate in advanced options cache compatible update "
-#~ "mode)."
-#~ msgstr ""
-#~ "Elija cómo se actualizarán sus contadores. El contador de acciones en "
-#~ "tiempo real se actualizará en cada carga de página y en sitios de alto "
-#~ "tráfico pueden producir carga extrema sobre el componente de admin-ajax "
-#~ "WordPress. Los contadores en caché se actualizarán una vez en el "
-#~ "intervalo elegido (si utiliza el complemento de caché y no se actualizan "
-#~ "con frecuencia, puede activar en el modo de actualización compatible con "
-#~ "caché de opciones avanzadas)."
-
-#~ msgid "Button Counters"
-#~ msgstr "Contadores de botones"
-
-#~ msgid "Additional button counter settings"
-#~ msgstr "Configuración adicional del contador de botones"
-
-#~ msgid ""
-#~ "Choose your Twitter counter working mode. If you select usage of "
-#~ "NewShareCounts.com to make it work you need to visit their site and fill "
-#~ "your site address and click sign in button using your Twitter account. "
-#~ "Visit <a href=\"http://newsharecounts.com/\" target=\"_blank\">http://"
-#~ "newsharecounts.com/</a>"
-#~ msgstr ""
-#~ "Elija su modo de trabajo de contador de Twitter. Si selecciona el uso de "
-#~ "NewShareCounts.com para que funcione, debe visitar su sitio y llenar la "
-#~ "dirección de su sitio y hacer clic en el botón de inicio de sesión "
-#~ "utilizando su cuenta de Twitter. Visitar <a href=\"http://newsharecounts."
-#~ "com/\" target=\"_blank\">http://newsharecounts.com/</a>"
-
-#~ msgid ""
-#~ "To avoid missing Facebook share counter due to rate limits we recommend "
-#~ "to fill access token key. Access token generation of counter can work "
-#~ "only when you do not use real time counters. To generate your access "
-#~ "token key please visit <a href=\"http://tools.creoworx.com/facebook/\" "
-#~ "target=\"_blank\">http://tools.creoworx.com/facebook/</a> and follow "
-#~ "instructions to generate application based token"
-#~ msgstr ""
-#~ "Para evitar que se pierda el contador de cuotas de Facebook debido a los "
-#~ "límites de velocidad recomendamos llenar la clave de token de acceso. La "
-#~ "generación de tokens de acceso del contador puede funcionar sólo cuando "
-#~ "no se utilizan contadores en tiempo real. Para generar su clave de "
-#~ "acceso, por favor visite <a href=\"http://tools.creoworx.com/facebook/\" "
-#~ "target=\"_blank\">http://tools.creoworx.com/facebook/</a> Y siga las "
-#~ "instrucciones para generar token basado en la aplicación"
-
-#~ msgid ""
-#~ "Activate internal counters for all networks that does not support API "
-#~ "count"
-#~ msgstr ""
-#~ "Activar contadores internos para todas las redes que no admiten el número "
-#~ "de API"
-
-#~ msgid ""
-#~ "Activate internal\n"
-#~ "\t\tcounters for all networks that does not have access to API\n"
-#~ "\t\tcounter functions. If this option is active counters are stored\n"
-#~ "\t\tin each post/page options and may be different from actual"
-#~ msgstr ""
-#~ "Activar funciones internas\n"
-#~ "\t\tContadores para todas las redes que no tienen acceso a API\n"
-#~ "\t\tFunciones de contador. Si esta opción está activa, los contadores se "
-#~ "almacenan\n"
-#~ "\t\tEn cada opción de publicación / página y puede ser diferente de"
-
-#~ msgid "Always display full value"
-#~ msgstr "Mostrar siempre el valor completo"
-
-#~ msgid "Additional total counter settings"
-#~ msgstr "Ajustes totales adicionales del contador"
-
-#~ msgid "Change total text"
-#~ msgstr "Cambiar texto total"
-
-#~ msgid ""
-#~ "This option allows you to change text Total that appear when left/right "
-#~ "position of total counter is selected."
-#~ msgstr ""
-#~ "Esta opción le permite cambiar el Total de texto que aparece cuando se "
-#~ "selecciona la posición izquierda / derecha del contador total."
-
-#~ msgid "Append text to total counter when big number styles are active"
-#~ msgstr ""
-#~ "Añade texto al contador total cuando hay estilos de números grandes "
-#~ "activos"
-
-#~ msgid ""
-#~ "This option allows you to add custom text below counter when big number "
-#~ "styles are active. For example you can add text shares."
-#~ msgstr ""
-#~ "Esta opción le permite agregar texto personalizado debajo del contador "
-#~ "cuando los estilos de números grandes están activos. Por ejemplo, puede "
-#~ "agregar partes de texto."
-
-#~ msgid "Options is applied when total counter with icon is selected"
-#~ msgstr "Opciones se aplica cuando se selecciona el contador total con icono"
-
-#~ msgid "Advanced counter settings"
-#~ msgstr "Configuración avanzada del contador"
-
-#~ msgid "Cached counters"
-#~ msgstr "Contadores guardados en caché"
-
-#~ msgid "Activate cache plugin update mode"
-#~ msgstr "Activar el modo de actualización del complemento de caché"
-
-#~ msgid ""
-#~ "Activate this option if you use cache plugin and counters do not update "
-#~ "often"
-#~ msgstr ""
-#~ "Active esta opción si utiliza el complemento de caché y los contadores no "
-#~ "se actualizan a menudo"
-
-#~ msgid "Social Share Click Logging"
-#~ msgstr "Compartir social Haga clic en Registro"
-
-#~ msgid "Activate Statistics"
-#~ msgstr "Activar estadísticas"
-
-#~ msgid ""
-#~ "Click statistics handle click on share buttons and you are able to see "
-#~ "detailed view of user activity. Please note that plugin log clicks of "
-#~ "buttons."
-#~ msgstr ""
-#~ "Haga clic en estadísticas, haga clic en los botones compartidos y podrá "
-#~ "ver una vista detallada de la actividad del usuario. Tenga en cuenta que "
-#~ "el plugin hace clic en los botones."
-
-#~ msgid "Homepage settings"
-#~ msgstr "Configuración de inicio"
-
-#~ msgid ""
-#~ "Configure global homepage share options that will be used on your "
-#~ "homepage when it is not a static page (page generated from list of posts "
-#~ "or dynamic generated page by theme). Those settings will work only when "
-#~ "one of options below is active."
-#~ msgstr ""
-#~ "Configure las opciones globales de compartición de página principal que "
-#~ "se utilizarán en su página principal cuando no sea una página estática "
-#~ "(página generada a partir de la lista de publicaciones o página generada "
-#~ "dinámicamente por tema). Esos ajustes funcionarán sólo cuando una de las "
-#~ "opciones siguientes esté activa."
-
-#~ msgid ""
-#~ "Default share image will be used when page or post doesn't have featured "
-#~ "image or custom setting for share image."
-#~ msgstr ""
-#~ "La imagen compartida predeterminada se utilizará cuando la página o la "
-#~ "publicación no tengan una imagen o una configuración personalizada para "
-#~ "compartir imágenes."
-
-#~ msgid ""
-#~ "If you recently move from http to https and realize that shares are gone "
-#~ "please activate this option and check are they back. In case this does "
-#~ "not help contact us in support system <a href=\"http://support.creoworx."
-#~ "com\" target=\"_blank\">http://support.creoworx.com</a> for addtional "
-#~ "instructions"
-#~ msgstr ""
-#~ "Si recientemente pasaste de http a https y te das cuenta de que las "
-#~ "acciones se han ido, por favor activa esta opción y comprueba si están de "
-#~ "vuelta. En caso de que esto no ayude a ponerse en contacto con nosotros "
-#~ "en el sistema de soporte <a href=\"http://support.creoworx.com\" target="
-#~ "\"_blank\"> http://support.creoworx.com </a> para obtener instrucciones "
-#~ "adicionales"
-
-#~ msgid ""
-#~ "If you see shortcodes in your description activate this option to extract "
-#~ "as full rendered content. <br/><b>Warning! Activation of this option may "
-#~ "affect work of other plugins or may lead to missing share buttons. If you "
-#~ "notice something that is not OK with site immediately deactivate it.</b>"
-#~ msgstr ""
-#~ "Si ve los shortcodes en su descripción, active esta opción para extraer "
-#~ "como contenido renderizado completo.. <br/><b>¡Advertencia! La activación "
-#~ "de esta opción puede afectar el trabajo de otros complementos o puede dar "
-#~ "lugar a que falten los botones de acciones. Si nota algo que no está bien "
-#~ "con el sitio de inmediato desactivarlo.</b>"
-
-#~ msgid "Activate custom share message"
-#~ msgstr "Activar mensaje compartido personalizado"
-
-#~ msgid ""
-#~ "Activation of custom share message will make all social buttons that are "
-#~ "automatically generated on site to share it."
-#~ msgstr ""
-#~ "La activación del mensaje compartido personalizado hará que todos los "
-#~ "botones sociales que se generen automáticamente en el sitio para "
-#~ "compartirlo."
-
-#~ msgid "Integration via points for click on links"
-#~ msgstr "Integración vía puntos para hacer clic en enlaces"
-
-#~ msgid ""
-#~ "Award users for click on share buttons using the build in hook for click "
-#~ "on links inside myCred"
-#~ msgstr ""
-#~ "Premio a los usuarios para hacer clic en los botones de compartir con la "
-#~ "construcción en el gancho para hacer clic en los enlaces dentro de myCred"
-
-#~ msgid ""
-#~ "Provide custom meta key for the points that user will get to share link. "
-#~ "To create your own please visit this tutorial: <a href=\"http://codex."
-#~ "mycred.me/get-started/multiple-point-types/\" target=\"_blank\">http://"
-#~ "codex.mycred.me/get-started/multiple-point-types/</a>. Leave blank to use "
-#~ "the default (mycred_default)"
-#~ msgstr ""
-#~ "Proporcione una meta clave personalizada para los puntos que el usuario "
-#~ "obtendrá para compartir el vínculo. Para crear tu propio, visita este "
-#~ "tutorial.: <a href=\"http://codex.mycred.me/get-started/multiple-point-"
-#~ "types/\" target=\"_blank\">http://codex.mycred.me/get-started/multiple-"
-#~ "point-types/</a>. Deje en blanco para usar el valor predeterminado "
-#~ "(mycred_default)"
-
-#~ msgid "Integration via Easy Social Share Buttons hook"
-#~ msgstr "Integración a través de Easy Social Share Buttons hook"
-
-#~ msgid ""
-#~ "Award users for click on share buttons using the custom hook for points "
-#~ "for social sharing"
-#~ msgstr ""
-#~ "Recompensa a los usuarios para hacer clic en los botones de compartir "
-#~ "utilizando el gancho personalizado para los puntos de uso compartido "
-#~ "social"
-
-#~ msgid "Activate myCred integration for points for social sharing"
-#~ msgstr ""
-#~ "Activar la integración de myCred para puntos de uso compartido social"
-
-#~ msgid ""
-#~ "Automatically appends an affiliate's ID to Easy Social Share Buttons "
-#~ "sharing links that are generated. You need to have installed AffiliateWP "
-#~ "plugin to use it: <a href=\"https://affiliatewp.com/\" target=\"_blank"
-#~ "\">https://affiliatewp.com/</a>"
-#~ msgstr ""
-#~ "Añade automáticamente un ID de afiliado a los botones de Easy Social "
-#~ "Share compartiendo los vínculos que se generan. Necesitas tener instalado "
-#~ "el plugin AffiliateWP para usarlo: <a href=\"https://affiliatewp.com/\" "
-#~ "target=\"_blank\">https://affiliatewp.com/</a>"
-
-#~ msgid "Append Affiliate ID to custom shared address in shortcodes"
-#~ msgstr ""
-#~ "Agregar ID de afiliado a la dirección compartida personalizada en los "
-#~ "códigos cortos"
-
-#~ msgid "Affiliates Integration"
-#~ msgstr "Integración de afiliados"
-
-#~ msgid ""
-#~ "Automatically appends an affiliate's ID to Easy Social Share Buttons "
-#~ "sharing links that are generated. You need to have installed Affiliates "
-#~ "plugin to use it: <a href=\"https://wordpress.org/plugins/affiliates/\" "
-#~ "target=\"_blank\">https://wordpress.org/plugins/affiliates/</a>"
-#~ msgstr ""
-#~ "Añade automáticamente el ID de un afiliado a los botones de Easy Social "
-#~ "Share compartiendo los vínculos que se generan. Necesitas tener instalado "
-#~ "el complemento de afiliados para usarlo: <a href=\"https://wordpress.org/"
-#~ "plugins/affiliates/\" target=\"_blank\"> https://wordpress.org/plugins/"
-#~ "affiliates/</a >"
-
-#~ msgid "Choose post types to display buttons"
-#~ msgstr "Elija los tipos de publicación para mostrar los botones"
-
-#~ msgid "Where to display buttons"
-#~ msgstr "Dónde mostrar los botones"
-
-#~ msgid ""
-#~ "Choose post types where you wish buttons to appear. If you are running "
-#~ "WooCommerce store you can choose between post type Products which will "
-#~ "display share buttons into product description or option to display "
-#~ "buttons below price."
-#~ msgstr ""
-#~ "Elija los tipos de publicación donde desee que aparezcan los botones. Si "
-#~ "usted está ejecutando tienda WooCommerce puede elegir entre los tipos de "
-#~ "post tipo que mostrará los botones de compartir en la descripción del "
-#~ "producto o la opción de mostrar los botones por debajo del precio."
-
-#~ msgid "Display in post excerpt"
-#~ msgstr "Mostrar en el extracto del post"
-
-#~ msgid ""
-#~ "Activate this option if your theme is using excerpts and you wish to "
-#~ "display share buttons in excerpts"
-#~ msgstr ""
-#~ "Active esta opción si su tema utiliza extractos y desea mostrar los "
-#~ "botones de compartir en extractos"
-
-#~ msgid "Deactivate display on"
-#~ msgstr "Desactivar la visualización en"
-
-#~ msgid ""
-#~ "Deactivate buttons on posts/pages with these IDs. Comma separated: \"11, "
-#~ "15, 125\". Deactivating plugin will make no style or scripts to be "
-#~ "executed for those pages/posts. Plugin also allows to deactivate only "
-#~ "specific functions on selected page/post ids. <a href=\""
-#~ msgstr ""
-#~ "Desactive los botones en las publicaciones / páginas con estos ID. "
-#~ "Separado por comas: \"11, 15, 125\". Desactivar el complemento no hará "
-#~ "que ningún estilo o secuencias de comandos se ejecuten para esas "
-#~ "páginas / publicaciones. El complemento también permite desactivar sólo "
-#~ "funciones específicas en los id / ID de página seleccionados. <a href=\""
-
-#~ msgid "Display buttons after product price"
-#~ msgstr "Mostrar botones después del precio del producto"
-
-#~ msgid "Set custom top position of float bar"
-#~ msgstr ""
-#~ "Establecer la posición superior personalizada de la barra de flotador"
-
-#~ msgid ""
-#~ "If your current theme has fixed bar or menu you may need to provide "
-#~ "custom top position of float or it will be rendered below this sticked "
-#~ "bar. For example you can try with value 40 (which is equal to 40px from "
-#~ "top)."
-#~ msgstr ""
-#~ "Si su tema actual tiene barra fija o menú que puede necesitar para "
-#~ "proporcionar la posición superior personalizada de flotador o se "
-#~ "representará por debajo de esta barra sticked. Por ejemplo, puede "
-#~ "intentar con el valor 40 (que es igual a 40px desde arriba)."
-
-#~ msgid "Hide buttons after percent of content is viewed"
-#~ msgstr ""
-#~ "Ocultar los botones después de que se vea el porcentaje de contenido"
-
-#~ msgid "Width and positioning settings"
-#~ msgstr "Ajustes de ancho y posicionamiento"
-
-#~ msgid "Display after percent of content is passed"
-#~ msgstr "Visualización después de pasar el porcentaje de contenido"
-
-#~ msgid ""
-#~ "Provide percent of content to viewed when buttons will appear (default "
-#~ "state if this field is provided will be hidden for that display method)."
-#~ msgstr ""
-#~ "Proporcione el porcentaje del contenido que se visualizará cuando "
-#~ "aparezcan los botones (el estado predeterminado si se proporciona este "
-#~ "campo se oculta para ese método de visualización)."
-
-#~ msgid "Sidebar Appearance"
-#~ msgstr "Apariencia de la barra lateral"
-
-#~ msgid "Left or Right sidebar appearance options"
-#~ msgstr "Opciones de apariencia de la barra lateral izquierda o derecha"
-
-#~ msgid "Fixed top position of sidebar"
-#~ msgstr "Posición superior fija de la barra lateral"
-
-#~ msgid ""
-#~ "You can provide custom top position of sidebar in pixels or percents (ex: "
-#~ "100px, 15%)."
-#~ msgstr ""
-#~ "Puede proporcionar la posición superior personalizada de la barra lateral "
-#~ "en píxeles o porcentajes (por ejemplo: 100px, 15%)."
-
-#~ msgid "Display after percent of content is viewed"
-#~ msgstr "Visualización después del porcentaje de contenido visualizado"
-
-#~ msgid "Top bar appearance"
-#~ msgstr "Apariencia superior de la barra"
-
-#~ msgid ""
-#~ "If your current theme has fixed bar or menu you may need to provide "
-#~ "custom top position of top bar or it will be rendered below this sticked "
-#~ "bar. For example you can try with value 40 (which is equal to 40px from "
-#~ "top)."
-#~ msgstr ""
-#~ "Si su tema actual tiene barra fija o menú puede que tenga que "
-#~ "proporcionar la posición superior personalizada de la barra superior o se "
-#~ "representará por debajo de esta barra de sticked. Por ejemplo, puede "
-#~ "intentar con el valor 40 (que es igual a 40px desde arriba)."
-
-#~ msgid ""
-#~ "f you display WordPress admin bar for logged in users you can correct "
-#~ "float from top position for logged in users to avoid bar to be rendered "
-#~ "below WordPress admin bar."
-#~ msgstr ""
-#~ "Muestra la barra de administración de WordPress para los usuarios "
-#~ "registrados puede corregir float desde la posición superior para los "
-#~ "usuarios registrados para evitar que la barra se represente debajo de la "
-#~ "barra de administración de WordPress."
-
-#~ msgid ""
-#~ "Change default background color of top bar (default is white #FFFFFF)."
-#~ msgstr ""
-#~ "Cambiar el color de fondo predeterminado de la barra superior (el valor "
-#~ "predeterminado es blanco #FFFFFF)."
-
-#~ msgid "Top bar width, height & placement"
-#~ msgstr "Ancho, altura y colocación de la barra superior"
-
-#~ msgid "TOP BAR CUSTOM CONTENT SETTINGS"
-#~ msgstr "CONFIGURACIÓN DEL CONTENIDO PERSONALIZADO DE LA BARRA SUPERIOR"
-
-#~ msgid "Include custom content into top bar along with your share buttons"
-#~ msgstr ""
-#~ "Incluir contenido personalizado en la barra superior junto con los "
-#~ "botones de compartir"
-
-#~ msgid "Bottom bar appearance"
-#~ msgstr "Apariencia de la barra inferior"
-
-#~ msgid "Use to fit the buttons to the style of your footer area."
-#~ msgstr ""
-#~ "Utilícelo para ajustar los botones al estilo de su área de pie de página."
-
-#~ msgid ""
-#~ "Change default background color of bottom bar (default is white #FFFFFF)."
-#~ msgstr ""
-#~ "Cambiar el color de fondo predeterminado de la barra inferior (por "
-#~ "defecto es #FFFFFF blanco)."
-
-#~ msgid "Bottom bar width, height & placement"
-#~ msgstr "Anchura, altura y colocación de la barra inferior"
-
-#~ msgid "Bottom bar content settings"
-#~ msgstr "Configuración del contenido de la barra inferior"
-
-#~ msgid "Pop up window settings"
-#~ msgstr "Configuración de ventanas emergentes"
-
-#~ msgid "Pop up window display"
-#~ msgstr "Visualización de ventanas emergentes"
-
-#~ msgid "Pop up window close"
-#~ msgstr "Cerrar Pop up"
-
-#~ msgid "Fly In window settings"
-#~ msgstr "Fly In ajustes"
-
-#~ msgid "Fly in window display"
-#~ msgstr "Fly en la pantalla de la ventana"
-
-#~ msgid ""
-#~ "Activating manual display mode will allow you to show window when you "
-#~ "decide with calling following javascript function essb_flyin_show();"
-#~ msgstr ""
-#~ "La activación del modo de visualización manual le permitirá mostrar la "
-#~ "ventana cuando decida con la llamada siguiente función JavaScript "
-#~ "essb_flyin_show();"
-
-#~ msgid "Fly in window close"
-#~ msgstr "Fly en la ventana de cierre"
-
-#~ msgid "Appearance"
-#~ msgstr "Apariencia"
-
-#~ msgid "Deactivate default components"
-#~ msgstr "Desactivar componentes predeterminados"
-
-#~ msgid "Deactivate default active display elements"
-#~ msgstr "Desactivar elementos de visualización activos predeterminados"
-
-#~ msgid "Activate additional components"
-#~ msgstr "Activar componentes adicionales"
-
-#~ msgid "Activate additional display elements"
-#~ msgstr "Activar elementos de visualización adicionales"
-
-#~ msgid "Customize colors"
-#~ msgstr "Personalizar colores"
-
-#~ msgid "Customize default colors of core components"
-#~ msgstr ""
-#~ "Personalizar los colores predeterminados de los componentes principales"
-
-#~ msgid "Customize button style"
-#~ msgstr "Personalizar estilo de botón"
-
-#~ msgid "Display Position Settings: Point"
-#~ msgstr "Ajustes de posición de la pantalla: punto"
-
-#~ msgid "Point display"
-#~ msgstr "Pantalla de punto"
-
-#~ msgid "Choose location of point and style"
-#~ msgstr "Elija lugar de punto y de estilo"
-
-#~ msgid "Custom button content for Advanced panel display"
-#~ msgstr ""
-#~ "Contenido del botón personalizado para la visualización avanzada del panel"
-
-#~ msgid "Personalize display of share buttons on mobile device"
-#~ msgstr ""
-#~ "Personalizar la visualización de los botones compartidos en el "
-#~ "dispositivo móvil"
-
-#~ msgid ""
-#~ "Activate this option to change your mobile displayed positions and style "
-#~ "settings of sharing buttons"
-#~ msgstr ""
-#~ "Active esta opción para cambiar las posiciones y la configuración de "
-#~ "estilo de los botones compartidos que se muestran en el móvil."
-
-#~ msgid "Primary in content display positions"
-#~ msgstr "Primario en las posiciones de visualización de contenido"
-
-#~ msgid "Share buttons bar customization"
-#~ msgstr "Personalización de la barra de botones de Share"
-
-#~ msgid "Display total share counter"
-#~ msgstr "Mostrar el contador de cuota total"
-
-#~ msgid "Client side mobile detection"
-#~ msgstr "Detección móvil del lado del cliente"
-
-#~ msgid ""
-#~ "Client side mobile settings should be used only when you have a cache "
-#~ "plugin that cannot be configured to work with both mobile and desktop "
-#~ "version of site (see instructions on how to configure most popular cache "
-#~ "plugins on the activate mobile settings switch). <br/><br/>All settings "
-#~ "in this section use screen size of screen to detect a mobile device. If "
-#~ "you use this mode of detection all desktop display methods cannot have "
-#~ "different mobile settings on mobile device - they will display same "
-#~ "buttons just like on desktop. Personalized settings will work for mobile "
-#~ "optimized display methods only.<br/><br/>Quick note: After activating the "
-#~ "client side detection if you see your mobile display methods twice you do "
-#~ "not need a client side detection and you can turn it off.<br/><br/"
-#~ "><b>Important! After you make change in that section after updating "
-#~ "settings you need to clear cache of plugin you use to allow new css code "
-#~ "that controls display to be added.</b>"
-#~ msgstr ""
-#~ "Los ajustes de móvil del lado del cliente sólo se deben utilizar cuando "
-#~ "se tiene un complemento de caché que no se puede configurar para trabajar "
-#~ "con la versión de sitio móvil y de escritorio (consulte las instrucciones "
-#~ "sobre cómo configurar los complementos de caché más populares en el "
-#~ "conmutador de activar los ajustes móviles).\n"
-#~ "<br/><br/>Todos los ajustes de esta sección utilizan el tamaño de "
-#~ "pantalla de la pantalla para detectar un dispositivo móvil. Si utiliza "
-#~ "este modo de detección, todos los métodos de visualización de escritorio "
-#~ "no pueden tener diferentes configuraciones de dispositivos móviles en "
-#~ "dispositivos móviles; mostrarán los mismos botones como en el escritorio. "
-#~ "Las configuraciones personalizadas funcionarán sólo para los métodos de "
-#~ "visualización optimizados para móviles. <br/> <br/> Nota rápida: Después "
-#~ "de activar la detección del lado del cliente si ve los métodos de "
-#~ "visualización de su teléfono móvil dos veces, no necesita una detección "
-#~ "del lado del cliente y puede desactivarla ..<br/><br/><b>¡Importante! "
-#~ "Después de hacer el cambio en esa sección después de actualizar los "
-#~ "ajustes que necesita para borrar caché de plugin que utiliza para "
-#~ "permitir que el nuevo código css que controla la pantalla para ser "
-#~ "añadido.</b>"
-
-#~ msgid "Activate after social share action"
-#~ msgstr "Activar después de acción social"
-
-#~ msgid ""
-#~ "Activate this option to start display message after share dialog is "
-#~ "closed."
-#~ msgstr ""
-#~ "Active esta opción para iniciar el mensaje de la pantalla después de "
-#~ "cerrar el diálogo de compartir."
-
-#~ msgid "After close action type"
-#~ msgstr "Después del tipo de acción cerrada"
-
-#~ msgid "Choose your after close action."
-#~ msgstr "Elige tu acción después de cerrar."
-
-#~ msgid ""
-#~ "If you choose popular posts to be displayed you need to choose counter "
-#~ "update period that is different than Real Time counters. That display "
-#~ "action will generate top 4 most shared posts over social networks from "
-#~ "same category as original post is loaded."
-#~ msgstr ""
-#~ "Si elige publicaciones populares que se mostrarán, deberá elegir el "
-#~ "período de actualización del contador que sea distinto de los contadores "
-#~ "en tiempo real. Esta acción de visualización generará los 4 puestos más "
-#~ "compartidos en las redes sociales de la misma categoría que la "
-#~ "publicación original."
-
-#~ msgid "Pop up message settings"
-#~ msgstr "Configuración de mensajes emergentes"
-
-#~ msgid "Text before like/follow buttons"
-#~ msgstr "Texto antes de me gusta / seguir los botones"
-
-#~ msgid "Message that will appear before buttons (html supported)."
-#~ msgstr "Mensaje que aparecerá antes de los botones (html soportado)."
-
-#~ msgid "Include Google +1 button for the following url"
-#~ msgstr "Incluir el botón +1 de Google para la url siguiente"
-
-#~ msgid "Provide url address of which you have to get +1."
-#~ msgstr ""
-#~ "Proporcione la dirección de url de la cual usted tiene que conseguir +1."
-
-#~ msgid "Include Google Follow Profile button"
-#~ msgstr "Incluir el botón Seguir perfil de Google"
-
-#~ msgid "Provide url address of Google Plus profile users to follow."
-#~ msgstr ""
-#~ "Proporcione la dirección de url de los usuarios de perfil de Google Plus "
-#~ "a seguir."
-
-#~ msgid "Activate generation of short urls for sharing"
-#~ msgstr "Activar generación de URL cortas para compartir"
-
-#~ msgid ""
-#~ "Activate this option if you wish to allow generation of short urls when "
-#~ "post is shared"
-#~ msgstr ""
-#~ "Active esta opción si desea permitir la generación de URL cortas cuando "
-#~ "se comparte la publicación"
-
-#~ msgid "Generate short urls for"
-#~ msgstr "Generar URL cortas para"
-
-#~ msgid ""
-#~ "Select networks you wish to generate short urls for - you can choose from "
-#~ "recommended networks (Twitter, Mobile Messengers) or all social networks"
-#~ msgstr ""
-#~ "Seleccione las redes que desea generar urls cortas para - puede elegir "
-#~ "entre las redes recomendadas (Twitter, Mobile Messengers) o todas las "
-#~ "redes sociales"
-
-#~ msgid "Choose short url type"
-#~ msgstr "Elija el tipo de URL corto"
-
-#~ msgid ""
-#~ "Please note that usage of bit.ly requires to fill additional fields below "
-#~ "or short urls will not be generated. If you choose goo.gl as provider we "
-#~ "also recommend to generate API key due to public quota limit provided by "
-#~ "Google."
-#~ msgstr ""
-#~ "Tenga en cuenta que el uso de bit.ly requiere rellenar campos adicionales "
-#~ "debajo o no se generarán urls cortas. Si elige goo.gl como proveedor, "
-#~ "también le recomendamos que genere clave de API debido al límite de cuota "
-#~ "pública proporcionado por Google."
-
-#~ msgid ""
-#~ "Goo.gl short url service can work with or without API key. If you have a "
-#~ "high traffic site it is recommended to use API key because when anonymous "
-#~ "usage reach amount of request for time you will not get short urls. To "
-#~ "generate such key you need to visit <a href=\"https://console.developers."
-#~ "google.com/project\" target=\"_blank\">Google Developer Console</a>"
-#~ msgstr ""
-#~ "Goo.gl servicio de url corta puede trabajar con o sin clave de API. Si "
-#~ "usted tiene un sitio de alto tráfico, se recomienda utilizar la clave de "
-#~ "la API, porque cuando el uso anónimo alcance la cantidad de solicitud de "
-#~ "tiempo no obtendrá urls cortas. Para generar esta clave, necesitas "
-#~ "visitar <a href=\"https://console.developers.google.com/project\" target="
-#~ "\"_blank\">Google Developer Console</a>"
-
-#~ msgid "Choose your default template"
-#~ msgstr "Elija su plantilla predeterminada"
-
-#~ msgid ""
-#~ "Default template will be used if no other personalization to selected "
-#~ "button design is made. You can easy select different template for post "
-#~ "types (via post type settings), button position (via button position "
-#~ "settings) or add custom to your shortcodes."
-#~ msgstr ""
-#~ "La plantilla predeterminada se utilizará si no se realiza ninguna otra "
-#~ "personalización en el diseño del botón seleccionado. Usted puede "
-#~ "seleccionar fácilmente la plantilla diferente para los tipos del poste "
-#~ "(vía los ajustes del tipo del poste), posición del botón (vía ajustes de "
-#~ "la posición del botón) o agregue la aduana a sus shortcodes."
-
-#~ msgid "Deactivate display of functions"
-#~ msgstr "Desactivar la visualización de funciones"
-
-#~ msgid "Deactivate on mobile"
-#~ msgstr "Desactivar en móvil"
-
-#~ msgid "Deactivate on tablet"
-#~ msgstr "Desactivar en tablet"
-
-#~ msgid "Hide message above, before or below"
-#~ msgstr "Ocultar mensaje anterior, anterior o inferior"
-
-#~ msgid ""
-#~ "Apply selection only if you wish to modify the default network list that "
-#~ "is used over site."
-#~ msgstr ""
-#~ "Aplicar la selección sólo si desea modificar la lista de red "
-#~ "predeterminada que se utiliza en el sitio."
-
-#~ msgid ""
-#~ "Activating this option will allow you to make full personalization of "
-#~ "displayed buttons."
-#~ msgstr ""
-#~ "La activación de esta opción le permitirá realizar la personalización "
-#~ "completa de los botones mostrados."
-
-#~ msgid "Visual customizations"
-#~ msgstr "Personalizaciones visuales"
-
-#~ msgid "Buttons Align"
-#~ msgstr "Alinear Botones"
-
-#~ msgid ""
-#~ "Choose how buttons\n"
-#~ "\t\t\t\tto be aligned. Default position is left but you can also select\n"
-#~ "\t\t\t\tRight or Center"
-#~ msgstr ""
-#~ "Elija cómo los botones\n"
-#~ "\t\t\t\tPara alinearse. La posición predeterminada está a la izquierda "
-#~ "pero también puede seleccionar\n"
-#~ "\t\t\t\tDerecho o Centro"
-
-#~ msgid ""
-#~ "Animations\n"
-#~ "\t\t\t\tare provided with CSS transitions and work on best with retina\n"
-#~ "\t\t\t\ttemplates."
-#~ msgstr ""
-#~ "Animaciones\n"
-#~ "\t\t\t\tSe proporcionan con transiciones CSS y trabajan mejor con la "
-#~ "retina\n"
-#~ "\t\t\t\tplantillas."
-
-#~ msgid "Set button width"
-#~ msgstr "Ajustar el ancho del botón"
-
-#~ msgid "Width of buttons"
-#~ msgstr "Ancho de botones"
-
-#~ msgid "Fixed width share buttons"
-#~ msgstr "Botones de ancho de banda fijo"
-
-#~ msgid "Full width share buttons"
-#~ msgstr "Botones de porcentaje de ancho total"
-
-#~ msgid "Display in columns"
-#~ msgstr "Mostrar en columnas"
-
-#~ msgid "Customize text of social network over button"
-#~ msgstr "Personalice el texto de la red social sobre el botón"
-
-#~ msgid ""
-#~ "Set texts that will appear on selected display method instead of default "
-#~ "network names. Use dash (-) if you wish to remove text for that network "
-#~ "name."
-#~ msgstr ""
-#~ "Establezca los textos que aparecerán en el método de visualización "
-#~ "seleccionado en lugar de los nombres de red predeterminados. Utilice el "
-#~ "guión (-) si desea eliminar el texto para ese nombre de red."
-
-#~ msgid "Change active social networks"
-#~ msgstr "Cambiar las redes sociales activas"
-
-#~ msgid "Do not select anything if you wish to use default network listessb"
-#~ msgstr ""
-#~ "No seleccione nada si desea utilizar la lista ssb de red predeterminada "
-
-#~ msgid "Rename displayed texts for network names"
-#~ msgstr "Cambiar el nombre de los textos mostrados para los nombres de red"
-
-#~ msgid "Popular Styles"
-#~ msgstr "Estilos populares"
-
-#~ msgid "New Styles"
-#~ msgstr "Nuevos Estilos"
-
-#~ msgid "Width Based Styles"
-#~ msgstr "Estilos basados en ancho"
-
-#~ msgid "Various Button Styles"
-#~ msgstr "Varios estilos de botones"
-
-#~ msgid "Mobile Styles"
-#~ msgstr "Estilos móviles"
-
-#~ msgid "Top of content"
-#~ msgstr "Principio del contenido"
-
-#~ msgid "Bottom of content"
-#~ msgstr "Parte inferior del contenido"
-
-#~ msgid "Mobile display"
-#~ msgstr "Mostrar móvil"
-
-#~ msgid "Icons with network name appearing on hover (including total counter)"
-#~ msgstr ""
-#~ "Iconos con el nombre de la red que aparece en la posición (incluido el "
-#~ "contador total)"
-
-#~ msgid "Icons with network name appearing on hover"
-#~ msgstr "Iconos con el nombre de red que aparece en el icono"
-
-#~ msgid "Share buttons with icons only"
-#~ msgstr "Compartir botones con iconos solamente"
-
-#~ msgid "Share buttons with network name only"
-#~ msgstr "Compartir botones con sólo nombre de red"
-
-#~ msgid "Full width share buttons with counters"
-#~ msgstr "Botones compartidos de ancho total con contadores"
-
-#~ msgid "Fixed width buttons with counters"
-#~ msgstr "Botones de ancho fijo con contadores"
-
-#~ msgid "Mashable style"
-#~ msgstr "Mashable style"
-
-#~ msgid "Upworthy style"
-#~ msgstr "Estilo de Upworthy "
-
-#~ msgid "Demo from our site"
-#~ msgstr "Demostración de nuestro sitio"
-
-#~ msgid "Copy Blogger style"
-#~ msgstr "Copiar estilo de Blogger"
-
-#~ msgid "Icons without space with more button"
-#~ msgstr "Iconos sin espacio con más botón"
-
-#~ msgid "Icons without space with more button including counter"
-#~ msgstr "Iconos sin espacio con más botón incluyendo contador"
-
-#~ msgid "Fancy full width share buttons"
-#~ msgstr "Botones de compartir de ancho completo de fantasía"
-
-#~ msgid "Flexible full width share buttons"
-#~ msgstr "Botones para compartir de anchura total flexible"
-
-#~ msgid "Flexible full width share buttons with name appear on button hover"
-#~ msgstr ""
-#~ "Los botones de compartimiento de anchura total flexible con nombre "
-#~ "aparecen en el botón"
-
-#~ msgid ""
-#~ "Flexible full width share buttons with name appear on button hover and "
-#~ "total counter"
-#~ msgstr ""
-#~ "Los botones de compartimiento de anchura total flexible con nombre "
-#~ "aparecen en el botón y el contador total"
-
-#~ msgid ""
-#~ "Flexible full width share buttons with name appear on button hover, "
-#~ "button counter and total counter"
-#~ msgstr ""
-#~ "Los botones de compartimiento de anchura total flexible con nombre "
-#~ "aparecen en el botón, el contador de botones y el contador total"
-
-#~ msgid "Inline buttons from our demo site"
-#~ msgstr "Botones en línea de nuestro sitio de demostración"
-
-#~ msgid "Massive share buttons"
-#~ msgstr "Botones de acciones masivas"
-
-#~ msgid "Massive share buttons version 2"
-#~ msgstr "Los botones masivos de la versión 2"
-
-#~ msgid "Share button with text"
-#~ msgstr "Compartir botón con texto"
-
-#~ msgid "Share button with text and counter"
-#~ msgstr "Compartir botón con texto y contador"
-
-#~ msgid "Share button with text and counter #2"
-#~ msgstr "Compartir el botón con el texto y el contador # 2"
-
-#~ msgid "Share button with text and counter #3"
-#~ msgstr "Compartir el botón con el texto y el contador # 3"
-
-#~ msgid "Share button with text #4"
-#~ msgstr "Compartir el botón con el texto # 4"
-
-#~ msgid "Share button with text and counter #5"
-#~ msgstr "Compartir el botón con el texto y el contador # 5"
-
-#~ msgid "Share button with text and counter #6"
-#~ msgstr "Compartir el botón con el texto y el contador # 6"
-
-#~ msgid "Fixed width buttons with total counter"
-#~ msgstr "Botones de anchura fija con contador total"
-
-#~ msgid "Vertical buttons"
-#~ msgstr "Botones verticales"
-
-#~ msgid "Vertical buttons 2"
-#~ msgstr "Botones verticales 2"
-
-#~ msgid "Sidebar from our demo site"
-#~ msgstr "Barra lateral de nuestro sitio de demostración"
-
-#~ msgid "Round icons with counter and name appear on hover"
-#~ msgstr ""
-#~ "Los iconos redondos con el contador y el nombre aparecen en el icono"
-
-#~ msgid "Mobile Buttons Bar"
-#~ msgstr "Barra de botones para móviles"
-
-#~ msgid "Mobile Buttons Bar With Total Counter"
-#~ msgstr "Barra de botones móviles con contador total"
-
-#~ msgid "Mobile Buttons Bar With Total Counter & Text"
-#~ msgstr "Barra de botones móvil con contador total y texto"
-
-#~ msgid "Mobile Buttons Bar With Text"
-#~ msgstr "Barra de botones con texto"
-
-#~ msgid "Easy Social Share Buttons: Ready made style"
-#~ msgstr "Botones sociales sencillos: estilo Listo"
-
-#~ msgid "is applied on position"
-#~ msgstr "Se aplica en la posición"
-
-#~ msgid ""
-#~ "Please check and if needed activate display of chosen position from "
-#~ "Social Sharing -> Where to display -> Positions"
-#~ msgstr ""
-#~ "Por favor, compruebe y si es necesario activar la visualización de la "
-#~ "posición elegida de Social Sharing -> Dónde mostrar-> Posiciones"
-
-#~ msgid "INCLUDES NETWORK SELECTION"
-#~ msgstr "INCLUYE SELECCIÓN DE RED"
-
-#~ msgid "INCLUDES TEMPLATE SELECTION"
-#~ msgstr "INCLUYE LA SELECCIÓN DE LA PLANTILLA"
-
-#~ msgid "Can be used on: "
-#~ msgstr "Se puede utilizar en:"
-
-#~ msgid "Choose position where you wish to install the ready made present"
-#~ msgstr "Elija la posición donde desea instalar el presente listo"
-
-#~ msgid ""
-#~ "Loading a ready made present will overwrite position settings you have "
-#~ "made till now. If you wish to assign the ready made style to more than "
-#~ "one location you need to do this location by location."
-#~ msgstr ""
-#~ "Al cargar un regalo ya preparado se sobrescribirán los ajustes de "
-#~ "posición que ha realizado hasta ahora. Si desea asignar el estilo "
-#~ "preparado a más de una ubicación, debe realizar esta ubicación por "
-#~ "ubicación."
-
-#~ msgid "Apply ready made style to selected location"
-#~ msgstr "Aplicar el estilo ya hecho a la ubicación seleccionada"
-
-#~ msgid "Welcome to ready made styles!<br/><br/>"
-#~ msgstr "Bienvenido a los estilos listos!<br/><br/>"
-
-#~ msgid ""
-#~ "With ready made styles wizard allows you to easy configure designs to "
-#~ "selected location. Each ready made style has set of positions where it "
-#~ "can be used. If you wish to apply it on more than one location than all "
-#~ "you need to apply it separately on each.<br/><br/>\n"
-#~ "\t\t\t\t\tFor some styles you can see recommended locations. This does "
-#~ "not mean that you cannot use them on others but for that locations you "
-#~ "will see the best visual effect. Those locations we mark using this style "
-#~ "<span class=\"essb-location essb-featured-location\">SIDEBAR</span><br/"
-#~ "><br/>\n"
-#~ "\t\t\t\t\tSome ready made styles contain preconfigured networks or "
-#~ "template which is made to ensure same design output will be generated. "
-#~ "You can see them marked as <span class=\"essb-location essb-featured-"
-#~ "location2\">networks</span> or <span class=\"essb-location essb-featured-"
-#~ "location2\">template</span>.\n"
-#~ "\t\t\t\t\tOnce you apply such present you can change template or active "
-#~ "networks using position settings (Social Sharing -> Where to display). "
-#~ "All styles that does not contain such marks will use the default social "
-#~ "networks and template you have set.<br/><br/>\n"
-#~ "\t\t\t\t\tImportant! Please ensure that location you choose and apply "
-#~ "style for is active in Social Buttons -> Where to display -> Positions. "
-#~ "Each ready made present has example settings that will configure location "
-#~ "you choose to apply on - you can change options at any time for it by "
-#~ "visiting Social Sharing -> Where to display -> Positions -> (Position "
-#~ "Name)."
-#~ msgstr ""
-#~ "Con el asistente de estilos preparados le permite configurar diseños con "
-#~ "facilidad a la ubicación seleccionada. Cada estilo preparado tiene un "
-#~ "conjunto de posiciones donde se puede utilizar. Si desea aplicarlo en más "
-#~ "de un lugar que todo lo que necesita para aplicarlo por separado en cada "
-#~ "uno.<br/><br/>\n"
-#~ "\t\t\t\t\tPara algunos estilos puedes ver las ubicaciones recomendadas. "
-#~ "Esto no significa que no se puede usar en otros, pero para que las "
-#~ "ubicaciones se verá el mejor efecto visual. Las ubicaciones que marcamos "
-#~ "con este estilo <span class = \"essb-location essb-featured-location"
-#~ "\">BARRA LATERAL</span><br/><br/>\n"
-#~ "\t\t\t\t\tAlgunos estilos listos contienen redes preconfiguradas o "
-#~ "plantilla que se hace para asegurar la misma salida de diseño que se "
-#~ "generará. Puedes verlos marcados como <span class=\"essb-location essb-"
-#~ "featured-location2\">networks</span> or <span class=\"essb-location essb-"
-#~ "featured-location2\">plantilla</span>.\n"
-#~ "\t\t\t\t\tUna vez que aplique tal presente, puede cambiar plantilla o "
-#~ "redes activas usando la configuración de posición (Compartiendo "
-#~ "socialmente -> Dónde mostrar). Todos los estilos que no contengan dichas "
-#~ "marcas utilizarán las redes sociales predeterminadas y la plantilla que "
-#~ "haya configurado.<br/><br/>\n"
-#~ "\t\t\t\t\t¡Importante! Por favor, asegúrese de que la ubicación que usted "
-#~ "elija y aplicar estilo para está activa en los botones sociales -> Dónde "
-#~ "mostrar -> Posiciones. Cada regalo hecho a mano tiene configuraciones de "
-#~ "ejemplo que configurarán la ubicación en la que elijas aplicar - puedes "
-#~ "cambiar las opciones en cualquier momento al visitar Social Sharing -> "
-#~ "Dónde mostrar -> Posiciones -> (Nombre Posición)."
-
-#~ msgid "This ready made style can be used for following locations: "
-#~ msgstr "Este estilo listo se puede utilizar para los siguientes lugares:"
-
-#~ msgid "Recommended for usage at: "
-#~ msgstr "Recomendado para su uso en:"
-
-#~ msgid "This style also includes preconfigured: "
-#~ msgstr "Este estilo también incluye preconfigurado:"
-
-#~ msgid "Select location where you wish to apply this style"
-#~ msgstr "Seleccione el lugar donde desea aplicar este estilo"
-
-#~ msgid "Apply on selected location"
-#~ msgstr "Aplicar en la ubicación seleccionada"
-
-#~ msgid "New extension for <b>Easy Social Share Buttons for WordPress</b>: "
-#~ msgstr "Nueva extensión para <b>Botones Social Share para WordPress</b>: "
-
-#~ msgid "New extensions for <b>Easy Social Share Buttons for WordPress</b>: "
-#~ msgstr ""
-#~ "Nuevas extensiones para <b> Botones Social Share para WordPress</b>: "
-
-#~ msgid "Hide notice"
-#~ msgstr "Ocultar noticia"
-
-#~ msgid "Display Positions by Post Type"
-#~ msgstr "Mostrar posiciones del tipo de post"
-
-#~ msgid ""
-#~ "Easy Social Share Buttons for WordPress is all-in-one social share "
-#~ "solution that allows you share, monitor and increase your social "
-#~ "popularity by AppsCreo"
-#~ msgstr ""
-#~ "Los sencillos botones de Share Social para WordPress son una solución de "
-#~ "compartir social todo en uno que te permite compartir, supervisar y "
-#~ "aumentar tu popularidad social de AppsCreo"
-
-#~ msgid "Start quick setup wizard"
-#~ msgstr "Iniciar asistente de configuración rápida"
-
-#~ msgid "Go to ready made style library"
-#~ msgstr "Ir a la biblioteca de estilo lista"
-
-#~ msgid "Continue to plugin settings"
-#~ msgstr "Continuar con la configuración del plugin"
-
-#~ msgid "Customize Tweet"
-#~ msgstr "Personalizar Tweet"
-
-#~ msgid "Customize Pinterest Image"
-#~ msgstr "Personalizar imagen de Pinterest"
-
-#~ msgid "Customize Share Message (Advanced)"
-#~ msgstr "Personalizar mensaje compartido (avanzado)"
-
-#~ msgid "SOCIAL MEDIA MESSAGE"
-#~ msgstr "MENSAJE DE LOS MEDIOS SOCIALES"
-
-#~ msgid ""
-#~ "Customize default generate social sharing message that is filled from "
-#~ "post data to grab your social media audience"
-#~ msgstr ""
-#~ "Personalizar por defecto generar mensaje de uso compartido social que se "
-#~ "rellena de datos de correos para captar su público de medios de "
-#~ "comunicación social"
-
-#~ msgid ""
-#~ "Add a title that will populate the open graph meta tag which will be used "
-#~ "when users share your content onto most social networks. If nothing is "
-#~ "provided here, we will use the post title as a backup. <span class=\"essb-"
-#~ "inner-recommend\">We recommend usage of titles that does not exceed 60 "
-#~ "characters</span>"
-#~ msgstr ""
-#~ "Agregue un título que rellene la etiqueta meta de gráfico abierto que se "
-#~ "utilizará cuando los usuarios compartan su contenido en la mayoría de las "
-#~ "redes sociales. Si no se proporciona nada aquí, utilizaremos el título de "
-#~ "la publicación como copia de seguridad. <span class=\"essb-inner-recommend"
-#~ "\">Recomendamos el uso de títulos que no excedan los 60 caracteres</span>"
-
-#~ msgid "Social Media Image"
-#~ msgstr "Imagen de los medios sociales"
-
-#~ msgid ""
-#~ "Did you know that Facebook has share data cache? <br/>All changes that "
-#~ "you made on site will not appear immediately unless you clear cache and "
-#~ "make Facebook bot revisit your site. The quick way to do this is to use "
-#~ "Easy Social Share Buttons top menu in WordPress bar where in Validation "
-#~ "you will find link to test and update Facebook information. You can read "
-#~ "more about this tool in this article <a href=\"http://appscreo.com/"
-#~ "facebook-debugger-tool/\" target=\"_blank\">http://appscreo.com/facebook-"
-#~ "debugger-tool/</a> in our blog. "
-#~ msgstr ""
-#~ "¿Sabías que Facebook tiene caché de datos compartidos? <br/>Todos los "
-#~ "cambios que realice en el sitio no aparecerán inmediatamente a menos que "
-#~ "borre el caché y haga que Facebook vuelva a visitar su sitio. La forma "
-#~ "rápida de hacerlo es utilizar el menú de Easy Social Share Buttons en la "
-#~ "barra de WordPress donde en Validation encontrarás un enlace para probar "
-#~ "y actualizar la información de Facebook. Puede leer más sobre esta "
-#~ "herramienta en este artículo <a href=\"http://appscreo.com/facebook-"
-#~ "debugger-tool/\" target=\"_blank\">http://appscreo.com/facebook-debugger-"
-#~ "tool/</a>en nuestro blog."
-
-#~ msgid "Additional Facebook Customizations"
-#~ msgstr "Personalizaciones adicionales de Facebook"
-
-#~ msgid "Include Video into Social Message"
-#~ msgstr "Incluir video en un mensaje social"
-
-#~ msgid ""
-#~ "Please use the FULL URL to the video (e.g. http://www.yourdomain.com/"
-#~ "videos/video.mp4)."
-#~ msgstr ""
-#~ "Utilice la URL COMPLETA del vídeo (por ejemplo, http://www.yourdomain.com/"
-#~ "videos/video.mp4)."
-
-#~ msgid "Video Width"
-#~ msgstr "Ancho del video"
-
-#~ msgid "Enter the width of your video. (Example: 320)."
-#~ msgstr "Ingrese el ancho de su video. (Ejemplo: 320)."
-
-#~ msgid "Video Height"
-#~ msgstr "Altura del video"
-
-#~ msgid "Enter the height of your video. (Example: 320)."
-#~ msgstr "Ingresa la altura del video. (Ejemplo: 320)."
-
-#~ msgid "Personalize Twitter card data"
-#~ msgstr "Personalice los datos de la tarjeta de Twitter"
-
-#~ msgid ""
-#~ "Twitter card data will be filled with default social share message or "
-#~ "with data from Social Share Optimization tags. Use this box in case you "
-#~ "need special customizations that will work only for Twitter"
-#~ msgstr ""
-#~ "Los datos de la tarjeta de Twitter se rellenarán con el mensaje de "
-#~ "recurso compartido social predeterminado o con los datos de las etiquetas "
-#~ "de Social Share Optimization. Utilice esta casilla en caso de que "
-#~ "necesite personalizaciones especiales que funcionarán sólo para Twitter"
-
-#~ msgid ""
-#~ "Add a custom title for your post. This will be used to post on an user's "
-#~ "wall when they like/share your post."
-#~ msgstr ""
-#~ "Agregue un título personalizado para su publicación. Esto se usará para "
-#~ "publicar en la pared de un usuario cuando les guste o comparta su "
-#~ "publicación."
-
-#~ msgid "If an image is provided it will be used in share data"
-#~ msgstr "Si se proporciona una imagen se utilizará en datos compartidos"
-
-#~ msgid ""
-#~ "Add a custom description for your post. This will be used to post on an "
-#~ "user's wall when they like/share your post."
-#~ msgstr ""
-#~ "Añade una descripción personalizada para tu publicación. Esto se usará "
-#~ "para publicar en la pared de un usuario cuando les guste o comparta su "
-#~ "publicación."
-
-#~ msgid "Customize Tweet Message for this post"
-#~ msgstr "Personalizar Tweet Mensaje para esta publicación"
-
-#~ msgid ""
-#~ "Choose personalized image that will be used to when you press Pinterest "
-#~ "share button <span class=\"essb-inner-recommend\">We recommend using an "
-#~ "image that is formatted in a 2:3 aspect ratio like 735 x 1102.</span>"
-#~ msgstr ""
-#~ "Elija la imagen personalizada que se usará para cuando pulse el botón de "
-#~ "compartir de Pinterest <span class=\"essb-inner-recommend\">Recomendamos "
-#~ "usar una imagen que esté formateada en una relación de aspecto 2: 3 como "
-#~ "735 x 1102.</span>"
-
-#~ msgid ""
-#~ "Customize share message is an easy way to change the default shared "
-#~ "information that is used by share buttons. Almost all social networks "
-#~ "that plugin support uses URL as leading sharing parameter. This in brief "
-#~ "means for you that when you setup custom share data you need to ensure "
-#~ "that information is also available into social share optimization tags on "
-#~ "the destination URL that plugin will share.<br/><br/>Please do not foget "
-#~ "to fill all parameters for better results because few of social networks "
-#~ "support almost all parameters and data for them will be taken from that "
-#~ "screen if filled or from post default data if they are empty."
-#~ msgstr ""
-#~ "Personalizar el mensaje compartido es una manera fácil de cambiar la "
-#~ "información compartida predeterminada que se utiliza en los botones "
-#~ "compartidos. Casi todas las redes sociales que utilizan soporte de "
-#~ "complementos usan URL como parámetro principal de uso compartido. Esto en "
-#~ "breve significa para usted que cuando se configura datos de uso "
-#~ "compartido que necesita para garantizar que la información también está "
-#~ "disponible en las etiquetas de optimización de compartir social en la URL "
-#~ "de destino que compartirá plugin. <br/> <br/> Por favor, no olvidar para "
-#~ "llenar Todos los parámetros para obtener mejores resultados porque pocas "
-#~ "de las redes sociales soportan casi todos los parámetros y los datos para "
-#~ "ellos se tomarán de esa pantalla si se llenan o de los datos por defecto "
-#~ "si están vacíos."
-
-#~ msgid "Total clicks on share buttons"
-#~ msgstr "Total de clics en los botones de acciones"
-
-#~ msgid "Desktop"
-#~ msgstr "Escritorio"
-
-#~ msgid "Most popular social network:"
-#~ msgstr "Red social más popular:"
-
-#~ msgid "Most popular position:"
-#~ msgstr "Posición más popular:"
-
-#~ msgid "1. Template"
-#~ msgstr "1. Plantilla"
-
-#~ msgid "2. Button Style"
-#~ msgstr "2. Estilo de botón "
-
-#~ msgid "3. Social Share Buttons"
-#~ msgstr "3. Social Share Botones"
-
-#~ msgid "4. Counters"
-#~ msgstr "4. Contadores"
-
-#~ msgid "5. Display Buttons On"
-#~ msgstr "5. Botones de visualización activados"
-
-#~ msgid "6. Position Of Buttons"
-#~ msgstr "6. Posición De Botones"
-
-#~ msgid "7. Mobile"
-#~ msgstr "7. Móvil"
-
-#~ msgid "8. Final Settings"
-#~ msgstr "8. Configuración final"
-
-#~ msgid "Change display positions on mobile"
-#~ msgstr "Cambiar posiciones de visualización en móviles"
-
-#~ msgid "Activate this option to personalize display positions on mobile"
-#~ msgstr ""
-#~ "Active esta opción para personalizar posiciones de visualización en "
-#~ "dispositivos móviles"
-
-#~ msgid "Share bar customization"
-#~ msgstr "Personalización de la barra de acciones"
-
-#~ msgid ""
-#~ "Activate this option to display network names (default is display is "
-#~ "icons only)."
-#~ msgstr ""
-#~ "Active esta opción para mostrar los nombres de la red (por defecto, la "
-#~ "pantalla es sólo iconos)."
-
-#~ msgid "Apply social networks recommended settings"
-#~ msgstr "Aplicar las configuraciones recomendadas de redes sociales"
-
-#~ msgid ""
-#~ "Activate this option to activate recommended for each social network "
-#~ "options (like Short URL for Twitter)"
-#~ msgstr ""
-#~ "Active esta opción para activar las opciones recomendadas para cada red "
-#~ "social (como URL corta para Twitter)"
-
-#~ msgid "Activate social share optimization meta tags"
-#~ msgstr ""
-#~ "Activar las metaetiquetas de optimización de recursos compartidos sociales"
-
-#~ msgid ""
-#~ "If you do not use SEO plugin or other plugin that insert social share "
-#~ "optimization meta tags it is highly recommended to activate this option. "
-#~ "It will generated required for better sharing meta tags and also will "
-#~ "allow you to change the values that social network read from your site."
-#~ msgstr ""
-#~ "Si no utiliza plugin de SEO u otro complemento que inserte etiquetas de "
-#~ "meta de optimización de uso compartido social, se recomienda activar esta "
-#~ "opción. Se generará necesario para compartir mejor las etiquetas meta y "
-#~ "también le permitirá cambiar los valores que la red social leer de su "
-#~ "sitio."
-
-#~ msgid "Activate social share buttons click statistics"
-#~ msgstr "Activar los botones de acciones sociales"
-
-#~ msgid ""
-#~ "Click statistics hanlde click on share buttons and you are able to see "
-#~ "detailed view of user activity. Please note that plugin log clicks of "
-#~ "buttons."
-#~ msgstr ""
-#~ "Haga clic en estadísticas, haga clic en los botones compartidos y podrá "
-#~ "ver una vista detallada de la actividad del usuario. Tenga en cuenta que "
-#~ "el plugin hace clic en los botones."
-
-#~ msgid ""
-#~ "Select which optimization options you wish to use. If you use cache "
-#~ "plugin or CDN on your site than those optimizations are already made. In "
-#~ "this case we suggest to avoid activating these options."
-#~ msgstr ""
-#~ "Seleccione las opciones de optimización que desee utilizar. Si utiliza "
-#~ "complemento de caché o CDN en su sitio, esas optimizaciones ya se han "
-#~ "realizado. En este caso sugerimos evitar activar estas opciones."
-
-#~ msgid "Optimize static plugin resources load"
-#~ msgstr "Optimizar la carga de recursos estáticos del complemento"
-
-#~ msgid ""
-#~ "Activate this option to apply the recommended options for static "
-#~ "resources load."
-#~ msgstr ""
-#~ "Active esta opción para aplicar las opciones recomendadas para la carga "
-#~ "de recursos estáticos."
-
-#~ msgid "Import/Export"
-#~ msgstr "Importar/exportar"
-
-#~ msgid "Import/Export Plugin Configuration"
-#~ msgstr "Importar/exportar configuración del plugin"
-
-#~ msgid "Ready Made Styles"
-#~ msgstr "Estilos listos"
-
-#~ msgid "Apply Ready Made Styles"
-#~ msgstr "Aplicar estilos preparados"
-
-#~ msgid "<i class='fa fa-database'></i> System Status"
-#~ msgstr "<i class='fa fa-database'></i> Estado del sistema"
-
-#~ msgid "<i class='fa fa-refresh'></i> Share Counter Test"
-#~ msgstr "<i class='fa fa-refresh'></i> Compartir prueba de contador"
-
-#~ msgid "View list of all extensions"
-#~ msgstr "Ver la lista de todas las extensiones"
-
-#~ msgid "Dismiss"
-#~ msgstr "Despedir"
-
-#~ msgid ""
-#~ " It is highly recommeded after change in settings to clear cache of "
-#~ "plugin you use: "
-#~ msgstr ""
-#~ "Es muy recomendable después de cambiar la configuración para borrar el "
-#~ "caché del complemento que utilice:"
-
-#~ msgid "Easy Social Share Buttons options are saved!"
-#~ msgstr "¡Easy Social las opciones de Share Buttons se guardan!"
-
-#~ msgid "Easy Social Share Buttons options are imported!"
-#~ msgstr "Easy Social las opciones de Share Buttons son importadas."
-
-#~ msgid "Plugin settings are restored to default."
-#~ msgstr ""
-#~ "La configuración del complemento se restablece de forma predeterminada."
-
-#~ msgid "Easy Social Share Buttons cache is running:"
-#~ msgstr "La caché de Easy Social Share Buttons se está ejecutando:"
-
-#~ msgid "Easy Social Share Buttons is using precompiled static resources"
-#~ msgstr "Easy Social Share Buttons utiliza recursos estáticos precompilados"
-
-#~ msgid "Rebuild resources"
-#~ msgstr "Reconstruir recursos"
-
-#~ msgid ""
-#~ "Backup of your current settings is generated. Copy generated "
-#~ "configuration string and save it on your computer. You can use it to "
-#~ "restore settings or transfer them to other site."
-#~ msgstr ""
-#~ "Se genera una copia de seguridad de la configuración actual. Copie la "
-#~ "cadena de configuración generada y guárdela en su computadora. Puede "
-#~ "usarlo para restaurar la configuración o transferirla a otro sitio."
-
-#~ msgid "Easy Social Share Buttons for WordPress Cache is purged!"
-#~ msgstr "Easy Social Share botones para WordPress caché es purgado!"
-
-#~ msgid "Statistics function in not activated!"
-#~ msgstr "Estadísticas funcionan en no activado!"
-
-#~ msgid "Click here to go to settings and activte it"
-#~ msgstr "Haz clic aquí para ir a la configuración y activarla"
-
-#~ msgid "Need Help? Click here to visit our support center"
-#~ msgstr ""
-#~ "¿Necesitas ayuda? Haga clic aquí para visitar nuestro centro de asistencia"
-
-#~ msgid ""
-#~ "Twitter share counter recovery is completed. Data is loaded from: <b>"
-#~ msgstr ""
-#~ "Twitter cuenta de recuperación de contador se ha completado. Los datos se "
-#~ "cargan desde: <b>"
-
-#~ msgid "Add-ons"
-#~ msgstr "Extensiones"
-
-#~ msgid "View list of all addons"
-#~ msgstr "Ver todas las extensiones"
-
-#~ msgid "Social Share Buttons [easy-social-share]"
-#~ msgstr "Social Share Botones [easy-social-share]"
-
-#~ msgid "Native Social Buttons [easy-social-lile]"
-#~ msgstr "Botones Sociales Nativos [easy-social-lile]"
-
-#~ msgid "Total Shares [easy-total-shares]"
-#~ msgstr "otal de Acciones [easy-total-shares]"
-
-#~ msgid "Subscribe Form [easy-subscribe]"
-#~ msgstr "Formulario de Suscripción [easy-subscribe]"
-
-#~ msgid "All available shortcodes"
-#~ msgstr "Todos los shortcodes disponibles"
-
-#~ msgid "Update cached counters"
-#~ msgstr "Actualizar contadores almacenados en caché"
-
-#~ msgid "Total: "
-#~ msgstr "Total :"
-
-#~ msgid "Send this to friend"
-#~ msgstr "Enviar a un amigo"
-
-#~ msgid " Total Subscribers"
-#~ msgstr "Total de Suscriptores"
-
-#~ msgid "Every 1 hour"
-#~ msgstr "Cada 1 hora"
-
-#~ msgid "Every 2 hours"
-#~ msgstr "Cada 2 horas"
-
-#~ msgid "Every 4 hours"
-#~ msgstr "Cada 4 horas"
-
-#~ msgid "Every 8 hours"
-#~ msgstr "Cada 8 horas"
-
-#~ msgid "Every 12 hours"
-#~ msgstr "Cada 12 horas"
-
-#~ msgid "Every 24 hours"
-#~ msgstr "Cada 24 horas"
-
-#~ msgid "Every 36 hours"
-#~ msgstr "Cada 36 horas"
-
-#~ msgid "Every 48 hours"
-#~ msgstr "Cada 48 horas"
-
-#~ msgid "Every 3 days"
-#~ msgstr "Cada 3 días"
-
-#~ msgid "Every 4 days"
-#~ msgstr "Cada 4 días"
-
-#~ msgid "Every 5 days"
-#~ msgstr "Cada 5 días"
-
-#~ msgid "Every 7 days"
-#~ msgstr "Cada 7 días"
-
-#~ msgid "Support Center"
-#~ msgstr "Portal de soporte"
-
-#~ msgid "Stat data for month: "
-#~ msgstr "Datos estadísticos del mes:"
-
-#~ msgid "Stat data for date: "
-#~ msgstr "Datos estadísticos para la fecha:"
-
-#~ msgid ""
-#~ "Displays top social post (requires Social Metrics Lite for data update to "
-#~ "be active)"
-#~ msgstr ""
-#~ "Muestra la entrada social superior (requiere que Social Metrics Lite para "
-#~ "que la actualización de datos esté activa)"
-
-#~ msgid "Easy Social Share Buttons: Top Social Posts"
-#~ msgstr "Easy Social Share Botones: Top Post Sociales"
-
-#~ msgid "Top Social Posts"
-#~ msgstr "Principales Posts Sociales"
-
-#~ msgid "Read more &rarr;"
-#~ msgstr "Leer más &rarr;"
-
-#~ msgid "General"
-#~ msgstr "General"
-
-#~ msgid "Display"
-#~ msgstr "Mostrar"
-
-#~ msgid "Filter"
-#~ msgstr "Filtrar"
-
-#~ msgid "Order"
-#~ msgstr "Ordenar"
-
-#~ msgid "Title URL"
-#~ msgstr "Titulo de URL "
-
-#~ msgid "CSS class"
-#~ msgstr "CSS class"
-
-#~ msgid "Before posts"
-#~ msgstr "Antes del post"
-
-#~ msgid "After posts"
-#~ msgstr "Después del post"
-
-#~ msgid "Legacy"
-#~ msgstr "Legado"
-
-#~ msgid "Standard"
-#~ msgstr "Estándar"
-
-#~ msgid "Custom Template Name"
-#~ msgstr "Nombre de plantilla personalizado"
-
-#~ msgid "Show title"
-#~ msgstr "Mostrar título"
-
-#~ msgid "Show published date"
-#~ msgstr "Mostrar fecha publicada"
-
-#~ msgid "Date format"
-#~ msgstr "Formato de fecha"
-
-#~ msgid "Show post author"
-#~ msgstr "Mostrar autor de publicación"
-
-#~ msgid "Show comments count"
-#~ msgstr "Mostrar número de comentarios"
-
-#~ msgid "Show excerpt"
-#~ msgstr "Mostrar fragmento"
-
-#~ msgid "Excerpt length (in words)"
-#~ msgstr "Longitud del extracto (en palabras)"
-
-#~ msgid "Show content"
-#~ msgstr "Mostrar contenido"
-
-#~ msgid "Show read more link"
-#~ msgstr "Mostrar más información"
-
-#~ msgid "Show thumbnail"
-#~ msgstr "Mostrar miniatura"
-
-#~ msgid "Show post categories"
-#~ msgstr "Mostrar categorías de post"
-
-#~ msgid "Show post tags"
-#~ msgstr "Mostrar etiquetas de publicación"
-
-#~ msgid "Show Total Social Score"
-#~ msgstr "Mostrar el puntaje social total"
-
-#~ msgid "Show Detailed Social Score"
-#~ msgstr "Mostrar la escala social detallada"
-
-#~ msgid "Show custom fields (comma separated)"
-#~ msgstr "Mostrar campos personalizados (separados por comas)"
-
-#~ msgid "Show posts only from current category"
-#~ msgstr "Mostrar publicaciones sólo de la categoría actual"
-
-#~ msgid "Categories"
-#~ msgstr "Categorías"
-
-#~ msgid "&ndash; Show All &ndash;"
-#~ msgstr "&ndash; Mostrar todo &ndash;"
-
-#~ msgid "Show posts only from current tag"
-#~ msgstr "Mostrar publicaciones sólo de la etiqueta actual"
-
-#~ msgid "Tags"
-#~ msgstr "Etiquetas"
-
-#~ msgid "Sticky posts"
-#~ msgstr "Fijar posts"
-
-#~ msgid "Show All Posts"
-#~ msgstr "Mostrar todos los posts"
-
-#~ msgid "Hide Sticky Posts"
-#~ msgstr "Ocultar fijar posts"
-
-#~ msgid "Show Only Sticky Posts"
-#~ msgstr "Mostrar sólo posts fijos"
-
-#~ msgid "Order by"
-#~ msgstr "Ordenar por"
-
-#~ msgid "Published Date"
-#~ msgstr "Fecha de publicación"
-
-#~ msgid "Comment Count"
-#~ msgstr "Número de comentarios"
-
-#~ msgid "Random"
-#~ msgstr "Aleatorio"
-
-#~ msgid "Custom Field"
-#~ msgstr "Campo personalizado"
-
-#~ msgid "Custom field"
-#~ msgstr "Campo personalizado"
-
-#~ msgid "Descending"
-#~ msgstr "Descendente"
-
-#~ msgid "Ascending"
-#~ msgstr "Ascendente"
-
-#~ msgid "By"
-#~ msgstr "Por"
-
-#~ msgid "No responses"
-#~ msgstr "Sin respuestas"
-
-#~ msgid "One response"
-#~ msgstr "Una respuesta"
-
-#~ msgid "% responses"
-#~ msgstr "% respuestas"
-
-#~ msgid "No posts found."
-#~ msgstr "No se han encontrado publicaciones."
-
-#~ msgid "|"
-#~ msgstr "|"
-
-#~ msgid "No comments"
-#~ msgstr "Sin comentarios"
-
-#~ msgid "One comment"
-#~ msgstr "un comentario"
-
-#~ msgid "% comments"
-#~ msgstr "% comentarios"
-
-#~ msgid "Posted in"
-#~ msgstr "Publicado en"
-
-#~ msgid "Tagged"
-#~ msgstr "Etiquetado"
-
-#~ msgid "Easy Social Share Buttons for WordPress 4.0"
-#~ msgstr "Botones sociales sencillos para WordPress 4.0"
-
-#~ msgid ""
-#~ "http://codecanyon.net/item/easy-social-share-buttons-for-"
-#~ "wordpress/6394476?ref=appscreo"
-#~ msgstr ""
-#~ "http://codecanyon.net/item/easy-social-share-buttons-for-"
-#~ "wordpress/6394476?ref=appscreo"
-
-#~ msgid ""
-#~ "Easy Social Share Buttons automatically adds share bar to your post or "
-#~ "pages with support of Facebook, Twitter, Google+, LinkedIn, Pinterest, "
-#~ "Digg, StumbleUpon, VKontakte, Tumblr, Reddit, Print, E-mail and other 30 "
-#~ "social networks. Easy Social Share Buttons for WordPress is compatible "
-#~ "with WooCommerce, bbPress and BuddyPress"
-#~ msgstr ""
-#~ "Easy Social Share Buttons agrega automáticamente barra de contenido a tu "
-#~ "publicación o páginas con soporte de Facebook, Twitter, Google+, "
-#~ "LinkedIn, Pinterest, Digg, StumbleUpon, VKontakte, Tumblr, Reddit, Print, "
-#~ "E-mail y otras 30 redes sociales. Los sencillos botones sociales de "
-#~ "WordPress son compatibles con WooCommerce, bbPress y BuddyPress"
-
-#~ msgid "http://codecanyon.net/user/appscreo/portfolio?ref=appscreo"
-#~ msgstr "http://codecanyon.net/user/appscreo/portfolio?ref=appscreo"

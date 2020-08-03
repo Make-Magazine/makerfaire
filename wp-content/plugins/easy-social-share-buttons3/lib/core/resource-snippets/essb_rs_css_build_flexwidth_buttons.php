@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @deprecated 7.3
+ */
+
 if (!function_exists('essb_rs_css_build_flexwidth_buttons')) {
 	function essb_rs_css_build_flexwidth_buttons($width, $button_width) {
 		$main_css = 'essb_flex_'.$width.'_'.$button_width;

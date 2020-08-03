@@ -39,6 +39,7 @@ function essb_correct_url_on_tracking_code($share, $network) {
 	
 		$share['url'] = str_replace('{network}', $network, $share['url']);
 		$share['full_url'] = str_replace('{network}', $network, $share['full_url']);
+		$share['short_url'] = str_replace('{network}', $network, $share['short_url']);
 	
 		$share['url'] = str_replace('{title}', $utm_title, $share['url']);
 		$share['full_url'] = str_replace('{title}', $utm_title, $share['full_url']);
@@ -58,6 +59,7 @@ function essb_correct_url_on_tracking_code($share, $network) {
 	
 				$share ['short_url_twitter'] = $global_shorturl;
 				$share ['short_url_whatsapp'] = $global_shorturl;
+				$share ['short_url'] = $global_shorturl;
 			}
 			else {
 			    essb_helper_maybe_load_feature('short-url');
@@ -78,13 +80,13 @@ function essb_correct_url_on_tracking_code($share, $network) {
 			}
 		}
 		else {
-
 			$share ['twitter_tweet'] .= '%20' . $share ['url'];
-			$share ['short_url_twitter'] = esc_attr ( $share ['url'] );
-			$share ['short_url_whatsapp'] = esc_attr ( $share ['url'] );
+			$share ['short_url_twitter'] = esc_url ( $share ['url'] );
+			$share ['short_url_whatsapp'] = esc_url ( $share ['url'] );
 			$share['clear_twitter_url'] = true;
 		}
 	
 	}
+	
 	return $share;
 }

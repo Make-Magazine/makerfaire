@@ -88,9 +88,18 @@ class ESSBAdminControler {
 		 * Since 7.1
 		 */
 		if (essb_option_bool_value('show_total_loves_column')) {
-    		essb_depend_load_function('essb_admin_build_resources', 'lib/admin/helpers/lovethis-column-helper.php');
+    		essb_depend_load_function('essb_add_loves_column', 'lib/admin/helpers/lovethis-column-helper.php');
     		essb_add_loves_column();
 		}
+		
+		/**
+		 * Since 7.3
+		 */
+		if (!essb_option_bool_value('deactivate_column_shareinfo')) {
+		    essb_depend_load_function('essb_add_shareinfo_column', 'lib/admin/helpers/shareinfo-column-helper.php');
+		    essb_add_shareinfo_column();
+		}
+		
 		
 
 		if (!essb_option_bool_value('deactivate_appscreo')) {

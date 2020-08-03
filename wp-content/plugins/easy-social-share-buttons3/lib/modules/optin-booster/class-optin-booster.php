@@ -84,7 +84,7 @@ class ESSBOptinBooster {
 	
 	public function load_assets() {
 		if (function_exists('essb_resource_builder')) {
-			essb_resource_builder()->add_static_resource_footer(ESSB3_OFOB_PLUGIN_URL . '/assets/essb-optin-booster.min.js', 'essb-optin-booster', 'js');
+			essb_resource_builder()->add_static_resource_footer(ESSB3_OFOB_PLUGIN_URL . 'assets/essb-optin-booster.min.js', 'essb-optin-booster', 'js');
 		}
 	}
 	

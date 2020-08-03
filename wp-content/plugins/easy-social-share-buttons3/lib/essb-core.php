@@ -268,10 +268,6 @@ class ESSBCore {
 		// @since 3.5
 		// changed in 3.6 to add share point
 		if (in_array('postbar', $this->general_options['button_position']) || in_array('point', $this->general_options['button_position'])) {
-			if (!essb_resource_builder()->is_activated('postbar') && in_array('postbar', $this->general_options['button_position'])) {
-				essb_depend_load_function('essb_rs_css_build_postbar_customizations', 'lib/core/resource-snippets/essb_rs_css_build_postbar_customizations.php');
-			}
-				
 			$display_locations_style = true;
 			essb_resource_builder()->activate_resource('postbar');
 			$display_locations_script = true;			
@@ -554,7 +550,7 @@ class ESSBCore {
 		
 		// @since version 3.1 CSS hide of mobile buttons
 		if (essb_option_bool_value('mobile_css_activate')) {
-			essb_depend_load_function('essb_rs_css_build_mobile_compatibility', 'lib/core/resource-snippets/essb_rs_css_build_mobile_compatibility.php');
+			essb_depend_load_function('essb_css_build_mobile_responsive', 'lib/helpers/assets/builder-share-reponsive.php');
 		}
 		
 		$this->list_of_activated_locations = array();
@@ -1717,7 +1713,7 @@ class ESSBCore {
 		//
 		$links_before = '';
 		$links_after = '';
-		
+
 		$display_key = 'postfloat';
 		$float_onsingle_only = essb_option_bool_value('float_onsingle_only');
 		if ($float_onsingle_only) {
@@ -2333,7 +2329,7 @@ class ESSBCore {
 		
 		if ($button_style['button_width'] == 'fixed') {
 			$fixedwidth_key = $button_style['button_width_fixed_value'] . '-' . $button_style['button_width_fixed_align'];
-			essb_depend_load_function('essb_rs_css_build_fixedwidth_button', 'lib/core/resource-snippets/essb_rs_css_build_fixedwidth_button.php');
+			essb_depend_load_function('essb_rs_css_build_fixedwidth_button', 'lib/helpers/assets/builder-share-fixedwidth.php');
 			essb_resource_builder()->add_css(essb_rs_css_build_fixedwidth_button($salt, $button_style['button_width_fixed_value'], $button_style['button_width_fixed_align']), 'essb-fixed-width-'.$fixedwidth_key, 'footer');
 					
 		}
@@ -2351,12 +2347,12 @@ class ESSBCore {
 			$single_button_width = intval($container_width) / $count_of_social_networks;
 			$single_button_width = floor($single_button_width);
 			
-			essb_depend_load_function('essb_rs_css_build_fullwidth_buttons', 'lib/core/resource-snippets/essb_rs_css_build_fullwidth_buttons.php');
+			essb_depend_load_function('essb_rs_css_build_fullwidth_buttons', 'lib/helpers/assets/builder-share-fullwidth.php');
 			essb_resource_builder()->add_css(essb_rs_css_build_fullwidth_buttons($count_of_social_networks, $button_style['button_width_full_container'], $button_style['button_width_full_button'], $button_style['button_width_full_first'], $button_style['button_width_full_second']), 'essb-full-width-'.$single_button_width.'-'.$button_style['button_width_full_button'].'-'.$button_style['button_width_full_container'], 'footer');
 		}
 		
 		if ($button_style['button_width'] == 'flex' && ($button_style['flex_width_value'] != '' || $button_style['flex_button_value'] != '')) {
-			essb_depend_load_function('essb_rs_css_build_flexwidth_buttons', 'lib/core/resource-snippets/essb_rs_css_build_flexwidth_buttons.php');
+			essb_depend_load_function('essb_rs_css_build_flexwidth_buttons', 'lib/helpers/assets/builder-share-flexwidth.php');
 			essb_resource_builder()->add_css(essb_rs_css_build_flexwidth_buttons($button_style['flex_width_value'], $button_style['flex_button_value']), 'essb_flex_'.$button_style['flex_width_value'].'_'.$button_style['flex_button_value'], 'footer');				
 		}
 		

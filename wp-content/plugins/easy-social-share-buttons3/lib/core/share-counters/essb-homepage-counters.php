@@ -77,15 +77,15 @@ if (!function_exists('essb_get_counter_meta_values')) {
 			$key = $row->meta_key;
 			$value = $row->meta_value;
 			
+			if ($key == 'essb_cache_expire' || $key == 'essb_cache_updated' || $key == 'essb_cached_image') {
+			    continue;
+			}
+			
 			$key = str_replace('essb_c_', '', $key);
 			
 			if (!isset($cached[$key])) {
 				$cached[$key] = 0;
-			}
-			
-			if ($key == 'essb_cache_expire' || $key == 'essb_cache_updated' || $key == 'essb_cached_image') {
-				continue;
-			}
+			}			
 			
 			$cached[$key] += intval($value);
 			$total += intval($value);

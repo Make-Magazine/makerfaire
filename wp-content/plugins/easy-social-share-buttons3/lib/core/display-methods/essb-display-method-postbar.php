@@ -20,6 +20,8 @@ class ESSBDisplayMethodPostBar {
 		$postbar_deactivate_prevnext = essb_object_bool_value($options, 'postbar_deactivate_prevnext');
 		$postbar_deactivate_progress = essb_object_bool_value($options, 'postbar_deactivate_progress');
 		$postbar_deactivate_title = essb_object_bool_value($options, 'postbar_deactivate_title');
+		
+		$postbar_deactivate_share = essb_object_bool_value($options, 'postbar_deactivate_share');
 			
 		$postbar_activate_category = essb_object_bool_value($options, 'postbar_activate_category');
 		$postbar_activate_author = essb_object_bool_value($options, 'postbar_activate_author');
@@ -166,12 +168,15 @@ class ESSBDisplayMethodPostBar {
 		}
 		
 		$output .= '</div>'; // icons
-			
-		$output .= '<div class="essb-postbar-buttons">';
-			
-		$output .= $share_buttons;
 		
-		$output .= '</div>'; // buttons
+		
+		if (!$postbar_deactivate_share) {
+    		$output .= '<div class="essb-postbar-buttons">';
+    			
+    		$output .= $share_buttons;
+    		
+    		$output .= '</div>'; // buttons
+		}
 			
 		if (!$postbar_deactivate_prevnext) {
 			$next_post = get_adjacent_post( true, '', false, 'category');

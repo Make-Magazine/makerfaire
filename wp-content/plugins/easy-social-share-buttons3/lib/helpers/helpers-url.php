@@ -15,7 +15,13 @@ function essb_get_site_current_url ($post_id = '') {
             $port = 80 !== $port && 443 !== $port ? ( ':' . $port ) : '';
             $url  = ! empty( $GLOBALS['HTTP_SERVER_VARS']['REQUEST_URI'] ) ? $GLOBALS['HTTP_SERVER_VARS']['REQUEST_URI'] : ( ! empty( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '' );
             
-            $permalink = 'http' . ( is_ssl() ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . $port . $url;
+            if ($port != '') {
+                if (strpos($_SERVER['HTTP_HOST'], $port) !== false) {
+                    $port = '';
+                }
+            }
+            
+            $permalink = 'http' . ( is_ssl() ? 's' : '' ) . '://' . $_SERVER['HTTP_HOST'] . $port . $url;            
         }
         else {
             global $wp;

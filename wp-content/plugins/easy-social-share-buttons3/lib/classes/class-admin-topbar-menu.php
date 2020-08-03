@@ -103,8 +103,8 @@ if (! class_exists('ESSB_Admin_Topbar_Menu')) {
                     $history_clear_url = essb_get_current_page_url();
                 }
                 
-                $this->add_sub_menu(esc_html__('Setup update of counters on entire site', 'essb'), esc_url($current_url), "essb_p8", "essb_p102");
-                $this->add_sub_menu(esc_html__('Clear counter history & update counters for current post/page', 'essb'), esc_url($history_clear_url), "essb_p8", "essb_p103");
+                $this->add_sub_menu(esc_html__('Setup update of counters on entire site', 'essb'), esc_url($current_url), "essb_p8", "essb_p82");
+                $this->add_sub_menu(esc_html__('Clear counter history & update counters for current post/page', 'essb'), esc_url($history_clear_url), "essb_p8", "essb_p83");
             }
             
             $this->add_sub_menu(esc_html__('Shortcode Generator', 'essb'), esc_url(get_admin_url() . 'admin.php?page=essb_redirect_shortcode&tab=shortcode'), "essb", "essb_top_shortcodegen");

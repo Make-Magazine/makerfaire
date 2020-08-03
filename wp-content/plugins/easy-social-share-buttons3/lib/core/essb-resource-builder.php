@@ -1025,47 +1025,51 @@ class ESSBResourceBuilder {
 /** static called functions for resource generation **/
 
 if (!function_exists('essb_manual_script_load')) {
-	function essb_manual_script_load($key, $file, $ver_string = '') {
-		echo '<script type="text/javascript" src="'.$file.$ver_string.'"></script>';
-	}
+    function essb_manual_script_load($key, $file, $ver_string = '') {
+        echo '<script type="text/javascript" src="'.$file.$ver_string.'"></script>';
+    }
 }
 
-function essb_dynamic_cache_load_css($cache_key = '') {
-	$cached_data = ESSBDynamicCache::get_resource($cache_key, 'css');
-	
-	if ($cached_data != '') {
-		echo "<link rel='stylesheet' id='".esc_attr($cache_key)."' href='".esc_url($cached_data)."' type='text/css' media='all' />";
-		return true;
-	}
-	else {
-		return false;
-	}
-	
+if (!function_exists('essb_dynamic_cache_load_css')) {
+    function essb_dynamic_cache_load_css($cache_key = '') {
+        $cached_data = ESSBDynamicCache::get_resource($cache_key, 'css');
+        
+        if ($cached_data != '') {
+            echo "<link rel='stylesheet' id='".esc_attr($cache_key)."' href='".esc_url($cached_data)."' type='text/css' media='all' />";
+            return true;
+        }
+        else {
+            return false;
+        }
+        
+    }
 }
 
-function essb_dynamic_cache_load_js($cache_key) {
-	$cached_data = ESSBDynamicCache::get_resource($cache_key, 'js');
-	
-	if ($cached_data != '') {
-		echo "<script type='text/javascript' src='".esc_url($cached_data)."' defer></script>";
-		return true;
-	}
-	else {
-		return false;
-	}
+if (!function_exists('essb_dynamic_cache_load_js')) {
+    function essb_dynamic_cache_load_js($cache_key) {
+        $cached_data = ESSBDynamicCache::get_resource($cache_key, 'js');
+        
+        if ($cached_data != '') {
+            echo "<script type='text/javascript' src='".esc_url($cached_data)."' defer></script>";
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }
 
-function essb_load_static_script($list, $async) {
-	$result = '';
-	$load_mode = ($async) ? "po.async=true;" : "po.defer=true;";
-	
-	foreach ($list as $key => $file) {
-		$result .= ('(function() { var po = document.createElement(\'script\'); po.type = \'text/javascript\'; '.$load_mode.'; po.src = \''.esc_url($file).'\'; var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(po, s); })();');
-	}
-	
-	if ($result != '') {
-		echo '<script type="text/javascript">'.$result.'</script>';
-	}
+if (!function_exists('essb_load_static_script')) {
+    function essb_load_static_script($list, $async) {
+        $result = '';
+        $load_mode = ($async) ? "po.async=true;" : "po.defer=true;";
+        
+        foreach ($list as $key => $file) {
+            $result .= ('(function() { var po = document.createElement(\'script\'); po.type = \'text/javascript\'; '.$load_mode.'; po.src = \''.esc_url($file).'\'; var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(po, s); })();');
+        }
+        
+        if ($result != '') {
+            echo '<script type="text/javascript">'.$result.'</script>';
+        }
+    }
 }
-
-?>

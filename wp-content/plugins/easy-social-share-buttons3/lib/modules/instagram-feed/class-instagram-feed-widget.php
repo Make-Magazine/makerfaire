@@ -76,6 +76,8 @@ class ESSBInstagramFeedWidget extends WP_Widget {
 			$instance[$key] = sanitize_text_field( $new_instance[$key] );
 		}
 		
+		$instance['title'] = sanitize_text_field($new_instance['title']);
+		
 		return $instance;
 	}
 

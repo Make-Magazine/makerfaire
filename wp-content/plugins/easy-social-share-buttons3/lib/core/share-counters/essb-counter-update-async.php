@@ -134,7 +134,10 @@ class ESSBAsyncShareCounters {
 					$RollingCurlX->addRequest ( $this->prepare_request_url ( $k, $url ), $post_data, array ($this, 'get_counts' ), array ($k ), $headers );
 					break;
 				case 'mwp' :
-					$RollingCurlX->addRequest ( $this->prepare_request_url ( $k, $url ), $post_data, array ($this, 'get_counts' ), array ($k ), $headers );
+				    /**
+				     * ManageWP is closed
+				     */
+					$this->counters [$k] = 0;
 					break;
 				case 'xing' :
 					$RollingCurlX->addRequest ( $this->prepare_request_url ( $k, $url ), $post_data, array ($this, 'get_counts' ), array ($k ), $headers );
@@ -441,7 +444,11 @@ class ESSBAsyncShareCounters {
 				case 'ok':
 					$shares = array();
 					try {
-						preg_match( '/^ODKL\.updateCount\(\'odklcnt0\',\'(\d+)\'\);$/i', $data, $shares );
+					    /**
+					     * Updating the API callback from
+					     * preg_match( '/^ODKL\.updateCount\(\'odklcnt0\',\'(\d+)\'\);$/i', $data, $shares );
+					     */
+					    preg_match( '/^ODKL\.updateCount\(\'\',\'(\d+)\'\);$/i', $data, $shares );					    
 					
 						$result = (int)$shares[ 1 ];
 					}
@@ -450,25 +457,7 @@ class ESSBAsyncShareCounters {
 					}
 					break;
 				case 'mwp':
-					$shares = array();
-					
-					$count = 0;
-					preg_match( '/<form(.*?)<\/form>/s', $data, $shares );
-					
-					if (count($shares) > 0) {
-						$current_result = $shares[1];
-					
-						$second_parse = array();
-						preg_match( '/<div>(.*?)<\/div>/s', $current_result, $second_parse );
-					
-						$value = $second_parse[1];
-						$value = str_replace("<span>", "", $value);
-						$value = str_replace("</span>", "", $value);
-					
-						$count = $value;
-					}
-					
-					$result = $count;
+					$result = 0;
 					break;
 				case 'xing':
 					$shares = array();

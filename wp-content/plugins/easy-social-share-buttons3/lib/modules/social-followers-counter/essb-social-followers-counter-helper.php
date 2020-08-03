@@ -303,9 +303,9 @@ class ESSBSocialFollowersCounterHelper {
 		$settings['delicious']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
 		$settings['delicious']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers');
 		
-		$settings['instgram']['id'] = array('type' => 'textbox', 'text' => 'User ID');
 		$settings['instgram']['username'] = array('type' => 'textbox', 'text' => 'Username');
-		$settings['instgram']['api_key'] = array('type' => 'textbox', 'text' => 'Access Token', 'authfield' => true, 'description' => 'Inside the plugin, you have two different methods of counter update. If you have a problem with the counter, remove token and try without it (public update).');
+		$settings['instgram']['alternative_update'] = array('type' => 'select', 'text' => 'Alternative Update', 'description' => 'Enable alternative methods if your Instagram followers do not update.', 'values' => array('no' => 'No', 'yes' => 'Yes'));
+		$settings['instgram']['force_update'] = array('type' => 'select', 'text' => 'Force Counter Update', 'description' => 'The force option will add a call to update the counter even when followers\' elements are not present on the page. This should provide a more stable counter update with the new Instagram rules.', 'values' => array('no' => 'No', 'yes' => 'Yes'));
 		$settings['instgram']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
 		$settings['instgram']['uservalue'] = array('type' => 'textbox', 'text' => 'Manual user value of followers');
 		

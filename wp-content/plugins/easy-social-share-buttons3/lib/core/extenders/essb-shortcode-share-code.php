@@ -469,6 +469,7 @@ if (! function_exists ( 'essb_shortcode_share_prepare' )) {
 		} else if ($display_as_key == "flyin") {
 			return essb_core ()->display_flyin ( true, $shortcode_parameters, $special_shortcode_options );
 		} else if ($display_as_key == "postfloat") {
+		    essb_depend_load_function('essb_postfloat_extender', 'lib/core/display-methods/essb-display-method-postfloat.php');		    
 			return essb_core ()->shortcode_display_postfloat ( $shortcode_parameters, $special_shortcode_options );
 		} else if ($display_as_key == "topbar") {
 			return essb_core ()->display_topbar ( true, $shortcode_parameters, $special_shortcode_options );

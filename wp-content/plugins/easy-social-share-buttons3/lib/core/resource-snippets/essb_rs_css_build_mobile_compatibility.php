@@ -1,9 +1,11 @@
 <?php
+/**
+ * @deprecated: 7.3
+ */
 if (!function_exists('essb_rs_css_build_mobile_compatibility')) {
 	add_filter('essb_css_buffer_head', 'essb_rs_css_build_mobile_compatibility');
-	
+
 	function essb_rs_css_build_mobile_compatibility($buffer) {
-		
 		$mobile_css_screensize = essb_sanitize_option_value('mobile_css_screensize');
 		if (empty($mobile_css_screensize)) {
 			$mobile_css_screensize = "750";

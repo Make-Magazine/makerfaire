@@ -301,6 +301,21 @@ function essb5_reset_settings_actions() {
 		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="removelove" data-title="<?php esc_html_e('Remove Love This Counter', 'essb'); ?>"><i class="fa fa-times"></i><?php esc_html_e('Reset Data', 'essb'); ?></a>
 	</div>
 </div>
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon">
+		<i class="fa fa-instagram"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php esc_html_e('Remove Instagram Cached Data', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php esc_html_e('Remove all stored data for Instagram feeds. This will force all feeds used on the website to make an immediate update.', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="instagramtransients" data-title="<?php esc_html_e('Clear Instagram Data', 'essb'); ?>"><i class="fa fa-times"></i><?php esc_html_e('Reset Data', 'essb'); ?></a>
+	</div>
+</div>
 	
 </div>
 	<?php 

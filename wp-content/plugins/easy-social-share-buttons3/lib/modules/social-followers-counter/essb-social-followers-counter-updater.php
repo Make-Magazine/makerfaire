@@ -473,23 +473,17 @@ class ESSBSocialFollowersCounterUpdater {
 		$username = ESSBSocialFollowersCounterHelper::get_option ( 'instgram_username' );
 		$api_key = ESSBSocialFollowersCounterHelper::get_option ( 'instgram_api_key' );
 		
-		if (empty($api_key) && !empty($username)) {
+		/**
+		 * Removing the previous token based update due to a change inside IG
+		 */
+		
+		if (!empty($username)) {
 			return $this->update_instagram_without_token();
 		}
-		
-		if (empty ( $id ) || empty ( $username ) || empty ( $api_key )) {
-			return 0;
+		else {
+		    return 0;
 		}
 		
-		try {
-			$response = $this->remote_update ( 'https://api.instagram.com/v1/users/' . $id . '?access_token=' . $api_key );			
-			
-			if (isset ( $response["data"] ) && isset ( $response["data"]["counts"] ) && isset ( $response["data"]["counts"]["followed_by"] )) {
-				return $response["data"]["counts"]["followed_by"];
-			}
-		} catch ( Exception $e ) {
-			return 0;
-		}
 	}
 	
 	public function update_instagram_without_token() {

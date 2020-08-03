@@ -165,8 +165,7 @@ function essb_is_internal_counted($network) {
 	$api_counters[] = 'vk';
 	$api_counters[] = 'reddit';
 	$api_counters[] = 'buffer';
-	$api_counters[] = 'ok';
-	$api_counters[] = 'mwp';
+	$api_counters[] = 'ok';	
 	$api_counters[] = 'xing';
 	$api_counters[] = 'yummly';
 	$api_counters[] = 'comments'; // added 7.0.4

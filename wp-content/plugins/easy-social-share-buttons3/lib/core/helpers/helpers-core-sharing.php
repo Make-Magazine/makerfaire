@@ -300,6 +300,13 @@ function essb_core_helper_generate_network_list() {
 }
 
 function essb_core_helper_textencode($str) {
+    /**
+     * @since 7.3
+     * Handle the unicode long dash and percentage mark
+     */    
+    $str = str_replace('&#8211;', '-', $str);    
+    $str = str_replace('%', '%25', $str);
+    
 	$str = str_replace(' ', '%20', $str);
 	$str = str_replace("'", '%27', $str);
 	$str = str_replace("\"", '%22', $str);

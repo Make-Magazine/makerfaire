@@ -159,7 +159,7 @@ if (!function_exists('essb_get_shortcode_options_social_share')) {
 		
 		$r['split2'] = array('type' => 'separator', 'title' => esc_html__('Share Counter', 'essb'));
 		$r['counters'] = array('type' => 'select', 'title' => esc_html__('Display share counters', 'essb'),
-				'options' => array('' => 'Default', 'no' => esc_html__('No', 'essb'), 'yes' => esc_html__('Yes', 'essb')));
+				'options' => array('' => 'Default', '0' => esc_html__('No', 'essb'), '1' => esc_html__('Yes', 'essb')));
 		
 		$listOfCounterPos = array('' => 'Default');
 		foreach (essb_avaliable_counter_positions() as $key => $text) {
@@ -263,7 +263,7 @@ if (!function_exists('essb_get_shortcode_options_easy_social_share')) {
 		
 		$r['split2'] = array('type' => 'separator', 'title' => esc_html__('Share Counter', 'essb'));
 		$r['counters'] = array('type' => 'select', 'title' => esc_html__('Display share counters', 'essb'),
-				'options' => array('' => 'Default', 'no' => esc_html__('No', 'essb'), 'yes' => esc_html__('Yes', 'essb')));
+				'options' => array('' => 'Default', '0' => esc_html__('No', 'essb'), '1' => esc_html__('Yes', 'essb')));
 		
 		$listOfCounterPos = array('' => 'Default');
 		foreach (essb_avaliable_counter_positions() as $key => $text) {
@@ -466,7 +466,7 @@ if (!function_exists('essb_get_shortcode_options_easy_social_share_popup')) {
 
 		$r['split2'] = array('type' => 'separator', 'title' => esc_html__('Share Counter', 'essb'));
 		$r['counters'] = array('type' => 'select', 'title' => esc_html__('Display share counters', 'essb'),
-				'options' => array('' => 'Default', 'no' => esc_html__('No', 'essb'), 'yes' => esc_html__('Yes', 'essb')));
+				'options' => array('' => 'Default', '0' => esc_html__('No', 'essb'), '1' => esc_html__('Yes', 'essb')));
 
 		$listOfCounterPos = array('' => 'Default');
 		foreach (essb_avaliable_counter_positions() as $key => $text) {

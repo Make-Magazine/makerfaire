@@ -316,7 +316,7 @@ class ESSBSocialProfiles {
 			$class_size .= ' '.$instance_class;
 		}
 		
-		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="nofollow"' : '';
+		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="noreferrer noopener nofollow"' : '';
 		$link_newwindow = (intval ( $instance_new_window ) == 1) ? ' target="_blank"' : '';
 		
 		// loading animations

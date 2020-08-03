@@ -595,6 +595,14 @@ class ESSBAdvancedOptions {
 			$options['functions_mode_mobile'] = ($value == 'true') ? 'auto' : '';
 		}
 		
+		// Install the analytics table
+		if ($param == "stats_active" && $value == 'true') {
+		    if (!class_exists('ESSBSocialShareAnalyticsBackEnd')) {
+		        include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-analytics/essb-social-share-analytics-backend.php');
+		    }
+            ESSBSocialShareAnalyticsBackEnd::install();
+		}
+		
 		// Sanitize the subscribe form values!
 		if (strpos($param, 'subscribe_mc') !== false) {
 		    $options[$param] = wp_kses($value, essb_subscribe_fields_safe_html());
@@ -1067,6 +1075,24 @@ class ESSBAdvancedOptions {
 			delete_post_meta_by_key('essb_c_love');
 			delete_post_meta_by_key('essb_pc_love');
 			delete_post_meta_by_key('_essb_love');
+		}
+		
+		/**
+		 * 10. Instagram Transients
+		 */
+		if ($function == 'instagramtransients') {
+		    global $wpdb;
+		    
+		    $ig_data = $wpdb->get_col( "SELECT option_name FROM $wpdb->options where (option_name LIKE '_transient_timeout_essb-u-%') OR (option_name LIKE '_transient_essb-u-%') OR (option_name LIKE '_transient_timeout_essb-h-%') OR (option_name LIKE '_transient_essb-h-%')" );
+		    
+		    if (!empty($ig_data)) {
+		        foreach( $ig_data as $transient ) {
+		            
+		            $name = str_replace( '_transient_timeout_', '', $transient );
+		            $name = str_replace( '_transient_', '', $transient );
+		            delete_transient( $name );		            
+		        }	
+		    }
 		}
 	}
 }

@@ -3605,14 +3605,237 @@ jQuery(document).ready(function($){
 		}
 	});
 	
-	$('.essb-instagramfeed').fadeIn(300);
+	/** 
+	 * Setup update of the feed function
+	 */
+	var essbInstagramFeedUpdate = window.essbInstagramFeedUpdate = function (id, options) {		
+		var source = options.username_tag || '',
+			isHashTag = source.indexOf('#') > -1,
+			url = '';
+			
+		source = source.replace('#', '').replace('@', '');
+		
+		url = isHashTag ? 'https://instagram.com/explore/tags/' + source : 'https://instagram.com/' + source;
+		
+		$.ajax({
+            type: 'GET',
+            url: url,
+            async: true,
+            cache: false
+        }).done( function (data) {
+        	if( isHashTag ){
+                data = JSON.parse(data.split("window._sharedData = ")[1].split(";<\/script>")[0]).entry_data.TagPage[0];
+            }else{
+                data = JSON.parse(data.split("window._sharedData = ")[1].split(";<\/script>")[0]).entry_data.ProfilePage[0];
+            }
+        	        	
+        	data = essbInstagramConvertSource(data, isHashTag);        	
+        	essbInstagramCacheUpdate(id, options, data);
+        });
+	};
 	
-	if ($('.essb-instagramfeed-popup').length) {	
+	var essbInstagramCacheUpdate = window.essbInstagramCacheUpdate = function(id, options, data) {
+		  $.ajax({
+              url: essbInstagramUpdater.ajaxurl,
+              type: 'POST',
+              async: true,
+              cache: false,
+              data: {
+                  action: 'essb-instagram-request-cache',
+                  security: essbInstagramUpdater.nonce,
+                  data: { 'options': options, 'data': data }
+              }
+          }).done( function( response ){
+        	  $('#' + id).html(response);
+        	  $('#' + id).data('update', 'false');
+        	  $('#' + id).fadeIn(300);
+        	          	  
+        	  setTimeout(function() {
+        		  essbInstagramFeedAssignEvents($('#' + id));
+        		  if ($('#' + id).hasClass('essb-instagramfeed-pending-popup')) essbInstagramPopupTrigger();
+        	  }, 300);
+          });
+	};	
+	
+	var essbInstagramConvertSource = function(data, useHashtag) {
+		var profileData = {}, images = [];			
+		
+		if (data.graphql && data.graphql.user) {
+			profileData = {
+				'bio': 	data.graphql.user.biography || '',
+				'external': 	data.graphql.user.external_url || '',
+				'followers': 	data.graphql.user.edge_followed_by.count || '',
+				'profile': 	data.graphql.user.profile_pic_url || '',
+				'profile_hd': 	data.graphql.user.profile_pic_url_hd || '',
+			};
+		}
+		
+		var imageSource = [];
+        if (!useHashtag && data['graphql']['user']['edge_owner_to_timeline_media']['edges']  ) {
+			imageSource = data['graphql']['user']['edge_owner_to_timeline_media']['edges'];
+        }
+        else if (useHashtag && data['graphql']['hashtag'][$hash_tag_media]['edges']  ) {
+        	imageSource = data['graphql']['hashtag']['edge_hashtag_to_top_posts']['edges'];
+        }        
+        
+        for (var i=0;i<imageSource.length;i++) {
+        	var image = imageSource[i];
+        	
+        	if (image['node']['edge_media_to_caption']['edges'].length == 0) {
+        		image['node']['edge_media_to_caption']['edges'].push({'node' : {'text': ''}});
+        	}
+        	
+        	var	type = image['node']['is_video'] ? 'video' : 'image',
+        		caption = image['node']['edge_media_to_caption']['edges'][0]['node']['text'] || '';        	
+        	
+        	images.push({
+	                'description': caption,
+	                'link': '//www.instagram.com/p/' + image['node']['shortcode'] || '',
+	                'time': image['node']['taken_at_timestamp'],
+	                'comments': image['node']['edge_media_to_comment']['count'],
+	                'likes': image['node']['edge_liked_by']['count'],
+	                'thumbnail': image['node']['thumbnail_resources'][0]['src'],
+	                'small': image['node']['thumbnail_resources'][2]['src'] ,
+	                'large': image['node']['thumbnail_resources'][4]['src'],
+	                'original': image['node']['display_url'] ,
+	                'type': type,
+        	});
+        }
+		
+		return {
+			'profile': profileData,
+			'images': images
+		}
+	};
+	
+	
+	var essbInstagramFeedAssignEvents = window.essbInstagramFeedAssignEvents = function(element) {
+		if ($(element).hasClass('essb-instagramfeed-masonry')) {
+			$(element).find('.essb-instagramfeed-images').masonry( { itemSelector: '.essb-instagramfeed-single' });
+		}
+		
+		if (!$(element).hasClass('essb-instagramfeed-masonry') && !$(element).hasClass('essb-instagramfeed-carousel')
+				&& !$(element).hasClass('essb-instagramfeed-carousel-1') && !$(element).hasClass('essb-instagramfeed-carousel-2')) {
+			var minWidth = -1;
+			$(element).find('.essb-instagramfeed-single').each(function() {
+				var singleWidth = $(this).width();
+				if (minWidth == -1) minWidth = singleWidth;				
+				else if (minWidth > singleWidth) { minWidth = singleWidth; }
+			});
+			
+			$(element).find('.essb-instagramfeed-single').each(function() {
+				$(this).css({'height': minWidth + 'px'});
+			});
+		}
+		
+		if ($(element).hasClass('essb-instagramfeed-carousel')) {
+			var slides = 4;
+			if ($(window).width() < 1100) slides = 3;
+			if ($(window).width() < 800) slides = 2;
+			if ($(window).width() < 640) slides = 1;
+			$(element).find('.essb-instagramfeed-images').slick({
+				  dots: false,
+				  infinite: true,
+				  speed: 300,
+				  slidesToShow: slides,
+				  slidesToScroll: slides,
+				  prevArrow: '<span class="slick-prev"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M365.446,237.539c0,4.948-1.808,9.236-5.421,12.847c-3.621,3.614-7.898,5.431-12.847,5.431H203.855l53.958,53.958c3.429,3.425,5.14,7.703,5.14,12.847c0,5.14-1.711,9.418-5.14,12.847l-25.981,25.98c-3.426,3.423-7.712,5.141-12.849,5.141c-5.136,0-9.419-1.718-12.847-5.141L102.783,258.093l-25.979-25.981c-3.427-3.429-5.142-7.707-5.142-12.845c0-5.14,1.714-9.42,5.142-12.847l25.979-25.981L206.136,77.083c3.428-3.425,7.707-5.137,12.847-5.137c5.141,0,9.423,1.711,12.849,5.137l25.981,25.981c3.617,3.617,5.428,7.902,5.428,12.851c0,4.948-1.811,9.231-5.428,12.847l-53.958,53.959h143.324c4.948,0,9.226,1.809,12.847,5.426c3.613,3.615,5.421,7.898,5.421,12.847V237.539z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
+				  nextArrow: '<span class="slick-next"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M361.733,232.111l-25.978,25.981l-103.35,103.349c-3.433,3.43-7.714,5.147-12.852,5.147c-5.137,0-9.419-1.718-12.847-5.147l-25.981-25.98c-3.616-3.607-5.424-7.898-5.424-12.847c0-4.942,1.809-9.227,5.424-12.847l53.962-53.954H91.363c-4.948,0-9.229-1.813-12.847-5.428c-3.615-3.613-5.424-7.898-5.424-12.847v-36.547c0-4.948,1.809-9.231,5.424-12.847c3.617-3.617,7.898-5.426,12.847-5.426h143.325l-53.962-53.959c-3.428-3.428-5.14-7.708-5.14-12.847c0-5.141,1.712-9.42,5.14-12.851l25.981-25.981c3.427-3.425,7.71-5.137,12.847-5.137c5.145,0,9.419,1.711,12.852,5.137l103.35,103.356l25.978,25.981c3.432,3.427,5.144,7.707,5.144,12.847C366.877,224.404,365.165,228.686,361.733,232.111z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
+			});
+		}
+		
+		if ($(element).hasClass('essb-instagramfeed-carousel-1')) {
+			var slides = 1;
+			$(element).find('.essb-instagramfeed-images').slick({
+				  dots: false,
+				  infinite: true,
+				  speed: 300,
+				  slidesToShow: slides,
+				  slidesToScroll: slides,
+				  prevArrow: '<span class="slick-prev"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M365.446,237.539c0,4.948-1.808,9.236-5.421,12.847c-3.621,3.614-7.898,5.431-12.847,5.431H203.855l53.958,53.958c3.429,3.425,5.14,7.703,5.14,12.847c0,5.14-1.711,9.418-5.14,12.847l-25.981,25.98c-3.426,3.423-7.712,5.141-12.849,5.141c-5.136,0-9.419-1.718-12.847-5.141L102.783,258.093l-25.979-25.981c-3.427-3.429-5.142-7.707-5.142-12.845c0-5.14,1.714-9.42,5.142-12.847l25.979-25.981L206.136,77.083c3.428-3.425,7.707-5.137,12.847-5.137c5.141,0,9.423,1.711,12.849,5.137l25.981,25.981c3.617,3.617,5.428,7.902,5.428,12.851c0,4.948-1.811,9.231-5.428,12.847l-53.958,53.959h143.324c4.948,0,9.226,1.809,12.847,5.426c3.613,3.615,5.421,7.898,5.421,12.847V237.539z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
+				  nextArrow: '<span class="slick-next"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M361.733,232.111l-25.978,25.981l-103.35,103.349c-3.433,3.43-7.714,5.147-12.852,5.147c-5.137,0-9.419-1.718-12.847-5.147l-25.981-25.98c-3.616-3.607-5.424-7.898-5.424-12.847c0-4.942,1.809-9.227,5.424-12.847l53.962-53.954H91.363c-4.948,0-9.229-1.813-12.847-5.428c-3.615-3.613-5.424-7.898-5.424-12.847v-36.547c0-4.948,1.809-9.231,5.424-12.847c3.617-3.617,7.898-5.426,12.847-5.426h143.325l-53.962-53.959c-3.428-3.428-5.14-7.708-5.14-12.847c0-5.141,1.712-9.42,5.14-12.851l25.981-25.981c3.427-3.425,7.71-5.137,12.847-5.137c5.145,0,9.419,1.711,12.852,5.137l103.35,103.356l25.978,25.981c3.432,3.427,5.144,7.707,5.144,12.847C366.877,224.404,365.165,228.686,361.733,232.111z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
+			});
+		}
+		
+		if ($(element).hasClass('essb-instagramfeed-carousel-2')) {
+			var slides = 2;
+			$(element).find('.essb-instagramfeed-images').slick({
+				  dots: false,
+				  infinite: true,
+				  speed: 300,
+				  slidesToShow: slides,
+				  slidesToScroll: slides,
+				  prevArrow: '<span class="slick-prev"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M365.446,237.539c0,4.948-1.808,9.236-5.421,12.847c-3.621,3.614-7.898,5.431-12.847,5.431H203.855l53.958,53.958c3.429,3.425,5.14,7.703,5.14,12.847c0,5.14-1.711,9.418-5.14,12.847l-25.981,25.98c-3.426,3.423-7.712,5.141-12.849,5.141c-5.136,0-9.419-1.718-12.847-5.141L102.783,258.093l-25.979-25.981c-3.427-3.429-5.142-7.707-5.142-12.845c0-5.14,1.714-9.42,5.142-12.847l25.979-25.981L206.136,77.083c3.428-3.425,7.707-5.137,12.847-5.137c5.141,0,9.423,1.711,12.849,5.137l25.981,25.981c3.617,3.617,5.428,7.902,5.428,12.851c0,4.948-1.811,9.231-5.428,12.847l-53.958,53.959h143.324c4.948,0,9.226,1.809,12.847,5.426c3.613,3.615,5.421,7.898,5.421,12.847V237.539z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
+				  nextArrow: '<span class="slick-next"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M361.733,232.111l-25.978,25.981l-103.35,103.349c-3.433,3.43-7.714,5.147-12.852,5.147c-5.137,0-9.419-1.718-12.847-5.147l-25.981-25.98c-3.616-3.607-5.424-7.898-5.424-12.847c0-4.942,1.809-9.227,5.424-12.847l53.962-53.954H91.363c-4.948,0-9.229-1.813-12.847-5.428c-3.615-3.613-5.424-7.898-5.424-12.847v-36.547c0-4.948,1.809-9.231,5.424-12.847c3.617-3.617,7.898-5.426,12.847-5.426h143.325l-53.962-53.959c-3.428-3.428-5.14-7.708-5.14-12.847c0-5.141,1.712-9.42,5.14-12.851l25.981-25.981c3.427-3.425,7.71-5.137,12.847-5.137c5.145,0,9.419,1.711,12.852,5.137l103.35,103.356l25.978,25.981c3.432,3.427,5.144,7.707,5.144,12.847C366.877,224.404,365.165,228.686,361.733,232.111z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
+			});
+		}
+		
+		if ($(element).hasClass('essb-instagramfeed-carousel-1') || $(element).hasClass('essb-instagramfeed-carousel-2')) {
+			var minHeight = -1;
+			$(element).find('.essb-instagramfeed-single').each(function() {
+				var singleHeight = $(this).height();
+				if (minHeight == -1) minHeight = singleHeight;				
+				else if (minHeight > singleHeight) { minHeight = singleHeight; }
+			});
+			
+			$(element).find('.essb-instagramfeed-single').each(function() {
+				$(this).css({'height': minHeight + 'px'});
+			});
+		}
+		
+		// Assign the lightbox
+		if ($(element).hasClass('essb-instagramfeed-lightbox')) {
+			$(element).find('.essb-instagramfeed-images .essb-instagramfeed-single a').each(function() {
+				$(this).on('click', function(e) {
+					e.preventDefault();
+					
+					var instaURL = $(this).attr('href') || '',
+						instaImgage = $(this).find('.essb-instagramfeed-single-image img').attr('src') || '',
+						instaContent = $(this).find('.essb-instagramfeed-single-image-info').html();
+								
+					SimpleLightbox.open({
+			            content: '<div class="essb-instagramfeed-lightbox-content">' +
+			            			'<div class="essb-instagramfeed-lightbox-content-image"><a href="'+instaURL+'" target="_blank"><img src="'+instaImgage+'"/></a></div>' +
+			            			'<div class="essb-instagramfeed-lightbox-content-info">' + instaContent +''+
+			            			'<div class="essb-instagramfeed-lightbox-button essb-instagramfeed-profile-followbtn"><a href="'+instaURL+'" target="_blank">Visit on Instagram</a>'+
+			            			'</div>'+
+			                     '</div>',
+			            elementClass: 'essb-instagramfeed-lightbox'
+			        });
+					
+					var content = $('.essb-instagramfeed-lightbox-content .essb-instagramfeed-single-image-info-desc').text();
+					if (content && content != '') {
+						content = content.split(' ');
+						for (var i = 0; i < content.length; i++) {
+							var word = content[i] || '';
+							if (word == '') continue;
+							
+							if (word.substr(0, 1) == '@') {
+								var linkID = word.substr(1);
+								content[i] = '<a href="https://instagram.com/' + linkID + '" target="_blank"><b>'+word+'</b></a>';
+							}
+							
+							if (word.substr(0, 1) == '#') {
+								var linkID = word.substr(1);
+								content[i] = '<a href="https://www.instagram.com/explore/tags/' + linkID + '" target="_blank"><b>'+word+'</b></a>';
+							}
+						}
+						
+						$('.essb-instagramfeed-lightbox-content .essb-instagramfeed-single-image-info-desc').html(content.join(' '));
+					}
+				});
+			});
+		} // end lightbox
+	};
+	
+	var essbInstagramPopupTrigger = window.essbInstagramPopupTrigger = function() {
+		if (!$('.essb-instagramfeed-popup').length) return;
+		
 		var maxWidth = $(window).width() - 50,
 			userWidth = $('.essb-instagramfeed-popup').data('width') || '',
 			userDelay = $('.essb-instagramfeed-popup').data('delay') || '',
 			userOneTimeCookie = $('.essb-instagramfeed-popup').data('hidefor') || '';
-		
+	
 		userOneTimeCookie = Number(userOneTimeCookie || 0);
 		if (!Number(userOneTimeCookie) || isNaN(userOneTimeCookie)) userOneTimeCookie = 0;
 		
@@ -3694,147 +3917,26 @@ jQuery(document).ready(function($){
 		}, 500);
 	}
 	
-	$('.essb-instagramfeed').each(function() {
-		if ($(this).hasClass('essb-instagramfeed-masonry')) {
-			$(this).find('.essb-instagramfeed-images').masonry( { itemSelector: '.essb-instagramfeed-single' });
-		}
-		
-		if (!$(this).hasClass('essb-instagramfeed-masonry') && !$(this).hasClass('essb-instagramfeed-carousel')
-				&& !$(this).hasClass('essb-instagramfeed-carousel-1') && !$(this).hasClass('essb-instagramfeed-carousel-2')) {
-			var minWidth = -1;
-			$(this).find('.essb-instagramfeed-single').each(function() {
-				var singleWidth = $(this).width();
-				if (minWidth == -1) minWidth = singleWidth;				
-				else if (minWidth > singleWidth) { minWidth = singleWidth; }
-			});
-			
-			$(this).find('.essb-instagramfeed-single').each(function() {
-				$(this).css({'height': minWidth + 'px'});
-			});
-		}
-		
-		if ($('.essb-instagramfeed-popup').length) {
-			$('.essb-instagramfeed-popup').center();
-			
-			/**
-			 * Correct the height, top position and scroll
-			 */
-			var height = $('.essb-instagramfeed-popup').height(),
-				winHeight = $(window).height();
-
-			/**
-			 * Height of the pop-up become bigger than screen. Re-position the window and setup
-			 * top again with scroll
-			 */
-			if (height > (winHeight - 50)) {
-				$('.essb-instagramfeed-popup').css({ 'top': '50px' });
-				$('.essb-instagramfeed-popup').css({ 'height': (winHeight - 100) + 'px' });
-				
-				var headerHeight = $('.essb-instagramfeed-popup .essb-instagramfeed-profile').outerHeight();
-				$('.essb-instagramfeed-popup .essb-instagramfeed-images').css({
-					'height': (winHeight - 100 - headerHeight) + 'px', 
-					'overflowY': 'scroll',
-					'lineHeight': '0'
-				});
-			}		
-		}
-		
-		
-		if ($(this).hasClass('essb-instagramfeed-carousel')) {
-			var slides = 4;
-			if ($(window).width() < 1100) slides = 3;
-			if ($(window).width() < 800) slides = 2;
-			if ($(window).width() < 640) slides = 1;
-			$(this).find('.essb-instagramfeed-images').slick({
-				  dots: false,
-				  infinite: true,
-				  speed: 300,
-				  slidesToShow: slides,
-				  slidesToScroll: slides,
-				  prevArrow: '<span class="slick-prev"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M365.446,237.539c0,4.948-1.808,9.236-5.421,12.847c-3.621,3.614-7.898,5.431-12.847,5.431H203.855l53.958,53.958c3.429,3.425,5.14,7.703,5.14,12.847c0,5.14-1.711,9.418-5.14,12.847l-25.981,25.98c-3.426,3.423-7.712,5.141-12.849,5.141c-5.136,0-9.419-1.718-12.847-5.141L102.783,258.093l-25.979-25.981c-3.427-3.429-5.142-7.707-5.142-12.845c0-5.14,1.714-9.42,5.142-12.847l25.979-25.981L206.136,77.083c3.428-3.425,7.707-5.137,12.847-5.137c5.141,0,9.423,1.711,12.849,5.137l25.981,25.981c3.617,3.617,5.428,7.902,5.428,12.851c0,4.948-1.811,9.231-5.428,12.847l-53.958,53.959h143.324c4.948,0,9.226,1.809,12.847,5.426c3.613,3.615,5.421,7.898,5.421,12.847V237.539z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
-				  nextArrow: '<span class="slick-next"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M361.733,232.111l-25.978,25.981l-103.35,103.349c-3.433,3.43-7.714,5.147-12.852,5.147c-5.137,0-9.419-1.718-12.847-5.147l-25.981-25.98c-3.616-3.607-5.424-7.898-5.424-12.847c0-4.942,1.809-9.227,5.424-12.847l53.962-53.954H91.363c-4.948,0-9.229-1.813-12.847-5.428c-3.615-3.613-5.424-7.898-5.424-12.847v-36.547c0-4.948,1.809-9.231,5.424-12.847c3.617-3.617,7.898-5.426,12.847-5.426h143.325l-53.962-53.959c-3.428-3.428-5.14-7.708-5.14-12.847c0-5.141,1.712-9.42,5.14-12.851l25.981-25.981c3.427-3.425,7.71-5.137,12.847-5.137c5.145,0,9.419,1.711,12.852,5.137l103.35,103.356l25.978,25.981c3.432,3.427,5.144,7.707,5.144,12.847C366.877,224.404,365.165,228.686,361.733,232.111z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
-			});
-		}
-		
-		if ($(this).hasClass('essb-instagramfeed-carousel-1')) {
-			var slides = 1;
-			$(this).find('.essb-instagramfeed-images').slick({
-				  dots: false,
-				  infinite: true,
-				  speed: 300,
-				  slidesToShow: slides,
-				  slidesToScroll: slides,
-				  prevArrow: '<span class="slick-prev"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M365.446,237.539c0,4.948-1.808,9.236-5.421,12.847c-3.621,3.614-7.898,5.431-12.847,5.431H203.855l53.958,53.958c3.429,3.425,5.14,7.703,5.14,12.847c0,5.14-1.711,9.418-5.14,12.847l-25.981,25.98c-3.426,3.423-7.712,5.141-12.849,5.141c-5.136,0-9.419-1.718-12.847-5.141L102.783,258.093l-25.979-25.981c-3.427-3.429-5.142-7.707-5.142-12.845c0-5.14,1.714-9.42,5.142-12.847l25.979-25.981L206.136,77.083c3.428-3.425,7.707-5.137,12.847-5.137c5.141,0,9.423,1.711,12.849,5.137l25.981,25.981c3.617,3.617,5.428,7.902,5.428,12.851c0,4.948-1.811,9.231-5.428,12.847l-53.958,53.959h143.324c4.948,0,9.226,1.809,12.847,5.426c3.613,3.615,5.421,7.898,5.421,12.847V237.539z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
-				  nextArrow: '<span class="slick-next"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M361.733,232.111l-25.978,25.981l-103.35,103.349c-3.433,3.43-7.714,5.147-12.852,5.147c-5.137,0-9.419-1.718-12.847-5.147l-25.981-25.98c-3.616-3.607-5.424-7.898-5.424-12.847c0-4.942,1.809-9.227,5.424-12.847l53.962-53.954H91.363c-4.948,0-9.229-1.813-12.847-5.428c-3.615-3.613-5.424-7.898-5.424-12.847v-36.547c0-4.948,1.809-9.231,5.424-12.847c3.617-3.617,7.898-5.426,12.847-5.426h143.325l-53.962-53.959c-3.428-3.428-5.14-7.708-5.14-12.847c0-5.141,1.712-9.42,5.14-12.851l25.981-25.981c3.427-3.425,7.71-5.137,12.847-5.137c5.145,0,9.419,1.711,12.852,5.137l103.35,103.356l25.978,25.981c3.432,3.427,5.144,7.707,5.144,12.847C366.877,224.404,365.165,228.686,361.733,232.111z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
-			});
-		}
-		
-		if ($(this).hasClass('essb-instagramfeed-carousel-2')) {
-			var slides = 2;
-			$(this).find('.essb-instagramfeed-images').slick({
-				  dots: false,
-				  infinite: true,
-				  speed: 300,
-				  slidesToShow: slides,
-				  slidesToScroll: slides,
-				  prevArrow: '<span class="slick-prev"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M365.446,237.539c0,4.948-1.808,9.236-5.421,12.847c-3.621,3.614-7.898,5.431-12.847,5.431H203.855l53.958,53.958c3.429,3.425,5.14,7.703,5.14,12.847c0,5.14-1.711,9.418-5.14,12.847l-25.981,25.98c-3.426,3.423-7.712,5.141-12.849,5.141c-5.136,0-9.419-1.718-12.847-5.141L102.783,258.093l-25.979-25.981c-3.427-3.429-5.142-7.707-5.142-12.845c0-5.14,1.714-9.42,5.142-12.847l25.979-25.981L206.136,77.083c3.428-3.425,7.707-5.137,12.847-5.137c5.141,0,9.423,1.711,12.849,5.137l25.981,25.981c3.617,3.617,5.428,7.902,5.428,12.851c0,4.948-1.811,9.231-5.428,12.847l-53.958,53.959h143.324c4.948,0,9.226,1.809,12.847,5.426c3.613,3.615,5.421,7.898,5.421,12.847V237.539z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
-				  nextArrow: '<span class="slick-next"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="438.533px" height="438.533px" viewBox="0 0 438.533 438.533" style="enable-background:new 0 0 438.533 438.533;" xml:space="preserve"><g><path d="M409.133,109.203c-19.608-33.592-46.205-60.189-79.798-79.796C295.736,9.801,259.058,0,219.273,0c-39.781,0-76.47,9.801-110.063,29.407c-33.595,19.604-60.192,46.201-79.8,79.796C9.801,142.8,0,179.489,0,219.267c0,39.78,9.804,76.463,29.407,110.062c19.607,33.592,46.204,60.189,79.799,79.798c33.597,19.605,70.283,29.407,110.063,29.407s76.47-9.802,110.065-29.407c33.593-19.602,60.189-46.206,79.795-79.798c19.603-33.596,29.403-70.284,29.403-110.062C438.533,179.485,428.732,142.795,409.133,109.203z M361.733,232.111l-25.978,25.981l-103.35,103.349c-3.433,3.43-7.714,5.147-12.852,5.147c-5.137,0-9.419-1.718-12.847-5.147l-25.981-25.98c-3.616-3.607-5.424-7.898-5.424-12.847c0-4.942,1.809-9.227,5.424-12.847l53.962-53.954H91.363c-4.948,0-9.229-1.813-12.847-5.428c-3.615-3.613-5.424-7.898-5.424-12.847v-36.547c0-4.948,1.809-9.231,5.424-12.847c3.617-3.617,7.898-5.426,12.847-5.426h143.325l-53.962-53.959c-3.428-3.428-5.14-7.708-5.14-12.847c0-5.141,1.712-9.42,5.14-12.851l25.981-25.981c3.427-3.425,7.71-5.137,12.847-5.137c5.145,0,9.419,1.711,12.852,5.137l103.35,103.356l25.978,25.981c3.432,3.427,5.144,7.707,5.144,12.847C366.877,224.404,365.165,228.686,361.733,232.111z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg></span>',
-			});
-		}
-		
-		if ($(this).hasClass('essb-instagramfeed-carousel-1') || $(this).hasClass('essb-instagramfeed-carousel-2')) {
-			var minHeight = -1;
-			$(this).find('.essb-instagramfeed-single').each(function() {
-				var singleHeight = $(this).height();
-				if (minHeight == -1) minHeight = singleHeight;				
-				else if (minHeight > singleHeight) { minHeight = singleHeight; }
-			});
-			
-			$(this).find('.essb-instagramfeed-single').each(function() {
-				$(this).css({'height': minHeight + 'px'});
-			});
-		}
-	});
+	// Assign the pop-up extra class
+	if ($('.essb-instagramfeed-popup').length)
+		$('.essb-instagramfeed-popup .essb-instagramfeed').addClass('essb-instagramfeed-pending-popup');
 	
-	$('.essb-instagramfeed-lightbox .essb-instagramfeed-images .essb-instagramfeed-single a').each(function() {
-		$(this).on('click', function(e) {
-			e.preventDefault();
+	// Begin update the instagram feed information
+	$('.essb-instagramfeed').each(function() {
+		var requireUpdate = $(this).data('update') || '',
+			options = $(this).data('source');
+		
+		if (requireUpdate.toString() == 'true') {
+			$(this).attr('id', 'essb-instagram-'+Math.random().toString(36).substr(2, 9));
 			
-			var instaURL = $(this).attr('href') || '',
-				instaImgage = $(this).find('.essb-instagramfeed-single-image img').attr('src') || '',
-				instaContent = $(this).find('.essb-instagramfeed-single-image-info').html();
-						
-			SimpleLightbox.open({
-	            content: '<div class="essb-instagramfeed-lightbox-content">' +
-	            			'<div class="essb-instagramfeed-lightbox-content-image"><a href="'+instaURL+'" target="_blank"><img src="'+instaImgage+'"/></a></div>' +
-	            			'<div class="essb-instagramfeed-lightbox-content-info">' + instaContent +''+
-	            			'<div class="essb-instagramfeed-lightbox-button essb-instagramfeed-profile-followbtn"><a href="'+instaURL+'" target="_blank">Visit on Instagram</a>'+
-	            			'</div>'+
-	                     '</div>',
-	            elementClass: 'essb-instagramfeed-lightbox'
-	        });
+			essbInstagramFeedUpdate($(this).attr('id'), options);
+		}
+		else {
+			$(this).fadeIn(300);
+			essbInstagramFeedAssignEvents($(this));
 			
-			var content = $('.essb-instagramfeed-lightbox-content .essb-instagramfeed-single-image-info-desc').text();
-			if (content && content != '') {
-				content = content.split(' ');
-				for (var i = 0; i < content.length; i++) {
-					var word = content[i] || '';
-					if (word == '') continue;
-					
-					if (word.substr(0, 1) == '@') {
-						var linkID = word.substr(1);
-						content[i] = '<a href="https://instagram.com/' + linkID + '" target="_blank"><b>'+word+'</b></a>';
-					}
-					
-					if (word.substr(0, 1) == '#') {
-						var linkID = word.substr(1);
-						content[i] = '<a href="https://www.instagram.com/explore/tags/' + linkID + '" target="_blank"><b>'+word+'</b></a>';
-					}
-				}
-				
-				$('.essb-instagramfeed-lightbox-content .essb-instagramfeed-single-image-info-desc').html(content.join(' '));
-			}
-		});
+			if ($(this).hasClass('essb-instagramfeed-pending-popup')) essbInstagramPopupTrigger();
+		}
 	});
 	
 });

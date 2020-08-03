@@ -1941,10 +1941,28 @@ jQuery(document).ready(function($){
 
 				if ($('.essb-profiles-' + network).length)
 					$('.essb-profiles-' + network).show();
+				
+				if (network == 'instagram') {
+					if ($('.essb-profiles-instgram').length)
+						$('.essb-profiles-instgram').show();
+				}
+				if (network == 'instgram') {
+					if ($('.essb-profiles-instagram').length)
+						$('.essb-profiles-instagram').show();
+				}
 			}
 			else {
 				if ($('.essb-profiles-' + network).length)
 					$('.essb-profiles-' + network).hide();
+				
+				if (network == 'instagram') {
+					if ($('.essb-profiles-instgram').length)
+						$('.essb-profiles-instgram').hide();
+				}
+				if (network == 'instgram') {
+					if ($('.essb-profiles-instagram').length)
+						$('.essb-profiles-instagram').hide();
+				}
 			}
 		});
 	});
@@ -2035,14 +2053,33 @@ jQuery(document).ready(function($){
 	
 	$('#essb-sortable-profile_networks input[type="checkbox"]').each(function(){
 		var network = $(this).val();
-		if ($(this).is(':checked')) {
 
+		if ($(this).is(':checked')) {
 			if ($('.essb-profiles-' + network).length)
 				$('.essb-profiles-' + network).show();
+			
+			if (network == 'instagram') {
+				if ($('.essb-profiles-instgram').length)
+					$('.essb-profiles-instgram').show();
+				
+			}
+			if (network == 'instgram') {
+				if ($('.essb-profiles-instagram').length)
+					$('.essb-profiles-instagram').show();
+			}
 		}
 		else {
 			if ($('.essb-profiles-' + network).length)
 				$('.essb-profiles-' + network).hide();
+			
+			if (network == 'instagram') {
+				if ($('.essb-profiles-instgram').length)
+					$('.essb-profiles-instgram').hide();
+			}
+			if (network == 'instgram') {
+				if ($('.essb-profiles-instagram').length)
+					$('.essb-profiles-instagram').hide();
+			}
 
 		}
 

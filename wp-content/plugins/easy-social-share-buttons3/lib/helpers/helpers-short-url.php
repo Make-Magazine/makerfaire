@@ -33,9 +33,12 @@ function essb_short_url($url, $provider, $post_id = '', $bitly_user = '', $bitly
         case 'wp':
             $short_url = wp_get_shortlink($post_id);
             
-            $url_parts = parse_url($url);
-            if (isset($url_parts['query'])) {
-                $short_url = essb_attach_tracking_code($short_url, $url_parts['query']);
+            /**
+             * 7.2.2 Fix passing UTM parameters to WordPress shortlink
+             */
+            if (strpos($url, '?') !== false) {
+                $url_parts = explode('?', $url);
+                $short_url = essb_attach_tracking_code($short_url, $url_parts[1]);                
             }
             
             break;

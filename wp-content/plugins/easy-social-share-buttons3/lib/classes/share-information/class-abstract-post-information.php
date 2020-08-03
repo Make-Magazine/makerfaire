@@ -160,7 +160,7 @@ abstract class ESSB_Post_Information {
             'url' => $url, 
             'title' => $this->prepare_text_value($this->title), 
             'image' => $this->image, 
-            'description' => $this->prepare_text_value($this->description), 
+            'description' => $this->strip_long_description($this->prepare_text_value($this->description)), 
             'twitter_user' => $this->tweet_user, 
             'twitter_hashtags' => $this->tweet_tags, 
             'twitter_tweet' => $this->prepare_text_value($this->tweet), 
@@ -525,6 +525,27 @@ abstract class ESSB_Post_Information {
         // stripslashes/wp_strip_all_tags
         $value = str_replace('&nbsp;', '', $this->remove_shortcodes_keep_content($value));
         return trim(strip_shortcodes(addslashes($value)));
+    }
+    
+    /**
+     * Truncate description - issue appearing in share to few networks if it is too long
+     * 
+     * @param string $value
+     * @return string
+     */
+    private function strip_long_description($value = '') {
+        $max_length = 256;
+        
+        if (has_filter("essb/helpers/share_description_length")) {
+            $description = apply_filters("essb/helpers/share_description_length", $max_length);
+        }
+        
+        if (strlen($value) > $max_length) {
+            $value = substr($value, 0, $max_length);
+            $value .= '...';
+        }
+        
+        return $value;
     }
     
     /**

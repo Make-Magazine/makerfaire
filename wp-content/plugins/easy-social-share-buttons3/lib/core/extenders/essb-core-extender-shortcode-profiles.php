@@ -24,6 +24,15 @@ class ESSBCoreExtenderShortcodeProfiles {
 		$sc_cta = isset($atts['cta']) ? $atts['cta'] : '';
 		$sc_cta_vertical = isset($atts['cta_vertical']) ? $atts['cta_vertical'] : '';
 		$sc_columns = isset($atts['columns']) ? $atts['columns'] : '';
+		$sc_profiles_all_networks = isset($atts['profiles_all_networks']) ? $atts['profiles_all_networks'] : '';
+		
+		if ($sc_profiles_all_networks == '' && $sc_networks != '') {
+		    $sc_profiles_all_networks = 'true';
+		}
+		
+		if ($sc_profiles_all_networks != '' && !essb_unified_true($sc_profiles_all_networks)) {
+		    $sc_networks = '';
+		}
 				
 		$sc_nospace = essb_unified_true($sc_nospace);	
 		$sc_cta = essb_unified_true($sc_cta);
@@ -35,9 +44,19 @@ class ESSBCoreExtenderShortcodeProfiles {
 			$profile_networks = explode(',', $sc_networks);
 		}
 		else {
-		    $profile_networks = essb_advanced_array_to_simple_array(essb_available_social_profiles());
-		}
-		
+		    $profile_networks = ESSBSocialProfilesHelper::get_active_networks();
+		    $profile_active_networks = $profile_networks;
+		    
+		    if (!is_array($profile_networks)) {
+		        $profile_networks = array();
+		    }
+		    
+		    $profiles_order = ESSBSocialProfilesHelper::get_active_networks_order();
+		    
+		    if (!is_array($profiles_order)) {
+		        $profiles_order = array();
+		    }
+		}		
 		
 		// prepare network values
 		$sc_network_address = array();

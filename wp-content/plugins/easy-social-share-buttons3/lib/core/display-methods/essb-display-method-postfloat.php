@@ -14,13 +14,11 @@
 if (!function_exists('essb_postfloat_extender')) {
 	
 	function essb_postfloat_extender($extra_options = '', $position = '', $style = array()) {
-		
 		if ($position == 'postfloat') {
 			$postfloat_bottom_offset = essb_option_value('postfloat_bottom_offset');
 			if ($postfloat_bottom_offset != '' && intval($postfloat_bottom_offset) > 0) {
 				$extra_options .= ' data-postfloat-bottom="'.esc_attr($postfloat_bottom_offset).'"';
 			}
-			
 			if (essb_option_bool_value('postfloat_always_visible')) {
 				$extra_options .= ' data-postfloat-stay="true"';
 			}

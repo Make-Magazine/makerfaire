@@ -1,4 +1,9 @@
 <?php
+/**
+ * @deprecated
+ * @since 7.3
+ */
+
 function essb_rs_css_topbar() {
 	$snippet = '';
 	

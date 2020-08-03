@@ -1,4 +1,8 @@
 <?php
+/**
+ * Deprecated
+ * @deprecated 7.3
+ */
 if (! function_exists ( 'essb_rs_css_build_customizer_mailchimp' )) {
 	function essb_rs_css_build_customizer_mailchimp($active_customizers) {
 		global $essb_options;

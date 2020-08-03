@@ -1106,3 +1106,9 @@ font-size: 13px; display: flex; background: #fff; }
 .essb-options .ao-shortcode-panel .title { color: #fff; }
 
 .essb-options-helprow .help-details .title { color: #2b4b80; }
+
+.manage-column.column-essb_shares { width: 6em; }
+
+.manage-column.column-essb_shareinfo { width: 8em; }
+
+.essb-status-icon svg { width: 18px; height: 18px; margin: 3px; }

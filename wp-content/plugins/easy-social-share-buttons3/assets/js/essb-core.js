@@ -2463,7 +2463,11 @@ jQuery(document).ready(function($){
 					if (app == 'phone') {
 						cmd = 'tel:'+number;
 					}
-					window.location.href = cmd;
+					
+					if (instance_mobile) window.location.href = cmd;
+					else {
+						window.open(cmd, '_blank');
+					}
 
 				});
 			});
@@ -2737,6 +2741,12 @@ jQuery(document).ready(function($){
 			});
 
 			var essbPinImagesDetect = function() {
+				
+				// WP Rocket Lazy Videos set no-pin class to those images to prevent holding down
+				$('.rll-youtube-player img').each(function() {
+					$(this).addClass('no-pin');
+				});
+				
 
 				if (essbPinImages.selector) {
 					$(essbPinImages.selector).each(essbPinImagesGenerateButtons);

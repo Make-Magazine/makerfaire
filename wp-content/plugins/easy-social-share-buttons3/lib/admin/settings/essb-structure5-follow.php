@@ -500,8 +500,15 @@ function essb3_draw_fanscounter_settings($tab_id, $menu_id) {
 function essb_prepare_social_profiles_fields($tab_id, $menu_id) {
 
 	foreach (essb_available_social_profiles() as $key => $text) {
-		ESSBOptionsStructureHelper::holder_start($tab_id, $menu_id, 'essb-profiles-panel essb-profiles-'.$key, 'essb-profiles-'.$key);
-		ESSBOptionsStructureHelper::panel_start($tab_id, $menu_id, $text, '', 'fa21 essbfc-icon essbfc-icon-'.$key, array("mode" => "toggle", "state" => "closed"));
+	    
+	    $display_key = $key;
+	    
+	    if ($display_key == 'instgram') {
+	        $display_key = 'instagram';
+	    }
+	    
+	    ESSBOptionsStructureHelper::holder_start($tab_id, $menu_id, 'essb-profiles-panel essb-profiles-'.$display_key, 'essb-profiles-'.$display_key);
+	    ESSBOptionsStructureHelper::panel_start($tab_id, $menu_id, $text, '', 'fa21 essbfc-icon essbfc-icon-'.$display_key, array("mode" => "toggle", "state" => "closed"));
 
 		if ($key == 'subscribe_form') {
 		    ESSBOptionsStructureHelper::field_select($tab_id, $menu_id, 'profile_'.$key, esc_html__('Form design', 'essb'), '', essb_optin_designs());		    

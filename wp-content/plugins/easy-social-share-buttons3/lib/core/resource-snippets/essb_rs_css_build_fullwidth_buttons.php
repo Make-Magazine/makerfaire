@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * @deprecated 7.3
+ */
+
 if (!function_exists('essb_rs_css_build_fullwidth_buttons')) {
 	function essb_rs_css_build_fullwidth_buttons($number_of_buttons, $container_width, $buttons_correction_width, $first_button = '', $second_button = '') {
 		$button_width = intval($container_width) / intval($number_of_buttons);

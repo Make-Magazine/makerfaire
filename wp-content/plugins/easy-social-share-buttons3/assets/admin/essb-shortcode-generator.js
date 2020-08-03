@@ -178,8 +178,17 @@ jQuery(document).ready(function( $ ){
 		else {
 			code = '[' + shortcode;
 			
+			let isSharingCode = ['social-share', 'easy-social-share', 'easy-social-share-popup'].indexOf(shortcode);
+			
 			for (var param in options) {
-				code += ' ' + param + '="' + options[param] + '"';
+				
+				let value = options[param] || '';
+				if (isSharingCode && (param == 'counter' || param == 'counters')) {
+					code += ' ' + param + '=' + (value == 'yes' ? '1': '0') + '';
+				}
+				else {
+					code += ' ' + param + '="' + value + '"';
+				}
 			}
 			code += ']';
 			

@@ -230,11 +230,13 @@ jQuery(document).ready(function( $ ){
 				$('.settings-panel-precompiled_mode').show();
 				$('.settings-panel-precompiled_folder').show();
 				$('.ao-panel-precompiled_unique').show();
+				$('.ao-panel-precompiled_footer').show();
 			}
 			else {
 				$('.settings-panel-precompiled_mode').hide();
 				$('.settings-panel-precompiled_folder').hide();
 				$('.ao-panel-precompiled_unique').hide();
+				$('.ao-panel-precompiled_footer').hide();
 			}
 		});
 		

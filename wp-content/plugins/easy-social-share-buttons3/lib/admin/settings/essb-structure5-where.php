@@ -633,6 +633,7 @@ if (!essb_options_bool_value('deactivate_method_postbar')) {
 	ESSBOptionsStructureHelper::field_switch_panel($where_to_display, 'positions|display-15', 'postbar_deactivate_prevnext', esc_html__('Deactivate previous/next articles', 'essb'), esc_html__('Activate this option if you wish to deactivate display of previous/next article buttons', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 	ESSBOptionsStructureHelper::field_switch_panel($where_to_display, 'positions|display-15', 'postbar_deactivate_progress', esc_html__('Deactivate read progress bar', 'essb'), esc_html__('Activate this option if you wish to deactivate display of read progress', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 	ESSBOptionsStructureHelper::field_switch_panel($where_to_display, 'positions|display-15', 'postbar_deactivate_title', esc_html__('Deactivate post title', 'essb'), esc_html__('Activate this option if you wish to deactivate display of post title', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+	ESSBOptionsStructureHelper::field_switch_panel($where_to_display, 'positions|display-15', 'postbar_deactivate_share', esc_html__('Deactivate share buttons', 'essb'), esc_html__('Show post-bar without share buttons', 'essb'));
 	ESSBOptionsStructureHelper::field_section_end_full_panels($where_to_display, 'positions|display-15');
 	ESSBOptionsStructureHelper::panel_end($where_to_display, 'positions|display-15');
 
