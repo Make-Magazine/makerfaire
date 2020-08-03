@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 5.3.2
+Tested up to: 5.4.2
 Stable tag: trunk
 Contributors: The GravityView Team
 License: GPL 3 or higher
@@ -23,6 +23,19 @@ UI was written using [Svelte](https://svelte.dev/) and requires compilation. Mak
 3. Compile assets by running `npm run build`
 
 == Changelog ==
+
+= 2.1.1 on July 15, 2020 =
+
+* Fixed: "is empty" and "is not empty" filters not working for Date fields
+
+= 2.1 on July 7, 2020 =
+
+* Added: Conditionally display configured fields based on logic rules
+    - Define content that is displayed when the field is not shown
+* Added: Specify custom value when "is" operator is used in combination with predefined select values
+* Added: Support for filtering by a multiple-choice field option that has no label
+* Fixed: Advanced Filter not initializing when a View is created from within the form editor
+* Fixed: PHP warning
 
 = 2.0.3 on March 16, 2020 =
 

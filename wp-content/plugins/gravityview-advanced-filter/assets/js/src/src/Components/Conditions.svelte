@@ -164,7 +164,8 @@
      * Determine if this is topmost condition group
      *
      * @param {string} path Condition path
-     * @returns {boolean}
+	 *
+     * @return {boolean}
      */
     function isRootCondition( path ) {
         return path === 'conditions';
@@ -268,7 +269,7 @@
 
     .gv-af-join-condition-group {
         margin: 0 auto;
-		margin-bottom: 5em;
+        margin-bottom: 5em;
 
         button {
             text-transform: uppercase;
@@ -315,4 +316,13 @@
         cursor: pointer;
     }
 
+
+    // Styles for conditional field logic
+    :global(.gv-field-conditional-logic) .gv-af-join-condition-group {
+        margin-bottom: 0;
+    }
+
+    :global(.gv-setting-container-conditional_logic_fail_output.hidden) {
+        display: none !important;
+    }
 </style>

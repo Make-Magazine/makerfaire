@@ -17,6 +17,8 @@
         selectedValue = selectedField.values[ 0 ].value;
     }
     let datePickerInstance;
+    // Text input should be displayed for fields with predefined values when: 1) "is" operator is used, 2) value is not one of the predefined ones
+    let _customIsOperatorInput = selectedField.values && ! selectedField.values.filter( ( _value ) => _value.value === selectedValue ).length;
 
     /**
      * Initialize date picker
@@ -112,6 +114,19 @@
             return;
         }
 
+        if ( selectedValue === 'gv-af-custom_input' ) {
+            selectedValue = '';
+            _customIsOperatorInput = true;
+        }
+
+        if ( selectedOperator === 'isempty' || selectedOperator === 'isnotempty' ) {
+            selectedValue = '';
+            if ( datePickerInstance ) {
+                datePickerInstance.destroy();
+                datePickerInstance = null;
+            }
+        }
+
         onUpdate( {
             conditionFieldPath,
             key: selectedField.key,
@@ -142,6 +157,15 @@
 
         return translations[ operator ];
     }
+
+    /**
+     * Used to return back to a list of available select values
+     */
+    function cancelCustomIsOperatorInput() {
+        _customIsOperatorInput = false;
+        selectedValue = selectedField.values[ 0 ].value;
+        updateField();
+    }
 </script>
 
 <div class="field">
@@ -162,6 +186,7 @@
 			{/if}
 		{/each}
     </select>
+
     <select bind:value={selectedOperator} on:change={updateField}>
 		{#each selectedField.operators as operator}
             <option value={operator}>
@@ -171,24 +196,39 @@
     </select>
 
 	{#if selectedOperator !== 'isempty' && selectedOperator !== 'isnotempty'}
-		{#if selectedField.values}
+		{#if selectedField.values && !_customIsOperatorInput}
             <select bind:value={selectedValue} on:change={updateField}>
 				{#each selectedField.values as value}
                     <option value={value.value}>
-						{value.text}
+						{value.text || translations.untitled}
                     </option>
 				{/each}
+				{#if selectedOperator === 'is'}
+                    <option disabled>
+                        &mdash;&mdash;&mdash;
+                    </option>
+                    <option value="gv-af-custom_input">
+						{translations.custom_is_operator_input}
+                    </option>
+				{/if}
             </select>
+		{:else if _customIsOperatorInput}
+            <div class="custom-is-text-input">
+                <input type="text" bind:value={selectedValue} on:keyup={updateField} />
+                <span>
+					<button aria-label={translations.available_choices_label} class="button button-link" on:click={cancelCustomIsOperatorInput}>
+						&#8592; {translations.available_choices}
+					</button>
+				</span>
+            </div>
 		{:else if (selectedField.cssClass || '').match(/datepicker/)}
             <input type="text" placeholder={selectedField.placeholder} bind:value={selectedValue} on:blur={updateField} use:datePicker />
 		{:else}
             <input type="text" bind:value={selectedValue} on:keyup={updateField} />
 		{/if}
 	{/if}
-
     <slot name="remove_field" />
 </div>
-
 
 <style type="text/scss">
     .field {
@@ -198,13 +238,36 @@
 
         select {
             width: 33.33%;
+            height: 3em;
         }
 
-        input {
+        div.is-custom-input, input {
             width: 40%;
         }
 
-        *:not(:first-child) {
+        div.custom-is-text-input {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+
+            input {
+                width: 100%;
+                height: 3em;
+            }
+
+            span {
+                position: absolute;
+                bottom: -36px; /* size of .button-link + 3px (1/2 the margin of the OR box) */
+                margin-left: none;
+
+                button {
+                    vertical-align: baseline;
+                }
+            }
+        }
+
+        *:not(:first-child):not(span) {
             margin-left: 1em !important;
         }
 

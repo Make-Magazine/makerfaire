@@ -1,4 +1,4 @@
-# Copyright (C) 2018 GravityView
+# Copyright (C) 2020 GravityView
 # This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
 # Translators:
 msgid ""
@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2018-07-11 22:29+0000\n"
+"PO-Revision-Date: 2020-07-15 18:28+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Portuguese (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/pt/)\n"
 "MIME-Version: 1.0\n"
@@ -23,42 +23,99 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Textdomain-Support: yes\n"
 
-#: advanced-filter.php:415 partials/metabox.php:2
+#: advanced-filter.php:117
+msgid "Conditional Logic"
+msgstr ""
+
+#: advanced-filter.php:118
+msgid "Only show the field if the configured conditions apply."
+msgstr ""
+
+#: advanced-filter.php:119
+msgid "Empty Field Content"
+msgstr ""
+
+#: advanced-filter.php:120
+msgid ""
+"Display custom content when field value does not meet conditional logic"
+msgstr ""
+
+#: advanced-filter.php:793
+msgid ""
+"Advanced Filter does not work in Internet Explorer. Please upgrade to "
+"another browser."
+msgstr ""
+
+#: advanced-filter.php:794
+msgid ""
+"Form fields are not available. Please try refreshing the page or saving the "
+"View."
+msgstr ""
+
+#: advanced-filter.php:795
+msgid "Add Condition"
+msgstr ""
+
+#: advanced-filter.php:812
+msgid "Remove Field"
+msgstr ""
+
+#: advanced-filter.php:813
+msgid "Return to Field Choices"
+msgstr ""
+
+#: advanced-filter.php:814
+msgid "Return to the list of choices defined by the field."
+msgstr ""
+
+#: advanced-filter.php:815
+msgid "Custom Choice"
+msgstr ""
+
+#: advanced-filter.php:816
+msgid "Untitled"
+msgstr ""
+
+#: advanced-filter.php:831 partials/metabox.php:2
 msgid "Advanced Filter"
 msgstr ""
 
-#: advanced-filter.php:417
+#: advanced-filter.php:833
 msgid ""
 "Limit what entries are visible based on entry values. The entries are "
 "filtered before the View is displayed. When users perform a search, results "
 "will first be filtered by these settings."
 msgstr ""
 
-#: advanced-filter.php:418
+#: advanced-filter.php:834
 msgid "Limit to Logged-in User Entries"
 msgstr ""
 
-#: advanced-filter.php:419 advanced-filter.php:751
+#: advanced-filter.php:835 advanced-filter.php:1020
 msgid "Created By"
 msgstr ""
 
-#: advanced-filter.php:419 advanced-filter.php:759
+#: advanced-filter.php:835 advanced-filter.php:1028
 msgid "Currently Logged-in User"
 msgstr ""
 
-#: advanced-filter.php:420 advanced-filter.php:755
+#: advanced-filter.php:836 advanced-filter.php:1024
 msgid "Currently Logged-in User (Disabled for Administrators)"
 msgstr ""
 
-#: advanced-filter.php:625
+#: advanced-filter.php:878
 msgid "Any Role of Current User"
 msgstr ""
 
-#: advanced-filter.php:663
+#: advanced-filter.php:919
 msgid "Created By User Role"
 msgstr ""
 
-#: advanced-filter.php:830
+#: advanced-filter.php:929
+msgid "Date Updated"
+msgstr ""
+
+#: advanced-filter.php:1146
 msgid "Entry Approval Status"
 msgstr ""
 
@@ -95,15 +152,87 @@ msgid ""
 "upgrade your server's PHP."
 msgstr ""
 
-#: partials/metabox.php:4
-msgid "You must save the View before you can configure Advanced Filters."
+#: advanced-filter.php:796
+msgctxt "Join using \"and\" operator"
+msgid "and"
 msgstr ""
 
-#: partials/metabox.php:5
-msgid "Advanced Filtering requires Javascript to be enabled."
+#: advanced-filter.php:797
+msgctxt "Join using \"or\" operator"
+msgid "or"
 msgstr ""
 
-#: advanced-filter.php:419
+#: advanced-filter.php:798
+msgctxt "Filter operator (e.g., A is TRUE)"
+msgid "is"
+msgstr ""
+
+#: advanced-filter.php:799
+msgctxt "Filter operator (e.g., A is not TRUE)"
+msgid "is not"
+msgstr ""
+
+#: advanced-filter.php:800
+msgctxt "Filter operator (e.g., A is greater than B)"
+msgid "greater than"
+msgstr ""
+
+#: advanced-filter.php:801
+msgctxt "Filter operator (e.g., A is less than B)"
+msgid "less than"
+msgstr ""
+
+#: advanced-filter.php:802
+msgctxt "Filter operator (e.g., AB contains B)"
+msgid "contains"
+msgstr ""
+
+#: advanced-filter.php:803
+msgctxt "Filter operator (e.g., AB contains B)"
+msgid "does not contain"
+msgstr ""
+
+#: advanced-filter.php:804
+msgctxt "Filter operator (e.g., AB starts with A)"
+msgid "starts with"
+msgstr ""
+
+#: advanced-filter.php:805
+msgctxt "Filter operator (e.g., AB ends with B)"
+msgid "ends with"
+msgstr ""
+
+#: advanced-filter.php:806
+msgctxt "Filter operator (e.g., A is before date B)"
+msgid "is before"
+msgstr ""
+
+#: advanced-filter.php:807
+msgctxt "Filter operator (e.g., A is after date B)"
+msgid "is after"
+msgstr ""
+
+#: advanced-filter.php:808
+msgctxt "Filter operator (e.g., A is on date B)"
+msgid "is on"
+msgstr ""
+
+#: advanced-filter.php:809
+msgctxt "Filter operator (e.g., A is not on date B)"
+msgid "is not on"
+msgstr ""
+
+#: advanced-filter.php:810
+msgctxt "Filter operator (e.g., A is empty)"
+msgid "is empty"
+msgstr ""
+
+#: advanced-filter.php:811
+msgctxt "Filter operator (e.g., A is not empty)"
+msgid "is not empty"
+msgstr ""
+
+#: advanced-filter.php:835
 msgctxt ""
 "First placeholder is \"Created By\" and second is \"Currently Logged-in "
 "User\""
@@ -112,7 +241,7 @@ msgid ""
 " &amp; \"%s\" from the drop-down menus."
 msgstr ""
 
-#: advanced-filter.php:420
+#: advanced-filter.php:836
 msgctxt ""
 "The placeholder is \"Currently Logged-in User (Disabled for "
 "Administrators)\""

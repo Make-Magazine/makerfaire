@@ -3,7 +3,7 @@
 Plugin Name: GravityView - Advanced Filter Extension
 Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 2.0.3
+Version: 2.1.1
 Author: GravityView
 Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
@@ -38,7 +38,7 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '2.0.3';
+		protected $_version = '2.1.1';
 
 		protected $_min_gravityview_version = '2.0';
 
@@ -53,9 +53,27 @@ function gv_extension_advanced_filtering_load() {
 		protected $_text_domain = 'gravityview-advanced-filter';
 
 		/**
+		 * @type array Map of virtual operators to GF_Query operators
+		 */
+		private static $_proxy_operators_map = array(
+			'isempty'    => 'is',
+			'isnotempty' => 'isnot',
+		);
+
+		/**
 		 * @type string AJAX action to add or update entry rating
 		 */
 		const AJAX_ACTION_GET_FIELD_FILTERS = 'get_field_filters_ajax';
+
+		/**
+		 * @type string Field meta name for conditional logic
+		 */
+		const CONDITIONAL_LOGIC_META = 'conditional_logic';
+
+		/**
+		 * @type string Field meta name for output displayed when conditions are not met`
+		 */
+		const CONDITIONAL_LOGIC_FAIL_OUTPUT_META = 'conditional_logic_fail_output';
 
 		function add_hooks() {
 
@@ -73,6 +91,56 @@ function gv_extension_advanced_filtering_load() {
 			add_filter( 'gform_filters_get_users', array( $this, 'created_by_get_users_args' ) );
 
 			add_action( 'wp_ajax_' . self::AJAX_ACTION_GET_FIELD_FILTERS, array( __CLASS__, 'get_field_filters_ajax' ) );
+
+			add_filter( 'gravityview_template_field_options', array( $this, 'modify_view_field_settings' ), 999, 5 );
+
+			add_filter( 'gravityview/template/field/output', array( $this, 'conditionally_display_field_output' ), 10, 2 );
+		}
+
+		/**
+		 * Add conditional logic fields to field settings
+		 *
+		 * @since 2.1
+		 *
+		 * @param array  $field_options Array of field options
+		 * @param string $template_id   Table slug
+		 * @param float  $field_id      GF Field ID
+		 * @param string $context       Context (e.g., single or directory)
+		 * @param string $input_type    Input type (e.g., textarea, list, select, etc.)
+		 * @param int    $form_id       Form ID
+		 *
+		 * @return array
+		 */
+		function modify_view_field_settings( $field_options, $template_id, $field_id, $context, $input_type ) {
+
+			$strings = array(
+				'conditional_logic_label'             => esc_html__( 'Conditional Logic', 'gravityview-advanced-filter' ),
+				'conditional_logic_label_desc'        => esc_html__( 'Only show the field if the configured conditions apply.',  'gravityview-advanced-filter' ),
+				'conditional_logic_fail_output_label' => esc_html__( 'Empty Field Content', 'gravityview-advanced-filter' ),
+				'conditional_logic_fail_output_desc'  => esc_html__( 'Display custom content when field value does not meet conditional logic', 'gravityview-advanced-filter' ),
+			);
+
+			$conditional_logic_container                  = <<<HTML
+	<span class="gv-label">{$strings['conditional_logic_label']}</span>
+	<span class="howto">{$strings['conditional_logic_label_desc']}</span>
+	<div class="gv-field-conditional-logic"></div>
+HTML;
+			$field_options['conditional_logic_container'] = array(
+				'type' => 'html',
+				'desc' => $conditional_logic_container,
+			);
+
+			$field_options['conditional_logic_fail_output'] = array(
+				'type'  => 'textarea',
+				'label' => $strings['conditional_logic_fail_output_label'],
+				'desc'  => $strings['conditional_logic_fail_output_desc'],
+			);
+
+			$field_options[ self::CONDITIONAL_LOGIC_META ] = array(
+				'type' => 'hidden',
+			);
+
+			return $field_options;
 		}
 
 		/**
@@ -354,15 +422,10 @@ function gv_extension_advanced_filtering_load() {
 			if ( ! empty( $filter['mode'] ) && isset( $filter['conditions'] ) ) {
 				/** We are in a logic definition */
 
-				$_proxy_operators_map = array(
-					'isempty'    => 'is',
-					'isnotempty' => 'isnot',
-				);
-
 				foreach ( $filter['conditions'] as &$condition ) {
 					// Map proxy operator to GF_Query operator
-					if ( ! empty( $condition['operator'] ) && ! empty( $_proxy_operators_map[ $condition['operator'] ] ) ) {
-						$condition['operator'] = $_proxy_operators_map[ $condition['operator'] ];
+					if ( ! empty( $condition['operator'] ) && ! empty( self::$_proxy_operators_map[ $condition['operator'] ] ) ) {
+						$condition['operator'] = self::$_proxy_operators_map[ $condition['operator'] ];
 					}
 
 					self::convert_to_gf_conditions( $condition, $view );
@@ -527,6 +590,11 @@ function gv_extension_advanced_filtering_load() {
 		 * @return mixed
 		 */
 		static function get_date_filter_value( $filter, $date_format = null, $use_gmt = false ) {
+
+			// Date value should be empty if "is empty" or "is not empty" operators are used
+			if ( '' === $filter['value'] && in_array( $filter['operator'], array( 'isempty', 'isnotempty' ) ) ) {
+				return $filter;
+			}
 
 			// Not a relative date; use the perceived time (local)
 			if ( self::is_valid_datetime( $filter['value'] ) ) {
@@ -704,7 +772,7 @@ function gv_extension_advanced_filtering_load() {
 
 			$filter_settings = self::get_field_filters( $post->ID );
 
-			if ( $form_id && empty( $filter_settings['field_filters'] ) ) {
+			if ( $form_id && empty( $filter_settings['field_filters_complete'] ) ) {
 				do_action( 'gravityview_log_error', '[print_javascript] Filter settings were not properly set', $filter_settings );
 
 				return;
@@ -714,18 +782,19 @@ function gv_extension_advanced_filtering_load() {
 			wp_enqueue_style( 'gravityview_adv_filter_admin', plugins_url( 'assets/css/advanced-filter.css', __FILE__ ), array(), $this->_version );
 
 			wp_localize_script( 'gravityview_adv_filter_admin', 'gvAdvancedFilter', array(
-				'fields'       => $filter_settings['field_filters'],
-				'conditions'   => $filter_settings['init_filter_vars'],
-				'fetchFields'  => array(
+				'fields_complete' => rgar( $filter_settings, 'field_filters_complete', array() ),
+				'fields_default'  => rgar( $filter_settings, 'field_filters_default', array() ),
+				'conditions'      => rgar( $filter_settings, 'init_filter_vars', array() ),
+				'fetchFields'     => array(
 					'action' => self::AJAX_ACTION_GET_FIELD_FILTERS,
 					'nonce'  => wp_create_nonce( 'gravityview-advanced-filter' ),
 				),
-				'translations' => array(
+				'translations'    => array(
 					'internet_explorer_notice' => esc_html__( 'Advanced Filter does not work in Internet Explorer. Please upgrade to another browser.', 'gravityview-advanced-filter' ),
 					'fields_not_available'     => esc_html__( 'Form fields are not available. Please try refreshing the page or saving the View.', 'gravityview-advanced-filter' ),
 					'add_condition'            => esc_html__( 'Add Condition', 'gravityview-advanced-filter' ),
-					'join_and'                 => esc_html_x( 'and', "Join using  operator", 'gravityview-advanced-filter' ),
-					'join_or'                  => esc_html_x( 'or', "Join using  operator", 'gravityview-advanced-filter' ),
+					'join_and'                 => esc_html_x( 'and', 'Join using "and" operator', 'gravityview-advanced-filter' ),
+					'join_or'                  => esc_html_x( 'or', 'Join using "or" operator', 'gravityview-advanced-filter' ),
 					'is'                       => esc_html_x( 'is', 'Filter operator (e.g., A is TRUE)', 'gravityview-advanced-filter' ),
 					'isnot'                    => esc_html_x( 'is not', 'Filter operator (e.g., A is not TRUE)', 'gravityview-advanced-filter' ),
 					'>'                        => esc_html_x( 'greater than', 'Filter operator (e.g., A is greater than B)', 'gravityview-advanced-filter' ),
@@ -741,6 +810,10 @@ function gv_extension_advanced_filtering_load() {
 					'isempty'                  => esc_html_x( 'is empty', 'Filter operator (e.g., A is empty)', 'gravityview-advanced-filter' ),
 					'isnotempty'               => esc_html_x( 'is not empty', 'Filter operator (e.g., A is not empty)', 'gravityview-advanced-filter' ),
 					'remove_field'             => esc_html__( 'Remove Field', 'gravityview-advanced-filter' ),
+					'available_choices'        => esc_html__( 'Return to Field Choices', 'gravityview-advanced-filter' ),
+					'available_choices_label'  => esc_html__( 'Return to the list of choices defined by the field.', 'gravityview-advanced-filter' ),
+					'custom_is_operator_input' => esc_html__( 'Custom Choice', 'gravityview-advanced-filter' ),
+					'untitled'                 => esc_html__( 'Untitled', 'gravityview-advanced-filter' ),
 				),
 			) );
 		}
@@ -941,7 +1014,7 @@ function gv_extension_advanced_filtering_load() {
 
 				// Gravity Forms already creates a "User" option.
 				// We don't care about specific user, just the logged in status.
-				if ( $filter['key'] === 'created_by' ) {
+				if ( 'created_by' === $filter['key'] ) {
 
 					// Update the default label to be more descriptive
 					$filter['text'] = esc_attr__( 'Created By', 'gravityview-advanced-filter' );
@@ -992,27 +1065,18 @@ function gv_extension_advanced_filtering_load() {
 					}
 				}
 
-				if ( isset( $filter['operators'] ) && ! isset( $filter['values'] ) && 'entry_id' !== $filter['key'] ) {
+				/**
+				 * Add extra operators for all fields except:
+				 * 1) those with predefined values
+				 * 2) Entry ID (it always exists)
+				 * 3) "any form field" ("is empty" does not work: https://github.com/gravityview/Advanced-Filter/issues/91)
+				 */
+				if ( isset( $filter['operators'] ) && ! isset( $filter['values'] ) && ! in_array( $filter['key'], array( 'entry_id', '0' ) ) ) {
 					$filter['operators'] = $_add_proxy_operators( $filter['operators'] );
-
 				}
 			}
 
-			$field_filters = self::add_approval_status_filter( $field_filters );
-
-			$init_field_id            = 0;
-			$init_field_operator      = "contains";
-			$default_init_filter_vars = array(
-				"mode"    => "all",
-				"filters" => array(
-					array(
-						"field"    => $init_field_id,
-						"operator" => $init_field_operator,
-						"value"    => '',
-					),
-				),
-			);
-
+			$field_filters    = self::add_approval_status_filter( $field_filters );
 			$filters          = get_post_meta( $post_id, '_gravityview_filters', true );
 			$init_filter_vars = self::convert_filters_to_nested( $filters ); // Convert to v2
 
@@ -1023,11 +1087,35 @@ function gv_extension_advanced_filtering_load() {
 			 */
 			$field_filters = apply_filters( 'gravityview/adv_filter/field_filters', $field_filters, $post_id );
 
-			return array(
-				'field_filters'    => $field_filters,
-				'init_filter_vars' => $init_filter_vars,
+			// For field conditional logic we use only default meta/properties and form fields
+			$field_filters_default        = array();
+			$_meta_and_properties_to_keep = array(
+				'ip',
+				'is_approved',
+				'source_url',
+				'date_created',
+				'date_updated',
+				'is_starred',
+				'payment_status',
+				'payment_date',
+				'payment_amount',
+				'transaction_id',
+				'created_by',
 			);
 
+			foreach ( $field_filters as $filter ) {
+				if ( ! in_array( $filter['key'], $_meta_and_properties_to_keep ) && ! is_numeric( $filter['key'] ) ) {
+					continue;
+				}
+
+				$field_filters_default[] = $filter;
+			}
+
+			return array(
+				'field_filters_complete' => $field_filters,
+				'field_filters_default'  => $field_filters_default,
+				'init_filter_vars'       => $init_filter_vars,
+			);
 		}
 
 		/**
@@ -1092,16 +1180,104 @@ function gv_extension_advanced_filtering_load() {
 
 			$filters = self::get_field_filters( null, $form_id );
 
-			if ( ! empty( $filters['field_filters'] ) ) {
+			if ( ! empty( $filters['field_filters_complete'] ) ) {
 				wp_send_json_success(
 					array(
-						'fields' => $filters['field_filters'],
+						'fields_complete' => rgar( $filters, 'field_filters_complete', array() ),
+						'fields_default'  => rgar( $filters, 'field_filters_default', array() ),
 					)
 				);
 			} else {
 				wp_send_json_error();
 			}
 		}
+
+		/**
+		 * Determine if entry meets conditional logic
+		 *
+		 * @since 2.1
+		 *
+		 * @param array $entry   GV Entry
+		 * @param array $filters Conditional logic filters
+		 *
+		 * @return bool
+		 */
+		function meets_conditional_logic( $entry, $filters ) {
+
+			$test_filter_conditions = function ( $filters, $mode ) use ( &$test_filter_conditions, $entry ) {
+
+				$results = array();
+
+				foreach ( $filters['conditions'] as &$filter_condition ) {
+					if ( ! empty( $filter_condition['conditions'] ) ) {
+						$results[] = $test_filter_conditions( $filter_condition, $filter_condition['mode'] );
+						continue;
+					}
+
+					$field_value         = $filter_condition['value'];
+					$comparison_operator = $filter_condition['operator'];
+
+					if ( ! empty( GravityView_Advanced_Filtering::$_proxy_operators_map[ $comparison_operator ] ) ) {
+						$comparison_operator = GravityView_Advanced_Filtering::$_proxy_operators_map[ $comparison_operator ];
+						$field_value         = '';
+					}
+
+					if ( '0' === $filter_condition['key'] ) { // process "any form field" condition
+						$_result = false;
+						foreach ( $entry as $id => $data ) {
+							if ( ! is_numeric( $id ) ) { // form fields always have numeric IDs
+								continue;
+							}
+
+							if ( GFFormsModel::matches_operation( $data, $field_value, $comparison_operator ) ) {
+								$_result = true; // a single match satisfies condition
+								break;
+							}
+						}
+
+						$results[] = $_result;
+					} else {
+						$entry_value = $entry[ $filter_condition['key'] ];
+						$results[]   = GFFormsModel::matches_operation( $entry_value, $field_value, $comparison_operator );
+					}
+				}
+
+				return ( $mode === 'and' ) ?
+					! in_array( false, $results, true ) : // "and" mode requires all values to be true
+					in_array( true, $results, true ); // "or" mode requires at least one true value
+			};
+
+			return $test_filter_conditions( $filters, $filters['mode'] );
+		}
+
+		/**
+		 * Display field if conditional logic is met
+		 *
+		 * @since 2.1
+		 *
+		 * @param string              $field_output Field output
+		 * @param GV\Template_Context $context      Template context
+		 *
+		 * @return string
+		 */
+		function conditionally_display_field_output( $field_output, $context ) {
+
+			$filters = rgar( $context->field->as_configuration(), self::CONDITIONAL_LOGIC_META, false );
+
+			if ( ! $filters || $filters === 'null' ) { // Empty conditions are a "null" string
+				return $field_output;
+			}
+
+			$filters                       = json_decode( $filters, true );
+			$entry                         = $context->entry->as_entry();
+			$conditional_logic_fail_output = rgar( $context->field->as_configuration(), self::CONDITIONAL_LOGIC_FAIL_OUTPUT_META, false );
+			$conditional_logic_fail_output = GravityView_API::replace_variables( $conditional_logic_fail_output, $context->view->form->form, $entry );
+
+			return $this->meets_conditional_logic( $entry, $filters ) ?
+				$field_output :
+				apply_filters( 'gravityview/field/value/empty', $conditional_logic_fail_output, $context );
+		}
+
 	} // end class
 
 	new GravityView_Advanced_Filtering;

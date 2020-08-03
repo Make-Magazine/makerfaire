@@ -42,10 +42,11 @@ class GV_Advanced_Filter_Tests extends GV_UnitTestCase {
 	private function assertEntries( $entries, $view_id, $filters, $ordered = false, $message = '' ) {
 
 		update_post_meta( $view_id, '_gravityview_filters', $filters );
-		$view = \GV\View::by_id( $view_id );
+		$view     = \GV\View::by_id( $view_id );
+		$_entries = $view->get_entries()->all();
 
 		if ( ! $ordered ) {
-			$this->assertCount( count( array_filter( $entries ) ), $_entries = $view->get_entries()->all(), $message );
+			$this->assertCount( count( array_filter( $entries ) ), $_entries, $message );
 		} else {
 			// @todo implement ordered when needed
 			$this->assertFalse( $ordered, '$ordered parameter not implemented' );
@@ -76,6 +77,9 @@ class GV_Advanced_Filter_Tests extends GV_UnitTestCase {
 		$post = $this->factory->view->create_and_get( array_merge( array(
 			'form_id'     => $form['id'],
 			'template_id' => 'table',
+			'settings'    => array(
+				'show_only_approved' => false,
+			),
 			'fields'      => array(
 				'directory_table-columns' => array(
 					wp_generate_password( 4, false ) => array(

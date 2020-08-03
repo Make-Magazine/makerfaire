@@ -22,8 +22,8 @@
     let conditionsStore = writable( $$props.conditions && $$props.conditions.hasOwnProperty( 'conditions' ) && $$props.conditions.conditions.length ? $$props.conditions : null );
     let fieldsStore = writable( $$props.fields );
     let fieldKeyToIndexMapStore = writable( mapFieldKeyToIndex( $$props.fields ) );
+    let { onConditionsUpdate } = $$props;
     let conditionsToExport;
-
     let div = document.getElementById( 'gravityview-metabox-content-container' );
     let autoscroll;
 
@@ -53,7 +53,13 @@
     } );
 
     // Export conditions
-    conditionsStore.subscribe( ( data ) => conditionsToExport = JSON.stringify( data ) );
+    conditionsStore.subscribe( ( data ) => {
+        conditionsToExport = JSON.stringify( data );
+
+        if ( typeof onConditionsUpdate === 'function' ) {
+            onConditionsUpdate( data );
+        }
+    } );
 
     // Allow updating fields from the outside
     export function updateFields( data ) {
