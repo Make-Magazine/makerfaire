@@ -73,7 +73,10 @@ if (isset($_POST['copyForm']) && isset($_POST['fieldList'])) {
                     unset($updForm['fields'][$key]);
                 }
             }
-
+            if($errMsg != ''){
+                echo $errMsg;
+            }
+            
             $updForm['fields'] = array_merge($updForm['fields'], $fieldsUpd);
             $result = GFAPI::update_form($updForm);
             //$result = true;
