@@ -32,11 +32,6 @@ if(file_exists($pop_content_html_file))
 </div>
 <div class="cli-modal-backdrop cli-fade cli-settings-overlay"></div>
 <div class="cli-modal-backdrop cli-fade cli-popupbar-overlay"></div>
-<script type="text/javascript">
-  /* <![CDATA[ */
-  cli_cookiebar_settings='<?php echo Cookie_Law_Info::get_json_settings(); ?>';
-  /* ]]> */
-</script>
 <?php 
 // Re-enable indexing
 echo "<!--googleon: all-->";

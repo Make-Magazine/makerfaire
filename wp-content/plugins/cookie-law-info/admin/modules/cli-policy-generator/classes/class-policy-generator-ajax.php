@@ -112,8 +112,6 @@ class Cookie_Law_Info_Policy_Generator_Ajax extends Cookie_Law_Info_Cli_Policy_G
 	*/
 	public function autosave_contant_data()
 	{
-		global $wpdb;
-		$scan_table=$wpdb->prefix.$this->main_tb;
 		$out=array(
 			'response'=>true,
 			'er'=>''

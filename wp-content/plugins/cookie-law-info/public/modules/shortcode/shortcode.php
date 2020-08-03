@@ -50,6 +50,7 @@ class Cookie_Law_Info_Shortcode {
         add_shortcode('cookie_after_accept',array($this,'cookie_after_accept_shortcode'));
         add_shortcode('user_consent_state',array($this,'user_consent_state_shortcode'));
         add_shortcode('webtoffee_powered_by',array($this,'wf_powered_by'));
+        add_shortcode( 'cookie_close',array($this,'cookielawinfo_shortcode_close_button'));        // a shortcode [close_button]
         
 	}
 
@@ -321,7 +322,7 @@ class Cookie_Law_Info_Shortcode {
         }
         $url_reject = ( $settings['button_3_action'] == "CONSTANT_OPEN_URL" && $settings['button_3_url'] != "#" ) ? "href='$settings[button_3_url]'" : "role='button' tabindex='0'";
         $link_tag = '';
-        $link_tag .= ' <a '.$url_reject.' id="'.Cookie_Law_Info_Public::cookielawinfo_remove_hash($settings['button_3_action']).'" ';
+        $link_tag .= '<a '.$url_reject.' id="'.Cookie_Law_Info_Public::cookielawinfo_remove_hash($settings['button_3_action']).'" ';
         $link_tag .= ($settings['button_3_new_win'] ) ? 'target="_blank" ' : '' ;
         $link_tag .= $classr . '  data-cli_action="reject"'.$margin_style.'>' . stripslashes(__($settings['button_3_text'],'cookie-law-info')) . '</a>';
         return $link_tag;
@@ -514,6 +515,17 @@ class Cookie_Law_Info_Shortcode {
         $link_tag .= ( $settings['button_x_new_win'] ) ? 'target="_blank" ' : '' ;
         $link_tag .= $class.' style="display:inline-block;'.$margin_style.'" >' . $settings['button_x_text'] . '</a>';       
         return $link_tag;
+    }
+    /**
+    * Shortcode for adding close button
+    *
+    * @since  1.8.9
+    * @return string
+    */
+    public function cookielawinfo_shortcode_close_button()
+    {        
+        $styles = '';
+        return '<a style="'.$styles.'" aria-label="'.__('Close the cookie bar','cookie-law-info').'" data-cli_action="accept" class="wt-cli-element cli_cookie_close_button" title="'.__('Close and Accept','cookie-law-info').'">×</a>';
     }
 }
 new Cookie_Law_Info_Shortcode($this);

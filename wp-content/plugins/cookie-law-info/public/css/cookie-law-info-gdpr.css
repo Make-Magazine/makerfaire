@@ -1183,3 +1183,162 @@ span.cli-necessary-caption {
     display: none;
     font-size:16px;
 }
+/* Changes for CCPA 
+Version : 1.8.9
+*/
+a.wt-cli-element.cli_cookie_close_button {
+    text-decoration: none;
+    color: #333333;
+    font-size: 22px;
+    line-height: 22px;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+}
+/* GDPR Bar Version 2 */
+.cli-bar-container{
+    float: none;
+    margin: 0 auto;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.cli-bar-btn_container {
+    margin-left: 20px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.cli-style-v2 a
+{
+    cursor: pointer;
+}
+.cli-bar-btn_container a {
+    white-space: nowrap;
+}
+.cli-style-v2 .cli-plugin-main-link 
+{
+    font-weight:inherit;
+}
+.cli-style-v2 
+{   
+    font-size: 11pt;
+    line-height: 18px;
+    font-weight:normal;
+}
+#cookie-law-info-bar[data-cli-type="widget"] .cli-bar-container,#cookie-law-info-bar[data-cli-type="popup"] .cli-bar-container{
+    display: block;
+}
+.cli-style-v2 .cli-bar-message {
+    width: 70%;
+    text-align: left;
+}
+#cookie-law-info-bar[data-cli-type="widget"] .cli-bar-message,#cookie-law-info-bar[data-cli-type="popup"] .cli-bar-message
+{
+    width:100%;
+}
+#cookie-law-info-bar[data-cli-type="widget"] .cli-style-v2 .cli-bar-btn_container {
+    margin-top:8px;
+    margin-left: 0px;
+    flex-wrap: wrap;
+}
+/* #cookie-law-info-bar[data-cli-type="widget"] .cli-style-v2 .cli-bar-message {
+    text-align: center;
+} */
+#cookie-law-info-bar[data-cli-type="popup"] .cli-style-v2 .cli-bar-btn_container {
+    margin-top:8px;
+    margin-left: 0px;
+}
+#cookie-law-info-bar[data-cli-style="cli-style-v2"] .cli_messagebar_head{
+    text-align: left;
+    /* padding-left: 15px; */
+    margin-bottom: 5px;
+    margin-top: 0px;
+    font-size: 16px;
+}
+/* #cookie-law-info-bar[data-cli-type="widget"] .cli-bar-container.cli-style-v2 {
+    padding-left: 0px;
+    padding-right: 0px;
+} */
+
+.cli-style-v2 .cli-bar-message .wt-cli-ccpa-element,.cli-style-v2 .cli-bar-message .wt-cli-ccpa-checkbox {
+    margin-top: 5px;
+}
+.cli-style-v2 .cli-bar-btn_container .cli_action_button ,
+.cli-style-v2 .cli-bar-btn_container .cli-plugin-main-link,
+.cli-style-v2 .cli-bar-btn_container .cli_settings_button
+{
+    margin-left: 5px;
+}
+.wt-cli-ccpa-checkbox label {
+    font-size: inherit;
+    cursor: pointer;
+    margin: 0px 0px 0px 5px;
+}
+/* .cli-bar-container.cli-style-v2 {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+} */
+#cookie-law-info-bar[data-cli-style="cli-style-v2"] 
+{
+    padding: 14px 25px;
+}
+#cookie-law-info-bar[data-cli-style="cli-style-v2"][data-cli-type="widget"]
+{
+    padding:32px 30px;
+}
+#cookie-law-info-bar[data-cli-style="cli-style-v2"][data-cli-type="popup"] {
+    padding: 32px 45px;
+}
+.cli-style-v2 .cli-plugin-main-link:not(.cli-plugin-button), .cli-style-v2 .cli_settings_button:not(.cli-plugin-button),.cli-style-v2 .cli_action_button:not(.cli-plugin-button){
+    text-decoration: underline;
+}
+.cli-style-v2 .cli-bar-btn_container .cli-plugin-button {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+a.wt-cli-ccpa-opt-out {
+    white-space: nowrap;
+    text-decoration: underline;
+}
+.wt-cli-necessary-checkbox {
+    display: none !important;
+}
+@media (max-width: 985px) {
+    .cli-style-v2 .cli-bar-message
+    {
+        width:100%;
+    }
+    .cli-style-v2.cli-bar-container
+    {
+        justify-content:left;
+        flex-wrap: wrap;
+    }
+    .cli-style-v2 .cli-bar-btn_container {
+        margin-left:0px;
+        margin-top: 10px;
+    }
+    #cookie-law-info-bar[data-cli-style="cli-style-v2"],#cookie-law-info-bar[data-cli-style="cli-style-v2"][data-cli-type="widget"],#cookie-law-info-bar[data-cli-style="cli-style-v2"][data-cli-type="popup"]
+    {
+        padding: 25px 25px;
+    }
+}

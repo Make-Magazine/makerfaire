@@ -11,6 +11,7 @@ if ( ! defined( 'WPINC' ) ) {
         <li data-target="reject-button"><a><?php _e('Reject Button', 'cookie-law-info'); ?></a></li>
         <li data-target="settings-button"><a><?php _e('Settings Button', 'cookie-law-info'); ?></a></li>
         <li data-target="read-more-button"><a><?php _e('Read More Link', 'cookie-law-info'); ?></a></li>
+        <li data-target="do-not-sell-button" class="wt-cli-ccpa-element"><a><?php _e('Do not sell link', 'cookie-law-info'); ?></a></li>
     </ul>
 
     <div class="cli_sub_tab_container">
@@ -317,6 +318,36 @@ if ( ! defined( 'WPINC' ) ) {
                         <select name="button_2_button_size_field" class="vvv_combobox">
                             <?php $this->print_combobox_options($this->get_button_sizes(), $the_options['button_2_button_size']); ?>
                         </select>
+                    </td>
+                </tr>
+            </table><!-- end custom button -->
+        </div>
+        <div class="cli_sub_tab_content wt-cli-ccpa-element" data-id="do-not-sell-button">
+            <h3><?php _e('Do not sell link', 'cookie-law-info'); ?> <code>[wt_cli_ccpa_optout]</code></h3>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row"><label for="button_6_text_field"><?php _e('CCPA Text', 'cookie-law-info'); ?></label></th>
+                    <td>
+                        <input type="text" name="button_6_text_field" value="<?php echo stripslashes($the_options['button_6_text']) ?>" />
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row"><label for="button_6_as_link_field"><?php _e('Show as', 'cookie-law-info'); ?></label></th>
+                    <td>
+                        <input type="radio" cli_frm_tgl-target="wt-cli-ccpa-advanced" id="button_6_as_link_field_yes" name="button_6_as_link_field" class="styled cli_form_toggle" value="true" <?php echo (wp_validate_boolean($the_options['button_6_as_link']) == true) ? ' checked="checked"' : ''; ?> /> <?php _e('Link', 'cookie-law-info'); ?>
+                        <input type="radio" cli_frm_tgl-target="wt-cli-ccpa-advanced" id="button_6_as_link_field_no" name="button_6_as_link_field" class="styled cli_form_toggle" value="false" <?php echo (wp_validate_boolean($the_options['button_6_as_link']) == false) ? ' checked="checked"' : ' '; ?> /> <?php _e('Checkbox', 'cookie-law-info'); ?>
+                        
+                        <span class="cli_form_help" cli_frm_tgl-id="wt-cli-ccpa-advanced" cli_frm_tgl-val="true" style="margin-top:8px;"><?php _e('The shortcode will be represented as a link whereever used.', 'cookie-law-info'); ?></span>
+                        <span class="cli_form_help" cli_frm_tgl-id="wt-cli-ccpa-advanced" cli_frm_tgl-val="false" style="margin-top:8px;"><?php _e('The shortcode will be represented as a checkbox with select option to record consent.', 'cookie-law-info'); ?></span>
+
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row"><label for="button_6_link_colour_field"><?php _e('Text colour', 'cookie-law-info'); ?></label></th>
+                    <td>
+                        <?php
+                        echo '<input type="text" name="button_6_link_colour_field" id="cli-colour-link-button-6" value="' . $the_options['button_6_link_colour'] . '" class="my-color-field" />';
+                        ?>
                     </td>
                 </tr>
             </table><!-- end custom button -->

@@ -210,6 +210,39 @@
 		cli_form_toggler.set();
 
 	 });
+	 var genericFunction = {
+		set : function() {
+			this.CLIAccordion();
+		},
+		CLIAccordion : function() {
+			
+			if (jQuery('.wt-cli-accordion-tab').hasClass('active')) {
+				jQuery('.wt-cli-accordion-tab.active').find('.wt-cli-accordion-content').slideDown(0);
+			}
+			jQuery(document).on('click', '.wt-cli-accordion-tab a', function (e) {
+				e.preventDefault();
+				var $this = jQuery(this);
+				if ($this.next().hasClass('active')) {
+					$this.removeClass('active');
+					$this.next().removeClass('active');
+					$this.closest('.wt-cli-accordion-tab').removeClass('active');
+					$this.next().slideUp(350);
+				} else {
+					$this.parent().parent().find('.wt-cli-accordion-content').removeClass('active');
+					$this.parent().parent().find('.wt-cli-accordion-content').slideUp(350);
+					$this.parent().parent().find('.wt-cli-accordion-tab a').removeClass('active');
+					$this.parent().parent().find('.wt-cli-accordion-tab').removeClass('active');
+					$this.toggleClass('active');
+					$this.closest('.wt-cli-accordion-tab').toggleClass('active');
+					$this.next().toggleClass('active');
+					$this.next().slideToggle(350);
+	
+				}
+			});
+			
+		}
+	}
+	genericFunction.set();
 })( jQuery );
 var cli_notify_msg=
 {

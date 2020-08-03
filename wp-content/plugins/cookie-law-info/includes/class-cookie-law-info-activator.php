@@ -32,7 +32,8 @@ class Cookie_Law_Info_Activator {
 	public static function activate() 
 	{
 		global $wpdb;
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );       
+        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' ); 
+        Cookie_Law_Info::maybe_first_time_install();      
         if(is_multisite()) 
         {
             // Get all blogs in the network and activate plugin on each one

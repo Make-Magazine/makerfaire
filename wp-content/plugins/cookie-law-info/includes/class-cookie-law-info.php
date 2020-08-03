@@ -58,6 +58,7 @@ class Cookie_Law_Info {
 	protected $version;
 
 	private static $stored_options=array();
+	protected $js_blocking_enabled = false;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -76,7 +77,7 @@ class Cookie_Law_Info {
 		} 
 		else 	
 		{
-			$this->version = '1.8.8';
+			$this->version = '1.8.9';
 		}
 		$this->plugin_name = 'cookie-law-info';
 
@@ -85,7 +86,7 @@ class Cookie_Law_Info {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_thrid_party_hooks();
-		//$this->cli_patches();
+		
 	}
 
 	/**
@@ -278,8 +279,7 @@ class Cookie_Law_Info {
 	public static function get_settings()
 	{
 		$settings = self::get_default_settings();
-		//self::$stored_options=self::$stored_options && count(self::$stored_options)>0 ? self::$stored_options : get_option(CLI_SETTINGS_FIELD);
-		self::$stored_options=get_option(CLI_SETTINGS_FIELD);
+		self::$stored_options = get_option(CLI_SETTINGS_FIELD);
 		if(!empty(self::$stored_options)) 
 		{
 			foreach(self::$stored_options as $key => $option ) 
@@ -287,7 +287,6 @@ class Cookie_Law_Info {
 				$settings[$key] = self::sanitise_settings($key,$option );
 			}
 		}
-		update_option( CLI_SETTINGS_FIELD, $settings );
 		return $settings;
 	}
 
@@ -366,7 +365,7 @@ class Cookie_Law_Info {
 			'button_1_link_colour' 			=> '#fff',
 			'button_1_new_win' 				=> false,
 			'button_1_as_button' 			=> true,
-			'button_1_button_colour' 		=> '#000',
+			'button_1_button_colour' 		=> '#61a229',
 			'button_1_button_size' 			=> 'medium',
 			'button_1_style'				=> array(),
 	            
@@ -383,26 +382,27 @@ class Cookie_Law_Info {
 			'button_2_hidebar'					=>false,
 			'button_2_style'				=> array(),
 	            
-	        'button_3_text'					=> 'Reject',
+	        'button_3_text'					=> 'REJECT',
 			'button_3_url' 					=> '#',
 			'button_3_action' 				=> '#cookie_action_close_header_reject',
 			'button_3_link_colour' 			=> '#fff',
 			'button_3_new_win' 				=> false,
 			'button_3_as_button' 			=> true,
-			'button_3_button_colour' 		=> '#000',
+			'button_3_button_colour' 		=> '#3566bb',
 			'button_3_button_size' 			=> 'medium',
 			'button_3_style'				=> array(),
 
 	        'button_4_text'					=> 'Cookie settings',
 			'button_4_url' 					=> '#',
 			'button_4_action' 				=> '#cookie_action_settings',
-			'button_4_link_colour' 			=> '#62a329',
+			'button_4_link_colour' 			=> '#333333',
 			'button_4_new_win' 				=> false,
 			'button_4_as_button' 			=> false,
 			'button_4_button_colour' 		=> '#000',
 			'button_4_button_size' 			=> 'medium',
 			'button_4_style'				=> array(),
-	            
+			'button_5_style'				=> array(),   
+			   
 			'font_family' 					=> 'inherit', // Pick the family, not the easy name (see helper function below)
 			'header_fix'                    => false,
 			'is_on' 						=> true,
@@ -413,7 +413,7 @@ class Cookie_Law_Info {
 			'notify_div_id' 				=> '#cookie-law-info-bar',
 			'notify_position_horizontal'	=> 'right',	// left | right
 			'notify_position_vertical'		=> 'bottom', // 'top' = header | 'bottom' = footer
-			'notify_message'				=> addslashes ( 'This website uses cookies to improve your experience. We\'ll assume you\'re ok with this, but you can opt-out if you wish. [cookie_settings margin="5px 20px 5px 20px"][cookie_button margin="5px"]'),
+			'notify_message'				=> addslashes ( '<div class="cli-bar-container cli-style-v2"><div class="cli-bar-message">We use cookies on our website to give you the most relevant experience by remembering your preferences and repeat visits. By clicking “Accept”, you consent to the use of ALL the cookies.</div><div class="cli-bar-btn_container">[cookie_settings margin="0px 10px 0px 5px"][cookie_button]</div></div>'),
 			'scroll_close'                  => false,
 			'scroll_close_reload'           => false,
 	        'accept_close_reload'           => false,
@@ -424,7 +424,7 @@ class Cookie_Law_Info {
 			'showagain_div_id' 				=> '#cookie-law-info-again',
 			'showagain_tab' 				=> true,
 			'showagain_x_position' 			=> '100px',
-			'text' 							=> '#000',
+			'text' 							=> '#333333',
 			'use_colour_picker'				=> true,
 			'show_once_yn'					=> false,	// this is a new feature so default = switched off
 			'show_once'						=> '10000',	// 8 seconds
@@ -434,8 +434,9 @@ class Cookie_Law_Info {
 			'bar_heading_text'				=>'',
 			'cookie_bar_as'					=>'banner',
 			'popup_showagain_position'		=>'bottom-right', //bottom-right | bottom-left | top-right | top-left
-			'widget_position'		=>'left', //left | right
+			'widget_position'		=>	'left', //left | right
 		);
+		$settings_v0_9 = apply_filters('wt_cli_plugin_settings', $settings_v0_9);
 		return $key!="" ? $settings_v0_9[$key] : $settings_v0_9;
 	}
 
@@ -505,14 +506,14 @@ class Cookie_Law_Info {
 		'popup_showagain_position'=>$settings['popup_showagain_position'],
 		'widget_position'=>$settings['widget_position'],
 	  );
-	  $str = json_encode( $slim_settings );
+	//   $str = json_encode( $slim_settings );
 	  /*
 	  DEBUG: 
 	  if ( $str == null | $str == '') {
 	    $str = 'error: json is empty';
 	  }
 	  */
-	  return $str;
+	  return $slim_settings;
 	}
 
 	/**
@@ -553,6 +554,10 @@ class Cookie_Law_Info {
 			case 'popup_overlay':
 			case 'thirdparty_on_field':
 			case 'third_party_default_state':
+			case 'ccpa_enabled':
+			case 'button_6_as_link':
+			case 'ccpa_region_based':
+			case 'ccpa_enable_bar':
 
 				if ( $value == 'true' || $value === true ) 
 				{
@@ -596,6 +601,9 @@ class Cookie_Law_Info {
 			// Allow some HTML, but no JavaScript. Note that deliberately NOT stripping out line breaks here, that's done when sending JavaScript parameter elsewhere:
 			case 'notify_message':
 			case 'bar_heading_text':
+			case 'ccpa_content':
+			case 'ccpa_gdpr_content':
+			case 'gdpr_content':
 				$ret = wp_kses( $value,self::allowed_html(), self::allowed_protocols() );
 				break;
 			// URLs only:
@@ -915,5 +923,53 @@ class Cookie_Law_Info {
     			update_option('cli_heading_version', $bar_version);
     		}
     	}
-    }
+	}
+	/**
+	* Check whether JS blocking is active or not
+	*
+	* @since  1.8.9
+	* @return bool
+	*/
+	public static function wt_cli_is_js_blocking_active() {
+
+		$js_blocking_enabled = false;
+		$js_option = self::get_js_option();
+		if( $js_option === "yes" ){
+			$js_blocking_enabled = true;
+		}   
+		return apply_filters('wt_cli_enable_js_blocking',$js_blocking_enabled);
+	}
+	/**
+	* JS blocker will be disabled by default for existing customer
+	*
+	* @since  1.8.9
+	* @return bool
+	*/
+	public static function maybe_first_time_install()
+    {
+		$plugin_settings = get_option(CLI_SETTINGS_FIELD);
+		if( $plugin_settings === false ) {
+			
+			$transient_value = get_transient('_wt_cli_first_time_activation');
+			if( $transient_value === false ) {
+				set_transient('_wt_cli_first_time_activation', true, 30);
+			}
+			return true;
+		}
+		return false;
+	}
+	/**
+	* Return js options
+	*
+	* @since  1.8.9
+	* @return bool,string
+	*/
+	public static function get_js_option() {
+
+		$js_option = false;
+		$js_option = get_option( 'cookielawinfo_js_blocking' );
+		return $js_option;
+		
+	}
+	
 }

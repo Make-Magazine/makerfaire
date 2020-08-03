@@ -48,6 +48,7 @@ class Cookie_Law_Info_Admin {
 	 */
 	private $modules=array(
 		'cli-policy-generator',
+		'ccpa'
 	);
 
 	public static $existing_modules=array();
@@ -107,7 +108,6 @@ class Cookie_Law_Info_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
 		wp_register_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cookie-law-info-admin.js', array( 'jquery' ,'wp-color-picker'), $this->version, false );
 
 	}
@@ -243,11 +243,11 @@ class Cookie_Law_Info_Admin {
 	    {
 	        // Check nonce:
 			check_admin_referer('cookielawinfo-update-thirdparty');
-			$stored_options['thirdparty_on_field'] = (bool)( isset( $_POST['thirdparty_on_field'] )  ? Cookie_Law_Info::sanitise_settings('thirdparty_on_field',$_POST['thirdparty_on_field']) : $stored_options['thirdparty_on_field'] );
-			$stored_options['third_party_default_state'] = (bool)( isset( $_POST['third_party_default_state'] )  ? Cookie_Law_Info::sanitise_settings('third_party_default_state',$_POST['third_party_default_state']) : $stored_options['third_party_default_state'] );
-			$stored_options['thirdparty_description'] = wp_kses_post( isset( $_POST['thirdparty_description'] ) && $_POST['thirdparty_description'] !== '' ? $_POST['thirdparty_description'] : $stored_options['thirdparty_description'] );
-			$stored_options['thirdparty_head_section'] = wp_unslash( isset( $_POST['thirdparty_head_section'] ) && $_POST['thirdparty_head_section'] !== '' ? $_POST['thirdparty_head_section'] : $stored_options['thirdparty_head_section'] );
-			$stored_options['thirdparty_body_section'] = wp_unslash( isset( $_POST['thirdparty_body_section'] ) && $_POST['thirdparty_body_section'] !== '' ? $_POST['thirdparty_body_section'] : $stored_options['thirdparty_body_section'] );
+			$stored_options['thirdparty_on_field'] = (bool)( isset( $_POST['thirdparty_on_field'] )  ? Cookie_Law_Info::sanitise_settings('thirdparty_on_field',$_POST['thirdparty_on_field']) : false );
+			$stored_options['third_party_default_state'] = (bool)( isset( $_POST['third_party_default_state'] )  ? Cookie_Law_Info::sanitise_settings('third_party_default_state',$_POST['third_party_default_state']) : true );
+			$stored_options['thirdparty_description'] = wp_kses_post( isset( $_POST['thirdparty_description'] ) && $_POST['thirdparty_description'] !== '' ? $_POST['thirdparty_description'] : '' );
+			$stored_options['thirdparty_head_section'] = wp_unslash( isset( $_POST['thirdparty_head_section'] ) && $_POST['thirdparty_head_section'] !== '' ? $_POST['thirdparty_head_section'] : '' );
+			$stored_options['thirdparty_body_section'] = wp_unslash( isset( $_POST['thirdparty_body_section'] ) && $_POST['thirdparty_body_section'] !== '' ? $_POST['thirdparty_body_section'] : '' );
 			update_option('cookielawinfo_thirdparty_settings', $stored_options);
 	        echo '<div class="updated"><p><strong>';
 	        echo __('Settings Updated.','cookie-law-info');
@@ -338,7 +338,8 @@ class Cookie_Law_Info_Admin {
 	                // Store sanitised values only:
 	                $the_options[$key] = Cookie_Law_Info::sanitise_settings($key, $_POST[$key . '_field']);
 	            }
-	        }
+			}
+			$the_options = apply_filters('wt_cli_before_save_settings',$the_options, $_POST);
 	        update_option(CLI_SETTINGS_FIELD, $the_options);
 	        echo '<div class="updated"><p><strong>' . __('Settings Updated.', 'cookie-law-info') . '</strong></p></div>';
 	    } 

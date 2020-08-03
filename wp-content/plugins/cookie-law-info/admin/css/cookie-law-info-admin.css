@@ -293,3 +293,187 @@ table.wc_emails .wc-email-settings-table-status .tips,table.cli_script_items .wc
     .cli_settings_left{ width:100%;}
     .cli_settings_right{ padding-left:0px; width:100%;}
 }
+/* CCPA Related Changes */
+/* Accordion Styles  */
+
+.wt-cli-accordion-container {
+    position: relative;
+    height: auto;
+    border-left: 1px solid #e2e4e7;
+    border-right: 1px solid #e2e4e7;
+}
+
+.wt-cli-accordion-container>h2 {
+    text-align: center;
+    color: #fff;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+}
+
+.wt-cli-accordion-content > .wt-cli-accordion-tab {
+    padding-left: 10px;
+    padding-right: 10px;
+    border-left: 1px solid #e2e4e7;
+    border-right: 1px solid #e2e4e7;
+}
+
+.wt-cli-accordion-content.active > .wt-cli-accordion-tab {
+    background: #fff;
+}
+
+.wt-cli-accordion-tab {
+    position: relative;
+    width: 100%;
+    height: auto;
+    border-bottom: 2px dotted #e2e4e7;
+    box-sizing: border-box;
+}
+
+.wt-cli-accordion-content {
+    padding-bottom: 15px;
+}
+
+.wt-cli-accordion-tab:not(:first-child) {
+    margin-top: -1px;
+}
+
+.wt-cli-accordion-tab > a {
+    display: block;
+    text-decoration: none;
+    color: #191e23;
+    font-weight: 600;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    outline: none;
+    -webkit-transition: all 0.2s linear;
+    -moz-transition: all 0.2s linear;
+    transition: all 0.2s linear;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    font-size: 1.3em;
+}
+
+.wt-cli-accordion-tab > a i {
+    float: right;
+    margin-top: 2px;
+}
+
+.wt-cli-accordion-tab > a:before {
+    content: "";
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid #000000;
+    border-right: 2px solid #000000;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    transition: -webkit-transform 400ms ease;
+    transition: transform 400ms ease;
+    transition: transform 400ms ease, -webkit-transform 400ms ease;
+    opacity: 0.8;
+    margin-right: 16px;
+}
+
+.wt-cli-accordion-tab > a.active::before {
+    -webkit-transform: rotate(135deg);
+    transform: rotate(135deg);
+}
+
+.wt-cli-accordion-content {
+    display: none;
+}
+
+/* End  Accordion Styles  */
+
+.wt-cli-section-gdpr-ccpa .wt-cli-section-inner {
+    display: none;
+}
+/* Webtoffe GDPR Cookie Consent Tooltip */
+
+/* Add this attribute to the element that needs a tooltip */
+
+[data-wt-cli-tooltip] {
+    position: relative;
+    z-index: 9999;
+    cursor: pointer;
+}
+
+/* Hide the tooltip content by default */
+
+[data-wt-cli-tooltip]:before, [data-wt-cli-tooltip]:after {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Position tooltip above the element */
+
+[data-wt-cli-tooltip]:before {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: 10px;
+    transform: translateX(-50%);
+    min-width: 250px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    background-color: #333;
+    color: #fff;
+    content: attr(data-wt-cli-tooltip);
+    text-align: center;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: normal;
+    padding: 12px;
+    letter-spacing: -.25px;
+    text-transform: none;
+    white-space: normal;
+}
+
+/* Triangle hack to make tooltip look like a speech bubble */
+
+[data-wt-cli-tooltip]:after {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: 5px;
+    margin-left: -5px;
+    width: 0;
+    border-top: 5px solid #000;
+    border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    content: " ";
+    font-size: 0;
+    line-height: 0;
+}
+
+/* Show tooltip content on hover */
+
+[data-wt-cli-tooltip]:hover:before, [data-wt-cli-tooltip]:hover:after {
+    visibility: visible;
+    opacity: 1;
+}
+
+span.wt-cli-tootip-icon {
+    background-image: url('../images/wt-cli-info.svg');
+}
+
+span.wt-cli-tootip-icon {
+    background-image: url(../images/wt-cli-info.svg);
+    width: 14px;
+    height: 14px;
+    display: inline-flex;
+    background-size: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-bottom: -2px;
+}
+.wt-cli-ccpa-message-toggler .wt-cli-form-group {
+    margin-bottom: 15px;
+}
