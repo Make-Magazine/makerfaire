@@ -152,9 +152,6 @@ class GP_Copy_Cat extends GWPerk {
         return gf_apply_filters( array( 'gpcc_copy_cat_fields', $form['id'] ), $copy_fields, $form );
     }
 
-    function documentation() {
-        return array( 'type' => 'url', 'value' => 'http://gravitywiz.com/documentation/gp-copy-cat/' );
-    }
 
 }
 

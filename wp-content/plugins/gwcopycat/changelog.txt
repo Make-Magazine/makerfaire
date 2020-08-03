@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.25
+
+	- Fixed an issue where clearing copied values would fail for checkboxes.
+
 ## 1.4.24
 
 	- Fixed issue where Drop Down value was set to null when attempting to populate value that did not exist.
