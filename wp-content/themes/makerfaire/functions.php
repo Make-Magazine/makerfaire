@@ -315,12 +315,9 @@ function angular_scripts() {
             wp_localize_script('angular-scripts', 'MyAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
             wp_localize_script('angular-scripts', 'angularLocalized', array('partials' => trailingslashit(get_template_directory_uri()) . 'partials/'));
         } elseif (is_page_template('page-schedule.php')) {
-            //wp_enqueue_script('angular-schedule', get_stylesheet_directory_uri() . '/js/angular/schedule_cont.js', array('angularjs'), $my_version);
             //angular ui-bootstrap style
             wp_enqueue_style('ui-bootstrap', get_stylesheet_directory_uri() . '/css/angular/angular-ui-bootstrap/ui-bootstrap-csp.css', array(), null, 'all');
         } elseif (is_page_template('page-meet-the-makers.php')) {
-            wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/meet-the-makers.js', array('angularjs'), $my_version, true);
-
             //angular ui-bootstrap style
             wp_enqueue_style('ui-bootstrap', get_stylesheet_directory_uri() . '/css/angular/angular-ui-bootstrap/ui-bootstrap-csp.css', array(), null, 'all');
             wp_enqueue_style('owl-carousel', get_template_directory_uri() . '/css/owl.carousel.css', array(), null, 'all');

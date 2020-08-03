@@ -251,6 +251,7 @@ function getMTMentries($formIDs, $faireID) {
             }
             $data['entity'][] = array(
                 'id' => $result->entry_id,
+                'link' => '/maker/entry/'.$result->entry_id,
                 'name' => $result->proj_name,
                 'large_img_url' => $fitPhoto,
                 'categories' => $category,
@@ -533,5 +534,6 @@ function getMakerList($entryID, $faireID) {
             }
         }
     }
+
     return $makerList;
 }
