@@ -207,10 +207,8 @@ class GravityView_Change_Entry_Creator {
 
         $created_by_id = \GV\Utils::get( $entry, 'created_by' );
 
-        // Make override
-        //$users = GVCommon::get_users( 'change_entry_creator' );
-        $users = GVCommon::get_users( 'change_entry_creator',array('fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email'), 'number' => 100000));
-        
+        $users = GVCommon::get_users( 'change_entry_creator' );
+
         $is_created_by_in_users = wp_list_filter( $users, array( 'ID' => $created_by_id ) );
 
         // Make sure that the entry creator is included in the users list. If not, add them.
@@ -235,9 +233,7 @@ class GravityView_Change_Entry_Creator {
 	    $output .= '<select name="created_by" id="change_created_by" class="widefat">';
         $output .= '<option value="' . selected( $entry['created_by'], '0', false ) . '"> &mdash; '.esc_attr_x( 'No User', 'No user assigned to the entry', 'gravityview').' &mdash; </option>';
         foreach($users as $user) {
-            //$output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
-            //Make override to return user list with email
-            $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_email.')' ).'</option>';
+            $output .= '<option value="'. $user->ID .'"'. selected( $entry['created_by'], $user->ID, false ).'>'.esc_attr( $user->display_name.' ('.$user->user_nicename.')' ).'</option>';
         }
         $output .= '</select>';
         $output .= '<input name="originally_created_by" value="'.esc_attr( $entry['created_by'] ).'" type="hidden" />';
