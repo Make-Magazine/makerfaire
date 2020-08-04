@@ -1,3 +1,22 @@
+### 2.4.19.4
+- AF: Fixed a JavaScript error with WordPress 5.5 which prevents dynamic and generic mapping type settings rendering correctly.
+
+
+### 2.4.19.3
+- Updated the translated countries list to be sorted alphabetically.
+- API: Added GF_Field_Address::get_default_countries() which returns the default array of countries using the ISO 3166-1 alpha-2 code as the key to the country name.
+- API: Fixed the value not being padded when true is passed for the fifth argument of the Currency.numberFormat method in gravityforms.js.
+- API: Fixed an issue where GF_Field_Address::get_country_code() would return null for some translated countries.
+
+
+### 2.4.19.2
+- Fixed a fatal error which occurs when the PowerPack for Beaver Builder plugin uses `GFCommon::gform_do_shortcode()`.
+
+
+### 2.4.19.1
+- Fixed an issue with the empty form validation ignoring the values of fields with visibility set to hidden.
+
+
 ### 2.4.19 | 2020-07-15
 - Added security enhancements.
 - Added [gform_preview_header](https://docs.gravityforms.com/gform_preview_header), [gform_preview_body_open](https://docs.gravityforms.com/gform_preview_body_open) actions to Preview Form page.
