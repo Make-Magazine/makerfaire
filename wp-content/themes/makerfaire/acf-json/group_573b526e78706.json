@@ -2956,6 +2956,13 @@
                 "operator": "==",
                 "value": "page-wide-leftnav.php"
             }
+        ],
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/1-column"
+            }
         ]
     ],
     "menu_order": 0,
@@ -2966,5 +2973,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1591304862
+    "modified": 1596667114
 }
