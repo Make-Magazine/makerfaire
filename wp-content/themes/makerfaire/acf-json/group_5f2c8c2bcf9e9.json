@@ -1,0 +1,48 @@
+{
+    "key": "group_5f2c8c2bcf9e9",
+    "title": "Panel - Flag Banner Separator",
+    "fields": [
+        {
+            "key": "field_5f2c8c40d59ad",
+            "label": "Active\/Inactive",
+            "name": "activeinactive",
+            "type": "radio",
+            "instructions": "This adds a flag banner that can be used to separate panels.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "Active": "Active",
+                "Inactive": "Inactive"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "",
+            "layout": "horizontal",
+            "return_format": "value",
+            "save_other_choice": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/flag-banner-panel"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1596755066
+}

@@ -32,6 +32,7 @@ function dispLayout($row_layout) {
             case '2_column_wysiwyg': // 1 column wysiwyg
                 $return = get2ColWYSIWYG();
                 break;
+            case 'one_column':
             case '1_column': // 1 COLUMN LAYOUT
                 $return = get1ColLayout();
                 break;
@@ -571,10 +572,11 @@ function get2ColWYSIWYG() {
 }
 
 /* * *************************************************** */
-/*   Function to return 1_column_photo_and_text_panel  */
+/*   Function to return Hero panel */
 /* * *************************************************** */
 
 function get1ColLayout() {
+    GLOBAL $acf_blocks;
     //get data submitted on admin page
     //loop thru and randomly select an image.
     $hero_array = array();
@@ -601,10 +603,8 @@ function get1ColLayout() {
         $hero_image = $hero_array[$randKey];
     }
 
-    $hero_text = get_sub_field('column_title');
-    $cta_button = get_sub_field('cta_button');
-    $cta_button_url = get_sub_field('cta_button_url');
-
+    $hero_text      = ($acf_blocks ? get_field('column_title') : get_sub_field('column_title'));
+  
     //build output
     $return = '';
     $return .= '<section class="hero-panel">';    // create content-panel section
@@ -621,12 +621,7 @@ function get1ColLayout() {
     $return .= '        ' . $hero_image .
             '     </div>' .
             '   </div>';
-
-    if (get_sub_field('cta_button')) {
-        $return .= ' <div class="row text-center padtop">
-                    <a class="btn btn-b-ghost" href="' . $cta_button_url . '">' . $cta_button . '</a>
-                  </div>';
-    }
+    
 
     // Because of the aggressive caching on prod, it makes more sense to shuffle the array in javascript
     $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").replaceWith(heroArray[0]);});</script>';
@@ -818,8 +813,9 @@ function getCTApanel() {
 /* * *************************************************** */
 
 function getRibbonSeparatorpanel() {
+    GLOBAL $acf_blocks;
     $return = '';
-    $background_color = get_sub_field('background_color');
+    $background_color = ($acf_blocks ? get_field('background_color') : get_sub_field('background_color'));
     $bg_color_class_map = array(
         "Blue" => '',
         "Light Blue" => ' light-blue-ribbon',
@@ -838,10 +834,11 @@ function getRibbonSeparatorpanel() {
 /* * *************************************************** */
 
 function getNewsBlockpanel() {
+    GLOBAL $acf_blocks;
     $args = [
-        'tag' => get_sub_field('tag'),
-        'title' => get_sub_field('title'),
-        'link' => get_sub_field('link')
+        'tag'   => ($acf_blocks ? get_field('tag') : get_sub_field('tag')),
+        'title' => ($acf_blocks ? get_field('title') : get_sub_field('title')),
+        'link'  => ($acf_blocks ? get_field('link') : get_sub_field('link'))
     ];
     require_once 'MF-News-Block.php';
     return do_news_block($args);
@@ -1358,14 +1355,16 @@ function getSponsorPanel() {
 /* * ************************************************ */
 
 function getFeatFairePanel() {
+    GLOBAL $acf_blocks;
+    
     $return = '';
     $return .= '<section class="featured-panel white-back"> ';
 
     //build the container div
     $return .= '<div class="container featured-faire-landing">';
 
-    // Display the panel title
-    $title = (get_sub_field('featured_faires_title') ? get_sub_field('featured_faires_title') : '');
+    // Display the panel title    
+    $title = ($acf_blocks ? get_field('featured_faires_title') : get_sub_field('featured_faires_title'));
     $return .= '<div class="row text-center">
                   <div class="panel-title title-w-border-y yellow-underline">
                     <h2>' . $title . '</h2>
@@ -1373,13 +1372,13 @@ function getFeatFairePanel() {
                 </div>';
 
     //get featured faires data
-    $url = get_sub_field('featured_faires_page_url');
-    $cta_url = get_sub_field('more_faires_url');
-    $cta_text = (get_sub_field('more_faires_text') !== '' ? get_sub_field('more_faires_text') : 'More Faires');
-
+    $url        = ($acf_blocks ? get_field('featured_faires_page_url') : get_sub_field('featured_faires_page_url'));
+    $cta_url    = ($acf_blocks ? get_field('more_faires_url') : get_sub_field('more_faires_url'));
+    $cta_text   = ($acf_blocks ? get_field('more_faires_text') : get_sub_field('more_faires_text'));
+    if($cta_text =='')  $cta_text = 'More Faires';
     //pull featured faire information based on entered url
     $id = url_to_postid($url);
-    $faires_to_show = (int) get_sub_field('faires_to_show');
+    $faires_to_show = (int) ($acf_blocks ? get_field('faires_to_show') : get_sub_field('faires_to_show'));
 
     $faires_shown = 0;
     // If the linked page has featured faires, then display data
@@ -1543,10 +1542,12 @@ function getFlagBannerPanel() {
 /* * *************************************************** */
 
 function getMakeyBanner() {
-    $title = get_sub_field('title_link_text');
-    $URL = get_sub_field('link_url');
+    GLOBAL $acf_blocks;
+    
+    $title  = ($acf_blocks ? get_field('title_link_text') : get_sub_field('title_link_text'));
+    $URL    = ($acf_blocks ? get_field('link_url') : get_sub_field('link_url'));
 
-    $content = '<div class="makey-banner ' . get_sub_field('background-color') . '">';
+    $content = '<div class="makey-banner ' . ($acf_blocks ? get_field('background-color') : get_sub_field('background-color')) . '">';
     $content .= '   <div class="container">';
     $content .= '      <div class="picture-holder">';
     $content .= '         <img alt="Maker Robot" height="74" class="lazyload" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';

@@ -1,0 +1,128 @@
+{
+    "key": "group_5f2c9116a89a1",
+    "title": "Panel - Hero Panel",
+    "fields": [
+        {
+            "key": "field_5f2c9116b6230",
+            "label": "Active\/Inactive",
+            "name": "activeinactive",
+            "type": "radio",
+            "instructions": "Activate or Inactivate this panel",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "activeinactive",
+                "id": ""
+            },
+            "layout": "horizontal",
+            "choices": {
+                "Active": "Active",
+                "Inactive": "Inactive"
+            },
+            "default_value": "Active",
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        },
+        {
+            "key": "field_5f2c9139ba9cf",
+            "label": "Hero image Repeater",
+            "name": "hero_image_repeater",
+            "type": "repeater",
+            "instructions": "Upload 1-10 images for use as the hero image on the page. The displayed image will be randomly selected from these.<br\/>Optimal size is 1920 x 490",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 1,
+            "max": 10,
+            "layout": "table",
+            "button_label": "",
+            "sub_fields": [
+                {
+                    "key": "field_5f2c9150ba9d0",
+                    "label": "Hero image",
+                    "name": "hero_image_random",
+                    "type": "image",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_5f2c916fba9d1",
+                    "label": "Image Link",
+                    "name": "image_cta",
+                    "type": "url",
+                    "instructions": "Optional - If supplied, this will make the image a clickable link.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                }
+            ]
+        },
+        {
+            "key": "field_5f2c91b0ba9d2",
+            "label": "Hero Title",
+            "name": "column_title",
+            "type": "wysiwyg",
+            "instructions": "This title is displayed over the content with a semi transparent white background",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "full",
+            "media_upload": 1,
+            "delay": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/one-column"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1596756448
+}

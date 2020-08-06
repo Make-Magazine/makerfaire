@@ -1,14 +1,14 @@
 {
-    "key": "group_5f2c75cf233ae",
-    "title": "Panel - Tint Social Block",
+    "key": "group_5f2c8d307eece",
+    "title": "Panel - Makey Banner",
     "fields": [
         {
-            "key": "field_5f2c764076ee4",
+            "key": "field_5f2c8d43a0558",
             "label": "Active\/Inactive",
             "name": "activeinactive",
             "type": "radio",
-            "instructions": "Activate or Inactivate this panel",
-            "required": 1,
+            "instructions": "",
+            "required": 0,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "",
@@ -21,36 +21,17 @@
             },
             "allow_null": 0,
             "other_choice": 0,
-            "default_value": "Active",
-            "layout": "horizontal",
+            "default_value": "",
+            "layout": "vertical",
             "return_format": "value",
             "save_other_choice": 0
         },
         {
-            "key": "field_5f2c767a76ee5",
-            "label": "Title",
-            "name": "title",
+            "key": "field_5f2c8d90a0559",
+            "label": "Title \/ Link Text",
+            "name": "title_link_text",
             "type": "text",
-            "instructions": "Defaults to \"Share Your Maker Faire Experience\"",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "Share Your Maker Faire Experience",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
-        },
-        {
-            "key": "field_5f2c75f076ee2",
-            "label": "Hashtags",
-            "name": "hashtags",
-            "type": "text",
-            "instructions": "Add one or more comma-separated hashtags, e.g. #makerfaire - Defaults to #makerfaire",
+            "instructions": "",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -65,11 +46,11 @@
             "maxlength": ""
         },
         {
-            "key": "field_5f2c761576ee3",
-            "label": "Personalization ID",
-            "name": "personalization_id",
-            "type": "text",
-            "instructions": "Defaults to \"764268\" when nothing entered.",
+            "key": "field_5f2c8daea055a",
+            "label": "Background Color",
+            "name": "background_color",
+            "type": "select",
+            "instructions": "Select a color for the banner background",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -77,7 +58,35 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": 764268,
+            "choices": {
+                "white-bg": "White",
+                "grey-bg": "Grey",
+                "darkgrey-bg": "Dark Grey",
+                "blue-bg": "Blue",
+                "darkblue-bg": "Dark Blue"
+            },
+            "default_value": "darkblue-bg",
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0,
+            "return_format": "value",
+            "ajax": 0,
+            "placeholder": ""
+        },
+        {
+            "key": "field_5f2c8dd7a055b",
+            "label": "Link URL",
+            "name": "link_url",
+            "type": "text",
+            "instructions": "The link URL. For example, \"\/map\/\"",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
             "placeholder": "",
             "prepend": "",
             "append": "",
@@ -89,7 +98,7 @@
             {
                 "param": "block",
                 "operator": "==",
-                "value": "acf\/tint-social-block-panel"
+                "value": "acf\/makey-banner"
             }
         ]
     ],
@@ -101,5 +110,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1596750548
+    "modified": 1596755494
 }

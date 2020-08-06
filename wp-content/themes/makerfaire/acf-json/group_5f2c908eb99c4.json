@@ -1,0 +1,74 @@
+{
+    "key": "group_5f2c908eb99c4",
+    "title": "Panel - Ribbon Separator",
+    "fields": [
+        {
+            "key": "field_5f2c908ec94da",
+            "label": "Active\/Inactive",
+            "name": "activeinactive",
+            "type": "radio",
+            "instructions": "Activate or Inactivate this panel",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "activeinactive",
+                "id": ""
+            },
+            "layout": "horizontal",
+            "choices": {
+                "Active": "Active",
+                "Inactive": "Inactive"
+            },
+            "default_value": "Active",
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        },
+        {
+            "key": "field_5f2c908ec94ee",
+            "label": "Background Color",
+            "name": "background_color",
+            "type": "radio",
+            "instructions": "Background color of this panel. Choose blue or red.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "Blue": "Blue",
+                "Light Blue": "Light Blue",
+                "Red": "Red",
+                "Orange": "Orange"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "Blue",
+            "layout": "horizontal",
+            "return_format": "value",
+            "save_other_choice": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/ribbon-separator-panel"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1596756166
+}
