@@ -46,7 +46,16 @@
 		};
 
 		self.initSession = function() {
-			$.post( self.ajaxUrl, self.sessionData, function( response ) { } );
+			$.post( self.ajaxUrl, self.sessionData, function( response ) {
+				/**
+				 * Do something after the Nested Forms session has been initialized.
+				 *
+				 * @since 1.0-beta-8.62
+				 *
+				 * @param {GPNestedForms} gpnf Current instance of the GPNestedForms class.
+				 */
+				gform.doAction( 'gpnf_session_initialized', self );
+			} );
 		};
 
 		self.initModal = function() {
@@ -487,6 +496,30 @@
 
         };
 
+		self.duplicateEntry = function( entryId, $trigger ) {
+
+			var $spinner = new AjaxSpinner( $trigger, self.spinnerUrl, '' );
+			$trigger.css( { visibility: 'hidden' } );
+
+			$.post( self.ajaxUrl, {
+				action: 'gpnf_duplicate_entry',
+				nonce: GPNFData.nonces.duplicateEntry,
+				gpnf_entry_id: entryId,
+				gpnf_parent_form_id: self.formId,
+				gpnf_nested_form_field_id: self.fieldId
+			}, function( response ) {
+
+				$spinner.destroy();
+				$trigger.css( { visibility: 'visible' } );
+
+				if ( response.success ) {
+					GPNestedForms.loadEntry( response.data );
+				}
+
+			} );
+
+		};
+
         self.getFormHtml = function() {
 
         	// Destroy any datepickers in our modal. They will be reinitialized when the modal is loaded.
@@ -778,6 +811,10 @@
         self.deleteEntry = function( item, event ) {
 			gpnf.deleteEntry( item, $( event.target ) );
         };
+
+        self.duplicateEntry = function( item, event ) {
+			gpnf.duplicateEntry( item.id, $( event.target ) );
+		}
 
     };
 

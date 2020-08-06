@@ -170,6 +170,8 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_action( 'wp_ajax_nopriv_gpnf_edit_entry',      array( $this, 'ajax_edit_entry' ) );
 		add_action( 'wp_ajax_gpnf_refresh_markup',         array( $this, 'ajax_refresh_markup' ) );
 		add_action( 'wp_ajax_nopriv_gpnf_refresh_markup',  array( $this, 'ajax_refresh_markup' ) );
+		add_action( 'wp_ajax_gpnf_duplicate_entry',        array( $this, 'ajax_duplicate_entry' ) );
+		add_action( 'wp_ajax_nopriv_gpnf_duplicate_entry', array( $this, 'ajax_duplicate_entry' ) );
 		add_action( 'wp_ajax_gpnf_session',                array( $this, 'ajax_session' ) );
 		add_action( 'wp_ajax_nopriv_gpnf_session',         array( $this, 'ajax_session' ) );
 
@@ -366,9 +368,10 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		wp_localize_script( 'gp-nested-forms', 'GPNFData', array(
 			'nonces' => array(
-				'editEntry'   => wp_create_nonce( 'gpnf_edit_entry' ),
-				'refreshMarkup'   => wp_create_nonce( 'gpnf_refresh_markup' ),
-				'deleteEntry' => wp_create_nonce( 'gpnf_delete_entry' ),
+				'editEntry'      => wp_create_nonce( 'gpnf_edit_entry' ),
+				'refreshMarkup'  => wp_create_nonce( 'gpnf_refresh_markup' ),
+				'deleteEntry'    => wp_create_nonce( 'gpnf_delete_entry' ),
+				'duplicateEntry' => wp_create_nonce( 'gpnf_duplicate_entry' ),
 			),
 			'strings' => array(),
 		) );
@@ -980,6 +983,55 @@ class GP_Nested_Forms extends GP_Plugin {
 		wp_send_json( $markup );
 
     }
+
+	public function ajax_duplicate_entry() {
+
+		if( ! wp_verify_nonce( rgpost( 'nonce' ), 'gpnf_duplicate_entry' ) ) {
+			wp_send_json_error( __( 'Oops! You don\'t have permission to duplicate this entry.', 'gp-nested-forms' ) );
+		}
+
+		$entry_id = $this->get_posted_entry_id();
+		$entry    = GFAPI::get_entry( $entry_id );
+
+		if ( ! GPNF_Entry::can_current_user_edit_entry( $entry ) ) {
+			wp_send_json_error( __( 'Oops! You don\'t have permission to duplicate this entry.', 'gp-nested-forms' ) );
+		}
+
+		// Prepare the entry for duplication.
+		unset( $entry['id'] );
+
+		$result = GFAPI::add_entry( $entry );
+
+		if( is_wp_error( $result ) ) {
+			wp_send_json_error( $result->get_error_message() );
+		}
+
+		$parent_form       = GFAPI::get_form( $this->get_posted_parent_form_id() );
+		$nested_form_field = $this->get_posted_nested_form_field( $parent_form );
+		$child_form        = GFAPI::get_form( $nested_form_field->gpnfForm );
+
+		// Note: Entry meta included in the passed entry will also be duplicated.
+		$dup_entry_id = GFAPI::add_entry( $entry );
+		$dup_entry    = GFAPI::get_entry( $dup_entry_id );
+		$field_values = gp_nested_forms()->get_entry_display_values( $dup_entry, $child_form );
+
+		// Attach session meta to child entry.
+		$session = new GPNF_Session( $parent_form['id'] );
+		$session->add_child_entry( $dup_entry_id );
+
+		// set args passed back to entry list on front-end
+		$args = array(
+			'formId'      => $parent_form['id'],
+			'fieldId'     => $nested_form_field->id,
+			'entryId'     => $dup_entry_id,
+			'entry'       => $dup_entry,
+			'fieldValues' => $field_values,
+			'mode'        => 'add',
+		);
+
+		wp_send_json_success( $args );
+
+	}
 
 	public function ajax_session() {
 
@@ -1701,7 +1753,7 @@ class GP_Nested_Forms extends GP_Plugin {
 			$args = array(
 				'formId'              => $form['id'],
 				'fieldId'             => $field['id'],
-				'nestedFormId'        => $nested_form['id'],
+				'nestedFormId'        => rgar( $nested_form, 'id' ),
 				'displayFields'       => $display_fields,
 				'entries'             => $entries,
 				'ajaxUrl'             => admin_url( 'admin-ajax.php', ! is_ssl() ? 'http' : 'admin' ),
@@ -2272,7 +2324,7 @@ class GP_Nested_Forms extends GP_Plugin {
 
 	public function has_pricing_field( $form ) {
 
-		if ( is_array( $form['fields'] ) ) {
+		if ( $form && is_array( $form['fields'] ) ) {
 			foreach ( $form['fields'] as $field ) {
 				if ( GFCommon::is_product_field( $field->type ) ) {
 					return true;

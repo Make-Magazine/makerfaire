@@ -1,6 +1,22 @@
 
 # Changelog
 
+## 1.0-beta-8.63
+
+	- Added a more verbose notice when nested form and fields are not set.
+
+## 1.0-beta-8.62
+
+	- Added [gpnf_session_initialized](https://gravitywiz.com/documentation/gpnf_session_initialized/) action to support doing something after the Nested Forms session has been initialized.
+
+## 1.0-beta-8.61
+
+	- Added header text for actions column to improve accessibility (Thanks OIT Design & Web Services NCSU).
+
+## 1.0-beta-8.60
+
+	- Added support for duplicating child entries in a Nested Form field. Currently requires manually adding the action link template.
+
 ## 1.0-beta-8.59
 
 	- Added support for filtering child entries by the Parent Entry ID in the Entries list view in addition to filtering by the Parent Entry ID in the Gravity Flow Form Connector plugin.

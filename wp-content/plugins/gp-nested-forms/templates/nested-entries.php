@@ -9,7 +9,7 @@
 					<?php echo GFCommon::get_label( $nested_field ); ?>
 				</th>
 			<?php endforeach; ?>
-			<th class="gpnf-row-actions">&nbsp;</th>
+			<th class="gpnf-row-actions"><span class="screen-reader-text">Actions</span></th>
 		</tr>
 		</thead>
 

@@ -56,10 +56,14 @@ class GP_Field_Nested_Form extends GF_Field {
 		$nested_field_ids = rgar( $this, 'gpnfFields', array() );
 		$column_count     = count( $nested_field_ids ) + 1; // + 1 for actions column
 
-		if( ! $nested_field_ids && ! $this->is_form_editor() ) {
-			return '<div class="gpnf-nested-entries-container ginput_container">' .
-			       __( 'Please select a form and fields to display in this Nested Form field.', 'gp-nested-forms' )
-				. '</div>';
+    // Show warning message when form/fields need to be configured
+		if( ! $nested_field_ids ) {
+      // GF 2.5 border color
+      $border_color = ( version_compare( GFForms::$version, '2.5.0', '>=' ) ) ? '#ddd':'#D2E0EB';
+      return sprintf( '<div class="gpnf-nested-entries-container ginput_container"><p style=" border: 1px dashed %s; border-radius: 3px; padding: 1rem; background: #fff; "><strong style="color: #ca4a1f;">%s</strong><br>%s</p></div>',
+        $border_color,
+        __( 'Configuration Required', 'gp-nested-forms' ),
+        __( 'Use the Nested Form and Summary Fields settings to choose the form and fields to display in this Nested Form field.', 'gp-nested-forms' ) );
 		}
 
 		// Get existing entries.
@@ -85,10 +89,11 @@ class GP_Field_Nested_Form extends GF_Field {
 		    'add_button_message' => $this->get_add_button_max_message( $form['id'], rgar( $nested_form, 'id' ) ),
 		    'tabindex'           => $tabindex,
 		    'labels'             => array(
-			    'no_entries'   => sprintf( __( 'There are no %s%s.%s', 'gp-nested-forms' ), '<span>', $this->get_items_label(), '</span>' ),
-			    'add_entry'    => $add_button_label,
-			    'edit_entry'   => __( 'Edit', 'gp-nested-forms' ),
-			    'delete_entry' => __( 'Delete', 'gp-nested-forms' ),
+			    'no_entries'      => sprintf( __( 'There are no %s%s.%s', 'gp-nested-forms' ), '<span>', $this->get_items_label(), '</span>' ),
+			    'add_entry'       => $add_button_label,
+			    'edit_entry'      => __( 'Edit', 'gp-nested-forms' ),
+			    'duplicate_entry' => __( 'Duplicate', 'gp-nested-forms' ),
+			    'delete_entry'    => __( 'Delete', 'gp-nested-forms' ),
 		    ),
 	    );
 
