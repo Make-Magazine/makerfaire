@@ -1,5 +1,4 @@
 <?php
-
 // FOR NOW, TURN OFF GUTENBURG
 // disable for posts
 //add_filter('use_block_editor_for_post', '__return_false', 10);
