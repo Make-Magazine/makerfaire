@@ -1,0 +1,83 @@
+{
+    "key": "group_5d6fea97afe0b",
+    "title": "Panel - Buy Tickets Float",
+    "fields": [
+        {
+            "key": "field_mk57196b4abc502",
+            "label": "Active\/Inactive",
+            "name": "activeinactive",
+            "type": "radio",
+            "instructions": "This adds a floating banner to buy tickets.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "activeinactive",
+                "id": ""
+            },
+            "layout": "horizontal",
+            "choices": {
+                "Active": "Active",
+                "Inactive": "Inactive"
+            },
+            "default_value": "Active",
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        },
+        {
+            "key": "field_mk57196b4abc503",
+            "label": "Buy Ticket URL",
+            "name": "buy_ticket_url",
+            "type": "url",
+            "instructions": "Required. Enter the URL to the ticket purchasing page for this faire.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_mk57196b4abc504",
+            "label": "Buy Ticket Text",
+            "name": "buy_ticket_text",
+            "type": "text",
+            "instructions": "Please enter the text displayed in the 'Buy Ticket' Flag. 15 character limit.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 15
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/buy-tickets-float"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1596742296
+}

@@ -1,0 +1,104 @@
+{
+    "key": "group_5d6febad3b2b2",
+    "title": "Panel - Sponsors",
+    "fields": [
+        {
+            "key": "field_mk5727a9d21b20b",
+            "label": "Active\/Inactive",
+            "name": "activeinactive",
+            "type": "radio",
+            "instructions": "Activate or Inactivate this panel",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "activeinactive",
+                "id": ""
+            },
+            "layout": "horizontal",
+            "choices": {
+                "Active": "Active",
+                "Inactive": "Inactive"
+            },
+            "default_value": "Active",
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        },
+        {
+            "key": "field_mk571518e122ba1",
+            "label": "Title",
+            "name": "title_sponsor_panel",
+            "type": "text",
+            "instructions": "30 Character limit",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": 30,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "readonly": 0,
+            "disabled": 0
+        },
+        {
+            "key": "field_5f2c77eaebc87",
+            "label": "Year",
+            "name": "sponsors_page_year",
+            "type": "text",
+            "instructions": "Type the 4 digit year of the faire here. 4 character limit.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 4
+        },
+        {
+            "key": "field_5f2c781cebc88",
+            "label": "Sponsors Page URL",
+            "name": "sponsors_page_url",
+            "type": "url",
+            "instructions": "This is used for pulling in the sponsor data for this faire.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/sponsors-panel"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1596750126
+}

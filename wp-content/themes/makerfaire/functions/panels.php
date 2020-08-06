@@ -6,8 +6,9 @@
 
 function dispLayout($row_layout) {
     $return = '';
-    $activeinactive = get_sub_field('activeinactive');
-    return 'you are here';
+    GLOBAL $acf_blocks;
+    $activeinactive = ($acf_blocks ? get_field('activeinactive') : get_sub_field('activeinactive'));
+
     if ($activeinactive == 'Active') {
         switch ($row_layout) {
             case 'buy_tickets_float': //floating buy tickets banner
@@ -17,9 +18,11 @@ function dispLayout($row_layout) {
             case 'featured_makers_panel_dynamic':        // FEATURED MAKERS (SQUARE) - dynamic
                 $return = getFeatMkPanel($row_layout);
                 break;
+            case 'three_column':
             case '3_column': // 3 COLUMN LAYOUT
                 $return = get3ColLayout();
                 break;
+            case 'six_column':
             case '6_column': // 6 column navigation panel
                 $return = get6ColLayout();
                 break;
@@ -66,9 +69,11 @@ function dispLayout($row_layout) {
             case 'flag_banner_panel': //flag banner separator
                 $return = getFlagBannerPanel();
                 break;
+            case 'two_column_video':
             case '2_column_video': // Video Panels
                 $return = getVideoPanel();
                 break;
+            case 'two_column_image':
             case '2_column_images': // Image Panels in the same style as the Video Panels
                 $return = getImagePanel();
                 break;
@@ -88,14 +93,15 @@ function dispLayout($row_layout) {
 /* * *********************************************** */
 
 function getFeatMkPanel($row_layout) {
+    GLOBAL $acf_blocks;
     $return = '';
+
     $dynamic = ($row_layout == 'featured_makers_panel_dynamic' ? true : false);
 
-    $makers_to_show = get_sub_field('makers_to_show');
-    $more_makers_button = get_sub_field('more_makers_button');
-    $background_color = get_sub_field('background_color');
-
-    $title = (get_sub_field('title') ? get_sub_field('title') : '');
+    $makers_to_show = ($acf_blocks ? get_field('makers_to_show') : get_sub_field('makers_to_show'));
+    $more_makers_button = ($acf_blocks ? get_field('more_makers_button') : get_sub_field('more_makers_button'));
+    $background_color = ($acf_blocks ? get_field('background_color') : get_sub_field('background_color'));
+    $title = ($acf_blocks ? get_field('title') : (get_sub_field('title') ? get_sub_field('title') : ''));
 
     //var_dump($background_color);
     // Check if the background color selected was white
@@ -108,7 +114,7 @@ function getFeatMkPanel($row_layout) {
     //build makers array
     $makerArr = array();
     if ($dynamic) {
-        $formid = (int) get_sub_field('enter_formid_here');
+        $formid = (int) ($acf_blocks ? get_field('enter_formid_here') : get_sub_field('enter_formid_here'));
 
         $search_criteria['status'] = 'active';
         $search_criteria['field_filters'][] = array('key' => '303', 'value' => 'Accepted');
@@ -232,12 +238,24 @@ function getFeatEvPanel($row_layout) {
           </div>';
     }
 
+    //gutenburg blocks use get_field, ACF panels use get_sub_field
+    GLOBAL $acf_blocks;
+    $title = ($acf_blocks ? get_field('title') : get_sub_field('title'));
+
+    if ($title) {
+        $return .= '<div class="row padtop text-center">
+            <div class="title-w-border-r">
+              <h2>' . $title . '</h2>
+            </div>
+          </div>';
+    }
+
     $return .= '<div class="row padbottom">';
 
     //build event array
     $eventArr = array();
     if ($dynamic) {
-        $formid = get_sub_field('enter_formid_here');
+        $formid = ($acf_blocks ? get_field('enter_formid_here') : get_sub_field('enter_formid_here'));
         $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
                        lead_detail.value as entry_status, DAYNAME(schedule.start_dt) as day,location.location,
                        (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '304.3' 
@@ -326,15 +344,17 @@ function getFeatEvPanel($row_layout) {
                 '</div>';
     }
 
-    $return .= '</div>'; //end div.row
-    if (get_sub_field('all_events_button')) {
-        $all_events_button = get_sub_field('all_events_button');
+    $return .= '</div>'; //end div.row    
+
+    $all_events_button = ($acf_blocks ? get_field('all_events_button') : get_sub_field('all_events_button'));
+    if ($all_events_button) {
         $return .= '<div class="row padbottom">
             <div class="col-xs-12 padbottom text-center">
               <a class="btn btn-b-ghost" href="' . $all_events_button . '">All Events</a>
             </div>
           </div>';
     }
+
     $return .= '</div>'; //end div.container
     $return .= '</section>';
     return $return;
@@ -350,7 +370,10 @@ function get3ColLayout() {
     $return .= '<section class="content-panel three-column">                
                 <div class="container">';
 
-    $panelTitle = get_sub_field('panel_title');
+    //gutenburg blocks use get_field, ACF panels use get_sub_field
+    GLOBAL $acf_blocks;
+    $panelTitle = ($acf_blocks ? get_field('panel_title') : get_sub_field('panel_title'));
+
     if ($panelTitle) {
         $return .= ' <div class="row">
                     <div class="col-xs-12 text-center padbottom">
@@ -361,7 +384,7 @@ function get3ColLayout() {
 
     $return .= '   <div class="row">'; //start row
     //get requested data for each column
-    $columns = get_sub_field('column');
+    $columns = ($acf_blocks ? get_field('column') : get_sub_field('column'));
     foreach ($columns as $column) {
         $return .= '   <div class="col-sm-4">'; //start column
         $data = $column['data'];
@@ -420,10 +443,11 @@ function get3ColLayout() {
 function get6ColLayout() {
     $return = '';
 
-    $panelTitle = get_sub_field('panel_title');
-    $imageHeight = get_sub_field('image_height');
-    $padding = get_sub_field('padding');
-    $linkPosition = get_sub_field('link_position');
+    GLOBAL $acf_blocks;
+    $panelTitle = ($acf_blocks ? get_field('panel_title') : get_sub_field('panel_title'));
+    $imageHeight = ($acf_blocks ? get_field('image_height') : get_sub_field('image_height'));
+    $padding = ($acf_blocks ? get_field('padding') : get_sub_field('padding'));
+    $linkPosition = ($acf_blocks ? get_field('link_position') : get_sub_field('link_position'));
 
     if ($padding == TRUE) {
         $return .= '<section class="content-panel six-column with-padding">';
@@ -441,7 +465,7 @@ function get6ColLayout() {
 
     $return .= '   <div class="image-grid-row">'; //start row
     //get requested data for each column
-    $columns = get_sub_field('column');
+    $columns = ($acf_blocks ? get_field('column') : get_sub_field('column'));
     foreach ($columns as $column) {
         $return .= '   <div class="image-grid-col" style="flex-direction:' . $linkPosition . ';">'; //start column
         $data = $column['data'];
@@ -452,15 +476,14 @@ function get6ColLayout() {
         $columnInfo = '';
         //$image = '<img height="" width="" alt="'.$imageArr['alt'].'" class="ximg-responsive" src="' . $imageArr['url'] . '" />';
         //echo $imageArr['url'];
-
-        $imgBg = 'data-bg="' . $imageArr['url'] . '"';
-        $imgStyle = 'style="height:' . $imageHeight . ';"';
-
+                
+        $imgStyle = 'style="background-image:url(' . $imageArr['url'] . ');height:' . $imageHeight . ';"';
+        
         $cta_link = $data['image_cta'];
         $ctaText = $data['image_cta_text'];
 
         $target = "_self";
-        if ($data['open_link_in_new_tab'] == "true") {
+        if (isset($data['open_link_in_new_tab']) && $data['open_link_in_new_tab'] == "true") {
             $target = "_blank";
         }
 
@@ -468,7 +491,7 @@ function get6ColLayout() {
 
         if (!empty($cta_link)) {
             if (!empty($imageArr['url'])) {
-                $columnInfo = '<a class="six-col-img lazyload" href="' . $cta_link . '" ' . $imgBg . ' ' . $imgStyle . ' target="' . $target . '"></a>';
+                $columnInfo = '<a class="six-col-img lazyload" href="' . $cta_link . '" ' . $imgStyle . ' target="' . $target . '"></a>';
             }
             if (!empty($ctaText)) {
                 $columnInfo .= '<h4 class="text-center sub-caption-bottom ' . $bgColor . '"><a href="' . $cta_link . '" target="' . $target . '">' . $ctaText . '</a></h4>';
@@ -617,11 +640,13 @@ function get1ColLayout() {
 
 function getVideoPanel() {
     //get data submitted on admin page
+    GLOBAL $acf_blocks;
 
     $return = '';
     $return .= '<section class="video-panel container-fluid">';    // create content-panel section
     //get requested data for each column
-    $video_rows = get_sub_field('video_row');
+    $video_rows = ($acf_blocks ? get_field('video_row') : get_sub_field('video_row'));
+
     $videoRowNum = 0;
     foreach ($video_rows as $video) {
         $videoRowNum += 1;
@@ -667,11 +692,13 @@ function getVideoPanel() {
 
 function getImagePanel() {
     //get data submitted on admin page
+    GLOBAL $acf_blocks;
 
     $return = '';
     $return .= '<section class="image-panel container-fluid">';    // create content-panel section
     //get requested data for each column
-    $image_rows = get_sub_field('image_row');
+    $image_rows = ($acf_blocks ? get_field('image_row') : get_sub_field('image_row'));
+
     $imageRowNum = 0;
     foreach ($image_rows as $image) {
         $imageRowNum += 1;
@@ -680,8 +707,8 @@ function getImagePanel() {
         if ($imageRowNum % 2 != 0) {
             $return .= '<div class="row ' . $image['background_color'] . '">';
             $return .= '  <div class="col-sm-4 col-xs-12">
-								 <h4>' . $image['image_title'] . '</h4>
-								 <p>' . $image['image_text'] . '</p>';
+                            <h4>' . $image['image_title'] . '</h4>
+                            <p>' . $image['image_text'] . '</p>';
             if ($image['image_links']) {
                 foreach ($image['image_links'] as $image_link) {
                     $return .= '  	    <a href="' . $image_link['image_link_url'] . '">' . $image_link['image_link_text'] . '</a>';
@@ -690,15 +717,14 @@ function getImagePanel() {
             $return .= '  </div>';
             $return .= '  <div class="col-sm-8 col-xs-12">
 			                 <div class="image-display">';
-            if ($image['image_overlay']['image_overlay_link']) {
+            if (isset($image['image_overlay']['image_overlay_link'])) {
                 $return .= ' 		  <a href="' . $image['image_overlay']['image_overlay_link'] . '">';
             }
             $return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
-            if ($image['image_overlay']['image_overlay_text']) {
+            if (isset($image['image_overlay']['image_overlay_text'])) {
                 $return .= '  <div class="image-overlay-text">' . $image['image_overlay']['image_overlay_text'] . '</div>';
-                ;
             }
-            if ($image['image_overlay']['image_overlay_link']) {
+            if (isset($image['image_overlay']['image_overlay_link'])) {
                 $return .= '        </a>';
             }
             $return .= '		</div>
@@ -708,15 +734,15 @@ function getImagePanel() {
             $return .= '<div class="row ' . $image['background_color'] . '">';
             $return .= '  <div class="col-sm-8 col-xs-12">
 			                 <div class="image-display">';
-            if ($image['image_overlay']['image_overlay_link']) {
+            if (isset($image['image_overlay']['image_overlay_link'])) {
                 $return .= ' 		  <a href="' . $image['image_overlay']['image_overlay_link'] . '">';
             }
             $return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
-            if ($image['image_overlay']['image_overlay_text']) {
+            if (isset($image['image_overlay']['image_overlay_text'])) {
                 $return .= '  <div class="image-overlay-text">' . $image['image_overlay']['image_overlay_text'] . '</div>';
                 ;
             }
-            if ($image['image_overlay']['image_overlay_link']) {
+            if (isset($image['image_overlay']['image_overlay_link'])) {
                 $return .= '        </a>';
             }
             $return .= '  </div>';
@@ -724,7 +750,7 @@ function getImagePanel() {
             $return .= '  <div class="col-sm-4 col-xs-12">
 								 <h4>' . $image['image_title'] . '</h4>
 								 <p>' . $image['image_text'] . '</p>';
-            if ($image['image_links']) {
+            if (isset($image['image_links'])) {
                 foreach ($image['image_links'] as $image_link) {
                     $return .= '  	    <a href="' . $image_link['image_link_url'] . '">' . $image_link['image_link_text'] . '</a>';
                 }
@@ -742,7 +768,12 @@ function getImagePanel() {
 /* * *************************************************** */
 
 function getBuyTixPanel() {
-    return '<a href="' . get_sub_field('buy_ticket_url') . '" target="_blank"><div class="floatBuyTix">' . get_sub_field('buy_ticket_text') . '</div></a>';
+    //gutenburg blocks use get_field, ACF panels use get_sub_field
+    GLOBAL $acf_blocks;
+    $buy_ticket_url = ($acf_blocks ? get_field('buy_ticket_url') : get_sub_field('buy_ticket_url'));
+    $buy_ticket_text = ($acf_blocks ? get_field('buy_ticket_text') : get_sub_field('buy_ticket_text'));
+
+    return '<a href="' . $buy_ticket_url . '" target="_blank"><div class="floatBuyTix">' . $buy_ticket_text . '</div></a>';
 }
 
 /* * *************************************************** */
@@ -750,10 +781,13 @@ function getBuyTixPanel() {
 /* * *************************************************** */
 
 function getCTApanel() {
+    GLOBAL $acf_blocks;
+
     $return = '';
-    $cta_title = get_sub_field('text');
-    $cta_url = get_sub_field('url');
-    $background_color = get_sub_field('background_color');
+    $cta_title = ($acf_blocks ? get_field('text') : get_sub_field('text'));
+    $cta_url = ($acf_blocks ? get_field('url') : get_sub_field('url'));
+    $background_color = ($acf_blocks ? get_field('background_color') : get_sub_field('background_color'));
+
     $bg_color_class_map = array(
         "Blue" => '',
         "Light Blue" => ' light-blue-ribbon',
@@ -818,10 +852,11 @@ function getNewsBlockpanel() {
 /* * *************************************************** */
 
 function getTintSocialBlockpanel() {
+    GLOBAL $acf_blocks;
     $args = [
-        'personalization_id' => get_sub_field('personalization_id'),
-        'title' => get_sub_field('title'),
-        'hashtags' => get_sub_field('hashtags')
+        'personalization_id' => ($acf_blocks ? get_field('personalization_id') : get_sub_field('personalization_id')),
+        'title' => ($acf_blocks ? get_field('title') : get_sub_field('title')),
+        'hashtags' => ($acf_blocks ? get_field('hashtags') : get_sub_field('hashtags'))
     ];
     require_once 'MF-Social-Block.php';
     return do_social_block($args);
@@ -834,7 +869,9 @@ function getTintSocialBlockpanel() {
 function getImgCarousel() {
     $return = '';
     // IMAGE CAROUSEL (RECTANGLE)
-    $width = get_sub_field('width');
+    GLOBAL $acf_blocks;
+    $width = ($acf_blocks ? get_field('width') : get_sub_field('width'));
+
     // check if the nested repeater field has rows of data
     if (have_rows('images')) {
 
@@ -911,7 +948,8 @@ function getImgCarousel() {
 function getImgCarouselSquare() {
     $return = '';
     // IMAGE CAROUSEL (SQUARE)
-    $width = get_sub_field('width');
+    GLOBAL $acf_blocks;
+    $width = ($acf_blocks ? get_field('width') : get_sub_field('width'));
 
     if (have_rows('images')) {
         $return .= '<section class="square-image-carousel ' . ($width == 'Content Width' ? 'container nopad' : '') . '">';
@@ -976,21 +1014,28 @@ function getImgCarouselSquare() {
 /* * *************************************************** */
 
 function getSliderPanel() {
+    GLOBAL $acf_blocks;
+    $background_color = ($acf_blocks ? get_field('background_color') : get_sub_field('background_color'));
+    $text_position = ($acf_blocks ? get_field('text_position') : get_sub_field('text_position'));
+    $slideshow_title = ($acf_blocks ? get_field('slideshow_title') : get_sub_field('slideshow_title'));
+    $slideshow_name = ($acf_blocks ? get_field('slideshow_name') : get_sub_field('slideshow_name'));
+    $column_number = ($acf_blocks ? get_field('column_number') : get_sub_field('column_number'));
+    $slides = ($acf_blocks ? get_field('slide') : get_sub_field('slide'));
+
     $return = '';
-    $return .= '<section class="slider-panel container-fluid ' . get_sub_field('background_color') . ' position-' . get_sub_field('text_position') . '">';
-    if (get_sub_field('slideshow_title')) {
-        $return .= '<div class="slideshow-title"><h2>' . get_sub_field('slideshow_title') . '</h2></div>';
+    $return .= '<section class="slider-panel container-fluid ' . $background_color . ' position-' . $text_position . '">';
+    if (!empty($slideshow_title)) {
+        $return .= '<div class="slideshow-title"><h2>' . $slideshow_title . '</h2></div>';
     }
-    $return .= '   <div class="' . get_sub_field('slideshow_name') . '-carousel owl-carousel columns-' . get_sub_field("column_number") . '">';
+    $return .= '   <div class="' . $slideshow_name . '-carousel owl-carousel columns-' . $column_number . '">';
     //get requested data for each column
-    $slides = get_sub_field('slide');
     foreach ($slides as $slide) {
         $imageObj = $slide['image'];
         if (empty($slide['slide_button_text']) && !empty($slide['slide_link'])) {
             $return .= '<a href="' . $slide['slide_link'] . '">';
         }
         $return .= '     <div class="item slide">
-		                   <div class="slide-image-section lazyload" data-bg="' . $imageObj['url'] . '">';
+        		                   <div class="slide-image-section lazyload" data-bg="' . $imageObj['url'] . '">';
         if (!empty($slide['slide_title']) && get_sub_field("column_number") > 1) {
             $return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
         }
@@ -1030,7 +1075,7 @@ function getSliderPanel() {
         }
     }
     $tabletSlides = 1;
-    if (get_sub_field("column_number") > 1) {
+    if ($column_number > 1) {
         $tabletSlides = 2;
     }
     $return .= '   </div>
@@ -1039,7 +1084,7 @@ function getSliderPanel() {
 					<script type="text/javascript">
 					   jQuery(document).ready(function() {
 					   	// slideshow carousel
-							jQuery(".' . get_sub_field('slideshow_name') . '-carousel.owl-carousel").owlCarousel({
+							jQuery(".' . $slideshow_name . '-carousel.owl-carousel").owlCarousel({
 							  loop: true,
 							  margin: 15,
 							  nav: true,
@@ -1057,7 +1102,7 @@ function getSliderPanel() {
 								   items: ' . $tabletSlides . '
 								 },
 								 1000: {
-									items: ' . get_sub_field("column_number") . '
+									items: ' . $column_number . '
 								 }
 							  }
 							})
@@ -1072,6 +1117,7 @@ function getSliderPanel() {
 /* * *************************************************** */
 
 function getNewsletterPanel() {
+    $return = 'This newsletter signup is no longer valid';
     $return = '
       <section class="newsletter-panel">
          <div class="container">
@@ -1203,18 +1249,23 @@ function getNewsletterPanel() {
 
 function getSponsorPanel() {
     $return = '';
-    $url = get_sub_field('sponsors_page_url');
-    $year = get_sub_field('sponsors_page_year');
+
+    GLOBAL $acf_blocks;
+    $url = ($acf_blocks ? get_field('sponsors_page_url') : get_sub_field('sponsors_page_url'));
+    $year = ($acf_blocks ? get_field('sponsors_page_year') : get_sub_field('sponsors_page_year'));
     $id = url_to_postid($url);
 
+    $title = ($acf_blocks ? get_field('title_sponsor_panel') : get_sub_field('title_sponsor_panel'));
+    if($title=='')  $title = 'Thank you to our sponsors';    
+    
     // IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS
     if (have_rows('goldsmith_sponsors', $id) || have_rows('silversmith_sponsors', $id) || have_rows('coppersmith_sponsors', $id) || have_rows('media_sponsors', $id)) {
         $return .= '
    <div class="sponsor-slide">
       <div class="container">
          <div class="row">
-            <div class="col-xs-12 text-center padbottom">
-               <h2 class="panel-title yellow-underline">Thank You To Our Sponsors!</h2>
+            <div class="col-xs-12 text-center padbottom">               
+               <h2 class="sponsor-slide-title">' . $title . '</h2>
             </div>
          </div>
          <div class="row">
@@ -1385,7 +1436,9 @@ function getFeatFairePanel() {
 
 function getSocialPanel() {
     $return = '';
-    $panel_title = get_sub_field('panel_title');
+    GLOBAL $acf_blocks;
+    $panel_title = ($acf_blocks ? get_field('panel_title') : get_sub_field('panel_title'));
+
     if (have_rows('active_feeds')) {
         $return .= '
     <section class="social-feeds-panel">

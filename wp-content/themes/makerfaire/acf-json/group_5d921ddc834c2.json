@@ -1,0 +1,176 @@
+{
+    "key": "group_5d921ddc834c2",
+    "title": "Panel - Image Carousel",
+    "fields": [
+        {
+            "key": "field_5d921df399faa",
+            "label": "Faire Location Text",
+            "name": "faire_location",
+            "type": "text",
+            "instructions": "Enter the faire location here in this format: \"Schurz High School, Chicago, IL\". 40 character limit.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "40",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 40
+        },
+        {
+            "key": "field_5d921e1399fab",
+            "label": "Faire Location URL",
+            "name": "faire_location_url",
+            "type": "url",
+            "instructions": "Optional - Turn the faire location text into a link by adding a url for google maps or another location url for the event.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "40",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5d921e71b33e2",
+            "label": "Open Faire Location URL In New Tab?",
+            "name": "open_faire_location",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "20",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_5d921ee223a2a",
+            "label": "Faire Date",
+            "name": "faire_date",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "40",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5d921eff8c2e1",
+            "label": "Logo",
+            "name": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "60",
+                "class": "",
+                "id": ""
+            },
+            "message": "To update logo go to Appearance > Customize > Logo & CTA Button",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
+            "key": "field_5d921fb60c464",
+            "label": "Call to Action Text",
+            "name": "call_to_action_text",
+            "type": "text",
+            "instructions": "Optional call to action title that will show below the logo. i.e. \"Call for Makers is Open!\" or \"Tickets are on Sale Now!\". 30 character limit.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 30
+        },
+        {
+            "key": "field_5d921fe90c465",
+            "label": "Call to Action Text URL",
+            "name": "call_to_action_text_url",
+            "type": "url",
+            "instructions": "Optional - Add a URL here that will link the call to action text field to a URL.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_5d9222d87c323",
+            "label": "Image Carousel",
+            "name": "image_carousel",
+            "type": "gallery",
+            "instructions": "Up to 3 images can be added. Carousel images will be centered and sized at 850px wide by 318px hieght.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "thumbnail",
+            "insert": "append",
+            "library": "all",
+            "min": 1,
+            "max": 3,
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/home-page-image-carousel"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1596742297
+}

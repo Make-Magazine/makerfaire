@@ -1,0 +1,156 @@
+{
+    "key": "group_5d6feb159d46b",
+    "title": "Panel - Featured Makers: Circle (Dynamic)",
+    "fields": [
+        {
+            "key": "field_mk579925053c2d6",
+            "label": "Active\/Inactive",
+            "name": "activeinactive",
+            "type": "radio",
+            "instructions": "Activate or Inactivate this panel",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "activeinactive",
+                "id": ""
+            },
+            "layout": "horizontal",
+            "choices": {
+                "Active": "Active",
+                "Inactive": "Inactive"
+            },
+            "default_value": "Active",
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        },
+        {
+            "key": "field_mk579925053c2d7",
+            "label": "Panel Title",
+            "name": "title",
+            "type": "text",
+            "instructions": "i.e. \"Featured Makers\". 28 character limit.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": 28,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "readonly": 0,
+            "disabled": 0
+        },
+        {
+            "key": "field_mk579926253c2eb",
+            "label": "Enter formid here",
+            "name": "enter_formid_here",
+            "type": "number",
+            "instructions": "Enter the form to pull featured individuals from. They must have the 'Featured Maker' flag set to be pulled in.",
+            "required": 1,
+            "conditional_logic": "",
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": "",
+            "max": "",
+            "step": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "readonly": 0,
+            "disabled": 0
+        },
+        {
+            "key": "field_mk579924c93c2cf",
+            "label": "Randomly pull Accepted",
+            "name": "pull_accepted",
+            "type": "radio",
+            "instructions": "Pull Project images randomly from Accepted entries if no Featured Maker flags are set?",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "activeinactive",
+                "id": ""
+            },
+            "layout": "horizontal",
+            "choices": {
+                "On": "On",
+                "Off": "Off"
+            },
+            "default_value": "On",
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        },
+        {
+            "key": "field_mk579925053c2d8",
+            "label": "Amount of Makers to show",
+            "name": "makers_to_show",
+            "type": "radio",
+            "instructions": "Show 4 Makers or 8 makers",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "vertical",
+            "choices": {
+                "4": 4,
+                "8": 8
+            },
+            "default_value": 4,
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        },
+        {
+            "key": "field_mk579925053c2de",
+            "label": "\"More Makers\" button",
+            "name": "more_makers_button",
+            "type": "url",
+            "instructions": "Optional button to link to a page with more makers. Leave URL field blank to hide.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/featured-makers-panel-circle-dynamic"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1596742297
+}

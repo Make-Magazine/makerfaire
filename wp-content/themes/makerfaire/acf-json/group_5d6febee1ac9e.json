@@ -1,0 +1,48 @@
+{
+    "key": "group_5d6febee1ac9e",
+    "title": "Panel - What is Maker Faire",
+    "fields": [
+        {
+            "key": "field_mk57196b4f7c509",
+            "label": "Active\/Inactive",
+            "name": "show_what_is_maker_faire",
+            "type": "radio",
+            "instructions": "This adds an uneditable text panel with information about Maker Faires.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "activeinactive",
+                "id": ""
+            },
+            "layout": "horizontal",
+            "choices": {
+                "show": "Active",
+                "hide": "Inactive"
+            },
+            "default_value": "show",
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/what-is-maker-faire"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1596742298
+}

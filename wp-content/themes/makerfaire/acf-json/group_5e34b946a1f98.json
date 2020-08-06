@@ -1,0 +1,282 @@
+{
+    "key": "group_5e34b946a1f98",
+    "title": "Panel - 6 Column Navigation",
+    "fields": [
+        {
+            "key": "field_5e34ba5a079a7",
+            "label": "Active\/Inactive",
+            "name": "activeinactive",
+            "type": "radio",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "Active": "Active",
+                "Inactive": "Inactive"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "Active",
+            "layout": "vertical",
+            "return_format": "value",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_5e34baa1079a8",
+            "label": "Panel Title",
+            "name": "panel_title",
+            "type": "text",
+            "instructions": "Optional: 50 character limit.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_5e472bdab37ca",
+            "label": "Padding",
+            "name": "padding",
+            "type": "true_false",
+            "instructions": "Whether the columns should have padding",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 1,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_5e4729b5b37c9",
+            "label": "Image Height",
+            "name": "image_height",
+            "type": "select",
+            "instructions": "Default height of container image will be fit into",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "200px": "200px",
+                "300px": "300px",
+                "400px": "400px"
+            },
+            "default_value": "200px",
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0,
+            "return_format": "value",
+            "ajax": 0,
+            "placeholder": ""
+        },
+        {
+            "key": "field_5e4af4f054ba4",
+            "label": "Link Position",
+            "name": "link_position",
+            "type": "select",
+            "instructions": "Whether the link text should appear above or below the image",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "column": "Bottom",
+                "column-reverse": "Top"
+            },
+            "default_value": "Top",
+            "allow_null": 0,
+            "multiple": 0,
+            "ui": 0,
+            "return_format": "value",
+            "ajax": 0,
+            "placeholder": ""
+        },
+        {
+            "key": "field_5e34bac5079a9",
+            "label": "Columns",
+            "name": "column",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "",
+            "min": 2,
+            "max": 6,
+            "layout": "table",
+            "button_label": "",
+            "sub_fields": [
+                {
+                    "key": "field_5e34bae0079aa",
+                    "label": "Data",
+                    "name": "data",
+                    "type": "group",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "layout": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_5e34baef079ab",
+                            "label": "Image",
+                            "name": "column_image_field",
+                            "type": "image",
+                            "instructions": "Upload an image; will be cropped to center",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "array",
+                            "preview_size": "thumbnail",
+                            "library": "all",
+                            "min_width": "",
+                            "min_height": "",
+                            "min_size": "",
+                            "max_width": "",
+                            "max_height": "",
+                            "max_size": "",
+                            "mime_types": "",
+                            "default_value": ""
+                        },
+                        {
+                            "key": "field_5e34bb26079ac",
+                            "label": "Image Link",
+                            "name": "image_cta",
+                            "type": "url",
+                            "instructions": "Optional link for both image and\/or text",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": ""
+                        },
+                        {
+                            "key": "field_5e34bb4a079ad",
+                            "label": "Link Text",
+                            "name": "image_cta_text",
+                            "type": "text",
+                            "instructions": "Optional - If supplied, an additional link is displayed below the image using this text.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        },
+                        {
+                            "key": "field_5e34bb64079ae",
+                            "label": "Button Color",
+                            "name": "button_color",
+                            "type": "select",
+                            "instructions": "Select the color of the button (default is blue)",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "blue-bg": "Blue",
+                                "darkblue-bg": "Dark Blue",
+                                "grey-bg": "Grey",
+                                "darkgrey-bg": "Dark Grey",
+                                "white-bg yellow-underline": "White"
+                            },
+                            "default_value": "Blue",
+                            "allow_null": 0,
+                            "multiple": 0,
+                            "ui": 0,
+                            "return_format": "value",
+                            "ajax": 0,
+                            "placeholder": ""
+                        },
+                        {
+                            "key": "field_5f2c6fabd0fa9",
+                            "label": "Open link in new tab?",
+                            "name": "open_link_in_new_tab",
+                            "type": "true_false",
+                            "instructions": "Check to open link in new tab, uncheck to stay within same tab",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "message": "",
+                            "default_value": 1,
+                            "ui": 0,
+                            "ui_on_text": "",
+                            "ui_off_text": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/six-column"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1596747733
+}

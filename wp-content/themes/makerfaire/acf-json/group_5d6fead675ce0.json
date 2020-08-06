@@ -1,0 +1,220 @@
+{
+    "key": "group_5d6fead675ce0",
+    "title": "Panel - Featured Makers",
+    "fields": [
+        {
+            "key": "field_mk5727a9191b209",
+            "label": "Active\/Inactive",
+            "name": "activeinactive",
+            "type": "radio",
+            "instructions": "Activate or Inactivate this panel",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "activeinactive",
+                "id": ""
+            },
+            "layout": "horizontal",
+            "choices": {
+                "Active": "Active",
+                "Inactive": "Inactive"
+            },
+            "default_value": "Active",
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        },
+        {
+            "key": "field_mk56fcb5958152f",
+            "label": "Panel Title",
+            "name": "title",
+            "type": "text",
+            "instructions": "i.e. \"Featured Makers\". 28 character limit.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": 28,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "readonly": 0,
+            "disabled": 0
+        },
+        {
+            "key": "field_mk5719832407ae9",
+            "label": "Amount of Makers to show",
+            "name": "makers_to_show",
+            "type": "radio",
+            "instructions": "Show 4 Makers or 8 makers",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "vertical",
+            "choices": {
+                "4": 4,
+                "8": 8
+            },
+            "default_value": 4,
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        },
+        {
+            "key": "field_mk56fc6fc3dc4a3",
+            "label": "Featured Makers",
+            "name": "featured_makers",
+            "type": "repeater",
+            "instructions": "Adds a panel for 1 row of 4 makers or 2 rows of 4 makers. Each maker features an image, name, and short description. Start by clicking the \"Add New Maker\" button for each featured maker to show in this panel.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "min": 0,
+            "max": 8,
+            "layout": "table",
+            "button_label": "Add New Maker",
+            "collapsed": "",
+            "sub_fields": [
+                {
+                    "key": "field_mk56fc70e8dc4a4",
+                    "label": "Maker Image",
+                    "name": "maker_image",
+                    "type": "image",
+                    "instructions": "Featured Maker Images are best when square sizes around 500px by 500px.",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_mk56fc7172dc4a5",
+                    "label": "Maker Name",
+                    "name": "maker_name",
+                    "type": "text",
+                    "instructions": "Optional field. 24 character limit.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": 19,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "readonly": 0,
+                    "disabled": 0
+                },
+                {
+                    "key": "field_mk56fc71a0dc4a6",
+                    "label": "Maker Short Description",
+                    "name": "maker_short_description",
+                    "type": "text",
+                    "instructions": "Optional field. 100 character limit.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": 100,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "readonly": 0,
+                    "disabled": 0
+                }
+            ]
+        },
+        {
+            "key": "field_mk571ab19c2e7ed",
+            "label": "\"More Makers\" button",
+            "name": "more_makers_button",
+            "type": "url",
+            "instructions": "Optional button to link to a page with more makers. Leave URL field blank to hide.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_mk5727eedc044ee",
+            "label": "Background Color",
+            "name": "background_color",
+            "type": "radio",
+            "instructions": "Background color of this panel. Choose blue or red.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "horizontal",
+            "choices": {
+                "Blue": "Blue",
+                "Red": "Red"
+            },
+            "default_value": "Blue",
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "allow_null": 0,
+            "return_format": "value"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/featured-makers-panel"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1596742297
+}
