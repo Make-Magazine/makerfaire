@@ -77,7 +77,7 @@ echo file_get_contents(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/membersh
 
 <?php
 // Tracking pixels users can turn off through the cookie law checkbox -- defaults to yes
-if ($_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
+if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
     ?>
     <div id="fb-root"></div>
     <script>(function (d, s, id) {
