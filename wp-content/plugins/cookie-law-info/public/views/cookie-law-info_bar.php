@@ -6,7 +6,7 @@ if ( ! defined( 'WPINC' ) ) {
 // Disable indexing of CookieLawInfo Cookie data
 echo "<!--googleoff: all-->";
 
-if($notify_html==""){ return; } //if filter is applied
+if($notify_html=="" || is_admin()){ return; } //if filter is applied
 echo $notify_html;
 $pop_out='';
 $pop_content_html_file=plugin_dir_path(CLI_PLUGIN_FILENAME).'public/views/cookie-law-info_popup_content.php';
