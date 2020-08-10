@@ -95,20 +95,20 @@ if (isset($entry->errors)) {
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
-    if (strpos($faireShort, "VMF") === 0) {
-        $field_287 = '';
-        $field_123 = '';
-        if(isset($entry['287'])){
-            $field_287 = $entry['287']; //What are the problems you aim to help solve with this project?
-            $field = GFFormsModel::get_field($form, 287);
-            $label_287 = $field->label;                
-        }
-        if(isset($entry['123'])){
-            $field_123 = $entry['123']; //What are some of the major challenges you have encountered and how did you address them?
-            $field = GFFormsModel::get_field($form, 123);
-            $label_123 = $field->label;
-        }
+    
+    $field_287 = '';
+    $field_123 = '';
+    if(isset($entry['287'])){
+        $field_287 = $entry['287']; //What are the problems you aim to help solve with this project?
+        $field = GFFormsModel::get_field($form, 287);
+        $label_287 = $field->label;                
     }
+    if(isset($entry['123'])){
+        $field_123 = $entry['123']; //What are some of the major challenges you have encountered and how did you address them?
+        $field = GFFormsModel::get_field($form, 123);
+        $label_123 = $field->label;
+    }
+    
     $project_website = (isset($entry['27']) ? $entry['27'] : '');  //Website
     $project_video = (isset($entry['32']) ? $entry['32'] : '');     //Video
     $project_video2 = (isset($entry['386']) ? $entry['386'] : '');     //Video2
