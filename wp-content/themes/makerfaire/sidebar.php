@@ -37,7 +37,7 @@ global $slug;
     </div>
         <?php }?>
 
-  <?php if($_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes" ) { // if GDPR consent isn't given, we won't have access to this function ?>
+  <?php if(!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes" ) { // if GDPR consent isn't given, we won't have access to this function ?>
 	  <!-- Beginning Sync AdSlot 2 for Ad unit header ### size: [[300,250]]  -->
 	  <div class="row">
 		<div class="col-xs-12 col-sm-6 col-md-12">
@@ -60,7 +60,7 @@ global $slug;
   </div>
 
   
-  <?php if($_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes" ) { // if GDPR consent isn't given, we won't have access to this function ?>
+  <?php if(!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes" ) { // if GDPR consent isn't given, we won't have access to this function ?>
 	  <!-- Beginning Sync AdSlot 3 for Ad unit header ### size: [[300,250]]  -->
 	  <div class="row">
 		<div class="col-xs-12 col-sm-6 col-md-12">
