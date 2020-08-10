@@ -127,7 +127,7 @@
                                         </div>
                                         <div class="col-xs-6">
                                             <div class="entry-page-maker-img">
-                                                <img class="img-responsive lazyload" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
+                                                <img class="img-responsive lazyload" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : get_stylesheet_directory_uri() . '/images/makey-profile-default.png' ); ?>" />
                                             </div>
                                         </div>
                                         <div class="col-xs-6">
