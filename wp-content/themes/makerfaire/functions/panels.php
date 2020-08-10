@@ -10,6 +10,7 @@ function dispLayout($row_layout) {
     $activeinactive = ($acf_blocks ? get_field('activeinactive') : get_sub_field('activeinactive'));
 
     if ($activeinactive == 'Active') {
+		error_log($row_layout);
         switch ($row_layout) {
             case 'buy_tickets_float': //floating buy tickets banner
                 $return = getBuyTixPanel($row_layout);
@@ -55,6 +56,9 @@ function dispLayout($row_layout) {
             case 'square_image_carousel': // IMAGE CAROUSEL (SQUARE)
                 $return = getImgCarouselSquare();
                 break;
+			case 'what_is_maker_faire': // WHAT IS MAKER FAIRE PANEL    
+				$return = getWhatisMF();
+				break;
             case 'newsletter_panel':  // NEWSLETTER PANEL
                 $return = getNewsletterPanel();
                 break;
@@ -1108,6 +1112,48 @@ function getSliderPanel() {
 					';
     return $return;
 }
+
+
+function getWhatisMF() {
+    $return = '';
+
+    $widget_radio = get_field('show_what_is_maker_faire'); //gutenburg block
+    if ($widget_radio == '')
+        $widget_radio = get_sub_field('show_what_is_maker_faire'); //regular panel
+
+    if ($widget_radio == 'show') {
+        $return .= '<section class="what-is-maker-faire">
+            <div class="container">
+              <div class="row text-center">
+                <div class="title-w-border-y">
+                  <h2>' . pl__('What is Maker Faire?', 'MF_theme') . '</h2>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                  <p class="text-center">' .
+                pl__('Maker Faire is a gathering of fascinating, curious people who enjoy learning and who love sharing what they can do. From engineers to artists to scientists to crafters, Maker Faire is a venue for these "makers" to show hobbies, experiments, projects.', 'MF_theme') .
+                '</p>' .
+                '<p class="text-center">' .
+                pl__('We call it the Greatest Show (& Tell) on Earth - a family-friendly showcase of invention, creativity, and resourcefulness.', 'MF_theme') .
+                '</p>' .
+                '<p class="text-center">' .
+                pl__('Glimpse the future and get inspired!', 'MF_theme') .
+                '</p>' .
+// .get_site_option( 'what-is-makerfaire' ).
+                '</div>
+              </div>
+            </div>
+            <div class="wimf-border">
+              <div class="wimf-triangle"></div>
+            </div>
+            <img src="' . get_bloginfo('template_directory') . '/img/makey.png" alt="Maker Faire information Makey icon" />
+          </section>';
+    }
+
+    return $return;
+}
+
 
 /* * *************************************************** */
 /* Function to return News Letter Panel                 */
