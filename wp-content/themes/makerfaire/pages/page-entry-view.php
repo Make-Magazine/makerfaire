@@ -37,11 +37,11 @@
             <!-- Project Short Description -->
             <div id="project_short" class="lead">
                 <p><?php echo nl2br($project_short); ?></p>                
-                <?php if (isset($project_problems) && $project_problems != '') { ?>
-                    <p><b>What are the problems you aim to help solve with this project?:</b><br/><?php echo nl2br($project_problems); ?></p>
+                <?php if (isset($field_287) && $field_287 != '') { ?>
+                    <p><b><?php echo $label_287;?>:</b><br/><?php echo nl2br($field_287); ?></p>
                 <?php } ?>
-                <?php if (isset($project_challenges) && $project_challenges != '') { ?>
-                    <p><b>What are some of the major challenges you have encountered and how did you address them?:</b><br/><?php echo nl2br($project_challenges); ?></p>
+                <?php if (isset($field_123) && $field_123 != '') { ?>
+                    <p><b><?php echo $label_123;?>:</b><br/><?php echo nl2br($field_123); ?></p>
             <?php } ?>
             </div>
             <?php
