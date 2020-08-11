@@ -95,20 +95,31 @@ if (isset($entry->errors)) {
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
-    
+
+    //field 287 and field 887 can be used in a form for any text input question. 
+    //We will display these on the entry detail form 
     $field_287 = '';
-    $field_123 = '';
-    if(isset($entry['287'])){
+    $field_887 = '';
+    if (isset($entry['287'])) {
         $field_287 = $entry['287']; //What are the problems you aim to help solve with this project?
         $field = GFFormsModel::get_field($form, 287);
-        $label_287 = $field->label;                
+        $label_287 = $field->label;
     }
-    if(isset($entry['123'])){
-        $field_123 = $entry['123']; //What are some of the major challenges you have encountered and how did you address them?
-        $field = GFFormsModel::get_field($form, 123);
-        $label_123 = $field->label;
+    //for VMF2020 we used field 123 instead of 887
+    if (strpos($faireShort, "VMF") === 0) {
+        if (isset($entry['123'])) {
+            $field_887 = $entry['123']; //What are some of the major challenges you have encountered and how did you address them?
+            $field = GFFormsModel::get_field($form, 123);
+            $label_887 = $field->label;
+        }
+    } else {
+        if (isset($entry['887'])) {
+            $field_887 = $entry['887']; //What are some of the major challenges you have encountered and how did you address them?
+            $field = GFFormsModel::get_field($form, 887);
+            $label_887 = $field->label;
+        }
     }
-    
+
     $project_website = (isset($entry['27']) ? $entry['27'] : '');  //Website
     $project_video = (isset($entry['32']) ? $entry['32'] : '');     //Video
     $project_video2 = (isset($entry['386']) ? $entry['386'] : '');     //Video2
@@ -169,7 +180,7 @@ $viewNow = (isset($entry[837]) ? $entry[837] : '');
 if (strpos($faireShort, "VMF") === 0) { // special for virtual faires
     //check if supplemental form was submitted
     $linkedSQL = 'select entry_id from wp_gf_entry_meta where meta_key="entry_id" and meta_value = ' . $entryId;
-    
+
     $linked_results = $wpdb->get_results($linkedSQL, ARRAY_A);
     foreach ($linked_results as $linked_result) {
         if (isset($linked_result['entry_id'])) {
@@ -508,11 +519,18 @@ function display_categories($catArray) {
 //return makers info
 function getMakerInfo($entry) {
     $makers = array();
+   
+    /* for VMF2020 we had two nested forms, one for makers one for entries. We determined this was too confusing for 
+     * our makers, and switched to one parent form for entry with one nested form for multiple makers. 
+     */
     if (isset($entry['gpnf_entry_parent']) && $entry['gpnf_entry_parent'] != '') { //is this a nested form with parent information
-        //pull maker information from nested form        
+        //pull maker information from nested form - VMF2020     
+        $makers = getMakerInfoNested($entry);
+    } elseif(isset($entry['854'])) {
+        // after VMF2020
         $makers = getMakerInfoNested($entry);
     } else {
-        //pull information from legacy        
+        //pull information from legacy - pre VMF2020
         $makers = getMakerInfoLegacy($entry);
     }
 
@@ -600,49 +618,50 @@ function handsOnMarker($entry) {
 }
 
 function getSocial($entrySocial) {
+    $socialBlock = '';
     $socialArray = [];
     /*
-    if (isset($entrySocial)) {
-        $entrySocial = (string) $entrySocial;
-        //error_log(print_r($entrySocial,true));
-        $socialArray = unserialize($entrySocial);
-    }
-    $socialBlock = '';
-    if (!empty($socialArray)) {
-        $socialBlock .= '<div class="social-block">';
-        foreach ($socialArray as $value) {
-            if ($value['Your Link'] != "") { // make sure there's a link to be had, then assign that link by plateform
-                if ($value['Plateform'] == "Facebook") {
-                    $socialBlock .= '<a class="social-link facebook-share" href="' . $value['Your Link'] . '"><i class="fab fa-facebook-square"></i></a>';
-                }
-                if ($value['Plateform'] == "Twitter") {
-                    $socialBlock .= '<a class="social-link twitter-share" href="' . $value['Your Link'] . '"><i class="fab fa-twitter"></i></a>';
-                }
-                if ($value['Plateform'] == "Instagram") {
-                    $socialBlock .= '<a class="social-link instagram-share" href="' . $value['Your Link'] . '"><i class="fab fa-instagram"></i></a>';
-                }
-                if ($value['Plateform'] == "YouTube") {
-                    $socialBlock .= '<a class="social-link youtube-share" href="' . $value['Your Link'] . '"><i class="fab fa-youtube-play"></i></a>';
-                }
-                if ($value['Plateform'] == "LinkedIn") {
-                    $socialBlock .= '<a class="social-link linkedin-share" href="' . $value['Your Link'] . '"><i class="fab fa-linkedin-square"></i></a>';
-                }
-                if ($value['Plateform'] == "Pinterest") {
-                    $socialBlock .= '<a class="social-link pinterest-share" href="' . $value['Your Link'] . '"><i class="fab fa-pinterest-square"></i></a>';
-                }
-                if ($value['Plateform'] == "Snapchat") {
-                    $socialBlock .= '<a class="social-link snapchat-share" href="' . $value['Your Link'] . '"><i class="fab fa-snapchat"></i></a>';
-                }
-                if ($value['Plateform'] == "Patreon") {
-                    $socialBlock .= '<a class="social-link patreon-share" href="' . $value['Your Link'] . '"><i class="fab fa-patreon"></i></a>';
-                }
-                if ($value['Plateform'] == "Other") {
-                    $socialBlock .= '<a class="social-link other-share" href="' . $value['Your Link'] . '"><i class="fab fa-globe"></i></a>';
-                }
-            }
-        }
-        $socialBlock .= '</div>';
-    }*/
+      if (isset($entrySocial)) {
+      $entrySocial = (string) $entrySocial;
+      //error_log(print_r($entrySocial,true));
+      $socialArray = unserialize($entrySocial);
+      }
+      $socialBlock = '';
+      if (!empty($socialArray)) {
+      $socialBlock .= '<div class="social-block">';
+      foreach ($socialArray as $value) {
+      if ($value['Your Link'] != "") { // make sure there's a link to be had, then assign that link by plateform
+      if ($value['Plateform'] == "Facebook") {
+      $socialBlock .= '<a class="social-link facebook-share" href="' . $value['Your Link'] . '"><i class="fab fa-facebook-square"></i></a>';
+      }
+      if ($value['Plateform'] == "Twitter") {
+      $socialBlock .= '<a class="social-link twitter-share" href="' . $value['Your Link'] . '"><i class="fab fa-twitter"></i></a>';
+      }
+      if ($value['Plateform'] == "Instagram") {
+      $socialBlock .= '<a class="social-link instagram-share" href="' . $value['Your Link'] . '"><i class="fab fa-instagram"></i></a>';
+      }
+      if ($value['Plateform'] == "YouTube") {
+      $socialBlock .= '<a class="social-link youtube-share" href="' . $value['Your Link'] . '"><i class="fab fa-youtube-play"></i></a>';
+      }
+      if ($value['Plateform'] == "LinkedIn") {
+      $socialBlock .= '<a class="social-link linkedin-share" href="' . $value['Your Link'] . '"><i class="fab fa-linkedin-square"></i></a>';
+      }
+      if ($value['Plateform'] == "Pinterest") {
+      $socialBlock .= '<a class="social-link pinterest-share" href="' . $value['Your Link'] . '"><i class="fab fa-pinterest-square"></i></a>';
+      }
+      if ($value['Plateform'] == "Snapchat") {
+      $socialBlock .= '<a class="social-link snapchat-share" href="' . $value['Your Link'] . '"><i class="fab fa-snapchat"></i></a>';
+      }
+      if ($value['Plateform'] == "Patreon") {
+      $socialBlock .= '<a class="social-link patreon-share" href="' . $value['Your Link'] . '"><i class="fab fa-patreon"></i></a>';
+      }
+      if ($value['Plateform'] == "Other") {
+      $socialBlock .= '<a class="social-link other-share" href="' . $value['Your Link'] . '"><i class="fab fa-globe"></i></a>';
+      }
+      }
+      }
+      $socialBlock .= '</div>';
+      } */
     return $socialBlock;
 }
 
@@ -815,29 +834,39 @@ function getMakerInfoNested($entry) {
     global $groupsocial;
     global $entryId;
 
-    //get parent information
+    //for VMF2020, we stored the project information in a nested form    
     $parent_entry_ID = $entry['gpnf_entry_parent'];
-    $parent_entry = GFAPI::get_entry($parent_entry_ID);
-    if (is_wp_error($parent_entry)) {
-        //echo 'there is an error';
-        //var_dump($parent_entry);
-        return array();
-    } else {
-        //pull group information from parent
-        if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
-            $isGroup = true;
-            $groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
-            $groupphoto = (isset($parent_entry['111']) ? $parent_entry['111'] : '');
-            $groupbio = (isset($parent_entry['110']) ? $parent_entry['110'] : '');
-            $groupsocial = getSocial(isset($parent_entry['828']) ? $parent_entry['828'] : '');
+    if($parent_entry_ID!=''){
+        $parent_entry = GFAPI::get_entry($parent_entry_ID);
+        if (is_wp_error($parent_entry)) {   //error in pulling the parent error. exit
+            //echo 'there is an error';
+            return array();
+        }else{
+            //pull group information from parent
+            if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
+                $isGroup = true;
+                $groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
+                $groupphoto = (isset($parent_entry['111']) ? $parent_entry['111'] : '');
+                $groupbio = (isset($parent_entry['110']) ? $parent_entry['110'] : '');
+                $groupsocial = getSocial(isset($parent_entry['828']) ? $parent_entry['828'] : '');
+            }
         }
-    }
+        $child_entryID_array = explode(",", $parent_entry['854']); //field 854 contains the makers, 852 contains the projects
+    } else {
+        //pull group information from current entry
+        if (isset($entry['844']) && $entry['844'] == 'Yes') {
+            $isGroup = true;
+            $groupname = (isset($entry['109']) ? $entry['109'] : '');
+            $groupphoto = (isset($entry['111']) ? $entry['111'] : '');
+            $groupbio = (isset($entry['110']) ? $entry['110'] : '');
+            $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
+        }
+        $child_entryID_array = explode(",", $entry['854']); //field 854 contains the makers, 852 contains the projects
+    }    
 
     //get maker information    
     $makers = array();
-
-    $child_entryID_array = explode(",", $parent_entry['854']); //field 854 contains the makers, 852 contains the projects
-
+    
     foreach ($child_entryID_array as $child_entryID) {
         if ($child_entryID != $entryId) { //no need to process the entry we are looking at
             $child_entry = GFAPI::get_entry($child_entryID);
