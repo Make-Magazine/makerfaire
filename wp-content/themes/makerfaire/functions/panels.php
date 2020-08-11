@@ -10,7 +10,6 @@ function dispLayout($row_layout) {
     $activeinactive = ($acf_blocks ? get_field('activeinactive') : get_sub_field('activeinactive'));
 
     if ($activeinactive == 'Active') {
-		error_log($row_layout);
         switch ($row_layout) {
             case 'buy_tickets_float': //floating buy tickets banner
                 $return = getBuyTixPanel($row_layout);
