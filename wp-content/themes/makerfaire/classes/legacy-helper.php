@@ -60,7 +60,6 @@ function legacy_get_resized_remote_image_url( $url, $width, $height, $escape = t
 	    'resize' => array($width, $height),
 	    'strip' => 'all',
 	  ));
-    error_log($thumburl);
 	return ( $escape ) ? esc_url( $thumburl ) : $thumburl;
   else:
   
@@ -79,7 +78,6 @@ function legacy_get_fit_remote_image_url( $url, $width, $height, $escape = true 
 		'fit' => array($width, $height),
 		'strip' => 'all',
 	   ));
-	error_log($thumburl);
 	   return ( $escape ) ? esc_url( $thumburl ) : $thumburl;
   else:
       return $url; 
