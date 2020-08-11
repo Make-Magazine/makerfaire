@@ -71,10 +71,15 @@ function gf_summary_metabox($form, $lead) {
     global $wpdb;
     $faire = $wpdb->get_var('select faire from wp_mf_faire where find_in_set (' . $form['id'] . ', wp_mf_faire.form_ids) > 0');
 
+    //is there a parent entry?
+    $parent_entry_ID = $lead['gpnf_entry_parent'];    
+    $parent_form = ($parent_entry_ID!=''?$lead['gpnf_entry_parent_form']:'');                    
+    
     $return = '
 <table class="fixed entry-detail-view">
 	<thead>
-		<th colspan="2" style="text-align: left" id="header"><h1>' . esc_html($project_name) . '</h1></th>
+		<th colspan="2" style="text-align: left" id="header"><h1>' . esc_html($project_name) . '</h1>'.
+            ($parent_entry_ID!=''?'<a href="/wp-admin/admin.php?page=gf_entries&view=entry&id='.$parent_form.'&lid='.$parent_entry_ID.'" target="_blank"><input class="button button-large button-primary" style="text-align:center" value="Parent Entry" /></a>':'').'</th>
 	</thead>
 	<tbody>
 		<tr>
@@ -179,24 +184,24 @@ function gf_summary_metabox($form, $lead) {
         <label >Email Note To:</label><br />';
 
     $emailto1 = array("Caleb Kraft" => "caleb@make.co",
-        "Dale Dougherty" => "dale@make.co",                                
+        "Dale Dougherty" => "dale@make.co",
         "Siana Alcorn" => "siana@make.co",
         "Gillian Mutti" => "gillian@make.co",
         "Jennifer Blakeslee" => "jennifer@make.co");
     $emailto2 = array(
         "Webmaster" => "webmaster@make.co",
         "Editors" => "editor@make.co",
-        "Rob Bullington" => "rob@make.co",        
+        "Rob Bullington" => "rob@make.co",
         "Keith Hammond" => "keith@make.co",
-        "Katie Kunde"   => "katie@make.co");
-    $emailtoaliases = array(        
+        "Katie Kunde" => "katie@make.co");
+    $emailtoaliases = array(
         "Maker Relations" => "makers@makerfaire.com",
         "PR" => "pr@make.co",
-        //"Sales" => "sales@makerfaire.com",
-        //"Sustainability" => "sustainability@makerfaire.com",
-        //"Speakers" => "speakers@makerfaire.com"
+            //"Sales" => "sales@makerfaire.com",
+            //"Sustainability" => "sustainability@makerfaire.com",
+            //"Speakers" => "speakers@makerfaire.com"
     );
- 
+
     $return .= '<div style="float:left">';
     foreach ($emailtoaliases as $name => $email) {
         $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="' . $email . '" />'
@@ -274,7 +279,7 @@ function gf_collapsible_sections($form, $lead) {
 
     //email fields
     $emailArray = array();
-    
+
     if (isset($lead['98']) && $lead['98'] != '')
         $emailArray[$lead['98']]['Contact'] = $lead['96.3'] . ' ' . $lead['96.6'];
     if (isset($lead['161']) && $lead['161'] != '')
@@ -294,11 +299,11 @@ function gf_collapsible_sections($form, $lead) {
 
     //for supplement forms, let's see if there is a field set to pull in email
     $return = get_value_by_label('contact-email', $form, array());
-    if(isset($return['id'])){
+    if (isset($return['id'])) {
         $emailArray[$lead[$return['id']]]['contact-email'] = $lead[$return['id']];
     }
-    
-    
+
+
     foreach ($form['fields'] as $field) {
         $fieldData[$field['id']] = $field;
     }
@@ -726,7 +731,7 @@ function entryResources($lead) {
             $dispUser = $userInfo->display_name;
         }
 
-        $update_stamp = esc_html( GFCommon::format_date( $result->dateUpdated, false,'m/d/y h:i a' ) );
+        $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
 
         $resourceDisp .= '<tr id="resRow' . $result->ID . '">'
                 . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $result->ID . '\',' . $result->lockBit . ')">' . ($result->lockBit == 1 ? '<i class="fa fa-lock fa-lg"></i>' : '<i class="fa fa-unlock-alt fa-lg"></i>') . '</span></td>'
@@ -768,7 +773,7 @@ function entryResources($lead) {
             $userInfo = get_userdata($result->user);
             $dispUser = $userInfo->display_name;
         }
-        $update_stamp = esc_html( GFCommon::format_date( $result->dateUpdated, false,'m/d/y h:i a'));
+        $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
         $attDisp .= '<tr id="attRow' . $result->ID . '">'
                 . ' <td class="lock">'
                 . '   <span class="lockIcon" onclick="resAttLock(\'#attRow' . $result->ID . '\',' . $result->lockBit . ')">'
@@ -816,7 +821,7 @@ function entryResources($lead) {
             $userInfo = get_userdata($result->user);
             $dispUser = $userInfo->display_name;
         }
-        $update_stamp = esc_html( GFCommon::format_date( $result->dateUpdated, false,'m/d/y h:i a'));
+        $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
         $attnDisp .= '<tr id="attnRow' . $result->ID . '">'
                 . ' <td id="attnvalue_' . $result->ID . '">' . $result->value . '</td>'
                 . ' <td id="attncomment_' . $result->ID . '" class="editable textAreaEdit">' . $result->comment . '</td>'
