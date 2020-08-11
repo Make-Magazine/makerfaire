@@ -40,8 +40,8 @@
                 <?php if (isset($field_287) && $field_287 != '') { ?>
                     <p><b><?php echo $label_287;?>:</b><br/><?php echo nl2br($field_287); ?></p>
                 <?php } ?>
-                <?php if (isset($field_123) && $field_123 != '') { ?>
-                    <p><b><?php echo $label_123;?>:</b><br/><?php echo nl2br($field_123); ?></p>
+                <?php if (isset($field_877) && $field_877 != '') { ?>
+                    <p><b><?php echo $label_877;?>:</b><br/><?php echo nl2br($field_877); ?></p>
             <?php } ?>
             </div>
             <?php
