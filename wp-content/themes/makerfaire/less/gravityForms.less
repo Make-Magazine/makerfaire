@@ -99,6 +99,8 @@
     }
     .gform_page_footer {
         display: flex;
+		justify-content: space-evenly;
+		flex-wrap: wrap;
         input[type=submit], .gform_previous_button, .gform_next_button, .button.gform_button.gform_last_page_button {
             background: #005e9a;
             box-shadow: none;
@@ -129,10 +131,24 @@
                 color: #005e9a
             }
         }
+		@media screen and (max-width: 768px) {
+			.container-gpb, input[type=submit] {
+				flex: 1;
+			}
+			.gform_save_link  {
+				flex: 0 0 100%;
+				margin-top: 10px;
+			}
+		}
         .gform_previous_button {
             margin-top: -2px !important;
         }
     }
+	.ginput_complex.ginput_container.has_first_name.has_last_name span {
+		@media screen and (max-width: 768px) {
+			width: 100% !important;
+		}
+	}
     .gform_page_footer.top_label input[type=submit] { padding: 0px 20px; display: inline-flex !important }
     .gform_previous_button {
         position: relative;
@@ -256,6 +272,10 @@
 	margin: 25px;
 	background: rgba(0, 94, 154, .1);
 	border-radius: 15px;
+	.gform_confirmation_message {
+		word-wrap: break-word;
+		word-break: break-word;
+	}
 	h1 {
 		font-weight: 700;
 		margin-top: 0px;
@@ -268,8 +288,11 @@
 		background: rgba(255,255,255, .5);
 		strong { font-size: 24px; }
 	}
-	a { color: #005e9a; }
+	a { 
+		color: #005e9a; 
+	}
 	.universal-btn {
+		color: #fff;
 		white-space: normal !important;
 		width: 100%;
 		height: auto;

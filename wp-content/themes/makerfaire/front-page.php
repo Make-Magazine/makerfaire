@@ -4,6 +4,8 @@
  */
 get_header();
 ?>
+
+<div class="clear"></div>
 <div id="main" class="front-page" role="main">
    <!-- Custom Panels -->
    <div class="page-content featured-faire customPanels">
