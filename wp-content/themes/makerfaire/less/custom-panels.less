@@ -1684,6 +1684,9 @@
 	margin: 10px;
 	margin-top: 45px;
 	position: relative;
+	display: flex;
+	flex-direction: column;
+	hr { width: 80%; }
 	h5 { 
 		font-weight: bold;
 		text-align: center;
@@ -1722,6 +1725,14 @@
 		.fas, image {
 			position: relative;
 			top: 20px;
+		}
+	}
+	.wp-block-buttons {
+		margin-top: auto;
+		.wp-block-button {
+			display: flex;
+			flex-direction: column;
+			margin-bottom: 0px;
 		}
 	}
 }
