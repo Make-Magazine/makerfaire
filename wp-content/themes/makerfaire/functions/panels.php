@@ -918,11 +918,11 @@ function getImgCarousel() {
 		  if ($text) {
                     $return .= '
           <div class="carousel-caption">
-            <h3>' . $text . '</h3>';
+            <h3>' . $text . '</h3>
+		  </div>';
 		  }
 		  $return .= '
-          </div>
-        </div>';
+		  </div>';
             }
             $i++;
         }
