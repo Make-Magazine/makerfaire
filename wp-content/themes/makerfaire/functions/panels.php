@@ -879,7 +879,7 @@ function getImgCarousel() {
         if ($width == 'Content Width') {
             $return .= 'container">';
         } else {
-            $return .= '">';
+            $return .= 'full-width">';
         }
         $return .= '<div id="carouselPanel" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner" role="listbox">';
@@ -889,34 +889,38 @@ function getImgCarousel() {
         while (have_rows('images')) {
             the_row();
 
-            $text = get_sub_field('text');
-            $url = get_sub_field('url');
-            $image = get_sub_field('image');
+            $text = ($acf_blocks ? get_field('text') : get_sub_field('text')); 
+            $url = ($acf_blocks ? get_field('url') : get_sub_field('url')); 
+            $image = ($acf_blocks ? get_field('image') : get_sub_field('image')); 
 
             if ($i == 0) {
                 $return .= '
         <div class="item active">';
-                if (get_sub_field('url')) {
+                if ($url) {
                     $return .= '<a href="' . $url . '">';
                 }
                 $return .= '
             <img class="lazyload" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
-                if (get_sub_field('text')) {
+                if ($text) {
                     $return .= '
               <div class="carousel-caption">
                 <h3>' . $text . '</h3>
               </div>';
                 }
-                if (get_sub_field('url')) {
+                if ($url) {
                     $return .= '</a>';
                 }
                 $return .= '
         </div>';
             } else {
                 $return .= '<div class="item">
-          <img class="lazyload" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />
+          <img class="lazyload" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
+		  if ($text) {
+                    $return .= '
           <div class="carousel-caption">
-            <h3>' . $text . '</h3>
+            <h3>' . $text . '</h3>';
+		  }
+		  $return .= '
           </div>
         </div>';
             }
