@@ -891,7 +891,7 @@ function getImgCarousel() {
 
             $text = ($acf_blocks ? get_field('text') : get_sub_field('text')); 
             $url = ($acf_blocks ? get_field('url') : get_sub_field('url')); 
-            $image = ($acf_blocks ? get_field('image') : get_sub_field('image')); 
+            $image = get_sub_field('image');
 
             if ($i == 0) {
                 $return .= '
