@@ -44,19 +44,17 @@
 }
 */
 .wp-block {
-	&.has-selected-ui {
-		&[data-type="epyt/youtube"] {
-			> div {
-				&::after {
-					content: "";
-					position: absolute;
-					top: 0;
-					left: 0;
-					right: 0;
-					bottom: 0;
-					opacity: 0;
-					cursor: pointer;
-				}
+	&[data-type="epyt/youtube"] {
+		> div {
+			&::after {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				opacity: 0;
+				cursor: pointer;
 			}
 		}
 		&.is-selected > div,
@@ -67,6 +65,7 @@
 		}
 	}
 }
+
 
 /* .epyt-gallery-list {
 	&:before {

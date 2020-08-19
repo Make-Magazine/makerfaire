@@ -3,8 +3,8 @@ Contributors: embedplus
 Plugin Name: YouTube Pro
 Tags: youtube live, live stream, youtube channel, video gallery, youtube galleries, channel gallery, gallery, playlist gallery, youtube gallery, accessibility, analytics, api, blocked youtube videos, cache, caching, channel, deleted youtube videos, effects, embed youtube, embedding youtube, featured image, get_locale, i18n, internationalization, lazy, lazy load, locale, localization, mute, no-cookie, oembed, page speed, playlist, playlists, plugin, Reddit, responsive, seo, short code, shortcode, ssl, subtitles, thumbnail, thumbnail image, thumbnails, tinymce, video, video analytics, video plugin, video seo, video shortcode, video thumbnails, view count, volume, widget, wordpress security, wordpress youtube embed, youtube, youtube api, youtube analytics, youtube embed, youtube impressions, youtube player, youtube playlist, youtube plugin, youtube shortcode, youtube snippets, youtube takedowns, youtube thumbnails, youtube plugin migration
 Requires at least: 4.0
-Tested up to: 5.2
-Stable tag: 13.1.1
+Tested up to: 5.5
+Stable tag: 13.4.1
 License: GPLv3 or later
 
 YouTube Pro. Customize and embed a responsive video, YouTube channel gallery, playlist gallery, or live stream from YouTube.com

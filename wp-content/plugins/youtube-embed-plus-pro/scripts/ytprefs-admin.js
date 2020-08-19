@@ -422,7 +422,7 @@
         {
             e.preventDefault();
             var tab = $(this).attr('href');
-            $('.nav-tab-wrapper a[href="' + tab + '"]').click();
+            $('.nav-tab-wrapper a[href="' + tab + '"], .nav-tab-wrapper a[rel="' + tab + '"]').click();
         });
 
 

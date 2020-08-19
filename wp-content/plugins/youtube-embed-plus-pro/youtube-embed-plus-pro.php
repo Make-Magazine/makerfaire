@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Pro - Gallery, Channel, Playlist, Live Stream
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Pro Plugin. Customize and embed a responsive video, YouTube channel gallery, playlist gallery, or live stream from YouTube.com
-  Version: 13.4
+  Version: 13.4.1
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
  */
@@ -21,7 +21,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '13.4';
+    public static $version = '13.4.1';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -145,9 +145,9 @@ class YouTubePrefsPro
         'do_shortcode',
         'convert_smilies'
     );
-    public static $get_api_key_msg = 'The ### feature now requires a (free) YouTube API key from Google. Please follow the easy steps <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">in this video</a> to create and save your API key.';
-    public static $boilerplate_api_error_message = ' Please make sure you performed the <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">steps in this video</a> to create and save a proper server API key.';
-    public static $dft_gdpr_consent_message = '<p><strong>Please accept YouTube cookies to play this video.</strong> By accepting you will be accessing content from YouTube, a service provided by an external third party.</p><p><a href="https://policies.google.com/privacy" target="_blank">YouTube privacy policy</a></p><p>If you accept this notice, your choice will be saved and the page will refresh.</p>';
+    public static $get_api_key_msg = ''; //'The ### feature now requires a (free) YouTube API key from Google. Please follow the easy steps <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">in this video</a> to create and save your API key.';
+    public static $boilerplate_api_error_message = ''; //' Please make sure you performed the <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">steps in this video</a> to create and save a proper server API key.';
+    public static $dft_gdpr_consent_message = ''; //'<p><strong>Please accept YouTube cookies to play this video.</strong> By accepting you will be accessing content from YouTube, a service provided by an external third party.</p><p><a href="https://policies.google.com/privacy" target="_blank">YouTube privacy policy</a></p><p>If you accept this notice, your choice will be saved and the page will refresh.</p>';
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     public static $vi_default_date = ''; // date('Y-m-d H:i:s', strtotime('2000-01-01'));
     public static $vi_last_category_update_interval = '1 hour';
@@ -203,6 +203,10 @@ class YouTubePrefsPro
         {
             self::$epbase = EMBEDPLUS_BASE_URL;
         }
+        self::$get_api_key_msg = __('The ### feature now requires a (free) YouTube API key from Google. Please follow the easy steps <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">in this video</a> to create and save your API key.', 'text_domain');
+        self::$boilerplate_api_error_message = __(' Please make sure you performed the <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">steps in this video</a> to create and save a proper server API key.', 'text_domain');
+        self::$dft_gdpr_consent_message = __('<p><strong>Please accept YouTube cookies to play this video.</strong> By accepting you will be accessing content from YouTube, a service provided by an external third party.</p><p><a href="https://policies.google.com/privacy" target="_blank">YouTube privacy policy</a></p><p>If you accept this notice, your choice will be saved and the page will refresh.</p>', 'text_domain');
+    
         self::$vi_default_date = date('Y-m-d H:i:s', strtotime('2000-01-01'));
         register_deactivation_hook(__FILE__, array(get_class(), 'on_deactivation'));
         add_action('admin_init', array(get_class(), 'check_double_plugin_warning'));
@@ -343,7 +347,7 @@ class YouTubePrefsPro
         if (in_array('youtube-embed-plus/youtube.php', $active_plugins))
         {
             $class = 'notice notice-error is-dismissible';
-            $message = __('For YouTube Pro to work, please deactivate the free version.', 'sample-text-domain');
+            $message = __('For YouTube Pro to work, please deactivate the free version.', 'text_domain');
 
             printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), wp_kses_post($message));
         }
@@ -378,7 +382,7 @@ class YouTubePrefsPro
         {
             $args = array(
                 'id' => 'ytprefs-bar-cache',
-                'title' => 'Clear YouTube Cache',
+                'title' => __('Clear YouTube Cache', 'text_domain'),
                 'href' => '#',
                 'meta' => array(
                     'class' => ''
@@ -395,7 +399,7 @@ class YouTubePrefsPro
 
         //display via list
         return '<li class="page-count">
-            <a href="' . $glancehref . '" class="thickbox ytprefs_glance_button" id="ytprefs_glance_button" title="YouTube Embeds At a Glance">' . number_format_i18n($cnt) . ' With YouTube</a>
+            <a href="' . $glancehref . '" class="thickbox ytprefs_glance_button" id="ytprefs_glance_button" title="YouTube Embeds At a Glance">' . number_format_i18n($cnt) . ' ' . __('With YouTube', 'text_domain') . '</a>
         </li>';
     }
 
@@ -405,8 +409,8 @@ class YouTubePrefsPro
         $cnt = self::get_glance_count();
         return
                 '<tr>
-            <td class="first b"><a title="YouTube Embeds At a Glance" href="' . $glancehref . '" class="thickbox ytprefs_glance_button">' . number_format_i18n($cnt) . '</a></td>
-            <td class="t"><a title="YouTube Embeds At a Glance" href="' . $glancehref . '" id="ytprefs_glance_button" class="thickbox ytprefs_glance_button">With YouTube</a></td>
+            <td class="first b"><a title="' . __('YouTube Embeds At a Glance', 'text_domain') . '" href="' . $glancehref . '" class="thickbox ytprefs_glance_button">' . number_format_i18n($cnt) . '</a></td>
+            <td class="t"><a title="' . __('YouTube Embeds At a Glance', 'text_domain') . '" href="' . $glancehref . '" id="ytprefs_glance_button" class="thickbox ytprefs_glance_button">' . __('With YouTube', 'text_domain') . '</a></td>
         </tr>';
     }
 
@@ -525,12 +529,8 @@ class YouTubePrefsPro
             {
                 $total = $wpdb->get_var("SELECT FOUND_ROWS();");
                 global $post;
-                echo '<h2>10 Latest Posts/Pages with YouTube Videos (' . intval($total) . ' Total)</h2>';
-                ?>
-
-                We recommend using this page as an easy way to check the results of the global default settings you make (e.g. hide annotations) on your recent embeds. Or, simply use it as an index to jump right to your posts that contain YouTube embeds.
-
-                <?php
+                echo '<h2>' . sprintf(__('10 Latest Posts/Pages with YouTube Videos (%1$s Total)', 'text_domain'), intval($total)) . '</h2>';
+                _e('We recommend using this page as an easy way to check the results of the global default settings you make (e.g. hide annotations) on your recent embeds. Or, simply use it as an index to jump right to your posts that contain YouTube embeds.', 'text_domain');
                 if ($total > 0)
                 {
                     echo '<ul class="accord">';
@@ -545,14 +545,13 @@ class YouTubePrefsPro
                 }
                 else
                 {
-                    echo '<p class="center bold orange">You currently do not have any YouTube embeds yet.</p>';
+                    echo '<p class="center bold orange">' . __('You currently do not have any YouTube embeds yet.', 'text_domain') . '</p>';
                 }
             }
 
             wp_reset_postdata();
             ?>
-            To remove this feature from your dashboard, simply uncheck <i>Show "At a Glance" Embed Links</i> in the <a target="_blank" href="<?php echo admin_url('admin.php?page=youtube-my-preferences#jumpdefaults') ?>">plugin settings page &raquo;</a>.
-
+            <?php printf(__('To remove this feature from your dashboard, simply uncheck <i>Show "At a Glance" Embed Links</i> in the <a target="_blank" href="%1$s">plugin settings page &raquo;</a>.', 'text_domain'), admin_url('admin.php?page=youtube-my-preferences#jumpdefaults')); ?>
         </div>
         <?php
     }
@@ -616,7 +615,7 @@ class YouTubePrefsPro
                                 $_description = esc_attr(sanitize_text_field($odata->author_name));
                                 $_thumbnailUrl = esc_url("https://i.ytimg.com/vi/" . $vidid . "/0.jpg");
 
-                                $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accthumb"><img alt="YouTube Video" src="' . $_thumbnailUrl . '" /></a>';
+                                $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accthumb"><img alt="' . __('YouTube Video', 'text_domain') . '" src="' . $_thumbnailUrl . '" /></a>';
                                 $thehtml .= '<div class="accinfo">';
                                 $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accvidtitle">' . $_name . '</a>';
                                 $thehtml .= '<div class="accdesc">' . (strlen($_description) > 400 ? substr($_description, 0, 400) . "..." : $_description) . '</div>';
@@ -625,13 +624,7 @@ class YouTubePrefsPro
                             }
                             else
                             {
-                                $thehtml .= '<p class="center bold orange">This <a target="_blank" href="' . $postlink . '">post/page</a> contains a video that has been removed from YouTube.';
-
-                                if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
-                                {
-                                    $thehtml .= '<br><a target="_blank" href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx">Activate delete video tracking to catch these cases &raquo;</a>';
-                                }
-                                $thehtml .= '</strong>';
+                                $thehtml .= sprintf(__('<p class="center bold orange">This <a target="_blank" href="%1$s">post/page</a> contains a video that has been removed from YouTube.</p>', 'text_domain'), $postlink);
                             }
                         }
                         catch (Exception $ex)
@@ -652,7 +645,7 @@ class YouTubePrefsPro
                                 $_description = esc_attr(sanitize_text_field($odata->author_name));
                                 $_thumbnailUrl = esc_url($odata->thumbnail_url);
 
-                                $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accthumb"><img alt="YouTube Video" src="' . $_thumbnailUrl . '" /></a>';
+                                $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accthumb"><img alt="' . __('YouTube Video', 'text_domain') . '" src="' . $_thumbnailUrl . '" /></a>';
                                 $thehtml .= '<div class="accinfo">';
                                 $thehtml .= '<a target="_blank" href="' . $postlink . '" class="accvidtitle">' . $_name . '</a>';
                                 $thehtml .= '<div class="accdesc">' . (strlen($_description) > 400 ? substr($_description, 0, 400) . "..." : $_description) . '</div>';
@@ -661,13 +654,7 @@ class YouTubePrefsPro
                             }
                             else
                             {
-                                $thehtml .= '<p class="center bold orange">This <a target="_blank" href="' . $postlink . '">post/page</a> contains a video that has been removed from YouTube.';
-
-                                if (!(self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0))
-                                {
-                                    $thehtml .= '<br><a target="_blank" href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx">Activate delete video tracking to catch these cases &raquo;</a>';
-                                }
-                                $thehtml .= '</strong>';
+                                $thehtml .= '<p class="center bold orange">' . sprintf(__('This <a target="_blank" href="%1$s">post/page</a> contains a video that has been removed from YouTube.', 'text_domain'), $postlink) . '</p>';
                             }
                         }
                         catch (Exception $ex)
@@ -757,7 +744,7 @@ class YouTubePrefsPro
     {
         ?>
         <div class="wrap" id="epyt_wiz_wrap">
-            <div class="smallnote center"> Please periodically check the YouTube plugin tab on your admin panel to review the latest options. </div>
+            <div class="smallnote center"> <?php _e('Please periodically check the YouTube plugin tab on your admin panel to review the latest options.', 'text_domain') ?></div>
 
             <?php
             $form_valid = true;
@@ -765,17 +752,17 @@ class YouTubePrefsPro
             $get_pro_link = self::$epbase . '/dashboard/pro-easy-video-analytics.aspx';
 
 
-            $step1_api_error_msg = ' Please confirm that the link works in your browser, and that <em>the owner of the video allowed embed sharing permissions (otherwise, contact the owner of the video to allow embedding)</em>. Then copy that full link in your address bar to paste here. If you are sure your link is correct, then (1) your API key may be too restrictive (<a target="_blank" href="https://console.developers.google.com/apis/credentials">check here</a>) or (2) you have reached your Google quota (<a href="https://console.developers.google.com/apis/dashboard" target="_blank">check here</a>). You can apply to Google for a <a href="https://services.google.com/fb/forms/ytapiquotarequest/" target="_blank">quota increase here</a>.';
+            $step1_api_error_msg = __(' Please confirm that the link works in your browser, and that <em>the owner of the video allowed embed sharing permissions (otherwise, contact the owner of the video to allow embedding)</em>. Then copy that full link in your address bar to paste here. If you are sure your link is correct, then (1) your API key may be too restrictive (<a target="_blank" href="https://console.developers.google.com/apis/credentials">check here</a>) or (2) you have reached your Google quota (<a href="https://console.developers.google.com/apis/dashboard" target="_blank">check here</a>). You can apply to Google for a <a href="https://services.google.com/fb/forms/ytapiquotarequest/" target="_blank">quota increase here</a>.', 'text_domain');
             $step1_video_errors = '';
-            $step1_video_error_invalid = 'Sorry, that does not seem to be a link to an existing video. Please confirm that the link works in your browser, and that <em>the owner of the video allowed embed sharing permissions (otherwise, contact the owner of the video to allow embedding)</em>. Then copy that full link in your address bar to paste here.';
+            $step1_video_error_invalid = __('Sorry, that does not seem to be a link to an existing video. Please confirm that the link works in your browser, and that <em>the owner of the video allowed embed sharing permissions (otherwise, contact the owner of the video to allow embedding)</em>. Then copy that full link in your address bar to paste here.', 'text_domain');
             $step1_playlist_errors = '';
-            $step1_playlist_error_invalid = 'Sorry, that does not seem to be a link to an existing playlist. Please confirm that the link works in your browser, and that <em>the owner of the playlist allowed embed sharing permissions (otherwise, contact the owner of the video to allow embedding)</em>. Then copy that full link in your address bar to paste here.';
+            $step1_playlist_error_invalid = __('Sorry, that does not seem to be a link to an existing playlist. Please confirm that the link works in your browser, and that <em>the owner of the playlist allowed embed sharing permissions (otherwise, contact the owner of the video to allow embedding)</em>. Then copy that full link in your address bar to paste here.', 'text_domain');
             $step1_channel_errors = '';
-            $step1_channel_error_invalid = 'Sorry, that does not seem to be a link to an existing video. ' . $step1_api_error_msg;
+            $step1_channel_error_invalid = __('Sorry, that does not seem to be a link to an existing video.', 'text_domain') . ' ' . $step1_api_error_msg;
             $step1_live_errors = '';
-            $step1_live_error_invalid = 'Sorry, that does not seem to be a valid link to an existing live video. ' . $step1_api_error_msg;
+            $step1_live_error_invalid = __('Sorry, that does not seem to be a valid link to an existing live video.', 'text_domain') . ' ' . $step1_api_error_msg;
             $step1_livechannel_errors = '';
-            $step1_livechannel_error_invalid = 'Sorry, that does not seem to be a link to an existing channel.';
+            $step1_livechannel_error_invalid = __('Sorry, that does not seem to be a link to an existing channel.', 'text_domain');
 
             $if_live_preview = false;
 
@@ -834,17 +821,17 @@ class YouTubePrefsPro
                                                 if (isset($odata->title))
                                                 {
                                                     $final_title = sanitize_text_field($odata->title);
-                                                    $final_title_prefix = 'Video';
+                                                    $final_title_prefix = __('Video', 'text_domain');
                                                     echo sanitize_text_field($odata->title);
                                                 }
                                                 ?>
                                             </h2>
                                             <p class="center">
-                                                <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] https://www.youtube.com/watch?v=<?php echo esc_attr($theytid) ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> Insert Into Editor</a>
+                                                <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] https://www.youtube.com/watch?v=<?php echo esc_attr($theytid) ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> <?php _e('Insert Into Editor', 'text_domain') ?></a>
                                                 &nbsp;
-                                                <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> Customize</a>
+                                                <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> <?php _e('Customize', 'text_domain') ?></a>
                                             </p>
-                                            &nbsp; Or Copy Code:
+                                            &nbsp; <?php _e('Or Copy Code', 'text_domain') ?>:
                                             <span class="copycode">[embedyt] https://www.youtube.com/watch?v=<?php echo esc_attr($theytid) ?>[/embedyt]</span>
                                             <div class="clearboth" style="height: 10px;">
                                             </div>
@@ -877,7 +864,7 @@ class YouTubePrefsPro
                             $search_options->pageToken = null;
                             ?>
                             <div id="step2_video_search" class="center">
-                                <h2>You searched for: <em class="orange"><?php echo sanitize_text_field($search); ?></em> </h2>
+                                <h2><?php _e('You searched for', 'text_domain') ?>: <em class="orange"><?php echo sanitize_text_field($search); ?></em> </h2>
 
                                 <?php
                                 $search_page = self::get_search_page($search_options);
@@ -941,24 +928,24 @@ class YouTubePrefsPro
                                             if (isset($odata->title))
                                             {
                                                 $final_title = sanitize_text_field($odata->title);
-                                                $final_title_prefix = 'Playlist';
-                                                echo 'Playlist: ' . sanitize_text_field($odata->title);
+                                                $final_title_prefix = __('Playlist', 'text_domain');
+                                                echo __('Playlist', 'text_domain') . ': ' . sanitize_text_field($odata->title);
                                             }
                                             ?>
                                         </h2>
                                         <p class="center">
-                                            <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> Insert as Playlist</a>
-                                            &nbsp; <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel . '&layout=gallery'; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> Insert as Gallery</a>
-                                            &nbsp; <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> Customize</a>
+                                            <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> <?php _e('Insert as Playlist', 'text_domain') ?></a>
+                                            &nbsp; <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel . '&layout=gallery'; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> <?php _e('Insert as Gallery', 'text_domain'); ?></a>
+                                            &nbsp; <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> <?php _e('Customize', 'text_domain'); ?></a>
                                         </p>
                                         <p>
-                                            Or Copy Code:
+                                            <?php _e('Or Copy Code', 'text_domain'); ?>:
                                         </p>
                                         <p>
-                                            Playlist Layout: <span class="copycode">[embedyt] <?php echo $rel; ?>[/embedyt]</span>
+                                            <?php _e('Playlist Layout', 'text_domain'); ?>: <span class="copycode">[embedyt] <?php echo $rel; ?>[/embedyt]</span>
                                         </p>
                                         <p>
-                                            Gallery Layout: <span class="copycode">[embedyt] <?php echo $rel . '&layout=gallery'; ?>[/embedyt]</span>
+                                            <?php _e('Gallery Layout', 'text_domain'); ?>: <span class="copycode">[embedyt] <?php echo $rel . '&layout=gallery'; ?>[/embedyt]</span>
                                         </p>
                                         <div class="clearboth" style="height: 10px;">
                                         </div>
@@ -1042,29 +1029,29 @@ class YouTubePrefsPro
                                     $rel = 'https://www.youtube.com/embed?listType=playlist&list=' . (esc_attr($theplaylistid));
 
                                     $final_title = sanitize_text_field($thechannel->snippet->title);
-                                    $final_title_prefix = 'Channel';
+                                    $final_title_prefix = __('Channel', 'text_domain');
                                     ?>
 
                                     <div id="step2_channel" class="center">
 
                                         <h2>
                                             <?php
-                                            echo 'Channel: ' . sanitize_text_field($thechannel->snippet->title);
+                                            echo __('Channel', 'text_domain') . ': ' . sanitize_text_field($thechannel->snippet->title);
                                             ?>
                                         </h2>
                                         <p class="center">
-                                            <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> Insert as Playlist</a>
-                                            &nbsp; <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel . '&layout=gallery'; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> Insert as Gallery</a>
-                                            &nbsp; <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> Customize</a>
+                                            <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> <?php _e('Insert as Playlist', 'text_domain'); ?></a>
+                                            &nbsp; <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel . '&layout=gallery'; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> <?php _e('Insert as Gallery', 'text_domain'); ?></a>
+                                            &nbsp; <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> <?php _e('Customize', 'text_domain'); ?></a>
                                         </p>
                                         <p>
-                                            Or Copy Code:
+                                            <?php _e('Or Copy Code', 'text_domain'); ?>:
                                         </p>
                                         <p>
-                                            Playlist Layout: <span class="copycode">[embedyt] <?php echo $rel; ?>[/embedyt]</span>
+                                            <?php _e('Playlist Layout', 'text_domain'); ?>: <span class="copycode">[embedyt] <?php echo $rel; ?>[/embedyt]</span>
                                         </p>
                                         <p>
-                                            Gallery Layout: <span class="copycode">[embedyt] <?php echo $rel . '&layout=gallery'; ?>[/embedyt]</span>
+                                            <?php _e('Gallery Layout', 'text_domain'); ?>: <span class="copycode">[embedyt] <?php echo $rel . '&layout=gallery'; ?>[/embedyt]</span>
                                         </p>
                                         <div class="clearboth" style="height: 10px;">
                                         </div>
@@ -1123,27 +1110,27 @@ class YouTubePrefsPro
                                     $rel = 'https://www.youtube.com/embed/live_stream?channel=' . (esc_attr($thechannelid));
 
                                     $final_title = esc_url('https://www.youtube.com/channel/' . $thechannelid);
-                                    $final_title_prefix = 'Live stream from channel';
+                                    $final_title_prefix = __('Live stream from channel', 'text_domain');
                                     $doing_live = true;
                                     ?>
 
                                     <div id="step2_livechannel" class="center">
                                         <h2>
                                             <?php
-                                            echo 'Live stream from channel: ' . esc_url('https://www.youtube.com/channel/' . $thechannelid);
+                                            echo __('Live stream from channel', 'text_domain') . ': ' . esc_url('https://www.youtube.com/channel/' . $thechannelid);
                                             ?>
                                         </h2>
                                         <p class="center">
-                                            <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> Insert Into Editor</a>
+                                            <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> <?php _e('Insert Into Editor', 'text_domain'); ?></a>
                                             &nbsp;
-                                            <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> Customize</a>
+                                            <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> <?php _e('Customize', 'text_domain'); ?></a>
                                         </p>
-                                        &nbsp; Or Copy Code:
+                                        &nbsp; <?php _e('Or Copy Code', 'text_domain'); ?>:
                                         <span class="copycode">[embedyt] https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>[/embedyt]</span>
                                         <div class="clearboth" style="height: 10px;">
                                         </div>
                                         <p>
-                                            If you see a black/empty YouTube player, then it's likely that your channel is not yet approved by YouTube/Google for embedding live streams.  You can live stream and have viewers watch directly on YouTube.com, but embedding the live stream on your own site requires meeting thresholds <a href="https://www.embedplus.com/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">described here</a>.
+                                            <?php _e('If you see a black/empty YouTube player, then it\'s likely that your channel is not yet approved by YouTube/Google for embedding live streams.  You can live stream and have viewers watch directly on YouTube.com, but embedding the live stream on your own site requires meeting thresholds <a href="https://www.embedplus.com/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">described here</a>.', 'text_domain'); ?>
                                         </p>
                                         <div class="ep-wizard-preview-video-wrapper">
                                             <iframe src="https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>" allowfullscreen="" frameborder="0"></iframe>
@@ -1205,7 +1192,7 @@ class YouTubePrefsPro
                             {
                                 $if_live_preview = $live_attempt->id;
                                 $final_title = sanitize_text_field($live_attempt->snippet->title);
-                                $final_title_prefix = 'Live Stream';
+                                $final_title_prefix = __('Live Stream', 'text_domain');
                             }
                             $rel = 'https://www.youtube.com/watch?v=' . (esc_attr($theytid)) . '&live=1';
                             $doing_live = true;
@@ -1214,15 +1201,15 @@ class YouTubePrefsPro
 
                                 <h2>
                                     <?php
-                                    echo 'Live Stream (or Premiere): ' . sanitize_text_field($live_attempt->snippet->title);
+                                    echo __('Live Stream (or Premiere)', 'text_domain') . ': ' . sanitize_text_field($live_attempt->snippet->title);
                                     ?>
                                 </h2>
                                 <p class="center">
-                                    <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> Insert Into Editor</a>
-                                    &nbsp; <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> Customize</a>
+                                    <a class="ui-button ui-widget ui-corner-all inserttopost" rel="[embedyt] <?php echo $rel; ?>[/embedyt]"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> <?php _e('Insert Into Editor', 'text_domain'); ?></a>
+                                    &nbsp; <a class="ui-button ui-widget ui-corner-all btn-customize-step"><span class="ui-icon ui-icon-wrench"></span> <?php _e('Customize', 'text_domain'); ?></a>
                                 </p>
                                 <p>
-                                    Or Copy Code:
+                                    <?php _e('Or Copy Code', 'text_domain'); ?>:
                                 </p>
                                 <p>
                                     <span class="copycode">[embedyt] <?php echo $rel; ?>[/embedyt]</span>
@@ -1240,10 +1227,10 @@ class YouTubePrefsPro
                                 }
                                 ?>
                                 <p>
-                                    <strong>Is your live stream not working?</strong>  According to Google/YouTube rules, there must be an active AdSense account that's connected to the live 
-                                    stream's channel (for monetization) in order embed the stream. If you own the channel, we suggest that you attach an AdSense account. Otherwise, you will 
+                                    <?php _e('<strong>Is your live stream not working?</strong>  According to Google/YouTube rules, there must be an active AdSense account that\'s connected to the live 
+                                    stream\'s channel (for monetization) in order embed the stream. If you own the channel, we suggest that you attach an AdSense account. Otherwise, you will 
                                     likely just see a blank screen when you embed your stream, even if it is visible on YouTube.com.
-                                    Read more here: <a href="https://support.google.com/youtube/answer/2474026?hl=en" target="_blank">https://support.google.com/youtube/answer/2474026?hl=en</a>
+                                    Read more here: <a href="https://support.google.com/youtube/answer/2474026?hl=en" target="_blank">https://support.google.com/youtube/answer/2474026?hl=en</a>', 'text_domain'); ?>
                                 </p>
                             </div>
                             <?php
@@ -1282,43 +1269,43 @@ class YouTubePrefsPro
                 ?>
 
                 <div class="wiz-accordion">
-                    <h3 class="header-go"><a href="<?php echo admin_url('admin.php?page=youtube-my-preferences#jumpdefaults'); ?>"> Check my general YouTube embedding instructions and settings. </a></h3>
+                    <h3 class="header-go"><a href="<?php echo admin_url('admin.php?page=youtube-my-preferences#jumpdefaults'); ?>"> <?php _e('Check my general YouTube embedding instructions and settings.', 'text_domain'); ?> </a></h3>
                     <div class="header-go-content"></div>
-                    <h3 id="h3_video"> <a href="#">Embed a single video.</a></h3>
+                    <h3 id="h3_video"> <a href="#"><?php _e('Embed a single video.', 'text_domain'); ?></a></h3>
                     <div>
-                        <h4 class="center">Single video directions</h4>
+                        <h4 class="center"><?php _e('Single video directions', 'text_domain'); ?></h4>
                         <p>
-                            Paste the url of a single video below (example: <em>https://www.youtube.com/watch?v=YVvn8dpSAt0</em> )
+                            <?php _e('Paste the url of a single video below (example: <em>https://www.youtube.com/watch?v=YVvn8dpSAt0</em> )', 'text_domain'); ?>
                         </p>
                         <form name="wizform_video" method="post" action="" class="wizform" id="wizform_video">
                             <?php wp_nonce_field('_epyt_wiz', '_epyt_nonce', true); ?>
                             <div class="center txt-button-align">
-                                <input name="txtUrl" maxlength="200" id="txtUrl" class="txturlpastecustom ui-widget ui-widget-content ui-corner-all" placeholder="Paste URL here" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_video">Submit</button>
+                                <input name="txtUrl" maxlength="200" id="txtUrl" class="txturlpastecustom ui-widget ui-widget-content ui-corner-all" placeholder="<?php _e('Paste URL here', 'text_domain'); ?>" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_video"><?php _e('Submit', 'text_domain'); ?></button>
                             </div>
                             <p class="badpaste orange bold" style="display: none;">
-                                Please do not paste full embedcode above, only simple links to the YouTube video.
+                                <?php _e('Please do not paste full embedcode above, only simple links to the YouTube video.
                                 <br />
-                                We have attempted to correct it above, but please doublecheck!
+                                We have attempted to correct it above, but please doublecheck!', 'text_domain'); ?>
                             </p>
                         </form>
                         <?php echo $step1_video_errors ? '<p class="orange bold">' . $step1_video_errors . '</p>' : ''; ?>
-                        <p><em>Note: You can also search YouTube videos by title in the text box above (example: <em>TED talks</em>). However, searching will use a significant amount of your YouTube API quota.</em></p>
+                        <p><em><?php _e('Note: You can also search YouTube videos by title in the text box above (example: <em>TED talks</em>). However, searching will use a significant amount of your YouTube API quota.', 'text_domain'); ?></em></p>
                     </div>
-                    <h3 id="h3_playlist"> <a href="#">Embed a playlist. </a></h3>
+                    <h3 id="h3_playlist"> <a href="#"><?php _e('Embed a playlist.', 'text_domain'); ?> </a></h3>
                     <div>
-                        <h4 class="center">Playlist directions</h4>
+                        <h4 class="center"><?php _e('Playlist directions', 'text_domain'); ?></h4>
                         <div class="playlist-tabs">
                             <ul>
-                                <li><a href="#ptabs-1">Self-contained layout directions</a></li>
-                                <li><a href="#ptabs-2">Gallery layout directions</a></li>
+                                <li><a href="#ptabs-1"><?php _e('Self-contained layout directions', 'text_domain'); ?></a></li>
+                                <li><a href="#ptabs-2"><?php _e('Gallery layout directions', 'text_domain'); ?></a></li>
                             </ul>
                             <div id="ptabs-1">
                                 <img src="<?php echo plugins_url('/images/icon-playlist-self.jpg', __FILE__) ?>" class="icon-playlist" />
                                 <ol>
-                                    <li>Go to the page for the playlist that lists all of its videos (<a href="https://www.youtube.com/playlist?list=PL70DEC2B0568B5469" target="_blank">Example &raquo;</a>). </li>
-                                    <li>You may then click on the video that you want the playlist to start with (this step only applies to self-contained playlists. You cannot pick a starter for gallery layout directions).</li>
-                                    <li>Copy the URL in your browser and paste it in the textbox below. You'll notice that a playlist URL contains the playlist ID (e.g. "PL...")</li>
-                                    <li>Click "Get Playlist" to continue.</li>
+                                    <li><?php _e('Go to the page for the playlist that lists all of its videos (<a href="https://www.youtube.com/playlist?list=PL70DEC2B0568B5469" target="_blank">Example &raquo;</a>).', 'text_domain'); ?></li>
+                                    <li><?php _e('You may then click on the video that you want the playlist to start with (this step only applies to self-contained playlists. You cannot pick a starter for gallery layout directions).', 'text_domain'); ?></li>
+                                    <li><?php _e('Copy the URL in your browser and paste it in the textbox below. You\'ll notice that a playlist URL contains the playlist ID (e.g. "PL...")', 'text_domain'); ?></li>
+                                    <li><?php _e('Click "Get Playlist" to continue.', 'text_domain'); ?></li>
                                 </ol>
                                 <div class="clearboth">
                                 </div>
@@ -1326,9 +1313,9 @@ class YouTubePrefsPro
                             <div id="ptabs-2">
                                 <img src="<?php echo plugins_url('/images/icon-playlist-gallery.jpg', __FILE__) ?>" class="icon-playlist" />
                                 <ol>
-                                    <li>Go to the page for the playlist that lists all of its videos (<a href="https://www.youtube.com/playlist?list=PL70DEC2B0568B5469" target="_blank">Example &raquo;</a>). </li>
-                                    <li>Copy the URL in your browser and paste it in the textbox below. You'll notice that a playlist URL contains the playlist ID (e.g. "PL...")</li>
-                                    <li>Click "Get Playlist" to continue.</li>
+                                    <li><?php _e('Go to the page for the playlist that lists all of its videos (<a href="https://www.youtube.com/playlist?list=PL70DEC2B0568B5469" target="_blank">Example &raquo;</a>).', 'text_domain'); ?> </li>
+                                    <li><?php _e('Copy the URL in your browser and paste it in the textbox below. You\'ll notice that a playlist URL contains the playlist ID (e.g. "PL...")', 'text_domain'); ?></li>
+                                    <li><?php _e('Click "Get Playlist" to continue.', 'text_domain'); ?></li>
                                 </ol>
                                 <div class="clearboth">
                                 </div>
@@ -1339,37 +1326,37 @@ class YouTubePrefsPro
                             <?php wp_nonce_field('_epyt_wiz', '_epyt_nonce', true); ?>
                             <div class="center txt-button-align">
                                 <input name="txtUrlPlaylist" maxlength="200" id="txtUrlPlaylist" class="txturlpastecustom ui-widget ui-widget-content ui-corner-all" placeholder="Paste the playlist link here" type="text">
-                                <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_playlist">Get Playlist</button>
+                                <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_playlist"><?php _e('Get Playlist', 'text_domain'); ?></button>
                             </div>
                         </form>
                         <?php echo $step1_playlist_errors ? '<p class="orange bold">' . $step1_playlist_errors . '</p>' : ''; ?>
                     </div>
-                    <h3 id="h3_channel"> <a href="#">Embed a channel.  </a></h3>
+                    <h3 id="h3_channel"> <a href="#"><?php _e('Embed a channel.', 'text_domain'); ?>  </a></h3>
                     <div>
-                        <h4 class="center">Channel directions</h4>
+                        <h4 class="center"><?php _e('Channel directions', 'text_domain'); ?></h4>
                         <?php
                         if (!self::has_api_key())
                         {
-                            echo str_replace('###', '"search for channel"', self::$get_api_key_msg);
+                            echo str_replace('###', __('"search for channel"', 'text_domain'), self::$get_api_key_msg);
                         }
                         else
                         {
                             ?>
                             <p>
-                                If you already know the direct link to the channel, enter it below.<br>Example: https://www.youtube.com/<strong>channel</strong>/UCnM5iMGiKsZg-iOlIO2ZkdQ
+                                <?php _e('If you already know the direct link to the channel, enter it below.<br>Example: https://www.youtube.com/<strong>channel</strong>/UCnM5iMGiKsZg-iOlIO2ZkdQ', 'text_domain'); ?>
                             </p>
                             <p>
-                                Or, simply enter a link to any single video that belongs to the user's channel, and the plugin will find the channel for you.<br>Example: https://www.youtube.com/watch?v=YVvn8dpSAt0
+                                <?php _e('Or, simply enter a link to any single video that belongs to the user\'s channel, and the plugin will find the channel for you.<br>Example: https://www.youtube.com/watch?v=YVvn8dpSAt0', 'text_domain'); ?>
                             </p>
                             <form name="wizform_channel" method="post" action="" class="wizform" id="wizform_channel">
                                 <?php wp_nonce_field('_epyt_wiz', '_epyt_nonce', true); ?>
                                 <div class="center txt-button-align">
-                                    <input name="txtUrlChannel" maxlength="200" id="txtUrlChannel" class="txturlpastecustom ui-widget ui-widget-content ui-corner-all" placeholder="Paste YouTube link here" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_channel">Get Channel</button>
+                                    <input name="txtUrlChannel" maxlength="200" id="txtUrlChannel" class="txturlpastecustom ui-widget ui-widget-content ui-corner-all" placeholder="<?php _e('Paste YouTube link here', 'text_domain'); ?>" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_channel"><?php _e('Get Channel', 'text_domain'); ?></button>
                                 </div>
                                 <p class="badpaste orange bold" style="display: none;">
-                                    Please do not paste full embedcode above, only simple links to the YouTube video.
+                                    <?php _e('Please do not paste full embedcode above, only simple links to the YouTube video.
                                     <br />
-                                    We have attempted to correct it above, but please doublecheck!
+                                    We have attempted to correct it above, but please doublecheck!', 'text_domain'); ?>
                                 </p>
                             </form>
                             <?php echo $step1_channel_errors ? '<p class="orange bold">' . $step1_channel_errors . '</p>' : ''; ?>
@@ -1377,65 +1364,65 @@ class YouTubePrefsPro
                         }
                         ?>
                     </div>
-                    <h3 id="h3_live"> <a href="#">Embed a live stream or premiere video. </a></h3>
+                    <h3 id="h3_live"> <a href="#"><?php _e('Embed a live stream or premiere video.', 'text_domain'); ?> </a></h3>
                     <div>
-                        <h4 class="center">Live stream or premiere directions</h4>
+                        <h4 class="center"><?php _e('Live stream or premiere directions', 'text_domain'); ?></h4>
                         <?php
                         if (!self::has_api_key())
                         {
-                            echo str_replace('###', 'live stream', self::$get_api_key_msg);
+                            echo str_replace('###', __('live stream', 'text_domain'), self::$get_api_key_msg);
                         }
                         else
                         {
                             ?>
                             <p>
-                                Important: You can embed any public livestreams or premieres from any channel that YouTube/Google has approved to be <strong>Eligible</strong> and <strong>Enabled</strong>.
-                                If you're trying to embed a livestream from your own channel, you can check make sure it is <strong>Eligible</strong> and <strong>Enabled</strong> by <a href="https://www.youtube.com/features" target="_blank">visiting here.</a>
+                                <?php _e('Important: You can embed any public livestreams or premieres from any channel that YouTube/Google has approved to be <strong>Eligible</strong> and <strong>Enabled</strong>.
+                                If you\'re trying to embed a livestream from your own channel, you can check make sure it is <strong>Eligible</strong> and <strong>Enabled</strong> by <a href="https://www.youtube.com/features" target="_blank">visiting here.</a>
                                 You are verified if you see the word "Enabled" at the bottom of the box that is labeled "Embed live streams." Note that verification can only be done directly through YouTube/Google with the link above, and this plugin cannot automatically do that.
-                                YouTube/Google also requires <strong>Monetization</strong> enabled. <a href="https://www.embedplus.com/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">You can read more here &raquo;</a>
+                                YouTube/Google also requires <strong>Monetization</strong> enabled. <a href="https://www.embedplus.com/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">You can read more here &raquo;</a>', 'text_domain'); ?>
                             </p>
 
                             <div class="livestream-tabs">
                                 <ul>
-                                    <li><a href="#livestream-tabs-2">Channel-based livestream (recommended)<sup class="orange">new</sup></a></li>
-                                    <li><a href="#livestream-tabs-1">Direct link to livestream or premiere video</a></li>
+                                    <li><a href="#livestream-tabs-2"><?php _e('Channel-based livestream (recommended)', 'text_domain'); ?><sup class="orange"><?php _e('new', 'text_domain'); ?></sup></a></li>
+                                    <li><a href="#livestream-tabs-1"><?php _e('Direct link to livestream or premiere video', 'text_domain'); ?></a></li>
                                 </ul>
                                 <div id="livestream-tabs-1">
                                     <p>
-                                        This will embed a specific live stream or premiere video.
+                                        <?php _e('This will embed a specific live stream or premiere video.', 'text_domain'); ?>
                                     </p>
                                     <ol>
                                         <li>
-                                            Paste in the direct URL of the live stream or premiere below and click Submit. Example: https://www.youtube.com/watch?v=<strong>5qap5aO4i9A</strong>
+                                            <?php _e('Paste in the direct URL of the live stream or premiere below and click Submit. Example', 'text_domain'); ?>: https://www.youtube.com/watch?v=<strong>5qap5aO4i9A</strong>
                                         </li>
                                         <li>
-                                            On the next screen, customize or insert your video.
+                                           <?php _e(' On the next screen, customize or insert your video.', 'text_domain'); ?>
                                         </li>
                                     </ol>
                                     <form name="wizform_live" method="post" action="" class="wizform" id="wizform_live">
                                         <?php wp_nonce_field('_epyt_wiz', '_epyt_nonce', true); ?>
                                         <div class="center txt-button-align">
-                                            <input name="txtUrlLive" maxlength="200" id="txtUrlLive" class="ui-widget ui-widget-content ui-corner-all" placeholder="Paste YouTube link here" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_live">Submit</button>
+                                            <input name="txtUrlLive" maxlength="200" id="txtUrlLive" class="ui-widget ui-widget-content ui-corner-all" placeholder="<?php _e('Paste YouTube link here', 'text_domain'); ?>" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_live"><?php _e('Submit', 'text_domain'); ?></button>
                                         </div>
                                     </form>
                                     <?php echo $step1_live_errors ? '<p class="orange bold">' . $step1_live_errors . '</p>' : ''; ?>
                                 </div>
                                 <div id="livestream-tabs-2">
                                     <p>
-                                        This will embed a video that will automatically display the next upcoming live stream from a channel. 
+                                        <?php _e('This will embed a video that will automatically display the next upcoming live stream from a channel.', 'text_domain'); ?>
                                     </p>
                                     <p>
-                                        Enter the link to the channel page below (note the word "channel" should be in the link).<br>Example: https://www.youtube.com/<strong>channel</strong>/UCL0iAkpqV5YaIVG7xkDtS4Q
+                                        <?php _e('Enter the link to the channel page below (note the word "channel" should be in the link).<br>Example', 'text_domain'); ?>: https://www.youtube.com/<strong>channel</strong>/UCL0iAkpqV5YaIVG7xkDtS4Q
                                     </p>                                    
                                     <form name="wizform_livechannel" method="post" action="" class="wizform" id="wizform_livechannel">
                                         <?php wp_nonce_field('_epyt_wiz', '_epyt_nonce', true); ?>
                                         <div class="center txt-button-align">
-                                            <input name="txtUrlLiveChannel" maxlength="200" id="txtUrlLiveChannel" class="ui-widget ui-widget-content ui-corner-all" placeholder="Paste channel link here" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_livechannel">Get Channel</button>
+                                            <input name="txtUrlLiveChannel" maxlength="200" id="txtUrlLiveChannel" class="ui-widget ui-widget-content ui-corner-all" placeholder="<?php _e('Paste channel link here', 'text_domain'); ?>" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_livechannel"><?php _e('Get Channel', 'text_domain'); ?></button>
                                         </div>                                        
                                     </form>
                                     <?php echo $step1_livechannel_errors ? '<p class="orange bold">' . $step1_livechannel_errors . '</p>' : ''; ?>
                                     <p class="smallnote">
-                                        <strong class="orange">Note</strong>: For now, the "Not Live" custom content feature is not available for channel-based embeds. YouTube's standard countdown will appear in the video until the scheduled stream goes live.
+                                        <?php _e('<strong class="orange">Note</strong>: For now, the "Not Live" custom content feature is not available for channel-based embeds. YouTube\'s standard countdown will appear in the video until the scheduled stream goes live.', 'text_domain'); ?>
                                     </p>
                                 </div>
                             </div>
@@ -1460,7 +1447,7 @@ class YouTubePrefsPro
                         <?php
                     }
                     ?>
-                    <h3 class="header-go"> <a href="<?php echo admin_url('admin.php?page=youtube-ep-analytics-dashboard'); ?>">Check my performance, blocked countries, deleted videos, etc. </a></h3>
+                    <h3 class="header-go"> <a href="<?php echo admin_url('admin.php?page=youtube-ep-analytics-dashboard'); ?>"><?php _e('Check my performance, blocked countries, deleted videos, etc.', 'text_domain'); ?> </a></h3>
                     <div class="header-go-content"></div>
 
                 </div>
@@ -1500,92 +1487,92 @@ class YouTubePrefsPro
         <div class="wrap" id="ep-wizard-customizer" ng-app="YouTubeWizardApp"> 
             <div ng-controller="YouTubeWizardController">
                 <div class="container-step-customize">
-                    <a class="ui-button ui-widget ui-corner-all btn-get-code-step btn-epwiz-step" ng-click="getCodeStep()"><span class="ui-icon ui-icon-check"></span> Get Code</a>
-                    <h1>YouTube Customizer</h1> <!--carat-2-e-w-->
+                    <a class="ui-button ui-widget ui-corner-all btn-get-code-step btn-epwiz-step" ng-click="getCodeStep()"><span class="ui-icon ui-icon-check"></span> <?php _e('Get Code', 'text_domain'); ?></a>
+                    <h1><?php _e('YouTube Customizer', 'text_domain'); ?></h1> <!--carat-2-e-w-->
                     <div class="clearboth"></div>
                     <div class="wizoptionbox">
                         <div id="wizoptionboxLeft">
                             <div id="ytpreviewbox">
                                 <div class="ep-wizard-preview-video-wrapper">
-                                    <iframe ng-src="{{iframePreviewUrl()}}" id="ifPreview" title="YouTube video player" frameborder="0" allowfullscreen=""></iframe>
+                                    <iframe ng-src="{{iframePreviewUrl()}}" id="ifPreview" title="<?php _e('YouTube video player', 'text_domain'); ?>" frameborder="0" allowfullscreen=""></iframe>
                                 </div>
                             </div>
                         </div>
                         <div id="wizoptionboxRight">
 
-                            <h2>Size Ratio</h2>
-                            <p class="smallnote">We've guessed your site's default content width below.</p>                        
-                            <label class="label-inline">Width:
+                            <h2><?php _e('Size Ratio', 'text_domain'); ?></h2>
+                            <p class="smallnote"><?php _e('We\'ve guessed your site\'s default content width below.', 'text_domain'); ?></p>                        
+                            <label class="label-inline"><?php _e('Width', 'text_domain'); ?>:
                                 <input name="txtWidth" ng-change="selectHeight()" ng-model="model.width" type="number" id="txtWidth" class="txtbox" required />
                             </label>
-                            <label class="label-inline">Height:
+                            <label class="label-inline"><?php _e('Height', 'text_domain'); ?>:
                                 <select id="selheight" ng-change="selectHeight()" ng-model="model.selheight">
-                                    <option value="manual">Manual →</option>
-                                    <option value="best-fit">Calculate Best-Fit</option>
-                                    <option value="16-9">Force 16:9 Ratio</option>
-                                    <option value="4-3">Force 4:3 Ratio</option>
+                                    <option value="manual"><?php _e('Manual', 'text_domain'); ?> →</option>
+                                    <option value="best-fit"><?php _e('Calculate Best-Fit', 'text_domain'); ?></option>
+                                    <option value="16-9"><?php _e('Force 16:9 Ratio', 'text_domain'); ?></option>
+                                    <option value="4-3"><?php _e('Force 4:3 Ratio', 'text_domain'); ?></option>
                                 </select>
                                 <input name="txtHeight" ng-model="model.height" type="number" id="txtHeight" class="txtbox" required ng-disabled="model.selheight !== 'manual'" />
                             </label>
-                            <p class="smallnote">If you need the above ratio to be fixed pixels instead of fluid, try turning off "Responsive video sizing" in the plugin settings page.</p>
+                            <p class="smallnote"><?php _e('If you need the above ratio to be fixed pixels instead of fluid, try turning off "Responsive video sizing" in the plugin settings page.', 'text_domain'); ?></p>
 
                             <div id="panPlaylistStart" ng-if="model.theplaylistid">
-                                <h2>Playlist &amp; Gallery Options</h2>
+                                <h2><?php _e('Playlist &amp; Gallery Options', 'text_domain'); ?></h2>
                                 <div id="panPlaylistLayout">
-                                    First select your playlist layout (normal or gallery):
+                                    <?php _e('First select your playlist layout (normal or gallery)', 'text_domain'); ?>:
                                     <select ng-model="model.gallery_style">
-                                        <option value="">Normal (self-contained)</option>
-                                        <option value="grid">Gallery - Grid</option>
-                                        <option value="listview">Gallery - Vertical List</option>
-                                        <option value="carousel">Gallery - Horizontal Slider</option>
+                                        <option value=""><?php _e('Normal (self-contained)', 'text_domain'); ?></option>
+                                        <option value="grid"><?php _e('Gallery - Grid', 'text_domain'); ?></option>
+                                        <option value="listview"><?php _e('Gallery - Vertical List', 'text_domain'); ?></option>
+                                        <option value="carousel"><?php _e('Gallery - Horizontal Slider', 'text_domain'); ?></option>
                                     </select>
                                 </div>
                                 <div ng-if="model.gallery_style == ''">
                                     <p>
-                                        Select which video your <strong>self-contained</strong> playlist should start with (this does not apply to galleries):
+                                        <?php _e('Select which video your <strong>self-contained</strong> playlist should start with (this does not apply to galleries)', 'text_domain'); ?>:
                                     </p>
-                                    <label><input type="radio" ng-model="model.rblPlaylistStart" value="0">Automatic (latest added)</label>
-                                    <label><input type="radio" ng-model="model.rblPlaylistStart" value="1">Currently selected video</label>
+                                    <label><input type="radio" ng-model="model.rblPlaylistStart" value="0"><?php _e('Automatic (latest added)', 'text_domain'); ?></label>
+                                    <label><input type="radio" ng-model="model.rblPlaylistStart" value="1"><?php _e('Currently selected video', 'text_domain'); ?></label>
                                 </div>
                                 <div ng-if="model.gallery_style != ''" id="panGallerySettings" class="panGallerySettings">
                                     <p>
-                                        Player display mode:
-                                        <label class="label-inline"><input type="radio" ng-model="model.gallery_disptype" value="default">Normal</label>
-                                        <label class="label-inline"><input type="radio" ng-model="model.gallery_disptype" value="lb">Popup</label>
+                                        <?php _e('Player display mode', 'text_domain'); ?>:
+                                        <label class="label-inline"><input type="radio" ng-model="model.gallery_disptype" value="default"><?php _e('Normal', 'text_domain'); ?></label>
+                                        <label class="label-inline"><input type="radio" ng-model="model.gallery_disptype" value="lb"><?php _e('Popup', 'text_domain'); ?></label>
                                     </p>
                                     <p ng-if="model.gallery_hidethumbimg != 1">
-                                        Thumbnail shape:
-                                        <label class="label-inline"><input type="radio" ng-model="model.gallery_thumbcrop" value="box">Rectangle</label>
-                                        <label class="label-inline"><input type="radio" ng-model="model.gallery_thumbcrop" value="portal">Circular</label>
+                                        <?php _e('Thumbnail shape', 'text_domain'); ?>:
+                                        <label class="label-inline"><input type="radio" ng-model="model.gallery_thumbcrop" value="box"><?php _e('Rectangle', 'text_domain'); ?></label>
+                                        <label class="label-inline"><input type="radio" ng-model="model.gallery_thumbcrop" value="portal"><?php _e('Circular', 'text_domain'); ?></label>
                                     </p>
 
-                                    <label ng-if="['grid', 'listview', 'carousel'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_showtitleChange()" <?php checked($wiz_defaults[self::$opt_gallery_showtitle], 1); ?>>Show gallery thumbnail titles</label>
-                                    <label ng-if="['grid', 'listview', 'carousel'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_showpagingChange()" <?php checked($wiz_defaults[self::$opt_gallery_showpaging], 1); ?>>Show pagination and Next/Previous buttons</label>
-                                    <label ng-if="['grid', 'listview', 'carousel'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_autonextChange()" <?php checked($wiz_defaults[self::$opt_gallery_autonext], 1); ?>>Automatically play next video</label>
-                                    <label ng-if="['listview'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_showdscChange()" <?php checked($wiz_defaults[self::$opt_gallery_showdsc], 1); ?>>Show gallery thumbnail descriptions</label>
-                                    <label ng-if="['grid', 'listview'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_hidethumbimgChange()" <?php checked($wiz_defaults[self::$opt_gallery_hidethumbimg], 1); ?>>Hide thumbnail images</label>
-                                    <label ng-if="!!model.gallery_style"><input type="checkbox" ng-click="gallery_channelsubChange()" <?php checked($wiz_defaults[self::$opt_gallery_channelsub], 1); ?>>Show subscribe button</label>
+                                    <label ng-if="['grid', 'listview', 'carousel'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_showtitleChange()" <?php checked($wiz_defaults[self::$opt_gallery_showtitle], 1); ?>><?php _e('Show gallery thumbnail titles', 'text_domain'); ?></label>
+                                    <label ng-if="['grid', 'listview', 'carousel'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_showpagingChange()" <?php checked($wiz_defaults[self::$opt_gallery_showpaging], 1); ?>><?php _e('Show pagination and Next/Previous buttons', 'text_domain'); ?></label>
+                                    <label ng-if="['grid', 'listview', 'carousel'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_autonextChange()" <?php checked($wiz_defaults[self::$opt_gallery_autonext], 1); ?>><?php _e('Automatically play next video', 'text_domain'); ?></label>
+                                    <label ng-if="['listview'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_showdscChange()" <?php checked($wiz_defaults[self::$opt_gallery_showdsc], 1); ?>><?php _e('Show gallery thumbnail descriptions', 'text_domain'); ?></label>
+                                    <label ng-if="['grid', 'listview'].indexOf(model.gallery_style) >= 0"><input type="checkbox" ng-click="gallery_hidethumbimgChange()" <?php checked($wiz_defaults[self::$opt_gallery_hidethumbimg], 1); ?>><?php _e('Hide thumbnail images', 'text_domain'); ?></label>
+                                    <label ng-if="!!model.gallery_style"><input type="checkbox" ng-click="gallery_channelsubChange()" <?php checked($wiz_defaults[self::$opt_gallery_channelsub], 1); ?>><?php _e('Show subscribe button', 'text_domain'); ?></label>
                                     <div ng-if="['grid', 'listview', 'carousel'].indexOf(model.gallery_style) >= 0" id="panGalleryPagesize" class="boxGalleryPagesize">
-                                        Thumbnails per page:
+                                        <?php _e('Thumbnails per page', 'text_domain'); ?>:
                                         <select ng-model="model.gallery_pagesize" convert-to-number>
                                             <?php
                                             for ($i = 1; $i <= 50; $i++)
                                             {
                                                 ?>
-                                                <option value="<?php echo $i ?>"><?php echo $i == intval($wiz_defaults[self::$opt_gallery_pagesize]) ? $i . ' (Default)' : $i ?></option>
+                                                <option value="<?php echo $i ?>"><?php echo $i == intval($wiz_defaults[self::$opt_gallery_pagesize]) ? $i . __(' (Default)', 'text_domain') : $i ?></option>
                                                 <?php
                                             }
                                             ?>
                                         </select>
                                     </div>
                                     <div ng-if="['grid'].indexOf(model.gallery_style) >= 0" id="panGalleryColumns" class="boxGalleryColumns">
-                                        Number of columns:
+                                        <?php _e('Number of columns', 'text_domain'); ?>:
                                         <select ng-model="model.gallery_columns" convert-to-number>
                                             <?php
                                             for ($i = 1; $i <= 30; $i++)
                                             {
                                                 ?>
-                                                <option value="<?php echo $i ?>"><?php echo $i == intval($wiz_defaults[self::$opt_gallery_columns]) ? $i . ' (Default)' : $i ?></option>
+                                                <option value="<?php echo $i ?>"><?php echo $i == intval($wiz_defaults[self::$opt_gallery_columns]) ? $i . __(' (Default)', 'text_domain') : $i ?></option>
                                                 <?php
                                             }
                                             ?>
@@ -1594,43 +1581,43 @@ class YouTubePrefsPro
                                 </div>
                             </div>
                             <div ng-if="model.doing_live" id="panLiveOptions">
-                                <h2><?php _e('Livestream/Premiere Options') ?></h2>
-                                <label><input ng-click="live_chatChange()" <?php checked($wiz_defaults[self::$opt_live_chat], 1); ?> id="chklive_chat" type="checkbox" name="chklive_chat"><?php _e('Add live chat <sup class="orange">new</sup>') ?></label>
+                                <h2><?php _e('Livestream/Premiere Options', 'text_domain') ?></h2>
+                                <label><input ng-click="live_chatChange()" <?php checked($wiz_defaults[self::$opt_live_chat], 1); ?> id="chklive_chat" type="checkbox" name="chklive_chat"><?php _e('Add live chat <sup class="orange">new</sup>', 'text_domain') ?></label>
                             </div>
-                            <h2>Other Options</h2>
-                            <p class="smallnote">Your site's current defaults have been pre-checked for this video.</p>
+                            <h2><?php _e('Other Options', 'text_domain'); ?></h2>
+                            <p class="smallnote"><?php _e('Your site\'s current defaults have been pre-checked for this video.', 'text_domain'); ?></p>
                             <div class="optionlist">
-                                <label><input ng-click="centervidChange()" <?php checked($wiz_defaults[self::$opt_center], 1); ?> id="chkCenter" type="checkbox" name="chkCenter">Center-align the video</label>
+                                <label><input ng-click="centervidChange()" <?php checked($wiz_defaults[self::$opt_center], 1); ?> id="chkCenter" type="checkbox" name="chkCenter"><?php _e('Center-align the video', 'text_domain'); ?></label>
                                 <label class="opt-wizhastip">
-                                    <input ng-click="autoplayChange()" <?php checked($wiz_defaults[self::$opt_autoplay], 1); ?> id="chkAutoplay" type="checkbox" name="chkAutoplay">Autoplay the video
+                                    <input ng-click="autoplayChange()" <?php checked($wiz_defaults[self::$opt_autoplay], 1); ?> id="chkAutoplay" type="checkbox" name="chkAutoplay"><?php _e('Autoplay the video', 'text_domain'); ?>
                                     <span class="ui-icon ui-icon-info" ng-if="model.autoplay == 1"></span>
                                     <span class="tip" ng-if="model.autoplay == 1">
-                                        <strong>Note about autoplay:</strong> Desktop browsers like <a href="https://developers.google.com/youtube/iframe_api_reference#Mobile_considerations" target="_blank">Chrome and Safari are moving towards preventing autoplay for any video</a>. But, your chances are improved if you set your videos to initially start muted. 
+                                        <?php _e('<strong>Note about autoplay:</strong> Desktop browsers like <a href="https://developers.google.com/youtube/iframe_api_reference#Mobile_considerations" target="_blank">Chrome and Safari are moving towards preventing autoplay for any video</a>. But, your chances are improved if you set your videos to initially start muted.', 'text_domain'); ?>
                                     </span>
                                 </label>
-                                <label><input ng-click="cc_load_policyChange()" <?php checked($wiz_defaults[self::$opt_cc_load_policy], 1); ?> id="chkCC" type="checkbox" name="chkCC">Turn on closed-captioning</label>
-                                <label><input ng-click="iv_load_policyChange()" <?php checked($wiz_defaults[self::$opt_iv_load_policy], 1); ?> id="chkAnn" type="checkbox" name="chkAnn">Show Annotations</label>
-                                <label><input ng-click="loopChange()" <?php checked($wiz_defaults[self::$opt_loop], 1); ?> id="chkLoop" type="checkbox" name="chkLoop">Loop the video</label>
-                                <label><input ng-click="modestbrandingChange()" <?php checked($wiz_defaults[self::$opt_modestbranding], 1); ?> id="chkModest" type="checkbox" name="chkModest">Modest branding: Hide YouTube logo while playing</label>
+                                <label><input ng-click="cc_load_policyChange()" <?php checked($wiz_defaults[self::$opt_cc_load_policy], 1); ?> id="chkCC" type="checkbox" name="chkCC"><?php _e('Turn on closed-captioning', 'text_domain'); ?></label>
+                                <label><input ng-click="iv_load_policyChange()" <?php checked($wiz_defaults[self::$opt_iv_load_policy], 1); ?> id="chkAnn" type="checkbox" name="chkAnn"><?php _e('Show Annotations', 'text_domain'); ?></label>
+                                <label><input ng-click="loopChange()" <?php checked($wiz_defaults[self::$opt_loop], 1); ?> id="chkLoop" type="checkbox" name="chkLoop"><?php _e('Loop the video', 'text_domain'); ?></label>
+                                <label><input ng-click="modestbrandingChange()" <?php checked($wiz_defaults[self::$opt_modestbranding], 1); ?> id="chkModest" type="checkbox" name="chkModest"><?php _e('Modest branding: Hide YouTube logo while playing', 'text_domain'); ?></label>
                                 <p>
-                                    Show related videos after playing:
-                                    <label><input type="radio" ng-model="model.rel" value="1" convert-to-number>Show related videos</label>
-                                    <label><input type="radio" ng-model="model.rel" value="0" convert-to-number>Show related only from the video's channel</label>
-                                    <label><input type="radio" ng-model="model.rel" value="-1" convert-to-number>Hide related videos after playback</label>
+                                    <?php _e('Show related videos after playing', 'text_domain'); ?>:
+                                    <label><input type="radio" ng-model="model.rel" value="1" convert-to-number><?php _e('Show related videos', 'text_domain'); ?></label>
+                                    <label><input type="radio" ng-model="model.rel" value="0" convert-to-number><?php _e('Show related only from the video\'s channel', 'text_domain'); ?></label>
+                                    <label><input type="radio" ng-model="model.rel" value="-1" convert-to-number><?php _e('Hide related videos after playback', 'text_domain'); ?></label>
                                 </p>
-                                <label><input ng-click="fsChange()" <?php checked($wiz_defaults[self::$opt_fs], 1); ?> id="chkFs" type="checkbox" name="chkFs">Show fullscreen button</label>
-                                <label><input ng-click="controlsChange()" <?php checked($wiz_defaults[self::$opt_controls], 1); ?> id="chkControls" type="checkbox" name="chkControls">Show controls (uncheck to remove controls)</label>
-                                <label><input ng-click="defaultvolChange()" <?php checked($wiz_defaults[self::$opt_defaultvol], 1); ?> id="chkVolume" type="checkbox" name="chkVolume">Set an initial volume level (uncheck to use visitor's default)</label>
+                                <label><input ng-click="fsChange()" <?php checked($wiz_defaults[self::$opt_fs], 1); ?> id="chkFs" type="checkbox" name="chkFs"><?php _e('Show fullscreen button', 'text_domain'); ?></label>
+                                <label><input ng-click="controlsChange()" <?php checked($wiz_defaults[self::$opt_controls], 1); ?> id="chkControls" type="checkbox" name="chkControls"><?php _e('Show controls (uncheck to remove controls)', 'text_domain'); ?></label>
+                                <label><input ng-click="defaultvolChange()" <?php checked($wiz_defaults[self::$opt_defaultvol], 1); ?> id="chkVolume" type="checkbox" name="chkVolume"><?php _e('Set an initial volume level (uncheck to use visitor\'s default)', 'text_domain'); ?></label>
                                 <div id="boxdefaultvol" ng-if="model.defaultvol == 1">
-                                    Volume: <span class="vol-output" ng-if="canInputRange()">{{model.vol == 0 ? 'Mute' : model.vol + '%'}}</span>
+                                    <?php _e('Volume', 'text_domain'); ?>: <span class="vol-output" ng-if="canInputRange()">{{model.vol == 0 ? '<?php _e('Mute', 'text_domain'); ?>' : model.vol + '%'}}</span>
                                     <input name="vol" type="{{canInputRange() ? 'range' : 'text'}}" id="vol" min="0" max="100" step="1" ng-model="model.vol" class="vol-range">
                                 </div>
                             </div>
 
                             <div ng-if="!model.theplaylistid && !model.doing_live" id="panStartStop">
-                                <h2>Start / Stop Time</h2>
+                                <h2><?php _e('Start / Stop Time', 'text_domain'); ?></h2>
                                 <p>
-                                    Optionally select a time to <strong>START</strong> when play is first clicked:
+                                    <?php _e('Optionally select a time to <strong>START</strong> when play is first clicked', 'text_domain'); ?>:
                                 </p>
                                 <div class="start-stop-box">
                                     <input type="number" ng-model="model.startHours" placeholder="hours" class="timepicker-box" step="1" min="0" max="11">
@@ -1640,7 +1627,7 @@ class YouTubePrefsPro
                                     <input type="number" ng-model="model.startSecs" placeholder="secs" class="timepicker-box" step="1" min="0" max="59">
                                 </div>
                                 <p>
-                                    <label for="chkStop"><input ng-model="model.alsoStop" id="chkStop" type="checkbox" name="chkStop">Also <strong>STOP</strong> the video at a specific time?</label>
+                                    <label for="chkStop"><input ng-model="model.alsoStop" id="chkStop" type="checkbox" name="chkStop"><?php _e('Also <strong>STOP</strong> the video at a specific time?', 'text_domain'); ?></label>
                                 </p>
                                 <div ng-class="model.alsoStop ? 'start-stop-box' : 'start-stop-box greyout'" id="stopbox">
                                     <input type="number" ng-model="model.stopHours" placeholder="hours" class="timepicker-box" step="1" min="0" max="11" ng-disabled="!model.alsoStop" >
@@ -1650,8 +1637,8 @@ class YouTubePrefsPro
                                     <input type="number" ng-model="model.stopSecs" placeholder="secs" class="timepicker-box" step="1" min="0" max="59" ng-disabled="!model.alsoStop" >
                                 </div>
                                 <p class="smallnote bold" ng-if="model.startHours || model.startMins || model.startSecs || model.stopHours || model.stopMins || model.stopSecs">
-                                    Start: {{ timeColons(model.startHours, model.startMins, model.startSecs)}} 
-                                    <span ng-if="model.alsoStop">- End: {{ timeColons(model.stopHours, model.stopMins, model.stopSecs)}}</span>
+                                    <?php _e('Start', 'text_domain'); ?>: {{ timeColons(model.startHours, model.startMins, model.startSecs)}} 
+                                    <span ng-if="model.alsoStop">- <?php _e('End', 'text_domain'); ?>: {{ timeColons(model.stopHours, model.stopMins, model.stopSecs)}}</span>
                                 </p>
                             </div>
         <!--                                    <pre>{{ model | json }}</pre>-->
@@ -1667,24 +1654,24 @@ class YouTubePrefsPro
                         <div class="clearboth">
                         </div>
                     </div>
-                    <a class="ui-button ui-widget ui-corner-all btn-get-code-step btn-epwiz-step" ng-click="getCodeStep()"><span class="ui-icon ui-icon-check"></span> Get Code</a>
+                    <a class="ui-button ui-widget ui-corner-all btn-get-code-step btn-epwiz-step" ng-click="getCodeStep()"><span class="ui-icon ui-icon-check"></span> <?php _e('Get Code', 'text_domain'); ?></a>
                     <div class="clearboth"></div>
 
                 </div>
                 <div class="container-step-get-code">
-                    <a class="ui-button ui-widget ui-corner-all btn-re-edit-step btn-epwiz-step" ng-click="editStep()"><span class="ui-icon ui-icon-arrowreturnthick-1-w"></span> Re-edit Options</a>
-                    <h1>Insert WordPress Embed Code</h1>
+                    <a class="ui-button ui-widget ui-corner-all btn-re-edit-step btn-epwiz-step" ng-click="editStep()"><span class="ui-icon ui-icon-arrowreturnthick-1-w"></span> <?php _e('Re-edit Options', 'text_domain'); ?></a>
+                    <h1><?php _e('Insert WordPress Embed Code', 'text_domain'); ?></h1>
                     <div class="clearboth"></div>
                     <h2>{{finalTitle()}}</h2>
                     <div class="wizoptionbox">
                         <p>
-                            Click on "Insert" to insert the code into your WordPress editor. Or, click to select the embed code. Then copy and paste it into your editor. If the below code is really long, it may appear as if it takes up 2 or 3 lines after you paste it, but it should still work:
+                            <?php _e('Click on "Insert" to insert the code into your WordPress editor. Or, click to select the embed code. Then copy and paste it into your editor. If the below code is really long, it may appear as if it takes up 2 or 3 lines after you paste it, but it should still work:', 'text_domain'); ?>
                         </p>
                         <p>
                             <textarea class="getcodebox" ng-click="selectAllText($event)">{{embedCode()}}</textarea>
                         </p>
                         <p>
-                            <a class="ui-button ui-widget ui-corner-all" ng-click="insertFinalCode()"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> Insert Into Editor</a>
+                            <a class="ui-button ui-widget ui-corner-all" ng-click="insertFinalCode()"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> <?php _e('Insert Into Editor', 'text_domain'); ?></a>
                         </p>
                     </div>
                 </div>
@@ -1788,10 +1775,10 @@ class YouTubePrefsPro
 
     public static function clean_api_error_html($raw_message, $add_boilerplate)
     {
-        $clean_html = '<div>Sorry, there was a YouTube error.</div>';
+        $clean_html = '<div>' . __('Sorry, there was a YouTube error.', 'text_domain') . '</div>';
         if (current_user_can('manage_options'))
         {
-            $clean_html = '<div>Sorry, there was a YouTube API error: <em>' . self::clean_api_error($raw_message) . '</em>' .
+            $clean_html = '<div>' . __('Sorry, there was a YouTube API error:', 'text_domain') . ' <em>' . self::clean_api_error($raw_message) . '</em>' .
                     ( $add_boilerplate ? self::$boilerplate_api_error_message : '' ) .
                     '</div>';
         }
@@ -1805,7 +1792,7 @@ class YouTubePrefsPro
 
         if (!self::has_api_key())
         {
-            $gallobj->html = '<div>' . str_replace('###', 'search', self::$get_api_key_msg) . '</div>';
+            $gallobj->html = '<div>' . str_replace('###', __('search', 'text_domain'), self::$get_api_key_msg) . '</div>';
             return $gallobj;
         }
 
@@ -1834,7 +1821,7 @@ class YouTubePrefsPro
                 $gallobj->html = self::clean_api_error_html($jsonResult->error->message, true);
                 return $gallobj;
             }
-            $gallobj->html = '<div>Sorry, there may be an issue with your YouTube API key. ' . self::$boilerplate_api_error_message . '</div>';
+            $gallobj->html = '<div>' . __('Sorry, there may be an issue with your YouTube API key.', 'text_domain') . ' ' . self::$boilerplate_api_error_message . '</div>';
             return $gallobj;
         }
 
@@ -1903,7 +1890,7 @@ class YouTubePrefsPro
         $totalPages = ceil($totalResults / $pageSize);
         $pagination = '<div class="epyt-pagination">';
 
-        $txtprev = self::$alloptions[self::$opt_gallery_customarrows] ? self::$alloptions[self::$opt_gallery_customprev] : _('Prev');
+        $txtprev = self::$alloptions[self::$opt_gallery_customarrows] ? self::$alloptions[self::$opt_gallery_customprev] : __('Prev', 'text_domain');
         $pagination .= '<div tabindex="0" role="button" class="epyt-pagebutton epyt-prev ' . (empty($prevPageToken) ? ' hide ' : '') . '" data-q="' . esc_attr($options->q)
                 . '" data-pagetoken="' . esc_attr($prevPageToken)
                 . '"><div class="epyt-arrow">&laquo;</div> <div>' . $txtprev . '</div></div>';
@@ -1913,7 +1900,7 @@ class YouTubePrefsPro
         $pagination .= '<div class="epyt-current">1</div><div class="epyt-pageseparator"> / </div><div class="epyt-totalpages">' . $totalPages . '</div>';
         $pagination .= '</div>';
 
-        $txtnext = self::$alloptions[self::$opt_gallery_customarrows] ? self::$alloptions[self::$opt_gallery_customnext] : _('Next');
+        $txtnext = self::$alloptions[self::$opt_gallery_customarrows] ? self::$alloptions[self::$opt_gallery_customnext] : __('Next', 'text_domain');
         $pagination .= '<div tabindex="0" role="button" class="epyt-pagebutton epyt-next' . (empty($nextPageToken) ? ' hide ' : '') . '" data-q="' . esc_attr($options->q)
                 . '" data-pagetoken="' . esc_attr($nextPageToken)
                 . '"><div>' . $txtnext . '</div> <div class="epyt-arrow">&raquo;</div></div>';
@@ -1941,7 +1928,7 @@ class YouTubePrefsPro
                     <form name="wizform_video" method="post" action="" class="wizform" id="wizform_video">
                     <p>' .
                 wp_nonce_field('_epyt_wiz', '_epyt_nonce', true, false) .
-                '<button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_video"><span class="ui-icon ui-icon-circle-check"></span> Select Video</button>
+                '<button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_video"><span class="ui-icon ui-icon-circle-check"></span> ' . __('Select Video', 'text_domain') . '</button>
                         <input name="txtUrl" id="txtUrl" type="hidden" value="https://www.youtube.com/watch?v=' . $escId . '">
                     </p>
                     </form>
@@ -1950,7 +1937,7 @@ class YouTubePrefsPro
             <div class="clearboth"></div>
         </div>
         <div id="moviecontainer' . $escId . '" class="center moviecontainer relative" style="display: none;">
-            Preview: <a id="closeme' . $escId . '" class="closeme" data-vid="' . $escId . '">
+            ' . __('Preview', 'text_domain') . ': <a id="closeme' . $escId . '" class="closeme" data-vid="' . $escId . '">
                 &times;
             </a>
             <div id="watch' . $escId . '">
@@ -1999,7 +1986,7 @@ class YouTubePrefsPro
                 '&random=' . rand(1, 1000) .
                 '&TB_iframe=true&width=950&height=800';
         ?>
-        <a href="<?php echo esc_attr($wizhref); ?>" class="thickbox button ytprefs_media_link" id="ytprefs_wiz_button" title="Visual YouTube Search Tool and Wizard - For easier embedding"><span></span> YouTube</a>
+        <a href="<?php echo esc_attr($wizhref); ?>" class="thickbox button ytprefs_media_link" id="ytprefs_wiz_button" title="<?php _e('Visual YouTube Search Tool and Wizard - For easier embedding', 'text_domain'); ?>"><span></span> <?php _e('YouTube', 'text_domain'); ?></a>
         <?php
         if (current_user_can('manage_options') && self::vi_logged_in())
         {
@@ -2048,7 +2035,7 @@ class YouTubePrefsPro
                             echo '<a class="epxout">&times;</a>';
                         }
                         ?>
-                        Seems like you have two different YouTube plugins by the EmbedPlus Team installed: <b><img alt="YouTube Icon" src="<?php echo plugins_url('images/youtubeicon16.png', __FILE__) ?>" /> YouTube</b> and <b><img alt="YouTube Icon" src="<?php echo plugins_url('images/btn_embedpluswiz.png', __FILE__) ?>" /> Advanced YouTube Embed.</b> We strongly suggest keeping only the one you prefer, so that they don't conflict with each other while trying to create your embeds.
+                        <?php _e('Seems like you have two different YouTube plugins by the EmbedPlus Team installed', 'text_domain'); ?>: <b><img alt="<?php _e('YouTube Icon', 'text_domain'); ?>" src="<?php echo plugins_url('images/youtubeicon16.png', __FILE__) ?>" /> <?php _e('YouTube', 'text_domain'); ?></b> <?php _e('and', 'text_domain'); ?> <b><img alt="<?php _e('YouTube Icon', 'text_domain'); ?>" src="<?php echo plugins_url('images/btn_embedpluswiz.png', __FILE__) ?>" /> <?php _e('Advanced YouTube Embed.', 'text_domain'); ?></b> <?php _e('We strongly suggest keeping only the one you prefer, so that they don\'t conflict with each other while trying to create your embeds.', 'text_domain'); ?>
                     </p>
                 </div>
 
@@ -2175,7 +2162,7 @@ class YouTubePrefsPro
         $_gb_compat = 1;
         $_gdpr_consent = 0;
         $_gdpr_consent_message = self::$dft_gdpr_consent_message;
-        $_gdpr_consent_button = 'Accept YouTube Content';
+        $_gdpr_consent_button = __('Accept YouTube Content', 'text_domain');
         $_playlistorder = 0;
         $_acctitle = 0;
         $_ogvideo = 0;
@@ -2225,10 +2212,10 @@ class YouTubePrefsPro
         $_gallery_thumbplay = 1;
         $_gallery_channelsub = 0;
         $_gallery_channelsublink = '';
-        $_gallery_channelsubtext = 'Subscribe to my channel';
+        $_gallery_channelsubtext = __('Subscribe to my channel', 'text_domain');
         $_gallery_customarrows = 0;
-        $_gallery_customprev = 'Prev';
-        $_gallery_customnext = 'Next';
+        $_gallery_customprev = __('Prev', 'text_domain');
+        $_gallery_customnext = __('Next', 'text_domain');
         $_gallery_pagesize = 15;
         $_gallery_limit_dsc = 0;
         $_gallery_length_dsc = 100;
@@ -2716,7 +2703,7 @@ class YouTubePrefsPro
 
         if (empty($options->apiKey))
         {
-            $gallobj->html = '<div>Please enter your YouTube API key to embed galleries.</div>';
+            $gallobj->html = '<div>' . __('Please enter your YouTube API key to embed galleries.', 'text_domain') . '</div>';
             return $gallobj;
         }
 
@@ -2769,8 +2756,8 @@ class YouTubePrefsPro
         {
             $redactedEndpoint = preg_replace('@&key=[^&]+@i', '&key=PRIVATE', $apiEndpoint);
             $active_plugins = get_option('active_plugins');
-            $gallobj->html = '<pre onclick="_EPADashboard_.selectText(this);" class="epyt-debug">CLICK this debug text to auto-select all. Then, COPY the selection.' . "\n\n" .
-                    'THIS IS DEBUG MODE OUTPUT. UNCHECK THE OPTION IN THE SETTINGS PAGE ONCE YOU ARE DONE DEBUGGING TO PUT THINGS BACK TO NORMAL.' . "\n\n" . $redactedEndpoint . "\n\n" . print_r($apiResult, true) . "\n\nActive Plugins\n\n" . print_r($active_plugins, true) . '</pre>';
+            $gallobj->html = '<pre onclick="_EPADashboard_.selectText(this);" class="epyt-debug">' . __('CLICK this debug text to auto-select all. Then, COPY the selection.', 'text_domain') . "\n\n" .
+                    __('THIS IS DEBUG MODE OUTPUT. UNCHECK THE OPTION IN THE SETTINGS PAGE ONCE YOU ARE DONE DEBUGGING TO PUT THINGS BACK TO NORMAL.', 'text_domain') . "\n\n" . $redactedEndpoint . "\n\n" . print_r($apiResult, true) . "\n\nActive Plugins\n\n" . print_r($active_plugins, true) . '</pre>';
             return $gallobj;
         }
 
@@ -2783,7 +2770,7 @@ class YouTubePrefsPro
                 $gallobj->html = self::clean_api_error_html($jsonResult->error->message, true);
                 return $gallobj;
             }
-            $gallobj->html = '<div>Sorry, there may be an issue with your YouTube API key. ' . self::$boilerplate_api_error_message . '</div>';
+            $gallobj->html = '<div>' . __('Sorry, there may be an issue with your YouTube API key.', 'text_domain') . ' ' . self::$boilerplate_api_error_message . '</div>';
             return $gallobj;
         }
 
@@ -2910,7 +2897,7 @@ class YouTubePrefsPro
         $totalPages = ceil($totalResults / $resultsPerPage);
         $pagination = '<div class="epyt-pagination ' . ($options->showPaging == 0 ? 'epyt-hide-pagination' : '') . '">';
 
-        $txtprev = self::$alloptions[self::$opt_gallery_customarrows] ? self::$alloptions[self::$opt_gallery_customprev] : _('Prev');
+        $txtprev = self::$alloptions[self::$opt_gallery_customarrows] ? self::$alloptions[self::$opt_gallery_customprev] : __('Prev', 'text_domain');
         $pagination .= '<div tabindex="0" role="button" class="epyt-pagebutton epyt-prev ' . (empty($prevPageToken) ? ' hide ' : '') . '" data-playlistid="' . esc_attr($options->playlistId)
                 . '" data-pagesize="' . intval($options->pageSize)
                 . '" data-pagetoken="' . esc_attr($prevPageToken)
@@ -2921,7 +2908,7 @@ class YouTubePrefsPro
                 . '" data-autonext="' . intval($options->autonext)
                 . '" data-hidethumbimg="' . intval($options->hidethumbimg)
                 . '" data-thumbplay="' . intval($options->thumbplay)
-                . ((self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 9 && $options->style == 'listview' && $options->showDsc) ? '" data-showdsc="' . intval($options->showDsc) : '')
+                . ((self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 9 && $options->style == 'listview') ? '" data-showdsc="' . intval($options->showDsc) : '')
                 . ((self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 9 && !in_array($options->thumbcrop, array('box', ''))) ? '" data-thumbcrop="' . $options->thumbcrop : '')
                 . '"><div class="epyt-arrow">&laquo;</div> <div>' . $txtprev . '</div></div>';
 
@@ -2930,7 +2917,7 @@ class YouTubePrefsPro
         $pagination .= '<div class="epyt-current">1</div><div class="epyt-pageseparator"> / </div><div class="epyt-totalpages">' . $totalPages . '</div>';
         $pagination .= '</div>';
 
-        $txtnext = self::$alloptions[self::$opt_gallery_customarrows] ? self::$alloptions[self::$opt_gallery_customnext] : _('Next');
+        $txtnext = self::$alloptions[self::$opt_gallery_customarrows] ? self::$alloptions[self::$opt_gallery_customnext] : __('Next', 'text_domain');
         $pagination .= '<div tabindex="0" role="button" class="epyt-pagebutton epyt-next' . (empty($nextPageToken) ? ' hide ' : '') . '" data-playlistid="' . esc_attr($options->playlistId)
                 . '" data-pagesize="' . intval($options->pageSize)
                 . '" data-pagetoken="' . esc_attr($nextPageToken)
@@ -2941,7 +2928,7 @@ class YouTubePrefsPro
                 . '" data-autonext="' . intval($options->autonext)
                 . '" data-hidethumbimg="' . intval($options->hidethumbimg)
                 . '" data-thumbplay="' . intval($options->thumbplay)
-                . ((self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && $options->style == 'listview' && $options->showDsc) ? '" data-showdsc="' . intval($options->showDsc) : '')
+                . ((self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && $options->style == 'listview') ? '" data-showdsc="' . intval($options->showDsc) : '')
                 . ((self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 9 && !in_array($options->thumbcrop, array('box', ''))) ? '" data-thumbcrop="' . $options->thumbcrop : '')
                 . '"><div>' . $txtnext . '</div> <div class="epyt-arrow">&raquo;</div></div>';
 
@@ -3061,7 +3048,7 @@ class YouTubePrefsPro
 
         if (isset($linkparams['live']) && $linkparams['live'] == '1')
         {
-            $live_error_msg = ' To embed live videos, please make sure you performed the <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">steps in this video</a> to create and save a proper server API key.';
+            $live_error_msg = __(' To embed live videos, please make sure you performed the <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">steps in this video</a> to create and save a proper server API key.', 'text_domain');
             if (isset(self::$alloptions[self::$opt_apikey]))
             {
                 if (isset($linkparams['channel']))
@@ -3207,6 +3194,11 @@ class YouTubePrefsPro
             $relstop = ' data-relstop="1" ';
         }
 
+        if (!empty($finalparams[self::$opt_loop]))
+        {
+            $relstop = '';
+        }
+
         if (self::$alloptions[self::$opt_dohl] == 1)
         {
             $locale = get_locale();
@@ -3309,7 +3301,7 @@ class YouTubePrefsPro
                 }
                 else
                 {
-                    $acctitle = ' title="YouTube player" ';
+                    $acctitle = ' title="' . __('YouTube player', 'text_domain') . '" ';
                 }
             }
             catch (Exception $e)
@@ -3319,7 +3311,7 @@ class YouTubePrefsPro
         }
         else
         {
-            $acctitle = ' title="YouTube player" ';
+            $acctitle = ' title="' . __('YouTube player', 'text_domain') . '" ';
         }
 
         // playlist cleanup
@@ -3610,7 +3602,7 @@ class YouTubePrefsPro
                     {
                         $_name = esc_attr(sanitize_text_field(str_replace("@", "&#64;", isset($json['items'][0]['snippet']['title']) ? $json['items'][0]['snippet']['title'] : '')));
                         $_description = esc_attr(sanitize_text_field(str_replace("@", "&#64;", isset($json['items'][0]['snippet']['description']) ? $json['items'][0]['snippet']['description'] : '')));
-                        $_description = empty($_description) ? "YouTube video" : $_description;
+                        $_description = empty($_description) ? __('YouTube video', 'text_domain') : $_description;
                         $_thumbnailUrl = esc_url("https://i.ytimg.com/vi/" . $vidid . "/0.jpg");
                         $_duration = isset($json['items'][0]['contentDetails']['duration']) ? $json['items'][0]['contentDetails']['duration'] : ''; // "T0H9M35S" "PT9M35S"
                         $_uploadDate = sanitize_text_field(isset($json['items'][0]['snippet']['publishedAt']) ? $json['items'][0]['snippet']['publishedAt'] : ''); // "2014-10-03T15:30:12.000Z"
@@ -3896,7 +3888,7 @@ class YouTubePrefsPro
     {
         if (!$url || !$post_id)
         {
-            return new WP_Error('missing', __('Please provide a valid URL and post ID', ''));
+            return new WP_Error('missing', __('Please provide a valid URL and post ID', 'text_domain'));
         }
 
         $post_title = get_the_title($post_id);
@@ -4003,20 +3995,20 @@ class YouTubePrefsPro
     {
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
-            self::$admin_page_hooks[] = add_menu_page('YouTube Settings', 'YouTube PRO', 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
+            self::$admin_page_hooks[] = add_menu_page(__('YouTube Settings', 'text_domain'), __('YouTube PRO', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
             self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'));
-            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', 'YouTube Analytics Dashboard', '<span class="wp-menu-image dashicons-before dashicons-chart-line"></span> PRO Analytics', 'manage_options', 'youtube-ep-analytics-dashboard', array(get_class(), 'epstats_show_options'));
+            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', __('YouTube Analytics Dashboard', 'text_domain'), '<span class="wp-menu-image dashicons-before dashicons-chart-line"></span> ' . __('PRO Analytics', 'text_domain'), 'manage_options', 'youtube-ep-analytics-dashboard', array(get_class(), 'epstats_show_options'));
 
             include_once(EPYTVI_INCLUDES_PATH . 'vi_admin_menu.php');
         }
         else
         {
-            self::$admin_page_hooks[] = add_menu_page('YouTube Settings', 'YouTube', 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
+            self::$admin_page_hooks[] = add_menu_page(__('YouTube Settings', 'text_domain'), __('YouTube', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
             self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'));
         }
-        self::$admin_page_hooks[] = add_submenu_page(null, 'YouTube Posts', 'YouTube Posts', 'manage_options', 'youtube-ep-glance', array(get_class(), 'glance_page'));
-        self::$admin_page_hooks[] = self::$wizard_hook = add_submenu_page(null, 'YouTube Wizard', 'YouTube Wizard', 'edit_posts', 'youtube-ep-wizard', array(get_class(), 'wizard'));
-        self::$admin_page_hooks[] = self::$onboarding_hook = add_submenu_page(null, 'YouTube Setup', 'YouTube Setup', 'manage_options', 'youtube-ep-onboarding', array(get_class(), 'ytprefs_show_onboarding'));
+        self::$admin_page_hooks[] = add_submenu_page(null, __('YouTube Posts', 'text_domain'), __('YouTube Posts', 'text_domain'), 'manage_options', 'youtube-ep-glance', array(get_class(), 'glance_page'));
+        self::$admin_page_hooks[] = self::$wizard_hook = add_submenu_page(null, __('YouTube Wizard', 'text_domain'), __('YouTube Wizard', 'text_domain'), 'edit_posts', 'youtube-ep-wizard', array(get_class(), 'wizard'));
+        self::$admin_page_hooks[] = self::$onboarding_hook = add_submenu_page(null, __('YouTube Setup', 'text_domain'), __('YouTube Setup', 'text_domain'), 'manage_options', 'youtube-ep-onboarding', array(get_class(), 'ytprefs_show_onboarding'));
     }
 
     public static function remove_stats_validation()
@@ -4051,7 +4043,7 @@ class YouTubePrefsPro
 
         if (!current_user_can('manage_options'))
         {
-            wp_die(__('You do not have sufficient permissions to access this page.'));
+            wp_die(__('You do not have sufficient permissions to access this page.', 'text_domain'));
         }
 
         if (self::$double_plugin)
@@ -4092,11 +4084,11 @@ class YouTubePrefsPro
             if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
             {
                 //// header
-                echo '<h1><span class="dashicons-before dashicons-chart-line"></span> ' . __('YouTube Analytics Dashboard') . "</h1>";
+                echo '<h1><span class="dashicons-before dashicons-chart-line"></span> ' . __('YouTube Analytics Dashboard', 'text_domain') . "</h1>";
                 ?>
                 <div class="ytindent chx">
                     <p>
-                        This page allows you to administer your YouTube Analytics Dashboard feature.
+                        <?php _e('This page allows you to administer your YouTube Analytics Dashboard feature.', 'text_domain'); ?>
                     </p>
 
                     <?php
@@ -4382,7 +4374,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update allows you to turn on or off the channel subscribe button within the wizard, and provides better compatibility with themes that use the Gutenberg block editor (see the Compatibility tab).";
+        $new_pointer_content .= "This update provides better compatibility with WordPress 5.5 for both Free and Pro versions.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -4999,7 +4991,7 @@ class YouTubePrefsPro
                             </p>
                             <p class="<?php echo self::vi_logged_in() || !empty($all[self::$opt_vi_active]) || !self::vi_ever_logged_in() ? 'hidden' : '' ?>">
                                 <input name="<?php echo self::$opt_vi_hide_monetize_tab; ?>" id="<?php echo self::$opt_vi_hide_monetize_tab; ?>" <?php checked($all[self::$opt_vi_hide_monetize_tab], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_vi_hide_monetize_tab; ?>"><b class="chktitle">Hide "Monetize" Feature:</b> Hide the tab(s) for the deprecated video intelligence feature.</label>
+                                <label for="<?php echo self::$opt_vi_hide_monetize_tab; ?>"><b class="chktitle">Hide "Monetize" Feature:</b> (deprecated) Hide the tab(s) for the deprecated video intelligence feature.</label>
                             </p>
                             <div id="not_live_content_scroll" class="p">
                                 <input name="<?php echo self::$opt_not_live_on; ?>" id="<?php echo self::$opt_not_live_on; ?>" <?php checked($all[self::$opt_not_live_on], 1); ?> type="checkbox" class="checkbox">
@@ -5144,7 +5136,7 @@ class YouTubePrefsPro
                         <h2>Visual YouTube Wizard Directions</h2>
                         <p>
                             While you're writing your post or page, you have the ability to search YouTube and insert videos, playlists, and even galleries right from your editor. Below are directions for each type of WordPress editor.
-                            For pagebuilder instructions, scroll down to the "Pagebuilder Tips" section.
+                            For <strong>pagebuilder instructions</strong>, scroll down to the "Pagebuilder Tips" section.
                         </p>
                         <h3>Classic Editor</h3>
                         <img class="wiztab-screenshots" src="<?php echo plugins_url('images/ss-wiz-classic.png', __FILE__) ?>">
@@ -5213,6 +5205,15 @@ class YouTubePrefsPro
                                 <iframe src="https://www.youtube.com/embed/7QNYw_g-7WM?rel=0" allowfullscreen="" frameborder="0"></iframe>
                             </div>
                         </div>
+                        <div class="wiztab-pagebuilder">
+                            <h3>Visual Composer</h3>
+                            <div class="epyt-fitvid">
+                                <iframe src="https://www.youtube.com/embed/FWBQc9XhAqM?rel=0" allowfullscreen="" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                        <p>
+                            If you don't see your page builder listed above, don't worry. For pretty much any page builder with a short code widget, you can also embed your video, gallery, live stream, or premiere by creating the short code using the plugin's wizard and then embedding the code in the short code widget or text widget of your page builder of choice.
+                        </p>
                     </section>
                     <section class="pattern" id="jumpgallery">
                         <h2>Gallery Settings and Directions</h2>
@@ -5277,7 +5278,7 @@ class YouTubePrefsPro
                             <p>
                                 <input name="<?php echo self::$opt_gallery_showpaging; ?>" id="<?php echo self::$opt_gallery_showpaging; ?>" <?php checked($all[self::$opt_gallery_showpaging], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_gallery_showpaging; ?>"><b class="chktitle">Show Pagination:</b> Show the Next/Previous buttons and page numbering.
-                                    It might be useful to hide pagination if you want your gallery to display just a subset of videos from a playlist or channel.  That is, only the first page of videos (defined by your page size) will be accessible to your visitors if these buttons are hidden.
+                                    It might be useful to hide pagination if you want your gallery to display just a subset of videos from a playlist or channel.  That is, only the first page of videos (defined by your page size) will be visible to your visitors if these buttons are hidden.
                                 </label>
                             </p>
                             <p>
@@ -5800,13 +5801,13 @@ class YouTubePrefsPro
                                 <label for="<?php echo self::$opt_stop_mobile_buffer; ?>">
                                     <b class="chktitle">Mobile Autoplay Problems: </b> 
                                     Autoplay works for desktop, but mobile devices don't allow autoplay due to network carrier data charges. For mobile devices, this option may help the player to properly display the video for the visitor to click on.
-                                    (<strong>Note:</strong> Desktop browsers like Chrome and Safari are moving towards preventing autoplay for any video. But, your chances are improved if you set your videos to initially start muted.)
+                                    (<strong>Note:</strong> Desktop browsers like <a href="https://developers.google.com/youtube/iframe_api_reference#Mobile_considerations" target="_blank">Chrome and Safari are moving towards preventing autoplay for any video</a>. But, your chances are improved if you set your videos to initially start muted.)
                                 </label>
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_ajax_compat; ?>" id="<?php echo self::$opt_ajax_compat; ?>" <?php checked($all[self::$opt_ajax_compat], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_ajax_compat; ?>">
-                                    <b class="chktitle">Ajax Theme:</b> <sup class="orange">BETA</sup>
+                                    <b class="chktitle">Ajax Theme:</b>
                                     If you have a theme that loads pages with AJAX transitions, try checking this option.
                                 </label>
                             </p>
@@ -5872,7 +5873,7 @@ class YouTubePrefsPro
                         </h3>
                         <p>
                             Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
-                            <br><span class="orange">PRO users: You can use the big <a href="<?php echo self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=protab' ?>" target="_blank">customize</a> buttons that you will see inside the wizard, instead of memorizing the following codes.</span>
+                            <br><span class="orange">PRO users: You can use the big <a href="<?php echo self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=manual' ?>" target="_blank">customize</a> buttons that you will see inside the wizard, instead of memorizing the following codes.</span>
                         </p>
                         <?php
                         _e('<ul class="reglist">');
