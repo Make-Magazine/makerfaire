@@ -14,13 +14,8 @@
  */
 class MSP_Admin_Assets {
 
-
-  /**
-   * __construct
-   */
-  function __construct() {
-
-  }
+  protected $panel_js_handler  = MSWP_SLUG .'-admin-scripts';
+  protected $global_js_handler = MSWP_SLUG .'-admin-global';
 
 
   public function enqueue_panel_assets (){
@@ -29,9 +24,9 @@ class MSP_Admin_Assets {
     $this->load_general_styles();
     $this->load_panel_styles();
 
+    $this->load_general_scripts();
     $this->add_general_variables();
     $this->add_general_script_localizations();
-    $this->load_general_scripts();
 
     // panel spesific assets
     if( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], array( 'edit', 'add' ) ) ) {
@@ -51,8 +46,8 @@ class MSP_Admin_Assets {
   public function enqueue_global_assets(){
 
     $this->load_global_styles();
-    $this->add_global_variables();
     $this->add_global_scripts();
+    $this->add_global_variables();
   }
 
 
@@ -64,7 +59,7 @@ class MSP_Admin_Assets {
 
   public function add_global_variables(){
     // load global variables about Master Slider
-    wp_localize_script( 'jquery', '__MS_GLOBAL', array(
+    wp_localize_script( $this->global_js_handler, '__MS_GLOBAL', array(
         'ajax_url'       => admin_url( 'admin-ajax.php' ),
         'admin_url'      => admin_url(),
         'menu_page_url'  => menu_page_url( MSWP_SLUG, false ),
@@ -75,9 +70,8 @@ class MSP_Admin_Assets {
   }
 
   private function add_global_scripts(){
-    wp_enqueue_script( MSWP_SLUG .'-admin-global', MSWP_AVERTA_ADMIN_URL . '/assets/js/global.js', array('jquery'), MSWP_AVERTA_VERSION, true );
+    wp_enqueue_script( $this->global_js_handler, MSWP_AVERTA_ADMIN_URL . '/assets/js/global.js', array('jquery'), MSWP_AVERTA_VERSION, true );
   }
-
 
   /**
    * Load scripts for master slider admin panel
@@ -125,8 +119,8 @@ class MSP_Admin_Assets {
           array( 'class' => 'ms-skin-metro'   , 'label' => 'Metro' )
       );
 
-    wp_localize_script( 'jquery', '__MSP_SKINS', apply_filters( 'masterslider_skins', $slider_skins ) );
-    wp_localize_script( 'jquery', '__MSP_SLIDER_ALIAS'  , '1' );
+    wp_localize_script( $this->panel_js_handler, '__MSP_SKINS', apply_filters( 'masterslider_skins', $slider_skins ) );
+    wp_localize_script( $this->panel_js_handler, '__MSP_SLIDER_ALIAS'  , '1' );
 
     // get and print slider id
     if ( isset( $_REQUEST['slider_id'] ) ) {
@@ -139,7 +133,7 @@ class MSP_Admin_Assets {
 
       if ( isset( $_REQUEST['action'] ) && 'add' == $_REQUEST['action'] ) {
         $slider_id = $mspdb->add_slider( array( 'status' => 'draft' ) );
-        wp_localize_script( 'jquery', '__MSP_SLIDER_ID', (string) $slider_id );
+        wp_localize_script( $this->panel_js_handler, '__MSP_SLIDER_ID', (string) $slider_id );
       }
     }
 
@@ -163,16 +157,16 @@ class MSP_Admin_Assets {
       $msp_preset_effect = empty( $msp_preset_effect ) ? NULL : $msp_preset_effect;
       $msp_buttons_style = empty( $msp_buttons_style ) ? NULL : $msp_buttons_style;
 
-      wp_localize_script( 'jquery', '__MSP_DATA'      , $msp_data    );
-      wp_localize_script( 'jquery', '__MSP_PRESET_STYLE'  , $msp_preset_style  );
-      wp_localize_script( 'jquery', '__MSP_PRESET_EFFECT' , $msp_preset_effect );
-      wp_localize_script( 'jquery', '__MSP_TYPE'      , $slider_type );
-      wp_localize_script( 'jquery', '__MSP_PRESET_BUTTON' , $msp_buttons_style );
+      wp_localize_script( $this->panel_js_handler, '__MSP_DATA'      , $msp_data    );
+      wp_localize_script( $this->panel_js_handler, '__MSP_PRESET_STYLE'  , $msp_preset_style  );
+      wp_localize_script( $this->panel_js_handler, '__MSP_PRESET_EFFECT' , $msp_preset_effect );
+      wp_localize_script( $this->panel_js_handler, '__MSP_TYPE'      , $slider_type );
+      wp_localize_script( $this->panel_js_handler, '__MSP_PRESET_BUTTON' , $msp_buttons_style );
     }
 
 
     // define panel directory path
-    wp_localize_script( 'jquery', '__MSP_PATH', MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/' );
+    wp_localize_script( $this->panel_js_handler, '__MSP_PATH', MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/' );
 
     $slider_panel_default_setting = array(
 
@@ -220,7 +214,7 @@ class MSP_Admin_Assets {
           'layerContent'  => 'Lorem Ipsum'
       );
 
-    wp_localize_script( 'jquery', '__MSP_DEF_OPTIONS', apply_filters( 'masterslider_panel_default_setting', $slider_panel_default_setting ) );
+    wp_localize_script( $this->panel_js_handler, '__MSP_DEF_OPTIONS', apply_filters( 'masterslider_panel_default_setting', $slider_panel_default_setting ) );
 
     do_action( 'masterslider_admin_add_panel_variables', $slider_type );
   }
@@ -236,7 +230,7 @@ class MSP_Admin_Assets {
     $uploads = wp_upload_dir();
 
     // define admin ajax address and master slider page
-    wp_localize_script( 'jquery', '__MS', array(
+    wp_localize_script( $this->panel_js_handler, '__MS', array(
       'ajax_url'       => admin_url( 'admin-ajax.php' ),
       'msp_menu_page'  => menu_page_url( MSWP_SLUG, false ),
       'msp_plugin_url' => MSWP_AVERTA_URL,
@@ -251,7 +245,7 @@ class MSP_Admin_Assets {
    */
   public function add_panel_script_localizations() {
 
-    wp_localize_script( 'jquery', '__MSP_LAN', apply_filters( 'masterslider_admin_localize', array(
+    wp_localize_script( $this->panel_js_handler, '__MSP_LAN', apply_filters( 'masterslider_admin_localize', array(
 
       // CallbacksController.js
       'cb_001' => __( 'On slide change start', 'master-slider' ),
@@ -393,7 +387,7 @@ class MSP_Admin_Assets {
    */
   public function add_general_script_localizations() {
 
-    wp_localize_script( 'jquery', '__MSP_GEN_LAN', apply_filters( 'masterslider_admin_general_localize', array(
+    wp_localize_script( $this->panel_js_handler, '__MSP_GEN_LAN', apply_filters( 'masterslider_admin_general_localize', array(
 
       'genl_001' => __( 'The changes you made will be lost if you navigate away from this page. To exit preview mode click on close (X) button.', 'master-slider' ),
       'genl_002' => __( 'Master Slider Preview', 'master-slider' ),

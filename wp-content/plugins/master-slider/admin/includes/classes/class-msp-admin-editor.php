@@ -28,7 +28,7 @@ class MSP_Admin_Editor {
 	public function __construct() {
 		add_action( 'admin_head', array( $this, 'add_shortcode_button' ) );
 		// Load admin Stylesheet and JavaScript.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts') );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts'), 12 );
 		add_filter( 'tiny_mce_version', array( $this, 'refresh_mce' ) );
 		// add_filter( 'mce_external_languages', array( $this, 'add_tinymce_lang' ), 10, 1 );
 	}
@@ -55,7 +55,7 @@ class MSP_Admin_Editor {
 	public function enqueue_admin_scripts() {
 
 		// define admin ajax address and master slider page
-		wp_localize_script( 'jquery', '__MS_EDITOR', array(
+		wp_localize_script( MSWP_SLUG .'-admin-scripts', '__MS_EDITOR', array(
 			'sliders'       => get_masterslider_names( true )
 		));
 	}
