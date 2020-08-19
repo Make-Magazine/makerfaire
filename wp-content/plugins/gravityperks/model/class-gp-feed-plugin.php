@@ -39,10 +39,21 @@ abstract class GP_Feed_Plugin extends GFFeedAddOn {
 
 		parent::pre_init();
 
+		// Since pre_init() is called from the __construct() and checking for add-on-specific requirements will call the
+		// constructor again, we can't check for requirements in pre_init(). Recursion is coming for us all.
+		if ( ! has_filter( 'init', array( $this, 'disable_init_when_requirements_unmet' ) ) ) {
+			add_action( 'init', array( $this, 'disable_init_when_requirements_unmet' ), 1 );
+		}
+
+	}
+
+	/**
+	 * Prevent plugin from initializing if requirements are not met.
+	 */
+	public function disable_init_when_requirements_unmet() {
 		if ( ! $this->check_requirements() ) {
 			remove_action( 'init', array( $this, 'init' ) );
 		}
-
 	}
 
 	public function init() {
