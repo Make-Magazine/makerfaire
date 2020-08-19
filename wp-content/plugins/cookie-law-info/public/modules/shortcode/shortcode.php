@@ -75,7 +75,9 @@ class Cookie_Law_Info_Shortcode {
                 jQuery('.cli_manage_current_consent').click(function(){
                     jQuery('#cookie-law-info-again').click();
                     setTimeout(function(){
-                        jQuery(window).scrollTop(jQuery('#cookie-law-info-bar').offset().top);
+                        if( jQuery('#cookie-law-info-bar').length > 0) {
+                            jQuery(window).scrollTop(jQuery('#cookie-law-info-bar').offset().top);
+                        }
                     },1000);
                 });
             });

@@ -268,55 +268,58 @@ var CLI=
 	},
 	privacyReadmore:function()
 	{	
-		var el= jQuery('.cli-privacy-content .cli-privacy-content-text'),
-		clone= el.clone(),
-		originalHtml= clone.html(),
-		originalHeight= el.outerHeight(),
-		Trunc = {
-		addReadmore:function(textBlock)
-		{	
-			if(textBlock.html().length > 250)
-			{
-				jQuery('.cli-privacy-readmore').show();
-			}
-			else
-			{
-				jQuery('.cli-privacy-readmore').hide();
-			}
-		},
-		truncateText : function( textBlock ) {   
-			var strippedText = jQuery('<div />').html(textBlock.html()); 
-			strippedText.find('table').remove();        
-			textBlock.html(strippedText.html());
-			currentText = textBlock.text();
-			if(currentText.trim().length > 250){
-				var newStr = currentText.substring(0, 250);
-				textBlock.empty().html(newStr).append('...');
-			}
-		},     
-		replaceText: function ( textBlock, original ){
-			return textBlock.html(original);      
-		}  
-		
-		};
-		Trunc.addReadmore(el);
-		Trunc.truncateText(el);
-		jQuery('a.cli-privacy-readmore').click(function(e){
-			e.preventDefault();
-			if(jQuery('.cli-privacy-overview').hasClass('cli-collapsed'))
+		var el= jQuery('.cli-privacy-content .cli-privacy-content-text');
+		if( el.length > 0 ) {
+			clone= el.clone(),
+			originalHtml= clone.html(),
+			originalHeight= el.outerHeight(),
+			Trunc = {
+			addReadmore:function(textBlock)
 			{	
-				Trunc.truncateText(el);
-				jQuery('.cli-privacy-overview').removeClass('cli-collapsed');
-				el.css('height', '100%');
-			}
-			else
-			{
-				jQuery('.cli-privacy-overview').addClass('cli-collapsed');
-				Trunc.replaceText(el, originalHtml);
-			}
+				if(textBlock.html().length > 250)
+				{
+					jQuery('.cli-privacy-readmore').show();
+				}
+				else
+				{
+					jQuery('.cli-privacy-readmore').hide();
+				}
+			},
+			truncateText : function( textBlock ) {   
+				var strippedText = jQuery('<div />').html(textBlock.html()); 
+				strippedText.find('table').remove();        
+				textBlock.html(strippedText.html());
+				currentText = textBlock.text();
+				if(currentText.trim().length > 250){
+					var newStr = currentText.substring(0, 250);
+					textBlock.empty().html(newStr).append('...');
+				}
+			},     
+			replaceText: function ( textBlock, original ){
+				return textBlock.html(original);      
+			}  
 			
-			
-		});
+			};
+			Trunc.addReadmore(el);
+			Trunc.truncateText(el);
+			jQuery('a.cli-privacy-readmore').click(function(e){
+				e.preventDefault();
+				if(jQuery('.cli-privacy-overview').hasClass('cli-collapsed'))
+				{	
+					Trunc.truncateText(el);
+					jQuery('.cli-privacy-overview').removeClass('cli-collapsed');
+					el.css('height', '100%');
+				}
+				else
+				{
+					jQuery('.cli-privacy-overview').addClass('cli-collapsed');
+					Trunc.replaceText(el, originalHtml);
+				}
+				
+				
+			});
+		}
+		
 	},
 	attachDelete:function()
 	{
@@ -909,7 +912,9 @@ var CLI=
 			jQuery(bar).attr('data-cli-style',styleClass);
 		}
 	},
-	CookieLawInfo_Callback: function( enableBar = true, enableBlocking = true ) {
+	CookieLawInfo_Callback: function( enableBar, enableBlocking ) {
+		enableBar = typeof enableBar !== 'undefined' ? enableBar : true;
+		enableBlocking = typeof enableBlocking !== 'undefined' ? enableBlocking : true;
 		if( CLI.js_blocking_enabled === true && Boolean( Cli_Data.custom_integration ) === true ) {
 			cliBlocker.cookieBar( enableBar );
 			cliBlocker.runScripts( enableBlocking );
@@ -961,16 +966,17 @@ var cliBlocker =
 		
 		
 	},
-	cookieBar: function( showbar = true )
+	cookieBar: function( showbar )
 	{	
+		showbar = typeof showbar !== 'undefined' ? showbar : true;
 		cliBlocker.cliShowBar = showbar;
 		if(cliBlocker.cliShowBar === false)
 		{
 			CLI.bar_elm.hide();
 			CLI.showagain_elm.hide();
-			CLI.settingsModal.hide();
+			CLI.settingsModal.removeClass('cli-blowup cli-out');
 			CLI.hidePopupOverlay();
-			jQuery('.cli-modal-backdrop').hide();
+			jQuery(".cli-settings-overlay").removeClass("cli-show");
 		}	
 		else
 		{
@@ -986,8 +992,9 @@ var cliBlocker =
 			jQuery('.cli-modal-backdrop').show();
 		}
 	},
-    runScripts:function( blocking = true )
+    runScripts:function( blocking )
 	{		
+		blocking = typeof blocking !== 'undefined' ? blocking : true;
 		cliBlocker.blockingStatus = blocking;
 		srcReplaceableElms = ['iframe','IFRAME','EMBED','embed','OBJECT','object','IMG','img'];
 		var genericFuncs = 
