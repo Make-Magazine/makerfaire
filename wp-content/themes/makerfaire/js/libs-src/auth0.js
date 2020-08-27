@@ -56,16 +56,8 @@ window.addEventListener('load', function() {
 		if (isAuthenticated()) {
 			profileView.style.display = 'flex';
 			getProfile();
-
-			//login to wordpress if not already
-			//check for wordpress cookie
-			if ( !jQuery( '.logged-in' ).length ) { // is the user logged in?
-				//wait .5 second for auth0 data to be returned from getProfile
-				setTimeout(function(){ WPlogin(); }, 0500); //login to wordpress
-			}
 		} else {
 			profileView.style.display = 'none';
-			//WPlogout();
 		}
 	}
 
@@ -96,7 +88,9 @@ window.addEventListener('load', function() {
 				if(document.querySelector(".logged-in") === null) {
 					document.querySelector("#LoginBtn").click();
 				}
-
+				if (err) {
+					errorMsg("There was an issue logging in at the getProfile phase. That error was: " + JSON.stringify(err));
+				}
 			}
 		});
 
@@ -130,7 +124,7 @@ window.addEventListener('load', function() {
 					 location.href = templateUrl;
 				} else {
 					 alert( "I'm sorry. We had an issue logging you into our system. Please try the login again." );
-					 errorMsg(userProfile.email + " had an issue logging in at the WP Login phase. That error is: " + JSON.stringify(error));
+					 errorMsg(userProfile.email + " had an issue logging in at the WP Login phase. That error is: " + JSON.stringify("hello" + xhr));
 				}
 			});
 

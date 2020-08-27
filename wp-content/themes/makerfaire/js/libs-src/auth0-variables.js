@@ -5,4 +5,4 @@ if (typeof templateUrl === 'undefined') {
   var templateUrl = window.location.origin;
 }
 var AUTH0_CALLBACK_URL = templateUrl + "/authenticate-redirect/";
-var AUTH0_REDIRECT_URL = templateUrl;
+var AUTH0_REDIRECT_URL = window.location;
