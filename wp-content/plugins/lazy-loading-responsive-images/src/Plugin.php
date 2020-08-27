@@ -84,6 +84,9 @@ class Plugin {
 		// Get the disabled classes and save in property.
 		$this->disabled_classes = $this->settings->get_disabled_classes();
 
+		// Disable core lazy loading.
+		add_filter( 'wp_lazy_loading_enabled', '__return_false' );
+
 		// Add link to settings in the plugin list.
 		add_filter( 'plugin_action_links', array(
 			$this,
@@ -207,15 +210,12 @@ class Plugin {
             'disable_html_ns' => true,
         ) );
 
-		// Preserve html entities, script tags and conditional IE comments.
+		// Preserve html entities and conditional IE comments.
 		// @link https://github.com/ivopetkov/html5-dom-document-php.
 		$content = preg_replace( '/&([a-zA-Z]*);/', 'lazy-loading-responsive-images-entity1-$1-end', $content );
 		$content = preg_replace( '/&#([0-9]*);/', 'lazy-loading-responsive-images-entity2-$1-end', $content );
 		$content = preg_replace( '/<!--\[([\w ]*)\]>/', '<!--[$1]>-->', $content );
 		$content = str_replace( '<![endif]-->', '<!--<![endif]-->', $content );
-		$content = str_replace( '<script>', '<!--<script>', $content );
-		$content = str_replace( '<script ', '<!--<script ', $content );
-		$content = str_replace( '</script>', '</script>-->', $content );
 
 		// Load the HTML.
 		$dom = $html5->loadHTML( $content );
@@ -315,16 +315,13 @@ class Plugin {
 			}
 		}
 
-		// Restore the entities and script tags.
+		// Restore the entities and conditional comments.
 		// @link https://github.com/ivopetkov/html5-dom-document-php/blob/9560a96f63a7cf236aa18b4f2fbd5aab4d756f68/src/HTML5DOMDocument.php#L343.
 		if ( strpos( $content, 'lazy-loading-responsive-images-entity') !== false || strpos( $content, '<!--<script' ) !== false ) {
 			$content = preg_replace('/lazy-loading-responsive-images-entity1-(.*?)-end/', '&$1;', $content );
 			$content = preg_replace('/lazy-loading-responsive-images-entity2-(.*?)-end/', '&#$1;', $content );
 			$content = preg_replace( '/<!--\[([\w ]*)\]>-->/', '<!--[$1]>', $content );
 			$content = str_replace( '<!--<![endif]-->', '<![endif]-->', $content );
-			$content = str_replace( '<!--<script>', '<script>', $content );
-			$content = str_replace( '<!--<script ', '<script ', $content );
-			$content = str_replace( '</script>-->', '</script>', $content );
 		}
 
 		return $content;
@@ -444,16 +441,6 @@ class Plugin {
 		// Set data-src value.
 		$img->setAttribute( 'data-src', $src );
 
-		if ( '1' === $this->settings->get_load_aspectratio_plugin() ) {
-			// Get width and height.
-			$img_width  = $img->getAttribute( 'width' );
-			$img_height = $img->getAttribute( 'height' );
-
-			if ( '' !== $img_width && '' !== $img_height ) {
-				$img->setAttribute( 'data-aspectratio', "$img_width/$img_height" );
-			}
-		}
-
 		if ( '1' === $this->settings->get_load_native_loading_plugin() ) {
 			$img->setAttribute( 'loading', 'lazy' );
 		}
@@ -467,7 +454,22 @@ class Plugin {
 		// Set the class string.
 		$img->setAttribute( 'class', $classes );
 
+		// Get width and height.
+		$img_width  = $img->getAttribute( 'width' );
+		$img_height = $img->getAttribute( 'height' );
+
 		// Set data URI for src attribute.
+		if ( '' !== $img_width && '' !== $img_height ) {
+			// We have image width and height, we can set a inline SVG to prevent content jumps.
+			$svg_placeholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {$img_width} {$img_height}'%3E%3C/svg%3E";
+			$svg_placeholder_srcset = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20{$img_width}%20{$img_height}%22%3E%3C%2Fsvg%3E";
+			$img->setAttribute( 'src', $svg_placeholder );
+			if ( $img->hasAttribute( 'srcset' ) ) {
+				$img->setAttribute( 'srcset', "$svg_placeholder_srcset {$img_width}w" );
+			}
+
+			return $dom;
+		}
 		$img->setAttribute( 'src', $this->src_placeholder );
 
 		return $dom;
@@ -687,8 +689,22 @@ class Plugin {
 		$noscript = $dom->createElement( 'noscript' );
 		$noscript_node = $elem->parentNode->insertBefore( $noscript, $elem );
 
+		// Create copy of media element.
+		$noscript_media_fallback_elem = $elem->cloneNode( true );
+
+		/**
+		 * Array of HTML attributes that should be stripped from the fallback element in noscript.
+		 * 
+		 * @param array Array of elements to strip from fallback.
+		 */
+		$attrs_to_strip_from_fallback = (array) apply_filters( 'lazy_loader_attrs_to_strip_from_fallback_elem', [] );
+
+		foreach ( $attrs_to_strip_from_fallback as $attr_to_strip ) {
+			$noscript_media_fallback_elem->removeAttribute( $attr_to_strip );
+		}
+
 		// Add a copy of the media element to the noscript.
-		$noscript_node->appendChild( $elem->cloneNode( true ) );
+		$noscript_node->appendChild( $noscript_media_fallback_elem );
 
 		return $dom;
 	}
@@ -715,12 +731,6 @@ class Plugin {
 		if ( '1' === $this->settings->get_load_unveilhooks_plugin() || '1' === $this->settings->get_enable_for_audios() || '1' === $this->settings->get_enable_for_videos() || '1' === $this->settings->get_enable_for_background_images() ) {
 			// Enqueue unveilhooks plugin.
 			wp_enqueue_script( 'lazysizes-unveilhooks', plugins_url( '/lazy-loading-responsive-images/js/ls.unveilhooks.min.js' ), array( 'lazysizes' ), false, true );
-		}
-
-		// Check if unveilhooks plugin should be loaded.
-		if ( '1' === $this->settings->get_load_aspectratio_plugin() ) {
-			// Enqueue unveilhooks plugin.
-			wp_enqueue_script( 'lazysizes-aspectratio', plugins_url( '/lazy-loading-responsive-images/js/ls.aspectratio.min.js' ), array( 'lazysizes' ), false, true );
 		}
 
 		// Check if native loading plugin should be loaded.

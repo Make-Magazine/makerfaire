@@ -1,17 +1,17 @@
 [
     {
         "name": "masterminds/html5",
-        "version": "2.7.0",
-        "version_normalized": "2.7.0.0",
+        "version": "2.7.3",
+        "version_normalized": "2.7.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Masterminds/html5-php.git",
-            "reference": "104443ad663d15981225f99532ba73c2f1d6b6f2"
+            "reference": "aad73dbfefd71d46072138109ce1288d96c329cc"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/104443ad663d15981225f99532ba73c2f1d6b6f2",
-            "reference": "104443ad663d15981225f99532ba73c2f1d6b6f2",
+            "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/aad73dbfefd71d46072138109ce1288d96c329cc",
+            "reference": "aad73dbfefd71d46072138109ce1288d96c329cc",
             "shasum": ""
         },
         "require": {
@@ -25,7 +25,7 @@
             "sami/sami": "~2.0",
             "satooshi/php-coveralls": "1.0.*"
         },
-        "time": "2019-07-25T07:03:26+00:00",
+        "time": "2020-07-05T07:53:37+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {

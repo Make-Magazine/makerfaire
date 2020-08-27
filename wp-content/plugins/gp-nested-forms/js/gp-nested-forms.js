@@ -195,7 +195,8 @@
 		self.getDefaultButtonObserver = function() {
 			return new MutationObserver( function( mutations ) {
 				mutations.forEach(function(mutation) {
-					if( mutation.type == 'attributes' && ( mutation.attributeName == 'style' || mutation.attributeName == 'disabled' ) ) {
+					if( mutation.type == 'attributes' && ( mutation.attributeName == 'style' || mutation.attributeName == 'disabled' )
+						&& ! document.querySelector('.gpnf-spinner') ) {
 						self.addModalButtons();
 					}
 				} );
@@ -552,7 +553,6 @@
 
             if( window['gformInitDatepicker'] ) {
 				self.$modal.find( '.datepicker' ).each( function() {
-					console.log( 'init', $( this ) );
 					gformInitSingleDatepicker( $( this ) );
 				} );
             }

@@ -417,7 +417,7 @@
                     fixDims: function (lity_event, lity_instance)
                     {
                         var $ifm = $(lity_event.target).find('iframe');
-                        if (($ifm.height() === 0 || $ifm.width() === 0) && !$ifm.parent().parent().hasClass('lity-content'))
+                        if (($ifm.height() === 0 || $ifm.width() === 0 || $ifm.css('position') !== 'absolute') && !$ifm.parent().parent().hasClass('lity-content'))
                         {
                             var fwvwrap = document.createElement('div');
                             fwvwrap.className = 'fluid-width-video-wrapper';
@@ -663,6 +663,7 @@
                                                 hidethumbimg: $(this).data('hidethumbimg'),
                                                 style: $(this).data('style'),
                                                 thumbcrop: $(this).data('thumbcrop'),
+                                                showDsc: $(this).data('showdsc'),
                                                 thumbplay: $(this).data('thumbplay')
                                             }
                                         };

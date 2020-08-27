@@ -3,7 +3,7 @@
  * Plugin Name: Gravity Perks
  * Plugin URI: https://gravitywiz.com/
  * Description: Effortlessly install and manage small functionality enhancements (aka "perks") for Gravity Forms.
- * Version: 2.1.9
+ * Version: 2.1.11
  * Author: Gravity Wiz
  * Author URI: https://gravitywiz.com/
  * License: GPL2
@@ -11,7 +11,7 @@
  * Domain Path: /languages
  */
 
-define( 'GRAVITY_PERKS_VERSION', '2.1.9' );
+define( 'GRAVITY_PERKS_VERSION', '2.1.11' );
 
 /**
  * Include the perk model as early as possible to when Perk plugins are loaded, they can safely extend

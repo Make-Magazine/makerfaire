@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.0-beta-8.64
+
+	- Fixed an issue where submit button would flash briefly on nested form modal before saving the entry.
+
 ## 1.0-beta-8.63
 
 	- Added a more verbose notice when nested form and fields are not set.

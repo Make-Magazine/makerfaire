@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.13
+
+	- Fixed dependency on jQuery.migrate that has been removed as of WordPress 5.5.
+
 ## 1.2.12
 
 	- Fixed issue where checkbox limits were not correctly applied on AJAX-enabled forms when a Checkbox field was hidden by conditional logic by default.
