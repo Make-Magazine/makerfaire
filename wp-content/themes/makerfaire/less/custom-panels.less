@@ -1696,21 +1696,23 @@
 				.slide-info-section { margin-top: 15px; }
 			}
 		}
-		.owl-prev, .owl-next {
-			position: absolute;
-			bottom: 35%;
-			width: 100px;
-			height: 150px;
-			color: #fff;
-			font-size: 84px;
-		   text-shadow: 1px 1px 10px #000000;
-			&:focus {outline:0;}
-		}
-		.owl-prev {
-			left: 0;
-		}
-		.owl-next {
-			right: 0;
+		.owl-nav {
+			button.owl-prev, button.owl-next {
+				position: absolute;
+				bottom: 35%;
+				width: 100px;
+				height: 150px;
+				color: #fff;
+				font-size: 84px;
+				text-shadow: 1px 1px 10px #000000;
+				&:focus {outline:0;}
+			}
+			button.owl-prev {
+				left: 0;
+			}
+			button.owl-next {
+				right: 0;
+			}
 		}
 		.owl-dots {
 			display: flex;
