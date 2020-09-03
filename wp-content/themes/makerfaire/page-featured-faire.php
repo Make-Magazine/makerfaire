@@ -32,7 +32,7 @@ get_header(); ?>
             endif;
             echo '<img src="' . $sub_field_3['url'] . '" alt="Featured Maker Faire Image" class="img-responsive lazyload" />';
             echo '<h4 class="featured-faire-date">' . $sub_field_4 . '</h4>';
-            echo '<h3 class="featured-faire-title clear">' . $sub_field_1 . '</h3>';
+            echo '<h3 class="featured-faire-title">' . $sub_field_1 . '</h3>';
             echo '<div class="clearfix"></div>';
             if( get_sub_field('faire_url') ):
               echo '</a>';
