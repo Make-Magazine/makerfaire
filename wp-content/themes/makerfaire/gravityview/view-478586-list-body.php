@@ -128,6 +128,8 @@ $entries   = $tableData['data'];
         if($entryData['form_type']=='Sponsor'||$entryData['form_type']=='Startup Sponsor')
           $dispEditPub = false;
 
+        //turning off the view/edit public information link for empire state maker faire as it isn't working
+        $dispEditPub=false;
          // NOTE (ts): this seems to be duplication; commenting for now, delete when done testing
         //if form type = sponsor or startup do not display
       //   if($entryData['form_type']=='Sponsor'||$entryData['form_type']=='Startup Sponsor')
@@ -193,7 +195,7 @@ $entries   = $tableData['data'];
             </div> <!-- close exhibitID -->
 
             <div>
-              <?php
+              <?php              
               if($dispEditPub) { ?>
                 <span class="editLink">
                   <a href="<?php echo $viewEditLink;?>">
