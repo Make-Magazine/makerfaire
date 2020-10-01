@@ -58,7 +58,7 @@ if (isset($entry->errors)) {
 
         $results = $wpdb->get_row($formSQL);
         if ($wpdb->num_rows > 0) {
-            $faire = $slug = $results->faire_name;
+            $faire = $slug = $results->faire_name;            
             $faireShort = $results->faire;
             $faireID = $results->id;
             $show_sched = $results->show_sched;
@@ -757,7 +757,7 @@ function displayEntryFooter() {
     global $wpdb;
     global $faireID;
     global $faire;
-
+    
     global $faire_year;
     global $show_sched;
     global $backMsg;
@@ -775,6 +775,9 @@ function displayEntryFooter() {
     if (strpos($faire, 'virtual') !== false) {
         $faire_location = "";
         $faire_link = "";
+    }else{
+        $faire_location = '';
+        $faire_link = '/'.$url_sub_path;
     }
 
     // we're going to check if the schedule page exists
@@ -815,9 +818,9 @@ function displayEntryFooter() {
 		        <a class="btn universal-btn" href="' . $faire_map . '"><h4>Download Map</h4></a>
 		    </div>';
     }
-    if ($faire != '' && $faire_location != '') {
+    if ($faire_link != '' || $faire_location != '') {
         $return .= '<div class="faireAction-box">
-		         <a class="btn universal-btn" href="' . $faire_link . '"><h4>' . $faire_location . ' Home</h4></a>
+		         <a class="btn universal-btn" href="' . $faire_link . '"><h4>' . ($faire_location!=''?$faire_location:'Faire') . ' Home</h4></a>
                     </div>';
     }
     $return .= '</div>';
