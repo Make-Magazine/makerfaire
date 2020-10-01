@@ -94,24 +94,6 @@ function make_add_acf_blocks() {
             'keywords' => array('featured', 'makers', 'square', 'dynamic', 'panel'),
         ));
         acf_register_block_type(array(
-            'name' => 'featured_makers_panel_circle',
-            'title' => __('Featured Makers (Circle images)'),
-            'render_callback' => 'call_ACF_block_panels',
-            'category' => 'make-panels',
-            'icon' => 'admin-comments',
-            'mode' => 'auto',
-            'keywords' => array('featured', 'makers', 'circle', 'panel'),
-        ));
-        acf_register_block_type(array(
-            'name' => 'featured_makers_panel_circle_dynamic',
-            'title' => __('Featured Makers (Circle images) - Dynamic Panel'),
-            'render_callback' => 'call_ACF_block_panels',
-            'category' => 'make-panels',
-            'icon' => 'admin-comments',
-            'mode' => 'auto',
-            'keywords' => array('featured', 'makers', 'circle', 'dynamic', 'panel'),
-        ));
-        acf_register_block_type(array(
             'name' => 'featured_events',
             'title' => __('Featured Events'),
             'render_callback' => 'call_ACF_block_panels',
