@@ -249,6 +249,8 @@ function getMTMentries($formIDs, $faireID) {
             if ($faireID == 'VMF2020') {
                 $locations = array(html_entity_decode(get_CPT_name($result->area)));
             }
+            if($locations==NULL)
+                $locations = '';
             $data['entity'][] = array(
                 'id' => $result->entry_id,
                 'link' => '/maker/entry/'.$result->entry_id,
