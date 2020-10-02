@@ -60,16 +60,16 @@
                 "class": "",
                 "id": ""
             },
-            "layout": "vertical",
             "choices": {
-                "4": 4,
-                "8": 8
+                "3": "3",
+                "6": "6"
             },
-            "default_value": 4,
-            "other_choice": 0,
-            "save_other_choice": 0,
             "allow_null": 0,
-            "return_format": "value"
+            "other_choice": 0,
+            "default_value": 4,
+            "layout": "vertical",
+            "return_format": "value",
+            "save_other_choice": 0
         },
         {
             "key": "field_mk56fc6fc3dc4a3",
@@ -216,5 +216,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1596742297
+    "modified": 1601592476
 }
