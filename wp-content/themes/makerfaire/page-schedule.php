@@ -36,6 +36,7 @@ if ($displayNav) {
             $sql = 'select * from wp_mf_faire where url_path="' . $parent_slug . '";';
             $faireData = $wpdb->get_row($sql);
             $faire = $faireData->faire;
+            $timeZone = $faireData->time_zone;
             ?>			
             <script type="text/javascript">
                 printScheduleEvent = function () {
@@ -55,7 +56,7 @@ if ($displayNav) {
                     <input type="hidden" id="faire"     value="<?php echo $faire; ?>" />
                     <input type="hidden" id="faire_st"  value="<?php echo $faireData->start_dt; ?>" />
                     <input type="hidden" id="faire_end" value="<?php echo $faireData->end_dt; ?>" />
-
+                    <input type="hidden" id="faire_tz"  value="<?php echo $timeZone; ?>" />
 
                     <div class="schedule-wrapper">			
                         <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
@@ -162,49 +163,50 @@ if ($displayNav) {
                                                 </div>
 
                                             </div>
-										<?php } ?>
-											<div class="sched-col-4">
-                                                <div class="faux-checkbox">
-                                                    <label>Featured</label>
-                                                    <ul class="nav nav-pills">
-                                                        <li class="nav-item">
-                                                            <button ng-class="{'ng-hide':showFeatured == 'Featured'}" type="button" ng-click="schedSearch.featured = 'Featured';showFeatured = 'Featured';" class="btn btn-default">&nbsp;</button>
-                                                        </li>
-                                                        <li class="nav-item">
-                                                            <button ng-init="showFeatured = schedSearch.featured" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="schedSearch.featured = '';showFeatured = '';" class="btn btn-default"><i class="fas fa-check"></i></button>
-                                                        </li>   
-                                                    </ul>
-                                                </div>
-                                            </div>
-										<?php if ($faireType == "VMF") { ?>
-											<div class="sched-col-4">
-												<div class='timezone-wrapper'>
-													<span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone("America/Los_Angeles"); ?>
-												</div>
-											</div>
-                                        <?php } 
-										if ($faireType != "VMF") { ?>
-
+                                        <?php } ?>
                                         <div class="sched-col-4">
-                                            <div class="dropdown" ng-hide="true">
-                                                <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                    <span ng-show="filterdow != ''">{{filterdow}}</span>
-                                                    <span ng-hide="true">All Days</span>
-                                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
-                                                </button>
-
-                                                <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
-                                                    <li>
-                                                        <a ng-click="setDateFilter('')" class="pointer-on-hover"><?php _e("All Days", 'makerfaire') ?></a>
+                                            <div class="faux-checkbox">
+                                                <label>Featured</label>
+                                                <ul class="nav nav-pills">
+                                                    <li class="nav-item">
+                                                        <button ng-class="{'ng-hide':showFeatured == 'Featured'}" type="button" ng-click="schedSearch.featured = 'Featured';showFeatured = 'Featured';" class="btn btn-default">&nbsp;</button>
                                                     </li>
-
-                                                    <li ng-repeat="dayOfWeek in dates">
-                                                        <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
-                                                    </li>
+                                                    <li class="nav-item">
+                                                        <button ng-init="showFeatured = schedSearch.featured" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="schedSearch.featured = '';showFeatured = '';" class="btn btn-default"><i class="fas fa-check"></i></button>
+                                                    </li>   
                                                 </ul>
                                             </div>
-                                        </div> 
-										<?php } ?>
+                                        </div>
+                                        <?php if ($faireType == "VMF") { ?>
+                                            <div class="sched-col-4">
+                                                <div class='timezone-wrapper'>
+                                                    <span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone($timeZone); ?>
+                                                </div>
+                                            </div>
+                                        <?php }
+                                        if ($faireType != "VMF") {
+                                            ?>
+
+                                            <div class="sched-col-4">
+                                                <div class="dropdown" ng-hide="true">
+                                                    <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                        <span ng-show="filterdow != ''">{{filterdow}}</span>
+                                                        <span ng-hide="true">All Days</span>
+                                                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+                                                        <li>
+                                                            <a ng-click="setDateFilter('')" class="pointer-on-hover"><?php _e("All Days", 'makerfaire') ?></a>
+                                                        </li>
+
+                                                        <li ng-repeat="dayOfWeek in dates">
+                                                            <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div> 
+                                        <?php } ?>
                                     </div> 
                                 </div>
                                 <div class="calendar-wrapper">
