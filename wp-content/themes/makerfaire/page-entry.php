@@ -781,9 +781,18 @@ function displayEntryFooter() {
     }
 
     // we're going to check if the schedule page exists
-    $scheduleStatus = get_page_by_path('/' . $url_sub_path . '/schedule/');
-    $mtmStatus = get_page_by_path('/' . $url_sub_path . '/meet-the-makers/');
-
+    //find the parent page
+    $parentPage = get_page_by_path('/' . $url_sub_path.'/');    
+    
+    $args = array('parent'=> $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-meet-the-makers.php');
+    $mtmPages = get_pages($args);    
+    $mtmPage = (isset($mtmPages[0])?$mtmPages[0]:'');
+    
+    $args = array('parent'=> $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-schedule.php');
+    $schedulePages = get_pages($args);         
+    
+    $schedulePage = (isset($schedulePages[0])?$schedulePages[0]:'');
+            
     $return = '';
     $return .= '<div class="faireActions container">';
 
@@ -792,7 +801,7 @@ function displayEntryFooter() {
         $url = parse_url(wp_get_referer()); //getting the referring URL
         $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
         $path = explode("/", $url['path']); // splitting the path
-        $backlink = "/" . $url_sub_path . "/meet-the-makers/";
+        $backlink = ($mtmPage && isset($mtmPage->guid)?$mtmPage->guid:'');
         $backMsg = 'See all ' . $faire_year . ' makers';
 
         //overwrite the backlink to send makers back to MAT if $makerEdit = true
@@ -801,15 +810,15 @@ function displayEntryFooter() {
             $backMsg = 'Back to Your Maker Faire Portal';
         }
 
-        if ($mtmStatus && $mtmStatus->post_status == 'publish' || $backlink == "/manage-entries/") {
+        if ($mtmPage && isset($mtmPage->post_status) && $mtmPage->post_status == 'publish' || $backlink == "/manage-entries/") {
             $return .= '<div class="faireAction-box">
 		            <a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
 			</div>';
         }
     }
-    if ($scheduleStatus && $scheduleStatus->post_status == 'publish') {
+    if ($schedulePage && isset($schedulePage->post_status) && $schedulePage->post_status == 'publish') {
         $return .= '<div class="faireAction-box">
-			<a class="btn universal-btn" href="/' . $url_sub_path . '/schedule/"><h4>View full schedule</h4></a>
+			<a class="btn universal-btn" href="' . $schedulePage->guid . '"><h4>View full schedule</h4></a>
 		    </div>';
     }
 
