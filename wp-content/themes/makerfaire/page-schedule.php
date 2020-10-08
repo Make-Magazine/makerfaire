@@ -139,7 +139,7 @@ if ($displayNav) {
                                                 </ul>
                                             </div>
                                         </div>
-                                        <?php if ($faireType == "VMF") { ?>
+                                        <?php if ($faire == "VMF2020") { ?>
                                             <div class="sched-col-4">
                                                 <div class="dropdown">
 
@@ -163,6 +163,28 @@ if ($displayNav) {
                                                 </div>
 
                                             </div>
+                                        <?php } if ($faire != "VMF2020") {
+                                            ?>
+
+                                            <div class="sched-col-4">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                        <span ng-show="filterdow != ''">{{filterdow}}</span>
+                                                        <span ng-show="filterdow == null || filterdow == ''">All Days</span>                                                        
+                                                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
+                                                        <li>
+                                                            <a ng-click="setDateFilter('')" class="pointer-on-hover"><?php _e("All Days", 'makerfaire') ?></a>
+                                                        </li>
+
+                                                        <li ng-repeat="dayOfWeek in dates">
+                                                            <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div> 
                                         <?php } ?>
                                         <div class="sched-col-4">
                                             <div class="faux-checkbox">
@@ -183,29 +205,6 @@ if ($displayNav) {
                                                     <span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone($timeZone); ?>
                                                 </div>
                                             </div>
-                                        <?php }
-                                        if ($faireType != "VMF") {
-                                            ?>
-
-                                            <div class="sched-col-4">
-                                                <div class="dropdown" ng-hide="true">
-                                                    <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                        <span ng-show="filterdow != ''">{{filterdow}}</span>
-                                                        <span ng-hide="true">All Days</span>
-                                                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
-                                                    </button>
-
-                                                    <ul class="dropdown-menu" aria-labelledby="mtm-dropdownMenu">
-                                                        <li>
-                                                            <a ng-click="setDateFilter('')" class="pointer-on-hover"><?php _e("All Days", 'makerfaire') ?></a>
-                                                        </li>
-
-                                                        <li ng-repeat="dayOfWeek in dates">
-                                                            <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div> 
                                         <?php } ?>
                                     </div> 
                                 </div>
@@ -247,7 +246,7 @@ if ($displayNav) {
                                 <div class="sched-col-1"></div>               
                                 <div class="sched-body">
                                     <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
-                                    <div ng-repeat="schedule in schedules| filter : schedSearch | orderBy: ['time_start', 'time_end'] | limitTo: limit">  
+                                    <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start', 'time_end'] | limitTo: limit">  
 
                                         <div class="row sched-row">
                                             <div class="sched-col-1">
