@@ -53,7 +53,7 @@ if (isset($entry->errors)) {
 
     $faire = $slug = $faireID = $show_sched = $faireShort = $faire_end = '';
     if ($form_id != '') {
-        $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide "
+        $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
                 . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
 
         $results = $wpdb->get_row($formSQL);
@@ -68,6 +68,7 @@ if (isset($entry->errors)) {
             $url_sub_path = $results->url_path;
             $faire_map = $results->faire_map;
             $program_guide = $results->program_guide;
+            $timeZone = $results->time_zone;
         }
     }
 
@@ -276,8 +277,9 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
     jQuery(document).ready(function () {
 
         jQuery(".timeZoneSelect").on("change", function () {
+            var tzone = jQuery('#faire_tz').val();
             //start time
-            var s = spacetime(jQuery("#start_dt").val(), 'America/Los_Angeles');
+            var s = spacetime(jQuery("#start_dt").val(), tzone);
             s = s.goto(this.value);
             var dispStartTime = s.format('time');
             jQuery("#dispStartTime").text(dispStartTime);
@@ -287,7 +289,7 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
             jQuery("#startDT").text(dispDate);
 
             //end time        
-            var e = spacetime(jQuery("#end_dt").val(), 'America/Los_Angeles');
+            var e = spacetime(jQuery("#end_dt").val(), tzone);
             e = e.goto(this.value);
             dispEndTime = e.format('time');
             jQuery("#dispEndTime").text(dispEndTime);
@@ -297,6 +299,7 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
 <div class="container-fluid entry-page">
     <div class="row">
         <div class="content col-xs-12">
+            <input type="hidden" id="faire_tz"  value="<?php echo $timeZone; ?>" />
             <?php
             // If there is edit in the url, they get all these options
             if ($makerEdit) {
@@ -348,7 +351,7 @@ function display_entry_schedule($entry_id) {
     global $url_sub_path;
     global $faire_map;
     global $program_guide;
-
+    global $timeZone;
 
     $backlink = "/" . $url_sub_path . "/meet-the-makers/";
 
@@ -412,7 +415,7 @@ function display_entry_schedule($entry_id) {
                 //spacetime tool wants date in ISO format - July 2, 2017 5:01:00
                 $return .= '<input id="start_dt" name="start_dt" value="' . date("F j, Y H:i:s", $start_dt) . '" type="hidden">';
                 $return .= '<input id="end_dt" name="end_dt" value="' . date("F j, Y H:i:s", $end_dt) . '" type="hidden">';
-                $return .= select_Timezone("America/Los_Angeles");
+                $return .= select_Timezone($timeZone);
             } else {
                 global $faire_start;
                 global $faire_end;
