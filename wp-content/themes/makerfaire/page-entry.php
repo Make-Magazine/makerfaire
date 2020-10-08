@@ -804,7 +804,7 @@ function displayEntryFooter() {
         $url = parse_url(wp_get_referer()); //getting the referring URL
         $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
         $path = explode("/", $url['path']); // splitting the path
-        $backlink = ($mtmPage && isset($mtmPage->guid)?$mtmPage->guid:'');
+        $backlink = ($mtmPage && isset($mtmPage->ID)?get_permalink($mtmPage->ID):'');
         $backMsg = 'See all ' . $faire_year . ' makers';
 
         //overwrite the backlink to send makers back to MAT if $makerEdit = true
@@ -821,7 +821,7 @@ function displayEntryFooter() {
     }
     if ($schedulePage && isset($schedulePage->post_status) && $schedulePage->post_status == 'publish') {
         $return .= '<div class="faireAction-box">
-			<a class="btn universal-btn" href="' . $schedulePage->guid . '"><h4>View full schedule</h4></a>
+			<a class="btn universal-btn" href="' . get_permalink($schedulePage->ID) . '"><h4>View full schedule</h4></a>
 		    </div>';
     }
 
