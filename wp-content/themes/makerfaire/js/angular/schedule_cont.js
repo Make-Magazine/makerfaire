@@ -46,11 +46,11 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         if (stageParam != undefined) {
             $scope.schedSearch.nicename = stageParam;
         }
-        
+
         if (featured == "true") {
             $scope.schedSearch.featured = "Featured";
         }
-        
+
         $scope.schedSearch.type = '';
         //if type URL parameter is passed, default the type to this
         if (typeParam != undefined) {
@@ -245,17 +245,24 @@ function schedScroll($window) {
 }
 
 function changeTimeZone(tz) {
+    var tzone = jQuery('#faire_tz').val();
+
     jQuery('.sched-col-3').each(function () {
         //start time
-        var s = spacetime(jQuery(this).find(".start_dt").text(), 'America/Los_Angeles');
+        var s = spacetime(jQuery(this).find(".start_dt").text(), tzone);
+
         s = s.goto(tz);
-        var dispStartTime = s.format('time');
+        var dispStartTime = s.unixFmt('h:mm a');
+
         jQuery(this).find(".dispStartTime").text(dispStartTime);
 
         //end time        
-        var e = spacetime(jQuery(this).find(".end_dt").text(), 'America/Los_Angeles');
+        var e = spacetime(jQuery(this).find(".end_dt").text(), tzone);
+
         e = e.goto(tz);
-        dispEndTime = e.format('time');
+
+        dispEndTime = e.unixFmt('h:mm a');
+
         jQuery(this).find(".dispEndTime").text(dispEndTime);
 
         // the day

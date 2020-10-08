@@ -65,8 +65,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         if (showMakeProjects !== 'mfonly') {
             //console.log('pulling makeprojects data');
             //call to make projects
-
-            $http.get('https://makeprojects.com/api/projects/category/' + MPCategory + '?limit=200&offset=0&sort=recent_activity&platform=projects')
+            $http.get('https://makeprojects.com/api/projects/category/' + MPCategory + '?limit=200&offset=0&sort=recent_activity&platform=projects', {headers: {'X-Partner': 'make'}})
                     .then(function successCallback(response) {
                         if (response.data.code == 200) {
                             if (response.data.result.projects <= 0) {
@@ -119,7 +118,8 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                             jQuery.merge($scope.makers, mp_array);
                         } else if (showMakeProjects === 'mponly') {
                             $scope.makers = mp_array;
-                        }                        
+                        }      
+                        shuffle($scope.makers);
                     });
         }
 
@@ -133,6 +133,8 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                         }
 
                         jQuery.merge($scope.makers, response.data.entity);
+                        shuffle($scope.makers);
+
                     }, function errorCallback(error) {
                         console.log(error);
                         jQuery('.mtm .loading').html(noMakerText);
@@ -254,4 +256,24 @@ function replaceAll(str, find, replace) {
 }
 function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}
+
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }
