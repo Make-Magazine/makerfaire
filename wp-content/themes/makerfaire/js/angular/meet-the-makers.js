@@ -65,7 +65,8 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         if (showMakeProjects !== 'mfonly') {
             //console.log('pulling makeprojects data');
             //call to make projects
-            $http.get('https://makeprojects.com/api/projects/category/' + MPCategory + '?limit=200&offset=0&sort=recent_activity&platform=projects', {headers: {'X-Partner': 'make'}})
+
+            $http.get('https://makeprojects.com/api/projects/category/' + MPCategory + '?limit=200&offset=0&sort=recent_activity&platform=projects')
                     .then(function successCallback(response) {
                         if (response.data.code == 200) {
                             if (response.data.result.projects <= 0) {
@@ -88,7 +89,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                                 angular.forEach(MPcategories, function (category) {
                                     catName.push(category.name);
                                 });
-
+                                
                                 //set data
                                 mp_array.push({'id': projects.id,
                                     'categories': catName,
@@ -115,11 +116,10 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                     })
                     .finally(function () {
                         if (showMakeProjects === 'mfandmp') {
-                            jQuery.merge($scope.makers, mp_array);                            
+                            jQuery.merge($scope.makers, mp_array);
                         } else if (showMakeProjects === 'mponly') {
                             $scope.makers = mp_array;
-                            shuffle($scope.makers);
-                        }
+                        }                        
                     });
         }
 
@@ -131,9 +131,8 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                         if (response.data.entity.length <= 0) {
                             jQuery('.mtm .loading').html(noMakerText);
                         }
-                        
+
                         jQuery.merge($scope.makers, response.data.entity);
-                        shuffle($scope.makers);
                     }, function errorCallback(error) {
                         console.log(error);
                         jQuery('.mtm .loading').html(noMakerText);
@@ -186,10 +185,10 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                 var categories = maker.categories;
                 //reset the category ids to the category names
                 maker.category_id_refs = categories;
-                // sometimes we get arrays for some reason, and that causes unsightly ng errors
-                if (maker.makerList && Array.isArray(maker.makerList)) {
-                    maker.makerList = " ";
-                }
+				// sometimes we get arrays for some reason, and that causes unsightly ng errors
+				if(maker.makerList && Array.isArray(maker.makerList)) {
+					maker.makerList = " ";
+				}
 
                 if (categories != null) {
                     angular.forEach(categories, function (cat) {
@@ -204,7 +203,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             if (locList.length > 0) {
                 var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
                 $scope.locations = locList.sort(collator.compare);
-            }
+            }           
         }, true);
     }]);
 
@@ -255,23 +254,4 @@ function replaceAll(str, find, replace) {
 }
 function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-}
-
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
 }
