@@ -192,7 +192,7 @@ if (strpos($faireShort, "VMF") === 0) { // special for virtual faires
         }
     }
 }
-$registerLink = ''; //post faire return blank for register link
+//$registerLink = ''; //post faire return blank for register link
 //
 // give admin and editor users special ability to see all entries
 $user = wp_get_current_user();
