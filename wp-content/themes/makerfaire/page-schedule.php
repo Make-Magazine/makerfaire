@@ -312,8 +312,6 @@ if ($displayNav) {
                                 <div class="load-trigger"></div>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
                 <!--LeftNav Containers-->

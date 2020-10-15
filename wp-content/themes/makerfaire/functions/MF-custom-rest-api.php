@@ -413,7 +413,7 @@ function getSchedule($formIDs, $faireID) {
                 }
             }
         }
-        $registration =''; //post faire - return blank for registration link
+        //$registration =''; //post faire - return blank for registration link
         //set stage name
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
         //"2016-05-21T11:55:00-07:00"
