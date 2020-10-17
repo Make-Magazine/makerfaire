@@ -325,7 +325,7 @@ function getSchedule($formIDs, $faireID) {
                where lead.status = 'active' and lead_detail.meta_value='Accepted' "
             . " and lead_detail.form_id in(" . implode(",", $formIDarr) . ") "
             /* code to hide scheduled items as they occur */
-                . " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " 
+                . " and schedule.end_dt >= now()+ INTERVAL -4 HOUR  " 
             . "order by subarea.sort_order";
     //TBD check if faire end date is beyond today. if it is hide this code, otherwise show it
     // " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " 
