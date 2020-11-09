@@ -2,7 +2,7 @@
 /**
  * Template Name: Entry
  *
- * @version 2.0
+ * @version 2.1
  */
 global $wp_query;
 $entryId = $wp_query->query_vars['e_id'];
@@ -38,7 +38,7 @@ if (isset($entry->errors)) {
         $sponsorshipLevel = $entry["442.3"];
     }
 
-    //build an array of field information
+    //build an array of field information for updating fields
     foreach ($form['fields'] as $field) {
         $fieldID = $field->id;
         $fieldData[$fieldID] = $field;
@@ -58,7 +58,7 @@ if (isset($entry->errors)) {
 
         $results = $wpdb->get_row($formSQL);
         if ($wpdb->num_rows > 0) {
-            $faire = $slug = $results->faire_name;            
+            $faire = $slug = $results->faire_name;
             $faireShort = $results->faire;
             $faireID = $results->id;
             $show_sched = $results->show_sched;
@@ -96,7 +96,6 @@ if (isset($entry->errors)) {
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
-
     //field 287 and field 887 can be used in a form for any text input question. 
     //We will display these on the entry detail form 
     $field_287 = '';
@@ -522,14 +521,14 @@ function display_categories($catArray) {
 //return makers info
 function getMakerInfo($entry) {
     $makers = array();
-   
+
     /* for VMF2020 we had two nested forms, one for makers one for entries. We determined this was too confusing for 
      * our makers, and switched to one parent form for entry with one nested form for multiple makers. 
      */
     if (isset($entry['gpnf_entry_parent']) && $entry['gpnf_entry_parent'] != '') { //is this a nested form with parent information
         //pull maker information from nested form - VMF2020     
         $makers = getMakerInfoNested($entry);
-    } elseif(isset($entry['854'])) {
+    } elseif (isset($entry['854'])) {
         // after VMF2020
         $makers = getMakerInfoNested($entry);
     } else {
@@ -570,43 +569,50 @@ function getMakerInfoLegacy($entry) {
         $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
             'bio' => (isset($entry['234']) ? $entry['234'] : ''),
             'photo' => (isset($entry['217']) ? $entry['217'] : ''),
-            'social' => getSocial(isset($entry['821']) ? $entry['821'] : '')
+            'social' => getSocial(isset($entry['821']) ? $entry['821'] : ''),
+            'website' => (isset($entry['209']) ? $entry['209'] : '')
         );
     if (isset($entry['158.3']) && $entry['158.3'] != "")
         $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
             'bio' => (isset($entry['258']) ? $entry['258'] : ''),
             'photo' => (isset($entry['224']) ? $entry['224'] : ''),
-            'social' => getSocial(isset($entry['822']) ? $entry['822'] : '')
+            'social' => getSocial(isset($entry['822']) ? $entry['822'] : ''),
+            'website' => (isset($entry['216']) ? $entry['216'] : '')
         );
     if (isset($entry['155.3']) && $entry['155.3'] != "")
         $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
             'bio' => (isset($entry['259']) ? $entry['259'] : ''),
             'photo' => (isset($entry['223']) ? $entry['223'] : ''),
-            'social' => getSocial(isset($entry['823']) ? $entry['823'] : '')
+            'social' => getSocial(isset($entry['823']) ? $entry['823'] : ''),
+            'website' => (isset($entry['215']) ? $entry['215'] : '')
         );
     if (isset($entry['156.3']) && $entry['156.3'] != "")
         $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
             'bio' => (isset($entry['260']) ? $entry['260'] : ''),
             'photo' => (isset($entry['222']) ? $entry['222'] : ''),
-            'social' => getSocial(isset($entry['824']) ? $entry['824'] : '')
+            'social' => getSocial(isset($entry['824']) ? $entry['824'] : ''),
+            'website' => (isset($entry['214']) ? $entry['214'] : '')
         );
     if (isset($entry['157.3']) && $entry['157.3'] != "")
         $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
             'bio' => (isset($entry['261']) ? $entry['261'] : ''),
             'photo' => (isset($entry['220']) ? $entry['220'] : ''),
-            'social' => getSocial(isset($entry['825']) ? $entry['825'] : '')
+            'social' => getSocial(isset($entry['825']) ? $entry['825'] : ''),
+            'website' => (isset($entry['213']) ? $entry['213'] : '')
         );
     if (isset($entry['159.3']) && $entry['159.3'] != "")
         $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
             'bio' => (isset($entry['262']) ? $entry['262'] : ''),
             'photo' => (isset($entry['221']) ? $entry['221'] : ''),
-            'social' => getSocial(isset($entry['826']) ? $entry['826'] : '')
+            'social' => getSocial(isset($entry['826']) ? $entry['826'] : ''),
+            'website' => (isset($entry['211']) ? $entry['211'] : '')
         );
     if (isset($entry['154.3']) && $entry['154.3'] != "")
         $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
             'bio' => (isset($entry['263']) ? $entry['263'] : ''),
             'photo' => (isset($entry['219']) ? $entry['219'] : ''),
-            'social' => getSocial(isset($entry['827']) ? $entry['827'] : '')
+            'social' => getSocial(isset($entry['827']) ? $entry['827'] : ''),
+            'website' => (isset($entry['212']) ? $entry['212'] : '')
         );
     return $makers;
 }
@@ -760,7 +766,7 @@ function displayEntryFooter() {
     global $wpdb;
     global $faireID;
     global $faire;
-    
+
     global $faire_year;
     global $show_sched;
     global $backMsg;
@@ -778,24 +784,24 @@ function displayEntryFooter() {
     if (strpos($faire, 'virtual') !== false) {
         $faire_location = "";
         $faire_link = "";
-    }else{
+    } else {
         $faire_location = '';
-        $faire_link = '/'.$url_sub_path;
+        $faire_link = '/' . $url_sub_path;
     }
 
     // we're going to check if the schedule page exists
     //find the parent page
-    $parentPage = get_page_by_path('/' . $url_sub_path.'/');    
-    
-    $args = array('parent'=> $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-meet-the-makers.php');
-    $mtmPages = get_pages($args);    
-    $mtmPage = (isset($mtmPages[0])?$mtmPages[0]:'');
-    
-    $args = array('parent'=> $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-schedule.php');
-    $schedulePages = get_pages($args);         
-    
-    $schedulePage = (isset($schedulePages[0])?$schedulePages[0]:'');
-            
+    $parentPage = get_page_by_path('/' . $url_sub_path . '/');
+
+    $args = array('parent' => $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-meet-the-makers.php');
+    $mtmPages = get_pages($args);
+    $mtmPage = (isset($mtmPages[0]) ? $mtmPages[0] : '');
+
+    $args = array('parent' => $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-schedule.php');
+    $schedulePages = get_pages($args);
+
+    $schedulePage = (isset($schedulePages[0]) ? $schedulePages[0] : '');
+
     $return = '';
     $return .= '<div class="faireActions container">';
 
@@ -804,7 +810,7 @@ function displayEntryFooter() {
         $url = parse_url(wp_get_referer()); //getting the referring URL
         $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
         $path = explode("/", $url['path']); // splitting the path
-        $backlink = ($mtmPage && isset($mtmPage->ID)?get_permalink($mtmPage->ID):'');
+        $backlink = ($mtmPage && isset($mtmPage->ID) ? get_permalink($mtmPage->ID) : '');
         $backMsg = 'See all ' . $faire_year . ' makers';
 
         //overwrite the backlink to send makers back to MAT if $makerEdit = true
@@ -832,7 +838,7 @@ function displayEntryFooter() {
     }
     if ($faire_link != '' || $faire_location != '') {
         $return .= '<div class="faireAction-box">
-		         <a class="btn universal-btn" href="' . $faire_link . '"><h4>' . ($faire_location!=''?$faire_location:'Faire') . ' Home</h4></a>
+		         <a class="btn universal-btn" href="' . $faire_link . '"><h4>' . ($faire_location != '' ? $faire_location : 'Faire') . ' Home</h4></a>
                     </div>';
     }
     $return .= '</div>';
@@ -849,39 +855,19 @@ function getMakerInfoNested($entry) {
     global $groupsocial;
     global $entryId;
 
-    //for VMF2020, we stored the project information in a nested form    
-    $parent_entry_ID = $entry['gpnf_entry_parent'];
-    if($parent_entry_ID!=''){
-        $parent_entry = GFAPI::get_entry($parent_entry_ID);
-        if (is_wp_error($parent_entry)) {   //error in pulling the parent error. exit
-            //echo 'there is an error';
-            return array();
-        }else{
-            //pull group information from parent
-            if (isset($parent_entry['844']) && $parent_entry['844'] == 'Yes') {
-                $isGroup = true;
-                $groupname = (isset($parent_entry['109']) ? $parent_entry['109'] : '');
-                $groupphoto = (isset($parent_entry['111']) ? $parent_entry['111'] : '');
-                $groupbio = (isset($parent_entry['110']) ? $parent_entry['110'] : '');
-                $groupsocial = getSocial(isset($parent_entry['828']) ? $parent_entry['828'] : '');
-            }
-        }
-        $child_entryID_array = explode(",", $parent_entry['854']); //field 854 contains the makers, 852 contains the projects
-    } else {
-        //pull group information from current entry
-        if (isset($entry['844']) && $entry['844'] == 'Yes') {
-            $isGroup = true;
-            $groupname = (isset($entry['109']) ? $entry['109'] : '');
-            $groupphoto = (isset($entry['111']) ? $entry['111'] : '');
-            $groupbio = (isset($entry['110']) ? $entry['110'] : '');
-            $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
-        }
-        $child_entryID_array = explode(",", $entry['854']); //field 854 contains the makers, 852 contains the projects
-    }    
+    //pull group information from current entry
+    if (isset($entry['844']) && $entry['844'] == 'Yes') {
+        $isGroup = true;
+        $groupname = (isset($entry['109']) ? $entry['109'] : '');
+        $groupphoto = (isset($entry['111']) ? $entry['111'] : '');
+        $groupbio = (isset($entry['110']) ? $entry['110'] : '');
+        $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
+    }
+    $child_entryID_array = explode(",", $entry['854']); //field 854 contains the makers, 852 contains the projects
 
     //get maker information    
     $makers = array();
-    
+
     foreach ($child_entryID_array as $child_entryID) {
         if ($child_entryID != $entryId) { //no need to process the entry we are looking at
             $child_entry = GFAPI::get_entry($child_entryID);
@@ -890,7 +876,8 @@ function getMakerInfoNested($entry) {
                 $makers[] = array('firstname' => $child_entry['160.3'], 'lastname' => $child_entry['160.6'],
                     'bio' => (isset($child_entry['234']) ? $child_entry['234'] : ''),
                     'photo' => (isset($child_entry['217']) ? $child_entry['217'] : ''),
-                    'social' => getSocial(isset($child_entry['821']) ? $child_entry['821'] : '')
+                    'social' => getSocial(isset($child_entry['821']) ? $child_entry['821'] : ''),
+                    'website' => (isset($child_entry['209']) ? $child_entry['209'] : '')
                 );
             }
         }
