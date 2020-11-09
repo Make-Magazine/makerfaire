@@ -38,11 +38,11 @@
             <div id="project_short" class="lead">
                 <p><?php echo nl2br($project_short); ?></p>                
                 <?php if (isset($field_287) && $field_287 != '') { ?>
-                    <p><b><?php echo $label_287;?>:</b><br/><?php echo nl2br($field_287); ?></p>
+                    <p><b><?php echo $label_287; ?>:</b><br/><?php echo nl2br($field_287); ?></p>
                 <?php } ?>
                 <?php if (isset($field_877) && $field_877 != '') { ?>
-                    <p><b><?php echo $label_877;?>:</b><br/><?php echo nl2br($field_877); ?></p>
-            <?php } ?>
+                    <p><b><?php echo $label_877; ?>:</b><br/><?php echo nl2br($field_877); ?></p>
+                <?php } ?>
             </div>
             <?php
             echo $video;    //project Video
@@ -56,14 +56,13 @@
 
             if (display_group($entryId)) {
                 ?><div class="group-entry"><?php echo display_group($entryId); ?></div><?php
-                }
-                if (display_groupEntries($entryId)) {
-                    ?><div class="group-entries"><?php echo display_groupEntries($entryId); ?></div><?php }
-                ?>
+            }
+            if (display_groupEntries($entryId)) {
+                ?><div class="group-entries"><?php echo display_groupEntries($entryId); ?></div><?php }
+            ?>
         </div>
 
         <div class="col-md-4 col-sm-12 col-xs-12" id="entrySidebar">
-
             <div class="entryInfo">
                 <?php
                 //display schedule/location information if there is any
@@ -74,7 +73,8 @@
                 if (!empty($registerLink)) {
                     ?>
                     <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
-                <?php } 
+                    <?php
+                }
                 if (!empty($viewNow)) {
                     ?>
                     <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
@@ -110,7 +110,7 @@
                     }
                     if (count($makers) > 0) {
                         if (count($makers) == 1) {
-                            echo '<div class="entry-header"><h2>MAKER</h2></div>';                            
+                            echo '<div class="entry-header"><h2>MAKER</h2></div>';
                         } else {
                             echo '<div class="entry-header"><h2>MAKERS</h2></div>';
                         }
@@ -131,12 +131,22 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-6">
-                <?php echo $maker['social']; ?>
+                                            <?php echo $maker['social']; ?>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-12"><p><?php echo $maker['bio']; ?></p></div>
                                     </div>
+                                    <?php
+                                    if (!empty($maker['website'])) {
+                                        ?>
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <a href="<?php echo $maker['website']; ?>" class="btn universal-btn entry-website"target="_blank" >Maker Website</a>
+                                            </div>
+                                        </div>
+                                        <?php }
+                                    ?>
                                 </div>
                                 <?php
                             }
@@ -152,5 +162,5 @@
 </div>
 
 <div class="entry-footer">
-<?php echo displayEntryFooter(); ?>
+    <?php echo displayEntryFooter(); ?>
 </div>
