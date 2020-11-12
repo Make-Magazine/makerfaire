@@ -96,7 +96,7 @@ if (isset($entry->errors)) {
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
-    //field 287 and field 887 can be used in a form for any text input question. 
+    //field 287 and field 877 can be used in a form for any text input question. 
     //We will display these on the entry detail form 
     $field_287 = '';
     $field_887 = '';
@@ -113,10 +113,10 @@ if (isset($entry->errors)) {
             $label_887 = $field->label;
         }
     } else {
-        if (isset($entry['887'])) {
-            $field_887 = $entry['887']; //What are some of the major challenges you have encountered and how did you address them?
-            $field = GFFormsModel::get_field($form, 887);
-            $label_887 = $field->label;
+        if (isset($entry['877'])) {
+            $field_877 = $entry['877']; //What are some of the major challenges you have encountered and how did you address them?
+            $field = GFFormsModel::get_field($form, 877);
+            $label_877 = $field->label;
         }
     }
 
