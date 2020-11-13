@@ -40,13 +40,10 @@ function MM_WPlogin() {
     //check_ajax_referer( 'ajax-login-nonce', 'ajaxsecurity' );
     global $wpdb; // access to the database
     //use auth0 plugin to log people into wp
-    $a0_plugin = new WP_Auth0();
+    $a0_plugin =  new WP_Auth0_InitialSetup( WP_Auth0_Options::Instance() );
     $a0_options = WP_Auth0_Options::Instance();
     $users_repo = new WP_Auth0_UsersRepo($a0_options);
-    $users_repo->init();
-
     $login_manager = new WP_Auth0_LoginManager($users_repo, $a0_options);
-    $login_manager->init();
 
     //get the user information passed from auth0
     $userinput = filter_input_array(INPUT_POST);
