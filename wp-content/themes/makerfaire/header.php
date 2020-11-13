@@ -160,13 +160,6 @@
                     "verify_peer_name" => false,
                 ),
             ));
-            if (UNIVERSAL_ASSET_USER && UNIVERSAL_ASSET_PASS) {
-                $context = stream_context_create(array(
-                    'http' => array(
-                        'header' => "Authorization: Basic " . base64_encode(UNIVERSAL_ASSET_USER . ':' . UNIVERSAL_ASSET_PASS)
-                    )
-                ));
-            }
             echo file_get_contents(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-topnav.html', false, $context);
             ?>
 

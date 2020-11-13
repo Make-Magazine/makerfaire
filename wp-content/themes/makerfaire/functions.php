@@ -123,41 +123,33 @@ add_filter('jetpack_enable_opengraph', '__return_false', 99);
 function set_universal_asset_constants() {
     // Assume that we're in prod; only change if we are definitively in another
     $universal_asset_env = 'make.co';
+	$universal_makehub_asset_env = 'community.make.co';
     $universal_asset_proto = 'https://';
-    $universal_asset_user = false;
-    $universal_asset_pass = false;
     $host = $_SERVER['HTTP_HOST'];
     // dev environments
     if (strpos($host, 'dev.') === 0) {
         $universal_asset_env = 'dev.make.co';
-        $universal_asset_user = 'makecodev';
-        $universal_asset_pass = '8f86ba87';
+		$universal_makehub_asset_env = 'devmakehub.wpengine.com';
     }
     // stage environments
     else if (strpos($host, 'stage.') === 0) {
         $universal_asset_env = 'stage.make.co';
-        $universal_asset_user = 'makecstage';
-        $universal_asset_pass = 'c2792563';
+		$universal_makehub_asset_env = 'stagemakehub.wpengine.com';
     }
     // legacy staging environments
     else if (strpos($host, '.staging.wpengine.com') > -1) {
         $universal_asset_env = 'makeco.staging.wpengine.com';
-        $universal_asset_user = 'makeco';
-        $universal_asset_pass = 'memberships';
-    }
-    // local environments
-    else if (strpos($host, ':8888') > -1 ) {
-        $universal_asset_env = 'makeco.local'; // this will require that we use `makeco` as our local
-        $universal_asset_proto = 'http://';
+		$universal_makehub_asset_env = 'makehub.staging.wpengine.com';
     }
     // wpengine local environments
-    else if (strpos($host, '.local') > -1 ) {
-        $universal_asset_env = 'makeco.local'; // this will require that we use `makeco` as our local        
+    else if (strpos($host, '.local') > -1  || strpos($host, '.test') > -1 ) {
+        $universal_asset_env = 'makeco.local';
+		$universal_makehub_asset_env = 'makehub.local';
+		$universal_asset_proto = 'http://';
     }
     // Set the important bits as CONSTANTS that can easily be used elsewhere
     define('UNIVERSAL_ASSET_URL_PREFIX', $universal_asset_proto . $universal_asset_env);
-    define('UNIVERSAL_ASSET_USER', $universal_asset_user);
-    define('UNIVERSAL_ASSET_PASS', $universal_asset_pass);
+	define('UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX', $universal_asset_proto . $universal_makehub_asset_env);
 }
 
 set_universal_asset_constants();
@@ -198,7 +190,7 @@ function load_scripts() {
     wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), '', true);
     // wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
     wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js', array('jquery'), '', true);
-    wp_enqueue_script('universal', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/js/min/universal.min.js', array(), $my_version, true);
+    wp_enqueue_script('universal', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/js/min/universal.min.js', array(), $my_version, true);
 
     wp_enqueue_script('thickbox', null);
 
