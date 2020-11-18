@@ -306,6 +306,9 @@ if (essb_option_bool_value('conversions_subscribe_lite_run') && !essb_options_bo
     include_once (ESSB3_MODULES_PATH . 'conversions-lite/class-subscribe-conversions-lite.php');
 }
 
+/**
+ * Running integrations
+ */
 if (class_exists('REALLY_SIMPLE_SSL')) {
     include_once (ESSB3_INTEGRATIONS_PATH . 'reallysimplessl.php');
 }

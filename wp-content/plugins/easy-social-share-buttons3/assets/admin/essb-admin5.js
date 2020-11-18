@@ -449,6 +449,8 @@ jQuery(document).ready(function($){
 			if ($(this).hasClass('essb-portlet-heading-closed')) {
 				$(this).removeClass('essb-portlet-heading-closed');
 				var content = $(this).parent().find('.essb-portlet-content');
+				
+				$(this).parent().addClass('portlet-active');
 
 				$(content).slideDown("fast", function() {
 					$(content).removeClass('essb-portlet-content-closed');
@@ -469,6 +471,8 @@ jQuery(document).ready(function($){
 				$(content).slideUp("fast", function() {
 					$(content).addClass('essb-portlet-content-closed');
 				});
+				
+				$(this).parent().removeClass('portlet-active');
 
 				var icon = $(this).find('.essb-portlet-state').find('i');
 				if (icon.length) {
@@ -505,6 +509,8 @@ jQuery(document).ready(function($){
 					$(content).removeClass('essb-portlet-content-closed');
 				});
 
+				$(parent_heading).parent().addClass('portlet-active');
+				
 				$('.CodeMirror').each(function(i, el){
 				    el.CodeMirror.refresh();
 				});
@@ -532,6 +538,7 @@ jQuery(document).ready(function($){
 			else {
 				$(parent_heading).addClass('essb-portlet-heading-closed');
 				var content = $(parent_heading).parent().find('.essb-portlet-content');
+				$(parent_heading).parent().removeClass('portlet-active');
 				if (content.length > 1) content = content[0];
 				$(content).slideUp("fast", function() {
 					$(content).addClass('essb-portlet-content-closed');
@@ -2334,25 +2341,36 @@ jQuery(document).ready(function($){
 			status.push('<div><span class="warning">&nbsp;</span>Description length is greater than 160 characters. Facebook may truncate it with a trailing ellipsis. </div>');
 		}
 
+		// Bridge to save and analyze
+		ssoMediaStatus.imageSize.width = 0;
+		ssoMediaStatus.imageSize.height = 0;
+		
+		if (!ssoSavedImage || typeof(ssoSavedImage) == 'undefined') ssoSavedImage = {};
+		
+		if (ssoSavedImage && ssoSavedImage['0']) ssoMediaStatus.imageSize.width = ssoSavedImage['0'];
+		if (ssoSavedImage && ssoSavedImage['1']) ssoMediaStatus.imageSize.height = ssoSavedImage['1'];
+		
 		if (ssoMediaStatus.imageSize.width == 0 || ssoMediaStatus.imageSize.height == 0) {
 			imageStatus = 2;
 			status.push('<div><span class="error">&nbsp;</span>Image is not provided</div>');
 		}
 
-		if (ssoMediaStatus.imageSize.width < 400 || ssoMediaStatus.imageSize.height < 400) {
+		if ((ssoMediaStatus.imageSize.width < 400 && ssoMediaStatus.imageSize.width > 0) || (ssoMediaStatus.imageSize.height < 400 && ssoMediaStatus.imageSize.height > 0)) {
 			imageStatus = 2;
 			status.push('<div><span class="error">&nbsp;</span>Image is smaller than the minimal required size</div>');
 		}
 
-		if ((ssoMediaStatus.imageSize.width < 1200 && ssoMediaStatus.imageSize.width > 400) || (ssoMediaStatus.imageSize.height < 628 && ssoMediaStatus.imageSize.height > 400)) {
+		if ((ssoMediaStatus.imageSize.width < 1150 && ssoMediaStatus.imageSize.width > 400) || (ssoMediaStatus.imageSize.height < 620 && ssoMediaStatus.imageSize.height > 400)) {
 			imageStatus = 3;
 			status.push('<div><span class="warning">&nbsp;</span>Your image size is smaller than the recommended</div>');
 		}
 
-		if (ssoMediaStatus.imageSize.width >= 1200 && ssoMediaStatus.imageSize.height >= 628) {
+		if (ssoMediaStatus.imageSize.width >= 1150 && ssoMediaStatus.imageSize.height >= 620) {
 			imageStatus = 1;
+			
+			var imageRequiredHeight = Math.floor(ssoMediaStatus.imageSize.width / 1.91);
 
-			var isProperAspect = Math.floor(ssoMediaStatus.imageSize.width / 1.91) == ssoMediaStatus.imageSize.height ? true : false;
+			var isProperAspect = (imageRequiredHeight == ssoMediaStatus.imageSize.height) || (imageRequiredHeight == ssoMediaStatus.imageSize.height + 1) || (imageRequiredHeight == ssoMediaStatus.imageSize.height - 1) ? true : false;
 			
 			if (isProperAspect)
 				status.push('<div><span class="ok">&nbsp;</span>Your image is OK</div>');
@@ -2400,6 +2418,7 @@ jQuery(document).ready(function($){
 		 * Additional check for image. If no image is provided it will generate a nag console
 		 * errors causing a slow down inside the post editing
 		 */
+		return;
 		
 		if (url = '' || url == 'none') return;
 		

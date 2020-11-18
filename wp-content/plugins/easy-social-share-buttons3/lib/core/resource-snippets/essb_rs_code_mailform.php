@@ -99,7 +99,12 @@ if (!function_exists('essb_rs_mailform_build')) {
 			$parsed_address = parse_url($base_site_url);
 				
 			$message_body = preg_replace(array('#%%title%%#', '#%%siteurl%%#', '#%%permalink%%#', '#%%image%%#'), array($title, $site_url, $url, $image), $message_body);
-				
+
+			/**
+			 * @since 7.4.2
+			 */
+			$message_body = preg_replace(array('#%%from_email%%#', '#%%from_name%%#', '#%%to_email%%#'), array($translate_mail_email, $translate_mail_name, $translate_mail_recipient), $message_body);
+			
 			$message_body = str_replace("\r\n", "<br />", $message_body);
 			
 			$code .= '<div class="essb_mailform_preview">'.$message_body.'</div>';

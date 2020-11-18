@@ -559,9 +559,23 @@ class ESSBCore {
 		$current_post_button_position = $this->general_options['button_position'];		
 		
 		// different button placement by post type is only avaiable in full interface
-		if (!defined('ESSB3_LIGHTMODE') && !ESSB_Runtime_Cache::is('adaptive-styles') && isset($post) && essb_option_bool_value('positions_by_pt')) {
-			$content_position_by_pt = essb_option_value('content_position_'.$post->post_type);
-			$button_position_by_pt = essb_option_value('button_position_'.$post->post_type);				
+		if (!defined('ESSB3_LIGHTMODE') && !ESSB_Runtime_Cache::is('adaptive-styles') && essb_option_bool_value('positions_by_pt')) {
+		    $content_position_by_pt = '';
+		    $button_position_by_pt = '';
+		    
+		    if (isset($post)) {
+                $content_position_by_pt = essb_option_value('content_position_'.$post->post_type);
+                $button_position_by_pt = essb_option_value('button_position_'.$post->post_type);	
+		    }
+		    
+			/**
+			 * Homepage
+			 */
+		    if (is_front_page()) {
+		        $content_position_by_pt = essb_option_value('content_position_homepage');
+		        $button_position_by_pt = essb_option_value('button_position_homepage');
+		    }
+			
 				
 			if (!empty($content_position_by_pt)) {
 				$current_post_content_locations = $content_position_by_pt;
@@ -944,8 +958,20 @@ class ESSBCore {
 		$is_all_lists = in_array('all_lists', $post_types);
 		$is_set_list = count($post_types) > 0 ?  true: false;
 		
+		/**
+		 * Homepage 
+		 */
+		$is_homepage = in_array('homepage', $post_types);
+		unset($post_types['homepage']);
+		
 		unset($post_types['all_lists']);
-		$is_lists_authorized = (is_archive() || is_front_page() || is_search() || is_tag() || is_post_type_archive() || is_home()) && $is_all_lists ? true : false;
+		$is_lists_authorized = (is_archive() || is_search() || is_tag() || is_post_type_archive() || is_home()) && $is_all_lists ? true : false;
+		
+		/**
+		 * Homepage
+		 */
+		if (is_front_page() && $is_homepage) { $is_lists_authorized = true; }
+		
 		$is_singular = is_singular($post_types);
 		if ($is_singular && !$is_set_list) {
 			$is_singular = false;

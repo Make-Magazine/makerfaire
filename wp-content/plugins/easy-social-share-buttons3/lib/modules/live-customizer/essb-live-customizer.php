@@ -23,9 +23,22 @@ class ESSBLiveCustomizer {
 		
 	}
 	
+	public function is_amp() {
+	    if (function_exists('amp_is_request') && amp_is_request()) {
+	        return true;
+	    }
+	    else {
+	        return false;
+	    }
+	}
+	
 	public function enqueue_scripts_and_styles() {		
 		if (essb_is_mobile()) {
 			return;
+		}
+		
+		if ($this->is_amp()) {
+		    return;
 		}
 		
 		wp_enqueue_style ( 'essb-fontawsome', ESSB3_PLUGIN_URL . '/assets/admin/font-awesome.min.css', array (), ESSB3_VERSION );
@@ -50,13 +63,15 @@ class ESSBLiveCustomizer {
 		if (!is_array($post_types)) {
 			$post_types = array();
 		}
+		
 		unset($post_types['all_lists']);
+		unset($post_types['homepage']);
 		
 		return is_singular($post_types);
 	}
 	
 	public function load_customizer() {
-		if ($this->can_run() && !essb_is_mobile()) {		
+		if ($this->can_run() && !essb_is_mobile() && !$this->is_amp()) {		
 			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/live-customizer/controls/controls.php');				
 			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/live-customizer/essb-live-customizer-toggle.php');
 			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/live-customizer/controls/panel.php');			

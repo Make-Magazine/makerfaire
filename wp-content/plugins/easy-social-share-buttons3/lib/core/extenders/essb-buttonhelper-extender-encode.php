@@ -80,7 +80,11 @@ function essb_correct_url_on_tracking_code($share, $network) {
 			}
 		}
 		else {
-			$share ['twitter_tweet'] .= '%20' . $share ['url'];
+		    /**
+		     * Remove the %20 option between URL and Tweet
+		     * @since 7.3.1
+		     */
+			$share ['twitter_tweet'] .= ' ' . $share ['url'];
 			$share ['short_url_twitter'] = esc_url ( $share ['url'] );
 			$share ['short_url_whatsapp'] = esc_url ( $share ['url'] );
 			$share['clear_twitter_url'] = true;

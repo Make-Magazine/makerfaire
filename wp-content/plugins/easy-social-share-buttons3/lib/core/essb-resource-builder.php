@@ -11,6 +11,8 @@
  * @since 3.0
  * @version 5.0
  * @modified 6.3
+ * 
+ * @deprecated 7.3
  */
 
 class ESSBResourceBuilder {

@@ -228,6 +228,24 @@ if (!function_exists('essb_is_position_active')) {
             }
         }
         
+        /**
+         * Homepage
+         */
+        if (essb_option_bool_value('positions_by_pt') && is_front_page()) {
+            $current_post_type = 'homepage';
+            
+            $content_position_by_pt = essb_option_value('content_position_'.$current_post_type);
+            $button_position_by_pt = essb_option_value('button_position_'.$current_post_type);
+            
+            if (!empty($content_position_by_pt)) {
+                $content_position = $content_position_by_pt;
+            }
+            
+            if (is_array($button_position_by_pt) && count($button_position_by_pt) > 0) {
+                $button_positions = $button_position_by_pt;
+            }
+        }
+        
         return $content_position == $position || in_array($position, $button_positions);
     }
 }

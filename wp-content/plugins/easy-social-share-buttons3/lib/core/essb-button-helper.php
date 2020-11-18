@@ -556,7 +556,9 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			 * Changing econding of options to happen via the included inside plugin function instead of 
 			 * replacing all one
 			 */			
-			$use_tweet = essb_core_helper_textencode( $share ['twitter_tweet'] );
+			$use_tweet = $share ['twitter_tweet'];
+			$use_tweet = essb_core_helper_prevent_percent_break_tweet($use_tweet);
+			$use_tweet = essb_core_helper_textencode( $use_tweet );
 
 			// @since 3.1 Twitter message optimization
 			$twitter_message_optimize = ESSBGlobalSettings::$twitter_message_optimize;
@@ -590,7 +592,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			
 			// @ updating from bookmarklet to button
 			if (essb_option_bool_value('pinterest_using_api')) {
-			 $url = sprintf ( 'https://pinterest.com/pin/create/bookmarklet/?media=%1$s&url=%2$s&title=%3$s&description=%4$s', $pin_image, $share ['url'], $share ['title'], $pinterest_description );
+                $url = sprintf ( 'https://pinterest.com/pin/create/bookmarklet/?media=%1$s&url=%2$s&title=%3$s&description=%4$s', $pin_image, $share ['url'], $share ['title'], $pinterest_description );
 			}
 			else {
 			    $url = sprintf ( 'https://pinterest.com/pin/create/button/?media=%1$s&url=%2$s&description=%3$s', $pin_image, $share ['url'], $pinterest_description );
@@ -633,10 +635,10 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			$url = sprintf ( 'https://www.tumblr.com/widgets/share/tool?canonicalUrl=%2$s&amp;title=%1$s&amp;posttype=link', essb_core_helper_textencode($share ['title']), ( $share ['url'] ) );
 			break;
 		case 'vk' :
-			$url = sprintf ( 'http://vk.com/share.php?url=%1$s&image=%2$s&description=%3$s&title=%4$s', $share ['url'], $share['image'], essb_core_helper_textencode($share['description']), essb_core_helper_textencode($share['title']) );
+		    $url = sprintf ( 'http://vk.com/share.php?url=%1$s&image=%2$s&description=%3$s&title=%4$s', $share ['url'], $share['image'], essb_core_helper_nonlatin_textencode($share['description']), essb_core_helper_nonlatin_textencode($share['title']) );
 			break;
 		case 'ok' :
-			$url = sprintf('https://connect.ok.ru/offer?url=%1$s&title=%2$s&imageUrl=%3$s', $share ['url'], essb_core_helper_textencode($share['title']), $share['image']);
+		    $url = sprintf('https://connect.ok.ru/offer?url=%1$s&title=%2$s&imageUrl=%3$s', $share ['url'], essb_core_helper_nonlatin_textencode($share['title']), $share['image']);
 			break;
 		case 'weibo' :
 			$url = sprintf ( 'http://service.weibo.com/share/share.php?url=%1$s&title=%2$s&pic=%3$s', $share ['url'], essb_core_helper_textencode($share['title']), $share['image'] );
@@ -889,7 +891,10 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 		$api_command = sprintf('essb.window(&#39;%1$s&#39;,&#39;%2$s&#39;,&#39;%3$s&#39;); return false;', $url, $network, $salt);
 	}
 
-	if ($share['essb_encode_url']) {
+	/**
+	 * Compatibility with Social Proof Notifications
+	 */
+	if (isset($share['essb_encode_url']) && $share['essb_encode_url']) {
 		$url = str_replace ('&', '&amp;', $url);
 	}
 

@@ -304,6 +304,15 @@
 }
 
 @media (max-width: 1024px) {
+	.essb-instagramfeed-profile {
+		display: block;
+		text-align: center;
+	}	
+	
+	.essb-instagramfeed-profile-photo { margin: 0 auto; }
+	.essb-instagramfeed-profilefollow .essb-instagramfeed-profile-bio { width: 100%; margin-bottom: 10px; }
+	.essb-instagramfeed-profile-followbtn { margin: 0 auto; }
+
 	.essb-instagramfeed-5cols .essb-instagramfeed-images .essb-instagramfeed-single {
 		width: 25%;
 		position: relative;
@@ -658,6 +667,15 @@
 					   color-stop(.5, transparent), to(transparent));
 }
 
+@media (max-width: 1024px) {
+	.essb-instagramfeed-lightbox-content { display: block; }
+	.essb-instagramfeed-lightbox-content-image, .essb-instagramfeed-lightbox-content-info { width: 100%; }
+	.essb-instagramfeed-single-image-info-desc { display: none; }
+	.essb-instagramfeed-lightbox-content-info .essb-instagramfeed-single-image-info-counters { display: flex; }
+	.essb-instagramfeed-lightbox-content-info .essb-instagramfeed-single-image-info-counters > div {
+		margin-bottom: 0;
+	}
+}
 
 /** 
  ---------------------------------------------------

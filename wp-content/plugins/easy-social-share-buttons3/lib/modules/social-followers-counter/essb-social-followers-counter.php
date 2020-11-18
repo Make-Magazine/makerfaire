@@ -79,6 +79,9 @@ class ESSBSocialFollowersCounter {
 	        $ig_followers = $prev_value;
 	    }
 	    
+	    
+	    update_option ( $this->essb3_cache_option_name, $counters );
+	    
 	    echo ESSBSocialFollowersCounterDraw::followers_number($ig_followers);
 	    die();
 	}

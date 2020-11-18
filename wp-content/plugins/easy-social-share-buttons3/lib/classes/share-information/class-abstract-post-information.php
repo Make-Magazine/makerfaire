@@ -146,6 +146,9 @@ abstract class ESSB_Post_Information {
         
         // Maybe load the Twitter card data
         $this->maybe_load_twitter_cards($post_id);
+        
+        // CDN support
+        $this->apply_cdn_urls_if_needed();
     }
     
     /**
@@ -160,7 +163,9 @@ abstract class ESSB_Post_Information {
             'url' => $url, 
             'title' => $this->prepare_text_value($this->title), 
             'image' => $this->image, 
-            'description' => $this->strip_long_description($this->prepare_text_value($this->description)), 
+            'description' => $this->strip_long_description($this->prepare_text_value($this->description)),
+            // Added 7.3.1
+            'description_plain' => $this->strip_long_description($this->prepare_text_value($this->description)), 
             'twitter_user' => $this->tweet_user, 
             'twitter_hashtags' => $this->tweet_tags, 
             'twitter_tweet' => $this->prepare_text_value($this->tweet), 
@@ -207,7 +212,19 @@ abstract class ESSB_Post_Information {
         }        
         
         if (empty($title)) {
-            $title = trim( essb_core_convert_smart_quotes( htmlspecialchars_decode(get_the_title ($post_id))));;
+            $title = get_the_title ($post_id);
+            
+            /**
+             * Added strip all html code - Secondary Title plugin
+             * @since 7.4.1
+             */
+            
+            if (defined('SECONDARY_TITLE_VERSION')) {
+                $title = wp_strip_all_tags($title);
+            }
+            
+            
+            $title = trim( essb_core_convert_smart_quotes( htmlspecialchars_decode($title)));;
         }
         
         return $title;
@@ -472,13 +489,40 @@ abstract class ESSB_Post_Information {
     }
     
     /**
+     * Apply CDN on the social media optimization tags and custom PIN image
+     * 
+     * @since 7.3
+     */
+    public function apply_cdn_urls_if_needed() {
+        if (essb_option_bool_value('activate_cdn_sso') || essb_option_bool_value('activate_cdn_pinterest')) {
+            $cdn_domain = essb_sanitize_option_value('cdn_domain');
+            
+            // Pinterest
+            if (essb_option_bool_value('activate_cdn_pinterest') && $this->pinterest_image != '') {
+                $this->pinterest_image = essb_apply_cdn_url($this->pinterest_image, $cdn_domain);
+            }
+            
+            // SSO Tags
+            if (essb_option_bool_value('activate_cdn_sso')) {
+                if ($this->opengraph_image != '') {
+                    $this->opengraph_image = essb_apply_cdn_url($this->opengraph_image, $cdn_domain);
+                }
+                
+                if ($this->twitter_card_image != '') {
+                    $this->twitter_card_image = essb_apply_cdn_url($this->twitter_card_image, $cdn_domain);
+                }
+            }
+        }
+    }
+    
+    /**
      * Getting opengraph value
      * 
      * @param string $param
      * @return string
      */
     public function opengraph_value($param = '') {
-        if ($param == 'title') {
+        if ($param == 'title') {            
             return $this->prepare_text_value($this->opengraph_title);
         }
         else if ($param == 'description') {

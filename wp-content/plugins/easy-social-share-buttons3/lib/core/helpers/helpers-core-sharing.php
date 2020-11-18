@@ -299,13 +299,40 @@ function essb_core_helper_generate_network_list() {
 	return $network_order;
 }
 
+function essb_core_helper_nonlatin_textencode($str = '') {
+    $str = str_replace('&#8211;', '-', $str); 
+    $str = str_replace(' ', '%20', $str);
+    $str = str_replace("'", '%27', $str);
+    $str = str_replace("\"", '%22', $str);
+    $str = str_replace('#', '%23', $str);
+    $str = str_replace('$', '%24', $str);
+    $str = str_replace('&', '%26', $str);
+    $str = str_replace(',', '%2C', $str);
+    $str = str_replace('/', '%2F', $str);
+    $str = str_replace(':', '%3A', $str);
+    $str = str_replace(';', '%3B', $str);
+    $str = str_replace('=', '%3D', $str);
+    $str = str_replace('?', '%3F', $str);
+    $str = str_replace('@', '%40', $str);
+    $str = str_replace('|', '%7C', $str);
+    $str = str_replace('\%27', '%27', $str);
+    $str = str_replace('%26%238211%3B', '-', $str);
+    
+    return $str;
+}
+
+function essb_core_helper_prevent_percent_break_tweet($str = '') {
+    $str = str_replace('%', '%25', $str);
+    
+    return $str;
+}
+
 function essb_core_helper_textencode($str) {
     /**
      * @since 7.3
      * Handle the unicode long dash and percentage mark
      */    
     $str = str_replace('&#8211;', '-', $str);    
-    $str = str_replace('%', '%25', $str);
     
 	$str = str_replace(' ', '%20', $str);
 	$str = str_replace("'", '%27', $str);
@@ -322,6 +349,7 @@ function essb_core_helper_textencode($str) {
 	$str = str_replace('@', '%40', $str);
 	$str = str_replace('|', '%7C', $str);
 	$str = str_replace('\%27', '%27', $str);
+	$str = str_replace('%26%238211%3B', '-', $str);
 	
 	return $str;
 }

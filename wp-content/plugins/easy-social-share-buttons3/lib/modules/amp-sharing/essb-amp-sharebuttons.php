@@ -20,6 +20,12 @@ class ESSBAmpSupport {
 	
 	function __construct() {
 		add_action ( 'amp_init', array (&$this, 'activate_amp_support' ) );
+		
+		/**
+		 * Additional check to validate AMP transitional running
+		 */
+		add_action ( 'wp_enqueue_scripts', array ($this, 'validate_amp_callback' ), 10 );
+		add_action ( 'wp_head', array($this, 'push_amp_styles'));
 	}
 	
 	public static function instance() {
@@ -46,6 +52,36 @@ class ESSBAmpSupport {
 	 * De-serialization disabled
 	 */
 	public function __wakeup() {
+	}
+	
+	function push_amp_styles() {
+	    if (function_exists('amp_is_request') && amp_is_request()) {
+	        echo '<style amp-custom>';
+	        include_once (ESSB5_AMP_PLUGIN_ROOT . 'essb-amp-styles.php');
+            echo '</style>';
+	    }
+	}
+	
+	public function validate_amp_callback() {
+	    if (function_exists('amp_is_request') && amp_is_request()) {
+	        
+	        /**
+	         * Reconfigure the plugin settings using the AMP support
+	         */
+	        
+	        ESSB_Plugin_Options::set('content_position', 'content_manual');
+	        ESSB_Plugin_Options::set('button_position', array());
+	        ESSB_Plugin_Options::set('live_customizer_disabled', 'true');
+	        
+	        // Deactivate plugin content filters aready added for sharing
+	        essb_core()->temporary_deactivate_content_filters();
+	        
+	        // Deactivate all plugin styles
+	        essb_resource_builder()->deactivate_actions();
+	        ESSB_Runtime_Cache::set('amp_running', true);
+	        
+	        wp_enqueue_style('essb-amp-styles', ESSB3_PLUGIN_URL. '/lib/modules/amp-sharing/essb-amp-styles.php', false, ESSB3_VERSION, 'all');
+	    }
 	}
 	
 	public function activate_amp_support() {

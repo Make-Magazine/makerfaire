@@ -66,3 +66,34 @@ function essb_get_current_url ($mode = '') {
 function essb_get_current_page_url() {
     return essb_get_site_current_url();
 }
+
+/**
+ * Replace the domain with the CDN path when used from the settings
+ * 
+ * @param unknown $current_url
+ * @param unknown $cdn_base
+ */
+function essb_apply_cdn_url($current_url, $cdn_base) {
+    
+    if ($cdn_base == '') {
+        return $current_url;
+    }
+    else {
+        $url_components = parse_url($current_url);
+        $current_domain = '';
+        
+        if (isset($url_components['path']) && $url_components['path'] != '') {
+            $current_domain = substr($current_url, 0, strpos($current_url, $url_components['path']));   
+        }
+        
+        if (strpos($cdn_base, 'http://') === false && strpos($cdn_base, 'https://') === false) {
+            $cdn_base = $url_components['scheme'] . '://' . $cdn_base;
+        }
+                
+        if ($current_domain != '') {
+            $current_url = str_replace ( $current_domain, $cdn_base, $current_url );
+        }
+        
+        return $current_url;
+    }
+}

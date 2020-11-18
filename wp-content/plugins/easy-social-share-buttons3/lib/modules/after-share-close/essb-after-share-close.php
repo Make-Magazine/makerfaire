@@ -26,6 +26,8 @@ class ESSBAfterCloseShare3 {
 	protected $single_display_mode = false;
 	protected $single_display_cookie_length = 7;
 	
+	public $pinterest_api_load = false;
+	
 	function __construct() {
 		// Reading all options
 		$this->options = ESSB_Plugin_Options::read_all();
@@ -66,6 +68,10 @@ class ESSBAfterCloseShare3 {
 		if ($is_active) {
 			add_action ( 'wp_enqueue_scripts', array ($this, 'check_after_postload_settings' ), 1 );
 		}
+	}
+	
+	public function pinterest_api_loaded() {
+	    return $this->pinterest_api_load;
 	}
 	
 	public function check_after_postload_settings() {
@@ -274,6 +280,9 @@ class ESSBAfterCloseShare3 {
 		}
 		if ($afterclose_like_pin_follow_url != '') {
 			$this->resource_files[] = array("key" => "pinterest-api", "file" => '//assets.pinterest.com/js/pinit.js', "type" => "js", 'noasync' => true);
+			
+			// Plugin will load Pinterest JS API
+			$this->pinterest_api_load = true;
 		}
 		if ($afterclose_like_youtube_channel != '' || $afterclose_like_youtube_user != '') {
 			$this->social_apis['google'] = 'load';

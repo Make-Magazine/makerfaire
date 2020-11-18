@@ -4,8 +4,10 @@ if (! class_exists('ESSB_TinyMCE_Loader')) {
     class ESSB_TinyMCE_Loader {
 
         public function __construct () {
-            add_action('admin_init', array ( $this, 'tinymce_loader' ));
-            add_action('admin_enqueue_scripts', array ( $this, 'tinymce_css' ), 10);
+            if (!essb_option_bool_value('classic_editor_disable_buttons')) {
+                add_action('admin_init', array ( $this, 'tinymce_loader' ));
+                add_action('admin_enqueue_scripts', array ( $this, 'tinymce_css' ), 10);
+            }
         }
 
         /**

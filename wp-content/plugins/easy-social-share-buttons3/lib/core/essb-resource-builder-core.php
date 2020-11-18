@@ -5,52 +5,6 @@ define('ESSB_RESOURCE_BUILDER_FOLDER', ESSB3_PLUGIN_ROOT . 'lib/core/resource-sn
 
 add_filter('essb_js_buffer_head', 'essb_js_build_admin_ajax_access_code');
 
-
-/**
- * Generate the CSS code for the customizer menu if active
- * @param unknown_type $buffer
- * 
- * @deprecated 7.3
- */
-function essb_css_build_customizer($buffer) {
-			
-	$snippet = '';
-
-	
-	$is_active_subscribe = essb_option_bool_value('activate_mailchimp_customizer');
-	$is_active_subscribe2 = essb_option_bool_value( 'activate_mailchimp_customizer2');
-	$is_active_subscribe3 = essb_option_bool_value('activate_mailchimp_customizer3');
-	$is_active_subscribe4 = essb_option_bool_value('activate_mailchimp_customizer4');
-	$is_active_subscribe5 = essb_option_bool_value('activate_mailchimp_customizer5');
-	$is_active_subscribe6 = essb_option_bool_value('activate_mailchimp_customizer6');
-	$is_active_subscribe7 = essb_option_bool_value('activate_mailchimp_customizer7');
-	$is_active_subscribe8 = essb_option_bool_value('activate_mailchimp_customizer8');
-	$is_active_subscribe9 = essb_option_bool_value('activate_mailchimp_customizer9');
-	
-	if ($is_active_subscribe || $is_active_subscribe2 || $is_active_subscribe3 || $is_active_subscribe4 ||
-			$is_active_subscribe5 || $is_active_subscribe6 || $is_active_subscribe7 || $is_active_subscribe8 || 
-			$is_active_subscribe9) {
-		
-		if (!function_exists('essb_rs_css_build_customizer_mailchimp')) {
-			include_once (ESSB_RESOURCE_BUILDER_FOLDER . 'essb_rs_css_build_customizer_mailchimp.php');
-		}
-	
-		
-		$snippet .= (essb_rs_css_build_customizer_mailchimp(array('design1' => $is_active_subscribe,
-				'design2' => $is_active_subscribe2,
-				'design3' => $is_active_subscribe3,
-				'design4' => $is_active_subscribe4,
-				'design5' => $is_active_subscribe5,
-				'design6' => $is_active_subscribe6,
-				'design7' => $is_active_subscribe7,
-				'design8' => $is_active_subscribe8,
-				'design9' => $is_active_subscribe9)));
-	}
-		
-	
-	return $buffer.$snippet;
-}
-
 /**
  * Core plugin settings for running on site. The filter will load them according to the loaded core
  * script to prevent errors.
@@ -226,6 +180,10 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 		if (essb_option_bool_value('pinterest_alwayscustom') && essb_option_bool_value('pinterest_images')) {
 			$pin_options['custompin'] = esc_attr(get_post_meta( get_the_ID(), 'essb_post_pin_desc', true));
 			$pin_options['force_custompin'] = true;
+		}
+		
+		if (essb_option_bool_value('pinterest_using_api')) {
+		    $pin_options['legacy_share_cmd'] = true;
 		}
 		
 		$output .= 'var essbPinImages = '.json_encode($pin_options).';';

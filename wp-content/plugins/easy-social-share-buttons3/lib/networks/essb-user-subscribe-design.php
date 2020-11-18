@@ -113,7 +113,7 @@ if (!function_exists('essb_user_subscribe_form_design')) {
 		$output .= '<div class="essb-subscribe-form-content essb-userform '.esc_attr($form_classes).'" data-position="'.esc_attr($position).'" data-design="'.esc_attr($design).'">';
 
 		if ($has_image && ($form_image_location == 'top' || $form_image_location == 'left')) {
-			$output .= '<div class="essb-userform-imagearea"><img src="'.esc_url($form_image).'"/></div>';
+		    $output .= '<div class="essb-userform-imagearea">'.essb_user_subscribe_form_image_html($form_image, $form_title, $subscribe_design).'</div>';			
 		}
 
 
@@ -128,7 +128,7 @@ if (!function_exists('essb_user_subscribe_form_design')) {
 		}
 
 		if ($has_image && $form_image_location == 'below_heading') {
-			$output .= '<div class="essb-userform-imagearea"><img src="'.esc_url($form_image).'"/></div>';
+		    $output .= '<div class="essb-userform-imagearea">'.essb_user_subscribe_form_image_html($form_image, $form_title, $subscribe_design).'</div>';
 		}
 
 		if ($form_text != '') {
@@ -179,12 +179,102 @@ if (!function_exists('essb_user_subscribe_form_design')) {
 		}
 
 		if ($has_image && $form_image_location == 'right') {
-			$output .= '<div class="essb-userform-imagearea"><img src="'.esc_url($form_image).'"/></div>';
+		    $output .= '<div class="essb-userform-imagearea">'.essb_user_subscribe_form_image_html($form_image, $form_title, $subscribe_design).'</div>';
 		}
 
 		$output .= '</div>';
 
 		return $output;
+	}
+	
+	/**
+	 * Generate responsive image HTML code
+	 * 
+	 * @since 7.3.2
+	 * 
+	 * @param string $image_url
+	 * @param string $title
+	 * @param array $options
+	 * @return void|string
+	 */
+	function essb_user_subscribe_form_image_html($image_url = '', $title = '', $options = array()) {
+	    if ($image_url == '') { return; }
+	    
+	    $form_image_width = stripslashes(essb_array_value('image_width', $options));
+	    $form_image_height = stripslashes(essb_array_value('image_height', $options));
+	    
+	    if ($form_image_height != '') {
+	        $form_image_height = str_replace('px', '', $form_image_height);
+	        $form_image_height = str_replace('%', '', $form_image_height);
+	        $form_image_height = trim($form_image_height);
+	    }
+	    
+	    if ($form_image_width != '') {
+	        $form_image_width = str_replace('px', '', $form_image_width);
+	        $form_image_width = str_replace('%', '', $form_image_width);
+	        $form_image_width = trim($form_image_width);
+	    }
+	    
+	    $show_image_w = '';
+	    $show_image_h = '';
+	    
+	    $image_id = attachment_url_to_postid($image_url);
+	    $image_set_alt = $title;
+	    
+	    $image_set_srcset=  '';
+	    if ($image_id != '' && $image_id != 0) {
+	        $image_has_alt = get_post_meta( $image_id, '_wp_attachment_image_alt', true);
+	        if ($image_has_alt != '') {
+	            $image_set_alt = $image_has_alt;
+	        }
+	        
+	        $image_set_srcset = wp_get_attachment_image_srcset($image_id, $form_image_height != '' && $form_image_width != '' ? array($form_image_width, $form_image_height) : 'full');
+	        
+	        $thumb = wp_get_attachment_image_src( $image_id, 'full' );
+	        if ( ! empty( $thumb[1] ) ) {
+	            $show_image_w = $thumb[1];
+	        }
+
+	        if ( ! empty( $thumb[2] ) ) {
+	            $show_image_h = $thumb[2];
+	        }
+	    }
+	    
+	    if ($form_image_height != '' && intval($form_image_height) != 0) {
+	        $show_image_h = $form_image_height;
+	    }
+
+	    if ($form_image_width != '' && intval($form_image_width) != 0) {
+	        $show_image_w = $form_image_width;
+	    }
+	    
+	    /**
+	     * Clear image title from shortcodes or HTML content
+	     */
+	    $image_set_alt = preg_replace("~(?:\[/?)[^/\]]+/?\]~s", '', $image_set_alt);
+	    $image_set_alt = trim(strip_shortcodes(addslashes($image_set_alt)));
+	    
+	    
+	    $image_props = array();
+	    $image_props[] = 'src="' . esc_url($image_url) . '"';
+	    
+	    if ($image_set_alt != '') {
+	        $image_props[] = 'alt="' . esc_attr($image_set_alt) . '"';
+	    }
+	    
+	    if ($image_set_srcset != '') {
+	        $image_props[] = 'srcset="' . $image_set_srcset . '"';
+	    }
+	    
+	    if ($show_image_h != '') {
+	        $image_props[] = 'height="' . $show_image_h . '"';
+	    }
+	    
+	    if ($show_image_w != '') {
+	        $image_props[] = 'width="' . $show_image_w . '"';
+	    }
+	    
+	    return '<img '.implode(' ', $image_props). '/>';
 	}
 
 	function essb_user_subscribe_form_custom_css($salt = '', $design = '', $design_class = '', $options = '') {

@@ -270,6 +270,16 @@ class ESSBSocialFollowersCounterDraw {
 
 		$instance_hide_value = isset($options['hide_value']) ? $options['hide_value'] : 0;
 		$instance_hide_text = isset($options['hide_text']) ? $options['hide_text'] : 0;
+		
+		/**
+		 * Adding support for custom network list
+		 */
+		$instance_show_user_networks = false;
+		$instance_user_networks = array();
+		if (isset($options['networks']) && $options['networks'] != '') {
+		    $instance_show_user_networks = true;
+		    $instance_user_networks = explode(',', $options['networks']);
+		}
 
 		$instance_new_window = self::covert_boolean_value($instance_new_window);
 		$instance_nofollow = self::covert_boolean_value($instance_nofollow);
@@ -400,8 +410,13 @@ class ESSBSocialFollowersCounterDraw {
 					echo '</li>';
 			}
 		}
+		
+		/**
+		 * Generating the display lit of networks
+		 */
+		$display_networks = $instance_show_user_networks && count($instance_user_networks) > 0 ? $instance_user_networks : essb_followers_counter ()->active_social_networks ();
 
-		foreach ( essb_followers_counter ()->active_social_networks () as $social ) {
+		foreach ( $display_networks as $social ) {
 			$social_followers_text = essb_followers_option ( $social . '_text' );
 			$social_custom_icon = essb_followers_option($social.'_icon_type');
 

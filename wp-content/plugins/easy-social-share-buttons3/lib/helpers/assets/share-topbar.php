@@ -57,7 +57,7 @@ if (!function_exists('essb_register_dynamic_share_topbar_styles')) {
             $topbar_buttonarea_width = 100 - $topbar_contentarea_width;
 
             ESSB_Dynamic_CSS_Builder::register_header_field('.essb_topbar .essb_topbar_inner_buttons', 'width', $topbar_buttonarea_width, '%');
-            ESSB_Dynamic_CSS_Builder::register_header_field('.essb_topbar .essb_topbar_inner_content', 'margin-top', $topbar_contentarea_width, '%');
+            ESSB_Dynamic_CSS_Builder::register_header_field('.essb_topbar .essb_topbar_inner_content', 'width', $topbar_contentarea_width, '%');
             
         }        
    }

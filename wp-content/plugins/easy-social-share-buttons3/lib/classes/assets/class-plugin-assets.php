@@ -57,6 +57,12 @@ class ESSB_Plugin_Assets {
     private $plugin_deactivate = false;
     private $precompiled_footer = false;
     
+    /**
+     * Add preloading option for the plugin styles
+     */
+    private $precompile_css_preload = false; 
+    private $precompile_css_filename = '';
+    
     private static $instance = null;
     
     /**
@@ -109,6 +115,7 @@ class ESSB_Plugin_Assets {
             $this->precompile_js = $precompiled_mode_js;
             
             $this->precompiled_footer = essb_option_bool_value('precompiled_footer');
+            $this->precompile_css_preload = essb_option_bool_value('precompiled_preload_css');
             
         }
         
@@ -162,6 +169,12 @@ class ESSB_Plugin_Assets {
         }
     }
     
+    /**
+     * Add extra body classes based on plugin settings
+     * 
+     * @param {array} $classes
+     * @return {array}
+     */
     public function flag_body_class($classes) {
         $classes[] = 'essb-'.ESSB3_VERSION;
         
@@ -188,9 +201,19 @@ class ESSB_Plugin_Assets {
     public function check_optimized_load() {
         if ($this->is_optimized_deactivated()) {
             $this->deactivate_actions();
-        }        
+        }   
+                
+        $this->plugin_deactivate = essb_is_plugin_deactivated_on();
         
-        $this->plugin_deactivate = essb_is_plugin_deactivated_on();        
+        /**
+         * AMP Bind
+         */
+        if (class_exists('ESSBAmpSupport')) {
+            if (function_exists('amp_is_request') && amp_is_request()) {
+                $this->deactivate_actions();
+                $this->plugin_deactivate = true;
+            }
+        }        
     }
     
     /**
@@ -221,6 +244,13 @@ class ESSB_Plugin_Assets {
                 if (!in_array('all_lists', $active_types)) {
                     $r = true;
                 }
+            }
+            
+            /**
+             * Frontpage check
+             */
+            if (is_front_page() && !in_array('homepage', $active_type)) {
+                $r = true;
             }
         }
         else if (essb_option_value('optimize_load') == 'post') {
@@ -350,6 +380,10 @@ class ESSB_Plugin_Assets {
         }
     }
     
+    /**
+     * @param unknown $file_with_path
+     * @param unknown $key
+     */
     public function add_static_footer_css($file_with_path, $key) {
         ESSB_Static_CSS_Loader::register_footer_style($key, $file_with_path);
     }
@@ -431,14 +465,23 @@ class ESSB_Plugin_Assets {
         }
     }
     
+    /**
+     * @return string
+     */
     function core_style_id() {
         return 'easy-social-share-buttons';
     }
     
+    /**
+     * @return string
+     */
     function core_script_id() {
         return 'easy-social-share-buttons-core';
     }
     
+    /**
+     * @return boolean
+     */
     function is_static_cache_running() {
         return class_exists('ESSBStaticCache');
     }
@@ -485,6 +528,9 @@ class ESSB_Plugin_Assets {
         return $r;
     }
     
+    /**
+     * Add to the header pre-compiled cached styles
+     */
     function register_precompile_styles() {
         if ($this->plugin_deactivate || $this->precompiled_footer) {
             return;
@@ -499,8 +545,23 @@ class ESSB_Plugin_Assets {
         $cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'css');
         
         if ($cached_data != '') {
-            wp_enqueue_style ( 'essb-compiledcache', $cached_data, false, $this->resource_version, 'all' );
-            $this->precompile_css_loaded = true;
+            if ($this->precompile_css_preload) {
+                $this->precompile_css_filename = $cached_data;
+                add_action('wp_head', array($this, 'preload_css_styles'));
+            }
+            else {
+                wp_enqueue_style ( 'essb-compiledcache', $cached_data, false, $this->resource_version, 'all' );
+                $this->precompile_css_loaded = true;
+            }
+        }
+    }
+    
+    /**
+     * Preloading styles
+     */
+    public function preload_css_styles() {
+        if ($this->precompile_css_filename != '') {
+            essb_manual_preload_css_file($this->precompile_css_filename);
         }
     }
     
@@ -717,8 +778,14 @@ class ESSB_Plugin_Assets {
         $cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'css');
         
         if ($cached_data != '') {
-            echo "<link rel='stylesheet' id='essb-compiledcache-css'  href='".esc_url($cached_data)."' type='text/css' media='all' />";
-            return;
+            if ($this->precompile_css_preload) {
+                essb_manual_preload_css_file($cached_data);
+                return;
+            }
+            else {
+                echo "<link rel='stylesheet' id='essb-compiledcache-css'  href='".esc_url($cached_data)."' type='text/css' media='all' />";
+                return;
+            }
         }
         
         $static_content = array();
@@ -794,8 +861,14 @@ class ESSB_Plugin_Assets {
             $cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'css');
             
             if ($cached_data != '') {
-                echo "<link rel='stylesheet' id='essb-compiledcache-css' href='".esc_url($cached_data)."' type='text/css' media='all' />";
-                return;
+                if ($this->precompile_css_preload) {
+                    essb_manual_preload_css_file($cached_data);
+                    return;
+                }
+                else {
+                    echo "<link rel='stylesheet' id='essb-compiledcache-css' href='".esc_url($cached_data)."' type='text/css' media='all' />";
+                    return;
+                }
             }
     }
     
@@ -1028,6 +1101,12 @@ class ESSB_Plugin_Assets {
 }
 
 /** static called functions for resource generation **/
+if (!function_exists('essb_manual_preload_css_file')) {
+    function essb_manual_preload_css_file($url = '') {
+        echo '<link rel="preload" href="'.esc_url($url).'" as="style" onload="this.rel=\'stylesheet\'">';
+    }
+}
+
 
 if (!function_exists('essb_manual_script_load')) {
     function essb_manual_script_load($key, $file, $ver_string = '') {

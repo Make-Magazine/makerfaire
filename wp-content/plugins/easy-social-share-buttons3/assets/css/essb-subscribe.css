@@ -1,4 +1,5 @@
 
+
 .essb-subscribe-form-overlay {
 	background-color: rgba(255, 255, 255, 0.9);
 	position: fixed;
@@ -2296,4 +2297,10 @@ font-weight: 400;
 
 .essb-subscribe-poweredby {
 	font-size: 12px; text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+	.essb-subscribe-mobile-hidden {
+		display: none !important;
+	}
 }
