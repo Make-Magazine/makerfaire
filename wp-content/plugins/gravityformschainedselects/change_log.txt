@@ -1,3 +1,8 @@
+### 1.5 | 2020-09-24
+- Added support for Gravity Forms 2.5
+- Fixed an issue with cache expiration when using the [gform_chainedselects_import_file](https://docs.gravityforms.com/gform_chainedselects_import_file/) filter.
+
+
 ### 1.4 | 2020-05-11
 - Added translations for Hebrew, Hindi, Japanese, and Turkish.
 - Fixed an issue where the import stalls with the spinner displayed if the uploaded csv contains malformed UTF-8 characters.
