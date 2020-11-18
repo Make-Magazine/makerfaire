@@ -25,7 +25,7 @@ class Caching {
 	 *
 	 * @var string DB_VERSION The current version of the database tables.
 	 */
-	const DB_VERSION = '2020.2.0';
+	const DB_VERSION = '2020.3.0';
 
 	/**
 	 * The table name for the table where caches are stored together with their statistics.
@@ -132,7 +132,7 @@ class Caching {
 	 */
 	public function get_cache( $cache_key ) {
 		$expiration = $this->get_cache_expiration( $cache_key );
-		if ( 0 === strtotime( $expiration ) ) {
+		if ( 1 === strtotime( $expiration ) ) {
 			return false;
 		}
 		$cache = get_transient( $this->transient_key( $cache_key ) );
@@ -155,21 +155,34 @@ class Caching {
 	 *
 	 * @param string $cache_key The cache key for the cache.
 	 * @param mixed  $value The item to be cached.
-	 * @param string $type The type of cache (endpoint|item).
+	 * @param string $type The type of cache (endpoint).
 	 * @param string $uri The requested uri for this cache if available.
 	 * @param string $object_type The object type for this cache if available.
 	 * @param array  $request_headers An array of cacheable request headers.
+	 * @param string $request_method The request method for this call.
 	 */
-	public function set_cache( $cache_key, $value, $type, $uri = '', $object_type = '', $request_headers = [] ) {
-		switch ( $type ) {
-			case 'endpoint':
-				$this->register_endpoint_cache( $cache_key, $value, $uri, $request_headers );
-				break;
-			case 'item':
-				$this->register_item_cache( $cache_key, $object_type, $value );
-				break;
+	public function set_cache( $cache_key, $value, $type, $uri = '', $object_type = '', $request_headers = [], $request_method = 'GET' ) {
+		if ( 'endpoint' !== $type ) {
+			_deprecated_argument( __FUNCTION__, '2020.3.0', 'Only \'endpoint\' is allowed for $type.' );
+
+			return;
 		}
-		set_transient( $this->transient_key( $cache_key ), $value, $this->get_timeout() );
+
+		$this->register_endpoint_cache( $cache_key, $value, $uri, $request_headers, $request_method );
+
+		set_transient(
+			$this->transient_key( $cache_key ),
+			$value,
+			$this->get_timeout(
+				true,
+				[
+					'uri'             => $uri,
+					'object_type'     => $object_type,
+					'request_headers' => $request_headers,
+					'request_method'  => $request_method,
+				]
+			)
+		);
 	}
 
 	/**
@@ -203,7 +216,7 @@ class Caching {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->query( $wpdb->prepare( $sql, $cache_id ) );
 		} else {
-			$this->update_cache_expiration( $cache_id, date_i18n( 'Y-m-d H:i:s', 0 ), true );
+			$this->update_cache_expiration( $cache_id, date_i18n( 'Y-m-d H:i:s', 1 ), true );
 		}
 	}
 
@@ -237,7 +250,7 @@ class Caching {
 		$sql              = "UPDATE `{$this->db_table_caches}`
 		SET `expiration` = %s
         WHERE ";
-		$prepare_params[] = date_i18n( 'Y-m-d H:i:s', 0 );
+		$prepare_params[] = date_i18n( 'Y-m-d H:i:s', 1 );
 		switch ( $strictness ) {
 			case self::FLUSH_STRICT:
 				$sql             .= ' `request_uri` = %s ';
@@ -461,7 +474,7 @@ class Caching {
 					`deleted` = {$deleted}";
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$affected_rows = $wpdb->query( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 0 ) ) );
+		$affected_rows = $wpdb->query( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 1 ) ) );
 
 		if ( 0 !== $affected_rows && false !== $affected_rows ) {
 			$this->schedule_cleanup();
@@ -495,7 +508,7 @@ class Caching {
                 AND `r`.`object_type` = %s";
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$affected_rows = $wpdb->query( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 0 ), $id, $object_type ) );
+		$affected_rows = $wpdb->query( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 1 ), $id, $object_type ) );
 
 		if ( 0 !== $affected_rows && false !== $affected_rows ) {
 			$this->schedule_cleanup();
@@ -518,7 +531,7 @@ class Caching {
                 AND `is_single` = %d";
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$affected_rows = $wpdb->query( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 0 ), 'endpoint', $object_type, false ) );
+		$affected_rows = $wpdb->query( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 1 ), 'endpoint', $object_type, false ) );
 
 		if ( 0 !== $affected_rows && false !== $affected_rows ) {
 			$this->schedule_cleanup();
@@ -569,19 +582,32 @@ class Caching {
 	 * Insert a new cache into the database.
 	 *
 	 * @param string $cache_key The cache key.
-	 * @param string $cache_type The cache type (endpoint|item).
+	 * @param string $cache_type The cache type (endpoint).
 	 * @param string $uri The requested URI.
 	 * @param string $object_type The object type for the cache.
 	 * @param bool   $is_single Whether it is a single item cache.
 	 * @param array  $request_headers An array of cacheable request headers.
+	 * @param string $request_method The request method for this call.
 	 *
 	 * @return int The ID of the inserted row.
 	 */
-	private function insert_cache_row( $cache_key, $cache_type, $uri, $object_type, $is_single = true, $request_headers = [] ) {
+	private function insert_cache_row( $cache_key, $cache_type, $uri, $object_type, $is_single = true, $request_headers = [], $request_method = 'GET' ) {
 		global $wpdb;
 
-		$expiration = self::get_timeout();
-		if ( ! self::get_memcache_used() ) {
+		if ( 'endpoint' !== $cache_type ) {
+			_deprecated_argument( __FUNCTION__, '2020.3.0', 'Only \'endpoint\' is allowed for $cache_type.' );
+		}
+
+		$expiration = $this->get_timeout(
+			true,
+			[
+				'uri'             => $uri,
+				'object_type'     => $object_type,
+				'request_headers' => $request_headers,
+				'request_method'  => $request_method,
+			]
+		);
+		if ( 0 !== $expiration && ! $this->get_memcache_used() ) {
 			// phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
 			$expiration += current_time( 'timestamp' );
 		}
@@ -593,12 +619,13 @@ class Caching {
 				'cache_type'      => $cache_type,
 				'request_uri'     => $uri,
 				'request_headers' => wp_json_encode( $request_headers ),
+				'request_method'  => $request_method,
 				'object_type'     => $object_type,
 				'cache_hits'      => 1,
 				'is_single'       => $is_single,
 				'expiration'      => date_i18n( 'Y-m-d H:i:s', $expiration ),
 			],
-			[ '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s' ]
+			[ '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s' ]
 		);
 
 		return $wpdb->insert_id;
@@ -623,13 +650,15 @@ class Caching {
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$result = $wpdb->get_row( $wpdb->prepare( $sql, $cache_key ), ARRAY_A );
 
-		$result['is_active'] = ( false !== get_transient( $this->transient_key( $result['cache_key'] ) ) && 0 !== strtotime( $result['expiration'] ) );
+		$result['is_active'] = ( false !== get_transient( $this->transient_key( $result['cache_key'] ) ) && 1 !== strtotime( $result['expiration'] ) );
 		if ( ! $result['is_active'] ) {
-			if ( strtotime( $result['expiration'] ) === 0 ) {
+			if ( 1 === strtotime( $result['expiration'] ) ) {
 				$result['expiration'] = __( 'Flushed', 'wp-rest-cache' );
 			} else {
 				$result['expiration'] = __( 'Expired', 'wp-rest-cache' );
 			}
+		} elseif ( 0 === strtotime( $result['expiration'] ) ) {
+			$result['expiration'] = __( 'Unlimited', 'wp-rest-cache' );
 		}
 
 		return $result;
@@ -641,17 +670,18 @@ class Caching {
 	 * @param int         $cache_id The ID of the cache row.
 	 * @param null|string $expiration The specific expiration date/time. If none supplied it will be calculated.
 	 * @param bool        $cleaned True if this is called when the transient is actually deleted.
+	 * @param array       $options An array of options for the wp_rest_cache/timeout filter.
 	 */
-	private function update_cache_expiration( $cache_id, $expiration = null, $cleaned = false ) {
+	private function update_cache_expiration( $cache_id, $expiration = null, $cleaned = false, $options = [] ) {
 		global $wpdb;
 
 		if ( is_null( $expiration ) ) {
-			$expiration = self::get_timeout();
-			if ( ! self::get_memcache_used() ) {
+			$timeout = $this->get_timeout( true, $options );
+			if ( 0 !== $timeout && ! $this->get_memcache_used() ) {
 				// phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
-				$expiration += current_time( 'timestamp' );
+				$timeout += current_time( 'timestamp' );
 			}
-			$expiration = date_i18n( 'Y-m-d H:i:s', $expiration );
+			$expiration = date_i18n( 'Y-m-d H:i:s', $timeout );
 		}
 
 		$wpdb->update(
@@ -676,6 +706,11 @@ class Caching {
 	 */
 	public function insert_cache_relation( $cache_id, $object_id, $object_type ) {
 		global $wpdb;
+
+		// Prevent notice when recursively processing a OPTIONS call.
+		if ( is_array( $object_id ) || is_array( $object_type ) ) {
+			return;
+		}
 
 		$wpdb->replace(
 			$this->db_table_relations,
@@ -714,8 +749,9 @@ class Caching {
 	 * @param mixed  $data The cached data.
 	 * @param string $uri The requested URI.
 	 * @param array  $request_headers An array of cacheable request headers.
+	 * @param string $request_method The request method for this call.
 	 */
-	private function register_endpoint_cache( $cache_key, $data, $uri, $request_headers ) {
+	private function register_endpoint_cache( $cache_key, $data, $uri, $request_headers, $request_method ) {
 		$cache_id = $this->get_cache_row_id( $cache_key );
 
 		/**
@@ -746,9 +782,19 @@ class Caching {
 		$this->is_single = apply_filters( 'wp_rest_cache/is_single_item', $this->is_single, $data, $uri );
 
 		if ( is_null( $cache_id ) ) {
-			$cache_id = $this->insert_cache_row( $cache_key, 'endpoint', $uri, $object_type, $this->is_single, $request_headers );
+			$cache_id = $this->insert_cache_row( $cache_key, 'endpoint', $uri, $object_type, $this->is_single, $request_headers, $request_method );
 		} else {
-			$this->update_cache_expiration( $cache_id );
+			$this->update_cache_expiration(
+				$cache_id,
+				null,
+				false,
+				[
+					'uri'             => $uri,
+					'object_type'     => $object_type,
+					'request_headers' => $request_headers,
+					'request_method'  => $request_method,
+				]
+			);
 		}
 
 		// Force data to be an array.
@@ -769,28 +815,6 @@ class Caching {
 		 * @param string $uri The requested URI.
 		 */
 		do_action( 'wp_rest_cache/process_cache_relations', $cache_id, $data, $object_type, $uri );
-	}
-
-	/**
-	 * Register an item cache in the database.
-	 *
-	 * @param string $cache_key The cache key.
-	 * @param string $object_type The object type of the cached item.
-	 * @param mixed  $data The cached data.
-	 */
-	private function register_item_cache( $cache_key, $object_type, $data ) {
-		$cache_id = $this->get_cache_row_id( $cache_key );
-
-		if ( is_null( $cache_id ) ) {
-			$cache_id = $this->insert_cache_row( $cache_key, 'item', '', $object_type );
-		} else {
-			$this->update_cache_expiration( $cache_id );
-		}
-
-		// Force data to be an array.
-		$data = json_decode( wp_json_encode( $data->data ), true );
-
-		$this->process_recursive_cache_relations( $cache_id, $data );
 	}
 
 	/**
@@ -883,7 +907,7 @@ class Caching {
 	/**
 	 * Get an array of cache data for a specific API type.
 	 *
-	 * @param string $api_type The type of the API for which the data is retrieved (endpoint|item).
+	 * @param string $api_type The type of the API for which the data is retrieved (endpoint).
 	 * @param int    $per_page Number of items to return per page.
 	 * @param int    $page_number The requested page.
 	 *
@@ -911,13 +935,15 @@ class Caching {
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 		foreach ( $results as &$result ) {
-			$result['is_active'] = ( false !== get_transient( $this->transient_key( $result['cache_key'] ) ) && 0 !== strtotime( $result['expiration'] ) );
+			$result['is_active'] = ( false !== get_transient( $this->transient_key( $result['cache_key'] ) ) && 1 !== strtotime( $result['expiration'] ) );
 			if ( ! $result['is_active'] ) {
-				if ( 0 === strtotime( $result['expiration'] ) ) {
+				if ( 1 === strtotime( $result['expiration'] ) ) {
 					$result['expiration'] = __( 'Flushed', 'wp-rest-cache' );
 				} else {
 					$result['expiration'] = __( 'Expired', 'wp-rest-cache' );
 				}
+			} elseif ( 0 === strtotime( $result['expiration'] ) ) {
+				$result['expiration'] = __( 'Unlimited', 'wp-rest-cache' );
 			}
 		}
 
@@ -927,7 +953,7 @@ class Caching {
 	/**
 	 * Get the number of records for the requested API type.
 	 *
-	 * @param string $api_type The type of the API for which the data is retrieved (endpoint|item).
+	 * @param string $api_type The type of the API for which the data is retrieved (endpoint).
 	 *
 	 * @return int The number of records.
 	 */
@@ -949,7 +975,7 @@ class Caching {
 	/**
 	 * Build the where clause for the query that retrieves the cache data for a specific API type.
 	 *
-	 * @param string $api_type The type of the API for which the data is retrieved (endpoint|item).
+	 * @param string $api_type The type of the API for which the data is retrieved (endpoint).
 	 * @param array  $prepare_args A reference to an array containing the arguments for the prepare statement.
 	 *
 	 * @return string The where clause.
@@ -1029,10 +1055,11 @@ class Caching {
 	 * Get the cache timeout as set in the plugin Settings.
 	 *
 	 * @param boolean $calculated If the returned value should be calculated using the interval.
+	 * @param array   $options An array of options for the wp_rest_cache/timeout filter.
 	 *
 	 * @return int Timeout (in seconds if calculated).
 	 */
-	public function get_timeout( $calculated = true ) {
+	public function get_timeout( $calculated = true, $options = [] ) {
 		$timeout = get_option( 'wp_rest_cache_timeout', 1 );
 		if ( $calculated ) {
 			$timeout_interval = $this->get_timeout_interval();
@@ -1040,6 +1067,20 @@ class Caching {
 			if ( $this->get_memcache_used() ) {
 				$timeout += time();
 			}
+		}
+
+		if ( $options ) {
+			/**
+			 * What timeout should be used for the current cache record?
+			 *
+			 * Allows to change the timeout for a specific cache record.
+			 *
+			 * @since 2020.3.0
+			 *
+			 * @param int The timeout as set in the settings.
+			 * @param array An array of options, containing the current uri, the object type, the request headers and the request method.
+			 */
+			$timeout = apply_filters( 'wp_rest_cache/timeout', $timeout, $options );
 		}
 
 		return $timeout;
@@ -1179,7 +1220,7 @@ class Caching {
                 AND     `cleaned` = %d
                 LIMIT   %d";
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$caches = $wpdb->get_results( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 0 ), 0, $limit ) );
+		$caches = $wpdb->get_results( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 1 ), 0, $limit ) );
 		if ( $caches ) {
 			foreach ( $caches as $cache ) {
 				$this->delete_cache( $cache->cache_key, $cache->deleted );
@@ -1191,7 +1232,7 @@ class Caching {
                 WHERE   `expiration` = %s
                 AND     `cleaned` = %d";
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$count = $wpdb->get_var( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 0 ), 0 ) );
+		$count = $wpdb->get_var( $wpdb->prepare( $sql, date_i18n( 'Y-m-d H:i:s', 1 ), 0 ) );
 
 		if ( $count > 0 ) {
 			$this->schedule_cleanup();
@@ -1219,6 +1260,7 @@ class Caching {
 					`cache_type` VARCHAR(10) NOT NULL,
 					`request_uri` LONGTEXT NOT NULL,
 					`request_headers` LONGTEXT NOT NULL,
+					`request_method` VARCHAR(10) NOT NULL,
 					`object_type` VARCHAR(191) NOT NULL,
 					`cache_hits` BIGINT(20) NOT NULL,
 					`is_single` TINYINT(1) NOT NULL,
