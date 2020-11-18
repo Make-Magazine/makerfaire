@@ -14,7 +14,7 @@ if (!defined('WPINC')) {
 			<div class="wt-cli-section wt-cli-section-general-settings">
 				<table class="form-table">
 					<tr valign="top">
-						<th scope="row"><label for="is_on_field"><?php _e('Enable cookie law', 'cookie-law-info'); ?></label></th>
+						<th scope="row"><label for="is_on_field"><?php _e('Enable cookie bar', 'cookie-law-info'); ?></label></th>
 						<td>
 							<input type="radio" id="is_on_field_yes" name="is_on_field" class="styled cli_bar_on" value="true" <?php echo ($the_options['is_on'] == true) ? ' checked="checked"' : ''; ?> /><?php _e('On', 'cookie-law-info'); ?>
 							<input type="radio" id="is_on_field_no" name="is_on_field" class="styled" value="false" <?php echo ($the_options['is_on'] == false) ? ' checked="checked" ' : ''; ?> /><?php _e('Off', 'cookie-law-info'); ?>
@@ -61,72 +61,6 @@ if (!defined('WPINC')) {
 
 
 
-		</div>
-		<div class="cli_sub_tab_content" data-id="show-again">
-			<h3><?php _e('Show Again Tab', 'cookie-law-info'); ?></h3>
-			<table class="form-table">
-				<tr valign="top">
-					<th scope="row"><label for="showagain_tab_field"><?php _e('Use Show Again Tab?', 'cookie-law-info'); ?></label></th>
-					<td>
-						<input type="radio" id="showagain_tab_field_yes" name="showagain_tab_field" class="styled" value="true" <?php echo ($the_options['showagain_tab'] == true) ? ' checked="checked"' : ''; ?> /><?php _e('Yes', 'cookie-law-info'); ?>
-						<input type="radio" id="showagain_tab_field_no" name="showagain_tab_field" class="styled" value="false" <?php echo ($the_options['showagain_tab'] == false) ? ' checked="checked" ' : ''; ?> /> <?php _e('No', 'cookie-law-info'); ?>
-					</td>
-				</tr>
-
-				<tr valign="top" cli_frm_tgl-id="cli_bar_type" cli_frm_tgl-val="banner" cli_frm_tgl-lvl="0">
-					<th scope="row"><label for="notify_position_horizontal_field"><?php _e('Tab Position', 'cookie-law-info'); ?></label></th>
-					<td>
-						<select name="notify_position_horizontal_field" class="vvv_combobox">
-							<?php
-							if ($the_options['notify_position_horizontal'] == "right") {
-								echo '<option value="right" selected="selected">' . __('Right', 'cookie-law-info') . '</option>';
-								echo '<option value="left">' . __('Left', 'cookie-law-info') . '</option>';
-							} else {
-								echo '<option value="right">' . __('Right', 'cookie-law-info') . '</option>';
-								echo '<option value="left" selected="selected">' . __('Left', 'cookie-law-info') . '</option>';
-							}
-							?>
-						</select>
-					</td>
-				</tr>
-
-				<tr valign="top" cli_frm_tgl-id="cli_bar_type" cli_frm_tgl-val="popup" cli_frm_tgl-lvl="0">
-					<th scope="row"><label for="popup_showagain_position_field"><?php _e('Tab Position', 'cookie-law-info'); ?></label></th>
-					<td>
-						<select name="popup_showagain_position_field" class="vvv_combobox">
-							<?php
-							$pp_sa_pos = $the_options['popup_showagain_position'];
-							?>
-							<option value="bottom-right" <?php echo $pp_sa_pos == 'bottom-right' ? 'selected' : ''; ?>>
-								<?php _e('Bottom Right', 'cookie-law-info') ?>
-							</option>
-							<option value="bottom-left" <?php echo $pp_sa_pos == 'bottom-left' ? 'selected' : ''; ?>>
-								<?php _e('Bottom Left', 'cookie-law-info') ?>
-							</option>
-							<option value="top-right" <?php echo $pp_sa_pos == 'top-right' ? 'selected' : ''; ?>>
-								<?php _e('Top Right', 'cookie-law-info') ?>
-							</option>
-							<option value="top-left" <?php echo $pp_sa_pos == 'top-left' ? 'selected' : ''; ?>>
-								<?php _e('Top Left', 'cookie-law-info') ?>
-							</option>
-						</select>
-					</td>
-				</tr>
-
-				<tr valign="top">
-					<th scope="row"><label for="showagain_x_position_field"><?php _e('From Left Margin', 'cookie-law-info'); ?></label></th>
-					<td>
-						<input type="text" name="showagain_x_position_field" value="<?php echo $the_options['showagain_x_position'] ?>" />
-						<span class="cli_form_help"><?php _e('Specify', 'cookie-law-info'); ?> px&nbsp;or&nbsp;&#37;, e.g. <em>"100px" or "30%"</em></span>
-					</td>
-				</tr>
-				<tr valign="top">
-					<th scope="row"><label for="showagain_text"><?php _e('Show More Text', 'cookie-law-info'); ?></label></th>
-					<td>
-						<input type="text" name="showagain_text_field" value="<?php echo $the_options['showagain_text'] ?>" />
-					</td>
-				</tr>
-			</table>
 		</div>
 		<div class="cli_sub_tab_content" data-id="other">
 			<h3><?php _e('Other', 'cookie-law-info'); ?></h3>

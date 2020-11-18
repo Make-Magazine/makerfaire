@@ -48,10 +48,11 @@ class Cookie_Law_Info_Public
 	 * Please check the `register_modules` method for more details
 	 */
 	private $modules = array(
+		'script-blocker',		
 		'shortcode',
 	);
 	public static $existing_modules = array();
-
+	public $cookie_categories;
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -59,70 +60,55 @@ class Cookie_Law_Info_Public
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
+
 	public function __construct($plugin_name, $version, $plugin_obj)
 	{
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->plugin_obj = $plugin_obj;
+		add_action('init',array( $this,'init_cookie_categories' ));
 		register_activation_hook(CLI_PLUGIN_FILENAME, array($this, 'activator'));
-	}
-	public static function get_cookie_categories()
-	{
+		
+	}	
+	public function init_cookie_categories() {
+
+		$neccessary_default_settings 		= 	Cookie_Law_Info_Admin::get_necessary_defaults();
+		$non_neccessary_default_settings 	= 	Cookie_Law_Info_Admin::get_non_necessary_defaults();
+
+		$neccessary_settings 				= 	get_option('cookielawinfo_necessary_settings');
+		$non_neccessary_settings 			= 	get_option('cookielawinfo_thirdparty_settings');
+
 		$cookie_categories = array(
-			'necessary' => __('Necessary', 'cookie-law-info'),
-			'non-necessary' => __('Non-necessary', 'cookie-law-info'),
+
+			'necessary' => array(
+					'enabled'		=> true,
+					'default_state'	=> true,
+					'title' 		=> sanitize_text_field ( ( isset( $neccessary_settings['necessary_title'] ) && $neccessary_settings['necessary_title'] !==  $neccessary_default_settings['necessary_title'] ) ? $neccessary_settings['necessary_title'] : __( $neccessary_default_settings['necessary_title'],'cookie-law-info') ),			
+					'description' 	=> wp_kses_post( stripslashes( isset($neccessary_settings['necessary_description']) ? $neccessary_settings['necessary_description'] : $neccessary_default_settings['necessary_description'])),
+			),
+			'non-necessary' => array(
+					'enabled' 		=> (bool) (isset($non_neccessary_settings['thirdparty_on_field'])  ? Cookie_Law_Info::sanitise_settings('thirdparty_on_field', $non_neccessary_settings['thirdparty_on_field']) : $non_neccessary_default_settings['thirdparty_on_field']),
+					'default_state'	=> Cookie_Law_Info::sanitise_settings( 'third_party_default_state' , ( isset( $non_neccessary_settings['third_party_default_state'] ) ? $non_neccessary_settings['third_party_default_state'] : $non_neccessary_default_settings['third_party_default_state'] ) ),
+					'title' 		=> sanitize_text_field ( ( isset( $non_neccessary_settings['thirdparty_title'] ) && $non_neccessary_settings['thirdparty_title'] !==  $non_neccessary_default_settings['thirdparty_title'] ) ? $non_neccessary_settings['thirdparty_title'] : __( $non_neccessary_default_settings['thirdparty_title'],'cookie-law-info' )),			
+					'description' 	=> wp_kses_post( stripslashes( isset( $non_neccessary_settings['thirdparty_description']) ? $non_neccessary_settings['thirdparty_description'] : $non_neccessary_default_settings['thirdparty_description'] )),
+			)
 		);
-		$cookie_categories = apply_filters('wt_cli_add_custom_cookie_categories_name', $cookie_categories);
+		$this->cookie_categories = $cookie_categories;
+
 		return $cookie_categories;
+		
 	}
-	public static function wt_cli_check_thirdparty_state()
-	{
+	public function get_cookie_categories_data() {
 
-		$wt_cli_default_state = false;
-
-		$third_party_cookie_options = get_option('cookielawinfo_thirdparty_settings');
-		$wt_cli_default_state_field =  isset($third_party_cookie_options['third_party_default_state']) ? $third_party_cookie_options['third_party_default_state'] : true;
-		$wt_cli_default_state = Cookie_Law_Info::sanitise_settings('third_party_default_state', $wt_cli_default_state_field);
-
-		return $wt_cli_default_state;
-	}
-	/**
-	 * Set Default Privacy overview and Cookie Sensitivity Contents
-	 *
-	 * @since 1.7.7
-	 */
-	public function cli_set_default_contents()
-	{
-		$privacy_settings = get_option('cookielawinfo_privacy_overview_content_settings');
-		$necessary_settings = get_option('cookielawinfo_necessary_settings');
-		$thirdparty_settings = get_option('cookielawinfo_thirdparty_settings');
-		$privacy_defaults = array(
-			'privacy_overview_content' => 'This website uses cookies to improve your experience while you navigate through the website. Out of these cookies, the cookies that are categorized as necessary are stored on your browser as they are essential for the working of basic functionalities of the website. We also use third-party cookies that help us analyze and understand how you use this website. These cookies will be stored in your browser only with your consent. You also have the option to opt-out of these cookies. But opting out of some of these cookies may have an effect on your browsing experience.', 'privacy_overview_title' => 'Privacy Overview'
-		);
-		$thirdparty_defaults = array(
-			'thirdparty_on_field' => true,
-			'third_party_default_state' => true,
-			'thirdparty_description' => 'Any cookies that may not be particularly necessary for the website to function and is used specifically to collect user personal data via analytics, ads, other embedded contents are termed as non-necessary cookies. It is mandatory to procure user consent prior to running these cookies on your website.',
-			'thirdparty_head_section' => '',
-			'thirdparty_body_section' => '',
-		);
-		$necessary_defaults = array('necessary_description' => 'Necessary cookies are absolutely essential for the website to function properly. This category only includes cookies that ensures basic functionalities and security features of the website. These cookies do not store any personal information.');
-		($privacy_settings === false) ? update_option('cookielawinfo_privacy_overview_content_settings', $privacy_defaults) : false;
-		($necessary_settings === false) ? update_option('cookielawinfo_necessary_settings', $necessary_defaults) : false;
-		if ($thirdparty_settings === false) {
-			update_option('cookielawinfo_thirdparty_settings', $thirdparty_defaults);
-		} else {
-			if (!isset($thirdparty_settings['thirdparty_description'])) {
-				$thirdparty_settings['thirdparty_description'] = $thirdparty_defaults['thirdparty_description'];
-				update_option('cookielawinfo_thirdparty_settings', $thirdparty_settings);
-			}
+		if( !$this->cookie_categories || !is_array( $this->cookie_categories ) ) {
+			$this->cookie_categories = $this->init_cookie_categories();
 		}
+		return $this->cookie_categories;
 	}
 	public function activator()
 	{	
 
-		$this->cli_set_default_contents();
 		$activation_transient = wp_validate_boolean( get_transient('_wt_cli_first_time_activation') ); 
 		
 		if( Cookie_Law_Info::maybe_first_time_install() === true && $activation_transient === true ) {
@@ -130,9 +116,6 @@ class Cookie_Law_Info_Public
 			if( $js_blocking === false ) {
 				update_option('cookielawinfo_js_blocking', 'yes');
 			}
-
-		} else {
-			update_option('cookielawinfo_js_blocking', 'no');
 		}
 		
 	}
@@ -148,34 +131,19 @@ class Cookie_Law_Info_Public
 		
 		if ($js_blocking_enabled === false) {
 
-			$cookie_categories = self::get_cookie_categories();
+			$cookie_category_data = $this->get_cookie_categories_data();
 			$the_options = Cookie_Law_Info::get_settings();
-			$thirdparty_on_field = false;
-			$third_party_cookie_options = get_option('cookielawinfo_thirdparty_settings');
-			$thirdparty_on_field = isset($third_party_cookie_options['thirdparty_on_field']) ? $third_party_cookie_options['thirdparty_on_field'] : false;
-			$wt_cli_is_thirdparty_enabled = Cookie_Law_Info::sanitise_settings('thirdparty_on_field', $thirdparty_on_field);
-			$wt_non_necessary_cookie_value = 'yes';
-
-			if (!self::wt_cli_check_thirdparty_state()) {
-				$wt_non_necessary_cookie_value = 'no';
-			}
 
 			if ($the_options['is_on'] == true) {
 
-				foreach ($cookie_categories as $key => $value) {
+				foreach( $cookie_category_data as $key => $data ) {
 					if (empty($_COOKIE["cookielawinfo-checkbox-$key"])) {
-						if ($key === 'non-necessary') {
-
-							if ($wt_cli_is_thirdparty_enabled == false) {
-
-								return false;
-							} else {
-
-								@setcookie("cookielawinfo-checkbox-$key", $wt_non_necessary_cookie_value, time() + 3600, '/');
-							}
+						$category_enabled = isset( $data['enabled']) ? $data['enabled'] : false ; 
+						$cookie_value 	  = ( isset( $data['default_state'] ) && $data['default_state'] === true ) ? 'yes' : 'no'; 
+						if( $category_enabled === false ) {
+							return false;
 						} else {
-
-							@setcookie("cookielawinfo-checkbox-$key", 'yes', time() + 3600, '/');
+							@setcookie("cookielawinfo-checkbox-$key", $cookie_value, time() + 3600, '/');
 						}
 					}
 				}
@@ -237,6 +205,7 @@ class Cookie_Law_Info_Public
 		$ccpa_type = (isset($the_options['consent_type']) ? $the_options['consent_type'] : 'gdpr');
 		$js_blocking_enabled = Cookie_Law_Info::wt_cli_is_js_blocking_active();
 		$enable_custom_integration = apply_filters('wt_cli_enable_plugin_integration',false);
+		$trigger_dom_reload = apply_filters('wt_cli_script_blocker_trigger_dom_refresh',false);
 		if ($the_options['is_on'] == true) {
 			$non_necessary_cookie_ids = Cookie_Law_Info::get_non_necessary_cookie_ids();
 			$cli_cookie_datas = array(
@@ -247,9 +216,9 @@ class Cookie_Law_Info_Public
 				'ccpaBarEnabled' => $ccpa_enable_bar,
 				'ccpaType' => $ccpa_type,
 				'js_blocking' => $js_blocking_enabled,
-				'custom_integration' => $enable_custom_integration
+				'custom_integration' => $enable_custom_integration,
+				'triggerDomRefresh' => $trigger_dom_reload,
 			);
-
 			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/cookie-law-info-public.js', array('jquery'), $this->version, false);
 			wp_localize_script($this->plugin_name, 'Cli_Data', $cli_cookie_datas);
 			wp_localize_script($this->plugin_name,'cli_cookiebar_settings',Cookie_Law_Info::get_json_settings());
@@ -349,14 +318,14 @@ class Cookie_Law_Info_Public
 			$head = __($the_options['bar_heading_text'], 'cookie-law-info');
 			$head = trim(stripslashes($head));
 
-			$notify_html = '<div id="' . $this->cookielawinfo_remove_hash($the_options["notify_div_id"]) . '">' .
+			$notify_html = '<div id="' . $this->cookielawinfo_remove_hash($the_options["notify_div_id"]) . '" data-nosnippet="true">' .
 				($head != "" ? '<h5 class="cli_messagebar_head">' . $head . '</h5>' : '')
 				. '<span>' . $str . '</span></div>';
 
 			//if($the_options['showagain_tab'] === true) 
 			//{
 			$show_again = __(stripslashes($the_options["showagain_text"]), 'cookie-law-info');
-			$notify_html .= '<div id="' . $this->cookielawinfo_remove_hash($the_options["showagain_div_id"]) . '" style="display:none;"><span id="cookie_hdr_showagain">' . $show_again . '</span></div>';
+			$notify_html .= '<div id="' . $this->cookielawinfo_remove_hash($the_options["showagain_div_id"]) . '" style="display:none;" data-nosnippet="true"><span id="cookie_hdr_showagain">' . $show_again . '</span></div>';
 			//}
 			global $wp_query;
 			$current_obj = get_queried_object();

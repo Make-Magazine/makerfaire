@@ -477,3 +477,38 @@ span.wt-cli-tootip-icon {
 .wt-cli-ccpa-message-toggler .wt-cli-form-group {
     margin-bottom: 15px;
 }
+
+.wt-cli-notice.wt-cli-info {
+    padding: 15px 15px 15px 41px;
+    background: #e5f5fa;
+    position: relative;
+    border-left: 4px solid;
+    border-color: #00a0d2;
+    margin-bottom: 15px;
+}
+
+.wt-cli-notice.wt-cli-info:before {
+    content: "\f348";
+    color: #00a0d2;
+    font-family: "dashicons";
+    position: absolute;
+    left: 15px;
+    font-size: 16px;
+}
+/* Toggle checkbox CSS since 1.9.4 */
+.wt-cli-input-toggle-section
+{
+    display: none;
+}
+.wt-cli-section-floating-widget-settings .wt-cli-input-toggle-section.wt-cli-toggle-active label {
+    margin-left: 15px !important;
+}
+.wt-cli-section-floating-widget-settings .wt-cli-input-toggle-section label {
+    -webkit-transition: margin 700ms;
+  -moz-transition: margin 700ms;
+  -o-transition: margin 700ms;
+  transition: margin 700ms;
+}
+.wt-cli-section-floating-widget-settings .form-table th {
+    width: 260px;
+}

@@ -4,13 +4,16 @@ if ( ! defined( 'WPINC' ) ) {
     die;
 }
 ?>
-<?php 
-$wt_cli_necessary_description =  isset($stored_options['necessary_description']) ? $stored_options['necessary_description'] : '';
-?>
 <style>
     .vvv_textbox{
         height: 150px;
         width:100%;
+    }
+    #wpbody-content .notice {
+        margin: 5px 20px 15px 0;
+    }
+    .notice, div.updated, div.error{
+        margin: 5px 20px 15px 0;
     }
 </style>
 <script type="text/javascript">
@@ -25,6 +28,12 @@ $wt_cli_necessary_description =  isset($stored_options['necessary_description'])
         <form method="post" action="<?php echo esc_url($_SERVER["REQUEST_URI"]); ?>" id="cli_ncessary_form" class="cookie-sensitivity-form">
             <?php wp_nonce_field('cookielawinfo-update-necessary'); ?> 
             <table class="form-table cli_necessary_form cli-admin-table">
+                <tr>
+                    <td>
+                        <label for="wt_cli_necessary_title"><?php _e('Title', 'cookie-law-info'); ?></label>
+                        <input type="text" id="wt_cli_necessary_title" name="wt_cli_necessary_title" value="<?php echo stripslashes( $wt_cli_necessary_title ); ?>" class="cli-textbox" />
+                    </td>
+                </tr>
                 <tr>
                     <td>
                        <label for="necessary_description"><?php echo __('Description','cookie-law-info');?></label>

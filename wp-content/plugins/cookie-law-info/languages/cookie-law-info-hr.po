@@ -1,159 +1,162 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-07-13 21:48+0530\n"
-"PO-Revision-Date: 2020-07-13 21:49+0530\n"
+"POT-Creation-Date: 2020-11-17 11:32+0530\n"
+"PO-Revision-Date: 2020-11-17 11:33+0530\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: admin/class-cookie-law-info-admin.php:144
-#: admin/class-cookie-law-info-admin.php:145
+#: admin/class-cookie-law-info-admin.php:147
+#: admin/class-cookie-law-info-admin.php:148
+#: admin/class-cookie-law-info-admin.php:247
 #: admin/partials/cookie-law-info-admin_settings.php:31
-msgid "Cookie Law Settings"
-msgstr "Postavke kolačića"
-
-#: admin/class-cookie-law-info-admin.php:152
-#: admin/class-cookie-law-info-admin.php:153
-msgid "Non-necessary Cookie"
-msgstr "Postavke kolačića"
-
-#: admin/class-cookie-law-info-admin.php:160
-#: admin/class-cookie-law-info-admin.php:161
-msgid "Necessary Cookie"
-msgstr "Potreban kolačić"
-
-#: admin/class-cookie-law-info-admin.php:168
-#: admin/class-cookie-law-info-admin.php:169
-#: admin/partials/cookie-law-info-privacy_overview.php:51
-msgid "Privacy Overview"
-msgstr "Pregled privatnosti"
-
-#: admin/class-cookie-law-info-admin.php:207
 msgid "Settings"
 msgstr "Podešavanja"
 
-#: admin/class-cookie-law-info-admin.php:208
-msgid "Support"
-msgstr "Podrška"
+#: admin/class-cookie-law-info-admin.php:155
+#: admin/class-cookie-law-info-admin.php:156
+#: public/modules/script-blocker/views/settings.php:174
+#: public/views/cookie-law-info_popup_content.php:23
+msgid "Non-necessary"
+msgstr "Non-potrebno"
 
-#: admin/class-cookie-law-info-admin.php:209
-msgid "Premium Upgrade"
-msgstr "Premium Upgrade"
+#: admin/class-cookie-law-info-admin.php:163
+#: admin/class-cookie-law-info-admin.php:164
+#: public/views/cookie-law-info_popup_content.php:22
+msgid "Necessary"
+msgstr "Potreban"
 
-#: admin/class-cookie-law-info-admin.php:219
-#: admin/class-cookie-law-info-admin.php:278
-#: admin/class-cookie-law-info-admin.php:320
+#: admin/class-cookie-law-info-admin.php:171
+#: admin/class-cookie-law-info-admin.php:172
+#: admin/partials/cookie-law-info-privacy_overview.php:25
+msgid "Privacy Overview"
+msgstr "Pregled privatnosti"
+
+#: admin/class-cookie-law-info-admin.php:221
+#: admin/class-cookie-law-info-admin.php:276
+#: admin/class-cookie-law-info-admin.php:334
+#: admin/class-cookie-law-info-admin.php:378
 #: admin/modules/cli-policy-generator/classes/class-policy-generator-ajax.php:22
-#: admin/partials/cookie-law-info-privacy_overview.php:8
+#: public/modules/script-blocker/script-blocker.php:133
+#: public/modules/script-blocker/script-blocker.php:173
+#: public/modules/script-blocker/script-blocker.php:310
 msgid "You do not have sufficient permission to perform this operation"
 msgstr "Nemate dovoljno dopuštenja za izvođenje ove operacije"
 
-#: admin/class-cookie-law-info-admin.php:253
-#: admin/class-cookie-law-info-admin.php:298
-#: admin/class-cookie-law-info-admin.php:344
-#: admin/partials/cookie-law-info-privacy_overview.php:27
+#: admin/class-cookie-law-info-admin.php:240
+#: admin/class-cookie-law-info-admin.php:306
+#: admin/class-cookie-law-info-admin.php:359
+#: admin/class-cookie-law-info-admin.php:403
 msgid "Settings Updated."
 msgstr "Postavke su obnovljene."
 
-#: admin/class-cookie-law-info-admin.php:359
+#: admin/class-cookie-law-info-admin.php:248
+msgid "Support"
+msgstr "Podrška"
+
+#: admin/class-cookie-law-info-admin.php:249
+msgid "Premium Upgrade"
+msgstr "Premium Upgrade"
+
+#: admin/class-cookie-law-info-admin.php:418
 msgid "ERROR MIGRATING SETTINGS (ERROR: 2)"
 msgstr "MJERENJE POSTAVLJANJA ERRORA (ERROR: 2)"
 
-#: admin/class-cookie-law-info-admin.php:377
+#: admin/class-cookie-law-info-admin.php:436
 msgid "Cookie ID"
 msgstr "ID kolačića"
 
-#: admin/class-cookie-law-info-admin.php:378
+#: admin/class-cookie-law-info-admin.php:437
 msgid "Cookie Type"
 msgstr "Vrsta kolačića"
 
-#: admin/class-cookie-law-info-admin.php:379
+#: admin/class-cookie-law-info-admin.php:438
 msgid "Cookie Duration"
 msgstr "Trajanje kolačića"
 
-#: admin/class-cookie-law-info-admin.php:380
+#: admin/class-cookie-law-info-admin.php:439
 msgid "Cookie Sensitivity"
 msgstr "Osjetljivost kolačića"
 
-#: admin/class-cookie-law-info-admin.php:630
+#: admin/class-cookie-law-info-admin.php:689
 msgid "Close Header"
 msgstr "Zatvori zaglavlje"
 
-#: admin/class-cookie-law-info-admin.php:634
+#: admin/class-cookie-law-info-admin.php:693
 msgid "Open URL"
 msgstr "Otvori URL"
 
-#: admin/class-cookie-law-info-admin.php:647
+#: admin/class-cookie-law-info-admin.php:706
 msgid "Extra Large"
 msgstr "Ekstra velika"
 
-#: admin/class-cookie-law-info-admin.php:651
+#: admin/class-cookie-law-info-admin.php:710
 msgid "Large"
 msgstr "Veliko"
 
-#: admin/class-cookie-law-info-admin.php:655
+#: admin/class-cookie-law-info-admin.php:714
 msgid "Medium"
 msgstr "Srednje"
 
-#: admin/class-cookie-law-info-admin.php:659
+#: admin/class-cookie-law-info-admin.php:718
 msgid "Small"
 msgstr "Mali"
 
-#: admin/class-cookie-law-info-admin.php:673
+#: admin/class-cookie-law-info-admin.php:732
 msgid "Default theme font"
 msgstr "Zadani font teme"
 
-#: admin/class-cookie-law-info-admin.php:677
+#: admin/class-cookie-law-info-admin.php:736
 msgid "Sans Serif"
 msgstr "Sans Serif"
 
-#: admin/class-cookie-law-info-admin.php:681
+#: admin/class-cookie-law-info-admin.php:740
 msgid "Serif"
 msgstr "Serif"
 
-#: admin/class-cookie-law-info-admin.php:685
+#: admin/class-cookie-law-info-admin.php:744
 msgid "Arial"
 msgstr "Arial"
 
-#: admin/class-cookie-law-info-admin.php:689
+#: admin/class-cookie-law-info-admin.php:748
 msgid "Arial Black"
 msgstr "Arial Black"
 
-#: admin/class-cookie-law-info-admin.php:693
+#: admin/class-cookie-law-info-admin.php:752
 msgid "Georgia, serif"
 msgstr "Georgia, serif"
 
-#: admin/class-cookie-law-info-admin.php:697
+#: admin/class-cookie-law-info-admin.php:756
 msgid "Helvetica"
 msgstr "Helvetica"
 
-#: admin/class-cookie-law-info-admin.php:701
+#: admin/class-cookie-law-info-admin.php:760
 msgid "Lucida"
 msgstr "Lucida"
 
-#: admin/class-cookie-law-info-admin.php:705
+#: admin/class-cookie-law-info-admin.php:764
 msgid "Tahoma"
 msgstr "Tahoma"
 
-#: admin/class-cookie-law-info-admin.php:709
+#: admin/class-cookie-law-info-admin.php:768
 msgid "Times New Roman"
 msgstr "Times New Roman"
 
-#: admin/class-cookie-law-info-admin.php:713
+#: admin/class-cookie-law-info-admin.php:772
 msgid "Trebuchet"
 msgstr "Trebuchet"
 
-#: admin/class-cookie-law-info-admin.php:717
+#: admin/class-cookie-law-info-admin.php:776
 msgid "Verdana"
 msgstr "Verdana"
 
@@ -166,6 +169,7 @@ msgid "Confirm"
 msgstr "Potvrda"
 
 #: admin/modules/ccpa/ccpa.php:108
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:154
 msgid "Cancel"
 msgstr "Otkaži"
 
@@ -204,10 +208,8 @@ msgid "CCPA & GDPR"
 msgstr "CCPA i GDPR"
 
 #: admin/modules/ccpa/views/ccpa_settings.php:7
-#, fuzzy
-#| msgid "Settings"
 msgid "CCPA Settings"
-msgstr "Podešavanja"
+msgstr "CCPA postavke"
 
 #: admin/modules/ccpa/views/ccpa_settings.php:7
 msgid ""
@@ -226,10 +228,8 @@ msgstr ""
 "[wt_cli_ccpa_optout]."
 
 #: admin/modules/ccpa/views/ccpa_settings.php:10
-#, fuzzy
-#| msgid "Enabled"
 msgid "Enable CCPA ?"
-msgstr "Omogućeno"
+msgstr "Omogućiti CCPA?"
 
 #: admin/modules/ccpa/views/ccpa_settings.php:18
 msgid "Enable CCPA notice"
@@ -250,7 +250,7 @@ msgid "Unable to handle your request."
 msgstr "Nije moguće obraditi vaš zahtjev."
 
 #: admin/modules/cli-policy-generator/classes/class-policy-generator-ajax.php:96
-#: admin/modules/cli-policy-generator/classes/class-policy-generator-ajax.php:132
+#: admin/modules/cli-policy-generator/classes/class-policy-generator-ajax.php:130
 #: admin/modules/cli-policy-generator/cli-policy-generator.php:132
 msgid "Error"
 msgstr "Greška"
@@ -294,9 +294,10 @@ msgid "Heading"
 msgstr "Naslov"
 
 #: admin/modules/cli-policy-generator/views/policy-generator.php:57
-#: admin/views/admin_necessary_cookie.php:30
-#: admin/views/admin_non_necessary_cookie.php:53
-#: public/modules/shortcode/shortcode.php:215
+#: admin/views/admin_necessary_cookie.php:39
+#: admin/views/admin_non_necessary_cookie.php:54
+#: public/modules/script-blocker/views/settings.php:142
+#: public/modules/shortcode/shortcode.php:220
 msgid "Description"
 msgstr "Opis"
 
@@ -320,15 +321,120 @@ msgstr "Stvorite stranicu Pravila kolačića"
 msgid "Live preview"
 msgstr "Pregled uživo"
 
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:43
+msgid "The plugin is complex to set up"
+msgstr "Dodatak je složen za postavljanje"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:45
+msgid "Please describe which area you are facing difficulties"
+msgstr "Opišite na kojem se području suočavate s poteškoćama"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:49
+msgid "I found a better plugin"
+msgstr "Pronašao sam bolji dodatak"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:51
+msgid "Which plugin?"
+msgstr "Koji dodatak?"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:55
+msgid "The plugin is great, but I need specific feature that you don't support"
+msgstr "Dodatak je sjajan, ali trebam određenu značajku koju ne podržavate"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:57
+msgid "Could you tell us more about that feature?"
+msgstr "Možete li nam reći više o toj značajci?"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:61
+msgid "The plugin didn't work as expected"
+msgstr "Dodatak nije radio kako se očekivalo"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:63
+msgid "What did you expect?"
+msgstr "Što si očekivao?"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:67
+msgid "A conflict with another plugin or theme"
+msgstr "Sukob s drugim dodatkom ili temom"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:69
+msgid "Which plugin or theme?"
+msgstr "Koji dodatak ili tema?"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:73
+msgid "Translation issues"
+msgstr "Problemi s prijevodom"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:77
+msgid "Incorrect/missing translation"
+msgstr "Pogrešan / nedostaje prijevod"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:79
+msgid "Name the language"
+msgstr "Nazovite jezik"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:83
+msgid ""
+"Unable to translate my dynamic content e.g, cookie message, button text etc"
+msgstr ""
+"Ne mogu prevesti svoj dinamički sadržaj, npr. Poruku kolačića, tekst gumba "
+"itd"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:85
+msgid "Name the language and the translator plugin that you are using"
+msgstr "Nazovite jezik i dodatak za prevoditelj koji koristite"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:91
+msgid "Upgrade to pro"
+msgstr "Nadogradi na pro"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:95
+#: admin/views/admin-settings-general.php:10
+#: admin/views/admin-settings-general.php:66
+msgid "Other"
+msgstr "Drugo"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:97
+msgid "Could you tell us a bit more?"
+msgstr "Možete li nam reći nešto više?"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:117
+msgid "If you have a moment, please let us know why you are deactivating:"
+msgstr "Ako imate trenutak, javite nam zašto deaktivirate:"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:144
+msgid ""
+"We do not collect any personal data when you submit this form. It's your "
+"feedback that we value."
+msgstr ""
+"Kad predate ovaj obrazac, ne prikupljamo nikakve osobne podatke. Vaše "
+"povratne informacije cijenimo."
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:145
+msgid "Privacy Policy"
+msgstr "Postavke pravila o privatnosti"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:152
+msgid "Go to support"
+msgstr "Idite na podršku"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:153
+msgid "Submit & Deactivate"
+msgstr "Pošaljite i deaktivirajte"
+
+#: admin/modules/uninstall-feedback/uninstall-feedback.php:155
+msgid "I rather wouldn't say"
+msgstr "Radije ne bih rekao"
+
 #: admin/partials/cookie-law-info-admin_settings.php:25
-#: admin/views/admin_necessary_cookie.php:17
-#: admin/views/admin_non_necessary_cookie.php:23
+#: admin/views/admin_necessary_cookie.php:20
+#: admin/views/admin_non_necessary_cookie.php:17
 msgid "Settings updated."
 msgstr "Postavke su obnovljene."
 
 #: admin/partials/cookie-law-info-admin_settings.php:26
-#: admin/views/admin_necessary_cookie.php:18
-#: admin/views/admin_non_necessary_cookie.php:24
+#: admin/views/admin_necessary_cookie.php:21
+#: admin/views/admin_non_necessary_cookie.php:18
 msgid "Unable to update Settings."
 msgstr "Ažuriranje postavki nije moguće."
 
@@ -341,12 +447,12 @@ msgid "Unable to reset settings."
 msgstr "Ažuriranje postavki nije moguće."
 
 #: admin/partials/cookie-law-info-admin_settings.php:39
-msgid "Your Cookie Law Info bar is switched on"
-msgstr "Vaša Cookie Law Info bar je uključena"
+msgid "Cookie bar is currently active"
+msgstr "Traka kolačića trenutno je aktivna"
 
 #: admin/partials/cookie-law-info-admin_settings.php:47
-msgid "Your Cookie Law Info bar is switched off"
-msgstr "Vaša Cookie Law Info bar je isključena"
+msgid "Cookie bar is currently inactive"
+msgstr "Traka kolačića trenutno je neaktivna"
 
 #: admin/partials/cookie-law-info-admin_settings.php:57
 #: admin/views/admin-settings-general.php:9
@@ -370,18 +476,18 @@ msgstr "Napredno"
 msgid "Help Guide"
 msgstr "Vodič"
 
-#: admin/partials/cookie-law-info-privacy_overview.php:58
+#: admin/partials/cookie-law-info-privacy_overview.php:32
 msgid "Privacy Overview Title"
 msgstr "Pregled naslova privatnosti"
 
-#: admin/partials/cookie-law-info-privacy_overview.php:64
-#: admin/partials/cookie-law-info-privacy_overview.php:79
+#: admin/partials/cookie-law-info-privacy_overview.php:38
+#: admin/partials/cookie-law-info-privacy_overview.php:53
 msgid "This will be shown in the settings visible for user on consent screen."
 msgstr ""
 "To će se prikazati u postavkama koje su vidljive korisnicima na zaslonu "
 "pristanka."
 
-#: admin/partials/cookie-law-info-privacy_overview.php:87
+#: admin/partials/cookie-law-info-privacy_overview.php:61
 msgid "Save Settings"
 msgstr "Postavke su obnovljene"
 
@@ -520,14 +626,12 @@ msgstr "Otvori u novom prozoru?"
 #: admin/views/admin-settings-buttons.php:311
 #: admin/views/admin-settings-general.php:38
 #: admin/views/admin-settings-general.php:54
-#: admin/views/admin-settings-general.php:71
-#: admin/views/admin-settings-general.php:140
-#: admin/views/admin-settings-general.php:148
-#: admin/views/admin-settings-general.php:155
+#: admin/views/admin-settings-general.php:74
+#: admin/views/admin-settings-general.php:82
+#: admin/views/admin-settings-general.php:89
 #: admin/views/admin-settings-messagebar.php:86
 #: admin/views/admin-settings-messagebar.php:110
-#: admin/views/admin-settings-messagebar.php:150
-#: admin/views/admin_non_necessary_cookie.php:37
+#: admin/views/admin_non_necessary_cookie.php:32
 msgid "Yes"
 msgstr "Da"
 
@@ -537,14 +641,13 @@ msgstr "Da"
 #: admin/views/admin-settings-buttons.php:312
 #: admin/views/admin-settings-general.php:39
 #: admin/views/admin-settings-general.php:55
-#: admin/views/admin-settings-general.php:72
-#: admin/views/admin-settings-general.php:141
-#: admin/views/admin-settings-general.php:149
-#: admin/views/admin-settings-general.php:156
+#: admin/views/admin-settings-general.php:75
+#: admin/views/admin-settings-general.php:83
+#: admin/views/admin-settings-general.php:90
 #: admin/views/admin-settings-messagebar.php:87
 #: admin/views/admin-settings-messagebar.php:111
-#: admin/views/admin-settings-messagebar.php:151
-#: admin/views/admin_non_necessary_cookie.php:38
+#: admin/views/admin_non_necessary_cookie.php:33
+#: public/modules/script-blocker/views/settings.php:139
 msgid "No"
 msgstr "Ne"
 
@@ -601,16 +704,12 @@ msgid "Open in new window?"
 msgstr "Otvori u novom prozoru?"
 
 #: admin/views/admin-settings-buttons.php:329
-#, fuzzy
-#| msgid "Text"
 msgid "CCPA Text"
-msgstr "Tekst"
+msgstr "CCPA tekst"
 
 #: admin/views/admin-settings-buttons.php:338
-#, fuzzy
-#| msgid "Check"
 msgid "Checkbox"
-msgstr "Provera"
+msgstr "Kvadratić"
 
 #: admin/views/admin-settings-buttons.php:340
 msgid "The shortcode will be represented as a link whereever used."
@@ -625,16 +724,9 @@ msgstr ""
 "Kratki kôd bit će predstavljen kao potvrdni okvir s odabranom opcijom za "
 "snimanje pristanka."
 
-#: admin/views/admin-settings-general.php:10
-#: admin/views/admin-settings-general.php:132
-msgid "Other"
-msgstr "Drugo"
-
 #: admin/views/admin-settings-general.php:17
-#, fuzzy
-#| msgid "Enable consent logging"
-msgid "Enable cookie law"
-msgstr "Omogući prijavu pristanka"
+msgid "Enable cookie bar"
+msgstr "Omogući traku kolačića"
 
 #: admin/views/admin-settings-general.php:19
 msgid "On"
@@ -678,81 +770,15 @@ msgstr ""
 msgid "This option will not work along with `Popup overlay`."
 msgstr "Ova opcija neće raditi zajedno s opcijom \"Popup overlay\"."
 
-#: admin/views/admin-settings-general.php:66
-#: admin/views/admin-settings-messagebar.php:145
-msgid "Show Again Tab"
-msgstr "Ne prikazuj ponovo"
-
 #: admin/views/admin-settings-general.php:69
-#: admin/views/admin-settings-messagebar.php:148
-msgid "Use Show Again Tab?"
-msgstr "Koristite karticu Ponovno prikazivanje?"
-
-#: admin/views/admin-settings-general.php:77
-#: admin/views/admin-settings-general.php:94
-#: admin/views/admin-settings-messagebar.php:156
-#: admin/views/admin-settings-messagebar.php:173
-msgid "Tab Position"
-msgstr "Pozicija"
-
-#: admin/views/admin-settings-general.php:82
-#: admin/views/admin-settings-general.php:85
-#: admin/views/admin-settings-messagebar.php:161
-#: admin/views/admin-settings-messagebar.php:164
-msgid "Right"
-msgstr "Desno"
-
-#: admin/views/admin-settings-general.php:83
-#: admin/views/admin-settings-general.php:86
-#: admin/views/admin-settings-messagebar.php:162
-#: admin/views/admin-settings-messagebar.php:165
-msgid "Left"
-msgstr "Lijevo"
-
-#: admin/views/admin-settings-general.php:101
-#: admin/views/admin-settings-messagebar.php:180
-msgid "Bottom Right"
-msgstr "Dolje desno"
-
-#: admin/views/admin-settings-general.php:104
-#: admin/views/admin-settings-messagebar.php:183
-msgid "Bottom Left"
-msgstr "Dole lijevo"
-
-#: admin/views/admin-settings-general.php:107
-#: admin/views/admin-settings-messagebar.php:186
-msgid "Top Right"
-msgstr "Gore desno"
-
-#: admin/views/admin-settings-general.php:110
-#: admin/views/admin-settings-messagebar.php:189
-msgid "Top Left"
-msgstr "Gore lijevo"
-
-#: admin/views/admin-settings-general.php:117
-#: admin/views/admin-settings-messagebar.php:196
-msgid "From Left Margin"
-msgstr "Lijeva margina"
-
-#: admin/views/admin-settings-general.php:120
-#: admin/views/admin-settings-messagebar.php:199
-msgid "Specify"
-msgstr "Ukloni masku"
-
-#: admin/views/admin-settings-general.php:124
-#: admin/views/admin-settings-messagebar.php:203
-msgid "Show More Text"
-msgstr "Prikaži više"
-
-#: admin/views/admin-settings-general.php:135
 msgid "Reload after \"scroll accept\" event?"
 msgstr "Ponovo učitati nakon događaja \"scroll accept\"?"
 
-#: admin/views/admin-settings-general.php:146
+#: admin/views/admin-settings-general.php:80
 msgid "Reload after Accept button click"
 msgstr "Ponovno učitavanje nakon što kliknete na gumb Prihvati"
 
-#: admin/views/admin-settings-general.php:153
+#: admin/views/admin-settings-general.php:87
 msgid "Reload after Reject button click"
 msgstr "Ponovno učitavanje nakon klika gumba Odbij"
 
@@ -878,16 +904,13 @@ msgid "Contact Us"
 msgstr "Kontaktirajte nas"
 
 #: admin/views/admin-settings-messagebar.php:9
-#, fuzzy
-#| msgid "Cookie Bar"
 msgid "Cookie bar"
-msgstr "Kolačić"
+msgstr "Kolačić s kolačićima"
 
 #: admin/views/admin-settings-messagebar.php:10
-#, fuzzy
-#| msgid "Show Again Tab"
-msgid "Show again tab"
-msgstr "Ne prikazuj ponovo"
+#: admin/views/admin-settings-messagebar.php:145
+msgid "Revisit consent"
+msgstr "Ponovno posjetite pristanak"
 
 #: admin/views/admin-settings-messagebar.php:15
 msgid "Cookie Bar"
@@ -930,10 +953,8 @@ msgid "Font"
 msgstr "Font"
 
 #: admin/views/admin-settings-messagebar.php:63
-#, fuzzy
-#| msgid "Cookie bar as"
 msgid "Show cookie bar as"
-msgstr "Traka kolačića kao"
+msgstr "Prikaži traku kolačića kao"
 
 #: admin/views/admin-settings-messagebar.php:68
 msgid "Banner"
@@ -967,10 +988,8 @@ msgid "`Accept on scroll` will not work along with this option."
 msgstr "`Prihvati na svitak` neće raditi zajedno s ovom opcijom."
 
 #: admin/views/admin-settings-messagebar.php:93
-#, fuzzy
-#| msgid "Position"
 msgid "Position:"
-msgstr "Position"
+msgstr "Položaj:"
 
 #: admin/views/admin-settings-messagebar.php:98
 msgid "Header"
@@ -1010,41 +1029,126 @@ msgstr "Lepljivo"
 msgid "On hide"
 msgstr "Na skrovištu"
 
+#: admin/views/admin-settings-messagebar.php:145
+msgid "previously"
+msgstr "prijašnji"
+
+#: admin/views/admin-settings-messagebar.php:145
+msgid "Show again tab"
+msgstr "Ne prikazuj ponovo"
+
+#: admin/views/admin-settings-messagebar.php:147
+msgid ""
+"Revisit consent will allow the visitors to view/edit/revoke their prior "
+"preferences. This can be done via a widget and/or a shortcode. A small "
+"privacy widget is automatically displayed at the footer of your website if "
+"the widget option is enabled. You can also manually insert a link to manage "
+"consent by adding the shortcode <b>[wt_cli_manage_consent]</b> to your "
+"website."
+msgstr ""
+"Pristanak za ponovni posjet omogućit će posjetiteljima da pregledaju / "
+"uređuju / opozivaju svoje prethodne postavke. To se može učiniti pomoću "
+"widgeta i / ili kratkog koda. Mali widget za privatnost automatski se "
+"prikazuje u podnožju vašeg web mjesta ako je opcija widgeta omogućena. "
+"Također možete ručno umetnuti vezu za upravljanje pristankom dodavanjem "
+"<b>kratkog koda [wt_cli_manage_consent]</b> na svoje web mjesto."
+
+#: admin/views/admin-settings-messagebar.php:152
+msgid "Enable revisit consent widget"
+msgstr "Omogućite ponovni posjet widgetu za pristanak"
+
+#: admin/views/admin-settings-messagebar.php:152
+msgid ""
+"By enabling this option a small privacy widget is automatically displayed at "
+"the footer of your website."
+msgstr ""
+"Omogućavanjem ove opcije mali se widget za privatnost automatski prikazuje u "
+"podnožju vašeg web mjesta."
+
+#: admin/views/admin-settings-messagebar.php:163
+#: admin/views/admin-settings-messagebar.php:180
+msgid "Tab Position"
+msgstr "Pozicija"
+
+#: admin/views/admin-settings-messagebar.php:168
+#: admin/views/admin-settings-messagebar.php:171
+msgid "Right"
+msgstr "Desno"
+
+#: admin/views/admin-settings-messagebar.php:169
+#: admin/views/admin-settings-messagebar.php:172
+msgid "Left"
+msgstr "Lijevo"
+
+#: admin/views/admin-settings-messagebar.php:187
+msgid "Bottom Right"
+msgstr "Dolje desno"
+
+#: admin/views/admin-settings-messagebar.php:190
+msgid "Bottom Left"
+msgstr "Dole lijevo"
+
+#: admin/views/admin-settings-messagebar.php:193
+msgid "Top Right"
+msgstr "Gore desno"
+
+#: admin/views/admin-settings-messagebar.php:196
+msgid "Top Left"
+msgstr "Gore lijevo"
+
+#: admin/views/admin-settings-messagebar.php:203
+msgid "From Right Margin"
+msgstr "S desne margine"
+
+#: admin/views/admin-settings-messagebar.php:203
+msgid "From Left Margin"
+msgstr "Lijeva margina"
+
+#: admin/views/admin-settings-messagebar.php:206
+msgid "Specify"
+msgstr "Ukloni masku"
+
+#: admin/views/admin-settings-messagebar.php:215
+#: admin/views/admin_necessary_cookie.php:33
+#: admin/views/admin_non_necessary_cookie.php:48
+msgid "Title"
+msgstr "Naslov"
+
 #: admin/views/admin-settings-save-button.php:12
-#: admin/views/admin_necessary_cookie.php:43
-#: admin/views/admin_non_necessary_cookie.php:86
+#: admin/views/admin_necessary_cookie.php:52
+#: admin/views/admin_non_necessary_cookie.php:87
+#: public/modules/script-blocker/script-blocker.php:219
 msgid "Update Settings"
 msgstr "Ažuriraj postavke"
 
-#: admin/views/admin_necessary_cookie.php:23
+#: admin/views/admin_necessary_cookie.php:26
 msgid "Necessary Cookie Settings"
 msgstr "Potrebne postavke kolačića"
 
-#: admin/views/admin_non_necessary_cookie.php:29
+#: admin/views/admin_non_necessary_cookie.php:23
 msgid "Non-necessary Cookie Settings"
 msgstr "Nepotrebne postavke kolačića"
 
-#: admin/views/admin_non_necessary_cookie.php:36
+#: admin/views/admin_non_necessary_cookie.php:31
 msgid "Enable Non-necessary Cookie"
 msgstr "Omogući nepotrebni kolačić"
 
-#: admin/views/admin_non_necessary_cookie.php:43
-#, fuzzy
-#| msgid "Default theme font"
+#: admin/views/admin_non_necessary_cookie.php:38
 msgid "Default state"
-msgstr "Zadani font teme"
+msgstr "Zadano stanje"
 
-#: admin/views/admin_non_necessary_cookie.php:44
-#: public/views/cookie-law-info_popup_content.php:5
+#: admin/views/admin_non_necessary_cookie.php:39
+#: public/modules/script-blocker/views/settings.php:141
+#: public/views/cookie-law-info_popup_content.php:7
 msgid "Enabled"
 msgstr "Omogućeno"
 
-#: admin/views/admin_non_necessary_cookie.php:45
-#: public/views/cookie-law-info_popup_content.php:6
+#: admin/views/admin_non_necessary_cookie.php:40
+#: public/views/cookie-law-info_popup_content.php:8
 msgid "Disabled"
 msgstr "Onemogućeno"
 
-#: admin/views/admin_non_necessary_cookie.php:47
+#: admin/views/admin_non_necessary_cookie.php:42
 msgid ""
 "If you enable this option, the category toggle button will be in the active "
 "state for cookie consent."
@@ -1052,7 +1156,7 @@ msgstr ""
 "Ako omogućite ovu opciju, gumb za uključivanje kategorije bit će u aktivnom "
 "stanju radi pristanka kolačića."
 
-#: admin/views/admin_non_necessary_cookie.php:61
+#: admin/views/admin_non_necessary_cookie.php:62
 msgid ""
 "This script will be added to the page HEAD section if the above settings is "
 "enabled and user has give consent."
@@ -1060,7 +1164,7 @@ msgstr ""
 "Ova skripta bit će dodana u stranicu HEAD, ako su gore navedene postavke "
 "omogućene, a korisnik je dao svoj pristanak."
 
-#: admin/views/admin_non_necessary_cookie.php:66
+#: admin/views/admin_non_necessary_cookie.php:67
 msgid ""
 "Print scripts in the head tag on the front end if above cookie settings is "
 "enabled and user has given consent."
@@ -1068,7 +1172,7 @@ msgstr ""
 "Ispisujte skripte u oznaku glave na prednjoj strani ako su gore navedene "
 "postavke kolačića omogućene i korisnik je dao pristanak."
 
-#: admin/views/admin_non_necessary_cookie.php:73
+#: admin/views/admin_non_necessary_cookie.php:74
 msgid ""
 "This script will be added right after the BODY section if the above settings "
 "is enabled and user has given consent."
@@ -1076,7 +1180,7 @@ msgstr ""
 "Ova skripta bit će dodana odmah nakon odjeljka BODY ako su gore navedene "
 "postavke omogućene i korisnik je dao pristanak."
 
-#: admin/views/admin_non_necessary_cookie.php:76
+#: admin/views/admin_non_necessary_cookie.php:77
 msgid ""
 "Print scripts before the closing body tag on the front end if above cookie "
 "settings is enabled and user has given consent."
@@ -1211,125 +1315,277 @@ msgstr " od"
 msgid "  much appreciated!"
 msgstr " mnogo poštovati!"
 
-#: public/class-cookie-law-info-public.php:73
-msgid "Necessary"
-msgstr "Potreban"
+#: cookie-law-info.php:80
+msgid ""
+"Please make sure the cache is cleared after each plugin update especially if "
+"you have minified JS and/or CSS files."
+msgstr ""
+"Molimo provjerite je li predmemorija izbrisana nakon svakog ažuriranja "
+"dodatka, posebno ako imate minificirane JS i / ili CSS datoteke."
 
-#: public/class-cookie-law-info-public.php:74
-msgid "Non-necessary"
-msgstr "Non-potrebno"
+#: includes/class-cookie-law-info-review_request.php:52
+#, php-format
+msgid ""
+"Hey, we at %sWebToffee%s would like to thank you for using our plugin. We "
+"would really appreciate if you could take a moment to drop a quick review "
+"that will inspire us to keep going."
+msgstr ""
+"Hej, mi na %sWebToffee% s želimo vam zahvaliti što koristite naš dodatak. "
+"Zaista bismo bili zahvalni ako biste izdvojili trenutak i odustali od "
+"kratkog pregleda koji će nas nadahnuti da nastavimo dalje."
 
-#: public/class-cookie-law-info-public.php:282
+#: includes/class-cookie-law-info-review_request.php:55
+msgid "Remind me later"
+msgstr "Podsjeti me kasnije"
+
+#: includes/class-cookie-law-info-review_request.php:56
+msgid "Not interested"
+msgstr "Ne zanima me"
+
+#: includes/class-cookie-law-info-review_request.php:57
+msgid "Review now"
+msgstr "Pregledajte odmah"
+
+#: public/class-cookie-law-info-public.php:251
 msgid "GDPR Cookie Consent"
 msgstr "Omogući prijavu pristanka"
 
-#: public/class-cookie-law-info-public.php:283
+#: public/class-cookie-law-info-public.php:252
 msgid "Cookie List"
 msgstr "Popis kolačića"
 
-#: public/class-cookie-law-info-public.php:284
-#: public/modules/shortcode/shortcode.php:203
+#: public/class-cookie-law-info-public.php:253
+#: public/modules/shortcode/shortcode.php:208
 msgid "Cookie"
 msgstr "Kolačić"
 
-#: public/class-cookie-law-info-public.php:285
+#: public/class-cookie-law-info-public.php:254
 msgid "Add New"
 msgstr "Unesi nov"
 
-#: public/class-cookie-law-info-public.php:286
+#: public/class-cookie-law-info-public.php:255
 msgid "Add New Cookie Type"
 msgstr "Dodati novi tip kolačića"
 
-#: public/class-cookie-law-info-public.php:287
+#: public/class-cookie-law-info-public.php:256
 msgid "Edit Cookie Type"
 msgstr "Urediti novi tip kolačića"
 
-#: public/class-cookie-law-info-public.php:288
+#: public/class-cookie-law-info-public.php:257
 msgid "New Cookie Type"
 msgstr "Novi tip kolačića"
 
-#: public/class-cookie-law-info-public.php:289
+#: public/class-cookie-law-info-public.php:258
 msgid "View Cookie Type"
 msgstr "Pregledati tip kolačića"
 
-#: public/class-cookie-law-info-public.php:290
+#: public/class-cookie-law-info-public.php:259
 msgid "Search Cookies"
 msgstr "Tražiti kolačiće"
 
-#: public/class-cookie-law-info-public.php:291
+#: public/class-cookie-law-info-public.php:260
 msgid "Nothing found"
 msgstr "Ništa nije pronađeno"
 
-#: public/class-cookie-law-info-public.php:292
+#: public/class-cookie-law-info-public.php:261
 msgid "Nothing found in Trash"
 msgstr "Ništa nije pronađeno u smeću"
 
-#: public/modules/shortcode/shortcode.php:94
+#: public/modules/script-blocker/script-blocker.php:156
+#: public/modules/script-blocker/script-blocker.php:157
+msgid "Script Blocker"
+msgstr "Script Blocker"
+
+#: public/modules/script-blocker/script-blocker.php:182
+msgid "Status updated"
+msgstr "Status ažuriran"
+
+#: public/modules/script-blocker/script-blocker.php:206
+msgid "Advanced script rendering"
+msgstr "Napredno prikazivanje skripti"
+
+#: public/modules/script-blocker/script-blocker.php:208
+#: public/modules/script-blocker/views/settings.php:7
+msgid "Enable"
+msgstr "Omogući"
+
+#: public/modules/script-blocker/script-blocker.php:209
+#: public/modules/script-blocker/views/settings.php:7
+msgid "Disable"
+msgstr "Onemogući"
+
+#: public/modules/script-blocker/script-blocker.php:210
+msgid ""
+"Advanced script rendering will render the blocked scripts using javascript "
+"thus eliminating the need for a page refresh. It is also optimized for "
+"caching since there is no server-side processing after obtaining the consent."
+msgstr ""
+"Napredno prikazivanje skripti prikazat će blokirane skripte pomoću "
+"javascripta, čime se eliminira potreba za osvježavanjem stranice. Također je "
+"optimiziran za predmemoriranje jer nema obrade na strani poslužitelja nakon "
+"dobivanja pristanka."
+
+#: public/modules/script-blocker/views/settings.php:9
+msgid "Script blocker is enabled."
+msgstr "Omogućen je blokator skripti."
+
+#: public/modules/script-blocker/views/settings.php:9
+msgid ""
+"Script blocker is currently disabled. Enable the blocker if you want any of "
+"the below listed plugins to be auto blocked."
+msgstr ""
+"Blokator skripti trenutno je onemogućen. Omogućite bloker ako želite da se "
+"bilo koji od dolje navedenih dodataka automatski blokira."
+
+#: public/modules/script-blocker/views/settings.php:10
+#, php-format
+msgid "<a href=\"javascript: submitform()\">%s</a>"
+msgstr "<a href=\"javascript: submitform()\">%s</a>"
+
+#: public/modules/script-blocker/views/settings.php:14
+#, php-format
+msgid ""
+"Advanced script rendering is currently disabled. It should be enabled for "
+"the automatic script blocker to function. <a href=\"%s\">Enable.</a>"
+msgstr ""
+"Napredno prikazivanje skripti trenutno je onemogućeno. Trebao bi biti "
+"omogućen za rad automatskog blokatora skripti. <a href=\"%s\">Omogućiti.</a>"
+
+#: public/modules/script-blocker/views/settings.php:113
+msgid "Manage Script Blocking"
+msgstr "Upravljanje blokiranjem skripti"
+
+#: public/modules/script-blocker/views/settings.php:134
+#, php-format
+msgid ""
+"Below is the list of plugins currently supported for auto blocking. Plugins "
+"marked inactive are either not installed or activated on your website. "
+"Enabled plugins will be blocked by default on the front-end of your website "
+"prior to obtaining user consent and rendered respectively based on consent. "
+"<a href=\"%s\" target=\"_blank\">Read more.</a>"
+msgstr ""
+"Ispod je popis dodataka koji su trenutno podržani za automatsko blokiranje. "
+"Dodaci označeni kao neaktivni ili nisu instalirani ili aktivirani na vašem "
+"web mjestu. Omogućeni dodaci bit će prema zadanim postavkama blokirani na "
+"prednjoj strani vašeg web mjesta prije dobivanja korisničkog pristanka i "
+"generirani na temelju pristanka. <a href=\"%s\" target=\"_blank\">Čitaj više."
+"</a>"
+
+#: public/modules/script-blocker/views/settings.php:140
+msgid "Name"
+msgstr "Nazivu"
+
+#: public/modules/script-blocker/views/settings.php:141
+msgid ""
+"Enabled: Plugins will be blocked by default prior to obtaining user consent."
+msgstr ""
+"Omogućeno: Dodaci će se prema zadanim postavkama blokirati prije dobivanja "
+"korisničkog pristanka."
+
+#: public/modules/script-blocker/views/settings.php:141
+msgid "Disabled: Plugins will be rendered prior to obtaining consent."
+msgstr "Onemogućeno: dodaci će se prikazati prije dobivanja pristanka."
+
+#: public/modules/script-blocker/views/settings.php:175
+msgid "Inactive"
+msgstr "Neaktivno"
+
+#: public/modules/shortcode/shortcode.php:99
 msgid "Your current state:"
 msgstr "Vaše trenutno stanje:"
 
-#: public/modules/shortcode/shortcode.php:99
-msgid "Consent Accepted."
-msgstr "Prihvaćen pristanak."
+#: public/modules/shortcode/shortcode.php:104
+msgid "Consent accepted."
+msgstr "Pristanak prihvaćen."
 
-#: public/modules/shortcode/shortcode.php:102
+#: public/modules/shortcode/shortcode.php:107
 msgid "Consent rejected."
 msgstr "Pristanak odbijen."
 
-#: public/modules/shortcode/shortcode.php:106
+#: public/modules/shortcode/shortcode.php:111
 msgid "No consent given."
 msgstr "Nema pristanka."
 
-#: public/modules/shortcode/shortcode.php:108
+#: public/modules/shortcode/shortcode.php:113
 msgid "Manage your consent."
 msgstr "Upravljajte svojim pristankom."
 
-#: public/modules/shortcode/shortcode.php:145
+#: public/modules/shortcode/shortcode.php:150
 msgid "Delete Cookies"
 msgstr "Izbriši kolačiće"
 
-#: public/modules/shortcode/shortcode.php:181
+#: public/modules/shortcode/shortcode.php:186
 msgid "No records found"
 msgstr "Nije pronađen nijedan zapis"
 
-#: public/modules/shortcode/shortcode.php:207
+#: public/modules/shortcode/shortcode.php:212
 msgid "Type"
 msgstr "Tip"
 
-#: public/modules/shortcode/shortcode.php:211
+#: public/modules/shortcode/shortcode.php:216
 msgid "Duration"
 msgstr "Trajanje"
 
-#: public/modules/shortcode/shortcode.php:528
-#, fuzzy
-#| msgid "Customise Cookie Bar"
+#: public/modules/shortcode/shortcode.php:533
 msgid "Close the cookie bar"
-msgstr "Cookie Bar će biti prikazan u:"
+msgstr "Zatvorite traku s kolačićima"
 
-#: public/modules/shortcode/shortcode.php:528
-#, fuzzy
-#| msgid "Consent Accepted."
+#: public/modules/shortcode/shortcode.php:533
 msgid "Close and Accept"
-msgstr "Prihvaćen pristanak."
+msgstr "Zatvori i prihvati"
 
 #: public/views/cookie-law-info_bar.php:23
 msgid "Close"
 msgstr "Zatvori"
 
-#: public/views/cookie-law-info_popup_content.php:4
+#: public/views/cookie-law-info_popup_content.php:6
 msgid "Always Enabled"
 msgstr "Uvijek omogućeno"
 
-#: public/views/cookie-law-info_popup_content.php:7
+#: public/views/cookie-law-info_popup_content.php:9
 msgid "Show more"
 msgstr "Prikaži više"
 
-#: public/views/cookie-law-info_popup_content.php:7
+#: public/views/cookie-law-info_popup_content.php:9
 msgid "Show less"
 msgstr "Prikaži manje"
 
-#~ msgid "Cookie Bar is currently:"
-#~ msgstr "Cookie Bar trenutačno je:"
+#~ msgid ""
+#~ "Which plugin are you using for language translation? Could you tell us a "
+#~ "bit more?"
+#~ msgstr ""
+#~ "Koji dodatak koristite za prijevod jezika? Možete li nam reći nešto više?"
+
+#~ msgid "Caching issues"
+#~ msgstr "Problemi s predmemoriranjem"
+
+#~ msgid "Which caching plugin are you using? Could you tell us a bit more?"
+#~ msgstr ""
+#~ "Koji dodatak za predmemoriranje koristite? Možete li nam reći nešto više?"
+
+#~ msgid "Cookie Law Settings"
+#~ msgstr "Postavke kolačića"
+
+#~ msgid "Show Again Tab"
+#~ msgstr "Ne prikazuj ponovo"
+
+#~ msgid "Use Show Again Tab?"
+#~ msgstr "Koristite karticu Ponovno prikazivanje?"
+
+#~ msgid "Show More Text"
+#~ msgstr "Prikaži više"
+
+#~ msgid "Non-necessary Cookie"
+#~ msgstr "Postavke kolačića"
+
+#~ msgid "Necessary Cookie"
+#~ msgstr "Potreban kolačić"
+
+#~ msgid "Your Cookie Law Info bar is switched on"
+#~ msgstr "Vaša Cookie Law Info bar je uključena"
+
+#~ msgid "Your Cookie Law Info bar is switched off"
+#~ msgstr "Vaša Cookie Law Info bar je isključena"
 
 #~ msgid "Cookie Bar will be shown in:"
 #~ msgstr "Cookie Bar će biti prikazan u:"
@@ -1365,9 +1621,6 @@ msgstr "Prikaži manje"
 
 #~ msgid "About the law"
 #~ msgstr "Postavke kolačića"
-
-#~ msgid "Privacy & Cookies Policy"
-#~ msgstr "Pregled privatnosti"
 
 #~ msgid "Priority"
 #~ msgstr "Prioritet"
@@ -1456,17 +1709,8 @@ msgstr "Prikaži manje"
 #~ msgid "Licence Email"
 #~ msgstr "E-ADRESA"
 
-#~ msgid "Activate"
-#~ msgstr "Aktiviraj"
-
 #~ msgid "Action is unknown."
 #~ msgstr "poznat."
-
-#~ msgid "Script Blocker"
-#~ msgstr "Script Blocker"
-
-#~ msgid "Name"
-#~ msgstr "Nazivu"
 
 #~ msgid "Category"
 #~ msgstr "Kategorija   "

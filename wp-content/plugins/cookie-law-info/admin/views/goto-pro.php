@@ -75,7 +75,7 @@
                 <li style=""><?php echo __('10X Powerful with GDPR Cookie Consent Features That Every Site Needs','cookie-law-info'); ?></li>
                 <li style="padding-top:5px;">
                    <p style="text-align: left;">
-                    <a href="https://www.webtoffee.com/product/gdpr-cookie-consent/" target="_blank" class="cli-button cli-button-go-pro"><?php echo __('Upgrade to Premium','cookie-law-info'); ?></a>
+                    <a href="https://www.webtoffee.com/product/gdpr-cookie-consent/?utm_source=free_plugin_sidebar&utm_medium=gdpr_basic&utm_campaign=GDPR&utm_content=<?php echo CLI_VERSION;?>" target="_blank" class="cli-button cli-button-go-pro"><?php echo __('Upgrade to Premium','cookie-law-info'); ?></a>
                 </p>
                 </li>
             </ul>
