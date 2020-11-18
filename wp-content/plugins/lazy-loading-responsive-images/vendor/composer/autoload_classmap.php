@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'FlorianBrinkmann\\LazyLoadResponsiveImages\\Helpers' => $baseDir . '/src/Helpers.php',
     'FlorianBrinkmann\\LazyLoadResponsiveImages\\Plugin' => $baseDir . '/src/Plugin.php',
     'FlorianBrinkmann\\LazyLoadResponsiveImages\\Settings' => $baseDir . '/src/Settings.php',
