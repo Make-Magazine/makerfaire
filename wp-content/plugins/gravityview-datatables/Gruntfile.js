@@ -241,6 +241,7 @@ module.exports = function(grunt) {
 								'http://gravityview.co/extensions/datatables/',
 								'Katz Web Services, Inc.',
 								'GravityView',
+								'The GravityView Team',
 								'http://www.katzwebservices.com',
 								'https://gravityview.co',
 							    'gv-datatables',

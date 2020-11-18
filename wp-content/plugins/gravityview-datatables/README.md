@@ -1,7 +1,7 @@
 # GravityView - DataTables Extension #
 **Tags:** gravityview  
 **Requires at least:** 4.4  
-**Tested up to:** 5.4  
+**Tested up to:** 5.5.1  
 **Stable tag:** trunk  
 **Contributors:** katzwebservices, luistinygod, soulseekah  
 **License:** GPL 3 or higher  
@@ -15,6 +15,22 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 ## Changelog ##
+
+### 2.4.6 on September 24, 2020 ###
+
+* Now the plugin dynamically refreshes events in [our Gravity Forms Calendar plugin](https://gravityview.co/extensions/calendar/) if using "Entries shown on page" setting in the Calendar widget
+* Updated: Russian translation (thanks, Irina F.!) and Turkish translation (thanks, Süha K!)
+
+__Developer Updates:__
+
+* Updated: DataTables script from 1.10.20 to 1.10.21
+    - Buttons from 1.6.1 to 1.6.4
+    - FixedColumns from 3.3.0 to 3.3.2
+    - FixedHeader from 3.1.6 to 3.1.7
+    - Responsive from 2.2.3 to 2.2.6
+    - Scroller from 2.0.1 to 2.0.3
+* Added: Global window events when DataTables makes/completes AJAX request and redraws
+* Modified: Additional argument for the `gravityview/datatables/output` filter that passes a collection of filtered entries
 
 ### 2.4.5 on April 29, 2020 ###
 

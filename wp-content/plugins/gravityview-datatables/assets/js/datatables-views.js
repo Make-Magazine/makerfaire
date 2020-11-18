@@ -14,7 +14,7 @@ window.gvDTResponsive = window.gvDTResponsive || {};
 window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 window.gvDTButtons = window.gvDTButtons || {};
 
-( function ( $ ) {
+( function( $ ) {
 
 	/**
 	 * Handle DataTables alert errors (possible values: alert, throw, none)
@@ -27,9 +27,9 @@ window.gvDTButtons = window.gvDTButtons || {};
 
 		tablesData: {},
 
-		init: function () {
+		init: function() {
 
-			$( '.gv-datatables' ).each( function ( i, e ) {
+			$( '.gv-datatables' ).each( function( i, e ) {
 
 				var options = window.gvDTglobals[ i ];
 				var viewId = $( this ).attr( 'data-viewid' );
@@ -39,7 +39,7 @@ window.gvDTButtons = window.gvDTButtons || {};
 
 				options.buttons = gvDataTables.setButtons( options );
 
-				options.drawCallback = function ( data ) {
+				options.drawCallback = function( data ) {
 
 					if ( window.gvEntryNotes ) {
 						window.gvEntryNotes.init();
@@ -52,7 +52,7 @@ window.gvDTButtons = window.gvDTButtons || {};
 				};
 
 				// convert ajax data object to method that return values from the global object
-				options.ajax.data = function ( e ) {
+				options.ajax.data = function( e ) {
 					return $.extend( {}, e, gvDataTables.tablesData[ viewId ] );
 				};
 
@@ -80,16 +80,24 @@ window.gvDTButtons = window.gvDTButtons || {};
 
 				var table = $( this ).DataTable( options );
 
-				table.on( 'draw.dt', function ( e, settings ) {
-					var api = new $.fn.dataTable.Api( settings );
-					if ( api.column( 0 ).data().length ) {
-						$( e.target )
-							.parents( '.gv-container-no-results' )
-							.removeClass( 'gv-container-no-results' )
-							.siblings( '.gv-widgets-no-results' )
-							.removeClass( 'gv-widgets-no-results' );
-					}
-				} );
+				table
+					.on( 'draw.dt', function( e, settings ) {
+						var api = new $.fn.dataTable.Api( settings );
+						if ( api.column( 0 ).data().length ) {
+							$( e.target )
+								.parents( '.gv-container-no-results' )
+								.removeClass( 'gv-container-no-results' )
+								.siblings( '.gv-widgets-no-results' )
+								.removeClass( 'gv-widgets-no-results' );
+						}
+						$( window ).trigger( 'gravityview-datatables/event/draw', { e: e, settings: settings } );
+					} )
+					.on( 'preXhr.dt', function( e, settings, data ) {
+						$( window ).trigger( 'gravityview-datatables/event/preXhr', { e: e, settings: settings, data: data } );
+					} )
+					.on( 'xhr.dt', function( e, settings, json, xhr ) {
+						$( window ).trigger( 'gravityview-datatables/event/xhr', { e: e, settings: settings, json: json, xhr: xhr } );
+					} );
 			} );
 
 		}, // end of init
@@ -100,13 +108,13 @@ window.gvDTButtons = window.gvDTButtons || {};
 		 * @param {object} options Options for the DT instance
 		 * @returns {Array} button settings
 		 */
-		setButtons: function ( options ) {
+		setButtons: function( options ) {
 
 			var buttons = [];
 
 			// extend the buttons export format
 			if ( options && options.buttons && options.buttons.length > 0 ) {
-				options.buttons.forEach( function ( button, i ) {
+				options.buttons.forEach( function( button, i ) {
 					if ( button.extend === 'print' ) {
 						buttons[ i ] = $.extend( true, {}, gvDataTables.buttonCommon, gvDataTables.buttonCustomizePrint, button );
 					} else {
@@ -128,7 +136,7 @@ window.gvDTButtons = window.gvDTButtons || {};
 		buttonCommon: {
 			exportOptions: {
 				format: {
-					body: function ( data, column, row ) {
+					body: function( data, column, row ) {
 
 						var newValue = data;
 
@@ -137,14 +145,14 @@ window.gvDTButtons = window.gvDTButtons || {};
 							return newValue;
 						}
 
-						newValue = newValue.replace( /\n/g, " " ); // Replace new lines with spaces
+						newValue = newValue.replace( /\n/g, ' ' ); // Replace new lines with spaces
 
 						/**
 						 * Changed to jQuery in 1.2.2 to make it more consistent. Regex not always to be trusted!
 						 */
 						newValue = $( '<span>' + newValue + '</span>' ) // Wrap in span to allow for $() closure
 							.find( 'li' ).after( '; ' ).end() // Separate <li></li> with ;
-							.find( 'img' ).replaceWith( function () {
+							.find( 'img' ).replaceWith( function() {
 								return $( this ).attr( 'alt' ); // Replace <img> tags with the image's alt tag
 							} ).end()
 							.find( 'br' ).replaceWith( ' ' ).end() // Replace <br> with space
@@ -152,27 +160,26 @@ window.gvDTButtons = window.gvDTButtons || {};
 							.text(); // Strip all tags
 
 						return newValue;
-					}
-				}
-			}
+					},
+				},
+			},
 		},
 
 		buttonCustomizePrint: {
-			customize: function ( win ) {
+			customize: function( win ) {
 				$( win.document.body ).find( 'table' )
 					.addClass( 'compact' )
 					.css( 'font-size', 'inherit' )
 					.css( 'table-layout', 'auto' );
-			}
+			},
 		},
-
 
 		/**
 		 * Responsive Extension: Function that is called for display of the child row data, when view setting "Hide Empty" is enabled.
 		 * @see assets/datatables-responsive/js/dataTables.responsive.js Responsive.defaults.details.renderer method
 		 */
-		customResponsiveRowRenderer: function ( api, rowIdx ) {
-			var data = api.cells( rowIdx, ':hidden' ).eq( 0 ).map( function ( cell ) {
+		customResponsiveRowRenderer: function( api, rowIdx ) {
+			var data = api.cells( rowIdx, ':hidden' ).eq( 0 ).map( function( cell ) {
 				var header = $( api.column( cell.column ).header() );
 
 				if ( header.hasClass( 'control' ) || header.hasClass( 'never' ) ) {
@@ -196,21 +203,23 @@ window.gvDTButtons = window.gvDTButtons || {};
 			} ).toArray().join( '' );
 
 			return data ? $( '<ul data-dtr-index="' + rowIdx + '"/>' ).append( data ) : false;
-		}
+		},
 	};
 
-	$( document ).ready( function () {
+	$( document ).ready( function() {
 
 		gvDataTables.init();
 
 		// reset search results
-		$( '.gv-search-clear' ).off().on( 'click', function ( e ) {
+		$( '.gv-search-clear' ).off().on( 'click', function( e ) {
 			var $form = $( this ).parents( 'form' ), viewId = $form.attr( 'data-viewid' ),
-				$container = $( '#gv-datatables-' + viewId ),
-				$table = $container.find( '.gv-datatables' ).DataTable(),
-				tableData = ( gvDataTables.tablesData ) ? gvDataTables.tablesData[ viewId ] : null;
+					$container                                  = $( '#gv-datatables-' + viewId ),
+					$table                                      = $container.find( '.gv-datatables' ).DataTable(),
+					tableData                                   = ( gvDataTables.tablesData ) ? gvDataTables.tablesData[ viewId ] : null;
 
-			if ( ! $table.length ) return;
+			if ( ! $table.length ) {
+				return;
+			}
 
 			// prevent event from bubbling and firing
 			e.stopImmediatePropagation();
@@ -238,25 +247,25 @@ window.gvDTButtons = window.gvDTButtons || {};
 		} );
 
 		// prevent search submit
-		$( '.gv-widget-search' ).on( 'submit', function ( e ) {
+		$( '.gv-widget-search' ).on( 'submit', function( e ) {
 			e.preventDefault();
 
 			var getData = {}, viewId = $( this ).attr( 'data-viewid' ),
-				$container = $( '#gv-datatables-' + viewId ),
-				$table = $container.find( '.gv-datatables' ).DataTable(),
-				tableData = ( gvDataTables.tablesData ) ? gvDataTables.tablesData[ viewId ] : null,
-				inputs = $( this ).serializeArray().filter( function ( k ) {
-					return $.trim( k.value ) !== '';
-				} );
+					$container           = $( '#gv-datatables-' + viewId ),
+					$table               = $container.find( '.gv-datatables' ).DataTable(),
+					tableData            = ( gvDataTables.tablesData ) ? gvDataTables.tablesData[ viewId ] : null,
+					inputs               = $( this ).serializeArray().filter( function( k ) {
+						return $.trim( k.value ) !== '';
+					} );
 
 			// submit form if table data is not set
-			if ( !tableData ) {
+			if ( ! tableData ) {
 				this.submit();
 				return;
 			}
 
 			if ( tableData.hideUntilSearched * 1 ) {
-				$table.on( 'draw.dt', function () {
+				$table.on( 'draw.dt', function() {
 					$container.toggleClass( 'hidden', inputs.length <= 1 );
 				} );
 			}
@@ -305,3 +314,4 @@ window.gvDTButtons = window.gvDTButtons || {};
 	} );
 
 }( jQuery ) );
+

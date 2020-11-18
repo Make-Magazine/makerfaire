@@ -51,8 +51,10 @@ abstract class GV_DataTables_Extension {
 
 	/**
 	 * Get the DataTables settings
+	 *
 	 * @param  int|null $view_id View ID. If empty, uses `$gravityview_view->ID`
-	 * @return [type]          [description]
+	 *
+	 * @return string|false Get the stored DataTables settings for the View, if set. Otherwise, false.
 	 */
 	function get_settings( $view_id = NULL ) {
 		global $gravityview_view;

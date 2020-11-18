@@ -21,6 +21,9 @@ describe('fixedHeader - api - fixedHeader.footerOffset()', function() {
 		it('Setter returns API instance', function() {
 			expect(table.fixedHeader.footerOffset(50) instanceof $.fn.dataTable.Api).toBe(true);
 		});
+		it('destroy', function() {
+			table.destroy();
+		});
 	});
 
 	describe('Functional tests', function() {
@@ -50,8 +53,8 @@ describe('fixedHeader - api - fixedHeader.footerOffset()', function() {
 			var pos = $(window).height() - 300 - $('table.fixedHeader-floating').height();
 			expect($('table.fixedHeader-floating').offset().top).toBe(pos);
 		});
-                it('destroy', function() {
-                        table.destroy();
-                });
+		it('destroy', function() {
+			table.destroy();
+		});
 	});
 });
