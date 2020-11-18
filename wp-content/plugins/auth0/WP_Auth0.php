@@ -3,13 +3,13 @@
  * Plugin Name: Login by Auth0
  * Plugin URL: https://auth0.com/docs/cms/wordpress
  * Description: Login by Auth0 provides improved username/password login, Passwordless login, Social login, MFA, and Single Sign On for all your sites.
- * Version: 4.1.0
+ * Version: 4.1.1
  * Author: Auth0
  * Author URI: https://auth0.com
  * Text Domain: wp-auth0
  */
 
-define( 'WPA0_VERSION', '4.1.0' );
+define( 'WPA0_VERSION', '4.1.1' );
 define( 'AUTH0_DB_VERSION', 23 );
 
 define( 'WPA0_PLUGIN_FILE', __FILE__ );
@@ -634,7 +634,7 @@ function wp_auth0_process_auth_callback() {
 	$login_manager = new WP_Auth0_LoginManager( $users_repo, WP_Auth0_Options::Instance() );
 	return $login_manager->init_auth0();
 }
-add_action( 'template_redirect', 'wp_auth0_process_auth_callback' );
+add_action( 'template_redirect', 'wp_auth0_process_auth_callback', 1 );
 
 function wp_auth0_login_ulp_redirect() {
 	$users_repo    = new WP_Auth0_UsersRepo( WP_Auth0_Options::Instance() );

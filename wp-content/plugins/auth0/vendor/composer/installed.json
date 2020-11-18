@@ -1,17 +1,17 @@
 [
     {
         "name": "lcobucci/jwt",
-        "version": "3.3.1",
-        "version_normalized": "3.3.1.0",
+        "version": "3.3.3",
+        "version_normalized": "3.3.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/lcobucci/jwt.git",
-            "reference": "a11ec5f4b4d75d1fcd04e133dede4c317aac9e18"
+            "reference": "c1123697f6a2ec29162b82f170dd4a491f524773"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/lcobucci/jwt/zipball/a11ec5f4b4d75d1fcd04e133dede4c317aac9e18",
-            "reference": "a11ec5f4b4d75d1fcd04e133dede4c317aac9e18",
+            "url": "https://api.github.com/repos/lcobucci/jwt/zipball/c1123697f6a2ec29162b82f170dd4a491f524773",
+            "reference": "c1123697f6a2ec29162b82f170dd4a491f524773",
             "shasum": ""
         },
         "require": {
@@ -26,7 +26,7 @@
             "phpunit/phpunit": "^5.7 || ^7.3",
             "squizlabs/php_codesniffer": "~2.3"
         },
-        "time": "2019-05-24T18:30:49+00:00",
+        "time": "2020-08-20T13:22:28+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
