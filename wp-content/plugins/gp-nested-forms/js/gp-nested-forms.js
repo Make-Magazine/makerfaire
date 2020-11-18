@@ -9,9 +9,10 @@
 		var self = this;
 
 		// copy all args to current object: formId, fieldId
-		for( prop in args ) {
-			if( args.hasOwnProperty( prop ) )
+		for ( prop in args ) {
+			if ( args.hasOwnProperty( prop ) ) {
 				self[prop] = args[prop];
+			}
 		}
 
 		self.init = function() {
@@ -21,8 +22,8 @@
 			self.initSession();
 
 			// Handle init when form is reloaded via AJAX.
-			if( typeof window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] !== 'undefined' ) {
-				var oldGPNF = window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ];
+			if ( typeof window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] !== 'undefined' ) {
+				var oldGPNF  = window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ];
 				self.entries = oldGPNF.entries;
 				oldGPNF.modal.destroy();
 				$( document ).off( '.{0}'.format( self.getNamespace() ) );
@@ -78,30 +79,31 @@
 				beforeClose: function() { return true; }
 			}, self.formId, self.fieldId, self );
 
-			if( self.modal ) {
+			if ( self.modal ) {
 				self.$modal = $( self.modal.modal );
 				return;
 			}
 
-			self.modal = new tingle.modal( self.modalArgs );
+			self.modal  = new tingle.modal( self.modalArgs );
 			self.$modal = $( self.modal.modal );
 
 			self.bindResizeEvents();
 
 			// Re-init modaled forms; 'gpnf_post_render' triggered on any nested form's first load every time a nested
 			// form is retrieved via ajax (aka editing, first load and each page load).
+
 			$( document ).on( 'gpnf_post_render.{0}'.format( self.getNamespace() ), function( event, formId, currentPage ) {
 
 				var $nestedForm = $( '#gform_wrapper_' + formId );
 
-				if( formId == self.nestedFormId && $nestedForm.length > 0 ) {
+				if ( formId == self.nestedFormId && $nestedForm.length > 0 ) {
 
 					$( document ).trigger( 'gform_post_render', [ self.nestedFormId, currentPage ] );
 
 					self.scrollToTop();
 
 					// Don't re-init buttons on the confirmation page; currentPage is undefined on the confirmation page.
-					if( currentPage ) {
+					if ( currentPage ) {
 						self.handleParentMergeTag();
 						self.addModalButtons();
 						self.observeDefaultButtons();
@@ -119,7 +121,7 @@
 			$( document ).on( 'click.{0}'.format( self.getNamespace() ), '#field_{0}_{1} .gpnf-add-entry'.format( self.formId, self.fieldId ), self.openAddModal );
 
 			// Setup Knockout to handle our Nested Form field entries.
-			if( ! self.isBound( self.$fieldContainer[0] ) ) {
+			if ( ! self.isBound( self.$fieldContainer[0] ) ) {
 				self.viewModel = new EntriesModel( self.prepareEntriesForKnockout( self.entries ), self );
 				ko.applyBindings( self.viewModel, self.$fieldContainer[0] );
 			}
@@ -145,6 +147,7 @@
 		self.openModal = function( trigger ) {
 			self.saveParentFocus( trigger );
 			self.modal.open();
+			self.initIframe( self.nestedFormId );
 			self.initFormScripts();
 		};
 
@@ -156,7 +159,7 @@
 
 			var $focus;
 
-			switch( typeof self.parentFocus ) {
+			switch ( typeof self.parentFocus ) {
 				case 'undefined':
 					// Currently, editing does not return the user to the edit button. Knockout refresh the view after
 					// the entry is edited. Idea is to pass trigger as a function so we can look up the last edited
@@ -176,9 +179,10 @@
 		};
 
 		self.scrollToTop = function() {
+
 			// Scroll back to the top of the modal when a new page is loaded or there is a validation error.
 			var modalContainerNode = $( self.modal.modal )[0];
-			if( modalContainerNode.scroll ) {
+			if ( modalContainerNode.scroll ) {
 				modalContainerNode.scroll( { top: 0, left: 0, behavior: 'smooth' } );
 			} else {
 				modalContainerNode.scrollTop = 0;
@@ -195,8 +199,7 @@
 		self.getDefaultButtonObserver = function() {
 			return new MutationObserver( function( mutations ) {
 				mutations.forEach(function(mutation) {
-					if( mutation.type == 'attributes' && ( mutation.attributeName == 'style' || mutation.attributeName == 'disabled' )
-						&& ! document.querySelector('.gpnf-spinner') ) {
+					if ( mutation.type == 'attributes' && ( mutation.attributeName == 'style' || mutation.attributeName == 'disabled' ) ) {
 						self.addModalButtons();
 					}
 				} );
@@ -249,20 +252,23 @@
 
 			self.getDefaultButtons().each( function() {
 				var $button = $( this );
-				if( $button.css( 'display' ) !== 'none' ) {
+				// Check if WooCommerce Gravity Forms is active. It hides Submit buttons by default and replaces them
+				// with an "Add to Cart" button. We can ignore that in nested forms. We should also check for the style
+				// attribute on the element to ensure that conditional paging functions in those scenarios.
+				var isWooCommercePage = typeof window.jQuery.fn.wc_gravity_form === 'function';
+				if ( $button.css( 'display' ) !== 'none' || ( isWooCommercePage && $button[0].style.display === '' ) ) {
 
-					var useModalTitleText = ($button.attr( 'type' ) === 'submit' || $button.attr( 'type' ) === 'image');
-					var label      = useModalTitleText ? self.getModalTitle() : $button.val(),
-						classes    = [ 'tingle-btn', 'tingle-btn--primary' ],
-						isDisabled = false;
+					var useModalTitleText = ( $button.attr( 'type' ) === 'submit' || $button.attr( 'type' ) === 'image' ),
+						label             = useModalTitleText ? self.getModalTitle() : $button.val(),
+						classes           = [ 'tingle-btn', 'tingle-btn--primary' ],
+						isDisabled        = $button.is( ':disabled' );
 
-					if( $button.hasClass( 'gform_previous_button' ) ) {
+					if ( $button.hasClass( 'gform_previous_button' ) ) {
 						classes.push( 'gpnf-btn-previous' );
-					} else if( $button.hasClass( 'gform_next_button' ) ) {
+					} else if ( $button.hasClass( 'gform_next_button' ) ) {
 						classes.push( 'gpnf-btn-next' );
 					} else {
 						classes.push( 'gpnf-btn-submit' );
-						isDisabled = $button.is( ':disabled' );
 					}
 
 					var tingleBtn = self.modal.addFooterBtn( label, classes.join( ' ' ), function( event ) {
@@ -282,7 +288,7 @@
 			} );
 
 			// If we're in edit mode - AND - there is a form, show the delete button. Otherwise, we're showing an error message.
-			if( self.mode == 'edit' && $( self.modal.modalBoxContent ).find( '.gform_wrapper' ).length > 0 ) {
+			if ( self.mode == 'edit' && $( self.modal.modalBoxContent ).find( '.gform_wrapper' ).length > 0 ) {
 				self.modal.addFooterBtn( self.modalArgs.labels.delete, 'tingle-btn tingle-btn--danger tingle-btn--pull-left gpnf-btn-delete', function() {
 					var $button = $( this );
 					if ( ! $button.data( 'isConfirming' ) ) {
@@ -305,7 +311,7 @@
 
 		self.addColorStyles = function() {
 
-			if( self.$style ) {
+			if ( self.$style ) {
 				self.$style.remove();
 			}
 
@@ -386,7 +392,7 @@
 			} );
 
 			$( document ).on( 'gform_post_conditional_logic.{0}'.format( self.getNamespace() ), function( event, formId ) {
-				if( self.nestedFormId == formId ) {
+				if ( self.nestedFormId == formId ) {
 					self.modal.checkOverflow();
 				}
 			} );
@@ -402,11 +408,11 @@
 		};
 
 		self.isBound = function( elem ) {
-			return !! ko.dataFor( elem );
-	    };
+			return ! ! ko.dataFor( elem );
+		};
 
 		self.prepareEntriesForKnockout = function( entries ) {
-			for( var i = 0; i < entries.length; i++ ) {
+			for ( var i = 0; i < entries.length; i++ ) {
 				entries[i] = self.prepareEntryForKnockout( entries[i] );
 			}
 			return entries;
@@ -417,17 +423,17 @@
 			// IE8 hack to fix recursive loop issue; props to Josh Casey
 			var entryTemplate = $.extend( {}, entry );
 
-			for( var prop in entryTemplate ) {
-				if( entry.hasOwnProperty( prop ) ) {
+			for ( var prop in entryTemplate ) {
+				if ( entry.hasOwnProperty( prop ) ) {
 					var item = entry[ prop ];
-					if( item.label === false ) {
+					if ( item.label === false ) {
 						item.label = '';
 					}
-                    entry['f' + prop] = item;
-                }
+					entry['f' + prop] = item;
+				}
 			}
 
-            return entry;
+			return entry;
 		};
 
 		self.refreshMarkup = function() {
@@ -437,141 +443,159 @@
 				nonce: GPNFData.nonces.refreshMarkup,
 				gpnf_parent_form_id: self.formId,
 				gpnf_nested_form_field_id: self.fieldId
-			}, function( response ) {
-				self.formHtml = response;
-			} );
+				}, function( response ) {
+					self.formHtml = response;
+				} );
 
 		};
 
-        self.editEntry = function( entryId, $trigger ) {
+		self.editEntry = function( entryId, $trigger ) {
 
-        	var $spinner = new AjaxSpinner( $trigger, self.spinnerUrl, '' );
-	        $trigger.css( { visibility: 'hidden' } );
+			var $spinner = new AjaxSpinner( $trigger, self.spinnerUrl, '' );
+			$trigger.css( { visibility: 'hidden' } );
 
-            $.post( self.ajaxUrl, {
-                action: 'gpnf_edit_entry',
-	            nonce: GPNFData.nonces.editEntry,
-                gpnf_entry_id: entryId,
-                gpnf_parent_form_id: self.formId,
-                gpnf_nested_form_field_id: self.fieldId
-            }, function( response ) {
+			$.post( self.ajaxUrl, {
+				action: 'gpnf_edit_entry',
+				nonce: GPNFData.nonces.editEntry,
+				gpnf_entry_id: entryId,
+				gpnf_parent_form_id: self.formId,
+				gpnf_nested_form_field_id: self.fieldId
+				}, function( response ) {
 
-            	$spinner.destroy();
-	            $trigger.css( { visibility: 'visible' } );
+					$spinner.destroy();
+					$trigger.css( { visibility: 'visible' } );
 
-	            self.setModalContent( response, 'edit' );
-	            self.openModal();
+					self.setModalContent( response, 'edit' );
+					self.openModal( function() {
+						return self.$parentFormContainer.find( '[data-entryid="' + entryId + '"]' ).find('a')[0];
+					} );
 
             } );
 
-        };
+		};
 
-        self.deleteEntry = function( item, $trigger ) {
+		self.deleteEntry = function( item, $trigger ) {
 
-	        var $spinner = new AjaxSpinner( $trigger, self.spinnerUrl, '' );
-	        $trigger.css( { visibility: 'hidden' } );
+			var $spinner = new AjaxSpinner( $trigger, self.spinnerUrl, '' );
+			$trigger.css( { visibility: 'hidden' } );
 
-        	$.post( self.ajaxUrl, {
-		        action: 'gpnf_delete_entry',
-		        nonce:  GPNFData.nonces.deleteEntry,
-		        gpnf_entry_id: item.id
-	        }, function( response ) {
+			$.post( self.ajaxUrl, {
+				action: 'gpnf_delete_entry',
+				nonce:  GPNFData.nonces.deleteEntry,
+				gpnf_entry_id: item.id
+				}, function( response ) {
 
-		        $spinner.destroy();
-		        $trigger.css( { visibility: 'visible' } );
+					$spinner.destroy();
+					$trigger.css( { visibility: 'visible' } );
 
-		        if( ! response ) {
-			        console.log( 'Error: no response.' );
-			        return;
-		        } else if( ! response.success ) {
-			        console.log( 'Error:' + response.data );
-			        return;
-		        }
+					if ( ! response ) {
+						console.log( 'Error: no response.' );
+						return;
+					} else if ( ! response.success ) {
+						console.log( 'Error:' + response.data );
+						return;
+					}
 
-		        // Success!
-		        self.viewModel.entries.remove( item );
+					// Success!
+					self.viewModel.entries.remove( item );
 
-		        self.refreshMarkup();
+					self.refreshMarkup();
 
-	        } );
+            } );
 
-        };
+		};
 
 		self.duplicateEntry = function( entryId, $trigger ) {
 
 			var $spinner = new AjaxSpinner( $trigger, self.spinnerUrl, '' );
 			$trigger.css( { visibility: 'hidden' } );
 
-			$.post( self.ajaxUrl, {
-				action: 'gpnf_duplicate_entry',
-				nonce: GPNFData.nonces.duplicateEntry,
-				gpnf_entry_id: entryId,
-				gpnf_parent_form_id: self.formId,
-				gpnf_nested_form_field_id: self.fieldId
-			}, function( response ) {
+			$.post(
+				self.ajaxUrl,
+				{
+					action: 'gpnf_duplicate_entry',
+					nonce: GPNFData.nonces.duplicateEntry,
+					gpnf_entry_id: entryId,
+					gpnf_parent_form_id: self.formId,
+					gpnf_nested_form_field_id: self.fieldId
+				},
+				function( response ) {
 
-				$spinner.destroy();
-				$trigger.css( { visibility: 'visible' } );
+					$spinner.destroy();
+					$trigger.css( { visibility: 'visible' } );
 
-				if ( response.success ) {
-					GPNestedForms.loadEntry( response.data );
+					if ( response.success ) {
+						GPNestedForms.loadEntry( response.data );
+					}
+
+					/**
+					 * Do something after a child entry has been duplicated on the frontend.
+					 *
+					 * @param object entry    The properties of the child entry including field values.
+					 * @param object response The full response from the duplication AJAX request.
+					 *
+					 * @since 1.0-beta-8.70
+					 */
+					gform.doAction( 'gpnf_post_duplicate_entry', response.data.entry, response );
+
 				}
-
-			} );
-
+			);
 		};
 
-        self.getFormHtml = function() {
+		self.getFormHtml = function() {
 
-        	// Destroy any datepickers in our modal. They will be reinitialized when the modal is loaded.
+			// Destroy any datepickers in our modal. They will be reinitialized when the modal is loaded.
 			// Fixes an issue when editing a Nested Form field on the frontend via Gravity Flow.
 			// See: https://secure.helpscout.net/conversation/1074300269/15718/
 			var $datepickers = self.$modalSource.find( '.datepicker' );
-			if( $datepickers.length && typeof $datepickers.datpicker !== 'undefined' ) {
+			if ( $datepickers.length && typeof $datepickers.datpicker !== 'undefined' ) {
 				self.$modalSource.find( '.datepicker' ).datepicker( 'destroy' );
 			}
 
-            // check stash for HTML first, required for AJAX-enabled parent forms
-            var formHtml = self.$modalSource.data( 'formHtml' );
-            if( ! formHtml ) {
-                formHtml = self.$modalSource.html();
-            }
+			// check stash for HTML first, required for AJAX-enabled parent forms
+			var formHtml = self.$modalSource.data( 'formHtml' );
+			if ( ! formHtml ) {
+				formHtml = self.$modalSource.html();
+			}
 
-            // stash for AJAX-enabled parent forms
-            self.$modalSource.data( 'formHtml', formHtml );
+			// stash for AJAX-enabled parent forms
+			self.$modalSource.data( 'formHtml', formHtml );
 
-            // clear the existing markup to prevent tabindex and script conflicts from multiple IDs existing in the same DOM
-            self.$modalSource.html( '' );
+			// clear the existing markup to prevent tabindex and script conflicts from multiple IDs existing in the same DOM
+			self.$modalSource.html( '' );
 
-            return formHtml;
-        };
+			return formHtml;
+		};
 
-        self.initFormScripts = function( currentPage ) {
+		self.initFormScripts = function( currentPage ) {
 
 			window.gform.doAction( 'gpnf_init_nested_form', self.nestedFormId );
-			$(document).trigger( 'gform_post_render', [ self.nestedFormId, 1 ] );
+			$( document ).trigger( 'gform_post_render', [ self.nestedFormId, 1 ] );
 
-            if( window['gformInitDatepicker'] ) {
+			if ( window['gformInitDatepicker'] ) {
 				self.$modal.find( '.datepicker' ).each( function() {
+					// Remove 'hasDatepicker' before initializing. This seems to be added when viewing
+					// in a Gravity Flow Inbox page and breaks jQuery's Date Picker.
+					$( this ).removeClass( 'hasDatepicker' );
 					gformInitSingleDatepicker( $( this ) );
 				} );
-            }
+			}
 
-            self.handleParentMergeTag();
+			self.handleParentMergeTag();
 
 			$( document ).on( 'gform_post_conditional_logic.{0}'.format( self.getNamespace() ), function( event, formId ) {
-				if( self.nestedFormId == formId ) {
+				if ( self.nestedFormId == formId ) {
 					self.handleParentMergeTag();
 				}
 			} );
 
-        };
+		};
 
 		/**
 		 * We really need a better way to trigger calculations.
 		 */
 		self.runCalc = function() {
-			$( document ).trigger( 'gform_post_conditional_logic', [ self.formId, [], false ]  );
+			$( document ).trigger( 'gform_post_conditional_logic', [ self.formId, [], false ] );
 		};
 
 		self.parseCalcs = function( formula, formulaField, formId, calcObj ) {
@@ -585,16 +609,16 @@
 					targetFieldId     = group[3],
 					replace           = 0;
 
-				if( nestedFormFieldId != self.fieldId ) {
+				if ( nestedFormFieldId != self.fieldId ) {
 					return;
 				}
 
-				switch( func ) {
+				switch ( func ) {
 					case 'sum':
 						var total = 0;
 						self.viewModel.entries().forEach( function( entry ) {
 							var value = 0;
-							if( typeof entry[ targetFieldId ] !== 'undefined' ) {
+							if ( typeof entry[ targetFieldId ] !== 'undefined' ) {
 								value = entry[ targetFieldId ].value ? entry[ targetFieldId ].value : 0;
 							}
 							total += parseFloat( value );
@@ -622,34 +646,34 @@
 
 		self.handleParentMergeTag = function () {
 
-			self.$modal.find(':input').each(function () {
-				var $this = $(this);
-				var value = $this.data('gpnf-value');
+			self.$modal.find( ':input' ).each(function () {
+				var $this = $( this );
+				var value = $this.data( 'gpnf-value' );
 
-				if ($this.data('gpnf-changed')) {
+				if ($this.data( 'gpnf-changed' )) {
 					return true;
 				}
 
-				if (!value) {
+				if ( ! value) {
 					return true;
 				}
 
 				var parentMergeTagMatches = self.getParentMergeTags( value );
 
-				if (!parentMergeTagMatches) {
+				if ( ! parentMergeTagMatches) {
 					return true;
 				}
 
-				for( var i = 0; i < parentMergeTagMatches.length; i++ ) {
+				for ( var i = 0; i < parentMergeTagMatches.length; i++ ) {
 
 					var inputId = parentMergeTagMatches[i][1];
 
-					if (isNaN(inputId)) {
+					if (isNaN( inputId )) {
 						return true;
 					}
 
-					var $parentInput = self.$parentFormContainer.find('#input_' + self.formId + '_' + inputId.split('.').join('_'));
-					if( $parentInput.hasClass( 'gfield_radio' ) ) {
+					var $parentInput = self.$parentFormContainer.find( '#input_' + self.formId + '_' + inputId.split( '.' ).join( '_' ) );
+					if ( $parentInput.hasClass( 'gfield_radio' ) ) {
 						$parentInput = $parentInput.find( 'input:checked' );
 					}
 
@@ -677,7 +701,7 @@
 					$( this ).val( value ).change();
 				}
 
-				$(this).on( 'change', function ( event ) {
+				$( this ).on( 'change', function ( event ) {
 					// Conditional logic will reset the default value which will be a {Parent} merge tag. If the input
 					// is being changed to a {Parent} merge tag, let's ignore that change event.
 					var matches = self.getParentMergeTags( $( this ).val() );
@@ -692,10 +716,10 @@
 			var matches = [],
 				pattern = /{Parent:(\d+(\.\d+)?)}/i;
 
-			while( pattern.test( string ) ) {
-				var i = matches.length;
+			while ( pattern.test( string ) ) {
+				var i      = matches.length;
 				matches[i] = pattern.exec( string );
-				string = string.replace( '' + matches[i][0], '' );
+				string     = string.replace( '' + matches[i][0], '' );
 			}
 
 			return matches;
@@ -726,6 +750,60 @@
 		};
 
 		/**
+		 * Initialize the iframe to receive posted form response. Cannot rely on Gravity Forms 2.5+ to handle this due
+		 * to a loading order-of-events issue introduced by the switch to DOMContentLoaded from document.ready.
+		 *
+		 * @param {int} formId
+		 */
+		self.initIframe = function( formId ) {
+			$( '#gform_ajax_frame_{0}'.format( formId ) )
+				// This hasn't been proven to be necessary but added this to make it as bulletproof as possible given
+				// that < GF 2.5 will still bind its own event to the iframe's load.
+				.off( 'load' )
+				.on( 'load', function() {
+					var contents    = $( this ).contents().find( '*' ).html();
+					var is_postback = contents.indexOf( 'GF_AJAX_POSTBACK' ) >= 0;
+					if ( ! is_postback ) {
+						return;
+					}
+					var form_content    = $( this ).contents().find( '#gform_wrapper_{0}'.format( formId ) );
+					var is_confirmation = $( this ).contents().find( '#gform_confirmation_wrapper_{0}'.format( formId ) ).length > 0;
+					var is_redirect     = contents.indexOf( 'gformRedirect(){' ) >= 0;
+					var is_form         = form_content.length > 0 && ! is_redirect && ! is_confirmation;
+					var $formWrapper    = $( '#gform_wrapper_{0}'.format( formId ) );
+					if ( is_form ) {
+						$formWrapper.html( form_content.html() );
+						if (form_content.hasClass( 'gform_validation_error' )) {
+							$formWrapper.addClass( 'gform_validation_error' );
+						} else {
+							$formWrapper.removeClass( 'gform_validation_error' );
+						}
+						setTimeout( function() { /* delay the scroll by 50 milliseconds to fix a bug in chrome */ }, 50 );
+						if ( window['gformInitDatepicker'] ) {
+							gformInitDatepicker();
+						}
+						if ( window['gformInitPriceFields']) {
+							gformInitPriceFields();
+						}
+						var current_page = $( '#gform_source_page_number_{0}'.format( formId ) ).val();
+						$( document ).trigger( 'gform_page_loaded', [ formId, current_page] );
+						window[ 'gf_submitting_{0}'.format( formId ) ] = false;
+					} else if ( ! is_redirect) {
+						var confirmation_content = $( this ).contents().find( '.GF_AJAX_POSTBACK' ).html();
+						if ( ! confirmation_content) {
+							confirmation_content = contents;
+						}
+						setTimeout( function() {
+							$formWrapper.replaceWith( confirmation_content );
+							$( document ).trigger( 'gform_confirmation_loaded', [ formId ] );
+							window[ 'gf_submitting_{0}'.format( formId ) ] = false;
+						}, 50 );
+					}
+					$( document ).trigger( 'gpnf_post_render', [ formId, current_page] );
+				} );
+		}
+
+		/**
 		 * Static function called via the confirmation of the nested form. Loads the newly created entry into the
 		 * Nested Form field displayed on the parent form.
 		 *
@@ -736,14 +814,14 @@
 			/** @var \GPNestedForms gpnf */
 			var gpnf = window[ 'GPNestedForms_{0}_{1}'.format( args.formId, args.fieldId ) ];
 
-			entry = gpnf.prepareEntryForKnockout( args.fieldValues );
+			entry    = gpnf.prepareEntryForKnockout( args.fieldValues );
 			entry.id = args.entryId;
 
 			// edit
-			if( args.mode == 'edit' ) {
+			if ( args.mode == 'edit' ) {
 
 				// get index of entry
-				var entryEditing = self.getEntryRow( entry.id );
+				var entryEditing     = self.getEntryRow( entry.id );
 				var replacementIndex = entryEditing.index();
 
 				// remove old entry, add updated
@@ -753,7 +831,6 @@
 			}
 			// add
 			else {
-
 
 				gpnf.viewModel.entries.push( entry );
 				gpnf.refreshMarkup();
@@ -770,53 +847,53 @@
 
 	var EntriesModel = function( entries, gpnf ) {
 
-        var self = this;
+		var self = this;
 
-        self.entries = ko.observableArray( entries );
+		self.entries = ko.observableArray( entries );
 
 		/**
 		 * Trigger change event on the form when entries change. This helps notify other plugins that the form has
 		 * updated if they're listening to the form 'change' events.
 		 */
 		self.entries.subscribe(function () {
-			gpnf.$parentFormContainer.children('form').trigger('change');
+			gpnf.$parentFormContainer.children( 'form' ).trigger( 'change' );
 		});
 
-        self.isMaxed = ko.computed( function() {
-        	var max = gform.applyFilters( 'gpnf_entry_limit_max', gpnf.entryLimitMax, gpnf.formId, gpnf.fieldId, gpnf );
+		self.isMaxed = ko.computed( function() {
+			var max = gform.applyFilters( 'gpnf_entry_limit_max', gpnf.entryLimitMax, gpnf.formId, gpnf.fieldId, gpnf );
 
-	        return max !== '' && self.entries().length >= max;
-        } );
+			return max !== '' && self.entries().length >= max;
+		} );
 
-        self.entryIds = ko.computed( function() {
-            var entryIds = [];
-            $.each( self.entries(), function( i, item ) {
-                entryIds.push( item.id );
-            } );
-            return entryIds;
-        }, self );
+		self.entryIds = ko.computed( function() {
+			var entryIds = [];
+			$.each( self.entries(), function( i, item ) {
+				entryIds.push( item.id );
+			} );
+			return entryIds;
+		}, self );
 
-        /**
+		/**
 		 * Run calculations anytime entries modified.
 		 */
 		self.runCalc = ko.computed( function() {
-	        gpnf.runCalc();
-	        return self.entries().length;
-        }, self );
+			gpnf.runCalc();
+			return self.entries().length;
+		}, self );
 
-        self.editEntry = function( item, event ) {
-            gpnf.editEntry( item.id, $( event.target ) );
-        };
+		self.editEntry = function( item, event ) {
+			gpnf.editEntry( item.id, $( event.target ) );
+		};
 
-        self.deleteEntry = function( item, event ) {
+		self.deleteEntry = function( item, event ) {
 			gpnf.deleteEntry( item, $( event.target ) );
-        };
+		};
 
-        self.duplicateEntry = function( item, event ) {
+		self.duplicateEntry = function( item, event ) {
 			gpnf.duplicateEntry( item.id, $( event.target ) );
 		}
 
-    };
+	};
 
 	/**
 	 * Event Handler
@@ -839,14 +916,14 @@
 	 */
 	window.gpnfEventHandler = function( event, formId, currentPage ) {
 
-		if( typeof window.gpnfEvents == 'undefined' ) {
+		if ( typeof window.gpnfEvents == 'undefined' ) {
 			window.gpnfEvents = [];
 		}
 
-		if( window.gpnfEvents.length == 0 ) {
+		if ( window.gpnfEvents.length == 0 ) {
 			var events = $._data( document ).events.gform_post_render;
 			$.each( events, function( index, event ) {
-				if( event.namespace == 'gpnf' ) {
+				if ( event.namespace == 'gpnf' ) {
 					window.gpnfEvents.push( event.handler );
 				}
 			} );
@@ -859,26 +936,24 @@
 
 	};
 
-
-
-    // # GENERAL HELPERS
+	// # GENERAL HELPERS
 
 	function AjaxSpinner( elem, imageSrc, inlineStyles ) {
 
 		imageSrc     = typeof imageSrc == 'undefined' || ! imageSrc ? gf_global.base_url + '/images/spinner.gif' : imageSrc;
 		inlineStyles = typeof inlineStyles != 'undefined' ? inlineStyles : '';
 
-		this.elem = elem;
+		this.elem  = elem;
 		this.image = '<img class="gfspinner" src="' + imageSrc + '" style="' + inlineStyles + '" />';
 
 		this.init = function() {
-			this.spinner = jQuery(this.image);
-			jQuery(this.elem).after(this.spinner);
+			this.spinner = jQuery( this.image );
+			jQuery( this.elem ).after( this.spinner );
 			return this;
 		};
 
 		this.destroy = function() {
-			jQuery(this.spinner).remove();
+			jQuery( this.spinner ).remove();
 		};
 
 		return this.init();
