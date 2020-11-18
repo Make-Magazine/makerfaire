@@ -22,4 +22,25 @@
         );
 
     });
+
+    $('.rate-btn').on('click', function(event){
+        var $this  = $(this);
+        var delay = $this.hasClass('delay') ? 'delay' : '';
+        jQuery.post(
+            ajaxurl,
+            {
+                action    : 'msp_dismiss_rate_notice', // the handler
+                msnonce   : __MS_GLOBAL.dismiss_nonce,
+                delay     : delay
+            },
+            function(res){
+                if( ! res.success ){
+                    alert( res.data.message );
+                } else {
+                    $this.parents('.msp-rate').find('button.notice-dismiss').click();
+                }
+            }
+        );
+
+    });
 })(jQuery, window, document);
