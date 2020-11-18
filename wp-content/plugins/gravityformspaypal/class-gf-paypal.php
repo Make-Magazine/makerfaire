@@ -77,6 +77,44 @@ class GFPayPal extends GFPaymentAddOn {
 
 	//----- SETTINGS PAGES ----------//
 
+	/**
+	 * Return the plugin's icon for the plugin/form settings menu.
+	 *
+	 * @since 3.2
+	 *
+	 * @return string
+	 */
+	public function get_menu_icon() {
+
+		return file_get_contents( $this->get_base_path() . '/images/menu-icon.svg' );
+
+	}
+
+	/**
+	 * Register needed styles.
+	 *
+	 * @since  3.2
+	 *
+	 * @return array $styles
+	 */
+	public function styles() {
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+
+		$styles = array(
+			array(
+				'handle'  => 'gform_paypal_form_settings_css',
+				'src'     => $this->get_base_url() . "/css/form_settings{$min}.css",
+				'version' => $this->_version,
+				'enqueue' => array(
+					array( 'admin_page' => array( 'form_settings' ) ),
+				),
+			),
+		);
+
+		return array_merge( parent::styles(), $styles );
+
+	}
+
 	public function plugin_settings_fields() {
 		$description = '
 			<p style="text-align: left;">' .
@@ -86,7 +124,7 @@ class GFPayPal extends GFPaymentAddOn {
 				<li>' . sprintf( esc_html__( 'Navigate to your PayPal %sIPN Settings page.%s', 'gravityformspaypal' ), '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=_profile-ipn-notify" target="_blank">', '</a>' ) . '</li>' .
 			'<li>' . esc_html__( 'If IPN is already enabled, you will see your current IPN settings along with a button to turn off IPN. If that is the case, just check the confirmation box below and you are ready to go!', 'gravityformspaypal' ) . '</li>' .
 			'<li>' . esc_html__( "If IPN is not enabled, click the 'Choose IPN Settings' button.", 'gravityformspaypal' ) . '</li>' .
-			'<li>' . sprintf( esc_html__( 'Click the box to enable IPN and enter the following Notification URL: %s', 'gravityformspaypal' ), '<strong>' . esc_url( add_query_arg( 'page', 'gf_paypal_ipn', get_bloginfo( 'url' ) . '/' ) ) . '</strong>' ) . '</li>' .
+			'<li>' . sprintf( esc_html__( 'Click the box to enable IPN and enter the following Notification URL: %s', 'gravityformspaypal' ), '<strong>' . esc_url( $this->get_callback_url() ) . '</strong>' ) . '</li>' .
 			'</ul>
 				<br/>';
 
@@ -100,12 +138,6 @@ class GFPayPal extends GFPaymentAddOn {
 						'label'   => esc_html__( 'PayPal IPN Setting', 'gravityformspaypal' ),
 						'type'    => 'checkbox',
 						'choices' => array( array( 'label' => esc_html__( 'Confirm that you have configured your PayPal account to enable IPN', 'gravityformspaypal' ), 'name' => 'gf_paypal_configured' ) )
-					),
-					array(
-						'type' => 'save',
-						'messages' => array(
-											'success' => esc_html__( 'Settings have been updated.', 'gravityformspaypal' )
-											),
 					),
 				),
 			),
@@ -328,17 +360,22 @@ class GFPayPal extends GFPaymentAddOn {
 
 	public function settings_trial_period( $field, $echo = true ) {
 		//use the parent billing cycle function to make the drop down for the number and type
-		$html = parent::settings_billing_cycle( $field );
+		$html = parent::settings_billing_cycle( $field, false );
+
+		if ( $echo ) {
+			echo $html;
+		}
 
 		return $html;
 	}
 
 	public function set_trial_onchange( $field ) {
 		//return the javascript for the onchange event
+		$row_id = $this->is_gravityforms_supported( '2.5-dev-1' ) ? '#gform_setting_trialPeriod' : '#gaddon-setting-row-trialPeriod';
 		return "
 		if(jQuery(this).prop('checked')){
 			jQuery('#{$field['name']}_product').show('slow');
-			jQuery('#gaddon-setting-row-trialPeriod').show('slow');
+			jQuery('{$row_id}').show('slow');
 			if (jQuery('#{$field['name']}_product').val() == 'enter_amount'){
 				jQuery('#{$field['name']}_amount').show('slow');
 			}
@@ -349,7 +386,7 @@ class GFPayPal extends GFPaymentAddOn {
 		else {
 			jQuery('#{$field['name']}_product').hide('slow');
 			jQuery('#{$field['name']}_amount').hide();
-			jQuery('#gaddon-setting-row-trialPeriod').hide('slow');
+			jQuery('{$row_id}').hide('slow');
 		}";
 	}
 
@@ -379,12 +416,6 @@ class GFPayPal extends GFPaymentAddOn {
 			do_action( 'gform_paypal_add_option_group', $this->get_current_feed(), $this->get_current_form() );
 			?>
 		</div>
-
-		<script type='text/javascript'>
-			jQuery(document).ready(function () {
-				jQuery('#gf_paypal_custom_settings label.left_header').css('margin-left', '-200px');
-			});
-		</script>
 
 		<?php
 
@@ -623,7 +654,7 @@ class GFPayPal extends GFPaymentAddOn {
 		$disable_shipping = ! empty( $feed['meta']['disableShipping'] ) ? '&no_shipping=1' : '';
 
 		//URL that will listen to notifications from PayPal
-		$ipn_url = urlencode( get_bloginfo( 'url' ) . '/?page=gf_paypal_ipn' );
+		$ipn_url = urlencode( $this->get_callback_url() );
 
 		$business_email = urlencode( trim( $feed['meta']['paypalEmail'] ) );
 		$custom_field   = $entry['id'] . '|' . wp_hash( $entry['id'] );
@@ -1573,12 +1604,29 @@ class GFPayPal extends GFPaymentAddOn {
 		}
 	}
 
+	/**
+	 * Determines if the current request is to the IPN URL.
+	 *
+	 * Support for page=gf_paypal_ipn remains so IPNs will continue to be processed for existing subscriptions.
+	 *
+	 * @since unknown
+	 * @since 3.4 Added support for requests to the frameworks default callback=slug URL.
+	 *
+	 * @return bool
+	 */
 	public function is_callback_valid() {
-		if ( rgget( 'page' ) != 'gf_paypal_ipn' ) {
-			return false;
-		}
+		return parent::is_callback_valid() || rgget( 'page' ) === 'gf_paypal_ipn';
+	}
 
-		return true;
+	/**
+	 * Returns the URL to be used for IPN processing.
+	 *
+	 * @since 3.4
+	 *
+	 * @return string
+	 */
+	public function get_callback_url() {
+		return add_query_arg( 'callback', $this->_slug, home_url( '/', 'https' ) );
 	}
 
 	private function get_pending_reason( $code ) {
@@ -2203,6 +2251,4 @@ class GFPayPal extends GFPaymentAddOn {
 	}
 
 	//------------------------------------------------------
-
-
 }
