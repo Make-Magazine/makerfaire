@@ -211,8 +211,17 @@ class GF_Field_Coupon extends GF_Field {
 			$coupons      = array();
 
 			foreach ( $coupon_codes as $code ) {
-				$price     = GFCommon::to_money( $product_info['products'][ $code ]['price'], rgar( $entry, 'currency' ) );
-				$coupons[] = sprintf( '%s (%s: %s)', $product_info['products'][ $code ]['name'], $code, $price );
+				$key = sprintf( '%d|%s', $this->id, $code );
+				if ( ! isset( $product_info['products'][ $key ] ) ) {
+					// Try the legacy key which is used by entries created before v2.9.3.
+					if ( ! isset( $product_info['products'][ $code ] ) ) {
+						$coupons[] = $code;
+						continue;
+					}
+					$key = $code;
+				}
+				$price     = GFCommon::to_money( $product_info['products'][ $key ]['price'], rgar( $entry, 'currency' ) );
+				$coupons[] = sprintf( '%s (%s: %s)', $product_info['products'][ $key ]['name'], $code, $price );
 			}
 
 			$value = implode( ', ', $coupons );
