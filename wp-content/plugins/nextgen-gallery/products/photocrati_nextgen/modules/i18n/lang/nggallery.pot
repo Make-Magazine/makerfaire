@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2014-02-20 19:45-0800\n"
-"PO-Revision-Date: 2020-02-28 12:08+08\n"
+"PO-Revision-Date: 2020-06-29 12:57+08\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: nggallery\n"
 
@@ -30,7 +30,7 @@ msgid "https://www.imagely.com/wordpress-gallery-plugin/nextgen-gallery/"
 msgstr ""
 
 #. Description of the plugin
-msgid "The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 28 million downloads."
+msgid "The most popular gallery plugin for WordPress and one of the most popular plugins of all time with over 30 million downloads."
 msgstr ""
 
 #. Author of the plugin
@@ -61,10 +61,6 @@ msgstr ""
 
 #: nggallery.php:947
 msgid "Hey %s, "
-msgstr ""
-
-#: nggallery.php:948
-msgid "Please help us improve NextGEN Gallery! If you opt-in, some data about your usage of NextGEN Gallery will be sent to freemius.com. If you skip this, that's okay! NextGEN Gallery will still work just fine."
 msgstr ""
 
 #: products/photocrati_nextgen/modules/attach_to_post/adapter.attach_to_post_ajax.php:168
@@ -763,7 +759,7 @@ msgid "Save Options"
 msgstr ""
 
 #: products/photocrati_nextgen/modules/nextgen_admin/templates/review_notice.php:5
-msgid "Hey <strong>%s</strong>, you've created %d NextGEN galleries! Awesome! Could I ask you to give us a 5-star rating really quickly on <a %s>WordPress.org</a>? It helps other WordPress users and motivates us to keep improving. You can also just send us feedback <a %s>here</a>. Thanks! ~ Erick Danzer (founder of Imagely/NextGEN Gallery)"
+msgid "Hey <strong>%s</strong>, you've created %d NextGEN galleries! Awesome! Could I ask you to give us a 5-star rating really quickly on <a %s>WordPress.org</a>? It helps other WordPress users and motivates us to keep improving. You can also just send us feedback <a %s>here</a>. Thanks! ~ Nathan Singh (founder of Imagely/NextGEN Gallery)"
 msgstr ""
 
 #: products/photocrati_nextgen/modules/nextgen_admin/templates/review_notice.php:14
