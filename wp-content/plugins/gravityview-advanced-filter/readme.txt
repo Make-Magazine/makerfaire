@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 5.4.2
+Tested up to: 5.5.1
 Stable tag: trunk
 Contributors: The GravityView Team
 License: GPL 3 or higher
@@ -23,6 +23,20 @@ UI was written using [Svelte](https://svelte.dev/) and requires compilation. Mak
 3. Compile assets by running `npm run build`
 
 == Changelog ==
+
+= 2.1.4 on September 24, 2020 =
+
+* Fixed: Allow using relative dates (e.g., "now", "today") in the date input field
+
+= 2.1.3 on August 25, 2020 =
+
+* Improved: Merge Tags can be now be processed in field conditional logic filters
+* Modified: Field conditional logic can only be configured for Multiple and Single Entry contexts
+
+= 2.1.2 on August 20, 2020 =
+
+* Fixed: Properly replace Merge Tags in certain "Created By", "Date Created/Updated" and certain other filters
+* Updated: Russian translation (thank you, Irina F!) and Polish translation
 
 = 2.1.1 on July 15, 2020 =
 

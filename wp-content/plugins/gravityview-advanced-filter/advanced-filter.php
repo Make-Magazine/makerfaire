@@ -3,7 +3,7 @@
 Plugin Name: GravityView - Advanced Filter Extension
 Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 2.1.1
+Version: 2.1.4
 Author: GravityView
 Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
@@ -38,7 +38,7 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '2.1.1';
+		protected $_version = '2.1.4';
 
 		protected $_min_gravityview_version = '2.0';
 
@@ -112,6 +112,10 @@ function gv_extension_advanced_filtering_load() {
 		 * @return array
 		 */
 		function modify_view_field_settings( $field_options, $template_id, $field_id, $context, $input_type ) {
+
+			if( 'edit' === $context ) {
+				return $field_options;
+			}
 
 			$strings = array(
 				'conditional_logic_label'             => esc_html__( 'Conditional Logic', 'gravityview-advanced-filter' ),
@@ -308,6 +312,17 @@ HTML;
 				if ( ! isset( $filter['key'] ) ) {
 					// Can't match any with empty string
 					$filter = null;
+				}
+
+				if ( isset( $filter['value'] ) ) {
+
+					$form = array();
+					if ( $view instanceof \GV\View ) {
+						$form = $view->form->form;
+					}
+
+					// Replace merge tags
+					$filter['value'] = GravityView_API::replace_variables( $filter['value'], $form, array() );
 				}
 
 				if ( $filter && in_array( $filter['key'], array( 'date_created', 'date_updated', 'payment_date' ), true ) ) {
@@ -650,7 +665,7 @@ HTML;
 				$form = GravityView_View::getInstance()->getForm();
 			}
 
-			// replace merge tags
+			// Replace merge tags
 			$filter['value'] = GravityView_API::replace_variables( $filter['value'], $form, array() );
 
 			// If it's a numeric value, it's a field
@@ -816,28 +831,6 @@ HTML;
 					'untitled'                 => esc_html__( 'Untitled', 'gravityview-advanced-filter' ),
 				),
 			) );
-		}
-
-		/**
-		 * Add Advanced Filters tooltips to Gravity Forms' localization
-		 *
-		 * @param array $tooltips
-		 *
-		 * @return array
-		 */
-		function tooltips( $tooltips = array() ) {
-
-			$tooltips['gv_advanced_filter'] = array(
-				'title' => __( 'Advanced Filter', 'gravityview-advanced-filter' ),
-				'value' => wpautop(
-					__( 'Limit what entries are visible based on entry values. The entries are filtered before the View is displayed. When users perform a search, results will first be filtered by these settings.', 'gravityview-advanced-filter' )
-					. '<h6>' . __( 'Limit to Logged-in User Entries', 'gravityview-advanced-filter' ) . '</h6>'
-					. sprintf( _x( 'To limit entries to those created by the current user, select "%s", "is" &amp; "%s" from the drop-down menus.', 'First placeholder is "Created By" and second is "Currently Logged-in User"', 'gravityview-advanced-filter' ), __( 'Created By', 'gravityview-advanced-filter' ), __( 'Currently Logged-in User', 'gravityview-advanced-filter' ) ) . ' '
-					. sprintf( _x( 'If you want to limit entries to those created by the current user, but allow the administrators to view all the entries, select "%s" from the drop-down menu.', 'The placeholder is "Currently Logged-in User (Disabled for Administrators)"', 'gravityview-advanced-filter' ), __( 'Currently Logged-in User (Disabled for Administrators)', 'gravityview-advanced-filter' ) )
-				),
-			);
-
-			return $tooltips;
 		}
 
 		/**
@@ -1103,8 +1096,8 @@ HTML;
 				'created_by',
 			);
 
-			foreach ( $field_filters as $filter ) {
-				if ( ! in_array( $filter['key'], $_meta_and_properties_to_keep ) && ! is_numeric( $filter['key'] ) ) {
+			foreach ( $field_filters as &$filter ) {
+				if ( ! in_array( $filter['key'], $_meta_and_properties_to_keep, true ) && ! is_numeric( $filter['key'] ) ) {
 					continue;
 				}
 
@@ -1196,15 +1189,17 @@ HTML;
 		 * Determine if entry meets conditional logic
 		 *
 		 * @since 2.1
+		 * @since 2.1.3 Added $context argument
 		 *
-		 * @param array $entry   GV Entry
-		 * @param array $filters Conditional logic filters
+		 * @param array               $entry   GV Entry
+		 * @param array               $filters Conditional logic filters
+		 * @param GV\Template_Context $context Template context {@since 2.1.3}
 		 *
 		 * @return bool
 		 */
-		function meets_conditional_logic( $entry, $filters ) {
+		protected function meets_conditional_logic( $entry, $filters, $context ) {
 
-			$test_filter_conditions = function ( $filters, $mode ) use ( &$test_filter_conditions, $entry ) {
+			$test_filter_conditions = function ( $filters, $mode ) use ( &$test_filter_conditions, $entry, $context ) {
 
 				$results = array();
 
@@ -1214,7 +1209,7 @@ HTML;
 						continue;
 					}
 
-					$field_value         = $filter_condition['value'];
+					$field_value         = GravityView_API::replace_variables( $filter_condition['value'], $context->view->form->form, $entry );
 					$comparison_operator = $filter_condition['operator'];
 
 					if ( ! empty( GravityView_Advanced_Filtering::$_proxy_operators_map[ $comparison_operator ] ) ) {
@@ -1242,7 +1237,7 @@ HTML;
 					}
 				}
 
-				return ( $mode === 'and' ) ?
+				return ( 'and' === $mode ) ?
 					! in_array( false, $results, true ) : // "and" mode requires all values to be true
 					in_array( true, $results, true ); // "or" mode requires at least one true value
 			};
@@ -1264,18 +1259,27 @@ HTML;
 
 			$filters = rgar( $context->field->as_configuration(), self::CONDITIONAL_LOGIC_META, false );
 
-			if ( ! $filters || $filters === 'null' ) { // Empty conditions are a "null" string
+			if ( ! $filters || 'null' === $filters ) { // Empty conditions are a "null" string
 				return $field_output;
 			}
 
-			$filters                       = json_decode( $filters, true );
-			$entry                         = $context->entry->as_entry();
+			$filters = json_decode( $filters, true );
+			$entry   = $context->entry->as_entry();
+
+			if ( $this->meets_conditional_logic( $entry, $filters, $context ) ) {
+				return $field_output;
+			}
+
 			$conditional_logic_fail_output = rgar( $context->field->as_configuration(), self::CONDITIONAL_LOGIC_FAIL_OUTPUT_META, false );
 			$conditional_logic_fail_output = GravityView_API::replace_variables( $conditional_logic_fail_output, $context->view->form->form, $entry );
 
-			return $this->meets_conditional_logic( $entry, $filters ) ?
-				$field_output :
-				apply_filters( 'gravityview/field/value/empty', $conditional_logic_fail_output, $context );
+			/**
+			 * @filter `gravityview/field/value/empty` What to display when this field is empty.
+			 *
+			 * @param string $value The value to display (Default: empty string)
+			 * @param \GV\Template_Context The template context this is being called from.
+			 */
+			return apply_filters( 'gravityview/field/value/empty', $conditional_logic_fail_output, $context );
 		}
 
 	} // end class

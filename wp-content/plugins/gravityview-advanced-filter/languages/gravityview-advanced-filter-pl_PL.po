@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: GravityView Advanced Filter\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
-"PO-Revision-Date: 2020-07-15 18:28+0000\n"
+"PO-Revision-Date: 2020-08-08 13:48+0000\n"
 "Last-Translator: Dariusz Zielonka <info@dariusz-zielonka.pl>\n"
 "Language-Team: Polish (Poland) (http://www.transifex.com/katzwebservices/gravityview-advanced-filter/language/pl_PL/)\n"
 "MIME-Version: 1.0\n"
@@ -26,56 +26,56 @@ msgstr ""
 
 #: advanced-filter.php:117
 msgid "Conditional Logic"
-msgstr ""
+msgstr "Logika warunkowa"
 
 #: advanced-filter.php:118
 msgid "Only show the field if the configured conditions apply."
-msgstr ""
+msgstr "Pokaż pole tylko wtedy, gdy obowiązują skonfigurowane warunki."
 
 #: advanced-filter.php:119
 msgid "Empty Field Content"
-msgstr ""
+msgstr "Zawartość pustego pola"
 
 #: advanced-filter.php:120
 msgid ""
 "Display custom content when field value does not meet conditional logic"
-msgstr ""
+msgstr "Wyświetlanie zawartości niestandardowej, gdy wartość pola nie spełnia logiki warunkowej"
 
 #: advanced-filter.php:793
 msgid ""
 "Advanced Filter does not work in Internet Explorer. Please upgrade to "
 "another browser."
-msgstr ""
+msgstr "Filtr zaawansowany nie działa w przeglądarce Internet Explorer. Prosimy o aktualizację do innej przeglądarki."
 
 #: advanced-filter.php:794
 msgid ""
 "Form fields are not available. Please try refreshing the page or saving the "
 "View."
-msgstr ""
+msgstr "Pola formularza nie są dostępne. Proszę spróbować odświeżyć stronę lub zapisać widok."
 
 #: advanced-filter.php:795
 msgid "Add Condition"
-msgstr ""
+msgstr "Dodaj warunek"
 
 #: advanced-filter.php:812
 msgid "Remove Field"
-msgstr ""
+msgstr "Usuń pole"
 
 #: advanced-filter.php:813
 msgid "Return to Field Choices"
-msgstr ""
+msgstr "Powrót do wyboru pola"
 
 #: advanced-filter.php:814
 msgid "Return to the list of choices defined by the field."
-msgstr ""
+msgstr "Wróć do listy wyboru określonej przez pole."
 
 #: advanced-filter.php:815
 msgid "Custom Choice"
-msgstr ""
+msgstr "Wybór niestandardowy"
 
 #: advanced-filter.php:816
 msgid "Untitled"
-msgstr ""
+msgstr "Bez nazwy"
 
 #: advanced-filter.php:831 partials/metabox.php:2
 msgid "Advanced Filter"
@@ -102,7 +102,7 @@ msgstr "Obecnie zalogowany Użytkownik"
 
 #: advanced-filter.php:836 advanced-filter.php:1024
 msgid "Currently Logged-in User (Disabled for Administrators)"
-msgstr "Aktualnie zalogowany użytkownik (wyłączone dla administratorów)"
+msgstr "Aktualnie zalogowany użytkownik (nieaktywny dla administratorów)"
 
 #: advanced-filter.php:878
 msgid "Any Role of Current User"
@@ -161,7 +161,7 @@ msgstr "i"
 #: advanced-filter.php:797
 msgctxt "Join using \"or\" operator"
 msgid "or"
-msgstr ""
+msgstr "czy"
 
 #: advanced-filter.php:798
 msgctxt "Filter operator (e.g., A is TRUE)"
@@ -191,47 +191,47 @@ msgstr "zawiera"
 #: advanced-filter.php:803
 msgctxt "Filter operator (e.g., AB contains B)"
 msgid "does not contain"
-msgstr ""
+msgstr "nie zawiera"
 
 #: advanced-filter.php:804
 msgctxt "Filter operator (e.g., AB starts with A)"
 msgid "starts with"
-msgstr ""
+msgstr "zaczyna się"
 
 #: advanced-filter.php:805
 msgctxt "Filter operator (e.g., AB ends with B)"
 msgid "ends with"
-msgstr ""
+msgstr "kończy się"
 
 #: advanced-filter.php:806
 msgctxt "Filter operator (e.g., A is before date B)"
 msgid "is before"
-msgstr ""
+msgstr "jest przed"
 
 #: advanced-filter.php:807
 msgctxt "Filter operator (e.g., A is after date B)"
 msgid "is after"
-msgstr ""
+msgstr "jest po"
 
 #: advanced-filter.php:808
 msgctxt "Filter operator (e.g., A is on date B)"
 msgid "is on"
-msgstr ""
+msgstr "jest w"
 
 #: advanced-filter.php:809
 msgctxt "Filter operator (e.g., A is not on date B)"
 msgid "is not on"
-msgstr ""
+msgstr "nie jest w"
 
 #: advanced-filter.php:810
 msgctxt "Filter operator (e.g., A is empty)"
 msgid "is empty"
-msgstr ""
+msgstr "jest pusty"
 
 #: advanced-filter.php:811
 msgctxt "Filter operator (e.g., A is not empty)"
 msgid "is not empty"
-msgstr ""
+msgstr "nie jest pusty"
 
 #: advanced-filter.php:835
 msgctxt ""

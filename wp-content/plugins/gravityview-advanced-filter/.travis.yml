@@ -12,6 +12,7 @@ notifications:
 branches:
   only:
     - master
+    - main
     - develop
 
 php:

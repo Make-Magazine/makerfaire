@@ -13,6 +13,7 @@ class GV_Advanced_Filter_Tests extends GV_UnitTestCase {
 		\GV\View::_flush_cache();
 
 		set_current_screen( 'front' );
+
 		wp_set_current_user( 0 );
 	}
 
@@ -1313,6 +1314,27 @@ class GV_Advanced_Filter_Tests extends GV_UnitTestCase {
 			)
 		);
 
+		$created_by_array = array(
+			array(
+				'text'  => 'Currently Logged-in User',
+				'value' => 'created_by',
+			),
+			array(
+				'text'  => 'Currently Logged-in User (Disabled for Administrators)',
+				'value' => 'created_by_or_admin',
+			),
+		);
+
+		$users = get_users();
+
+		/** @var WP_User $user */
+		foreach ( $users as $user ) {
+			$created_by_array[] = array(
+				'text' => $user->user_login,
+				'value' => $user->ID,
+			);
+		}
+
 		$view = $this->get_view( 'simple.json' );
 
 		update_post_meta( $view->ID, '_gravityview_filters', array(
@@ -1323,9 +1345,9 @@ class GV_Advanced_Filter_Tests extends GV_UnitTestCase {
 
 		$filters = GravityView_Advanced_Filtering::get_field_filters( $view->ID );
 
-		$this->assertCount( 2, $filters );
+		$this->assertCount( 3, $filters );
 
-		$filter_fields = $filters['field_filters'];
+		$filter_fields = $filters['field_filters_complete'];
 		$filter_vars   = $filters['init_filter_vars'];
 
 		$filter_vars = json_decode( preg_replace( '#"_id":".+?"#', '"_id":"#"', json_encode( $filter_vars ) ), true );
@@ -1356,7 +1378,11 @@ class GV_Advanced_Filter_Tests extends GV_UnitTestCase {
 			array(
 				'key'             => '0',
 				'text'            => 'Any form field',
-				'operators'       => array( 'contains', 'is', 'isempty' ),
+				'operators'       => array(
+					'contains',
+					'is',
+					// 'isempty', // TODO: https://github.com/gravityview/Advanced-Filter/issues/91
+				),
 				'preventMultiple' => false,
 			),
 			array(
@@ -1448,17 +1474,7 @@ class GV_Advanced_Filter_Tests extends GV_UnitTestCase {
 				'key'             => 'created_by',
 				'text'            => 'Created By',
 				'operators'       => array( 'is', 'isnot' ),
-				'values'          => array(
-					array(
-						'text'  => 'Currently Logged-in User',
-						'value' => 'created_by',
-					),
-					array(
-						'text'  => 'Currently Logged-in User (Disabled for Administrators)',
-						'value' => 'created_by_or_admin',
-					),
-					array( 'text' => $login, 'value' => $admin ),
-				),
+				'values'          => $created_by_array,
 				'preventMultiple' => false,
 			),
 			array(

@@ -30,6 +30,13 @@
             allowInput: true,
             altInput: true,
             altFormat,
+            errorHandler: function errorHandler( err ) {
+                if ( err.message.match( /date provided/ ) ) {
+                    return;
+                }
+
+                return typeof console !== 'undefined' && console.warn( err );
+            },
             placeholder: selectedField.placeholder,
             onChange: ( selectedDates, value ) => {
                 selectedValue = value;
@@ -259,7 +266,7 @@
             span {
                 position: absolute;
                 bottom: -36px; /* size of .button-link + 3px (1/2 the margin of the OR box) */
-                margin-left: none;
+                margin-left: 0;
 
                 button {
                     vertical-align: baseline;
