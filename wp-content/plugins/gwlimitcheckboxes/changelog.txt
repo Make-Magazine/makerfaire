@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.2.15
+
+	- Added support for Gravity Flow's User Input steps.
+
+## 1.2.14
+
+	- Fixed an issue where administrative fields may produce a cryptic error message when GPLCB is enabled for them.
+
 ## 1.2.13
 
 	- Fixed dependency on jQuery.migrate that has been removed as of WordPress 5.5.
