@@ -2,37 +2,43 @@
 
 class GP_Read_Only extends GWPerk {
 
-	public $version = GP_READ_ONLY_VERSION;
+	public $version                      = GP_READ_ONLY_VERSION;
 	protected $min_gravity_perks_version = '1.0-beta-3';
 	protected $min_gravity_forms_version = '2.4';
-	protected $min_wp_version = '3.0';
+	protected $min_wp_version            = '3.0';
 
-	private $unsupported_field_types = array( 'hidden', 'html', 'captcha', 'page', 'section' );
+	private $unsupported_field_types  = array( 'hidden', 'html', 'captcha', 'page', 'section' );
 	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'address', 'workflow_user', 'workflow_role', 'workflow_assignee_select' );
 
 	public function init() {
 
-		$this->add_tooltip($this->key('readonly'), __('<h6>Read-only</h6> Set field as "readonly". Read-only fields will be visible on the form but cannot be modified by the user.', 'gravityperks'));
+		$this->add_tooltip( $this->key( 'readonly' ), __( '<h6>Read-only</h6> Set field as "readonly". Read-only fields will be visible on the form but cannot be modified by the user.', 'gravityperks' ) );
 		$this->enqueue_field_settings();
 
 		// Filters
 		add_filter( 'gform_field_input', array( $this, 'read_only_input' ), 11, 5 );
 
-		add_filter( 'gform_pre_process', array( $this, 'process_hidden_captures' ) );
+		add_filter( 'gform_pre_process', array( $this, 'process_hidden_captures' ), 11, 1 );
 
 		add_filter( 'gform_rich_text_editor_options', array( $this, 'filter_rich_text_editor_options' ), 10, 2 );
+
+		// Add support for Gravity View since `gform_pre_process` never fires in GV's edit path.
+		add_action( 'gravityview/edit_entry/before_update', function ( $form, $entry_id, $object ) {
+				$this->process_hidden_captures( $form );
+			}, 10, 3
+		);
 
 	}
 
 	public function field_settings_ui() {
 		?>
 
-		<li class="<?php echo $this->key('field_setting'); ?> field_setting" style="display:none;">
-			<input type="checkbox" id="<?php echo $this->key('field_checkbox'); ?>" value="1" onclick="SetFieldProperty('<?php echo $this->key('enable'); ?>', this.checked)">
+		<li class="<?php echo $this->key( 'field_setting' ); ?> field_setting" style="display:none;">
+			<input type="checkbox" id="<?php echo $this->key( 'field_checkbox' ); ?>" value="1" onclick="SetFieldProperty('<?php echo $this->key( 'enable' ); ?>', this.checked)">
 
-			<label class="inline" for="<?php echo $this->key('field_checkbox'); ?>">
-				<?php _e('Read-only', 'gravityperks'); ?>
-				<?php gform_tooltip($this->key('readonly')); ?>
+			<label class="inline" for="<?php echo $this->key( 'field_checkbox' ); ?>">
+				<?php _e( 'Read-only', 'gravityperks' ); ?>
+				<?php gform_tooltip( $this->key( 'readonly' ) ); ?>
 			</label>
 		</li>
 
@@ -56,19 +62,19 @@ class GP_Read_Only extends GWPerk {
 				});
 
 				$(document).bind('gform_load_field_settings', function(event, field, form) {
-					$("#<?php echo $this->key('field_checkbox'); ?>").attr('checked', field["<?php echo $this->key('enable'); ?>"] == true);
+					$("#<?php echo $this->key( 'field_checkbox' ); ?>").attr('checked', field["<?php echo $this->key( 'enable' ); ?>"] == true);
 
 					// If calculation is enabled, we typically don't need this Perk since the input will be read-only
-                    // However, in the case of the product field with a quantity field, the quantity field won't
-                    // be read-only.
+					// However, in the case of the product field with a quantity field, the quantity field won't
+					// be read-only.
 					if( ! isReadOnlyFieldType( GetInputType( field ) ) || (isCalcEnabled( field ) && field.type !== 'product') ) {
-						field["<?php echo $this->key('enable'); ?>"] = false;
+						field["<?php echo $this->key( 'enable' ); ?>"] = false;
 						$('.gwreadonly_field_setting').hide();
 					}
 				});
 
 				function isReadOnlyFieldType(type) {
-					var unsupportedFieldTypes = <?php echo json_encode($this->unsupported_field_types); ?>;
+					var unsupportedFieldTypes = <?php echo json_encode( $this->unsupported_field_types ); ?>;
 					return $.inArray(type, unsupportedFieldTypes) != -1 ? false : true;
 				}
 
@@ -85,12 +91,12 @@ class GP_Read_Only extends GWPerk {
 
 	public function read_only_input( $input_html, $field, $value, $entry_id, $form_id ) {
 
-		if( $field->is_entry_detail() ) {
+		if ( $field->is_entry_detail() ) {
 			return $input_html;
 		}
 
-		$input_type = RGFormsModel::get_input_type($field);
-		if( in_array( $input_type, $this->unsupported_field_types ) || ! rgar( $field, $this->key( 'enable' ) ) ) {
+		$input_type = RGFormsModel::get_input_type( $field );
+		if ( in_array( $input_type, $this->unsupported_field_types ) || ! rgar( $field, $this->key( 'enable' ) ) ) {
 			return $input_html;
 		}
 
@@ -98,12 +104,12 @@ class GP_Read_Only extends GWPerk {
 
 		$input_html = GFCommon::get_field_input( $field, $value, $entry_id, $form_id, GFAPI::get_form( $form_id ) );
 
-		switch( $input_type ) {
+		switch ( $input_type ) {
 			case 'textarea':
 			case 'post_content':
 			case 'post_excerpt':
 			case 'workflow_discussion': // @gravityflow
-				$search = "<textarea";
+				$search  = '<textarea';
 				$replace = $search . " readonly='readonly'";
 				break;
 			case 'multiselect':
@@ -111,40 +117,40 @@ class GP_Read_Only extends GWPerk {
 			case 'workflow_user': // @gravityflow
 			case 'workflow_role': // @gravityflow
 			case 'workflow_assignee_select': // @gravityflow
-				$search = "<select";
+				$search  = '<select';
 				$replace = $search . " disabled='disabled'";
 				break;
 			case 'radio':
 			case 'checkbox':
-				$search = "<input";
+				$search  = '<input';
 				$replace = $search . " disabled='disabled'";
 				break;
 			case 'time':
 			case 'address':
 				$search = array(
-					"<input"  => "<input readonly='readonly'",
-					"<select" => "<select disabled='disabled'",
+					'<input'  => "<input readonly='readonly'",
+					'<select' => "<select disabled='disabled'",
 				);
 				break;
 			case 'list':
 				// remove add/remove buttons
 				$input_html = preg_replace( '/<td class=\'gfield_list_icons\'>[\s\S]+?<\/td>/', '', $input_html );
-				$search = array(
-					"<input"  => "<input readonly='readonly'",
-					"<select" => "<select disabled='disabled'",
+				$search     = array(
+					'<input'  => "<input readonly='readonly'",
+					'<select' => "<select disabled='disabled'",
 				);
 				break;
 			default:
-				$search = "<input";
+				$search  = '<input';
 				$replace = $search . " readonly='readonly'";
 				break;
 		}
 
-		if( ! is_array( $search ) ) {
+		if ( ! is_array( $search ) ) {
 			$search = array( $search => $replace );
 		}
 
-		if( $input_type == 'date' && $field->dateType == 'datepicker' ) {
+		if ( $input_type == 'date' && $field->dateType == 'datepicker' ) {
 			/**
 			 * Disable the datepicker for read-only Datepicker fields.
 			 *
@@ -155,39 +161,38 @@ class GP_Read_Only extends GWPerk {
 			 * @param int           $entry_id    The current entry ID; 0 when no entry ID is provided.
 			 */
 			$disable_datepicker = gf_apply_filters( array( 'gpro_disable_datepicker', $form_id, $field->id ), true, $field, $entry_id );
-			if( $disable_datepicker ) {
+			if ( $disable_datepicker ) {
 				// Find 'datepicker' CSS class and replace it with our custom class indicating that we've disabled it.
 				// This class is used by Conditional Logic Dates to identify read-only Datepicker fields.
 				$search['\'datepicker '] = 'gpro-disabled-datepicker ';
 			}
 		}
 
-		foreach( $search as $_search => $replace ) {
+		foreach ( $search as $_search => $replace ) {
 			$input_html = str_replace( $_search, $replace, $input_html );
 		}
 
 		// add hidden capture input markup for disabled field types
-		if( in_array( $input_type, $this->disable_attr_field_types ) ) {
+		if ( in_array( $input_type, $this->disable_attr_field_types ) ) {
 
-			$value = $this->get_field_value( $field );
+			$value           = $this->get_field_value( $field );
 			$hc_input_markup = '';
 
-			if( is_array( $field['inputs'] ) ) {
+			if ( is_array( $field['inputs'] ) ) {
 
-				switch( $input_type ) {
+				switch ( $input_type ) {
 					case 'time':
 						$hc_input_markup .= $this->get_hidden_capture_markup( $form_id, $field->id . '.3', array_pop( $value ) );
 						break;
 					case 'address':
-						$input_id = sprintf( '%d.%d', $field->id, $this->get_address_select_input_id( $field ) );
+						$input_id         = sprintf( '%d.%d', $field->id, $this->get_address_select_input_id( $field ) );
 						$hc_input_markup .= $this->get_hidden_capture_markup( $form_id, $input_id, rgar( $value, $input_id ) );
 						break;
 					default:
-						foreach( $field['inputs'] as $input ) {
+						foreach ( $field['inputs'] as $input ) {
 							$hc_input_markup .= $this->get_hidden_capture_markup( $form_id, $input['id'], $value );
 						}
 				}
-
 			} else {
 
 				$hc_input_markup = $this->get_hidden_capture_markup( $form_id, $field->id, $value );
@@ -205,10 +210,10 @@ class GP_Read_Only extends GWPerk {
 
 	public function get_hidden_capture_input_id( $form_id, $input_id ) {
 
-		if( intval( $input_id ) != $input_id ) {
+		if ( intval( $input_id ) != $input_id ) {
 			$input_id_bits               = explode( '.', $input_id );
 			list( $field_id, $input_id ) = $input_id_bits;
-			$hc_input_id = sprintf( 'gwro_hidden_capture_%d_%d_%d', $form_id, $field_id, $input_id );
+			$hc_input_id                 = sprintf( 'gwro_hidden_capture_%d_%d_%d', $form_id, $field_id, $input_id );
 		} else {
 			$hc_input_id = sprintf( 'gwro_hidden_capture_%d_%d', $form_id, $input_id );
 		}
@@ -220,7 +225,7 @@ class GP_Read_Only extends GWPerk {
 
 		$hc_input_id = $this->get_hidden_capture_input_id( $form_id, $input_id );
 
-		if( is_array( $value ) ) {
+		if ( is_array( $value ) ) {
 			$value = rgar( $value, (string) $input_id );
 		}
 
@@ -233,13 +238,13 @@ class GP_Read_Only extends GWPerk {
 		 * In some instances (i.e. parent submission of Nested Forms), the gform_pre_process filter may be applied to a
 		 * form that is not currently being submitted. Let's make sure we're only working with the submitted form.
 		 */
-		if( rgpost( 'gform_submit' ) != $form['id'] ) {
+		if ( rgpost( 'gform_submit' ) != $form['id'] ) {
 			return $form;
 		}
 
-		foreach( $_POST as $key => $value ) {
+		foreach ( $_POST as $key => $value ) {
 
-			if( strpos( $key, 'gwro_hidden_capture_' ) !== 0 ) {
+			if ( strpos( $key, 'gwro_hidden_capture_' ) !== 0 ) {
 				continue;
 			}
 
@@ -247,18 +252,18 @@ class GP_Read_Only extends GWPerk {
 			list( $form_id, $field_id, $input_id ) = array_pad( explode( '_', str_replace( 'gwro_hidden_capture_', '', $key ) ), 3, false );
 
 			$field = GFFormsModel::get_field( $form, $field_id );
-			switch( $field->get_input_type() ) {
+			switch ( $field->get_input_type() ) {
 				// time fields are in array format in the POST
 				case 'time':
 					$full_input_id = $field_id;
 					$full_value    = rgpost( "input_{$full_input_id}" );
 
-					if ( ! is_array ( $full_value ) )  {
+					if ( ! is_array( $full_value ) ) {
 						break;
 					}
 
-					$full_value[]  = $value;
-					$value         = $full_value;
+					$full_value[] = $value;
+					$value        = $full_value;
 					break;
 				default:
 					// gets "5_1" from an array like array( 5, 1 ) or "5" from an array like array( 5, false )
@@ -267,10 +272,9 @@ class GP_Read_Only extends GWPerk {
 
 			// Only use hidden capture if $_POST does not already contain a value for this inputs;
 			// this allows support for checking/unchecking via JS (i.e. checkbox fields).
-			if( empty( $_POST[ "input_{$full_input_id}" ] ) && $value ) {
+			if ( empty( $_POST[ "input_{$full_input_id}" ] ) && $value ) {
 				$_POST[ "input_{$full_input_id}" ] = $value;
 			}
-
 		}
 
 		return $form;
@@ -283,10 +287,10 @@ class GP_Read_Only extends GWPerk {
 		if ( isset( $_GET['gf_token'] ) ) {
 			$incomplete_submission_info = GFFormsModel::get_draft_submission_values( $_GET['gf_token'] );
 			if ( $incomplete_submission_info['form_id'] == $field['formId'] ) {
-				$submission_details_json                = $incomplete_submission_info['submission'];
-				$submission_details                     = json_decode( $submission_details_json, true );
-				$submitted_values                        = $submission_details['submitted_values'];
-				$field_values                           = $submission_details['field_values'];
+				$submission_details_json = $incomplete_submission_info['submission'];
+				$submission_details      = json_decode( $submission_details_json, true );
+				$submitted_values        = $submission_details['submitted_values'];
+				$field_values            = $submission_details['field_values'];
 			}
 		}
 
@@ -299,25 +303,25 @@ class GP_Read_Only extends GWPerk {
 		$choices = (array) rgar( $field, 'choices' );
 		$choices = array_filter( $choices );
 
-		if( ! $value && $field->get_input_type() == 'time' ) {
+		if ( ! $value && $field->get_input_type() == 'time' ) {
 
 		}
 		// if value is not available from post or prepop, check the choices (if field has choices)
-		else if( ! $value && ! empty( $choices ) ) {
+		elseif ( ! $value && ! empty( $choices ) ) {
 
 			$values = array();
 			$index  = 1;
 
-			foreach( $choices as $choice ) {
+			foreach ( $choices as $choice ) {
 
-				if( $index % 10 == 0 ) {
+				if ( $index % 10 == 0 ) {
 					$index++;
 				}
 
-				if( rgar( $choice, 'isSelected' ) ) {
-					$full_input_id = sprintf( '%d.%d', $field['id'], $index );
-					$price         = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
-					$choice_value  = in_array( $field['type'], array( 'product', 'option' ) )  ? sprintf( '%s|%s', $choice['value'], $price ) : $choice['value'];
+				if ( rgar( $choice, 'isSelected' ) ) {
+					$full_input_id            = sprintf( '%d.%d', $field['id'], $index );
+					$price                    = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
+					$choice_value             = in_array( $field['type'], array( 'product', 'option' ) ) ? sprintf( '%s|%s', $choice['value'], $price ) : $choice['value'];
 					$values[ $full_input_id ] = $choice_value;
 				}
 
@@ -328,11 +332,11 @@ class GP_Read_Only extends GWPerk {
 			$input_type = GFFormsModel::get_input_type( $field );
 
 			// if no choice is preselected and this is a select, get the first choice's value since it will be selected by default in the browser
-			if( empty( $values ) && in_array( $input_type, array( 'select', 'workflow_user', 'workflow_role', 'workflow_assignee_select' ) ) ) {
+			if ( empty( $values ) && in_array( $input_type, array( 'select', 'workflow_user', 'workflow_role', 'workflow_assignee_select' ) ) ) {
 				$values[] = rgars( $choices, '0/value' );
 			}
 
-			switch( $input_type ) {
+			switch ( $input_type ) {
 				case 'multiselect':
 					$value = implode( ',', $values );
 					break;
@@ -343,7 +347,6 @@ class GP_Read_Only extends GWPerk {
 					$value = reset( $values );
 					break;
 			}
-
 		}
 
 		return $value;
@@ -351,7 +354,7 @@ class GP_Read_Only extends GWPerk {
 
 	public function filter_rich_text_editor_options( $settings, $field ) {
 
-		if( $field->gwreadonly_enable ) {
+		if ( $field->gwreadonly_enable ) {
 			$settings['tinymce']['init_instance_callback'] = str_replace( 'function (editor) {', 'function (editor) { editor.setMode( "readonly" );', $settings['tinymce']['init_instance_callback'] );
 		}
 
@@ -360,7 +363,7 @@ class GP_Read_Only extends GWPerk {
 
 	public function get_address_select_input_id( $field ) {
 		$input_id = false;
-		switch( $field->addressType ) {
+		switch ( $field->addressType ) {
 			case 'us':
 			case 'canadian':
 				$input_id = 4;
