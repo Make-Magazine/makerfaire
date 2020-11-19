@@ -197,6 +197,14 @@ class ESSBOptinFlyout {
 	
 	public function draw_form_code($event = '', $design = '', $overlay_color = '', $event_fire = '', $credit_link = false) {
 		$output = '';
+		
+		/**
+		 * @since 7.3.1
+		 */
+		$ofof_deactivate_mobile = $this->option_bool_value('ofof_deactivate_mobile');
+		if (!$ofof_deactivate_mobile && essb_option_bool_value('subscribe_css_deactivate_mobile')) {
+		    $ofof_deactivate_mobile = true;
+		}
 				
 		$close_type = $this->option_value ( 'of_' . $event . '_close' );
 		$close_color = $this->option_value ( 'of_' . $event . '_closecolor' );
@@ -217,7 +225,7 @@ class ESSBOptinFlyout {
 			$close_text = esc_html__( "No thanks. I don't want.", 'easy-optin-flyout' );
 		}
 		
-		$output .= '<div class="essb-optinflyout essb-optinflyout-' . esc_attr($position) . ' essb-optinflyout-' . esc_attr($event) . '" ' . $event_fire . ' ' . ($overlay_color != '' ? ' style="background-color:' . esc_attr($overlay_color) . '!important;"' : '') . '>';
+		$output .= '<div class="essb-optinflyout essb-optinflyout-' . esc_attr($position) . ' essb-optinflyout-' . esc_attr($event) . ($ofof_deactivate_mobile ? ' essb-subscribe-mobile-hidden' : '') . '" ' . $event_fire . ' ' . ($overlay_color != '' ? ' style="background-color:' . esc_attr($overlay_color) . '!important;"' : '') . '>';
 		
 		if ($close_type == 'icon') {
 			$output .= '<div class="essb-optinflyout-close essb-optinflyout-closeicon" ' . $css_color . '><i class="essb_icon_close" ' . $css_color . '></i></div>';

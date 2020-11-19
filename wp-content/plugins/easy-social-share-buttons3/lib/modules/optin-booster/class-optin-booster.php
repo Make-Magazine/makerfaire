@@ -212,6 +212,13 @@ class ESSBOptinBooster {
 	public function draw_form_code($event = '', $design = '', $overlay_color = '', $event_fire = '', $credit_link = false) {
 		$output = '';
 		
+		/**
+		 * @since 7.3.1		 
+		 */
+		$ofob_deactivate_mobile = $this->option_bool_value('ofob_deactivate_mobile');
+		if (!$ofob_deactivate_mobile && essb_option_bool_value('subscribe_css_deactivate_mobile')) {
+		    $ofob_deactivate_mobile = true;
+		}
 		
 		$close_type = $this->option_value('of_'.$event.'_close');
 		$close_color = $this->option_value('of_'.$event.'_closecolor');
@@ -230,7 +237,7 @@ class ESSBOptinBooster {
 			$close_text = esc_html__("No thanks. I don't want.", 'essb');
 		}
 		
-		$output .= '<div class="essb-optinbooster essb-optinbooster-'.esc_attr($event).'" '.$event_fire.'>';
+		$output .= '<div class="essb-optinbooster essb-optinbooster-'.esc_attr($event).($ofob_deactivate_mobile ? ' essb-subscribe-mobile-hidden' : '').'" '.$event_fire.'>';
 		
 		if ($close_type == 'icon') {
 			$output .= '<div class="essb-optinbooster-close essb-optinbooster-closeicon" '.esc_attr($css_color).'><i class="essb_icon_close"></i></div>';
@@ -242,7 +249,7 @@ class ESSBOptinBooster {
 		}
 		
 		$output .= '</div>';
-		$output .= '<div class="essb-optinbooster-overlay essb-optinbooster-overlay-'.esc_attr($event).'"'.($overlay_color != '' ? ' style="background-color:'.esc_attr($overlay_color).'!important;"' : '').'>';
+		$output .= '<div class="essb-optinbooster-overlay essb-optinbooster-overlay-'.esc_attr($event).($ofob_deactivate_mobile ? ' essb-subscribe-mobile-hidden' : '').'"'.($overlay_color != '' ? ' style="background-color:'.esc_attr($overlay_color).'!important;"' : '').'>';
 		if ($credit_link) {
 			$output .= '<div class="promo">Powered by <a href="http://go.appscreo.com/essb" target="_blank">Best Social Sharing Plugin for WordPress</a> Easy Social Share Buttons</div>';
 		}

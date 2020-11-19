@@ -3,35 +3,6 @@
 if ( ! defined( 'WPINC' ) ) {
     die;
 }  
-if (!current_user_can('manage_options')) 
-{
-    wp_die(__('You do not have sufficient permission to perform this operation', 'cookie-law-info'));
-}
-$options = array(
-    'privacy_overview_title',
-    'privacy_overview_content',
-);
-// Get options:
-$stored_options = get_option('cookielawinfo_privacy_overview_content_settings', array(
-    'privacy_overview_content' => '','privacy_overview_title' => '',
-)); 
-// Check if form has been set:
-if (isset($_POST['update_privacy_overview_content_settings_form'])) {
-
-    // Check nonce:
-    check_admin_referer('cookielawinfo-update-privacy-overview-content');
-
-    $stored_options['privacy_overview_title'] = sanitize_text_field( isset( $_POST['privacy_overview_title'] )  ? $_POST['privacy_overview_title'] : $stored_options['privacy_overview_title'] );
-    $stored_options['privacy_overview_content'] = wp_kses_post( isset( $_POST['privacy_overview_content'] ) && $_POST['privacy_overview_content'] !== '' ? $_POST['privacy_overview_content'] : $stored_options['privacy_overview_content'] );
-    update_option('cookielawinfo_privacy_overview_content_settings', $stored_options);
-    echo '<div class="updated"><p><strong>' . __('Settings Updated.', 'cookie-law-info') . '</strong></p></div>';
-}
-
-$stored_options = get_option('cookielawinfo_privacy_overview_content_settings', array(
-   'privacy_overview_content' => '','privacy_overview_title' => '',
-));
-$privacy_title = isset($stored_options['privacy_overview_title']) ? $stored_options['privacy_overview_title'] : '';
-$privacy_content = isset($stored_options['privacy_overview_content']) ? $stored_options['privacy_overview_content'] : '';
 ?>
 <style>
     .vvv_textbox{
@@ -42,6 +13,9 @@ $privacy_content = isset($stored_options['privacy_overview_content']) ? $stored_
         width: 100%;
         height: 35px;
         margin-bottom: 5px;
+    }
+    .notice, div.updated, div.error{
+        margin: 5px 20px 15px 0;
     }
 </style>
 <div class="wrap">
@@ -66,7 +40,7 @@ $privacy_content = isset($stored_options['privacy_overview_content']) ? $stored_
                         $cli_use_editor= apply_filters('cli_use_editor_in_po',true);
                         if($cli_use_editor)
                         {
-                            wp_editor( stripslashes($privacy_content) , 'cli_privacy_overview_content', $wpe_settings = array('textarea_name'=>'privacy_overview_content'));
+                            wp_editor( stripslashes($privacy_content) , 'cli_privacy_overview_content', $wpe_settings = array('textarea_name'=>'privacy_overview_content','textarea_rows' => 10));
                         }
                         else
                         {

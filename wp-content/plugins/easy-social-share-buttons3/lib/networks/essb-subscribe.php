@@ -126,11 +126,11 @@ class ESSBNetworks_Subscribe {
 		return $output;
 	}
 	
-	public static function draw_inline_subscribe_form($mode = '', $design = '', $is_widget = false, $position = '') {
+	public static function draw_inline_subscribe_form($mode = '', $design = '', $is_widget = false, $position = '', $hide_mobile = false) {
 		if (empty($mode)) $mode = ESSBGlobalSettings::$subscribe_function;
 		$salt = mt_rand();
 		
-		$output = '<div class="essb-subscribe-form essb-subscribe-form-'.esc_attr($salt).' essb-subscribe-form-inline">';
+		$output = '<div class="essb-subscribe-form essb-subscribe-form-'.esc_attr($salt).' essb-subscribe-form-inline'.($hide_mobile ? ' essb-subscribe-mobile-hidden': '').'">';
 				
 		if ($mode == "form") {
 			$output .= do_shortcode(ESSBGlobalSettings::$subscribe_content);

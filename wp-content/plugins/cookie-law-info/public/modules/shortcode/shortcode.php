@@ -32,13 +32,15 @@ class Cookie_Law_Info_Shortcode {
 
     public $plugin_name;
 
+    public $cookie_options;
+
 	public function __construct($parent_obj)
 	{
 		$this->version=$parent_obj->version;
         $this->parent_obj=$parent_obj;
         $this->plugin_obj=$parent_obj->plugin_obj;
         $this->plugin_name=$parent_obj->plugin_name;
-
+        $this->cookie_options = Cookie_Law_Info::get_settings();
         // Shortcodes:
         add_shortcode( 'delete_cookies',array($this,'cookielawinfo_delete_cookies_shortcode')); // a shortcode [delete_cookies (text="Delete Cookies")]
         add_shortcode( 'cookie_audit',array($this,'cookielawinfo_table_shortcode'));           // a shortcode [cookie_audit style="winter"]
@@ -51,6 +53,7 @@ class Cookie_Law_Info_Shortcode {
         add_shortcode('user_consent_state',array($this,'user_consent_state_shortcode'));
         add_shortcode('webtoffee_powered_by',array($this,'wf_powered_by'));
         add_shortcode( 'cookie_close',array($this,'cookielawinfo_shortcode_close_button'));        // a shortcode [close_button]
+        add_shortcode('wt_cli_manage_consent',array( $this, 'manage_consent'));
         
 	}
 
@@ -98,7 +101,7 @@ class Cookie_Law_Info_Shortcode {
         {
             if($_COOKIE["viewed_cookie_policy"]=='yes')
             {
-                $html.=' '.__('Consent Accepted.','cookie-law-info');
+                $html.=' '.__('Consent accepted.','cookie-law-info');
             }else
             {
                 $html.=' '.__('Consent rejected.','cookie-law-info');
@@ -528,6 +531,23 @@ class Cookie_Law_Info_Shortcode {
     {        
         $styles = '';
         return '<a style="'.$styles.'" aria-label="'.__('Close the cookie bar','cookie-law-info').'" data-cli_action="accept" class="wt-cli-element cli_cookie_close_button" title="'.__('Close and Accept','cookie-law-info').'">×</a>';
+    }
+    /**
+    * Add a link that allows the user the revisit their consent
+    *
+    * @since  1.9.4
+    * @access public
+    * @return string
+    */
+    public function manage_consent(){
+        if( !$this->cookie_options  ) {
+            $this->cookie_options = Cookie_Law_Info::get_settings();
+        }
+        $manage_consent_link    =   '';
+        $manage_consent_text    =   ( isset( $this->cookie_options['showagain_text'] ) ? $this->cookie_options['showagain_text'] : '' );
+        $manage_consent_link    =   '<a href="javascript:void(0)" class="wt-cli-manage-consent-link">'.$manage_consent_text.'</a>';
+        
+        return $manage_consent_link;
     }
 }
 new Cookie_Law_Info_Shortcode($this);

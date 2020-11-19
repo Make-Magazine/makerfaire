@@ -144,6 +144,7 @@ class ESSB_Dynamic_CSS_Builder {
             if (!function_exists('essb_register_dynamic_share_postfloat_styles')) {
                 include_once (ESSB3_HELPERS_PATH. 'assets/share-postfloat.php');
             }
+
             essb_register_dynamic_share_postfloat_styles();
         }
         
@@ -209,6 +210,14 @@ class ESSB_Dynamic_CSS_Builder {
                 
                 $buffer .= essb_register_dynamic_subscribe_form_styles();
                 
+        }
+        
+        if (essb_option_bool_value('subscribe_css_deactivate_mobile')) {
+            if (!function_exists('essb_register_dynamic_subscribe_mobile_hide')) {
+                include_once (ESSB3_HELPERS_PATH. 'assets/customizer-subscribe-forms-mobile.php');
+            }
+            
+            essb_register_dynamic_subscribe_mobile_hide();
         }
         
         return $buffer;

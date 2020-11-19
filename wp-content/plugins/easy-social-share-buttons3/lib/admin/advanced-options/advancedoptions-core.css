@@ -769,6 +769,8 @@ margin-right: 5px;
 	color: #fff;
 }
 
+.shortcode-options select { width: 100%; max-width: 100%; }
+
 /**
  * Shortcode generator in the floating window
  */

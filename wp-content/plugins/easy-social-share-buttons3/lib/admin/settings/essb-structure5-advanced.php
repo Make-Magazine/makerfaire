@@ -64,6 +64,10 @@ ESSBOptionsStructureHelper::field_select_panel('advanced', 'optimization', 'prec
 ESSBOptionsStructureHelper::field_select_panel('advanced', 'optimization', 'precompiled_folder', esc_html__('Cache data storage', 'essb'), '', array('' => 'WordPress Content Folder', 'uploads' => 'WordPress Uploads Folder', 'plugin' => 'Plugin Folder'));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'optimization', 'precompiled_unique', esc_html__('Generate unique filename', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'optimization', 'precompiled_footer', esc_html__('Move loading of the CSS styles to the footer', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+/**
+ * @since 7.3.2
+ */
+ESSBOptionsStructureHelper::field_switch_panel('advanced', 'optimization', 'precompiled_preload_css', esc_html__('Load CSS Asynchronously (rel=preload)', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 
 ESSBOptionsStructureHelper::field_heading('advanced', 'optimization', 'heading4', esc_html__('Global Optimization', 'essb'));
 ESSBOptionsStructureHelper::field_section_start_full_panels('advanced', 'optimization');
@@ -141,45 +145,57 @@ ESSBOptionsStructureHelper::field_switch_panel('advanced', 'advanced', 'user_lin
 ESSBOptionsStructureHelper::panel_end('advanced', 'advanced');
 
 ESSBOptionsStructureHelper::help('advanced', 'integrate', '', '', array('Help With Settings' => 'https://docs.socialsharingplugin.com/knowledgebase/advanced-plugin-settings-integrations/#Integrations'));
-ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Elementor Page Builder', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'opened'));
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Elementor', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'using_elementor', esc_html__('I am using Elementor page builder', 'essb'), esc_html__('Enable the option if your post share customizations disappear when you build or edit content with the Elementor page builder.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'using_elementor_events', esc_html__('Use Elementor page builder content events', 'essb'), esc_html__('Enable the option to attach content only share buttons to the Elementor content events. The option may be used if the share buttons don\'t appear on generated with Elementor posts or pages.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'remove_elementor_widgets', esc_html__('Don\'t load plugin Elementor widgets', 'essb'), esc_html__('Enable the option to stop the plugin from loading Elementor widgets.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'hide_buttons_elementor_edit', esc_html__('Don\'t show share buttons in Elementor design mode', 'essb'), esc_html__('Enable the option to hide site-wide social share buttons in Elementor edit mode.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
 ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
 
-ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Yoast SEO', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'opened'));
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Yoast SEO', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'deactivate_pair_yoast_sso', esc_html__('Deactivate Yoast Social Tags Integration', 'essb'), esc_html__('By default when Yoast SEO plugin is detected, Easy Social Share Buttons loads all customizations in the Social Media settings you have made in Yoast SEO in the share message and share optimization. Enable this option to stop the automatic integration.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'deactivate_pair_yoast_seo', esc_html__('Deactivate Yoast SEO Data Integration ', 'essb'), esc_html__('By default when Yoast SEO plugin is detected, Easy Social Share Buttons loads all customizations in the SEO settings you have made in Yoast SEO in the share message and share optimization. Enable this option to stop the automatic integration.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
 
-ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Social Warfare', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'opened'));
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Social Warfare', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'activate_sw_bridge', esc_html__('Use previous data set in Social Warfare', 'essb'), esc_html__('If you use in past Social Warfare and you have a customizations made in social sharing than you can activate this option and allow plugin read all that stored values.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
 
-ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Social Snap', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'opened'));
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Social Snap', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'activate_ss_bridge', esc_html__('Use previous data set in Social Snap', 'essb'), esc_html__('You migrate from this plugin, enable the option to automatically detect and used previous customizations on posts (social media image, custom tweets, Pin image).', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
 
-ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('MashShare', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'opened'));
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('MashShare', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'activate_ms_bridge', esc_html__('Use previous data set in MashShare', 'essb'), esc_html__('You migrate from this plugin, enable the option to automatically detect and used previous customizations on posts (social media image, custom tweets, Pin image).', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
 
-ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('AddThis', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'opened'));
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('AddThis', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'cache_counter_addthis', esc_html__('Load AddThis internal share counters', 'essb'), esc_html__('Set this option to Yes if you have a used AddThis. The option will call the AddThis API to display the total number internal shares. As there is no network based split the value will be added only to the total counter. Due to AddThis restrictions the import will not work if you set to Yes the option "Speed Up Process Of Counters Update"', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
 
-ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('WPML & Polylang', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'opened'));
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('WPML & Polylang', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'deactivate_multilang', esc_html__('Deactivate automated WPML & Polylang bridge', 'essb'), esc_html__('When WPML or Polylang is found in the current WordPress setup plugin will setup a multilangual setup fields. This with version change may cause a problem in settings work. If such appear please activate this option temporary', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
 
-ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Rank Math', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'opened'));
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Rank Math', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'rankmath_og_deactivate', esc_html__('Deactivate Rank Math social share optimization tags', 'essb'), esc_html__('If you are using Rank Math plugin and need to show social share optimization tags from Easy Social Share Buttons for WordPress, activate this option. Rank Math does not have option to deactivate the tags from Rank Math settings.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
 
-ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Gutenberg', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'opened'));
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('CDN Support', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
+ESSBOptionsStructureHelper::field_textbox_panel('advanced', 'integrate', 'cdn_domain', esc_html__('CDN URL', 'essb'), esc_html__('Example: https://cdn.example.com', 'essb'));
+ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'activate_cdn_sso', esc_html__('Enable CDN support for social media optimization images', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'activate_cdn_pinterest', esc_html__('Enable CDN support for custom Pinterest images', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
+
+
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('Gutenberg', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'gutenberg_disable_pinterenst', esc_html__('Deactivate Gutenberg image block integration with Pinterest', 'essb'), esc_html__('Stop the additional fields in the Gutenberg Image block for Pinterest sharing.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
+
+ESSBOptionsStructureHelper::panel_start('advanced', 'integrate', esc_html__('WordPress Classic Editor', 'essb'), '', 'fa21 fa fa-plug', array("mode" => "toggle", 'state' => 'closed', "css_class" => "essb-auto-open"));
+ESSBOptionsStructureHelper::field_switch_panel('advanced', 'integrate', 'classic_editor_disable_buttons', esc_html__('Remove shortcode buttons from the Classic Editor', 'essb'), esc_html__('Stop the additional fields in the Gutenberg Image block for Pinterest sharing.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+ESSBOptionsStructureHelper::panel_end('advanced', 'integrate');
+
 
 ESSBOptionsStructureHelper::help('advanced', 'administrative', '', '', array('Help With Settings' => 'https://docs.socialsharingplugin.com/knowledgebase/administrative-options-disable-specific-features-and-limit-access/'));
 ESSBOptionsStructureHelper::panel_start('advanced', 'administrative', esc_html__('Administrative Tools', 'essb'), '', 'fa21 fa fa-times', array("mode" => "toggle", 'state' => 'opened'));

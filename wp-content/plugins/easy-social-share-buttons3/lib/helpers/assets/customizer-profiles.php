@@ -4,6 +4,16 @@ if (!function_exists('essb_register_dynamic_profile_styles')) {
      * Register dynamic Social Profile Styles
      */
     function essb_register_dynamic_profile_styles() {
+        
+        /**
+         * @since 7.3.1
+         * 
+         * Prevent building styles if the module is not used
+         * ESSBSocialProfilesHelper
+         */
+        if (!class_exists('ESSBSocialProfilesHelper')) {
+            return;
+        }
 
         $network_list = ESSBSocialProfilesHelper::available_social_networks();
         

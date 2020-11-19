@@ -39,6 +39,7 @@ jQuery(document).ready(function($){
                   data: data && data.followers ? data.followers : ''
               }
           }).done( function( response ){
+        	  console.log('(update) Instagram Followers stored');
         	  if (id && id != '')
         		  $('#' + id + ' .essbfc-followers-count').html(response);
           });

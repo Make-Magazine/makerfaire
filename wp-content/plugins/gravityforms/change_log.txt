@@ -1,3 +1,31 @@
+### 2.4.21.4
+- API: Updated REST API v2 to support authentication using WordPress 5.6 application passwords.
+
+
+### 2.4.21.3
+- API: Fixed an issue where a database error can occur when using the GFAPI methods for managing feeds when a feed add-on has not been installed to create the required table.
+
+
+### 2.4.21.2
+- AF: Removed animation from input toggles on Feed Settings page.
+- AF: Hide Setup Fee fields when Trial is enabled for Payment Add-Ons.
+
+
+### 2.4.21.1
+- Fixed an issue where a currency formatted number field can save the wrong calculation result to the entry if the rounding setting was previously configured.
+
+
+### 2.4.21 | 2020-10-14
+- Added security enhancements.
+- Updated background updates to work more seamlessly with WordPress's automatic updates.
+- Fixed an issue with date formats when retrieving notes by date.
+- Fixed an issue where the honeypot field description can be assigned the same id attribute as other forms on the page.
+- Fixed an issue with WordPress 5.5 where the select all checkbox on the export entries page can stop functioning.
+- API: Updated REST API for WordPress 5.5.
+- AF: Fixed a fatal error which occurs when the add-on is not active during background feed processing.
+- AF: Added the [gform_pre_delete_feed](https://docs.gravityforms.com/gform_pre_delete_feed) action hook.
+
+
 ### 2.4.20 | 2020-08-06
 - Added support for WordPress 5.5.
 - Updated background updates to be compatible with automatic updates in WordPress 5.5.

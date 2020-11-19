@@ -101,11 +101,7 @@ ESSBOptionsStructureHelper::panel_end('instagram', 'popup');
 function essb5_advanced_instagram_shortcode() {
 	echo essb5_generate_code_advanced_settings_panel(
 			esc_html__('Generate Instagram Feed Shortcode [instagram-feed]', 'essb'),
-			esc_html__('Generate shortcode for username or hashtag feed. The shortcode can be embedded anywhere inside the content.', 'essb'),
+			esc_html__('Generate feed shortcode for an Instagram user. You can place it anywhere inside content where shortcodes are supported. If you are using Elementor, there is a widget for this in the builder.', 'essb'),
 			'instagramfeed-shortcode', 'ao-shortcode', esc_html__('Generate', 'essb'), 'fa fa-code', 'no', '500', '', 'ti-instagram', esc_html__('[instagram-feed] Code Generation', 'essb'), true);
 
-	echo essb5_generate_code_advanced_settings_panel(
-			esc_html__('Generate Instagram Image Shortcode [instagram-image]', 'essb'),
-			esc_html__('Embed a single Instagram image on site.', 'essb'),
-			'instagramimage-shortcode', 'ao-shortcode', esc_html__('Generate', 'essb'), 'fa fa-code', 'no', '500', '', 'ti-image', esc_html__('[instagram-image] Code Generation', 'essb'), true);
 }

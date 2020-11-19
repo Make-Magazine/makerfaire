@@ -48,7 +48,7 @@ get_header();
          <div class="row">
             <div class="col-xs-12 col-lg-10 col-lg-offset-1">
                <div class="picture-holder"><img alt="Maker Robot with speech bubble" height="71" src="/wp-content/uploads/2015/04/maker-robot-textbox.png" width="66"></div>               
-               <h1>What is Maker Faire?</h1>We call it the Greatest Show (& Tell) on Earth. As a celebration of the Maker Movement, it’s a family-friendly showcase of invention and creativity that gathers together tech enthusiasts, crafters, educators, tinkerers, food artisans, hobbyists, engineers, science clubs, artists, students, and commercial exhibitors. Makers come to show their creations. Attendees come to glimpse the future...and to learn to become makers themselves.
+               <h2>What is Maker Faire?</h2>We call it the Greatest Show (& Tell) on Earth. As a celebration of the Maker Movement, it’s a family-friendly showcase of invention and creativity that gathers together tech enthusiasts, crafters, educators, tinkerers, food artisans, hobbyists, engineers, science clubs, artists, students, and commercial exhibitors. Makers come to show their creations. Attendees come to glimpse the future...and to learn to become makers themselves.
             </div>
          </div>
       </div>

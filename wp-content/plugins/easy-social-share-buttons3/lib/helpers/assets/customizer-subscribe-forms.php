@@ -336,7 +336,7 @@ if (! function_exists ( 'essb_register_dynamic_subscribe_form_styles' )) {
 		
 		if (essb_option_bool_value('activate_mailchimp_customizer8')) {
 			$bg_color1 = essb_sanitize_option_value('customizer_subscribe_bgcolor8');
-			$bg_color2 = essb_sanitize_option_value('customizer_subscribe_bgcolor28');
+			$bg_color2 = essb_sanitize_option_value('customizer_subscribe_bgcolor82');
 			
 			if ($bg_color1 != '' && $bg_color2 != '') {
 				$snippet .= '.essb-subscribe-form-content.essb-subscribe-from-design8

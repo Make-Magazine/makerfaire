@@ -120,6 +120,17 @@ class ESSB_Plugin_Options {
         
         return isset($options[$param]) ? is_numeric ($options[$param]) ? $options[$param] : 0 : 0;
     }
+    
+    
+    /**
+     * Update option value
+     * 
+     * @param unknown $param
+     * @param string $value
+     */
+    public static function set($param, $value = '') {
+        self::$core_options[$param] = $value;
+    }
 
     
     /**

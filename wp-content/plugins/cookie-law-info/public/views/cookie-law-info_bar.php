@@ -15,7 +15,7 @@ if(file_exists($pop_content_html_file))
     include $pop_content_html_file;
 } 
 ?>
-<div class="cli-modal" id="cliSettingsPopup" tabindex="-1" role="dialog" aria-labelledby="cliSettingsPopup" aria-hidden="true">
+<div class="cli-modal" data-nosnippet="true" id="cliSettingsPopup" tabindex="-1" role="dialog" aria-labelledby="cliSettingsPopup" aria-hidden="true">
   <div class="cli-modal-dialog" role="document">
     <div class="cli-modal-content cli-bar-popup">
       <button type="button" class="cli-modal-close" id="cliModalClose">

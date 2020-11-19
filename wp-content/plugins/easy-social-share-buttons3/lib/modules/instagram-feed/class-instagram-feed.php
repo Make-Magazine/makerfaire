@@ -185,8 +185,13 @@ class ESSBInstagramFeed {
 	
 	public function get_settings($values = array()) {
 		$r = array();
+		
+		/**
+		 * @since 7.5 Support only for username
 		$r['username'] = array('type' => 'text', 'title' => esc_html__('Username', 'essb'), 'description' => esc_html__('Fill just one of username or hashtag at same time', 'essb'));
 		$r['tag'] = array('type' => 'text', 'title' => esc_html__('Hashtag', 'essb'), 'description' => esc_html__('Fill just one of username or hashtag at same time', 'essb'));
+		*/
+		$r['username'] = array('type' => 'text', 'title' => esc_html__('Username', 'essb'));
 		$r['type'] = array('type' => 'select', 'title' => esc_html__('Display type', 'essb'), 
 				'options' => array(
 						'1col' => esc_html__('1 Column', 'essb'), 
@@ -211,7 +216,7 @@ class ESSBInstagramFeed {
 				'options' => array(
 						'normal' => esc_html__('Normal', 'essb'),
 						'small' => esc_html__('Small', 'essb')));
-		$r['image_size'] = array('type' => 'select', 'title' => esc_html__('Image size', 'essb'),
+		$r['image_size'] = array('type' => 'select', 'title' => esc_html__('Image size', 'essb'), 'description' => esc_html__('It is like the image size of WordPress. Leave at default if you are not sure what to choose.', 'essb'),
 				'options' => array(
 						'' => esc_html__('Default', 'essb'),
 						'thumbnail' => esc_html__('Thumbnail', 'essb'),

@@ -12,9 +12,12 @@ class ESSBEditorMediaButtons {
 	/**
 	 * Register the buttons
 	 */
-	public function __construct() {		
-		add_action ( 'admin_init', array ($this, 'tinymce_loader' ) );
-		add_action ( 'media_buttons', array( $this, 'media_button' ), 20 );
+	public function __construct() {	
+	    
+	    if (!essb_option_bool_value('classic_editor_disable_buttons')) {	    
+    		add_action ( 'admin_init', array ($this, 'tinymce_loader' ) );
+    		add_action ( 'media_buttons', array( $this, 'media_button' ), 20 );
+	    }
 	}
 	
 	/**

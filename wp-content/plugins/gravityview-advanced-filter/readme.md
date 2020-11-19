@@ -24,6 +24,20 @@ UI was written using [Svelte](https://svelte.dev/) and requires compilation. Mak
 
 ## Changelog ##
 
+### 2.1.3 on August XX, 2020 ###
+
+* Improved: Merge Tags can be now be processed in field conditional logic filters
+* Updated: Field conditional logic can only be configured for Multiple and Single Entry views
+
+### 2.1.2 on August 20, 2020 ###
+
+* Fixed: Properly replace Merge Tags in certain "Created By", "Date Created/Updated" and certain other filters
+* Updated: Russian translation (thank you, Irina F!) and Polish translation
+
+### 2.1.1 on July 15, 2020 ###
+
+* Fixed: "is empty" and "is not empty" filters not working for Date fields
+
 ### 2.1 on July 7, 2020 ###
 
 * Added: Conditionally display configured fields based on logic rules

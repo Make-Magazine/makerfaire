@@ -76,28 +76,42 @@
 				}
 			}
 
-			self.$fieldSelect.html( options.join( '' ) );
-			self.$fieldSelect.val( selectedFields ).select2( {
-				placeholder: GPNFAdminData.strings.displayFieldsPlaceholder
-			} ).on( 'select2:select select2:unselect', function() {
-				RefreshSelectedFieldPreview();
-			} ).on('select2:unselecting', function() {
-				// Prevent Select2 from opening menu when an option is unselected.
-				var opts = $(this).data('select2').options;
-				opts.set('disabled', true);
-				setTimeout(function() {
-					opts.set('disabled', false);
-				}, 1);
-			} );
+			self.$formSettings.show();
+
+			self.$fieldSelect
+				.html( options.join( '' ) )
+				.val( selectedFields );
+
+			if ( typeof $.fn.selectWoo !== 'undefined' ) {
+				self.$fieldSelect.selectWoo( {
+					placeholder: GPNFAdminData.strings.displayFieldsPlaceholder
+				} );
+			} else {
+				self.$fieldSelect.select2( {
+					placeholder: GPNFAdminData.strings.displayFieldsPlaceholder
+				} );
+			}
+
+			self.$fieldSelect
+				.on( 'select2:select select2:unselect', function() {
+					RefreshSelectedFieldPreview();
+				} ).on( 'select2:unselecting', function() {
+					// Prevent Select2 from opening menu when an option is unselected.
+					var opts = $( this ).data( 'select2' ).options;
+					opts.set( 'disabled', true );
+					setTimeout( function() {
+						opts.set( 'disabled', false );
+					}, 1 );
+				} );
 
 			// Add our custom class to identify (and style) our Select2's. You'd think there would be an easier way...
 			$.each( self.$fieldSelect.data( 'select2' ), function ( index, $elem ) {
 				if( $elem instanceof jQuery ) {
-					$elem.addClass( 'gpnf-select2' );
+					$elem.addClass( typeof $.fn.selectWoo !== 'undefined' ? 'gpnf-selectwoo' : 'gpnf-select2' );
 				}
 			} );
 
-			self.$formSettings.slideDown();
+			self.$formSettings.hide().slideDown();
 
 		};
 
@@ -109,10 +123,9 @@
 				action: 'gpnf_get_form_fields',
 				nonce: GPNFAdminData.nonces.getFormFields,
 				form_id: formId
-			}, function( response ) {
+			}, function( fields ) {
 				$spinner.destroy();
-				if( typeof response === 'object' ) {
-					var fields = response;
+				if( typeof fields === 'object' ) {
 					self.setFieldsSelect( fields, selectedFields );
 				} else {
 					alert( GPNFAdminData.strings.getFormFieldsError );

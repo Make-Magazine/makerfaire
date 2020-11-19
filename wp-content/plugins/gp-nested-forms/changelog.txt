@@ -1,6 +1,62 @@
 
 # Changelog
 
+## 1.0-beta-8.76
+
+	- Added support for providing a negative index to the :index modifier to allow selecting backwards from the last submitted child entry.
+
+## 1.0-beta-8.75
+
+	- Fixed issue where child form failed to submit when WCGFPA applied styles to force hide all submit buttons.
+
+## 1.0-beta-8.74
+
+	- Added support for an :index modifier to allow targeting a specific ch… (#38)
+	- Fixed an issue where the "html" format was forced on the simple list template.
+	- Fixed an issue where a misconfigured nested form may generate PHP warnings in other perks.
+	- Fixed an issue in IE11 where GPNF would scroll to the top after editing an entry.
+	- Fixed issue where requested spinner graphic did not exist in Gravity Forms 2.5.
+
+## 1.0-beta-8.73
+
+	- Fixed an issue in IE11 where GPNF would scroll to the top after editing an entry.
+
+## 1.0-beta-8.72
+
+	- Fixed issue where duplicating a child entry created two duplicates instead of the expected one.
+
+## 1.0-beta-8.71
+
+	- Added [gpnf_post_duplicate_entry](https://gravitywiz.com/documentation/gpnf_post_duplicate_entry/) filter to allow doing something after a child entry has been duplicated on the frontend.
+
+## 1.0-beta-8.70
+
+	- Fixed a compatibility issue with Gravity Flow and Date fields.
+
+## 1.0-beta-8.69
+
+	- Fixed an integration issue where WooCommerce Gravity Forms Plugin would hide the submit button.
+
+## 1.0-beta-8.68
+
+	- Added [`gpnf_cookie_name`](https://gravitywiz.com/documentation/gpnf_cookie_name/) filter.
+	- Added support for Gravity Forms 2.5. (#30)
+
+## 1.0-beta-8.67
+
+	- Added support for populating values passed from the parent form's `field_values` shortcode parameter.
+	- Fixed issue where child form inline styles that shared a parent form handle were enqueued too late and never output.
+
+## 1.0-beta-8.66
+
+	- Added responsive support when displaying the Nested Entries Detail template on the frontend.
+	- Added inline docs for "gpnf_entry_limit_min" and "gpnf_entry_limit_max" filters.
+	- Added translator comments for several strings.
+
+## 1.0-beta-8.65
+
+	- Fixed an issue where parent merge tags in child notifications may not be parsed correctly.
+
 ## 1.0-beta-8.64
 
 	- Fixed an issue where submit button would flash briefly on nested form modal before saving the entry.

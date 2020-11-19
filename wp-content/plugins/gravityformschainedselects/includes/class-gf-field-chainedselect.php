@@ -14,6 +14,30 @@ class GF_Chained_Field_Select extends GF_Field {
 		}
 	}
 
+	/**
+	 * Returns the field's form editor icon.
+	 *
+	 * This could be an icon url or a dashicons class.
+	 *
+	 * @since 1.4.2
+	 *
+	 * @return string
+	 */
+	public function get_form_editor_field_icon() {
+		return gf_chained_selects()->get_base_url() . '/images/menu-icon.svg';
+	}
+
+	/**
+	 * Returns the field's form editor description.
+	 *
+	 * @since 1.4.2
+	 *
+	 * @return string
+	 */
+	public function get_form_editor_field_description() {
+		return esc_attr__( 'Allows populating drop downs dynamically and chaining multiple drop downs together.', 'gravityformschainedselects' );
+	}
+
 	public static function init() {
 
 	    add_filter( 'wp_ajax_gform_get_next_chained_select_choices', array( __class__, 'get_next_chained_select_choices' ) );
@@ -239,105 +263,125 @@ class GF_Chained_Field_Select extends GF_Field {
 		return $choices;
 	}
 
-    public static function maybe_import_from_filter( $form ) {
+	public static function maybe_import_from_filter( $form ) {
 
-		if( is_admin() && rgget( 'id' ) != $form['id'] ) {
+		if ( is_admin() && rgget( 'id' ) != $form['id'] ) {
 			return $form;
 		}
 
+		gf_chained_selects()->log_debug( __METHOD__ . '(): running for form #' . $form['id'] );
+
 		$has_change = false;
 
-	    foreach( $form['fields'] as &$field ) {
+		foreach ( $form['fields'] as &$field ) {
 
-	    	if( $field->get_input_type() != 'chainedselect' ) {
-	    		continue;
-		    }
+			if ( $field->get_input_type() != 'chainedselect' ) {
+				continue;
+			}
 
-	    	$has_filter = has_filter( 'gform_chainedselects_import_file' ) || has_filter( 'gform_chainedselects_import_file_' . $form['id'] ) || has_filter( 'gform_chainedselects_import_file_' . $form['id'] . '_' . $field->id );
-	    	$has_change = ( $has_filter && ! $field->gfcsFilterEnabled ) || ( ! $has_filter && $field->gfcsFilterEnabled );
+			gf_chained_selects()->log_debug( __METHOD__ . '(): processing field #' . $field->id );
 
-		    // If filter is set, let's set a flag so we can lock down the field settings UI.
-		    $field->gfcsFilterEnabled = $has_filter;
+			$has_filter       = has_filter( 'gform_chainedselects_import_file' ) || has_filter( 'gform_chainedselects_import_file_' . $form['id'] ) || has_filter( 'gform_chainedselects_import_file_' . $form['id'] . '_' . $field->id );
+			$has_field_change = ( $has_filter && ! $field->gfcsFilterEnabled ) || ( ! $has_filter && $field->gfcsFilterEnabled );
 
+			// If filter is set, let's set a flag so we can lock down the field settings UI.
+			$field->gfcsFilterEnabled = $has_filter;
 
-	    	if( ! $has_filter ) {
-	    		if( $has_change ) {
-				    $field->gfcsFile = null;
-			    }
-	    		continue;
-		    }
+			if ( ! $has_filter ) {
+				if ( $has_field_change ) {
+					$has_change                 = true;
+					$field->gfcsFile            = null;
+					$field->gfcsCacheKey        = null;
+					$field->gfcsCacheExpiration = null;
+				}
+				gf_chained_selects()->log_debug( __METHOD__ . '(): skipping; filter not used.' );
+				continue;
+			}
 
-		    /**
-		     * Provide an import file programmatically.
-		     *
-		     * This import file will override any previously uploaded file via the form settings.
-		     *
-		     * @param array $import_file {
-		     *
-		     *     An array of details for the file from which choices will be imported.
-		     *
-		     *     @var string $url The URL of the file to be imported.
-		     *     @var int    $expiration The number of seconds until the import file will be re-imported.
-		     * }
-		     *
-		     * @since 1.0
-		     */
-		    $import_details = gf_apply_filters( array( 'gform_chainedselects_import_file', $form['id'], $field->id ), array(
-			    'url' => '',
-			    'expiration' => 60 * 60 * 24
-		    ), $form, $field );
+			/**
+			 * Provide an import file programmatically.
+			 *
+			 * This import file will override any previously uploaded file via the form settings.
+			 *
+			 * @since 1.0
+			 *
+			 * @param array $import_file {
+			 *
+			 *     An array of details for the file from which choices will be imported.
+			 *
+			 *     @var string $url        The URL of the file to be imported.
+			 *     @var int    $expiration The number of seconds until the import file will be re-imported.
+			 * }
+			 */
+			$import_details = gf_apply_filters( array( 'gform_chainedselects_import_file', $form['id'], $field->id ), array(
+				'url'        => '',
+				'expiration' => 60 * 60 * 24
+			), $form, $field );
 
-		    if( ! rgar( $import_details, 'url' ) ) {
-			    continue;
-		    }
+			if ( ! rgar( $import_details, 'url' ) ) {
+				gf_chained_selects()->log_debug( __METHOD__ . '(): skipping; empty url.' );
+				continue;
+			}
 
-		    $cache_key = implode( '_', array(
-			    sanitize_title_with_dashes( $import_details['url'] ),
-			    intval( $import_details['expiration'] ),
-		    ) );
+			$cache_key = implode( '_', array(
+				sanitize_title_with_dashes( $import_details['url'] ),
+				intval( $import_details['expiration'] ),
+			) );
 
-		    if( $field->gfcsCacheKey == $cache_key && time() >= $field->gfcsCacheExpiration ) {
-		    	continue;
-		    }
+			$now = time();
 
-		    // Check if we've recently pinged this URL.
-		    $field->gfcsCacheKey = $cache_key;
-		    $field->gfcsCacheExpiration = time() + $import_details['expiration'];
+			// Check if we've recently pinged this URL.
+			if ( $field->gfcsCacheKey == $cache_key && $now <= $field->gfcsCacheExpiration ) {
+				gf_chained_selects()->log_debug( sprintf( '%s(): skipping; not expired. now: %d; gfcsCacheExpiration: %d; %d seconds until file can be reimported.', __METHOD__, $now, $field->gfcsCacheExpiration, $field->gfcsCacheExpiration - $now ) );
+				continue;
+			}
 
-		    $import = self::import_choices_from_remote_file( $import_details['url'], $field, $form );
+			$field->gfcsCacheKey        = $cache_key;
+			$field->gfcsCacheExpiration = time() + $import_details['expiration'];
 
-		    if( is_wp_error( $import ) ) {
+			$import = self::import_choices_from_remote_file( $import_details['url'], $field, $form );
 
-		    	if( $field->gfcsFile == null ) {
-				    $field->inputs   = gf_chained_selects()->get_default_inputs();
-				    $field->choices  = gf_chained_selects()->get_default_choices();
-			    }
+			if ( is_wp_error( $import ) ) {
+				gf_chained_selects()->log_debug( sprintf( '%s(): import failed. %s - %s', __METHOD__, $import->get_error_code(), $import->get_error_message() ) );
 
-			    // There was an error fetching the file. Let's check the file again in 60 seconds.
-			    $field->gfcsCacheExpiration = time() + 60;
+				if ( $field->gfcsFile == null ) {
+					$field->inputs  = gf_chained_selects()->get_default_inputs();
+					$field->choices = gf_chained_selects()->get_default_choices();
+				}
 
-		    } else {
+				// There was an error fetching the file. Let's check the file again in 60 seconds.
+				$field->gfcsCacheExpiration = time() + 60;
 
-		    	$has_change = true;
+			} else {
 
-			    $field->gfcsFile = $import['gfcsFile'];
-			    $field->inputs   = $import['inputs'];
-			    $field->choices  = $import['choices'];
+				$has_change = true;
 
-		    }
+				$field->gfcsFile = $import['gfcsFile'];
+				$field->inputs   = $import['inputs'];
+				$field->choices  = $import['choices'];
+				gf_chained_selects()->log_debug( __METHOD__ . '(): import complete.' );
 
-        }
+			}
 
-        if( $has_change ) {
-	        remove_filter( 'gform_form_post_get_meta', array( __class__, 'maybe_import_from_filter' ) );
-	        // Apparently this isn't always set before updating the form?
-	        $form['is_active'] = isset( $form['is_active'] ) ? $form['is_active'] : true;
- 	    	GFAPI::update_form( $form );
-	        add_filter( 'gform_form_post_get_meta', array( __class__, 'maybe_import_from_filter' ) );
-        }
+		}
 
-        return $form;
-    }
+		if ( $has_change ) {
+			remove_filter( 'gform_form_post_get_meta', array( __class__, 'maybe_import_from_filter' ) );
+			// Apparently this isn't always set before updating the form?
+			$form['is_active'] = isset( $form['is_active'] ) ? $form['is_active'] : true;
+			$result            = GFAPI::update_form( $form );
+			add_filter( 'gform_form_post_get_meta', array( __class__, 'maybe_import_from_filter' ) );
+			if ( is_wp_error( $result ) ) {
+				gf_chained_selects()->log_debug( sprintf( '%s(): form update failed. %s - %s', __METHOD__, $result->get_error_code(), $result->get_error_message() ) );
+			} else {
+				gf_chained_selects()->log_debug( __METHOD__ . '(): form updated.' );
+			}
+		} else {
+			gf_chained_selects()->log_debug( __METHOD__ . '(): no change to form.' );
+		}
+
+		return $form;
+	}
 
     public static function import_choices_from_remote_file( $url, $field, $form ) {
 

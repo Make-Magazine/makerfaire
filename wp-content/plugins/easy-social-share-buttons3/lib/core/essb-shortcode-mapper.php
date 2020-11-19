@@ -135,6 +135,7 @@ function essb_shortcode_subscribe($atts, $content = '') {
 	$twostep = 'false';
 	$twostep_inline = 'false';
 	$conversion_key = 'shortcode';
+	$hide_mobile = false;
 
 	if (is_array($atts)) {
 		$mode = essb_object_value($atts, 'mode');
@@ -143,6 +144,8 @@ function essb_shortcode_subscribe($atts, $content = '') {
 		$twostep_inline = essb_object_value($atts, 'twostep_inline');
 		$twostep_text = essb_object_value($atts, 'twostep_text');
 		$conversion = essb_object_value($atts, 'conversion');
+		
+		$mobile_deactivate = essb_object_value($atts, 'mobile_deactivate');
 		
 		if ($conversion != '') {
 			$conversion_key = $conversion;
@@ -155,6 +158,10 @@ function essb_shortcode_subscribe($atts, $content = '') {
 		if ($mode == '') {
 			$mode = 'mailchimp';
 		}
+		
+		if ($mobile_deactivate == 'true') {
+		    $hide_mobile = true;
+		}
 	}
 
 	if (!class_exists('ESSBNetworks_Subscribe')) {
@@ -165,7 +172,7 @@ function essb_shortcode_subscribe($atts, $content = '') {
 		return ESSBNetworks_Subscribe::draw_inline_subscribe_form_twostep($mode, $design, $content, $twostep_inline);
 	}
 	else {
-		return ESSBNetworks_Subscribe::draw_inline_subscribe_form($mode, $design, false, $conversion_key);
+	    return ESSBNetworks_Subscribe::draw_inline_subscribe_form($mode, $design, false, $conversion_key, $hide_mobile);
 	}
 }
 

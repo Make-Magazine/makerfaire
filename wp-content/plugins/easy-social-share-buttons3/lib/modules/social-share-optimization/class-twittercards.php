@@ -68,7 +68,7 @@ class ESSB_TwitterCards {
 		$metatag_key = apply_filters( 'essb_twitter_metatag_key', 'name' );
 	
 		// Output meta.
-		echo '<meta ', esc_attr( $metatag_key ), '="twitter:', esc_attr( $name ), '" content="', $value, '" />', "\n";
+		echo '<meta ', esc_attr( $metatag_key ), '="twitter:', esc_attr( $name ), '" content="', esc_attr($value), '" />', "\n";
 	}
 	
 	public function card() {
@@ -100,9 +100,11 @@ class ESSB_TwitterCards {
 		    $twitter_title = $post_details->twittercard_value('title');
 		    $twitter_image = $post_details->twittercard_value('image');
 		    $twitter_url = $post_details->twittercard_value('url');
+		    
 			
 			if (!empty($twitter_title)) {
-				$this->output_metatag('title', esc_attr($twitter_title));
+			    $twitter_title = esc_html( wp_strip_all_tags( stripslashes( $twitter_title ), true ) );
+				$this->output_metatag('title', $twitter_title);
 				
 			}
 			if (!empty($twitter_description)) {

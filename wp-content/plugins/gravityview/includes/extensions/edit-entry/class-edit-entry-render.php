@@ -4,7 +4,7 @@
  *
  * @package   GravityView
  * @license   GPL2+
- * @author    Katz Web Services, Inc.
+ * @author    GravityView <hello@gravityview.co>
  * @link      http://gravityview.co
  * @copyright Copyright 2014, Katz Web Services, Inc.
  */
@@ -207,7 +207,7 @@ class GravityView_Edit_Entry_Render {
      */
     public function is_edit_entry() {
 
-        $is_edit_entry = ( GravityView_frontend::is_single_entry() || (!empty(gravityview()->request->is_entry()) ) ) && (!empty($_GET['edit']) );
+        $is_edit_entry = ( GravityView_frontend::is_single_entry() || gravityview()->request->is_entry() ) && (!empty($_GET['edit']) );
 
         return ( $is_edit_entry || $this->is_edit_entry_submission() );
     }
@@ -234,19 +234,16 @@ class GravityView_Edit_Entry_Render {
         self::$original_entry = $entries[0];
         $this->entry = $entries[0];
 
-        self::$original_form = GFAPI::get_form($this->entry['form_id']);
-        $this->form = $gravityview_view->getForm();
+        //self::$original_form = GFAPI::get_form( $this->entry['form_id'] );
+        //$this->form = $gravityview_view->getForm();
+
         $this->form_id = $this->entry['form_id'];
-        
-        /*  This override allows the form to be set based on the selected 
-         *  entry instead of the form that is setup in the view.
-         */        
         $this->form = GFAPI::get_form($this->form_id);
         self::$original_form = $this->form;
 
         $this->view_id = $gravityview_view->getViewId();
         $this->post_id = \GV\Utils::get($post, 'ID', null);
-                        
+
         self::$nonce_key = GravityView_Edit_Entry::get_nonce_key($this->view_id, $this->form_id, $this->entry['id']);
     }
 
@@ -308,11 +305,9 @@ class GravityView_Edit_Entry_Render {
         GFFormDisplay::enqueue_form_scripts($gravityview_view->getForm(), false);
 
         wp_localize_script('gravityview-fe-view', 'gvGlobals', array('cookiepath' => COOKIEPATH));
-        echo '<br/><br/>';        
-        
+
         // Sack is required for images
         wp_print_scripts(array('sack', 'gform_gravityforms', 'gravityview-fe-view'));
-        
     }
 
     /**
@@ -635,13 +630,12 @@ class GravityView_Edit_Entry_Render {
 
         $form = $this->filter_conditional_logic($this->form);
 
-        /** @var GF_Field $field */
+        /** @type GF_Field $field */
         foreach ($form['fields'] as $k => &$field) {
 
             /**
              * Remove the fields with calculation formulas before save to avoid conflicts with GF logic
              * @since 1.16.3
-             * @var GF_Field $field
              */
             if ($field->has_calculation()) {
                 unset($form['fields'][$k]);
@@ -1303,9 +1297,9 @@ class GravityView_Edit_Entry_Render {
 
                 ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
-                $html = GFFormDisplay::get_form($this->form['id'], false, false, true, $this->entry);
+                //$html = GFFormDisplay::get_form($this->form['id'], false, false, true, $this->entry);
                 $html = str_replace('{all_fields:nohidden,noadmin}','',$html);
-                
+
                 ob_get_clean();
 
                 remove_filter('gform_pre_render', array($this, 'filter_modify_form_fields'), 5000);
@@ -1698,8 +1692,13 @@ class GravityView_Edit_Entry_Render {
              * fields. This goes through all the fields and if they're an invalid post field, we
              * set them as valid. If there are still issues, we'll return false.
              *
-             * @param  [type] $validation_results [description]
-             * @return [type]                     [description]
+             * @param  $validation_results {
+             *   @type bool $is_valid
+             *   @type array $form
+             *   @type int $failed_validation_page The page number which has failed validation.
+             * }
+             *
+             * @return array
              */
             public function custom_validation($validation_results) {
 
@@ -2021,8 +2020,8 @@ class GravityView_Edit_Entry_Render {
                  * @param int $view_id View ID
                  */
                 $use_gf_adminonly_setting = apply_filters('gravityview/edit_entry/use_gf_admin_only_setting', empty($edit_fields), $form, $view_id);
-                
-                //Make: Remove admin only fields for everyone                
+
+                //MF override - Never display admin only fields even to admins
                 //if ($use_gf_adminonly_setting && false === GVCommon::has_cap('gravityforms_edit_entries', $this->entry['id'])) {
                     foreach ($fields as $k => $field) {
                         if ($field->adminOnly) {
@@ -2277,7 +2276,8 @@ class GravityView_Edit_Entry_Render {
                      * If the Entry is embedded, there may be two entries on the same page.
                      * If that's the case, and one is being edited, the other should fail gracefully and not display an error.
                      */
-                    /*if (GravityView_oEmbed::getInstance()->get_entry_id()) {
+                    /*
+                    if (GravityView_oEmbed::getInstance()->get_entry_id()) {
                         $error = true;
                     } else {
                         $error = __('The link to edit this entry is not valid; it may have expired.', 'gravityview');

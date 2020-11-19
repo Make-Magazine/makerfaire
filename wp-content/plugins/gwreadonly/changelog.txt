@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.6
+
+	- Fixed compatibility issues with the Gravity View plugin.
+
 ## 1.5
 
 	- Updated read-only to disable Datepicker fields by default (#1)

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#5059C9;}
+	.st1{fill:#7B83EB;}
+	.st2{clip-path:url(#SVGID_1_);}
+	.st3{fill:url(#SVGID_2_);}
+	.st4{fill:#FFFFFF;}
+</style>
+<g>
+	<g id="small_person">
+		<path id="Body_9_" class="st0" d="M370.8,205H478c12.7,0,23,10.3,23,23v104.6c0,42.3-34.3,76.6-76.6,76.6l0,0
+			c-42.3,0-76.6-34.3-76.6-76.6l0,0V227.9C347.9,215.2,358.2,205,370.8,205z"/>
+		<circle id="Head_9_" class="st0" cx="424.4" cy="123.3" r="51"/>
+	</g>
+	<g id="Large_Person">
+		<path id="Body-2_9_" class="st1" d="M166.7,205h199.1c12.7,0,23,10.3,23,23v130.2c0,67.7-54.8,122.5-122.5,122.5
+			s-122.5-54.8-122.5-122.5V227.9C143.7,215.2,154,205,166.7,205z"/>
+		<circle id="Head-2_9_" class="st1" cx="266.2" cy="102.9" r="71.5"/>
+	</g>
+	<g>
+		<defs>
+			<path id="SVGID_4_" d="M365.7,205H256v-31.4c39.1,5.6,75.3-21.5,80.9-60.5s-21.5-75.3-60.5-80.9c-39.1-5.6-75.3,21.5-80.9,60.5
+				c-0.5,3.4-0.7,6.8-0.7,10.2c0,10.6,2.3,21.1,6.9,30.6H31.4c-11.3,0-20.4,9.2-20.4,20.4v204.2c0,11.3,9.2,20.4,20.4,20.4h114
+				c9.7,57.9,60.1,102.1,120.8,102.1c67.7,0,122.5-54.8,122.5-122.5V227.9C388.7,215.2,378.4,205,365.7,205z"/>
+		</defs>
+		<clipPath id="SVGID_1_">
+			<use xlink:href="#SVGID_4_"  style="overflow:visible;"/>
+		</clipPath>
+		<g id="Back_Plate" class="st2">
+			
+				<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="55.4219" y1="436.8112" x2="56.0599" y2="436.1732" gradientTransform="matrix(384 0 0 -384 -21320 167820)">
+				<stop  offset="0" style="stop-color:#5A62C4"/>
+				<stop  offset="1" style="stop-color:#3940AB"/>
+			</linearGradient>
+			<path class="st3" d="M31.4,133.5h204.2c11.3,0,20.4,9.1,20.4,20.4v204.2c0,11.3-9.1,20.4-20.4,20.4H31.4
+				c-11.3,0-20.4-9.1-20.4-20.4V153.9C11,142.6,20.1,133.5,31.4,133.5z"/>
+		</g>
+	</g>
+	<g id="Letter_T">
+		<polygon class="st4" points="184.1,213.8 145.7,213.8 145.7,318.6 121.2,318.6 121.2,213.8 82.9,213.8 82.9,193.5 184.1,193.5 		
+			"/>
+	</g>
+</g>
+</svg>

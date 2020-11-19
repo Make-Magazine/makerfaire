@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Pro - Gallery, Channel, Playlist, Live Stream
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Pro Plugin. Customize and embed a responsive video, YouTube channel gallery, playlist gallery, or live stream from YouTube.com
-  Version: 13.4.1
+  Version: 13.4.1.2
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
  */
@@ -21,7 +21,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '13.4.1';
+    public static $version = '13.4.1.2';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -35,6 +35,7 @@ class YouTubePrefsPro
     public static $opt_debugmode = 'debugmode';
     public static $opt_old_script_method = 'old_script_method';
     public static $opt_cc_load_policy = 'cc_load_policy';
+    public static $opt_cc_lang_pref = 'cc_lang_pref';
     public static $opt_iv_load_policy = 'iv_load_policy';
     public static $opt_loop = 'loop';
     public static $opt_modestbranding = 'modestbranding';
@@ -142,6 +143,7 @@ class YouTubePrefsPro
         'shortcode_unautop',
         'prepend_attachment',
         'wp_make_content_images_responsive',
+        'wp_filter_content_tags',
         'do_shortcode',
         'convert_smilies'
     );
@@ -238,6 +240,7 @@ class YouTubePrefsPro
             self::$yt_options = array(
                 self::$opt_autoplay,
                 self::$opt_cc_load_policy,
+                self::$opt_cc_lang_pref,
                 self::$opt_iv_load_policy,
                 self::$opt_loop,
                 self::$opt_modestbranding,
@@ -1343,7 +1346,7 @@ class YouTubePrefsPro
                         {
                             ?>
                             <p>
-                                <?php _e('If you already know the direct link to the channel, enter it below.<br>Example: https://www.youtube.com/<strong>channel</strong>/UCnM5iMGiKsZg-iOlIO2ZkdQ', 'text_domain'); ?>
+                                <?php _e('If you already know the direct link to the channel ID, enter it below. <br>Example: https://www.youtube.com/<strong>channel</strong>/UCnM5iMGiKsZg-iOlIO2ZkdQ <p class="smallnote">Note: the following format will not work:  https://www.youtube.com<strong>/c/</strong>customchannelname  If you cannot locate the proper channel ID format above, then try the other method below.</p> ', 'text_domain'); ?>
                             </p>
                             <p>
                                 <?php _e('Or, simply enter a link to any single video that belongs to the user\'s channel, and the plugin will find the channel for you.<br>Example: https://www.youtube.com/watch?v=YVvn8dpSAt0', 'text_domain'); ?>
@@ -1503,7 +1506,7 @@ class YouTubePrefsPro
                             <h2><?php _e('Size Ratio', 'text_domain'); ?></h2>
                             <p class="smallnote"><?php _e('We\'ve guessed your site\'s default content width below.', 'text_domain'); ?></p>                        
                             <label class="label-inline"><?php _e('Width', 'text_domain'); ?>:
-                                <input name="txtWidth" ng-change="selectHeight()" ng-model="model.width" type="number" id="txtWidth" class="txtbox" required />
+                                <input name="txtWidth" ng-change="selectHeight()" ng-model="model.width" type="number" min="200" id="txtWidth" class="txtbox" required />
                             </label>
                             <label class="label-inline"><?php _e('Height', 'text_domain'); ?>:
                                 <select id="selheight" ng-change="selectHeight()" ng-model="model.selheight">
@@ -1512,7 +1515,7 @@ class YouTubePrefsPro
                                     <option value="16-9"><?php _e('Force 16:9 Ratio', 'text_domain'); ?></option>
                                     <option value="4-3"><?php _e('Force 4:3 Ratio', 'text_domain'); ?></option>
                                 </select>
-                                <input name="txtHeight" ng-model="model.height" type="number" id="txtHeight" class="txtbox" required ng-disabled="model.selheight !== 'manual'" />
+                                <input name="txtHeight" ng-model="model.height" type="number" id="txtHeight" class="txtbox" min="200" required ng-disabled="model.selheight !== 'manual'" />
                             </label>
                             <p class="smallnote"><?php _e('If you need the above ratio to be fixed pixels instead of fluid, try turning off "Responsive video sizing" in the plugin settings page.', 'text_domain'); ?></p>
 
@@ -2149,6 +2152,7 @@ class YouTubePrefsPro
         $_glance = 0;
         $_autoplay = 0;
         $_cc_load_policy = 0;
+        $_cc_lang_pref = '';
         $_iv_load_policy = 1;
         $_loop = 0;
         $_modestbranding = 0;
@@ -2282,6 +2286,7 @@ class YouTubePrefsPro
             $_debugmode = self::tryget($arroptions, self::$opt_debugmode, 0);
             $_old_script_method = self::tryget($arroptions, self::$opt_old_script_method, 0);
             $_cc_load_policy = self::tryget($arroptions, self::$opt_cc_load_policy, 0);
+            $_cc_lang_pref = self::tryget($arroptions, self::$opt_cc_lang_pref, $_cc_lang_pref);
             $_iv_load_policy = self::tryget($arroptions, self::$opt_iv_load_policy, 1);
             $_loop = self::tryget($arroptions, self::$opt_loop, 0);
             $_modestbranding = self::tryget($arroptions, self::$opt_modestbranding, 0);
@@ -2399,6 +2404,7 @@ class YouTubePrefsPro
             self::$opt_glance => $_glance,
             self::$opt_autoplay => $_autoplay,
             self::$opt_cc_load_policy => $_cc_load_policy,
+            self::$opt_cc_lang_pref => $_cc_lang_pref,
             self::$opt_iv_load_policy => $_iv_load_policy,
             self::$opt_loop => $_loop,
             self::$opt_modestbranding => $_modestbranding,
@@ -3533,7 +3539,7 @@ class YouTubePrefsPro
 
         for ($i = 0; $i < count(self::$the_content_filters); $i++)
         {
-            if (function_exists(self::$the_content_filters[$i]))
+            if (function_exists(self::$the_content_filters[$i]) && !(self::wp_above_version('5.5') && self::$the_content_filters[$i] === 'wp_make_content_images_responsive'))
             {
                 $content = call_user_func(self::$the_content_filters[$i], $content);
             }
@@ -4374,7 +4380,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update provides better compatibility with WordPress 5.5 for both Free and Pro versions.";
+        $new_pointer_content .= "This update allows you to specify the default language (when available) that the player will use to display closed captions, for both Free and Pro versions.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -4425,7 +4431,7 @@ class YouTubePrefsPro
                 }
             }
             ?>
-            <a class="nav-tab" href="#jumpperformance">Performance <sup class="orange">new</sup></a>
+            <a class="nav-tab" href="#jumpperformance">Performance</a>
             <a class="nav-tab" href="#jumpcompat">Compatibility</a>
             <a class="nav-tab" href="#jumpprivacy">Security & Privacy</a>
             <a class="nav-tab" href="#jumphowto">Embed Manually</a>
@@ -4907,11 +4913,11 @@ class YouTubePrefsPro
                             <p>
                                 <input name="<?php echo self::$opt_defaultdims; ?>" id="<?php echo self::$opt_defaultdims; ?>" <?php checked($all[self::$opt_defaultdims], 1); ?> type="checkbox" class="checkbox">                        
                                 <span id="boxdefaultdims">
-                                    Width: <input type="text" name="<?php echo self::$opt_defaultwidth; ?>" id="<?php echo self::$opt_defaultwidth; ?>" value="<?php echo esc_attr(trim($all[self::$opt_defaultwidth])); ?>" class="textinput" style="width: 50px;"> &nbsp;
-                                    Height: <input type="text" name="<?php echo self::$opt_defaultheight; ?>" id="<?php echo self::$opt_defaultheight; ?>" value="<?php echo esc_attr(trim($all[self::$opt_defaultheight])); ?>" class="textinput" style="width: 50px;">
+                                    Width: <input type="number" min="200" name="<?php echo self::$opt_defaultwidth; ?>" id="<?php echo self::$opt_defaultwidth; ?>" value="<?php echo esc_attr(trim($all[self::$opt_defaultwidth])); ?>" class="textinput" style="width: 75px;"> &nbsp;
+                                    Height: <input type="number" min="200" name="<?php echo self::$opt_defaultheight; ?>" id="<?php echo self::$opt_defaultheight; ?>" value="<?php echo esc_attr(trim($all[self::$opt_defaultheight])); ?>" class="textinput" style="width: 75px;">
                                 </span>
 
-                                <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('<b class="chktitle">Default Dimensions:</b> Make your videos have a default size. Recommended: 800 x 450 (NOTE: If responsive sizing is also turned on, your videos will be responsive but also keep this aspect ratio.) ') ?></label>
+                                <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('<b class="chktitle">Default Dimensions:</b> Make your videos have a default size. Recommended: 800 x 450 (NOTE: If responsive sizing is also turned on, your videos will be responsive but also keep this aspect ratio.). Also, according to YouTube guidelines, the player must be a minimum of 200 x 200 (or recommended 480 x 270 for 16:9 ratio players) in order to display correctly.') ?></label>
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_responsive; ?>" id="<?php echo self::$opt_responsive; ?>" <?php checked($all[self::$opt_responsive], 1); ?> type="checkbox" class="checkbox">
@@ -4960,6 +4966,213 @@ class YouTubePrefsPro
                             <p>
                                 <input name="<?php echo self::$opt_cc_load_policy; ?>" id="<?php echo self::$opt_cc_load_policy; ?>" <?php checked($all[self::$opt_cc_load_policy], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_cc_load_policy; ?>"><?php _e('<b class="chktitle">Closed Captions:</b> Turn on closed captions by default.') ?></label>
+                            </p>
+                            <?php
+                            $lang_codes = [
+                                ["Abkhazian","аҧсуа бызшәа, аҧсшәа","ab","abk","abk"],
+                                ["Afar","Afaraf","aa","aar","aar"],
+                                ["Afrikaans","Afrikaans","af","afr","afr"],
+                                ["Akan","Akan","ak","aka","aka"],
+                                ["Albanian","Shqip","sq","sqi","alb"],
+                                ["Amharic","አማርኛ","am","amh","amh"],
+                                ["Arabic","العربية","ar","ara","ara"],
+                                ["Aragonese","aragonés","an","arg","arg"],
+                                ["Armenian","Հայերեն","hy","hye","arm"],
+                                ["Assamese","অসমীয়া","as","asm","asm"],
+                                ["Avaric","авар мацӀ, магӀарул мацӀ","av","ava","ava"],
+                                ["Avestan","avesta","ae","ave","ave"],
+                                ["Aymara","aymar aru","ay","aym","aym"],
+                                ["Azerbaijani","azərbaycan dili","az","aze","aze"],
+                                ["Bambara","bamanankan","bm","bam","bam"],
+                                ["Bashkir","башҡорт теле","ba","bak","bak"],
+                                ["Basque","euskara, euskera","eu","eus","baq"],
+                                ["Belarusian","беларуская мова","be","bel","bel"],
+                                ["Bengali","বাংলা","bn","ben","ben"],
+                                ["Bihari languages","भोजपुरी","bh","bih","bih"],
+                                ["Bislama","Bislama","bi","bis","bis"],
+                                ["Bosnian","bosanski jezik","bs","bos","bos"],
+                                ["Breton","brezhoneg","br","bre","bre"],
+                                ["Bulgarian","български език","bg","bul","bul"],
+                                ["Burmese","ဗမာစာ","my","mya","bur"],
+                                ["Catalan, Valencian","català, valencià","ca","cat","cat"],
+                                ["Chamorro","Chamoru","ch","cha","cha"],
+                                ["Chechen","нохчийн мотт","ce","che","che"],
+                                ["Chichewa, Chewa, Nyanja","chiCheŵa, chinyanja","ny","nya","nya"],
+                                ["Chinese","中文 (Zhōngwén), 汉语, 漢語","zh","zho","chi"],
+                                ["Chuvash","чӑваш чӗлхи","cv","chv","chv"],
+                                ["Cornish","Kernewek","kw","cor","cor"],
+                                ["Corsican","corsu, lingua corsa","co","cos","cos"],
+                                ["Cree","ᓀᐦᐃᔭᐍᐏᐣ","cr","cre","cre"],
+                                ["Croatian","hrvatski jezik","hr","hrv","hrv"],
+                                ["Czech","čeština, český jazyk","cs","ces","cze"],
+                                ["Danish","dansk","da","dan","dan"],
+                                ["Divehi, Dhivehi, Maldivian","ދިވެހި","dv","div","div"],
+                                ["Dutch, Flemish","Nederlands, Vlaams","nl","nld","dut"],
+                                ["Dzongkha","རྫོང་ཁ","dz","dzo","dzo"],
+                                ["English","English","en","eng","eng"],
+                                ["Esperanto","Esperanto","eo","epo","epo"],
+                                ["Estonian","eesti, eesti keel","et","est","est"],
+                                ["Ewe","Eʋegbe","ee","ewe","ewe"],
+                                ["Faroese","føroyskt","fo","fao","fao"],
+                                ["Fijian","vosa Vakaviti","fj","fij","fij"],
+                                ["Finnish","suomi, suomen kieli","fi","fin","fin"],
+                                ["French","français, langue française","fr","fra","fre"],
+                                ["Fulah","Fulfulde, Pulaar, Pular","ff","ful","ful"],
+                                ["Galician","Galego","gl","glg","glg"],
+                                ["Georgian","ქართული","ka","kat","geo"],
+                                ["German","Deutsch","de","deu","ger"],
+                                ["Greek, Modern (1453–)","ελληνικά","el","ell","gre"],
+                                ["Guarani","Avañe'ẽ","gn","grn","grn"],
+                                ["Gujarati","ગુજરાતી","gu","guj","guj"],
+                                ["Haitian, Haitian Creole","Kreyòl ayisyen","ht","hat","hat"],
+                                ["Hausa","(Hausa) هَوُسَ","ha","hau","hau"],
+                                ["Hebrew","עברית","he","heb","heb"],
+                                ["Herero","Otjiherero","hz","her","her"],
+                                ["Hindi","हिन्दी, हिंदी","hi","hin","hin"],
+                                ["Hiri Motu","Hiri Motu","ho","hmo","hmo"],
+                                ["Hungarian","magyar","hu","hun","hun"],
+                                ["Interlingua (International Auxiliary Language Association)","Interlingua","ia","ina","ina"],
+                                ["Indonesian","Bahasa Indonesia","id","ind","ind"],
+                                ["Interlingue, Occidental","(originally:) Occidental, (after WWII:) Interlingue","ie","ile","ile"],
+                                ["Irish","Gaeilge","ga","gle","gle"],
+                                ["Igbo","Asụsụ Igbo","ig","ibo","ibo"],
+                                ["Inupiaq","Iñupiaq, Iñupiatun","ik","ipk","ipk"],
+                                ["Ido","Ido","io","ido","ido"],
+                                ["Icelandic","Íslenska","is","isl","ice"],
+                                ["Italian","Italiano","it","ita","ita"],
+                                ["Inuktitut","ᐃᓄᒃᑎᑐᑦ","iu","iku","iku"],
+                                ["Japanese","日本語 (にほんご)","ja","jpn","jpn"],
+                                ["Javanese","ꦧꦱꦗꦮ, Basa Jawa","jv","jav","jav"],
+                                ["Kalaallisut, Greenlandic","kalaallisut, kalaallit oqaasii","kl","kal","kal"],
+                                ["Kannada","ಕನ್ನಡ","kn","kan","kan"],
+                                ["Kanuri","Kanuri","kr","kau","kau"],
+                                ["Kashmiri","कश्मीरी, كشميري‎","ks","kas","kas"],
+                                ["Kazakh","қазақ тілі","kk","kaz","kaz"],
+                                ["Central Khmer","ខ្មែរ, ខេមរភាសា, ភាសាខ្មែរ","km","khm","khm"],
+                                ["Kikuyu, Gikuyu","Gĩkũyũ","ki","kik","kik"],
+                                ["Kinyarwanda","Ikinyarwanda","rw","kin","kin"],
+                                ["Kirghiz, Kyrgyz","Кыргызча, Кыргыз тили","ky","kir","kir"],
+                                ["Komi","коми кыв","kv","kom","kom"],
+                                ["Kongo","Kikongo","kg","kon","kon"],
+                                ["Korean","한국어","ko","kor","kor"],
+                                ["Kurdish","Kurdî, کوردی‎","ku","kur","kur"],
+                                ["Kuanyama, Kwanyama","Kuanyama","kj","kua","kua"],
+                                ["Latin","latine, lingua latina","la","lat","lat"],
+                                ["Luxembourgish, Letzeburgesch","Lëtzebuergesch","lb","ltz","ltz"],
+                                ["Ganda","Luganda","lg","lug","lug"],
+                                ["Limburgan, Limburger, Limburgish","Limburgs","li","lim","lim"],
+                                ["Lingala","Lingála","ln","lin","lin"],
+                                ["Lao","ພາສາລາວ","lo","lao","lao"],
+                                ["Lithuanian","lietuvių kalba","lt","lit","lit"],
+                                ["Luba-Katanga","Kiluba","lu","lub","lub"],
+                                ["Latvian","latviešu valoda","lv","lav","lav"],
+                                ["Manx","Gaelg, Gailck","gv","glv","glv"],
+                                ["Macedonian","македонски јазик","mk","mkd","mac"],
+                                ["Malagasy","fiteny malagasy","mg","mlg","mlg"],
+                                ["Malay","Bahasa Melayu, بهاس ملايو‎","ms","msa","may"],
+                                ["Malayalam","മലയാളം","ml","mal","mal"],
+                                ["Maltese","Malti","mt","mlt","mlt"],
+                                ["Maori","te reo Māori","mi","mri","mao"],
+                                ["Marathi","मराठी","mr","mar","mar"],
+                                ["Marshallese","Kajin M̧ajeļ","mh","mah","mah"],
+                                ["Mongolian","Монгол хэл","mn","mon","mon"],
+                                ["Nauru","Dorerin Naoero","na","nau","nau"],
+                                ["Navajo, Navaho","Diné bizaad","nv","nav","nav"],
+                                ["North Ndebele","isiNdebele","nd","nde","nde"],
+                                ["Nepali","नेपाली","ne","nep","nep"],
+                                ["Ndonga","Owambo","ng","ndo","ndo"],
+                                ["Norwegian Bokmål","Norsk Bokmål","nb","nob","nob"],
+                                ["Norwegian Nynorsk","Norsk Nynorsk","nn","nno","nno"],
+                                ["Norwegian","Norsk","no","nor","nor"],
+                                ["Sichuan Yi, Nuosu","ꆈꌠ꒿ Nuosuhxop","ii","iii","iii"],
+                                ["South Ndebele","isiNdebele","nr","nbl","nbl"],
+                                ["Occitan","occitan, lenga d'òc","oc","oci","oci"],
+                                ["Ojibwa","ᐊᓂᔑᓈᐯᒧᐎᓐ","oj","oji","oji"],
+                                ["Church Slavic, Old Slavonic, Church Slavonic, Old Bulgarian, Old Church Slavonic","ѩзыкъ словѣньскъ","cu","chu","chu"],
+                                ["Oromo","Afaan Oromoo","om","orm","orm"],
+                                ["Oriya","ଓଡ଼ିଆ","or","ori","ori"],
+                                ["Ossetian, Ossetic","ирон æвзаг","os","oss","oss"],
+                                ["Punjabi, Panjabi","ਪੰਜਾਬੀ, پنجابی‎","pa","pan","pan"],
+                                ["Pali","पालि, पाळि","pi","pli","pli"],
+                                ["Persian","فارسی","fa","fas","per"],
+                                ["Polish","język polski, polszczyzna","pl","pol","pol"],
+                                ["Pashto, Pushto","پښتو","ps","pus","pus"],
+                                ["Portuguese","Português","pt","por","por"],
+                                ["Quechua","Runa Simi, Kichwa","qu","que","que"],
+                                ["Romansh","Rumantsch Grischun","rm","roh","roh"],
+                                ["Rundi","Ikirundi","rn","run","run"],
+                                ["Romanian, Moldavian, Moldovan","Română","ro","ron","rum"],
+                                ["Russian","русский","ru","rus","rus"],
+                                ["Sanskrit","संस्कृतम्","sa","san","san"],
+                                ["Sardinian","sardu","sc","srd","srd"],
+                                ["Sindhi","सिन्धी, سنڌي، سندھی‎","sd","snd","snd"],
+                                ["Northern Sami","Davvisámegiella","se","sme","sme"],
+                                ["Samoan","gagana fa'a Samoa","sm","smo","smo"],
+                                ["Sango","yângâ tî sängö","sg","sag","sag"],
+                                ["Serbian","српски језик","sr","srp","srp"],
+                                ["Gaelic, Scottish Gaelic","Gàidhlig","gd","gla","gla"],
+                                ["Shona","chiShona","sn","sna","sna"],
+                                ["Sinhala, Sinhalese","සිංහල","si","sin","sin"],
+                                ["Slovak","Slovenčina, Slovenský Jazyk","sk","slk","slo"],
+                                ["Slovenian","Slovenski Jezik, Slovenščina","sl","slv","slv"],
+                                ["Somali","Soomaaliga, af Soomaali","so","som","som"],
+                                ["Southern Sotho","Sesotho","st","sot","sot"],
+                                ["Spanish, Castilian","Español","es","spa","spa"],
+                                ["Sundanese","Basa Sunda","su","sun","sun"],
+                                ["Swahili","Kiswahili","sw","swa","swa"],
+                                ["Swati","SiSwati","ss","ssw","ssw"],
+                                ["Swedish","Svenska","sv","swe","swe"],
+                                ["Tamil","தமிழ்","ta","tam","tam"],
+                                ["Telugu","తెలుగు","te","tel","tel"],
+                                ["Tajik","тоҷикӣ, toçikī, تاجیکی‎","tg","tgk","tgk"],
+                                ["Thai","ไทย","th","tha","tha"],
+                                ["Tigrinya","ትግርኛ","ti","tir","tir"],
+                                ["Tibetan","བོད་ཡིག","bo","bod","tib"],
+                                ["Turkmen","Türkmen, Түркмен","tk","tuk","tuk"],
+                                ["Tagalog","Wikang Tagalog","tl","tgl","tgl"],
+                                ["Tswana","Setswana","tn","tsn","tsn"],
+                                ["Tonga (Tonga Islands)","Faka Tonga","to","ton","ton"],
+                                ["Turkish","Türkçe","tr","tur","tur"],
+                                ["Tsonga","Xitsonga","ts","tso","tso"],
+                                ["Tatar","татар теле, tatar tele","tt","tat","tat"],
+                                ["Twi","Twi","tw","twi","twi"],
+                                ["Tahitian","Reo Tahiti","ty","tah","tah"],
+                                ["Uighur, Uyghur","ئۇيغۇرچە‎, Uyghurche","ug","uig","uig"],
+                                ["Ukrainian","Українська","uk","ukr","ukr"],
+                                ["Urdu","اردو","ur","urd","urd"],
+                                ["Uzbek","Oʻzbek, Ўзбек, أۇزبېك‎","uz","uzb","uzb"],
+                                ["Venda","Tshivenḓa","ve","ven","ven"],
+                                ["Vietnamese","Tiếng Việt","vi","vie","vie"],
+                                ["Volapük","Volapük","vo","vol","vol"],
+                                ["Walloon","Walon","wa","wln","wln"],
+                                ["Welsh","Cymraeg","cy","cym","wel"],
+                                ["Wolof","Wollof","wo","wol","wol"],
+                                ["Western Frisian","Frysk","fy","fry","fry"],
+                                ["Xhosa","isiXhosa","xh","xho","xho"],
+                                ["Yiddish","ייִדיש","yi","yid","yid"],
+                                ["Yoruba","Yorùbá","yo","yor","yor"],
+                                ["Zhuang, Chuang","Saɯ cueŋƅ, Saw cuengh","za","zha","zha"],
+                                ["Zulu","isiZulu","zu","zul","zul"]
+                            ];
+                            
+                            $selected_val = trim($all[self::$opt_cc_lang_pref]);
+                            ?>
+                            <p>
+                                <label for="<?php echo self::$opt_cc_lang_pref; ?>"><b class="chktitle">Closed Captions Language:</b></label> <sup class="orange"><?php _e('new', 'youtube-embed-plus-pro'); ?></sup>
+                                <select name="<?php echo self::$opt_cc_lang_pref; ?>" id="<?php echo self::$opt_cc_lang_pref; ?>" style="width: 260px;">                                    
+                                    <option <?php echo '' == $selected_val ? 'selected' : '' ?> value="">Default/Unspecified</option>
+                                    <?php
+                                    foreach ($lang_codes as $idx => $lang_row)
+                                    {
+                                        $iso_code = $lang_row[2];
+                                        $iso_label = $lang_row[0] . ' - ' . $lang_row[1];
+                                        ?>
+                                    <option <?php echo $iso_code == $selected_val ? 'selected' : '' ?> value="<?php echo $iso_code ?>"><?php echo $iso_label ?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                </select>
+                                Select the preferred default language for closed captions (when available).
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_dohl; ?>" id="<?php echo self::$opt_dohl; ?>" <?php checked($all[self::$opt_dohl], 1); ?> type="checkbox" class="checkbox">
@@ -5387,7 +5600,7 @@ class YouTubePrefsPro
                                     <img class="ssaltgallery" src="<?php echo plugins_url('images/ss-live-chat.jpg', __FILE__) ?>" />
                                     <input name="<?php echo self::$opt_live_chat; ?>" id="<?php echo self::$opt_live_chat; ?>" <?php checked($all[self::$opt_live_chat], 1); ?> type="checkbox" class="checkbox">
                                     <label for="<?php echo self::$opt_live_chat; ?>">
-                                        <b><?php _e('(PRO)') ?> </b> <b class="chktitle"><?php _e('Enable Live Chat:') ?></b> <?php _e('<sup class="orange">new</sup>') ?> <?php _e('Add more interaction to your site by including the YouTube live chat box as part of each live stream or premiere embed. Note that live chat can also be an option for earning money from your audience by using the Super Chat feature. <a href="https://creatoracademy.youtube.com/page/lesson/superchat" target="_blank">Learn more here</a>.') ?>
+                                        <b><?php _e('(PRO)') ?> </b> <b class="chktitle"><?php _e('Enable Live Chat:') ?></b> <sup class="orange"><?php _e('new') ?></sup> <?php _e('Add more interaction to your site by including the YouTube live chat box as part of each live stream or premiere embed. Note that live chat can also be an option for earning money from your audience by using the Super Chat feature. <a href="https://creatoracademy.youtube.com/page/lesson/superchat" target="_blank">Learn more here</a>.') ?>
                                         <strong class="check-note"><?php _e('<span class="orange">NOTE:</span> In wide containers, the chat box will appear to the right of the player. It will appear below the player when the container is less than 964px. Also, Google/YouTube disables live chat on mobile devices. So for mobile phones and tablets, the chat box will be hidden.') ?></strong>
                                     </label>
                                     <br>
@@ -5422,7 +5635,7 @@ class YouTubePrefsPro
                                 <div class="p">
                                     <input name="<?php echo self::$opt_gallery_limit_dsc; ?>" id="<?php echo self::$opt_gallery_limit_dsc; ?>" <?php checked($all[self::$opt_gallery_limit_dsc], 1); ?> type="checkbox" class="checkbox">
                                     <label for="<?php echo self::$opt_gallery_limit_dsc ?>">
-                                        <b>(PRO)</b> <b class="chktitle">Description Limit:</b> <sup class="orange">new</sup>
+                                        <b>(PRO)</b> <b class="chktitle">Description Limit:</b>
                                         Limit the number of characters shown in the description, when using the vertical list styling.
                                         <strong class="check-note">
                                             Number of characters:
@@ -5528,8 +5741,8 @@ class YouTubePrefsPro
                                         </div>
                                         <label>
                                             <b class="chktitle">Cache Lifetime (hours): </b>
-                                            <input name="<?php echo self::$opt_spdcexp; ?>" id="<?php echo self::$opt_spdcexp; ?>" value="<?php echo esc_attr(trim($all[self::$opt_spdcexp])); ?>" type="number" min="1"/>
-                                            Tip: If your pages rarely change, you may wish to set this to a much higher value than 24 hours.
+                                            <input name="<?php echo self::$opt_spdcexp; ?>" id="<?php echo self::$opt_spdcexp; ?>" value="<?php echo min(720, intval($all[self::$opt_spdcexp])); ?>" type="number" min="1" max="720"/>
+                                            Tip: If your pages rarely change, you may wish to set this to a much higher value than 24 hours (the max allowed is 720 hours, which is 30 days).
                                         </label>
                                         <br>
                                         <br>
@@ -5736,14 +5949,14 @@ class YouTubePrefsPro
                             <p>
                                 <input name="<?php echo self::$opt_ajax_save; ?>" id="<?php echo self::$opt_ajax_save; ?>" <?php checked($all[self::$opt_ajax_save], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_ajax_save; ?>">
-                                    <b class="chktitle">Save Settings with AJAX: </b> <sup class="orange">new</sup> 
+                                    <b class="chktitle">Save Settings with AJAX: </b>
                                     Turn this option off if you are having trouble saving your settings.
                                 </label>
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_gb_compat; ?>" id="<?php echo self::$opt_gb_compat; ?>" <?php checked($all[self::$opt_gb_compat], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_gb_compat; ?>">
-                                    <b class="chktitle">Gutenberg Block Editor Theme Spacing: </b> <sup class="orange">new</sup>
+                                    <b class="chktitle">Gutenberg Block Editor Theme Spacing: </b> 
                                     Check this option to fix possible issues with spacing below your videos. You may also want to try combining this option with Responsive Sizing.
                                 </label>
                             </p>
@@ -5907,7 +6120,7 @@ class YouTubePrefsPro
                         <div class="p">
                             <input name="<?php echo self::$opt_defer_js; ?>" id="<?php echo self::$opt_defer_js; ?>" <?php checked($all[self::$opt_defer_js], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_defer_js ?>">
-                                <b class="chktitle"><?php _e('Defer Javascript:', 'youtube-embed-plus-pro'); ?></b> <sup class="orange"><?php _e('new', 'youtube-embed-plus-pro'); ?></sup>
+                                <b class="chktitle"><?php _e('Defer Javascript:', 'youtube-embed-plus-pro'); ?></b> 
                                 <?php _e('JavaScript (JS) deferral is a common website performance option that can offer significant improvements of page speed. You can reduce the initial load time of your page by allowing this plugin\'s scripts to begin execution only after a page is loaded. You may receive a better GTMetrix score with this option turned on. Note: This feature is compatible with most sites, but turn it off if you are having issues.', 'youtube-embed-plus-pro'); ?>                                
                             </label>                       
                             <div class="p box_defer_jquery">
@@ -6590,6 +6803,8 @@ class YouTubePrefsPro
         $new_options[self::$opt_gallery_collapse_grid] = self::postchecked(self::$opt_gallery_collapse_grid) ? 1 : 0;
         $new_options[self::$opt_vi_hide_monetize_tab] = self::postchecked(self::$opt_vi_hide_monetize_tab) ? 1 : 0;
 
+        $new_options[self::$opt_cc_lang_pref] = sanitize_title($_POST[self::$opt_cc_lang_pref]);
+        
         $_rel = 0;
         try
         {
@@ -8807,7 +9022,7 @@ class YouTubePrefsPro
                         <img src="<?php echo plugins_url(self::$folder_name . '/images/adstxt-help.png') . '?ver=' . self::$version; ?>"/>
                         Trouble getting content that fits your site, even with the proper settings above/below? Contact support at <strong><a href="mailto:ext@embedplus.com">ext@embedplus.com</a></strong>
                     </div>
-                    <h2><span class="vi-num">1</span> Video Categories (Multiple Allowed) <sup class="orange">new</sup></h2>
+                    <h2><span class="vi-num">1</span> Video Categories (Multiple Allowed)</h2>
                     <p>
                         Your video ad will be optimized to relate to your site's content and the one or more categories you select below. Note that the quality of the matches improves over time. 
                     </p>

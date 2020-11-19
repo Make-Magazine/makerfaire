@@ -417,6 +417,21 @@ class ESSBAdvancedOptions {
 		if ($current_tab == 'boarding') {
 			$this->load_settings('boarding');
 		}
+		
+		/**
+		 * External tabs
+		 * 
+		 * @since 7.4.1
+		 */
+		$extension_tabs = array();
+		
+		if (has_filter('essb_extension_advanced_tabs')) {
+		    $extension_tabs = apply_filters('essb_extension_advanced_tabs', $extension_tabs);
+		}
+		
+		if (in_array($current_tab, $extension_tabs)) {
+		    $this->load_extension_settings($current_tab);
+		}
 	}
 
 	public function get_subcategories() {
@@ -435,6 +450,14 @@ class ESSBAdvancedOptions {
 		}
 
 		include_once ESSB3_PLUGIN_ROOT . 'lib/admin/advanced-options/setup/ao-'.$settings_file.'.php';
+	}
+	
+	public function load_extension_settings($settings_key = '') {
+	    $file = apply_filters("essb_extension_advanced_tabs_file_{$settings_key}", $file);
+	    
+	    if ($file != '') {
+	        include_once $file;
+	    }
 	}
 	
 	public function remove_custom_button() {

@@ -165,6 +165,7 @@ class Defaults {
 		'jetpack_publicize_options',
 		'jetpack_connection_active_plugins',
 		'jetpack_sync_non_blocking', // is non-blocking Jetpack Sync flow enabled.
+		'ce4wp_referred_by', // Creative Mail. See pbtFPC-H5-p2 .
 	);
 
 	/**
@@ -300,6 +301,8 @@ class Defaults {
 		'available_jetpack_blocks'         => array( 'Jetpack_Gutenberg', 'get_availability' ), // Includes both Gutenberg blocks *and* plugins.
 		'paused_themes'                    => array( 'Automattic\\Jetpack\\Sync\\Functions', 'get_paused_themes' ),
 		'paused_plugins'                   => array( 'Automattic\\Jetpack\\Sync\\Functions', 'get_paused_plugins' ),
+		'theme_support'                    => array( 'Automattic\\Jetpack\\Sync\\Functions', 'get_theme_support' ),
+
 	);
 
 
@@ -703,6 +706,7 @@ class Defaults {
 		'_feedback_extra_fields',
 		'_g_feedback_shortcode',
 		'_jetpack_post_thumbnail',
+		'_last_editor_used_jetpack',
 		'_menu_item_classes',
 		'_menu_item_menu_item_parent',
 		'_menu_item_object',
@@ -723,6 +727,7 @@ class Defaults {
 		'_wp_page_template',
 		'_wp_trash_meta_comments_status',
 		'_wpas_mess',
+		'_wpas_is_tweetstorm',
 		'content_width',
 		'custom_css_add',
 		'custom_css_preprocessor',
@@ -801,7 +806,14 @@ class Defaults {
 		'custom-logo',
 		'menus',
 		'automatic-feed-links',
-		'editor-style',
+		'align-wide',
+		'wp-block-styles',
+		'responsive-embeds',
+		'disable-custom-gradients',
+		'disable-custom-font-sizes',
+		'disable-custom-colors',
+		'dark-editor-style',
+		'customize-selective-refresh-widgets',
 		'widgets',
 		'html5',
 		'title-tag',
@@ -811,6 +823,9 @@ class Defaults {
 		'site-logo',
 		'editor-color-palette',
 		'editor-gradient-presets',
+		'editor-font-sizes',
+		'editor-styles',
+		'editor-style', // deprecated.
 	);
 
 	/**
@@ -891,7 +906,6 @@ class Defaults {
 		'promote_users',
 		'delete_themes',
 		'export',
-		'edit_comment',
 		'upload_plugins',
 		'upload_themes',
 	);
@@ -920,7 +934,7 @@ class Defaults {
 	 * @return float Number of seconds.
 	 */
 	public static function get_max_sync_execution_time() {
-		$max_exec_time = intval( ini_get( 'max_execution_time' ) );
+		$max_exec_time = (int) ini_get( 'max_execution_time' );
 		if ( 0 === $max_exec_time ) {
 			// 0 actually means "unlimited", but let's not treat it that way.
 			$max_exec_time = 60;

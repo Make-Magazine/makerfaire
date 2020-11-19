@@ -46,7 +46,7 @@ if (!function_exists('essb_register_dynamic_share_bottombar_styles')) {
             $bottombar_buttonarea_width = 100 - $bottombar_contentarea_width;
             
             ESSB_Dynamic_CSS_Builder::register_header_field('.essb_bottombar .essb_bottombar_inner_buttons', 'width', $bottombar_buttonarea_width, '%');
-            ESSB_Dynamic_CSS_Builder::register_header_field('.essb_bottombar .essb_bottombar_inner_content', 'margin-top', $bottombar_contentarea_width, '%');
+            ESSB_Dynamic_CSS_Builder::register_header_field('.essb_bottombar .essb_bottombar_inner_content', 'width', $bottombar_contentarea_width, '%');
             
         }
     }

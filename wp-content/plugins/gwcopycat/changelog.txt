@@ -1,6 +1,31 @@
 
 # Changelog
 
+## 1.4.31
+
+	- Fixed a regression where GPCC may throw a JS error if the class is added to the target field.
+
+## 1.4.30
+
+	- Fixed issue where value filtered with deprecated filter was ignored.
+
+## 1.4.29
+
+	- Fixed a regression with subfields copying introduced in 1.4.26.
+
+## 1.4.28
+
+	- Fixed an issue where the new `gpcc-populated` classes may apply on page load.
+
+## 1.4.27
+
+	- Added `gpcc-populated-input` and `gpcc-populated` to mark populated inputs and their parent field container respectively.
+
+## 1.4.26
+
+	- Fixed an issue where values weren't copied if the target field is a rich text editor.
+	- Fixed issue where clicking a checkbox would result in a JavaScript error rather than copying values when using Gravity Forms 2.5 and newer.
+
 ## 1.4.25
 
 	- Fixed an issue where clearing copied values would fail for checkboxes.

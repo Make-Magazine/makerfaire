@@ -77,7 +77,7 @@ class Cookie_Law_Info {
 		} 
 		else 	
 		{
-			$this->version = '1.9.0';
+			$this->version = '1.9.4';
 		}
 		$this->plugin_name = 'cookie-law-info';
 
@@ -130,12 +130,14 @@ class Cookie_Law_Info {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-cookie-law-info-public.php';
 
-
+		
 		/**
 		 * The class responsible for adding compatibility to third party plugins
 		 * 
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'third-party/class-cookie-law-info-third-party.php';
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-cookie-law-info-review_request.php';
 
 		$this->loader = new Cookie_Law_Info_Loader();
 
@@ -420,9 +422,9 @@ class Cookie_Law_Info {
 	        'reject_close_reload'           => false,
 			'showagain_background' 			=> '#fff',
 			'showagain_border' 				=> '#000',
-			'showagain_text'	 			=> addslashes('Privacy & Cookies Policy'),
+			'showagain_text'	 			=> addslashes('Manage consent'),
 			'showagain_div_id' 				=> '#cookie-law-info-again',
-			'showagain_tab' 				=> true,
+			'showagain_tab' 				=> false,
 			'showagain_x_position' 			=> '100px',
 			'text' 							=> '#333333',
 			'use_colour_picker'				=> true,
@@ -434,7 +436,7 @@ class Cookie_Law_Info {
 			'bar_heading_text'				=>'',
 			'cookie_bar_as'					=>'banner',
 			'popup_showagain_position'		=>'bottom-right', //bottom-right | bottom-left | top-right | top-left
-			'widget_position'		=>	'left', //left | right
+			'widget_position'			=>	'left', //left | right
 		);
 		$settings_v0_9 = apply_filters('wt_cli_plugin_settings', $settings_v0_9);
 		return $key!="" ? $settings_v0_9[$key] : $settings_v0_9;
@@ -934,7 +936,7 @@ class Cookie_Law_Info {
 
 		$js_blocking_enabled = false;
 		$js_option = self::get_js_option();
-		if( $js_option === "yes" ){
+		if( $js_option === true ) {
 			$js_blocking_enabled = true;
 		}   
 		return apply_filters('wt_cli_enable_js_blocking',$js_blocking_enabled);
@@ -968,8 +970,10 @@ class Cookie_Law_Info {
 
 		$js_option = false;
 		$js_option = get_option( 'cookielawinfo_js_blocking' );
-		return $js_option;
-		
+		if( isset( $js_option ) && $js_option === 'yes') {
+			return true;
+		}
+		return false;
 	}
 	
 }

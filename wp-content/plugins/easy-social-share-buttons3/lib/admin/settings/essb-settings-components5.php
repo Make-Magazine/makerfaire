@@ -1157,6 +1157,8 @@ function essb5_generate_code_advanced_settings_panel($title = '', $desc = '', $a
 		if ($advanced_option_running) {
 			$running_code_state = '<span class="running">'.esc_html__('Running', 'essb').'</span>';
 			
+			$panel_class .= ' ao-active-panel';
+			
 			if (!empty($running_tag)) {
 				$running_code_state = '<span class="running">'.$running_tag.'</span>';
 			}

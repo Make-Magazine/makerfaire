@@ -8,6 +8,7 @@
  */
 
 use Automattic\Jetpack\Assets;
+use Automattic\Jetpack\Blocks;
 use Automattic\Jetpack\Sync\Settings;
 
 define( 'GRUNION_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -106,8 +107,8 @@ class Grunion_Contact_Form_Plugin {
 	public static function strip_tags( $data_with_tags ) {
 		if ( is_array( $data_with_tags ) ) {
 			foreach ( $data_with_tags as $index => $value ) {
-				$index = sanitize_text_field( strval( $index ) );
-				$value = wp_kses( strval( $value ), array() );
+				$index = sanitize_text_field( (string) $index );
+				$value = wp_kses( (string) $value, array() );
 				$value = str_replace( '&amp;', '&', $value ); // undo damage done by wp_kses_normalize_entities()
 
 				$data_without_tags[ $index ] = $value;
@@ -141,7 +142,7 @@ class Grunion_Contact_Form_Plugin {
 		}
 
 		add_filter( 'jetpack_contact_form_is_spam', array( $this, 'is_spam_blocklist' ), 10, 2 );
-
+		add_filter( 'jetpack_contact_form_in_comment_disallowed_list', array( $this, 'is_in_disallowed_list' ), 10, 2 );
 		// Akismet to the rescue
 		if ( defined( 'AKISMET_VERSION' ) || function_exists( 'akismet_http_post' ) ) {
 			add_filter( 'jetpack_contact_form_is_spam', array( $this, 'is_spam_akismet' ), 10, 2 );
@@ -149,6 +150,7 @@ class Grunion_Contact_Form_Plugin {
 		}
 
 		add_action( 'loop_start', array( 'Grunion_Contact_Form', '_style_on' ) );
+		add_action( 'pre_amp_render_post', array( 'Grunion_Contact_Form', '_style_on' ) );
 
 		add_action( 'wp_ajax_grunion-contact-form', array( $this, 'ajax_request' ) );
 		add_action( 'wp_ajax_nopriv_grunion-contact-form', array( $this, 'ajax_request' ) );
@@ -243,55 +245,98 @@ class Grunion_Contact_Form_Plugin {
 	}
 
 	private static function register_contact_form_blocks() {
-		jetpack_register_block( 'jetpack/contact-form', array(
-			'render_callback' => array( __CLASS__, 'gutenblock_render_form' ),
-		) );
+		Blocks::jetpack_register_block(
+			'jetpack/contact-form',
+			array(
+				'render_callback' => array( __CLASS__, 'gutenblock_render_form' ),
+			)
+		);
 
 		// Field render methods.
-		jetpack_register_block( 'jetpack/field-text', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_text' ),
-		) );
-		jetpack_register_block( 'jetpack/field-name', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_name' ),
-		) );
-		jetpack_register_block( 'jetpack/field-email', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_email' ),
-		) );
-		jetpack_register_block( 'jetpack/field-url', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_url' ),
-		) );
-		jetpack_register_block( 'jetpack/field-date', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_date' ),
-		) );
-		jetpack_register_block( 'jetpack/field-telephone', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_telephone' ),
-		) );
-		jetpack_register_block( 'jetpack/field-textarea', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_textarea' ),
-		) );
-		jetpack_register_block( 'jetpack/field-checkbox', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_checkbox' ),
-		) );
-		jetpack_register_block( 'jetpack/field-checkbox-multiple', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_checkbox_multiple' ),
-		) );
-		jetpack_register_block( 'jetpack/field-radio', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_radio' ),
-		) );
-		jetpack_register_block( 'jetpack/field-select', array(
-			'parent'          => array( 'jetpack/contact-form' ),
-			'render_callback' => array( __CLASS__, 'gutenblock_render_field_select' ),
-		) );
+		Blocks::jetpack_register_block(
+			'jetpack/field-text',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_text' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-name',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_name' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-email',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_email' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-url',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_url' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-date',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_date' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-telephone',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_telephone' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-textarea',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_textarea' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-checkbox',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_checkbox' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-checkbox-multiple',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_checkbox_multiple' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-radio',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_radio' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-select',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_select' ),
+			)
+		);
+		Blocks::jetpack_register_block(
+			'jetpack/field-consent',
+			array(
+				'parent'          => array( 'jetpack/contact-form' ),
+				'render_callback' => array( __CLASS__, 'gutenblock_render_field_consent' ),
+			)
+		);
 	}
 
 	public static function gutenblock_render_form( $atts, $content ) {
@@ -355,6 +400,26 @@ class Grunion_Contact_Form_Plugin {
 	}
 	public static function gutenblock_render_field_select( $atts, $content ) {
 		$atts = self::block_attributes_to_shortcode_attributes( $atts, 'select' );
+		return Grunion_Contact_Form::parse_contact_field( $atts, $content );
+	}
+
+	/**
+	 * Render the consent field.
+	 *
+	 * @param string $atts consent attributes.
+	 * @param string $content html content.
+	 */
+	public static function gutenblock_render_field_consent( $atts, $content ) {
+		$atts = self::block_attributes_to_shortcode_attributes( $atts, 'consent' );
+
+		if ( ! isset( $atts['implicitConsentMessage'] ) ) {
+			$atts['implicitConsentMessage'] = __( "By submitting your information, you're giving us permission to email you. You may unsubscribe at any time.", 'jetpack' );
+		}
+
+		if ( ! isset( $atts['explicitConsentMessage'] ) ) {
+			$atts['explicitConsentMessage'] = __( 'Can we send you an email from time to time?', 'jetpack' );
+		}
+
 		return Grunion_Contact_Form::parse_contact_field( $atts, $content );
 	}
 
@@ -651,10 +716,26 @@ class Grunion_Contact_Form_Plugin {
 	 * @return bool TRUE => spam, FALSE => not spam
 	 */
 	public function is_spam_blocklist( $is_spam, $form = array() ) {
-		global $wp_version;
-
 		if ( $is_spam ) {
 			return $is_spam;
+		}
+
+		return $this->is_in_disallowed_list( false, $form );
+	}
+
+	/**
+	 * Check if a submission matches the comment disallowed list.
+	 * Attached to `jetpack_contact_form_in_comment_disallowed_list`.
+	 *
+	 * @param boolean $in_disallowed_list Whether the feedback is in the disallowed list.
+	 * @param array   $form The form array.
+	 * @return bool Returns true if the form submission matches the disallowed list and false if it doesn't.
+	 */
+	public function is_in_disallowed_list( $in_disallowed_list, $form = array() ) {
+		global $wp_version;
+
+		if ( $in_disallowed_list ) {
+			return $in_disallowed_list;
 		}
 
 		/*
@@ -884,6 +965,17 @@ class Grunion_Contact_Form_Plugin {
 		$md['feedback_date'] = get_the_date( DATE_RFC3339, $post_id );
 		$content_fields      = self::parse_fields_from_content( $post_id );
 		$md['feedback_ip']   = ( isset( $content_fields['_feedback_ip'] ) ) ? $content_fields['_feedback_ip'] : 0;
+
+		// add the email_marketing_consent to the post meta.
+		$md['email_marketing_consent'] = 0;
+		if ( isset( $content_fields['_feedback_all_fields'] ) ) {
+			$all_fields = $content_fields['_feedback_all_fields'];
+			// check if the email_marketing_consent field exists.
+			if ( isset( $all_fields['email_marketing_consent'] ) ) {
+				$md['email_marketing_consent'] = $all_fields['email_marketing_consent'];
+			}
+		}
+
 		return $md;
 	}
 
@@ -2275,6 +2367,34 @@ class Grunion_Contact_Form extends Crunion_Contact_Form_Shortcode {
 	}
 
 	/**
+	 * Escape a shortcode value.
+	 *
+	 * Shortcode attribute values have a number of unfortunate restrictions, which fortunately we
+	 * can get around by adding some extra HTML encoding.
+	 *
+	 * The output HTML will have a few extra escapes, but that makes no functional difference.
+	 *
+	 * @since 9.1.0
+	 * @param string $val Value to escape.
+	 * @return string
+	 */
+	private static function esc_shortcode_val( $val ) {
+		return strtr(
+			esc_html( $val ),
+			array(
+				// Brackets in attribute values break the shortcode parser.
+				'['  => '&#091;',
+				']'  => '&#093;',
+				// Shortcode parser screws up backslashes too, thanks to calls to `stripcslashes`.
+				'\\' => '&#092;',
+				// The existing code here represents arrays as comma-separated strings.
+				// Rather than trying to change representations now, just escape the commas in values.
+				','  => '&#044;',
+			)
+		);
+	}
+
+	/**
 	 * The contact-field shortcode processor
 	 * We use an object method here instead of a static Grunion_Contact_Form_Field class method to parse contact-field shortcodes so that we can tie them to the contact-form object.
 	 *
@@ -2292,18 +2412,18 @@ class Grunion_Contact_Form extends Crunion_Contact_Form_Shortcode {
 			}
 			foreach ( $attributes as $att => $val ) {
 				if ( is_numeric( $att ) ) { // Is a valueless attribute
-					$att_strs[] = esc_html( $val );
+					$att_strs[] = self::esc_shortcode_val( $val );
 				} elseif ( isset( $val ) ) { // A regular attr - value pair
 					if ( ( $att === 'options' || $att === 'values' ) && is_string( $val ) ) { // remove any empty strings
 						$val = explode( ',', $val );
 					}
- 					if ( is_array( $val ) ) {
+					if ( is_array( $val ) ) {
 						$val =  array_filter( $val, array( __CLASS__, 'remove_empty' ) ); // removes any empty strings
-						$att_strs[] = esc_html( $att ) . '="' . implode( ',', array_map( 'esc_html', $val ) ) . '"';
+						$att_strs[] = esc_html( $att ) . '="' . implode( ',', array_map( array( __CLASS__, 'esc_shortcode_val' ), $val ) ) . '"';
 					} elseif ( is_bool( $val ) ) {
-						$att_strs[] = esc_html( $att ) . '="' . esc_html( $val ? '1' : '' ) . '"';
+						$att_strs[] = esc_html( $att ) . '="' . ( $val ? '1' : '' ) . '"';
 					} else {
-						$att_strs[] = esc_html( $att ) . '="' . esc_html( $val ) . '"';
+						$att_strs[] = esc_html( $att ) . '="' . self::esc_shortcode_val( $val ) . '"';
 					}
 				}
 			}
@@ -2346,32 +2466,48 @@ class Grunion_Contact_Form extends Crunion_Contact_Form_Shortcode {
 	}
 
 	static function get_default_label_from_type( $type ) {
+		$str = null;
 		switch ( $type ) {
 			case 'text':
-				return __( 'Text', 'jetpack' );
+				$str = __( 'Text', 'jetpack' );
+				break;
 			case 'name':
-				return __( 'Name', 'jetpack' );
+				$str = __( 'Name', 'jetpack' );
+				break;
 			case 'email':
-				return __( 'Email', 'jetpack' );
+				$str = __( 'Email', 'jetpack' );
+				break;
 			case 'url':
-				return __( 'Website', 'jetpack' );
+				$str = __( 'Website', 'jetpack' );
+				break;
 			case 'date':
-				return __( 'Date', 'jetpack' );
+				$str = __( 'Date', 'jetpack' );
+				break;
 			case 'telephone':
-				return __( 'Phone', 'jetpack' );
+				$str = __( 'Phone', 'jetpack' );
+				break;
 			case 'textarea':
-				return __( 'Message', 'jetpack' );
+				$str = __( 'Message', 'jetpack' );
+				break;
 			case 'checkbox':
-				return __( 'Checkbox', 'jetpack' );
+				$str = __( 'Checkbox', 'jetpack' );
+				break;
 			case 'checkbox-multiple':
-				return __( 'Choose several', 'jetpack' );
+				$str = __( 'Choose several', 'jetpack' );
+				break;
 			case 'radio':
-				return __( 'Choose one', 'jetpack' );
+				$str = __( 'Choose one', 'jetpack' );
+				break;
 			case 'select':
-				return __( 'Select one', 'jetpack' );
+				$str = __( 'Select one', 'jetpack' );
+				break;
+			case 'consent':
+				$str = __( 'Consent', 'jetpack' );
+				break;
 			default:
-				return null;
+				$str = null;
 		}
+		return $str;
 	}
 
 	/**
@@ -2450,6 +2586,7 @@ class Grunion_Contact_Form extends Crunion_Contact_Form_Shortcode {
 				case 'url':
 				case 'subject':
 				case 'textarea':
+				case 'consent':
 					$field_ids[ $type ] = $id;
 					break;
 				default:
@@ -2474,7 +2611,8 @@ class Grunion_Contact_Form extends Crunion_Contact_Form_Shortcode {
 		$to     = $this->get_attribute( 'to' );
 		$widget = $this->get_attribute( 'widget' );
 
-		$contact_form_subject = $this->get_attribute( 'subject' );
+		$contact_form_subject    = $this->get_attribute( 'subject' );
+		$email_marketing_consent = false;
 
 		$to     = str_replace( ' ', '', $to );
 		$emails = explode( ',', $to );
@@ -2575,6 +2713,13 @@ class Grunion_Contact_Form extends Crunion_Contact_Form_Shortcode {
 			}
 		}
 
+		if ( isset( $field_ids['consent'] ) ) {
+			$field = $this->fields[ $field_ids['consent'] ];
+			if ( $field->value ) {
+				$email_marketing_consent = true;
+			}
+		}
+
 		$all_values = $extra_values = array();
 		$i          = 1; // Prefix counter for stored metadata
 
@@ -2662,6 +2807,18 @@ class Grunion_Contact_Form extends Crunion_Contact_Form_Shortcode {
 			$spam = '***SPAM*** ';
 		}
 
+		/**
+		 * Filter whether a submitted contact form is in the comment disallowed list.
+		 *
+		 * @module contact-form
+		 *
+		 * @since 8.9.0
+		 *
+		 * @param bool  $result         Is the submitted feedback in the disallowed list.
+		 * @param array $akismet_values Feedack values returned by the Akismet plugin.
+		 */
+		$in_comment_disallowed_list = apply_filters( 'jetpack_contact_form_in_comment_disallowed_list', false, $akismet_values );
+
 		if ( ! $comment_author ) {
 			$comment_author = $comment_author_email;
 		}
@@ -2693,6 +2850,8 @@ class Grunion_Contact_Form extends Crunion_Contact_Form_Shortcode {
 		$headers = 'From: "' . $comment_author . '" <' . $from_email_addr . ">\r\n" .
 		           'Reply-To: "' . $comment_author . '" <' . $reply_to_addr . ">\r\n";
 
+		$all_values['email_marketing_consent'] = $email_marketing_consent;
+
 		// Build feedback reference
 		$feedback_time  = current_time( 'mysql' );
 		$feedback_title = "{$comment_author} - {$feedback_time}";
@@ -2714,8 +2873,14 @@ class Grunion_Contact_Form extends Crunion_Contact_Form_Shortcode {
 		$date_time_format = sprintf( $date_time_format, get_option( 'date_format' ), get_option( 'time_format' ) );
 		$time             = date_i18n( $date_time_format, current_time( 'timestamp' ) );
 
-		// keep a copy of the feedback as a custom post type
-		$feedback_status = $is_spam === true ? 'spam' : 'publish';
+		// Keep a copy of the feedback as a custom post type.
+		if ( $in_comment_disallowed_list ) {
+			$feedback_status = 'trash';
+		} elseif ( $is_spam ) {
+			$feedback_status = 'spam';
+		} else {
+			$feedback_status = 'publish';
+		}
 
 		foreach ( (array) $akismet_values as $av_key => $av_value ) {
 			$akismet_values[ $av_key ] = Grunion_Contact_Form_Plugin::strip_tags( $av_value );
@@ -3100,16 +3265,19 @@ class Grunion_Contact_Form_Field extends Crunion_Contact_Form_Shortcode {
 	function __construct( $attributes, $content = null, $form = null ) {
 		$attributes = shortcode_atts(
 			array(
-				'label'       => null,
-				'type'        => 'text',
-				'required'    => false,
-				'options'     => array(),
-				'id'          => null,
-				'default'     => null,
-				'values'      => null,
-				'placeholder' => null,
-				'class'       => null,
-				'width'       => null,
+				'label'                  => null,
+				'type'                   => 'text',
+				'required'               => false,
+				'options'                => array(),
+				'id'                     => null,
+				'default'                => null,
+				'values'                 => null,
+				'placeholder'            => null,
+				'class'                  => null,
+				'width'                  => null,
+				'consenttype'            => null,
+				'implicitconsentmessage' => null,
+				'explicitconsentmessage' => null,
 			), $attributes, 'contact-field'
 		);
 
@@ -3434,6 +3602,29 @@ class Grunion_Contact_Form_Field extends Crunion_Contact_Form_Shortcode {
 		return $field;
 	}
 
+	/**
+	 * Render the consent field.
+	 *
+	 * @param string $id field id.
+	 * @param string $class html classes (can be set by the admin).
+	 */
+	private function render_consent_field( $id, $class ) {
+		$consent_type    = 'explicit' === $this->get_attribute( 'consenttype' ) ? 'explicit' : 'implicit';
+		$consent_message = 'explicit' === $consent_type ? $this->get_attribute( 'explicitconsentmessage' ) : $this->get_attribute( 'implicitconsentmessage' );
+
+		$field  = "<label class='grunion-field-label consent consent-" . $consent_type . "'>";
+
+		if ( 'implicit' === $consent_type ) {
+			$field .= "\t\t<input aria-hidden='true' type='checkbox' checked name='" . esc_attr( $id ) . "' value='" . esc_attr__( 'Yes', 'jetpack' ) . "' style='display:none;' /> \n";
+		} else {
+			$field .= "\t\t<input type='checkbox' name='" . esc_attr( $id ) . "' value='" . esc_attr__( 'Yes', 'jetpack' ) . "' " . $class . "/> \n";
+		}
+		$field .= "\t\t" . esc_html( $consent_message );
+		$field .= "</label>\n";
+		$field .= "<div class='clear-form'></div>\n";
+		return $field;
+	}
+
 	function render_checkbox_multiple_field( $id, $label, $value, $class, $required, $required_field_text  ) {
 		$field = $this->render_label( '', $id, $label, $required, $required_field_text );
 		foreach ( (array) $this->get_attribute( 'options' ) as $optionIndex => $option ) {
@@ -3553,6 +3744,9 @@ class Grunion_Contact_Form_Field extends Crunion_Contact_Form_Shortcode {
 				break;
 			case 'date':
 				$field .= $this->render_date_field( $id, $label, $value, $field_class, $required, $required_field_text, $field_placeholder );
+				break;
+			case 'consent':
+				$field .= $this->render_consent_field( $id, $field_class );
 				break;
 			default: // text field
 				$field .= $this->render_default_field( $id, $label, $value, $field_class, $required, $required_field_text, $field_placeholder, $type );

@@ -1278,7 +1278,7 @@ jQuery( document ).bind( 'gform_post_render', function( event, form_id, page ) {
                 mapTypeId       : google.maps.MapTypeId[map_data.map_type],
                 backgroundColor : '#f1f1f1',
                 scrollwheel     : map_data.scrollwheel,
-                styles          : typeof field_values.gfgeo_map_styles !== 'undefined' ? jQuery.parseJSON( field_values.gfgeo_map_styles ) : ''
+                styles          : ( typeof field_values.gfgeo_map_styles !== 'undefined' && field_values.gfgeo_map_styles != '' ) ? jQuery.parseJSON( field_values.gfgeo_map_styles ) : ''
             };
         
             // generate the map

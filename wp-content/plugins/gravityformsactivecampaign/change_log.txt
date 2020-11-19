@@ -1,6 +1,11 @@
+### 1.8 | 2020-09-07
+- Added support for Gravity Forms 2.5.
+
+
 ### 1.7 | 2020-03-11
 - Added translations for Hebrew, Hindi, Japanese, and Turkish.
 - Fix PHP notices thrown on the feed list and edit page in PHP 7.4.
+
 
 ### 1.6
 - Added support for adding notes to contacts.

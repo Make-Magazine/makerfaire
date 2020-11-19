@@ -1112,3 +1112,56 @@ font-size: 13px; display: flex; background: #fff; }
 .manage-column.column-essb_shareinfo { width: 8em; }
 
 .essb-status-icon svg { width: 18px; height: 18px; margin: 3px; }
+
+/**
+ * Modern Panels
+ */
+.essb-control-content .essb-portlet, .essb-control-content .ao-settings-section {
+	box-shadow: -10px 0 0 #ededed;
+	border: 2px solid #ededed;
+    margin-right: 10px;
+	border-radius: 8px;
+	transition: 0.2s all;
+}
+
+.essb-control-content .ao-shortcode-panel {
+	box-shadow: none;
+	border: none;
+	border-radius: 3px;
+}
+
+.essb-control-content .ao-settings-section-deactivate {
+	border: 1px solid #ffc1cd;
+	border-radius: 3px;
+}
+
+.essb-control-content .ao-settings-section-activate {
+	border: 2px solid rgba(0,102,204,0.14);
+}
+ 
+.essb-control-content .essb-portlet.portlet-active,
+.essb-control-content .ao-settings-section.ao-active-panel,
+.essb-control-content .essb-portlet.portlet-active:hover {
+	box-shadow: -10px 0 0 #5867dd;
+	border-color: #5867dd;
+}
+
+.essb-control-content .essb-portlet:hover, .essb-control-content .ao-settings-section:not(.ao-settings-section-deactivate):hover {
+	box-shadow: -10px 0 0 #9fa7eb;
+	border-color: #9fa7eb;
+}
+
+.essb-portlet .essb-portlet-heading h3, .ao-settings-section .title-col .title {
+	font-size: 18px;
+	letter-spacing: -0.3px;
+}
+
+.essb-portlet .essb-portlet-heading-icon i { font-size: 18px; }
+
+.essb-portlet .essb-portlet-description, .ao-settings-section .title-col .label, .ao-settings-section .panel-title .label {
+	font-size: 12px !important;
+	color: #666 !important;
+	line-height: 1.4em;
+}
+
+.ao-settings-section.ao-shortcode-panel .title-col .label { color: #fff !important; }

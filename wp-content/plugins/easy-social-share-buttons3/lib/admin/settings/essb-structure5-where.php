@@ -709,8 +709,15 @@ if (!essb_options_bool_value('deactivate_method_point')) {
 	$tab_id = $where_to_display;
 	$menu_id = 'positions|display-16';
 	$location = 'point';
+	
+	/**
+	 * Update to the new components
+	 * @since 7.3.1
+	 */
+	ESSBOptionsStructureHelper::title($tab_id, $menu_id, esc_html__('Template', 'essb'), '', 'inner-row');
+	ESSBOptionsStructureHelper::field_template_select($tab_id, $menu_id, $location.'_template', $location);	
+	
 	ESSBOptionsStructureHelper::field_select($tab_id, $menu_id, $location.'_button_style', esc_html__('Buttons Style', 'essb'), esc_html__('Select your button display style.', 'essb'), essb_avaiable_button_style_with_recommend());
-	ESSBOptionsStructureHelper::field_select($tab_id, $menu_id, $location.'_template', esc_html__('Template', 'essb'), esc_html__('Select your template for that display location.', 'essb'), essb_available_tempaltes4());
 	ESSBOptionsStructureHelper::field_switch($tab_id, $menu_id, $location.'_nospace', esc_html__('Remove spacing between buttons', 'essb'), esc_html__('Activate this option to remove default space between share buttons.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 	ESSBOptionsStructureHelper::field_switch($tab_id, $menu_id, $location.'_show_counter', esc_html__('Display counter of sharing', 'essb'), esc_html__('Activate display of share counters.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 	ESSBOptionsStructureHelper::field_select($tab_id, $menu_id, $location.'_counter_pos', esc_html__('Position of counters', 'essb'), esc_html__('Choose your default button counter position. Please note that if you use Simple icons mode all Inside positions will act like Inside - network names will not appear because of visual limitations', 'essb'), essb_avaliable_counter_positions_point());
@@ -1277,6 +1284,24 @@ function essb3_register_positions_by_posttypes() {
 
 	}
 
+	/**
+	 * Separate settings for homepage
+	 */
+	$custom_pt = 'homepage';
+	ESSBOptionsStructureHelper::holder_start($where_to_display, 'positions|positions_posttype', 'essb-position-posttype', 'essb-position-posttype-'.esc_attr($custom_pt));
+	
+	ESSBOptionsStructureHelper::field_heading($where_to_display, 'positions|positions_posttype', 'heading6', 'Homepage');
+	ESSBOptionsStructureHelper::structure_row_start($where_to_display, 'positions|positions_posttype');
+	ESSBOptionsStructureHelper::structure_section_start($where_to_display, 'positions|positions_posttype', 'c6', esc_html__('Primary content display position', 'essb'), esc_html__('Choose default in content position that will be used for that post type', 'essb'));
+	ESSBOptionsStructureHelper::field_select($where_to_display, 'positions|positions_posttype', 'content_position_'.$custom_pt, '', '', essb_simplified_radio_check_list(essb_avaliable_content_positions(), true));
+	ESSBOptionsStructureHelper::structure_section_end($where_to_display, 'positions|positions_posttype');
+	
+	ESSBOptionsStructureHelper::structure_section_start($where_to_display, 'positions|positions_posttype', 'c6', esc_html__('Additional button display positions', 'essb'), esc_html__('Choose additional site display position that will be used for that post type', 'essb'));
+	ESSBOptionsStructureHelper::field_checkbox_list($where_to_display, 'positions|positions_posttype', 'button_position_'.$custom_pt, '', '', essb_simplified_radio_check_list(essb_available_button_positions()));
+	ESSBOptionsStructureHelper::structure_section_end($where_to_display, 'positions|positions_posttype');
+	ESSBOptionsStructureHelper::structure_row_end($where_to_display, 'positions|positions_posttype');
+	ESSBOptionsStructureHelper::holder_end($where_to_display, 'positions|positions_posttype');
+	
 	ESSBOptionsStructureHelper::panel_end($where_to_display, 'positions|positions_posttype');
 }
 
@@ -1307,8 +1332,11 @@ function essb3_post_type_select() {
 	}
 
 	$selected = in_array ( 'all_lists', $current_posttypes  ) ? 'checked="checked"' : '';
-	printf('<li><input type="checkbox" name="essb_options[display_in_types][]" id="%1$s" value="%1$s" %2$s> <label for="%1$s">%3$s</label></li>', 'all_lists', $selected, 'Lists of articles (homepage, blog, archives, search results, etc.)');
+	printf('<li><input type="checkbox" name="essb_options[display_in_types][]" id="%1$s" value="%1$s" %2$s> <label for="%1$s">%3$s</label></li>', 'all_lists', $selected, 'Lists of articles (blog, archives, search results, etc.)');
 
+	$selected = in_array ( 'homepage', $current_posttypes  ) ? 'checked="checked"' : '';
+	printf('<li><input type="checkbox" name="essb_options[display_in_types][]" id="%1$s" value="%1$s" %2$s> <label for="%1$s">%3$s</label></li>', 'homepage', $selected, 'Homepage');
+	
 	echo '</ul>';
 }
 

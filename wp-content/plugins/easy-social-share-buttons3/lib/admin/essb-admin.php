@@ -357,6 +357,18 @@ class ESSBAdminControler {
 		if (!is_array($display_in_types)) {
 			$display_in_types = array();
 		}
+		
+		/**
+		 * @since 7.4.2
+		 * 
+		 * Validate if WooCommerce positions are enabled but there is no products post_type chosen
+		 */
+		if (essb_option_bool_value('woocommece_share') || essb_option_bool_value('woocommerce_after_add_to_cart_form') ||
+		  essb_option_bool_value('woocommece_beforeprod') || essb_option_bool_value('woocommece_afterprod')) {
+		      if (in_array('product', $display_in_types)) {
+		          $display_in_types[] = 'product';
+		      }
+		}
 
 		// get post types
 		$pts	 = get_post_types( array('show_ui' => true, '_builtin' => true) );
@@ -725,8 +737,20 @@ class ESSBAdminControler {
 		wp_enqueue_style( 'wp-color-picker');
 		wp_enqueue_script( 'wp-color-picker');
 
-		wp_enqueue_script( 'wp-color-picker-alpha', ESSB3_PLUGIN_URL.'/assets/admin/wp-color-picker-alpha.js', array( 'wp-color-picker' ), ESSB3_VERSION );
 
+		wp_register_script( 'wp-color-picker-alpha', ESSB3_PLUGIN_URL.'/assets/admin/wp-color-picker-alpha.js', array( 'wp-color-picker' ), ESSB3_VERSION, true );
+		
+		$color_picker_strings = array(
+		    'clear'            => __( 'Clear', 'essb' ),
+		    'clearAriaLabel'   => __( 'Clear color', 'essb' ),
+		    'defaultString'    => __( 'Default', 'essb' ),
+		    'defaultAriaLabel' => __( 'Select default color', 'essb' ),
+		    'pick'             => __( 'Select Color', 'essb' ),
+		    'defaultLabel'     => __( 'Color value', 'essb' ),
+		);
+		wp_localize_script( 'wp-color-picker-alpha', 'wpColorPickerL10n', $color_picker_strings );
+		wp_enqueue_script( 'wp-color-picker-alpha' );
+		
 		wp_register_style ( 'essb-datatable', ESSB3_PLUGIN_URL . '/assets/admin/datatable/jquery.dataTables.css', array (), ESSB3_VERSION );
 		wp_enqueue_style ( 'essb-datatable' );
 		wp_enqueue_script ( 'essb-datatable', ESSB3_PLUGIN_URL . '/assets/admin/datatable/jquery.dataTables.js', array ('jquery' ), ESSB3_VERSION, true );

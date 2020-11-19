@@ -79,13 +79,13 @@
                 }
 
             	/**
-	             * Filter the group that is about to be processed.
+	             * Filter the group of checkboxes that are about to be processed.
 	             *
 	             * @since 1.2
 	             *
-	             * @param object group             The current group.
-	             * @param object $elem             A jQuery object of the element that triggered the event.
-	             * @param object GPLimitCheckboxes The current instance of the GPLimitCheckboxes object.
+	             * @param object group The current group.
+	             * @param object $elem A jQuery object of the element that triggered the event.
+	             * @param object gplc  The current instance of the GPLimitCheckboxes object.
 	             */
                 var group = gform.applyFilters( 'gplc_group', $.extend( true, {}, self.groups[ i ] ), fieldId, $elem, self );
 

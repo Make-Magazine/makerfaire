@@ -68,6 +68,7 @@ abstract class GravityView_Admin_View_Item {
 			'adminOnly'     => null,
 			'subtitle'      => null,
 			'placeholder'   => null,
+			'icon'          => null,
 		) );
 
 		$this->title      = $title;
@@ -148,7 +149,7 @@ abstract class GravityView_Admin_View_Item {
 	 */
 	function getOutput() {
 
-		$settings_title    = sprintf( __( 'Configure %s Settings', 'gravityview' ), ucfirst( $this->label_type ) );
+		$settings_title    = sprintf( __( 'Configure %s Settings', 'gravityview' ), esc_html( rgar( $this->item, 'label', ucfirst( $this->label_type ) ) ) );
 		$delete_title      = sprintf( __( 'Remove %s', 'gravityview' ), ucfirst( $this->label_type ) );
 		$single_link_title = __( 'This field links to the Single Entry', 'gravityview' );
 
@@ -172,12 +173,17 @@ abstract class GravityView_Admin_View_Item {
 		}
 		$label = esc_attr( $label );
 
+		if ( $this->item['icon'] && ! \GV\Utils::get( $this->item, 'parent' ) ) {
+			$label = '<i class="dashicons ' . esc_attr( $this->item['icon'] ) . '"></i> ' . $label;
+		}
+
 		$output = '<button class="gv-add-field screen-reader-text">' . sprintf( esc_html__( 'Add "%s"', 'gravityview' ), $label ) . '</button>';
 
 		$output .= '<h5 class="selectable gfield field-id-' . esc_attr( $this->id ) . '">';
 
 		$parent_label = '';
-		if ( ! empty( $this->item['parent'] ) ) {
+
+    if ( ! empty( $this->item['parent'] ) ) {
 			$parent_label = ' <small>(' . esc_attr( $this->item['parent']['label'] ) . ')</small>';
 		}
 

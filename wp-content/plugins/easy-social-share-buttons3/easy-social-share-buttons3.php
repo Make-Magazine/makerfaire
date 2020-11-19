@@ -4,7 +4,7 @@
 * Plugin Name: Easy Social Share Buttons for WordPress
 * Description: The first true all in one social media plugin for WordPress, including social share buttons, social followers counter, social profile links, click to tweet, Pinnable images, after share events, subscribe forms, Instagram feed, social proof notifications and much more.
 * Plugin URI: https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo
-* Version: 7.3
+* Version: 7.5
 * Author: CreoApps
 * Author URI: https://codecanyon.net/user/appscreo/portfolio?ref=appscreo
 */
@@ -20,7 +20,7 @@ if (defined('ESSB3_VERSION')) {
     return;
 }
 
-define ( 'ESSB3_VERSION', '7.3' );
+define ( 'ESSB3_VERSION', '7.5' );
 define ( 'ESSB3_PLUGIN_ROOT', dirname ( __FILE__ ) . '/' );
 define ( 'ESSB3_PLUGIN_URL', plugins_url () . '/' . basename ( dirname ( __FILE__ ) ) );
 define ( 'ESSB3_PLUGIN_BASE_NAME', plugin_basename ( __FILE__ ) );
@@ -202,6 +202,15 @@ class ESSB_Manager {
 		// After Share Actions
 		if (ESSB_Runtime_Cache::running('after-share-running')) {
 		    ESSB_Factory_Loader::activate('after-share', 'ESSBAfterCloseShare3');
+		    
+		    /**
+		     * Pinterest javascript API check - if it is used automatically 
+		     * switching to the legacy share method. Required to prevent visual 
+		     * glitches in the Pin button.
+		     */
+		    if (ESSB_Factory_Loader::get('after-share')->pinterest_api_loaded()) {
+		        ESSB_Plugin_Options::set('pinterest_using_api', 'true');
+		    }
 		}
 
 		// On Media Sharing
@@ -330,7 +339,11 @@ class ESSB_Manager {
 	public function resourceBuilder() {		
 	    if (!ESSB_Factory_Loader::running('resource-builder')) {
 	        ESSB_Factory_Loader::activate('resource-builder', 'ESSB_Plugin_Assets');
-	        //ESSB_Factory_Loader::activate('resource-builder', 'ESSBResourceBuilder');
+	        
+	        /**
+	         * Deprecating the old resource builder
+	         * ESSB_Factory_Loader::activate('resource-builder', 'ESSBResourceBuilder');
+	         */	        
 	    }
 	    
 	    return ESSB_Factory_Loader::get('resource-builder');

@@ -93,8 +93,8 @@ class GFCoupons extends GFFeedAddOn {
 				'enqueue' => array( array( 'field_types' => array( 'coupon' ) ) ),
 			),
 			array(
-				'handle'  => 'gform_admin',
-				'src'     => GFCommon::get_base_url() . "/css/admin{$min}.css",
+				'handle'  => $this->is_gravityforms_supported( '2.5-beta' ) ? 'gform_coupon_admin' : 'gform_admin',
+				'src'     => $this->get_base_url() . "/css/admin{$min}.css",
 				'version' => $this->_version,
 				'enqueue' => array( array( 'admin_page' => array( 'plugin_page' ) ) ),
 			),
@@ -341,23 +341,6 @@ class GFCoupons extends GFFeedAddOn {
 	}
 
 	/**
-	 * Add the settings tab with the uninstall button.
-	 */
-	public function plugin_settings() {
-
-		if ( $this->maybe_uninstall() ) {
-			?>
-			<div class="push-alert-gold" style="border-left: 1px solid #E6DB55; border-right: 1px solid #E6DB55;">
-				<?php printf( esc_html__( 'The %s has been successfully uninstalled. It can be re-activated from the %splugins page%s.', 'gravityformscoupons' ), $this->_title, "<a href='plugins.php'>", '</a>' ); ?>
-			</div>
-			<?php
-		} else {
-			//renders uninstall section
-			$this->render_uninstall();
-		}
-	}
-
-	/**
 	 * Prevent coupons being added to the Form Settings menu list.
 	 *
 	 * @param array $tabs Contains the properties for each tab: name, label and query.
@@ -382,19 +365,75 @@ class GFCoupons extends GFFeedAddOn {
 		require_once( GFCommon::get_base_path() . '/tooltips.php' );
 	}
 
-	/**
-	 * Creates the coupons feeds page.
-	 */
-	public function plugin_page() {
-		$fid = $this->get_current_feed_id();
 
-		if ( ! empty( $fid ) || $fid == '0' ) {
-			$form_id = rgget( 'id' );
-			$this->coupon_edit_page( $fid, $form_id );
-		} else {
-			parent::feed_list_page();
+	/**
+	 * Override of parent::plugin_page_container() method. Allows for correct formatting of header and notifications.
+	 *
+	 * @since 2.10
+	 */
+	public function plugin_page_container() {
+		if ( ! $this->is_gravityforms_supported( '2.5-beta' ) ) {
+			return parent::plugin_page_container();
 		}
 
+		// Print admin styles.
+		wp_print_styles( array( 'jquery-ui-styles', 'gform_admin', 'gform_settings', 'wp-pointer' ) );
+
+		// Display page header.
+		?>
+		<div class="wrap gforms_edit_form gforms_form_settings_wrap <?php echo esc_attr( GFCommon::get_browser_class() ); ?>">
+			<?php
+			GFCommon::gf_header();
+			GFCommon::notices_section();
+
+			$wrapper_class = 'gform-settings__wrapper';
+
+			if ( $this->is_feed_edit_page() ) {
+				$wrapper_class .= ' gform-settings__wrapper--edit';
+			}
+			?>
+
+			<div class="<?php echo esc_attr( $wrapper_class ); ?>">
+				<?php
+				GFCommon::display_dismissible_message();
+				GFCommon::display_admin_message();
+				?>
+
+				<h2 class="gf_admin_page_title"><?php echo esc_html( $this->plugin_page_title() ); ?></h2>
+				<?php $this->plugin_page(); ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Creates the coupons feeds top-level settings page.
+	 *
+	 * Will render either the coupons feeds list or the individual edit screen, depending on context.
+	 *
+	 * @since 2.10
+	 */
+	public function plugin_page() {
+		if ( $this->is_feed_list_page() ) {
+			$this->feed_list_page();
+			return;
+		}
+
+		$form    = $this->get_current_form();
+		$feed_id = $this->get_current_feed_id();
+
+		// Display edit page.
+		if ( ! $this->is_gravityforms_supported( '2.5-beta' ) ) {
+			$this->coupon_edit_page( $feed_id, $form );
+			return;
+		}
+
+		// Ensure the GFFormSettings class is available for the call to `feed_edit_page` below.
+		if ( ! class_exists( 'GFFormSettings' ) ) {
+			require_once( GFCommon::get_base_path() . '/form_settings.php' );
+		}
+
+		$this->feed_edit_page( $form, $feed_id );
 	}
 
 	/**
@@ -410,6 +449,28 @@ class GFCoupons extends GFFeedAddOn {
 		} else {
 			return rgget( 'fid' );
 		}
+	}
+
+	/**
+	 * Determine if currently on the feed edit page for Add-On.
+	 *
+	 * @since 2.10
+	 *
+	 * @return bool
+	 */
+	public function is_feed_edit_page() {
+		$page   = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
+		$params = array_filter(
+			array(
+				'id'  => filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT ),
+				'fid' => filter_input( INPUT_GET, 'fid', FILTER_VALIDATE_INT ),
+			),
+			function( $value ) {
+				return is_numeric( $value );
+			}
+		);
+
+		return $page === 'gravityformscoupons' && ! empty( $params );
 	}
 
 	/**
@@ -443,6 +504,25 @@ class GFCoupons extends GFFeedAddOn {
 		GFCommon::display_admin_message( '', $messages );
 
 		$this->render_settings( $feed_fields );
+	}
+
+	/**
+	 * Update selected form when saving feed.
+	 *
+	 * @since 2.10
+	 *
+	 * @param int   $feed_id  Feed ID.
+	 * @param int   $form_id  Form ID.
+	 * @param array $settings Feed meta.
+	 *
+	 * @return int
+	 */
+	public function save_feed_settings( $feed_id, $form_id, $settings ) {
+		$saved_feed_id = parent::save_feed_settings( absint( $feed_id ), $form_id, $settings );
+
+		$this->update_feed_form_id( $saved_feed_id, absint( rgar( $settings, 'gravityForm' ) ) );
+
+		return $saved_feed_id;
 	}
 
 	/**
@@ -523,6 +603,17 @@ class GFCoupons extends GFFeedAddOn {
 	}
 
 	/**
+	 * Get the form settings title.
+	 *
+	 * @since 2.10
+	 *
+	 * @return string
+	 */
+	public function form_settings_title() {
+		return esc_html_e( 'Coupons', 'gravityformscoupons' );
+	}
+
+	/**
 	 * Configures which columns should be displayed on the coupon feeds page.
 	 *
 	 * @return array
@@ -590,14 +681,16 @@ class GFCoupons extends GFFeedAddOn {
 	 * @return string
 	 */
 	public function get_column_value_couponAmount( $feed ) {
+		$couponAmount = GFCommon::to_number( $feed['meta']['couponAmount'] );
+
 		if ( $feed['meta']['couponAmountType'] == 'flat' ) {
-			$couponAmount = GFCommon::to_money( $feed['meta']['couponAmount'] );
+			$formattedAmount = GFCommon::to_money( $couponAmount );
 		} else {
-			$number_format = GFCommon::is_currency_decimal_dot() ? 'decimal_dot' : 'decimal_comma';
-			$couponAmount  = GFCommon::format_number( $feed['meta']['couponAmount'], $number_format ) . '%';
+			$number_format   = GFCommon::is_currency_decimal_dot() ? 'decimal_dot' : 'decimal_comma';
+			$formattedAmount = GFCommon::format_number( $couponAmount, $number_format ) . '%';
 		}
 
-		return $couponAmount;
+		return $formattedAmount;
 	}
 
 	/**
@@ -815,36 +908,49 @@ class GFCoupons extends GFFeedAddOn {
 								jQuery(\'#couponAmount\').attr("placeholder",placeholderText);
 							}
 
-							jQuery(document).ready(function($){
-								//set placeholder text for initial load
-								var type = jQuery(\'#couponAmountType\').val();
+							jQuery( document ).ready( function( $ ) {
+								// Set placeholder text for initial load.
+								var $amountInput = jQuery( \'#couponAmount\' );
+								var type = jQuery( \'#couponAmountType\' ).val();
 								var placeholderText = type == \'flat\' ? \'' . html_entity_decode( GFCommon::to_money( 1 ) ) . '\' : \'1%\';
-								jQuery(\'#couponAmount\').attr("placeholder",placeholderText);
-
-								//format initial coupon amount value when there is one and it is currency
-								var cur = new Currency(gf_vars.gf_currency_config),
-								    couponAmount = jQuery(\'#couponAmount\').val();
-								if ( couponAmount ){
-									if (type == \'flat\'){
-										couponAmount = cur.toMoney(couponAmount, true);
+							
+								$amountInput.attr( "placeholder", placeholderText );
+							
+								// Format initial coupon amount value when there is one and it is currency.
+								var cur = new Currency( gf_vars.gf_currency_config );
+								var couponAmount = $amountInput.val();
+								var formattedAmount;
+									
+								if ( couponAmount ) {
+									if ( type == \'flat\' ) {
+										formattedAmount = cur.toMoney( cur.toNumber( couponAmount ), true );
+									} else {
+										formattedAmount = cur.numberFormat(
+											cur.toNumber( couponAmount ),
+											cur.currency["decimals"],
+											cur.currency["decimal_separator"],
+											cur.currency["thousand_separator"]
+										) + \'%\';
 									}
-									else{
-										couponAmount = cur.numberFormat(couponAmount, cur.currency["decimals"], cur.currency["decimal_separator"], cur.currency["thousand_separator"]) + \'%\';
-									}
-									jQuery(\'#couponAmount\').val(couponAmount);
+							
+									$amountInput.val( formattedAmount );
 								}
-
-								jQuery(\'.datepicker\').each(
-									function (){
+								
+								jQuery( \'.datepicker\' ).each(
+									function() {
 										var image = "' . $this->get_base_url() . '/images/calendar.png";
-										jQuery(this).datepicker({showOn: "both", buttonImage: image, buttonImageOnly: true, dateFormat: "yy-mm-dd" });
+										jQuery( this ).datepicker( {
+											showOn: "both",
+											buttonImage: image,
+											buttonImageOnly: true,
+											dateFormat: "yy-mm-dd"
+										} );
 									}
 								);
-
 							});
-
 						</script>';
 
+		unset( $field['callback'] );
 		$field['type']     = 'select';
 		$field['choices']  = array(
 			array(
@@ -886,7 +992,7 @@ class GFCoupons extends GFFeedAddOn {
 		$settings = $this->get_posted_settings();
 
 		if ( empty( $settings['couponAmount'] ) ) {
-			$this->set_field_error( array( 'name' => 'couponAmount' ), esc_html__( 'This field is required.', 'gravityformscoupons' ) );
+			$this->set_field_error( $field, esc_html__( 'This field is required.', 'gravityformscoupons' ) );
 		}
 	}
 
@@ -904,7 +1010,7 @@ class GFCoupons extends GFFeedAddOn {
 			$dateTime = DateTime::createFromFormat( '!Y-m-d', $date );
 
 			if ( ! $dateTime || $date != $dateTime->format( 'Y-m-d' ) ) {
-				$this->set_field_error( array( 'name' => $name ), esc_html__( 'Please enter a valid date. Format: YYYY-MM-DD.', 'gravityformscoupons' ) );
+				$this->set_field_error( $field, esc_html__( 'Please enter a valid date. Format: YYYY-MM-DD.', 'gravityformscoupons' ) );
 			}
 		}
 	}

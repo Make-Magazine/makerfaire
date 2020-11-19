@@ -210,7 +210,7 @@ jQuery(document).ready(function($){
 
 
 		if (!trackingOnly)
-			wnd = window.open( url, keyWin, "height="+(service == 'twitter' ? '300' : '500')+",width="+(service == 'twitter' ? '500' : '800')+",resizable=1,scrollbars=yes,top="+top+",left="+left );
+			wnd = window.open( url, keyWin, "height="+(service == 'twitter' ? '500' : '500')+",width="+(service == 'twitter' ? '500' : '800')+",resizable=1,scrollbars=yes,top="+top+",left="+left );
 
 
 		if (typeof(essb_settings) != "undefined") {
@@ -2650,6 +2650,10 @@ jQuery(document).ready(function($){
 			if (pinDescription == '') pinDescription = document.title;
 
 			var shareCmd = 'https://pinterest.com/pin/create/button/?media=' + encodeURI(pinSrc) + '&url=' + encodeURI(document.URL) + '&is_video=false' + '&description=' + encodeURIComponent(pinDescription);
+			
+			if (essbPinImages.legacy_share_cmd)
+				shareCmd = 'https://pinterest.com/pin/create/bookmarklet/?media=' + encodeURI(pinSrc) + '&url=' + encodeURI(document.URL) + '&title=' + encodeURIComponent(pinDescription)+'&description=' + encodeURIComponent(pinDescription);
+			
 			if (pinID != '') shareCmd = 'https://www.pinterest.com/pin/'+pinID+'/repin/x/';
 
 			var imgClasses = image.attr('class'),

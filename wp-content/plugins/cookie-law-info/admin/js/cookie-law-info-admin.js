@@ -213,6 +213,9 @@
 	 var genericFunction = {
 		set : function() {
 			this.CLIAccordion();
+			this.checkboxTogglerHandler();
+			this.revisitConsentPositionEvent();
+			this.revisitConsentPosition();
 		},
 		CLIAccordion : function() {
 			
@@ -240,9 +243,58 @@
 				}
 			});
 			
+		},
+		checkboxTogglerHandler: function(){
+			jQuery('input[name="showagain_tab_field"],.wt-cli-input-toggle-checkbox').each(function(){
+				genericFunction.checkboxToggler( jQuery(this) );
+			});
+			jQuery(document).on('click','.wt-cli-input-toggle-checkbox',function(){
+				genericFunction.checkboxToggler( jQuery(this));
+			});
+		},
+		checkboxToggler: function( element ) {
+			
+			var currentElement = element;
+			var toggleTarget = currentElement.attr('data-cli-toggle-target');
+			var targetElement = jQuery('[data-cli-toggle-id='+toggleTarget+']');
+			if ( currentElement.is(':checked') ) {
+				targetElement.slideDown(200);
+				targetElement.addClass('wt-cli-toggle-active');
+			} else {
+				targetElement.slideUp(100);
+				targetElement.removeClass('wt-cli-toggle-active');
+				
+			}
+		},
+		revisitConsentPositionEvent: function(){
+			jQuery(document).on('change', 'select[name="notify_position_horizontal_field"],select[name="popup_showagain_position_field"],input[name="cookie_bar_as_field"],select[name="widget_position_field"]', function(){
+				genericFunction.revisitConsentPosition();
+			});
+		},
+		revisitConsentPosition: function(){
+			var barType = jQuery('input[type="radio"][name="cookie_bar_as_field"]:checked').val();
+			var position = jQuery('select[name="notify_position_horizontal_field"] option:selected').val();
+			var revisitConsentMarginLabel = jQuery('#wt-cli-revisit-consent-margin-label');
+			var currentText = jQuery('#wt-cli-revisit-consent-margin-label').val();
+			if( barType === "popup" ) {
+				position = jQuery('select[name="popup_showagain_position_field"] option:selected').val();
+			} else if( barType === "widget") {
+				position = jQuery('select[name="widget_position_field"] option:selected').val();
+			}
+			
+			if( position === 'bottom-right' || position === 'top-right' || position === 'right' ){
+				currentText =  revisitConsentMarginLabel.attr('data-cli-right-text');
+			} else {
+				currentText =  revisitConsentMarginLabel.attr('data-cli-left-text');
+			}
+			if(typeof(currentText) != "undefined" && currentText !== null) {
+				revisitConsentMarginLabel.html(currentText);
+			}
 		}
 	}
-	genericFunction.set();
+	$(document).ready(function () {
+		genericFunction.set();
+    });
 })( jQuery );
 var cli_notify_msg=
 {
@@ -253,7 +305,7 @@ var cli_notify_msg=
 	},
 	success:function(message)
 	{
-		var suss_elm=jQuery('<div class="notify_msg" style="background:#1de026; border:solid 1px #2bcc1c;">'+message+'</div>');				
+		var suss_elm=jQuery('<div class="notify_msg" style="background:#00B200; border:solid 1px #00B200;">'+message+'</div>');				
 		this.setNotify(suss_elm);
 	},
 	setNotify:function(elm)

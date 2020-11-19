@@ -48,7 +48,7 @@ class API_Caches_Table extends \WP_List_Table {
 	 * @throws \Exception If invalid API Type is supplied.
 	 */
 	public function __construct( $api_type ) {
-		if ( ! in_array( $api_type, [ 'item', 'endpoint' ], true ) ) {
+		if ( 'endpoint' !== $api_type ) {
 			throw new \Exception(
 				sprintf(
 					/* translators: %s: api-type */
@@ -59,22 +59,12 @@ class API_Caches_Table extends \WP_List_Table {
 		}
 
 		self::$api_type = $api_type;
-		switch ( $api_type ) {
-			case 'item':
-				$args = [
-					'singular' => __( 'Item API Cache', 'wp-rest-cache' ),
-					'plural'   => __( 'Item API Caches', 'wp-rest-cache' ),
-					'ajax'     => false,
-				];
-				break;
-			case 'endpoint':
-				$args = [
-					'singular' => __( 'Endpoint API Cache', 'wp-rest-cache' ),
-					'plural'   => __( 'Endpoint API Caches', 'wp-rest-cache' ),
-					'ajax'     => false,
-				];
-				break;
-		}
+
+		$args = [
+			'singular' => __( 'Endpoint API Cache', 'wp-rest-cache' ),
+			'plural'   => __( 'Endpoint API Caches', 'wp-rest-cache' ),
+			'ajax'     => false,
+		];
 		parent::__construct( $args );
 	}
 
@@ -230,6 +220,7 @@ class API_Caches_Table extends \WP_List_Table {
 			'cache_key'       => __( 'Cache Key', 'wp-rest-cache' ),
 			'request_uri'     => __( 'Request URI', 'wp-rest-cache' ),
 			'request_headers' => __( 'Request Headers', 'wp-rest-cache' ),
+			'request_method'  => __( 'Request Method', 'wp-rest-cache' ),
 			'object_type'     => __( 'Object Type', 'wp-rest-cache' ),
 			'expiration'      => __( 'Expiration', 'wp-rest-cache' ),
 			'cache_hits'      => __( '# Cache Hits', 'wp-rest-cache' ),
@@ -246,11 +237,12 @@ class API_Caches_Table extends \WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable_columns = [
-			'cache_key'   => [ 'cache_key', false ],
-			'request_uri' => [ 'request_uri', false ],
-			'object_type' => [ 'object_type', false ],
-			'expiration'  => [ 'expiration', true ],
-			'cache_hits'  => [ 'cache_hits', true ],
+			'cache_key'      => [ 'cache_key', false ],
+			'request_uri'    => [ 'request_uri', false ],
+			'request_method' => [ 'request_method', false ],
+			'object_type'    => [ 'object_type', false ],
+			'expiration'     => [ 'expiration', true ],
+			'cache_hits'     => [ 'cache_hits', true ],
 		];
 
 		return $sortable_columns;
@@ -330,7 +322,7 @@ class API_Caches_Table extends \WP_List_Table {
 	 * @param string $action The action to be taken.
 	 */
 	private function process_bulk_action( $action ) {
-		$caches = filter_input( INPUT_POST, 'bulk-flush', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		$caches = filter_input( INPUT_GET, 'bulk-flush', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
 		foreach ( $caches as $cache_key ) {
 			self::clear_cache( $cache_key, ( 'bulk-delete' === $action ) );
 		}

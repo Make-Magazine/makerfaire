@@ -44,7 +44,11 @@ function essb_sso_metabox_interface_facebook($post_id) {
 		<div class="essb-flex-grid-c c12">
 			<strong class="essb-title">Facebook Preview</strong>
 			<br/>
-			<span class="label">Recommended image size used for sharing is 1,200 x 628 pixels or image with an aspect ratio of 1.91:1</span>
+			<span class="label">Recommended image size used for sharing is 1,200 x 630 pixels or image with an aspect ratio of 1.91:1.
+				<?php if (!essb_option_bool_value('sso_deactivate_analyzer')) { ?>
+					<strong>Analyzing image size and selection will run on save of the post.</strong>
+				<?php } ?>
+			</span>
 		</div>
 	</div>
 	<div class="essb-flex-grid-r">
@@ -59,6 +63,7 @@ function essb_sso_metabox_interface_facebook($post_id) {
 					esc_html_e('Custom image URL for Social Media Optimization. The field will have value in the case of custom image selection. The field will remain blank if the default image is used.', 'essb');
 					echo '</div>';
 				}
+				
 				?>
 			
 				<div class="sso-title carret-mark "><?php echo esc_html($sso_data->single_title($post_id)); ?></div>
@@ -72,6 +77,19 @@ function essb_sso_metabox_interface_facebook($post_id) {
 		</div>
 	</div>
 	<?php if (!essb_option_bool_value('sso_deactivate_analyzer')) { ?>
+	
+	<?php 
+	
+	if ($essb_post_og_image != '') {
+	    $image_data = getimagesize($essb_post_og_image);
+	    
+	    echo '<script type="text/javascript">var ssoSavedImage = window.ssoSavedImage = '.json_encode($image_data).';</script>';
+	}
+	else {
+	    echo '<script type="text/javascript">var ssoSavedImage = window.ssoSavedImage = {};</script>';
+	}
+	
+	?>
 	<div class="essb-flex-grid-r" style="margin-left: -240px; position: absolute; width: 220px;">
 		<div class="essb-flex-grid-c c12">
 			<div id="sso-calculated-score"></div>

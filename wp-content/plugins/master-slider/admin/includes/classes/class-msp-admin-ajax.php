@@ -13,6 +13,7 @@ class MSP_Admin_Ajax {
     add_action( 'wp_ajax_msp_panel_handler'     , array( $this, 'save_panel_ajax'     ) );
     add_action( 'wp_ajax_msp_create_new_handler', array( $this, 'create_new_slider'   ) );
     add_action( 'wp_ajax_msp_dismiss_notice'    , array( $this, 'dimiss_notice'       ) );
+    add_action( 'wp_ajax_msp_dismiss_rate_notice', array( $this, 'dismiss_rate_notice') );
   }
 
 
@@ -173,6 +174,21 @@ class MSP_Admin_Ajax {
       exit;// IMPORTANT
   }
 
+  /**
+   * Dismiss rate notice
+   */
+  public function dismiss_rate_notice() {
+
+      if ( empty( $_POST['msnonce'] ) || ! wp_verify_nonce( $_POST['msnonce'], "ms-dismiss-notice") ) {
+          wp_send_json_error( array( 'message' => __( 'Authorization failed! Notice cannot be closed.', 'master-slider' ) ) );
+      }
+      $expire_date = '';
+      if ( ! empty( $_POST['delay'] ) ) {
+          $expire_date = 3 * DAY_IN_SECONDS;
+      }
+      msp_set_transient( 'msp_rate_notice_missed', 'yes', $expire_date );
+      wp_send_json_success( array( 'message' => __( 'Successfully dismissed ..', 'master-slider' ) ) );
+  }
 
 }
 
