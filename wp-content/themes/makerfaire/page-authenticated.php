@@ -2,14 +2,23 @@
 /*
 Template name: Authenticated content
 */
-if (!is_user_logged_in())
-    auth_redirect();
+get_header();
+if (!is_user_logged_in()) { ?>
+<div class="clear"></div>
 
-get_header(); ?>
+<div class="page-content container">
+	<div class="row">
+		<div class="content col-md-12 text-center">
+			<h1>You must be logged in to access your Maker Faire Entries</h1>
+		</div>
+	</div>
+</div>
+	
+<?php } else { ?>
 
 <div class="clear"></div>
 
-<div class="container">
+<div class="page-content container">
 
 	<div class="row">
 
@@ -36,4 +45,5 @@ get_header(); ?>
 
 </div><!--Container-->
 
-<?php get_footer(); ?>
+<?php }
+get_footer(); ?>
