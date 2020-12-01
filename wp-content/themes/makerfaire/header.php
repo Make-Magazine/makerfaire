@@ -154,13 +154,7 @@
 
             <?php
             // Nav Level 1 and Hamburger
-            $context = stream_context_create(array(
-                "ssl" => array(
-                    "verify_peer" => false,
-                    "verify_peer_name" => false,
-                ),
-            ));
-            echo file_get_contents(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-topnav.html', false, $context);
+            echo basicCurl(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-topnav.html');
             ?>
 
             <div id="nav-level-2" class="nav-level-2">
@@ -185,9 +179,9 @@
             </div>
 
             <div id="nav-flyout">
-<?php
-echo file_get_contents(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-megamenu.html', false, $context);
-?>
+				<?php
+					echo basicCurl(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-megamenu.html');
+				?>
             </div>
 
         </header>

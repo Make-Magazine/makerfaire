@@ -1,45 +1,6 @@
 <?php
-$context = stream_context_create(array(
-    "ssl" => array(
-        "verify_peer" => false,
-        "verify_peer_name" => false,
-    ),
-));
-
-echo file_get_contents(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-footer.html', false, $context);
+   echo basicCurl(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-footer.html');
 ?>
-
-<div class="fancybox-thx" style="display:none;">
-    <div class="nl-modal-cont nl-thx-p2">
-        <div class="col-sm-4 hidden-xs nl-modal">
-            <span class="fa-stack fa-4x">
-                <i class="far fa-circle fa-stack-2x"></i>
-                <i class="far fa-thumbs-up fa-stack-1x"></i>
-            </span>
-        </div>
-        <div class="col-sm-8 col-xs-12 nl-modal">
-            <h3>Awesome!</h3>
-            <p style="color:#333;text-align:center;margin-top:20px;">Thanks for signing up.</p>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-</div>
-
-<div class="nl-modal-error" style="display:none;">
-    <div class="col-xs-12 nl-modal padtop">
-        <p class="lead">The reCAPTCHA box was not checked. Please try again.</p>
-    </div>
-    <div class="clearfix"></div>
-</div>
-
-<script>
-    jQuery(".magical").click(function (event) {
-        event.preventDefault();
-        jQuery.getScript("<?php echo get_template_directory_uri() . '/magical/js/jquery.magical.js' ?>", function () {
-            jQuery(".magical").unicornblast();
-        });
-    });
-</script>
 
 <!-- Clear the WP admin bar when in mobile fixed header -->
 <script>
