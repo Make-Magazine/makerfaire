@@ -2906,6 +2906,112 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "layout_5fe11b028bb6b": {
+                    "key": "layout_5fe11b028bb6b",
+                    "name": "rss_feed",
+                    "label": "RSS Feed",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_5fe11b108bb6c",
+                            "label": "Active\/Inactive",
+                            "name": "activeinactive",
+                            "type": "radio",
+                            "instructions": "Activate or Inactivate this panel",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "Active": "Active",
+                                "Inactive": "Inactive"
+                            },
+                            "allow_null": 0,
+                            "other_choice": 0,
+                            "default_value": "",
+                            "layout": "vertical",
+                            "return_format": "value",
+                            "save_other_choice": 0
+                        },
+                        {
+                            "key": "field_5fe11b308bb6d",
+                            "label": "Title",
+                            "name": "title",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
+                        },
+                        {
+                            "key": "field_5fe11b3c8bb6e",
+                            "label": "Feed URL",
+                            "name": "feed_url",
+                            "type": "url",
+                            "instructions": "URL of the RSS feed to pull from",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": ""
+                        },
+                        {
+                            "key": "field_5fe11b628bb6f",
+                            "label": "More Link",
+                            "name": "more_link",
+                            "type": "url",
+                            "instructions": "Optional more link",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": ""
+                        },
+                        {
+                            "key": "field_5fe11b788bb70",
+                            "label": "Number",
+                            "name": "number",
+                            "type": "number",
+                            "instructions": "Number of feed items to show (defaults to 4)",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "min": "",
+                            "max": "",
+                            "step": ""
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
             },
             "button_label": "Add New Panel",
@@ -2961,7 +3067,7 @@
             {
                 "param": "block",
                 "operator": "==",
-                "value": "acf\/1-column"
+                "value": "all"
             }
         ]
     ],
@@ -2971,7 +3077,7 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1596667114
+    "modified": 1608588182
 }

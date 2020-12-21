@@ -87,6 +87,9 @@ function dispLayout($row_layout) {
             case 'image_slider': // this is gonna end up pretty similar to the image carousel, but we're going to have it as a panel
                 $return = getSliderPanel();
                 break;
+			case 'rss_feed': // pull the rss feed shortcode with user inputs
+				$return = getRSSFeed();
+				break;
         }
     }
     return $return;
@@ -1606,4 +1609,18 @@ function getMakeyBanner() {
     $content .= '</div>';
 
     return $content;
+}
+
+/* **************************************************** */
+/* Function to return the rss feed from user input      */
+/* **************************************************** */
+function getRSSFeed() {
+	GLOBAL $acf_blocks;
+	$title = ($acf_blocks ? get_field('title') : get_sub_field('title'));
+	$feed_url = ($acf_blocks ? get_field('feed_url') : get_sub_field('feed_url'));
+	$more_link = ($acf_blocks ? get_field('more_link') : get_sub_field('more_link'));
+	$number = ($acf_blocks ? get_field('number') : get_sub_field('number'));
+	
+	$rss_shortcode = '[make_rss title='.urlencode($title).', feed='.$feed_url.', moreLink='.$more_link.', number='.$number.']';
+	echo do_shortcode($rss_shortcode);
 }

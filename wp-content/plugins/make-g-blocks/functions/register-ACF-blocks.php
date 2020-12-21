@@ -261,6 +261,15 @@ function make_add_acf_blocks() {
             'mode' => 'auto',
             'keywords' => array('maker', 'faire', 'panel'),
         ));
+		acf_register_block_type(array(
+            'name' => 'rss_feed',
+            'title' => __('RSS Feed with Image'),
+            'render_callback' => 'call_ACF_block_panels',
+            'category' => 'make-panels',
+            'icon' => 'admin-comments',
+            'mode' => 'auto',
+            'keywords' => array('maker', 'faire', 'panel'),
+        ));
 
 
         //end               
