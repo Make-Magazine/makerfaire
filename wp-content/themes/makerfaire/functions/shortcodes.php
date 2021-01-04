@@ -53,9 +53,9 @@ function make_rss_func($atts) {
                         <div class="post-feed">
                             <a class="full-link" href="' . esc_url($item->get_permalink()) . '" target="_blank">
                                 <div class="title">
-                                    <p class="p-title">' . esc_html($item->get_title()) . '</p>
+                                    <p class="p-title">' . smartTruncate(esc_html($item->get_title()), 60, " ") . '</p>
                                     <img src="' . get_first_image_url($item->get_content()) . '" alt="' . esc_html($item->get_title()) . ' featured image">                                    
-                                    <p>' . shorten(get_summary($item->get_content()), 120) . '</p>
+                                    <p>' . smartTruncate(get_summary($item->get_content()), 110, " ") . '</p>
                                 </div>
                             </a>
                         </div>
