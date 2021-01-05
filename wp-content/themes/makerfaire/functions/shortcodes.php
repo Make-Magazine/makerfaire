@@ -3,7 +3,8 @@
 // get just the text
 function get_summary($html) {
     $summary = preg_replace('/<a[^>]*>([\s\S]*?)<\/a[^>]*>/', '', $html);
-    $summary = strip_tags(str_replace('The post appeared first on .', '', $summary));
+    $summary = strip_tags(str_replace('The post  appeared first on .', '', $summary));
+    $summary = str_replace('[&hellip;]', '', $summary);
     return $summary;
 }
 
