@@ -29,9 +29,13 @@ function make_rss_func($atts) {
         'morelink' => "",
         'number' => 6
             ), $atts);
-	if($a['title'] == ",") {
-		$a['title'] = '';
+	// each attribute above for some reason has a comma after it
+	array_walk($a, create_function('&$val', '$val = trim($val, ",");'));  
+	
+	if($a['feed']) {
+		$a['feed'] = 'https://makezine.com/tag/' . $a['feed'] . "/feed";
 	}
+	
     $return = '    
     <div class="container rss-feed">
         <h2>' . $a['title'] . ' News from <img class="logo" src="https://make.co/wp-content/themes/memberships/img/make_logo.svg" /> Magazine</h2>

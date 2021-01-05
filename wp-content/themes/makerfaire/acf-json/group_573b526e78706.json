@@ -2958,10 +2958,10 @@
                         },
                         {
                             "key": "field_5fe11b3c8bb6e",
-                            "label": "Feed URL",
-                            "name": "feed_url",
-                            "type": "url",
-                            "instructions": "URL of the RSS feed to pull from",
+                            "label": "Feed Tag",
+                            "name": "feed_tag",
+                            "type": "text",
+                            "instructions": "Tag of the makezine feed to pull from. Leave blank to pull from all recent makezine articles.",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -2970,14 +2970,17 @@
                                 "id": ""
                             },
                             "default_value": "",
-                            "placeholder": ""
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": ""
                         },
                         {
                             "key": "field_5fe11b628bb6f",
                             "label": "More Link",
                             "name": "more_link",
                             "type": "url",
-                            "instructions": "Optional more link",
+                            "instructions": "Optional more link (if blank no button will appear under the feed)",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -2993,7 +2996,7 @@
                             "label": "Number",
                             "name": "number",
                             "type": "number",
-                            "instructions": "Number of feed items to show (defaults to 4)",
+                            "instructions": "Number of feed items to show (defaults to 6)",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -3079,5 +3082,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1608588182
+    "modified": 1609806398
 }

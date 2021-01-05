@@ -1617,10 +1617,10 @@ function getMakeyBanner() {
 function getRSSFeed() {
 	GLOBAL $acf_blocks;
 	$title = ($acf_blocks ? get_field('title') : get_sub_field('title'));
-	$feed_url = ($acf_blocks ? get_field('feed_url') : get_sub_field('feed_url'));
+	$feed_tag = ($acf_blocks ? get_field('feed_tag') : get_sub_field('feed_tag'));
 	$more_link = ($acf_blocks ? get_field('more_link') : get_sub_field('more_link'));
 	$number = ($acf_blocks ? get_field('number') : get_sub_field('number'));
 	
-	$rss_shortcode = '[make_rss title='.urlencode($title).', feed='.$feed_url.', moreLink='.$more_link.', number='.$number.']';
+	$rss_shortcode = '[make_rss title='.urlencode($title).', feed='.$feed_tag.', moreLink='.$more_link.', number='.$number.']';
 	echo do_shortcode($rss_shortcode);
 }
