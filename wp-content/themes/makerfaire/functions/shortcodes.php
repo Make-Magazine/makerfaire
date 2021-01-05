@@ -22,7 +22,7 @@ function shorten($string, $length) {
 
 // [make_rss title="Makerspace", feed="https://makezine.com/tag/makerspaces/feed/", moreLink="http://makezine.com/tag/makerspaces/", number=4]
 function make_rss_func($atts) {
-	error_log(print_r($atts, TRUE));
+	
     $a = shortcode_atts(array(
         'title' => '',
         'feed' => 'https://makezine.com/feed/',
@@ -32,8 +32,10 @@ function make_rss_func($atts) {
 	// each attribute above for some reason has a comma after it
 	array_walk($a, create_function('&$val', '$val = trim($val, ",");'));  
 	
-	if($a['feed']) {
+	if($a['feed'] && $a['feed'] != "") {
 		$a['feed'] = 'https://makezine.com/tag/' . $a['feed'] . "/feed";
+	} else {
+		$a['feed'] = 'https://makezine.com/feed/';
 	}
 	
     $return = '    
