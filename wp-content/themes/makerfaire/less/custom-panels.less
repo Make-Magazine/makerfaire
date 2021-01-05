@@ -1855,11 +1855,13 @@
 				position: relative;
 				&::after {
 					content: "...";
-					background: #fff;
+					width: 30px;
+					background: rgb(255,255,255);
+					background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 35%, rgba(255,255,255,1) 100%);
 					position: absolute;
 					bottom: 0px;
 					right: 0px;
-					padding: 0px 5px;
+					text-align: right;
 				}
 				@media screen and (min-width: 500px) {
 					max-height: 200px;
