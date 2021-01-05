@@ -1837,20 +1837,49 @@
 					font-size: 18px;
 					line-height: 1.3em;
 					font-weight: 400;
-					margin-bottom: 15px;
-					height: 35px;
 					overflow: visible;
+				}
+				@media screen and (min-width: 767px) {
+					margin-bottom: 5px;
+					.p-title { height: auto; }
+				}
+				@media screen and (min-width: 982px) {
+					margin-bottom: 20px;
+					.p-title { height: 35px; }
+				}
+			}
+			.content {
+				display: flex;
+				align-items: start;
+				overflow: hidden;
+				position: relative;
+				&::after {
+					content: "...";
+					background: #fff;
+					position: absolute;
+					bottom: 0px;
+					right: 0px;
+					padding: 0px 5px;
+				}
+				@media screen and (min-width: 500px) {
+					max-height: 200px;
+				}
+				@media screen and (min-width: 991px) {
+					max-height: 140px;
+				}
+				@media screen and (min-width: 1200px) {
+					max-height: 120px;
 				}
 				p {                
 					line-height: 1.3em;
 					font-size: .97em;
 				}
 				img {
-					float: left;
 					margin-right: 15px;
 					max-width: 40%;
-						 height: auto;
+					object-fit: contain;
 				}
+				
 			}
 		}
 		.all-projects-title {

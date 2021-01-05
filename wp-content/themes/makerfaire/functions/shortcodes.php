@@ -60,8 +60,10 @@ function make_rss_func($atts) {
                             <a class="full-link" href="' . esc_url($item->get_permalink()) . '" target="_blank">
                                 <div class="title">
                                     <p class="p-title">' . smartTruncate(esc_html($item->get_title()), 60, " ") . '</p>
+								</div>
+								<div class="content">
                                     <img src="' . get_first_image_url($item->get_content()) . '" alt="' . esc_html($item->get_title()) . ' featured image">                                    
-                                    <p>' . smartTruncate(get_summary($item->get_content()), 110, " ") . '</p>
+                                    <p>' . get_summary($item->get_content()) . '</p>
                                 </div>
                             </a>
                         </div>
