@@ -20,6 +20,12 @@ function shorten($string, $length) {
     return $desc;
 }
 
+function get_first_image_url($html) {
+  if (preg_match('/<img.+?src="(.+?)"/', $html, $matches)) {
+  return $matches[1];
+  }
+}
+
 
 // [make_rss title="Makerspace", feed="https://makezine.com/tag/makerspaces/feed/", moreLink="http://makezine.com/tag/makerspaces/", number=4]
 function make_rss_func($atts) {

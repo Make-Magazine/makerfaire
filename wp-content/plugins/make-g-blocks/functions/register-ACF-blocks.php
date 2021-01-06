@@ -215,15 +215,6 @@ function make_add_acf_blocks() {
             'mode' => 'auto',
             'keywords' => array('makey', 'banner','panel'),
         ));            
-        acf_register_block_type(array(
-            'name' => 'post_feed',
-            'title' => __('News / Post Feed'),
-            'render_callback' => 'call_ACF_block_panels',
-            'category' => 'make-panels',
-            'icon' => 'admin-comments',
-            'mode' => 'auto',
-            'keywords' => array('post', 'panel'),
-        ));        
         //Ribbon Separator Panel
         acf_register_block_type(array(
             'name' => 'ribbon_separator_panel',
@@ -281,10 +272,5 @@ function call_ACF_block_panels($block) {
     $acf_blocks = TRUE;
     $name = str_replace("acf/", "", $block['name']);
     $name = str_replace("-", "_", $name);
-    if (get_field('is_example')){
-	/* Render screenshot for example */
-        echo 'this is it'.plugin_dir_path().'/examples/buy_tickets.png';
-        //echo '<img src="'.plugin_dir_path().'/examples/buy_tickets.png" />';
-    }
     echo ($name != '' ? dispLayout($name) : '');
 }

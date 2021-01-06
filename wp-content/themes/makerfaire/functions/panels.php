@@ -40,9 +40,6 @@ function dispLayout($row_layout) {
             case 'call_to_action':  // CTA PANEL
                 $return = getCTApanel();
                 break;
-            case 'news_block_panel':  // NEWS BLOCK PANEL
-                $return = getNewsBlockpanel();
-                break;
             case 'tint_social_block_panel':  // NEWS BLOCK PANEL
                 $return = getTintSocialBlockpanel();
                 break;
@@ -833,21 +830,6 @@ function getRibbonSeparatorpanel() {
             . '   <div class="arrow-right-sm"></div>';
     $return .= '</section>';
     return $return;
-}
-
-/* * *************************************************** */
-/* Function to return News Block panel                  */
-/* * *************************************************** */
-
-function getNewsBlockpanel() {
-    GLOBAL $acf_blocks;
-    $args = [
-        'tag'   => ($acf_blocks ? get_field('tag') : get_sub_field('tag')),
-        'title' => ($acf_blocks ? get_field('title') : get_sub_field('title')),
-        'link'  => ($acf_blocks ? get_field('link') : get_sub_field('link'))
-    ];
-    require_once 'MF-News-Block.php';
-    return do_news_block($args);
 }
 
 /* * *************************************************** */

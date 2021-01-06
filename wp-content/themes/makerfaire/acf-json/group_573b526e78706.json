@@ -3065,13 +3065,6 @@
                 "operator": "==",
                 "value": "page-wide-leftnav.php"
             }
-        ],
-        [
-            {
-                "param": "block",
-                "operator": "==",
-                "value": "all"
-            }
         ]
     ],
     "menu_order": 0,
@@ -3082,5 +3075,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1609806398
+    "modified": 1609890453
 }
