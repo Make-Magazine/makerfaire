@@ -14,6 +14,8 @@
 // Stop any direct calls to this file
 defined( 'ABSPATH' ) or die( 'This file cannot be called directly!' );
 $type = ( ! empty( $_REQUEST['type'] ) ? sanitize_text_field( $_REQUEST['type'] ) : null );
+$upcoming = ( ! empty( $_REQUEST['upcoming'] ) ? sanitize_text_field( $_REQUEST['upcoming'] ) : false );
+$number = ( ! empty( $_REQUEST['number'] ) ? sanitize_text_field( $_REQUEST['number'] ) : null );
 
 // Double check again we have requested this file
 if ( $type == 'map' ) {
@@ -41,29 +43,37 @@ if ( $type == 'map' ) {
   }
 
   $select_query = '
-    SELECT  `ID`
-      , `annual`
-      , `faire_shortcode`
-      , `faire_name`
-      , `lat`
-      , `lng`
-      , `faire_year`
-      , `event_type`
-      , `event_dt`
-      , `event_start_dt`
-      , `event_end_dt`
-      , `cfm_start_dt`
-      , `cfm_end_dt`
-      , `cfm_url`
-      , `faire_url`
-      , `ticket_site_url`
-      , `free_event`
-      , `venue_address_street`
-      , `venue_address_city`
-      , `venue_address_state`
-      , `venue_address_country`
-      , `venue_address_postal_code`
-      , `venue_address_region`, states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state';
+    SELECT  `ID`, 
+	        `annual`, 
+			`faire_shortcode`, 
+			`faire_name`,
+			`lat`,
+			`lng`,
+			`faire_year`, 
+			`event_type`, 
+			`event_dt`, 
+			`event_start_dt`, 
+			`event_end_dt`, 
+			`cfm_start_dt`, 
+			`cfm_end_dt`, 
+			`cfm_url`, 
+			`faire_url`, 
+			`ticket_site_url`, 
+			`free_event`, 
+			`venue_address_street`, 
+			`venue_address_city`, 
+			`venue_address_state`, 
+			`venue_address_country`, 
+			`venue_address_postal_code`, 
+			`venue_address_region`, 
+			states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state';
+  if($upcoming == true) {
+	  $select_query .= ' where event_start_dt >= CURDATE()
+	  					ORDER BY `wp_mf_global_faire`.`event_start_dt` ASC';
+  }
+  if($number != null && is_numeric($number)) {
+	  $select_query .= ' limit 5';
+  }
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query ( $select_query );
 
