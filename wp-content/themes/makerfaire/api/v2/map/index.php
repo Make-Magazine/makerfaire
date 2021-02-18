@@ -72,7 +72,7 @@ if ( $type == 'map' ) {
 	  					ORDER BY `wp_mf_global_faire`.`event_start_dt` ASC';
   }
   if($number != null && is_numeric($number)) {
-	  $select_query .= ' limit 5';
+	  $select_query .= ' limit ' . $number;
   }
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query ( $select_query );
