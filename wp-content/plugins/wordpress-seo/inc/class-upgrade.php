@@ -68,6 +68,9 @@ class WPSEO_Upgrade {
 			'14.9-RC0'   => 'upgrade_149',
 			'15.1-RC0'   => 'upgrade_151',
 			'15.3-RC0'   => 'upgrade_153',
+			'15.5-RC0'   => 'upgrade_155',
+			'15.7-RC0'   => 'upgrade_157',
+			'15.9.1-RC0' => 'upgrade_1591',
 		];
 
 		array_walk( $routines, [ $this, 'run_upgrade_routine' ], $version );
@@ -767,7 +770,40 @@ class WPSEO_Upgrade {
 		WPSEO_Options::set( 'indexing_started', $indexation_started_value );
 
 		$indexables_indexing_completed_value = WPSEO_Options::get( 'indexables_indexation_completed' );
-		WPSEO_Options::set( 'indexables_indexing_completed', $indexables_indexing_completed_value);
+		WPSEO_Options::set( 'indexables_indexing_completed', $indexables_indexing_completed_value );
+	}
+
+	/**
+	 * Performs the 15.5 upgrade.
+	 *
+	 * @return void
+	 */
+	private function upgrade_155() {
+		// Unset the fbadminapp value in the wpseo_social option.
+		$wpseo_social_option = get_option( 'wpseo_social' );
+
+		if ( isset( $wpseo_social_option['fbadminapp'] ) ) {
+			unset( $wpseo_social_option['fbadminapp'] );
+			update_option( 'wpseo_social', $wpseo_social_option );
+		}
+	}
+
+	/**
+	 * Performs the 15.7 upgrade.
+	 *
+	 * @return void
+	 */
+	private function upgrade_157() {
+		add_action( 'init', [ $this, 'remove_plugin_updated_notification_for_157' ] );
+	}
+
+	/**
+	 * Performs the 15.9.1 upgrade routine.
+	 */
+	private function upgrade_1591() {
+		$enabled_auto_updates = \get_option( 'auto_update_plugins' );
+		$addon_update_watcher = YoastSEO()->classes->get( \Yoast\WP\SEO\Integrations\Watchers\Addon_Update_Watcher::class );
+		$addon_update_watcher->toggle_auto_updates_for_add_ons( [], $enabled_auto_updates );
 	}
 
 	/**
@@ -825,7 +861,7 @@ class WPSEO_Upgrade {
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Reason: Is it prepared already.
 		$query = $wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: Too hard to fix.
-			"DELETE FROM $indexable_table 
+			"DELETE FROM $indexable_table
 			WHERE object_type = 'term'
 			AND object_sub_type IN ("
 				. \implode( ', ', \array_fill( 0, \count( $private_taxonomies ), '%s' ) )
@@ -874,6 +910,15 @@ class WPSEO_Upgrade {
 	 */
 	public function remove_acf_notification_for_142() {
 		Yoast_Notification_Center::get()->remove_notification_by_id( 'wpseo-suggested-plugin-yoast-acf-analysis' );
+	}
+
+	/**
+	 * Removes the wpseo-plugin-updated notification from the Notification center for the 15.7 upgrade.
+	 *
+	 * @return void
+	 */
+	public function remove_plugin_updated_notification_for_157() {
+		Yoast_Notification_Center::get()->remove_notification_by_id( 'wpseo-plugin-updated' );
 	}
 
 	/**
