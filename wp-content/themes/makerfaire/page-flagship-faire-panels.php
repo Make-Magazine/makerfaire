@@ -12,7 +12,7 @@ get_header(); ?>
     <!-- <div class="container"> -->
    
       <?php the_content(); ?>
-
+<!--
       <div class="mf-full-hero" style="background-image: url('../wp-content/themes/makerfaire/images/ba19-banner-image-lrg.jpg');">
          <div class="mf-left-text">
             <div class="mf-title-text">
@@ -24,7 +24,7 @@ get_header(); ?>
                </div>
             </div>
          </div>
-      </div>
+      </div>-->
 
     <!-- </div> -->
     <?php
