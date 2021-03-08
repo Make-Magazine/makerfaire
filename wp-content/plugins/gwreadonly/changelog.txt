@@ -1,6 +1,18 @@
 
 # Changelog
 
+## 1.9
+
+	- Fixed a potential issue where GPRO may cause form validation to fail.
+
+## 1.8
+
+	- Fixed a compatibility issue with GPPA Field Value Objects.
+
+## 1.7
+
+	- Fixed issue where double-quotes in labels/values would not be properly escaped on the frontend.
+
 ## 1.6
 
 	- Fixed compatibility issues with the Gravity View plugin.

@@ -199,8 +199,15 @@ class GP_Read_Only extends GWPerk {
 
 			}
 
-			$input_html .= $hc_input_markup;
-
+			// Check if there's a closing div tag
+			if ( strpos( $input_html, '</div>' ) !== false ) {
+				// Append GPRO hidden input before last closing div tag.
+				// This ensures that GPPA will replace the hidden GPRO input during XHR requests.
+				$input_html = preg_replace( '((.*)<\/div>)', '$1' . str_replace( '$', '\$', $hc_input_markup ) . '</div>', $input_html );
+			} else {
+				// No closing div tag, append GPRO hidden input to the end
+				$input_html .= $hc_input_markup;
+			}
 		}
 
 		add_filter( 'gform_field_input', array( $this, 'read_only_input' ), 11, 5 );
@@ -229,7 +236,7 @@ class GP_Read_Only extends GWPerk {
 			$value = rgar( $value, (string) $input_id );
 		}
 
-		return sprintf( '<input type="hidden" id="%s" name="%s" value="%s" class="gf-default-disabled" />', $hc_input_id, $hc_input_id, $value );
+		return sprintf( '<input type="hidden" id="%s" name="%s" value="%s" class="gf-default-disabled" />', $hc_input_id, $hc_input_id, esc_attr( $value ) );
 	}
 
 	public function process_hidden_captures( $form ) {
@@ -303,6 +310,10 @@ class GP_Read_Only extends GWPerk {
 		$choices = (array) rgar( $field, 'choices' );
 		$choices = array_filter( $choices );
 
+		// Use GPPA hydrated value if current value is empty and gppa-values is enabled
+		if ( rgar( $field, 'gppa-values-enabled', false ) && ! $value ) {
+			$value = $field->gppa_hydrated_value;
+		}
 		if ( ! $value && $field->get_input_type() == 'time' ) {
 
 		}
