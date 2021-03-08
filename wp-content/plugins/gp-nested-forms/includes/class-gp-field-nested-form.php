@@ -164,7 +164,7 @@ class GP_Field_Nested_Form extends GF_Field {
 			<button type="button" class="gpnf-add-entry"
 		        data-formid="%s"
 		        data-nestedformid="%s"
-				data-bind="attr: { disabled: isMaxed }"
+				data-bind="attr: { disabled: isMaxed }, css: { \'gf-default-disabled\': isMaxed }"
 				%s>
 				%s
 			</button>',

@@ -61,6 +61,11 @@
 	display: inline-block;
 }
 
+.gpnf-add-entry + .gfspinner {
+	margin-left: 5px;
+	vertical-align: middle;
+}
+
 .gpnf-view-related-entries {
 	font-size: 14px;
 	font-weight: bold;
