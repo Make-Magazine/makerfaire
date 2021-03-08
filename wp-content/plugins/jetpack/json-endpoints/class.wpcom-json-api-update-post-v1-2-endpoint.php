@@ -273,6 +273,11 @@ class WPCOM_JSON_API_Update_Post_v1_2_Endpoint extends WPCOM_JSON_API_Update_Pos
 			if ( $reset_draft_date || $reset_scheduled_date ) {
 				$input['date_gmt'] = gmdate( 'Y-m-d H:i:s' );
 			}
+
+			// Untrash a post so that the proper hooks get called as well as the comments get untrashed.
+			if ( $this->should_untrash_post( $last_status, $new_status, $post ) ) {
+				$input = $this->untrash_post( $post, $input );
+			}
 		}
 
 		if ( function_exists( 'wpcom_switch_to_blog_locale' ) ) {
@@ -755,7 +760,6 @@ class WPCOM_JSON_API_Update_Post_v1_2_Endpoint extends WPCOM_JSON_API_Update_Pos
 
 				$meta = (object) $meta;
 
-				// Custom meta description can only be set on sites that have a business subscription.
 				if ( Jetpack_SEO_Posts::DESCRIPTION_META_KEY == $meta->key && ! Jetpack_SEO_Utils::is_enabled_jetpack_seo() ) {
 					return new WP_Error( 'unauthorized', __( 'SEO tools are not enabled for this site.', 'jetpack' ), 403 );
 				}

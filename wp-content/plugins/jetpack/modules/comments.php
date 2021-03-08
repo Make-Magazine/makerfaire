@@ -10,7 +10,7 @@
  * Feature: Engagement
  * Additional Search Queries: comments, comment, facebook, twitter, google+, social
  *
- * @package Jetpack.
+ * @package automattic/jetpack
  */
 
 use Automattic\Jetpack\Assets;
@@ -32,13 +32,13 @@ Assets::add_resource_hint(
 /*
  * Add the main commenting system.
  */
-require dirname( __FILE__ ) . '/comments/comments.php';
+require __DIR__ . '/comments/comments.php';
 
 if ( is_admin() ) {
 	/**
 	 * Add the admin functionality.
 	 */
-	require dirname( __FILE__ ) . '/comments/admin.php';
+	require __DIR__ . '/comments/admin.php';
 }
 
 /**
@@ -49,4 +49,3 @@ function jetpack_comments_load() {
 }
 
 add_action( 'jetpack_modules_loaded', 'jetpack_comments_load' );
-

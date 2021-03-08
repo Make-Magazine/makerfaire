@@ -4,7 +4,7 @@
  *
  * @since 6.8.0
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 namespace Automattic\Jetpack\Extensions\Map;
@@ -14,7 +14,6 @@ use Automattic\Jetpack\Tracking;
 use Jetpack;
 use Jetpack_Gutenberg;
 use Jetpack_Mapbox_Helper;
-use Jetpack_Options;
 
 const FEATURE_NAME = 'map';
 const BLOCK_NAME   = 'jetpack/' . FEATURE_NAME;

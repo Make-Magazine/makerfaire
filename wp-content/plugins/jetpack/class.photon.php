@@ -2,7 +2,7 @@
 /**
  * Class for photon functionality.
  *
- * @package Jetpack.
+ * @package automattic/jetpack
  */
 
 use Automattic\Jetpack\Assets;
@@ -626,7 +626,6 @@ class Jetpack_Photon {
 
 		return $galleries;
 	}
-
 
 	/**
 	 * Runs the image widget through photon.

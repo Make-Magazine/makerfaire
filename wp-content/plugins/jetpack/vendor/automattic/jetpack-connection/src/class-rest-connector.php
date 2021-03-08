@@ -153,10 +153,11 @@ class REST_Connector {
 		$connection = new Manager();
 
 		$connection_status = array(
-			'isActive'     => $connection->is_active(),
-			'isStaging'    => $status->is_staging_site(),
-			'isRegistered' => $connection->is_registered(),
-			'offlineMode'  => array(
+			'isActive'          => $connection->is_active(),
+			'isStaging'         => $status->is_staging_site(),
+			'isRegistered'      => $connection->is_connected(),
+			'hasConnectedOwner' => $connection->has_connected_owner(),
+			'offlineMode'       => array(
 				'isActive'        => $status->is_offline_mode(),
 				'constant'        => defined( 'JETPACK_DEV_DEBUG' ) && JETPACK_DEV_DEBUG,
 				'url'             => $status->is_local_site(),
@@ -164,7 +165,7 @@ class REST_Connector {
 				'filter'          => ( apply_filters( 'jetpack_development_mode', false ) || apply_filters( 'jetpack_offline_mode', false ) ), // jetpack_development_mode is deprecated.
 				'wpLocalConstant' => defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV,
 			),
-			'isPublic'     => '1' == get_option( 'blog_public' ), // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+			'isPublic'          => '1' == get_option( 'blog_public' ), // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 		);
 
 		if ( $rest_response ) {
@@ -175,7 +176,6 @@ class REST_Connector {
 			return $connection_status;
 		}
 	}
-
 
 	/**
 	 * Get plugins connected to the Jetpack.
@@ -193,7 +193,7 @@ class REST_Connector {
 
 		array_walk(
 			$plugins,
-			function( &$data, $slug ) {
+			function ( &$data, $slug ) {
 				$data['slug'] = $slug;
 			}
 		);

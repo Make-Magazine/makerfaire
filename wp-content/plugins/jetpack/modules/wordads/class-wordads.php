@@ -2,10 +2,10 @@
 /**
  * Main WordAds file.
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
-define( 'WORDADS_ROOT', dirname( __FILE__ ) );
+define( 'WORDADS_ROOT', __DIR__ );
 define( 'WORDADS_BASENAME', plugin_basename( __FILE__ ) );
 define( 'WORDADS_FILE_PATH', WORDADS_ROOT . '/' . basename( __FILE__ ) );
 define( 'WORDADS_URL', plugins_url( '/', __FILE__ ) );
@@ -596,7 +596,6 @@ class WordAds {
 
 		return $snippet;
 	}
-
 
 	/**
 	 * Returns the AMP snippet to be inserted

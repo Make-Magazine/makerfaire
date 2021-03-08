@@ -2,11 +2,11 @@
 /**
  * Jetpack Debugger functionality allowing for self-service diagnostic information via the legacy jetpack debugger.
  *
- * @package jetpack
+ * @package automattic/jetpack
  */
 
-use Automattic\Jetpack\Status;
 use Automattic\Jetpack\Redirect;
+use Automattic\Jetpack\Status;
 
 /**
  * Class Jetpack_Debugger

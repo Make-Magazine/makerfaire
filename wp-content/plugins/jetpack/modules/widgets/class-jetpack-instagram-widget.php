@@ -2,10 +2,11 @@
 /**
  * Instagram Widget. Display some Instagram photos via a widget.
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 use Automattic\Jetpack\Connection\Client;
+use Automattic\Jetpack\Connection\Manager;
 
 /**
  * This is the actual Instagram widget along with other code that only applies to the widget.
@@ -369,7 +370,7 @@ class Jetpack_Instagram_Widget extends WP_Widget {
 	 * @return bool if this request trying to remove the widgets stored id.
 	 */
 	public function removing_widgets_stored_id( $status ) {
-		return $status['valid'] && isset( $_GET['instagram_widget_id'] ) && (int) $_GET['instagram_widget_id'] === (int) $this->number && ! empty( $_GET['instagram_widget'] ) && 'remove_token' === $_GET['instagram_widget'];
+		return $status['valid'] && isset( $_GET['instagram_widget_id'] ) && (int) $_GET['instagram_widget_id'] === (int) $this->number && ! empty( $_GET['instagram_widget'] ) && 'remove_token' === $_GET['instagram_widget']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -380,6 +381,18 @@ class Jetpack_Instagram_Widget extends WP_Widget {
 	 */
 	public function form( $instance ) {
 		$instance = wp_parse_args( $instance, $this->defaults );
+
+		if ( ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) && ! ( new Manager() )->is_user_connected() ) {
+			echo '<p>';
+			printf(
+				// translators: %1$1 and %2$s are the opening and closing a tags creating a link to the Jetpack dashboard.
+				esc_html__( 'In order to use this widget you need %1$scomplete your Jetpack connection%2$s by authorizing your user.', 'jetpack' ),
+				'<a href="' . esc_url( Jetpack::admin_url() ) . '">',
+				'</a>'
+			);
+			echo '</p>';
+			return;
+		}
 
 		// If coming back to the widgets page from an action, expand this widget.
 		if ( isset( $_GET['instagram_widget_id'] ) && (int) $_GET['instagram_widget_id'] === (int) $this->number ) {
@@ -599,7 +612,7 @@ class Jetpack_Instagram_Widget extends WP_Widget {
 
 add_action(
 	'widgets_init',
-	function() {
+	function () {
 		if ( Jetpack::is_active() ) {
 			register_widget( 'Jetpack_Instagram_Widget' );
 		}

@@ -1,10 +1,10 @@
 === Jetpack - WP Security, Backup, Speed, & Growth ===
 Contributors: automattic, adamkheckler, aduth, akirk, allendav, alternatekev, andy, annezazu, apeatling, azaozz, batmoo, barry, beaulebens, biskobe, blobaugh, brbrr, cainm, cena, cfinke, chaselivingston, chellycat, clickysteve, csonnek, danielbachhuber, davoraltman, daniloercoli, delawski, designsimply, dllh, drawmyface, dsmart, dzver, ebinnion, egregor, eliorivero, enej, eoigal, erania-pinnera, ethitter, fgiannar, gcorne, georgestephanis, gibrown, goldsounds, hew, hugobaeta, hypertextranch, iammattthomas, iandunn, jblz, jasmussen, jeffgolenski, jeherve, jenhooks, jenia, jessefriedman, jgs, jkudish, jmdodd, joanrho, johnjamesjacoby, jshreve, kbrownkd, keoshi, koke, kraftbj, lancewillett, leogermani, lschuyler, macmanx, martinremy, matt, matveb, mattwiebe, maverick3x6, mcsf, mdawaffe, mdbitz, MichaelArestad, migueluy, mikeyarce, mkaz, nancythanki, nickmomrik, obenland, oskosk, pento, professor44, rachelsquirrel, rdcoll, ryancowles, richardmuscat, richardmtl, robertbpugh, roccotripaldi, samhotchkiss, scarstocea, scottsweb, sdquirk, sermitr, simison, stephdau, tmoorewp, tyxla, Viper007Bond, westi, yoavf, zinigor
 Tags: WP, backup, social, AMP, WooCommerce, malware, scan, spam, CDN, social
-Stable tag: 9.1
-Requires at least: 5.4
+Stable tag: 9.4
+Requires at least: 5.5
 Requires PHP: 5.6
-Tested up to: 5.5
+Tested up to: 5.7
 
 The best WP plugin for backup, anti spam, malware scan, CDN, AMP, social, search, contact form, and integrations with Woo, Facebook, Instagram, Google
 
@@ -47,7 +47,7 @@ Create and customize your WordPress site, optimize it for visitors and revenue, 
 * Grow traffic with SEO tools for Google, Bing, Twitter, Facebook, and WordPress.com. XML sitemap created automatically.
 * Advertise on your site to generate revenue. The Jetpack ad network automatically does the work for you to find high-quality ads that are placed on your site.
 * Manage Jetpack features from anywhere with the official WordPress mobile app, available for Apple iOS (iPhone or iPad) and Google Android.
-* Looking for a CRM? Check out the Jetpack CRM plugin which works alongside Jetpack to give you a simple and practical way to build relationships with your customers and leads.
+* Looking for Customer Relationship Management? Check out the [Jetpack CRM plugin](https://jetpackcrm.com) which works alongside Jetpack to give you a simple and practical way to build relationships with your customers and leads.
 
 = EASY DESIGN TOOLS =
 Quickly customize your site to make it stand out — no coding needed.
@@ -118,10 +118,6 @@ Once you’ve installed Jetpack, your stats will be available on your Jetpack da
 = How do I contribute to Jetpack? =
 
 There are opportunities for developers at all levels to contribute. [Learn more about contributing to Jetpack](https://jetpack.com/contribute) or consider [joining our beta program](https://jetpack.com/beta).
-
-= Is Jetpack CRM included in the Jetpack plugin? =
-
-No, please download the separate Jetpack CRM plugin to use Jetpack CRM.
 
 = What else does Jetpack include? =
 
@@ -243,77 +239,59 @@ Our Cookie and Consent Banner can help you comply with GDPR. The European Union�
 
 == Changelog ==
 
-= 9.1 =
+= 9.5 =
 
-* Release date: November 10, 2020
-* Release post: https://wp.me/p1moTy-s0E
+* Release date: March 2, 2021
+* Release post: https://wp.me/p1moTy-uSv
 
 **Enhancements**
 
-* Button Block: add a center alignment option to all Jetpack button blocks.
-* Content Options: add new filter to allow theme and plugin authors to disable featured image removal for their Custom Post Types.
-* Dashboard: improve the display of dates in the Jetpack Plan screen and in the Stats graph.
-* Dashboard: improve the display of numbers in all languages.
-* Donations Block: improve the display of the block outside WordPress (in subscription emails, for example).
-* Embeds: update Loom logo.
-* External Media: add feature to the Cover block.
-* Google Calendar Block: improve the display of the block in the editor.
-* Image Compare Block: accessibility improvements.
-* Instant Search: improve accessibility of the Search modal.
-* Likes: remove jQuery dependency where possible.
-* Pay with PayPal Block: improve the styling of the buttons in subscription emails.
-* Pay with PayPal Block: improve the display of currencies.
-* Podcast Player Block: add option to hide the episode title.
-* Podcast Player Block: display more helpful error messages when a podcast cannot be embedded.
-* Publicize: improve the usability of the Twitter thread options.
-* REST API: support needed capabilities in Jetpack REST API endpoints that allow site based authentication.
-* Social Menu & Social Media Icons: add support for Telegram profiles.
-* Synchronization: improve reliability of synchronization of theme changes.
-* WhatsApp Block: add option to change the alignment of the button.
-* Widget Visibility: improve performance on sites with a large number of pages.
-* WordPress.com Block Editor: add option to add metadata to a post indicating the last editor used.
-* WordPress.com REST API: remove outdated code that allowed non-secure requests to the API, as such requests are no longer accepted.
+* Carousel: improve the experience on mobile devices by allowing touch events (pinch, zoom).
+* Instant Search: improve the design of the Search modal.
+* Instant Search: open search result links in the current window rather than opening a new one.
+* Podcast Player Block: allow filtering the number of tracks returned when fetching new podcast episodes.
+* Podcast Player Block: add publication date to the data returned when fetching new podcast episodes.
+* Recommendations: add a dashboard banner to help users discover the best Jetpack features.
+* Related Posts: improve performance by removing jQuery dependency.
+* SEO Tools: make the feature available for all sites.
+* Social Icons Widget: add new icons.
+* Social Menu: add new icons.
+* Synchronization: improve reliability of data by excluding blocked taxonomies.
+* Tiled Galleries: improve performance by removing jQuery dependency.
+* Video Block: add support for custom video player progress bar colors.
+* Widgets: display notice in the customizer when one needs to connect their account before using the Instagram widget.
 
 **Improved compatibility**
 
-* Comments: avoid AMP validation errors when using Jetpack's Comments feature and the AMP plugin.
-* Dashboard: better support all states available when using one of Jetpack's Security solutions.
-* Embeds: improve compatibility between Jetpack's Instagram embed and WordPress' own embed.
-* Embeds: ensure Facebook Embeds work well with the AMP plugin.
-* External Media: update iconography and improve forward compatibility.
-* General: better detect local development environments.
-* Google Analytics: add support for the AMP plugin to track WooCommerce events.
-* OpenTable Block: ensure full compatibility with the AMP plugin.
-* Pay with PayPal Block: ensure full compatibility with the AMP plugin.
-* Sharing: add support for the Google Web Stories plugin.
-* Slideshow Block: ensure that the block can be displayed using the Full Width alignment setting when using the Gutenberg plugin.
-* Widget Visibility: avoid performance impact it may have on the block editor when used with the Gutenberg plugin.
-* YouTube embeds: ensure that all YouTube video embeds work well when using the AMP plugin.
+* Block Editor: update all blocks to be fully compatible with WordPress 5.7.
+* General: Jetpack now requires WordPress 5.6, and is fully compatible with WordPress 5.7.
+* Protect: ensure that the blocked login page is fully compatible with the Robots API changes introduced in WordPress 5.7.
 
 **Bug fixes**
 
-* Calendly and Eventbrite Blocks: fix layout issue when selecting block styles in the editor.
-* Contact Form: selection widgets, radio buttons, and checkboxes can now use commas, brackets, and backslashes in the labels and values without breaking the form.
-* Donations / Payments Block: fix visual bug in Stripe connection banner.
-* Embeds: ensure Facebook videos are centered properly with the Twenty Twenty theme.
-* Google Analytics: support updated Google Analytics 4 properties.
-* Image CDN: the CDN will now ignore attempts to specify percentages for width or height in an image tag.
-* Infinite Scroll: ensure the number of posts loaded when using Infinite Scroll respects posts per page settings.
-* Latest Instagram Posts Block: avoid PHP warning when no images can be retrieved from Instagram.
-* Lazy Images: attempt to load all images when printing a post, and inform the user when printing if images haven't been loaded.
-* Pay with PayPal Block: add default price value.
-* Pay with PayPal Block: ensure currencies are displayed properly in the editor.
-* Protect: fix handling of IPv6 addresses.
-* Publicize: ensure that custom messages can be saved when using the Portfolio Custom Post Type.
-* Publicize: ensure that tweets consisting only of whitespace aren't added to Twitter threads.
-* Publicize: when generating Twitter threads, allow text to be split at line breaks where appropriate.
-* Security / Contact Form: add additional checks before checking submitted forms for spam.
-* Security / WordPress.com REST API: improve authentication checks when making proxied requests to a site's API endpoints.
-* Slideshow Block: fix a bug that prevented the first and last images from displaying when the slideshow loops.
-* Stats: no longer incorrectly report a term ID as a post ID in some rare cases.
-* Videos: ensure Jetpack videos use the correct aspect ratio in both the editor and the frontend, even when used within column blocks.
-* WhatsApp Block: fix issue when the text color would not be correct.
+* Autoloader: prevent transitive plugin execution.
+* Carousel: ensure that the Carousel view is available regardless of your gallery's link settings.
+* Comments: improve respect for the Core moderation option in particular cases.
+* Connection flow: ensuring Jetpack Dashboard successfully loads after reconnect.
+* Cookies & Consent Widget: ensure the widget can be edited from the new block-based widget editor.
+* Custom Content Types: allow Newspack's Blog Posts block to display Testimonial and Portfolio posts.
+* Dashboard: improve performance by reducing excessive API calls.
+* Dashboard: improve product upgrade flow for non-connected Jetpack users.
+* Instant Search: fix closing of the overlay using the Escape key in IE11.
+* Instant Search: improve compatibility with browser forward/back navigation.
+* Instant Search: avoid issues when changes made in customizer would not immediately appear in preview.
+* Jetpack Videos: fix responsiveness of Video poster images.
+* Map Block: avoid issues when resize event listener was not removed when the component was unmounted.
+* Markdown: avoid filters loading too early when creating a new site within a Multisite network.
+* Payments Block: avoid layout issues when setting up a new payment plan.
+* Pay With Paypal Block: ensure that line breaks can be used in product description.
+* Secure Sign On: improve the connection flow when users first log in via SSO.
+* Sharing: avoid displaying block content in Open Graph Meta tags when not needed.
+* Sharing: ensure that sharing popup opens properly in Firefox.
+* Shortcodes: use arguments provided by shortcode attributes for the Instagram embeds.
+* Video Block: avoid potential PHP notice when working with Jetpack Videos.
+* WhatsApp block: adjust width of block options toolbar.
 
 --------
 
-[See the previous changelogs here](https://raw.githubusercontent.com/Automattic/jetpack/master/changelog.txt).
+[See the previous changelogs here](https://raw.githubusercontent.com/Automattic/jetpack/master/projects/plugins/jetpack/changelog.txt)

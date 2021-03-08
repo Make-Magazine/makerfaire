@@ -8,7 +8,7 @@
  * - The second creates a information block.
  * It is hooked into `jetpack_module_more_info_ . $module`
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 use Automattic\Jetpack\Redirect;
@@ -259,7 +259,6 @@ function jetpack_enhanced_distribution_more_info() {
 	);
 }
 add_action( 'jetpack_module_more_info_enhanced-distribution', 'jetpack_enhanced_distribution_more_info' );
-
 
 /**
  * Protect support link.

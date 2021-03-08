@@ -4,7 +4,7 @@
  *
  * @since 8.5.0
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 namespace Automattic\Jetpack\Extensions\Instagram_Gallery;
@@ -40,7 +40,7 @@ add_action( 'init', __NAMESPACE__ . '\register_block' );
  *
  * @return string
  */
-function render_block( $attributes, $content ) {
+function render_block( $attributes, $content ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 	if ( ! array_key_exists( 'accessToken', $attributes ) ) {
 		return '';
 	}

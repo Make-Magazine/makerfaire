@@ -10,13 +10,13 @@
  * Feature: Writing
  * Additional Search Queries: post by email, email
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 /**
  * Require the PBE Class.
  */
-require_once dirname( __FILE__ ) . '/post-by-email/class-jetpack-post-by-email.php';
+require_once __DIR__ . '/post-by-email/class-jetpack-post-by-email.php';
 
 add_action( 'jetpack_modules_loaded', array( 'Jetpack_Post_By_Email', 'init' ) );
 
