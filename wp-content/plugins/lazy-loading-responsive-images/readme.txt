@@ -3,8 +3,8 @@ Contributors: FlorianBrinkmann, MarcDK
 Donate link: https://www.paypal.me/flobrinkmann
 Tags: lazysizes, lazy loading, performance, images
 Requires at least: 4.9.8
-Tested up to: 5.6
-Stable tag: 7.1.0
+Tested up to: 5.7
+Stable tag: 7.2.0
 Requires PHP: 7.0
 
 == Description ==
@@ -45,8 +45,6 @@ Lazy loads (without the need of any manually modifications):
 * Styles.
 
 The plugin adds a `noscript` element as fallback for disabled JavaScript.
-
-By default, the auto-modifying of the image markup does not work for images that are added using `wp_get_attachment_image()`, because there cannot be a `noscript` fallback added. You can enable the option to process the complete markup to make them work.
 
 You can disable lazy loading for elements with specific CSS classes by defining them via the plugin settings (*Settings* › *Media* › *Lazy Loader options*). Or use the `skip-lazy` class or the `data-skip-lazy` attribute. `skip-lazy` and `data-skip-lazy` also work on wrapper elements to exclude the wrapper and its children from being processed.
 
@@ -105,6 +103,22 @@ The CSS from the example are the default styles that are used by the plugin (wit
 There is a textarea in the plugin settings where you can insert custom settings for the lazysizes config.
 
 == Changelog ==
+
+= 7.2.0 – 08.03.2021 =
+
+Tested with WordPress 5.7.
+
+**Added**
+
+* Process `wp_get_attachment_image` filter that was added in WordPress 5.6.
+
+**Changed**
+
+* Updated lazysizes and its plugins to 5.3.0.
+
+**Fixed**
+
+* Use same escaped version of SVG placeholder for `src` and `srcset` to fix a HTML validation error.
 
 = 7.1.0 – 04.11.2020 =
 
