@@ -3,7 +3,8 @@
 add_action( 'rest_api_init', function () {
 	register_rest_route( 'makemap/v1', 'mapdata/(?P<formid>[a-z0-9\-]+)', array(
 		'methods' => 'GET',
-		'callback' => 'build_map_JSON'
+		'callback' => 'build_map_JSON',
+                'permission_callback' => '__return_true'
 	));
 
 });
