@@ -951,47 +951,40 @@
    // Common elements
 	.content-panel.three-column {
 		.container {
-         padding-top: 40px;
-         padding-bottom: 40px;
-         @media (max-width:480px) {
-            padding-top: 20px
-         }
-         @media screen and (max-width: 767px) {
-            .col-sm-4 { // add a little vertical spacing when cols stack
-               margin-bottom: 1em;
-            }
-         }
-         ul {
-            list-style: none;
-            margin: 0 1em;
-            padding: 0.5em 1em;
-            // border: 1px solid #fff3da;
-            // border-right: 16px solid #fffaf0;
-            // background-color: #fffdf7;
-
-            border: 5px solid #48b8ef;
-            /* border-bottom: 14px solid #03b7f0; */
-            border-right: none;
-            border-left: none;
-            /* background-color: #fffdf7; */
-
-            li {
-               margin: 1em 0.5em;
-               &:before {      
-                  color: #48b8ef;
-                  content: "\2022";
-                  font-size: 2em;
-                  padding-right: .2em;
-                  position: relative;
-                  top: .2em;
-               }
-               a {
-                  font-size: 16px;
-               }
-            }
-         }
-
-      }
+			padding-top: 40px;
+			padding-bottom: 40px;
+			@media (max-width:480px) {
+				padding-top: 20px
+			}
+			@media screen and (max-width: 767px) {
+				.col-sm-4 { // add a little vertical spacing when cols stack
+					margin-bottom: 1em;
+					img { width: 100%; }
+				}
+			}
+			ul {
+				list-style: none;
+				margin: 0 1em;
+				padding: 0.5em 1em;
+				border: 5px solid #48b8ef;
+				border-right: none;
+				border-left: none;
+				li {
+				   margin: 1em 0.5em;
+				   &:before {      
+					  color: #48b8ef;
+					  content: "\2022";
+					  font-size: 2em;
+					  padding-right: .2em;
+					  position: relative;
+					  top: .2em;
+				   }
+				   a {
+					  font-size: 16px;
+				   }
+				}
+			}
+      	}
 	}
 	
 	.content-panel.single-block, .content-panel.double-block {
