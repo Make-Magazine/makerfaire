@@ -529,6 +529,7 @@ function video_get_info_by_blogpostid( $blog_id, $post_id ) {
 	$video_info->blog_id         = $blog_id;
 	$video_info->guid            = null;
 	$video_info->finish_date_gmt = '0000-00-00 00:00:00';
+	$video_info->rating          = null;
 
 	if ( is_wp_error( $post ) ) {
 		return $video_info;
@@ -540,6 +541,12 @@ function video_get_info_by_blogpostid( $blog_id, $post_id ) {
 
 	// Since this is a VideoPress post, lt's fill out the rest of the object.
 	$video_info->guid = get_post_meta( $post_id, 'videopress_guid', true );
+	$meta             = wp_get_attachment_metadata( $post_id );
+
+	if ( $meta && isset( $meta['videopress'] ) ) {
+		$videopress_meta    = $meta['videopress'];
+		$video_info->rating = $videopress_meta['rating'];
+	}
 
 	if ( videopress_is_finished_processing( $post_id ) ) {
 		$video_info->finish_date_gmt = date( 'Y-m-d H:i:s' );
@@ -629,8 +636,7 @@ function video_image_url_by_guid( $guid, $format ) {
 
 	$meta = wp_get_attachment_metadata( $post->ID );
 
-	// We add ssl => 1 to make sure that the videos.files.wordpress.com domain is parsed as photon.
-	$poster = apply_filters( 'jetpack_photon_url', $meta['videopress']['poster'], array( 'ssl' => 1 ), 'https' );
+	$poster = apply_filters( 'jetpack_photon_url', $meta['videopress']['poster'] );
 
 	return $poster;
 }
@@ -783,6 +789,16 @@ function jetpack_videopress_flash_embed_filter( $content ) {
 		$content
 	);
 	return $content;
+}
+
+/**
+ * Checks if the provided rating string is a valid VideoPress video rating value.
+ *
+ * @param mixed $rating The video rating to validate.
+ * @return bool
+ */
+function videopress_is_valid_video_rating( $rating ) {
+	return in_array( $rating, array( 'G', 'PG-13', 'R-17', 'X-18' ), true );
 }
 
 add_filter( 'the_content', 'jetpack_videopress_flash_embed_filter', 7 ); // Needs to be priority 7 to allow Core to oEmbed.

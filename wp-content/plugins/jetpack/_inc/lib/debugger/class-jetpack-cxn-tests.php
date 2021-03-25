@@ -2,18 +2,18 @@
 /**
  * Collection of tests to run on the Jetpack connection locally.
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 use Automattic\Jetpack\Connection\Client;
 use Automattic\Jetpack\Connection\Manager as Connection_Manager;
-use Automattic\Jetpack\Status;
-use Automattic\Jetpack\Connection\Utils as Connection_Utils;
-use Automattic\Jetpack\Sync\Modules;
-use Automattic\Jetpack\Sync\Settings as Sync_Settings;
-use Automattic\Jetpack\Sync\Health as Sync_Health;
-use Automattic\Jetpack\Sync\Sender as Sync_Sender;
+use Automattic\Jetpack\Connection\Tokens;
 use Automattic\Jetpack\Redirect;
+use Automattic\Jetpack\Status;
+use Automattic\Jetpack\Sync\Health as Sync_Health;
+use Automattic\Jetpack\Sync\Modules;
+use Automattic\Jetpack\Sync\Sender as Sync_Sender;
+use Automattic\Jetpack\Sync\Settings as Sync_Settings;
 
 /**
  * Class Jetpack_Cxn_Tests contains all of the actual tests.
@@ -86,7 +86,7 @@ class Jetpack_Cxn_Tests extends Jetpack_Cxn_Test_Base {
 	 * @return object|false
 	 */
 	protected function helper_get_blog_token() {
-		return Jetpack::connection()->get_access_token();
+		return ( new Tokens() )->get_access_token();
 	}
 
 	/**
@@ -298,6 +298,14 @@ class Jetpack_Cxn_Tests extends Jetpack_Cxn_Test_Base {
 				)
 			);
 		}
+		if ( ! ( new Connection_Manager() )->get_connection_owner_id() && ( new Status() )->is_no_user_testing_mode() ) {
+			return self::skipped_test(
+				array(
+					'name'              => $name,
+					'short_description' => __( 'Jetpack is running in userless mode. No master user to check.', 'jetpack' ),
+				)
+			);
+		}
 		$local_user = $this->helper_retrieve_local_master_user();
 
 		if ( $local_user->exists() ) {
@@ -325,6 +333,14 @@ class Jetpack_Cxn_Tests extends Jetpack_Cxn_Test_Base {
 				array(
 					'name'              => $name,
 					'short_description' => __( 'Jetpack is not connected.', 'jetpack' ),
+				)
+			);
+		}
+		if ( ! ( new Connection_Manager() )->get_connection_owner_id() && ( new Status() )->is_no_user_testing_mode() ) {
+			return self::skipped_test(
+				array(
+					'name'              => $name,
+					'short_description' => __( 'Jetpack is running in userless mode. No master user to check.', 'jetpack' ),
 				)
 			);
 		}
@@ -466,7 +482,7 @@ class Jetpack_Cxn_Tests extends Jetpack_Cxn_Test_Base {
 
 		$m                = new Connection_Manager();
 		$user_id          = get_current_user_id() ? get_current_user_id() : $m->get_connection_owner_id();
-		$validated_tokens = $m->validate_tokens( $user_id );
+		$validated_tokens = ( new Tokens() )->validate( $user_id );
 
 		if ( ! is_array( $validated_tokens ) || count( array_diff_key( array_flip( array( 'blog_token', 'user_token' ) ), $validated_tokens ) ) ) {
 			return self::skipped_test(
@@ -747,7 +763,7 @@ class Jetpack_Cxn_Tests extends Jetpack_Cxn_Test_Base {
 					esc_html__( 'Error', 'jetpack' )
 				);
 				$description .= wp_kses(
-					__( 'Jetpack has detected an error while syncing your site. <strong>We recommend <a id="full_sync_request_link" href="#">a full sync</a> to align Jetpack with your site data.</strong>', 'jetpack' ),
+					__( 'Jetpack has detected that data is not properly in sync which may be impacting some of your site’s functionality. <strong>Click <a id="full_sync_request_link" href="#">here</a> to start a full sync</strong> to align Jetpack with your site data. If you still notice this error after running a full sync, please contact support for additional assistance.', 'jetpack' ),
 					array(
 						'a'      => array(
 							'id'   => array(),
@@ -765,7 +781,7 @@ class Jetpack_Cxn_Tests extends Jetpack_Cxn_Test_Base {
 						'severity'          => 'critical',
 						'action'            => Redirect::get_url( 'jetpack-contact-support' ),
 						'action_label'      => __( 'Contact Jetpack Support', 'jetpack' ),
-						'short_description' => __( 'Jetpack has detected an error while syncing your site. We recommend a full sync to align Jetpack with your site data.', 'jetpack' ),
+						'short_description' => __( 'Jetpack has detected that data is not properly in sync which may be impacting some of your site’s functionality. We recommend a full sync to align Jetpack with your site data. If you still notice this error after running a full sync, please contact support for additional assistance.', 'jetpack' ),
 						'long_description'  => $description,
 					)
 				);

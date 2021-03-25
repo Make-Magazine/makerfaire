@@ -17,9 +17,14 @@
 
 		self.init = function() {
 
-			self.id = self.getDebugId();
+			self.id 				  = self.getDebugId();
+			self.$fieldContainer      = $( '#field_{0}_{1}'.format( self.formId, self.fieldId ) );
+			self.$parentFormContainer = $( '#gform_wrapper_{0}'.format( self.formId ) );
+			self.$currentPage 		  = self.$parentFormContainer.find('.gform_page:visible');
+			self.$modalSource         = $( '.gpnf-nested-form-{0}-{1}'.format( self.formId, self.fieldId ) );
 
-			self.initSession();
+			var inHiddenPage = !!(self.$currentPage.length &&
+				!self.$currentPage.find(self.$fieldContainer).length);
 
 			// Handle init when form is reloaded via AJAX.
 			if ( typeof window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] !== 'undefined' ) {
@@ -32,22 +37,48 @@
 				self.viewModel = oldGPNF.viewModel;
 			}
 
-			self.$parentFormContainer = $( '#gform_wrapper_{0}'.format( self.formId ) );
-			self.$fieldContainer      = $( '#field_{0}_{1}'.format( self.formId, self.fieldId ) );
-			self.$modalSource         = $( '.gpnf-nested-form-{0}-{1}'.format( self.formId, self.fieldId ) );
-			self.formHtml             = self.getFormHtml();
-
-			self.initModal();
-			self.addColorStyles();
+			/**
+			 * Calculations need to be init if the form is not visible to support multi-page forms that use call on
+			 * Nested Form calculations such as {Nested Form:xx:sum=yy} from other pages.
+			 *
+			 * See #21815
+			 */
 			self.initKnockout();
 			self.initCalculations();
 
+			if (inHiddenPage) {
+				console.debug('Nested form is not visible. Skipping loading.');
+
+				return;
+			}
+
+			var sessionPromise = self.initSession();
+
+			// Click handler for add entry button.
+			$( document ).on( 'click.{0}'.format( self.getNamespace() ), '#field_{0}_{1} .gpnf-add-entry'.format( self.formId, self.fieldId ), self.openAddModal );
+
+			self.initModal();
+			self.addColorStyles();
+
 			window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] = self;
 
+			/**
+			 * Filter whether or not the child form HTML should be immediately fetched when the parent form is loaded.
+			 *
+			 * @since 1.0-beta-9
+			 *
+			 * @param boolean 			autoLoadChildForm   Whether or not to load child form HTML on parent form load.
+			 * @param int           	formId 				The parent form ID.
+			 * @param int             	fieldId   			The field ID of the Nested Form field.
+			 * @param {GPNestedForms} 	gpnf      			Current instance of the GPNestedForms object.
+			 */
+			if (gform.applyFilters('gpnf_fetch_form_html_on_load', true, self.formId, self.fieldId, self)) {
+				sessionPromise.always(self.getFormHtml);
+			}
 		};
 
 		self.initSession = function() {
-			$.post( self.ajaxUrl, self.sessionData, function( response ) {
+			return $.post( self.ajaxUrl, self.sessionData, function( response ) {
 				/**
 				 * Do something after the Nested Forms session has been initialized.
 				 *
@@ -91,20 +122,17 @@
 
 			// Re-init modaled forms; 'gpnf_post_render' triggered on any nested form's first load every time a nested
 			// form is retrieved via ajax (aka editing, first load and each page load).
-
 			$( document ).on( 'gpnf_post_render.{0}'.format( self.getNamespace() ), function( event, formId, currentPage ) {
 
 				var $nestedForm = $( '#gform_wrapper_' + formId );
 
 				if ( formId == self.nestedFormId && $nestedForm.length > 0 ) {
 
-					$( document ).trigger( 'gform_post_render', [ self.nestedFormId, currentPage ] );
-
 					self.scrollToTop();
 
 					// Don't re-init buttons on the confirmation page; currentPage is undefined on the confirmation page.
 					if ( currentPage ) {
-						self.handleParentMergeTag();
+						self.initFormScripts();
 						self.addModalButtons();
 						self.observeDefaultButtons();
 					}
@@ -117,14 +145,10 @@
 
 		self.initKnockout = function() {
 
-			// Click handler for add entry button.
-			$( document ).on( 'click.{0}'.format( self.getNamespace() ), '#field_{0}_{1} .gpnf-add-entry'.format( self.formId, self.fieldId ), self.openAddModal );
-
 			// Setup Knockout to handle our Nested Form field entries.
-			if ( ! self.isBound( self.$fieldContainer[0] ) ) {
-				self.viewModel = new EntriesModel( self.prepareEntriesForKnockout( self.entries ), self );
-				ko.applyBindings( self.viewModel, self.$fieldContainer[0] );
-			}
+			self.viewModel = new EntriesModel( self.prepareEntriesForKnockout( self.entries ), self );
+			ko.cleanNode( self.$fieldContainer[0] );
+			ko.applyBindings( self.viewModel, self.$fieldContainer[0] );
 
 		};
 
@@ -139,16 +163,27 @@
 
 			event.preventDefault();
 
-			self.setModalContent();
-			self.openModal( $( event.target ) );
+			event.target.disabled = true;
+
+			var $spinner = new AjaxSpinner( event.target, self.spinnerUrl, '' );
+
+			self.getFormHtml().done(function (html) {
+				self.setModalContent(html);
+				self.openModal( $( event.target ) );
+			}).always(function() {
+				$spinner.destroy();
+				event.target.disabled = false;
+			});
 
 		};
 
 		self.openModal = function( trigger ) {
 			self.saveParentFocus( trigger );
 			self.modal.open();
+			if ( self.isGF25 ) {
+				$( document ).trigger( 'gpnf_post_render', [ self.nestedFormId, '1' ] );
+			}
 			self.initIframe( self.nestedFormId );
-			self.initFormScripts();
 		};
 
 		self.saveParentFocus = function( trigger ) {
@@ -208,11 +243,18 @@
 
 		self.setModalContent = function( html, mode ) {
 
+			$( document ).off( 'gform_post_render.gpnf' );
+
 			self.setMode( typeof mode === 'undefined' ? 'add' : 'edit' );
 
 			$( self.modal.modalBoxContent )
 				.html( typeof html !== 'undefined' ? html : self.formHtml )
 				.prepend( '<div class="gpnf-modal-header" style="background-color:{1}">{0}</div>'.format( self.getModalTitle(), self.modalHeaderColor ) );
+
+			/**
+			 * In some cases the .gform_wrapper will have display: none
+			 */
+			$( self.modal.modalBoxContent ).find('.gform_wrapper').show();
 
 			self.$modal.find( 'input[name="gpnf_nested_form_field_id"]' ).val( self.fieldId );
 
@@ -239,7 +281,7 @@
 		};
 
 		self.getModalTitle = function() {
-			return self.getMode() === 'add' ? self.modalArgs.title : self.modalArgs.editTitle;
+			return self.getMode() === 'add' ? self.modalArgs.labels.title : self.modalArgs.labels.editTitle;
 		};
 
 		self.addModalButtons = function() {
@@ -256,7 +298,7 @@
 				// with an "Add to Cart" button. We can ignore that in nested forms. We should also check for the style
 				// attribute on the element to ensure that conditional paging functions in those scenarios.
 				var isWooCommercePage = typeof window.jQuery.fn.wc_gravity_form === 'function';
-				if ( $button.css( 'display' ) !== 'none' || ( isWooCommercePage && $button[0].style.display === '' ) ) {
+				if ( $button[0].style.display !== 'none' || ( isWooCommercePage && $button[0].style.display === '' ) ) {
 
 					var useModalTitleText = ( $button.attr( 'type' ) === 'submit' || $button.attr( 'type' ) === 'image' ),
 						label             = useModalTitleText ? self.getModalTitle() : $button.val(),
@@ -373,10 +415,6 @@
 			return self.mode ? self.mode : 'add';
 		};
 
-		self.getModalTitle = function() {
-			return self.getMode() === 'add' ? self.modalTitle : self.editModalTitle;
-		};
-
 		self.stashFormData = function() {
 			self.formData = self.$modal.find( 'form' ).serialize();
 		};
@@ -438,14 +476,14 @@
 
 		self.refreshMarkup = function() {
 
-			$.post( self.ajaxUrl, {
+			return $.post( self.ajaxUrl, {
 				action: 'gpnf_refresh_markup',
 				nonce: GPNFData.nonces.refreshMarkup,
 				gpnf_parent_form_id: self.formId,
 				gpnf_nested_form_field_id: self.fieldId
-				}, function( response ) {
-					self.formHtml = response;
-				} );
+			}, function( response ) {
+				self.formHtml = response;
+			} );
 
 		};
 
@@ -544,27 +582,12 @@
 
 		self.getFormHtml = function() {
 
-			// Destroy any datepickers in our modal. They will be reinitialized when the modal is loaded.
-			// Fixes an issue when editing a Nested Form field on the frontend via Gravity Flow.
-			// See: https://secure.helpscout.net/conversation/1074300269/15718/
-			var $datepickers = self.$modalSource.find( '.datepicker' );
-			if ( $datepickers.length && typeof $datepickers.datpicker !== 'undefined' ) {
-				self.$modalSource.find( '.datepicker' ).datepicker( 'destroy' );
+			if (self.formHtml) {
+				return $.when(self.formHtml);
 			}
 
-			// check stash for HTML first, required for AJAX-enabled parent forms
-			var formHtml = self.$modalSource.data( 'formHtml' );
-			if ( ! formHtml ) {
-				formHtml = self.$modalSource.html();
-			}
+			return self.refreshMarkup();
 
-			// stash for AJAX-enabled parent forms
-			self.$modalSource.data( 'formHtml', formHtml );
-
-			// clear the existing markup to prevent tabindex and script conflicts from multiple IDs existing in the same DOM
-			self.$modalSource.html( '' );
-
-			return formHtml;
 		};
 
 		self.initFormScripts = function( currentPage ) {
@@ -698,7 +721,7 @@
 				var currentValue = $( this ).val();
 
 				if ( currentValue != value ) {
-					$( this ).val( value ).change();
+					$( this ).val( value ).change().trigger("chosen:updated");
 				}
 
 				$( this ).on( 'change', function ( event ) {
@@ -892,47 +915,6 @@
 		self.duplicateEntry = function( item, event ) {
 			gpnf.duplicateEntry( item.id, $( event.target ) );
 		}
-
-	};
-
-	/**
-	 * Event Handler
-	 *
-	 * GPNF outputs all inline scripts to the footer for the Nested Form. This means that scripts binding directly to
-	 * the document gform_post_render event will trigger before GF's default gform_post_render function which handles
-	 * setting various form data (i.e. conditional logic, number formats). If those scripts are using that data it will
-	 * generate errors since that data has not yet been defined.
-	 *
-	 * Our first attempt at solving this involved using $._data() to prioritize our namespaced gform_post_render functions.
-	 * This proved to be unreliable (though I'd be willing to revisit).
-	 *
-	 * Our current solution is the Event Handler. We bind to gform_post_render as early as possible (see
-	 * GP_Nested_Forms::handle_event_handler()) and call our gpnfEventHandler(). This function will
-	 * a) get an array of all of our namespaced gform_post_render.gpnf bindings
-	 * b) unbind them, and
-	 * c) call them any time this function is called.
-	 *
-	 * To recreate, enable the Gravity Forms Dependency Fields add-on on a nested form and disable this function.
-	 */
-	window.gpnfEventHandler = function( event, formId, currentPage ) {
-
-		if ( typeof window.gpnfEvents == 'undefined' ) {
-			window.gpnfEvents = [];
-		}
-
-		if ( window.gpnfEvents.length == 0 ) {
-			var events = $._data( document ).events.gform_post_render;
-			$.each( events, function( index, event ) {
-				if ( event.namespace == 'gpnf' ) {
-					window.gpnfEvents.push( event.handler );
-				}
-			} );
-			$( document ).off( 'gform_post_render.gpnf' );
-		}
-
-		$.each( window.gpnfEvents, function( index, event ) {
-			event( event, formId, currentPage );
-		} );
 
 	};
 

@@ -11,11 +11,12 @@
  * Feature: Engagement
  * Additional Search Queries: statistics, tracking, analytics, views, traffic, stats
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 use Automattic\Jetpack\Tracking;
 use Automattic\Jetpack\Connection\Client;
+use Automattic\Jetpack\Connection\Manager as Connection_Manager;
 use Automattic\Jetpack\Connection\XMLRPC_Async_Call;
 use Automattic\Jetpack\Redirect;
 use Automattic\Jetpack\Status;
@@ -194,6 +195,7 @@ function stats_template_redirect() {
 	}
 
 	add_action( 'wp_footer', 'stats_footer', 101 );
+	add_action( 'web_stories_print_analytics', 'stats_footer' );
 
 }
 
@@ -259,8 +261,8 @@ function stats_render_footer( $data ) {
 	$data_stats_array = stats_array( $data );
 
 	$stats_footer = <<<END
-<script type='text/javascript' src='{$script}' async='async' defer='defer'></script>
-<script type='text/javascript'>
+<script src='{$script}' defer></script>
+<script>
 	_stq = window._stq || [];
 	_stq.push([ 'view', {{$data_stats_array}} ]);
 	_stq.push([ 'clickTrackerInit', '{$data['blog']}', '{$data['post']}' ]);
@@ -1101,59 +1103,22 @@ function stats_dashboard_widget_control() {
  * @return void
  */
 function stats_jetpack_dashboard_widget() {
-?>
+	?>
 	<form id="stats_dashboard_widget_control" action="<?php echo esc_url( admin_url() ); ?>" method="post">
 		<?php stats_dashboard_widget_control(); ?>
 		<?php wp_nonce_field( 'edit-dashboard-widget_dashboard_stats', 'dashboard-widget-nonce' ); ?>
 		<input type="hidden" name="widget_id" value="dashboard_stats" />
 		<?php submit_button( __( 'Submit', 'jetpack' ) ); ?>
 	</form>
-	<span class="js-toggle-stats_dashboard_widget_control">
-		<?php esc_html_e( 'Configure', 'jetpack' ); ?>
-	</span>
+	<button type="button" class="handlediv js-toggle-stats_dashboard_widget_control" aria-expanded="true">
+		<span class="screen-reader-text"><?php esc_html_e( 'Configure', 'jetpack' ); ?></span>
+		<span class="toggle-indicator" aria-hidden="true"></span>
+	</button>
 	<div id="dashboard_stats">
 		<div class="inside">
 			<div style="height: 250px;"></div>
 		</div>
 	</div>
-	<script>
-		jQuery(document).ready(function($){
-			var $toggle = $('.js-toggle-stats_dashboard_widget_control');
-
-			$toggle.parent().prev().append( $toggle );
-			$toggle.show().click(function(e){
-				e.preventDefault();
-				e.stopImmediatePropagation();
-				$(this).parent().toggleClass('controlVisible');
-				$('#stats_dashboard_widget_control').slideToggle();
-			});
-		});
-	</script>
-	<style>
-		.js-toggle-stats_dashboard_widget_control {
-			display: none;
-			float: right;
-			margin-top: 0.2em;
-			font-weight: 400;
-			color: #444;
-			font-size: .8em;
-			text-decoration: underline;
-			cursor: pointer;
-		}
-		#stats_dashboard_widget_control {
-			display: none;
-			padding: 0 10px;
-			overflow: hidden;
-		}
-		#stats_dashboard_widget_control .button-primary {
-			float: right;
-		}
-		#dashboard_stats {
-			box-sizing: border-box;
-			width: 100%;
-			padding: 0 10px;
-		}
-	</style>
 	<?php
 }
 
@@ -1173,7 +1138,8 @@ function stats_register_widget_control_callback() {
  * @access public
  * @return void
  */
-function stats_dashboard_head() { ?>
+function stats_dashboard_head() {
+	?>
 <script type="text/javascript">
 /* <![CDATA[ */
 jQuery( function($) {
@@ -1202,82 +1168,25 @@ jQuery( function($) {
 	jQuery( window ).one( 'resize', function() {
 		jQuery( '#stat-chart' ).css( 'width', 'auto' );
 	} );
+
+
+	// Widget settings toggle container.
+	var toggle = $( '.js-toggle-stats_dashboard_widget_control' );
+
+	// Move the toggle in the widget header.
+	toggle.appendTo( '#jetpack_summary_widget .handle-actions' );
+
+	// Toggle settings when clicking on it.
+	toggle.show().click( function( e ) {
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		$( this ).parent().toggleClass( 'controlVisible' );
+		$( '#stats_dashboard_widget_control' ).slideToggle();
+	} );
 } );
 /* ]]> */
 </script>
-<style type="text/css">
-/* <![CDATA[ */
-#stat-chart {
-	background: none !important;
-}
-#dashboard_stats .inside {
-	margin: 10px 0 0 0 !important;
-}
-#dashboard_stats #stats-graph {
-	margin: 0;
-}
-#stats-info {
-	border-top: 1px solid #dfdfdf;
-	margin: 7px -10px 0 -10px;
-	padding: 10px;
-	background: #fcfcfc;
-	-moz-box-shadow:inset 0 1px 0 #fff;
-	-webkit-box-shadow:inset 0 1px 0 #fff;
-	box-shadow:inset 0 1px 0 #fff;
-	overflow: hidden;
-	border-radius: 0 0 2px 2px;
-	-webkit-border-radius: 0 0 2px 2px;
-	-moz-border-radius: 0 0 2px 2px;
-	-khtml-border-radius: 0 0 2px 2px;
-}
-#stats-info #top-posts, #stats-info #top-search {
-	float: left;
-	width: 50%;
-}
-#stats-info #top-posts {
-	padding-right: 3%;
-}
-#top-posts .stats-section-inner p {
-	white-space: nowrap;
-	overflow: hidden;
-}
-#top-posts .stats-section-inner p a {
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-#stats-info div#active {
-	border-top: 1px solid #dfdfdf;
-	margin: 0 -10px;
-	padding: 10px 10px 0 10px;
-	-moz-box-shadow:inset 0 1px 0 #fff;
-	-webkit-box-shadow:inset 0 1px 0 #fff;
-	box-shadow:inset 0 1px 0 #fff;
-	overflow: hidden;
-}
-#top-search p {
-	color: #999;
-}
-#stats-info h3 {
-	font-size: 1em;
-	margin: 0 0 .5em 0 !important;
-}
-#stats-info p {
-	margin: 0 0 .25em;
-	color: #999;
-}
-#stats-info p.widget-loading {
-	margin: 1em 0 0;
-	color: #333;
-}
-#stats-info p a {
-	display: block;
-}
-#stats-info p a.button {
-	display: inline;
-}
-/* ]]> */
-</style>
-<?php
+	<?php
 }
 
 /**
@@ -1700,7 +1609,7 @@ function jetpack_stats_load_admin_css() {
  * @return mixed
  */
 function jetpack_stats_post_table( $columns ) { // Adds a stats link on the edit posts page
-	if ( ! current_user_can( 'view_stats' ) || ! Jetpack::is_user_connected() ) {
+	if ( ! current_user_can( 'view_stats' ) || ! ( new Connection_Manager( 'jetpack' ) )->is_user_connected() ) {
 		return $columns;
 	}
 	// Array-Fu to add before comments

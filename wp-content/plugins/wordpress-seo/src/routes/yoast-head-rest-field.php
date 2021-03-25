@@ -4,6 +4,7 @@ namespace Yoast\WP\SEO\Routes;
 
 use Yoast\WP\SEO\Actions\Indexables\Indexable_Head_Action;
 use Yoast\WP\SEO\Conditionals\Headless_Rest_Endpoints_Enabled_Conditional;
+use Yoast\WP\SEO\Helpers\Post_Helper;
 use Yoast\WP\SEO\Helpers\Post_Type_Helper;
 use Yoast\WP\SEO\Helpers\Taxonomy_Helper;
 
@@ -37,6 +38,13 @@ class Yoast_Head_REST_Field implements Route_Interface {
 	protected $taxonomy_helper;
 
 	/**
+	 * The post helper.
+	 *
+	 * @var Post_Helper
+	 */
+	protected $post_helper;
+
+	/**
 	 * The head action.
 	 *
 	 * @var Indexable_Head_Action
@@ -44,7 +52,9 @@ class Yoast_Head_REST_Field implements Route_Interface {
 	protected $head_action;
 
 	/**
-	 * @inheritDoc
+	 * Returns the conditionals based in which this loadable should be active.
+	 *
+	 * @return array
 	 */
 	public static function get_conditionals() {
 		return [ Headless_Rest_Endpoints_Enabled_Conditional::class ];
@@ -55,20 +65,25 @@ class Yoast_Head_REST_Field implements Route_Interface {
 	 *
 	 * @param Post_Type_Helper      $post_type_helper The post type helper.
 	 * @param Taxonomy_Helper       $taxonomy_helper  The taxonomy helper.
+	 * @param Post_Helper           $post_helper      The post helper.
 	 * @param Indexable_Head_Action $head_action      The head action.
 	 */
 	public function __construct(
 		Post_Type_Helper $post_type_helper,
 		Taxonomy_Helper $taxonomy_helper,
+		Post_Helper $post_helper,
 		Indexable_Head_Action $head_action
 	) {
 		$this->post_type_helper = $post_type_helper;
 		$this->taxonomy_helper  = $taxonomy_helper;
+		$this->post_helper      = $post_helper;
 		$this->head_action      = $head_action;
 	}
 
 	/**
-	 * @inheritDoc
+	 * Registers routes with WordPress.
+	 *
+	 * @return void
 	 */
 	public function register_routes() {
 		$public_post_types = $this->post_type_helper->get_public_post_types();
@@ -99,6 +114,13 @@ class Yoast_Head_REST_Field implements Route_Interface {
 	 * @return string The head.
 	 */
 	public function for_post( $params ) {
+		if ( ! isset( $params['id'] ) ) {
+			return null;
+		}
+
+		if ( ! $this->post_helper->is_post_indexable( $params['id'] ) ) {
+			return null;
+		}
 		$obj = $this->head_action->for_post( $params['id'] );
 
 		if ( $obj->status === 404 ) {

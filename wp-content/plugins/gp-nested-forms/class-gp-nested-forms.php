@@ -105,7 +105,6 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_filter( 'gform_custom_merge_tags', array( $this, 'add_nested_form_field_total_merge_tag' ), 10, 4 );
 
 		// Handle parent form.
-		add_filter( 'gform_get_form_filter', array( $this, 'handle_event_handler' ), 10, 2 );
 		add_action( 'gform_register_init_scripts', array( $this, 'register_all_form_init_scripts' ) );
 		add_action( 'gform_entry_created', array( $this, 'handle_parent_submission' ), 10, 2 );
 		add_action( 'gform_after_update_entry', array( $this, 'handle_parent_update_entry' ), 10, 2 );
@@ -142,9 +141,18 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		add_filter( 'gform_enqueue_scripts', array( $this, 'enqueue_child_form_scripts' ) );
 
+		add_filter( 'gform_field_input', array( $this, 'rerender_signature_field_on_edit' ), 10, 5 );
+
 		// Make single entry label and plural entry label translatable via WPML.
 		add_filter( 'gform_multilingual_field_keys', array( $this, 'wpml_translate_entry_labels' ) );
 
+		// Clear form's nested entries if save and continue is used (migrated from snippet library)
+		add_action( 'gform_post_process', function( $form ) {
+			if ( rgpost( 'gform_save' ) && class_exists( 'GPNF_Session' ) ) {
+				$session = new GPNF_Session( $form['id'] );
+				$session->delete_cookie();
+			}
+		} );
 	}
 
 	public function init_admin() {
@@ -762,6 +770,10 @@ class GP_Nested_Forms extends GP_Plugin {
 	 */
 	public function enqueue_child_form_scripts( $form ) {
 
+		if ( empty( $form['fields'] ) || ! is_array( $form['fields'] ) ) {
+			return;
+		}
+
 		foreach ( $form['fields'] as $field ) {
 
 			if ( $field->type !== 'form' ) {
@@ -771,7 +783,7 @@ class GP_Nested_Forms extends GP_Plugin {
 			$nested_form_id = rgar( $field, 'gpnfForm' );
 			$nested_form    = $this->get_nested_form( $nested_form_id );
 
-			if ( $nested_form['fields'] ) {
+			if ( rgar( $nested_form, 'fields' ) ) {
 				GFFormDisplay::enqueue_form_scripts( $nested_form, true );
 			}
 		}
@@ -818,13 +830,32 @@ class GP_Nested_Forms extends GP_Plugin {
 
 			<div class="gpnf-nested-form gpnf-nested-form-<?php echo $form['id']; ?>-<?php echo $field['id']; ?>" style="display:none;">
 				<?php
+				if ( $this->use_jquery_ui_dialog() ) {
+					$this->load_nested_form_hooks( $nested_form_id, $form['id'] );
 
-				$this->load_nested_form_hooks( $nested_form_id, $form['id'] );
+					gravity_form( $nested_form_id, false, true, $this->is_preview(), $this->get_stashed_shortcode_field_values( $form['id'] ), true, 99999 );
 
-				gravity_form( $nested_form_id, false, true, $this->is_preview(), $this->get_stashed_shortcode_field_values( $form['id'] ), true, 99999 );
+					$this->unload_nested_form_hooks( $nested_form_id, $form );
+				} else {
+					/**
+					 * Preload the form but do not echo it out. This is important for making sure all CSS/JS gets
+					 * enqueued if enqueueing logic during the form.
+					 *
+					 * This addition was necessary for compatibility with GP Populate Anything's Live Merge Tags.
+					 *
+					 * @param boolean  $value Whether or not to pre-load (but not echo to document) the form.
+					 * @param array    $form  The current form.
+					 * @since 1.0-beta-9.4
+					 */
+					if ( gf_apply_filters( array( 'gpnf_preload_form', $form['id'] ), true, $form ) ) {
+						add_filter( 'gform_init_scripts_footer', '__return_false', 123 );
+						/* Ensure that the last param ($echo) is false so it does not get rendered out. */
+						gravity_form( $nested_form_id, false, true, $this->is_preview(), $this->get_stashed_shortcode_field_values( $form['id'] ), true, 99999, false );
+						remove_filter( 'gform_init_scripts_footer', '__return_false', 123 );
+					}
 
-				$this->unload_nested_form_hooks( $nested_form_id, $form );
-
+					echo '<!-- Loaded dynamically via AJAX -->';
+				}
 				?>
 			</div>
 
@@ -995,6 +1026,11 @@ class GP_Nested_Forms extends GP_Plugin {
 			die( __( 'Oops! You don\'t have permission to edit this entry.', 'gp-nested-forms' ) );
 		}
 
+		/**
+		 * Needed for rehydrating Signature Field
+		 */
+		$GLOBALS['gpnf_current_edit_entry'] = $entry;
+
 		ob_start();
 
 		add_filter( 'gform_pre_render_' . $form_id, array( $this, 'prepare_form_for_population' ) );
@@ -1002,11 +1038,21 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_filter( 'gwlc_is_edit_view', '__return_true' );
 		add_filter( 'gwlc_selected_values', array( $this, 'set_gwlc_selected_values' ), 20, 2 );
 
+		add_filter( 'gform_get_form_filter_' . $form_id, array( $this, 'replace_post_render_trigger' ), 10, 2 );
+		add_filter( 'gform_footer_init_scripts_filter_' . $form_id, array( $this, 'replace_post_render_trigger' ), 10, 2 );
+
 		$this->get_parent_form_id();
 		add_filter( 'gform_form_tag', array( $this, 'add_nested_inputs' ), 10, 2 );
 		add_filter( 'gform_field_value', array( $this, 'populate_field_from_session_cookie' ), 10, 3 );
 
 		gravity_form( $form_id, false, false, false, $this->prepare_entry_for_population( $entry ), true, 9999 );
+
+		/**
+		 * footer_init_scripts does not run by default if explicitly loading the form with AJAX enabled in GF >2.5.
+		 */
+		if ( $this->is_gf_version_gte( '2.5-beta-1' ) ) {
+			GFFormDisplay::footer_init_scripts( $form_id );
+		}
 
 		$markup = trim( ob_get_clean() );
 		wp_send_json( $markup );
@@ -1041,6 +1087,13 @@ class GP_Nested_Forms extends GP_Plugin {
 		$_POST = array();
 
 		gravity_form( $nested_form_id, false, true, true, $field_values, true, 99999 );
+
+		/**
+		 * footer_init_scripts does not run by default if explicitly loading the form with AJAX enabled in GF >2.5.
+		 */
+		if ( $this->is_gf_version_gte( '2.5-beta-1' ) ) {
+			GFFormDisplay::footer_init_scripts( $nested_form_id );
+		}
 
 		$this->unload_nested_form_hooks( '', $nested_form_id );
 
@@ -1197,7 +1250,7 @@ class GP_Nested_Forms extends GP_Plugin {
 
 	public function parse_modifier( $modifier, $modifiers ) {
 		$modifiers = $this->parse_modifiers( $modifiers );
-		return rgar( $modifiers, $modifier );
+		return rgar( $modifiers, $modifier, false );
 	}
 
 	/**
@@ -1653,8 +1706,11 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_filter( 'gform_form_tag', array( $this, 'add_nested_inputs' ), 10, 2 );
 		add_filter( 'gform_pre_render', array( $this, 'remove_extra_other_choices' ) );
 
-		// Force scripts to load in the footer so that they are not reincluded in the fetched form markup.
-		add_filter( 'gform_init_scripts_footer', '__return_true', 11 );
+		if ( $this->use_jquery_ui_dialog() ) {
+			// Force scripts to load in the footer so that they are not reincluded in the fetched form markup.
+			add_filter( 'gform_init_scripts_footer', '__return_true', 11 );
+		}
+
 		add_filter( 'gform_get_form_filter_' . $form_id, array( $this, 'replace_post_render_trigger' ), 10, 2 );
 		add_filter( 'gform_footer_init_scripts_filter_' . $form_id, array( $this, 'replace_post_render_trigger' ), 10, 2 );
 
@@ -1721,8 +1777,11 @@ class GP_Nested_Forms extends GP_Plugin {
 
 	public function unload_nested_form_hooks( $form_string, $form_or_id ) {
 
+		if ( $this->use_jquery_ui_dialog() ) {
+			remove_filter( 'gform_init_scripts_footer', '__return_true', 11 );
+		}
+
 		remove_filter( 'gform_form_tag', array( $this, 'add_nested_inputs' ) );
-		remove_filter( 'gform_init_scripts_footer', '__return_true', 11 );
 		remove_filter( 'gform_pre_render', array( $this, 'remove_extra_other_choices' ) );
 
 		do_action( 'gpnf_unload_nested_form_hooks', rgar( $form_or_id, 'id', $form_or_id ), $this->parent_form_id );
@@ -1736,43 +1795,15 @@ class GP_Nested_Forms extends GP_Plugin {
 		$form_html = preg_replace( '/trigger\([ ]*[\'"]gform_post_render[\'"]/', "trigger('gpnf_post_render'", $form_html );
 		// Used by event handler functionality to target nested form post render events and prioritize them.
 		$form_html = preg_replace( '/bind\([ ]*[\'"]gform_post_render[\'"]/', "bind('gform_post_render.gpnf'", $form_html );
+		if ( ! $this->use_jquery_ui_dialog() ) {
+			$form_html = preg_replace( '/<script.*gformInitSpinner.*?<\/script>/', '<!-- GPNF removes GF\'s default <iframe> script; replacing it with its own in gp-nested-form.js. -->', $form_html );
+		}
 		return $form_html;
 	}
 
-	public function handle_event_handler( $markup, $form ) {
-
-		if ( ! $this->has_nested_form_field( $form, true ) ) {
-			return $markup;
-		}
-
-		$is_ajax = strpos( $markup, 'GF_AJAX_POSTBACK' ) !== false;
-
-		if ( apply_filters( 'gform_init_scripts_footer', false ) && ! has_action( 'wp_footer', array( __CLASS__, 'output_event_handler' ) ) ) {
-			add_action( 'wp_footer', array( __CLASS__, 'output_event_handler' ) );
-			add_action( 'gform_preview_footer', array( __CLASS__, 'output_event_handler' ) );
-			add_action( 'admin_footer', array( __CLASS__, 'output_event_handler' ) );
-		} elseif ( ! $is_ajax ) {
-			$script = self::output_event_handler( false );
-			$markup = $script . $markup;
-		}
-
-		return $markup;
-	}
-
 	public function handle_nested_form_field_value( $value, $entry, $field ) {
-		global $wpdb;
 
-		// Honor the submitted value.
-		// Note: with this change, the conditional below (for the WCGF Product plugin) may no longer be necessary...
-		if ( $this->is_form_submission() ) {
-			return $value;
-		}
-
-		// Only process for Nested Form fields and when we're working with a "real" entry.
-		// The latter check resolves a conflict with Preview Submission where an empty entry ID returned erroneous child entries.
-		// The Code Canyon WCGF Product plugin uses randomly generated alphanumeric entry IDs for some reason. Let's ignore these entries.
-		// 	@see https://secure.helpscout.net/conversation/956639062/13730?folderId=14965
-		if ( ! is_a( $field, 'GF_Field' ) || $field->type !== 'form' || ! $entry['id'] || ! is_numeric( $entry['id'] ) ) {
+		if ( $this->should_use_static_value( $field, $entry ) ) {
 			return $value;
 		}
 
@@ -1788,7 +1819,13 @@ class GP_Nested_Forms extends GP_Plugin {
 		$child_entries = GFAPI::get_entries(
 			$field->gpnfForm,
 			array(
-				'status'        => 'active',
+				/*
+				 * When a parent entry is trashed, its child entries are also trashed. When a parent entry is restored,
+				 * we should also restore its child entries. To support this, fetch child entries based on the status
+				 * of the parent entry. We will likely need to improve this logic when we add support for more types of
+				 * relationships between parent and child entries.
+				 */
+				'status'        => $entry['status'] === 'trash' ? 'trash' : 'active',
 				'field_filters' => array(
 					'mode' => 'all',
 					array(
@@ -1819,6 +1856,36 @@ class GP_Nested_Forms extends GP_Plugin {
 		return $value;
 	}
 
+	public function should_use_static_value( $field, $entry ) {
+
+		// Honor the submitted value.
+		// Note: with this change, the conditional below (for the WCGF Product plugin) may no longer be necessary...
+		if ( $this->is_form_submission() ) {
+			return true;
+		}
+
+		// Only process for Nested Form fields and when we're working with a "real" entry.
+		// The latter check resolves a conflict with Preview Submission where an empty entry ID returned erroneous child entries.
+		// The Code Canyon WCGF Product plugin uses randomly generated alphanumeric entry IDs for some reason. Let's ignore these entries.
+		// 	@see https://secure.helpscout.net/conversation/956639062/13730?folderId=14965
+		if ( ! is_a( $field, 'GP_Field_Nested_Form' ) || ! $entry['id'] || ! is_numeric( $entry['id'] ) ) {
+			return true;
+		}
+
+		/**
+		 * Filter whether the current Nested Form field's value should be fetched dynamically from the database or left as is.
+		 *
+		 * @param bool                  $should_use_static_value Should the field's value be static?
+		 * @param \GP_Field_Nested_Form $field                   The current Nested Form field.
+		 * @param array                 $entry                   The current entry.
+		 *
+		 * @since 1.0-beta-8.80
+		 */
+		$should_use_static_value = gf_apply_filters( array( 'gpnf_should_use_static_value', $field->formId, $field->id ), false, $field, $entry );
+
+		return $should_use_static_value;
+	}
+
 	public static function get_child_entry_max() {
 		/**
 		 * Filter the maximum number of child entries accepted in a Nested Form field.
@@ -1830,17 +1897,6 @@ class GP_Nested_Forms extends GP_Plugin {
 		 * @param int $child_entry_max The maximum number of child entries accepted in a Nested Form field.
 		 */
 		return apply_filters( 'gpnf_child_entry_max', 99 );
-	}
-
-	public static function output_event_handler( $echo = true ) {
-
-		$script = '<script> jQuery( document ).on( "gform_post_render", function( event, formId, currentPage ) { gpnfEventHandler( event, formId, currentPage ); } ); </script>';
-
-		if ( $echo ) {
-			echo $script;
-		}
-
-		return $script;
 	}
 
 	public function register_all_form_init_scripts( $form ) {
@@ -1893,6 +1949,7 @@ class GP_Nested_Forms extends GP_Plugin {
 				'modalWidth'          => 700,
 				'modalHeight'         => 'auto',
 				'hasConditionalLogic' => GFFormDisplay::has_conditional_logic( $nested_form ),
+				'isGF25'              => $this->is_gf_version_gte( '2.5-beta-1' ),
 			);
 
 			// Backwards compatibility for deprecated "modalTitle" option.
@@ -2701,6 +2758,39 @@ class GP_Nested_Forms extends GP_Plugin {
 		$field_keys[] = 'gpnfEntryLabelSingular';
 		$field_keys[] = 'gpnfEntryLabelPlural';
 		return $field_keys;
+	}
+
+	/**
+	 * Re-render the Signature field when editing Nested Entries with the value of the entry being edited.
+	 *
+	 * Ticket #22155
+	 */
+	public function rerender_signature_field_on_edit( $markup, $field, $value, $entry_id, $form_id ) {
+		static $_processing;
+
+		if ( $field->type !== 'signature' ) {
+			return $markup;
+		}
+
+		/**
+		 * Prevent recursion
+		 */
+		if ( $_processing === true ) {
+			return $markup;
+		}
+
+		if ( empty( $GLOBALS['gpnf_current_edit_entry'] ) ) {
+			return $markup;
+		}
+
+		$entry = $GLOBALS['gpnf_current_edit_entry'];
+		$form  = GFAPI::get_form( $form_id );
+
+		$_processing = true;
+		$markup      = GFCommon::get_field_input( $field, rgar( $entry, $field->id ), $entry_id, $form_id, $form );
+		$_processing = false;
+
+		return $markup;
 	}
 
 	public function is_preview() {

@@ -29,26 +29,26 @@ if (!class_exists('GFCPTAddon1_5')) {
         /*
          * Override. Gets the post type from our new field value
          */
-        function get_field_post_type( $field ) {
-          if (array_key_exists('populatePostType', $field)) {
-            return $field['populatePostType'];
-          } else {
-            return false;
-          }
-        }
+	    function get_field_post_type( $field ) {
+		    if ( isset( $field->populatePostType ) ) {
+			    return $field->populatePostType;
+		    }
+
+		    return false;
+	    }
 
         /*
          * Override. Gets the taxonomy from our new field value
          */
-        function get_field_taxonomy( $field ) {
-          if (array_key_exists('populateTaxonomy', $field)) {
-            return $field['populateTaxonomy'];
-          } else if (array_key_exists('saveToTaxonomy', $field)) {
-            return $field['saveToTaxonomy'];
-          } else {
-            return false;
-          }
-        }
+	    function get_field_taxonomy( $field ) {
+		    if ( isset( $field->populateTaxonomy ) ) {
+			    return $field->populateTaxonomy;
+		    } elseif ( isset( $field->populateTaxonomy ) ) {
+			    return $field->populateTaxonomy;
+		    }
+
+		    return false;
+	    }
 
         /*
          * Override. Gets the custom post type from the post title field value

@@ -2,9 +2,8 @@
 /**
  * Jetpack Twitter Card handling.
  *
- * @package Jetpack.
+ * @package automattic/jetpack
  */
-
 
 /**
  * Twitter Cards

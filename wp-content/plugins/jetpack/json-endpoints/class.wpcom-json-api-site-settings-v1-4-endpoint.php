@@ -65,15 +65,14 @@ new WPCOM_JSON_API_Site_Settings_V1_4_Endpoint( array(
 		'social_notifications_reblog'             => '(bool) Email me when someone reblogs my post?',
 		'social_notifications_subscribe'          => '(bool) Email me when someone follows my blog?',
 		'comment_moderation'                      => '(bool) Moderate comments for manual approval?',
-		'comment_whitelist'                       => '(bool) Moderate comments unless author has a previously-approved comment?', // Now deprecated. Replaced by comment_previously_approved https://wp.me/p2AvED-lv6 Remove when minimum required is WordPress 5.5.
 		'comment_previously_approved'             => '(bool) Moderate comments unless author has a previously-approved comment?',
 		'comment_max_links'                       => '(int) Moderate comments that contain X or more links',
 		'moderation_keys'                         => '(string) Words or phrases that trigger comment moderation, one per line',
-		'blacklist_keys'                          => '(string) Words or phrases that mark comment spam, one per line', // Now deprecated. Replaced by disallowed_keys https://wp.me/p2AvED-lv6 Remove when minimum required is WordPress 5.5.
 		'disallowed_keys'                         => '(string) Words or phrases that mark comment spam, one per line',
 		'lang_id'                                 => '(int) ID for language blog is written in',
 		'locale'                                  => '(string) locale code for language blog is written in',
 		'wga'                                     => '(array) Google Analytics Settings',
+		'jetpack_cloudflare_analytics'            => '(array) Cloudflare Analytics Settings',
 		'disabled_likes'                          => '(bool) Are likes globally disabled (they can still be turned on per post)?',
 		'disabled_reblogs'                        => '(bool) Are reblogs disabled on posts?',
 		'jetpack_comment_likes_enabled'           => '(bool) Are comment likes enabled for all comments?',

@@ -1,9 +1,10 @@
 <?php
 use Automattic\Jetpack\Constants;
+use Automattic\Jetpack\Connection\Manager as Connection_Manager;
 use Automattic\Jetpack\Connection\REST_Connector;
 use Automattic\Jetpack\Licensing;
-use Automattic\Jetpack\Status;
 use Automattic\Jetpack\Partner;
+use Automattic\Jetpack\Status;
 
 include_once( 'class.jetpack-admin-page.php' );
 
@@ -16,16 +17,12 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 
 	function get_page_hook() {
 		// Add the main admin Jetpack menu
-		return add_menu_page( 'Jetpack', 'Jetpack', 'jetpack_admin_page', 'jetpack', array( $this, 'render' ), 'div' );
+		return add_menu_page( 'Jetpack', 'Jetpack', 'jetpack_admin_page', 'jetpack', array( $this, 'render' ), 'div', 3 );
 	}
 
 	function add_page_actions( $hook ) {
 		/** This action is documented in class.jetpack.php */
 		do_action( 'jetpack_admin_menu', $hook );
-
-		// Place the Jetpack menu item on top and others in the order they appear
-		add_filter( 'custom_menu_order',         '__return_true' );
-		add_filter( 'menu_order',                array( $this, 'jetpack_menu_order' ) );
 
 		if ( ! isset( $_GET['page'] ) || 'jetpack' !== $_GET['page'] ) {
 			return; // No need to handle the fallback redirection if we are not on the Jetpack page
@@ -50,16 +47,6 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 	}
 
 	/**
-	 * Add Jetpack Setup sub-link for eligible users
-	 */
-	function jetpack_add_set_up_sub_nav_item() {
-		if ( $this->show_setup_wizard() ) {
-			global $submenu;
-			$submenu['jetpack'][] = array( __( 'Set up', 'jetpack' ), 'jetpack_admin_page', 'admin.php?page=jetpack#/setup' );
-		}
-	}
-
-	/**
 	 * Add Jetpack Dashboard sub-link and point it to AAG if the user can view stats, manage modules or if Protect is active.
 	 *
 	 * Works in Dev Mode or when user is connected.
@@ -68,10 +55,8 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 	 */
 	function jetpack_add_dashboard_sub_nav_item() {
 		if ( ( new Status() )->is_offline_mode() || Jetpack::is_active() ) {
-			global $submenu;
-			if ( current_user_can( 'jetpack_admin_page' ) ) {
-				$submenu['jetpack'][] = array( __( 'Dashboard', 'jetpack' ), 'jetpack_admin_page', 'admin.php?page=jetpack#/dashboard' );
-			}
+			add_submenu_page( 'jetpack', __( 'Dashboard', 'jetpack' ), __( 'Dashboard', 'jetpack' ), 'jetpack_admin_page', 'jetpack#/dashboard', '__return_null' );
+			remove_submenu_page( 'jetpack', 'jetpack' );
 		}
 	}
 
@@ -81,9 +66,8 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 	 * @since 4.3.0
 	 */
 	function jetpack_add_settings_sub_nav_item() {
-		if ( ( ( new Status() )->is_offline_mode() || Jetpack::is_active() ) && current_user_can( 'jetpack_admin_page' ) && current_user_can( 'edit_posts' ) ) {
-			global $submenu;
-			$submenu['jetpack'][] = array( __( 'Settings', 'jetpack' ), 'jetpack_admin_page', 'admin.php?page=jetpack#/settings' );
+		if ( ( ( new Status() )->is_offline_mode() || Jetpack::is_active() ) && current_user_can( 'edit_posts' ) ) {
+			add_submenu_page( 'jetpack', __( 'Settings', 'jetpack' ), __( 'Settings', 'jetpack' ), 'jetpack_admin_page', 'jetpack#/settings', '__return_null' );
 		}
 	}
 
@@ -97,18 +81,17 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 		echo '</noscript>';
 	}
 
+	/**
+	 * Custom menu order.
+	 *
+	 * @deprecated since 9.2.0
+	 * @param array $menu_order Menu order.
+	 * @return array
+	 */
 	function jetpack_menu_order( $menu_order ) {
-		$jp_menu_order = array();
+		_deprecated_function( __METHOD__, 'jetpack-9.2' );
 
-		foreach ( $menu_order as $index => $item ) {
-			if ( $item != 'jetpack' )
-				$jp_menu_order[] = $item;
-
-			if ( $index == 0 )
-				$jp_menu_order[] = 'jetpack';
-		}
-
-		return $jp_menu_order;
+		return $menu_order;
 	}
 
 	function page_render() {
@@ -160,8 +143,9 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 			return; // No need for scripts on a fallback page
 		}
 
-
-		$is_offline_mode     = ( new Status() )->is_offline_mode();
+		$status              = new Status();
+		$is_offline_mode     = $status->is_offline_mode();
+		$site_suffix         = $status->get_site_suffix();
 		$script_deps_path    = JETPACK__PLUGIN_DIR . '_inc/build/admin.asset.php';
 		$script_dependencies = array( 'wp-polyfill' );
 		if ( file_exists( $script_deps_path ) ) {
@@ -189,7 +173,7 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 		wp_add_inline_script( 'react-plugin', 'var Initial_State=JSON.parse(decodeURIComponent("' . rawurlencode( wp_json_encode( $this->get_initial_state() ) ) . '"));', 'before' );
 
 		// This will set the default URL of the jp_redirects lib.
-		wp_add_inline_script( 'react-plugin', 'var jetpack_redirects = { currentSiteRawUrl: "' . Jetpack::build_raw_urls( get_home_url() ) . '" };', 'before' );
+		wp_add_inline_script( 'react-plugin', 'var jetpack_redirects = { currentSiteRawUrl: "' . $site_suffix . '" };', 'before' );
 	}
 
 	function get_initial_state() {
@@ -275,7 +259,7 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 			'currentVersion'              => JETPACK__VERSION,
 			'is_gutenberg_available'      => true,
 			'getModules'                  => $modules,
-			'rawUrl'                      => Jetpack::build_raw_urls( get_home_url() ),
+			'rawUrl'                      => ( new Status() )->get_site_suffix(),
 			'adminUrl'                    => esc_url( admin_url() ),
 			'siteTitle'                   => (string) htmlspecialchars_decode( get_option( 'blogname' ), ENT_QUOTES ),
 			'stats'                       => array(
@@ -310,7 +294,7 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 				'isAtomicSite'               => jetpack_is_atomic_site(),
 				'plan'                       => Jetpack_Plan::get(),
 				'showBackups'                => Jetpack::show_backups_ui(),
-				'showSetupWizard'            => $this->show_setup_wizard(),
+				'showRecommendations'        => Jetpack_Recommendations::is_enabled(),
 				'isMultisite'                => is_multisite(),
 				'dateFormat'                 => get_option( 'date_format' ),
 			),
@@ -333,7 +317,7 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 			'externalServicesConnectUrls' => $this->get_external_services_connect_urls(),
 			'calypsoEnv'                  => Jetpack::get_calypso_env(),
 			'products'                    => Jetpack::get_products_for_purchase(),
-			'setupWizardStatus'           => Jetpack_Options::get_option( 'setup_wizard_status', 'not-started' ),
+			'recommendationsStep'         => Jetpack_Core_Json_Api_Endpoints::get_recommendations_step()['step'],
 			'isSafari'                    => $is_safari,
 			'doNotUseConnectionIframe'    => Constants::is_true( 'JETPACK_SHOULD_NOT_USE_CONNECTION_IFRAME' ),
 			'licensing'                   => array(
@@ -362,16 +346,6 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
 		$core_api_endpoint = new Jetpack_Core_API_Data();
 		$settings = $core_api_endpoint->get_all_options();
 		return $settings->data;
-	}
-
-
-	/**
-	 * Returns a boolean for whether the Setup Wizard should be displayed or not.
-	 *
-	 * @return bool True if the Setup Wizard should be displayed, false otherwise.
-	 */
-	public function show_setup_wizard() {
-		return Jetpack_Wizard::can_be_displayed();
 	}
 
 	/**
@@ -493,9 +467,11 @@ class Jetpack_React_Page extends Jetpack_Admin_Page {
  * @return array
  */
 function jetpack_current_user_data() {
+	$jetpack_connection = new Connection_Manager( 'jetpack' );
+
 	$current_user   = wp_get_current_user();
 	$is_master_user = $current_user->ID == Jetpack_Options::get_option( 'master_user' );
-	$dotcom_data    = Jetpack::get_connected_user_data();
+	$dotcom_data    = $jetpack_connection->get_connected_user_data();
 
 	// Add connected user gravatar to the returned dotcom_data.
 	$dotcom_data['avatar'] = ( ! empty( $dotcom_data['email'] ) ?
@@ -509,7 +485,7 @@ function jetpack_current_user_data() {
 		: false );
 
 	$current_user_data = array(
-		'isConnected' => Jetpack::is_user_connected( $current_user->ID ),
+		'isConnected' => $jetpack_connection->is_user_connected( $current_user->ID ),
 		'isMaster'    => $is_master_user,
 		'username'    => $current_user->user_login,
 		'id'          => $current_user->ID,
@@ -518,6 +494,7 @@ function jetpack_current_user_data() {
 		'permissions' => array(
 			'admin_page'         => current_user_can( 'jetpack_admin_page' ),
 			'connect'            => current_user_can( 'jetpack_connect' ),
+			'connect_user'       => current_user_can( 'jetpack_connect_user' ),
 			'disconnect'         => current_user_can( 'jetpack_disconnect' ),
 			'manage_modules'     => current_user_can( 'jetpack_manage_modules' ),
 			'network_admin'      => current_user_can( 'jetpack_network_admin_page' ),
@@ -525,8 +502,8 @@ function jetpack_current_user_data() {
 			'edit_posts'         => current_user_can( 'edit_posts' ),
 			'publish_posts'      => current_user_can( 'publish_posts' ),
 			'manage_options'     => current_user_can( 'manage_options' ),
-			'view_stats'		 => current_user_can( 'view_stats' ),
-			'manage_plugins'	 => current_user_can( 'install_plugins' )
+			'view_stats'         => current_user_can( 'view_stats' ),
+			'manage_plugins'     => current_user_can( 'install_plugins' )
 									&& current_user_can( 'activate_plugins' )
 									&& current_user_can( 'update_plugins' )
 									&& current_user_can( 'delete_plugins' ),

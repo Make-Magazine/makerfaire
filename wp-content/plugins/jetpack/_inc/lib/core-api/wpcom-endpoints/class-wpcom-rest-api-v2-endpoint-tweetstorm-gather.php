@@ -2,11 +2,9 @@
 /**
  * REST API endpoint for the Gathering Tweetstorms block.
  *
- * @package Jetpack
+ * @package automattic/jetpack
  * @since 8.7.0
  */
-
-use Automattic\Jetpack\Connection\Client;
 
 /**
  * Tweetstorm gatherer.

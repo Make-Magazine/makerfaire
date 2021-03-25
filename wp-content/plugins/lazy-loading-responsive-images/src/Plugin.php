@@ -51,6 +51,13 @@ class Plugin {
 	protected $basename;
 
 	/**
+	 * URL to editor JS file.
+	 *
+	 * @var string
+	 */
+	protected $js_asset_url;
+
+	/**
 	 * Placeholder data uri for img src attributes.
 	 *
 	 * @link https://stackoverflow.com/a/13139830
@@ -130,6 +137,9 @@ class Plugin {
 
 			// Filter markup of gravatars to modify markup for lazy loading.
 			add_filter( 'get_avatar', array( $this, 'filter_markup' ) );
+
+			// Filter markup of wp_get_attachment_image() calls.
+			add_filter( 'wp_get_attachment_image', array( $this, 'filter_markup' ) );
 
 			// Adds lazyload markup and noscript element to post thumbnail.
 			add_filter( 'post_thumbnail_html', array(
@@ -461,11 +471,10 @@ class Plugin {
 		// Set data URI for src attribute.
 		if ( '' !== $img_width && '' !== $img_height ) {
 			// We have image width and height, we can set a inline SVG to prevent content jumps.
-			$svg_placeholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {$img_width} {$img_height}'%3E%3C/svg%3E";
-			$svg_placeholder_srcset = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20{$img_width}%20{$img_height}%22%3E%3C%2Fsvg%3E";
+			$svg_placeholder = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20{$img_width}%20{$img_height}%22%3E%3C%2Fsvg%3E";
 			$img->setAttribute( 'src', $svg_placeholder );
 			if ( $img->hasAttribute( 'srcset' ) ) {
-				$img->setAttribute( 'srcset', "$svg_placeholder_srcset {$img_width}w" );
+				$img->setAttribute( 'srcset', "$svg_placeholder {$img_width}w" );
 			}
 
 			return $dom;
@@ -832,9 +841,13 @@ class Plugin {
 	 */
 	public function enqueue_block_editor_assets() {
 		if ( isset( $_REQUEST['post'] ) && in_array( get_post_type( $_REQUEST['post'] ), $this->settings->get_disable_option_object_types() ) && post_type_supports( get_post_type( $_REQUEST['post'] ), 'custom-fields' ) ) {
-			$file_data  = get_file_data( __FILE__, array( 'v' => 'Version' ) );
-			$assets_url = trailingslashit( plugin_dir_url( __FILE__ ) );
-			wp_enqueue_script( 'lazy-loading-responsive-images-functions', plugins_url( '/lazy-loading-responsive-images/js/functions.js' ), array( 'wp-blocks', 'wp-element', 'wp-edit-post' ), $file_data['v'] );
+			$script_asset_file = require( __DIR__ . '/../js/build/functions.asset.php' );
+			wp_enqueue_script(
+				'lazy-loading-responsive-images-functions',
+				$this->js_asset_url,
+				$script_asset_file['dependencies'],
+				$script_asset_file['version']
+			);
 		}
 	}
 
@@ -852,6 +865,15 @@ class Plugin {
 	 */
 	public function set_basename( $basename ) {
 		$this->basename = $basename;
+	}
+
+	/**
+	 * Sets plugin basename.
+	 *
+	 * @param string $basename The plugin basename.
+	 */
+	public function set_js_asset_url( $js_asset_url ) {
+		$this->js_asset_url = $js_asset_url;
 	}
 
 	/**

@@ -58,6 +58,12 @@ abstract class GP_Plugin extends GFAddOn {
 
 		parent::init();
 
+		/**
+		 * Remove row after Perks in plugins tab that Gravity Forms provides since Gravity Perks already checks
+		 * requirements, license, etc.
+		 */
+		remove_action( 'after_plugin_row_' . $this->get_path(), array( $this, 'plugin_row' ), 10 );
+
 		$this->perk->init();
 
 	}

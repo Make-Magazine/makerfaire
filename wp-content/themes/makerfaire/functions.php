@@ -155,7 +155,7 @@ function set_universal_asset_constants() {
 set_universal_asset_constants();
 
 function load_scripts() {
-
+    wp_enqueue_script("jquery");
     $my_theme = wp_get_theme();
     $my_version = $my_theme->get('Version');
 
@@ -240,6 +240,7 @@ function enqueue_custom_allforms_script($form, $is_ajax) {
 }
 
 add_action('gform_enqueue_scripts', 'enqueue_custom_allforms_script', 10, 2);
+
 
 function load_admin_scripts() {
     $my_theme = wp_get_theme();

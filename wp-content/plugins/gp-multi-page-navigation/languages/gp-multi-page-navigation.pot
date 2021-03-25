@@ -1,4 +1,4 @@
-# Copyright (C) 2020 GP Multi-page Navigation
+# Copyright (C) 2021 GP Multi-page Navigation
 # This file is distributed under the same license as the GP Multi-page Navigation package.
 msgid ""
 msgstr ""
@@ -13,7 +13,7 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../class-gp-multi-page-navigation.php:17, ../class-gp-multi-page-navigation.php:97
+#: ../class-gp-multi-page-navigation.php:17, ../class-gp-multi-page-navigation.php:100
 msgid "Enable Page Navigation"
 msgstr ""
 
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Convert the form's page names into clickable links that allow the user to navigation between the pages of the form."
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:18, ../class-gp-multi-page-navigation.php:103
+#: ../class-gp-multi-page-navigation.php:18, ../class-gp-multi-page-navigation.php:106
 msgid "Activation Type"
 msgstr ""
 
@@ -29,39 +29,39 @@ msgstr ""
 msgid "Specify when the user should be able to navigate between pages and to which pages the user should be able to navigate."
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:105
+#: ../class-gp-multi-page-navigation.php:108
 msgid "User can navigate to any form page"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:107
+#: ../class-gp-multi-page-navigation.php:110
 msgid "they have completed"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:108
+#: ../class-gp-multi-page-navigation.php:111
 msgid "from the start"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:109
+#: ../class-gp-multi-page-navigation.php:112
 msgid "after reaching the last page"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:305
+#: ../class-gp-multi-page-navigation.php:333
 msgid "Back to Last Page"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:306
+#: ../class-gp-multi-page-navigation.php:334
 msgctxt "Option to submit multi-page form after validation error"
 msgid "Submit"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:307
+#: ../class-gp-multi-page-navigation.php:335
 msgid "Next Page with Errors"
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:362
+#: ../class-gp-multi-page-navigation.php:400
 msgid "There are multiple pages with errors."
 msgstr ""
 
-#: ../class-gp-multi-page-navigation.php:363
+#: ../class-gp-multi-page-navigation.php:401
 msgid "You have been redirected to the first page with errors."
 msgstr ""

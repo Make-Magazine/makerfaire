@@ -14,7 +14,7 @@ class GPNF_WC_Product_Addons {
 
 	private function __construct() {
 
-		add_action( 'woocommerce_gravityforms_entry_created', array( $this, 'update_child_entries_parent' ), 10, 5 );
+		add_action( 'woocommerce_gravityforms_entry_created', array( $this, 'update_child_entries_parent' ), 5, 5 );
 
 	}
 

@@ -2,7 +2,7 @@
 /**
  * Jetpack Search Overlay Customization
  *
- * @package jetpack
+ * @package automattic/jetpack
  */
 
 // Exit if file is accessed directly.
@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once dirname( __FILE__ ) . '/class.jetpack-search-helpers.php';
-require_once dirname( __FILE__ ) . '/class-jetpack-search-options.php';
+require_once __DIR__ . '/class.jetpack-search-helpers.php';
+require_once __DIR__ . '/class-jetpack-search-options.php';
 
 /**
  * Class to customize search on the site.
@@ -37,8 +37,8 @@ class Jetpack_Search_Customize {
 	 * @param WP_Customize_Manager $wp_customize Customizer instance.
 	 */
 	public function customize_register( $wp_customize ) {
-		require_once dirname( __FILE__ ) . '/customize-controls/class-label-control.php';
-		require_once dirname( __FILE__ ) . '/customize-controls/class-excluded-post-types-control.php';
+		require_once __DIR__ . '/customize-controls/class-label-control.php';
+		require_once __DIR__ . '/customize-controls/class-excluded-post-types-control.php';
 		$section_id     = 'jetpack_search';
 		$setting_prefix = Jetpack_Search_Options::OPTION_PREFIX;
 
@@ -159,30 +159,6 @@ class Jetpack_Search_Customize {
 				'choices'     => array(
 					'minimal'  => __( 'Minimal', 'jetpack' ),
 					'expanded' => __( 'Expanded', 'jetpack' ),
-				),
-			)
-		);
-
-		$id = $setting_prefix . 'opacity';
-		$wp_customize->add_setting(
-			$id,
-			array(
-				'default'   => 97,
-				'transport' => 'postMessage',
-				'type'      => 'option',
-			)
-		);
-		$wp_customize->add_control(
-			$id,
-			array(
-				'type'        => 'range',
-				'section'     => $section_id,
-				'label'       => __( 'Background Opacity', 'jetpack' ),
-				'description' => __( 'Select an opacity for your search overlay.', 'jetpack' ),
-				'input_attrs' => array(
-					'min'  => 85,
-					'max'  => 100,
-					'step' => 0.5,
 				),
 			)
 		);

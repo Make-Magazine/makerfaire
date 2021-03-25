@@ -5,29 +5,34 @@ add_action('rest_api_init', function () {
     //get faire data such as Meet the Makers and Schedule information based on form id(s)
     register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<formids>[a-z0-9\-]+)', array(
         'methods' => 'GET',
-        'callback' => 'mf_fairedata'
+        'callback' => 'mf_fairedata',
+        'permission_callback' => '__return_true'
     ));
     register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<formids>[a-z0-9\-]+)/(?P<faireid>[a-z0-9\-]+)', array(
         'methods' => 'GET',
-        'callback' => 'mf_fairedata'
+        'callback' => 'mf_fairedata',
+        'permission_callback' => '__return_true'
     ));
 
     //get ribbon information by year
     register_rest_route('makerfaire', '/v2/mfRibbons/(?P<year>[a-z0-9\-]+)', array(
         'methods' => 'GET',
-        'callback' => 'mf_ribbons'
+        'callback' => 'mf_ribbons',
+        'permission_callback' => '__return_true'
     ));
 
     //update an entry
     register_rest_route('makerfaire', '/v2/entry/(?P<type>[a-z0-9\-]+)/(?P<entryid>[a-z0-9\-]+)', array(
         'methods' => 'GET',
-        'callback' => 'mf_updateEntry'
+        'callback' => 'mf_updateEntry',
+        'permission_callback' => '__return_true'
     ));
 
     //makerfaire api for makershare
     register_rest_route('makerfaire', '/v2/mfapi/(?P<type>[a-z0-9\-]+)/(?P<key>[a-z0-9\-]+)', array(
         'methods' => 'GET',
-        'callback' => 'mf_mfapi'
+        'callback' => 'mf_mfapi',
+        'permission_callback' => '__return_true'
     ));
 });
 

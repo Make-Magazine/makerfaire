@@ -1,6 +1,15 @@
 
 # Changelog
 
+## 1.0.10
+
+	- Fixed compatibility issue with GF 2.5 and conditional logic.
+
+## 1.0.9
+
+	- Added support for tracking if the last page is reached for manual page links.
+	- Fixed issue where GP Multi Page Navigation settings would show for every field in the Form Editor.
+
 ## 1.0.8
 
 	- Fixed issue where GF Multi-Page Navigation settings would not show in the Page settings when using Gravity Forms 2.5 or newer.

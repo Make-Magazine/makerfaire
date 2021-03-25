@@ -225,7 +225,7 @@ class GF_REST_Authentication {
 
 		$this->error = $error;
 
-		$this->log_error( __METHOD__ . '(): ' . print_r( $error, true ) );
+		$this->log_error( __METHOD__ . '(): ' . json_encode( $error ) );
 	}
 
 	/***
