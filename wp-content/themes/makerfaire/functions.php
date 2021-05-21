@@ -122,33 +122,27 @@ add_filter('jetpack_enable_opengraph', '__return_false', 99);
 
 function set_universal_asset_constants() {
     // Assume that we're in prod; only change if we are definitively in another
-    $universal_asset_env = 'make.co';
 	$universal_makehub_asset_env = 'community.make.co';
     $universal_asset_proto = 'https://';
     $host = $_SERVER['HTTP_HOST'];
     // dev environments
     if (strpos($host, 'dev.') === 0) {
-        $universal_asset_env = 'dev.make.co';
 		$universal_makehub_asset_env = 'devmakehub.wpengine.com';
     }
     // stage environments
     else if (strpos($host, 'stage.') === 0) {
-        $universal_asset_env = 'stage.make.co';
 		$universal_makehub_asset_env = 'stagemakehub.wpengine.com';
     }
     // legacy staging environments
     else if (strpos($host, '.staging.wpengine.com') > -1) {
-        $universal_asset_env = 'makeco.staging.wpengine.com';
 		$universal_makehub_asset_env = 'makehub.staging.wpengine.com';
     }
     // wpengine local environments
     else if (strpos($host, '.local') > -1  || strpos($host, '.test') > -1 ) {
-        $universal_asset_env = 'makeco.local';
 		$universal_makehub_asset_env = 'makehub.local';
 		$universal_asset_proto = 'http://';
     }
     // Set the important bits as CONSTANTS that can easily be used elsewhere
-    define('UNIVERSAL_ASSET_URL_PREFIX', $universal_asset_proto . $universal_asset_env);
 	define('UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX', $universal_asset_proto . $universal_makehub_asset_env);
 }
 
@@ -171,7 +165,7 @@ function load_scripts() {
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
     wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
     wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.6/css/jquery.fancybox.min.css', '', 'all');
-    wp_enqueue_style('universal.css', UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/css/universal.min.css', array(), $my_version);
+    wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/css/universal.min.css', array(), $my_version);
 
     // font awesome load script
 	wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true ); 

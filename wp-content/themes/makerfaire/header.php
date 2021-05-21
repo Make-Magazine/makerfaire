@@ -150,39 +150,8 @@
 <?php } // end cookie law if  ?>
 
         <a name="topofpage"></a>
-        <header id="universal-nav" class="universal-nav">
 
-            <?php
-            // Nav Level 1 and Hamburger
-            echo basicCurl(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-topnav.html');
-            ?>
-
-            <div id="nav-level-2" class="nav-level-2">
-                <div class="container">
-                    <div class="nav-2-banner">
-                        <?php
-                        wp_nav_menu(array(
-                            'menu' => 'secondary_universal_menu',
-                            'theme_location' => 'secondary_universal_menu',
-                            'depth' => 1,
-                            'container' => '',
-                            'container_class' => '',
-                            'link_before' => '<span>',
-                            'link_after' => '</span>',
-                            'menu_class' => 'nav navbar-nav',
-                            'fallback_cb' => 'wp_bootstrap_navwalker::fallback',
-                            'walker' => new wp_bootstrap_navwalker())
-                        );
-                        ?>
-                    </div>
-                </div>
-            </div>
-
-            <div id="nav-flyout">
-				<?php
-					echo basicCurl(UNIVERSAL_ASSET_URL_PREFIX . '/wp-content/themes/memberships/universal-nav/universal-megamenu.html');
-				?>
-            </div>
-
-        </header>
-        <div class="nav-flyout-underlay"></div>
+		<?php
+		// Universal Nav
+		echo basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/page-elements/universal-topnav.html');
+		?>
