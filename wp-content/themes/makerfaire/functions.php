@@ -122,7 +122,7 @@ add_filter('jetpack_enable_opengraph', '__return_false', 99);
 
 function set_universal_asset_constants() {
     // Assume that we're in prod; only change if we are definitively in another
-	$universal_makehub_asset_env = 'community.make.co';
+	$universal_makehub_asset_env = 'make.co';
     $universal_asset_proto = 'https://';
     $host = $_SERVER['HTTP_HOST'];
     // dev environments
