@@ -345,24 +345,11 @@
 						font-size: 1rem;
 						line-height: var(--lh);
 						position: relative;
-						padding-right: 15px;
-						--max-lines: 4;
-						max-height: calc(var(--lh) * var(--max-lines));
-						&::before {
-							content: "...";
-							position: absolute;
-							bottom: 0;
-							right: 0;
-							background: #fff;
-						}
-						&::after { // cover up the ellipsis for when max lines isn't exceeded
-							content: "";
-							position: absolute;
-							right: 0;
-							width: 1.5rem;
-							height: 2rem;
-							background: white;
-						}
+						padding-right: 15px;;
+						display: -webkit-box;
+						-webkit-line-clamp: 3;
+						-webkit-box-orient: vertical;  
+						overflow: hidden;
 					}
 					&:hover h3 {
 						opacity: 1;
