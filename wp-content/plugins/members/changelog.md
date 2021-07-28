@@ -1,6 +1,23 @@
 # Change Log
 
-## 3.1.3 - 
+## 3.1.5 - 2021-03-25
+
+### Fixed
+
+- Block permissions not working for nested blocks (e.g. columns)
+
+## 3.1.4 - 2021-03-11
+
+### Changed
+
+- Convert instance of wp.editor to wp.blockEditor
+- Check for MemberPress constant instead of using `is_plugin_active()`
+
+### Fixed
+
+- Compatibility for PHP 8
+
+## 3.1.3 - 2020-09-16
 
 ### Changed
 
