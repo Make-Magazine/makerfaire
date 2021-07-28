@@ -1,17 +1,18 @@
 <?php
 
-if (!class_exists('GFCPTAddonBase')) {
+if ( ! class_exists( 'GFCPTAddonBase' ) ) {
 
 	/*
 	 * Base class for the GFCPT Addon. All common code is in here and differences per version are overrided
 	 */
+
 	class GFCPTAddonBase {
 
-	  protected $_has_tag_inputs = false;
-	  protected $_included_js;
-	  protected $_tag_inputs = array();
-	  protected $_tag_map = array();
-	  protected $_tag_terms = array();
+		protected $_has_tag_inputs = false;
+		protected $_included_js;
+		protected $_tag_inputs = array();
+		protected $_tag_map = array();
+		protected $_tag_terms = array();
 
 
 		/*
@@ -19,39 +20,42 @@ if (!class_exists('GFCPTAddonBase')) {
 		 */
 		public function init() {
 			//alter the way forms are rendered by inserting taxomony dropdowns,radios and checkboxes
-			add_filter('gform_pre_render' , array(&$this, 'setup_form') );
+			add_filter( 'gform_pre_render', array( &$this, 'setup_form' ) );
 
 			//alter the way forms are rendered by the admin too!
-			add_filter('gform_admin_pre_render' , array(&$this, 'setup_form') );
+			add_filter( 'gform_admin_pre_render', array( &$this, 'setup_form' ) );
 
 			//alter the form for submission - this is mainly for checkboxes
-			add_filter('gform_pre_submission_filter', array(&$this, 'setup_form') );
+			add_filter( 'gform_pre_submission_filter', array( &$this, 'setup_form' ) );
 
 			add_filter( 'gform_form_post_get_meta', array( $this, 'setup_form_on_export' ) );
 
 			//set the post type when saving a post
-			add_filter("gform_post_data", array(&$this, 'set_post_values'), 10, 2);
+			add_filter( "gform_post_data", array( &$this, 'set_post_values' ), 10, 2 );
 
-			if( class_exists( 'gform_update_post' ) ) {
-				remove_filter( 'gform_after_submission', array( 'gform_update_post', 'delete_custom_taxonomy_save' ), 1, 2 );
+			if ( class_exists( 'gform_update_post' ) ) {
+				remove_filter( 'gform_after_submission', array(
+					'gform_update_post',
+					'delete_custom_taxonomy_save'
+				), 1, 2 );
 			}
 
 			//intercept the form save and save any taxonomy links if needed
-			add_action( 'gform_after_create_post', array( $this, 'save_taxonomies'), 10, 3 );
+			add_action( 'gform_after_create_post', array( $this, 'save_taxonomies' ), 10, 3 );
 
 			//enqueue scripts to the page
-			add_action( 'gform_enqueue_scripts',       array( $this, 'enqueue_form_scripts' ), 10, 2 );
+			add_action( 'gform_enqueue_scripts', array( $this, 'enqueue_form_scripts' ), 10, 2 );
 			add_action( 'gform_register_init_scripts', array( $this, 'register_init_scripts' ), 10, 2 );
 
-			add_filter("gform_preview_styles", array(&$this, 'preview_print_styles'), 10, 2);
+			add_filter( "gform_preview_styles", array( &$this, 'preview_print_styles' ), 10, 2 );
 
-			add_filter( 'gform_entry_field_value',   array( $this, 'display_term_name_on_entry_detail' ), 10, 4 );
+			add_filter( 'gform_entry_field_value', array( $this, 'display_term_name_on_entry_detail' ), 10, 4 );
 			add_filter( 'gform_entries_field_value', array( $this, 'display_term_name_on_entry_list' ), 10, 4 );
-			add_filter( 'gform_export_field_value',  array( $this, 'display_term_name_on_export' ), 10, 4 );
+			add_filter( 'gform_export_field_value', array( $this, 'display_term_name_on_export' ), 10, 4 );
 
-			add_filter( 'gform_entry_field_value',   array( $this, 'display_post_title_on_entry_detail' ), 10, 4 );
+			add_filter( 'gform_entry_field_value', array( $this, 'display_post_title_on_entry_detail' ), 10, 4 );
 			add_filter( 'gform_entries_field_value', array( $this, 'display_post_title_on_entry_list' ), 10, 4 );
-			add_filter( 'gform_export_field_value',  array( $this, 'display_post_title_on_export' ), 10, 4 );
+			add_filter( 'gform_export_field_value', array( $this, 'display_post_title_on_export' ), 10, 4 );
 
 
 		}
@@ -61,36 +65,40 @@ if (!class_exists('GFCPTAddonBase')) {
 		 */
 		function setup_form( $form ) {
 
-		  //loop thru all fields
-		  foreach($form['fields'] as &$field) {
-
-			//see if the field is using a taxonomy
-			$taxonomy = $this->get_field_taxonomy( $field );
-
-			if($taxonomy) {
-			  $this->setup_taxonomy_field( $field, $taxonomy );
-			  continue;
+			if ( empty( $form['fields'] ) ) {
+				return $form;
 			}
 
-			//if its a select then check if we have set a post type
-			if ($field['type'] == 'select') {
+			//loop thru all fields
+			foreach ( $form['fields'] as &$field ) {
 
-			  $post_type = $this->get_field_post_type( $field );
+				//see if the field is using a taxonomy
+				$taxonomy = $this->get_field_taxonomy( $field );
 
-			  if ($post_type) {
-				$this->setup_post_type_field( $field, $post_type );
-				continue;
-			  }
+				if ( $taxonomy ) {
+					$this->setup_taxonomy_field( $field, $taxonomy );
+					continue;
+				}
 
+				//if its a select then check if we have set a post type
+				if ( $field['type'] == 'select' ) {
+
+					$post_type = $this->get_field_post_type( $field );
+
+					if ( $post_type ) {
+						$this->setup_post_type_field( $field, $post_type );
+						continue;
+					}
+
+				}
 			}
-		  }
 
-		  return $form;
+			return $form;
 		}
 
 		function setup_form_on_export( $form ) {
 
-			if( in_array( rgpost( 'action' ), array( 'rg_select_export_form', 'gf_process_export' ) ) ) {
+			if ( in_array( rgpost( 'action' ), array( 'rg_select_export_form', 'gf_process_export' ) ) ) {
 				$form = $this->setup_form( $form );
 			}
 
@@ -99,23 +107,27 @@ if (!class_exists('GFCPTAddonBase')) {
 
 		function register_init_scripts( $form ) {
 
-			$inputs = array();
+			$inputs     = array();
 			$taxonomies = array();
 
-			foreach( $form['fields'] as $field ) {
+			foreach ( $form['fields'] as $field ) {
 
-				if( ! $this->has_tax_enhanced_ui( $field ) ) {
+				if ( ! $this->has_tax_enhanced_ui( $field ) ) {
 					continue;
 				}
 
-				$inputs[] = array( 'input' => sprintf( '#input_%d_%d', $form['id'], $field->id ), 'taxonomy' => $field->saveToTaxonomy );
-				if( ! array_key_exists( $field->saveToTaxonomy, $taxonomies ) ) {
+				$inputs[] = array(
+					'input'    => sprintf( '#input_%d_%d', $form['id'], $field->id ),
+					'taxonomy' => $field->saveToTaxonomy
+				);
+
+				if ( ! array_key_exists( $field->saveToTaxonomy, $taxonomies ) ) {
 					$taxonomies[ $field->saveToTaxonomy ] = get_terms( $field->saveToTaxonomy, 'orderby=name&hide_empty=0&fields=names' );
 				}
 
 			}
 
-			if( empty( $inputs ) ) {
+			if ( empty( $inputs ) ) {
 				return;
 			}
 
@@ -125,15 +137,17 @@ if (!class_exists('GFCPTAddonBase')) {
 				var gfcptCurrentInputs = ' . json_encode( $inputs ) . ';
 				for ( input in gfcptCurrentInputs ) {
 				    if( gfcptCurrentInputs.hasOwnProperty( input ) ) {
-						gfcpt_tag_inputs.tag_inputs.push( gfcptCurrentInputs[ input ] );        
+						gfcpt_tag_inputs.tag_inputs.push( gfcptCurrentInputs[ input ] );
 				    }
 				}
 				var gfcptCurrentTaxonomies = ' . json_encode( $taxonomies ) . ';
 				for ( taxonomy in gfcptCurrentTaxonomies ) {
 				    if( gfcptCurrentTaxonomies.hasOwnProperty( taxonomy ) ) {
-						gfcpt_tag_taxonomies[ taxonomy ] = gfcptCurrentTaxonomies[ taxonomy ];        
+						gfcpt_tag_taxonomies[ taxonomy ] = gfcptCurrentTaxonomies[ taxonomy ];
 				    }
-				}';
+				}
+				init_tagit_script();
+				';
 
 
 			GFFormDisplay::add_init_script( $form['id'], 'gfcpt_tagit', GFFormDisplay::ON_PAGE_RENDER, $script );
@@ -142,37 +156,37 @@ if (!class_exists('GFCPTAddonBase')) {
 
 		function enqueue_form_scripts( $form ) {
 
-			if( ! $this->has_tax_enhanced_ui( $form ) ) {
+			if ( ! $this->has_tax_enhanced_ui( $form ) ) {
 				return;
 			}
 
-			wp_register_style( 'gfcpt_jquery_ui_theme', plugins_url( 'css/custom/jquery-ui-1.8.16.custom.css' , __FILE__ ) );
+			wp_register_style( 'gfcpt_jquery_ui_theme', plugins_url( 'css/custom/jquery-ui-1.8.16.custom.css', __FILE__ ) );
 			wp_enqueue_style( 'gfcpt_jquery_ui_theme' );
 
-			wp_register_style( 'gfcpt_tagit_css', plugins_url( 'css/jquery.tagit.css' , __FILE__ ) );
+			wp_register_style( 'gfcpt_tagit_css', plugins_url( 'css/jquery.tagit.css', __FILE__ ) );
 			wp_enqueue_style( 'gfcpt_tagit_css' );
 
 			wp_enqueue_script( 'jquery-ui-core' );
 			wp_enqueue_script( 'jquery-ui-widget' );
 			wp_enqueue_script( 'jquery-ui-autocomplete' );
 
-			wp_register_script( 'gfcpt_tagit_js', plugins_url( 'js/tag-it.js' , __FILE__ ), array( 'jquery-ui-widget' ) );
+			wp_register_script( 'gfcpt_tagit_js', plugins_url( 'js/tag-it.js', __FILE__ ), array( 'jquery-ui-widget' ) );
 			wp_enqueue_script( 'gfcpt_tagit_js' );
 
-			wp_register_script( 'gfcpt_tagit_init_js', plugins_url( 'js/tag-it.init.js' , __FILE__ ), array('gfcpt_tagit_js' ), false, true );
+			wp_register_script( 'gfcpt_tagit_init_js', plugins_url( 'js/tag-it.init.js', __FILE__ ), array( 'gfcpt_tagit_js' ), false, true );
 			wp_enqueue_script( 'gfcpt_tagit_init_js' );
 
 		}
 
 		function has_tax_enhanced_ui( $form_or_field ) {
 
-			if( is_a( $form_or_field, 'GF_Field' ) ) {
-				if( $form_or_field->get_input_type() == 'text' && $form_or_field->saveToTaxonomy && $form_or_field->taxonomyEnhanced ) {
+			if ( is_a( $form_or_field, 'GF_Field' ) ) {
+				if ( $form_or_field->get_input_type() == 'text' && $form_or_field->saveToTaxonomy && $form_or_field->taxonomyEnhanced ) {
 					return true;
 				}
 			} else {
-				foreach( $form_or_field['fields'] as $field ) {
-					if( $this->has_tax_enhanced_ui( $field ) ) {
+				foreach ( $form_or_field['fields'] as $field ) {
+					if ( $this->has_tax_enhanced_ui( $field ) ) {
 						return true;
 					}
 				}
@@ -192,19 +206,21 @@ if (!class_exists('GFCPTAddonBase')) {
 		function set_post_values( $post_data, $form ) {
 
 			//check if the form saves a post
-			if ( $this->is_form_a_post_form($form) ) {
+			if ( $this->is_form_a_post_form( $form ) ) {
 				$target_post_type = $this->get_form_post_type( $form );
 
-				if ($target_post_type)
+				if ( $target_post_type ) {
 					$post_data["post_type"] = $target_post_type;
+				}
 
 				//then check if we have set a parent
 				$parent_post_id = $this->get_form_parent_post_id( $form );
 
-				if ($parent_post_id > 0) {
-				  $post_data["post_parent"] = $parent_post_id;
+				if ( $parent_post_id > 0 ) {
+					$post_data["post_parent"] = $parent_post_id;
 				}
 			}
+
 			return $post_data;
 
 		}
@@ -213,12 +229,21 @@ if (!class_exists('GFCPTAddonBase')) {
 		 * Checks if a form includes a 'post field'
 		 */
 		function is_form_a_post_form( $form ) {
-			foreach ($form["fields"] as $field) {
-				if(in_array($field["type"],
-						array("post_category","post_title","post_content",
-							"post_excerpt","post_tags","post_custom_fields","post_image")))
+			foreach ( $form["fields"] as $field ) {
+				if ( in_array( $field["type"],
+					array(
+						"post_category",
+						"post_title",
+						"post_content",
+						"post_excerpt",
+						"post_tags",
+						"post_custom_fields",
+						"post_image"
+					) ) ) {
 					return true;
+				}
 			}
+
 			return false;
 		}
 
@@ -279,23 +304,26 @@ if (!class_exists('GFCPTAddonBase')) {
 		 * setup a field if it is linked to a post type
 		 */
 		function setup_post_type_field( &$field, $post_type ) {
-			$first_choice = $field['choices'][0]['text'];
-			$field['choices'] = $this->load_post_type_choices( $post_type, $first_choice, $field );
+			$first_choice             = $field['choices'][0]['text'];
+			$field['choices']         = $this->load_post_type_choices( $post_type, $first_choice, $field );
 			$field->enableChoiceValue = true;
 		}
 
-		function load_post_type_choices($post_type, $first_choice = '', $field ) {
+		function load_post_type_choices( $post_type, $first_choice = '', $field ) {
 			$posts = $this->load_posts_hierarchical( $post_type, $field->formId, $field->id );
-			if ($first_choice === '' || $first_choice === 'First Choice'){
+			if ( $first_choice === '' || $first_choice === 'First Choice' ) {
 				// if no default option is specified, dynamically create based on post type name
-				$post_type_obj = get_post_type_object($post_type);
-				$choices[] = array('text' => "-- select a {$post_type_obj->labels->singular_name} --", 'value' => '');
+				$post_type_obj = get_post_type_object( $post_type );
+				$choices[]     = array(
+					'text'  => "-- select a {$post_type_obj->labels->singular_name} --",
+					'value' => ''
+				);
 			} else {
-				$choices[] = array('text' => $first_choice, 'value' => '');
+				$choices[] = array( 'text' => $first_choice, 'value' => '' );
 			}
 
-			foreach($posts as $post) {
-				$choices[] = array('value' => $post->ID, 'text' => $post->post_title);
+			foreach ( $posts as $post ) {
+				$choices[] = array( 'value' => $post->ID, 'text' => $post->post_title );
 			}
 
 			return $choices;
@@ -305,28 +333,30 @@ if (!class_exists('GFCPTAddonBase')) {
 		 * Get a hierarchical list of posts
 		 */
 		function load_posts_hierarchical( $post_type, $form_id, $field_id ) {
-			$args = gf_apply_filters( 'gfcpt_get_posts_args', array( $form_id, $field_id ), array(
+			$args  = gf_apply_filters( 'gfcpt_get_posts_args', array( $form_id, $field_id ), array(
 				'post_type'   => $post_type,
-				'numberposts' => -1,
+				'numberposts' => - 1,
 				'orderby'     => $post_type == 'page' ? 'menu_order' : 'title',
 				'order'       => $post_type == 'page' ? null : 'ASC',
 				'post_status' => 'publish'
 			) );
 			$posts = get_posts( $args );
+
 			return $this->walk_posts( $posts );
 		}
 
 		/*
 		 * Helper function to recursively 'walk' the posts
 		 */
-		function walk_posts( $input_array, $parent_id=0, &$out_array=array(), $level=0 ){
+		function walk_posts( $input_array, $parent_id = 0, &$out_array = array(), $level = 0 ) {
 			foreach ( $input_array as $item ) {
 				if ( $item->post_parent == $parent_id ) {
-						$item->post_title = str_repeat('--', $level) . $item->post_title;
-						$out_array[] = $item;
-						$this->walk_posts( $input_array, $item->ID, $out_array, $level+1 );
+					$item->post_title = str_repeat( '--', $level ) . $item->post_title;
+					$out_array[]      = $item;
+					$this->walk_posts( $input_array, $item->ID, $out_array, $level + 1 );
 				}
 			}
+
 			return $out_array;
 		}
 
@@ -335,8 +365,8 @@ if (!class_exists('GFCPTAddonBase')) {
 		 */
 		function setup_taxonomy_field( &$field, $taxonomy ) {
 
-			$first_choice = rgars( $field, 'choices/0/text' );
-			$field['choices'] = $this->load_taxonomy_choices( $taxonomy, $field['type'], $first_choice, $field );
+			$first_choice             = rgars( $field, 'choices/0/text' );
+			$field['choices']         = $this->load_taxonomy_choices( $taxonomy, $field['type'], $first_choice, $field );
 			$field->enableChoiceValue = true;
 
 			//now check if we are dealing with a checkbox list and do some extra magic
@@ -346,15 +376,15 @@ if (!class_exists('GFCPTAddonBase')) {
 
 				$counter = 0;
 				//recreate the inputs so they are captured correctly on form submission
-				foreach( $field['choices'] as $choice ) {
+				foreach ( $field['choices'] as $choice ) {
 
 					//thanks to Peter Schuster for the help on this fix
-					$counter++;
+					$counter ++;
 					if ( $counter % 10 == 0 ) {
-						$counter++;
+						$counter ++;
 					}
 
-					$id = $field['id'] . '.' . $counter;
+					$id       = $field['id'] . '.' . $counter;
 					$inputs[] = array( 'label' => $choice['text'], 'id' => $id );
 				}
 
@@ -366,29 +396,42 @@ if (!class_exists('GFCPTAddonBase')) {
 		/*
 		 * Load any taxonomy terms
 		 */
-		function load_taxonomy_choices($taxonomy, $type, $first_choice = '', $field ) {
+		function load_taxonomy_choices( $taxonomy, $type, $first_choice = '', $field ) {
 			$choices = array();
 
-			if ( in_array( $field->get_input_type(), gf_apply_filters( array( 'gfcpt_hierarchical_display', $field->formId, $field->fieldId ), array( 'select', 'multiselect' ) ) ) ) {
+			if ( in_array( $field->get_input_type(), gf_apply_filters( array(
+				'gfcpt_hierarchical_display',
+				$field->formId,
+				$field->fieldId
+			), array( 'select', 'multiselect' ) ) ) ) {
 
 				$terms = $this->load_taxonomy_hierarchical( $taxonomy, $field );
 
-				if( $field->get_input_type() == 'select' ) {
+				if ( $field->get_input_type() == 'select' ) {
 					if ( $first_choice !== '' && $first_choice !== 'First Choice' && empty( $field->placeholder ) ) {
 						// if no default option is specified, dynamically create based on taxonomy name
-						$taxonomy = get_taxonomy($taxonomy);
-						$choices[] = array('text' => "-- select a {$taxonomy->labels->singular_name} --", 'value' => '');
+						$taxonomy  = get_taxonomy( $taxonomy );
+						$choices[] = array(
+							'text'  => "-- select a {$taxonomy->labels->singular_name} --",
+							'value' => ''
+						);
 					}
 				}
 
 			} else {
-				$terms = get_terms($taxonomy, 'orderby=name&hide_empty=0');
+				$args = gf_apply_filters( 'gfcpt_taxonomy_args', array( $field->formId, $field->id ), array(
+					'taxonomy'   => $taxonomy,
+					'orderby'    => 'name',
+					'hide_empty' => 0
+				), $field );
+
+				$terms = get_terms( $args );
 			}
 
-			if ( !array_key_exists("errors",$terms) ) {
-			  foreach($terms as $term) {
-				  $choices[] = array('value' => $term->term_id, 'text' => $term->name);
-			  }
+			if ( ! array_key_exists( "errors", $terms ) ) {
+				foreach ( $terms as $term ) {
+					$choices[] = array( 'value' => $term->term_id, 'text' => $term->name );
+				}
 			}
 
 			return $choices;
@@ -400,18 +443,19 @@ if (!class_exists('GFCPTAddonBase')) {
 		function load_taxonomy_hierarchical( $taxonomy, $field ) {
 
 			$args = gf_apply_filters( 'gfcpt_taxonomy_args', array( $field->formId, $field->id ), array(
-				'taxonomy'      => $taxonomy,
-				'orderby'       => 'name',
-				'hierarchical'  => 1,
-				'hide_empty'    => 0
+				'taxonomy'     => $taxonomy,
+				'orderby'      => 'name',
+				'hierarchical' => 1,
+				'hide_empty'   => 0
 			), $field );
 
-			$terms  = get_categories( $args );
+			$terms = get_categories( $args );
 
-			if ( array_key_exists("errors",$terms) ) {
+			if ( array_key_exists( "errors", $terms ) ) {
 				return $terms;
 			} else {
 				$parent = isset( $args['parent'] ) ? $args['parent'] : 0;
+
 				return $this->walk_terms( $terms, $parent );
 			}
 
@@ -420,14 +464,15 @@ if (!class_exists('GFCPTAddonBase')) {
 		/*
 		 * Helper function to recursively 'walk' the taxonomy terms
 		 */
-		function walk_terms( $input_array, $parent_id=0, &$out_array=array(), $level=0 ){
+		function walk_terms( $input_array, $parent_id = 0, &$out_array = array(), $level = 0 ) {
 			foreach ( $input_array as $item ) {
 				if ( $item->parent == $parent_id ) {
-						$item->name = str_repeat('--', $level) . $item->name;
-						$out_array[] = $item;
-						$this->walk_terms( $input_array, $item->term_id, $out_array, $level+1 );
+					$item->name  = str_repeat( '--', $level ) . $item->name;
+					$out_array[] = $item;
+					$this->walk_terms( $input_array, $item->term_id, $out_array, $level + 1 );
 				}
 			}
+
 			return $out_array;
 		}
 
@@ -441,11 +486,13 @@ if (!class_exists('GFCPTAddonBase')) {
 
 				$this->delete_custom_taxonomies( $entry, $form );
 
-				foreach( $form['fields'] as &$field ) {
+				foreach ( $form['fields'] as &$field ) {
 
 					$taxonomy = $this->get_field_taxonomy( $field );
 
-					if ( !$taxonomy ) continue;
+					if ( ! $taxonomy ) {
+						continue;
+					}
 
 					$this->save_taxonomy_field( $field, $entry, $taxonomy );
 				}
@@ -455,22 +502,17 @@ if (!class_exists('GFCPTAddonBase')) {
 		/**
 		 * Remove Custom Taxonomies
 		 *
+		 * @return    void
 		 * @author  ekaj
-		 * @return	void
 		 */
 		public function delete_custom_taxonomies( $entry, $form ) {
 			// Check if the submission contains a WordPress post
-			if (! empty($entry['post_id']) )
-			{
-				foreach( $form['fields'] as &$field )
-				{
-					$taxonomy = false;
-					if ( array_key_exists('populateTaxonomy', $field) ) {
-						$taxonomy = $field['populateTaxonomy'];
-					}
+			if ( ! empty( $entry['post_id'] ) ) {
+				foreach ( $form['fields'] as &$field ) {
+					$taxonomy = rgar( $field, 'populateTaxonomy' );
 
 					if ( $taxonomy ) {
-						wp_set_object_terms( $entry['post_id'], NULL, $taxonomy );
+						wp_set_object_terms( $entry['post_id'], null, $taxonomy );
 					}
 				}
 			}
@@ -483,13 +525,13 @@ if (!class_exists('GFCPTAddonBase')) {
 
 			$terms = array();
 
-			switch( $field->get_input_type() ) {
+			switch ( $field->get_input_type() ) {
 				case 'multiselect':
 
 					$value = $entry[ $field->id ];
 					$terms = json_decode( $value );
 
-					if( ! is_array( $terms ) ) {
+					if ( ! is_array( $terms ) ) {
 						$terms = explode( ',', $value );
 					}
 
@@ -527,9 +569,9 @@ if (!class_exists('GFCPTAddonBase')) {
 
 			$return = $term_id;
 
-			if( $field->populateTaxonomy && ! empty( $term_id ) ) {
+			if ( $field->populateTaxonomy && ! empty( $term_id ) ) {
 				$term = get_term( (int) $term_id, $field->populateTaxonomy );
-				if( ! is_wp_error( $term ) ) {
+				if ( ! is_wp_error( $term ) ) {
 					$return = $term->name;
 				}
 			}
@@ -543,7 +585,7 @@ if (!class_exists('GFCPTAddonBase')) {
 
 		function display_term_name_on_entry_list( $value, $form_id, $field_id ) {
 
-			if( is_numeric( $field_id ) ) {
+			if ( is_numeric( $field_id ) ) {
 				$field = GFFormsModel::get_field( GFAPI::get_form( $form_id ), $field_id );
 				$value = $this->get_term_name( $value, $field );
 			}
@@ -557,8 +599,9 @@ if (!class_exists('GFCPTAddonBase')) {
 
 		function get_post_title( $post_id, $field ) {
 
-			if( $field->populatePostType && ! empty( $post_id ) ) {
+			if ( $field->populatePostType && ! empty( $post_id ) ) {
 				$post = get_post( $post_id );
+
 				return $post ? $post->post_title : $post_id;
 			}
 
@@ -571,7 +614,7 @@ if (!class_exists('GFCPTAddonBase')) {
 
 		function display_post_title_on_entry_list( $value, $form_id, $field_id ) {
 
-			if( is_numeric( $field_id ) ) {
+			if ( is_numeric( $field_id ) ) {
 				$field = GFFormsModel::get_field( GFAPI::get_form( $form_id ), $field_id );
 				$value = $this->get_post_title( $value, $field );
 			}
