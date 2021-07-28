@@ -178,6 +178,17 @@ class autoptimizeCriticalCSSSettings {
                     <?php
                 }
 
+                // check if defer jQuery is active and warn if so.
+                if ( 1 == $ao_ccss_deferjquery && PAnD::is_admin_notice_active( 'i-know-about-defer-inline-forever' ) ) {
+                    ?>
+                    <div data-dismissible="i-know-about-defer-inline-forever" class="notice-warning notice is-dismissible"><p>
+                    <?php
+                    _e( 'You have "defer jQuery and other non-aggregated JS-files" active (under Advanced Settings), but that functionality is deprecated and will be removed in the next major version of Autoptimize. Consider using the new "Do not aggregate but defer" and "Also defer inline JS" options on the main settings page instead.', 'autoptimize' );
+                    ?>
+                    </p></div>
+                    <?php
+                }
+
                 // warn if it looks as though the queue processing job looks isn't running
                 // but store result in transient as to not to have to go through 2 arrays each and every time.
                 $_warn_cron = get_transient( 'ao_ccss_cronwarning' );
@@ -307,7 +318,7 @@ class autoptimizeCriticalCSSSettings {
                             echo "<input class='hidden' name='autoptimize_ccss_queue' value='" . $ao_ccss_queue_raw . "'>";
                             echo '<input class="hidden" name="autoptimize_ccss_viewport[w]" value="' . $viewport['w'] . '">';
                             echo '<input class="hidden" name="autoptimize_ccss_viewport[h]" value="' . $viewport['h'] . '">';
-                            echo '<input class="hidden" name="autoptimize_ccss_finclude" value="' . $ao_ccss_finclude . '">';
+                            echo '<input class="hidden" name="autoptimize_ccss_finclude" value="' . esc_attr( $ao_ccss_finclude ) . '">';
                             echo '<input class="hidden" name="autoptimize_ccss_rtimelimit" value="' . $ao_ccss_rtimelimit . '">';
                             echo '<input class="hidden" name="autoptimize_ccss_debug" value="' . $ao_ccss_debug . '">';
                             echo '<input class="hidden" name="autoptimize_ccss_noptimize" value="' . $ao_ccss_noptimize . '">';
