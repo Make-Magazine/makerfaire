@@ -88,9 +88,6 @@ class Master_Slider_Admin {
     // Load admin Stylesheet and JavaScript.
     add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts') );
 
-    // Add some essential content in admin page header
-    add_action( 'admin_head', array( $this, 'admin_header' ), 9 );
-
     // Add the options page and menu item.
     add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
 
@@ -176,41 +173,22 @@ class Master_Slider_Admin {
     $screen = get_current_screen();
     if ( $this->sliders_screen_hook_suffix == $screen->id ) {
         $admin_assets->enqueue_panel_assets();
+
+        if ( isset( $_REQUEST['slider_id'] ) && is_numeric( $_REQUEST['slider_id'] ) ) {
+
+          $slider_id  = sanitize_text_field( $_REQUEST['slider_id'] );
+          global $mspdb;
+          $custom_fonts = $mspdb->get_slider_field_val( $slider_id, 'custom_fonts' );
+  
+          if ( ! empty( $custom_fonts ) )
+            wp_enqueue_style( 'master-slider-admin-fonts', 'http://fonts.googleapis.com/css?family=' . $custom_fonts, [], false, 'all' );
+        }
     }
 
     if ( MSWP_SLUG . '_page_' . MSWP_SLUG . '-setting' == $screen->id ) {
         $admin_assets->enqueue_setting_page_assets();
     }
 
-  }
-
-
-  /**
-   * Print essential content in admin page header
-   *
-   * @since     1.0.0
-   *
-   * @return    void
-   */
-  public function admin_header() {
-
-    if ( ! isset( $this->sliders_screen_hook_suffix ) ) {
-      return;
-    }
-
-    $screen = get_current_screen();
-    if ( $this->sliders_screen_hook_suffix == $screen->id ) {
-
-      if ( isset( $_REQUEST['slider_id'] ) ) {
-
-        $slider_id  = $_REQUEST['slider_id'];
-        global $mspdb;
-        $custom_fonts = $mspdb->get_slider_field_val( $slider_id, 'custom_fonts' );
-
-        if ( ! empty( $custom_fonts ) )
-          printf( "<link rel='stylesheet' id='masterslider-admin-fonts' href='http://fonts.googleapis.com/css?family=%s' type='text/css' />\n", $custom_fonts );
-      }
-    }
   }
 
 

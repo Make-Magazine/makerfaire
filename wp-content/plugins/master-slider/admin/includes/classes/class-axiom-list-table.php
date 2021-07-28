@@ -208,8 +208,8 @@ class Axiom_List_Table {
 			echo '<input type="hidden" name="detached" value="' . esc_attr( $_REQUEST['detached'] ) . '" />';
 ?>
 <p class="search-box">
-	<label class="screen-reader-text" for="<?php echo $input_id ?>"><?php echo $text; ?>:</label>
-	<input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>" />
+	<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ) ?>"><?php echo esc_html( $text ); ?>:</label>
+	<input type="search" id="<?php echo esc_attr( $input_id ) ?>" name="s" value="<?php _admin_search_query(); ?>" />
 	<?php submit_button( $text, 'button', false, false, array('id' => 'search-submit') ); ?>
 </p>
 <?php
@@ -252,9 +252,14 @@ class Axiom_List_Table {
 			return;
 
 		echo "<ul class='subsubsub'>\n";
+
 		foreach ( $views as $class => $view ) {
-			$views[ $class ] = "\t<li class='$class'>$view";
+			$scaped_class = esc_attr( $class );
+			$scaped_view  = esc_attr( $view  );
+
+			$views[ $class ] = "\t<li class='$scaped_class'>$scaped_view";
 		}
+
 		echo implode( " |</li>\n", $views ) . "</li>\n";
 		echo "</ul>";
 	}
@@ -698,7 +703,7 @@ class Axiom_List_Table {
 		$current_url = remove_query_arg( 'paged', $current_url );
 
 		if ( isset( $_GET['orderby'] ) )
-			$current_orderby = $_GET['orderby'];
+			$current_orderby = sanitize_sql_orderby( $_GET['orderby'] );
 		else
 			$current_orderby = '';
 

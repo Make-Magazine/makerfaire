@@ -279,9 +279,6 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 	}
 
 
-	$inline_style = empty( $inline_style ) ? '' : sprintf( 'style="%s" ', esc_attr( $inline_style ) );
-
-
 	$arrows_hideunder   = empty( $arrows_hideunder  ) ? '' : sprintf( ', hideUnder:%s', $arrows_hideunder  );
 	$bullets_hideunder  = empty( $bullets_hideunder ) ? '' : sprintf( ', hideUnder:%s', $bullets_hideunder );
 	$thumbs_hideunder   = empty( $thumbs_hideunder  ) ? '' : sprintf( ', hideUnder:%s', $thumbs_hideunder  );
@@ -397,19 +394,19 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
  ?>
 
 		<!-- MasterSlider -->
-		<div id="<?php echo $puid; ?>" class="master-slider-parent msl <?php echo trim( $wrapper_classes ); ?>" <?php echo $inline_style; ?> >
+		<div id="<?php echo esc_attr( $puid ); ?>" class="master-slider-parent msl <?php echo esc_attr( trim( $wrapper_classes ) ); ?>" style="<?php echo esc_attr( $inline_style ); ?>">
 
-			<?php echo $inner_template_container_open_tags; ?>
+			<?php echo wp_kses_post( $inner_template_container_open_tags ); ?>
 
 			<!-- MasterSlider Main -->
-			<div id="<?php echo $uid; ?>" class="master-slider <?php echo $skin; ?>" >
+			<div id="<?php echo esc_attr( $uid ); ?>" class="master-slider <?php echo esc_attr( $skin ); ?>" >
 				 <?php // generate all ms slide shortcodes ?>
 				 <?php echo do_shortcode($content); ?>
 
 			</div>
 			<!-- END MasterSlider Main -->
 
-			 <?php echo $inner_template_container_close_tags; ?>
+			 <?php echo wp_kses_post( $inner_template_container_close_tags ); ?>
 
 		</div>
 		<!-- END MasterSlider -->
@@ -419,7 +416,7 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 			"use strict";
 
 			$(function () {
-				var <?php echo $instance_name; ?> = new MasterSlider();
+				var <?php echo esc_js( $instance_name ); ?> = new MasterSlider();
 
 				// slider controls
 <?php if($arrows  == 'true' || 'image-gallery' == $template ){
@@ -517,7 +514,7 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 								);
 } ?>
 				// slider setup
-				<?php echo $instance_name; ?>.setup("<?php echo $uid; ?>", {
+				<?php echo esc_js( $instance_name ); ?>.setup("<?php echo $uid; ?>", {
 						width           : <?php echo (int)$width; ?>,
 						height          : <?php echo (int) $height; ?>,
 						minHeight       : <?php echo (int) $min_height; ?>,
@@ -608,10 +605,6 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 					        $instance_name, $facebook_username_prop, $facebook_albumid_prop, $facebook_count, $facebook_thumb_size, $facebook_size, $facebook_type );
 				}
 
-				if ( ! empty( $gfonts ) ) {
-					$link_tag = sprintf( "<link rel='stylesheet' id='ms-fonts'  href='http://fonts.googleapis.com/css?family=%s' type='text/css' media='all' />", $gfonts );
-					echo "\n\t\t\t\t" . sprintf( '$("head").append( "%s" );', $link_tag ) . "\n";
-				}
 				// add slider instance to global scope
 				echo "\n\t\t\t\twindow.masterslider_instances = window.masterslider_instances || [];";
 				echo "\n\t\t\t\twindow.masterslider_instances.push( $instance_name );\n";
@@ -622,7 +615,13 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 		</script>
 
 <?php
-	 return apply_filters( "masterslider_ms_slider_shortcode", ob_get_clean(), $mixed );
+	if ( ! empty( $gfonts ) ) {
+		$response = wp_remote_get( 'http://fonts.googleapis.com/css?family=' . $gfonts );
+		if ( !is_wp_error( $response ) ) {
+			wp_add_inline_style( 'ms-fonts', $response['body'] );
+		}
+	}
+	return apply_filters( "masterslider_ms_slider_shortcode", ob_get_clean(), $mixed );
 }
 
 
@@ -711,8 +710,8 @@ function msp_masterslider_slide_shortcode( $atts, $content = null ) {
 	$src_blank 	= empty( $src_blank ) ? $src : $src_blank;
 
     if( ! empty( $pattern ) || ! empty( $tintcolor ) ){
-        $inline_style   = ! empty( $tintcolor ) ? 'style="background-color:' . $tintcolor . ';"' : '';
-        $slide_content .= "\t\t\t\t\t" . sprintf('<div class="ms-pattern %s" %s ></div>', $pattern, $inline_style )."\n";
+        $inline_style   = ! empty( $tintcolor ) ? esc_attr( 'background-color:' . $tintcolor . ';') : '';
+        $slide_content .= "\t\t\t\t\t" . sprintf('<div class="ms-pattern %s" style="%s"></div>', $pattern, $inline_style )."\n";
     }
 
 	// decode escaped square brackets
@@ -1104,5 +1103,3 @@ function msp_masterslider_slide_flickr_shortcode( $atts, $content = null ) {
 
 	return apply_filters( 'masterslider_slide_flickr_shortcode', "\t\t\t\t".$output, $args );
 }
-
-

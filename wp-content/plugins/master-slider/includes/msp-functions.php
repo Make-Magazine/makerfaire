@@ -487,7 +487,7 @@ function msp_the_post_thumbnail( $post_id = null, $width = null , $height = null
     // return resized image tag
     function msp_get_the_post_thumbnail( $post_id = null, $width = null , $height = null, $crop = null , $quality = 100 ) {
         $image_src = msp_get_the_post_thumbnail_src( $post_id, $width , $height, $crop, $quality);
-        return $image_src ? '<img src="'.$image_src.'" alt="" />' : '';
+        return $image_src ? '<img src="'. esc_url( $image_src ) .'" alt="" />' : '';
     }
 
         /**
@@ -825,7 +825,8 @@ function msp_the_trimmed_string( $string, $max_length = 1000, $more = ' ...' ){
     if( ! function_exists( 'msp_get_trimmed_string') ){
 
         function msp_get_trimmed_string( $string, $max_length = 1000, $more = ' ...' ){
-            return function_exists( 'mb_strimwidth' ) ? mb_strimwidth( $string, 0, $max_length, $more ) : substr( $string, 0, $max_length ) . $more;
+            $trimmed = function_exists( 'mb_strimwidth' ) ? mb_strimwidth( $string, 0, $max_length, $more ) : substr( $string, 0, $max_length ) . $more;
+            return wp_kses_post( $trimmed );
         }
 
     }
@@ -856,7 +857,9 @@ function msp_the_trim_excerpt( $post_id = null, $char_length = null, $exclude_st
             $excerpt = strip_tags( msp_strip_shortcodes( $excerpt, $exclude_strip_shortcode_tags ) );
             $text = msp_get_trimmed_string( $excerpt, $char_length, $excerpt_more );
 
-            return apply_filters( 'wp_trim_excerpt', $text, $raw_excerpt );
+            $text = apply_filters( 'wp_trim_excerpt', $text, $raw_excerpt );
+
+            return wp_kses_post( $text );
         }
 
     }
