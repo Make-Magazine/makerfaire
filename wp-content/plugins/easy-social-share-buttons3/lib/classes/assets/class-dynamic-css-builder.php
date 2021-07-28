@@ -168,27 +168,7 @@ class ESSB_Dynamic_CSS_Builder {
                 include_once (ESSB3_HELPERS_PATH. 'assets/customizer-share-buttons.php');
             }
             essb_register_dynamic_sharebutton_styles();
-        }
-        
-        /**
-         * Social Profiles
-         */
-        if (!defined('ESSB3_LIGHTMODE') && !essb_options_bool_value('deactivate_module_profiles') && essb_option_bool_value('activate_profiles_customizer')) {            
-            if (!function_exists('essb_register_dynamic_profile_styles')) {
-                include_once (ESSB3_HELPERS_PATH. 'assets/customizer-profiles.php');
-            }
-            essb_register_dynamic_profile_styles();
-        }
-        
-        /**
-         * Social Followers Counter
-         */
-        if (defined('ESSB3_SOCIALFANS_ACTIVE') && essb_option_bool_value('activate_fanscounter_customizer')) {
-            if (!function_exists('essb_register_dynamic_followers_styles')) {
-                include_once (ESSB3_HELPERS_PATH. 'assets/customizer-followers-counter.php');
-            }
-            essb_register_dynamic_followers_styles();
-        }
+        }        
         
         /** 
          * Subscribe forms

@@ -256,6 +256,11 @@ if (essb_installed_wpml() || essb_installed_polylang()) {
 	if (!is_admin()) {
 		if (has_filter('essb4_options_multilanguage')) {
 			$essb_options = apply_filters('essb4_options_multilanguage', $essb_options);
+			
+			/**
+			 * @since 7.7 Integrate filter to the new options
+			 */
+			ESSB_Plugin_Options::trigger_options_filter('essb4_options_multilanguage');
 		}
 		if (defined('ESSB3_SOCIALFANS_ACTIVE')) {
 			if (has_filter('essb4_followeroptions_multilanguage')) {

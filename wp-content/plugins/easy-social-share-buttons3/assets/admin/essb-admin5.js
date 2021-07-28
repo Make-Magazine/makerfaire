@@ -1649,6 +1649,7 @@ jQuery(document).ready(function($){
 		$('#essb-short-googl').hide();
 		$('#essb-short-rebrandly').hide();
 		$('#essb-short-post').hide();
+		$('#essb-short-pus').hide();
 
 		if (value == 'goo.gl')
 			$('#essb-short-googl').show();
@@ -1658,6 +1659,8 @@ jQuery(document).ready(function($){
 			$('#essb-short-rebrandly').show();
 		if (value == 'po.st')
 			$('#essb-short-post').show();
+		if (value == 'pus')
+			$('#essb-short-pus').show();
 	});
 
 	$('#essb_options_subscribe_function').on('change', function(e){

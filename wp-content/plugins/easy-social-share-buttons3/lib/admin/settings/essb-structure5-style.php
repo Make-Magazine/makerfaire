@@ -161,8 +161,28 @@ function essb3_draw_fanscounter_customization($tab_id, $menu_id) {
 	if (defined('ESSB3_SFCE_VERSION')) {
 		$network_list = ESSBSocialFollowersCounterHelper::list_of_all_available_networks_extended();
 	}
-
+	
+	/**
+	 * Load the SVG icons if not present
+	 */
+	if (!class_exists('ESSB_SVG_Icons')) {
+	    include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+	}
+	
+	ESSBOptionsStructureHelper::field_heading($tab_id, $menu_id, 'heading5', 'All networks');
+	ESSBOptionsStructureHelper::field_section_start_full_panels($tab_id, $menu_id);
+	ESSBOptionsStructureHelper::field_color($tab_id, $menu_id, 'fanscustomizer_all', esc_html__('Regular', 'essb'), '');
+	ESSBOptionsStructureHelper::field_color($tab_id, $menu_id, 'fanscustomizer_hover_all', esc_html__('Hover', 'essb'), '');
+	ESSBOptionsStructureHelper::field_section_end_full_panels($tab_id, $menu_id);
+	
 	foreach ($network_list as $network => $title) {
+	    
+	    if (ESSBSocialFollowersCounterHelper::is_deprecated_network($network)) {
+	        continue;
+	    }
+	    
+	    $title = '<span class="essb-svg-size18">'.ESSB_SVG_Icons::get_icon($network) . '</span> ' . $title;
+	    
 	    ESSBOptionsStructureHelper::field_heading($tab_id, $menu_id, 'heading5', $title);
 	    ESSBOptionsStructureHelper::field_section_start_full_panels($tab_id, $menu_id);
 	    ESSBOptionsStructureHelper::field_color($tab_id, $menu_id, 'fanscustomizer_'.$network, esc_html__('Regular', 'essb'), '');
@@ -174,11 +194,31 @@ function essb3_draw_fanscounter_customization($tab_id, $menu_id) {
 function essb3_draw_profiles_customization($tab_id, $menu_id) {
 	$network_list = ESSBSocialProfilesHelper::available_social_networks();
 
+	ESSBOptionsStructureHelper::field_heading($tab_id, $menu_id, 'heading5', 'All networks');
+	ESSBOptionsStructureHelper::field_section_start_full_panels($tab_id, $menu_id);
+	ESSBOptionsStructureHelper::field_color($tab_id, $menu_id, 'profilecustomize_all', esc_html__('Regular', 'essb'), '');
+	ESSBOptionsStructureHelper::field_color($tab_id, $menu_id, 'profilecustomize_hover_all', esc_html__('Hover', 'essb'), '');
+	ESSBOptionsStructureHelper::field_section_end_full_panels($tab_id, $menu_id);
+	
+	/**
+	 * Load the SVG icons if not present
+	 */
+	if (!class_exists('ESSB_SVG_Icons')) {
+	    include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+	}
+	
 	foreach ($network_list as $network => $title) {
+	    
+	    if (ESSBSocialFollowersCounterHelper::is_deprecated_network($network)) {
+	        continue;
+	    }	    
+	    
+	    $title = '<span class="essb-svg-size18">'.ESSB_SVG_Icons::get_icon($network) . '</span> ' . $title;
+	    
 	    ESSBOptionsStructureHelper::field_heading($tab_id, $menu_id, 'heading5', $title);	    
 	    ESSBOptionsStructureHelper::field_section_start_full_panels($tab_id, $menu_id);
-	    ESSBOptionsStructureHelper::field_color_panel($tab_id, $menu_id, 'profilecustomize_'.$network, esc_html__('Regular', 'essb'), '');
-	    ESSBOptionsStructureHelper::field_color_panel($tab_id, $menu_id, 'profilecustomize_hover_'.$network, esc_html__('Hover', 'essb'), '');
+	    ESSBOptionsStructureHelper::field_color($tab_id, $menu_id, 'profilecustomize_'.$network, esc_html__('Regular', 'essb'), '');
+	    ESSBOptionsStructureHelper::field_color($tab_id, $menu_id, 'profilecustomize_hover_'.$network, esc_html__('Hover', 'essb'), '');
 	    ESSBOptionsStructureHelper::field_section_end_full_panels($tab_id, $menu_id);
 	}
 }

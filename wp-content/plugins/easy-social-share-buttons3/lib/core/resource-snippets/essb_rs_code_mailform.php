@@ -40,7 +40,7 @@ if (!function_exists('essb_rs_mailform_build')) {
 		if ($translate_mail_name == '') $translate_mail_name = esc_html__ ('Your name', 'essb');
 		
 		$mail_captcha = essb_option_value('mail_captcha');
-		$mail_popup_edit = essb_option_bool_value('mail_popup_edit');
+		$mail_popup_edit = false; // deprecated @since 7.0
 		
 		$code = '';
 		

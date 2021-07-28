@@ -404,6 +404,12 @@ function essb_register_settings_metabox_optimize() {
 			else {
 				ESSBOptionsFramework::draw_title('Counter update information is not available', 'Time of counter update will appear once first time such is made when you load post. If you wish to make a manual counter update you can use the top Easy Social Share Buttons menu where you have link when post is opened');
 			}
+			
+			echo '<div>';
+			echo '<a class="essb-btn" href="'.esc_url(add_query_arg('essb_clear_cached_counters', 'true', $post_address)).'" target="_blank">Update Counters Now</a>&nbsp;';
+			echo '<a class="essb-btn essb-btn-red" href="'.esc_url(add_query_arg('essb_clear_counters_history', 'true', $post_address)).'" target="_blank">Delete Stored Counters & Update Now</a>';
+			echo '</div>';
+			
 			ESSBOptionsFramework::draw_options_row_end();
 			
 			ESSBMetaboxInterface::draw_content_section_end();

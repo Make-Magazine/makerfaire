@@ -50,6 +50,8 @@ if (! function_exists ( 'essb_generate_affiliatewp_referral_link' )) {
 			}
 		} else {
 			if ($affwp_active_pretty) {
+			    // Add trailing slash always! 7.5.1
+			    $permalink = trailingslashit($permalink);
 				$aff_append_data = '/' . affiliate_wp ()->tracking->get_referral_var () . '/';
 				if (strpos($permalink, $aff_append_data) === false) {
 					$permalink .= affiliate_wp ()->tracking->get_referral_var () . '/' . affwp_get_affiliate_id ();

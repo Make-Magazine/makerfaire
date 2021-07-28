@@ -35,6 +35,11 @@ class EasySocialShareButtons_Widget3 extends WP_Widget {
 		$custom_list = isset($instance['custom_list']) ? $instance['custom_list'] : '';
 		$essb_w_force = $instance['essb_w_force'];
 		
+		/**
+		 * @since 7.7 Widget title compatibility with WPML
+		 */
+		$title = apply_filters( 'widget_title', empty($instance['title']) ? '' : $instance['title'], $instance );
+		
 		$options = array();
 		$buttons = "";
 		

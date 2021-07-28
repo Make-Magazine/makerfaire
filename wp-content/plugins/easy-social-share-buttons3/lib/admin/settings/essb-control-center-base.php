@@ -1,6 +1,26 @@
 <?php
 if (!class_exists('ESSBControlCenter')) {
 	class ESSBControlCenter {
+	    
+	    /**
+	     * New version is running
+	     * @var string
+	     * @since 8.0
+	     */
+	    private static $new_version = false;
+	    
+	    /**
+	     * Defines a global block to hold all sections that are not distributed
+	     * @since 8.0
+	     */
+	    private static $global_block = '';
+	    
+	    /**
+	     * Icon based blocks for accessing the navigation
+	     * @since 8.0
+	     */
+	    public static $sidebar_blocks = array();
+	    
 		/**
 		 * Menu sidebar sections available
 		 */
@@ -30,6 +50,34 @@ if (!class_exists('ESSBControlCenter')) {
 		 * Hold the list of existing feature groups (for direct access to all)
 		 */
 		public static $features_group = array();
+		
+		/**
+		 * Activate the new version of the settings screen
+		 */
+		public static function set_new_version() {
+		    self::$new_version = true;
+		}
+		
+		/**
+		 * Check if the new version is enabled
+		 * 
+		 * @return boolean
+		 */
+		public static function is_new_version() {
+		    return self::$new_version;
+		}
+		
+	    public static function deprecate_blocks_in_new_version() {
+	        if (self::$new_version) {
+	            $blocks = array('othersharing', 'othersocial');
+	            
+	            foreach ($blocks as $block_id) {
+	                if (isset(self::$sidebar_sections[$block_id])) {
+	                    unset (self::$sidebar_sections[$block_id]);
+	                }
+	            }
+	        }
+	    }
 		
 		/**
 		 * ---------------------------------------------------------
@@ -230,6 +278,24 @@ if (!class_exists('ESSBControlCenter')) {
 		}
 		
 		/**
+		 * Check if there is a sidebar section registered for the plugin
+		 *
+		 * @param array $ids
+		 * @return boolean
+		 */
+		public static function one_section_is_registered ($ids = array()) {
+		    $r = false;
+		    
+		    foreach ($ids as $id) {
+		        if (isset(self::$sidebar_sections[$id])) {
+		            $r = true;
+		        }
+		    }
+		    
+		    return $r;
+		}
+		
+		/**
 		 * ---------------------------------------------------------
 		 * Register navigation and options section inside plugin
 		 * ---------------------------------------------------------
@@ -241,6 +307,72 @@ if (!class_exists('ESSBControlCenter')) {
 		 */
 		public static function set_active_section($section_id = '') {
 			self::$active_section = $section_id;
+		}
+		
+		
+		public static function register_sidebar_block($block_id, $icon = '', $title = '', $sections = array()) {
+		    self::$sidebar_blocks[$block_id] = array(
+		        'icon' => $icon,
+		        'title' => $title,
+		        'sections' => $sections
+		    );
+		}
+		
+		/**
+		 * Append a new section to an existing sidebar block
+		 *
+		 * @param unknown $block_id
+		 * @param unknown $section
+		 */
+		public static function append_to_sidebar_block ($block_id, $section) {
+		    if (isset(self::$sidebar_blocks[$block_id]) && !empty($section)) {
+		        self::$sidebar_blocks[$block_id]['sections'][] = $section;
+		    }
+		}
+		
+		/**
+		 * 
+		 * @param string $block_id
+		 * @since 8.0
+		 */
+		public static function set_global_block($block_id = '') {
+		    if (isset(self::$sidebar_blocks[$block_id])) {
+		        self::$global_block = $block_id;
+		    }
+		}
+		
+		/**
+		 * 
+		 * @param string $section_id
+		 * @return boolean
+		 */
+		public static function exist_in_block($section_id = '') {
+		    $r = false;
+		    
+		    foreach (self::$sidebar_blocks as $block_id => $options) {
+		        if (!isset($options['sections'])) {
+		            continue;
+		        }
+		        
+		        if (in_array($section_id, $options['sections'])) {
+		            $r = true;
+		        }
+		    }
+		    
+		    return $r;
+		}
+		
+		/**
+		 * Distribute the not assigned sections into a global block (usually extensions)
+		 */
+		public static function distribute_unassigned_sections() {
+		    if (self::$global_block != '') {
+		        foreach (self::$sidebar_sections as $section_id => $options) {
+		            if (!self::exist_in_block($section_id)) {
+		                self::append_to_sidebar_block(self::$global_block, $section_id);
+		            }
+		        }
+		    }
 		}
 
 		/**
@@ -599,6 +731,15 @@ if (!class_exists('ESSBControlCenter')) {
 		 * Output setup panel navigation
 		 */
 		public static function draw_sidebar() {
+		    
+		    /**
+		     * @since 8.0
+		     */
+		    if (self::$new_version) {
+		        self::draw_sidebar_v8();
+		        return '';
+		    }
+		    
 			$plugin_title = 'ESSB';
 			$plugin_title = apply_filters('essb_control_center_navigation_title', $plugin_title);
 				
@@ -667,6 +808,128 @@ if (!class_exists('ESSBControlCenter')) {
 			echo '</div>'; //essb-control-navigation
 		}
 		
+		/**
+		 * Output setup panel navigation
+		 * @since 8.0
+		 */
+		public static function draw_sidebar_v8() {
+		    
+		    self::distribute_unassigned_sections();
+		    
+		    $plugin_title = 'ESSB';
+		    $plugin_title = apply_filters('essb_control_center_navigation_title', $plugin_title);
+		    
+		    $active_block_id = '';
+		    
+		    echo '<!-- parent blocks -->';
+		    echo '<div class="essb-vertical-blocks-nav">';
+		    
+		    echo '<div class="essb-header-logo">';
+		    
+		    echo '<div class="essb-header-logo-image"><div class="essb-logo essb-logo32"></div></div>';
+		    echo '<div class="essb-header-logo-title"><span class="version">'.ESSB3_VERSION.'</span></div>';
+		    
+		    echo '</div>'; // essb-header-logo
+		    
+		    foreach (self::$sidebar_blocks as $block_id => $options) {
+		        $related_sections = isset($options['sections']) ? $options['sections'] : array();
+		        $is_active = in_array(self::$active_section, $related_sections);
+		        
+		        if (!self::one_section_is_registered($related_sections)) {
+		            continue;
+		        }
+		        
+		        if ($is_active) {
+		            $active_block_id = $block_id;
+		        }
+		        
+		        echo '<div class="nav-block '.($is_active ? ' active' : '').'" title="'.esc_attr($options['title']).'" data-block="'.esc_attr($block_id).'">';
+		        echo '<i class="'.esc_attr($options['icon']).'"></i>';
+		        echo '</div>';
+		    }
+		    
+		    echo '</div>';
+		    
+		    echo '<!-- end: parent blocks -->';
+		    
+		    echo '<!-- Setup Navigation -->';
+		    echo '<div class="essb-inner-navigation">';
+		    
+		    
+		    // block rendering
+		    foreach (self::$sidebar_blocks as $block_id => $options) {
+		        $related_sections = isset($options['sections']) ? $options['sections'] : array();
+		        
+		        // essb-primary-navigation
+		        echo '<ul class="essb-primary-navigation'.($active_block_id == $block_id ? ' active': '').'" id="block-'.esc_attr($block_id).'">';
+		        
+		        // Generating navigation based on registered sidebar sections
+		        foreach (self::$sidebar_sections as $section_id => $section_options) {
+		            $type = isset($section_options['type']) ? $section_options['type'] : '';
+		            $name = isset($section_options['name']) ? $section_options['name'] : '';
+		            
+		            if (!in_array($section_id, $related_sections)) {
+		                continue;
+		            }
+		            
+		            if ($type == 'split') {
+		                echo '<li class="essb-navigation-split essb-cc-'.esc_attr($section_id).'">'.esc_html($name).'</li>';
+		            }
+		            else if ($type == 'menu') {
+		                $icon = isset($section_options['icon']) ? $section_options['icon'] : '';
+		                $hide_menu = isset($section_options['hide_menu']) ? $section_options['hide_menu'] : false;
+		                $is_active = $section_id == self::$active_section;
+		                
+		                /**
+		                 * Option is internal - it should be hidden inside the navigation
+		                 */
+		                if ($hide_menu) {
+		                    continue;
+		                }
+		                
+		                echo '<li class="essb-menu-item essb-cc-'.esc_attr($section_id).($is_active ? ' active' : '').'" data-menu="'.esc_attr($section_id).'" data-title="'.esc_attr($name).'">';
+		                echo '<a href="'.esc_url(self::section_build_url($section_id)).'">';
+		                if ($icon != '') {
+		                    echo '<i class="'.esc_attr($icon).'"></i>';
+		                }
+		                echo '<span>'.esc_attr($name).'</span>';
+		                echo '</a>';
+		                
+		                // Generate the sidebar output if needed
+		                if (self::section_has_menu($section_id)) {
+		                    
+		                    $menu_items = self::section_menu_items_count($section_id);
+		                    
+		                    echo '<ul class="essb-submenu essb-cc-sub-'.esc_attr($section_id).($is_active ? ' active-submenu': '').($menu_items < 2 ? ' essb-cc-singleitem' : '').'">';
+		                    foreach (self::$menu_items[$section_id] as $menu_id => $menu_options) {
+		                        echo '<li class="essb-submenu-item essb-cc-'.esc_attr($section_id).'-'.esc_attr($menu_id).'" data-menu="'.esc_attr($section_id).'" data-submenu="'.esc_attr($menu_id).'" data-title="'.esc_html($menu_options['title']).'">';
+		                        echo '<a href="'.esc_url(self::section_build_url($section_id, $menu_id)).'"><span>' . esc_html($menu_options['title']) . '</span></a>';
+		                        
+		                        
+		                        $has_submenu = self::section_menu_has_sub($section_id, $menu_id);
+		                        if ($has_submenu) {
+		                            
+		                            echo '<div class="essb-inner-menu">';
+		                            self::draw_sidebar_submenu($section_id, $menu_id);
+		                            echo '</div>';
+		                        }
+		                        
+		                        echo '</li>';
+		                    }
+		                    echo '</ul>';
+		                }
+		                
+		                echo '</li>';
+		            }
+		        }
+		        
+		        echo '</ul>';
+		        
+		    }
+		    
+		    echo '</div>'; //essb-control-navigation
+		}
+		
 		public static function draw_blank_content_start() {
 			echo '<!-- Options Content -->';
 			echo '<div class="essb-control-content">';
@@ -680,6 +943,15 @@ if (!class_exists('ESSBControlCenter')) {
 		 * Output content area
 		 */
 		public static function draw_content() {
+		    
+		    /**
+		     * @since 8.0
+		     */
+		    if (self::$new_version) {
+		        self::draw_content_v8();
+		        return '';
+		    }
+		    
 			echo '<!-- Options Content -->';
 			echo '<div class="essb-control-content">';
 				
@@ -790,6 +1062,147 @@ if (!class_exists('ESSBControlCenter')) {
 		}
 		
 		/**
+		 * Output content area
+		 */
+		public static function draw_content_v8() {
+		    echo '<!-- Options Content -->';
+		    echo '<div class="essb-control-content">';
+		    
+		    // Generation of control center header
+		    if (!self::section_without_topbar(self::$active_section)) {
+		        echo '<div class="essb-control-top">';
+		        
+		        echo '<a href="#" class="essb-control-btn essb-head-modesbtn" id="essb-head-modesbtn"><i class="fa fa-magic"></i><span>'.esc_html__('Switch Mode', 'essb').'</span></a>';
+		        
+		        // Manage plugin features button
+		        echo '<a href="#" class="essb-control-btn essb-head-featuresbtn" id="essb-head-featuresbtn"><i class="fa fa-cog"></i><span>'.esc_html__('Activate/Deactivate Features', 'essb').'</span><span class="small-tag">'.esc_html(self::features_count()).'</span></a>';
+		        
+		        // Help button
+		        echo '<a href="'.esc_url(self::help_url()).'" class="essb-control-btn essb-control-btn-help"><i class="fa fa-life-ring"></i><span>'.esc_html__('Get Support', 'essb').'</span></a>';
+		        
+		        // Onboarding button
+		        echo '<a href="'.esc_url(self::getting_started_url()).'" class="essb-control-btn essb-control-btn-onboarding"><i class="fa fa-info-circle"></i><span>'.esc_html__('Getting Started', 'essb').'</span></a>';
+		        
+		        
+		        if (!ESSBActivationManager::isActivated()) {
+		            echo '<a href="'.esc_url(admin_url('admin.php?page=essb_redirect_update&tab=update')).'" class="essb-control-btn essb-control-btn-activate"><i class="fa fa-ban"></i> '.esc_html__('Not activated', 'essb').'</a>';
+		        }
+		        
+		        // Save settings button
+		        if (!self::section_without_save(self::$active_section)) {
+		            echo '<a href="#" class="essb-control-btn essb-control-btn-save"><i class="ti-save"></i><span>'.esc_html__('Save Settings', 'essb').'</span></a>';
+		            echo '<input type="Submit" name="Submit" value="Update Settings" class="essb-btn essb-btn-red essb-hidden" id="essb-btn-update">';
+		        }
+		        
+		        echo '</div>';
+		    }
+		    
+		    // Actual setup screen content
+		    echo '<div class="essb-control-inner">';
+		    
+		    $section_options = self::get_section_options(self::$active_section);
+		    
+		    echo '<div class="essb-control-inner-content essb-options-container essb-options">';
+		    
+		    do_action('essb_control_center_before_content');
+		    
+		    // Draw the options title section
+		    $section_title = self::get_section_title(self::$active_section);
+		    
+		    echo '<div class="essb-options-title">'.($section_title['icon'] != '' ? '<i class="title-icon '.esc_attr($section_title['icon']).'"></i>' : '').esc_attr($section_title['title']).'<span class="essb-options-subtitle"></span></div>';
+		    
+		    foreach($section_options as $section => $fields) {
+		        printf('<div id="essb-container-%1$s" class="essb-data-container">', esc_attr($section));
+		        
+		        $has_submenu = self::section_menu_has_sub(self::$active_section, $section);
+		        $sub_title = self::section_menu_sub_title(self::$active_section, $section);
+		        $child_list = array();
+		        
+		        $show_submenu = false;
+		        
+		        echo '<div class="essb-inner-flex">';
+		        // Generating internal section submenu and get the list of child menu items
+		        
+		        if ($has_submenu && $show_submenu) {
+		            
+		            echo '<div class="essb-inner-menu">';
+		            $child_list = self::draw_submenu(self::$active_section, $section);
+		            echo '</div>';
+		        }
+		        else if ($has_submenu && !$show_submenu) {
+		            $child_list = self::generate_submenu(self::$active_section, $section);
+		        }
+		        
+		        echo '<div class="essb-inner-content'.($has_submenu && $show_submenu ? ' essb-hasmenu' : '').'">';
+		        
+		        // Breadcrumb navigation
+		        echo '<div class="essb-inner-breadcrumb">'.($section_title['icon'] != '' ? '<i class="title-icon '.esc_attr($section_title['icon']).'"></i>' : '').esc_attr($section_title['title']).'<span class="essb-options-subtitle">'.esc_html($sub_title).'</span></div>';
+		        
+		        
+		        if (!$has_submenu) {
+		            echo '<div class="essb-flex-grid essb-parent-options">';
+		            $section_options = $fields;
+		            ESSBOptionsFramework::reset_row_status();
+		            foreach ($section_options as $option) {
+		                ESSBOptionsFramework::draw_options_field($option, false, array());
+		            }
+		            echo '</div>'; // .essb-flex-grid
+		        }
+		        else {
+		            foreach ($child_list as $submenu_id) {
+		                echo '<div class="essb-child-section essb-parent-options essb-child-section-'.esc_attr($submenu_id).'">';
+		                
+		                echo '<div class="essb-flex-grid">';
+		                $section_options = $fields;
+		                ESSBOptionsFramework::reset_row_status();
+		                foreach ($section_options as $option) {
+		                    $option_submenu_id = isset($option['submenu_id']) ? $option['submenu_id'] : '';
+		                    if ($option_submenu_id != $submenu_id) { continue; }
+		                    
+		                    ESSBOptionsFramework::draw_options_field($option, false, array());
+		                }
+		                echo '</div>'; // .essb-flex-grid
+		                
+		                echo '</div>'; // .essb-child-section
+		            }
+		        }
+		        
+		        echo '</div>'; // .essb-inner-content
+		        
+		        echo '</div>'; // .essb-inner-flex
+		        
+		        echo '</div>'; //.essb-data-container
+		    }
+		    echo '</div>'; // .essb-control-inner-content
+		    
+		    echo '</div>'; // .essb-control-inner
+		    
+		    echo '</div>'; //essb-control-content
+		}
+		
+		public static function generate_submenu($section_id, $menu_id) {
+		    $child_list = self::$menu_items[$section_id][$menu_id]['child_list'];
+		    $tab_list = array();
+		    
+		    foreach ($child_list as $child_id) {
+		        $options = self::$sub_sections[$child_id];
+		        $type = isset($options['type']) ? $options['type'] : '';
+		        $value = isset($options['value']) ? $options['value'] : '';
+		        $id = isset($options['id']) ? $options['id'] : '';
+		        $class_name = isset($options['class']) ? $options['class'] : '';
+		        
+		        if ($type == 'menu') {
+		            foreach ($value as $key => $text) {
+		                $tab_list[] = $key;
+		            }
+		        }
+		    }
+		    
+		    return $tab_list;
+		}
+		
+		
+		/**
 		 * Output child menu navigation and generate a list of the child ids
 		 * 
 		 * @param string $section_id
@@ -844,6 +1257,37 @@ if (!class_exists('ESSBControlCenter')) {
 			}
 			
 			return $tab_list;
+		}
+		
+		/**
+		 * Output child menu navigation and generate a list of the child ids
+		 *
+		 * @param string $section_id
+		 * @param string $menu_id
+		 * @return array
+		 */
+		public static function draw_sidebar_submenu($section_id, $menu_id) {
+		    $child_list = self::$menu_items[$section_id][$menu_id]['child_list'];
+		    $tab_list = array();
+		    
+		    foreach ($child_list as $child_id) {
+		        $options = self::$sub_sections[$child_id];
+		        $type = isset($options['type']) ? $options['type'] : '';
+		        $value = isset($options['value']) ? $options['value'] : '';
+		        $id = isset($options['id']) ? $options['id'] : '';
+		        $class_name = isset($options['class']) ? $options['class'] : '';
+		        
+		        if ($type == 'menu') {
+		            echo '<ul>';
+		            
+		            foreach ($value as $key => $text) {
+		                echo '<li data-tab="'.$key.'" class="essb-inner-menu-item-'.esc_attr($key).'"><a href="#">'.esc_html($text).'</a></li>';
+		                $tab_list[] = $key;
+		            }
+		            
+		            echo '</ul>';
+		        }
+		    }
 		}
 	}
 }

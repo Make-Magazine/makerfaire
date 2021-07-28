@@ -21,16 +21,40 @@ if ($connector != 'mymail' && $connector != 'mailster' && $connector != 'mailpoe
 
 
 essb5_draw_heading(esc_html__('Form Texts', 'essb'), '5');
+essb5_draw_switch_option('add_name', esc_html__('Include Name Field', 'essb'), '', true, essb_array_value('add_name', $designSetup));
+
 essb5_draw_input_option('title', esc_html__('Heading', 'essb'), '', true, true, essb_array_value('title', $designSetup));
 essb5_draw_editor_option('text', esc_html__('Form custom content', 'essb'), esc_html__('HTML code and shortcodes are supported', 'essb'), 'htmlmixed', true, essb_array_value('text', $designSetup));
 essb5_draw_input_option('footer', esc_html__('Footer Text', 'essb'), '', true, true, essb_array_value('footer', $designSetup));
-
 essb5_draw_input_option('name_placeholder', esc_html__('Name field text', 'essb'), '', true, true, essb_array_value('name_placeholder', $designSetup));
 essb5_draw_input_option('email_placeholder', esc_html__('Email field text', 'essb'), '', true, true, essb_array_value('email_placeholder', $designSetup));
 essb5_draw_input_option('button_placeholder', esc_html__('Subscribe button text', 'essb'), '', true, true, essb_array_value('button_placeholder', $designSetup));
-essb5_draw_switch_option('add_name', esc_html__('Include Name Field', 'essb'), '', true, essb_array_value('add_name', $designSetup));
 essb5_draw_input_option('error_message', esc_html__('Error Subscribe Message', 'essb'), '', true, true, essb_array_value('error_message', $designSetup));
 essb5_draw_input_option('ok_message', esc_html__('Success Subscribe Message', 'essb'), '', true, true, essb_array_value('ok_message', $designSetup));
+
+/**
+ * @since 7.6 Multilanguage support for the custom subscribe forms
+ */
+if (essb_installed_wpml() || essb_installed_polylang()) {
+    if (ESSBActivationManager::isActivated()) {
+        $languages = ESSBWpmlBridge::getLanguages();
+        
+        foreach ($languages as $key => $name) {
+            essb5_draw_panel_start($name, 'Translate the fields you need in this language. If you leave blank it will use the global texts.');
+
+            essb5_draw_input_option('title_'.$key, esc_html__('Heading', 'essb'), '', true, true, essb_array_value('title_'.$key, $designSetup));
+            essb5_draw_editor_option('text_'.$key, esc_html__('Form custom content', 'essb'), esc_html__('HTML code and shortcodes are supported', 'essb'), 'htmlmixed', true, essb_array_value('text_'.$key, $designSetup));
+            essb5_draw_input_option('footer_'.$key, esc_html__('Footer Text', 'essb'), '', true, true, essb_array_value('footer_'.$key, $designSetup));
+            essb5_draw_input_option('name_placeholder_'.$key, esc_html__('Name field text', 'essb'), '', true, true, essb_array_value('name_placeholder_'.$key, $designSetup));
+            essb5_draw_input_option('email_placeholder_'.$key, esc_html__('Email field text', 'essb'), '', true, true, essb_array_value('email_placeholder_'.$key, $designSetup));
+            essb5_draw_input_option('button_placeholder_'.$key, esc_html__('Subscribe button text', 'essb'), '', true, true, essb_array_value('button_placeholder_'.$key, $designSetup));
+            essb5_draw_input_option('error_message_'.$key, esc_html__('Error Subscribe Message', 'essb'), '', true, true, essb_array_value('error_message_'.$key, $designSetup));
+            essb5_draw_input_option('ok_message_'.$key, esc_html__('Success Subscribe Message', 'essb'), '', true, true, essb_array_value('ok_message_'.$key, $designSetup));
+            
+            essb5_draw_panel_end();
+        }
+    }
+}
 
 essb5_draw_heading(esc_html__('Include Image Inside Form', 'essb'), '5');
 essb5_draw_file_option('image', esc_html__('Select image for the form', 'essb'), esc_html__('Optional you can choose an image that will appear inside the form. The image location can be selected from the menu blow', 'essb'), true, essb_array_value('image', $designSetup));

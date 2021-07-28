@@ -75,6 +75,22 @@ class ESSBAdvancedOptions {
 			$this->remove_form_design();
 		}
 		
+		if ($cmd == 'remove_instagram_account') {
+		    $this->remove_instagram_account();
+		}
+		
+		if ($cmd == 'update_instagram_token') {
+		    $this->update_instagram_token();
+		}
+		
+		if ($cmd == 'update_instagram_images') {
+		    $this->update_instagram_images();
+		}
+		
+		if ($cmd == 'remove_instagram_accounts') {
+		    $this->remove_instagram_accounts();
+		}
+		
 		if ($cmd == 'remove_custom_button') {
 			$this->remove_custom_button();
 		}
@@ -297,6 +313,10 @@ class ESSBAdvancedOptions {
 		if ($current_tab == 'manage_subscribe_forms') {
 			$this->load_settings('form-designer');
 		}
+		
+		if ($current_tab == 'manage_instagram_accounts') {
+		    $this->load_settings('instagram-account');
+		}
 
 		if ($current_tab == 'manage-positions') {
 			$this->load_settings('manage-positions');
@@ -475,6 +495,52 @@ class ESSBAdvancedOptions {
 			essb5_form_remove_design($design);
 		}
 	}
+	
+	public function remove_instagram_account() {
+	    $account = isset($_REQUEST['account']) ? $_REQUEST['account'] : '';
+	    
+	    if ($account != '') {
+	        if (!class_exists('ESSBInstagramFeed')) {
+	            include_once (ESSB3_MODULES_PATH . 'instagram-feed/class-instagram-feed.php');
+	        }
+	        
+	        ESSBInstagramFeed::remove_account($account);
+	    }
+	}
+	
+	public function update_instagram_token() {
+	    $account = isset($_REQUEST['account']) ? $_REQUEST['account'] : '';
+	    $token = isset($_REQUEST['token']) ? $_REQUEST['token'] : '';
+	    
+	    if ($account != '' && $token != '') {
+	        if (!class_exists('ESSBInstagramFeed')) {
+	            include_once (ESSB3_MODULES_PATH . 'instagram-feed/class-instagram-feed.php');
+	        }
+	        
+	        ESSBInstagramFeed::update_token($account, $token);
+	    }
+	}
+	
+	public function update_instagram_images() {
+	    $account = isset($_REQUEST['account']) ? $_REQUEST['account'] : '';
+	    $username = isset($_REQUEST['username']) ? $_REQUEST['username'] : '';
+	    
+	    if ($account != '' && $username != '') {
+	        if (!class_exists('ESSBInstagramFeed')) {
+	            include_once (ESSB3_MODULES_PATH . 'instagram-feed/class-instagram-feed.php');
+	        }
+	        
+	        ESSBInstagramFeed::update_images($username);
+	    }
+	}
+	
+	public function remove_instagram_accounts() {
+	    if (!class_exists('ESSBInstagramFeed')) {
+	        include_once (ESSB3_MODULES_PATH . 'instagram-feed/class-instagram-feed.php');
+	    }
+	    
+	    ESSBInstagramFeed::remove_all_accounts();
+	}
 
 	/**
 	 * Hold down the save options actions.
@@ -491,6 +557,10 @@ class ESSBAdvancedOptions {
 
 		if ($group == 'essb_options_forms') {
 			$this->save_subscribe_form($options);
+		}
+		else if ($group == 'essb_options_ig_accounts') {
+		    // @since 7.9 Instagram connected accounts
+		    $this->save_instagram_account($options);
 		}
 		else if ($group == 'essb_options_custom_networks') {
 			$this->save_custom_button($options);
@@ -596,6 +666,36 @@ class ESSBAdvancedOptions {
 		}
 
 		essb5_save_form_designs($existing);
+	}
+	
+	public function save_instagram_account($options = array()) {
+	    if (!class_exists('ESSBInstagramFeed')) {
+	        include_once (ESSB3_MODULES_PATH . 'instagram-feed/class-instagram-feed.php');
+	    }
+	    
+	    $account_id = isset($options['ig_account_id']) ? $options['ig_account_id'] : '';
+	    $account_type = isset($options['ig_account_type']) ? $options['ig_account_type'] : '';
+	    
+	    if ($account_id == 'new') {
+	        $account_id = ESSBInstagramFeed::get_new_account_id();
+	        
+	        if (empty($account_id)) {
+	            $account_id = 1;
+	        }
+	    }
+	    
+	    $account_options = array();
+	    
+	    foreach ($options as $key => $value) {
+	        if ($key != 'ig_account_id' && $key != 'essb_advanced_token' && $key != '_wp_http_referer' && $key != 'ig_account_type') {
+	            $value = wp_kses($value, essb_subscribe_fields_safe_html());
+	            $account_options[$key] = $value;
+	        }
+	    }
+	    
+	    $account_options['account_type'] = $account_type;
+	    
+	    ESSBInstagramFeed::save_account($account_id, $account_options);
 	}
 
 	/**

@@ -513,7 +513,6 @@ if (!function_exists('essb_available_animations')) {
 if (! function_exists ( 'essb_cached_counters_update' )) {
 	function essb_cached_counters_update() {
 		$periods = array ();
-		$periods [''] = 'Real time share counters';
 		$periods [1] = 'Updated on 1 Minute';
 		$periods [5] = 'Updated on 5 Minutes';
 		$periods [10] = 'Updated on 10 Minutes';

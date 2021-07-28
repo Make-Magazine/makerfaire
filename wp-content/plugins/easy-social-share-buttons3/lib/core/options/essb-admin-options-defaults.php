@@ -227,7 +227,7 @@ if (!function_exists('essb_stylebuilder_css_files')) {
 		$files['essb-followers'] = array(
 				'name' => esc_html__('Followers counter, Social Profiles', 'essb'),
 				'default' => 'false',
-				'file' => 'lib/modules/social-followers-counter/assets/css/essb-followers-counter.min.css');
+				'file' => 'lib/modules/social-followers-counter/assets/social-profiles.min.css');
 
 		$files['essb-clicktotweet'] = array(
 				'name' => esc_html__('Click to Tweet', 'essb'),

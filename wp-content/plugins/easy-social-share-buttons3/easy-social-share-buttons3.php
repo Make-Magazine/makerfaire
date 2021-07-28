@@ -4,7 +4,7 @@
 * Plugin Name: Easy Social Share Buttons for WordPress
 * Description: The first true all in one social media plugin for WordPress, including social share buttons, social followers counter, social profile links, click to tweet, Pinnable images, after share events, subscribe forms, Instagram feed, social proof notifications and much more.
 * Plugin URI: https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo
-* Version: 7.5
+* Version: 7.9
 * Author: CreoApps
 * Author URI: https://codecanyon.net/user/appscreo/portfolio?ref=appscreo
 */
@@ -20,7 +20,7 @@ if (defined('ESSB3_VERSION')) {
     return;
 }
 
-define ( 'ESSB3_VERSION', '7.5' );
+define ( 'ESSB3_VERSION', '7.9' );
 define ( 'ESSB3_PLUGIN_ROOT', dirname ( __FILE__ ) . '/' );
 define ( 'ESSB3_PLUGIN_URL', plugins_url () . '/' . basename ( dirname ( __FILE__ ) ) );
 define ( 'ESSB3_PLUGIN_BASE_NAME', plugin_basename ( __FILE__ ) );

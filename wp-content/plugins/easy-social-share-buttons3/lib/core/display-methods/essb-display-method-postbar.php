@@ -56,7 +56,7 @@ class ESSBDisplayMethodPostBar {
 				$output .= '<a href="'.esc_url(get_permalink( $prev_post->ID )).'">';
 				$output .= '<span class="essb_title">';
 				$output .= '<span class="essb_tcategory">';
-				$post_title = substr(get_the_title( $prev_post->ID ),0,100);
+				$post_title = mb_substr(get_the_title( $prev_post->ID ),0,100);
 				$output .= $post_title;
 				if (strlen($post_title) >48){
 					$output .= '&hellip;';
@@ -82,7 +82,7 @@ class ESSBDisplayMethodPostBar {
 				$working_post_content = preg_replace( '/\s+/', ' ', $working_post_content );
 				$working_post_content = strip_shortcodes($working_post_content);
 				$working_post_content = trim ( $working_post_content );
-				$working_post_content = substr ( $working_post_content, 0, 150 );
+				$working_post_content = mb_substr ( $working_post_content, 0, 150 );
 				$working_post_content .= '&hellip;';
 				$output .= '<span class="essb_tdesc">';
 				$output .= $working_post_content;
@@ -192,7 +192,7 @@ class ESSBDisplayMethodPostBar {
 				$output .= '<a href="'.esc_url(get_permalink( $next_post->ID )).'">';	
 				$output .= '<span class="essb_title">';
 				$output .= '<span class="essb_tcategory">';
-				$post_title = substr(get_the_title( $next_post->ID ),0,80);
+				$post_title = mb_substr(get_the_title( $next_post->ID ),0,80);
 				$output .= $post_title;
 				if (strlen($post_title) >48){
 					$output .= '&hellip;';
@@ -217,7 +217,7 @@ class ESSBDisplayMethodPostBar {
 				$working_post_content = preg_replace( '/\s+/', ' ', $working_post_content );
 				$working_post_content = strip_shortcodes($working_post_content);
 				$working_post_content = trim ( $working_post_content );
-				$working_post_content = substr ( $working_post_content, 0, 150 );
+				$working_post_content = mb_substr ( $working_post_content, 0, 150 );
 				$working_post_content .= '&hellip;';
 				$output .= '<span class="essb_tdesc">';
 				$output .= $working_post_content;

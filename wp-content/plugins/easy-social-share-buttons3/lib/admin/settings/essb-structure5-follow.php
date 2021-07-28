@@ -320,7 +320,6 @@ if (!essb_option_bool_value('deactivate_module_followers')) {
 		ESSBOptionsStructureHelper::field_switch('follow', 'follow-1', 'fanscounter_widget_deactivate', esc_html__('I will not use Followers Counter widget', 'essb'), esc_html__('Remove the plugin widget for followers counter from the code and list of widgets.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		ESSBOptionsStructureHelper::field_select('follow', 'follow-1', 'essb3fans_update', esc_html__('Data update period', 'essb'), esc_html__('The default is 1 day if nothing is selected.', 'essb'), ESSBSocialFollowersCounterHelper::available_cache_periods());
 		ESSBOptionsStructureHelper::field_select('follow', 'follow-1', 'essb3fans_format', esc_html__('Number format', 'essb'), '', ESSBSocialFollowersCounterHelper::available_number_formats());
-		ESSBOptionsStructureHelper::field_switch('follow', 'follow-1', 'essb3fans_uservalues', esc_html__('Allow custom user values of followers', 'essb'), esc_html__('Enable this option if you plan to set your number of followers for the networks that have automated updates. The value will overwrite the automatic received and come to screen (until it is smaller than the automatic).', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		ESSBOptionsStructureHelper::field_switch('follow', 'follow-1', 'fanscounter_clear_on_save', esc_html__('Clear stored values on settings update', 'essb'), esc_html__('Remove all stored values for the number of followers and do a fresh update.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		
 		ESSBOptionsStructureHelper::field_heading('follow', 'follow-1', 'heading5', esc_html__('Social Networks', 'essb'));
@@ -450,12 +449,24 @@ if (!essb_option_bool_value('deactivate_module_profiles')) {
 function essb3_draw_fanscounter_settings($tab_id, $menu_id) {
 	$setting_fields = ESSBSocialFollowersCounterHelper::options_structure();
 	$network_list = ESSBSocialFollowersCounterHelper::available_social_networks();
-
+	
+	/**
+	 * Load the SVG icons if not present
+	 */
+	if (!class_exists('ESSB_SVG_Icons')) {
+	    include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+	}
+	
 	$networks_same_authentication = array();
 
 	foreach ($network_list as $network => $title) {
+	    
+	    if (ESSBSocialFollowersCounterHelper::is_deprecated_network($network)) {
+	        continue;
+	    }	    
+	    
 		ESSBOptionsStructureHelper::holder_start($tab_id, $menu_id, 'essb-followers-panel essb-followers-'.$network, 'essb-followers-'.$network);
-		ESSBOptionsStructureHelper::panel_start($tab_id, $menu_id, $title, '', 'fa21 essbfc-icon essbfc-icon-'.$network, array("mode" => "toggle", "state" => "closed"));
+		ESSBOptionsStructureHelper::panel_start($tab_id, $menu_id, $title, '', 'fa21 essbfc-icon essbfc-icon-'.$network, array("mode" => "toggle", "state" => "closed", 'svg_icon' => ESSB_SVG_Icons::get_icon($network == 'total' ? 'total_followers' : $network)));
 
 		$default_options_key = $network;
 		$is_extended_key = false;
@@ -498,17 +509,28 @@ function essb3_draw_fanscounter_settings($tab_id, $menu_id) {
 }
 
 function essb_prepare_social_profiles_fields($tab_id, $menu_id) {
-
+    /**
+     * Load the SVG icons if not present
+     */
+    if (!class_exists('ESSB_SVG_Icons')) {
+        include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+    }
+    
 	foreach (essb_available_social_profiles() as $key => $text) {
 	    
 	    $display_key = $key;
 	    
+	    if (ESSBSocialFollowersCounterHelper::is_deprecated_network($key)) {
+	        continue;
+	    }
+	    
 	    if ($display_key == 'instgram') {
 	        $display_key = 'instagram';
 	    }
+	    	    
 	    
 	    ESSBOptionsStructureHelper::holder_start($tab_id, $menu_id, 'essb-profiles-panel essb-profiles-'.$display_key, 'essb-profiles-'.$display_key);
-	    ESSBOptionsStructureHelper::panel_start($tab_id, $menu_id, $text, '', 'fa21 essbfc-icon essbfc-icon-'.$display_key, array("mode" => "toggle", "state" => "closed"));
+	    ESSBOptionsStructureHelper::panel_start($tab_id, $menu_id, $text, '', 'fa21 essbfc-icon essbfc-icon-'.$display_key, array("mode" => "toggle", "state" => "closed", 'svg_icon' => ESSB_SVG_Icons::get_icon($display_key)));
 
 		if ($key == 'subscribe_form') {
 		    ESSBOptionsStructureHelper::field_select($tab_id, $menu_id, 'profile_'.$key, esc_html__('Form design', 'essb'), '', essb_optin_designs());		    

@@ -10,7 +10,7 @@ essb5_draw_heading(esc_html__('General', 'essb'), '6');
 essb5_draw_switch_option('counter_remove_query_string', esc_html__('Don\'t use query string in URLs when updating share counters', 'essb'), '');
 
 essb5_draw_heading(esc_html__('Facebook', 'essb'), '6');
-$listOfOptions = array ("" => "API Endpoint #1 (Public)", "api2" => "API Endpoint #2 (Require Token)", 'sharedcount' => 'SharedCount.com (Require Token)');
+$listOfOptions = array ("api2" => "Facebook API (Require Token)", 'sharedcount' => 'SharedCount.com (Require Token)');
 essb5_draw_select_option('facebook_counter_api', esc_html__('Facebook counter update API', 'essb'), esc_html__('Facebook have right now several active API endpoints that you can use to get share counter. Facebook API Endpoint #2 and Endpoint #3 uses Facebook API 3 and require access token to read the share values.', 'essb'), $listOfOptions);
 essb5_draw_input_option('facebook_counter_token', esc_html__('Facebook access token key', 'essb'), sprintf(esc_html__('To generate your access token key please visit %s and follow instructions to generate application based token', 'essb'), '<a href="https://tools.creoworx.com/facebook/" target="_blank">https://tools.creoworx.com/facebook/</a>'), true);
 essb5_draw_input_option('sharedcount_token', esc_html__('SharedCount.com access token key', 'essb'), esc_html__('Fill this field only if you choose from the settings to use SharedCount.com as a counter provider. Otherwise leave blank. More details for token generation you can find inside the SharedCount.com documentation', 'essb'), true);
@@ -24,8 +24,6 @@ essb5_draw_heading(esc_html__('LinkedIn', 'essb'), '6');
 $listOfOptions = array ("" => "Self-hosted counter (internally counted by click on buttons)", "no" => "Without share counter");
 essb5_draw_select_option('linkedin_counter_type', esc_html__('LinkedIn share counter', 'essb'), esc_html__('LinkedIn recenly announced that they are removing share counters from their button and API. The API may still return data for your site but it is adviced to switch to internal counters.', 'essb'), $listOfOptions);
 
-essb5_draw_heading(esc_html__('Pinterest', 'essb'), '6');
-essb5_draw_switch_option('cache_counter_pinterest_async', esc_html__('Client side Pinterest counter update', 'essb'), esc_html__('Pinterest apply restrictions when you are using few hosts that avoid Pinterest counter extraction. In such case please activate this option to avoid missing Pinterest counters. Due to Pinterest rate limitations this option cannot work with share recovery.', 'essb'));
 essb5_draw_heading(esc_html__('AddThis', 'essb'), '6');
 essb5_draw_switch_option('cache_counter_addthis', esc_html__('AddThis Internal Counter Support', 'essb'), esc_html__('Set this option to Yes if you have a used AddThis. The option will call the AddThis API to display the total number internal shares. As there is no network based split the value will be added only to the total counter. Due to AddThis restrictions the import will not work if you set to Yes the option "Speed Up Process Of Counters Update"', 'essb'));
 
