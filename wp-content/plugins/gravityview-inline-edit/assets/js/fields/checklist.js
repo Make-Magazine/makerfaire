@@ -82,15 +82,16 @@
 
 		//collect text of checked boxes
 		value2htmlFinal: function ( value, element ) {
-			var html = [], checked = $.fn.editableutils.itemsByValue( value, this.sourceData ),
-				escape = this.options.escape, sourceData = $( element ).data( 'source' ),
-				inputID = $( element ).data( 'inputid' ),
-				choiceDisplay = $( element ).data( 'choice_display' ), singleColumnField = false;
-
+			var html = [];
+			var checked = $.fn.editableutils.itemsByValue( value, this.sourceData );
+			var escape = this.options.escape, sourceData = $( element ).data( 'source' );
+			var inputID = $( element ).data( 'inputid' );
+			var choiceDisplay = $( element ).data( 'choice_display' );
+			var singleColumnField = false;
+			var $el = $( element );
+			var isEntryView = $el.parents( 'table.gf_entries' ).length;
 
 			if ( inputID ) {
-
-
 				//sourceData indexes start at 0 so we need to decrement inputID
 				singleColumnField = sourceData[ ( inputID - 1 ) ];
 
@@ -99,32 +100,37 @@
 					// `tick` is default
 					switch ( choiceDisplay ) {
 						case 'label':
-							$( element ).text( singleColumnField.text );
+							$el.text( singleColumnField.text );
 							break;
 						case 'value':
-							$( element ).text( singleColumnField.value );
+							$el.text( singleColumnField.value );
 							break;
 						default:
-							$( element ).html( '<span class="dashicons dashicons-yes"></span>' );
+							$el.html( '<span class="dashicons dashicons-yes"></span>' );
 							break;
 					}
 				} else {
-					$( element ).empty();
+					$el.empty();
 				}
 
-			}
-
-			else if ( checked.length ) {
-
+			} else if ( checked.length ) {
 				$.each( checked, function ( i, v ) {
 					var text = escape ? $.fn.editableutils.escape( v.value ) : v.value;
-					html.push( '<li>' + text + '</li>' );
+					if ( ! isEntryView ) {
+						html.push( '<li>' + text + '</li>' );
+					} else {
+						html.push( text );
+					}
 				} );
 
-				$( element ).html( '<ul class="bulleted">' + html.join( '' ) + '</ul>' );
+				if ( isEntryView ) {
+					$el.html( html.join( ', ' ) );
+					return;
+				}
 
+				$el.html( '<ul class="bulleted">' + html.join( '' ) + '</ul>' );
 			} else {
-				$( element ).empty();
+				$el.empty();
 			}
 		},
 

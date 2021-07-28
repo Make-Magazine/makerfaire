@@ -80,14 +80,15 @@
 		 @method value2html(value, element)
 		 **/
 		value2html: function ( value, element ) {
+			var $el = $( element );
 
 			if ( !value ) {
-				$( element ).empty();
+				$el.empty();
 				return;
 			}
 
 			// Use .attr() because .data returns undefined instead of empty string, which is annoying
-			var input_id = $( element ).attr( 'data-inputid' );
+			var input_id = $el.attr( 'data-inputid' );
 
 			var return_value = '';
 
@@ -111,7 +112,9 @@
 				return_value = value[ 1 ] + ':' + value[ 2 ] + ' ' + value[ 3 ];
 			}
 
-			$( element ).html( '<div>' + return_value.toUpperCase() + '</div>' );
+			var html = $el.attr('data-display');
+
+			$el.html( html );
 		}
 	} );
 

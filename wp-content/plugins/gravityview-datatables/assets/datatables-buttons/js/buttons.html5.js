@@ -962,7 +962,7 @@ DataTable.ext.buttons.csvHtml5 = {
 		}
 
 		if ( config.bom ) {
-			output = '\ufeff' + output;
+			output = String.fromCharCode(0xFEFF) + output;
 		}
 
 		_saveAs(
@@ -1063,7 +1063,9 @@ DataTable.ext.buttons.excelHtml5 = {
 				}
 
 				var originalContent = row[i];
-				row[i] = row[i].trim();
+				row[i] = typeof row[i].trim === 'function'
+					? row[i].trim()
+					: row[i];
 
 				// Special number formatting options
 				for ( var j=0, jen=_excelSpecials.length ; j<jen ; j++ ) {

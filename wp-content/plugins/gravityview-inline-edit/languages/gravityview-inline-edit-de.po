@@ -1,14 +1,18 @@
 # Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2.
+# Translators:
+# Michael Eppers <michael@proper.de>, 2019
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView Inline Edit 1.2.3\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2017-06-25 23:56+0000\n"
+"Last-Translator: Michael Eppers <michael@proper.de>, 2019\n"
 "Language-Team: German (https://www.transifex.com/katzwebservices/teams/18775/de/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -23,64 +27,69 @@ msgstr ""
 
 #: class-gravityview-inline-edit.php:76 class-gravityview-inline-edit.php:360
 msgid "Inline Edit by GravityView"
-msgstr ""
+msgstr "Direktbearbeitung von GravityView"
 
 #: class-gravityview-inline-edit.php:261
 msgid "Update"
-msgstr ""
+msgstr "Aktualisieren"
 
 #: class-gravityview-inline-edit.php:266
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 #: class-gravityview-inline-edit.php:358
 msgid "The plugin requires Gravity Forms."
-msgstr ""
+msgstr "Dieses Plugin benötigt Gravity Forms."
 
 #: includes/class-gravityview-inline-edit-ajax.php:119
 msgid "Gravity Forms is not active."
-msgstr ""
+msgstr "Gravity Forms ist nicht aktiv."
 
 #: includes/class-gravityview-inline-edit-ajax.php:130
 msgid "You are not allowed to edit this entry."
-msgstr ""
+msgstr "Sie haben keine Berechtigung, diesen Eintrag zu bearbeiten."
 
 #: includes/class-gravityview-inline-edit-ajax.php:222
 msgid "This field is required."
-msgstr ""
+msgstr "Dies ist ein Pflichtfeld."
 
 #: includes/class-gravityview-inline-edit-ajax.php:258
 msgid "Please enter a valid time."
-msgstr ""
+msgstr "Bitte geben Sie eine gültige Zeit ein."
 
 #: includes/class-gravityview-inline-edit-ajax.php:373
 msgid "Invalid value. Please try again."
-msgstr ""
+msgstr "Ungültiger Wert. Bitte versuchen Sie es erneut."
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:58
 msgid "An Inline Edit button will be added"
-msgstr ""
+msgstr "Eine Schaltfläche zum Direktbearbeiten wird hinzugefügt."
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:60
 msgid ""
 "If enabled, a button to toggle on and off inline editing will be added to "
 "the Gravity Forms Entries screen. If disabled, the button will not be added."
 msgstr ""
+"Eine Schaltfläche zum Ein- und Ausschalten der Direktbearbeitung wird der "
+"Gravity Forms Eintags-Ansicht hinzugefügt, falls aktiviert. Die Schaltfläche"
+" wird nicht hinzugefügt, falls deaktiviert."
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:115
 #: includes/class-gravityview-inline-edit-gravityview.php:306
 #: includes/class-gravityview-inline-edit-render-abstract.php:205
 msgid "Enable Inline Edit"
-msgstr ""
+msgstr "Direktbearbeitung aktivieren"
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:120
 msgid "Allow Inline Edit when viewing this form's entries in Gravity Forms"
 msgstr ""
+"Erlaube Direktbearbeitung bei Ansicht dieser Formulareinträge in Gravity "
+"Forms"
 
 #: includes/class-gravityview-inline-edit-gravity-forms.php:124
 #: includes/class-gravityview-inline-edit-settings.php:45
 msgid "Inline Edit"
-msgstr ""
+msgstr "Direktbearbeitung"
 
 #: includes/class-gravityview-inline-edit-gravityview.php:307
 msgid "Adds a link to toggle Inline Editing capabilities."
@@ -103,7 +112,7 @@ msgstr ""
 #: includes/class-gravityview-inline-edit-gravityview.php:426
 #: includes/class-gravityview-inline-edit-settings.php:433
 msgid "Inline Edit Mode"
-msgstr ""
+msgstr "Direktbearbeitungs-Modus"
 
 #: includes/class-gravityview-inline-edit-gravityview.php:428
 #: includes/class-gravityview-inline-edit-settings.php:436
@@ -128,7 +137,7 @@ msgstr ""
 
 #: includes/class-gravityview-inline-edit-render-abstract.php:204
 msgid "Toggle Inline Edit"
-msgstr ""
+msgstr "Direktbearbeitung ein- / ausschalten"
 
 #: includes/class-gravityview-inline-edit-render-abstract.php:206
 msgid "Disable Inline Edit"
@@ -136,15 +145,15 @@ msgstr ""
 
 #: includes/class-gravityview-inline-edit-scripts.php:102
 msgid "Empty"
-msgstr ""
+msgstr "Leer"
 
 #: includes/class-gravityview-inline-edit-settings.php:290
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: includes/class-gravityview-inline-edit-settings.php:291
 msgid "There was an error processing the request."
-msgstr ""
+msgstr "Bei der Verarbeitung der Anfrage ist ein Fehler aufgetreten."
 
 #: includes/class-gravityview-inline-edit-settings.php:292
 msgid ""
@@ -197,7 +206,7 @@ msgstr ""
 
 #: includes/class-gravityview-inline-edit-settings.php:304
 msgid "Verify License"
-msgstr ""
+msgstr "Lizenz überprüfen"
 
 #: includes/class-gravityview-inline-edit-settings.php:422
 msgid "Support License Key"
@@ -211,7 +220,7 @@ msgstr ""
 
 #: includes/class-gravityview-inline-edit-settings.php:426
 msgid "Enter your license key here"
-msgstr ""
+msgstr "Geben Sie hier Ihren Lizenzschlüssel ein"
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
@@ -226,11 +235,11 @@ msgstr ""
 
 #: lib/EDD_SL_Plugin_Updater.php:396
 msgid "You do not have permission to install plugin updates"
-msgstr ""
+msgstr "Sie haben keine Berechtigung, Plugin Aktualisierungen zu installieren"
 
 #: lib/EDD_SL_Plugin_Updater.php:396
 msgid "Error"
-msgstr ""
+msgstr "Fehler"
 
 #: lib/class-gravityview-extension.php:351
 msgid "Could not activate the %s Extension; GravityView is not active."

@@ -1,9 +1,9 @@
 === GravityView - DataTables Extension ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 5.5.1
+Tested up to: 5.8
 Stable tag: trunk
-Contributors: katzwebservices, luistinygod, soulseekah
+Contributors: The GravityView Team
 License: GPL 3 or higher
 
 Display entries in a dynamic table powered by DataTables & GravityView.
@@ -15,6 +15,19 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.4.8.1 on July 27, 2021 =
+
+* Fixed: Interference with a non-DataTables layout search widget clear button
+
+= 2.4.8 on July 19, 2021 =
+
+* Fixed: Search widget clear/reset button would not refresh DataTables results
+* Fixed: When using the Print button, single check marks were not shown. Now a check mark emoji will be shown ✔️
+
+= 2.4.7 on December 10, 2020 =
+
+* Fixed: Inline Edit not working in Single Entry context
 
 = 2.4.6 on September 24, 2020 =
 

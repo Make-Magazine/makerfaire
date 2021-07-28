@@ -1,7 +1,7 @@
 === Inline Edit by GravityView ===
 Tags: gravity forms
 Requires at least: 3.3
-Tested up to: 5.3
+Tested up to: 5.7.2
 Stable tag: trunk
 Contributors: The GravityView Team
 License: GPL 2
@@ -19,6 +19,39 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 1.4.2 on June 1, 2021 =
+
+* Fixed: License field missing when running Gravity Forms 2.5
+
+= 1.4.1 on April 12, 2021 =
+
+* Fixed: Editing the Country/State/Province input of an Address field did not work
+* Fixed: Fields that weren't editable were removed from the View rather than being disabled
+* Fixed: Editing a Paragraph Text field did not respect the "allow HTML" View setting
+
+= 1.4 on April 1, 2021 =
+
+* Added: Support for Product field (User-Defined Price only)
+* Fixed: Multi-input fields (e.g., Name) marked as required would fail validation when attempting to update them
+* Fixed: Updating a single checkbox choice would reset other choices
+* Fixed: Updating fields linking to a single entry would remove the hyperlink and reset the field value
+* Fixed: It was possible to clear all checkbox choices for fields marked as required
+* Fixed: Inline Edit would initialize with incorrect data when including multiple list fields in the View
+* Fixed: Output formatting for certain field types would change after an update
+* Fixed: Currency symbol would disappear when updating a number field
+* Improved: Links to single entry are not disabled when Inline Edit is activated
+* Improved: Inline Edit no longer prevents configuring visible columns on the Gravity Forms Entries screen
+* Improved: Shows a message when a form or View does not have any editable fields visible
+* Updated: German translation (thanks, Michael!), Russian translation (thanks, Irina!), and Chinese translation (thanks, Edi!)
+
+= 1.3.3 on January 11, 2021 =
+
+* Improved: If there are no entries, hide the Inline Edit button
+* Improved: Don't register a bundled jQuery Cookie script if others are in use
+* Fixed: Unable to override the default "Empty" string translation
+* Fixed: "Enable Inline Edit" toggle would not work with the DataTables layout
+* Fixed: Clicking the Inline Edit button would enable, then immediately disable, inline editing
 
 = 1.3.2 on December 5, 2019 =
 

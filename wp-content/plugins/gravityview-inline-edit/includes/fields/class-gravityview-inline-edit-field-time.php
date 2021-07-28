@@ -51,14 +51,16 @@ class GravityView_Inline_Edit_Field_Time extends GravityView_Inline_Edit_Field {
 
 		$return = array(
 			array(
-				'selector' => "#gv-inline-editable-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}",
+				'selector' => ".gv-inline-editable-field-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}",
+				'data'     => array( 'display_value' => strtoupper( $gf_field->get_value_export( $entry ) ) ),
 				'value'    => json_encode( $gvtime ),
 			),
 		);
 
 		foreach ( $gvtime as $key => $value ) {
 			$return[] = array(
-				'selector' => "#gv-inline-editable-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}-{$key}",
+				'selector' => ".gv-inline-editable-field-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}-{$key}",
+				'data'     => array( 'display_value' => strtoupper( $value ) ),
 				'value'    => json_encode( array( $key => $value ) ),
 			);
 		}

@@ -10,12 +10,12 @@
   },
   "homepage": "https://datatables.net",
   "license": "MIT",
-  "version": "2.0.3",
-  "_release": "2.0.3",
+  "version": "2.0.4",
+  "_release": "2.0.4",
   "_resolution": {
     "type": "version",
-    "tag": "2.0.3",
-    "commit": "13db658690219d0be07353f36336deab58372120"
+    "tag": "2.0.4",
+    "commit": "0df9e4967e0c55bdf944fe46559d4cdde3c8f446"
   },
   "_source": "https://github.com/DataTables/Scroller.git",
   "_target": ">=1.2.2",

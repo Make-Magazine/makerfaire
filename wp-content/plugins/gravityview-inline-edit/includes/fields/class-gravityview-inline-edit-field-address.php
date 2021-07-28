@@ -83,6 +83,47 @@ class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Fiel
 	}
 
 	/**
+	 * Format full address for display after it's been edited
+	 *
+	 * @since 1.4
+	 *
+	 * @param GF_Field $gf_field Field data
+	 * @param array    $entry    Entry data
+	 *
+	 * @return array
+	 */
+	public function _get_inline_edit_extra_data( $gf_field, $entry ) {
+
+		$address = array();
+
+		foreach ( $gf_field->inputs as $input ) {
+			$_id = $input['id'];
+			if ( ! isset( $entry[ $_id ] ) ) {
+				continue;
+			}
+
+			$address[ $_id ] = rgar( $entry, $_id );
+		}
+
+		// Code taken from GravityView core (see `templates/fields/fields-address-html.php`)
+		add_filter( 'gform_disable_address_map_link', '__return_true' );
+		$formatted_address = GFCommon::get_lead_field_display( $gf_field, $address, "", false, 'html' );
+		remove_filter( 'gform_disable_address_map_link', '__return_true' );
+		if ( empty( $formatted_address ) ) {
+			return array();
+		}
+
+		$map_link = gravityview_get_map_link( $formatted_address );
+
+		$formatted_address = str_replace( "\n", '<br />', $formatted_address );
+
+		return array(
+			'display_value' => $formatted_address,
+			'map_link' => $map_link,
+		);
+	}
+
+	/**
 	 * Get which inputs in the address field are hidden_fields
 	 *
 	 * @since 1.0

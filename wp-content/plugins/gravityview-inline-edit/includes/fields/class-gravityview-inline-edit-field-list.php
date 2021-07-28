@@ -31,7 +31,7 @@ class GravityView_Inline_Edit_Field_List extends GravityView_Inline_Edit_Field {
 		//Multicolumn support. Don't combine the next check, isset( $list_source_raw[0] ) && is_array( $list_source_raw[0]  ),
 		// with this because there are cases where multicolumn is enabled but we can't retrieve data-colcount
 		if ( $gf_field->enableColumns ) {
-			$mode                                = 'multi';
+			$mode                                = 'multi_' . $field_id;
 			$wrapper_attributes['data-colcount'] = count( $gf_field->choices );
 		}
 
