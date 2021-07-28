@@ -1940,7 +1940,7 @@
 		};
 		
 		// modern browsers
-		var file = acf.isget( $input[0], 'files', 0);
+		var file = $input[0].files.length ? acf.isget($input[0].files, 0) : false;
 		if( file ){
 			
 			// update data
@@ -2523,6 +2523,20 @@
 	}
 	
 	/**
+	 * Returns true if value is a number or a numeric string. 
+	 *
+	 * @date	30/11/20
+	 * @since	5.9.4
+	 * @link	https://stackoverflow.com/questions/9716468/pure-javascript-a-function-like-jquerys-isnumeric/9716488#9716488
+	 *
+	 * @param	mixed n The variable being evaluated.
+	 * @return	bool.
+	 */
+	acf.isNumeric = function( n ){
+		return !isNaN(parseFloat(n)) && isFinite(n);
+	}
+	
+	/**
 	 * Triggers a "refresh" action used by various Components to redraw the DOM.
 	 *
 	 * @date	26/05/2020
@@ -2542,7 +2556,11 @@
 	});
 	
 	$(window).on('load', function(){
-		acf.doAction('load');
+		
+		// Use timeout to ensure action runs after Gutenberg has modified DOM elements during "DOMContentLoaded".
+		setTimeout(function(){
+			acf.doAction('load');
+		});
 	});
 	
 	$(window).on('beforeunload', function(){
@@ -2562,7 +2580,6 @@
 	});
 	
 })(jQuery);
-
 ( function( window, undefined ) {
 	"use strict";
 
@@ -2815,7 +2832,6 @@
 	acf.hooks = new EventManager();
 
 } )( window );
-
 (function($, undefined){
 	
 	// Cached regex to split keys for `addEvent`.
@@ -3724,7 +3740,6 @@
 	};
 	
 })(jQuery);
-
 (function($, undefined){
 	
 	acf.models.Popup = acf.Model.extend({
@@ -3839,7 +3854,6 @@
 	};
 	
 })(jQuery);
-
 (function($, undefined){
 	
 	acf.models.Modal = acf.Model.extend({
@@ -3929,7 +3943,6 @@
 	};
 	
 })(jQuery);
-
 (function($, undefined){
 	
 	var panel = new acf.Model({
@@ -3964,7 +3977,6 @@
 	});
 		
 })(jQuery);
-
 (function($, undefined){
 	
 	var Notice = acf.Model.extend({
@@ -4111,7 +4123,6 @@
 	
 	
 })(jQuery);
-
 (function($, undefined){
 	
 	acf.newTooltip = function( props ){
@@ -4436,12 +4447,3 @@
 	});
 	
 })(jQuery);
-
-// @codekit-prepend "_acf.js";
-// @codekit-prepend "_acf-hooks.js";
-// @codekit-prepend "_acf-model.js";
-// @codekit-prepend "_acf-popup.js";
-// @codekit-prepend "_acf-modal.js";
-// @codekit-prepend "_acf-panel.js";
-// @codekit-prepend "_acf-notice.js";
-// @codekit-prepend "_acf-tooltip.js";
