@@ -62,7 +62,7 @@ class GP_Read_Only extends GWPerk {
 				});
 
 				$(document).bind('gform_load_field_settings', function(event, field, form) {
-					$("#<?php echo $this->key( 'field_checkbox' ); ?>").attr('checked', field["<?php echo $this->key( 'enable' ); ?>"] == true);
+					$("#<?php echo $this->key( 'field_checkbox' ); ?>").prop( 'checked', field["<?php echo $this->key( 'enable' ); ?>"] === true );
 
 					// If calculation is enabled, we typically don't need this Perk since the input will be read-only
 					// However, in the case of the product field with a quantity field, the quantity field won't

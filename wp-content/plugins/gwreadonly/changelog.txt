@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.9.1
+
+	- Fixed an issue where GPRO UI may show an incorrect state.
+
 ## 1.9
 
 	- Fixed a potential issue where GPRO may cause form validation to fail.

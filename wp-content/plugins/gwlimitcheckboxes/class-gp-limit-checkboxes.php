@@ -5,7 +5,7 @@ class GP_Limit_Checkboxes extends GWPerk {
 	public $version = GP_LIMIT_CHECKBOXES_VERSION;
 
 	protected $min_gravity_forms_version = '1.9';
-	protected $min_gravity_perks_version = '1.2.8.12';
+	protected $min_gravity_perks_version = '2.2.5';
 
 	public function init() {
 
@@ -25,7 +25,7 @@ class GP_Limit_Checkboxes extends GWPerk {
 		// Enable validation on Gravity Flow's User Input step.
 		add_filter( 'gravityflow_validation_user_input', array( $this, 'validate' ) );
 
-		add_action( 'wp_print_scripts', array( $this, 'enqueue_admin_scripts' ) );
+		add_action( 'admin_head', array( $this, 'enqueue_admin_scripts' ) );
 		add_filter( 'gform_enqueue_scripts', array( $this, 'enqueue_form_scripts' ) );
 
 	}
@@ -400,48 +400,47 @@ class GP_Limit_Checkboxes extends GWPerk {
 	public function field_settings_ui() {
 		?>
 			<style type="text/css">
-				.gwp-option { margin: 0 0 10px; }
 				#gws_field_tab .gwp-option label { margin: 0 !important; }
 				#gws_field_tab .gwp-option input[type="text"] { margin-right: 100px; }
-				.gws-child-settings { border-left: 2px solid #eee; padding: 15px; margin-left: 5px; margin-top: 5px; }
 			</style>
 
-			<li class="<?php echo $this->key( 'setting' ); ?> gwp_field_setting field_setting" style="display:none;">
+			<li class="<?php echo $this->key( 'setting' ); ?> gwp_field_setting field_setting gp-field-setting" style="display:none;">
 				<input type="checkbox" id="<?php echo $this->key( 'enable' ); ?>" onclick="gperk.toggleSettings('<?php echo $this->key( 'enable' ); ?>', '<?php echo $this->key( 'settings' ); ?>');" value="1">
 				<label for="<?php echo $this->key( 'enable' ); ?>" class="inline">
-					<?php _e( 'Limit how many checkboxes can be checked', 'gp-limit-checkboxes' ); ?>
+					<?php _e( 'Limit number of checked checkboxes.', 'gp-limit-checkboxes' ); ?>
 					<?php gform_tooltip( $this->key( 'enable' ) ); ?>
 				</label>
 
-				<div id="<?php echo $this->key( 'settings' ); ?>" class="gws-child-settings" style="display: none;">
-					<div class="gwp-option">
-						<div>
+				<div id="<?php echo $this->key( 'settings' ); ?>" class="gp-child-settings" style="display: none;">
+					<div class="gwp-option gp-field-setting">
+						<div class="gp-group gp-row">
 							<label for="<?php echo $this->key( 'minimum_limit' ); ?>" class="inline" style="width:100px;">
-								<?php _e( 'Minimum Limit: ', 'gp-limit-checkboxes' ); ?>
+								<?php _e( 'Minimum Limit', 'gp-limit-checkboxes' ); ?>
 							</label>
 							<input type="text" id="<?php echo $this->key( 'minimum_limit' ); ?>" onchange="SetFieldProperty('<?php echo $this->key( 'minimum_limit' ); ?>', jQuery(this).val());" style="width:60px;">
 						</div>
-						<div>
+
+						<div class="gp-group gp-row">
 							<label for="<?php echo $this->key( 'maximum_limit' ); ?>" class="inline" style="width:100px;">
-								<?php _e( 'Maximum Limit: ', 'gp-limit-checkboxes' ); ?>
+								<?php _e( 'Maximum Limit', 'gp-limit-checkboxes' ); ?>
 							</label>
 							<input type="text" id="<?php echo $this->key( 'maximum_limit' ); ?>" onchange="SetFieldProperty('<?php echo $this->key( 'maximum_limit' ); ?>', jQuery(this).val());" style="width:60px;">
 						</div>
-					</div>
 
-					<div class="gwp-option">
-						<input type="checkbox" id="<?php echo $this->key( 'span_multiple_fields' ); ?>"
-							   onclick="
-									gperk.toggleSettings('<?php echo $this->key( 'span_multiple_fields' ); ?>', '<?php echo $this->key( 'multiple_fields_settings' ); ?>');
-									SetFieldProperty( '<?php echo $this->key( 'span_limit_fields' ); ?>', [] );
-									   "
-							   value="1">
-						<label for="<?php echo $this->key( 'span_multiple_fields' ); ?>" class="inline">
-							<?php _e( 'Span Limit Across Multiple Checkbox Fields', 'gp-limit-checkboxes' ); ?>
-							<?php gform_tooltip( $this->key( 'span_multiple_fields' ) ); ?>
-						</label>
+						<div class="gp-row">
+							<input type="checkbox" id="<?php echo $this->key( 'span_multiple_fields' ); ?>"
+								   onclick="
+										   gperk.toggleSettings('<?php echo $this->key( 'span_multiple_fields' ); ?>', '<?php echo $this->key( 'multiple_fields_settings' ); ?>');
+										   SetFieldProperty( '<?php echo $this->key( 'span_limit_fields' ); ?>', [] );
+										   "
+								   value="1">
+							<label for="<?php echo $this->key( 'span_multiple_fields' ); ?>" class="inline">
+								<?php _e( 'Span limit across multiple fields.', 'gp-limit-checkboxes' ); ?>
+								<?php gform_tooltip( $this->key( 'span_multiple_fields' ) ); ?>
+							</label>
 
-						<div id="<?php echo $this->key( 'multiple_fields_settings' ); ?>" class="gws-child-settings" style="display: none;"></div>
+							<div id="<?php echo $this->key( 'multiple_fields_settings' ); ?>" class="gws-child-settings gp-child-settings" style="display: none;"></div>
+						</div>
 					</div>
 				</div>
 			</li>
@@ -477,11 +476,11 @@ class GP_Limit_Checkboxes extends GWPerk {
 						// All setTimeouts are set as I was hitting an issue where the fieldSettings dom object
 						// was not added before the select fields were being dynamically set.
 						setTimeout(function() {
-							jQuery("#field_"+field.id+" .<?php echo $this->slug; ?>_"+field.id).asmSelect({
+							jQuery(".<?php echo $this->slug; ?>_"+field.id).asmSelect({
 								addItemTarget: 'bottom',
 								animate: true,
 								highlight: true,
-								sortable: true
+								sortable: false
 							});
 						}, 10);
 					});
@@ -515,7 +514,7 @@ class GP_Limit_Checkboxes extends GWPerk {
 							if( ! fieldLabel )
 								fieldLabel = '(unlabeled) ID: ' + fieldId;
 								
-							html += "<option id='field-id-" + fieldId + "' value='" + fieldId + "'" + selected + ">" + truncateRuleText( fieldLabel, 40 ) + "</option>";
+							html += "<option id='field-id-" + fieldId + "' value='" + fieldId + "'" + selected + ">" + truncateRuleText( fieldLabel, 35 ) + "</option>";
 							
 						});
 						
@@ -526,7 +525,6 @@ class GP_Limit_Checkboxes extends GWPerk {
 					}
 					
 					function isFieldSelected( fieldId, spanLimitFields ) {
-						var field = GetFieldById( fieldId );
 						return $.inArray( fieldId, spanLimitFields ) != -1;
 					}
 
@@ -538,7 +536,7 @@ class GP_Limit_Checkboxes extends GWPerk {
 
 						var halfLength = length / 2;
 
-						return text.substr( 0, halfLength ) + '...' + text.substr( text.length -( halfLength - 1 ), halfLength );
+						return text.substr( 0, halfLength ).trim() + '...' + text.substr( text.length - ( halfLength - 1 ), halfLength ).trim();
 
 					}
 					
@@ -553,11 +551,8 @@ class GP_Limit_Checkboxes extends GWPerk {
 			return;
 		}
 
-		wp_enqueue_style( 'asmSelectCss', $this->get_base_url() . '/css/jquery.asmselect.css' );
-		$this->register_noconflict_styles( 'asmSelectCss' );
-
-		wp_enqueue_script( 'asmSelect', $this->get_base_url() . '/js/jquery.asmselect.js' );
-		$this->register_noconflict_script( 'asmSelect' );
+		wp_enqueue_style( 'gwp-asmselect' );
+		wp_enqueue_script( 'gwp-asmselect' );
 
 	}
 
