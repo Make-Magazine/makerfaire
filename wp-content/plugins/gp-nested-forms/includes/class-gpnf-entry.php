@@ -97,17 +97,12 @@ class GPNF_Entry {
 				continue;
 			}
 
-			$child_entry_ids = rgar( $entry, $field->id );
-			if ( $child_entry_ids == '' ) {
+			$child_entry_ids = gp_nested_forms()->get_child_entry_ids_from_value( rgar( $entry, $field->id ) );
+			if ( empty( $child_entry_ids ) ) {
 				continue;
 			}
 
-			$child_entries_array = explode( ',', $child_entry_ids );
-			if ( empty( $child_entries_array ) ) {
-				continue;
-			}
-
-			foreach ( $child_entries_array as $child_entry_id ) {
+			foreach ( $child_entry_ids as $child_entry_id ) {
 				$child_entry = GFAPI::get_entry( $child_entry_id );
 				if ( ! is_wp_error( $child_entry ) ) {
 					$child_entry[ GPNF_Entry::ENTRY_NESTED_FORM_FIELD_KEY ] = $field->id;
@@ -246,21 +241,32 @@ class GPNF_Entry {
 			$can_user_edit_entry = true;
 		}
 
-		$parent_entry_id = gform_get_meta( $entry['id'], self::ENTRY_PARENT_KEY );
-		$session         = new GPNF_Session( $parent_form_id );
+		$parent_entry_id      = gform_get_meta( $entry['id'], self::ENTRY_PARENT_KEY );
+		$parent_form_field_id = gform_get_meta( $entry['id'], self::ENTRY_NESTED_FORM_FIELD_KEY );
+
+		$session = new GPNF_Session( $parent_form_id );
+
+		$save_and_continue_entry_ids = gp_nested_forms()->get_save_and_continue_child_entry_ids( $parent_form_id, $parent_form_field_id );
 
 		if ( $session->has_data() && $parent_entry_id == $session->get( 'hash' ) ) {
+			$can_user_edit_entry = true;
+		/**
+		 * In some cases, the session cookie may not be available in which case we need to pull the child entry list
+		 * again and bypass the permissions.
+		 */
+		} else if ( count( $save_and_continue_entry_ids ) && in_array( $entry['id'], $save_and_continue_entry_ids ) ) {
 			$can_user_edit_entry = true;
 		}
 
 		/**
 		 * Filter whether the current user has permission to edit the given entry.
 		 *
+		 * @param bool $can_user_edit_entry Can the current user edit the given entry?
+		 * @param array $entry Current entry.
+		 * @param \WP_User $user Current user.
+		 *
 		 * @since 1.0
 		 *
-		 * @param bool     $can_user_edit_entry Can the current user edit the given entry?
-		 * @param array    $entry               Current entry.
-		 * @param \WP_User $user                Current user.
 		 */
 		$can_user_edit_entry = apply_filters( 'gpnf_can_user_edit_entry', $can_user_edit_entry, $entry, $current_user );
 
