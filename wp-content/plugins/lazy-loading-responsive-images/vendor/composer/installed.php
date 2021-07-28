@@ -1,24 +1,24 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => 'v7.2.0',
-    'version' => '7.2.0.0',
+    'pretty_version' => 'v8.1.0',
+    'version' => '8.1.0.0',
     'aliases' => 
     array (
     ),
-    'reference' => 'da44e2f338f7d5d3195af83141abb7d91092a9e8',
+    'reference' => '744ec50b1b65984a98a003301a7a64fdbbd6172f',
     'name' => 'florianbrinkmann/lazy-loading-responsive-images',
   ),
   'versions' => 
   array (
     'florianbrinkmann/lazy-loading-responsive-images' => 
     array (
-      'pretty_version' => 'v7.2.0',
-      'version' => '7.2.0.0',
+      'pretty_version' => 'v8.1.0',
+      'version' => '8.1.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'da44e2f338f7d5d3195af83141abb7d91092a9e8',
+      'reference' => '744ec50b1b65984a98a003301a7a64fdbbd6172f',
     ),
     'masterminds/html5' => 
     array (
