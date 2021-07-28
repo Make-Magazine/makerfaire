@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.4
+
+	- Fixed issue where download links for files uploaded with single file upload fields could be incorrect.
+
 ## 1.3.3
 
 	- Fixed an issue where signature fields would not preview with `{all_fields}` merge tag.
