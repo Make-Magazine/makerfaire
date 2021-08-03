@@ -2080,20 +2080,20 @@ class GravityView_Edit_Entry_Render {
 	     * @param int $view_id View ID
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
-	    /*
-	    if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
+	    
+	    //if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
 			foreach( $fields as $k => $field ) {
 				if( $field->adminOnly ) {
 				    unset( $fields[ $k ] );
 				}
 			}
 			return array_values( $fields );
-		}
-
+		//}
+	
 	    foreach( $fields as &$field ) {
 		    $field->adminOnly = false;
 		}
-*/
+
 		return $fields;
 	}
 
@@ -2339,12 +2339,13 @@ class GravityView_Edit_Entry_Render {
 			 * If the Entry is embedded, there may be two entries on the same page.
 			 * If that's the case, and one is being edited, the other should fail gracefully and not display an error.
 			 */
+			/*
 			if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
 				$error = true;
 			} else {
 				$error = __( 'The link to edit this entry is not valid; it may have expired.', 'gravityview');
 			}
-
+	*/
 		}
 
 		if( ! GravityView_Edit_Entry::check_user_cap_edit_entry( $this->entry ) ) {
