@@ -237,9 +237,14 @@ class GravityView_Edit_Entry_Render {
 	    self::$original_entry = $entries[0];
 	    $this->entry = $entries[0];
 
-		self::$original_form = GFAPI::get_form( $this->entry['form_id'] );
-		$this->form = $gravityview_view->getForm();
+		//self::$original_form = GFAPI::get_form( $this->entry['form_id'] );
+		//$this->form = $gravityview_view->getForm();
+		//$this->form_id = $this->entry['form_id'];
+		//Make: override
 		$this->form_id = $this->entry['form_id'];
+		$this->form = GFAPI::get_form($this->form_id);
+		self::$original_form = $this->form;
+		
 		$this->view_id = $gravityview_view->getViewId();
 		$this->post_id = \GV\Utils::get( $post, 'ID', null );
 
@@ -1316,7 +1321,8 @@ class GravityView_Edit_Entry_Render {
 		ob_start(); // Prevent PHP warnings possibly caused by prefilling list fields for conditional logic
 
 		$html = GFFormDisplay::get_form( $this->form['id'], false, false, true, $this->entry );
-
+		$html = str_replace('{all_fields:nohidden,noadmin}','',$html);
+		
 		ob_get_clean();
 
 	    remove_filter( 'gform_pre_render', array( $this, 'filter_modify_form_fields' ), 5000 );
@@ -2074,7 +2080,7 @@ class GravityView_Edit_Entry_Render {
 	     * @param int $view_id View ID
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
-
+	    /*
 	    if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
 			foreach( $fields as $k => $field ) {
 				if( $field->adminOnly ) {
@@ -2087,7 +2093,7 @@ class GravityView_Edit_Entry_Render {
 	    foreach( $fields as &$field ) {
 		    $field->adminOnly = false;
 		}
-
+*/
 		return $fields;
 	}
 
