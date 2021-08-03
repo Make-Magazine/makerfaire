@@ -528,7 +528,7 @@ class GFRMTHELPER {
     $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
 
     $entry_id     = $lead['id'];
-		$form_id      = $form['id'];
+    $form_id      = $form['id'];
 
     //      109 - group name    151 - project name
     $project_name = (isset($lead['109'])&& trim($lead['109']) !='' ? $lead['109']:(isset($lead['151']) ? $lead['151']:''));
@@ -838,11 +838,15 @@ class GFRMTHELPER {
     $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET ('.$form_id.', wp_mf_faire.form_ids)> 0');
 
     // NOTE (ts): For 'Workshop' update... this may be the spot where the image is set... TBD
-    if($form_type == 'Presentation') {
+    
+    //default project photo to field 22. 
+    $project_photo = (isset($lead['22']) ? $lead['22'] : '');
+    
+    //if this is a Presentation Form AND the presenter photo is set, override
+    if($form_type == 'Presentation' && isset($makerArray['presenter']['photo']) && $makerArray['presenter']['photo']) {
       $project_photo = $makerArray['presenter']['photo'];
-    }else{
-      $project_photo = (isset($lead['22']) ? $lead['22'] : '');
     }
+    
     //if the entry status is active, use field 303 as the status, else use entry status
     if($lead['status'] == 'active'){
       $status = (isset($lead['303']) ? htmlentities($lead['303']) : '');
