@@ -5,6 +5,7 @@
  * Sort Order: 13
  * First Introduced: 1.9
  * Requires Connection: Yes
+ * Requires User Connection: Yes
  * Auto Activate: Yes
  * Module Tags: Other
  * Feature: General
@@ -98,6 +99,13 @@ class Jetpack_Notifications {
 
 		if ( !self::current_browser_is_supported() )
 			return;
+
+		// Do not show notifications in the Site Editor, which is always in fullscreen mode.
+		global $pagenow;
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'gutenberg-edit-site' === $_GET['page'] ) {
+			return;
+		}
 
 		add_action( 'admin_bar_menu', array( &$this, 'admin_bar_menu'), 120 );
 		add_action( 'wp_head', array( &$this, 'styles_and_scripts'), 120 );
