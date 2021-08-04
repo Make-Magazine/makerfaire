@@ -365,6 +365,12 @@ if ( ! class_exists( 'GFCPTAddonBase' ) ) {
 		 */
 		function setup_taxonomy_field( &$field, $taxonomy ) {
 
+			// Setting up $field['choices'] on non choice based fields breaks default value selection
+			// after GF 2.5.5.4. See HS#25737
+			if  ( ! rgar( $field, 'choices' ) ) {
+				return;
+			}
+
 			$first_choice             = rgars( $field, 'choices/0/text' );
 			$field['choices']         = $this->load_taxonomy_choices( $taxonomy, $field['type'], $first_choice, $field );
 			$field->enableChoiceValue = true;

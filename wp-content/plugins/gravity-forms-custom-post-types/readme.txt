@@ -81,6 +81,10 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 
 == Changelog ==
 
+= 3.1.23 =
+* Fixed a compatibility issue with GF 2.5.5.4+ which converted default values to the term ID when displayed/stored.
+* Added taxonomy name (in addition to label) to Taxonomy dropdowns. Credit: @grapplerulrich
+
 = 3.1.22 =
 
 * Added post name (in addition to label) to Post Type dropdowns in Form Editor. Credit: @grapplerulrich

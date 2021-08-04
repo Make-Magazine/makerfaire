@@ -127,7 +127,7 @@ if ( ! class_exists( 'GFCPTAddon1_5' ) ) {
 							style="margin-top:10px; display:none;">
 						<option value="" style="color:#999;">Select a Taxonomy</option>
 						<?php foreach ( $this->get_taxonomies( $form_id ) as $taxonomy ) : ?>
-							<option value="<?php echo $taxonomy->name; ?>"><?php echo $taxonomy->label; ?></option>
+							<option value="<?php echo $taxonomy->name; ?>"><?php echo $taxonomy->label . ' (' . $taxonomy->name . ')'; ?></option>
 						<?php endforeach; ?>
 					</select>
 				</li>
@@ -169,7 +169,7 @@ if ( ! class_exists( 'GFCPTAddon1_5' ) ) {
 							foreach ( $this->get_taxonomies( $form_id ) as $taxonomy ) :
 								if ( $taxonomy->hierarchical === false ) :
 									?>
-									<option value="<?php echo $taxonomy->name; ?>"><?php echo $taxonomy->label; ?></option>
+									<option value="<?php echo $taxonomy->name; ?>"><?php echo $taxonomy->label . ' (' . $taxonomy->name . ')'; ?></option>
 								<?php endif; ?>
 							<?php endforeach; ?>
 
