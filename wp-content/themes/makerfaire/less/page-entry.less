@@ -170,11 +170,10 @@
 			p { font-weight: 300; }
 			.entry-page-maker-img { // crop this image to a square
 				width: 100%;
-				padding-bottom: 100%;
 				overflow: hidden;
 				position: relative;
-				img {
-					position: absolute;
+				background: #fff;
+				img {					
 					width: auto;
 					min-width: 100%;
 					min-height: auto;
@@ -304,4 +303,110 @@
 			}
 		}
 	}
+	
+	.social-links {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 10px 0px;
+		a {
+			&::before {
+				font-family: FontAwesome;
+				visibility: visible;
+			}
+			&[href*="facebook"] {
+				visibility: hidden;
+				width: 40px;
+				float: left;
+				&::before {
+					content: "\f09a";
+					color: #3b5998;
+					font-size: 25px;
+				}
+			}
+			&[href*="twitter"] {
+				visibility: hidden;
+				width: 40px;
+				float: left;
+				&::before {
+					content: "\f099";
+					color: #1da1f2;
+					font-size: 25px;
+				}
+			}
+			&[href*="instagram"] {
+				visibility: hidden;
+				width: 40px;
+				float: left;
+				&::before {
+					content: "\f16d";
+					color: #e1306c;
+					font-size: 25px;
+				}
+			}
+			&[href*="youtube"] {
+				visibility: hidden;
+				width: 40px;
+				float: left;
+				&::before {
+					content: "\f167";
+					color: #ff0000;
+					font-size: 25px;
+				}
+			}
+			&[href*="linkedin"] {
+				visibility: hidden;
+				width: 40px;
+				float: left;
+				&::before {
+					content: "\f08c";
+					color: #0077b5;
+					font-size: 25px;
+				}
+			}
+			&[href*="snapchat"] {
+				visibility: hidden;
+				width: 40px;
+				float: left;
+				&::before {
+					content: "\f2ab";
+					color: #fffc00;
+					font-size: 25px;
+				}
+			}
+			//wechat
+			&[href*="weixin"] {
+				visibility: hidden;
+				width: 40px;
+				float: left;
+				&::before {
+					content: "\f1d7";
+					color: #7BB32E;
+					font-size: 25px;
+				}
+			}
+			//wechat
+			&[href*="wechat"] {
+				visibility: hidden;
+				width: 40px;
+				float: left;
+				&::before {
+					content: "\f1d7";
+					color: #7BB32E;
+					font-size: 25px;
+				}
+			}
+			
+			&[href*="whatsapp"] {
+				visibility: hidden;
+				width: 40px;
+				float: left;
+				&::before {
+					content: "\f232";
+					color: #075E54;
+					font-size: 25px;
+				}
+			}
+		}
+	}	
 }

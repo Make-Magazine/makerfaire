@@ -127,7 +127,7 @@ function format_ratings($value, $form_id, $field_id, $entry) {
         $meta = GFFormsModel::get_entry_meta(array($form_id));
         if (isset($meta[$meta_key])) {
             $metaField = $meta[$meta_key];
-            if (is_array($metaField['filter']['choices'])) {
+            if (isset($metaField['filter']['choices']) && is_array($metaField['filter']['choices'])) {
                 foreach ($metaField['filter']['choices'] as $choice) {
                     if ($choice['value'] == $value)
                         $value = $choice['text'];
