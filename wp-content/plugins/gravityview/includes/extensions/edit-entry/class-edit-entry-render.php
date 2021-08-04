@@ -239,13 +239,13 @@ class GravityView_Edit_Entry_Render {
 
 		//self::$original_form = GFAPI::get_form( $this->entry['form_id'] );
 		//$this->form = $gravityview_view->getForm();
-		//$this->form_id = $this->entry['form_id'];
-		//Make: override
-		$this->form_id = $this->entry['form_id'];
+
+		$this->form_id = $this->entry['form_id'];		
 		$this->form = GFAPI::get_form($this->form_id);
 		self::$original_form = $this->form;
 		
 		$this->view_id = $gravityview_view->getViewId();
+		
 		$this->post_id = \GV\Utils::get( $post, 'ID', null );
 
 		self::$nonce_key = GravityView_Edit_Entry::get_nonce_key( $this->view_id, $this->form_id, $this->entry['id'] );
@@ -1643,23 +1643,24 @@ class GravityView_Edit_Entry_Render {
 
 				    }
 
-				    if ( \GV\Utils::get( $field, "multipleFiles" ) ) {
+					if ( \GV\Utils::get( $field, 'multipleFiles' ) ) {
+						// If there are fresh uploads, process and merge them.
+						// Otherwise, use the passed values, which should be json-encoded array of URLs
+						if ( isset( GFFormsModel::$uploaded_files[ $form_id ][ $input_name ] ) ) {
+							$value = empty( $value ) ? '[]' : $value;
+							$value = stripslashes_deep( $value );
+							$value = GFFormsModel::prepare_value( $form, $field, $value, $input_name, $entry['id'], array() );
+						} else if ( GFCommon::is_json( $value ) ) {
+							// Existing file; let GF derive the value from the `$_gf_uploaded_files` object (see `\GF_Field_FileUpload::get_multifile_value()`)
+							global $_gf_uploaded_files;
 
-				        // If there are fresh uploads, process and merge them.
-				        // Otherwise, use the passed values, which should be json-encoded array of URLs
-				        if( isset( GFFormsModel::$uploaded_files[$form_id][$input_name] ) ) {
-				            $value = empty( $value ) ? '[]' : $value;
-				            $value = stripslashes_deep( $value );
-				            $value = GFFormsModel::prepare_value( $form, $field, $value, $input_name, $entry['id'], array());
-				        }
-
-				    } else {
-
-				        // A file already exists when editing an entry
-				        // We set this to solve issue when file upload fields are required.
-				        GFFormsModel::$uploaded_files[ $form_id ][ $input_name ] = $value;
-
-				    }
+							$_gf_uploaded_files[ $input_name ] = $value;
+						}
+					} else {
+						// A file already exists when editing an entry
+						// We set this to solve issue when file upload fields are required.
+						GFFormsModel::$uploaded_files[ $form_id ][ $input_name ] = $value;
+					}
 
 				    $this->entry[ $input_name ] = $value;
 				    $_POST[ $input_name ] = $value;
@@ -2080,7 +2081,7 @@ class GravityView_Edit_Entry_Render {
 	     * @param int $view_id View ID
 	     */
 	    $use_gf_adminonly_setting = apply_filters( 'gravityview/edit_entry/use_gf_admin_only_setting', empty( $edit_fields ), $form, $view_id );
-	    
+
 	    //if( $use_gf_adminonly_setting && false === GVCommon::has_cap( 'gravityforms_edit_entries', $this->entry['id'] ) ) {
 			foreach( $fields as $k => $field ) {
 				if( $field->adminOnly ) {
@@ -2089,7 +2090,7 @@ class GravityView_Edit_Entry_Render {
 			}
 			return array_values( $fields );
 		//}
-	
+
 	    foreach( $fields as &$field ) {
 		    $field->adminOnly = false;
 		}
@@ -2339,13 +2340,12 @@ class GravityView_Edit_Entry_Render {
 			 * If the Entry is embedded, there may be two entries on the same page.
 			 * If that's the case, and one is being edited, the other should fail gracefully and not display an error.
 			 */
-			/*
 			if( GravityView_oEmbed::getInstance()->get_entry_id() ) {
 				$error = true;
 			} else {
 				$error = __( 'The link to edit this entry is not valid; it may have expired.', 'gravityview');
 			}
-	*/
+
 		}
 
 		if( ! GravityView_Edit_Entry::check_user_cap_edit_entry( $this->entry ) ) {
