@@ -2,7 +2,7 @@
 Contributors: photocrati, imagely
 Tags: wordpress gallery plugin, gallery, nextgen, nextgen gallery, photo gallery, image gallery, photography, slideshow, images, photo, photo album, watermark
 Requires at least: 5.5.4
-Stable tag: 3.12
+Stable tag: 3.13
 Tested up to: 5.7.2
 License: GPLv3
 Requires PHP: 5.6
@@ -178,6 +178,9 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 
 == Changelog ==
+
+= V3.13  - 08.04.2021
+* Fixed:   All WP-Admin links had "/wp-admin/" removed for some users
 
 = V3.12  - 07.13.2021
 * Fixed:   PHP warning generated for some Nimble Builder users

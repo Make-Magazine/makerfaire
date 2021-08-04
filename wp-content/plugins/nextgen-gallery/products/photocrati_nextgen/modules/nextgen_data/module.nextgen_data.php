@@ -185,11 +185,9 @@ class M_NextGen_Data extends C_Base_Module
 			'C_Ngglegacy_Thumbnail'             => 'class.ngglegacy_thumbnail.php',
 			'C_Dynamic_Thumbnails_Manager' 			=> 'class.dynamic_thumbnails_manager.php',			
             'Mixin_NextGen_Table_Extras'        => 'mixin.nextgen_table_extras.php',
-            'Mixin_GalleryStorage_Base'              => 'mixin.gallerystorage_base.php',
             'Mixin_GalleryStorage_Base_Dynamic'      => 'mixin.gallerystorage_base_dynamic.php',
             'Mixin_GalleryStorage_Base_Getters'      => 'mixin.gallerystorage_base_getters.php',
             'Mixin_GalleryStorage_Base_Management'   => 'mixin.gallerystorage_base_management.php',
-            'Mixin_GalleryStorage_Base_MediaLibrary' => 'mixin.gallerystorage_base_medialibrary.php',
             'Mixin_GalleryStorage_Base_Upload'       => 'mixin.gallerystorage_base_upload.php'
 
         );

@@ -1,6 +1,9 @@
 NextGEN Gallery
 by Imagely
 
+= V3.13  - 08.04.2021
+* Fixed:   All WP-Admin links had "/wp-admin/" removed for some users
+
 = V3.12  - 07.13.2021
 * Fixed:   PHP warning generated for some Nimble Builder users
 * Changed: Added 'ngg_marketing_parameters' filter
