@@ -637,7 +637,8 @@ function getSocial($entrySocial) {
 		
 		//only show the first 3 social links entered
 		foreach ($socialArray as $link) {
-			if ($link['Your Link'] != '') {
+			//verify that the social media link provided is not blank and is a valid url
+			if ($link['Your Link'] != '' && validate_url($link['Your Link'])) {
 				//platform was misspelled as plateform in some earlier forms
 				if(isset($link['Platform'])){
 					$platform = $link['Platform'];
