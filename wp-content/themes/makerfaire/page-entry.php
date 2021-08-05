@@ -53,12 +53,14 @@ if (isset($entry->errors)) {
 
     $faire = $slug = $faireID = $show_sched = $faireShort = $faire_end = '';
     if ($form_id != '') {
-        $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
+        $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name,  faire_location, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
                 . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
 
         $results = $wpdb->get_row($formSQL);
         if ($wpdb->num_rows > 0) {
             $faire = $slug = $results->faire_name;
+            $faire_name = $results->pretty_faire_name;
+            $faire_location_db = $results->faire_location;
             $faireShort = $results->faire;
             $faireID = $results->id;
             $show_sched = $results->show_sched;
@@ -747,7 +749,7 @@ function displayEntryFooter() {
     global $wpdb;
     global $faireID;
     global $faire;
-
+	global $faire_name;
     global $faire_year;
     global $show_sched;
     global $backMsg;
@@ -755,21 +757,29 @@ function displayEntryFooter() {
     global $faire_map;
     global $program_guide;
     global $makerEdit;
-
+    global $faire_location_db;
+    
     $faire_location = "Bay Area";
     $faire_link = "/bay-area";
+    
     if (strpos($faire, 'new-york') !== false) {
         $faire_location = "New York";
         $faire_link = "/new-york";
     }
-    if (strpos($faire, 'virtual') !== false) {
+    if (strpos($faire, 'virtual') !== false) {   
         $faire_location = "";
         $faire_link = "";
     } else {
-        $faire_location = '';
-        $faire_link = '/' . $url_sub_path;
+    	//if a valid url is added to the db, use that otherwise assume it's a MF link
+    	if (validate_url($url_sub_path)) {
+    		$faire_location = $faire_name;
+    		$faire_link = $url_sub_path;
+    	}else{
+        	$faire_location = '';
+        	$faire_link = '/' . $url_sub_path;
+    	}
     }
-
+    
     // we're going to check if the schedule page exists
     //find the parent page
     $parentPage = get_page_by_path('/' . $url_sub_path . '/');
