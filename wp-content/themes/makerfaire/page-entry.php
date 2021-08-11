@@ -234,7 +234,7 @@ foreach ($entry as $key => $field) {
 
 // Project Inline video
 $video = '';
-if (!empty($project_video)) {
+if (!empty($project_video) && validate_url($project_video)) {
     $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video);
     //youtube has two type of url formats we need to look for and change
     $videoID = parse_yturl($dispVideo);
@@ -249,7 +249,7 @@ if (!empty($project_video)) {
 }
 
 $video2 = '';
-if (!empty($project_video2)) {
+if (!empty($project_video2) && validate_url($project_video2)) {
     $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video2);
     //youtube has two type of url formats we need to look for and change
     $videoID = parse_yturl($dispVideo);
