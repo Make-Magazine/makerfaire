@@ -1,6 +1,6 @@
 {
    "name": "makerfaire",
-   "version": "4.33.297",
+   "version": "4.33.298",
    "description": "Maker Faire",
    "main": "",
    "private": true,
@@ -60,7 +60,7 @@
       "dev": "npm-run-all build -p onchange:js:** onchange:vue:map onchange:less:**"
    },
    "devDependencies": {
-      "@babel/cli": "^7.8.4",
+      "@babel/cli": "^7.14.8",
       "@babel/core": "^7.9.6",
       "@babel/preset-env": "^7.9.6",
       "bootstrap": "3.3.7",
