@@ -41,9 +41,9 @@ global $slug;
 	  <!-- Beginning Sync AdSlot 2 for Ad unit header ### size: [[300,250]]  -->
 	  <div class="row">
 		<div class="col-xs-12 col-sm-6 col-md-12">
-		  <div id='div-gpt-ad-664089004995786621-2' class="adblock">
+		  <div id='div-gpt-ad-2739897-2' class="adblock">
 			<script type='text/javascript'>
-				googletag.cmd.push(function(){googletag.display('div-gpt-ad-664089004995786621-2')});
+				googletag.cmd.push(function(){googletag.display('div-gpt-ad-2739897-2')});
 			</script>
 		  </div>
 		</div>
@@ -64,9 +64,9 @@ global $slug;
 	  <!-- Beginning Sync AdSlot 3 for Ad unit header ### size: [[300,250]]  -->
 	  <div class="row">
 		<div class="col-xs-12 col-sm-6 col-md-12">
-		  <div id='div-gpt-ad-664089004995786621-3' class="adblock">
+		  <div id='div-gpt-ad-2739897-3' class="adblock">
 			<script type='text/javascript'>
-			  googletag.cmd.push(function(){googletag.display('div-gpt-ad-664089004995786621-3')});
+			  googletag.cmd.push(function(){googletag.display('div-gpt-ad-2739897-3')});
 			</script>
 		  </div>
 		</div>
