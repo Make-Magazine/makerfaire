@@ -61,7 +61,7 @@ $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
 		'fieldName' => 'event_start_dt', 'fieldLabel'=>'Start Date', 'type'=>'date',
 		'sort' => array('direction' => 'uiGridConstants.DESC', 'priority' => 1), 
-		'enableSorting' => true, 'type' => 'date'
+		'enableSorting' => true
   );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
 		'fieldName' => 'ID', 'type'=>'number'
