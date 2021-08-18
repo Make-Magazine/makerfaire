@@ -54,6 +54,15 @@ function essb_short_url($url, $provider, $post_id = '', $bitly_user = '', $bitly
         case 'po.st':
             $short_url = essb_short_post($url, $post_id, $deactivate_cache, $post_api_key);
             break;
+        case 'pus':
+            /**
+             * @since 7.7 support for the Premium URL Shortener
+             */
+            $shorturl_pus_url = essb_option_value('shorturl_pus_url');
+            $shorturl_pus_api = essb_option_value('shorturl_pus_api');
+            
+            $short_url = essb_short_pus($url, $post_id, $deactivate_cache, $shorturl_pus_url, $shorturl_pus_api);
+            break;
         case 'ssu':
             $short_url = essb_short_ssu($url, $post_id, $deactivate_cache);
             break;
@@ -309,5 +318,54 @@ function essb_short_ssu($url, $post_id, $deactivate_cache = false) {
         }
     }
     
+    return $result;
+}
+
+/**
+ * Premium URL Shortener support
+ * 
+ * @param unknown $url
+ * @param unknown $post_id
+ * @param string $deactivate_cache
+ * @param string $api_url
+ * @param string $api_key
+ * @return unknown
+ */
+function essb_short_pus($url, $post_id, $deactivate_cache = false, $api_url = '', $api_key = '') {
+    if (! empty($post_id) && ! $deactivate_cache) {
+        $exist_shorturl = get_post_meta($post_id, 'essb_shorturl_pus', true);
+        
+        if (! empty($exist_shorturl)) {
+            return $exist_shorturl;
+        }
+    }
+    
+    $result = $url;
+    
+    $curl = curl_init();
+    
+    curl_setopt_array($curl, array ( 
+        CURLOPT_URL => rtrim($api_url, "/") . "/api?api=" . $api_key . "&url=" . strip_tags(trim($url)), 
+        CURLOPT_RETURNTRANSFER => true, 
+        CURLOPT_ENCODING => "", 
+        CURLOPT_MAXREDIRS => 2, 
+        CURLOPT_TIMEOUT => 10, 
+        CURLOPT_FOLLOWLOCATION => true, 
+        CURLOPT_CUSTOMREQUEST => "POST", 
+        CURLOPT_HTTPHEADER => array ( 
+            "Authorization: Token " . $api_key, "Content-Type: application/json" 
+        ) 
+    ));
+    
+    $short = curl_exec($curl);
+    curl_close($curl);
+        
+    $short = json_decode($short, TRUE);
+    
+    if (!$short['error']) {
+        $result = $short["short"];
+        update_post_meta($post_id, 'essb_shorturl_pus', $result);
+    }
+
     return $result;
 }

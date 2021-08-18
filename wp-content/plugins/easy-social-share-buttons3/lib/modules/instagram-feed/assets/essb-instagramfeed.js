@@ -3604,110 +3604,7 @@ jQuery(document).ready(function($){
 			});
 		}
 	});
-	
-	/** 
-	 * Setup update of the feed function
-	 */
-	var essbInstagramFeedUpdate = window.essbInstagramFeedUpdate = function (id, options) {		
-		var source = options.username_tag || '',
-			isHashTag = source.indexOf('#') > -1,
-			url = '';
-			
-		source = source.replace('#', '').replace('@', '');
 		
-		url = isHashTag ? 'https://instagram.com/explore/tags/' + source : 'https://instagram.com/' + source;
-		
-		$.ajax({
-            type: 'GET',
-            url: url,
-            async: true,
-            cache: false
-        }).done( function (data) {
-        	if( isHashTag ){
-                data = JSON.parse(data.split("window._sharedData = ")[1].split(";<\/script>")[0]).entry_data.TagPage[0];
-            }else{
-                data = JSON.parse(data.split("window._sharedData = ")[1].split(";<\/script>")[0]).entry_data.ProfilePage[0];
-            }
-        	        	
-        	data = essbInstagramConvertSource(data, isHashTag);        	
-        	essbInstagramCacheUpdate(id, options, data);
-        });
-	};
-	
-	var essbInstagramCacheUpdate = window.essbInstagramCacheUpdate = function(id, options, data) {
-		  $.ajax({
-              url: essbInstagramUpdater.ajaxurl,
-              type: 'POST',
-              async: true,
-              cache: false,
-              data: {
-                  action: 'essb-instagram-request-cache',
-                  security: essbInstagramUpdater.nonce,
-                  data: { 'options': options, 'data': data }
-              }
-          }).done( function( response ){
-        	  $('#' + id).html(response);
-        	  $('#' + id).data('update', 'false');
-        	  $('#' + id).fadeIn(300);
-        	          	  
-        	  setTimeout(function() {
-        		  essbInstagramFeedAssignEvents($('#' + id));
-        		  if ($('#' + id).hasClass('essb-instagramfeed-pending-popup')) essbInstagramPopupTrigger();
-        	  }, 300);
-          });
-	};	
-	
-	var essbInstagramConvertSource = function(data, useHashtag) {
-		var profileData = {}, images = [];			
-		
-		if (data.graphql && data.graphql.user) {
-			profileData = {
-				'bio': 	data.graphql.user.biography || '',
-				'external': 	data.graphql.user.external_url || '',
-				'followers': 	data.graphql.user.edge_followed_by.count || '',
-				'profile': 	data.graphql.user.profile_pic_url || '',
-				'profile_hd': 	data.graphql.user.profile_pic_url_hd || '',
-			};
-		}
-		
-		var imageSource = [];
-        if (!useHashtag && data['graphql']['user']['edge_owner_to_timeline_media']['edges']  ) {
-			imageSource = data['graphql']['user']['edge_owner_to_timeline_media']['edges'];
-        }
-        else if (useHashtag && data['graphql']['hashtag'][$hash_tag_media]['edges']  ) {
-        	imageSource = data['graphql']['hashtag']['edge_hashtag_to_top_posts']['edges'];
-        }        
-        
-        for (var i=0;i<imageSource.length;i++) {
-        	var image = imageSource[i];
-        	
-        	if (image['node']['edge_media_to_caption']['edges'].length == 0) {
-        		image['node']['edge_media_to_caption']['edges'].push({'node' : {'text': ''}});
-        	}
-        	
-        	var	type = image['node']['is_video'] ? 'video' : 'image',
-        		caption = image['node']['edge_media_to_caption']['edges'][0]['node']['text'] || '';        	
-        	
-        	images.push({
-	                'description': caption,
-	                'link': '//www.instagram.com/p/' + image['node']['shortcode'] || '',
-	                'time': image['node']['taken_at_timestamp'],
-	                'comments': image['node']['edge_media_to_comment']['count'],
-	                'likes': image['node']['edge_liked_by']['count'],
-	                'thumbnail': image['node']['thumbnail_resources'][0]['src'],
-	                'small': image['node']['thumbnail_resources'][2]['src'] ,
-	                'large': image['node']['thumbnail_resources'][4]['src'],
-	                'original': image['node']['display_url'] ,
-	                'type': type,
-        	});
-        }
-		
-		return {
-			'profile': profileData,
-			'images': images
-		}
-	};
-	
 	
 	var essbInstagramFeedAssignEvents = window.essbInstagramFeedAssignEvents = function(element) {
 		if ($(element).hasClass('essb-instagramfeed-masonry')) {
@@ -3834,7 +3731,10 @@ jQuery(document).ready(function($){
 		var maxWidth = $(window).width() - 50,
 			userWidth = $('.essb-instagramfeed-popup').data('width') || '',
 			userDelay = $('.essb-instagramfeed-popup').data('delay') || '',
-			userOneTimeCookie = $('.essb-instagramfeed-popup').data('hidefor') || '';
+			userOneTimeCookie = $('.essb-instagramfeed-popup').data('hidefor') || '',
+			hideMobile = $('.essb-instagramfeed-popup').data('disablemobile') || '';
+		
+		if (hideMobile == '1' && $(window).width() < 768) return;
 	
 		userOneTimeCookie = Number(userOneTimeCookie || 0);
 		if (!Number(userOneTimeCookie) || isNaN(userOneTimeCookie)) userOneTimeCookie = 0;
@@ -3923,20 +3823,9 @@ jQuery(document).ready(function($){
 	
 	// Begin update the instagram feed information
 	$('.essb-instagramfeed').each(function() {
-		var requireUpdate = $(this).data('update') || '',
-			options = $(this).data('source');
-		
-		if (requireUpdate.toString() == 'true') {
-			$(this).attr('id', 'essb-instagram-'+Math.random().toString(36).substr(2, 9));
+		essbInstagramFeedAssignEvents($(this));
 			
-			essbInstagramFeedUpdate($(this).attr('id'), options);
-		}
-		else {
-			$(this).fadeIn(300);
-			essbInstagramFeedAssignEvents($(this));
-			
-			if ($(this).hasClass('essb-instagramfeed-pending-popup')) essbInstagramPopupTrigger();
-		}
+		if ($(this).hasClass('essb-instagramfeed-pending-popup')) essbInstagramPopupTrigger();
 	});
 	
 });

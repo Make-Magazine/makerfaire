@@ -58,8 +58,8 @@ table.dataTable {
 			}
 		}
 
-		> tr[role="row"] > td.dtr-control,
-		> tr[role="row"] > th.dtr-control {
+		> tr > td.dtr-control,
+		> tr > th.dtr-control {
 			position: relative;
 			padding-left: 30px;
 			cursor: pointer;

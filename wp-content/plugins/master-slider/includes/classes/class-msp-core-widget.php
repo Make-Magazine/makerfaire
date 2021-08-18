@@ -108,18 +108,18 @@ class MSP_Widget extends WP_Widget {
                 case 'textbox':
 
                     echo '<p>',
-                        '<label for="'.$this->get_field_id($id).'" >'.$field["name"].'</label>',
-                        '<input class="widefat" id="'.$this->get_field_id($id).'" name="'.$this->get_field_name($id).'" type="text" value="'.$instance[$id].'" />',
+                        '<label for="'.esc_attr( $this->get_field_id( $id ) ).'" >'. esc_html( $field["name"] ) .'</label>',
+                        '<input class="widefat" id="'. esc_attr( $this->get_field_id( $id ) ).'" name="'.esc_attr( $this->get_field_name( $id ) ).'" type="text" value="'.esc_attr( $instance[$id] ).'" />',
                     '</p>';
 
                     break;
 
                 case 'select':
                     echo '<p>',
-                        '<label for="'.$this->get_field_id($id).'" >'. __( $field['name'], 'master-slider' ). '</label>',
-                        '<select name="'.$this->get_field_name($id).'" id="'.$this->get_field_id($id).'" value="'.$instance[$id].'" style="width:100%;max-width:100%;" >';
-                foreach ($field['options'] as $key => $value) {
-                    echo    '<option value="'.$key.'" '.(($instance[$id] == $key)?'selected="selected"':'' ).' >'. __($value, "default"). '</option>';
+                        '<label for="'.esc_attr( $this->get_field_id( $id ) ).'" >'. esc_html( $field['name'] ). '</label>',
+                        '<select name="'.esc_attr( $this->get_field_name( $id ) ).'" id="'.esc_attr( $this->get_field_id( $id ) ).'" value="'.esc_attr( $instance[$id] ).'" style="width:100%;max-width:100%;" >';
+                foreach( $field['options'] as $key => $value ) {
+                    echo    '<option value="'.esc_attr( $key ).'" '. selected( $instance[$id], $key, false ) .' >'. esc_html( $value ) .'</option>';
                 }
 
                     echo '</select>',

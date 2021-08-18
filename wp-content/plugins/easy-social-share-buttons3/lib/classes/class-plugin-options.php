@@ -44,7 +44,7 @@ class ESSB_Plugin_Options {
         // New after loading options event
         if (has_filter('essb_after_options_load')) {
             self::$core_options = apply_filters('essb_after_options_load', self::$core_options);
-        }
+        }                
     }
     
     /**

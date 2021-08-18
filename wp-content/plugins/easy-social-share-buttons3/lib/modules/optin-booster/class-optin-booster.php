@@ -33,13 +33,19 @@ class ESSBOptinBooster {
 		
 		if ($this->option_bool_value('ofob_time') || $this->option_bool_value('ofob_scroll') || 
 				$this->option_bool_value('ofob_exit') || $this->option_bool_value('ofob_manual')) {
-			add_action ( 'wp_footer', array(&$this, 'draw_forms'), 99);
+				    
+			if (!$this->option_bool_value('ofob_manual_mode')) {    
+                add_action ( 'wp_footer', array(&$this, 'draw_forms'), 99);
+			}
 			add_action('init', array(&$this, 'load_assets'), 99);
-				
-		}
-		
+			add_shortcode('booster-subscribe-form', array(&$this, 'manually_load_form'));
+		}		
 	}
 	
+	/**
+	 * Check if module can run on the current post/page
+	 * @return boolean
+	 */
 	function is_deactivated_on() {
 		global $essb3ofob_options;
 	
@@ -140,6 +146,9 @@ class ESSBOptinBooster {
 	public function __wakeup() {
 	}
 	
+	public function manually_load_form() {
+	    add_action ( 'wp_footer', array(&$this, 'draw_forms'), 99);
+	}
 	
 	public function draw_forms() {
 		

@@ -135,11 +135,13 @@ abstract class GravityView_Inline_Edit_Field {
 		if ( $this->standard_live_update ) {
 
 			$value = method_exists( $this, '_get_inline_edit_value' ) ? $this->_get_inline_edit_value( $gf_field, $entry ) : rgar( $entry, $gf_field->id );
+			$data  = method_exists( $this, '_get_inline_edit_extra_data' ) ? $this->_get_inline_edit_extra_data( $gf_field, $entry ) : array( 'display_value' => $gf_field->get_value_export( $entry ) );
 
 			$return = array(
 				array(
-					'selector' => "#gv-inline-editable-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}",
+					'selector' => ".gv-inline-editable-field-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}",
 					'value'    => $value,
+					'data'     => $data,
 				),
 			);
 
@@ -153,8 +155,9 @@ abstract class GravityView_Inline_Edit_Field {
 				}
 
 				$return[] = array(
-					'selector' => str_replace( '.', '-', "#gv-inline-editable-{$entry['id']}-{$entry['form_id']}-{$input['id']}" ),
+					'selector' => ".gv-inline-editable-field-{$entry['id']}-{$entry['form_id']}-" . str_replace( '.', '-', $input['id'] ),
 					'value'    => $return_value,
+					'data'     => array( 'display_value' => implode( ' ', array_values( json_decode( $return_value, true ) ) ) ),
 				);
 			}
 		}

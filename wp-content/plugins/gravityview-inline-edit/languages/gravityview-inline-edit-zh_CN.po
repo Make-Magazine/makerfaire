@@ -1,17 +1,18 @@
 # Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2.
 # Translators:
-# michael edi <michaeledi@163.com>, 2017
+# Edi Weigh <michaeledi@163.com>, 2018
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView Inline Edit 1.2.3\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
-"Last-Translator: michael edi <michaeledi@163.com>, 2017\n"
+"PO-Revision-Date: 2017-06-25 23:56+0000\n"
+"Last-Translator: Edi Weigh <michaeledi@163.com>, 2018\n"
 "Language-Team: Chinese (China) (https://www.transifex.com/katzwebservices/teams/18775/zh_CN/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -139,82 +140,82 @@ msgstr "禁用内部编辑"
 
 #: includes/class-gravityview-inline-edit-scripts.php:102
 msgid "Empty"
-msgstr ""
+msgstr "空"
 
 #: includes/class-gravityview-inline-edit-settings.php:290
 msgid "Status"
-msgstr ""
+msgstr "状态"
 
 #: includes/class-gravityview-inline-edit-settings.php:291
 msgid "There was an error processing the request."
-msgstr ""
+msgstr "处理请求时出错。"
 
 #: includes/class-gravityview-inline-edit-settings.php:292
 msgid ""
 "Could not deactivate the license. The license key you attempted to "
 "deactivate may not be active or valid."
-msgstr ""
+msgstr "无法停用许可证。你试图停用可能不活跃或有效的许可证密钥。"
 
 #: includes/class-gravityview-inline-edit-settings.php:293
 msgid "The license key is valid, but it has not been activated for this site."
-msgstr ""
+msgstr "许可证密钥是有效的，但本域名并没有被激活。"
 
 #: includes/class-gravityview-inline-edit-settings.php:294
 msgid "Invalid: this license has reached its activation limit."
-msgstr ""
+msgstr "无效：这个许可证已达到其激活限制。"
 
 #: includes/class-gravityview-inline-edit-settings.php:295
 msgid "The license has been deactivated."
-msgstr ""
+msgstr "许可证已被停用。"
 
 #: includes/class-gravityview-inline-edit-settings.php:296
 msgid "The license key is valid and active."
-msgstr ""
+msgstr "许可证密钥有效，已激活。"
 
 #: includes/class-gravityview-inline-edit-settings.php:297
 #: includes/class-gravityview-inline-edit-settings.php:298
 msgid "The license key entered is invalid."
-msgstr ""
+msgstr "输入的许可证密钥是无效的。"
 
 #: includes/class-gravityview-inline-edit-settings.php:299
 msgid "This license key has been revoked."
-msgstr ""
+msgstr "这个许可证密钥已被撤销。"
 
 #: includes/class-gravityview-inline-edit-settings.php:300
 msgid ""
 "This license key has expired. %sRenew your license on the GravityView "
 "website%s"
-msgstr ""
+msgstr "此授权码已经失效。%s在GravityView官网更新授权%s"
 
 #: includes/class-gravityview-inline-edit-settings.php:301
 msgid "Verifying license&hellip;"
-msgstr ""
+msgstr "验证许可证&hellip;"
 
 #: includes/class-gravityview-inline-edit-settings.php:302
 msgid "Activate License"
-msgstr ""
+msgstr "激活授权码"
 
 #: includes/class-gravityview-inline-edit-settings.php:303
 msgid "Deactivate License"
-msgstr ""
+msgstr "无效的许可证"
 
 #: includes/class-gravityview-inline-edit-settings.php:304
 msgid "Verify License"
-msgstr ""
+msgstr "验证许可证"
 
 #: includes/class-gravityview-inline-edit-settings.php:422
 msgid "Support License Key"
-msgstr ""
+msgstr "支持授权码"
 
 #: includes/class-gravityview-inline-edit-settings.php:423
 msgid ""
 "Enter the license key that was sent to you on purchase. This enables plugin "
 "updates &amp; support."
-msgstr ""
+msgstr "输入发送到您购买上的的许可证密钥。这个将开启插件自动更新 &amp; 支持。"
 
 #: includes/class-gravityview-inline-edit-settings.php:426
 msgid "Enter your license key here"
-msgstr ""
+msgstr "在这里输入授权码"
 
 #: lib/EDD_SL_Plugin_Updater.php:201
 msgid ""
@@ -255,7 +256,7 @@ msgstr "https://gravityview.co/extensions/inline-edit/"
 
 #. Description of the plugin/theme
 msgid "Edit your fields inline in Gravity Forms and GravityView."
-msgstr ""
+msgstr "在Gravity Forms和GravityView中直接编辑字段。"
 
 #: class-gravityview-inline-edit.php:359
 msgctxt ""

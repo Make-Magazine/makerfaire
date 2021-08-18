@@ -1,5 +1,16 @@
 <?php
 class ESSBSocialProfilesHelper {
+    
+    public static function get_stylesheet_url() {
+        /**
+         * Loading Module Assets
+         */
+        if (!class_exists('ESSBSocialFollowersCounterAssets')) {
+            // include visual draw class
+            include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-assets.php');
+        }
+        return ESSBSocialFollowersCounterAssets::core_stylesheet();
+    }
 	
 	public static function get_active_networks() {
 		$network_list = essb_option_value('profile_networks');
@@ -60,14 +71,12 @@ class ESSBSocialProfilesHelper {
 		$socials['soundcloud'] = 'SoundCloud';
 		$socials['behance'] = 'Behance';
 		$socials['foursquare'] = 'Foursquare';
-		$socials['forrst'] = 'Forrst';
 		$socials['mailchimp'] = 'MailChimp';
 		$socials['delicious'] = 'Delicious';
 		$socials['instgram'] = 'Instagram';
 		$socials['youtube'] = 'YouTube';
 		$socials['vk'] = 'VK';
 		$socials['rss'] = 'RSS';
-		$socials['vine'] = 'Vine';
 		$socials['tumblr'] = 'Tumblr';
 		$socials['slideshare'] = 'SlideShare';
 		$socials['500px'] = '500px';
@@ -75,7 +84,6 @@ class ESSBSocialProfilesHelper {
 		$socials['wp_posts'] = 'WordPress Posts';
 		$socials['wp_comments'] = 'WordPress Comments';
 		$socials['wp_users'] = 'WordPress Users';
-		$socials['audioboo'] = 'Audioboo';
 		$socials['steamcommunity'] = 'Steam';
 		$socials['weheartit'] = 'WeHeartit';
 		$socials['feedly'] = 'Feedly';
@@ -103,6 +111,8 @@ class ESSBSocialProfilesHelper {
 		
 		$socials['subscribe_form'] = 'Subscribe Form'; // version 7.1
 		
+		$socials['periscope'] = 'Periscope';		
+		
 		if (has_filter('essb4_follower_networks')) {
 			$socials = apply_filters('essb4_follower_networks', $socials);
 		}
@@ -111,7 +121,32 @@ class ESSBSocialProfilesHelper {
 	}
 	
 	public static function available_templates() {
-		$templates = array('color' => 'Color icons', 'roundcolor' => 'Round Color Icons', 'outlinecolor' => 'Outline Color Icons', 'grey' => 'Grey icons', 'roundgrey' => 'Round Grey Icons', 'outlinegrey' => 'Outline Grey Icons', 'light' => 'Light Icons', 'roundlight' => 'Round Light Icons', 'outlinelight' => 'Outline Light Icons', 'metro' => 'Metro', 'flat' => 'Flat', 'dark' => 'Dark', 'tinycolor' => 'Tiny Color', 'tinygrey' => 'Tiny Grey', 'tinylight' => 'Tiny Light', 'modern' => "Modern", 'modernlight' => "Modern Light");
+		$templates = array(
+		    'color' => 'Color icons', 
+		    'roundcolor' => 'Round Color Icons', 
+		    'outlinecolor' => 'Outline Color Icons', 
+		    'grey' => 'Grey icons', 
+		    'roundgrey' => 'Round Grey Icons', 
+		    'outlinegrey' => 'Outline Grey Icons', 
+		    'light' => 'Light Icons', 
+		    'roundlight' => 'Round Light Icons', 
+		    'outlinelight' => 'Outline Light Icons', 
+		    'metro' => 'Metro', 
+		    'flat' => 'Flat', 
+		    'dark' => 'Dark', 
+		    'tinycolor' => 'Tiny Color', 
+		    'tinygrey' => 'Tiny Grey', 
+		    'tinylight' => 'Tiny Light', 
+		    'tinymodern' => 'Tiny Modern', 
+		    'modern' => "Modern", 
+		    'modernlight' => "Modern Light",
+		    'modernoutline' => "Modern Outline",
+		    "metro essbfc-template-fancy" => "Metro Fancy",
+		    "metro essbfc-template-bold" => "Metro Bold",
+		    'metrooutline' => 'Framed',
+		    'gradient' => 'Gradient',
+		    'minimal' => 'Minimal'
+		);
 		
 		return $templates;
 	}

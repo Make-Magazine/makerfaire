@@ -52,10 +52,10 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
                     $disabled_msg   = isset( $starter_data['disabled_msg'] ) && ! empty( $starter_data['disabled_msg'] ) ? $starter_data['disabled_msg'] : '';
 
                     ?>
-                    <div class="msp-template-figure <?php echo $selected_attr . $is_unavailable; ?>" data-slider-type="<?php echo $starter_data['slidertype']; ?>"
-                            data-starter-uid="<?php echo $starter_data['id']; ?>" data-starter-section="<?php echo $section_id; ?>" data-disabled-msg="<?php echo $disabled_msg; ?>"  >
+                    <div class="msp-template-figure <?php echo esc_attr( $selected_attr . $is_unavailable ); ?>" data-slider-type="<?php echo esc_attr( $starter_data['slidertype'] ); ?>"
+                            data-starter-uid="<?php echo esc_attr( $starter_data['id'] ); ?>" data-starter-section="<?php echo esc_attr( $section_id ); ?>" data-disabled-msg="<?php echo esc_attr( $disabled_msg ); ?>"  >
                         <div class="msp-templte-selected"></div>
-                        <img src="<?php echo $starter_data['screenshot']; ?>" />
+                        <img src="<?php echo esc_attr( $starter_data['screenshot'] ); ?>" />
                         <?php if ( $is_unavailable && 'wc-product-slider' !== $starter_data['id'] ):
                             $demo_url = add_query_arg(
                                 array(
@@ -73,7 +73,7 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
                                 <a href="<?php echo esc_url( $starter_data['test_drive_url'] ); ?>" target="_blank"><img src="<?php echo esc_url( MSWP_AVERTA_ADMIN_URL ); ?>/assets/images/thirdparty/test-drive.png" alt="Test Drive"><?php _e( 'Test Drive', MSWP_TEXT_DOMAIN ); ?></a>
                             </div>
                         <?php endif ?>
-                        <div class="msp-template-caption" title="<?php echo esc_attr( $starter_data['label'] ); ?>"><?php echo $starter_data['label']; ?><span></span></div>
+                        <div class="msp-template-caption" title="<?php echo esc_attr( $starter_data['label'] ); ?>"><?php echo esc_attr( $starter_data['label'] ); ?><span></span></div>
                     </div>
                     <?php
 
@@ -125,7 +125,7 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
       <div class="msp-export-wrapper">
       <h4 class="msp-dialog-inner-split-header"><?php _e('Export', 'master-slider' ) ?></h4>
 
-      <form action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post" class="msp-export-form msp-dialog-inner-section">
+      <form action="<?php echo esc_attr( $_SERVER['REQUEST_URI'] ); ?>" method="post" class="msp-export-form msp-dialog-inner-section">
 
         <div class="msp-export-table-container">
 
@@ -153,11 +153,11 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
       $human_time = human_time_diff( $orig_time );
   ?>
               <tr>
-                <th class="export-column export-field-cb" ><input type="checkbox" name="msp-export-sliders[]" class="export-slider-cb" value="<?php echo $slider['ID']; ?>" /></th>
-                <th class="export-column export-field-ID" ><?php echo $slider['ID']; ?></th>
-                <th class="export-column export-field-title" ><?php echo $slider['title']; ?></th>
-                <th class="export-column export-field-type" ><?php echo $slider['type']; ?></th>
-                <th class="export-column export-field-lastmodify" ><abbr title="<?php echo $time; ?>"><?php echo $human_time; ?></abbr></th>
+                <th class="export-column export-field-cb" ><input type="checkbox" name="msp-export-sliders[]" class="export-slider-cb" value="<?php echo esc_attr( $slider['ID'] ); ?>" /></th>
+                <th class="export-column export-field-ID" ><?php echo esc_html( $slider['ID'] ); ?></th>
+                <th class="export-column export-field-title" ><?php echo esc_html( $slider['title'] ); ?></th>
+                <th class="export-column export-field-type" ><?php echo esc_html( $slider['type'] ); ?></th>
+                <th class="export-column export-field-lastmodify" ><abbr title="<?php echo esc_attr( $time ); ?>"><?php echo esc_html( $human_time ); ?></abbr></th>
               </tr>
   <?php } ?>
             </tbody>
@@ -182,5 +182,3 @@ if( current_user_can( 'create_masterslider' ) ) { ?>
   </div>
 
 <?php } ?>
-
-

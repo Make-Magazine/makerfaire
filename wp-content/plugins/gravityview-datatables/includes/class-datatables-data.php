@@ -1055,8 +1055,6 @@ class GV_Extension_DataTables_Data {
 		$post = get_post();
 
 		if ( ! is_a( $post, 'WP_Post' ) ) {
-			gravityview()->log->debug( 'GV_Extension_DataTables_Data[add_scripts_and_styles] not a post...leaving', array( 'data' => $post ) );
-
 			return;
 		}
 
@@ -1185,7 +1183,7 @@ class GV_Extension_DataTables_Data {
 			return $settings;
 		}
 
-		$settings['disableInitOnLoad'] = true;
+		$settings['disableInitOnLoad'] = false;
 
 		return $settings;
 	}

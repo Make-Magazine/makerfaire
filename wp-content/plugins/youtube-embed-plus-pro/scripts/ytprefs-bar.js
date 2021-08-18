@@ -4,7 +4,7 @@
         window._EPYTB_.ajaxurl = window._EPYTB_.ajaxurl.replace("http://", "https://");
     }
     $(document).ready(function () {
-        $('#wp-admin-bar-ytprefs-bar-cache a').click(function (e) {
+        $('#wp-admin-bar-ytprefs-bar-cache a').on('click', function (e) {
 
             var loading = document.createElement('img');
             loading.src = _EPYTB_.pluginurl + 'images/ajax-loader-dark.gif';

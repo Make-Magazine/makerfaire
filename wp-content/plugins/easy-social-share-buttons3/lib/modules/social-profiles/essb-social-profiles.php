@@ -7,6 +7,7 @@
  *
  */
 class ESSBSocialProfiles {
+    
 	private static $instance = null;
 	
 	private $activated = true;
@@ -22,49 +23,31 @@ class ESSBSocialProfiles {
 	} // end get_instance;
 	
 	function __construct() {
-		$is_active = false;
-		$resources_loaded = false;		
+	    
+	    /**
+	     * Loading Module Assets
+	     */
+	    if (!class_exists('ESSBSocialFollowersCounterAssets')) {
+	        // include visual draw class
+	        include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-assets.php');
+	    }
+	    ESSBSocialFollowersCounterAssets::init_profiles();
 		
+		/**
+		 * Floating sidebar
+		 */
 		if (essb_option_bool_value('profiles_display')) {
-			$profiles_display_position = essb_option_value('profiles_display_position');
-			
-			if ($profiles_display_position != 'widget') {
-				$is_active = true;
-				
-				if (essb_option_bool_value('profiles_mobile_deactivate')) {
-					if (essb_is_mobile()) {
-						$is_active = false;
-					}
-				}
-			}
-		}
-				
-		if ($is_active) {
-			add_action( 'wp_enqueue_scripts' , array ( $this , 'register_front_assets' ), 1);
-			add_action( 'wp_footer', array($this, 'display_profiles'));
-			$resources_loaded = true;
+		    add_action( 'wp_footer', array($this, 'display_profiles'));
 		}
 		
-		
+		/**
+		 * Content Bar
+		 */
 		if (essb_options_bool_value('profiles_post_display')) {
-			if (!$resources_loaded) {
-				add_action( 'wp_enqueue_scripts' , array ( $this , 'register_front_assets' ), 1);
-			}
-			
-			add_filter( 'the_content', array($this, 'display_content_profiles') );
+		    add_filter( 'the_content', array($this, 'display_content_profiles') );
 		}
 	}	
 	
-	public function register_front_assets() {
-		if (essb_is_plugin_deactivated_on() || essb_is_module_deactivated_on('profiles')) {
-			$this->activated = false;
-			return;
-		}
-		
-		essb_resource_builder()->add_static_resource(ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/essb-followers-counter.min.css', 'essb-social-followers-counter', 'css');
-		essb_resource_builder()->activate_resource('profiles_css');
-	
-	}
 	
 	/**
 	 * Add profile content buttons below content of posts
@@ -124,6 +107,11 @@ class ESSBSocialProfiles {
 			}
 		}		
 		
+		$root_classes = [];
+		$root_classes[] = 'essb-fc-fixed';
+		$root_classes[] = 'essb-fc-fixed-v';
+		$root_classes[] = 'essb-fc-fixed-'.esc_attr($profiles_display_position);
+		
 		$options = array(
 				'position' => $profiles_display_position,
 				'template' => $profiles_template,
@@ -133,7 +121,9 @@ class ESSBSocialProfiles {
 				'size' => $profiles_size
 				);
 		
+		echo '<div class="'.implode(' ', $root_classes).'">';
 		echo $this->draw_social_profiles($options);
+		echo '</div>';
 	}
 	
 	/**
@@ -191,19 +181,21 @@ class ESSBSocialProfiles {
 		}
 		
 		$options = array(
-				'class' => 'essbfc-profiles-postbar',
+		        'align' => $profiles_post_align,
 				'size' => $profiles_post_size,
 				'template' => $profiles_post_template,
 				'animation' => $profiles_post_animation,
 				'nospace' => $profiles_post_nospace,
-				'show_text' => $profiles_post_show_text ? 'yes' : 'no',
+				'cta' => $profiles_post_show_text ? 'yes' : '',
+		        'cta_vertical' => $profiles_post_show_text ? 'yes' : '',
+		        'columns' => $profiles_post_width,
 				'networks' => $profiles
 		);
 		
 		$profile_bar_buttons = self::draw_social_profiles($options);
 		
 		
-		$profile_bar = '<div class="essbfc-profiles-post essbfc-profile-width-'.esc_attr($profiles_post_width).' essbfc-profiles-post-'.esc_attr($profiles_post_align).' essbfc-content-pos-'.esc_attr($profiles_post_content_pos).'">';
+		$profile_bar = '<div class="essb-profiles-post essb-profiles-post-'.esc_attr($profiles_post_align).' essb-profiles-content-'.esc_attr($profiles_post_content_pos).'">';
 		if ($profiles_post_content != '') {
 			$profile_bar .= '<div class="user-content">'.$profiles_post_content.'</div>';
 		}
@@ -215,207 +207,216 @@ class ESSBSocialProfiles {
 		return $profile_bar;
 	}
 	
-	/**
-	 * draw_social_profiles
-	 * 
-	 * @param array $options
-	 * @since 4.0
-	 */
-	public static function draw_social_profiles($options) {		
-		$instance_position = isset ( $options ['position'] ) ? $options ['position'] : '';
-		$instance_new_window = 1;
-		$instance_nofollow = 1;
-		$instance_template = isset ( $options ['template'] ) ? $options ['template'] : 'flat';
-		$instance_animation = isset ( $options ['animation'] ) ? $options ['animation'] : '';
-		$instance_nospace = isset ( $options ['nospace'] ) ? $options ['nospace'] : 0;
-		$instance_networks = isset($options['networks']) ? $options['networks'] : array();
-		$instance_networks_text = isset($options['networks_text']) ? $options['networks_text'] : array();
-		
-		$instance_align = isset($options['align']) ? $options['align'] : '';
-		$instance_size = isset($options['size']) ? $options['size'] : '';
-		$instance_class = isset($options['class']) ? $options['class'] : '';
-		$instance_show_text = isset($options['show_text'])? $options['show_text'] : '';
-		$cta = isset($options['cta']) ? $options['cta'] : '';
-		$cta_vertical = isset($options['cta_vertical']) ? $options['cta_vertical'] : '';
-		$columns = isset($options['columns']) ? $options['columns'] : '';		
-		
-		if ($instance_show_text == 'true') {
-			$instance_show_text = 'yes';
-		}
+	public static function draw_social_profiles ($options = array()) {
+	    
+	    if (has_filter('essb_profiles_draw_options')) {
+	        $options = apply_filters('essb_profiles_draw_options', $options);
+	    }
+	    
+	    $instance_position = isset ( $options ['position'] ) ? $options ['position'] : '';
+	    $instance_new_window = 1;
+	    $instance_nofollow = 1;
+	    $instance_template = isset ( $options ['template'] ) ? $options ['template'] : 'flat';
+	    $instance_animation = isset ( $options ['animation'] ) ? $options ['animation'] : '';
+	    $instance_nospace = isset ( $options ['nospace'] ) ? $options ['nospace'] : 0;
+	    $instance_networks = isset($options['networks']) ? $options['networks'] : array();
+	    $instance_networks_text = isset($options['networks_text']) ? $options['networks_text'] : array();
+	    
+	    $instance_align = isset($options['align']) ? $options['align'] : '';
+	    $instance_size = isset($options['size']) ? $options['size'] : '';
+	    $instance_class = isset($options['class']) ? $options['class'] : '';
+	    $cta = isset($options['cta']) ? $options['cta'] : '';
+	    $cta_vertical = isset($options['cta_vertical']) ? $options['cta_vertical'] : '';
+	    $instance_columns = isset($options['columns']) ? $options['columns'] : 'row';
+	    
+	    $link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="noreferrer noopener nofollow"' : '';
+	    $link_newwindow = (intval ( $instance_new_window ) == 1) ? ' target="_blank"' : '';	    
+	    
+	    	    
+	    // compatibility with previous template slugs
+	    if (!empty($instance_template)) {
+	        if ($instance_template == "lite") {
+	            $instance_template = "light";
+	        }
+	        if ($instance_template == "grey-transparent") {
+	            $instance_template = "grey";
+	        }
+	        if ($instance_template == "color-transparent") {
+	            $instance_template = "color";
+	        }
+	        
+	        /**
+	         * Convert deprecated templates
+	         */
+	        if ($instance_template == 'metro essbfc-template-fancy') { $instance_template = 'metrofancy'; }
+	        if ($instance_template == 'metro essbfc-template-bold') { $instance_template = 'metrobold'; }
+	    }
+	    
+	    if (!class_exists('ESSBSocialFollowersCounterDraw')) {
+	        include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-draw.php');
+	    }
+	    
+	    /**
+	     * Loading Animations
+	     */
+	    if (! empty ( $instance_animation )) {
+	        essb_resource_builder ()->add_static_footer_css ( ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/animations.css', 'essb-social-followers-counter-animations', 'css' );
+	    }
+	    
+	    /**
+	     * Load the SVG icons if not present
+	     */
+	    if (!class_exists('ESSB_SVG_Icons')) {
+	        include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+	    }
+	    
+	    /**
+	     * Building core classes
+	     */
+	    $root_classes = array();
+	    $root_classes[] = 'essb-social-followers-variables';
+	    $root_classes[] = 'essb-fc-grid';
+	    $root_classes[] = 'essb-profiles';
+	    
+	    if ($cta == 'yes' && $instance_align != '') { $instance_align .= '-button'; }
+	    
+	    if (!empty($instance_template)) { $root_classes[] = 'essb-fc-template-'.esc_attr($instance_template); }
+	    if (!empty($instance_animation)) { $root_classes[] = 'essb-fc-animation-'.esc_attr($instance_animation); }
+	    if (!empty($instance_columns)) { $root_classes[] = 'essb-fc-columns-'.esc_attr($instance_columns); }
+	    if ($instance_nospace == 1) { $root_classes[] = 'essb-fc-nospace'; }
+	    if (!empty($instance_class)) { $root_classes[] = $instance_class; }
+	    if (!empty($instance_align)) { $root_classes[] = 'essb-fc-profile-align-'.esc_attr($instance_align); }
+	    if (!empty($instance_size)) { $root_classes[] = 'essb-fc-profile-size-'.esc_attr($instance_size); }
+	    if ($cta == 'yes' && $cta_vertical != 'yes') { $root_classes[] = 'essb-fc-profile-h'; }
+	    if ($cta == 'yes' && $cta_vertical == 'yes') { $root_classes[] = 'essb-fc-profile-v'; }
+	    
+	    $additional_classes = self::additional_block_classes($instance_template);
+	    if ($additional_classes != '') { $root_classes[] = $additional_classes; }
+	    
+	    $code = '';
+	    
+	    /**
+	     * Generate parent element class
+	     */
+	    $code .= '<div class="'.implode(' ', $root_classes).'">';
+	    
+	    /**
+	     * Begin network drawing
+	     */
+	    $names = ESSBSocialProfilesHelper::get_text_of_buttons();
+	    foreach ($instance_networks as $social => $url) {
+	        $social_display = $social;
+	        if ($social_display == "instgram") {
+	            $social_display = "instagram";
+	        }
+	        
+	        /**
+	         * Apply additional user texts that can be part of the shortcode or widget
+	         */
+	        $user_text = isset($instance_networks_text[$social]) ? $instance_networks_text[$social] : '';
+	        if ($user_text != '') {
+	            $names[$social] = $user_text;
+	        }
+	        
+	        $social_icon = ESSB_SVG_Icons::get_icon($social_display);
+	        
+	        $network_text = isset($names[$social]) ? $names[$social] : '';
+	        
+	        if ($cta != 'yes') { $network_text = ''; }
+	        
+	        $opts = array(
+	            'block_classes' => 'essb-fc-network-'.$social_display .' '. ESSBSocialFollowersCounterDraw::block_template_class($instance_template, $social_display),
+	            'block_atts' => '',
+	            'icon_classes' => ESSBSocialFollowersCounterDraw::icon_template_class($instance_template, $social_display),
+	            'url_atts' => $link_nofollow.$link_newwindow
+	        );
+	        
+	        $opts['block_classes'] = str_replace( 'essb-fc-tiny-block', '', $opts['block_classes']);
+	        
+	        if ($cta == 'yes' && $cta_vertical != 'yes') {  $opts['block_classes'] .= ' essb-fc-tiny-block'; }
+	        	        
+	        $code .= self::generate_single_block($social_icon, $network_text, $url, $opts);
+	        
+	    }
+	    
+	    $code .= '</div>';
+	    
+	    return $code;
+	}
 	
-
-		// compatibility with previous template slugs
-		if (!empty($instance_template)) {
-			if ($instance_template == "lite") {
-				$instance_template = "light";
-			}
-			if ($instance_template == "grey-transparent") {
-				$instance_template = "grey";
-			}
-			if ($instance_template == "color-transparent") {
-				$instance_template = "color";
-			}
-		}
-		
-		if ($instance_show_text == 'yes') {
-			$instance_class .= ' essbfc-profiles-button';
-		}
-		
-		if ($cta == 'yes') {
-			$instance_class .= ' essbfc-profiles-cta';
-		}
-		else {
-			$instance_class .= ' essbfc-profiles-nocta';
-		}
-		
-		if ($cta_vertical == 'yes' && $cta == 'yes') {
-			$instance_class .= ' essbfc-profiles-ctavert';
-		}
-		else if ($cta_vertical != 'yes' && $cta == 'yes') {
-			$instance_class .= ' essbfc-profiles-ctah';
-		}
-		
-		if ($columns != '') {
-			$instance_class .= ' essbfc-profiles-columns essbfc-profiles-columns-'.esc_attr($columns);
-		}
-		
-		// adding additional template classes
-		$global_extra_class = true;
-		if ($instance_template == 'color' || $instance_template == 'grey' || $instance_template == 'light') {
-			$instance_class .= ' essbfc-profiles-design-icon';
-			$global_extra_class = false;
-		}
-		
-		if ($instance_template == 'roundcolor' || $instance_template == 'roundgrey' || $instance_template == 'roundlight') {
-			$instance_class .= ' essbfc-profiles-design-roundicon';
-			$global_extra_class = false;
-		}
-		
-		if ($instance_template == 'outlinecolor' || $instance_template == 'outlinegrey' || $instance_template == 'outlinelight') {
-			$instance_class .= ' essbfc-profiles-design-outlineicon';
-			$global_extra_class = false;
-		}
-		
-		if ($global_extra_class) {
-			$instance_class .= ' essbfc-profiles-design-general';
-		}
-		
-		$names = ESSBSocialProfilesHelper::get_text_of_buttons();
-		
-		$class_template = (! empty ( $instance_template )) ? " essbfc-template-" . $instance_template : '';
-		$class_animation = (! empty ( $instance_animation )) ? " essbfc-icon-" . $instance_animation : '';
-		$class_columns = 'essbfc-col-profiles';
-		$class_nospace = (intval ( $instance_nospace ) == 1) ? " essbfc-nospace" : "";
-				
-		$class_position = ($instance_position != '') ? ' essbfc-profiles-bar essbfc-profiles-'.$instance_position : '';
-		
-		$class_align = !empty($instance_align) ? ' essbfc-profiles-align-'.$instance_align : '';
-		$class_size = !empty($instance_size) ? ' essbfc-profiles-size-'.$instance_size : '';
-		
-		if ($instance_class != '') {
-			$class_size .= ' '.$instance_class;
-		}
-		
-		$link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="noreferrer noopener nofollow"' : '';
-		$link_newwindow = (intval ( $instance_new_window ) == 1) ? ' target="_blank"' : '';
-		
-		// loading animations
-		if (! empty ( $class_animation )) {
-			essb_resource_builder ()->add_static_footer_css ( ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/hover.css', 'essb-social-followers-counter-animations', 'css' );
-		}
-		
-		$code = '';
-		// followers main element
-		$code .= sprintf ( '<div class="essbfc-container essbfc-container-profiles %1$s%2$s%3$s%4$s%5$s%6$s%7$s">', 
-					'', 
-					esc_attr($class_columns), esc_attr($class_template), esc_attr($class_nospace), 
-					esc_attr($class_position), esc_attr($class_align), esc_attr($class_size) );
-		
-		
-		$code .= '<ul>';
-		
-		$subscribe_salt = mt_rand();
-		$draw_subscribe_form = false;
-		$subscribe_design = '';
-		
-		foreach ( $instance_networks as $social => $url ) {
-			$social_display = $social;
-			if ($social_display == "instgram") {
-				$social_display = "instagram";
-			}
-			
-			/**
-			 * Apply additional user texts that can be part of the shortcode or widget
-			 */
-			$user_text = isset($instance_networks_text[$social]) ? $instance_networks_text[$social] : '';
-			if ($user_text != '') {
-				$names[$social] = $user_text;
-			}
-
-			$social_custom_icon = '';
-		
-			$code .= sprintf ( '<li class="essbfc-%1$s">', esc_attr($social_display) );
-			
-			$link_title = isset($names[$social]) ? ' title="'.$names[$social].'"' : '';
-			
-			$network_text = isset($names[$social]) ? $names[$social] : '';
-			
-			$network_nofollow = $link_nofollow;
-			if ($social == 'rss') {
-				$deactivate_trigger = false;
-				$deactivate_trigger = apply_filters('essb5_remove_profile_rss_nofollow', $deactivate_trigger);
-				
-				if ($deactivate_trigger) {
-					$network_nofollow = '';
-				}
-			}
-		
-			$follow_url = $url;
-			if (! empty ( $follow_url )) {
-			    if ($social == 'subscribe_form') {
-			        $code .= sprintf ( '<a href="#"%2$s%3$s%4$s data-subscribe-form="%1$s" onclick="essb.toggle_subscribe(\'%5$s\'); return false;">', esc_attr($follow_url), $link_newwindow, $network_nofollow, $link_title, $subscribe_salt );
-			        $draw_subscribe_form = true;
-			        $subscribe_design = $follow_url;
-			    }
-			    else {
-				    $code .= sprintf ( '<a href="%1$s"%2$s%3$s%4$s>', esc_url($follow_url), $link_newwindow, $network_nofollow, $link_title );
-			    }
-			}
-		
-			$code .= '<div class="essbfc-network">';
-			$code .= sprintf ( '<i class="essbfc-icon essbfc-icon-%1$s%2$s%3$s"></i>', esc_attr($social_display), esc_attr($class_animation), esc_attr($social_custom_icon) );
-			if ($instance_show_text == 'yes' && $network_text != '' ) {
-				$code .= '<span class="essbfc-profile-cta">'.$network_text.'</span>';
-			}
-			
-			/**
-			 * New CTA button design
-			 */
-			if ($cta == 'yes' && $network_text != '') {
-				$code .= '<span class="essbfc-profile-cta_text">'.$network_text.'</span>';
-			}
-			
-			$code .= '</div>';
-		
-			if (! empty ( $follow_url )) {
-				$code .= '</a>';
-			}
-			$code .= '</li>';
-		}
-		
-		$code .= '</ul>';
-		
-		$code .= '</div>';
-		
-		if ($draw_subscribe_form) {
-		    if (!class_exists('ESSBNetworks_Subscribe')) {
-		        include_once (ESSB3_PLUGIN_ROOT . 'lib/networks/essb-subscribe.php');
-		    }
-		    $code .= ESSBNetworks_Subscribe::draw_popup_subscribe_form($subscribe_design, $subscribe_salt);
-		    
-		}
-		
-		return $code;
+	public static function additional_block_classes ( $template = '' ) {
+	    $r = '';
+	    
+	    switch ($template) {
+	        case 'color':
+	        case 'roundcolor':
+	        case 'outlinecolor':
+	        case 'grey':
+	        case 'roundgrey':
+	        case 'outlinegrey': 
+	        case 'light':
+	        case 'roundlight':
+	        case 'outlinelight':
+	        case 'metrofancy':
+	        case 'minimal':
+	        case 'boxed':
+	            $r = 'essb-profiles-iconic';
+	            break;	
+	            
+	        case 'tinycolor':
+	        case 'tinygrey':
+	        case 'tinylight':
+	        case 'tinymodern':
+	            $r = 'essb-profiles-smallfont';
+	            break;
+	    }
+	    
+	    return $r;
+	}
+	
+	/**
+	 * Generate single network block
+	 *
+	 * @param string $icon
+	 * @param string $value
+	 * @param string $text
+	 * @param string $url
+	 * @param string $extra_classes
+	 * @param string $extra_atts
+	 * @return string
+	 */
+	public static function generate_single_block($icon = '', $text = '', $url = '', $opts = array()) {
+	    
+	    $extra_classes = isset($opts['block_classes']) ? $opts['block_classes'] : '';
+	    $extra_atts = isset($opts['block_atts']) ? $opts['block_atts'] : '';
+	    $url_atts = isset($opts['url_atts']) ? ' '. $opts['url_atts'] : '';
+	    $icon_classes = isset($opts['icon_classes']) ? $opts['icon_classes'] : '';
+	    
+	    if ($icon_classes != '') {
+	        $icon_classes = ' class="'.esc_attr($icon_classes). '"';
+	    }
+	    
+	    $output = '<div class="essb-fc-block '.esc_attr($extra_classes).'"';
+	    if ($extra_atts != '') {
+	        $output .= ' '.$extra_atts;
+	    }
+	    $output .= '>';
+	    
+	    $output .= '<div class="essb-fc-block-icon"><i'.$icon_classes.'>'.$icon.'</i></div>';
+	    
+	    if ($text != '') {
+    	    $output .= '<div class="essb-fc-block-details">';
+    	    $output .= '<span class="text">'.($text != '' ? esc_attr($text) : '&nbsp;').'</span>';
+    	    $output .= '</div>';
+	    }
+	    
+	    if ($url != '') {
+	        $output .= '<a href="'.esc_url($url).'"'.$url_atts.'></a>';
+	    }
+	    
+	    $output .= '</div>'; // essb-fc-block
+	    
+	    return $output;
 	}
 }
 

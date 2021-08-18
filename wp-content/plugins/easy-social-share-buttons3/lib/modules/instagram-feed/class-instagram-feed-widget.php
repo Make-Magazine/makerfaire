@@ -32,6 +32,11 @@ class ESSBInstagramFeedWidget extends WP_Widget {
 		
 		$title = ( ! empty( $instance['title'] ) ) ? $instance['title'] : '';
 		
+		/**
+		 * @since 7.7 Widget title compatibility with WPML
+		 */
+		$title = apply_filters( 'widget_title', empty($instance['title']) ? '' : $instance['title'], $instance );
+		
 		$instance['widget'] = 'true';
 		
 		/** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */

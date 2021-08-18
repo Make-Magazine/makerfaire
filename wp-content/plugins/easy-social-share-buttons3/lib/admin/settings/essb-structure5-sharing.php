@@ -428,7 +428,8 @@ ESSBOptionsStructureHelper::tabs_start('social', 'sharecnt', 'counter-tabs', arr
 
 ESSBOptionsStructureHelper::tab_start('social', 'sharecnt', 'counter-tabs-0', 'true');
 
-ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'counter_mode', esc_html__('Counter Update Interval', 'essb'), esc_html__('The counter update interval determins how frequent your share counters will update on site. You can choose from various options, including a real-time update. During the period your counters will be served from the cache stored locally on each post. If you are using a too short update interval you may need to activate additional counter update options (to ensure that share counters will update all the time). The real-time update is suitable only for testing and it is not intended to be used on live sites.', 'essb'), essb_cached_counters_update(), '', '8');
+ESSBOptionsStructureHelper::field_select('social', 'sharecnt', 'counter_mode', esc_html__('Share Counts Refresh', 'essb'), esc_html__('Adjust the period between share counters update on your website. The option will work only if you have share counters enabled to display on at least one position of the share buttons.', 'essb'), essb_cached_counters_update(), '', '8');
+ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_increase', esc_html__('Increase update period for older posts', 'essb'), esc_html__('Use this option to increase progressive update counter interval for older posts of your site. This will make less calls to social APIs and make counters update faster.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '8');
 
 ESSBOptionsStructureHelper::panel_start('social', 'sharecnt', esc_html__('Advanced counter update options', 'essb'), '', 'fa21 fa fa-refresh', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
 
@@ -443,23 +444,13 @@ ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
 ESSBOptionsStructureHelper::structure_row_end('social', 'sharecnt');
 
 ESSBOptionsStructureHelper::structure_row_start('social', 'sharecnt');
+
 ESSBOptionsStructureHelper::structure_section_start('social', 'sharecnt', 'c6');
-ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_increase', esc_html__('Increase update period for older posts', 'essb'), esc_html__('Use this option to increase progressive update counter interval for older posts of your site. This will make less calls to social APIs and make counters update faster.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '8');
+ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_force', esc_html__('Always save the share counter value without using the internal cache', 'essb'), esc_html__('If the API share count request returns a lower number than previously recorded, we ignore the new number and retain the original higher number from the previous request. Activating this will force the new share number to be accepted even if it is a lower number than previously recorded.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '8');
 ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
 
 ESSBOptionsStructureHelper::structure_section_start('social', 'sharecnt', 'c6');
-ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_force', esc_html__('Force save new shares', 'essb'), esc_html__('If the API share count request returns a lower number than previously recorded, we ignore the new number and retain the original higher number from the previous request. Activating this will force the new share number to be accepted even if it is a lower number than previously recorded.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '8');
-ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
-
-ESSBOptionsStructureHelper::structure_row_end('social', 'sharecnt');
-
-ESSBOptionsStructureHelper::structure_row_start('social', 'sharecnt');
-ESSBOptionsStructureHelper::structure_section_start('social', 'sharecnt', 'c6');
-ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_facebook_async', esc_html__('Client side Facebook counter update', 'essb'), esc_html__('Use client side Facebook counter update to eliminate Facebook rate policy for number of connection you can send. The client side update will ensure your counters will frequently update. Option is compatible with share recovery.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '8');
-ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
-
-ESSBOptionsStructureHelper::structure_section_start('social', 'sharecnt', 'c6');
-ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_narrow', esc_html__('Narrow Down Number of Share Counter Updates', 'essb'), esc_html__('This option will add an additional check to updated posts to ensure that popular posts will not update so frequently. This will allow to update less popular posts by reserving additional ticks for them.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '8');
+ESSBOptionsStructureHelper::field_switch('social', 'sharecnt', 'cache_counter_narrow', esc_html__('Narrow down the number of share counter updates for a post/page', 'essb'), esc_html__('This option will add an additional check to updated posts to ensure that popular posts will not update so frequently. This will allow to update less popular posts by reserving additional ticks for them.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '8');
 ESSBOptionsStructureHelper::structure_section_end('social', 'sharecnt');
 
 
@@ -467,7 +458,7 @@ ESSBOptionsStructureHelper::structure_row_end('social', 'sharecnt');
 
 ESSBOptionsStructureHelper::panel_end('social', 'sharecnt');
 
-\ESSBOptionsStructureHelper::field_component('social', 'sharecnt', 'essb5_additional_counter_options', 'false');
+ESSBOptionsStructureHelper::field_component('social', 'sharecnt', 'essb5_additional_counter_options', 'false');
 
 
 ESSBOptionsStructureHelper::tab_end('social', 'sharecnt');
@@ -686,6 +677,11 @@ if (!essb_option_bool_value('deactivate_module_shorturl')) {
 		$listOfOptions['ssu'] = esc_html__('Social Media Short URLs add-on for Easy Social Share Buttons for WordPress', 'essb');
 	}
 	
+	/**
+	 * @since 7.7 Added support for Premium URL Shortener
+	 */
+	$listOfOptions['pus'] = 'Premium URL Shortener';
+	
 	ESSBOptionsStructureHelper::field_select('social', 'shorturl', 'shorturl_type', esc_html__('Short URL type', 'essb'), esc_html__('Usage of external service for short URL generation requires to set up all fields (tokens, access, etc.). Without doing this setup, URLs won\'t be generated.'), $listOfOptions);
 	
 	ESSBOptionsStructureHelper::holder_start('social', 'shorturl', 'essb-short-bitly', 'essb-short-bitly');
@@ -699,16 +695,25 @@ if (!essb_option_bool_value('deactivate_module_shorturl')) {
 	ESSBOptionsStructureHelper::field_heading('social', 'shorturl', 'heading5', esc_html__('goo.gl Access Configuration', 'essb'));
 	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'shorturl', 'shorturl_googlapi', esc_html__('goo.gl API key', 'essb'), esc_html__('Goo.gl short URL service is official closed. Please swich to a different provider.', 'essb'));
 	ESSBOptionsStructureHelper::holder_end('social', 'shorturl');
+	
 	ESSBOptionsStructureHelper::holder_start('social', 'shorturl', 'essb-short-rebrandly', 'essb-short-rebrandly');
 	ESSBOptionsStructureHelper::field_heading('social', 'shorturl', 'heading5', esc_html__('Rebrandly Access Configuration', 'essb'));
 	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'shorturl', 'shorturl_rebrandpi', esc_html__('Rebrandly API key', 'essb'), sprintf(esc_html__('Rebrandly service require API key to generate your short URLs. To get such please visit this address %s', 'essb'), '<a href="https://www.rebrandly.com/api-settings" target="_blank">Rebrandly API Settings page</a>'));
 	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'shorturl', 'shorturl_rebrandpi_domain', esc_html__('Rebrandly Domain ID', 'essb'), sprintf(esc_html__('If you have your own branded domain name fill in here its ID. To get domian ID visit %s and copy from URL its ID.', 'essb'), '<a href="https://www.rebrandly.com/domains/all" target="_blank">Rebrandly Domain list page</a>'));
 	ESSBOptionsStructureHelper::field_switch('social', 'shorturl', 'shorturl_rebrandpi_https', esc_html__('Generate HTTPS version of Short URL', 'essb'), esc_html__('Set to Yes if you wish the generated URLs to be with https protocol instead of http', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 	ESSBOptionsStructureHelper::holder_end('social', 'shorturl');
+	
 	ESSBOptionsStructureHelper::holder_start('social', 'shorturl', 'essb-short-post', 'essb-short-post');
 	ESSBOptionsStructureHelper::field_heading('social', 'shorturl', 'heading5', esc_html__('po.st Access Configuration', 'essb'));
 	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'shorturl', 'shorturl_postapi', esc_html__('po.st API Access Token', 'essb'), esc_html__('po.st service require API access token to generate your short URLs. To get such please visit this address ', 'essb').'<a href="http://re.po.st/register" target="_blank">http://re.po.st/register</a>');
 	ESSBOptionsStructureHelper::holder_end('social', 'shorturl');
+	
+	ESSBOptionsStructureHelper::holder_start('social', 'shorturl', 'essb-short-pus', 'essb-short-pus');
+	ESSBOptionsStructureHelper::field_heading('social', 'shorturl', 'heading5', esc_html__('Premium URL Shortener', 'essb'));
+	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'shorturl', 'shorturl_pus_url', esc_html__('URL of the shortener', 'essb'), '');
+	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'shorturl', 'shorturl_pus_api', esc_html__('API key', 'essb'), '');
+	ESSBOptionsStructureHelper::holder_end('social', 'shorturl');
+
 	ESSBOptionsStructureHelper::panel_end('social', 'shorturl');
 	
 	ESSBOptionsStructureHelper::field_component('social', 'shorturl', 'essb5_advanced_shorturl_options', 'false');
@@ -1177,6 +1182,17 @@ $essb5_options_translate['essb5_main_singlecounter_selection'] = 'counter_pos';
 $essb5_options_translate['essb5_main_totalcoutner_selection'] = 'total_counter_pos';
 
 function essb5_additional_counter_options() {	
+    
+    echo essb5_generate_code_advanced_settings_panel(
+        esc_html__('Share Counter Update Configuration', 'essb'),
+        esc_html__('Configure global options related to the update of the share counters on your website (Facebook, Twitter, LinkedIn, AddThis).', 'essb'),
+        'update-counter', '', esc_html__('Configure', 'essb'), 'ti-settings', 'no', '500');
+    
+    echo essb5_generate_code_advanced_settings_panel(
+            esc_html__('Internal Share Counter', 'essb'),
+            'Not all social networks support share counters. For those that do not have API, you can enable internal share counters. Those counters increase with a click on the buttons. That will help show the counter on all networks (and the value will be added to the total counter).',
+            'internal-counter', '', esc_html__('Configure', 'essb'), 'ti-settings', 'no', '500', '', '', '', false, '',
+            'automation-deactivate-internal', esc_html__('Fully Deactivate Internal Counters', 'essb'));
 	ESSBOptionsFramework::draw_heading(esc_html__('Single & Total Counter Display', 'essb'), '6', '', '', 'essb-internal-heading6');
 	
 	echo essb5_generate_code_advanced_settings_panel(
@@ -1189,11 +1205,7 @@ function essb5_additional_counter_options() {
 			'',
 			'total-counter', '', esc_html__('Configure', 'essb'), 'ti-settings', 'no', '500');
 
-	echo essb5_generate_code_advanced_settings_panel(
-            esc_html__('Internal Share Counter', 'essb'),
-            '',
-            'internal-counter', '', esc_html__('Configure', 'essb'), 'ti-settings', 'no', '500', '', '', '', false, '', 
-	        'automation-deactivate-internal', esc_html__('Fully Deactivate Internal Counters', 'essb'));
+
 			    
 			
     ESSBOptionsFramework::draw_heading(esc_html__('Additional Share Counter Options & Features', 'essb'), '6', '', '', 'essb-internal-heading6');			
@@ -1213,12 +1225,7 @@ function essb5_additional_counter_options() {
             esc_html__('Share counter recovery allows you restore back shares once you make a permalink change (including installing a SSL certificate). Share recovery will show back shares only if they are present for both versions of URL (before and after change).', 'essb'),
             'share-recovery', '', esc_html__('Configure', 'essb'), 'ti-settings', 'no', '500', '', '', '', false, '',
             'automation-https-recover', esc_html__('Automatically Configure Recovery When Moved to HTTPS', 'essb'));
-    }
-    
-	echo essb5_generate_code_advanced_settings_panel(
-			esc_html__('Share Counter Update Provider Options', 'essb'),
-			esc_html__('Configure additional network-specific share counter update options (activate internal counter for all networks, deactivate internal counters, set Twitter counter update services, different Facebook API endpoint, etc.).', 'essb'),
-			'update-counter', '', esc_html__('Configure', 'essb'), 'ti-settings', 'no', '500');
+    }   
 	
 	echo essb5_generate_code_advanced_settings_panel(
 			esc_html__('Additional Counter Display Rules', 'essb'),

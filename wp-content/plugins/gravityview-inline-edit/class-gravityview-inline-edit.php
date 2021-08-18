@@ -218,23 +218,23 @@ final class GravityView_Inline_Edit extends GravityView_Extension {
 	 */
 	public function get_supported_fields() {
 		$supported_fields = array(
-			'checkbox',
-			'radio',
-			'multiselect',
 			'address',
+			'checkbox',
 			'date',
 			'email',
-			'textarea',
-			'name',
-			'list',
-			'select',
-			'phone',
-			'time',
-			'url',
-			'website',
-			'number',
-			'text',
 			'hidden',
+			'list',
+			'multiselect',
+			'name',
+			'number',
+			'phone',
+			'product',
+			'radio',
+			'select',
+			'text',
+			'textarea',
+			'time',
+			'website',
 		);
 
 		/**

@@ -249,7 +249,7 @@ class ESSB_Plugin_Assets {
             /**
              * Frontpage check
              */
-            if (is_front_page() && !in_array('homepage', $active_type)) {
+            if (is_front_page() && !in_array('homepage', $active_types)) {
                 $r = true;
             }
         }

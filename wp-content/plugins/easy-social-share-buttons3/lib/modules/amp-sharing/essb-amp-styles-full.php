@@ -1142,3 +1142,5 @@
 .essb_links.essb_displayed_bottom a:focus {
 	background-color: #363636 ;
 }
+
+.essb_displayed_sidebar { display: none; }

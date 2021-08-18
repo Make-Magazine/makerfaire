@@ -103,7 +103,7 @@ function get_value_by_label($key, $form, $entry = array()) {
             $return = $retArray;
          } else {
             $return['id'] = $field['id'];
-            if (!empty($entry)) {
+            if (!empty($entry) && isset($entry[$field['id']])) {
                $return['value'] = $entry[$field['id']];
             } else {
                $return['value'] = '';
@@ -126,7 +126,7 @@ function get_all_fieldby_name($key, $form, $entry = array()) {
       if ($field['type'] == 'name' || $field['type'] == 'address') {
          foreach ($field['inputs'] as $choice) {
             if (isset($choice['name']) && $choice['name'] == $key) {
-               $return[] = array('id' => $choice['id'], 'value' => (!empty($entry) ? $entry[$choice['id']] : ''));
+            	$return[] = array('id' => $choice['id'], 'value' => (!empty($entry) && isset($entry[$choice['id']])? $entry[$choice['id']] : ''));
             }
          }
       } else {
@@ -134,7 +134,7 @@ function get_all_fieldby_name($key, $form, $entry = array()) {
          if ($lead_key == $key) {
             $return[] = array(
                 'id' => $field['id'],
-                'value' => (!empty($entry) ? $entry[$field['id']] : '')
+            		'value' => (!empty($entry) && isset($entry[$field['id']]) ? $entry[$field['id']] : '')
             );
          }
       }

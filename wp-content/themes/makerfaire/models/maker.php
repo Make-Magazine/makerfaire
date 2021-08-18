@@ -162,8 +162,8 @@ class maker {
 			if(isset($form['form_type']) &&
              ($form['form_type']=='Exhibit' ||
               $form['form_type']=='Workshop' ||
-				  $form['form_type']=='Performer'||
-				  $form['form_type']=='Presentation')){
+			  $form['form_type']=='Performer'||
+			  $form['form_type']=='Presentation')){
 			  $this->isMaker = TRUE;
 			}
 			$data['form_type'] = $form['form_type'];
@@ -171,7 +171,7 @@ class maker {
         $data['date_created'] = '';
         $data['ticketing']    = '';
         $data['tasks']        = '';
-		  $form['form_type'] = '';
+		$form['form_type'] = '';
       }
 
       //do not return if form type

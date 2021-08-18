@@ -7,7 +7,7 @@ echo '<div id="ms-preview-wrapper">';
 
 if( isset( $_REQUEST['slider_params'] ) && ! empty( $_REQUEST['slider_params'] ) ) {
 
-  $slider_params = $_REQUEST['slider_params'];
+  $slider_params = sanitize_text_field( $_REQUEST['slider_params'] );
   $slider_shortcodes = msp_panel_data_2_ms_slider_shortcode( $slider_params );
   echo do_shortcode( $slider_shortcodes );
 
@@ -18,7 +18,7 @@ if( isset( $_REQUEST['slider_params'] ) && ! empty( $_REQUEST['slider_params'] )
     printf( "<!-- Custom slider styles -->\n<style>%s</style>", $slider_custom_css );
 
 } elseif ( isset( $_REQUEST['slider_id'] ) && ! empty( $_REQUEST['slider_id'] ) ) {
-  $slider_id = $_REQUEST['slider_id'];
+  $slider_id = sanitize_text_field( $_REQUEST['slider_id'] );
   $slider_shortcodes = msp_get_ms_slider_shortcode_by_slider_id( $slider_id );
   echo do_shortcode( $slider_shortcodes );
   // print slider custom css inline in live preview
@@ -57,12 +57,12 @@ if ( isset( $_REQUEST['strip_wp'] ) ) {
 #wpcontent {
   margin-left:0;
 }
-html.wp-toolbar { 
-  padding-top:0; 
+html.wp-toolbar {
+  padding-top:0;
 }
-#msp-main-wrapper { 
-  margin:0; 
-  display:block; 
+#msp-main-wrapper {
+  margin:0;
+  display:block;
 }
 #ms-preview-wrapper{
   width:100%;
@@ -73,6 +73,5 @@ html.wp-toolbar {
   padding-left: 0;
 }
 </style>
-<?php 
+<?php
 }
-

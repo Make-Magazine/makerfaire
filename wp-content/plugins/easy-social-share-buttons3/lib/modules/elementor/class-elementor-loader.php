@@ -70,6 +70,12 @@ class ESSBElementorWidgetsLoader {
 			if ( $template_file && is_readable( $template_file ) ) {
 				require_once $template_file;
 			}
+			
+			$template_file = plugin_dir_path(__FILE__).'widgets/widget-social-profiles.php';
+			
+			if ( $template_file && is_readable( $template_file ) ) {
+			    require_once $template_file;
+			}
 
 
 			$widget_manager = \Elementor\Plugin::instance()->widgets_manager;
@@ -79,6 +85,7 @@ class ESSBElementorWidgetsLoader {
 			$widget_manager->register_widget_type( new Elementor\ESSB_Elementor_Share_Action_Button_Widget() );
 			$widget_manager->register_widget_type( new Elementor\ESSB_Elementor_Followers_Counter_Widget() );
 			$widget_manager->register_widget_type( new Elementor\ESSB_Elementor_Instagram_Feed_Widget() );
+			$widget_manager->register_widget_type( new Elementor\ESSB_Elementor_Social_Profiles_Widget() );
 		}
 	}
 }

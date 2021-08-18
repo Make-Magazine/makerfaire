@@ -459,10 +459,6 @@ function essb_settings5_status_notifications() {
 
 	}
 
-	if (essb_option_value('counter_mode') == '' && essb_option_value('show_counter')) {
-		essb_display_status_message(esc_html__('Real time share counters warning!', 'essb'), esc_html__('You are using real time share counters update on your site. It is highly recommended to avoid that on a production site because you may cause overload of server or send too many requests to social API which will lead to missing share counters for a period of time', 'essb'), 'fa fa-exclamation-circle');
-	}
-
 	if ($purge_cache == 'true') {
 		if (class_exists ( 'ESSBDynamicCache' )) {
 			ESSBDynamicCache::flush ();

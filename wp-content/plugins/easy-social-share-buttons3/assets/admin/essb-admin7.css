@@ -1159,9 +1159,17 @@ font-size: 13px; display: flex; background: #fff; }
 .essb-portlet .essb-portlet-heading-icon i { font-size: 18px; }
 
 .essb-portlet .essb-portlet-description, .ao-settings-section .title-col .label, .ao-settings-section .panel-title .label {
-	font-size: 12px !important;
-	color: #666 !important;
-	line-height: 1.4em;
+	font-size: 13px !important;
+	color: #444 !important;
+	line-height: 1.5em;
+	margin-top: 10px;
 }
 
 .ao-settings-section.ao-shortcode-panel .title-col .label { color: #fff !important; }
+
+/**
+ * SVG Icons
+ */
+
+.essb-svg-size18 svg { width: 18px; height: 18px; vertical-align: middle;}
+.essb-portlet-heading-icon .essb-svg-icon { width: 18px; height: 18px; line-height: 1; }

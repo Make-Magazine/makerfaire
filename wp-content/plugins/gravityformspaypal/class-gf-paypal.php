@@ -86,7 +86,7 @@ class GFPayPal extends GFPaymentAddOn {
 	 */
 	public function get_menu_icon() {
 
-		return file_get_contents( $this->get_base_path() . '/images/menu-icon.svg' );
+		return $this->is_gravityforms_supported( '2.5-beta-3.1' ) ? 'gform-icon--paypal' : 'dashicons-admin-generic';
 
 	}
 
@@ -369,24 +369,32 @@ class GFPayPal extends GFPaymentAddOn {
 		return $html;
 	}
 
+	/**
+	 * Returns the JavaScript for the Trial input onchange event.
+	 *
+	 * @since Unknown
+	 *
+	 * @param array $field The trial input field.
+	 *
+	 * @return string
+	 */
 	public function set_trial_onchange( $field ) {
-		//return the javascript for the onchange event
 		$row_id = $this->is_gravityforms_supported( '2.5-dev-1' ) ? '#gform_setting_trialPeriod' : '#gaddon-setting-row-trialPeriod';
 		return "
 		if(jQuery(this).prop('checked')){
-			jQuery('#{$field['name']}_product').show('slow');
-			jQuery('{$row_id}').show('slow');
+			jQuery('#{$field['name']}_product').show();
+			jQuery('{$row_id}').show();
 			if (jQuery('#{$field['name']}_product').val() == 'enter_amount'){
-				jQuery('#{$field['name']}_amount').show('slow');
+				jQuery('#{$field['name']}_amount').show();
 			}
 			else{
 				jQuery('#{$field['name']}_amount').hide();
 			}
 		}
 		else {
-			jQuery('#{$field['name']}_product').hide('slow');
+			jQuery('#{$field['name']}_product').hide();
 			jQuery('#{$field['name']}_amount').hide();
-			jQuery('{$row_id}').hide('slow');
+			jQuery('{$row_id}').hide();
 		}";
 	}
 
@@ -531,11 +539,11 @@ class GFPayPal extends GFPaymentAddOn {
 
 	/**
 	 * Prevent the GFPaymentAddOn version of the options field being added to the feed settings.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function option_choices() {
-		
+
 		return false;
 	}
 
@@ -554,7 +562,7 @@ class GFPayPal extends GFPaymentAddOn {
 
 		$feed['meta'] = $settings;
 		$feed         = apply_filters( 'gform_paypal_save_config', $feed );
-		
+
 		//call hook to validate custom settings/meta added using gform_paypal_action_fields or gform_paypal_add_option_group action hooks
 		$is_validation_error = apply_filters( 'gform_paypal_config_validation', false, $feed );
 		if ( $is_validation_error ) {
@@ -563,7 +571,7 @@ class GFPayPal extends GFPaymentAddOn {
 		}
 
 		$settings = $feed['meta'];
-		
+
 		//--------------------------------------------------------
 
 		return parent::save_feed_settings( $feed_id, $form_id, $settings );
@@ -688,7 +696,7 @@ class GFPayPal extends GFPaymentAddOn {
 		$url .= $query_string;
 
 		$url = gf_apply_filters( 'gform_paypal_request', $form['id'], $url, $form, $entry, $feed, $submission_data );
-		
+
 		//add the bn code (build notation code)
 		$url .= '&bn=Rocketgenius_SP';
 
@@ -762,7 +770,7 @@ class GFPayPal extends GFPaymentAddOn {
 		}
 
 		$query_string .= "{$shipping}&cmd={$cmd}{$extra_qs}";
-		
+
 		//save payment amount to lead meta
 		gform_update_meta( $entry_id, 'payment_amount', $payment_amount );
 
@@ -819,7 +827,7 @@ class GFPayPal extends GFPaymentAddOn {
 		}
 
 		$query_string = "&amount={$payment_amount}&item_name={$purpose}&cmd={$cmd}";
-		
+
 		//save payment amount to lead meta
 		gform_update_meta( $entry_id, 'payment_amount', $payment_amount );
 
@@ -926,7 +934,7 @@ class GFPayPal extends GFPaymentAddOn {
 
 		//save payment amount to lead meta
 		gform_update_meta( $entry_id, 'payment_amount', $payment_amount );
-		
+
 		return $payment_amount > 0 ? $query_string : false;
 
 	}
@@ -1324,7 +1332,7 @@ class GFPayPal extends GFPaymentAddOn {
 				$action['amount']           = $recurring_amount;
 				$action['entry_id']         = $entry['id'];
 				$action['ready_to_fulfill'] = ! $entry['is_fulfilled'] ? true : false;
-				
+
 				if ( ! $this->is_valid_initial_payment_amount( $entry['id'], $recurring_amount ) ){
 					//create note and transaction
 					$this->log_debug( __METHOD__ . '(): Payment amount does not match subscription amount. Subscription will not be activated.' );
@@ -1390,7 +1398,7 @@ class GFPayPal extends GFPaymentAddOn {
 						$action['payment_date']     = gmdate( 'y-m-d H:i:s' );
 						$action['payment_method']	= 'PayPal';
 						$action['ready_to_fulfill'] = ! $entry['is_fulfilled'] ? true : false;
-						
+
 						if ( ! $this->is_valid_initial_payment_amount( $entry['id'], $amount ) ){
 							//create note and transaction
 							$this->log_debug( __METHOD__ . '(): Payment amount does not match product price. Entry will not be marked as Approved.' );
@@ -1776,7 +1784,7 @@ class GFPayPal extends GFPaymentAddOn {
 		if ( $this->payment_details_editing_disabled( $entry, 'update' ) ) {
 			return;
 		}
-        
+
 		//get payment fields to update
 		$payment_status = rgpost( 'payment_status' );
 		//when updating, payment status may not be editable, if no value in post, set to lead payment status
@@ -1980,8 +1988,8 @@ class GFPayPal extends GFPaymentAddOn {
 			$this->update_payment_gateway();
 
 			//updating entry status from 'Approved' to 'Paid'
-			$this->update_lead();			
-			
+			$this->update_lead();
+
 		}
 
 		// Remove TLS 1.2 warning.
@@ -2180,7 +2188,7 @@ class GFPayPal extends GFPaymentAddOn {
 
 		$this->log_debug( __METHOD__ . "(): transactions: {$wpdb->rows_affected} rows were added." );
 	}
-	
+
 	public function get_old_transaction_table_name() {
 		global $wpdb;
 		return $wpdb->prefix . 'rg_paypal_transaction';

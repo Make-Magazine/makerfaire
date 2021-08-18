@@ -2,7 +2,7 @@
 
 class ESSBSocialFollowersCounter {
 	
-	private $version = '3.0';
+	private $version = '4.0';
 	private $essb3_cache_option_name = 'essbfcounter_cached';
 	private $essb3_expire_name = 'essbfcounter_expire';
 	private $updater_instance;
@@ -16,7 +16,9 @@ class ESSBSocialFollowersCounter {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-updater.php');
 		
 		// include visual draw class
-		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-draw.php');
+		if (!class_exists('ESSBSocialFollowersCounterDraw')) {
+            include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-draw.php');
+		}
 		
 		add_shortcode( 'essb-fans' , array ( $this , 'register_plugin_shortcodes' ) );
 		add_shortcode( 'easy-fans' , array ( $this , 'register_plugin_shortcodes' ) );
@@ -24,11 +26,7 @@ class ESSBSocialFollowersCounter {
 		add_shortcode( 'easy-total-fans' , array ( $this , 'register_plugin_shortcode_totalfans' ) );
 		add_shortcode( 'easy-total-followers' , array ( $this , 'register_plugin_shortcode_totalfans' ) );
 		add_shortcode( 'easy-followers-layout' , array ( $this , 'register_plugin_shortcodes_layout' ) );
-		add_shortcode( 'followme-bar', array($this, 'register_shortcode_followme_bar'));
-		
-		add_action( 'wp_enqueue_scripts' , array ( $this , 'register_front_assets' ), 1);
-		
-		add_action( 'wp_footer', array($this, 'push_instagram_update_action'));
+		add_shortcode( 'followme-bar', array($this, 'register_shortcode_followme_bar'));				
 		
 		if (essb_option_bool_value('fanscounter_sidebar')) {
 			add_action( 'wp_footer', array ($this, 'draw_followers_sidebar'), 99);
@@ -37,90 +35,21 @@ class ESSBSocialFollowersCounter {
 		if (essb_option_bool_value('fanscounter_postbar')) {
 			add_filter( 'the_content', array ($this, 'draw_followers_postbar'), 99);
 		}
-		
-		add_action( 'wp_ajax_essb-instagram-followers-request-cache', array( $this, 'ajax_load_cache_js') );
-		add_action( 'wp_ajax_nopriv_essb-instagram-followers-request-cache', array( $this, 'ajax_load_cache_js') );
-		
+				
 		/**
-		 * 
 		 * @var ESSBSocialFollowersCounter $should_update
 		 */
 		$this->should_update = $this->should_update_followers();
-		if (ESSBSocialFollowersCounterHelper::get_option('instgram_force_update') == 'yes') {
-		    $this->force_update_method = true;
-		}		
-	}
-	
-	public function ajax_load_cache_js() {
-	    $nonce_key = 'essb-instagram-followers';
-	    check_ajax_referer( $nonce_key, 'security' );
-	    
-	    $data = isset($_REQUEST['data']) ? $_REQUEST['data'] : array();
-	    
-	    $ig_followers = isset($_REQUEST['data']) ? $_REQUEST['data'] : 0;
-	    // @security: prevent saving any value - only valid integers
-	    $ig_followers = intval($ig_followers);
-	    
-	    $counters = get_option($this->essb3_cache_option_name);
-	    if (!isset($counters) || !is_array($counters)) {
-	        $counters = array();
-	    }
-	    
-	    $prev_value = isset($counters['instgram']) ? $counters['instgram'] : 0;
-	    if (isset($counters['instagram'])) {
-	        $prev_value = isset($counters['instagram']) ? $counters['instagram'] : 0;
-	    }
-	    
-	    if ($prev_value < $ig_followers) {	    
-    	    $counters['instgram'] = $ig_followers;
-    	    $counters['instagram'] = $ig_followers;
-	    }
-	    else {
-	        $ig_followers = $prev_value;
-	    }
-	    
-	    
-	    update_option ( $this->essb3_cache_option_name, $counters );
-	    
-	    echo ESSBSocialFollowersCounterDraw::followers_number($ig_followers);
-	    die();
-	}
-	
-	public function push_instagram_update_action() {
-	    
-	    $should_add = false;
-	    
-	    if (ESSB_Runtime_Cache::is('followers_counter_update')) {
-	        $should_add = true;
-	    }
-	    else if ($this->should_update && $this->force_update_method) {
-	        $should_add = true;
-	    }
-	    
-	    if ($should_add) {
-	        $options = array('nonce' => esc_js( wp_create_nonce( 'essb-instagram-followers' ) ),
-	            'ajaxurl' => esc_url(admin_url('admin-ajax.php'))
-	        );
-	        
-	        if ($this->force_update_method) {
-	            $options['forced_update'] = 'true';
-	            $options['instagram_user'] = ESSBSocialFollowersCounterHelper::get_option('instgram_username');
-	        }
-	        
-	        echo '<script> var essbInstagramFollowersUpdater = '.json_encode($options).';</script>';
-	        essb_resource_builder ()->add_static_resource_footer ( ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/essb-social-followers-counter.js', 'essb-instagram-social-followers', 'js' );
-	        
-	    }
-	}
 		
-	public function register_front_assets() {
-		if (essb_is_plugin_deactivated_on() || essb_is_module_deactivated_on('fanscounter')) {
-			return;
+		/**
+		 * Loading Module Assets
+		 */
+		if (!class_exists('ESSBSocialFollowersCounterAssets')) {
+		    // include visual draw class
+		    include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-followers-counter/essb-social-followers-counter-assets.php');
 		}
-		
-		essb_resource_builder()->add_static_resource(ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/essb-followers-counter.min.css', 'essb-social-followers-counter', 'css');
-		
-	}
+		ESSBSocialFollowersCounterAssets::init();
+	}	
 	
 	/**
 	 * Automatically assign follow me bar below post content
@@ -212,6 +141,13 @@ class ESSBSocialFollowersCounter {
 		$now = time ();
 		
 		$is_alive = ($expire_time > $now);
+		
+		/**
+		 * @since 7.7 / Filter integrated
+		 */
+		if (has_filter("essb_followers_counter_update_is_live")) {
+		    $is_alive = apply_filters("essb_followers_counter_update_is_live", $is_alive);
+		}
 				
 		if (true == $is_alive) {
 			return false;
@@ -228,6 +164,13 @@ class ESSBSocialFollowersCounter {
 	    // if it is not required we load the counters from cache
 	    if (!$request_update) {
 	        $counters = get_option ( $this->essb3_cache_option_name );
+	        
+	        /**
+	         * @since 7.7 / Filter integrated
+	         */
+	        if (has_filter("essb_followers_counter_values")) {
+	            $counters = apply_filters("essb_followers_counter_values", $counters);
+	        }
 	        
 	        // does not exist cached counters - initiate full counter update
 	        if (!isset($counters)) {
@@ -292,6 +235,13 @@ class ESSBSocialFollowersCounter {
 			ESSB_Runtime_Cache::set('followers_counter_update', true);
 		}
 		
+		/**
+		 * @since 7.7 Counter value filter
+		 */
+		if (has_filter("essb_followers_counter_values")) {
+		    $counters = apply_filters("essb_followers_counter_values", $counters);
+		}
+		
 		return $counters;
 	}
 	
@@ -326,6 +276,10 @@ class ESSBSocialFollowersCounter {
 		$counters = array();		
 		
 		$require_check_in_cache = false;
+		
+		/**
+		 * @since 7.9 Instagram number of followers goes manually
+		 */			
 		foreach ( $this->active_social_networks() as $social ) {
 			switch ($social) {
 				case 'twitter' :
@@ -373,10 +327,13 @@ class ESSBSocialFollowersCounter {
 				case 'delicious' :
 					$count = $this->updater()->update_delicious ();
 					break;
-				case 'instgram':
-				case 'instagram' :
-					$count = $this->updater()->update_instagram ();
-					break;
+				/*
+				 * @since 7.9 deprecated Instagram does not allow access to value of followers anymore
+				 * case 'instgram':
+				 * case 'instagram' :
+				 *	$count = $this->updater()->update_instagram ();
+				 *	break;
+				 */
 				case 'youtube' :
 					$count = $this->updater()->update_youtube ();
 					break;
@@ -453,6 +410,9 @@ class ESSBSocialFollowersCounter {
 				case 'patreon':
 				case 'ok':
 				case 'subscribe_form':
+				case 'periscope':
+				case 'instgram':
+				case 'instagram' :
 					$count = $this->update_manual_value($social);
 					break;
 				default :
@@ -471,8 +431,11 @@ class ESSBSocialFollowersCounter {
 			}
 		}
 		
-		// validete and apply active manual user values
-		$is_active_selfcounts = ESSBSocialFollowersCounterHelper::get_option('uservalues');
+		/**
+		 * @since 7.6 User values are always ON
+		 */
+		$is_active_selfcounts = true;
+		
 		if ($is_active_selfcounts) {
 			foreach ( $this->active_social_networks() as $social ) {
 				$user_value = ESSBSocialFollowersCounterHelper::get_option($social.'_uservalue');
@@ -532,6 +495,13 @@ class ESSBSocialFollowersCounter {
 				}
 			}
 		}
+		
+		/**
+		 * @since 7.7 / Filter integrated
+		 */
+		if (has_filter("essb_followers_active_networks")) {
+		    $result = apply_filters("essb_followers_active_networks", $result);
+		}
 
 		return $result;
 	}
@@ -590,6 +560,7 @@ class ESSBSocialFollowersCounter {
 			case 'mixer':
 			case 'patreon':
 			case 'ok':
+			case 'periscope': 
 				return ESSBSocialFollowersCounterHelper::get_option ( $social . '_url' );
 				break;
 			default :
@@ -788,6 +759,7 @@ class ESSBSocialFollowersCounter {
 			case 'mixer':
 			case 'patreon':
 			case 'ok':
+			case 'periscope':
 				return ESSBSocialFollowersCounterHelper::get_option ( $social . '_url' );
 				break;				
 		}
@@ -795,6 +767,7 @@ class ESSBSocialFollowersCounter {
 		if (has_filter("essb4_followers_{$social}_url")) {
 			return apply_filters("essb4_followers_{$social}_url", $social);
 		}
+		
 	}
 	
 	public function draw_followers_sidebar() {
@@ -828,4 +801,24 @@ class ESSBSocialFollowersCounter {
 		
 		ESSBSocialFollowersCounterDraw::draw_followers_sidebar($options);
 	}
+	
+	/**
+	 * @deprecated 7.9
+	 *
+	 * The function is depreacted and pending removale due to Instagram API change
+	 */
+	public function ajax_load_cache_js() {
+	    echo '';
+	    die();
+	}
+	
+	/**
+	 * @deprecated 7.9
+	 * Instagram API does not accept anymore public connection for reading profiles.
+	 */
+	public function push_instagram_update_action() {
+	    
+	    __doing_it_wrong( 'push_instagram_update_action', 'This method is deprecated because of Instagram API change' );
+	    
+	}	
 }

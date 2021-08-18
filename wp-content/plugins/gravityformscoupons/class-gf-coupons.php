@@ -631,6 +631,19 @@ class GFCoupons extends GFFeedAddOn {
 	}
 
 	/**
+	 * Returns the message that is displayed when the feed list is empty.
+	 *
+	 * @since 2.12
+	 *
+	 * @return string The message
+	 */
+	public function feed_list_no_item_message() {
+		$url = add_query_arg( array( 'fid' => 0 ) );
+		/* Translators: 1. Opening anchor tag, 2.Closing anchor tag */
+		return sprintf( esc_html__( "You don't have any coupons configured. Let's go %1$1screate one%2$2s!", 'gravityformscoupons' ), "<a href='" . esc_url( $url ) . "'>", '</a>' );
+	}
+
+	/**
 	 * Returns the value to be displayed in the Title column.
 	 *
 	 * @param array $feed The coupon feed being included in the feed list.
@@ -1190,7 +1203,7 @@ class GFCoupons extends GFFeedAddOn {
 	 *
 	 * @return bool
 	 */
-	public function can_apply_coupon( $coupon_code, $existing_coupon_codes, $feed, &$invalid_reason = '', $form ) {
+	public function can_apply_coupon( $coupon_code, $existing_coupon_codes, $feed, &$invalid_reason, $form ) {
 
 		$coupon = $this->get_coupon_by_code( $feed );
 		if ( ! $coupon ) {
@@ -1388,7 +1401,7 @@ class GFCoupons extends GFFeedAddOn {
 	 *
 	 * @return array
 	 */
-	public function get_discounts( $coupons, &$total = 0, &$discount_total, $entry = array() ) {
+	public function get_discounts( $coupons, &$total, &$discount_total, $entry = array() ) {
 		$coupons = $this->sort_coupons( $coupons );
 
 		$discount_total = 0;

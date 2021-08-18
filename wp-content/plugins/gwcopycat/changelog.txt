@@ -1,6 +1,66 @@
 
 # Changelog
 
+## 1.4.45
+
+	- Fixed a regression where GPCC would not copy values to hidden fields.
+
+## 1.4.44
+
+	- Fixed a potential issue where copied prices to radio fields may not update the form's total amount.
+	- Fixed an issue where GPCC would not copy values to quantity fields correctly.
+
+## 1.4.43
+
+	- Fixed an issue where the [gpcc_copied_value](https://gravitywiz.com/documentation/gpcc_copied_value-js/) filter did not fire when copying checkbox or radio fields.
+
+## 1.4.42
+
+	- Fixed an issue where conditional logic may clear copied fields after hiding them multiple times.
+	- Improved consistency of how Total field values are handled by always removing the currency symbol and thousand separators.
+
+## 1.4.41
+
+	- Fixed an issue where GPCC would apply custom CSS even when no value was copied.
+	- Fixed potential recursion issue when pricing and conditional logic are used together.
+	- Improved performance on larger forms.
+
+## 1.4.40
+
+	- Fixed a potential issue where manual copying may be triggered by conditional logic.
+
+## 1.4.39
+
+	- Fixed a potential error when GPCC is used in a form with a coupon code.
+
+## 1.4.38
+
+	- Fixed a potential issue where conditionally shown fields may not trigger a copy action.
+
+## 1.4.37
+
+	- Fixed an issue where GPCC could lag on large AJAX enabled forms.
+
+## 1.4.36
+
+	- Added a new parameter to [`gpcc_custom_copy`](https://gravitywiz.com/documentation/gpcc_custom_copy/) and [`gpcc_custom_clear`](https://gravitywiz.com/documentation/gpcc_custom_clear/) distinguishing the current field being operated on.
+
+## 1.4.35
+
+	- Fixed an issue where conditional logic may not trigger on target radio fields.
+
+## 1.4.34
+
+	- Added `gpcc_custom_copy` and `gpcc_custom_clear` filters to handle corner cases.
+
+## 1.4.33
+
+	- Added GF Chained Selects Support.
+
+## 1.4.32
+
+	- Fixed issue where using a Password field with confirmation as a source field would result in the password and confirm password inputs being concatenated rather than just copying the password.
+
 ## 1.4.31
 
 	- Fixed a regression where GPCC may throw a JS error if the class is added to the target field.

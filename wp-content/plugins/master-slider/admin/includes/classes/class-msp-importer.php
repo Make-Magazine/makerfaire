@@ -166,7 +166,7 @@ class MSP_Importer {
 
           <input type="hidden" name="msp-import" value="1">
 
-          <input type="hidden" name="max_file_size" value="<?php echo $bytes; ?>" />
+          <input type="hidden" name="max_file_size" value="<?php echo esc_attr( $bytes ); ?>" />
 
           <input type="file" name="msp-import-file" class="msp-select-file">
 
@@ -197,7 +197,7 @@ class MSP_Importer {
 
             if ( $_FILES['msp-import-file']['error'] == UPLOAD_ERR_OK  && is_uploaded_file( $_FILES['msp-import-file']['tmp_name'] ) ) {
               // get import file content
-              $import_data = file_get_contents( $_FILES['msp-import-file']['tmp_name'] );
+              $import_data = file_get_contents( sanitize_file_name( $_FILES['msp-import-file']['tmp_name'] ) );
               $this->import_data( $import_data );
             }
 
@@ -214,7 +214,7 @@ class MSP_Importer {
 
       if( current_user_can('export_masterslider') || apply_filters( 'masterslider_user_can_import_starter_content', 0 ) ) {
 
-        if ( $starter_field = msp_get_slider_starter_field( $_REQUEST['starter_id'] ) ) {
+        if ( $starter_field = msp_get_slider_starter_field( sanitize_text_field( $_REQUEST['starter_id'] ) ) ) {
 
           if ( isset( $starter_field['importdata'] ) && ! empty( $starter_field['importdata'] )  ) {
 
@@ -248,7 +248,7 @@ class MSP_Importer {
 
         if( check_admin_referer('export-msp-sliders') ) {
 
-          $sliders    = isset( $_POST['msp-export-sliders']      ) ? $_POST['msp-export-sliders']      : '';
+          $sliders    = isset( $_POST['msp-export-sliders']      ) ?  $_POST['msp-export-sliders'] : '';
 
           if( ! empty( $sliders ) || ! empty( $args ) ) {
             $this->export_slider_data_in_file( $sliders, $args );

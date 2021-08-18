@@ -33,6 +33,15 @@ final class Plugin {
 	private static $min_wp_version = GV_MIN_WP_VERSION;
 
 	/**
+	 * @var string Minimum WordPress version.
+	 *
+	 * @since 2.9.3
+	 *
+	 * GravityView will require this version of WordPress soon.
+	 */
+	private static $future_min_wp_version = GV_FUTURE_MIN_WP_VERSION;
+
+	/**
 	 * @var string Minimum Gravity Forms version.
 	 *
 	 * GravityView requires at least this version of Gravity Forms to function properly.
@@ -226,6 +235,7 @@ final class Plugin {
 		include_once $this->dir( 'includes/extensions/delete-entry/class-delete-entry.php' );
 		include_once $this->dir( 'includes/extensions/duplicate-entry/class-duplicate-entry.php' );
 		include_once $this->dir( 'includes/extensions/entry-notes/class-gravityview-field-notes.php' );
+		include_once $this->dir( 'includes/extensions/lightbox/class-gravityview-lightbox.php' );
 
 		// Load WordPress Widgets
 		include_once $this->dir( 'includes/wordpress-widgets/register-wordpress-widgets.php' );
@@ -294,15 +304,7 @@ final class Plugin {
 			return;
 		}
 
-		// Pre-4.6 loading
-		// TODO: Remove when GV minimum version is WordPress 4.6.0
-		$locale = apply_filters( 'plugin_locale', ( ( function_exists( 'get_user_locale' ) && is_admin() ) ? get_user_locale() : get_locale() ), 'gravityview' );
-
-		$loaded = load_textdomain( 'gravityview', sprintf( '%s/%s-%s.mo', $this->dir( 'languages' ), $domain, $locale ) );
-
-		if ( $loaded ) {
-			return;
-		}
+		$locale = apply_filters( 'plugin_locale', ( ( function_exists('get_user_locale') && is_admin() ) ? get_user_locale() : get_locale() ), 'gravityview' );
 
 		gravityview()->log->error( sprintf( 'Unable to load textdomain for %s locale.', $locale ) );
 	}
@@ -468,6 +470,21 @@ final class Plugin {
 		}
 
 		return version_compare( $this->get_wordpress_version(), $version, '>=' );
+	}
+
+	/**
+	 * Is this version of GravityView compatible with the future version of WordPress?
+	 *
+	 * @since 2.9.3
+	 *
+	 * @return bool true if compatible, false otherwise
+	 * @api
+	 */
+	public function is_compatible_future_wordpress() {
+
+		$version = $this->get_wordpress_version();
+
+		return $version ? version_compare( $version, self::$future_min_wp_version, '>=' ) : false;
 	}
 
 	/**
@@ -662,9 +679,9 @@ final class Plugin {
 		delete_site_transient( 'gravityview_related_plugins' );
 	}
 
-	private function __clone() {
+	public function __clone() {
 	}
 
-	private function __wakeup() {
+	public function __wakeup() {
 	}
 }

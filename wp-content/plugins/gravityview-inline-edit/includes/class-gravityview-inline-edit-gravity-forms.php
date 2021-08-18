@@ -56,7 +56,7 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 		$image   = GRAVITYVIEW_INLINE_URL . 'assets/images/gf-inline-edit-toggle.png';
 		$content = sprintf( '<h3>%s</h3><p>%s</p><p>%s</p>',
 			esc_html__( 'An Inline Edit button will be added', 'gravityview-inline-edit' ),
-			'<img src="' . $image . '" class="alignright" width="300" />',
+			'<img src="' . $image . '" class="alignright" width="300" style="max-width: 100%;" />',
 			esc_html__( 'If enabled, a button to toggle on and off inline editing will be added to the Gravity Forms Entries screen. If disabled, the button will not be added.', 'gravityview-inline-edit' )
 		);
 
@@ -241,6 +241,10 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	public function maybe_add_inline_edit_toggle_button( $form_id = 0 ) {
 
 		if ( ! $this->is_inline_edit_enabled( $form_id ) ) {
+			return;
+		}
+
+		if ( 0 === GFAPI::count_entries( $form_id ) ) {
 			return;
 		}
 

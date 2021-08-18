@@ -24,7 +24,7 @@ class MSP_Admin_Ajax {
             wp_send_json_error( array( 'message' => __( 'Authorization failed! Notice cannot be closed.', 'master-slider' ) ) );
         }
 
-        $notice_id = ! empty( $_POST['_id'] ) ? $_POST['_id'] : '';
+        $notice_id = ! empty( $_POST['_id'] ) ? sanitize_text_field( $_POST['_id'] ) : '';
 
         if ( empty( $notice_id ) ) {
             wp_send_json_error( array( 'message' => __( 'Notice cannot be closed. Notice ID is required ..', 'master-slider' ) ) );
@@ -68,18 +68,18 @@ class MSP_Admin_Ajax {
     /////////////////////////////////////////////////////////////////////////////////////////
 
     // Get the slider id
-    $slider_id    = isset( $_REQUEST['slider_id']     ) ? $_REQUEST['slider_id']     : '';
+    $slider_id    = isset( $_REQUEST['slider_id'] ) ? sanitize_text_field( $_REQUEST['slider_id'] ) : '';
 
-    if ( empty( $slider_id ) ) {
+    if ( empty( $slider_id ) || ! is_numeric( $slider_id ) ) {
        echo json_encode( array( 'success' => false, 'type' => 'save' , 'message' => __( "Slider id is not defined.", 'master-slider' )  ) );
        exit;
     }
 
     // get the slider type
-    $slider_type  = isset( $_REQUEST['slider_type']   ) ? $_REQUEST['slider_type']   : 'custom';
+    $slider_type  = isset( $_REQUEST['slider_type']   ) ? sanitize_key( $_REQUEST['slider_type'] ) : 'custom';
 
     // get panel data
-    $msp_data   = isset( $_REQUEST['msp_data']      ) ? $_REQUEST['msp_data']      : NULL;
+    $msp_data   = isset( $_REQUEST['msp_data']  ) ? $_REQUEST['msp_data']  : NULL;
 
 
     // get parse and database tools
@@ -95,7 +95,7 @@ class MSP_Admin_Ajax {
     $slider_custom_styles = $parser->get_styles();
 
     $fields = array(
-      'title'     => $slider_setting[ 'title' ],
+      'title'     => sanitize_text_field( $slider_setting[ 'title' ] ),
       'type'      => $slider_setting[ 'slider_type' ],
       'slides_num'  => count( $slides ),
       'params'    => $msp_data,
@@ -155,7 +155,7 @@ class MSP_Admin_Ajax {
     /////////////////////////////////////////////////////////////////////////////////////////
 
     // Get the slider id
-    $slider_type = isset( $_REQUEST['slider_type'] ) ? $_REQUEST['slider_type'] : '';
+    $slider_type = isset( $_REQUEST['slider_type'] ) ? sanitize_key( $_REQUEST['slider_type'] ) : '';
 
 
     // Get new slider id

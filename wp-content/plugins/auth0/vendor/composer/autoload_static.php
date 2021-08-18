@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite9f1e0e5e3b2a4d641d2bd979a94c49c
+class ComposerStaticInit6af92748471ab6830d7a023075581aae
 {
     public static $files = array (
         '4ddff123f026bee5ee1f5c415e2d5eb3' => __DIR__ . '/../..' . '/functions.php',
@@ -20,44 +20,45 @@ class ComposerStaticInite9f1e0e5e3b2a4d641d2bd979a94c49c
     public static $prefixDirsPsr4 = array (
         'Lcobucci\\JWT\\' => 
         array (
-            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
+            0 => __DIR__ . '/..' . '/auth0/php-jwt/src',
         ),
     );
 
     public static $classMap = array (
-        'Lcobucci\\JWT\\Builder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Builder.php',
-        'Lcobucci\\JWT\\Claim' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim.php',
-        'Lcobucci\\JWT\\Claim\\Basic' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Basic.php',
-        'Lcobucci\\JWT\\Claim\\EqualsTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/EqualsTo.php',
-        'Lcobucci\\JWT\\Claim\\Factory' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Factory.php',
-        'Lcobucci\\JWT\\Claim\\GreaterOrEqualsTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/GreaterOrEqualsTo.php',
-        'Lcobucci\\JWT\\Claim\\LesserOrEqualsTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/LesserOrEqualsTo.php',
-        'Lcobucci\\JWT\\Claim\\Validatable' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Validatable.php',
-        'Lcobucci\\JWT\\Parser' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parser.php',
-        'Lcobucci\\JWT\\Parsing\\Decoder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parsing/Decoder.php',
-        'Lcobucci\\JWT\\Parsing\\Encoder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parsing/Encoder.php',
-        'Lcobucci\\JWT\\Signature' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signature.php',
-        'Lcobucci\\JWT\\Signer' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer.php',
-        'Lcobucci\\JWT\\Signer\\BaseSigner' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/BaseSigner.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/MultibyteStringConverter.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha256.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha384.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha512.php',
-        'Lcobucci\\JWT\\Signer\\Ecdsa\\SignatureConverter' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/SignatureConverter.php',
-        'Lcobucci\\JWT\\Signer\\Hmac' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac.php',
-        'Lcobucci\\JWT\\Signer\\Hmac\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha256.php',
-        'Lcobucci\\JWT\\Signer\\Hmac\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha384.php',
-        'Lcobucci\\JWT\\Signer\\Hmac\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha512.php',
-        'Lcobucci\\JWT\\Signer\\Key' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Key.php',
-        'Lcobucci\\JWT\\Signer\\Keychain' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Keychain.php',
-        'Lcobucci\\JWT\\Signer\\OpenSSL' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/OpenSSL.php',
-        'Lcobucci\\JWT\\Signer\\Rsa' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa.php',
-        'Lcobucci\\JWT\\Signer\\Rsa\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha256.php',
-        'Lcobucci\\JWT\\Signer\\Rsa\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha384.php',
-        'Lcobucci\\JWT\\Signer\\Rsa\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha512.php',
-        'Lcobucci\\JWT\\Token' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token.php',
-        'Lcobucci\\JWT\\ValidationData' => __DIR__ . '/..' . '/lcobucci/jwt/src/ValidationData.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Lcobucci\\JWT\\Builder' => __DIR__ . '/..' . '/auth0/php-jwt/src/Builder.php',
+        'Lcobucci\\JWT\\Claim' => __DIR__ . '/..' . '/auth0/php-jwt/src/Claim.php',
+        'Lcobucci\\JWT\\Claim\\Basic' => __DIR__ . '/..' . '/auth0/php-jwt/src/Claim/Basic.php',
+        'Lcobucci\\JWT\\Claim\\EqualsTo' => __DIR__ . '/..' . '/auth0/php-jwt/src/Claim/EqualsTo.php',
+        'Lcobucci\\JWT\\Claim\\Factory' => __DIR__ . '/..' . '/auth0/php-jwt/src/Claim/Factory.php',
+        'Lcobucci\\JWT\\Claim\\GreaterOrEqualsTo' => __DIR__ . '/..' . '/auth0/php-jwt/src/Claim/GreaterOrEqualsTo.php',
+        'Lcobucci\\JWT\\Claim\\LesserOrEqualsTo' => __DIR__ . '/..' . '/auth0/php-jwt/src/Claim/LesserOrEqualsTo.php',
+        'Lcobucci\\JWT\\Claim\\Validatable' => __DIR__ . '/..' . '/auth0/php-jwt/src/Claim/Validatable.php',
+        'Lcobucci\\JWT\\Parser' => __DIR__ . '/..' . '/auth0/php-jwt/src/Parser.php',
+        'Lcobucci\\JWT\\Parsing\\Decoder' => __DIR__ . '/..' . '/auth0/php-jwt/src/Parsing/Decoder.php',
+        'Lcobucci\\JWT\\Parsing\\Encoder' => __DIR__ . '/..' . '/auth0/php-jwt/src/Parsing/Encoder.php',
+        'Lcobucci\\JWT\\Signature' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signature.php',
+        'Lcobucci\\JWT\\Signer' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer.php',
+        'Lcobucci\\JWT\\Signer\\BaseSigner' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/BaseSigner.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Ecdsa.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Ecdsa/MultibyteStringConverter.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha256' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Ecdsa/Sha256.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha384' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Ecdsa/Sha384.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha512' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Ecdsa/Sha512.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\SignatureConverter' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Ecdsa/SignatureConverter.php',
+        'Lcobucci\\JWT\\Signer\\Hmac' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Hmac.php',
+        'Lcobucci\\JWT\\Signer\\Hmac\\Sha256' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Hmac/Sha256.php',
+        'Lcobucci\\JWT\\Signer\\Hmac\\Sha384' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Hmac/Sha384.php',
+        'Lcobucci\\JWT\\Signer\\Hmac\\Sha512' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Hmac/Sha512.php',
+        'Lcobucci\\JWT\\Signer\\Key' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Key.php',
+        'Lcobucci\\JWT\\Signer\\Keychain' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Keychain.php',
+        'Lcobucci\\JWT\\Signer\\OpenSSL' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/OpenSSL.php',
+        'Lcobucci\\JWT\\Signer\\Rsa' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Rsa.php',
+        'Lcobucci\\JWT\\Signer\\Rsa\\Sha256' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Rsa/Sha256.php',
+        'Lcobucci\\JWT\\Signer\\Rsa\\Sha384' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Rsa/Sha384.php',
+        'Lcobucci\\JWT\\Signer\\Rsa\\Sha512' => __DIR__ . '/..' . '/auth0/php-jwt/src/Signer/Rsa/Sha512.php',
+        'Lcobucci\\JWT\\Token' => __DIR__ . '/..' . '/auth0/php-jwt/src/Token.php',
+        'Lcobucci\\JWT\\ValidationData' => __DIR__ . '/..' . '/auth0/php-jwt/src/ValidationData.php',
         'WP_Auth0_Admin' => __DIR__ . '/../..' . '/lib/admin/WP_Auth0_Admin.php',
         'WP_Auth0_Admin_Advanced' => __DIR__ . '/../..' . '/lib/admin/WP_Auth0_Admin_Advanced.php',
         'WP_Auth0_Admin_Appearance' => __DIR__ . '/../..' . '/lib/admin/WP_Auth0_Admin_Appearance.php',
@@ -117,9 +118,9 @@ class ComposerStaticInite9f1e0e5e3b2a4d641d2bd979a94c49c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite9f1e0e5e3b2a4d641d2bd979a94c49c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite9f1e0e5e3b2a4d641d2bd979a94c49c::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInite9f1e0e5e3b2a4d641d2bd979a94c49c::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit6af92748471ab6830d7a023075581aae::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit6af92748471ab6830d7a023075581aae::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit6af92748471ab6830d7a023075581aae::$classMap;
 
         }, null, ClassLoader::class);
     }

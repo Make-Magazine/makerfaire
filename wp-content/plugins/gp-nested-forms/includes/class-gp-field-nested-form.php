@@ -68,6 +68,9 @@ class GP_Field_Nested_Form extends GF_Field {
 			);
 		}
 
+		// Sanitize value.
+		$value = $this->santize_nested_form_field_value( $value );
+
 		// Get existing entries.
 		$entries = array();
 		if ( ! empty( $value ) ) {
@@ -132,11 +135,7 @@ class GP_Field_Nested_Form extends GF_Field {
 
 		$template = new GP_Template( gp_nested_forms() );
 		$markup   = $template->parse_template(
-			array(
-				sprintf( '%s-%s-%s.php', $args['template'], $form['id'], $this->id ),
-				sprintf( '%s-%s.php', $args['template'], $form['id'] ),
-				sprintf( '%s.php', $args['template'] ),
-			),
+			gp_nested_forms()->get_template_names( $args['template'], $form['id'], $this->id ),
 			true,
 			false,
 			$args
@@ -156,6 +155,10 @@ class GP_Field_Nested_Form extends GF_Field {
 		);
 
 		return $markup;
+	}
+
+	public function santize_nested_form_field_value( $value ) {
+		return implode( ',', gp_nested_forms()->get_child_entry_ids_from_value( $value ) );
 	}
 
 	public function get_add_button( $form_id, $nested_form_id, $tabindex, $label ) {
@@ -195,7 +198,6 @@ class GP_Field_Nested_Form extends GF_Field {
 
 		$field            = GFAPI::get_field( $form, $field_id );
 		$template         = new GP_Template( gp_nested_forms() );
-		$entry_ids        = array_filter( explode( ',', $value ) );
 		$entries          = gp_nested_forms()->get_entries( $value );
 		$nested_form_id   = rgar( $this, 'gpnfForm' );
 		$nested_form      = gp_nested_forms()->get_nested_form( $nested_form_id );
@@ -204,18 +206,14 @@ class GP_Field_Nested_Form extends GF_Field {
 		$args = array(
 			'template'      => 'nested-entries-count',
 			'entries'       => $entries,
-			'entry_count'   => count( $entry_ids ),
+			'entry_count'   => count( $entries ),
 			'label_plural'  => $this->get_items_label(),
 			'nested_fields' => gp_nested_forms()->get_fields_by_ids( $nested_field_ids, $nested_form ),
 			'nested_form'   => $nested_form,
 		);
 
 		$markup = $template->parse_template(
-			array(
-				sprintf( '%s-%s-%s.php', $args['template'], $field->formId, $field->id ),
-				sprintf( '%s-%s.php', $args['template'], $field->formId ),
-				sprintf( '%s.php', $args['template'] ),
-			),
+			gp_nested_forms()->get_template_names( $args['template'], $field->formId, $field->id ),
 			true,
 			false,
 			$args
@@ -249,19 +247,24 @@ class GP_Field_Nested_Form extends GF_Field {
 			$template = 'nested-entries-count';
 		}
 
-		$related_entries_link = sprintf(
-			'<a class="gpnf-related-entries-link" href="%s">%s</a>',
-			add_query_arg(
-				array(
-					'page'                       => 'gf_entries',
-					'id'                         => $nested_form['id'],
-					GPNF_Entry::ENTRY_PARENT_KEY => rgget( 'lid' ),
-					GPNF_Entry::ENTRY_NESTED_FORM_FIELD_KEY => $this->id,
+		$related_entries_link = '';
+
+		// Related entries requires login, hide them if this is a public view.
+		if ( is_admin() ) {
+			$related_entries_link = sprintf(
+				'<a class="gpnf-related-entries-link" href="%s">%s</a>',
+				add_query_arg(
+					array(
+						'page'                       => 'gf_entries',
+						'id'                         => $nested_form['id'],
+						GPNF_Entry::ENTRY_PARENT_KEY => rgget( 'lid' ),
+						GPNF_Entry::ENTRY_NESTED_FORM_FIELD_KEY => $this->id,
+					),
+					admin_url( 'admin.php' )
 				),
-				admin_url( 'admin.php' )
-			),
-			sprintf( __( 'View Expanded %s List', 'gp-nested-forms' ), $this->get_item_label() )
-		);
+				sprintf( __( 'View Expanded %s List', 'gp-nested-forms' ), $this->get_item_label() )
+			);
+		}
 
 		$actions = array(
 			'related_entries' => $related_entries_link,
@@ -316,11 +319,7 @@ class GP_Field_Nested_Form extends GF_Field {
 
 		$template = new GP_Template( gp_nested_forms() );
 		$markup   = $template->parse_template(
-			array(
-				sprintf( '%s-%s-%s.php', $args['template'], $this->form_id, $this->id ),
-				sprintf( '%s-%s.php', $args['template'], $this->form_id ),
-				sprintf( '%s.php', $args['template'] ),
-			),
+			gp_nested_forms()->get_template_names( $args['template'], $this->formId, $this->id ),
 			true,
 			false,
 			$args
@@ -409,7 +408,7 @@ class GP_Field_Nested_Form extends GF_Field {
 			$entry_count = 0;
 			$entry_ids   = array();
 		} else {
-			$entry_ids   = explode( ',', $value );
+			$entry_ids   = gp_nested_forms()->get_child_entry_ids_from_value( $value );
 			$entry_count = count( $entry_ids );
 		}
 

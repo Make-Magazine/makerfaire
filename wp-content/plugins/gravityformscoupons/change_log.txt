@@ -1,3 +1,10 @@
+### 3.0 | 2020-09-29
+- Added a custom icon to the Coupon field for Gravity Forms 2.5.
+- Updated empty coupons list verbiage.
+- Fixed the alignment of the coupon amount tooltip in the add new coupon page.
+- Fixed compatibility issues with PHP 8.
+
+
 ### 2.11 | 2020-09-28
 - Added support for Gravity Forms 2.5.
 - Fixed a rounding issue with the form total for some discounts when used with the PayPal Commerce Platform Add-On.

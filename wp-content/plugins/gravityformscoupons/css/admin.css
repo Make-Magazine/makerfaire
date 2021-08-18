@@ -7,11 +7,6 @@
 	display: block;
 }
 
-#gform_setting_couponAmountType .gform-settings-label {
-	display: block;
-	width: 100%;
-}
-
 #gform_setting_couponAmountType .gform-settings-input__container {
 	display: inline-flex;
 	width: calc(50% - 0.5rem);

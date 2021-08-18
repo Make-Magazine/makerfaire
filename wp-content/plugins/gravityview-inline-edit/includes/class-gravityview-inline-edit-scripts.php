@@ -139,6 +139,12 @@ final class GravityView_Inline_Edit_Scripts {
 
 		wp_enqueue_script( 'gv-inline-editable' );
 
+		if( is_admin() ){
+			$no_fields_text = esc_html__( 'The visible columns do not contain any fields editable by Inline Edit. Click the gear icon in the table header to modify visible columns.', 'gravityview-inline-edit' );
+		} else{
+			$no_fields_text = esc_html__( 'This View does not contain fields editable by Inline Edit. Edit the View to add fields.', 'gravityview-inline-edit' );
+		}
+
 		$js_settings = array(
 			'mode'        => GravityView_Inline_Edit::get_instance()->get_edit_mode(),
 			'buttons'     => GravityView_Inline_Edit::get_instance()->get_buttons_template(),
@@ -146,7 +152,8 @@ final class GravityView_Inline_Edit_Scripts {
 			'showbuttons' => 'bottom',
 			'onblur'      => 'cancel',
 			'showinputs'  => false,
-			'emptytext'   => esc_html__('Empty', 'gravityview-inline-edit')
+			'emptytext'   => esc_html__('Empty', 'gravityview-inline-edit'),
+			'nofieldstext' => $no_fields_text,
 		);
 
 		/**
@@ -230,28 +237,45 @@ final class GravityView_Inline_Edit_Scripts {
 	 * @return void
 	 */
 	private function _register_custom_field_scripts() {
-
 		$script_debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		$custom_inline_edit_field_types = array( 'address', 'multiselect', 'radiolist', 'name', 'gvtime', 'checklist' );
+		$custom_inline_edit_field_types = array(
+			'address',
+			'checklist',
+			'email',
+			'gvlist',
+			'gvtime',
+			'multiselect',
+			'name',
+			'number',
+			'product',
+			'radiolist',
+			'tel',
+			'textarea',
+			'url'
+		);
 
 		foreach ( $custom_inline_edit_field_types as $custom_field ) {
-			wp_register_script( 'gv-inline-edit-' . $custom_field, GRAVITYVIEW_INLINE_URL . 'assets/js/fields/' . $custom_field . $script_debug . '.js', array(
+			$dependencies = array(
 				'jquery',
 				GravityView_Inline_Edit::get_instance()->get_edit_style(),
 				'gv-inline-edit-gvutils',
-			), GravityView_Inline_Edit::get_version() );
-			$this->_scripts[] = 'gv-inline-edit-' . $custom_field;
+			);
+
+			if ( 'gvlist' === $custom_field ) {
+				$dependencies[] = 'gform_gravityforms';
+			}
+
+			wp_register_script(
+				'gv-inline-edit-' . $custom_field,
+				GRAVITYVIEW_INLINE_URL . 'assets/js/fields/' . $custom_field . $script_debug . '.js',
+				$dependencies,
+				GravityView_Inline_Edit::get_version()
+			);
+
+			$this->_scripts[]              = 'gv-inline-edit-' . $custom_field;
 			$this->_custom_field_scripts[] = 'gv-inline-edit-' . $custom_field;
 		}
-
-		wp_register_script( 'gv-inline-edit-gvlist', GRAVITYVIEW_INLINE_URL . 'assets/js/fields/gvlist' . $script_debug . '.js', array(
-			'jquery',
-			GravityView_Inline_Edit::get_instance()->get_edit_style(),
-			'gform_gravityforms',
-		), GravityView_Inline_Edit::get_version() );
-
-		$this->_scripts[] = 'gv-inline-edit-gvlist';
 	}
 
 	/**
@@ -286,21 +310,29 @@ final class GravityView_Inline_Edit_Scripts {
 		wp_register_script( 'poshytip', GRAVITYVIEW_INLINE_URL . 'bower_components/poshytip/src/jquery.poshytip.js', array( 'jquery' ), GravityView_Inline_Edit::get_version() );
 		wp_register_script( 'gv-bootstrap', GRAVITYVIEW_INLINE_URL . 'bower_components/bootstrap-sass/assets/javascripts/bootstrap' . $script_debug . '.js', array(), GravityView_Inline_Edit::get_version() );
 		wp_register_script( 'gv-jquery-ui-core', GRAVITYVIEW_INLINE_URL . 'assets/js/jquery-ui-1.11.0.min.js', array( 'jquery' ) );
-		wp_register_script( 'jquery-cookie', GRAVITYVIEW_INLINE_URL . 'bower_components/jquery.cookie/jquery.cookie.js', array( 'jquery' ) );
 		wp_register_script( $edit_style, GRAVITYVIEW_INLINE_URL . 'bower_components/x-editable/dist/' . $edit_style . '/js/' . $supported_scripts_versions[ $edit_style ]['file'], $supported_scripts_versions[ $edit_style ]['deps'], GravityView_Inline_Edit::get_version() );
+
+		if ( wp_script_is( 'gravityview-jquery-cookie' ) ) {
+			$cookie_script = 'gravityview-jquery-cookie';
+		} elseif( wp_script_is( 'jquery-cookie' ) ) {
+			$cookie_script = 'jquery-cookie';
+		} else {
+			$cookie_script = 'gv-inline-edit-jquery-cookie';
+			wp_register_script( 'gv-inline-edit-jquery-cookie', GRAVITYVIEW_INLINE_URL . 'bower_components/jquery.cookie/jquery.cookie.js', array( 'jquery' ) );
+		}
 
 		$this->_scripts = array_merge( array_keys( $supported_scripts_versions ), $this->_scripts );
 		$this->_scripts = array_merge( array(
 			'poshytip',
 			'gv-bootstrap',
 			'gv-jquery-ui-core',
-			'jquery-cookie',
+			$cookie_script,
 			$edit_style,
 		), $this->_scripts );
 
 		wp_register_script( 'gv-inline-editable', GRAVITYVIEW_INLINE_URL . 'assets/js/fields-inline-editable' . $script_debug . '.js', array(
 			'jquery',
-			'jquery-cookie',
+			$cookie_script,
 			$edit_style,
 		), GravityView_Inline_Edit::get_version(), true );
 		$this->_scripts[] = 'gv-inline-editable';

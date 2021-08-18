@@ -140,7 +140,7 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 	// 7.1
 	// Adding translation of the Share on words only
 	$share_on_prefix = essb_option_value('translate_share_on_prefix');
-	if ($share_on_prefix == '') { $share_on_prefix = esc_html__('Share on ', 'essb'); }
+	if ($share_on_prefix == '') { $share_on_prefix = esc_html__('Share on', 'essb'); }
 
 	$required_fullwidth_correction = essb_button_require_fullwidth_correction($style);
 	$count_displayed = 0;
@@ -342,7 +342,7 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 			// Additional check for the localization setup
 			$hover_text = essb_sanitize_option_value('hovertext_'.$single);
 			if ($hover_text == '' || essb_option_bool_value('deactivate_module_translate')) {
-                $hover_text = esc_html__('Share on ', 'essb').$name;
+			    $hover_text = $share_on_prefix.' '.$name;
 			}
 			
 			if (essb_option_bool_value('user_link_notitle')) {
@@ -383,6 +383,7 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 			if (has_filter("essb_network_svg_icon_{$single}")) {
 				$custom_svg_icon = apply_filters("essb_network_svg_icon_{$single}", $custom_svg_icon);
 			}
+			
 			
 			// Attach custom URL options if present to the base link
 			if (has_filter("essb_network_custom_url_options_{$single}")) {
@@ -467,7 +468,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			}
 		}
 	}
-	
+
 	$share['url'] = rawurlencode(esc_url($share['url']));		
 	$share['short_url'] = rawurlencode(esc_url($share['short_url']));
 	$share['short_url_twitter'] = rawurlencode(esc_url($share['short_url_twitter']));
@@ -475,7 +476,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 	$share['title'] = urlencode(esc_attr($share['title']));
 	$share['image'] = esc_attr($share['image']);
 	$share['description'] = urlencode(esc_attr($share['description']));		
-	
+
 	/**
 	 * 7.2.2 Fix the wrong encoded URLs in UTM options
 	 */
@@ -484,6 +485,13 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 	    $share['full_url'] = str_replace('%26%23038%3B', '%26', $share['full_url']);
 	    $share['short_url'] = str_replace('%26%23038%3B', '%26', $share['short_url']);
 	    $share['short_url_twitter'] = str_replace('%26%23038%3B', '%26', $share['short_url_twitter']);	  
+	}
+	
+	/**
+	 * @since 7.7 Title get & symbol issue after encoding to %26amp%3B (got as &amp; instead of &)
+	 */
+	if (strpos($share['title'], '%26amp%3B') !== false) {
+	    $share['title'] = str_replace('%26amp%3B', '%26', $share['title']);
 	}
 
 	// adding additional support for hashtags everywhere

@@ -897,6 +897,22 @@ function essb5_draw_input_option($field_id, $title = '', $description = '', $ful
 }
 
 /**
+ * Generate textarea field
+ * @param unknown $field_id
+ * @param string $title
+ * @param string $description
+ * @param string $user_value
+ * @param string $value
+ */
+function essb5_draw_textarea_option($field_id, $title = '', $description = '', $user_value = false, $value = '') {
+    $value = $user_value ? $value : essb_option_value($field_id);
+    $value = stripslashes($value);
+    ESSBOptionsFramework::draw_options_row_start($title, $description);
+    ESSBOptionsFramework::draw_textarea_field($field_id, 'essb_options', $value);
+    ESSBOptionsFramework::draw_options_row_end();
+}
+
+/**
  * Generating a settings row with switch field
  * 
  * @param unknown_type $field_id

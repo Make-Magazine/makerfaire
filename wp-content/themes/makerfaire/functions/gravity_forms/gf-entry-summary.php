@@ -299,7 +299,7 @@ function gf_collapsible_sections($form, $lead) {
 
     //for supplement forms, let's see if there is a field set to pull in email
     $return = get_value_by_label('contact-email', $form, array());
-    if (isset($return['id'])) {
+    if (isset($return['id']) && isset($lead[$return['id']])) {
         $emailArray[$lead[$return['id']]]['contact-email'] = $lead[$return['id']];
     }
 

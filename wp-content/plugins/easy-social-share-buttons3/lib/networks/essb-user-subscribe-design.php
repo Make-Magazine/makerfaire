@@ -57,6 +57,22 @@ if (!function_exists('essb_user_subscribe_form_design')) {
 		$form_error_message = stripslashes(essb_array_value('error_message', $subscribe_design));
 		$form_ok_message = stripslashes(essb_array_value('ok_message', $subscribe_design));
 		$form_add_name = stripslashes(essb_array_value('add_name', $subscribe_design));
+		
+		/**
+		 * @since 7.6 Multilangual translate support
+		 */
+		if (essb_installed_wpml() || essb_installed_polylang()) {
+		    $lang = ESSBWpmlBridge::getCurrentLang();		    
+		    
+		    $form_title = essb_user_subscribe_multilanguage_text('title', $lang, $form_title, $subscribe_design);
+		    $form_text = essb_user_subscribe_multilanguage_text('text', $lang, $form_text, $subscribe_design);
+		    $form_footer = essb_user_subscribe_multilanguage_text('footer', $lang, $form_footer, $subscribe_design);
+		    $form_name_placeholder = essb_user_subscribe_multilanguage_text('name_placeholder', $lang, $form_name_placeholder, $subscribe_design);
+		    $form_email_placeholder = essb_user_subscribe_multilanguage_text('email_placeholder', $lang, $form_email_placeholder, $subscribe_design);
+		    $form_button_placeholder = essb_user_subscribe_multilanguage_text('button_placeholder', $lang, $form_button_placeholder, $subscribe_design);
+		    $form_error_message = essb_user_subscribe_multilanguage_text('error_message', $lang, $form_error_message, $subscribe_design);
+		    $form_ok_message = essb_user_subscribe_multilanguage_text('ok_message', $lang, $form_ok_message, $subscribe_design);
+		}
 
 		$form_image = stripslashes(essb_array_value('image', $subscribe_design));
 		$form_image_location = stripslashes(essb_array_value('image_location', $subscribe_design));
@@ -185,6 +201,27 @@ if (!function_exists('essb_user_subscribe_form_design')) {
 		$output .= '</div>';
 
 		return $output;
+	}
+	
+	/**
+	 * Apply multilanguage translate
+	 * 
+	 * @param string $param
+	 * @param string $lang
+	 * @param string $base_text
+	 * @param array $options
+	 * @return string|unknown
+	 */
+	function essb_user_subscribe_multilanguage_text($param = '', $lang = '', $base_text = '', $options = array()) {
+	    $param = $param . '_' . $lang;
+	    
+	    $value = essb_array_value($param, $options);
+	    
+	    if (!empty($value)) {
+	        $base_text = $value;
+	    }
+	    
+	    return $base_text;
 	}
 	
 	/**

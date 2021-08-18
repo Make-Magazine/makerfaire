@@ -5,8 +5,8 @@
  * 
  * @author appscreo
  * @package EasySocialShareButtons
- * @version 1.0
- * @since 7.0
+ * @version 2.0
+ * @since 7.9
  */
 class ESSBInstagramFeed {
 	
@@ -14,7 +14,22 @@ class ESSBInstagramFeed {
 	
 	private $resources = false;
 	private $optimized = false;
-	private $cache_ttl = 24;
+	private $cache_ttl = 6;
+	
+	private $api_media_url = 'https://graph.instagram.com/me/media';
+	private $api_me_url = 'https://graph.instagram.com/me';
+	private $api_refresh_token = 'https://graph.instagram.com/refresh_access_token';
+	
+	private static $option_name = 'essb_instagram_accounts';
+	
+	private static $transient_prefix = 'essb-ig-';
+	private static $transient_prefix_long = 'essb-long-ig-';
+	
+	/**
+	 * Store loaded accounts
+	 * @var array
+	 */
+	private static $cached_accounts = array();
 	
 	/**
 	 * Get static instance of class
@@ -47,23 +62,17 @@ class ESSBInstagramFeed {
 	
 	public function __construct() {
 		
-		$this->optimized = true;
+		$this->optimized = true;		
 		
 		// @since 7.0.1 
 		// Deactivate feed shortcode if Smashing Baloon Instagram Feed is working
 		if (!defined('SBIVER')) {
-		  add_shortcode('instagram-feed', array($this, 'generate_shortcode'));
+            add_shortcode('instagram-feed', array($this, 'generate_shortcode'));
 		}
 		else {
 		    add_shortcode('essb-instagram-feed', array($this, 'generate_shortcode'));
 		}
-		
-		add_shortcode('instagram-photo', array($this, 'generate_image_code'));
-		add_shortcode('instagram-image', array($this, 'generate_image_code'));
-		
-		add_action( 'wp_ajax_essb-instagram-request-cache', array( $this, 'ajax_load_cache_js') );
-		add_action( 'wp_ajax_nopriv_essb-instagram-request-cache', array( $this, 'ajax_load_cache_js') );
-		
+						
 		/** 
 		 * Check if need to load resources
 		 */
@@ -89,66 +98,14 @@ class ESSBInstagramFeed {
 		
 		if (essb_option_bool_value('instagramfeed_popup')) {
 			add_action ( 'wp_footer', array($this, 'draw_widget_popup'), 101);
-		}
-		
-		add_action('wp_footer', array($this, 'initialize_update'));
-	}
+		}		
+	}	
 	
 	/**
-	 * Assign required javascript code for the ajax update
+	 * Validate if the feed should be included in the content
+	 * 
+	 * @return boolean
 	 */
-	public function initialize_update() {
-	    
-	    $options = array('nonce' => esc_js( wp_create_nonce( 'essb-instagram' ) ),
-	        'ajaxurl' => esc_url(admin_url('admin-ajax.php'))
-	    );
-	    
-        echo '<script> var essbInstagramUpdater = '.json_encode($options).';</script>';
-	}
-	
-	public function ajax_load_cache_js() {
-	    $nonce_key = 'essb-instagram';	    
-	    check_ajax_referer( $nonce_key, 'security' );
-	    
-	    $data = $_REQUEST['data'];
-	    $options = $data['options'];
-	    $source = $data['data'];
-	    
-	    echo self::draw_instagram(
-	        $options['username_tag'],
-	        $options['type'],
-	        $options['show'],
-	        $options['space'],
-	        $options['profile'] == 'true',
-	        $options['follow_button'] == 'true',
-	        $options['link_mode'],
-	        $options['post_data'],
-	        $options['image_size'],
-	        $options['masonry'] == 'true',
-	        $options['widget'] == 'true',
-	        $options['profile_size'],
-	        $source
-        );
-	    
-	    $username = trim( strtolower( $options['username_tag']) );
-	    $use_hashtag = false;
-	    
-	    switch ( substr( $username, 0, 1 ) ) {
-	        case '#':
-	            $transient_prefix = 'h';
-	            $use_hashtag = true;
-	            break;	            
-	        default:
-	            $transient_prefix = 'u';
-	            break;
-	    }
-	    
-	    $instagram = base64_encode( serialize( $source ) );
-	    set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ), $instagram, $this->cache_ttl * HOUR_IN_SECONDS );
-	    	    
-	    die();
-	}
-	
 	public function can_add_automatic_content_widget() {
 		if (is_admin () || is_search() || is_feed()) {
 			return false;
@@ -166,6 +123,10 @@ class ESSBInstagramFeed {
 		return true;
 	}
 	
+	/**
+	 * Validate if the feed should be added as a pop-up
+	 * @return boolean
+	 */
 	public function can_add_automatic_popup_widget() {
 		if (is_admin () || is_search() || is_feed()) {
 			return false;
@@ -186,12 +147,7 @@ class ESSBInstagramFeed {
 	public function get_settings($values = array()) {
 		$r = array();
 		
-		/**
-		 * @since 7.5 Support only for username
-		$r['username'] = array('type' => 'text', 'title' => esc_html__('Username', 'essb'), 'description' => esc_html__('Fill just one of username or hashtag at same time', 'essb'));
-		$r['tag'] = array('type' => 'text', 'title' => esc_html__('Hashtag', 'essb'), 'description' => esc_html__('Fill just one of username or hashtag at same time', 'essb'));
-		*/
-		$r['username'] = array('type' => 'text', 'title' => esc_html__('Username', 'essb'));
+		$r['username'] = array('type' => 'select', 'title' => esc_html__('Username', 'essb'), 'options' => self::get_account_list());
 		$r['type'] = array('type' => 'select', 'title' => esc_html__('Display type', 'essb'), 
 				'options' => array(
 						'1col' => esc_html__('1 Column', 'essb'), 
@@ -203,7 +159,7 @@ class ESSBInstagramFeed {
 						'carousel-1' => esc_html__('Carousel with 1 image (slider)', 'essb'),
 						'carousel-2' => esc_html__('Carousel with 2 images', 'essb'),
 						'row' => esc_html__('Row', 'essb')));
-		$r['show'] = array('type' => 'text', 'title' => esc_html__('Images to show', 'essb'), 'description' => esc_html__('Enter number between 1 and 12', 'essb'));
+		$r['show'] = array('type' => 'text', 'title' => esc_html__('Images to show', 'essb'), 'description' => esc_html__('Enter number between 1 and 15', 'essb'));
 		$r['profile'] = array('type' => 'select', 'title' => esc_html__('Show profile information', 'essb'), 'description' => esc_html__('Only when username is provided', 'essb'), 
 				'options' => array(
 					'false' => esc_html__('No', 'essb'),
@@ -216,13 +172,6 @@ class ESSBInstagramFeed {
 				'options' => array(
 						'normal' => esc_html__('Normal', 'essb'),
 						'small' => esc_html__('Small', 'essb')));
-		$r['image_size'] = array('type' => 'select', 'title' => esc_html__('Image size', 'essb'), 'description' => esc_html__('It is like the image size of WordPress. Leave at default if you are not sure what to choose.', 'essb'),
-				'options' => array(
-						'' => esc_html__('Default', 'essb'),
-						'thumbnail' => esc_html__('Thumbnail', 'essb'),
-						'small' => esc_html__('Small', 'essb'),
-						'large' => esc_html__('Large', 'essb'),
-						'original' => esc_html__('Original', 'essb')));
 		$r['space'] = array('type' => 'select', 'title' => esc_html__('Space between images', 'essb'),
 				'options' => array(
 						'' => esc_html__('Without space', 'essb'),
@@ -234,26 +183,9 @@ class ESSBInstagramFeed {
 		$r['masonry'] = array('type' => 'select', 'title' => esc_html__('Masonry', 'essb'), 'description' => esc_html__('Only when columns display is used', 'essb'),
 				'options' => array(
 						'false' => esc_html__('No', 'essb'),
-						'true' => esc_html__('Yes', 'essb')));
-		$r['info'] = array('type' => 'select', 'title' => esc_html__('Hide hover image details', 'essb'),
-				'options' => array(
-						'' => esc_html__('Default from settings', 'essb'),
-						'false' => esc_html__('Yes', 'essb')));
+						'true' => esc_html__('Yes', 'essb')));		
 		
 		return $r;
-	}
-	
-	public function generate_image_code($atts = array()) {
-		$id = isset($atts['id']) ? $atts['id'] : '';
-		$profile = isset($atts['profile']) ? $atts['profile'] : '';
-		$post_info = isset($atts['info']) ? $atts['info'] : '';
-		
-		if ($id == '') {
-			return '';
-		}
-		else {
-			return $this->draw_instagram_image($id, $profile == 'true', $post_info == 'true');
-		}
 	}
 	
 	public function generate_shortcode($atts = array()) {
@@ -264,7 +196,6 @@ class ESSBInstagramFeed {
 		$show = isset($atts['show']) ? $atts['show'] : '';
 		$profile = isset($atts['profile']) ? $atts['profile'] : '';
 		$follow_button = isset($atts['followbtn']) ? $atts['followbtn'] : '';
-		$image_size = isset($atts['image_size']) ? $atts['image_size'] : 'large';
 		$space = isset($atts['space']) ? $atts['space'] : '';
 		$masonry = isset($atts['masonry']) ? $atts['masonry'] : '';
 		$profile_size = isset($atts['profile_size']) ? $atts['profile_size'] : '';
@@ -296,7 +227,7 @@ class ESSBInstagramFeed {
 		
 		if ($username != '') {
 			return $this->draw_instagram($username, $type, $show, $space, $profile == 'true', $follow_button == 'true',
-					$link_mode, $post_info_style, $image_size, $masonry == 'true', $widget == 'true', $profile_size);
+					$link_mode, $post_info_style, '', $masonry == 'true', $widget == 'true', $profile_size);
 		}
 		else {
 			return '';
@@ -333,7 +264,13 @@ class ESSBInstagramFeed {
 			$instagramfeed_popup_width = essb_sanitize_option_value('instagramfeed_popup_width');
 			$instagramfeed_popup_appear_again = essb_sanitize_option_value('instagramfeed_popup_appear_again');
 			
-			echo '<div class="essb-instagramfeed-popup" data-delay="'.esc_attr($instagramfeed_popup_delay).'" data-width="'.esc_attr($instagramfeed_popup_width).'" data-hidefor="'.esc_attr($instagramfeed_popup_appear_again).'">';
+			/**
+			 * @since 7.7.3
+			 * @var Ambiguous $instagramfeed_popup_disablemobile
+			 */
+			$instagramfeed_popup_disablemobile = essb_option_bool_value('instagramfeed_popup_disablemobile');
+			
+			echo '<div class="essb-instagramfeed-popup" data-delay="'.esc_attr($instagramfeed_popup_delay).'" data-width="'.esc_attr($instagramfeed_popup_width).'" data-hidefor="'.esc_attr($instagramfeed_popup_appear_again).'" data-disablemobile="'.esc_attr($instagramfeed_popup_disablemobile).'">';
 			echo $instagram_widget;
 			echo '</div>';
 			echo '<div class="essb-instagramfeed-popup-overlay"></div>';
@@ -374,152 +311,17 @@ class ESSBInstagramFeed {
 		}
 		
 		return $content.$instagram_widget;
-	}
-	
-	public function draw_instagram_image($image_id = '', $profile = false, $info = false) {
-		$data = $this->scrape_instagram_post($image_id);
-
-		$link_url = 'https://www.instagram.com/p/'.esc_attr($image_id).'/';
-		$output = '';
-		
-		$output .= '<div class="essb-instagramfeed-photo">';
-		
-		if ($profile) {
-			$follow_text = esc_html__('Follow', 'essb');
-				
-			$output .= '<div class="essb-instagramfeed-photo-profile">';
-			$image = !empty($data['profile']['profile']) ? $data['profile']['profile'] : '';	
-			$instagram_username = !empty($data['profile']['user']) ? $data['profile']['user'] : '';
-			$instagram_profile_url = 'https://instagram.com/'.esc_attr($instagram_username);
-			$instagram_name = !empty($data['profile']['full_name']) ? $data['profile']['full_name'] : '';
-				
-			if (!empty($image)) {
-				$output .= '<div class="essb-instagramfeed-photo-profile-photo">';
-				$output .= '<a href="'.esc_url($instagram_profile_url).'" target="_blank" rel="nofollow noreferrer noopener"><img src="'.esc_url($image).'"/></a>';
-				$output .= '</div>';
-			}
-			
-			if (!empty($instagram_name)) {
-				$output .= '<div class="essb-instagramfeed-photo-profile-name">';
-				$output .= '<a href="'.esc_url($instagram_profile_url).'" target="_blank" rel="nofollow noreferrer noopener">'.$instagram_name.'</a>';
-				$output .= '</div>';
-			}
-				
-			$output .= '<div class="essb-instagramfeed-photo-profile-followbtn">';
-			$output .= '<a href="'.esc_url($instagram_profile_url).'" target="_blank" rel="nofollow noreferrer noopener">'.$follow_text.'</a>';
-			$output .= '</div>';
-				
-			$output .= '</div>';
-		}
-		
-		$image_url = !empty($data['images']['image_url']) ? $data['images']['image_url'] : '';
-		$image_desc = !empty($data['images']['description']) ? $data['images']['description'] : '';
-		$image_likes = !empty($data['images']['likes']) ? $data['images']['likes'] : '';
-		$image_comments = !empty($data['images']['comments']) ? $data['images']['comments'] : '';
-		$image_time = !empty($data['images']['time']) ? $data['images']['time'] : '';
-		
-		$output .= '<div class="essb-instagramfeed-photo-image">';
-		$output .= '<a href="'.esc_url($link_url).'" target="_blank" rel="nofollow noreferrer noopener">';
-		
-		$output .= '<div class="essb-instagramfeed-photo-single-image">';
-		$output .= '<img src="'.esc_url($image_url).'"/>';
-		$output .= '</div>';
-		$output .= '</a>';
-		$output .= '</div>';
-		
-		if ($info) {
-			$output .= '<div class="essb-instagramfeed-single-image-info">';
-			$output .= '<div class="essb-instagramfeed-single-image-info-image">';
-			$output .= '<div class="essb-instagramfeed-single-image-info-counters">';
-			$output .= '<div class="essb-instagramfeed-single-image-info-counters-comment">';
-			$output .= '<span class="icon">';
-			$output .= '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 511.6 511.6" style="enable-background:new 0 0 511.6 511.6;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#FFFFFF;}
-</style>
-<g>
-	<path class="st0" d="M477.4,127.4c-22.8-28.1-53.9-50.2-93.1-66.5c-39.2-16.3-82-24.4-128.5-24.4c-34.6,0-67.8,4.8-99.4,14.4
-		c-31.6,9.6-58.8,22.6-81.7,39c-22.8,16.4-41,35.8-54.5,58.4C6.8,170.8,0,194.5,0,219.2c0,28.5,8.6,55.3,25.8,80.2
-		c17.2,24.9,40.8,45.9,70.7,62.8c-2.1,7.6-4.6,14.8-7.4,21.7c-2.9,6.9-5.4,12.5-7.7,16.9c-2.3,4.4-5.4,9.2-9.3,14.6
-		c-3.9,5.3-6.8,9.1-8.8,11.3c-2,2.2-5.3,5.8-9.9,10.8c-4.6,5-7.5,8.3-8.8,9.9c-0.2,0.1-1,1-2.3,2.6c-1.3,1.6-2,2.4-2,2.4l-1.7,2.6
-		c-1,1.4-1.4,2.3-1.3,2.7c0.1,0.4-0.1,1.3-0.6,2.9c-0.5,1.5-0.4,2.7,0.1,3.4v0.3c0.8,3.4,2.4,6.2,5,8.3c2.6,2.1,5.5,3,8.7,2.6
-		c12.4-1.5,23.2-3.6,32.5-6.3C133,456,176.7,433,214.4,399.7c14.3,1.5,28.1,2.3,41.4,2.3c46.4,0,89.3-8.1,128.5-24.4
-		c39.2-16.3,70.2-38.4,93.1-66.5c22.8-28.1,34.3-58.7,34.3-91.8C511.6,186.1,500.2,155.5,477.4,127.4z"/>
-</g>
-</svg>';
-			$output .= '</span>';
-			$output .= '<span class="value">'.esc_html(essb_kilomega($image_comments)).'</span>';
-			$output .= '</div>'; // comments
-			$output .= '<div class="essb-instagramfeed-single-image-info-counters-likes">';
-			$output .= '<span class="icon">';
-			$output .= '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#FFFFFF;}
-</style>
-<path class="st0" d="M24.9,10.1c2-4.8,6.6-8.1,12-8.1c7.2,0,12.4,6.2,13.1,13.5c0,0,0.4,1.8-0.4,5.1c-1.1,4.5-3.5,8.5-6.9,11.5
-	L24.9,48L7.4,32.2c-3.4-3-5.8-7-6.9-11.5c-0.8-3.3-0.4-5.1-0.4-5.1C0.7,8.2,5.9,2,13.2,2C18.5,2,22.8,5.3,24.9,10.1z"/>
-</svg>';
-			$output .= '</span>';
-			$output .= '<span class="value">'.esc_html(essb_kilomega($image_likes)).'</span>';
-			$output .= '</div>'; // likes
-			$output .= '</div>'; // end counters
-			$output .= '<div class="viewmore">';
-			$output .= '<a href="'.esc_url($link_url).'" target="_blank" rel="nofollow noreferrer noopener">'.esc_html__('View more on Instagram', 'essb').'</a>';
-			$output .= '</div>';
-			$output .= '</div>'; // end parent counters
-			$output .= '<div class="essb-instagramfeed-single-image-info-desc">';
-			$output .= $this->wrap_tags_and_users($image_desc);
-			$output .= '</div>'; // end desc
-			$output .= '</div>'; // end info
-		
-		}
-		
-		$output .= '</div>';
-		
-		return $output;
-	}
+	}	
 	
 	public function draw_instagram($username_tag = '', $type = '3cols', $show = 12, $space = '', $profile = false, 
 			$follow_button = false, $link_mode = 'direct', $post_data = '', $image_size = 'original', $masonry = false,
-			$widget = false, $profile_size = '', $update_source = '') {
+			$widget = false, $profile_size = '') {
 	    
-        if (empty($update_source)) {
-            $data = $this->scrape_instagram($username_tag);
-            $force_update = false;
-        }
-        else {
-            $data = $update_source;
-            $force_update = false;           
-        }
-		
-		if (!isset($data['images']) || count($data['images']) == 0) {
-		    $force_update = true;
-		}			
-				
-		// Test mode
-		$section_update_options = array('username_tag' => $username_tag,
-		    'type' => $type,
-		    'show' => $show,
-		    'space' => $space,
-		    'profile' => $profile ? 'true' : 'false',
-		    'follow_button' => $follow_button ? 'true' : 'false',
-		    'link_mode' => $link_mode,
-		    'post_data' => $post_data,
-		    'image_size' => $image_size,
-		    'masonry' => $masonry ? 'true': 'false',
-		    'widget' => $widget ? 'true' : 'false',
-		    'profile_size' => $profile_size
-		);
-		
-		/**
-		 * The profile card and follow button can appear only for the personal profiles
-		 */
-		if (substr( $username_tag, 0, 1 ) != '@') {
-			$profile = false;
-			$follow_button = false;
-		}
+        $username_tag = str_replace('@', '', $username_tag);
+
+        $data = $this->scrape_instagram($username_tag);		
+        
+        $account_data = self::get_username_data($username_tag); 
 		
 		// Image loading action
 		$instagram_open_as = essb_sanitize_option_value('instagram_open_as');
@@ -562,24 +364,42 @@ class ESSBInstagramFeed {
 			$parent_classes[] = 'essb-instagramfeed-profile-'.esc_attr($profile_size);
 		}
 		
-		$parent_classes[] = 'essb-forced-hidden';		
+		if (essb_option_bool_value('instagram_deactivate_mobile')) {
+		    $parent_classes[] = 'essb-instagramfeed-mobilehidden';
+		}
 		
 		$output = '';
 		
 		//
 		if (empty($update_source)) {
-            $output = '<div class="'.esc_attr(join(' ', $parent_classes)).'" data-source="'.esc_attr(json_encode($section_update_options)).'" data-update="'.($force_update ? 'true' : 'false').'">';
+            $output = '<div class="'.esc_attr(join(' ', $parent_classes)).'">';
 		}
 		/**
 		 * Profile card if shown
 		 */
 		if ($profile) {
 			$follow_text = esc_html__('Follow', 'essb');
+			$followers_text = esc_html__('followers', 'essb');
+			
+			/**
+			 * @since 7.8 Translate from plugin settings
+			 */
+			$translate_follow_text = essb_sanitize_option_value('instagram_follow_button_text');
+			$translate_followers_text = essb_sanitize_option_value('instagram_followers_text');
+			
+			if (!empty($translate_follow_text)) {
+			    $follow_text = $translate_follow_text;
+			}
+			
+			if (!empty($translate_followers_text)) {
+			    $followers_text = $translate_followers_text;
+			}
 			
 			$output .= '<div class="essb-instagramfeed-profile'.($follow_button && !$widget ? ' essb-instagramfeed-profilefollow': '').'">';
-			$image = !empty($data['profile']['profile_hd']) ? $data['profile']['profile_hd'] : (!empty($data['profile']['profile']) ? $data['profile']['profile'] : '');
-			$bio = !empty($data['profile']['bio']) ? $data['profile']['bio'] : '';
-			$followers_value = !empty($data['profile']['followers']) ? $data['profile']['followers'] : 0;
+			$image = !empty($account_data['display_pic']) ? $account_data['display_pic'] : '';
+			$name = !empty($account_data['display_name']) ? $account_data['display_name'] : $account_data['username'];			
+			$bio = !empty($account_data['display_bio']) ? $account_data['display_bio'] : '';
+			$followers_value = !empty($account_data['followers']) ? $account_data['followers'] : 0;
 			
 			$instagram_profile_url = 'https://instagram.com/'.esc_attr(str_replace('@', '', $username_tag ));
 			
@@ -589,12 +409,12 @@ class ESSBInstagramFeed {
 				$output .= '</div>';
 			}
 			
-			if (!empty($bio)) {
+			if (!empty($bio) || !empty($name)) {
 				$output .= '<div class="essb-instagramfeed-profile-bio">';
-				$output .= '<span class="profile-name">'.esc_html(str_replace('@', '', $username_tag )).'</span>';
+				$output .= '<span class="profile-name">'.esc_html(str_replace('@', '', $name )).'</span>';
 				if (intval($followers_value) > 0) {
 					$output .= '<span class="profile-likes">';
-					$output .= '<b>'.essb_kilomega($data['profile']['followers']).'</b> '.esc_html__('followers', 'essb');
+					$output .= '<b>'.essb_kilomega($data['profile']['followers']).'</b> '.$followers_text;
 					$output .= '</span>';
 				}
 				$output .= '<span class="profile-info">'.$bio.'</span>';
@@ -617,25 +437,27 @@ class ESSBInstagramFeed {
 			$output .= '</div>';
 		}
 		
-		if (intval($show) > 12) {
-			$show = 12;
+		// check what is the best number of possible images
+		if (intval($show) > 15) {
+			$show = 15;
 		}
 		
 		$output .= '<div class="essb-instagramfeed-images">';
 		$count = 1;
-		foreach ($data['images'] as $image) {
+		foreach ($data as $image) {
 			
 			if ($count > $show) {
 				continue;
 			}
 			
-			$image_url = isset($image[$image_size]) ? $image[$image_size] : $image['original'];
-			$link_url = $image['link'];
-			$type = isset($image['type']) ? $image['type'] : 'image';
+			$image_url = !empty($image['image']) ? $image['image'] : '';
+			$link_url = !empty($image['permalink']) ? $image['permalink'] : '';
+			$type = !empty($image['type']) ? $image['type'] : 'IMAGE';
+			$caption = !empty($image['caption']) ? $image['caption'] : '';
 			
 			$key = mt_rand();
 			
-			$output .= '<div class="essb-instagramfeed-single essb-instagramfeed-single-'.esc_attr($key).' essb-instagramfeed-single-'.esc_attr($type).'" style="background: url('.esc_url($image_url).');">';
+			$output .= '<div class="essb-instagramfeed-single essb-instagramfeed-single-'.esc_attr($key).' essb-instagramfeed-single-'.esc_attr($type).'" style="background-image: url('.esc_url($image_url).');">';
 			$output .= '<a href="'.esc_url($link_url).'" target="_blank" rel="nofollow noreferrer noopener">';
 			$output .= '<div class="essb-instagramfeed-single-image">';
 			$output .= '<img src="'.esc_url($image_url).'"/>';
@@ -643,43 +465,8 @@ class ESSBInstagramFeed {
 			$output .= '</div>';
 			
 			$output .= '<div class="essb-instagramfeed-single-image-info">';
-			$output .= '<div class="essb-instagramfeed-single-image-info-counters">';
-			$output .= '<div class="essb-instagramfeed-single-image-info-counters-comment">';
-			$output .= '<span class="icon">';
-			$output .= '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 511.6 511.6" style="enable-background:new 0 0 511.6 511.6;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#FFFFFF;}
-</style>
-<g>
-	<path class="st0" d="M477.4,127.4c-22.8-28.1-53.9-50.2-93.1-66.5c-39.2-16.3-82-24.4-128.5-24.4c-34.6,0-67.8,4.8-99.4,14.4
-		c-31.6,9.6-58.8,22.6-81.7,39c-22.8,16.4-41,35.8-54.5,58.4C6.8,170.8,0,194.5,0,219.2c0,28.5,8.6,55.3,25.8,80.2
-		c17.2,24.9,40.8,45.9,70.7,62.8c-2.1,7.6-4.6,14.8-7.4,21.7c-2.9,6.9-5.4,12.5-7.7,16.9c-2.3,4.4-5.4,9.2-9.3,14.6
-		c-3.9,5.3-6.8,9.1-8.8,11.3c-2,2.2-5.3,5.8-9.9,10.8c-4.6,5-7.5,8.3-8.8,9.9c-0.2,0.1-1,1-2.3,2.6c-1.3,1.6-2,2.4-2,2.4l-1.7,2.6
-		c-1,1.4-1.4,2.3-1.3,2.7c0.1,0.4-0.1,1.3-0.6,2.9c-0.5,1.5-0.4,2.7,0.1,3.4v0.3c0.8,3.4,2.4,6.2,5,8.3c2.6,2.1,5.5,3,8.7,2.6
-		c12.4-1.5,23.2-3.6,32.5-6.3C133,456,176.7,433,214.4,399.7c14.3,1.5,28.1,2.3,41.4,2.3c46.4,0,89.3-8.1,128.5-24.4
-		c39.2-16.3,70.2-38.4,93.1-66.5c22.8-28.1,34.3-58.7,34.3-91.8C511.6,186.1,500.2,155.5,477.4,127.4z"/>
-</g>
-</svg>';
-			$output .= '</span>';
-			$output .= '<span class="value">'.esc_html(essb_kilomega($image['comments'])).'</span>';
-			$output .= '</div>'; // comments
-			$output .= '<div class="essb-instagramfeed-single-image-info-counters-likes">';
-			$output .= '<span class="icon">';
-			$output .= '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#FFFFFF;}
-</style>
-<path class="st0" d="M24.9,10.1c2-4.8,6.6-8.1,12-8.1c7.2,0,12.4,6.2,13.1,13.5c0,0,0.4,1.8-0.4,5.1c-1.1,4.5-3.5,8.5-6.9,11.5
-	L24.9,48L7.4,32.2c-3.4-3-5.8-7-6.9-11.5c-0.8-3.3-0.4-5.1-0.4-5.1C0.7,8.2,5.9,2,13.2,2C18.5,2,22.8,5.3,24.9,10.1z"/>
-</svg>';
-			$output .= '</span>';
-			$output .= '<span class="value">'.esc_html(essb_kilomega($image['likes'])).'</span>';
-			$output .= '</div>'; // likes
-			$output .= '</div>'; // end counters
 			$output .= '<div class="essb-instagramfeed-single-image-info-desc">';
-			$output .= $this->wrap_tags_and_users($image['description']);
+			$output .= $this->wrap_tags_and_users($caption);
 			$output .= '</div>'; // end desc
 			$output .= '</div>'; // end info
 			
@@ -713,313 +500,78 @@ class ESSBInstagramFeed {
 		return $text;
 	}
 	
-	public function scrape_instagram_post($post_id) {
-		$url = 'https://www.instagram.com/p/' . esc_attr($post_id) . '/?__a=1';
-		$transient_prefix = 'p';
-		
-		/**
-		 * Check if already a cached data exists in the database for that tag
-		 */
-		if ( false === ( $instagram = get_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $post_id ) ) ) ) {
-		
-			$remote = wp_remote_get( $url, array(
-					'user-agent' => 'Instagram/' . ESSB3_VERSION . '; ' . home_url()
-			) );
-		
-			if ( is_wp_error( $remote ) ) {
-				return $this->blank_instagram_feed( 'site_down', esc_html__( 'Unable to communicate with Instagram.', 'essb' ) );
-			}
-		
-			if ( 200 !== wp_remote_retrieve_response_code( $remote ) ) {
-			    return $this->blank_instagram_feed( 'invalid_response', esc_html__( 'Instagram did not return a 200.', 'essb' ) );
-			}
-		
-			$insta_array = json_decode( $remote['body'], true );
-		
-			if ( ! $insta_array ) {
-			    return $this->blank_instagram_feed( 'bad_json', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
-			}
-			
-			if (!isset($insta_array['graphql']) || !isset($insta_array['graphql']['shortcode_media'])) {
-			    return $this->blank_instagram_feed( 'bad_json_2', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
-			}
-				
-			$media_data = $insta_array['graphql']['shortcode_media'];
-			$instagram = array();
-			
-			$instagram['image_url'] = isset($media_data['display_url']) ? $media_data['display_url'] : '';
-			$instagram['description'] = '';
-			if ( ! empty( $media_data['edge_media_to_caption']['edges'][0]['node']['text'] ) ) {
-				$instagram['description'] = wp_kses( $media_data['edge_media_to_caption']['edges'][0]['node']['text'], array() );
-			}
-			
-			$instagram['link'] = trailingslashit( '//www.instagram.com/p/' . $media_data['shortcode']);
-			$instagram['time'] = $media_data['taken_at_timestamp'];
-			$instagram['comments'] = $media_data['edge_media_preview_comment']['count'];
-			$instagram['likes'] = $media_data['edge_media_preview_like']['count'];
-				
-			$profile_data = array();
-			if (isset($media_data['owner'])) {
-				$profile_data = array(
-						'user' => $media_data['owner']['username'],
-						'full_name' => $media_data['owner']['full_name'],
-						'id' => $media_data['owner']['id'],
-						'profile' => $media_data['owner']['profile_pic_url'],
-				);
-			}
-		
-			// do not set an empty transient - should help catch private or empty accounts. Set a shorter transient in other cases to stop hammering Instagram
-			if ( ! empty( $instagram ) ) {
-				$data = array('profile' => $profile_data, 'images' => $instagram);
-				$instagram = base64_encode( serialize( $data ) );
-				set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $post_id ), $instagram, $this->cache_ttl * HOUR_IN_SECONDS );
-			} else {
-				$data = array('profile' => array(), 'images' => array());
-				$instagram = base64_encode( serialize( $data ) );
-				set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $post_id ), $instagram, MINUTE_IN_SECONDS * 1 );
-			}
-		}
-		
-		if ( ! empty( $instagram ) ) {
-			return unserialize( base64_decode( $instagram ) );
-		} else {
-			return new WP_Error( 'no_images', esc_html__( 'Instagram did not return any images.', 'essb' ) );
-		}
-		
-	}
 	
-	
+	/**
+	 * Scrape data for Instagram account
+	 * @param string $username_or_tag
+	 * @return mixed|array
+	 */
 	public function scrape_instagram($username_or_tag = '') {
 	    $username = trim( strtolower( $username_or_tag ) );
-	    $use_hashtag = false;
-	    
-	    switch ( substr( $username, 0, 1 ) ) {
-	        case '#':
-	            $url = 'https://www.instagram.com/explore/tags/' . str_replace( '#', '', $username ) . '';
-	            $transient_prefix = 'h';
-	            $use_hashtag = true;
-	            break;
-	            
-	        default:
-	            $url = 'https://www.instagram.com/' . str_replace( '@', '', $username ) . '';
-	            $transient_prefix = 'u';
-	            break;
-	    }
-	    
-	    if ( false === ( $instagram = get_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ) ) ) ) {
-	        
-	        $remote = wp_remote_get( $url, array(
-	            'user-agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
-	            'timeout' => 120,
-	            'sslverify' => false
-	        ) );
-	        
-	        if ( is_wp_error( $remote ) ) {
-	            return $this->blank_instagram_feed( 'site_down', esc_html__( 'Unable to communicate with Instagram.', 'essb' ) );
-	        }
-	        
-	        if ( 200 !== wp_remote_retrieve_response_code( $remote ) ) {
-	            return $this->blank_instagram_feed( 'invalid_response', esc_html__( 'Instagram did not return a 200.', 'essb' ) );
-	        }	        
-	        
-	        $shared_data = explode( 'window._sharedData = ', $remote['body'] );
-	        $insta_json = explode( ';</script>', $shared_data[1] );
-	        $insta_array = json_decode( $insta_json[0], TRUE );
-
-	        if ( ! $insta_array ) {
-	            return $this->blank_instagram_feed( 'bad_json', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
-	        }
-	            
-	        $hash_tag_media = 'edge_hashtag_to_media';
-	        if($use_hashtag) {
-	            $hash_tag_media = 'edge_hashtag_to_top_posts';
-	        }
+	    $username = str_replace('@', '', $username);
+	    	    
+	    if ( false === ( $instagram = get_transient( self::$transient_prefix . sanitize_title_with_dashes( $username ) ) ) ) {
+	        	        
+	        $url = add_query_arg( array(
+	            'fields'       => 'caption, id, media_type, media_url, permalink, thumbnail_url, timestamp, username',
+	            'access_token' => self::get_username_token($username),
+	        ), $this->api_media_url );
 	        
 	        
-	        $images = array();
+	        // Get the new images if the images are not fetched.
+	        $response = wp_remote_get( $url );
 	        
-	        if (!$use_hashtag && isset( $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges'] ) ) {
-	            $images = $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges'];
-	        }
-	        else if ($use_hashtag && isset( $insta_array['entry_data']['TagPage'][0]['graphql']['hashtag'][$hash_tag_media]['edges'] ) ) {
-	            $images = $insta_array['entry_data']['TagPage'][0]['graphql']['hashtag'][$hash_tag_media]['edges'];
-	        }
-	        else {
-	            return $this->blank_instagram_feed( 'bad_json_2', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
-	        }
-	        
-	        
-	        $profile_data = array();
-	        if (isset($insta_array['entry_data']['ProfilePage'][0]['graphql']['user'])) {
-	            $profile_data = array(
-	                'bio' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['biography'],
-	                'external' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['external_url'],
-	                'followers' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_followed_by']['count'],
-	                'profile' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['profile_pic_url'],
-	                'profile_hd' => $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['profile_pic_url_hd'],
-	            );
-	        }
+	        $data = json_decode( wp_remote_retrieve_body( $response ) );
 	        
 	        $instagram = array();
 	        
-	        foreach ( $images as $image ) {
-	            if ( true === $image['node']['is_video'] ) {
-	                $type = 'video';
-	            } else {
-	                $type = 'image';
+	        if (!empty($data->data)) {
+	            foreach ($data->data as $one_image) {
+	                
+	                $instagram[] = array(
+	                    'caption' => !empty($one_image->caption) ? $one_image->caption : '',
+	                    'type' => !empty($one_image->media_type) ? $one_image->media_type : '',
+	                    'image' => !empty($one_image->media_url) ? $one_image->media_url : '',
+	                    'permalink' => !empty($one_image->permalink) ? $one_image->permalink : '',
+	                    'timestamp' => !empty($one_image->timestamp) ? $one_image->timestamp : '',
+	                    'username' => !empty($one_image->username) ? $one_image->username : ''
+	                );
 	            }
+	        }
+	        
+	        
+	        /**
+	         * @since 7.8
+	         */
+	        if (essb_option_bool_value('instagram_extra_cache') && empty( $instagram )) {
+	            $cached_instagram = get_transient(self::$transient_prefix_long . sanitize_title_with_dashes( $username ));
 	            
-	            $caption = esc_html__( 'Instagram Image', 'essb' );
-	            if ( ! empty( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'] ) ) {
-	                $caption = wp_kses( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'], array() );
+	            if (!empty($cached_instagram)) {
+	                $instagram = unserialize( base64_decode( $cached_instagram ) );
 	            }
-	            
-	            $instagram[] = array(
-	                'description' => $caption,
-	                'link'        => trailingslashit( '//www.instagram.com/p/' . $image['node']['shortcode'] ),
-	                'time'        => $image['node']['taken_at_timestamp'],
-	                'comments'    => $image['node']['edge_media_to_comment']['count'],
-	                'likes'       => $image['node']['edge_liked_by']['count'],
-	                'thumbnail'   => preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][0]['src'] ),
-	                'small'       => preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][2]['src'] ),
-	                'large'       => preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][4]['src'] ),
-	                'original'    => preg_replace( '/^https?\:/i', '', $image['node']['display_url'] ),
-	                'type'        => $type,
-	            );
-	        } // End foreach().
+	        }
 	        
 	        // do not set an empty transient - should help catch private or empty accounts. Set a shorter transient in other cases to stop hammering Instagram
 	        if ( ! empty( $instagram ) ) {
-	            $data = array('profile' => $profile_data, 'images' => $instagram);
-	            $instagram = base64_encode( serialize( $data ) );
-	            set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ), $instagram, $this->cache_ttl * HOUR_IN_SECONDS );
-	        } else {
-	            $data = array('profile' => array(), 'images' => array());
-	            $instagram = base64_encode( serialize( $data ) );
-	            set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ), $instagram, MINUTE_IN_SECONDS * 1 );
-	        }
+	            $instagram = base64_encode( serialize( $instagram ) );
+	            set_transient( self::$transient_prefix . sanitize_title_with_dashes( $username ), $instagram, $this->cache_ttl * HOUR_IN_SECONDS );
+	            
+	            /**
+	             * @since 7.8 Save permanent cache data
+	             */
+	            if (essb_option_bool_value('instagram_extra_cache')) {
+	                set_transient(self::$transient_prefix_long . sanitize_title_with_dashes( $username ), $instagram, YEAR_IN_SECONDS);
+	            }
+	        } 
 	    }
 	    
 	    if ( ! empty( $instagram ) ) {
 	        return unserialize( base64_decode( $instagram ) );
 	    } else {
-	        return $this->blank_instagram_feed( 'no_images', esc_html__( 'Instagram did not return any images.', 'essb' ) );
+	        return array();
 	    }
 	}
-	
-	/**
-	 * Scrape data from instagram for tag or username
-	 * @param string $username_or_tag (@user or #hashtag)
-	 */
-	public function scrape_instagram_json($username_or_tag = '') {
-		$username = trim( strtolower( $username_or_tag ) );
-				
-		switch ( substr( $username, 0, 1 ) ) {
-			case '#':
-				$url = 'https://www.instagram.com/explore/tags/' . str_replace( '#', '', $username ) . '?__a=1';
-				$transient_prefix = 'h';
-				break;
 		
-			default:
-				$url = 'https://www.instagram.com/' . str_replace( '@', '', $username ) . '?__a=1';
-				$transient_prefix = 'u';
-				break;
-		}
-		
-		
-		/**
-		 * Check if already a cached data exists in the database for that tag
-		 */
-		if ( false === ( $instagram = get_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ) ) ) ) {
-		
-			$remote = wp_remote_get( $url, array(
-					'user-agent' => 'Instagram/' . ESSB3_VERSION . '; ' . home_url()
-			) );
-		
-			if ( is_wp_error( $remote ) ) {
-			    return $this->blank_instagram_feed( 'site_down', esc_html__( 'Unable to communicate with Instagram.', 'essb' ) );
-			}
-		
-			if ( 200 !== wp_remote_retrieve_response_code( $remote ) ) {
-			    return $this->blank_instagram_feed( 'invalid_response', esc_html__( 'Instagram did not return a 200.', 'essb' ) );
-			}
-		
-			$insta_array = json_decode( $remote['body'], true );
-		
-			if ( ! $insta_array ) {
-			    return $this->blank_instagram_feed( 'bad_json', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
-			}			
-			
-			if ( isset( $insta_array['graphql']['user']['edge_owner_to_timeline_media']['edges'] ) ) {
-				$images = $insta_array['graphql']['user']['edge_owner_to_timeline_media']['edges'];
-			} elseif ( isset( $insta_array['graphql']['hashtag']['edge_hashtag_to_media']['edges'] ) ) {
-				$images = $insta_array['graphql']['hashtag']['edge_hashtag_to_media']['edges'];
-			} else {
-			    return $this->blank_instagram_feed( 'bad_json_2', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
-			}
-		
-			if ( ! is_array( $images ) ) {
-			    return $this->blank_instagram_feed( 'bad_array', esc_html__( 'Instagram has returned invalid data.', 'essb' ) );
-			}
-			
-			$profile_data = array();
-			if (isset($insta_array['graphql']['user'])) {
-				$profile_data = array(
-						'bio' => $insta_array['graphql']['user']['biography'],
-						'external' => $insta_array['graphql']['user']['external_url'],
-						'followers' => $insta_array['graphql']['user']['edge_followed_by']['count'],
-						'profile' => $insta_array['graphql']['user']['profile_pic_url'],
-						'profile_hd' => $insta_array['graphql']['user']['profile_pic_url_hd'],
-				);
-			}
-		
-			$instagram = array();
-		
-			foreach ( $images as $image ) {
-				if ( true === $image['node']['is_video'] ) {
-					$type = 'video';
-				} else {
-					$type = 'image';
-				}
-		
-				$caption = esc_html__( 'Instagram Image', 'essb' );
-				if ( ! empty( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'] ) ) {
-					$caption = wp_kses( $image['node']['edge_media_to_caption']['edges'][0]['node']['text'], array() );
-				}
-		
-				$instagram[] = array(
-						'description' => $caption,
-						'link'        => trailingslashit( '//www.instagram.com/p/' . $image['node']['shortcode'] ),
-						'time'        => $image['node']['taken_at_timestamp'],
-						'comments'    => $image['node']['edge_media_to_comment']['count'],
-						'likes'       => $image['node']['edge_liked_by']['count'],
-						'thumbnail'   => preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][0]['src'] ),
-						'small'       => preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][2]['src'] ),
-						'large'       => preg_replace( '/^https?\:/i', '', $image['node']['thumbnail_resources'][4]['src'] ),
-						'original'    => preg_replace( '/^https?\:/i', '', $image['node']['display_url'] ),
-						'type'        => $type,
-				);
-			} // End foreach().
-			
-			// do not set an empty transient - should help catch private or empty accounts. Set a shorter transient in other cases to stop hammering Instagram
-			if ( ! empty( $instagram ) ) {
-				$data = array('profile' => $profile_data, 'images' => $instagram);
-				$instagram = base64_encode( serialize( $data ) );
-				set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ), $instagram, $this->cache_ttl * HOUR_IN_SECONDS );
-			} else {
-				$data = array('profile' => array(), 'images' => array());
-				$instagram = base64_encode( serialize( $data ) );
-				set_transient( 'essb-' . $transient_prefix . '-' . sanitize_title_with_dashes( $username ), $instagram, MINUTE_IN_SECONDS * 1 );
-			}
-		}
-		
-		if ( ! empty( $instagram ) ) {
-			return unserialize( base64_decode( $instagram ) );
-		} else {
-		    return $this->blank_instagram_feed( 'no_images', esc_html__( 'Instagram did not return any images.', 'essb' ) );
-		}
-	}
-	
 	/**
 	 * Return a blank Instagram array instead of an error
 	 * 
@@ -1035,6 +587,202 @@ class ESSBInstagramFeed {
 	    $output['error'] = array('code' => $code, 'message' => $message);
 	    
 	    return $output;
+	}
+	
+
+	/**
+	 * Get all saved Instagram accounts
+	 * @return array
+	 */
+	public static function get_accounts() {
+	    if (!empty(self::$cached_accounts)) {
+	        $r = self::$cached_accounts;
+	    }
+	    else {
+	       $r = get_option(self::$option_name);
+	    }
+	    
+	    if (!$r || !is_array($r)) {
+	        $r = array();
+	    }
+	    
+	    if (empty(self::$cached_accounts)) {
+	        self::$cached_accounts = $r;
+	    }
+	    
+	    return $r;
+	}
+	
+	/**
+	 * Save all Instagram accounts
+	 * 
+	 * @param array $accounts
+	 */
+	public static function save_accounts($accounts = array()) {
+	    update_option(self::$option_name, $accounts, 'no', 'no');
+	    self::$cached_accounts = array();
+	}
+	
+	/**
+	 * Remove single Instagram account
+	 * @param string $account_id
+	 */
+	public static function remove_account($account_id = '') {
+	    $accounts = self::get_accounts();
+	    
+	    if (isset($accounts[$account_id])) {
+	        
+	        /**
+	         * Remove stored data before removing the account
+	         */
+	        $username = !empty($accounts[$account_id]['username']) ? $accounts[$account_id]['username'] : '';
+	        if (!empty($username)) {
+	            delete_transient(self::$transient_prefix . $username);
+	            delete_transient(self::$transient_prefix_long . $username);
+	        }
+	        
+	        unset ($accounts[$account_id]);
+	    }
+	    
+	    self::save_accounts($accounts);
+	}
+	
+	/**
+	 * Update token to an existing account
+	 * 
+	 * @param string $account_id
+	 * @param string $token
+	 */
+	public static function update_token($account_id = '', $token = '') {
+	    $accounts = self::get_accounts();
+	    
+	    if (isset($accounts[$account_id])) {
+	        $accounts[$account_id]['token'] = $token;
+	    }
+	    
+	    self::save_accounts($accounts);
+	}
+	
+	/**
+	 * Generate a new unique account numeric ID
+	 * @return number
+	 */
+	public static function get_new_account_id() {
+	    $accounts = self::get_accounts();
+	    $new_design_id = count($accounts) + 1;
+	    
+	    return uniqid();
+	}
+	
+	/**
+	 * Get single account data
+	 * @param string $account_id
+	 * @return array|mixed
+	 */
+	public static function get_account($account_id = '') {
+	    $accounts = self::get_accounts();
+	    $r = array();
+	    
+	    if (isset($accounts[$account_id])) {
+	        $r = $accounts[$account_id];
+	    }
+	    
+	    return $r;
+	}
+	
+	/**
+	 * Save single Instagram account data
+	 * @param string $account_id
+	 * @param array $data
+	 */
+	public static function save_account($account_id = '', $data = array()) {
+	    $accounts = self::get_accounts();
+	    $accounts[$account_id] = $data;
+	    
+	    self::save_accounts($accounts);
+	}
+	
+	/**
+	 * Remove all stored Instagram accounts
+	 */
+	public static function remove_all_accounts() {
+	    
+	    $accounts = self::get_accounts();
+	    
+	    foreach ($accounts as $account_id => $account_data) {	        
+	        /**
+	         * Remove stored data before removing the account
+	         */
+	        $username = !empty($accounts[$account_id]['username']) ? $accounts[$account_id]['username'] : '';
+	        if (!empty($username)) {
+	            delete_transient(self::$transient_prefix . $username);
+	            delete_transient(self::$transient_prefix_long . $username);
+	        }
+	    }
+	    
+	    delete_option(self::$option_name);
+	}
+	
+	
+	/**
+	 * Generate a list for account selection in the settings
+	 * 
+	 * @return string[]|unknown[]
+	 */
+	public static function get_account_list() {
+	    $r = array();
+	    $accounts = self::get_accounts();
+	    
+	    foreach ($accounts as $account_id => $account_data) {
+	        $username = isset($account_data['username']) ? $account_data['username'] : '';
+	        $display_name = isset($account_data['display_name']) ? $account_data['display_name'] : '';
+	        
+	        $r[$username] = $display_name != '' ? $display_name . ' (' . $username . ')' : $username;
+	    }
+	    
+	    return $r;
+	}
+	
+	/**
+	 * Get account details by username
+	 * 
+	 * @param string $username
+	 * @return array|unknown
+	 */
+	public static function get_username_data($username = '') {
+	    $r = array();
+	    
+	    $accounts = self::get_accounts();
+	    
+	    foreach ($accounts as $account_id => $account_data) {
+	        $current_username = isset($account_data['username']) ? $account_data['username'] : '';
+	        
+	        if ($current_username == $username) {
+	            $r = $account_data;
+	        }
+	    }
+	    
+	    return $r;
+	}
+	
+	/**
+	 * Get token related to a specific account
+	 * @param string $username
+	 * @return string
+	 */
+	public static function get_username_token($username = '') {
+	    $account = self::get_username_data($username);
+	    
+	    return isset($account['token']) ? $account['token'] : '';
+	}
+	
+	/**
+	 * Update images for a single username
+	 * @param string $username
+	 */
+	public static function update_images($username = '') {
+	    delete_transient(self::$transient_prefix . $username);
+	    essb_instagram_feed()->scrape_instagram($username);
 	}
 }
 

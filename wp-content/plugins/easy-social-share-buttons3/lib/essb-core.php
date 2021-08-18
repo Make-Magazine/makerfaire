@@ -1947,7 +1947,7 @@ class ESSBCore {
 		}		
 		
 		// -- getting main share details based on current post
-		$post_share_details = essb_get_post_share_details($position);
+		$post_share_details = essb_get_post_share_details($position);		
 		
 		// generate native button main settings
 		$post_native_details = essb_get_native_button_settings($position, $only_share);		

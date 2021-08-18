@@ -32,24 +32,30 @@
 		 *
 		 **/
 		value2html: function ( value, element ) {
+			var $el = $( element );
 
-			if ( ! value ) {
-				$( element ).empty();
+			if ( !value ) {
+				$el.empty();
 				return;
 			}
 
 			// Turn CSV string into array
-			if( 'string' === typeof value ) {
-				value = value.split(',');
+			if ( 'string' === typeof value ) {
+				value = value.split( ',' );
 			}
 
 			var value_array = $.map( value, function ( val, index ) {
 				return [ val ];
 			} );
 
+			if ( $el.parents( 'table.gf_entries' ).length ) {
+				$el.html( value_array.join( ', ' ) );
+				return;
+			}
+
 			var value_html = value_array.join( '</li><li>' );
 
-			$( element ).html( '<ul><li>' + value_html + '</li></ul>' );
+			$el.html( '<ul><li>' + value_html + '</li></ul>' );
 		},
 
 		/**

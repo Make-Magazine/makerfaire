@@ -39,6 +39,13 @@ class ESSB_Site_Share_Information {
             $r = 'single';
         }
         
+        /**
+         * @since 7.7.5
+         */
+        if (has_filter('essb_site_share_information_type')) {
+            $r = apply_filters('essb_site_share_information_type', $r);
+        }
+        
         return $r;
     }
 
@@ -50,7 +57,7 @@ class ESSB_Site_Share_Information {
         $title = '';
         
         if ($type == 'front') {
-            $titlee = essb_option_value('sso_frontpage_title');
+            $title = essb_option_value('sso_frontpage_title');
             
             if (empty($title)) {
                 $title = get_bloginfo('name');
@@ -77,6 +84,13 @@ class ESSB_Site_Share_Information {
         }
         else if ($type != 'single') {
             $title = get_bloginfo('name');
+        }
+        
+        /**
+         * @since 7.7.5
+         */
+        if (has_filter('essb_site_share_information_title')) {
+            $title = apply_filters('essb_site_share_information_title', $title, $type);
         }
         
         return $title;
@@ -111,6 +125,13 @@ class ESSB_Site_Share_Information {
             $description = get_bloginfo('description');
         }
         
+        /**
+         * @since 7.7.5
+         */
+        if (has_filter('essb_site_share_information_title')) {
+            $description = apply_filters('essb_site_share_information_description', $description, $type);
+        }
+        
         return $description;
     }
 
@@ -129,6 +150,13 @@ class ESSB_Site_Share_Information {
                     $image = $custom;
                 }
             }
+        }
+        
+        /**
+         * @since 7.7.5
+         */
+        if (has_filter('essb_site_share_information_image')) {
+            $image = apply_filters('essb_site_share_information_image', $image, $type);
         }
         
         return $image;
@@ -176,6 +204,13 @@ class ESSB_Site_Share_Information {
         }
         else if ($type != 'single') {
             $url = get_bloginfo('url');
+        }
+        
+        /**
+         * @since 7.7.5
+         */
+        if (has_filter('essb_site_share_information_url')) {
+            $url = apply_filters('essb_site_share_information_url', $url, $type);
         }
         
         return $url;

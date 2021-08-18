@@ -224,6 +224,7 @@ ESSBOptionsStructureHelper::field_select_panel('advanced', 'administrative', 'es
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'limit_editor_fields', esc_html__('Limit post/page settings access', 'essb'), esc_html__('Set to Yes if you need to limit the default editing components visibility on posts/pages.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::field_select_panel('advanced', 'administrative', 'limit_editor_fields_access', esc_html__('User access role', 'essb'), esc_html__('Select the role that user should have to access the setup of fields. But only when the previous option is active.', 'essb'), $listOfOptions);
 ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'disable_meta_editor_fields', esc_html__('Fully deactivate plugin editing metaboxes', 'essb'), esc_html__('Set to Yes if you need to completely remove the plugin metaboxes inlcuding those that are required for sharing personalization.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+ESSBOptionsStructureHelper::field_switch_panel('advanced', 'administrative', 'always_load_meta_editor_fields', esc_html__('Always load share customization editing no matter of selected post types', 'essb'), esc_html__('The share customization fields appear automatically on assigned posts. If you use shortcodes on post types not associated you need this option to have access to share customization fields.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::panel_end('advanced', 'administrative');
 
 ESSBOptionsStructureHelper::panel_start('advanced', 'administrative', esc_html__('Metabox visibiltiy', 'essb'), '', 'fa21 fa fa-eye', array("mode" => "toggle", 'state' => 'opened'));
@@ -362,7 +363,7 @@ function essb3_reset_postdata() {
 	echo '</div>';
 
 	echo '<div class="mb15">';
-	echo '<a href="#" class="essb-btn essb-btn-red" data-clear="all" data-title="All Plugin Stored Data">'.esc_html__('I want to remove all stored plugin data', 'essb').'</a>';
+	echo '<a href="#" class="essb-btn essb-btn-red essb-reset-settings" data-clear="all" data-title="All Plugin Stored Data">'.esc_html__('I want to remove all stored plugin data', 'essb').'</a>';
 	echo '</div>';
 }
 

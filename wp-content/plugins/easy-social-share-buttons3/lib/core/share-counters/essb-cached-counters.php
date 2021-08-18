@@ -364,11 +364,11 @@ class ESSBCachedCounters {
 				}
 				
 				if (intval($post_age) >= 21 && intval($post_age) < 30) {
-					$expire_time = intval($expire_time) * 5;
+					$expire_time = intval($expire_time) * 4;
 				}
 				
 				if (intval($post_age) >= 30) {
-					$expire_time = intval($expire_time) * 7;
+					$expire_time = intval($expire_time) * 5;
 				}
 			}
 			

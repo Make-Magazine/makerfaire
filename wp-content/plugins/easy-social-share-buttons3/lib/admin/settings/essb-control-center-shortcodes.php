@@ -291,10 +291,6 @@ if (!class_exists('ESSBControlCenterShortcodes')) {
 			 * Instagram Images & Feed
 			 */
 			if (!essb_option_bool_value('deactivate_module_instagram')) {
-				essb_depend_load_function('essb_get_shortcode_options_instagram_image', 'lib/admin/settings/shortcode-options/instagram-image.php');
-				self::register_shortcode('instagram-image', 'ti-instagram', esc_html__('Embedding single Instagram image', 'essb'), '');
-				self::register_shortcode_options_feed('instagram-image', essb_get_shortcode_options_instagram_image());
-
 				essb_depend_load_function('essb_get_shortcode_options_instagram_feed', 'lib/admin/settings/shortcode-options/instagram-feed.php');
 				self::register_shortcode('instagram-feed', 'ti-instagram', esc_html__('Add Instagram feed for user or hashtag', 'essb'), '');
 				self::register_shortcode_options_feed('instagram-feed', essb_get_shortcode_options_instagram_feed());

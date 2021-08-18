@@ -146,7 +146,7 @@ function essb_get_post_share_details ($position = '') {
     // Generate single post sharing information
     if (isset($post) && !$list_of_articles_mode) {
         $post_data = ESSB_Runtime_Cache::get_post_sharing_data($post->ID);
-        $r = $post_data->compile_share_object();
+        $r = $post_data->compile_share_object();        
     }
     else {
         // Generate global share information or archive share information
@@ -159,6 +159,13 @@ function essb_get_post_share_details ($position = '') {
     }
     
     $r['list_of_articles_mode'] = $list_of_articles_mode;
+    
+    /**
+     * @since 7.7.5 Additional filter for reading social share optimization (to get send via external plugins)
+     */
+    if (has_filter('essb_get_post_share_details')) {
+        $r = apply_filters('essb_get_post_share_details', $r);
+    }
     
     return $r;
 }

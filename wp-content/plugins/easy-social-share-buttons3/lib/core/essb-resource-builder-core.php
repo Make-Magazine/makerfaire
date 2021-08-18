@@ -18,22 +18,6 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 	$code_options['essb3_nonce'] = wp_create_nonce('essb3_ajax_nonce');
 	$code_options['essb3_plugin_url'] = esc_url(ESSB3_PLUGIN_URL);
 	
-	/**
-	 * Real-time related share counters only
-	 */
-	if (essb_option_value('counter_mode') == '') {
-		$code_options['essb3_facebook_total'] = essb_option_bool_value('facebooktotal');
-		$code_options['essb3_admin_ajax'] = essb_option_bool_value('force_counters_admin');
-		$code_options['essb3_internal_counter'] = essb_option_bool_value('active_internal_counters');
-		$code_options['essb3_counter_button_min'] = intval(essb_option_value('button_counter_hidden_till'));
-		$code_options['essb3_counter_total_min'] = intval(essb_option_value('total_counter_hidden_till'));
-		$code_options['essb3_no_counter_mailprint'] = essb_option_bool_value('deactive_internal_counters_mail');
-		$code_options['essb3_single_ajax'] = essb_option_bool_value('force_counters_admin_single');
-		$code_options['ajax_type'] = essb_sanitize_option_value('force_counters_admin_type');
-		$code_options['twitter_counter'] = essb_sanitize_option_value('twitter_counters');
-		$code_options['google_counter'] = essb_sanitize_option_value('google_counter_type');
-	}
-	
 	$code_options['essb3_stats'] = essb_option_bool_value('stats_active');
 	$code_options['essb3_ga'] = essb_option_bool_value('activate_ga_tracking');	
 	/**
@@ -75,13 +59,7 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 		if (essb_option_value('subscribe_require_name_error') != '') {
 			$code_options['subscribe_validate_name_error'] = essb_sanitize_option_value('subscribe_require_name_error');
 		}
-	}
-	
-	// since 5.2 - client side counter update
-	if (essb_option_bool_value('cache_counter_facebook_async') || essb_option_bool_value('cache_counter_pinterest_async')) {
-		essb_depend_load_function('essb_cached_counters_options', 'lib/core/share-counters/essb-cached-counters-front.php');
-		$code_options = essb_cached_counters_options($code_options);
-	}
+	}	
 	
 	if (essb_option_bool_value('pinterest_force_description') || essb_option_bool_value('pinterest_description')) {
 		$code_options['pin_description'] = esc_attr(get_post_meta( get_the_ID(), 'essb_post_pin_desc', true));

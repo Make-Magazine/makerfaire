@@ -306,7 +306,8 @@ class GWPreviewConfirmation {
 		$file_info = self::get_uploaded_file_info( $form['id'], $input_name, $field );
 
 		if ( ! self::is_multi_file_field( $field ) ) {
-			$source = GFFormsModel::get_upload_url( $form['id'] ) . '/tmp/' . $file_info['temp_filename'];
+			$file_url = GFFormsModel::get_upload_url( $form['id'] ) . '/tmp/' . $file_info['temp_filename'];
+			$source   = $field->get_download_url( $file_url );
 		}
 
 		if ( ! $file_info ) {

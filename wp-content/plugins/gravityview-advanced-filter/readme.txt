@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 5.5.1
+Tested up to: 5.7.2
 Stable tag: trunk
 Contributors: The GravityView Team
 License: GPL 3 or higher
@@ -23,6 +23,31 @@ UI was written using [Svelte](https://svelte.dev/) and requires compilation. Mak
 3. Compile assets by running `npm run build`
 
 == Changelog ==
+
+= 2.1.9 on May 31, 2021 =
+
+* Fixed: "Created by Currently Logged-in User (Disabled for Administrators)" filter did not work with field conditional logic
+* Fixed: Relative date comparison did not respect WordPress's timezone offset
+
+= 2.1.8 on April 12, 2021 =
+
+* Fixed: Field Conditional Logic did not work with multiple-input field types (e.g. Address, Name, etc.)
+
+= 2.1.7 on March 3, 2021 =
+
+* Fixed: Comparison of dates in field conditional logical results in a PHP notice
+* Fixed: Checkbox field not working with field conditional logic
+* Fixed: JavaScript error when opening field settings with conditional logic configured for a nonexistent field ID
+
+= 2.1.6 on February 8, 2021 =
+
+* Fixed: Filter values containing certain characters (e.g., "+") would fail to be processed
+* Fixed: Comparison of dates in field conditional logical results in a PHP notice
+
+= 2.1.5 on December 10, 2020 =
+
+* Fixed: Relative date comparison (e.g., "Entry Date" > "tomorrow") not working for field conditional logic
+* Fixed: Decoding of URL-encoded special characters in filter values (e.g., "%26" was not being converted to "&")
 
 = 2.1.4 on September 24, 2020 =
 

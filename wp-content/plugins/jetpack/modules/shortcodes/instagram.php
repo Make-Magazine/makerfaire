@@ -15,6 +15,7 @@
 
 use Automattic\Jetpack\Connection\Client;
 use Automattic\Jetpack\Constants;
+use Automattic\Jetpack\Status;
 
 if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
 	add_action( 'init', 'jetpack_instagram_enable_embeds' );
@@ -29,18 +30,8 @@ if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
  * @since 9.1.0
  */
 function jetpack_instagram_enable_embeds() {
-
-	/**
-	 * Instagram's custom Embed provider.
-	 * We first remove the embed provider that's registered by Core; then, we declare our own.
-	 *
-	 * We can drop the `wp_oembed_remove_provider` line once Core stops adding its own Instagram provider:
-	 * https://core.trac.wordpress.org/ticket/50861.
-	 */
-	wp_oembed_remove_provider( '#https?://(www\.)?instagr(\.am|am\.com)/(p|tv)/.*#i' );
-
 	wp_oembed_add_provider(
-		'#https?://(www\.)?instagr(\.am|am\.com)/(p|tv)/.*#i',
+		'#https?://(www\.)?instagr(\.am|am\.com)/(p|tv|reel)/.*#i',
 		'https://graph.facebook.com/v5.0/instagram_oembed/',
 		true
 	);
@@ -49,7 +40,7 @@ function jetpack_instagram_enable_embeds() {
 	 * Handle an alternate Instagram URL format, where the username is also part of the URL.
 	 */
 	wp_oembed_add_provider(
-		'#https?://(?:www\.)?instagr(?:\.am|am\.com)/(?:[^/]*)/(p|tv)/([^\/]*)#i',
+		'#https?://(?:www\.)?instagr(?:\.am|am\.com)/(?:[^/]*)/(p|tv|reel)/([^\/]*)#i',
 		'https://graph.facebook.com/v5.0/instagram_oembed/',
 		true
 	);
@@ -248,7 +239,7 @@ function jetpack_instagram_oembed_fetch_url( $provider, $url, $args ) {
 
 	// If we don't have an access token, we go through the WP.com proxy instead.
 	// To that end, we need to make sure that we're connected to WP.com.
-	if ( ! Jetpack::is_active_and_not_offline_mode() ) {
+	if ( ! Jetpack::is_connection_ready() || ( new Status() )->is_offline_mode() ) {
 		return $provider;
 	}
 

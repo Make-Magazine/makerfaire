@@ -13,28 +13,6 @@ if (!essb_option_bool_value('deactivate_postcount')) {
 	add_action ( 'wp_ajax_essb_self_postcount', 'essb_actions_update_post_count' );
 }
 
-if (essb_option_bool_value('cache_counter_facebook_async')) {
-	essb_depend_load_function('essb_actions_update_facebook_count', 'lib/core/extenders/essb-actions-facebookcount.php');	
-	add_action ( 'wp_ajax_nopriv_essb_facebook_counter_update', 'essb_actions_update_facebook_count' );
-	add_action ( 'wp_ajax_essb_facebook_counter_update', 'essb_actions_update_facebook_count' );
-}
-
-if (essb_option_bool_value('cache_counter_pinterest_async')) {
-	essb_depend_load_function('essb_actions_update_pinterest_count', 'lib/core/extenders/essb-actions-pinterestcount.php');	
-	add_action ( 'wp_ajax_nopriv_essb_pinterest_counter_update', 'essb_actions_update_pinterest_count' );
-	add_action ( 'wp_ajax_essb_pinterest_counter_update', 'essb_actions_update_pinterest_count' );
-}
-
-
-/**
- * Real time share counter action adding only if the counter mode is set.
- */
-if (essb_option_value('counter_mode') == '') {
-	essb_depend_load_function('essb_actions_get_share_counts', 'lib/core/extenders/essb-actions-realsharecounts.php');	
-	add_action ( 'wp_ajax_nopriv_essb_counts', 'essb_actions_get_share_counts' );
-	add_action ( 'wp_ajax_essb_counts', 'essb_actions_get_share_counts' );
-}
-
 /**
  * Additional ajax update requests that can run over the site
  */

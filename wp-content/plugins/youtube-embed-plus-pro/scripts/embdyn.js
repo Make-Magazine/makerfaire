@@ -199,6 +199,7 @@
                         $vid.removeAttr('data-ep-src');
                         setTimeout(function ()
                         {
+                            $($vid.parent()).fitVidsEP();
                             $vid.addClass('animated ' + $vid.attr('data-ep-a'));
                         }, 1);
                     }

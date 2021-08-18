@@ -219,6 +219,11 @@ if (!function_exists('essb_wpml_translatable_fields')) {
 		$result['heading15'] = array('type' => 'heading', 'group' => 'menu6', 'title' => esc_html__('Bottom Bar'));
 		$result['bottombar_usercontent'] = array('type' => 'field', 'group' => 'menu6', 'tab_id' => 'where', 'menu_id' => 'display-10');
 		
+		$result['heading16'] = array('type' => 'heading', 'group' => 'menu6', 'title' => esc_html__('Share Booster'));
+		$result['booster_title'] = array('type' => 'field', 'group' => 'menu6', 'tab_id' => 'where', 'menu_id' => 'display-20');
+		$result['booster_message'] = array('type' => 'field', 'group' => 'menu6', 'tab_id' => 'where', 'menu_id' => 'display-20');
+		
+		
 		// @since 5.0 followers counter integration
 		if (class_exists('ESSBSocialFollowersCounterHelper')) {
 			if (!essb_option_bool_value('deactivate_module_followers') && essb_options_bool_value('fanscounter_active')) {

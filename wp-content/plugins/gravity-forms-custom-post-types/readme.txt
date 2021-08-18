@@ -1,5 +1,5 @@
 === Gravity Forms + Custom Post Types ===
-Contributors: spivurno,bradvin,wpsmith
+Contributors: spivurno,claygriffiths,bradvin,wpsmith
 Donate link: http://gravitywiz.com/
 Tags: form,forms,gravity,gravity form,gravity forms,CPT,custom post types,custom post type,taxonomy,taxonomies
 Requires at least: 3.0.1
@@ -8,11 +8,15 @@ Stable tag: 3.1.16
 
 Map your Gravity-Forms-generated posts to a custom post type and/or custom taxonomies.
 
-== Description ==
+= Introduction =
 
-> This plugin is an add-on for [Gravity Forms](http://gravityforms.com). Make sure you visit [GravityWiz.com](http://gravitywiz.com/blog/) for more **free** Gravity Forms resources. And if you're looking to the largest collection of Gravity Forms plugins, check out [Gravity Perks](http://gravityperks.com).
+This plugin is an add-on for [Gravity Forms](http://gravityforms.com). Make sure you visit [GravityWiz.com](http://gravitywiz.com/blog/) for more **free** Gravity Forms resources. And if you're looking to the largest collection of Gravity Forms plugins, check out [Gravity Perks](http://gravityperks.com).
+
+= Description =
 
 Gravity Forms allows you to create posts from a form submission using special Post Fields. By default, the submitted form will be created as a standard WordPress post. This plugin allows you to change the post type of the generated post. **No code required!** This plugin also provides the ability to assign the generated post to a custom taxonomy.
+
+Need to update posts? Learn [how to update posts with Gravity Forms](https://gravitywiz.com/how-to-update-posts-with-gravity-forms/).
 
 = Features =
 
@@ -77,6 +81,41 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 
 == Changelog ==
 
+= 3.1.23 =
+* Fixed a compatibility issue with GF 2.5.5.4+ which converted default values to the term ID when displayed/stored.
+* Added taxonomy name (in addition to label) to Taxonomy dropdowns. Credit: @grapplerulrich
+
+= 3.1.22 =
+
+* Added post name (in addition to label) to Post Type dropdowns in Form Editor. Credit: @grapplerulrich
+* Fixed issue where `gfcpt_taxonomy_args` filter was not used for non-hierarchical terms. Credit: @grapplerulrich
+
+= 3.1.21 =
+
+* Fixed a compatibility issue with Gravity Forms 2.5 and Enhanced UI.
+
+= 3.1.20 =
+
+* Fixed PHP notice on Gravity Forms Coupons Add-On page.
+* Fixed PHP warning when populating taxonomies.
+* Updated formatting of PHP files in plugin to better conform to  the WordPress Coding Standards.
+
+= 3.1.19 =
+
+* Bumped plugin version.
+
+= 3.1.18 =
+
+* Fixed issue with "Save To Taxonomy" setting not properly saving the entered taxonomy.
+
+= 3.1.17 =
+
+* Readme updates.
+
+= 3.1.16 =
+
+* Readme updates.
+
 = 3.1.15 =
 
 * Fixed issue when exporting taxonomy-and-post-type-populated Checkbox fields.
@@ -123,7 +162,7 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 = 3.1.5 =
 
 * Fixed issue with populating Drop Down & Multi Selects
-* Fixed issue when saving Multi Select taxonomies 
+* Fixed issue when saving Multi Select taxonomies
 
 = 3.1.4 =
 

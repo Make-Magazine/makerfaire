@@ -322,6 +322,52 @@ jQuery(document).ready(function($){
 			});
 
 		});
+		
+		$('.ao-validate-ig-token').on('click', function(e) {
+			e.preventDefault();
+			
+			var token = $('#essb_options_token').val();
+			
+			if (token == '') {
+				$.toast({
+				    heading: 'No token key found',
+				    showHideTransition: 'fade',
+				    icon: 'error',
+				    position: 'bottom-right',
+				    hideAfter: 2000
+				});
+				
+				return;
+			}
+			
+			var validateIGUrl = 'https://graph.instagram.com/me?fields=id,username&access_token=' + token;
+			$.ajax({
+	            type: "GET",
+	            url: validateIGUrl,
+	            data: {},
+	            success: function (data) {
+	            	$('#essb_options_userid').val(data.id || '');
+	            	$('#essb_options_username').val(data.username || '');
+	            	
+	            	$.toast({
+					    heading: 'Token key validated successfully',
+					    showHideTransition: 'fade',
+					    icon: 'success',
+					    position: 'bottom-right',
+					    hideAfter: 2000
+					});
+	            },
+	            error: function(data) {
+	            	$.toast({
+					    heading: 'The access token is not valid or it is expired',
+					    showHideTransition: 'fade',
+					    icon: 'error',
+					    position: 'bottom-right',
+					    hideAfter: 2000
+					});
+	            }
+	    	});
+		});
 	}
 
 	essbAdvancedOptions.removeFormDesign = function(design) {
@@ -345,6 +391,80 @@ jQuery(document).ready(function($){
 				window.location.href = reload + (section != '' ? '&section='+section : '') + (subsection != '' ? '&subsection='+subsection : '');
 			}, 2000);
 		});
+	}
+	
+	essbAdvancedOptions.removeInstagramAccount = function(account) {
+		var remotePost = { 'account': account};
+
+		essbAdvancedOptions.post('remove_instagram_account', remotePost, function(data) {
+			$.toast({
+			    heading: 'Account is removed! The settings screen will reload to update the values.',
+			    showHideTransition: 'fade',
+			    icon: 'success',
+			    position: 'bottom-right',
+			    hideAfter: 5000
+			});
+
+			setTimeout(function(){
+				if (!essb_advancedopts_reloadurl) return;
+				var reload = essb_advancedopts_reloadurl,
+					section = $('#section').val(),
+					subsection = $('#subsection').val();
+
+				window.location.href = reload + (section != '' ? '&section='+section : '') + (subsection != '' ? '&subsection='+subsection : '');
+			}, 2000);
+		});
+	}
+	
+	essbAdvancedOptions.updateInstagramToken = function(account, token) {
+		var remotePost = { 'account': account, 'token': token };
+
+		essbAdvancedOptions.post('update_instagram_token', remotePost, function(data) {
+			$.toast({
+			    heading: 'Instagram token is successfully updated!',
+			    showHideTransition: 'fade',
+			    icon: 'success',
+			    position: 'bottom-right',
+			    hideAfter: 5000
+			});
+		});
+	}
+	
+	essbAdvancedOptions.updateInstagramImages = function(account, username) {
+		var remotePost = { 'account': account, 'username': username };	
+
+		essbAdvancedOptions.post('update_instagram_images', remotePost, function(data) {
+			$.toast({
+			    heading: 'Instagram images are successfully updated!',
+			    showHideTransition: 'fade',
+			    icon: 'success',
+			    position: 'bottom-right',
+			    hideAfter: 5000
+			});
+		});
+	}
+	
+	essbAdvancedOptions.removeAllInstagramAccounts = function() {
+		var remotePost = { };
+
+		essbAdvancedOptions.post('remove_instagram_accounts', remotePost, function(data) {
+			$.toast({
+			    heading: 'All accounts are removed! The settings screen will reload to update the values.',
+			    showHideTransition: 'fade',
+			    icon: 'success',
+			    position: 'bottom-right',
+			    hideAfter: 5000
+			});
+
+			setTimeout(function(){
+				if (!essb_advancedopts_reloadurl) return;
+				var reload = essb_advancedopts_reloadurl,
+					section = $('#section').val(),
+					subsection = $('#subsection').val();
+
+				window.location.href = reload + (section != '' ? '&section='+section : '') + (subsection != '' ? '&subsection='+subsection : '');
+			}, 2000);
+		});		
 	}
 	
 	essbAdvancedOptions.removeCustomButton = function(network) {
@@ -499,6 +619,103 @@ jQuery(document).ready(function($){
 			}).then((willDelete) => {
 			  if (willDelete) {
 				essbAdvancedOptions.removeFormDesign(design);
+			  }
+			});
+
+	});
+	
+	$('.ao-form-igaccount').on('click', function(e){
+		e.preventDefault();
+
+		var account = $(this).data('account') || '',
+			title = $(this).data('title') || '';
+
+		account = account.replace('account-', '');
+
+		essbAdvancedOptions.show('manage_instagram_accounts', true, title, false, { 'account': account }, 500);
+	});
+
+	$('.ao-form-removeigaccount').on('click', function(e) {
+		e.preventDefault();
+
+		var account = $(this).data('account') || '',
+			title = $(this).data('title') || '';
+
+		account = account.replace('account-', '');
+
+		swal({ title: "Are you sure?",
+			  text: "Please confirm you wish to remove this account from the list!",
+			  icon: "warning",
+			  buttons: true,
+			  dangerMode: true,
+			}).then((willDelete) => {
+			  if (willDelete) {
+				essbAdvancedOptions.removeInstagramAccount(account);
+			  }
+			});
+
+	});
+	
+	$('.ao-form-refreshtoken').on('click', function(e) {
+		e.preventDefault();
+
+		var account = $(this).data('account') || '',
+			token = $(this).data('token') || '',
+			baseURL = 'https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=' + token;
+
+		account = account.replace('account-', '');
+		
+		
+		$.ajax({
+            type: "GET",
+            url: baseURL,
+            data: {},
+            success: function (data) {
+            	if (data && data.access_token) {
+            		essbAdvancedOptions.updateInstagramToken(account, data.access_token);
+            	}
+            	else {
+    				$.toast({
+    				    heading: 'A problem with token refresh appears. Please, try again later and if it fails again complete the steps and obtain a new one.',
+    				    showHideTransition: 'fade',
+    				    icon: 'error',
+    				    position: 'bottom-right',
+    				    hideAfter: 5000
+    				});
+            	}
+            },
+            error: function(data) {
+				$.toast({
+				    heading: 'A problem with token refresh appears. Please, try again later and if it fails again complete the steps and obtain a new one.',
+				    showHideTransition: 'fade',
+				    icon: 'error',
+				    position: 'bottom-right',
+				    hideAfter: 5000
+				});
+            }
+    	});
+	});
+	
+	$('.ao-form-igupdate').on('click', function(e) {
+		e.preventDefault();
+		
+		var account = $(this).data('account') || '',
+			username = $(this).data('username') || '';
+		
+		essbAdvancedOptions.updateInstagramImages(account, username);
+	});
+	
+	$('.ao-remove-igaccounts').on('click', function(e) {
+		e.preventDefault();
+		
+		swal({ title: "Are you sure?",
+			  text: "Please confirm you wish to remove all accounts!",
+			  icon: "warning",
+			  buttons: true,
+			  dangerMode: true,
+			}).then((willDelete) => {
+			  if (willDelete) {
+				essbAdvancedOptions.removeAllInstagramAccounts();
 			  }
 			});
 

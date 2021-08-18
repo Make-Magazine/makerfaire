@@ -6,9 +6,20 @@
 	padding: 10px 15px;
 	text-decoration: none;
 	font-weight: 600;
+	display: inline-block;
 }
 .ao-new-subscribe-design span.essb_icon { margin-right: 5px; }
 .ao-new-subscribe-design:hover { background: rgba(0,0,0,0.2); color: #111; }
+
+.ao-remove-igaccounts {
+	background: #e74c3c;
+	color: #fff;
+}
+
+.ao-remove-igaccounts:hover {
+	background: #A92B1D;
+	color: #fff;
+}
 
 
 .ao-options-btn {
@@ -1219,3 +1230,71 @@ body.essb-boarding-open #wpcontent {
     white-space: nowrap;
     padding: 0px 20px 0px 54px;
 }
+
+.ao-instagram-accounts .essb-new-subscribe-design {
+	background: #f9f9f9;
+}
+
+.ig-accounts { overflow: hidden; }
+.ig-accounts .ig-account {
+	white-space: nowrap;
+    font-size: 13px;
+    line-height: 1;
+    display: inline-flex;
+    padding: 6px;
+    margin-right: 15px;
+    margin-bottom: 5px;
+    border: 1px solid #f1f2f3;;
+    border-radius: 99px;
+    background: #fff;
+    overflow: hidden;
+	align-items: center;
+	float: left;
+}
+
+.ig-accounts .ig-account .pic {
+	width: 64px;
+	text-align: center;
+}
+
+.ig-accounts .ig-account .name {
+	padding: 10px;
+	padding-right: 15px;
+}
+
+.ig-accounts .ig-account .name .user {
+	font-weight: bold;
+	font-size: 14px;
+	margin-bottom: 5px;
+}
+
+.ig-accounts .ig-account .name .userid {
+	font-size: 11px;
+	margin-bottom: 10px;
+}
+
+.ig-accounts .ig-account .actions a {
+	color: #000;
+	font-weight: 600;
+	text-decoration: none;
+	margin: 5px;
+	transition: 0.2s all;
+}
+
+.ig-accounts .ig-account .actions a:hover {
+	border-bottom: 1px dotted currentcolor;	
+}
+
+.ig-accounts .ig-account .actions a.remove {
+	color: #ff0000;
+}
+
+.ig-accounts .ig-account .actions a.refresh {
+	color: #5867dd;
+}
+
+.ig-accounts .ig-account .actions a.update {
+	color: #ff8822;
+}
+
+.ig-accounts .ig-account .pic img { width: 48px; border-radius: 50%;}

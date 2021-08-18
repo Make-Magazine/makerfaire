@@ -65,8 +65,11 @@ class ESSBSocialImageShare {
 		if (!$this->can_run()) { return; }
 		
 		essb_resource_builder()->add_static_resource_footer(ESSB3_PLUGIN_URL . '/lib/modules/social-image-share/assets/css/easy-social-image-share.min.css', 'essb-social-image-share', 'css');
-		wp_enqueue_script ( 'jquery' );
-		wp_enqueue_script ( 'essb-social-image-share', ESSB3_PLUGIN_URL . '/lib/modules/social-image-share/assets/js/easy-social-image-share.min.js', array ('jquery' ), false, true );
+		
+		/**
+		 * @since 7.6.1 Calling via the resoure builder instead of direct call
+		 */
+		essb_resource_builder()->add_static_resource_footer(ESSB3_PLUGIN_URL . '/lib/modules/social-image-share/assets/js/easy-social-image-share.min.js', 'essb-social-image-share', 'js');
 	}
 	
 	public function include_social_image_share() {

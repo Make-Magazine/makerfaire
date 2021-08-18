@@ -50,6 +50,10 @@ if (!function_exists('essb_postfloat_extender')) {
 			if ($postfloat_selectors != '') {
 				$extra_options .= ' data-postfloat-selectors="'.esc_attr($postfloat_selectors).'"';
 			}
+			
+			if (essb_option_bool_value('postfloat_fix_bottom') && essb_option_bool_value('postfloat_always_visible')) {
+			    $extra_options .= ' data-postfloat-fixbottom="true"';
+			}
 		}
 		
 		return $extra_options;

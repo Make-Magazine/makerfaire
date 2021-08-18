@@ -168,7 +168,7 @@ class Settings {
 			'lazy_load_responsive_images_additional_filters'      => array(
 				'value'             => get_option( 'lazy_load_responsive_images_additional_filters', '' ),
 				'label'             => __( 'Additional filters', 'lazy-loading-responsive-images' ),
-				'description'       => __( 'Enter one or more additional WordPress filters that should be processed (one per line). Anything that does not match the regular expression for PHP function names will be removed.', 'lazy-loading-responsive-images' ),
+				'description'       => __( 'Enter one or more additional WordPress filters that should be processed (one per line), for example, <code>wp_get_attachment_image</code>. Anything that does not match the regular expression for PHP function names will be removed.', 'lazy-loading-responsive-images' ),
 				'field_callback'    => array( $this, 'textarea_field_cb' ),
 				'sanitize_callback' => array(
 					$this->helpers,
@@ -187,7 +187,7 @@ class Settings {
 			'lazy_load_responsive_images_native_loading_plugin'    => array(
 				'value'             => get_option( 'lazy_load_responsive_images_native_loading_plugin', '0' ),
 				'label'             => __( 'Include lazysizes native loading plugin' ),
-				'description'       => __( 'The plugin transforms images and iframes to use native lazyloading in browsers that support it.', 'lazy-loading-responsive-images' ),
+				'description'       => __( 'The plugin transforms images and iframes to use native lazyloading in browsers that support it. <strong>Important:</strong> Supporting browsers will use their threshold to decide if media needs to be loaded. That might lead to media being loaded even if it is far away from the visible area.', 'lazy-loading-responsive-images' ),
 				'field_callback'    => array( $this, 'checkbox_field_cb' ),
 				'sanitize_callback' => array(
 					$this->helpers,

@@ -28,39 +28,48 @@ class GravityView_Inline_Edit_Field_Number extends GravityView_Inline_Edit_Field
 	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field ) {
 		global $wpdb;
 
-		$return = $update_result;
-
 		if ( version_compare( GFFormsModel::get_database_version(), '2.3-dev-1', '>=' ) ) {
-			$entry_meta_table  = GFFormsModel::get_entry_meta_table_name();
-			$current_fields    = $wpdb->get_results( $wpdb->prepare( "SELECT id, meta_key FROM $entry_meta_table WHERE entry_id=%d", $entry['id'] ) );
+			$entry_meta_table = GFFormsModel::get_entry_meta_table_name();
+			$current_fields   = $wpdb->get_results( $wpdb->prepare( "SELECT id, meta_key FROM $entry_meta_table WHERE entry_id=%d", $entry['id'] ) );
 		} else {
 			$lead_detail_table = GFFormsModel::get_lead_details_table_name();
 			$current_fields    = $wpdb->get_results( $wpdb->prepare( "SELECT id, field_number FROM $lead_detail_table WHERE lead_id=%d", $entry['id'] ) );
 		}
 
-		$form              = GFAPI::get_form( $form_id );
-		$response          = array();
+		if ( ! is_bool( $update_result ) ) {
+			return $update_result;
+		}
+
+		$form = GFAPI::get_form( $form_id );
+
+		$display_value = \GFCommon::get_lead_field_display( $gf_field, $entry[$gf_field->id], $entry['currency'], false, 'html' );
+
+		$response = array(
+			array(
+				'value'    => $entry[ $gf_field->id ],
+				'selector' => ".gv-inline-editable-field-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}",
+				'data'     => array( 'display_value' => $display_value ),
+			)
+		);
 
 		/** @var GF_Field $field */
 		foreach ( $form['fields'] as $field ) {
-
 			if ( $field->has_calculation() ) {
 
 				GFFormsModel::save_input( $form, $field, $entry, $current_fields, $field->id );
 
 				// Refresh the entry after saving the input value
-				$entry      = GFAPI::get_entry( $entry['id'] );
+				$entry = GFAPI::get_entry( $entry['id'] );
 
 				$response[] = array(
 					'value'    => GFCommon::get_calculation_value( $field->id, $form, $entry ),
 					'selector' => ".gv-inline-edit-live-{$entry['id']}-{$entry['form_id']}-{$field->id}",
+					'data'     => array( 'display_value' => strtoupper( $field->get_value_export( $entry ) ) ),
 				);
-
-				$return = $response;
 			}
 		}
 
-		return $return;
+		return $response;
 	}
 }
 
