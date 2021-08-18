@@ -64,6 +64,8 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
     $scope.msg = {};
     $scope.gridOptions = {
       enableCellEditOnFocus: true,
+	  enableSorting: true,
+	  useExternalSorting: false,
       enableFiltering: true,minRowsToShow:20,rowEditWaitInterval: 1,
       enableGridMenu: true,
       exporterCsvFilename: mainRoute+'_'+subRoute+'_export.csv',
@@ -97,16 +99,30 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       data: jQuery.param({ 'table' : $scope.dispTablename , 'type' : 'tableData' }),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     })
-    .then(function(response){
+    .then(function(response){	
       angular.forEach(response.data.columnDefs, function(value, key) {
+	     value.headerCellClass =  $scope.highlightFilteredHeader;
+
           if(("filter" in value)){
             value.filter.type = uiGridConstants.filter.SELECT;
           }
+          if(("sort" in value)){
+			//need to translate the string passed in the json to an actual object
+			if(value.sort.direction=='uiGridConstants.DESC'){
+				console.log('i am here');
+				value.sort.direction = uiGridConstants.DESC;
+			}else{
+				value.sort.direction = uiGridConstants.ASC;
+			}	        
+          }
+		  response.data.columnDefs[key] = value;
+console.log(response.data.columnDefs[key]);
         });
-
+      
       $scope.gridOptions.columnDefs = response.data.columnDefs;
       $scope.gridOptions.data       = response.data.data;
       $scope.resource.pInfo         = response.data.pInfo;
+      $scope.gridOptions.enableSorting = true;
     })
     .finally(function () { $scope.resource.loading = false; });
   } //end check if need faire data
@@ -211,7 +227,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
         $scope.resource.pInfo         = response.data.pInfo;
       }
     }).finally(function () {
-      if(type=='faires'){
+      if(type=='faires'){	
         faires = $scope.data.faires;
         angular.forEach(faires, function(value,key){
           if(value.faire==$scope.subRoute){

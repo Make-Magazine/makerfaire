@@ -37,7 +37,8 @@ function make_rss_func($atts) {
         'number' => 6
             ), $atts);
 	// each attribute above for some reason has a comma after it
-	array_walk($a, create_function('&$val', '$val = trim($val, ",");'));  
+	//array_walk($a, create_function('&$val', '$val = trim($val, ",");'));  
+	array_walk($a, function(&$val){ $val = trim($val, ",");});
 	
 	if($a['feed'] && $a['feed'] != "") {
 		$a['feed'] = 'https://makezine.com/tag/' . $a['feed'] . "/feed";

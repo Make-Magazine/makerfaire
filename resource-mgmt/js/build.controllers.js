@@ -189,7 +189,7 @@ rmgControllers.controller('buildCtrl', ['$scope', '$routeParams', '$http','$inte
     headers: {'Content-Type': 'application/json'}
   })
   .then(function(response){
-      angular.forEach(response.data.columnDefs, function(value, key) {
+      angular.forEach(response.data.columnDefs, function(value, key) {	
         if(value.name=='faire' && $scope.reports.selFaire!=''){
           angular.forEach(value.filter.selectOptions, function(selValue, selKey) {
             if(selValue.label==$scope.reports.selFaire){
