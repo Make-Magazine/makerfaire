@@ -109,14 +109,13 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
           if(("sort" in value)){
 			//need to translate the string passed in the json to an actual object
 			if(value.sort.direction=='uiGridConstants.DESC'){
-				console.log('i am here');
 				value.sort.direction = uiGridConstants.DESC;
 			}else{
 				value.sort.direction = uiGridConstants.ASC;
 			}	        
           }
 		  response.data.columnDefs[key] = value;
-console.log(response.data.columnDefs[key]);
+
         });
       
       $scope.gridOptions.columnDefs = response.data.columnDefs;
