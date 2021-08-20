@@ -5,6 +5,8 @@
 *.bak
 *.swp
 Thumbs.db
+.buildpath
+.project
 
 # wordpress specific
 wp-config.php
