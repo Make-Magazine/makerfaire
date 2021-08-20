@@ -83,12 +83,12 @@ class MSP_Admin_Assets {
     wp_enqueue_media();
 
     // Master Slider Panel Scripts
-    wp_enqueue_script( MSWP_SLUG . '-handlebars'   ,  MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/js/handlebars.min.js',       array( 'jquery' ), MSWP_AVERTA_VERSION, true );
-    wp_enqueue_script( MSWP_SLUG . '-ember-js'     ,  MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/js/ember.min.js',          array( 'jquery' ), MSWP_AVERTA_VERSION, true );
-    wp_enqueue_script( MSWP_SLUG . '-ember-model'  ,  MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/js/ember-model.min.js',        array( 'jquery' ), MSWP_AVERTA_VERSION, true );
+    wp_enqueue_script( MSWP_SLUG . '-handlebars'   ,  MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/js/handlebars.min.js',       array( 'jquery-core', 'jquery-migrate' ), MSWP_AVERTA_VERSION, true );
+    wp_enqueue_script( MSWP_SLUG . '-ember-js'     ,  MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/js/ember.min.js',          array( MSWP_SLUG . '-handlebars' ), MSWP_AVERTA_VERSION, true );
+    wp_enqueue_script( MSWP_SLUG . '-ember-model'  ,  MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/js/ember-model.min.js',        array( MSWP_SLUG . '-ember-js' ), MSWP_AVERTA_VERSION, true );
     wp_enqueue_script( MSWP_SLUG . '-msp-required'   ,  MSWP_AVERTA_ADMIN_URL . '/views/slider-panel/js/msp.required.js',
       array(
-        'jquery', 'jquery-ui-core', 'jquery-ui-dialog', 'jquery-ui-draggable',
+        MSWP_SLUG . '-ember-model', 'jquery-ui-core', 'jquery-ui-dialog', 'jquery-ui-draggable',
         'jquery-ui-sortable', 'jquery-ui-slider', 'jquery-ui-spinner'
       ),
       MSWP_AVERTA_VERSION, true
@@ -125,7 +125,7 @@ class MSP_Admin_Assets {
     // get and print slider id
     if ( isset( $_REQUEST['slider_id'] ) ) {
 
-      $slider_id  = $_REQUEST['slider_id'];
+      $slider_id  = sanitize_text_field( $_REQUEST['slider_id'] );
 
     } else {
       global $mspdb;

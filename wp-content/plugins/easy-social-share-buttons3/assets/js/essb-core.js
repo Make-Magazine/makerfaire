@@ -357,8 +357,13 @@ jQuery(document).ready(function($){
 	};
 
 	essb.loveThis = function (instance) {
+		console.log(window.essb_love_you_message_thanks);
+		
 		if (typeof(essb_love_you_message_loved) == 'undefined') var essb_love_you_message_loved = '';
 		if (typeof(essb_love_you_message_thanks) == 'undefined') var essb_love_you_message_thanks = '';
+		
+		if (typeof (window.essb_love_you_message_thanks) != 'undefined') essb_love_you_message_thanks = window.essb_love_you_message_thanks;
+		if (typeof (window.essb_love_you_message_loved) != 'undefined') essb_love_you_message_loved = window.essb_love_you_message_loved;
 
 		if (essb.clickedLoveThis) {
 			if (!essb.loveDisableLoved) alert(essb_love_you_message_loved ? essb_love_you_message_loved : 'You already love this today');
@@ -430,12 +435,10 @@ jQuery(document).ready(function($){
 	};
 
 	essb.toggle_more_popup = function(unique_id) {
-
 		if (essb['essb_morepopup_opened']) {
 			essb.toggle_less_popup(unique_id);
 			return;
 		}
-
 		if ($(".essb_morepopup_"+unique_id).hasClass("essb_morepopup_inline")) {
 			essb.toggle_more_inline(unique_id);
 			return;
@@ -500,7 +503,6 @@ jQuery(document).ready(function($){
 		var appear_y = $(buttons_element).position().top + $(buttons_element).outerHeight(true);
 		var appear_x = $(buttons_element).position().left;
 		var appear_position = "absolute";
-
 
 		var appear_at_bottom = false;
 
@@ -641,6 +643,12 @@ jQuery(document).ready(function($){
 			$(formContainer).hide();
 			$('.essb-subscribe-form-' + key).find('.essb-subscribe-loader').show();
 			var submitapi_call = formContainer.attr('action') + '&mailchimp_email='+user_mail+'&mailchimp_name='+user_name+'&position='+usedPosition+'&design='+usedDesign+'&title='+encodeURIComponent(document.title);
+			
+			/**
+			 * @since 7.7 Additional check to prevent mixed content 
+			 */
+			var current_page_url = window.location.href;
+			if (current_page_url.indexOf('https://') > -1 && submitapi_call.indexOf('https://') == -1) submitapi_call = submitapi_call.replace('http://', 'https://');
 			
 			// validate reCaptcha too
 			if ($('.essb-subscribe-captcha').length) {
@@ -837,67 +845,6 @@ jQuery(document).ready(function($){
 
 		$(element).fadeOut(400);
 		essb['is_displayed_sharebar'] = false;
-	};
-
-	essb.update_facebook_counter = function(url, recovery_url) {
-
-		if( (/bot|crawl|slurp|spider/i).test(navigator.userAgent) ) return;
-
-		$.when($.get('https://graph.facebook.com/?id=' + url + '&fields=og_object{engagement}') ,
-				( recovery_url ? $.get('https://graph.facebook.com/?id=' + recovery_url + '&fields=og_object{engagement}') : '')
-		).then( function( counter, recovery_counter ) {
-
-			if( 'undefined' !== typeof counter[0].og_object && counter[0].og_object.engagement ) {
-				var shares1 = parseInt(counter[0].og_object.engagement.count || 0),
-					comments1 = parseInt(counter[0].og_object.engagement.comments || 0),
-					likes1 = 0,
-					total_shares1 = 0,
-					total_shares2 = 0;
-
-
-				total_shares1 = shares1 + comments1 + likes1;
-				if (recovery_url && recovery_counter[0] && 'undefined' !== typeof recovery_counter[0].og_object && recovery_counter[0].og_object.engagement) {
-					var shares2 = parseInt(recovery_counter[0].og_object.engagement.count || 0),
-						comments2 = parseInt(recovery_counter[0].og_object.engagement.comments || 0),
-						likes2 = 0;
-
-					total_shares2 = shares2 + comments2 + likes2;
-
-					if (total_shares1 != total_shares2) total_shares1 += total_shares2;
-				}
-
-				$.post(essb_settings.ajax_url, {
-					'action': 'essb_facebook_counter_update',
-					'post_id': essb_settings.post_id,
-					'count': total_shares1,
-					'nonce': essb_settings.essb3_nonce
-				}, function (data) { if (data) {
-					console.log(data);
-				}},'json');
-			}
-		});
-	};
-
-	essb.update_pinterest_counter = function(url, recovery_url) {
-		if( (/bot|crawl|slurp|spider/i).test(navigator.userAgent) ) return;
-
-		$.get('https://api.pinterest.com/v1/urls/count.json?callback=?&url=' + url, {
-		}, function (data) {
-			var total_shares1 = data['count'] ? data['count'] : 0;
-
-			console.log('total_shares1 = ' + total_shares1);
-
-			$.post(essb_settings.ajax_url, {
-				'action': 'essb_pinterest_counter_update',
-				'post_id': essb_settings.post_id,
-				'count': total_shares1.toString(),
-				'nonce': essb_settings.essb3_nonce
-			}, function (data) { if (data) {
-				console.log(data);
-			}},'json');
-
-		},'json');
-
 	};
 
 	essb.responsiveEventsCanRun = function(element) {
@@ -1115,19 +1062,6 @@ jQuery(document).ready(function($){
 	};	
 
 	$(document).ready(function(){
-
-		/**
-		 * Facebook Client Side Counter Update
-		 */
-		
-		if (typeof essb_settings != 'undefined') {
-			if (essb_settings['facebook_client']) {
-				essb.update_facebook_counter(essb_settings['facebook_post_url'] || '', essb_settings['facebook_post_recovery_url'] || '');
-			}
-			if (essb_settings['pinterest_client']) {
-				essb.update_pinterest_counter(essb_settings['facebook_post_url'] || '', essb_settings['facebook_post_recovery_url'] || '');
-			}
-		}
 
 		/**
 		 * Mobile Share Bar
@@ -1508,6 +1442,7 @@ jQuery(document).ready(function($){
 		if ($('.essb_displayed_postfloat').length) {
 			var top = $('.essb_displayed_postfloat').offset().top - parseFloat($('.essb_displayed_postfloat').css('marginTop').replace(/auto/, 0));
 			var postfloat_always_onscreen = ($('.essb_displayed_postfloat').data('postfloat-stay') || '').toString() == 'true' ? true : false;
+			var postfloat_fix_bottom = ($('.essb_displayed_postfloat').data('postfloat-fixbottom') || '').toString() == 'true' ? true : false;
 			var custom_user_top = $('.essb_displayed_postfloat').data('postfloat-top') || '';
 			var postFloatVisibleSelectors = $('.essb_displayed_postfloat').data('postfloat-selectors') || '',
 				postFloatViewportCheck = [],
@@ -1590,6 +1525,28 @@ jQuery(document).ready(function($){
 						if (!isOneVisible) {
 							if ($('.essb_displayed_postfloat').hasClass("essb_postfloat_breakscroll")) {
 								$('.essb_displayed_postfloat').removeClass("essb_postfloat_breakscroll");
+							}
+							
+							/**
+							 * Fix the postfloat at the bottom of content
+							 */
+							if (postfloat_fix_bottom) {								
+								if (element_top > break_top) {
+									if (!$('.essb_displayed_postfloat').hasClass('essb_postfloat_absolute')) {
+										$('.essb_displayed_postfloat').removeClass('essb_postfloat_fixed');
+										$('.essb_displayed_postfloat').attr('data-unfixed', element_top);
+										$('.essb_displayed_postfloat').addClass('essb_postfloat_absolute');
+										$('.essb_displayed_postfloat').css({ 'position': 'absolute', 'top': ($('.essb_break_scroll').position().top - element_height - 100) + 'px'});
+									}
+								}
+								else {
+									if ($('.essb_displayed_postfloat').hasClass('essb_postfloat_absolute')) {
+										$('.essb_displayed_postfloat').removeClass('essb_postfloat_absolute');
+										$('.essb_displayed_postfloat').removeAttr('data-unfixed');
+										$('.essb_displayed_postfloat').css({ 'position': '', 'top': '' });
+										$('.essb_displayed_postfloat').addClass('essb_postfloat_fixed');
+									}
+								}
 							}
 						}
 						else {
@@ -1938,7 +1895,8 @@ jQuery(document).ready(function($){
 
 							// If the current mouse Y position is not within 50px of the top
 							// edge of the viewport, return.
-							if(evt.clientY >= 50)
+							// 7.7.3 - replace 50 -> 0
+							if(evt.clientY >= 0)
 								return;
 
 						  if (evt.toElement === null && evt.relatedTarget === null) {
@@ -2492,6 +2450,26 @@ jQuery(document).ready(function($){
 		if (essb_settings.pin_force_active && essb_settings.pin_force_image) {
 			$('img').each(function() {
 				$(this).attr('data-pin-media', essb_settings.pin_force_image);
+				
+				/**
+				 * Forcing all custom parameters too
+				 */
+				if (!$(this).data('pin-description')) {
+					var pinDescription  = '';
+					if ($(this).attr('title')) pinDescription = $(this).attr('title');
+					else if ($(this).attr('alt')) pinDescription = $(this).attr('alt');
+
+					// give always priority of the custom description if set
+					if (essbPinImages.force_custompin && !essbPinImages.custompin) essbPinImages.custompin = document.title;
+					if (essbPinImages.custompin) pinDescription = essbPinImages.custompin;
+
+					// if title is not genenrated it will use the Document Title
+					if (pinDescription == '') pinDescription = document.title;
+					
+					$(this).attr('data-pin-description', pinDescription);
+				}
+				
+				if (!$(this).data('pin-url')) $(this).attr('data-pin-url', encodeURI(document.URL));
 			});
 		}
 		
@@ -2632,7 +2610,7 @@ jQuery(document).ready(function($){
 			
 			// additional check for the autoptimize svg placeholder preventing images from load
 			// Pinterest also does not accept SVG images
-			if (pinSrc.indexOf('data:image/svg+xml') > -1) return;
+			if (pinSrc.indexOf('data:image/svg+xml') > -1 || pinSrc.indexOf('data:image/gif') > -1) return;
 
 			if (image.data('media')) pinSrc = image.data('media');
 			if (image.data('lazy-src')) pinSrc = image.data('lazy-src');
@@ -2649,10 +2627,10 @@ jQuery(document).ready(function($){
 			// if title is not genenrated it will use the Document Title
 			if (pinDescription == '') pinDescription = document.title;
 
-			var shareCmd = 'https://pinterest.com/pin/create/button/?media=' + encodeURI(pinSrc) + '&url=' + encodeURI(document.URL) + '&is_video=false' + '&description=' + encodeURIComponent(pinDescription);
+			var shareCmd = 'https://pinterest.com/pin/create/button/?url=' + encodeURI(document.URL) + '&is_video=false' + '&media=' + encodeURI(pinSrc) + '&description=' + encodeURIComponent(pinDescription);
 			
 			if (essbPinImages.legacy_share_cmd)
-				shareCmd = 'https://pinterest.com/pin/create/bookmarklet/?media=' + encodeURI(pinSrc) + '&url=' + encodeURI(document.URL) + '&title=' + encodeURIComponent(pinDescription)+'&description=' + encodeURIComponent(pinDescription);
+				shareCmd = 'https://pinterest.com/pin/create/bookmarklet/?url=' + encodeURI(document.URL) + '&media=' + encodeURI(pinSrc) + '&title=' + encodeURIComponent(pinDescription)+'&description=' + encodeURIComponent(pinDescription) + '&media=' + encodeURI(pinSrc);
 			
 			if (pinID != '') shareCmd = 'https://www.pinterest.com/pin/'+pinID+'/repin/x/';
 

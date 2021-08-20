@@ -58,6 +58,10 @@ class ESSBAmpSupport {
 	    if (function_exists('amp_is_request') && amp_is_request()) {
 	        echo '<style amp-custom>';
 	        include_once (ESSB5_AMP_PLUGIN_ROOT . 'essb-amp-styles.php');
+	        
+	        //if (class_exists('ESSBSocialFollowersCounter') || class_exists('ESSBSocialProfiles')) {
+	        //    include_once (ESSB5_AMP_PLUGIN_ROOT . 'essb-social-profiles-amp.php');
+	        //}
             echo '</style>';
 	    }
 	}
@@ -81,6 +85,10 @@ class ESSBAmpSupport {
 	        ESSB_Runtime_Cache::set('amp_running', true);
 	        
 	        wp_enqueue_style('essb-amp-styles', ESSB3_PLUGIN_URL. '/lib/modules/amp-sharing/essb-amp-styles.php', false, ESSB3_VERSION, 'all');
+	        
+	        if (class_exists('ESSBSocialFollowersCounter') || class_exists('ESSBSocialProfiles')) {
+	            wp_enqueue_style('essb-amp-styles-profiles', ESSB3_PLUGIN_URL. '/lib/modules/amp-sharing/essb-social-profiles-amp.php', false, ESSB3_VERSION, 'all');	            
+	        }
 	    }
 	}
 	
@@ -138,6 +146,11 @@ class ESSBAmpSupport {
 	
 	public function amp_load_css() {
 		include_once (ESSB5_AMP_PLUGIN_ROOT . 'essb-amp-styles.php');
+		
+		if (class_exists('ESSBSocialFollowersCounter') || class_exists('ESSBSocialProfiles')) {
+		    include_once (ESSB5_AMP_PLUGIN_ROOT . 'essb-social-profiles-amp.php');
+		}
+		
 	}
 }
 

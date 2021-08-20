@@ -37,7 +37,7 @@ class ESSB_TaxonomyOptimizations {
 	
 	public function save_meta_tags($id) {
 		
-		$wptm_edit = $_POST["wptm_sso_edit"];
+	    $wptm_edit = isset($_POST["wptm_sso_edit"]) ? $_POST["wptm_sso_edit"] : '';
 		if (isset($wptm_edit) && !empty($wptm_edit)) {
 			foreach ($this->fields as $field_id => $field_data) {
 				$inputValue = $_POST['essb_wptm_'.$field_id];

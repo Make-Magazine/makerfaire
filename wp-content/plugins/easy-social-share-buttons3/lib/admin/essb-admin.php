@@ -373,8 +373,13 @@ class ESSBAdminControler {
 		// get post types
 		$pts	 = get_post_types( array('show_ui' => true, '_builtin' => true) );
 		$cpts	 = get_post_types( array('show_ui' => true, '_builtin' => false) );
+		
+		/**
+		 * @since 7.7 Always load the customization fields
+		 */
+		$always_load_meta_editor_fields = essb_option_bool_value('always_load_meta_editor_fields');
 		foreach ( $pts as $pt ) {
-			if ((defined('ESSB3_SSO_ACTIVE') && !$turnoff_essb_optimize_box) || (in_array($pt, $display_in_types) && !$turnoff_essb_optimize_box)) {
+		    if ((defined('ESSB3_SSO_ACTIVE') && !$turnoff_essb_optimize_box) || (in_array($pt, $display_in_types) && !$turnoff_essb_optimize_box) || $always_load_meta_editor_fields) {
 				add_meta_box('essb_metabox_optmize', esc_html__('Easy Social Share Buttons: Share Options', 'essb'), 'essb_register_settings_metabox_optimize', $pt, 'normal', 'high');
 			}
 
@@ -721,13 +726,19 @@ class ESSBAdminControler {
 			return;
 		}
 		
+		if (class_exists('ESSBControlCenter') && ESSBControlCenter::is_new_version()) {
+		    // new interface
+		    wp_enqueue_style ( 'essb-admin8', ESSB3_PLUGIN_URL.'/assets/admin/essb-admin8.css' );
+		    wp_enqueue_script ( 'essb-admin8', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin8.js', array ('jquery' ), ESSB3_VERSION, true );
+		}
+		
 		add_action('admin_footer', array($this, 'generate_shortcode_settings'));
 		
 
 		wp_register_style ( 'essb-admin3-style', ESSB3_PLUGIN_URL . '/assets/css/easy-social-share-buttons.css', array (), ESSB3_VERSION );
 		wp_enqueue_style ( 'essb-admin3-style' );
 		
-		wp_register_style ( 'essbfc-admin3-style', ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/essb-followers-counter.css', array (), ESSB3_VERSION );
+		wp_register_style ( 'essbfc-admin3-style', ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/social-profiles.min.css', array (), ESSB3_VERSION );
 		wp_enqueue_style ( 'essbfc-admin3-style' );
 
 		wp_register_style ( 'essb-admin3-style-animations', ESSB3_PLUGIN_URL . '/assets/css/essb-animations.css', array (), ESSB3_VERSION );

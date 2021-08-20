@@ -5,9 +5,7 @@
  * @autor averta
  */
 
-/* import featherlight css*/
-@import url(featherlight.min.css);
-.msp-container{
+ .msp-container{
 	min-width: 920px;
 }
 
@@ -227,23 +225,36 @@
 	background-position: -101px -76px;
 }
 
-.msp-ico.msp-ico-pro {
-    width: 20px;
-    height: 25px;
-    background-position: -226px -253px;
-    vertical-align: top !important;
-    top: -3px;
+.msp-ico-desktop {
+    background-position: -114px -228px;
+	width: 16px;
+	height: 16px;
 }
 
-.msp-ico.msp-ico-testdrive {
-    width: 42px;
-    height: 25px;
-    background: url(../images/pro-features/key.png) no-repeat;
-    vertical-align: top;
-    top: 10px;
-    display: inline-block;
-    position: relative;
+.msp-btn-selected .msp-ico-desktop{
+    background-position: -170px -228px;
 }
+
+.msp-ico-tablet {
+    background-position: -137px -228px;
+    width: 13px;
+    height: 16px;
+}
+
+.msp-btn-selected .msp-ico-tablet{
+    background-position: -193px -228px;
+}
+
+.msp-ico-phone {
+    background-position: -156px -228px;
+    width: 8px;
+    height: 16px;
+}
+
+.msp-btn-selected .msp-ico-phone{
+    background-position: -212px -228px;
+}
+
 
 /*------------------------------*/
 /* Main Navigation */
@@ -262,163 +273,6 @@
 	display: block;
 	position: relative;
 }
-
-.msp-main-nav ul li.msp-upgrade-btn a {
-    background-color: #5EBE27;
-    border-bottom-color: #52A820;
-}
-
-.msp-main-nav ul li.msp-upgrade-btn a:hover {
-    background-color: #5FC524;
-}
-.msp-main-nav ul li.msp-upgrade-btn a.active:hover {
-	background-color: white;
-}
-
-.msp-metabox-row.msp-pro-tab {
-    margin: 0;
-    clear: both;
-    text-align: center;
-}
-
-.msp-pro-tab h2 {
-    margin: 40px 0 20px 0;
-    font-size: 30px;
-    color: #444;
-}
-
-.msp-pro-tab h3 {
-    text-align: center;
-    margin: 35px 0 20px;
-    font-size: 26px;
-    font-weight: 500;
-}
-
-.msp-pro-tab p {
-    font-size: 14px;
-    color: #444;
-}
-
-.msp-pro-featurs {
-    max-width: 877px;
-    margin: 0 auto;
-}
-
-.msp-pf-figure {
-    float: left;
-    margin: 20px 5px 20px 0;
-}
-
-.msp-pf-figure h6 {
-    font-size: 15px;
-    color: #444;
-    margin: 15px 0 0;
-}
-
-
-.msp-pro-tab.msp-pf-admin-section {
-    background: #e7e7e7;
-    padding: 40px 0;
-    margin-top: 20px;
-}
-
-.msp-pf-admin-ss {
-    max-width: 877px;
-    margin: 0 auto;
-}
-
-.msp-pf-admin-ss .msp-pf-figure { margin: 0 3px; position: relative;}
-.msp-pf-admin-ss .msp-pf-figure>img {
-	border: solid 1px #CDCDCD;
-}
-
-.msp-pf-thumb-ol {
-	overflow: hidden;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    background: rgba(0, 0, 0, 0.53);
-    top: 0;
-    opacity: 0;
-}
-
-.msp-pf-thumb-ol>img {
-    position: relative;
-    top: 40%;
-    -webkit-transform: scale(2) rotate(80deg);
-    -ms-transform: scale(2) rotate(80deg);
-        transform: scale(2) rotate(80deg);
-}
-
-.msp-pf-thumb-ol, .msp-pf-thumb-ol>img {
-	-webkit-transition: all 260ms ease-out;
-	transition: all 260ms ease-out;
-}
-
-.msp-pf-thumb-ol:hover{
-	opacity: 1;
-}
-
-.msp-pf-thumb-ol:hover >img {
-    -webkit-transform: scale(1) rotate(0);
-    -ms-transform: scale(1) rotate(0);
-        transform: scale(1) rotate(0);
-}
-
-
-
-a.msp-blue-btn.msp-pf-testdrive{
-	display: inline-block;
-	cursor: pointer;
-	padding: 0 25px;
-	margin-top: 20px;
-	font-weight: 800;
-	font-size: 15px;
-	line-height: 40px;
-	border-bottom: solid 4px #2a95bc;
-}
-
-a.msp-blue-btn.msp-pf-testdrive:hover {
-    background: #33AFDB;
-}
-
-.msp-pro-tab.msp-pf-join-section {
-    background: #ED686E;
-  	padding: 40px 0;
-  	margin-bottom: -20px;
-}
-
-.msp-pro-tab.msp-pf-join-section p,
-.msp-pro-tab.msp-pf-join-section h3 {
-    color: white;
-}
-
-a.msp-pf-btn {
-    display: inline-block;
-    padding: 0 20px;
-    background: white;
-    color: #6B6B6B;
-    line-height: 34px;
-    margin: 5px 3px;
-    border-bottom: solid 3px #f3f3f3;
-}
-
-a.msp-pf-btn.msp-pf-upgrade-btn {
-    background: #444;
-    color: white;
-    border-bottom-color: #222;
-}
-
-.msp-pf-btn.msp-pf-upgrade-btn:hover {
-    background: #4C4C4C;
-}
-
-a.msp-pf-btn.msp-pf-more-btn:hover {
-    background: #f2f2f2;
-    border-bottom-color: #DBDBDB;
-}
-
-
 
 .msp-main-nav ul li a>.msp-ico{
 	display: inline-block;
@@ -442,7 +296,6 @@ a.msp-pf-btn.msp-pf-more-btn:hover {
 .msp-main-nav ul li a.active .msp-ico-posts { background-position: -250px -225px; }
 .msp-main-nav ul li a.active .msp-ico-wooc { background-position: -200px -200px; }
 
-.msp-main-nav ul li a.active .msp-ico-pro { background-position: -250px -252px; }
 .msp-save-bar-placeholder {
 	height: 35px;
 }
@@ -1194,6 +1047,28 @@ button.msp-img-btn {
 	color: #444;
 }
 
+
+/* Responsive switch  */
+
+.msp-responsive-control {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.msp-responsive-btn {
+    width: 32px !important;
+    height: 32px;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+}
+
 /* Align Btns */
 
 .msp-align-btns {
@@ -1602,7 +1477,7 @@ button.msp-img-btn {
 	position: relative;
 	border: solid 1px #DEDEDE;
 	margin: 0px auto;
-	overflow: hidden;
+	/* overflow: hidden; */
 	color: black;
 }
 
@@ -1620,6 +1495,11 @@ button.msp-img-btn {
     margin-top: 20px;
     border-top: solid 1px #f1f1f1;
 }
+
+.msp-stage-container {
+    overflow: auto;
+}
+
 
 /*disable native selection*/
 .msp-slide-stage, .msp-slide-stage *{
@@ -1674,6 +1554,12 @@ button.msp-img-btn {
 	cursor: default;
 }
 
+.msp-stage-layer:hover, .msp-stage-layer:hover .sp-stage-hotspot {
+    outline: rgba(0, 0, 204,1) 1px solid;
+}
+
+
+
 .msp-stage-layer img{
 	display: block;
 }
@@ -1703,8 +1589,8 @@ button.msp-img-btn {
 .msp-stage-layer.active .msp-stage-hotspot,
 .msp-stage-layer.active {
 	-webkit-animation: mswp-pulse 1s infinite ease-out;
-	animation: mswp-pulse 1s infinite ease-out;
-	outline-width: 1px;
+	animation: mswp-pulse 2s infinite ease-out;
+	outline-width: 2px;
 	outline-style: dashed;
 }
 
@@ -1720,8 +1606,8 @@ button.msp-img-btn {
 
 
 .msp-stage-layer.active {
-    width: auto !important;
-    height: auto !important;
+    /* width: auto !important; */
+    /* height: auto !important; */
 }
 
 /* CKEditor style */
@@ -2050,7 +1936,7 @@ button.msp-savepreset {
 .msp-templte-selected {
     position: absolute;
     top: 0;
-    right: 0;
+    right: -1px;
     width: 22px;
     height: 22px;
     background: url(../images/ui-spritesheet.png) -194px -146px no-repeat #2EA2CC;
@@ -2616,10 +2502,45 @@ New pro tab styles
     color: white;
 }
 
-#upgrade_to_pro .form-table th{
-    width:0;
-    padding:0;
+/* ------------------------------------------------------------------------------ */
+/* new layout styles */
+/* .msp-main-container > .ember-view {
+    display: flex;
+    flex-wrap: wrap;
 }
-#upgrade_to_pro .form-table td{
-    padding:0;
+
+.msp-slides-list-panel {
+    width: 100%;
+}
+
+.msp-slide-settings-panel {
+    width: 360px;
+    margin-left: 20px;
+    order: 1;
+}
+
+.msp-slide-settings-panel > .msp-metabox {
+    height: calc(100% - 40px);
+}
+
+.msp-layer-settings-panel {
+    width: 360px;
+    margin-left: 20px;
+}
+
+.msp-layer-settings-panel > .msp-metabox {
+    height: calc(100% - 40px);
+}
+
+.msp-slide-editor-panel {
+    flex: 1;
+} */
+
+
+.msp-style-name {
+    text-overflow: ellipsis;
+    max-width: 130px;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
 }

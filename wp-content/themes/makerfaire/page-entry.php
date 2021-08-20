@@ -53,12 +53,14 @@ if (isset($entry->errors)) {
 
     $faire = $slug = $faireID = $show_sched = $faireShort = $faire_end = '';
     if ($form_id != '') {
-        $formSQL = "select replace(lower(faire_name),' ','-') as faire_name, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
+        $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name,  faire_location, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
                 . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
 
         $results = $wpdb->get_row($formSQL);
         if ($wpdb->num_rows > 0) {
             $faire = $slug = $results->faire_name;
+            $faire_name = $results->pretty_faire_name;
+            $faire_location_db = $results->faire_location;
             $faireShort = $results->faire;
             $faireID = $results->id;
             $show_sched = $results->show_sched;
@@ -232,7 +234,7 @@ foreach ($entry as $key => $field) {
 
 // Project Inline video
 $video = '';
-if (!empty($project_video)) {
+if (!empty($project_video) && validate_url($project_video)) {
     $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video);
     //youtube has two type of url formats we need to look for and change
     $videoID = parse_yturl($dispVideo);
@@ -247,7 +249,7 @@ if (!empty($project_video)) {
 }
 
 $video2 = '';
-if (!empty($project_video2)) {
+if (!empty($project_video2) && validate_url($project_video2)) {
     $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video2);
     //youtube has two type of url formats we need to look for and change
     $videoID = parse_yturl($dispVideo);
@@ -627,50 +629,31 @@ function handsOnMarker($entry) {
 }
 
 function getSocial($entrySocial) {
-    $socialBlock = '';
-    $socialArray = [];
-    /*
-      if (isset($entrySocial)) {
-      $entrySocial = (string) $entrySocial;
-      //error_log(print_r($entrySocial,true));
-      $socialArray = unserialize($entrySocial);
-      }
-      $socialBlock = '';
-      if (!empty($socialArray)) {
-      $socialBlock .= '<div class="social-block">';
-      foreach ($socialArray as $value) {
-      if ($value['Your Link'] != "") { // make sure there's a link to be had, then assign that link by plateform
-      if ($value['Plateform'] == "Facebook") {
-      $socialBlock .= '<a class="social-link facebook-share" href="' . $value['Your Link'] . '"><i class="fab fa-facebook-square"></i></a>';
-      }
-      if ($value['Plateform'] == "Twitter") {
-      $socialBlock .= '<a class="social-link twitter-share" href="' . $value['Your Link'] . '"><i class="fab fa-twitter"></i></a>';
-      }
-      if ($value['Plateform'] == "Instagram") {
-      $socialBlock .= '<a class="social-link instagram-share" href="' . $value['Your Link'] . '"><i class="fab fa-instagram"></i></a>';
-      }
-      if ($value['Plateform'] == "YouTube") {
-      $socialBlock .= '<a class="social-link youtube-share" href="' . $value['Your Link'] . '"><i class="fab fa-youtube-play"></i></a>';
-      }
-      if ($value['Plateform'] == "LinkedIn") {
-      $socialBlock .= '<a class="social-link linkedin-share" href="' . $value['Your Link'] . '"><i class="fab fa-linkedin-square"></i></a>';
-      }
-      if ($value['Plateform'] == "Pinterest") {
-      $socialBlock .= '<a class="social-link pinterest-share" href="' . $value['Your Link'] . '"><i class="fab fa-pinterest-square"></i></a>';
-      }
-      if ($value['Plateform'] == "Snapchat") {
-      $socialBlock .= '<a class="social-link snapchat-share" href="' . $value['Your Link'] . '"><i class="fab fa-snapchat"></i></a>';
-      }
-      if ($value['Plateform'] == "Patreon") {
-      $socialBlock .= '<a class="social-link patreon-share" href="' . $value['Your Link'] . '"><i class="fab fa-patreon"></i></a>';
-      }
-      if ($value['Plateform'] == "Other") {
-      $socialBlock .= '<a class="social-link other-share" href="' . $value['Your Link'] . '"><i class="fab fa-globe"></i></a>';
-      }
-      }
-      }
-      $socialBlock .= '</div>';
-      } */
+	$socialBlock = '';
+	
+	if (isset($entrySocial)) {
+		$entrySocial = (string) $entrySocial;
+		$socialArray = (array) unserialize($entrySocial);
+		
+		$socialBlock = '<span class="social-links">';
+		
+		//only show the first 3 social links entered
+		foreach ($socialArray as $link) {
+			//verify that the social media link provided is not blank and is a valid url
+			if ($link['Your Link'] != '' && validate_url($link['Your Link'])) {
+				//platform was misspelled as plateform in some earlier forms
+				if(isset($link['Platform'])){
+					$platform = $link['Platform'];
+				}elseif(isset($link['Plateform'])){
+					$platform = $link['Plateform'];
+				}
+				//$platform = (isset($link['Platform'])?$link['Platform']:isset($link['Plateform'])?$link['Plateform']:'');
+				$socialBlock .= '<a target="_blank" href="' . $link['Your Link'] . '">'.$platform.'</a>';
+			}
+		}
+		$socialBlock .= '</span>';
+	}
+	
     return $socialBlock;
 }
 
@@ -766,7 +749,7 @@ function displayEntryFooter() {
     global $wpdb;
     global $faireID;
     global $faire;
-
+	global $faire_name;
     global $faire_year;
     global $show_sched;
     global $backMsg;
@@ -774,34 +757,43 @@ function displayEntryFooter() {
     global $faire_map;
     global $program_guide;
     global $makerEdit;
-
+    global $faire_location_db;
+    
     $faire_location = "Bay Area";
     $faire_link = "/bay-area";
+    
     if (strpos($faire, 'new-york') !== false) {
         $faire_location = "New York";
         $faire_link = "/new-york";
     }
-    if (strpos($faire, 'virtual') !== false) {
+    if (strpos($faire, 'virtual') !== false) {   
         $faire_location = "";
         $faire_link = "";
     } else {
-        $faire_location = '';
-        $faire_link = '/' . $url_sub_path;
+    	//if a valid url is added to the db, use that otherwise assume it's a MF link
+    	if (validate_url($url_sub_path)) {
+    		$faire_location = $faire_name;
+    		$faire_link = $url_sub_path;
+    	}else{
+        	$faire_location = '';
+        	$faire_link = '/' . $url_sub_path;
+    	}
     }
-
+    
     // we're going to check if the schedule page exists
     //find the parent page
     $parentPage = get_page_by_path('/' . $url_sub_path . '/');
+    $schedulePage = '';
+    $mtmPage = '';
+    if(isset($parentPage->ID)){
+    	$args = array('parent' => $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-meet-the-makers.php');
+    	$mtmPages = get_pages($args);
+    	$mtmPage = (isset($mtmPages[0]) ? $mtmPages[0] : '');
 
-    $args = array('parent' => $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-meet-the-makers.php');
-    $mtmPages = get_pages($args);
-    $mtmPage = (isset($mtmPages[0]) ? $mtmPages[0] : '');
-
-    $args = array('parent' => $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-schedule.php');
-    $schedulePages = get_pages($args);
-
-    $schedulePage = (isset($schedulePages[0]) ? $schedulePages[0] : '');
-
+    	$args = array('parent' => $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-schedule.php');
+    	$schedulePages = get_pages($args);
+    	$schedulePage = (isset($schedulePages[0]) ? $schedulePages[0] : '');
+    }
     $return = '';
     $return .= '<div class="faireActions container">';
 
@@ -821,8 +813,8 @@ function displayEntryFooter() {
 
         if ($mtmPage && isset($mtmPage->post_status) && $mtmPage->post_status == 'publish' || $backlink == "/manage-entries/") {
             $return .= '<div class="faireAction-box">
-		            <a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
-			</div>';
+		            		<a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
+						</div>';
         }
     }
     if ($schedulePage && isset($schedulePage->post_status) && $schedulePage->post_status == 'publish') {

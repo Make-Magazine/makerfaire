@@ -5,3 +5,16 @@
 select[name="_gform_setting_trial_product"] + .gform-settings-input__container {
     display: inline-flex;
 }
+
+#gform_setting_trialPeriod .gform-settings-input__container {
+	display: inline-flex;
+	width: calc(50% - 0.5rem);
+}
+
+html:not([dir="rtl"]) #gform_setting_trialPeriod .gform-settings-input__container + .gform-settings-input__container {
+	margin-left: 0.625rem;
+}
+
+html[dir="rtl"] #gform_setting_trialPeriod .gform-settings-input__container + .gform-settings-input__container {
+	margin-right: 0.625rem;
+}

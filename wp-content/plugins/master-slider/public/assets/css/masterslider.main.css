@@ -1,6 +1,6 @@
 /*! 
  * Master Slider WordPress Lite Main CSS File
- * @date May 2017
+ * @date Feb 2021
  */
 
 
@@ -649,7 +649,7 @@
 .ms-skin-default .ms-tooltip-point {cursor: pointer;}
 .ms-skin-default .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #BBB;
 	background: white;
@@ -660,17 +660,17 @@
 
 .ms-skin-default .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: black;
 	background:rgba(0, 0, 0, 0.36);
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 .ms-skin-default .ms-tooltip {
@@ -686,14 +686,14 @@
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-default .ms-slide .ms-slide-vpbtn,
 	.ms-skin-default .ms-video-btn,
 	.ms-skin-default .ms-slide .ms-slide-vcbtn,
@@ -703,8 +703,9 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/light-skin-1-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }
+
 
 
 /**
@@ -830,7 +831,7 @@ only screen and (                min-resolution: 2dppx) {
 .ms-skin-black-1 .ms-tooltip-point {cursor: pointer;}
 .ms-skin-black-1 .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #444444;
 	background: black;
@@ -841,17 +842,17 @@ only screen and (                min-resolution: 2dppx) {
 
 .ms-skin-black-1 .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: white;
 	background: rgba(255, 255, 255, 0.9);
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 .ms-skin-black-1  .ms-tooltip {
@@ -868,14 +869,14 @@ only screen and (                min-resolution: 2dppx) {
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-black-1 .ms-slide .ms-slide-vpbtn,
 	.ms-skin-black-1 .ms-video-btn,
 	.ms-skin-black-1 .ms-slide .ms-slide-vcbtn,
@@ -884,8 +885,9 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/black-skin-1-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }
+
 
 
 /**
@@ -1050,10 +1052,10 @@ only screen and (                min-resolution: 2dppx) {
     position: absolute;
     border-radius: 15px;
 
-    animation: point-anim 1.5s infinite ;
-    -moz-animation: point-anim 1.5s infinite;
-    -webkit-animation: point-anim 1.5s infinite;
-    -o-animation: point-anim 1.5s infinite;
+    animation: ms-point-anim 1.5s infinite ;
+    -moz-animation: ms-point-anim 1.5s infinite;
+    -webkit-animation: ms-point-anim 1.5s infinite;
+    -o-animation: ms-point-anim 1.5s infinite;
 }
 
 .ms-skin-minimal .ms-tooltip {
@@ -1080,7 +1082,7 @@ only screen and (                min-resolution: 2dppx) {
 	width: 45px;
 	height: 45px;
 	background: url(skins/black-skin-2.png) black no-repeat -16px -103px;
-	border: solid 3px rgb(255, 255, 255);  
+	border: solid 3px rgb(255, 255, 255);
 	border-color: rgba(255, 255, 255, 0.4);
 	-webkit-background-clip: padding-box;
 	top: 50%;
@@ -1236,7 +1238,7 @@ only screen and (                min-resolution: 2dppx) {
 .ms-skin-black-2 .ms-tooltip-point {cursor: pointer;}
 .ms-skin-black-2 .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #BBB;
 	background: white;
@@ -1247,17 +1249,17 @@ only screen and (                min-resolution: 2dppx) {
 
 .ms-skin-black-2 .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: black;
 	background:rgba(0, 0, 0, 0.36);
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 .ms-ie7.ms-skin-black-2 .ms-tooltip-point .ms-point-border,
@@ -1278,14 +1280,14 @@ only screen and (                min-resolution: 2dppx) {
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-black-2 .ms-slide .ms-slide-vpbtn,
 	.ms-skin-black-2 .ms-video-btn,
 	.ms-skin-black-2 .ms-slide .ms-slide-vcbtn,
@@ -1294,8 +1296,9 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/black-skin-2-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }
+
 
 
 /**
@@ -1421,7 +1424,7 @@ only screen and (                min-resolution: 2dppx) {
 .ms-skin-light-2 .ms-tooltip-point {cursor: pointer;}
 .ms-skin-light-2 .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #BBB;
 	background: white;
@@ -1432,17 +1435,17 @@ only screen and (                min-resolution: 2dppx) {
 
 .ms-skin-light-2 .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: black;
 	background:rgba(0, 0, 0, 0.36);
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 .ms-skin-light-2  .ms-tooltip {
@@ -1458,14 +1461,14 @@ only screen and (                min-resolution: 2dppx) {
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-light-2 .ms-slide .ms-slide-vpbtn,
 	.ms-skin-light-2 .ms-video-btn,
 	.ms-skin-light-2 .ms-slide .ms-slide-vcbtn,
@@ -1474,7 +1477,7 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/light-skin-2-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }
 
 
@@ -1602,7 +1605,7 @@ only screen and (                min-resolution: 2dppx) {
 .ms-skin-light-3 .ms-tooltip-point {cursor: pointer;}
 .ms-skin-light-3 .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #BBB;
 	background: white;
@@ -1613,17 +1616,17 @@ only screen and (                min-resolution: 2dppx) {
 
 .ms-skin-light-3 .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: black;
 	background:rgba(0, 0, 0, 0.36);
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 .ms-skin-light-3  .ms-tooltip {
@@ -1639,14 +1642,14 @@ only screen and (                min-resolution: 2dppx) {
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-light-3 .ms-slide .ms-slide-vpbtn,
 	.ms-skin-light-3 .ms-video-btn,
 	.ms-skin-light-3 .ms-slide .ms-slide-vcbtn,
@@ -1656,7 +1659,7 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/light-skin-3-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }
 
 
@@ -1810,7 +1813,7 @@ only screen and (                min-resolution: 2dppx) {
 .ms-skin-light-4 .ms-tooltip-point {cursor: pointer;}
 .ms-skin-light-4 .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #E0E0E0;
 	background: #4b8aac;
@@ -1821,16 +1824,16 @@ only screen and (                min-resolution: 2dppx) {
 
 .ms-skin-light-4 .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: white;
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 
@@ -1847,14 +1850,14 @@ only screen and (                min-resolution: 2dppx) {
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-light-4 .ms-slide .ms-slide-vpbtn,
 	.ms-skin-light-4 .ms-video-btn,
 	.ms-skin-light-4 .ms-slide .ms-slide-vcbtn,
@@ -1863,7 +1866,7 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/light-skin-4-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }
 
 
@@ -2001,7 +2004,7 @@ only screen and (                min-resolution: 2dppx) {
 .ms-skin-light-5 .ms-tooltip-point {cursor: pointer;}
 .ms-skin-light-5 .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #BBB;
 	background: white;
@@ -2012,17 +2015,17 @@ only screen and (                min-resolution: 2dppx) {
 
 .ms-skin-light-5 .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: black;
 	background:rgba(0, 0, 0, 0.36);
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 /* In Android browser, using css animations over slider causes some crashes */
@@ -2051,14 +2054,14 @@ only screen and (                min-resolution: 2dppx) {
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-light-5 .ms-slide .ms-slide-vpbtn,
 	.ms-skin-light-5 .ms-video-btn,
 	.ms-skin-light-5 .ms-slide .ms-slide-vcbtn,
@@ -2067,7 +2070,7 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/light-skin-5-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }
 
 
@@ -2233,7 +2236,7 @@ only screen and (                min-resolution: 2dppx) {
 .ms-skin-light-6 .ms-tooltip-point {cursor: pointer;}
 .ms-skin-light-6 .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #BBB;
 	background: white;
@@ -2244,17 +2247,17 @@ only screen and (                min-resolution: 2dppx) {
 
 .ms-skin-light-6 .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: black;
 	background:rgba(0, 0, 0, 0.36);
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 .ms-ie7.ms-skin-light-6 .ms-tooltip-point .ms-point-border,
@@ -2275,14 +2278,14 @@ only screen and (                min-resolution: 2dppx) {
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-light-6 .ms-slide .ms-slide-vpbtn,
 	.ms-skin-light-6 .ms-video-btn,
 	.ms-skin-light-6 .ms-slide .ms-slide-vcbtn,
@@ -2291,7 +2294,7 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/light-skin-6-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }
 
 
@@ -2419,7 +2422,7 @@ only screen and (                min-resolution: 2dppx) {
 .ms-skin-metro .ms-tooltip-point {cursor: pointer;}
 .ms-skin-metro .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #BBB;
 	background: white;
@@ -2430,17 +2433,17 @@ only screen and (                min-resolution: 2dppx) {
 
 .ms-skin-metro .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: black;
 	background:rgba(0, 0, 0, 0.36);
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 .ms-skin-metro .ms-tooltip {
@@ -2456,14 +2459,14 @@ only screen and (                min-resolution: 2dppx) {
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-metro .ms-slide .ms-slide-vpbtn,
 	.ms-skin-metro .ms-video-btn,
 	.ms-skin-metro .ms-slide .ms-slide-vcbtn,
@@ -2473,8 +2476,9 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/metro-skin-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }
+
 
 
 /**
@@ -2600,7 +2604,7 @@ only screen and (                min-resolution: 2dppx) {
 .ms-skin-contrast .ms-tooltip-point {cursor: pointer;}
 .ms-skin-contrast .ms-tooltip-point .ms-point-center {
 	width: 12px;
-	height: 12px; 
+	height: 12px;
 	border-radius: 15px;
 	border: solid 2px #636363;
 	background: black;
@@ -2611,17 +2615,17 @@ only screen and (                min-resolution: 2dppx) {
 
 .ms-skin-contrast .ms-tooltip-point .ms-point-border {
 	width: 22px;
-	height: 22px; 
+	height: 22px;
 	background: white;
 	background: rgba(255, 255, 255, 0.99);
 	margin: -11px 0 0 -11px;
 	position: absolute;
 	border-radius: 15px;
-	
-	animation: point-anim 1.5s infinite ;
-	-moz-animation: point-anim 1.5s infinite;
-	-webkit-animation: point-anim 1.5s infinite;
-	-o-animation: point-anim 1.5s infinite;
+
+	animation: ms-point-anim 1.5s infinite ;
+	-moz-animation: ms-point-anim 1.5s infinite;
+	-webkit-animation: ms-point-anim 1.5s infinite;
+	-o-animation: ms-point-anim 1.5s infinite;
 }
 
 .ms-skin-contrast  .ms-tooltip {
@@ -2638,14 +2642,14 @@ only screen and (                min-resolution: 2dppx) {
 }
 
 /* retina */
-@media 
+@media
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (   min--moz-device-pixel-ratio: 2),
 only screen and (     -o-min-device-pixel-ratio: 2/1),
 only screen and (        min-device-pixel-ratio: 2),
 only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
-	
+
 	.ms-skin-contrast .ms-slide .ms-slide-vpbtn,
 	.ms-skin-contrast .ms-video-btn,
 	.ms-skin-contrast .ms-slide .ms-slide-vcbtn,
@@ -2655,5 +2659,5 @@ only screen and (                min-resolution: 2dppx) {
 		background-image:url(skins/contrast-skin-retina.png);
 		background-size: 152px 225px;
 	}
-	
+
 }

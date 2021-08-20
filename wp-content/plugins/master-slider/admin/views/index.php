@@ -10,9 +10,9 @@
  */
 
  $msp_nonce = wp_create_nonce( 'msp_panel' );
- $action    = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
- $slider_id = isset( $_REQUEST['slider_id'] ) ? $_REQUEST['slider_id'] : '';
- $do        = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
+ $action    = isset( $_REQUEST['action'] ) ? sanitize_text_field( $_REQUEST['action'] ) : '';
+ $slider_id = isset( $_REQUEST['slider_id'] ) ? sanitize_text_field( $_REQUEST['slider_id'] ) : '';
+ $do        = isset( $_REQUEST['action'] ) ? sanitize_text_field( $_REQUEST['action'] ) : '';
 
 
 function msp_thankyou_footer() {
@@ -32,7 +32,7 @@ add_filter( 'admin_footer_text',  'msp_thankyou_footer' );
 
 ?>
 
-<div id="msp-main-wrapper" class="wrap" data-nonce="<?php echo $msp_nonce; ?>" >
+<div id="msp-main-wrapper" class="wrap" data-nonce="<?php echo esc_attr( $msp_nonce ); ?>" >
 
 <?php
 

@@ -1,3 +1,8 @@
+### 3.5 | 2021-04-28
+- Fixed an issue with the display of the add-on icon in the form settings on Gravity Forms 2.5.
+- Removed extraneous animation from the trial input on the feed settings page.
+
+
 ### 3.4 | 2020-09-15
 - Added support for Gravity Forms 2.5
 - Updated new transactions to use /?callback=gravityformspaypal as the IPN URL. Existing transactions will continue to use /?page=gf_paypal_ipn.

@@ -392,8 +392,7 @@ class MSP_DB {
       return null;
     }
 
-    $sql = $wpdb->prepare( "SELECT * FROM {$this->sliders} WHERE ID = %d", (int)$slider_id );
-    $result = $wpdb->get_row( $sql, ARRAY_A );
+    $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->sliders} WHERE ID = %d", (int) $slider_id ), ARRAY_A );
 
     return $this->maybe_unserialize_fields($result);
   }
@@ -483,21 +482,19 @@ class MSP_DB {
     $offset_num = (int) $args['offset'];
 
     // remove limit if limit number is set to 0
-    $limit  = ( 1 > $limit_num ) ? '' : 'LIMIT '. $limit_num;
+    $limit  = ( 1 > $limit_num ) ? '' : 'LIMIT '. esc_sql( $limit_num );
 
     // remove offect if offset number is set to 0
-    $offset = ( 0 == $offset_num )? '' : 'OFFSET '. $offset_num;
+    $offset = ( 0 == $offset_num )? '' : 'OFFSET '. esc_sql( $offset_num );
 
     // add LIKE if defined
-    $like  = empty( $args['like'] ) ? '' : 'LIKE '. $args['like'];
+    $like  = empty( $args['like'] ) ? '' : 'LIKE '. esc_sql( $args['like'] );
 
     $where = empty( $args['where'] ) ? '' : 'WHERE '. $args['where'];
 
     // sanitize sort type
     $order   = strtolower( $args['order'] ) === 'desc' ? 'DESC' : 'ASC';
-    $orderby_clause = $args['orderby'] .' '. $order;
-
-        $orderby_clause = sanitize_sql_orderby( $orderby_clause );
+    $orderby_clause = $args['orderby'] .' '. sanitize_sql_orderby( $order );
 
     $sql = "
       SELECT *
@@ -611,10 +608,10 @@ class MSP_DB {
     );
 
     // check if key already exist in master slider options table
-    $sql = $wpdb->prepare( "SELECT * FROM {$this->options} WHERE option_name = %s", $option_name );
     // skip adding option if option added to options table before
-    if( $result = $wpdb->get_row( $sql, ARRAY_A ) )
+    if( $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->options} WHERE option_name = %s", $option_name ), ARRAY_A ) ){
       return false;
+    }
 
     // An array of formats to be mapped to each of the value in $data
     $format = array('%s', '%s');
@@ -652,8 +649,7 @@ class MSP_DB {
     // query the value if value is not available in cache
     if( false === $value ) {
 
-      $sql = $wpdb->prepare( "SELECT * FROM {$this->options} WHERE option_name = %s", $option_name );
-      $result = $wpdb->get_row( $sql, ARRAY_A );
+      $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->options} WHERE option_name = %s", $option_name ), ARRAY_A );
 
       $value = $result && isset( $result['option_value'] ) ? $result['option_value'] : $default_value;
 

@@ -193,13 +193,13 @@
                                         window._EPADashboard_.lb.close();
                                         setTimeout(function ()
                                         {
-                                            $nextvid.click();
+                                            $nextvid.trigger('click');
                                         }, 1000);
 
                                     }
                                     else
                                     {
-                                        $nextvid.click();
+                                        $nextvid.trigger('click');
                                     }
                                 }
                                 else
@@ -209,13 +209,13 @@
                                         window._EPADashboard_.lb.close();
                                         setTimeout(function ()
                                         {
-                                            $gallery.find('.epyt-pagebutton.epyt-next[data-pagetoken!=""][data-pagetoken]').first().click();
+                                            $gallery.find('.epyt-pagebutton.epyt-next[data-pagetoken!=""][data-pagetoken]').first().trigger('click');
                                         }, 1000);
 
                                     }
                                     else
                                     {
-                                        $gallery.find('.epyt-pagebutton.epyt-next[data-pagetoken!=""][data-pagetoken]').first().click();
+                                        $gallery.find('.epyt-pagebutton.epyt-next[data-pagetoken!=""][data-pagetoken]').first().trigger('click');
                                     }
 
                                 }
@@ -234,7 +234,7 @@
                         {
                             try
                             {
-                                if (!window._EPADashboard_.isMobile())
+                                if (true) //!window._EPADashboard_.isMobile()) //
                                 {
                                     var currentId = typeof player.getVideoData == 'function' ? player.getVideoData().video_id || window._EPADashboard_.justid(player.getVideoUrl()) : window._EPADashboard_.justid(player.getVideoUrl());
                                     var chatIframe = document.createElement('iframe');
@@ -443,7 +443,7 @@
                     {
                         if (typeof window.YT === 'undefined')
                         {
-                            if (window._EPYT_.ytapi_load !== 'never' && (window._EPYT_.ytapi_load === 'always' || $('iframe[src*="youtube.com/embed/"], iframe[data-src*="youtube.com/embed/"]').length))//, iframe[src*="youtube-nocookie.com/embed/"], iframe[data-src*="youtube-nocookie.com/embed/"]').length))
+                            if (window._EPYT_.ytapi_load !== 'never' && (window._EPYT_.ytapi_load === 'always' || $('iframe[src*="youtube.com/embed/"], iframe[data-src*="youtube.com/embed/"], .__youtube_prefs__').length))//, iframe[src*="youtube-nocookie.com/embed/"], iframe[data-src*="youtube-nocookie.com/embed/"]').length))
                             {
                                 var iapi = document.createElement('script');
                                 iapi.src = "https://www.youtube.com/iframe_api";
@@ -516,7 +516,7 @@
                                 {
                                     pagenumsalign();
                                 }, 300);
-                                $(window).resize(pagenumsalign);
+                                $(window).on('resize', pagenumsalign);
 
 
                                 $container.on('click touchend', '.epyt-gallery-list .epyt-gallery-thumb', function (e)
@@ -567,7 +567,7 @@
                                                 window._EPADashboard_.setVidSrc($iframe, vidSrc);
                                             }
 
-                                            $('.lity-close').focus();
+                                            $('.lity-close').trigger('focus');
 
                                         }
                                         else
@@ -610,7 +610,7 @@
                                     if ((code === 13) || (code === 32))
                                     {
                                         e.preventDefault();
-                                        $(this).click();
+                                        $(this).trigger('click');
 
                                     }
                                 });
@@ -689,7 +689,7 @@
 
                                             if ($container.find('.epyt-pagebutton').first().data('autonext') == '1' && !humanClick)
                                             {
-                                                $container.find('.epyt-gallery-thumb').first().click();
+                                                $container.find('.epyt-gallery-thumb').first().trigger('click');
                                             }
 
                                         })

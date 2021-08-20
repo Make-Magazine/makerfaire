@@ -32,14 +32,27 @@
 			return value || '';
 		},
 		value2html: function ( value, element ) {
+			var $el = $( element );
+			var entryLink = $el.attr( 'data-entry-link' );
 
 			if ( !value ) {
-				$( element ).empty();
+				$el.empty();
 				return;
 			}
 
-			var sourceData = $( element ).data( 'source' ),
-				choiceDisplay = $( element ).data( 'choice_display' ), selected_choice = false;
+			if ( value === 'gf_other_choice' ) {
+				var html = $el.attr( 'data-other-choice' );
+
+				if ( entryLink ) {
+					html = $( '<a />', { href: entryLink, html: html } );
+				}
+
+				$el.html( html );
+
+				return;
+			}
+			var sourceData = $el.data( 'source' ),
+				choiceDisplay = $el.data( 'choice_display' ), selected_choice = false;
 
 			$.each( sourceData, function ( index, choice ) {
 				if ( choice.hasOwnProperty( 'value' ) && choice.value === value ) {
@@ -49,18 +62,27 @@
 			} );
 
 			if ( value.length > 0 && selected_choice ) {
+				var html = '';
+
 				// `value` is default
 				switch ( choiceDisplay ) {
 					case 'label':
-						$( element ).text( selected_choice.text );
+						html = selected_choice.text;
 						break;
 					case 'value':
 					default:
-						$( element ).text( selected_choice.value );
+						html = selected_choice.value;
 						break;
 				}
+
+				if ( entryLink ) {
+					html = $( '<a />', { href: entryLink, html: html } );
+				}
+
+				$el.html( html );
+
 			} else {
-				$( element ).empty();
+				$el.empty();
 			}
 		}
 	} );

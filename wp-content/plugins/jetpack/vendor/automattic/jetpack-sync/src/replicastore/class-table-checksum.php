@@ -224,7 +224,7 @@ class Table_Checksum {
 				'range_field'     => 'term_taxonomy_id',
 				'key_fields'      => array( 'term_taxonomy_id' ),
 				'checksum_fields' => array( 'term_taxonomy_id', 'term_id', 'taxonomy', 'description', 'parent' ),
-				'filter_values'   => Sync\Settings::get_blacklisted_taxonomies_structured(),
+				'filter_values'   => Sync\Settings::get_allowed_taxonomies_structured(),
 			),
 			'links'              => $wpdb->links, // TODO describe in the array format or add exceptions.
 			'options'            => $wpdb->options, // TODO describe in the array format or add exceptions.
@@ -485,8 +485,26 @@ class Table_Checksum {
 			$parent_table_obj    = new Table_Checksum( $this->parent_table );
 			$parent_filter_query = $parent_table_obj->build_filter_statement( null, null, null, 'parent_table' );
 
+			// It is possible to have the GROUP By cause multiple rows to be returned for the same row for term_taxonomy.
+			// To get distinct entries we use a correlatd subquery back on the parent table using the primary key.
+			$additional_unique_clause = '';
+			if ( 'term_taxonomy' === $this->parent_table ) {
+				$additional_unique_clause = "
+				AND parent_table.{$parent_table_obj->range_field} = (
+				SELECT min( parent_table_cs.{$parent_table_obj->range_field} )
+			            FROM {$parent_table_obj->table} as parent_table_cs
+			            WHERE parent_table_cs.{$this->parent_join_field} = {$this->table}.{$this->table_join_field}
+			        )
+				";
+			}
+
 			$join_statement = "
-				INNER JOIN {$parent_table_obj->table} as parent_table ON ({$this->table}.{$this->table_join_field} = parent_table.{$this->parent_join_field} AND {$parent_filter_query})
+			    INNER JOIN {$parent_table_obj->table} as parent_table
+			    ON (
+			        {$this->table}.{$this->table_join_field} = parent_table.{$this->parent_join_field}
+			        AND {$parent_filter_query}
+			        $additional_unique_clause
+			    )
 			";
 		}
 
@@ -533,8 +551,21 @@ class Table_Checksum {
 
 		$this->validate_fields( array( $this->range_field ) );
 
+		// Performance :: When getting the postmeta range we do not want to filter by the whitelist.
+		// The reason for this is that it leads to a non-performant query that can timeout.
+		// Instead lets get the range based on posts regardless of meta.
+		$filter_values = $this->filter_values;
+		if ( 'postmeta' === $this->table ) {
+			$this->filter_values = null;
+		}
+
 		// `trim()` to make sure we don't add the statement if it's empty.
 		$filters = trim( $this->build_filter_statement( $range_from, $range_to ) );
+
+		// Reset Post meta filter.
+		if ( 'postmeta' === $this->table ) {
+			$this->filter_values = $filter_values;
+		}
 
 		$filter_statement = '';
 		if ( ! empty( $filters ) ) {

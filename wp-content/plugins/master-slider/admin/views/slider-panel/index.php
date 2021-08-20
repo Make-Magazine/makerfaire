@@ -19,8 +19,6 @@
     <img src="<?php echo MSWP_AVERTA_ADMIN_URL . '/views/slider-panel'; ?>/images/loading.gif">
     <?php _e('Loading data...', MSWP_TEXT_DOMAIN); ?>
 </div>
-<?php echo MSP_Notices::get_instance()->get_notice( 'ms-notice-info-panel' ); ?>
-
 <div id="msp-root" class="msp-container"> </div>
 <div id="mspHiddenEditor" style="display:none">
     <?php wp_editor( '', 'msp-hidden' , array( 'textarea_rows' => 8 ) );  ?>
@@ -48,7 +46,9 @@
             </ul>
         </nav>
         <div class="clear"></div>
+        <div class="msp-main-container">
         {{outlet}}
+        </div>
         <div class="msp-shortcode-cont">
             <span><?php _e('Shortcode :', MSWP_TEXT_DOMAIN); ?> </span>
             {{view MSPanel.SimpleCodeBlock value=shortCode width=120}}
@@ -70,17 +70,6 @@
         </div>
     {{/if}}
 </script>
-
-<?php
-    /**
-     * Display the new or previous type of pro tab paged
-     * Valid numbers for $pro_content_type are: 1, 2
-     */
-    //$pro_content_type = get_option( 'master-slider_ab_pro_feature_panel_content_type', 1 );
-    $pro_content_type = 1;
-    // ab testing check
-    if( 1 == $pro_content_type ){
-?>
 
 <script type="text/x-handlebars" id="pro-features">
     {{#meta-box title="Upgrade to Master Slider Pro Edition"}}
@@ -160,7 +149,7 @@
                         {{#tabs-panel}}
                           <ul class="tabs-content">
                             <li id="s1">
-                                <p>We cannot believe how simple is using MasterSlider! The interface is so simple, easy to use and extraordinary intuitive. The sample sliders library and auto importing feature was our dream that came true by you guys! The documentation, video tutorials and variety of options for customizing everything was totally beyond our expectation! You really nailed it!</p>
+                                <p>We cannot believe how simple is using MasterSlider! The interface is so simple, easy to use and extraordinary intuitive. The sample sliders library and auto importing feature was our dream that came true by you guys! The documentation, video tutorials and variety of options for customizing everything was totally beyond or expectation! You really nailed it!</p>
                                 <img class="msp-new-pro-avatar" src="<?php echo MSWP_AVERTA_ADMIN_URL . '/views/slider-panel'; ?>/images/pro-features/testimonials/pixflow.png" alt="">
                                 <h4>PixFlow<br><span>WordPress Theme Author</span></h4>
                             </li>
@@ -207,7 +196,7 @@
             <div class="msp-new-pro-buy">
                 <div class="msp-content-wrapper">
                     <h2>Join the <?php echo msp_get_pro_users_num(); ?> Pro users today!</h2>
-                    <a href="http://avt.li/mspnpt" target="_blank" class="msp-new-pro-btn" target="_blank">Get a License Instantly</a>
+                    <a href="http://avt.li/mstopro" target="_blank" class="msp-new-pro-btn">Upgrade to Pro</a>
                 </div>
             </div>
 
@@ -215,11 +204,8 @@
     {{/meta-box}}
 </script>
 
-<?php
-    } else {
-?>
 
-<script type="text/x-handlebars" id="pro-features">
+<script type="text/x-handlebars" id="pro-features-1">
 	{{#meta-box title="Upgrade Master Slider to PRO"}}
 		<div class="msp-metabox-row msp-pro-tab">
 			<div class="msp-pro-featurs">
@@ -309,10 +295,6 @@
 		</div>
 	{{/meta-box}}
 </script>
-
-<?php
-    }
-?>
 
 <!-- Slider Settings Page -->
 <script type="text/x-handlebars" id="settings">
@@ -497,47 +479,50 @@
 
     {{/meta-box}}
 </script>
-
 <!-- Slides Page -->
 <script type="text/x-handlebars" id="slides">
     {{#if customSlider}}
-        <!-- Slides List -->
-        {{#meta-box title="<?php _e('Slides', MSWP_TEXT_DOMAIN); ?>"}}
-        <div class="msp-metabox-row">
-         {{view MSPanel.SlideList}}
+        <div class="msp-slides-list-panel">
+            <!-- Slides List -->
+            {{#meta-box title="<?php _e('Slides', MSWP_TEXT_DOMAIN); ?>"}}
+            <div class="msp-metabox-row">
+                {{view MSPanel.SlideList}}
+            </div>
+            {{/meta-box}}
         </div>
-        {{/meta-box}}
         {{#if currentSlide}}
             {{partial "slide-settings"}}
         {{/if}}
     {{/if}}
 </script>
-
 <!-- Slide Settings Partial -->
 <script type="text/x-handlebars" id="slide-settings">
+    <div class="msp-slide-settings-panel">
+        {{#tabs-panel id="slide-settings"}}
+        <div class="msp-metabox-handle">
 
-    {{#tabs-panel id="slide-settings"}}
-    <div class="msp-metabox-handle">
+            <ul class="tabs">
+                <li class="active"><a href="#sl-bg"><?php _e('Background', MSWP_TEXT_DOMAIN); ?></a></li>
+                <li><a href="#sl-val"><?php _e('Video and Link', MSWP_TEXT_DOMAIN); ?></a></li>
+                <li><a href="#sl-inf"><?php _e('Slide Info', MSWP_TEXT_DOMAIN); ?></a></li>
+                <li><a href="#sl-misc"><?php _e('Misc', MSWP_TEXT_DOMAIN); ?></a></li>
+            </ul>
 
-        <ul class="tabs">
-            <li class="active"><a href="#sl-bg"><?php _e('Background', MSWP_TEXT_DOMAIN); ?></a></li>
-            <li><a href="#sl-val"><?php _e('Video and Link', MSWP_TEXT_DOMAIN); ?></a></li>
-            <li><a href="#sl-inf"><?php _e('Slide Info', MSWP_TEXT_DOMAIN); ?></a></li>
-            <li><a href="#sl-misc"><?php _e('Misc', MSWP_TEXT_DOMAIN); ?></a></li>
+            <div class="msp-metabox-toggle"></div>
+        </div>
+
+        <ul class="tabs-content">
+            <li id="sl-bg">{{partial 'slide-background'}}</li>
+            <li id="sl-val">{{partial 'slide-video-and-link'}}</li>
+            <li id="sl-inf">{{partial 'slide-info'}}</li>
+            <li id="sl-misc">{{partial 'slide-misc'}}</li>
         </ul>
 
-        <div class="msp-metabox-toggle"></div>
+        {{/tabs-panel}}
+
     </div>
 
-    <ul class="tabs-content">
-        <li id="sl-bg">{{partial 'slide-background'}}</li>
-        <li id="sl-val">{{partial 'slide-video-and-link'}}</li>
-        <li id="sl-inf">{{partial 'slide-info'}}</li>
-        <li id="sl-misc">{{partial 'slide-misc'}}</li>
-    </ul>
-
-    {{/tabs-panel}}
-
+    <div class="msp-slide-editor-panel">
     {{#meta-box title="Slide"}}
         <div class="msp-metabox-row">
            <div class="msp-metabox-indented">
@@ -547,6 +532,7 @@
         <hr class="msp-metabox-hr">
         {{view MSPanel.StageArea}}
     {{/meta-box}}
+    </div>
 </script>
 
 <!-- Slide Background Settings Partial -->

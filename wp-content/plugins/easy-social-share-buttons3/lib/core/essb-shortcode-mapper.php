@@ -40,7 +40,7 @@ function essb_inline_profile_bar() {
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles.php');
 		include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles-helper.php');
 		define('ESSB3_SOCIALPROFILES_ACTIVE', 'true');
-		$template_url = ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/css/essb-followers-counter.min.css';
+		$template_url = ESSBSocialProfilesHelper::get_stylesheet_url();
 		essb_resource_builder()->add_static_footer_css($template_url, 'essb-social-followers-counter');
 	}
 	

@@ -20,6 +20,26 @@ global $essb_sidebar_description;
 $essb_options = essb_options();
 
 if (class_exists('ESSBControlCenter')) {
+    
+    /**
+     * @since 8.0 - New control center
+     * ESSBControlCenter::set_new_version();
+     */
+    
+    ESSBControlCenter::register_sidebar_block('sharing', 'ti-sharethis', 'Sharing', array('social_heading', 'social', 'where', 'othersharing'));
+    ESSBControlCenter::register_sidebar_block('following', 'ti-heart', 'Follow', array('follow_heading', 'follow', 'profiles', 'natives', 'instagram', 'proof-notifications', 'othersocial'));
+    ESSBControlCenter::register_sidebar_block('subscribe', 'ti-email', 'Subscribe', array('subscribe'));
+    ESSBControlCenter::register_sidebar_block('chat', 'ti-comments', 'Chat & Contact', array('chat'));
+    ESSBControlCenter::register_sidebar_block('advanced', 'ti-settings', 'Advanced', array('additional_heading', 'advanced', 'translate', 'shortcode'));
+    ESSBControlCenter::register_sidebar_block('styles', 'ti-palette', 'Styles', array('style', 'readymade'));
+    ESSBControlCenter::register_sidebar_block('import', 'ti-reload', 'Import, Export, Reset', array('import'));
+    ESSBControlCenter::register_sidebar_block('analytics', 'ti-stats-up', 'Analytics', array('analytics_heading', 'analytics', 'conversions'));
+    ESSBControlCenter::register_sidebar_block('developer', 'ti-server', 'Analytics', array('developer'));
+    ESSBControlCenter::register_sidebar_block('about', 'ti-info-alt', 'About, Activate, Extensions', array('about', 'update', 'extensions'));
+    ESSBControlCenter::register_sidebar_block('extensions', 'ti-package', 'Extensions', array());
+    ESSBControlCenter::set_global_block('extensions');
+    
+    
 	ESSBControlCenter::register_sidebar_heading('social_heading', esc_html__('Social Sharing', 'essb'));
 	ESSBControlCenter::register_sidebar_section('social', esc_html__('Share Buttons', 'essb'), '', 'ti-sharethis');
 	ESSBControlCenter::register_sidebar_section('where', esc_html__('Where to Display', 'essb'), '', 'ti-layout');
@@ -106,7 +126,18 @@ if (class_exists('ESSBControlCenter')) {
 	}
 	
 	ESSBControlCenter::register_sidebar_heading('advanced_split', '');
-	ESSBControlCenter::register_sidebar_section('update', esc_html__('Activate', 'essb'), '', 'ti-lock', false, false, false, false, true);
+	
+	if (has_filter('essb_unset_activation_page')) {
+	    $result = false;
+	    $result = apply_filters('essb_unset_activation_page', $result);
+	    
+	    if (!$result) {
+	        ESSBControlCenter::register_sidebar_section('update', esc_html__('Activate', 'essb'), '', 'ti-lock', false, false, false, false, true);
+	    }
+	}
+	else {
+	   ESSBControlCenter::register_sidebar_section('update', esc_html__('Activate', 'essb'), '', 'ti-lock', false, false, false, false, true);
+	}
 	
 	if (essb_option_value('functions_mode') != 'light') {
 		if (!essb_option_bool_value('deactivate_stylelibrary')) {
@@ -120,6 +151,8 @@ if (class_exists('ESSBControlCenter')) {
 	}
 	
 	ESSBControlCenter::register_sidebar_section('about', esc_html__('About', 'essb'), '', 'ti-info-alt', true);
+	
+	ESSBControlCenter::deprecate_blocks_in_new_version();
 }
 
 

@@ -165,13 +165,14 @@ class A_WordPress_Routing_App extends Mixin
         if (!apply_filters('ngg_wprouting_add_post_permalink', TRUE)) {
             return $generated_url;
         }
+        global $multipage, $page;
         $base_url = $this->object->get_router()->get_base_url('home');
         $settings = C_NextGen_Settings::get_instance();
         if (strlen($generated_url) < 2) {
             $generated_url = $base_url;
         }
         $original_url = $generated_url;
-        $generated_parts = explode($settings->router_param_slug, $generated_url);
+        $generated_parts = explode($settings->get('router_param_slug', 'nggallery'), $generated_url);
         $generated_url = $generated_parts[0];
         $ngg_parameters = '/';
         if (isset($generated_parts[1])) {
@@ -186,6 +187,11 @@ class A_WordPress_Routing_App extends Mixin
         $original_url = trailingslashit($original_url);
         $post_permalink = trailingslashit($post_permalink);
         $generated_url = trailingslashit($generated_url);
+        // Ensure that /page/2/ links to /page/2/nggallery/page/4 rather than /nggallery/page/4/ when our paginated
+        // galleries are displayed on posts paginated through the page break block
+        if ($multipage && $page >= 2) {
+            $post_permalink = $post_permalink . $page;
+        }
         // We need to determine if the generated url and the post permalink TRULY differ. If they
         // differ, then we'll return post_permalink + nggallery parameters appended. Otherwise, we'll
         // just return the generated url
@@ -213,7 +219,7 @@ class A_WordPress_Routing_App extends Mixin
             // The post permalink differs from the generated url
             $post_permalink = str_replace(home_url(), $base_url, $post_permalink);
             $post_parts = $this->parse_url($post_permalink);
-            $post_parts['path'] = $this->object->join_paths($post_parts['path'], $settings->router_param_slug, $ngg_parameters);
+            $post_parts['path'] = $this->object->join_paths($post_parts['path'], $settings->get('router_param_slug', 'nggallery'), $ngg_parameters);
             $post_parts['path'] = str_replace('index.php/index.php', 'index.php', $post_parts['path']);
             // incase permalink_structure contains index.php
             if (!empty($generated_parts['query']) && empty($post_parts['query'])) {

@@ -391,7 +391,7 @@
         {
             send_to_editor('<p>[embed-vi-ad]</p>');
         });
-        $(window).resize(window._EPYTA_.widen_ytprefs_wiz);
+        $(window).on('resize', window._EPYTA_.widen_ytprefs_wiz);
 
         $(document).on('wp-before-tinymce-init.ytprefs-media_button', function (event, init)
         {
@@ -422,7 +422,7 @@
         {
             e.preventDefault();
             var tab = $(this).attr('href');
-            $('.nav-tab-wrapper a[href="' + tab + '"], .nav-tab-wrapper a[rel="' + tab + '"]').click();
+            $('.nav-tab-wrapper a[href="' + tab + '"], .nav-tab-wrapper a[rel="' + tab + '"]').trigger('click');
         });
 
 
@@ -431,7 +431,7 @@
             if (ev.which == 13)
             {
                 ev.preventDefault();
-                $(this).find('.ytprefs-ajax-form--submit:not([disabled])').click();
+                $(this).find('.ytprefs-ajax-form--submit:not([disabled])').trigger('click');
             }
         });
 
@@ -695,7 +695,7 @@
             $('.vi-how-works').on('click', function ()
             {
                 var hash = $(this).data('jump'); // jstab
-                $('.nav-tab-wrapper > a[href="' + hash + '"]').click();
+                $('.nav-tab-wrapper > a[href="' + hash + '"]').trigger('click');
             });
 
             $(document).on('click', '.wrap-vi-settings .nav-tab-wrapper a', function ()
@@ -1059,9 +1059,9 @@
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////// step 1
             var prokeyval;
             var mydomain = escape("http://" + window.location.host.toString());
-            $('#prokeysubmit').click(function ()
+            $('#prokeysubmit').on('click', function ()
             {
-                $(this).attr('disabled', 'disabled');
+                $(this).prop('disabled', true);
                 $('#prokeyfailed').hide();
                 $('#prokeysuccess').hide();
                 $('#prokeyloading').show();
@@ -1108,7 +1108,7 @@
                     complete: function ()
                     {
                         $('#prokeyloading').hide();
-                        $('#prokeysubmit').removeAttr('disabled');
+                        $('#prokeysubmit').prop('disabled', false);
                     }
 
                 });
@@ -1277,7 +1277,7 @@
     {
         if (_EPYTA_.onboarded != '1')
         {
-            $('.ytprefs-onboarding-launch').click();
+            $('.ytprefs-onboarding-launch').trigger('click');
         }
     }); // end onload
 })(window, jQuery);

@@ -58,11 +58,11 @@ final class GravityView_Inline_Edit_AJAX {
 	/**
 	 * Check if x-editable POST field `gv_inline_edit_field` is set. If it is, transform value into an x-editable field
 	 *
-	 * @todo Should we use admin-ajax.php instead?
-	 *
 	 * @since 1.0
 	 *
 	 * @return void
+	 * @todo  Should we use admin-ajax.php instead?
+	 *
 	 */
 	public function process_inline_edit_callbacks() {
 		if ( isset( $_POST['gv_inline_edit_field'] ) ) {
@@ -76,7 +76,7 @@ final class GravityView_Inline_Edit_AJAX {
 	 * @since 1.0
 	 *
 	 * @param GF_Field $field
-	 * @param int $passed_input_id ID of input
+	 * @param int      $passed_input_id ID of input
 	 *
 	 * @return bool True: input is hidden; False: input is shown
 	 */
@@ -123,6 +123,7 @@ final class GravityView_Inline_Edit_AJAX {
 		$type       = sanitize_key( $_POST['type'] );
 		$form_id    = sanitize_key( $_POST['form_id'] );
 		$field_id   = sanitize_key( $_POST['field_id'] );
+		$input_id   = sanitize_key( $_POST['input_id'] );
 		$view_id    = sanitize_key( $_POST['view_id'] );
 		$post_value = rgpost( 'value' );
 
@@ -143,45 +144,16 @@ final class GravityView_Inline_Edit_AJAX {
 				$values_to_update[ $field_id ] = $field_validate;
 				break;
 			case 'address':
-				/** @var array $value */
-				$value = $post_value;
-				if ( 1 === count( $value ) ) {//single-field mode
-					$gf_field->enableCopyValuesOption = $_POST[ 'input_' . $field_id . '_copy_values_activated' ] = true;//Ensure that validation doesn't treat this as a complete field
-				}
-
-				foreach ( $value as $input_number => $input_value ) {
-					if ( $gf_field->isRequired && empty( $input_value ) ) {
-						continue;
-					}
-					if ( $this->_is_input_hidden( $gf_field, $input_number ) ) {
-						do_action( 'gravityview_log_debug', sprintf( '%s: Value not saved; input is hidden in the form (%d.%d)', __METHOD__, $gf_field->id, $input_number ) );
-						continue;
-					}
-					$values_to_update[ $field_id . '.' . $input_number ] = $input_value;
-					$_POST[ 'input_' . $field_id . '_' . $input_number ] = $entry[ $field_id . '.' . $input_number ];//Used for GF validation
-				}
-				$field_validate = $value;
-				break;
 			case 'name':
-				/** @var array $value */
 				$value = $post_value;
 
-				if ( 1 === count( $value ) ) {//single-field mode
-					$gf_field->nameFormat = 'simple';//Ensures that validate doesn't treat this as a full field
+				foreach ( $gf_field->inputs as $index => $input ) {
+					$_id                      = $input['id'];
+					$_input = explode('.', $_id)[1];
+					$values_to_update[ $_id ] = isset( $value[ $_input ] ) ? $value[ $_input ] : $entry[ $_id ];
 				}
 
-				foreach ( $value as $input_number => $input_value ) {
-					if ( $gf_field->isRequired && empty( $input_value ) ) {
-						continue;
-					}
-					if ( $this->_is_input_hidden( $gf_field, $input_number ) ) {
-						do_action( 'gravityview_log_debug', sprintf( '%s: Value not saved; input is hidden in the form (%d.%d)', __METHOD__, $gf_field->id, $input_number ) );
-						continue;
-					}
-					$values_to_update[ $field_id . '.' . $input_number ] = $value[ $input_number ];
-					$_POST[ 'input_' . $field_id . '_' . $input_number ] = $entry[ $field_id . '.' . $input_number ];//Used for GF validation
-				}
-				$field_validate = $value;
+				$field_validate = $values_to_update;
 				break;
 			case 'number':
 				$value                         = $field_validate = $post_value;
@@ -193,26 +165,36 @@ final class GravityView_Inline_Edit_AJAX {
 				$values_to_update[ $field_id ] = $value;
 				break;
 			case 'checklist':
-				$choice_number = 1;
+				if ( (int) $input_id ) {
+					$post_value = ( is_array( $post_value ) ) ? $post_value[0] : $post_value;
 
-				$input_number = rgpost( 'inputNumber' );
+					$_id = $field_id . '.' . $input_id;
 
-				foreach ( $gf_field->choices as $choice ) {
-					if ( $choice_number % 10 === 0 ) { //hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
+					if ( $post_value !== $entry[ $_id ] ) {
+						$values_to_update[ $_id ] = $post_value;
+					}
+				} else {
+					$choice_number = 1;
+
+					foreach ( $gf_field->choices as $i => $choice ) {
+						if ( $choice_number % 10 === 0 ) { //hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
+							$choice_number ++;
+						}
+
+						$_id = $field_id . '.' . $choice_number;
+
+						if ( ! in_array( $choice['value'], $post_value ) && '' !== $entry[ $_id ] ) {
+							$values_to_update[ $_id ] = '';
+						}
+
+						if ( in_array( $choice['value'], $post_value ) && '' === $entry[ $_id ] ) {
+							$values_to_update[ $_id ] = $choice['value'];
+						}
+
 						$choice_number ++;
 					}
-					$input_id = $field_id . '.' . $choice_number;
-
-					if ( ! $input_number || ( (int) $choice_number === (int) $input_number ) ) {
-						if ( ! in_array( $choice['value'], (array) $post_value ) && isset( $entry[ $input_id ] ) ) {
-							$entry[ $input_id ] = '';
-						} else {
-							$values_to_update[ $input_id ] = $choice['value'];
-						}
-					}
-					$choice_number ++;
 				}
-				$field_validate = $post_value;
+				$field_validate = $values_to_update;
 				break;
 			case 'multiselect':
 				/** @var array $post_value */
@@ -270,13 +252,18 @@ final class GravityView_Inline_Edit_AJAX {
 				$field_validate                = intval( sanitize_text_field( $value[1] ) ) . ':' . intval( sanitize_text_field( $value[2] ) ) . ' ' . strtoupper( sanitize_text_field( $value[3] ) );
 				$values_to_update[ $field_id ] = $field_validate;
 				break;
+			case 'product':
+				$currency                      = new RGCurrency( $entry['currency'] );
+				$field_validate                = $post_value;
+				$values_to_update[ $field_id ] = $currency->to_money( $post_value );
+				break;
 			default:
 				$field_validate                = $post_value;
 				$values_to_update[ $field_id ] = $field_validate;
 				break;
 		}
 
-		$validation_response = $this->validate_field( $field_validate, $gf_field, $type );
+		$validation_response = $this->validate_field( $field_validate, $gf_field, $type, $entry );
 
 		if ( is_wp_error( $validation_response ) ) {
 			wp_send_json( $validation_response );
@@ -299,11 +286,11 @@ final class GravityView_Inline_Edit_AJAX {
 	 * @since 1.0
 	 * @since 1.1 Added $original_entry param
 	 *
-	 * @param array $entry The entry object that will be updated
-	 * @param int $form_id The Form ID that the entry is connected to
-	 * @param GF_Field|null $gf_field Field of the value that will be updated, or null if no field exists (for entry meta)
-	 * @param string $type Inline Edit type, defined in {@see GravityView_Inline_Edit_Field->inline_edit_type}
-	 * @param array $original_entry Original entry object
+	 * @param array         $entry          The entry object that will be updated
+	 * @param int           $form_id        The Form ID that the entry is connected to
+	 * @param GF_Field|null $gf_field       Field of the value that will be updated, or null if no field exists (for entry meta)
+	 * @param string        $type           Inline Edit type, defined in {@see GravityView_Inline_Edit_Field->inline_edit_type}
+	 * @param array         $original_entry Original entry object
 	 *
 	 * @return bool|WP_Error $update_result True: the entry has been updated by Gravity Forms or WP_Error if there was a problem
 	 */
@@ -314,7 +301,7 @@ final class GravityView_Inline_Edit_AJAX {
 		 */
 		$remove_hooks = apply_filters( 'gravityview-inline-edit/remove-gf-update-hooks', true );
 
-		if( $remove_hooks ) {
+		if ( $remove_hooks ) {
 			remove_all_filters( 'gform_entry_pre_update' );
 			remove_all_filters( 'gform_form_pre_update_entry' );
 			remove_all_filters( 'gform_form_pre_update_entry_' . $form_id );
@@ -328,34 +315,34 @@ final class GravityView_Inline_Edit_AJAX {
 		$update_result = GFAPI::update_entry( $entry );
 
 		/**
-		 * @filter `gravityview-inline-edit/entry-updated` Inline Edit entry updated
+		 * @filter  `gravityview-inline-edit/entry-updated` Inline Edit entry updated
 		 *
-		 * @since 1.0
-		 * @since 1.1 Added $original_entry param
+		 * @since   1.0
+		 * @since   1.1 Added $original_entry param
 		 *
 		 * @used-by GravityView_Inline_Edit::update_inline_edit_result
 		 *
-		 * @param bool|WP_Error $update_result True: the entry has been updated by Gravity Forms or WP_Error if there was a problem
-		 * @param array $entry The Entry Object that's been updated
-		 * @param int $form_id The Form ID
-		 * @param GF_Field|null $gf_field The field that's been updated, or null if no field exists (for entry meta)
-		 * @param array $original_entry Original entry, before being updated
+		 * @param bool|WP_Error $update_result  True: the entry has been updated by Gravity Forms or WP_Error if there was a problem
+		 * @param array         $entry          The Entry Object that's been updated
+		 * @param int           $form_id        The Form ID
+		 * @param GF_Field|null $gf_field       The field that's been updated, or null if no field exists (for entry meta)
+		 * @param array         $original_entry Original entry, before being updated
 		 */
 		$update_result = apply_filters( 'gravityview-inline-edit/entry-updated', $update_result, $entry, $form_id, $gf_field, $original_entry );
 
 		/**
-		 * @filter `gravityview-inline-edit/entry-updated/{$type}` Inline Edit entry updated, where $type is the GravityView_Inline_Edit_Field->inline_edit_type string
+		 * @filter  `gravityview-inline-edit/entry-updated/{$type}` Inline Edit entry updated, where $type is the GravityView_Inline_Edit_Field->inline_edit_type string
 		 *
-		 * @since 1.0
-		 * @since 1.1 Added $original_entry param
+		 * @since   1.0
+		 * @since   1.1 Added $original_entry param
 		 *
 		 * @used-by GravityView_Inline_Edit::update_inline_edit_result
 		 *
-		 * @param bool|WP_Error $update_result True: the entry has been updated by Gravity Forms or WP_Error if there was a problem
-		 * @param array $entry The Entry Object that's been updated
-		 * @param int $form_id The Form ID
-		 * @param GF_Field|null $gf_field The field that's been updated, or null if no field exists (for entry meta)
-		 * @param array $original_entry Original entry, before being updated
+		 * @param bool|WP_Error $update_result  True: the entry has been updated by Gravity Forms or WP_Error if there was a problem
+		 * @param array         $entry          The Entry Object that's been updated
+		 * @param int           $form_id        The Form ID
+		 * @param GF_Field|null $gf_field       The field that's been updated, or null if no field exists (for entry meta)
+		 * @param array         $original_entry Original entry, before being updated
 		 */
 		$update_result = apply_filters( 'gravityview-inline-edit/entry-updated/' . $type, $update_result, $entry, $form_id, $gf_field, $original_entry );
 
@@ -366,15 +353,36 @@ final class GravityView_Inline_Edit_AJAX {
 	 * Validate inputs
 	 *
 	 * @since 1.0
+	 * @since 1.4 Added $entry parameter
 	 *
-	 * @param mixed $field_value The field value to validate
-	 * @param GF_Field $gf_field The field to validate
-	 * @param int $field_id The field ID
-	 * @param string $field_type The type of the field
+	 * @param mixed    $field_value The field value to validate
+	 * @param GF_Field $gf_field    The field to validate
+	 * @param int      $field_id    The field ID
+	 * @param string   $field_type  The type of the field
+	 * @param array    $entry       Entry data
 	 *
 	 * @return boolean|WP_Error  true if all's well or WP_Error if the fields not valid
 	 */
-	private function validate_field( $field_value, $gf_field, $field_type ) {
+	private function validate_field( $field_value, $gf_field, $field_type, $entry = array() ) {
+
+		if ( $gf_field instanceof \GF_Field_Checkbox && $gf_field->isRequired && is_array( $field_value ) ) {
+
+			if ( empty( $field_value ) ) {
+				return true;
+			}
+
+			$values = array();
+
+			foreach ( $gf_field->inputs as $input ) {
+				$values[ $input['id'] ] = $entry[ $input['id'] ];
+			}
+
+			if ( empty( array_filter( array_merge( $values, $field_value ) ) ) ) {
+				return new WP_Error( strtolower( $field_type ) . '_validation_failed', __( 'This field must have at least one checked option.', 'gravityview-inline-edit' ) );
+			};
+
+			return true;
+		}
 
 		$gf_field->validate( $field_value, null );
 

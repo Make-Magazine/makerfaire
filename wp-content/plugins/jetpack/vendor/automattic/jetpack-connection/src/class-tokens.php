@@ -54,12 +54,18 @@ class Tokens {
 
 		$user_token = $this->get_access_token( $user_id ? $user_id : get_current_user_id() );
 		$blog_token = $this->get_access_token();
-		$method     = 'POST';
-		$body       = array(
+
+		// Cannot validate non-existent tokens.
+		if ( false === $user_token || false === $blog_token ) {
+			return false;
+		};
+
+		$method   = 'POST';
+		$body     = array(
 			'user_token' => $this->get_signed_token( $user_token ),
 			'blog_token' => $this->get_signed_token( $blog_token ),
 		);
-		$response   = Client::_wp_remote_request( $url, compact( 'body', 'method' ) );
+		$response = Client::_wp_remote_request( $url, compact( 'body', 'method' ) );
 
 		if ( is_wp_error( $response ) || ! wp_remote_retrieve_body( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			return false;
@@ -68,6 +74,36 @@ class Tokens {
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		return $body ? $body : false;
+	}
+
+	/**
+	 * Perform the API request to validate only the blog.
+	 *
+	 * @return bool|WP_Error Boolean with the test result. WP_Error if test cannot be performed.
+	 */
+	public function validate_blog_token() {
+		$blog_id = Jetpack_Options::get_option( 'id' );
+		if ( ! $blog_id ) {
+			return new WP_Error( 'site_not_registered', 'Site not registered.' );
+		}
+		$url = sprintf(
+			'%s/%s/v%s/%s',
+			Constants::get_constant( 'JETPACK__WPCOM_JSON_API_BASE' ),
+			'wpcom',
+			'2',
+			'sites/' . $blog_id . '/jetpack-token-health/blog'
+		);
+
+		$method   = 'GET';
+		$response = Client::remote_request( compact( 'url', 'method' ) );
+
+		if ( is_wp_error( $response ) || ! wp_remote_retrieve_body( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return false;
+		}
+
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		return is_array( $body ) && isset( $body['is_healthy'] ) && true === $body['is_healthy'];
 	}
 
 	/**
@@ -223,7 +259,7 @@ class Tokens {
 	 */
 	public function update_user_token( $user_id, $token, $is_master_user ) {
 		// Not designed for concurrent updates.
-		$user_tokens = Jetpack_Options::get_option( 'user_tokens' );
+		$user_tokens = $this->get_user_tokens();
 		if ( ! is_array( $user_tokens ) ) {
 			$user_tokens = array();
 		}
@@ -320,7 +356,7 @@ class Tokens {
 	public function get_access_token( $user_id = false, $token_key = false, $suppress_errors = true ) {
 		$possible_special_tokens = array();
 		$possible_normal_tokens  = array();
-		$user_tokens             = Jetpack_Options::get_option( 'user_tokens' );
+		$user_tokens             = $this->get_user_tokens();
 
 		if ( $user_id ) {
 			if ( ! $user_tokens ) {
@@ -438,7 +474,7 @@ class Tokens {
 	 * @return Boolean Whether the disconnection of the user was successful.
 	 */
 	public function disconnect_user( $user_id, $can_overwrite_primary_user = false ) {
-		$tokens = Jetpack_Options::get_option( 'user_tokens' );
+		$tokens = $this->get_user_tokens();
 		if ( ! $tokens ) {
 			return false;
 		}
@@ -453,7 +489,7 @@ class Tokens {
 
 		unset( $tokens[ $user_id ] );
 
-		Jetpack_Options::update_option( 'user_tokens', $tokens );
+		$this->update_user_tokens( $tokens );
 
 		return true;
 	}
@@ -462,33 +498,16 @@ class Tokens {
 	 * Returns an array of user_id's that have user tokens for communicating with wpcom.
 	 * Able to select by specific capability.
 	 *
-	 * @param string $capability The capability of the user.
+	 * @deprecated 9.9.1
+	 * @see Manager::get_connected_users
+	 *
+	 * @param string   $capability The capability of the user.
+	 * @param int|null $limit How many connected users to get before returning.
 	 * @return array Array of WP_User objects if found.
 	 */
-	public function get_connected_users( $capability = 'any' ) {
-		$connected_users = array();
-		$user_tokens     = Jetpack_Options::get_option( 'user_tokens' );
-
-		if ( ! is_array( $user_tokens ) || empty( $user_tokens ) ) {
-			return $connected_users;
-		}
-		$connected_user_ids = array_keys( $user_tokens );
-
-		if ( ! empty( $connected_user_ids ) ) {
-			foreach ( $connected_user_ids as $id ) {
-				// Check for capability.
-				if ( 'any' !== $capability && ! user_can( $id, $capability ) ) {
-					continue;
-				}
-
-				$user_data = get_userdata( $id );
-				if ( $user_data instanceof \WP_User ) {
-					$connected_users[] = $user_data;
-				}
-			}
-		}
-
-		return $connected_users;
+	public function get_connected_users( $capability = 'any', $limit = null ) {
+		_deprecated_function( __METHOD__, 'jetpack-9.9.1' );
+		return ( new Manager( 'jetpack' ) )->get_connected_users( $capability, $limit );
 	}
 
 	/**
@@ -544,5 +563,30 @@ class Tokens {
 		}
 
 		return join( ' ', $header_pieces );
+	}
+
+	/**
+	 * Gets the list of user tokens
+	 *
+	 * @since 9.9.1
+	 *
+	 * @return bool|array An array of user tokens where keys are user IDs and values are the tokens. False if no user token is found.
+	 */
+	public function get_user_tokens() {
+		return Jetpack_Options::get_option( 'user_tokens' );
+	}
+
+	/**
+	 * Updates the option that stores the user tokens
+	 *
+	 * @since 9.9.1
+	 *
+	 * @param array $tokens An array of user tokens where keys are user IDs and values are the tokens.
+	 * @return bool Was the option successfully updated?
+	 *
+	 * @todo add validate the input.
+	 */
+	public function update_user_tokens( $tokens ) {
+		return Jetpack_Options::update_option( 'user_tokens', $tokens );
 	}
 }

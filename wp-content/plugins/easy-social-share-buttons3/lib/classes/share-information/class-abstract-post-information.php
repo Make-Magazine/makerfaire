@@ -223,6 +223,14 @@ abstract class ESSB_Post_Information {
                 $title = wp_strip_all_tags($title);
             }
             
+            /**
+             * Added strip all html code - Transposh
+             * @since 7.7.4
+             */
+            if (class_exists('transposh_plugin')) {
+                $title = wp_strip_all_tags($title);
+            }
+            
             
             $title = trim( essb_core_convert_smart_quotes( htmlspecialchars_decode($title)));;
         }

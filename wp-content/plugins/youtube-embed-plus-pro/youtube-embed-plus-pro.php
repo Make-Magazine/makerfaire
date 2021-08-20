@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Pro - Gallery, Channel, Playlist, Live Stream
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Pro Plugin. Customize and embed a responsive video, YouTube channel gallery, playlist gallery, or live stream from YouTube.com
-  Version: 13.4.1.2
+  Version: 13.4.3
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
  */
@@ -21,7 +21,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '13.4.1.2';
+    public static $version = '13.4.3';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -481,7 +481,7 @@ class YouTubePrefsPro
                     {
 
 
-                        $j('.acctitle').click(function ()
+                        $j('.acctitle').on('click', function ()
                         {
                             var $acctitle = $j(this);
                             var $accbox = $j(this).parent().children('.accbox');
@@ -1133,7 +1133,7 @@ class YouTubePrefsPro
                                         <div class="clearboth" style="height: 10px;">
                                         </div>
                                         <p>
-                                            <?php _e('If you see a black/empty YouTube player, then it\'s likely that your channel is not yet approved by YouTube/Google for embedding live streams.  You can live stream and have viewers watch directly on YouTube.com, but embedding the live stream on your own site requires meeting thresholds <a href="https://www.embedplus.com/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">described here</a>.', 'text_domain'); ?>
+                                            <?php _e('If you see a black/empty YouTube player, then it likely means that you do not have any currently running or future live streams that are scheduled in your channel, so the plugin isn\'t getting any data from the YouTube API to show.  If you want to continue to use the channel based live stream embedding method, we suggest regularly scheduling one or more live streams so the player is not black/empty.', 'text_domain'); ?>
                                         </p>
                                         <div class="ep-wizard-preview-video-wrapper">
                                             <iframe src="https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>" allowfullscreen="" frameborder="0"></iframe>
@@ -2047,7 +2047,7 @@ class YouTubePrefsPro
                     {
                         $(document).ready(function ()
                         {
-                            $('.epxout').click(function ()
+                            $('.epxout').on('click', function ()
                             {
                                 $.ajax({
                                     type: "post",
@@ -2193,9 +2193,9 @@ class YouTubePrefsPro
         $_spdcab = 1;
         $_dynload = 0;
         $_dyntype = '';
-        $_defaultdims = 0;
-        $_defaultwidth = '';
-        $_defaultheight = '';
+        $_defaultdims = 1;
+        $_defaultwidth = isset($GLOBALS['content_width']) && is_numeric($GLOBALS['content_width']) ? intval($GLOBALS['content_width']) : 800;
+        $_defaultheight = intval($_defaultwidth * 9.0 / 16.0);
         $_playsinline = 0;
         $_origin = 0;
         $_pause_others = 0;
@@ -2336,9 +2336,9 @@ class YouTubePrefsPro
             $_spdcab = self::tryget($arroptions, self::$opt_spdcab, 1);
             $_dynload = self::tryget($arroptions, self::$opt_dynload, 0);
             $_dyntype = self::tryget($arroptions, self::$opt_dyntype, '');
-            $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, 0);
-            $_defaultwidth = self::tryget($arroptions, self::$opt_defaultwidth, '');
-            $_defaultheight = self::tryget($arroptions, self::$opt_defaultheight, '');
+            $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, $_defaultdims);
+            $_defaultwidth = self::tryget($arroptions, self::$opt_defaultwidth, $_defaultwidth);
+            $_defaultheight = self::tryget($arroptions, self::$opt_defaultheight, $_defaultheight);
             $_pause_others = self::tryget($arroptions, self::$opt_pause_others, $_pause_others);
             $_defaultvol = self::tryget($arroptions, self::$opt_defaultvol, 0);
             $_vol = self::tryget($arroptions, self::$opt_vol, '');
@@ -4307,8 +4307,8 @@ class YouTubePrefsPro
                             if (response.type === "success")
                             {
                                 $j(response.container).append(response.data);
-                                $j(".ytprefs_glance_button").click(widen_ytprefs_glance);
-                                $j(window).resize(widen_ytprefs_glance);
+                                $j(".ytprefs_glance_button").on('click', widen_ytprefs_glance);
+                                $j(window).on('resize', widen_ytprefs_glance);
                                 if (typeof ep_do_pointers === 'function')
                                 {
                                     //ep_do_pointers($j);
@@ -4380,7 +4380,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update allows you to specify the default language (when available) that the player will use to display closed captions, for both Free and Pro versions.";
+        $new_pointer_content .= "This update provides better gallery compatibility with cookie compliance plugins, and better oEmbed performance for both Free and Pro versions, as well as live stream chat on mobile devices for the Pro version.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -4917,7 +4917,7 @@ class YouTubePrefsPro
                                     Height: <input type="number" min="200" name="<?php echo self::$opt_defaultheight; ?>" id="<?php echo self::$opt_defaultheight; ?>" value="<?php echo esc_attr(trim($all[self::$opt_defaultheight])); ?>" class="textinput" style="width: 75px;">
                                 </span>
 
-                                <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('<b class="chktitle">Default Dimensions:</b> Make your videos have a default size. Recommended: 800 x 450 (NOTE: If responsive sizing is also turned on, your videos will be responsive but also keep this aspect ratio.). Also, according to YouTube guidelines, the player must be a minimum of 200 x 200 (or recommended 480 x 270 for 16:9 ratio players) in order to display correctly.') ?></label>
+                                <label for="<?php echo self::$opt_defaultdims; ?>"><?php _e('<b class="chktitle">Default Dimensions:</b> Make your videos have a default size, for better loading performance and consistency. Recommended: 800 x 450 (NOTE: If responsive sizing is also turned on, your videos will be responsive but also keep this aspect ratio.). Also, according to YouTube guidelines, the player must be a minimum of 200 x 200 (or recommended 480 x 270 for 16:9 ratio players) in order to display correctly.') ?></label>
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_responsive; ?>" id="<?php echo self::$opt_responsive; ?>" <?php checked($all[self::$opt_responsive], 1); ?> type="checkbox" class="checkbox">
@@ -5705,7 +5705,8 @@ class YouTubePrefsPro
                                             'litespeed-cache/litespeed-cache.php',
                                             'w3-total-cache/w3-total-cache.php',
                                             'wp-fastest-cache/wpFastestCache.php',
-                                            'wp-super-cache/wp-cache.php'
+                                            'wp-super-cache/wp-cache.php',
+                                            'wp-rocket/wp-rocket.php'
                                         );
                                         //echo sprintf('<pre>%s</pre>', print_r($all_active_plugins, true));
                                         $active_caching_plugins = array_intersect($all_active_plugins, $all_caching_plugins);
@@ -6317,7 +6318,7 @@ class YouTubePrefsPro
                     {
                         alertify.alert(alertmessage);
                         var tabSelector = '.wrap-ytprefs .nav-tab-wrapper .nav-tab[href=#' + $tabFocus.attr('id') + ']';
-                        $(tabSelector).click();
+                        $(tabSelector).trigger('click');
                     }
                     if (!$formDefaults.find('#ajax_save').is(':checked'))
                     {
@@ -6385,7 +6386,7 @@ class YouTubePrefsPro
                         {
                             window.scrollTo(0, 0);
                         }, 1);
-                        $('.wrap-ytprefs .nav-tab-wrapper a[href="' + window.location.hash + '"]').click();
+                        $('.wrap-ytprefs .nav-tab-wrapper a[href="' + window.location.hash + '"]').trigger('click');
                     }
 
                     $('#ytform').on('submit', function (e)
@@ -6393,7 +6394,7 @@ class YouTubePrefsPro
                         return window.savevalidate(e);
                     });
 
-                    jQuery('#<?php echo self::$opt_defaultdims; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_defaultdims; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6405,7 +6406,7 @@ class YouTubePrefsPro
                         }
 
                     });
-                    jQuery('#<?php echo self::$opt_gallery_customarrows; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_gallery_customarrows; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6417,7 +6418,7 @@ class YouTubePrefsPro
                         }
 
                     });
-                    jQuery('#<?php echo self::$opt_gallery_collapse_grid; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_gallery_collapse_grid; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6428,7 +6429,7 @@ class YouTubePrefsPro
                             jQuery("#box_collapse_grid").hide(500);
                         }
                     });
-                    jQuery('#<?php echo self::$opt_restrict_wizard; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_restrict_wizard; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6439,7 +6440,7 @@ class YouTubePrefsPro
                             jQuery("#box_restrict_wizard").hide(500);
                         }
                     });
-                    jQuery('#<?php echo self::$opt_gallery_channelsub; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_gallery_channelsub; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6451,7 +6452,7 @@ class YouTubePrefsPro
                         }
 
                     });
-                    jQuery('#<?php echo self::$opt_dynload; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_dynload; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6463,7 +6464,7 @@ class YouTubePrefsPro
                         }
 
                     });
-                    jQuery('#<?php echo self::$opt_spdc; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_spdc; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6474,7 +6475,7 @@ class YouTubePrefsPro
                             jQuery("#boxspdc").hide(500);
                         }
                     });
-                    jQuery('#<?php echo self::$opt_responsive; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_responsive; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6485,7 +6486,7 @@ class YouTubePrefsPro
                             jQuery("#boxresponsive_all").hide(500);
                         }
                     });
-                    jQuery('#<?php echo self::$opt_migrate; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_migrate; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6496,7 +6497,7 @@ class YouTubePrefsPro
                             jQuery("#boxmigratelist").hide(500);
                         }
                     });
-                    jQuery('#<?php echo self::$opt_nocookie; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_nocookie; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6508,7 +6509,7 @@ class YouTubePrefsPro
                         }
 
                     });
-                    jQuery('#<?php echo self::$opt_gdpr_consent; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_gdpr_consent; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6523,7 +6524,7 @@ class YouTubePrefsPro
                     jQuery('.vi-not-interested').on('click', function (e)
                     {
                         //e.preventDefault();
-                        jQuery('a.nav-tab[href="#jumpdefaults"]').click();
+                        jQuery('a.nav-tab[href="#jumpdefaults"]').trigger('click');
                         setTimeout(function ()
                         {
                             var scrollNext = jQuery('#vi_hide_monetize_tab').offset().top - 20;
@@ -6535,7 +6536,7 @@ class YouTubePrefsPro
                         }, 500);
                     });
 
-                    jQuery('#<?php echo self::$opt_schemaorg; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_schemaorg; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6546,7 +6547,7 @@ class YouTubePrefsPro
                             jQuery("#boxschemaorg").hide(500);
                         }
                     });
-                    jQuery('#<?php echo self::$opt_defaultvol; ?>').change(function ()
+                    jQuery('#<?php echo self::$opt_defaultvol; ?>').on('change', function ()
                     {
                         if (jQuery(this).is(":checked"))
                         {
@@ -6578,13 +6579,13 @@ class YouTubePrefsPro
                     }
 
 
-                    jQuery('#boxspdc input.button').click(function ()
+                    jQuery('#boxspdc input.button').on('click', function ()
                     {
                         jQuery('#clearspdcloading').show();
                         jQuery('#clearspdcfailed').hide();
                         jQuery('#clearspdcsuccess').hide();
                         $clearbutton = jQuery(this);
-                        $clearbutton.attr('disabled', 'disabled');
+                        $clearbutton.prop('disabled', true);
                         jQuery.ajax({
                             type: "post",
                             dataType: "json",
@@ -6609,23 +6610,23 @@ class YouTubePrefsPro
                             complete: function ()
                             {
                                 jQuery('#clearspdcloading').hide();
-                                $clearbutton.removeAttr('disabled');
+                                $clearbutton.prop('disabled', false);
                             }
 
                         });
                     });
-                    jQuery("#showcase-validate").click(function ()
+                    jQuery("#showcase-validate").on('click', function ()
                     {
                         window.open("<?php echo self::$epbase . "/showcase-validate.aspx?prokey=" . esc_attr(self::$alloptions[self::$opt_pro]) ?>" + "&domain=" + mydomain);
                     });
-                    jQuery('#showprokey').click(function ()
+                    jQuery('#showprokey').on('click', function ()
                     {
                         jQuery('.submitpro').show(500);
                         return false;
                     });
-                    jQuery('#prokeysubmit').click(function ()
+                    jQuery('#prokeysubmit').on('click', function ()
                     {
-                        jQuery(this).attr('disabled', 'disabled');
+                        jQuery(this).prop('disabled', true);
                         jQuery('#prokeyfailed').hide();
                         jQuery('#prokeysuccess').hide();
                         jQuery('#prokeyloading').show();
@@ -6666,7 +6667,7 @@ class YouTubePrefsPro
                             complete: function ()
                             {
                                 jQuery('#prokeyloading').hide();
-                                jQuery('#prokeysubmit').removeAttr('disabled');
+                                jQuery('#prokeysubmit').prop('disabled', false);
                             }
 
                         });
@@ -6691,7 +6692,7 @@ class YouTubePrefsPro
                             complete: function ()
                             {
                                 jQuery('#prokeyloading').hide();
-                                jQuery('#prokeysubmit').removeAttr('disabled');
+                                jQuery('#prokeysubmit').prop('disabled', false);
                             }
 
                         });
@@ -7704,8 +7705,8 @@ class YouTubePrefsPro
                     'ytapi_load' => self::$alloptions[self::$opt_ytapi_load],
                     'pause_others' => self::$alloptions[self::$opt_pause_others] == '1' ? true : false,
                     'stopMobileBuffer' => self::$alloptions[self::$opt_stop_mobile_buffer] == '1' ? true : false,
-                    'vi_active' => self::$alloptions[self::$opt_vi_active] == '1' ? true : false,
-                    'vi_js_posttypes' => self::$alloptions[self::$opt_vi_js_posttypes]
+                    'vi_active' => false, //self::$alloptions[self::$opt_vi_active] == '1' ? true : false,
+                    'vi_js_posttypes' => array() // self::$alloptions[self::$opt_vi_js_posttypes]
                 );
 
                 if (isset(self::$alloptions[self::$opt_pro]) && strlen(trim(self::$alloptions[self::$opt_pro])) > 8 && isset(self::$alloptions[self::$opt_dashpre]) && self::$alloptions[self::$opt_dashpre] == '1')
@@ -7783,9 +7784,9 @@ class YouTubePrefsPro
             wp_enqueue_style('__ytprefs_admin__vi_css', plugins_url('styles/ytvi-admin' . self::$min . '.css', __FILE__), array(), self::$version);
             wp_enqueue_script('__ytprefs_admin__alertify_js', plugins_url('scripts/alertify/alertify' . self::$min . '.js', __FILE__), array(), self::$version);
             wp_enqueue_script('__ytprefs_admin__alertify_defaults_js', plugins_url('scripts/alertify/alertify-defaults' . self::$min . '.js', __FILE__), array(), self::$version);
-            wp_enqueue_script('__ytprefs_admin__moment_js', plugins_url('scripts/chartjs/moment' . self::$min . '.js', __FILE__), array(), self::$version);
-            wp_enqueue_script('__ytprefs_admin__chart_js', plugins_url('scripts/chartjs/chart' . self::$min . '.js', __FILE__), array('__ytprefs_admin__moment_js'), self::$version);
-            wp_enqueue_script('__ytprefs_admin__chart_deferred_js', plugins_url('scripts/chartjs/chartjs-plugin-deferred' . self::$min . '.js', __FILE__), array('__ytprefs_admin__chart_js'), self::$version);
+//            wp_enqueue_script('__ytprefs_admin__moment_js', plugins_url('scripts/chartjs/moment' . self::$min . '.js', __FILE__), array(), self::$version);
+//            wp_enqueue_script('__ytprefs_admin__chart_js', plugins_url('scripts/chartjs/chart' . self::$min . '.js', __FILE__), array('__ytprefs_admin__moment_js'), self::$version);
+//            wp_enqueue_script('__ytprefs_admin__chart_deferred_js', plugins_url('scripts/chartjs/chartjs-plugin-deferred' . self::$min . '.js', __FILE__), array('__ytprefs_admin__chart_js'), self::$version);
         }
 
         wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus-pro/scripts/embedplus_mce' . self::$min . '.css', array(), self::$version);

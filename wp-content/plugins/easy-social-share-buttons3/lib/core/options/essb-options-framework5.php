@@ -660,6 +660,12 @@ class ESSBOptionsFramework {
 		$switch_submit = isset($element_options['switch_submit']) ? $element_options['switch_submit'] : '';
 		$css_class = isset($element_options['css_class']) ? $element_options['css_class'] : '';
 		
+		// @since 7.7.2 SVG icon support for the panels
+		$svg_icon = isset($element_options['svg_icon']) ? $element_options['svg_icon'] : '';
+		if ($svg_icon != '' && $icon != '') {
+		    $icon = '';
+		}
+		
 		if ($description == '') { 
 			$css_class .= ' essb-portlet-notdesc';
 		}
@@ -694,6 +700,10 @@ class ESSBOptionsFramework {
 		if ($icon != '') {
 			print '<div class="essb-portlet-heading-icon"><i class="'.esc_attr($icon).'"></i></div>';
 		}
+		else if ($svg_icon != '') {
+		    print '<div class="essb-portlet-heading-icon">'.$svg_icon.'</div>';
+		}
+		
 		print "<h3>".esc_html($title).'</h3>';
 			if ($description != '') {
 			print '<div class="essb-portlet-description">'.($description).'</div>';

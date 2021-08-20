@@ -93,17 +93,17 @@
                                 <div class="col-xs-12">
                                     <h3 class="text-capitalize" id="groupname"><?php echo $groupname; ?></h3>
                                 </div>
-                                <div class="col-xs-6">
+                                <div class="col-xs-12">
                                     <div class="entry-page-maker-img">
                                         <img class="img-responsive lazyload" src="<?php echo (!empty($groupphoto) ? legacy_get_fit_remote_image_url($groupphoto, 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
                                     </div>
                                 </div>
-                                <div class="col-xs-6">
-                                    <?php echo $groupsocial; ?>
-                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-xs-12"><p id="groupbio"><?php echo $groupbio; ?></p></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12"><?php echo $groupsocial; ?></div>
                             </div>
                         </div>
                         <?php
@@ -125,17 +125,17 @@
                                                 <span class="text-capitalize"><?php echo $maker['lastname']; ?></span>
                                             </h3>
                                         </div>
-                                        <div class="col-xs-6">
+                                        <div class="col-xs-12">
                                             <div class="entry-page-maker-img">
                                                 <img class="img-responsive lazyload" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : get_stylesheet_directory_uri() . '/images/makey-profile-default.png' ); ?>" />
                                             </div>
                                         </div>
-                                        <div class="col-xs-6">
-                                            <?php echo $maker['social']; ?>
-                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-12"><p><?php echo $maker['bio']; ?></p></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12"><?php echo $maker['social']; ?></div>
                                     </div>
                                     <?php
                                     if (!empty($maker['website'])) {

@@ -40,6 +40,17 @@ class GF_Field_Coupon extends GF_Field {
 	}
 
 	/**
+	 * Get the icon for the form editor field.
+	 *
+	 * @since 2.12
+	 *
+	 * @return string
+	 */
+	public function get_form_editor_field_icon() {
+		return gf_coupons()->is_gravityforms_supported( '2.5-beta-3.1' ) ? 'gform-icon--coupon-alt' : 'dashicons-admin-generic';
+	}
+
+	/**
 	 * Return the settings which should be available on the field in the form editor.
 	 *
 	 * @return array

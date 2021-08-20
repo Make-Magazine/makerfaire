@@ -44,6 +44,18 @@ class ESSB_OpenGraph {
 				
 			add_action( 'wp_head', array( $this, 'opengraph' ), 1 );
 		}
+		else {
+		    /**
+		     * @since 7.7.4 enable additional contact fileds
+		     */
+		    add_filter( 'user_contactmethods', array( $this, 'update_contactmethods' ), 10, 1 );
+		}
+	}
+	
+	public function update_contactmethods($contactmethods) {
+	    $contactmethods['facebook']   = esc_html__( 'Facebook profile URL', 'essb' );
+	    
+	    return $contactmethods;
 	}
 
 	/**
@@ -428,13 +440,27 @@ class ESSB_OpenGraph {
 			return;
 		}
 		
+		/**
+		 * The global setting
+		 */
 		$facebook = essb_option_value('opengraph_tags_fbauthor');
 		
 		if (is_singular()) {
+		    /**
+		     * The current post setting
+		     */
 			$onpost_fb_authorship = get_post_meta (get_the_ID(), 'essb_post_og_author', true);
 			
 			if (!empty($onpost_fb_authorship)) {
 				$facebook = $onpost_fb_authorship;
+			}
+			
+			/**
+			 * The user meta field
+			 */
+			$user_fb_authorship = get_the_author_meta('facebook');
+			if ($user_fb_authorship != '') {
+			    $facebook = $user_fb_authorship;
 			}
 		}
 		

@@ -78,16 +78,20 @@ abstract class GravityView_Inline_Edit_Render {
 	}
 
 	/**
-	 * Wrap each field value with
+	 * Wrap each field value with HTML markup/data attributes
+	 *
+	 * @since 1.4 Added $field_settings_parameter
+	 *
 	 * @param $output
 	 * @param $entry
 	 * @param string $field_id
 	 * @param GF_Field $gf_field
 	 * @param array $form
+	 * @param array $field_settings
 	 *
 	 * @return string
 	 */
-	public function wrap_field_value( $output, $entry, $field_id, $gf_field, $form = array() ) {
+	public function wrap_field_value( $output, $entry, $field_id, $gf_field, $form = array(), $field_settings = array() ) {
 		$source = null;
 
 		if ( $gf_field ) {
@@ -115,13 +119,17 @@ abstract class GravityView_Inline_Edit_Render {
 		if ( ! in_array( $input_type, $supported_fields ) ||
 		     ( 'list' === $input_type && $gf_field->enableColumns && ! empty( $input_id ) )
 		) {
+			if ( 'entry_link' == $input_type ) {
+				return $output;
+			}
+
 			return '<div class="gv-inline-editable-disabled editable-disabled">' . $output . '</div>';
 		}
 
 		// TODO: Add dynamic `title` to show the label of the field being edited
 		$wrapper_attributes = array(
-			'id'           => str_replace( '.', '-', "gv-inline-editable-{$entry['id']}-{$form['id']}-{$field_id}" ),
-			'class'        => 'gv-inline-editable-value',
+			'id'           => str_replace( '.', '-', "gv-inline-editable-field-{$entry['id']}-{$form['id']}-{$field_id}" ),
+			'class'        => "gv-inline-editable-field-{$entry['id']}-{$form['id']}-" . str_replace( '.', '-', $field_id ),
 			'data-formid'  => $form['id'],
 			'data-entryid' => $entry['id'],
 			'data-fieldid' => $gf_field_id,
@@ -130,6 +138,14 @@ abstract class GravityView_Inline_Edit_Render {
 
 		if ( ! empty( $source ) ) {
 			$wrapper_attributes['data-source'] = json_encode( $source );
+		}
+
+		if ( '1' === rgar( $field_settings, 'show_map_link' ) ) {
+			$wrapper_attributes['data-show-map-link'] = 'true';
+		}
+
+		if ( '1' === rgar( $field_settings, 'allow_html' ) ) {
+			$wrapper_attributes['data-allow-html'] = 'true';
 		}
 
 		//Disable inline edit for number fields with calculation

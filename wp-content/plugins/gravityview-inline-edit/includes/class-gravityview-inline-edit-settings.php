@@ -55,7 +55,7 @@ class GravityView_Inline_Edit_GFAddon extends GFAddOn {
      * @return bool True: Settings form is being saved and the Inline Edit setting is in the posted values (form settings)
 	 */
 	public function is_save_postback() {
-		return ! rgempty( 'gform-settings-save' ) && ( isset( $_POST['gv_inline_edit_enable'] ) || isset( $_POST['_gravityview-inline-edit_save_settings_nonce'] ) || isset( $_POST['_gaddon_setting_inline-edit-mode'] ) );
+		return ! rgempty( 'gform-settings-save' ) && ( isset( $_POST['gv_inline_edit_enable'] ) || isset( $_POST['_gravityview-inline-edit_save_settings_nonce'] ) || isset( $_POST['_gaddon_setting_inline-edit-mode'] ) || isset( $_POST['_gform_setting_inline-edit-mode'] ) );
 	}
 
 	/**
@@ -121,7 +121,7 @@ class GravityView_Inline_Edit_GFAddon extends GFAddOn {
 	 *
 	 * @return string
 	 */
-	protected function settings_edd_license( $field, $echo = true ) {
+	public function settings_edd_license( $field, $echo = true ) {
 
 		// Otherwise, it'd be output as an attribute. Didn't want to use the `gaddon_no_output_field_properties` filter
 		unset( $field['description'] );

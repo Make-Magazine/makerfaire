@@ -441,7 +441,7 @@ class GFActiveCampaign extends GFFeedAddOn {
 						'label'             => esc_html__( 'API URL', 'gravityformsactivecampaign' ),
 						'type'              => 'text',
 						'class'             => 'medium',
-						'feedback_callback' => array( $this, 'has_valid_api_url' )
+						'feedback_callback' => array( $this, 'initialize_api' )
 					),
 					array(
 						'name'              => 'api_key',
@@ -1016,7 +1016,7 @@ class GFActiveCampaign extends GFFeedAddOn {
 	 */
 	public function initialize_api() {
 
-		if ( ! is_null( $this->api ) ) {
+		if ( $this->api instanceof GF_ActiveCampaign_API ) {
 			return true;
 		}
 
@@ -1024,17 +1024,11 @@ class GFActiveCampaign extends GFFeedAddOn {
 		require_once 'includes/class-gf-activecampaign-api.php';
 
 		/* Get the plugin settings */
-		$settings = $this->get_plugin_settings();
+		$settings = $this->get_saved_plugin_settings();
 
 		/* If any of the account information fields are empty, return null. */
 		if ( rgempty( 'api_url', $settings ) || rgempty( 'api_key', $settings ) ) {
 			return null;
-		}
-
-		// Test API URL.
-		$valid_api_url = $this->has_valid_api_url( $settings['api_url'] );
-		if ( ! $valid_api_url ) {
-			return false;
 		}
 
 		$this->log_debug( __METHOD__ . "(): Validating API info for {$settings['api_url']} / {$settings['api_key']}." );
@@ -1066,35 +1060,48 @@ class GFActiveCampaign extends GFFeedAddOn {
 	}
 
 	/**
+	 * Gets the saved plugin settings, either from the database or the post request.
+	 *
+	 * This is a helper method that ensures the feedback callback receives the right value if the newest values
+	 * are posted to the settings page.
+	 *
+	 * @since 1.9
+	 *
+	 * @return array
+	 */
+	private function get_saved_plugin_settings() {
+		$prefix  = $this->is_gravityforms_supported( '2.5' ) ? '_gform_setting' : '_gaddon_setting';
+		$api_url = rgpost( "{$prefix}_api_url" );
+		$api_key = rgpost( "{$prefix}_api_key" );
+
+		$settings = $this->get_plugin_settings();
+
+		if ( ! $this->is_plugin_settings( $this->_slug ) || ! ( $api_url && $api_key ) ) {
+			return $settings;
+		}
+
+		$settings['api_url'] = esc_url( $api_url );
+		$settings['api_key'] = sanitize_title( $api_key );
+
+		return $settings;
+	}
+
+	/**
 	 * Checks if API URL is valid.
+	 *
+	 * This method has been deprecated in favor of initialize_api, as that method throws an exception and logs the
+	 * error message if the service is unable to connect. We need an API key to validate the API URL.
+	 *
+	 * @since unknown
+	 * @deprecated 1.9
 	 *
 	 * @param string $api_url The API URL.
 	 *
-	 * @return bool|null
+	 * @return null
 	 */
 	public function has_valid_api_url( $api_url ) {
-
-		/* If no API URL is set, return null. */
-		if ( rgblank( $api_url ) ) {
-			return null;
-		}
-
-		$this->log_debug( __METHOD__ . "(): Validating API url {$api_url}." );
-
-		/* Setup request URL. */
-		$request_url = untrailingslashit( $api_url ) . '/admin/api.php?api_action=list_view&api_output=json';
-
-		/* Setup API request. */
-		$response = wp_remote_get( $request_url );
-
-		/* If there was a failure on the request, return false. */
-		if ( is_a( $response, 'WP_Error' ) ) {
-			return false;
-		}
-
-		/* Return validity based on content type. */
-		return ( strpos( $response['headers']['content-type'], 'application/json' ) !== false );
-
+		_deprecated_function( __METHOD__, '1.9' );
+		return null;
 	}
 
 

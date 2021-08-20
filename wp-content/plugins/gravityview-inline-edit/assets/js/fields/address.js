@@ -38,18 +38,19 @@
 		 @method value2html(value, element)
 		 **/
 		value2html: function ( value, element ) {
+			var $el = $( element );
 
 			if ( !value ) {
-				$( element ).empty();
+				$el.empty();
 				return;
 			}
 			var value_array = $.map( value, function ( val, index ) {
 				return [ val ];
 			} );
 
-			var html = value_array.join( ' ' );
+			var html = $el.attr('data-display');
 
-			$( element ).html( '<div>' + html + '</div>' );
+			$el.html( html );
 		},
 
 		/**

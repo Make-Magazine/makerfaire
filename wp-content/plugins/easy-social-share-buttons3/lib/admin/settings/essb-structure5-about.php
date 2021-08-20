@@ -34,6 +34,18 @@ if ($current_tab == 'status') {
 // setting up the default tab if the selected is not existing in the list
 if (!isset($tabs[$active_tab])) { $active_tab = 'about'; }
 
+if (has_filter('essb_unset_activation_page')) {
+    $result = false;
+    $result = apply_filters('essb_unset_activation_page', $result);
+    
+    if ($result) {
+        unset ($tabs['activate']);
+        if ($active_tab == 'activate') { $active_tab = 'about'; }
+    }
+}
+
+
+
 ?>
 
 <!--  notifications -->

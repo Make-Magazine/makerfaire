@@ -217,7 +217,7 @@ function get_invoice_services($form, $lead) {
            *  30” x 72” Folding Banquet Table: $60.00
            */
 
-          $orderedQty = (!empty($lead) ? $lead[$qty]:0);
+          $orderedQty = (!empty($lead) && isset($lead[$qty]) ? $lead[$qty]:0);
         }else{
           //no field data
           $service_name = $field['label'];

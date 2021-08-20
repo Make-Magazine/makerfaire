@@ -19,7 +19,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 */
 	protected function should_add_hooks() {
 
-		$is_gv_admin = class_exists( 'GravityView_Admin' ) && GravityView_Admin::is_admin_page() || ( function_exists( 'gravityview' ) && gravityview()->request->is_admin() );
+		$is_gv_admin = ( class_exists( 'GravityView_Admin' ) && GravityView_Admin::is_admin_page() ) || ( function_exists( 'gravityview' ) && gravityview()->request->is_admin() );
 
 		$is_valid_nonce = isset( $_POST['nonce'] ) && ( wp_verify_nonce( $_POST['nonce'], 'gravityview_inline_edit' ) || wp_verify_nonce( $_POST['nonce'], 'gravityview_datatables_data' ) );
 
@@ -279,7 +279,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		add_filter( 'gravityview-inline-edit/wrapper-attributes', array( $this, 'filter_wrapper_attribute_add_entry_link' ), 10, 7 );
 
-		$return = parent::wrap_field_value( $output, $entry, $field_settings['id'], $gf_field, $form );
+		$return = parent::wrap_field_value( $output, $entry, $field_settings['id'], $gf_field, $form, $field_settings );
 
 		remove_filter( 'gravityview-inline-edit/wrapper-attributes', array( $this, 'filter_wrapper_attribute_add_entry_link' ), 10 );
 

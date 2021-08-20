@@ -194,14 +194,16 @@ class GFRMTHELPER {
             if($res->resource_id!=$resource_id)
               $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->resource_id, $resource_id, 'RMT Resource: id changed');
           }
-        } else { //no record found, if qty is not 0 - add
-          //insert this record
-          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
-                  . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
-          //update change report
-          $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$resource_id);
-          $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $qty, 'RMT Resource: '.$res->token.' -  qty');
-          $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $comment, 'RMT Resource: '.$res->token.' - comment');
+        } else { //no record found, if qty is a numeric value add
+        	if(is_int($qty)){
+	          //insert this record
+	          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+	                  . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
+	          //update change report
+	          $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$resource_id);
+	          $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $qty, 'RMT Resource: '.$res->token.' -  qty');
+	          $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $comment, 'RMT Resource: '.$res->token.' - comment');
+        	}
         }
       } else { //all other form types
         $cat_id = $wpdb->get_var("select resource_category_id from wp_rmt_resources where id = ".$resource_id);
@@ -228,14 +230,16 @@ class GFRMTHELPER {
             }
           }
         }else{
-          //insert this record
-          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
-                          . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
-
-          //update change report
-          $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$resource_id);
-          $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $qty, 'RMT resource: '.$res->token.' -  qty');
-          $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $comment, 'RMT resource: '.$res->token.' - comment');
+            //insert this record
+        	if(is_int($qty)){
+	          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+	                          . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
+	
+	          //update change report
+	          $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID='.$resource_id);
+	          $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $qty, 'RMT resource: '.$res->token.' -  qty');
+	          $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $comment, 'RMT resource: '.$res->token.' - comment');
+        	}
         }
       } //end check for payment form type
 
@@ -524,7 +528,7 @@ class GFRMTHELPER {
     $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
 
     $entry_id     = $lead['id'];
-		$form_id      = $form['id'];
+    $form_id      = $form['id'];
 
     //      109 - group name    151 - project name
     $project_name = (isset($lead['109'])&& trim($lead['109']) !='' ? $lead['109']:(isset($lead['151']) ? $lead['151']:''));
@@ -834,11 +838,15 @@ class GFRMTHELPER {
     $faire = $wpdb->get_var('select faire from wp_mf_faire where FIND_IN_SET ('.$form_id.', wp_mf_faire.form_ids)> 0');
 
     // NOTE (ts): For 'Workshop' update... this may be the spot where the image is set... TBD
-    if($form_type == 'Presentation') {
+    
+    //default project photo to field 22. 
+    $project_photo = (isset($lead['22']) ? $lead['22'] : '');
+    
+    //if this is a Presentation Form AND the presenter photo is set, override
+    if($form_type == 'Presentation' && isset($makerArray['presenter']['photo']) && $makerArray['presenter']['photo']) {
       $project_photo = $makerArray['presenter']['photo'];
-    }else{
-      $project_photo = (isset($lead['22']) ? $lead['22'] : '');
     }
+    
     //if the entry status is active, use field 303 as the status, else use entry status
     if($lead['status'] == 'active'){
       $status = (isset($lead['303']) ? htmlentities($lead['303']) : '');

@@ -1,14 +1,18 @@
 # Copyright (C) 2018 GravityView
 # This file is distributed under the GPLv2.
+# Translators:
+# Bo Jaeger <jaegerbo@gmail.com>, 2018
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView Inline Edit 1.2.3\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
-"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2017-06-25 23:56+0000\n"
+"Last-Translator: Bo Jaeger <jaegerbo@gmail.com>, 2018\n"
 "Language-Team: Danish (https://www.transifex.com/katzwebservices/teams/18775/da/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: da\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -35,7 +39,7 @@ msgstr ""
 
 #: class-gravityview-inline-edit.php:358
 msgid "The plugin requires Gravity Forms."
-msgstr ""
+msgstr "Dette plugin kræver Gravity Forms"
 
 #: includes/class-gravityview-inline-edit-ajax.php:119
 msgid "Gravity Forms is not active."
