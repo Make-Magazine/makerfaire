@@ -136,6 +136,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       $scope.gridOptions.data.push({});
     }
   };
+
   $scope.save = function() {
     $scope.gridApi.rowEdit.flushDirtyRows( $scope.gridApi.grid );
   };
