@@ -178,6 +178,8 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
         if(response.data.success){
           var index = $scope.gridOptions.data.indexOf(row.entity);
           $scope.gridOptions.data.splice(index, 1);
+        }else{
+	    	alert('error in update. '+response.data.message);
         }
       }, function errorCallback(response) {
         //
