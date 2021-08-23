@@ -91,7 +91,7 @@ function save_data($mysqli, $table = '', $data = '', $pkeyField = '') {
 				$query = "Update " . $table . " SET " . implode ( ",", $updateField ) . " where " . $pkeyField . '=' . $id;
 			}
 		}
-
+		
 		if ($mysqli->query ( $query )) {
 			$data ['success'] = true;
 			if (! empty ( $id ))
@@ -99,9 +99,9 @@ function save_data($mysqli, $table = '', $data = '', $pkeyField = '') {
 			else
 				$data ['message'] = 'Data inserted successfully.';
 			if (empty ( $id ))
-				$data ['id'] = ( int ) $mysqli->insert_id;
+				$data ['ID'] = ( int ) $mysqli->insert_id;
 			else
-				$data ['id'] = ( int ) $id;
+				$data ['ID'] = ( int ) $id;
 		} else {
 			throw new Exception ( $mysqli->sqlstate . ' - ' . $mysqli->error . ' query=' . $query );
 		}
@@ -221,6 +221,9 @@ function getTableData($mysqli, $table) {
 					if(isset($addlFields['type'])){
 						$vars['type'] = $addlFields ['type'];
 					}	
+					if(isset($addlFields['cellFilter'])){
+						$vars['cellFilter'] = $addlFields ['cellFilter'];
+					}
 					// add the field to the column definitions
 					$colDefFound = false;
 					foreach($data ['columnDefs'] as $key=>$columnDef){

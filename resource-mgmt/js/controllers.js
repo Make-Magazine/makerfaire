@@ -157,7 +157,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 		})
     .then(function successCallback(response) {
-        if(!rowEntity.pkey) $scope.gridOptions.data[index][pkey] = response.data.id;
+        if(!rowEntity.pkey) $scope.gridOptions.data[index][pkey] = response.data.ID;
         promise.resolve();
       }, function errorCallback(response) {
         promise.reject();

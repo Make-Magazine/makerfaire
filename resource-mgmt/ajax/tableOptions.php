@@ -59,12 +59,11 @@ $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
     'options' => array('Mini' => 'Mini', 'Featured' => 'Featured', 'Flagship' => 'Flagship', 'School' => 'School')
   );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
-		'fieldName' => 'event_start_dt', 'fieldLabel'=>'Start Date', 'type'=>'date',
-		'sort' => array('direction' => 'uiGridConstants.DESC', 'priority' => 1), 
-		'enableSorting' => true
+		'fieldName' => 'event_start_dt', 'fieldLabel'=>'Start Date'
   );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
-		'fieldName' => 'ID', 'type'=>'number'
+		'fieldName' => 'ID', 'type'=>'number',
+		'sort' => array('direction' => 'uiGridConstants.DESC', 'priority' => 1)
 );
 
 //Ribbons
