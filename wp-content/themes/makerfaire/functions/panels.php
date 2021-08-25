@@ -1621,12 +1621,20 @@ function getFaireList() {
     
     $date_start = date('Y-m-d H:i:s', time());
     
-    $faire_type = ($acf_blocks ? get_field('type') : get_sub_field('type'));
-    $past_or_future = ($acf_blocks ? get_field('past_or_future') : get_sub_field('past_or_future'));
+    $faire_type = ($acf_blocks ? implode(",", get_field('type')) : implode(",", get_sub_field('type')));
+    $past_or_future_value = ($acf_blocks ? get_field('past_or_future') : get_sub_field('past_or_future'));
+    error_log($past_or_future_value);
+    $past_or_future = "";
+    if($past_or_future_value == '>') {
+        $past_or_future = " AND event_start_dt > '{$date_start}'";
+    } else if($past_or_future_value == '<') {
+        $past_or_future = " AND event_start_dt < '{$date_start}'";
+    }
     $limit = ($acf_blocks ? get_field('number') : get_sub_field('number'));
-    
+    error_log("SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, faire_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type in({$faire_type}){$past_or_future}");
+
     $output = "<ul class='faire-list'>";
-    $rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, faire_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type {$faire_type} AND event_start_dt {$past_or_future} '{$date_start}'", OBJECT );
+    $rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, faire_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type in({$faire_type}){$past_or_future} ORDER BY event_start_dt", OBJECT );
     $i = 0;
     foreach($rows as $row){ 
         if($row->faire_image) {
