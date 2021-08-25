@@ -87,6 +87,9 @@ function dispLayout($row_layout) {
 			case 'rss_feed': // pull the rss feed shortcode with user inputs
 				$return = getRSSFeed();
 				break;
+			case 'faire_list': // return display of the list of faires
+			    $return = getFaireList();
+			    break;
         }
     }
     return $return;
@@ -1605,4 +1608,37 @@ function getRSSFeed() {
 	
 	$rss_shortcode = '[make_rss title='.urlencode($title).', feed='.$feed_tag.', moreLink='.$more_link.', number='.$number.']';
 	echo do_shortcode($rss_shortcode);
+}
+
+
+
+/* ********************************************************* */
+/* Function to show a list of faires of the type entered     */
+/* ********************************************************* */
+function getFaireList() {
+    GLOBAL $acf_blocks;
+    GLOBAL $wpdb;
+    
+    $date_start = date('Y-m-d H:i:s', time());
+    
+    $faire_type = ($acf_blocks ? get_field('type') : get_sub_field('type'));
+    $past_or_future = ($acf_blocks ? get_field('past_or_future') : get_sub_field('past_or_future'));
+    $limit = ($acf_blocks ? get_field('number') : get_sub_field('number'));
+    
+    $output = "<ul class='faire-list'>";
+    $rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, faire_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type {$faire_type} AND event_start_dt {$past_or_future} '{$date_start}'", OBJECT );
+    $i = 0;
+    foreach($rows as $row){ 
+        if($row->faire_image) {
+            $name = isset($row->faire_nicename) ? $row->faire_nicename : $row->faire_name;
+            $output .= "<li><a href='$row->faire_url,'>";
+            $output .=      "<img src='$row->faire_image'>";
+            $output .=      "<p>$row->event_dt</p>";
+            $output .=      "<h3>$name</h3>";
+            $output .= "</a></li>";
+            if (++$i == $limit) break;
+        }
+    }
+    $output .= "</ul>";
+    echo($output);
 }
