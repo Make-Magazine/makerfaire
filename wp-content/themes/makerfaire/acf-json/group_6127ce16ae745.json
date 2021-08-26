@@ -1,0 +1,90 @@
+{
+    "key": "group_6127ce16ae745",
+    "title": "Call for Makers List",
+    "fields": [
+        {
+            "key": "field_6127ce34d2656",
+            "label": "Active\/Inactive",
+            "name": "activeinactive",
+            "type": "radio",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "Active": "Active",
+                "Inactive": "Inactive"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "",
+            "layout": "vertical",
+            "return_format": "value",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_6127ce68d2657",
+            "label": "How Many Featured Faires?",
+            "name": "featured_faires_number",
+            "type": "number",
+            "instructions": "Appears at the top as images, must be divisible by 3",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 3,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": 3
+        },
+        {
+            "key": "field_6127cee0d2658",
+            "label": "How Many Community Faires?",
+            "name": "community_faires_number",
+            "type": "number",
+            "instructions": "Appears underneath the featured faires as a list of links",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "min": "",
+            "max": "",
+            "step": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/cfm-list"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1629998884
+}
