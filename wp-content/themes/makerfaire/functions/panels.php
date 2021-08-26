@@ -1540,22 +1540,25 @@ function getFaireList() {
     GLOBAL $acf_blocks;
     GLOBAL $wpdb;
     
+    $date_start = date('Y-m-d H:i:s', time());
+    
     $faire_type = ($acf_blocks ? implode(",", get_field('type')) : implode(",", get_sub_field('type')));
     $past_or_future_value = ($acf_blocks ? get_field('past_or_future') : get_sub_field('past_or_future'));
-
+    
     $past_or_future = "";
     if($past_or_future_value == '>') {
-        $past_or_future = " AND event_start_dt > " . CURRENT_DATE();
+        $past_or_future = " AND event_start_dt > '" . $date_start . "'";
     } else if($past_or_future_value == '<') {
-        $past_or_future = " AND event_start_dt < " . CURRENT_DATE();
+        $past_or_future = " AND event_start_dt < '" . $date_start . "'";
     }
     $limit = ($acf_blocks ? get_field('number') : get_sub_field('number'));
-
+    
     $output = "<ul class='flex-list faire-list'>";
     $rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type in({$faire_type}){$past_or_future} ORDER BY event_start_dt", OBJECT );
     $i = 0;
-    foreach($rows as $row){ 
+    foreach($rows as $row){
         if($row->faire_image) {
+            
             $name = isset($row->faire_nicename) ? $row->faire_nicename : $row->faire_name;
             $output .= "<li><a href='$row->faire_url'>";
             $output .=      "<img src='$row->faire_image'>";
