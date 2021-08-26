@@ -12,12 +12,14 @@ function change_email_to($notification, $form, $entry) {
    	  $notification['from'] = 'webmaster@make.co';
    	  $notification['subject'] = 'Redirect Email from '.$homeurl.' sent to ' . $notification['to'] . ' - ' . $notification['subject'];   	
       if (isset($notification['bcc'])) $notification['bcc'] = '';
-   } elseif (strpos($homeurl, ':8888') !== false) {
+   } elseif (strpos($homeurl, '.local') !== false) {
       // Check for local sites
       if (defined('MF_OVERRITE_EMAIL')) {
          $notification['toType'] = 'email';
          $notification['to'] = MF_OVERRITE_EMAIL;
          if (isset($notification['bcc'])) $notification['bcc'] = '';
+      }else{
+      	$notification = array();
       }
    }
    
@@ -39,6 +41,15 @@ function change_email_for_wp($notification) {
 				'subject' => 'Redirect Email from '.$homeurl.' sent to ' . $notification['to'] . ' - ' . $notification['subject']
 		);
 		$notification['headers'][] = 'cc: ""';
+	}elseif (strpos($homeurl, '.local') !== false) {
+		// Check for local sites
+		if (defined('MF_OVERRITE_EMAIL')) {
+			$notification['toType'] = 'email';
+			$notification['to'] = MF_OVERRITE_EMAIL;
+			if (isset($notification['bcc'])) $notification['bcc'] = '';
+		}else{
+			$notification = array();
+		}
 	}
 	return ($notification);	
 } 
