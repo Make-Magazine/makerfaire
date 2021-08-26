@@ -1584,7 +1584,7 @@ function getCFMList() {
     
     $output = "<div class='cfm-list'>";
     $output .=   "<ul class='flex-list featured-cfm-list'>";
-    $featuredRows = $wpdb->get_results( "SELECT event_start_dt, event_type, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Featured' AND event_start_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT );
+    $featuredRows = $wpdb->get_results( "SELECT event_start_dt, cfm_end_dt, event_type, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Featured' AND cfm_end_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT );
     $i = 0;
     foreach($featuredRows as $row){
         if($row->cfm_image) {
@@ -1596,7 +1596,7 @@ function getCFMList() {
     }
     $output .=   "</ul>";
     $output .=   "<ul class='community-cfm-list'>";
-    $communityRows = $wpdb->get_results( "SELECT faire_name, event_start_dt, event_type, event_dt, cfm_url FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Mini' AND event_start_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT );
+    $communityRows = $wpdb->get_results( "SELECT faire_name, event_start_dt, cfm_end_dt, event_type, event_dt, cfm_url FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Mini' AND cfm_end_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT );
     $j = 0;
     foreach($communityRows as $row){
         $output .= "<li><a href='$row->cfm_url'>";
