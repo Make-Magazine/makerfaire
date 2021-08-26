@@ -417,7 +417,8 @@ function gf_collapsible_sections($form, $lead) {
 
       <div role="tabpanel" class="tab-pane"  id="ticketing">
         <div class="panel-group">';
-
+    		$return.= "EventBrite Logic is currently disabled. Please talk to Engineering to re-enable this.";
+/*
     $ticketing = entryTicketing($lead);
     if ($ticketing) {
         $return .= $ticketing;
@@ -444,7 +445,7 @@ function gf_collapsible_sections($form, $lead) {
                     I\'m sorry.  There is not an Eventbrite event set up for this faire.
                   </div>';
         }
-    }
+    }*/
     $return .= '
         </div>
       </div>

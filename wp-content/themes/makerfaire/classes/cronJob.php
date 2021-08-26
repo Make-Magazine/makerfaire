@@ -13,7 +13,7 @@ build_wp_mf_maker(); //for testing*/
 /*
  * Cron process to create MAT records for specific forms
  */
-add_action('cron_update_mfTables', 'update_mfTables',10,3);
+//add_action('cron_update_mfTables', 'update_mfTables',10,3);
 
 function update_mfTables($form,$limit=0,$start){
   error_log('updating maker tables for form '. $form.' ('.$start.', '.$limit.')');
@@ -40,7 +40,7 @@ function update_mfTables($form,$limit=0,$start){
  * It looks for accepted records on current faires and checks if tickets have been created for them.
     If they have not, it will start the process to request new tickets.
  */
-add_action('cron_eb_ticketing', 'cron_genEBtickets');
+//add_action('cron_eb_ticketing', 'cron_genEBtickets');
 
 function cron_genEBtickets(){
   global $wpdb;
