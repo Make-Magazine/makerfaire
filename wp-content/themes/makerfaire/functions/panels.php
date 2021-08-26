@@ -1540,16 +1540,14 @@ function getFaireList() {
     GLOBAL $acf_blocks;
     GLOBAL $wpdb;
     
-    $date_start = date('Y-m-d H:i:s', time());
-    
     $faire_type = ($acf_blocks ? implode(",", get_field('type')) : implode(",", get_sub_field('type')));
     $past_or_future_value = ($acf_blocks ? get_field('past_or_future') : get_sub_field('past_or_future'));
 
     $past_or_future = "";
     if($past_or_future_value == '>') {
-        $past_or_future = " AND event_start_dt > " . $date_start;
+        $past_or_future = " AND event_start_dt > " . CURRENT_DATE();
     } else if($past_or_future_value == '<') {
-        $past_or_future = " AND event_start_dt < " . $date_start;
+        $past_or_future = " AND event_start_dt < " . CURRENT_DATE();
     }
     $limit = ($acf_blocks ? get_field('number') : get_sub_field('number'));
 
