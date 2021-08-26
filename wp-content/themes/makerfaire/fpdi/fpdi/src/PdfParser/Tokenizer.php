@@ -1,19 +1,17 @@
 <?php
+
 /**
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2017 Setasign - Jan Slabon (https://www.setasign.com)
+ * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
- * @version   2.0.3
  */
 
 namespace setasign\Fpdi\PdfParser;
 
 /**
  * A tokenizer class.
- *
- * @package setasign\Fpdi\PdfParser
  */
 class Tokenizer
 {
@@ -75,7 +73,7 @@ class Tokenizer
     public function getNextToken()
     {
         $token = \array_pop($this->stack);
-        if (null !== $token) {
+        if ($token !== null) {
             return $token;
         }
 
@@ -83,14 +81,8 @@ class Tokenizer
             return false;
         }
 
-        if ($byte === "\x20" ||
-            $byte === "\x0A" ||
-            $byte === "\x0D" ||
-            $byte === "\x0C" ||
-            $byte === "\x09" ||
-            $byte === "\x00"
-        ) {
-            if (false === $this->leapWhiteSpaces()) {
+        if (\in_array($byte, ["\x20", "\x0A", "\x0D", "\x0C", "\x09", "\x00"], true)) {
+            if ($this->leapWhiteSpaces() === false) {
                 return false;
             }
             $byte = $this->streamReader->readByte();

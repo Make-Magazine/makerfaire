@@ -1,16 +1,19 @@
 <?php
+
 /**
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2017 Setasign - Jan Slabon (https://www.setasign.com)
+ * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
- * @version   2.0.3
  */
 
 namespace setasign\Fpdi;
 
+use setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException;
+use setasign\Fpdi\PdfParser\Filter\FilterException;
 use setasign\Fpdi\PdfParser\PdfParser;
+use setasign\Fpdi\PdfParser\PdfParserException;
 use setasign\Fpdi\PdfParser\StreamReader;
 use setasign\Fpdi\PdfParser\Type\PdfArray;
 use setasign\Fpdi\PdfParser\Type\PdfBoolean;
@@ -25,6 +28,7 @@ use setasign\Fpdi\PdfParser\Type\PdfStream;
 use setasign\Fpdi\PdfParser\Type\PdfString;
 use setasign\Fpdi\PdfParser\Type\PdfToken;
 use setasign\Fpdi\PdfParser\Type\PdfType;
+use setasign\Fpdi\PdfParser\Type\PdfTypeException;
 use setasign\Fpdi\PdfReader\PageBoundaries;
 use setasign\Fpdi\PdfReader\PdfReader;
 use setasign\Fpdi\PdfReader\PdfReaderException;
@@ -38,8 +42,6 @@ use /* This namespace/class is used by the commercial FPDI PDF-Parser add-on. */
  *
  * This trait offers the core functionalities of FPDI. By passing them to a trait we can reuse it with e.g. TCPDF in a
  * very easy way.
- *
- * @package setasign\Fpdi
  */
 trait FpdiTrait
 {
@@ -51,9 +53,16 @@ trait FpdiTrait
     protected $readers = [];
 
     /**
+     * Instances created internally.
+     *
+     * @var array
+     */
+    protected $createdReaders = [];
+
+    /**
      * The current reader id.
      *
-     * @var string
+     * @var string|null
      */
     protected $currentReaderId;
 
@@ -79,6 +88,25 @@ trait FpdiTrait
     protected $objectsToCopy = [];
 
     /**
+     * Release resources and file handles.
+     *
+     * This method is called internally when the document is created successfully. By default it only cleans up
+     * stream reader instances which were created internally.
+     *
+     * @param bool $allReaders
+     */
+    public function cleanUp($allReaders = false)
+    {
+        $readers = $allReaders ? array_keys($this->readers) : $this->createdReaders;
+        foreach ($readers as $id) {
+            $this->readers[$id]->getParser()->getStreamReader()->cleanUp();
+            unset($this->readers[$id]);
+        }
+
+        $this->createdReaders = [];
+    }
+
+    /**
      * Set the minimal PDF version.
      *
      * @param string $pdfVersion
@@ -99,6 +127,9 @@ trait FpdiTrait
      */
     protected function getPdfParserInstance(StreamReader $streamReader)
     {
+        // note: if you get an exception here - turn off errors/warnings on not found for your autoloader.
+        // psr-4 (https://www.php-fig.org/psr/psr-4/) says: Autoloader implementations MUST NOT throw
+        // exceptions, MUST NOT raise errors of any level, and SHOULD NOT return a value.
         /** @noinspection PhpUndefinedClassInspection */
         if (\class_exists(FpdiPdfParser::class)) {
             /** @noinspection PhpUndefinedClassInspection */
@@ -121,7 +152,7 @@ trait FpdiTrait
             $id = (string) $file;
         } elseif (\is_string($file)) {
             $id = \realpath($file);
-            if (false === $id) {
+            if ($id === false) {
                 $id = $file;
             }
         } elseif (\is_object($file)) {
@@ -132,6 +163,7 @@ trait FpdiTrait
             );
         }
 
+        /** @noinspection OffsetOperationsInspection */
         if (isset($this->readers[$id])) {
             return $id;
         }
@@ -140,11 +172,13 @@ trait FpdiTrait
             $streamReader = new StreamReader($file);
         } elseif (\is_string($file)) {
             $streamReader = StreamReader::createByFile($file);
+            $this->createdReaders[] = $id;
         } else {
             $streamReader = $file;
         }
 
         $reader = new PdfReader($this->getPdfParserInstance($streamReader));
+        /** @noinspection OffsetOperationsInspection */
         $this->readers[$id] = $reader;
 
         return $id;
@@ -172,6 +206,7 @@ trait FpdiTrait
      *
      * @param string|resource|StreamReader $file Path to the file or a stream resource or a StreamReader instance.
      * @return int The page count of the PDF document.
+     * @throws PdfParserException
      */
     public function setSourceFile($file)
     {
@@ -191,8 +226,12 @@ trait FpdiTrait
      * @param string $box The page boundary to import. Default set to PageBoundaries::CROP_BOX.
      * @param bool $groupXObject Define the form XObject as a group XObject to support transparency (if used).
      * @return string A unique string identifying the imported page.
-     * @see PageBoundaries
+     * @throws CrossReferenceException
+     * @throws FilterException
+     * @throws PdfParserException
+     * @throws PdfTypeException
      * @throws PdfReaderException
+     * @see PageBoundaries
      */
     public function importPage($pageNumber, $box = PageBoundaries::CROP_BOX, $groupXObject = true)
     {
@@ -262,7 +301,7 @@ trait FpdiTrait
 
         if ($rotation !== 0) {
             $rotation *= -1;
-            $angle = $rotation * M_PI/180;
+            $angle = $rotation * M_PI / 180;
             $a = \cos($angle);
             $b = \sin($angle);
             $c = -$b;
@@ -295,42 +334,48 @@ trait FpdiTrait
         // try to use the existing content stream
         $pageDict = $page->getPageDictionary();
 
-        $contentsObject = PdfType::resolve(PdfDictionary::get($pageDict, 'Contents'), $reader->getParser(), true);
-        $contents =  PdfType::resolve($contentsObject, $reader->getParser());
+        try {
+            $contentsObject = PdfType::resolve(PdfDictionary::get($pageDict, 'Contents'), $reader->getParser(), true);
+            $contents =  PdfType::resolve($contentsObject, $reader->getParser());
 
-        // just copy the stream reference if it is only a single stream
-        if (($contentsIsStream = ($contents instanceof PdfStream))
-            || ($contents instanceof PdfArray && \count($contents->value) === 1)
-        ) {
-            if ($contentsIsStream) {
-                /**
-                 * @var PdfIndirectObject $contentsObject
-                 */
-                $stream = $contents;
+            // just copy the stream reference if it is only a single stream
+            if (
+                ($contentsIsStream = ($contents instanceof PdfStream))
+                || ($contents instanceof PdfArray && \count($contents->value) === 1)
+            ) {
+                if ($contentsIsStream) {
+                    /**
+                     * @var PdfIndirectObject $contentsObject
+                     */
+                    $stream = $contents;
+                } else {
+                    $stream = PdfType::resolve($contents->value[0], $reader->getParser());
+                }
+
+                $filter = PdfDictionary::get($stream->value, 'Filter');
+                if (!$filter instanceof PdfNull) {
+                    $dict->value['Filter'] = $filter;
+                }
+                $length = PdfType::resolve(PdfDictionary::get($stream->value, 'Length'), $reader->getParser());
+                $dict->value['Length'] = $length;
+                $stream->value = $dict;
+                // otherwise extract it from the array and re-compress the whole stream
             } else {
-                $stream = PdfType::resolve($contents->value[0], $reader->getParser());
+                $streamContent = $this->compress
+                    ? \gzcompress($page->getContentStream())
+                    : $page->getContentStream();
+
+                $dict->value['Length'] = PdfNumeric::create(\strlen($streamContent));
+                if ($this->compress) {
+                    $dict->value['Filter'] = PdfName::create('FlateDecode');
+                }
+
+                $stream = PdfStream::create($dict, $streamContent);
             }
-
-            $filter = PdfDictionary::get($stream->value, 'Filter');
-            if (!$filter instanceof PdfNull) {
-                $dict->value['Filter'] = $filter;
-            }
-            $length = PdfType::resolve(PdfDictionary::get($stream->value, 'Length'), $reader->getParser());
-            $dict->value['Length'] = $length;
-            $stream->value = $dict;
-
-        // otherwise extract it from the array and re-compress the whole stream
-        } else {
-            $streamContent = $this->compress
-                ? \gzcompress($page->getContentStream())
-                : $page->getContentStream();
-
-            $dict->value['Length'] = PdfNumeric::create(\strlen($streamContent));
-            if ($this->compress) {
-                $dict->value['Filter'] = PdfName::create('FlateDecode');
-            }
-
-            $stream = PdfStream::create($dict, $streamContent);
+        // Catch faulty pages and use an empty content stream
+        } catch (FpdiException $e) {
+            $dict->value['Length'] = PdfNumeric::create(0);
+            $stream = PdfStream::create($dict, '');
         }
 
         $this->importedPages[$pageId] = [
@@ -348,8 +393,8 @@ trait FpdiTrait
     /**
      * Draws an imported page onto the page.
      *
-     * Omit one of the size parameters (width, height) to calculate the other one automatically in view to the aspect
-     * ratio.
+     * Give only one of the size parameters (width, height) to calculate the other one automatically in view to the
+     * aspect ratio.
      *
      * @param mixed $pageId The page id
      * @param float|int|array $x The abscissa of upper-left corner. Alternatively you could use an assoc array
@@ -364,6 +409,7 @@ trait FpdiTrait
     public function useImportedPage($pageId, $x = 0, $y = 0, $width = null, $height = null, $adjustPageSize = false)
     {
         if (\is_array($x)) {
+            /** @noinspection OffsetOperationsInspection */
             unset($x['pageId']);
             \extract($x, EXTR_IF_EXISTS);
             /** @noinspection NotOptimalIfConditionsInspection */
@@ -402,8 +448,8 @@ trait FpdiTrait
     /**
      * Get the size of an imported page.
      *
-     * Omit one of the size parameters (width, height) to calculate the other one automatically in view to the aspect
-     * ratio.
+     * Give only one of the size parameters (width, height) to calculate the other one automatically in view to the
+     * aspect ratio.
      *
      * @param mixed $tpl The template id
      * @param float|int|null $width The width.
@@ -446,6 +492,7 @@ trait FpdiTrait
      * Writes a PdfType object to the resulting buffer.
      *
      * @param PdfType $value
+     * @throws PdfTypeException
      */
     protected function writePdfType(PdfType $value)
     {
@@ -455,26 +502,20 @@ trait FpdiTrait
             } else {
                 $this->_put(\rtrim(\rtrim(\sprintf('%.5F', $value->value), '0'), '.') . ' ', false);
             }
-
         } elseif ($value instanceof PdfName) {
             $this->_put('/' . $value->value . ' ', false);
-
         } elseif ($value instanceof PdfString) {
             $this->_put('(' . $value->value . ')', false);
-
         } elseif ($value instanceof PdfHexString) {
             $this->_put('<' . $value->value . '>');
-
         } elseif ($value instanceof PdfBoolean) {
             $this->_put($value->value ? 'true ' : 'false ', false);
-
         } elseif ($value instanceof PdfArray) {
             $this->_put('[', false);
             foreach ($value->value as $entry) {
                 $this->writePdfType($entry);
             }
             $this->_put(']');
-
         } elseif ($value instanceof PdfDictionary) {
             $this->_put('<<', false);
             foreach ($value->value as $name => $entry) {
@@ -482,13 +523,10 @@ trait FpdiTrait
                 $this->writePdfType($entry);
             }
             $this->_put('>>');
-
         } elseif ($value instanceof PdfToken) {
             $this->_put($value->value);
-
         } elseif ($value instanceof PdfNull) {
             $this->_put('null ');
-
         } elseif ($value instanceof PdfStream) {
             /**
              * @var $value PdfStream
@@ -497,7 +535,6 @@ trait FpdiTrait
             $this->_put('stream');
             $this->_put($value->getStream());
             $this->_put('endstream');
-
         } elseif ($value instanceof PdfIndirectObjectReference) {
             if (!isset($this->objectMap[$this->currentReaderId])) {
                 $this->objectMap[$this->currentReaderId] = [];
@@ -509,10 +546,9 @@ trait FpdiTrait
             }
 
             $this->_put($this->objectMap[$this->currentReaderId][$value->value] . ' 0 R ', false);
-
         } elseif ($value instanceof PdfIndirectObject) {
             /**
-             * @var $value PdfIndirectObject
+             * @var PdfIndirectObject $value
              */
             $n = $this->objectMap[$this->currentReaderId][$value->objectNumber];
             $this->_newobj($n);
