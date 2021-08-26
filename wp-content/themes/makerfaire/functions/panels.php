@@ -481,7 +481,7 @@ function get6ColLayout() {
         //$image = '<img height="" width="" alt="'.$imageArr['alt'].'" class="ximg-responsive" src="' . $imageArr['url'] . '" />';
         //echo $imageArr['url'];
                 
-        $imgStyle = 'style="background-image:url(' . $imageArr['url'] . ');height:' . $imageHeight . ';"';
+        $imgStyle = 'style="background-image:url(' . (isset($imageArr['url'])?$imageArr['url']:"") . ');height:' . $imageHeight . ';"';
         
         $cta_link = $data['image_cta'];
         $ctaText = $data['image_cta_text'];
@@ -590,7 +590,8 @@ function get1ColLayout() {
             the_row();
             // TODO add the URL wrapper
             $hero_image_random = get_sub_field('hero_image_random');
-            $hero_image_url = $hero_image_random["url"];
+            //echo 'the hero image url is '.$hero_image_random["url"];
+            $hero_image_url = (isset($hero_image_random["url"])?$hero_image_random["url"]:'');
 
             $image = '<div class="hero-img lazyload" data-bg="' . $hero_image_url . '"></div>';
             $cta_link = get_sub_field('image_cta');

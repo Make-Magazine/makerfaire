@@ -57,7 +57,7 @@ function gf_summary_metabox($form, $lead) {
     $makerGroupPhoto = (isset($lead['111']) ? $lead['111'] : '');
 
     $field55 = RGFormsModel::get_field($form, '55');
-    $whatareyourplansvalues = $field55['choices'];
+    $whatareyourplansvalues = (isset($field55['choices'])?$field55['choices']:'');
 
     $main_description = '';
 // Check if we are loading the public description or a short description

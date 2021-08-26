@@ -21,7 +21,7 @@ require_once( TEMPLATEPATH . '/post-types/maker.php' );
 require_once( TEMPLATEPATH . '/post-types/global-maker-faire.php' );
 
 // Markdown
-require_once( TEMPLATEPATH . '/plugins/markdown/markdown.php' );
+//require_once( TEMPLATEPATH . '/plugins/markdown/markdown.php' );
 
 // Status Board
 require_once( TEMPLATEPATH . '/plugins/status-board/status-board.php' );
