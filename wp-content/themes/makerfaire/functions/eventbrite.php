@@ -8,7 +8,7 @@ function ebAccessTokens(){
   wp_send_json($response);
   exit;
 }
-add_action('wp_ajax_ebAccessTokens', 'ebAccessTokens');
+//add_action('wp_ajax_ebAccessTokens', 'ebAccessTokens');
 
 // This function is called with ajax to update the hidden indicator for
 // the eventbrite access codes
@@ -27,7 +27,7 @@ function ebUpdateAC(){
   wp_send_json($response);
   exit;
 }
-add_action('wp_ajax_ebUpdateAC', 'ebUpdateAC');
+//add_action('wp_ajax_ebUpdateAC', 'ebUpdateAC');
 
 /* Used to generate ticket codes */
 function genEBtickets($entryID){
@@ -137,4 +137,4 @@ function genEBtickets($entryID){
   }
   return $response;
 }
-add_action( 'sidebar_entry_update', 'genEBtickets', 10, 1 );
+//add_action( 'sidebar_entry_update', 'genEBtickets', 10, 1 );
