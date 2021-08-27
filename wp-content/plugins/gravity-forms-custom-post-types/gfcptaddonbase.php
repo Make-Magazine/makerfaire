@@ -309,7 +309,7 @@ if ( ! class_exists( 'GFCPTAddonBase' ) ) {
 			$field->enableChoiceValue = true;
 		}
 
-		function load_post_type_choices( $post_type, $first_choice = '', $field ) {
+		function load_post_type_choices( $post_type, $first_choice, $field ) {
 			$posts = $this->load_posts_hierarchical( $post_type, $field->formId, $field->id );
 			if ( $first_choice === '' || $first_choice === 'First Choice' ) {
 				// if no default option is specified, dynamically create based on post type name
@@ -371,6 +371,13 @@ if ( ! class_exists( 'GFCPTAddonBase' ) ) {
 				return;
 			}
 
+			// Choices check is not sufficient in cases where choices were accidentally saved to non-choice fields.
+			if ( ! in_array( $field->get_input_type(), array( 'select', 'multiselect', 'radio', 'checkbox' ), true ) ) {
+				// This clears any choices stored on non-choice based fields due to an earlier bug in GF+CPT. See HS#25737
+				$field['choices'] = '';
+				return;
+			}
+
 			$first_choice             = rgars( $field, 'choices/0/text' );
 			$field['choices']         = $this->load_taxonomy_choices( $taxonomy, $field['type'], $first_choice, $field );
 			$field->enableChoiceValue = true;
@@ -402,7 +409,7 @@ if ( ! class_exists( 'GFCPTAddonBase' ) ) {
 		/*
 		 * Load any taxonomy terms
 		 */
-		function load_taxonomy_choices( $taxonomy, $type, $first_choice = '', $field ) {
+		function load_taxonomy_choices( $taxonomy, $type, $first_choice, $field ) {
 			$choices = array();
 
 			if ( in_array( $field->get_input_type(), gf_apply_filters( array(

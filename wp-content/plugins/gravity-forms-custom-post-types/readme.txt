@@ -81,6 +81,12 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 
 == Changelog ==
 
+= 3.1.25 =
+* Fixed PHP 8 deprecation notices about required parameters after optional parameters.
+
+= 3.1.24 =
+* Fixed an issue where taxonomy terms may be saved as choices on non-choice based fields.
+
 = 3.1.23 =
 * Fixed a compatibility issue with GF 2.5.5.4+ which converted default values to the term ID when displayed/stored.
 * Added taxonomy name (in addition to label) to Taxonomy dropdowns. Credit: @grapplerulrich
