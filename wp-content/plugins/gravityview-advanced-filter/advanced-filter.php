@@ -3,7 +3,7 @@
 Plugin Name: GravityView - Advanced Filter Extension
 Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 2.1.9
+Version: 2.1.10
 Author: GravityView
 Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
@@ -38,7 +38,7 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '2.1.9';
+		protected $_version = '2.1.10';
 
 		protected $_min_gravityview_version = '2.0';
 
@@ -140,6 +140,11 @@ HTML;
 				'type'       => 'textarea',
 				'label'      => $strings['conditional_logic_fail_output_label'],
 				'desc'       => $strings['conditional_logic_fail_output_desc'],
+				'tooltip'    => true,
+				'article'    => array(
+					'id'  => '611420b6766e8844fc34f9a3',
+					'url' => 'https://docs.gravityview.co/article/775-field-conditional-logic-doesnt-hide-empty-fields',
+				),
 				'merge_tags' => 'force',
 				'group'      => 'visibility',
 				'priority'   => 10100,
@@ -730,6 +735,17 @@ HTML;
 				case 'workflow_current_status_timestamp':
 					$filter = self::get_date_filter_value( $filter, 'U', false );
 					break;
+
+				/**
+				 * Empty multi-file upload field contains '[]' (empty JSON array) as a value
+				 *
+				 * @since 2.1.10
+				 */
+				case 'fileupload':
+					if ( $field->multipleFiles && in_array( $filter['operator'], array( 'isempty', 'isnotempty' ) ) ) {
+						$filter['value'] = '[]';
+					}
+					break;
 			}
 
 			return $filter;
@@ -1279,6 +1295,11 @@ HTML;
 							$entry_value = ( isset( $entry[ $input_id ] ) ) ? $entry[ $input_id ] : '';
 						} else if ( isset( $entry[ $filter_condition['key'] ] ) ) {
 							$entry_value = $entry[ $filter_condition['key'] ];
+						}
+
+						// Empty multi-file upload field contains '[]' (empty JSON array) as a value
+						if ( ( $field && 'fileupload' === $field->type ) && '[]' === $entry_value ) {
+							$entry_value = '';
 						}
 
 						if ( ( $field && 'date' === $field->type ) || in_array( $filter_condition['key'], array( 'date_created', 'date_updated', 'payment_date' ), true ) ) {
