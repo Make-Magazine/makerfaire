@@ -183,11 +183,11 @@ final class GravityView_Inline_Edit_AJAX {
 
 						$_id = $field_id . '.' . $choice_number;
 
-						if ( ! in_array( $choice['value'], $post_value ) && '' !== $entry[ $_id ] ) {
+						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $entry[ $_id ] ) {
 							$values_to_update[ $_id ] = '';
 						}
 
-						if ( in_array( $choice['value'], $post_value ) && '' === $entry[ $_id ] ) {
+						if ( in_array( $choice['value'], (array) $post_value ) && '' === $entry[ $_id ] ) {
 							$values_to_update[ $_id ] = $choice['value'];
 						}
 

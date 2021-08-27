@@ -3,7 +3,7 @@
  * Plugin Name: GravityView Inline Edit
  * Plugin URI:  https://gravityview.co/extensions/inline-edit/
  * Description: Edit your fields inline in Gravity Forms and GravityView.
- * Version:     1.4.2
+ * Version:     1.4.3
  * Author:      GravityView
  * Author URI:  https://gravityview.co
  * Text Domain: gravityview-inline-edit
@@ -17,7 +17,7 @@
  *
  * @since 1.0
  */
-define( 'GRAVITYVIEW_INLINE_VERSION', '1.4.2' );
+define( 'GRAVITYVIEW_INLINE_VERSION', '1.4.3' );
 
 /** @define "GRAVITYVIEW_INLINE_DIR" "./" The absolute path to the plugin directory */
 define( 'GRAVITYVIEW_INLINE_DIR', plugin_dir_path( __FILE__ ) );

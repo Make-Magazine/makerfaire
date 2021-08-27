@@ -1,7 +1,7 @@
 === Inline Edit by GravityView ===
 Tags: gravity forms
 Requires at least: 3.3
-Tested up to: 5.7.2
+Tested up to: 5.8
 Stable tag: trunk
 Contributors: The GravityView Team
 License: GPL 2
@@ -19,6 +19,17 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 1.4.3 on August 26, 2021 =
+
+* Improved: The Inline Edit button no longer makes the page adjust on load on the Gravity Forms "Entries" screen
+* Improved: The appearance when editing checkboxes in Gravity Forms 2.5
+* Fixed: Single checkbox items would not be editable on the "Entries" screen in Gravity Forms 2.5
+* Fixed: `de` German translations were unreachable; strings were merged with `de_DE`. Thanks again for the translations, Michael!
+
+__Developer Updates:__
+
+* Modified: Escaped the `style` attribute output in `templates/toggle.php`
 
 = 1.4.2 on June 1, 2021 =
 

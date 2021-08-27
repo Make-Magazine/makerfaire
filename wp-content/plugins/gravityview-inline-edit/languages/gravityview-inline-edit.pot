@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GravityView Inline Edit 1.4.1\n"
+"Project-Id-Version: GravityView Inline Edit 1.4.3\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
 "POT-Creation-Date: 2017-06-25 23:58:38+00:00\n"
 "MIME-Version: 1.0\n"

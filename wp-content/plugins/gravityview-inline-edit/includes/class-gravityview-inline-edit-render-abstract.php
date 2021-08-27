@@ -234,8 +234,8 @@ abstract class GravityView_Inline_Edit_Render {
 		 */
 		$labels = apply_filters( 'gravityview-inline-edit/toggle-labels', $labels );
 
-		// When on admin, show as button. Otherwise, don't
-		$link_class = is_admin() ? 'button button-primary' : '';
+		// When on admin, show as button and hide (will be unhidden by JS). Otherwise, don't.
+		$link_class = is_admin() ? 'button button-primary hidden' : '';
 
 		ob_start();
 		/** @define "GRAVITYVIEW_INLINE_DIR" "../" */

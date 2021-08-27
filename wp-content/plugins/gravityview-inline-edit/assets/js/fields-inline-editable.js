@@ -252,11 +252,12 @@
 
                     // "Other" Text input element is located multiple locations based on whether we're editing inline (there's also difference between Entries and View screens) or inside a popup
                     var popupId = $( '#' + fieldParms.name ).attr( 'aria-describedby' );
+                    var $input;
 
                     if ( popupId ) {
-                        var $input = $( '#' + popupId ).find( 'input:checked' );
+                        $input = $( '#' + popupId ).find( 'input:checked' );
                     } else {
-                        var $input = ( window.pagenow === 'forms_page_gf_entries' ) ? $( this ).parents( 'td' ).find( '.gv-editable-container input:checked' ) : $( this ).next( '.gv-editable-container' ).find( 'input:checked' );
+                        $input = ( window.pagenow === 'forms_page_gf_entries' ) ? $( this ).parents( 'td' ).find( '.gv-editable-container input:checked' ) : $( this ).next( '.gv-editable-container' ).find( 'input:checked' );
                     }
 
                     // Set or clear "data-other-choice" attribute when "Other" choice is selected, so that we're properly initializing this field when it's recreated after each update/close
@@ -374,7 +375,7 @@
                     // template contains all checkboxes in a <div><ul></div>
                     var single_checkbox_html = $( template )
                         // Remove all checkboxes that aren't the one we want to show
-                        .find( 'li' ).not( ':has(input[name$="\.' + inputNumber + '"])' ).remove().end()
+                        .find( 'li,div' ).not( ':has(input[name$="\.' + inputNumber + '"])' ).remove().end()
                         // And grab the <div class="ginput_container"> wrapper
                         .parents( 'div' )[0].outerHTML;
 
@@ -639,7 +640,7 @@
          * @return {void}
          */
         self.gfMoveToggleButton = function () {
-            $( '.wp-admin .inline-edit-enable' ).insertAfter( '.tablenav.top .bulkactions' );
+            $( '.wp-admin .inline-edit-enable' ).insertAfter( '.tablenav.top .bulkactions' ).removeClass('hidden');
         };
 
         /**
