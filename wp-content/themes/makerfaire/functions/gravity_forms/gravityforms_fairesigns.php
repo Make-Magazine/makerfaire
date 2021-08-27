@@ -135,7 +135,7 @@ add_action('gen_table_tags', 'genTableTags', 10, 1);
 // create zip files of maker signs
 function createSignZip() {
     global $wpdb;
-    error_log('Start zip creation. Group forms by ' . $type);
+    
     $response = array();
     $statusFilter = (isset($_POST['selstatus']) ? $_POST['selstatus'] : '');
     $type = (isset($_POST['seltype']) ? $_POST['seltype'] : '');
@@ -143,6 +143,7 @@ function createSignZip() {
     $signType = (isset($_POST['type']) ? $_POST['type'] : 'signs');
     $filterError = (isset($_POST['error'])) ? $_POST['error'] : '';
     $filterFormId = (isset($_POST['filform'])) ? $_POST['filform'] : '';
+    error_log('Start zip creation. Group forms by ' . $type);
     
     // If filter by formid append to filename
     $appendFormId = "";
@@ -385,6 +386,10 @@ function massGenerateSigns($entList, $type, $faire) {
     //write completion file
     $path = ($type === 'signs' ? 'maker' : ($type === 'presenter' ? 'presenter' : 'tabletags'));
 
+    //if directory does note exist, create it
+    if (!file_exists( TEMPLATEPATH . '/signs/' . $faire . '/' . $path)) {
+    	mkdir( TEMPLATEPATH . '/signs/' . $faire . '/' . $path, 0777, true);
+    }
     $fileName = TEMPLATEPATH . '/signs/' . $faire . '/' . $path . '/lastrun.txt';
 
     $content = date('m-d-y  h:i:s A T');

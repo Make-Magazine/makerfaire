@@ -9,10 +9,10 @@
 global $wp_query;
 $postID = 0;
 //pull by the slug name
-$the_slug = $wp_query->query_vars['entryslug']; //entry-id
+$the_slug = (isset($wp_query->query_vars['entryslug'])?$wp_query->query_vars['entryslug']:''); //entry-id
 
 if($the_slug==''){
-    $the_slug = $wp_query->query_vars['maker-entry-archive'];
+	$the_slug = (isset($wp_query->query_vars['maker-entry-archive'])?$wp_query->query_vars['maker-entry-archive']:'');
 }
 $makers = array();
 
