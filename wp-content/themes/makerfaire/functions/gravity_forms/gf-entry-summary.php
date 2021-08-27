@@ -77,37 +77,35 @@ function gf_summary_metabox($form, $lead) {
     
     $return = '
 
-<table cellspacing="0" class="entry-details-table">
-	<thead>
+<table cellspacing="0" class="gf-entry-summary">
 		<tr>
-			<th style="text-align: left" id="header">
+			<th colspan="2" style="text-align: left;" id="header">
 				<h1>' . esc_html($project_name) . '</h1>'.
             	($parent_entry_ID!=''?'<a target="_blank" href="/wp-admin/admin.php?page=gf_entries&view=entry&id='.$parent_form.'&lid='.$parent_entry_ID.'" target="_blank"><input class="button button-large button-primary" style="text-align:center" value="Parent Entry" /></a>':'').
             '</th>
 		</tr>
-	</thead>
-	<tbody>
+	
 		<tr>
-			<td style="padding:15px;" valign="top">
+			<td class="entry-image" valign="top">
 				<a href="' . $photo . '" ><img width="100%" src="' . legacy_get_fit_remote_image_url($photo, 400, 400) . '" alt="" /></a>
 			</td>
-			<td style="padding:15px;" valign="top">
-				<table>
+			<td valign="top">
+				<table class="entry-overview">
 					<tr>
 						<td colspan="2">
 							<p>' . stripslashes(nl2br($main_description, "\n")) . '</p>
 						</td>
 					</tr>
 					<tr>
-						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Type:</strong></td>
+						<td valign="top"><strong>Type:</strong></td>
 						<td valign="top">' . esc_attr(ucfirst($entry_form_type)) . '</td>
 					</tr>
 					<tr>
-						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Status:</strong></td>
+						<td valign="top"><strong>Status:</strong></td>
 						<td valign="top">' . esc_attr($entry_form_status) . '</td>
 					</tr>
 					<tr>
-						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Website:</strong></td>
+						<td valign="top"><strong>Website:</strong></td>
 						<td valign="top"><a href="' . esc_url($wkey) . '" target="_blank">' . esc_url($wkey) . '</a></td>
 					</tr>
 					<tr>
@@ -115,7 +113,7 @@ function gf_summary_metabox($form, $lead) {
 						<td>' . (( isset($vkey) ) ? '<a href="' . esc_url($vkey) . '" target="_blank">' . esc_url($vkey) . '</a><br/>' : '') . '</td>
 					</tr>
 					<tr>
-						<td style="width: 80px; word-break: break-all;" valign="top"><strong>Maker Names:</strong></td>
+						<td valign="top"><strong>Maker Names:</strong></td>
 						<td valign="top">' . (!empty($makergroupname) ? $makergroupname . '(Group)</br>' : '');
 
     //loop thru all 7 maker photos
@@ -142,7 +140,7 @@ function gf_summary_metabox($form, $lead) {
 						<td>' . (( isset($areyoua) ) ? $areyoua : '') . '</td>
 					</tr>
 					<tr>
-						<td style="width: 80px;" valign="top"><strong>What are your plans:</strong></td>
+						<td valign="top"><strong>What are your plans:</strong></td>
 						<td valign="top">';
 
     if (is_array($whatareyourplansvalues)) {
@@ -184,8 +182,10 @@ function gf_summary_metabox($form, $lead) {
 				</table>
 			</td>
 		</tr>
+		</table>
+<table cellspacing="0" class="gf-entry-summary">
 		<tr>
-			<td style="padding:15px">
+			<td>
         <label >Email Note To:</label><br />';
 
     $emailto1 = array("Caleb Kraft" => "caleb@make.co",
@@ -237,7 +237,6 @@ function gf_summary_metabox($form, $lead) {
     $return .= '<span class="updMsg add_note_sidebarMsg"></span>
 			</td>
 		</tr>
-	</tbody>
 </table>';
 
     return $return;

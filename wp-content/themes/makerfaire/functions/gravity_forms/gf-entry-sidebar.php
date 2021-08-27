@@ -5,7 +5,7 @@ function add_sidebar_sections($form, $lead) {
   $mode = empty( $_POST['screen_mode'] ) ? 'view' : $_POST['screen_mode'];
   //the form is being pulled from the &id parameter in the url.  if they change the lid parameter in the url but not the id, the form object will be wrong here
   $form = GFAPI::get_form( $lead['form_id'] );
-  $sidebar  = '';
+  $sidebar  = '<div id="side-sortables" class="meta-box-sortables ui-sortable">';
   $sidebar .= display_entry_info_box($form, $lead);
   if ($mode == 'view') {
     $sidebar .= display_entry_rating_box($form, $lead);
@@ -25,38 +25,37 @@ function add_sidebar_sections($form, $lead) {
     $sidebar .= display_dupCopy_entry_box($form, $lead, $formList);
     $sidebar .= display_send_conf_box($form, $lead);
   }
+  $sidebar .= '</div>';
   echo $sidebar;
 }
 
 function addExpandBox($data, $title, $boxID, $boxClass=''){
-	return '<div id="side-sortables" class="meta-box-sortables ui-sortable">'
-			. '<div id="'.$boxID  .'" class="postbox '.$boxClass.'">'
-  		. '  <div class="postbox-header">
-				 <h2 class="hndle ui-sortable-handle" style="flex-wrap: wrap; line-height: inherit;">'.$title.'</h2>'
-	  		. '  <div class="handle-actions hide-if-no-js">
-					<button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="print-handle-order-higher-description"><span class="screen-reader-text">Move up</span><span class="order-higher-indicator" aria-hidden="true"></span></button>
-					<span class="hidden" id="submitdiv-handle-order-higher-description">Move '.$title.' box up</span>
-					<button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="submitdiv-handle-order-lower-description">
-						<span class="screen-reader-text">Move down</span>
-						<span class="order-lower-indicator" aria-hidden="true"></span>
-					</button>
-					<span class="hidden" id="submitdiv-handle-order-lower-description">Move '.$title.' box down</span>
-					<button type="button" class="handlediv" aria-expanded="true">
-						<span class="screen-reader-text">Toggle panel: '.$title.'</span>
-						<span class="toggle-indicator" aria-hidden="true"></span>
-					</button>
-				 </div>
-			 </div>  	
-          	 <div class="inside">'.
-                  $data.'
-             </div>
-          </div></div>';
-  
-                                 
+	return '<div id="'.$boxID  .'" class="postbox '.$boxClass.'">'
+  			. '<div class="postbox-header">
+					<h2 class="hndle ui-sortable-handle" style="flex-wrap: wrap; line-height: inherit;">'.$title.'</h2>'
+	  		. '  	<div class="handle-actions hide-if-no-js">
+						<button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="print-handle-order-higher-description"><span class="screen-reader-text">Move up</span><span class="order-higher-indicator" aria-hidden="true"></span></button>
+						<span class="hidden" id="submitdiv-handle-order-higher-description">Move '.$title.' box up</span>
+						<button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="submitdiv-handle-order-lower-description">
+							<span class="screen-reader-text">Move down</span>
+							<span class="order-lower-indicator" aria-hidden="true"></span>
+						</button>
+						<span class="hidden" id="submitdiv-handle-order-lower-description">Move '.$title.' box down</span>
+						<button type="button" class="handlediv" aria-expanded="true">
+							<span class="screen-reader-text">Toggle panel: '.$title.'</span>
+							<span class="toggle-indicator" aria-hidden="true"></span>
+						</button>
+				 	</div>
+			 	</div> <!-- close .postbox-header --> 	
+	          	 <div class="inside">'.
+	                  $data.'
+	             </div> <!-- close .inside -->
+            </div><!-- close postbox -->';                                 
 }
+
 function display_entry_info_box($form, $lead) {
-  $mode       = empty( $_POST['screen_mode'] )  ? 'view' : $_POST['screen_mode'];
-	$street     = (isset($lead['101.1'])          ? $lead['101.1']:'');
+  	$mode       = empty( $_POST['screen_mode'] )  ? 'view' : $_POST['screen_mode'];
+  	$street     = (isset($lead['101.1'])          ? $lead['101.1']:'');
 	$street2    = (!empty($lead["101.2"]))        ? $lead["101.2"].'<br />' : '' ;
 	$city       = (isset($lead["101.3"])          ? $lead["101.3"]:'');
 	$state      = (isset($lead["101.4"])          ? $lead["101.4"]:'');
@@ -65,26 +64,26 @@ function display_entry_info_box($form, $lead) {
 	$email      = (isset($lead["98"])             ? $lead["98"]:'');
 	$phone      = (isset($lead["99"])             ? $lead["99"]:'');
 	$phonetype  = (isset($lead["148"])            ? $lead["148"]:'');
-  $return =
-   '<table width="100%" class="entry-status">'.
+	$return =
+   	  '<table width="100%" class="entry-status">'.
           mf_sidebar_entry_status( $form, $lead ) .
           '<tr><td colspan="2"><hr /></td></tr>'.
           ($mode == 'view' ? mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ) .
                              mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' ):'') .
        '</table>' .
-          ($mode == 'view' ? '<small>Change a selection above to update entry</small><hr /> ': '').
-       'Contact:<div style="padding:5px">'. (isset($lead['96.3'])?$lead['96.3']:'').' '. (isset($lead['96.6'])?$lead['96.6']:'').'<br />'.
-        $street  .'<br />'.
-        $street2 .'<br />'.
-        $city    .', '. $state.'  '. $zip.'<br />'.
-        $country .'<br />
-        <a href="mailto:'. $email.'">'. $email.'</a><br />'.
-        $phonetype.':  '. $phone.'<br />
-      </div>'.
-      __( 'Filled out: ', 'gravityforms' ). esc_html( GFCommon::format_date( $lead['date_created'], false, 'Y/m/d' ) ) .'<br /><br/>
-      '. do_action( 'gform_entry_info', $form['id'], $lead ) .
-   '</div>
-    <div id="delete-action" style="float:none;">';
+        ($mode == 'view' ? '<small>Change a selection above to update entry</small><hr /> ': '').
+       'Contact: 
+		<div style="padding:5px">'. (isset($lead['96.3'])?$lead['96.3']:'').' '. (isset($lead['96.6'])?$lead['96.6']:'').'<br />'.
+        	$street  .'<br />'.
+        	$street2 .'<br />'.
+        	$city    .', '. $state.'  '. $zip.'<br />'.
+        	$country .'<br />
+        	<a href="mailto:'. $email.'">'. $email.'</a><br />'.
+        	$phonetype.':  '. $phone.'<br />
+      	</div>'.
+      	__( 'Filled out: ', 'gravityforms' ). esc_html( GFCommon::format_date( $lead['date_created'], false, 'Y/m/d' ) ) .'<br /><br/>'
+      . do_action( 'gform_entry_info', $form['id'], $lead ) .
+   	 '<div id="delete-action" style="float:none;">';
       switch ( $lead['status'] ) {
         case 'spam' :
           if ( GFCommon::spam_enabled( $form['id'] ) ) {
@@ -123,6 +122,7 @@ function display_entry_info_box($form, $lead) {
             $return .= "<a class=\"submitdelete deletion\" onclick=\"jQuery('#action').val('spam'); jQuery('#entry_form').submit()\" href=\"#\">". __( 'Mark as Spam', 'gravityforms' ) ."</a>";
           }
       } //end switch
+      $return .= "</div><!-- close #delete-action -->";
       if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) && $lead['status'] != 'trash' ) {
         $button_text      = $mode == 'view' ? __( 'Edit', 'gravityforms' ) : __( 'Update', 'gravityforms' );
         $disabled         = $mode == 'view' ? '' : ' disabled="disabled" ';
@@ -138,6 +138,7 @@ function display_entry_info_box($form, $lead) {
   $title = 'Entry Information';
   return addExpandBox($return,$title,'entry-info');
 }
+
 function display_entry_rating_box($form, $lead) {
   /* Ratings Sidebar Area */
   global $wpdb;
