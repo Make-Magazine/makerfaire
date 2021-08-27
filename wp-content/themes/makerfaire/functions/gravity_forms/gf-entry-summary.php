@@ -80,19 +80,19 @@ function gf_summary_metabox($form, $lead) {
 <table cellspacing="0" class="entry-details-table">
 	<thead>
 		<tr>
-			<th colspan="2" style="text-align: left" id="header">
+			<th style="text-align: left" id="header">
 				<h1>' . esc_html($project_name) . '</h1>'.
-            	($parent_entry_ID!=''?'<a href="/wp-admin/admin.php?page=gf_entries&view=entry&id='.$parent_form.'&lid='.$parent_entry_ID.'" target="_blank"><input class="button button-large button-primary" style="text-align:center" value="Parent Entry" /></a>':'').
+            	($parent_entry_ID!=''?'<a target="_blank" href="/wp-admin/admin.php?page=gf_entries&view=entry&id='.$parent_form.'&lid='.$parent_entry_ID.'" target="_blank"><input class="button button-large button-primary" style="text-align:center" value="Parent Entry" /></a>':'').
             '</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td style="width:440px; padding:15px;" valign="top">
-				<a href="' . $photo . '" ><img width="400px" src="' . legacy_get_fit_remote_image_url($photo, 400, 400) . '" alt="" /></a>
+			<td style="padding:15px;" valign="top">
+				<a href="' . $photo . '" ><img width="100%" src="' . legacy_get_fit_remote_image_url($photo, 400, 400) . '" alt="" /></a>
 			</td>
-			<td style="word-break: break-all; padding:15px;" valign="top">
-				<table style="word-break: break-all;">
+			<td style="padding:15px;" valign="top">
+				<table>
 					<tr>
 						<td colspan="2">
 							<p>' . stripslashes(nl2br($main_description, "\n")) . '</p>
