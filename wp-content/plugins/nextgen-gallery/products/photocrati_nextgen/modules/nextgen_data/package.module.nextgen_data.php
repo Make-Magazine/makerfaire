@@ -369,7 +369,7 @@ class Mixin_Dynamic_Thumbnails_Manager extends Mixin
                                 if ($uri_arg == 'crop') {
                                     $params['crop'] = true;
                                 } else {
-                                    if (in_array(strtolower($uri_arg), array('gif', 'jpg', 'png'))) {
+                                    if (in_array(strtolower($uri_arg), apply_filters('ngg_allowed_file_types', NGG_DEFAULT_ALLOWED_FILE_TYPES))) {
                                         $params['type'] = $uri_arg;
                                     } else {
                                         if (preg_match('/(\\d+)x(\\d+)(?:x(\\d+))?/i', $uri_arg, $size_match) > 0) {
@@ -2184,7 +2184,7 @@ class C_Gallery_Storage extends C_Component
     }
     function get_image_format_list()
     {
-        $format_list = array(IMAGETYPE_GIF => 'gif', IMAGETYPE_JPEG => 'jpg', IMAGETYPE_PNG => 'png');
+        $format_list = [IMAGETYPE_GIF => 'gif', IMAGETYPE_JPEG => 'jpg', IMAGETYPE_PNG => 'png', IMAGETYPE_WEBP => 'webp'];
         return $format_list;
     }
     /**
@@ -2485,7 +2485,7 @@ class C_Gallery_Storage extends C_Component
         // Remove all image files and purge all empty directories left over
         $iterator = new DirectoryIterator($abspath);
         // Only delete image files! Other files may be stored incorrectly but it's not our place to delete them
-        $removable_extensions = apply_filters('ngg_allowed_file_types', array('jpeg', 'jpg', 'png', 'gif'));
+        $removable_extensions = apply_filters('ngg_allowed_file_types', NGG_DEFAULT_ALLOWED_FILE_TYPES);
         foreach ($removable_extensions as $extension) {
             $removable_extensions[] = $extension . '_backup';
         }
@@ -2783,7 +2783,7 @@ class C_Gallery_Storage extends C_Component
     {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
         $extension = strtolower($extension);
-        $allowed_extensions = apply_filters('ngg_allowed_file_types', array('jpeg', 'jpg', 'png', 'gif'));
+        $allowed_extensions = apply_filters('ngg_allowed_file_types', NGG_DEFAULT_ALLOWED_FILE_TYPES);
         foreach ($allowed_extensions as $extension) {
             $allowed_extensions[] = $extension . '_backup';
         }
@@ -2809,16 +2809,16 @@ class C_Gallery_Storage extends C_Component
         if (!$filename && isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
             $filename = $_FILES['file']['tmp_name'];
         }
-        $valid_types = array('image/gif', 'image/jpg', 'image/jpeg', 'image/pjpeg', 'image/png');
+        $allowed_mime = apply_filters('ngg_allowed_mime_types', NGG_DEFAULT_ALLOWED_MIME_TYPES);
         // If we can, we'll verify the mime type
         if (function_exists('exif_imagetype')) {
             if (($image_type = @exif_imagetype($filename)) !== FALSE) {
-                $retval = in_array(image_type_to_mime_type($image_type), $valid_types);
+                $retval = in_array(image_type_to_mime_type($image_type), $allowed_mime);
             }
         } else {
             $file_info = @getimagesize($filename);
             if (isset($file_info[2])) {
-                $retval = in_array(image_type_to_mime_type($file_info[2]), $valid_types);
+                $retval = in_array(image_type_to_mime_type($file_info[2]), $allowed_mime);
             }
         }
         return $retval;
@@ -2881,6 +2881,26 @@ class C_Gallery_Storage extends C_Component
         }
         return $filename;
     }
+    /**
+     * Determines whether a WebP image is animated which GD does not support.
+     *
+     * @see https://developers.google.com/speed/webp/docs/riff_container
+     * @param string $filename
+     * @return bool
+     */
+    public function is_animated_webp($filename)
+    {
+        $retval = FALSE;
+        $handle = fopen($filename, 'rb');
+        fseek($handle, 12);
+        if (fread($handle, 4) === 'VP8X') {
+            fseek($handle, 20);
+            $flag = fread($handle, 1);
+            $retval = (bool) (ord($flag) >> 1 & 1);
+        }
+        fclose($handle);
+        return $retval;
+    }
     function import_image_file($dst_gallery, $image_abspath, $filename = NULL, $image = FALSE, $override = FALSE, $move = FALSE)
     {
         $image_abspath = wp_normalize_path($image_abspath);
@@ -2902,8 +2922,15 @@ class C_Gallery_Storage extends C_Component
             // Sanitize the filename for storing in the DB
             $filename = $this->sanitize_filename_for_db($filename);
             // Ensure that the filename is valid
-            if (!preg_match("/(png|jpeg|jpg|gif|_backup)\$/i", $filename)) {
+            $extensions = apply_filters('ngg_allowed_file_types', NGG_DEFAULT_ALLOWED_FILE_TYPES);
+            $extensions[] = '_backup';
+            $ext_list = implode('|', $extensions);
+            if (!preg_match("/({$ext_list})\$/i", $filename)) {
                 throw new E_UploadException(__('Invalid image file. Acceptable formats: JPG, GIF, and PNG.', 'nggallery'));
+            }
+            // GD does not support animated WebP and will generate a fatal error when we try to create thumbnails or resize
+            if ($this->is_animated_webp($image_abspath)) {
+                throw new E_UploadException(__('Animated WebP images are not supported.', 'nggallery'));
             }
             // Compute the destination folder
             $new_image_abspath = path_join($gallery_abspath, $filename);
@@ -4595,7 +4622,7 @@ class C_NggLegacy_Thumbnail
             @ini_set('memory_limit', -1);
             $image_size = @getimagesize($this->fileName);
             if (isset($image_size) && is_array($image_size)) {
-                $extensions = array('1' => 'GIF', '2' => 'JPG', '3' => 'PNG');
+                $extensions = [IMAGETYPE_GIF => 'GIF', IMAGETYPE_JPEG => 'JPG', IMAGETYPE_PNG => 'PNG', IMAGETYPE_WEBP => 'WEBP'];
                 $extension = array_key_exists($image_size[2], $extensions) ? $extensions[$image_size[2]] : '';
                 if ($extension) {
                     $this->format = $extension;
@@ -4641,6 +4668,13 @@ class C_NggLegacy_Thumbnail
                         $img_err = __('Support for PNG format is missing.', 'nggallery');
                     }
                     break;
+                case 'WEBP':
+                    if (function_exists('imagecreatefromwebp')) {
+                        $this->oldImage = @imagecreatefromwebp($this->fileName);
+                    } else {
+                        $img_err = __('Support for WEBP format is missing.', 'nggallery');
+                    }
+                    break;
             }
             if (!$this->oldImage) {
                 if ($img_err == null) {
@@ -4680,6 +4714,9 @@ class C_NggLegacy_Thumbnail
                 // didn't get the channel for png
                 $CHANNEL = 3;
                 break;
+            case 'WEBP':
+                $CHANNEL = $imageInfo['bits'];
+                break;
         }
         $bits = !empty($imageInfo['bits']) ? $imageInfo['bits'] : 32;
         // imgInfo[bits] is not always available
@@ -4700,6 +4737,9 @@ class C_NggLegacy_Thumbnail
                 case 'PNG':
                     // didn't get the channel for png
                     $channels = 3;
+                    break;
+                case 'WEBP':
+                    $CHANNEL = $imageInfo['bits'];
                     break;
             }
         }
@@ -4743,18 +4783,17 @@ class C_NggLegacy_Thumbnail
     }
     /**
      * Must be called to free up allocated memory after all manipulations are done
-     *
      */
     function destruct()
     {
-        if (is_resource($this->newImage)) {
-            @ImageDestroy($this->newImage);
+        if (is_resource($this->newImage) || $this->newImage instanceof GdImage) {
+            @imagedestroy($this->newImage);
         }
-        if (is_resource($this->oldImage)) {
-            @ImageDestroy($this->oldImage);
+        if (is_resource($this->oldImage) || $this->newImage instanceof GdImage) {
+            @imagedestroy($this->oldImage);
         }
-        if (is_resource($this->workingImage)) {
-            @ImageDestroy($this->workingImage);
+        if (is_resource($this->workingImage) || $this->newImage instanceof GdImage) {
+            @imagedestroy($this->workingImage);
         }
     }
     /**
@@ -5065,6 +5104,14 @@ class C_NggLegacy_Thumbnail
                     ImagePng($this->newImage);
                 }
                 break;
+            case 'WEBP':
+                if ($name != '') {
+                    $this->error = !@imagewebp($this->newImage, $name);
+                } else {
+                    header('Content-type: image/webp');
+                    imagewebp($this->newImage);
+                }
+                break;
         }
     }
     /**
@@ -5365,7 +5412,7 @@ class C_NggLegacy_Thumbnail
     function watermarkImage($relPOS = 'botRight', $xPOS = 0, $yPOS = 0)
     {
         // if it's a resource ID take it as watermark text image
-        if (is_resource($this->watermarkImgPath)) {
+        if (is_resource($this->watermarkImgPath) || $this->watermarkImgPath instanceof GdImage) {
             $this->workingImage = $this->watermarkImgPath;
         } else {
             // (possibly) search for the file from the document root
@@ -5685,7 +5732,7 @@ class Mixin_GalleryStorage_Base_Management extends Mixin
                     $image = $mapper->find($image);
                 }
                 if ($image) {
-                    if (!property_exists($image, 'meta_data')) {
+                    if (empty($image->meta_data) || !is_array($image->meta_data)) {
                         $image->meta_data = array();
                     }
                     $dimensions = getimagesize($image_path);

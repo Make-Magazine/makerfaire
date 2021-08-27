@@ -87,7 +87,7 @@ class C_Lightbox_Library_Manager
         $thickbox->title = __('Thickbox', 'nggallery');
         $thickbox->code = "class='thickbox' rel='%GALLERY_NAME%'";
         $thickbox->styles = array('wordpress#thickbox');
-        $thickbox->scripts = array('photocrati-lightbox#thickbox/nextgen_thickbox_init.js', 'wordpress#thickbox');
+        $thickbox->scripts = array('photocrati-lightbox#thickbox/nextgen_thickbox_init.js', 'photocrati-lightbox#thickbox/thickbox.js');
         $thickbox->values = array('nextgen_thickbox_i18n' => array('next' => __('Next &gt;', 'nggallery'), 'prev' => __('&lt; Prev', 'nggallery'), 'image' => __('Image', 'nggallery'), 'of' => __('of', 'nggallery'), 'close' => __('Close', 'nggallery'), 'noiframes' => __('This feature requires inline frames. You have iframes disabled or your browser does not support them.', 'nggallery')));
         $this->register('thickbox', $thickbox);
         // Allow third parties to integrate

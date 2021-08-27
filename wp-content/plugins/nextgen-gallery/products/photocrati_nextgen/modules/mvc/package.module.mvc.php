@@ -170,6 +170,9 @@ abstract class C_MVC_Controller extends C_Component
             case 'pdf':
                 $type = 'application/pdf';
                 break;
+            case 'webp':
+                $type = 'image/webp';
+                break;
         }
         $this->object->_content_type = $type;
         return $type;

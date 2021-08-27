@@ -1,6 +1,14 @@
 NextGEN Gallery
 by Imagely
 
+= V3.15  - 08.23.2021
+* Fixed:   A warning was generated on every request for users of PHP 5.6
+
+= V3.14  - 08.18.2021
+* NEW:     Added support for unanimated WebP images
+* Fixed:   PHP warning was generated when enqueueing frontend resources
+* Fixed:   "Scan folder for new images" was failing with PHP 8+
+
 = V3.13  - 08.04.2021
 * Fixed:   All WP-Admin links had "/wp-admin/" removed for some users
 

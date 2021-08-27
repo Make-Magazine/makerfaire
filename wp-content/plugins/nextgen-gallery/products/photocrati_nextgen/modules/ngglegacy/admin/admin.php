@@ -223,7 +223,10 @@ class nggAdminPanel{
     						'imageCount' => '1'
     			) );
     			wp_enqueue_script( 'shutter' );
-    			add_thickbox();
+
+    			// Thickbox is used to display images being managed
+                C_Lightbox_Library_Manager::get_instance()->enqueue('thickbox');
+
 			break;
 			case "nggallery-manage-album" :
                 wp_enqueue_script( 'jquery-ui-dialog' );

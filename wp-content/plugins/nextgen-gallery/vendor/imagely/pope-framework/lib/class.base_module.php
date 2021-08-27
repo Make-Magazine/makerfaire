@@ -90,20 +90,20 @@ abstract class C_Base_Module
      */
     function get_type_list()
     {
-        // XXX small hack to skip photocrati theme modules scans
-        $except_modules = array(
-            'photocrati-gallery_legacy' => array(),
-            'photocrati-theme_bulk' => array(),
-            'photocrati-theme_admin' => array(),
-            'photocrati-auto_update' => array(
-                'A_Autoupdate_Settings' => 'adapter.autoupdate_settings.php'
-            ),
-            'photocrati-auto_update-admin' => array(
-                'A_Autoupdate_Admin_Ajax' => 'adapter.autoupdate_admin_ajax.php',
-                'A_Autoupdate_Admin_Factory' => 'adapter.autoupdate_admin_factory.php',
-                'C_Autoupdate_Admin_Ajax' => 'class.autoupdate_admin_ajax.php',
-                'C_Autoupdate_Admin_Controller' => 'class.autoupdate_admin_controller.php'
-            ));
+    	// XXX small hack to skip photocrati theme modules scans
+    	$except_modules = array(
+    	'photocrati-gallery_legacy' => array(), 
+    	'photocrati-theme_bulk' => array(), 
+    	'photocrati-theme_admin' => array(), 
+    	'photocrati-auto_update' => array(
+        'A_Autoupdate_Settings' => 'adapter.autoupdate_settings.php'
+      ),
+    	'photocrati-auto_update-admin' => array(
+        'A_Autoupdate_Admin_Ajax' => 'adapter.autoupdate_admin_ajax.php',
+        'A_Autoupdate_Admin_Factory' => 'adapter.autoupdate_admin_factory.php',
+        'C_Autoupdate_Admin_Ajax' => 'class.autoupdate_admin_ajax.php',
+        'C_Autoupdate_Admin_Controller' => 'class.autoupdate_admin_controller.php'
+      ));
       
       if (isset($except_modules[$this->module_id]))
       {

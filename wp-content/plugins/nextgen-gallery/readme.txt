@@ -2,8 +2,8 @@
 Contributors: photocrati, imagely
 Tags: wordpress gallery plugin, gallery, nextgen, nextgen gallery, photo gallery, image gallery, photography, slideshow, images, photo, photo album, watermark
 Requires at least: 5.5.4
-Stable tag: 3.13
-Tested up to: 5.7.2
+Stable tag: 3.15
+Tested up to: 5.8
 License: GPLv3
 Requires PHP: 5.6
 
@@ -178,6 +178,14 @@ For more information, feel free to visit the official website for the NextGEN Ga
 
 
 == Changelog ==
+
+= V3.15  - 08.23.2021
+* Fixed:   A warning was generated on every request for users of PHP 5.6
+
+= V3.14  - 08.18.2021
+* NEW:     Added support for unanimated WebP images
+* Fixed:   PHP warning was generated when enqueueing frontend resources
+* Fixed:   "Scan folder for new images" was failing with PHP 8+
 
 = V3.13  - 08.04.2021
 * Fixed:   All WP-Admin links had "/wp-admin/" removed for some users
