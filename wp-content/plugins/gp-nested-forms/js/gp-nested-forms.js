@@ -108,6 +108,7 @@
 
 			self.modalArgs = gform.applyFilters( 'gpnf_modal_args', {
 				labels: self.modalLabels,
+				closeLabel: self.modalLabels.closeScreenReaderLabel,
 				colors: self.modalColors,
 				footer: true,
 				stickyFooter: self.modalStickyFooter,
@@ -343,12 +344,26 @@
 
 			self.modal.modalBoxFooter.innerHTML = '';
 
-			self.modal.addFooterBtn( self.modalArgs.labels.cancel, 'tingle-btn tingle-btn--default gpnf-btn-cancel', function() {
+			/**
+			 * Filter the CSS classes of buttons in the Nested Form modal.
+			 *
+			 * @since 1.0-beta-10.1
+			 *
+			 * @param string 			buttonClasses 		CSS classes for the button
+			 * @param string 			buttonType 			The button type. Will be one of the following: 'submit', 'next', 'previous', 'delete', 'cancel'
+			 * @param int           	formId 				The parent form ID.
+			 * @param int             	fieldId   			The field ID of the Nested Form field.
+			 * @param {GPNestedForms} 	gpnf      			Current instance of the GPNestedForms object.
+			 */
+			var cancelButtonCSSClasses = window.gform.applyFilters('gpnf_modal_button_css_classes', 'tingle-btn tingle-btn--default gpnf-btn-cancel', 'cancel', self.formId, self.fieldId, self);
+
+			self.modal.addFooterBtn( self.modalArgs.labels.cancel, cancelButtonCSSClasses, function() {
 				self.handleCancelClick( $( this ) );
 			} );
 
 			self.getDefaultButtons().each( function() {
 				var $button = $( this );
+				var buttonType = null;
 				// Check if WooCommerce Gravity Forms is active. It hides Submit buttons by default and replaces them
 				// with an "Add to Cart" button. We can ignore that in nested forms. We should also check for the style
 				// attribute on the element to ensure that conditional paging functions in those scenarios.
@@ -362,13 +377,18 @@
 
 					if ( $button.hasClass( 'gform_previous_button' ) ) {
 						classes.push( 'gpnf-btn-previous' );
+						buttonType = 'previous';
 					} else if ( $button.hasClass( 'gform_next_button' ) ) {
+						buttonType = 'next';
 						classes.push( 'gpnf-btn-next' );
 					} else {
+						buttonType = 'submit';
 						classes.push( 'gpnf-btn-submit' );
 					}
 
-					var tingleBtn = self.modal.addFooterBtn( label, classes.join( ' ' ), function( event ) {
+					classes = window.gform.applyFilters('gpnf_modal_button_css_classes', classes.join(' '), buttonType, self.formId, self.fieldId, self);
+
+					var tingleBtn = self.modal.addFooterBtn( label, classes, function( event ) {
 						if (self.hasPendingUploads()) {
 							var gfStrings = typeof gform_gravityforms != 'undefined' ? gform_gravityforms.strings : {};
 							alert(gfStrings.currently_uploading);
@@ -387,13 +407,17 @@
 				}
 			} );
 
-			self.modal.addFooterBtn( self.modalArgs.labels.cancel, 'tingle-btn tingle-btn--default gpnf-btn-cancel-mobile', function() {
+			var mobileCancelClasses = window.gform.applyFilters('gpnf_modal_button_css_classes', 'tingle-btn tingle-btn--default gpnf-btn-cancel-mobile', 'cancel', self.formId, self.fieldId, self);
+
+			self.modal.addFooterBtn( self.modalArgs.labels.cancel, mobileCancelClasses, function() {
 				self.handleCancelClick( $( this ) );
 			} );
 
 			// If we're in edit mode - AND - there is a form, show the delete button. Otherwise, we're showing an error message.
 			if ( self.mode == 'edit' && $( self.modal.modalBoxContent ).find( '.gform_wrapper' ).length > 0 ) {
-				self.modal.addFooterBtn( self.modalArgs.labels.delete, 'tingle-btn tingle-btn--danger tingle-btn--pull-left gpnf-btn-delete', function() {
+				var deleteButtonClasses = window.gform.applyFilters('gpnf_modal_button_css_classes', 'tingle-btn tingle-btn--danger tingle-btn--pull-left gpnf-btn-delete', 'delete', self.formId, self.fieldId, self);
+
+				self.modal.addFooterBtn( self.modalArgs.labels.delete, deleteButtonClasses, function() {
 					var $button = $( this );
 					var isConfirmActionEnabled = self.modalArgs.labels.confirmAction !== false && self.modalArgs.labels.confirmAction !== '';
 					if ( ! $button.data( 'isConfirming' ) && isConfirmActionEnabled ) {

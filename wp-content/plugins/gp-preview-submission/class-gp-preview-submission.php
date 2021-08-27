@@ -123,7 +123,8 @@ class GP_Preview_Submission extends GWPerk {
 	}
 
 	function has_any_merge_tag( $string ) {
-		return preg_match_all( '/{.+}/', $string, $matches, PREG_SET_ORDER );
+		// Negative lookbehind to prevent replacement of GP Populate Anything Live Merge Tags
+		return preg_match_all( '/(?<!@){.+}/', $string, $matches, PREG_SET_ORDER );
 	}
 
 	function has_gppa_parent_merge_tag( $text ) {

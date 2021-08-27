@@ -237,22 +237,15 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		$scripts = array();
 
-		// Don't include select2 on non-GF pages. Solves issues with ACF where our version of select2 is registered but it is expecting it's own.
 		if ( GFForms::is_gravity_page() ) {
-
 			$deps = array( 'jquery' );
 
-			if ( ! $this->is_gf_version_gte( '2.5-dev-1' ) ) {
-				$deps[]    = 'select2';
-				$scripts[] = array(
-					'handle'  => 'select2',
-					'src'     => $this->get_base_url() . '/js/select2.min.js',
-					'version' => '4.0.3',
-					'enqueue' => null,
-				);
-			} else {
-				$deps[] = 'gform_selectwoo';
-			}
+			$scripts[] = array(
+				'handle'  => 'gwp-asmselect',
+				'enqueue' => array(
+					array( 'admin_page' => array( 'form_editor' ) ),
+				),
+			);
 
 			$scripts[] = array(
 				'handle'   => 'gp-nested-forms-admin',
@@ -308,9 +301,7 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		$styles = array(
 			array(
-				'handle'  => 'select2',
-				'src'     => $this->get_base_url() . '/css/select2.min.css',
-				'version' => '4.0.3',
+				'handle'  => 'gwp-asmselect',
 				'enqueue' => array(
 					array( 'admin_page' => array( 'form_editor' ) ),
 				),
@@ -384,8 +375,7 @@ class GP_Nested_Forms extends GP_Plugin {
 					'getFormFields' => wp_create_nonce( 'gpnf_get_form_fields' ),
 				),
 				'strings' => array(
-					'getFormFieldsError'       => esc_html__( 'There was an error retrieving the fields for this form. Please try again or contact support.', 'gp-nested-forms' ),
-					'displayFieldsPlaceholder' => esc_html__( 'Select your fields', 'gp-nested-forms' ),
+					'getFormFieldsError' => esc_html__( 'There was an error retrieving the fields for this form. Please try again or contact support.', 'gp-nested-forms' ),
 				),
 			)
 		);
@@ -659,7 +649,7 @@ class GP_Nested_Forms extends GP_Plugin {
 					<?php gform_tooltip( 'gpnf_fields' ); ?>
 				</label>
 				<div id="gpnf-fields-container" class="gp-group">
-					<select id="gpnf-fields" class="fieldwidth-3" multiple disabled onchange="SetFieldProperty( 'gpnfFields', jQuery( this ).val() );">
+					<select id="gpnf-fields" title="<?php esc_html_e( 'Select your fields', 'gp-nested-forms' ); ?>" class="fieldwidth-3" multiple disabled>
 						<!-- dynamically populated based on selection in 'form' select -->
 					</select>
 					<img class="gpnf-static-spinner" src="<?php echo GFCommon::get_base_url(); ?>/images/<?php echo $this->is_gf_version_gte( '2.5-beta-1' ) ? 'spinner.svg' : 'spinner.gif';?>">
@@ -997,7 +987,17 @@ class GP_Nested_Forms extends GP_Plugin {
 			wp_send_json_error( __( 'Oops! You don\'t have permission to delete this entry.', 'gp-nested-forms' ) );
 		}
 
-		$result = GFAPI::delete_entry( $entry_id );
+		/**
+		 * Filter whether GPNF should trash child entries when they are deleted on the front-end.
+		 *
+		 * @param boolean  $should_trash_entries Should entries be trashed on delete? (default: false)
+		 * @since 1.0-beta-10.1
+		 */
+		if ( gf_apply_filters( array( 'gpnf_should_trash_entries_on_delete', $entry['form_id'] ), false ) ) {
+			$result = GFFormsModel::update_lead_property( $entry_id, 'status', 'trash' );
+		} else {
+			$result = GFAPI::delete_entry( $entry_id );
+		}
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( $result->get_error_message() );
@@ -1316,17 +1316,17 @@ class GP_Nested_Forms extends GP_Plugin {
 			sprintf( '%s-%s.php', $base, $form_id ),
 			sprintf( '%s.php', $base ),
 		);
-		
+
 		if ( $custom_suffix ) {
 			$custom_template_names = array();
-			
+
 			foreach ( $template_names as $template_name ) {
 				$custom_template_names[] = str_replace( $base, $base . '-' . $custom_suffix, $template_name );
 			}
-			
+
 			$template_names = array_merge( $custom_template_names, $template_names );
 		}
-		
+
 		return $template_names;
 	}
 
@@ -1990,13 +1990,14 @@ class GP_Nested_Forms extends GP_Plugin {
 				'entries'             => $entries,
 				'ajaxUrl'             => admin_url( 'admin-ajax.php', ! is_ssl() ? 'http' : 'admin' ),
 				'modalLabels'         => array(
-					'title'         => sprintf( __( 'Add %s', 'gp-nested-forms' ), $field->get_item_label() ),
-					'editTitle'     => sprintf( __( 'Edit %s', 'gp-nested-forms' ), $field->get_item_label() ),
-					'submit'        => false,
-					'editSubmit'    => false,
-					'cancel'        => esc_html__( 'Cancel', 'gp-nested-forms' ),
-					'delete'        => esc_html__( 'Delete', 'gp-nested-forms' ),
-					'confirmAction' => esc_html__( 'Are you sure?', 'gp-nested-forms' ),
+					'title'                  => sprintf( __( 'Add %s', 'gp-nested-forms' ), $field->get_item_label() ),
+					'editTitle'              => sprintf( __( 'Edit %s', 'gp-nested-forms' ), $field->get_item_label() ),
+					'submit'                 => false,
+					'editSubmit'             => false,
+					'cancel'                 => esc_html__( 'Cancel', 'gp-nested-forms' ),
+					'delete'                 => esc_html__( 'Delete', 'gp-nested-forms' ),
+					'confirmAction'          => esc_html__( 'Are you sure?', 'gp-nested-forms' ),
+					'closeScreenReaderLabel' => esc_html__( 'Close', 'gp-nested-forms' ),
 				),
 				'modalColors'         => array(
 					'primary'   => $primary_color,

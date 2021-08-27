@@ -1,6 +1,22 @@
 
 # Changelog
 
+## 1.0-beta-10.1
+
+	- Added [gpnf_modal_button_css_classes](https://gravitywiz.com/documentation/gpnf_modal_button_css_classes) JavaScript filter.
+	- Added [gpnf_should_trash_entries_on_delete](https://gravitywiz.com/documentation/gpnf_should_trash_entries_on_delete) filter.
+	- Fixed issue where child entry notifications would not be sent when using a Nested Form field with the WooCommerce GF Product Add-ons extension.
+
+## 1.0-beta-10
+
+	- Improved user experience of how Summary Fields are managed. They're now listed out vertically and sortable.
+	- Added French translation. Thank you, [Cyrille Sanson](https://100son.net)!
+	- Fixed typo in :sum modifier merge tag default value.
+
+## 1.0-beta-9.35
+
+	- Added i18n support for GPNF's "Close" modal button.
+
 ## 1.0-beta-9.34
 
 	- Updated custom template names to have precedence before all standard template names.
