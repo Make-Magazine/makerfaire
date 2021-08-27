@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.9.2
+
+	- Fixed a compatibility issue with GF 2.5 and List fields where the add/remove buttons remained visible.
+
 ## 1.9.1
 
 	- Fixed an issue where GPRO UI may show an incorrect state.

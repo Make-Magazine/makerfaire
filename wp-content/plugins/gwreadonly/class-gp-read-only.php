@@ -134,7 +134,7 @@ class GP_Read_Only extends GWPerk {
 				break;
 			case 'list':
 				// remove add/remove buttons
-				$input_html = preg_replace( '/<td class=\'gfield_list_icons\'>[\s\S]+?<\/td>/', '', $input_html );
+				$input_html = preg_replace( '/<(?:td|div) class=\'gfield_list_icons\'>[\s\S]+?<\/(?:td|div)>/', '', $input_html );
 				$search     = array(
 					'<input'  => "<input readonly='readonly'",
 					'<select' => "<select disabled='disabled'",
