@@ -76,17 +76,22 @@ function gf_summary_metabox($form, $lead) {
     $parent_form = ($parent_entry_ID!=''?$lead['gpnf_entry_parent_form']:'');                    
     
     $return = '
-<table class="fixed entry-detail-view">
+
+<table cellspacing="0" class="entry-details-table">
 	<thead>
-		<th colspan="2" style="text-align: left" id="header"><h1>' . esc_html($project_name) . '</h1>'.
-            ($parent_entry_ID!=''?'<a href="/wp-admin/admin.php?page=gf_entries&view=entry&id='.$parent_form.'&lid='.$parent_entry_ID.'" target="_blank"><input class="button button-large button-primary" style="text-align:center" value="Parent Entry" /></a>':'').'</th>
+		<tr>
+			<th colspan="2" style="text-align: left" id="header">
+				<h1>' . esc_html($project_name) . '</h1>'.
+            	($parent_entry_ID!=''?'<a href="/wp-admin/admin.php?page=gf_entries&view=entry&id='.$parent_form.'&lid='.$parent_entry_ID.'" target="_blank"><input class="button button-large button-primary" style="text-align:center" value="Parent Entry" /></a>':'').
+            '</th>
+		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td style="width:440px; padding:5px;" valign="top">
+			<td style="width:440px; padding:15px;" valign="top">
 				<a href="' . $photo . '" ><img width="400px" src="' . legacy_get_fit_remote_image_url($photo, 400, 400) . '" alt="" /></a>
 			</td>
-			<td style="word-break: break-all;" valign="top">
+			<td style="word-break: break-all; padding:15px;" valign="top">
 				<table style="word-break: break-all;">
 					<tr>
 						<td colspan="2">
@@ -180,7 +185,7 @@ function gf_summary_metabox($form, $lead) {
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td style="padding:15px">
         <label >Email Note To:</label><br />';
 
     $emailto1 = array("Caleb Kraft" => "caleb@make.co",

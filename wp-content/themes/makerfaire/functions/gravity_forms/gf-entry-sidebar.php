@@ -28,19 +28,31 @@ function add_sidebar_sections($form, $lead) {
   echo $sidebar;
 }
 
-function addExpandBox($data, $title, $boxClass=''){
-  return '<div class="meta-box-sortables '.$boxClass.'">'
-          . ' <div class="postbox">'
-          . '   <button type="button" class="handlediv button-link" aria-expanded="true">'
-          . '     <span class="screen-reader-text">Toggle panel: '.$boxClass.'</span>'
-          . '     <span class="toggle-indicator" aria-hidden="true"></span>'
-          . '   </button>'
-          . '   <h2 class="hndle ui-sortable-handle">'.$title.'</h2>'
-          . '   <div class="inside">'.
+function addExpandBox($data, $title, $boxID, $boxClass=''){
+	return '<div id="side-sortables" class="meta-box-sortables ui-sortable">'
+			. '<div id="'.$boxID  .'" class="postbox '.$boxClass.'">'
+  		. '  <div class="postbox-header">
+				 <h2 class="hndle ui-sortable-handle" style="flex-wrap: wrap; line-height: inherit;">'.$title.'</h2>'
+	  		. '  <div class="handle-actions hide-if-no-js">
+					<button type="button" class="handle-order-higher" aria-disabled="false" aria-describedby="print-handle-order-higher-description"><span class="screen-reader-text">Move up</span><span class="order-higher-indicator" aria-hidden="true"></span></button>
+					<span class="hidden" id="submitdiv-handle-order-higher-description">Move '.$title.' box up</span>
+					<button type="button" class="handle-order-lower" aria-disabled="false" aria-describedby="submitdiv-handle-order-lower-description">
+						<span class="screen-reader-text">Move down</span>
+						<span class="order-lower-indicator" aria-hidden="true"></span>
+					</button>
+					<span class="hidden" id="submitdiv-handle-order-lower-description">Move '.$title.' box down</span>
+					<button type="button" class="handlediv" aria-expanded="true">
+						<span class="screen-reader-text">Toggle panel: '.$title.'</span>
+						<span class="toggle-indicator" aria-hidden="true"></span>
+					</button>
+				 </div>
+			 </div>  	
+          	 <div class="inside">'.
                   $data.'
-                </div>
-              </div>
-            </div>';
+             </div>
+          </div></div>';
+  
+                                 
 }
 function display_entry_info_box($form, $lead) {
   $mode       = empty( $_POST['screen_mode'] )  ? 'view' : $_POST['screen_mode'];
@@ -124,7 +136,7 @@ function display_entry_info_box($form, $lead) {
       }
 
   $title = 'Entry Information';
-  return addExpandBox($return,$title);
+  return addExpandBox($return,$title,'entry-info');
 }
 function display_entry_rating_box($form, $lead) {
   /* Ratings Sidebar Area */
@@ -183,7 +195,7 @@ function display_entry_rating_box($form, $lead) {
               data-content="1 = No way<br/>2 = Low priority<br/>3 = Yes, If there’s room<br/>4 = Yes definitely<br/>5 = Hell yes">
               (?)
             </a>'. $ratingAvg .' stars';
-  return addExpandBox($return,$title);
+  return addExpandBox($return,$title,'entry-rating');
 }
 function display_entry_fee_mgmt_box($form, $lead) {
   $fieldName  = 'entry_info_fee_mgmt';
@@ -192,7 +204,7 @@ function display_entry_fee_mgmt_box($form, $lead) {
   $return     = field_display($lead,$form,$field_id,$fieldName);
   $return .= '<input type="button" name="update_fee_mgmt" value="Update Fee Management" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_fee_mgmt\');"/>';
   $return .= '<span class="updMsg update_fee_mgmtMsg"></span>';
-  return addExpandBox($return,'Fee Management');
+  return addExpandBox($return,'Fee Management','fee-mgmt');
 }
 function display_entry_notes_box($form, $lead) {
   /* Notes Sidebar Area */
@@ -211,7 +223,7 @@ function display_entry_notes_box($form, $lead) {
   $subject = '';
   $return = notes_sidebar_grid( $notes, true, $emails, $subject );
 
-  return addExpandBox($return,'Notes','notesbox');
+  return addExpandBox($return,'Notes','notes','notesbox');
 }
 
 function display_flags_prelim_locs($form, $lead) {
@@ -243,7 +255,7 @@ function display_flags_prelim_locs($form, $lead) {
     // Create Update button for sidebar entry management
     $return     .= $entry_sidebar_button.$msgBox;
 
-    return addExpandBox($return,'Flags / Preliminary Location');
+    return addExpandBox($return,'Flags / Preliminary Location', 'flags');
 	}else{
     return '';
   }
@@ -270,7 +282,7 @@ function display_sched_loc_box($form, $lead) {
 	if ($mode == 'view') {
     // Load Entry Sidebar details: schedule
     $return =  mf_sidebar_entry_schedule( $form['id'], $lead );
-    return addExpandBox($return,'Schedule/Location','schedBox');
+    return addExpandBox($return,'Schedule/Location','schedule-location','schedBox');
   }  else {
     return '';
   }
@@ -303,7 +315,7 @@ function display_form_change_box($form, $lead, $formList) {
   $output .= '<input type="button" name="change_form_id" value="Change Form" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'change_form_id\');"/><br />';
   $output .= '<span class="updMsg change_form_idMsg"></span>';
 
-  return addExpandBox($output,'Change Form');
+  return addExpandBox($output,'Change Form','change-form');
 }
 
 function display_dupCopy_entry_box($form, $lead,$formList) {
@@ -319,7 +331,7 @@ function display_dupCopy_entry_box($form, $lead,$formList) {
   $output .= '<input type="button" name="duplicate_entry_id" value="Duplicate Entry" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'duplicate_entry_id\');"/><br />';
   $output .= '<span class="updMsg duplicate_entry_idMsg"></span>';
 
-  return addExpandBox($output,$title);
+  return addExpandBox($output,$title, 'dup-copy-entry');
 }
 
 function display_send_conf_box($form, $lead) {
@@ -329,7 +341,7 @@ function display_send_conf_box($form, $lead) {
               <input type="button" name="send_conf_letter" value="Send Confirmation Letter" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'send_conf_letter\');"/>
               <span class="updMsg send_conf_letterMsg"></span>
           </div>';
-  return addExpandBox($output,$title);
+  return addExpandBox($output,$title, 'send-conf-letter');
 }
 
 /* Notes Sidebar Grid Function */
