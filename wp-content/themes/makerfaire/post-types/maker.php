@@ -28,7 +28,7 @@ function maker_init() {
 	) );
 
 }
-add_action( 'init', 'maker_init' );
+//add_action( 'init', 'maker_init' );
 
 function maker_updated_messages( $messages ) {
 	global $post;

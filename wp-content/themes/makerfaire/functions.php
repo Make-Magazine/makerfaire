@@ -1,47 +1,6 @@
 <?php
-// FOR NOW, TURN OFF GUTENBURG
-// disable for posts
-//add_filter('use_block_editor_for_post', '__return_false', 10);
-// disable for post types
-//add_filter('use_block_editor_for_post_type', '__return_false', 10);
-
-// Set our global Faire Variable. Use the slug of the taxonomy as the value.
-define('MF_CURRENT_FAIRE', 'world-maker-faire-new-york-2014');
-
-// include maker-faire-forms plugin
-require_once( TEMPLATEPATH . '/plugins/maker-faire-forms/maker-faire-forms.php' );
-
-// include maker-faire-forms plugin
-require_once( TEMPLATEPATH . '/plugins/public-pages/makers.php' );
-
-// include maker-faire-forms plugin
-require_once( TEMPLATEPATH . '/post-types/maker.php' );
-
-// include global-maker-faires post type
-require_once( TEMPLATEPATH . '/post-types/global-maker-faire.php' );
-
-// Status Board
-require_once( TEMPLATEPATH . '/plugins/status-board/status-board.php' );
-
-// Current Faire Page
-require_once( TEMPLATEPATH . '/plugins/admin-pages/current-faire/current-faire.php');
-
-// Sponsor Carousel
-include_once TEMPLATEPATH . '/plugins/public-pages/sponsor.php';
-
-// Sponsor Carousel
-include_once TEMPLATEPATH . '/plugins/instagram/instagram.php';
-
 // Register Custom Navigation Walker include custom menu widget to use walkerclass
 include_once TEMPLATEPATH . '/lib/wp_bootstrap_navwalker.php';
-
-// Post Locker
-//include_once dirname( __FILE__ ) . '/plugins/hide-post-locker/hide-post-locker.php';
-// Blue Ribbons
-include_once dirname(__FILE__) . '/plugins/blue-ribbons/blue-ribbons.php';
-
-// White House
-include_once dirname(__FILE__) . '/plugins/white-house/white-house.php';
 
 // Load the settings field for the Applications API
 include_once dirname(__FILE__) . '/api/admin-settings.php';
@@ -49,16 +8,11 @@ include_once dirname(__FILE__) . '/api/admin-settings.php';
 // Load the functions for the Applications API
 include_once dirname(__FILE__) . '/api/v2/functions.php';
 
-//include_once TEMPLATEPATH. '/classes/gf-entry-datatables.php';
 include_once TEMPLATEPATH . '/classes/gf-helper.php';
 include_once TEMPLATEPATH . '/classes/makerfaire-helper.php';
 include_once TEMPLATEPATH . '/classes/gf-rmt-helper.php';
 include_once TEMPLATEPATH . '/classes/mf-sharing-cards.php';
 include_once TEMPLATEPATH . '/classes/ICS.php';
-
-if (!defined('LOCAL_DEV_ENVIRONMENT') || !LOCAL_DEV_ENVIRONMENT) {
-    //include_once TEMPLATEPATH . '/classes/mf-login.php';
-}
 
 // Legacy Helper Functions replacing VIP Wordpress.com calls
 include_once TEMPLATEPATH . '/classes/legacy-helper.php';
@@ -71,17 +25,6 @@ if (is_admin()) {
     include_once TEMPLATEPATH . '/classes/eventbrite.class.inc';
 }
 
-require_once( 'taxonomies/type.php' );
-require_once( 'taxonomies/sponsor-category.php' );
-require_once( 'taxonomies/location.php' );
-require_once( 'taxonomies/faire.php' );
-require_once( 'taxonomies/location_category.php' );
-require_once( 'taxonomies/makerfaire_category.php' );
-require_once( 'taxonomies/group.php' );
-/*
-  require_once( 'plugins/post-types/event-items.php' );
-  require_once( 'post-types/sponsor.php' );
-  require_once( 'post-types/location.php' ); */
 if (defined('WP_CLI') && WP_CLI)
     require_once( 'plugins/wp-cli/wp-cli.php' );
 
