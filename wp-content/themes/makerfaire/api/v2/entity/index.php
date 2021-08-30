@@ -86,7 +86,7 @@ if ($type == 'entity') {
   // Loop through the posts
   while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
     // Store the app information
-    //$app_data = json_decode( mf_clean_content( $post->post_content ) );
+   
     // REQUIRED: Application ID
     $app['id'] = absint($row['lead_id']);
 
