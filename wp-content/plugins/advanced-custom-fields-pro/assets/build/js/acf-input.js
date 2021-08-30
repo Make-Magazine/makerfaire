@@ -7729,10 +7729,22 @@
 				placeholder:		this.get('placeholder'),
 				multiple:			this.get('multiple'),
 				data:				[],
-				escapeMarkup:		function( string ){ 
-					return acf.escHtml( string ); 
-				},
 			};
+
+
+			if ( acf.isset(window, 'jQuery', 'fn', 'selectWoo') ) {
+				// SelectWoo is loaded, use legacy escaping as returning a jQuery object is not supported.
+				options.escapeMarkup = function( string ) { 
+					return acf.escHtml( string ); 
+				};
+			} else {
+				options.templateSelection = function( selection ) {
+					var $selection = $('<span class="acf-selection"></span>');
+					$selection.text( acf.escHtml( selection.text ) );
+					$selection.data('element', selection.element);
+					return $selection;
+				};
+			}
 			
 			// multiple
 			if( options.multiple ) {
@@ -7789,7 +7801,11 @@
 			            $ul.find('.select2-selection__choice').each(function() {
 				            
 				            // vars
-							var $option = $( $(this).data('data').element );
+							if ( $(this).data('data') ) {
+								var $option = $( $(this).data('data').element );
+							} else {
+								var $option = $( $(this).children('span.acf-selection').data('element') );
+							}
 							
 							// detach and re-append to end
 							$option.detach().appendTo( $select );
@@ -9656,7 +9672,7 @@
 			var lastPostStatus = '';
 			wp.data.subscribe(function() {
 				var postStatus = editorSelect.getEditedPostAttribute( 'status' );
-				useValidation = ( postStatus === 'publish' );
+				useValidation = ( postStatus === 'publish' || postStatus === 'future' );
 				lastPostStatus = ( postStatus !== 'publish' ) ? postStatus : lastPostStatus;
 			});
 
@@ -9676,7 +9692,7 @@
 						return resolve( 'Validation ignored (autosave).' );
 					}
 
-					// Bail early if validation is not neeed.
+					// Bail early if validation is not needed.
 					if( !useValidation ) {
 						return resolve( 'Validation ignored (draft).' );
 					}
@@ -9728,6 +9744,8 @@
 					}
 				}).then(function(){
 					return savePost.apply(_this, _args);
+				}).catch(function(err){
+					// Nothing to do here, user is alerted of validation issues.
 				});
 			};
 		}
