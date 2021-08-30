@@ -97,19 +97,8 @@ add_shortcode( 'mmakers', 'makerfaire_meet_the_makers_shortcode' );
  * 3 arbitrarily tagged posts from Makezine - for homepage, but also available as generic shortcode
  */
 
-function makerfaire_makezine_rss_news($atts) {
-   extract(shortcode_atts(array(
-      "newstag" => 'maker-faire',
-      "newstitle" => '',
-      "newslink" => ''
-   ), $atts));
-   require_once 'MF-News-Block.php';
-   $args = [
-      'tag' => $newstag,
-      'title' => $newstitle,
-      'link' => $newslink
-   ];
-   return do_news_block($args);
+function makerfaire_makezine_rss_news($atts) {   
+   return '';
 }
 
 add_shortcode( 'mf-news', 'makerfaire_makezine_rss_news' );
