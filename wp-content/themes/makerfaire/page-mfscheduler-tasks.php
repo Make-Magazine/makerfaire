@@ -33,7 +33,7 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {
       $sched_type = $model->PresentationType;
       $start = date('Y-m-d H:i:s', strtotime($model->Start));
       $end = date('Y-m-d H:i:s', strtotime($model->End));
-      $entries = $model->Entries [0];
+      $entries = (isset($model->Entries[0]) ? $model->Entries[0] : array());
       $model->locationID = add_entry_schedule($faire_id, $subareaid, $start, $end, $entries, $sched_type);
       $model->StatusColor = get_statuscolor_bylocationID($model->locationID);
       $result = $model; // $result=1 ; // $result = $result->createWithAssociation('Meetings', 'MeetingAttendees', $columns, $request->models, 'MeetingID', array('Attendees' => 'AttendeeID'));
@@ -104,7 +104,7 @@ function add_entry_schedule($faire_id, $subarea_id, $entry_schedule_start, $entr
   // $entry_info_entry_id = (isset($_POST['entry_info_entry_id']) ? $_POST['entry_info_entry_id'] : '');
   // location fields
   $location_id = 'NULL';
-  $entry_location_subarea_change = add_entry_location($entry_info_entry_id, $subarea_id, $location_id);
+  add_entry_location($entry_info_entry_id, $subarea_id, $location_id);
 
   // $form_id=$lead['form_id'];
   // set the location
@@ -128,9 +128,9 @@ function add_entry_schedule($faire_id, $subarea_id, $entry_schedule_start, $entr
   if ($insert_row) {
     $result_id = $mysqli->insert_id;
   } else {
+  	$result_id = 0;
     echo ('Error :' . $insert_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
   }
-  ;
 
   return $result_id;
 }
@@ -339,9 +339,10 @@ function add_entry_location($entry_id, $subarea_id, &$location_id = '') {
   if ($insert_row) {
     $result_id = $mysqli->insert_id;
   } else {
+  	$result_id = 0;
     echo ('Error :' . $insert_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
   }
-  ;
+  
   $location_id = $result_id;
 }
 
