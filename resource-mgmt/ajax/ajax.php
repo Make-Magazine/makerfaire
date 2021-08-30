@@ -331,9 +331,11 @@ function getFkeyData($tabFkeyData){
   $selectOptions = array();
   $optionquery = "select " . $referenceField . ", " . $referenceDisplay . " from "   . $referenceTable;
   $result = $mysqli->query( $optionquery );
-  while ($row = $result->fetch_assoc()) {
-    $options[]       = array('id'    => $row[$referenceField], 'fkey'   => $row[$referenceDisplay]);
-    $selectOptions[] = array('value' => $row[$referenceField], 'label' => $row[$referenceDisplay]);
+  if($result){
+	  while ($row = $result->fetch_assoc()) {
+	    $options[]       = array('id'    => $row[$referenceField], 'fkey'   => $row[$referenceDisplay]);
+	    $selectOptions[] = array('value' => $row[$referenceField], 'label' => $row[$referenceDisplay]);
+	  }
   }
   return(array($options,$selectOptions));
 }

@@ -918,14 +918,18 @@ function retrieveRptData($table, $faire) {
       if (isset($row['schedType'])) {
          if (trim($row['schedType']) == '') {
             //determine sched type based on form type
-            $form = GFAPI::get_form($row->form_id);
-            if ($form['form_type'] == 'Performance') {
-               $row['schedType'] = 'Performance';
-            } elseif ($form['form_type'] == 'Workshop') {
-               $row['schedType'] = 'Workshop';
-            } else {
-               $row['schedType'] = 'Talk';
-            }
+         	if(isset($row->form_id)){
+	            $form = GFAPI::get_form($row->form_id);
+	            if ($form['form_type'] == 'Performance') {
+	               $row['schedType'] = 'Performance';
+	            } elseif ($form['form_type'] == 'Workshop') {
+	               $row['schedType'] = 'Workshop';
+	            } else {
+	               $row['schedType'] = 'Talk';
+	            }
+         	}else{
+         		$row['schedType'] = '';
+         	}
          }
          $row['schedType'] = ucfirst($row['schedType']);
       }
@@ -1534,7 +1538,7 @@ function paymentRpt($table, $faire) {
                      if (is_array($payFields['inputs'])) {
                         foreach ($payFields['inputs'] as $input) {
                            $pay_det .= $input['label'] . ': ';
-                           $pay_det .= $payEntry[$input['id']] . "\r";
+                           $pay_det .= (isset($payEntry[$input['id']])?$payEntry[$input['id']]:'') . "\r";
                         }
                         $pay_det .= "\r";
                      }
@@ -1616,6 +1620,7 @@ function notesRpt($table, $faire) {
 }
 
 function shortFormType($form_type) {
+	global $cmInd;
    switch ($form_type) {
       case 'Show Management':
          $form_type = 'SHOW';
