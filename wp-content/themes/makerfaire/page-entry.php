@@ -633,7 +633,7 @@ function getSocial($entrySocial) {
 	
 	if (isset($entrySocial)) {
 		$entrySocial = (string) $entrySocial;
-		$socialArray = (array) unserialize($entrySocial);
+		$socialArray = (is_serialized($entrySocial)?unserialize($entrySocial):array());		
 		
 		$socialBlock = '<span class="social-links">';
 		
@@ -856,7 +856,7 @@ function getMakerInfoNested($entry) {
         $groupbio = (isset($entry['110']) ? $entry['110'] : '');
         $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
     }
-    $child_entryID_array = explode(",", $entry['854']); //field 854 contains the makers, 852 contains the projects
+    $child_entryID_array = (isset($entry['854'])?explode(",", $entry['854']):array()); //field 854 contains the makers, 852 contains the projects
 
     //get maker information    
     $makers = array();
