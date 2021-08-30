@@ -14,7 +14,7 @@ function make_panels($categories, $post) {
     );
 }
 
-add_filter('block_categories', 'make_panels', 10, 2);
+add_filter('block_categories_all', 'make_panels', 10, 2);
 
 add_action('acf/init', 'make_add_acf_blocks');
 
