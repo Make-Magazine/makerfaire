@@ -32,7 +32,7 @@ function fix_image_orientation( $entry, $form ) {
         $exif = @read_exif_data( $image );
 
         //if image is jpg, check the image orientation and correct if necessary
-        if ( $exif['MimeType'] == 'image/jpeg' ) {
+        if ($exif && isset($exif['MimeType']) && $exif['MimeType'] == 'image/jpeg' ) {
           $exif_orient = isset($exif['Orientation'])?$exif['Orientation']:0;
           $rotateImage = 0;
 
