@@ -111,16 +111,6 @@ function make_add_acf_blocks() {
             'mode' => 'auto',
             'keywords' => array('featured', 'events', 'dynamic', 'panel'),
         ));
-        //featured faires panel
-        acf_register_block_type(array(
-            'name' => 'featured_faires_panel',
-            'title' => __('Featured Faires - Dynamic'),
-            'render_callback' => 'call_ACF_block_panels',
-            'category' => 'make-panels',
-            'icon' => 'admin-comments',
-            'mode' => 'auto',
-            'keywords' => array('featured', 'faires', 'panel'),
-        ));
         //Flag Banner Separator Panel
         acf_register_block_type(array(
             'name' => 'flag_banner_panel',
@@ -261,6 +251,24 @@ function make_add_acf_blocks() {
             'mode' => 'auto',
             'keywords' => array('maker', 'faire', 'panel'),
         ));
+		acf_register_block_type(array(
+		    'name' => 'faire_list',
+		    'title' => __('List of Faires'),
+		    'render_callback' => 'call_ACF_block_panels',
+		    'category' => 'make-panels',
+		    'icon' => 'admin-comments',
+		    'mode' => 'auto',
+		    'keywords' => array('maker', 'faire', 'panel'),
+		));
+		acf_register_block_type(array(
+		    'name' => 'cfm_list',
+		    'title' => __('List of Call for Maker Forms'),
+		    'render_callback' => 'call_ACF_block_panels',
+		    'category' => 'make-panels',
+		    'icon' => 'admin-comments',
+		    'mode' => 'auto',
+		    'keywords' => array('maker', 'faire', 'panel'),
+		));
 
 
         //end               
