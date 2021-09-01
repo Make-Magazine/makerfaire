@@ -457,7 +457,7 @@ function display_group($entryID) {
           from wp_mf_lead_rel
           left outer join wp_gf_entry  child on wp_mf_lead_rel.childID = child.id
           left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id
-          where (parentID=" . $entryID . " or childID=" . $entryID . ") and child.status != 'trash' and parent.status != 'trash' GROUP BY wp_mf_lead_rel.parentID”;
+          where (parentID=" . $entryID . " or childID=" . $entryID . ") and child.status != 'trash' and parent.status != 'trash' GROUP BY wp_mf_lead_rel.parentID";
     $results = $wpdb->get_results($sql);
     if ($wpdb->num_rows > 0) {
         if ($results[0]->parentID != $entryID) {
@@ -490,7 +490,7 @@ function display_groupEntries($entryID) {
           from wp_mf_lead_rel
           left outer join wp_gf_entry  child on wp_mf_lead_rel.childID = child.id
           left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id
-          where (parentID=" . $entryID . " or childID=" . $entryID . ") and child.status != 'trash' and parent.status != 'trash' GROUP BY wp_mf_lead_rel.childID”";
+          where (parentID=" . $entryID . " or childID=" . $entryID . ") and child.status != 'trash' and parent.status != 'trash' GROUP BY wp_mf_lead_rel.childID";
     $results = $wpdb->get_results($sql);
     if ($wpdb->num_rows > 0) {
         if ($results[0]->parentID == $entryID) {
