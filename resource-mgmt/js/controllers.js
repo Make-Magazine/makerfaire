@@ -64,6 +64,8 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
     $scope.msg = {};
     $scope.gridOptions = {
       enableCellEditOnFocus: true,
+	  enableSorting: true,
+	  useExternalSorting: false,
       enableFiltering: true,minRowsToShow:20,rowEditWaitInterval: 1,
       enableGridMenu: true,
       exporterCsvFilename: mainRoute+'_'+subRoute+'_export.csv',
@@ -97,16 +99,29 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       data: jQuery.param({ 'table' : $scope.dispTablename , 'type' : 'tableData' }),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     })
-    .then(function(response){
+    .then(function(response){	
       angular.forEach(response.data.columnDefs, function(value, key) {
+	     value.headerCellClass =  $scope.highlightFilteredHeader;
+
           if(("filter" in value)){
             value.filter.type = uiGridConstants.filter.SELECT;
           }
-        });
+          if(("sort" in value)){
+			//need to translate the string passed in the json to an actual object
+			if(value.sort.direction=='uiGridConstants.DESC'){
+				value.sort.direction = uiGridConstants.DESC;
+			}else{
+				value.sort.direction = uiGridConstants.ASC;
+			}	        
+          }
+		  response.data.columnDefs[key] = value;
 
+        });
+      
       $scope.gridOptions.columnDefs = response.data.columnDefs;
       $scope.gridOptions.data       = response.data.data;
       $scope.resource.pInfo         = response.data.pInfo;
+      $scope.gridOptions.enableSorting = true;
     })
     .finally(function () { $scope.resource.loading = false; });
   } //end check if need faire data
@@ -121,6 +136,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       $scope.gridOptions.data.push({});
     }
   };
+
   $scope.save = function() {
     $scope.gridApi.rowEdit.flushDirtyRows( $scope.gridApi.grid );
   };
@@ -142,7 +158,11 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 		})
     .then(function successCallback(response) {
-        if(!rowEntity.pkey) $scope.gridOptions.data[index][pkey] = response.data.id;
+	 	if(response.data.success==true){
+          if(!rowEntity.pkey) $scope.gridOptions.data[index][pkey] = response.data.ID;
+        }else{
+	    	alert('error in update. '+response.data.message);
+        }        
         promise.resolve();
       }, function errorCallback(response) {
         promise.reject();
@@ -163,6 +183,8 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
         if(response.data.success){
           var index = $scope.gridOptions.data.indexOf(row.entity);
           $scope.gridOptions.data.splice(index, 1);
+        }else{
+	    	alert('error in update. '+response.data.message);
         }
       }, function errorCallback(response) {
         //
@@ -211,7 +233,7 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
         $scope.resource.pInfo         = response.data.pInfo;
       }
     }).finally(function () {
-      if(type=='faires'){
+      if(type=='faires'){	
         faires = $scope.data.faires;
         angular.forEach(faires, function(value,key){
           if(value.faire==$scope.subRoute){

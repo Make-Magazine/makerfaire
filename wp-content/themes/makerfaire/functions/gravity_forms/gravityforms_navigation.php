@@ -186,7 +186,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
                                     'title' => $menu_item->title,
                                     'href' => $menu_item->url,
                                     'meta' => array('class' => 'my-toolbar-page'),
-                                    'parent' => 'mf_admin_parent_' . $faire
+                                		'parent' => 'mf_admin_parent' . (isset($faire)? '_'.$faire:'-default')
                                 );
 
                                 $wp_admin_bar->add_node($args);

@@ -4,7 +4,7 @@ global $slug;
 ?>
 <div class="col-md-4">
       <?php
-            $goldSmith = mf_sponsor_carousel( 'Goldsmith Sponsor',$slug );
+            $goldSmith   = mf_sponsor_carousel( 'Goldsmith Sponsor',$slug );
             $silverSmith = mf_sponsor_carousel( 'Silversmith Sponsor',$slug );
             $copperSmith = mf_sponsor_carousel( 'Coppersmith Sponsor',$slug );
         if($goldSmith!=FALSE || $silverSmith!=FALSE || $copperSmith!=FALSE){

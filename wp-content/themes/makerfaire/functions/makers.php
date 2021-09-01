@@ -1102,8 +1102,8 @@ function mf_display_schedule_by_location( $atts ) {
 	), $atts );
 
 	// Get the faire date array. If the
-	//$faire_date = mf_get_faire_date( sanitize_title( $data['faire'] ) );
-	$faire_date = array();
+	$faire_date = mf_get_faire_date( sanitize_title( $data['faire'] ) );
+
 	// Make sure we actually passed a valid faire...
 	if ( empty( $faire_date ) )
 		return '<h3>Not a valid faire!</h3>';

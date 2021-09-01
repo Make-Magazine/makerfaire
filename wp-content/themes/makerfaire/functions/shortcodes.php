@@ -36,6 +36,7 @@ function make_rss_func($atts) {
         'morelink' => "",
         'number' => 6
             ), $atts);
+
 	// each attribute above for some reason has a comma after it	 
 	array_walk($a,function(&$val){$val = trim($val);});
 	

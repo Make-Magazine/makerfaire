@@ -58,6 +58,13 @@ $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
     'fieldName' => 'event_type', 'filterType'=>'dropdown','fieldLabel'=>'Event Type', 'enableCellEdit' => true,
     'options' => array('Mini' => 'Mini', 'Featured' => 'Featured', 'Flagship' => 'Flagship', 'School' => 'School')
   );
+$tableOptions['wp_mf_global_faire']['addlFields'][] = array(
+		'fieldName' => 'event_start_dt', 'fieldLabel'=>'Start Date'
+  );
+$tableOptions['wp_mf_global_faire']['addlFields'][] = array(
+		'fieldName' => 'ID', 'type'=>'number',
+		'sort' => array('direction' => 'uiGridConstants.DESC', 'priority' => 1)
+);
 
 //Ribbons
 $tableOptions['wp_mf_ribbons']['addlFields']['form_id'] = array('fieldName' => 'form_id', 'fieldLabel' => 'Form ID',

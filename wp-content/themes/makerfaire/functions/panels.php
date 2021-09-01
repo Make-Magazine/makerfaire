@@ -61,9 +61,6 @@ function dispLayout($row_layout) {
             case 'sponsors_panel':   // SPONSOR PANEL
                 $return = getSponsorPanel();
                 break;
-            case 'featured_faires_panel':   // FEATURED FAIRES PANEL
-                $return = getFeatFairePanel();
-                break;
             case 'social_media': //social media panel
                 $return = getSocialPanel();
                 break;
@@ -87,6 +84,12 @@ function dispLayout($row_layout) {
 			case 'rss_feed': // pull the rss feed shortcode with user inputs
 				$return = getRSSFeed();
 				break;
+			case 'faire_list': // return display of the list of faires
+			    $return = getFaireList();
+			    break;
+			case 'cfm_list': // return display of the list of call for maker forms
+			    $return = getCFMList();
+			    break;
         }
     }
     return $return;
@@ -590,8 +593,9 @@ function get1ColLayout() {
             the_row();
             // TODO add the URL wrapper
             $hero_image_random = get_sub_field('hero_image_random');
+
             $hero_image_url = (isset($hero_image_random["url"])?$hero_image_random["url"]:'');
-            
+
             $image = '<div class="hero-img lazyload" data-bg="' . $hero_image_url . '"></div>';
             $cta_link = get_sub_field('image_cta');
 
@@ -1383,85 +1387,6 @@ function getSponsorPanel() {
     return $return;
 }
 
-/* * ************************************************ */
-/*  Returns a list of featured faires based on data */
-/*  entered in another page                         */
-/* * ************************************************ */
-
-function getFeatFairePanel() {
-    GLOBAL $acf_blocks;
-    
-    $return = '';
-    $return .= '<section class="featured-panel white-back"> ';
-
-    //build the container div
-    $return .= '<div class="container featured-faire-landing">';
-
-    // Display the panel title    
-    $title = ($acf_blocks ? get_field('featured_faires_title') : get_sub_field('featured_faires_title'));
-    $return .= '<div class="row text-center">
-                  <div class="panel-title title-w-border-y yellow-underline">
-                    <h2>' . $title . '</h2>
-                  </div>
-                </div>';
-
-    //get featured faires data
-    $url        = ($acf_blocks ? get_field('featured_faires_page_url') : get_sub_field('featured_faires_page_url'));
-    $cta_url    = ($acf_blocks ? get_field('more_faires_url') : get_sub_field('more_faires_url'));
-    $cta_text   = ($acf_blocks ? get_field('more_faires_text') : get_sub_field('more_faires_text'));
-    if($cta_text =='')  $cta_text = 'More Faires';
-    //pull featured faire information based on entered url
-    $id = url_to_postid($url);
-    $faires_to_show = (int) ($acf_blocks ? get_field('faires_to_show') : get_sub_field('faires_to_show'));
-
-    $faires_shown = 0;
-    // If the linked page has featured faires, then display data
-    if (have_rows('featured_faires', $id)) {
-        $return .= ' <div class="row">';
-        while (have_rows('featured_faires', $id) && $faires_shown < $faires_to_show) {
-            the_row();
-
-            //don't display events that have passed
-            if (!get_sub_field('past_event')) {
-                $faires_shown++;
-
-                $faire_title = get_sub_field('faire_title'); //Title            
-                $faire_url = get_sub_field('faire_url'); //URL
-                $faire_photo = get_sub_field('faire_photo'); //Photo
-                $faire_date = get_sub_field('faire_date'); //Date
-
-                $return .= '<div class="col-xs-12 col-sm-6 col-md-4">';
-                $return .= '   <div class="featured-faire-box">';
-                if ($faire_url != '') {
-                    $return .= '<a href="' . $faire_url . '">';
-                }
-                $return .= '<img src="' . $faire_photo['url'] . '" alt="Featured Maker Faire Image" class="img-responsive lazyload" />';
-                //$return .=   '<p class="featured-faire-above-title">Maker Faire</p>';
-                $return .= '<h4 class="featured-faire-date">' . $faire_date . '</h4>';
-                $return .= '<h3 class="featured-faire-title clear">' . $faire_title . '</h3>';
-                $return .= '<div class="clearfix"></div>';
-                if ($faire_url != '') {
-                    $return .= '</a>';
-                }
-                $return .= '   </div>';
-                $return .= '</div>';
-            }
-        }
-        $return .= '   </div>';
-    }
-
-    //add cta section
-    if ($cta_url != '') {
-        $return .= '<div class="row padbottom">
-                     <div class="col-xs-12 padbottom text-center">
-                       <a class="btn btn-blue-universal cta-btn" href="' . $cta_url . '">' . $cta_text . '</a>
-                     </div>
-                   </div>';
-    }
-    $return .= '   </div>'  //close .container div
-            . '</section>';
-    return $return;
-}
 
 /* * ************************************************ */
 /*  Function to return Social Media Panel           */
@@ -1605,4 +1530,81 @@ function getRSSFeed() {
 	
 	$rss_shortcode = '[make_rss title='.urlencode($title).', feed='.$feed_tag.', moreLink='.$more_link.', number='.$number.']';
 	echo do_shortcode($rss_shortcode);
+}
+
+
+
+/* ********************************************************* */
+/* Function to show a list of faires of the type entered     */
+/* ********************************************************* */
+function getFaireList() {
+    GLOBAL $acf_blocks;
+    GLOBAL $wpdb;
+    
+    $date_start = date('Y-m-d H:i:s', time());
+    
+    $faire_type = ($acf_blocks ? implode(",", get_field('type')) : implode(",", get_sub_field('type')));
+    $past_or_future_value = ($acf_blocks ? get_field('past_or_future') : get_sub_field('past_or_future'));
+    
+    $past_or_future = "";
+    if($past_or_future_value == '>') {
+        $past_or_future = " AND event_start_dt > '" . $date_start . "'";
+    } else if($past_or_future_value == '<') {
+        $past_or_future = " AND event_start_dt < '" . $date_start . "'";
+    }
+    $limit = ($acf_blocks ? get_field('number') : get_sub_field('number'));
+    
+    $output = "<ul class='flex-list faire-list'>";
+    $rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type in({$faire_type}){$past_or_future} ORDER BY event_start_dt", OBJECT );
+    $i = 0;
+    foreach($rows as $row){
+        if($row->faire_image) {
+            
+            $name = isset($row->faire_nicename) ? $row->faire_nicename : $row->faire_name;
+            $output .= "<li><a href='$row->faire_url'>";
+            $output .=      "<img src='$row->faire_image'>";
+            $output .=      "<p>$row->event_dt</p>";
+            $output .=      "<h3>$name</h3>";
+            $output .= "</a></li>";
+            if (++$i == $limit) break;
+        }
+    }
+    $output .= "</ul>";
+    echo($output);
+}
+
+/* **************************************************** */
+/* Function to show a list of call for makers forms     */
+/* **************************************************** */
+function getCFMList() {
+    GLOBAL $acf_blocks;
+    GLOBAL $wpdb;
+    
+    $featured_faire_limit = ($acf_blocks ? get_field('featured_faires_number') : get_sub_field('featured_faires_number'));
+    $community_faire_limit = ($acf_blocks ? get_field('community_faires_number') : get_sub_field('community_faires_number'));
+    
+    $output = "<div class='cfm-list'>";
+    $output .=   "<ul class='flex-list featured-cfm-list'>";
+    $featuredRows = $wpdb->get_results( "SELECT event_start_dt, cfm_end_dt, event_type, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Featured' AND cfm_end_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT );
+    $i = 0;
+    foreach($featuredRows as $row){
+        if($row->cfm_image) {
+            $output .= "<li><a href='$row->cfm_url'>";
+            $output .=      "<img src='$row->cfm_image'>";
+            $output .= "</a></li>";
+            if (++$i == $featured_faire_limit) break;
+        }
+    }
+    $output .=   "</ul>";
+    $output .=   "<ul class='community-cfm-list'>";
+    $communityRows = $wpdb->get_results( "SELECT faire_name, event_start_dt, cfm_end_dt, event_type, event_dt, cfm_url FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Mini' AND cfm_end_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT );
+    $j = 0;
+    foreach($communityRows as $row){
+        $output .= "<li><a href='$row->cfm_url'>";
+        $output .=      $row->faire_name . "<br />(" . $row->event_dt . ")";
+        $output .= "</a></li>";
+        if (++$j == $community_faire_limit) break;
+    }
+    $output .=   "</ul>";
+    echo($output);
 }
