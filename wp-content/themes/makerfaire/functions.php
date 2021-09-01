@@ -98,9 +98,7 @@ function load_scripts() {
     wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
     wp_enqueue_style('make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css', true);
     // wp_enqueue_style('wpb-google-fonts', 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Condensed:400', false);
-    wp_enqueue_style('linearicons', 'https://cdn.linearicons.com/free/1.0.0/icon-font.min.css', '', 'all', true);
     wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.min.css', array(), $my_version);
-    // wp_enqueue_style('ytv', get_stylesheet_directory_uri() . '/css/ytv.css');
 
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
     wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
@@ -392,6 +390,12 @@ function shapeSpace_remove_toolbar_node($wp_admin_bar) {
 
 add_action('admin_bar_menu', 'shapeSpace_remove_toolbar_node', 999);
 
+// keep the old style widget page
+function switch_widget_editor() {
+    remove_theme_support( 'widgets-block-editor' );
+}
+add_action( 'after_setup_theme', 'switch_widget_editor' );
+
 // Never expire orphaned entries.
 // Set the expiration date to 100 years in the future effectively never expiring the entries.
 add_filter('gpnf_expiration_modifier', function() {
@@ -484,3 +488,21 @@ function validate_url($url) {
 	
 	return true;
 }
+
+/*
+add_filter( 'manage_pages_columns', 'codismo_table_columns', 10, 1 );
+add_action( 'manage_pages_custom_column', 'codismo_table_column', 10, 2 );
+function codismo_table_columns( $columns ) {
+    $custom_columns = array(
+        'codismo_template' => 'Template'
+    );
+    $columns = array_merge( $columns, $custom_columns );
+    return $columns;
+    
+}
+function codismo_table_column( $column, $post_id ) {
+    if ( $column == 'codismo_template' ) {
+        echo basename( get_page_template() );
+    }
+}
+*/
