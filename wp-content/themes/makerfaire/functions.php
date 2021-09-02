@@ -112,10 +112,7 @@ function load_scripts() {
     // space time for timezone hijinks
     wp_enqueue_script('spacetime', 'https://unpkg.com/spacetime', array(), false, true);
 
-    if (strpos($_SERVER['REQUEST_URI'], "authenticate-redirect") !== false) {
-        wp_enqueue_script('billboard', get_stylesheet_directory_uri() . '/js/libs/billboard.js', array('jquery'), $my_version, true);
-    }
-    // Libraries concatenated by the grunt concat task (in Gruntfile.js):
+    // Libraries concatenated by our npm build
     wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'), $my_version, true);
     // Other libraries:
     wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), '', true);
