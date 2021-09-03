@@ -22,28 +22,7 @@ get_header(); ?>
 					$json = json_decode($json);
 				?>
 
-				<article <?php post_class(); ?>>
-
-
-					<?php echo ( !empty( $json->maker_faire ) ) ? '<h5><small>' . mf_better_name( $json->maker_faire ) . '</small></h5>' : ''; ?>
-
-					<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
-
-					<?php
-						//if ($json->form_type == 'exhibit') {
-							// echo mf_location( get_the_ID() );
-						//}
-					?>
-
-					<?php echo mf_get_scheduled_item( get_the_ID() ); ?>
-
-					<?php mf_public_blurb( $json ); ?>
-
-					<hr>
-
-					<?php if ( function_exists( 'sharing_display') ) echo sharing_display(); ?>
-
-				</article>
+				
 
 			<?php endwhile; ?>
 

@@ -9,9 +9,7 @@
 		<div class="content col-md-8">
 
 			<?php
-				$faire = ( isset( $_GET['faire'] ) && ! empty( $_GET['faire'] ) ) ? sanitize_title( $_GET['faire'] ) : MF_CURRENT_FAIRE;
-
-				echo do_shortcode( '[mf_schedule_by_location location_id="' . get_the_ID() . '" faire="' . $faire . '"]' );
+				$faire = ( isset( $_GET['faire'] ) && ! empty( $_GET['faire'] ) ) ? sanitize_title( $_GET['faire'] ) : '';				
 			?>
 
 		</div><!--Content-->

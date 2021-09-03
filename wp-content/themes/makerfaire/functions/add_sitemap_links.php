@@ -21,7 +21,7 @@ function add_entries_sitemap_to_index($smp) {
    $forms = GFAPI::get_forms(true, false);
    
    foreach ($forms as $form) {
-      if (in_array($form['form_type'],$form_types)) {         
+   	if (isset($form['form_type']) && in_array($form['form_type'],$form_types)) {         
          
          $formId = $form['fields'][0]['formId'];     
          //see if there are any entries that match search criteria

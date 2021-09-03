@@ -413,7 +413,7 @@ function make_campaign_monitor_form( $atts, $content = null ) {
 		'submit_class' => '',
 		'submit'       => 'Subscribe',
 	), $atts ) );
-
+	$output = '';
 	if ( ! empty( $class ) ) {
 		$output .= '<form action="' . esc_url( $url ) . '" method="post" id="' . esc_attr( $id ) . '" class="' . esc_attr( $class ) . '">';
 	} else {

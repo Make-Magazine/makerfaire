@@ -35,8 +35,8 @@ if ($displayNav) {
 
             $sql = 'select * from wp_mf_faire where url_path="' . $parent_slug . '";';
             $faireData = $wpdb->get_row($sql);
-            $faire = $faireData->faire;
-            $timeZone = $faireData->time_zone;
+            $faire = (isset($faireData->faire)?$faireData->faire:'');
+            $timeZone = (isset($faireData->time_zone)?$faireData->time_zone:'');
             ?>			
             <script type="text/javascript">
                 printScheduleEvent = function () {
