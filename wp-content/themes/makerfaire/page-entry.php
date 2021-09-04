@@ -5,8 +5,9 @@
  * @version 2.1
  */
 global $wp_query;
-$entryId = $wp_query->query_vars['e_id'];
-$editEntry = $wp_query->query_vars['edit_slug'];
+global $wpdb;
+$entryId = (isset($wp_query->query_vars['e_id'])?$wp_query->query_vars['e_id']:'');
+$editEntry = (isset($wp_query->query_vars['edit_slug'])?$wp_query->query_vars['edit_slug']:'');
 $entry = GFAPI::get_entry($entryId);
 
 //error_log(print_r($entry, TRUE));
@@ -26,6 +27,8 @@ if (isset($entry->errors)) {
     $formType = '';
     $entry = array();
     $faire = '';
+    $faireShort = '';
+    $timeZone = '';
 } else {
     //find out which faire this entry is for to set the 'look for more makers link'
     $form_id = $entry['form_id'];
@@ -51,14 +54,14 @@ if (isset($entry->errors)) {
         $entry = GFAPI::get_entry($entryId);
     }
 
-    $faire = $slug = $faireID = $show_sched = $faireShort = $faire_end = '';
+    $faire = $show_sched = $faireShort = $faire_end = '';
     if ($form_id != '') {
         $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name,  faire_location, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
                 . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
 
         $results = $wpdb->get_row($formSQL);
         if ($wpdb->num_rows > 0) {
-            $faire = $slug = $results->faire_name;
+            $faire = $results->faire_name;
             $faire_name = $results->pretty_faire_name;
             $faire_location_db = $results->faire_location;
             $faireShort = $results->faire;

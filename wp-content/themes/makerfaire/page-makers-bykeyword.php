@@ -19,14 +19,15 @@ foreach ($exclude_form as $exFormID){
 }
 
 //$search_term = urldecode($wp_query->query_vars['s_keyword']);
-$search_term=$_GET["s_term"];
-$currentpage = $wp_query->query_vars['offset'];
+$search_term=(isset($_GET["s_term"])?$_GET["s_term"]:'');
+$currentpage = (isset($wp_query->query_vars['offset'])?$wp_query->query_vars['offset']:0);
 $page_size = 30;
 $offset=($currentpage-1)*$page_size;
 $total_count = 0;
-$f = $wp_query->query_vars['f'];
+$f = (isset($wp_query->query_vars['f'])?$wp_query->query_vars['f']:'');
 //$search_criteria = array( 'key' => '147', 'value' =>  $search_term);
 //$search_criteria['status'] = 'active';
+$search_criteria=array();
 $search_criteria['field_filters'][] = array( 'key' => '16', 'operator' => 'contains','value' => $search_term);
 $search_criteria['field_filters'][] = array( 'key' => '320', 'operator' => 'contains','value' => $search_term);
 $search_criteria['field_filters'][] = array( 'key' => '321', 'operator' => 'contains','value' => $search_term);
@@ -179,10 +180,10 @@ function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 	global $wpdb;
 	$sort_field_number = rgar( $sorting, 'key' );
 	$sort_direction    = isset( $sorting['direction'] ) ? $sorting['direction'] : 'DESC';
-	$offset          = isset( $paging['offset'] ) ? $paging['offset'] : 0;
-	$page_size       = isset( $paging['page_size'] ) ? $paging['page_size'] : 20;
-	$search_key          = isset( $searching['key'] ) ? $searching['key'] : '';
-	$search_value       = isset( $searching['value'] ) ? $searching['value'] : '';
+	$offset            = isset( $paging['offset'] ) ? $paging['offset'] : 0;
+	$page_size         = isset( $paging['page_size'] ) ? $paging['page_size'] : 20;
+	$search_key        = isset( $searching['key'] ) ? $searching['key'] : '';
+	$search_value      = isset( $searching['value'] ) ? $searching['value'] : '';
 
 	if ( ! is_numeric( $sort_field_number ) || ! is_numeric( $offset ) || ! is_numeric( $page_size ) ) {
 		return '';

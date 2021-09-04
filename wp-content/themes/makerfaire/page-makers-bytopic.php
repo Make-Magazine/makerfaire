@@ -3,7 +3,7 @@
  * Template Name: Makers By Topic
  */
 global $wp_query;
-
+global $wpdb;
 //get faire ID (default to BA15
 $faire = (isset($_GET['faire'])?sanitize_text_field($_GET['faire']):'BA15');
 $results            = $wpdb->get_results('SELECT * FROM wp_mf_faire where faire= "'.strtoupper($faire).'"');
@@ -17,17 +17,17 @@ foreach ($exclude_form as $exFormID){
     unset($current_form_ids[$key]);
   }
 }
-$topic_slug = $wp_query->query_vars['t_slug'];
+$topic_slug = (isset($wp_query->query_vars['t_slug'])?$wp_query->query_vars['t_slug']:'');
 
 $category = get_term_by('slug',$topic_slug,'makerfaire_category');
 
 //change to search by taxonomy code
-$search_category = $category->term_id;
-$currentpage = $wp_query->query_vars['offset'];
+$search_category = (isset($category->term_id)?$category->term_id:'');
+$currentpage = (isset($wp_query->query_vars['offset'])?$wp_query->query_vars['offset']:'');
 $page_size = 30;
 $offset=($currentpage-1)*$page_size;
 $total_count = 0;
-$f = $wp_query->query_vars['f'];
+$f = (isset($wp_query->query_vars['f'])?$wp_query->query_vars['f']:'');
 
 $sorting_criteria = array('key' => '151', 'direction' => 'ASC' );
 $paging_criteria  = array('offset' => $offset, 'page_size' => $page_size );
@@ -42,7 +42,6 @@ $entries =  GFAPI::get_entries( $current_form_ids, $search_criteria, $sorting_cr
 $current_url = '/'.$f.'/meet-the-makers/topics/'.$topic_slug;
 
 // Load Categories
-$cats_tags = get_categories(array('hide_empty' => 0));
 
 get_header(); ?>
 <div class="clear"></div>
@@ -63,7 +62,7 @@ get_header(); ?>
 			</div>
 			<div class="row">
 				<div class="col-md-8">
-					<h3 class="nomargins">Topic: <?php echo $category->name;?></h3>
+					<h3 class="nomargins">Topic: <?php echo (isset($category->name)?$category->name:'');?></h3>
 				</div>
 			</div>
 			<div class="clear"></div>
@@ -119,8 +118,7 @@ get_header(); ?>
 /* Support Functions */
 function search_entries_bytopic( $form_id, $search_criteria = array(), $sorting = null, $paging = null, &$total_count ) {
   global $wpdb;
-  $sort_field = isset( $sorting['key'] ) ? $sorting['key'] : 'date_created'; // column, field or entry meta
-
+ 
 	//initializing rownum
 	$sql = sort_by_field_query( $form_id, $search_criteria, $sorting, $paging);
 	$sqlcounting = sort_by_field_count( $form_id, $search_criteria);
@@ -142,7 +140,6 @@ function search_entries_bytopic( $form_id, $search_criteria = array(), $sorting 
 function sort_by_field_query( $form_id, $searching, $sorting, $paging ) {
 	global $wpdb;
 	$sort_field_number = rgar( $sorting, 'key' );
-	$sort_direction    = isset( $sorting['direction'] ) ? $sorting['direction'] : 'DESC';
 	$offset          = isset( $paging['offset'] ) ? $paging['offset'] : 0;
 	$page_size       = isset( $paging['page_size'] ) ? $paging['page_size'] : 20;
 	$search_key          = isset( $searching['key'] ) ? $searching['key'] : '';
@@ -200,8 +197,6 @@ function sort_by_field_count( $form_id, $searching ) {
 	$searchfield_number_max = $search_key + 0.9999;
 
 	$lead_detail_table_name = 'wp_gf_entry_meta';
-	$lead_table_name        = 'wp_gf_entry';
-
 	$accepted_criteria = "(meta_key BETWEEN '302.9999' AND '303.9999' AND meta_value = 'Accepted' )";
 
 

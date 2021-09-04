@@ -2,6 +2,7 @@
 /**
  * Template Name: Meet the Makers page
  */
+global $wpdb;
   get_header();
 
   $par_post = get_post($post->post_parent);
@@ -41,17 +42,17 @@
 
   $faire     = get_post_meta($post->ID, 'faire', true);
   $results = $wpdb->get_results('SELECT * FROM wp_mf_faire where faire= "'.strtoupper($faire).'"');
-  $faireName = $results[0]->faire_name;
+  $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
 
   $entries = GFAPI::get_entries($faireArray, $search_criteria, null, array('offset' => 0, 'page_size' => 60));
 
-  $randEntryKey = array_rand($entries);
-  $randEntry = $entries[$randEntryKey];
-  $randEntryId = $randEntry['id'];
+  $randEntryKey = (!empty($entries)?array_rand($entries):'');
+  $randEntry = (isset($entries[$randEntryKey])?$entries[$randEntryKey]:'');  
 
-  $randPhoto = $randEntry['22'];
+  $randPhoto = (isset($randEntry['22'])?$randEntry['22']:'');
+  
   //find out if there is an override image for this page
-  $overrideImg = findOverride($randEntry['id'],'mtm');
+  $overrideImg = (isset($randEntry['id'])?findOverride($randEntry['id'],'mtm'):'');
   if($overrideImg!='') $randPhoto = $overrideImg;
 ?>
 
@@ -68,14 +69,14 @@
 						<div class="mask">
 							<div class="slideset">
                 <div class="slide">
-                  <a href="/maker/entry/<?php echo $randEntry['id']; ?>">
+                  <a href="<?php echo (isset($randEntry['id'])? 'maker/entry/'.$randEntry['id']:'#')?>">
                     <span class="maker-slider-btn">Learn More About This Maker</span>
                     <img class="img-responsive cycle-gallery-slide" src="<?php echo legacy_get_resized_remote_image_url($randPhoto,1134,442); ?>" srcset="<?php echo legacy_get_resized_remote_image_url($randPhoto,767,575); ?> 500w, <?php echo legacy_get_resized_remote_image_url($randPhoto,1134,442); ?>" alt="Slide Show from Maker Faire <?php echo $faireName;?>">
                   </a>
-									<a href="/maker/entry/<?php echo $randEntry['id']; ?>">
+				  <a href="<?php echo (isset($randEntry['id'])? 'maker/entry/'.$randEntry['id']:'#')?>">
                     <div class="text-holder">
-				   						<strong class="title">Featured Maker Story</strong>
-				   						<p><mark><?php echo $randEntry['151']; ?>: </mark><?php echo $randEntry['16']; ?></p>
+				   		<strong class="title">Featured Maker Story</strong>
+				   		<p><mark><?php echo (isset($randEntry['151'])?$randEntry['151']:''); ?>: </mark><?php echo (isset($randEntry['16'])?$randEntry['16']:''); ?></p>
                     </div>
                   </a>
                 </div>

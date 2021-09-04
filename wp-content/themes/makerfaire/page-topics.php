@@ -40,7 +40,7 @@ get_header(); ?>
 
 			<div class="page-header">
 
-				<h1><?php the_title(); ?> <small><?php echo ( ! empty( $faire ) ) ? esc_html( $faire->name ) : 'All Faires'; ?></small></h1>
+				<h1><?php the_title(); ?> <small><?php echo ( ! empty( $faire )&& isset($faire->name ) ) ? esc_html( $faire->name ) : 'All Faires'; ?></small></h1>
 				<h2><?php echo esc_html( $tag_obj->name ); ?></h2>
 				<ul class="pager">
 					<li class="previous"><?php previous_posts_link('&larr; Previous Page', $query->max_num_pages); ?></li>
