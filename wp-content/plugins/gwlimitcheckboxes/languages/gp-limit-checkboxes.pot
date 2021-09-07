@@ -45,18 +45,18 @@ msgid_plural "You must select at least %s items."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../class-gp-limit-checkboxes.php:410
+#: ../class-gp-limit-checkboxes.php:424
 msgid "Limit number of checked checkboxes."
 msgstr ""
 
-#: ../class-gp-limit-checkboxes.php:418
+#: ../class-gp-limit-checkboxes.php:432
 msgid "Minimum Limit"
 msgstr ""
 
-#: ../class-gp-limit-checkboxes.php:425
+#: ../class-gp-limit-checkboxes.php:439
 msgid "Maximum Limit"
 msgstr ""
 
-#: ../class-gp-limit-checkboxes.php:438
+#: ../class-gp-limit-checkboxes.php:452
 msgid "Span limit across multiple fields."
 msgstr ""

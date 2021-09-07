@@ -500,7 +500,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		foreach ( $expired as $entry_id ) {
 
 			// Move expired entries to the trash. Gravity Forms will handle deleting them from there.
-			GFFormsModel::update_lead_property( $entry_id, 'status', 'trash' );
+			GFAPI::update_entry_property( $entry_id, 'status', 'trash' );
 
 			// Remove expiration meta so this entry will never "expire" again.
 			$entry = new GPNF_Entry( $entry_id );
@@ -994,7 +994,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		 * @since 1.0-beta-10.1
 		 */
 		if ( gf_apply_filters( array( 'gpnf_should_trash_entries_on_delete', $entry['form_id'] ), false ) ) {
-			$result = GFFormsModel::update_lead_property( $entry_id, 'status', 'trash' );
+			$result = GFAPI::update_entry_property( $entry_id, 'status', 'trash' );
 		} else {
 			$result = GFAPI::delete_entry( $entry_id );
 		}
@@ -2921,6 +2921,32 @@ class GP_Nested_Forms extends GP_Plugin {
 	 */
 	public function is_gf_version_gte( $version ) {
 		return class_exists( 'GFForms' ) && version_compare( GFForms::$version, $version, '>=' );
+	}
+
+	/**
+	 * Returns a query parameter from the current XHR request or the parent form's $_REQUEST.
+	 *
+	 * Note: This relies on the session cookie that's stored when the parent form initially loads
+	 *
+	 * @param string $param Query parameter to get
+	 *
+	 * @return string|null Value of query parameter if present
+	 */
+	public function get_query_arg( $param ) {
+		// Use rgget() to attempt to fetch values from $_GET
+		$value = rgget( $param );
+
+		// If we didn't find a value in $_GET, let's check our session cookie
+		if( rgblank( $value ) ) {
+			$parent_form_id = rgar( $_REQUEST, 'gpnf_parent_form_id' );
+			if ( $parent_form_id ) {
+				$session = new GPNF_Session( $parent_form_id );
+				$cookie  = $session->get_cookie();
+				$value   = rgar( $cookie['request'], $param );
+			}
+		}
+
+		return $value;
 	}
 
 }

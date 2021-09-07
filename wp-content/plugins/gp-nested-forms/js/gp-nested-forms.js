@@ -407,7 +407,7 @@
 				}
 			} );
 
-			var mobileCancelClasses = window.gform.applyFilters('gpnf_modal_button_css_classes', 'tingle-btn tingle-btn--default gpnf-btn-cancel-mobile', 'cancel', self.formId, self.fieldId, self);
+			var mobileCancelClasses = window.gform.applyFilters('gpnf_modal_button_css_classes', 'tingle-btn tingle-btn--default gpnf-btn-cancel-mobile', 'cancel-mobile', self.formId, self.fieldId, self);
 
 			self.modal.addFooterBtn( self.modalArgs.labels.cancel, mobileCancelClasses, function() {
 				self.handleCancelClick( $( this ) );
@@ -828,9 +828,31 @@
 					}
 
 					var $parentInput = self.$parentFormContainer.find( '#input_' + self.formId + '_' + inputId.split( '.' ).join( '_' ) );
-					if ( $parentInput.hasClass( 'gfield_radio' ) ) {
+					if ( $parentInput.hasClass( 'gfield_radio' ) || $parentInput.hasClass( 'gfield_checkbox' ) ) {
 						$parentInput = $parentInput.find( 'input:checked' );
 					}
+
+					var parentValue = [];
+
+					// Apply input label if :label modifier is added
+					if ( parentMergeTagMatches[i][0].indexOf(':label') !== -1 ) {
+						$parentInput.each(function() {
+							var $input = $(this);
+
+							if ( $input.hasClass('gfield_select') ) {
+								parentValue.push($input.find('option:selected').text());
+							} else {
+								parentValue.push($input.parent().find('label').text());
+							}
+						});
+					} else {
+						$parentInput.each(function() {
+							parentValue.push($(this).val());
+						});
+					}
+
+					// Convert array of values to string.
+					parentValue = parentValue.join(', ');
 
 					/**
 					 * Filter the value of the parent merge tag before it is replaced in the field.
@@ -842,7 +864,7 @@
 					 * @param int             formId          ID of the current form.
 					 * @param {GPNestedForms} gpnf            Current instance of the GPNestedForms object.
 					 */
-					var parentValue = gform.applyFilters( 'gpnf_parent_merge_tag_value', $parentInput.length ? $parentInput.val() : '', inputId, self.formId, self );
+					parentValue = gform.applyFilters( 'gpnf_parent_merge_tag_value', $parentInput.length ? parentValue : '', inputId, self.formId, self );
 
 					value = value.replace( parentMergeTagMatches[i][0], parentValue );
 
@@ -869,7 +891,7 @@
 		self.getParentMergeTags = function( string ) {
 
 			var matches = [],
-				pattern = /{Parent:(\d+(\.\d+)?)}/i;
+				pattern = /{Parent:(\d+(\.\d+)?)[^\}]*}/i;
 
 			while ( pattern.test( string ) ) {
 				var i      = matches.length;

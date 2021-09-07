@@ -63,7 +63,7 @@ class GPNF_Entry {
 		if ( ! $entry_id ) {
 			$entry_id = $this->_entry_id;
 		}
-		GFFormsModel::update_lead_property( $entry_id, 'status', $status );
+		GFAPI::update_entry_property( $entry_id, 'status', $status );
 	}
 
 	public function has_children() {

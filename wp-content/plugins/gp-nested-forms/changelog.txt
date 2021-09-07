@@ -1,6 +1,20 @@
 
 # Changelog
 
+## 1.0-beta-10.4
+
+	- Improved support for checkboxes pulled into child forms using the {Parent} merge tag. When more than one checkbox is selected, the values/labels will be comma delimited.
+	- Added `:label` modifier to `{parent}` GPNF merge tags.
+
+## 1.0-beta-10.3
+
+	- Updated `gpnf_modal_button_css_classes` to use `cancel-mobile` for the `type` parameter when filtering the mobile cancel button.
+
+## 1.0-beta-10.2
+
+	- Added `GP_Nested_Forms->get_query_arg()` to enable additional customization/parsing of URL parameters in a nested form.
+	- Fixed a potential future incompatibility issue with GF API.
+
 ## 1.0-beta-10.1
 
 	- Added [gpnf_modal_button_css_classes](https://gravitywiz.com/documentation/gpnf_modal_button_css_classes) JavaScript filter.

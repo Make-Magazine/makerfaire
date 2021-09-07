@@ -251,6 +251,20 @@ class GP_Limit_Checkboxes extends GWPerk {
 						array_unshift( $message, __( 'This field is part of a group.', 'gp-limit-checkboxes' ) );
 					}
 
+					/**
+					 * Filter whether the current field's minimum limit be validated.
+					 *
+					 * @since 1.3.2
+					 *
+					 * @param bool     $should_validate_min Should current field's minimum limit by validated? Defaults to `true`.
+					 * @param array    $form                The form object to which the current field belongs.
+					 * @param GF_Field $field               The current Checkbox field.
+					 */
+					$should_validate_min = gf_apply_filters( array( 'gplcb_should_validate_minimum', $form['id'], $field_id ), true, $form, GFAPI::get_field( $form, $field_id ) );
+					if ( ! $should_validate_min ) {
+						continue;
+					}
+
 					// group errors take priority
 					if ( $slug == 'field_under_min' && isset( $errors[ $field_id ]['group_under_min'] ) ) {
 						continue;
@@ -588,3 +602,8 @@ class GP_Limit_Checkboxes extends GWPerk {
 }
 
 class GWLimitCheckboxes extends GP_Limit_Checkboxes { }
+
+function gp_limit_checkboxes() {
+	// @todo When we convert this to GP_Plugin, we will need to fetch the existing instance.
+	return new GP_Limit_Checkboxes( 'gwlimitcheckboxes/gwlimitcheckboxes.php' );
+}
