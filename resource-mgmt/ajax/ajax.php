@@ -204,19 +204,20 @@ function getTableData($mysqli, $table) {
 							'headerCellClass' => '$scope.highlightFilteredHeader',
 							'enableFiltering'=> true
 					);
+					
 					if(isset($addlFields['filterType']) && $addlFields['filterType']=='dropdown'){
-						$var['cellFilter'] = 'griddropdown:this';						
-						$var['editDropdownValueLabel'] = 'fkey';
-						$var['editDropdownIdLabel'] = 'id';
-						$var['editDropdownOptionsArray'] = $options;
-						$var['editableCellTemplate'] = ($enableCellEdit == true ? 'ui-grid/dropdownEditor' : '');
+						$vars['cellFilter'] = 'griddropdown:this';						
+						$vars['editDropdownValueLabel'] = 'fkey';
+						$vars['editDropdownIdLabel'] = 'id';
+						$vars['editDropdownOptionsArray'] = $options;
+						$vars['editableCellTemplate'] = ($enableCellEdit == true ? 'ui-grid/dropdownEditor' : '');
 					}
 					if(!empty($selectOptions)){
 						$vars['filter'] = array ('selectOptions' => $selectOptions);
 					}
+					
 					if(isset($addlFields['sort'])){
 						$vars['sort'] = $addlFields ['sort'];
-						$vars['enableSorting'] = $addlFields ['enableSorting'];
 					}			
 					if(isset($addlFields['type'])){
 						$vars['type'] = $addlFields ['type'];
@@ -224,6 +225,7 @@ function getTableData($mysqli, $table) {
 					if(isset($addlFields['cellFilter'])){
 						$vars['cellFilter'] = $addlFields ['cellFilter'];
 					}
+					
 					// add the field to the column definitions
 					$colDefFound = false;
 					foreach($data ['columnDefs'] as $key=>$columnDef){

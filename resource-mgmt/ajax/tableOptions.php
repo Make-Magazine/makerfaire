@@ -48,11 +48,12 @@ $tableOptions['wp_rmt_entry_resources']['fkey']    = array(
 
 //Global Faire table
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
-        'fieldName' => 'venue_address_region', 'filterType'=>'dropdown','fieldLabel'=>'Region', 'enableCellEdit' => true, 'width' => 150,
+        'fieldName' => 'venue_address_region', 'filterType'=>'dropdown', 'fieldLabel'=>'Region', 
+		'enableCellEdit' => true, 'width' => 150,
         'options' => array( 'Europe'        =>  'Europe',         'North America' =>  'North America',
-                  'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
-                  'South America' =>  'South America',  'Middle East'   =>  'Middle East',
-                  'PACIFIC'       =>  'Pacific',        'Africa'        =>  'Africa')
+                 			'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
+                  			'South America' =>  'South America',  'Middle East'   =>  'Middle East',
+                  			'PACIFIC'       =>  'Pacific',        'Africa'        =>  'Africa')
     );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
     'fieldName' => 'event_type', 'filterType'=>'dropdown','fieldLabel'=>'Event Type', 'enableCellEdit' => true,
