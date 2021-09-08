@@ -389,6 +389,12 @@ ul.bulletless {
 	display:flex;
 	width: max-content;
 	padding: 10px;
+	&:first-of-type {
+		display: none !important;
+	}
+	&:last-of-type {
+		display: inline-block !important;
+	}
 }
 
 .dropdown-menu {
