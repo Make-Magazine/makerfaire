@@ -1,5 +1,7 @@
 <?php // Template Name: Signage Detail
-
+if(!is_user_logged_in()) {
+	die('You do not have permission to access this page.');
+}
 $location =  ( isset( $_GET['loc'] )?intval( $_GET['loc'] ):'' );
 $faire = (isset($_GET['faire']) ? $_GET['faire']:'ny15');
 
