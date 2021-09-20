@@ -433,7 +433,11 @@ class GP_Multi_Page_Navigation extends GWPerk {
 			$message[] = __( 'You have been redirected to the first page with errors.', 'gp-multi-page-navigation' );
 		}
 
-		$message[] = __( 'Errors have been highlighted below.', 'gravityforms' );
+		if ( GravityPerks::is_gf_version_lte( '2.5-beta-1' ) ) {
+			$message[] = __( 'Errors have been highlighted below.', 'gravityforms' );
+		} else {
+			$message[] = __( 'Please review the fields below.', 'gravityforms' );
+		}
 
 		// Apply GF 2.4 error markup if needed
 		if ( GravityPerks::is_gf_version_lte( '2.5' ) ) {
