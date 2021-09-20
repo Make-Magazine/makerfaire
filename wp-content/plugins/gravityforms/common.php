@@ -525,7 +525,7 @@ class GFCommon {
 	}
 
 	public static function is_valid_email( $email ) {
-		return is_email( $email );
+		return is_email( trim( $email ) );
 	}
 
 	public static function is_valid_email_list( $email_list ) {
@@ -1233,6 +1233,26 @@ class GFCommon {
 
 	public static function decode_merge_tag( $text ) {
 		return str_replace( '&#x7b;', '{', $text );
+	}
+
+	/**
+	 * Given a calculation formula tag, (e.g. {:1} + 3), gather any field IDs referenced
+	 * within it and return as an array.
+	 *
+	 * @since 2.5.10
+	 *
+	 * @param string $text The formula tag to parse.
+	 *
+	 * @return array
+	 */
+	public static function get_field_ids_from_formula_tag( $text ) {
+		preg_match_all( '/\{[^:]*:([0-9]+)\}/', $text, $matches );
+
+		if ( empty( $matches[1] ) ) {
+			return array();
+		}
+
+		return $matches[1];
 	}
 
 	public static function format_post_category( $value, $use_id ) {
@@ -3633,8 +3653,7 @@ Content-Type: text/html;
 		$key = json_encode( $types ) . '_' . $product_id . '_' . $form['id'];
 		if ( ! isset( $_product_fields[ $key ] ) ) {
 			$fields = array();
-			for ( $i = 0, $count = sizeof( $form['fields'] ); $i < $count; $i ++ ) {
-				$field = $form['fields'][ $i ];
+			foreach ( $form['fields'] as $field ) {
 				if ( in_array( $field->type, $types ) && $field->productField == $product_id ) {
 					$fields[] = $field;
 				}
@@ -3835,7 +3854,7 @@ Content-Type: text/html;
 			),
 			'form_id'      => 0,
 			'label'        => __( 'Preview', 'gravityforms' ),
-			'link_class'   => 'button preview-form gform-button gform-button--white',
+			'link_class'   => 'preview-form gform-button gform-button--white',
 			'menu_class'   => 'gf_form_toolbar_preview',
 			'priority'     => 700,
 			'target'       => '_blank',
@@ -6063,9 +6082,27 @@ Content-Type: text/html;
 						'december'  => esc_html__( 'December', 'gravityforms' ),
 					),
 					'firstDay' => absint( get_option( 'start_of_week' ) ),
+					'iconText' => esc_html__( 'Select date', 'gravityforms' ),
 				),
 			)
 		);
+
+		if ( is_admin() ) {
+			// localizes all gravity forms language strings for the admin
+			wp_localize_script(
+				'gform_gravityforms', 'gform_admin_i18n', array(
+					// named sub objects that match the admin js file name (camelCased) they are localizing
+					'formAdmin'   => array(
+						'toggleFeedInactive' => esc_html__( 'Inactive', 'gravityforms' ),
+						'toggleFeedActive'   => esc_html__( 'Active', 'gravityforms' ),
+					),
+					'shortcodeUi' => array(
+						'editForm'   => esc_html__( 'Edit Form', 'gravityforms' ),
+						'insertForm' => esc_html__( 'Insert Form', 'gravityforms' ),
+					),
+				)
+			);
+		}
 	}
 
 	public static function localize_gform_gravityforms_multifile() {

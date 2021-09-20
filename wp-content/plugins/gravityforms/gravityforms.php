@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms
 Plugin URI: https://gravityforms.com
 Description: Easily create web forms and manage form entries within the WordPress admin.
-Version: 2.5.9
+Version: 2.5.10
 Requires at least: 4.0
 Requires PHP: 5.6
 Author: Gravity Forms
@@ -211,7 +211,7 @@ class GFForms {
 	 *
 	 * @var string $version The version number.
 	 */
-	public static $version = '2.5.9';
+	public static $version = '2.5.10';
 
 	/**
 	 * Handles background upgrade tasks.
@@ -254,6 +254,28 @@ class GFForms {
 			// Integration with osDXP.
 			require_once  plugin_dir_path( __FILE__ ) . 'includes/class-gf-osdxp.php';
 		}
+	}
+
+	/**
+	* Register services and providers.
+	*/
+	public static function register_services() {
+		$container = self::get_service_container();
+		$container->add_provider( new \Gravity_Forms\Gravity_Forms\Util\GF_Util_Service_Provider() );
+		$container->add_provider( new \Gravity_Forms\Gravity_Forms\License\GF_License_Service_Provider() );
+	}
+
+	public static function get_service_container() {
+		require_once( plugin_dir_path( __FILE__ ) . '/includes/license/class-gf-license-service-provider.php' );
+		require_once( plugin_dir_path( __FILE__ ) . '/includes/util/class-gf-util-service-provider.php' );
+
+		if ( ! empty( self::$container ) ) {
+			return self::$container;
+		}
+
+		self::$container = new \Gravity_Forms\Gravity_Forms\GF_Service_Container();
+
+		return self::$container;
 	}
 
 	/**
@@ -2564,7 +2586,6 @@ class GFForms {
 		wp_register_script( 'gform_form_admin', $base_url . "/js/form_admin{$min}.js", array(
 			'jquery',
 			'jquery-ui-autocomplete',
-			'wp-i18n',
 			'gform_placeholder',
 			'gform_gravityforms',
 			'gform_form_editor_conditional_flyout',
@@ -2599,7 +2620,7 @@ class GFForms {
 		wp_register_script( 'gform_shortcode_ui', $base_url . "/js/shortcode-ui{$min}.js", array(
 			'jquery',
 			'wp-backbone',
-			'wp-i18n'
+			'gform_gravityforms'
 		), $version, true );
 		wp_register_script( 'gform_system_report_clipboard', $base_url . '/includes/system-status/js/clipboard.min.js', array( 'jquery' ), $version, true );
 		wp_register_script( 'gform_preview', $base_url . "/js/preview{$min}.js", array( 'jquery' ), $version, false );
@@ -2842,6 +2863,7 @@ class GFForms {
 				break;
 
 			case 'entry_list':
+			case 'results':
 				$scripts = array(
 					'gform_simplebar',
 					'wp-lists',
@@ -3066,6 +3088,10 @@ class GFForms {
 
 		if ( rgget( 'page' ) == 'gf_addons' ) {
 			return 'addons';
+		}
+
+		if ( rgget( 'page' ) == 'gf_entries' && strpos( rgget( 'view' ), 'gf_results' ) !== false ) {
+			return 'results';
 		}
 
 		if ( rgget( 'page' ) == 'gf_export' && ( rgget( 'view' ) == 'export_entry' || ! isset( $_GET['view'] ) ) ) {

@@ -1,3 +1,6 @@
+
+const config = requireDir( './config' );
+
 module.exports = {
 	purge: {
 		enabled: true,
