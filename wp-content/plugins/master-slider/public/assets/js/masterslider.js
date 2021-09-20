@@ -3,8 +3,8 @@
  * Copyright © 2021 All Rights Reserved. 
  *
  * @author Averta [www.averta.net]
- * @version 2.80.9
- * @date Feb 2021
+ * @version 2.85.10
+ * @date Aug 2021
  */
 
 
@@ -411,7 +411,7 @@ window.averta = {};
         this.$element = $element;
         this.enabled = true;
 
-        $element.bind(ev_start  , {target: this} , this.__touchStart);
+        $element.on(ev_start  , {target: this} , this.__touchStart);
 
         $element[0].swipe = this;
 
@@ -520,9 +520,9 @@ window.averta = {};
 
         swipe.start_time = new Date().getTime();
 
-        $(document).bind(ev_end    , {target: swipe} , swipe.__touchEnd).
-                    bind(ev_move   , {target: swipe} , swipe.__touchMove).
-                    bind(ev_cancel , {target: swipe} , swipe.__touchCancel);
+        $(document).on(ev_end    , {target: swipe} , swipe.__touchEnd).
+                    on(ev_move   , {target: swipe} , swipe.__touchMove).
+                    on(ev_cancel , {target: swipe} , swipe.__touchCancel);
 
         var status = swipe.createStatusObject(point);
         status.phase = 'start';
@@ -580,9 +580,9 @@ window.averta = {};
         swipe.touchStarted = false;
         swipe.priventEvt   = null;
 
-        $(document).unbind(ev_end     , swipe.__touchEnd).
-                    unbind(ev_move    , swipe.__touchMove).
-                    unbind(ev_cancel  , swipe.__touchCancel);
+        $(document).off(ev_end     , swipe.__touchEnd).
+                    off(ev_move    , swipe.__touchMove).
+                    off(ev_cancel  , swipe.__touchCancel);
 
         status.speed = status.distance / status.duration;
 
@@ -1868,14 +1868,14 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
         var that = this;
 
         if ( this.link ) {
-            this.link.addClass('ms-slide-link').html('').click(function(e){
+            this.link.addClass('ms-slide-link').html('').on('click', function(e){
                 if ( that.linkdis ) {
                     e.preventDefault();
                 }
             });
 
             // this.$element.css('cursor' , 'pointer')
-            //           .click(function(){ if(!that.linkdis) window.open(that.link , that.link_targ || '_self'); });
+            //           .on('click', function(){ if(!that.linkdis) window.open(that.link , that.link_targ || '_self'); });
         }
 
         if ( this.video ) {
@@ -1893,12 +1893,12 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 
             this.vpbtn = $('<div></div>')
                         .addClass('ms-slide-vpbtn')
-                        .click(function(){that.__playVideo();})
+                        .on('click', function(){that.__playVideo();})
                         .appendTo(this.$element);
 
             this.vcbtn = $('<div></div>')
                         .addClass('ms-slide-vcbtn')
-                        .click(function(){that.__closeVideo();})
+                        .on('click', function(){that.__closeVideo();})
                         .appendTo(this.$element)
                         .css('display','none');
 
@@ -2124,7 +2124,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 		this.resize_listener = function(){that.__resize();};
 
 		// in @version 1.5.7 it will be added in Masterslider.js _setupSliderLayout function
-		//$(window).bind('resize', this.resize_listener);
+		//$(window).on('resize', this.resize_listener);
 
 		//if(this.so.smoothHeight) this.so.autoHeight = true;
 
@@ -2154,10 +2154,10 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 
 		if(this.so.overPause){
 			var that = this;
-			this.slider.$element.mouseenter(function(){
+			this.slider.$element.on('mouseenter',function(){
 				that.is_over = true;
 				that._stopTimer();
-			}).mouseleave(function(){
+			}).on('mouseleave',function(){
 				that.is_over = false;
 				that._startTimer();
 			});
@@ -2442,7 +2442,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 			};
 
 			if(window.MSBrowserInfo.mozilla) this.slider.$element[0].addEventListener('DOMMouseScroll' , this.wheellistener);
-			else this.slider.$element.bind('mousewheel', this.wheellistener);
+			else this.slider.$element.on('mousewheel', this.wheellistener);
 		}
 
 		// if(this.so.wheel){
@@ -2460,7 +2460,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 		// 	};
 
 		// 	if(window.MSBrowserInfo.mozilla) this.slider.$element[0].addEventListener('DOMMouseScroll' , this.wheellistener);
-		// 	else this.slider.$element.bind('mousewheel', this.wheellistener);
+		// 	else this.slider.$element.on('mousewheel', this.wheellistener);
 		// }
 
 		if(this.slider.$element[0].clientWidth === 0)
@@ -2503,13 +2503,13 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 		this._timer.reset();
 		this._timer = null;
 
-		$(window).unbind('resize', this.resize_listener);
+		$(window).off('resize', this.resize_listener);
 		this.view.destroy();
 		this.view = null;
 
 		if(this.so.wheel){
 			if(window.MSBrowserInfo.mozilla) this.slider.$element[0].removeEventListener('DOMMouseScroll' , this.wheellistener);
-			else this.slider.$element.unbind('mousewheel', this.wheellistener);
+			else this.slider.$element.off('mousewheel', this.wheellistener);
 			this.wheellistener = null;
 		}
 
@@ -2652,13 +2652,13 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 
 		var that = this;
 		this.resize_listener = function(){that._resize();};
-		$(window).bind('resize', this.resize_listener);
+		$(window).on('resize', this.resize_listener);
 
 	};
 
 	MasterSlider.author  		= 'Averta Ltd. (www.averta.net)';
-	MasterSlider.version 		= '2.80.9';
-	MasterSlider.releaseDate 	= 'Feb 2021';
+	MasterSlider.version 		= '2.85.10';
+	MasterSlider.releaseDate 	= 'Aug 2021';
 
 	// Master Slider plugins.
 	MasterSlider._plugins = []
@@ -2756,7 +2756,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 	 * @private
 	 */
 	p._removeLoading = function(){
-		$(window).unbind('resize', this.resize_listener);
+		$(window).off('resize', this.resize_listener);
 		this.$element.removeClass('before-init')
 					.css('visibility', 'visible')
 					.css('height','')
@@ -2818,12 +2818,12 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 			this.options.fullwidth = true;  // enable slider fullscreen for fullwidth, fillwidth, autofill and fullscreen layouts.
 		}
 		if( lo === 'fullscreen' ||  lo === 'fullwidth' || lo === 'autofill' ){
-			$(window).bind('resize', {that:this}, this._updateLayout);
+			$(window).on('resize', {that:this}, this._updateLayout);
 			this._updateLayout();
 		}
 
 		// bind resize handler of slidecontroller __resize
-		$(window).bind('resize', this.slideController.resize_listener);
+		$(window).on('resize', this.slideController.resize_listener);
 	};
 
 	/**
@@ -2907,7 +2907,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 		if(this.options.swipe && !window._touch && this.options.grabCursor && this.options.mouse){
 			var $view = this.view.$element;
 
-			$view.mousedown(function(){
+			$view.on('mousedown',function(){
 				$view.removeClass('ms-grab-cursor');
 				$view.addClass('ms-grabbing-cursor');
 
@@ -2917,7 +2917,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 
 			}).addClass('ms-grab-cursor');
 
-			$(document).mouseup(function(){
+			$(document).on('mouseup',function(){
 				$view.removeClass('ms-grabbing-cursor');
 				$view.addClass('ms-grab-cursor');
 
@@ -3197,7 +3197,7 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 
 		var lo = this.options.layout;
 		if( lo === 'fullscreen' ||  lo === 'fullwidth' ){
-			$(window).unbind('resize', this._updateLayout);
+			$(window).off('resize', this._updateLayout);
 		}
 
 		this.view = null;
@@ -3928,42 +3928,42 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 
 /* ================== bin-debug/js/lite/views/FadeView.js =================== */
 ;(function($){
-	
+
 	"use strict";
-	
+
 	window.MSFadeView = function(options){
 		MSBasicView.call(this , options);
 		this.$element.removeClass('ms-basic-view').addClass('ms-fade-view');
 		this.controller.renderCallback(this.__update , this);
 	};
-	
+
 	MSFadeView.extend(MSBasicView);
-	
+
 	var p  = MSFadeView.prototype;
 	var _super  = MSBasicView.prototype;
-	 
+
 	/*-------------- METHODS --------------*/
-	
+
 	p.__update = function(controller , value){
 		var cont_scroll = -value;
 		var slide_pos , slide , distance;
-		
+
 		for(var i = 0; i < this.slidesCount; ++i){
 			slide = this.slideList[i];
 			distance = -cont_scroll - slide.position;
 			this.__updateSlides(slide , distance);
 		}
 	};
-	
+
 	p.__updateSlides = function(slide , distance){
 		var value =  Math.abs(distance / this[this.__dimension]);
 		if(1 - value <= 0){
-			slide.$element.fadeTo(0 , 0).css('visibility' , 'hidden');	
+			slide.$element.css('opacity', 0).css('visibility' , 'hidden');
 		}else{
-			slide.$element.fadeTo(0 , 1 - value).css('visibility' , '');
+			slide.$element.css('opacity', 1 - value).css('visibility' , '');
 		}
 	};
-	
+
 	p.__locateSlides = function(move , start){
 
 		this.__updateViewList();
@@ -3973,10 +3973,10 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 		// 	this.slides[i].position = i * this[this.__dimension];
 		// }
 
-		start = !this.loop ? this.slides.indexOf(this.viewSlidesList[0]) * (this[this.__dimension] + this.spacing ) : start || 0; 
+		start = !this.loop ? this.slides.indexOf(this.viewSlidesList[0]) * (this[this.__dimension] + this.spacing ) : start || 0;
 
 		var l = this.viewSlidesList.length , slide;
-		
+
 		for(var i = 0; i !== l ; i++){
 			var pos =  start + i * this[this.__dimension];
 			slide = this.viewSlidesList[i];
@@ -3987,35 +3987,35 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 		if(move !== false)this.controller.changeTo( this.slideList[this.index].position , false , null , null , false);
 
 	};
-	
+
 	p.__pushEnd = function(){
 		var first_slide = this.slides.shift();
 		var last_slide = this.slides[this.slidesCount - 2];
 		this.slides.push(first_slide);
 		first_slide.position = last_slide.position + this[this.__dimension];
 	};
-	
+
 	p.__pushStart = function(){
 		var last_slide =  this.slides.pop();
 		var first_slide = this.slides[0];
-		this.slides.unshift(last_slide);		
+		this.slides.unshift(last_slide);
 		last_slide.position = first_slide.position - this[this.__dimension];
 	};
-	
+
 	p.create = function(index){
 		_super.create.call(this , index);
 		this.spacing = 0;
 		this.controller.options.minValidDist = 10;
 	};
-	
+
 	MSSlideController.registerView('fade' , MSFadeView);
 })(jQuery);
 
 /* ================== bin-debug/js/lite/uicontrols/BaseControl.js =================== */
 ;(function($){
-	
+
 	"use strict";
-	
+
 	var BaseControl = function(){
 		this.options = {
 			prefix:'ms-',
@@ -4024,16 +4024,16 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 			customClass: null
 		};
 	};
-	
+
 	var p = BaseControl.prototype;
-	
+
 	/* -------------------------------- */
-	
+
 	p.slideAction = function(slide){
 
 	};
-	
-	p.setup = function(){		
+
+	p.setup = function(){
 		this.cont = this.options.insertTo ? $(this.options.insertTo) : this.slider.$controlsCont;
 		if(!this.options.overVideo) this._hideOnvideoStarts();
 
@@ -4043,7 +4043,7 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 		if(this.options.hideUnder){
 			//this.slider.api.addEventListener(MSSliderEvent.RESIZE, this.onSliderResize, this);
 			this.needsRealign = !this.options.insetTo && (this.options.align === 'left' || this.options.align === 'right') && this.options.inset === false;
-			$(window).bind('resize', {that:this}, this.onResize);
+			$(window).on('resize', {that:this}, this.onResize);
 			this.onResize();
 
 		}
@@ -4067,50 +4067,50 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 			that.onAppend();
 		}
 	};
-	
+
 	p.create = function(){
 		var that = this;
 		if(this.options.autohide ){
-			
+
 			this.hide(true);
-			
-			this.slider.$controlsCont.mouseenter($.proxy(this._onMouseEnter, this))
-									 .mouseleave($.proxy(this._onMouseLeave, this))
-									 .mousedown($.proxy(this._onMouseDown, this));
+
+			this.slider.$controlsCont.on('mouseenter', this._onMouseEnter(this))
+									 .on('mouseleave', this._onMouseLeave(this))
+									 .on('mousedown', this._onMouseDown(this));
 
 			if ( this.$element ) {
-				this.$element.mouseenter($.proxy(this._onMouseEnter, this))
-							 .mouseleave($.proxy(this._onMouseLeave, this))
-							 .mousedown($.proxy(this._onMouseDown, this));
+				this.$element.on('mouseenter', this._onMouseEnter(this))
+							 .on('mouseleave', this._onMouseLeave(this))
+							 .on('mousedown', this._onMouseDown(this));
 			}
 
-			$(document).mouseup($.proxy(this._onMouseUp, this));
+			$(document).on('mouseup', this._onMouseUp(this));
 		}
-		
+
 		if ( this.options.align ) {
 			this.$element.addClass('ms-align-' + this.options.align);
 		}
 
-		// add custom class to control 
+		// add custom class to control
 		if ( this.options.customClass && this.$element ) {
 			this.$element.addClass(this.options.customClass);
 		}
 	};
 
 	/**
-	 * Mouse Enter Listener 
+	 * Mouse Enter Listener
 	 * @since 2.2
 	 */
 	p._onMouseEnter = function(){
 		if ( !this._disableAH && !this.mdown ){
 			this.visible();
 		}
-		
+
 		this.mleave = false;
 	};
 
 	/**
-	 * Mouse Leave Listener 
+	 * Mouse Leave Listener
 	 * @since 2.2
 	 */
 	p._onMouseLeave = function(){
@@ -4122,7 +4122,7 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 	};
 
 	/**
-	 * Mouse Down Listener 
+	 * Mouse Down Listener
 	 * @since 2.2
 	 */
 	p._onMouseDown = function(){
@@ -4130,14 +4130,14 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 	};
 
 	/**
-	 * Mouse Up Listener 
+	 * Mouse Up Listener
 	 * @since 2.2
 	 */
 	p._onMouseUp = function(){
-		if ( this.mdown && this.mleave ) { 
+		if ( this.mdown && this.mleave ) {
 			this.hide();
 		}
-		
+
 		this.mdown = false;
 	};
 
@@ -4160,20 +4160,20 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 			this.slider._realignControls();
 		}
 	};
-	
+
 	p._hideOnvideoStarts = function(){
 		var that = this;
 		this.slider.api.addEventListener(MSSliderEvent.VIDEO_PLAY , function(){
    			 that._disableAH = true;
    			 that.hide();
 		});
-		 
+
 		this.slider.api.addEventListener(MSSliderEvent.VIDEO_CLOSE , function(){
 		     that._disableAH = false;
    			 that.visible();
 		});
 	};
-	
+
 	p.hide = function(fast){
 		if(fast){
 			this.$element.css('opacity' , 0);
@@ -4188,7 +4188,7 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 
 		this.$element.addClass('ms-ctrl-hide');
 	};
-	
+
 	p.visible = function(){
 		if(this.detached) return;
 		clearTimeout(this.hideTo);
@@ -4196,54 +4196,54 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 		CTween.fadeIn(this.$element , 400 , false);
 		this.$element.removeClass('ms-ctrl-hide');
 	};
-	
+
 	p.destroy = function(){
 
 		if(this.options && this.options.hideUnder){
 			//this.slider.api.removeEventListener(MSSliderEvent.RESIZE, this.onResize, this);
-			$(window).unbind('resize', this.onResize);
+			$(window).off('resize', this.onResize);
 		}
 	};
-	
+
 	window.BaseControl = BaseControl;
-	
+
 })(jQuery);
 
 /* ================== bin-debug/js/lite/uicontrols/Arrows.js =================== */
 ;(function($){
-	
+
 	"use strict";
-	
+
 	var MSArrows = function(options){
 		BaseControl.call(this);
 		$.extend(this.options , options);
 	};
-	
+
 	MSArrows.extend(BaseControl);
-	
+
 	var p = MSArrows.prototype;
 	var _super = BaseControl.prototype;
-	
+
 	/* -------------------------------- */
-	
+
 	p.setup = function(){
 		var that = this;
-		
+
 		this.$next = $('<div></div>')
 					.addClass(this.options.prefix + 'nav-next')
 					//.appendTo(this.cont)
-					.bind('click' , function(){
+					.on('click' , function(){
 							that.slider.api.next(true);
 					});
-				
-		
+
+
 		this.$prev = $('<div></div>')
 					.addClass(this.options.prefix + 'nav-prev')
 					//.appendTo(this.cont)
-					.bind('click' , function(){
+					.on('click' , function(){
 						that.slider.api.previous(true);
 					});
-		
+
 		_super.setup.call(this);
 
 		this.cont.append(this.$next);
@@ -4251,21 +4251,21 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 
 		this.checkHideUnder(); // super method
 	};
-	
+
 	p.hide = function(fast){
 		if(fast){
 			this.$prev.css('opacity' , 0).css('display', 'none');
 			this.$next.css('opacity' , 0).css('display', 'none');
 			return;
 		}
-	
+
 		CTween.fadeOut(this.$prev , 400 , false);
 		CTween.fadeOut(this.$next , 400 , false);
-		
+
 		this.$prev.addClass('ms-ctrl-hide');
 		this.$next.addClass('ms-ctrl-hide');
 	};
-	
+
 	p.visible = function(){
 		if(this.detached) return;
 		CTween.fadeIn(this.$prev , 400 );
@@ -4273,13 +4273,13 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 		this.$prev.removeClass('ms-ctrl-hide').css('display', '');
 		this.$next.removeClass('ms-ctrl-hide').css('display', '');
 	};
-	
+
 	p.destroy = function(){
 		_super.destroy();
 		this.$next.remove();
 		this.$prev.remove();
 	};
-	
+
 	window.MSArrows = MSArrows;
 	MSSlideController.registerControl('arrows' , MSArrows);
 })(jQuery);
@@ -4353,8 +4353,8 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 
 		if(this.options.arrows){
 			var that = this;
-			this.$fwd = $('<div></div>').addClass('ms-thumblist-fwd').appendTo(this.$element).click(function(){that.controller.push(-15);});
-			this.$bwd = $('<div></div>').addClass('ms-thumblist-bwd').appendTo(this.$element).click(function(){that.controller.push(15);});
+			this.$fwd = $('<div></div>').addClass('ms-thumblist-fwd').appendTo(this.$element).on('click', function(){that.controller.push(-15);});
+			this.$bwd = $('<div></div>').addClass('ms-thumblist-bwd').appendTo(this.$element).on('click', function(){that.controller.push(15);});
 		}
 
 		// align control
@@ -4454,7 +4454,7 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 
 		var that = this;
 		this.resize_listener = function(){that.__resize();};
-		$(window).bind('resize', this.resize_listener);
+		$(window).on('resize', this.resize_listener);
 
 		this.thumbSize = this.thumbs[0][this.__jdimen](true);
 
@@ -4472,7 +4472,7 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 			};
 
 			if(window.MSBrowserInfo.mozilla) this.$element[0].addEventListener('DOMMouseScroll' , this.wheellistener);
-			else this.$element.bind('mousewheel', this.wheellistener);
+			else this.$element.on('mousewheel', this.wheellistener);
 		}
 
 		this.slider.api.addEventListener(MSSliderEvent.CHANGE_START , this.update , this);
@@ -4632,11 +4632,11 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 
 		if(this.options.wheel){
 			if(window.MSBrowserInfo.mozilla) this.$element[0].removeEventListener('DOMMouseScroll' , this.wheellistener);
-			else this.$element.unbind('mousewheel', this.wheellistener);
+			else this.$element.off('mousewheel', this.wheellistener);
 			this.wheellistener = null;
 		}
 
-		$(window).unbind('resize', this.resize_listener);
+		$(window).off('resize', this.resize_listener);
 
 		this.$element.remove();
 
@@ -5073,92 +5073,92 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 
 /* ================== bin-debug/js/lite/uicontrols/CircleTimer.js =================== */
 ;(function($){
-	
+
 	"use strict";
-	
+
 	var MSCircleTimer = function(options){
 		BaseControl.call(this);
-		
+
 		this.options.color 	= '#A2A2A2';
 		this.options.stroke = 10;
 		this.options.radius	= 4;
-		
+
 		this.options.autohide = false;
 		$.extend(this.options , options);
 	};
-	
+
 	MSCircleTimer.extend(BaseControl);
-	
+
 	var p = MSCircleTimer.prototype;
 	var _super = BaseControl.prototype;
-	
+
 	/* -------------------------------- */
-	
+
 	p.setup = function(){
 		var that = this;
 		_super.setup.call(this);
-		
+
 		this.$element = $('<div></div>')
 					.addClass(this.options.prefix + 'ctimer')
 					.appendTo(this.cont);
-					
+
 		this.$canvas = 	$('<canvas></canvas>')
 					.addClass('ms-ctimer-canvas')
-					.appendTo(this.$element);		
-		
+					.appendTo(this.$element);
+
 		this.$bar = $('<div></div>')
 					.addClass('ms-ctimer-bullet')
 					.appendTo(this.$element);
-		
+
 		if(!this.$canvas[0].getContext){
 			this.destroy();
 			this.disable = true;
 			return;
 		}
-		
-		
+
+
 		this.ctx		= this.$canvas[0].getContext('2d');
 		this.prog		= 0;
-		
+
 		this.__w = (this.options.radius + this.options.stroke/2) * 2;
 		this.$canvas[0].width  = this.__w;
 		this.$canvas[0].height = this.__w;
 
 		this.checkHideUnder(); // super method
 	};
-	
+
 	p.create = function(){
 		if(this.disable) return;
 		_super.create.call(this);
 		this.slider.api.addEventListener(MSSliderEvent.WAITING , this._update , this);
-		
+
 		var that = this;
-		this.$element.click(function(){
+		this.$element.on('click', function(){
 			if(that.slider.api.paused)
 				that.slider.api.resume();
 			else
 				that.slider.api.pause();
 		});
-		
+
 		this._update();
 	};
-	
+
 	p._update = function(){
 		var that = this;
 		$(this).stop(true).animate({prog:this.slider.api._delayProgress * 0.01} ,
 					 	{duration:200 , step:function(){that._draw();}});
 		//this.$bar[0].style.width = this.slider.api._delayProgress/100 * this.$element.width() + 'px';
 	};
-	
+
 	p._draw = function(){
 		this.ctx.clearRect(0 , 0,  this.__w ,  this.__w);
-		this.ctx.beginPath(); 
+		this.ctx.beginPath();
 		this.ctx.arc(this.__w * .5 , this.__w * .5 ,this.options.radius , Math.PI * 1.5 , Math.PI * 1.5 + 2 * Math.PI * this.prog, false);
 		this.ctx.strokeStyle = this.options.color;
 		this.ctx.lineWidth = this.options.stroke;
 		this.ctx.stroke();
 	};
-	
+
 	p.destroy = function(){
 		_super.destroy();
 		if(this.disable) return;
@@ -5166,7 +5166,7 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 		this.slider.api.removeEventListener(MSSliderEvent.WAITING , this._update , this);
 		this.$element.remove();
 	};
-	
+
 	window.MSCircleTimer = MSCircleTimer;
 		MSSlideController.registerControl('circletimer' , MSCircleTimer);
 })(jQuery);
@@ -5328,7 +5328,7 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 /* ================== bin-debug/js/lite/plugins/MSStartOnAppear.js =================== */
 /**
  * Start on appear plugin for Master Slider.
- * 
+ *
  * @description This plugin prevents slider automatically initialization and inits slider when it appears inside of the browser window.
  * @version  1.0.0
  * @author Averta
@@ -5349,11 +5349,11 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 		this.PId = PId++;
 		this.slider = slider;
 		this.$slider = slider.$element;
-		
+
 		if ( this.slider.options.startOnAppear ) {
 			// hold on slider
 			slider.holdOn();
-			$doc.ready($.proxy(this.init, this));
+			$doc.ready(this.init.bind(this));
 		}
 	};
 
@@ -5365,7 +5365,7 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 	 */
 	p.init = function (){
 		var api = this.slider.api;
-		$window.on('scroll.soa' + this.PId , $.proxy(this._onScroll, this)).trigger('scroll');
+		$window.on('scroll.soa' + this.PId , this._onScroll.bind(this)).trigger('scroll');
 	};
 
 	p._onScroll = function () {
