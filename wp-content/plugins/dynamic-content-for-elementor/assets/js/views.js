@@ -1,0 +1,122 @@
+(function ($) {
+    var WidgetElements_ViewsHandler = function ($scope, $) {
+
+		var id_scope = $scope.attr('data-id');
+		var elementSettings = get_Dyncontel_ElementSettings($scope);
+		var elementSwiper = '.elementor-element-' + id_scope + ' .swiper-container';
+		var speed = elementSettings.transition_speed;
+		var disableOnInteraction = Boolean( elementSettings.pause_on_interaction ) || false;
+		var loop = false;
+
+		if ( 'yes' === elementSettings.infinite) {
+			loop = true;
+		}
+        
+		var id_post = $scope.attr('data-post-id');
+		var elementorBreakpoints = elementorFrontend.config.breakpoints;
+		
+		var viewsSwiperOptions = {
+			autoHeight: true,
+			speed: speed,
+			loop: loop,
+		};
+
+		// Responsive Parameters
+		var spaceBetween = 0;
+
+		if (elementSettings.spaceBetween) {
+			spaceBetween = elementSettings.spaceBetween;
+		}
+
+		var responsivePoints = viewsSwiperOptions.breakpoints = {};
+		responsivePoints[elementorBreakpoints.lg] = {
+			slidesPerView: Number(elementSettings.slides_to_show) || 'auto',
+			slidesPerGroup: Number(elementSettings.slides_to_scroll) || 1,
+			spaceBetween: Number(spaceBetween) || 0,
+		};
+
+		var spaceBetween_tablet = spaceBetween;
+		if (elementSettings.spaceBetween_tablet) {
+			spaceBetween_tablet = elementSettings.spaceBetween_tablet;
+		}
+		responsivePoints[elementorBreakpoints.md] = {
+			slidesPerView: Number(elementSettings.slides_to_show_tablet) || Number(elementSettings.slides_to_show) || 'auto',
+			slidesPerGroup: Number(elementSettings.sslides_to_scroll_tablet) || Number(elementSettings.slides_to_scroll) || 1,
+			spaceBetween: Number(spaceBetween_tablet) || 0,
+		};
+
+		var spaceBetween_mobile = spaceBetween_tablet;
+		if (elementSettings.spaceBetween_mobile) {
+			spaceBetween_mobile = elementSettings.spaceBetween_mobile;
+		}
+		responsivePoints[elementorBreakpoints.xs] = {
+			slidesPerView: Number(elementSettings.slides_to_show_mobile) || Number(elementSettings.slides_to_show_tablet) || Number(elementSettings.slidesPerView) || 'auto',
+			slidesPerGroup: Number(elementSettings.slides_to_scroll_mobile) || Number(elementSettings.slides_to_scroll_tablet) || Number(elementSettings.slidesPerGroup) || 1,
+			spaceBetween: Number(spaceBetween_mobile) || 0,
+		};
+		viewsSwiperOptions = $.extend(viewsSwiperOptions, responsivePoints);
+
+		// Navigation
+		if (elementSettings.navigation != 'none') {
+			
+			if ( elementSettings.navigation == 'both' || elementSettings.navigation == 'arrows' ) {
+				viewsSwiperOptions = $.extend(viewsSwiperOptions, {
+					navigation: {
+						nextEl: id_post ? '.elementor-element-' + id_scope + '[data-post-id="' + id_post + '"] .elementor-swiper-button-next' : '.elementor-swiper-button-next',
+						prevEl: id_post ? '.elementor-element-' + id_scope + '[data-post-id="' + id_post + '"] .elementor-swiper-button-prev' : '.elementor-swiper-button-prev',
+					},
+				});
+			}
+
+			if ( elementSettings.navigation == 'both' || elementSettings.navigation == 'dots' ) {
+				viewsSwiperOptions = $.extend(viewsSwiperOptions, {
+					pagination: {
+						el: id_post ? '.elementor-element-' + id_scope + '[data-post-id="' + id_post + '"] .swiper-pagination' : '.swiper-pagination',
+						type: 'bullets',
+						clickable: true,
+					},
+				});
+			}
+		}
+
+		// Autoplay
+		if ( elementSettings.autoplay ) {
+			viewsSwiperOptions = $.extend(viewsSwiperOptions, {
+				autoplay: {
+					autoplay: true,
+					delay: elementSettings.autoplay_speed,
+					disableOnInteraction: disableOnInteraction,
+				}
+			});
+		}
+
+		// Instance
+		if ( 'undefined' === typeof Swiper ) {
+			const asyncSwiper = elementorFrontend.utils.swiper;
+
+			new asyncSwiper( elementSwiper, viewsSwiperOptions ).then( ( newSwiperInstance ) => {
+				viewsSwiper = newSwiperInstance;
+			} );
+		} else {
+			viewsSwiper = new Swiper( elementSwiper, viewsSwiperOptions );
+		}
+		
+		// Pause on hover
+		if ( elementSettings.autoplay && elementSettings.pause_on_hover ) {
+			$(elementSwiper).on({
+				mouseenter: function () {
+					viewsSwiper.autoplay.stop();
+				},
+				mouseleave: function () {
+					viewsSwiper.autoplay.start();
+				}
+			});
+		}
+		
+    };
+
+    // Make sure you run this code under Elementor..
+    $(window).on('elementor/frontend/init', function () {
+        elementorFrontend.hooks.addAction('frontend/element_ready/dce-views.default', WidgetElements_ViewsHandler);
+    });
+})(jQuery);
