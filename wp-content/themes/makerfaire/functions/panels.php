@@ -52,9 +52,9 @@ function dispLayout($row_layout) {
             case 'square_image_carousel': // IMAGE CAROUSEL (SQUARE)
                 $return = getImgCarouselSquare();
                 break;
-			case 'what_is_maker_faire': // WHAT IS MAKER FAIRE PANEL    
-				$return = getWhatisMF();
-				break;
+            case 'what_is_maker_faire': // WHAT IS MAKER FAIRE PANEL    
+                $return = getWhatisMF();
+                break;
             case 'newsletter_panel':  // NEWSLETTER PANEL
                 $return = getNewsletterPanel();
                 break;
@@ -81,15 +81,15 @@ function dispLayout($row_layout) {
             case 'image_slider': // this is gonna end up pretty similar to the image carousel, but we're going to have it as a panel
                 $return = getSliderPanel();
                 break;
-			case 'rss_feed': // pull the rss feed shortcode with user inputs
-				$return = getRSSFeed();
-				break;
-			case 'faire_list': // return display of the list of faires
-			    $return = getFaireList();
-			    break;
-			case 'cfm_list': // return display of the list of call for maker forms
-			    $return = getCFMList();
-			    break;
+            case 'rss_feed': // pull the rss feed shortcode with user inputs
+                $return = getRSSFeed();
+                break;
+            case 'faire_list': // return display of the list of faires
+                $return = getFaireList();
+                break;
+            case 'cfm_list': // return display of the list of call for maker forms
+                $return = getCFMList();
+                break;
         }
     }
     return $return;
@@ -483,9 +483,9 @@ function get6ColLayout() {
         $columnInfo = '';
         //$image = '<img height="" width="" alt="'.$imageArr['alt'].'" class="ximg-responsive" src="' . $imageArr['url'] . '" />';
         //echo $imageArr['url'];
-                
-        $imgStyle = 'style="background-image:url(' . (isset($imageArr['url'])?$imageArr['url']:'') . '); height:' . $imageHeight . ';"';
-        
+
+        $imgStyle = 'style="background-image:url(' . (isset($imageArr['url']) ? $imageArr['url'] : '') . '); height:' . $imageHeight . ';"';
+
         $cta_link = $data['image_cta'];
         $ctaText = $data['image_cta_text'];
 
@@ -594,7 +594,7 @@ function get1ColLayout() {
             // TODO add the URL wrapper
             $hero_image_random = get_sub_field('hero_image_random');
 
-            $hero_image_url = (isset($hero_image_random["url"])?$hero_image_random["url"]:'');
+            $hero_image_url = (isset($hero_image_random["url"]) ? $hero_image_random["url"] : '');
 
             $image = '<div class="hero-img lazyload" data-bg="' . $hero_image_url . '"></div>';
             $cta_link = get_sub_field('image_cta');
@@ -610,8 +610,8 @@ function get1ColLayout() {
         $hero_image = $hero_array[$randKey];
     }
 
-    $hero_text      = ($acf_blocks ? get_field('column_title') : get_sub_field('column_title'));
-  
+    $hero_text = ($acf_blocks ? get_field('column_title') : get_sub_field('column_title'));
+
     //build output
     $return = '';
     $return .= '<section class="hero-panel">';    // create content-panel section
@@ -628,7 +628,6 @@ function get1ColLayout() {
     $return .= '        ' . $hero_image .
             '     </div>' .
             '   </div>';
-    
 
     // Because of the aggressive caching on prod, it makes more sense to shuffle the array in javascript
     $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").replaceWith(heroArray[0]);});</script>';
@@ -878,8 +877,8 @@ function getImgCarousel() {
         while (have_rows('images')) {
             the_row();
 
-            $text = ($acf_blocks ? get_field('text') : get_sub_field('text')); 
-            $url = ($acf_blocks ? get_field('url') : get_sub_field('url')); 
+            $text = ($acf_blocks ? get_field('text') : get_sub_field('text'));
+            $url = ($acf_blocks ? get_field('url') : get_sub_field('url'));
             $image = get_sub_field('image');
 
             if ($i == 0) {
@@ -904,13 +903,13 @@ function getImgCarousel() {
             } else {
                 $return .= '<div class="item">
           <img class="lazyload" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
-		  if ($text) {
+                if ($text) {
                     $return .= '
           <div class="carousel-caption">
             <h3>' . $text . '</h3>
 		  </div>';
-		  }
-		  $return .= '
+                }
+                $return .= '
 		  </div>';
             }
             $i++;
@@ -1105,7 +1104,6 @@ function getSliderPanel() {
     return $return;
 }
 
-
 function getWhatisMF() {
     $return = '';
 
@@ -1145,7 +1143,6 @@ function getWhatisMF() {
 
     return $return;
 }
-
 
 /* * *************************************************** */
 /* Function to return News Letter Panel                 */
@@ -1291,8 +1288,9 @@ function getSponsorPanel() {
     $id = url_to_postid($url);
 
     $title = ($acf_blocks ? get_field('title_sponsor_panel') : get_sub_field('title_sponsor_panel'));
-    if($title=='')  $title = 'Thank you to our sponsors';    
-    
+    if ($title == '')
+        $title = 'Thank you to our sponsors';
+
     // IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS
     if (have_rows('goldsmith_sponsors', $id) || have_rows('silversmith_sponsors', $id) || have_rows('coppersmith_sponsors', $id) || have_rows('media_sponsors', $id)) {
         $return .= '
@@ -1386,7 +1384,6 @@ function getSponsorPanel() {
 
     return $return;
 }
-
 
 /* * ************************************************ */
 /*  Function to return Social Media Panel           */
@@ -1502,9 +1499,9 @@ function getFlagBannerPanel() {
 
 function getMakeyBanner() {
     GLOBAL $acf_blocks;
-    
-    $title  = ($acf_blocks ? get_field('title_link_text') : get_sub_field('title_link_text'));
-    $URL    = ($acf_blocks ? get_field('link_url') : get_sub_field('link_url'));
+
+    $title = ($acf_blocks ? get_field('title_link_text') : get_sub_field('title_link_text'));
+    $URL = ($acf_blocks ? get_field('link_url') : get_sub_field('link_url'));
 
     $content = '<div class="makey-banner ' . ($acf_blocks ? get_field('background-color') : get_sub_field('background-color')) . '">';
     $content .= '   <div class="container">';
@@ -1518,93 +1515,97 @@ function getMakeyBanner() {
     return $content;
 }
 
-/* **************************************************** */
+/* * *************************************************** */
 /* Function to return the rss feed from user input      */
-/* **************************************************** */
+/* * *************************************************** */
+
 function getRSSFeed() {
-	GLOBAL $acf_blocks;
-	$title = ($acf_blocks ? get_field('title') : get_sub_field('title'));
-	$feed_tag = ($acf_blocks ? get_field('feed_tag') : get_sub_field('feed_tag'));
-	$more_link = ($acf_blocks ? get_field('more_link') : get_sub_field('more_link'));
-	$number = ($acf_blocks ? get_field('number') : get_sub_field('number'));
-	
-	$rss_shortcode = '[make_rss title='.urlencode($title).', feed='.$feed_tag.', moreLink='.$more_link.', number='.$number.']';
-	echo do_shortcode($rss_shortcode);
+    GLOBAL $acf_blocks;
+    $title = ($acf_blocks ? get_field('title') : get_sub_field('title'));
+    $feed_tag = ($acf_blocks ? get_field('feed_tag') : get_sub_field('feed_tag'));
+    $more_link = ($acf_blocks ? get_field('more_link') : get_sub_field('more_link'));
+    $number = ($acf_blocks ? get_field('number') : get_sub_field('number'));
+
+    $rss_shortcode = '[make_rss title="' . urlencode($title) . '" feed="' . $feed_tag . '" moreLink="' . $more_link . '" number=' . $number . ']';
+    echo do_shortcode($rss_shortcode);
 }
 
-
-
-/* ********************************************************* */
+/* * ******************************************************** */
 /* Function to show a list of faires of the type entered     */
-/* ********************************************************* */
+/* * ******************************************************** */
+
 function getFaireList() {
     GLOBAL $acf_blocks;
     GLOBAL $wpdb;
-    
+
     $date_start = date('Y-m-d H:i:s', time());
-    
+
     $faire_type = ($acf_blocks ? implode(",", get_field('type')) : implode(",", get_sub_field('type')));
     $past_or_future_value = ($acf_blocks ? get_field('past_or_future') : get_sub_field('past_or_future'));
-    
+
     $past_or_future = "";
-    if($past_or_future_value == '>') {
+    if ($past_or_future_value == '>') {
         $past_or_future = " AND event_start_dt > '" . $date_start . "'";
-    } else if($past_or_future_value == '<') {
+    } else if ($past_or_future_value == '<') {
         $past_or_future = " AND event_start_dt < '" . $date_start . "'";
     }
     $limit = ($acf_blocks ? get_field('number') : get_sub_field('number'));
-    
+
     $output = "<ul class='flex-list faire-list'>";
-    $rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type in({$faire_type}){$past_or_future} ORDER BY event_start_dt", OBJECT );
+    $rows = $wpdb->get_results("SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type in({$faire_type}){$past_or_future} ORDER BY event_start_dt", OBJECT);
     $i = 0;
-    foreach($rows as $row){
-        if($row->faire_image) {
-            
+    foreach ($rows as $row) {
+        if ($row->faire_image) {
+
             $name = isset($row->faire_nicename) ? $row->faire_nicename : $row->faire_name;
             $output .= "<li><a href='$row->faire_url'>";
-            $output .=      "<img src='$row->faire_image'>";
-            $output .=      "<p>$row->event_dt</p>";
-            $output .=      "<h3>$name</h3>";
+            $output .= "<img src='$row->faire_image'>";
+            $output .= "<p>$row->event_dt</p>";
+            $output .= "<h3>$name</h3>";
             $output .= "</a></li>";
-            if (++$i == $limit) break;
+            if (++$i == $limit)
+                break;
         }
     }
     $output .= "</ul>";
     echo($output);
 }
 
-/* **************************************************** */
+/* * *************************************************** */
 /* Function to show a list of call for makers forms     */
-/* **************************************************** */
+/* * *************************************************** */
+
 function getCFMList() {
     GLOBAL $acf_blocks;
     GLOBAL $wpdb;
-    
+
     $featured_faire_limit = ($acf_blocks ? get_field('featured_faires_number') : get_sub_field('featured_faires_number'));
     $community_faire_limit = ($acf_blocks ? get_field('community_faires_number') : get_sub_field('community_faires_number'));
-    
+
     $output = "<div class='cfm-list'>";
-    $output .=   "<ul class='flex-list featured-cfm-list'>";
-    $featuredRows = $wpdb->get_results( "SELECT event_start_dt, cfm_start_dt, cfm_end_dt, event_type, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Featured' AND cfm_start_dt < CURRENT_DATE() AND cfm_end_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT );
+    $output .= "<ul class='flex-list featured-cfm-list'>";
+    $featuredRows = $wpdb->get_results("SELECT event_start_dt, cfm_start_dt, cfm_end_dt, event_type, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Featured' AND cfm_start_dt < CURRENT_DATE() AND cfm_end_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT);
     $i = 0;
-    foreach($featuredRows as $row){
-        if($row->cfm_image) {
+    foreach ($featuredRows as $row) {
+        if ($row->cfm_image) {
             $output .= "<li><a href='$row->cfm_url'>";
-            $output .=      "<img src='$row->cfm_image'>";
+            $output .= "<img src='$row->cfm_image'>";
             $output .= "</a></li>";
-            if (++$i == $featured_faire_limit) break;
+            if (++$i == $featured_faire_limit)
+                break;
         }
     }
-    $output .=   "</ul>";
-    $output .=   "<ul class='community-cfm-list'>";
-    $communityRows = $wpdb->get_results( "SELECT faire_name, event_start_dt, cfm_start_dt, cfm_end_dt, event_type, event_dt, cfm_url FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Mini' AND cfm_start_dt < CURRENT_DATE() AND cfm_end_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT );
+    $output .= "</ul>";
+    $output .= "<ul class='community-cfm-list'>";
+    $communityRows = $wpdb->get_results("SELECT faire_name, event_start_dt, cfm_start_dt, cfm_end_dt, event_type, event_dt, cfm_url FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Mini' AND cfm_start_dt < CURRENT_DATE() AND cfm_end_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT);
     $j = 0;
-    foreach($communityRows as $row){
+    foreach ($communityRows as $row) {
         $output .= "<li><a href='$row->cfm_url'>";
-        $output .=      $row->faire_name . "<br />(" . $row->event_dt . ")";
+        $output .= $row->faire_name . "<br />(" . $row->event_dt . ")";
         $output .= "</a></li>";
-        if (++$j == $community_faire_limit) break;
+        if (++$j == $community_faire_limit)
+            break;
     }
-    $output .=   "</ul>";
+    $output .= "</ul>";
     echo($output);
 }
