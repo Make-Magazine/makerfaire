@@ -116,6 +116,11 @@ if( ! class_exists('MS_Aq_Resize') ) {
 
                 // Get image size after cropping.
                 $dims = image_resize_dimensions( $orig_w, $orig_h, $width, $height, $crop );
+
+                if ( empty( $dims ) ) {
+                    return $url;
+                }
+                
                 $dst_w = $dims[4];
                 $dst_h = $dims[5];
 

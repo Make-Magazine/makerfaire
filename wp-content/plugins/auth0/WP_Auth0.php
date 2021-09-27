@@ -3,13 +3,13 @@
  * Plugin Name: Login by Auth0
  * Plugin URL: https://auth0.com/docs/cms/wordpress
  * Description: Login by Auth0 provides improved username/password login, passwordless login, social login, multi-factor authentication, and single sign-on for all your sites.
- * Version: 4.2.0
+ * Version: 4.3.1
  * Author: Auth0
  * Author URI: https://auth0.com
  * Text Domain: wp-auth0
  */
 
-define( 'WPA0_VERSION', '4.2.0' );
+define( 'WPA0_VERSION', '4.3.1' );
 define( 'AUTH0_DB_VERSION', 23 );
 
 define( 'WPA0_PLUGIN_FILE', __FILE__ );
@@ -22,8 +22,8 @@ define( 'WPA0_PLUGIN_IMG_URL', WPA0_PLUGIN_URL . 'assets/img/' );
 define( 'WPA0_PLUGIN_LIB_URL', WPA0_PLUGIN_URL . 'assets/lib/' );
 define( 'WPA0_PLUGIN_BS_URL', WPA0_PLUGIN_URL . 'assets/bootstrap/' );
 
-define( 'WPA0_LOCK_CDN_URL', 'https://cdn.auth0.com/js/lock/11.21/lock.min.js' );
-define( 'WPA0_AUTH0_JS_CDN_URL', 'https://cdn.auth0.com/js/auth0/9.12/auth0.min.js' );
+define( 'WPA0_LOCK_CDN_URL', 'https://cdn.auth0.com/js/lock/11.30/lock.min.js' );
+define( 'WPA0_AUTH0_JS_CDN_URL', 'https://cdn.auth0.com/js/auth0/9.16/auth0.min.js' );
 
 define( 'WPA0_AUTH0_LOGIN_FORM_ID', 'auth0-login-form' );
 define( 'WPA0_CACHE_GROUP', 'wp_auth0' );
@@ -31,7 +31,9 @@ define( 'WPA0_JWKS_CACHE_TRANSIENT_NAME', 'WP_Auth0_JWKS_cache' );
 
 define( 'WPA0_LANG', 'wp-auth0' ); // deprecated; do not use for translations
 
-require_once __DIR__ . '/vendor/autoload.php';
+if ( is_readable( __DIR__ . '/vendor/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor/autoload.php';
+}
 
 /*
  * Startup
@@ -165,7 +167,7 @@ function wp_auth0_register_widget() {
 add_action( 'widgets_init', 'wp_auth0_register_widget' );
 
 function wp_auth0_register_query_vars( $qvars ) {
-	return array_merge( $qvars, [ 'error', 'error_description', 'a0_action', 'auth0', 'state', 'code' ] );
+	return array_merge( $qvars, [ 'error', 'error_description', 'a0_action', 'auth0', 'state', 'code', 'invitation', 'organization', 'organization_name' ] );
 }
 add_filter( 'query_vars', 'wp_auth0_register_query_vars' );
 
