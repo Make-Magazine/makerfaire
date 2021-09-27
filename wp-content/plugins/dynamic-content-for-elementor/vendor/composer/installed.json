@@ -1,0 +1,2737 @@
+{
+    "packages": [
+        {
+            "name": "dompdf\/dompdf",
+            "version": "v0.8.3",
+            "version_normalized": "0.8.3.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/dompdf\/dompdf.git",
+                "reference": "75f13c700009be21a1965dc2c5b68a8708c22ba2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/dompdf\/dompdf\/zipball\/75f13c700009be21a1965dc2c5b68a8708c22ba2",
+                "reference": "75f13c700009be21a1965dc2c5b68a8708c22ba2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-mbstring": "*",
+                "phenx\/php-font-lib": "0.5.*",
+                "phenx\/php-svg-lib": "0.3.*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "^4.8|^5.5|^6.5",
+                "squizlabs\/php_codesniffer": "2.*"
+            },
+            "suggest": {
+                "ext-gd": "Needed to process images",
+                "ext-gmagick": "Improves image processing performance",
+                "ext-imagick": "Improves image processing performance"
+            },
+            "time": "2018-12-14T02:40:31+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "0.7-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Dompdf\\": "src\/"
+                },
+                "classmap": [
+                    "lib\/"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "LGPL-2.1"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien M\u00e9nager",
+                    "email": "fabien.menager@gmail.com"
+                },
+                {
+                    "name": "Brian Sweeney",
+                    "email": "eclecticgeek@gmail.com"
+                },
+                {
+                    "name": "Gabriel Bull",
+                    "email": "me@gabrielbull.com"
+                }
+            ],
+            "description": "DOMPDF is a CSS 2.1 compliant HTML to PDF converter",
+            "homepage": "https:\/\/github.com\/dompdf\/dompdf",
+            "support": {
+                "issues": "https:\/\/github.com\/dompdf\/dompdf\/issues",
+                "source": "https:\/\/github.com\/dompdf\/dompdf\/tree\/master"
+            },
+            "install-path": "..\/dompdf\/dompdf"
+        },
+        {
+            "name": "guzzlehttp\/guzzle",
+            "version": "7.3.0",
+            "version_normalized": "7.3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/guzzle\/guzzle.git",
+                "reference": "7008573787b430c1c1f650e3722d9bba59967628"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/guzzle\/guzzle\/zipball\/7008573787b430c1c1f650e3722d9bba59967628",
+                "reference": "7008573787b430c1c1f650e3722d9bba59967628",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp\/promises": "^1.4",
+                "guzzlehttp\/psr7": "^1.7 || ^2.0",
+                "php": "^7.2.5 || ^8.0",
+                "psr\/http-client": "^1.0"
+            },
+            "provide": {
+                "psr\/http-client-implementation": "1.0"
+            },
+            "require-dev": {
+                "bamarni\/composer-bin-plugin": "^1.4.1",
+                "ext-curl": "*",
+                "php-http\/client-integration-tests": "^3.0",
+                "phpunit\/phpunit": "^8.5.5 || ^9.3.5",
+                "psr\/log": "^1.1"
+            },
+            "suggest": {
+                "ext-curl": "Required for CURL handler support",
+                "ext-intl": "Required for Internationalized Domain Name (IDN) support",
+                "psr\/log": "Required for using the Log middleware"
+            },
+            "time": "2021-03-23T11:33:13+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "7.3-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\GuzzleHttp\\": "src\/"
+                },
+                "files": [
+                    "src\/functions_include.php"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https:\/\/github.com\/mtdowling"
+                },
+                {
+                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
+                    "email": "mark.sagikazar@gmail.com",
+                    "homepage": "https:\/\/sagikazarmark.hu"
+                }
+            ],
+            "description": "Guzzle is a PHP HTTP client library",
+            "homepage": "http:\/\/guzzlephp.org\/",
+            "keywords": [
+                "client",
+                "curl",
+                "framework",
+                "http",
+                "http client",
+                "psr-18",
+                "psr-7",
+                "rest",
+                "web service"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/guzzle\/guzzle\/issues",
+                "source": "https:\/\/github.com\/guzzle\/guzzle\/tree\/7.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/github.com\/GrahamCampbell",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/github.com\/Nyholm",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/github.com\/alexeyshockov",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/github.com\/gmponos",
+                    "type": "github"
+                }
+            ],
+            "install-path": "..\/guzzlehttp\/guzzle"
+        },
+        {
+            "name": "guzzlehttp\/promises",
+            "version": "1.4.1",
+            "version_normalized": "1.4.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/guzzle\/promises.git",
+                "reference": "8e7d04f1f6450fef59366c399cfad4b9383aa30d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/guzzle\/promises\/zipball\/8e7d04f1f6450fef59366c399cfad4b9383aa30d",
+                "reference": "8e7d04f1f6450fef59366c399cfad4b9383aa30d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "symfony\/phpunit-bridge": "^4.4 || ^5.1"
+            },
+            "time": "2021-03-07T09:25:29+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\GuzzleHttp\\Promise\\": "src\/"
+                },
+                "files": [
+                    "src\/functions_include.php"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https:\/\/github.com\/mtdowling"
+                }
+            ],
+            "description": "Guzzle promises library",
+            "keywords": [
+                "promise"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/guzzle\/promises\/issues",
+                "source": "https:\/\/github.com\/guzzle\/promises\/tree\/1.4.1"
+            },
+            "install-path": "..\/guzzlehttp\/promises"
+        },
+        {
+            "name": "guzzlehttp\/psr7",
+            "version": "1.8.2",
+            "version_normalized": "1.8.2.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/guzzle\/psr7.git",
+                "reference": "dc960a912984efb74d0a90222870c72c87f10c91"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/guzzle\/psr7\/zipball\/dc960a912984efb74d0a90222870c72c87f10c91",
+                "reference": "dc960a912984efb74d0a90222870c72c87f10c91",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "psr\/http-message": "~1.0",
+                "ralouphie\/getallheaders": "^2.0.5 || ^3.0.0"
+            },
+            "provide": {
+                "psr\/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "ext-zlib": "*",
+                "phpunit\/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.14 || ^7.5.20 || ^8.5.8 || ^9.3.10"
+            },
+            "suggest": {
+                "laminas\/laminas-httphandlerrunner": "Emit PSR-7 responses"
+            },
+            "time": "2021-04-26T09:17:50+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.7-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\GuzzleHttp\\Psr7\\": "src\/"
+                },
+                "files": [
+                    "src\/functions_include.php"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https:\/\/github.com\/mtdowling"
+                },
+                {
+                    "name": "Tobias Schultze",
+                    "homepage": "https:\/\/github.com\/Tobion"
+                }
+            ],
+            "description": "PSR-7 message implementation that also provides common utility methods",
+            "keywords": [
+                "http",
+                "message",
+                "psr-7",
+                "request",
+                "response",
+                "stream",
+                "uri",
+                "url"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/guzzle\/psr7\/issues",
+                "source": "https:\/\/github.com\/guzzle\/psr7\/tree\/1.8.2"
+            },
+            "install-path": "..\/guzzlehttp\/psr7"
+        },
+        {
+            "name": "jlawrence\/eos",
+            "version": "v3.2.2",
+            "version_normalized": "3.2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/jlawrence11\/eos.git",
+                "reference": "25e3d0f2316cb4636000f452a8e7dcc83725a32a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/jlawrence11\/eos\/zipball\/25e3d0f2316cb4636000f452a8e7dcc83725a32a",
+                "reference": "25e3d0f2316cb4636000f452a8e7dcc83725a32a",
+                "shasum": ""
+            },
+            "require-dev": {
+                "codeclimate\/php-test-reporter": "dev-master",
+                "phpunit\/phpunit": "4.*"
+            },
+            "time": "2016-03-02T22:35:41+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\jlawrence\\eos\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "LGPL-2.1+"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Lawrence",
+                    "email": "jon@jon-lawrence.com"
+                }
+            ],
+            "description": "Parse and solve math equations without using 'eval()'.",
+            "keywords": [
+                "eos",
+                "equations",
+                "math",
+                "solve"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/jlawrence11\/eos\/issues",
+                "source": "https:\/\/github.com\/jlawrence11\/eos\/tree\/master"
+            },
+            "install-path": "..\/jlawrence\/eos"
+        },
+        {
+            "name": "matthiasmullie\/path-converter",
+            "version": "1.1.3",
+            "version_normalized": "1.1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/matthiasmullie\/path-converter.git",
+                "reference": "e7d13b2c7e2f2268e1424aaed02085518afa02d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/matthiasmullie\/path-converter\/zipball\/e7d13b2c7e2f2268e1424aaed02085518afa02d9",
+                "reference": "e7d13b2c7e2f2268e1424aaed02085518afa02d9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcre": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "~4.8"
+            },
+            "time": "2019-02-05T23:41:09+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\MatthiasMullie\\PathConverter\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthias Mullie",
+                    "email": "pathconverter@mullie.eu",
+                    "homepage": "http:\/\/www.mullie.eu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Relative path converter",
+            "homepage": "http:\/\/github.com\/matthiasmullie\/path-converter",
+            "keywords": [
+                "converter",
+                "path",
+                "paths",
+                "relative"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/matthiasmullie\/path-converter\/issues",
+                "source": "https:\/\/github.com\/matthiasmullie\/path-converter\/tree\/1.1.3"
+            },
+            "install-path": "..\/matthiasmullie\/path-converter"
+        },
+        {
+            "name": "mcaskill\/composer-exclude-files",
+            "version": "v2.0.0",
+            "version_normalized": "2.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/mcaskill\/composer-plugin-exclude-files.git",
+                "reference": "2bf916ab1ec9959b3a58ba3652bad6ffedf0e10e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/mcaskill\/composer-plugin-exclude-files\/zipball\/2bf916ab1ec9959b3a58ba3652bad6ffedf0e10e",
+                "reference": "2bf916ab1ec9959b3a58ba3652bad6ffedf0e10e",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0 || ^2.0",
+                "php": "^5.3.2 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "composer\/composer": "^1.0 || ^2.0",
+                "symfony\/phpunit-bridge": "^4.2 || ^5.0"
+            },
+            "time": "2020-09-25T22:01:23+00:00",
+            "type": "composer-plugin",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                },
+                "class": "McAskill\\Composer\\ExcludeFilePlugin"
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\McAskill\\Composer\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chauncey McAskill",
+                    "email": "chauncey@mcaskill.ca"
+                }
+            ],
+            "description": "Exclude files from autoload_files.php",
+            "support": {
+                "issues": "https:\/\/github.com\/mcaskill\/composer-plugin-exclude-files\/issues",
+                "source": "https:\/\/github.com\/mcaskill\/composer-plugin-exclude-files\/tree\/v2.0.0"
+            },
+            "install-path": "..\/mcaskill\/composer-exclude-files"
+        },
+        {
+            "name": "myclabs\/php-enum",
+            "version": "1.8.3",
+            "version_normalized": "1.8.3.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/myclabs\/php-enum.git",
+                "reference": "b942d263c641ddb5190929ff840c68f78713e937"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/myclabs\/php-enum\/zipball\/b942d263c641ddb5190929ff840c68f78713e937",
+                "reference": "b942d263c641ddb5190929ff840c68f78713e937",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.3 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "^9.5",
+                "squizlabs\/php_codesniffer": "1.*",
+                "vimeo\/psalm": "^4.6.2"
+            },
+            "time": "2021-07-05T08:18:36+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\MyCLabs\\Enum\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP Enum contributors",
+                    "homepage": "https:\/\/github.com\/myclabs\/php-enum\/graphs\/contributors"
+                }
+            ],
+            "description": "PHP Enum implementation",
+            "homepage": "http:\/\/github.com\/myclabs\/php-enum",
+            "keywords": [
+                "enum"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/myclabs\/php-enum\/issues",
+                "source": "https:\/\/github.com\/myclabs\/php-enum\/tree\/1.8.3"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/github.com\/mnapoli",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/myclabs\/php-enum",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/myclabs\/php-enum"
+        },
+        {
+            "name": "paquettg\/php-html-parser",
+            "version": "3.1.1",
+            "version_normalized": "3.1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/paquettg\/php-html-parser.git",
+                "reference": "4e01a438ad5961cc2d7427eb9798d213c8a12629"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/paquettg\/php-html-parser\/zipball\/4e01a438ad5961cc2d7427eb9798d213c8a12629",
+                "reference": "4e01a438ad5961cc2d7427eb9798d213c8a12629",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-mbstring": "*",
+                "ext-zlib": "*",
+                "guzzlehttp\/guzzle": "^7.0",
+                "guzzlehttp\/psr7": "^1.6",
+                "myclabs\/php-enum": "^1.7",
+                "paquettg\/string-encode": "~1.0.0",
+                "php": ">=7.2",
+                "php-http\/httplug": "^2.1"
+            },
+            "require-dev": {
+                "friendsofphp\/php-cs-fixer": "^2.16",
+                "infection\/infection": "^0.13.4",
+                "mockery\/mockery": "^1.2",
+                "phan\/phan": "^2.4",
+                "phpunit\/phpunit": "^7.5.1"
+            },
+            "time": "2020-11-01T20:34:43+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\PHPHtmlParser\\": "src\/PHPHtmlParser"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gilles Paquette",
+                    "email": "paquettg@gmail.com",
+                    "homepage": "http:\/\/gillespaquette.ca"
+                }
+            ],
+            "description": "An HTML DOM parser. It allows you to manipulate HTML. Find tags on an HTML page with selectors just like jQuery.",
+            "homepage": "https:\/\/github.com\/paquettg\/php-html-parser",
+            "keywords": [
+                "dom",
+                "html",
+                "parser"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/paquettg\/php-html-parser\/issues",
+                "source": "https:\/\/github.com\/paquettg\/php-html-parser\/tree\/3.1.1"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/paquettg\/php-html-parser",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/paquettg\/php-html-parser"
+        },
+        {
+            "name": "paquettg\/string-encode",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/paquettg\/string-encoder.git",
+                "reference": "a8708e9fac9d5ddfc8fc2aac6004e2cd05d80fee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/paquettg\/string-encoder\/zipball\/a8708e9fac9d5ddfc8fc2aac6004e2cd05d80fee",
+                "reference": "a8708e9fac9d5ddfc8fc2aac6004e2cd05d80fee",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "^7.5.1"
+            },
+            "time": "2018-12-21T02:25:09+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\stringEncode\\": "src\/stringEncode\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gilles Paquette",
+                    "email": "paquettg@gmail.com",
+                    "homepage": "http:\/\/gillespaquette.ca"
+                }
+            ],
+            "description": "Facilitating the process of altering string encoding in PHP.",
+            "homepage": "https:\/\/github.com\/paquettg\/string-encoder",
+            "keywords": [
+                "charset",
+                "encoding",
+                "string"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/paquettg\/string-encoder\/issues",
+                "source": "https:\/\/github.com\/paquettg\/string-encoder\/tree\/1.0.1"
+            },
+            "install-path": "..\/paquettg\/string-encode"
+        },
+        {
+            "name": "paypal\/paypal-checkout-sdk",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/paypal\/Checkout-PHP-SDK.git",
+                "reference": "ed6a55075448308b87a8b59dcb7fedf04a048cb1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/paypal\/Checkout-PHP-SDK\/zipball\/ed6a55075448308b87a8b59dcb7fedf04a048cb1",
+                "reference": "ed6a55075448308b87a8b59dcb7fedf04a048cb1",
+                "shasum": ""
+            },
+            "require": {
+                "paypal\/paypalhttp": "1.0.0"
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "^5.7"
+            },
+            "time": "2019-11-07T23:16:44+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\PayPalCheckoutSdk\\": "lib\/PayPalCheckoutSdk",
+                    "DynamicOOOS\\Sample\\": "samples\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "https:\/\/github.com\/paypal\/Checkout-PHP-SDK\/blob\/master\/LICENSE"
+            ],
+            "authors": [
+                {
+                    "name": "PayPal",
+                    "homepage": "https:\/\/github.com\/paypal\/Checkout-PHP-SDK\/contributors"
+                }
+            ],
+            "description": "PayPal's PHP SDK for Checkout REST APIs",
+            "homepage": "http:\/\/github.com\/paypal\/Checkout-PHP-SDK\/",
+            "keywords": [
+                "checkout",
+                "orders",
+                "payments",
+                "paypal",
+                "rest",
+                "sdk"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/paypal\/Checkout-PHP-SDK\/issues",
+                "source": "https:\/\/github.com\/paypal\/Checkout-PHP-SDK\/tree\/1.0.1"
+            },
+            "install-path": "..\/paypal\/paypal-checkout-sdk"
+        },
+        {
+            "name": "paypal\/paypalhttp",
+            "version": "1.0.0",
+            "version_normalized": "1.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/paypal\/paypalhttp_php.git",
+                "reference": "1ad9b846a046f09d6135cbf2cbaa7701bbc630a3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/paypal\/paypalhttp_php\/zipball\/1ad9b846a046f09d6135cbf2cbaa7701bbc630a3",
+                "reference": "1ad9b846a046f09d6135cbf2cbaa7701bbc630a3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*"
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "^5.7",
+                "wiremock-php\/wiremock-php": "1.43.2"
+            },
+            "time": "2019-11-06T21:27:12+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\PayPalHttp\\": "lib\/PayPalHttp"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PayPal",
+                    "homepage": "https:\/\/github.com\/paypal\/paypalhttp_php\/contributors"
+                }
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/paypal\/paypalhttp_php\/issues",
+                "source": "https:\/\/github.com\/paypal\/paypalhttp_php\/tree\/1.0.0"
+            },
+            "abandoned": true,
+            "install-path": "..\/paypal\/paypalhttp"
+        },
+        {
+            "name": "payum\/iso4217",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/Payum\/iso4217.git",
+                "reference": "6a45480e2818350dea58b7a076d0115aa7ff5789"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/Payum\/iso4217\/zipball\/6a45480e2818350dea58b7a076d0115aa7ff5789",
+                "reference": "6a45480e2818350dea58b7a076d0115aa7ff5789",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "~4.0"
+            },
+            "time": "2016-08-04T08:15:12+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Payum\\ISO4217\\": "."
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com"
+                },
+                {
+                    "name": "Community contributions",
+                    "homepage": "https:\/\/github.com\/Payum\/Payum\/contributors"
+                },
+                {
+                    "name": "Kotlyar Maksim",
+                    "email": "kotlyar.maksim@gmail.com"
+                },
+                {
+                    "name": "Payum project",
+                    "homepage": "http:\/\/payum.org\/"
+                }
+            ],
+            "description": "ISO 4217 PHP Library",
+            "homepage": "http:\/\/payum.org",
+            "keywords": [
+                "4217",
+                "ISO 4217",
+                "currencies",
+                "iso",
+                "library"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/payum\/iso4217\/issues",
+                "source": "https:\/\/github.com\/payum\/iso4217"
+            },
+            "install-path": "..\/payum\/iso4217"
+        },
+        {
+            "name": "phenx\/php-font-lib",
+            "version": "0.5.2",
+            "version_normalized": "0.5.2.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/PhenX\/php-font-lib.git",
+                "reference": "ca6ad461f032145fff5971b5985e5af9e7fa88d8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/PhenX\/php-font-lib\/zipball\/ca6ad461f032145fff5971b5985e5af9e7fa88d8",
+                "reference": "ca6ad461f032145fff5971b5985e5af9e7fa88d8",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "^4.8.35 || ^5 || ^6 || ^7"
+            },
+            "time": "2020-03-08T15:31:32+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\FontLib\\": "src\/FontLib"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien M\u00e9nager",
+                    "email": "fabien.menager@gmail.com"
+                }
+            ],
+            "description": "A library to read, parse, export and make subsets of different types of font files.",
+            "homepage": "https:\/\/github.com\/PhenX\/php-font-lib",
+            "support": {
+                "issues": "https:\/\/github.com\/PhenX\/php-font-lib\/issues",
+                "source": "https:\/\/github.com\/PhenX\/php-font-lib\/tree\/0.5.2"
+            },
+            "install-path": "..\/phenx\/php-font-lib"
+        },
+        {
+            "name": "phenx\/php-svg-lib",
+            "version": "v0.3.3",
+            "version_normalized": "0.3.3.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/PhenX\/php-svg-lib.git",
+                "reference": "5fa61b65e612ce1ae15f69b3d223cb14ecc60e32"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/PhenX\/php-svg-lib\/zipball\/5fa61b65e612ce1ae15f69b3d223cb14ecc60e32",
+                "reference": "5fa61b65e612ce1ae15f69b3d223cb14ecc60e32",
+                "shasum": ""
+            },
+            "require": {
+                "sabberworm\/php-css-parser": "^8.3"
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "^5.5|^6.5"
+            },
+            "time": "2019-09-11T20:02:13+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Svg\\": "src\/Svg"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien M\u00e9nager",
+                    "email": "fabien.menager@gmail.com"
+                }
+            ],
+            "description": "A library to read, parse and export to PDF SVG files.",
+            "homepage": "https:\/\/github.com\/PhenX\/php-svg-lib",
+            "support": {
+                "issues": "https:\/\/github.com\/PhenX\/php-svg-lib\/issues",
+                "source": "https:\/\/github.com\/PhenX\/php-svg-lib\/tree\/master"
+            },
+            "install-path": "..\/phenx\/php-svg-lib"
+        },
+        {
+            "name": "php-http\/httplug",
+            "version": "2.2.0",
+            "version_normalized": "2.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/php-http\/httplug.git",
+                "reference": "191a0a1b41ed026b717421931f8d3bd2514ffbf9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/php-http\/httplug\/zipball\/191a0a1b41ed026b717421931f8d3bd2514ffbf9",
+                "reference": "191a0a1b41ed026b717421931f8d3bd2514ffbf9",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0",
+                "php-http\/promise": "^1.1",
+                "psr\/http-client": "^1.0",
+                "psr\/http-message": "^1.0"
+            },
+            "require-dev": {
+                "friends-of-phpspec\/phpspec-code-coverage": "^4.1",
+                "phpspec\/phpspec": "^5.1 || ^6.0"
+            },
+            "time": "2020-07-13T15:43:23+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Http\\Client\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eric GELOEN",
+                    "email": "geloen.eric@gmail.com"
+                },
+                {
+                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
+                    "email": "mark.sagikazar@gmail.com",
+                    "homepage": "https:\/\/sagikazarmark.hu"
+                }
+            ],
+            "description": "HTTPlug, the HTTP client abstraction for PHP",
+            "homepage": "http:\/\/httplug.io",
+            "keywords": [
+                "client",
+                "http"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/php-http\/httplug\/issues",
+                "source": "https:\/\/github.com\/php-http\/httplug\/tree\/master"
+            },
+            "install-path": "..\/php-http\/httplug"
+        },
+        {
+            "name": "php-http\/promise",
+            "version": "1.1.0",
+            "version_normalized": "1.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/php-http\/promise.git",
+                "reference": "4c4c1f9b7289a2ec57cde7f1e9762a5789506f88"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/php-http\/promise\/zipball\/4c4c1f9b7289a2ec57cde7f1e9762a5789506f88",
+                "reference": "4c4c1f9b7289a2ec57cde7f1e9762a5789506f88",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "friends-of-phpspec\/phpspec-code-coverage": "^4.3.2",
+                "phpspec\/phpspec": "^5.1.2 || ^6.2"
+            },
+            "time": "2020-07-07T09:29:14+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Http\\Promise\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joel Wurtz",
+                    "email": "joel.wurtz@gmail.com"
+                },
+                {
+                    "name": "M\u00e1rk S\u00e1gi-Kaz\u00e1r",
+                    "email": "mark.sagikazar@gmail.com"
+                }
+            ],
+            "description": "Promise used for asynchronous HTTP requests",
+            "homepage": "http:\/\/httplug.io",
+            "keywords": [
+                "promise"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/php-http\/promise\/issues",
+                "source": "https:\/\/github.com\/php-http\/promise\/tree\/1.1.0"
+            },
+            "install-path": "..\/php-http\/promise"
+        },
+        {
+            "name": "psr\/cache",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/php-fig\/cache.git",
+                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/php-fig\/cache\/zipball\/d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2016-08-06T20:24:11+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Psr\\Cache\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http:\/\/www.php-fig.org\/"
+                }
+            ],
+            "description": "Common interface for caching libraries",
+            "keywords": [
+                "cache",
+                "psr",
+                "psr-6"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/php-fig\/cache\/tree\/master"
+            },
+            "install-path": "..\/psr\/cache"
+        },
+        {
+            "name": "psr\/container",
+            "version": "1.1.1",
+            "version_normalized": "1.1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/php-fig\/container.git",
+                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/php-fig\/container\/zipball\/8622567409010282b7aeebe4bb841fe98b58dcaf",
+                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "time": "2021-03-05T17:36:06+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Psr\\Container\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https:\/\/www.php-fig.org\/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https:\/\/github.com\/php-fig\/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/php-fig\/container\/issues",
+                "source": "https:\/\/github.com\/php-fig\/container\/tree\/1.1.1"
+            },
+            "install-path": "..\/psr\/container"
+        },
+        {
+            "name": "psr\/http-client",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/php-fig\/http-client.git",
+                "reference": "2dfb5f6c5eff0e91e20e913f8c5452ed95b86621"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/php-fig\/http-client\/zipball\/2dfb5f6c5eff0e91e20e913f8c5452ed95b86621",
+                "reference": "2dfb5f6c5eff0e91e20e913f8c5452ed95b86621",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^8.0",
+                "psr\/http-message": "^1.0"
+            },
+            "time": "2020-06-29T06:28:15+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Psr\\Http\\Client\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http:\/\/www.php-fig.org\/"
+                }
+            ],
+            "description": "Common interface for HTTP clients",
+            "homepage": "https:\/\/github.com\/php-fig\/http-client",
+            "keywords": [
+                "http",
+                "http-client",
+                "psr",
+                "psr-18"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/php-fig\/http-client\/tree\/master"
+            },
+            "install-path": "..\/psr\/http-client"
+        },
+        {
+            "name": "psr\/http-message",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/php-fig\/http-message.git",
+                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/php-fig\/http-message\/zipball\/f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2016-08-06T14:39:51+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Psr\\Http\\Message\\": "src\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http:\/\/www.php-fig.org\/"
+                }
+            ],
+            "description": "Common interface for HTTP messages",
+            "homepage": "https:\/\/github.com\/php-fig\/http-message",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/php-fig\/http-message\/tree\/master"
+            },
+            "install-path": "..\/psr\/http-message"
+        },
+        {
+            "name": "psr\/log",
+            "version": "1.1.4",
+            "version_normalized": "1.1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/php-fig\/log.git",
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/php-fig\/log\/zipball\/d49695b909c3b7628b6289db5479a1c204601f11",
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2021-05-03T11:20:27+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Psr\\Log\\": "Psr\/Log\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https:\/\/www.php-fig.org\/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https:\/\/github.com\/php-fig\/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/php-fig\/log\/tree\/1.1.4"
+            },
+            "install-path": "..\/psr\/log"
+        },
+        {
+            "name": "ralouphie\/getallheaders",
+            "version": "3.0.3",
+            "version_normalized": "3.0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/ralouphie\/getallheaders.git",
+                "reference": "120b605dfeb996808c31b6477290a714d356e822"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/ralouphie\/getallheaders\/zipball\/120b605dfeb996808c31b6477290a714d356e822",
+                "reference": "120b605dfeb996808c31b6477290a714d356e822",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "php-coveralls\/php-coveralls": "^2.1",
+                "phpunit\/phpunit": "^5 || ^6.5"
+            },
+            "time": "2019-03-08T08:55:37+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src\/getallheaders.php"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ralph Khattar",
+                    "email": "ralph.khattar@gmail.com"
+                }
+            ],
+            "description": "A polyfill for getallheaders.",
+            "support": {
+                "issues": "https:\/\/github.com\/ralouphie\/getallheaders\/issues",
+                "source": "https:\/\/github.com\/ralouphie\/getallheaders\/tree\/develop"
+            },
+            "install-path": "..\/ralouphie\/getallheaders"
+        },
+        {
+            "name": "sabberworm\/php-css-parser",
+            "version": "8.3.1",
+            "version_normalized": "8.3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/sabberworm\/PHP-CSS-Parser.git",
+                "reference": "d217848e1396ef962fb1997cf3e2421acba7f796"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/sabberworm\/PHP-CSS-Parser\/zipball\/d217848e1396ef962fb1997cf3e2421acba7f796",
+                "reference": "d217848e1396ef962fb1997cf3e2421acba7f796",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "codacy\/coverage": "^1.4",
+                "phpunit\/phpunit": "~4.8"
+            },
+            "time": "2020-06-01T09:10:00+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Sabberworm\\CSS\\": "lib\/Sabberworm\/CSS\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Raphael Schweikert"
+                }
+            ],
+            "description": "Parser for CSS Files written in PHP",
+            "homepage": "http:\/\/www.sabberworm.com\/blog\/2010\/6\/10\/php-css-parser",
+            "keywords": [
+                "css",
+                "parser",
+                "stylesheet"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/sabberworm\/PHP-CSS-Parser\/issues",
+                "source": "https:\/\/github.com\/sabberworm\/PHP-CSS-Parser\/tree\/8.3.1"
+            },
+            "install-path": "..\/sabberworm\/php-css-parser"
+        },
+        {
+            "name": "stripe\/stripe-php",
+            "version": "v7.95.0",
+            "version_normalized": "7.95.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/stripe\/stripe-php.git",
+                "reference": "ed372a1f6430b06dda408bb33b27d2be35ceaf07"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/stripe\/stripe-php\/zipball\/ed372a1f6430b06dda408bb33b27d2be35ceaf07",
+                "reference": "ed372a1f6430b06dda408bb33b27d2be35ceaf07",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "friendsofphp\/php-cs-fixer": "2.17.1",
+                "php-coveralls\/php-coveralls": "^2.1",
+                "phpunit\/phpunit": "^5.7",
+                "squizlabs\/php_codesniffer": "^3.3",
+                "symfony\/process": "~3.4"
+            },
+            "time": "2021-09-02T02:30:40+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Stripe\\": "lib\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stripe and contributors",
+                    "homepage": "https:\/\/github.com\/stripe\/stripe-php\/contributors"
+                }
+            ],
+            "description": "Stripe PHP Library",
+            "homepage": "https:\/\/stripe.com\/",
+            "keywords": [
+                "api",
+                "payment processing",
+                "stripe"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/stripe\/stripe-php\/issues",
+                "source": "https:\/\/github.com\/stripe\/stripe-php\/tree\/v7.95.0"
+            },
+            "install-path": "..\/stripe\/stripe-php"
+        },
+        {
+            "name": "sunra\/php-simple-html-dom-parser",
+            "version": "v1.5.2",
+            "version_normalized": "1.5.2.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/sunra\/php-simple-html-dom-parser.git",
+                "reference": "75b9b1cb64502d8f8c04dc11b5906b969af247c6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/sunra\/php-simple-html-dom-parser\/zipball\/75b9b1cb64502d8f8c04dc11b5906b969af247c6",
+                "reference": "75b9b1cb64502d8f8c04dc11b5906b969af247c6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.3.2"
+            },
+            "time": "2016-11-22T22:57:47+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Sunra\\PhpSimple\\HtmlDomParser\\": "Src\/Sunra\/PhpSimple\/HtmlDomParser\/"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sunra",
+                    "email": "sunra@yandex.ru",
+                    "homepage": "https:\/\/github.com\/sunra"
+                },
+                {
+                    "name": "S.C. Chen",
+                    "homepage": "http:\/\/sourceforge.net\/projects\/simplehtmldom\/"
+                }
+            ],
+            "description": "Composer adaptation of: A HTML DOM parser written in PHP5+ let you manipulate HTML in a very easy way! Require PHP 5+. Supports invalid HTML. Find tags on an HTML page with selectors just like jQuery. Extract contents from HTML in a single line.",
+            "homepage": "https:\/\/github.com\/sunra\/php-simple-html-dom-parser",
+            "keywords": [
+                "dom",
+                "html",
+                "parser"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/sunra\/php-simple-html-dom-parser\/issues",
+                "source": "https:\/\/github.com\/sunra\/php-simple-html-dom-parser\/tree\/master"
+            },
+            "install-path": "..\/sunra\/php-simple-html-dom-parser"
+        },
+        {
+            "name": "symfony\/cache",
+            "version": "v4.4.30",
+            "version_normalized": "4.4.30.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/cache.git",
+                "reference": "f1c33520a5a439dfd7bd4d5e9cec26c6b79054cc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/cache\/zipball\/f1c33520a5a439dfd7bd4d5e9cec26c6b79054cc",
+                "reference": "f1c33520a5a439dfd7bd4d5e9cec26c6b79054cc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.3",
+                "psr\/cache": "^1.0|^2.0",
+                "psr\/log": "^1|^2|^3",
+                "symfony\/cache-contracts": "^1.1.7|^2",
+                "symfony\/polyfill-php73": "^1.9",
+                "symfony\/polyfill-php80": "^1.16",
+                "symfony\/service-contracts": "^1.1|^2",
+                "symfony\/var-exporter": "^4.2|^5.0"
+            },
+            "conflict": {
+                "doctrine\/dbal": "<2.6",
+                "symfony\/dependency-injection": "<3.4",
+                "symfony\/http-kernel": "<4.4|>=5.0",
+                "symfony\/var-dumper": "<4.4"
+            },
+            "provide": {
+                "psr\/cache-implementation": "1.0|2.0",
+                "psr\/simple-cache-implementation": "1.0",
+                "symfony\/cache-implementation": "1.0|2.0"
+            },
+            "require-dev": {
+                "cache\/integration-tests": "dev-master",
+                "doctrine\/cache": "^1.6|^2.0",
+                "doctrine\/dbal": "^2.6|^3.0",
+                "predis\/predis": "^1.1",
+                "psr\/simple-cache": "^1.0",
+                "symfony\/config": "^4.2|^5.0",
+                "symfony\/dependency-injection": "^3.4|^4.1|^5.0",
+                "symfony\/filesystem": "^4.4|^5.0",
+                "symfony\/http-kernel": "^4.4",
+                "symfony\/var-dumper": "^4.4|^5.0"
+            },
+            "time": "2021-08-25T08:17:29+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Component\\Cache\\": ""
+                },
+                "exclude-from-classmap": [
+                    "\/Tests\/"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Provides an extended PSR-6, PSR-16 (and tags) implementation",
+            "homepage": "https:\/\/symfony.com",
+            "keywords": [
+                "caching",
+                "psr6"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/cache\/tree\/v4.4.30"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/cache"
+        },
+        {
+            "name": "symfony\/cache-contracts",
+            "version": "v2.4.0",
+            "version_normalized": "2.4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/cache-contracts.git",
+                "reference": "c0446463729b89dd4fa62e9aeecc80287323615d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/cache-contracts\/zipball\/c0446463729b89dd4fa62e9aeecc80287323615d",
+                "reference": "c0446463729b89dd4fa62e9aeecc80287323615d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "psr\/cache": "^1.0|^2.0|^3.0"
+            },
+            "suggest": {
+                "symfony\/cache-implementation": ""
+            },
+            "time": "2021-03-23T23:28:01+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.4-dev"
+                },
+                "thanks": {
+                    "name": "symfony\/contracts",
+                    "url": "https:\/\/github.com\/symfony\/contracts"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Contracts\\Cache\\": ""
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Generic abstractions related to caching",
+            "homepage": "https:\/\/symfony.com",
+            "keywords": [
+                "abstractions",
+                "contracts",
+                "decoupling",
+                "interfaces",
+                "interoperability",
+                "standards"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/cache-contracts\/tree\/v2.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/cache-contracts"
+        },
+        {
+            "name": "symfony\/css-selector",
+            "version": "v3.4.47",
+            "version_normalized": "3.4.47.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/css-selector.git",
+                "reference": "da3d9da2ce0026771f5fe64cb332158f1bd2bc33"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/css-selector\/zipball\/da3d9da2ce0026771f5fe64cb332158f1bd2bc33",
+                "reference": "da3d9da2ce0026771f5fe64cb332158f1bd2bc33",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8"
+            },
+            "time": "2020-10-24T10:57:07+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Component\\CssSelector\\": ""
+                },
+                "exclude-from-classmap": [
+                    "\/Tests\/"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Jean-Fran\u00e7ois Simon",
+                    "email": "jeanfrancois.simon@sensiolabs.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Symfony CssSelector Component",
+            "homepage": "https:\/\/symfony.com",
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/css-selector\/tree\/v3.4.47"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/css-selector"
+        },
+        {
+            "name": "symfony\/dom-crawler",
+            "version": "v3.4.47",
+            "version_normalized": "3.4.47.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/dom-crawler.git",
+                "reference": "ef97bcfbae5b384b4ca6c8d57b617722f15241a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/dom-crawler\/zipball\/ef97bcfbae5b384b4ca6c8d57b617722f15241a6",
+                "reference": "ef97bcfbae5b384b4ca6c8d57b617722f15241a6",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8",
+                "symfony\/polyfill-ctype": "~1.8",
+                "symfony\/polyfill-mbstring": "~1.0"
+            },
+            "require-dev": {
+                "symfony\/css-selector": "~2.8|~3.0|~4.0"
+            },
+            "suggest": {
+                "symfony\/css-selector": ""
+            },
+            "time": "2020-10-24T10:57:07+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Component\\DomCrawler\\": ""
+                },
+                "exclude-from-classmap": [
+                    "\/Tests\/"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Symfony DomCrawler Component",
+            "homepage": "https:\/\/symfony.com",
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/dom-crawler\/tree\/v3.4.47"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/dom-crawler"
+        },
+        {
+            "name": "symfony\/expression-language",
+            "version": "v3.4.47",
+            "version_normalized": "3.4.47.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/expression-language.git",
+                "reference": "de38e66398fca1fcb9c48e80279910e6889cb28f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/expression-language\/zipball\/de38e66398fca1fcb9c48e80279910e6889cb28f",
+                "reference": "de38e66398fca1fcb9c48e80279910e6889cb28f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8",
+                "symfony\/cache": "~3.1|~4.0",
+                "symfony\/polyfill-php70": "~1.6"
+            },
+            "time": "2020-10-24T10:57:07+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Component\\ExpressionLanguage\\": ""
+                },
+                "exclude-from-classmap": [
+                    "\/Tests\/"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Symfony ExpressionLanguage Component",
+            "homepage": "https:\/\/symfony.com",
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/expression-language\/tree\/v3.4.47"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/expression-language"
+        },
+        {
+            "name": "symfony\/polyfill-ctype",
+            "version": "v1.23.0",
+            "version_normalized": "1.23.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/polyfill-ctype.git",
+                "reference": "46cd95797e9df938fdd2b03693b5fca5e64b01ce"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/polyfill-ctype\/zipball\/46cd95797e9df938fdd2b03693b5fca5e64b01ce",
+                "reference": "46cd95797e9df938fdd2b03693b5fca5e64b01ce",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "suggest": {
+                "ext-ctype": "For best performance"
+            },
+            "time": "2021-02-19T12:13:01+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.23-dev"
+                },
+                "thanks": {
+                    "name": "symfony\/polyfill",
+                    "url": "https:\/\/github.com\/symfony\/polyfill"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Polyfill\\Ctype\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gert de Pagter",
+                    "email": "BackEndTea@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for ctype functions",
+            "homepage": "https:\/\/symfony.com",
+            "keywords": [
+                "compatibility",
+                "ctype",
+                "polyfill",
+                "portable"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/polyfill-ctype\/tree\/v1.23.0"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/polyfill-ctype"
+        },
+        {
+            "name": "symfony\/polyfill-mbstring",
+            "version": "v1.23.1",
+            "version_normalized": "1.23.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/polyfill-mbstring.git",
+                "reference": "9174a3d80210dca8daa7f31fec659150bbeabfc6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/polyfill-mbstring\/zipball\/9174a3d80210dca8daa7f31fec659150bbeabfc6",
+                "reference": "9174a3d80210dca8daa7f31fec659150bbeabfc6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "suggest": {
+                "ext-mbstring": "For best performance"
+            },
+            "time": "2021-05-27T12:26:48+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.23-dev"
+                },
+                "thanks": {
+                    "name": "symfony\/polyfill",
+                    "url": "https:\/\/github.com\/symfony\/polyfill"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Polyfill\\Mbstring\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Mbstring extension",
+            "homepage": "https:\/\/symfony.com",
+            "keywords": [
+                "compatibility",
+                "mbstring",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/polyfill-mbstring\/tree\/v1.23.1"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/polyfill-mbstring"
+        },
+        {
+            "name": "symfony\/polyfill-php70",
+            "version": "v1.20.0",
+            "version_normalized": "1.20.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/polyfill-php70.git",
+                "reference": "5f03a781d984aae42cebd18e7912fa80f02ee644"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/polyfill-php70\/zipball\/5f03a781d984aae42cebd18e7912fa80f02ee644",
+                "reference": "5f03a781d984aae42cebd18e7912fa80f02ee644",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "time": "2020-10-23T14:02:19+00:00",
+            "type": "metapackage",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.20-dev"
+                },
+                "thanks": {
+                    "name": "symfony\/polyfill",
+                    "url": "https:\/\/github.com\/symfony\/polyfill"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 7.0+ features to lower PHP versions",
+            "homepage": "https:\/\/symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/polyfill-php70\/tree\/v1.20.0"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": null
+        },
+        {
+            "name": "symfony\/polyfill-php73",
+            "version": "v1.23.0",
+            "version_normalized": "1.23.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/polyfill-php73.git",
+                "reference": "fba8933c384d6476ab14fb7b8526e5287ca7e010"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/polyfill-php73\/zipball\/fba8933c384d6476ab14fb7b8526e5287ca7e010",
+                "reference": "fba8933c384d6476ab14fb7b8526e5287ca7e010",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "time": "2021-02-19T12:13:01+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.23-dev"
+                },
+                "thanks": {
+                    "name": "symfony\/polyfill",
+                    "url": "https:\/\/github.com\/symfony\/polyfill"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Polyfill\\Php73\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources\/stubs"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
+            "homepage": "https:\/\/symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/polyfill-php73\/tree\/v1.23.0"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/polyfill-php73"
+        },
+        {
+            "name": "symfony\/polyfill-php80",
+            "version": "v1.23.1",
+            "version_normalized": "1.23.1.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/polyfill-php80.git",
+                "reference": "1100343ed1a92e3a38f9ae122fc0eb21602547be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/polyfill-php80\/zipball\/1100343ed1a92e3a38f9ae122fc0eb21602547be",
+                "reference": "1100343ed1a92e3a38f9ae122fc0eb21602547be",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "time": "2021-07-28T13:41:28+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.23-dev"
+                },
+                "thanks": {
+                    "name": "symfony\/polyfill",
+                    "url": "https:\/\/github.com\/symfony\/polyfill"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Polyfill\\Php80\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources\/stubs"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ion Bazan",
+                    "email": "ion.bazan@gmail.com"
+                },
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
+            "homepage": "https:\/\/symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/polyfill-php80\/tree\/v1.23.1"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/polyfill-php80"
+        },
+        {
+            "name": "symfony\/service-contracts",
+            "version": "v2.4.0",
+            "version_normalized": "2.4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/service-contracts.git",
+                "reference": "f040a30e04b57fbcc9c6cbcf4dbaa96bd318b9bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/service-contracts\/zipball\/f040a30e04b57fbcc9c6cbcf4dbaa96bd318b9bb",
+                "reference": "f040a30e04b57fbcc9c6cbcf4dbaa96bd318b9bb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "psr\/container": "^1.1"
+            },
+            "suggest": {
+                "symfony\/service-implementation": ""
+            },
+            "time": "2021-04-01T10:43:52+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.4-dev"
+                },
+                "thanks": {
+                    "name": "symfony\/contracts",
+                    "url": "https:\/\/github.com\/symfony\/contracts"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Contracts\\Service\\": ""
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Generic abstractions related to writing services",
+            "homepage": "https:\/\/symfony.com",
+            "keywords": [
+                "abstractions",
+                "contracts",
+                "decoupling",
+                "interfaces",
+                "interoperability",
+                "standards"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/service-contracts\/tree\/v2.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/service-contracts"
+        },
+        {
+            "name": "symfony\/var-exporter",
+            "version": "v5.3.7",
+            "version_normalized": "5.3.7.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/symfony\/var-exporter.git",
+                "reference": "2ded877ab0574d8b646f4eb3f716f8ed7ee7f392"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/symfony\/var-exporter\/zipball\/2ded877ab0574d8b646f4eb3f716f8ed7ee7f392",
+                "reference": "2ded877ab0574d8b646f4eb3f716f8ed7ee7f392",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony\/polyfill-php80": "^1.16"
+            },
+            "require-dev": {
+                "symfony\/var-dumper": "^4.4.9|^5.0.9"
+            },
+            "time": "2021-08-04T22:42:42+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\Symfony\\Component\\VarExporter\\": ""
+                },
+                "exclude-from-classmap": [
+                    "\/Tests\/"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https:\/\/symfony.com\/contributors"
+                }
+            ],
+            "description": "Allows exporting any serializable PHP data structure to plain PHP code",
+            "homepage": "https:\/\/symfony.com",
+            "keywords": [
+                "clone",
+                "construct",
+                "export",
+                "hydrate",
+                "instantiate",
+                "serialize"
+            ],
+            "support": {
+                "source": "https:\/\/github.com\/symfony\/var-exporter\/tree\/v5.3.7"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/symfony.com\/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https:\/\/github.com\/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https:\/\/tidelift.com\/funding\/github\/packagist\/symfony\/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "..\/symfony\/var-exporter"
+        },
+        {
+            "name": "tecnickcom\/tcpdf",
+            "version": "6.4.2",
+            "version_normalized": "6.4.2.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/tecnickcom\/TCPDF.git",
+                "reference": "172540dcbfdf8dc983bc2fe78feff48ff7ec1c76"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/tecnickcom\/TCPDF\/zipball\/172540dcbfdf8dc983bc2fe78feff48ff7ec1c76",
+                "reference": "172540dcbfdf8dc983bc2fe78feff48ff7ec1c76",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2021-07-20T14:43:20+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "config",
+                    "include",
+                    "tcpdf.php",
+                    "tcpdf_parser.php",
+                    "tcpdf_import.php",
+                    "tcpdf_barcodes_1d.php",
+                    "tcpdf_barcodes_2d.php",
+                    "include\/tcpdf_colors.php",
+                    "include\/tcpdf_filters.php",
+                    "include\/tcpdf_font_data.php",
+                    "include\/tcpdf_fonts.php",
+                    "include\/tcpdf_images.php",
+                    "include\/tcpdf_static.php",
+                    "include\/barcodes\/datamatrix.php",
+                    "include\/barcodes\/pdf417.php",
+                    "include\/barcodes\/qrcode.php"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "LGPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Nicola Asuni",
+                    "email": "info@tecnick.com",
+                    "role": "lead"
+                }
+            ],
+            "description": "TCPDF is a PHP class for generating PDF documents and barcodes.",
+            "homepage": "http:\/\/www.tcpdf.org\/",
+            "keywords": [
+                "PDFD32000-2008",
+                "TCPDF",
+                "barcodes",
+                "datamatrix",
+                "pdf",
+                "pdf417",
+                "qrcode"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/tecnickcom\/TCPDF\/issues",
+                "source": "https:\/\/github.com\/tecnickcom\/TCPDF\/tree\/6.4.2"
+            },
+            "funding": [
+                {
+                    "url": "https:\/\/www.paypal.com\/cgi-bin\/webscr?cmd=_donations&currency_code=GBP&business=paypal@tecnick.com&item_name=donation%20for%20tcpdf%20project",
+                    "type": "custom"
+                }
+            ],
+            "install-path": "..\/tecnickcom\/tcpdf"
+        },
+        {
+            "name": "telegram-bot\/api",
+            "version": "v2.3.21",
+            "version_normalized": "2.3.21.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/TelegramBot\/Api.git",
+                "reference": "dafad7c9d5468c07f9bbb06c3f358b4b4d842848"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/TelegramBot\/Api\/zipball\/dafad7c9d5468c07f9bbb06c3f358b4b4d842848",
+                "reference": "dafad7c9d5468c07f9bbb06c3f358b4b4d842848",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "codeception\/codeception": "*",
+                "phpunit\/phpunit": "~4.0",
+                "squizlabs\/php_codesniffer": "2.*"
+            },
+            "time": "2021-01-23T16:46:24+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\TelegramBot\\Api\\": "src"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ilya Gusev",
+                    "email": "mail@igusev.ru",
+                    "homepage": "https:\/\/php-cat.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Wrapper for Telegram Bot API",
+            "homepage": "https:\/\/github.com\/TelegramBot\/Api",
+            "keywords": [
+                "bot",
+                "bot api",
+                "php",
+                "telegram"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/TelegramBot\/Api\/issues",
+                "source": "https:\/\/github.com\/TelegramBot\/Api\/tree\/v2.3.21"
+            },
+            "install-path": "..\/telegram-bot\/api"
+        },
+        {
+            "name": "tijsverkoyen\/css-to-inline-styles",
+            "version": "2.2.3",
+            "version_normalized": "2.2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/tijsverkoyen\/CssToInlineStyles.git",
+                "reference": "b43b05cf43c1b6d849478965062b6ef73e223bb5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/tijsverkoyen\/CssToInlineStyles\/zipball\/b43b05cf43c1b6d849478965062b6ef73e223bb5",
+                "reference": "b43b05cf43c1b6d849478965062b6ef73e223bb5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "php": "^5.5 || ^7.0 || ^8.0",
+                "symfony\/css-selector": "^2.7 || ^3.0 || ^4.0 || ^5.0"
+            },
+            "require-dev": {
+                "phpunit\/phpunit": "^4.8.35 || ^5.7 || ^6.0 || ^7.5"
+            },
+            "time": "2020-07-13T06:12:54+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DynamicOOOS\\TijsVerkoyen\\CssToInlineStyles\\": "src"
+                }
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Tijs Verkoyen",
+                    "email": "css_to_inline_styles@verkoyen.eu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "CssToInlineStyles is a class that enables you to convert HTML-pages\/files into HTML-pages\/files with inline styles. This is very useful when you're sending emails.",
+            "homepage": "https:\/\/github.com\/tijsverkoyen\/CssToInlineStyles",
+            "support": {
+                "issues": "https:\/\/github.com\/tijsverkoyen\/CssToInlineStyles\/issues",
+                "source": "https:\/\/github.com\/tijsverkoyen\/CssToInlineStyles\/tree\/2.2.3"
+            },
+            "install-path": "..\/tijsverkoyen\/css-to-inline-styles"
+        },
+        {
+            "name": "yahnis-elsts\/plugin-update-checker",
+            "version": "v4.11",
+            "version_normalized": "4.11.0.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/YahnisElsts\/plugin-update-checker.git",
+                "reference": "3155f2d3f1ca5e7ed3f25b256f020e370515af43"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/YahnisElsts\/plugin-update-checker\/zipball\/3155f2d3f1ca5e7ed3f25b256f020e370515af43",
+                "reference": "3155f2d3f1ca5e7ed3f25b256f020e370515af43",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=5.2.0"
+            },
+            "time": "2021-03-15T16:07:52+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "load-v4p11.php"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Yahnis Elsts",
+                    "email": "whiteshadow@w-shadow.com",
+                    "homepage": "http:\/\/w-shadow.com\/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A custom update checker for WordPress plugins and themes. Useful if you can't host your plugin in the official WP repository but still want it to support automatic updates.",
+            "homepage": "https:\/\/github.com\/YahnisElsts\/plugin-update-checker\/",
+            "keywords": [
+                "automatic updates",
+                "plugin updates",
+                "theme updates",
+                "wordpress"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/YahnisElsts\/plugin-update-checker\/issues",
+                "source": "https:\/\/github.com\/YahnisElsts\/plugin-update-checker\/tree\/v4.11"
+            },
+            "install-path": "..\/yahnis-elsts\/plugin-update-checker"
+        }
+    ],
+    "dev": false,
+    "dev-package-names": []
+}
