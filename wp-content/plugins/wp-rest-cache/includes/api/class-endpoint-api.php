@@ -2,7 +2,7 @@
 /**
  * API for endpoint caching.
  *
- * @link: http://www.acato.nl
+ * @link: https://www.acato.nl
  * @since 2018.1
  *
  * @package    WP_Rest_Cache_Plugin
@@ -334,6 +334,20 @@ class Endpoint_Api {
 			return true;
 		}
 
+		$disallowed_endpoints = get_option( 'wp_rest_cache_disallowed_endpoints', [] );
+
+		foreach ( $disallowed_endpoints as $namespace => $endpoints ) {
+			foreach ( $endpoints as $endpoint ) {
+				$endpoint_uri = $rest_prefix . $namespace . '/' . $endpoint;
+				if ( $use_parameter ) {
+					$endpoint_uri = $rest_prefix . rawurlencode( '/' . $namespace . '/' . $endpoint );
+				}
+				if ( strpos( $this->request_uri, $endpoint_uri ) !== false ) {
+					return true;
+				}
+			}
+		}
+
 		// We dont skip.
 		return false;
 	}
@@ -358,7 +372,18 @@ class Endpoint_Api {
 
 			if ( JSON_ERROR_NONE === $last_error ) {
 
-				$this->rest_send_cors_headers( '' );
+				/**
+				 * Disable CORS headers.
+				 *
+				 * Allows to disable the sending of CORS headers.
+				 *
+				 * @since 2021.4.0
+				 *
+				 * @param boolean $disable_cors_headers True if CORS headers should not be send.
+				 */
+				if ( false === apply_filters( 'wp_rest_cache/disable_cors_headers', false ) ) {
+					$this->rest_send_cors_headers( '' );
+				}
 
 				foreach ( $cache['headers'] as $key => $value ) {
 					$header = sprintf( '%s: %s', $key, $value );
@@ -407,8 +432,9 @@ class Endpoint_Api {
 	 * WordPress process even before several hooks are fired.
 	 */
 	public function save_options() {
-		$original_allowed_endpoints = get_option( 'wp_rest_cache_allowed_endpoints', [] );
-		$item_allowed_endpoints     = get_option( 'wp_rest_cache_item_allowed_endpoints', [] );
+		$original_allowed_endpoints    = get_option( 'wp_rest_cache_allowed_endpoints', [] );
+		$item_allowed_endpoints        = get_option( 'wp_rest_cache_item_allowed_endpoints', [] );
+		$original_disallowed_endpoints = get_option( 'wp_rest_cache_disallowed_endpoints', [] );
 
 		/**
 		 * Override cache-enabled endpoints.
@@ -422,6 +448,20 @@ class Endpoint_Api {
 		$allowed_endpoints = apply_filters( 'wp_rest_cache/allowed_endpoints', $item_allowed_endpoints );
 		if ( $original_allowed_endpoints !== $allowed_endpoints ) {
 			update_option( 'wp_rest_cache_allowed_endpoints', $allowed_endpoints, false );
+		}
+
+		/**
+		 * Override cache-disabled endpoints.
+		 *
+		 * Allows to override the endpoints that will not be cached by the WP REST Cache plugin.
+		 *
+		 * @since 2021.4.0
+		 *
+		 * @param array $original_disallowed_endpoints An array of endpoints that are not allowed to be cached.
+		 */
+		$disallowed_endpoints = apply_filters( 'wp_rest_cache/disallowed_endpoints', $original_disallowed_endpoints );
+		if ( $original_disallowed_endpoints !== $disallowed_endpoints ) {
+			update_option( 'wp_rest_cache_disallowed_endpoints', $disallowed_endpoints, false );
 		}
 
 		$original_rest_prefix = get_option( 'wp_rest_cache_rest_prefix' );
@@ -486,7 +526,7 @@ class Endpoint_Api {
 		 *
 		 * @since 2020.2.0
 		 *
-		 * @param boolean $original_uncached_parameters An array of query parameters that should be omitted from the cacheable query string.
+		 * @param boolean $original_cache_hit_recording Set to false to disable cache hit recording.
 		 */
 		$cache_hit_recording = apply_filters( 'wp_rest_cache/cache_hit_recording', $original_cache_hit_recording );
 		if ( (int) $original_cache_hit_recording !== (int) $cache_hit_recording ) {

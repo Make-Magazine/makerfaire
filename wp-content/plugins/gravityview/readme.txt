@@ -21,6 +21,26 @@ Beautifully display your Gravity Forms entries. Learn more on [gravityview.co](h
 
 == Changelog ==
 
+= 2.13.1 on September 27, 2021 =
+
+* Improved: Views now load faster due to improved template caching.
+* Added: Ability to configure an "Admin Label" for Custom Content widgets. This makes it easier to see your widget configuration a glance.
+* Fixed: Issue where non-support users may see a "Revoke TrustedLogin" admin bar link.
+
+= 2.13 on September 23, 2021 =
+
+* Added: Integrated with TrustedLogin, the easiest & most secure way to grant access to your website. [Learn more about TrustedLogin](https://www.trustedlogin.com/about/easy-and-safe/).
+	- Need to share access with support? Click the new "Grant Support Access" link in the "Views" menu.
+
+= 2.12.1 on September 1, 2021 =
+
+* Fixed: The Gravity Forms widget in the View editor would always use the source form of the View
+* Fixed: The field picker didn't use available translations
+* Fixed: Importing [exported Views](https://docs.gravityview.co/article/119-importing-and-exporting-configured-views) failed when Custom Content or [DIY Layout](https://gravityview.co/extensions/diy-layout/) fields included line breaks.
+* Fixed: When first installing GravityView, the message was for an invalid license instead of inactive.
+* Fixed: The "Affiliate ID" setting would not toggle properly when loading GravityView settings. [P.S. — Become an affiliate and earn money referring GravityView!](https://gravityview.co/account/affiliates/#about-the-program)
+* Tweak: Changed the icon of the Presets preview
+
 = 2.12 on July 29, 2021 =
 
 * Fixed: Add latest Yoast SEO scripts to the No-Conflict approved list

@@ -2,7 +2,7 @@
 /**
  * Class responsible for caching and saving cache relations.
  *
- * @link: http://www.acato.nl
+ * @link: https://www.acato.nl
  * @since 2018.3
  *
  * @package    WP_Rest_Cache_Plugin
@@ -1100,8 +1100,8 @@ class Caching {
 			 *
 			 * @since 2020.3.0
 			 *
-			 * @param int The timeout as set in the settings.
-			 * @param array An array of options, containing the current uri, the object type, the request headers and the request method.
+			 * @param int $timeout The timeout as set in the settings.
+			 * @param array $options An array of options, containing the current uri, the object type, the request headers and the request method.
 			 */
 			$timeout = apply_filters( 'wp_rest_cache/timeout', $timeout, $options );
 		}

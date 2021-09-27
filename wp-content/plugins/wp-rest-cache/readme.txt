@@ -2,9 +2,9 @@
 Contributors: acato, rockfire, yoeridekker
 Tags: cache, wp-rest-api, api, rest, rest cache, rest api cache
 Requires at least: 4.7
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 5.5
-Stable tag: 2021.3.0
+Stable tag: 2021.4.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -170,6 +170,18 @@ Yes you can! Use the `wp wp-rest-cache flush` command to flush caches. Type `wp 
 5. Cache details page - Cache data.
 
 == Changelog ==
+
+= 2021.4.1 =
+Release Date: September 15th, 2021
+
+Bugfix: Fix notice for missing variable.
+
+= 2021.4.0 =
+Release Date: September 15th, 2021
+
+Feature: Added filter for disabling CORS headers.
+Feature: Added filter to disallow caching of (sub)endpoints.
+Bugfix: Filesystem methods weren't always loaded correctly when the plugin was loaded through a mu-plugin.
 
 = 2021.3.0 =
 Release Date: April 15th, 2021
