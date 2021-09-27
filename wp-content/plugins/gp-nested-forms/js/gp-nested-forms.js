@@ -809,7 +809,18 @@
 				 * @param int           	formId 				       The parent form ID.
 				 */
 				if ( self.mode === 'edit' && ! gform.applyFilters( 'gpnf_replace_parent_merge_tag_on_edit', false, self.formId ) ) {
-					// Skip processing edited/populated merge tags
+					// Skip processing edited/populated merge tags.
+					// One exception here is that we need to ensure that `{parent}` merge tags are removed.
+					// This can occur when editing a child entry with an empty field and an empty parent field value.
+					// See: HS#27251
+					value = $( this ).val();
+					var parentMergeTagEdit = self.getParentMergeTags( value );
+					if ( parentMergeTagEdit.length ) {
+						for ( var i = 0, max = parentMergeTagEdit.length; i < max; i ++ ) {
+							value = value.replace( parentMergeTagEdit[i][0], '' );
+						}
+						$( this ).val( value ).change().trigger("chosen:updated");
+					}
 					return true;
 				}
 

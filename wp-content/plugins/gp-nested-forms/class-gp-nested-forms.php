@@ -626,6 +626,7 @@ class GP_Nested_Forms extends GP_Plugin {
 				<label for="gpnf-form" class="section_label">
 					<?php _e( 'Nested Form', 'gp-nested-forms' ); ?>
 					<?php gform_tooltip( 'gpnf_form' ); ?>
+					<a href="" id="gpnf-edit-child-form" target="_blank">Edit Nested Form</a>
 				</label>
 
 				<select id="gpnf-form" onchange="SetFieldProperty( 'gpnfForm', this.value ); window.gpGlobals.GPNFAdmin.toggleNestedFormFields();" class="fieldwidth-3">

@@ -242,3 +242,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
+#gpnf-edit-child-form {
+	float: right;
+}

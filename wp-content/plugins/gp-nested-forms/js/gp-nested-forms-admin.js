@@ -16,6 +16,7 @@
 			self.$entryLimitMax      = $( '#gpnf-entry-limit-max' );
 			self.$feedProcessing     = $( '#gpnf-feed-processing' );
 			self.$modalHeaderColor   = $( '#gpnf-modal-header-color' );
+			self.$editChildForm      = $( '#gpnf-edit-child-form' );
 
 			$( document ).bind( 'gform_load_field_settings', function( event, field, form ) {
 
@@ -36,6 +37,7 @@
 
 				// set the 'form' field even if there is no value (resets 'form' for fields with no form selected)
 				self.$formSelect.val( nestedFormId );
+				self.setEditChildFormLink( nestedFormId );
 
 				var selectedFields = field['gpnfFields'] ? field['gpnfFields'] : [];
 				self.toggleNestedFormFields( selectedFields );
@@ -63,6 +65,10 @@
 				self.$formSettings.hide();
 			}
 		};
+
+		self.setEditChildFormLink = function( childFormId ) {
+			self.$editChildForm.attr( 'href', '?page=gf_edit_forms&id=' + childFormId );
+		}
 
 		self.sortAsmSelectDropdown = function( fields ) {
 			var $select = self.$fieldSelect.siblings('.asmSelect');

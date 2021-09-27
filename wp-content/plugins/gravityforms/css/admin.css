@@ -852,14 +852,31 @@ html[dir="rtl"] .gform-alert__dismiss {
 
 #gf_toolbar_buttons_container .update-form {
 		margin: 0 0.75rem 0 0.1875rem;
+		padding: 0.4065rem 1.125rem;
 	}
+
+#gf_toolbar_buttons_container .update-form .gform-button__icon {
+			font-size: 1.5rem;
+			line-height: 0;
+			top: unset;
+			width: 24px;
+		}
 
 #gf_toolbar_buttons_container .preview-form {
 		margin: 0 0.1875rem 0 0.75rem;
 	}
 
+.gforms_edit_form #gf_toolbar_buttons_container .preview-form {
+	padding: 0.4065rem 1.125rem;
+}
+
 html[dir="rtl"] #gf_toolbar_buttons_container .update-form {
 		margin: 0 0.1875rem 0 0.75rem;
+	}
+
+html[dir="rtl"] #gf_toolbar_buttons_container .update-form.gform-button--icon-leading .gform-button__icon {
+		margin-left: 0.5rem;
+		margin-right: unset;
 	}
 
 html[dir="rtl"] #gf_toolbar_buttons_container .preview-form {
@@ -8152,6 +8169,7 @@ html[dir="rtl"] .modal_footer {
 
 .gform_new_form .gform_new_form_modal_container .setting-row textarea {
 	height: 110px;
+	max-height: 200px;
 }
 
 .gform_new_form .gform_new_form_modal_container #gf_new_form_error_message {
