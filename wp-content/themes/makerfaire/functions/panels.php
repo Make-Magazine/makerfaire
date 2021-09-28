@@ -1528,7 +1528,7 @@ function getRSSFeed() {
 	$more_link = ($acf_blocks ? get_field('more_link') : get_sub_field('more_link'));
 	$number = ($acf_blocks ? get_field('number') : get_sub_field('number'));
 	
-	$rss_shortcode = '[make_rss title='.urlencode($title).', feed='.$feed_tag.', moreLink='.$more_link.', number='.$number.']';
+	$rss_shortcode = '[make_rss title="' . urlencode($title) . '" feed="' . $feed_tag . '" moreLink="' . $more_link . '" number=' . $number . ']';
 	echo do_shortcode($rss_shortcode);
 }
 
