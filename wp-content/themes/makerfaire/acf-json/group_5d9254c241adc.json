@@ -163,6 +163,13 @@
                 "operator": "==",
                 "value": "acf\/two-column-video"
             }
+        ],
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            }
         ]
     ],
     "menu_order": 0,
@@ -173,5 +180,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1632860991
+    "modified": 1632861620
 }
