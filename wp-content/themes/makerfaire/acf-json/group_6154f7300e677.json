@@ -1,35 +1,11 @@
 {
-    "key": "group_5d926c982c482",
-    "title": "Panel - 2 column: Image and Text",
+    "key": "group_6154f7300e677",
+    "title": "Elementor - Two Column Image",
     "fields": [
         {
-            "key": "field_5d926d20787fb",
-            "label": "Active\/Inactive",
-            "name": "activeinactive",
-            "type": "radio",
-            "instructions": "Activate or Inactivate this panel",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "Active": "Active",
-                "Inactive": "Inactive"
-            },
-            "allow_null": 0,
-            "other_choice": 0,
-            "default_value": "Active",
-            "layout": "vertical",
-            "return_format": "value",
-            "save_other_choice": 0
-        },
-        {
-            "key": "field_5d926d4d787fc",
-            "label": "Image Row",
-            "name": "image_row",
+            "key": "field_6154f75a2081e",
+            "label": "Elementor Image Row",
+            "name": "elementor_image_row",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -39,16 +15,16 @@
                 "class": "",
                 "id": ""
             },
-            "collapsed": "field_5d926d72787fd",
+            "collapsed": "field_6154f7992081f",
             "min": 0,
             "max": 0,
-            "layout": "block",
+            "layout": "row",
             "button_label": "",
             "sub_fields": [
                 {
-                    "key": "field_5d926d72787fd",
-                    "label": "Image Title",
-                    "name": "image_title",
+                    "key": "field_6154f7992081f",
+                    "label": "Elementor Image Title",
+                    "name": "elementor_image_panel_itle",
                     "type": "text",
                     "instructions": "",
                     "required": 0,
@@ -62,13 +38,13 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": 50
+                    "maxlength": ""
                 },
                 {
-                    "key": "field_5d926d82787fe",
-                    "label": "Image Text",
-                    "name": "image_text",
-                    "type": "text",
+                    "key": "field_6154f7af20820",
+                    "label": "Elementor Image Text",
+                    "name": "elementor_image_panel_text",
+                    "type": "textarea",
                     "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
@@ -79,16 +55,16 @@
                     },
                     "default_value": "",
                     "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": 220
+                    "maxlength": "",
+                    "rows": "",
+                    "new_lines": ""
                 },
                 {
-                    "key": "field_5d926d97787ff",
-                    "label": "Image Links",
-                    "name": "image_links",
+                    "key": "field_6154f7c020821",
+                    "label": "Elementor Image Links",
+                    "name": "elementor_image_links",
                     "type": "repeater",
-                    "instructions": "Optional links that will appear under the text to the side of the image",
+                    "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -103,9 +79,9 @@
                     "button_label": "",
                     "sub_fields": [
                         {
-                            "key": "field_5d926db178800",
-                            "label": "Image Link Text",
-                            "name": "image_link_text",
+                            "key": "field_6154f7e520822",
+                            "label": "Elementor Image Link Text",
+                            "name": "elementor_image_panel_link_text",
                             "type": "text",
                             "instructions": "",
                             "required": 0,
@@ -119,12 +95,12 @@
                             "placeholder": "",
                             "prepend": "",
                             "append": "",
-                            "maxlength": 50
+                            "maxlength": ""
                         },
                         {
-                            "key": "field_5d926dc878801",
-                            "label": "Image Link URL",
-                            "name": "image_link_url",
+                            "key": "field_6154f7ef20823",
+                            "label": "Elementor Image Link Url",
+                            "name": "elementor_image_panel_link_url",
                             "type": "url",
                             "instructions": "",
                             "required": 0,
@@ -140,11 +116,11 @@
                     ]
                 },
                 {
-                    "key": "field_5d926e2378802",
-                    "label": "Image Panel",
-                    "name": "image",
+                    "key": "field_6154f81120824",
+                    "label": "Elementor Image Panel Image",
+                    "name": "elementor_image_panel_image",
                     "type": "image",
-                    "instructions": "Images MUST be at least 1240px wide, no more than 650px tall",
+                    "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -153,7 +129,7 @@
                         "id": ""
                     },
                     "return_format": "array",
-                    "preview_size": "thumbnail",
+                    "preview_size": "medium",
                     "library": "all",
                     "min_width": "",
                     "min_height": "",
@@ -164,63 +140,46 @@
                     "mime_types": ""
                 },
                 {
-                    "key": "field_5d926e4878803",
-                    "label": "Image Overlay",
-                    "name": "image_overlay",
-                    "type": "group",
-                    "instructions": "Totally optional, if link is provided and not text, link will be for the image itself",
+                    "key": "field_6154f85120825",
+                    "label": "Elementor Image Overlay Text",
+                    "name": "elementor_image_panel_overlay_text",
+                    "type": "text",
+                    "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
-                        "width": "",
+                        "width": "49",
                         "class": "",
                         "id": ""
                     },
-                    "layout": "block",
-                    "sub_fields": [
-                        {
-                            "key": "field_5d926e6778804",
-                            "label": "Image Overlay Text",
-                            "name": "image_overlay_text",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": 50
-                        },
-                        {
-                            "key": "field_5d926e7678805",
-                            "label": "Image Overlay Link",
-                            "name": "background_color",
-                            "type": "url",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": ""
-                        }
-                    ]
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": ""
                 },
                 {
-                    "key": "field_5d926ef578806",
-                    "label": "Background Color",
-                    "name": "background_color",
+                    "key": "field_615606501afd7",
+                    "label": "Elementor Image Overlay Link",
+                    "name": "elementor_image_panel_overlay_link",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "49",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_6154f86d20826",
+                    "label": "Elementor Image Panel Background Color",
+                    "name": "elementor_image_panel_background_color",
                     "type": "select",
-                    "instructions": "Background Color",
+                    "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -249,9 +208,9 @@
     "location": [
         [
             {
-                "param": "block",
+                "param": "post_type",
                 "operator": "==",
-                "value": "acf\/two-column-image"
+                "value": "page"
             }
         ]
     ],
@@ -263,5 +222,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1632958945
+    "modified": 1633030495
 }

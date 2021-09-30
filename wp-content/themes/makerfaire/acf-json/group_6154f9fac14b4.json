@@ -1,35 +1,11 @@
 {
-    "key": "group_5d9254c241adc",
-    "title": "Panel - 2 Column Video",
+    "key": "group_6154f9fac14b4",
+    "title": "Elementor Two Column Video",
     "fields": [
         {
-            "key": "field_5d9254f6f5fbc",
-            "label": "Active\/Inactive",
-            "name": "activeinactive",
-            "type": "radio",
-            "instructions": "Activate or Inactivate this panel",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "Active": "Active",
-                "Inactive": "Inactive"
-            },
-            "allow_null": 0,
-            "other_choice": 0,
-            "default_value": "Active",
-            "layout": "vertical",
-            "return_format": "value",
-            "save_other_choice": 0
-        },
-        {
-            "key": "field_5d925527f5fbd",
-            "label": "Video Row",
-            "name": "video_row",
+            "key": "field_6154f9fb2095f",
+            "label": "Elementor Video Row",
+            "name": "elementor_video_panel_row",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -39,16 +15,16 @@
                 "class": "",
                 "id": ""
             },
-            "collapsed": "field_5d925549f5fbe",
+            "collapsed": "field_6154f9fb2ba65",
             "min": 0,
             "max": 0,
             "layout": "block",
             "button_label": "",
             "sub_fields": [
                 {
-                    "key": "field_5d925549f5fbe",
-                    "label": "Video Title",
-                    "name": "video_title",
+                    "key": "field_6154f9fb2ba65",
+                    "label": "Elementor Video Panel Title",
+                    "name": "elementor_video_panel_title",
                     "type": "text",
                     "instructions": "Title that appears on the text side",
                     "required": 0,
@@ -65,9 +41,9 @@
                     "maxlength": ""
                 },
                 {
-                    "key": "field_5d92555ef5fbf",
-                    "label": "Video Text",
-                    "name": "video_text",
+                    "key": "field_6154f9fb2ba6f",
+                    "label": "Elementor Video Panel Text",
+                    "name": "elementor_video_panel_text",
                     "type": "text",
                     "instructions": "Text appears under title",
                     "required": 0,
@@ -84,9 +60,9 @@
                     "maxlength": ""
                 },
                 {
-                    "key": "field_5d92556df5fc0",
-                    "label": "Video Button Link",
-                    "name": "video_button_link",
+                    "key": "field_6154f9fb2ba77",
+                    "label": "Elementor Video Panel Button Link",
+                    "name": "elementor_video_panel_button_link",
                     "type": "url",
                     "instructions": "Link under text",
                     "required": 0,
@@ -100,9 +76,9 @@
                     "placeholder": ""
                 },
                 {
-                    "key": "field_5d925583f5fc1",
-                    "label": "Video Button Text",
-                    "name": "video_button_text",
+                    "key": "field_6154f9fb2ba7f",
+                    "label": "Elementor Video Panel Button Text",
+                    "name": "elementor_video_panel_button_text",
                     "type": "text",
                     "instructions": "The text for the link",
                     "required": 0,
@@ -119,11 +95,11 @@
                     "maxlength": ""
                 },
                 {
-                    "key": "field_5d9255a5f5fc2",
-                    "label": "Video Code",
-                    "name": "video_code",
-                    "type": "text",
-                    "instructions": "Youtube video code determines what video to show",
+                    "key": "field_6154f9fb2ba8e",
+                    "label": "Elementor Video Panel Url",
+                    "name": "elementor_video_panel_url",
+                    "type": "url",
+                    "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -132,10 +108,7 @@
                         "id": ""
                     },
                     "default_value": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": ""
+                    "placeholder": ""
                 }
             ]
         }
@@ -143,9 +116,9 @@
     "location": [
         [
             {
-                "param": "block",
+                "param": "post_type",
                 "operator": "==",
-                "value": "acf\/two-column-video"
+                "value": "page"
             }
         ]
     ],
@@ -157,5 +130,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1633026564
+    "modified": 1632959234
 }
