@@ -72,7 +72,7 @@ class Two_Column_Video extends Widget_Base {
 		);
 
     $this->add_control(
-    			'list',
+    			'video_list',
     			[
     				'label' => __( 'Repeater List', 'plugin-domain' ),
     				'type' => \Elementor\Controls_Manager::REPEATER,
@@ -98,13 +98,12 @@ class Two_Column_Video extends Widget_Base {
 
 	protected function render() {
     $settings = $this->get_settings_for_display();
-
-		if ( $settings['list'] ) {
-      $return = '';
-      $return .= '<section class="video-panel container-fluid">';    // create content-panel section
+    $return = '<h1>Two column Video</h1';
+    $return .= '<section class="video-panel container-fluid">';    // create content-panel section
+		if ( $settings['video_list'] ) {
       $videoRowNum = 0;
 
-      foreach (  $settings['list'] as $video ) {
+      foreach (  $settings['video_list'] as $video ) {
         $videoRowNum += 1;
         if ($videoRowNum % 2 != 0) {
             $return .= '<div class="row">';
@@ -138,8 +137,8 @@ class Two_Column_Video extends Widget_Base {
                 $return .= '</div>';
             }
         }
-        $return ='</section>';
-        echo $return;
       }
-    }
+      $return ='</section>';
+      echo $return;
+    } //end render function
 } //end class
