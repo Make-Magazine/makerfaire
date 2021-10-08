@@ -514,3 +514,6 @@ function codismo_table_column( $column, $post_id ) {
     }
 }
 */
+
+//pull in custom elementor widgets
+require_once('elementor-widgets/make-widgets.php');
