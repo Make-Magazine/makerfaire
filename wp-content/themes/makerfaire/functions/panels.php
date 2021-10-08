@@ -52,7 +52,7 @@ function dispLayout($row_layout) {
             case 'square_image_carousel': // IMAGE CAROUSEL (SQUARE)
                 $return = getImgCarouselSquare();
                 break;
-			case 'what_is_maker_faire': // WHAT IS MAKER FAIRE PANEL    
+			case 'what_is_maker_faire': // WHAT IS MAKER FAIRE PANEL
 				$return = getWhatisMF();
 				break;
             case 'newsletter_panel':  // NEWSLETTER PANEL
@@ -208,11 +208,11 @@ function getFeatMkPanel($row_layout) {
 								 }
 
 								 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
-								 
+
 								 if( 561 > jQuery(window).width() ) {
 								   jQuery(jQuery(this).find(".desc-body")).css("mask-image", "none");
 									jQuery(jQuery(this).find(".desc-body")).css("height", "auto");
-								 } else { 
+								 } else {
 								 	jQuery(jQuery(this).find(".desc-body")).css("height", availableHeight);
 								 }
 							 });
@@ -265,7 +265,7 @@ function getFeatEvPanel($row_layout) {
         $formid = ($acf_blocks ? get_field('enter_formid_here') : get_sub_field('enter_formid_here'));
         $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
                        lead_detail.value as entry_status, DAYNAME(schedule.start_dt) as day,location.location,
-                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '304.3' 
+                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '304.3'
                            AND value like 'Featured Maker')  as flag,
                        (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '22')  as photo,
                        (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '151') as name,
@@ -351,7 +351,7 @@ function getFeatEvPanel($row_layout) {
                 '</div>';
     }
 
-    $return .= '</div>'; //end div.row    
+    $return .= '</div>'; //end div.row
 
     $all_events_button = ($acf_blocks ? get_field('all_events_button') : get_sub_field('all_events_button'));
     if ($all_events_button) {
@@ -374,7 +374,7 @@ function getFeatEvPanel($row_layout) {
 function get3ColLayout() {
     $return = '';
 
-    $return .= '<section class="content-panel three-column">                
+    $return .= '<section class="content-panel three-column">
                 <div class="container">';
 
     //gutenburg blocks use get_field, ACF panels use get_sub_field
@@ -483,9 +483,9 @@ function get6ColLayout() {
         $columnInfo = '';
         //$image = '<img height="" width="" alt="'.$imageArr['alt'].'" class="ximg-responsive" src="' . $imageArr['url'] . '" />';
         //echo $imageArr['url'];
-                
+
         $imgStyle = 'style="background-image:url(' . (isset($imageArr['url'])?$imageArr['url']:'') . '); height:' . $imageHeight . ';"';
-        
+
         $cta_link = $data['image_cta'];
         $ctaText = $data['image_cta_text'];
 
@@ -546,7 +546,7 @@ function get1ColWYSIWYG() {
     }
 
     $return .= '  </div>
-          
+
         </section>';
     return $return;
 }
@@ -611,7 +611,7 @@ function get1ColLayout() {
     }
 
     $hero_text      = ($acf_blocks ? get_field('column_title') : get_sub_field('column_title'));
-  
+
     //build output
     $return = '';
     $return .= '<section class="hero-panel">';    // create content-panel section
@@ -628,7 +628,7 @@ function get1ColLayout() {
     $return .= '        ' . $hero_image .
             '     </div>' .
             '   </div>';
-    
+
 
     // Because of the aggressive caching on prod, it makes more sense to shuffle the array in javascript
     $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").replaceWith(heroArray[0]);});</script>';
@@ -805,8 +805,8 @@ function getCTApanel() {
     $return .= '   <div class="container">
                      <div class="row text-center">
                         <div class="col-xs-12">
-                           <h3>                              
-                              <span>' . $cta_title . '</span>                              
+                           <h3>
+                              <span>' . $cta_title . '</span>
                            </h3>
                         </div>
                      </div>
@@ -878,8 +878,8 @@ function getImgCarousel() {
         while (have_rows('images')) {
             the_row();
 
-            $text = ($acf_blocks ? get_field('text') : get_sub_field('text')); 
-            $url = ($acf_blocks ? get_field('url') : get_sub_field('url')); 
+            $text = ($acf_blocks ? get_field('text') : get_sub_field('text'));
+            $url = ($acf_blocks ? get_field('url') : get_sub_field('url'));
             $image = get_sub_field('image');
 
             if ($i == 0) {
@@ -1073,7 +1073,7 @@ function getSliderPanel() {
     }
     $return .= '   </div>
 	            </section>
-					
+
 					<script type="text/javascript">
 					   jQuery(document).ready(function() {
 					   	// slideshow carousel
@@ -1091,7 +1091,7 @@ function getSliderPanel() {
 								 0: {
 									items: 1
 								 },
-								 600: { 
+								 600: {
 								   items: ' . $tabletSlides . '
 								 },
 								 1000: {
@@ -1153,7 +1153,7 @@ function getWhatisMF() {
 
 function getNewsletterPanel() {
     $return = 'This newsletter signup is no longer valid';
-    $return = '
+    $return .= '
       <section class="newsletter-panel">
          <div class="container">
 
@@ -1291,22 +1291,22 @@ function getSponsorPanel() {
     $id = url_to_postid($url);
 
     $title = ($acf_blocks ? get_field('title_sponsor_panel') : get_sub_field('title_sponsor_panel'));
-    if($title=='')  $title = 'Thank you to our sponsors';    
-    
+    if($title=='')  $title = 'Thank you to our sponsors';
+
     // IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS
     if (have_rows('goldsmith_sponsors', $id) || have_rows('silversmith_sponsors', $id) || have_rows('coppersmith_sponsors', $id) || have_rows('media_sponsors', $id)) {
         $return .= '
    <div class="sponsor-slide">
       <div class="container">
          <div class="row">
-            <div class="col-xs-12 text-center padbottom">               
+            <div class="col-xs-12 text-center padbottom">
                <h2 class="sponsor-slide-title">' . $title . '</h2>
             </div>
          </div>
          <div class="row">
             <div class="col-sm-12">
                <h4 class="sponsor-slide-title">' . ($year ? $year . ' ' : '') . 'Maker Faire Sponsors: <br /> <span class="sponsor-slide-cat"></span></h4>
-            </div>            
+            </div>
          </div>
          <div class="row">
             <div class="col-xs-12">
@@ -1502,7 +1502,7 @@ function getFlagBannerPanel() {
 
 function getMakeyBanner() {
     GLOBAL $acf_blocks;
-    
+
     $title  = ($acf_blocks ? get_field('title_link_text') : get_sub_field('title_link_text'));
     $URL    = ($acf_blocks ? get_field('link_url') : get_sub_field('link_url'));
 
@@ -1527,7 +1527,7 @@ function getRSSFeed() {
 	$feed_tag = ($acf_blocks ? get_field('feed_tag') : get_sub_field('feed_tag'));
 	$more_link = ($acf_blocks ? get_field('more_link') : get_sub_field('more_link'));
 	$number = ($acf_blocks ? get_field('number') : get_sub_field('number'));
-	
+
 	$rss_shortcode = '[make_rss title="' . urlencode($title) . '" feed="' . $feed_tag . '" moreLink="' . $more_link . '" number=' . $number . ']';
 	echo do_shortcode($rss_shortcode);
 }
@@ -1540,12 +1540,12 @@ function getRSSFeed() {
 function getFaireList() {
     GLOBAL $acf_blocks;
     GLOBAL $wpdb;
-    
+
     $date_start = date('Y-m-d H:i:s', time());
-    
+
     $faire_type = ($acf_blocks ? implode(",", get_field('type')) : implode(",", get_sub_field('type')));
     $past_or_future_value = ($acf_blocks ? get_field('past_or_future') : get_sub_field('past_or_future'));
-    
+
     $past_or_future = "";
     if($past_or_future_value == '>') {
         $past_or_future = " AND event_start_dt > '" . $date_start . "'";
@@ -1553,13 +1553,13 @@ function getFaireList() {
         $past_or_future = " AND event_start_dt < '" . $date_start . "'";
     }
     $limit = ($acf_blocks ? get_field('number') : get_sub_field('number'));
-    
+
     $output = "<ul class='flex-list faire-list'>";
     $rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type in({$faire_type}){$past_or_future} ORDER BY event_start_dt", OBJECT );
     $i = 0;
     foreach($rows as $row){
         if($row->faire_image) {
-            
+
             $name = isset($row->faire_nicename) ? $row->faire_nicename : $row->faire_name;
             $output .= "<li><a href='$row->faire_url'>";
             $output .=      "<img src='$row->faire_image'>";
@@ -1579,10 +1579,10 @@ function getFaireList() {
 function getCFMList() {
     GLOBAL $acf_blocks;
     GLOBAL $wpdb;
-    
+
     $featured_faire_limit = ($acf_blocks ? get_field('featured_faires_number') : get_sub_field('featured_faires_number'));
     $community_faire_limit = ($acf_blocks ? get_field('community_faires_number') : get_sub_field('community_faires_number'));
-    
+
     $output = "<div class='cfm-list'>";
     $output .=   "<ul class='flex-list featured-cfm-list'>";
     $featuredRows = $wpdb->get_results( "SELECT event_start_dt, cfm_start_dt, cfm_end_dt, event_type, cfm_url, faire_image, cfm_image FROM {$wpdb->prefix}mf_global_faire WHERE event_type = 'Featured' AND cfm_start_dt < CURRENT_DATE() AND cfm_end_dt > CURRENT_DATE() ORDER BY event_start_dt", OBJECT );
