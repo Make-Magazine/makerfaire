@@ -71,22 +71,28 @@ class Two_Column_Video extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'list',
-			[
-				'label' => __( 'Repeater List', 'plugin-domain' ),
-				'type' => Controls_Manager::REPEATER,
-				'fields' => $repeater->get_controls(),
-				'default' => [
-					[
-						'video_title' => __( 'Video Row #1', 'makerfaire' )
-					],
-				],
-				'title_field' => '{{{ video_title }}}',
-			]
-		);
+    $this->add_control(
+    			'list',
+    			[
+    				'label' => __( 'Repeater List', 'plugin-domain' ),
+    				'type' => \Elementor\Controls_Manager::REPEATER,
+    				'fields' => $repeater->get_controls(),
+    				'default' => [
+    					[
+    						'list_title' => __( 'Title #1', 'plugin-domain' ),
+    						'list_content' => __( 'Item content. Click the edit button to change this text.', 'plugin-domain' ),
+    					],
+    					[
+    						'list_title' => __( 'Title #2', 'plugin-domain' ),
+    						'list_content' => __( 'Item content. Click the edit button to change this text.', 'plugin-domain' ),
+    					],
+    				],
+    				'title_field' => '{{{ list_title }}}',
+    			]
+    		);
 
-		$this->end_controls_section();
+    		$this->end_controls_section();
+
 
 	}
 
