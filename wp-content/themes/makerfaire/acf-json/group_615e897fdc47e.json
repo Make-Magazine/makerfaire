@@ -1,0 +1,81 @@
+{
+    "key": "group_615e897fdc47e",
+    "title": "Elementor - Makezine RSS Feed",
+    "fields": [
+        {
+            "key": "field_615e89805d0fb",
+            "label": "Elementor Makezine RSS Feed Title",
+            "name": "title",
+            "type": "text",
+            "instructions": "Type the News Block title here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 256
+        },
+        {
+            "key": "field_615e89805d107",
+            "label": "Elementor Makezine RSS Feed Tag",
+            "name": "tag",
+            "type": "text",
+            "instructions": "The \"tag\" from the makezine.com site, for example \"bay-area-maker-faire\".",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_615e89805d112",
+            "label": "Elementor Makezine RSS Feed Link",
+            "name": "link",
+            "type": "text",
+            "instructions": "Add the \"Read More\" link here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1633585668
+}

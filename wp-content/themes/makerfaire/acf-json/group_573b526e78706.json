@@ -1181,97 +1181,6 @@
                     "min": "",
                     "max": ""
                 },
-                "571e9Gyds7ysy8g": {
-                    "key": "571e9Gyds7ysy8g",
-                    "name": "news_block_panel",
-                    "label": "News Block Panel",
-                    "display": "row",
-                    "sub_fields": [
-                        {
-                            "key": "field_5c93bfbbd73ec",
-                            "label": "Link",
-                            "name": "link",
-                            "type": "text",
-                            "instructions": "Add the \"Read More\" link here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": ""
-                        },
-                        {
-                            "key": "field_571e989hhjkhbdudyug",
-                            "label": "Tag",
-                            "name": "tag",
-                            "type": "text",
-                            "instructions": "The \"tag\" from the makezine.com site, for example \"bay-area-maker-faire\".",
-                            "required": 1,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": ""
-                        },
-                        {
-                            "key": "field_5727sdfu6tdfyg",
-                            "label": "Active\/Inactive",
-                            "name": "activeinactive",
-                            "type": "radio",
-                            "instructions": "Activate or Inactivate this panel",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "activeinactive",
-                                "id": ""
-                            },
-                            "layout": "horizontal",
-                            "choices": {
-                                "Active": "Active",
-                                "Inactive": "Inactive"
-                            },
-                            "default_value": "Active",
-                            "other_choice": 0,
-                            "save_other_choice": 0,
-                            "allow_null": 0,
-                            "return_format": "value"
-                        },
-                        {
-                            "key": "field_571fsd78hbhj",
-                            "label": "Title",
-                            "name": "title",
-                            "type": "text",
-                            "instructions": "Type the News Block title here, e.g. News from &lt;em>Make:&lt;\/em> &lt;a href=\"http:\/\/makezine.com\/tag\/maker-faire\/\">See all&lt;\/a>. 256 character limit.",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": 256
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
                 "5b4e51639ab7e": {
                     "key": "5b4e51639ab7e",
                     "name": "3_column",
@@ -2940,5 +2849,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1630537910
+    "modified": 1633631897
 }
