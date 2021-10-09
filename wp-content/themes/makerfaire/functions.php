@@ -516,4 +516,4 @@ function codismo_table_column( $column, $post_id ) {
 */
 
 //pull in custom elementor widgets
-require_once('elementor-widgets/make-widgets.php');
+require_once('elementor/make-widgets.php');
