@@ -52,26 +52,15 @@ class Two_Column_Image extends Widget_Base {
         );
 
 		$repeater->add_control(
-            'image_link_text',
+            'image_wysiwyg',
             [
-		        'label' => __('Image Link Text', 'makerfaire'),
-		        'type' => Controls_Manager::TEXT,
-		        'description' => __('Enter the text for the link', 'makerfaire'),
+		        'label' => __('Image WYSIWYG', 'makerfaire'),
+		        'type' => Controls_Manager::WYSIWYG ,
+		        'description' => __('Enter links or lists here', 'makerfaire'),
                 'label_block' => true,
             ]
         );
 
-        $repeater->add_control(
-            'image_link_url',
-            [
-                'label' => __('Image Link URL', 'makerfaire'),
-                'type' => Controls_Manager::URL,
-        		'description' => __('Enter the url for the link', 'makerfaire'),
-                'default' => [
-                    'url' => '',
-                ]
-            ]
-        );
 
 		$repeater->add_control(
 			'image',
@@ -156,20 +145,20 @@ class Two_Column_Image extends Widget_Base {
 					$return .= '  <div class="col-sm-4 col-xs-12">
 									<h4>' . $image['image_title'] . '</h4>
 									<p>' . $image['image_text'] . '</p>';
-					if ( isset($image['image_link_url']) && isset($image['image_link_text']) ) {
-						$return .= '  	<a href="' . $image['image_link_url']['url'] . '">' . $image['image_link_text'] . '</a>';
+					if (!empty($image['image_wysiwyg'])  ) {
+						$return .=  '<div class="image-wysiwyg">' . $image['image_wysiwyg'] . '</div>';
 					}
 					$return .= '  </div>';
 					$return .= '  <div class="col-sm-8 col-xs-12">
 									 <div class="image-display">';
-					if (isset($image['image_overlay_link'])) {
+					if (!empty($image['image_overlay_link']['url'])) {
 						$return .= ' 		  <a href="' . $image['image_overlay_link']['url'] . '">';
 					}
 					$return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
-					if (isset($image['image_overlay_text'])) {
+					if (!empty($image['image_overlay_text'])) {
 						$return .= '  <div class="image-overlay-text">' . $image['image_overlay_text'] . '</div>';
 					}
-					if (isset($image['image_overlay_link'])) {
+					if (!empty($image['image_overlay_link'])) {
 						$return .= '        </a>';
 					}
 					$return .= '		</div>
@@ -179,15 +168,15 @@ class Two_Column_Image extends Widget_Base {
 					$return .= '<div class="row ' . $image['background_color'] . '">';
 					$return .= '  <div class="col-sm-8 col-xs-12">
 									 <div class="image-display">';
-					if (isset($image['image_overlay_link'])) {
+					if (!empty($image['image_overlay_link']['url'])) {
 						$return .= ' 		  <a href="' . $image['image_overlay_link']['url'] . '">';
 					}
 					$return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
-					if ( isset($image['image_overlay_text']) ) {
+					if (!empty($image['image_overlay_text']) ) {
 						$return .= '  <div class="image-overlay-text">' . $image['image_overlay_text'] . '</div>';
 						;
 					}
-					if (isset($image['image_overlay_link'])) {
+					if (!empty($image['image_overlay_link'])) {
 						$return .= '        </a>';
 					}
 					$return .= '  </div>';
@@ -195,8 +184,8 @@ class Two_Column_Image extends Widget_Base {
 					$return .= '<div class="col-sm-4 col-xs-12">
 										<h4>' . $image['image_title'] . '</h4>
 										<p>' . $image['image_text'] . '</p>';
-					if ( isset($image['image_link_url']) && isset($image['image_link_text']) ) {
-						$return .= '  	<a href="' . $image['image_link_url']['url'] . '">' . $image['image_link_text'] . '</a>';
+					if (!empty($image['image_wysiwyg'])  ) {
+						$return .=      '<div class="image-wysiwyg">' . $image['image_wysiwyg'] . '</div>';
 					}
 					$return .= '  </div>';
 					$return .= '</div>';

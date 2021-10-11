@@ -110,3 +110,29 @@
 	right: 0;
 	border-right: 16px solid #fff;
 }
+
+// Specific widget_search
+.elementor-widget-two_column_image {
+	.image-display a {
+		position: relative;
+		display: flex;
+		overflow: hidden;
+		.image-overlay-text {
+			position: absolute;
+			bottom: 0px;
+			right: 0px;
+			padding: 10px 15px;
+			background: rgba(255, 255, 255, .5);
+			color: #333;
+		}
+	}
+	.image-display {
+		display: flex;
+	}
+	img {
+		padding: 15px 0;
+		flex-shrink: 0;
+		min-width: 100%;
+		min-height: 100%
+	}
+}
