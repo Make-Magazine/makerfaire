@@ -25,6 +25,7 @@ class Make_Elementor_Widgets {
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Two_Column_Video() );
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Two_Column_Image() );
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\RSS_Feed() );
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Featured_Makers_Dynamic() );
 	}
 
 }
