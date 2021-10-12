@@ -2,8 +2,6 @@
 
 namespace Elementor;
 
-require_once(__DIR__."/../../../../plugins/gravityforms/includes/api.php");
-
 class Featured_Makers_Dynamic extends Widget_Base {
 
     public function get_name() {
@@ -32,87 +30,87 @@ class Featured_Makers_Dynamic extends Widget_Base {
 		);
 
 		$this->add_control(
-				'title',
-				[
-					'label' => __( 'Title', 'makerfaire' ),
-					'label_block' => true,
-					'type' => \Elementor\Controls_Manager::TEXT,
-					'placeholder' => __( 'Enter your title', 'makerfaire' ),
-				]
-			);
+			'title',
+			[
+				'label' => __( 'Title', 'makerfaire' ),
+				'label_block' => true,
+				'type' => \Elementor\Controls_Manager::TEXT,
+				'placeholder' => __( 'Enter your title', 'makerfaire' ),
+			]
+		);
 
-			$this->add_control(
-				'form_id',
-				[
-					'label' => __( 'Form ID', 'makerfaire' ),
-					'type' => \Elementor\Controls_Manager::NUMBER,
-					'description' => __( "Enter the form to pull featured individuals from. They must have the 'Featured Maker' flag set to be pulled in.", 'makerfaire' ),
-					'min' => 1,
-					'step' => 1,
-				]
-			);
+		$this->add_control(
+			'form_id',
+			[
+				'label' => __( 'Form ID', 'makerfaire' ),
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'description' => __( "Enter the form to pull featured individuals from. They must have the 'Featured Maker' flag set to be pulled in.", 'makerfaire' ),
+				'min' => 1,
+				'step' => 1,
+			]
+		);
 
-			$this->add_control(
-				'pull_accepted',
-				[
-					'label' => __( 'Random Pull Accepted?', 'makerfaire' ),
-					'label_block' => true,
-					'type' => \Elementor\Controls_Manager::CHOOSE,
-					'options' => [
-						'on' => [
-							'title' => __( 'On', 'plugin-domain' ),
-							'icon' => 'fas fa-toggle-on',
-						],
-						'offr' => [
-							'title' => __( 'Off', 'plugin-domain' ),
-							'icon' => 'fas fa-toggle-off',
-						],
+		$this->add_control(
+			'random',
+			[
+				'label' => __( 'Random Pull Accepted?', 'makerfaire' ),
+				'label_block' => true,
+				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'options' => [
+					'on' => [
+						'title' => __( 'On', 'plugin-domain' ),
+						'icon' => 'fas fa-toggle-on',
 					],
-					'default' => 'on',
-					'toggle' => true,
-				]
-			);
-
-			$this->add_control(
-				'makers_to_show',
-				[
-					'label' => __( 'Makers to Show', 'makerfaire' ),
-					'type' => \Elementor\Controls_Manager::NUMBER,
-					'min' => 3,
-					'max' => 6,
-					'step' => 3,
-					'default' => 3,
-				]
-			);
-
-			$this->add_control(
-				'more_makers_button',
-				[
-					'label' => __( '"More Makers" Button', 'makerfaire' ),
-					'type' => \Elementor\Controls_Manager::URL,
-					'placeholder' => __( 'https://your-link.com', 'makerfaire' ),
-					'description' => __( 'Optional button to link to a page with more makers. Leave URL field blank to hide.', 'makerfaire' ),
-					'default' => [
-						'url' => '',
-					]
-				]
-			);
-
-			$this->add_control(
-				'background_color',
-				[
-					'label' => __( 'Background Color', 'makerfaire' ),
-					'type' => \Elementor\Controls_Manager::SELECT,
-					'options' => [
-						'white-bg' => __( 'White', 'makerfaire' ),
-						'grey-bg' => __( 'Grey', 'makerfaire' ),
-						'darkgrey-bg' => __( 'Dark Grey', 'makerfaire' ),
-						'blue-bg' => __( 'Blue', 'makerfaire' ),
-						'darkblue-bg' => __( 'Dark Blue', 'makerfaire' ),
+					'off' => [
+						'title' => __( 'Off', 'plugin-domain' ),
+						'icon' => 'fas fa-toggle-off',
 					],
-					'default' => 'white-bg',
+				],
+				'default' => 'on',
+				'toggle' => true,
+			]
+		);
+
+		$this->add_control(
+			'makers_to_show',
+			[
+				'label' => __( 'Makers to Show', 'makerfaire' ),
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'min' => 3,
+				'max' => 6,
+				'step' => 3,
+				'default' => 3,
+			]
+		);
+
+		$this->add_control(
+			'more_makers_button',
+			[
+				'label' => __( '"More Makers" Button', 'makerfaire' ),
+				'type' => \Elementor\Controls_Manager::URL,
+				'placeholder' => __( 'https://your-link.com', 'makerfaire' ),
+				'description' => __( 'Optional button to link to a page with more makers. Leave URL field blank to hide.', 'makerfaire' ),
+				'default' => [
+					'url' => '',
 				]
-			);
+			]
+		);
+
+		$this->add_control(
+			'background_color',
+			[
+				'label' => __( 'Background Color', 'makerfaire' ),
+				'type' => \Elementor\Controls_Manager::SELECT,
+				'options' => [
+					'white-bg' => __( 'White', 'makerfaire' ),
+					'grey-bg' => __( 'Grey', 'makerfaire' ),
+					'darkgrey-bg' => __( 'Dark Grey', 'makerfaire' ),
+					'blue-bg' => __( 'Blue', 'makerfaire' ),
+					'darkblue-bg' => __( 'Dark Blue', 'makerfaire' ),
+				],
+				'default' => 'white-bg',
+			]
+		);
 
         $this->end_controls_section();
     }
@@ -138,7 +136,6 @@ class Featured_Makers_Dynamic extends Widget_Base {
 		$makerArr = array();
 
 		$formid = (int) ($settings['form_id']);
-		error_log($formid);
 
 		$search_criteria['status'] = 'active';
 		$search_criteria['field_filters'][] = array('key' => '303', 'value' => 'Accepted');
@@ -147,7 +144,9 @@ class Featured_Makers_Dynamic extends Widget_Base {
 		$entries = \GFAPI::get_entries($formid, $search_criteria, null, array('offset' => 0, 'page_size' => 999));
 
 		//randomly order entries
-		shuffle($entries);
+		if( $settings['random'] == 'on' ) {
+			shuffle($entries);
+		}
 		foreach ($entries as $entry) {
 			$url = $entry['22'];
 
