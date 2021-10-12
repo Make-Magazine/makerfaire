@@ -27,6 +27,7 @@ class Make_Elementor_Widgets {
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\RSS_Feed() );
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Featured_Makers_Dynamic() );
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Upcoming_Faires() );
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Upcoming_Call_For_Makers() );
 	}
 
 }

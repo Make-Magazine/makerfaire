@@ -5,7 +5,7 @@ namespace Elementor;
 class Upcoming_Faires extends Widget_Base {
 
     public function get_name() {
-        return 'upcoming_Faires';
+        return 'upcoming_faires';
     }
 
     public function get_title() {
@@ -24,7 +24,7 @@ class Upcoming_Faires extends Widget_Base {
         $this->start_controls_section(
 			'section_title',
 			[
-				'label' => __( 'Featured Makers - Dynamic', 'makerfaire' ),
+				'label' => __( 'Upcoming Featured Faires List', 'makerfaire' ),
 				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
 			]
 		);
@@ -40,7 +40,7 @@ class Upcoming_Faires extends Widget_Base {
 					'Mini' => __( 'Community', 'makerfaire' ),
 					'School' => __( 'School', 'makerfaire' ),
 				],
-				'default' => 'Featured',
+				'default' => 'Community',
 				'multiple' => true,
 				'description' => __( "Type of Maker Faire you would like to display (you can select multiple options)", 'makerfaire' ),
 			]
