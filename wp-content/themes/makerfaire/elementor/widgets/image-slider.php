@@ -93,7 +93,7 @@ class Image_Slider extends Widget_Base {
             ]
         );
 
-		$this->add_control(
+		$repeater->add_control(
 			'slide_button_color',
 			[
 				'label' => __( 'Slide Button Color', 'makerfaire' ),
@@ -251,7 +251,7 @@ class Image_Slider extends Widget_Base {
 
 						<script type="text/javascript">
 						   jQuery(document).ready(function() {
-							// slideshow carousel
+							    // slideshow carousel
 								jQuery(".' . $slideshow_name . '-carousel.owl-carousel").owlCarousel({
 								  loop: true,
 								  margin: 15,

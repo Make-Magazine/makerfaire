@@ -31,6 +31,7 @@ class Make_Elementor_Widgets {
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Upcoming_Call_For_Makers() );
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Sponsors() );
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Image_Slider() );
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\Hero_Panel() );
 	}
 
 }
