@@ -218,7 +218,7 @@ class Featured_Items extends Widget_Base {
 
 			$href = !empty($item['item_url']['url']) ? 'href="' . $item['item_url']['url'] . '" ' . $newTab : '';
 
-	        $return .= '<' . $markup . ' ' . $href . ' class="grid-item lazyload" style="background:' . $item['imageObj']['url'] . '">';
+	        $return .= '<' . $markup . ' ' . $href . ' class="grid-item lazyload" style="background:url(' . $item['imageObj']['url'] . ');">';
 
 	        if (!empty($item['desc'])) {
 	            $return .= '<div class="grid-item-desc">
