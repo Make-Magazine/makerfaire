@@ -150,7 +150,7 @@ class Featured_Makers_Dynamic extends Widget_Base {
 		foreach ($entries as $entry) {
 			$url = $entry['22'];
 
-			$overrideImg = $entry['id'];
+			$overrideImg = findOverride($entry['id'], 'makerPanel');
 			if ($overrideImg != '')
 				$url = $overrideImg;
 				$makerArr[] = array('image' => $url,
@@ -169,7 +169,8 @@ class Featured_Makers_Dynamic extends Widget_Base {
 		foreach ($makerArr as $maker) {
 			// var_dump($maker);
 			// echo '<br />';
-			$return .= '<div class="grid-item lazyload" data-bg="' . $maker['image'] . '">';
+			
+			$return .= '<div class="grid-item" style="background:url(' . $maker['image'] . ');background-size:cover;">';
 
 			if (!empty($maker['desc'])) {
 				$markup = !empty($maker['maker_url']) ? 'a' : 'div';
