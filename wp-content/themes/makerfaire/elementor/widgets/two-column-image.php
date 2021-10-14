@@ -154,7 +154,7 @@ class Two_Column_Image extends Widget_Base {
 					if (!empty($image['image_overlay_link']['url'])) {
 						$return .= ' 		  <a href="' . $image['image_overlay_link']['url'] . '">';
 					}
-					$return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
+					$return .= '			 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
 					if (!empty($image['image_overlay_text'])) {
 						$return .= '  <div class="image-overlay-text">' . $image['image_overlay_text'] . '</div>';
 					}
@@ -171,7 +171,7 @@ class Two_Column_Image extends Widget_Base {
 					if (!empty($image['image_overlay_link']['url'])) {
 						$return .= ' 		  <a href="' . $image['image_overlay_link']['url'] . '">';
 					}
-					$return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
+					$return .= '			 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
 					if (!empty($image['image_overlay_text']) ) {
 						$return .= '  <div class="image-overlay-text">' . $image['image_overlay_text'] . '</div>';
 						;
