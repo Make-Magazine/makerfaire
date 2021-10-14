@@ -93,18 +93,13 @@ class Hero_Panel extends Widget_Base {
 
 	        foreach ($settings['hero_image_repeater'] as $hero) {
 	            the_row();
-	            // TODO add the URL wrapper
-	            $hero_image_random = $hero['hero_image_random'];
 
-	            $hero_image_url = (isset($hero_image_random["url"])?$hero_image_random["url"]:'');
+	            $hero_image_url = (isset($hero['hero_image_random']['url'])?$hero['hero_image_random']['url']:'');
 
-	            $image = '<div class="hero-img" style="background:url(' . $hero_image_url . ');background-size:cover;"></div>';
-	            $cta_link = $hero['image_cta']['url'];
-
-	            if (!empty($cta_link)) {
-	                $columnInfo = '<a href="' . $cta_link . '">' . $image . '</a>';
+	            if (!empty($hero['image_cta']['url'])) {
+	                $columnInfo = '<a href="' . $hero['image_cta']['url'] . '" id="heroPanel"><div class="hero-img" style="background:url(' . $hero_image_url . ');background-size:cover;"></div></a>';
 	            } else {
-	                $columnInfo = $image;
+	                $columnInfo = '<div class="hero-img" id="heroPanel" style="background:url(' . $hero_image_url . ');background-size:cover;"></div>';
 	            }
 	            $hero_array[] = $columnInfo;
 	        }
@@ -133,8 +128,8 @@ class Hero_Panel extends Widget_Base {
 
 
 	    // Because of the aggressive caching on prod, it makes more sense to shuffle the array in javascript
-	    $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery(".hero-img").replaceWith(heroArray[0]);});</script>';
-	    // this was removed from above function, since the background hero is no longer an image but a background image
+	    $return .= '</section><script type="text/javascript">var heroArray = ' . json_encode($hero_array) . ';heroArray.sort(function(a, b){return 0.5 - Math.random()});jQuery(document).ready(function(){jQuery("#heroPanel").replaceWith(heroArray[0]);});</script>';
+
 		echo $return;
 
     } //end render function
