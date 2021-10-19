@@ -116,11 +116,9 @@ class Hero_Panel extends Widget_Base {
 	    $return .= '   <div class="row">
 	                    <div class="col-xs-12">';
 	    if ($hero_text) {
-	        $return .= '<div class="top_left"><img src="https://makerfaire.com/wp-content/themes/makerfaire/img/TopLeftCorner.png"></div>'
-	                . '<div class="panel_title">'
-	                . '   <div class="panel_text">' . $hero_text . '</div>'
-	                . '   <div class="bottom_right"><img src="https://makerfaire.com//wp-content/themes/makerfaire/img/BottomRightCorner.png"></div>'
-	                . '</div>';
+	        $return .= '<div class="panel_title">
+		                	<div class="panel_text">' . $hero_text . '</div>
+	                	</div>';
 	    }
 	    $return .= '        ' . $hero_image .
 	            '     </div>' .
