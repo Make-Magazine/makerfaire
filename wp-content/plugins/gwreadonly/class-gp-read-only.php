@@ -23,10 +23,20 @@ class GP_Read_Only extends GWPerk {
 		add_filter( 'gform_rich_text_editor_options', array( $this, 'filter_rich_text_editor_options' ), 10, 2 );
 
 		// Add support for Gravity View since `gform_pre_process` never fires in GV's edit path.
-		add_action( 'gravityview/edit_entry/before_update', function ( $form, $entry_id, $object ) {
-				$this->process_hidden_captures( $form );
-			}, 10, 3
-		);
+		add_action( 'gravityview_edit_entry', array( $this, 'process_hidden_captures_gravityview' ), 5, 4 );
+
+		/**
+		 * Add support for Gravity Flow's User Input step
+		 *
+		 * The user input step does not seem to fire the standard form submission's `gform_pre_process` hook.
+		 * Here we attempt to intercept validation but only in the `in_progress`/`complete` states which indicate
+		 * that an entry is being updated.
+		 */
+		if ( class_exists( 'Gravity_Flow' ) && in_array( rgpost( 'gravityflow_status' ), array( 'in_progress', 'complete' ) ) ) {
+			add_filter( 'gform_pre_validation', function ( $form ) {
+				return $this->process_hidden_captures( $form );
+			}, 5, 1 );
+		}
 
 	}
 
@@ -244,8 +254,9 @@ class GP_Read_Only extends GWPerk {
 		/**
 		 * In some instances (i.e. parent submission of Nested Forms), the gform_pre_process filter may be applied to a
 		 * form that is not currently being submitted. Let's make sure we're only working with the submitted form.
+		 * Update: We also need a second check here for Gravity Flow as they use `gravityflow_submit` instead. HS#27204
 		 */
-		if ( rgpost( 'gform_submit' ) != $form['id'] ) {
+		if ( rgpost( 'gform_submit' ) != $form['id'] && rgpost( 'gravityflow_submit' ) != $form['id'] ) {
 			return $form;
 		}
 
@@ -287,6 +298,15 @@ class GP_Read_Only extends GWPerk {
 		return $form;
 	}
 
+	public function process_hidden_captures_gravityview( $_, $entry, $view, $request ) {
+		if ( ! wp_verify_nonce( rgpost( 'is_gv_edit_entry' ), 'is_gv_edit_entry' ) ) {
+			return;
+		}
+
+		$form = GFAPI::get_form( $entry['form_id'] );
+		$this->process_hidden_captures( $form );
+	}
+
 	public function get_field_value( $field ) {
 
 		$field_values = $submitted_values = false;
@@ -301,7 +321,10 @@ class GP_Read_Only extends GWPerk {
 			}
 		}
 
-		if ( is_array( $submitted_values ) ) {
+		if ( function_exists( 'gravityview' ) && gravityview()->request->is_edit_entry() ) {
+			$gv_entry = gravityview()->request->is_edit_entry();
+			$value    = rgar( $gv_entry->as_entry(), $field->id );
+		} elseif ( is_array( $submitted_values ) ) {
 			$value = $submitted_values[ $field->id ];
 		} else {
 			$value = $field->get_value_default_if_empty( GFFormsModel::get_field_value( $field, $field_values ) );

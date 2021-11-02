@@ -239,7 +239,7 @@
                                     var currentId = typeof player.getVideoData == 'function' ? player.getVideoData().video_id || window._EPADashboard_.justid(player.getVideoUrl()) : window._EPADashboard_.justid(player.getVideoUrl());
                                     var chatIframe = document.createElement('iframe');
                                     $(chatIframe).addClass('epyt-live-chat').attr('src', 'https://www.youtube.com/live_chat?v=' + currentId + '&embed_domain=' + window.location.hostname);
-                                    $chatWrapper.find('.epyt-live-chat-box').append(chatIframe);
+                                    $chatWrapper.find('.epyt-live-chat-box').empty().append(chatIframe);
                                     if ($chatWrapper.width() > 964)
                                     {
                                         $chatWrapper.addClass('epyt-live-chat-wrapper--wide');
@@ -325,12 +325,9 @@
                                     events: {
                                         "onReady": window._EPADashboard_.onPlayerReady,
                                         "onStateChange": window._EPADashboard_.onPlayerStateChange
-                                    }
+                                    },
+                                    host: (thisvid.src || '').indexOf('nocookie') > 0 ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com'
                                 };
-//                                if (thisvid.src && thisvid.src.indexOf('nocookie') > 0)
-//                                {
-//                                    ytOptions.host = 'https://www.youtube-nocookie.com';
-//                                }
                                 return new window.YT.Player(iframeid, ytOptions);
                             }
                         }
@@ -430,9 +427,17 @@
                     },
                     setVidSrc: function ($iframe, vidSrc)
                     {
-                        $iframe.attr('src', window._EPADashboard_.cleanSrc(vidSrc));
-                        $iframe.get(0).epytsetupdone = false;
-                        window._EPADashboard_.setupevents($iframe.attr('id'));
+                        if ($iframe.is('.epyt-facade'))
+                        {
+                            $iframe.attr('data-facadesrc', window._EPADashboard_.cleanSrc(vidSrc));
+                            $iframe.trigger('click');
+                        }
+                        else
+                        {
+                            $iframe.attr('src', window._EPADashboard_.cleanSrc(vidSrc));
+                            $iframe.get(0).epytsetupdone = false;
+                            window._EPADashboard_.setupevents($iframe.attr('id'));
+                        }
                     },
                     cleanSrc: function (srcInput)
                     {
@@ -476,10 +481,10 @@
                             if (!$container.data('epytevents') || !$('body').hasClass('block-editor-page'))
                             {
                                 $container.data('epytevents', '1');
-                                var $iframe = $(this).find('iframe, div.__youtube_prefs_gdpr__').first();
+                                var $iframe = $(this).find('iframe, div.__youtube_prefs_gdpr__, div.epyt-facade').first();
                                 var contentlbid = 'content' + $iframe.attr('id');
                                 $container.find('.lity-hide').attr('id', contentlbid);
-                                var initSrc = $iframe.data('src') || $iframe.attr('src');
+                                var initSrc = $iframe.data('src') || $iframe.data('facadesrc') || $iframe.attr('src');
                                 if (!initSrc)
                                 {
                                     initSrc = $iframe.data('ep-src');
@@ -521,7 +526,7 @@
 
                                 $container.on('click touchend', '.epyt-gallery-list .epyt-gallery-thumb', function (e)
                                 {
-                                    $iframe = $container.find('iframe, div.__youtube_prefs_gdpr__').first();
+                                    $iframe = $container.find('iframe, div.__youtube_prefs_gdpr__, div.epyt-facade').first();
                                     if (window._EPYT_.touchmoved)
                                     {
                                         return;
@@ -736,6 +741,49 @@
                             }
                         });
 
+                        $('.epyt-facade-poster[data-facadeoembed]').each(function ()
+                        {
+                            var $facadePoster = $(this);
+                            var facadeOembedUrl = 'https://www.youtube.com/' + $facadePoster.data('facadeoembed');
+                            $.get('https://youtube.com/oembed', {url: facadeOembedUrl, format: 'json'},
+                                    function (response)
+                                    {
+                                        $facadePoster.attr('src', response.thumbnail_url);
+                                    }, 'json')
+                                    .fail(function ()
+                                    {
+                                    })
+                                    .always(function ()
+                                    {
+                                    });
+                        });
+
+                        $('.epyt-facade').on('click', function (e)
+                        {
+                            var $facade = $(this);
+                            var srcTemp = $facade.attr('data-facadesrc');
+                            srcTemp = window._EPADashboard_.cleanSrc(srcTemp);
+                            var iframe = document.createElement('iframe');
+                            for (var i = 0; i < this.attributes.length; i++)
+                            {
+                                var attrib = this.attributes[i];
+                                if (['allow', 'class', 'height', 'id', 'width'].indexOf(attrib.name.toLowerCase()) >= 0 || attrib.name.toLowerCase().indexOf('data-') == 0)
+                                {
+                                    $(iframe).attr(attrib.name, attrib.value);
+                                }
+                            }
+                            $(iframe).removeClass('epyt-facade');
+                            $(iframe).attr('allowfullscreen', '').attr('title', $facade.find('img').attr('alt')).attr('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+
+                            window._EPADashboard_.loadYTAPI();
+                            $facade.replaceWith(iframe);
+                            $(iframe).attr('src', srcTemp);
+                            window._EPADashboard_.setupevents($(iframe).attr('id'));
+                            setTimeout(function ()
+                            {
+                                $($(iframe).parent()).fitVidsEP();
+                            }, 1);
+                        });
                     }
                 };
     }

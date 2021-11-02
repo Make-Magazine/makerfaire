@@ -1,4 +1,4 @@
-/*! elementor - v3.4.4 - 13-09-2021 */
+/*! elementor - v3.4.7 - 31-10-2021 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -12479,7 +12479,7 @@ BaseElementView = BaseContainer.extend({
         name: 'edit',
         icon: 'eicon-edit',
 
-        /* translators: %s: Element Name. */
+        /* translators: %s: Element name. */
         title: sprintf(__('Edit %s', 'elementor'), this.options.model.getTitle()),
         callback: function callback() {
           return $e.run('panel/editor/open', {
@@ -13536,24 +13536,24 @@ ColumnView = BaseElementView.extend({
     var elementData = elementor.getElementData(this.model),
         editTools = {};
     editTools.edit = {
-      /* translators: %s: Element Name. */
+      /* translators: %s: Element name. */
       title: sprintf(__('Edit %s', 'elementor'), elementData.title),
       icon: 'column'
     };
 
     if (elementor.getPreferences('edit_buttons')) {
       editTools.duplicate = {
-        /* translators: %s: Element Name. */
+        /* translators: %s: Element name. */
         title: sprintf(__('Duplicate %s', 'elementor'), elementData.title),
         icon: 'clone'
       };
       editTools.add = {
-        /* translators: %s: Element Name. */
+        /* translators: %s: Element name. */
         title: sprintf(__('Add %s', 'elementor'), elementData.title),
         icon: 'plus'
       };
       editTools.remove = {
-        /* translators: %s: Element Name. */
+        /* translators: %s: Element name. */
         title: sprintf(__('Delete %s', 'elementor'), elementData.title),
         icon: 'close'
       };
@@ -13799,28 +13799,28 @@ var SectionView = BaseElementView.extend({
 
     if (!this.isInner()) {
       editTools.add = {
-        /* translators: %s: Element Name. */
+        /* translators: %s: Element name. */
         title: sprintf(__('Add %s', 'elementor'), elementData.title),
         icon: 'plus'
       };
     }
 
     editTools.edit = {
-      /* translators: %s: Element Name. */
+      /* translators: %s: Element name. */
       title: sprintf(__('Edit %s', 'elementor'), elementData.title),
       icon: 'handle'
     };
 
     if (elementor.getPreferences('edit_buttons')) {
       editTools.duplicate = {
-        /* translators: %s: Element Name. */
+        /* translators: %s: Element name. */
         title: sprintf(__('Duplicate %s', 'elementor'), elementData.title),
         icon: 'clone'
       };
     }
 
     editTools.remove = {
-      /* translators: %s: Element Name. */
+      /* translators: %s: Element name. */
       title: sprintf(__('Delete %s', 'elementor'), elementData.title),
       icon: 'close'
     };

@@ -14,7 +14,6 @@
 
 window.gvDTResponsive = window.gvDTResponsive || {};
 window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
-window.gvDTButtons = window.gvDTButtons || {};
 
 ( function ( $ ) {
 
@@ -81,7 +80,6 @@ window.gvDTButtons = window.gvDTButtons || {};
 				}
 
 				var table = $( this ).DataTable( options );
-
 				table
 				.on( 'draw.dt', function ( e, settings ) {
 					var api = new $.fn.dataTable.Api( settings );
@@ -108,6 +106,22 @@ window.gvDTButtons = window.gvDTButtons || {};
 						json: json,
 						xhr: xhr
 					} );
+				} ).on( 'responsive-display', function ( e, datatable, row, showHide, update ) {
+					$( window ).trigger( 'gravityview-datatables/event/responsive');
+					var visible_divs, div_attr;
+
+					// Fix duplicate images in Fancybox in datatables on mobile.
+					visible_divs = $( this ).find( 'td:visible .gravityview-fancybox' );
+
+					if( visible_divs.length > 0 ){
+						visible_divs.each( function( i, e ) {
+							div_attr = $( this ).attr( 'data-fancybox' );
+							if ( div_attr && div_attr.indexOf( 'mobile' ) === -1 ) {
+								div_attr += '-mobile';
+								$( this ).attr( 'data-fancybox', div_attr );
+							}
+						} );
+					}
 				} );
 			} );
 
@@ -132,8 +146,6 @@ window.gvDTButtons = window.gvDTButtons || {};
 						buttons[ i ] = $.extend( true, {}, gvDataTables.buttonCommon, button );
 					}
 				} );
-
-				$.fn.dataTable.Buttons.swfPath = gvDTButtons.swf || '';
 			}
 
 			return buttons;
@@ -289,7 +301,14 @@ window.gvDTButtons = window.gvDTButtons || {};
 			var getData = {};
 			var viewId = $( this ).attr( 'data-viewid' );
 			var $container = $( '#gv-datatables-' + viewId );
-			var $table = $container.find( '.gv-datatables' ).DataTable();
+			var $table;
+
+			// Check if fixed columns is activated.
+			if ( $container.find( '.DTFC_ScrollWrapper' ).length > 0 ) {
+				$table = $container.find( '.dataTables_scrollBody .gv-datatables' ).DataTable();
+			} else {
+				$table = $container.find( '.gv-datatables' ).DataTable();
+			}
 			var tableData = ( gvDataTables.tablesData ) ? gvDataTables.tablesData[ viewId ] : null;
 			var inputs = $( this ).serializeArray().filter( function ( k ) {
 				return $.trim( k.value ) !== '';

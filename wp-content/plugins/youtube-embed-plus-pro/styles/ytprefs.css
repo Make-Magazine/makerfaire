@@ -544,6 +544,13 @@ body .epyt-gallery-img-gdpr {
     min-height: 0;
 }
 
+.epyt-live-chat-wrapper .epyt-live-chat-box p {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    width: 100%;
+}
 
 .epyt-live-chat-wrapper .epyt-live-chat-box .epyt-live-chat {
     display: block;
@@ -559,6 +566,86 @@ body .epyt-gallery-img-gdpr {
     bottom: 0;
 }
 
+/********* facade */
+
+.epyt-facade {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    -webkit-transition: 0.4s all;
+    -moz-transition: 0.4s all;
+    transition: 0.4s all;    
+}
+
+.epyt-facade:hover {
+    -webkit-filter: brightness(90%);
+    -moz-filter: brightness(90%);
+    filter: brightness(90%);
+}
+
+.epyt-facade img.epyt-facade-poster {
+    display: block;
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: none;
+    height: auto;
+    cursor: pointer;
+}
+
+.epyt-facade button.epyt-facade-play {
+    background-color: transparent !important;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 68px;
+    height: 48px;
+    margin-left: -34px;
+    margin-top: -24px;
+    -webkit-transition: opacity .25s cubic-bezier(0,0,0.2,1);
+    transition: opacity .25s cubic-bezier(0,0,0.2,1);
+    cursor: pointer;
+    border-width: 0 !important;
+}
+
+.epyt-facade button.epyt-facade-play svg {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+.epyt-facade button.epyt-facade-play svg .ytp-large-play-button-bg {
+    -webkit-transition: fill .1s cubic-bezier(0.4,0,1,1),fill-opacity .1s cubic-bezier(0.4,0,1,1);
+    transition: fill .1s cubic-bezier(0.4,0,1,1),fill-opacity .1s cubic-bezier(0.4,0,1,1);
+    fill: #212121;
+    fill-opacity: .8;
+}
+
+.epyt-facade:hover button.epyt-facade-play svg .ytp-large-play-button-bg {
+    -webkit-transition: fill .1s cubic-bezier(0,0,0.2,1),fill-opacity .1s cubic-bezier(0,0,0.2,1);
+    transition: fill .1s cubic-bezier(0,0,0.2,1),fill-opacity .1s cubic-bezier(0,0,0.2,1);
+    fill: #f00;
+    fill-opacity: 1;
+}
+
+.wp-block-embed.wp-has-aspect-ratio .wp-block-embed__wrapper .epyt-is-override.epyt-facade,
+.wp-block-embed.wp-has-aspect-ratio .wp-block-embed__wrapper .epyt-is-override.__youtube_prefs_gdpr__
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
 
 /********* YTVI */
 .ytvi-story-container {

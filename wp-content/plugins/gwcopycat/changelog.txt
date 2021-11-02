@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.4.46
+
+	- Fixed a potential issue where conditionally hidden target fields may not be copied to if manual copy is used to also show the target fields.
+	- Fixed an issue where multiple conditionally hidden inline date pickers would not trigger copy on page load.
+
 ## 1.4.45
 
 	- Fixed a regression where GPCC would not copy values to hidden fields.

@@ -372,6 +372,9 @@
 
 .elementor-widget-wrap > .elementor-element.elementor-absolute {
   position: absolute; }
+  .elementor-column > .elementor-widget-wrap > .elementor-element.elementor-absolute {
+    padding: inherit;
+    box-sizing: content-box; }
 
 .elementor-widget-wrap > .elementor-element.elementor-fixed {
   position: fixed; }

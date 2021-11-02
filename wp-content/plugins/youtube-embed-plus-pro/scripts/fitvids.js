@@ -88,6 +88,21 @@ var epdofitvids = epdofitvids || function ($)
 
                         setTimeout(function ()
                         {
+                            var resizeEvent = null;
+                            if (typeof (Event) === 'function')
+                            {
+                                resizeEvent = new Event('resize');
+                            }
+                            else
+                            {
+                                resizeEvent = document.createEvent('Event');
+                                resizeEvent.initEvent('resize', true, true);
+                            }
+                            window.dispatchEvent(resizeEvent);
+                        }, 10);
+
+                        setTimeout(function ()
+                        {
                             if (parseInt($this.parent().css('padding-top'), 10) > $this.height() + 20)
                             {
                                 $this.parent().removeClass('fluid-width-video-wrapper').css('padding-top', '');
@@ -108,6 +123,21 @@ var epdofitvids = epdofitvids || function ($)
                     {
                         $this.wrap(fwvwrap).parent('.fluid-width-video-wrapper').attr('style', 'padding-top: ' + (aspectRatio * 100) + "% !important;");
                         $this.removeAttr('height').removeAttr('width');
+
+                        setTimeout(function ()
+                        {
+                            var resizeEvent = null;
+                            if (typeof (Event) === 'function')
+                            {
+                                resizeEvent = new Event('resize');
+                            }
+                            else
+                            {
+                                resizeEvent = document.createEvent('Event');
+                                resizeEvent.initEvent('resize', true, true);
+                            }
+                            window.dispatchEvent(resizeEvent);
+                        }, 10);
 
                         setTimeout(function ()
                         {

@@ -1,4 +1,4 @@
-/*! elementor - v3.4.4 - 13-09-2021 */
+/*! elementor - v3.4.7 - 31-10-2021 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2287,7 +2287,7 @@ var Data = /*#__PURE__*/function (_Commands) {
    *
    * @param {DataTypes} type
    *
-   * @return {string|boolean}
+   * @returns {string|boolean}
    */
 
 
@@ -2320,7 +2320,7 @@ var Data = /*#__PURE__*/function (_Commands) {
      *
      * @param {DataTypes} type
      *
-     * @return {[string]|boolean}
+     * @returns {[string]|boolean}
      */
 
   }, {
@@ -2514,9 +2514,11 @@ var Data = /*#__PURE__*/function (_Commands) {
     /**
      * Function prepareHeaders().
      *
+     * Prepare the headers for each request.
+     *
      * @param {RequestData} requestData
      *
-     * @return {{}} params
+     * @returns {{}} params
      */
 
   }, {
@@ -2570,12 +2572,15 @@ var Data = /*#__PURE__*/function (_Commands) {
       return params;
     }
     /**
+     * Function prepareEndpoint().
+     *
      * This method response for building a final endpoint,
      * the main problem is with plain permalink mode + command with query params that creates a weird url,
      * the current method should fix it.
      *
-     * @param endpoint
-     * @returns {string}
+     * @param {string} endpoint
+     *
+     * @returns {string} endpoint
      */
 
   }, {
@@ -2598,7 +2603,7 @@ var Data = /*#__PURE__*/function (_Commands) {
      * @param {RequestData} requestData
      * @param {function(input: RequestInfo, init?) : Promise<Response> } [fetchAPI]
      *
-     * @return {{}} params
+     * @returns {Promise<Response>}
      */
 
   }, {
@@ -2813,6 +2818,19 @@ var Data = /*#__PURE__*/function (_Commands) {
     value: function registerFormat(command, format) {
       this.commandFormats[command] = format;
     }
+    /**
+     * Function create().
+     *
+     * Run a command, that will be translated as endpoint for creating new data.
+     *
+     * @param {string} command
+     * @param {*} data
+     * @param {{}} query
+     * @param {{}} options
+     *
+     * @returns {*} result
+     */
+
   }, {
     key: "create",
     value: function create(command, data) {
@@ -2824,6 +2842,18 @@ var Data = /*#__PURE__*/function (_Commands) {
         data: data
       });
     }
+    /**
+     * Function delete().
+     *
+     * Run a command, that will be translated as endpoint for deleting data.
+     *
+     * @param {string} command
+     * @param {{}} query
+     * @param {{}} options
+     *
+     * @returns {*} result
+     */
+
   }, {
     key: "delete",
     value: function _delete(command) {
@@ -2834,6 +2864,18 @@ var Data = /*#__PURE__*/function (_Commands) {
         options: options
       });
     }
+    /**
+     * Function get().
+     *
+     * Run a command, that will be translated as endpoint for getting data.
+     *
+     * @param {string} command
+     * @param {{}} query
+     * @param {{}} options
+     *
+     * @returns {*} result
+     */
+
   }, {
     key: "get",
     value: function get(command) {
@@ -2844,6 +2886,19 @@ var Data = /*#__PURE__*/function (_Commands) {
         options: options
       });
     }
+    /**
+     * Function update().
+     *
+     * Run a command, that will be translated as endpoint for updating data.
+     *
+     * @param {string} command
+     * @param {*} data
+     * @param {{}} query
+     * @param {{}} options
+     *
+     * @returns {*} result
+     */
+
   }, {
     key: "update",
     value: function update(command, data) {
@@ -2855,6 +2910,18 @@ var Data = /*#__PURE__*/function (_Commands) {
         data: data
       });
     }
+    /**
+     * Function options().
+     *
+     * Run a command, that will be translated as endpoint for requesting options/information about specific endpoint.
+     *
+     * @param {string} command
+     * @param {{}} query
+     * @param {{}} options
+     *
+     * @returns {*} result
+     */
+
   }, {
     key: "options",
     value: function options(command, query) {
@@ -2865,12 +2932,6 @@ var Data = /*#__PURE__*/function (_Commands) {
         options: _options
       });
     }
-    /**
-     * @param {ComponentBase} component
-     * @param {string} command
-     * @param callback
-     */
-
   }, {
     key: "register",
     value: function register(component, command, callback) {
@@ -2882,15 +2943,17 @@ var Data = /*#__PURE__*/function (_Commands) {
       if (format) {
         $e.data.registerFormat(fullCommandName, format);
       }
+
+      return this;
     }
     /**
+     * @override
+     *
      * TODO: Add JSDOC typedef for args ( query and options ).
      *
      * @param {DataTypes} type
      * @param {string} command
      * @param {{}} args
-     *
-     * @return {*}
      */
 
   }, {

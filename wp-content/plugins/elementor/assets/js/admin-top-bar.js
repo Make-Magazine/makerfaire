@@ -1,4 +1,4 @@
-/*! elementor - v3.4.4 - 13-09-2021 */
+/*! elementor - v3.4.7 - 31-10-2021 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -410,7 +410,6 @@ exports.default = _default;
 
 "use strict";
 /* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
-/* provided dependency */ var PropTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
 
 
 var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
@@ -438,27 +437,14 @@ var _usePageTitle = __webpack_require__(/*! ./hooks/use-page-title/use-page-titl
 var _environment = _interopRequireDefault(__webpack_require__(/*! elementor-common/utils/environment */ "../core/common/assets/js/utils/environment.js"));
 
 function AdminTopBar(props) {
-  var actionButtonsRef = (0, _react.useRef)(); // Handle Top Bar visibility on initiation and when toggle the admin top bar checkbox in screen options
+  var actionButtonsRef = (0, _react.useRef)(); // Handle Top Bar visibility on initiation: Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
 
   (0, _react.useEffect)(function () {
-    var adminTopBarCheckboxElement = document.querySelector('#e-dashboard-widget-admin-top-bar-hide');
     var adminTopBarElement = document.querySelector('#e-admin-top-bar-root');
-
-    if (!adminTopBarCheckboxElement || adminTopBarCheckboxElement.checked) {
-      adminTopBarElement.classList.add('e-admin-top-bar--active');
-    } else {
-      adminTopBarElement.classList.add('e-admin-top-bar--inactive');
-    }
-
-    if (adminTopBarCheckboxElement) {
-      adminTopBarCheckboxElement.addEventListener('change', function () {
-        adminTopBarElement.classList.toggle('e-admin-top-bar--active');
-        adminTopBarElement.classList.toggle('e-admin-top-bar--inactive');
-      });
-    }
+    adminTopBarElement.classList.add('e-admin-top-bar--active');
   }, []); // Handle the page title visibility in admin top bar.
 
-  var pageTitleText = (0, _usePageTitle.usePageTitle)(props.isDashboard); // Handle the action buttons visibility in admin top bar on initiation.
+  var pageTitleText = (0, _usePageTitle.usePageTitle)(); // Handle the action buttons visibility in admin top bar on initiation.
 
   (0, _react.useEffect)(function () {
     var actionButtonElements = document.querySelectorAll('.page-title-action');
@@ -490,10 +476,6 @@ function AdminTopBar(props) {
     icon: "eicon-search-bold"
   }, __('Finder', 'elementor')) : '', window.elementorCloudAdmin ? window.elementorCloudAdmin() : ''), /*#__PURE__*/_react.default.createElement(_connectionButton.default, null)));
 }
-
-AdminTopBar.propTypes = {
-  isDashboard: PropTypes.bool
-};
 
 /***/ }),
 
@@ -627,9 +609,9 @@ var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 
 var _barButton = _interopRequireDefault(__webpack_require__(/*! ../bar-button/bar-button */ "../modules/admin-top-bar/assets/js/components/bar-button/bar-button.js"));
 
-function ConnectionButton(props) {
+function ConnectionButton() {
   var buttonRef = (0, _react.useRef)();
-  var isUserConnected = elementorCommonConfig.connect.is_user_connected;
+  var isUserConnected = elementorAdminTopBarConfig.is_user_connected;
   (0, _react.useEffect)(function () {
     if (!buttonRef.current || isUserConnected) {
       return;
@@ -643,7 +625,7 @@ function ConnectionButton(props) {
   }, []);
 
   var tooltipText = __('Connect your account to get access to Elementor\'s Template Library & more.', 'elementor'),
-      connectUrl = elementorCommonConfig.connect.connect_url,
+      connectUrl = elementorAdminTopBarConfig.connect_url,
       buttonText = __('Connect Account', 'elementor'),
       targetUrl = '_self';
 
@@ -672,7 +654,6 @@ function ConnectionButton(props) {
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
 var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
@@ -689,7 +670,7 @@ var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runt
 
 var _react = __webpack_require__(/*! react */ "react");
 
-var usePageTitle = function usePageTitle(isDashboard) {
+var usePageTitle = function usePageTitle() {
   var _useState = (0, _react.useState)('Elementor'),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       pageTitle = _useState2[0],
@@ -698,15 +679,11 @@ var usePageTitle = function usePageTitle(isDashboard) {
   (0, _react.useEffect)(function () {
     var pageTitleElement = document.querySelector('.wp-heading-inline');
 
-    if (!pageTitleElement && !isDashboard) {
+    if (!pageTitleElement) {
       return;
     }
 
-    if (isDashboard) {
-      setPageTitle(__('Dashboard', 'elementor'));
-    } else {
-      setPageTitle(pageTitleElement.innerText);
-    }
+    setPageTitle(pageTitleElement.innerText);
   }, []);
   return pageTitle;
 };
@@ -5131,28 +5108,16 @@ __webpack_require__(/*! core-js/modules/es6.array.map.js */ "../node_modules/cor
 var _adminTopBar = _interopRequireDefault(__webpack_require__(/*! ./admin-top-bar */ "../modules/admin-top-bar/assets/js/admin-top-bar.js"));
 
 var AppWrapper = elementorCommon.config.isDebug ? _react.default.StrictMode : _react.default.Fragment;
-document.addEventListener('DOMContentLoaded', function () {
-  var adminTopBarElement = document.getElementById('e-admin-top-bar-root'); // When root element is not exists, the admin top bar should not be rendered.
+var adminTopBarElement = document.getElementById('e-admin-top-bar-root');
+var elementorMenuItemIds = ['toplevel_page_elementor', 'menu-posts-elementor_library'];
+var menuItemSelector = elementorMenuItemIds.map(function (itemId) {
+  return "#".concat(itemId, " .wp-menu-open");
+}).join(', ');
+var isElementorPage = !!document.querySelector(menuItemSelector);
 
-  if (!adminTopBarElement) {
-    return;
-  }
-
-  var isTopBarOptionWidgetChecked = !!document.querySelector('#e-dashboard-widget-admin-top-bar-hide');
-  var elementorMenuItemIds = ['toplevel_page_elementor', 'menu-posts-elementor_library'];
-  var menuItemSelector = elementorMenuItemIds.map(function (itemId) {
-    return "#".concat(itemId, " .wp-menu-open");
-  }).join(', ');
-  var isElementorPage = !!document.querySelector(menuItemSelector);
-
-  if (isElementorPage || isTopBarOptionWidgetChecked) {
-    ReactDOM.render( /*#__PURE__*/_react.default.createElement(AppWrapper, null, /*#__PURE__*/_react.default.createElement(_adminTopBar.default, {
-      isDashboard: isTopBarOptionWidgetChecked
-    })), adminTopBarElement);
-  } else {
-    adminTopBarElement.classList.add('e-admin-top-bar--inactive');
-  }
-});
+if (isElementorPage) {
+  ReactDOM.render( /*#__PURE__*/_react.default.createElement(AppWrapper, null, /*#__PURE__*/_react.default.createElement(_adminTopBar.default, null)), adminTopBarElement);
+}
 })();
 
 /******/ })()

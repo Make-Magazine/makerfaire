@@ -116,7 +116,7 @@ class GV_Extension_DataTables_Data {
 
 		if ( ! is_admin() ) {
 			// Enqueue scripts and styles
-			add_action( 'wp_enqueue_scripts', array( $this, 'add_scripts_and_styles' ) );
+			add_action( 'gravityview/template/after', array( $this, 'add_scripts_and_styles' ) );
 		}
 
 		// Extend DataTables view as needed
@@ -994,6 +994,7 @@ class GV_Extension_DataTables_Data {
 			$field_column = array(
 				'name'  => 'gv_' . $field_id,
 				'width' => $this->get_column_width( $field->as_configuration() ),
+				'className' => gravityview_sanitize_html_class( \GV\Utils::get( $field->as_configuration(), 'custom_class', '' ) ),
 			);
 
 			/**
@@ -1049,8 +1050,20 @@ class GV_Extension_DataTables_Data {
 	 * Enqueue Scripts and Styles for DataTable View Type
 	 *
 	 * @filter gravityview_datatables_loading_text Modify the text shown while the DataTable is loading
+     *
+     * @since 2.5 Added $gravityview parameter
+     *
+     * @param \GV\Template_Context $gravityview The $gravityview object available in templates.
 	 */
-	function add_scripts_and_styles() {
+	public function add_scripts_and_styles( $gravityview ) {
+
+        if ( empty( $gravityview ) || ! $gravityview instanceof \GV\Template_Context ) {
+            return;
+        }
+
+        if( ! $gravityview->template instanceof \GV\View_DataTable_Template ) {
+            return;
+        }
 
 		$post = get_post();
 

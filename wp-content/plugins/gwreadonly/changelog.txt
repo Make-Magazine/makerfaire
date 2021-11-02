@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.9.3
+
+	- Improved support for using Read Only with GravityView.
+	- Fixed a compatibility issue with Gravity Flow's User Input step.
+
 ## 1.9.2
 
 	- Fixed a compatibility issue with GF 2.5 and List fields where the add/remove buttons remained visible.

@@ -1,4 +1,4 @@
-/*! elementor - v3.4.4 - 13-09-2021 */
+/*! elementor - v3.4.7 - 31-10-2021 */
 @charset "UTF-8";
 .elementor-control-unit-1 {
   width: 27px; }
@@ -744,6 +744,8 @@ select {
     font-size: 15px; }
     .elementor-panel #elementor-panel-header-title img {
       width: 90px; }
+  .elementor-panel #elementor-panel-elements-categories {
+    padding-bottom: 10px; }
   .elementor-panel .elementor-panel-category {
     position: relative; }
     .elementor-panel .elementor-panel-category:first-child .elementor-panel-category-title {

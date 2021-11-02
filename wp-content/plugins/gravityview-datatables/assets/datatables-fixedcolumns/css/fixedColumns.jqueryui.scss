@@ -1,16 +1,26 @@
-
-div.DTFC_LeftWrapper table.dataTable,
-div.DTFC_RightWrapper table.dataTable {
-	z-index: 2;
-
-	&.no-footer {
-		border-bottom: none;
+table.dataTable{
+	th{
+		background-color: rgb(246, 246, 246) !important;
+		z-index: 1;
 	}
 }
 
-// Block out the gap above the scrollbar on the right, when there is a fixed
-// right column
-div.DTFC_Blocker {
-	background-color: white;
+div.dtfc-right-top-blocker {
+	border-bottom: none !important;
+	background-color: rgb(246, 246, 246) !important;
+	border-top: 1px solid #c5c5c5 !important;
 }
 
+tr.dt-rowReorder-moving {
+    td.dtfc-fixed-left,
+    td.dtfc-fixed-right {
+        border-top: 2px solid #555 !important;
+        border-bottom: 2px solid #555 !important;
+    }
+    td.dtfc-fixed-left:first-child {
+        border-left: 2px solid #555 !important;
+    }
+    td.dtfc-fixed-right:last-child {
+        border-right: 2px solid #555 !important;
+    }
+}

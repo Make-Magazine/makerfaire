@@ -16,6 +16,23 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 2.5 on October 7, 2021 =
+
+* Fixed: GravityView Entry Approval not working when in responsive mode (requires GravityView 2.13.2 or newer)
+* Fixed: Images displayed in a lightbox were duplicated when in responsive mode
+* Fixed: Searching while FixedColumns breaks the table layout
+* Fixed: DataTables scripts were being enqueued on every page load
+* Fixed: DataTables scripts were enqueued on every page load
+* Fixed: The field setting "Custom CSS Class" was not being used in the output
+* Improved: Minor security fix
+
+__Developer Updates:__
+
+* Modified: Changed enqueuing of scripts to happen from the `gravityview/template/after` action
+    * This means GravityView 1.x template overrides will no longer function for DataTables. See our [template migration guide](https://github.com/gravityview/GravityView/wiki/Template-Migration) for more information.
+* Modified: Removed support for exporting using deprecated .swf behavior in DataTables
+* Modified: Removed use of global `gvDTButtons` JavaScript variable on the front-end
+
 = 2.4.8.1 on July 27, 2021 =
 
 * Fixed: Interference with a non-DataTables layout search widget clear button

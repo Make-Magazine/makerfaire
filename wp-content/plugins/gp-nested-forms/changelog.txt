@@ -1,6 +1,27 @@
 
 # Changelog
 
+## 1.0-beta-10.9
+
+	- Added a CSS class to the Nested Entries Detail Simple template to support targeting specific tables when multiple tables are displayed.
+	- Updated `gpnf_init_nested_forms` filter to pass the current instance of GPNestedForms as the second parameter.
+
+## 1.0-beta-10.8
+
+	- Fixed issue where Summary Fields setting did not always initialize correctly.
+
+## 1.0-beta-10.7
+
+	- Fixed an issue where Drop Downs were not correctly repopulated after being revealed by conditional logic if their default value included a `{Parent}` merge tag.
+
+## 1.0-beta-10.6
+
+	- Added a link in the Nested Form field setting to allow you to open the child form in the form editor in a new tab.
+
+## 1.0-beta-10.5
+
+	- Fixed a potential issue where the `{parent}` merge tag may remain visible when editing entries while the source field is empty.
+
 ## 1.0-beta-10.4
 
 	- Improved support for checkboxes pulled into child forms using the {Parent} merge tag. When more than one checkbox is selected, the values/labels will be comma delimited.

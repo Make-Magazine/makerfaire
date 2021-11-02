@@ -325,13 +325,13 @@ class GravityView_Change_Entry_Creator {
 			$output .= '<option value="' . $entry_creator_user->ID . '" selected="selected">' . esc_attr( $entry_creator_user->display_name . ' (' . $entry_creator_user->user_nicename . ')' ) . '</option>';
 		}
 
-		//$all_users = GVCommon::get_users( 'change_entry_creator', array( 'number' => self::DEFAULT_NUMBER_OF_USERS ) );
-		$all_users = GVCommon::get_users( 'change_entry_creator', array( 'fields' => array( 'ID', 'display_name', 'user_login', 'user_nicename','user_email'), 'number' => 100000) );
+		$all_users = GVCommon::get_users( 'change_entry_creator', array( 'number' => self::DEFAULT_NUMBER_OF_USERS ) );
 		foreach ( $all_users as $user ) {
 			if ( $entry_creator_user_id === $user->ID ) {
 				continue;
-			}			
-			$output .= '<option value="' . esc_attr( $user->ID ) . '">' . esc_attr( $user->display_name . ' (' . $user->user_email . ')' ) . '</option>';
+			}
+
+			$output .= '<option value="' . esc_attr( $user->ID ) . '">' . esc_attr( $user->display_name . ' (' . $user->user_nicename . ')' ) . '</option>';
 		}
 
 		$user_count      = count_users();

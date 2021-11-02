@@ -199,17 +199,24 @@ input.ui-widget[type=text] {
     display: block;
 }
 
-.ytprefs-ob-step2 form #responsive ~ #boxresponsive_all {
+.ytprefs-ob-step2 form #responsive ~ #boxresponsive_all,
+.ytprefs-ob-step2 form #facade_mode ~ .box_facade_mode {
     height: 0;
     visibility: none;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 300ms, visibility 300ms;
 }
 
-.ytprefs-ob-step2 form #responsive:checked ~ #boxresponsive_all {
+.ytprefs-ob-step2 form #responsive:checked ~ #boxresponsive_all,
+.ytprefs-ob-step2 form #facade_mode:checked ~ .box_facade_mode {
     height: auto;
     visibility: visible;
     opacity: 1;
+    padding-left: 10px;
+    margin-top: 10px;
+    pointer-events: all;
+    border-left: 5px solid #cccccc;
 }
 
 .gdpr-options-left {

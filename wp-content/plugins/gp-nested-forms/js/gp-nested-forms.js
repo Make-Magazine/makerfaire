@@ -708,7 +708,15 @@
 
 		self.initFormScripts = function( currentPage ) {
 
-			window.gform.doAction( 'gpnf_init_nested_form', self.nestedFormId );
+			/**
+			 * Do something immediately before the nested form modal is initialized.
+			 *
+			 * @since 1.0-beta-8.25
+			 *
+			 * @param int            nestedFormId The ID of the nested form being initialized in the modal.
+			 * @param \GPNestedForms gpnf         The instance of GPNestedForms (specific to the parent form and Nested Form field) that is initializing the modal.
+			 */
+			window.gform.doAction( 'gpnf_init_nested_form', self.nestedFormId, self );
 			$( document ).trigger( 'gform_post_render', [ self.nestedFormId, currentPage ] );
 
 			if ( window['gformInitDatepicker'] ) {
@@ -722,9 +730,9 @@
 
 			self.handleParentMergeTag();
 
-			$( document ).on( 'gform_post_conditional_logic.{0}'.format( self.getNamespace() ), function( event, formId ) {
+			$( document ).on( 'gform_post_conditional_logic.{0}'.format( self.getNamespace() ), function( event, formId, fieldIds ) {
 				if ( self.nestedFormId == formId ) {
-					self.handleParentMergeTag();
+					self.handleParentMergeTag( fieldIds );
 				}
 			} );
 
@@ -783,18 +791,28 @@
 			return formula;
 		};
 
-		self.handleParentMergeTag = function () {
+		self.handleParentMergeTag = function ( fieldIds ) {
+
 			// Do not process merge tags if the form was submitted and contains errors
 			if ( self.$modal.find( '.gform_validation_error' ).length !== 0 ) {
 				return;
 			}
 
-			self.$modal.find( ':input' ).each(function () {
+			var $inputs;
+
+			if ( typeof fieldIds !== 'undefined' ) {
+				var selectors = [];
+				$.each( fieldIds, function( index, fieldId ) {
+					selectors.push( '#field_{0}_{1}'.format( self.nestedFormId, fieldId ) );
+				} );
+				$inputs = self.$modal.find( selectors.join( ',' ) ).find( ':input' );
+			} else {
+				$inputs = self.$modal.find( ':input' );
+			}
+
+			$inputs.each(function () {
 				var $this = $( this );
 				var value = $this.data( 'gpnf-value' );
-				if ($this.data( 'gpnf-changed' )) {
-					return true;
-				}
 
 				if ( ! value) {
 					return true;
@@ -809,7 +827,18 @@
 				 * @param int           	formId 				       The parent form ID.
 				 */
 				if ( self.mode === 'edit' && ! gform.applyFilters( 'gpnf_replace_parent_merge_tag_on_edit', false, self.formId ) ) {
-					// Skip processing edited/populated merge tags
+					// Skip processing edited/populated merge tags.
+					// One exception here is that we need to ensure that `{parent}` merge tags are removed.
+					// This can occur when editing a child entry with an empty field and an empty parent field value.
+					// See: HS#27251
+					value = $( this ).val();
+					var parentMergeTagEdit = self.getParentMergeTags( value );
+					if ( parentMergeTagEdit.length ) {
+						for ( var i = 0, max = parentMergeTagEdit.length; i < max; i ++ ) {
+							value = value.replace( parentMergeTagEdit[i][0], '' );
+						}
+						$( this ).val( value ).change().trigger("chosen:updated");
+					}
 					return true;
 				}
 
@@ -878,12 +907,6 @@
 					$( this ).val( value ).change().trigger("chosen:updated");
 				}
 
-				$( this ).on( 'change', function ( event ) {
-					// Conditional logic will reset the default value which will be a {Parent} merge tag. If the input
-					// is being changed to a {Parent} merge tag, let's ignore that change event.
-					var matches = self.getParentMergeTags( $( this ).val() );
-					$( this ).data( 'gpnf-changed', ! matches.length );
-				});
 			});
 
 		};

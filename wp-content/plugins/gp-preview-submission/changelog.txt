@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.6
+
+	- Removed `create_function()` reference to avoid Security Ninja false positive warning.
+
 ## 1.3.5
 
 	- Fixed issue where Preview Submission would conflict with Populate Anything's Live Merge Tags and prevent input value replacement.

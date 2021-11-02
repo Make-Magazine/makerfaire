@@ -1,4 +1,4 @@
-/*! elementor - v3.4.4 - 13-09-2021 */
+/*! elementor - v3.4.7 - 31-10-2021 */
 (self["webpackChunkelementor"] = self["webpackChunkelementor"] || []).push([["preloaded-modules"],{
 
 /***/ "../assets/dev/js/frontend/handlers/accordion.js":
@@ -334,16 +334,22 @@ class Counter extends elementorModules.frontend.handlers.Base {
 
   onInit() {
     super.onInit();
-    elementorFrontend.waypoint(this.elements.$counterNumber, () => {
-      const data = this.elements.$counterNumber.data(),
-            decimalDigits = data.toValue.toString().match(/\.(.*)/);
+    this.intersectionObserver = elementorModules.utils.Scroll.scrollObserver({
+      callback: event => {
+        if (event.isInViewport) {
+          this.intersectionObserver.unobserve(this.elements.$counterNumber[0]);
+          const data = this.elements.$counterNumber.data(),
+                decimalDigits = data.toValue.toString().match(/\.(.*)/);
 
-      if (decimalDigits) {
-        data.rounding = decimalDigits[1].length;
+          if (decimalDigits) {
+            data.rounding = decimalDigits[1].length;
+          }
+
+          this.elements.$counterNumber.numerator(data);
+        }
       }
-
-      this.elements.$counterNumber.numerator(data);
     });
+    this.intersectionObserver.observe(this.elements.$counterNumber[0]);
   }
 
 }
@@ -1754,7 +1760,7 @@ module.exports = elementorModules.ViewModule.extend({
       if ('youtube' === videoType) {
         this.prepareYTVideo(apiObject, videoID, $videoContainer, $videoWrapper, $playIcon);
       } else if ('vimeo' === videoType) {
-        this.prepareVimeoVideo(apiObject, videoID, $videoContainer, $videoWrapper, $playIcon);
+        this.prepareVimeoVideo(apiObject, videoURL, $videoContainer, $videoWrapper, $playIcon);
       }
     });
     $playIcon.addClass(classes.playing).removeClass(classes.hidden);
@@ -1790,10 +1796,10 @@ module.exports = elementorModules.ViewModule.extend({
       }
     });
   },
-  prepareVimeoVideo: function (Vimeo, videoId, $videoContainer, $videoWrapper, $playIcon) {
+  prepareVimeoVideo: function (Vimeo, videoURL, $videoContainer, $videoWrapper, $playIcon) {
     const classes = this.getSettings('classes'),
           vimeoOptions = {
-      id: videoId,
+      url: videoURL,
       autoplay: true,
       transparent: false,
       playsinline: false

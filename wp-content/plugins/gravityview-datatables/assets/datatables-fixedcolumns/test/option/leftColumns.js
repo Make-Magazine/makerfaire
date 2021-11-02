@@ -8,20 +8,18 @@ describe('fixedColumns - leftColumns', function() {
 	});
 
 	function _checkElements(side, expected) {
-		expect($('.DTFC_' + side + 'BodyWrapper td').length).toBe(expected * 10);
-		expect($('.DTFC_' + side + 'BodyWrapper td').length).toBe(expected * 10);
-		expect($('.DTFC_' + side + 'BodyWrapper td').length).toBe(expected * 10);
+		expect($('td.dtfc-fixed-' + side).length).toBe(expected * 10);
 	}
 
 	function checkElements(left, right) {
-		_checkElements('Left', left);
-		_checkElements('Right', right);
+		_checkElements('left', left);
+		_checkElements('right', right);
 	}
 
 	describe('Check the defaults', function() {
 		dt.html('basic');
 		it('Single column set by default', function() {
-			expect($.fn.dataTable.FixedColumns.defaults.iLeftColumns).toBe(1);
+			expect($.fn.dataTable.FixedColumns.defaults.left).toBe(1);
 		});
 
 		it('None specified', function() {
@@ -34,6 +32,7 @@ describe('fixedColumns - leftColumns', function() {
 		});
 	});
 
+	// deprecated options
 	describe('Check the defaults', function() {
 		dt.html('basic');
 		it('Cycle through all columns', function() {
@@ -57,6 +56,36 @@ describe('fixedColumns - leftColumns', function() {
 				fixedColumns: {
 					leftColumns: 2,
 					rightColumns: 1
+				}
+			});
+
+			checkElements(2, 1);
+		});
+	});
+
+	describe('Check the defaults', function() {
+		dt.html('basic');
+		it('Cycle through all columns', function() {
+			for (let i = 1; i <= 6; i++) {
+				table = $('#example').DataTable({
+					destroy: true,
+					scrollX: true,
+					fixedColumns: {
+						left: i
+					}
+				});
+
+				checkElements(i, 0);
+			}
+		});
+
+		dt.html('basic');
+		it('Ensure sensible when right columns also used', function() {
+			table = $('#example').DataTable({
+				scrollX: true,
+				fixedColumns: {
+					left: 2,
+					right: 1
 				}
 			});
 

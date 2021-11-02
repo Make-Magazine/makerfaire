@@ -1,4 +1,4 @@
-/*! elementor - v3.4.4 - 13-09-2021 */
+/*! elementor - v3.4.7 - 31-10-2021 */
 (self["webpackChunkelementor"] = self["webpackChunkelementor"] || []).push([["frontend"],{
 
 /***/ "../assets/dev/js/frontend/documents-manager.js":
@@ -1018,12 +1018,11 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
     }
   }
 
-  prepareVimeoVideo(Vimeo, videoId) {
+  prepareVimeoVideo(Vimeo, videoLink) {
     const elementSettings = this.getElementSettings(),
-          startTime = elementSettings.background_video_start ? elementSettings.background_video_start : 0,
           videoSize = this.elements.$backgroundVideoContainer.outerWidth(),
           vimeoOptions = {
-      id: videoId,
+      url: videoLink,
       width: videoSize.width,
       autoplay: true,
       loop: !elementSettings.background_play_once,
@@ -1144,7 +1143,7 @@ class BackgroundVideo extends elementorModules.frontend.handlers.Base {
         }
 
         if ('vimeo' === this.videoType) {
-          this.prepareVimeoVideo(apiObject, videoID);
+          this.prepareVimeoVideo(apiObject, videoLink);
         }
       });
     } else {
@@ -1253,15 +1252,21 @@ class HandlesPosition extends elementorModules.frontend.handlers.Base {
       return;
     }
 
+    const insideHandleClass = 'elementor-section--handles-inside',
+          $handlesElement = this.$element.find('> .elementor-element-overlay > .elementor-editor-section-settings');
+
+    if (elementor.settings.page.model.attributes.scroll_snap) {
+      this.$element.addClass(insideHandleClass);
+      return;
+    }
+
     const isOverflowHidden = this.isOverflowHidden();
 
     if (!isOverflowHidden && !this.isFirstSection()) {
       return;
     }
 
-    const offset = isOverflowHidden ? 0 : this.getOffset(),
-          $handlesElement = this.$element.find('> .elementor-element-overlay > .elementor-editor-section-settings'),
-          insideHandleClass = 'elementor-section--handles-inside';
+    const offset = isOverflowHidden ? 0 : this.getOffset();
 
     if (offset < 25) {
       this.$element.addClass(insideHandleClass);

@@ -23,7 +23,7 @@ class GP_Limit_Checkboxes extends GWPerk {
 		add_filter( 'gravityview/import/column/checkbox/unchecked', array( $this, 'disable_validation' ) );
 
 		// Enable validation on Gravity Flow's User Input step.
-		add_filter( 'gravityflow_validation_user_input', array( $this, 'validate' ) );
+		add_filter( 'gravityflow_validation_user_input', array( $this, 'handle_gravityflow_validation' ), 10, 2 );
 
 		add_action( 'admin_head', array( $this, 'enqueue_admin_scripts' ) );
 		add_filter( 'gform_enqueue_scripts', array( $this, 'enqueue_form_scripts' ) );
@@ -295,6 +295,42 @@ class GP_Limit_Checkboxes extends GWPerk {
 		}
 
 		$validation_result['form'] = $form;
+
+		return $validation_result;
+	}
+
+	/**
+	 * Handle validation for Gravity Flow User Input step.
+	 *
+	 * The current implementation will simply ignore validation issues for GPLC-enabled fields if they are not editable
+	 * for the current step. This does pose some issues for potential edge-cases.
+	 *
+	 * The core issue is that non-editable field values are not avialable in the $_POST during the submission of this
+	 * step. If a Checkbox field is part of a group and one field is editable but other is not, it is possible to exceed
+	 * the group's maximum or fail to meet the minimum since only the editable field will be included in the checkbox
+	 * count.
+	 *
+	 * Additionally, since we're overwriting the validation result entirely... it is possible that there is a scenario
+	 * where some other 3rd-party would want the non-editable field to be validated with their custom logic. Let's see
+	 * if this presents itself before we account for it.
+	 *
+	 * @param $validation_result
+	 * @param \Gravity_Flow_Step_User_Input $step
+	 *
+	 * @return mixed
+	 */
+	public function handle_gravityflow_validation( $validation_result, $step ) {
+
+		$validation_result             = $this->validate( $validation_result );
+		$validation_result['is_valid'] = true;
+
+		foreach ( $validation_result['form']['fields'] as &$field ) {
+			if ( $this->is_applicable_field( $field ) && ! in_array( $field->id, $step->get_editable_fields() ) ) {
+				$field->failed_validation = false;
+			} elseif ( $field->failed_validation ) {
+				$validation_result['is_valid'] = true;
+			}
+		}
 
 		return $validation_result;
 	}

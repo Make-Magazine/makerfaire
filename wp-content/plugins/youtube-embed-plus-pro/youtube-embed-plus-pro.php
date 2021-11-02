@@ -1,16 +1,17 @@
 <?php
 /*
-  Plugin Name: Embed Plus for YouTube Pro - Gallery, Channel, Playlist, Live Stream
+  Plugin Name: Embed Plus for YouTube Pro - Embed a YouTube Gallery, Channel, Playlist, Live Stream, Facade
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
-  Description: YouTube Pro Plugin. Customize and embed a responsive video, YouTube channel gallery, playlist gallery, or live stream from YouTube.com
-  Version: 13.4.3
+  Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
+  Version: 14.0
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
+  Requires at least: 4.1
  */
 
 /*
   Embed Plus for YouTube Pro
-  Copyright (C) 2020 EmbedPlus.com
+  Copyright (C) 2021 EmbedPlus.com
 
  */
 
@@ -21,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '13.4.3';
+    public static $version = '14.0';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -52,6 +53,8 @@ class YouTubePrefsPro
     public static $opt_ogvideo = 'ogvideo';
     public static $opt_nocookie = 'nocookie';
     public static $opt_gb_compat = 'gb_compat';
+    public static $opt_facade_mode = 'facade_mode';
+    public static $opt_facade_autoplay = 'facade_autoplay';
     public static $opt_gdpr_consent = 'gdpr_consent';
     public static $opt_gdpr_consent_message = 'gdpr_consent_message';
     public static $opt_gdpr_consent_button = 'gdpr_consent_button';
@@ -2164,6 +2167,8 @@ class YouTubePrefsPro
         $_pro = '';
         $_nocookie = 0;
         $_gb_compat = 1;
+        $_facade_mode = 0;
+        $_facade_autoplay = 1;
         $_gdpr_consent = 0;
         $_gdpr_consent_message = self::$dft_gdpr_consent_message;
         $_gdpr_consent_button = __('Accept YouTube Content', 'text_domain');
@@ -2302,6 +2307,8 @@ class YouTubePrefsPro
             $_pro = self::tryget($arroptions, self::$opt_pro, '');
             $_nocookie = self::tryget($arroptions, self::$opt_nocookie, 0);
             $_gb_compat = self::tryget($arroptions, self::$opt_gb_compat, $_gb_compat);
+            $_facade_mode = self::tryget($arroptions, self::$opt_facade_mode, $_facade_mode);
+            $_facade_autoplay = self::tryget($arroptions, self::$opt_facade_autoplay, $_facade_autoplay);
             $_gdpr_consent = self::tryget($arroptions, self::$opt_gdpr_consent, $_gdpr_consent);
             $_gdpr_consent_message = self::tryget($arroptions, self::$opt_gdpr_consent_message, $_gdpr_consent_message);
             $_gdpr_consent_button = self::tryget($arroptions, self::$opt_gdpr_consent_button, $_gdpr_consent_button);
@@ -2420,6 +2427,8 @@ class YouTubePrefsPro
             self::$opt_pro => $_pro,
             self::$opt_nocookie => $_nocookie,
             self::$opt_gb_compat => $_gb_compat,
+            self::$opt_facade_mode => $_facade_mode,
+            self::$opt_facade_autoplay => $_facade_autoplay,
             self::$opt_gdpr_consent => $_gdpr_consent,
             self::$opt_gdpr_consent_message => $_gdpr_consent_message,
             self::$opt_gdpr_consent_button => $_gdpr_consent_button,
@@ -3408,7 +3417,7 @@ class YouTubePrefsPro
         {
             $begin_live_chat = '<div class="epyt-live-chat-wrapper ' . ($iscontent && $finalparams[self::$opt_gb_compat] == 1 && current_theme_supports('responsive-embeds') ? ' wp-block-embed' : '') . '">';
             $begin_live_chat_video = '<div class="epyt-live-chat-video">';
-            $begin_live_chat_box = '<div class="epyt-live-chat-box">';
+            $begin_live_chat_box = '<div class="epyt-live-chat-box">' . (!empty($finalparams[self::$opt_facade_mode]) && $finalparams[self::$opt_facade_mode] == 1 ? '<p>' . __('Click on the video to activate live chat.', 'text_domain') . '</p>' : '' );
             $end_live_chat = $end_live_chat_box = $end_live_chat_video = '</div>';
         }
 
@@ -3433,13 +3442,41 @@ class YouTubePrefsPro
         }
         $iframe_id = rand(10000, 99999);
 
-        $code1 = $begin_gb_wrapper . $beginlb . $begin_live_chat . $begin_live_chat_video . $begin_responsive . '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs .
-                ' data-origwidth="' . self::$defaultwidth . '" data-origheight="' . self::$defaultheight . '" ' . $relstop .
-                $dynsrc . 'src="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
-        $code2 = '" class="__youtube_prefs__ ' . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif .
-                ' no-lazyload"' . $voloutput . $acctitle . $galleryid_ifm_data . ' allow="autoplay; encrypted-media" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll=""></iframe>' .
-                $end_responsive . $end_live_chat_video . $begin_live_chat_box . $end_live_chat_box . $end_live_chat . $endlb . $end_gb_wrapper . $schemaorgoutput;
-
+        $code1 = $begin_gb_wrapper . $beginlb . $begin_live_chat . $begin_live_chat_video . $begin_responsive;
+        $code_iframe1 = $code_iframe2 = '';
+        if ($videoidoutput != 'live_stream'  && $finalparams[self::$opt_facade_mode] == 1)
+        {
+            $facade_img_src = '';
+            if (!empty($videoidoutput))
+            {
+                $facade_img_src = ' src="https://i.ytimg.com/vi/' . $videoidoutput . '/hqdefault.jpg" ';
+            }
+            else if (isset($finalparams['list']))
+            {
+                $facade_img_src = ' data-facadeoembed="playlist?list=' . $finalparams['list'] .'" ';
+            }                
+            $acctitle = str_replace('title="', 'alt="', $acctitle);
+            $facade_autoplay = $finalparams[self::$opt_facade_autoplay] == 1 ? ' data-epautoplay="1" ' : '';
+            $code_iframe1 = '<div ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs . ' data-origwidth="' . self::$defaultwidth . '" data-origheight="' . self::$defaultheight . '" ' . $relstop .
+                    'data-facadesrc="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
+            $code_iframe2 = '" class="__youtube_prefs__ epyt-facade' . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
+                    $voloutput . $galleryid_ifm_data . $facade_autoplay . '><img class="epyt-facade-poster" loading="lazy" ' . $acctitle . $facade_img_src . ' />' .
+                    '<button class="epyt-facade-play" aria-label="Play"><svg height="100%" version="1.1" viewBox="0 0 68 48" width="100%"><path class="ytp-large-play-button-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path><path d="M 45,24 27,14 27,34" fill="#fff"></path></svg></button>' .
+                    '</div>';
+        }
+        else
+        {
+            $code_iframe1 = '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs . ' data-origwidth="' . self::$defaultwidth . '" data-origheight="' . self::$defaultheight . '" ' . $relstop .
+                    $dynsrc . 'src="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
+            $code_iframe2 = '" class="__youtube_prefs__ ' . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
+                    $voloutput . $acctitle . $galleryid_ifm_data . ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll=""></iframe>';            
+        }        
+        
+        $code2 = $end_responsive . $end_live_chat_video . $begin_live_chat_box . $end_live_chat_box . $end_live_chat . $endlb . $end_gb_wrapper . $schemaorgoutput;
+        
+        $code1 .= $code_iframe1;
+        $code2 = $code_iframe2 . $code2;
+        
         $origin = '';
 
         try
@@ -3468,7 +3505,7 @@ class YouTubePrefsPro
                     }
                     else
                     {
-                        if (!(isset($finalparams['live']) && $key == 'loop'))
+                        if (!((isset($finalparams['live']) || isset($finalparams['live_stream'])) && $key == 'loop')) // don't add loop for channel streaming
                         {
                             $finalsrc .= htmlspecialchars($key) . '=' . htmlspecialchars($value) . '&';
                             if ($key == 'loop' && $value == 1 && !isset($finalparams['list']))
@@ -3484,7 +3521,7 @@ class YouTubePrefsPro
         if (self::gdpr_mode())
         {
             $code1 = $beginlb . '<div ' . $dyntype . $centercode . ' id="_ytid_' . rand(10000, 99999) . '"'; // width="' . self::$defaultwidth . '" height="' . self::$defaultheight . '" ';
-            $code2 = ' class="__youtube_prefs__  __youtube_prefs_gdpr__ ' . ($iscontent ? '' : ' __youtube_prefs_widget__') . $disptypeif . '" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll="">' .
+            $code2 = ' class="__youtube_prefs__  __youtube_prefs_gdpr__ ' . ($iscontent ? '' : ' __youtube_prefs_widget__') . ($isoverride ? ' epyt-is-override ' : '')  . $disptypeif . '" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll="">' .
                     apply_filters('ytprefs_filter_the_content_light', wp_kses_post(self::$alloptions[self::$opt_gdpr_consent_message])) .
                     '<button type="button" class="__youtube_prefs_gdpr__">' . trim(sanitize_text_field(self::$alloptions[self::$opt_gdpr_consent_button])) .
                     '<img src="' . plugins_url('images/icon-check.png', __FILE__) . '" alt="accept" data-no-lazy="1" data-skipgform_ajax_framebjll="" /></button>' .
@@ -4380,7 +4417,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update provides better gallery compatibility with cookie compliance plugins, and better oEmbed performance for both Free and Pro versions, as well as live stream chat on mobile devices for the Pro version.";
+        $new_pointer_content .= "This update adds a new facade mode for lighter and faster page loads (see Performance tab) and fixes a CSS issue on both Free and Pro versions.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -4574,6 +4611,7 @@ class YouTubePrefsPro
             #boxnocookie {display: inline-block; border-radius: 3px; padding: 2px 4px 2px 4px; color: red;  <?php echo $all[self::$opt_nocookie] ? '' : 'display: none;' ?>}
             #boxapinever {display: none; color: red;}
             input[type="radio"]:checked ~ #boxapinever {display: block;}
+            #box_facade_mode { color: red; <?php echo (bool) $all[self::$opt_facade_mode] ? 'display: block;' : 'display: none;' ?>}
             #box_gdpr_consent { color: red; <?php echo (bool) $all[self::$opt_gdpr_consent] ? 'display: block;' : 'display: none;' ?>}
             .strike {text-decoration: line-through;}
             .upgchecks { padding: 20px; border: 1px dotted #777777; background-color: #fcfcfc; }
@@ -4665,6 +4703,14 @@ class YouTubePrefsPro
             }
 
             #not_live_on:checked ~ #wp-not_live_content-wrap {
+                opacity: 1;
+            }
+
+            #facade_mode ~ .box_facade_mode {
+                opacity: .3;
+            }
+
+            #facade_mode:checked ~ .box_facade_mode {
                 opacity: 1;
             }
 
@@ -4958,7 +5004,7 @@ class YouTubePrefsPro
                             <p>
                                 <input name="<?php echo self::$opt_pause_others; ?>" id="<?php echo self::$opt_pause_others; ?>" <?php checked($all[self::$opt_pause_others], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_pause_others; ?>">
-                                    <b class="chktitle"><?php _e('Simultaneous Playback Control:', 'youtube-embed-plus-pro'); ?></b> <sup class="orange"><?php _e('new', 'youtube-embed-plus-pro'); ?></sup>
+                                    <b class="chktitle"><?php _e('Simultaneous Playback Control:', 'youtube-embed-plus-pro'); ?></b>
                                     <?php _e('You can enable/disable the ability for visitors to have separate videos running at the same time on the same page. Check this to automatically pause other players while the current player is playing. (Note: this feature is not guaranteed to work with videos embedded from other plugins).', 'youtube-embed-plus-pro'); ?>
                                 </label>
                             </p>
@@ -5158,7 +5204,7 @@ class YouTubePrefsPro
                             $selected_val = trim($all[self::$opt_cc_lang_pref]);
                             ?>
                             <p>
-                                <label for="<?php echo self::$opt_cc_lang_pref; ?>"><b class="chktitle">Closed Captions Language:</b></label> <sup class="orange"><?php _e('new', 'youtube-embed-plus-pro'); ?></sup>
+                                <label for="<?php echo self::$opt_cc_lang_pref; ?>"><b class="chktitle">Closed Captions Language:</b></label>
                                 <select name="<?php echo self::$opt_cc_lang_pref; ?>" id="<?php echo self::$opt_cc_lang_pref; ?>" style="width: 260px;">                                    
                                     <option <?php echo '' == $selected_val ? 'selected' : '' ?> value="">Default/Unspecified</option>
                                     <?php
@@ -5329,7 +5375,7 @@ class YouTubePrefsPro
                                 <label for="<?php echo self::$opt_nocookie; ?>">
                                     <b class="chktitle">No Cookies:</b> Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well.
                                     <div id="boxnocookie">
-                                        Note: Checking this option may break some features such as the ones listed below:
+                                        Note: Checking this option may introduce issues to features that depend YouTube's API, such as the ones listed below. We suggest testing them out to make sure you are still pleased with the results:
                                         <ul class="list-ul">
                                             <li>Galleries</li>
                                             <li>Hide related videos at the end of playback</li>
@@ -5600,7 +5646,7 @@ class YouTubePrefsPro
                                     <img class="ssaltgallery" src="<?php echo plugins_url('images/ss-live-chat.jpg', __FILE__) ?>" />
                                     <input name="<?php echo self::$opt_live_chat; ?>" id="<?php echo self::$opt_live_chat; ?>" <?php checked($all[self::$opt_live_chat], 1); ?> type="checkbox" class="checkbox">
                                     <label for="<?php echo self::$opt_live_chat; ?>">
-                                        <b><?php _e('(PRO)') ?> </b> <b class="chktitle"><?php _e('Enable Live Chat:') ?></b> <sup class="orange"><?php _e('new') ?></sup> <?php _e('Add more interaction to your site by including the YouTube live chat box as part of each live stream or premiere embed. Note that live chat can also be an option for earning money from your audience by using the Super Chat feature. <a href="https://creatoracademy.youtube.com/page/lesson/superchat" target="_blank">Learn more here</a>.') ?>
+                                        <b><?php _e('(PRO)') ?> </b> <b class="chktitle"><?php _e('Enable Live Chat:') ?></b> <?php _e('Add more interaction to your site by including the YouTube live chat box as part of each live stream or premiere embed. Note that live chat can also be an option for earning money from your audience by using the Super Chat feature. <a href="https://creatoracademy.youtube.com/page/lesson/superchat" target="_blank">Learn more here</a>.') ?>
                                         <strong class="check-note"><?php _e('<span class="orange">NOTE:</span> In wide containers, the chat box will appear to the right of the player. It will appear below the player when the container is less than 964px. Also, Google/YouTube disables live chat on mobile devices. So for mobile phones and tablets, the chat box will be hidden.') ?></strong>
                                     </label>
                                     <br>
@@ -6041,7 +6087,7 @@ class YouTubePrefsPro
                     <section class="pattern" id="jumphowto">
                         <h2>Manual Embedding</h2>
                         <p>
-                            <strong>We recommend using the wizard in your editor to embed.</strong> However, if you choose to manually embed code, follow the instructions below.
+                            <strong>We strongly recommend using the wizard in your editor to embed.</strong> However, if you choose to manually embed code, follow some legacy instructions below.
                         </p>
 
                         <h3>
@@ -6118,6 +6164,23 @@ class YouTubePrefsPro
                         <p>
                             <?php _e('On this page, we describe performance options to help optimize page speed times of your pages containing YouTube embeds.', 'youtube-embed-plus-pro'); ?>
                         </p>
+                        <div class="p">
+                            <input name="<?php echo self::$opt_facade_mode; ?>" id="<?php echo self::$opt_facade_mode; ?>" <?php checked($all[self::$opt_facade_mode], 1); ?> type="checkbox" class="checkbox">
+                            <label for="<?php echo self::$opt_facade_mode ?>">
+                                <b class="chktitle"><?php _e('Facade Mode:', 'youtube-embed-plus-pro'); ?> <sup class="orange">new</sup></b> 
+                                <?php _e('This improves performance by loading a lighter version of the player, until it is clicked. Then the real player loads (note: for live streams, the real player is always loaded).  We have tested this feature in multiple cases and found it to successfully improve your Lighthouse performance score by addressing  the following recommendation: "Some third-party resources can be lazy loaded with a facade."', 'youtube-embed-plus-pro'); ?>
+                            </label>                       
+                            <div class="p box_facade_mode">
+                                <input name="<?php echo self::$opt_facade_autoplay; ?>" id="<?php echo self::$opt_facade_autoplay; ?>" type="checkbox" class="checkbox" <?php checked($all[self::$opt_facade_autoplay], 1); ?>>
+                                <label for="<?php echo self::$opt_facade_autoplay ?>">
+                                    <b class="chktitle"><?php _e('Autoplay On Facade Click:', 'youtube-embed-plus-pro'); ?></b>
+                                    <span>
+                                        <?php _e('After clicking once on the facade (aka light thumbnail), it is replaced with the real player. Check this option to have the real player play immediately, otherwise it will require an additional click. Note that checking this option will use YouTube\'s autoplay feature, which will not contribute toward play counts.  If you\'re embedding videos from someone else\'s channel, we recommend checking this.  If you\'re embedding videos that are from your channel, then you should self-evaluate the tradeoff involving play counts and additional clicking.', 'youtube-embed-plus-pro'); ?>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        
                         <div class="p">
                             <input name="<?php echo self::$opt_defer_js; ?>" id="<?php echo self::$opt_defer_js; ?>" <?php checked($all[self::$opt_defer_js], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_defer_js ?>">
@@ -6764,6 +6827,8 @@ class YouTubePrefsPro
         $new_options[self::$opt_color] = self::postchecked(self::$opt_color) ? 'red' : 'white';
         $new_options[self::$opt_nocookie] = self::postchecked(self::$opt_nocookie) ? 1 : 0;
         $new_options[self::$opt_gb_compat] = self::postchecked(self::$opt_gb_compat) ? 1 : 0;
+        $new_options[self::$opt_facade_mode] = self::postchecked(self::$opt_facade_mode) ? 1 : 0;
+        $new_options[self::$opt_facade_autoplay] = self::postchecked(self::$opt_facade_autoplay) ? 1 : 0;
         $new_options[self::$opt_gdpr_consent] = self::postchecked(self::$opt_gdpr_consent) ? 1 : 0;
         $new_options[self::$opt_playlistorder] = self::postchecked(self::$opt_playlistorder) ? 1 : 0;
         $new_options[self::$opt_acctitle] = self::postchecked(self::$opt_acctitle) ? 1 : 0;
@@ -7175,6 +7240,8 @@ class YouTubePrefsPro
             {
                 $input[self::$opt_ytapi_load] = 'light';
             }
+            $input[self::$opt_facade_mode] = intval($input[self::$opt_facade_mode]);
+            $input[self::$opt_facade_autoplay] = intval($input[self::$opt_facade_autoplay]);
             $input[self::$opt_gdpr_consent] = intval($input[self::$opt_gdpr_consent]);
             $input[self::$opt_gdpr_consent_message] = wp_kses_post(stripslashes($input[self::$opt_gdpr_consent_message]));
             $input[self::$opt_gdpr_consent_button] = wp_kses_post(stripslashes($input[self::$opt_gdpr_consent_button]));
@@ -7206,6 +7273,8 @@ class YouTubePrefsPro
             self::$opt_not_live_content => '',
             self::$opt_not_live_on => 0,
             self::$opt_ytapi_load => 'light',
+            self::$opt_facade_mode => 0,
+            self::$opt_facade_autoplay => 1,
             self::$opt_gdpr_consent => 0,
             self::$opt_gdpr_consent_message => self::$dft_gdpr_consent_message,
             self::$opt_gdpr_consent_button => 'Accept YouTube Content',
@@ -7417,6 +7486,22 @@ class YouTubePrefsPro
                                 <input type="radio" name="<?php echo self::$opt_rel; ?>" id="<?php echo self::$opt_rel; ?>1" value="1" <?php checked($all[self::$opt_rel], 1); ?>>
                                 <label for="<?php echo self::$opt_rel; ?>1">Show related videos</label> &nbsp;&nbsp;
                             </div>
+                            <div class="ytprefs-ob-setting yob-single yob-gallery yob-standalone">
+                                <input value="1" name="<?php echo self::$opt_facade_mode; ?>" id="<?php echo self::$opt_facade_mode; ?>" <?php checked($all[self::$opt_facade_mode], 1); ?> type="checkbox" class="checkbox">
+                                <label for="<?php echo self::$opt_facade_mode ?>">
+                                    <b class="chktitle"><?php _e('Facade Mode:', 'youtube-embed-plus-pro'); ?> <sup class="orange">new</sup></b> 
+                                    <?php _e('This improves performance by loading a lighter version of the player, until it is clicked. Then the real player loads (note: for live streams, the real player is always loaded).  We have tested this feature in multiple cases and found it to successfully improve your Lighthouse performance score by addressing  the following recommendation: "Some third-party resources can be lazy loaded with a facade."', 'youtube-embed-plus-pro'); ?>
+                                </label>                       
+                                <div class="p box_facade_mode">
+                                    <input value="1" name="<?php echo self::$opt_facade_autoplay; ?>" id="<?php echo self::$opt_facade_autoplay; ?>" type="checkbox" class="checkbox" <?php checked($all[self::$opt_facade_autoplay], 1); ?>>
+                                    <label for="<?php echo self::$opt_facade_autoplay ?>">
+                                        <b class="chktitle"><?php _e('Autoplay On Facade Click:', 'youtube-embed-plus-pro'); ?></b>
+                                        <span>
+                                            <?php _e('After clicking once on the facade (aka light thumbnail), it is replaced with the real player. Check this option to have the real player play immediately, otherwise it will require an additional click. Note that checking this option will use YouTube\'s autoplay feature, which will not contribute toward play counts.  If you\'re embedding videos from someone else\'s channel, we recommend checking this.  If you\'re embedding videos that are from your channel, then you should self-evaluate the tradeoff involving play counts and additional clicking.', 'youtube-embed-plus-pro'); ?>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
                             <div class="ytprefs-ob-setting yob-single yob-gallery yob-standalone yob-live">
                                 <input value="1" name="<?php echo self::$opt_modestbranding; ?>" id="<?php echo self::$opt_modestbranding; ?>" <?php checked($all[self::$opt_modestbranding], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_modestbranding; ?>"><?php _e('<b class="chktitle">Modest Branding:</b> No YouTube logo will be shown on the control bar.  Instead, as required by YouTube, the logo will only show as a watermark when the video is paused/stopped.') ?></label>
@@ -7526,7 +7611,7 @@ class YouTubePrefsPro
                                 <label for="<?php echo self::$opt_nocookie; ?>">
                                     <b class="chktitle">No Cookies:</b> Prevent YouTube from leaving tracking cookies on your visitors browsers unless they actual play the videos. This is coded to apply this behavior on links in your past post as well.
                                     <span id="boxnocookie">
-                                        Checking this option may break some features such as galleries and playlists. Furthermore, videos on mobile devices may have problems if you leave this checked.
+                                        Checking this option may introduce issues to features that depend YouTube's API, such as galleries and playlists. Furthermore, videos on mobile devices may have problems if you leave this checked. We suggest testing this out to make sure you are pleased with the results.
                                     </span>
                                 </label>
                             </div>
@@ -7780,7 +7865,6 @@ class YouTubePrefsPro
         {
             wp_enqueue_style('__ytprefs_admin__alertify_css', plugins_url('styles/alertify/alertify' . self::$min . '.css', __FILE__), array(), self::$version);
             wp_enqueue_style('__ytprefs_admin__alertify_theme_css', plugins_url('styles/alertify/themes/default' . self::$min . '.css', __FILE__), array(), self::$version);
-            wp_enqueue_style('wp-color-picker');
             wp_enqueue_style('__ytprefs_admin__vi_css', plugins_url('styles/ytvi-admin' . self::$min . '.css', __FILE__), array(), self::$version);
             wp_enqueue_script('__ytprefs_admin__alertify_js', plugins_url('scripts/alertify/alertify' . self::$min . '.js', __FILE__), array(), self::$version);
             wp_enqueue_script('__ytprefs_admin__alertify_defaults_js', plugins_url('scripts/alertify/alertify-defaults' . self::$min . '.js', __FILE__), array(), self::$version);
@@ -7790,7 +7874,7 @@ class YouTubePrefsPro
         }
 
         wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus-pro/scripts/embedplus_mce' . self::$min . '.css', array(), self::$version);
-        wp_enqueue_script('__ytprefs_admin__', plugins_url('scripts/ytprefs-admin' . self::$min . '.js', __FILE__), array('jquery', 'jquery-effects-fade', 'wp-color-picker'), self::$version, false);
+        wp_enqueue_script('__ytprefs_admin__', plugins_url('scripts/ytprefs-admin' . self::$min . '.js', __FILE__), array('jquery', 'jquery-effects-fade'), self::$version, false);
         $admin_script_vars = array(
             'wpajaxurl' => admin_url('admin-ajax.php'),
             'wizhref' => admin_url('admin.php?page=youtube-ep-wizard') . '&random=' . rand(1, 1000) . '&TB_iframe=true&width=950&height=800',

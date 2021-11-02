@@ -1,11 +1,11 @@
-/*! Scroller 2.0.4
+/*! Scroller 2.0.5
  * ©2011-2021 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     Scroller
  * @description Virtual rendering for DataTables
- * @version     2.0.4
+ * @version     2.0.5
  * @file        dataTables.scroller.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -216,8 +216,8 @@ var Scroller = function ( dt, opts ) {
 			 *  @default  0
 			 */
 			viewport: null,
-			labelFactor: 1,
 			labelHeight: 0,
+			xbar: 0
 		},
 
 		topRowFloat: 0,
@@ -296,9 +296,9 @@ $.extend( Scroller.prototype, {
 		}
 
 		var label = this.dom.label.outerHeight();
-		var xbar = this.dom.scroller.offsetHeight - this.dom.scroller.clientHeight;
+		
+		heights.xbar = this.dom.scroller.offsetHeight - this.dom.scroller.clientHeight;
 		heights.labelHeight = label;
-		heights.labelFactor = (heights.viewport-label - xbar) / heights.scroll;
 
 		if ( redraw === undefined || redraw )
 		{
@@ -1071,9 +1071,11 @@ $.extend( Scroller.prototype, {
 			this.s.labelVisible = true;
 		}
 		if (this.s.labelVisible) {
+			var labelFactor = (heights.viewport-heights.labelHeight - heights.xbar) / heights.scroll;
+
 			this.dom.label
 				.html( this.s.dt.fnFormatNumber( parseInt( this.s.topRowFloat, 10 )+1 ) )
-				.css( 'top', iScrollTop + (iScrollTop * heights.labelFactor) )
+				.css( 'top', iScrollTop + (iScrollTop * labelFactor) )
 				.css( 'display', 'block' );
 		}
 	},
@@ -1196,7 +1198,7 @@ Scroller.oDefaults = Scroller.defaults;
  *  @name      Scroller.version
  *  @static
  */
-Scroller.version = "2.0.4";
+Scroller.version = "2.0.5";
 
 
 

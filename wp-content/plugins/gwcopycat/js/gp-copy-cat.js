@@ -85,51 +85,15 @@
 				}
 			);
 
-			// Trigger change on .gwcopy inputs after being shown by conditional logic
-			var skipPostConditionalLogicCopy = false;
-
-			$( document ).on('gform_post_conditional_logic', function (e, formId, fields, isInit) {
-				// `fields` could be undefined here if discount and subtotal fields are present in the form. See #21 and HS#23431
-				if (isInit || ! fields || skipPostConditionalLogicCopy) {
+			gform.addAction('gform_post_conditional_logic_field_action', function (formId, action, targetId, defaultValues, isInit) {
+				if ( action === 'hide' ) {
 					return;
 				}
-
-				/**
-				 * Calling copyValues inside gform_post_conditional_logic runs a high risk of recursion due to things
-				 * like GF calculations.
-				 *
-				 * This is a simple flag to prevent recursion.
-				 */
-				skipPostConditionalLogicCopy = true;
-
-				for (var i = 0, max = fields.length; i < max; i++) {
-					// Do not run copyValues/clearValues if the field being displayed has a GPCC class and is not
-					// part of the source/target (i.e. manual copy checkbox that copies two other fields).
-					// This fixes an issue where a copy would trigger simply if a manual checkbox is part of
-					// a group of fields being displayed by conditional logic. See #22 HS#23550
-					var skipCopying   = false;
-					var currentField  = fields[i];
-					var fieldSettings = self.fields[currentField];
-					if (fieldSettings) {
-						for (var j = 0, max_j = fieldSettings.length; j < max_j; j++) {
-							var fieldSetting = fieldSettings[j];
-							if (parseInt( fieldSetting.source ) !== currentField && parseInt( fieldSetting.target ) !== currentField) {
-								skipCopying = true;
-								break;
-							}
-						}
-					}
-					if (skipCopying) {
-						continue;
-					}
-					var $inputs = $( "#field_{0}_{1}.gwcopy".format( formId, fields[i] ) ).find( 'input, textarea, select' );
-					if ( ! $inputs.length ) {
-						var sourceFieldId = self.getSourceFieldIdByTarget( fields[i] );
-						if ( sourceFieldId ) {
-							$inputs = $( "#field_{0}_{1}.gwcopy".format( self.formId, sourceFieldId ) ).find( 'input, textarea, select' );
-						}
-					}
-					if ( $inputs.length && ! gformIsHidden( $inputs ) ) {
+				var fieldId       = gf_get_input_id_by_html_id( targetId );
+				var fieldSettings = self.getFieldSettings( fieldId );
+				if ( fieldSettings ) {
+					for ( var i = 0; i < fieldSettings.length; i++ ) {
+						var $inputs = $( "#field_{0}_{1}.gfield".format( formId, fieldSettings[i].source ) ).find( 'input, textarea, select' );
 						$inputs.each(function () {
 							if ( $( this ).is( ':checkbox' ) ) {
 								// Make sure we clear checkboxes before copying them
@@ -139,28 +103,34 @@
 						});
 					}
 				}
-
-				/**
-				 * During testing, I found that synchronously setting this back to false did not work as intended as
-				 * jQuery was also requesting animation frames.
-				 *
-				 * See HS #23725
-				 *
-				 * @todo Revisit usage of requestAnimationFrame() and see if we can come up with something more robust.
-				 */
-				requestAnimationFrame(function () {
-					skipPostConditionalLogicCopy = false;
-				});
 			});
 
 			$formWrapper.data( 'GPCopyCat', self );
 
 		};
 
+		/**
+		 * Attempt to get the field settings from our dictionary.
+		 *
+		 * This method starts by looking for the field settings using a standard lookup in the dictionary.
+		 *
+		 * If that fails, it attempts to find settings by looking up an entry by assuming that the fieldId is a target
+		 * of a conditional logic operation and with a source field entry in the dictionary (i.e. copy-x-to-y is defined on the source).
+		 *
+		 * Finally, as a last resort (in cases where a manual copy control is neither the source nor the target)
+		 * it attempts to return all matching settings where the fieldId is listed as the target.
+		 *
+		 * @param fieldId
+		 * @returns {*|array}
+		 */
+		self.getFieldSettings = function ( fieldId ) {
+			return self.fields[ fieldId ] || self.fields[ self.getSourceFieldIdByTarget( fieldId ) ] || self.getSourceFieldIdByTarget( fieldId, true );
+		};
+
 		self.copyValues = function (elem, isOverwrite, forceEmptyCopy) {
 
-			var fieldId = gf_get_input_id_by_html_id( $( elem ).parents( '.gwcopy' ).attr( 'id' ) ),
-				fields  = self.fields[fieldId];
+			var fieldId = gf_get_input_id_by_html_id( $( elem ).parents( '.gfield' ).attr( 'id' ) ),
+				fields  = self.getFieldSettings( fieldId );
 
 			isOverwrite    = typeof isOverwrite !== 'undefined' ? isOverwrite : self.overwrite;
 			forceEmptyCopy = typeof forceEmptyCopy !== 'undefined' ? forceEmptyCopy : isOverwrite;
@@ -185,11 +155,6 @@
 						targetInputId: targetFieldId
 						}
 					);
-
-				// Skip conditionally hidden fields but do not target <input type="hidden" />
-				if ( gformIsHidden( targetGroup ) && ! targetGroup.is( '[type="hidden"]' ) ) {
-					continue;
-				}
 
 				/**
 				 * Handle copying fields manually
@@ -390,8 +355,8 @@
 		 */
 		self.clearValues = function (elem) {
 
-			var fieldId = $( elem ).parents( '.gwcopy' ).attr( 'id' ).replace( 'field_' + self.formId + '_', '' );
-			var fields  = self.fields[fieldId];
+			var fieldId = $( elem ).parents( '.gfield' ).attr( 'id' ).replace( 'field_' + self.formId + '_', '' );
+			var fields  = self.getFieldSettings( fieldId );
 
 			for (var i = 0; i < fields.length; i++) {
 
@@ -626,7 +591,14 @@
 			return isListField;
 		};
 
-		self.getSourceFieldIdByTarget = function( targetFieldId ) {
+		/**
+		 * Returns source fieldId by targetFieldId
+		 *
+		 * @param targetFieldId
+		 * @param returnSettings   If true, return the settings array instead of the fieldId
+		 * @returns {boolean|*}
+		 */
+		self.getSourceFieldIdByTarget = function( targetFieldId, returnSettings ) {
 			for ( var i in self.fields ) {
 				if ( ! self.fields.hasOwnProperty( i ) ) {
 					continue;
@@ -634,8 +606,8 @@
 				var fieldSettings = self.fields[ i ];
 				for ( var j = 0; j < fieldSettings.length; j++ ) {
 					var setting = fieldSettings[ j ];
-					if ( parseInt( setting.target ) === targetFieldId ) {
-						return setting.source;
+					if ( parseInt( setting.target ) === parseInt( targetFieldId ) ) {
+						return returnSettings ? fieldSettings : setting.source;
 					}
 				}
 			}

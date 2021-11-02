@@ -3,8 +3,8 @@
  * Copyright © 2021 All Rights Reserved. 
  *
  * @author Averta [www.averta.net]
- * @version 2.85.10
- * @date Aug 2021
+ * @version 2.85.12
+ * @date Sep 2021
  */
 
 
@@ -2657,8 +2657,8 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 	};
 
 	MasterSlider.author  		= 'Averta Ltd. (www.averta.net)';
-	MasterSlider.version 		= '2.85.10';
-	MasterSlider.releaseDate 	= 'Aug 2021';
+	MasterSlider.version 		= '2.85.12';
+	MasterSlider.releaseDate 	= 'Sep 2021';
 
 	// Master Slider plugins.
 	MasterSlider._plugins = []
@@ -4074,17 +4074,17 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 
 			this.hide(true);
 
-			this.slider.$controlsCont.on('mouseenter', this._onMouseEnter(this))
-									 .on('mouseleave', this._onMouseLeave(this))
-									 .on('mousedown', this._onMouseDown(this));
+			this.slider.$controlsCont.on('mouseenter', this._onMouseEnter.bind(this))
+									 .on('mouseleave', this._onMouseLeave.bind(this))
+									 .on('mousedown', this._onMouseDown.bind(this));
 
 			if ( this.$element ) {
-				this.$element.on('mouseenter', this._onMouseEnter(this))
-							 .on('mouseleave', this._onMouseLeave(this))
-							 .on('mousedown', this._onMouseDown(this));
+				this.$element.on('mouseenter', this._onMouseEnter.bind(this))
+							 .on('mouseleave', this._onMouseLeave.bind(this))
+							 .on('mousedown', this._onMouseDown.bind(this));
 			}
 
-			$(document).on('mouseup', this._onMouseUp(this));
+			$(document).on('mouseup', this._onMouseUp.bind(this));
 		}
 
 		if ( this.options.align ) {
@@ -4408,7 +4408,7 @@ MSViewEvents.CHANGE_END	     	= 'slideChangeEnd';
 					.addClass('ms-thumb-frame')
 					.append(thumb_ele)
 					.append($('<div class="ms-thumb-ol"></div>'))
-					.bind(this.options.hover? 'hover' : 'click' , function(){that.changeSlide(thumb_frame);});
+					.on(this.options.hover? 'hover' : 'click' , function(){that.changeSlide(thumb_frame);});
 
 		if( this.options.align ){
 			thumb_frame.width(this.options.width - (this.options.dir === 'v' && this.options.type === 'tabs' ? 12 : 0))  // less arrow size 12px

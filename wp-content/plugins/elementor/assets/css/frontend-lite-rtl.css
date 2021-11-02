@@ -1,4 +1,4 @@
-/*! elementor - v3.4.4 - 13-09-2021 */
+/*! elementor - v3.4.7 - 31-10-2021 */
 .dialog-widget-content {
   background-color: #fff;
   position: absolute;
@@ -428,6 +428,10 @@
 
 .elementor-widget-wrap > .elementor-element.elementor-absolute {
   position: absolute; }
+  .elementor-column > .elementor-widget-wrap > .elementor-element.elementor-absolute {
+    padding: inherit;
+    -webkit-box-sizing: content-box;
+            box-sizing: content-box; }
 
 .elementor-widget-wrap > .elementor-element.elementor-fixed {
   position: fixed; }

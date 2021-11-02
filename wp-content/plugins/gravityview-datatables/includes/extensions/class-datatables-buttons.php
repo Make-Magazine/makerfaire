@@ -156,8 +156,6 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 		 */
 		wp_enqueue_style( 'gv-dt_buttons_style', apply_filters( 'gravityview_dt_buttons_style_src', $path.'css/buttons.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
 
-
-		wp_localize_script( 'gv-datatables-cfg', 'gvDTButtons', array( 'swf' => plugins_url( 'assets/datatables-buttons/swf/flashExport.swf', GV_DT_FILE ) ) );
 	}
 
 
@@ -183,6 +181,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 
 			if( !empty( $buttons ) ) {
 				foreach( $buttons as $button ) {
+
 					$button_config = array(
 						'extend' => $button,
 						'text' => esc_html( $button_labels[ $button ] ),
