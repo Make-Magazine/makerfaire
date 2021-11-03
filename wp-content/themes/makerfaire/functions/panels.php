@@ -52,7 +52,7 @@ function dispLayout($row_layout) {
             case 'square_image_carousel': // IMAGE CAROUSEL (SQUARE)
                 $return = getImgCarouselSquare();
                 break;
-            case 'what_is_maker_faire': // WHAT IS MAKER FAIRE PANEL    
+            case 'what_is_maker_faire': // WHAT IS MAKER FAIRE PANEL
                 $return = getWhatisMF();
                 break;
             case 'newsletter_panel':  // NEWSLETTER PANEL
@@ -89,6 +89,9 @@ function dispLayout($row_layout) {
                 break;
             case 'cfm_list': // return display of the list of call for maker forms
                 $return = getCFMList();
+                break;
+			case 'shortcode': // just do the shortcode
+                $return = getShortie();
                 break;
         }
     }
@@ -208,11 +211,11 @@ function getFeatMkPanel($row_layout) {
 								 }
 
 								 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
-								 
+
 								 if( 561 > jQuery(window).width() ) {
 								   jQuery(jQuery(this).find(".desc-body")).css("mask-image", "none");
 									jQuery(jQuery(this).find(".desc-body")).css("height", "auto");
-								 } else { 
+								 } else {
 								 	jQuery(jQuery(this).find(".desc-body")).css("height", availableHeight);
 								 }
 							 });
@@ -265,7 +268,7 @@ function getFeatEvPanel($row_layout) {
         $formid = ($acf_blocks ? get_field('enter_formid_here') : get_sub_field('enter_formid_here'));
         $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
                        lead_detail.value as entry_status, DAYNAME(schedule.start_dt) as day,location.location,
-                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '304.3' 
+                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '304.3'
                            AND value like 'Featured Maker')  as flag,
                        (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '22')  as photo,
                        (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '151') as name,
@@ -351,7 +354,7 @@ function getFeatEvPanel($row_layout) {
                 '</div>';
     }
 
-    $return .= '</div>'; //end div.row    
+    $return .= '</div>'; //end div.row
 
     $all_events_button = ($acf_blocks ? get_field('all_events_button') : get_sub_field('all_events_button'));
     if ($all_events_button) {
@@ -374,7 +377,7 @@ function getFeatEvPanel($row_layout) {
 function get3ColLayout() {
     $return = '';
 
-    $return .= '<section class="content-panel three-column">                
+    $return .= '<section class="content-panel three-column">
                 <div class="container">';
 
     //gutenburg blocks use get_field, ACF panels use get_sub_field
@@ -546,7 +549,7 @@ function get1ColWYSIWYG() {
     }
 
     $return .= '  </div>
-          
+
         </section>';
     return $return;
 }
@@ -804,8 +807,8 @@ function getCTApanel() {
     $return .= '   <div class="container">
                      <div class="row text-center">
                         <div class="col-xs-12">
-                           <h3>                              
-                              <span>' . $cta_title . '</span>                              
+                           <h3>
+                              <span>' . $cta_title . '</span>
                            </h3>
                         </div>
                      </div>
@@ -1072,7 +1075,7 @@ function getSliderPanel() {
     }
     $return .= '   </div>
 	            </section>
-					
+
 					<script type="text/javascript">
 					   jQuery(document).ready(function() {
 					   	// slideshow carousel
@@ -1090,7 +1093,7 @@ function getSliderPanel() {
 								 0: {
 									items: 1
 								 },
-								 600: { 
+								 600: {
 								   items: ' . $tabletSlides . '
 								 },
 								 1000: {
@@ -1297,14 +1300,14 @@ function getSponsorPanel() {
    <div class="sponsor-slide">
       <div class="container">
          <div class="row">
-            <div class="col-xs-12 text-center padbottom">               
+            <div class="col-xs-12 text-center padbottom">
                <h2 class="sponsor-slide-title">' . $title . '</h2>
             </div>
          </div>
          <div class="row">
             <div class="col-sm-12">
                <h4 class="sponsor-slide-title">' . ($year ? $year . ' ' : '') . 'Maker Faire Sponsors: <br /> <span class="sponsor-slide-cat"></span></h4>
-            </div>            
+            </div>
          </div>
          <div class="row">
             <div class="col-xs-12">
@@ -1608,4 +1611,9 @@ function getCFMList() {
     }
     $output .= "</ul>";
     echo($output);
+}
+
+function getShortie() {
+    $shortcode = get_sub_field('shortcode');
+	echo do_shortcode($shortcode);
 }

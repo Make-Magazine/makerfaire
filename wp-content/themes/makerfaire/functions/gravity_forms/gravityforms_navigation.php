@@ -168,25 +168,26 @@ function toolbar_link_to_mypage($wp_admin_bar) {
         $locations = array('mf-admin-bayarea-register-menu', 'mf-admin-newyork-register-menu', 'mf-admin-chicago-register-menu');
         foreach ($locations as $location_id) {
             //is this a navigation menu?
-            if (isset($menu_locations[$location_id])) {            	
-                foreach ($menus as $menu) {                	
+            if (isset($menu_locations[$location_id])) {
+                foreach ($menus as $menu) {
                     // If the ID of this menu is the ID associated with the location we're searching for
                     if ($menu->term_id == $menu_locations[$location_id]) {
                         // This is the correct menu
-                        $menu_items = wp_get_nav_menu_items($menu);                        
+                        $menu_items = wp_get_nav_menu_items($menu);
                         //build faire specific admin
                         foreach ((array) $menu_items as $key => $menu_item) {
-                        	
+
                             if ($menu_item->menu_item_parent == 0) {
                                 // each MF Admin menu has a parent item set that will tell us which faire to add these menu item's too
                                 $faire = $menu_item->attr_title;
                             } else {
+								$faire = $menu_item->menu_item_parent;
                                 $args = array(
                                     'id' => $menu_item->object_id,
                                     'title' => $menu_item->title,
                                     'href' => $menu_item->url,
                                     'meta' => array('class' => 'my-toolbar-page'),
-                                    'parent' => 'mf_admin_parent_' . $faire                                		                                		
+                                    'parent' => 'mf_admin_parent_' . $faire
                                 );
 								//error_log(print_r($args,TRUE));
                                 $wp_admin_bar->add_node($args);
@@ -222,7 +223,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
             }
         }
     }
-    
+
     //add new navigation node
     $args = [
         'id' => 'wp-submit-asana-bug',
