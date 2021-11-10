@@ -107,7 +107,7 @@ class Upcoming_Faires extends Widget_Base {
 
 		$return = "<ul class='flex-list faire-list'>";
 
-		$rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM ".$wpdb->prefix."mf_global_faire WHERE event_type in(".$faire_type.")".$past_or_future." ORDER BY event_start_dt", OBJECT );
+		$rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM ".$wpdb->prefix."mf_global_faire WHERE event_type in(".$faire_type.") ".$past_or_future." ORDER BY event_start_dt", OBJECT );
 
 		$i = 0;
 		foreach($rows as $row){
