@@ -78,7 +78,7 @@ class Two_Column_Video extends Widget_Base {
             [
 		        'label' => __('Video Code', 'makerfaire'),
 		        'type' => Controls_Manager::TEXT,
-		        'description' => __('YouTube video code determines what video to show', 'makerfaire'),
+		        'description' => __('YouTube video code determines what video to show. e.g. sjDJ1ZwGpq4 is the code to enter for the video: https://youtu.be/sjDJ1ZwGpq4', 'makerfaire'),
 		        'label_block' => true,
             ]
         );

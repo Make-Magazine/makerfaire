@@ -169,17 +169,17 @@ class Featured_Makers_Dynamic extends Widget_Base {
 		foreach ($makerArr as $maker) {
 			// var_dump($maker);
 			// echo '<br />';
-			
+
 			$return .= '<div class="grid-item" style="background:url(' . $maker['image'] . ');background-size:cover;">';
 
 			if (!empty($maker['desc'])) {
 				$markup = !empty($maker['maker_url']) ? 'a' : 'div';
 				$href = !empty($maker['maker_url']) ? 'href="' . $maker['maker_url'] . '"' : '';
 				$return .= '<' . $markup . ' ' . $href . ' class="grid-item-desc">
-						 <div class="desc-body"><h4>' . $maker['name'] . '</h4>
-						 <p class="desc">' . $maker['desc'] . '</p></div>';
+								 <div class="desc-body"><h4>' . $maker['name'] . '</h4>
+								 <p class="desc">' . strip_tags($maker['desc']) . '</p></div>';
 				if (!empty($maker['maker_url'])) {
-					$return .= '  <p class="btn btn-blue read-more-link">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
+					$return .= ' <p class="btn btn-blue read-more-link">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
 				}
 				$return .= ' </' . $markup . '>';
 			}
