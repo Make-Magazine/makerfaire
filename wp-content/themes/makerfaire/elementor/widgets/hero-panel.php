@@ -68,14 +68,12 @@ class Hero_Panel extends Widget_Base {
         $this->add_control(
             'hero_image_repeater',
             [
-                'label' => __('Hero Images', ''),
+                'label' => __('Hero Images <br /><br /><i style="color:#a4afb7;font-size:11px;">Upload 1-10 images for use as the hero image on the page. The displayed image will be randomly selected from these.<br/>Optimal size is 1920 x 490</i>', 'makerfaire'),
                 'type' => Controls_Manager::REPEATER,
                 'fields' => $repeater->get_controls(),
                 'default' => [
                     [
-                        'image_title' => __('Image #1', 'makerfaire'),
-                        'list_content' => __('Upload 1-10 images for use as the hero image on the page. The displayed image will be randomly selected from these.<br/>Optimal size is 1920 x 490', 'makerfaire'),
-                    ],
+                        'image_title' => __('Image #1', 'makerfaire'),					],
                 ],
             ]
         );

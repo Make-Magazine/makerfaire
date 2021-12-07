@@ -170,7 +170,7 @@ class Featured_Makers_Dynamic extends Widget_Base {
 			// var_dump($maker);
 			// echo '<br />';
 
-			$return .= '<div class="grid-item" style="background:url(' . $maker['image'] . ');background-size:cover;">';
+			$return .= '<div class="grid-item" style="background:url(' . $maker['image'] . ');background-size:cover;background-position:center;">';
 
 			if (!empty($maker['desc'])) {
 				$markup = !empty($maker['maker_url']) ? 'a' : 'div';

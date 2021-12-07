@@ -124,7 +124,7 @@ class Featured_Items extends Widget_Base {
 				'min' => 3,
 				'max' => 12,
 				'step' => 3,
-				'default' => 3,
+				'default' => 6,
 			]
 		);
 
