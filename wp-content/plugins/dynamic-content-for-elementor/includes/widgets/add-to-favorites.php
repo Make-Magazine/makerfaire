@@ -13,7 +13,7 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -42,27 +42,21 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\DCE_Widge
     {
         $this->start_controls_section('section_content', ['label' => __('Settings', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_favorite_scope', ['label' => __('Scope', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['cookie' => ['title' => __('Cookie', 'dynamic-content-for-elementor'), 'icon' => 'icon-dyn-cookie'], 'user' => ['title' => __('User', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-user'], 'global' => ['title' => __('Global', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-globe']], 'toggle' => \false, 'default' => 'user']);
+        $this->add_control('dce_favorite_key', ['label' => __('Key', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'my_favorites', 'description' => __('The unique name that identifies the favorites in user meta, cookies or options. Pay attention when setting it because if you change it, you will lose the preferences saved until now', 'dynamic-content-for-elementor'), 'condition' => ['dce_favorite_sticky' => '']]);
+        $this->add_control('dce_favorite_remove', ['label' => __('Can remove', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('dce_favorite_counter', ['label' => __('Show counter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_favorite_scope' => ['user', 'cookie']]]);
-        $this->add_control('dce_favorite_counter_icon', ['label' => __('Icon Counter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'label_block' => \true, 'fa4compatibility' => 'icon', 'condition' => ['dce_favorite_scope' => ['user', 'cookie'], 'dce_favorite_counter!' => '']]);
+        $this->add_control('dce_favorite_counter_icon', ['label' => __('Icon Counter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'label_block' => \true, 'condition' => ['dce_favorite_scope' => ['user', 'cookie'], 'dce_favorite_counter!' => '']]);
         $this->add_control('dce_favorite_sticky', ['label' => __('Save as Sticky Posts', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_favorite_scope' => 'global']]);
-        $this->start_controls_tabs('sticky_tabs', ['condition' => ['dce_favorite_scope' => 'global', 'dce_favorite_sticky!' => '']]);
+        $this->start_controls_tabs('repe_tabs');
+        $this->start_controls_tab('add_repe_tab', ['label' => __('Add', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_favorite_title_add', ['label' => __('Title Add', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Add to my Favorites', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_favorite_icon_add', ['label' => __('Icon Add', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'label_block' => \true]);
+        $this->end_controls_tab();
+        $this->start_controls_tab('remove_repe_tab', ['label' => __('Remove', 'dynamic-content-for-elementor'), 'condition' => ['dce_favorite_remove!' => '']]);
+        $this->add_control('dce_favorite_title_remove', ['label' => __('Title Remove', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Remove from my Favorites', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_favorite_icon_remove', ['label' => __('Icon Remove', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'label_block' => \true]);
         $this->end_controls_tab();
         $this->end_controls_tabs();
-        $repeater_fields = new \Elementor\Repeater();
-        $repeater_fields->add_control('dce_favorite_key', ['label' => __('Key', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'dce_favorite_' . \mt_rand()]);
-        $repeater_fields->add_control('dce_favorite_title', ['label' => __('Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'separator' => 'after']);
-        $repeater_fields->start_controls_tabs('repe_tabs');
-        $repeater_fields->start_controls_tab('add_repe_tab', ['label' => __('Add', 'dynamic-content-for-elementor')]);
-        $repeater_fields->add_control('dce_favorite_title_add', ['label' => __('Title Add', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT]);
-        $repeater_fields->add_control('dce_favorite_icon_add', ['label' => __('Icon Add', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'label_block' => \true, 'fa4compatibility' => 'icon']);
-        $repeater_fields->end_controls_tab();
-        $repeater_fields->start_controls_tab('remove_repe_tab', ['label' => __('Remove', 'dynamic-content-for-elementor')]);
-        $repeater_fields->add_control('dce_favorite_title_remove', ['label' => __('Title Remove', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT]);
-        $repeater_fields->add_control('dce_favorite_icon_remove', ['label' => __('Icon Remove', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'label_block' => \true, 'fa4compatibility' => 'icon']);
-        $repeater_fields->end_controls_tab();
-        $repeater_fields->end_controls_tabs();
-        $this->add_control('dce_favorite_list', ['label' => __('Favorite lists', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'fields' => $repeater_fields->get_controls(), 'title_field' => '{{{ dce_favorite_title }}}', 'default' => ['dce_favorite_key' => 'my_favorites', 'dce_favorite_title' => __('My favorites', 'dynamic-content-for-elementor'), 'dce_favorite_title_add' => __('Add to my Favorites', 'dynamic-content-for-elementor'), 'dce_favorite_title_remove' => __('Remove from my Favorites', 'dynamic-content-for-elementor')], 'condition' => ['dce_favorite_sticky' => '']]);
-        $this->add_control('dce_favorite_remove', ['label' => __('Can remove', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('dce_favorite_cookie_days', ['label' => __('Cookie expiration', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 365, 'min' => 0, 'description' => __('Value is in days. Set 0 or empty for session duration.', 'dynamic-content-for-elementor'), 'condition' => ['dce_favorite_scope' => 'cookie']]);
         $this->add_control('dce_favorite_cookie_cache', ['label' => __('Cache', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_favorite_scope' => 'cookie']]);
         $this->end_controls_section();
@@ -77,7 +71,7 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\DCE_Widge
         $this->add_control('counter_padding', ['label' => __('Counter Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['max' => 50]], 'default' => ['size' => 5], 'selectors' => ['{{WRAPPER}} .elementor-button .elementor-align-counter-right' => 'padding-left: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .elementor-button .elementor-align-counter-left' => 'padding-right: {{SIZE}}{{UNIT}};'], 'condition' => ['dce_favorite_counter!' => '']]);
         $this->add_control('counter_indent', ['label' => __('Counter Spacing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['max' => 50]], 'default' => ['size' => 5], 'selectors' => ['{{WRAPPER}} .elementor-button .elementor-align-counter-right' => 'margin-left: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .elementor-button .elementor-align-counter-left' => 'margin-right: {{SIZE}}{{UNIT}};'], 'condition' => ['dce_favorite_counter!' => '']]);
         $this->end_controls_section();
-        $this->start_controls_section('section_visitors', ['label' => __('Visitors', 'dynamic-content-for-elementor'), 'condition' => ['dce_favorite_scope' => 'user']]);
+        $this->start_controls_section('section_visitors', ['label' => __('Visitors', 'dynamic-content-for-elementor'), 'condition' => ['dce_favorite_scope' => 'user', 'dce_favorite_key!' => 'dce_wishlist']]);
         $this->add_control('dce_favorite_visitor_hide', ['label' => __('Hide Button for non-logged-in users', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->add_control('dce_favorite_visitor_login', ['label' => __('Login URL', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'default' => ['url' => wp_login_url(), 'is_external' => \false, 'nofollow' => \false], 'condition' => ['dce_favorite_visitor_hide' => '']]);
         $this->end_controls_section();
@@ -134,18 +128,25 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\DCE_Widge
     protected function render()
     {
         $settings = $this->get_settings_for_display();
-        $settings['dce_favorite_ajax'] = 'yes';
         if (empty($settings)) {
+            return;
+        }
+        if (empty($settings['dce_favorite_key'])) {
+            Helper::notice('', __('Please set a key for your favorites', 'dynamic-content-for-elementor'));
             return;
         }
         $user_id = get_current_user_id();
         if (!$user_id && $settings['dce_favorite_scope'] == 'user' && $settings['dce_favorite_visitor_hide']) {
             return;
         }
-        $post_ID = get_the_ID();
+        $post_ID = apply_filters('wpml_object_id', get_the_ID(), get_post_type(), \true);
+        // Don't show Add to Wishlist if the post isn't a product
+        if ('dce_wishlist' === $settings['dce_favorite_key'] && 'product' !== get_post_type($post_ID)) {
+            return;
+        }
         $element_ID = $this->get_id();
-        $act_add = $act_remove = \false;
-        // add or remove
+        $act_add = \false;
+        $act_remove = \false;
         $act = $this->update_list($element_ID, $post_ID);
         if ($act) {
             if ($act == 'add') {
@@ -165,372 +166,357 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\DCE_Widge
         if (!empty($settings['size'])) {
             $this->add_render_attribute('button', 'class', 'elementor-size-' . $settings['size']);
         }
-        if (!empty($settings['dce_favorite_list']) && \count($settings['dce_favorite_list']) > 1) {
-            $this->add_render_attribute('wrapper', 'class', 'btn-group');
-            $this->add_render_attribute('wrapper', 'role', 'group');
-        }
+        $this->add_render_attribute('wrapper', 'class', 'btn-group');
+        $this->add_render_attribute('wrapper', 'role', 'group');
         $this->add_render_attribute(['content-wrapper' => ['class' => 'elementor-button-content-wrapper'], 'icon-align' => ['class' => ['elementor-button-icon', 'elementor-align-icon-' . $settings['icon_align']]], 'text' => ['class' => 'elementor-button-text']]);
         $this->add_inline_editing_attributes('text', 'none');
         if (!empty($settings['dce_favorite_counter'])) {
             $this->add_render_attribute(['counter-align' => ['class' => ['elementor-button-counter', 'elementor-align-counter-' . $settings['counter_align']]]]);
         }
         if ($settings['dce_favorite_scope'] == 'global' && $settings['dce_favorite_sticky']) {
-            $settings['dce_favorite_list'] = [['dce_favorite_title_add' => wp_kses_post($settings['dce_favorite_title_add']), 'dce_favorite_icon_add' => $settings['dce_favorite_icon_add'], 'dce_favorite_title_remove' => wp_kses_post($settings['dce_favorite_title_remove']), 'dce_favorite_icon_remove' => $settings['dce_favorite_icon_remove'], 'dce_favorite_key' => 'sticky_posts']];
+            $settings['dce_favorite_key'] = 'sticky_posts';
         }
-        if (!empty($settings['dce_favorite_list'])) {
-            ?>
-			<div <?php 
-            echo $this->get_render_attribute_string('wrapper');
-            ?>>
+        ?>
 
-				<?php 
-            if (\count($settings['dce_favorite_list']) > 1) {
-                ?>
+		<div <?php 
+        echo $this->get_render_attribute_string('wrapper');
+        ?>>
 
-					<?php 
-                _e('Coming soon', 'dynamic-content-for-elementor');
-                ?>
-
-					<?php 
+			<?php 
+        $list = ['dce_favorite_title_add' => wp_kses_post($settings['dce_favorite_title_add']), 'dce_favorite_icon_add' => $settings['dce_favorite_icon_add'], 'dce_favorite_title_remove' => wp_kses_post($settings['dce_favorite_title_remove']), 'dce_favorite_icon_remove' => $settings['dce_favorite_icon_remove'], 'dce_favorite_key' => sanitize_text_field($settings['dce_favorite_key'])];
+        $favorite_value = $this->get_favorite_value($list['dce_favorite_key'], $settings['dce_favorite_scope']);
+        $is_favorite = $act_add;
+        if ($favorite_value && \in_array($post_ID, $favorite_value) && !$act_remove && !$settings['dce_favorite_cookie_cache']) {
+            $is_favorite = \true;
+        }
+        $this->add_render_attribute('button', 'class', 'dce-add-to-favorite-button');
+        if ($is_favorite) {
+            $act = 'remove';
+            $act_alt = 'add';
+        } else {
+            $act = 'add';
+            $act_alt = 'remove';
+        }
+        $icon = 'dce_favorite_icon_' . $act;
+        $title = 'dce_favorite_title_' . $act;
+        $icon_alt = 'dce_favorite_icon_' . $act_alt;
+        $title_alt = 'dce_favorite_title_' . $act_alt;
+        $this->add_render_attribute('button', 'class', 'dce-add-to-favorite-' . $act);
+        if ($is_favorite && !$settings['dce_favorite_remove']) {
+            $this->add_render_attribute('button', 'class', 'elementor-button-disabled');
+            $this->add_render_attribute('button', 'class', 'dce-add-to-favorite-disabled');
+            $this->add_render_attribute('button', 'href', '#');
+            $this->add_render_attribute('button', 'onclick', 'return false;');
+        } else {
+            if (!$user_id && $settings['dce_favorite_scope'] == 'user' && !$settings['dce_favorite_visitor_hide']) {
+                $btn_url = $settings['dce_favorite_visitor_login']['url'];
+                if ($settings['dce_favorite_visitor_login']['nofollow']) {
+                    $this->add_render_attribute('button', 'rel', 'nofollow');
+                }
+                if ($settings['dce_favorite_visitor_login']['is_external']) {
+                    $this->add_render_attribute('button', 'target', '_blank');
+                }
             } else {
-                $list = \reset($settings['dce_favorite_list']);
-                $favorite_value = $this->get_favorite_value($list['dce_favorite_key'], $settings['dce_favorite_scope']);
-                $is_favorite = $act_add;
-                if ($favorite_value && \in_array($post_ID, $favorite_value) && !$act_remove && !$settings['dce_favorite_cookie_cache']) {
-                    $is_favorite = \true;
-                }
-                $this->add_render_attribute('button', 'class', 'dce-add-to-favorite-button');
-                if ($is_favorite) {
-                    $act = 'remove';
-                    $act_alt = 'add';
-                } else {
-                    $act = 'add';
-                    $act_alt = 'remove';
-                }
-                $icon = 'dce_favorite_icon_' . $act;
-                $title = 'dce_favorite_title_' . $act;
-                $icon_alt = 'dce_favorite_icon_' . $act_alt;
-                $title_alt = 'dce_favorite_title_' . $act_alt;
-                $this->add_render_attribute('button', 'class', 'dce-add-to-favorite-' . $act);
-                if ($is_favorite && !$settings['dce_favorite_remove']) {
-                    $this->add_render_attribute('button', 'class', 'elementor-button-disabled');
-                    $this->add_render_attribute('button', 'class', 'dce-add-to-favorite-disabled');
-                    $this->add_render_attribute('button', 'href', '#');
-                    $this->add_render_attribute('button', 'onclick', 'return false;');
-                } else {
-                    if (!$user_id && $settings['dce_favorite_scope'] == 'user' && !$settings['dce_favorite_visitor_hide']) {
-                        $btn_url = $settings['dce_favorite_visitor_login']['url'];
-                        if ($settings['dce_favorite_visitor_login']['nofollow']) {
-                            $this->add_render_attribute('button', 'rel', 'nofollow');
-                        }
-                        if ($settings['dce_favorite_visitor_login']['is_external']) {
-                            $this->add_render_attribute('button', 'target', '_blank');
-                        }
-                    } else {
-                        $nonce = wp_create_nonce('dce_add_to_favorites');
-                        $btn_url = admin_url('admin-ajax.php?action=dce_add_to_favorites');
-                        $btn_url = add_query_arg('nonce', $nonce, $btn_url);
-                        $btn_url = add_query_arg('eid', $element_ID, $btn_url);
-                        $btn_url = add_query_arg('dce_list', $list['dce_favorite_key'], $btn_url);
-                        $btn_url = add_query_arg('dce_post_id', $post_ID, $btn_url);
-                        $btn_url = add_query_arg('time', \time(), $btn_url);
-                    }
-                    $this->add_render_attribute('button', 'href', $btn_url);
-                    $this->add_render_attribute('button', 'class', 'elementor-button-link');
-                }
-                if ($settings['hover_animation']) {
-                    $this->add_render_attribute('button', 'class', 'elementor-animation-' . $settings['hover_animation']);
-                }
+                $nonce = wp_create_nonce('dce_add_to_favorites');
+                $btn_url = admin_url('admin-ajax.php?action=dce_add_to_favorites');
+                $btn_url = add_query_arg('nonce', $nonce, $btn_url);
+                $btn_url = add_query_arg('eid', $element_ID, $btn_url);
+                $btn_url = add_query_arg('dce_list', $list['dce_favorite_key'], $btn_url);
+                $btn_url = add_query_arg('dce_post_id', $post_ID, $btn_url);
+                $btn_url = add_query_arg('time', \time(), $btn_url);
+            }
+            $this->add_render_attribute('button', 'href', $btn_url);
+            $this->add_render_attribute('button', 'class', 'elementor-button-link');
+        }
+        if ($settings['hover_animation']) {
+            $this->add_render_attribute('button', 'class', 'elementor-animation-' . $settings['hover_animation']);
+        }
+        ?>
+			<a <?php 
+        echo $this->get_render_attribute_string('button');
+        ?> rel="nofollow">
+				<span <?php 
+        echo $this->get_render_attribute_string('content-wrapper');
+        ?>>
+					<?php 
+        if (!empty($settings['dce_favorite_counter'])) {
+            if ($settings['dce_favorite_scope'] == 'user') {
+                $counter = self::get_user_counter($list['dce_favorite_key']);
+            }
+            if ($settings['dce_favorite_scope'] == 'cookie') {
+                $counter = self::get_cookie_counter($list['dce_favorite_key'], $post_ID);
+            }
+            if ($counter || \Elementor\Plugin::$instance->editor->is_edit_mode()) {
                 ?>
-					<a <?php 
-                echo $this->get_render_attribute_string('button');
-                ?> rel="nofollow">
-						<span <?php 
-                echo $this->get_render_attribute_string('content-wrapper');
+							<span <?php 
+                echo $this->get_render_attribute_string('counter-align');
                 ?>>
 							<?php 
-                if (!empty($settings['dce_favorite_counter'])) {
-                    if ($settings['dce_favorite_scope'] == 'user') {
-                        $counter = self::get_user_counter($list['dce_favorite_key']);
-                    }
-                    if ($settings['dce_favorite_scope'] == 'cookie') {
-                        $counter = self::get_cookie_counter($list['dce_favorite_key'], $post_ID);
-                    }
-                    if ($counter || \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                        ?>
-									<span <?php 
-                        echo $this->get_render_attribute_string('counter-align');
-                        ?>>
-									<?php 
-                        if (!empty($settings['dce_favorite_counter_icon']['value'])) {
-                            Icons_Manager::render_icon($settings['dce_favorite_counter_icon'], ['aria-hidden' => 'true']);
-                        }
-                        ?> <?php 
-                        echo $counter;
-                        ?>
-									</span>
-									<?php 
-                    }
+                if (!empty($settings['dce_favorite_counter_icon']['value'])) {
+                    Icons_Manager::render_icon($settings['dce_favorite_counter_icon'], ['aria-hidden' => 'true']);
                 }
-                $icon_align = $this->get_render_attribute_string('icon-align');
-                $icon_align_alt = \str_replace('class="', 'class="dce-add-to-favorite-icon-' . $act_alt . ' ', $icon_align);
-                $icon_align = \str_replace('class="', 'class="dce-add-to-favorite-icon-' . $act . ' ', $icon_align);
-                $text = $this->get_render_attribute_string('text');
-                $text_alt = \str_replace('class="', 'class="dce-add-to-favorite-text-' . $act_alt . ' ', $text);
-                $text = \str_replace('class="', 'class="dce-add-to-favorite-text-' . $act . ' ', $text);
+                ?> <?php 
+                echo $counter;
                 ?>
-									<?php 
-                if (!empty($list[$icon]['value'])) {
-                    ?>
-								<span <?php 
-                    echo $icon_align;
-                    ?>>
-										<?php 
-                    Icons_Manager::render_icon($list[$icon], ['aria-hidden' => 'true']);
-                    ?>
-								</span>
-										<?php 
-                }
-                ?>
+							</span>
 							<?php 
-                if (!empty($list[$icon_alt]['value']) && $settings['dce_favorite_ajax']) {
-                    ?>
-								<span <?php 
-                    echo $icon_align_alt;
-                    ?>>
+            }
+        }
+        $icon_align = $this->get_render_attribute_string('icon-align');
+        $icon_align_alt = \str_replace('class="', 'class="dce-add-to-favorite-icon-' . $act_alt . ' ', $icon_align);
+        $icon_align = \str_replace('class="', 'class="dce-add-to-favorite-icon-' . $act . ' ', $icon_align);
+        $text = $this->get_render_attribute_string('text');
+        $text_alt = \str_replace('class="', 'class="dce-add-to-favorite-text-' . $act_alt . ' ', $text);
+        $text = \str_replace('class="', 'class="dce-add-to-favorite-text-' . $act . ' ', $text);
+        ?>
+							<?php 
+        if (!empty($list[$icon]['value'])) {
+            ?>
+						<span <?php 
+            echo $icon_align;
+            ?>>
 								<?php 
-                    Icons_Manager::render_icon($list[$icon_alt], ['aria-hidden' => 'true']);
-                    ?>
-								</span>
-								<?php 
-                }
-                ?>
-					<?php 
-                if (!empty($list[$title])) {
-                    ?>
-								<span <?php 
-                    echo $text;
-                    ?>><?php 
-                    echo $list[$title];
-                    ?></span>
-						<?php 
-                }
-                ?>
-					<?php 
-                if (!empty($list[$title_alt]) && $settings['dce_favorite_ajax']) {
-                    ?>
-								<span <?php 
-                    echo $text_alt;
-                    ?>><?php 
-                    echo $list[$title_alt];
-                    ?></span>
-						<?php 
-                }
-                ?>
+            Icons_Manager::render_icon($list[$icon], ['aria-hidden' => 'true']);
+            ?>
 						</span>
-					</a>
-					<?php 
-                if ($settings['hover_animation']) {
-                    ?>
-					<script>
-						jQuery(function () {
-							jQuery('.dce-favorite-btn-<?php 
-                    echo $element_ID;
-                    ?>-<?php 
-                    echo $post_ID;
-                    ?>')
-								.mouseover(
-									function() {
-										jQuery(this).addClass('elementor-animation-<?php 
-                    echo $settings['hover_animation'];
-                    ?>');
-									}
-								).mouseout(
-									function(){
-										jQuery(this).removeClass('elementor-animation-<?php 
-                    echo $settings['hover_animation'];
-                    ?>');
-									}
-								);
-						});
-					</script>
-						<?php 
-                }
-                $btn_selector = '".elementor-element-' . $this->get_id() . ' .dce-favorite-btn-' . $element_ID . '-' . $post_ID . '"';
-                if ($settings['dce_favorite_ajax']) {
-                    if ($settings['dce_favorite_scope'] != 'user' || $settings['dce_favorite_scope'] == 'user' && get_current_user_id()) {
-                        ?>
-						<script>
-							jQuery(function () {
-								jQuery(<?php 
-                        echo $btn_selector;
-                        ?>).on('click', function () {
-									if (jQuery(this).hasClass('dce-add-to-favorite-add')) {
-										jQuery(this).removeClass('dce-add-to-favorite-add').addClass('dce-add-to-favorite-remove');
-										jQuery(this).closest('.elementor-widget-dce-add-to-favorites').find('.dce-notice-favorite-add').show();
-										if (Boolean(<?php 
-                        echo !empty($settings['dce_favorite_counter']);
-                        ?>)) {
-											if (jQuery('span').hasClass('elementor-button-counter')) {
-												jQuery(this).find('span.elementor-button-counter').text(' ' + parseInt(parseInt(jQuery(this).find('span.elementor-button-counter').text()) + 1));
-												<?php 
-                        if (!empty($settings['dce_favorite_counter_icon']['value'])) {
-                            ?>
-													jQuery(this).find('span.elementor-button-counter').prepend('<?php 
-                            Icons_Manager::render_icon($settings['dce_favorite_counter_icon'], ['aria-hidden' => 'true']);
-                            ?>');
-													jQuery('span.elementor-button-counter').addClass('<?php 
-                            echo 'elementor-align-counter-' . $settings['counter_align'];
-                            ?>');
-													<?php 
-                        }
-                        ?>
-											} else {
-												jQuery(this).find('.elementor-button-content-wrapper')
-												.append('<span class="elementor-button-counter elementor-align-counter-<?php 
-                        echo $settings['counter_align'];
-                        ?>">');
-												jQuery(this).find('span.elementor-button-counter').text(' ' + 1);
-												<?php 
-                        if (!empty($settings['dce_favorite_counter_icon']['value'])) {
-                            ?>
-													jQuery(this).find('span.elementor-button-counter').prepend('<?php 
-                            Icons_Manager::render_icon($settings['dce_favorite_counter_icon'], ['aria-hidden' => 'true']);
-                            ?>');
-													jQuery('span.elementor-button-counter').addClass('<?php 
-                            echo 'elementor-align-counter-' . $settings['counter_align'];
-                            ?>');
-													<?php 
-                        }
-                        ?>
-											}
-										}
-									} else {
-										jQuery(this).addClass('dce-add-to-favorite-add').removeClass('dce-add-to-favorite-remove');
-										jQuery(this).closest('.elementor-widget-dce-add-to-favorites').find('.dce-notice-favorite-remove').show();
-										if (parseInt(jQuery(this).find('span.elementor-button-counter').text()) == 1){
-											jQuery(this).find('span.elementor-button-counter').remove();
-										} else {
-											jQuery(this).find('.elementor-button-counter').text(' ' + (parseInt(jQuery(this).find('.elementor-button-counter').text()) - 1));
-											<?php 
-                        if (!empty($settings['dce_favorite_counter_icon']['value'])) {
-                            ?>
-											   jQuery(this).find('span.elementor-button-counter').prepend('<?php 
-                            Icons_Manager::render_icon($settings['dce_favorite_counter_icon'], ['aria-hidden' => 'true']);
-                            ?>');
-												<?php 
-                        }
-                        ?>
-										}
-									}
-									if (jQuery(this).hasClass('dce-add-to-favorite-remove')) {
-										dce_act = 'add';
-									} else {
-										dce_act = 'remove';
-									}
-									jQuery(<?php 
-                        echo $btn_selector;
-                        ?>).css('pointer-events', 'none');
-									jQuery.get(jQuery(this).attr('href') + '&dce_act=' + dce_act + '&time=' + Date.now(), function (data) {
-										var my_btn = jQuery(<?php 
-                        echo $btn_selector;
-                        ?>);
-							<?php 
-                        if ($settings['dce_favorite_cookie_cache']) {
-                            ?>
-											var counter = parseInt(jQuery(data).find('.dce-favorite-btn-<?php 
-                            echo $this->get_id();
-                            ?>-<?php 
-                            echo $post_ID;
-                            ?> .elementor-button-counter').text());
-											if (counter) {
-												my_btn.find('.elementor-button-counter').text(counter);
-											}
 								<?php 
-                        }
-                        ?>
-
-										my_btn.css('pointer-events', 'auto');
-									});
-									return false;
-								});
-							});
-						</script>
-							<?php 
-                    }
-                }
-                if ($settings['dce_favorite_scope'] == 'cookie' && $settings['dce_favorite_cookie_cache']) {
-                    ?>
-						<script>
-							jQuery(function () {
-								var cookieValue = dce_getCookie("<?php 
-                    echo $list['dce_favorite_key'];
-                    ?>");
-								if (cookieValue) {
-									var postIds = cookieValue.split(',');
-									if (postIds.includes("<?php 
-                    echo $post_ID;
-                    ?>")) {
-										jQuery(<?php 
-                    echo $btn_selector;
-                    ?>).removeClass('dce-add-to-favorite-add').addClass('dce-add-to-favorite-remove');
-									}
-								}
-							});
-						</script>
+        }
+        ?>
+					<?php 
+        if (!empty($list[$icon_alt]['value'])) {
+            ?>
+						<span <?php 
+            echo $icon_align_alt;
+            ?>>
 						<?php 
-                }
+            Icons_Manager::render_icon($list[$icon_alt], ['aria-hidden' => 'true']);
+            ?>
+						</span>
+						<?php 
+        }
+        ?>
+			<?php 
+        if (!empty($list[$title])) {
+            ?>
+						<span <?php 
+            echo $text;
+            ?>><?php 
+            echo $list[$title];
+            ?></span>
+				<?php 
+        }
+        ?>
+			<?php 
+        if (!empty($list[$title_alt])) {
+            ?>
+						<span <?php 
+            echo $text_alt;
+            ?>><?php 
+            echo $list[$title_alt];
+            ?></span>
+				<?php 
+        }
+        ?>
+				</span>
+			</a>
+			<?php 
+        if ($settings['hover_animation']) {
+            ?>
+			<script>
+				jQuery(function () {
+					jQuery('.dce-favorite-btn-<?php 
+            echo $element_ID;
+            ?>-<?php 
+            echo $post_ID;
+            ?>')
+						.mouseover(
+							function() {
+								jQuery(this).addClass('elementor-animation-<?php 
+            echo $settings['hover_animation'];
+            ?>');
+							}
+						).mouseout(
+							function(){
+								jQuery(this).removeClass('elementor-animation-<?php 
+            echo $settings['hover_animation'];
+            ?>');
+							}
+						);
+				});
+			</script>
+				<?php 
+        }
+        $btn_selector = '".elementor-element-' . $this->get_id() . ' .dce-favorite-btn-' . $element_ID . '-' . $post_ID . '"';
+        if ($settings['dce_favorite_scope'] != 'user' || $settings['dce_favorite_scope'] == 'user' && get_current_user_id()) {
+            ?>
+			<script>
+				jQuery(function () {
+					jQuery(<?php 
+            echo $btn_selector;
+            ?>).on('click', function () {
+						if (jQuery(this).hasClass('dce-add-to-favorite-add')) {
+							jQuery(this).removeClass('dce-add-to-favorite-add').addClass('dce-add-to-favorite-remove');
+							jQuery(this).closest('.elementor-widget-dce-add-to-favorites').find('.dce-notice-favorite-add').show();
+							if (Boolean(<?php 
+            echo !empty($settings['dce_favorite_counter']);
+            ?>)) {
+								if (jQuery('span').hasClass('elementor-button-counter')) {
+									jQuery(this).find('span.elementor-button-counter').text(' ' + parseInt(parseInt(jQuery(this).find('span.elementor-button-counter').text()) + 1));
+									<?php 
+            if (!empty($settings['dce_favorite_counter_icon']['value'])) {
+                ?>
+										jQuery(this).find('span.elementor-button-counter').prepend('<?php 
+                Icons_Manager::render_icon($settings['dce_favorite_counter_icon'], ['aria-hidden' => 'true']);
+                ?>');
+										jQuery('span.elementor-button-counter').addClass('<?php 
+                echo 'elementor-align-counter-' . $settings['counter_align'];
+                ?>');
+										<?php 
             }
             ?>
+								} else {
+									jQuery(this).find('.elementor-button-content-wrapper')
+									.append('<span class="elementor-button-counter elementor-align-counter-<?php 
+            echo $settings['counter_align'];
+            ?>">');
+									jQuery(this).find('span.elementor-button-counter').text(' ' + 1);
+									<?php 
+            if (!empty($settings['dce_favorite_counter_icon']['value'])) {
+                ?>
+										jQuery(this).find('span.elementor-button-counter').prepend('<?php 
+                Icons_Manager::render_icon($settings['dce_favorite_counter_icon'], ['aria-hidden' => 'true']);
+                ?>');
+										jQuery('span.elementor-button-counter').addClass('<?php 
+                echo 'elementor-align-counter-' . $settings['counter_align'];
+                ?>');
+										<?php 
+            }
+            ?>
+								}
+							}
+						} else {
+							jQuery(this).addClass('dce-add-to-favorite-add').removeClass('dce-add-to-favorite-remove');
+							jQuery(this).closest('.elementor-widget-dce-add-to-favorites').find('.dce-notice-favorite-remove').show();
+							if (parseInt(jQuery(this).find('span.elementor-button-counter').text()) == 1){
+								jQuery(this).find('span.elementor-button-counter').remove();
+							} else {
+								jQuery(this).find('.elementor-button-counter').text(' ' + (parseInt(jQuery(this).find('.elementor-button-counter').text()) - 1));
+								<?php 
+            if (!empty($settings['dce_favorite_counter_icon']['value'])) {
+                ?>
+									jQuery(this).find('span.elementor-button-counter').prepend('<?php 
+                Icons_Manager::render_icon($settings['dce_favorite_counter_icon'], ['aria-hidden' => 'true']);
+                ?>');
+									<?php 
+            }
+            ?>
+							}
+						}
+						if (jQuery(this).hasClass('dce-add-to-favorite-remove')) {
+							dce_act = 'add';
+						} else {
+							dce_act = 'remove';
+						}
+						jQuery(<?php 
+            echo $btn_selector;
+            ?>).css('pointer-events', 'none');
+						jQuery.get(jQuery(this).attr('href') + '&dce_act=' + dce_act + '&time=' + Date.now(), function (data) {
+							var my_btn = jQuery(<?php 
+            echo $btn_selector;
+            ?>);
+				<?php 
+            if ($settings['dce_favorite_cookie_cache']) {
+                ?>
+								var counter = parseInt(jQuery(data).find('.dce-favorite-btn-<?php 
+                echo $this->get_id();
+                ?>-<?php 
+                echo $post_ID;
+                ?> .elementor-button-counter').text());
+								if (counter) {
+									my_btn.find('.elementor-button-counter').text(counter);
+								}
+					<?php 
+            }
+            ?>
+
+							my_btn.css('pointer-events', 'auto');
+						});
+						return false;
+					});
+				});
+			</script>
+				<?php 
+        }
+        if ($settings['dce_favorite_scope'] == 'cookie' && $settings['dce_favorite_cookie_cache']) {
+            ?>
+				<script>
+					jQuery(function () {
+						var cookieValue = dce_getCookie("<?php 
+            echo $list['dce_favorite_key'];
+            ?>");
+						if (cookieValue) {
+							var postIds = cookieValue.split(',');
+							if (postIds.includes("<?php 
+            echo $post_ID;
+            ?>")) {
+								jQuery(<?php 
+            echo $btn_selector;
+            ?>).removeClass('dce-add-to-favorite-add').addClass('dce-add-to-favorite-remove');
+							}
+						}
+					});
+				</script>
+				<?php 
+        }
+        ?>
+		</div>
+		<?php 
+        $modal_class = $settings['dce_favorite_msg_floating'] ? ' dce-modal' : '';
+        $modal_class = $settings['dce_favorite_msg_floating'] && !empty($settings['message_align']) ? $modal_class . ' modal-' . $settings['message_align'] : $modal_class;
+        $modal_class = $settings['dce_favorite_msg_floating'] && !empty($settings['message_valign']) ? $modal_class . ' modal-' . $settings['message_valign'] : $modal_class;
+        ?>
+		<?php 
+        if (($act_add || \Elementor\Plugin::$instance->editor->is_edit_mode()) && $settings['dce_favorite_msg_add_enable']) {
+            ?>
+			<div class="elementor-message elementor-message-success dce-notice dce-notice-favorite dce-notice-favorite-add elementor-alert elementor-alert-success<?php 
+            echo $modal_class;
+            ?>"<?php 
+            if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                ?> style="display:none;"<?php 
+            }
+            ?>>
+				<span class="elementor-alert-description-asd"><?php 
+            echo $settings['dce_favorite_msg_add'];
+            ?></span>
+				<button type="button" class="elementor-alert-dismiss" onClick="jQuery(this).parent().fadeOut();">
+					<span aria-hidden="true">&times;</span>
+					<span class="elementor-screen-only"><?php 
+            echo __('Dismiss alert', 'dynamic-content-for-elementor');
+            ?></span>
+				</button>
 			</div>
 			<?php 
-            $modal_class = $settings['dce_favorite_msg_floating'] ? ' dce-modal' : '';
-            $modal_class = $settings['dce_favorite_msg_floating'] && !empty($settings['message_align']) ? $modal_class . ' modal-' . $settings['message_align'] : $modal_class;
-            $modal_class = $settings['dce_favorite_msg_floating'] && !empty($settings['message_valign']) ? $modal_class . ' modal-' . $settings['message_valign'] : $modal_class;
+        }
+        if (($act_remove || \Elementor\Plugin::$instance->editor->is_edit_mode()) && $settings['dce_favorite_msg_remove_enable']) {
             ?>
+			<div class="elementor-message elementor-message-danger dce-notice dce-notice-favorite dce-notice-favorite-remove elementor-alert elementor-alert-warning<?php 
+            echo $modal_class;
+            ?>"<?php 
+            if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                ?> style="display:none;"<?php 
+            }
+            ?>>
+				<span class="elementor-alert-description-asd"><?php 
+            echo $settings['dce_favorite_msg_remove'];
+            ?></span>
+				<button type="button" class="elementor-alert-dismiss" onClick="jQuery(this).parent().fadeOut();">
+					<span aria-hidden="true">&times;</span>
+					<span class="elementor-screen-only"><?php 
+            echo __('Dismiss alert', 'dynamic-content-for-elementor');
+            ?></span>
+				</button>
+			</div>
 			<?php 
-            if (($settings['dce_favorite_ajax'] || $act_add || \Elementor\Plugin::$instance->editor->is_edit_mode()) && $settings['dce_favorite_msg_add_enable']) {
-                ?>
-				<div class="elementor-message elementor-message-success dce-notice dce-notice-favorite dce-notice-favorite-add elementor-alert elementor-alert-success<?php 
-                echo $modal_class;
-                ?>"<?php 
-                if ($settings['dce_favorite_ajax'] && !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                    ?> style="display:none;"<?php 
-                }
-                ?>>
-					<span class="elementor-alert-description-asd"><?php 
-                echo $settings['dce_favorite_msg_add'];
-                ?></span>
-					<button type="button" class="elementor-alert-dismiss" onClick="jQuery(this).parent().fadeOut();">
-						<span aria-hidden="true">&times;</span>
-						<span class="elementor-screen-only"><?php 
-                echo __('Dismiss alert', 'dynamic-content-for-elementor');
-                ?></span>
-					</button>
-				</div>
-				<?php 
-            }
-            if (($settings['dce_favorite_ajax'] || $act_remove || \Elementor\Plugin::$instance->editor->is_edit_mode()) && $settings['dce_favorite_msg_remove_enable']) {
-                ?>
-				<div class="elementor-message elementor-message-danger dce-notice dce-notice-favorite dce-notice-favorite-remove elementor-alert elementor-alert-warning<?php 
-                echo $modal_class;
-                ?>"<?php 
-                if ($settings['dce_favorite_ajax'] && !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                    ?> style="display:none;"<?php 
-                }
-                ?>>
-					<span class="elementor-alert-description-asd"><?php 
-                echo $settings['dce_favorite_msg_remove'];
-                ?></span>
-					<button type="button" class="elementor-alert-dismiss" onClick="jQuery(this).parent().fadeOut();">
-						<span aria-hidden="true">&times;</span>
-						<span class="elementor-screen-only"><?php 
-                echo __('Dismiss alert', 'dynamic-content-for-elementor');
-                ?></span>
-					</button>
-				</div>
-				<?php 
-            }
         }
     }
     public function update_list($element_ID, $post_ID, $list_key = '')
@@ -624,10 +610,7 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\DCE_Widge
         }
         if (!$meta_key) {
             $settings = $this->get_settings_for_display();
-            if (!empty($settings['dce_favorite_list'])) {
-                $list = \reset($settings['dce_favorite_list']);
-                $meta_key = $list['dce_favorite_key'];
-            }
+            $meta_key = sanitize_text_field($settings['dce_favorite_key']);
         }
         $args = ['meta_query' => [['key' => $meta_key, 'value' => \sprintf(':"%s";', $post_ID), 'compare' => 'LIKE']]];
         $user_query = new \DynamicContentForElementor\Widgets\WP_User_Query($args);
@@ -660,7 +643,7 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\DCE_Widge
                 }
                 break;
         }
-        return $favorite_value;
+        return Helper::my_translate_object_id($favorite_value);
     }
     public static function get_user_counter($list_key = '')
     {

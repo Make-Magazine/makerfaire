@@ -13,7 +13,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -45,7 +45,7 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\DCE_Widget_
         $this->add_control('numPoints', ['label' => __('Number of points', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 5], 'label_block' => \true, 'range' => ['px' => ['min' => 3, 'max' => 100, 'step' => 1]], 'frontend_available' => \true]);
         $this->add_control('minmaxRadius', ['label' => __('Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['sizes' => ['start' => 100.0, 'end' => 200.0], 'unit' => 'px'], 'range' => ['px' => ['min' => 10.0, 'max' => 600.0, 'step' => 1.0]], 'labels' => [__('Min', 'dynamic-content-for-elementor'), __('Max', 'dynamic-content-for-elementor')], 'handles' => 'range', 'frontend_available' => \true]);
         $this->add_control('minmaxDuration', ['label' => __('Duration', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['sizes' => ['start' => 1, 'end' => 2], 'unit' => 's'], 'range' => ['s' => ['min' => 0.1, 'max' => 5, 'step' => 0.1]], 'labels' => [__('Min', 'dynamic-content-for-elementor'), __('Max', 'dynamic-content-for-elementor')], 'scales' => 0, 'handles' => 'range', 'frontend_available' => \true]);
-        $this->add_control('show_points', ['label' => __('Show Points', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'frontend_available' => \true, 'render_type' => 'template']);
+        $this->add_control('show_points', ['label' => __('Show Points', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'frontend_available' => \true, 'render_type' => 'template']);
         $this->end_controls_section();
         $this->start_controls_section('section_viewbox', ['label' => __('Viewbox', 'dynamic-content-for-elementor')]);
         $this->add_responsive_control('svg_max_width', ['label' => __('Max-Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '', 'unit' => 'px'], 'size_units' => ['px', '%', 'vw'], 'range' => ['px' => ['min' => 0, 'max' => 1000], '%' => ['min' => 0, 'max' => 100], 'vw' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} svg' => 'max-width: {{SIZE}}{{UNIT}};']]);

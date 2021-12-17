@@ -13,13 +13,17 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
 {
     public function __construct()
     {
-        \Elementor\Controls_Manager::add_tab('dce_visibility', __('Visibility', 'dynamic-content-for-elementor'));
+        Controls_Manager::add_tab('dce_visibility', __('Visibility', 'dynamic-content-for-elementor'));
         parent::__construct();
+    }
+    public function get_style_depends()
+    {
+        return ['dce-dynamic-visibility'];
     }
     public $name = 'Visibility';
     public $has_controls = \true;
     public $common_sections_actions = [['element' => 'common', 'action' => '_section_style'], ['element' => 'section', 'action' => 'section_advanced'], ['element' => 'column', 'action' => 'section_advanced']];
-    public static $tabs = ['post' => 'Post', 'user' => 'User & Role', 'archive' => 'Term & Archive ', 'dynamic_tag' => 'Dynamic Tags', 'device' => 'Device & Browser', 'datetime' => 'Date & Time', 'context' => 'Context', 'woocommerce' => 'WooCommerce', 'myfastapp' => 'My FastAPP', 'random' => 'Random', 'custom' => 'Custom Condition', 'events' => 'Events', 'repeater' => 'Advanced', 'fallback' => 'Fallback'];
+    public static $tabs = ['post' => 'Post/Page', 'user' => 'User & Role', 'archive' => 'Term & Archive ', 'dynamic_tag' => 'Dynamic Tags', 'device' => 'Device & Browser', 'datetime' => 'Date & Time', 'context' => 'Context', 'woocommerce' => 'WooCommerce', 'myfastapp' => 'My FastAPP', 'random' => 'Random', 'custom' => 'Custom Condition', 'events' => 'Events', 'repeater' => 'Advanced', 'fallback' => 'Fallback'];
     public static $triggers = ['user' => ['label' => 'User & Role', 'options' => ['role', 'users', 'usermeta']], 'device' => ['label' => 'Device & Browser', 'options' => ['browser', 'responsive']], 'post' => ['label' => 'Current Post', 'options' => ['leaf', 'parent', 'node', 'root']]];
     public static function compare_options()
     {
@@ -98,10 +102,7 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
     }
     protected function add_actions()
     {
-        add_action('elementor/editor/after_enqueue_scripts', function () {
-            wp_register_script('dce-script-editor-visibility', plugins_url('/assets/js/visibility.js', DCE__FILE__), ['dce-script-editor'], DCE_VERSION);
-            wp_enqueue_script('dce-script-editor-visibility');
-        });
+        add_action('elementor/widget/render_content', [$this, 'render_template'], 9, 2);
         $elements = ['common', 'section', 'column'];
         foreach ($elements as $el_type) {
             add_action('elementor/element/' . $el_type . '/dce_section_visibility_advanced/before_section_end', function ($element, $args) {
@@ -244,18 +245,17 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
         if ($section == 'advanced') {
             $element->add_control('enabled_visibility', ['label' => __('Visibility', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
             $element->add_control('dce_visibility_hidden', ['label' => __('Always hide this element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['enabled_visibility' => 'yes'], 'separator' => 'before']);
-            $element->add_control('dce_visibility_dom', ['label' => __('Keep HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Keep the HTML element in the DOM and hide this element via CSS.', 'dynamic-content-for-elementor'), 'condition' => ['enabled_visibility' => 'yes'], 'separator' => 'before']);
+            $element->add_control('dce_visibility_dom', ['label' => __('Keep HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Keep the HTML element in the DOM and hide this element via CSS', 'dynamic-content-for-elementor'), 'condition' => ['enabled_visibility' => 'yes'], 'separator' => 'before']);
             $element->add_control('dce_visibility_mode', ['label' => __('Composition mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => 'quick']);
-            $element->add_control('dce_visibility_selected', ['label' => __('Display mode', 'dynamic-content-for-elementor'), 'description' => __('Hide or Show an element when a condition is triggered.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['yes' => ['title' => __('Show', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye'], 'hide' => ['title' => __('Hide', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye-slash']], 'default' => 'yes', 'toggle' => \false, 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
-            $element->add_control('dce_visibility_logical_connective', ['label' => __('Logical connective', 'dynamic-content-for-elementor'), 'description' => __('This setting determines how the conditions are combined. If OR is selected the condition is satisfied when at least one condition is satisfied. If AND is selected all conditions must be satisfied.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'or', 'return_value' => 'and', 'label_on' => __('AND', 'dynamic-content-for-elementor'), 'label_off' => __('OR', 'dynamic-content-for-elementor'), 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
+            $element->add_control('dce_visibility_selected', ['label' => __('Display mode', 'dynamic-content-for-elementor'), 'description' => __('Hide or show an element when a condition is triggered', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['yes' => ['title' => __('Show', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye'], 'hide' => ['title' => __('Hide', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye-slash']], 'default' => 'yes', 'toggle' => \false, 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
+            $element->add_control('dce_visibility_logical_connective', ['label' => __('Logical connective', 'dynamic-content-for-elementor'), 'description' => __('This setting determines how the conditions are combined. If OR is selected the condition is satisfied when at least one condition is satisfied. If AND is selected all conditions must be satisfied', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'or', 'return_value' => 'and', 'label_on' => __('AND', 'dynamic-content-for-elementor'), 'label_off' => __('OR', 'dynamic-content-for-elementor'), 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
             $_triggers = self::$tabs;
-            unset($_triggers['v2']);
             unset($_triggers['repeater']);
             unset($_triggers['fallback']);
             $element->add_control('dce_visibility_triggers', ['label' => __('Triggers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $_triggers, 'default' => \array_keys($_triggers), 'multiple' => \true, 'separator' => 'before', 'label_block' => \true, 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
             $element->add_control('dce_visibility_debug', ['label' => __('Debug', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Get a report of triggered rule', 'dynamic-content-for-elementor'), 'separator' => 'before', 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
             if (\defined('DVE_PLUGIN_BASE')) {
-                $element->add_control('dce_visibility_review', ['label' => '<b>' . __('Did you enjoy Dynamic Visibility extension?', 'dynamic-content-for-elementor') . '</b>', 'type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => __('Please leave us a', 'dynamic-content-for-elementor') . ' <a target="_blank" href="https://wordpress.org/support/plugin/dynamic-visibility-for-elementor/reviews/?filter=5/#new-post">★★★★★</a> ' . __('rating.<br>We really appreciate your support!', 'dynamic-content-for-elementor'), 'separator' => 'before']);
+                $element->add_control('dce_visibility_review', ['label' => '<b>' . __('Did you enjoy Dynamic Visibility extension?', 'dynamic-content-for-elementor') . '</b>', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('Please leave us a', 'dynamic-content-for-elementor') . ' <a target="_blank" href="https://wordpress.org/support/plugin/dynamic-visibility-for-elementor/reviews/?filter=5/#new-post">★★★★★</a> ' . __('rating.<br>We really appreciate your support!', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             }
         }
         if ($section == 'dynamic_tag') {
@@ -263,20 +263,6 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
             $element->add_control('dce_visibility_dynamic_tag', ['label' => __('Dynamic Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'dynamic' => ['active' => \true, 'categories' => $refl->getConstants()], 'placeholder' => __('Select condition field', 'dynamic-content-for-elementor')]);
             $element->add_control('dce_visibility_dynamic_tag_status', ['label' => __('Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'label_block' => \true, 'options' => self::compare_options(), 'default' => 'isset', 'toggle' => \false]);
             $element->add_control('dce_visibility_dynamic_tag_value', ['type' => Controls_Manager::TEXT, 'label' => __('Value', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_dynamic_tag_status!' => ['not', 'isset']]]);
-        }
-        if ($section == 'v2') {
-            if (\false) {
-                $ctype = Controls_Manager::HIDDEN;
-            } else {
-                $ctype = Controls_Manager::SWITCHER;
-                $element->add_control('dce_visibility_v2_notice', ['label' => __('WARNING', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => __('If you updated from v2 set everything to Yes and manage it from the main \\"Display Mode\\", otherwise ignore this control section', 'dynamic-content-for-elementor')]);
-            }
-            $element->add_control('dce_visibility_user_selected', ['label' => __('User Show/Hide', 'dynamic-content-for-elementor'), 'type' => $ctype, 'default' => 'yes']);
-            $element->add_control('dce_visibility_device_selected', ['label' => __('Device Show/Hide', 'dynamic-content-for-elementor'), 'type' => $ctype, 'default' => 'yes']);
-            $element->add_control('dce_visibility_datetime_selected', ['label' => __('DateTime Show/Hide', 'dynamic-content-for-elementor'), 'type' => $ctype, 'default' => 'yes']);
-            $element->add_control('dce_visibility_context_selected', ['label' => __('Context Show/Hide', 'dynamic-content-for-elementor'), 'type' => $ctype, 'default' => 'yes']);
-            $element->add_control('dce_visibility_tags_selected', ['label' => __('Tags Show/Hide', 'dynamic-content-for-elementor'), 'type' => $ctype, 'default' => 'yes']);
-            $element->add_control('dce_visibility_custom_condition_selected', ['label' => __('Custom Show/Hide', 'dynamic-content-for-elementor'), 'type' => $ctype, 'default' => 'yes']);
         }
         if ($section == 'user') {
             $element->add_control('dce_visibility_role', ['label' => __('Roles', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Roles', 'dynamic-content-for-elementor'), 'label_block' => \true, 'multiple' => \true, 'query_type' => 'users', 'object_type' => 'role', 'description' => __('Limit visualization to specific user roles', 'dynamic-content-for-elementor')]);
@@ -288,7 +274,7 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
             $element->add_control('dce_visibility_ip', ['label' => __('Remote IP', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the list of IP who will be able to view this element.<br>Separate IPs by comma. (ex. "123.123.123.123, 8.8.8.8, 4.4.4.4")', 'dynamic-content-for-elementor') . '<br><b>' . __('Your current IP is: ', 'dynamic-content-for-elementor') . sanitize_text_field($_SERVER['REMOTE_ADDR']) . '</b>', 'separator' => 'before']);
             $element->add_control('dce_visibility_referrer', ['label' => __('Referrer', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered when previous page is a specific page.', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_referrer_list', ['label' => __('Specific referral site authorized:', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXTAREA, 'placeholder' => 'facebook.com' . \PHP_EOL . 'google.com', 'description' => __('Only selected referral, once per line. If empty it is triggered for all external site.', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_referrer' => 'yes']]);
-            $element->add_control('dce_visibility_max_user', ['label' => __('Max per User', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::NUMBER, 'min' => 1, 'separator' => 'before']);
+            $element->add_control('dce_visibility_max_user', ['label' => __('Max per User', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'separator' => 'before']);
             if (Helper::is_plugin_active('geoip-detect') && \function_exists('geoip_detect2_get_info_from_current_ip')) {
                 $geoinfo = \geoip_detect2_get_info_from_current_ip();
                 $countryInfo = new \YellowTree\GeoipDetect\Geonames\CountryInformation();
@@ -309,7 +295,7 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
         }
         if ($section == 'datetime') {
             if (\time() != current_time('timestamp')) {
-                $element->add_control('dce_visibility_datetime_important_note', ['type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => '<small><br>' . __('Server time and WordPress time are different.', 'dynamic-content-for-elementor') . '<br>' . __('Will be used the Wordpress time you set in', 'dynamic-content-for-elementor') . ' <a target="_blank" href="' . admin_url('options-general.php') . '">' . __('Wordpress General preferences', 'dynamic-content-for-elementor') . '</a>.<br>' . '<br>' . '<strong>SERVER time:</strong><br>' . \date('r') . '<br><br>' . '<strong>WORDPRESS time:</strong><br>' . current_time('r') . '</small>', 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
+                $element->add_control('dce_visibility_datetime_important_note', ['type' => Controls_Manager::RAW_HTML, 'raw' => '<small>' . __('Server time and WordPress time are different.', 'dynamic-content-for-elementor') . '<br>' . __('Will be used the WordPress time you set in', 'dynamic-content-for-elementor') . ' <a target="_blank" href="' . admin_url('options-general.php') . '">' . __('WordPress General preferences', 'dynamic-content-for-elementor') . '</a>.<br>' . '<br>' . '<strong>SERVER time:</strong><br>' . \date('r') . '<br><br>' . '<strong>WORDPRESS time:</strong><br>' . current_time('r') . '</small>', 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             }
             $element->add_control('dce_visibility_date_dynamic', ['label' => __('Use Dynamic Dates', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
             $element->add_control('dce_visibility_date_dynamic_from', ['label' => __('Date FROM', 'dynamic-content-for-elementor'), 'label_block' => \true, 'type' => Controls_Manager::TEXT, 'placeholder' => 'Y-m-d H:i:s', 'description' => __('If set the element will appear after this date', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_date_dynamic!' => ''], 'dynamic' => ['active' => \true]]);
@@ -323,18 +309,18 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
             for ($day_index = 0; $day_index <= 6; $day_index++) {
                 $week[esc_attr($day_index)] = $wp_locale->get_weekday($day_index);
             }
-            $element->add_control('dce_visibility_time_week', ['label' => __('Days of the WEEK', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $week, 'description' => __('Select days in the week.', 'dynamic-content-for-elementor'), 'multiple' => \true, 'separator' => 'before']);
+            $element->add_control('dce_visibility_time_week', ['label' => __('Days of the week', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $week, 'multiple' => \true, 'separator' => 'before']);
             $element->add_control('dce_visibility_time_from', ['label' => __('Time FROM', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'H:m', 'description' => __('If set (in H:m format) the element will appear after this time.', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_time_to', ['label' => __('Time TO', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'H:m', 'description' => __('If set (in H:m format) the element will be visible until this time', 'dynamic-content-for-elementor')]);
         }
         if ($section == 'context') {
             $element->add_control('dce_visibility_parameter', ['label' => __('Parameter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the name of the parameter passed in GET, COOKIE or POST method', 'dynamic-content-for-elementor')]);
-            $element->add_control('dce_visibility_parameter_method', ['label' => __('Parameter Method', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['GET' => ['title' => __('GET', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle-o'], 'POST' => ['title' => __('POST', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle'], 'REQUEST' => ['title' => __('REQUEST', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-dot-circle-o'], 'COOKIE' => ['title' => __('COOKIE', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-pie-chart'], 'SERVER' => ['title' => __('SERVER', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-server']], 'default' => 'REQUEST', 'toggle' => \false, 'condition' => ['dce_visibility_parameter!' => '']]);
+            $element->add_control('dce_visibility_parameter_method', ['label' => __('Parameter Method', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['GET' => 'GET', 'POST' => 'POST', 'REQUEST' => 'REQUEST', 'COOKIE' => 'COOKIE', 'SERVER' => 'SERVER'], 'default' => 'REQUEST', 'condition' => ['dce_visibility_parameter!' => '']]);
             $element->add_control('dce_visibility_parameter_status', ['label' => __('Parameter Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => self::compare_options(), 'default' => 'isset', 'toggle' => \false, 'label_block' => \true, 'condition' => ['dce_visibility_parameter!' => '']]);
             $element->add_control('dce_visibility_parameter_value', ['label' => __('Parameter Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('The specific value of the parameter', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_parameter!' => '', 'dce_visibility_parameter_status!' => ['not', 'isset']]]);
             $element->add_control('dce_visibility_conditional_tags_site', ['label' => __('Site', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['is_dynamic_sidebar' => __('Dynamic sidebar', 'dynamic-content-for-elementor'), 'is_active_sidebar' => __('Active sidebar', 'dynamic-content-for-elementor'), 'is_rtl' => __('RTL', 'dynamic-content-for-elementor'), 'is_multisite' => __('Multisite', 'dynamic-content-for-elementor'), 'is_main_site' => __('Main site', 'dynamic-content-for-elementor'), 'is_child_theme' => __('Child theme', 'dynamic-content-for-elementor'), 'is_customize_preview' => __('Customize preview', 'dynamic-content-for-elementor'), 'is_multi_author' => __('Multi author', 'dynamic-content-for-elementor'), 'is feed' => __('Feed', 'dynamic-content-for-elementor'), 'is_trackback' => __('Trackback', 'dynamic-content-for-elementor')], 'multiple' => \true, 'separator' => 'before']);
-            $element->add_control('dce_visibility_max_day', ['label' => __('Max per Day', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::NUMBER, 'min' => 1, 'separator' => 'before']);
-            $element->add_control('dce_visibility_max_total', ['label' => __('Max Total', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::NUMBER, 'min' => 1, 'separator' => 'before']);
+            $element->add_control('dce_visibility_max_day', ['label' => __('Max per Day', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'separator' => 'before']);
+            $element->add_control('dce_visibility_max_total', ['label' => __('Max Total', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'separator' => 'before']);
             $select_lang = [];
             // WPML
             global $sitepress;
@@ -368,10 +354,10 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
                 }
             }
             // WEGLOT
-            if (Helper::is_plugin_active('weglot') && \function_exists('DynamicOOOS\\weglot_get_destination_languages')) {
-                $select_lang_array = \array_column(weglot_get_destination_languages(), 'language_to');
+            if (Helper::is_plugin_active('weglot') && \function_exists('weglot_get_destination_languages')) {
+                $select_lang_array = \array_column(\weglot_get_destination_languages(), 'language_to');
                 // Add current language
-                $select_lang_array[] = weglot_get_current_language();
+                $select_lang_array[] = \weglot_get_current_language();
                 if (!empty($select_lang_array)) {
                     foreach ($select_lang_array as $key => $value) {
                         $select_lang[$value] = $value;
@@ -384,7 +370,7 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
         }
         if ($section == 'post') {
             $element->add_control('dce_visibility_post_id', ['label' => __('Post ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['current' => ['title' => __('Current', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-list'], 'global' => ['title' => __('Global', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-globe'], 'static' => ['title' => __('Static', 'dynamic-content-for-elementor'), 'icon' => 'eicon-pencil']], 'default' => 'current', 'toggle' => \false]);
-            $element->add_control('dce_visibility_post_id_static', ['label' => __('Set Post ID', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::NUMBER, 'min' => 1, 'condition' => ['dce_visibility_post_id' => 'static']]);
+            $element->add_control('dce_visibility_post_id_static', ['label' => __('Set Post ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'condition' => ['dce_visibility_post_id' => 'static']]);
             $element->add_control('dce_visibility_post_id_description', ['type' => Controls_Manager::RAW_HTML, 'raw' => '<small>' . __('In some cases, Current ID and Global ID may be different. For example, if you use a widget with a loop on a page, then Global ID will be Page ID, and Current ID will be Post ID in preview inside the loop.', 'dynamic-content-for-elementor') . '</small>', 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             $element->add_control('dce_visibility_cpt', ['label' => __('Post Type', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Type', 'dynamic-content-for-elementor'), 'label_block' => \true, 'multiple' => \true, 'query_type' => 'posts', 'object_type' => 'type', 'description' => __('Visible if current post is one of these Post Types', 'dynamic-content-for-elementor')]);
             $element->add_control('dce_visibility_post', ['label' => __('Page/Post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'description' => __('Visible if current post is one of these Page/Posts', 'dynamic-content-for-elementor'), 'multiple' => \true, 'separator' => 'before']);
@@ -394,30 +380,31 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
                     $element->add_control('dce_visibility_term_' . $tkey, ['label' => __('Terms', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Term Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'terms', 'object_type' => $tkey, 'description' => __('Visible if current post is related to these terms', 'dynamic-content-for-elementor'), 'multiple' => \true, 'condition' => ['dce_visibility_tax' => $tkey]]);
                 }
             }
-            $element->add_control('dce_visibility_field', ['label' => __('Post Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'fields', 'object_type' => 'post', 'description' => __('Triggered by a selected Post Field value', 'dynamic-content-for-elementor'), 'separator' => 'before']);
+            $element->add_control('dce_visibility_field', ['label' => __('Post Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'fields', 'object_type' => 'post', 'description' => __('Triggered by a selected Post Field value', 'dynamic-content-for-elementor'), 'separator' => 'before', 'dynamic' => ['active' => \false]]);
             $element->add_control('dce_visibility_field_status', ['label' => __('Post Field Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => self::compare_options(), 'default' => 'isset', 'toggle' => \false, 'label_block' => \true, 'condition' => ['dce_visibility_field!' => '']]);
             $element->add_control('dce_visibility_field_value', ['label' => __('Post Field Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('The specific value of the Post Field', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_field!' => '', 'dce_visibility_field_status!' => ['not', 'isset']]]);
             $element->add_control('dce_visibility_meta', ['label' => __('Multiple Metas', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'description' => __('Triggered by specifics metas fields if they are valorized', 'dynamic-content-for-elementor'), 'multiple' => \true, 'separator' => 'before']);
-            $element->add_control('dce_visibility_meta_operator', ['label' => __('Meta conditions', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('And', 'dynamic-content-for-elementor'), 'label_off' => __('Or', 'dynamic-content-for-elementor'), 'description' => __('How post meta have to satisfy this conditions', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_meta!' => '']]);
+            $element->add_control('dce_visibility_meta_operator', ['label' => __('Meta conditions', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('And', 'dynamic-content-for-elementor'), 'label_off' => __('Or', 'dynamic-content-for-elementor'), 'description' => __('How post meta have to satisfy this condition', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_meta!' => '']]);
             $element->add_control('dce_visibility_format', ['label' => __('Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => Helper::get_post_formats(), 'description' => __('Triggered if current post is set as one of this format', 'dynamic-content-for-elementor') . '<br><a href="https://wordpress.org/support/article/post-formats/" target="_blank">' . __('Read more on Post Format.', 'dynamic-content-for-elementor') . '</a>', 'multiple' => \true, 'separator' => 'before']);
             $element->add_control('dce_visibility_parent', ['label' => __('Is Parent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for post with children', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_root', ['label' => __('Is Root', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for first level posts (without parent)', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_leaf', ['label' => __('Is Leaf', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for last level posts (without children)', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_node', ['label' => __('Is Node', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for intermedial level posts (with parent and child)', 'dynamic-content-for-elementor'), 'separator' => 'before']);
-            $element->add_control('dce_visibility_node_level', ['label' => __('Node level', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::NUMBER, 'min' => 1, 'condition' => ['dce_visibility_node!' => '']]);
-            $element->add_control('dce_visibility_level', ['label' => __('Has Level', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::NUMBER, 'min' => 1, 'description' => __('Triggered for specific level posts', 'dynamic-content-for-elementor'), 'separator' => 'before']);
+            $element->add_control('dce_visibility_node_level', ['label' => __('Node level', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'condition' => ['dce_visibility_node!' => '']]);
+            $element->add_control('dce_visibility_level', ['label' => __('Has Level', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'description' => __('Triggered for specific level posts', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_child', ['label' => __('Has Parent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for children posts (with a parent)', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_child_parent', ['label' => __('Specific Parent Post IDs', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'multiple' => \true, 'separator' => 'before', 'query_type' => 'posts', 'condition' => ['dce_visibility_child!' => '']]);
             $element->add_control('dce_visibility_sibling', ['label' => __('Has Siblings', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for post with siblings', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_friend', ['label' => __('Has Term Buddies', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for posts grouped in taxonomies with other posts', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_friend_term', ['label' => __('Terms where find Buddies', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Term Name', 'dynamic-content-for-elementor'), 'query_type' => 'terms', 'description' => __('Specific a Term for current post has friends.', 'dynamic-content-for-elementor'), 'multiple' => \true, 'label_block' => \true, 'condition' => ['dce_visibility_friend!' => '']]);
             $element->add_control('dce_visibility_conditional_tags_post', ['label' => __('Conditional Tags - Post', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['is_sticky' => __('Is Sticky', 'dynamic-content-for-elementor'), 'is_post_type_hierarchical' => __('Is Hierarchical Post Type', 'dynamic-content-for-elementor'), 'is_post_type_archive' => __('Is Post Type Archive', 'dynamic-content-for-elementor'), 'comments_open' => __('Comments are open', 'dynamic-content-for-elementor'), 'pings_open' => __('Pings are open', 'dynamic-content-for-elementor'), 'has_tag' => __('Has Tags', 'dynamic-content-for-elementor'), 'has_term' => __('Has Terms', 'dynamic-content-for-elementor'), 'has_excerpt' => __('Has Excerpt', 'dynamic-content-for-elementor'), 'has_post_thumbnail' => __('Has Post Thumbnail', 'dynamic-content-for-elementor'), 'has_nav_menu' => __('Has Nav menu', 'dynamic-content-for-elementor')], 'multiple' => \true, 'separator' => 'before', 'condition' => ['dce_visibility_post_id' => 'current']]);
-            $element->add_control('dce_visibility_special', ['label' => __('Conditonal Tags - Page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['is_front_page' => __('Front Page', 'dynamic-content-for-elementor'), 'is_home' => __('Home', 'dynamic-content-for-elementor'), 'is_404' => __('404 Not Found', 'dynamic-content-for-elementor'), 'is_single' => __('Single', 'dynamic-content-for-elementor'), 'is_page' => __('Page', 'dynamic-content-for-elementor'), 'is_attachment' => __('Attachment', 'dynamic-content-for-elementor'), 'is_preview' => __('Preview', 'dynamic-content-for-elementor'), 'is_admin' => __('Admin', 'dynamic-content-for-elementor'), 'is_page_template' => __('Page Template', 'dynamic-content-for-elementor'), 'is_comments_popup' => __('Comments Popup', 'dynamic-content-for-elementor'), 'is_woocommerce' => __('A Woocommerce Page', 'dynamic-content-for-elementor'), 'is_shop' => __('Shop', 'dynamic-content-for-elementor'), 'is_product' => __('Product', 'dynamic-content-for-elementor'), 'is_product_taxonomy' => __('Product Taxonomy', 'dynamic-content-for-elementor'), 'is_product_category' => __('Product Category', 'dynamic-content-for-elementor'), 'is_product_tag' => __('Product Tag', 'dynamic-content-for-elementor'), 'is_cart' => __('Cart', 'dynamic-content-for-elementor'), 'is_checkout' => __('Checkout', 'dynamic-content-for-elementor'), 'is_add_payment_method_page' => __('Add Payment method', 'dynamic-content-for-elementor'), 'is_checkout_pay_page' => __('Checkout Pay', 'dynamic-content-for-elementor'), 'is_account_page' => __('Account page', 'dynamic-content-for-elementor'), 'is_edit_account_page' => __('Edit Account', 'dynamic-content-for-elementor'), 'is_lost_password_page' => __('Lost password', 'dynamic-content-for-elementor'), 'is_view_order_page' => __('Order summary', 'dynamic-content-for-elementor'), 'is_order_received_page' => __('Order complete', 'dynamic-content-for-elementor')], 'multiple' => \true, 'separator' => 'before', 'condition' => ['dce_visibility_post_id' => 'current']]);
+            $element->add_control('dce_visibility_special', ['label' => __('Conditional Tags - Page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['is_front_page' => __('Front Page', 'dynamic-content-for-elementor'), 'is_home' => __('Home', 'dynamic-content-for-elementor'), 'is_404' => __('404 Not Found', 'dynamic-content-for-elementor'), 'is_single' => __('Single', 'dynamic-content-for-elementor'), 'is_page' => __('Page', 'dynamic-content-for-elementor'), 'is_attachment' => __('Attachment', 'dynamic-content-for-elementor'), 'is_preview' => __('Preview', 'dynamic-content-for-elementor'), 'is_admin' => __('Admin', 'dynamic-content-for-elementor'), 'is_page_template' => __('Page Template', 'dynamic-content-for-elementor'), 'is_comments_popup' => __('Comments Popup', 'dynamic-content-for-elementor'), 'is_woocommerce' => __('WooCommerce Page', 'dynamic-content-for-elementor'), 'is_shop' => __('Shop', 'dynamic-content-for-elementor'), 'is_product' => __('Product', 'dynamic-content-for-elementor'), 'is_product_taxonomy' => __('Product Taxonomy', 'dynamic-content-for-elementor'), 'is_product_category' => __('Product Category', 'dynamic-content-for-elementor'), 'is_product_tag' => __('Product Tag', 'dynamic-content-for-elementor'), 'is_cart' => __('Cart', 'dynamic-content-for-elementor'), 'is_checkout' => __('Checkout', 'dynamic-content-for-elementor'), 'is_add_payment_method_page' => __('Add Payment method', 'dynamic-content-for-elementor'), 'is_checkout_pay_page' => __('Checkout Page', 'dynamic-content-for-elementor'), 'is_account_page' => __('Account Page', 'dynamic-content-for-elementor'), 'is_edit_account_page' => __('Edit Account', 'dynamic-content-for-elementor'), 'is_lost_password_page' => __('Lost Password', 'dynamic-content-for-elementor'), 'is_view_order_page' => __('Order Summary', 'dynamic-content-for-elementor'), 'is_order_received_page' => __('Order Received', 'dynamic-content-for-elementor')], 'multiple' => \true, 'separator' => 'before', 'condition' => ['dce_visibility_post_id' => 'current']]);
         }
         if ($section == 'woocommerce') {
-            if (Helper::is_plugin_active('woocommerce')) {
-                $element->add_control('dce_visibility_woo_product_id_static', ['label' => __('Product in the cart', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Product Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'product', 'separator' => 'after']);
-                $element->add_control('dce_visibility_woo_product_category', ['label' => __('Product Category in the cart', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Product Category', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'terms', 'separator' => 'after']);
+            if (Helper::is_woocommerce_active()) {
+                $element->add_control('dce_visibility_woo_cart', ['label' => __('Cart is', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['select' => __('Select...', 'dynamic-content-for-elementor'), 'empty' => __('Empty', 'dynamic-content-for-elementor'), 'not_empty' => __('Not empty', 'dynamic-content-for-elementor')], 'default' => 'select']);
+                $element->add_control('dce_visibility_woo_product_id_static', ['label' => __('Product in the cart', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Product Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'product']);
+                $element->add_control('dce_visibility_woo_product_category', ['label' => __('Product Category in the cart', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Product Category', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'terms']);
                 if (Helper::is_plugin_active('woocommerce-memberships')) {
                     $plans = get_posts(['post_type' => 'wc_membership_plan', 'post_status' => 'publish', 'numberposts' => -1]);
                     if (!empty($plans)) {
@@ -435,8 +422,8 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
         }
         if ($section == 'myfastapp') {
             if (!\defined('DCE_PATH')) {
-                //  Feature not present in FREE version
-                $element->add_control('dce_visibility_myfastapp_hide', ['raw' => __('Feature available only in Dynamic.ooo - Dynamic Content for Elementor, paid version.', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::RAW_HTML, 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
+                // Feature not available in the free version
+                $element->add_control('dce_visibility_myfastapp_hide', ['raw' => __('Feature available only in Dynamic.ooo - Dynamic Content for Elementor, paid version.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::RAW_HTML, 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             } else {
                 if (Helper::is_myfastapp_active()) {
                     $element->add_control('dce_visibility_myfastapp', ['label' => __('The visitor is', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['all' => __('on the site or in the app', 'dynamic-content-for-elementor'), 'site' => __('on the site', 'dynamic-content-for-elementor'), 'app' => __('in the app', 'dynamic-content-for-elementor')], 'default' => 'all']);
@@ -446,11 +433,11 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
             }
         }
         if ($section == 'events') {
-            $element->add_control('dce_visibility_events_note', ['type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => __('Using an Event trigger is necessary in order to activate "Keep HTML" from base settings', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['dce_visibility_dom' => '']]);
-            $element->add_control('dce_visibility_event', ['label' => __('Event', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'click', 'options' => ['click' => 'click', 'mouseover' => 'mouseover', 'dblclick' => 'dblclick'], 'condition' => ['dce_visibility_dom!' => '']]);
-            $element->add_control('dce_visibility_click', ['label' => __('Trigger on this element', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'description' => __('Type here the Selector in jQuery format. For example #name', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_dom!' => '']]);
+            $element->add_control('dce_visibility_events_note', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('Using an Event trigger is necessary in order to activate "Keep HTML" from base settings', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['dce_visibility_dom' => '']]);
+            $element->add_control('dce_visibility_event', ['label' => __('Event', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'click', 'options' => ['click' => 'click', 'mouseover' => 'mouseover', 'dblclick' => 'dblclick'], 'condition' => ['dce_visibility_dom!' => '']]);
+            $element->add_control('dce_visibility_click', ['label' => __('Trigger on this element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the Selector in jQuery format. For example #name', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_dom!' => '']]);
             $element->add_control('dce_visibility_click_show', ['label' => __('Show Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_jquery_display_mode(), 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
-            $element->add_control('dce_visibility_click_other', ['label' => __('Hide other elements', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'description' => __('Type here the Selector in jQuery format. For example .elements', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
+            $element->add_control('dce_visibility_click_other', ['label' => __('Hide other elements', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the Selector in jQuery format. For example .elements', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
             $element->add_control('dce_visibility_click_toggle', ['label' => __('Toggle', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
             $element->add_control('dce_visibility_load', ['label' => __('On Page Load', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_visibility_dom!' => ''], 'separator' => 'before']);
             $element->add_control('dce_visibility_load_delay', ['label' => __('Delay time', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 0, 'default' => 0, 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_load!' => '']]);
@@ -487,12 +474,12 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
             $element->add_control('dce_visibility_term_count', ['label' => __('Has Posts', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for terms has related Posts count.', 'dynamic-content-for-elementor')]);
         }
         if ($section == 'random') {
-            $element->add_control('dce_visibility_random', ['label' => __('Random', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['%'], 'range' => ['%' => ['min' => 0, 'max' => 100]]]);
+            $element->add_control('dce_visibility_random', ['label' => __('Random', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'description' => __('Choose the percentage probability that the condition is true', 'dynamic-content-for-elementor'), 'size_units' => ['%'], 'range' => ['%' => ['min' => 0, 'max' => 100]]]);
         }
         if ($section == 'custom') {
             if (!\defined('DCE_PATH')) {
-                //  Feature not present in FREE version
-                $element->add_control('dce_visibility_custom_hide', ['raw' => __('Feature available only in Dynamic.ooo - Dynamic Content for Elementor, paid version.', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::RAW_HTML, 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
+                //  Feature not available in FREE version
+                $element->add_control('dce_visibility_custom_hide', ['raw' => __('Feature available only in Dynamic.ooo - Dynamic Content for Elementor, paid version.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::RAW_HTML, 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             } else {
                 if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                     $element->add_control('dce_visibility_custom_condition_php', ['label' => __('Custom PHP condition', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CODE, 'language' => 'php', 'default' => '', 'description' => __('Type here a function that returns a boolean value. You can use all WP variables and functions.', 'dynamic-content-for-elementor')]);
@@ -503,12 +490,12 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
             $element->add_control('dce_visibility_fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('If you want to show something when the element is hidden', 'dynamic-content-for-elementor')]);
             if (!\defined('DCE_PATH')) {
                 // free version doesn't support template shortcode
-                $element->add_control('dce_visibility_fallback_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::HIDDEN, 'default' => 'text']);
+                $element->add_control('dce_visibility_fallback_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => 'text']);
             } else {
                 $element->add_control('dce_visibility_fallback_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'default' => 'text', 'condition' => ['dce_visibility_fallback!' => '']]);
             }
-            $element->add_control('dce_visibility_fallback_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => 'Use a Elementor Template as content of popup, useful for complex structure.', 'condition' => ['dce_visibility_fallback!' => '', 'dce_visibility_fallback_type' => 'template']]);
-            $element->add_control('dce_visibility_fallback_text', ['label' => __('Text Fallback', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => 'This element is currently hidden.', 'description' => __('If the element is not visible, insert here your content', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_fallback!' => '', 'dce_visibility_fallback_type' => 'text']]);
+            $element->add_control('dce_visibility_fallback_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as content of popup, useful for complex structure', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_fallback!' => '', 'dce_visibility_fallback_type' => 'template']]);
+            $element->add_control('dce_visibility_fallback_text', ['label' => __('Text Fallback', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => __('This element is currently hidden.', 'dynamic-content-for-elementor'), 'description' => __('If the element is not visible, insert here your content', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_fallback!' => '', 'dce_visibility_fallback_type' => 'text']]);
             if ($element_type == 'section') {
                 $element->add_control('dce_visibility_fallback_section', ['label' => __('Use section wrapper', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'description' => __('Mantain original section wrapper.', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_fallback!' => '']]);
             }
@@ -653,7 +640,7 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
                     }
                     break;
                 case 'static':
-                    $post_tmp = get_post($settings['dce_visibility_post_id_static']);
+                    $post_tmp = get_post(\intval($settings['dce_visibility_post_id_static']));
                     if (\is_object($post_tmp)) {
                         $post_ID = $post_tmp->ID;
                     }
@@ -1020,8 +1007,9 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
                     // post
                     if (isset($settings['dce_visibility_post']) && !empty($settings['dce_visibility_post']) && \is_array($settings['dce_visibility_post'])) {
                         $triggers['dce_visibility_post'] = __('Post', 'dynamic-content-for-elementor');
+                        $visibility_post = Helper::my_translate_object_id($settings['dce_visibility_post']);
                         $triggers_n++;
-                        if (\in_array($post_ID, $settings['dce_visibility_post'])) {
+                        if (\in_array($post_ID, $visibility_post)) {
                             $conditions['dce_visibility_post'] = __('Post', 'dynamic-content-for-elementor');
                             $contexthidden = \true;
                         }
@@ -1052,24 +1040,11 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
                             if (!empty($settings[$tkey]) && \is_array($settings[$tkey])) {
                                 if (!empty($terms)) {
                                     $triggers_n++;
-                                    if (Helper::is_wpml_active()) {
-                                        // WPML Active - Retrieve terms from the current language
-                                        foreach ($terms as $term) {
-                                            $terms_current_language[] = apply_filters('wpml_object_id', $term, $settings['dce_visibility_tax'], \true);
-                                        }
-                                        foreach ($settings[$tkey] as $term) {
-                                            $term_searched_current_language[] = apply_filters('wpml_object_id', $term, $settings['dce_visibility_tax'], \true);
-                                        }
-                                        if (\array_intersect($terms_current_language, $term_searched_current_language)) {
-                                            $conditions[$tkey] = __('Terms', 'dynamic-content-for-elementor');
-                                            $contexthidden = \true;
-                                        }
-                                    } else {
-                                        // WPML not activated
-                                        if (\array_intersect($terms, $settings[$tkey])) {
-                                            $conditions[$tkey] = __('Terms', 'dynamic-content-for-elementor');
-                                            $contexthidden = \true;
-                                        }
+                                    // Retrieve terms searched on the current language
+                                    $term_searched_current_language = Helper::my_translate_object_id_by_type($settings[$tkey], $settings['dce_visibility_tax']);
+                                    if (\array_intersect($terms, $term_searched_current_language)) {
+                                        $conditions[$tkey] = __('Terms', 'dynamic-content-for-elementor');
+                                        $contexthidden = \true;
                                     }
                                 }
                             } else {
@@ -1340,7 +1315,7 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
                     }
                     // WEGLOT
                     if (Helper::is_plugin_active('weglot')) {
-                        $current_language = weglot_get_current_language();
+                        $current_language = \weglot_get_current_language();
                     }
                     $triggers_n++;
                     if (\in_array($current_language, $settings['dce_visibility_lang'])) {
@@ -1570,6 +1545,13 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
             if (empty($settings['dce_visibility_triggers']) || \in_array('woocommerce', $settings['dce_visibility_triggers'])) {
                 // WOOCOMMERCE
                 if (Helper::is_woocommerce_active()) {
+                    if ('select' !== $settings['dce_visibility_woo_cart']) {
+                        $triggers['dce_visibility_woo_cart'] = __('Cart is', 'dynamic-content-for-elementor');
+                        $cart_is_empty = WC()->cart->get_cart_contents_count() === 0;
+                        if ('empty' === $settings['dce_visibility_woo_cart'] && $cart_is_empty || 'not_empty' === $settings['dce_visibility_woo_cart'] && !$cart_is_empty) {
+                            $conditions['dce_visibility_woo_cart'] = __('Cart is', 'dynamic-content-for-elementor');
+                        }
+                    }
                     if (!empty($settings['dce_visibility_woo_product_id_static'])) {
                         $triggers['dce_visibility_woo_product_id_static'] = __('Product in the cart', 'dynamic-content-for-elementor');
                         $product_id = $settings['dce_visibility_woo_product_id_static'];
@@ -1647,7 +1629,7 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
                 }
             }
             if (empty($settings['dce_visibility_triggers']) || \in_array('myfastapp', $settings['dce_visibility_triggers'])) {
-                if (Helper::is_myfastapp_active() && 'all' !== $settings['dce_visibility_myfastapp']) {
+                if (Helper::is_myfastapp_active() && isset($settings['dce_visibility_myfastapp']) && 'all' !== $settings['dce_visibility_myfastapp']) {
                     $triggers['dce_visibility_myfastapp'] = 'My FastAPP';
                     $headers = \getallheaders();
                     $is_on_myfastapp = isset($headers['X-Appid']);
@@ -1810,10 +1792,6 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
                     ?>').on('<?php 
                     echo $settings['dce_visibility_event'];
                     ?>', function () {
-
-								<?php 
-                    $css_classes = $settings['_css_classes'];
-                    ?>
 
 								<?php 
                     if ($settings['dce_visibility_click_other']) {
@@ -2100,5 +2078,11 @@ class DCE_Extension_Visibility extends \DynamicContentForElementor\Extensions\DC
                 }
             }
         }
+    }
+    public function render_template($content, $widget)
+    {
+        $settings = $widget->get_settings_for_display();
+        $this->enqueue_all();
+        return $content;
     }
 }

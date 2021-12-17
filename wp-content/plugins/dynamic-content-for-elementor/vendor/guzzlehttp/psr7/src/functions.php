@@ -2,10 +2,10 @@
 
 namespace DynamicOOOS\GuzzleHttp\Psr7;
 
-use DynamicOOOS\Psr\Http\Message\MessageInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\StreamInterface;
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * Returns the string representation of an HTTP message.
  *

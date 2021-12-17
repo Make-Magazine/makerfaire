@@ -20,11 +20,11 @@ use DynamicContentForElementor\Controls\DCE_Group_Control_Transform_Element;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_PodsGallery extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_PodsGallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
-        return ['jquery-masonry', 'dce-wow', 'photoswipe', 'photoswipe-ui', 'diamonds', 'homeycombs', 'dce-acfgallery'];
+        return ['jquery-masonry', 'dce-wow', 'photoswipe', 'photoswipe-ui', 'dce-diamonds', 'dce-homeycombs', 'dce-acfgallery'];
     }
     public function get_style_depends()
     {
@@ -45,7 +45,7 @@ class DCE_Widget_PodsGallery extends \DynamicContentForElementor\Widgets\DCE_Wid
         $this->add_control('hideIncompleteRow', ['label' => __('Hide Incomplete Row', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'diamond']]);
         $this->add_responsive_control('size_honeycombs', ['label' => __('Size Hexagon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 250, 'tablet_default' => 150, 'mobile_default' => 100, 'min' => 20, 'max' => 800, 'step' => 1, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'hexagon']]);
         $this->add_control('gap_honeycombs', ['label' => __('Gap Hexagon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 10, 'min' => 0, 'max' => 100, 'step' => 1, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'hexagon']]);
-        $this->add_control('enabled_wow', ['label' => __('WOW Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'frontend_available' => \true]);
+        $this->add_control('enabled_wow', ['label' => __('WOW Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true]);
         $this->end_controls_section();
         $this->start_controls_section('section_style_gallery', ['label' => 'Gallery', 'dynamic-content-for-elementor', 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => '', 'prefix_class' => 'align-', 'selectors' => ['{{WRAPPER}} .dynamic_gallery' => 'text-align: {{VALUE}};']]);

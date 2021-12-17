@@ -10,18 +10,18 @@ class TemplateSystem
 {
     public static $instance;
     public static $template_id;
-    public static $options = array();
+    public static $options = [];
     private $types_registered = [];
     private $taxonomyes_registered = [];
-    public static $supported_types = array('elementor_library', 'oceanwp_library', 'ae_global_templates');
-    public static $excluded_cpts = array(
+    public static $supported_types = ['elementor_library', 'oceanwp_library', 'ae_global_templates'];
+    public static $excluded_cpts = [
         // JET
         'jet-engine',
         'jet-menu',
         'jet-popup',
         'jet-smart-filters',
-    );
-    public static $excluded_taxonomies = array(
+    ];
+    public static $excluded_taxonomies = [
         // CORE
         'nav_menu',
         'link_category',
@@ -42,116 +42,116 @@ class TemplateSystem
         // FLAMINGO
         'flamingo_contact_tag',
         'flamingo_inbound_channel',
-    );
-    public static $template_styles = array();
+    ];
+    public static $template_styles = [];
     /**
      * Constructor
-     *
-     * @since 0.0.1
-     *
-     * @access public
      */
     public function __construct()
-    {
-        $this->init();
-        self::$instance = $this;
-    }
-    public function init()
     {
         add_action('elementor/init', [$this, 'dce_elementor_init']);
         self::$options = get_option(DCE_OPTIONS, []);
         $dce_template = get_option('dce_template');
-        if (isset($dce_template) && 'active' == $dce_template) {
-            // Setup
-            add_action('init', array($this, 'dce_setup'));
+        if (isset($dce_template) && 'active' === $dce_template) {
+            // Add Template Columns on Terms and Posts
+            add_action('init', [$this, 'add_template_system_columns']);
             if (!is_admin()) {
                 self::add_content_filter();
             }
             // Use the hook inside template > archive.php
-            add_action('dce_before_content_inner', array($this, 'dce_add_template_before_content'));
-            add_action('dce_after_content_inner', array($this, 'dce_add_template_after_content'));
-            // Manage template fullwidth
-            $this->dce_template_init();
+            add_action('dce_before_content_inner', array($this, 'add_template_before_content'));
+            add_action('dce_after_content_inner', array($this, 'add_template_after_content'));
+            // Manage the layout with add_filter
+            $this->manage_filters_layout();
             if (!is_admin()) {
-                // necessary, if remove it will work also in admin result
                 add_action('pre_get_posts', array($this, 'enfold_customization_author_archives'));
             }
-            \DynamicContentForElementor\Metabox::init_template_system();
+            if (current_user_can('manage_options')) {
+                new \DynamicContentForElementor\Metabox();
+            }
         }
+        self::$instance = $this;
     }
+    /**
+     * If Template System is active, call the filter for the_content to show the template
+     *
+     * @return void
+     */
     public function add_content_filter()
     {
         $dce_template = get_option('dce_template');
-        if (isset($dce_template) && 'active' == $dce_template) {
-            if (!is_admin()) {
-                add_filter('the_content', array($this, 'dce_elementor_remove_content_filter'), 1);
-                add_filter('the_content', array($this, 'dce_filter_the_content_in_the_main_loop'), 999999);
-            }
+        if (isset($dce_template) && 'active' === $dce_template) {
+            add_filter('the_content', array($this, 'remove_elementor_content_filter_priority'), 1);
+            add_filter('the_content', array($this, 'filter_the_content_in_the_main_loop'), 999999);
         }
     }
+    /**
+     * Remove the filter for the_content
+     *
+     * @return void
+     */
     public function remove_content_filter()
     {
-        remove_filter('the_content', array($this, 'dce_filter_the_content_in_the_main_loop'), 999999);
+        remove_filter('the_content', array($this, 'filter_the_content_in_the_main_loop'), 999999);
     }
     public function dce_elementor_init()
     {
-        // Dynamic Content for Elementor - Shortcode
-        add_shortcode('dce-elementor-template', array($this, 'dce_elementor_add_shortcode_template'));
+        add_shortcode('dce-elementor-template', array($this, 'add_shortcode_template'));
         // Add a data attribute to permit to add an inline CSS in a loop
         // It shouldn't be added all the times but only in a loop. TODO
-        add_action('elementor/frontend/column/before_render', array($this, 'add_dce_background'));
-        add_action('elementor/frontend/section/before_render', array($this, 'add_dce_background'));
+        add_action('elementor/frontend/column/before_render', array($this, 'add_dce_background_data_attributes'));
+        add_action('elementor/frontend/section/before_render', array($this, 'add_dce_background_data_attributes'));
         // Fix for CSS in a loop
-        add_action('elementor/frontend/the_content', array($this, '_css_class_fix'));
-        add_action('elementor/frontend/widget/after_render', array($this, '_fix_style'));
-        add_action('elementor/frontend/column/after_render', array($this, '_fix_style'));
-        add_action('elementor/frontend/section/after_render', array($this, '_fix_style'));
-        // Init hook
-        do_action('dynamic_content_for_elementor/init');
+        add_action('elementor/frontend/the_content', array($this, 'css_class_fix'));
+        add_action('elementor/frontend/widget/after_render', array($this, 'fix_style'));
+        add_action('elementor/frontend/column/after_render', array($this, 'fix_style'));
+        add_action('elementor/frontend/section/after_render', array($this, 'fix_style'));
     }
-    public function dce_setup()
+    /**
+     * Add Template System Columns on terms and posts for users with 'manage_options' capabilities
+     *
+     * @return void
+     */
+    public function add_template_system_columns()
     {
         // COLUMNS
         $args = array('public' => \true);
         if (current_user_can('manage_options')) {
-            // Column Template for terms
+            // Template Column for terms
             $taxonomyesRegistered = get_taxonomies($args, 'names', 'and');
             $dceExcludedTaxonomies = self::$excluded_taxonomies;
             $taxonomyesRegistered = \array_diff($taxonomyesRegistered, $dceExcludedTaxonomies);
-            foreach ($taxonomyesRegistered as $chiave) {
-                add_filter('manage_edit-' . $chiave . '_columns', array($this, 'dce_taxonomy_columns_head'));
-                add_filter('manage_' . $chiave . '_custom_column', array($this, 'dce_taxonomy_columns_content'), 10, 3);
+            foreach ($taxonomyesRegistered as $key) {
+                add_filter('manage_edit-' . $key . '_columns', array($this, 'taxonomy_columns_head'));
+                add_filter('manage_' . $key . '_custom_column', array($this, 'taxonomy_columns_content'), 10, 3);
             }
-            // Column Template for postsType
-            $typesRegistered = Helper::get_types_registered();
-            foreach ($typesRegistered as $chiave) {
-                add_filter('manage_' . $chiave . '_posts_columns', array($this, 'dce_columns_head'));
-                add_action('manage_' . $chiave . '_posts_custom_column', array($this, 'dce_columns_content'), 10, 2);
+            // Template Column for Posts/Pages
+            $typesRegistered = self::get_registered_types();
+            foreach ($typesRegistered as $key) {
+                add_filter('manage_' . $key . '_posts_columns', array($this, 'columns_head'));
+                add_action('manage_' . $key . '_posts_custom_column', array($this, 'columns_content'), 10, 2);
             }
         }
     }
-    public static function add_product_container_class()
-    {
-        // Use html_compress($html) function to minify html codes.
-        \ob_start(function ($html) {
-            return \str_replace('elementor elementor-', 'product elementor elementor-', $html);
-        });
-    }
-    // Add columns Template
-    public function dce_columns_head($columns)
+    /**
+     * Add columns heading for Template System
+     *
+     * @param [type] $columns
+     * @return void
+     */
+    public function columns_head($columns)
     {
         $columns['dce_template'] = __('Dynamic.ooo Template System', 'dynamic-content-for-elementor');
         return $columns;
     }
-    public function dce_columns_content($column_name, $post_ID)
+    public function columns_content($column_name, $post_ID)
     {
-        if ($column_name == 'dce_template') {
-            // show content of 'directors_name' column
-            $datopagina = get_post_meta($post_ID, 'dyncontel_elementor_templates', \true);
-            if ($datopagina) {
-                if ($datopagina != 1) {
-                    echo '<a href="' . get_permalink($datopagina) . '" target="blank">' . wp_kses_post(get_the_title($datopagina)) . '</a> - ';
-                    echo '<a href="' . admin_url('post.php?post=' . $datopagina . '&action=edit') . '" target="blank">' . __('Edit', 'dynamic-content-for-elementor') . '</a>';
+        if ('dce_template' === $column_name) {
+            $template = get_post_meta($post_ID, 'dyncontel_elementor_templates', \true);
+            if ($template) {
+                if ($template != 1) {
+                    echo '<a href="' . get_permalink($template) . '" target="blank">' . wp_kses_post(get_the_title($template)) . '</a> - ';
+                    echo '<a href="' . admin_url('post.php?post=' . $template . '&action=edit') . '" target="blank">' . __('Edit', 'dynamic-content-for-elementor') . '</a>';
                 } else {
                     echo '<b>' . __('None', 'dynamic-content-for-elementor') . '</b>';
                 }
@@ -160,12 +160,18 @@ class TemplateSystem
             }
         }
     }
-    public function dce_taxonomy_columns_head($columns)
+    /**
+     * Column heading for Template System on Taxonomies
+     *
+     * @param [type] $columns
+     * @return void
+     */
+    public function taxonomy_columns_head($columns)
     {
-        $columns['dce_template'] = 'Template';
+        $columns['dce_template'] = 'Dynamic.ooo Template';
         return $columns;
     }
-    public function dce_taxonomy_columns_content($content, $column_name, $term_id = \false)
+    public function taxonomy_columns_content($content, $column_name, $term_id = \false)
     {
         if ('dce_template' == $column_name && $term_id) {
             $head_term = get_term_meta($term_id, 'dynamic_content_head', \true);
@@ -202,13 +208,12 @@ class TemplateSystem
         return $content;
     }
     /**
-     * Enqueue admin styles
+     * Shortcode [dce-elementor-template] to show a template
      *
-     * @since 0.5.0
-     *
-     * @access public
+     * @param [type] $atts
+     * @return void
      */
-    public function dce_elementor_add_shortcode_template($atts)
+    public function add_shortcode_template($atts)
     {
         $atts = shortcode_atts(array('id' => '', 'post_id' => '', 'author_id' => '', 'user_id' => '', 'term_id' => '', 'ajax' => '', 'loading' => '', 'inlinecss' => \false), $atts, 'dce-elementor-template');
         $atts['id'] = \intval($atts['id']);
@@ -324,24 +329,15 @@ class TemplateSystem
             return $template_page;
         }
     }
-    private function dce_template_init()
+    /**
+     * Add filters to manage layout on single (full width, canvas) and archives (boxed, full width, canvas)
+     *
+     * @return void
+     */
+    private function manage_filters_layout()
     {
-        // SINGLE File template (blank page)
-        add_filter('template_include', array($this, 'dce_filter_statictemplate'), 999999);
-        // SINGLE
-        //ARCHIVIO file template (boxed/full/canvas)
-        add_filter('archive_template', array($this, 'dce_filter_archivetemplate'), 999999);
-        // ARCHIVE
-    }
-    public function themeslug_filter_front_page_template($template)
-    {
-        return is_home() ? '' : $template;
-    }
-    // TODO: Woocommerce
-    public static function wooc_class($classes)
-    {
-        $classes[] = 'woocommerce';
-        return $classes;
+        add_filter('template_include', array($this, 'layout_static_templates'), 999999);
+        add_filter('archive_template', array($this, 'layout_archive_templates'), 999999);
     }
     public function enfold_customization_author_archives($query)
     {
@@ -351,7 +347,7 @@ class TemplateSystem
         }
         remove_action('pre_get_posts', 'enfold_customization_author_archives');
     }
-    public function dce_add_template_before_content()
+    public function add_template_before_content()
     {
         global $post;
         global $default_template;
@@ -394,13 +390,10 @@ class TemplateSystem
             }
         }
     }
-    public function dce_add_template_after_content()
+    public function add_template_after_content()
     {
-        //
         global $post;
-        //
         global $default_template;
-        //
         if ($post) {
             $cptype = $post->post_type;
         } else {
@@ -431,20 +424,21 @@ class TemplateSystem
             }
         }
     }
-    // Filter ARCHIVE Template
-    public function dce_filter_archivetemplate($single_template)
+    /**
+     * Layout for archives
+     *
+     * @param [type] $single_template
+     * @return void
+     */
+    public function layout_archive_templates($single_template)
     {
         global $post;
         if (!is_author()) {
-            // 1 - verifico se il tipo di post ha il template
-            $typesRegistered = Helper::get_types_registered();
+            // Retrieves all CPTs that can have a template
+            $typesRegistered = self::get_registered_types();
             foreach ($typesRegistered as $chiave) {
-                if (isset($post->post_type) && $post->post_type == $chiave) {
-                    if (!empty(self::$options['dyncontel_field_archive' . $chiave]) && !empty(self::$options['dyncontel_field_archive' . $chiave . '_template'])) {
-                        if (!is_404()) {
-                            $single_template = DCE_PATH . 'template/archive.php';
-                        }
-                    }
+                if (isset($post->post_type) && $post->post_type == $chiave && !empty(self::$options['dyncontel_field_archive' . $chiave]) && !empty(self::$options['dyncontel_field_archive' . $chiave . '_template']) && !is_404()) {
+                    $single_template = DCE_PATH . 'template/archive.php';
                 }
             }
         } elseif (is_author()) {
@@ -454,17 +448,23 @@ class TemplateSystem
         }
         return $single_template;
     }
-    // Filter SINGLE Template
-    public function dce_filter_statictemplate($my_template)
+    /**
+     * Load from Elementor folder '/modules/page-templates/templates/' the layout between 'header-footer' (Full-Width in our settings) and 'canvas'
+     *
+     * @param [type] $my_template
+     * @return void
+     */
+    public function layout_static_templates($my_template)
     {
         global $post;
+        // Single post of any post type
         if (is_singular() && !get_page_template_slug()) {
-            // 2 - verifico se una tassonomia associata ha il blank
+            // Check if the post is part of a taxonomy that has a template associated with it
             $postTaxonomyes = Helper::get_post_terms($post->ID);
             if (!empty($postTaxonomyes)) {
                 foreach ($postTaxonomyes as $tKey => $aTaxo) {
                     $aTaxName = $aTaxo->taxonomy;
-                    if (!empty(self::$options['dyncontel_field_single_taxonomy_' . $aTaxName . '_blank'])) {
+                    if (!empty(self::$options['dyncontel_field_single_taxonomy_' . $aTaxName]) && 'publish' === get_post_status(self::$options['dyncontel_field_single_taxonomy_' . $aTaxName]) && !empty(self::$options['dyncontel_field_single_taxonomy_' . $aTaxName . '_blank'])) {
                         $_blank = self::$options['dyncontel_field_single_taxonomy_' . $aTaxName . '_blank'];
                         if ($_blank == 1 || $_blank == '1') {
                             $_blank = 'header-footer';
@@ -475,11 +475,11 @@ class TemplateSystem
                     }
                 }
             }
-            // 1 - verifico se il tipo di post ha il blank
-            $typesRegistered = Helper::get_types_registered();
+            // Posts (not WooCommerce Products)
+            $typesRegistered = self::get_registered_types();
             foreach ($typesRegistered as $chiave) {
                 if (isset($post->post_type) && $post->post_type == $chiave && $chiave != 'product') {
-                    if (!empty(self::$options['dyncontel_field_single' . $chiave . '_blank'])) {
+                    if (!empty(self::$options['dyncontel_field_single' . $chiave]) && 'publish' === get_post_status(self::$options['dyncontel_field_single' . $chiave]) && !empty(self::$options['dyncontel_field_single' . $chiave . '_blank'])) {
                         $_blank = self::$options['dyncontel_field_single' . $chiave . '_blank'];
                         if ($_blank == 1 || $_blank == '1') {
                             $_blank = 'header-footer';
@@ -508,11 +508,11 @@ class TemplateSystem
                 }
             }
         }
-        // PRODUCT WOOCOMMERCE
+        // WooCommerce
         if (Helper::is_woocommerce_active()) {
-            // In caso di SINGLE Wooc
-            if (is_product()) {
-                if (!empty(self::$options['dyncontel_field_singleproduct_blank'])) {
+            // WooCommerce Product - Single Page
+            if (\is_product()) {
+                if (!empty(self::$options['dyncontel_field_singleproduct']) && 'publish' === get_post_status(self::$options['dyncontel_field_singleproduct']) && !empty(self::$options['dyncontel_field_singleproduct_blank'])) {
                     if (!get_page_template_slug()) {
                         $my_template = DCE_PATH . '/template/woocommerce.php';
                     }
@@ -521,9 +521,9 @@ class TemplateSystem
                     $my_template = DCE_PATH . '/template/woocommerce.php';
                 }
             }
-            // In caso di Archive Wooc
+            // WooCommerce Archives
             if (is_product_category() || is_product_tag()) {
-                if (!empty(self::$options['dyncontel_field_archiveproduct']) && !empty(self::$options['dyncontel_field_archiveproduct_blank'])) {
+                if (!empty(self::$options['dyncontel_field_archiveproduct']) && 'publish' === get_post_status(self::$options['dyncontel_field_archiveproduct']) && !empty(self::$options['dyncontel_field_archiveproduct_blank'])) {
                     if (!get_page_template_slug()) {
                         if (!is_404()) {
                             $my_template = DCE_PATH . '/template/archive.php';
@@ -537,9 +537,9 @@ class TemplateSystem
                 }
             }
         }
-        // ATTACHMENTS
+        // Attachment pages
         if (is_attachment() && !get_page_template_slug()) {
-            if (!empty(self::$options['dyncontel_field_singleattachment_blank'])) {
+            if (!empty(self::$options['dyncontel_field_singleattachment']) && 'publish' === get_post_status(self::$options['dyncontel_field_singleattachment']) && !empty(self::$options['dyncontel_field_singleattachment_blank'])) {
                 $_blank = self::$options['dyncontel_field_singleattachment_blank'];
                 if ($_blank == 1 || $_blank == '1') {
                     $_blank = 'header-footer';
@@ -548,42 +548,44 @@ class TemplateSystem
                 $my_template = ELEMENTOR_PATH . 'modules/page-templates/templates/' . $_blank . '.php';
             }
         }
-        // SEARCH
+        // Search Page
         if (is_search()) {
-            if (!empty(self::$options['dyncontel_field_archivesearch_template']) && !empty(self::$options['dyncontel_field_archivesearch'])) {
+            if (!empty(self::$options['dyncontel_field_archivesearch_template']) && !empty(self::$options['dyncontel_field_archivesearch']) && 'publish' === get_post_status(self::$options['dyncontel_field_archivesearch'])) {
                 $my_template = DCE_PATH . '/template/page_template/search.php';
             }
         }
-        // AUTHOR (è in Archive)
+        // Author Archive
         if (is_author()) {
-            if (!empty(self::$options['dyncontel_field_archiveuser_template']) && !empty(self::$options['dyncontel_field_archiveuser'])) {
+            if (!empty(self::$options['dyncontel_field_archiveuser_template']) && !empty(self::$options['dyncontel_field_archiveuser']) && 'publish' === get_post_status(self::$options['dyncontel_field_archiveuser'])) {
                 $single_template = DCE_PATH . '/template/user.php';
             }
         }
-        // In caso di HOME
+        // Homepage
         if (is_home() || \function_exists('is_shop') && \is_shop()) {
             // Le home's di Archivio
-            if (!empty(self::$options['dyncontel_field_archive' . get_post_type()]) && !empty(self::$options['dyncontel_field_archive' . get_post_type() . '_template'])) {
-                if (!is_404()) {
-                    $my_template = DCE_PATH . '/template/archive.php';
-                }
+            if (!empty(self::$options['dyncontel_field_archive' . get_post_type()]) && 'publish' === get_post_status(self::$options['dyncontel_field_archive' . get_post_type()]) && !empty(self::$options['dyncontel_field_archive' . get_post_type() . '_template']) && !is_404()) {
+                $my_template = DCE_PATH . '/template/archive.php';
             }
-            // La home page
+            // Check if it's a page and doesn't have a specific template on the theme folder
             if (is_page() && !get_page_template_slug()) {
-                if (!empty(self::$options['dyncontel_field_singlepage_blank'])) {
+                if (!empty(self::$options['dyncontel_field_singlepage']) && 'publish' === get_post_status(self::$options['dyncontel_field_singlepage']) && !empty(self::$options['dyncontel_field_singlepage_blank'])) {
                     $_blank = self::$options['dyncontel_field_singlepage_blank'];
                     if ($_blank == 1 || $_blank == '1') {
                         $_blank = 'header-footer';
                     }
-                    // retrocompatibility
                     $my_template = ELEMENTOR_PATH . 'modules/page-templates/templates/' . $_blank . '.php';
                 }
             }
         }
         return $my_template;
     }
-    // The_Content (questo è il cuore dell'applicazione)
-    public function dce_elementor_remove_content_filter($content)
+    /**
+     * Remove content filter priority from Elementor
+     *
+     * @param [type] $content
+     * @return void
+     */
+    public function remove_elementor_content_filter_priority($content)
     {
         if (!empty(\Elementor\Frontend::THE_CONTENT_FILTER_PRIORITY)) {
             if (self::get_template_id()) {
@@ -600,7 +602,7 @@ class TemplateSystem
         }
         return $content;
     }
-    public function dce_filter_the_content_in_the_main_loop($content)
+    public function filter_the_content_in_the_main_loop($content)
     {
         // if current post has not its Elementor Template
         $dce_default_template = self::get_template_id();
@@ -615,7 +617,7 @@ class TemplateSystem
     }
     public function fix_elementor_pro_post_content_widget($content, $widget = \false)
     {
-        if ($widget && $widget->get_name() == 'theme-post-content') {
+        if ($widget && 'theme-post-content' === $widget->get_name()) {
             return get_the_content();
         }
         return $content;
@@ -624,15 +626,13 @@ class TemplateSystem
     {
         if (is_singular()) {
             $queried_object = get_queried_object();
-            if (!empty($queried_object) && \get_class($queried_object) == 'WP_Post') {
+            if (!empty($queried_object) && 'WP_Post' === \get_class($queried_object)) {
                 $post = get_post();
                 if ($post) {
-                    $post_id = $post->ID;
-                    // check the Post if is built with Elementor
-                    $elementor_data = get_post_meta($post->ID, '_elementor_edit_mode', \true);
-                    if ($elementor_data) {
-                        $template_id = $post_id;
-                        return $template_id;
+                    // check if the post is built with Elementor
+                    $created_with_elementor = get_post_meta($post->ID, '_elementor_edit_mode', \true);
+                    if ($created_with_elementor) {
+                        return $post->ID;
                     }
                 }
             }
@@ -642,6 +642,10 @@ class TemplateSystem
     public static function get_template_id($head = \false)
     {
         if (self::$template_id) {
+            // Return if the template doesn't exists
+            if ('publish' !== get_post_status(self::$template_id)) {
+                return;
+            }
             return self::$template_id;
         }
         $dce_template = 0;
@@ -823,27 +827,37 @@ class TemplateSystem
         self::$template_id = $dce_template;
         return $dce_template;
     }
-    public static function get_template($template, $inline_css = \false)
+    public static function get_template($template_id, $inline_css = \false)
     {
-        $get_id = apply_filters('wpml_object_id', $template, 'elementor_library', \true);
+        if (!$template_id) {
+            return;
+        }
+        // Return if the template doesn't exists
+        if ('publish' !== get_post_status($template_id)) {
+            return;
+        }
+        // If WPML is active, retrieve the translation of the current template
+        $template_id = apply_filters('wpml_object_id', $template_id, 'elementor_library', \true);
         // Check if the template is created with Elementor
-        $elementor = get_post_meta($get_id, '_elementor_edit_mode', \true);
-        $pagina_template = '';
-        // If Elementor
-        if (\class_exists('Elementor\\Plugin') && $elementor) {
-            // Dalla versione 0.1.0 (consigliavano questo) .. ma ha dei limiti ..per tutti i siti fino ad oggi ho fatto così ... e funzione per i template, ma non per i contenuti diretti.
-            $start = \microtime(\true);
-            // Dalla versione 0.6.0 dopo ore di ragionamenti vado ad usare questo per generare il contenuto di Elementor. Questo mi permette di usare un contenuto Elementor dentro a un contenuto nel template ... vedi (elementor/includes/frontend.php)
-            $pagina_template = \Elementor\Plugin::instance()->frontend->get_builder_content($get_id, $inline_css);
-            $pagina_template = self::_css_class_fix($pagina_template, $get_id);
+        $created_with_elementor = get_post_meta($template_id, '_elementor_edit_mode', \true);
+        if ($created_with_elementor) {
+            $template_page = \Elementor\Plugin::instance()->frontend->get_builder_content($template_id, $inline_css);
+            $template_page = self::css_class_fix($template_page, $template_id);
+            return $template_page;
         } else {
-            $post_n = get_post($get_id);
+            $post_n = get_post($template_id);
             $content_n = apply_filters('the_content', $post_n->post_content);
             echo $content_n;
+            return;
         }
-        return $pagina_template;
     }
-    public function add_dce_background($element)
+    /**
+     * Add Data Attributes to fix issue for templates in a loop
+     *
+     * @param [type] $element
+     * @return void
+     */
+    public function add_dce_background_data_attributes($element)
     {
         // Color
         $background_color = $element->get_settings_for_display('background_color');
@@ -860,7 +874,7 @@ class TemplateSystem
         }
         $background_overlay_hover_color = $element->get_settings_for_display('background_overlay_hover_color');
         if (!empty($background_overlay_hover_color)) {
-            $element->add_render_attribute('_wrapper', 'data-dce-background-overlay-color', $background_overlay_hover_color, \true);
+            $element->add_render_attribute('_wrapper', 'data-dce-background-overlay-hover-color', $background_overlay_hover_color, \true);
         }
         // Background Image URL
         $background_image = $element->get_settings_for_display('background_image');
@@ -880,7 +894,7 @@ class TemplateSystem
             $element->add_render_attribute('_wrapper', 'data-dce-background-overlay-hover-image-url', $background_overlay_hover_image['url'], \true);
         }
     }
-    public static function _css_class_fix($content = '', $template_id = 0)
+    public static function css_class_fix($content = '', $template_id = 0)
     {
         if ($content) {
             $template_html_id = Helper::get_template_id_by_html($content);
@@ -922,7 +936,7 @@ class TemplateSystem
         }
         return $content;
     }
-    public function _fix_style($element)
+    public function fix_style($element)
     {
         $css = '';
         $settings = $element->get_settings_for_display();
@@ -982,36 +996,15 @@ class TemplateSystem
             echo $css;
         }
     }
-    public function dce_get_header($name)
+    /**
+     * Retrieve all Custom Post Types
+     *
+     * @return void
+     */
+    public static function get_registered_types()
     {
-        require DCE_PATH . 'template/header.php';
-        $templates = [];
-        $name = (string) $name;
-        if ('' !== $name) {
-            $templates[] = "header-{$name}.php";
-        }
-        $templates[] = 'header.php';
-        // Avoid running wp_head hooks again
-        remove_all_actions('wp_head');
-        \ob_start();
-        // It cause a `require_once` so, in the get_header it self it will not be required again.
-        locate_template($templates, \true);
-        $header = \ob_get_clean();
-        echo '<header id="site-header" itemscope="itemscope" itemtype="http://schema.org/WPHeader">' . $header . '</header>';
-    }
-    public function dce_get_footer($name)
-    {
-        require DCE_PATH . 'template/footer.php';
-        $templates = [];
-        $name = (string) $name;
-        if ('' !== $name) {
-            $templates[] = "footer-{$name}.php";
-        }
-        $templates[] = 'footer.php';
-        \ob_start();
-        // It cause a `require_once` so, in the get_header it self it will not be required again.
-        locate_template($templates, \true);
-        $footer = \ob_get_clean();
-        echo '<footer id="footer" class="site-footer" itemscope="itemscope" itemtype="http://schema.org/WPFooter">' . $footer . '</footer>';
+        $types_registered = get_post_types(array('public' => \true), 'names', 'and');
+        $types_excluded = self::$supported_types;
+        return \array_diff($types_registered, $types_excluded);
     }
 }

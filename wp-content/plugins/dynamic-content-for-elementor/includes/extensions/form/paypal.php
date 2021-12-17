@@ -38,7 +38,7 @@ class DCE_Extension_Form_PayPal extends \ElementorPro\Modules\Forms\Fields\Field
     }
     public function add_control_section_to_form($element, $args)
     {
-        $element->start_controls_section('dce_section_paypal_buttons_style', ['label' => __('PayPal', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE]);
+        $element->start_controls_section('dce_section_paypal_buttons_style', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('PayPal', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE]);
         $element->add_control('dce_paypal_center', ['label' => __('Center PayPal Buttons', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'return_value' => 'yes']);
         $element->add_control('dce_paypal_layout', ['label' => __('Vertical layout (More Payment Options)', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'horizontal', 'return_value' => 'vertical']);
         $element->add_control('dce_paypal_height', ['label' => __('PayPal Buttons Height', 'dynamic-content-for-elementor'), 'description' => __('Buttons Height in pixels: min 25, max 55.', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 35, 'min' => 25, 'max' => 55, 'ste' => 1]);
@@ -153,14 +153,6 @@ class DCE_Extension_Form_PayPal extends \ElementorPro\Modules\Forms\Fields\Field
         }
         return new PayPalHttpClient($env);
     }
-    private static function get_field_settings($id, Classes\Form_Record $record)
-    {
-        $field_settings = $record->get_form_settings('form_fields');
-        $field_settings = \array_filter($field_settings, function ($field) use($id) {
-            return $field['custom_id'] === $id;
-        });
-        return \array_values($field_settings)[0];
-    }
     /**
      * The form settings that are passed to the validation function have
      * the dynamic controls not parsed (not sure why). So we do it
@@ -218,7 +210,7 @@ class DCE_Extension_Form_PayPal extends \ElementorPro\Modules\Forms\Fields\Field
         try {
             // Will throw an error if the order capture is not succesful.
             $response = self::paypal_client()->execute($request);
-            $field_settings = self::get_field_settings($id, $record);
+            $field_settings = Helper::get_form_field_settings($id, $record);
             if ('yes' !== $field_settings['dce_form_paypal_disable_validation'] && 'yes' !== $field_settings['dce_form_paypal_value_from_field']) {
                 // Check that the total payed in the order is the same as that
                 // of the item value set in the field settings. This is needed

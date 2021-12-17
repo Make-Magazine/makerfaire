@@ -1,4 +1,4 @@
-/*! elementor - v3.4.7 - 31-10-2021 */
+/*! elementor - v3.5.0 - 12-12-2021 */
 #e-dashboard-widget-admin-top-bar {
   position: absolute;
   opacity: 0;
@@ -132,7 +132,7 @@
   #e-admin-top-bar-root .e-admin-top-bar__bar-button-title {
     font-size: 13px;
     font-weight: 500;
-    font-family: 'Roboto';
+    font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
     margin: 0 4px;
     line-height: normal; }
   #e-admin-top-bar-root ~ #wpbody .wrap h1, #e-admin-top-bar-root ~ #wpbody .wrap .page-title-action {

@@ -48,6 +48,7 @@ class Ajax
         }
         $element_id = empty($_GET['eid']) ? 0 : sanitize_text_field($_GET['eid']);
         $favorite_post_id = empty($_GET['dce_post_id']) ? 0 : \intval($_GET['dce_post_id']);
+        $favorite_post_id = apply_filters('wpml_object_id', $favorite_post_id, get_post_type($favorite_post_id), \true);
         $list_key = empty($_GET['dce_list']) ? 0 : sanitize_text_field($_GET['dce_list']);
         if ($element_id && $favorite_post_id && $list_key) {
             status_header(200);

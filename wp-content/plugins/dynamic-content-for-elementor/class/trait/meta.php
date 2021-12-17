@@ -332,7 +332,7 @@ trait Trait_Meta
             $acf_fields = \array_keys(self::get_acf_fields());
             if (!empty($acf_fields) && \in_array($meta_key, $acf_fields, \true)) {
                 // https://www.advancedcustomfields.com/resources/
-                $meta_value = get_field($meta_key, 'user_' . $user_id);
+                $meta_value = \get_field($meta_key, 'user_' . $user_id);
             }
         }
         // https://docs.elementor.com/article/385-elementor-integration-with-pods
@@ -463,6 +463,29 @@ trait Trait_Meta
         }
         return $postMetas;
     }
+    public static function get_relationship_pods($grouped = \false, $like = '', $info = \true)
+    {
+        $postMetasGrouped = [];
+        $postMetas = [];
+        $pods = get_posts(array('post_type' => '_pods_field', 'numberposts' => -1, 'post_status' => 'publish', 'suppress_filters' => \false));
+        if (!empty($pods)) {
+            foreach ($pods as $apod) {
+                $type = get_post_meta($apod->ID, 'type', \true);
+                if ('pick' === $type) {
+                    $field_name = $apod->post_title;
+                    if ($info) {
+                        $field_name .= ' [' . $type . ']';
+                    }
+                    $postMetas[$apod->post_name] = $field_name;
+                    $postMetasGrouped['PODS'][$apod->post_name] = $postMetas[$apod->post_name];
+                }
+            }
+        }
+        if ($grouped) {
+            return $postMetasGrouped;
+        }
+        return $postMetas;
+    }
     public static function is_post_meta($meta_name = null)
     {
         $post_fields = array('ID', 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count');
@@ -514,27 +537,30 @@ trait Trait_Meta
     {
         $acf_list = [];
         if (\is_string($types)) {
-            if ($types == 'dyncontel-acf') {
-                $types = array('text', 'textarea', 'select', 'number', 'checkbox', 'radio', 'color_picker', 'date_time_picker', 'date_picker', 'time_picker', 'oembed', 'file', 'url', 'image', 'wysiwyg', 'true_false', 'acf_code_field', 'repeater', 'google_map', 'link', 'page_link');
-            } else {
-                $types = \DynamicContentForElementor\Helper::str_to_array(',', $types);
-            }
+            $types = \DynamicContentForElementor\Helper::str_to_array(',', $types);
         }
         if ($select) {
             $acf_list[0] = __('Select the field', 'dynamic-content-for-elementor');
         }
         if (\DynamicContentForElementor\Helper::is_acf_active()) {
-            $tipo = 'acf-field';
-            $acf_fields = get_posts(array('post_type' => $tipo, 'numberposts' => -1, 'post_status' => 'publish', 'orderby' => 'title', 'suppress_filters' => \false));
+            $post_type = 'acf-field';
+            $acf_fields = get_posts(['post_type' => $post_type, 'numberposts' => -1, 'post_status' => 'publish', 'orderby' => 'title', 'suppress_filters' => \false]);
+            // ACF Fields saved in JSON or PHP
+            if (acf_have_local_fields()) {
+                $raw_fields = acf_get_local_fields();
+                foreach ($raw_fields as $raw_field) {
+                    $acf_fields[] = acf_get_field($raw_field['key']);
+                }
+            }
             if (!empty($acf_fields)) {
                 foreach ($acf_fields as $acf_field) {
                     $acf_field_parent = \false;
-                    if ($acf_field->post_parent) {
+                    if (isset($acf_field->post_parent) && $acf_field->post_parent) {
                         if ($acf_field_parent = get_post($acf_field->post_parent)) {
                             $acf_field_parent_settings = maybe_unserialize($acf_field_parent->post_content);
                         }
                     }
-                    $acf_field_settings = maybe_unserialize($acf_field->post_content);
+                    $acf_field_settings = maybe_unserialize($acf_field->post_content ?? '');
                     if (isset($acf_field_settings['type']) && (empty($types) || \in_array($acf_field_settings['type'], $types))) {
                         if ($group && $acf_field_parent) {
                             if (empty($acf_list[$acf_field_parent->post_excerpt]) || \is_array($acf_list[$acf_field_parent->post_excerpt])) {
@@ -593,7 +619,7 @@ trait Trait_Meta
         if (!self::is_acf_active()) {
             return [];
         }
-        $fields = get_field($key);
+        $fields = \get_field($key);
         $sub_fields = [];
         $row_counter = 0;
         if ($fields) {
@@ -742,27 +768,27 @@ trait Trait_Meta
             }
         }
         // post
-        $theField = get_field($idField, $id_page, $format);
+        $theField = \get_field($idField, $id_page, $format);
         if (!$theField) {
             $locations = self::get_acf_field_locations($dataACFieldPost);
             if (is_tax() || is_category() || is_tag() || \in_array('taxonomy', $locations)) {
                 $term = get_queried_object();
-                $theField = get_field($idField, $term, $format);
+                $theField = \get_field($idField, $term, $format);
             }
             if (!$theField && is_author()) {
                 $author_id = get_the_author_meta('ID');
-                $theField = get_field($idField, 'user_' . $author_id, $format);
+                $theField = \get_field($idField, 'user_' . $author_id, $format);
             }
             if (!$theField && \in_array('user', $locations)) {
                 $user_id = get_current_user_id();
-                $theField = get_field($idField, 'user_' . $user_id, $format);
+                $theField = \get_field($idField, 'user_' . $user_id, $format);
             }
             if (!$theField && \in_array('options', $locations)) {
-                $theField = get_field($idField, 'options', $format);
+                $theField = \get_field($idField, 'options', $format);
             }
             if (!$theField && \in_array('nav', $locations)) {
                 $menu = wp_get_nav_menu_object($id_page);
-                $theField = get_field($idField, $menu, $format);
+                $theField = \get_field($idField, $menu, $format);
             }
         }
         return $theField;

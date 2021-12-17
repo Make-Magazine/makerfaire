@@ -11,7 +11,7 @@
 namespace DynamicOOOS\Symfony\Component\Cache;
 
 use DynamicOOOS\Doctrine\Common\Cache\CacheProvider;
-use DynamicOOOS\Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use DynamicOOOS\Symfony\Contracts\Service\ResetInterface;
 /**
  * @author Nicolas Grekas <p@tchwork.com>

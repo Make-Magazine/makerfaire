@@ -1,4 +1,4 @@
-function get_Dyncontel_ElementSettings($element) {
+function dceGetElementSettings($element) {
         var elementSettings = [];
         var modelCID = $element.data('model-cid');
         if (elementorFrontend.isEditMode() && modelCID) {
@@ -41,10 +41,10 @@ function observe_Dyncontel_element( $target, $function_callback ){
         });*/
 
         // Opzioni per il monitoraggio (quali mutazioni monitorare)
-        var config = { 
-            attributes: true, 
-            childList: false, 
-            characterData: true 
+        var config = {
+            attributes: true,
+            childList: false,
+            characterData: true
         };
 
         var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
@@ -58,34 +58,71 @@ function observe_Dyncontel_element( $target, $function_callback ){
     }
 
 }
-    
-(function ($) {
-    var get_Dyncontel_ElementSettings = function ($element) {
 
-        var elementSettings = {};
-        var modelCID = $element.data('model-cid');
+window.dynamicooo = {};
 
-        if (elementorFrontend.isEditMode() && modelCID) {
-            var settings = elementorFrontend.config.elements.data[ modelCID ];
-            var settingsKeys = elementorFrontend.config.elements.keys[ settings.attributes.widgetType || settings.attributes.elType ];
-            var type = settings.attributes.widgetType || settings.attributes.elType;
-            if (!settingsKeys) {
-                settingsKeys = elementorFrontend.config.elements.keys[type] = [];
-                jQuery.each(settings.controls, function (name, control) {
-                    if (control.frontend_available) {
-                        settingsKeys.push(name);
-                    }
-                });
-            }
-            jQuery.each(settings.getActiveControls(), function (controlKey) {
-                if (-1 !== settingsKeys.indexOf(controlKey)) {
-                    elementSettings[ controlKey ] = settings.attributes[ controlKey ];
-                }
-            });
-        } else {
-            elementSettings = $element.data('settings') || [];
-        }
-        return elementSettings;
-    };
+dynamicooo.getActiveBreakpointsMinPointAndPostfix = () => {
+	let breakpoints = elementorFrontend.config.responsive.activeBreakpoints;
+	let ret = {};
+	for (let key in breakpoints) {
+		ret[key] = {
+			// Elementor widescreen value is actually the min breakpoint:
+			min_point: elementorFrontend.breakpoints.getDeviceMinBreakpoint(key),
+			postfix: `_${key}`,
+		};
+	}
+	ret.desktop = {
+		min_point: elementorFrontend.breakpoints.getDeviceMinBreakpoint('desktop'),
+		postfix: '',
+	}
+	return ret;
+}
 
-})(jQuery);
+/**
+  * Create a Swiper settings breakpoints object .
+  *
+  * swiperSettings: An object with with Swiper settings keys as keys, and as values
+  *  an object contains:
+  * - elementor_key: The Elementor Settings Key from where the value of the
+  *    Swiper Key should be fetched.
+  * - default_value
+  * - filter: function that modifies the Elementor Setting value.>
+  *
+  *
+  *  Returns the breakpoints object as defined by Swiper, value are
+  *  automatically fetched from the Elementor settings.
+  */
+dynamicooo.makeSwiperBreakpoints = (swiperSettings, elementorSettings, elementorSettingsPrefix) => {
+	elementorSettingsPrefix = elementorSettingsPrefix || '';
+	swiperBreakpoints = {}
+	let elementorBreakpoints = dynamicooo.getActiveBreakpointsMinPointAndPostfix();
+	for(let device in elementorBreakpoints) {
+		let min_point = elementorBreakpoints[device].min_point;
+		let postfix = elementorBreakpoints[device].postfix;
+		let breakpointSettings = {}
+		for(let swiperSettingsKey in swiperSettings) {
+			let elementorSettingsKey = elementorSettingsPrefix + swiperSettings[swiperSettingsKey].elementor_key;
+			let default_value = swiperSettings[swiperSettingsKey].default_value;
+			let postfixedKey = elementorSettingsKey + postfix;
+			let value
+			if (typeof elementorSettings[postfixedKey] !== "undefined") {
+				value = elementorSettings[postfixedKey];
+			} else {
+				// fallback to desktop value:
+				value = elementorSettings[elementorSettingsKey]
+			}
+			if (typeof value !== "undefined") {
+				let filter = Number;
+				if ( typeof swiperSettings[swiperSettingsKey].filter === "function" ) {
+					filter = swiperSettings[swiperSettingsKey].filter;
+				}
+				value = filter(value);
+			} else {
+				value = default_value;
+			}
+			breakpointSettings[swiperSettingsKey] = value;
+		}
+		swiperBreakpoints[min_point] = breakpointSettings;
+	}
+	return swiperBreakpoints;
+}

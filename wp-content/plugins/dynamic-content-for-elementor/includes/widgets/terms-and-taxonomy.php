@@ -10,7 +10,7 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Terms extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Terms extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -19,7 +19,7 @@ class DCE_Widget_Terms extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
     protected function _register_controls()
     {
         $this->start_controls_section('section_content', ['label' => __('Terms', 'dynamic-content-for-elementor')]);
-        $this->add_control('taxonomy', ['label' => __('Taxonomy', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['auto' => __('Dynamic', 'dynamic-content-for-elementor')] + get_taxonomies(array('public' => \true)), 'default' => 'category']);
+        $this->add_control('taxonomy', ['label' => __('Taxonomy', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['auto' => __('Dynamic', 'dynamic-content-for-elementor')] + get_taxonomies(), 'default' => 'category']);
         $this->add_control('only_parent_terms', ['label' => __('Show only', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['both' => ['title' => __('Both', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-tags'], 'yes' => ['title' => __('Parents', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-sitemap'], 'children' => ['title' => __('Children', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-child']], 'toggle' => \false, 'default' => 'both']);
         $this->add_control('separator', ['label' => __('Separator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => ', ']);
         $this->add_control('use_termdescription', ['label' => __('Show term description', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'return_value' => 'yes']);
@@ -183,7 +183,7 @@ class DCE_Widget_Terms extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
                         } else {
                             if ($settings['acf_field_color']) {
                                 $idField_color = $settings['acf_field_color'];
-                                $colorField = get_field($idField_color, 'term_' . $term->term_id);
+                                $colorField = \get_field($idField_color, 'term_' . $term->term_id);
                             }
                         }
                         if ($colorField) {
@@ -205,7 +205,7 @@ class DCE_Widget_Terms extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
                         } else {
                             if ($settings['acf_field_color_hover']) {
                                 $idField_color_hover = $settings['acf_field_color_hover'];
-                                $colorField_hover = get_field($idField_color_hover, 'term_' . $term->term_id);
+                                $colorField_hover = \get_field($idField_color_hover, 'term_' . $term->term_id);
                             }
                         }
                         if ($colorField_hover) {

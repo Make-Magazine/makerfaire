@@ -1,0 +1,10 @@
+/*!
+ * Knockout JavaScript library v3.5.1
+ * (c) The Knockout.js team - http://knockoutjs.com/
+ * License: MIT (http://www.opensource.org/licenses/mit-license.php)
+ */
+
+/*!
+* focus-trap 6.7.1
+* @license MIT, https://github.com/focus-trap/focus-trap/blob/master/LICENSE
+*/

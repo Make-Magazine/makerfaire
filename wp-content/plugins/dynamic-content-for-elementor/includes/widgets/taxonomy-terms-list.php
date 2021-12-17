@@ -15,7 +15,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -42,7 +42,7 @@ class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\D
         $this->add_control('show_taxonomy', ['label' => __('Show Taxonomy Name', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '1']);
         //
         $this->add_control('tax_text', ['label' => __('Custom Taxonomy Name', 'dynamic-content-for-elementor'), 'description' => __('If you do not want to use your native label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'condition' => ['show_taxonomy' => '1']]);
-        $this->add_control('tax_link', ['label' => __('Custom Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => 'http://your-link.com', 'condition' => ['show_taxonomy' => '1', 'tax_text!' => ''], 'default' => ['url' => ''], 'show_label' => \false]);
+        $this->add_control('tax_link', ['label' => __('Custom Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['show_taxonomy' => '1', 'tax_text!' => ''], 'default' => ['url' => ''], 'show_label' => \false]);
         $this->add_control('show_childlist', ['label' => __('Show Child List', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '1']);
         $this->add_control('show_childlist_depth', ['label' => __('Max Child Depth', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 0, 'condition' => ['show_childlist' => '1']]);
         $this->add_control('show_count', ['label' => __('Show Count', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
@@ -305,7 +305,7 @@ class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\D
                 $image_acf = '';
                 if (isset($settings['image_acf_enable']) && $settings['image_acf_enable']) {
                     $idFields = $settings['acf_field_image'];
-                    $imageField = get_field($idFields, 'term_' . $term->term_id);
+                    $imageField = \get_field($idFields, 'term_' . $term->term_id);
                     $typeField = '';
                     if ($imageField) {
                         $imageSrc = \false;

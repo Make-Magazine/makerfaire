@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\Psr\Log;
+namespace Psr\Log;
 
 /**
  * Describes log levels.

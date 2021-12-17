@@ -10,8 +10,8 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Exception;
 
-use DynamicOOOS\Psr\Cache\InvalidArgumentException as Psr6CacheInterface;
-use DynamicOOOS\Psr\SimpleCache\InvalidArgumentException as SimpleCacheInterface;
+use Psr\Cache\InvalidArgumentException as Psr6CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException as SimpleCacheInterface;
 if (\interface_exists(SimpleCacheInterface::class)) {
     class InvalidArgumentException extends \InvalidArgumentException implements Psr6CacheInterface, SimpleCacheInterface
     {

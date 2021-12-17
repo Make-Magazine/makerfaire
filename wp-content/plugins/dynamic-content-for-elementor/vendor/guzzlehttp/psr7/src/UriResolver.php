@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\GuzzleHttp\Psr7;
 
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * Resolves a URI reference in the context of a base URI and the opposite way.
  *

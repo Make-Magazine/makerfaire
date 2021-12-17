@@ -12,12 +12,11 @@ use Elementor\Utils;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Group_Control_Outline;
 use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_CSS;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Transform_Element;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -46,8 +45,8 @@ class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\DCE_W
             'default' => 'Select the field',
             'condition' => ['link_to' => 'acf_url'],
         ]);
-        $this->add_control('acf_field_url_target', ['label' => __('Blank', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'label_off' => __('No', 'dynamic-content-for-elementor'), 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'acf_url']]);
-        $this->add_control('link', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => 'http://your-link.com', 'condition' => ['link_to' => 'custom'], 'show_label' => \false]);
+        $this->add_control('acf_field_url_target', ['label' => __('Blank', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['link_to' => 'acf_url']]);
+        $this->add_control('link', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'show_label' => \false]);
         $this->end_controls_section();
         /* -------------------- Background ------------------ */
         $post_type_object = get_post_type_object(get_post_type());
@@ -61,7 +60,7 @@ class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\DCE_W
             'default' => '0',
         ]);
         $this->add_control('bg_position', ['label' => __('Background position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'top center', 'options' => ['' => __('Default', 'dynamic-content-for-elementor'), 'top left' => __('Top Left', 'dynamic-content-for-elementor'), 'top center' => __('Top Center', 'dynamic-content-for-elementor'), 'top right' => __('Top Right', 'dynamic-content-for-elementor'), 'center left' => __('Center Left', 'dynamic-content-for-elementor'), 'center center' => __('Center Center', 'dynamic-content-for-elementor'), 'center right' => __('Center Right', 'dynamic-content-for-elementor'), 'bottom left' => __('Bottom Left', 'dynamic-content-for-elementor'), 'bottom center' => __('Bottom Center', 'dynamic-content-for-elementor'), 'bottom right' => __('Bottom Right', 'dynamic-content-for-elementor')], 'selectors' => ['{{WRAPPER}} .dynamic-content-featuredimage-bg' => 'background-position: {{VALUE}};'], 'condition' => ['use_bg' => '1']]);
-        $this->add_control('bg_extend', ['label' => __('Extend Background', 'dynamic-content-for-elementor'), 'description' => __('Absolutely position the image by spreading it over the entire column. Warning: the height of the image depends on the elements contained in the column.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'condition' => ['use_bg' => '1'], 'prefix_class' => 'extendbg-']);
+        $this->add_control('bg_extend', ['label' => __('Extend Background', 'dynamic-content-for-elementor'), 'description' => __('Absolutely position the image by spreading it over the entire column. Warning: the height of the image depends on the elements contained in the column.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'condition' => ['use_bg' => '1'], 'prefix_class' => 'extendbg-']);
         $this->add_responsive_control('minimum_height', ['label' => __('Minimum Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '', 'unit' => 'px'], 'tablet_default' => ['size' => '', 'unit' => 'px'], 'mobile_default' => ['size' => '', 'unit' => 'px'], 'size_units' => ['px', '%', 'vh'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 1000], 'vh' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dynamic-content-featuredimage-bg' => 'min-height: {{SIZE}}{{UNIT}};'], 'condition' => ['use_bg' => '1', 'bg_extend' => 'yes']]);
         $this->add_responsive_control('height', ['label' => __('Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 200, 'unit' => 'px'], 'tablet_default' => ['unit' => 'px'], 'mobile_default' => ['unit' => 'px'], 'size_units' => ['px', '%', 'vh'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 1000], 'vh' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dynamic-content-featuredimage-bg' => 'height: {{SIZE}}{{UNIT}};'], 'condition' => ['use_bg' => '1', 'bg_extend' => '']]);
         $this->end_controls_section();
@@ -176,7 +175,7 @@ class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\DCE_W
                 break;
             case 'acf_url':
                 if (!empty($settings['acf_field_url'])) {
-                    $link = esc_url(get_field($settings['acf_field_url'], $id_page));
+                    $link = esc_url(\get_field($settings['acf_field_url'], $id_page));
                     $target = $settings['acf_field_url_target'] ? 'target="_blank"' : '';
                 } else {
                     $link = \false;

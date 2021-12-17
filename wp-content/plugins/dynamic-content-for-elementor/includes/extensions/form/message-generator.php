@@ -96,7 +96,7 @@ class DCE_Extension_Form_Message extends \ElementorPro\Modules\Forms\Classes\Act
         $settings = $record->get('form_settings');
         $fields = Helper::get_form_data($record);
         $settings = Helper::get_dynamic_value($settings, $fields);
-        $this->dce_elementor_form_message($fields, $settings, $ajax_handler);
+        $this->message($fields, $settings, $ajax_handler);
     }
     /**
      * On Export
@@ -116,7 +116,7 @@ class DCE_Extension_Form_Message extends \ElementorPro\Modules\Forms\Classes\Act
             }
         }
     }
-    protected function dce_elementor_form_message($fields, $settings = null, $ajax_handler = null)
+    protected function message($fields, $settings = null, $ajax_handler = null)
     {
         $element_id = $settings['id'];
         $message_html = '';

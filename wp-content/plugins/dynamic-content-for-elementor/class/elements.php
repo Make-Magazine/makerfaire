@@ -19,17 +19,17 @@ class Elements
     public static $user_can_elementor = \false;
     public function __construct()
     {
-        add_action('elementor/init', array($this, 'dce_elements_init'));
+        add_action('elementor/init', [$this, 'init']);
     }
-    public function dce_elements_init()
+    public function init()
     {
         if (!is_admin()) {
             // elements report
             add_action('elementor/frontend/widget/before_render', array($this, 'start_element'), 11, 2);
             $option = get_option('dce_frontend_navigator');
-            if ($option == 'active' || $option == 'active-visitors') {
+            if ('active' === $option || 'active-visitors' === $option) {
                 self::$user_can_elementor = \DynamicContentForElementor\Helper::user_can_elementor();
-                if (self::$user_can_elementor || isset($_GET['dce-nav']) && $option == 'active-visitors') {
+                if (self::$user_can_elementor || isset($_GET['dce-nav']) && 'active-visitors' === $option) {
                     add_action('elementor/frontend/builder_content_data', array($this, 'start_element'), 11, 2);
                     // template start
                     add_action('elementor/frontend/the_content', array($this, 'end_element'), 11, 2);

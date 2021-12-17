@@ -115,8 +115,6 @@ class ApiRequestor
      * @param null|array $headers
      *
      * @throws Exception\ApiErrorException
-     *
-     * @return array tuple containing (ApiReponse, API key)
      */
     public function requestStream($method, $url, $readBodyChunkCallable, $params = null, $headers = null)
     {
@@ -366,7 +364,7 @@ class ApiRequestor
         list($absUrl, $rawHeaders, $params, $hasFile, $myApiKey) = $this->_prepareRequest($method, $url, $params, $headers);
         $requestStartMs = Util\Util::currentTimeMillis();
         list($rbody, $rcode, $rheaders) = $this->httpClient()->request($method, $absUrl, $rawHeaders, $params, $hasFile);
-        if (isset($rheaders['request-id']) && \is_string($rheaders['request-id']) && \strlen($rheaders['request-id']) > 0) {
+        if (isset($rheaders['request-id']) && \is_string($rheaders['request-id']) && '' !== $rheaders['request-id']) {
             self::$requestTelemetry = new RequestTelemetry($rheaders['request-id'], Util\Util::currentTimeMillis() - $requestStartMs);
         }
         return [$rbody, $rcode, $rheaders, $myApiKey];
@@ -389,7 +387,7 @@ class ApiRequestor
         list($absUrl, $rawHeaders, $params, $hasFile, $myApiKey) = $this->_prepareRequest($method, $url, $params, $headers);
         $requestStartMs = Util\Util::currentTimeMillis();
         list($rbody, $rcode, $rheaders) = $this->streamingHttpClient()->requestStream($method, $absUrl, $rawHeaders, $params, $hasFile, $readBodyChunkCallable);
-        if (isset($rheaders['request-id']) && \is_string($rheaders['request-id']) && \strlen($rheaders['request-id']) > 0) {
+        if (isset($rheaders['request-id']) && \is_string($rheaders['request-id']) && '' !== $rheaders['request-id']) {
             self::$requestTelemetry = new RequestTelemetry($rheaders['request-id'], Util\Util::currentTimeMillis() - $requestStartMs);
         }
         return [$rbody, $rcode, $rheaders, $myApiKey];

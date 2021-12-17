@@ -1,6 +1,6 @@
 ( function( $ ) {
 	var WidgetElements_TooltipHandler = function( $scope, $ ) {
-		var elementSettings = get_Dyncontel_ElementSettings( $scope );
+		var elementSettings = dceGetElementSettings( $scope );
 
 		if( elementSettings.dce_enable_tooltip ) {
 
@@ -42,7 +42,7 @@
 			if (target.length) {
 				target = target.toArray();
 			} else {
-				console.error('Dynamic Tooltip: Selector not found');
+				console.error('Dynamic.ooo Tooltip: Selector not found');
 				return;
 			}
 
@@ -77,6 +77,7 @@
 					followCursor: followCursor,
 					maxWidth: maxWidth,
 					theme: 'theme_' + $scope.data('id'),
+					zIndex: parseInt(elementSettings.dce_tooltip_zindex),
 				});
 			}
 		}

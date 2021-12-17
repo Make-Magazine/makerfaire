@@ -8,6 +8,8 @@ dceJsField.registerRefresherGenerator = function(field_id, refresherGenerator) {
 	this.refresherGenerators[field_id] = refresherGenerator;
 }
 
+jQuery(window).trigger('dce/jsfield-loaded');
+
 let getFieldValue = (form, id) => {
 	let data = new FormData(form);
 	let key = `form_fields[${id}]`;
@@ -72,5 +74,8 @@ function initializeAllJsFieldFields($scope) {
 }
 
 jQuery(window).on('elementor/frontend/init', function() {
+	if(elementorFrontend.isEditMode()) {
+		return;
+	}
 	elementorFrontend.hooks.addAction('frontend/element_ready/form.default', initializeAllJsFieldFields);
 });

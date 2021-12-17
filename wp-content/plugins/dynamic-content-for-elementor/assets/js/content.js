@@ -4,7 +4,7 @@
       var dcecontentWrap = $scope.find('.dce-content-wrapper');
       var dceunfold = $scope.find('.unfold-btn a');
       var dceunfoldfa = $scope.find('.unfold-btn i.fa-old');
-      var elementSettings = get_Dyncontel_ElementSettings($scope);
+      var elementSettings = dceGetElementSettings($scope);
 
       if (elementSettings.enable_unfold) {
         var originalHeightUnfold = dcecontentWrap.outerHeight();

@@ -17,7 +17,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -35,6 +35,8 @@ class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widge
         $this->add_responsive_control('hamburger_align', ['label' => __('Menu Icon Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'separator' => 'before', 'selectors' => ['{{WRAPPER}} .dce-button-wrapper' => 'text-align: {{VALUE}};'], 'default' => 'right']);
         $this->add_responsive_control('aocm_position', ['label' => __('Menu Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-left'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-right']], 'selectors' => ['#animatedoffcanvasmenu-{{ID}} .dce-nav .dce-menu-aocm' => '{{VALUE}}: 0;', '#animatedoffcanvasmenu-{{ID}} .dce-menu-aocm .dce-close' => '{{VALUE}}: 0;'], 'default' => 'right', 'frontend_available' => \true]);
         $this->add_control('side_background', ['label' => __('Side Background', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'label_on' => __('Show', 'dynamic-content-for-elementor'), 'label_off' => __('Hide', 'dynamic-content-for-elementor'), 'return_value' => 'show', 'default' => 'show', 'separator' => 'before', 'frontend_available' => 'true']);
+        $this->add_control('dynamic_template_before_choice', ['label' => __('Template before menu', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
+        $this->add_control('dynamic_template_before', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['dynamic_template_before_choice!' => '']]);
         $this->add_control('dynamic_template_after_choice', ['label' => __('Template after menu', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
         $this->add_control('dynamic_template_after', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['dynamic_template_after_choice!' => '']]);
         $this->end_controls_section();
@@ -158,10 +160,10 @@ class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widge
         $this->start_controls_section('section_animatedoffcanvasmenu_sideof', ['label' => __('Side Background', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['side_background!' => '']]);
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'background_overlay', 'label' => __('Background Overlay Color', 'dynamic-content-for-elementor'), 'types' => ['classic', 'gradient'], 'selector' => '#animatedoffcanvasmenu-{{ID}} .dce-bg']);
         $this->end_controls_section();
-        // ++++++++++++++++++++++ Close ++++++++++++++++++++++
+        // Close
         $this->start_controls_section('section_style_close', ['label' => __('Close Button', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('enable_close_button', ['label' => __('Close Button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
-        $this->add_control('close_type', ['label' => __('Close type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['x' => ['title' => __('X', 'dynamic-content-for-elementor'), 'icon' => 'eicon-close'], 'icon' => ['title' => __('Icon', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-asterisk'], 'image' => ['title' => __('Image', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-picture-o'], 'text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-italic']], 'toggle' => \false, 'default' => 'x', 'condition' => []]);
+        $this->add_control('close_type', ['label' => __('Close type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['x' => ['title' => __('X', 'dynamic-content-for-elementor'), 'icon' => 'eicon-close'], 'icon' => ['title' => __('Icon', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-asterisk'], 'image' => ['title' => __('Image', 'dynamic-content-for-elementor'), 'icon' => 'eicon-image'], 'text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-italic']], 'toggle' => \false, 'default' => 'x', 'condition' => []]);
         $this->add_control('close_icon', ['label' => __('Close Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'label_block' => \true, 'default' => ['value' => 'fas fa-times', 'library' => 'solid'], 'condition' => ['close_type' => 'icon']]);
         $this->add_control('close_image', ['label' => __('Close Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'default' => ['url' => ''], 'condition' => ['close_type' => 'image']]);
         $this->add_control('close_text', ['label' => __('Close Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Close', 'dynamic-content-for-elementor'), 'condition' => ['close_type' => 'text']]);
@@ -184,7 +186,6 @@ class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widge
         $this->add_control('close_bg_color_hover', ['label' => __('Background color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['#animatedoffcanvasmenu-{{ID}} .dce-menu-aocm button.dce-close:hover' => 'border-color: {{VALUE}};'], 'condition' => ['close_bg_border_border!' => '']]);
         $this->end_controls_tab();
         $this->end_controls_tabs();
-        //
         $this->add_responsive_control('x_buttonsize_closemodal', ['label' => __('Button Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'separator' => 'before', 'default' => ['size' => 50, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 20, 'max' => 100, 'step' => 1]], 'condition' => ['close_type' => 'x'], 'selectors' => ['#animatedoffcanvasmenu-{{ID}} .dce-menu-aocm .dce-close .dce-quit-ics' => 'height: {{SIZE}}{{UNIT}}; width: {{SIZE}}{{UNIT}};']]);
         $this->add_control('x_weight_closemodal', ['label' => __('Close Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 1, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 1, 'max' => 20, 'step' => 1]], 'condition' => ['close_type' => 'x'], 'selectors' => ['#animatedoffcanvasmenu-{{ID}} .dce-menu-aocm .dce-close .dce-quit-ics:after, #animatedoffcanvasmenu-{{ID}} .dce-menu-aocm .dce-close .dce-quit-ics:before' => 'height: {{SIZE}}{{UNIT}}; top: calc(50% - ({{SIZE}}{{UNIT}}/2));']]);
         $this->add_control('x_size_closemodal', ['label' => __('Close Size (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 60, 'unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 20, 'max' => 200, 'step' => 1]], 'condition' => ['close_type' => 'x'], 'selectors' => ['#animatedoffcanvasmenu-{{ID}} .dce-menu-aocm .dce-close .dce-quit-ics:after, #animatedoffcanvasmenu-{{ID}} .dce-menu-aocm .dce-close .dce-quit-ics:before' => 'width: {{SIZE}}{{UNIT}}; left: calc(50% - ({{SIZE}}{{UNIT}}/2));']]);
@@ -326,7 +327,7 @@ class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widge
         } elseif ($settings['hamburger_style'] == 'custom_icon') {
             ?>
 						<div id="dce_hamburger">
-						<?php 
+							<?php 
             Icons_Manager::render_icon($settings['custom_icon_image'], ['aria-hidden' => 'true']);
             ?>
 						</div>
@@ -356,31 +357,32 @@ class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widge
 
 						<?php 
         if ($settings['close_type'] == 'text') {
-            ?><span class="dce-button-text"><?php 
+            ?>
+							<span class="dce-button-text"><?php 
             echo wp_kses_post($settings['close_text']);
-            ?></span><?php 
+            ?></span>
+						<?php 
         }
         ?>
 
 						<?php 
-        if ($settings['close_type'] == 'icon') {
-            if ($settings['close_icon']) {
-                Icons_Manager::render_icon($settings['close_icon'], ['aria-hidden' => 'true']);
-            }
+        if ($settings['close_type'] == 'icon' && $settings['close_icon']) {
+            Icons_Manager::render_icon($settings['close_icon'], ['aria-hidden' => 'true']);
         }
         ?>
 
 						<?php 
         if ($settings['close_type'] == 'image') {
+            ?>
+							<?php 
             if ($settings['close_image']['id']) {
-                ?><img class="close-img" aria-hidden="true" src="<?php 
+                ?>
+							<img class="close-img" aria-hidden="true" src="<?php 
                 echo $settings['close_image']['url'];
-                ?>" /><?php 
+                ?>" />
+							<?php 
             }
         }
-        ?>
-
-						<?php 
         if ($settings['close_type'] == 'x') {
             ?>
 							<span class="dce-quit-ics"></span>
@@ -390,9 +392,27 @@ class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widge
 					</a>
 
 					<div class="dce-nav-menu">
+
+						<?php 
+        if ($settings['dynamic_template_before_choice'] && $settings['dynamic_template_before']) {
+            ?>
+						<div class="dce-template-before">
+							<?php 
+            if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                $inlinecss = 'inlinecss="true"';
+            } else {
+                $inlinecss = '';
+            }
+            echo do_shortcode('[dce-elementor-template id="' . $settings['dynamic_template_before'] . '" ' . $inlinecss . ']');
+            ?>
+						</div>
+						<?php 
+        }
+        ?>
+
 						<?php 
         if ($settings['menu_animatedoffcanvasmenu']) {
-            wp_nav_menu(array('menu' => $settings['menu_animatedoffcanvasmenu'], 'menu_id' => 'dce-ul-menu', 'depth' => $settings['animatedoffcanvasmenu_depth'], 'before' => '<span class="menu-item-wrap">', 'after' => '</span>'));
+            wp_nav_menu(['menu' => $settings['menu_animatedoffcanvasmenu'], 'menu_id' => 'dce-ul-menu', 'depth' => $settings['animatedoffcanvasmenu_depth'], 'before' => '<span class="menu-item-wrap">', 'after' => '</span>']);
         }
         ?>
 
@@ -401,16 +421,15 @@ class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widge
             ?>
 						<div class="dce-template-after">
 							<?php 
-            $dynamic_template_after = $settings['dynamic_template_after'];
             if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                 $inlinecss = 'inlinecss="true"';
             } else {
                 $inlinecss = '';
             }
-            echo do_shortcode('[dce-elementor-template id="' . $dynamic_template_after . '" ' . $inlinecss . ']');
+            echo do_shortcode('[dce-elementor-template id="' . $settings['dynamic_template_after'] . '" ' . $inlinecss . ']');
             ?>
 						</div>
-							<?php 
+						<?php 
         }
         ?>
 					</div>

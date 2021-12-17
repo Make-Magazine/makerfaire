@@ -630,5 +630,9 @@
 }
 
 .elementor-widget-dce-acf-repeater-v2 .dce-acf-repater-table {
-    overflow-x: auto;
+  overflow-x: auto;
+}
+/* ACF repeater */
+.elementor-widget-dce-acf-repeater-v2 .dce-acf-repeater-masonry .dce-acf-repeater-item {
+  float: left;
 }

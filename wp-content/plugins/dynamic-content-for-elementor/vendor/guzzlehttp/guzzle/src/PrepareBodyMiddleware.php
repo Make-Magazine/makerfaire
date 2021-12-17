@@ -3,7 +3,7 @@
 namespace DynamicOOOS\GuzzleHttp;
 
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * Prepares requests that contain a body, adding the Content-Length,
  * Content-Type, and Expect headers.

@@ -3,7 +3,7 @@
 namespace DynamicOOOS\Http\Client;
 
 use DynamicOOOS\Http\Promise\Promise;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * Sends a PSR-7 Request in an asynchronous way by returning a Promise.
  *

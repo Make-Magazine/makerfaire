@@ -1,7 +1,7 @@
 (
 	function ( $ ) {
 		var WidgetElements_SvgDistortionHandler = function ( $scope,$ ) {
-			var elementSettings = get_Dyncontel_ElementSettings( $scope );
+			var elementSettings = dceGetElementSettings( $scope );
 			var id_scope = $scope.attr( 'data-id' );
 
 			var imgDisplacment = elementSettings.displacement_image.url;

@@ -1,7 +1,7 @@
 (function ($) {
   var WidgetElementsPopupHandler = function ($scope, $) {
 
-      var dce_popup_settings = get_Dyncontel_ElementSettings($scope);
+      var dce_popup_settings = dceGetElementSettings($scope);
       var id_scope = $scope.attr('data-id');
       var id_popup = $scope.find('.dce-modal').attr('id');
       var is_animate = false;
@@ -46,12 +46,20 @@
           id_modal_scope = id_modal_scope.join('-');
 
           if (!dce_popup_settings.always_visible) {
-              dce_setCookie(id_modal, 1, dce_popup_settings.cookie_lifetime);
+        	dce_setCookie(id_modal, 1, dce_popup_settings.cookie_lifetime);
           }
           var settings_close_delay = 0;
           if (dce_popup_settings.close_delay) {
-              settings_close_delay = dce_popup_settings.close_delay;
+            settings_close_delay = dce_popup_settings.close_delay;
           }
+
+		  $('.elementor-video').each(function(){
+			this.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
+		  });
+
+		  $('.elementor-video-iframe').each(function(){
+			this.contentWindow.postMessage('{"method":"pause"}', '*')
+		  });
 
           // Remove from body the "open" class
           $('body').removeClass('modal-open-' + id_modal).removeClass('modal-open-' + id_modal_scope);

@@ -16,7 +16,6 @@ class GlobalSettings extends CSS_Manager
 {
     const PANEL_TAB_SETTINGS = 'settings';
     const META_KEY = '_dce_general_settings';
-    public static $namespace = '\\DynamicContentForElementor\\Includes\\Settings\\';
     public static $global_settings = [];
     public static $registered_settings = [];
     /**
@@ -208,19 +207,7 @@ class GlobalSettings extends CSS_Manager
     }
     public static function init()
     {
-        self::$global_settings = self::init_global_settings_info();
         self::on_settings_registered();
-    }
-    public static function init_global_settings_info()
-    {
-        $global_settings_info = [];
-        $global_settings_info['DCE_Settings_SmoothTransition'] = ['category' => '', 'name' => 'dce_settings_smoothtransition', 'title' => __('Smooth Transition', 'dynamic-content-for-elementor'), 'description' => __('Provides a smooth animated transition between pages', 'dynamic-content-for-elementor'), 'icon' => 'icon-dyn-smooth-transition', 'plugin_depends' => [], 'doc_url' => 'https://www.dynamic.ooo/widget/global-settings-smooth-transition/'];
-        $global_settings_info['DCE_Settings_TrackerHeader'] = ['category' => '', 'name' => 'dce_settings_trackerheader', 'title' => __('Tracker Header', 'dynamic-content-for-elementor'), 'description' => __('Tracker header will fix the header of your site to the top of the page. The header will disappear while scrolling but will reappear with a small swipe upward. This will help to optimize available spaces, especially on mobile devices', 'dynamic-content-for-elementor'), 'icon' => 'icon-dyn-tracker-header', 'plugin_depends' => [], 'doc_url' => 'https://www.dynamic.ooo/widget/global-settings-tracker-header/'];
-        return $global_settings_info;
-    }
-    public static function get_global_settings_info()
-    {
-        return self::$global_settings;
     }
     /**
      * On extensions Registered
@@ -237,24 +224,9 @@ class GlobalSettings extends CSS_Manager
             \Elementor\Core\Settings\Manager::add_settings_manager(new \DynamicContentForElementor\GlobalSettings());
         }
     }
-    public static function get_excluded_settings()
+    public static function get_global_settings()
     {
-        return \json_decode(get_option('dce_excluded_global_settings', '[]'), \true);
-    }
-    public static function get_active_settings()
-    {
-        $excluded_settings = self::get_excluded_settings();
-        $active_settings = array();
-        $global_settings = self::get_global_settings_info();
-        if (!empty($global_settings)) {
-            foreach ($global_settings as $global_setting_class => $global_setting_info) {
-                if (!isset($excluded_settings[$global_setting_class])) {
-                    $class = self::$namespace . $global_setting_class;
-                    $active_settings[$global_setting_class] = $global_setting_info;
-                }
-            }
-        }
-        return $active_settings;
+        return \DynamicContentForElementor\Plugin::instance()->features->filter(['type' => 'global-setting']);
     }
     /**
      * On Controls Registered
@@ -265,10 +237,10 @@ class GlobalSettings extends CSS_Manager
      */
     public static function register_settings()
     {
-        $excluded_settings = self::get_excluded_settings();
-        foreach (self::$global_settings as $global_setting_class => $global_setting_info) {
-            if (!isset($excluded_settings[$global_setting_class])) {
-                $class = self::$namespace . $global_setting_class;
+        $global_settings = self::get_global_settings();
+        foreach ($global_settings as $global_setting_info) {
+            if ($global_setting_info['status'] === 'active') {
+                $class = '\\DynamicContentForElementor\\' . $global_setting_info['class'];
                 if (\DynamicContentForElementor\Helper::check_plugin_dependencies(\false, $global_setting_info['plugin_depends'])) {
                     self::$registered_settings[] = new $class();
                 }

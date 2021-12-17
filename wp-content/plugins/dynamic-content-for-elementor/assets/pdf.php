@@ -42,7 +42,7 @@ if ($element_id && $post_id) {
     $orientation = 'portrait';
     $margin = 0;
     $dest = 'I';
-    $styles = 'dynamic-content-for-elementor';
+    $styles = 'only-elementor';
     $converter = 'dompdf';
     if ($settings['dce_pdf_button_body'] === 'template') {
         $template_id = $settings['dce_pdf_button_template'];
@@ -187,6 +187,8 @@ if ($element_id && $post_id) {
                 // Link image from url to path
                 $site_url = site_url();
                 $upload = wp_upload_dir();
+                // Replace URL with directory path to avoid a http call
+                $pdf_html = \str_replace('src="' . $site_url . '/wp-content/uploads', 'src="' . $upload['basedir'], $pdf_html);
                 $pdf_html = \str_replace('src="' . $site_url, 'src="' . $upload['basedir'], $pdf_html);
                 // from div to table
                 $pdf_html = \DynamicContentForElementor\Helper::tablefy($pdf_html);

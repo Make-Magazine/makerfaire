@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Component\ExpressionLanguage;
 
-use DynamicOOOS\Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use DynamicOOOS\Symfony\Component\Cache\Adapter\ArrayAdapter;
 use DynamicOOOS\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheAdapter;
 use DynamicOOOS\Symfony\Component\ExpressionLanguage\ParserCache\ParserCacheInterface;

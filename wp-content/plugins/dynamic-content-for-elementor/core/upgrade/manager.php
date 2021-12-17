@@ -21,6 +21,10 @@ class Manager extends Upgrades_Manager
     {
         return __('Dynamic.ooo - Dynamic Content for Elementor', 'dynamic-content-for-elementor');
     }
+    public function get_updater_label()
+    {
+        return esc_html__('Dynamic.ooo - Dynamic Content for Elementor Data Updater', 'dynamic-content-for-elementor');
+    }
     // Suffixes like -beta1 or -dev should not influence upgrade logic.
     public function get_clean_version($version)
     {

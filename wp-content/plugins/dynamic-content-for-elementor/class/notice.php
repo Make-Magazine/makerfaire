@@ -7,9 +7,6 @@ if (!\defined('ABSPATH')) {
 }
 class Notice
 {
-    public function __construct()
-    {
-    }
     public static function dce_admin_notice__license()
     {
         if (did_action('elementor/loaded')) {

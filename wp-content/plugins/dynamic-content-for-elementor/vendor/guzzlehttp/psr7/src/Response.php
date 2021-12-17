@@ -2,8 +2,8 @@
 
 namespace DynamicOOOS\GuzzleHttp\Psr7;
 
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
-use DynamicOOOS\Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 /**
  * PSR-7 response implementation.
  */

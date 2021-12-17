@@ -1,8 +1,8 @@
 <?php
 
-namespace DynamicOOOS\Psr\Http\Client;
+namespace Psr\Http\Client;
 
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * Exception for when a request failed.
  *
@@ -10,7 +10,7 @@ use DynamicOOOS\Psr\Http\Message\RequestInterface;
  *      - Request is invalid (e.g. method is missing)
  *      - Runtime request errors (e.g. the body stream is not seekable)
  */
-interface RequestExceptionInterface extends ClientExceptionInterface
+interface RequestExceptionInterface extends \Psr\Http\Client\ClientExceptionInterface
 {
     /**
      * Returns the request.

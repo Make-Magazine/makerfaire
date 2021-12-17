@@ -1,6 +1,6 @@
 (function ($) {
     var WidgetElements_DynamicCountdownHandler = function ($scope, $) {
-        var elementSettings = get_Dyncontel_ElementSettings($scope);
+        var elementSettings = dceGetElementSettings($scope);
         var id_scope = $scope.attr('data-id');
 		var target = '.elementor-element-' + id_scope + ' .elementor-countdown-wrapper';
 

@@ -10,8 +10,8 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Exception;
 
-use DynamicOOOS\Psr\Cache\CacheException as Psr6CacheInterface;
-use DynamicOOOS\Psr\SimpleCache\CacheException as SimpleCacheInterface;
+use Psr\Cache\CacheException as Psr6CacheInterface;
+use Psr\SimpleCache\CacheException as SimpleCacheInterface;
 if (\interface_exists(SimpleCacheInterface::class)) {
     class LogicException extends \LogicException implements Psr6CacheInterface, SimpleCacheInterface
     {

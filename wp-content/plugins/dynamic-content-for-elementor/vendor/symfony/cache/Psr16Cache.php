@@ -10,10 +10,10 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache;
 
-use DynamicOOOS\Psr\Cache\CacheException as Psr6CacheException;
-use DynamicOOOS\Psr\Cache\CacheItemPoolInterface;
-use DynamicOOOS\Psr\SimpleCache\CacheException as SimpleCacheException;
-use DynamicOOOS\Psr\SimpleCache\CacheInterface;
+use Psr\Cache\CacheException as Psr6CacheException;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\SimpleCache\CacheException as SimpleCacheException;
+use Psr\SimpleCache\CacheInterface;
 use DynamicOOOS\Symfony\Component\Cache\Adapter\AdapterInterface;
 use DynamicOOOS\Symfony\Component\Cache\Exception\InvalidArgumentException;
 use DynamicOOOS\Symfony\Component\Cache\Traits\ProxyTrait;

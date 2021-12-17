@@ -31,20 +31,11 @@ jQuery(window).on('load', function () {
     // https://googlechrome.github.io/samples/async-clipboard/
     // https://developers.google.com/web/updates/2018/03/clipboardapi
 
-    /*
-     // Web Storage API
-     var item_id = "dceSharedData";
-     jQuery('#dce-copy-paste').on('change', function() {
-     window.localStorage.setItem(item_id, jQuery(this).val());
-     });
-     jQuery('#dce-copy-paste').val(window.localStorage.getItem(item_id));
-     */
-
     // COPY
     jQuery(document).on('click', '.elementor-context-menu-list__item-copy, .elementor-context-menu-list__item-copy_all_content', function () {
         var transferData = elementorCommon.storage.get('clipboard');
         if (!transferData) {
-            transferData = elementorCommon.storage.get('transfer'); //elementorFrontend.config.elements.data[dce_model_cid]; //.attributes;
+            transferData = elementorCommon.storage.get('transfer');
         }
         var jTransferData = JSON.stringify(transferData);
         if (navigator.clipboard) {

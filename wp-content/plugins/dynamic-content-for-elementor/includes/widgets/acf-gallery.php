@@ -19,11 +19,11 @@ use DynamicContentForElementor\Controls\DCE_Group_Control_Transform_Element;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
-        return ['imagesloaded', 'jquery-masonry', 'dce-wow', 'photoswipe', 'photoswipe-ui', 'diamonds', 'homeycombs', 'justifiedGallery-lib', 'dce-acfgallery'];
+        return ['imagesloaded', 'jquery-masonry', 'dce-wow', 'photoswipe', 'photoswipe-ui', 'dce-diamonds', 'dce-homeycombs', 'justifiedGallery-lib', 'dce-acfgallery'];
     }
     public function get_style_depends()
     {
@@ -31,34 +31,34 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\DCE_Widget_
     }
     protected function _register_controls()
     {
-        $post_type_object = get_post_type_object(get_post_type());
-        $acf_group = '';
-        $this->start_controls_section('section_content', ['label' => __('ACF Gallery', 'dynamic-content-for-elementor')]);
+        $this->start_controls_section('section_content', ['label' => $this->get_title()]);
         $this->add_control('acf_field_list', ['label' => __('ACF Gallery Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'gallery']);
         $this->add_control('acf_gallery_from', ['label' => __('Retrieve the field from', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'current_post', 'options' => ['current_post' => __('Current Post', 'dynamic-content-for-elementor'), 'current_user' => __('Current User', 'dynamic-content-for-elementor'), 'current_author' => __('Current Author', 'dynamic-content-for-elementor'), 'current_term' => __('Current Term', 'dynamic-content-for-elementor'), 'options_page' => __('Options Page', 'dynamic-content-for-elementor')]]);
-        $this->add_control('enabled_wow', ['label' => __('WOW Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'frontend_available' => \true]);
+        $this->add_control('enabled_wow', ['label' => __('WOW Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true]);
         $this->end_controls_section();
         $this->start_controls_section('section_settings_gallery', ['label' => __('Gallery', 'dynamic-content-for-elementor')]);
-        $this->add_control('gallery_type', ['label' => __('Skin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['row' => __('Row', 'dynamic-content-for-elementor'), 'grid' => __('Grid', 'dynamic-content-for-elementor'), 'masonry' => __('Masonry', 'dynamic-content-for-elementor'), 'justified' => __('Justified', 'dynamic-content-for-elementor'), 'single_image' => __('Single image', 'dynamic-content-for-elementor'), 'diamond' => __('Diamond', 'dynamic-content-for-elementor'), 'hexagon' => __('Hexagon', 'dynamic-content-for-elementor')], 'default' => 'masonry', 'frontend_available' => \true]);
-        $this->add_control('single_image_type', ['label' => __('Type of single image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['first' => __('First', 'dynamic-content-for-elementor'), 'random' => __('Random', 'dynamic-content-for-elementor')], 'default' => 'first', 'frontend_available' => \true, 'condition' => ['gallery_type' => 'single_image']]);
-        $this->add_responsive_control('columns_grid', ['label' => __('Columns', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 2, 'tablet_default' => 3, 'mobile_default' => 1, 'min' => 1, 'max' => 24, 'render_type' => 'none', 'selectors' => ['{{WRAPPER}} .acfgallery-item' => 'width: calc( 100% / {{VALUE}} );'], 'condition' => ['gallery_type' => ['grid', 'masonry']]]);
+        $this->add_control('gallery_type', ['label' => __('Skin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['row' => __('Row', 'dynamic-content-for-elementor'), 'grid' => __('Grid', 'dynamic-content-for-elementor'), 'masonry' => __('Masonry', 'dynamic-content-for-elementor'), 'justified' => __('Justified', 'dynamic-content-for-elementor'), 'single_image' => __('Single Image', 'dynamic-content-for-elementor'), 'diamond' => __('Diamond', 'dynamic-content-for-elementor'), 'hexagon' => __('Hexagon', 'dynamic-content-for-elementor')], 'default' => 'masonry', 'frontend_available' => \true]);
+        $this->add_control('limit', ['label' => __('Limit images to be shown', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'condition' => ['gallery_type!' => 'single_image']]);
+        $this->add_control('limit_images', ['label' => __('Images to Show', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'max' => 100, 'step' => 1, 'default' => 10, 'condition' => ['gallery_type!' => 'single_image', 'limit!' => '']]);
+        $this->add_control('single_image_type', ['label' => __('Show', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['first' => __('First', 'dynamic-content-for-elementor'), 'random' => __('Random', 'dynamic-content-for-elementor')], 'default' => 'first', 'condition' => ['gallery_type' => 'single_image']]);
+        $this->add_responsive_control('columns_grid', ['label' => __('Columns', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 2, 'tablet_default' => 3, 'mobile_default' => 1, 'min' => 1, 'max' => 24, 'selectors' => ['{{WRAPPER}} .acfgallery-item' => 'width: calc(100% / {{VALUE}}); flex: 0 1 calc( 100% / {{VALUE}} );'], 'condition' => ['gallery_type' => ['grid', 'masonry', 'justified']]]);
         $this->add_control('justified_rowHeight', ['label' => __('Row Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'range' => ['px' => ['min' => 10, 'max' => 800, 'step' => 1]], 'frontend_available' => \true, 'condition' => ['gallery_type' => 'justified']]);
-        $this->add_control('justified_margin', ['label' => __('Images space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]], 'frontend_available' => \true, 'condition' => ['gallery_type' => 'justified']]);
+        $this->add_control('justified_margin', ['label' => __('Space between images', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]], 'frontend_available' => \true, 'condition' => ['gallery_type' => 'justified']]);
         $this->add_control('justified_lastRow', ['label' => __('Last row', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'nojustify', 'options' => ['justify' => __('Justify', 'dynamic-content-for-elementor'), 'nojustify' => __('Left', 'dynamic-content-for-elementor'), 'center' => __('Center', 'dynamic-content-for-elementor'), 'right' => __('Right', 'dynamic-content-for-elementor'), 'hide' => __('Hide', 'dynamic-content-for-elementor')], 'frontend_available' => \true, 'condition' => ['gallery_type' => 'justified']]);
-        $this->add_control('column_diamond', ['label' => __('Min Diamonds per row', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '4', 'options' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'], 'frontend_available' => \true, 'condition' => ['gallery_type' => 'diamond']]);
+        $this->add_control('column_diamond', ['label' => __('Min diamonds per row', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '4', 'options' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6'], 'frontend_available' => \true, 'condition' => ['gallery_type' => 'diamond']]);
         $this->add_responsive_control('size_diamond', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'range' => ['px' => ['min' => 20, 'max' => 800, 'step' => 1]], 'frontend_available' => \true, 'selectors' => ['{{WRAPPER}} .diamonds .diamond-box-wrap' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};'], 'condition' => ['gallery_type' => 'diamond']]);
-        $this->add_control('gap_diamond', ['label' => __('Gap Diamond', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0, 'min' => 0, 'max' => 100, 'step' => 1, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'diamond']]);
+        $this->add_control('gap_diamond', ['label' => __('Gap between diamonds', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0, 'min' => 0, 'max' => 100, 'step' => 1, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'diamond']]);
         $this->add_control('hideIncompleteRow', ['label' => __('Hide Incomplete Row', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'diamond']]);
-        $this->add_responsive_control('size_honeycombs', ['label' => __('Size Hexagon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 250, 'tablet_default' => 150, 'mobile_default' => 100, 'min' => 20, 'max' => 800, 'step' => 1, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'hexagon']]);
-        $this->add_control('gap_honeycombs', ['label' => __('Gap Hexagon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 10, 'min' => 0, 'max' => 100, 'step' => 1, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'hexagon']]);
+        $this->add_responsive_control('size_honeycombs', ['label' => __('Hexagon Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 250, 'tablet_default' => 150, 'mobile_default' => 100, 'min' => 20, 'max' => 800, 'step' => 1, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'hexagon']]);
+        $this->add_control('gap_honeycombs', ['label' => __('Hexagon Gap', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 10, 'min' => 0, 'max' => 100, 'step' => 1, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'hexagon']]);
         $this->end_controls_section();
         $this->start_controls_section('section_style_gallery', ['label' => __('Gallery', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
-        $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => '', 'prefix_class' => 'align-', 'selectors' => ['{{WRAPPER}} .dynamic_acfgallery' => 'text-align: {{VALUE}};']]);
-        $this->add_responsive_control('v_align', ['label' => __('Vertical Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['top' => ['title' => __('Top', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-top'], 'middle' => ['title' => __('Middle', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-middle'], 'down' => ['title' => __('Down', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-bottom']], 'default' => 'top', 'selectors' => ['{{WRAPPER}} .dynamic_acfgallery  .acfgallery-item' => 'vertical-align: {{VALUE}};'], 'condition' => ['gallery_type' => ['grid']]]);
+        $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => '', 'prefix_class' => 'align-', 'selectors' => ['{{WRAPPER}} .dce-acf-gallery' => 'text-align: {{VALUE}};']]);
+        $this->add_responsive_control('v_align', ['label' => __('Vertical Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['top' => ['title' => __('Top', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-top'], 'middle' => ['title' => __('Middle', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-middle'], 'down' => ['title' => __('Down', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-bottom']], 'default' => 'top', 'selectors' => ['{{WRAPPER}} .dce-acf-gallery  .acfgallery-item' => 'vertical-align: {{VALUE}};'], 'condition' => ['gallery_type' => ['grid']]]);
         $this->add_responsive_control('items_padding', ['label' => __('Paddings Items', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .acfgallery-item' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['gallery_type!' => ['hexagon']]]);
         $this->add_control('image_border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .wrap-item-acfgallery' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['gallery_type!' => ['hexagon']]]);
         $this->add_group_control(Group_Control_Border::get_type(), ['name' => 'image_border', 'label' => __('Image Border', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .wrap-item-acfgallery', 'condition' => ['gallery_type!' => ['diamond', 'hexagon']]]);
-        $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'image_box_shadow', 'selector' => '{{WRAPPER}} .dynamic_acfgallery-masonry .wrap-item-acfgallery, {{WRAPPER}} .dynamic_acfgallery-diamond .diamond-box', 'condition' => ['gallery_type!' => ['hexagon']]]);
+        $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'image_box_shadow', 'selector' => '{{WRAPPER}} .dce-acf-gallery-masonry .wrap-item-acfgallery, {{WRAPPER}} .dce-acf-gallery-diamond .diamond-box', 'condition' => ['gallery_type!' => ['hexagon']]]);
         $this->end_controls_section();
         $this->start_controls_section('section_settings', ['label' => __('Images', 'dynamic-content-for-elementor')]);
         $this->add_group_control(Group_Control_Image_Size::get_type(), ['name' => 'size', 'label' => __('Image Size', 'dynamic-content-for-elementor'), 'default' => 'large']);
@@ -67,12 +67,12 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\DCE_Widget_
         $this->start_controls_section('section_style_images', ['label' => __('Images', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('force_width', ['label' => __('Force Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'prefix_class' => 'forcewidth-']);
         $this->add_responsive_control('size_img', ['label' => __('Size (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 100, 'unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .wrap-item-acfgallery' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['force_width' => 'yes']]);
-        $this->add_control('popover-toggle', ['label' => __('Transform image', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::POPOVER_TOGGLE, 'return_value' => 'yes']);
+        $this->add_control('popover-toggle', ['label' => __('Transform', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::POPOVER_TOGGLE, 'return_value' => 'yes']);
         $this->start_popover();
-        $this->add_group_control(DCE_Group_Control_Transform_Element::get_type(), ['name' => 'transform_image', 'label' => __('Transform image', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dynamic_acfgallery', 'separator' => 'before']);
+        $this->add_group_control(DCE_Group_Control_Transform_Element::get_type(), ['name' => 'transform_image', 'label' => __('Transform', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-acf-gallery', 'separator' => 'before']);
         $this->end_popover();
-        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => __('Filters image', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .acfgallery-item img']);
-        $this->add_responsive_control('desc_margin', ['label' => __('space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} figcaption' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['use_desc!' => '']]);
+        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => __('Filters', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .acfgallery-item img']);
+        $this->add_responsive_control('desc_margin', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} figcaption' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['use_desc!' => '']]);
         $this->add_control('figure_title_heading', ['label' => __('Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['use_desc' => 'title']]);
         $this->add_control('acf_space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['max' => 100, 'min' => 0, 'step' => 1]], 'selectors' => ['{{WRAPPER}} figcaption .title' => 'margin-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['use_desc' => 'title']]);
         $this->add_control('desc_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} figcaption .title' => 'color: {{VALUE}};'], 'condition' => ['use_desc' => 'title']]);
@@ -111,7 +111,7 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\DCE_Widget_
             return;
         }
         if ('masonry' === $settings['gallery_type'] && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            Helper::notice('', __('Masonry is not seen correctly in the Elementor editor due to technical limitations but works correctly in the frontend.', 'dynamic-content-for-elementor'));
+            Helper::notice('', __('Masonry is not displayed correctly in the Elementor editor due to technical limitations but works correctly in the frontend.', 'dynamic-content-for-elementor'));
         }
         switch ($settings['acf_gallery_from']) {
             case 'current_post':
@@ -137,150 +137,177 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\DCE_Widget_
                 $id_page = 'options';
                 break;
         }
-        $idFields = '';
+        $elementor_lightbox = '';
+        $counter = 0;
+        $title = '';
+        $image_size = $settings['size_size'];
+        $enable_lightbox = '';
+        $lightbox_type = '';
+        $overlay_hover_class = 'is-overlay';
+        if ($settings['enable_lightbox']) {
+            $enable_lightbox = 'is-lightbox';
+        }
+        if ($settings['lightbox_type'] == 'photoswipe') {
+            $lightbox_type = ' ' . $settings['lightbox_type'];
+        } else {
+            $lightbox_type = 'dce-gallery';
+            $data_elementor_slideshow = ' data-elementor-lightbox-slideshow="' . $this->get_id() . '"';
+            $elementor_lightbox = 'gallery-lightbox';
+        }
         $idFields = $settings['acf_field_list'];
-        $galleria = Helper::get_acf_field_value($idFields, $id_page);
-        if (!empty($galleria)) {
-            $first_image = \reset($galleria);
-            if (!\is_array($first_image)) {
-                if (\filter_var(\reset($galleria), \FILTER_VALIDATE_URL)) {
-                    // URL format
-                    $tmp = array();
-                    foreach ($galleria as $image_url) {
-                        $tmp[] = Helper::get_image_id($image_url);
-                    }
-                    $galleria = $tmp;
+        $acf_gallery = Helper::get_acf_field_value($idFields, $id_page);
+        if (empty($acf_gallery)) {
+            return;
+        }
+        $first_image = \reset($acf_gallery);
+        if (!\is_array($first_image)) {
+            if (\filter_var(\reset($acf_gallery), \FILTER_VALIDATE_URL)) {
+                // URL format
+                $tmp = array();
+                foreach ($acf_gallery as $image_url) {
+                    $tmp[] = Helper::get_image_id($image_url);
                 }
-                if (\is_numeric(\reset($galleria))) {
-                    // ID format
-                    $args = array('post_type' => 'attachment', 'post__in' => $galleria, 'post_status' => 'inherit', 'post_mime_type' => 'image', 'numberposts' => 0, 'posts_per_page' => -1);
-                    $galleria = get_posts($args);
+                $acf_gallery = $tmp;
+            }
+            if (\is_numeric(\reset($acf_gallery))) {
+                // ID format
+                $args = array('post_type' => 'attachment', 'post__in' => $acf_gallery, 'post_status' => 'inherit', 'post_mime_type' => 'image', 'numberposts' => 0, 'posts_per_page' => -1);
+                $acf_gallery = get_posts($args);
+            }
+            if (\is_object(\reset($acf_gallery))) {
+                // URL format
+                $tmp = array();
+                foreach ($acf_gallery as $image) {
+                    $tmp[] = $this->get_attachment($image->ID);
                 }
-                if (\is_object(\reset($galleria))) {
-                    // URL format
-                    $tmp = array();
-                    foreach ($galleria as $image) {
-                        $tmp[] = $this->dce_get_attachment($image->ID);
-                    }
-                    $galleria = $tmp;
-                }
+                $acf_gallery = $tmp;
             }
         }
-        if ($galleria) {
-            $counter = 0;
-            $title = '';
-            $image_size = $settings['size_size'];
-            $enable_lightbox = '';
-            $lightbox_type = '';
-            $elementor_lightbox = '';
-            $data_elementor_open_lightbox = '';
-            $data_elementor_slideshow = '';
-            if ($settings['enable_lightbox']) {
-                $enable_lightbox = ' is-lightbox';
-            }
-            if ($settings['lightbox_type'] == 'photoswipe') {
-                $lightbox_type = ' ' . $settings['lightbox_type'];
-                $data_elementor_open_lightbox = 'data-elementor-open-lightbox="no"';
+        // Single Image Skin
+        if ('single_image' === $settings['gallery_type']) {
+            if ('first' === $settings['single_image_type']) {
+                $acf_gallery = \array_slice($acf_gallery, 0, 1);
             } else {
-                $lightbox_type = ' dce-gallery';
-                $data_elementor_slideshow = ' data-elementor-lightbox-slideshow="' . $this->get_id() . '"';
-                $elementor_lightbox = ' gallery-lightbox';
-                $data_elementor_open_lightbox = 'data-elementor-open-lightbox="yes"';
+                $random_key = \array_rand($acf_gallery, 1);
+                $acf_gallery = \array_slice($acf_gallery, $random_key, 1);
             }
-            $type_gallery = '';
-            if (!empty($settings['gallery_type'])) {
-                $type_gallery = $settings['gallery_type'];
-            }
-            $type_gallery_item = '';
-            $type_gallery_item_a = '';
-            if ($settings['gallery_type'] == 'hexagon') {
-                $type_gallery = 'honeycombs';
-                if ($enable_lightbox != '') {
-                    $type_gallery_item_a = 'comb';
-                } else {
-                    $type_gallery_item = ' comb';
-                }
-            }
-            //  Overlay Hover
-            $overlay_hover_block = '';
-            $overlay_hover_class = '';
-            if ($settings['gallery_type'] == 'hexagon') {
-                $overlay_hover_block = '<span><span>';
-            } else {
-                $overlay_hover_block = '<span class="acfgallery-overlay_hover"></span>';
-            }
-            $overlay_hover_class = ' is-overlay ';
-            ?>
-			<div id="<?php 
-            echo $type_gallery;
-            ?>-grid" class="<?php 
-            echo $type_gallery;
-            ?>-grid dynamic_acfgallery dynamic_acfgallery-<?php 
-            echo $type_gallery . $enable_lightbox . $elementor_lightbox . $lightbox_type . $overlay_hover_class;
-            ?> column-<?php 
-            echo $settings['columns_grid'];
-            ?>" itemscope itemtype="http://schema.org/ImageGallery">
-				<?php 
-            foreach ($galleria as $image) {
-                $single_image = '';
-                if ($settings['gallery_type'] == 'single_image' && $counter >= 1) {
-                    $single_image = ' hidden';
-                }
-                if (!isset($image['id'])) {
-                    $img_id = $image;
-                    $image = $this->dce_get_attachment($img_id);
-                }
-                $image_url = Group_Control_Image_Size::get_attachment_image_src($image['id'], 'size', $settings);
-                $wow_enable = $settings['enabled_wow'];
-                if ($wow_enable == 'yes') {
+        }
+        // Limit images to show
+        if (!empty($settings['limit']) && 'yes' === $settings['limit'] && !empty($settings['limit_images'])) {
+            $acf_gallery = \array_slice($acf_gallery, 0, $settings['limit_images']);
+        }
+        $this->add_render_attribute('container', ['class' => ['dce-acf-gallery', 'dce-acf-gallery-' . $settings['gallery_type'], $enable_lightbox, $elementor_lightbox, $lightbox_type, $overlay_hover_class, $settings['columns_grid'] ? 'column-' . $settings['columns_grid'] : '']]);
+        $this->add_render_attribute('container', 'itemtype', '');
+        $this->add_render_attribute('container', 'itemscope', 'http://schema.org/ImageGallery');
+        ?>
+
+		<div <?php 
+        echo $this->get_render_attribute_string('container');
+        ?>>
+			<?php 
+        foreach ($acf_gallery as $image) {
+            $this->show_image($image, $settings, $counter, $enable_lightbox);
+            $counter++;
+        }
+        ?>
+		</div>	
+		<?php 
+    }
+    /**
+     * Show a single image from ACF Gallery
+     *
+     * @param [type] $image
+     * @param [type] $settings
+     * @param [type] $counter
+     * @param [type] $enable_lightbox
+     * @return void
+     */
+    protected function show_image($image, $settings, $counter, $enable_lightbox)
+    {
+        if (!isset($image['id'])) {
+            $img_id = $image;
+            $image = $this->get_attachment($img_id);
+        }
+        $image_url = Group_Control_Image_Size::get_attachment_image_src($image['id'], 'size', $settings);
+        $elementor_lightbox = '';
+        $data_elementor_open_lightbox = '';
+        $data_elementor_slideshow = '';
+        $overlay_hover_class = 'is-overlay ';
+        //  Overlay Hover
+        $overlay_hover_block = '';
+        $overlay_hover_class = '';
+        if ($settings['gallery_type'] == 'hexagon') {
+            $overlay_hover_block = '<span><span>';
+        } else {
+            $overlay_hover_block = '<span class="acfgallery-overlay_hover"></span>';
+        }
+        if ($settings['enable_lightbox']) {
+            $enable_lightbox = ' is-lightbox';
+        }
+        if ($settings['lightbox_type'] == 'photoswipe') {
+            $data_elementor_open_lightbox = 'data-elementor-open-lightbox="no"';
+        } else {
+            $data_elementor_slideshow = ' data-elementor-lightbox-slideshow="' . $this->get_id() . '"';
+            $elementor_lightbox = 'gallery-lightbox';
+            $data_elementor_open_lightbox = 'data-elementor-open-lightbox="yes"';
+        }
+        $type_gallery_item_a = '';
+        if ($settings['gallery_type'] == 'hexagon' && $enable_lightbox != '') {
+            $type_gallery_item_a = 'comb';
+        }
+        if ($settings['gallery_type'] != 'hexagon') {
+            if (0 === $counter) {
+                // Attributes for figure
+                $this->add_render_attribute('figure', 'itemprop', 'associatedMedia');
+                $this->add_render_attribute('figure', 'itemscope', '');
+                $this->add_render_attribute('figure', 'itemtype', 'http://schema.org/ImageObject');
+                $this->add_render_attribute('figure', ['class' => ['acfgallery-item', 'grid-item']]);
+                if ($settings['enabled_wow']) {
                     $wow_coeff = $settings['wow_coef'] ? $settings['wow_coef'] : 0;
-                    $wow_delay = ' data-wow-delay="' . $counter * $wow_coeff . 's"';
-                    $wow_animations = $settings['wow_animations'];
-                    $wow_string = ' wow ' . $wow_animations;
-                } else {
-                    $wow_string = '';
-                    $wow_delay = '';
+                    $this->add_render_attribute('figure', 'data-wow-delay', $counter * $wow_coeff . 's');
+                    $this->add_render_attribute('figure', ['class' => ['wow', $settings['wow_animations']]]);
                 }
-                if ($settings['gallery_type'] != 'hexagon') {
-                    echo '<figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject"  class="acfgallery-item grid-item' . $type_gallery_item . $single_image . $wow_string . '"' . $wow_delay . '>';
-                    echo '<div class="wrap-item-acfgallery">';
-                }
-                if ($enable_lightbox) {
-                    echo '<a class="' . $type_gallery_item_a . $enable_lightbox . $elementor_lightbox . '" href="' . $image['url'] . '" itemprop="contentUrl" data-size="' . $image['width'] . 'x' . $image['height'] . '"' . $data_elementor_open_lightbox . $data_elementor_slideshow . '>';
-                } elseif ($settings['enable_lightbox_link']) {
-                    echo '<a class="' . $type_gallery_item_a . '" href="' . $image['url'] . '" itemprop="contentUrl" >';
-                }
-                echo '<img src="' . $image_url . '" itemprop="thumbnail" alt="' . $image['alt'] . '" />';
-                echo $overlay_hover_block;
-                if ($enable_lightbox || $settings['enable_lightbox_link']) {
-                    echo '</a>';
-                }
-                if ($settings['gallery_type'] != 'hexagon') {
-                    echo '</div>';
-                    if ($settings['use_desc'] != '' && ($settings['gallery_type'] != 'diamond' && $settings['gallery_type'] != 'hexagon')) {
-                        echo '<figcaption itemprop="description caption">';
-                        foreach ($settings['use_desc'] as $value) {
-                            if ($value == 'caption') {
-                                echo '          <p class="' . $value . '" >' . $image[$value] . '</p>';
-                            } elseif ($value == 'description') {
-                                echo '           <p class="' . $value . '">' . $image[$value] . '</p>';
-                            } elseif ($value == 'title') {
-                                echo '            <h3 class="' . $value . '">' . $image[$value] . '</h3>';
-                            }
-                        }
-                        echo '</figcaption>';
-                    }
-                    echo '</figure>';
-                }
-                $counter++;
+                // Attributes for wrap item
+                $this->add_render_attribute('wrap-item', ['class' => ['wrap-item-acfgallery']]);
             }
             ?>
-			</div>
-			<!-- Root element of PhotoSwipe. Must have class pswp. -->
+			<figure <?php 
+            echo $this->get_render_attribute_string('figure');
+            ?>>
+				<div <?php 
+            echo $this->get_render_attribute_string('wrap-item');
+            ?>>
 			<?php 
         }
+        if ($enable_lightbox) {
+            echo '<a class="' . $type_gallery_item_a . $enable_lightbox . $elementor_lightbox . '" href="' . $image['url'] . '" itemprop="contentUrl" data-size="' . $image['width'] . 'x' . $image['height'] . '"' . $data_elementor_open_lightbox . $data_elementor_slideshow . '>';
+        } elseif ($settings['enable_lightbox_link']) {
+            echo '<a class="' . $type_gallery_item_a . '" href="' . $image['url'] . '" itemprop="contentUrl" >';
+        }
+        echo '<img src="' . $image_url . '" itemprop="thumbnail" alt="' . $image['alt'] . '" />';
+        echo $overlay_hover_block;
+        if ($enable_lightbox || $settings['enable_lightbox_link']) {
+            echo '</a>';
+        }
+        if ($settings['gallery_type'] != 'hexagon') {
+            echo '</div>';
+            if ($settings['use_desc'] != '' && ($settings['gallery_type'] != 'diamond' && $settings['gallery_type'] != 'hexagon')) {
+                echo '<figcaption itemprop="description caption">';
+                foreach ($settings['use_desc'] as $value) {
+                    if ($value == 'caption') {
+                        echo '          <p class="' . $value . '" >' . $image[$value] . '</p>';
+                    } elseif ($value == 'description') {
+                        echo '           <p class="' . $value . '">' . $image[$value] . '</p>';
+                    } elseif ($value == 'title') {
+                        echo '            <h3 class="' . $value . '">' . $image[$value] . '</h3>';
+                    }
+                }
+                echo '</figcaption>';
+            }
+            echo '</figure>';
+        }
     }
-    protected function dce_get_attachment($attachment_id)
+    protected function get_attachment($attachment_id)
     {
         $attachment = get_post($attachment_id);
         $img_src = wp_get_attachment_image_src($attachment_id, 'full');

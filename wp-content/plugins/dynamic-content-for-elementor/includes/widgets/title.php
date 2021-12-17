@@ -13,7 +13,7 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Title extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Title extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -26,7 +26,7 @@ class DCE_Widget_Title extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
         $this->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'default' => 'h3', 'separator' => 'before']);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => '', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};'], 'condition' => ['enable_divider' => '']]);
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'post' => 'Post URL', 'parent' => 'Parent Page', 'custom' => __('Custom URL', 'dynamic-content-for-elementor')]]);
-        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => 'http://your-link.com', 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
+        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
         $this->add_control('enable_divider', ['label' => __('Dividers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Show', 'dynamic-content-for-elementor'), 'label_off' => __('Hide', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'render_type' => 'template', 'prefix_class' => 'dce-title-divider-']);
         $this->add_control('enable_masking', ['label' => __('Masking', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Show', 'dynamic-content-for-elementor'), 'label_off' => __('Hide', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'render_type' => 'template', 'prefix_class' => 'dce-title-mask-']);
         $this->end_controls_section();
@@ -43,6 +43,11 @@ class DCE_Widget_Title extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
         $this->start_controls_section('section_title_masking', ['label' => __('Masking', 'dynamic-content-for-elementor'), 'condition' => ['enable_masking' => 'yes']]);
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'background_masking', 'types' => ['classic', 'gradient'], 'fields_options' => ['background' => ['frontend_available' => \true], 'video_link' => ['frontend_available' => \true]], 'selector' => '{{WRAPPER}} .dynamic-content-for-elementor-title span']);
         $this->end_controls_section();
+        $this->start_controls_section('section_source', ['label' => __('Source', 'dynamic-content-for-elementor')]);
+        $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('other', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
+        $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
+        $this->add_control('other_post_parent', ['label' => __('From post parent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['data_source' => '']]);
+        $this->end_controls_section();
         $this->start_controls_section('section_style', ['label' => __('Title', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('color', ['label' => __('Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dynamic-content-for-elementor-title' => 'color: {{VALUE}};', '{{WRAPPER}} .dynamic-content-for-elementor-title a' => 'color: {{VALUE}};']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography', 'selector' => '{{WRAPPER}} .dynamic-content-for-elementor-title']);
@@ -52,11 +57,6 @@ class DCE_Widget_Title extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
         $this->start_controls_section('section_rollhover', ['label' => __('Rollover', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['link_to!' => 'none']]);
         $this->add_control('hover_color', ['label' => __('Hover Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dynamic-content-for-elementor-title a:hover' => 'color: {{VALUE}};'], 'condition' => ['link_to!' => 'none']]);
         $this->add_control('hover_animation', ['label' => __('Hover Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HOVER_ANIMATION, 'condition' => ['link_to!' => 'none']]);
-        $this->end_controls_section();
-        $this->start_controls_section('section_dce_settings', ['label' => __('Dynamic Content', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_SETTINGS]);
-        $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('other', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
-        $this->add_control('other_post_parent', ['label' => __('From post parent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['data_source' => '']]);
         $this->end_controls_section();
     }
     protected function render()

@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_Content extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Content extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public static $remove_recursion_loop = [];
     public function get_script_depends()
@@ -34,7 +34,7 @@ class DCE_Widget_Content extends \DynamicContentForElementor\Widgets\DCE_Widget_
         $this->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'default' => 'div']);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right'], 'justify' => ['title' => __('Justified', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-justify']], 'default' => '', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};']]);
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'post' => __('Post URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')]]);
-        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => 'http://your-link.com', 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
+        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
         $this->add_control('no_shortcode', ['label' => __('Remove Shortcodes', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->add_control('enable_unfold', ['label' => __('Unfold', 'dynamic-content-for-elementor'), 'description' => __('Limit the display of the content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'separator' => 'before']);
         $this->add_responsive_control('height_content', ['label' => __('Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'frontend_available' => \true, 'default' => ['size' => 280], 'range' => ['px' => ['max' => 600, 'min' => 0, 'step' => 1]], 'selectors' => ['{{WRAPPER}} .dce-content.unfolded' => 'height: {{SIZE}}{{UNIT}};'], 'render_type' => 'template', 'condition' => ['enable_unfold' => 'yes']]);

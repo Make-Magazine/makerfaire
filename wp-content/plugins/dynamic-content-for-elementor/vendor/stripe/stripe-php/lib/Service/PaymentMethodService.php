@@ -6,7 +6,9 @@ namespace DynamicOOOS\Stripe\Service;
 class PaymentMethodService extends \DynamicOOOS\Stripe\Service\AbstractService
 {
     /**
-     * Returns a list of PaymentMethods for a given Customer.
+     * Returns a list of PaymentMethods. For listing a customer’s payment methods, you
+     * should use <a href="/docs/api/payment_methods/customer_list">List a Customer’s
+     * PaymentMethods</a>.
      *
      * @param null|array $params
      * @param null|array|\Stripe\Util\RequestOptions $opts

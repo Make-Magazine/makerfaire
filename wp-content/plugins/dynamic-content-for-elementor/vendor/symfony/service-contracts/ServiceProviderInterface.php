@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Contracts\Service;
 
-use DynamicOOOS\Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 /**
  * A ServiceProviderInterface exposes the identifiers and the types of services provided by a container.
  *

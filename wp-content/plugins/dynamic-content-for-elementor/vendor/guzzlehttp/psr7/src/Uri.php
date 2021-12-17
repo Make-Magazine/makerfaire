@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\GuzzleHttp\Psr7;
 
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * PSR-7 URI implementation.
  *

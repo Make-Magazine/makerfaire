@@ -29,7 +29,7 @@ var is_trackerheader = false;
         if (trackerHeader_element.length > 1) {
             if ($('#trackerheader-wrap').length) {
 				trackerHeader_element.unwrap();
-			} 
+			}
             trackerHeader_element.wrapAll("<div id='trackerheader-wrap' />");
             trackerHeader_element = $('#trackerheader-wrap');
         }
@@ -195,16 +195,12 @@ var is_trackerheader = false;
         }
     }
     function handleLoadingStyle(newValue) {
-
         if (newValue) {
             // SI
             $('.animsition-loading').removeClass(loading_style);
             loading_style = 'loading-style-' + newValue;
             $('.animsition-loading').addClass(loading_style);
-
-        } else {
-            // NO
-        }
+		}
     }
     function handleAnimsition(newValue) {
         $('body').toggleClass('dce-smoothtransition');
@@ -220,7 +216,7 @@ var is_trackerheader = false;
             if (smoothtransitionClassController) {
 				smoothTransitionHandler();
 			}
-                
+
             // ...se lo spinner animsition-loading non esiste lo genero per poter controllare l'anteprima..
             if( !$('.animsition-loading').length ){
                 var mainpagewrap = 'body';

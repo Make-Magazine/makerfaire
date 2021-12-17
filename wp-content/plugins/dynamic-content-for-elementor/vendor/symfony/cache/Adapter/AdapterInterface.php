@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Adapter;
 
-use DynamicOOOS\Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use DynamicOOOS\Symfony\Component\Cache\CacheItem;
 // Help opcache.preload discover always-needed symbols
 \class_exists(CacheItem::class);

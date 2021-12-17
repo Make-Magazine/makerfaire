@@ -1,77 +1,71 @@
-var isAdminBar = false,
-isEditMode = false;
 (function ($) {
 
     var DyncontEl_GoogleMapsHandler = function ($scope, $) {
-        var map;
+        var $map = $scope.find('.map');
+		var map = $map[0];
         var bounds;
+        
+		// Positions
+		let positions = $map.data('positions') || [];
 
-        var elementSettingsMap = get_Dyncontel_ElementSettings($scope);
+		// Exit if the maps doesn't have positions
+		if( ! positions.length ) {
+			return;
+		}
 
-        var id_scope = $scope.attr('data-id');
-
-        var map = $scope.find('#el-wgt-map-' + id_scope)[0];
-        if (!map) {
-          return;
-        }
-
-        var indirizzo = jQuery(map).data('address');
-        var lati = jQuery(map).data('lat') || 0;
-        var long = jQuery(map).data('lng') || 0;
-
-        var infoWindow = jQuery(map).data('infowindow') || 'Empty Info Window';
+		var latitude = parseFloat( positions[0].lat ) || 0;
+		var longitude = parseFloat( positions[0].lng ) || 0;
         var lastWindow = null;
+		var elementSettingsMap = dceGetElementSettings($scope);
+        var markerWidth = elementSettingsMap.marker_width || 0;
+        var markerHeight = elementSettingsMap.marker_height || 0;
+		var zoom = $map.data('zoom') || 10;
+		var imageMarker = positions[0].marker || '';
 
-        var imageMarker = jQuery(map).data('imgmarker') || '';
-
-        var w = elementSettingsMap.marker_width;
-        var h = elementSettingsMap.marker_height;
-        if (w && h && imageMarker) {
-          imageMarker = {
-            url: jQuery(map).data('imgmarker') || '',
-            scaledSize: new google.maps.Size(w, h)
-          };
-        }
-        var zoom = jQuery(map).data('zoom');
-
-        if (elementSettingsMap.zoom && elementSettingsMap.zoom.size) {
-            zoom = elementSettingsMap.zoom.size;
+        if (markerWidth && markerHeight && imageMarker) {
+			imageMarker = {
+				url: imageMarker,
+				scaledSize: new google.maps.Size(markerWidth, markerHeight),
+			};
         }
 
-        var centroMappa = {lat: lati, lng: long};
-
+		// Map Parameters
         var mapParams = {
-          zoom: zoom,
-          scrollwheel: Boolean( elementSettingsMap.prevent_scroll ),
-          mapTypeControl: Boolean( elementSettingsMap.maptypecontrol ),
-          panControl: Boolean( elementSettingsMap.pancontrol ),
-          rotateControl: Boolean( elementSettingsMap.rotaterontrol ),
-          scaleControl: Boolean( elementSettingsMap.scalecontrol ),
-          streetViewControl: Boolean( elementSettingsMap.streetviewcontrol ),
-          zoomControl: Boolean( elementSettingsMap.zoomcontrol ),
-          fullscreenControl: Boolean( elementSettingsMap.fullscreenControl ),
-          center: centroMappa
+			zoom: zoom,
+			scrollwheel: Boolean( elementSettingsMap.prevent_scroll ),
+			mapTypeControl: Boolean( elementSettingsMap.maptypecontrol ),
+			panControl: Boolean( elementSettingsMap.pancontrol ),
+			rotateControl: Boolean( elementSettingsMap.rotaterontrol ),
+			scaleControl: Boolean( elementSettingsMap.scalecontrol ),
+			streetViewControl: Boolean( elementSettingsMap.streetviewcontrol ),
+			zoomControl: Boolean( elementSettingsMap.zoomcontrol ),
+			fullscreenControl: Boolean( elementSettingsMap.fullscreenControl ),
+			center: {
+				lat: latitude,
+				lng: longitude,
+			},
         };
 
+		// Map Type (Roadmap, satellite, etc.)
         if (elementSettingsMap.map_type && elementSettingsMap.map_type !== "acfmap") {
-          mapParams['mapTypeId'] = elementSettingsMap.map_type;
+          	mapParams['mapTypeId'] = elementSettingsMap.map_type;
         }
 
         if (elementSettingsMap.style_select === 'custom') {
-          mapParams['styles'] = eval(elementSettingsMap.style_map);
-          initMap(map, mapParams);
+			mapParams['styles'] = eval(elementSettingsMap.style_map);
+			initMap(map, mapParams);
         } else if (elementSettingsMap.style_select === 'prestyle') {
-          var fileStyle = elementSettingsMap.snazzy_select;
-          $.getJSON(fileStyle + ".json", function (json) {
-            mapParams['styles'] = json;
-            initMap(map, mapParams);
-          });
+			var fileStyle = elementSettingsMap.snazzy_select;
+			$.getJSON(fileStyle + ".json", function (json) {
+				mapParams['styles'] = json;
+				initMap(map, mapParams);
+			});
         } else {
-          initMap(map, mapParams);
+          	initMap(map, mapParams);
         }
 
-        function initMap(elements_map, mapParams_map) {
-            map = new google.maps.Map(elements_map, mapParams_map);
+        function initMap(mapElement, mapParameters) {
+            map = new google.maps.Map(mapElement, mapParameters);
             var markers = [];
             var mapDataType = elementSettingsMap.map_data_type;
 
@@ -103,111 +97,108 @@ isEditMode = false;
               });
             }
 
-            // Forzo l'uso della latitudine-longitudine se sto usando acf
-            if(elementSettingsMap.acf_mapfield) {
-              mapDataType = 'latlng';
-            }
-
             if (elementSettingsMap.use_query) {
                 bounds = new google.maps.LatLngBounds();
-                eval('var address_list = address_list_'+id_scope);
 
-                for (i = 0; i < address_list.length; i++) {
+                for (i = 0; i < positions.length; i++) {
 
                     if (mapDataType == 'address') {
-                      addressToLocation(
-                        address_list[i]['address'],
-                        address_list[i]['marker'],
-                        address_list[i]['infoWindow'],
-                        address_list[i]['postLink'],
-                        changeMapLocation);
+						addressToLocation(
+							positions[i]['address'],
+							positions[i]['marker'],
+							positions[i]['infowindow'],
+							positions[i]['link'],
+							changeMapLocation,
+							markerWidth,
+							markerHeight
+						);
+                    } else if ( mapDataType == 'latlng' || mapDataType == 'acfmap' ) {
 
-                    } else if (mapDataType == 'latlng') {
-
-                        var latLng = new google.maps.LatLng(address_list[i]['lat'], address_list[i]['lng']); //Makes a latlng
+                        var latLng = new google.maps.LatLng(positions[i]['lat'], positions[i]['lng']); //Makes a latlng
                         map.panTo(latLng); //Make map global
 
-                        var imageMarkerList = address_list[i]['marker'];
-
-                        var w = elementSettingsMap.marker_width;
-                        var h = elementSettingsMap.marker_height;
-                        if (w && h && imageMarkerList) {
-                          imageMarkerList = {
-                            url: address_list[i]['marker'],
-                            scaledSize: new google.maps.Size(w, h)
-                          };
+                        var imageMarkerList = positions[i]['marker'];
+                        var markerWidth = elementSettingsMap.marker_width;
+                        var markerHeight = elementSettingsMap.marker_height;
+                        if (markerWidth && markerHeight && imageMarkerList) {
+							imageMarkerList = {
+								url: positions[i]['marker'],
+								scaledSize: new google.maps.Size(markerWidth, markerHeight)
+							};
                         }
 
                         new google.maps.LatLng('0', '0');
 
                         var marker = new google.maps.Marker({
-                          position: latLng,
-                          map: map,
-                          icon: imageMarkerList,
-                          animation: google.maps.Animation.DROP,
+							position: latLng,
+							map: map,
+							icon: imageMarkerList,
+							animation: google.maps.Animation.DROP,
                         });
 
                         markers.push(marker);
-
                         bounds.extend(marker.position);
 
                         if (elementSettingsMap.enable_infoWindow) {
-
                           google.maps.event.addListener(marker, 'click', (function (marker, k) {
                             return function () {
+								if (elementSettingsMap.infoWindow_click_to_post) {
+									window.location = positions[k]['link'];
+								} else {
+									var iwOptions = {
+										content: positions[k]['infowindow'],
+									}
+									if(elementSettingsMap.infoWindow_panel_maxwidth.size){
+										iwOptions['maxWidth'] = elementSettingsMap.infoWindow_panel_maxwidth.size;
+									}
+									var infoWindowMap = new google.maps.InfoWindow(iwOptions);
 
-                              if (elementSettingsMap.infoWindow_click_to_post) {
-                                  if (isEditMode) {
-                                      alert('You have clicked: ' + address_list[k]['postLink']);
-                                      return false;
-                                  } else {
-                                      window.location = address_list[k]['postLink'];
-                                  }
-                              } else {
-                                  var iwOptions = {
-                                      content: address_list[k]['infoWindow'],
-                                  }
-                                  if(elementSettingsMap.infoWindow_panel_maxwidth.size){
-                                      iwOptions['maxWidth'] = elementSettingsMap.infoWindow_panel_maxwidth.size;
-                                  }
-                                  var infoWindowMap = new google.maps.InfoWindow(iwOptions);
-
-                                  if (lastWindow) lastWindow.close();
-                                  infoWindowMap.open(map, marker);
-                                  lastWindow = infoWindowMap;
-                              }
+									if (lastWindow) lastWindow.close();
+									infoWindowMap.open(map, marker);
+									lastWindow = infoWindowMap;
+								}
                             }
                           })(marker, i));
-
                         }
                     }
                     // Center the map
                     map.fitBounds(bounds);
 					if ( ! elementSettingsMap.auto_zoom ) {
-						var listener = google.maps.event.addListener(map, "idle", function () {
+						var listener = google.maps.event.addListenerOnce(map, "idle", function () {
 							// Set Zoom after centered the map
 							map.setZoom(zoom);
-							google.maps.event.removeListener(listener);
 						});
 					}
                 }
                 if( elementSettingsMap.markerclustererControl ){
                 	// Add a marker clusterer to manage the markers.
-                	new MarkerClusterer(map, markers,
-                    {imagePath: '/wp-content/plugins/dynamic-content-for-elementor/assets/lib/gmap/markerclusterer/img/m'});
+                	new MarkerClusterer(
+						map,
+						markers,
+						{
+							imagePath: '/wp-content/plugins/dynamic-content-for-elementor/assets/lib/gmap/markerclusterer/img/m'
+						}
+					);
                 }
 
             } else {
 
-                if (mapDataType == 'address') {
-                    addressToLocation(indirizzo, imageMarker, infoWindow, null, changeMapLocation);
-                } else if (mapDataType == 'latlng') {
-                    var latLng = new google.maps.LatLng(lati, long); // Makes a latlng
-                    map.panTo(latLng); // Make map global
+				var infoWindow = positions[0].infowindow || '';
 
-                    var infoWindowMap = new google.maps.InfoWindow({
-                        content: infoWindow
-                    });
+                if (mapDataType == 'address') {
+					var address = positions[0].address || '';
+                    addressToLocation(
+						address,
+						imageMarker,
+						infoWindow,
+						null,
+						changeMapLocation,
+						markerWidth,
+						markerHeight
+					);
+                } else if (mapDataType == 'latlng' || mapDataType == 'acfmap') {
+                    var latLng = new google.maps.LatLng(latitude, longitude); // Makes a latlng
+                    map.panTo(latLng); // Make map global
 
                     var marker = new google.maps.Marker({
                         position: latLng,
@@ -215,12 +206,15 @@ isEditMode = false;
                         icon: imageMarker,
                         animation: google.maps.Animation.DROP,
                     });
-
-                    if (elementSettingsMap.enable_infoWindow) {
-                        marker.addListener('click', function () {
-                            infoWindowMap.open(map, this);
-                        });
-                    }
+                    // Infowindow
+					if (elementSettingsMap.enable_infoWindow && positions[0].infowindow) {
+						var infoWindowMap = new google.maps.InfoWindow({
+							content: positions[0].infowindow,
+						});
+						marker.addListener('click', function () {
+							infoWindowMap.open(map, marker);
+						});
+					}
                 }
             }
         }
@@ -228,33 +222,38 @@ isEditMode = false;
         function changeMapLocation(locations) {
             if (locations && locations.length >= 1) {
 
-                var image = {
-                    url: locations[0].marker,
-                };
-                var objMarker = {
+				// Image Marker
+				if (locations[0].marker != "") {
+					let imageMarker;
+					if( locations[0].markerWidth && locations[0].markerHeight && locations[0].marker ) {
+						imageMarker = {
+							url: locations[0].marker,
+							scaledSize: new google.maps.Size(markerWidth, markerHeight),
+						};
+					} else {
+						imageMarker = {
+							url: locations[0].marker,
+						};
+					}
+				}
+
+				// New marker
+                var marker = new google.maps.Marker({
                     map: map,
                     position: locations[0].location,
-                };
-                if (locations[0].marker != "") {
-                    objMarker['icon'] = image;
-                }
-                var marker = new google.maps.Marker(objMarker);
-
-                var infoWindowMap = new google.maps.InfoWindow({
-                    content: locations[0].infoWindow,
+					icon: imageMarker,
                 });
-                map.panTo(locations[0].location);
 
-                if (elementSettingsMap.enable_infoWindow) {
+				map.panTo(locations[0].location);
+
+				// Infowindow
+                if (elementSettingsMap.enable_infoWindow && locations[0].infoWindow) {
+					var infoWindowMap = new google.maps.InfoWindow({
+						content: locations[0].infoWindow,
+					});
                     marker.addListener('click', function () {
-
                         if (elementSettingsMap.infoWindow_click_to_post) {
-                            if (isEditMode) {
-                                alert('You clicked: ' + locations[0].postLink);
-                                return false;
-                            } else {
-                                window.location = locations[0].postLink;
-                            }
+                            window.location = locations[0].postLink;
                         } else {
                             infoWindowMap.open(map, marker);
                         }
@@ -268,15 +267,16 @@ isEditMode = false;
         }
     };
 
-    function addressToLocation(address, markerimg, iw, pl, callback) {
+    function addressToLocation(address, markerimg, iw, pl, callback, markerWidth, markerHeight) {
 
         // Geocoder converts addresses to latitude-longitude positions
         var geocoder = new google.maps.Geocoder();
+
         geocoder.geocode(
-          {
-            address: address
-          },
-          function (results, status) {
+			{
+				address: address
+			},
+			function (results, status) {
 
               var resultLocations = [];
 
@@ -286,14 +286,16 @@ isEditMode = false;
                   for (var i = 0; i < numOfResults; i++) {
                     var result = results[i];
                     resultLocations.push(
-                      {
-                          text: result.formatted_address,
-                          addressStr: result.formatted_address,
-                          location: result.geometry.location,
-                          marker: markerimg,
-                          postLink: pl,
-                          infoWindow: iw
-                      }
+                      	{
+							text: result.formatted_address,
+							addressStr: result.formatted_address,
+							location: result.geometry.location,
+							marker: markerimg,
+							postLink: pl,
+							infoWindow: iw,
+							markerWidth: markerWidth,
+							markerHeight: markerHeight,
+                      	}
                     );
                   }
                 }
@@ -321,13 +323,6 @@ isEditMode = false;
 
     // Make sure you run this code under Elementor..
     $(window).on('elementor/frontend/init', function () {
-        if (elementorFrontend.isEditMode()) {
-            isEditMode = true;
-        }
-
-        if ($('body').is('.admin-bar')) {
-            isAdminBar = true;
-        }
         elementorFrontend.hooks.addAction('frontend/element_ready/dyncontel-acf-google-maps.default', DyncontEl_GoogleMapsHandler);
     });
 

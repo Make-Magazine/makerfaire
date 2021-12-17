@@ -4,8 +4,8 @@ namespace DynamicOOOS\GuzzleHttp;
 
 use DynamicOOOS\GuzzleHttp\Promise as P;
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 /**
  * Middleware that retries requests based on the boolean result of
  * invoking the provided "decider" function.
@@ -32,7 +32,7 @@ class RetryMiddleware
      *                                                                         returns true if the request is to be
      *                                                                         retried.
      * @param callable(RequestInterface, array): PromiseInterface $nextHandler Next handler to invoke.
-     * @param null|callable(int): int                             $delay       Function that accepts the number of retries
+     * @param (callable(int): int)|null                           $delay       Function that accepts the number of retries
      *                                                                         and returns the number of
      *                                                                         milliseconds to delay.
      */

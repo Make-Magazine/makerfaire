@@ -8,7 +8,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Panorama extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Panorama extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     protected function _register_controls()
     {

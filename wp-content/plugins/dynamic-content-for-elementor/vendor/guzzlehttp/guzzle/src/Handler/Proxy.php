@@ -4,7 +4,7 @@ namespace DynamicOOOS\GuzzleHttp\Handler;
 
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
 use DynamicOOOS\GuzzleHttp\RequestOptions;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * Provides basic proxies for handlers.
  *

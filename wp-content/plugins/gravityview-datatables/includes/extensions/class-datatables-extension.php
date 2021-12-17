@@ -6,7 +6,20 @@ abstract class GV_DataTables_Extension {
 
 	function __construct() {
 
+		/**
+		 * Enqueue scripts and styles when GV shortcode is manually processed (e.g., by calling `do_shortcode()`)
+		 *
+		 * @since 2.6
+		 *
+		 * @param \GV\View $view GV View
+		 * @param \WP_Post $post Associated WP post
+		 */
+		add_action( 'gravityview/shortcode/before-processing', function ( $view, $post ) {
+			$this->add_scripts( array(), array(), $post );
+		}, 10, 2 );
+
 		add_action( 'gravityview_datatables_scripts_styles', array( $this, 'add_scripts' ), 10, 3 );
+
 		add_filter( 'gravityview_datatables_js_options', array( $this, 'maybe_add_config' ), 10, 3 );
 
 		add_filter( 'gravityview_datatables_table_class', array( $this, 'add_html_class') );

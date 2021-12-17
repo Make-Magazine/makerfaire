@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_SvgDistortion extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_SvgDistortion extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -42,7 +42,7 @@ class DCE_Widget_SvgDistortion extends \DynamicContentForElementor\Widgets\DCE_W
         $this->start_controls_section('section_distortion', ['label' => __('Distortion', 'dynamic-content-for-elementor')]);
         $this->add_control('svg_trigger', ['label' => __('Trigger', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['static' => __('Static', 'dynamic-content-for-elementor'), 'animation' => __('Animation', 'dynamic-content-for-elementor'), 'rollover' => __('Rollover', 'dynamic-content-for-elementor'), 'scroll' => __('Scroll', 'dynamic-content-for-elementor')], 'frontend_available' => \true, 'default' => 'static', 'render_type' => 'template', 'prefix_class' => 'svg-trigger-']);
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')], 'condition' => ['svg_trigger' => 'rollover']]);
-        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => 'http://your-link.com', 'dynamic' => ['active' => \true], 'condition' => ['link_to' => 'custom', 'svg_trigger' => 'rollover'], 'default' => ['url' => ''], 'show_label' => \false]);
+        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true], 'condition' => ['link_to' => 'custom', 'svg_trigger' => 'rollover'], 'default' => ['url' => ''], 'show_label' => \false]);
         $this->add_control('playpause_control', ['label' => __('Animation Controls', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'default' => 'running', 'toggle' => \false, 'options' => ['running' => ['title' => __('Play', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-play'], 'paused' => ['title' => __('Pause', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-pause']], 'frontend_available' => \true, 'separator' => 'before', 'render_type' => 'ui', 'condition' => ['svg_trigger' => ['animation']]]);
         $this->add_control('animation_heading', ['label' => __('Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['svg_trigger' => ['animation', 'rollover', 'scroll']]]);
         $this->add_control('speed_animation', ['label' => __('Speed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'label_block' => \false, 'default' => ['size' => 3], 'range' => ['px' => ['min' => 0.1, 'max' => 10, 'step' => 0.1]], 'frontend_available' => \true, 'condition' => ['svg_trigger' => ['animation', 'rollover', 'scroll']]]);
@@ -130,7 +130,7 @@ class DCE_Widget_SvgDistortion extends \DynamicContentForElementor\Widgets\DCE_W
         $this->add_responsive_control('svg_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'prefix_class' => 'align-', 'default' => 'left', 'selectors' => ['{{WRAPPER}} .dce_distortion-wrapper' => 'text-align: {{VALUE}};']]);
         $this->end_controls_section();
         $this->start_controls_section('section_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'condition' => ['svg_trigger' => 'static']]);
-        $this->add_control('distortion_output', ['label' => __('Output', 'dynamic-content-for-elementor'), 'description' => __('Use distortion only for appling to other page elements. With this Option activated, the svg element will not be displayed.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
+        $this->add_control('distortion_output', ['label' => __('Output', 'dynamic-content-for-elementor'), 'description' => __('Use distortion only for appling to other page elements. With this Option activated, the svg element will not be displayed.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
         $this->add_control('id_svg_class', ['label' => __('CSS Class', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => '', 'frontend_available' => \true, 'condition' => ['distortion_output' => 'yes']]);
         $this->add_control('note_idclass', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('Here you can write the class of the element to trasform with the SVG distortion. Remember to write the class name on your element in advanced tab.', 'dynamic-content-for-elementor'), 'content_classes' => 'dce-document-settings', 'separator' => 'after', 'condition' => ['distortion_output' => 'yes']]);
         $this->end_controls_section();
@@ -147,7 +147,6 @@ class DCE_Widget_SvgDistortion extends \DynamicContentForElementor\Widgets\DCE_W
         if ($settings['displacement_image']['url']) {
             $filterId = 'filter="url(#distortion-filter-' . $widgetId . ')"';
         }
-        //
         $image_size = $settings['image_size'];
         $image_url = Group_Control_Image_Size::get_attachment_image_src($settings['base_image']['id'], 'image', $settings);
         $dispimage_url = Group_Control_Image_Size::get_attachment_image_src($settings['displacement_image']['id'], 'image', $settings);

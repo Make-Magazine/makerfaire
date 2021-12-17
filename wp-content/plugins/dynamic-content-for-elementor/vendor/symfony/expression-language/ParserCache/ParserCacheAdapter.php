@@ -10,8 +10,8 @@
  */
 namespace DynamicOOOS\Symfony\Component\ExpressionLanguage\ParserCache;
 
-use DynamicOOOS\Psr\Cache\CacheItemInterface;
-use DynamicOOOS\Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use DynamicOOOS\Symfony\Component\Cache\CacheItem;
 /**
  * @author Alexandre GESLIN <alexandre@gesl.in>

@@ -14,7 +14,7 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class Acf_Flexible_Content extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class Acf_Flexible_Content extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -59,7 +59,7 @@ class Acf_Flexible_Content extends \DynamicContentForElementor\Widgets\DCE_Widge
     }
     protected function render()
     {
-        $settings = $this->get_active_settings();
+        $settings = $this->get_settings_for_display();
         if (empty($settings) || empty($settings['layouts'])) {
             return;
         }

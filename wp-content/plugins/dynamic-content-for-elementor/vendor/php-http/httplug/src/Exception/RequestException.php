@@ -2,8 +2,8 @@
 
 namespace DynamicOOOS\Http\Client\Exception;
 
-use DynamicOOOS\Psr\Http\Client\RequestExceptionInterface as PsrRequestException;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Client\RequestExceptionInterface as PsrRequestException;
+use Psr\Http\Message\RequestInterface;
 /**
  * Exception for when a request failed, providing access to the failed request.
  *

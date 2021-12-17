@@ -3,11 +3,12 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
+use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_RawPhp extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_RawPhp extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function show_in_panel()
     {
@@ -27,14 +28,14 @@ class DCE_Widget_RawPhp extends \DynamicContentForElementor\Widgets\DCE_Widget_P
     protected function register_controls_content()
     {
         $this->start_controls_section('section_rawphp', ['label' => __('PHP Raw', 'dynamic-content-for-elementor')]);
-        $this->add_control('custom_php', ['label' => __('Custom PHP', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CODE, 'language' => 'php']);
+        $this->add_control('custom_php', ['label' => __('PHP Code', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CODE, 'language' => 'php']);
         $this->end_controls_section();
     }
     protected function render()
     {
         $settings = $this->get_settings_for_display(null, \true);
         if (current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode() && empty($settings['custom_php'])) {
-            echo __('Add your Custom PHP Code to begin.', 'dynamic-content-for-elementor');
+            Helper::notice('', __('Add your Custom PHP Code', 'dynamic-content-for-elementor'));
         } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
             $this->render_non_admin_notice();
         } elseif (current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode() && !empty($settings['custom_php']) || !is_admin() && !empty($settings['custom_php'])) {

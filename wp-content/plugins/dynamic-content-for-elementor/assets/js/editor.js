@@ -142,22 +142,19 @@ jQuery(function () {
 
     jQuery(document).on('mousedown', '.elementor-control-repeater_shape_path .elementor-repeater-fields, .elementor-control-repeater_shape_polyline .elementor-repeater-fields', function () {
         var repeater_index = jQuery(this).index();
-        // ------------
         var eid = dce_get_element_id_from_cid(dce_model_cid);
         var iFrameDOM = jQuery("iframe#elementor-preview-iframe").contents();
         var morphed = iFrameDOM.find('.elementor-element[data-id=' + eid + '] svg.dce-svg-morph');
-        // ------------
+
         if (morphed.attr('data-run') == 'paused')
             morphed.attr('data-morphid', repeater_index);
 
     });
     jQuery(document).on('change', '.elementor-control-playpause_control', function () {
         var runAnimation = elementorFrontend.config.elements.data[dce_model_cid].attributes['playpause_control'];
-        // ------------
         var eid = dce_get_element_id_from_cid(dce_model_cid);
         var iFrameDOM = jQuery("iframe#elementor-preview-iframe").contents();
         var morphed = iFrameDOM.find('.elementor-element[data-id=' + eid + '] #dce-svg-' + eid);
-        // ------------
         morphed.attr('data-run', runAnimation);
     });
     //---- global settings -----
@@ -214,17 +211,9 @@ jQuery(function () {
 
 // FILEBROWSER
 jQuery(window).on('elementor:init', function () {
-    jQuery(document).on("click", ".elementor-control-medias .remove_media", function () {
-        var editorId = jQuery(this).data('editor');
-        tinyMCE.editors[editorId].setContent('');
-    });
-    setInterval(function () {
-        // add navigator element toggle
-        jQuery(".elementor-control-medias .add_media").not('.has-remove-media').each(function () {
-            jQuery(this).after('<button type="button" id="remove-media-button" class="elementor-button elementor-button-warning button remove_media" data-editor="' + jQuery(this).data('editor') + '"><span class="wp-media-buttons-icon dashicons dashicons-no-alt"></span> <small>Remove Media</small></button>');
-            jQuery(this).addClass('has-remove-media');
-        });
-    }, 1000);
+	elementor.channels.editor.on( 'dceFileBrowser:removeMedia', ( childView ) => {
+		tinyMCE.editors[0].setContent('');
+	});
 });
 
 jQuery(window).on('elementor:init', function () {
@@ -270,16 +259,28 @@ jQuery(window).on('elementor:init', function () {
                 minimumInputLength: 1
             });
         },
+		// translate with an ajax post ids to post titles.
         getValueTitles: function getValueTitles() {
-            var self = this,
-                    ids = this.getControlValue(),
-                    queryType = this.model.get('query_type');
+            var self = this;
+            var ids = this.getControlValue();
+            var queryType = this.model.get('query_type');
             objectType = this.model.get('object_type');
             if (!ids || !queryType)
                 return;
             if (!_.isArray(ids)) {
                 ids = [ids];
             }
+			// no translation needed for these query types:
+			if(queryType === 'pods' || queryType === 'acf') {
+				let t = {}
+				for (id of ids) {
+					t[id] = id; // Label is the same as the value.
+				}
+				self.isTitlesReceived = true;
+                self.model.set('options', t);
+                self.render();
+				return;
+			}
 
             elementorCommon.ajax.loadObjects({
                 action: 'dce_query_control_value_titles',
@@ -332,8 +333,6 @@ jQuery(window).on('elementor:init', function () {
     // Add Control Handlers
     elementor.addControlView('ooo_query', DCEControlQuery);
     jQuery(document).on('change', '.elementor-control-type-ooo_query select', function () {
-        var eid = dce_get_element_id_from_cid(dce_model_cid);
-        var iFrameDOM = jQuery("iframe#elementor-preview-iframe").contents();
         dce_update_query_btn(this);
     });
 });
@@ -368,7 +367,7 @@ function dce_update_query_btn(ooo) {
                 break;
         }
         if (edit_link != '#') {
-            jQuery(ooo).parent().append('<div class="elementor-control-unit-1 tooltip-target dce-elementor-control-quick-edit" data-tooltip="Quick EDIT"><a href="' + edit_link + '" target="_blank" class="dce-quick-edit-btn"><i class="eicon-pencil"></i></a></div>');
+            jQuery(ooo).parent().append('<div class="elementor-control-unit-1 tooltip-target dce-elementor-control-quick-edit" data-tooltip="Quick Edit"><a href="' + edit_link + '" target="_blank" class="dce-quick-edit-btn"><i class="eicon-pencil"></i></a></div>');
         }
     } else {
         var new_link = '#';
@@ -397,23 +396,7 @@ function dce_update_query_btn(ooo) {
                 break;
         }
         if (new_link != '#') {
-            jQuery(ooo).parent().prepend('<div class="elementor-control-unit-1 tooltip-target dce-elementor-control-quick-edit" data-tooltip="Add NEW"><a href="' + new_link + '" target="_blank" class="dce-quick-edit-btn"><i class="eicon-plus"></i></a></div>');
+            jQuery(ooo).parent().prepend('<div class="elementor-control-unit-1 tooltip-target dce-elementor-control-quick-edit" data-tooltip="Add New"><a href="' + new_link + '" target="_blank" class="dce-quick-edit-btn"><i class="eicon-plus"></i></a></div>');
         }
     }
 }
-
-jQuery(window).on('load', function () {
-    if (jQuery('#elementor-preview-iframe').length) {
-        var element = getUrlParam('element');
-        if (element) {
-            var iFrame = jQuery("iframe#elementor-preview-iframe");
-            var iFrameDOM = iFrame.contents();
-            var thisTimeout = setInterval(function(){
-                if (!jQuery('#elementor-loading:visible').length) {
-                    iFrameDOM.find("div.elementor-element-" + element).trigger('click');
-                    clearInterval(thisTimeout);
-                }
-            }, 1000);
-        }
-    }
-});

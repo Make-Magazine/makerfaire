@@ -10,12 +10,12 @@
   },
   "license": "MIT",
   "homepage": "https://github.com/DataTables/FixedColumns",
-  "version": "4.0.0",
-  "_release": "4.0.0",
+  "version": "4.0.1",
+  "_release": "4.0.1",
   "_resolution": {
     "type": "version",
-    "tag": "4.0.0",
-    "commit": "6c7ff7cf1c85adbc3114f6ac8727f4cf4bc3fb5b"
+    "tag": "4.0.1",
+    "commit": "35e3417789224d8c6d7b02100417627fcf834ae8"
   },
   "_source": "https://github.com/DataTables/FixedColumns.git",
   "_target": ">=3.0.2",

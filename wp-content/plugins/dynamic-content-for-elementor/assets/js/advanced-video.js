@@ -1,6 +1,6 @@
 (function ($) {
     var WidgetElements_AdvancedVideoHandler = function ($scope, $) {
-        var elementSettings = get_Dyncontel_ElementSettings($scope);
+        var elementSettings = dceGetElementSettings($scope);
         var id_scope = $scope.attr('data-id');
         var customControls = elementSettings.dce_video_custom_controls;
 
@@ -50,7 +50,7 @@
             } else {
                 setTimeout(function () {
 					generatePlyrVideo();
-				}, 400);
+				}, 1000);
             }
         }
     };

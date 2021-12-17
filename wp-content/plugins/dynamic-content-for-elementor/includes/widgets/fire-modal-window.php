@@ -15,7 +15,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_ModalWindow extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_ModalWindow extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -103,9 +103,11 @@ class DCE_Widget_ModalWindow extends \DynamicContentForElementor\Widgets\DCE_Wid
 
 			<div class="cd-modal">
 				<div class="cd-modal-content">
-				<?php 
-        echo do_shortcode('[dce-elementor-template id="' . $template . '"]');
-        ?>
+					<?php 
+        if (!empty($template)) {
+            echo do_shortcode('[dce-elementor-template id="' . $template . '"]');
+        }
+        ?>				
 				</div>
 			</div>
 			<a href="#" class="cd-modal-close">

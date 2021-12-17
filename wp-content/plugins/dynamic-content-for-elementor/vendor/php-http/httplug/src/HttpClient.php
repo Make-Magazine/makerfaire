@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\Http\Client;
 
-use DynamicOOOS\Psr\Http\Client\ClientInterface;
+use Psr\Http\Client\ClientInterface;
 /**
  * {@inheritdoc}
  *

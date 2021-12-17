@@ -3,8 +3,8 @@
 namespace DynamicOOOS\GuzzleHttp\Psr7;
 
 use InvalidArgumentException;
-use DynamicOOOS\Psr\Http\Message\StreamInterface;
-use DynamicOOOS\Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
 use RuntimeException;
 class UploadedFile implements UploadedFileInterface
 {

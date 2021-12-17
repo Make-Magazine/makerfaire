@@ -18,9 +18,9 @@ use DynamicOOOS\PHPHtmlParser\Exceptions\LogicalException;
 use DynamicOOOS\PHPHtmlParser\Exceptions\NotLoadedException;
 use DynamicOOOS\PHPHtmlParser\Exceptions\StrictException;
 use DynamicOOOS\PHPHtmlParser\Exceptions\UnknownChildTypeException;
-use DynamicOOOS\Psr\Http\Client\ClientExceptionInterface;
-use DynamicOOOS\Psr\Http\Client\ClientInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * Class Dom.
  */

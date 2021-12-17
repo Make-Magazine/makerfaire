@@ -2,8 +2,8 @@
 
 namespace DynamicOOOS\GuzzleHttp;
 
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 interface MessageFormatterInterface
 {
     /**

@@ -48,40 +48,31 @@ jQuery( window ).on( 'elementor:init', function() {
 			_this.ui.sliders.each( function(index, slider) {
 				var $slider = jQuery( this ),
 					$input = $slider.next( '.elementor-slider-input' ).find( 'input' );
-					if (elementor.config.version < '2.5') {
-					 $slider.slider( {
-							value: value[ this.dataset.input ],
-							min: +$input.attr( 'min' ),
-							max: +$input.attr( 'max' ),
-							step: +$input.attr( 'step' )
-						} );
-					} else {
-						var sliderInstance = noUiSlider.create(slider, {
-							start: [value[slider.dataset.input]],
-							step: 1,
-							range: {
-								min: +$input.attr('min'),
-								max: +$input.attr('max')
+					
+					var sliderInstance = noUiSlider.create(slider, {
+						start: [value[slider.dataset.input]],
+						step: 1,
+						range: {
+							min: +$input.attr('min'),
+							max: +$input.attr('max')
+						},
+						format: {
+							to: function to(sliderValue) {
+								return +sliderValue.toFixed(1);
 							},
-							format: {
-								to: function to(sliderValue) {
-									return +sliderValue.toFixed(1);
-								},
-								from: function from(sliderValue) {
-									return +sliderValue;
-								}
+							from: function from(sliderValue) {
+								return +sliderValue;
 							}
-						});
+						}
+					});
 
-						sliderInstance.on('slide', function (values) {
-							var type = sliderInstance.target.dataset.input;
+					sliderInstance.on('slide', function (values) {
+						var type = sliderInstance.target.dataset.input;
 
-							$input.val(values[0]);
+						$input.val(values[0]);
 
-							_this.setValue(type, values[0]);
-						});
-
-					}
+						_this.setValue(type, values[0]);
+					});
 			} );
 
 
@@ -107,12 +98,7 @@ jQuery( window ).on( 'elementor:init', function() {
 
 				if ( $element.length && _.isEmpty( $element.val() ) ) {
 					$element.val( defaultTransformsValue[transform] );
-					if (elementor.config.version < '2.5') {
-						$slider.slider( 'value', defaultTransformsValue[transform] );
-					} else {
-						$slider[0].noUiSlider.set( defaultTransformsValue[transform] );
-					}
-
+					$slider[0].noUiSlider.set( defaultTransformsValue[transform] );
 				}
 
 			} );
@@ -155,12 +141,7 @@ jQuery( window ).on( 'elementor:init', function() {
 
 			var type = event.currentTarget.dataset.setting,
 				$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' );
-
-				if (elementor.config.version < '2.5') {
-					$slider.slider( 'value', this.getControlValue( type ) );
-				} else {
-						$slider[0].noUiSlider.set(this.getControlValue(type));
-				}
+				$slider[0].noUiSlider.set(this.getControlValue(type));
 
 			this.updateTransformations();
 		},

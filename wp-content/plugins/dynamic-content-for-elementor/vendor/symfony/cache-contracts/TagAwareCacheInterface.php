@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Contracts\Cache;
 
-use DynamicOOOS\Psr\Cache\InvalidArgumentException;
+use Psr\Cache\InvalidArgumentException;
 /**
  * Allows invalidating cached items using tags.
  *

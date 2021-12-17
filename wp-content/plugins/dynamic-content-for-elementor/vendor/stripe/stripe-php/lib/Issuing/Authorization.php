@@ -48,7 +48,7 @@ class Authorization extends \DynamicOOOS\Stripe\ApiResource
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Authorization the approved authorization
+     * @return \Stripe\Issuing\Authorization the approved authorization
      */
     public function approve($params = null, $opts = null)
     {
@@ -63,7 +63,7 @@ class Authorization extends \DynamicOOOS\Stripe\ApiResource
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Authorization the declined authorization
+     * @return \Stripe\Issuing\Authorization the declined authorization
      */
     public function decline($params = null, $opts = null)
     {

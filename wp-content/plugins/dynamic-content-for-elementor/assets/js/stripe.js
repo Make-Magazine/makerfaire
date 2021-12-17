@@ -54,7 +54,7 @@ function initializeStripeField(wrapper, $scope) {
 	}
 	cardElement.mount($elementsWrapper[0]);
 
-	const confirmPayment = (clientSecret) => {
+	const confirmPayment = (clientSecret, subscriptionId) => {
 		stripe.confirmCardPayment(clientSecret, { payment_method: {
 			type: 'card',
 			card: cardElement,
@@ -65,7 +65,8 @@ function initializeStripeField(wrapper, $scope) {
 				$error.show();
 			} else {
 				$error.hide();
-				$hiddenInput.val(result.paymentIntent.id);
+				const fieldValue = subscriptionId ? subscriptionId : result.paymentIntent.id;
+				$hiddenInput.val(fieldValue);
 				$form.trigger('submit');
 			}
 		});
@@ -105,7 +106,7 @@ function initializeStripeField(wrapper, $scope) {
 				$error.show();
 				$submitButton.removeAttr('disabled');
 			} else {
-				confirmPayment(data.data.client_secret);
+				confirmPayment(data.data.client_secret, data.data.subscription_id);
 			}
 		}).catch(error => console.log(error));
 	});

@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\Psr\Http\Message;
+namespace Psr\Http\Message;
 
 /**
  * Value object representing a URI.

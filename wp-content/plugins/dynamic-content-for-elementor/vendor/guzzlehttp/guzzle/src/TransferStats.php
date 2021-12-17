@@ -2,9 +2,9 @@
 
 namespace DynamicOOOS\GuzzleHttp;
 
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * Represents data at the point after it was transferred either successfully
  * or after a network error.

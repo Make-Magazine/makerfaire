@@ -233,25 +233,14 @@ class GP_Nested_Forms extends GP_Plugin {
 
 	public function scripts() {
 
-		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
-
 		$scripts = array();
 
 		if ( GFForms::is_gravity_page() ) {
-			$deps = array( 'jquery' );
-
-			$scripts[] = array(
-				'handle'  => 'gwp-asmselect',
-				'enqueue' => array(
-					array( 'admin_page' => array( 'form_editor' ) ),
-				),
-			);
-
 			$scripts[] = array(
 				'handle'   => 'gp-nested-forms-admin',
-				'src'      => $this->get_base_url() . "/js/gp-nested-forms-admin{$min}.js",
+				'src'      => $this->get_base_url() . "/js/built/gp-nested-forms-admin.js",
 				'version'  => $this->_version,
-				'deps'     => $deps,
+				'deps'     => array( 'jquery', 'gwp-asmselect' ),
 				'enqueue'  => array(
 					array( 'admin_page' => array( 'form_editor' ) ),
 				),
@@ -259,27 +248,12 @@ class GP_Nested_Forms extends GP_Plugin {
 			);
 		}
 
-		$scripts[] = array(
-			'handle'  => 'knockout',
-			'src'     => $this->get_base_url() . '/js/knockout-3.5.1.js',
-			'version' => $this->_version,
-			'enqueue' => null,
-		);
-
-		$deps = array( 'jquery', 'knockout', 'gform_gravityforms' );
+		$deps = array( 'jquery', 'gform_gravityforms' );
 		if ( $this->use_jquery_ui_dialog() ) {
 			$deps[] = 'jquery-ui-dialog';
-		} else {
-			$scripts[] = array(
-				'handle'  => 'tingle',
-				'src'     => $this->get_base_url() . "/js/tingle{$min}.js",
-				'version' => $this->_version,
-				'enqueue' => null,
-			);
-			$deps[]    = 'tingle';
 		}
 
-		$src = $this->use_jquery_ui_dialog() ? "/js/gp-nested-forms-jquery-ui{$min}.js" : "/js/gp-nested-forms{$min}.js";
+		$src = $this->use_jquery_ui_dialog() ? "/js/built/gp-nested-forms-jquery-ui.js" : "/js/built/gp-nested-forms.js";
 
 		$scripts[] = array(
 			'handle'   => 'gp-nested-forms',
@@ -828,7 +802,7 @@ class GP_Nested_Forms extends GP_Plugin {
 				if ( $this->use_jquery_ui_dialog() ) {
 					$this->load_nested_form_hooks( $nested_form_id, $form['id'] );
 
-					gravity_form( $nested_form_id, false, true, $this->is_preview(), $this->get_stashed_shortcode_field_values( $form['id'] ), true, 99999 );
+					gravity_form( $nested_form_id, false, true, $this->is_preview(), $this->get_stashed_shortcode_field_values( $form['id'] ), true, $this->get_tabindex() );
 
 					$this->unload_nested_form_hooks( $nested_form_id, $form );
 				} else {
@@ -845,7 +819,7 @@ class GP_Nested_Forms extends GP_Plugin {
 					if ( gf_apply_filters( array( 'gpnf_preload_form', $form['id'] ), true, $form ) ) {
 						add_filter( 'gform_init_scripts_footer', '__return_false', 123 );
 						/* Ensure that the last param ($echo) is false so it does not get rendered out. */
-						gravity_form( $nested_form_id, false, true, $this->is_preview(), $this->get_stashed_shortcode_field_values( $form['id'] ), true, 99999, false );
+						gravity_form( $nested_form_id, false, true, $this->is_preview(), $this->get_stashed_shortcode_field_values( $form['id'] ), true, $this->get_tabindex(), false );
 						remove_filter( 'gform_init_scripts_footer', '__return_false', 123 );
 					}
 
@@ -869,6 +843,10 @@ class GP_Nested_Forms extends GP_Plugin {
 		do_action( 'gpnf_nested_forms_markup', $form );
 
 		return ob_get_clean();
+	}
+
+	public function get_tabindex() {
+		return GFCommon::$tab_index > 1 ? GFCommon::$tab_index++ : 0;
 	}
 
 	/**
@@ -1048,7 +1026,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_filter( 'gform_form_tag', array( $this, 'add_nested_inputs' ), 10, 2 );
 		add_filter( 'gform_field_value', array( $this, 'populate_field_from_session_cookie' ), 10, 3 );
 
-		gravity_form( $form_id, false, false, false, $this->prepare_entry_for_population( $entry ), true, 9999 );
+		gravity_form( $form_id, false, false, false, $this->prepare_entry_for_population( $entry ), true, $this->get_tabindex() );
 
 		/**
 		 * footer_init_scripts does not run by default if explicitly loading the form with AJAX enabled in GF >2.5.
@@ -1115,7 +1093,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		// isSelected based on posted values. I'm betting this will resolve many other unknown issues as well.
 		$_POST = array();
 
-		gravity_form( $nested_form_id, false, true, true, $field_values, true, 99999 );
+		gravity_form( $nested_form_id, false, true, true, $field_values, true, $this->get_tabindex() );
 
 		/**
 		 * footer_init_scripts does not run by default if explicitly loading the form with AJAX enabled in GF >2.5.
@@ -1137,8 +1115,21 @@ class GP_Nested_Forms extends GP_Plugin {
 			wp_send_json_error( __( 'Oops! You don\'t have permission to duplicate this entry.', 'gp-nested-forms' ) );
 		}
 
-		$entry_id = $this->get_posted_entry_id();
-		$entry    = GFAPI::get_entry( $entry_id );
+		$entry_id             = $this->get_posted_entry_id();
+		$parent_form_id       = $this->get_posted_parent_form_id();
+		$nested_form_field_id = $this->get_posted_nested_form_field_id();
+
+		/**
+		 * Filter the child entry that will be duplicated.
+		 *
+		 * @since 1.0
+		 *
+		 * @param array $entry                The entry that will be duplicated.
+		 * @param int   $entry_id             The ID of the entry that will be duplicated.
+		 * @param int   $parent_form_id       The ID of the form that contains the Nested Form field.
+		 * @param int   $nested_form_field_id The ID of the Nested Form field for which the entry is being duplicated.
+		 */
+		$entry = gf_apply_filters( array( 'gpnf_duplicate_entry', $parent_form_id, $nested_form_field_id ), GFAPI::get_entry( $entry_id ), $entry_id, $parent_form_id, $nested_form_field_id );
 
 		if ( ! GPNF_Entry::can_current_user_edit_entry( $entry ) ) {
 			wp_send_json_error( __( 'Oops! You don\'t have permission to duplicate this entry.', 'gp-nested-forms' ) );
@@ -1991,7 +1982,9 @@ class GP_Nested_Forms extends GP_Plugin {
 				'entries'             => $entries,
 				'ajaxUrl'             => admin_url( 'admin-ajax.php', ! is_ssl() ? 'http' : 'admin' ),
 				'modalLabels'         => array(
+					/* Translators: %s is replaced by singular item label. */
 					'title'                  => sprintf( __( 'Add %s', 'gp-nested-forms' ), $field->get_item_label() ),
+					/* Translators: %s is replaced by singular item label. */
 					'editTitle'              => sprintf( __( 'Edit %s', 'gp-nested-forms' ), $field->get_item_label() ),
 					'submit'                 => false,
 					'editSubmit'             => false,
@@ -2019,6 +2012,7 @@ class GP_Nested_Forms extends GP_Plugin {
 				'modalHeight'         => 'auto',
 				'hasConditionalLogic' => GFFormDisplay::has_conditional_logic( $nested_form ),
 				'isGF25'              => $this->is_gf_version_gte( '2.5-beta-1' ),
+				'enableFocusTrap'	  => true,
 			);
 
 			// Backwards compatibility for deprecated "modalTitle" option.
@@ -2047,10 +2041,12 @@ class GP_Nested_Forms extends GP_Plugin {
 			 *     @var array  $entries             An array of modified entries, including only their display values.
 			 *     @var string $ajaxUrl             The URL to which AJAX requests will be posted.
 			 *     @var int    $modalWidth          The default width of the modal; defaults to 700.
-			 *     @var mixed  $modalHeight         The default height of the modal; defaults to 'auto' which will automatically size the modal based on it's contents.
+			 *     @var mixed  $modalHeight         The default height of the modal; defaults to 'auto' which will automatically size the modal based on its contents.
 			 *     @var string $modalClass          The class that will be attached to the modal for styling.
 			 *     @var string $modalHeaderColor    A HEX color that will be set as the default background color of the modal header.
 			 *     @var bool   $hasConditionalLogic Indicate whether the current form has conditional logic enabled.
+			 *     @var bool   $hasConditionalLogic Indicate whether the current form has conditional logic enabled.
+			 *     @var bool   $enableFocusTrap 	Whether the nested form should use a focus trap when open to prevent tabbing outside the nested form.
 			 *
 			 * }
 			 * @param GF_Field $field The current Nested Form field.
@@ -2485,6 +2481,16 @@ class GP_Nested_Forms extends GP_Plugin {
 					break;
 			}
 		}
+
+		/**
+		 * Filter the entry that will be populated for editing in the nested form.
+		 *
+		 * @since 1.0-beta-10.11
+		 *
+		 * @param array $entry An array of entry data that has been prepared for population.
+		 * @param array $form  The form object of the nested form.
+		 */
+		$entry = gf_apply_filters( array( 'gpnf_populated_entry', $this->get_posted_parent_form_id(), $this->get_posted_nested_form_field_id() ), $entry, $form );
 
 		return $entry;
 	}

@@ -256,26 +256,32 @@ class GWPreviewConfirmation {
 
 			switch ( $input_type ) {
 				case 'fileupload':
-					$value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
+					$existing_value = $value;
+					$value          = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
 
-					if ( $is_multi_upload_field ) {
-
-						if ( is_a( $field, 'GF_Field' ) ) {
-							$value = $field->get_value_entry_detail( json_encode( array_filter( (array) $value ) ) );
-						} else {
-							$value = GFCommon::get_lead_field_display( $field, json_encode( $value ) );
-						}
-
-						$input_name = 'input_' . str_replace( '.', '_', $field['id'] );
-						$file_info  = self::get_uploaded_file_info( $form['id'], $input_name, $field );
-
-						if ( $file_info ) {
-							foreach ( $file_info as $file ) {
-								$value = str_replace( '>' . $file['temp_filename'], '>' . $file['uploaded_filename'], $value );
-							}
-						}
+					// Use existing value if it's present. This is needed for GP Nested Forms as the entry is different.
+					if ( $value === '' && $existing_value ) {
+						$value = $existing_value;
 					} else {
-						$value = $input_id == 'all_fields' || rgar( $_modifiers, 'link' ) ? self::preview_image_display( $field, $form, $value ) : $value;
+						if ( $is_multi_upload_field ) {
+
+							if ( is_a( $field, 'GF_Field' ) ) {
+								$value = $field->get_value_entry_detail( json_encode( array_filter( (array) $value ) ) );
+							} else {
+								$value = GFCommon::get_lead_field_display( $field, json_encode( $value ) );
+							}
+
+							$input_name = 'input_' . str_replace( '.', '_', $field['id'] );
+							$file_info  = self::get_uploaded_file_info( $form['id'], $input_name, $field );
+
+							if ( $file_info ) {
+								foreach ( $file_info as $file ) {
+									$value = str_replace( '>' . $file['temp_filename'], '>' . $file['uploaded_filename'], $value );
+								}
+							}
+						} else {
+							$value = $input_id == 'all_fields' || rgar( $_modifiers, 'link' ) ? self::preview_image_display( $field, $form, $value ) : $value;
+						}
 					}
 					break;
 				case 'signature':
@@ -432,6 +438,18 @@ class GWPreviewConfirmation {
 						if ( empty( $entry[ $field['id'] ] ) ) {
 							$entry[ $input_id ] = rgpost( sprintf( 'input_%s', str_replace( '.', '_', $input_id ) ) );
 						}
+						break;
+
+					// Set file upload field values otherwise sections with only file upload fields will not show as
+					// Gravity Forms will think the section has no inputs/fields with values.
+					case 'fileupload':
+						$value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
+
+						if ( rgar( $field, 'multipleFiles' ) ) {
+							$value = json_encode( array_filter( (array) $value ) );
+						}
+
+						$entry[ $field->id ] = $value;
 						break;
 				}
 			}

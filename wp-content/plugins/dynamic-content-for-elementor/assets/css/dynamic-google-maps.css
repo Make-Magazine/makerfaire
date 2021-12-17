@@ -37,3 +37,7 @@
 .elementor-widget-dyncontel-acf-google-maps .custom-map-control-button:hover {
   background: #ebebeb;
 }
+.elementor-widget-dyncontel-acf-google-maps .gm-style .gm-style-iw-t::after {
+  border-top: none !important;
+  border-right: none !important;
+}

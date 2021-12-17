@@ -10,8 +10,8 @@
  */
 namespace DynamicOOOS\Symfony\Contracts\Cache;
 
-use DynamicOOOS\Psr\Cache\CacheItemInterface;
-use DynamicOOOS\Psr\Cache\InvalidArgumentException;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\InvalidArgumentException;
 /**
  * Covers most simple to advanced caching needs.
  *
@@ -36,7 +36,7 @@ interface CacheInterface
      *                                              See https://en.wikipedia.org/wiki/Cache_stampede#Probabilistic_early_expiration
      * @param array                      &$metadata The metadata of the cached item {@see ItemInterface::getMetadata()}
      *
-     * @return mixed The value corresponding to the provided key
+     * @return mixed
      *
      * @throws InvalidArgumentException When $key is not valid or when $beta is negative
      */

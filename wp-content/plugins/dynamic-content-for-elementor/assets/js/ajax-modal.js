@@ -90,7 +90,7 @@ function riempiModale(data, url, scopeId) {
 
         var stateObj = {url: "bar"};
         if (url != window.location) {
-            var elementSettings = get_Dyncontel_ElementSettings(jQuery(this));
+            var elementSettings = dceGetElementSettings(jQuery(this));
             if (elementSettings.change_url) {
                 window.history.pushState(null, null, url);
             }
@@ -134,7 +134,7 @@ $( window ).on( 'elementor/frontend/init', function() {
     if (jQuery('.ajax-open').length > 0) {
 
         jQuery('.ajax-open').each(function (i, el) {
-            var elementSettings_ajaxOpen = get_Dyncontel_ElementSettings(jQuery(this));
+            var elementSettings_ajaxOpen = dceGetElementSettings(jQuery(this));
             ajaxPage_init(elementSettings_ajaxOpen, jQuery(this).attr('data-id'));
         });
     }

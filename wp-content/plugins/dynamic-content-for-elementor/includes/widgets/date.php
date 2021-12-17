@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Date extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Date extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -31,7 +31,7 @@ class DCE_Widget_Date extends \DynamicContentForElementor\Widgets\DCE_Widget_Pro
         $this->add_responsive_control('date_text_before_block', ['label' => __('Before - Inline or Block', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'label_off' => __('Inline', 'dynamic-content-for-elementor'), 'label_on' => __('Block', 'dynamic-content-for-elementor'), 'return_value' => 'block', 'selectors' => ['{{WRAPPER}} .dynamic-content-for-elementor-date span.tx-before' => 'display: {{VALUE}};'], 'condition' => ['date_text_before!' => '']]);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right'], 'justify' => ['title' => __('Justified', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-justify']], 'default' => '', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};']]);
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'post' => 'Post URL', 'custom' => __('Custom URL', 'dynamic-content-for-elementor')]]);
-        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => 'http://your-link.com', 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
+        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
         $this->add_control('float', ['label' => __('Float left', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN]);
         $this->add_control('block', ['label' => __('Use Block', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('block', 'dynamic-content-for-elementor'), 'label_off' => __('span', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
         $this->end_controls_section();

@@ -28,7 +28,7 @@ class DynamicCountdown extends \DynamicContentForElementor\Extensions\DCE_Extens
     public function render_countdown($element)
     {
         if ('countdown' === $element->get_name()) {
-            $this->_enqueue_alles();
+            $this->enqueue_all();
         }
     }
 }

@@ -92,15 +92,15 @@ class LicenseSystem
         $dce_backup = !get_option('dce_backup_disable');
         if ($dce_backup) {
             // create zip in /wp-content/backup
-            if (!\is_dir(DCE_BACKUP_PATH)) {
-                \mkdir(DCE_BACKUP_PATH, 0755, \true);
+            if (!\is_dir(\DynamicContentForElementor\Plugin::$backup_path)) {
+                \mkdir(\DynamicContentForElementor\Plugin::$backup_path, 0755, \true);
             }
             // Add to the directory an empty index.php
-            if (!\is_file(DCE_BACKUP_PATH . '/index.php')) {
+            if (!\is_file(\DynamicContentForElementor\Plugin::$backup_path . '/index.php')) {
                 $phpempty = "<?php\n//Silence is golden.\n";
-                \file_put_contents(DCE_BACKUP_PATH . '/index.php', $phpempty);
+                \file_put_contents(\DynamicContentForElementor\Plugin::$backup_path . '/index.php', $phpempty);
             }
-            $outZipPath = DCE_BACKUP_PATH . '/dynamic-content-for-elementor_' . DCE_VERSION . '.zip';
+            $outZipPath = \DynamicContentForElementor\Plugin::$backup_path . '/dynamic-content-for-elementor_' . DCE_VERSION . '.zip';
             if (\is_file($outZipPath)) {
                 \unlink($outZipPath);
             }
@@ -247,7 +247,7 @@ class LicenseSystem
                 // same version...so no change :)
                 $rollback = \true;
             } else {
-                $backup = DCE_BACKUP_PATH . '/dynamic-content-for-elementor_' . sanitize_file_name($_POST['dce_version']) . '.zip';
+                $backup = \DynamicContentForElementor\Plugin::$backup_path . '/dynamic-content-for-elementor_' . sanitize_file_name($_POST['dce_version']) . '.zip';
                 if (\is_file($backup)) {
                     // from local backup
                     $roll_url = DCE_BACKUP_URL . '/dynamic-content-for-elementor_' . sanitize_file_name($_POST['dce_version']) . '.zip';
@@ -274,7 +274,7 @@ class LicenseSystem
         // Verify updates
         $info = self::check_for_updates_url();
         try {
-            $myUpdateChecker = \DynamicOOOS\Puc_v4_Factory::buildUpdateChecker($info, $file, 'dynamic-content-for-elementor');
+            $myUpdateChecker = \Puc_v4_Factory::buildUpdateChecker($info, $file, 'dynamic-content-for-elementor');
         } catch (\Throwable $e) {
             // Puc is not essential. Do not crash the plugin just because it throws an error.
             // phpcs:ignore WordPress.PHP.DevelopmentFunctions

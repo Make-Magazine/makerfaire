@@ -2,8 +2,8 @@
 
 namespace DynamicOOOS\Http\Client\Exception;
 
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 /**
  * Thrown when a response was received but the request itself failed.
  *

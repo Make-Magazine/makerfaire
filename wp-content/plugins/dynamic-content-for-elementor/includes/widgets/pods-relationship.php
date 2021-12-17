@@ -13,7 +13,7 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_PodsRelationship extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_PodsRelationship extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -36,9 +36,8 @@ class DCE_Widget_PodsRelationship extends \DynamicContentForElementor\Widgets\DC
     }
     protected function _register_controls_content()
     {
-        $rels = Helper::get_pods_fields('pick');
         $this->start_controls_section('section_content', ['label' => __('Content', 'dynamic-content-for-elementor')]);
-        $this->add_control('pods_relation_field', ['label' => __('PODS Relation Fields List', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => $rels, 'default' => '0']);
+        $this->add_control('pods_relation_field', ['label' => __('PODS Relationship field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'pods', 'object_type' => 'relationship']);
         $this->add_control('pods_relation_render', ['label' => __('Render mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['title' => ['title' => __('Title', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-list'], 'text' => ['title' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'title', 'separator' => 'before']);
         $this->add_control('pods_relation_template', ['label' => __('Select Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['pods_relation_render' => 'template']]);
         $this->add_control('pods_relation_text', ['label' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '<h4>[post:title]</h4>[post:thumb]<p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">READ MORE</a>', 'dynamic' => ['active' => \true], 'condition' => ['pods_relation_render' => 'text']]);
@@ -80,188 +79,182 @@ class DCE_Widget_PodsRelationship extends \DynamicContentForElementor\Widgets\DC
     }
     protected function render()
     {
-        $settings = $this->get_settings_for_display(null, \true);
-        if (empty($settings)) {
+        $settings = $this->get_settings_for_display();
+        if (empty($settings) || empty($settings['pods_relation_field'])) {
             return;
         }
         global $post;
         $old_post = $post;
-        if ($settings['pods_relation_field']) {
-            if (pods(get_post_type(), get_the_ID())) {
-                $rel_posts = pods_field_raw($settings['pods_relation_field']);
-            } else {
-                $rel_posts = array();
-            }
-            $rel_post = \false;
-            if (\is_numeric($rel_posts)) {
-                $rel_post = array($rel_posts);
-            } elseif (isset($rel_posts['ID'])) {
-                $rel_post = array($rel_posts['ID']);
-            } elseif (\is_array($rel_posts)) {
-                $rel_post = wp_list_pluck($rel_posts, 'ID');
-            }
-            if ($rel_post) {
-                if (\is_array($rel_post) && !empty($rel_post)) {
-                    if (\count($rel_post) > 1 && $settings['pods_relation_format']) {
-                        $labels = array();
-                        if (\in_array($settings['pods_relation_format'], array('tab', 'accordion', 'select'))) {
-                            foreach ($rel_post as $arel) {
-                                $post = get_post($arel);
-                                $labels[$post->ID] = \DynamicContentForElementor\Tokens::do_tokens($settings['pods_relation_label']);
-                            }
-                        }
-                        switch ($settings['pods_relation_format']) {
-                            case 'ul':
-                                echo '<ul class="dce-pods-relational-list">';
-                                break;
-                            case 'ol':
-                                echo '<ol class="dce-pods-relational-list">';
-                                break;
-                            case 'grid':
-                                echo '<div class="dce-view-row grid-page grid-col-md-' . $settings['pods_relation_col'] . ' grid-col-sm-' . $settings['pods_relation_col_tablet'] . ' grid-col-xs-' . $settings['pods_relation_col_mobile'] . '">';
-                                break;
-                            case 'tab':
-                                echo '<div class="dce-view-tab dce-tab dce-tab-' . $settings['pods_relation_tab'] . '"><ul>';
-                                $i = 0;
-                                foreach ($labels as $pkey => $alabel) {
-                                    ?>
-									<li>
-										<a class="dce-view-item dce-tab-item<?php 
-                                    echo !$i ? ' dce-tab-item-active' : '';
-                                    ?>" href="#dce-pods-relational-post-<?php 
-                                    echo $this->get_id() . '-' . $pkey;
-                                    ?>" onclick="jQuery('.elementor-element-<?php 
-                                    echo $this->get_id();
-                                    ?> .dce-pods-relational-post').hide();jQuery('.elementor-element-<?php 
-                                    echo $this->get_id();
-                                    ?> .dce-tab-item-active').removeClass('dce-tab-item-active');jQuery(jQuery(this).attr('href')).show();jQuery(this).addClass('dce-tab-item-active'); return false;">
-											<<?php 
-                                    echo \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']);
-                                    ?> class="elementor-heading-title">
-									<?php 
-                                    echo $alabel;
-                                    ?>
-											</<?php 
-                                    echo \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']);
-                                    ?>>
-										</a>
-									</li>
-									<?php 
-                                    $i++;
-                                }
-                                echo '</ul><div class="dce-tab-content">';
-                                break;
-                            case 'select':
-                                ?>
-								<select class="elementor-heading-title dce-view-select" onchange="jQuery('.elementor-element-<?php 
-                                echo $this->get_id();
-                                ?> .dce-pods-relational-post').slideUp();jQuery(jQuery(this).val()).slideDown();">
-									<?php 
-                                if ($settings['pods_relation_close'] && $settings['pods_relation_close_label']) {
-                                    echo '<option value="#dce-view-no-show">' . $settings['pods_relation_close_label'] . '</option>';
-                                }
-                                foreach ($labels as $pkey => $alabel) {
-                                    echo '<option value="#dce-pods-relational-post-' . $this->get_id() . '-' . $pkey . '">' . $alabel . '</option>';
-                                }
-                                ?>
-								</select>
-								<div class="dce-select-content">
-									<?php 
-                                break;
-                        }
-                    }
-                    foreach ($rel_post as $rkey => $arel) {
-                        $post = get_post($arel);
-                        if (\count($rel_post) > 1) {
-                            switch ($settings['pods_relation_format']) {
-                                case 'ul':
-                                case 'ol':
-                                    echo '<li class="dce-view-pane dce-pods-relational-post dce-pods-relational-post-' . $post->ID . '">';
-                                    break;
-                                default:
-                                    if ($settings['pods_relation_format'] == 'accordion' && $settings['pods_relation_render'] != 'title') {
-                                        ?>
-											<div class="dce-accordion-item">
-												<a class="dce-view-item" href="#dce-pods-relational-post-<?php 
-                                        echo $this->get_id() . '-' . $post->ID;
-                                        ?>" onclick="if (!jQuery(jQuery(this).attr('href')).is(':visible')) {
-																								jQuery('.elementor-element-<?php 
-                                        echo $this->get_id();
-                                        ?> .dce-pods-relational-post').slideUp();
-																								jQuery(jQuery(this).attr('href')).slideDown();
-																							} else {
-																								jQuery(jQuery(this).attr('href')).slideUp();
-																							} return false;">
-													<<?php 
-                                        echo \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']);
-                                        ?> class="elementor-heading-title">
-												<?php 
-                                        echo $labels[$post->ID];
-                                        ?>
-													</<?php 
-                                        echo \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']);
-                                        ?>>
-												</a>
-											</div>
-										<?php 
-                                    }
-                                    $is_hidden = \false;
-                                    if (\in_array($settings['pods_relation_format'], array('accordion', 'select'))) {
-                                        // && $settings['pods_relation_render'] != 'title') {
-                                        if ($settings['pods_relation_close'] && !$rkey || $rkey) {
-                                            $is_hidden = \true;
-                                        }
-                                    }
-                                    if (\in_array($settings['pods_relation_format'], array('tab')) && $rkey) {
-                                        $is_hidden = \true;
-                                    }
-                                    $pstyle = $is_hidden ? ' style="display: none;"' : '';
-                                    echo '<div id="dce-pods-relational-post-' . $this->get_id() . '-' . $post->ID . '" class="dce-view-pane dce-' . $settings['pods_relation_format'] . '-pane dce-pods-relational-post dce-pods-relational-post-' . $post->ID . ($settings['pods_relation_format'] == 'grid' ? ' item-page' : '') . '"' . $pstyle . '>';
-                                    break;
-                            }
-                        }
-                        if ($settings['pods_relation_render'] == 'template' && $settings['pods_relation_template']) {
-                            echo do_shortcode('[dce-elementor-template id="' . $settings['pods_relation_template'] . '"]');
-                        } elseif ($settings['pods_relation_render'] == 'text') {
-                            echo \DynamicContentForElementor\Tokens::do_tokens($settings['pods_relation_text']);
-                        } else {
-                            if ($settings['pods_relation_link']) {
-                                echo '<a class="dce-pods-relational-post-link" href="' . get_permalink($post->ID) . '">';
-                            }
-                            echo '<' . \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']) . ' class="elementor-heading-title">' . wp_kses_post(get_the_title($post->ID)) . '</' . \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']) . '>';
-                            if ($settings['pods_relation_link']) {
-                                echo '</a>';
-                            }
-                        }
-                        if (\count($rel_post) > 1) {
-                            switch ($settings['pods_relation_format']) {
-                                case 'ul':
-                                case 'ol':
-                                    echo '</li>';
-                                    break;
-                                default:
-                                    echo '</div>';
-                                    break;
-                            }
-                        }
-                    }
-                    if (\count($rel_post) > 1 && $settings['pods_relation_format']) {
-                        switch ($settings['pods_relation_format']) {
-                            case 'ul':
-                                echo '</ul>';
-                                break;
-                            case 'ol':
-                                echo '</ol>';
-                                break;
-                            case 'tab':
-                                echo '</div>';
-                            case 'grid':
-                            case 'select':
-                                echo '</div>';
-                                break;
-                        }
-                    }
+        if (pods(get_post_type(), get_the_ID())) {
+            $related_posts = pods_field_raw($settings['pods_relation_field']);
+        }
+        if (empty($related_posts)) {
+            return;
+        }
+        if (\is_numeric($related_posts)) {
+            $related_posts = array($related_posts);
+        } elseif (isset($related_posts['ID'])) {
+            $related_posts = array($related_posts['ID']);
+        } elseif (\is_array($related_posts)) {
+            $related_posts = wp_list_pluck($related_posts, 'ID');
+        }
+        if (\count($related_posts) > 1 && $settings['pods_relation_format']) {
+            $labels = array();
+            if (\in_array($settings['pods_relation_format'], array('tab', 'accordion', 'select'))) {
+                foreach ($related_posts as $arel) {
+                    $post = get_post($arel);
+                    $labels[$post->ID] = \DynamicContentForElementor\Tokens::do_tokens($settings['pods_relation_label']);
                 }
+            }
+            switch ($settings['pods_relation_format']) {
+                case 'ul':
+                    echo '<ul class="dce-pods-relational-list">';
+                    break;
+                case 'ol':
+                    echo '<ol class="dce-pods-relational-list">';
+                    break;
+                case 'grid':
+                    echo '<div class="dce-view-row grid-page grid-col-md-' . $settings['pods_relation_col'] . ' grid-col-sm-' . $settings['pods_relation_col_tablet'] . ' grid-col-xs-' . $settings['pods_relation_col_mobile'] . '">';
+                    break;
+                case 'tab':
+                    echo '<div class="dce-view-tab dce-tab dce-tab-' . $settings['pods_relation_tab'] . '"><ul>';
+                    $i = 0;
+                    foreach ($labels as $pkey => $alabel) {
+                        ?>
+						<li>
+							<a class="dce-view-item dce-tab-item<?php 
+                        echo !$i ? ' dce-tab-item-active' : '';
+                        ?>" href="#dce-pods-relational-post-<?php 
+                        echo $this->get_id() . '-' . $pkey;
+                        ?>" onclick="jQuery('.elementor-element-<?php 
+                        echo $this->get_id();
+                        ?> .dce-pods-relational-post').hide();jQuery('.elementor-element-<?php 
+                        echo $this->get_id();
+                        ?> .dce-tab-item-active').removeClass('dce-tab-item-active');jQuery(jQuery(this).attr('href')).show();jQuery(this).addClass('dce-tab-item-active'); return false;">
+								<<?php 
+                        echo \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']);
+                        ?> class="elementor-heading-title">
+						<?php 
+                        echo $alabel;
+                        ?>
+								</<?php 
+                        echo \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']);
+                        ?>>
+							</a>
+						</li>
+						<?php 
+                        $i++;
+                    }
+                    echo '</ul><div class="dce-tab-content">';
+                    break;
+                case 'select':
+                    ?>
+					<select class="elementor-heading-title dce-view-select" onchange="jQuery('.elementor-element-<?php 
+                    echo $this->get_id();
+                    ?> .dce-pods-relational-post').slideUp();jQuery(jQuery(this).val()).slideDown();">
+						<?php 
+                    if ($settings['pods_relation_close'] && $settings['pods_relation_close_label']) {
+                        echo '<option value="#dce-view-no-show">' . $settings['pods_relation_close_label'] . '</option>';
+                    }
+                    foreach ($labels as $pkey => $alabel) {
+                        echo '<option value="#dce-pods-relational-post-' . $this->get_id() . '-' . $pkey . '">' . $alabel . '</option>';
+                    }
+                    ?>
+					</select>
+					<div class="dce-select-content">
+						<?php 
+                    break;
+            }
+        }
+        foreach ($related_posts as $rkey => $arel) {
+            $post = get_post($arel);
+            if (\count($related_posts) > 1) {
+                switch ($settings['pods_relation_format']) {
+                    case 'ul':
+                    case 'ol':
+                        echo '<li class="dce-view-pane dce-pods-relational-post dce-pods-relational-post-' . $post->ID . '">';
+                        break;
+                    default:
+                        if ($settings['pods_relation_format'] == 'accordion' && $settings['pods_relation_render'] != 'title') {
+                            ?>
+								<div class="dce-accordion-item">
+									<a class="dce-view-item" href="#dce-pods-relational-post-<?php 
+                            echo $this->get_id() . '-' . $post->ID;
+                            ?>" onclick="if (!jQuery(jQuery(this).attr('href')).is(':visible')) {
+																					jQuery('.elementor-element-<?php 
+                            echo $this->get_id();
+                            ?> .dce-pods-relational-post').slideUp();
+																					jQuery(jQuery(this).attr('href')).slideDown();
+																				} else {
+																					jQuery(jQuery(this).attr('href')).slideUp();
+																				} return false;">
+										<<?php 
+                            echo \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']);
+                            ?> class="elementor-heading-title">
+									<?php 
+                            echo $labels[$post->ID];
+                            ?>
+										</<?php 
+                            echo \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']);
+                            ?>>
+									</a>
+								</div>
+							<?php 
+                        }
+                        $is_hidden = \false;
+                        if (\in_array($settings['pods_relation_format'], array('accordion', 'select'))) {
+                            // && $settings['pods_relation_render'] != 'title') {
+                            if ($settings['pods_relation_close'] && !$rkey || $rkey) {
+                                $is_hidden = \true;
+                            }
+                        }
+                        if (\in_array($settings['pods_relation_format'], array('tab')) && $rkey) {
+                            $is_hidden = \true;
+                        }
+                        $pstyle = $is_hidden ? ' style="display: none;"' : '';
+                        echo '<div id="dce-pods-relational-post-' . $this->get_id() . '-' . $post->ID . '" class="dce-view-pane dce-' . $settings['pods_relation_format'] . '-pane dce-pods-relational-post dce-pods-relational-post-' . $post->ID . ($settings['pods_relation_format'] == 'grid' ? ' item-page' : '') . '"' . $pstyle . '>';
+                        break;
+                }
+            }
+            if ($settings['pods_relation_render'] == 'template' && $settings['pods_relation_template']) {
+                echo do_shortcode('[dce-elementor-template id="' . $settings['pods_relation_template'] . '"]');
+            } elseif ($settings['pods_relation_render'] == 'text') {
+                echo \DynamicContentForElementor\Tokens::do_tokens($settings['pods_relation_text']);
+            } else {
+                if ($settings['pods_relation_link']) {
+                    echo '<a class="dce-pods-relational-post-link" href="' . get_permalink($post->ID) . '">';
+                }
+                echo '<' . \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']) . ' class="elementor-heading-title">' . wp_kses_post(get_the_title($post->ID)) . '</' . \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']) . '>';
+                if ($settings['pods_relation_link']) {
+                    echo '</a>';
+                }
+            }
+            if (\count($related_posts) > 1) {
+                switch ($settings['pods_relation_format']) {
+                    case 'ul':
+                    case 'ol':
+                        echo '</li>';
+                        break;
+                    default:
+                        echo '</div>';
+                        break;
+                }
+            }
+        }
+        if (\count($related_posts) > 1 && $settings['pods_relation_format']) {
+            switch ($settings['pods_relation_format']) {
+                case 'ul':
+                    echo '</ul>';
+                    break;
+                case 'ol':
+                    echo '</ol>';
+                    break;
+                case 'tab':
+                    echo '</div>';
+                case 'grid':
+                case 'select':
+                    echo '</div>';
+                    break;
             }
         }
         wp_reset_postdata();

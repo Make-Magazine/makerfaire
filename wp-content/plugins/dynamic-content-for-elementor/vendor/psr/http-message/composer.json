@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "DynamicOOOS\\Psr\\Http\\Message\\": "src\/"
+            "Psr\\Http\\Message\\": "src\/"
         }
     },
     "extra": {

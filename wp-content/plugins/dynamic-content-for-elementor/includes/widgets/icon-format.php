@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_IconFormat extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_IconFormat extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -19,11 +19,11 @@ class DCE_Widget_IconFormat extends \DynamicContentForElementor\Widgets\DCE_Widg
     }
     protected function _register_controls()
     {
-        $this->start_controls_section('section_cpt', ['label' => __('Icon Format', 'dynamic-content-for-elementor')]);
+        $this->start_controls_section('section_cpt', ['label' => $this->get_title()]);
         $this->add_responsive_control('icon_size', ['label' => __('Icon Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 30], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dashicons:before' => 'font-size: {{SIZE}}{{UNIT}};']]);
         $this->add_responsive_control('padding_size', ['label' => __('Padding Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => 0, 'max' => 50]], 'selectors' => ['{{WRAPPER}} .dashicons' => 'padding: {{SIZE}}{{UNIT}};']]);
-        $this->add_control('color_icon', ['label' => __('Color Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dashicons:before' => 'color: {{VALUE}};']]);
-        $this->add_control('color_bg', ['label' => __('Color Background', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dashicons' => 'background-color: {{VALUE}};']]);
+        $this->add_control('color_icon', ['label' => __('Icon Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dashicons:before' => 'color: {{VALUE}};']]);
+        $this->add_control('color_bg', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dashicons' => 'background-color: {{VALUE}};']]);
         $this->add_responsive_control('icon_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => '', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};']]);
         $this->end_controls_section();
     }

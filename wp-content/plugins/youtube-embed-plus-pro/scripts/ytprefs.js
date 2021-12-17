@@ -75,7 +75,7 @@
                             }
 
                             var epautoplay = parseInt(event.target.getIframe().getAttribute("data-epautoplay"));
-                            if (!isNaN(epautoplay) && epautoplay === 1)
+                            if (!isNaN(epautoplay) && epautoplay === 1 && !$(event.target.getIframe()).closest('.lity-hide').length)
                             {
                                 event.target.playVideo();
                             }
@@ -731,6 +731,11 @@
                             }
                         });
 
+                        $('.__youtube_prefs_gdpr__.epyt-is-override').each(function ()
+                        {
+                            $(this).parent('.wp-block-embed__wrapper').addClass('epyt-is-override__wrapper');
+                        });
+
                         $('button.__youtube_prefs_gdpr__').on('click', function (e)
                         {
                             e.preventDefault();
@@ -738,6 +743,21 @@
                             {
                                 $.cookie("ytprefs_gdpr_consent", '1', {expires: 30, path: '/'});
                                 window.top.location.reload();
+                            }
+                        });
+
+                        $('img.epyt-facade-poster').one("load", function ()
+                        {
+                            if (this.naturalHeight < 200)
+                            {
+                                var facadeOldSrc = $(this).attr("src");
+                                $(this).attr("src", facadeOldSrc.replace('maxresdefault', 'hqdefault'));
+                            }
+                        }).each(function ()
+                        {
+                            if (this.complete)
+                            {
+                                $(this).trigger('load');
                             }
                         });
 

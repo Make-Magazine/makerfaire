@@ -13,7 +13,7 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_Pdf extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Pdf extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function show_in_panel()
     {
@@ -33,8 +33,8 @@ class DCE_Widget_Pdf extends \DynamicContentForElementor\Widgets\DCE_Widget_Prot
     protected function _register_controls_content()
     {
         $this->start_controls_section('section_dce_pdf', ['label' => __('PDF', 'dynamic-content-for-elementor')]);
-        $this->add_control('dce_pdf_button_converter', ['label' => __('Converter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'description' => __('The JS converter is the most accurate, but better used for short content, ideally fitting in only one page. Use the other converters for long text spanning multiple pages.', 'dynamic-content-for-elementor'), 'options' => ['js' => ['title' => __('JS', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-fire'], 'browser' => ['title' => __('Browser', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-window-maximize'], 'dompdf' => ['title' => __('DomPDF', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-paint-brush'], 'tcpdf' => ['title' => __('TCPDF', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-rocket']], 'condition' => ['dce_pdf_rtl' => ''], 'toggle' => \false, 'default' => 'js']);
-        $this->add_control('dce_pdf_rtl_button_converter', ['label' => __('Converter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['browser' => ['title' => __('Browser', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-window-maximize'], 'tcpdf' => ['title' => __('TCPDF', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-rocket']], 'condition' => ['dce_pdf_rtl!' => ''], 'toggle' => \false, 'default' => 'tcpdf']);
+        $this->add_control('dce_pdf_button_converter', ['label' => __('Converter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'description' => __('The JS converter is the most accurate, but better used for short content, ideally fitting in only one page. Use the other converters for long text spanning multiple pages.', 'dynamic-content-for-elementor'), 'options' => ['js' => 'JS', 'browser' => 'Browser', 'dompdf' => 'DomPDF', 'tcpdf' => 'TCPDF'], 'condition' => ['dce_pdf_rtl' => ''], 'toggle' => \false, 'default' => 'js']);
+        $this->add_control('dce_pdf_rtl_button_converter', ['label' => __('Converter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['browser' => 'Browser', 'tcpdf' => 'TCPDF'], 'condition' => ['dce_pdf_rtl!' => ''], 'toggle' => \false, 'default' => 'tcpdf']);
         $this->add_control('dce_pdf_button_title', ['label' => __('Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '[post:name]', 'description' => __('The PDF file name, the .pdf extension will automatically added', 'dynamic-content-for-elementor'), 'label_block' => \true]);
         $this->add_control('dce_pdf_button_body', ['label' => __('Body', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['post' => ['title' => __('Current Post', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'post']);
         $default_container = 'body';
@@ -43,7 +43,7 @@ class DCE_Widget_Pdf extends \DynamicContentForElementor\Widgets\DCE_Widget_Prot
         }
         $this->add_control('dce_pdf_button_container', ['label' => __('HTML Container', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => $default_container, 'placeholder' => __('body', 'dynamic-content-for-elementor'), 'label_block' => \true, 'description' => 'Use jQuery selector to identify the content for this PDF.', 'condition' => ['dce_pdf_button_body' => 'post']]);
         $this->add_control('dce_pdf_button_template', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as body for this PDF.', 'dynamic-content-for-elementor'), 'condition' => ['dce_pdf_button_body' => 'template']]);
-        $paper_sizes = \array_keys(\DynamicOOOS\Dompdf\Adapter\CPDF::$PAPER_SIZES);
+        $paper_sizes = \array_keys(@\DynamicOOOS\Dompdf\Adapter\CPDF::$PAPER_SIZES);
         $tmp = array();
         foreach ($paper_sizes as $asize) {
             $tmp[$asize] = \strtoupper($asize);
@@ -60,12 +60,12 @@ class DCE_Widget_Pdf extends \DynamicContentForElementor\Widgets\DCE_Widget_Prot
         }
         $js_paper_sizes += ['dl' => 'dl', 'letter' => 'letter', 'government-letter' => 'government-letter', 'legal' => 'legal', 'junior-legal' => 'junior-legal', 'ledger' => 'ledger', 'tabloid' => 'tabloid', 'credit-card' => 'credit-card'];
         $this->add_control('dce_pdf_button_size_js', ['label' => __('Page Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'a4', 'options' => $js_paper_sizes, 'condition' => ['dce_pdf_button_converter' => 'js']]);
-        $this->add_control('dce_pdf_button_orientation', ['label' => __('Page Orientation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['portrait' => ['title' => __('Portrait', 'dynamic-content-for-elementor'), 'icon' => 'fas fa-portrait'], 'landscape' => ['title' => __('Landscape', 'dynamic-content-for-elementor'), 'icon' => 'fas fa-tv']], 'toggle' => \false, 'default' => 'portrait', 'condition' => ['dce_pdf_button_converter!' => ['browser']]]);
+        $this->add_control('dce_pdf_button_orientation', ['label' => __('Page Orientation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['portrait' => __('Portrait', 'dynamic-content-for-elementor'), 'landscape' => __('Landscape', 'dynamic-content-for-elementor')], 'toggle' => \false, 'default' => 'portrait', 'condition' => ['dce_pdf_button_converter!' => ['browser']]]);
         $this->add_control('dce_pdf_button_margin', ['label' => __('Page Margins', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'default' => ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20, 'unit' => 'px', 'isLinked' => \true], 'size_units' => ['px', '%', 'em'], 'condition' => ['dce_pdf_button_converter' => ['dompdf', 'tcpdf']]]);
         $this->add_control('dce_pdf_button_margins_js', ['label' => __('Page Margins', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'default' => ['top' => 0, 'right' => 0, 'bottom' => 0, 'left' => 0, 'unit' => 'mm', 'isLinked' => \true], 'size_units' => ['pt', 'mm', 'in', 'px'], 'condition' => ['dce_pdf_button_converter' => ['js']]]);
         $this->add_control('dce_pdf_button_dpi', ['label' => __('DPI', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '96', 'options' => ['72' => '72', '96' => '96', '150' => '150', '200' => '200', '240' => '240', '300' => '300'], 'condition' => ['dce_pdf_button_converter' => 'dompdf']]);
-        $this->add_control('dce_pdf_button_styles', ['label' => __('Use Styles', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['unstyled' => ['title' => __('No Style', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle-o'], 'dynamic-content-for-elementor' => ['title' => __('Only Elementor', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-adjust'], 'all' => ['title' => __('Elementor & Theme', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle']], 'toggle' => \false, 'default' => 'dynamic-content-for-elementor', 'condition' => ['dce_pdf_button_converter' => ['dompdf', 'tcpdf']]]);
-        $this->add_control('dce_pdf_rtl', ['label' => __('RTL Language', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => 'Right-to-left languages are written and read from right-to-left', 'default' => '', 'condition' => ['dce_pdf_button_converter' => ['dompdf', 'tcpdf']]]);
+        $this->add_control('dce_pdf_button_styles', ['label' => __('Use Styles', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['unstyled' => __('No Style', 'dynamic-content-for-elementor'), 'only-elementor' => __('Only Elementor', 'dynamic-content-for-elementor'), 'all' => __('Elementor & Theme', 'dynamic-content-for-elementor')], 'toggle' => \false, 'default' => 'only-elementor', 'condition' => ['dce_pdf_button_converter' => ['dompdf', 'tcpdf']]]);
+        $this->add_control('dce_pdf_rtl', ['label' => __('RTL Language', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Right-to-left languages are written and read from right-to-left', 'dynamic-content-for-elementor'), 'default' => '', 'condition' => ['dce_pdf_button_converter' => ['dompdf', 'tcpdf']]]);
         $this->end_controls_section();
         $this->start_controls_section('section_button', ['label' => __('Button', 'dynamic-content-for-elementor')]);
         $this->add_control('button_type', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '', 'options' => ['' => __('Default', 'dynamic-content-for-elementor'), 'info' => __('Info', 'dynamic-content-for-elementor'), 'success' => __('Success', 'dynamic-content-for-elementor'), 'warning' => __('Warning', 'dynamic-content-for-elementor'), 'danger' => __('Danger', 'dynamic-content-for-elementor')], 'prefix_class' => 'elementor-button-']);
@@ -140,33 +140,34 @@ class DCE_Widget_Pdf extends \DynamicContentForElementor\Widgets\DCE_Widget_Prot
         if ($psettings['source_type'] === 'template') {
             $tbody = \Elementor\Plugin::$instance->frontend->get_builder_content_for_display($psettings['template_id'], \true);
             if (!$tbody) {
-                echo 'Error: could not fetch the template for generating the pdf';
+                echo __('Error: could not fetch the template for generating the pdf', 'dynamic-content-for-elementor');
                 return;
             }
             $selector = '#dce-pdftemplate';
             echo \preg_replace('/<div/', '<div id="dce-pdftemplate"', $tbody, 1);
         }
-        ?><script>
-let $ = jQuery;
-let el = $("<?php 
-        echo $selector;
-        ?>");
-		<?php 
-        if ($psettings['source_type'] == 'template') {
-            ?>
-el.remove();
-<?php 
-        }
-        ?>
-function downloadPDF(){
-	var restorepage = $('body').html();
-	var printcontent = el.clone();
-	$('body').empty().html(printcontent);
-	window.print();
-	$('body').html(restorepage);
-	return false;
-}
-	</script><?php 
+        $selector = wp_json_encode($selector);
+        $is_template = $psettings['source_type'] === 'template' ? 'true' : 'false';
+        $script = <<<EOD
+<script>
+ (function(\$) {
+   let el = \$({$selector});
+   if ( {$is_template} ) {
+     el.remove();
+   }
+   window.downloadPDF = function(){
+     var restorepage = \$('body').html();
+     var printcontent = el.clone();
+     \$('body').empty().html(printcontent);
+\t debugger;
+     window.print();
+     \$('body').html(restorepage);
+     return false;
+   }
+ })(jQuery)
+</script>
+EOD;
+        echo $script;
     }
     /**
      * wp_footer action: Echoes the js converter scripts that will immediately
@@ -227,7 +228,7 @@ EOD;
         $converter = $settings['dce_pdf_button_converter'];
         if ($converter === 'js') {
             $this->add_render_attribute('button', 'onclick', esc_attr($this->jsconv_button_onclick()));
-            $this->add_render_attribute('button', 'href', '#');
+            $this->add_render_attribute('button', 'style', 'cursor: pointer;');
             $download_id = isset($_GET['downloadPDF']) ? sanitize_text_field($_GET['downloadPDF']) : 0;
             if ($download_id === $this->get_id()) {
                 add_action('elementor/frontend/after_enqueue_scripts', [$this, 'jsconv_enqueue_scripts'], 1000, 0);
@@ -235,7 +236,7 @@ EOD;
         } elseif ($settings['dce_pdf_button_converter'] == 'browser') {
             $this->add_render_attribute('button', 'onclick', 'downloadPDF()');
             $this->add_render_attribute('button', 'href', '#');
-            add_action('elementor/frontend/after_enqueue_scripts', [$this, 'browserconv_insert_scripts'], 1000, 0);
+            $this->browserconv_insert_scripts();
         } else {
             $pdf_url = DCE_URL . 'assets/pdf.php';
             $pdf_url .= '?post_id=' . get_the_ID();

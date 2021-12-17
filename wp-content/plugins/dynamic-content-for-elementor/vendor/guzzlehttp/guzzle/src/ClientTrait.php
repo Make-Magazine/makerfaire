@@ -4,8 +4,8 @@ namespace DynamicOOOS\GuzzleHttp;
 
 use DynamicOOOS\GuzzleHttp\Exception\GuzzleException;
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * Client interface for sending HTTP requests.
  */

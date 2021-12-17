@@ -20,6 +20,6 @@ trait ExtensionInfo
     }
     public function get_docs()
     {
-        return self::get_info('doc_url');
+        return '';
     }
 }

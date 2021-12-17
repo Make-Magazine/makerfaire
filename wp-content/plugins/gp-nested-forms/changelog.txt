@@ -1,6 +1,39 @@
 
 # Changelog
 
+## 1.0-rc-1.3
+
+	- Fixed potential JavaScript errors when submitting/editing entries for some use-cases.
+	- Added `enableFocusTrap` to [`gpnf_init_script_args`](https://gravitywiz.com/documentation/gpnf_init_script_args).
+	
+## 1.0-rc-1.2
+
+	- Fixed issue where jQuery UI modal was not updated to work with our new build flow.
+
+## 1.0-rc-1.1
+
+	- Fixed issue where datepicker widget was not focusable due to focus being trapped in the Nested Form modal.
+	- Fixed issue where 3rd-party usage of GPNestedForms.loadEntry() would result in an error if the modal had not yet been activated.
+
+## 1.0-rc-1.0
+
+	- Fixed conflict where GPFUP's editor actions (cancel/crop) were not interactable when opened from a Nested Form modal due to GPNF's new focus trap.
+	- Improved loading experience for Nested Forms by preventing the max entries message and row actions from showing on initial load.
+	- Added support for screen readers on child entry edit actions.
+	- Added `gpnf_enable_duplication` filter to enable "Duplicate" action for child entries.
+	- Added `gpnf_duplicate_entry` filter to allow modifying the entry that will be duplicated.
+	- Updated Nested Entries template to display "Duplicate" action when enabled via filter.
+	- Improved default styles for Nested Form fields.
+	- Improved screen reader support for modal interactions.
+	- Fixed issue where button submit animation was not triggered when submit was triggered by "Enter" keypress.
+	- Improved accessibility of keyboard navigation. Tabbing is now restricted to focusable elements in the Nested Form modal when opened.
+	- Added [gpnf_populated_entry](https://gravitywiz.com/documentation/gpnf_populated_entry/) filter to allow filtering the entry that is about to be populated into the child form for editing.
+	- Fixed issue where calculations of multiple parent forms on the same page could conflict causing modifiers such as :total to not work as expected.
+
+## 1.0-beta-10.10
+
+	- Fixed issue where {Parent} merge tags would not be parsed if used in fields conditionally shown by a Section Field.
+
 ## 1.0-beta-10.9
 
 	- Added a CSS class to the Nested Entries Detail Simple template to support targeting specific tables when multiple tables are displayed.

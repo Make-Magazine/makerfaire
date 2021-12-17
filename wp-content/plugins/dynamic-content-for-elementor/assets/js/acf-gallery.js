@@ -1,74 +1,65 @@
 (function ($) {
     var WidgetDyncontel_ACFGalleryHandler = function ($scope, $) {
-        var elementSettingsACFGallery = get_Dyncontel_ElementSettings($scope);
-
-        var $block_acfgallery = '.dynamic_acfgallery';
+        var elementSettings = dceGetElementSettings($scope);
+        var $block_acfgallery = '.dce-acf-gallery';
         var $items_acfgallery = '.acfgallery-item';
-
         var $grid_dce_posts = $scope.find($block_acfgallery);
 
-        if (elementSettingsACFGallery.gallery_type == 'masonry') {
-
+        if (elementSettings.gallery_type == 'masonry') {
             var $masonry_dce_posts = $grid_dce_posts.masonry();
-            // ---------- [ imagesLoaded ] ---------
-            $grid_dce_posts.imagesLoaded().progress(function () {
 
-
-                $scope.find($items_acfgallery).css('opacity',1);
+			$grid_dce_posts.imagesLoaded().progress(function () {
+                $scope.find($items_acfgallery).css('opacity', 1);
                 $masonry_dce_posts.masonry('layout');
             });
-        }else if(elementSettingsACFGallery.gallery_type == 'justified') {
-            $scope.find('.justified-grid').imagesLoaded().progress(function () {
-
+        }else if(elementSettings.gallery_type == 'justified') {
+            $scope.find('.dce-acf-gallery-justified').imagesLoaded().progress(function () {
+				$scope.find($items_acfgallery).css('opacity', 1);
             });
-            $scope.find('.justified-grid').justifiedGallery({
-                rowHeight : Number(elementSettingsACFGallery.justified_rowHeight.size) || 170,
-                maxRowHeight : -1,
+            $scope.find('.dce-acf-gallery-justified').justifiedGallery({
+                rowHeight: Number(elementSettings.justified_rowHeight.size) || 170,
+                maxRowHeight: -1,
                 selector: 'figure, div:not(.spinner)',
                 imgSelector: '> img, > a > img, > div > a > img, > div > img',
-                margins: Number(elementSettingsACFGallery.justified_margin.size) || 0,
-                lastRow: elementSettingsACFGallery.justified_lastRow
+                margins: Number(elementSettings.justified_margin.size) || 0,
+                lastRow: elementSettings.justified_lastRow
             });
 
-        }else if (elementSettingsACFGallery.gallery_type == 'diamond') {
-            var $size_d = elementSettingsACFGallery.size_diamond;
-            var column_d = elementSettingsACFGallery.column_diamond;
-            var $diamond_grid = $scope.find($block_acfgallery).diamonds({
+        }else if (elementSettings.gallery_type == 'diamond') {
+            var $size_d = elementSettings.size_diamond;
+            var column_d = elementSettings.column_diamond;
+            $scope.find($block_acfgallery).diamonds({
                 size: $size_d.size || 240, // Size of the squares
-                gap: elementSettingsACFGallery.gap_diamond || 0, // Pixels between squares
+                gap: elementSettings.gap_diamond || 0, // Pixels between squares
                 itemSelector: ".acfgallery-item",
-                hideIncompleteRow: Boolean( elementSettingsACFGallery.hideIncompleteRow ),
+                hideIncompleteRow: Boolean( elementSettings.hideIncompleteRow ),
                 autoRedraw: true,
                 minDiamondsPerRow: column_d,
             });
             $(window).resize(function () {
                 $scope.find($block_acfgallery).diamonds("draw");
             });
-        } else if (elementSettingsACFGallery.gallery_type == 'hexagon') {
-            var $size_d = '';
-
-            $size_d = elementSettingsACFGallery.size_honeycombs;
-
-            $scope.find('.honeycombs-grid').honeycombs({
-                combWidth: $size_d,
-                margin: Number(elementSettingsACFGallery.gap_honeycombs),
+        } else if (elementSettings.gallery_type == 'hexagon') {
+            $scope.find('.dce-acf-gallery-hexagon').honeycombs({
+                combWidth: elementSettings.size_honeycombs,
+                margin: Number(elementSettings.gap_honeycombs),
             });
         }
 
-        if (elementSettingsACFGallery.enabled_wow) {
+        if (elementSettings.enabled_wow) {
             var wow = new WOW(
-                    {
-                        //boxClass: 'wow', // animated element css class (default is wow)
-                        //animateClass: 'animated', // animation css class (default is animated)
-                        offset: 0, // distance to the element when triggering the animation (default is 0)
-                        mobile: true, // trigger animations on mobile devices (default is true)
-                        live: true, // act on asynchronously loaded content (default is true)
-                        callback: function (box) {
-                            // the callback is fired every time an animation is started
-                            // the argument that is passed in is the DOM node being animated
-                        },
-                        scrollContainer: null // optional scroll container selector, otherwise use window
-                    }
+				{
+					//boxClass: 'wow', // animated element css class (default is wow)
+					//animateClass: 'animated', // animation css class (default is animated)
+					offset: 0, // distance to the element when triggering the animation (default is 0)
+					mobile: true, // trigger animations on mobile devices (default is true)
+					live: true, // act on asynchronously loaded content (default is true)
+					callback: function (box) {
+						// the callback is fired every time an animation is started
+						// the argument that is passed in is the DOM node being animated
+					},
+					scrollContainer: null // optional scroll container selector, otherwise use window
+				}
             );
             wow.init();
         }
@@ -79,12 +70,12 @@
             // (children of gallerySelector)
             var parseThumbnailElements = function (el) {
                 var thumbElements = el.childNodes,
-                        numNodes = thumbElements.length,
-                        items = [],
-                        figureEl,
-                        linkEl,
-                        size,
-                        item;
+					numNodes = thumbElements.length,
+					items = [],
+					figureEl,
+					linkEl,
+					size,
+					item;
 
                 for (var i = 0; i < numNodes; i++) {
                     figureEl = thumbElements[i]; // <figure> element
@@ -104,7 +95,6 @@
                         w: parseInt(size[0], 10),
                         h: parseInt(size[1], 10)
                     };
-
 
 
                     if (figureEl.children.length > 1) {
@@ -165,8 +155,6 @@
                     nodeIndex++;
                 }
 
-
-
                 if (index >= 0) {
                     // open PhotoSwipe if valid index found
                     openPhotoSwipe(index, clickedGallery);
@@ -177,7 +165,7 @@
             // parse picture index and gallery index from URL (#&pid=1&gid=2)
             var photoswipeParseHash = function () {
                 var hash = window.location.hash.substring(1),
-                        params = {};
+                    params = {};
 
                 if (hash.length < 5) {
                     return params;
@@ -275,10 +263,11 @@
             }
         };
         // execute above function
-        if ($scope.find('.dynamic_acfgallery.is-lightbox.photoswipe, .dynamic_gallery.is-lightbox.photoswipe').length > 0) {
-            if ($('body').find('.pswp').length < 1)
-                photoSwipeContent();
-            initPhotoSwipeFromDOM('.dynamic_acfgallery.is-lightbox.photoswipe, .dynamic_gallery.is-lightbox.photoswipe');
+        if ($scope.find('.dce-acf-gallery.is-lightbox.photoswipe').length > 0) {
+            if ($('body').find('.pswp').length < 1) {
+				photoSwipeContent();
+			}
+            initPhotoSwipeFromDOM('.dce-acf-gallery.is-lightbox.photoswipe');
         }
     };
 

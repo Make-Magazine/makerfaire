@@ -82,7 +82,7 @@ class FiltersParser
     {
         // The following is the precise regex for a function name.
         $name = $this->match_regex('/\\G\\s*([a-zA-Z_\\x80-\\xff][a-zA-Z0-9_\\x80-\\xff]*)\\s*/');
-        if (!$name) {
+        if ($name === \false) {
             return 'error';
         }
         if ($this->match('|')) {
@@ -121,7 +121,7 @@ class FiltersParser
             $this->captures[] = $qstr;
         } else {
             $arg = $this->match_regex('/\\G([^\\s,\\)]+)\\s*/');
-            if (!$arg) {
+            if ($arg === \false) {
                 return 'error';
             }
             $this->captures[] = $arg;
@@ -410,18 +410,18 @@ class Tokens
                     $single = null;
                     if (\count($altriPezzi) == 2) {
                         $filtersTmp = \explode('|', \end($altriPezzi));
+                        $real_filters = [];
                         foreach ($filtersTmp as $afilter) {
                             if (\is_numeric($afilter) && \intval($afilter) > 0) {
                                 $user_id = \intval($afilter);
-                            }
-                            if ($afilter == 'author') {
+                            } elseif ($afilter === 'author') {
                                 $user_id = get_the_author_meta('ID');
-                            }
-                            if ($afilter == 'single') {
+                            } elseif ($afilter === 'single') {
                                 $single = \true;
-                            }
-                            if ($afilter == 'multiple') {
+                            } elseif ($afilter === 'multiple') {
                                 $single = \false;
+                            } else {
+                                $real_filters[] = $afilter;
                             }
                         }
                     }
@@ -432,7 +432,7 @@ class Tokens
                     $replaceValue = self::check_array_value($metaValue, $metaKey);
                     if (\count($altriPezzi) == 2) {
                         // APPLY FILTERS
-                        $replaceValue = self::apply_filters($replaceValue, \end($altriPezzi), $user_id, $field);
+                        $replaceValue = self::apply_filters($replaceValue, \implode('|', $real_filters), $user_id, $field);
                     }
                     $replaceValue = self::value_or_fallback($replaceValue, $fallback);
                     $text = \str_replace('[user:' . $metaParams . ']', $replaceValue, $text);
@@ -512,7 +512,7 @@ class Tokens
         $pezzi = \explode('[product:', $text);
         if (\count($pezzi) > 1) {
             $current_post_id = $post_id = get_the_ID();
-            $current_post = wc_get_product();
+            $current_post = \wc_get_product();
             foreach ($pezzi as $dce_key => $avalue) {
                 $filters = array();
                 if ($dce_key) {

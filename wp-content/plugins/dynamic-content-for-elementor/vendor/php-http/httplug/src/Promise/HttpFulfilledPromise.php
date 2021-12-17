@@ -4,7 +4,7 @@ namespace DynamicOOOS\Http\Client\Promise;
 
 use DynamicOOOS\Http\Client\Exception;
 use DynamicOOOS\Http\Promise\Promise;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 final class HttpFulfilledPromise implements Promise
 {
     /**

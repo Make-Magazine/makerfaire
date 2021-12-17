@@ -37,7 +37,7 @@ class Dispute extends \DynamicOOOS\Stripe\ApiResource
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Dispute the submited dispute
+     * @return \Stripe\Issuing\Dispute the submited dispute
      */
     public function submit($params = null, $opts = null)
     {

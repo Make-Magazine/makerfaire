@@ -4,9 +4,9 @@ namespace DynamicOOOS\GuzzleHttp\Handler;
 
 use DynamicOOOS\GuzzleHttp\Psr7\Response;
 use DynamicOOOS\GuzzleHttp\Utils;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
-use DynamicOOOS\Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 /**
  * Represents a cURL easy handle and the data it populates.
  *

@@ -57,16 +57,16 @@ class DCE_Extension_Form_Redirect extends \ElementorPro\Modules\Forms\Classes\Ac
     {
         $widget->start_controls_section('section_dce_form_redirect', ['label' => $this->get_label(), 'condition' => ['submit_actions' => $this->get_name()]]);
         if (\Elementor\Plugin::$instance->editor->is_edit_mode() && !current_user_can('administrator')) {
-            $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="elementor-panel-alert elementor-panel-alert-warning">' . __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor') . '</div>']);
+            $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             $widget->end_controls_section();
             return;
         }
         $repeater_fields = new \Elementor\Repeater();
         $repeater_fields->add_control('dce_form_redirect_condition_field', ['label' => __('Condition', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the ID of the form field to check, or leave empty to perform the redirect', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \false]]);
-        $repeater_fields->add_control('dce_form_redirect_condition_status', ['label' => __('Condition Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['empty' => ['title' => __('Empty', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle-o'], 'valued' => ['title' => __('Valued', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-dot-circle-o'], 'lt' => ['title' => __('Less than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-left'], 'gt' => ['title' => __('Greater than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'equal' => ['title' => __('Equal to', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check-circle-o '], 'contain' => ['title' => __('Contain', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-inbox ']], 'default' => 'valued', 'toggle' => \false, 'label_block' => \true, 'condition' => ['dce_form_redirect_condition_field!' => '']]);
+        $repeater_fields->add_control('dce_form_redirect_condition_status', ['label' => __('Condition Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['empty' => ['title' => __('Empty', 'dynamic-content-for-elementor'), 'icon' => 'eicon-circle-o'], 'valued' => ['title' => __('Valorized with any value', 'dynamic-content-for-elementor'), 'icon' => 'eicon-dot-circle-o'], 'lt' => ['title' => __('Less than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-left'], 'gt' => ['title' => __('Greater than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'equal' => ['title' => __('Equal to', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle'], 'contain' => ['title' => __('Contain', 'dynamic-content-for-elementor'), 'icon' => 'eicon-check']], 'default' => 'valued', 'toggle' => \false, 'label_block' => \true, 'condition' => ['dce_form_redirect_condition_field!' => '']]);
         $repeater_fields->add_control('dce_form_redirect_condition_value', ['label' => __('Condition Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('A value to compare the value of the field', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_redirect_condition_field!' => '', 'dce_form_redirect_condition_status' => ['lt', 'gt', 'equal', 'contain']]]);
         $repeater_fields->add_control('dce_form_redirect_to', ['label' => __('Redirect To', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true, 'categories' => [TagsModule::POST_META_CATEGORY, TagsModule::TEXT_CATEGORY, TagsModule::URL_CATEGORY]], 'label_block' => \true, 'render_type' => 'none', 'classes' => 'elementor-control-direction-ltr']);
-        $widget->add_control('dce_form_redirect_repeater', ['label' => __('Redirects', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::REPEATER, 'title_field' => '{{{ dce_form_redirect_to }}}', 'fields' => $repeater_fields->get_controls()]);
+        $widget->add_control('dce_form_redirect_repeater', ['label' => __('Redirects', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'title_field' => '{{{ dce_form_redirect_to }}}', 'fields' => $repeater_fields->get_controls()]);
         // $widget->add_control(
         // 		'dce_form_redirect_help', [
         // 			'type' => \Elementor\Controls_Manager::RAW_HTML,
@@ -107,7 +107,7 @@ class DCE_Extension_Form_Redirect extends \ElementorPro\Modules\Forms\Classes\Ac
             $settings = $record->get('form_settings');
         }
         $settings = Helper::get_dynamic_value($settings, $fields);
-        $this->dce_elementor_form_redirect($fields, $settings, $ajax_handler, $record);
+        $this->redirection($fields, $settings, $ajax_handler, $record);
     }
     /**
      * On Export
@@ -127,7 +127,7 @@ class DCE_Extension_Form_Redirect extends \ElementorPro\Modules\Forms\Classes\Ac
             }
         }
     }
-    protected function dce_elementor_form_redirect($fields, $settings = null, $ajax_handler = null, $record = null)
+    protected function redirection($fields, $settings = null, $ajax_handler = null, $record = null)
     {
         foreach ($settings['dce_form_redirect_repeater'] as $mkey => $aredirect) {
             $condition_satisfy = \true;

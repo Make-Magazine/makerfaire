@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_AnimateText extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_AnimateText extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {

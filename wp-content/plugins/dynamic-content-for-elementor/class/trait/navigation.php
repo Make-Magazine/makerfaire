@@ -118,7 +118,7 @@ trait Navigation
         $link_next = self::get_wp_link_page_sf($paged + 1);
         return $link_next;
     }
-    public static function numeric_query_pagination($pages, $settings)
+    public static function numeric_query_pagination($pages, $settings, $class = '')
     {
         $search_filter_query = \false;
         if (isset($settings['query_type']) && $settings['query_type'] === 'search_filter') {
@@ -141,7 +141,11 @@ trait Navigation
             }
         }
         if (1 != $pages) {
-            echo '<div class="dce-pagination">';
+            if ($class) {
+                echo '<div class="dce-pagination ' . $class . '">';
+            } else {
+                echo '<div class="dce-pagination">';
+            }
             // Progression
             if ($settings['pagination_show_progression']) {
                 echo '<span class="progression">' . $paged . ' / ' . $pages . '</span>';

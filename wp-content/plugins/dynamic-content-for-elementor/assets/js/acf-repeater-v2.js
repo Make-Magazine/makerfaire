@@ -28,7 +28,7 @@ const manageAutoplayInsideTab = (tabWrapper, options, elementSwiper ) => {
 
 (function ($) {
     var WidgetDyncontel_ACFRepeaterHandler = function ($scope, $) {
-        var elementSettings = get_Dyncontel_ElementSettings($scope);
+        var elementSettings = dceGetElementSettings($scope);
         var $block_acfgallery = '.dce-acf-repeater';
 
 
@@ -93,7 +93,7 @@ const manageAutoplayInsideTab = (tabWrapper, options, elementSwiper ) => {
 
             var swiperOptions = {
                 // Optional parameters
-                direction: 'horizontal', 
+                direction: 'horizontal',
                 initialSlide: slideInitNum,
                 speed: Number(elementSettings.speed_slider) || 300,
                 autoHeight: Boolean(elementSettings.autoHeight), //false, // Set to true and slider wrapper will adopt its height to the height of the currently active slide
@@ -109,7 +109,7 @@ const manageAutoplayInsideTab = (tabWrapper, options, elementSwiper ) => {
                 centerInsufficientSlides: true,
                 watchOverflow: true,
                 centeredSlides: centroDiapo,
-                grabCursor: Boolean(elementSettings.grabCursor), 
+                grabCursor: Boolean(elementSettings.grabCursor),
                 freeMode: Boolean(elementSettings.freeMode),
                 freeModeMomentum: Boolean(elementSettings.freeModeMomentum),
                 freeModeMomentumRatio: Number(elementSettings.freeModeMomentumRatio) || 1,
@@ -118,7 +118,7 @@ const manageAutoplayInsideTab = (tabWrapper, options, elementSwiper ) => {
                 freeModeMomentumBounceRatio: Number(elementSettings.speed) || 1,
                 freeModeMinimumVelocity: Number(elementSettings.speed) || 0.02,
                 freeModeSticky: Boolean(elementSettings.freeModeSticky),
-                loop: cicloInfinito, 
+                loop: cicloInfinito,
                 navigation: {
                     nextEl: id_post ? '.dce-elementor-post-'+id_post+' .elementor-element-' + id_scope + ' .next-' + counter_id : '.next-' + counter_id,
                     prevEl: id_post ? '.dce-elementor-post-'+id_post+' .elementor-element-' + id_scope + ' .prev-' + counter_id : '.prev-' + counter_id,
@@ -163,40 +163,24 @@ const manageAutoplayInsideTab = (tabWrapper, options, elementSwiper ) => {
             }
 
             // Responsive Params
-            var spaceBetween = 0;
-            if (elementSettings.spaceBetween) {
-                spaceBetween = elementSettings.spaceBetween;
-            }
-            var responsivePoints = swiperOptions.breakpoints = {};
-            responsivePoints[elementorBreakpoints.lg] = {
-                slidesPerView: Number(elementSettings.slidesPerView) || 'auto',
-                slidesPerGroup: Number(elementSettings.slidesPerGroup) || 1,
-                spaceBetween: Number(spaceBetween) || 0,
-                slidesPerColumn: Number(elementSettings.slidesColumn) || 1,
-            };
-
-            var spaceBetween_tablet = spaceBetween;
-            if (elementSettings.spaceBetween_tablet) {
-                spaceBetween_tablet = elementSettings.spaceBetween_tablet;
-            }
-            responsivePoints[elementorBreakpoints.md] = {
-                slidesPerView: Number(elementSettings.slidesPerView_tablet) || Number(elementSettings.slidesPerView) || 'auto',
-                slidesPerGroup: Number(elementSettings.slidesPerGroup_tablet) || Number(elementSettings.slidesPerGroup) || 1,
-                spaceBetween: Number(spaceBetween_tablet) || 0,
-                slidesPerColumn: Number(elementSettings.slidesColumn_tablet) || Number(elementSettings.slidesColumn) || 1,
-            };
-
-            var spaceBetween_mobile = spaceBetween_tablet;
-            if (elementSettings.spaceBetween_mobile) {
-                spaceBetween_mobile = elementSettings.spaceBetween_mobile;
-            }
-            responsivePoints[elementorBreakpoints.xs] = {
-                slidesPerView: Number(elementSettings.slidesPerView_mobile) || Number(elementSettings.slidesPerView_tablet) || Number(elementSettings.slidesPerView) || 'auto',
-                slidesPerGroup: Number(elementSettings.slidesPerGroup_mobile) || Number(elementSettings.slidesPerGroup_tablet) || Number(elementSettings.slidesPerGroup) || 1,
-                spaceBetween: Number(spaceBetween_mobile) || 0,
-                slidesPerColumn: Number(elementSettings.slidesColumn_mobile) || Number(elementSettings.slidesColumn_tablet) || Number(elementSettings.slidesColumn) || 1,
-            };
-            swiperOptions = $.extend(swiperOptions, responsivePoints);
+			swiperOptions.breakpoints = dynamicooo.makeSwiperBreakpoints({
+				slidesPerView: {
+					elementor_key: 'slidesPerView',
+					default_value: 'auto'
+				},
+				slidesPerGroup: {
+					elementor_key: 'slidesPerGroup',
+					default_value: 1
+				},
+				spaceBetween: {
+					elementor_key: 'spaceBetween',
+					default_value: 0,
+				},
+				slidesPerColumn: {
+					elementor_key: 'slidesColumn',
+					default_value: 1,
+				}
+			}, elementSettings);
 
 			{
 				let isCarousel = elementSettings.dce_acf_repeater_format == 'slider_carousel';

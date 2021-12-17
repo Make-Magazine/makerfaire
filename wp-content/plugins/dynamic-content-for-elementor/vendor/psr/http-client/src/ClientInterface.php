@@ -1,9 +1,9 @@
 <?php
 
-namespace DynamicOOOS\Psr\Http\Client;
+namespace Psr\Http\Client;
 
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 interface ClientInterface
 {
     /**

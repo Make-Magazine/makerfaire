@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Breadcrumbs extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Breadcrumbs extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -21,29 +21,28 @@ class DCE_Widget_Breadcrumbs extends \DynamicContentForElementor\Widgets\DCE_Wid
     {
         $this->start_controls_section('section_options', ['label' => __('Options', 'dynamic-content-for-elementor')]);
         if (!\function_exists('yoast_breadcrumb') || !$this->is_yoast_breadcrumbs()) {
-            $this->add_control('enable_home_text', ['label' => __('Home Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
+            $this->add_control('enable_home_text', ['label' => __('Show Home', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
             $this->add_control('home-text', ['label' => __('Custom Home Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Homepage', 'dynamic-content-for-elementor'), 'condition' => ['enable_home_text' => 'yes']]);
             $this->add_control('separator', ['label' => __('Separator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => ' > ']);
         } else {
             $this->add_control('yoast_bc_alert', ['raw' => __('Breadcrumbs Yoast SEO', 'dynamic-content-for-elementor') . ' ' . \sprintf('<a href="%s" target="_blank">%s</a>', admin_url('admin.php?page=wpseo_titles#top#breadcrumbs'), __('Go settings Panel', 'dynamic-content-for-elementor')), 'type' => Controls_Manager::RAW_HTML, 'content_classes' => '']);
         }
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right'], 'justify' => ['title' => __('Justified', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-justify']], 'default' => '', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};']]);
-        $this->add_responsive_control('space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 5, 'unit' => 'px'], 'tablet_default' => ['unit' => 'px'], 'mobile_default' => ['unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-breadcrumbs .dce-separator, {{WRAPPER}} a, {{WRAPPER}} a + span' => 'padding: 0 {{SIZE}}{{UNIT}};']]);
+        $this->add_responsive_control('space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 5, 'unit' => 'px'], 'tablet_default' => ['unit' => 'px'], 'mobile_default' => ['unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-separator, {{WRAPPER}} a, {{WRAPPER}} a + span' => 'padding: 0 {{SIZE}}{{UNIT}};']]);
         $this->end_controls_section();
         $this->start_controls_section('section_style_items', ['label' => __('Items', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
-        $this->add_control('breadcrums_items', ['label' => __('Items', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
-        $this->add_control('color', ['label' => __('Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-breadcrumbs li, {{WRAPPER}} .dce-breadcrumbs a, {{WRAPPER}} .dce-breadcrumbs span:not(.dce-separator)' => 'color: {{VALUE}};']]);
-        $this->add_control('color_hover', ['label' => __('Text Color Hover', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-breadcrumbs a:hover' => 'color: {{VALUE}};']]);
-        $this->add_control('final_color', ['label' => __('Final text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-breadcrumbs .bread-current, {{WRAPPER}} .dce-breadcrumbs .breadcrumb_last' => 'color: {{VALUE}};']]);
+        $this->add_control('color', ['label' => __('Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} li, {{WRAPPER}} a' => 'color: {{VALUE}};']]);
+        $this->add_control('color_hover', ['label' => __('Text Color Hover', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} a:hover' => 'color: {{VALUE}};']]);
+        $this->add_control('final_color', ['label' => __('Current Item Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} li.item-current' => 'color: {{VALUE}};']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography', 'label' => __('Typography', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-breadcrumbs']);
-        $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography_final', 'label' => __('Typography of final', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-breadcrumbs .bread-current, {{WRAPPER}} .dce-breadcrumbs .breadcrumb_last']);
+        $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography_final', 'label' => __('Current Item Typography', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .item-current']);
         $this->end_controls_section();
         $this->start_controls_section('section_style_home', ['label' => __('Home', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['enable_home_text' => 'yes']]);
-        $this->add_control('home_color', ['label' => __('Home text color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-breadcrumbs li.item-home' => 'color: {{VALUE}};', '{{WRAPPER}} .dce-breadcrumbs li.item-home a' => 'color: {{VALUE}};'], 'condition' => ['enable_home_text' => 'yes']]);
-        $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography_hometext', 'label' => __('Typography home text', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-breadcrumbs li.item-home']);
+        $this->add_control('home_color', ['label' => __('Home Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} li.item-home' => 'color: {{VALUE}};', '{{WRAPPER}} li.item-home a' => 'color: {{VALUE}};'], 'condition' => ['enable_home_text' => 'yes']]);
+        $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography_hometext', 'label' => __('Home Typography', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} li.item-home']);
         $this->end_controls_section();
         $this->start_controls_section('section_style_separator', ['label' => __('Separator', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
-        $this->add_control('separator_color', ['label' => __('Separator Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-breadcrumbs .dce-separator, .dce-breadcrumbs span' => 'color: {{VALUE}};']]);
+        $this->add_control('separator_color', ['label' => __('Separator Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-separator span' => 'color: {{VALUE}};']]);
         $this->end_controls_section();
     }
     protected function render()
@@ -56,26 +55,23 @@ class DCE_Widget_Breadcrumbs extends \DynamicContentForElementor\Widgets\DCE_Wid
         if (isset($settings['separator'])) {
             $separator = '<span class="dce-separator">' . wp_kses_post($settings['separator']) . '</span>';
         }
-        $id = 'dce-breadcrumbs';
-        $class = 'dce-breadcrumbs';
         $home_title = '';
         if (isset($settings['home-text'])) {
             $home_title = wp_kses_post($settings['home-text']);
         }
         $id_page = Helper::get_the_id();
-        $html_tag = 'div';
         if (\function_exists('yoast_breadcrumb') && $this->is_yoast_breadcrumbs()) {
-            \yoast_breadcrumb('<' . $html_tag . ' id="' . $id . '" class="' . $class . '">', '</' . $html_tag . '>');
+            \yoast_breadcrumb('<div id="' . $id . '" class="' . $class . '">', '</div>');
         } else {
             // Get the query & post information
             global $post, $wp_query;
             $category = get_the_category($id_page);
-            // Build the breadcrums
-            echo '<ul id="' . $id . '" class="' . $class . '">';
+            // Build the breadcrumbs
+            echo '<ul>';
             // Do not display on the homepage
             if (!is_front_page()) {
-                if ($settings['enable_home_text'] == 'yes') {
-                    // Home page
+                if ($settings['enable_home_text']) {
+                    // Home
                     echo '<li class="item-home"><a class="bread-link bread-home" href="' . get_home_url() . '" title="' . $home_title . '">' . $home_title . '</a></li>';
                     echo '<li class="separator separator-home"> ' . $separator . ' </li>';
                 }

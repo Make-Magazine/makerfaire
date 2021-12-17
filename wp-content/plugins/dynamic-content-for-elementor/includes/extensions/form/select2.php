@@ -76,9 +76,12 @@ class DCE_Extension_Form_Select2 extends \DynamicContentForElementor\Extensions\
                         ?>');
 						let form = $scope.find('form')[0];
 						field2.on('select2:select', () => {
-							let evt = document.createEvent("HTMLEvents");
-							evt.initEvent("change", false, true);
-							form.dispatchEvent(evt);
+							let evtChange = document.createEvent("HTMLEvents");
+							evtChange.initEvent("change", false, true);
+							let evtInput = document.createEvent("HTMLEvents");
+							evtInput.initEvent("input", false, true);
+							form.dispatchEvent(evtChange);
+							form.dispatchEvent(evtInput);
 						});
 						var classes = field2.attr('class');
 						var $select2 = field2.select2({

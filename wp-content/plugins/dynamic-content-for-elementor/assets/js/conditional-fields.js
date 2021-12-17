@@ -5,7 +5,8 @@ const getFieldsValues = (fields) => {
 	for (const id in fields) {
 		let $inputs = fields[id].inputs;
 		if ($inputs.length === 1) {
-			if( $inputs.attr('type') === 'checkbox') {
+			let type = $inputs.attr('type');
+			if( type  === 'checkbox' || type === 'radio' ) {
 				if ($inputs.prop('checked')) {
 					values[id] = $inputs.val();
 				} else {
@@ -127,7 +128,11 @@ const getOnFormChange = ({fields, field_conditions, submit_conditions, $form, la
 		const $fieldWrapper = fields[id].wrapper;
 		$fieldInputs.prop('disabled', false);
 		$fieldWrapper[0].dataset.dceConditionsFieldStatus = 'active';
-		$fieldWrapper.show();
+		// show only if it's not a field that should
+		// always be hidden, like an hidden amount:
+		if ($fieldInputs.data('hide') !== 'yes') {
+			$fieldWrapper.show();
+		}
 	}
 	const handleFieldConditions = (values) => {
 		for (const cond of field_conditions) {
@@ -182,6 +187,7 @@ Conditional Fields v2 Error (the error is on the validation condition <code>${co
 
 function initializeConditionalFields($form) {
 	const $outWrapper = $form.find('.elementor-form-fields-wrapper');
+	$form.find('.dce-conditions-js-error-notice').remove();
 	let field_conditions = $outWrapper.attr('data-field-conditions');
 	let submit_conditions = $outWrapper.attr('data-submit-conditions');
 	let fieldIds = $outWrapper.attr('data-field-ids');

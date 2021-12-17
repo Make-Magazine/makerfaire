@@ -7,13 +7,13 @@ use DynamicOOOS\GuzzleHttp\Exception\GuzzleException;
 use DynamicOOOS\GuzzleHttp\Exception\InvalidArgumentException;
 use DynamicOOOS\GuzzleHttp\Promise as P;
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * @final
  */
-class Client implements ClientInterface, \DynamicOOOS\Psr\Http\Client\ClientInterface
+class Client implements ClientInterface, \Psr\Http\Client\ClientInterface
 {
     use ClientTrait;
     /**
@@ -290,6 +290,9 @@ class Client implements ClientInterface, \DynamicOOOS\Psr\Http\Client\ClientInte
     {
         $modify = ['set_headers' => []];
         if (isset($options['headers'])) {
+            if (\array_keys($options['headers']) === \range(0, \count($options['headers']) - 1)) {
+                throw new InvalidArgumentException('The headers array must have header name as keys.');
+            }
             $modify['set_headers'] = $options['headers'];
             unset($options['headers']);
         }

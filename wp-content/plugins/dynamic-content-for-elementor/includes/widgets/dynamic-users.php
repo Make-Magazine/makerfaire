@@ -16,7 +16,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -78,7 +78,7 @@ class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\DCE_Wi
         $repeater->add_control('articles_url', ['label' => __('Add Link to Post', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['meta' => 'articles']]);
         $repeater->add_control('link_to_page', ['label' => __('Link to page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['meta!' => ['attachments', 'articles']]]);
         $repeater->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'user_page', 'options' => ['user_page' => __('User page', 'dynamic-content-for-elementor'), 'other_url' => __('Meta URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')], 'condition' => ['link_to_page' => 'yes', 'meta!' => ['attachments', 'articles']]]);
-        $repeater->add_control('custom_link', ['label' => __('Link url', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => 'http://your-link.com', 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
+        $repeater->add_control('custom_link', ['label' => __('Link url', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
         $user_meta_url = Helper::get_acf_field_urlfile();
         $repeater->add_control('meta_field_url', ['label' => __('Meta Field Url', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => $user_meta_url, 'default' => __('Select the field', 'dynamic-content-for-elementor'), 'condition' => ['link_to_page' => 'yes', 'link_to' => 'other_url', 'meta!' => ['attachments', 'articles']]]);
         $repeater->add_control('meta_field_url_target_blank', ['label' => __('Target blank', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['link_to_page' => 'yes', 'link_to' => 'other_url', 'meta!' => ['attachments', 'articles'], 'meta_field_url!' => '']]);

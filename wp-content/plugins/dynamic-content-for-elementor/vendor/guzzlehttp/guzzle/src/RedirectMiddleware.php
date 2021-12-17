@@ -5,9 +5,9 @@ namespace DynamicOOOS\GuzzleHttp;
 use DynamicOOOS\GuzzleHttp\Exception\BadResponseException;
 use DynamicOOOS\GuzzleHttp\Exception\TooManyRedirectsException;
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * Request redirect middleware.
  *

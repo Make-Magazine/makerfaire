@@ -3,10 +3,6 @@
 namespace DynamicContentForElementor\Extensions;
 
 use Elementor\Controls_Manager;
-use Elementor\Controls_Stack;
-use Elementor\Group_Control_Typography;
-use Elementor\Group_Control_Border;
-use Elementor\Icons_Manager;
 use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
@@ -16,104 +12,57 @@ class DCE_Extension_Form_Address_Autocomplete extends \DynamicContentForElemento
 {
     private $is_common = \false;
     public $has_action = \false;
+    public $depended_scripts = ['dce-form-address-autocomplete'];
+    public $depended_styles = [];
     public function get_name()
     {
         return 'dce_form_address_autocomplete';
     }
     protected function add_actions()
     {
-        add_action('elementor/widget/render_content', array($this, '_render_form'), 10, 2);
-        add_action('elementor/widget/print_template', function ($template, $widget) {
-            if ('form' === $widget->get_name()) {
-                $template = \false;
-            }
-            return $template;
-        }, 10, 2);
+        add_action('elementor/element/form/section_form_fields/before_section_end', [$this, 'update_fields_controls']);
+        add_action('elementor-pro/forms/pre_render', [$this, 'add_assets_depends'], 10, 2);
     }
-    public function _render_form($content, $widget)
+    public function add_assets_depends($instance, $form)
     {
-        if ($widget->get_name() == 'form') {
-            //https://developers.google.com/maps/documentation/javascript/examples/places-autocomplete-addressform
-            $settings = $widget->get_settings_for_display();
-            $has_address = \false;
-            $jkey = 'dce_' . $widget->get_type() . '_form_' . $widget->get_id() . '_address';
-            if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                \ob_start();
-                ?>
-				<script id="<?php 
-                echo $jkey;
-                ?>">
-					var placeSearch, autocomplete;
-
-					function dce_geolocate() {
-						if (navigator.geolocation) {
-							navigator.geolocation.getCurrentPosition(function (position) {
-								var geolocation = {
-									lat: position.coords.latitude,
-									lng: position.coords.longitude
-								};
-								var circle = new google.maps.Circle(
-										{center: geolocation, radius: position.coords.accuracy});
-								autocomplete.setBounds(circle.getBounds());
-							});
-						}
-					}
-
-				function dce_init_autocomplete() {
-				<?php 
-                foreach ($settings['form_fields'] as $key => $afield) {
-                    if ($afield['field_type'] == 'text') {
-                        if (!empty($afield['field_address'])) {
-                            $has_address = \true;
-                            ?>
-						autocomplete = new google.maps.places.Autocomplete(document.getElementById('form-field-<?php 
-                            echo $afield['custom_id'];
-                            ?>'), {types: ['geocode']});
-						autocomplete.setFields(['address_component']);
-							<?php 
-                            if (!empty($afield['field_address_restrict_country'])) {
-                                ?>
-							autocomplete.setComponentRestrictions({
-								  country: [<?php 
-                                foreach ($afield['field_address_restrict_country'] as $country) {
-                                    echo '"' . $country . '",';
-                                }
-                                ?>],
-							});			
-						<?php 
-                            }
-                            ?>
-							<?php 
-                        }
-                    }
+        $autocomplete_fields = [];
+        // fetch all the settings data we need to pass to the JavaScript code:
+        foreach ($instance['form_fields'] as $field) {
+            if ($field['field_type'] == 'text' && !empty($field['field_address'])) {
+                $new_field = ['id' => $field['custom_id']];
+                if (!empty($field['field_address_restrict_country'])) {
+                    $new_field['country'] = $field['field_address_restrict_country'];
                 }
-                ?>
-				}
-				  </script>
-				<?php 
-                $add_js = \ob_get_clean();
-                if ($has_address) {
-                    global $wp_scripts;
-                    if (!empty($wp_scripts->registered['dce-google-maps-api'])) {
-                        $wp_scripts->registered['dce-google-maps-api']->src .= '&libraries=places&callback=dce_init_autocomplete';
-                    }
-                    wp_enqueue_script('dce-google-maps-api');
-                    return $content . $add_js;
-                }
+                $autocomplete_fields[] = $new_field;
             }
         }
-        return $content;
-    }
-    public static function _add_to_form(Controls_Stack $element, $control_id, $control_data, $options = [])
-    {
-        if ($element->get_name() == 'form' && $control_id == 'form_fields') {
-            $control_data['fields']['form_fields_enchanted_tab'] = array('type' => 'tab', 'tab' => 'enchanted', 'label' => '<i class="dynicon icon-dyn-logo-dce" aria-hidden="true"></i>', 'tabs_wrapper' => 'form_fields_tabs', 'name' => 'form_fields_enchanted_tab', 'condition' => ['field_type!' => 'step']);
-            if (!get_option('dce_google_maps_api')) {
-                $control_data['fields']['field_address_api_notice'] = array('name' => 'field_address_api_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('In order to use Address Autocomplete you should set Google Maps API, with Geocoding API enabled, on APIs section', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
+        if (!empty($autocomplete_fields)) {
+            $form->add_render_attribute('wrapper', 'data-autocomplete-fields', wp_json_encode($autocomplete_fields));
+            global $wp_scripts;
+            if (!empty($wp_scripts->registered['dce-google-maps-api'])) {
+                $wp_scripts->registered['dce-google-maps-api']->src .= '&libraries=places';
             }
-            $control_data['fields']['field_address'] = array('name' => 'field_address', 'label' => __('Address Autocomplete', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'true', 'default' => '', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
-            $control_data['fields']['field_address_restrict_country'] = array('name' => 'field_address_restrict_country', 'label' => __('Restrict Country', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => Helper::get_iso_3166_1_alpha_2(), 'multiple' => \true, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text'], ['name' => 'field_address', 'operator' => '!=', 'value' => '']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
+            foreach ($this->depended_scripts as $script) {
+                $form->add_script_depends($script);
+            }
+            foreach ($this->depended_styles as $style) {
+                $form->add_style_depends($style);
+            }
         }
-        return $control_data;
+    }
+    public function update_fields_controls($widget)
+    {
+        $elementor = \ElementorPro\Plugin::elementor();
+        $control_data = $elementor->controls_manager->get_control_from_stack($widget->get_unique_name(), 'form_fields');
+        if (is_wp_error($control_data)) {
+            return;
+        }
+        $field_controls = [];
+        if (!get_option('dce_google_maps_api')) {
+            $field_controls['field_address_api_notice'] = ['name' => 'field_address_api_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('In order to use Address Autocomplete you should set Google Maps API, with Geocoding API enabled, on APIs section', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted'];
+        }
+        $field_controls += ['form_fields_enchanted_tab' => ['type' => 'tab', 'tab' => 'enchanted', 'label' => '<i class="dynicon icon-dyn-logo-dce" aria-hidden="true"></i>', 'tabs_wrapper' => 'form_fields_tabs', 'name' => 'form_fields_enchanted_tab', 'condition' => ['field_type!' => 'step']], 'field_address' => ['name' => 'field_address', 'label' => __('Address Autocomplete', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'true', 'default' => '', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted'], 'field_address_restrict_country' => ['name' => 'field_address_restrict_country', 'label' => __('Restrict Country', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => Helper::get_iso_3166_1_alpha_2(), 'multiple' => \true, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text'], ['name' => 'field_address', 'operator' => '!=', 'value' => '']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted']];
+        $control_data['fields'] = \array_merge($control_data['fields'], $field_controls);
+        $widget->update_control('form_fields', $control_data);
     }
 }

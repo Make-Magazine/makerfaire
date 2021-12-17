@@ -86,24 +86,43 @@
 			);
 
 			gform.addAction('gform_post_conditional_logic_field_action', function (formId, action, targetId, defaultValues, isInit) {
+
 				if ( action === 'hide' ) {
 					return;
 				}
+
 				var fieldId       = gf_get_input_id_by_html_id( targetId );
 				var fieldSettings = self.getFieldSettings( fieldId );
-				if ( fieldSettings ) {
-					for ( var i = 0; i < fieldSettings.length; i++ ) {
-						var $inputs = $( "#field_{0}_{1}.gfield".format( formId, fieldSettings[i].source ) ).find( 'input, textarea, select' );
-						$inputs.each(function () {
-							if ( $( this ).is( ':checkbox' ) ) {
-								// Make sure we clear checkboxes before copying them
-								self.clearValues( this );
-							}
-							self.copyValues( this );
-						});
-					}
+				var triggerIds    = [];
+
+				if ( ! fieldSettings ) {
+					return;
 				}
-			});
+
+				for ( var i = 0; i < fieldSettings.length; i++ ) {
+
+					if ( $.inArray( fieldSettings[i].trigger, triggerIds ) !== -1 ) {
+						continue;
+					}
+
+					triggerIds.push( fieldSettings[i].trigger );
+
+					var $trigger = $( '#field_{0}_{1}'.format( formId, fieldSettings[i].trigger ) ).find( 'input, textarea, select' )
+
+					if ( $trigger.is( ':checkbox' ) ) {
+						if ( $trigger.filter( ':checked' ).length ) {
+							self.copyValues( $trigger[0] );
+						} else {
+							self.clearValues( $trigger[0] );
+						}
+					}
+					else {
+						self.copyValues( $trigger[0] );
+					}
+
+				}
+
+			} );
 
 			$formWrapper.data( 'GPCopyCat', self );
 
@@ -216,6 +235,18 @@
 
 				}
 
+				targetValues = [];
+
+				/**
+				 * If targeting a Checkbox field rather than a specific checkbox, uncheck all checkboxes prior to copying.
+				 *
+				 * We previously handled this only when the copy was triggered by conditional logic (see: https://github.com/gravitywiz/gwcopycat/blob/master/js/gp-copy-cat.js#L98-L101)
+				 * but that did not match how it was handled by direct user interaction.
+				 */
+				if ( ! isInputSpecific( targetFieldId ) && targetGroup.is( ':checkbox' ) && isOverwrite ) {
+					targetGroup.prop( 'checked', false );
+				}
+
 				targetGroup.each(
 					function (i) {
 
@@ -225,6 +256,8 @@
 							hasSourceValue = isCheckable || sourceValues[index] || ($.isArray( sourceValues ) /* @todo list field hac */ && sourceValues.join( ' ' )),
 							hasValue       = false,
 							value          = null;
+
+						targetValues[i] = $targetElem.val();
 
 						if (isCheckable) {
 							// NOTE: this is how this should technically work but I don't think anyone is targeting individual
@@ -334,12 +367,17 @@
 						// trigger 'keypress' on all checked checkboxes to trigger applicable conditional logic
 						targetGroup.filter( ':checked' );
 					}
+					// @todo Should only be triggering this is the value actually changed...
 					targetGroup.keypress();
 				} else {
-					targetGroup
-						.change()
-						// @hack trigger chosen:updated on every change since it doesn't "hurt" anything to do so; alternative is checking if chosen is activated
-						.trigger( 'chosen:updated' );
+					targetGroup.each( function( i ) {
+						if ( targetValues[ i ] != $( this ).val() ) {
+							$( this )
+								.change()
+								// @hack trigger chosen:updated on every change since it doesn't "hurt" anything to do so; alternative is checking if chosen is activated
+								.trigger( 'chosen:updated' );
+						}
+					} );
 				}
 
 				targetGroup.trigger( 'copy.gpcopycat' );
@@ -380,7 +418,7 @@
 					continue;
 				}
 				if (isListtoList) {
-					return;
+					continue;
 				}
 
 				if (parseInt( field.source ) == fieldId && $( elem ).is( ':checkbox' )) {
@@ -388,7 +426,7 @@
 						targetGroup.prop( 'checked', false );
 					}
 					self.copyValues( elem, true, true );
-					return;
+					continue;
 				}
 
 				sourceGroup.each(
@@ -646,7 +684,7 @@
 		};
 
 		self.getMaxRowCount = function (targetGroup) {
-			var classes = targetGroup.parents( 'li.gfield' ).attr( 'class' ).split( ' ' );
+			var classes = targetGroup.parents( '.gfield' ).attr( 'class' ).split( ' ' );
 			for (var i = 0; i < classes.length; i++) {
 				if (classes[i].indexOf( 'gp-field-maxrows' ) !== -1) {
 					return parseInt( classes[i].split( '-' )[3] );

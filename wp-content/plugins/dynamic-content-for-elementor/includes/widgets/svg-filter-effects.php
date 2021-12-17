@@ -13,7 +13,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -45,21 +45,14 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
         $this->add_control('svg_trigger', ['label' => __('Trigger', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'options' => ['static' => __('Static', 'dynamic-content-for-elementor'), 'animation' => __('Animation', 'dynamic-content-for-elementor'), 'rollover' => __('Rollover', 'dynamic-content-for-elementor'), 'scroll' => __('Scroll', 'dynamic-content-for-elementor')], 'frontend_available' => \true, 'default' => 'static', 'render_type' => 'template']);
         $this->add_control('svg_trigger_options', ['label' => __('Trigger options', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['from_val_to_zero' => __('From values to original', 'dynamic-content-for-elementor'), 'from_zero_to_val' => __('From original to values', 'dynamic-content-for-elementor')], 'frontend_available' => \true, 'default' => 'from_val_to_zero', 'separator' => 'after', 'condition' => ['svg_trigger!' => 'static']]);
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')], 'condition' => ['svg_trigger' => 'rollover']]);
-        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => 'http://your-link.com', 'dynamic' => ['active' => \true], 'condition' => ['link_to' => 'custom', 'svg_trigger' => 'rollover'], 'default' => ['url' => ''], 'show_label' => \false]);
+        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true], 'condition' => ['link_to' => 'custom', 'svg_trigger' => 'rollover'], 'default' => ['url' => ''], 'show_label' => \false]);
         $this->add_control('playpause_control', ['label' => __('Animation Controls', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'default' => 'running', 'toggle' => \false, 'options' => ['running' => ['title' => __('Play', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-play'], 'paused' => ['title' => __('Pause', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-pause']], 'frontend_available' => \true, 'separator' => 'before', 'render_type' => 'ui', 'condition' => ['svg_trigger' => ['animation']]]);
         $this->add_control('animation_heading', ['label' => __('Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['svg_trigger' => ['animation', 'rollover', 'scroll']]]);
         $this->add_control('speed_animation', ['label' => __('Speed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'label_block' => \false, 'default' => ['size' => 3], 'range' => ['px' => ['min' => 0.2, 'max' => 10, 'step' => 0.1]], 'frontend_available' => \true, 'condition' => ['svg_trigger' => ['animation', 'rollover', 'scroll']]]);
         $this->add_control('delay_animation', ['label' => __('Delay', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'label_block' => \false, 'default' => ['size' => 1], 'range' => ['px' => ['min' => 0.1, 'max' => 10, 'step' => 0.1]], 'frontend_available' => \true, 'condition' => ['svg_trigger' => ['animation', 'rollover', 'scroll']]]);
         $this->add_control('easing_animation', ['label' => __('Easing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Default', 'dynamic-content-for-elementor')] + Helper::get_gsap_ease(), 'default' => 'easeInOut', 'frontend_available' => \true, 'label_block' => \false, 'condition' => ['svg_trigger' => ['animation', 'rollover', 'scroll']]]);
         $this->add_control('easing_animation_ease', ['label' => __('Equation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Default', 'dynamic-content-for-elementor')] + Helper::get_gsap_timing_functions(), 'default' => 'Power3', 'frontend_available' => \true, 'label_block' => \false, 'condition' => ['svg_trigger' => ['animation', 'rollover', 'scroll']]]);
-        $this->add_control('fe_filtereffect', [
-            'label' => __('Type', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::SELECT,
-            'separator' => 'after',
-            'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'duotone' => __('Duotone', 'dynamic-content-for-elementor'), 'broken' => __('Broken', 'dynamic-content-for-elementor'), 'squiggly' => __('Squiggly', 'dynamic-content-for-elementor'), 'sketch' => __('Sketch Frame', 'dynamic-content-for-elementor'), 'glitch' => __('Glitch', 'dynamic-content-for-elementor'), 'x-rays' => __('X-rays', 'dynamic-content-for-elementor'), 'morphology' => __('Morphology', 'dynamic-content-for-elementor'), 'posterize' => __('Posterize', 'dynamic-content-for-elementor'), 'rgbOfset' => __('RGB Offset', 'dynamic-content-for-elementor'), 'pixelate' => __('Pixelate', 'dynamic-content-for-elementor')],
-            //'frontend_available' => true,
-            'default' => 'duotone',
-        ]);
+        $this->add_control('fe_filtereffect', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'separator' => 'after', 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'duotone' => __('Duotone', 'dynamic-content-for-elementor'), 'broken' => __('Broken', 'dynamic-content-for-elementor'), 'squiggly' => __('Squiggly', 'dynamic-content-for-elementor'), 'sketch' => __('Sketch Frame', 'dynamic-content-for-elementor'), 'glitch' => __('Glitch', 'dynamic-content-for-elementor'), 'x-rays' => __('X-rays', 'dynamic-content-for-elementor'), 'morphology' => __('Morphology', 'dynamic-content-for-elementor'), 'posterize' => __('Posterize', 'dynamic-content-for-elementor'), 'rgbOfset' => __('RGB Offset', 'dynamic-content-for-elementor'), 'pixelate' => __('Pixelate', 'dynamic-content-for-elementor')], 'default' => 'duotone']);
         $this->add_control('options_heading', ['label' => __('Options', 'dynamic-content-for-elementor'), 'description' => __('Shape parameters', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'condition' => ['fe_filtereffect' => ['morphology', 'duotone', 'squiggly', 'broken', 'sketch', 'posterize', 'glitch', 'pixelate']]]);
         $this->add_control('size_pixelate', ['label' => __('Pixel size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '5', 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 1, 'max' => 20, 'step' => 1]], 'condition' => ['fe_filtereffect' => 'glitch']]);
         $this->add_control('size_glitch', ['label' => __('Glitch size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '5', 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 1, 'max' => 20, 'step' => 1]], 'condition' => ['fe_filtereffect' => 'glitch']]);
@@ -68,7 +61,7 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
         $this->add_control('sketchY', ['label' => __('Sketch Y', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0.02', 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 0, 'max' => 0.1, 'step' => 0.01]], 'condition' => ['fe_filtereffect' => 'sketch']]);
         $this->add_control('sketchScale', ['label' => __('Sketch size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '17', 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]], 'condition' => ['fe_filtereffect' => 'sketch']]);
         $this->add_control('sketchColor', ['label' => __('Frame color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '#000000', 'alpha' => \false, 'condition' => ['fe_filtereffect' => 'sketch']]);
-        $this->add_control('popover_posterize_R', ['label' => __('Red', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::POPOVER_TOGGLE, 'label_off' => __('No', 'dynamic-content-for-elementor'), 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'condition' => ['fe_filtereffect' => 'posterize']]);
+        $this->add_control('popover_posterize_R', ['label' => __('Red', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::POPOVER_TOGGLE, 'return_value' => 'yes', 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->start_popover();
         $this->add_control('colorposter_R_1', ['label' => __('Color poster 1', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->add_control('colorposter_R_2', ['label' => __('Color poster 2', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0.25'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
@@ -76,7 +69,7 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
         $this->add_control('colorposter_R_4', ['label' => __('Color poster 4', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0.75'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->add_control('colorposter_R_5', ['label' => __('Color poster 5', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '1'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->end_popover();
-        $this->add_control('popover_posterize_G', ['label' => __('Green', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::POPOVER_TOGGLE, 'label_off' => __('No', 'dynamic-content-for-elementor'), 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'condition' => ['fe_filtereffect' => 'posterize']]);
+        $this->add_control('popover_posterize_G', ['label' => __('Green', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::POPOVER_TOGGLE, 'return_value' => 'yes', 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->start_popover();
         $this->add_control('colorposter_G_1', ['label' => __('Color poster 1', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->add_control('colorposter_G_2', ['label' => __('Color poster 2', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0.25'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
@@ -84,7 +77,7 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
         $this->add_control('colorposter_G_4', ['label' => __('Color poster 4', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0.75'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->add_control('colorposter_G_5', ['label' => __('Color poster 5', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '1'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->end_popover();
-        $this->add_control('popover_posterize_B', ['label' => __('Blue', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::POPOVER_TOGGLE, 'label_off' => __('No', 'dynamic-content-for-elementor'), 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'condition' => ['fe_filtereffect' => 'posterize']]);
+        $this->add_control('popover_posterize_B', ['label' => __('Blue', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::POPOVER_TOGGLE, 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->start_popover();
         $this->add_control('colorposter_B_1', ['label' => __('Color poster 1', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->add_control('colorposter_B_2', ['label' => __('Color poster 2', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0.25'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
@@ -92,7 +85,7 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
         $this->add_control('colorposter_B_4', ['label' => __('Color poster 4', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0.75'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->add_control('colorposter_B_5', ['label' => __('Color poster 5', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '1'], 'range' => ['px' => ['min' => 0, 'max' => 1, 'step' => 0.1]], 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->end_popover();
-        $this->add_control('desatureposter', ['label' => __('Remove colors', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'dilate', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => '', 'condition' => ['fe_filtereffect' => 'posterize']]);
+        $this->add_control('desatureposter', ['label' => __('Remove colors', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'dilate', 'return_value' => '', 'condition' => ['fe_filtereffect' => 'posterize']]);
         $this->add_control('size_broken', ['label' => __('Broken size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '15', 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 1, 'max' => 100, 'step' => 1]], 'condition' => ['fe_filtereffect' => 'broken']]);
         $this->add_control('operator_dilateerode', ['label' => __('Dilate or Erode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'dilate', 'label_on' => __('Dilate', 'dynamic-content-for-elementor'), 'label_off' => __('Erode', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'condition' => ['fe_filtereffect' => 'morphology']]);
         $this->add_control('radius_dilateerode', ['label' => __('Radius of Morphology', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '3', 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 0, 'max' => 10, 'step' => 1]], 'condition' => ['fe_filtereffect' => 'morphology']]);
@@ -110,17 +103,7 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
             'default' => 'thumbnail',
             'condition' => ['fe_output' => '', 'base_image[id]!' => ''],
         ]);
-        $this->add_control('preserveAR', [
-            'label' => __('Aspect Ratio', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::HIDDEN,
-            'default' => '',
-            'label_on' => __('Yes', 'dynamic-content-for-elementor'),
-            'label_off' => __('No', 'dynamic-content-for-elementor'),
-            'return_value' => 'yes',
-            //'render_type' => 'template',
-            'frontend_available' => \true,
-            'separator' => 'before',
-        ]);
+        $this->add_control('preserveAR', ['label' => __('Aspect Ratio', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => '', 'frontend_available' => \true, 'separator' => 'before']);
         $this->end_controls_section();
         $this->start_controls_section('section_viewbox', ['label' => __('Viewbox', 'dynamic-content-for-elementor')]);
         $this->add_control('viewbox_width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'label_block' => \false, 'default' => 600, 'min' => 100, 'max' => 2000, 'step' => 1]);
@@ -131,9 +114,9 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
         $this->add_responsive_control('svg_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'prefix_class' => 'align-', 'default' => 'left', 'selectors' => ['{{WRAPPER}} .dce_fe_effects-wrapper' => 'text-align: {{VALUE}};']]);
         $this->end_controls_section();
         $this->start_controls_section('section_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'condition' => ['svg_trigger' => 'static']]);
-        $this->add_control('fe_output', ['label' => __('Output', 'dynamic-content-for-elementor'), 'description' => __('Use the filter effects only for application on other page elements. Activating this option the svg element will not be displayed.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('fe_output_direct', ['label' => __('Directly to element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('id_svg_class', ['label' => __('CSS Class', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => '', 'condition' => ['fe_output' => 'yes']]);
+        $this->add_control('fe_output', ['label' => __('Output', 'dynamic-content-for-elementor'), 'description' => __('Use the filter effects only for application on other page elements. Activating this option the svg element will not be displayed.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'return_value' => 'yes']);
+        $this->add_control('fe_output_direct', ['label' => __('Directly to element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'return_value' => 'yes']);
+        $this->add_control('id_svg_class', ['label' => __('CSS Class', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'condition' => ['fe_output' => 'yes']]);
         $this->add_control('note_idclass', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('Here you can write the class of the element to trasform with the SVG distortion. Remember to write the class name on your element in advanced tab.', 'dynamic-content-for-elementor'), 'content_classes' => 'dce-document-settings', 'separator' => 'after', 'condition' => ['fe_output' => 'yes']]);
         $this->end_controls_section();
     }
@@ -150,8 +133,6 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
         if ($typeEffect != '') {
             $filterId = 'filter="url(#fe_effect-' . $widgetId . ')"';
         }
-        // ---------------------------------
-        //
         $image_size = $settings['image_size'];
         $image_url = Group_Control_Image_Size::get_attachment_image_src($settings['base_image']['id'], 'image', $settings);
         $viewBoxW = $settings['viewbox_width'];
@@ -220,13 +201,12 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
         $desatureposter = $settings['desatureposter'];
         // MORPHOLOGY
         $dilateerode = $settings['radius_dilateerode']['size'];
-        // ---------------------------------
         $this->add_render_attribute('svgfeeffects', ['class' => 'dce_fe_effects', 'data-coef' => 0.5]);
         $preserveAR = '';
         if (!$settings['preserveAR']) {
             $preserveAR = ' preserveAspectRatio="none"';
         }
-        $abbondanza = 'x="0%" y=0%" width="100%" height="100%"';
+        $abbondanza = 'x="0%" y="0%" width="100%" height="100%"';
         ?>
 		<div class="dce_fe_effects-wrapper">
 		  <div <?php 
@@ -265,7 +245,6 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
 						<feFuncB type="table" tableValues="<?php 
             echo $color1_B . ' ' . $color2_B;
             ?>"></feFuncB>
-
 					</feComponentTransfer>
 				  <?php 
         } elseif ($settings['fe_filtereffect'] == 'broken') {
@@ -284,7 +263,6 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
 
 				<?php 
         } elseif ($settings['fe_filtereffect'] == 'rgbOfset') {
-            //
             ?>
 					  <feFlood flood-color="#FF0000" flood-opacity="0.5" result="RED" />
 					  <feFlood flood-color="#00FF00" flood-opacity="0.5" result="GREEN" />
@@ -300,7 +278,7 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
 							  <feMergeNode in="GREEN_TEXT_OFF"/>
 							  <feMergeNode in="BLUE_TEXT_OFF"/>
 					  </feMerge>
-				  ?>
+
 				<?php 
         } elseif ($settings['fe_filtereffect'] == 'squiggly') {
             ?>
@@ -319,7 +297,6 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
 				<?php 
         } elseif ($settings['fe_filtereffect'] == 'sketch') {
             ?>
-
 					<feMorphology operator="dilate" radius="<?php 
             echo $stroke_sketch;
             ?>" in="SourceAlpha" result="morphology"/>
@@ -369,7 +346,7 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
 					  <feMorphology operator="erode" radius="<?php 
                 echo $dilateerode;
                 ?>"> </feMorphology>
-						<?php 
+					<?php 
             }
             ?>
 				<?php 
@@ -377,7 +354,6 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
             ?>
 
 				  <feComponentTransfer result="poster">
-					<!-- <feFuncR type="discrete" tableValues="0 .5 1"/> .25 .4 .5 .75 1 -->
 					<feFuncR type="discrete" tableValues="<?php 
             echo $posterR;
             ?>" />
@@ -504,83 +480,12 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
 						<feMergeNode in="shadow2"></feMergeNode>/>
 						<feMergeNode in="SourceGraphic"></feMergeNode>/>
 					  </feMerge>
-					<!-- <feFlood flood-color="black" result="black" />
-					<feFlood flood-color="red" result="flood1" />
-					<feFlood flood-color="limegreen" result="flood2" />
-					<feOffset in="SourceGraphic" dx="3" dy="0" result="off1a"/>
-					<feOffset in="SourceGraphic" dx="2" dy="0" result="off1b"/>
-					<feOffset in="SourceGraphic" dx="-3" dy="0" result="off2a"/>
-					<feOffset in="SourceGraphic" dx="-2" dy="0" result="off2b"/>
-					<feComposite in="flood1" in2="off1a" operator="in"  result="comp1" />
-					<feComposite in="flood2" in2="off2a" operator="in" result="comp2" />
-
-					<feMerge x="0" width="100%" result="merge1">
-						<feMergeNode in = "black" />
-						<feMergeNode in = "comp1" />
-						<feMergeNode in = "off1b" />
-
-						<animate
-							attributeName="y"
-							id = "y"
-							dur ="4s"
-
-							values = '104px; 104px; 30px; 105px; 30px; 2px; 2px; 50px; 40px; 105px; 105px; 20px; 6ßpx; 40px; 104px; 40px; 70px; 10px; 30px; 104px; 102px'
-
-							keyTimes = '0; 0.362; 0.368; 0.421; 0.440; 0.477; 0.518; 0.564; 0.593; 0.613; 0.644; 0.693; 0.721; 0.736; 0.772; 0.818; 0.844; 0.894; 0.925; 0.939; 1'
-
-							repeatCount = "indefinite" />
-
-						<animate attributeName="height"
-							id = "h"
-							dur ="4s"
-
-							values = '10px; 0px; 10px; 30px; 50px; 0px; 10px; 0px; 0px; 0px; 10px; 50px; 40px; 0px; 0px; 0px; 40px; 30px; 10px; 0px; 50px'
-
-							keyTimes = '0; 0.362; 0.368; 0.421; 0.440; 0.477; 0.518; 0.564; 0.593; 0.613; 0.644; 0.693; 0.721; 0.736; 0.772; 0.818; 0.844; 0.894; 0.925; 0.939; 1'
-
-							repeatCount = "indefinite" />
-					</feMerge>
-
-
-					<feMerge x="0" width="100%" y="60px" height="65px" result="merge2">
-						<feMergeNode in = "black" />
-						<feMergeNode in = "comp2" />
-						<feMergeNode in = "off2b" />
-
-						<animate attributeName="y"
-							id = "y"
-							dur ="4s"
-							values = '103px; 104px; 69px; 53px; 42px; 104px; 78px; 89px; 96px; 100px; 67px; 50px; 96px; 66px; 88px; 42px; 13px; 100px; 100px; 104px;'
-
-							keyTimes = '0; 0.055; 0.100; 0.125; 0.159; 0.182; 0.202; 0.236; 0.268; 0.326; 0.357; 0.400; 0.408; 0.461; 0.493; 0.513; 0.548; 0.577; 0.613; 1'
-
-							repeatCount = "indefinite" />
-
-						<animate attributeName="height"
-							id = "h"
-							dur = "4s"
-
-							values = '0px; 0px; 0px; 16px; 16px; 12px; 12px; 0px; 0px; 5px; 10px; 22px; 33px; 11px; 0px; 0px; 10px'
-
-							keyTimes = '0; 0.055; 0.100; 0.125; 0.159; 0.182; 0.202; 0.236; 0.268; 0.326; 0.357; 0.400; 0.408; 0.461; 0.493; 0.513;  1'
-
-							repeatCount = "indefinite" />
-					</feMerge>
-
-					<feMerge>
-						<feMergeNode in="SourceGraphic" />
-
-						<feMergeNode in="merge1" />
-					<feMergeNode in="merge2" />
-
-					</feMerge> -->
 
 					<?php 
         }
         ?>
 			  </filter>
 			</defs>
-
 
 			<image id="img-distorted"
 				<?php 
@@ -818,14 +723,6 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
 						<feFuncB type="table" tableValues="{{color1_B}} {{color2_B}}"></feFuncB>
 					</feComponentTransfer>
 				  <# } else if(fe_filtereffect == 'broken'){ #>
-					  <!-- <feTurbulence type="turbulence" baseFrequency="0.002 0.008" numOctaves="2" seed="2" stitchTiles="stitch" result="turbulence"/>
-					  <feColorMatrix type="saturate" values="30" in="turbulence" result="colormatrix"/>
-					  <feColorMatrix type="matrix" values="1 0 0 0 0
-					0 1 0 0 0
-					0 0 1 0 0
-					0 0 0 150 -15" in="colormatrix" result="colormatrix1"/>
-					  <feComposite in="SourceGraphic" in2="colormatrix1" operator="in" result="composite"/>
-					  <feDisplacementMap in="SourceGraphic" in2="colormatrix1" scale="{{size_broken}}" xChannelSelector="R" yChannelSelector="A" result="displacementMap"/> -->
 			<AnimFeTurbulence type="fractalNoise" baseFrequency={freq} numOctaves="1.5" result="TURB" seed="8" />
 			<AnimFeDisplacementMap xChannelSelector="R" yChannelSelector="G" in="SourceGraphic" in2="TURB" result="DISP" scale={scale} />
 
@@ -989,77 +886,6 @@ class DCE_Widget_SvgFilterEffects extends \DynamicContentForElementor\Widgets\DC
 							<feMergeNode in="shadow2"></feMergeNode>/>
 							<feMergeNode in="SourceGraphic"></feMergeNode>/>
 						  </feMerge>
-
-						<!-- <feFlood flood-color="black" result="black" />
-						<feFlood flood-color="red" result="flood1" />
-						<feFlood flood-color="limegreen" result="flood2" />
-						<feOffset in="SourceGraphic" dx="3" dy="0" result="off1a"/>
-						<feOffset in="SourceGraphic" dx="2" dy="0" result="off1b"/>
-						<feOffset in="SourceGraphic" dx="-3" dy="0" result="off2a"/>
-						<feOffset in="SourceGraphic" dx="-2" dy="0" result="off2b"/>
-						<feComposite in="flood1" in2="off1a" operator="in"  result="comp1" />
-						<feComposite in="flood2" in2="off2a" operator="in" result="comp2" />
-
-						<feMerge x="0" width="100%" result="merge1">
-							<feMergeNode in = "black" />
-							<feMergeNode in = "comp1" />
-							<feMergeNode in = "off1b" />
-
-							<animate
-								attributeName="y"
-								id = "y"
-								dur ="4s"
-
-								values = '104px; 104px; 30px; 105px; 30px; 2px; 2px; 50px; 40px; 105px; 105px; 20px; 6ßpx; 40px; 104px; 40px; 70px; 10px; 30px; 104px; 102px'
-
-								keyTimes = '0; 0.362; 0.368; 0.421; 0.440; 0.477; 0.518; 0.564; 0.593; 0.613; 0.644; 0.693; 0.721; 0.736; 0.772; 0.818; 0.844; 0.894; 0.925; 0.939; 1'
-
-								repeatCount = "indefinite" />
-
-							<animate attributeName="height"
-								id = "h"
-								dur ="4s"
-
-								values = '10px; 0px; 10px; 30px; 50px; 0px; 10px; 0px; 0px; 0px; 10px; 50px; 40px; 0px; 0px; 0px; 40px; 30px; 10px; 0px; 50px'
-
-								keyTimes = '0; 0.362; 0.368; 0.421; 0.440; 0.477; 0.518; 0.564; 0.593; 0.613; 0.644; 0.693; 0.721; 0.736; 0.772; 0.818; 0.844; 0.894; 0.925; 0.939; 1'
-
-								repeatCount = "indefinite" />
-						</feMerge>
-
-
-						<feMerge x="0" width="100%" y="60px" height="65px" result="merge2">
-							<feMergeNode in = "black" />
-							<feMergeNode in = "comp2" />
-							<feMergeNode in = "off2b" />
-
-							<animate attributeName="y"
-								id = "y"
-								dur ="4s"
-								values = '103px; 104px; 69px; 53px; 42px; 104px; 78px; 89px; 96px; 100px; 67px; 50px; 96px; 66px; 88px; 42px; 13px; 100px; 100px; 104px;'
-
-								keyTimes = '0; 0.055; 0.100; 0.125; 0.159; 0.182; 0.202; 0.236; 0.268; 0.326; 0.357; 0.400; 0.408; 0.461; 0.493; 0.513; 0.548; 0.577; 0.613; 1'
-
-								repeatCount = "indefinite" />
-
-							<animate attributeName="height"
-								id = "h"
-								dur = "4s"
-
-								values = '0px; 0px; 0px; 16px; 16px; 12px; 12px; 0px; 0px; 5px; 10px; 22px; 33px; 11px; 0px; 0px; 10px'
-
-								keyTimes = '0; 0.055; 0.100; 0.125; 0.159; 0.182; 0.202; 0.236; 0.268; 0.326; 0.357; 0.400; 0.408; 0.461; 0.493; 0.513;  1'
-
-								repeatCount = "indefinite" />
-						</feMerge>
-
-						<feMerge>
-							<feMergeNode in="SourceGraphic" />
-
-							<feMergeNode in="merge1" />
-						<feMergeNode in="merge2" />
-
-						</feMerge> -->
 
 				  <# } #>
 				  </filter>

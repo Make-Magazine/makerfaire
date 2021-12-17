@@ -11,10 +11,13 @@
 namespace DynamicOOOS\Symfony\Contracts\Service\Test;
 
 use DynamicOOOS\PHPUnit\Framework\TestCase;
-use DynamicOOOS\Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use DynamicOOOS\Symfony\Contracts\Service\ServiceLocatorTrait;
 abstract class ServiceLocatorTest extends TestCase
 {
+    /**
+     * @return ContainerInterface
+     */
     protected function getServiceLocator(array $factories)
     {
         return new class($factories) implements ContainerInterface
@@ -59,7 +62,7 @@ abstract class ServiceLocatorTest extends TestCase
     public function testThrowsOnUndefinedInternalService()
     {
         if (!$this->getExpectedException()) {
-            $this->expectException(\DynamicOOOS\Psr\Container\NotFoundExceptionInterface::class);
+            $this->expectException(\Psr\Container\NotFoundExceptionInterface::class);
             $this->expectExceptionMessage('The service "foo" has a dependency on a non-existent service "bar". This locator only knows about the "foo" service.');
         }
         $locator = $this->getServiceLocator(['foo' => function () use(&$locator) {
@@ -69,7 +72,7 @@ abstract class ServiceLocatorTest extends TestCase
     }
     public function testThrowsOnCircularReference()
     {
-        $this->expectException(\DynamicOOOS\Psr\Container\ContainerExceptionInterface::class);
+        $this->expectException(\Psr\Container\ContainerExceptionInterface::class);
         $this->expectExceptionMessage('Circular reference detected for service "bar", path: "bar -> baz -> bar".');
         $locator = $this->getServiceLocator(['foo' => function () use(&$locator) {
             return $locator->get('bar');

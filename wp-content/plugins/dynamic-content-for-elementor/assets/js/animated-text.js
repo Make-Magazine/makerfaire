@@ -1,7 +1,7 @@
 (
 	function ( $ ) {
 		var WidgetElements_AnimateTextHandler = function ( $scope,$ ) {
-			var elementSettings = get_Dyncontel_ElementSettings( $scope );
+			var elementSettings = dceGetElementSettings( $scope );
 			// var id_scope = $scope.attr( 'data-id' );
 
 			var effectIn = elementSettings.animatetext_animationstyle_in;

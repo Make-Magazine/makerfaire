@@ -2,8 +2,8 @@
 
 namespace DynamicOOOS\Http\Client\Exception;
 
-use DynamicOOOS\Psr\Http\Client\NetworkExceptionInterface as PsrNetworkException;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Client\NetworkExceptionInterface as PsrNetworkException;
+use Psr\Http\Message\RequestInterface;
 /**
  * Thrown when the request cannot be completed because of network issues.
  *

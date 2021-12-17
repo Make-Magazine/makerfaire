@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "DynamicOOOS\\Psr\\Cache\\": "src\/"
+            "Psr\\Cache\\": "src\/"
         }
     },
     "extra": {

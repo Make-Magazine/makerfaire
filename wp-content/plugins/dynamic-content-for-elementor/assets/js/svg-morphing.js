@@ -2,7 +2,7 @@
 
 	var WidgetElements_SvgMorphHandler = function( $scope, $ ) {
 
-		var elementSettings = get_Dyncontel_ElementSettings($scope);
+		var elementSettings = dceGetElementSettings($scope);
 		var id_scope = $scope.attr('data-id');
 
 		var forma = elementSettings.type_of_shape;

@@ -4,7 +4,7 @@
 		altezza = 0,
 		paddingL, paddingR;
 
-		var elementSettings = get_Dyncontel_ElementSettings( $scope );
+		var elementSettings = dceGetElementSettings( $scope );
 
 		$scope.find('.dce-modalwindow-section').on('click','[data-type="modal-trigger"]', function(){
 			var actionBtn = $(this),

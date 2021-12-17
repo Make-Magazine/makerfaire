@@ -16,7 +16,7 @@ class DCE_Extension_Transforms extends \DynamicContentForElementor\Extensions\DC
     {
         $element_type = $element->get_type();
         $element->add_control('enabled_transform', ['label' => __('Transforms', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
-        $element->add_group_control(DCE_Group_Control_Transform_Element::get_type(), ['name' => 'transforms', 'label' => 'Transforms', 'default' => '', 'selector' => '{{WRAPPER}} .dce-transforms', 'condition' => ['enabled_transform!' => '']]);
+        $element->add_group_control(DCE_Group_Control_Transform_Element::get_type(), ['name' => 'transforms', 'label' => __('Transforms', 'dynamic-content-for-elementor'), 'default' => '', 'selector' => '{{WRAPPER}} .dce-transforms', 'condition' => ['enabled_transform!' => '']]);
     }
     protected function add_actions()
     {

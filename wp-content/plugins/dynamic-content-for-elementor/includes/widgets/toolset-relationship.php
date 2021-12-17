@@ -13,7 +13,7 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_ToolsetRelationship extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_ToolsetRelationship extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {

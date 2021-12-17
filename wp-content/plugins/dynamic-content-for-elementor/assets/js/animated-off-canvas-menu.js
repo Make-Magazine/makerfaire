@@ -1,26 +1,21 @@
 (
 	function ( $ ) {
 		var WidgetElements_AnimatedOffcanvasMenu = function ( $scope,$ ) {
-			var elementSettings = get_Dyncontel_ElementSettings( $scope );
+			var elementSettings = dceGetElementSettings( $scope );
 			var id_scope = $scope.attr( 'data-id' );
-
 			var animatedoffcanvasmenu = '#animatedoffcanvasmenu-' + id_scope;
 			var menu_position = elementSettings.aocm_position;
-
 			var class_menu_li = animatedoffcanvasmenu + ' .dce-menu-aocm ul#dce-ul-menu > li';
 			var class_template_before = animatedoffcanvasmenu + ' .dce-template-after';
-
 			var class_hamburger = '.dce-button-hamburger';
 			var class_modal = animatedoffcanvasmenu + ' .dce-menu-aocm';
 			var class_sidebg = animatedoffcanvasmenu + ' .dce-bg';
 			var class_quit = animatedoffcanvasmenu + ' .dce-menu-aocm .dce-close';
 			var items_menu = $scope.find( class_menu_li + ', ' + class_template_before );
-
 			var rate_menuside_desktop = Number( elementSettings.animatedoffcanvasmenu_rate.size );
 			var rate_menuside_tablet = Number( elementSettings.animatedoffcanvasmenu_rate_tablet.size );
 			var rate_menuside_mobile = Number( elementSettings.animatedoffcanvasmenu_rate_mobile.size );
 			var rate_menuside = rate_menuside_desktop;
-
 			var side_background = elementSettings.side_background;
 
 			if( side_background ) {
@@ -28,9 +23,9 @@
 			}
 			var time_menu_pane_opening = Number( elementSettings.time_menu_pane_opening.size ) / 1000;
 			var time_menu_list_opening = Number( elementSettings.time_menu_list_opening.size );
-			 	if (time_menu_list_opening === 0) {
-					time_menu_list_opening = 1;
-				}
+			if (time_menu_list_opening === 0) {
+				time_menu_list_opening = 1;
+			}
 			time_menu_list_opening = time_menu_list_opening / 1000;
 
 			var time_menu_list_stagger = Number( elementSettings.time_menu_list_stagger.size ) / 1000;
@@ -116,10 +111,10 @@
 
 			tl.reverse();
 
-			// EVENTS
-			$scope.on( "click",class_hamburger,function ( e ) {
+			// Events
+			$scope.on( "click", class_hamburger, function ( e ) {
 				e.preventDefault();
-				$( ".dce-close" ).fadeIn( 3000,function () {
+				$( ".dce-close" ).fadeIn( 3000, function () {
 					$( this ).removeClass( "close-hidden" );
 				} );
 				tl.reversed( ! tl.reversed() );
@@ -131,11 +126,11 @@
 				return false;
 			} );
 
-			$( animatedoffcanvasmenu ).on( "click",'a:not(.dce-close)',function ( e ) {
+			$( animatedoffcanvasmenu ).on( "click",'a:not(.dce-close):not(.no-link)',function ( e ) {
 				close_menu();
 			} );
 
-			$( document ).on( "click",class_quit,function ( e ) {
+			$( document ).on( "click", class_quit, function ( e ) {
 				e.preventDefault();
 				$( ".dce-close" ).fadeOut( 1000,function () {
 					$( this ).addClass( "close-hidden" );
@@ -152,14 +147,22 @@
 				}
 			} );
 
-			$( '.animatedoffcanvasmenu ul > li.menu-item-has-children > .menu-item-wrap' )
-			.append( '<span class="indicator-child no-transition">+</span>' );
-			// ACCORDION Menu
-			$( '.animatedoffcanvasmenu ul > li.menu-item-has-children > .menu-item-wrap .indicator-child' )
-			.click( function ( e ) {
+			$( '.animatedoffcanvasmenu ul > li.menu-item-has-children > .menu-item-wrap' ).append( '<span class="indicator-child no-transition">+</span>' );
+			$( '.animatedoffcanvasmenu ul li span a:not([href])' ).addClass( "no-link no-transition" );
+			$( '.animatedoffcanvasmenu ul li span a[href="#"]' ).addClass( "no-link no-transition" );
+			
+			// Accordion Menu
+			$( '.animatedoffcanvasmenu ul > li.menu-item-has-children > .menu-item-wrap .indicator-child' ).click( function ( e ) {
 				e.preventDefault();
 				$( this ).closest( 'li' ).find( '> .sub-menu' ).not( ':animated' ).slideToggle();
 			} );
+
+			// Menu Items without href or with #
+			$( '.animatedoffcanvasmenu ul li span a.no-link' ).click( function ( e ) {
+				e.preventDefault();
+				$( this ).closest( 'li' ).find( '> .sub-menu' ).not( ':animated' ).slideToggle();
+			} );
+
 
 			if ( ! elementorFrontend.isEditMode() ) {
 				$( animatedoffcanvasmenu ).prependTo( "body" );
@@ -167,8 +170,7 @@
 		};
 
 		$( window ).on( 'elementor/frontend/init',function () {
-			elementorFrontend.hooks.addAction(
-				'frontend/element_ready/dce-animatedoffcanvasmenu.default', WidgetElements_AnimatedOffcanvasMenu );
+			elementorFrontend.hooks.addAction( 'frontend/element_ready/dce-animatedoffcanvasmenu.default', WidgetElements_AnimatedOffcanvasMenu );
 		} );
 	}
 )( jQuery );

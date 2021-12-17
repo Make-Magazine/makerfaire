@@ -6,6 +6,108 @@ $loader = require_once __DIR__.'/autoload.php';
 
 // Aliases for the whitelisted classes. For more information see:
 // https://github.com/humbug/php-scoper/blob/master/README.md#class-whitelisting
+if (!class_exists('Mustache_Loader', false) && !interface_exists('Mustache_Loader', false) && !trait_exists('Mustache_Loader', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Loader');
+}
+if (!class_exists('Mustache_Logger', false) && !interface_exists('Mustache_Logger', false) && !trait_exists('Mustache_Logger', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Logger');
+}
+if (!class_exists('Mustache_Engine', false) && !interface_exists('Mustache_Engine', false) && !trait_exists('Mustache_Engine', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Engine');
+}
+if (!class_exists('Mustache_Logger_StreamLogger', false) && !interface_exists('Mustache_Logger_StreamLogger', false) && !trait_exists('Mustache_Logger_StreamLogger', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Logger_StreamLogger');
+}
+if (!class_exists('Mustache_Logger_AbstractLogger', false) && !interface_exists('Mustache_Logger_AbstractLogger', false) && !trait_exists('Mustache_Logger_AbstractLogger', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Logger_AbstractLogger');
+}
+if (!class_exists('Mustache_Cache_FilesystemCache', false) && !interface_exists('Mustache_Cache_FilesystemCache', false) && !trait_exists('Mustache_Cache_FilesystemCache', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Cache_FilesystemCache');
+}
+if (!class_exists('Mustache_Cache_AbstractCache', false) && !interface_exists('Mustache_Cache_AbstractCache', false) && !trait_exists('Mustache_Cache_AbstractCache', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Cache_AbstractCache');
+}
+if (!class_exists('Mustache_Cache_NoopCache', false) && !interface_exists('Mustache_Cache_NoopCache', false) && !trait_exists('Mustache_Cache_NoopCache', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Cache_NoopCache');
+}
+if (!class_exists('Mustache_Parser', false) && !interface_exists('Mustache_Parser', false) && !trait_exists('Mustache_Parser', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Parser');
+}
+if (!class_exists('Mustache_Cache', false) && !interface_exists('Mustache_Cache', false) && !trait_exists('Mustache_Cache', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Cache');
+}
+if (!class_exists('Mustache_Source_FilesystemSource', false) && !interface_exists('Mustache_Source_FilesystemSource', false) && !trait_exists('Mustache_Source_FilesystemSource', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Source_FilesystemSource');
+}
+if (!class_exists('Mustache_Context', false) && !interface_exists('Mustache_Context', false) && !trait_exists('Mustache_Context', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Context');
+}
+if (!class_exists('Mustache_Loader_FilesystemLoader', false) && !interface_exists('Mustache_Loader_FilesystemLoader', false) && !trait_exists('Mustache_Loader_FilesystemLoader', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Loader_FilesystemLoader');
+}
+if (!class_exists('Mustache_Loader_ArrayLoader', false) && !interface_exists('Mustache_Loader_ArrayLoader', false) && !trait_exists('Mustache_Loader_ArrayLoader', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Loader_ArrayLoader');
+}
+if (!class_exists('Mustache_Loader_CascadingLoader', false) && !interface_exists('Mustache_Loader_CascadingLoader', false) && !trait_exists('Mustache_Loader_CascadingLoader', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Loader_CascadingLoader');
+}
+if (!class_exists('Mustache_Loader_StringLoader', false) && !interface_exists('Mustache_Loader_StringLoader', false) && !trait_exists('Mustache_Loader_StringLoader', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Loader_StringLoader');
+}
+if (!class_exists('Mustache_Loader_ProductionFilesystemLoader', false) && !interface_exists('Mustache_Loader_ProductionFilesystemLoader', false) && !trait_exists('Mustache_Loader_ProductionFilesystemLoader', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Loader_ProductionFilesystemLoader');
+}
+if (!class_exists('Mustache_Loader_InlineLoader', false) && !interface_exists('Mustache_Loader_InlineLoader', false) && !trait_exists('Mustache_Loader_InlineLoader', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Loader_InlineLoader');
+}
+if (!class_exists('Mustache_Loader_MutableLoader', false) && !interface_exists('Mustache_Loader_MutableLoader', false) && !trait_exists('Mustache_Loader_MutableLoader', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Loader_MutableLoader');
+}
+if (!class_exists('Mustache_Tokenizer', false) && !interface_exists('Mustache_Tokenizer', false) && !trait_exists('Mustache_Tokenizer', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Tokenizer');
+}
+if (!class_exists('Mustache_Source', false) && !interface_exists('Mustache_Source', false) && !trait_exists('Mustache_Source', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Source');
+}
+if (!class_exists('Mustache_HelperCollection', false) && !interface_exists('Mustache_HelperCollection', false) && !trait_exists('Mustache_HelperCollection', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_HelperCollection');
+}
+if (!class_exists('Mustache_Template', false) && !interface_exists('Mustache_Template', false) && !trait_exists('Mustache_Template', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Template');
+}
+if (!class_exists('Mustache_Exception', false) && !interface_exists('Mustache_Exception', false) && !trait_exists('Mustache_Exception', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Exception');
+}
+if (!class_exists('Mustache_LambdaHelper', false) && !interface_exists('Mustache_LambdaHelper', false) && !trait_exists('Mustache_LambdaHelper', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_LambdaHelper');
+}
+if (!class_exists('Mustache_Exception_UnknownTemplateException', false) && !interface_exists('Mustache_Exception_UnknownTemplateException', false) && !trait_exists('Mustache_Exception_UnknownTemplateException', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Exception_UnknownTemplateException');
+}
+if (!class_exists('Mustache_Exception_LogicException', false) && !interface_exists('Mustache_Exception_LogicException', false) && !trait_exists('Mustache_Exception_LogicException', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Exception_LogicException');
+}
+if (!class_exists('Mustache_Exception_RuntimeException', false) && !interface_exists('Mustache_Exception_RuntimeException', false) && !trait_exists('Mustache_Exception_RuntimeException', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Exception_RuntimeException');
+}
+if (!class_exists('Mustache_Exception_InvalidArgumentException', false) && !interface_exists('Mustache_Exception_InvalidArgumentException', false) && !trait_exists('Mustache_Exception_InvalidArgumentException', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Exception_InvalidArgumentException');
+}
+if (!class_exists('Mustache_Exception_UnknownHelperException', false) && !interface_exists('Mustache_Exception_UnknownHelperException', false) && !trait_exists('Mustache_Exception_UnknownHelperException', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Exception_UnknownHelperException');
+}
+if (!class_exists('Mustache_Exception_UnknownFilterException', false) && !interface_exists('Mustache_Exception_UnknownFilterException', false) && !trait_exists('Mustache_Exception_UnknownFilterException', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Exception_UnknownFilterException');
+}
+if (!class_exists('Mustache_Exception_SyntaxException', false) && !interface_exists('Mustache_Exception_SyntaxException', false) && !trait_exists('Mustache_Exception_SyntaxException', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Exception_SyntaxException');
+}
+if (!class_exists('Mustache_Compiler', false) && !interface_exists('Mustache_Compiler', false) && !trait_exists('Mustache_Compiler', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Compiler');
+}
+if (!class_exists('Mustache_Autoloader', false) && !interface_exists('Mustache_Autoloader', false) && !trait_exists('Mustache_Autoloader', false)) {
+    spl_autoload_call('DynamicOOOS\Mustache_Autoloader');
+}
 if (!class_exists('TCPDF_PARSER', false) && !interface_exists('TCPDF_PARSER', false) && !trait_exists('TCPDF_PARSER', false)) {
     spl_autoload_call('DynamicOOOS\TCPDF_PARSER');
 }
@@ -48,8 +150,8 @@ if (!class_exists('TCPDFBarcode', false) && !interface_exists('TCPDFBarcode', fa
 if (!class_exists('TCPDF', false) && !interface_exists('TCPDF', false) && !trait_exists('TCPDF', false)) {
     spl_autoload_call('DynamicOOOS\TCPDF');
 }
-if (!class_exists('ComposerAutoloaderInit48a97da1c6fa941cb42899dda1626d3a', false) && !interface_exists('ComposerAutoloaderInit48a97da1c6fa941cb42899dda1626d3a', false) && !trait_exists('ComposerAutoloaderInit48a97da1c6fa941cb42899dda1626d3a', false)) {
-    spl_autoload_call('DynamicOOOS\ComposerAutoloaderInit48a97da1c6fa941cb42899dda1626d3a');
+if (!class_exists('ComposerAutoloaderInit60ce337ddaa0919f3efbbff3e3efbf3a', false) && !interface_exists('ComposerAutoloaderInit60ce337ddaa0919f3efbbff3e3efbf3a', false) && !trait_exists('ComposerAutoloaderInit60ce337ddaa0919f3efbbff3e3efbf3a', false)) {
+    spl_autoload_call('DynamicOOOS\ComposerAutoloaderInit60ce337ddaa0919f3efbbff3e3efbf3a');
 }
 if (!class_exists('Puc_v4p11_Factory', false) && !interface_exists('Puc_v4p11_Factory', false) && !trait_exists('Puc_v4p11_Factory', false)) {
     spl_autoload_call('DynamicOOOS\Puc_v4p11_Factory');
@@ -198,14 +300,24 @@ if (!class_exists('HTML5_TreeBuilder', false) && !interface_exists('HTML5_TreeBu
 
 // Functions whitelisting. For more information see:
 // https://github.com/humbug/php-scoper/blob/master/README.md#functions-whitelisting
-if (!function_exists('add_action')) {
-    function add_action() {
-        return \DynamicOOOS\add_action(...func_get_args());
-    }
-}
 if (!function_exists('register_activation_hook')) {
     function register_activation_hook() {
         return \DynamicOOOS\register_activation_hook(...func_get_args());
+    }
+}
+if (!function_exists('plugin_basename')) {
+    function plugin_basename() {
+        return \DynamicOOOS\plugin_basename(...func_get_args());
+    }
+}
+if (!function_exists('set_transient')) {
+    function set_transient() {
+        return \DynamicOOOS\set_transient(...func_get_args());
+    }
+}
+if (!function_exists('add_action')) {
+    function add_action() {
+        return \DynamicOOOS\add_action(...func_get_args());
     }
 }
 if (!function_exists('dce_load')) {
@@ -253,16 +365,6 @@ if (!function_exists('dce_admin_notice_suggest_new_php_version')) {
         return \DynamicOOOS\dce_admin_notice_suggest_new_php_version(...func_get_args());
     }
 }
-if (!function_exists('dce_activate')) {
-    function dce_activate() {
-        return \DynamicOOOS\dce_activate(...func_get_args());
-    }
-}
-if (!function_exists('add_option')) {
-    function add_option() {
-        return \DynamicOOOS\add_option(...func_get_args());
-    }
-}
 if (!function_exists('dce_save_activation_error')) {
     function dce_save_activation_error() {
         return \DynamicOOOS\dce_save_activation_error(...func_get_args());
@@ -286,51 +388,6 @@ if (!function_exists('delete_option')) {
 if (!function_exists('get_header')) {
     function get_header() {
         return \DynamicOOOS\get_header(...func_get_args());
-    }
-}
-if (!function_exists('do_action')) {
-    function do_action() {
-        return \DynamicOOOS\do_action(...func_get_args());
-    }
-}
-if (!function_exists('have_posts')) {
-    function have_posts() {
-        return \DynamicOOOS\have_posts(...func_get_args());
-    }
-}
-if (!function_exists('the_post')) {
-    function the_post() {
-        return \DynamicOOOS\the_post(...func_get_args());
-    }
-}
-if (!function_exists('post_password_required')) {
-    function post_password_required() {
-        return \DynamicOOOS\post_password_required(...func_get_args());
-    }
-}
-if (!function_exists('get_the_password_form')) {
-    function get_the_password_form() {
-        return \DynamicOOOS\get_the_password_form(...func_get_args());
-    }
-}
-if (!function_exists('the_ID')) {
-    function the_ID() {
-        return \DynamicOOOS\the_ID(...func_get_args());
-    }
-}
-if (!function_exists('wc_product_class')) {
-    function wc_product_class() {
-        return \DynamicOOOS\wc_product_class(...func_get_args());
-    }
-}
-if (!function_exists('wc_get_template_part')) {
-    function wc_get_template_part() {
-        return \DynamicOOOS\wc_get_template_part(...func_get_args());
-    }
-}
-if (!function_exists('get_footer')) {
-    function get_footer() {
-        return \DynamicOOOS\get_footer(...func_get_args());
     }
 }
 if (!function_exists('get_post_type')) {
@@ -363,14 +420,34 @@ if (!function_exists('get_term_meta')) {
         return \DynamicOOOS\get_term_meta(...func_get_args());
     }
 }
+if (!function_exists('do_action')) {
+    function do_action() {
+        return \DynamicOOOS\do_action(...func_get_args());
+    }
+}
 if (!function_exists('do_shortcode')) {
     function do_shortcode() {
         return \DynamicOOOS\do_shortcode(...func_get_args());
     }
 }
+if (!function_exists('have_posts')) {
+    function have_posts() {
+        return \DynamicOOOS\have_posts(...func_get_args());
+    }
+}
+if (!function_exists('the_post')) {
+    function the_post() {
+        return \DynamicOOOS\the_post(...func_get_args());
+    }
+}
 if (!function_exists('the_content')) {
     function the_content() {
         return \DynamicOOOS\the_content(...func_get_args());
+    }
+}
+if (!function_exists('get_footer')) {
+    function get_footer() {
+        return \DynamicOOOS\get_footer(...func_get_args());
     }
 }
 if (!function_exists('_e')) {
@@ -423,6 +500,11 @@ if (!function_exists('oceanwp_post_entry_classes')) {
         return \DynamicOOOS\oceanwp_post_entry_classes(...func_get_args());
     }
 }
+if (!function_exists('the_ID')) {
+    function the_ID() {
+        return \DynamicOOOS\the_ID(...func_get_args());
+    }
+}
 if (!function_exists('post_class')) {
     function post_class() {
         return \DynamicOOOS\post_class(...func_get_args());
@@ -471,6 +553,11 @@ if (!function_exists('get_template_part')) {
 if (!function_exists('oceanwp_get_post_video_html')) {
     function oceanwp_get_post_video_html() {
         return \DynamicOOOS\oceanwp_get_post_video_html(...func_get_args());
+    }
+}
+if (!function_exists('post_password_required')) {
+    function post_password_required() {
+        return \DynamicOOOS\post_password_required(...func_get_args());
     }
 }
 if (!function_exists('oceanwp_get_gallery_ids')) {
@@ -703,19 +790,9 @@ if (!function_exists('wp_footer')) {
         return \DynamicOOOS\wp_footer(...func_get_args());
     }
 }
-if (!function_exists('weglot_get_destination_languages')) {
-    function weglot_get_destination_languages() {
-        return \DynamicOOOS\weglot_get_destination_languages(...func_get_args());
-    }
-}
 if (!function_exists('plugins_url')) {
     function plugins_url() {
         return \DynamicOOOS\plugins_url(...func_get_args());
-    }
-}
-if (!function_exists('plugin_basename')) {
-    function plugin_basename() {
-        return \DynamicOOOS\plugin_basename(...func_get_args());
     }
 }
 if (!function_exists('site_url')) {
@@ -726,11 +803,6 @@ if (!function_exists('site_url')) {
 if (!function_exists('get_bloginfo')) {
     function get_bloginfo() {
         return \DynamicOOOS\get_bloginfo(...func_get_args());
-    }
-}
-if (!function_exists('icl_object_id')) {
-    function icl_object_id() {
-        return \DynamicOOOS\icl_object_id(...func_get_args());
     }
 }
 if (!function_exists('sanitize_text_field')) {
@@ -828,19 +900,14 @@ if (!function_exists('wp_upload_dir')) {
         return \DynamicOOOS\wp_upload_dir(...func_get_args());
     }
 }
-if (!function_exists('wp')) {
-    function wp() {
-        return \DynamicOOOS\wp(...func_get_args());
-    }
-}
 if (!function_exists('showHelp')) {
     function showHelp() {
         return \DynamicOOOS\showHelp(...func_get_args());
     }
 }
-if (!function_exists('composerRequire48a97da1c6fa941cb42899dda1626d3a')) {
-    function composerRequire48a97da1c6fa941cb42899dda1626d3a() {
-        return \DynamicOOOS\composerRequire48a97da1c6fa941cb42899dda1626d3a(...func_get_args());
+if (!function_exists('composerRequire60ce337ddaa0919f3efbbff3e3efbf3a')) {
+    function composerRequire60ce337ddaa0919f3efbbff3e3efbf3a() {
+        return \DynamicOOOS\composerRequire60ce337ddaa0919f3efbbff3e3efbf3a(...func_get_args());
     }
 }
 if (!function_exists('wp_normalize_path')) {
@@ -1128,9 +1195,24 @@ if (!function_exists('get_last_retrieve_url_contents_content_type')) {
         return \DynamicOOOS\get_last_retrieve_url_contents_content_type(...func_get_args());
     }
 }
+if (!function_exists('trigger_deprecation')) {
+    function trigger_deprecation() {
+        return \DynamicOOOS\trigger_deprecation(...func_get_args());
+    }
+}
 if (!function_exists('d')) {
     function d() {
         return \DynamicOOOS\d(...func_get_args());
+    }
+}
+if (!function_exists('dd')) {
+    function dd() {
+        return \DynamicOOOS\dd(...func_get_args());
+    }
+}
+if (!function_exists('dump')) {
+    function dump() {
+        return \DynamicOOOS\dump(...func_get_args());
     }
 }
 

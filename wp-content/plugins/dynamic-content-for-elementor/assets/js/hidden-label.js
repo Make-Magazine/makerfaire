@@ -12,18 +12,20 @@ const initializeHiddenLabelField = (field, form) => {
 	}
 	const hiddenInputs = hiddenField.querySelectorAll(`[name^=form_fields]`)
 	const getLabel = () => {
-		if (hiddenInputs.length === 1) { // Select:
-			return hiddenInputs[0].options[hiddenInputs[0].selectedIndex].innerHTML;
-		} else { // Checkbox os Radio:
-			let labels = [];
-			for (let input of hiddenInputs) {
-				if (input.checked) {
-					let id = input.getAttribute('id');
-					let label = form.querySelector(`label[for=${id}]`).innerHTML;
-					labels.push(label);
+		if (hiddenInputs.length >= 1) {
+			if (hiddenInputs[0].tagName === 'SELECT') {
+				return hiddenInputs[0].options[hiddenInputs[0].selectedIndex].innerHTML;
+			} else { // Checkbox or Radio
+				let labels = [];
+				for (let input of hiddenInputs) {
+					if (input.checked) {
+						let id = input.getAttribute('id');
+						let label = form.querySelector(`label[for=${id}]`).innerHTML;
+						labels.push(label);
+					}
 				}
+				return labels.join(', ');
 			}
-			return labels.join(', ');
 		}
 	}
 	const updateLabel = () => {

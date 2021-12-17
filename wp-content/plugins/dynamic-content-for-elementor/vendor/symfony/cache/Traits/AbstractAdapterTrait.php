@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Traits;
 
-use DynamicOOOS\Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemInterface;
 use DynamicOOOS\Symfony\Component\Cache\CacheItem;
 use DynamicOOOS\Symfony\Component\Cache\Exception\InvalidArgumentException;
 /**
@@ -34,10 +34,10 @@ trait AbstractAdapterTrait
      */
     public function getItem($key)
     {
-        if ($this->deferred) {
+        $id = $this->getId($key);
+        if (isset($this->deferred[$key])) {
             $this->commit();
         }
-        $id = $this->getId($key);
         $f = $this->createCacheItem;
         $isHit = \false;
         $value = null;
@@ -56,12 +56,14 @@ trait AbstractAdapterTrait
      */
     public function getItems(array $keys = [])
     {
-        if ($this->deferred) {
-            $this->commit();
-        }
         $ids = [];
+        $commit = \false;
         foreach ($keys as $key) {
             $ids[] = $this->getId($key);
+            $commit = $commit || isset($this->deferred[$key]);
+        }
+        if ($commit) {
+            $this->commit();
         }
         try {
             $items = $this->doFetch($ids);

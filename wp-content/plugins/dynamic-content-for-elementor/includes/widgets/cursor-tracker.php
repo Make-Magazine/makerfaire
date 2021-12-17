@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_CursorTracker extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_CursorTracker extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -47,7 +47,7 @@ class DCE_Widget_CursorTracker extends \DynamicContentForElementor\Widgets\DCE_W
         $this->add_control('cursortracker_scroll', ['label' => __('Enable', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'frontend_available' => \true]);
         $this->add_responsive_control('cursortracker_strokesize_scrollprogress', ['label' => __('Stroke Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '', 'unit' => 'px'], 'range' => ['px' => ['min' => 1, 'max' => 40, 'step' => 1]], 'selectors' => ['#cursors-{{ID}} .progress-wrap svg.progress-circle path.dce-cursortrack-path1' => 'stroke-width: {{SIZE}};'], 'condition' => ['cursortracker_scroll!' => '']]);
         $this->add_control('cursortracker_color_scrollprogress', ['label' => __('Progress Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['#cursors-{{ID}} .progress-wrap svg.progress-circle path.dce-cursortrack-path1' => 'stroke: {{VALUE}};'], 'condition' => ['cursortracker_scroll!' => '']]);
-        $this->add_control('responsive_cursorTracker', ['label' => __('Apply cursor on', 'dynamic-content-for-elementor'), 'description' => __('Responsive mode will take place on preview or live pages only, not while editing in Elementor.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'multiple' => \true, 'separator' => 'before', 'label_block' => \true, 'options' => Helper::get_active_devices_list(), 'default' => ['desktop', 'tablet', 'mobile'], 'frontend_available' => \true, 'render_type' => 'none']);
+        $this->add_control('responsive_cursorTracker', ['label' => __('Apply cursor on', 'dynamic-content-for-elementor'), 'description' => __('Responsive mode will take place on preview or live pages only, not while editing in Elementor.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'multiple' => \true, 'separator' => 'before', 'label_block' => \true, 'options' => \array_combine(Helper::get_active_devices_list(), Helper::get_active_devices_list()), 'default' => ['desktop', 'tablet', 'mobile'], 'frontend_available' => \true, 'render_type' => 'none']);
         $this->end_controls_section();
     }
     protected function render()
@@ -69,7 +69,7 @@ class DCE_Widget_CursorTracker extends \DynamicContentForElementor\Widgets\DCE_W
 						<svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-20 -20 140 140">
 							<path class="dce-cursortrack-path2" d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"/>
 							<?php 
-        if ($settings['cursortracker_scroll']) {
+        if (!empty($settings['cursortracker_scroll'])) {
             ?><path class="dce-cursortrack-path1" d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"/><?php 
         }
         ?>

@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\Psr\Log;
+namespace Psr\Log;
 
 /**
  * Describes a logger-aware instance.
@@ -14,5 +14,5 @@ interface LoggerAwareInterface
      *
      * @return void
      */
-    public function setLogger(LoggerInterface $logger);
+    public function setLogger(\Psr\Log\LoggerInterface $logger);
 }

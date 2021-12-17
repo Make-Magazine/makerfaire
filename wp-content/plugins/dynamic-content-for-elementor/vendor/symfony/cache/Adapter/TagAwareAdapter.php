@@ -10,10 +10,10 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Adapter;
 
-use DynamicOOOS\Psr\Cache\CacheItemInterface;
-use DynamicOOOS\Psr\Cache\InvalidArgumentException;
-use DynamicOOOS\Psr\Log\LoggerAwareInterface;
-use DynamicOOOS\Psr\Log\LoggerAwareTrait;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\InvalidArgumentException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use DynamicOOOS\Symfony\Component\Cache\CacheItem;
 use DynamicOOOS\Symfony\Component\Cache\PruneableInterface;
 use DynamicOOOS\Symfony\Component\Cache\ResettableInterface;
@@ -125,7 +125,7 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
      */
     public function hasItem($key)
     {
-        if ($this->deferred) {
+        if (\is_string($key) && isset($this->deferred[$key])) {
             $this->commit();
         }
         if (!$this->pool->hasItem($key)) {
@@ -160,15 +160,17 @@ class TagAwareAdapter implements TagAwareAdapterInterface, TagAwareCacheInterfac
      */
     public function getItems(array $keys = [])
     {
-        if ($this->deferred) {
-            $this->commit();
-        }
         $tagKeys = [];
+        $commit = \false;
         foreach ($keys as $key) {
             if ('' !== $key && \is_string($key)) {
+                $commit = $commit || isset($this->deferred[$key]);
                 $key = static::TAGS_PREFIX . $key;
                 $tagKeys[$key] = $key;
             }
+        }
+        if ($commit) {
+            $this->commit();
         }
         try {
             $items = $this->pool->getItems($tagKeys + $keys);

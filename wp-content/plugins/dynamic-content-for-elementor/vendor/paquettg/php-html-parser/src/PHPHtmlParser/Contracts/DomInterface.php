@@ -5,8 +5,8 @@ namespace DynamicOOOS\PHPHtmlParser\Contracts;
 
 use DynamicOOOS\PHPHtmlParser\Dom;
 use DynamicOOOS\PHPHtmlParser\Options;
-use DynamicOOOS\Psr\Http\Client\ClientInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
 interface DomInterface
 {
     public function loadFromFile(string $file, ?Options $options = null) : Dom;

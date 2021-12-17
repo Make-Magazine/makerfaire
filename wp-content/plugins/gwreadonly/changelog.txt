@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.9.5
+
+	- Added support for Date Drop Downs and the Prefix input in the Name field.
+
+## 1.9.4
+
+	- Fixed issue where read-only List field column headers were incorrectly offset.
+
 ## 1.9.3
 
 	- Improved support for using Read Only with GravityView.

@@ -50,7 +50,7 @@ class DCE_Extension_Rellax extends \DynamicContentForElementor\Extensions\DCE_Ex
     {
         $settings = $widget->get_settings_for_display();
         if (isset($settings['enabled_rellax']) && $settings['enabled_rellax'] == 'yes') {
-            $this->_enqueue_alles();
+            $this->enqueue_all();
             $id_item = $widget->get_id();
             $content = '<div id="rellax-' . $id_item . '" class="rellax" data-rellax-percentage="' . $settings['percentage_rellax']['size'] . '" data-rellax-zindex="' . $settings['zindex_rellax'] . '">' . $content . '</div>';
         }

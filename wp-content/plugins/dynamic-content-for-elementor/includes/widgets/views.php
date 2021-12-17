@@ -18,7 +18,7 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public $cpts;
     public $taxonomies;
@@ -116,7 +116,7 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
         $this->add_control('dce_views_select_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['dce_views_select_type' => 'template']]);
         $this->add_control('dce_views_select_template_ajax', ['label' => __('Lazy Load', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_views_select_type' => 'template']]);
         $this->add_control('dce_views_select_template_ajax_progressive', ['label' => __('Progressive Load', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_views_select_type' => 'template', 'dce_views_select_template_ajax!' => '']]);
-        $this->add_control('dce_views_select_template_ajax_placeholder', ['label' => __('Progressive Load', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['image' => ['title' => __('Image', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-picture-o'], 'text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-font'], 'clone' => ['title' => __('Clone', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-clone'], 'fadein' => ['title' => __('FadeIn', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-low-vision']], 'toggle' => \false, 'default' => 'fadein', 'condition' => ['dce_views_select_type' => 'template', 'dce_views_select_template_ajax!' => '']]);
+        $this->add_control('dce_views_select_template_ajax_placeholder', ['label' => __('Progressive Load', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['image' => ['title' => __('Image', 'dynamic-content-for-elementor'), 'icon' => 'eicon-image'], 'text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-font'], 'clone' => ['title' => __('Clone', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-clone'], 'fadein' => ['title' => __('FadeIn', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-low-vision']], 'toggle' => \false, 'default' => 'fadein', 'condition' => ['dce_views_select_type' => 'template', 'dce_views_select_template_ajax!' => '']]);
         $this->add_control('dce_views_select_template_ajax_placeholder_text', ['label' => __('Placeholder Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>', 'condition' => ['dce_views_select_type' => 'template', 'dce_views_select_template_ajax!' => '', 'dce_views_select_template_ajax_placeholder' => 'text']]);
         $this->add_control('dce_views_select_template_ajax_placeholder_image', ['label' => __('Placeholder Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'default' => ['url' => \Elementor\Utils::get_placeholder_image_src()], 'condition' => ['dce_views_select_type' => 'template', 'dce_views_select_template_ajax!' => '', 'dce_views_select_template_ajax_placeholder' => 'image']]);
         $this->add_control('dce_views_select_text', ['label' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CODE, 'default' => '[post:thumb]<h4>[post:title]</h4><p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">' . __("Read more", 'dynamic-content-for-elementor') . '</a>', 'condition' => ['dce_views_select_type' => 'text']]);
@@ -169,7 +169,7 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
                 $this->add_control('dce_views_term_' . $tkey, ['label' => $atax, 'type' => 'ooo_query', 'placeholder' => __('Term Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'terms', 'object_type' => $tkey, 'multiple' => \true, 'condition' => ['dce_views_from_dynamic' => '', 'dce_views_object' => 'post']]);
             }
         }
-        $this->add_control('dce_views_tax_relation', ['label' => __('Tax Relation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['AND' => ['title' => __('AND', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle'], 'OR' => ['title' => __('OR', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle-o']], 'toggle' => \false, 'default' => 'OR', 'condition' => ['dce_views_from_dynamic' => '', 'dce_views_object' => 'post']]);
+        $this->add_control('dce_views_tax_relation', ['label' => __('Tax Relation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['AND' => 'AND', 'OR' => 'OR'], 'toggle' => \false, 'default' => 'OR', 'condition' => ['dce_views_from_dynamic' => '', 'dce_views_object' => 'post']]);
         $this->add_control('dce_views_term_not', ['label' => __('Not in Terms', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'query_type' => 'terms', 'placeholder' => __('Select Terms', 'dynamic-content-for-elementor'), 'label_block' => \true, 'multiple' => \true, 'separator' => 'before', 'description' => __('Exclude posts related to this terms', 'dynamic-content-for-elementor'), 'condition' => ['dce_views_from_dynamic' => '', 'dce_views_object' => 'post']]);
         $this->add_control('dce_views_ignore_ids', ['label' => __('Ignore IDs', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'separator' => 'before']);
         $this->end_controls_section();
@@ -199,7 +199,7 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
         $repeater_form->add_control('dce_views_where_form_field_multiple', ['label' => __('Multiple', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_views_where_form_type' => ['select']]]);
         $repeater_form->add_control('dce_views_where_form_operator', ['label' => __('Operator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => $sql_operators, 'default' => 'LIKE']);
         $repeater_form->add_control('dce_views_where_form_value', ['label' => __('Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXTAREA, 'rows' => 2, 'description' => __('If select/checkbox/radio use one line for option, use | to separate value and name (e.g.:"my_value|Name of the option").', 'dynamic-content-for-elementor'), 'condition' => ['dce_views_where_form_type' => ['radio', 'checkbox', 'select']]]);
-        $repeater_form->add_control('dce_views_where_form_value_format', ['label' => __('Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['reset' => ['title' => __('value|Label', 'dynamic-content-for-elementor'), 'icon' => 'eicon-custom'], 'end' => ['title' => __('Label|value', 'dynamic-content-for-elementor'), 'icon' => 'eicon-pro-icon']], 'toggle' => \false, 'default' => 'reset', 'condition' => ['dce_views_where_form_type' => ['radio', 'checkbox', 'select']]]);
+        $repeater_form->add_control('dce_views_where_form_value_format', ['label' => __('Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['reset' => __('value|Label', 'dynamic-content-for-elementor'), 'end' => __('Label|value', 'dynamic-content-for-elementor')], 'toggle' => \false, 'default' => 'reset', 'condition' => ['dce_views_where_form_type' => ['radio', 'checkbox', 'select']]]);
         $repeater_form->add_control('dce_views_where_form_rule', ['label' => __('Combination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['AND' => 'AND', 'OR' => 'OR'], 'toggle' => \false, 'default' => 'AND']);
         $repeater_form->add_control('dce_views_where_form_required', ['label' => __('Required', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $repeater_form->end_controls_tab();
@@ -269,6 +269,7 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
         $this->start_controls_section('section_order', ['label' => __('Order By - Sort criteria', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_views_order_random', ['label' => __('Random', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->add_control('dce_views_order_by', ['label' => __('Sorting by fields', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'fields' => $repeater_order->get_controls(), 'prevent_empty' => \false, 'title_field' => '{{{ dce_views_order_field }}}', 'condition' => ['dce_views_order_random' => '']]);
+        $this->add_control('dce_views_order_by_no_nulls', ['label' => __('Exclude Posts where the sorting fields are not set (simpler, faster query).', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'no', 'label_block' => \true, 'condition' => ['dce_views_order_random' => '']]);
         $this->add_control('exposed_sort_heading', ['label' => __('Exposed Sort', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING]);
         $this->add_responsive_control('dce_views_order_form_width', ['label' => __('Form Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Default', 'dynamic-content-for-elementor'), '100' => '100%', '90' => '90%', '83' => '83%', '80' => '80%', '75' => '75%', '70' => '70%', '66' => '66%', '60' => '60%', '50' => '50%', '40' => '40%', '33' => '33%', '30' => '30%', '25' => '25%', '20' => '20%', '16' => '16%', '14' => '14%', '12' => '12%', '11' => '11%', '10' => '10%'], 'default' => '100', 'condition' => ['dce_views_order_by!' => []]]);
         $this->add_responsive_control('dce_views_order_form_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['flex-start' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'flex-end' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'selectors' => ['{{WRAPPER}} .dce-view-exposed-sort-row' => 'justify-content: {{VALUE}};', '{{WRAPPER}} .dce-view-exposed-sort-row .elementor-column > *' => 'width: 100%;']]);
@@ -334,7 +335,7 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
         $this->end_controls_tab();
         $this->start_controls_tab('dce_views_style_table_cell_td', ['label' => __('TD', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_views_style_table_cell_td_vertical_alignment', ['label' => __('Vertical Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['bottom' => ['title' => __('Bottom', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-bottom'], 'middle' => ['title' => __('Middle', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-middle'], 'top' => ['title' => __('Top', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-top']], 'selectors' => ['{{WRAPPER}} table tbody > tr > td' => 'vertical-align: {{VALUE}};']]);
-        $this->add_control('dce_views_style_table_cell_td_more', ['label' => '<b>' . __('Edit TD style from Single Result section', 'dynamic-content-for-elementor') . '</b>', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('You will find many other specific style settings in the "Single Result" section here below', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_views_style_table_cell_td_more', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('You will find many other specific style settings in the "Single Result" section here below', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
         $this->end_controls_tab();
         $this->start_controls_tab('dce_views_style_table_cell_td_first', ['label' => __('TD:first', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_views_style_table_cell_td_first_bgcolor', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} table tbody > tr > td:first-child' => 'background-color: {{VALUE}};']]);
@@ -614,10 +615,7 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
         $args = $this->get_wp_query_args();
         $args = $this->set_exposed_form_args($args);
         $this->add_filters();
-        $args_mod = do_action("elementor/query/before/" . $this->get_id(), $args);
-        if ($args_mod) {
-            $args = $args_mod;
-        }
+        $args = apply_filters("elementor/query/before/" . $this->get_id(), $args);
         // The Query
         switch ($settings['dce_views_object']) {
             case 'post':
@@ -2337,6 +2335,9 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
                 $args_keys = Helper::get_wp_query_args();
             }
             foreach ($_GET as $gkey => $aget) {
+                if ($gkey === 'p') {
+                    continue;
+                }
                 $gkey = esc_attr($gkey);
                 $aget = esc_attr($aget);
                 if ($settings['dce_views_object'] == 'post') {
@@ -2835,6 +2836,9 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
                 }
             }
             if (!empty($settings['dce_views_order_by'])) {
+                $orderby_clauses = ['relation' => 'AND'];
+                $orderby_not_exists = ['relation' => 'OR'];
+                $orderby_metaquery_used = \false;
                 foreach ($settings['dce_views_order_by'] as $key => $asort) {
                     if ($asort['dce_views_order_field']) {
                         $is_meta = 'is_' . $settings['dce_views_object'] . '_meta';
@@ -2851,32 +2855,41 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
                             $dce_views_order_field = $asort['dce_views_order_field'];
                         }
                         $field_name = $asort['dce_views_order_field'];
-                        switch ($asort['dce_views_order_field_type']) {
-                            case '':
-                                $meta_type = 'CHAR';
-                                break;
-                            case '_num':
-                                $meta_type = 'NUMERIC';
-                                break;
-                            case '_date':
-                                $meta_type = 'DATE';
-                                break;
+                        $meta_type = 'CHAR';
+                        if (!empty($asort['dce_views_order_field_type'])) {
+                            switch ($asort['dce_views_order_field_type']) {
+                                case '':
+                                    $meta_type = 'CHAR';
+                                    break;
+                                case '_num':
+                                    $meta_type = 'NUMERIC';
+                                    break;
+                                case '_date':
+                                    $meta_type = 'DATE';
+                                    break;
+                            }
                         }
                         // Don't insert on meta_query the orderby fields
                         $default_fields = ['post_content' => 'post_content'];
                         $default_fields = \array_merge($default_fields, Helper::get_post_orderby_options());
                         if (!\array_key_exists($field_name, $default_fields) && !\array_key_exists(\str_replace('post_', '', $field_name), $default_fields)) {
-                            $args['orderby'][$field_name . '_clause'] = $asort['dce_views_order_field_sort'];
-                            // EXISTS
-                            $args['meta_query']['relation'] = 'OR';
-                            $args['meta_query'][$field_name . '_clause']['key'] = $field_name;
-                            $args['meta_query'][$field_name . '_clause']['type'] = $meta_type;
-                            $args['meta_query'][$field_name . '_clause']['compare'] = 'EXISTS';
+                            $orderby_metaquery_used = \true;
+                            $orderby_clause = ['key' => $field_name, 'type' => $meta_type, 'compare' => 'EXISTS'];
+                            $orderby_clause_name = $field_name . '_clause';
+                            $orderby_clauses[$orderby_clause_name] = $orderby_clause;
+                            $args['orderby'][$orderby_clause_name] = $asort['dce_views_order_field_sort'];
                             // NOT EXISTS
-                            $args['meta_query'][] = ['key' => $field_name, 'type' => $meta_type, 'compare' => 'NOT EXISTS'];
+                            $orderby_not_exists[] = ['key' => $field_name, 'type' => $meta_type, 'compare' => 'NOT EXISTS'];
                         } else {
                             $args['orderby'][$field_name] = $asort['dce_views_order_field_sort'];
                         }
+                    }
+                }
+                if ($orderby_metaquery_used) {
+                    if ('yes' === $settings['dce_views_order_by_no_nulls']) {
+                        $args['meta_query'] = $orderby_clauses;
+                    } else {
+                        $args['meta_query'] = ['relation' => 'OR', $orderby_clauses, $orderby_not_exists];
                     }
                 }
                 if ($settings['dce_views_object'] == 'term') {
@@ -2914,7 +2927,7 @@ class DCE_Widget_Views extends \DynamicContentForElementor\Widgets\DCE_Widget_Pr
     public function get_obj_ids($awhere, $retry = null)
     {
         global $wpdb;
-        $settings = $this->get_active_settings();
+        $settings = $this->get_settings_for_display();
         $obj_ids = array();
         if (!$retry) {
             if (isset($_GET[$awhere['dce_views_where_field']]) && $_GET['eid'] == $this->get_id()) {

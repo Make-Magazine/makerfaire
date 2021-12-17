@@ -19,8 +19,8 @@ class ExpressionLanguageTest extends TestCase
 {
     public function testCachedParse()
     {
-        $cacheMock = $this->getMockBuilder('DynamicOOOS\\Psr\\Cache\\CacheItemPoolInterface')->getMock();
-        $cacheItemMock = $this->getMockBuilder('DynamicOOOS\\Psr\\Cache\\CacheItemInterface')->getMock();
+        $cacheMock = $this->getMockBuilder('Psr\\Cache\\CacheItemPoolInterface')->getMock();
+        $cacheItemMock = $this->getMockBuilder('Psr\\Cache\\CacheItemInterface')->getMock();
         $savedParsedExpression = null;
         $expressionLanguage = new ExpressionLanguage($cacheMock);
         $cacheMock->expects($this->exactly(2))->method('getItem')->with('1%20%2B%201%2F%2F')->willReturn($cacheItemMock);
@@ -55,7 +55,7 @@ class ExpressionLanguageTest extends TestCase
     {
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Cache argument has to implement "Psr\\Cache\\CacheItemPoolInterface".');
-        $cacheMock = $this->getMockBuilder('DynamicOOOS\\Psr\\Cache\\CacheItemSpoolInterface')->getMock();
+        $cacheMock = $this->getMockBuilder('Psr\\Cache\\CacheItemSpoolInterface')->getMock();
         new ExpressionLanguage($cacheMock);
     }
     public function testConstantFunction()
@@ -129,8 +129,8 @@ class ExpressionLanguageTest extends TestCase
     }
     public function testCachingWithDifferentNamesOrder()
     {
-        $cacheMock = $this->getMockBuilder('DynamicOOOS\\Psr\\Cache\\CacheItemPoolInterface')->getMock();
-        $cacheItemMock = $this->getMockBuilder('DynamicOOOS\\Psr\\Cache\\CacheItemInterface')->getMock();
+        $cacheMock = $this->getMockBuilder('Psr\\Cache\\CacheItemPoolInterface')->getMock();
+        $cacheItemMock = $this->getMockBuilder('Psr\\Cache\\CacheItemInterface')->getMock();
         $expressionLanguage = new ExpressionLanguage($cacheMock);
         $savedParsedExpression = null;
         $cacheMock->expects($this->exactly(2))->method('getItem')->with('a%20%2B%20b%2F%2Fa%7CB%3Ab')->willReturn($cacheItemMock);

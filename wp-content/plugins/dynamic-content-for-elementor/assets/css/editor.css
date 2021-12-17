@@ -214,9 +214,14 @@
   margin-right: 25px;
 }
 
-.dce-elementor-navigator__element__toggle {
+body:not(.rtl) .dce-elementor-navigator__element__toggle {
   position: absolute;
   right: 15px;
+  top: 9px;
+}
+body.rtl .dce-elementor-navigator__element__toggle {
+  position: absolute;
+  left: 15px;
   top: 9px;
 }
 
@@ -312,8 +317,8 @@
   position: relative;
 }
 
-.elementor-panel .elementor-element .icon i[class*="icon-dyn-"]:after {
-  content: '\e868';
+.elementor-panel .elementor-element .icon i[class*="icon-dyn-"]:after, .elementor-panel .elementor-element .icon i[class*="icon-dce-"]:after {
+  content: '\e869';
   position: absolute;
   top: 5px;
   right: 2px;
@@ -327,7 +332,7 @@
   transition: color 0.5s ease;
 }
 
-.elementor-panel .elementor-element:hover .icon i[class*="icon-dyn-"]:after {
+.elementor-panel .elementor-element:hover .icon i[class*="icon-dyn-"]:after, .elementor-panel .elementor-element:hover .icon i[class*="icon-dce-"]:after {
   color: #e52600;
 }
 
@@ -587,3 +592,9 @@
   font-size: 20px;
   margin-right: 8px;
 }
+
+/* Hide WYSYWYG Editor on FileBrowser - Medias setting */
+.elementor-control-medias .wp-editor-container, .elementor-control-medias .wp-editor-tabs { 
+  display: none; 
+}
+

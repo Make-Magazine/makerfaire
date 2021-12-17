@@ -83,11 +83,24 @@ class Stripe
         if ($field_settings === \false) {
             wp_send_json_error(['message' => 'Invalid Form']);
         }
-        $client_secret = $this->make_payment_intent($form, $field_settings);
-        if ($client_secret === \false) {
+        try {
+            if (($field_settings['dce_stripe_is_subscription'] ?? '') === 'yes') {
+                $data = $this->create_subscription($form, $field_settings);
+            } else {
+                // simple payment
+                $data = $this->create_single_payment($form, $field_settings);
+            }
+        } catch (\Throwable $e) {
+            if (current_user_can('administrator')) {
+                wp_send_json_error(['message' => $e->getMessage()]);
+            } else {
+                wp_send_json_error(['message' => 'Stripe Error']);
+            }
+        }
+        if ($data === \false) {
             wp_send_json_error(['message' => 'Stripe Authentication Error']);
         }
-        wp_send_json_success(['client_secret' => $client_secret]);
+        wp_send_json_success($data);
     }
     /** Example: 10, USD will return 1000. 10, YEN will return 10. */
     public function get_amount_in_currency_smallest_unit(float $amount, string $currency_code)
@@ -97,8 +110,23 @@ class Stripe
         $exponent = $currency->getExp();
         return \intval($amount * \pow(10, $exponent));
     }
+    /** Notify the admin if one of the customer reference fields cannot be found */
+    public function debug_check_customer_reference_fields($item)
+    {
+        if (current_user_can('administrator')) {
+            $fields = ['dce_stripe_customer_name_field_id', 'dce_stripe_customer_email_field_id', 'dce_stripe_customer_phone_field_id'];
+            foreach ($fields as $field) {
+                $field_name = $item[$field] ?? '';
+                if ($field_name !== '' && !isset($_POST['form_fields'][$field_name])) {
+                    $msg = __("Stripe: cannot find customer field `{$field_name}`. Please, do not use shortcode or tokens, just insert the ID of the field as it is.", 'dynamic-content-for-elementor');
+                    wp_send_json_error(['message' => $msg]);
+                }
+            }
+        }
+    }
     public function make_stripe_customer($item)
     {
+        $this->debug_check_customer_reference_fields($item);
         $customer = ['name' => $item['dce_stripe_customer_name_field_id'] ?? '', 'email' => $item['dce_stripe_customer_email_field_id'] ?? '', 'phone' => $item['dce_stripe_customer_phone_field_id'] ?? ''];
         $customer = \array_filter($customer, function ($id) {
             return !empty($id);
@@ -114,14 +142,34 @@ class Stripe
             return $_POST['form_fields'][$matches[1] ?? ''] ?? '';
         }, $description);
     }
-    public function make_payment_intent($form, $item)
+    public function create_subscription($form, $item)
+    {
+        if (($item['dce_form_stripe_price_id_from_field'] ?? '') === 'yes') {
+            $field_id = $item['dce_form_stripe_price_id_field_id'] ?? '';
+            $price_id = $_POST['form_fields'][$field_id] ?? \false;
+            if ($price_id === \false) {
+                wp_send_json_error(['message' => __('Could not find the Price ID field. Please just insert the field ID as it is, not inside a token or shortcode.', 'dynamic-content-for-elementor')]);
+            }
+        } else {
+            $price_id = $item['dce_form_stripe_price_id'];
+        }
+        $customer = $this->make_stripe_customer($item);
+        $subscription_data = ['customer' => $customer, 'items' => [['price' => $price_id]], 'payment_behavior' => 'default_incomplete', 'expand' => ['latest_invoice.payment_intent']];
+        try {
+            $subscription = \DynamicOOOS\Stripe\Subscription::create($subscription_data);
+            return ['client_secret' => $subscription->latest_invoice->payment_intent->client_secret, 'subscription_id' => $subscription->id];
+        } catch (\DynamicOOOS\Stripe\Exception\AuthenticationException $e) {
+            return \false;
+        }
+    }
+    public function create_single_payment($form, $item)
     {
         // We might get the amount from another field, or statically.
         if (($item['dce_form_stripe_value_from_field'] ?? '') === 'yes') {
             $field_id = $item['dce_form_stripe_value_field_id'] ?? '';
             $amount = $_POST['form_fields'][$field_id] ?? \false;
             if ($amount === \false) {
-                wp_send_json_error(['message' => __('Could not find the Amount field.', 'dynamic-content-for-elementor')]);
+                wp_send_json_error(['message' => __('Could not find the Amount field. Please just insert the field ID as it is, not inside a token or shortcode.', 'dynamic-content-for-elementor')]);
             }
         } else {
             $amount = $item['dce_form_stripe_item_value'];
@@ -141,9 +189,12 @@ class Stripe
         }
         try {
             $intent = \DynamicOOOS\Stripe\PaymentIntent::create($intent_data);
-            return $intent->client_secret;
+            return ['client_secret' => $intent->client_secret];
         } catch (\DynamicOOOS\Stripe\Exception\AuthenticationException $e) {
             return \false;
         }
+    }
+    public function make_payment_intent($form, $item)
+    {
     }
 }

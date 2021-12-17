@@ -11,7 +11,7 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_NextPrev extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_NextPrev extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -37,8 +37,8 @@ class DCE_Widget_NextPrev extends \DynamicContentForElementor\Widgets\DCE_Widget
         $this->add_control('width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['%', 'px'], 'default' => ['size' => 50, 'unit' => '%'], 'range' => ['px' => ['min' => 10, 'max' => 300], '%' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .nav-links > div' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['custom_width' => '1']]);
         $this->end_controls_section();
         $this->start_controls_section('section_position', ['label' => __('Position', 'dynamic-content-for-elementor')]);
-        $this->add_control('fluttua', ['label' => __('Floating', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'prefix_class' => 'float']);
-        $this->add_control('verticale', ['label' => __('Vertical', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'prefix_class' => 'vertical']);
+        $this->add_control('fluttua', ['label' => __('Floating', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'prefix_class' => 'float']);
+        $this->add_control('verticale', ['label' => __('Vertical', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'prefix_class' => 'vertical']);
         $this->end_controls_section();
         $this->start_controls_section('section_style', ['label' => $this->get_title(), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('color_1', ['label' => __('Color Navigation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .nav-title' => 'color: {{VALUE}};', '{{WRAPPER}} a .nav-title' => 'color: {{VALUE}};'], 'condition' => ['style_postnav' => 'classic']]);
@@ -63,7 +63,7 @@ class DCE_Widget_NextPrev extends \DynamicContentForElementor\Widgets\DCE_Widget
     }
     protected function render()
     {
-        $settings = $this->get_active_settings();
+        $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }

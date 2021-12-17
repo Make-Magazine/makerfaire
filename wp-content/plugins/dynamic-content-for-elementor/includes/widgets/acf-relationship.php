@@ -14,7 +14,7 @@ use DynamicContentForElementor\Tokens;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Relationship extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Relationship extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -100,7 +100,7 @@ class DCE_Widget_Relationship extends \DynamicContentForElementor\Widgets\DCE_Wi
                 $terms = get_the_terms(get_the_ID(), $settings['acf_relation_taxonomy']);
                 $rel_posts = get_term_meta($terms[0]->term_id, $settings['acf_relation_field'], \true);
             } elseif ($settings['acf_relation_from'] == 'options_page') {
-                $rel_posts_objects = get_field($settings['acf_relation_field'], 'option');
+                $rel_posts_objects = \get_field($settings['acf_relation_field'], 'option');
                 $rel_posts_ids = [];
                 foreach ($rel_posts_objects as $rel_post) {
                     \array_push($rel_posts_ids, $rel_post->ID);

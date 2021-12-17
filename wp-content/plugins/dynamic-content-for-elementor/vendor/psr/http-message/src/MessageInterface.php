@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\Psr\Http\Message;
+namespace Psr\Http\Message;
 
 /**
  * HTTP messages consist of requests from a client to a server and responses
@@ -173,5 +173,5 @@ interface MessageInterface
      * @return static
      * @throws \InvalidArgumentException When the body is not valid.
      */
-    public function withBody(StreamInterface $body);
+    public function withBody(\Psr\Http\Message\StreamInterface $body);
 }

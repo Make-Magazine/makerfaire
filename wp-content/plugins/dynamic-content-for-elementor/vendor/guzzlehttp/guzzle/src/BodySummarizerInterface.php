@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\GuzzleHttp;
 
-use DynamicOOOS\Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\MessageInterface;
 interface BodySummarizerInterface
 {
     /**

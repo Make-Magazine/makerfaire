@@ -1,6 +1,6 @@
 (function ($) {
     var WidgetElements_SvgBlobHandler = function ($scope, $) {
-        var elementSettings = get_Dyncontel_ElementSettings($scope);
+        var elementSettings = dceGetElementSettings($scope);
         var id_scope = $scope.attr('data-id');
 
 

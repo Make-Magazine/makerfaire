@@ -1,7 +1,7 @@
 ( function( $ ) {
 	var isReveal = false;
 	var WidgetElements_RevealHandler = function( $scope, $ ) {
-		var elementSettings = get_Dyncontel_ElementSettings( $scope );
+		var elementSettings = dceGetElementSettings( $scope );
 		var rev1;
 		var revealAction = function(){
 			rev1 = new RevealFx(revealistance, {

@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\Http\Client;
 
-use DynamicOOOS\Psr\Http\Client\ClientExceptionInterface as PsrClientException;
+use Psr\Http\Client\ClientExceptionInterface as PsrClientException;
 /**
  * Every HTTP Client related Exception must implement this interface.
  *

@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\Psr\Cache;
+namespace Psr\Cache;
 
 /**
  * Exception interface for invalid cache arguments.
@@ -8,6 +8,6 @@ namespace DynamicOOOS\Psr\Cache;
  * Any time an invalid argument is passed into a method it must throw an
  * exception class which implements Psr\Cache\InvalidArgumentException.
  */
-interface InvalidArgumentException extends CacheException
+interface InvalidArgumentException extends \Psr\Cache\CacheException
 {
 }

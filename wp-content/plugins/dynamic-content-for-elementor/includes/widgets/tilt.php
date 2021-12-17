@@ -13,7 +13,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Tilt extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Tilt extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -28,9 +28,9 @@ class DCE_Widget_Tilt extends \DynamicContentForElementor\Widgets\DCE_Widget_Pro
         $this->add_control('tilt_perspective', ['label' => __('Perspective', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 1000, 'min' => 0, 'max' => 2000, 'step' => 10, 'frontend_available' => \true]);
         $this->add_control('tilt_scale', ['label' => __('Scale', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 1, 'min' => 1, 'max' => 2, 'step' => 0.01]);
         $this->add_control('tilt_speed', ['label' => __('Speed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 300, 'min' => 0, 'max' => 1000, 'step' => 10, 'frontend_available' => \true]);
-        $this->add_control('tilt_transition', ['label' => __('Transition', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'frontend_available' => \true]);
-        $this->add_control('tilt_reset', ['label' => __('Reset', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'frontend_available' => \true]);
-        $this->add_control('tilt_glare', ['label' => __('Glare', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'frontend_available' => \true]);
+        $this->add_control('tilt_transition', ['label' => __('Transition', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'frontend_available' => \true]);
+        $this->add_control('tilt_reset', ['label' => __('Reset', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'frontend_available' => \true]);
+        $this->add_control('tilt_glare', ['label' => __('Glare', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true]);
         $this->add_control('tilt_maxGlare', ['label' => __('Max Glare', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 1, 'min' => 0, 'max' => 1, 'step' => 0.1]);
         $this->end_controls_section();
     }

@@ -9,8 +9,8 @@ use DynamicOOOS\PHPHtmlParser\Exceptions\ChildNotFoundException;
 use DynamicOOOS\PHPHtmlParser\Exceptions\CircularException;
 use DynamicOOOS\PHPHtmlParser\Exceptions\NotLoadedException;
 use DynamicOOOS\PHPHtmlParser\Exceptions\StrictException;
-use DynamicOOOS\Psr\Http\Client\ClientInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * Class StaticDom.
  */

@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Tokens extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Tokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function show_in_panel()
     {
@@ -31,8 +31,6 @@ class DCE_Widget_Tokens extends \DynamicContentForElementor\Widgets\DCE_Widget_P
     protected function register_controls_content()
     {
         $this->start_controls_section('section_tokens', ['label' => __('Text Editor with Tokens', 'dynamic-content-for-elementor')]);
-        $postFields = Helper::get_post_fields();
-        $userFields = Helper::get_user_fields();
         $this->add_control('dce_html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'ul' => 'ul', 'ol' => 'ol', 'p' => 'p', '' => __('None', 'dynamic-content-for-elementor')], 'default' => '']);
         $this->add_control('text_w_tokens', ['label' => '', 'type' => Controls_Manager::WYSIWYG, 'default' => __('Hello', 'dynamic-content-for-elementor') . ' [user:nicename], ' . __('you are using Elementor', 'dynamic-content-for-elementor') . ' [option:elementor_version]', 'dynamic' => ['active' => \true]]);
         $this->end_controls_section();
@@ -63,27 +61,29 @@ class DCE_Widget_Tokens extends \DynamicContentForElementor\Widgets\DCE_Widget_P
     }
     protected function render()
     {
-        $settings = $this->get_settings_for_display(null, \true);
-        if (current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode() && $settings['text_w_tokens'] == '') {
-            _e('Add text to the widget and fill it with Tokens', 'dynamic-content-for-elementor');
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        if (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
             $this->render_non_admin_notice();
-        } elseif (current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode() && $settings['text_w_tokens'] != '' || !is_admin() && $settings['text_w_tokens'] != '') {
-            $this->add_render_attribute('tokens', 'class', ['dce-tokens']);
-            ?>
-			<div <?php 
-            echo $this->get_render_attribute_string('tokens');
-            ?>>
-			<?php 
-            $text_w_tokens = $settings['text_w_tokens'];
-            if ($settings['dce_html_tag']) {
-                $text_w_tokens = \str_replace('[', '<' . \DynamicContentForElementor\Helper::validate_html_tag($settings['dce_html_tag']) . ' class="dce-token">[', $text_w_tokens);
-                $text_w_tokens = \str_replace(']', ']</' . \DynamicContentForElementor\Helper::validate_html_tag($settings['dce_html_tag']) . '>', $text_w_tokens);
-            }
-            echo Helper::get_dynamic_value($text_w_tokens);
-            ?>
-			</div>
-			<?php 
+            return;
         }
+        $settings = $this->get_settings_for_display(null, \true);
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && $settings['text_w_tokens'] == '') {
+            Helper::notice('', __('Add text to the widget using Tokens', 'dynamic-content-for-elementor'));
+            return;
+        }
+        $this->add_render_attribute('tokens', 'class', ['dce-tokens']);
+        ?>
+		<div <?php 
+        echo $this->get_render_attribute_string('tokens');
+        ?>>
+		<?php 
+        $text_w_tokens = $settings['text_w_tokens'];
+        if (!empty($settings['dce_html_tag'])) {
+            $text_w_tokens = \str_replace('[', '<' . \DynamicContentForElementor\Helper::validate_html_tag($settings['dce_html_tag']) . ' class="dce-token">[', $text_w_tokens);
+            $text_w_tokens = \str_replace(']', ']</' . \DynamicContentForElementor\Helper::validate_html_tag($settings['dce_html_tag']) . '>', $text_w_tokens);
+        }
+        echo Helper::get_dynamic_value($text_w_tokens);
+        ?>
+		</div>
+		<?php 
     }
 }

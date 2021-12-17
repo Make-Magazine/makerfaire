@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -19,29 +19,21 @@ class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\DCE
     }
     protected function _register_controls()
     {
-        $this->start_controls_section('section_content', ['label' => __('Pages menu from parent', 'dynamic-content-for-elementor')]);
+        $this->start_controls_section('section_content', ['label' => $this->get_title()]);
         $this->add_control('parentpage_select', ['label' => __('Parent Page', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['dynamic_parentchild' => '']]);
         $this->add_control('menu_style', ['label' => __('Style', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['horizontal' => __('Horizontal', 'dynamic-content-for-elementor'), 'vertical' => __('Vertical', 'dynamic-content-for-elementor')], 'default' => 'vertical', 'separator' => 'after']);
-        $this->add_control('dynamic_parentchild', ['label' => __('Dynamic page parent/child', 'dynamic-content-for-elementor'), 'description' => __('Change depending on the page that displays it', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('heading_settings_menu', ['label' => __('Settings', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
+        $this->add_control('dynamic_parentchild', ['label' => __('Dynamic page parent/child', 'dynamic-content-for-elementor'), 'description' => __('Change depending on the page that displays it', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
+        $this->add_control('orderby', ['label' => __('Order By', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_post_orderby_options(), 'default' => 'menu_order']);
+        $this->add_control('order', ['label' => __('Order', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['ASC' => __('Ascending', 'dynamic-content-for-elementor'), 'DESC' => __('Descending', 'dynamic-content-for-elementor')], 'default' => 'ASC']);
         $this->add_control('use_second_level', ['label' => __('Use second level', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('exclude_io', ['label' => __('Exclude myself', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('no_siblings', ['label' => __('Hide Siblings', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dynamic_parentchild!' => '']]);
         $this->add_control('only_children', ['label' => __('Only children', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['no_siblings!' => '']]);
-        $this->add_control('heading_options_menu', ['label' => __('Options', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_control('show_parent', ['label' => __('Show parent page Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('show_childlist', ['label' => __('Show Child List', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
-        $this->add_control('show_border', ['label' => __('Show Border', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => __('Yes', 'dynamic-content-for-elementor'), '0' => __('No', 'dynamic-content-for-elementor'), '2' => __('Any', 'dynamic-content-for-elementor')], 'prefix_class' => 'border-', 'render_type' => 'template', 'default' => '1']);
         $this->add_control('blockwidth_enable', ['label' => __('Force Block width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['show_border' => '2']]);
         $this->add_control('menu_width', ['label' => __('Box Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'size_units' => ['px', '%'], 'range' => ['px' => ['min' => 0, 'max' => 800], '%' => ['min' => 0, 'max' => 100]], 'condition' => ['blockwidth_enable' => 'yes'], 'selectors' => ['{{WRAPPER}} .dce-menu .box' => 'width: {{SIZE}}{{UNIT}};']]);
         $this->add_responsive_control('show_separators', ['label' => __('Show Separator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['solid' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], 'none' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'toggle' => \true, 'default' => 'solid', 'selectors' => ['{{WRAPPER}} .dce-menu.horizontal li' => 'border-left-style: {{VALUE}};'], 'condition' => ['menu_style' => 'horizontal']]);
-        $this->add_control('heading_spaces_menu', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['show_childlist!' => '']]);
-        $this->add_control('menu_space', ['label' => __('Header Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu .dce-parent-title' => 'margin-bottom: calc( {{SIZE}}{{UNIT}} / 2);', '{{WRAPPER}} .dce-menu hr' => 'margin-bottom: calc( {{SIZE}}{{UNIT}} / 2);', '{{WRAPPER}} .dce-menu div.box' => 'padding: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '']]);
-        $this->add_control('menu_list_space', ['label' => __('List Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu ul.first-level > li' => 'margin-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '']]);
-        $this->add_control('menu_indent', ['label' => __('Indent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}}.border-1 .dce-menu ul.first-level > li, {{WRAPPER}} .dce-menu.horizontal li' => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};', '{{WRAPPER}}.border-2 .dce-menu ul.first-level' => 'padding: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '']]);
-        $this->add_control('heading_spaces_menu_2', ['label' => __('Space of level 2', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['show_childlist!' => '', 'use_second_level' => 'yes']]);
-        $this->add_control('menu_2_list_space', ['label' => __('List Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu ul.second-level > li' => 'padding-top: {{SIZE}}{{UNIT}}; padding-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '', 'use_second_level' => 'yes']]);
-        $this->add_control('menu_2_indent', ['label' => __('Indent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu ul.second-level > li' => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '', 'use_second_level' => 'yes']]);
         $this->end_controls_section();
         $this->start_controls_section('section_style', ['label' => __('Style', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_responsive_control('menu_align', ['label' => __('Text Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'prefix_class' => 'menu-align-', 'default' => 'left', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};']]);
@@ -54,11 +46,19 @@ class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\DCE
         $this->add_control('menu_color_2', ['label' => __('Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-menu ul.second-level a' => 'color: {{VALUE}};'], 'condition' => ['show_childlist!' => '', 'use_second_level' => 'yes']]);
         $this->add_control('menu_color_hover_2', ['label' => __('Text Hover Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'condition' => ['show_childlist!' => '', 'use_second_level' => 'yes'], 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-menu ul.second-level a:hover' => 'color: {{VALUE}};']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography_list_2', 'selector' => '{{WRAPPER}} .dce-menu ul.second-level li', 'condition' => ['show_childlist!' => '', 'use_second_level' => 'yes']]);
+        $this->add_control('heading_spaces_menu', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['show_childlist!' => '']]);
+        $this->add_control('menu_space', ['label' => __('Header Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu .dce-parent-title' => 'margin-bottom: calc( {{SIZE}}{{UNIT}} / 2);', '{{WRAPPER}} .dce-menu hr' => 'margin-bottom: calc( {{SIZE}}{{UNIT}} / 2);', '{{WRAPPER}} .dce-menu div.box' => 'padding: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '']]);
+        $this->add_control('menu_list_space', ['label' => __('List Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu ul.first-level > li' => 'margin-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '']]);
+        $this->add_control('menu_indent', ['label' => __('Indent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}}.border-1 .dce-menu ul.first-level > li, {{WRAPPER}} .dce-menu.horizontal li' => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};', '{{WRAPPER}}.border-2 .dce-menu ul.first-level' => 'padding: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '']]);
+        $this->add_control('heading_spaces_menu_2', ['label' => __('Space of level 2', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['show_childlist!' => '', 'use_second_level' => 'yes']]);
+        $this->add_control('menu_2_list_space', ['label' => __('List Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu ul.second-level > li' => 'padding-top: {{SIZE}}{{UNIT}}; padding-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '', 'use_second_level' => 'yes']]);
+        $this->add_control('menu_2_indent', ['label' => __('Indent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu ul.second-level > li' => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist!' => '', 'use_second_level' => 'yes']]);
         $this->add_control('heading_title', ['label' => __('Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['show_parent!' => '']]);
         $this->add_control('menu_title_color', ['label' => __('Title Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'condition' => ['show_parent!' => ''], 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-menu .dce-parent-title a' => 'color: {{VALUE}};']]);
         $this->add_control('menu_title_color_hover', ['label' => __('Title Hover Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-menu .dce-parent-title a:hover' => 'color: {{VALUE}};'], 'condition' => ['show_parent!' => '']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography_tit', 'selector' => '{{WRAPPER}} .dce-menu .dce-parent-title', 'condition' => ['show_parent!' => '']]);
-        $this->add_control('heading_border', ['label' => __('Border', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['show_border' => ['1', '2']]]);
+        $this->add_control('heading_border', ['label' => __('Border', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
+        $this->add_control('show_border', ['label' => __('Show Border', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => __('Yes', 'dynamic-content-for-elementor'), '0' => __('No', 'dynamic-content-for-elementor'), '2' => __('Any', 'dynamic-content-for-elementor')], 'prefix_class' => 'border-', 'render_type' => 'template', 'default' => '1']);
         $this->add_control('menu_border_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'condition' => ['show_border!' => '0'], 'selectors' => ['{{WRAPPER}} .dce-menu hr' => 'border-color: {{VALUE}};', '{{WRAPPER}} .dce-menu.horizontal li' => 'border-left-color: {{VALUE}};', '{{WRAPPER}} .dce-menu .box' => 'border-color: {{VALUE}};']]);
         $this->add_control('menu_border_size', ['label' => __('Weight', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 1, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 1, 'max' => 20]], 'selectors' => ['{{WRAPPER}} .dce-menu hr, {{WRAPPER}} .dce-menu .box' => 'border-width: {{SIZE}}{{UNIT}};'], 'condition' => ['show_border' => ['1', '2']]]);
         $this->add_control('menu_border_width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['px', '%'], 'range' => ['px' => ['min' => 1, 'max' => 1000], '%' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu hr, {{WRAPPER}} .dce-menu .box' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['show_border' => ['1']]]);
@@ -69,7 +69,7 @@ class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\DCE
     }
     protected function render()
     {
-        $settings = $this->get_active_settings();
+        $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }
@@ -105,7 +105,7 @@ class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\DCE
         } elseif (is_home() || is_archive()) {
             $exclude_io = array();
         }
-        $args = array('posts_per_page' => -1, 'orderby' => 'menu_order', 'order' => 'ASC', 'exclude' => $exclude_io, 'post_type' => 'any', 'post_parent' => $id_page, 'post_status' => 'publish', 'suppress_filters' => \false);
+        $args = array('posts_per_page' => -1, 'orderby' => $settings['orderby'], 'order' => $settings['order'], 'exclude' => $exclude_io, 'post_type' => 'any', 'post_parent' => $id_page, 'post_status' => 'publish', 'suppress_filters' => \false);
         $children = get_posts($args);
         $styleMenu = $settings['menu_style'];
         $clssStyleMenu = $styleMenu;
@@ -134,7 +134,7 @@ class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\DCE
                             echo '<a href="' . get_permalink($page->ID) . '"' . $linkActive . '>' . wp_kses_post($page->post_title) . '</a>';
                         }
                         if ($settings['use_second_level']) {
-                            $args2 = array('posts_per_page' => -1, 'orderby' => 'menu_order', 'order' => 'ASC', 'exclude' => $exclude_io, 'post_type' => 'any', 'post_parent' => $page->ID, 'post_status' => 'publish', 'suppress_filters' => \false);
+                            $args2 = array('posts_per_page' => -1, 'orderby' => $settings['orderby'], 'order' => $settings['order'], 'exclude' => $exclude_io, 'post_type' => 'any', 'post_parent' => $page->ID, 'post_status' => 'publish', 'suppress_filters' => \false);
                             $children2 = get_posts($args2);
                             if (\count($children2) > 0) {
                                 echo '<ul class="second-level">';

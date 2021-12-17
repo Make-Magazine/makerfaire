@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\GuzzleHttp\Psr7;
 
-use DynamicOOOS\Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\StreamInterface;
 /**
  * Stream decorator that can cache previously read bytes from a sequentially
  * read stream.
@@ -29,7 +29,11 @@ class CachingStream implements StreamInterface
     }
     public function getSize()
     {
-        return \max($this->stream->getSize(), $this->remoteStream->getSize());
+        $remoteSize = $this->remoteStream->getSize();
+        if (null === $remoteSize) {
+            return null;
+        }
+        return \max($this->stream->getSize(), $remoteSize);
     }
     public function rewind()
     {

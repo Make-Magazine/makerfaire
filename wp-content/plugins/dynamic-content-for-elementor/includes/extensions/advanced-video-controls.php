@@ -118,8 +118,8 @@ class DCE_Extension_Video extends \DynamicContentForElementor\Extensions\DCE_Ext
     {
         if ('video' === $widget->get_name()) {
             $settings = $widget->get_settings();
-            if ($settings['dce_video_custom_controls']) {
-                $this->_enqueue_alles();
+            if ('yes' === $settings['dce_video_custom_controls']) {
+                $this->enqueue_all();
             }
         }
         return $content;

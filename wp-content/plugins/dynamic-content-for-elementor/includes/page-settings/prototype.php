@@ -61,6 +61,9 @@ class DCE_Document_Prototype
         add_action('elementor/frontend/after_enqueue_scripts', [$this, 'enqueue_scripts']);
         // Enqueue styles
         add_action('elementor/frontend/after_enqueue_styles', [$this, 'enqueue_styles']);
+        add_action('elementor/preview/enqueue_scripts', function () {
+            $this->enqueue_all();
+        });
         if ($this->is_common) {
             // Add the advanced section required to display controls
             $this->add_common_sections_actions();
@@ -148,17 +151,6 @@ class DCE_Document_Prototype
         return $this->depended_styles;
     }
     /**
-     * Retrieve document description.
-     *
-     * @since 0.5.8
-     * @access public
-     *
-     * @return string Widget description.
-     */
-    public static function get_description()
-    {
-    }
-    /**
      * Enqueue styles.
      *
      * Registers all the styles defined as document dependencies and enqueues
@@ -182,7 +174,7 @@ class DCE_Document_Prototype
             }
         }
     }
-    public function _enqueue_alles()
+    public function enqueue_all()
     {
         $this->_enqueue_styles();
         $this->_enqueue_scripts();

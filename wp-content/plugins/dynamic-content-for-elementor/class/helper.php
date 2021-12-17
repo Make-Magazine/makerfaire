@@ -24,6 +24,32 @@ class Helper
     use \DynamicContentForElementor\Trait_Notice;
     use \DynamicContentForElementor\Trait_Static;
     use \DynamicContentForElementor\Trait_Date;
+    /** In Elementor forms validation and process functions, Elementor
+     *  unfortunately does not pass the field settings, so we have to fetch
+     *  them manually. */
+    public static function get_form_field_settings($id, $record)
+    {
+        $field_settings = $record->get_form_settings('form_fields');
+        $field_settings = \array_filter($field_settings, function ($field) use($id) {
+            return $field['custom_id'] === $id;
+        });
+        return \array_values($field_settings)[0];
+    }
+    /** Make sure the given dir is created and has protection files. */
+    public static function ensure_dir($path)
+    {
+        if (\file_exists($path . '/index.php')) {
+            return $path;
+        }
+        wp_mkdir_p($path);
+        $files = [['file' => 'index.php', 'content' => ['<?php', '// Silence is golden.']], ['file' => '.htaccess', 'content' => ['Options -Indexes', '<ifModule mod_headers.c>', '	<Files *.*>', '       Header set Content-Disposition attachment', '	</Files>', '</IfModule>']]];
+        foreach ($files as $file) {
+            if (!\file_exists(trailingslashit($path) . $file['file'])) {
+                $content = \implode(\PHP_EOL, $file['content']);
+                @\file_put_contents(trailingslashit($path) . $file['file'], $content);
+            }
+        }
+    }
     public static function get_datatables_language()
     {
         $locale2 = \substr(get_locale(), 0, 2);

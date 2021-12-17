@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Contracts\Cache;
 
-use DynamicOOOS\Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemInterface;
 /**
  * Computes and returns the cached value of an item.
  *

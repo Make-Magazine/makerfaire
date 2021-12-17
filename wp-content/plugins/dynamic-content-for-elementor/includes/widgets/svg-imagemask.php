@@ -10,7 +10,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_SvgImagemask extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_SvgImagemask extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -63,10 +63,10 @@ class DCE_Widget_SvgImagemask extends \DynamicContentForElementor\Widgets\DCE_Wi
         $this->add_responsive_control('svg_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'prefix_class' => 'align-', 'default' => 'left', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};']]);
         $this->end_controls_section();
         $this->start_controls_section('section_source', ['label' => __('Source', 'dynamic-content-for-elementor')]);
-        $this->add_control('mask_output', ['label' => __('Output', 'dynamic-content-for-elementor'), 'description' => __('Use masking only  for application on other page elements. Activating this option the svg element will not be displayed.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
+        $this->add_control('mask_output', ['label' => __('Output', 'dynamic-content-for-elementor'), 'description' => __('Use masking only for application on other page elements. Activating this option the svg element will not be displayed.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
         $this->add_control('id_svg_class', ['label' => __('CSS Class', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => '', 'condition' => ['mask_output' => 'yes']]);
-        $this->add_control('mask_output_direct', ['label' => __('Directly to element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('note_idclass', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('Here you can type the class of the element to trasform with the SVG distortion', 'dynamic-content-for-elementor'), 'content_classes' => 'dce-document-settings', 'separator' => 'after', 'condition' => ['mask_output' => 'yes']]);
+        $this->add_control('mask_output_direct', ['label' => __('Directly to element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
+        $this->add_control('note_idclass', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('Type the class of the element to trasform with the SVG distortion', 'dynamic-content-for-elementor'), 'content_classes' => 'dce-document-settings', 'separator' => 'after', 'condition' => ['mask_output' => 'yes']]);
         $this->end_controls_section();
     }
     protected function render()

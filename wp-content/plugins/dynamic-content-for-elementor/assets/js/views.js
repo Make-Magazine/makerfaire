@@ -2,7 +2,7 @@
     var WidgetElements_ViewsHandler = function ($scope, $) {
 
 		var id_scope = $scope.attr('data-id');
-		var elementSettings = get_Dyncontel_ElementSettings($scope);
+		var elementSettings = dceGetElementSettings($scope);
 		var elementSwiper = '.elementor-element-' + id_scope + ' .swiper-container';
 		var speed = elementSettings.transition_speed;
 		var disableOnInteraction = Boolean( elementSettings.pause_on_interaction ) || false;
@@ -11,10 +11,10 @@
 		if ( 'yes' === elementSettings.infinite) {
 			loop = true;
 		}
-        
+
 		var id_post = $scope.attr('data-post-id');
 		var elementorBreakpoints = elementorFrontend.config.breakpoints;
-		
+
 		var viewsSwiperOptions = {
 			autoHeight: true,
 			speed: speed,
@@ -22,43 +22,24 @@
 		};
 
 		// Responsive Parameters
-		var spaceBetween = 0;
-
-		if (elementSettings.spaceBetween) {
-			spaceBetween = elementSettings.spaceBetween;
-		}
-
-		var responsivePoints = viewsSwiperOptions.breakpoints = {};
-		responsivePoints[elementorBreakpoints.lg] = {
-			slidesPerView: Number(elementSettings.slides_to_show) || 'auto',
-			slidesPerGroup: Number(elementSettings.slides_to_scroll) || 1,
-			spaceBetween: Number(spaceBetween) || 0,
-		};
-
-		var spaceBetween_tablet = spaceBetween;
-		if (elementSettings.spaceBetween_tablet) {
-			spaceBetween_tablet = elementSettings.spaceBetween_tablet;
-		}
-		responsivePoints[elementorBreakpoints.md] = {
-			slidesPerView: Number(elementSettings.slides_to_show_tablet) || Number(elementSettings.slides_to_show) || 'auto',
-			slidesPerGroup: Number(elementSettings.sslides_to_scroll_tablet) || Number(elementSettings.slides_to_scroll) || 1,
-			spaceBetween: Number(spaceBetween_tablet) || 0,
-		};
-
-		var spaceBetween_mobile = spaceBetween_tablet;
-		if (elementSettings.spaceBetween_mobile) {
-			spaceBetween_mobile = elementSettings.spaceBetween_mobile;
-		}
-		responsivePoints[elementorBreakpoints.xs] = {
-			slidesPerView: Number(elementSettings.slides_to_show_mobile) || Number(elementSettings.slides_to_show_tablet) || Number(elementSettings.slidesPerView) || 'auto',
-			slidesPerGroup: Number(elementSettings.slides_to_scroll_mobile) || Number(elementSettings.slides_to_scroll_tablet) || Number(elementSettings.slidesPerGroup) || 1,
-			spaceBetween: Number(spaceBetween_mobile) || 0,
-		};
-		viewsSwiperOptions = $.extend(viewsSwiperOptions, responsivePoints);
+		viewsSwiperOptions.breakpoints = dynamicooo.makeSwiperBreakpoints({
+			slidesPerView: {
+				elementor_key: 'slides_to_show',
+				default_value: 'auto'
+			},
+			slidesPerGroup: {
+				elementor_key: 'slides_to_scroll',
+				default_value: 1
+			},
+			spaceBetween: {
+				elementor_key: 'spaceBetween',
+				default_value: 0,
+			},
+		}, elementSettings);
 
 		// Navigation
 		if (elementSettings.navigation != 'none') {
-			
+
 			if ( elementSettings.navigation == 'both' || elementSettings.navigation == 'arrows' ) {
 				viewsSwiperOptions = $.extend(viewsSwiperOptions, {
 					navigation: {
@@ -100,7 +81,7 @@
 		} else {
 			viewsSwiper = new Swiper( elementSwiper, viewsSwiperOptions );
 		}
-		
+
 		// Pause on hover
 		if ( elementSettings.autoplay && elementSettings.pause_on_hover ) {
 			$(elementSwiper).on({
@@ -112,7 +93,7 @@
 				}
 			});
 		}
-		
+
     };
 
     // Make sure you run this code under Elementor..

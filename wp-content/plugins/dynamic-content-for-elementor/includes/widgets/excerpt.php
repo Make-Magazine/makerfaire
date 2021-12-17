@@ -11,7 +11,7 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Excerpt extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Excerpt extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public static $remove_recursion_loop = [];
     public function get_style_depends()
@@ -25,12 +25,12 @@ class DCE_Widget_Excerpt extends \DynamicContentForElementor\Widgets\DCE_Widget_
         $this->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'default' => 'div']);
         $this->add_control('excerpt_advanced', ['label' => __('Advanced manipulation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'post' => __('Post URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')]]);
-        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => 'http://your-link.com', 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
+        $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
         $this->end_controls_section();
         $this->start_controls_section('section_advanced_excerpt', ['label' => __('Advanced Manipulation', 'dynamic-content-for-elementor'), 'condition' => ['excerpt_advanced!' => '']]);
         $this->add_control('excerpt_no_custom', ['label' => __('Generate Excerpts', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Generate excerpts even if a post hasn\'t a custom excerpt attached.', 'dynamic-content-for-elementor')]);
         $this->add_control('excerpt_length', ['label' => __('Excerpt Length', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'default' => 40]);
-        $this->add_control('excerpt_length_type', ['label' => __('Length Unit', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'words', 'options' => ['words' => __('Words', 'dynamic-content-for-elementor'), 'charachters' => __('Charachters', 'dynamic-content-for-elementor')]]);
+        $this->add_control('excerpt_length_type', ['label' => __('Length Unit', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'words', 'options' => ['words' => __('Words', 'dynamic-content-for-elementor'), 'charachters' => __('Characters', 'dynamic-content-for-elementor')]]);
         $this->add_control('excerpt_ellipsis', ['label' => __('Excerpt Ellipsis', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Will substitute the part of the post that is omitted in the excerpt.', 'dynamic-content-for-elementor'), 'default' => '&hellip;']);
         $this->add_control('excerpt_finish', ['label' => __('Finish', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'exact', 'options' => ['exact' => __('Exact', 'dynamic-content-for-elementor'), 'exact_w_spaces' => __('Exact (count spaces as well)', 'dynamic-content-for-elementor'), 'word' => __('Word', 'dynamic-content-for-elementor'), 'sentence' => __('Sentence', 'dynamic-content-for-elementor')]]);
         $this->add_control('excerpt_no_shortcode', ['label' => __('Remove Shortcode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
@@ -88,11 +88,10 @@ class DCE_Widget_Excerpt extends \DynamicContentForElementor\Widgets\DCE_Widget_
                 $link = \false;
                 break;
         }
-        $target = !empty($settings['link']['is_external']) ? 'target="_blank"' : '';
         $animation_class = !empty($settings['hover_animation']) ? 'elementor-animation-' . $settings['hover_animation'] : '';
         $html = \sprintf('<%1$s class="dce-excerpt %2$s">', \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']), $animation_class);
         if ($link) {
-            $html .= \sprintf('<a href="%1$s" %2$s>%3$s</a>', $link, $target, $excerpt);
+            $html .= \sprintf('<a href="%s">%s</a>', $link, $excerpt);
         } else {
             $html .= $excerpt;
         }

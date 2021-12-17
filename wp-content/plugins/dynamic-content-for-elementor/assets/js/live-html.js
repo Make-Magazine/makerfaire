@@ -1,8 +1,28 @@
 import mustache from "https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js";
 
+const maybeUploadFileToImageURL = (value) => {
+	if (typeof value !== 'object') {
+		return value;
+	}
+	if (value.constructor.name !== 'File') {
+		return value;
+	}
+	let isImage = value.type.startsWith('image');
+	return { url: URL.createObjectURL(value), name: value.name, is_image: isImage };
+}
+
+// Map file uploads to url blobs. So that if they are images they can be used
+// inside img tags.
+const allUploadFilesToImageURLs = (value) => {
+	if (! Array.isArray(value)) {
+		return maybeUploadFileToImageURL(value);
+	}
+	return value.map((v) => maybeUploadFileToImageURL(v));
+}
+
 // Generate an object with as key the field names of the form and as value their
 // current value.
-let getFields = (form) => {
+const getFields = (form) => {
 	let data = new FormData(form);
 	let out = {};
 	for(let [k,v] of data.entries()) {
@@ -15,6 +35,7 @@ let getFields = (form) => {
 			} else {
 				value = data.get(k);
 			}
+			value = allUploadFilesToImageURLs(value);
 			let fieldName = matches[1];
 			out[fieldName] = value;
 		}
@@ -22,14 +43,20 @@ let getFields = (form) => {
 	return out;
 }
 
+function renderLiveHTML(form, code) {
+	let formData = getFields(form);
+	return mustache.render(code, { form: formData });
+}
+
+window.renderLiveHTML = renderLiveHTML;
+
 function initializeLiveHtml(wrapper, widget) {
 	let div = wrapper.getElementsByTagName('div')[0];
 	let form = widget.getElementsByTagName('form')[0];
 	let code = div.dataset.code;
 	let realTime = div.dataset.realTime === 'yes';
 	let onChange = () => {
-		let formData = getFields(form);
-		div.innerHTML = mustache.render(code, { form: formData });
+		div.innerHTML = renderLiveHTML(form, code);
 	}
 	onChange();
 	form.addEventListener(realTime ? 'input' : 'change', onChange);

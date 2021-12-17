@@ -28,7 +28,6 @@ class DCE_Extension_Prototype
         add_action('elementor/frontend/after_enqueue_scripts', [$this, 'enqueue_scripts']);
         // Enqueue styles
         add_action('elementor/frontend/after_enqueue_styles', [$this, 'enqueue_styles']);
-        // Elementor hooks
         if ($this->is_common) {
             // Add the advanced section required to display controls
             $this->add_common_sections_actions();
@@ -132,7 +131,7 @@ class DCE_Extension_Prototype
             }
         }
     }
-    public function _enqueue_alles()
+    public function enqueue_all()
     {
         $this->_enqueue_styles();
         $this->_enqueue_scripts();
@@ -204,20 +203,15 @@ class DCE_Extension_Prototype
      *
      * @param Manager $dynamic_tags
      */
-    public function add_dynamic_tags()
+    public function add_dynamic_tag($class_name)
     {
-        add_action('elementor/dynamic_tags/register_tags', function ($dynamic_tags) {
+        add_action('elementor/dynamic_tags/register_tags', function ($dynamic_tags) use($class_name) {
             // To register that group as well before the tag
             $tags_config = \Elementor\Plugin::$instance->dynamic_tags->get_config();
             if (!isset($tags_config['groups']['dce'])) {
                 \Elementor\Plugin::$instance->dynamic_tags->register_group('dce', ['title' => 'Dynamic.ooo']);
             }
-            $tag_name = \get_class($this);
-            $tag_name = \explode('\\', $tag_name);
-            $tag_name = \end($tag_name);
-            $tag_name = \str_replace('DCE_Extension_', '', $tag_name);
-            // Finally register the tag
-            $class_name = '\\DynamicContentForElementor\\Modules\\DynamicTags\\Tags\\DCE_DynamicTag_' . $tag_name;
+            $class_name = '\\DynamicContentForElementor\\Modules\\DynamicTags\\Tags\\' . $class_name;
             $dynamic_tags->register_tag($class_name);
         });
     }

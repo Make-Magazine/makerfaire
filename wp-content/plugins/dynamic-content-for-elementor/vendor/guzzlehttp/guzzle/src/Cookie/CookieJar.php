@@ -2,8 +2,8 @@
 
 namespace DynamicOOOS\GuzzleHttp\Cookie;
 
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 /**
  * Cookie jar that stores cookies as an array
  */

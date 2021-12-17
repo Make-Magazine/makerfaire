@@ -1,7 +1,11 @@
 .elementor-widget-dyncontel-threesixtyslider .threesixty {
-  position: relative;
-  overflow: hidden;
   margin: 0 auto;
+  overflow: hidden;
+  max-height: 100%;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: auto;
 }
 .elementor-widget-dyncontel-threesixtyslider .threesixty .threesixty_images {
   display: none;
@@ -9,17 +13,35 @@
   margin: 0;
   padding: 0;
 }
-.elementor-widget-dyncontel-threesixtyslider .threesixty .threesixty_images img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .threesixty_images
+  img {
+  top: 0;
+  width: 100%;
+  height: auto;
 }
-.elementor-widget-dyncontel-threesixtyslider .threesixty .threesixty_images img.previous-image {
-  visibility: hidden;
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .threesixty_images
+  img.previous-image {
+  display: none;
+  /*
+    Do not put here any other styles.
+    It causes massive recalc / repaints and image flickering,
+    especially on Firefox.
+  */
 }
-.elementor-widget-dyncontel-threesixtyslider .threesixty .threesixty_images img.current-image {
-  visibility: visible;
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .threesixty_images
+  img.current-image {
+  display: block;
+  /*
+    Do not put here any other styles.
+    It causes massive recalc / repaints and image flickering,
+    especially on Firefox.
+  */
 }
 .elementor-widget-dyncontel-threesixtyslider .threesixty .spinner {
   width: 60px;
@@ -28,58 +50,135 @@
   height: 30px;
   background: #333;
   background: rgba(0, 0, 0, 0.7);
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
   border-radius: 5px;
 }
 .elementor-widget-dyncontel-threesixtyslider .threesixty .spinner span {
+  font-family: Arial, "MS Trebuchet", sans-serif;
   font-size: 12px;
   font-weight: bolder;
-  color: #FFF;
+  color: #fff;
   text-align: center;
   line-height: 30px;
   display: block;
 }
 .elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar {
   position: absolute;
-  bottom: 0;
+  color: #fff;
+  z-index: 1;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
+}
+.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar.bottom-right {
+  bottom: 10px;
+  right: 20px;
+}
+.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar.bottom-left {
+  bottom: 10px;
+  left: 20px;
+}
+.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar.top-left {
+  top: 10px;
+  left: 20px;
+}
+.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar.top-right {
+  top: 10px;
+  right: 20px;
+}
+.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar.top-center {
+  top: 10px;
   left: 50%;
-  z-index: 11;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
   transform: translateX(-50%);
 }
-.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar a {
-  display: block;
-  width: 32px;
-  height: 32px;
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar.bottom-center {
+  bottom: 10px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar .butn {
+  z-index: 2;
   float: left;
-  background: url(img/sprites.png) no-repeat;
-  text-indent: -999999px;
-  border-bottom: none;
+  width: 30px;
+  height: 30px;
+  padding: 7.5px;
+  border-right: 1px solid rgba(0, 0, 0, 0.7);
+  border-left: 1px solid rbga(255, 255, 255, 0.2);
+  border-radius: 0;
+  cursor: pointer;
 }
-.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar a.nav_bar_play {
-  background-position: 0 0 !important;
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar
+  .butn:first-child {
+  border-left: none;
 }
-.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar a.nav_bar_previous {
-  background-position: 0 -73px !important;
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar
+  .butn:last-child {
+  border-right: none;
 }
-.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar a.nav_bar_stop {
-  background-position: 0 -37px !important;
+.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar .butn span {
+  z-index: 13;
+  display: block;
+  width: 15px;
+  height: 15px;
+  margin: auto;
 }
-.elementor-widget-dyncontel-threesixtyslider .threesixty .nav_bar a.nav_bar_next {
-  background-position: 0 -104px !important;
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar
+  .butn
+  span.icon-play {
+  background: url(../lib/threesixty-slider/img/sprite.png) no-repeat 0 0;
 }
-/* html */
-.elementor-widget-dyncontel-threesixtyslider .threesixty:-webkit-full-screen {
-  background: #ffffff;
-  width: 100%;
-  height: 100%;
-  margin-top: 0;
-  padding-top: 200px;
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar
+  .butn
+  span.icon-pause {
+  background: url(../lib/threesixty-slider/img/sprite.png) no-repeat -15px 0;
 }
-.elementor-widget-dyncontel-threesixtyslider .threesixty:-moz-full-screen {
-  background: #ffffff;
-  width: 100%;
-  height: 100%;
-  margin-top: 0;
-  padding-top: 200px;
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar
+  .butn
+  span.icon-forward {
+  background: url(../lib/threesixty-slider/img/sprite.png) no-repeat -30px 0;
+}
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar
+  .butn
+  span.icon-back {
+  background: url(../lib/threesixty-slider/img/sprite.png) no-repeat -45px 0;
+}
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar
+  .butn
+  span.icon-fullscreen {
+  background: url(../lib/threesixty-slider/img/sprite.png) no-repeat -60px 0;
+}
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar
+  .butn
+  span.icon-resize {
+  background: url(../lib/threesixty-slider/img/sprite.png) no-repeat -75px 0;
+}
+.elementor-widget-dyncontel-threesixtyslider
+  .threesixty
+  .nav_bar
+  .butn
+  span.icon-download {
+  background: url(../lib/threesixty-slider/img/sprite.png) no-repeat -90px 0;
 }

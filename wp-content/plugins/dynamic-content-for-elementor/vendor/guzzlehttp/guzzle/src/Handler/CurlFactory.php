@@ -10,7 +10,7 @@ use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
 use DynamicOOOS\GuzzleHttp\Psr7\LazyOpenStream;
 use DynamicOOOS\GuzzleHttp\TransferStats;
 use DynamicOOOS\GuzzleHttp\Utils;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * Creates curl resources from a request
  *
@@ -282,8 +282,11 @@ class CurlFactory implements CurlFactoryInterface
             if ($accept) {
                 $conf[\CURLOPT_ENCODING] = $accept;
             } else {
+                // The empty string enables all available decoders and implicitly
+                // sets a matching 'Accept-Encoding' header.
                 $conf[\CURLOPT_ENCODING] = '';
-                // Don't let curl send the header over the wire
+                // But as the user did not specify any acceptable encodings we need
+                // to overwrite this implicit header with an empty one.
                 $conf[\CURLOPT_HTTPHEADER][] = 'Accept-Encoding:';
             }
         }

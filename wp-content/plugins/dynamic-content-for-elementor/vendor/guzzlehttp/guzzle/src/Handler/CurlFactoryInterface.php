@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\GuzzleHttp\Handler;
 
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 interface CurlFactoryInterface
 {
     /**

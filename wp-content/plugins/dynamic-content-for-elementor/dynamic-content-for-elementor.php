@@ -8,7 +8,7 @@
  * Plugin Name: Dynamic.ooo - Dynamic Content for Elementor
  * Plugin URI: https://www.dynamic.ooo/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Description: Building powerful websites by extending Elementor. We give you over 100 features that will save you time and money on achieving complex results. The only limit is your imagination.
- * Version: 1.16.9
+ * Version: 2.2.4
  * Requires at least: 5.2
  * Requires PHP: 5.6
  * Author: Dynamic.ooo
@@ -17,8 +17,8 @@
  * Domain Path: /languages
  * License: GPL-3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.txt
- * Elementor tested up to: 3.4.3
- * Elementor Pro tested up to: 3.4.1
+ * Elementor tested up to: 3.5.0
+ * Elementor Pro tested up to: 3.5.0
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Dynamic Content for Elementor incorporates code from:
+ * Dynamic.ooo - Dynamic Content for Elementor incorporates code from:
  * - A-Frame, Copyright (c) 2015-2017 A-Frame authors, License: MIT, https://aframe.io
  * - Animate.css, Copyright (c) 2019 Daniel Eden, License: MIT, https://daneden.github.io/animate.css/
  * - anime.js, Copyright (c) 2019 Julian Garnier, License: MIT, https://github.com/juliangarnier/anime
  * - Animsition, Copyright (c) 2013-2015 blivesta, License: MIT, http://git.blivesta.com/animsition/
  * - Cache, Copyright (c) 2015 PHP Framework Interoperability Group, License: MIT, https://github.com/php-fig/cache
+ * - Chart.js, Copyright (c) 2014-2021 Chart.js Contributors, License: MIT, https://github.com/chartjs/Chart.js
  * - Clipboard.js, Copyright (c) 2019 Zeno Rocha, License: MIT, https://zenorocha.mit-license.org/
  * - CodeMirror, License: GPL v3, https://www.codemirror.net
  * - Codrops.com, Copyright (c) 2019, License: MIT, https://www.codrops.com
@@ -56,7 +57,7 @@
  * - Dompdf, License: LGPL v2.1, https://github.com/dompdf/dompdf
  * - eos, Copyright Jon Lawrence, License: LGPL v2.1, https://github.com/jlawrence11/eos/
  * - Flatpickr, Copyright (c) 2017 Gregory Petrosyan, License: MIT, https://flatpickr.js.org
- * - GSAP, GreenSock files are subject to their own license (https://greensock.com/standard-license) and you can ONLY use the bonus files as a part of Dynamic Content for Elementor
+ * - GSAP, GreenSock files are subject to their own license (https://greensock.com/standard-license) and you can ONLY use the bonus files as a part of Dynamic.ooo - Dynamic Content for Elementor
  * - HeadRoom js, Copyright (c) 2020 Nick Nilliams, License: MIT, https://wicky.nillia.ms/headroom.js/
  * - HoneyCombs, License: GPL v3, https://github.com/nasirkhan/honeycombs
  * - Html2Canvas, Copyright (c) 2012 Niklas von Hertzen, License: MIT, https://html2canvas.hertzen.com/
@@ -65,6 +66,7 @@
  * - ISO4217, Copyright (C) 2015 Maksim Kotlyar, License: MIT, https://github.com/Payum/iso4217
  * - Isotope, GPL v3, http://isotope.metafizzy.co
  * - Javascript implementation of the Symfony/ExpressionLanguage, Copyright (c) @jameskfry, License: MIT, https://www.npmjs.com/package/expression-language
+ * - jQuery Color, Copyright (c) OpenJS Foundation and other contributors, License: CC0, https://github.com/jquery/jquery-color
  * - jQuery Easing, Copyright (c) 2008 George McGinley Smith, License: BSD, http://gsgd.co.uk/sandbox/jquery/easing/
  * - jQuery inertiaScroll, Copyright(c) 2017 Go Nishiduka, License: MIT
  * - jquery.matchHeight.js, Copyright (c) 2014 Liam Brummitt, License: MIT, https://github.com/liabru/jquery-match-height
@@ -78,6 +80,7 @@
  * - Parallax.js, Copyright (c) 2014 Matthew Wagerfield - @wagerfield, License: MIT, https://github.com/wagerfield/parallax
  * - PathConverter, Copyright (c) 2015 Matthias Mullie, License: MIT, https://github.com/matthiasmullie/path-converter
  * - Payum\ISO4217, License: MIT, https://github.com/Payum/iso4217
+ * - PDF.js, Copyright (c) Mozilla and individual contributors, License: Apache 2.0, https://github.com/mozilla/pdf.js
  * - Perlin Noise, by Stefan Gustavson, https://github.com/stegu/perlin-noise
  * - Plugin Update Checker, Copyright (c) 2017 Jānis Elsts, License: MIT, https://github.com/YahnisElsts/plugin-update-checker
  * - Plyr, Copyright (c) 2017 Sam Potts, License: MIT, https://plyr.io
@@ -101,7 +104,7 @@
  * - Swiper.js, 2019 (c) Swiper by Vladimir Kharlampidi from iDangero.us, License: MIT, https://idangero.us/swiper/
  * - TCPDF, Copyright (c) 2004-2020 – Nicola Asuni - Tecnick.com, License: GPL v3, https://tcpdf.org
  * - Telegram Bot, Copyright (c) 2015 Ilya Gusev, License: MIT, https://github.com/TelegramBot/Api
- * - Three Sixty Image slider, Copyright 2013 Gaurav Jassal, License: MIT, http://github.com/vml-webdev/threesixty-slider.git
+ * - Three Sixty Image slider, Copyright 2013 Gaurav Jassal, License: MIT, https://github.com/rustamwin/threesixty-slider
  * - Tilt.js, Copyright (c) 2017 Gijs Rogé, License: MIT, https://gijsroge.github.io/tilt.js/
  * - Tippy.js, Copyright (c) 2017-present atomiks, License: MIT, https://atomiks.github.io/tippyjs/
  * - Signature Pad, Copyright (c) 2018 Szymon Nowak, License: MIT, https://github.com/szimek/signature_pad
@@ -141,8 +144,11 @@ if ( version_compare( phpversion(), '7.1', '>=' ) ) {
 	require_once __DIR__ . '/vendor/symfony/polyfill-php80/bootstrap.php';
 }
 
+register_activation_hook( plugin_basename( __FILE__ ), function() {
+	set_transient( 'dce_activation_redirect', true, MINUTE_IN_SECONDS );
+} );
+
 add_action( 'plugins_loaded', 'dce_load' );
-register_activation_hook( DCE__FILE__, 'dce_activate' );
 
 /**
  * Load Dynamic Content for Elementor
@@ -205,15 +211,6 @@ function dce_admin_notice_suggest_new_php_version() {
 	if ( isset( $_GET['page'] ) && 'dce-features' === $_GET['page'] ) {
 		\DynamicContentForElementor\Notice::dce_admin_notice__warning( sprintf( __( 'You are using PHP version %1$s. It\'s suggested to use PHP version %2$s+.', 'dynamic-content-for-elementor' ), phpversion(), DCE_PHP_VERSION_SUGGESTED ) );
 	}
-}
-
-/**
- * Runs code upon activation
- *
- * @since 0.1.0
- */
-function dce_activate() {
-	add_option( 'dce_do_activation_redirect', true );
 }
 
 /**

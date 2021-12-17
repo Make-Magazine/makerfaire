@@ -1,6 +1,22 @@
 
 # Changelog
 
+## 1.4.50
+
+	- Improved conditional logic handling for accuracy and efficiency. (#40)
+
+## 1.4.49
+
+	- Improved performance by only triggering change events when value has actually changed.
+
+## 1.4.48
+
+	- Fixed issue where copying from one List field to another did not work in Gravity Forms 2.5.
+
+## 1.4.47
+
+	- Fixed issue where only the first Copy Cat class was respected when clearing values after a checkbox click.
+
 ## 1.4.46
 
 	- Fixed a potential issue where conditionally hidden target fields may not be copied to if manual copy is used to also show the target fields.

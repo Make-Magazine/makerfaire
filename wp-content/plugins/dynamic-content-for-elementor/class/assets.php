@@ -11,6 +11,7 @@ class Assets
     public static $dce_styles = [];
     public static $dce_scripts = [];
     public static $styles = array(
+        'dce-crypto-badge' => '/assets/css/crypto-badge.css',
         'dce-icons-form-style' => '/assets/css/icons-form.css',
         'dce-hidden-label' => 'assets/css/hidden-label.css',
         'dce-globalsettings' => 'assets/css/global-settings.css',
@@ -23,25 +24,31 @@ class Assets
         'dce-acfGallery' => '/assets/css/acf-gallery.css',
         'dce-acf-repeater' => '/assets/css/acf-repeater.css',
         'dce-acf-repeater-v2' => '/assets/css/acf-repeater-v2.css',
+        'dce-add-to-calendar' => '/assets/css/add-to-calendar.css',
+        'dce-dynamic-visibility' => '/assets/css/dynamic-visibility.css',
+        'dce-copy-to-clipboard' => '/assets/css/copy-to-clipboard.css',
         'dce-google-maps' => '/assets/css/dynamic-google-maps.css',
         'dce-pods' => '/assets/css/pods-fields.css',
         'dce-pods-gallery' => '/assets/css/pods-gallery.css',
         'dce-toolset' => '/assets/css/toolset-fields.css',
-        //DYNAMICPOSTS v1
-        'dce-dynamicPosts' => '/assets/css/dynamic-posts.css',
+        'dce-tooltip' => '/assets/css/tooltip.css',
+        'dce-pdf-viewer' => '/assets/css/pdf-viewer.css',
+        // Dynamic Posts - old version
+        'dce-dynamic-posts-old-version' => '/assets/css/dynamic-posts-old-version.css',
         'dce-dynamicPosts_slick' => '/assets/css/dynamic-posts-slick.css',
         'dce-dynamicPosts_swiper' => '/assets/css/dynamic-posts-swiper.css',
         'dce-dynamicPosts_timeline' => '/assets/css/dynamic-posts-timeline.css',
-        //DYNAMIC POSTS v2
-        'dce-dynamicPosts-grid' => '/assets/css/dynamic-posts-v2-skin-grid.css',
-        'dce-dynamicPosts-carousel' => '/assets/css/dynamic-posts-v2-skin-carousel.css',
-        'dce-dynamicPosts-dualcarousel' => '/assets/css/dynamic-posts-v2-skin-dual-carousel.css',
-        'dce-dynamicPosts-timeline' => '/assets/css/dynamic-posts-v2-skin-timeline.css',
-        'dce-dynamicPosts-smoothscroll' => '/assets/css/dynamic-posts-v2-skin-smoothscroll.css',
-        'dce-dynamicPosts-gridtofullscreen3d' => '/assets/css/dynamic-posts-v2-skin-grid-to-fullscreen-3d.css',
-        'dce-dynamicPosts-crossroadsslideshow' => '/assets/css/dynamic-posts-v2-skin-crossroads-slideshow.css',
-        'dce-dynamicPosts-nextpost' => '/assets/css/dynamic-posts-v2-skin-next-post.css',
-        'dce-dynamicPosts-3d' => '/assets/css/dynamic-posts-v2-skin-3d.css',
+        // Dynamic Posts
+        'dce-dynamic-posts' => '/assets/css/dynamic-posts.css',
+        'dce-dynamicPosts-grid' => '/assets/css/dynamic-posts-skin-grid.css',
+        'dce-dynamicPosts-carousel' => '/assets/css/dynamic-posts-skin-carousel.css',
+        'dce-dynamicPosts-dualcarousel' => '/assets/css/dynamic-posts-skin-dual-carousel.css',
+        'dce-dynamicPosts-timeline' => '/assets/css/dynamic-posts-skin-timeline.css',
+        'dce-dynamicPosts-smoothscroll' => '/assets/css/dynamic-posts-skin-smoothscroll.css',
+        'dce-dynamicPosts-gridtofullscreen3d' => '/assets/css/dynamic-posts-skin-grid-to-fullscreen-3d.css',
+        'dce-dynamicPosts-crossroadsslideshow' => '/assets/css/dynamic-posts-skin-crossroads-slideshow.css',
+        'dce-dynamicPosts-nextpost' => '/assets/css/dynamic-posts-skin-next-post.css',
+        'dce-dynamicPosts-3d' => '/assets/css/dynamic-posts-skin-3d.css',
         'dce-dynamicUsers' => '/assets/css/dynamic-users.css',
         'dce-iconFormat' => '/assets/css/icon-format.css',
         'dce-nextPrev' => '/assets/css/prev-next.css',
@@ -71,26 +78,37 @@ class Assets
         'dce-svg' => '/assets/css/svg.css',
         'dce-views' => '/assets/css/views.css',
     );
-    public static $vendor_css = array('dce-osm-map' => 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css', 'dce-photoSwipe_default' => '/assets/lib/photoSwipe/photoswipe.min.css', 'dce-photoSwipe_skin' => '/assets/lib/photoSwipe/default-skin/default-skin.min.css', 'dce-justifiedGallery' => '/assets/lib/justifiedGallery/css/justifiedGallery.min.css', 'dce-file-icon' => '/assets/lib/file-icon/file-icon-vivid.min.css', 'animatecss' => '/assets/lib/animate/animate.min.css', 'datatables' => '/assets/lib/datatables/datatables.min.css', 'dce-plyr' => 'https://cdn.plyr.io/3.6.8/plyr.css', 'dce-swiper' => '/assets/lib/swiper/css/swiper.min.css');
+    public static $vendor_css = array('dce-jquery-confirm' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css', 'dce-osm-map' => 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css', 'dce-photoSwipe_default' => '/assets/lib/photoSwipe/photoswipe.min.css', 'dce-photoSwipe_skin' => '/assets/lib/photoSwipe/default-skin/default-skin.css', 'dce-justifiedGallery' => '/assets/lib/justifiedGallery/css/justifiedGallery.min.css', 'dce-file-icon' => '/assets/lib/file-icon/file-icon-vivid.min.css', 'animatecss' => '/assets/lib/animate/animate.min.css', 'datatables' => '/assets/lib/datatables/datatables.min.css', 'dce-plyr' => 'https://cdn.plyr.io/3.6.9/plyr.css', 'dce-swiper' => '/assets/lib/swiper/css/swiper.min.css');
     public static $vendor_js;
     private static function init_vendor_js()
     {
         $google_maps_api = get_option('dce_google_maps_api');
         $locale2 = \substr(get_locale(), 0, 2);
         if (get_option('dce_paypal_api_mode', 'sandbox') === 'sandbox') {
-            $paypal_client_id = get_option('dce_paypal_api_client_id_sandbox');
+            $paypal_option = get_option('dce_paypal_api_client_id_sandbox');
         } else {
-            $paypal_client_id = get_option('dce_paypal_api_client_id_live');
+            $paypal_option = get_option('dce_paypal_api_client_id_live');
+        }
+        // Many user have incorecctly set their email as client id, make sure
+        // this is not the case:
+        if (!\strpos($paypal_option, '@')) {
+            $paypal_client_id = $paypal_option;
+        } else {
+            $paypal_client_id = \false;
         }
         $paypal_currency = get_option('dce_paypal_api_currency', 'USD');
         self::$vendor_js = [
+            'dce-pdf-js' => ['path' => 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js', 'deps' => []],
+            'dce-chart-js' => 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js',
+            'dce-imagesloaded' => 'https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js',
+            'dce-jquery-confirm' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js',
             'dce-leaflet' => 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js',
             'dce-expressionlanguage' => '/assets/lib/expressionlanguage/expressionlanguage.min.js',
-            'dce-html2canvas' => '/assets/lib/html2canvas/html2canvas.min.js',
+            'dce-html2canvas' => 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js',
             'dce-jspdf' => 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.1.1/jspdf.umd.min.js',
-            'dce-aframe' => 'https://cdnjs.cloudflare.com/ajax/libs/aframe/1.0.4/aframe.min.js',
+            'dce-aframe' => ['path' => 'https://cdnjs.cloudflare.com/ajax/libs/aframe/1.0.4/aframe.min.js', 'deps' => [], 'in_footer' => \false],
             'dce-datatables' => '/assets/lib/datatables/datatables.min.js',
-            'dce-plyr-js' => 'https://cdn.plyr.io/3.6.8/plyr.polyfilled.js',
+            'dce-plyr-js' => 'https://cdn.plyr.io/3.6.9/plyr.polyfilled.js',
             'dce-dayjs' => '/assets/lib/dayjs/dayjs.min.js',
             'dce-wow' => '/assets/lib/wow/wow.min.js',
             'dce-jquery-match-height' => 'assets/lib/jquery-match-height/jquery.matchHeight-min.js',
@@ -99,8 +117,8 @@ class Assets
             'dce-jquery-slick' => '/assets/lib/slick/slick.min.js',
             'velocity' => '/assets/lib/velocity/velocity.min.js',
             'velocity-ui' => '/assets/lib/velocity/velocity.ui.min.js',
-            'diamonds' => '/assets/lib/diamonds/jquery.diamonds.js',
-            'homeycombs' => '/assets/lib/homeycombs/jquery.homeycombs.js',
+            'dce-diamonds' => '/assets/lib/diamonds/jquery.diamonds.js',
+            'dce-homeycombs' => '/assets/lib/homeycombs/jquery.homeycombs.js',
             'photoswipe' => '/assets/lib/photoSwipe/photoswipe.min.js',
             'photoswipe-ui' => '/assets/lib/photoSwipe/photoswipe-ui-default.min.js',
             'tilt-lib' => '/assets/lib/tilt/tilt.jquery.min.js',
@@ -167,12 +185,12 @@ class Assets
             'dce-scrollify' => '/assets/lib/scrollify/jquery.scrollify.js',
             'dce-inertia-scroll' => '/assets/lib/inertiaScroll/jquery-inertiaScroll.js',
             'dce-lax-lib' => '/assets/lib/lax/lax.min.js',
-            'dce-scrolling' => '/assets/js/scrolling.js',
             'dce-google-maps-markerclusterer' => 'https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js',
             'dce-google-maps' => '/assets/js/dynamic-google-maps.js',
             'dce-stripe-js' => 'https://js.stripe.com/v3',
             'dce-popper' => 'https://unpkg.com/@popperjs/core@2',
             'dce-tippy' => ['path' => 'https://unpkg.com/tippy.js@6', 'deps' => ['dce-popper']],
+            'dce-jquery-color' => ['path' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery-color/2.1.2/jquery.color.min.js', 'deps' => ['jquery']],
         ];
         if (!empty($google_maps_api)) {
             self::$vendor_js['dce-google-maps-api'] = "https://maps.googleapis.com/maps/api/js?key={$google_maps_api}&language={$locale2}";
@@ -182,24 +200,28 @@ class Assets
         }
     }
     public static $scripts = array(
+        'dce-form-address-autocomplete' => ['path' => '/assets/js/form-address-autocomplete.js', 'deps' => ['dce-google-maps-api']],
         'dce-osm-map' => ['path' => '/assets/js/osm-map.js', 'deps' => ['dce-leaflet']],
         'dce-conditional-fields' => ['path' => '/assets/js/conditional-fields.js', 'deps' => ['dce-expressionlanguage']],
+        'dce-pdf-viewer' => ['path' => '/assets/js/pdf-viewer.js', 'deps' => ['dce-pdf-js']],
         'dce-dynamic-countdown' => '/assets/js/dynamic-countdown.js',
-        'dce-js-field' => '/assets/js/js-field.js',
+        'dce-js-field' => ['path' => '/assets/js/js-field.js', 'deps' => ['jquery']],
         'dce-amount-field' => '/assets/js/amount-field.js',
         'dce-live-html' => '/assets/js/live-html.js',
+        'dce-confirm-dialog' => ['path' => '/assets/js/confirm-dialog.js', 'deps' => ['dce-jquery-confirm', 'dce-live-html']],
         'dce-stripe' => ['path' => '/assets/js/stripe.js', 'deps' => ['dce-stripe-js']],
         'dce-paypal' => ['path' => '/assets/js/paypal.js', 'deps' => ['dce-paypal-sdk']],
         'dce-pdf-jsconv' => ['path' => '/assets/js/pdf-button-js-converter.js', 'deps' => ['dce-jspdf', 'dce-html2canvas']],
         'dce-dynamic-select' => '/assets/js/dynamic-select.js',
+        'dce-dynamic-charts' => '/assets/js/dynamic-charts.js',
         'dce-hidden-label' => '/assets/js/hidden-label.js',
         'dce-admin-js' => 'assets/js/admin.js',
         'dce-globalsettings-js' => ['path' => 'assets/js/global-settings.js', 'deps' => ['jquery']],
-        'dce-script-editor-visibility' => ['path' => '/assets/js/visibility.js', 'deps' => ['dce-script-editor']],
+        'dce-script-editor-visibility' => ['path' => '/assets/js/dynamic-visibility.js', 'deps' => ['dce-script-editor']],
         'dce-acf' => '/assets/js/acf-fields.js',
         'dce-ajaxmodal' => '/assets/js/ajax-modal.js',
         'dce-cookie' => '/assets/js/cookie.js',
-        'dce-settings' => '/assets/js/settings.js',
+        'dce-settings' => ['path' => '/assets/js/settings.js', 'deps' => ['jquery']],
         'dce-fix-background-loop' => '/assets/js/fix-background-loop.js',
         'dce-animatetext' => '/assets/js/animated-text.js',
         'dce-modals' => '/assets/js/modals.js',
@@ -208,22 +230,22 @@ class Assets
         'dce-parallax-js' => '/assets/js/parallax.js',
         'dce-360-slider' => '/assets/js/360-slider.js',
         'dce-views' => '/assets/js/views.js',
-        'dce-twentytwenty' => '/assets/js/after-before.js',
+        'dce-twentytwenty' => ['path' => '/assets/js/after-before.js', 'deps' => ['dce-imagesloaded']],
         'dce-tilt' => '/assets/js/tilt.js',
-        'dce-acf_posts' => '/assets/js/dynamic-posts.js',
+        'dce-dynamic-posts-old-version' => '/assets/js/dynamic-posts-old-version.js',
         'dce-icons-form' => '/assets/js/icons-form.js',
         // Dynamic Posts v2
-        'dce-dynamicPosts-base' => '/assets/js/dynamic-posts-v2-base.js',
-        'dce-dynamicPosts-grid' => '/assets/js/dynamic-posts-v2-skin-grid.js',
-        'dce-dynamicPosts-grid-filters' => '/assets/js/dynamic-posts-v2-skin-grid-filters.js',
-        'dce-dynamicPosts-carousel' => '/assets/js/dynamic-posts-v2-skin-carousel.js',
-        'dce-dynamicPosts-dualcarousel' => '/assets/js/dynamic-posts-v2-skin-dual-carousel.js',
-        'dce-dynamicPosts-timeline' => '/assets/js/dynamic-posts-v2-skin-timeline.js',
-        'dce-dynamicPosts-smoothscroll' => '/assets/js/dynamic-posts-v2-skin-smoothscroll.js',
-        'dce-dynamicPosts-gridtofullscreen3d' => '/assets/js/dynamic-posts-v2-skin-grid-to-fullscreen-3d.js',
-        'dce-dynamicPosts-crossroadsslideshow' => '/assets/js/dynamic-posts-v2-skin-crossroads-slideshow.js',
-        'dce-dynamicPosts-nextpost' => '/assets/js/dynamic-posts-v2-skin-next-post.js',
-        'dce-dynamicPosts-3d' => '/assets/js/dynamic-posts-v2-skin-3d.js',
+        'dce-dynamicPosts-base' => '/assets/js/dynamic-posts-base.js',
+        'dce-dynamicPosts-grid' => '/assets/js/dynamic-posts-skin-grid.js',
+        'dce-dynamicPosts-grid-filters' => ['path' => '/assets/js/dynamic-posts-skin-grid-filters.js', 'deps' => ['dce-imagesloaded']],
+        'dce-dynamicPosts-carousel' => '/assets/js/dynamic-posts-skin-carousel.js',
+        'dce-dynamicPosts-dualcarousel' => '/assets/js/dynamic-posts-skin-dual-carousel.js',
+        'dce-dynamicPosts-timeline' => '/assets/js/dynamic-posts-skin-timeline.js',
+        'dce-dynamicPosts-smoothscroll' => '/assets/js/dynamic-posts-skin-smoothscroll.js',
+        'dce-dynamicPosts-gridtofullscreen3d' => '/assets/js/dynamic-posts-skin-grid-to-fullscreen-3d.js',
+        'dce-dynamicPosts-crossroadsslideshow' => '/assets/js/dynamic-posts-skin-crossroads-slideshow.js',
+        'dce-dynamicPosts-nextpost' => '/assets/js/dynamic-posts-skin-next-post.js',
+        'dce-dynamicPosts-3d' => '/assets/js/dynamic-posts-skin-3d.js',
         'dce-acf-repeater' => '/assets/js/acf-repeater.js',
         'dce-acf-repeater-v2' => '/assets/js/acf-repeater-v2.js',
         'dce-content-js' => '/assets/js/content.js',
@@ -279,47 +301,41 @@ class Assets
             wp_enqueue_script('jquery');
         });
         // Admin Style
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_styles'));
-        // OCEANWP SCRIPT
-        add_action('elementor/frontend/after_enqueue_scripts', function () {
-            $theme = wp_get_theme();
-            if ('OceanWP' == $theme->name || 'oceanwp' == $theme->template) {
-                $dir = OCEANWP_JS_DIR_URI;
-                $theme_version = OCEANWP_THEME_VERSION;
-                wp_enqueue_script('oceanwp-main', $dir . 'main.min.js', array('jquery'), $theme_version, \true);
-            }
-        });
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_styles']);
         // Dashboard
         add_action('admin_head', [$this, 'dce_icons']);
         // Scripts
         add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
         add_action('elementor/frontend/after_enqueue_scripts', [$this, 'dce_frontend_enqueue_scripts']);
         // Styles
-        add_action('wp_enqueue_scripts', array($this, 'register_styles'));
-        add_action('wp_enqueue_scripts', array($this, 'register_vendor_styles'));
-        add_action('elementor/frontend/after_enqueue_styles', array($this, 'dce_frontend_enqueue_style'));
+        add_action('wp_enqueue_scripts', [$this, 'register_styles']);
+        add_action('wp_enqueue_scripts', [$this, 'register_vendor_styles']);
+        add_action('elementor/frontend/after_enqueue_styles', [$this, 'dce_frontend_enqueue_style']);
         // Editor
-        add_action('elementor/editor/after_enqueue_scripts', array($this, 'dce_editor'));
-        add_action('elementor/preview/enqueue_styles', array($this, 'dce_preview'));
+        add_action('elementor/editor/after_enqueue_scripts', [$this, 'dce_editor']);
+        add_action('elementor/preview/enqueue_styles', [$this, 'dce_preview']);
         // Global enqueue Script and Style
-        add_action('wp_enqueue_scripts', array($this, 'dce_globals_stylescript'));
+        add_action('wp_enqueue_scripts', [$this, 'dce_globals_stylescript']);
     }
     public static function dce_globals_stylescript()
     {
         $is_in_editor = \Elementor\Plugin::$instance->editor->is_edit_mode();
+        $features = \DynamicContentForElementor\Plugin::instance()->features;
         // Global
-        if (get_option('enable_smoothtransition') || $is_in_editor) {
+        $smooth_enabled = $features->get_feature_info('gst_smooth_transition', 'status') === 'active';
+        $theader_enabled = $features->get_feature_info('gst_tracker_header', 'status') === 'active';
+        if ($smooth_enabled && (get_option('enable_smoothtransition') || $is_in_editor)) {
             // Global Settings CSS LIB
             wp_enqueue_style('animsition-base', DCE_URL . 'assets/lib/animsition/css/animsition.css', array(), DCE_VERSION, \true);
             wp_enqueue_style('dce-animations');
             // Global Settings JS LIB
             wp_enqueue_script('dce-animsition-lib', DCE_URL . 'assets/lib/animsition/js/animsition.min.js', array('jquery'), DCE_VERSION, \true);
         }
-        if (get_option('enable_trackerheader') || $is_in_editor) {
+        if ($theader_enabled && (get_option('enable_trackerheader') || $is_in_editor)) {
             // Global Settings JS LIB
             wp_enqueue_script('dce-trackerheader-lib', DCE_URL . 'assets/lib/headroom/headroom.min.js', array('jquery'), DCE_VERSION, \true);
         }
-        if (get_option('enable_trackerheader') || get_option('enable_smoothtransition') || $is_in_editor) {
+        if (($theader_enabled || $smooth_enabled) && (get_option('enable_trackerheader') || get_option('enable_smoothtransition') || $is_in_editor)) {
             wp_enqueue_script('dce-globalsettings-js');
             wp_enqueue_style('dce-globalsettings');
             $settings_controls = (new \DynamicContentForElementor\GlobalSettings())->dce_settings();
@@ -398,19 +414,24 @@ class Assets
     }
     public static function register_vendor_scripts()
     {
-        foreach (self::$vendor_js as $name => $path) {
-            // if the script specifies dependencies:
-            if (\is_array($path)) {
-                $deps = $path['deps'];
-                $path = $path['path'];
+        foreach (self::$vendor_js as $name => $js_info) {
+            // if the script specifies dependencies or in_footer
+            if (\is_array($js_info)) {
+                $deps = $js_info['deps'] ?? [];
+                $in_footer = $js_info['in_footer'] ?? \true;
+                $path = $js_info['path'];
             } else {
                 $deps = [];
+                $in_footer = \true;
+                $path = $js_info;
             }
             if (\substr($path, 0, 4) != 'http') {
+                // Add DCE Path
                 $path = plugins_url($path, DCE__FILE__);
-                wp_register_script($name, $path, $deps, DCE_VERSION, \true);
+                wp_register_script($name, $path, $deps, DCE_VERSION, $in_footer);
             } else {
-                wp_register_script($name, $path, $deps, null, \true);
+                // version should stay null, paypal will complain about ver parameter otherwise:
+                wp_register_script($name, $path, $deps, null, $in_footer);
             }
         }
     }
@@ -425,10 +446,6 @@ class Assets
         wp_enqueue_script('dce-fix-background-loop');
     }
     public function dce_head()
-    {
-        self::add_head_frontend_js();
-    }
-    public static function add_head_frontend_js()
     {
         $template_id = \DynamicContentForElementor\Elements::get_main_template_id();
         if ($template_id) {
@@ -447,14 +464,6 @@ class Assets
         if (!empty(\DynamicContentForElementor\Elements::$elements['widget'])) {
             $template_id = \DynamicContentForElementor\Elements::get_main_template_id();
             if ($template_id) {
-                $widgets = get_post_meta($template_id, 'dce_widgets', \true);
-                if (empty($widgets)) {
-                    $widgets = \DynamicContentForElementor\Elements::$elements['widget'];
-                } else {
-                    foreach (\DynamicContentForElementor\Elements::$elements['widget'] as $wkey => $awidget) {
-                        $widgets[$wkey] = $awidget;
-                    }
-                }
                 update_post_meta($template_id, 'dce_widgets', \DynamicContentForElementor\Elements::$elements['widget']);
             }
         }
@@ -611,27 +620,6 @@ class Assets
         $style = \str_replace('</style>', '', $style);
         return $style;
     }
-    // Woocommerce script
-    public function dce_wc_enqueue_scripts()
-    {
-        // In preview mode it's not a real Product page - enqueue manually.
-        if (current_theme_supports('wc-product-gallery-zoom')) {
-            wp_enqueue_script('zoom');
-        }
-        if (current_theme_supports('wc-product-gallery-slider')) {
-            wp_enqueue_script('flexslider');
-        }
-        if (current_theme_supports('wc-product-gallery-lightbox')) {
-            wp_enqueue_script('photoswipe-ui-default');
-            wp_enqueue_style('photoswipe-default-skin');
-        }
-        wp_enqueue_script('wc-single-product');
-        wp_enqueue_script('woocommerce');
-        wp_enqueue_style('photoswipe');
-        wp_enqueue_style('photoswipe-default-skin');
-        wp_enqueue_style('photoswipe-default-skin');
-        wp_enqueue_style('woocommerce_prettyPhoto_css');
-    }
     /**
      * Enqueue admin styles
      *
@@ -671,11 +659,15 @@ class Assets
         wp_enqueue_style('dce-style-icons');
         // Register styles
         wp_register_style('dce-style-editor', plugins_url('/assets/css/editor.css', DCE__FILE__), [], DCE_VERSION);
-        // Enqueue styles Editor
         wp_enqueue_style('dce-style-editor');
+        // JS for Editor
         wp_register_script('dce-script-editor', plugins_url('/assets/js/editor.js', DCE__FILE__), [], DCE_VERSION, \true);
         wp_enqueue_script('dce-script-editor');
-        wp_localize_script('dce-script-editor', 'posts_v2_item_label_localization', ['item_title' => '<i class="fa fa-font" aria-hidden="true"></i> ' . __('Title', 'dynamic-content-for-elementor'), 'item_image' => '<i class="eicon-featured-image" aria-hidden="true"></i> ' . __('Featured Image', 'dynamic-content-for-elementor'), 'item_date' => '<i class="fa fa-calendar" aria-hidden="true"></i> ' . __('Date', 'dynamic-content-for-elementor'), 'item_termstaxonomy' => '<i class="eicon-tags" aria-hidden="true"></i> ' . __('Terms', 'dynamic-content-for-elementor'), 'item_content' => '<i class="fa fa-align-left" aria-hidden="true"></i> ' . __('Content', 'dynamic-content-for-elementor'), 'item_author' => '<i class="eicon-user-circle-o" aria-hidden="true"></i> ' . __('Author', 'dynamic-content-for-elementor'), 'item_custommeta' => '<i class="eicon-custom" aria-hidden="true"></i> ' . __('Custom Meta Fields', 'dynamic-content-for-elementor'), 'item_readmore' => '<i class="eicon-button" aria-hidden="true"></i> ' . __('Read More', 'dynamic-content-for-elementor'), 'item_posttype' => '<i class="eicon-post-info" aria-hidden="true"></i> ' . __('Post Type', 'dynamic-content-for-elementor')]);
+        // JS for Dynamic Visibility on editor mode
+        wp_register_script('dce-script-editor-dynamic-visibility', plugins_url('/assets/js/editor-dynamic-visibility.js', DCE__FILE__), [], DCE_VERSION, \true);
+        wp_enqueue_script('dce-script-editor-dynamic-visibility');
+        // Labels on Dynamic Posts
+        wp_localize_script('dce-script-editor', 'posts_v2_item_label_localization', ['item_title' => '<i class="fa fa-font" aria-hidden="true"></i> ' . __('Title', 'dynamic-content-for-elementor'), 'item_image' => '<i class="eicon-featured-image" aria-hidden="true"></i> ' . __('Featured Image', 'dynamic-content-for-elementor'), 'item_date' => '<i class="fa fa-calendar" aria-hidden="true"></i> ' . __('Date', 'dynamic-content-for-elementor'), 'item_termstaxonomy' => '<i class="eicon-tags" aria-hidden="true"></i> ' . __('Terms', 'dynamic-content-for-elementor'), 'item_content' => '<i class="fa fa-align-left" aria-hidden="true"></i> ' . __('Content', 'dynamic-content-for-elementor'), 'item_author' => '<i class="eicon-user-circle-o" aria-hidden="true"></i> ' . __('Author', 'dynamic-content-for-elementor'), 'item_custommeta' => '<i class="eicon-custom" aria-hidden="true"></i> ' . __('Custom Meta Fields', 'dynamic-content-for-elementor'), 'item_readmore' => '<i class="eicon-button" aria-hidden="true"></i> ' . __('Read More', 'dynamic-content-for-elementor'), 'item_posttype' => '<i class="eicon-post-info" aria-hidden="true"></i> ' . __('Post Type', 'dynamic-content-for-elementor'), 'item_productprice' => '<i class="eicon-product-price" aria-hidden="true"></i> ' . __('Product Price', 'dynamic-content-for-elementor'), 'item_sku' => '<i class="eicon-product-info" aria-hidden="true"></i> ' . __('Product SKU', 'dynamic-content-for-elementor'), 'item_addtocart' => '<i class="eicon-product-add-to-cart" aria-hidden="true"></i> ' . __('Add to Cart', 'dynamic-content-for-elementor')]);
     }
     /**
      * Enqueue admin styles

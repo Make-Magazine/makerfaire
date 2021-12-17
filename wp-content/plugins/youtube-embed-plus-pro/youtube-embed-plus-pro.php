@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Pro - Embed a YouTube Gallery, Channel, Playlist, Live Stream, Facade
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.0
+  Version: 14.0.1.1
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.1
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.0';
+    public static $version = '14.0.1.1';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -797,6 +797,12 @@ class YouTubePrefsPro
                         {
                             throw new Exception();
                         }
+                        else
+                        {
+                            // cleanup
+                            $search = str_replace('/shorts/', '/watch?v=', $search);
+                        }
+                        
                         if (preg_match(self::$justurlregex, $search))
                         {
                             //$search = esc_url($search);
@@ -1277,11 +1283,11 @@ class YouTubePrefsPro
                 <div class="wiz-accordion">
                     <h3 class="header-go"><a href="<?php echo admin_url('admin.php?page=youtube-my-preferences#jumpdefaults'); ?>"> <?php _e('Check my general YouTube embedding instructions and settings.', 'text_domain'); ?> </a></h3>
                     <div class="header-go-content"></div>
-                    <h3 id="h3_video"> <a href="#"><?php _e('Embed a single video.', 'text_domain'); ?></a></h3>
+                    <h3 id="h3_video"> <a href="#"><?php _e('Embed a single video, or YouTube short.', 'text_domain'); ?></a></h3>
                     <div>
                         <h4 class="center"><?php _e('Single video directions', 'text_domain'); ?></h4>
                         <p>
-                            <?php _e('Paste the url of a single video below (example: <em>https://www.youtube.com/watch?v=YVvn8dpSAt0</em> )', 'text_domain'); ?>
+                            <?php _e('Paste the url of a single video below (examples: <em>https://www.youtube.com/watch?v=YVvn8dpSAt0</em> or <em>https://www.youtube.com/shorts/J38Yq85ZoyY</em>)', 'text_domain'); ?>
                         </p>
                         <form name="wizform_video" method="post" action="" class="wizform" id="wizform_video">
                             <?php wp_nonce_field('_epyt_wiz', '_epyt_nonce', true); ?>
@@ -1349,7 +1355,7 @@ class YouTubePrefsPro
                         {
                             ?>
                             <p>
-                                <?php _e('If you already know the direct link to the channel ID, enter it below. <br>Example: https://www.youtube.com/<strong>channel</strong>/UCnM5iMGiKsZg-iOlIO2ZkdQ <p class="smallnote">Note: the following format will not work:  https://www.youtube.com<strong>/c/</strong>customchannelname  If you cannot locate the proper channel ID format above, then try the other method below.</p> ', 'text_domain'); ?>
+                                <?php _e('If you already know the direct link to the channel ID, enter it below. <br>Example: https://www.youtube.com<strong>/channel/</strong>UCnM5iMGiKsZg-iOlIO2ZkdQ <p class="error-channel-format smallnote">Note: the following format will not work:  https://www.youtube.com<strong>/c/</strong>customchannelname  If you cannot locate the proper channel ID format above, then try the other method below.</p> ', 'text_domain'); ?>
                             </p>
                             <p>
                                 <?php _e('Or, simply enter a link to any single video that belongs to the user\'s channel, and the plugin will find the channel for you.<br>Example: https://www.youtube.com/watch?v=YVvn8dpSAt0', 'text_domain'); ?>
@@ -3444,12 +3450,12 @@ class YouTubePrefsPro
 
         $code1 = $begin_gb_wrapper . $beginlb . $begin_live_chat . $begin_live_chat_video . $begin_responsive;
         $code_iframe1 = $code_iframe2 = '';
-        if ($videoidoutput != 'live_stream'  && $finalparams[self::$opt_facade_mode] == 1)
+        if ($videoidoutput != 'live_stream' && $finalparams[self::$opt_facade_mode] == 1)
         {
             $facade_img_src = '';
             if (!empty($videoidoutput))
             {
-                $facade_img_src = ' src="https://i.ytimg.com/vi/' . $videoidoutput . '/hqdefault.jpg" ';
+                $facade_img_src = ' src="https://i.ytimg.com/vi/' . $videoidoutput . '/maxresdefault.jpg" ';
             }
             else if (isset($finalparams['list']))
             {
@@ -4417,7 +4423,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update adds a new facade mode for lighter and faster page loads (see Performance tab) and fixes a CSS issue on both Free and Pro versions.";
+        $new_pointer_content .= "This update increases resolution for facade images, fixes a CSS issue with GDPR embeds, adds YouTube Shorts compatibility, and fixes a playing-in-background issue for popup players.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -6169,6 +6175,7 @@ class YouTubePrefsPro
                             <label for="<?php echo self::$opt_facade_mode ?>">
                                 <b class="chktitle"><?php _e('Facade Mode:', 'youtube-embed-plus-pro'); ?> <sup class="orange">new</sup></b> 
                                 <?php _e('This improves performance by loading a lighter version of the player, until it is clicked. Then the real player loads (note: for live streams, the real player is always loaded).  We have tested this feature in multiple cases and found it to successfully improve your Lighthouse performance score by addressing  the following recommendation: "Some third-party resources can be lazy loaded with a facade."', 'youtube-embed-plus-pro'); ?>
+                                <a href="https://www.youtube.com/watch?v=W7PKUjVBDNE" target="_blank"><?php _e('See an example of this feature at work.', 'youtube-embed-plus-pro'); ?></a>
                             </label>                       
                             <div class="p box_facade_mode">
                                 <input name="<?php echo self::$opt_facade_autoplay; ?>" id="<?php echo self::$opt_facade_autoplay; ?>" type="checkbox" class="checkbox" <?php checked($all[self::$opt_facade_autoplay], 1); ?>>
@@ -7491,6 +7498,7 @@ class YouTubePrefsPro
                                 <label for="<?php echo self::$opt_facade_mode ?>">
                                     <b class="chktitle"><?php _e('Facade Mode:', 'youtube-embed-plus-pro'); ?> <sup class="orange">new</sup></b> 
                                     <?php _e('This improves performance by loading a lighter version of the player, until it is clicked. Then the real player loads (note: for live streams, the real player is always loaded).  We have tested this feature in multiple cases and found it to successfully improve your Lighthouse performance score by addressing  the following recommendation: "Some third-party resources can be lazy loaded with a facade."', 'youtube-embed-plus-pro'); ?>
+                                    <a href="https://www.youtube.com/watch?v=W7PKUjVBDNE" target="_blank"><?php _e('See an example of this feature at work.', 'youtube-embed-plus-pro'); ?></a>
                                 </label>                       
                                 <div class="p box_facade_mode">
                                     <input value="1" name="<?php echo self::$opt_facade_autoplay; ?>" id="<?php echo self::$opt_facade_autoplay; ?>" type="checkbox" class="checkbox" <?php checked($all[self::$opt_facade_autoplay], 1); ?>>

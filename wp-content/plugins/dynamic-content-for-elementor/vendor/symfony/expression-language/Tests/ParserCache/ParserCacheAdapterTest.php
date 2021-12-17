@@ -33,7 +33,7 @@ class ParserCacheAdapterTest extends TestCase
     public function testSave()
     {
         $poolMock = $this->getMockBuilder('DynamicOOOS\\Symfony\\Component\\ExpressionLanguage\\ParserCache\\ParserCacheInterface')->getMock();
-        $cacheItemMock = $this->getMockBuilder('DynamicOOOS\\Psr\\Cache\\CacheItemInterface')->getMock();
+        $cacheItemMock = $this->getMockBuilder('Psr\\Cache\\CacheItemInterface')->getMock();
         $key = 'key';
         $value = new ParsedExpression('1 + 1', new Node([], []));
         $parserCacheAdapter = new ParserCacheAdapter($poolMock);
@@ -84,7 +84,7 @@ class ParserCacheAdapterTest extends TestCase
     {
         $poolMock = $this->getMockBuilder('DynamicOOOS\\Symfony\\Component\\ExpressionLanguage\\ParserCache\\ParserCacheInterface')->getMock();
         $parserCacheAdapter = new ParserCacheAdapter($poolMock);
-        $cacheItemMock = $this->getMockBuilder('DynamicOOOS\\Psr\\Cache\\CacheItemInterface')->getMock();
+        $cacheItemMock = $this->getMockBuilder('Psr\\Cache\\CacheItemInterface')->getMock();
         $this->expectException(\BadMethodCallException::class);
         $parserCacheAdapter->saveDeferred($cacheItemMock);
     }

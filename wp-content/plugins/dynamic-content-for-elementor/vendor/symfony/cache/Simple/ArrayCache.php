@@ -10,8 +10,8 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Simple;
 
-use DynamicOOOS\Psr\Log\LoggerAwareInterface;
-use DynamicOOOS\Psr\SimpleCache\CacheInterface as Psr16CacheInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\SimpleCache\CacheInterface as Psr16CacheInterface;
 use DynamicOOOS\Symfony\Component\Cache\Adapter\ArrayAdapter;
 use DynamicOOOS\Symfony\Component\Cache\CacheItem;
 use DynamicOOOS\Symfony\Component\Cache\Exception\InvalidArgumentException;

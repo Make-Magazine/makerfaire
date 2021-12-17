@@ -2,8 +2,6 @@
 
 namespace DynamicContentForElementor;
 
-use DynamicContentForElementor\PageSettings\PageSettings_Scrollify;
-use DynamicContentForElementor\PageSettings\PageSettings_InertiaScroll;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Core\Upgrade\Manager as UpgradeManager;
 /**
@@ -13,7 +11,8 @@ use DynamicContentForElementor\Core\Upgrade\Manager as UpgradeManager;
  */
 class Plugin
 {
-    private static $instance;
+    public static $backup_path = \WP_CONTENT_DIR . '/backup';
+    static $instance;
     /**
      * @var UpgradeManager
      */
@@ -27,20 +26,19 @@ class Plugin
      */
     public function __construct()
     {
+        self::$instance = $this;
         $this->init();
     }
     public static function instance()
     {
         if (\is_null(self::$instance)) {
-            self::$instance = new self();
+            new self();
         }
         return self::$instance;
     }
     public function init()
     {
-        // Instance classes
-        $this->instances();
-        add_action('admin_menu', [$this, 'add_dce_menu'], 200);
+        $this->init_managers();
         // fire actions
         add_action('elementor/init', [$this, 'add_dce_to_elementor'], 0);
         add_filter('plugin_action_links_' . DCE_PLUGIN_BASE, [$this, 'plugin_action_links']);
@@ -48,21 +46,19 @@ class Plugin
         add_filter('pre_handle_404', [$this, 'dce_allow_posts_pagination'], 999, 2);
         add_action('elementor/element/form/section_form_fields/before_section_end', [$this, 'add_form_fields_enchanted_tab']);
     }
-    public function instances()
+    public function init_managers()
     {
+        $this->features = new \DynamicContentForElementor\Features();
         $this->controls = new \DynamicContentForElementor\Controls();
-        $this->extensions = new \DynamicContentForElementor\Extensions();
         $this->page_settings = new \DynamicContentForElementor\PageSettings();
-        $this->settings = new \DynamicContentForElementor\Settings();
-        // Dashboard
-        $this->api = new \DynamicContentForElementor\Dashboard\Api();
-        $this->templatesystem = new \DynamicContentForElementor\Dashboard\TemplateSystem();
-        $this->license = new \DynamicContentForElementor\Dashboard\License();
+        $this->admin_pages_manager = new \DynamicContentForElementor\AdminPages\Manager();
         $this->widgets = new \DynamicContentForElementor\Widgets();
         $this->stripe = new \DynamicContentForElementor\Stripe();
+        $this->pdf_html_templates = new \DynamicContentForElementor\PdfHtmlTemplates();
+        $this->cryptocurrency = new \DynamicContentForElementor\Cryptocurrency();
         new \DynamicContentForElementor\Ajax();
         new \DynamicContentForElementor\Assets();
-        new \DynamicContentForElementor\Dashboard\Dashboard();
+        new \DynamicContentForElementor\Dashboard();
         new \DynamicContentForElementor\LicenseSystem();
         new \DynamicContentForElementor\TemplateSystem();
         new \DynamicContentForElementor\Elements();
@@ -86,7 +82,7 @@ class Plugin
         // Controls Manager
         \Elementor\Plugin::$instance->controls_manager = new \DynamicContentForElementor\DCE_Controls_Manager(\Elementor\Plugin::$instance->controls_manager);
         // Extensions
-        $this->extensions->on_extensions_registered();
+        $this->extensions = new \DynamicContentForElementor\Extensions();
         // Page Settings
         $this->page_settings->on_page_settings_registered();
         // Widgets
@@ -106,19 +102,6 @@ class Plugin
         $control_data['fields'] = \array_merge($control_data['fields'], $field_controls);
         $widget->update_control('form_fields', $control_data);
     }
-    public function add_dce_menu()
-    {
-        // Dynamic Content - Menu
-        add_menu_page('Dynamic.ooo', 'Dynamic.ooo', 'manage_options', 'dce-features', [$this->settings, 'dce_setting_page'], 'data:image/svg+xml;base64,' . $this->dce_get_icon_svg(), '58.6');
-        // Dynamic Content - Features
-        add_submenu_page('dce-features', 'Dynamic.ooo - ' . __('Features', 'dynamic-content-for-elementor'), __('Features', 'dynamic-content-for-elementor'), 'manage_options', 'dce-features', [$this->settings, 'dce_setting_page']);
-        // Dynamic Content - Template System
-        add_submenu_page('dce-features', 'Dynamic.ooo - ' . __('Template System', 'dynamic-content-for-elementor'), __('Template System', 'dynamic-content-for-elementor'), 'manage_options', 'dce-templatesystem', [$this->templatesystem, 'display_form']);
-        // Dynamic Content - APIs
-        add_submenu_page('dce-features', 'Dynamic.ooo - ' . __('APIs', 'dynamic-content-for-elementor'), __('APIs', 'dynamic-content-for-elementor'), 'manage_options', 'dce-apis', [$this->api, 'display_form']);
-        // Dynamic Content - License
-        add_submenu_page('dce-features', 'Dynamic.ooo - ' . __('License', 'dynamic-content-for-elementor'), __('License', 'dynamic-content-for-elementor'), 'administrator', 'dce-license', [$this->license, 'show_license_form']);
-    }
     public static function plugin_action_links($links)
     {
         $links['config'] = '<a title="Configuration" href="' . admin_url() . 'admin.php?page=dce-features">' . __('Configuration', 'dynamic-content-for-elementor') . '</a>';
@@ -132,11 +115,6 @@ class Plugin
         }
         return $plugin_meta;
     }
-    public static function dce_get_icon_svg($base64 = \true)
-    {
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88.74 71.31"><path d="M35.65,588.27h27.5c25.46,0,40.24,14.67,40.24,35.25v.2c0,20.58-15,35.86-40.65,35.86H35.65Zm27.81,53.78c11.81,0,19.65-6.51,19.65-18v-.2c0-11.42-7.84-18-19.65-18H55.41v36.26Z" transform="translate(-35.65 -588.27)" fill="#a8abad"/><path d="M121.69,609.94a33.84,33.84,0,0,0-7.56-11.19,36.51,36.51,0,0,0-11.53-7.56A37.53,37.53,0,0,0,88,588.4a43.24,43.24,0,0,0-5.4.34,36.53,36.53,0,0,1,20.76,10,33.84,33.84,0,0,1,7.56,11.19,35.25,35.25,0,0,1,2.7,13.79v.2a34.79,34.79,0,0,1-2.75,13.79,35.21,35.21,0,0,1-19.19,18.94,36.48,36.48,0,0,1-9.27,2.45,42.94,42.94,0,0,0,5.39.35,37.89,37.89,0,0,0,14.67-2.8,35.13,35.13,0,0,0,19.19-18.94,34.79,34.79,0,0,0,2.75-13.79v-.2A35.25,35.25,0,0,0,121.69,609.94Z" transform="translate(-35.65 -588.27)" fill="#a8abad" /></svg>';
-        return \base64_encode($svg);
-    }
     public function dce_allow_posts_pagination($preempt, $wp_query)
     {
         if ($preempt || empty($wp_query->query_vars['page']) || empty($wp_query->post) || !is_singular()) {
@@ -145,7 +123,7 @@ class Plugin
         $allow_pagination = \false;
         $document = '';
         $current_post_id = $wp_query->post->ID;
-        $dce_posts_widgets = ['dyncontel-acfposts', 'dce-dynamicposts-v2', 'dyncontel-dynamicusers'];
+        $dce_posts_widgets = ['dyncontel-acfposts', 'dce-dynamicposts-v2', 'dyncontel-dynamicusers', 'dce-sticky-posts', 'dce-my-posts', 'dce-dynamic-woo-products', 'dce-search-results', 'dce-dynamic-show-favorites', 'dce-woo-products-cart', 'dce-woo-product-upsells', 'dce-woo-product-crosssells'];
         // Check if current post/page is built with Elementor and check for DCE posts pagination
         if (\Elementor\Plugin::$instance->db->is_built_with_elementor($current_post_id) && !$allow_pagination) {
             $allow_pagination = $this->dce_check_posts_pagination($current_post_id, $dce_posts_widgets);
@@ -155,7 +133,7 @@ class Plugin
         if (isset($dce_template) && 'active' == $dce_template && !$allow_pagination) {
             $options = get_option('dyncontel_options');
             $post_type = get_post_type($current_post_id);
-            if ($options['dyncontel_field_single' . $post_type]) {
+            if (\is_array($options) && $options['dyncontel_field_single' . $post_type]) {
                 $allow_pagination = $this->dce_check_posts_pagination($options['dyncontel_field_single' . $post_type], $dce_posts_widgets);
             }
         }

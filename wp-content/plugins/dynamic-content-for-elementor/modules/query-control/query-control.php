@@ -122,6 +122,18 @@ class QueryControl extends Module
         }
         return $results;
     }
+    protected function get_pods($data)
+    {
+        $results = [];
+        $function = 'get_' . $data['object_type'] . '_pods';
+        $fields = \DynamicContentForElementor\Helper::$function(\false, $data['q']);
+        foreach ($fields as $field_key => $field_name) {
+            if ($field_key) {
+                $results[] = ['id' => $field_key, 'text' => esc_attr($field_name)];
+            }
+        }
+        return $results;
+    }
     protected function get_posts($data)
     {
         $results = [];
@@ -385,19 +397,20 @@ class QueryControl extends Module
     }
     protected function get_value_titles_for_terms($request)
     {
-        $ids = (array) $request['id'];
+        $id = $request['id'];
         $results = [];
-        $tid = \reset($ids);
-        if (\is_numeric($tid)) {
-            $query_params = ['include' => $ids];
+        if (\is_numeric($id)) {
+            $term = get_term_by('term_taxonomy_id', $id);
+            $results[$id] = $term->name;
+            return $results;
         } else {
             $query_params = ['slug' => $ids];
+            $terms = get_terms($query_params);
+            foreach ($terms as $term) {
+                $results[$term->term_id] = $term->name;
+            }
+            return $results;
         }
-        $terms = get_terms($query_params);
-        foreach ($terms as $term) {
-            $results[$term->term_id] = $term->name;
-        }
-        return $results;
     }
     protected function get_value_titles_for_taxonomies($request)
     {

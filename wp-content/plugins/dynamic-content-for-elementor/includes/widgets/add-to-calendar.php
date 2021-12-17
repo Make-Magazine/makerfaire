@@ -14,7 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class DCE_Widget_Calendar extends DCE_Widget_Prototype {
+class DCE_Widget_Calendar extends WidgetPrototype {
+
+	public function get_style_depends() {
+		return [ 'dce-add-to-calendar' ];
+	}
 
 	protected function _register_controls() {
 

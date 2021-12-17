@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Adapter;
 
-use DynamicOOOS\Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\CacheInterface;
 use DynamicOOOS\Symfony\Component\Cache\PruneableInterface;
 use DynamicOOOS\Symfony\Component\Cache\ResettableInterface;
 use DynamicOOOS\Symfony\Component\Cache\Traits\ProxyTrait;

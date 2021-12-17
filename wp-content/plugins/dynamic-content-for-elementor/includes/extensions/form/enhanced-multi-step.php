@@ -74,7 +74,7 @@ class DCE_Extension_Form_Step extends \DynamicContentForElementor\Extensions\DCE
     }
     public function add_control_section_to_form($element, $args)
     {
-        $element->start_controls_section('dce_step_section_style', ['label' => __('Steps Legend', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE, 'condition' => ['dce_step_legend!' => '']]);
+        $element->start_controls_section('dce_step_section_style', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Steps Legend', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE, 'condition' => ['dce_step_legend!' => '']]);
         $element->add_responsive_control('dce_step_title_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'selectors' => ['{{WRAPPER}} .dce-form-step legend' => 'display: block; text-align: {{VALUE}};']]);
         $element->add_control('dce_step_title_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-form-step legend' => 'color: {{VALUE}};']]);
         $element->add_group_control(Group_Control_Typography::get_type(), ['name' => 'dce_step_title_typography', 'label' => __('Typography', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-form-step legend']);
@@ -82,7 +82,7 @@ class DCE_Extension_Form_Step extends \DynamicContentForElementor\Extensions\DCE
         $element->add_group_control(Group_Control_Text_Shadow::get_type(), ['name' => 'dce_step_text_shadow', 'selector' => '{{WRAPPER}} .dce-form-step legend']);
         $element->end_controls_section();
         // SUMMARY
-        $element->start_controls_section('dce_step_section_summary', ['label' => __('Steps Summary', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE, 'condition' => ['dce_step_summary!' => '', 'dce_step_show' => '']]);
+        $element->start_controls_section('dce_step_section_summary', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Steps Summary', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE, 'condition' => ['dce_step_summary!' => '', 'dce_step_show' => '']]);
         $element->add_control('dce_step_summary_title', ['label' => __('Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING]);
         $element->add_responsive_control('dce_step_summary_title_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'selectors' => ['{{WRAPPER}} .dce-step-summary-title' => 'text-align: {{VALUE}};']]);
         $element->add_group_control(Group_Control_Typography::get_type(), ['name' => 'dce_step_summary_title_typography', 'selector' => '{{WRAPPER}} .dce-step-summary-title']);

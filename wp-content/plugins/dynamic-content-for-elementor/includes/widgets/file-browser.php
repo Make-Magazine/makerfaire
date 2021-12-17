@@ -15,7 +15,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public $file_metadata = array();
     // save it in a hidden field in json, values only for this post
@@ -45,7 +45,8 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\DCE_Wid
         $this->add_control('path_selection', ['label' => __('Select path', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['uploads' => ['title' => __('Uploads', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-upload'], 'custom' => ['title' => __('Custom', 'dynamic-content-for-elementor'), 'icon' => 'eicon-custom'], 'media' => ['title' => __('Media Library', 'dynamic-content-for-elementor'), 'icon' => 'eicon-image'], 'taxonomy' => ['title' => __('Taxonomy', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-tags'], 'post' => ['title' => __('Post Medias', 'dynamic-content-for-elementor'), 'icon' => 'eicon-post']], 'default' => 'uploads', 'toggle' => \false]);
         $this->add_control('folder_custom', ['label' => __('Custom Path', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'myfolder/docs', 'description' => __('A custom path from site root. You can use Token for dynamic path.', 'dynamic-content-for-elementor') . '<br>Ex: \'myfolder/document/[post:my_meta_field]\'', 'default' => 'wp-content/uploads', 'condition' => ['path_selection' => ['custom', 'csv']]]);
         $this->add_control('medias_field', ['label' => __('Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Field Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'fields', 'object_type' => 'any', 'condition' => ['path_selection' => 'media']]);
-        $this->add_control('medias', ['label' => __('Choose Files', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::WYSIWYG, 'description' => '<style>.elementor-control-medias .wp-editor-container, .elementor-control-medias .wp-editor-tabs { display: none; }</style>', 'condition' => ['path_selection' => 'media', 'medias_field' => '']]);
+        $this->add_control('medias', ['label' => __('Choose Files', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::WYSIWYG, 'condition' => ['path_selection' => 'media', 'medias_field' => '']]);
+        $this->add_control('remove_media', ['label' => __('Remove All Files', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::BUTTON, 'event' => 'dceFileBrowser:removeMedia', 'text' => __('Remove', 'dynamic-content-for-elementor'), 'description' => '', 'condition' => ['path_selection' => 'media', 'medias_field' => '']]);
         $this->add_control('metas', ['label' => __('Post Meta field', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SELECT2, 'options' => $post_metas, 'condition' => ['path_selection' => 'meta']]);
         $this->add_control('folder', ['label' => __('Root Folder', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $this->getFolders(), 'default' => \date('Y'), 'description' => __('You can add more files trought MediaLibrary or via FTP', 'dynamic-content-for-elementor'), 'condition' => ['path_selection' => 'uploads']]);
         foreach ($this->getFolders() as $key => $value) {
@@ -61,7 +62,7 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\DCE_Wid
             foreach ($taxonomies as $tkey => $atax) {
                 if ($tkey) {
                     $terms = Helper::get_taxonomy_terms($tkey, \true);
-                    $this->add_control('terms_' . $tkey, ['label' => __('Terms', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['' => __('All', 'dynamic-content-for-elementor')] + $terms, 'description' => __('Filter results by selected taxonomy term', 'dynamic-content-for-elementor'), 'label_block' => \true, 'condition' => ['taxonomy' => $tkey, 'path_selection' => 'taxonomy']]);
+                    $this->add_control('terms_' . $tkey, ['label' => __('Terms', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['' => __('All', 'dynamic-content-for-elementor')] + $terms, 'description' => __('Filter results by selected taxonomy terms', 'dynamic-content-for-elementor'), 'label_block' => \true, 'condition' => ['taxonomy' => $tkey, 'path_selection' => 'taxonomy']]);
                 }
             }
         }
@@ -88,13 +89,13 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\DCE_Wid
         $this->add_control('folder_csv_col_file', ['label' => __('CSV File col', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 2, 'min' => 1]);
         $this->add_control('folder_csv_title', ['label' => __('Use Dir basename as file Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->end_controls_section();
-        $this->start_controls_section('section_file_form', ['label' => __('Search form', 'dynamic-content-for-elementor'), 'condition' => ['search!' => '']]);
-        $this->add_control('search_text', ['label' => __('Search Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Quick search', 'dynamic-content-for-elementor'), 'placeholder' => __('Quick search', 'dynamic-content-for-elementor')]);
+        $this->start_controls_section('section_file_form', ['label' => __('Search Form', 'dynamic-content-for-elementor'), 'condition' => ['search!' => '']]);
+        $this->add_control('search_text', ['label' => __('Search Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Quick Search', 'dynamic-content-for-elementor')]);
         $this->add_control('search_text_size', ['label' => __('Form Title HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'p' => 'p'], 'default' => 'h4', 'condition' => ['search_text!' => '']]);
         $this->add_control('search_notice', ['label' => __('Search Notice', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('* at least 3 characters', 'dynamic-content-for-elementor'), 'placeholder' => __('* at least 3 characters', 'dynamic-content-for-elementor')]);
-        $this->add_control('search_quick', ['label' => __('Quick search', 'dynamic-content-for-elementor'), 'description' => __('Search on input change, no buttons needed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
+        $this->add_control('search_quick', ['label' => __('Quick Search', 'dynamic-content-for-elementor'), 'description' => __('Search on input change, no buttons needed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->add_control('search_find_text', ['label' => __('Find Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Find', 'dynamic-content-for-elementor'), 'condition' => ['search_quick' => '']]);
-        $this->add_control('search_reset', ['label' => __('Use Reset button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['search_quick' => '']]);
+        $this->add_control('search_reset', ['label' => __('Reset Button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['search_quick' => '']]);
         $this->add_control('search_reset_text', ['label' => __('Reset Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Reset', 'dynamic-content-for-elementor'), 'condition' => ['search_quick' => '', 'search_reset!' => '']]);
         $this->end_controls_section();
         $this->start_controls_section('section_file_metadata', ['label' => __('Metadata', 'dynamic-content-for-elementor'), 'condition' => ['enable_metadata!' => '']]);
@@ -108,8 +109,6 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\DCE_Wid
         $this->add_control('enable_metadata_hide', ['label' => __('Hide some files and folders', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('You can select what file and folder to hide if you don’t want to share it', 'dynamic-content-for-elementor'), 'condition' => ['enable_metadata' => 'yes']]);
         $this->add_control('enable_metadata_hide_reverse', ['label' => __('Invert: show only selected files and folders', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('If enabled you select the exact file and folder to show, all other file and folders will be hidden', 'dynamic-content-for-elementor'), 'condition' => ['enable_metadata' => 'yes', 'enable_metadata_hide' => 'yes']]);
         $this->end_controls_section();
-        // ----- STYLE
-        // Title
         $this->start_controls_section('section_style_title', ['label' => __('Title', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['title' => 'yes']]);
         $this->add_responsive_control('title_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'eicon-text-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'eicon-text-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'eicon-text-align-right'], 'justify' => ['title' => __('Justified', 'dynamic-content-for-elementor'), 'icon' => 'eicon-text-align-justify']], 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-filebrowser-title' => 'text-align: {{VALUE}};']]);
         $this->add_control('title_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-filebrowser-title' => 'color: {{VALUE}};']]);
@@ -468,7 +467,7 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\DCE_Wid
                             }
                         }
                         if (\Elementor\Plugin::$instance->editor->is_edit_mode() && empty($dirs)) {
-                            _e('Empty CSV folder', 'dynamic-content-for-elementor');
+                            Helper::notice('', __('Empty CSV folder', 'dynamic-content-for-elementor'));
                             return \false;
                         }
                     }
@@ -477,12 +476,12 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\DCE_Wid
                     $this->editorJavascript();
                 } else {
                     if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                        _e('Root folder not found', 'dynamic-content-for-elementor');
+                        Helper::notice('', __('Root folder not found', 'dynamic-content-for-elementor'));
                     }
                 }
             } else {
                 if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                    _e('Select root folder or files', 'dynamic-content-for-elementor');
+                    Helper::notice('', __('Select root folder or files', 'dynamic-content-for-elementor'));
                 }
             }
         }

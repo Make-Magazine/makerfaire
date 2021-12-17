@@ -3,7 +3,7 @@
 /**
  * @package php-svg-lib
  * @link    http://github.com/PhenX/php-svg-lib
- * @author  Fabien M�nager <fabien.menager@gmail.com>
+ * @author  Fabien Ménager <fabien.menager@gmail.com>
  * @license GNU LGPLv3+ http://www.gnu.org/copyleft/lesser.html
  */
 namespace DynamicOOOS\Svg\Surface;
@@ -36,7 +36,7 @@ class SurfaceGmagick implements SurfaceInterface
         $image = new \Gmagick();
         $image->newimage($this->width, $this->height);
         $image->drawimage($this->canvas);
-        $tmp = \tempnam("", "gm");
+        $tmp = \tempnam(\sys_get_temp_dir(), "gm");
         $image->write($tmp);
         return \file_get_contents($tmp);
     }
@@ -135,7 +135,7 @@ class SurfaceGmagick implements SurfaceInterface
             if (\strpos($data, "base64") === 0) {
                 $data = \base64_decode(\substr($data, 7));
             }
-            $image = \tempnam("", "svg");
+            $image = \tempnam(\sys_get_temp_dir(), "svg");
             \file_put_contents($image, $data);
         }
         $img = $this->canvas->load_image("auto", $image, "");

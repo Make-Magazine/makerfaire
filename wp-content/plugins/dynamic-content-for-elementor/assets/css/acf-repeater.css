@@ -632,3 +632,6 @@
 .elementor-widget-dyncontel-acf-repeater .dce-acf-repater-table {
     overflow-x: auto;
 }
+.elementor-widget-dyncontel-acf-repeater .dce-acf-repeater-masonry .dce-acf-repeater-item {
+  float: left;
+}

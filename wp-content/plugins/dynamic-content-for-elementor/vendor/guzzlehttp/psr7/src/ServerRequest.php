@@ -3,10 +3,10 @@
 namespace DynamicOOOS\GuzzleHttp\Psr7;
 
 use InvalidArgumentException;
-use DynamicOOOS\Psr\Http\Message\ServerRequestInterface;
-use DynamicOOOS\Psr\Http\Message\StreamInterface;
-use DynamicOOOS\Psr\Http\Message\UploadedFileInterface;
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * Server-side HTTP request
  *

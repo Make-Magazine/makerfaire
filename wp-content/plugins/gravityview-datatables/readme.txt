@@ -10,11 +10,15 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Installation ==
 
-1. Upload plugin files to your plugins folder, or install using WordPress' built-in Add New Plugin installer
+1. Upload plugin files to your plugins folder, or install using WordPress's built-in Add New Plugin installer
 2. Activate the plugin
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.5.1 on November 4, 2021 =
+
+* Fixed: DataTables scripts would not load when manually outputting the contents of the `[gravityview]` shortcode. Requires GravityView 2.13.4 or newer.
 
 = 2.5 on October 7, 2021 =
 
@@ -352,3 +356,6 @@ __Developer Notes:__
 = 1.0.0 on July 24 =
 * Liftoff!
 
+
+
+= 1639768391-4249 =

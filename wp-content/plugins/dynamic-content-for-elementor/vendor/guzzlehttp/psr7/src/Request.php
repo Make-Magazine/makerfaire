@@ -3,9 +3,9 @@
 namespace DynamicOOOS\GuzzleHttp\Psr7;
 
 use InvalidArgumentException;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\StreamInterface;
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * PSR-7 request implementation.
  */

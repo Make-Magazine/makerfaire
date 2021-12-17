@@ -10,8 +10,8 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Adapter;
 
-use DynamicOOOS\Psr\Cache\CacheItemInterface;
-use DynamicOOOS\Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use DynamicOOOS\Symfony\Component\Cache\CacheItem;
 use DynamicOOOS\Symfony\Component\Cache\Exception\InvalidArgumentException;
 use DynamicOOOS\Symfony\Component\Cache\PruneableInterface;

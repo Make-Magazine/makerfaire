@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Simple;
 
-use DynamicOOOS\Psr\SimpleCache\CacheInterface as Psr16CacheInterface;
+use Psr\SimpleCache\CacheInterface as Psr16CacheInterface;
 use DynamicOOOS\Symfony\Component\Cache\Adapter\ChainAdapter;
 use DynamicOOOS\Symfony\Component\Cache\Exception\InvalidArgumentException;
 use DynamicOOOS\Symfony\Component\Cache\PruneableInterface;

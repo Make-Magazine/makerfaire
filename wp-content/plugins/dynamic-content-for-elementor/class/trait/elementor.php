@@ -512,7 +512,7 @@ trait Trait_Elementor
     }
     public static function get_active_devices_list()
     {
-        if (!\version_compare(ELEMENTOR_VERSION, '3.4.0', '>=')) {
+        if (!\version_compare(ELEMENTOR_VERSION, '3.4.0', '>')) {
             return ['desktop', 'tablet', 'mobile'];
         }
         return \Elementor\Plugin::$instance->breakpoints->get_active_devices_list();

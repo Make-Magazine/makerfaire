@@ -1,8 +1,8 @@
 <?php
 
-namespace DynamicOOOS\Psr\Log\Test;
+namespace Psr\Log\Test;
 
-use DynamicOOOS\Psr\Log\AbstractLogger;
+use Psr\Log\AbstractLogger;
 /**
  * Used for testing purposes.
  *

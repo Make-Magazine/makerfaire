@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Parallax extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Parallax extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -24,14 +24,14 @@ class DCE_Widget_Parallax extends \DynamicContentForElementor\Widgets\DCE_Widget
     protected function _register_controls()
     {
         $this->start_controls_section('section_parallaxsettings', ['label' => __('Parallax', 'dynamic-content-for-elementor')]);
-        $this->add_control('parallaxjs_relative_input', ['label' => __('Relative Input', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('parallaxjs_clip_relative_input', ['label' => __('Clip Relative Input', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('parallaxjs_hover_only', ['label' => __('Hover Only', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
+        $this->add_control('parallaxjs_relative_input', ['label' => __('Relative Input', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
+        $this->add_control('parallaxjs_clip_relative_input', ['label' => __('Clip Relative Input', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
+        $this->add_control('parallaxjs_hover_only', ['label' => __('Hover Only', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
         $this->add_control('parallaxjs_input_element', ['label' => __('Input Element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '#myinput']);
-        $this->add_control('parallaxjs_calibrate_x', ['label' => __('Calibrate X', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('parallaxjs_calibrate_y', ['label' => __('Calibrate Y', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('parallaxjs_invert_x', ['label' => __('Invert X', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
-        $this->add_control('parallaxjs_invert_y', ['label' => __('Invert Y', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
+        $this->add_control('parallaxjs_calibrate_x', ['label' => __('Calibrate X', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
+        $this->add_control('parallaxjs_calibrate_y', ['label' => __('Calibrate Y', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
+        $this->add_control('parallaxjs_invert_x', ['label' => __('Invert X', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
+        $this->add_control('parallaxjs_invert_y', ['label' => __('Invert Y', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
         $this->add_control('parallaxjs_limit_x', ['label' => __('Limit X', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 100, 'min' => 0, 'max' => 1000, 'step' => 10]);
         $this->add_control('parallaxjs_limit_y', ['label' => __('Limit Y', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 100, 'min' => 0, 'max' => 1000, 'step' => 10]);
         $this->add_control('parallaxjs_scalar_x', ['label' => __('Scalar X', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 2], 'range' => ['min' => 0, 'max' => 100]]);
@@ -40,7 +40,7 @@ class DCE_Widget_Parallax extends \DynamicContentForElementor\Widgets\DCE_Widget
         $this->add_control('parallaxjs_friction_y', ['label' => __('Friction Y', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0.1, 'min' => 0, 'max' => 1, 'step' => 0.1]);
         $this->add_control('parallaxjs_origin_x', ['label' => __('Origin X', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0.5, 'min' => 0, 'max' => 1, 'step' => 0.1]);
         $this->add_control('parallaxjs_origin_y', ['label' => __('Origin Y', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0.5, 'min' => 0, 'max' => 1, 'step' => 0.1]);
-        $this->add_control('parallaxjs_pointer_events', ['label' => __('Pointer Events', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'label_off' => __('No', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
+        $this->add_control('parallaxjs_pointer_events', ['label' => __('Pointer Events', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
         $this->end_controls_section();
         $this->start_controls_section('section_parallaxitems', ['label' => __('Parallax Items', 'dynamic-content-for-elementor')]);
         $this->add_control('parallax_coef', ['label' => __('Default depth factor', 'dynamic-content-for-elementor'), 'description' => __('It is used if the DepthFactor value is 0', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0.2, 'min' => 0.05, 'max' => 1, 'step' => 0.05]);

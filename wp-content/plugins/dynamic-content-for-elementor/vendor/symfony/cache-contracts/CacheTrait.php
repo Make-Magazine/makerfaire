@@ -10,9 +10,9 @@
  */
 namespace DynamicOOOS\Symfony\Contracts\Cache;
 
-use DynamicOOOS\Psr\Cache\CacheItemPoolInterface;
-use DynamicOOOS\Psr\Cache\InvalidArgumentException;
-use DynamicOOOS\Psr\Log\LoggerInterface;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 // Help opcache.preload discover always-needed symbols
 \class_exists(InvalidArgumentException::class);
 /**
@@ -24,6 +24,8 @@ trait CacheTrait
 {
     /**
      * {@inheritdoc}
+     *
+     * @return mixed
      */
     public function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
     {

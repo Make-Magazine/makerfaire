@@ -13,11 +13,15 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Clipboard extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_Clipboard extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
         return ['dce-clipboard-js'];
+    }
+    public function get_style_depends()
+    {
+        return ['dce-copy-to-clipboard'];
     }
     public function show_in_panel()
     {

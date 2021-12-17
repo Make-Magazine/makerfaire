@@ -8,7 +8,7 @@ if (!\defined('ABSPATH')) {
 }
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Controls_Manager;
-class OsmMap extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class OsmMap extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {

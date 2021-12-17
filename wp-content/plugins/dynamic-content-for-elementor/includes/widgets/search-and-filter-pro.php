@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_SearchFilter extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_SearchFilter extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     protected function _register_controls()
     {

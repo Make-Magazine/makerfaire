@@ -44,13 +44,13 @@ class DCE_Extension_Form_Signature extends \ElementorPro\Modules\Forms\Fields\Fi
         if (is_wp_error($control_data)) {
             return;
         }
-        $field_controls = ['signature_jpeg' => ['name' => 'signature_jpeg', 'label' => __('Transmit using JPEG', 'dynamic-content-for-elementor'), 'description' => __('Use this option to if the signature does not appear in the PDF.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'no', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]]];
+        $field_controls = ['signature_save_to_file' => ['name' => 'signature_save_to_file', 'label' => __('Save to file', 'dynamic-content-for-elementor'), 'default' => 'yes', 'type' => Controls_Manager::SWITCHER, 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'signature_jpeg' => ['name' => 'signature_jpeg', 'label' => __('Transmit using JPEG', 'dynamic-content-for-elementor'), 'description' => __('Use this option to if the signature does not appear in the PDF.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'no', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]]];
         $control_data['fields'] = $this->inject_field_controls($control_data['fields'], $field_controls);
         $widget->update_control('form_fields', $control_data);
     }
     public function add_control_section_to_form($element, $args)
     {
-        $element->start_controls_section('dce_section_signature_buttons_style', ['label' => __('Signature', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE]);
+        $element->start_controls_section('dce_section_signature_buttons_style', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Signature', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE]);
         $element->add_responsive_control('signature_canvas_width', ['label' => __('Width of the Signature Pad', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SLIDER, 'size_units' => ['px'], 'default' => ['unit' => 'px', 'size' => 400], 'range' => ['px' => ['min' => 1, 'max' => 800, 'step' => 5]], 'selectors' => ['{{WRAPPER}} .dce-signature-wrapper' => '--canvas-width: {{SIZE}}{{UNIT}};']]);
         $element->add_control('signature_canvas_border_radius', ['label' => __('Pad Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'default' => ['top' => '3', 'right' => '3', 'bottom' => '3', 'left' => '3', 'size_units' => 'px'], 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-signature-canvas' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'separator' => 'before']);
         $element->add_control('signature_canvas_border_width', ['label' => __('Pad Border Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'default' => ['top' => '1', 'right' => '1', 'bottom' => '1', 'left' => '1', 'size_units' => 'px'], 'size_units' => ['px'], 'selectors' => ['{{WRAPPER}} .dce-signature-canvas' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
@@ -136,21 +136,52 @@ class DCE_Extension_Form_Signature extends \ElementorPro\Modules\Forms\Fields\Fi
     }
     public function sanitize_field($value, $field)
     {
-        if (\preg_match('&^data:image/(jpeg|png);base64,[\\w/+]&', $value)) {
+        if (\preg_match('&^data:image/(jpeg|png);base64,[\\w\\d/+]+=*$&', $value, $matches)) {
             return $value;
         }
         return '';
     }
-    /**
-     * process file and move it to uploads directory
-     *
-     * @param array                $field
-     * @param Classes\Form_Record  $record
-     * @param Classes\Ajax_Handler $ajax_handler
-     */
+    public function save_to_file($data, $dir_name, $extension, $ajax_handler)
+    {
+        // sanitize path:
+        if (!\preg_match('/[\\w\\d_]+/', $dir_name)) {
+            $ajax_handler->add_admin_error_message(__('Invalid field ID', 'dynamic-content-for-elementor') . $dir_rel_path);
+        }
+        $dir_abs_path = trailingslashit(wp_upload_dir()['basedir']) . 'dynamic/signatures/' . $dir_name;
+        Helper::ensure_dir($dir_abs_path);
+        // Code from Elementor Upload field:
+        $filename = \uniqid() . '.' . $extension;
+        $filename = wp_unique_filename($dir_abs_path, $filename);
+        $new_file = trailingslashit($dir_abs_path) . $filename;
+        if (\is_dir($dir_abs_path) && \is_writable($dir_abs_path)) {
+            $res = \file_put_contents($new_file, $data);
+            if ($res) {
+                // Set correct file permissions.
+                $perms = 0644;
+                @\chmod($new_file, $perms);
+                $url = wp_upload_dir()['baseurl'] . '/dynamic/signatures/' . trailingslashit($dir_name) . $filename;
+                return $url;
+            } else {
+                $ajax_handler->add_error_message(esc_html__('There was an error while trying to save your signature.', 'dynamic-content-for-elementor'));
+            }
+        } else {
+            $ajax_handler->add_admin_error_message(esc_html__('Signature save directory is not writable or does not exist.', 'dynamic-content-for-elementor'));
+        }
+    }
     public function process_field($field, Classes\Form_Record $record, Classes\Ajax_Handler $ajax_handler)
     {
-        $id = $field['id'];
-        $record->update_field($id, 'value', '<img src="' . $field['raw_value'] . '" alt="signature">');
+        $value = $field['value'];
+        $settings = Helper::get_form_field_settings($field['id'], $record);
+        if (($settings['signature_save_to_file'] ?? '') !== 'yes') {
+            return;
+        }
+        \preg_match('&^data:image/(jpeg|png);base64,([\\w\\d/+]+=*)$&', $value, $matches);
+        $extension = $matches[1];
+        $encoded_image = $matches[2];
+        // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+        $decoded_image = \base64_decode($encoded_image);
+        $dir_name = $settings['_id'];
+        $url = $this->save_to_file($decoded_image, $dir_name, $extension, $ajax_handler);
+        $record->update_field($field['id'], 'value', $url);
     }
 }

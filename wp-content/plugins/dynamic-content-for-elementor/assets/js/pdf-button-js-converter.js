@@ -10,12 +10,22 @@ var templateEl = null;
 if (jsconv.isTemplate) {
 	templateEl = document.getElementById("dce-pdftemplate");
 	templateEl.parentElement.removeChild(templateEl);
+	// hide all other elements, so that the template is alone in the page.
+	let prevBody = document.querySelectorAll('body > *');
+	prevBody.forEach((e) => {
+		e.dataset.dcePrevDisplay = e.style.display;
+		e.style.display = 'none';
+	});
 	document.body.prepend(templateEl);
 }
 function pdfBeforeRendering() {}
 function pdfAfterRendering() {
 	if (templateEl) {
 		document.body.removeChild(templateEl);
+		let prevBody = document.querySelectorAll('body > *');
+		prevBody.forEach((e) => {
+			e.style.display = e.dataset.dcePrevDisplay;
+		});
 	}
 	document.body.classList.remove('dce-pdf-printing');
 }
@@ -85,3 +95,4 @@ if (pdfButton.length > 0) {
 		pdfButton[0].style.display = pdfButtonDisplay;
 }
 pdfAfterRendering();
+jQuery(window).trigger('dce/jsconvpdf/after');

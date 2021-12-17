@@ -10,8 +10,8 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Adapter;
 
-use DynamicOOOS\Psr\Cache\CacheItemInterface;
-use DynamicOOOS\Psr\Log\LoggerAwareInterface;
+use Psr\Cache\CacheItemInterface;
+use Psr\Log\LoggerAwareInterface;
 use DynamicOOOS\Symfony\Component\Cache\CacheItem;
 use DynamicOOOS\Symfony\Component\Cache\ResettableInterface;
 use DynamicOOOS\Symfony\Component\Cache\Traits\ArrayTrait;

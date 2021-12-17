@@ -2,6 +2,7 @@
 
 namespace DynamicContentForElementor;
 
+use DynamicContentForElementor\TemplateSystem;
 if (!\defined('ABSPATH')) {
     exit;
 }
@@ -9,34 +10,23 @@ class Metabox
 {
     public function __construct()
     {
-        $this->init();
-    }
-    public function init()
-    {
-    }
-    public static function init_template_system()
-    {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
         // metabox Template in page
-        add_action('add_meta_boxes', [\get_class(), 'dce_metabox_template'], 1, 2);
-        add_action('save_post', [\get_class(), 'dce_save_metaboxdata_template'], 1, 2);
+        add_action('add_meta_boxes', [\get_class(), 'metabox_template'], 1, 2);
+        add_action('save_post', [\get_class(), 'save_metaboxdata_template'], 1, 2);
         // metabox Template in elementor_library for Demo
-        add_action('add_meta_boxes', [\get_class(), 'dce_metabox_demoID'], 1, 2);
-        add_action('save_post', [\get_class(), 'dce_save_metaboxdata_demoID'], 1, 2);
+        add_action('add_meta_boxes', [\get_class(), 'metabox_demo_id'], 1, 2);
+        add_action('save_post', [\get_class(), 'save_metaboxdata_demo_id'], 1, 2);
         // metabox Template for terms
-        add_action('admin_init', [\get_class(), 'dce_taxonomybox_init']);
+        add_action('admin_init', [\get_class(), 'taxonomybox_init']);
     }
-    public static function dce_metabox_template($post_type = 'post', $post = \false)
+    public static function metabox_template($post_type = 'post', $post = \false)
     {
         $class = \get_class();
-        if (\in_array($post_type, \DynamicContentForElementor\Helper::get_types_registered())) {
-            add_meta_box('dce_metabox', __('Dynamic.ooo Template System', 'dynamic-content-for-elementor'), $class . '::dce_metabox_template_select', null, 'side');
-            //, 'post', 'normal', 'default' );
+        if (\in_array($post_type, TemplateSystem::get_registered_types())) {
+            add_meta_box('dce_metabox', __('Dynamic.ooo Template System', 'dynamic-content-for-elementor'), $class . '::metabox_template_select', null, 'side');
         }
     }
-    public static function dce_metabox_template_select($post_object)
+    public static function metabox_template_select($post_object)
     {
         $html = '';
         $templates = \DynamicContentForElementor\Helper::get_all_template(\true);
@@ -55,13 +45,13 @@ class Metabox
         }
         echo $html;
     }
-    public static function dce_save_metaboxdata_template($post_id, $post)
+    public static function save_metaboxdata_template($post_id, $post)
     {
         if (\defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return $post_id;
         }
         // if post type is different from our selected one, do nothing
-        if (\in_array($post->post_type, \DynamicContentForElementor\Helper::get_types_registered())) {
+        if (\in_array($post->post_type, TemplateSystem::get_registered_types())) {
             if (isset($_POST['dyncontel_elementor_templates'])) {
                 update_post_meta($post_id, 'dyncontel_elementor_templates', sanitize_text_field($_POST['dyncontel_elementor_templates']));
             }
@@ -73,15 +63,15 @@ class Metabox
         }
         return $post_id;
     }
-    public static function dce_metabox_demoID($post_type, $post)
+    public static function metabox_demo_id($post_type, $post)
     {
         $class = \get_class();
         if ($post_type == 'elementor_library') {
-            add_meta_box('dce_metabox', __('Template Preview', 'dynamic-content-for-elementor'), $class . '::dce_metabox_demoID_post', null, 'side');
+            add_meta_box('dce_metabox', __('Template Preview', 'dynamic-content-for-elementor'), $class . '::metabox_demo_id_post', null, 'side');
             //, 'post', 'normal', 'default' );
         }
     }
-    public static function dce_metabox_demoID_post($post_object)
+    public static function metabox_demo_id_post($post_object)
     {
         $html = '';
         $all_posts = \DynamicContentForElementor\Helper::get_all_posts(null, \true);
@@ -117,7 +107,7 @@ class Metabox
         }
         echo $html;
     }
-    public static function dce_save_metaboxdata_demoID($post_id, $post)
+    public static function save_metaboxdata_demo_id($post_id, $post)
     {
         if (\defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return $post_id;
@@ -141,7 +131,7 @@ class Metabox
      * custom option and settings
      */
     // ************************************** SETTINGS INIT
-    public static function dce_taxonomybox_init()
+    public static function taxonomybox_init()
     {
         if (current_user_can('manage_options')) {
             $args = array('public' => \true);
@@ -166,7 +156,7 @@ class Metabox
 		<div id="dce_termbox" class="dce-term-box">
 			<div class="dce-term-head">
 				<h3><?php 
-        _e('Dynamic Template', 'dynamic-content-for-elementor');
+        _e('Dynamic.ooo Template', 'dynamic-content-for-elementor');
         ?></h3>
 			</div>
 			<div class="form-field dce-term dce-term-add">
@@ -184,7 +174,7 @@ class Metabox
 		<tr class="form-field dce-term dce-term-edit">
 			<th scope="row" valign="top">
 				<label for="dynamic_content"><?php 
-        _e('Dynamic Template', 'dynamic-content-for-elementor');
+        _e('Dynamic.ooo Template', 'dynamic-content-for-elementor');
         ?></label>
 			</th>
 			<td>

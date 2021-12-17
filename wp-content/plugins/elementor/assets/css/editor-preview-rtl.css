@@ -1,4 +1,4 @@
-/*! elementor - v3.4.7 - 31-10-2021 */
+/*! elementor - v3.5.0 - 12-12-2021 */
 @charset "UTF-8";
 .elementor-control-unit-1 {
   width: 27px; }
@@ -701,22 +701,16 @@ a.elementor-responsive-switcher {
       -ms-flex-pack: end;
           justify-content: flex-end; }
 
-.rtl .elementor-control-text_align .elementor-choices,
-.rtl .elementor-control-align .elementor-choices,
-.rtl .elementor-control-position .elementor-choices {
+.rtl .elementor-control-type-choose[class*="elementor-control-text_align"] .elementor-choices, .rtl .elementor-control-type-choose[class*="elementor-control-align"] .elementor-choices, .rtl .elementor-control-type-choose[class*="elementor-control-position"] .elementor-choices {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: reverse;
       -ms-flex-direction: row-reverse;
           flex-direction: row-reverse; }
-  .rtl .elementor-control-text_align .elementor-choices .elementor-choices-label:nth-child(2),
-  .rtl .elementor-control-align .elementor-choices .elementor-choices-label:nth-child(2),
-  .rtl .elementor-control-position .elementor-choices .elementor-choices-label:nth-child(2) {
+  .rtl .elementor-control-type-choose[class*="elementor-control-text_align"] .elementor-choices .elementor-choices-label:nth-child(2), .rtl .elementor-control-type-choose[class*="elementor-control-align"] .elementor-choices .elementor-choices-label:nth-child(2), .rtl .elementor-control-type-choose[class*="elementor-control-position"] .elementor-choices .elementor-choices-label:nth-child(2) {
     border-left: 1px solid #d5dadf;
     -webkit-border-radius: 3px 0 0 3px;
             border-radius: 3px 0 0 3px; }
-  .rtl .elementor-control-text_align .elementor-choices .elementor-choices-label:last-child,
-  .rtl .elementor-control-align .elementor-choices .elementor-choices-label:last-child,
-  .rtl .elementor-control-position .elementor-choices .elementor-choices-label:last-child {
+  .rtl .elementor-control-type-choose[class*="elementor-control-text_align"] .elementor-choices .elementor-choices-label:last-child, .rtl .elementor-control-type-choose[class*="elementor-control-align"] .elementor-choices .elementor-choices-label:last-child, .rtl .elementor-control-type-choose[class*="elementor-control-position"] .elementor-choices .elementor-choices-label:last-child {
     border-left: none;
     -webkit-border-radius: 0 3px 3px 0;
             border-radius: 0 3px 3px 0; }
@@ -1462,6 +1456,9 @@ a.elementor-responsive-switcher {
 
 .elementor-control-type-media.elementor-control-dynamic-value .elementor-control-input-wrapper {
   border: none; }
+
+.elementor-control:not(.elementor-control-type-icons) .elementor-control-media__preview {
+  background-color: #d5dadf; }
 
 .elementor-control-type-number.elementor-control-dynamic input {
   -webkit-border-radius: 0 3px 3px 0;
@@ -2591,16 +2588,16 @@ body.elementor-editor-active .elementor.elementor-edit-mode .elementor-element.e
       .e-element-color-picker__swatch:hover::before {
         opacity: 1; }
 
-.elementor-editor__ui-state__color-picker *:not(.e-element-color-picker__swatch) {
+.e-ui-state--elements-color-picker-color-picking__on *:not(.e-element-color-picker__swatch) {
   cursor: url("../images/eyedropper.svg") 0 20, pointer; }
 
-.elementor-editor__ui-state__color-picker .e-element-color-picker:not(.e-picker-hidden):hover,
-.elementor-editor__ui-state__color-picker .elementor-element:hover > .e-element-color-picker:not(.e-picker-hidden),
-.elementor-editor__ui-state__color-picker .elementor-widget-container:hover + .e-element-color-picker:not(.e-picker-hidden) {
+.e-ui-state--elements-color-picker-color-picking__on .e-element-color-picker:not(.e-picker-hidden):hover,
+.e-ui-state--elements-color-picker-color-picking__on .elementor-element:hover > .e-element-color-picker:not(.e-picker-hidden),
+.e-ui-state--elements-color-picker-color-picking__on .elementor-widget-container:hover + .e-element-color-picker:not(.e-picker-hidden) {
   opacity: 1;
   pointer-events: all; }
 
-.elementor-editor__ui-state__color-picker .elementor-section:hover {
+.e-ui-state--elements-color-picker-color-picking__on .elementor-section:hover {
   outline: 1px solid #71d7f7; }
 
 html.elementor-html {
@@ -2663,8 +2660,11 @@ html.elementor-html {
 .elementor-edit-area-active .elementor-edit-hidden {
   display: none; }
 
-.elementor-section-wrap:empty {
-  min-height: 25px; }
+.elementor-section-wrap {
+  position: relative;
+  z-index: 1; }
+  .elementor-section-wrap:empty {
+    min-height: 25px; }
 
 .elementor-element > .elementor-element-overlay {
   position: absolute;

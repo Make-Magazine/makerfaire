@@ -132,6 +132,7 @@ class GP_Copy_Cat extends GWPerk {
 					'target'       => $target_field_id,
 					'sourceFormId' => $source_form_id,
 					'targetFormId' => $target_form_id,
+					'trigger'      => $field['id'],
 				);
 
 			}

@@ -153,6 +153,10 @@ trait Trait_WP
         }
         return $listTax;
     }
+    public static function get_woocommerce_taxonomies()
+    {
+        return ['product_cat', 'product_visibility', 'product_type', 'product_variation'];
+    }
     public static function get_taxonomy_terms($taxonomy = null, $flat = \false, $search = '', $info = \true, $orderby = 'name', $order = 'ASC')
     {
         $listTerms = [];
@@ -231,23 +235,6 @@ trait Trait_WP
             }
         }
         return $listTerm;
-    }
-    public static function get_parentpages()
-    {
-        //
-        $args = array('sort_order' => 'DESC', 'sort_column' => 'menu_order', 'numberposts' => -1, 'post_type' => self::get_types_registered(), 'post_status' => 'publish');
-        $pages = get_pages($args);
-        $listPage = [];
-        foreach ($pages as $page) {
-            $children = get_children('post_parent=' . $page->ID);
-            $parents = get_post_ancestors($page->ID);
-            $isparent = '';
-            if (\count($children) > 0) {
-                $isparent = ' (Parent)';
-            }
-            $listPage[$page->ID] = $page->post_title . $isparent;
-        }
-        return $listPage;
     }
     public static function get_post_settings($settings)
     {
@@ -359,16 +346,8 @@ trait Trait_WP
             }
             return \false;
         }
-        // test it ##
-        #pr( $posts[0] );
         // kick back results ##
         return \reset($posts);
-    }
-    public static function get_types_registered()
-    {
-        $typesRegistered = get_post_types(array('public' => \true), 'names', 'and');
-        $type_esclusi = \DynamicContentForElementor\TemplateSystem::$supported_types;
-        return \array_diff($typesRegistered, $type_esclusi);
     }
     public static function get_roles($everyone = \false)
     {
@@ -562,9 +541,9 @@ trait Trait_WP
         global $product;
         if (\DynamicContentForElementor\Helper::is_woocommerce_active()) {
             if (isset($idprod)) {
-                $product = wc_get_product($idprod);
+                $product = \wc_get_product($idprod);
             } else {
-                $product = wc_get_product();
+                $product = \wc_get_product();
             }
         }
         if (empty($product)) {
@@ -593,6 +572,7 @@ trait Trait_WP
         if (!$post_id) {
             $post_id = get_the_ID();
         }
+        $post_id = apply_filters('wpml_object_id', $post_id, get_post_type($post_id), \true);
         if ($field == 'permalink' || $field == 'get_permalink') {
             $postValue = get_permalink($post_id);
         }
@@ -626,13 +606,13 @@ trait Trait_WP
             }
         }
         if ($postValue === null) {
-            // fot meta created with Toolset plugin
+            // for meta created with Toolset plugin
             if (metadata_exists('post', $post_id, 'wpcf-' . $field)) {
                 $postValue = get_post_meta($post_id, 'wpcf-' . $field, $single);
             }
         }
         if ($postValue === null) {
-            // fot meta WooCoomerce plugin
+            // for meta WooCoomerce plugin
             if (metadata_exists('post', $post_id, '_' . $field)) {
                 $postValue = get_post_meta($post_id, '_' . $field, $single);
             }
@@ -645,7 +625,7 @@ trait Trait_WP
                     $postValue[$aterm->term_id] = $aterm;
                 }
             } else {
-                // woocommerce taxonomies (Attributes) begin with pa_
+                // WooCommerce taxonomies (Attributes) begin with pa_
                 $post_terms = get_the_terms($post_id, 'pa_' . $field);
                 if (!empty($post_terms) && !is_wp_error($post_terms)) {
                     foreach ($post_terms as $key => $aterm) {
@@ -670,7 +650,7 @@ trait Trait_WP
         if ($user_id) {
             $userTmp = get_user_by('ID', $user_id);
             if ($userTmp) {
-                $user_properties_whitelist = ['ID', 'user_nicename', 'nicename', 'name', 'registered', 'user_registered', 'user_email', 'email', 'display_name', 'description', 'url', 'user_url'];
+                $user_properties_whitelist = ['ID', 'user_nicename', 'nicename', 'name', 'registered', 'user_registered', 'user_email', 'email', 'display_name', 'description', 'url', 'user_url', 'roles'];
                 if (\in_array($field, $user_properties_whitelist)) {
                     // campo nativo
                     if (\property_exists($userTmp->data, $field)) {
@@ -835,8 +815,8 @@ trait Trait_WP
         if ($theme) {
             $elementor_styles['theme-style'] = get_stylesheet_directory() . '/style.css';
             if (is_child_theme()) {
-                $elementor_styles['theme-templatepath'] = TEMPLATEPATH . '/style.css';
-                $elementor_styles['theme-templatepath'] = TEMPLATEPATH . '/assets/css/style.css';
+                $elementor_styles['theme-templatepath'] = get_template_directory() . '/style.css';
+                $elementor_styles['theme-templatepath'] = get_template_directory() . '/assets/css/style.css';
             }
         }
         if (self::is_elementorpro_active()) {
@@ -1188,5 +1168,63 @@ trait Trait_WP
             }
         }
         return $array;
+    }
+    public static function my_translate_object_id_by_type($object_id, $type)
+    {
+        $current_language = apply_filters('wpml_current_language', null);
+        // if array
+        if (\is_array($object_id)) {
+            $translated_object_ids = array();
+            foreach ($object_id as $id) {
+                $translated_object_ids[] = apply_filters('wpml_object_id', $id, $type, \true, $current_language);
+            }
+            return $translated_object_ids;
+        } elseif (\is_string($object_id)) {
+            // check if we have a comma separated ID string
+            $is_comma_separated = \strpos($object_id, ',');
+            if ($is_comma_separated !== \false) {
+                // explode the comma to create an array of IDs
+                $object_id = \explode(',', $object_id);
+                $translated_object_ids = array();
+                foreach ($object_id as $id) {
+                    $translated_object_ids[] = apply_filters('wpml_object_id', $id, $type, \true, $current_language);
+                }
+                // make sure the output is a comma separated string (the same way it came in!)
+                return \implode(',', $translated_object_ids);
+            } else {
+                return apply_filters('wpml_object_id', \intval($object_id), $type, \true, $current_language);
+            }
+        } else {
+            return apply_filters('wpml_object_id', $object_id, $type, \true, $current_language);
+        }
+    }
+    public static function my_translate_object_id($object_id)
+    {
+        $current_language = apply_filters('wpml_current_language', null);
+        // if array
+        if (\is_array($object_id)) {
+            $translated_object_ids = array();
+            foreach ($object_id as $id) {
+                $translated_object_ids[] = apply_filters('wpml_object_id', $id, get_post_type($id), \true, $current_language);
+            }
+            return $translated_object_ids;
+        } elseif (\is_string($object_id)) {
+            // check if we have a comma separated ID string
+            $is_comma_separated = \strpos($object_id, ',');
+            if ($is_comma_separated !== \false) {
+                // explode the comma to create an array of IDs
+                $object_id = \explode(',', $object_id);
+                $translated_object_ids = array();
+                foreach ($object_id as $id) {
+                    $translated_object_ids[] = apply_filters('wpml_object_id', $id, get_post_type($id), \true, $current_language);
+                }
+                // make sure the output is a comma separated string (the same way it came in!)
+                return \implode(',', $translated_object_ids);
+            } else {
+                return apply_filters('wpml_object_id', \intval($object_id), get_post_type(\intval($object_id)), \true, $current_language);
+            }
+        } else {
+            return apply_filters('wpml_object_id', $object_id, get_post_type($object_id), \true, $current_language);
+        }
     }
 }

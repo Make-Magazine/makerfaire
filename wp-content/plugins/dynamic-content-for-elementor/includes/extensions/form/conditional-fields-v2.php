@@ -69,10 +69,6 @@ class ConditionalFieldsV2 extends \DynamicContentForElementor\Extensions\DCE_Ext
     public function add_assets_depends($instance, $form)
     {
         // fetch all the settings data we need to pass to the JavaScript code:
-        $field_ids = [];
-        foreach ($instance['form_fields'] as $field) {
-            $field_ids[] = $field['custom_id'];
-        }
         $field_conditions = $this->get_fields_conditions($instance);
         $submit_conditions = $this->get_submit_conditions($instance);
         $enabled = \false;
@@ -85,6 +81,17 @@ class ConditionalFieldsV2 extends \DynamicContentForElementor\Extensions\DCE_Ext
             $enabled = \true;
         }
         if ($enabled) {
+            echo '<div class="dce-conditions-js-error-notice  elementor-message elementor-message-danger">';
+            if (current_user_can('administrator')) {
+                echo __('Dynamic.ooo - Conditional Fields v2: a JS Error has been detected. This could be caused by a JS Optimizer plugin. Please read this <a href="https://dnmc.ooo/jserror">article</a>. This message is not visible to site visitors', 'dynamic-content-for-elementor');
+            } else {
+                echo __('A problem was detected in the following Form. Submitting it could result in errors. Please contact the site administrator.', 'dynamic-content-for-elementor');
+            }
+            echo '</div>';
+            $field_ids = [];
+            foreach ($instance['form_fields'] as $field) {
+                $field_ids[] = $field['custom_id'];
+            }
             $form->add_render_attribute('wrapper', 'data-field-ids', wp_json_encode($field_ids));
             foreach ($this->depended_scripts as $script) {
                 $form->add_script_depends($script);
@@ -107,7 +114,7 @@ class ConditionalFieldsV2 extends \DynamicContentForElementor\Extensions\DCE_Ext
         $widget->start_controls_section('section_conditional_validation', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Conditional Validation', 'dynamic-content-for-elementor')]);
         $repeater = new \Elementor\Repeater();
         $repeater->add_control('disabled', ['label' => __('Disable', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER]);
-        $repeater->add_control('expression', ['label' => __('Expression', 'dynamic-content-for-elementor'), 'description' => __('One condition per line. All conditions are and-connected. Conditions are expressions that can also use the or operator and much more! You can use our online tool <a href="https://www.dynamic.ooo/conditions-generator/">Conditions Generator</a> to generate your conditions more easily.', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXTAREA, 'label_block' => \true]);
+        $repeater->add_control('expression', ['label' => __('Expression', 'dynamic-content-for-elementor'), 'description' => __('One condition per line. All conditions are and-connected. Conditions are expressions that can also use the or operator and much more! You can use our online tool <a target="_blank" href="https://dnmc.ooo/condgen">Conditions Generator</a> to generate your conditions more easily.', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXTAREA, 'label_block' => \true]);
         $repeater->add_control('error_message', ['label' => __('Error Message', 'dynamic-content-for-elementor'), 'default' => __('Form Validation Error', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'label_block' => \true]);
         $repeater->add_control('error_field_id', ['label' => __('Field ID to attach the error to (optional)', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'label_block' => \true]);
         $repeater->add_control('hide_submit', ['label' => __('Also hide the Submit button if the condition is not satisfied', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'label_block' => \true]);
@@ -121,7 +128,7 @@ class ConditionalFieldsV2 extends \DynamicContentForElementor\Extensions\DCE_Ext
         if (is_wp_error($control_data)) {
             return;
         }
-        $field_controls = ['form_fields_conditions_tab' => ['type' => 'tab', 'tab' => 'content', 'label' => __('Conditions', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'field_type', 'operator' => '!in', 'value' => ['hidden', 'step']]]], 'tabs_wrapper' => 'form_fields_tabs', 'name' => 'form_fields_conditions_tab'], 'dce_field_conditions_mode' => ['name' => 'dce_field_conditions_mode', 'label' => __('Condition', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['visible' => ['title' => __('Always Visible', 'dynamic-content-for-elementor'), 'icon' => 'eicon-check'], 'show' => ['title' => __('Show if', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye'], 'hide' => ['title' => __('Hide if', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye-slash']], 'toggle' => \false, 'default' => 'visible', 'tab' => 'content', 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_conditions_tab'], 'dce_conditions_expression' => ['name' => 'dce_conditions_expression', 'type' => \Elementor\Controls_Manager::TEXTAREA, 'label' => __('Conditions Expressions', 'dynamic-content-for-elementor'), 'description' => __('One condition per line. All conditions are and-connected. Conditions are expressions that can also use the or operator and much more! You can use our online tool <a href="https://www.dynamic.ooo/conditions-generator/">Conditions Generator</a> to generate your conditions more easily.', 'dynamic-content-for-elementor'), 'placeholder' => "name == 'Joe'", 'condition' => ['dce_field_conditions_mode!' => 'visible'], 'tab' => 'content', 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_conditions_tab'], 'dce_conditions_disable_only' => ['name' => 'dce_conditions_disable_only', 'label' => __('Disable only', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'tab' => 'content', 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_conditions_tab', 'condition' => ['dce_field_conditions_mode!' => 'visible']]];
+        $field_controls = ['form_fields_conditions_tab' => ['type' => 'tab', 'tab' => 'content', 'label' => __('Conditions', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'field_type', 'operator' => '!in', 'value' => ['hidden', 'step']]]], 'tabs_wrapper' => 'form_fields_tabs', 'name' => 'form_fields_conditions_tab'], 'dce_field_conditions_mode' => ['name' => 'dce_field_conditions_mode', 'label' => __('Condition', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['visible' => ['title' => __('Always Visible', 'dynamic-content-for-elementor'), 'icon' => 'eicon-check'], 'show' => ['title' => __('Show if', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye'], 'hide' => ['title' => __('Hide if', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye-slash']], 'toggle' => \false, 'default' => 'visible', 'tab' => 'content', 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_conditions_tab'], 'dce_conditions_expression' => ['name' => 'dce_conditions_expression', 'type' => \Elementor\Controls_Manager::TEXTAREA, 'label' => __('Conditions Expressions', 'dynamic-content-for-elementor'), 'description' => __('One condition per line. All conditions are and-connected. Conditions are expressions that can also use the or operator and much more! You can use our online tool <a target="_blank" href="https://dnmc.ooo/condgen">Conditions Generator</a> to generate your conditions more easily.', 'dynamic-content-for-elementor'), 'placeholder' => "name == 'Joe'", 'condition' => ['dce_field_conditions_mode!' => 'visible'], 'tab' => 'content', 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_conditions_tab'], 'dce_conditions_disable_only' => ['name' => 'dce_conditions_disable_only', 'label' => __('Disable only', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'tab' => 'content', 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_conditions_tab', 'condition' => ['dce_field_conditions_mode!' => 'visible']]];
         $control_data['fields'] = \array_merge($control_data['fields'], $field_controls);
         $widget->update_control('form_fields', $control_data);
     }

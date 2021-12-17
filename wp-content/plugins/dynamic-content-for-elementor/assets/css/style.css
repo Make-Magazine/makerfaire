@@ -39,87 +39,6 @@ button[disabled], html input[disabled] {
   z-index: 9999;
 }
 
-/* Visibility */
-.dce-visibility-element-hidden,
-.dce-visibility-widget-hidden,
-.dce-visibility-column-hidden,
-.dce-visibility-section-hidden {
-  display: none;
-}
-
-.dce-visibility-element-hidden.elementor-widget-dyncontel-panorama {
-  display: block;
-  position: fixed;
-  left: 10000px;
-}
-
-.dce-btn-visibility {
-  position: absolute;
-  top: 15px;
-  background-color: #e52600;
-  color: white;
-  border-radius: 50%;
-  line-height: 1;
-  padding: 9px;
-  font-size: 15px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
-  border: 3px solid #fff;
-  z-index: 10000000;
-  transform: translate(-50%, -50%);
-  left: 50%;
-}
-
-.dce-btn-visibility:hover {
-  color: #000 !important;
-}
-
-.elementor-editor-active .dce-btn-visibility {
-  margin-left: 20px;
-}
-
-.dce-box-visibility-debug {
-  display: none;
-  position: absolute;
-  top: 0px;
-  left: 50%;
-  background-color: #e52600;
-  color: #FFF;
-  border-radius: 3px;
-  line-height: 1;
-  text-align: left;
-  z-index: 10;
-  padding: 10px;
-  margin: -10px 0 0 34px;
-  min-width: 150px;
-}
-
-.dce-box-visibility-debug:before {
-  content: '';
-  display: block;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 10px 0px 10px 10px;
-  border-color: transparent transparent #e52600 transparent;
-  position: absolute;
-  bottom: 100%;
-  left: -10px;
-  top: 4px;
-}
-
-.elementor-editor-active .dce-box-visibility-debug:before {
-  left: 22px;
-}
-
-.dce-box-visibility-debug ul {
-  list-style: none;
-  margin: 0;
-}
-
-.dce-visibility-widget-hidden-debug {
-  min-height: 10px;
-}
-
 /* Helpers */
 body.elementor-dce {
   overflow-x: hidden;
@@ -144,40 +63,10 @@ body.elementor-dce {
   float: left !important;
 }
 
-.maschera {
-  overflow: hidden !important;
-}
-
-.blocco-lista {
-  max-width: 400px;
-  margin: 0 auto;
-}
-
 .mask {
   overflow: hidden;
 }
 
-.dce-flexbox {
-  display: flex;
-  align-items: center;
-}
-
-.dce-absolute {
-  position: absolute;
-}
-
-.dce-offscreen {
-  position: absolute;
-  left: -999em;
-  display: block !important;
-}
-
-/* --------------------------------------- */
-body:not(.elementor-editor-active) .disattivo {
-  pointer-events: none;
-}
-
-/* --------------------------------------- */
 /* Archive Grid */
 .archive-title {
   text-align: center;
@@ -290,17 +179,6 @@ body.dce-inertiaScroll {
 
 .inertia-scroll {
   z-index: 900;
-}
-
-.dce-scrolling .scroll-direction-horizontal.elementor-2760 section.elementor-element {}
-
-.trace-test {
-  position: fixed;
-  top: 80px;
-  left: 80px;
-  z-index: 10000000000000000;
-  background-color: #FFF;
-  border: 1px solid #ccc;
 }
 
 /* Ajax Open */
@@ -465,76 +343,6 @@ body.modal-p-off .wrap-p .close .dce-quit-ics {
   transform: rotate(-45deg);
 }
 
-/* --------- equalHMR -------- */
-body:not(.elementor-msie) .equalHMR {
-  flex: 1 1 100%;
-}
-
-.equalHMR .dce-wrapper {
-  height: 100%;
-}
-
-/* SWUP */
-.transition-fade {
-  transition: .1s;
-  visibility: visible;
-}
-
-html.is-animating .transition-fade {
-  visibility: hidden;
-}
-
-/* MAIN */
-html.swup-enabled #main {
-  transition: .4s;
-  opacity: 1;
-}
-
-html.swup-enabled.is-animating #main {
-  opacity: 0;
-  transition-duration: 0.3s;
-  transition-delay: 0.1s;
-}
-
-/* Footer */
-html.swup-enabled #footer {
-  transition: .4s;
-  position: relative;
-  top: 0;
-  transition-delay: .5s;
-}
-
-html.swup-enabled.is-changing #footer {
-  top: 100vh;
-  transition-duration: 0.3s;
-  transition-delay: 0s;
-}
-
-html.swup-enabled.is-animating #footer {
-  top: 100vh;
-  transition-duration: 0.3s;
-}
-
-.elementor-widget-dce-meta .elementor-image {
-  display: inline-block;
-}
-
-/* ACF GoogleMap */
-.elementor-widget-dyncontel-acf-google-maps .gm-style .gm-style-iw-t::after {
-  border-top: none !important;
-  border-right: none !important;
-}
-
-.elementor-button-disabled {
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-/* ACF repeater */
-.dce-acf-repeater-masonry .dce-acf-repeater-item {
-  float: left;
-}
-
 /* ELEMENTOR PRO FORM */
 .elementor-field-group .elementor-select-wrapper::after {
   content: "\e92a";
@@ -565,107 +373,6 @@ html.swup-enabled.is-animating #footer {
   transform: translateY(-50%);
 }
 
-/* Copy to Clipboard */
-.elementor-widget-dce-copy-to-clipboard .elementor-button .elementor-button-text:empty {
-  display: none;
-}
-
-.elementor-widget-dce-copy-to-clipboard .elementor-button {
-  border: none;
-}
-
-.dce-tooltip {
-  position: relative;
-  display: inline-block;
-  zcursor: help;
-}
-
-.dce-tooltip .dce-tooltiptext {
-  visibility: hidden;
-  position: absolute;
-  width: auto;
-  background-color: #555;
-  color: #fff;
-  padding: 5px;
-  border-radius: 6px;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity .6s;
-}
-
-.dce-tooltip:hover .dce-tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
-
-.dce-tooltip-right {
-  top: -10px;
-  transform: translateY(-50%);
-  left: 125%;
-}
-
-.dce-tooltip-right::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent #555 transparent transparent;
-}
-
-.dce-tooltip-bottom {
-  top: 135%;
-  left: 50%;
-  margin-left: -60px;
-}
-
-.dce-tooltip-bottom::after {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent #555 transparent;
-}
-
-.dce-tooltip-top {
-  bottom: 125%;
-  left: 50%;
-  margin-left: -60px;
-}
-
-.dce-tooltip-top::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-.dce-tooltip-left {
-  top: -10px;
-  transform: translateY(-50%);
-  right: 128%;
-}
-
-.dce-tooltip-left::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent transparent #555;
-}
-
 .single .full-width #primary, .single .wrap.full-width,
 .page .full-width #primary, .page .wrap.full-width {
   max-width: 100%;
@@ -691,7 +398,6 @@ html.swup-enabled.is-animating #footer {
 .posts-navigation li a {
   display: inline-block;
 }
-
 
 .dce-input-group {
   position: relative;
@@ -725,9 +431,28 @@ html.swup-enabled.is-animating #footer {
   display: flex;
 }
 
-
 .dce-no-list {
   list-style: none;
   padding-left: 0;
   margin-left: 0;
+}
+
+.dce-conditions-js-error-notice {
+  animation: 2s dceJsErrorFadeIn;
+  animation-fill-mode: forwards;
+  visibility: hidden;
+}
+
+@keyframes dceJsErrorFadeIn {
+  99% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+
+/* form autocomplete in popups, google menu was below modal:  */
+.pac-container {
+    z-index: 10000;
 }

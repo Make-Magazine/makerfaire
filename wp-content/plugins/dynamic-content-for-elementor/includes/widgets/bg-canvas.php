@@ -10,7 +10,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_BgCanvas extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_BgCanvas extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -50,7 +50,7 @@ class DCE_Widget_BgCanvas extends \DynamicContentForElementor\Widgets\DCE_Widget
     }
     protected function render()
     {
-        $settings = $this->get_active_settings();
+        $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }

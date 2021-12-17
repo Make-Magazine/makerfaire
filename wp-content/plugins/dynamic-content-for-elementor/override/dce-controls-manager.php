@@ -10,9 +10,12 @@ class DCE_Controls_Manager extends Controls_Manager
     public function initialize_active_form_extensions_with_add_to_form()
     {
         $this->active_form_extensions_with_add_to_form = [];
-        $active_form_extensions = \DynamicContentForElementor\Extensions::get_active_form_extensions();
-        foreach ($active_form_extensions as $extension_class => $extension_info) {
-            $a_form_ext_class = \DynamicContentForElementor\Extensions::$namespace . $extension_class;
+        $extensions = \DynamicContentForElementor\Plugin::instance()->features->filter(['type' => 'extension', 'category' => 'FORM']);
+        $extensions = \array_filter($extensions, function ($e) {
+            return $e['status'] === 'active';
+        });
+        foreach ($extensions as $extension_info) {
+            $a_form_ext_class = '\\DynamicContentForElementor\\' . $extension_info['class'];
             if (\method_exists($a_form_ext_class, '_add_to_form')) {
                 $this->active_form_extensions_with_add_to_form[] = $a_form_ext_class;
             }

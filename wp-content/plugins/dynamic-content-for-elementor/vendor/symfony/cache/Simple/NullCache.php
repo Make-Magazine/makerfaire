@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache\Simple;
 
-use DynamicOOOS\Psr\SimpleCache\CacheInterface as Psr16CacheInterface;
+use Psr\SimpleCache\CacheInterface as Psr16CacheInterface;
 use DynamicOOOS\Symfony\Component\Cache\Adapter\NullAdapter;
 use DynamicOOOS\Symfony\Contracts\Cache\CacheInterface;
 @\trigger_error(\sprintf('The "%s" class is deprecated since Symfony 4.3, use "%s" and type-hint for "%s" instead.', NullCache::class, NullAdapter::class, CacheInterface::class), \E_USER_DEPRECATED);

@@ -2,8 +2,8 @@
 
 namespace DynamicOOOS\GuzzleHttp\Exception;
 
-use DynamicOOOS\Psr\Http\Client\NetworkExceptionInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Client\NetworkExceptionInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * Exception thrown when a connection cannot be established.
  *

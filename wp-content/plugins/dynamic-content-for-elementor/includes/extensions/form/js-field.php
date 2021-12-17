@@ -75,13 +75,22 @@ class JsField extends \ElementorPro\Modules\Forms\Fields\Field_Base
      */
     public function render($item, $item_index, $form)
     {
+        $method = $form->get_settings('form_method');
+        if ($method === 'post' || $method === 'get') {
+            echo '<p><span class="elementor-message elementor-message-danger elementor-help-inline elementor-form-help-inline" role="alert">';
+            echo __('JS Field is not compatible with the Method Extension Post and Get options.', 'dynamic-content-for-elementor');
+            echo '</span></p>';
+            return;
+        }
         $code = $item['dce_js_field_code'];
         $full_code = <<<EOD
-dceJsField.registerRefresherGenerator("{$item['custom_id']}", (getField) => {
-\t{$code}
-})
+jQuery(window).on('dce/jsfield-loaded', () => {
+\tdceJsField.registerRefresherGenerator("{$item['custom_id']}", (getField) => {
+\t\t{$code}
+\t})
+});
 EOD;
-        wp_add_inline_script('dce-js-field', $full_code, 'after');
+        wp_add_inline_script('dce-js-field', $full_code, 'before');
         wp_localize_script('dce-js-field', 'jsFieldLocale', ['syntaxError' => __('Your JS Field code contains errors, check the browser console!', 'dynamic-content-for-elementor'), 'returnError' => __('Your JS Field code should return a function.', 'dynamic-content-for-elementor')]);
         if ($item['dce_js_field_hide'] === 'yes') {
             $form->add_render_attribute('input' . $item_index, 'data-hide', 'yes');

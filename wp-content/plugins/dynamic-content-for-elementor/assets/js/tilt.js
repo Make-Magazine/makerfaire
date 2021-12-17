@@ -2,7 +2,7 @@
     var WidgetElements_TiltHandler = function ($scope, $) {
 
         var tiltistance = $scope.find('.js-tilt');
-        var tiltSettings = get_Dyncontel_ElementSettings($scope);
+        var tiltSettings = dceGetElementSettings($scope);
 
         var tilt = $scope.find(tiltistance).tilt({
             maxTilt: tiltSettings.tilt_maxtilt['size'], //20,

@@ -4,7 +4,15 @@ namespace DynamicContentForElementor;
 
 trait Trait_Plugin
 {
+    protected static $plugin_dependency_names = ['acf' => 'Advanced Custom Fields', 'advanced-custom-fields-pro' => 'Advanced Custom Fields Pro', 'elementor-pro' => 'Elementor Pro', 'pods' => 'Pods', 'search-filter-pro' => 'Search & Filter Pro', 'types' => 'Toolset', 'woocommerce' => 'WooCommerce'];
     public static $checked_plugins = [];
+    public static function get_plugin_dependency_names($plugin)
+    {
+        if (isset(self::$plugin_dependency_names[$plugin])) {
+            return self::$plugin_dependency_names[$plugin];
+        }
+        return $plugin;
+    }
     public static function is_plugin_active($plugin)
     {
         if (isset(self::$checked_plugins[$plugin])) {
@@ -99,9 +107,9 @@ trait Trait_Plugin
         }
         return \false;
     }
-    public static function is_wpml_active()
+    public static function is_memberpress_active()
     {
-        if (\function_exists('DynamicOOOS\\icl_object_id')) {
+        if (\defined('MEPR_PLUGIN_NAME')) {
             return \true;
         }
         return \false;
@@ -175,7 +183,7 @@ trait Trait_Plugin
                         return \false;
                     }
                     if (\is_numeric($pkey)) {
-                        $depsDisabled[] = $plugin;
+                        $depsDisabled[] = self::get_plugin_dependency_names($plugin);
                     } else {
                         $depsDisabled[] = $pkey;
                     }

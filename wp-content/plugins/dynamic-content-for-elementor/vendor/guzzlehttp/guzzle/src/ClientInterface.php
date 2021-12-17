@@ -4,9 +4,9 @@ namespace DynamicOOOS\GuzzleHttp;
 
 use DynamicOOOS\GuzzleHttp\Exception\GuzzleException;
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
-use DynamicOOOS\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 /**
  * Client interface for sending HTTP requests.
  */
@@ -15,7 +15,7 @@ interface ClientInterface
     /**
      * The Guzzle major version.
      */
-    const MAJOR_VERSION = 7;
+    public const MAJOR_VERSION = 7;
     /**
      * Send an HTTP request.
      *

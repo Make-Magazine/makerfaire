@@ -1,8 +1,4 @@
 <?php
-/**
- * Template Dynamic Content
- */
-
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,11 +14,10 @@ if ( isset( $inlinecss ) && $inlinecss ) {
 $elementor = get_post_meta( $get_id, '_elementor_edit_mode', true );
 $template_page = '';
 // If Elementor
-if ( class_exists( 'Elementor\Plugin' ) && $elementor ) {
+if ( $elementor ) {
 	$template_page = Elementor\Plugin::instance()->frontend->get_builder_content( $get_id, $inlcss );
 } else {
 	$post_n = get_post( $get_id );
 	$content_n = apply_filters( 'the_content', $post_n->post_content );
 	echo $content_n;
-
 }

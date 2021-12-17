@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\GuzzleHttp\Psr7;
 
-use DynamicOOOS\Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\StreamInterface;
 /**
  * Stream decorator trait
  *

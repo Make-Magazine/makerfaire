@@ -8,9 +8,9 @@ use DynamicOOOS\GuzzleHttp\Promise as P;
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
 use DynamicOOOS\GuzzleHttp\TransferStats;
 use DynamicOOOS\GuzzleHttp\Utils;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
-use DynamicOOOS\Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 /**
  * Handler that returns responses or throw exceptions from a queue.
  *

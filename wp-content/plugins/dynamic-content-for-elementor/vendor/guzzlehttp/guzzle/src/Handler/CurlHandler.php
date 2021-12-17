@@ -3,7 +3,7 @@
 namespace DynamicOOOS\GuzzleHttp\Handler;
 
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * HTTP handler that uses cURL easy handles as a transport layer.
  *
@@ -22,9 +22,9 @@ class CurlHandler
     /**
      * Accepts an associative array of options:
      *
-     * - factory: Optional curl factory used to create cURL handles.
+     * - handle_factory: Optional curl factory used to create cURL handles.
      *
-     * @param array $options Array of options to use with the handler
+     * @param array{handle_factory?: ?CurlFactoryInterface} $options Array of options to use with the handler
      */
     public function __construct(array $options = [])
     {

@@ -1,6 +1,6 @@
 (function ($) {
     var WidgetElements_FormHandler = function ($scope, $) {
-        var elementSettings = get_Dyncontel_ElementSettings($scope);
+        var elementSettings = dceGetElementSettings($scope);
         var id_scope = $scope.attr('data-id');
         var summary = elementSettings.dce_step_summary;
         if (summary) {

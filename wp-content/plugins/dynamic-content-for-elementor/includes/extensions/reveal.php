@@ -51,7 +51,7 @@ class DCE_Extension_Reveal extends \DynamicContentForElementor\Extensions\DCE_Ex
     {
         $settings = $widget->get_settings_for_display();
         if ($settings['enabled_reveal']) {
-            $this->_enqueue_alles();
+            $this->enqueue_all();
             $id_item = $widget->get_id();
             $content = '<div id="reveal-' . $id_item . '" class="revealFx">' . $content . '</div>';
         }

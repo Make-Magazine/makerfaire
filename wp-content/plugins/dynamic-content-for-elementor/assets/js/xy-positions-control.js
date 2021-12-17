@@ -41,7 +41,7 @@ jQuery( window ).on( 'elementor:init', function() {
 
 			this.updateXYPositions();
 		},
-	
+
 		initSliders: function() {
 			var _this = this;
 			var value = this.getControlValue();
@@ -50,31 +50,22 @@ jQuery( window ).on( 'elementor:init', function() {
 				var $slider = jQuery( this ),
 					$input = $slider.next( '.elementor-slider-input' ).find( 'input' );
 
-					if (elementor.config.version < '2.5') {
-						$slider.slider( {
-							value: value[ this.dataset.input ],
-							min: +$input.attr( 'min' ),
-							max: +$input.attr( 'max' ),
-							step: +$input.attr( 'step' )
-						} );
-					} else {
-						var sliderInstance = noUiSlider.create(slider, {
-							start: [value[slider.dataset.input]],
-							step: 1,
-							range: {
-								min: +$input.attr('min'),
-								max: +$input.attr('max')
+					var sliderInstance = noUiSlider.create(slider, {
+						start: [value[slider.dataset.input]],
+						step: 1,
+						range: {
+							min: +$input.attr('min'),
+							max: +$input.attr('max')
+						},
+						format: {
+							to: function to(sliderValue) {
+								return +sliderValue.toFixed(1);
 							},
-							format: {
-								to: function to(sliderValue) {
-									return +sliderValue.toFixed(1);
-								},
-								from: function from(sliderValue) {
-									return +sliderValue;
-								}
+							from: function from(sliderValue) {
+								return +sliderValue;
 							}
-						});
-
+						}
+					});
 
 					sliderInstance.on('slide', function (values) {
 						var type = sliderInstance.target.dataset.input;
@@ -83,11 +74,7 @@ jQuery( window ).on( 'elementor:init', function() {
 
 						_this.setValue(type, values[0]);
 					});
-
-				}
-
 			} );
-
 		},
 		onReady: function() {
 			this.initSliders();
@@ -96,7 +83,8 @@ jQuery( window ).on( 'elementor:init', function() {
 
 		updateXYPositions: function() {
 			this.fillEmptyXYPositions();
-			this.updateXYPositionsValue();
+			// The following causes control conditions not to work and its purpose is unclear. -!h-
+			// this.updateXYPositionsValue();
 		},
 		fillEmptyXYPositions: function() {
 			var xypositions = this.getPossibleXYPositions(),
@@ -111,13 +99,7 @@ jQuery( window ).on( 'elementor:init', function() {
 
 				if ( $element.length && _.isEmpty( $element.val() ) ) {
 					$element.val( defaultXYPositionsValue[xyposition] );
-
-					if (elementor.config.version < '2.5') {
-						$slider.slider( 'value', defaultXYPositionsValue[xyposition] );
-					} else {
-						$slider[0].noUiSlider.set( defaultXYPositionsValue[xyposition] );
-					}
-
+					$slider[0].noUiSlider.set( defaultXYPositionsValue[xyposition] );
 				}
 
 			} );
@@ -128,19 +110,11 @@ jQuery( window ).on( 'elementor:init', function() {
 				$controls = this.ui.controls,
 				$sliders = this.ui.sliders,
 				defaultXYPositionsValue = this.defaultXYPositionsValue;
-
 			xypositions.forEach( function( xyposition ) {
 				var $element = $controls.filter( '[data-setting="' + xyposition + '"]' );
-
 				currentValue[ xyposition ] = $element.length ? $element.val() : defaultXYPositionsValue;
-
 				var $slider = $sliders.filter( '[data-input="' + xyposition + '"]' );
-
-				if (elementor.config.version < '2.5') {
-					$slider.slider( 'value', $element.length ? $element.val() : defaultXYPositionsValue );
-				} else {
-					$slider[0].noUiSlider.set( $element.length ? $element.val() : defaultXYPositionsValue );
-				}
+				$slider[0].noUiSlider.set( $element.length ? $element.val() : defaultXYPositionsValue );
 			} );
 			this.setValue( currentValue );
 		},
@@ -156,12 +130,7 @@ jQuery( window ).on( 'elementor:init', function() {
 
 			var type = event.currentTarget.dataset.setting,
 			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' );
-
-			if (elementor.config.version < '2.5') {
-				$slider.slider( 'value', this.getControlValue( type ) );
-			} else {
-				$slider[0].noUiSlider.set( this.getControlValue( type ) );
-			}
+			$slider[0].noUiSlider.set( this.getControlValue( type ) );
 
 			this.updateXYPositions();
 		},

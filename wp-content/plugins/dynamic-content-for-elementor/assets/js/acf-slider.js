@@ -1,7 +1,7 @@
 (function ($) {
     var WidgetElements_ACFSliderHandler = function ($scope, $) {
 
-        var elementSettings = get_Dyncontel_ElementSettings($scope);
+        var elementSettings = dceGetElementSettings($scope);
 
         var elementSwiper = $scope.find('.swiper-container')[0];
         var id_scope = $scope.attr('data-id');
@@ -169,41 +169,25 @@
         }
 
         //------------------- Responsive Params
-        var spaceBetween = 0;
-        if (elementSettings.spaceBetween) {
-            spaceBetween = elementSettings.spaceBetween.size;
-        }
-        var responsivePoints = swiperOptions.breakpoints = {};
-        responsivePoints[elementorBreakpoints.lg] = {
-            slidesPerView: Number(elementSettings.slidesPerView) || 'auto',
-            slidesPerGroup: Number(elementSettings.slidesPerGroup) || 1,
-            spaceBetween: Number(spaceBetween) || 0,
-            slidesPerColumn: Number(elementSettings.slidesColumn) || 1,
-        };
-
-        var spaceBetween_tablet = spaceBetween;
-        if (elementSettings.spaceBetween_tablet) {
-            spaceBetween_tablet = elementSettings.spaceBetween_tablet.size;
-        }
-        responsivePoints[elementorBreakpoints.md] = {
-            slidesPerView: Number(elementSettings.slidesPerView_tablet) || Number(elementSettings.slidesPerView) || 'auto',
-            slidesPerGroup: Number(elementSettings.slidesPerGroup_tablet) || Number(elementSettings.slidesPerGroup) || 1,
-            spaceBetween: Number(spaceBetween_tablet) || 0,
-            slidesPerColumn: Number(elementSettings.slidesColumn_tablet) || Number(elementSettings.slidesColumn) || 1,
-        };
-
-        var spaceBetween_mobile = spaceBetween_tablet;
-        if (elementSettings.spaceBetween_mobile) {
-            spaceBetween_mobile = elementSettings.spaceBetween_mobile.size;
-        }
-        responsivePoints[elementorBreakpoints.xs] = {
-            slidesPerView: Number(elementSettings.slidesPerView_mobile) || Number(elementSettings.slidesPerView_tablet) || Number(elementSettings.slidesPerView) || 'auto',
-            slidesPerGroup: Number(elementSettings.slidesPerGroup_mobile) || Number(elementSettings.slidesPerGroup_tablet) || Number(elementSettings.slidesPerGroup) || 1,
-            spaceBetween: Number(spaceBetween_mobile) || 0,
-            slidesPerColumn: Number(elementSettings.slidesColumn_mobile) || Number(elementSettings.slidesColumn_tablet) || Number(elementSettings.slidesColumn) || 1,
-        };
-        swiperOptions = $.extend(swiperOptions, responsivePoints);
-
+        swiperOptions.breakpoints = dynamicooo.makeSwiperBreakpoints({
+			slidesPerView: {
+				elementor_key: 'slidesPerView',
+				default_value: 'auto'
+			},
+			slidesPerGroup: {
+				elementor_key: 'slidesPerGroup',
+				default_value: 1
+			},
+			spaceBetween: {
+				elementor_key: 'spaceBetween',
+				default_value: 0,
+				filter: (s) => Number(s.size),
+			},
+			slidesPerColumn: {
+				elementor_key: 'slidesColumn',
+				default_value: 1,
+			}
+		}, elementSettings);
 
         if (elementSettings.effects == 'custom1') {
             swiperOptions = $.extend(swiperOptions, interleaveEffect);

@@ -37,6 +37,21 @@ class CustomerService extends \DynamicOOOS\Stripe\Service\AbstractService
         return $this->requestCollection('get', $this->buildPath('/v1/customers/%s/balance_transactions', $parentId), $params, $opts);
     }
     /**
+     * Returns a list of PaymentMethods for a given Customer.
+     *
+     * @param string $id
+     * @param null|array $params
+     * @param null|array|\Stripe\Util\RequestOptions $opts
+     *
+     * @throws \Stripe\Exception\ApiErrorException if the request fails
+     *
+     * @return \Stripe\Collection
+     */
+    public function allPaymentMethods($id, $params = null, $opts = null)
+    {
+        return $this->requestCollection('get', $this->buildPath('/v1/customers/%s/payment_methods', $id), $params, $opts);
+    }
+    /**
      * List sources for a specified customer.
      *
      * @param string $parentId

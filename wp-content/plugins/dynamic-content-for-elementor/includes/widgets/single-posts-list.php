@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_SinglePostsMenu extends \DynamicContentForElementor\Widgets\DCE_Widget_Prototype
+class DCE_Widget_SinglePostsMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -61,7 +61,7 @@ class DCE_Widget_SinglePostsMenu extends \DynamicContentForElementor\Widgets\DCE
     }
     protected function render()
     {
-        $settings = $this->get_active_settings();
+        $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }

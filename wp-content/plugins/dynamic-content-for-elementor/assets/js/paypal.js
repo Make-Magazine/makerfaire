@@ -65,6 +65,10 @@ function initializePayPalButtons(w, $scope) {
 			},
 			onApprove: function(data, actions) {
 				orderIDInput.value = data.orderID;
+				// fire change event so conditions can be updated.
+				let evt = document.createEvent("HTMLEvents");
+				evt.initEvent("change", false, true);
+				orderIDInput.dispatchEvent(evt);
 				buttons.style.display = "none";
 				approvedMsg.style.display = "block";
 			}

@@ -122,7 +122,7 @@
             const acc = diff / config.width;
             const velo = +acc;
             const bounce = 1 - Math.abs(velo * scaleVal)
-            const skew = velo * (skewVal); //16; //7.5
+            const skew = velo * (skewVal);
 
             var percentOfScroll = (this.data.current / sizeTotalScroll) * 100;
 
@@ -440,8 +440,10 @@
 
         // configure
         var xx = 0;
-        if (settings_page.remove_first_scrollEffects)
-            xx = 1;
+        if (settings_page.remove_first_scrollEffects) {
+			xx = 1;
+		}
+            
         sectionsAvailable.each(function () {
             if ($(this).index() >= xx)
                 sectionsAvailable.addClass('lax');
@@ -633,14 +635,12 @@
 
     }
 
-
     // Change CallBack
     function handlescroll_viewport(newValue) {
 
         if (newValue) {
             // SI
             is_pageScroll = true;
-
         } else {
             // NO
             is_pageScroll = false;
@@ -656,12 +656,10 @@
     // Change CallBack SCROLLIFY
     function handleScrollify(newValue) {
 
-
         if (newValue) {
             if (is_scrollify) {
                 $.scrollify.enable();
             }
-
             init_Scrollify();
             handleScrollify_enablenavigation(settings_page.enable_scrollify_nav);
         } else {
@@ -719,7 +717,7 @@
             createNavigationTitles(newValue, true);
         }
     }
-    // Change CallBack SCROLL-EFFECTS - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Change CallBack SCROLL-EFFECTS
     function handleScrollEffects(newValue) {
         if (newValue) {
             // SI
@@ -738,11 +736,8 @@
     function handleScrollEffects_animations(newValue) {
         var animationType_string = newValue.join(' ');
         if (newValue.length) {
-
             removeScrollEffects();
-
             init_ScrollEffects();
-
             setStyleEffects(animationType_string);
             lax.updateElements();
         }
@@ -751,17 +746,12 @@
         reloadScrolling();
     }
     function handleScrollEffects_removefirst(newValue) {
-        if (newValue) {
-            // SI
-
-        }
         removeScrollEffects();
         init_ScrollEffects();
     }
 
     // Change CallBack INERTIA-SCROLL
     function handleInertiaScroll(newValue) {
-
         if (newValue) {
             // SI
             if (is_inertiaScroll) {
@@ -777,9 +767,7 @@
         }
     }
     function handleInertiaScroll_direction(newValue) {
-
         directionScroll = newValue;
-
         if (newValue) {
             // SI
             if (is_inertiaScroll) {
@@ -800,18 +788,15 @@
        if (typeof elementorFrontendConfig.settings.page !== 'undefined') {
            settings_page = elementorFrontendConfig.settings.page;
            currentPostId = elementorFrontendConfig.post.id;
-
            is_enable_dceScrolling = settings_page.enable_dceScrolling;
            is_enable_scrollify = settings_page.enable_scrollify;
            is_enable_scrollEffects = settings_page.enable_scrollEffects;
            is_enable_inertiaScroll = settings_page.enable_inertiaScroll;
-
            var responsive_scrollEffects = settings_page.responsive_scrollEffects;
            var responsive_snapScroll = settings_page.responsive_snapScroll;
            var responsive_inertiaScroll = settings_page.responsive_inertiaScroll;
 
            var deviceMode = $('body').attr('data-elementor-device-mode');
-
 
            if (is_enable_scrollEffects && is_enable_dceScrolling && $.inArray(deviceMode, responsive_scrollEffects) >= 0) {
                init_ScrollEffects();
@@ -824,7 +809,6 @@
 
                init_InertiaScroll();
            }
-
 
            if (elementorFrontend.isEditMode()) {
                if (elementor) {

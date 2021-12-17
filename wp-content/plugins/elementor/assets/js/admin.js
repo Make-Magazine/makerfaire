@@ -1,4 +1,4 @@
-/*! elementor - v3.4.7 - 31-10-2021 */
+/*! elementor - v3.5.0 - 12-12-2021 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -139,7 +139,7 @@ function _arrayLikeToArray(arr, len) {
 }
 
 module.exports = _arrayLikeToArray;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -156,7 +156,7 @@ function _arrayWithHoles(arr) {
 }
 
 module.exports = _arrayWithHoles;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -175,7 +175,7 @@ function _assertThisInitialized(self) {
 }
 
 module.exports = _assertThisInitialized;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -192,7 +192,7 @@ function _classCallCheck(instance, Constructor) {
 }
 
 module.exports = _classCallCheck;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -222,7 +222,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 module.exports = _createClass;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -258,7 +258,7 @@ function _createSuper(Derived) {
 }
 
 module.exports = _createSuper;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -277,7 +277,7 @@ var superPropBase = __webpack_require__(/*! ./superPropBase.js */ "../node_modul
 function _get(target, property, receiver) {
   if (typeof Reflect !== "undefined" && _Reflect$get) {
     module.exports = _get = _Reflect$get;
-    module.exports.default = module.exports, module.exports.__esModule = true;
+    module.exports["default"] = module.exports, module.exports.__esModule = true;
   } else {
     module.exports = _get = function _get(target, property, receiver) {
       var base = superPropBase(target, property);
@@ -292,14 +292,14 @@ function _get(target, property, receiver) {
       return desc.value;
     };
 
-    module.exports.default = module.exports, module.exports.__esModule = true;
+    module.exports["default"] = module.exports, module.exports.__esModule = true;
   }
 
   return _get(target, property, receiver || target);
 }
 
 module.exports = _get;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -317,12 +317,12 @@ function _getPrototypeOf(o) {
   module.exports = _getPrototypeOf = _Object$setPrototypeOf ? _Object$getPrototypeOf : function _getPrototypeOf(o) {
     return o.__proto__ || _Object$getPrototypeOf(o);
   };
-  module.exports.default = module.exports, module.exports.__esModule = true;
+  module.exports["default"] = module.exports, module.exports.__esModule = true;
   return _getPrototypeOf(o);
 }
 
 module.exports = _getPrototypeOf;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -352,7 +352,7 @@ function _inherits(subClass, superClass) {
 }
 
 module.exports = _inherits;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -369,7 +369,7 @@ function _interopRequireDefault(obj) {
 }
 
 module.exports = _interopRequireDefault;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -395,7 +395,7 @@ function _isNativeReflectConstruct() {
 }
 
 module.exports = _isNativeReflectConstruct;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -440,7 +440,7 @@ function _iterableToArrayLimit(arr, i) {
 }
 
 module.exports = _iterableToArrayLimit;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -455,7 +455,7 @@ function _nonIterableRest() {
 }
 
 module.exports = _nonIterableRest;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -465,20 +465,22 @@ module.exports.default = module.exports, module.exports.__esModule = true;
   \***********************************************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var _typeof = __webpack_require__(/*! @babel/runtime-corejs2/helpers/typeof */ "../node_modules/@babel/runtime-corejs2/helpers/typeof.js").default;
+var _typeof = __webpack_require__(/*! @babel/runtime-corejs2/helpers/typeof */ "../node_modules/@babel/runtime-corejs2/helpers/typeof.js")["default"];
 
 var assertThisInitialized = __webpack_require__(/*! ./assertThisInitialized.js */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js");
 
 function _possibleConstructorReturn(self, call) {
   if (call && (_typeof(call) === "object" || typeof call === "function")) {
     return call;
+  } else if (call !== void 0) {
+    throw new TypeError("Derived constructors may only return object or undefined");
   }
 
   return assertThisInitialized(self);
 }
 
 module.exports = _possibleConstructorReturn;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -496,12 +498,12 @@ function _setPrototypeOf(o, p) {
     return o;
   };
 
-  module.exports.default = module.exports, module.exports.__esModule = true;
+  module.exports["default"] = module.exports, module.exports.__esModule = true;
   return _setPrototypeOf(o, p);
 }
 
 module.exports = _setPrototypeOf;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -524,7 +526,7 @@ function _slicedToArray(arr, i) {
 }
 
 module.exports = _slicedToArray;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -546,7 +548,7 @@ function _superPropBase(object, property) {
 }
 
 module.exports = _superPropBase;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -568,20 +570,20 @@ function _typeof(obj) {
       return typeof obj;
     };
 
-    module.exports.default = module.exports, module.exports.__esModule = true;
+    module.exports["default"] = module.exports, module.exports.__esModule = true;
   } else {
     module.exports = _typeof = function _typeof(obj) {
       return obj && typeof _Symbol === "function" && obj.constructor === _Symbol && obj !== _Symbol.prototype ? "symbol" : typeof obj;
     };
 
-    module.exports.default = module.exports, module.exports.__esModule = true;
+    module.exports["default"] = module.exports, module.exports.__esModule = true;
   }
 
   return _typeof(obj);
 }
 
 module.exports = _typeof;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -605,7 +607,7 @@ function _unsupportedIterableToArray(o, minLen) {
 }
 
 module.exports = _unsupportedIterableToArray;
-module.exports.default = module.exports, module.exports.__esModule = true;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
 
 /***/ }),
 
@@ -626,7 +628,7 @@ _Object$defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = void 0;
+exports["default"] = void 0;
 
 __webpack_require__(/*! core-js/modules/es6.string.includes.js */ "../node_modules/core-js/modules/es6.string.includes.js");
 
@@ -699,7 +701,7 @@ var AdminMenuHandler = /*#__PURE__*/function (_elementorModules$Vie) {
   return AdminMenuHandler;
 }(elementorModules.ViewModule);
 
-exports.default = AdminMenuHandler;
+exports["default"] = AdminMenuHandler;
 
 /***/ }),
 
@@ -791,6 +793,78 @@ module.exports = elementorModules.ViewModule.extend({
 
 /***/ }),
 
+/***/ "../assets/dev/js/utils/events.js":
+/*!****************************************!*\
+  !*** ../assets/dev/js/utils/events.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.Events = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var Events = /*#__PURE__*/function () {
+  function Events() {
+    (0, _classCallCheck2.default)(this, Events);
+  }
+
+  (0, _createClass2.default)(Events, null, [{
+    key: "dispatch",
+    value:
+    /**
+     * Dispatch an Elementor event.
+     *
+     * Will dispatch both native event & jQuery event (as BC).
+     * By default, `bcEvent` is `null`.
+     *
+     * @param {Object} context - The context that will dispatch the event.
+     * @param {string} event - Event to dispatch.
+     * @param {*} data - Data to pass to the event, default to `null`.
+     * @param {string|null} bcEvent - BC event to dispatch, default to `null`.
+     *
+     * @return {void}
+     */
+    function dispatch(context, event) {
+      var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      var bcEvent = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+      // Make sure to use the native context if it's a jQuery instance.
+      context = context instanceof jQuery ? context[0] : context; // Dispatch the BC event only if exists.
+
+      if (bcEvent) {
+        context.dispatchEvent(new CustomEvent(bcEvent, {
+          detail: data
+        }));
+      } // jQuery's `.on()` listens also to native custom events, so there is no need
+      // to dispatch also a jQuery event.
+
+
+      context.dispatchEvent(new CustomEvent(event, {
+        detail: data
+      }));
+    }
+  }]);
+  return Events;
+}();
+
+exports.Events = Events;
+var _default = Events;
+exports["default"] = _default;
+
+/***/ }),
+
 /***/ "../core/common/assets/js/utils/environment.js":
 /*!*****************************************************!*\
   !*** ../core/common/assets/js/utils/environment.js ***!
@@ -806,7 +880,7 @@ _Object$defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = void 0;
+exports["default"] = void 0;
 
 __webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
 
@@ -851,7 +925,7 @@ isAppleWebkit = matchUserAgent('AppleWebKit') && !isBlink,
 };
 
 var _default = environment;
-exports.default = _default;
+exports["default"] = _default;
 
 /***/ }),
 
@@ -872,7 +946,9 @@ _Object$defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = void 0;
+exports["default"] = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.array.find.js */ "../node_modules/core-js/modules/es6.array.find.js");
 
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
 
@@ -901,16 +977,41 @@ var ExperimentsModule = /*#__PURE__*/function (_elementorModules$Vie) {
     value: function getDefaultSettings() {
       return {
         selectors: {
-          experimentIndicators: '.e-experiment__title__indicator'
+          experimentIndicators: '.e-experiment__title__indicator',
+          experimentForm: '#elementor-settings-form',
+          experimentSelects: '.e-experiment__select',
+          experimentsButtons: '.e-experiment__button'
         }
       };
     }
   }, {
     key: "getDefaultElements",
     value: function getDefaultElements() {
+      var _this$getSettings = this.getSettings(),
+          selectors = _this$getSettings.selectors;
+
       return {
-        $experimentIndicators: jQuery(this.getSettings('selectors.experimentIndicators'))
+        $experimentIndicators: jQuery(selectors.experimentIndicators),
+        $experimentForm: jQuery(selectors.experimentForm),
+        $experimentSelects: jQuery(selectors.experimentSelects),
+        $experimentsButtons: jQuery(selectors.experimentsButtons)
       };
+    }
+  }, {
+    key: "bindEvents",
+    value: function bindEvents() {
+      var _this = this;
+
+      this.elements.$experimentsButtons.on('click', function (event) {
+        return _this.onExperimentsButtonsClick(event);
+      });
+    }
+  }, {
+    key: "onExperimentsButtonsClick",
+    value: function onExperimentsButtonsClick(event) {
+      var submitButton = jQuery(event.currentTarget);
+      this.elements.$experimentSelects.val(submitButton.val());
+      this.elements.$experimentForm.find('#submit').trigger('click');
     }
   }, {
     key: "addTipsy",
@@ -926,16 +1027,16 @@ var ExperimentsModule = /*#__PURE__*/function (_elementorModules$Vie) {
   }, {
     key: "addIndicatorsTooltips",
     value: function addIndicatorsTooltips() {
-      var _this = this;
+      var _this2 = this;
 
       this.elements.$experimentIndicators.each(function (index, experimentIndicator) {
-        return _this.addTipsy(jQuery(experimentIndicator));
+        return _this2.addTipsy(jQuery(experimentIndicator));
       });
     }
   }, {
     key: "onInit",
     value: function onInit() {
-      var _this2 = this;
+      var _this3 = this;
 
       (0, _get2.default)((0, _getPrototypeOf2.default)(ExperimentsModule.prototype), "onInit", this).call(this);
 
@@ -943,7 +1044,7 @@ var ExperimentsModule = /*#__PURE__*/function (_elementorModules$Vie) {
         import(
         /* webpackIgnore: true */
         "".concat(elementorCommon.config.urls.assets, "lib/tipsy/tipsy.min.js?ver=1.0.0")).then(function () {
-          return _this2.addIndicatorsTooltips();
+          return _this3.addIndicatorsTooltips();
         });
       }
     }
@@ -951,7 +1052,7 @@ var ExperimentsModule = /*#__PURE__*/function (_elementorModules$Vie) {
   return ExperimentsModule;
 }(elementorModules.ViewModule);
 
-exports.default = ExperimentsModule;
+exports["default"] = ExperimentsModule;
 
 /***/ }),
 
@@ -972,7 +1073,7 @@ _Object$defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = void 0;
+exports["default"] = void 0;
 
 __webpack_require__(/*! core-js/modules/es6.string.includes.js */ "../node_modules/core-js/modules/es6.string.includes.js");
 
@@ -1052,7 +1153,7 @@ var LandingPagesHandler = /*#__PURE__*/function (_AdminMenuHandler) {
   return LandingPagesHandler;
 }(_adminMenu.default);
 
-exports.default = LandingPagesHandler;
+exports["default"] = LandingPagesHandler;
 
 /***/ }),
 
@@ -1073,7 +1174,7 @@ _Object$defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = void 0;
+exports["default"] = void 0;
 
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
 
@@ -1125,7 +1226,7 @@ var _default = /*#__PURE__*/function (_elementorModules$Mod) {
   return _default;
 }(elementorModules.Module);
 
-exports.default = _default;
+exports["default"] = _default;
 
 /***/ }),
 
@@ -5142,6 +5243,8 @@ var _module2 = _interopRequireDefault(__webpack_require__(/*! elementor/core/exp
 
 var _environment = _interopRequireDefault(__webpack_require__(/*! ../../../../core/common/assets/js/utils/environment */ "../core/common/assets/js/utils/environment.js"));
 
+var _events = _interopRequireDefault(__webpack_require__(/*! elementor-utils/events */ "../assets/dev/js/utils/events.js"));
+
 (function ($) {
   var ElementorAdmin = elementorModules.ViewModule.extend({
     maintenanceMode: null,
@@ -5547,7 +5650,8 @@ var _environment = _interopRequireDefault(__webpack_require__(/*! ../../../../co
   });
   $(function () {
     window.elementorAdmin = new ElementorAdmin();
-    elementorCommon.elements.$window.trigger('elementor/admin/init');
+
+    _events.default.dispatch(elementorCommon.elements.$window, 'elementor/admin/init');
   });
 })(jQuery);
 })();

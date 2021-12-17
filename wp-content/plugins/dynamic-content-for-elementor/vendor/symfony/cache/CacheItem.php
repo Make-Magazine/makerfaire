@@ -10,7 +10,7 @@
  */
 namespace DynamicOOOS\Symfony\Component\Cache;
 
-use DynamicOOOS\Psr\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 use DynamicOOOS\Symfony\Component\Cache\Exception\InvalidArgumentException;
 use DynamicOOOS\Symfony\Component\Cache\Exception\LogicException;
 use DynamicOOOS\Symfony\Contracts\Cache\ItemInterface;

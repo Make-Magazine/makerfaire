@@ -24,7 +24,7 @@ dce = {
 		backgroundColor = jQuery(element).data( "dce-background-overlay-color" );
 		this.addCssForBackgroundColor( element, backgroundColor );
 
-		backgroundColor = jQuery(element).data( "dce-background-overlay-color" );
+		backgroundColor = jQuery(element).data( "dce-background-overlay-hover-color" );
 		this.addCssForBackgroundColor( element, backgroundColor );
 
 

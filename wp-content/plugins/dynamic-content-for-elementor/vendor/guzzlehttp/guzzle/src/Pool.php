@@ -6,7 +6,7 @@ use DynamicOOOS\GuzzleHttp\Promise as P;
 use DynamicOOOS\GuzzleHttp\Promise\EachPromise;
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
 use DynamicOOOS\GuzzleHttp\Promise\PromisorInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 /**
  * Sends an iterator of requests concurrently using a capped pool size.
  *

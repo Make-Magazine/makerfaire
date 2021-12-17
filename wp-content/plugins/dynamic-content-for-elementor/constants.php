@@ -1,6 +1,6 @@
 <?php
 
-define( 'DCE_VERSION', '1.16.9' );
+define( 'DCE_VERSION', '2.2.4' );
 define( 'DCE__FILE__', __FILE__ );
 define( 'DCE_URL', plugins_url( '/', __FILE__ ) );
 define( 'DCE_PATH', plugin_dir_path( __FILE__ ) );
@@ -10,7 +10,6 @@ define( 'DCE_ELEMENTOR_PRO_VERSION_REQUIRED', '2.10.0' );
 define( 'DCE_PHP_VERSION_REQUIRED', '7.0' );
 define( 'DCE_PHP_VERSION_SUGGESTED', '7.3' );
 define( 'DCE_OPTIONS', 'dyncontel_options' );
-define( 'DCE_BACKUP_PATH', WP_CONTENT_DIR . '/backup' );
 define( 'DCE_BACKUP_URL', site_url() . '/wp-content/backup' );
 // License and update
 define( 'DCE_LICENSE_URL', 'https://license.dynamic.ooo' );

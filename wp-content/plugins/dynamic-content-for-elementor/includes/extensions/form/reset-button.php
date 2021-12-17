@@ -97,7 +97,7 @@ class DCE_Extension_Form_Reset extends \DynamicContentForElementor\Extensions\DC
     public function _add_form_reset_style($element, $args = array())
     {
         if ($element->get_name() == 'form') {
-            $element->start_controls_section('section_reset_button_style', ['label' => __('Reset Button', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
+            $element->start_controls_section('section_reset_button_style', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Reset Button', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
             $element->start_controls_tabs('tabs_reset_button_style');
             $element->start_controls_tab('tab_reset_button_normal', ['label' => __('Normal', 'dynamic-content-for-elementor')]);
             $element->add_control('reset_button_background_color', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .elementor-button.elementor-button-reset' => 'background-color: {{VALUE}};']]);

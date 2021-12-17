@@ -16,6 +16,8 @@ class DCE_Extension_Form_description extends \DynamicContentForElementor\Extensi
 {
     private $is_common = \false;
     public $has_action = \false;
+    public $depended_scripts = [];
+    public $depended_styles = ['dce-tooltip'];
     public function get_name()
     {
         return 'dce_form_description';
@@ -24,15 +26,34 @@ class DCE_Extension_Form_description extends \DynamicContentForElementor\Extensi
     {
         return __('Description', 'dynamic-content-for-elementor');
     }
+    public function add_assets_depends($form)
+    {
+        foreach ($this->depended_scripts as $script) {
+            $form->add_script_depends($script);
+        }
+        foreach ($this->depended_styles as $style) {
+            $form->add_style_depends($style);
+        }
+    }
     protected function add_actions()
     {
         add_action('elementor/widget/render_content', array($this, '_render_form'), 10, 2);
+        add_action('elementor/preview/enqueue_scripts', [$this, 'add_preview_depends']);
         add_action('elementor/widget/print_template', function ($template, $widget) {
             if ('form' === $widget->get_name()) {
                 $template = \false;
             }
             return $template;
         }, 10, 2);
+    }
+    public function add_preview_depends()
+    {
+        foreach ($this->depended_scripts as $script) {
+            wp_enqueue_script($script);
+        }
+        foreach ($this->depended_styles as $style) {
+            wp_enqueue_style($style);
+        }
     }
     public function _render_form($content, $widget)
     {
@@ -58,8 +79,10 @@ class DCE_Extension_Form_description extends \DynamicContentForElementor\Extensi
 					<?php 
             }
             $has_description = \false;
+            $add_assets = \false;
             foreach ($settings['form_fields'] as $key => $afield) {
                 if (!empty($afield['field_description']) && $afield['field_description_position'] != 'no-description') {
+                    $add_assets = \true;
                     $has_description = \true;
                     $field_description = \str_replace("'", "\\'", $afield['field_description']);
                     $field_description = \preg_replace('/\\s+/', ' ', \trim($field_description));
@@ -109,6 +132,9 @@ class DCE_Extension_Form_description extends \DynamicContentForElementor\Extensi
 						<?php 
                     }
                 }
+            }
+            if ($add_assets) {
+                $this->add_assets_depends($widget);
             }
             if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                 ?>

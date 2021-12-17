@@ -6,9 +6,9 @@ use DynamicOOOS\GuzzleHttp\Cookie\CookieJarInterface;
 use DynamicOOOS\GuzzleHttp\Exception\RequestException;
 use DynamicOOOS\GuzzleHttp\Promise as P;
 use DynamicOOOS\GuzzleHttp\Promise\PromiseInterface;
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
-use DynamicOOOS\Psr\Http\Message\ResponseInterface;
-use DynamicOOOS\Psr\Log\LoggerInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 /**
  * Functions used to create and wrap handlers with handler middleware.
  */

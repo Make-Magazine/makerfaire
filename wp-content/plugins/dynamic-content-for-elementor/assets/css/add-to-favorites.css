@@ -14,3 +14,7 @@
 .dce-add-to-favorite-add .dce-add-to-favorite-text-remove {
     display: none;
 }
+.elementor-widget-dce-add-to-favorites .elementor-button-disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}

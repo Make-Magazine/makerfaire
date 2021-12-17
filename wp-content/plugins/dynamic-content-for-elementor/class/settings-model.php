@@ -67,12 +67,10 @@ class Model extends CSS_Model
             $target_smoothTransition = ' ' . $selector_wrapper;
         }
         $controls = [];
-        $global_settings = GlobalSettings::get_active_settings();
-        if (!empty($global_settings)) {
-            foreach ($global_settings as $global_settings_class => $global_settings_info) {
-                $class = GlobalSettings::$namespace . $global_settings_class;
-                $controls[$global_settings_class] = $class::get_controls();
-            }
+        $global_settings = GlobalSettings::get_global_settings();
+        foreach ($global_settings as $global_settings_info) {
+            $class = '\\DynamicContentForElementor\\' . $global_settings_info['class'];
+            $controls[$class] = $class::get_controls();
         }
         return [GlobalSettings::PANEL_TAB_SETTINGS => $controls];
     }

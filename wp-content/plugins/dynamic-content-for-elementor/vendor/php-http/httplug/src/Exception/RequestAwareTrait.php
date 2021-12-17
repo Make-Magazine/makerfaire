@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\Http\Client\Exception;
 
-use DynamicOOOS\Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 trait RequestAwareTrait
 {
     /**

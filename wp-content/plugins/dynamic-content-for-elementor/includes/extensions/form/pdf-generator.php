@@ -5,6 +5,8 @@ namespace DynamicContentForElementor\Extensions;
 use Elementor\Controls_Manager;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Tokens;
+use DynamicContentForElementor\Plugin;
+use ElementorPro\Modules\QueryControl\Module as QueryModule;
 if (!\defined('ABSPATH')) {
     exit;
 }
@@ -60,32 +62,33 @@ class DCE_Extension_Form_PDF extends \ElementorPro\Modules\Forms\Classes\Action_
             $widget->end_controls_section();
             return;
         }
-        $widget->add_control('dce_form_pdf_converter', ['label' => __('Converter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'description' => __('Choose the converter that will generate the PDF.', 'dynamic-content-for-elementor'), 'options' => ['dompdf' => ['title' => __('DomPDF', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-paint-brush'], 'svg' => ['title' => __('SVG', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-fire']], 'toggle' => \false, 'default' => 'svg']);
+        $widget->add_control('dce_form_pdf_converter', ['label' => __('Converter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'description' => __('Choose the converter that will generate the PDF.', 'dynamic-content-for-elementor'), 'options' => ['svg' => 'SVG', 'html' => 'HTML', 'dompdf' => 'DomPDF'], 'toggle' => \false, 'default' => 'svg']);
         if (!\extension_loaded('imagick')) {
             $msg_txt = __(' The PHP extension <strong>imagick</strong> is missing but is highly recommended when creating the PDF from an SVG template. As a fallback only a limited subset of SVG is supported and the recommend editor is ', 'dynamic-content-for-elementor');
             $imagick_warning = <<<EOF
-{$msg_txt}<a href="https://svgeditor.dynamic.ooo">Dynamic SVG Editor</a>
+{$msg_txt}<a href="https://dnmc.ooo/svg">Dynamic SVG Editor</a>
 EOF;
             $widget->add_control('dce_form_pdf_missing_imagick', ['type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => $imagick_warning, 'separator' => 'before', 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['dce_form_pdf_converter' => 'svg']]);
         } else {
             $msg_txt = __('The SVG converter tries to use imagick for better results, but on some old system it might not work correctly, resulting in blank PDFs. If you have problems you can try to disable it. Please notice that if imagick is disabled you will have to use a simple SVG editor like this: ', 'dynamic-content-for-elementor');
-            $imagick_warning = "{$msg_txt}<a href='https://svgeditor.dynamic.ooo'>Dynamic SVG Editor</a>";
+            $imagick_warning = "{$msg_txt}<a href='https://dnmc.ooo/svg'>Dynamic SVG Editor</a>";
             $widget->add_control('dce_form_pdf_disable_imagick', ['label' => __('Disable Imagick', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'description' => $imagick_warning, 'return_value' => 'disable', 'default' => 'enable', 'separator' => 'before', 'condition' => ['dce_form_pdf_converter' => 'svg']]);
         }
         $widget->add_control('dce_form_pdf_name', ['label' => __('Name', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '[date|U]', 'description' => __('The PDF file name, the .pdf extension will automatically added', 'dynamic-content-for-elementor'), 'label_block' => \true, 'separator' => 'before']);
         $widget->add_control('dce_form_pdf_folder', ['label' => __('Folder', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'elementor/pdf/[date|Y]/[date|m]', 'description' => __('The directory inside /wp-content/uploads/ where save the PDF file', 'dynamic-content-for-elementor'), 'label_block' => \true]);
         $svg_repeater = new \Elementor\Repeater();
         $svg_repeater->add_control('text', ['label' => __('SVG Page code', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CODE, 'language' => 'svg', 'dynamic' => ['active' => \false]]);
+        $widget->add_control('dce_pdf_html_template', ['label' => __('HTML Template', 'dynamic-content-for-elementor'), 'type' => QueryModule::QUERY_CONTROL_ID, 'options' => [], 'label_block' => \true, 'autocomplete' => ['object' => QueryModule::QUERY_OBJECT_POST, 'display' => 'detailed', 'query' => ['post_type' => \DynamicContentForElementor\PdfHtmlTemplates::CPT]], 'condition' => ['dce_form_pdf_converter' => 'html']]);
         $widget->add_control('dce_form_pdf_svg_code_repeater', ['label' => __('PDF Pages', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'title_field' => 'Page', 'fields' => $svg_repeater->get_controls(), 'description' => __('The SVG template code that will be converted to PDF. One SVG per page. You can insert Tokens inside it.', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_pdf_converter' => 'svg']]);
         $widget->add_control('dce_form_pdf_template', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as body for this PDF', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_pdf_converter' => 'dompdf']]);
-        $paper_sizes = \array_keys(\DynamicOOOS\Dompdf\Adapter\CPDF::$PAPER_SIZES);
+        $paper_sizes = array(0 => '4a0', 1 => '2a0', 2 => 'a0', 3 => 'a1', 4 => 'a2', 5 => 'a3', 6 => 'a4', 7 => 'a5', 8 => 'a6', 9 => 'a7', 10 => 'a8', 11 => 'a9', 12 => 'a10', 13 => 'b0', 14 => 'b1', 15 => 'b2', 16 => 'b3', 17 => 'b4', 18 => 'b5', 19 => 'b6', 20 => 'b7', 21 => 'b8', 22 => 'b9', 23 => 'b10', 24 => 'c0', 25 => 'c1', 26 => 'c2', 27 => 'c3', 28 => 'c4', 29 => 'c5', 30 => 'c6', 31 => 'c7', 32 => 'c8', 33 => 'c9', 34 => 'c10', 35 => 'ra0', 36 => 'ra1', 37 => 'ra2', 38 => 'ra3', 39 => 'ra4', 40 => 'sra0', 41 => 'sra1', 42 => 'sra2', 43 => 'sra3', 44 => 'sra4', 45 => 'letter', 46 => 'half-letter', 47 => 'legal', 48 => 'ledger', 49 => 'tabloid', 50 => 'executive', 51 => 'folio', 52 => 'commercial #10 envelope', 53 => 'catalog #10 1/2 envelope', 54 => '8.5x11', 55 => '8.5x14', 56 => '11x17');
         $tmp = array();
         foreach ($paper_sizes as $asize) {
             $tmp[$asize] = \strtoupper($asize);
         }
         $paper_sizes = $tmp;
         $widget->add_control('dce_form_pdf_size', ['label' => __('Page Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'a4', 'options' => $paper_sizes, 'condition' => ['dce_form_pdf_converter' => 'dompdf']]);
-        $widget->add_control('dce_form_pdf_orientation', ['label' => __('Page Orientation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['portrait' => ['title' => __('Portrait', 'dynamic-content-for-elementor'), 'icon' => 'fas fa-portrait'], 'landscape' => ['title' => __('Landscape', 'dynamic-content-for-elementor'), 'icon' => 'fas fa-tv']], 'toggle' => \false, 'default' => 'portrait', 'condition' => ['dce_form_pdf_converter' => 'dompdf']]);
+        $widget->add_control('dce_form_pdf_orientation', ['label' => __('Page Orientation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['portrait' => __('Portrait', 'dynamic-content-for-elementor'), 'landscape' => __('Landscape', 'dynamic-content-for-elementor')], 'toggle' => \false, 'default' => 'portrait', 'condition' => ['dce_form_pdf_converter' => 'dompdf']]);
         $widget->add_control('dce_form_pdf_margin', ['label' => __('Page Margin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em'], 'condition' => ['dce_form_pdf_converter' => 'dompdf']]);
         $widget->add_control('dce_form_pdf_button_dpi', ['label' => __('DPI', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '96', 'options' => ['72' => '72', '96' => '96', '150' => '150', '200' => '200', '240' => '240', '300' => '300'], 'condition' => ['dce_form_pdf_converter' => 'dompdf']]);
         $widget->add_control('dce_form_section_page', ['label' => __('Sections Page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Force every Template Section in a new page', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_pdf_converter' => 'dompdf']]);
@@ -116,15 +119,22 @@ EOF;
     {
         $fields = Helper::get_form_data($record);
         $settings = $record->get('form_settings');
-        if ($settings['dce_form_pdf_converter'] === 'svg') {
-            try {
-                $this->svg_converter($settings, $record, $fields, $ajax_handler);
-            } catch (\Throwable $e) {
-                $ajax_handler->add_admin_error_message($e->getMessage());
+        try {
+            if ($settings['dce_form_pdf_converter'] === 'dompdf') {
+                $settings = Helper::get_dynamic_value($settings, $fields);
+                $this->dompdf_converter($settings, $fields, $ajax_handler);
+            } else {
+                if ($settings['dce_form_pdf_converter'] === 'svg') {
+                    $raw_pdf = $this->svg_converter($settings, $record, $fields, $ajax_handler);
+                } elseif ($settings['dce_form_pdf_converter'] === 'html') {
+                    $raw_pdf = $this->html_converter($settings, $record, $fields, $ajax_handler);
+                }
+                if ($raw_pdf) {
+                    $this->save_pdf_string_to_file($raw_pdf, $settings, $fields);
+                }
             }
-        } else {
-            $settings = Helper::get_dynamic_value($settings, $fields);
-            $this->dompdf_converter($settings, $fields, $ajax_handler);
+        } catch (\Throwable $e) {
+            $ajax_handler->add_admin_error_message($e->getMessage());
         }
     }
     /**
@@ -142,21 +152,6 @@ EOF;
                 if (\substr($key, 0, 4) == 'dce_') {
                     unset($element['settings'][$key]);
                 }
-            }
-        }
-    }
-    /** Make sure the given dir is created and has protection files. */
-    private static function ensure_dir($path)
-    {
-        if (\file_exists($path . '/index.php')) {
-            return $path;
-        }
-        wp_mkdir_p($path);
-        $files = [['file' => 'index.php', 'content' => ['<?php', '// Silence is golden.']], ['file' => '.htaccess', 'content' => ['Options -Indexes', '<ifModule mod_headers.c>', '	<Files *.*>', '       Header set Content-Disposition attachment', '	</Files>', '</IfModule>']]];
-        foreach ($files as $file) {
-            if (!\file_exists(trailingslashit($path) . $file['file'])) {
-                $content = \implode(\PHP_EOL, $file['content']);
-                @\file_put_contents(trailingslashit($path) . $file['file'], $content);
             }
         }
     }
@@ -288,19 +283,53 @@ EOF;
         }
         return $dom->saveXML();
     }
-    private function svg_converter($settings, $record, $fields, $ajax_handler)
+    private function get_field_values($record)
+    {
+        $raw_fields = $record->get_field([]);
+        $values = [];
+        foreach ($raw_fields as $field) {
+            $values[$field['id']] = $field['value'];
+        }
+        return $values;
+    }
+    private function get_raw_field_values($record)
+    {
+        $raw_fields = $record->get_field([]);
+        $values = [];
+        foreach ($raw_fields as $field) {
+            $values[$field['id']] = $field['raw_value'];
+        }
+        return $values;
+    }
+    private function html_converter($settings, $record, $fields, $ajax_handler)
+    {
+        $form_data = $this->get_field_values($record);
+        $raw_form_data = $this->get_raw_field_values($record);
+        $template_id = $settings['dce_pdf_html_template'];
+        if (!$template_id) {
+            $ajax_handler->add_error_message(__('PDF Generator: Please select an HTML template.', 'dynamic-content-for-elementor'));
+            return \false;
+        }
+        $module = Plugin::instance()->pdf_html_templates;
+        return $module->generate_pdf_from_template_id($template_id, $form_data, $raw_form_data);
+    }
+    private function save_pdf_string_to_file($raw_pdf, $settings, $fields)
     {
         global $dce_form;
         $dir_rel_path = Helper::get_dynamic_value($settings['dce_form_pdf_folder'], $fields);
         $upload_dir = wp_upload_dir();
         $dir_abs_path = trailingslashit($upload_dir['basedir']) . $dir_rel_path;
-        self::ensure_dir($dir_abs_path);
+        Helper::ensure_dir($dir_abs_path);
         $dir_url = trailingslashit($upload_dir['baseurl']) . $dir_rel_path;
         $file_name = Helper::get_dynamic_value($settings['dce_form_pdf_name'], $fields);
         $file_name = $file_name . '.pdf';
         $file_path = trailingslashit($dir_abs_path) . $file_name;
         $dce_form['pdf']['path'] = $file_path;
         $dce_form['pdf']['url'] = trailingslashit($dir_url) . $file_name;
+        \file_put_contents($file_path, $raw_pdf);
+    }
+    private function svg_converter($settings, $record, $fields, $ajax_handler)
+    {
         $svgs = $settings['dce_form_pdf_svg_code_repeater'];
         if (empty($svgs)) {
             $msg = __('PDF not generated, no SVG pages found.', 'dynamic-content-for-elementor');
@@ -315,8 +344,9 @@ EOF;
         $raw_pdf = self::svg_converter_convert($svgs, ($settings['dce_form_pdf_disable_imagick'] ?? '') === 'disable');
         if ($raw_pdf === \false) {
             $ajax_handler->add_admin_error_message('PDF: invalid SVG code.');
+            return \false;
         }
-        \file_put_contents($file_path, $raw_pdf);
+        return $raw_pdf;
     }
     public function dompdf_converter($settings, $fields, $ajax_handler = null)
     {
@@ -377,18 +407,18 @@ EOF;
             $phpempty = "<?php\n//Silence is golden.\n";
             \file_put_contents($pdf_dir . 'index.php', $phpempty);
         }
-        // https://github.com/dompdf/dompdf
         $context = \stream_context_create(array('ssl' => array('verify_peer' => \false, 'verify_peer_name' => \false)));
+        // https://github.com/dompdf/dompdf
         $options = new \DynamicOOOS\Dompdf\Options();
         $options->set('isRemoteEnabled', \true);
         $options->setIsRemoteEnabled(\true);
-        // instantiate and use the dompdf class
+        // Instantiate and use the dompdf class
         $dompdf = new \DynamicOOOS\Dompdf\Dompdf($options);
         $dompdf->setHttpContext($context);
         $dompdf->loadHtml($pdf_html);
         $dompdf->set_option('isRemoteEnabled', \true);
         $dompdf->set_option('isHtml5ParserEnabled', \true);
-        // (Optional) Setup the paper size and orientation
+        // Setup the paper size and orientation
         $dompdf->setPaper($settings['dce_form_pdf_size'], $settings['dce_form_pdf_orientation']);
         // DPI
         $dompdf->set_option('dpi', $settings['dce_form_pdf_button_dpi']);
