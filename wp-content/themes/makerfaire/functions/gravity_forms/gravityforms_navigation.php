@@ -163,7 +163,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
 
         $wp_admin_bar->add_node($args);
         buildFaireDrop($wp_admin_bar);
-
+        $faire = '';
         //add custom menu items
         $locations = array('mf-admin-bayarea-register-menu', 'mf-admin-newyork-register-menu', 'mf-admin-chicago-register-menu');
         foreach ($locations as $location_id) {

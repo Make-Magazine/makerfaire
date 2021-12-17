@@ -22,11 +22,12 @@ include_once TEMPLATEPATH . '/classes/cronJob.php';
 
 //eventbrite API
 if (is_admin()) {
-    include_once TEMPLATEPATH . '/classes/eventbrite.class.inc';
+include_once TEMPLATEPATH . '/classes/eventbrite.class.inc';
 }
 
-if (defined('WP_CLI') && WP_CLI)
-    require_once( 'plugins/wp-cli/wp-cli.php' );
+if (defined('WP_CLI') && WP_CLI) {
+    require_once('plugins/wp-cli/wp-cli.php');
+}
 
 // Include all function files in the makerfaire/functions directory:
 foreach (glob(TEMPLATEPATH . '/functions/*.php') as $file) {
@@ -55,35 +56,34 @@ add_action("wp_default_styles", "my_wp_default_styles");
 add_filter('jetpack_enable_opengraph', '__return_false', 99);
 
 /*
-  Set some CONST for universal assets (nav and footer)
-  enclosed in a function for safety
+*    Set some CONST for universal assets (nav and footer)
+enclosed in a function for safety
   this needs to appear before the scripts/styles are enqueued
  */
 
 function set_universal_asset_constants() {
     // Assume that we're in prod; only change if we are definitively in another
-	$universal_makehub_asset_env = 'make.co';
+    $universal_makehub_asset_env = 'make.co';
     $universal_asset_proto = 'https://';
     $host = $_SERVER['HTTP_HOST'];
     // dev environments
     if (strpos($host, 'dev.') === 0) {
-		$universal_makehub_asset_env = 'devmakehub.wpengine.com';
-    }
-    // stage environments
-    else if (strpos($host, 'stage.') === 0) {
-		$universal_makehub_asset_env = 'stagemakehub.wpengine.com';
-    }
-    // legacy staging environments
-    else if (strpos($host, '.staging.wpengine.com') > -1) {
-		$universal_makehub_asset_env = 'makehub.staging.wpengine.com';
-    }
-    // wpengine local environments
-    else if (strpos($host, '.local') > -1  || strpos($host, '.test') > -1 ) {
-		$universal_makehub_asset_env = 'makehub.local';
-		$universal_asset_proto = 'http://';
+        $universal_makehub_asset_env = 'devmakehub.wpengine.com';
+    } elseif (strpos($host, 'stage.') === 0) { // stage environments
+        $universal_makehub_asset_env = 'stagemakehub.wpengine.com';
+    } elseif (strpos($host, '.staging.wpengine.com') > -1) { // legacy staging environments
+        $universal_makehub_asset_env = 'makehub.staging.wpengine.com';
+    } elseif (strpos($host, '.local') > -1  || strpos($host, '.test') > -1) { // wpengine local environments
+        $universal_makehub_asset_env = 'makehub.local';
+        if(defined('makehub_local_https') && makehub_local_https){
+            $universal_asset_proto = 'https://';
+        }else{
+            $universal_asset_proto = 'http://';
+        }
+
     }
     // Set the important bits as CONSTANTS that can easily be used elsewhere
-	define('UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX', $universal_asset_proto . $universal_makehub_asset_env);
+    define('UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX', $universal_asset_proto . $universal_makehub_asset_env);
 }
 
 set_universal_asset_constants();
@@ -106,7 +106,7 @@ function load_scripts() {
     wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/css/universal.min.css', array(), $my_version);
 
     // font awesome load script
-	wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true ); 
+    wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true);
     //auth0
     wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false, true);
     // space time for timezone hijinks
@@ -128,8 +128,10 @@ function load_scripts() {
     // Localize
     $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
     wp_localize_script('built', 'object_name', $translation_array);
-    wp_localize_script('built-libs', 'ajax_object',
-            array(
+    wp_localize_script(
+        'built-libs',
+        'ajax_object',
+        array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'home_url' => get_home_url(),
                 'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
@@ -180,7 +182,7 @@ function load_admin_scripts() {
     wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), null);
 
     //wp_enqueue_script('make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'));
-    wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true );
+    wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true);
     wp_enqueue_script('admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.min.js', array('jquery'), $my_version);
 
     //styles
@@ -191,12 +193,12 @@ function load_admin_scripts() {
     wp_enqueue_script('sack');
     //custom scripts for national
     $user = wp_get_current_user();
-    $is_national = ( in_array('national', (array) $user->roles) );
+    $is_national = (in_array('national', (array) $user->roles));
     if ($is_national) {
         wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsnationaladmin.js', array('jquery'), null);
     }
 
-    $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
+    $is_barnesandnoble = (in_array('barnes__noble', (array) $user->roles));
     if ($is_barnesandnoble) {
         wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsbarnesandnobleadmin.js', array('jquery'), null);
     }
@@ -281,7 +283,7 @@ add_action('wp_ajax_nopriv_make_error_log', 'make_error_log');
 // Write to the php error log by request
 function make_error_log() {
     $error = filter_input(INPUT_POST, 'make_error', FILTER_SANITIZE_STRING);
-    error_log(print_r($error, TRUE));
+    error_log(print_r($error, true));
 }
 
 function my_acf_flexible_content_layout_title($title, $field, $layout, $i) {
@@ -389,13 +391,13 @@ add_action('admin_bar_menu', 'shapeSpace_remove_toolbar_node', 999);
 
 // keep the old style widget page
 function switch_widget_editor() {
-    remove_theme_support( 'widgets-block-editor' );
+    remove_theme_support('widgets-block-editor');
 }
-add_action( 'after_setup_theme', 'switch_widget_editor' );
+add_action('after_setup_theme', 'switch_widget_editor');
 
 // Never expire orphaned entries.
 // Set the expiration date to 100 years in the future effectively never expiring the entries.
-add_filter('gpnf_expiration_modifier', function() {
+add_filter('gpnf_expiration_modifier', function () {
     return 100 * YEAR_IN_SECONDS;
 });
 
@@ -450,19 +452,28 @@ function select_Timezone($selected = '') {
     return $select;
 }
 
-function basicCurl($url){
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-	$data = curl_exec($ch);
-	curl_close($ch);
-	return $data;
+function basicCurl($url) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    //for local server only!
+    $host = $_SERVER['HTTP_HOST'];
+    if (strpos($host, '.local') > -1  || strpos($host, '.test') > -1) { // wpengine local environments
+      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    }
+
+    $data = curl_exec($ch);
+    curl_close($ch);
+    return $data;
 }
 
 function smartTruncate($string, $limit, $break = ".", $pad = "...") {
     // return with no change if string is shorter than $limit
-    if (strlen($string) <= $limit)
+if (strlen($string) <= $limit) {
         return $string;
+    }
     // is $break present between $limit and the end of the string?
     if (false !== ($breakpoint = strpos($string, $break, $limit))) {
         if ($breakpoint < strlen($string) - 1) {
@@ -473,17 +484,17 @@ function smartTruncate($string, $limit, $break = ".", $pad = "...") {
 }
 
 function validate_url($url) {
-	if(preg_match( '/^(http|https):\\/\\/[a-z0-9_]+([\\-\\.]{1}[a-z_0-9]+)*\\.[_a-z]{2,5}'.'((:[0-9]{1,5})?\\/.*)?$/i' ,$url)){
-		$path = parse_url($url, PHP_URL_PATH);
-		$encoded_path = array_map('urlencode', explode('/', $path));
-		$url = str_replace($path, implode('/', $encoded_path), $url);
-		
-		return filter_var($url, FILTER_VALIDATE_URL) ? true : false;
-	}else{
-		return false;
-	}
-	
-	return true;
+    if (preg_match('/^(http|https):\\/\\/[a-z0-9_]+([\\-\\.]{1}[a-z_0-9]+)*\\.[_a-z]{2,5}'.'((:[0-9]{1,5})?\\/.*)?$/i', $url)) {
+        $path = parse_url($url, PHP_URL_PATH);
+        $encoded_path = array_map('urlencode', explode('/', $path));
+        $url = str_replace($path, implode('/', $encoded_path), $url);
+
+        return filter_var($url, FILTER_VALIDATE_URL) ? true : false;
+    } else {
+        return false;
+    }
+
+    return true;
 }
 
 /*
@@ -495,7 +506,7 @@ function codismo_table_columns( $columns ) {
     );
     $columns = array_merge( $columns, $custom_columns );
     return $columns;
-    
+
 }
 function codismo_table_column( $column, $post_id ) {
     if ( $column == 'codismo_template' ) {
@@ -503,3 +514,6 @@ function codismo_table_column( $column, $post_id ) {
     }
 }
 */
+
+//pull in custom elementor widgets
+require_once('elementor/make-widgets.php');

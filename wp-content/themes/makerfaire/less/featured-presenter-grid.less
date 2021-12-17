@@ -4,13 +4,21 @@
 @feat_img_touch_lg_breakpoint: 960px;
 @feat_img_touch_sm_breakpoint: 768px;
 @feat_img_mobile_breakpoint: 560px;
-
+.featured-item-panel {
+	.panel-title {
+		display: flex;
+		justify-content: center;
+	 }
+	padding-bottom: 30px;
+}
 .featured-image-grid {
    display: grid;
    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
    grid-column-gap: 24px;
    grid-row-gap: 24px;
    margin-bottom: 24px;
+   max-width: 1170px;
+   margin: 0 auto 30px;
    @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
       display: block;
    }
@@ -82,7 +90,7 @@
 		background-color: rgba(0,0,0,.6);
 		color: #dedede;
 		padding: 1em;
-		max-height: 90px;
+		max-height: 105px;
 		overflow-y: visible;
 
 		h3, p {

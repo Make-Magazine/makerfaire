@@ -7,6 +7,7 @@ get_header();
 
 <div class="clear"></div>
 <div id="main" class="front-page" role="main">
+	<?php the_content(); ?>
    <!-- Custom Panels -->
    <div class="page-content featured-faire customPanels">
       <?php 

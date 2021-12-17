@@ -141,7 +141,7 @@
                 },
                 {
                     "key": "field_5d926e2378802",
-                    "label": "Image",
+                    "label": "Image Panel",
                     "name": "image",
                     "type": "image",
                     "instructions": "Images MUST be at least 1240px wide, no more than 650px tall",
@@ -199,10 +199,10 @@
                         },
                         {
                             "key": "field_5d926e7678805",
-                            "label": "Background Color",
+                            "label": "Image Overlay Link",
                             "name": "background_color",
-                            "type": "select",
-                            "instructions": "Background Color",
+                            "type": "url",
+                            "instructions": "",
                             "required": 0,
                             "conditional_logic": 0,
                             "wrapper": {
@@ -210,19 +210,7 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "choices": {
-                                "white-bg": "White",
-                                "grey-bg": "Grey",
-                                "darkgrey-bg": "Dark Grey",
-                                "blue-bg": "Blue",
-                                "darkblue-bg": "Dark Blue"
-                            },
-                            "default_value": "white-bg",
-                            "allow_null": 0,
-                            "multiple": 0,
-                            "ui": 0,
-                            "return_format": "value",
-                            "ajax": 0,
+                            "default_value": "",
                             "placeholder": ""
                         }
                     ]
@@ -273,7 +261,7 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1596745386
+    "modified": 1632958945
 }

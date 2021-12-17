@@ -1,0 +1,35 @@
+{
+	"name": "gravityforms",
+	"version": "2.5.10",
+	"license": "GPL-2.0",
+	"repository": "https://github.com/gravityforms/gravityforms",
+	"engines": {
+		"node": "14.15.0",
+		"npm": "6.14.8"
+	},
+	"scripts": {
+		"start": "yarn install && cd node_modules/@gravityforms/gulp-tasks && npm run gulp -- dev",
+		"dev": "cd node_modules/@gravityforms/gulp-tasks && npm run gulp -- dev",
+		"dist": "cd node_modules/@gravityforms/gulp-tasks && npm run gulp -- dist",
+		"lint": "eslint . --ext .js,.jsx --fix",
+		"js:theme:dev": "cd node_modules/@gravityforms/webpack-config && npm run js:theme:dev",
+		"js:admin:dev": "cd node_modules/@gravityforms/webpack-config && npm run js:admin:dev",
+		"js:theme:prod": "cd node_modules/@gravityforms/webpack-config && npm run js:theme:prod",
+		"js:admin:prod": "cd node_modules/@gravityforms/webpack-config && npm run js:admin:prod",
+		"icons:admin": "cd node_modules/@gravityforms/gulp-tasks && npm run gulp -- icons:admin",
+		"icons:theme": "cd node_modules/@gravityforms/gulp-tasks && npm run gulp -- icons:theme",
+		"validate": "cd node_modules/@gravityforms/gulp-tasks && npm run gulp -- lint",
+		"watch": "cd node_modules/@gravityforms/gulp-tasks && npm run gulp -- watch"
+	},
+	"dependencies": {
+		"@gravityforms/components": "file:packages/npm/components",
+		"@gravityforms/request": "file:packages/npm/request",
+		"@gravityforms/utils": "file:packages/npm/utils"
+	},
+	"devDependencies": {
+		"@gravityforms/gulp-tasks": "file:packages/npm/gulp-tasks",
+		"@gravityforms/stylelint-config": "file:packages/npm/stylelint-config",
+		"@gravityforms/webpack-config": "file:packages/npm/webpack-config",
+		"lerna": "^4.0.0"
+	}
+}
