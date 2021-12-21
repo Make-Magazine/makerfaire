@@ -86,7 +86,7 @@
       }
 
       @media all and (max-width: 767px) {
-         .searchbox {  
+         .searchbox {
             input[type="text"] {
                flex: 1;
                max-width: initial;
@@ -98,27 +98,30 @@
    .col-date {
       width: 30%;
    }
-	.col-num { width: 5%; }
+	.col-num {
+		width: 5%;
+	}
    .col-name {
       width: 30%;
    }
    .col-location {
       width: 25%;
-   } 
+   }
    .col-country {
       width: 10%;
-   } 
+   }
 
 
    .VueTables__search, .VueTables__limit, .VuePagination__count {
       display: none;
    }
    .VueTables__table {
-      tr {
-         cursor: pointer;
-      }
-      .col-hidden { display: none; }
+		tr {
+			cursor: pointer;
+		}
+      	.col-hidden { display: none; }
 		.col-num {
+			display: none;
 			pointer-events: none;
 			.glyphicon-sort {
 				display: none;
@@ -150,7 +153,7 @@
 			top: 25px;
 			right: 0px;
 		}
-		h4 { 
+		h4 {
 			height: 40px;
 			font-weight: 300;
 			margin-bottom: 30px;
@@ -165,7 +168,7 @@
 				}
 			}
 		}
-		@media all and (max-width: 767px) { 
+		@media all and (max-width: 767px) {
          padding: 0px;
          h4 {
             height: auto;
@@ -203,11 +206,11 @@
 			margin-bottom: -2px;
 		}
 		label {
-			i { 
-				font-size: 24px; 
+			i {
+				font-size: 24px;
 				margin-top: -2px;
 			}
-			span { 
+			span {
 				position: relative;
 				top: -3px;
 			}

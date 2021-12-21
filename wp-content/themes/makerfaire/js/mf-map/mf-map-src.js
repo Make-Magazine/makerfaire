@@ -15,11 +15,11 @@ jQuery(document).ready(function() {
 			filteredData: [], // this is the tableData with the filters applied
          options: {
             headings: {
-               faire_name: 'Name',
-					annual: 'Annual',
-					event_start_dt: 'Date',
-               venue_address_city: 'Location', 
-               venue_address_country: 'Country',
+                faire_name: 'Name',
+				annual: 'Annual',
+				event_start_dt: 'Date',
+               	venue_address_city: 'Location',
+               	venue_address_country: 'Country',
             },
             templates: {
                venue_address_city: function (h, row, index) {
@@ -31,22 +31,22 @@ jQuery(document).ready(function() {
                },
             },
             columnsDisplay: { // the sizes the columns disappear
-					venue_address_city: 'min_tabletL',
-					annual: 'min_tabletP',
-               venue_address_country: 'desktop',
+				venue_address_city: 'min_tabletL',
+				annual: 'min_tabletP',
+                venue_address_country: 'desktop',
             },
             columnsClasses: {
-               faire_name: 'col-name',
-					annual: 'col-num',
-					event_start_dt: 'col-date',
-               venue_address_city: 'col-location', 
-               venue_address_country: 'col-country',
-					venue_address_street: 'col-hidden',
-					venue_address_state: 'col-hidden',
-					event_dt: 'col-hidden',
-					category: 'col-hidden',
-					event_end_dt: 'col-hidden',
-					venue_address_postal_code: 'col-hidden',
+				faire_name: 'col-name',
+				annual: 'col-num',
+				event_start_dt: 'col-date',
+				venue_address_city: 'col-location',
+				venue_address_country: 'col-country',
+				venue_address_street: 'col-hidden',
+				venue_address_state: 'col-hidden',
+				event_dt: 'col-hidden',
+				category: 'col-hidden',
+				event_end_dt: 'col-hidden',
+				venue_address_postal_code: 'col-hidden',
             },
             pagination: { chunk: 5 }, // undocumented :(
 				multiSorting: {
@@ -74,16 +74,16 @@ jQuery(document).ready(function() {
 			pastFaires: false,
 			currentLocation: false,
 			types: [
-				{name: "Global", description: "Faires that pull in exhibitors from around the world"}, 
-				{name: "Featured", description: "Larger-scale regional events"}, 
-				{name: "Mini", description: "Community events"}, 
+				{name: "Global", description: "Faires that pull in exhibitors from around the world"},
+				{name: "Featured", description: "Larger-scale regional events"},
+				{name: "Mini", description: "Community events"},
 				{name: "School", description: "K-12 Faires (closed to general public)"}
 			],
 			buttonMessage: "Show Past Faires",
          map: null,
 			markerCluster: null,
          mapDefaultZoom: 2,
-			mapMinZoom: 2, 
+			mapMinZoom: 2,
 			mapMaxZoom: 20,
          mapDefaultPos: {
 				lat: 29.1070772,
@@ -103,7 +103,7 @@ jQuery(document).ready(function() {
 					  _self.outputData[key].event_start_dt = Date.parse(_self.outputData[key].event_start_dt);
 					});
                _self.detectBrowser();
-               // _self.getLocation(); 
+               // _self.getLocation();
                _self.initMap();
             })
             .catch(function (error) {
@@ -113,13 +113,13 @@ jQuery(document).ready(function() {
             });
       },
 		updated: function() {
-			firstLoaded = false; 
+			firstLoaded = false;
 		},
       methods: {
          detectBrowser: function() {
             var useragent = navigator.userAgent,
                mapdiv = this.$refs.map;
-          
+
             if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
               mapdiv.style.width = '100%';
               mapdiv.style.height = '300px';
@@ -149,7 +149,7 @@ jQuery(document).ready(function() {
 						return values;
 					}
 				});
-				
+
 				var styledMapType = new google.maps.StyledMapType(
             [
 					  {
@@ -384,7 +384,7 @@ jQuery(document).ready(function() {
 									}
 								});
 								_self.addMarkers();
-						  } 
+						  }
 					  }
 				 });
 			},
@@ -395,9 +395,9 @@ jQuery(document).ready(function() {
             // infoWindow.open(this.map);
          },
 			// search filter
-         searchFilter: function(data) { 
+         searchFilter: function(data) {
             var searchString = this.filterVal.toLowerCase();
-				if(validateZipCode(searchString) == true) { 
+				if(validateZipCode(searchString) == true) {
 					this.codeAddress(searchString);
 				}
 				this.filteredData = this.tableData.filter( function(values) {
@@ -407,12 +407,12 @@ jQuery(document).ready(function() {
 							return values;
 						}
 					}
-					
+
 				});
             this.addMarkers();
          },
 			// past faires filter
-			psFilter: function(data){ 
+			psFilter: function(data){
 				var searchString = this.filterVal.toLowerCase(); // remember the search string
 				if(this.pastFaires == true) {
 					this.buttonMessage = "Show Past Faires";
@@ -444,7 +444,7 @@ jQuery(document).ready(function() {
 				this.addMarkers();
 			},
 			// type/category of faire filter
-			typeFilter: function(data) { 
+			typeFilter: function(data) {
 				var searchString = this.filterVal.toLowerCase(); // always remember the search string
 				// add to type filter array if checked on click, remove if unchecked
 				if("undefined" === typeof(data.originalTarget)) { // for webkit
@@ -472,7 +472,7 @@ jQuery(document).ready(function() {
 						}
 					}
 				});
-				if(validateZipCode(searchString) == true) { 
+				if(validateZipCode(searchString) == true) {
 					this.codeAddress(searchString);
 				}
             this.addMarkers();
@@ -504,7 +504,7 @@ jQuery(document).ready(function() {
                 fillOpacity: 1,
                 strokeOpacity: 0,
             };
-            this.markers = this.filteredData.map(function(location, i) {		
+            this.markers = this.filteredData.map(function(location, i) {
 					// styling for the various types of faires... flagship is now: Global
 					switch (location.category) {
 						case 'Flagship':
@@ -549,7 +549,7 @@ jQuery(document).ready(function() {
 }); // end doc ready
 
 /*jQuery(window).load(function(){
-  jQuery("input#School").click();	
+  jQuery("input#School").click();
 });*/
 
 

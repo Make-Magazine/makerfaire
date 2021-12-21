@@ -113,7 +113,7 @@ jQuery(document).ready(function () {
           _self.outputData[key].event_start_dt = Date.parse(_self.outputData[key].event_start_dt);
         });
 
-        _self.detectBrowser(); // _self.getLocation(); 
+        _self.detectBrowser(); // _self.getLocation();
 
 
         _self.initMap();
@@ -548,7 +548,7 @@ jQuery(document).ready(function () {
 }); // end doc ready
 
 /*jQuery(window).load(function(){
-  jQuery("input#School").click();	
+  jQuery("input#School").click();
 });*/
 
 function formatDate(date) {
