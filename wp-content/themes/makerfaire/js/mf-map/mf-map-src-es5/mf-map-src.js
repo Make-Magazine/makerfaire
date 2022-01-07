@@ -11,7 +11,7 @@ jQuery(document).ready(function () {
   var vm = new Vue({
     el: "#directory",
     data: {
-      columns: ['faire_name', 'annual', 'event_start_dt', 'venue_address_city', 'venue_address_country', 'venue_address_street', 'venue_address_state', 'event_dt', 'category', 'event_end_dt', 'venue_address_postal_code'],
+      columns: ['faire_name', 'event_start_dt', 'venue_address_city', 'venue_address_country', 'venue_address_street', 'venue_address_state', 'event_dt', 'category', 'event_end_dt', 'venue_address_postal_code'],
       tableData: [],
       // this keeps the whole table
       filteredData: [],
@@ -19,7 +19,6 @@ jQuery(document).ready(function () {
       options: {
         headings: {
           faire_name: 'Name',
-          annual: 'Annual',
           event_start_dt: 'Date',
           venue_address_city: 'Location',
           venue_address_country: 'Country'
@@ -38,12 +37,10 @@ jQuery(document).ready(function () {
         columnsDisplay: {
           // the sizes the columns disappear
           venue_address_city: 'min_tabletL',
-          annual: 'min_tabletP',
           venue_address_country: 'desktop'
         },
         columnsClasses: {
           faire_name: 'col-name',
-          annual: 'col-num',
           event_start_dt: 'col-date',
           venue_address_city: 'col-location',
           venue_address_country: 'col-country',

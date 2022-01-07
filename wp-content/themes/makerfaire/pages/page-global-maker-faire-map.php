@@ -85,13 +85,6 @@
           <table class="table table-striped table-condensed">
             <tr></tr>
             <tr ng-init="sort='event_start_dt';reverse=false">
-              <th class="cursor-pointer" ng-click="sort='annual';reverse=!reverse">
-                ANNUAL
-                <span ng-show="sort == 'annual'">
-                  <span ng-show="!reverse">^</span>
-                  <span ng-show="reverse">v</span>
-                </span>
-              </th>
               <th class="cursor-pointer" ng-click="sort='category';reverse=!reverse">FAIRE TYPE
                 <span ng-show="sort == 'category'">
                   <span ng-show="!reverse">^</span>
@@ -119,7 +112,6 @@
               </th>
             </tr>
             <tr dir-paginate="(index, row) in $ctrl.faireMarkers | orderBy:sort:reverse | itemsPerPage: 20">
-              <td>{{row.annual | ordinal}}</td>
               <td class="map-category-{{row.category}}"><i class="fas fa-circle"></i> {{row.category}}</td>
               <td>{{row.event_dt}}</td>
               <td>
