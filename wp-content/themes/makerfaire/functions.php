@@ -67,20 +67,14 @@ function set_universal_asset_constants() {
     $universal_asset_proto = 'https://';
     $host = $_SERVER['HTTP_HOST'];
     // dev environments
-    if (strpos($host, 'dev.') === 0) {
+    if (strpos($host, 'dev.') === 0 || strpos($host, 'mfairedev.') === 0) {
         $universal_makehub_asset_env = 'devmakehub.wpengine.com';
-    } elseif (strpos($host, 'stage.') === 0) { // stage environments
+    } elseif (strpos($host, 'stage.') === 0 || strpos($host, 'mfairestage.') === 0) { // stage environments
         $universal_makehub_asset_env = 'stagemakehub.wpengine.com';
     } elseif (strpos($host, '.staging.wpengine.com') > -1) { // legacy staging environments
         $universal_makehub_asset_env = 'makehub.staging.wpengine.com';
     } elseif (strpos($host, '.local') > -1  || strpos($host, '.test') > -1) { // wpengine local environments
         $universal_makehub_asset_env = 'makehub.local';
-        if(defined('makehub_local_https') && makehub_local_https){
-            $universal_asset_proto = 'https://';
-        }else{
-            $universal_asset_proto = 'http://';
-        }
-
     }
     // Set the important bits as CONSTANTS that can easily be used elsewhere
     define('UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX', $universal_asset_proto . $universal_makehub_asset_env);
