@@ -17,7 +17,9 @@ $type = ( ! empty( $_REQUEST['type'] ) ? sanitize_text_field( $_REQUEST['type'] 
 $upcoming = ( ! empty( $_REQUEST['upcoming'] ) ? sanitize_text_field( $_REQUEST['upcoming'] ) : false );
 $number = ( ! empty( $_REQUEST['number'] ) ? sanitize_text_field( $_REQUEST['number'] ) : null );
 $categories = ( ! empty( $_REQUEST['categories'] ) ? sanitize_text_field( $_REQUEST['categories'] ) : null );
-$categories_string = str_replace(',', '","', $categories);
+// transform the $categories string to something that will work with a mySQL IN statement
+$categories = str_replace(' ', '', $categories);
+$categories_string = '"' . str_replace(',', '","', $categories) . '"';
 
 // Double check again we have requested this file
 if ( $type == 'map' ) {
@@ -77,9 +79,16 @@ if ( $type == 'map' ) {
 	  $where .= 'event_start_dt >= CURDATE()';
 	  $order .= '`wp_mf_global_faire`.`event_start_dt` ASC';
 	  if(!empty($categories)) {
-	  	  $where .= ' AND event_type IN ("'.$categories_string.'")';
+		  $where .= ' AND ';
 	  }
-	  $select_query .= $where;
+  }
+  if(!empty($categories)) {
+	  $where .= 'event_type IN ('.$categories_string.')';
+  }
+  if($upcoming == true || !empty($categories)) {
+	 $select_query .= $where;
+  }
+  if($upcoming == true) {
 	  $select_query .= $order;
   }
   if($number != null && is_numeric($number)) {
