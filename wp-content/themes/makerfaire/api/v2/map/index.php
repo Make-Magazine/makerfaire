@@ -16,6 +16,8 @@ defined( 'ABSPATH' ) or die( 'This file cannot be called directly!' );
 $type = ( ! empty( $_REQUEST['type'] ) ? sanitize_text_field( $_REQUEST['type'] ) : null );
 $upcoming = ( ! empty( $_REQUEST['upcoming'] ) ? sanitize_text_field( $_REQUEST['upcoming'] ) : false );
 $number = ( ! empty( $_REQUEST['number'] ) ? sanitize_text_field( $_REQUEST['number'] ) : null );
+$categories = ( ! empty( $_REQUEST['categories'] ) ? sanitize_text_field( $_REQUEST['categories'] ) : null );
+$categories_string = str_replace(',', '","', $categories);
 
 // Double check again we have requested this file
 if ( $type == 'map' ) {
@@ -66,13 +68,25 @@ if ( $type == 'map' ) {
 			`venue_address_postal_code`,
 			`venue_address_region`,
 			states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state';
+
+  $where = ' WHERE ';
+  $order = ' ORDER BY ';
+  $limit = ' LIMIT ';
+
   if($upcoming == true) {
-	  $select_query .= ' where event_start_dt >= CURDATE()
-	  					ORDER BY `wp_mf_global_faire`.`event_start_dt` ASC';
+	  $where .= 'event_start_dt >= CURDATE()';
+	  $order .= '`wp_mf_global_faire`.`event_start_dt` ASC';
+  }
+  if($upcoming == true && !empty($categories)) {
+	  $where .= ' AND ';
+  }
+  if(!empty($categories)) {
+  	  $where .= 'event_type IN ("'.$categories_string.'")';
   }
   if($number != null && is_numeric($number)) {
-	  $select_query .= ' limit ' . $number;
+	  $limit .= $number;
   }
+  $select_query .= $where . $order . $limit;
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query ( $select_query );
 
