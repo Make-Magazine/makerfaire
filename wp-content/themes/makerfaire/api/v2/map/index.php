@@ -76,17 +76,16 @@ if ( $type == 'map' ) {
   if($upcoming == true) {
 	  $where .= 'event_start_dt >= CURDATE()';
 	  $order .= '`wp_mf_global_faire`.`event_start_dt` ASC';
-  }
-  if($upcoming == true && !empty($categories)) {
-	  $where .= ' AND ';
-  }
-  if(!empty($categories)) {
-  	  $where .= 'event_type IN ("'.$categories_string.'")';
+	  if(!empty($categories)) {
+	  	  $where .= ' AND event_type IN ("'.$categories_string.'")';
+	  }
+	  $select_query .= $where;
+	  $select_query .= $order;
   }
   if($number != null && is_numeric($number)) {
 	  $limit .= $number;
+	  $select_query .= $limit;
   }
-  $select_query .= $where . $order . $limit;
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query ( $select_query );
 
