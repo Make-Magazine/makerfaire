@@ -17,7 +17,7 @@ $type = ( ! empty( $_REQUEST['type'] ) ? sanitize_text_field( $_REQUEST['type'] 
 $upcoming = ( ! empty( $_REQUEST['upcoming'] ) ? sanitize_text_field( $_REQUEST['upcoming'] ) : false );
 $number = ( ! empty( $_REQUEST['number'] ) ? sanitize_text_field( $_REQUEST['number'] ) : null );
 $categories = ( ! empty( $_REQUEST['categories'] ) ? sanitize_text_field( $_REQUEST['categories'] ) : null );
-// transform the $categories string to something that will work with a mySQL IN statement
+// add quotes around each faire type in the $categories string so that it will work with a mySQL IN statement
 $categories = str_replace(' ', '', $categories);
 $categories_string = '"' . str_replace(',', '","', $categories) . '"';
 
@@ -72,29 +72,27 @@ if ( $type == 'map' ) {
 			states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state';
 
   $where = ' WHERE ';
-  $order = ' ORDER BY ';
-  $limit = ' LIMIT ';
-
+  $order = '';
+  $limit = '';
+  // if the api has an upcoming parameter set to true, we only want to return faire's past our current date
   if($upcoming == true) {
 	  $where .= 'event_start_dt >= CURDATE()';
 	  $order .= '`wp_mf_global_faire`.`event_start_dt` ASC';
+	  // when categories are set, we are limiting the faire to the set types (e.g. Mini, Featured, Flagship or School)
 	  if(!empty($categories)) {
 		  $where .= ' AND ';
 	  }
   }
+  // when categories are set, we are limiting the faire to the set types (e.g. Mini, Featured, Flagship or School)
   if(!empty($categories)) {
 	  $where .= 'event_type IN ('.$categories_string.')';
   }
-  if($upcoming == true || !empty($categories)) {
-	 $select_query .= $where;
-  }
-  if($upcoming == true) {
-	  $select_query .= $order;
-  }
+  // How many faires to return
   if($number != null && is_numeric($number)) {
 	  $limit .= $number;
-	  $select_query .= $limit;
   }
+  $select_query .= ($where!=' WHERE '?$where:'') . ($order!=''?' ORDER BY '.$order:'') . ($limit!=''?' LIMIT '.$limit:'');
+
   $mysqli->query("SET NAMES 'utf8'");
   $result = $mysqli->query ( $select_query );
 
