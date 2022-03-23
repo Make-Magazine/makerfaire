@@ -150,6 +150,18 @@ class Image_Slider extends Widget_Base {
 		);
 
 		$this->add_control(
+			'slide_height',
+			[
+				'label' => esc_html__( 'Slide Height', 'makerfaire' ),
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'min' => 300,
+				'max' => 600,
+				'step' => 10,
+				'default' => 400,
+			]
+		);
+
+		$this->add_control(
 			'text_position',
 			[
 				'label' => __( 'Text Position', 'makerfaire' ),
@@ -185,6 +197,7 @@ class Image_Slider extends Widget_Base {
 
 		$background_color = $settings['background_color'];
 		$text_position = $settings['text_position'];
+		$slide_height = $settings['slide_height'];
 		$slideshow_title = $settings['slideshow_title'];
 		$slideshow_name = $settings['slideshow_name'];
 		$column_number = $settings['column_number'];
@@ -203,7 +216,7 @@ class Image_Slider extends Widget_Base {
 				$return .= '<a href="' . $slide['slide_link']['url'] . '">';
 			}
 			$return .= '     <div class="item slide">
-									   <div class="slide-image-section" style="background:url(' . $imageObj['url'] . ');background-repeat:no-repeat;background-size:cover;">';
+									   <div class="slide-image-section" style="background:url(' . $imageObj['url'] . ');background-repeat:no-repeat;background-size:cover;min-height:'.$slide_height.'px;">';
 			if (!empty($slide['slide_title']) && get_sub_field("column_number") > 1) {
 				$return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
 			}
