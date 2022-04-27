@@ -74,7 +74,7 @@ function set_universal_asset_constants() {
     } elseif (strpos($host, '.staging.wpengine.com') > -1) { // legacy staging environments
         $universal_makehub_asset_env = 'makehub.staging.wpengine.com';
     } elseif (strpos($host, '.local') > -1  || strpos($host, '.test') > -1) { // wpengine local environments
-        $universal_makehub_asset_env = 'makehub.local';
+        $universal_makehub_asset_env = 'www.makehub.local';
     }
     // Set the important bits as CONSTANTS that can easily be used elsewhere
     define('UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX', $universal_asset_proto . $universal_makehub_asset_env);
