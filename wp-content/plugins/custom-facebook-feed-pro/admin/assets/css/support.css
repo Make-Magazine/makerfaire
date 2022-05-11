@@ -37,16 +37,16 @@
 }
 /*orange*/
 .sb-btn-orange{
-	background: #FE544F!important;
+	background: #E34F0E!important;
 	color: #fff!important;
 }
 .sb-btn-orange:hover{
-	background: #EC352F!important;
+	background: #F37036!important;
 	color: #fff!important;
 }
 .sb-btn-orange:focus,
 .sb-btn-orange:active{
-	background: #BC120E!important;
+	background: #B8400B!important;
 	color: #fff!important;
 }
 .cff-fb-cp-clpboard{
@@ -213,7 +213,7 @@
 }
 .cff-section-header .cff-search-doc .cff-search-doc-field {
     position: relative;
-    background: #fff;
+    background: #F3F4F5;
     border: 1px solid #DCDDE1;
     min-width: 283px;
     box-sizing: border-box;
@@ -425,7 +425,7 @@
     box-sizing: border-box;
 }
 .cff-support-contact-block .sb-cb-btn{
-    background: #FE544F;
+    background: #E34F0E;
     border-radius: 2px;
     color: #fff;
     text-decoration: none;
@@ -434,14 +434,14 @@
     font-size: 14px;
 }
 .cff-support-contact-block .sb-cb-btn:hover {
-    background: #EC352F;
-    border-color: #EC352F;
+    background: #F37036;
+    border-color: #F37036;
 }
 
 .cff-support-contact-block .sb-cb-btn:focus,
 .cff-support-contact-block .sb-cb-btn:active {
-    background: #BC120E;
-    border-color: #BC120E;
+    background: #B8400B;
+    border-color: #B8400B;
     outline: none;
     box-shadow: none;
 }
@@ -681,7 +681,7 @@
 }
 .cff-stck-wdg-btn svg{
     width: 25px;
-    fill: #FE544F;
+    fill: #E34F0E;
     height: 33px;
     float: left;
 }

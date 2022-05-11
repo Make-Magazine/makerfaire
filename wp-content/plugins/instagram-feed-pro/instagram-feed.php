@@ -3,43 +3,37 @@
 Plugin Name: Instagram Feed Pro Developer
 Plugin URI: https://smashballoon.com/instagram-feed
 Description: Display beautifully clean, customizable, and responsive Instagram feeds
-Version: 6.0.6
+Version: 5.12.5
 Author: Smash Balloon
 Author URI: https://smashballoon.com/
 License: GPLv2 or later
 Text Domain: instagram-feed
 */
 /*
-Copyright 2022  Smash Balloon  (email: hey@smashballoon.com)
+Copyright 2021  Smash Balloon  (email: hey@smashballoon.com)
 This program is paid software; you may not redistribute it under any
 circumstances without the expressed written consent of the plugin author.
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 */
+define( 'SBI_STORE_URL', 'https://smashballoon.com/' );
+define( 'SBI_PLUGIN_NAME', 'Instagram Feed Pro Developer' );
 
-use InstagramFeed\Helpers\SB_Instagram_Tracking;
-
-if ( ! defined( 'SBI_STORE_URL' ) ) {
-	define( 'SBI_STORE_URL', 'https://smashballoon.com/' );
-}
-if ( ! defined( 'SBI_PLUGIN_NAME' ) ) {
-	define( 'SBI_PLUGIN_NAME', 'Instagram Feed Pro Developer' );
-}
 // The ID of the product. Used for renewals
 $sbi_download_id = 33751; //33604, 33748, 33751
 
-if( !class_exists( '\InstagramFeed\EDD_SL_Plugin_Updater' ) ) {
+if( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
 	// load custom updater
 	include( dirname( __FILE__ ) . '/EDD_SL_Plugin_Updater.php' );
 }
 
 if ( ! defined( 'SBIVER' ) ) {
-	define( 'SBIVER', '6.0.6' );
+	define( 'SBIVER', '5.12.5' );
 }
 // Db version.
 if ( ! defined( 'SBI_DBVERSION' ) ) {
-	define( 'SBI_DBVERSION', '2.0' );
+	define( 'SBI_DBVERSION', '1.91' );
 }
 define( 'SBI_WELCOME_VER', '5_12' ); //Update when the Welcome page has new items to show
 
@@ -68,15 +62,10 @@ if ( ! defined( 'SBI_MINIMUM_WALL_VERSION' ) ) {
 	define( 'SBI_MINIMUM_WALL_VERSION', '1.0' );
 }
 
-
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_instagram' ) ) {
-	if ( isset( $_POST['oth'] ) ) {
-		return;
-	} else {
-		wp_die( "Please deactivate the free version of the Instagram Feed plugin before activating this version.<br /><br />Back to the WordPress <a href='".get_admin_url(null, 'plugins.php')."'>Plugins page</a>." );
-	}
+	wp_die( "Please deactivate the free version of the Custom Feeds for Instagram plugin before activating this version.<br /><br />Back to the WordPress <a href='".get_admin_url(null, 'plugins.php')."'>Plugins page</a>." );
 } else {
 	/**
 	 * Define constants and load plugin files
@@ -121,19 +110,8 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 			define( 'SBI_MAX_RECORDS', 1500 );
 		}
 
-		if ( ! defined( 'SBI_BUILDER_DIR' ) ) {
-		    define( 'SBI_BUILDER_DIR', SBI_PLUGIN_DIR . 'admin/builder/' );
-		}
-
-		if ( ! defined( 'SBI_BUILDER_URL' ) ) {
-		    define( 'SBI_BUILDER_URL', SBI_PLUGIN_URL . 'admin/builder/' );
-		}
-
-		require SBI_PLUGIN_DIR . 'vendor/autoload.php';
-
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/if-functions.php';
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/class-sb-instagram-api-connect.php';
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/class-sb-instagram-cache.php';
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/class-sb-instagram-connected-account.php';
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/class-sb-instagram-cron-updater.php';
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/class-sb-instagram-data-encryption.php';
@@ -153,15 +131,18 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/class-sb-instagram-single.php';
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/class-sb-instagram-token-refresher.php';
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/blocks/class-sbi-blocks.php';
+		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/class-sbi-tracking.php';
 
 		$sbi_blocks = new SB_Instagram_Blocks();
-		new SB_Instagram_Tracking();
+
 		if ( $sbi_blocks->allow_load() ) {
 			$sbi_blocks->load();
 		}
 
 		if ( is_admin() ) {
 			require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/actions.php';
+			require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/main.php';
+			require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/class-sbi-about.php';
 			require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/class-sbi-account-connector.php';
 
 			if ( version_compare( PHP_VERSION,  '5.3.0' ) >= 0
@@ -171,8 +152,6 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 				$sbi_notifications->init();
 
 				require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/class-sbi-new-user.php';
-				$sbi_newuser = new SBI_New_User();
-				$sbi_newuser->init();
 
 				require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/addon-functions.php';
 				require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/admin/PluginSilentUpgrader.php';
@@ -189,48 +168,10 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 			}
 
 		}
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/class-sb-instagram-widget.php';
-		$widget = new \InstagramFeed\SBI_Widget();
-
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'widget.php';
+
 		global $sb_instagram_posts_manager;
 		$sb_instagram_posts_manager = new SB_Instagram_Posts_Manager();
-
-		include SBI_PLUGIN_DIR . '/inc/Builder/SBI_Feed_Builder.php';
-		include SBI_PLUGIN_DIR . '/inc/Builder/SBI_Tooltip_Wizard.php';
-		//require_once SBI_PLUGIN_DIR . '/inc/Builder/SBI_Db.php';
-		//require_once SBI_PLUGIN_DIR . '/inc/Builder/SBI_Feed_Builder.php';
-		//require_once SBI_PLUGIN_DIR . '/inc/Builder/SBI_Feed_Saver.php';
-		//require_once SBI_PLUGIN_DIR . '/inc/Builder/SBI_Feed_Saver_Manager.php';
-		//require_once SBI_PLUGIN_DIR . '/inc/Builder/SBI_Post_Set.php';
-		//require_once SBI_PLUGIN_DIR . '/inc/Builder/SBI_Source.php';
-
-		sbi_builder_pro();
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'admin/SBI_View.php';
-
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'admin/SBI_About_Us.php';
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'admin/SBI_Admin_Notices.php';
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'admin/SBI_Global_Settings.php';
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'admin/SBI_HTTP_Request.php';
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'admin/SBI_oEmbeds.php';
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'admin/SBI_Response.php';
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'admin/SBI_Support.php';
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'admin/SBI_View.php';
-		$sbi_oembed				= new InstagramFeed\Admin\SBI_oEmbeds();
-		//$sbi_feed_builder		= new SBI_Feed_Builder();
-		$sbi_global_settings	= new InstagramFeed\Admin\SBI_Global_Settings();
-		$sbi_support			= new InstagramFeed\Admin\SBI_Support();
-		$sbi_about_us			= new InstagramFeed\Admin\SBI_About_Us();
-		//$sbi_tooltip_wizard		= new SBI_Tooltip_Wizard();
-		//$sbi_widget				= new SBI_Widget();
-		$sbi_admin_notices		= new InstagramFeed\Admin\SBI_Admin_Notices();
-		$sbi_tooltip_wizard		= new InstagramFeed\Builder\SBI_Tooltip_Wizard();
-
-		$db_ver = get_option( 'sbi_db_version', 0 );
-		if ( version_compare( $db_ver, '2.0', '>=' ) ) {
-			sbiOembedInit();
-		}
-
 	}
 
 	add_action( 'plugins_loaded', 'sb_instagram_feed_init' );
@@ -243,9 +184,6 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/pro/class-sbi-feed-pro.php';
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/pro/class-sbi-parse-pro.php';
 		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/pro/class-sbi-settings-pro.php';
-
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/pro/class-sbi-moderation-mode-cache.php';
-		require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/pro/class-sbi-moderation-mode-feed.php';
 
 		SB_Instagram_Comments::init_listeners();
 	}
@@ -392,18 +330,7 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 	 *
 	 * @since  2.0
 	 */
-	function sbi_create_database_table ( $include_charset_collate = true ) {
-		if ( ! function_exists( 'dbDelta' ) ) {
-			require_once ABSPATH . '/wp-admin/includes/upgrade.php';
-		}
-
-		global $wpdb;
-		$max_index_length = 191;
-		$charset_collate  = '';
-		if ( $include_charset_collate && method_exists( $wpdb, 'get_charset_collate' ) ) { // get_charset_collate introduced in WP 3.5
-			$charset_collate = $wpdb->get_charset_collate();
-		}
-
+	function sbi_create_database_table() {
 		global $wpdb;
 		global $sb_instagram_posts_manager;
 
@@ -414,61 +341,102 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 			$sb_instagram_posts_manager = new SB_Instagram_Posts_Manager();
 		}
 
-		$table_name      = esc_sql( $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE );
+		global $wp_version;
 
-		if ( $wpdb->get_var( "show tables like '$table_name'" ) !== $table_name ) {
-			$sql = "CREATE TABLE " . $table_name . " (
-            id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            created_on DATETIME,
-            instagram_id VARCHAR(1000) DEFAULT '' NOT NULL,
-            time_stamp DATETIME,
-            top_time_stamp DATETIME,
-            json_data LONGTEXT DEFAULT '' NOT NULL,
-            media_id VARCHAR(1000) DEFAULT '' NOT NULL,
-            sizes VARCHAR(1000) DEFAULT '' NOT NULL,
-            aspect_ratio DECIMAL (4,2) DEFAULT 0 NOT NULL,
-            images_done TINYINT(1) DEFAULT 0 NOT NULL,
-            last_requested DATE
-        ) $charset_collate;";
-			$wpdb->query( $sql );
-		}
-		$error = $wpdb->last_error;
-		$query = $wpdb->last_query;
+		if ( version_compare( $wp_version, '3.5', '<' ) ) {
+			$table_name = esc_sql( $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE );
 
-		if ( $wpdb->get_var( "show tables like '$table_name'" ) !== $table_name ) {
-			$had_error = true;
-			$sb_instagram_posts_manager->add_error( 'database_create', '<strong>' . __( 'There was an error when trying to create the database tables used for resizing images.', 'instagram-feed' ) .'</strong><br>' . $error . '<br><code>' . $query . '</code>' );
-		}
+			if ( $wpdb->get_var( "show tables like '$table_name'" ) != $table_name ) {
+				$sql = "CREATE TABLE " . $table_name . " (
+                id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                created_on DATETIME,
+                instagram_id VARCHAR(1000) DEFAULT '' NOT NULL,
+                time_stamp DATETIME,
+                top_time_stamp DATETIME,
+                json_data LONGTEXT DEFAULT '' NOT NULL,
+                media_id VARCHAR(1000) DEFAULT '' NOT NULL,
+                sizes VARCHAR(1000) DEFAULT '' NOT NULL,
+                aspect_ratio DECIMAL (4,2) DEFAULT 0 NOT NULL,
+                images_done TINYINT(1) DEFAULT 0 NOT NULL,
+                last_requested DATE
+            );";
+				$wpdb->query( $sql );
+			}
 
-		$feeds_posts_table_name = esc_sql( $wpdb->prefix . SBI_INSTAGRAM_FEEDS_POSTS );
+			$feeds_posts_table_name = esc_sql( $wpdb->prefix . SBI_INSTAGRAM_FEEDS_POSTS );
 
-		if ( $wpdb->get_var( "show tables like '$feeds_posts_table_name'" ) != $feeds_posts_table_name ) {
-			$sql = "CREATE TABLE " . $feeds_posts_table_name . " (
-			record_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            id INT(11) UNSIGNED NOT NULL,
-            instagram_id VARCHAR(1000) DEFAULT '' NOT NULL,
-            feed_id VARCHAR(1000) DEFAULT '' NOT NULL,
-            hashtag VARCHAR(1000) DEFAULT '' NOT NULL,
-            INDEX hashtag (hashtag($max_index_length)),
-            INDEX feed_id (feed_id($max_index_length))
-        ) $charset_collate;";
-			$wpdb->query( $sql );
-			$sbi_statuses_option = get_option( 'sbi_statuses', array() );
+			if ( $wpdb->get_var( "show tables like '$feeds_posts_table_name'" ) != $feeds_posts_table_name ) {
+				$sql = "CREATE TABLE " . $feeds_posts_table_name . " (
+				record_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                id INT(11) UNSIGNED NOT NULL,
+                instagram_id VARCHAR(1000) DEFAULT '' NOT NULL,
+                feed_id VARCHAR(1000) DEFAULT '' NOT NULL,
+                hashtag VARCHAR(1000) DEFAULT '' NOT NULL,
+                INDEX hashtag (hashtag(100)),
+                INDEX feed_id (feed_id(100))
+            );";
+				$wpdb->query( $sql );
+			}
 
-			$sbi_statuses_option['database']['hashtag_column'] = true;
+			return;
+		} else {
+			$charset_collate = $wpdb->get_charset_collate();
+			$table_name      = esc_sql( $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE );
 
-			update_option( 'sbi_statuses', $sbi_statuses_option );
-		}
-		$error = $wpdb->last_error;
-		$query = $wpdb->last_query;
+			if ( $wpdb->get_var( "show tables like '$table_name'" ) != $table_name ) {
+				$sql = "CREATE TABLE " . $table_name . " (
+                id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                created_on DATETIME,
+                instagram_id VARCHAR(1000) DEFAULT '' NOT NULL,
+                time_stamp DATETIME,
+                top_time_stamp DATETIME,
+                json_data LONGTEXT DEFAULT '' NOT NULL,
+                media_id VARCHAR(1000) DEFAULT '' NOT NULL,
+                sizes VARCHAR(1000) DEFAULT '' NOT NULL,
+                aspect_ratio DECIMAL (4,2) DEFAULT 0 NOT NULL,
+                images_done TINYINT(1) DEFAULT 0 NOT NULL,
+                last_requested DATE
+            ) $charset_collate;";
+				$wpdb->query( $sql );
+			}
+			$error = $wpdb->last_error;
+			$query = $wpdb->last_query;
 
-		if ( $wpdb->get_var( "show tables like '$feeds_posts_table_name'" ) != $feeds_posts_table_name ) {
-			$had_error = true;
-			$sb_instagram_posts_manager->add_error( 'database_create', '<strong>' . __( 'There was an error when trying to create the database tables used for resizing images.', 'instagram-feed' ) .'</strong><br>' . $error . '<br><code>' . $query . '</code>' );
-		}
+			if ( $wpdb->get_var( "show tables like '$table_name'" ) != $table_name ) {
+				$had_error = true;
+				$sb_instagram_posts_manager->add_error( 'database_create', '<strong>' . __( 'There was an error when trying to create the database tables used for resizing images.', 'instagram-feed' ) .'</strong><br>' . $error . '<br><code>' . $query . '</code>' );
+			}
 
-		if ( ! $had_error ) {
-			$sb_instagram_posts_manager->remove_error( 'database_create' );
+			$feeds_posts_table_name = esc_sql( $wpdb->prefix . SBI_INSTAGRAM_FEEDS_POSTS );
+
+			if ( $wpdb->get_var( "show tables like '$feeds_posts_table_name'" ) != $feeds_posts_table_name ) {
+				$sql = "CREATE TABLE " . $feeds_posts_table_name . " (
+				record_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                id INT(11) UNSIGNED NOT NULL,
+                instagram_id VARCHAR(1000) DEFAULT '' NOT NULL,
+                feed_id VARCHAR(1000) DEFAULT '' NOT NULL,
+                hashtag VARCHAR(1000) DEFAULT '' NOT NULL,
+                INDEX hashtag (hashtag(100)),
+                INDEX feed_id (feed_id(100))
+            ) $charset_collate;";
+				$wpdb->query( $sql );
+				$sbi_statuses_option = get_option( 'sbi_statuses', array() );
+
+				$sbi_statuses_option['database']['hashtag_column'] = true;
+
+				update_option( 'sbi_statuses', $sbi_statuses_option );
+			}
+			$error = $wpdb->last_error;
+			$query = $wpdb->last_query;
+
+			if ( $wpdb->get_var( "show tables like '$feeds_posts_table_name'" ) != $feeds_posts_table_name ) {
+				$had_error = true;
+				$sb_instagram_posts_manager->add_error( 'database_create', '<strong>' . __( 'There was an error when trying to create the database tables used for resizing images.', 'instagram-feed' ) .'</strong><br>' . $error . '<br><code>' . $query . '</code>' );
+			}
+
+			if ( ! $had_error ) {
+				$sb_instagram_posts_manager->remove_error( 'database_create' );
+			}
 		}
 	}
 
@@ -496,7 +464,7 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 
 			sbi_create_database_table();
 
-			//Delete all transients
+//Delete all transients
 			global $wpdb;
 			$table_name = $wpdb->prefix . "options";
 			$wpdb->query( "
@@ -612,7 +580,6 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 
 			update_option( 'sbi_db_version', SBI_DBVERSION );
 		}
-
 		//$manager = new SB_Instagram_Data_Manager();
 		//$manager->reset(); die();
 		if ( (float) $db_ver < 1.91 ) {
@@ -622,187 +589,8 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 			update_option( 'sbi_db_version', SBI_DBVERSION );
 		}
 
-		//\InstagramFeed\Builder\SBI_Db::reset_legacy();die();
-		//echo '<pre>';$sbi_statuses_option = get_option( 'sbi_statuses', array() );var_dump($sbi_statuses_option); die();
-
-		//\InstagramFeed\Builder\SBI_Db::reset_tables();\InstagramFeed\Builder\SBI_Db::reset_db_update();die();
-
-		/**
-		 * for 4.0 update
-		 */
-		if ( (float) $db_ver < 2.0 ){
-			$sbi_statuses_option = get_option( 'sbi_statuses', array() );
-			$options = get_option( 'sb_instagram_settings', array() );
-			$db = sbi_get_database_settings();
-
-			$connected_accounts =  isset( $options['connected_accounts'] ) ? $options['connected_accounts'] : array();
-
-			\InstagramFeed\Builder\SBI_Db::create_tables();
-			update_option( 'sbi_db_version', SBI_DBVERSION );
-
-			$options_support_legacy = false;
-			if ( ! empty( $connected_accounts ) ) {
-				$sbi_statuses_option['legacy_source_queue'] = \InstagramFeed\Builder\SBI_Source::set_legacy_source_queue();
-
-				$sbi_statuses_option['legacy_source_queue'] = \InstagramFeed\Builder\SBI_Source::batch_process_legacy_source_queue();
-				$options_support_legacy = true;
-
-				/** Caching Type **/
-				if ( ! empty( $db['sbi_caching_type'] ) && $db['sbi_caching_type'] === 'page' ) {
-					if ( ! empty( $db['sb_instagram_cache_time_unit'] ) && $db['sb_instagram_cache_time_unit'] === 'minutes' ) {
-						if ( (int) $db['sb_instagram_cache_time'] < 30 ) {
-							$db['legacy_page_cache'] = max( (int) $db['sb_instagram_cache_time'], 1 );
-						}
-
-						$db['sbi_cache_cron_interval'] = '30mins';
-
-						update_option( 'sb_instagram_settings', $db );
-					}
-					include_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'inc/class-sb-instagram-cron-updater.php';
-					SB_Instagram_Cron_Updater::start_cron_job( $db['sbi_cache_cron_interval'], $db['sbi_cache_cron_time'], $db['sbi_cache_cron_am_pm'] );
-				}
-				/** End Caching Type **/
-
-				if ( sbi_is_pro_version() ) {
-					$base_settings =\SB_Instagram_Settings_Pro::legacy_shortcode_atts( array(), $db );
-				} else {
-					$base_settings =\SB_Instagram_Settings::legacy_shortcode_atts( array(), $db );
-				}
-
-				if ( $base_settings['type'] === 'user' ) {
-					if ( ! empty( $base_settings['id'] ) ) {
-						$base_settings['user'] = array();
-						foreach ( $base_settings['id'] as $id ) {
-							if ( ! empty( $connected_accounts[ $id ] ) ) {
-								$base_settings['user'][] = $connected_accounts[ $id ]['username'];
-							}
-						}
-					}
-				} elseif ( $base_settings['type'] === 'tagged' ) {
-					if ( ! empty( $base_settings['tagged'] ) ) {
-						$base_settings['user'] = array();
-						foreach ( $base_settings['tagged'] as $id ) {
-							if ( ! empty( $connected_accounts[ $id ] ) ) {
-								$base_settings['user'][] = $connected_accounts[ $id ]['username'];
-							}
-						}
-					}
-				}
-
-				update_option( 'sbi_legacy_feed_settings', sbi_json_encode( $base_settings ), false );
-			}
-
-			// how many legacy feeds?
-			$args = array(
-				'html_location' => array( 'header', 'footer', 'sidebar', 'content', 'unknown' ),
-				'group_by' => 'shortcode_atts',
-				'page' => 1
-			);
-			$feeds_data = \SB_Instagram_Feed_Locator::legacy_instagram_feed_locator_query( $args );
-			$num_legacy = count( $feeds_data );
-
-			$sbi_statuses_option['support_legacy_shortcode'] = $options_support_legacy;
-
-			if ( $num_legacy > 0 ) {
-
-				if ( $num_legacy > 1 ) {
-					$sbi_statuses_option['legacy_onboarding'] = array(
-						'active' => true,
-						'type'=> 'multiple'
-					);
-					$sbi_statuses_option['support_legacy_shortcode'] = true;
-				} else {
-					$sbi_statuses_option['legacy_onboarding'] = array(
-						'active' => true,
-						'type'=> 'single'
-					);
-
-					$shortcode_atts = ! empty($feeds_data[0] ) && $feeds_data[0]['shortcode_atts'] != '[""]' ? json_decode( $feeds_data[0]['shortcode_atts'], true ) : [];
-					$shortcode_atts = is_array( $shortcode_atts ) ? $shortcode_atts : array();
-
-					$sbi_statuses_option['support_legacy_shortcode'] = $shortcode_atts;
-
-					$shortcode_atts['from_update'] = true;
-
-					$db = sbi_get_database_settings();
-					if ( sbi_is_pro_version() ) {
-						$base_settings =\SB_Instagram_Settings_Pro::legacy_shortcode_atts( $shortcode_atts, $db );
-					} else {
-						$base_settings =\SB_Instagram_Settings::legacy_shortcode_atts( $shortcode_atts, $db );
-					}
-
-					$feed_saver = new \InstagramFeed\Builder\SBI_Feed_Saver( false );
-					$feed_saver->set_data( $base_settings );
-
-					if ( $base_settings['type'] === 'hashtag' ) {
-						$feed_name = str_replace(',', ' ', $base_settings['hashtag'] );
-					} else {
-
-						if ( $base_settings['type'] === 'user' ) {
-							if ( ! empty( $base_settings['id'] ) ) {
-								$base_settings['user'] = array();
-								foreach ( $base_settings['id'] as $id ) {
-									if ( ! empty( $connected_accounts[ $id ] ) ) {
-										$base_settings['user'][] = $connected_accounts[ $id ]['username'];
-									}
-								}
-							}
-						} elseif ( $base_settings['type'] === 'tagged' ) {
-							if ( ! empty( $base_settings['tagged'] ) ) {
-								$base_settings['user'] = array();
-								foreach ( $base_settings['tagged'] as $id ) {
-									if ( ! empty( $connected_accounts[ $id ] ) ) {
-										$base_settings['user'][] = $connected_accounts[ $id ]['username'];
-									}
-								}
-							}
-						}
-
-						$feed_name = 'My Feed';
-						if ( ! empty( $base_settings['user'] ) ) {
-							$feed_name = implode( ', ', $base_settings['user'] );
-							$feed_name = trim( $feed_name );
-						}
-
-					}
-
-					$feed_saver->set_feed_name( $feed_name );
-
-					$new_feed_id = $feed_saver->update_or_insert();
-
-					$args = array(
-						'new_feed_id' => $new_feed_id,
-						'legacy_feed_id' => $feeds_data[0]['feed_id'],
-					);
-
-					SB_Instagram_Feed_Locator::update_legacy_to_builder( $args );
-				}
-			} elseif ( $num_legacy === 0 && $options_support_legacy ) {
-				$sbi_statuses_option['support_legacy_shortcode'] = true;
-			}
-
-			if ( ! wp_next_scheduled( 'sbi_feed_update' ) ) {
-				wp_schedule_event( time() + 60, 'twicedaily', 'sbi_feed_update' );
-			}
-
-			$sbi_rating_notice = get_option( 'sbi_rating_notice', '' );
-
-			if ( $sbi_rating_notice !== 'dismissed' ) {
-				$sbi_statuses_option['first_install'] = empty( $sbi_statuses_option['first_install'] ) ? time() : $sbi_statuses_option['first_install'];
-				$sbi_rating_notice_option = get_option( 'sbi_rating_notice', false );
-				$sbi_rating_notice_waiting = get_transient( 'instagram_feed_rating_notice_waiting' );
-				if ( $sbi_rating_notice_waiting === false
-				     && $sbi_rating_notice_option === false ) {
-					$time = 2 * WEEK_IN_SECONDS;
-					set_transient( 'instagram_feed_rating_notice_waiting', 'waiting', $time );
-					update_option( 'sbi_rating_notice', 'pending', false );
-				}
-			}
-
-			update_option( 'sbi_statuses', $sbi_statuses_option, true );
-		}
-
 	}
+
 	add_action( 'wp_loaded', 'sbi_check_for_db_updates' );
 
 	/**
@@ -818,9 +606,8 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 		}
 
 		//If the user is preserving the settings then don't delete them
-		$options                        = get_option( 'sb_instagram_settings', array() );
+		$options                        = get_option( 'sb_instagram_settings' );
 		$sb_instagram_preserve_settings = isset( $options['sb_instagram_preserve_settings'] ) ? $options['sb_instagram_preserve_settings'] : false;
-
 		/* ALL platform Data */
 		/* Backup Caches */
 		global $wpdb;
@@ -878,6 +665,9 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 		delete_option( 'sbi_single_cache' );
 		delete_transient( 'sbinst_comment_cache' );
 		delete_option( 'sbi_oembed_token' );
+		delete_option( 'sbi_hashtag_ids' );
+		delete_option( 'sbi_oembed_token' );
+		delete_option( 'sbi_top_api_calls' );
 		//image resizing
 		$upload                 = wp_upload_dir();
 		$posts_table_name       = $wpdb->prefix . 'sbi_instagram_posts';
@@ -910,71 +700,80 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 			        FROM $table_name
 			        WHERE `option_name` LIKE ('%\_transient\_timeout\_\$sbi\_%')
 			        " );
-		delete_option( 'sbi_db_version' );
-
-		$feed_caches_table_name = $wpdb->prefix . 'sbi_feed_caches';
-		$wpdb->query( "DROP TABLE IF EXISTS $feed_caches_table_name" );
-
-		$sources_table_name = $wpdb->prefix . 'sbi_sources';
-		$wpdb->query( "DROP TABLE IF EXISTS $sources_table_name" );
-
-		$table_name = $wpdb->prefix . "options";
-		$wpdb->query( "
-	        DELETE
-	        FROM $table_name
-	        WHERE `option_name` LIKE ('%\_transient\_\$sbi\_%')
-	        " );
-		$wpdb->query( "
-	        DELETE
-	        FROM $table_name
-	        WHERE `option_name` LIKE ('%\_transient\_timeout\_\$sbi\_%')
-	        " );
-		$wpdb->query( "
-	        DELETE
-	        FROM $table_name
-	        WHERE `option_name` LIKE ('%!sbi\_%')
-        " );
-		$wpdb->query( "
-	        DELETE
-	        FROM $table_name
-	        WHERE `option_name` LIKE ('%\_transient\_&sbi\_%')
-        " );
-		$wpdb->query( "
-	        DELETE
-	        FROM $table_name
-	        WHERE `option_name` LIKE ('%\_transient\_timeout\_&sbi\_%')
-        " );
-
-		delete_option( 'sbi_hashtag_ids' );
-		delete_option( 'sbi_local_avatars' );
 
 		/* End Platform Data */
+		delete_option( 'sbi_db_version' );
+
 		if ( $sb_instagram_preserve_settings ) {
 			return;
 		}
 
+		//Settings
+		delete_option( 'sbi_statuses' );
+		delete_option( 'sb_instagram_settings' );
+		delete_option( 'sbi_ver' );
+		delete_option( 'sb_expired_tokens' );
+		delete_option( 'sbi_cron_report' );
+		delete_option( 'sb_instagram_errors' );
+		delete_option( 'sb_instagram_ajax_status' );
+
+		// Clear backup caches
+		global $wpdb;
+		$table_name = $wpdb->prefix . "options";
+		$wpdb->query( "
+        DELETE
+        FROM $table_name
+        WHERE `option_name` LIKE ('%!sbi\_%')
+        " );
+		$wpdb->query( "
+        DELETE
+        FROM $table_name
+        WHERE `option_name` LIKE ('%\_transient\_&sbi\_%')
+        " );
+		$wpdb->query( "
+        DELETE
+        FROM $table_name
+        WHERE `option_name` LIKE ('%\_transient\_timeout\_&sbi\_%')
+        " );
+		$wpdb->query( "
+    DELETE
+    FROM $table_name
+    WHERE `option_name` LIKE ('%sb_wlupdated_%')
+    " );
+
+		//image resizing
+		$upload                 = wp_upload_dir();
+		$posts_table_name       = $wpdb->prefix . 'sbi_instagram_posts';
+		$feeds_posts_table_name = esc_sql( $wpdb->prefix . 'sbi_instagram_feeds_posts' );
+
+		$image_files = glob( trailingslashit( $upload['basedir'] ) . trailingslashit( SBI_UPLOADS_NAME ) . '*' ); // get all file names
+		foreach ( $image_files as $file ) { // iterate files
+			if ( is_file( $file ) ) {
+				unlink( $file );
+			} // delete file
+		}
+
+		global $wp_filesystem;
+
+		$wp_filesystem->delete( trailingslashit( $upload['basedir'] ) . trailingslashit( SBI_UPLOADS_NAME ) , true );
 		//Delete tables
 		$wpdb->query( "DROP TABLE IF EXISTS $posts_table_name" );
 		$wpdb->query( "DROP TABLE IF EXISTS $feeds_posts_table_name" );
 		$locator_table_name = $wpdb->prefix . SBI_INSTAGRAM_FEED_LOCATOR;
 		$wpdb->query( "DROP TABLE IF EXISTS $locator_table_name" );
 
-		$feeds_table_name = $wpdb->prefix . 'sbi_feeds';
-		$wpdb->query( "DROP TABLE IF EXISTS $feeds_table_name" );
-
-		$table_name = esc_sql( $wpdb->prefix . "postmeta" );
-		$result = $wpdb->query("
-		    DELETE
-		    FROM $table_name
-		    WHERE meta_key = '_sbi_oembed_done_checking';");
-
-		$usermeta_table_name = $wpdb->prefix . "usermeta";
-		$result = $wpdb->query( "
-	        DELETE
-	        FROM $usermeta_table_name
-	        WHERE meta_key LIKE ('sbi\_%')
-	        " );
-
+		$table_name = $wpdb->prefix . "options";
+		$wpdb->query( "
+			        DELETE
+			        FROM $table_name
+			        WHERE `option_name` LIKE ('%\_transient\_\$sbi\_%')
+			        " );
+		$wpdb->query( "
+			        DELETE
+			        FROM $table_name
+			        WHERE `option_name` LIKE ('%\_transient\_timeout\_\$sbi\_%')
+			        " );
+		delete_option( 'sbi_hashtag_ids' );
 		delete_option( 'sb_instagram_errors' );
 		delete_option( 'sbi_usage_tracking_config' );
 		delete_option( 'sbi_usage_tracking' );
@@ -985,18 +784,6 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 		delete_option( 'sbi_welcome_seen' );
 		delete_option( 'sbi_notifications' );
 		delete_option( 'sbi_newuser_notifications' );
-		delete_option( 'sbi_statuses' );
-		delete_option( 'sb_instagram_settings' );
-		delete_option( 'sbi_ver' );
-		delete_option( 'sb_expired_tokens' );
-		delete_option( 'sbi_cron_report' );
-		delete_option( 'sb_instagram_ajax_status' );
-		delete_option( 'sbi_legacy_feed_settings' );
-		delete_option( 'sbi_check_license_api_when_expires' );
-		delete_option( 'sbi_license_last_check_timestamp' );
-		delete_option( 'sbi_license_data' );
-		delete_option( 'sbi_license_key' );
-		delete_option( 'sbi_license_status' );
 
 		global $wp_roles;
 		$wp_roles->remove_cap( 'administrator', 'manage_instagram_feed_options' );
@@ -1058,7 +845,7 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 		$sbi_license_key = trim( get_option( 'sbi_license_key' ) );
 
 		// setup the updater
-		$edd_updater = new InstagramFeed\EDD_SL_Plugin_Updater( SBI_STORE_URL, __FILE__, array(
+		$edd_updater = new EDD_SL_Plugin_Updater( SBI_STORE_URL, __FILE__, array(
 				'version'   => SBIVER,                   // current version number
 				'license'   => $sbi_license_key,        // license key
 				'item_name' => SBI_PLUGIN_NAME,         // name of this plugin
@@ -1075,9 +862,9 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 	add_action( 'plugins_loaded', 'sbi_text_domain' );
 
 	function sbi_do_token_refreshes() {
-		$basic_sources = \InstagramFeed\Builder\SBI_Source::get_expiring();
+		$options                        = get_option( 'sb_instagram_settings', array() );
+		$connected_accounts = isset( $options['connected_accounts'] ) ? $options['connected_accounts'] : array();
 
-		$connected_accounts = \InstagramFeed\Builder\SBI_Source::convert_sources_to_connected_accounts( $basic_sources );
 		if ( is_array( $connected_accounts ) && ! empty( $connected_accounts ) ) {
 			require_once trailingslashit( SBI_PLUGIN_DIR ) . 'inc/class-sb-instagram-token-refresher.php';
 
@@ -1087,23 +874,24 @@ if ( function_exists( 'sb_instagram_feed_init' ) || function_exists( 'display_in
 				)
 			);
 			foreach ( $connected_accounts as $connected_account ) {
-				$refresher = new SB_Instagram_Token_Refresher( $connected_account );
-				$refresher->attempt_token_refresh();
-				if ( $refresher->get_last_error_code() === 10 ) {
-					sbi_update_connected_account( $connected_account['user_id'], array( 'private' => true ) );
-				}
+				$is_basic = (isset( $connected_account['type'] ) && $connected_account['type'] === 'basic');
 
-				$report[ $connected_account['user_id'] ] = $refresher->get_report();
+				if ( $is_basic ) {
+					$refresher = new SB_Instagram_Token_Refresher( $connected_account );
+					if ( $refresher->should_attempt_refresh() ) {
+						$refresher->attempt_token_refresh();
+						if ( $refresher->get_last_error_code() === 10 ) {
+							sbi_update_connected_account( $connected_account['user_id'], array( 'private' => true ) );
+						}
+					}
+
+					$report[ $connected_account['user_id'] ] = $refresher->get_report();
+				}
 			}
 
 			update_option( 'sbi_refresh_report', $report, false );
 		}
+
 	}
 	add_action( 'sb_instagram_twicedaily', 'sbi_do_token_refreshes' );
-}
-
-
-//BUILDER CODE
-function sbi_builder_pro() {
-	return InstagramFeed\Builder\SBI_Feed_Builder::instance();
 }

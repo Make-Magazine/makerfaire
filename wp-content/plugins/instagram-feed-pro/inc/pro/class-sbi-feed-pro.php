@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
-class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
-
+class SB_Instagram_Feed_Pro extends SB_Instagram_Feed
+{
 	/**
 	 * @var array
 	 */
@@ -34,7 +34,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	 *
 	 * @return object|SB_Instagram_API_Connect_Pro
 	 */
-	public function make_api_connection( $connected_account_or_page, $type = null, $params = null ) {
+	public function make_api_connection( $connected_account_or_page, $type = NULL, $params = NULL ) {
 		return new SB_Instagram_API_Connect_Pro( $connected_account_or_page, $type, $params );
 	}
 
@@ -60,12 +60,11 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	 */
 	public function should_look_for_db_only_posts( $settings, $feed_type_and_terms ) {
 		$next_pages = $this->get_next_pages();
-
 		if ( ! isset( $feed_type_and_terms['hashtags_recent'] ) ) {
 			return false;
 		}
 
-		if ( empty( $next_pages ) ) {
+		if ( empty( $next_pages ) ){
 			return false;
 		}
 
@@ -77,10 +76,6 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 		}
 
 		return false;
-	}
-
-	public function using_an_allow_list( $settings ) {
-		return ! empty( $settings['allow_list'] ) || ! empty( $settings['show_selected_list'] );
 	}
 
 	/**
@@ -102,17 +97,17 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			$query_feed_id = $feed_id_array[0];
 		}
 
-		$post_data          = $this->get_post_data();
+		$post_data = $this->get_post_data();
 		$last_post_data_set = array_slice( $post_data, -$settings['minnum'], $settings['minnum'] );
 
-		$earliest_time_stamp = date( 'Y-m-d H:i:s', time() - ( 24 * 60 * 60 ) );
+		$earliest_time_stamp = date( 'Y-m-d H:i:s', time() - (24*60*60) );
 		if ( ! isset( $feed_type_and_terms['hashtags_recent'] ) && isset( $last_post_data_set[0] ) ) {
 			// usort($last_post_data_set, 'sbi_date_sort' ); not accurate, instead sort all posts by placeholder time stamp after
 			// looping through the last post set. this is only necessary from randomly sorted hashtag posts, should be rare
 
 			$last_post = array_slice( $last_post_data_set, -1 );
 
-			$earliest_time_stamp = self::get_time_stamp( $feed_id, $last_post[0]['id'] );
+			$earliest_time_stamp = SB_Instagram_Feed_Pro::get_time_stamp( $feed_id, $last_post[0]['id']);
 		}
 
 		$this->add_report( 'Earliest time stamp used ' . $earliest_time_stamp );
@@ -134,12 +129,12 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			}
 
 			$args = array(
-				'feed_id'  => $query_feed_id,
-				'hashtags' => $hashtags,
+				'feed_id' => $query_feed_id,
+				'hashtags' => $hashtags
 			);
 		}
 
-		$post_set = self::get_post_set_from_db( $args, 0, $earliest_time_stamp );
+		$post_set = SB_Instagram_Feed_Pro::get_post_set_from_db( $args, 0, $earliest_time_stamp );
 
 		if ( isset( $post_set[0] ) ) {
 
@@ -147,7 +142,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 
 			foreach ( $post_set as $post ) {
 				$decrypted = $this->encryption->decrypt( $post );
-				$decoded   = ! empty( $decrypted ) ? json_decode( $decrypted, true ) : json_decode( $post, true );
+				$decoded = ! empty( $decrypted ) ? json_decode( $decrypted, true ) : json_decode( $post, true );
 				if ( isset( $decoded['id'] ) ) {
 					$decoded = $this->filter_posts( array( $decoded ), $settings );
 
@@ -158,68 +153,6 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			}
 
 			$this->set_post_data( $post_data );
-		} else {
-			$this->add_report( 'Db returned no posts' );
-		}
-
-	}
-
-	/**
-	 * Adds posts from the database from the allow list in settings
-	 *
-	 * @param array $settings
-	 *
-	 * @since 6.0.5
-	 */
-	public function add_db_only_allow_list_posts( $settings ) {
-
-		if ( empty( $settings['allow_list'] ) && empty( $settings['show_selected_list'] ) ) {
-			return;
-		}
-
-		if ( ! empty( $settings['show_selected_list'] ) ) {
-			$settings['allow_list'] = $settings['show_selected_list'];
-		}
-
-		$sanitized_list = array_map( 'sbi_sanitize_instagram_ids', $settings['allow_list'] );
-		$allow_list = implode( "','", $sanitized_list );
-
-		global $wpdb;
-		$posts_table_name       = $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE;
-		$feeds_posts_table_name = $wpdb->prefix . SBI_INSTAGRAM_FEEDS_POSTS;
-		$results = $wpdb->get_col(
-		"SELECT p.json_data FROM $posts_table_name AS p INNER JOIN $feeds_posts_table_name AS f ON p.id = f.id
-				WHERE p.instagram_id IN ('$allow_list')
-				GROUP BY p.instagram_id
-				ORDER BY p.time_stamp"
-		);
-
-		$post_set = $results;
-
-		if ( isset( $post_set[0] ) ) {
-			$post_data          = $this->get_post_data();
-
-			$this->add_report( 'Db returned posts: ' . count( $post_set ) );
-
-			foreach ( $post_set as $post ) {
-				$decrypted = $this->encryption->decrypt( $post );
-				$decoded   = ! empty( $decrypted ) ? json_decode( $decrypted, true ) : json_decode( $post, true );
-				if ( isset( $decoded['id'] ) ) {
-					$decoded = $this->filter_posts( array( $decoded ), $settings );
-
-					if ( ! empty( $decoded[0] ) ) {
-						array_push( $post_data, $decoded[0] );
-					}
-				}
-			}
-
-			self::update_last_requested( $sanitized_list );
-
-			usort($post_data, 'sbi_date_sort' );
-
-			$this->set_post_data( $post_data );
-			$this->remove_duplicate_posts();
-
 		} else {
 			$this->add_report( 'Db returned no posts' );
 		}
@@ -247,16 +180,14 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 				$feed_id = $feed_id_or_args['feed_id'];
 			}
 			if ( isset( $feed_id_or_args['hashtags'] ) ) {
-				$hashtag = strtolower( implode( ", '", $feed_id_or_args['hashtags'] ) );
+				$hashtag = strtolower( implode( ", '",  $feed_id_or_args['hashtags'] ) );
 			}
 		} else {
 			$feed_id = $feed_id_or_args;
 		}
 
-		$posts_table_name       = $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE;
+		$posts_table_name = $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE;
 		$feeds_posts_table_name = $wpdb->prefix . SBI_INSTAGRAM_FEEDS_POSTS;
-
-
 		// this will help cover small changes in the number of posts requested
 		// as well as posts stored when in moderation mode
 		$feed_id_variant_1 = substr( $feed_id, 0, -1 );
@@ -265,9 +196,9 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 		$feed_id_variant_4 = substr( $feed_id, 0, -4 );
 
 		$additional_where = " OR BINARY f.feed_id = '" . esc_sql( $feed_id_variant_1 ) .
-							"' OR BINARY f.feed_id = '" . esc_sql( $feed_id_variant_2 ) .
-							"' OR BINARY f.feed_id = '" . esc_sql( $feed_id_variant_3 ) .
-							"' OR BINARY f.feed_id = '" . esc_sql( $feed_id_variant_4 ) . "'";
+		                    "' OR BINARY f.feed_id = '" . esc_sql( $feed_id_variant_2 ) .
+		                    "' OR BINARY f.feed_id = '" . esc_sql( $feed_id_variant_3 ) .
+		                    "' OR BINARY f.feed_id = '" . esc_sql( $feed_id_variant_4 ) . "'";
 
 		if ( isset( $hashtag ) ) {
 			$additional_where .= " OR f.hashtag IN ('" . esc_sql( $hashtag ) . "')";
@@ -283,40 +214,13 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 		 */
 		$additional_where = apply_filters( 'sbi_db_query_additional_where', $additional_where, $feed_id );
 
-		if ( strpos( $feed_id, '*' ) === 0 ) {
-			if ( ! empty( $hashtag ) ) {
-				$hashtag = esc_sql( $hashtag );
-				$results = $wpdb->get_col(
-					$wpdb->prepare(
-						"SELECT p.json_data FROM $posts_table_name AS p INNER JOIN $feeds_posts_table_name AS f ON p.id = f.id
-							WHERE BINARY f.hashtag IN ('$hashtag')
-							AND p.time_stamp < '$max_timestamp'
-							GROUP BY p.instagram_id
-							ORDER BY p.time_stamp
-							DESC LIMIT %d, %d",
-						$offset,
-						$num_posts
-					)
-				);
-			} else {
-				$results = array();
-			}
-		} else {
-			$results = $wpdb->get_col(
-				$wpdb->prepare(
-					"SELECT p.json_data FROM $posts_table_name AS p INNER JOIN $feeds_posts_table_name AS f ON p.id = f.id
-						WHERE BINARY f.feed_id = %s
-						$additional_where
-						AND p.time_stamp < '$max_timestamp'
-						GROUP BY p.instagram_id
-						ORDER BY p.time_stamp
-						DESC LIMIT %d, %d",
-					$feed_id,
-					$offset,
-					$num_posts
-				)
-			);
-		}
+		$results = $wpdb->get_col( $wpdb->prepare( "SELECT p.json_data FROM $posts_table_name AS p INNER JOIN $feeds_posts_table_name AS f ON p.id = f.id 
+			WHERE BINARY f.feed_id = %s
+			{$additional_where}
+			AND p.time_stamp < '$max_timestamp'
+			GROUP BY p.instagram_id
+			ORDER BY p.time_stamp
+			DESC LIMIT %d, %d", $feed_id, $offset, $num_posts ) );
 
 		return $results;
 	}
@@ -324,20 +228,15 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	public static function get_time_stamp( $feed_id, $post_id ) {
 		global $wpdb;
 
-		$posts_table_name       = $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE;
+		$posts_table_name = $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE;
 		$feeds_posts_table_name = $wpdb->prefix . SBI_INSTAGRAM_FEEDS_POSTS;
-		$feed_id_array          = explode( '#', $feed_id );
-		$feed_id                = $feed_id_array[0];
+		$feed_id_array = explode( '#', $feed_id );
+		$feed_id = $feed_id_array[0];
 
-		$results = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT p.time_stamp FROM $posts_table_name AS p INNER JOIN $feeds_posts_table_name AS f ON p.id = f.id
-			WHERE f.instagram_id = %s
+		$results = $wpdb->get_col( $wpdb->prepare( "SELECT p.time_stamp FROM $posts_table_name AS p INNER JOIN $feeds_posts_table_name AS f ON p.id = f.id 
+			WHERE f.instagram_id = %s 
 			ORDER BY p.time_stamp
-			ASC LIMIT 1",
-				$post_id
-			)
-		);
+			ASC LIMIT 1", $post_id ) );
 
 		$return = isset( $results[0] ) ? $results[0] : date( 'Y-m-d H:i:s' );
 
@@ -354,7 +253,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	 * @since 5.0
 	 */
 	public function set_remote_stories_data( $settings, $feed_types_and_terms, $connected_accounts_for_feed ) {
-		$first_user  = isset( $feed_types_and_terms['users'][0] ) ? $feed_types_and_terms['users'][0]['term'] : '';
+		$first_user = isset( $feed_types_and_terms['users'][0] ) ? $feed_types_and_terms['users'][0]['term'] : '';
 		$header_data = $this->get_header_data();
 
 		if ( isset( $connected_accounts_for_feed[ $first_user ] ) && isset( $connected_accounts_for_feed[ $first_user ]['type'] ) && $connected_accounts_for_feed[ $first_user ]['type'] === 'business' ) {
@@ -388,8 +287,8 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	 * @since 5.2
 	 */
 	public function need_header( $settings, $feed_types_and_terms ) {
-		$showheader = ( $settings['showheader'] === 'on' || $settings['showheader'] === 'true' || $settings['showheader'] === true );
-		return ( $showheader && ( isset( $feed_types_and_terms['users'] ) || isset( $feed_types_and_terms['tagged'] ) ) );
+		$showheader = ($settings['showheader'] === 'on' || $settings['showheader'] === 'true' || $settings['showheader'] === true);
+		return ($showheader && (isset( $feed_types_and_terms['users'] ) || isset( $feed_types_and_terms['tagged'] )));
 	}
 
 	/**
@@ -438,7 +337,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	public function need_avatars( $settings ) {
 		if ( isset( $settings['type'] ) && $settings['type'] === 'hashtag' ) {
 			return false;
-		} elseif ( isset( $settings['disablelightbox'] ) && ( $settings['disablelightbox'] === 'true' || $settings['disablelightbox'] === 'on' ) ) {
+		} elseif ( isset( $settings['disablelightbox'] ) && ($settings['disablelightbox'] === 'true' || $settings['disablelightbox'] === 'on') ) {
 			return false;
 		} else {
 			return true;
@@ -454,7 +353,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	 * @since 5.0
 	 */
 	public function set_up_feed_avatars( $connected_accounts_in_feed, $feed_types_and_terms ) {
-		$header_data                     = $this->get_header_data();
+		$header_data = $this->get_header_data();
 		$ids_usernames_already_available = array();
 
 		if ( ! empty( $header_data ) ) {
@@ -464,20 +363,18 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 				$ids_usernames_already_available[] = $header_data['username'];
 
 				if ( isset( $feed_types_and_terms['users'][0]['term'] )
-					 && ! empty( $connected_accounts_in_feed[ $feed_types_and_terms['users'][0]['term'] ]['local_avatar_url'] ) ) {
+				     && isset( $connected_accounts_in_feed[ $feed_types_and_terms['users'][0]['term'] ]['local_avatar'] )
+				     && (int)$connected_accounts_in_feed[ $feed_types_and_terms['users'][0]['term'] ]['local_avatar'] === 1 ) {
 					$this->set_avatar( 'LCL' . $connected_accounts_in_feed[ $feed_types_and_terms['users'][0]['term'] ]['username'], 1 );
 				} elseif ( isset( $feed_types_and_terms['tagged'][0]['term'] )
-					 && isset( $connected_accounts_in_feed[ $feed_types_and_terms['tagged'][0]['term'] ]['local_avatar_url'] ) ) {
+                     && isset( $connected_accounts_in_feed[ $feed_types_and_terms['tagged'][0]['term'] ]['local_avatar'] )
+                     && (int)$connected_accounts_in_feed[ $feed_types_and_terms['tagged'][0]['term'] ]['local_avatar'] === 1 ) {
 					$this->set_avatar( 'LCL' . $connected_accounts_in_feed[ $feed_types_and_terms['tagged'][0]['term'] ]['username'], 1 );
 				} else {
 					if ( isset( $feed_types_and_terms['users'][0]['term'] ) ) {
-						if ( ! empty( $connected_accounts_in_feed ) ) {
-							$this->set_avatar( 'LCL' . $connected_accounts_in_feed[ $feed_types_and_terms['users'][0]['term'] ]['username'], 0 );
-						}
+						$this->set_avatar( 'LCL' . $connected_accounts_in_feed[ $feed_types_and_terms['users'][0]['term'] ]['username'], 0 );
 					} else {
-						if ( ! empty( $connected_accounts_in_feed ) ) {
-							$this->set_avatar( 'LCL' . $connected_accounts_in_feed[ $feed_types_and_terms['tagged'][0]['term'] ]['username'], 0 );
-						}
+						$this->set_avatar( 'LCL' . $connected_accounts_in_feed[ $feed_types_and_terms['tagged'][0]['term'] ]['username'], 0 );
 					}
 				}
 			}
@@ -487,12 +384,12 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			foreach ( $feed_types_and_terms['users'] as $term_and_params ) {
 				$user = $term_and_params['term'];
 
-				if ( ! in_array( $user, $ids_usernames_already_available, true )
-					 && isset( $connected_accounts_in_feed[ $user ]['profile_picture'] )
-						&& ! in_array( $connected_accounts_in_feed[ $user ]['username'], $ids_usernames_already_available, true ) ) {
+				if ( ! in_array( $user, $ids_usernames_already_available )
+				     && isset( $connected_accounts_in_feed[ $user ]['profile_picture'] )
+						&& ! in_array( $connected_accounts_in_feed[ $user ]['username'], $ids_usernames_already_available ) ) {
 					$this->set_avatar( $connected_accounts_in_feed[ $user ]['username'], $connected_accounts_in_feed[ $user ]['profile_picture'] );
 
-					if ( ! empty( $connected_accounts_in_feed[ $user ]['local_avatar_url'] ) ) {
+					if ( isset( $connected_accounts_in_feed[ $user ]['local_avatar'] ) && (int)$connected_accounts_in_feed[ $user ]['local_avatar'] === 1 ) {
 						$this->set_avatar( 'LCL' . $connected_accounts_in_feed[ $user ]['username'], 1 );
 					} else {
 						$this->set_avatar( 'LCL' . $connected_accounts_in_feed[ $user ]['username'], 0 );
@@ -539,20 +436,15 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	public function get_earliest_time_stamp( $feed_id ) {
 		global $wpdb;
 
-		$posts_table_name       = $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE;
+		$posts_table_name = $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE;
 		$feeds_posts_table_name = $wpdb->prefix . SBI_INSTAGRAM_FEEDS_POSTS;
-		$feed_id_array          = explode( '#', $feed_id );
-		$feed_id                = $feed_id_array[0];
+		$feed_id_array = explode( '#', $feed_id );
+		$feed_id = $feed_id_array[0];
 
-		$results = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT p.time_stamp FROM $posts_table_name AS p INNER JOIN $feeds_posts_table_name AS f ON p.id = f.id
-			WHERE BINARY f.feed_id = %s
+		$results = $wpdb->get_col( $wpdb->prepare( "SELECT p.time_stamp FROM $posts_table_name AS p INNER JOIN $feeds_posts_table_name AS f ON p.id = f.id 
+			WHERE BINARY f.feed_id = %s 
 			ORDER BY p.time_stamp
-			ASC LIMIT 1",
-				$feed_id
-			)
-		);
+			ASC LIMIT 1", $feed_id ) );
 
 		$return = isset( $results[0] ) ? $results[0] : date( 'Y-m-d H:i:s' );
 
@@ -565,26 +457,18 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	 * @param array $post_set
 	 * @param array $settings
 	 *
-	 * @return array
+	 * @return mixed
 	 *
 	 * @since 5.11.2
 	 */
 	public function process_hide_photos( $post_set, $settings = array() ) {
 		if ( empty( $settings['whitelist'] )
-			 && empty( $settings['hidephotos'] ) ) {
+		     && empty( $settings['hidephotos'] ) ) {
 			return $post_set;
 		}
 
-		if ( isset( $settings['allow_list'] ) ) {
-			$white_list  = $settings['allow_list'];
-			$hide_photos = array();
-		} elseif ( isset( $settings['block_list'] ) ) {
-			$hide_photos = $settings['block_list'];
-			$white_list  = array();
-		} else {
-			$hide_photos = ! empty( $settings['hidephotos'] ) && empty( $settings['doingModerationMode'] ) ? explode( ',', str_replace( ' ', '', $settings['hidephotos'] ) ) : array();
-			$white_list  = ! empty( $settings['whitelist'] ) && empty( $settings['doingModerationMode'] ) ? get_option( 'sb_instagram_white_lists_' . $settings['whitelist'], array() ) : false;
-		}
+		$hide_photos = ! empty( $settings['hidephotos'] ) && empty( $settings['doingModerationMode'] ) ? explode( ',', str_replace( ' ', '', $settings['hidephotos'] ) ) : array();
+		$white_list = ! empty( $settings['whitelist'] ) && empty( $settings['doingModerationMode'] ) ? get_option( 'sb_instagram_white_lists_'.$settings['whitelist'], array() ) : false;
 
 		$filtered_posts = array();
 		foreach ( $post_set as $post ) {
@@ -594,7 +478,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 
 			$is_hidden = false;
 			if ( ! empty( $hide_photos )
-				 && ( in_array( $id, $hide_photos, true ) || in_array( 'sbi_' . $id, $hide_photos, true ) ) ) {
+			     && (in_array( $id, $hide_photos, true ) || in_array( 'sbi_' . $id, $hide_photos, true )) ) {
 				$is_hidden = true;
 				if ( $white_list ) {
 					if ( in_array( $id, $white_list, true ) || in_array( 'sbi_' . $id, $white_list, true ) ) {
@@ -622,6 +506,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			if ( $keep_post ) {
 				$filtered_posts[] = $post;
 			}
+
 		}
 
 		return $filtered_posts;
@@ -633,66 +518,39 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	 * @param array $post_set
 	 * @param array $settings
 	 *
-	 * @return array
+	 * @return mixed
 	 *
 	 * @since 5.0
 	 * @since 5.1 support for filtering "includes any includeword
 	 *  and also does not include any excludeword"
 	 */
 	protected function filter_posts( $post_set, $settings = array() ) {
-		$entering_moderation_mode = ( sbi_doing_customizer( $settings ) && ! empty( $_POST['moderationShoppableShowSelected'] ) );
-		if ( $entering_moderation_mode ) {
-			if ( ! empty( $settings['show_selected_list'] ) ) {
-				$settings['allow_list'] = $settings['show_selected_list'];
-			} else {
-				// no hide
-				$settings['whitelist']  = '';
-				$settings['hidephotos'] = '';
-				if ( isset( $settings['allow_list'] ) ) {
-					unset( $settings['allow_list'] );
-				}
-				if ( isset( $settings['block_list'] ) ) {
-					unset( $settings['block_list'] );
-				}
-			}
-		}
 
 		if ( empty( $settings['includewords'] )
-			 && empty( $settings['excludewords'] )
-			 && empty( $settings['whitelist'] )
-			 && empty( $settings['hidephotos'] )
-			 && empty( $settings['allow_list'] )
-			 && empty( $settings['block_list'] )
-			 && $settings['media'] === 'all' ) {
+		     && empty( $settings['excludewords'] )
+		     && empty( $settings['whitelist'] )
+		     && empty( $settings['hidephotos'] )
+		     && $settings['media'] === 'all') {
 			return $post_set;
 		}
 
-		if ( isset( $settings['allow_list'] ) ) {
-			$white_list  = $settings['allow_list'];
-			$hide_photos = array();
-		} elseif ( isset( $settings['block_list'] ) ) {
-			$hide_photos = $settings['block_list'];
-			$white_list  = array();
-		} else {
-			$hide_photos = ! empty( $settings['hidephotos'] ) && empty( $settings['doingModerationMode'] ) ? explode( ',', str_replace( ' ', '', $settings['hidephotos'] ) ) : array();
-			$white_list  = ! empty( $settings['whitelist'] ) && empty( $settings['doingModerationMode'] ) ? get_option( 'sb_instagram_white_lists_' . $settings['whitelist'], array() ) : false;
-		}
-
-		$includewords   = ! empty( $settings['includewords'] ) ? explode( ',', $settings['includewords'] ) : array();
-		$excludewords   = ! empty( $settings['excludewords'] ) ? explode( ',', $settings['excludewords'] ) : array();
-		$media_filter   = $settings['media'] !== 'all' ? $settings['media'] : false;
-		$video_types    = ! empty( $settings['videotypes'] ) ? explode( ',', str_replace( ' ', '', strtolower( $settings['videotypes'] ) ) ) : array( 'igtv', 'regular' );
+		$includewords = ! empty( $settings['includewords'] ) ? explode( ',', $settings['includewords'] ) : array();
+		$excludewords = ! empty( $settings['excludewords'] ) ? explode( ',', $settings['excludewords'] ) : array();
+		$hide_photos = ! empty( $settings['hidephotos'] ) && empty( $settings['doingModerationMode'] ) ? explode( ',', str_replace( ' ', '', $settings['hidephotos'] ) ) : array();
+		$white_list = ! empty( $settings['whitelist'] ) && empty( $settings['doingModerationMode'] ) ? get_option( 'sb_instagram_white_lists_'.$settings['whitelist'], array() ) : false;
+		$media_filter = $settings['media'] !== 'all' ? $settings['media'] : false;
+		$video_types = ! empty( $settings['videotypes'] ) ? explode( ',', str_replace( ' ', '', strtolower( $settings['videotypes'] ) ) ) : array( 'igtv', 'regular' );
 		$filtered_posts = array();
 		foreach ( $post_set as $post ) {
 			$keep_post = false;
 
-			$padded_caption = ' ' . str_replace( array( '+', '%0A' ), ' ', urlencode( str_replace( array( '#', '@' ), array( ' HASHTAG', ' MENTION' ), strtolower( SB_Instagram_Parse_Pro::get_caption( $post ) ) ) ) ) . ' ';
-			$id             = SB_Instagram_Parse_Pro::get_post_id( $post );
+			$padded_caption = ' ' . str_replace( array( '+', '%0A' ), ' ',  urlencode( str_replace( array( '#', '@' ), array( ' HASHTAG', ' MENTION' ), strtolower( SB_Instagram_Parse_Pro::get_caption( $post ) ) ) ) ) . ' ';
+			$id = SB_Instagram_Parse_Pro::get_post_id( $post );
 
-			$is_hidden           = false;
+			$is_hidden = false;
 			$passes_media_filter = true;
 			if ( ! empty( $hide_photos )
-				 && ( in_array( $id, $hide_photos, true ) || in_array( 'sbi_' . $id, $hide_photos, true ) ) ) {
+			     && (in_array( $id, $hide_photos, true ) || in_array( 'sbi_' . $id, $hide_photos, true )) ) {
 				$is_hidden = true;
 				if ( $white_list ) {
 					if ( in_array( $id, $white_list, true ) || in_array( 'sbi_' . $id, $white_list, true ) ) {
@@ -705,11 +563,11 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 				$media_type = SB_Instagram_Parse_Pro::get_media_type( $post );
 				if ( $media_filter === 'videos' ) {
 					if ( ! empty( $video_types ) ) {
-						if ( ! in_array( 'igtv', $video_types, true ) ) {
+						if ( ! in_array( 'igtv', $video_types ) ) {
 							if ( SB_Instagram_Parse::get_media_product_type( $post ) === 'igtv' ) {
 								$passes_media_filter = false;
 							}
-						} elseif ( ! in_array( 'regular', $video_types, true ) ) {
+						} elseif ( ! in_array( 'regular', $video_types ) ) {
 							if ( SB_Instagram_Parse::get_media_product_type( $post ) !== 'igtv' ) {
 								$passes_media_filter = false;
 							}
@@ -727,9 +585,9 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 
 			// any blocked photos will not pass any additional filters so don't bother processing
 			if ( ! $is_hidden && $passes_media_filter ) {
-				$is_on_white_list   = false;
-				$has_includeword    = false;
-				$has_excludeword    = false;
+				$is_on_white_list = false;
+				$has_includeword = false;
+				$has_excludeword = false;
 				$passes_word_filter = false;
 
 				if ( $white_list ) {
@@ -759,12 +617,12 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 						foreach ( $excludewords as $excludeword ) {
 							if ( ! empty( $excludeword ) ) {
 								if ( strpos( $excludeword, '#' ) === 0 && SB_Instagram_Parse_Pro::get_tags( $post ) ) {
-									$tags            = SB_Instagram_Parse_Pro::get_tags( $post );
-									$this_tag        = str_replace( '#', '', strtolower( $excludeword ) );
+									$tags = SB_Instagram_Parse_Pro::get_tags( $post );
+									$this_tag = str_replace( '#', '', strtolower( $excludeword ) );
 									$has_excludeword = in_array( $this_tag, $tags, true );
 								} else {
-									$converted_excludeword = trim( str_replace( '+', ' ', urlencode( str_replace( array( '#', '@' ), array( ' HASHTAG', ' MENTION' ), strtolower( $excludeword ) ) ) ) );
-									if ( preg_match( '/\b' . $converted_excludeword . '\b/i', $padded_caption, $matches ) ) {
+									$converted_excludeword = trim( str_replace('+', ' ', urlencode( str_replace( array( '#', '@' ), array( ' HASHTAG', ' MENTION' ), strtolower( $excludeword ) ) ) ) );
+									if ( preg_match('/\b'.$converted_excludeword.'\b/i', $padded_caption, $matches ) ) {
 										$has_excludeword = true;
 									}
 								}
@@ -776,8 +634,9 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 					} elseif ( ! empty( $includewords ) ) {
 						$passes_word_filter = $has_includeword;
 					} else {
-						$passes_word_filter = ! $has_excludeword;
+						$passes_word_filter = !$has_excludeword;
 					}
+
 				} else {
 					// no other filters so it belongs in the feed
 					$keep_post = true;
@@ -792,6 +651,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			if ( $keep_post ) {
 				$filtered_posts[] = $post;
 			}
+
 		}
 
 		return $filtered_posts;
@@ -820,21 +680,21 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			$return_post_set = $post_set;
 		} elseif ( $settings['sortby'] === 'random' ) {
 			/*
-			 * randomly selects posts in a random order. Cache saves posts
-			 * in this random order so paginating does not cause some posts to show up
-			 * twice or not at all
-			 */
-			usort( $post_set, 'sbi_rand_sort' );
+             * randomly selects posts in a random order. Cache saves posts
+             * in this random order so paginating does not cause some posts to show up
+             * twice or not at all
+             */
+			usort($post_set, 'sbi_rand_sort' );
 			$return_post_set = $post_set;
 
 		} elseif ( $settings['sortby'] === 'likes' ) {
-			usort( $post_set, 'sbi_likes_sort' );
+			usort($post_set, 'sbi_likes_sort' );
 			$return_post_set = $post_set;
 		} else {
 			$this->add_report( 'pages created when sorting ' . $this->pages_created );
 
 			// compares posted on dates of posts
-			usort( $post_set, 'sbi_date_sort' );
+			usort($post_set, 'sbi_date_sort' );
 
 			$return_post_set = $post_set;
 		}
@@ -870,20 +730,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			}
 			$total_posts_loaded = $settings['num'] + $offset;
 
-			if ( (int) $settings['whitelist_num'] <= $total_posts_loaded ) {
-				return true;
-			}
-		}
-
-		if ( ! empty( $settings['allow_list'] ) ) {
-			if ( ! empty( $settings['moderation_shoppable'] ) ) {
-				return false;
-			}
-			$total_posts_loaded = $settings['num'] + $offset;
-
-			$num_allow_list = is_array( $settings['allow_list'] ) ? count( $settings['allow_list'] ) : 0;
-
-			if ( $num_allow_list <= $total_posts_loaded ) {
+			if ( (int)$settings['whitelist_num'] <= $total_posts_loaded ) {
 				return true;
 			}
 		}
@@ -912,32 +759,32 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 		}
 
 		if ( $layout === 'carousel' ) {
-			$arrows                      = $settings['carouselarrows'] === 'true' || $settings['carouselarrows'] === 'on' || $settings['carouselarrows'] === 1 || $settings['carouselarrows'] === '1' || $settings['carouselarrows'] === true;
-			$pag                         = $settings['carouselpag'] === 'true' || $settings['carouselpag'] === 'on' || $settings['carouselpag'] === 1 || $settings['carouselpag'] === '1' || $settings['carouselpag'] === true;
-			$autoplay                    = $settings['carouselautoplay'] === 'true' || $settings['carouselautoplay'] === 'on' || $settings['carouselautoplay'] === 1 || $settings['carouselautoplay'] === '1' || $settings['carouselautoplay'] === true;
-			$time                        = $autoplay ? (int) $settings['carouseltime'] : false;
-			$loop                        = ! empty( $settings['carouselloop'] ) && ( $settings['carouselloop'] !== 'rewind' ) ? false : true;
-			$rows                        = ! empty( $settings['carouselrows'] ) ? min( (int) $settings['carouselrows'], 2 ) : 1;
+			$arrows = $settings['carouselarrows'] == 'true' || $settings['carouselarrows'] == 'on' || $settings['carouselarrows'] == 1 || $settings['carouselarrows'] == '1';
+			$pag = $settings['carouselpag'] == 'true' || $settings['carouselpag'] == 'on' || $settings['carouselpag'] == 1 || $settings['carouselpag'] == '1';
+			$autoplay = $settings['carouselautoplay'] == 'true' || $settings['carouselautoplay'] == 'on' || $settings['carouselautoplay'] == 1 || $settings['carouselautoplay'] == '1';
+			$time = $autoplay ? (int)$settings['carouseltime'] : false;
+			$loop = ! empty( $settings['carouselloop'] ) && ($settings['carouselloop'] !== 'rewind') ? false : true;
+			$rows = ! empty( $settings['carouselrows'] ) ? min( (int)$settings['carouselrows'], 2 ) : 1;
 			$options_att_arr['carousel'] = array( $arrows, $pag, $autoplay, $time, $loop, $rows );
 		} elseif ( $layout === 'highlight' ) {
-			$type                         = trim( $settings['highlighttype'] );
-			$pattern                      = trim( $settings['highlightpattern'] );
-			$offset                       = (int) trim( $settings['highlightoffset'] );
-			$hashtag                      = str_replace( ',', '|', trim( str_replace( array( '#', ' ' ), '', $settings['highlighthashtag'] ) ) );
-			$ids                          = str_replace( ',', '|', trim( str_replace( array( 'sbi_', '' ), '', $settings['highlightids'] ) ) );
+			$type = trim( $settings['highlighttype'] );
+			$pattern = trim( $settings['highlightpattern'] );
+			$offset = (int)trim( $settings['highlightoffset'] );
+			$hashtag = str_replace( ',', '|', trim( str_replace( array( '#', ' '), '', $settings['highlighthashtag'] ) ) );
+			$ids = str_replace( ',', '|', trim( str_replace( array( 'sbi_', ''), '', $settings['highlightids'] ) ) );
 			$options_att_arr['highlight'] = array( $type, $pattern, $offset, $hashtag, $ids );
 		} elseif ( $layout === 'masonry' ) {
 			$options_att_arr['masonry'] = true;
 		} else {
 			$options_att_arr['grid'] = true;
 		}
-		$autoscroll = $settings['autoscroll'] === 'true' || $settings['autoscroll'] === 'on' || $settings['autoscroll'] === 1 || $settings['autoscroll'] === '1';
+		$autoscroll = $settings['autoscroll'] == 'true' || $settings['autoscroll'] == 'on' || $settings['autoscroll'] == 1 || $settings['autoscroll'] == '1';
 
 		if ( $autoscroll ) {
-			$options_att_arr['autoscroll'] = max( 20, (int) $settings['autoscrolldistance'] );
+			$options_att_arr['autoscroll'] = max( 20, (int)$settings['autoscrolldistance'] );
 		}
 
-		$mediavine = $settings['mediavine'] === 'true' || $settings['mediavine'] === 'on' || $settings['mediavine'] === true;
+		$mediavine = $settings['mediavine'] == 'true' || $settings['mediavine'] == 'on' || $settings['mediavine'] === true;
 		if ( $mediavine ) {
 			$options_att_arr['mediavine'] = true;
 		}
@@ -946,42 +793,38 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			$options_att_arr['avatars'] = $settings['feed_avatars'];
 		}
 
-		$disablelightbox = $settings['disablelightbox'] === 'true' || $settings['disablelightbox'] === 'on' || $settings['disablelightbox'] === true || $settings['disablelightbox'] === 1 || $settings['disablelightbox'] === '1';
+		$disablelightbox = $settings['disablelightbox'] == 'true' || $settings['disablelightbox'] == 'on' || $settings['disablelightbox'] == 1 || $settings['disablelightbox'] == '1';
 		if ( $disablelightbox ) {
 			$options_att_arr['disablelightbox'] = true;
 		} else {
-			$lightboxcomments = $settings['lightboxcomments'] === 'true' || $settings['lightboxcomments'] === 'on' || $settings['lightboxcomments'] === true || $settings['lightboxcomments'] === 1 || $settings['lightboxcomments'] === '1';
+			$lightboxcomments = $settings['lightboxcomments'] == 'true' || $settings['lightboxcomments'] == 'on' || $settings['lightboxcomments'] == 1 || $settings['lightboxcomments'] == '1';
 			if ( $lightboxcomments ) {
-				$options_att_arr['lightboxcomments'] = max( 1, (int) $settings['numcomments'] );
+				$options_att_arr['lightboxcomments'] = max( 1, (int)$settings['numcomments'] );
 			}
 		}
 
-		$captionlinks = $settings['captionlinks'] === 'true' || $settings['captionlinks'] === 'on' || $settings['captionlinks'] === 1 || $settings['captionlinks'] === true || $settings['captionlinks'] === '1';
+		$captionlinks = $settings['captionlinks'] == 'true' || $settings['captionlinks'] == 'on' || $settings['captionlinks'] == 1 || $settings['captionlinks'] == '1';
 		if ( $captionlinks ) {
 			$options_att_arr['captionlinks'] = true;
 		}
 
 		// disable mobile refers to disabling a different mobile layout from desktop
 		$disable_mobile = $settings['disablemobile'];
-		( $disable_mobile === 'on' || $disable_mobile === 'true' || $disable_mobile === true ) ? $disable_mobile = true : $disable_mobile = false;
-		if ( $settings['disablemobile'] === 'false' ) {
-			$disable_mobile = '';
-		}
+		( $disable_mobile == 'on' || $disable_mobile == 'true' || $disable_mobile == true ) ? $disable_mobile = true : $disable_mobile = false;
+		if( $settings[ 'disablemobile' ] === 'false' ) $disable_mobile = '';
 		if ( $disable_mobile !== true && $settings['colsmobile'] !== 'same' ) {
-			$colsmobile = (int) ( $settings['colsmobile'] ) > 0 ? (int) $settings['colsmobile'] : 'auto';
+			$colsmobile = (int)( $settings['colsmobile'] ) > 0 ? (int)$settings['colsmobile'] : 'auto';
 		} else {
-			$colsmobile = (int) ( $settings['cols'] ) > 0 ? (int) $settings['cols'] : 4;
+			$colsmobile = (int)( $settings['cols'] ) > 0 ? (int)$settings['cols'] : 4;
 		}
 		$options_att_arr['colsmobile'] = $colsmobile;
 
-		$options_att_arr['colstablet'] = $settings['colstablet'];
-
 		if ( ! empty( $settings['captionsize'] ) ) {
-			$options_att_arr['captionsize'] = (int) $settings['captionsize'];
+			$options_att_arr['captionsize'] = (int)$settings['captionsize'];
 		}
 
 		if ( ! empty( $settings['captionlength'] ) ) {
-			$options_att_arr['captionlength'] = (int) $settings['captionlength'];
+			$options_att_arr['captionlength'] = (int)$settings['captionlength'];
 		}
 
 		if ( ! empty( $settings['cache_all'] ) ) {
@@ -990,15 +833,17 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 
 		$moderation_mode = isset( $settings['doingModerationMode'] );
 		if ( $moderation_mode ) {
-			$mod_index                   = isset( $_GET['sbi_moderation_index'] ) ? sanitize_text_field( substr( $_GET['sbi_moderation_index'], 0, 10 ) ) : '0';
+			$mod_index = isset( $_GET['sbi_moderation_index'] ) ? sanitize_text_field( substr( $_GET['sbi_moderation_index'], 0, 10 ) ) : '0';
 			$options_att_arr['modindex'] = $mod_index;
 
+
 			if ( ! empty( $settings['whitelist'] ) ) {
-				$white_list_name                  = $settings['whitelist'];
-				$white_list_ids                   = ! empty( $settings['whitelist'] ) ? get_option( 'sb_instagram_white_lists_' . $settings['whitelist'], array() ) : false;
+				$white_list_name = $settings['whitelist'];
+				$white_list_ids = ! empty( $settings['whitelist'] ) ? get_option( 'sb_instagram_white_lists_'.$settings['whitelist'], array() ) : false;
 				$options_att_arr['whiteListName'] = $white_list_name;
-				$options_att_arr['whiteListIDs']  = $white_list_ids;
+				$options_att_arr['whiteListIDs'] = $white_list_ids;
 			}
+
 
 			$hide_photos = ! empty( $settings['hidephotos'] ) ? explode( ',', str_replace( ' ', '', $settings['hidephotos'] ) ) : array();
 			if ( ! empty( $hide_photos ) ) {
@@ -1010,7 +855,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			$options_att_arr['moderationLink'] = true;
 		}
 
-		$other_atts .= ' data-options="' . esc_attr( sbi_json_encode( $options_att_arr ) ) . '"';
+		$other_atts .= ' data-options="'.esc_attr( sbi_json_encode( $options_att_arr ) ).'"';
 
 		return $other_atts;
 	}
@@ -1023,7 +868,6 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 		$post_data = $this->get_post_data();
 
 		if ( ! empty( $post_data ) ) {
-
 			$post_data = array_slice( $post_data, $offset );
 
 			$this->set_post_data( $post_data );
@@ -1044,7 +888,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	protected function add_classes( $settings ) {
 		$classes = array();
 
-		$moderation_mode = ( isset( $_GET['sbi_moderation_mode'] ) && $_GET['sbi_moderation_mode'] === 'true' && current_user_can( 'edit_posts' ) );
+		$moderation_mode = (isset ( $_GET['sbi_moderation_mode'] ) && $_GET['sbi_moderation_mode'] === 'true' && current_user_can( 'edit_posts' ));
 
 		if ( $moderation_mode ) {
 			$classes[] = 'sbi_moderation_mode';
@@ -1056,9 +900,9 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 		$return = array();
 		if ( strpos( $type, 'hashtag' ) !== false ) {
 			$hashtag = isset( $type_args['hashtag_name'] ) ? $type_args['hashtag_name'] : '';
-			$return  = array(
-				'header_text' => '#' . $hashtag,
-				'hashtag'     => $hashtag,
+			$return = array(
+				'header_text' => '#'.$hashtag,
+				'hashtag' => $hashtag
 			);
 		}
 
@@ -1077,16 +921,15 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	public static function get_ajax_page_load_html() {
 		$sbi_options = sbi_get_database_settings();
 		$font_method = 'svg';
-		$upload      = wp_upload_dir();
+		$upload = wp_upload_dir();
 		$resized_url = trailingslashit( $upload['baseurl'] ) . trailingslashit( SBI_UPLOADS_NAME );
-		$br_adjust   = isset( $sbi_options['sbi_br_adjust'] ) && ( $sbi_options['sbi_br_adjust'] === 'false' || $sbi_options['sbi_br_adjust'] === '0' || $sbi_options['sbi_br_adjust'] === false ) ? false : true;
+		$br_adjust = isset( $sbi_options['sbi_br_adjust'] ) && ($sbi_options['sbi_br_adjust'] == 'false' || $sbi_options['sbi_br_adjust'] == '0' || $sbi_options['sbi_br_adjust'] == false) ? false : true;
 
 		$js_options = array(
 			'font_method' => $font_method,
 			'placeholder' => trailingslashit( SBI_PLUGIN_URL ) . 'img/placeholder.png',
 			'resized_url' => $resized_url,
-			'br_adjust'   => $br_adjust,
-			'ajax_url'  => admin_url( 'admin-ajax.php' ),
+			'br_adjust' => $br_adjust
 		);
 		if ( isset( $sbi_options['sb_instagram_disable_mob_swipe'] ) && $sbi_options['sb_instagram_disable_mob_swipe'] ) {
 			$js_options['no_mob_swipe'] = true;
@@ -1094,7 +937,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 
 		$encoded_options = sbi_json_encode( $js_options );
 
-		$js_option_html  = '<script type="text/javascript">var sb_instagram_js_options = ' . $encoded_options . ';</script>';
+		$js_option_html = '<script type="text/javascript">var sb_instagram_js_options = ' . $encoded_options . ';</script>';
 		$js_option_html .= "<script type='text/javascript' src='" . trailingslashit( SBI_PLUGIN_URL ) . 'js/sbi-scripts.min.js?ver=' . SBIVER . "'></script>";
 
 		return $js_option_html;
@@ -1118,7 +961,7 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 			return false;
 		}
 
-		if ( (int) $attempts <= 5 ) {
+		if ( (int)$attempts <= 5 ) {
 			return true;
 		}
 
@@ -1137,13 +980,13 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 	 */
 	protected function get_different_connected_account( $type, $attempted_connected_accounts ) {
 
-		$settings       = sbi_get_database_settings();
+		$settings = sbi_get_database_settings();
 		$attempted_keys = $attempted_connected_accounts;
 
 		foreach ( $settings['connected_accounts'] as $connected_account_key => $ca_data ) {
 			if ( isset( $ca_data['type'] )
-				 && $ca_data['type'] === 'business'
-				 && ! in_array( (string) $ca_data['access_token'], $attempted_keys, true ) ) {
+			     && $ca_data['type'] === 'business'
+			     && ! in_array( (string)$ca_data['access_token'], $attempted_keys, true ) ) {
 				return $ca_data;
 			}
 		}
@@ -1156,39 +999,39 @@ class SB_Instagram_Feed_Pro extends SB_Instagram_Feed {
 
 		$fe_errors = $sb_instagram_posts_manager->get_frontend_errors();
 
-		if ( ! empty( $fe_errors['hashtag_limit_reached'] ) ) {
+		if ( !empty( $fe_errors['hashtag_limit_reached'] ) ) {
 			return;
 		}
 
+
 		$error_message_return = array(
-			'error_message'       => __( 'Error: No posts found.', 'instagram-feed' ),
-			'admin_only'          => __( 'Make sure this account has posts available on instagram.com.', 'instagram-feed' ),
+			'error_message' => __( 'Error: No posts found.', 'instagram-feed' ),
+			'admin_only' => __( 'Make sure this account has posts available on instagram.com.', 'instagram-feed' ),
 			'frontend_directions' => '<a href="https://smashballoon.com/instagram-feed/docs/errors/">' . __( 'Click here to troubleshoot', 'instagram-feed' ) . '</a>',
-			'backend_directions'  => '<a href="https://smashballoon.com/instagram-feed/docs/errors/">' . __( 'Click here to troubleshoot', 'instagram-feed' ) . '</a>',
+			'backend_directions' => '<a href="https://smashballoon.com/instagram-feed/docs/errors/">' . __( 'Click here to troubleshoot', 'instagram-feed' ) . '</a>'
 		);
 
 		if ( $this->one_post_found
-			 && ( ! empty( $settings['includewords'] )
-				 || ! empty( $settings['excludewords'] )
-				 || ! empty( $settings['whitelist'] )
-				 || ! empty( $settings['hidephotos'] )
-				 || ! $settings['media'] === 'all' ) ) {
+		     && (! empty( $settings['includewords'] )
+			     || ! empty( $settings['excludewords'] )
+			     || ! empty( $settings['whitelist'] )
+			     || ! empty( $settings['hidephotos'] )
+			     || ! $settings['media'] === 'all') ) {
 
 			if ( ! empty( $settings['whitelist'] ) ) {
-				$error_message_return['admin_only']          = __( 'Use <a href="https://smashballoon.com/guide-to-moderation-mode/">moderation mode</a> to add posts to your whitelist.', 'instagram-feed' );
+				$error_message_return['admin_only'] = __( 'Use <a href="https://smashballoon.com/guide-to-moderation-mode/">moderation mode</a> to add posts to your whitelist.', 'instagram-feed' );
 				$error_message_return['frontend_directions'] = '';
-				$error_message_return['backend_directions']  = '';
+				$error_message_return['backend_directions'] = '';
 			} else {
-				$error_message_return['admin_only']          = __( 'You may be filtering out too many posts or there could be a cache conflict. See <a href="https://smashballoon.com/post-filtering-not-working/">this page</a> for troubleshooting steps.', 'instagram-feed' );
+				$error_message_return['admin_only'] = __( 'You may be filtering out too many posts or there could be a cache conflict. See <a href="https://smashballoon.com/post-filtering-not-working/">this page</a> for troubleshooting steps.', 'instagram-feed' );
 				$error_message_return['frontend_directions'] = '';
-				$error_message_return['backend_directions']  = '';
+				$error_message_return['backend_directions'] = '';
 			}
 		} else {
 			if ( $settings['type'] === 'hashtag' ) {
 				if ( $settings['order'] === 'recent' ) {
 					$error_message_return['error_message'] .= ' ' . __( 'No posts made to this hashtag within the last 24 hours.', 'instagram-feed' );
-				} else {
-					$error_message_return['error_message'] .= ' ' . __( 'No posts made to this hashtag within the last 24 hours.', 'instagram-feed' );
+				} else {					$error_message_return['error_message'] .= ' ' . __( 'No posts made to this hashtag within the last 24 hours.', 'instagram-feed' );
 					$error_message_return['error_message'] .= ' ' . __( 'No posts made to this hashtag.', 'instagram-feed' );
 				}
 			} else {

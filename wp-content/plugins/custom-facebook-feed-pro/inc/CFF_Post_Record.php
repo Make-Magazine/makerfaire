@@ -8,13 +8,9 @@
  *
  * @since 2.0/4.0
  */
+
 namespace CustomFacebookFeed;
-use CustomFacebookFeed\SB_Facebook_Data_Encryption;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class CFF_Post_Record{
 	/**
@@ -47,11 +43,6 @@ class CFF_Post_Record{
 	private $connected_account;
 
 	/**
-	 * @var object|SB_Facebook_Data_Encryption
-	 */
-	private $encryption;
-
-	/**
 	 * SB_Instagram_Post constructor.
 	 *
 	 * @param string $instagram_post_id from the Instagram API
@@ -69,7 +60,6 @@ class CFF_Post_Record{
 		$this->images_done = ! empty( $feed_id_match ) && isset( $feed_id_match[0]['images_done'] ) ? $feed_id_match[0]['images_done'] === '1' : 0;
 		$this->feed_id = $feed_id;
 		$this->connected_account = $connected_account;
-		$this->encryption = new SB_Facebook_Data_Encryption();
 	}
 
 	/**
@@ -157,7 +147,7 @@ class CFF_Post_Record{
 								$message .= ' ' . $key . '- ' . $item[0] . ' |';
 							}
 						}
-						\cff_main_pro()->cff_error_reporter->add_error( 'image_editor', array( $new_file_name, $message ) );
+						\cff_main_pro()->cff_error_reporter->add_error( 'image_editor', array( $file_name, $message ) );
 					}
 				}
 
@@ -199,8 +189,36 @@ class CFF_Post_Record{
 	 *
 	 * @since 2.0/4.0
 	 */
-	public function update_db_data( $update_last_requested, $transient_name, $image_sizes, $upload_dir, $upload_url, $timestamp_for_update = false ) {
+	public function update_db_data( $update_last_requested = true, $transient_name = false, $image_sizes, $upload_dir, $upload_url, $timestamp_for_update = false ) {
+/*
+		if ( empty( $this->db_id ) ) {
+			return false;
+		}
 
+		$to_update = array(
+			'json_data' => sbi_json_encode( $this->instagram_api_data )
+		);
+
+		if ( $update_last_requested ) {
+			$to_update['last_requested'] = date( 'Y-m-d H:i:s' );
+		}
+
+		if ( $timestamp_for_update ) {
+			$to_update['top_time_stamp'] = $timestamp_for_update;
+		}
+
+		if ( $transient_name ) {
+			$this->maybe_add_feed_id( $transient_name );
+		}
+
+		if ( $this->media_id === 'pending' ) {
+			$this->resize_and_save_image( $image_sizes, $upload_dir, $upload_url );
+		} else {
+			$this->update_sbi_instagram_posts( $to_update );
+		}
+
+		return true;
+*/
 	}
 
 	/**
@@ -260,7 +278,7 @@ class CFF_Post_Record{
 			'created_on' => $db_data['created_on'],
 			'last_requested' => $db_data['last_requested'],
 			'time_stamp' => $db_data['time_stamp'],
-			'json_data' => $this->encryption->encrypt( CFF_Utils::cff_json_encode( $db_data['json_data'] ) ),
+			'json_data' => $db_data['json_data'],
 			'media_id' => $db_data['media_id'],
 			'sizes' => $db_data['sizes'],
 			'aspect_ratio' => $db_data['aspect_ratio'],
@@ -337,17 +355,13 @@ class CFF_Post_Record{
 	 * @since 2.0/4.0
 	 */
 	private function get_db_data() {
-		if ( is_string( $this->api_data ) && $this->encryption->decrypt( $this->api_data ) ) {
-			$api_data = $this->encryption->decrypt( $this->api_data );
-		} else {
-			$api_data = $this->api_data;
-		}
+
 		$db_data = array(
 			'facebook_id' => $this->api_post_id,
 			'created_on' => date( 'Y-m-d H:i:s' ),
 			'time_stamp' => date( 'Y-m-d H:i:s', CFF_Parse_Pro::get_timestamp( $this->api_data ) ),
 			'last_requested' => date( 'Y-m-d H:i:s' ),
-			'json_data' =>  CFF_Utils::cff_json_encode( $api_data ) ,
+			'json_data' => CFF_Utils::cff_json_encode( $this->api_data ),
 			'media_id' => '',
 			'sizes' => '{}',
 			'aspect_ratio' => 1,

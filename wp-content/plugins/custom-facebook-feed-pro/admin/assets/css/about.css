@@ -36,16 +36,16 @@
 }
 /*orange*/
 .sb-btn-orange{
-	background: #FE544F!important;
+	background: #E34F0E!important;
 	color: #fff!important;
 }
 .sb-btn-orange:hover{
-	background: #EC352F!important;
+	background: #F37036!important;
 	color: #fff!important;
 }
 .sb-btn-orange:focus,
 .sb-btn-orange:active{
-	background: #BC120E!important;
+	background: #B8400B!important;
 	color: #fff!important;
 }
 .cff-fb-full-wrapper{
@@ -324,9 +324,6 @@
     border-radius: 0 0 2px 2px;
     text-align: left;
 }
-.sb-team-info > div {
-    min-width: 50%;
-}
 .cff-about-box .sb-team-info .sb-team-left h2 {
     font-size: 24px;
     line-height: 29px;
@@ -468,7 +465,7 @@
 }
 .cff-stck-wdg-btn svg{
     width: 25px;
-    fill: #FE544F;
+    fill: #E34F0E;
     height: 33px;
     float: left;
 }

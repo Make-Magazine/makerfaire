@@ -2950,7 +2950,7 @@
 	padding: 20px 0;
 }
 #cff-admin .cff-more-plugins-intro span{
-	color: #FE544F;
+	color: #e34f0e;
 }
 #cff-admin .cff_more_plugins h3{
 	padding: 15px 0 0 0;
@@ -2973,7 +2973,7 @@
 }
 #cff-admin.cff-oembeds .cff-success a{
 	margin-left: 5px;
-	color: #FE544F;
+	color: #e34f0e;
 }
 #cff-admin .cff-oembed-promo{
 	margin: 30px 0 0 0;
@@ -3153,7 +3153,7 @@
     top: 1px;
 }
 #adminmenu a[href="admin.php?page=cff-support"],
-#adminmenu a[href="admin.php?page=cff-top"]{
+#adminmenu a[href="admin.php?page=cff-top"]{ 
     display: none;
 }
 
@@ -3303,7 +3303,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100%;    
     height: 100%;
     background: rgba(0, 0, 0, 0.4);
     z-index: 999;
@@ -3435,7 +3435,7 @@ body.index-php .cff-sb-modal {
 }
 @media (max-width: 767px) {
 	.cff-admin-notices .license-action-btns {
-		flex-wrap: wrap;
+		flex-wrap: wrap;	
 	}
 	.cff-admin-notices .license-action-btns .cff-notice-btn:not(:last-child) {
 		margin-bottom: 8px;
@@ -3661,4 +3661,3 @@ body .cff_review_step1_notice .cff-btn-link:not(:last-child) {
 		display: inline-block;
 	}
 }
-

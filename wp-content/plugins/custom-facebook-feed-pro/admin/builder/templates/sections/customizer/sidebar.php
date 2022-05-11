@@ -7,7 +7,7 @@
 
 		<div class="sb-customizer-sidebar-sec-ctn cff-fb-fs" v-if="customizerScreens.activeSection == null">
 			<div v-for="(section, sectionId) in customizerSidebarBuilder[customizerScreens.activeTab].sections">
-				<div :class="'sb-customizer-sidebar-sec-el cff-fb-fs sb-customizer-sidebar-section-' + sectionId " v-if="!section.isHeader" v-show="section.condition != undefined ? checkControlCondition(section.condition) : true" @click.prevent.default="switchCustomizerSection(sectionId, section)">
+				<div class="sb-customizer-sidebar-sec-el cff-fb-fs" v-if="!section.isHeader" @click.prevent.default="switchCustomizerSection(sectionId, section)">
 					<div class="sb-customizer-sidebar-sec-el-icon" v-html="svgIcons[section.icon]"></div>
 					<span class="sb-small-p sb-bold sb-dark-text">{{section.heading}}</span>
                     <div class="sb-customizer-chevron">

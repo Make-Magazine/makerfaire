@@ -1,7 +1,7 @@
 <?php
 /**
  * Custom Facebook Feed Item : Post Text Template
- * Displays the custom feed item post text
+ * Displays the custom feed item post text 
  *
  * @version 3.18 Custom Facebook Feed by Smash Balloon
  *
@@ -13,13 +13,13 @@ use CustomFacebookFeed\CFF_Shortcode_Display;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 ?>
 <<?php echo $cff_title_format.' '.$cff_title_styles ?> class="cff-post-text">
-	<span class="cff-text" data-color="<?php echo $cff_posttext_link_color ?>"><?php
-			if ( $cff_title_link && !empty($post_text) ):
-				$text_link = ($cff_post_type == 'link' || $cff_post_type == 'video') ? "https://www.facebook.com/" . $page_id . "/posts/" . $PostID[1] : $link;
+	<span class="cff-text" data-color="<?php echo $cff_posttext_link_color ?>"><?php 
+			if ( $cff_title_link && !empty($post_text) ): 
+				$text_link = ($cff_post_type == 'link' || $cff_post_type == 'video') ? "https://www.facebook.com/" . $page_id . "/posts/" . $PostID[1] : $link;			
 		?>
 			<a class="cff-post-text-link" <?php echo $cff_title_styles ?> href="<?php echo esc_url($text_link) ?>" <?php echo $target.$cff_nofollow ?>>
-				<?php
-					endif;
+				<?php 
+					endif; 
 					$post_text = preg_replace("/\r\n|\r|\n/",$cff_linebreak_el, $post_text);
 					$post_text = apply_filters( 'cff_post_text', $post_text );
 					if ($cff_title_link):
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 					else:
 						echo CFF_Autolink::cff_autolink( $post_text ) . ' ';
 					endif;
-			if ( $cff_title_link && !empty($post_text) ):
+			if ( $cff_title_link && !empty($post_text) ): 
 				?>
 			</a>
 		<?php endif; ?>

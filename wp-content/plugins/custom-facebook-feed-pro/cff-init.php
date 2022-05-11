@@ -4,7 +4,6 @@ use CustomFacebookFeed\CFF_GDPR_Integrations;
 use CustomFacebookFeed\CFF_Autolink;
 use CustomFacebookFeed\CFF_Utils;
 use CustomFacebookFeed\CFF_FB_Settings;
-use CustomFacebookFeed\SB_Facebook_Data_Manager;
 
 function cff_stripos_arr($haystack, $needle) {
 	if(!is_array($needle)) $needle = array($needle);
@@ -81,19 +80,15 @@ function cff_ppca_check_notice_dismiss() {
 
 
 
+function cff_reset_log() {
+	\cff_main_pro()->cff_error_reporter->add_action_log( 'View feed and retry button clicked.' );
+	cff_delete_cache();
+
+	die();
+}
+add_action( 'wp_ajax_cff_reset_log', 'cff_reset_log' );
+
+
 //Remove masonry extension
 remove_filter( 'shortcode_atts_custom_facebook_feed', 'cff_masonry_filter_custom_facebook_feed_shortcode', 10 );
 remove_filter( 'cff_feed_class', 'cff_masonry_add_class', 10 );
-
-
-
-function cff_doing_openssl() {
-	return extension_loaded( 'openssl' );
-}
-
-function cff_delete_all_platform_data(){
-	$manager = new SB_Facebook_Data_Manager();
-	$manager->delete_caches();
-	\cff_main_pro()->cff_error_reporter->add_action_log( 'Deleted all platform data.' );
-	\cff_main_pro()->cff_error_reporter->reset_api_errors();
-}

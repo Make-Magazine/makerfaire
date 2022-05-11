@@ -1,9 +1,0 @@
-{
-    "name": "smashballoon/instagram-feed-pro",
-    "autoload": {
-        "psr-4": {
-            "InstagramFeed\\": "inc/"
-        }
-    },
-    "require": {}
-}

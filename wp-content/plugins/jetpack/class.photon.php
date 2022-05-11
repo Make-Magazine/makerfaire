@@ -896,7 +896,7 @@ class Jetpack_Photon {
 	 * @return array An array of Photon image urls and widths.
 	 */
 	public function filter_srcset_array( $sources = array(), $size_array = array(), $image_src = array(), $image_meta = array(), $attachment_id = 0 ) {
-		if ( ! is_array( $sources ) ) {
+		if ( ! is_array( $sources ) || array() === $sources ) {
 			return $sources;
 		}
 		$upload_dir = wp_get_upload_dir();
@@ -1092,7 +1092,7 @@ class Jetpack_Photon {
 		}
 
 		// Bail if no host is found.
-		if ( is_null( $url_info['host'] ) ) {
+		if ( $url_info['host'] === null ) {
 			return false;
 		}
 
@@ -1102,7 +1102,7 @@ class Jetpack_Photon {
 		}
 
 		// Bail if no path is found.
-		if ( is_null( $url_info['path'] ) ) {
+		if ( $url_info['path'] === null ) {
 			return false;
 		}
 
@@ -1235,18 +1235,6 @@ class Jetpack_Photon {
 		}
 
 		return $tags;
-	}
-
-	/**
-	 * Returns empty array.
-	 *
-	 * @deprecated 8.8.0 Use filter_photon_noresize_intermediate_sizes.
-	 *
-	 * @return array Empty array.
-	 */
-	public function noresize_intermediate_sizes() {
-		_deprecated_function( __METHOD__, 'jetpack-8.8.0', '::filter_photon_noresize_intermediate_sizes' );
-		return __return_empty_array();
 	}
 
 	/**

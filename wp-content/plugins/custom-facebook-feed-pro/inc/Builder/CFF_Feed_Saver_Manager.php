@@ -6,13 +6,7 @@
  */
 
 namespace CustomFacebookFeed\Builder;
-
-use CustomFacebookFeed\Admin\Traits\CFF_Feed_Templates_Settings;
-use CustomFacebookFeed\SB_Facebook_Data_Manager;
-
 class CFF_Feed_Saver_Manager {
-
-	use CFF_Feed_Templates_Settings;
 
 	/**
 	 * AJAX hooks for various feed data related functionality
@@ -41,19 +35,13 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function builder_update() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
+		CFF_Feed_Builder::check_privilege( false );
 
 		$settings_data = $_POST;
 
 		$feed_id = false;
 		if ( ! empty( $settings_data['feed_id'] ) ) {
-			$feed_id = sanitize_text_field( wp_unslash($settings_data['feed_id']) );
+			$feed_id = sanitize_text_field( $settings_data['feed_id'] );
 			unset( $settings_data['feed_id'] );
 		} elseif ( isset( $settings_data['feed_id'] ) ) {
 			unset( $settings_data['feed_id'] );
@@ -78,16 +66,13 @@ class CFF_Feed_Saver_Manager {
 			if ( in_array( $feed_type, $default_grid ) ) {
 				$settings_data['feedlayout'] = 'grid';
 			}
-
-			// Add feed settings depending on feed templates
-			$settings_data = CFF_Feed_Templates_Settings::get_feed_settings_by_feed_templates( $settings_data );
 		}
 		unset( $settings_data['new_insert'] );
 		unset( $settings_data['sourcename'] );
 		$feed_name = '';
 		if ( isset( $settings_data['update_feed'] ) && $settings_data['update_feed'] == 'true') {
 			$settings_data['settings']['sources'] = $_POST['sources'];
-			$feed_name = sanitize_text_field( wp_unslash( $settings_data['feed_name'] ) );
+			$feed_name = $settings_data['feed_name'];
 			$settings_data = $settings_data['settings'];
 		}
 		if ( isset( $settings_data['album'] ) ) {
@@ -97,7 +82,6 @@ class CFF_Feed_Saver_Manager {
 			$settings_data['playlist'] = CFF_Source::extract_id( $settings_data['playlist'], 'playlist' );
 		}
 
-		unset($settings_data['accesstoken']);
 		$feed_saver = new CFF_Feed_Saver( $feed_id );
 		$feed_saver->set_feed_name( $feed_name );
 		$feed_saver->set_data( $settings_data );
@@ -163,13 +147,7 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function retrieve_comments() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
+		CFF_Feed_Builder::check_privilege( false );
 
 		if ( empty( $_POST['feed_id'] )) {
 			echo '{}';
@@ -178,7 +156,7 @@ class CFF_Feed_Saver_Manager {
 
 		$return = [];
 
-		$feed_id  = sanitize_text_field( wp_unslash( $_POST['feed_id'] ) );
+		$feed_id  = $_POST['feed_id'];
 		$feed_saver = new CFF_Feed_Saver( $feed_id );
 		$settings = $feed_saver->get_feed_settings();
 		if ( $settings != false ){
@@ -201,13 +179,7 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function delete_feed() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
+		CFF_Feed_Builder::check_privilege( false );
 		if ( ! empty( $_POST['feeds_ids'] ) && is_array( $_POST['feeds_ids'] )) {
 			CFF_Db::delete_feeds_query( $_POST['feeds_ids'] );
 		}
@@ -221,15 +193,9 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function delete_source() {
-		check_ajax_referer( 'cff_admin_nonce' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
+		CFF_Feed_Builder::check_privilege( false );
 		if ( ! empty( $_POST['source_id'] ) ) {
-			CFF_Db::delete_source_query( sanitize_text_field( wp_unslash( $_POST['source_id'] ) ) );
+			CFF_Db::delete_source_query( $_POST['source_id'] );
 		}
 	}
 
@@ -240,14 +206,8 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function clear_single_feed_cache() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
-		$feed_id = sanitize_text_field( wp_unslash( $_POST['feedID'] ) );
+		CFF_Feed_Builder::check_privilege( false );
+		$feed_id = sanitize_text_field( $_POST['feedID'] );
 
 		if ( $feed_id === 'legacy' ) {
 			\CustomFacebookFeed\CFF_Cache::clear_legacy();
@@ -274,15 +234,9 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function duplicate_feed() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
+		CFF_Feed_Builder::check_privilege( false );
 		if ( ! empty( $_POST['feed_id'] ) ) {
-			CFF_Db::duplicate_feed_query( sanitize_text_field( wp_unslash( $_POST['feed_id'] ) ) );
+			CFF_Db::duplicate_feed_query( $_POST['feed_id'] );
 		}
 	}
 
@@ -293,13 +247,7 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function importer() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
+		CFF_Feed_Builder::check_privilege( false );
 		if ( ! empty( $_POST['feed_json'] ) && strpos( $_POST['feed_json'], '{' ) === 0 ) {
 			echo json_encode( CFF_Feed_Saver_Manager::import_feed( stripslashes( $_POST['feed_json'] ) ) );
 		} else {
@@ -374,38 +322,19 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function feed_customizer_fly_preview() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
+		CFF_Feed_Builder::check_privilege( false );
 		if( isset( $_POST['feedID'] ) &&  isset( $_POST['previewSettings'] ) ){
 			$return = array(
 				'posts' => array()
 			);
-			$feed_id = filter_var( $_POST['feedID'], FILTER_VALIDATE_INT );
-			$post_set = new CFF_Post_Set( $feed_id );
-
-			$previewSettings = 	isset( $_POST['isFeedTemplatesPopup'] ) ? CFF_Feed_Templates_Settings::get_feed_settings_by_feed_templates( $_POST['previewSettings'] ) + $_POST['previewSettings'] : $_POST['previewSettings'];
-
-			$post_set->init( true, $previewSettings );
+			$post_set = new CFF_Post_Set( $_POST['feedID'] );
+			$post_set->init( true, $_POST['previewSettings'] );
 			$post_set->fetch();
 
 			$return['posts'] = $post_set->get_data();
 
 			$header_details = array();
 			$settings = $post_set->get_feed_settings();
-
-			// Update feed settings depending on feed templates
-			if ( isset( $_POST['isFeedTemplatesPopup'] ) ) {
-				$settings = CFF_Feed_Templates_Settings::get_feed_settings_by_feed_templates( $settings );
-				$return['customizerData'] = $settings;
-			}
-
-
-
 
 			if ( isset( $settings['sources'][0] ) ) {
 				$args = array(
@@ -429,14 +358,8 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function get_feed_settings() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
-		$feed_id = ! empty( $_POST['feed_id'] ) ? sanitize_text_field( wp_unslash( $_POST['feed_id'] ) ) : false;
+		CFF_Feed_Builder::check_privilege( false );
+		$feed_id = ! empty( $_POST['feed_id'] ) ? $_POST['feed_id'] : false;
 
 		if ( ! $feed_id ) {
 			wp_die( 'no feed id' );
@@ -496,14 +419,8 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function get_feed_list_page() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
-		$args = array( 'page' => (int)sanitize_text_field( wp_unslash( $_POST['page'] ) ) );
+		CFF_Feed_Builder::check_privilege( false );
+		$args = array( 'page' => (int)$_POST['page'] );
 		$feeds_data = CFF_Feed_Builder::get_feed_list($args);
 
 		echo \CustomFacebookFeed\CFF_Utils::cff_json_encode( $feeds_data );
@@ -517,19 +434,13 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function get_locations_page() {
-		check_ajax_referer( 'cff-admin' , 'nonce');
-
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
+		CFF_Feed_Builder::check_privilege( false );
 		$args = array( 'page' => (int)$_POST['page'] );
 
 		if ( ! empty( $_POST['is_legacy'] ) ) {
-			$args['feed_id'] = sanitize_text_field( wp_unslash( $_POST['feed_id'] ) );
+			$args['feed_id'] = sanitize_text_field( $_POST['feed_id'] );
 		} else {
-			$args['feed_id'] = '*' . (int)sanitize_text_field( wp_unslash( $_POST['feed_id'] ) );
+			$args['feed_id'] = '*' . (int)$_POST['feed_id'];
 		}
 		$feeds_data = \CustomFacebookFeed\CFF_Feed_Locator::facebook_feed_locator_query( $args );
 
@@ -558,8 +469,7 @@ class CFF_Feed_Saver_Manager {
 	 */
 	public static function get_export_json( $feed_id ) {
 		$feed_saver = new CFF_Feed_Saver( $feed_id );
-		//Passing true to get Encrypted Access Toekn
-		$settings = $feed_saver->get_feed_settings(true);
+		$settings = $feed_saver->get_feed_settings();
 
 		return \CustomFacebookFeed\CFF_Utils::cff_json_encode( $settings );
 	}
@@ -595,7 +505,6 @@ class CFF_Feed_Saver_Manager {
 	 * @since 4.0
 	 */
 	public static function import_feed( $json ) {
-		$manager = new SB_Facebook_Data_Manager();
 		$settings_data = json_decode( $json, true );
 
 		$return = array(
@@ -617,14 +526,14 @@ class CFF_Feed_Saver_Manager {
 			if ( isset( $source['account_id'] ) ) {
 				$settings_source[] = $source['account_id'];
 				$source_data = array(
-					'access_token' => sanitize_text_field( wp_unslash( $manager->remote_decrypt($source['access_token']) ) ),
-					'id'           => sanitize_text_field( wp_unslash( $source['account_id'] ) ),
-					'type'         => sanitize_text_field( wp_unslash( $source['account_type'] ) ),
-					'privilege'    => isset( $source['privilege'] ) ? sanitize_text_field( wp_unslash( $source['privilege'] ) ) : '',
+					'access_token' => sanitize_text_field( $source['access_token'] ),
+					'id'           => sanitize_text_field( $source['account_id'] ),
+					'type'         => sanitize_text_field( $source['account_type'] ),
+					'privilege'    => isset( $source['privilege'] ) ? sanitize_text_field( $source['privilege'] ) : '',
 				);
 
 				if ( ! empty( $source['name'] ) ) {
-					$source_data['name'] = sanitize_text_field( wp_unslash( $source['name'] ) );
+					$source_data['name'] = sanitize_text_field( $source['name'] );
 				}
 
 				$header_details = \CustomFacebookFeed\CFF_Utils::fetch_header_data( $source_data['id'], $source_data['type'] === 'group', $source_data['access_token'], 0, false, '' );
@@ -734,7 +643,7 @@ class CFF_Feed_Saver_Manager {
 			$return = intval( $value );
 			break;
 			default:
-			$return = sanitize_text_field( wp_unslash( $value ) );
+			$return = sanitize_text_field( $value );
 			break;
 		}
 

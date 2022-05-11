@@ -36,52 +36,7 @@ class CFF_Customview_Control extends CFF_Controls_Base{
 	*/
 	public function get_control_output($controlEditingTypeModel){
 		$this->get_control_sources_output($controlEditingTypeModel);
-		$this->get_control_feedtemplate_output($controlEditingTypeModel);
 		$this->get_control_feedtype_output($controlEditingTypeModel);
-	}
-
-	/**
-	 * Feed Templates Output Control
-	 *
-	 *
-	 * @since 4.0
-	 * @access public
-	 *
-	 * @return HTML
-	*/
-	public function get_control_feedtemplate_output($controlEditingTypeModel){
-	?>
-		<div :class="['sb-control-feedtype-ctn sb-control-feedtemplate-ctn', 'cff-feedtemplate-' + customizerScreens.printedTemplate.type]" v-if="control.viewId == 'feedtemplate'">
-			<div class="cff-fb-type-el" v-if="customizerFeedTemplatePrint()"  @click.prevent.default="activateView('feedtemplatesPopup')">
-				<div class="cff-fb-type-el-img cff-fb-fs" v-html="svgIcons[customizerFeedData.settings.feedtype][customizerScreens.printedTemplate.icon]"></div>
-				<div class="cff-fb-type-el-info cff-fb-fs">
-					<strong class="cff-fb-fs" v-html="getFeedTemplateElTitle(customizerScreens.printedTemplate, true)"></strong>
-				</div>
-			</div>
-			<button class="sb-control-action-button sb-btn cff-fb-fs sb-btn-grey" @click.prevent.default="activateView('feedtemplatesPopup')">
-				<div v-html="svgIcons['edit']"></div>
-				<span>{{genericText.change}}</span>
-			</button>
-		</div>
-		<div class="sb-control-single-id-ctn cff-fb-fs" v-if="customizerFeedData.settings.feedtype == 'singlealbum'">
-			<strong>{{addFeaturedAlbumScreen.URLorID}}</strong>
-			<div class="sb-control-single-id-input cff-fb-fs">
-				<input class="sb-control-input" type="text" v-model="customizerFeedData.settings.album">
-				<button class="sb-control-action-button sb-btn cff-fb-fs cff-btn-orange" @click.prevent.default="customizerControlAjaxAction('feedFlyPreview')">
-					<span>{{genericText.update}}</span>
-				</button>
-			</div>
-		</div>
-		<div class="sb-control-single-id-ctn cff-fb-fs" v-if="customizerFeedData.settings.feedtype == 'featuredpost'">
-			<strong>{{addFeaturedPostScreen.URLorID}}</strong>
-			<div class="sb-control-single-id-input cff-fb-fs">
-				<input class="sb-control-input" type="text" v-model="customizerFeedData.settings.featuredpost">
-				<button class="sb-control-action-button sb-btn cff-fb-fs cff-btn-orange" @click.prevent.default="customizerControlAjaxAction('feedFlyPreview')">
-					<span>{{genericText.update}}</span>
-				</button>
-			</div>
-		</div>
-	<?php
 	}
 
 	/**
@@ -167,13 +122,11 @@ class CFF_Customview_Control extends CFF_Controls_Base{
 						<span>{{source.account_id}}</span>
 						<div class="cff-fb-srcs-info-icon" v-html="svgIcons['copy2']" @click.prevent.default="copyToClipBoard(source.account_id)"></div>
 					</div>
-					<!--
 					<div class="cff-fb-srcs-info-item">
 						<strong>{{genericText.token}}</strong>
 						<span>{{source.access_token}}</span>
 						<div class="cff-fb-srcs-info-icon" v-html="svgIcons['copy2']" @click.prevent.default="copyToClipBoard(source.access_token)"></div>
 					</div>
-				-->
 				</div>
 			</div>
 

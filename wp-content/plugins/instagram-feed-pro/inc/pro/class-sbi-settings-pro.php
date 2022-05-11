@@ -9,10 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
-use InstagramFeed\Helpers\Util;
-use InstagramFeed\SB_Instagram_Data_Encryption;
-
-
 class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 
 	private $business_accounts;
@@ -20,261 +16,17 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 	/**
 	 * SB_Instagram_Settings constructor.
 	 *
-	 * @param array $atts
-	 * @param array $db
-	 * @param array|bool $preview_settings
+	 * @param $atts
+	 * @param $db
 	 */
-	public function __construct( $atts, $db, $preview_settings = false ) {
-		if ( empty( $atts['feed'] ) ) {
-			$sbi_statuses = get_option( 'sbi_statuses', array() );
-			if ( empty( $sbi_statuses['support_legacy_shortcode'] ) ) {
-				if ( empty( $atts ) ) {
-					$atts = array();
-				}
-
-				$atts['feed'] = 1;
-			}
-		}
-
-		$this->connected_accounts = array();
+	public function __construct( $atts, $db ) {
 		$this->feed_type_and_terms = array();
 		$this->connected_accounts_in_feed = array();
-		$this->atts = $this->filter_atts_for_legacy( $atts );
+		$this->atts = $atts;
 		$this->db   = $db;
 
-		if ( ! empty( $atts['feed'] ) && $atts['feed'] !== 'legacy' ) {
-			$this->settings = SB_Instagram_Settings::get_settings_by_feed_id( $atts['feed'], $preview_settings );
+		$connected_accounts = isset( $db['connected_accounts'] ) ? $db['connected_accounts'] : array();
 
-			if ( ! empty( $this->settings ) ) {
-				$this->settings['customizer'] = isset($atts['customizer']) && $atts['customizer'] == true ? true : false;
-				$this->settings['feed'] = intval( $atts['feed'] );
-				if ( ! empty( $this->atts['cachetime'] ) ) {
-					$this->settings['cachetime'] = $this->atts['cachetime'];
-				}
-
-				$this->connected_accounts = $this->get_connected_accounts_from_settings();
-
-				if ( $this->settings['type'] === 'mixed' ) {
-					$this->atts['tagged'] = $this->settings['tagged'];
-					$this->atts['user'] = $this->settings['id'];
-					$this->atts['hashtag'] = $this->settings['hashtag'];
-				}
-
-				foreach ( $this->atts as $key => $value ) {
-					$this->settings[ $key ] = $value;
-				}
-			}
-		}
-
-		if ( empty( $this->settings ) ) {
-			if ( ! empty( $preview_settings ) ) {
-				$this->settings = $preview_settings;
-			} else {
-				$sbi_statuses = get_option( 'sbi_statuses', array() );
-
-				if ( ! empty( $sbi_statuses['support_legacy_shortcode'] ) ) {
-					$legacy_settings_option = self::get_legacy_feed_settings();
-
-					if ( empty( $legacy_settings_option ) ) {
-						$this->settings = SB_Instagram_Settings_Pro::get_settings_by_legacy_shortcode( $atts, $db );
-					} else {
-						$this->settings = wp_parse_args( $this->atts, $legacy_settings_option );
-					}
-				}
-
-			}
-			if ( ! empty( $this->settings ) ) {
-				if ( ! is_array( $this->settings ) ) {
-					$this->settings = array();
-				}
-				$this->settings['customizer'] = isset($atts['customizer']) && $atts['customizer'] == true ? true : false;
-
-				$this->settings['feed'] = 'legacy';
-				if ( isset( $this->settings['type'] ) && $this->settings['type'] === 'mixed' ) {
-					$this->atts['tagged']  = ! empty( $this->settings['tagged'] ) ? $this->settings['tagged'] : array();
-					$this->atts['user']    = ! empty( $this->settings['id'] ) ? $this->settings['id'] : array();
-					$this->atts['hashtag'] = ! empty( $this->settings['hashtag'] ) ? $this->settings['hashtag'] : array();
-				}
-
-				$this->connected_accounts = $this->get_connected_accounts_from_settings();
-
-			}
-			$this->settings = wp_parse_args( $this->settings, \InstagramFeed\Builder\SBI_Feed_Saver::settings_defaults() );
-
-		}
-		if ( empty( $this->settings ) ) {
-			return;
-		}
-
-		$this->settings = $this->filter_for_builder( $this->settings, $atts );
-
-		$this->settings = $this->filter_for_legacy( $this->settings, $atts );
-
-
-		if ( ! empty( $this->settings['customizer'] ) ) {
-			$this->settings = $this->filter_for_customizer( $this->settings );
-		}
-
-		if ( empty( $this->settings['feed_is_moderated'] ) ) {
-			$this->settings['feed_is_moderated'] = false;
-		}
-
-
-		$this->connected_accounts = apply_filters( 'sbi_connected_accounts', $this->connected_accounts, $this->atts );
-
-		$this->settings['customtemplates'] = $this->settings['customtemplates'] === true || $this->settings['customtemplates'] === 'true' || $this->settings['customtemplates'] === 'on';
-		if ( Util::isDebugging() ) {
-			$this->settings['customtemplates'] = false;
-		}
-		$this->settings['showbio'] = $this->settings['showbio'] === 'true' || $this->settings['showbio'] === 'on' || $this->settings['showbio'] === true;
-		if ( isset( $atts['showbio'] ) && $atts['showbio'] === 'false' ) {
-			$this->settings['showbio'] = false;
-		}
-		// allow the use of "user=" for tagged type as well
-		if ( $this->settings['type'] === 'tagged'
-		     && empty( $atts['tagged'] )
-		     && ! empty( $atts['user'] ) ) {
-			$this->settings['tagged'] = $atts['user'];
-		}
-		$this->settings['num'] = max( (int)$this->settings['num'], 0);
-		$this->settings['minnum'] = max( (int)$this->settings['num'], (int)$this->settings['nummobile'] );
-		if ( $this->settings['sortby'] === 'likes' ) {
-			$this->settings['apinum'] = 200;
-		}
-
-		$this->settings['disable_resize'] = isset( $db['sb_instagram_disable_resize'] ) && ($db['sb_instagram_disable_resize'] === 'on' || $db['disable_js_image_loading'] === true);
-		$this->settings['favor_local'] = ! isset( $db['sb_instagram_favor_local'] ) || ($db['sb_instagram_favor_local'] === 'on') || ($db['sb_instagram_favor_local'] === true);
-		$this->settings['backup_cache_enabled'] = ! isset( $db['sb_instagram_backup'] ) || ($db['sb_instagram_backup'] === 'on') || $db['sb_instagram_backup'] === true;
-		$this->settings['font_method'] = 'svg';
-		$this->settings['disable_js_image_loading'] = ! isset( $this->settings['disable_js_image_loading'] ) && isset( $db['disable_js_image_loading'] ) && (($db['disable_js_image_loading'] === 'on') || $db['disable_js_image_loading'] === true);
-
-		switch ( $db['sbi_cache_cron_interval'] ) {
-			case '30mins' :
-				$this->settings['sbi_cache_cron_interval'] = 60*30;
-				break;
-			case '1hour' :
-				$this->settings['sbi_cache_cron_interval'] = 60*60;
-				break;
-			default :
-				$this->settings['sbi_cache_cron_interval'] = 60*60*12;
-		}
-		$this->settings['sb_instagram_cache_time'] = isset( $this->db['sb_instagram_cache_time'] ) ? $this->db['sb_instagram_cache_time'] : 1;
-		$this->settings['sb_instagram_cache_time_unit'] = isset( $this->db['sb_instagram_cache_time_unit'] ) ? $this->db['sb_instagram_cache_time_unit'] : 'hours';
-
-		$this->settings['stories'] = (($this->settings['stories'] === '' && ! isset( $db['sb_instagram_stories'])) || $this->settings['stories'] === true || $this->settings['stories'] === 'on' || $this->settings['stories'] === 'true') && $this->settings['stories'] !== 'false';
-
-		$this->settings['addModerationModeLink'] = ($this->settings['moderationmode'] === true || $this->settings['moderationmode'] === 'on' || $this->settings['moderationmode'] === 'true') && current_user_can('edit_posts' );
-
-		$moderation_mode = isset ( $atts['doingModerationMode'] );
-		if ( $moderation_mode ) {
-			$this->settings['cols'] = 4;
-			$this->settings['colsmobile'] = 2;
-			$this->settings['colstablet'] = 3;
-
-			$this->settings['num'] = 50;
-			$this->settings['apinum'] = 50;
-			$this->settings['minnum'] = 50;
-			$this->settings['nummobile'] = 50;
-
-			$this->settings['lightboxcomments'] = false;
-			$this->settings['showlikes'] = false;
-			$this->settings['showcaption'] = false;
-			$this->settings['showheader'] = true;
-			$this->settings['showbutton'] = true;
-			$this->settings['showfollow'] = false;
-			$this->settings['disablelightbox'] = true;
-			$this->settings['sortby'] = 'none';
-			$this->settings['doingModerationMode'] = true;
-			$this->settings['offset'] = 0;
-		}
-
-		if ( ! empty( $this->atts['cachetime'] ) ) {
-			$this->settings['caching_type'] = 'page';
-			$cache_time = max( 1, (int) $this->atts['cachetime'] );
-			$this->settings['cachetimeseconds'] = 60 * $cache_time;
-		} elseif ( ! empty( $this->db['legacy_page_cache'] ) ) {
-			$this->settings['caching_type'] = 'page';
-			$cache_time = max( 1, (int) $this->db['legacy_page_cache'] );
-			$this->settings['cachetimeseconds'] = 60 * $cache_time;
-		} else {
-			$this->settings['caching_type'] = 'background';
-		}
-
-		$feed_is_permanent = isset( $atts['permanent'] ) ? ($atts['permanent'] === 'true') : false;
-		$white_list_is_permanent = false;
-		if ( ! empty( $this->settings['whitelist'] ) ) {
-			$permanent_white_lists = get_option( 'sb_permanent_white_lists', array() );
-			if ( in_array( $this->settings['whitelist'], $permanent_white_lists, true ) ) {
-				$white_list_is_permanent = true;
-			}
-
-			$this->settings['whitelist_ids'] = get_option( 'sb_instagram_white_lists_'.$this->settings['whitelist'], array() );
-			$this->settings['whitelist_num'] = count( $this->settings['whitelist_ids'] );
-		}
-
-		if ( $feed_is_permanent || $white_list_is_permanent ) {
-			$this->settings['backup_cache_enabled'] = true;
-			$this->settings['alwaysUseBackup'] = true;
-			$this->settings['caching_type'] = 'permanent';
-		}
-
-		$this->settings['headeroutside'] = ($this->settings['headeroutside'] === true || $this->settings['headeroutside'] === 'on' || $this->settings['headeroutside'] === 'true');
-		if ( $this->settings['showheader'] === 'false' ) {
-			$this->settings['showheader'] = false;
-		}
-		$this->settings['heightunit'] = ! empty( $this->settings['heightunit'] ) ? $this->settings['heightunit'] : 'px';
-
-		if ( empty( $atts['layout'] ) && isset( $atts['carousel'] ) && $atts['carousel'] === 'true' ) {
-			$this->settings['layout'] = 'carousel';
-		}
-
-		if ( $this->settings['layout'] === 'carousel'
-		     && $this->settings['num'] <= $this->settings['cols'] ) {
-			$this->settings['num'] = 2 * (int)$this->settings['cols'];
-			$this->settings['minnum'] = 2 * (int)$this->settings['cols'];
-		}
-
-		$this->settings['ajax_post_load'] = ! isset( $this->settings['ajax_post_load'] ) && isset( $db['sb_ajax_initial'] ) && (($db['sb_ajax_initial'] === 'on') || $db['sb_ajax_initial'] === true);
-
-		$this->settings['isgutenberg'] = SB_Instagram_Blocks::is_gb_editor();
-		if ( $this->settings['isgutenberg'] ) {
-			$this->settings['ajax_post_load'] = false;
-			$this->settings['disable_js_image_loading'] = true;
-		}
-
-		if ( (int)$this->settings['offset'] > 0 ) {
-			$num = max( (int)$this->settings['minnum'], (int)$this->settings['apinum'] );
-			$this->settings['apinum'] = $num + (int)$this->settings['offset'];
-		}
-
-		$this->settings['showfollow'] = ( $this->settings['showfollow'] == 'on' || $this->settings['showfollow'] == 'true' || $this->settings['showfollow'] == true ) && $this->settings['showfollow'] !== 'false';
-
-		$this->settings['gdpr'] = isset( $db['gdpr'] ) ? $db['gdpr'] : 'auto';
-		$this->settings = apply_filters( 'sbi_feed_settings', $this->settings, $this->connected_accounts );
-
-		if ( SB_Instagram_GDPR_Integrations::doing_gdpr( $this->settings ) ) {
-			$this->settings['stories'] = false;
-			SB_Instagram_GDPR_Integrations::init();
-		}
-
-		if ( $this->settings['feedid'] === 'false' ) {
-			$this->settings['feedid'] = false;
-		}
-
-		// flag moderation mode and shoppable mode
-		$this->settings['moderation_shoppable'] = ! empty( $_POST['moderationShoppableMode'] );
-	}
-
-	/**
-	 * Backwards compatibility for shortcode arguments and feeds
-	 *
-	 * @param array $atts
-	 * @param array $db
-	 *
-	 * @return array
-	 * @since 6.0
-	 */
-	public static function get_settings_by_legacy_shortcode( $atts, $db ) {
 		//Create the includes string to set as shortcode default
 		$hover_include_string = '';
 		if( isset($db[ 'sbi_hover_inc_username' ]) ){
@@ -314,11 +66,8 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 			}
 		}
 
-		$settings = shortcode_atts(
+		$this->settings = shortcode_atts(
 			array(
-				//TESTV6
-				'customizer' => isset($db[ 'customizer' ]) ? $db[ 'customizer' ] : false,
-
 				//Feed general
 				'type' => isset($db[ 'sb_instagram_type' ]) ? $db[ 'sb_instagram_type' ] : 'user',
 				'order' => isset($db[ 'sb_instagram_order' ]) ? $db[ 'sb_instagram_order' ] : '',
@@ -332,7 +81,7 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 				'widthunit' => isset($db[ 'sb_instagram_width_unit' ]) ? $db[ 'sb_instagram_width_unit' ] : '',
 				'widthresp' => isset($db[ 'sb_instagram_feed_width_resp' ]) ? $db[ 'sb_instagram_feed_width_resp' ] : '',
 				'height' => isset($db[ 'sb_instagram_height' ]) ? $db[ 'sb_instagram_height' ] : '',
-				'heightunit' => isset($db[ 'sb_instagram_height_unit' ]) ? $db[ 'sb_instagram_height_unit' ] : 'px',
+				'heightunit' => isset($db[ 'sb_instagram_height_unit' ]) ? $db[ 'sb_instagram_height_unit' ] : '',
 				'sortby' => isset($db[ 'sb_instagram_sort' ]) ? $db[ 'sb_instagram_sort' ] : '',
 				'disablelightbox' => isset($db[ 'sb_instagram_disable_lightbox' ]) ? $db[ 'sb_instagram_disable_lightbox' ] : '',
 				'captionlinks' => isset($db[ 'sb_instagram_captionlinks' ]) ? $db[ 'sb_instagram_captionlinks' ] : '',
@@ -342,7 +91,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 				'nummobile' => isset($db[ 'sb_instagram_nummobile' ]) ? $db[ 'sb_instagram_nummobile' ] : '',
 				'cols' => isset($db[ 'sb_instagram_cols' ]) ? $db[ 'sb_instagram_cols' ] : '',
 				'colsmobile' => isset($db[ 'sb_instagram_colsmobile' ]) ? $db[ 'sb_instagram_colsmobile' ] : '',
-				'colstablet' => 2,
 				'disablemobile' => isset($db[ 'sb_instagram_disable_mobile' ]) ? $db[ 'sb_instagram_disable_mobile' ] : '',
 				'imagepadding' => isset($db[ 'sb_instagram_image_padding' ]) ? $db[ 'sb_instagram_image_padding' ] : '',
 				'imagepaddingunit' => isset($db[ 'sb_instagram_image_padding_unit' ]) ? $db[ 'sb_instagram_image_padding_unit' ] : '',
@@ -396,7 +144,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 				'stories' => isset($db[ 'sb_instagram_stories' ]) ? $db[ 'sb_instagram_stories' ] : true,
 				'storiestime' => isset($db[ 'sb_instagram_stories_time' ]) ? $db[ 'sb_instagram_stories_time' ] : '',
 				'headeroutside' => isset($db[ 'sb_instagram_outside_scrollable' ]) ? $db[ 'sb_instagram_outside_scrollable' ] : '',
-				'headersource' => '',
 
 				'class' => '',
 				'ajaxtheme' => isset($db[ 'sb_instagram_ajax_theme' ]) ? $db[ 'sb_instagram_ajax_theme' ] : '',
@@ -447,222 +194,134 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 				'gdpr'    => isset( $db['gdpr'] ) ? $db['gdpr'] : 'auto',
 
 			), $atts );
-
-		$settings['sources'] = is_string( $settings['id'] ) ? explode( ',', str_replace( ' ', '', $settings['id'] ) ) : array();
-
-		return $settings;
-	}
-
-	/**
-	 * Converts settings from the builder to settings used in the feed
-	 *
-	 * @param $settings
-	 * @param $atts
-	 *
-	 * @return mixed
-	 * @since 6.0
-	 */
-	public function filter_for_builder( $settings, $atts ) {
-
-		if ( ! empty( $settings['shoppablefeed'] )
-			&& $settings['shoppablefeed'] !== 'false'
-			&& ! empty( $settings['shoppablefeed'] ) ) {
-			$settings['captionlinks'] = true;
-
-			if ( ! is_array( $settings['shoppablelist'] ) ) {
-				$settings['shoppablelist'] = json_decode( $settings['shoppablelist'], true ) ? json_decode( $settings['shoppablelist'], true ) : array();
-			}
+		$this->settings['customtemplates'] = $this->settings['customtemplates'] === 'true' || $this->settings['customtemplates'] === 'on';
+		if ( isset( $_GET['sbi_debug'] ) ) {
+			$this->settings['customtemplates'] = false;
+		}
+		$this->settings['showbio'] = $this->settings['showbio'] === 'true' || $this->settings['showbio'] === 'on' || $this->settings['showbio'] === true;
+		if ( isset( $atts['showbio'] ) && $atts['showbio'] === 'false' ) {
+			$this->settings['showbio'] = false;
+		}
+		// allow the use of "user=" for tagged type as well
+		if ( $this->settings['type'] === 'tagged'
+		     && empty( $atts['tagged'] )
+		     && ! empty( $atts['user'] ) ) {
+			$this->settings['tagged'] = $atts['user'];
+		}
+		$this->settings['num'] = max( (int)$this->settings['num'], 0);
+		$this->settings['minnum'] = max( (int)$this->settings['num'], (int)$this->settings['nummobile'] );
+		if ( $this->settings['sortby'] === 'likes' ) {
+			$this->settings['apinum'] = 200;
 		}
 
-		if ( ! isset( $atts['media'] ) ) {
-			$include_photos = $settings['media'] !== 'videos';
-			if ( isset( $settings['photosposts'] ) ) {
-				$include_photos = $settings['photosposts'] !== 'false' && ! empty( $settings['photosposts'] );
-			}
+		$this->settings['disable_resize'] = isset( $db['sb_instagram_disable_resize'] ) && ($db['sb_instagram_disable_resize'] === 'on');
+		$this->settings['favor_local'] = ! isset( $db['sb_instagram_favor_local'] ) || ($db['sb_instagram_favor_local'] === 'on') || ($db['sb_instagram_favor_local'] === true);
+		$this->settings['backup_cache_enabled'] = ! isset( $db['sb_instagram_backup'] ) || ($db['sb_instagram_backup'] === 'on') || $db['sb_instagram_backup'] === true;
+		$this->settings['font_method'] = 'svg';
+		$this->settings['disable_js_image_loading'] = isset( $db['disable_js_image_loading'] ) && ($db['disable_js_image_loading'] === 'on');
 
-			if ( isset( $settings['videosposts'] ) && $settings['videosposts'] ) {
-				$include_videos = true;
-			} else {
-				$include_videos = $settings['media'] === 'all' || $settings['media'] === 'videos' ? true : false;
-			}
-			if ( isset( $settings['videosposts'] ) ) {
-				$include_videos = $settings['videosposts'] !== 'false' && ! empty( $settings['videosposts'] );
-			}
+		switch ( $db['sbi_cache_cron_interval'] ) {
+			case '30mins' :
+				$this->settings['sbi_cache_cron_interval'] = 60*30;
+				break;
+			case '1hour' :
+				$this->settings['sbi_cache_cron_interval'] = 60*60;
+				break;
+			default :
+				$this->settings['sbi_cache_cron_interval'] = 60*60*12;
+		}
+		$this->settings['sb_instagram_cache_time'] = isset( $this->db['sb_instagram_cache_time'] ) ? $this->db['sb_instagram_cache_time'] : 1;
+		$this->settings['sb_instagram_cache_time_unit'] = isset( $this->db['sb_instagram_cache_time_unit'] ) ? $this->db['sb_instagram_cache_time_unit'] : 'hours';
 
-			if ( $include_photos && $include_videos ) {
-				$settings['media'] = 'all';
-			} elseif ( $include_videos ) {
-				$settings['media'] = 'videos';
-			} else {
-				$settings['media'] = 'photos';
-			}
-		} else {
-			$include_videos = $settings['media'] === 'all' || $settings['media'] === 'videos' && strpos( $settings['videotypes'], 'regular' );
+		$this->settings['stories'] = (($this->settings['stories'] === '' && ! isset( $db['sb_instagram_stories'])) || $this->settings['stories'] === true || $this->settings['stories'] === 'on' || $this->settings['stories'] === 'true') && $this->settings['stories'] !== 'false';
+
+		$this->settings['addModerationModeLink'] = ($this->settings['moderationmode'] === true || $this->settings['moderationmode'] === 'on' || $this->settings['moderationmode'] === 'true') && current_user_can('edit_posts' );
+
+		$moderation_mode = isset ( $atts['doingModerationMode'] );
+		if ( $moderation_mode ) {
+			$this->settings['cols'] = 5;
+			$this->settings['colsmobile'] = 3;
+
+			$this->settings['num'] = 50;
+			$this->settings['apinum'] = 50;
+			$this->settings['minnum'] = 50;
+			$this->settings['nummobile'] = 50;
+
+			$this->settings['lightboxcomments'] = false;
+			$this->settings['showlikes'] = false;
+			$this->settings['showcaption'] = false;
+			$this->settings['showheader'] = true;
+			$this->settings['showbutton'] = true;
+			$this->settings['showfollow'] = false;
+			$this->settings['disablelightbox'] = true;
+			$this->settings['sortby'] = 'none';
+			$this->settings['doingModerationMode'] = true;
+			$this->settings['offset'] = 0;
 		}
 
-		if ( ! isset( $atts['videotypes'] ) ) {
-			$video_types = array();
-			if ( $include_videos ) {
-				$video_types[] = 'igtv';
-				$video_types[] = 'regular';
-			}
-			$settings['videotypes'] = implode( ',', $video_types );
-		}
+		$this->settings['caching_type'] = $db['sbi_caching_type'];
 
-		if ( ! empty( $settings['enablemoderationmode'] )
-			&& $settings['enablemoderationmode'] !== 'false' &&
-	        ! empty( $settings['moderationlist'] ) ) {
-			$moderation_list = json_decode( $settings['moderationlist'], true );
-
-			if ( $moderation_list ) {
-				$settings['feed_is_moderated'] = true;
-
-				$settings['block_list'] = array();
-				if ( ! empty( $settings['customBlockModerationlist'] ) ) {
-					$custom_block_list = explode( ',', str_replace( ' ', '', $settings['customBlockModerationlist'] ) );
-					$settings['block_list'] = $custom_block_list;
-				}
-				$settings['whitelist'] = 'builder';
-				$settings['hidephotos'] = 'builder';
-				if ( $moderation_list['list_type_selected'] === 'allow' ) {
-					$settings['allow_list'] = ! empty( $moderation_list['allow_list'] ) ? $moderation_list['allow_list'] : array();
-					$settings['apinum'] = ! empty( $settings['apinum'] ) ? max( intval( $settings['apinum'] ), 20 ) : 20;
-				} else {
-					$settings['block_list'] = ! empty( $moderation_list['block_list'] ) ? array_merge( $settings['block_list'], $moderation_list['block_list'] ) : $settings['block_list'];
-				}
-			}
-
-		}
-
-		if ( isset( $atts['ajaxtheme'] ) ) {
-			$settings['ajaxtheme'] = $atts['ajaxtheme'] === 'true';
-		} else {
-			$db = sbi_get_database_settings();
-			$settings['ajaxtheme'] = isset( $db['sb_instagram_ajax_theme'] ) ? $db['sb_instagram_ajax_theme'] === '1' || $db['sb_instagram_ajax_theme'] === true || $db['sb_instagram_ajax_theme'] === 'on' : false;
-		}
-
-		return $settings;
-	}
-
-	/**
-	 * Disables or enables certain settings when using the
-	 * customizer
-	 *
-	 * @param $settings
-	 *
-	 * @return mixed
-	 * @since 6.0
-	 */
-	public function filter_for_customizer( $settings ) {
-
-		$settings['customtemplates'] = false;
-		$settings['moderationmode'] = false;
-		$settings['ajax_post_load'] = false;
-		$settings['disable_js_image_loading'] = false;
-		$settings['showheader'] = true;
-
-		return $settings;
-
-	}
-
-	/**
-	 * Filters out or converts allowed/disallowed shortcode settings
-	 *
-	 * @param $atts
-	 *
-	 * @return mixed
-	 * @since 6.0
-	 */
-	public function filter_atts_for_legacy( $atts ) {
-		if ( ! empty( $atts['from_update'] ) ) {
-			unset( $atts['from_update'] );
-			return $atts;
-		}
-		$sbi_statuses = get_option( 'sbi_statuses', array() );
-		$allowed_legacy_shortcode = array(
-			'feed',
-			'moderationmode',
-			'hidephotos',
-			'permanent',
-			'headersource',
-			'customizer',
-			'cachetime',
-			'class',
-			'mediavine'
-		);
-
-		if ( ! empty( $sbi_statuses['support_legacy_shortcode'] )
-			&& empty( $atts['feed'] ) ) {
-
-			if ( is_array( $sbi_statuses['support_legacy_shortcode'] ) ) {
-				$atts_diff = array_diff( $sbi_statuses['support_legacy_shortcode'], $atts ); // determines if the shortcode settings match the shortcode settings of an existing feed
-
-				foreach ( $atts_diff as $key => $value ) {
-					if ( in_array( $key, $allowed_legacy_shortcode ) ) {
-						unset( $atts_diff[ $key ] );
-					}
-				}
-				if ( empty( $atts_diff ) ) {
-					$atts['feed'] = 1;
-				}
-			}
-
-			if ( empty( $atts['feed'] ) ) {
-				return $atts;
-			}
-		}
-
-
-		foreach ( $atts as $key => $value ) {
-			if ( ! in_array( $key, $allowed_legacy_shortcode ) ) {
-				unset( $atts[ $key ] );
-			}
-
-		}
-
-		return $atts;
-
-	}
-
-	/**
-	 * Converts legacy feed settings to work with new settings
-	 *
-	 * @param $settings
-	 * @param $atts
-	 *
-	 * @return mixed
-	 * @since 6.0
-	 */
-	public function filter_for_legacy( $settings, $atts  ) {
-		$sbi_statuses = get_option( 'sbi_statuses', array() );
-
-		if ( empty( $sbi_statuses['support_legacy_shortcode'] ) ) {
-			return $settings;
-		}
-
-		if ( isset( $atts['whitelist'] ) ) {
-			$settings['whitelist'] = $atts['whitelist'];
-			$settings['feed_is_moderated'] = true;
-			$feed_is_permanent = isset( $atts['permanent'] ) ? ($atts['permanent'] === 'true') : false;
-			$white_list_is_permanent = false;
+		$feed_is_permanent = isset( $atts['permanent'] ) ? ($atts['permanent'] === 'true') : false;
+		$white_list_is_permanent = false;
+		if ( ! empty( $this->settings['whitelist'] ) ) {
 			$permanent_white_lists = get_option( 'sb_permanent_white_lists', array() );
-			if ( in_array( $settings['whitelist'], $permanent_white_lists, true ) ) {
+			if ( in_array( $this->settings['whitelist'], $permanent_white_lists, true ) ) {
 				$white_list_is_permanent = true;
 			}
 
-			$settings['whitelist_ids'] = get_option( 'sb_instagram_white_lists_'.$settings['whitelist'], array() );
-			$settings['whitelist_num'] = count( $settings['whitelist_ids'] );
-
-			if ( $feed_is_permanent || $white_list_is_permanent ) {
-				$settings['backup_cache_enabled'] = true;
-				$settings['alwaysUseBackup'] = true;
-				$settings['caching_type'] = 'permanent';
-			}
+			$this->settings['whitelist_ids'] = get_option( 'sb_instagram_white_lists_'.$this->settings['whitelist'], array() );
+			$this->settings['whitelist_num'] = count( $this->settings['whitelist_ids'] );
 		}
 
+		if ( $feed_is_permanent || $white_list_is_permanent ) {
+			$this->settings['backup_cache_enabled'] = true;
+			$this->settings['alwaysUseBackup'] = true;
+			$this->settings['caching_type'] = 'permanent';
+		} else {
+			/*global $sb_instagram_posts_manager;
+			if ( $sb_instagram_posts_manager->are_current_api_request_delays() ) {
+				$this->settings['alwaysUseBackup'] = true;
+				$this->settings['caching_type'] = 'permanent';
+			}*/
+		}
 
-		return $settings;
+		$this->settings['headeroutside'] = ($this->settings['headeroutside'] === true || $this->settings['headeroutside'] === 'on' || $this->settings['headeroutside'] === 'true');
+		if ( $this->settings['showheader'] === 'false' ) {
+			$this->settings['showheader'] = false;
+		}
 
+		if ( empty( $atts['layout'] ) && isset( $atts['carousel'] ) && $atts['carousel'] === 'true' ) {
+			$this->settings['layout'] = 'carousel';
+		}
+
+		if ( $this->settings['layout'] === 'carousel'
+		     && $this->settings['num'] <= $this->settings['cols'] ) {
+			$this->settings['num'] = 2 * (int)$this->settings['cols'];
+			$this->settings['minnum'] = 2 * (int)$this->settings['cols'];
+		}
+
+		$this->settings['ajax_post_load'] = isset( $db['sb_ajax_initial'] ) && ($db['sb_ajax_initial'] === 'on');
+
+		$this->settings['isgutenberg'] = SB_Instagram_Blocks::is_gb_editor();
+		if ( $this->settings['isgutenberg'] ) {
+			$this->settings['ajax_post_load'] = false;
+			$this->settings['disable_js_image_loading'] = true;
+		}
+
+		if ( (int)$this->settings['offset'] > 0 ) {
+			$num = max( (int)$this->settings['minnum'], (int)$this->settings['apinum'] );
+			$this->settings['apinum'] = $num + (int)$this->settings['offset'];
+		}
+
+		$this->connected_accounts = apply_filters( 'sbi_connected_accounts', $connected_accounts, $this->atts );
+
+		$this->settings = apply_filters( 'sbi_feed_settings', $this->settings, $this->connected_accounts );
+
+
+		if ( SB_Instagram_GDPR_Integrations::doing_gdpr( $this->settings ) ) {
+			$this->settings['stories'] = false;
+			SB_Instagram_GDPR_Integrations::init();
+		}
 	}
 
 	/**
@@ -683,8 +342,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 
 		if ( ! empty( $transient_name ) ) {
 			$this->transient_name = $transient_name;
-		} elseif ( ! empty( $this->settings['feed'] ) && $this->settings['feed'] !== 'legacy' && intval( $this->settings['feed'] ) > 0 ) {
-			$this->transient_name = '*' . $this->settings['feed'];
 		} elseif ( ! empty( $this->settings['feedid'] ) ) {
 			$this->transient_name = 'sbi_' . $this->settings['feedid'];
 		} else {
@@ -742,9 +399,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 
 			if ( $this->settings['sortby'] === 'likes' ) {
 				$sbi_transient_name .= 'lsrt';
-			}
-			if ( $this->settings['sortby'] === 'random' ) {
-				$sbi_transient_name .= 'rdm';
 			}
 
 			if ( isset( $feed_type_and_terms['users'] ) ) {
@@ -824,25 +478,16 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 
 	}
 
-	/**
-	 * @param array $connected_accounts
-	 */
 	private function add_connected_accounts_in_feed( $connected_accounts ) {
 		foreach ( $connected_accounts as $key => $connected_account ) {
 			$this->connected_accounts_in_feed[ $key ] = $connected_account;
 		}
 	}
 
-	/**
-	 * @param array $feed_type_and_terms
-	 */
 	private function add_feed_type_and_terms( $feed_type_and_terms ) {
 		$this->feed_type_and_terms = array_merge( $this->feed_type_and_terms, $feed_type_and_terms );
 	}
 
-	/**
-	 * @param array|bool $users
-	 */
 	private function set_user_feed( $users = false ) {
 		global $sb_instagram_posts_manager;
 
@@ -875,10 +520,8 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 			);
 			$usernames_included = array();
 			$usernames_not_connected = array();
-
-
 			foreach ( $users as $user_id_or_name ) {
-				$connected_account = ! empty( $this->connected_accounts[ $user_id_or_name ] ) ? $this->connected_accounts[ $user_id_or_name ] : SB_Instagram_Connected_Account::lookup( $user_id_or_name );
+				$connected_account = SB_Instagram_Connected_Account::lookup( $user_id_or_name );
 
 				if ( $connected_account ) {
 					if ( ! in_array( $connected_account['username'], $usernames_included, true ) ) {
@@ -935,16 +578,14 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 
 	}
 
-	/**
-	 * @param array $hashtags
-	 */
 	private function set_hashtag_feed( $hashtags ) {
+		//delete_option( 'sbi_hashtag_ids' );
 		global $sb_instagram_posts_manager;
 
 		$hashtag_order_suffix = $this->settings['order'] === 'recent' ? 'recent' : 'top';
 		if ( $this->settings['order'] === 'top' ) {
 			$this->settings['sortby'] = 'api';
-			$this->settings['apinum'] = empty( $this->settings['moderation_shoppable'] ) ? 50 : 20;
+			$this->settings['apinum'] = 50;
 		}
 		$connected_accounts_in_feed = array();
 
@@ -993,58 +634,48 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 		foreach ( $hashtags as $hashtag ) {
 			$hashtag_id = false;
 			$error = false;
-			$hashtag = str_replace('#', '', $hashtag );
-			if ( ! empty( $hashtag ) ) {
-				if ( isset( $saved_hashtag_ids[ $hashtag ] ) ) {
-					$hashtag_id = $saved_hashtag_ids[ $hashtag ];
-					$connected_accounts_in_feed[ $hashtag_id ] = $connected_business_accounts[0];
-					$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][] = array(
-						'term' => $hashtag_id,
-						'params' => array( 'hashtag_id' => $hashtag_id ),
-						'hashtag_name' => $hashtag
-					);
-				} else {
-					global $sb_instagram_posts_manager;
 
-					$i = 0;
-					$new_hashtag_id = false;
-					$hashtag_does_not_exist_error = false;
+			if ( isset( $saved_hashtag_ids[ $hashtag ] ) ) {
+				$hashtag_id = $saved_hashtag_ids[ $hashtag ];
+				$connected_accounts_in_feed[ $hashtag_id ] = $connected_business_accounts[0];
+				$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][] = array(
+					'term' => $hashtag_id,
+					'params' => array( 'hashtag_id' => $hashtag_id ),
+					'hashtag_name' => $hashtag
+				);
+			} else {
+				global $sb_instagram_posts_manager;
 
-					while ( isset( $connected_business_accounts[ $i ] ) && ! $new_hashtag_id && ! $hashtag_does_not_exist_error ) {
-						$sb_instagram_posts_manager->maybe_remove_display_error( 'hashtag_limit' );
-						if ( $sb_instagram_posts_manager->account_over_hashtag_limit( $connected_business_accounts[ $i ] ) ) {
-							$error = true;
+				$i = 0;
+				$new_hashtag_id = false;
+				$hashtag_does_not_exist_error = false;
 
-						} else {
-							$error = false;
+				while ( isset( $connected_business_accounts[ $i ] ) && ! $new_hashtag_id && ! $hashtag_does_not_exist_error ) {
+					$sb_instagram_posts_manager->maybe_remove_display_error( 'hashtag_limit' );
+					if ( $sb_instagram_posts_manager->account_over_hashtag_limit( $connected_business_accounts[ $i ] ) ) {
+						$error = true;
 
-							if ( ! $sb_instagram_posts_manager->hashtag_has_error( $hashtag ) ) {
-								$connected_business_account = $connected_business_accounts[ $i ];
-								$new_hashtag_id = SB_Instagram_Settings_Pro::get_remote_hashtag_id_from_hashtag_name( $hashtag, $connected_business_account );
+					} else {
+						$error = false;
 
-								if ( $new_hashtag_id ) {
-									$hashtag_id = $new_hashtag_id;
-									$connected_accounts_in_feed[ $new_hashtag_id ] = $connected_business_account;
-									$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][] = array(
-										'term' => $new_hashtag_id,
-										'params' => array( 'hashtag_id' => $new_hashtag_id ),
-										'hashtag_name' => $hashtag
-									);
-									$new_hashtag_ids = array(
-										$hashtag => $new_hashtag_id
-									);
-									SB_Instagram_Settings_Pro::update_hashtag_ids( $new_hashtag_ids );
+						if ( ! $sb_instagram_posts_manager->hashtag_has_error( $hashtag ) ) {
+							$connected_business_account = $connected_business_accounts[ $i ];
+							$new_hashtag_id = SB_Instagram_Settings_Pro::get_remote_hashtag_id_from_hashtag_name( $hashtag, $connected_business_account );
 
-								} else {
-									$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][] = array(
-										'term' => '',
-										'params' => array(),
-										'hashtag_name' => $hashtag,
-										'error' => true
-									);
-								}
+							if ( $new_hashtag_id ) {
+								$hashtag_id = $new_hashtag_id;
+								$connected_accounts_in_feed[ $new_hashtag_id ] = $connected_business_account;
+								$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][] = array(
+									'term' => $new_hashtag_id,
+									'params' => array( 'hashtag_id' => $new_hashtag_id ),
+									'hashtag_name' => $hashtag
+								);
+								$new_hashtag_ids = array(
+									$hashtag => $new_hashtag_id
+								);
+								SB_Instagram_Settings_Pro::update_hashtag_ids( $new_hashtag_ids );
+
 							} else {
-
 								$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][] = array(
 									'term' => '',
 									'params' => array(),
@@ -1052,40 +683,48 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 									'error' => true
 								);
 							}
+						} else {
+
+							$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][] = array(
+								'term' => '',
+								'params' => array(),
+								'hashtag_name' => $hashtag,
+								'error' => true
+							);
 						}
-
-						$i++;
 					}
-				}
 
-				if ( $error ) {
-					$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][] = array(
-						'term' => '',
-						'params' => array(),
+					$i++;
+				}
+			}
+
+			if ( $error ) {
+				$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][] = array(
+					'term' => '',
+					'params' => array(),
+					'hashtag_name' => $hashtag,
+					'error' => true
+				);
+			}
+
+			if ( $hashtag_id ) {
+				if ( $hashtag_order_suffix === 'recent'
+				     && ! SB_Instagram_Posts_Manager::top_post_request_already_made( $hashtag ) ) {
+					$this->settings['cache_all'] = true;
+					$feed_type_and_terms['hashtags_top'][] = array(
+						'term' => $hashtag_id,
+						'params' => array( 'hashtag_id' => $hashtag_id ),
 						'hashtag_name' => $hashtag,
-						'error' => true
+						'one_time_request' => true
 					);
 				}
+			}
 
-				if ( $hashtag_id ) {
-					if ( $hashtag_order_suffix === 'recent'
-					     && ! SB_Instagram_Posts_Manager::top_post_request_already_made( $hashtag ) ) {
-						$this->settings['cache_all'] = true;
-						$feed_type_and_terms['hashtags_top'][] = array(
-							'term' => $hashtag_id,
-							'params' => array( 'hashtag_id' => $hashtag_id ),
-							'hashtag_name' => $hashtag,
-							'one_time_request' => true
-						);
-					}
-				}
+			foreach ( $feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ] as $key => $hashtag_terms ) {
+				$term = $hashtag_terms['term'];
 
-				foreach ( $feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ] as $key => $hashtag_terms ) {
-					$term = $hashtag_terms['term'];
-
-					if ( ! empty( $term ) && $sb_instagram_posts_manager->are_current_api_request_delays( $connected_accounts_in_feed[ $term ] ) ) {
-						$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][ $key ]['error'] = true;
-					}
+				if ( ! empty( $term ) && $sb_instagram_posts_manager->are_current_api_request_delays( $connected_accounts_in_feed[ $term ] ) ) {
+					$feed_type_and_terms[ 'hashtags_' . $hashtag_order_suffix ][ $key ]['error'] = true;
 				}
 			}
 
@@ -1096,9 +735,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 		$this->add_connected_accounts_in_feed( $connected_accounts_in_feed );
 	}
 
-	/**
-	 * @param array $tagged
-	 */
 	private function set_tagged_feed( $tagged ) {
 		global $sb_instagram_posts_manager;
 
@@ -1109,10 +745,10 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 		if ( ! empty( $tagged ) ) {
 			$users = is_array( $tagged ) ? $tagged : explode( ',', str_replace( ' ', '',  $tagged ) );
 			$usernames_included = array();
-			$usernames_not_connected = array();
+			$usernames_not_connected = array();;
 
 			foreach ( $users as $user_id_or_name ) {
-				$connected_account = ! empty( $this->connected_accounts[ $user_id_or_name ] ) ? $this->connected_accounts[ $user_id_or_name ] : SB_Instagram_Connected_Account::lookup( $user_id_or_name );
+				$connected_account = SB_Instagram_Connected_Account::lookup( $user_id_or_name );
 				$valid_for_tagged = $connected_account && isset( $connected_account['type'] ) && $connected_account['type'] === 'business';
 				if ( $valid_for_tagged ) {
 					if ( ! $sb_instagram_posts_manager->are_current_api_request_delays( $connected_account ) ) {
@@ -1153,7 +789,7 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 			} else {
 				$user = implode( ', ', $usernames_not_connected );
 			}
-/*
+
 			$error_message_return = array(
 				'error_message' => sprintf( __( 'Error: There is no connected business account for the user %s.', 'instagram-feed' ), $user ),
 				'admin_only' => sprintf( __( 'A connected business account related to the tagged Instagram account is required to display tagged feeds. Please visit %s to learn how to connect a business account.', 'instagram-feed' ), '<a href="https://smashballoon.com/migrate-to-new-instagram-hashtag-api/">' . __( 'this page', 'instagram-feed' ) . '</a>' ),
@@ -1161,7 +797,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 				'backend_directions' => ''
 			);
 			$sb_instagram_posts_manager->maybe_set_display_error( 'configuration', $error_message_return );
-*/
 		}
 
 		$this->add_feed_type_and_terms( $feed_type_and_terms );
@@ -1208,7 +843,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 
 				$this->set_user_feed();
 			} else {
-				$user_array= array();
 				if ( ! empty( $this->settings['user'] ) ) {
 					$user_array = is_array( $this->settings['user'] ) ? $this->settings['user'] : explode( ',', str_replace( ' ', '',  $this->settings['user'] ) );
 				} elseif ( ! empty( $this->settings['id'] ) ) {
@@ -1218,48 +852,12 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 				$this->set_user_feed( $user_array );
 			}
 			if ( empty( $this->feed_type_and_terms['users'] ) ) {
-				$sbi_statuses_option = get_option( 'sbi_statuses', array() );
-
-
-				if ( ! $sbi_statuses_option['support_legacy_shortcode'] ) {
-
-					if ( empty( $this->atts['feed'] ) ) {
-						$error_message_return = array(
-							'error_message' => __( 'Error: No Feed ID Set.', 'instagram-feed' ),
-							'admin_only' => __( 'Visit the Instagram Feed settings page to see which feeds have been created and how to embed them.', 'instagram-feed' ),
-							'frontend_directions' => '',
-							'backend_directions' => ''
-						);
-					} else {
-						$error_message_return = array(
-							'error_message' => __( 'Error: Invalid Feed ID.', 'instagram-feed' ),
-							'admin_only' => __( 'Visit the Instagram Feed settings page to see which feeds have been created and how to embed them.', 'instagram-feed' ),
-							'frontend_directions' => '',
-							'backend_directions' => ''
-						);
-					}
-
-					$sb_instagram_posts_manager->maybe_set_display_error( 'configuration', $error_message_return );
-					return;
-				} else {
-					if ( empty( $this->atts['feed'] ) ) {
-						$error_message_return = array(
-							'error_message' => __( 'Error: No users set.', 'instagram-feed' ),
-							'admin_only' => __( 'Please visit the plugin\'s settings page to select a user account or add one to the shortcode - user="username".', 'instagram-feed' ),
-							'frontend_directions' => '',
-							'backend_directions' => ''
-						);
-					} else {
-						$error_message_return = array(
-							'error_message' => __( 'Error: Invalid Feed ID.', 'instagram-feed' ),
-							'admin_only' => __( 'Visit the Instagram Feed settings page to see which feeds have been created and how to embed them.', 'instagram-feed' ),
-							'frontend_directions' => '',
-							'backend_directions' => ''
-						);
-					}
-
-				}
-
+				$error_message_return = array(
+					'error_message' => __( 'Error: No users set.', 'instagram-feed' ),
+					'admin_only' => __( 'Please visit the plugin\'s settings page to select a user account or add one to the shortcode - user="username".', 'instagram-feed' ),
+					'frontend_directions' => '',
+					'backend_directions' => ''
+				);
 				$sb_instagram_posts_manager->maybe_set_display_error( 'configuration', $error_message_return );
 			}
 		} elseif ( $this->settings['type'] === 'hashtag' ) {
@@ -1347,6 +945,7 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 				}
 			}
 
+
 			if ( empty( $this->feed_type_and_terms['tagged'] )
 				 && empty( $this->feed_type_and_terms['hashtags_recent'] )
 			     && empty( $this->feed_type_and_terms['hashtags_top'] )
@@ -1376,10 +975,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 				$sb_instagram_posts_manager->maybe_set_display_error( 'configuration', $error_message_return );
 
 			}
-		}
-
-		if ( ! empty( $this->connected_accounts_in_feed ) ) {
-			$this->settings['sources'] = $this->connected_accounts_in_feed;
 		}
 	}
 
@@ -1419,6 +1014,7 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 				SB_Instagram_API_Connect_Pro::handle_wp_remote_get_error( $connection->get_wp_error() );
 			} else {
 				$response = $connection->get_data();
+
 				if ( (int)$response['error']['code'] === 24 ) {
 					$response['hashtag'] = $hashtag;
 					$sb_instagram_posts_manager->add_error( 'hashtag', $response );
@@ -1444,112 +1040,89 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 	 */
 	public static function get_public_db_settings_keys() {
 		$public = array(
-			'type',
-			'user',
-			'order',
-			'id',
-			'hashtag',
-			'tagged',
-			'width',
-			'widthunit',
-			'height',
-			'heightunit',
-			'widthresp',
-			'sortby',
-			'captionlinks',
-			'offset',
-			'num',
-			'apinum',
-			'disablelightbox',
-			'apinum',
-			'nummobile',
-			'numtablet',
-			'cols',
-			'colsmobile',
-			'colstablet',
-			'disablemobile',
-			'colstablet',
-			'imagepadding',
-			'imagepaddingunit',
-			'layout',
-			'lightboxcomments',
-			'numcomments',
-			'hovereffect',
-			'hovercolor',
-			'hovertextcolor',
-			'hoverdisplay',
-			'background',
-			'imageres',
-			'videotypes',
-			'showcaption',
-			'captionlength',
-			'captioncolor',
-			'captionsize',
-			'showlikes',
-			'likessize',
-			'hidephotos',
-			'showbutton',
-			'buttoncolor',
-			'buttonhovercolor',
-			'buttontextcolor',
-			'buttontext',
-			'showfollow',
-			'followcolor',
-			'followhovercolor',
-			'followtextcolor',
-			'followtext',
-			'showheader',
-			'headertextsize',
-			'headercolor',
-			'headerstyle',
-			'showfollowers',
-			'showbio',
-			'custombio',
-			'customavatar',
-			'headerprimarycolor',
-			'headersecondarycolor',
-			'headersize',
-			'stories',
-			'storiestime',
-			'class',
-			'ajaxtheme',
-			'excludewords',
-			'includewords',
-			'maxrequests',
-			'carouselrows',
-			'carouselloop',
-			'carouselarrows',
-			'carouselpag',
-			'carouselautoplay',
-			'carouseltime',
-			'highlighttype',
-			'highlightoffset',
-			'highlightpattern',
-			'highlighthashtag',
-			'highlightids',
-			'whitelist',
-			'highlighttype',
-			'autoscroll',
-			'autoscrolldistance',
-			'permanent',
-			'user',
-			'feedid',
-			'resizeprocess',
-			'mediavine',
-			'customtemplates',
-			'gdpr',
-			'colorpalette',
-			'feed',
-			'minnum',
-			'disable_resize',
+			'sb_instagram_type',
+			'sb_instagram_order',
+			'sb_instagram_user_id',
+			'sb_instagram_hashtag',
+			'sb_instagram_user_id',
+			'sb_instagram_ajax_theme',
+			'enqueue_js_in_head',
 			'disable_js_image_loading',
-			'sbi_cache_cron_interval',
+			'sb_instagram_disable_resize',
+			'sb_instagram_favor_local',
+			'sb_ajax_initial',
+			'use_custom',
+			'sb_instagram_layout_type',
+			'sb_instagram_highlight_type',
+			'sb_instagram_highlight_offset',
+			'sb_instagram_highlight_factor',
+			'sb_instagram_highlight_ids',
+			'sb_instagram_highlight_hashtag',
+			'sb_instagram_carousel',
+			'sb_instagram_carousel_rows',
+			'sb_instagram_carousel_loop',
+			'sb_instagram_carousel_arrows',
+			'sb_instagram_carousel_pag',
+			'sb_instagram_carousel_autoplay',
+			'sb_instagram_carousel_interval',
+			'sb_instagram_offset',
+
+			//Hover style
+			'sb_hover_background',
+			'sb_hover_text',
+			'sbi_hover_inc_username',
+			'sbi_hover_inc_icon',
+			'sbi_hover_inc_date',
+			'sbi_hover_inc_instagram',
+			'sbi_hover_inc_location',
+			'sbi_hover_inc_caption',
+			'sbi_hover_inc_likes',
 			'sb_instagram_cache_time',
 			'sb_instagram_cache_time_unit',
-			'addModerationModeLink',
-			'caching_type',
-			'ajax_post_load',
-			'caching_type',
+			'sbi_caching_type',
+			'sbi_cache_cron_interval',
+			'sbi_cache_cron_time',
+			'sbi_cache_cron_am_pm',
+			'sb_instagram_width',
+			'sb_instagram_width_unit',
+			'sb_instagram_feed_width_resp',
+			'sb_instagram_height',
+			'sb_instagram_num',
+			'sb_instagram_height_unit',
+			'sb_instagram_cols',
+			'sb_instagram_disable_mobile',
+			'sb_instagram_image_padding',
+			'sb_instagram_image_padding_unit',
+			'sb_instagram_sort',
+			'sb_instagram_background',
+			'sb_instagram_show_btn',
+			'sb_instagram_btn_background',
+			'sb_instagram_btn_text_color',
+			'sb_instagram_btn_text',
+			'sb_instagram_image_res',
+			//Header
+			'sb_instagram_show_header',
+			'sb_instagram_header_size',
+			'sb_instagram_header_color',
+			//Follow button
+			'sb_instagram_show_follow_btn',
+			'sb_instagram_folow_btn_background',
+			'sb_instagram_follow_btn_text_color',
+			'sb_instagram_follow_btn_text',
+			'sb_instagram_disable_lightbox',
+			'sb_instagram_captionlinks',
+			'sb_instagram_exclude_words',
+			'sb_instagram_include_words',
+			'sb_instagram_lightbox_comments',
+			'sb_instagram_num_comments',
+			'sb_instagram_stories',
+			'sb_instagram_stories_time',
+			'sb_instagram_autoscroll',
+			'sb_instagram_autoscrolldistance',
+			//Misc
+			'sb_instagram_cron',
+			'sb_instagram_backup',
+			'sb_instagram_disable_awesome',
 		);
 
 		return $public;
@@ -1739,7 +1312,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 			'sb_instagram_disable_font'         => false,
 			'sb_instagram_backup' => true,
 			'sb_ajax_initial' => false,
-			'sb_instagram_resizeprocess' => 'background',
 			'enqueue_css_in_shortcode' => false,
 			'sb_instagram_disable_mob_swipe' => false,
 			'sbi_br_adjust' => true,
@@ -1749,7 +1321,6 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 			'enable_email_report' => 'on',
 			'email_notification' => 'monday',
 			'email_notification_addresses' => get_option( 'admin_email' ),
-			'gdpr' => 'auto',
 
 			//Carousel
 			'sb_instagram_carousel'             => false,
@@ -1763,637 +1334,5 @@ class SB_Instagram_Settings_Pro extends SB_Instagram_Settings{
 		);
 
 		return $defaults;
-	}
-
-	public function get_connected_accounts_from_settings() {
-		if ( $this->settings['feed'] === 'legacy' ) {
-			$sources = \InstagramFeed\Builder\SBI_Db::source_query();
-
-			return \InstagramFeed\Builder\SBI_Source::convert_sources_to_connected_accounts( $sources );
-		}
-		$include_all_businesses = false;
-
-		$account_ids = [];
-
-		if ( $this->settings['type'] === 'hashtag' ) {
-			$include_all_businesses = true;
-		}
-
-		if ( $this->settings['type'] === 'mixed' ) {
-			$include_all_businesses = ! empty( $this->settings['hashtag'] );
-		}
-
-		$ids = is_array( $this->settings['id'] ) ? $this->settings['id'] : explode( ',', str_replace(' ', '', $this->settings['id'] ) );
-		$tagged = is_array( $this->settings['tagged'] ) ? $this->settings['tagged'] : explode( ',', str_replace(' ', '', $this->settings['tagged'] ) );
-
-		$account_ids = array_merge( $ids, $tagged );
-
-		$args = array(
-			'all_businesses' => $include_all_businesses,
-			'id' => $account_ids
-		);
-		$sources = \InstagramFeed\Builder\SBI_Db::source_query( $args );
-
-		if ( empty( $sources ) ) {
-			$sources = \InstagramFeed\Builder\SBI_Db::source_query();
-		}
-
-		return \InstagramFeed\Builder\SBI_Source::convert_sources_to_connected_accounts( $sources );
-	}
-
-	/**
-	 * Attributes allowed in shortcodes and how they are sanitized
-	 *
-	 * @return array
-	 */
-	public static function get_pro_allowed_atts() {
-		$allowed_atts = SB_Instagram_Settings::get_allowed_atts();
-
-		$pro_allowed_atts = array(
-			'feed' => array(
-				'method' => 'intval',
-				'allowed_vals' => 99999
-			),
-			'type'               => array(
-				'method'       => 'enum',
-				'allowed_vals' => array( 'user', 'tagged', 'hashtag', 'mixed' ),
-			),
-			'order'              => array(
-				'method'       => 'enum',
-				'allowed_vals' => array( 'top', 'recent' ),
-			),
-			'tagged'             => array(
-				'method'       => 'feedid_chars',
-				'allowed_vals' => 'any',
-			),
-			'hashtag'            => array(
-				'method'       => 'hashtag_chars',
-				'allowed_vals' => 'any',
-			),
-			'disablelightbox'    => array(
-				'method' => 'page_load_only',
-			),
-			'captionlinks'       => array(
-				'method' => 'page_load_only',
-			),
-			'offset'             => array(
-				'method'       => 'intval',
-				'allowed_vals' => 500,
-			),
-			'layout'             => array(
-				'method' => 'page_load_only',
-			),
-			'lightboxcomments'   => array(
-				'method' => 'page_load_only',
-			),
-			'numcomments'        => array(
-				'method' => 'page_load_only',
-			),
-			'hovereffect'        => array(
-				'method' => 'page_load_only',
-			),
-			'hovercolor'         => array(
-				'method'       => 'color',
-				'allowed_vals' => 'any',
-			),
-			'hovertextcolor'     => array(
-				'method'       => 'color',
-				'allowed_vals' => 'any',
-			),
-			'hoverdisplay'       => array(
-				'method'       => 'enum_array',
-				'allowed_vals' => array( 'icon', 'date', 'instagram', 'location', 'caption', 'likes' ),
-			),
-			'media'              => array(
-				'method'       => 'enum',
-				'allowed_vals' => array( 'all', 'photos', 'videos' ),
-			),
-			'videotypes'         => array(
-				'method'       => 'enum_array',
-				'allowed_vals' => array( 'regular', 'igtv' ),
-			),
-			'showcaption'        => array(
-				'method'       => 'string_true',
-				'allowed_vals' => 'any',
-			),
-			'captionlength'      => array(
-				'method'       => 'intval',
-				'allowed_vals' => 500,
-			),
-			'captioncolor'       => array(
-				'method'       => 'color',
-				'allowed_vals' => 'any',
-			),
-			'captionsize'        => array(
-				'method'       => 'pxsize',
-				'allowed_vals' => 'any',
-			),
-			'showlikes'          => array(
-				'method'       => 'string_true',
-				'allowed_vals' => 'any',
-			),
-			'likescolor'         => array(
-				'method'       => 'color',
-				'allowed_vals' => 'any',
-			),
-			'likessize'          => array(
-				'method'       => 'pxsize',
-				'allowed_vals' => 'any',
-			),
-			'hidephotos'         => array(
-				'method'       => 'numeric_and_comma',
-				'allowed_vals' => 'any',
-			),
-			'showfollowers'      => array(
-				'method'       => 'string_true',
-				'allowed_vals' => 'any',
-			),
-			'stories'            => array(
-				'method' => 'page_load_only',
-			),
-			'storiestime'        => array(
-				'method' => 'page_load_only',
-			),
-			'includewords'       => array(
-				'method'       => 'inc_ex',
-				'allowed_vals' => 100,
-			),
-			'excludewords'       => array(
-				'method'       => 'inc_ex',
-				'allowed_vals' => 100,
-			),
-			'carousel'           => array(
-				'method' => 'page_load_only',
-			),
-			'carouselrows'       => array(
-				'method' => 'page_load_only',
-			),
-			'carouselloop'       => array(
-				'method' => 'page_load_only',
-			),
-			'carouselarrows'     => array(
-				'method' => 'page_load_only',
-			),
-			'carouselpag'        => array(
-				'method' => 'page_load_only',
-			),
-			'carouselautoplay'   => array(
-				'method' => 'page_load_only',
-			),
-			'carouseltime'       => array(
-				'method' => 'page_load_only',
-			),
-			'highlighttype'      => array(
-				'method' => 'page_load_only',
-			),
-			'highlightoffset'    => array(
-				'method' => 'page_load_only',
-			),
-			'highlightpattern'   => array(
-				'method' => 'page_load_only',
-			),
-			'highlighthashtag'   => array(
-				'method' => 'page_load_only',
-			),
-			'highlightids'       => array(
-				'method' => 'page_load_only',
-			),
-			'whitelist'          => array(
-				'method'       => 'feedid_chars',
-				'allowed_vals' => 'any',
-			),
-			'autoscroll'         => array(
-				'method' => 'page_load_only',
-			),
-			'autoscrolldistance' => array(
-				'method' => 'page_load_only',
-			),
-			'moderationmode'     => array(
-				'method' => 'page_load_only',
-			),
-			'permanent'          => array(
-				'method'       => 'string_true',
-				'allowed_vals' => 'any',
-			),
-			'mediavine'          => array(
-				'method' => 'page_load_only',
-			),
-			'doingModerationMode'      => array(
-				'method'       => 'string_true',
-				'allowed_vals' => 'any',
-			),
-		);
-
-		return array_merge( $allowed_atts, $pro_allowed_atts );
-	}
-
-	/**
-	 * Compares given array with an allow list of
-	 * setting keys and how they should be sanitized
-	 *
-	 * @param array $atts
-	 *
-	 * @return array
-	 */
-	public static function pro_sanitize_raw_atts( $atts ) {
-		$sanitized_atts = array();
-
-		$allowed_atts = SB_Instagram_Settings_Pro::get_pro_allowed_atts();
-
-		foreach ( $atts as $key => $value ) {
-			if ( ! is_array( $value ) ) {
-				$value = (string) $value;
-			} else {
-				$value = '';
-			}
-
-			if ( isset( $allowed_atts[ $key ] ) && strlen( $value ) < 500 ) {
-				$sanitization_method = $allowed_atts[ $key ]['method'];
-
-				switch ( $sanitization_method ) {
-					case 'enum' :
-						if ( in_array( $value, $allowed_atts[ $key ]['allowed_vals'], true ) ) {
-							$sanitized_atts[ $key ] = sanitize_text_field( $value );
-						}
-						break;
-					case 'enum_array' :
-						$values_array = explode( ',', str_replace( ' ', '', $value ) );
-						$filtered = array();
-						foreach ( $values_array as $single_value ) {
-							if ( in_array( $single_value, $allowed_atts[ $key ]['allowed_vals'], true ) ) {
-								$filtered[] = $single_value;
-							}
-						}
-						$sanitized_atts[ $key ] = implode( ',', $filtered );
-						break;
-					case 'alpha_numeric_and_comma' :
-						$sanitized_atts[ $key ] = preg_replace( "/[^A-Za-z0-9_,]/", '', $value );
-						break;
-					case 'feedid_chars' :
-						$value = str_replace( ' ', '', $value );
-						$feedid_chars_with_expected = preg_replace( "/[^A-Za-z0-9#_\-\/?,]/", '', str_replace('%','', urlencode( $value ) ) );
-						if ( $feedid_chars_with_expected !== str_replace('%','', urlencode( $value ) ) ) {
-							$sanitized_atts[ $key ] = '';
-						} else {
-							$sanitized_atts[ $key ] = sanitize_text_field( $value );
-						}
-						break;
-					case 'hashtag_chars' :
-						$value = str_replace( ' ', '', $value );
-						$hashtag_with_expected = preg_replace( "/[^A-Za-z0-9#_\-\/?,]/", '', str_replace('%','', urlencode( $value ) ) );
-						if ( $hashtag_with_expected !== str_replace('%','', urlencode( $value ) ) ) {
-							$sanitized_atts[ $key ] = '';
-						} else {
-							$sanitized_atts[ $key ] = sanitize_text_field( $value );
-						}
-						break;
-					case 'intval' :
-						$value = intval( $value );
-
-						if ( $value < (int)$allowed_atts[ $key ]['allowed_vals'] ) {
-							$sanitized_atts[ $key ] = $value;
-						}
-
-						break;
-					case 'floatval' :
-						$value = floatval( $value );
-
-						if ( $allowed_atts[ $key ]['allowed_vals'] === 'any' ) {
-							$sanitized_atts[ $key ] = $value;
-						} elseif ( $value < (float)$allowed_atts[ $key ]['allowed_vals'] ) {
-							$sanitized_atts[ $key ] = $value;
-						}
-
-						if ( floor( $value ) === $value ) {
-							$sanitized_atts[ $key ] = (int)$value;
-						}
-
-						break;
-					case 'string_true' :
-						$value = floatval( $value );
-
-						if ( $value === 'true' || $value === 'on' || $value === true ) {
-							$sanitized_atts[ $key ] = 'true';
-						} else {
-							$sanitized_atts[ $key ] = 'false';
-						}
-
-						break;
-					case 'color' :
-						if ( strpos( $value, 'rgb' ) === false ) {
-							$sanitized_atts[ $key ] = sanitize_hex_color( $value );
-						} else {
-							$sanitized_atts[ $key ] = preg_replace( "/[^rgba0-9.,()]/", '', $value );
-						}
-
-						break;
-					case 'pxsize' :
-						if ( strpos( $value, 'inherit' ) !== false ) {
-							$sanitized_atts[ $key ] = 'inherit';
-						} else {
-							$sanitized_atts[ $key ] = preg_replace( "/[^0-9]/", '', $value );
-						}
-
-						break;
-					case 'numeric_and_comma' :
-						$sanitized_atts[ $key ] = preg_replace( "/[^0-9,]/", '', $value );
-
-						break;
-					case 'inc_ex' :
-						$values_array = explode( ',', str_replace( ' ', '', $value ) );
-						$filtered = array();
-						foreach ( $values_array as $single_value ) {
-							if ( strlen( $single_value ) < $allowed_atts[ $key ]['allowed_vals'] ) {
-								$filtered[] = $single_value;
-							}
-						}
-						$sanitized_atts[ $key ] = implode( ',', $filtered );
-						break;
-				}
-			}
-		}
-
-		return $sanitized_atts;
-  }
-
-	/**
-	 * @return mixed
-	 * @since 6.0
-	 */
-	public static function get_legacy_feed_settings() {
-		return json_decode( get_option( 'sbi_legacy_feed_settings', '{}' ), true );
-	}
-
-	/**
-	 * @param $instagram_feed_settings
-	 *
-	 * @return mixed
-	 * @since 6.0
-	 */
-	public static function legacy_to_builder_convert( $instagram_feed_settings ) {
-
-		$moderation_json_array = array(
-			'list_type_selected' => 'allow',
-			'allow_list' => array(),
-			'block_list' => ! empty( $instagram_feed_settings['hidephotos'] ) ? explode( ',', str_replace(',', ' ', $instagram_feed_settings['hidephotos'] ) ) : array()
-		);
-
-		if ( ! empty( $instagram_feed_settings['whitelist_ids'] ) ) {
-			$moderation_json_array['allow_list'] = $instagram_feed_settings['whitelist_ids'];
-		} else {
-			$moderation_json_array['list_type_selected'] = 'block';
-		}
-		$instagram_feed_settings['moderationlist'] = json_encode( $moderation_json_array );
-		$instagram_feed_settings['customizer'] = false;
-		$instagram_feed_settings['feed'] = 'legacy';
-		$unsets = array(
-			'feed_is_moderated',
-			'whitelist_ids',
-			'whitelist_num',
-			'minnum',
-			'disable_resize',
-			'favor_local',
-			'backup_cache_enabled',
-			'font_method',
-			'disable_js_image_loading',
-			'sbi_cache_cron_interval',
-			'sb_instagram_cache_time',
-			'sb_instagram_cache_time_unit',
-			'addModerationModeLink',
-			'caching_type',
-			'ajax_post_load',
-			'isgutenberg',
-			'hidephotos',
-		);
-
-		foreach ( $unsets as $unset_key ) {
-			if ( isset( $instagram_feed_settings[ $unset_key ] ) ) {
-				unset( $instagram_feed_settings[ $unset_key ] );
-			}
-		}
-
-		return $instagram_feed_settings;
-	}
-
-	/**
-	 * For one time update to capture existing legacy shortcode atts
-	 *
-	 * @param array $atts
-	 * @param array $db
-	 *
-	 * @return array
-	 */
-	public static function legacy_shortcode_atts( $atts, $db ) {
-		//Create the includes string to set as shortcode default
-		$hover_include_string = '';
-		if ( isset( $db['sbi_hover_inc_username'] ) ) {
-			( $db['sbi_hover_inc_username'] && $db['sbi_hover_inc_username'] !== '' ) ? $hover_include_string .= 'username,' : $hover_include_string .= '';
-		}
-		//If the username option doesn't exist in the database yet (eg: on plugin update) then set it to be displayed
-		if ( ! array_key_exists( 'sbi_hover_inc_username', $db ) ) {
-			$hover_include_string .= 'username,';
-		}
-
-		if ( isset( $db['sbi_hover_inc_icon'] ) ) {
-			( $db['sbi_hover_inc_icon'] && $db['sbi_hover_inc_icon'] !== '' ) ? $hover_include_string .= 'icon,' : $hover_include_string .= '';
-		}
-		if ( ! array_key_exists( 'sbi_hover_inc_icon', $db ) ) {
-			$hover_include_string .= 'icon,';
-		}
-
-		if ( isset( $db['sbi_hover_inc_date'] ) ) {
-			( $db['sbi_hover_inc_date'] && $db['sbi_hover_inc_date'] !== '' ) ? $hover_include_string .= 'date,' : $hover_include_string .= '';
-		}
-		if ( ! array_key_exists( 'sbi_hover_inc_date', $db ) ) {
-			$hover_include_string .= 'date,';
-		}
-
-		if ( isset( $db['sbi_hover_inc_instagram'] ) ) {
-			( $db['sbi_hover_inc_instagram'] && $db['sbi_hover_inc_instagram'] !== '' ) ? $hover_include_string .= 'instagram,' : $hover_include_string .= '';
-		}
-		if ( ! array_key_exists( 'sbi_hover_inc_instagram', $db ) ) {
-			$hover_include_string .= 'instagram,';
-		}
-
-		if ( isset( $db['sbi_hover_inc_location'] ) ) {
-			( $db['sbi_hover_inc_location'] && $db['sbi_hover_inc_location'] !== '' ) ? $hover_include_string .= 'location,' : $hover_include_string .= '';
-		}
-		if ( isset( $db['sbi_hover_inc_caption'] ) ) {
-			( $db['sbi_hover_inc_caption'] && $db['sbi_hover_inc_caption'] !== '' ) ? $hover_include_string .= 'caption,' : $hover_include_string .= '';
-		}
-		if ( isset( $db['sbi_hover_inc_likes'] ) ) {
-			( $db['sbi_hover_inc_likes'] && $db['sbi_hover_inc_likes'] !== '' ) ? $hover_include_string .= 'likes,' : $hover_include_string .= '';
-		}
-		if ( isset( $db['sb_instagram_incex_one_all'] ) ) {
-			if ( $db['sb_instagram_incex_one_all'] === 'one' ) {
-				$db['sb_instagram_include_words'] = '';
-				$db['sb_instagram_exclude_words'] = '';
-			}
-		}
-
-		$settings = shortcode_atts(
-			array(
-				//Feed general
-				'type'                 => isset( $db['sb_instagram_type'] ) ? $db['sb_instagram_type'] : 'user',
-				'order'                => isset( $db['sb_instagram_order'] ) ? $db['sb_instagram_order'] : '',
-				'id'                   => isset( $db['sb_instagram_user_id'] ) ? $db['sb_instagram_user_id'] : '',
-				'hashtag'              => isset( $db['sb_instagram_hashtag'] ) ? $db['sb_instagram_hashtag'] : '',
-				'tagged'               => isset( $db['sb_instagram_tagged_ids'] ) ? $db['sb_instagram_tagged_ids'] : '',
-				'location'             => isset( $db['sb_instagram_location'] ) ? $db['sb_instagram_location'] : '',
-				'coordinates'          => isset( $db['sb_instagram_coordinates'] ) ? $db['sb_instagram_coordinates'] : '',
-				'single'               => '',
-				'width'                => isset( $db['sb_instagram_width'] ) ? $db['sb_instagram_width'] : '',
-				'widthunit'            => isset( $db['sb_instagram_width_unit'] ) ? $db['sb_instagram_width_unit'] : '',
-				'widthresp'            => isset( $db['sb_instagram_feed_width_resp'] ) ? $db['sb_instagram_feed_width_resp'] : '',
-				'height'               => isset( $db['sb_instagram_height'] ) ? $db['sb_instagram_height'] : '',
-				'heightunit'           => isset( $db['sb_instagram_height_unit'] ) ? $db['sb_instagram_height_unit'] : '',
-				'sortby'               => isset( $db['sb_instagram_sort'] ) ? $db['sb_instagram_sort'] : '',
-				'disablelightbox'      => isset( $db['sb_instagram_disable_lightbox'] ) ? $db['sb_instagram_disable_lightbox'] : '',
-				'captionlinks'         => isset( $db['sb_instagram_captionlinks'] ) ? $db['sb_instagram_captionlinks'] : '',
-				'offset'               => isset( $db['sb_instagram_offset'] ) ? $db['sb_instagram_offset'] : '',
-				'num'                  => isset( $db['sb_instagram_num'] ) ? $db['sb_instagram_num'] : '',
-				'apinum'               => isset( $db['sb_instagram_minnum'] ) ? $db['sb_instagram_minnum'] : '',
-				'nummobile'            => isset( $db['sb_instagram_nummobile'] ) ? $db['sb_instagram_nummobile'] : '',
-				'cols'                 => isset( $db['sb_instagram_cols'] ) ? $db['sb_instagram_cols'] : '',
-				'colsmobile'           => isset( $db['sb_instagram_colsmobile'] ) ? $db['sb_instagram_colsmobile'] : '',
-				'disablemobile'        => isset( $db['sb_instagram_disable_mobile'] ) ? $db['sb_instagram_disable_mobile'] : '',
-				'imagepadding'         => isset( $db['sb_instagram_image_padding'] ) ? $db['sb_instagram_image_padding'] : '',
-				'imagepaddingunit'     => isset( $db['sb_instagram_image_padding_unit'] ) ? $db['sb_instagram_image_padding_unit'] : '',
-				'layout'               => isset( $db['sb_instagram_layout_type'] ) ? $db['sb_instagram_layout_type'] : 'grid',
-
-				//Lightbox comments
-				'lightboxcomments'     => isset( $db['sb_instagram_lightbox_comments'] ) ? $db['sb_instagram_lightbox_comments'] : '',
-				'numcomments'          => isset( $db['sb_instagram_num_comments'] ) ? $db['sb_instagram_num_comments'] : '',
-
-				//Photo hover styles
-				'hovereffect'          => isset( $db['sb_instagram_hover_effect'] ) ? $db['sb_instagram_hover_effect'] : '',
-				'hovercolor'           => isset( $db['sb_hover_background'] ) ? $db['sb_hover_background'] : '',
-				'hovertextcolor'       => isset( $db['sb_hover_text'] ) ? $db['sb_hover_text'] : '',
-				'hoverdisplay'         => $hover_include_string,
-
-				//Item misc
-				'background'           => isset( $db['sb_instagram_background'] ) ? $db['sb_instagram_background'] : '',
-				'imageres'             => isset( $db['sb_instagram_image_res'] ) ? $db['sb_instagram_image_res'] : '',
-				'media'                => isset( $db['sb_instagram_media_type'] ) ? $db['sb_instagram_media_type'] : '',
-				'videotypes'           => isset( $db['videotypes'] ) ? $db['videotypes'] : 'regular,igtv',
-				'showcaption'          => isset( $db['sb_instagram_show_caption'] ) ? $db['sb_instagram_show_caption'] : true,
-				'captionlength'        => isset( $db['sb_instagram_caption_length'] ) ? $db['sb_instagram_caption_length'] : '',
-				'captioncolor'         => isset( $db['sb_instagram_caption_color'] ) ? $db['sb_instagram_caption_color'] : '',
-				'captionsize'          => isset( $db['sb_instagram_caption_size'] ) ? $db['sb_instagram_caption_size'] : '',
-				'showlikes'            => isset( $db['sb_instagram_show_meta'] ) ? $db['sb_instagram_show_meta'] : true,
-				'likescolor'           => isset( $db['sb_instagram_meta_color'] ) ? $db['sb_instagram_meta_color'] : '',
-				'likessize'            => isset( $db['sb_instagram_meta_size'] ) ? $db['sb_instagram_meta_size'] : '',
-				'hidephotos'           => isset( $db['sb_instagram_hide_photos'] ) ? $db['sb_instagram_hide_photos'] : '',
-
-				//Footer
-				'showbutton'           => isset( $db['sb_instagram_show_btn'] ) ? $db['sb_instagram_show_btn'] : '',
-				'buttoncolor'          => isset( $db['sb_instagram_btn_background'] ) ? $db['sb_instagram_btn_background'] : '',
-				'buttontextcolor'      => isset( $db['sb_instagram_btn_text_color'] ) ? $db['sb_instagram_btn_text_color'] : '',
-				'buttontext'           => isset( $db['sb_instagram_btn_text'] ) ? stripslashes( esc_attr( $db['sb_instagram_btn_text'] ) ) : '',
-				'showfollow'           => isset( $db['sb_instagram_show_follow_btn'] ) ? $db['sb_instagram_show_follow_btn'] : '',
-				'followcolor'          => isset( $db['sb_instagram_folow_btn_background'] ) ? $db['sb_instagram_folow_btn_background'] : '',
-				'followtextcolor'      => isset( $db['sb_instagram_follow_btn_text_color'] ) ? $db['sb_instagram_follow_btn_text_color'] : '',
-				'followtext'           => isset( $db['sb_instagram_follow_btn_text'] ) ? stripslashes( esc_attr( $db['sb_instagram_follow_btn_text'] ) ) : '',
-
-				//Header
-				'showheader'           => isset( $db['sb_instagram_show_header'] ) ? $db['sb_instagram_show_header'] : '',
-				'headercolor'          => isset( $db['sb_instagram_header_color'] ) ? $db['sb_instagram_header_color'] : '',
-				'headerstyle'          => isset( $db['sb_instagram_header_style'] ) ? $db['sb_instagram_header_style'] : '',
-				'showfollowers'        => isset( $db['sb_instagram_show_followers'] ) ? $db['sb_instagram_show_followers'] : true,
-				'showbio'              => isset( $db['sb_instagram_show_bio'] ) ? $db['sb_instagram_show_bio'] : true,
-				'custombio'            => isset( $db['sb_instagram_custom_bio'] ) ? $db['sb_instagram_custom_bio'] : '',
-				'customavatar'         => isset( $db['sb_instagram_custom_avatar'] ) ? $db['sb_instagram_custom_avatar'] : '',
-				'headerprimarycolor'   => isset( $db['sb_instagram_header_primary_color'] ) ? $db['sb_instagram_header_primary_color'] : '',
-				'headersecondarycolor' => isset( $db['sb_instagram_header_secondary_color'] ) ? $db['sb_instagram_header_secondary_color'] : '',
-				'headersize'           => isset( $db['sb_instagram_header_size'] ) ? $db['sb_instagram_header_size'] : '',
-				'stories'              => isset( $db['sb_instagram_stories'] ) ? $db['sb_instagram_stories'] : true,
-				'storiestime'          => isset( $db['sb_instagram_stories_time'] ) ? $db['sb_instagram_stories_time'] : '',
-				'headeroutside'        => isset( $db['sb_instagram_outside_scrollable'] ) ? $db['sb_instagram_outside_scrollable'] : '',
-
-				'class'                => '',
-				'ajaxtheme'            => isset( $db['sb_instagram_ajax_theme'] ) ? $db['sb_instagram_ajax_theme'] : '',
-				'cachetime'            => isset( $db['sb_instagram_cache_time'] ) ? $db['sb_instagram_cache_time'] : '',
-				'blockusers'           => isset( $db['sb_instagram_block_users'] ) ? $db['sb_instagram_block_users'] : '',
-				'showusers'            => isset( $db['sb_instagram_show_users'] ) ? $db['sb_instagram_show_users'] : '',
-				'excludewords'         => isset( $db['sb_instagram_exclude_words'] ) ? $db['sb_instagram_exclude_words'] : '',
-				'includewords'         => isset( $db['sb_instagram_include_words'] ) ? $db['sb_instagram_include_words'] : '',
-				'maxrequests'          => isset( $db['sb_instagram_requests_max'] ) ? $db['sb_instagram_requests_max'] : '',
-
-				//Carousel
-				'carousel'             => isset( $db['sb_instagram_carousel'] ) ? $db['sb_instagram_carousel'] : '',
-				'carouselrows'         => isset( $db['sb_instagram_carousel_rows'] ) ? $db['sb_instagram_carousel_rows'] : '',
-				'carouselloop'         => isset( $db['sb_instagram_carousel_loop'] ) ? $db['sb_instagram_carousel_loop'] : '',
-				'carouselarrows'       => isset( $db['sb_instagram_carousel_arrows'] ) ? $db['sb_instagram_carousel_arrows'] : '',
-				'carouselpag'          => isset( $db['sb_instagram_carousel_pag'] ) ? $db['sb_instagram_carousel_pag'] : '',
-				'carouselautoplay'     => isset( $db['sb_instagram_carousel_autoplay'] ) ? $db['sb_instagram_carousel_autoplay'] : '',
-				'carouseltime'         => isset( $db['sb_instagram_carousel_interval'] ) ? $db['sb_instagram_carousel_interval'] : '',
-
-				//Highlight
-				'highlighttype'        => isset( $db['sb_instagram_highlight_type'] ) ? $db['sb_instagram_highlight_type'] : '',
-				'highlightoffset'      => isset( $db['sb_instagram_highlight_offset'] ) ? $db['sb_instagram_highlight_offset'] : '',
-				'highlightpattern'     => isset( $db['sb_instagram_highlight_factor'] ) ? $db['sb_instagram_highlight_factor'] : '',
-				'highlighthashtag'     => isset( $db['sb_instagram_highlight_hashtag'] ) ? $db['sb_instagram_highlight_hashtag'] : '',
-				'highlightids'         => isset( $db['sb_instagram_highlight_ids'] ) ? $db['sb_instagram_highlight_ids'] : '',
-
-				//WhiteList
-				'whitelist'            => '',
-
-				//Load More on Scroll
-				'autoscroll'           => isset( $db['sb_instagram_autoscroll'] ) ? $db['sb_instagram_autoscroll'] : '',
-				'autoscrolldistance'   => isset( $db['sb_instagram_autoscrolldistance'] ) ? $db['sb_instagram_autoscrolldistance'] : '',
-
-				//Moderation Mode
-				'moderationmode'       => isset( $db['sb_instagram_moderation_mode'] ) ? $db['sb_instagram_moderation_mode'] === 'visual' : '',
-
-				//Permanent
-				'permanent'            => isset( $db['sb_instagram_permanent'] ) ? $db['sb_instagram_permanent'] : false,
-				'accesstoken'          => '',
-				'user'                 => isset( $db['sb_instagram_user_id'] ) ? $db['sb_instagram_user_id'] : false,
-
-				//Misc
-				'feedid'               => isset( $db['sb_instagram_feed_id'] ) ? $db['sb_instagram_feed_id'] : false,
-
-				'resizeprocess'        => isset( $db['sb_instagram_resizeprocess'] ) ? $db['sb_instagram_resizeprocess'] : 'background',
-				'mediavine'            => isset( $db['sb_instagram_media_vine'] ) ? $db['sb_instagram_media_vine'] : '',
-				'customtemplates'      => isset( $db['custom_template'] ) ? $db['custom_template'] : '',
-				'gdpr'                 => isset( $db['gdpr'] ) ? $db['gdpr'] : 'auto',
-
-			),
-			$atts
-		);
-		$settings['customtemplates'] = $settings['customtemplates'] === 'true' || $settings['customtemplates'] === 'on' || $settings['customtemplates'] === true;
-		$settings['showbio'] = $settings['showbio'] === 'true' || $settings['showbio'] === 'on' || $settings['showbio'] === true;
-		if ( isset( $settings['showbio'] ) && $settings['showbio'] === 'false' ) {
-			$settings['showbio'] = false;
-		}
-		// allow the use of "user=" for tagged type as well
-		if ( $settings['type'] === 'tagged'
-		     && empty( $atts['tagged'] )
-		     && ! empty( $atts['user'] ) ) {
-			$settings['tagged'] = $atts['user'];
-		}
-		$settings['num']    = max( (int) $settings['num'], 0 );
-		$settings['minnum'] = max( (int) $settings['num'], (int) $settings['nummobile'] );
-		$settings['disable_resize']           = isset( $db['sb_instagram_disable_resize'] ) && ( $db['sb_instagram_disable_resize'] === 'on' || $db['sb_instagram_disable_resize'] === true );
-		$settings['favor_local']              = ! isset( $db['sb_instagram_favor_local'] ) || ( $db['sb_instagram_favor_local'] === 'on' ) || ( $db['sb_instagram_favor_local'] === true );
-		$settings['backup_cache_enabled']     = ! isset( $db['sb_instagram_backup'] ) || ( $db['sb_instagram_backup'] === 'on' ) || $db['sb_instagram_backup'] === true;
-		$settings['font_method']              = 'svg';
-		$settings['disable_js_image_loading'] = isset( $db['disable_js_image_loading'] ) && ( $db['disable_js_image_loading'] === 'on' || $db['disable_js_image_loading'] === true );
-
-		switch ( $db['sbi_cache_cron_interval'] ) {
-			case '30mins':
-				$settings['sbi_cache_cron_interval'] = 60 * 30;
-				break;
-			case '1hour':
-				$settings['sbi_cache_cron_interval'] = 60 * 60;
-				break;
-			default:
-				$settings['sbi_cache_cron_interval'] = 60 * 60 * 12;
-		}
-		$settings['sb_instagram_cache_time']      = isset( $db['sb_instagram_cache_time'] ) ? $db['sb_instagram_cache_time'] : 1;
-		$settings['sb_instagram_cache_time_unit'] = isset( $db['sb_instagram_cache_time_unit'] ) ? $db['sb_instagram_cache_time_unit'] : 'hours';
-
-		$settings['stories'] = ( ( $settings['stories'] === '' && ! isset( $db['sb_instagram_stories'] ) ) || $settings['stories'] === true || $settings['stories'] === 'on' || $settings['stories'] === 'true' ) && $settings['stories'] !== 'false';
-		return $settings;
 	}
 }

@@ -2,7 +2,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
-use TwitterFeed\Pro\CTF_Resizer;
 
 class SW_Feed {
 	/**
@@ -296,7 +295,7 @@ class SW_Feed {
 			$this->next_pages = isset( $transient_data['pagination'] ) ? $transient_data['pagination'] : array();
 			$this->pages_created = isset( $transient_data['pages_created'] ) ? $transient_data['pages_created'] : 0;
 			$this->plugins_with_atts = isset( $transient_data['plugins_with_atts'] ) ? $transient_data['plugins_with_atts'] : array();
-			$this->atts = isset( $transient_data['atts'] ) ? $transient_data['atts'] : array();
+			$this->atts = isset( $transient_data['atts'] ) ? $transient_data['atts'] : array();          
             $this->last_retrieve = isset( $transient_data['last_retrieve'] ) ? $transient_data['last_retrieve'] : null;
             $this->last_requested = isset( $transient_data['last_requested'] ) ? $transient_data['last_requested'] : null;
 

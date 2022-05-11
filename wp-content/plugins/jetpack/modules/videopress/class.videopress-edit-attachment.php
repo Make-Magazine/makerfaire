@@ -83,10 +83,12 @@ class VideoPress_Edit_Attachment {
 			return $post;
 		}
 
-		$post_title    = isset( $_POST['post_title'] ) ? $_POST['post_title'] : null;
-		$post_excerpt  = isset( $_POST['post_excerpt'] ) ? $_POST['post_excerpt'] : null;
-		$rating        = isset( $attachment['rating'] ) ? $attachment['rating'] : null;
-		$display_embed = isset( $attachment['display_embed'] ) ? $attachment['display_embed'] : 0;
+		$post_title      = isset( $_POST['post_title'] ) ? $_POST['post_title'] : null;
+		$post_excerpt    = isset( $_POST['post_excerpt'] ) ? $_POST['post_excerpt'] : null;
+		$rating          = isset( $attachment['rating'] ) ? $attachment['rating'] : null;
+		$display_embed   = isset( $attachment['display_embed'] ) ? $attachment['display_embed'] : 0;
+		$allow_download  = isset( $attachment['allow_download'] ) ? $attachment['allow_download'] : 0;
+		$privacy_setting = isset( $attachment['privacy_setting'] ) ? $attachment['privacy_setting'] : VIDEOPRESS_PRIVACY::SITE_DEFAULT;
 
 		$result = Videopress_Attachment_Metadata::persist_metadata(
 			$post['ID'],
@@ -95,7 +97,9 @@ class VideoPress_Edit_Attachment {
 			null, // @todo: Check why we haven't sent the caption in the first place.
 			$post_excerpt,
 			$rating,
-			$this->normalize_display_embed_value( $display_embed )
+			$this->normalize_checkbox_value( $display_embed ),
+			$this->normalize_checkbox_value( $allow_download ),
+			$privacy_setting
 		);
 
 		if ( is_wp_error( $result ) ) {
@@ -107,14 +111,14 @@ class VideoPress_Edit_Attachment {
 	}
 
 	/**
-	 * Convert the string values of display_embed option to the format that they will be stored in db.
+	 * Convert the string values of a checkbox option to the format that they will be stored in db.
 	 *
-	 * @param string $display_embed The denormalized version.
+	 * @param string $value The denormalized version.
 	 *
 	 * @return int
 	 */
-	private function normalize_display_embed_value( $display_embed ) {
-		return 'on' === $display_embed ? 1 : 0;
+	private function normalize_checkbox_value( $value ) {
+		return 'on' === $value ? 1 : 0;
 	}
 
 	/**
@@ -196,10 +200,22 @@ class VideoPress_Edit_Attachment {
 			'html'  => $this->display_embed_choice( $info ),
 		);
 
+		$fields['allow_download'] = array(
+			'label' => _x( 'Download', 'A header for the video allow download option area', 'jetpack' ),
+			'input' => 'html',
+			'html'  => $this->display_download_choice( $info ),
+		);
+
 		$fields['video-rating'] = array(
 			'label' => _x( 'Rating', 'A header for the video rating area', 'jetpack' ),
 			'input' => 'html',
 			'html'  => $this->display_rating( $info ),
+		);
+
+		$fields['privacy_setting'] = array(
+			'label' => _x( 'Privacy Setting', 'A header for the video privacy setting area.', 'jetpack' ),
+			'input' => 'html',
+			'html'  => $this->display_privacy_setting( $info ),
 		);
 
 		return $fields;
@@ -256,18 +272,82 @@ HTML;
 	}
 
 	/**
+	 * Creates a checkbox and a label for a video option.
+	 *
+	 * @param string $id the checkbox id.
+	 * @param string $name the checkbox name.
+	 * @param string $label the label text.
+	 * @param bool   $is_checked if the checkbox should be checked.
+	 *
+	 * @return string the generated HTML
+	 */
+	protected function create_checkbox_for_option( $id, $name, $label, $is_checked ) {
+		$html = "<label for='$id'><input type='checkbox' name='$name' id='$id'";
+		if ( $is_checked ) {
+			$html .= ' checked="checked"';
+		}
+		$html .= " />$label</label>";
+		return $html;
+	}
+
+	/**
 	 * Build HTML to display a form checkbox for embedcode display preference
 	 *
 	 * @param object $info database row from the videos table
 	 * @return string input element of type checkbox set to checked state based on stored embed preference
 	 */
 	protected function display_embed_choice( $info ) {
-		$id  = "attachments-{$info->post_id}-displayembed";
-		$out = "<label for='$id'><input type='checkbox' name='attachments[{$info->post_id}][display_embed]' id='$id'";
-		if ( $info->display_embed ) {
-			$out .= ' checked="checked"';
+		return $this->create_checkbox_for_option(
+			"attachments-{$info->post_id}-displayembed",
+			"attachments[{$info->post_id}][display_embed]",
+			__( 'Display share menu and allow viewers to copy a link or embed this video', 'jetpack' ),
+			$info->display_embed
+		);
+	}
+
+	/**
+	 * Build HTML to display a form checkbox for the "allow download" video option
+	 *
+	 * @param object $info database row from the videos table.
+	 * @return string input element of type checkbox with checked state matching the download preference
+	 */
+	protected function display_download_choice( $info ) {
+		return $this->create_checkbox_for_option(
+			"attachments-{$info->post_id}-allowdownload",
+			"attachments[{$info->post_id}][allow_download]",
+			__( 'Display download option and allow viewers to download this video', 'jetpack' ),
+			isset( $info->allow_download ) && $info->allow_download
+		);
+	}
+
+	/**
+	 * Build HTML to display a form input radio button for video ratings
+	 *
+	 * @param object $info Database row from the videos table.
+	 *
+	 * @return string Input Elements of type radio with existing stored value selected.
+	 */
+	protected function display_privacy_setting( $info ) {
+		$privacy_settings = array(
+			VIDEOPRESS_PRIVACY::SITE_DEFAULT => __( 'Site Default', 'jetpack' ),
+			VIDEOPRESS_PRIVACY::IS_PUBLIC    => __( 'Public', 'jetpack' ),
+			VIDEOPRESS_PRIVACY::IS_PRIVATE   => __( 'Private', 'jetpack' ),
+		);
+
+		$displayed_privacy_setting = intval( isset( $info->privacy_setting ) ? $info->privacy_setting : VIDEOPRESS_PRIVACY::SITE_DEFAULT );
+
+		$out = "<select name='attachments[{$info->post_id}][privacy_setting]'>";
+		foreach ( $privacy_settings as $r => $label ) {
+			$out .= "<option value=\"$r\"";
+			if ( intval( $r ) === $displayed_privacy_setting ) {
+				$out .= ' selected';
+			}
+
+			$out .= ">$label</option>";
 		}
-		$out .= ' />' . __( 'Display share menu and allow viewers to embed or download this video', 'jetpack' ) . '</label>';
+
+		$out .= '</select>';
+
 		return $out;
 	}
 
@@ -284,13 +364,18 @@ HTML;
 			'G'     => 'G',
 			'PG-13' => 'PG-13',
 			'R-17'  => 'R',
-			'X-18'  => 'X',
 		);
+
+		$displayed_rating = $info->rating;
+		// X-18 was previously supported but is now removed to better comply with our TOS.
+		if ( 'X-18' === $displayed_rating ) {
+			$displayed_rating = 'R-17';
+		}
 
 		foreach ( $ratings as $r => $label ) {
 			$id   = "attachments-{$info->post_id}-rating-$r";
 			$out .= "<label for=\"$id\"><input type=\"radio\" name=\"attachments[{$info->post_id}][rating]\" id=\"$id\" value=\"$r\"";
-			if ( $info->rating == $r ) {
+			if ( $displayed_rating === $r ) {
 				$out .= ' checked="checked"';
 			}
 

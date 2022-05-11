@@ -11,7 +11,7 @@
                 <h3>{{selectSourceScreen.updateHeading}}</h3>
                 <div class="cff-fb-srcs-desc">{{selectSourceScreen.updateDescription}}</div>
                 <div class="cff-fb-srcslist-ctn cff-fb-fs">
-                    <div class="cff-fb-srcs-item cff-fb-srcs-new" @click.prevent.default="$parent.activateView('sourcePopupType', 'creationRedirect')">
+                    <div class="cff-fb-srcs-item cff-fb-srcs-new" @click.prevent.default="$parent.activateView('sourcePopupType', 'creation')">
                         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.66634 5.66634H5.66634V9.66634H4.33301V5.66634H0.333008V4.33301H4.33301V0.333008H5.66634V4.33301H9.66634V5.66634Z" fill="#0096CC"/>
                         </svg>
@@ -19,8 +19,7 @@
                     </div>
                     <div class="cff-fb-srcs-item" v-for="(source, sourceIndex) in sourcesList" @click.prevent.default="$parent.selectSourceCustomizer(source)" :data-type="source.account_type"
                          :data-active="$parent.isSourceActiveCustomizer(source)"
-                         :data-disabled="$parent.checkSourceForEventsPopup(source) || $parent.checkTypeForGroupPopup(source)"
-
+                         :data-test="(Array.isArray($parent.customizerFeedData.settings.sources.map) || $parent.customizerFeedData.settings.sources instanceof Object ) && $parent.customizerFeedData.settings.sources.map(s => s.account_id).includes(source.account_id)"
                     >
                         <div class="cff-fb-srcs-item-chkbx">
                             <div class="cff-fb-srcs-item-chkbx-ic"></div>
@@ -54,7 +53,7 @@
 
             <div v-if="!$parent.activeExtensions['multifeed']" class="cff-fb-srcs-update-footer cff-fb-fs">
                 <div class="cff-fb-srcs-update-footer-image">
-                    <svg width="171" height="107" viewBox="0 0 171 107" fill="none" xmlns="http://www.w3.org/2000/svg"> <g clip-path="url(#clip0)"> <g style="mix-blend-mode:multiply" opacity="0.3" filter="url(#filter0_f)"> <circle cx="-52.5141" cy="81.0831" r="129.5" transform="rotate(27.5614 -52.5141 81.0831)" fill="url(#paint0_linear)"/> </g> <g style="mix-blend-mode:multiply" opacity="0.5" filter="url(#filter1_f)"> <circle cx="-0.490694" cy="175.917" r="129.5" transform="rotate(27.5614 -0.490694 175.917)" fill="#52D1FF"/> </g> <g filter="url(#filter2_d)"> <g clip-path="url(#clip1)"> <rect x="28.3672" y="27.6296" width="98.778" height="65.0678" rx="1.5679" transform="rotate(-3 28.3672 27.6296)" fill="white"/> <path d="M123.358 30.4864C123.227 27.9727 121.083 26.0427 118.569 26.1745C116.056 26.3062 114.126 28.4496 114.257 30.9634C114.377 33.2386 116.127 35.042 118.328 35.2578L118.161 32.0835L117.006 32.1441L116.936 30.823L118.092 30.7624L118.04 29.7716C117.981 28.634 118.626 27.9562 119.653 27.9023C120.167 27.8754 120.686 27.9402 120.686 27.9402L120.744 29.0595L120.176 29.0893C119.607 29.1191 119.442 29.4774 119.461 29.8443L119.505 30.6884L120.771 30.622L120.639 31.9537L119.574 32.0095L119.741 35.1838C121.907 34.7391 123.478 32.7617 123.358 30.4864Z" fill="#006BFA"/> <rect x="33.2227" y="43.8606" width="90.7776" height="44.6095" transform="rotate(-3 33.2227 43.8606)" fill="#F6966B"/> <path d="M85.0273 41.146L123.879 39.1099L126.213 83.6583L86.6466 72.0425L85.0273 41.146Z" fill="#86D0F9"/> <path d="M85.0245 41.1458L33.2227 43.8606L34.8419 74.7571L86.6437 72.0423L85.0245 41.1458Z" fill="#FCE1D5"/> </g> <rect x="28.5732" y="27.8151" width="98.386" height="64.6758" rx="1.37191" transform="rotate(-3 28.5732 27.8151)" stroke="#E8E8EB" stroke-width="0.391974"/> </g> <g filter="url(#filter3_d)"> <rect x="38" y="17" width="98.778" height="65.0678" rx="1.5679" fill="white"/> <path d="M132.714 24.8243C132.714 22.3071 130.674 20.2676 128.157 20.2676C125.64 20.2676 123.6 22.3071 123.6 24.8243C123.6 27.1026 125.254 28.9951 127.44 29.3259V26.1472H126.283V24.8243H127.44V23.8321C127.44 22.6929 128.12 22.0498 129.149 22.0498C129.663 22.0498 130.178 22.1417 130.178 22.1417V23.2625H129.608C129.039 23.2625 128.855 23.6116 128.855 23.9791V24.8243H130.123L129.921 26.1472H128.855V29.3259C131.042 28.9951 132.714 27.1026 132.714 24.8243Z" fill="#006BFA"/> <rect x="42" y="33.4629" width="90.7776" height="44.6095" fill="#43A6DB"/> <path d="M93.8789 33.4634L132.784 33.4634V78.0729L93.8789 64.4023V33.4634Z" fill="#86D0F9"/> <path d="M93.8729 33.4629L42 33.4629L42 64.4018H93.8729V33.4629Z" fill="#B5E5FF"/> <rect x="38.196" y="17.196" width="98.386" height="64.6758" rx="1.37191" stroke="#E8E8EB" stroke-width="0.391974"/> </g> <rect x="119.5" y="65.5" width="25" height="25" rx="12.5" fill="#FE544F"/> <path d="M136.375 78.625H132.625V82.375H131.375V78.625H127.625V77.375H131.375V73.625H132.625V77.375H136.375V78.625Z" fill="white"/> </g> <defs> <filter id="filter0_f" x="-301.238" y="-167.64" width="497.446" height="497.446" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"/> <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/> <feGaussianBlur stdDeviation="37" result="effect1_foregroundBlur"/> </filter> <filter id="filter1_f" x="-249.215" y="-72.8064" width="497.446" height="497.446" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"/> <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/> <feGaussianBlur stdDeviation="37" result="effect1_foregroundBlur"/> </filter> <filter id="filter2_d" x="25.3672" y="22.46" width="110.048" height="78.1482" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"/> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/> <feOffset dx="1" dy="4"/> <feGaussianBlur stdDeviation="2"/> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/> </filter> <filter id="filter3_d" x="35" y="17" width="106.778" height="73.0678" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"/> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/> <feOffset dx="1" dy="4"/> <feGaussianBlur stdDeviation="2"/> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/> </filter> <linearGradient id="paint0_linear" x1="-89.7454" y1="446.921" x2="455.773" y2="-109.929" gradientUnits="userSpaceOnUse"> <stop stop-color="white"/> <stop offset="0.147864" stop-color="#F6640E"/> <stop offset="0.443974" stop-color="#BA03A7"/> <stop offset="0.733337" stop-color="#6A01B9"/> <stop offset="1" stop-color="#6B01B9"/> </linearGradient> <clipPath id="clip0"> <path d="M0 0H171V105C171 106.105 170.105 107 169 107H0V0Z" fill="white"/> </clipPath> <clipPath id="clip1"> <rect x="28.3672" y="27.6296" width="98.778" height="65.0678" rx="1.5679" transform="rotate(-3 28.3672 27.6296)" fill="white"/> </clipPath> </defs> </svg>
+                    <svg width="171" height="107" viewBox="0 0 171 107" fill="none" xmlns="http://www.w3.org/2000/svg"> <g clip-path="url(#clip0)"> <g style="mix-blend-mode:multiply" opacity="0.3" filter="url(#filter0_f)"> <circle cx="-52.5141" cy="81.0831" r="129.5" transform="rotate(27.5614 -52.5141 81.0831)" fill="url(#paint0_linear)"/> </g> <g style="mix-blend-mode:multiply" opacity="0.5" filter="url(#filter1_f)"> <circle cx="-0.490694" cy="175.917" r="129.5" transform="rotate(27.5614 -0.490694 175.917)" fill="#52D1FF"/> </g> <g filter="url(#filter2_d)"> <g clip-path="url(#clip1)"> <rect x="28.3672" y="27.6296" width="98.778" height="65.0678" rx="1.5679" transform="rotate(-3 28.3672 27.6296)" fill="white"/> <path d="M123.358 30.4864C123.227 27.9727 121.083 26.0427 118.569 26.1745C116.056 26.3062 114.126 28.4496 114.257 30.9634C114.377 33.2386 116.127 35.042 118.328 35.2578L118.161 32.0835L117.006 32.1441L116.936 30.823L118.092 30.7624L118.04 29.7716C117.981 28.634 118.626 27.9562 119.653 27.9023C120.167 27.8754 120.686 27.9402 120.686 27.9402L120.744 29.0595L120.176 29.0893C119.607 29.1191 119.442 29.4774 119.461 29.8443L119.505 30.6884L120.771 30.622L120.639 31.9537L119.574 32.0095L119.741 35.1838C121.907 34.7391 123.478 32.7617 123.358 30.4864Z" fill="#006BFA"/> <rect x="33.2227" y="43.8606" width="90.7776" height="44.6095" transform="rotate(-3 33.2227 43.8606)" fill="#F6966B"/> <path d="M85.0273 41.146L123.879 39.1099L126.213 83.6583L86.6466 72.0425L85.0273 41.146Z" fill="#86D0F9"/> <path d="M85.0245 41.1458L33.2227 43.8606L34.8419 74.7571L86.6437 72.0423L85.0245 41.1458Z" fill="#FCE1D5"/> </g> <rect x="28.5732" y="27.8151" width="98.386" height="64.6758" rx="1.37191" transform="rotate(-3 28.5732 27.8151)" stroke="#E8E8EB" stroke-width="0.391974"/> </g> <g filter="url(#filter3_d)"> <rect x="38" y="17" width="98.778" height="65.0678" rx="1.5679" fill="white"/> <path d="M132.714 24.8243C132.714 22.3071 130.674 20.2676 128.157 20.2676C125.64 20.2676 123.6 22.3071 123.6 24.8243C123.6 27.1026 125.254 28.9951 127.44 29.3259V26.1472H126.283V24.8243H127.44V23.8321C127.44 22.6929 128.12 22.0498 129.149 22.0498C129.663 22.0498 130.178 22.1417 130.178 22.1417V23.2625H129.608C129.039 23.2625 128.855 23.6116 128.855 23.9791V24.8243H130.123L129.921 26.1472H128.855V29.3259C131.042 28.9951 132.714 27.1026 132.714 24.8243Z" fill="#006BFA"/> <rect x="42" y="33.4629" width="90.7776" height="44.6095" fill="#43A6DB"/> <path d="M93.8789 33.4634L132.784 33.4634V78.0729L93.8789 64.4023V33.4634Z" fill="#86D0F9"/> <path d="M93.8729 33.4629L42 33.4629L42 64.4018H93.8729V33.4629Z" fill="#B5E5FF"/> <rect x="38.196" y="17.196" width="98.386" height="64.6758" rx="1.37191" stroke="#E8E8EB" stroke-width="0.391974"/> </g> <rect x="119.5" y="65.5" width="25" height="25" rx="12.5" fill="#E34F0E"/> <path d="M136.375 78.625H132.625V82.375H131.375V78.625H127.625V77.375H131.375V73.625H132.625V77.375H136.375V78.625Z" fill="white"/> </g> <defs> <filter id="filter0_f" x="-301.238" y="-167.64" width="497.446" height="497.446" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"/> <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/> <feGaussianBlur stdDeviation="37" result="effect1_foregroundBlur"/> </filter> <filter id="filter1_f" x="-249.215" y="-72.8064" width="497.446" height="497.446" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"/> <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/> <feGaussianBlur stdDeviation="37" result="effect1_foregroundBlur"/> </filter> <filter id="filter2_d" x="25.3672" y="22.46" width="110.048" height="78.1482" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"/> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/> <feOffset dx="1" dy="4"/> <feGaussianBlur stdDeviation="2"/> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/> </filter> <filter id="filter3_d" x="35" y="17" width="106.778" height="73.0678" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"/> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/> <feOffset dx="1" dy="4"/> <feGaussianBlur stdDeviation="2"/> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/> </filter> <linearGradient id="paint0_linear" x1="-89.7454" y1="446.921" x2="455.773" y2="-109.929" gradientUnits="userSpaceOnUse"> <stop stop-color="white"/> <stop offset="0.147864" stop-color="#F6640E"/> <stop offset="0.443974" stop-color="#BA03A7"/> <stop offset="0.733337" stop-color="#6A01B9"/> <stop offset="1" stop-color="#6B01B9"/> </linearGradient> <clipPath id="clip0"> <path d="M0 0H171V105C171 106.105 170.105 107 169 107H0V0Z" fill="white"/> </clipPath> <clipPath id="clip1"> <rect x="28.3672" y="27.6296" width="98.778" height="65.0678" rx="1.5679" transform="rotate(-3 28.3672 27.6296)" fill="white"/> </clipPath> </defs> </svg>
                 </div>
                 <div class="cff-fb-srcs-update-footer-txt">
                     <h4>{{selectSourceScreen.updateFooter}}</h4>
@@ -71,14 +70,14 @@
         </div>
         <!--END Source Popup on the Customizer-->
 
-        <div class="cff-fb-source-popup cff-fb-popup-inside" :data-step="viewsActive.sourcePopupScreen"  v-if="viewsActive.sourcePopupType != 'customizer'">
-            <div class="cff-fb-popup-cls" @click.prevent.default="$parent.activateView('sourcePopup')" v-if="viewsActive.sourcePopupScreen != 'redirect_1'">
+        <div class="cff-fb-source-popup cff-fb-popup-inside"  v-if="viewsActive.sourcePopupType != 'customizer'">
+            <div class="cff-fb-popup-cls" @click.prevent.default="$parent.activateView('sourcePopup')">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M14 1.41L12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41Z" fill="#141B38"/>
                 </svg>
             </div>
             <!-- Step One Select Source -->
-            <div class="cff-fb-source-step1 cff-fb-fs" v-if="viewsActive.sourcePopupScreen == 'step_1_event'">
+            <div class="cff-fb-source-step1 cff-fb-fs" v-if="viewsActive.sourcePopupScreen == 'step_1'">
                 <div class="cff-fb-source-top cff-fb-fs">
                     <div class=" cff-fb-fs">
                         <div class="cff-fb-src-back-top" @click.prevent.default="$parent.activateView('sourcePopup', 'updateCustomizer')">
@@ -89,7 +88,6 @@
                         </div>
                     </div>
                     <h3>{{selectSourceScreen.modal.addNew}}</h3>
-                    <!--
                     <div class="cff-fb-stp1-elm cff-fb-fs">
                         <div class="cff-fb-stp1-elm-ic">1</div>
                         <div class="cff-fb-stp1-elm-txt">
@@ -116,7 +114,6 @@
                             </div>
                         </div>
                     </div>
-                     -->
                     <div class="cff-fb-stp1-elm cff-fb-fs" v-if="(addNewSource.typeSelected == 'group' && selectedFeed == 'events') || selectedFeed != 'events'">
                         <div class="cff-fb-stp1-elm-ic">2</div>
                         <div class="cff-fb-stp1-elm-txt">
@@ -135,7 +132,7 @@
                     <div class="cff-fb-fs" v-if="(addNewSource.typeSelected == 'page' && selectedFeed == 'events')">
                         <!--Add Event Source-->
                         <div class="cff-fb-stp1-elm cff-fb-stp1-event cff-fb-fs">
-                            <div class="cff-fb-stp1-elm-ic">1</div>
+                            <div class="cff-fb-stp1-elm-ic">2</div>
                             <div class="cff-fb-stp1-elm-txt">
                                 <div class="cff-fb-stp1-elm-head sb-small-p sb-bold sb-dark-text">{{selectSourceScreen.modal.enterEventToken}}</div>
                                 <div class="cff-fb-stp1-elm-desc sb-caption sb-caption-lighter" v-html="selectSourceScreen.modal.enterEventTokenDescription"></div>
@@ -175,20 +172,11 @@
                 </div>
             </div>
 
-            <div class="cff-fb-source-redirect cff-fb-fs" v-if="viewsActive.sourcePopupScreen == 'redirect_1'" >
-                <div class="cff-fb-source-redirect-ld cff-fb-fs">
-                    <div></div>
-                </div>
-                <div class="cff-fb-source-redirect-info cff-fb-fs">
-                    <strong class="cff-fb-fs">{{genericText.redirectLoading.heading}}</strong>
-                    <p class="cff-fb-fs">{{genericText.redirectLoading.description}}</p>
-                </div>
-            </div>
             <!-- Step Two Show Pages Connected to -->
             <div class="cff-fb-source-step2 cff-fb-fs" v-if="viewsActive.sourcePopupScreen == 'step_2'">
                 <div class="cff-fb-source-top cff-fb-fs">
                     <div class=" cff-fb-fs">
-                        <div class="cff-fb-src-back-top" @click.prevent.default="$parent.customizerFeedData != undefined ? $parent.switchScreen('sourcePopupType', 'customizer') : $parent.activateView('sourcePopup')">
+                        <div class="cff-fb-src-back-top" @click.prevent.default="$parent.switchScreen('sourcePopupScreen','step_1')">
                             <svg width="6" height="9" viewBox="0 0 6 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M5.27398 1.44L4.33398 0.5L0.333984 4.5L4.33398 8.5L5.27398 7.56L2.22065 4.5L5.27398 1.44Z" fill="#434960"/>
                             </svg>
@@ -260,7 +248,7 @@
             <div class="cff-fb-source-step3 cff-fb-fs" v-if="viewsActive.sourcePopupScreen == 'step_3'">
                 <div class="cff-fb-source-top cff-fb-fs">
                     <div class=" cff-fb-fs">
-                        <div class="cff-fb-src-back-top" @click.prevent.default="$parent.customizerFeedData != undefined ? $parent.switchScreen('sourcePopupType', 'customizer') : $parent.activateView('sourcePopup')"">
+                        <div class="cff-fb-src-back-top" @click.prevent.default="$parent.switchScreen('sourcePopupScreen','step_1')">
                             <svg width="6" height="9" viewBox="0 0 6 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M5.27398 1.44L4.33398 0.5L0.333984 4.5L4.33398 8.5L5.27398 7.56L2.22065 4.5L5.27398 1.44Z" fill="#434960"/>
                             </svg>
@@ -290,7 +278,7 @@
                     <button class="cff-fb-source-btn cff-fb-fs sb-btn-blue sb-account-connection-button" @click.prevent.default="addSourceManually()" :data-active="checkManualEmpty() && loadingAjax == false ? 'true' : 'false'">
                         <div v-if="loadingAjax === false" class="cff-fb-icon-success"></div>
                         <span v-if="loadingAjax === false">{{genericText.add}}</span>
-                        <span v-if="loadingAjax" v-html="cff_settings.loaderSVG"></span>
+                        <span v-if="loadingAjax" class="spinner" style="display: inline-block;visibility: visible;margin: 1px;"></span>
                     </button>
 
                 </div>
@@ -316,7 +304,6 @@
                                 <p class="sb-step-text sb-small-p"><span v-html="addAppStep"></span><span v-if="index === 0"><a id="cff-group-admin-link" :href="'https://www.facebook.com/groups/'+selectedSourcesToConnect[0]+'/apps/store'" target="_blank" rel="noopener noreferrer" v-html="$parent.genericText.clickingHere"></a></span></p>
                             </div>
                         </div>
-                        <p style="margin-top: 25px;"><span style="color: red; font-weight: bold;">Important:</span> {{selectSourceScreen.modal.reconnectingAppDir}}</p>
                     </div>
 
                     <div v-if="typeof window.cffSelected !== 'undefined' && window.cffSelected.indexOf(false) > -1 " class="sb-directions-wrap">

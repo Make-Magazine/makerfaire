@@ -1,5 +1,4 @@
 <div v-if="viewsActive.pageScreen == 'selectFeed'" class="cff-fb-fs">
-	<span></span>
 	<div class="cff-fb-create-ctn cff-fb-wrapper">
 		<div class="cff-fb-heading">
 			<h1>{{selectFeedTypeScreen.mainHeading}}</h1>
@@ -13,7 +12,6 @@
 		<?php
 		include_once CFF_BUILDER_DIR . 'templates/sections/feeds-type.php';
 		include_once CFF_BUILDER_DIR . 'templates/sections/select-source.php';
-		include_once CFF_BUILDER_DIR . 'templates/sections/select-template.php';
 		include_once CFF_BUILDER_DIR . 'templates/sections/create-feed/single-album.php';
 		include_once CFF_BUILDER_DIR . 'templates/sections/create-feed/featured-post.php';
 		include_once CFF_BUILDER_DIR . 'templates/sections/create-feed/videos.php';

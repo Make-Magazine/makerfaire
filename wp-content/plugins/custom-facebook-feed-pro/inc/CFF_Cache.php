@@ -8,7 +8,6 @@
  */
 
 namespace CustomFacebookFeed;
-use CustomFacebookFeed\SB_Facebook_Data_Encryption;
 
 class CFF_Cache {
 
@@ -78,11 +77,6 @@ class CFF_Cache {
 	private $header_backup;
 
 	/**
-	 * @var object|SB_Facebook_Data_Encryption
-	 */
-	protected $encryption;
-
-	/**
 	 * CFF_Cache constructor. Set the feed id, cache key, legacy
 	 *
 	 * @param string $feed_id
@@ -102,7 +96,6 @@ class CFF_Cache {
 		}
 
 		$this->feed_id = $feed_id;
-		$this->encryption = new SB_Facebook_Data_Encryption();
 	}
 
 	/**
@@ -117,7 +110,6 @@ class CFF_Cache {
 			$existing_caches = $this->query_cff_feed_caches();
 
 			foreach ( $existing_caches as $cache ) {
-				$cache['cache_value'] = $this->encryption->maybe_decrypt( $cache['cache_value'] );
 				switch( $cache['cache_key'] ) {
 					case 'posts':
 						$this->posts = $cache['cache_value'];
@@ -154,7 +146,7 @@ class CFF_Cache {
 			$this->is_expired = $expired;
 
 		} else {
-			$transient_cache = $this->encryption->maybe_decrypt(get_transient( $this->feed_id ));
+			$transient_cache = get_transient( $this->feed_id );
 			if ( $transient_cache ) {
 				$this->posts = $transient_cache;
 				$this->is_expired = false;
@@ -162,7 +154,7 @@ class CFF_Cache {
 				$this->posts = array();
 				$this->is_expired = true;
 			}
-			$this->posts_backup = $this->encryption->maybe_decrypt(get_transient( '!cff_backup_' . $this->feed_id ));
+			$this->posts_backup = get_transient( '!cff_backup_' . $this->feed_id );
 		}
 
 		if ( $this->cache_time < 1 ) {
@@ -210,32 +202,29 @@ class CFF_Cache {
 	 * @since 4.0
 	 */
 	public function get( $type ) {
-		$return = array();
 		switch( $type ) {
 			case 'posts':
-				$return = $this->posts;
+				return $this->posts;
 				break;
 			case 'posts' . $this->suffix:
-				$return = $this->posts_page;
+				return $this->posts_page;
 				break;
 			case 'header':
-				$return = $this->header;
+				return $this->header;
 				break;
 			case 'resized_images':
-				$return = $this->resized_images;
+				return $this->resized_images;
 				break;
 			case 'meta':
-				$return = $this->meta;
+				return $this->meta;
 				break;
 			case 'posts_backup':
-				$return = $this->posts_backup;
+				return $this->posts_backup;
 				break;
 			case 'header_backup':
-				$return = $this->header_backup;
+				return $this->header_backup;
 				break;
 		}
-
-		return $this->maybe_decrypt( $return );
 	}
 
 	/**
@@ -298,16 +287,14 @@ class CFF_Cache {
 			$cache_value = CFF_Utils::cff_json_encode( $cache_value );
 		}
 
-		$encrypted_cache_value = $this->maybe_encrypt( $cache_value );
-
 		if ( $this->is_legacy ) {
 			if ( $cache_key === 'posts' ) {
-				set_transient( $this->feed_id, $encrypted_cache_value, $this->cache_time );
+				set_transient( $this->feed_id, $cache_value, $this->cache_time );
 				if ( $include_backup ) {
-					set_transient( '!cff_backup_' . $this->feed_id, $encrypted_cache_value, YEAR_IN_SECONDS );
+					set_transient( '!cff_backup_' . $this->feed_id, $cache_value, YEAR_IN_SECONDS );
 				}
 			} elseif ( strpos( $cache_key, 'posts' ) !== false ) {
-				set_transient( $this->feed_id, $encrypted_cache_value, $this->cache_time );
+				set_transient( $this->feed_id, $cache_value, $this->cache_time );
 			}
 
 			return 1;
@@ -326,7 +313,7 @@ class CFF_Cache {
 		$where = array();
 		$format = array();
 
-		$data['cache_value'] = $this->maybe_encrypt( $cache_value );
+		$data['cache_value'] = $cache_value;
 		$format[] = '%s';
 
 		$data['last_updated'] = date( 'Y-m-d H:i:s' );
@@ -384,7 +371,7 @@ class CFF_Cache {
 			$affected = $wpdb->query( $wpdb->prepare(
 				"UPDATE $cache_table_name
 				SET cache_value = ''
-				WHERE feed_id = %d
+				WHERE feed_id = %d 
 				AND cache_key NOT IN ( 'posts', 'posts_backup', 'header_backup' );",
 				$this->feed_id ) );
 		} else {
@@ -473,9 +460,6 @@ class CFF_Cache {
 			do_action( 'litespeed_purge', 'esi.custom-facebook-feed' );
 		}
 
-		if( has_action( 'litespeed_purge_all' ) ) {
-			do_action( 'litespeed_purge_all' );
-		}
 	}
 
 	/**
@@ -532,48 +516,5 @@ class CFF_Cache {
 	 */
 	private function get_wp_cache_key() {
 		return 'cff_feed_'. $this->feed_id . '_' . $this->page;
-	}
-
-
-	/**
-	 * Uses a raw value and attempts to encrypt it
-	 *
-	 * @param $value
-	 *
-	 * @return bool|string
-	 */
-	private function maybe_encrypt( $value ) {
-		if ( ! empty( $value ) && ! is_string( $value ) ) {
-			$value = cff_json_encode( $value );
-		}
-		if ( empty( $value ) ) {
-			return $value;
-		}
-
-		return $this->encryption->encrypt( $value );
-	}
-
-	/**
-	 * Uses a raw value and attempts to decrypt it
-	 *
-	 * @param $value
-	 *
-	 * @return bool|string
-	 */
-	private function maybe_decrypt( $value ) {
-		if ( ! is_string( $value ) ) {
-			return $value;
-		}
-		if ( strpos( $value, '{' ) === 0 ) {
-			return $value;
-		}
-
-		$decrypted = $this->encryption->decrypt( $value );
-
-		if ( ! $decrypted ) {
-			return $value;
-		}
-
-		return $decrypted;
 	}
 }

@@ -3,14 +3,14 @@
 Plugin Name: Smash Balloon Social Wall
 Plugin URI: https://smashballoon.com/social-wall
 Description: Combine social media feeds from all Smash Balloon plugins.
-Version: 1.0.8
+Version: 1.0.4
 Author: Smash Balloon
 Author URI: https://smashballoon.com/
 License: GPLv2 or later
 Text Domain: social-wall
 */
 /*
-Copyright 2022  Smash Balloon  (email: hey@smashballoon.com)
+Copyright 2021  Smash Balloon  (email: hey@smashballoon.com)
 This program is paid software; you may not redistribute it under any
 circumstances without the expressed written consent of the plugin author.
 This program is distributed in the hope that it will be useful,
@@ -21,7 +21,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 define( 'SBSW_PLUGIN_EDD_NAME', 'Social Wall' );
 
 if ( ! defined( 'SWVER' ) ) {
-	define( 'SWVER', '1.0.8' );
+	define( 'SWVER', '1.0.4' );
 }
 // Db version.
 if ( ! defined( 'SW_DBVERSION' ) ) {

@@ -2,6 +2,10 @@
 	clear: both;
 }
 
+.contact-form input {
+	font: inherit;
+}
+
 .contact-form input::placeholder {
 	transition: opacity 0.3s ease-out;
 }
@@ -131,12 +135,6 @@
 	flex: 0 0 100%;
 }
 
-.wp-block-jetpack-button button {
-	padding: 20px 30px;
-	border: inherit;
-	font: inherit;
-}
-
 .wp-block-jetpack-button.alignright button {
 	float: right;
 }
@@ -195,4 +193,9 @@
 .jetpack-empty-spam-spinner {
 	display: inline-block;
 	margin-top: 7px;
+}
+
+/* Make sure the set height of the Spacer block nested inside the Contact Form block is respected */
+.wp-block-jetpack-contact-form .wp-block-spacer {
+	width: 100%;
 }

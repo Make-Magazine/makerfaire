@@ -5,7 +5,8 @@
  * @package WPSEO\Main
  */
 
-use Composer\Autoload\ClassLoader;
+use Yoast\WP\SEO\Helpers\Options_Helper;
+use Yoast\WP\SEO\Integrations\Admin\Ryte_Integration;
 
 if ( ! function_exists( 'add_filter' ) ) {
 	header( 'Status: 403 Forbidden' );
@@ -17,7 +18,7 @@ if ( ! function_exists( 'add_filter' ) ) {
  * {@internal Nobody should be able to overrule the real version number as this can cause
  *            serious issues with the options, so no if ( ! defined() ).}}
  */
-define( 'WPSEO_VERSION', '17.1' );
+define( 'WPSEO_VERSION', '18.8' );
 
 
 if ( ! defined( 'WPSEO_PATH' ) ) {
@@ -37,7 +38,7 @@ define( 'YOAST_VENDOR_DEFINE_PREFIX', 'YOASTSEO_VENDOR__' );
 define( 'YOAST_VENDOR_PREFIX_DIRECTORY', 'vendor_prefixed' );
 
 define( 'YOAST_SEO_PHP_REQUIRED', '5.6' );
-define( 'YOAST_SEO_WP_TESTED', '5.8' );
+define( 'YOAST_SEO_WP_TESTED', '5.9.3' );
 define( 'YOAST_SEO_WP_REQUIRED', '5.6' );
 
 if ( ! defined( 'WPSEO_NAMESPACES' ) ) {
@@ -50,11 +51,11 @@ if ( ! defined( 'WPSEO_NAMESPACES' ) ) {
 /**
  * Autoload our class files.
  *
- * @param string $class Class name.
+ * @param string $class_name Class name.
  *
  * @return void
  */
-function wpseo_auto_load( $class ) {
+function wpseo_auto_load( $class_name ) {
 	static $classes = null;
 
 	if ( $classes === null ) {
@@ -64,9 +65,9 @@ function wpseo_auto_load( $class ) {
 		];
 	}
 
-	$cn = strtolower( $class );
+	$cn = strtolower( $class_name );
 
-	if ( ! class_exists( $class ) && isset( $classes[ $cn ] ) ) {
+	if ( ! class_exists( $class_name ) && isset( $classes[ $cn ] ) ) {
 		require_once $classes[ $cn ];
 	}
 }
@@ -107,7 +108,7 @@ if ( YOAST_ENVIRONMENT === 'development' && isset( $yoast_autoloader ) ) {
 		 *
 		 * @return void
 		 */
-		function() use ( $yoast_autoloader ) {
+		static function() use ( $yoast_autoloader ) {
 			$yoast_autoloader->unregister();
 			$yoast_autoloader->register( true );
 		},
@@ -137,6 +138,9 @@ function wpseo_activate( $networkwide = false ) {
 		/* Multi-site network activation - activate the plugin for all blogs. */
 		wpseo_network_activate_deactivate( true );
 	}
+
+	// This is done so that the 'uninstall_{$file}' is triggered.
+	register_uninstall_hook( WPSEO_FILE, '__return_false' );
 }
 
 /**
@@ -217,6 +221,13 @@ function _wpseo_activate() {
 	}
 
 	WPSEO_Options::set( 'indexing_reason', 'first_install' );
+	WPSEO_Options::set( 'first_time_install', true );
+	if ( ! defined( 'WP_CLI' ) || ! WP_CLI ) {
+		WPSEO_Options::set( 'should_redirect_after_install_free', true );
+	}
+	else {
+		WPSEO_Options::set( 'activation_redirect_timestamp_free', \time() );
+	}
 
 	do_action( 'wpseo_register_roles' );
 	WPSEO_Role_Manager_Factory::get()->add();
@@ -228,7 +239,7 @@ function _wpseo_activate() {
 	WPSEO_Utils::clear_cache();
 
 	// Schedule cronjob when it doesn't exists on activation.
-	$wpseo_ryte = new WPSEO_Ryte();
+	$wpseo_ryte = YoastSEO()->classes->get( Ryte_Integration::class );
 	$wpseo_ryte->activate_hooks();
 
 	do_action( 'wpseo_activate' );
@@ -350,10 +361,6 @@ function wpseo_init() {
 	foreach ( $integrations as $integration ) {
 		$integration->register_hooks();
 	}
-
-	// Loading Ryte integration.
-	$wpseo_ryte = new WPSEO_Ryte();
-	$wpseo_ryte->register_hooks();
 }
 
 /**
@@ -366,9 +373,6 @@ function wpseo_init_rest_api() {
 	}
 
 	// Boot up REST API.
-	$configuration_service = new WPSEO_Configuration_Service();
-	$configuration_service->initialize();
-
 	$statistics_service = new WPSEO_Statistics_Service( new WPSEO_Statistics() );
 
 	$endpoints   = [];

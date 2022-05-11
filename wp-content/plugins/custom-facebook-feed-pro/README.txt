@@ -1,9 +1,9 @@
 === Custom Facebook Feed Pro ===
 Author: Smash Balloon
-Support Website: https://smashballoon.com/custom-facebook-feed/
+Support Website: http://smashballoon.com/custom-facebook-feed/
 Requires at least: 4.1
-Tested up to: 5.9.3
-Version: 4.2.5
+Tested up to: 5.8
+Version: 4.0.6
 License: Non-distributable, Not for resale
 
 The Custom Facebook Feed allows you to display a completely customizable Facebook feed of any public Facebook page on your website.
@@ -34,111 +34,11 @@ Display a **completely customizable**, **responsive** and **search engine crawla
 5. You can display multiple feeds of different Facebook pages by specifying a Page ID directly in the shortcode: [custom-facebook-feed id=smashballoon num=5].
 
 == Changelog ==
-= 4.2.5 =
-* Fix: Fixed issues with hashtags and account mention links in the post text in some specific situations.
-* Fix: Fixed PHP warnings when visiting the support page before creating a feed.
-
-= 4.2.4 =
-* Fix: Fixed hashtags and account mentions errors with links in the post text.
-* Fix: Events feeds with a masonry layout would not load more posts correctly.
-* Fix: Events feeds would not have the proper styling and settings applied to the load more button.
-* Fix: When there were multiple feeds on a page, some images would not show for the first feed under certain circumstances.
-* Fix: The dark theme template would not apply correctly in feeds.
-* Fix: Fixed missing setting for video post titles.
-* Fix: Added support for oEmbed URL with the structure "https://www.facebook.com/permalink.php?story_fbid=1234567890&id=1123456789"
-
-= 4.2.3 =
-* Tweak: Updated our logo and color scheme throughout the plugin to match our new [website](https://smashballoon.com/).
-* Tweak: Minified the CSS and JavaScript files for better performance.
-* Tweak: Added the CSS class "cff-feed-image" to all img elements in the feed.
-* Fix: Fixed several issues related to event feeds.
-* Fix: The media position post text was being duplicated.
-* Fix: The load more button would be hidden if there were multiple feeds on a page using the masonry layout.
-* Fix: The [Reviews extension](https://smashballoon.com/extensions/reviews/) can now be translated using the "Translations" tab on the settings page.
-* Fix: Added links to the issue in our API error helper doc in error messages for easy debugging on our website.
-* Fix: When using the AJAX theme fix, the JavaScript file name includes the version number to bust browser caches with updates.
-* Fix: Dismissing dashboard notifications would prevent the ability to create new feeds until the page was refreshed.
-* Fix: The event post text setting was not working.
-
-= 4.2.2 =
-* Fix: Fixed an issue which caused the new "Feed Templates" menu item to throw an error if editing a feed created prior to v4.2.
-
-= 4.2.1 =
-* Fix: Fixed an error in the plugin updater code which occurs in certain circumstances.
-
-= 4.2 =
-* New: Introducing our new Feed Templates feature! You can now select a feed template when creating a feed to make it much quicker and easier to get started with the type of feed you want to display. Selecting a template preconfigures the feed customization settings to match that template, saving you time and effort.
-* Tweak: Allowed the use of the "includewords" shortcode setting in the Social Wall plugin to work like the shortcode setting "filter".
-* Tweak: Added a button to reset the error log found on the settings page.
-* Tweak: When using the lightbox, users will not be able to switch posts while new image thumbnails are loading.
-* Tweak: All HTTP calls now use WordPress HTTP request features instead of native PHP cURL.
-* Fix: For legacy feeds, the shortcode setting "account" was not working.
-* Fix: oEmbeds would not work for some new versions of Facebook video links.
-* Fix: Fixed several issues with loading more posts and events feeds.
-* Fix: "Load More" button customizations were not being reflected in the customizer feed preview.
-* Fix: Fixed an issue in the customizer preview when changing post types using the Safari browser.
-* Fix: Fixed PHP warnings that would occur during background updates.
-* Fix: Fixed high numbers of events preventing "upcoming" events from working as expected.
-* Fix: Fixed some occurrences of CDN images being used when local images were available.
-* Fix: Fixed an issue with group events.
-* Fix: Added back support for the "<k></k>" date formatting feature.
-* Fix: Fixed groups not working correctly in Social Wall under some circumstances.
-* Fix: Fixed thumbnail AJAX request not working under some circumstances.
-* Fix: Fixed an issue with the dark theme and the cff-item elements not having a dark background.
-* Fix: Post tags would link the wrong word in post text under some circumstances.
-* Fix: Settings that were available in versions before 4.0 were missing for album and video feeds.
-* Fix: Fixed the lightbox showing all posts on the page when multiple single album feeds were displaying.
-* Fix: Fixed PHP warning "explode() expects parameter 1 to be string, array given" related to an account ID error.
-* Fix: Fixed a PHP error "trying to get array offset of bool" causing feeds to not load.
-* Fix: Fixed distorted portrait image album covers when loading more posts.
-* Fix: Fixed a JavaScript error that would occur when trying to play a video that did not have a parent post.
-
-= 4.1.1 =
-* Fix: Fixed an issue where legacy feeds would cause an oAuth error during the API request.
-* Fix: Fixed an issue causing thumbnails not to appear in the lightbox when available.
-* Fix: Post comments would not display in some feeds.
-* Fix: Local copies of images would not be created in some feeds.
-* Fix: Improved plugin hardening by removing unused admin pages.
-
-= 4.1.0.1 =
-* Fix: Fixed an issue with images not showing in photo/video feeds when using the Masonry layout.
-* Fix: Fixed an issue causing Facebook posts not to display in the Social Wall plugin since v4.1.
-
-= 4.1 =
-* Tweak: Connecting an account will now go through connect.smashballoon.com to improve account connection reliability.
-* Tweak: The Facebook app used to connect groups has changed. If you are using a Facebook group feed, then please reconnect your group accounts using the new app when convenient to prevent any future issues. When reconnecting, follow the included directions on how to add the new app to your group settings.
-* Tweak: All Facebook data is now encrypted in your WordPress database.
-* Tweak: Access Tokens are no longer able to be viewed on the settings page.
-* Tweak: Translations specific to feeds now allow the use of a "blank" setting to always use the translation made on the "Settings" page.
-* Fix: Manually connecting an account while on the "Settings" page would not work.
-* Fix: Fixed a JavaScript error that would occur with certain optimization plugins in use.
-* Fix: Dark color scheme was not applying correctly to "boxed" posts.
-* Fix: "Show outside scrollable area" setting was not working for the header and like box with certain feed settings.
-* Fix: Load more button was showing when no more posts were available.
-* Fix: Events feed number of posts setting would not work if the load more button was disabled.
-* Fix: Improvements made to the order of albums in the lightbox when multiple albums were on a page.
-* Fix: Video descriptions sometimes contained incorrect characters.
-* Fix: The Multifeed extension was not working as expected with events feeds.
-* Fix: An invalid color would be used in inline styles under certain circumstances.
-* Fix: Fixed a PHP error when a string was used for the cache time setting.
-
-= 4.0.8 =
-* Fix: Fixed a PHP error when a Gutenberg block was used to display a feed that didn't exist.
-* Fix: Fixed a PHP warning due to a non-number being used as the cache time.
-* Fix: Additional slashes were added to the feed name every time settings were saved if using an apostrophe.
-* Fix: Added additional plugin hardening.
-
-= 4.0.7 =
-* Important: With this update, the Custom CSS and Custom JS settings have been deprecated. Please see below for details.
-* Tweak: If any Custom CSS was being used in this field then it will be automatically moved into the native WordPress Customizer "Additional CSS" field instead and continue to work as normal.
-* Tweak: If any Custom JavaScript was being used, then this update will prevent that JavaScript from working. There are [directions here](https://smashballoon.com/doc/moving-custom-javascript-code-out-of-our-plugins/) on how you can migrate this JavaScript into a specialized plugin instead.
-
 = 4.0.6 =
 * Fix: Fixed a compatibility issue with the Complianz Cookie Consent plugin integration.
 * Fix: Locations of feeds sorted by source would not work if the source ID was not a number.
 * Fix: Fixed an issue where setting were not preserved even when using the preserve settings option and deleting the plugin.
 * Fix: Added support for "eventoffset" setting in shortcode.
-* Fix: Improved security hardening
 * Fix: Fixed locale setting causing a PHP warning if not set.
 * Fix: Fixed PHP warnings when viewing dashboard notifications.
 * Fix: Fixed some options and tables not being removed from the WordPress database on uninstall.

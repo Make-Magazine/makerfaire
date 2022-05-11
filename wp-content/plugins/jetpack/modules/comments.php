@@ -8,7 +8,7 @@
  * Auto Activate: No
  * Module Tags: Social
  * Feature: Engagement
- * Additional Search Queries: comments, comment, facebook, twitter, google+, social
+ * Additional Search Queries: comments, comment, facebook, twitter, google, social
  *
  * @package automattic/jetpack
  */
@@ -19,8 +19,6 @@ Assets::add_resource_hint(
 	array(
 		'//jetpack.wordpress.com',
 		'//s0.wp.com',
-		'//s1.wp.com',
-		'//s2.wp.com',
 		'//public-api.wordpress.com',
 		'//0.gravatar.com',
 		'//1.gravatar.com',

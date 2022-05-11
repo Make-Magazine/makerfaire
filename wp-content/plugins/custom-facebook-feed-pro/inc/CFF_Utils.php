@@ -9,7 +9,6 @@
 namespace CustomFacebookFeed;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-use CustomFacebookFeed\SB_Facebook_Data_Encryption;
 
 class CFF_Utils{
 
@@ -22,18 +21,94 @@ class CFF_Utils{
 	 * @since 3.18
 	 */
 	static function cff_fetchUrl($url){
-        //Use the WP HTTP API
-        $args = array(
-	        'timeout' => 60
-        );
-        $response = wp_remote_get( $url, $args );
-	    if ( CFF_Utils::cff_is_wp_error( $response ) ) {
-		    CFF_Utils::cff_log_wp_error( $response, $url );
-            //Don't display an error, just use the Server config Error Reference message
-            $FBdata = null;
-        } else {
-            $feedData = wp_remote_retrieve_body($response);
-        }
+	    //Style options
+	    $options = get_option('cff_style_settings');
+	    isset( $options['cff_request_method'] ) ? $cff_request_method = $options['cff_request_method'] : $cff_request_method = 'auto';
+
+	    if($cff_request_method == '1'){
+	        //Use cURL
+	        if(is_callable('curl_init')){
+	            $ch = curl_init();
+	            // Use global proxy settings
+	            if (defined('WP_PROXY_HOST')) {
+	              curl_setopt($ch, CURLOPT_PROXY, WP_PROXY_HOST);
+	            }
+	            if (defined('WP_PROXY_PORT')) {
+	              curl_setopt($ch, CURLOPT_PROXYPORT, WP_PROXY_PORT);
+	            }
+	            if (defined('WP_PROXY_USERNAME')){
+	              $auth = WP_PROXY_USERNAME;
+	              if (defined('WP_PROXY_PASSWORD')){
+	                $auth .= ':' . WP_PROXY_PASSWORD;
+	              }
+	              curl_setopt($ch, CURLOPT_PROXYUSERPWD, $auth);
+	            }
+	            curl_setopt($ch, CURLOPT_URL, $url);
+	            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	            curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+	            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	            curl_setopt($ch, CURLOPT_ENCODING, '');
+	            $feedData = curl_exec($ch);
+	            curl_close($ch);
+	        }
+	    } else if($cff_request_method == '2') {
+	        //Use file_get_contents
+	        if ( (ini_get('allow_url_fopen') == 1 || ini_get('allow_url_fopen') === TRUE ) && in_array('https', stream_get_wrappers()) ){
+	            $feedData = @file_get_contents($url);
+	        }
+	    } else if($cff_request_method == '3'){
+	        //Use the WP HTTP API
+	        $request = new \WP_Http;
+	        $response = $request->request($url, array('timeout' => 60, 'sslverify' => false));
+		    if( CFF_Utils::cff_is_wp_error( $response ) ) {
+			    CFF_Utils::cff_log_wp_error( $response, $url );
+	            //Don't display an error, just use the Server config Error Reference message
+	            $FBdata = null;
+	        } else {
+	            $feedData = wp_remote_retrieve_body($response);
+	        }
+	    } else {
+	        //Auto detect
+	        if(is_callable('curl_init')){
+	            $ch = curl_init();
+	            // Use global proxy settings
+	            if (defined('WP_PROXY_HOST')) {
+	              curl_setopt($ch, CURLOPT_PROXY, WP_PROXY_HOST);
+	            }
+	            if (defined('WP_PROXY_PORT')) {
+	              curl_setopt($ch, CURLOPT_PROXYPORT, WP_PROXY_PORT);
+	            }
+	            if (defined('WP_PROXY_USERNAME')){
+	              $auth = WP_PROXY_USERNAME;
+	              if (defined('WP_PROXY_PASSWORD')){
+	                $auth .= ':' . WP_PROXY_PASSWORD;
+	              }
+	              curl_setopt($ch, CURLOPT_PROXYUSERPWD, $auth);
+	            }
+	            curl_setopt($ch, CURLOPT_URL, $url);
+	            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	            curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+	            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	            curl_setopt($ch, CURLOPT_ENCODING, '');
+	            $feedData = curl_exec($ch);
+	            curl_close($ch);
+	        } elseif ( (ini_get('allow_url_fopen') == 1 || ini_get('allow_url_fopen') === TRUE ) && in_array('https', stream_get_wrappers()) ) {
+	            $feedData = @file_get_contents($url);
+	        } else {
+	            $request = new \WP_Http;
+	            $response = $request->request($url, array('timeout' => 60, 'sslverify' => false));
+	            if( CFF_Utils::cff_is_wp_error( $response ) ) {
+		            // not a header request
+		            if ( strpos( $url, '&limit=' ) !== false ) {
+			            CFF_Utils::cff_log_wp_error( $response, $url );
+		            }
+
+		            $feedData = null;
+	            } else {
+	                $feedData = wp_remote_retrieve_body($response);
+	            }
+	        }
+	    }
 
 		if ( ! CFF_Utils::cff_is_fb_error( $feedData ) ) {
 			\cff_main_pro()->cff_error_reporter->remove_error( 'connection' );
@@ -392,8 +467,6 @@ class CFF_Utils{
 
 	    }
 	    if ( !empty($custom_date) ){
-	    	$custom_date = str_replace("{hide-start}","<k>",$custom_date);
-	    	$custom_date = str_replace("{hide-end}","</k>",$custom_date);
 	        $print = date_i18n($custom_date, $new_time);
 	    }
 	    return $print;
@@ -481,8 +554,6 @@ class CFF_Utils{
 	            break;
 	    }
 	    if ( !empty($custom_date) ){
-	    	$custom_date = str_replace("{hide-start}","<k>",$custom_date);
-	    	$custom_date = str_replace("{hide-end}","</k>",$custom_date);
 	        $print = date_i18n($custom_date, $original);
 	    }
 
@@ -671,6 +742,7 @@ class CFF_Utils{
 	 */
 	static function cff_get_set_cache($cff_posts_json_url, $transient_name, $cff_cache_time, $cache_seconds, $data_att_html, $cff_show_access_token, $access_token, $backup=false, $is_multifeed = false ) {
 		$cache_seconds = max(60, $cache_seconds );
+
 		// Trying to use new cache table
 		$shortcode_atts = is_array( $data_att_html ) ? $data_att_html : json_decode( str_replace( '&quot;', '"', $data_att_html ), true );
 
@@ -1135,10 +1207,6 @@ class CFF_Utils{
 			$header_access_token = reset($access_token);
 			if( empty($header_access_token) ) $header_access_token = key($access_token);
 		}
-
-		$encryption = new SB_Facebook_Data_Encryption();
-		$header_access_token = $encryption->decrypt($header_access_token) ? $encryption->decrypt($header_access_token) : $header_access_token;
-
 		$header_details_json_url = 'https://graph.facebook.com/v4.0/'.$header_page_id.'?fields=id,picture.height(150).width(150),cover,name,link'.$page_only_fields.'&access_token='. $header_access_token;
 		//Get the data
 		$header_details = CFF_Utils::cff_get_set_cache($header_details_json_url, $transient_name, $cff_cache_time, WEEK_IN_SECONDS, $data_att_html, false, $access_token);
@@ -1146,7 +1214,4 @@ class CFF_Utils{
 		return $header_details;
 	}
 
-	public static function sanitize_post_ids( $raw_id ) {
-		return preg_replace( '/[^0-9_]/', '', $raw_id );
-	}
 }

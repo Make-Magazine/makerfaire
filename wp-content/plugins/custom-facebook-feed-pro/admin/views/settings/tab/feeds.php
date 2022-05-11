@@ -37,6 +37,9 @@
         <div class="cff-tab-form-field">
             <div class="sb-form-field">
                 <div class="mb-10 caching-form-fields-group">
+                    <select id="cff-caching-options" class="cff-select size-sm mr-3" v-model="model.feeds.cachingType">
+                        <option value="background">{{feedsTab.cachingBox.inTheBackground}}</option>
+                    </select>
                     <select id="cff-caching-intervals" class="cff-select size-sm mr-3" v-model="model.feeds.cronInterval">
                         <option v-for="(name, key) in feedsTab.cachingBox.inTheBackgroundOptions" :value="key">{{name}}</option>
                     </select>
@@ -96,25 +99,27 @@
             </div>
         </div>
     </div>
-    <div class="sb-tab-box sb-custom-css-box sb-reset-box-style clearfix" v-if="model.feeds.customCSS !== ''">
+    <div class="sb-tab-box sb-custom-css-box sb-reset-box-style clearfix">
         <div class="tab-label">
             <h3>{{feedsTab.customCSSBox.title}}</h3>
         </div>
         <div class="cff-tab-form-field">
             <div class="sb-form-field">
-                <div class="sb-custom-cssjs-notice" v-html="feedsTab.customCSSBox.message"></div>
-                <div class="sb-disabled-custom-code"><textarea readonly v-html="model.feeds.customCSS"></textarea></div>
+                <div class="d-flex mb-15">
+                    <textarea name="" class="cff-textarea" v-model="model.feeds.customCSS" :placeholder="feedsTab.customCSSBox.placeholder"></textarea>
+                </div>
             </div>
         </div>
     </div>
-    <div class="sb-tab-box sb-custom-js-box clearfix" v-if="model.feeds.customJS !== ''">
+    <div class="sb-tab-box sb-custom-js-box clearfix">
         <div class="tab-label">
             <h3>{{feedsTab.customJSBox.title}}</h3>
         </div>
         <div class="cff-tab-form-field">
             <div class="sb-form-field">
-                <div class="sb-custom-cssjs-notice" v-html="feedsTab.customJSBox.message"></div>
-                <div class="sb-disabled-custom-code"><textarea readonly v-html="model.feeds.customJS"></textarea></div>
+                <div class="d-flex mb-15">
+                    <textarea name="" class="cff-textarea" v-model="model.feeds.customJS" :placeholder="feedsTab.customJSBox.placeholder"></textarea>
+                </div>
             </div>
         </div>
     </div>

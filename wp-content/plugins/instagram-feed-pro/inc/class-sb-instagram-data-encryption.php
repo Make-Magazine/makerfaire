@@ -14,9 +14,6 @@
  * @access private
  * @ignore
  */
-
-namespace InstagramFeed;
-
 class SB_Instagram_Data_Encryption {
 
 	/**
@@ -106,26 +103,6 @@ class SB_Instagram_Data_Encryption {
 		}
 
 		return substr( $value, 0, - strlen( $this->salt ) );
-	}
-
-	/**
-	 * Encrypts a value that may already be encrypted.
-	 *
-	 * If a user-based key is set, that key is used. Otherwise the default key is used.
-	 *
-	 * @since 6.0
-	 *
-	 * @param string $raw_value Value to encrypt.
-	 * @return string|bool encrypted value, or false on failure.
-	 */
-	public function maybe_encrypt( $raw_value ) {
-		$maybe_decrypted = $this->decrypt( $raw_value );
-
-		if ( $maybe_decrypted ) {
-			return $this->encrypt( $maybe_decrypted );
-		}
-
-		return $this->encrypt( $raw_value );
 	}
 
 	/**

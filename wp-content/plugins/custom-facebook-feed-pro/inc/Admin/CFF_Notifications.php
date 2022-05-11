@@ -16,7 +16,7 @@ class CFF_Notifications {
 	 *
 	 * @var string
 	 */
-	const SOURCE_URL = 'https://plugin.smashballoon.com/notifications.json';
+	const SOURCE_URL = 'http://plugin.smashballoon.com/notifications.json';
 
 	/**
 	 * @var string
@@ -101,9 +101,11 @@ class CFF_Notifications {
 		}
 
 		$current_screen = get_current_screen();
+
+		$base = wp_doing_ajax() ? 'ajax' : $current_screen->base;
 		// if we are one single feed page then return
-		if ( is_object( $current_screen ) && $current_screen->base == "facebook-feed_page_cff-feed-builder" && isset( $_GET['feed_id'] ) ) {
-			$access = false;
+		if ( $base == "facebook-feed_page_cff-feed-builder" && isset( $_GET['feed_id'] ) ) {
+			return;
 		}
 
 		return apply_filters( 'cff_admin_notifications_has_access', $access );
@@ -179,34 +181,9 @@ class CFF_Notifications {
 		$option = $this->get_option();
 
 		foreach ( $notifications as $notification ) {
-			// Ignore if not a targeted plugin
-			if ( ! empty( $notification['plugin'] ) && is_array( $notification['plugin'] ) && ! in_array( self::PLUGIN, $notification['plugin'], true ) ) {
-				continue;
-			}
-
-			// Ignore if max wp version detected
-			if ( ! empty( $notification['maxwpver'] ) && version_compare( get_bloginfo( 'version' ), $notification['maxwpver'], '>' ) ) {
-				continue;
-			}
-
 			// Ignore if max version has been reached
-			if ( ! empty( $notification['maxver'] ) && version_compare( $notification['maxver'],  CFFVER ) < 0 ) {
+			if ( ! empty( $notification['maxver'] ) && version_compare( $notification['maxver'],  CFFVER ) <= 0 ) {
 				continue;
-			}
-
-			// Ignore if min version has not been reached
-			if ( ! empty( $notification['minver'] ) && version_compare( $notification['minver'],  CFFVER ) > 0 ) {
-				continue;
-			}
-
-			// Ignore if a specific cff_status is empty or false
-			if ( ! empty( $notification['statuscheck'] ) ) {
-				$status_key          = sanitize_key( $notification['statuscheck'] );
-				$cff_statuses_option = get_option( 'cff_statuses', array() );
-
-				if ( empty( $cff_statuses_option[ $status_key ] ) ) {
-					continue;
-				}
 			}
 
 			// The message and license should never be empty, if they are, ignore.
@@ -267,29 +244,9 @@ class CFF_Notifications {
 				unset( $notifications[ $key ] );
 			}
 
-			// Ignore if max wp version detected
-			if ( ! empty( $notification['maxwpver'] ) && version_compare( get_bloginfo( 'version' ), $notification['maxwpver'], '>' ) ) {
-				unset( $notifications[ $key ] );
-			}
-
 			// Ignore if max version has been reached
-			if ( ! empty( $notification['maxver'] ) && version_compare( $notification['maxver'],  CFFVER ) < 0 ) {
+			if ( ! empty( $notification['maxver'] ) && version_compare( $notification['maxver'],  CFFVER ) <= 0 ) {
 				unset( $notifications[ $key ] );
-			}
-
-			// Ignore if min version has not been reached
-			if ( ! empty( $notification['minver'] ) && version_compare( $notification['minver'],  CFFVER ) > 0 ) {
-				unset( $notifications[ $key ] );
-			}
-
-			// Ignore if a specific cff_status is empty or false
-			if ( ! empty( $notification['statuscheck'] ) ) {
-				$status_key          = sanitize_key( $notification['statuscheck'] );
-				$cff_statuses_option = get_option( 'cff_statuses', array() );
-
-				if ( empty( $cff_statuses_option[ $status_key ] ) ) {
-					unset( $notifications[ $key ] );
-				}
 			}
 		}
 
@@ -452,7 +409,7 @@ class CFF_Notifications {
 			'{slug}' => 'custom-facebook-feed',
 			'{campaign}' => 'facebook-free'
 		);
-
+		
 		if ( CFF_Utils::cff_is_pro_version() ) {
 			$merge_fields['{campaign}'] = 'facebook-pro';
 			$merge_fields['{plugin}'] = 'Custom Facebook Feed Pro';
@@ -517,7 +474,7 @@ class CFF_Notifications {
 						! empty( $btn['url'] ) ? esc_url( $this->replace_merge_fields( $btn['url'], $notification ) ) : '',
 						$btn_type === 'primary' ? 'cff-btn-orange' : 'cff-btn-grey',
 						! empty( $btn['target'] ) && $btn['target'] === '_blank' ? ' target="_blank" rel="noopener noreferrer"' : '',
-						! empty( $btn['text'] ) ? sanitize_text_field( wp_unslash( $btn['text'] ) ) : ''
+						! empty( $btn['text'] ) ? sanitize_text_field( $btn['text'] ) : ''
 					);
 				}
 				$buttons_html = ! empty( $buttons_html ) ? '<div class="buttons">' . $buttons_html . '</div>' : '';
@@ -532,12 +489,15 @@ class CFF_Notifications {
 				if ( $notification['image'] === 'balloon'
 				     || $notification['id'] === 'review'
 				     || $notification['id'] === 'discount') {
-					$image_html = sprintf(
-						'<div class="bell"><img src="%s" alt="notice">',
-						CFF_PLUGIN_URL . 'admin/assets/img/balloon.svg' );
+					$image_html = '<div class="bell">';
+
+					$image_html .= '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1438 1878" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2">';
+					$image_html .= '  <path d="M671.51004 492.9884C539.9423 433.8663 402.90125 345.5722 274.97656 304.47286c45.45163 108.39592 83.81332 223.88017 123.51 338.03105C319.308 702.00293 226.8217 748.19258 138.46278 798.51607c75.1914 74.32371 181.67968 117.34651 266.52444 182.01607-67.96124 83.86195-201.48527 171.01801-234.02107 247.01998 140.6922-17.6268 304.63688-46.21031 435.53794-52.00418 28.76427 144.58328 43.5987 303.09763 84.50756 435.53713 60.92033-175.26574 116.0014-356.37317 188.51594-520.0451 111.90644 46.2857 248.29012 102.72607 357.52902 130.01188-76.64636-107.5347-146.59346-221.76948-214.5166-338.02903 100.51162-72.83876 202.1718-144.52451 299.02538-221.02092-136.89514-12.61229-278.73428-20.28827-422.53618-25.99865-22.85288-148.33212-16.84826-325.51604-52.005-461.53983-53.19327 111.4882-115.96694 213.39155-175.51418 318.52497m65.00513 1228.60735c-18.0795 77.37586 41.4876 109.11326 32.50298 156.01215-58.8141-20.268-103.0576-30.67962-182.01567-19.50203 2.47018-60.37036 56.76662-68.90959 45.50432-143.0108C-208.90184 1619.4318-210.59186 99.02478 626.00572 5.44992c1046.0409-117.00405 1078.86445 1689.2596 110.50945 1716.14582" fill="#e34f0e"/>';
+					$image_html .= '  <path d="M847.02422 174.46342c35.15674 136.02379 29.15212 313.20771 52.0046 461.53578 143.8023 5.71443 285.63982 13.38636 422.53658 26.0027-96.85317 76.4964-198.51497 148.18216-299.02579 221.0189 67.92355 116.26239 137.87024 230.49432 214.51864 338.03024-109.24093-27.28662-245.62461-83.72577-357.53106-130.01269-72.51454 163.67274-127.5956 344.78017-188.51553 520.0459-40.90926-132.4395-55.74329-290.95384-84.50796-435.53712-130.90066 5.79549-294.84493 34.37738-435.53754 52.00418 32.5358-76.00075 166.05902-163.156 234.02026-247.02038-84.84516-64.67037-191.33222-107.69074-266.52363-182.01486 88.35892-50.32349 180.8436-96.51314 260.02295-156.0162-39.69708-114.14683-78.05674-229.63108-123.50878-338.027C402.89923 345.5722 539.9423 433.86629 671.51004 492.98839c59.54684-105.13342 122.3209-207.03677 175.51418-318.52497" fill="#fff"/>';
+					$image_html .= '</svg>';
 				} else {
 					$image_html = '<div class="thumb">';
-					$img_src = CFF_PLUGIN_URL . 'admin/assets/img/' . sanitize_text_field( wp_unslash( $notification['image'] ) );
+					$img_src = SBY_PLUGIN_URL . 'admin/assets/img/' . sanitize_text_field( $notification['image'] );
 					$image_html .= '<img src="'.esc_url( $img_src ).'" alt="notice">';
 
 					if ( isset( $notification['image_overlay'] ) ) {
@@ -555,10 +515,10 @@ class CFF_Notifications {
 					<p class="content">%2$s</p>
 					%3$s
 				</div>',
-				! empty( $notification['title'] ) ? $this->replace_merge_fields( sanitize_text_field( wp_unslash( $notification['title'] ) ), $notification ) : '',
+				! empty( $notification['title'] ) ? $this->replace_merge_fields( sanitize_text_field( $notification['title'] ), $notification ) : '',
 				! empty( $notification['content'] ) ? wp_kses( $this->replace_merge_fields( $notification['content'], $notification ), $content_allowed_tags ) : '',
 				$buttons_html,
-				! empty( $notification['id'] ) ? esc_attr( sanitize_text_field( wp_unslash( $notification['id'] ) ) ) : 0,
+				! empty( $notification['id'] ) ? esc_attr( sanitize_text_field( $notification['id'] ) ) : 0,
 				$current_class
 			);
 

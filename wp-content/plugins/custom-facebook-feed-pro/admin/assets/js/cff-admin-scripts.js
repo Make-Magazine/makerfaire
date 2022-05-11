@@ -24,29 +24,12 @@ jQuery(document).ready(function($) {
 
 	});
 
-	$('body').on('click','.cff-dismissible .notice-dismiss',function() {
-		$.ajax({
-			url : cffA.ajax_url,
-			type : 'post',
-			data : {
-				action : 'cff_dismiss_custom_cssjs_notice',
-				cff_nonce: cffA.cff_nonce
-			},
-			success : function(data) {
-			},
-			error : function(e)  {
-				console.log(e);
-			}
-		});
-	});
-
 	//The "cff_ppca_access_token_invalid" transient is set if the access token doesn't match the ID specified. Use an Ajax call to check whether that transient is set, and if so, then displays a notice under the access token field. This used so we don't need to make an API call every time the page loads. It stores the value in this transient and checks it via ajax.
 	$.ajax({
 		url : cffA.ajax_url,
 		type : 'get',
 		data : {
-			action : 'cff_ppca_token_check_flag',
-			cff_nonce: cffA.cff_nonce
+			action : 'cff_ppca_token_check_flag'
 		},
 		success : function(data) {
 			if( data == '1' ) $('.cff-ppca-check-notice.cff-error').show();
@@ -730,6 +713,7 @@ jQuery(document).ready(function($) {
 			avatar: avatar
 		};
 
+		console.log(typeof sbswCASubmit,$('#sbspf_admin').length);
 		if (typeof sbswCASubmit !== 'undefined' && $('#sbspf_admin').length) {
 			sbswCASubmit(cff_connected_accounts);
 		} else {
@@ -1090,8 +1074,19 @@ jQuery(document).ready(function($) {
 		event.preventDefault();
 		var $btn = jQuery(this);
 		$btn.prop( 'disabled', true ).addClass( 'loading' ).html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>');
-		window.location.href = $btn.attr('data-url');
-
+		$.ajax({
+			url : cffA.ajax_url,
+			type : 'post',
+			data : {
+				action : 'cff_reset_log'
+			},
+			success : function(data) {
+				window.location.href = $btn.attr('data-url');
+			},
+			error : function(data)  {
+				window.location.href = $btn.attr('data-url');
+			}
+		}); // ajax call
 	});
 
 	/* removing padding */
@@ -1112,8 +1107,7 @@ jQuery(document).ready(function($) {
 			url : cffA.ajax_url,
 			type : 'post',
 			data : {
-				action : 'cff_reset_resized',
-				cff_nonce: cffA.cff_nonce
+				action : 'cff_reset_resized'
 			},
 			success : function(data) {
 				$cffClearResizedButton.prop('disabled',false);
@@ -1173,17 +1167,43 @@ jQuery(document).ready(function($) {
         jQuery(this).remove();
     });
 
+    //cff_reset_log
+    var $cffClearLog = $('#cff_reset_log');
+
+    $cffClearLog.on('click', function(event) {
+        event.preventDefault();
+
+        jQuery('#cff-clear-cache-success').remove();
+        jQuery(this).prop("disabled",true);
+
+        $.ajax({
+            url : cffA.ajax_url,
+            type : 'post',
+            data : {
+                action : 'cff_clear_error_log'
+            },
+            success : function(data) {
+                $cffClearLog.prop('disabled',false);
+                if(data=='1') {
+                    $cffClearLog.after('<i id="cff-clear-cache-success" class="fa fa-check-circle cff-success"></i>');
+                } else {
+                    $cffClearLog.after('<span>error</span>');
+                }
+            }
+        }); // ajax call
+    }); // clear_error_log click
+
 	$(document).on('click', '#renew-modal-btn', function() {
 		$('.cff-sb-modal').show();
 	});
-
+	
 	$(document).on('click', '#cff-sb-close-modal', function() {
 		$('.cff-sb-modal').hide();
 	});
 
 	/**
 	 * Recheck the licensey key by sending AJAX request to the server
-	 *
+	 * 
 	 * @since 4.0
 	 */
 	$(document).on('click', "#recheck-license-key", function() {
@@ -1192,9 +1212,7 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			url: ajaxurl,
 			data: {
-				action: 'cff_check_license',
-				cff_nonce: cffA.cff_nonce
-
+				action: 'cff_check_license'
 			},
 			success: function(result){
 				$(this).find('.spinner-icon').hide();
@@ -1211,7 +1229,7 @@ jQuery(document).ready(function($) {
 
 	/**
 	 * Dismiss the renewed license notice
-	 *
+	 * 
 	 * @since 4.0
 	 */
 	$(document).on('click', "#cff-hide-notice", function() {
@@ -1223,7 +1241,7 @@ jQuery(document).ready(function($) {
 
 	/**
 	 * Dismiss the license notice on dashboard page
-	 *
+	 * 
 	 * @since 4.0
 	 */
 	$(document).on('click', "#sb-dismiss-notice", function() {
@@ -1234,9 +1252,7 @@ jQuery(document).ready(function($) {
 		$.ajax({
 			url: ajaxurl,
 			data: {
-				action: 'cff_dismiss_license_notice',
-				cff_nonce: cffA.cff_nonce
-
+				action: 'cff_dismiss_license_notice'
 			},
 			success: function(result){
 				console.log('notice dismissed');
@@ -1256,8 +1272,7 @@ jQuery(document).ready(function($) {
 			type : 'post',
 			data : {
 				action : 'cff_review_notice_consent_update',
-				consent : 'yes',
-				cff_nonce: cffA.cff_nonce
+				consent : 'yes'
 			},
 			success : function(data) {
 			}
@@ -1274,9 +1289,7 @@ jQuery(document).ready(function($) {
 			type : 'post',
 			data : {
 				action : 'cff_review_notice_consent_update',
-				consent : 'no',
-				cff_nonce: cffA.cff_nonce
-
+				consent : 'no'
 			},
 			success : function(data) {
 			}
@@ -1521,6 +1534,7 @@ jQuery(document).ready(function($) {
 				}, 3000 );
 
 			}).fail( function( xhr ) {
+				console.log( xhr.responseText );
 			});
 		},
 

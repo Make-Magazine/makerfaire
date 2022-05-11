@@ -95,7 +95,7 @@ class CFF_Error_Reporter
 					}
 				}
 			}
-			if ( ! $accesstoken_error_exists && isset( $this->errors['accounts'] ) ) {
+			if ( !$accesstoken_error_exists ) {
 				$this->errors['accounts'][ $connected_account['id'] ][] = array(
 					'accesstoken' 	=> $args['accesstoken'],
 					'post_id' 		=> $args['post_id'],
@@ -219,15 +219,7 @@ class CFF_Error_Reporter
 		);
 
 		if( isset( $response['error']['code'] ) ){
-			$error_code = (int)$response['error']['code'];
-			if ( $error_code === 104 ) {
-				$error_code = 999;
-				$url        = 'https://smashballoon.com/doc/error-999-access-token-could-not-be-decrypted/';
-
-				$response['error']['message'] = __( 'Your access token could not be decrypted on this website. Reconnect this account or go to our website to learn how to prevent this.', 'custom-facebook-feed' );
-			} else {
-				$url = 'https://smashballoon.com/doc/facebook-api-errors/';
-			}
+			$error_code 							= (int)$response['error']['code'];
 			$api_error_number_message 				= sprintf( __( 'API Error %s:', 'custom-facebook-feed' ), $error_code );
 			$error_message_return['public_message'] = __( 'Error connecting to the Facebook API.', 'custom-facebook-feed' ) . ' ' . $api_error_number_message;
 			$ppca_error								= ( strpos($response['error']['message'], 'Public Content Access') !== false ) ? true : false;
@@ -238,11 +230,11 @@ class CFF_Error_Reporter
 
 			$error_message_return['frontend_directions'] = ( $ppca_error )
 				? '<p class="cff-error-directions"><a href="https://smashballoon.com/facebook-api-changes-september-4-2020/" target="_blank" rel="noopener">' . __( 'Directions on How to Resolve This Issue', 'custom-facebook-feed' )  . '</a></p>'
-				: '<p class="cff-error-directions"><a href="' . $url . '?facebook&utm_campaign=facebook-pro&utm_source=error-message&utm_medium=frontend#'. absint( $error_code ) .'" target="_blank" rel="noopener">' . __( 'Directions on How to Resolve This Issue', 'custom-facebook-feed' )  . '</a></p>';
+				: '<p class="cff-error-directions"><a href="https://smashballoon.com/custom-facebook-feed/docs/errors/" target="_blank" rel="noopener">' . __( 'Directions on How to Resolve This Issue', 'custom-facebook-feed' )  . '</a></p>';
 
 			$error_message_return['backend_directions'] = ( $ppca_error )
 				? '<a class="cff-notice-btn cff-btn-blue" href="https://smashballoon.com/facebook-api-changes-september-4-2020/" target="_blank" rel="noopener">' . __( 'Directions on How to Resolve This Issue', 'custom-facebook-feed' )  . '</a>'
-				: '<a class="cff-notice-btn cff-btn-blue" href="' . $url . '?facebook&utm_campaign=facebook-pro&utm_source=error-message&utm_medium=frontend#'. absint( $error_code ) .'" target="_blank" rel="noopener">' . __( 'Directions on How to Resolve This Issue', 'custom-facebook-feed' )  . '</a>';
+				: '<a class="cff-notice-btn cff-btn-blue" href="https://smashballoon.com/custom-facebook-feed/docs/errors/" target="_blank" rel="noopener">' . __( 'Directions on How to Resolve This Issue', 'custom-facebook-feed' )  . '</a>';
 
 			$error_message_return['errorno'] = $error_code;
 
@@ -276,8 +268,7 @@ class CFF_Error_Reporter
 			100,
 			200,
 			190,
-			104,
-			999
+			104
 		);
 
 		return in_array( $error_code, $critical_codes, true );
@@ -302,16 +293,8 @@ class CFF_Error_Reporter
 
 	}
 
-
-
 	public function remove_all_errors() {
 		delete_option( $this->reporter_key );
-	}
-
-	public function reset_api_errors() {
-		$this->errors['connection'] = array();
-		$this->errors['accounts'] = array();
-		update_option( $this->reporter_key, $this->errors, false );
 	}
 
 	/**
@@ -351,9 +334,7 @@ class CFF_Error_Reporter
 
 			$directions = '<p class="cff-error-directions">';
 			$directions .= $error_message_array['backend_directions'];
-			if ( ! empty( $error_message_array['post_id'] ) ) {
-				$directions .= '<button data-url="'.get_the_permalink( $error_message_array['post_id'] ).'" class="cff-clear-errors-visit-page cff-space-left cff-btn cff-notice-btn cff-btn-grey">' . __( 'View Feed and Retry', 'custom-facebook-feed' )  . '</button>';
-			}
+			$directions .= '<button data-url="'.get_the_permalink( $error_message_array['post_id'] ).'" class="cff-clear-errors-visit-page cff-space-left cff-btn cff-notice-btn cff-btn-grey">' . __( 'View Feed and Retry', 'custom-facebook-feed' )  . '</button>';
 			$directions .=	'</p>';
 		}else{
 
@@ -590,12 +571,6 @@ class CFF_Error_Reporter
 	public function dismiss_critical_notice() {
 
 		check_ajax_referer( 'cff-critical-notice', 'nonce' );
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
-		}
-
 
 		update_option( 'cff_dismiss_critical_notice', 1, false );
 

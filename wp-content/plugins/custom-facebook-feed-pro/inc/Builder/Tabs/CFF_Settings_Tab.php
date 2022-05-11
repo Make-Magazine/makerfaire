@@ -581,14 +581,6 @@ class CFF_Settings_Tab{
 				'min'				=> 1
 			],
 			[
-				'type' 				=> 'number',
-				'id' 				=> 'eventspostlimit',
-				'stacked'			=> 'true',
-				'heading'		=> __( 'Events Limit', 'custom-facebook-feed' ),
-				'tooltip'		=> __( 'Enter the events post limit', 'custom-facebook-feed' ),
-				'condition'			=> ['feedtype' => ['events']],
-			],
-			[
 				'type' 				=> 'separator',
 				'top' 				=> 20,
 				'bottom' 			=> 10,
@@ -598,7 +590,7 @@ class CFF_Settings_Tab{
 				'type' 				=> 'select',
 				'id' 				=> 'videoaction',
 				'heading' 			=> __( 'Play Video Action', 'custom-facebook-feed' ),
-				'condition'			=> ['feedtype' => ['timeline','videos']],
+				'condition'			=> ['feedtype' => ['timeline']],
 				'conditionHide'		=> true,
 				'description'		=> __( 'What should happen when a video in the feed is clicked', 'custom-facebook-feed' ),
 				'options'			=> [
@@ -613,7 +605,7 @@ class CFF_Settings_Tab{
 				'checkExtension'	=> 'reviews',
 				'conditionHide'		=> true,
 				'heading' 			=> __( 'Reviews Retrieval Method', 'custom-facebook-feed' ),
-				'description' 		=> __( 'Most users should leave this set as "Auto" and only change it if directed by a member of the support team.' ),
+				'description' 		=> __( 'A single line decription of the feature.', 'custom-facebook-feed' ),
 				'options'			=> [
 					'auto' => __( 'Automatic', 'custom-facebook-feed' ),
 					'all' => __( 'All', 'custom-facebook-feed' ),

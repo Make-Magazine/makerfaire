@@ -8,8 +8,6 @@
 namespace CustomFacebookFeed\Builder;
 
 use CustomFacebookFeed\CFF_FB_Settings;
-use CustomFacebookFeed\SB_Facebook_Data_Encryption;
-use CustomFacebookFeed\SB_Facebook_Data_Manager;
 
 class CFF_Feed_Saver {
 
@@ -243,7 +241,7 @@ class CFF_Feed_Saver {
 
 		$this->sanitized_and_sorted_data['feeds'][] = array(
 			'key' => 'feed_name',
-			'values' => [sanitize_text_field(wp_unslash($this->feed_name))]
+			'values' => [sanitize_text_field($this->feed_name)]
 		);
 
 		$success = CFF_Db::feeds_update( $this->sanitized_and_sorted_data['feeds'], $args );
@@ -284,10 +282,7 @@ class CFF_Feed_Saver {
 	 *
 	 * @since 4.0
 	 */
-	public function get_feed_settings( $is_export = false ) {
-		$encryption = new SB_Facebook_Data_Encryption();
-		$manager = new SB_Facebook_Data_Manager();
-
+	public function get_feed_settings() {
 		if ( $this->is_legacy ) {
 			$return = CFF_FB_Settings::get_legacy_settings( array() );
 
@@ -370,9 +365,9 @@ class CFF_Feed_Saver {
 					'account_id' => stripslashes( $source['account_id'] ),
 					'account_type' => stripslashes( $source['account_type'] ),
 					'privilege' => stripslashes( $source['privilege'] ),
-					'access_token' => $is_export === true ? stripslashes( $manager->remote_encrypt( $source['access_token'] ) ) : stripslashes( $encryption->decrypt( $source['access_token'] ) ),
+					'access_token' => stripslashes( $source['access_token'] ),
 					'username' => stripslashes( $source['username'] ),
-					'info' => stripslashes( $encryption->decrypt( $source['info'] ) ),
+					'info' => stripslashes( $source['info'] ),
 					'error' => stripslashes( $source['error'] ),
 					'expires' => stripslashes( $source['expires'] ),
 					'avatar_url' => stripslashes( $source['avatar_url'] ),
@@ -384,7 +379,7 @@ class CFF_Feed_Saver {
 		} else {
 			$found_sources = array();
 
-			$ids_or_slugs = is_array( $return['id'] ) ? $return['id'] : explode( $return['id'], ',' );
+			$ids_or_slugs = explode( $return['id'], ',' );
 			foreach ( $ids_or_slugs as $id_or_slug ) {
 				$maybe_source_from_connected = CFF_Source::maybe_one_off_connected_account_update( $id_or_slug );
 
@@ -410,9 +405,9 @@ class CFF_Feed_Saver {
 						'account_id' => stripslashes( $source['account_id'] ),
 						'account_type' => stripslashes( $source['account_type'] ),
 						'privilege' => stripslashes( $source['privilege'] ),
-						'access_token' => stripslashes( $encryption->decrypt( $source['access_token'] ) ),
+						'access_token' => stripslashes( $source['access_token'] ),
 						'username' => stripslashes( $source['username'] ),
-						'info' => stripslashes( $encryption->decrypt( $source['info'] ) ),
+						'info' => stripslashes( $source['info'] ),
 						'error' => stripslashes( $source['error'] ),
 						'expires' => stripslashes( $source['expires'] ),
 						'avatar_url' => stripslashes( $source['avatar_url'] ),
@@ -439,9 +434,9 @@ class CFF_Feed_Saver {
 						'account_id' => stripslashes( $source_query[0]['account_id'] ),
 						'account_type' => stripslashes( $source_query[0]['account_type'] ),
 						'privilege' => stripslashes( $source_query[0]['privilege'] ),
-						'access_token' => stripslashes( $encryption->decrypt( $source_query[0]['access_token'] ) ),
+						'access_token' => stripslashes( $source_query[0]['access_token'] ),
 						'username' => stripslashes( $source_query[0]['username'] ),
-						'info' => stripslashes( $encryption->decrypt( $source_query[0]['info'] ) ),
+						'info' => stripslashes( $source_query[0]['info'] ),
 						'expires' => stripslashes( $source_query[0]['expires'] ),
 					);
 
@@ -454,7 +449,6 @@ class CFF_Feed_Saver {
 		}
 
 		$return['num'] = isset( $return['num'] ) ? (string)$return['num'] : '5';
-		$return['nummobile'] = isset( $return['nummobile'] ) ? (string)$return['nummobile'] : '2';
 
 		return $return;
 	}
@@ -485,7 +479,6 @@ class CFF_Feed_Saver {
 
 		$args = array( 'id' => $sources );
 		$source_query = CFF_Db::source_query( $args );
-		$encryption = new SB_Facebook_Data_Encryption();
 
 		$return['sources'] = array();
 		if ( ! empty( $source_query ) ) {
@@ -494,9 +487,9 @@ class CFF_Feed_Saver {
 					'record_id' => stripslashes( $source['id'] ),
 					'account_id' => stripslashes( $source['account_id'] ),
 					'account_type' => stripslashes( $source['account_type'] ),
-					'access_token' => stripslashes( $encryption->decrypt( $source['access_token'] ) ),
+					'access_token' => stripslashes( $source['access_token'] ),
 					'username' => stripslashes( $source['username'] ),
-					'info' => stripslashes( $encryption->decrypt( $source['info'] ) ),
+					'info' => stripslashes( $source['info'] ),
 					'error' => stripslashes( $source['error'] ),
 					'expires' => stripslashes( $source['expires'] ),
 				);
@@ -527,8 +520,6 @@ class CFF_Feed_Saver {
 			$final_translations['facebooklinktext'] = isset( $translations['cff_facebook_link_text'] ) ? stripslashes( esc_attr( $translations['cff_facebook_link_text'] ) ) : __( 'View on Facebook', 'custom-facebook-feed' );
 			$final_translations['sharelinktext'] = isset( $translations['cff_facebook_share_text'] ) ? stripslashes( esc_attr( $translations['cff_facebook_share_text'] ) ) : __( 'Share', 'custom-facebook-feed' );
 			$final_translations['buttontext'] = isset( $translations[ 'cff_load_more_text' ] ) ? stripslashes( esc_attr( $translations[ 'cff_load_more_text' ] ) ) : __( 'Load more', 'custom-facebook-feed' );
-			$final_translations['reviewslinktext'] = isset( $translations[ 'cff_reviews_link_text' ] ) ? stripslashes( esc_attr( $translations[ 'cff_reviews_link_text' ] ) ) : __( 'View all Reviews', 'custom-facebook-feed' );
-
 
 			$defaults = array(
 				'sources' => '',
@@ -539,7 +530,6 @@ class CFF_Feed_Saver {
 				'pagetype' => 'page',
 				'num' => '5',
 				'limit' => '',
-				'eventspostlimit' => '250',
 				'others' => '',
 				'showpostsby' => 'me',
 				'cachetype' => 'background',
@@ -566,14 +556,14 @@ class CFF_Feed_Saver {
 				'eventimage' => 'full',
 				'pastevents' => 'false',
 				'albumsource' => 'photospage',
-				'showalbumtitle' => true,
-				'showalbumnum' => false,
+				'showalbumtitle' => 'on',
+				'showalbumnum' => 'on',
 				'albumcols' => '4',
 				'photosource' => 'photospage',
 				'photocols' => '4',
 				'videosource' => 'videospage',
-				'showvideoname' => true,
-				'showvideodesc' => false,
+				'showvideoname' => 'on',
+				'showvideodesc' => 'on',
 				'videocols' => '4',
 				'playlist' => '',
 				'disablelightbox' => 'off',
@@ -592,7 +582,7 @@ class CFF_Feed_Saver {
 				'cols' => 3,
 				'colsmobile' => 1,
 				'colsjs' => true,
-				'nummobile' => '2',
+				'nummobile' => '',
 				'poststyle' => 'regular',
 				'postbgcolor' => '#',
 				'postcorners' => '0',
@@ -655,8 +645,8 @@ class CFF_Feed_Saver {
 				'buttonhovercolor' => '',
 				'buttontextcolor' => '',
 				'buttontext' =>  $final_translations['buttontext'],
-				'facebooklinktext' => '',
-				'sharelinktext' => '',
+				'facebooklinktext' => $final_translations['facebooklinktext'],
+				'sharelinktext' => $final_translations['sharelinktext'],
 				'iconstyle' => 'light',
 				'socialtextcolor' => '#',
 				'socialbgcolor' => '#',
@@ -715,7 +705,7 @@ class CFF_Feed_Saver {
 				'postimagesize' => 'large',
 				'videoheight' => '',
 				'videoaction' => 'post',
-				'videoplayer' => 'standard',
+				'videoplayer' => 'facebook',
 				'sepcolor' => '#ddd',
 				'sepsize' => '1',
 				'photostext' => 'photos',
@@ -746,7 +736,7 @@ class CFF_Feed_Saver {
 				'reviewsrated' => '1,2,3,4,5',
 				'starsize' => '12',
 				'hidenegative' => '',
-				'reviewslinktext' => '',
+				'reviewslinktext' => __( 'View all Reviews', 'custom-facebook-feed' ),
 				'reviewshidenotext' => '',
 				'reviewsmethod' => 'all',
 				//TO BE CHECKED

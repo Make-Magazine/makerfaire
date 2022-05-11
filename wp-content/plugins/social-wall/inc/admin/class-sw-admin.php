@@ -95,7 +95,7 @@ class SW_Admin {
         jQuery(document).ready( function($) {
         	//Open SW menu when on individual plugins
         	var on_cff_settings = jQuery('#cff-builder-app').length || jQuery('#cff-settings').length || jQuery('#cff-extensions').length || jQuery('#cff-oembeds').length || jQuery('#cff-about').length || jQuery('#cff-support').length,
-        		on_sbi_settings = jQuery('#sbi_admin.wrap').length || jQuery('#sbi-builder-app').length || jQuery('#sbi-settings').length || jQuery('#sbi-extensions').length || jQuery('#sbi-oembeds').length || jQuery('#sbi-about').length || jQuery('#sbi-support').length,
+        		on_sbi_settings = jQuery('#sbi_admin.wrap').length,
         		on_ctf_settings = jQuery('#ctf-admin.wrap').length,
         		on_yt_settings = jQuery('#sbspf_admin.wrap h1:contains(\'Feeds for YouTube\')').length;
 
@@ -149,8 +149,8 @@ class SW_Admin {
         		jQuery('.sbsw-installed-pointer').fadeOut();
         	});";
         }
-
-        echo "});
+        	
+        echo "});     
         </script>";
 
         update_option('sbsw_seen_menu_tooltip', true);
@@ -207,10 +207,8 @@ class SW_Admin {
 		$this->add_false_field( 'carouselpag', 'customize');
 		$this->add_false_field( 'carouselautoplay', 'customize');
 		$this->add_false_field( 'masonryshowfilter', 'customize');
-		$this->add_false_field( 'showbutton', 'customize');
-		$this->add_false_field( 'preserve_settings', 'customize');
-		$this->add_false_field( 'ajaxtheme', 'customize');
-		$this->add_false_field( 'customtemplates', 'customize');
+
+
 	}
 
 	public function additional_settings_init() {
@@ -1138,11 +1136,7 @@ class SW_Admin {
 		if ( ! defined( 'SBIVER' ) ) {
 			$sbsw_sbi_menu_text = '<span class="sbsw_plugin_missing">Instagram Feed</span>';
 			$sbsw_sbi_menu_link = 'https://smashballoon.com/instagram-feed/';
-		} else {
-		    if ( version_compare( SBIVER, '6.0', '>=' ) ) {
-			    $sbsw_sbi_menu_link = admin_url( 'admin.php?page=sbi-feed-builder' );
-            }
-        }
+		}
 		$sbsw_cff_menu_text = '<span class="sbsw_cff_menu">Facebook Feed</span>';
 		$sbsw_cff_menu_link = defined( 'CFFVER' ) && version_compare(CFFVER, 4.0, '<' ) ? admin_url( 'admin.php?page=cff-top' ) : admin_url( 'admin.php?page=cff-feed-builder' );
 		if ( ! defined( 'CFFVER' ) ){
@@ -1154,10 +1148,6 @@ class SW_Admin {
 		if ( ! defined( 'CTF_VERSION' ) ) {
 			$sbsw_ctf_menu_text = '<span class="sbsw_plugin_missing">Twitter Feed</span>';
 			$sbsw_ctf_menu_link = 'https://smashballoon.com/custom-twitter-feeds/';
-		}else{
-			if ( version_compare( CTF_VERSION, '2.0', '>=' ) ) {
-			    $sbsw_ctf_menu_link = admin_url( 'admin.php?page=ctf-feed-builder' );
-            }
 		}
 		$sbsw_yt_menu_text = '<span class="sbsw_yt_menu">YouTube Feed</span>';
 		$sbsw_yt_menu_link = 'youtube-feed';

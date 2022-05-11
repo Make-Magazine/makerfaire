@@ -22,20 +22,6 @@
             </div>
         </div>
     </div>
-    <div class="sb-tab-box sb-clear-error-log-box sb-reset-box-style clearfix">
-        <div class="tab-label">
-            <h3>{{advancedTab.resetErrorBox.title}}</h3>
-        </div>
-        <div class="cff-tab-form-field">
-        <button type="button" class="cff-btn" @click="resetErrorLog()">
-                        <span v-html="resetErrorLogIcon()" :class="clearErrorLogStatus" v-if="clearErrorLogStatus !== null"></span>
-                        {{advancedTab.resetErrorBox.reset}}
-                    </button>
-            <span class="help-text">
-                {{advancedTab.resetErrorBox.helpText}}
-            </span>
-        </div>
-    </div>
     <div class="sb-tab-box sb-usage-box sb-reset-box-style clearfix">
         <div class="tab-label">
             <h3>{{advancedTab.usageBox.title}}</h3>
@@ -158,20 +144,6 @@
                     <span v-html="advancedTab.feedIssueBox.helpText"></span>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="sb-tab-box sb-optimize-box sb-dpa-clear-box-style clearfix">
-        <div class="tab-label">
-            <h3>{{advancedTab.dpaClear.title}}</h3>
-        </div>
-        <div class="cff-tab-form-field">
-            <button type="button" class="cff-btn" @click="dpaReset()">
-                <span v-html="dpaResetStatusIcon()" :class="dpaResetStatus" v-if="dpaResetStatus !== null"></span>
-                {{advancedTab.dpaClear.clear}}
-            </button>
-            <span class="help-text">
-                {{advancedTab.dpaClear.helpText}}
-            </span>
         </div>
     </div>
 </div>

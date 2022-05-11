@@ -246,16 +246,10 @@ class CFF_New_User extends CFF_Notifications {
 	 * @since 4.0
 	 */
 	public function review_notice_consent() {
-		//Security Checks
-		check_ajax_referer( 'cff_nonce', 'cff_nonce' );
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error(); // This auto-dies.
+		if ( ! DOING_AJAX ) {
+			return;
 		}
-
-		$consent = isset( $_POST[ 'consent' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'consent' ] ) ) : '';
+		$consent = isset( $_POST[ 'consent' ] ) ? sanitize_text_field( $_POST[ 'consent' ] ) : '';
 
 		update_option( 'cff_review_consent', $consent );
 
@@ -308,8 +302,8 @@ class CFF_New_User extends CFF_Notifications {
 		$image_overlay = '';
 
 		foreach ( $notifications as $notification ) {
-			$img_src = CFF_PLUGIN_URL . 'admin/assets/img/' . sanitize_text_field( wp_unslash( $notification['image'] ) );
-			$type = sanitize_text_field( wp_unslash( $notification['id'] ) );
+			$img_src = CFF_PLUGIN_URL . 'admin/assets/img/' . sanitize_text_field( $notification['image'] );
+			$type = sanitize_text_field( $notification['id'] );
 			// check if this is a review notice
 			if( $type == 'review' ) {
 				$review_consent = get_option( 'cff_review_consent' );
@@ -494,7 +488,7 @@ class CFF_New_User extends CFF_Notifications {
 		}
 
 		if ( isset( $_GET['cff_ignore_new_user_sale_notice'] ) ) {
-			$response = sanitize_text_field( wp_unslash( $_GET['cff_ignore_new_user_sale_notice'] ) );
+			$response = sanitize_text_field( $_GET['cff_ignore_new_user_sale_notice'] );
 			if ( $response === 'always' ) {
 				update_user_meta( $user_id, 'cff_ignore_new_user_sale_notice', 'always' );
 
@@ -509,7 +503,7 @@ class CFF_New_User extends CFF_Notifications {
 		}
 
 		if ( isset( $_GET['cff_ignore_bfcm_sale_notice'] ) ) {
-			$response = sanitize_text_field( wp_unslash(  $_GET['cff_ignore_bfcm_sale_notice'] ));
+			$response = sanitize_text_field( $_GET['cff_ignore_bfcm_sale_notice'] );
 			if ( $response === 'always' ) {
 				update_user_meta( $user_id, 'cff_ignore_bfcm_sale_notice', 'always' );
 			} elseif ( $response === date( 'Y', cff_get_current_time() ) ) {

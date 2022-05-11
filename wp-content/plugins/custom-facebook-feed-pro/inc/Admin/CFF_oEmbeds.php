@@ -70,20 +70,13 @@ class CFF_oEmbeds {
 
 	/**
 	 * Disable Facebook oEmbed
-	 *
+	 * 
 	 * @since 4.0
-	 *
+	 * 
 	 * @return CFF_Response
 	 */
 	public function disable_facebook_oembed () {
-		// Run a security check.
-		check_ajax_referer( 'cff-admin', 'nonce' );
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		// Check for permissions.
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error();
-		}
+		\CustomFacebookFeed\Builder\CFF_Feed_Builder::check_privilege( 'nonce' );
 
 		$oembed_settings = get_option( 'cff_oembed_token', array() );
 		$oembed_settings['access_token'] = '';
@@ -97,20 +90,13 @@ class CFF_oEmbeds {
 
 	/**
 	 * Disable Instagram oEmbed
-	 *
+	 * 
 	 * @since 4.0
-	 *
+	 * 
 	 * @return CFF_Response
 	 */
 	public function disable_instagram_oembed () {
-		// Run a security check.
-		check_ajax_referer( 'cff-admin', 'nonce' );
-		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
-		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
-		// Check for permissions.
-		if ( ! current_user_can( $cap ) ) {
-			wp_send_json_error();
-		}
+		\CustomFacebookFeed\Builder\CFF_Feed_Builder::check_privilege( 'nonce' );
 
 		$oembed_settings = get_option( 'sbi_oembed_token', array() );
 		$oembed_settings['access_token'] = '';
@@ -234,9 +220,6 @@ class CFF_oEmbeds {
 			$oembed_token_settings = $newly_retrieved_oembed_connection_data;
 			$return['newOembedData'] = $newly_retrieved_oembed_connection_data;
 
-			$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
-			$newly_retrieved_oembed_connection_data['access_token'] = $encryption->maybe_encrypt( $newly_retrieved_oembed_connection_data['access_token'] );
-
 			update_option( 'cff_oembed_token', $newly_retrieved_oembed_connection_data );
 			update_option( 'sbi_oembed_token', $newly_retrieved_oembed_connection_data );
 		} elseif ( ! empty( $newly_retrieved_oembed_connection_data ) ) {
@@ -317,10 +300,10 @@ class CFF_oEmbeds {
 				return $return;
 			}
 		} if ( isset( $_GET['cff_access_token'] ) ) {
-			$access_token = sanitize_text_field( wp_unslash( $_GET['cff_access_token'] ) );
+			$access_token = $_GET['cff_access_token'];
 
 			$return = [];
-			$valid_new_access_token = ! empty( $access_token ) && strlen( $access_token ) > 20 && $saved_access_token_data !== $access_token ? sanitize_text_field( wp_unslash(  $_GET['cff_access_token'] ) ) : false;
+			$valid_new_access_token = ! empty( $access_token ) && strlen( $access_token ) > 20 && $saved_access_token_data !== $access_token ? sanitize_text_field( $_GET['cff_access_token'] ) : false;
 			if ( $valid_new_access_token ) {
 				$url = esc_url_raw( 'https://graph.facebook.com/me/accounts?limit=500&access_token=' . $valid_new_access_token );
 				$pages_data_connection = wp_remote_get( $url );

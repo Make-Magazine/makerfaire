@@ -23,15 +23,15 @@ function cff_deactivate_addon() {
 	}
 
 	if ( isset( $_POST['plugin'] ) ) {
-		$plugin = sanitize_text_field( wp_unslash( $_POST['plugin'] ) );
+		$plugin = sanitize_text_field( $_POST['plugin'] );
 
-		// check if intended to disable extension from extensions bundle
+		// check if intended to disable extension from extensions bundle  
 		if ( isset( $_POST['extensions_bundle'] ) && true == $_POST['extensions_bundle'] ) {
 			$cff_ext_options = get_option('cff_extensions_status');
 			$cff_ext_options[ $plugin ] = '';
 			$activate = update_option('cff_extensions_status', $cff_ext_options);
 		} else {
-			$activate = deactivate_plugins( sanitize_text_field( wp_unslash( $_POST['plugin'] ) ) );
+			$activate = deactivate_plugins( $_POST['plugin'] );
 		}
 
 		if ( 'plugin' === $type ) {
@@ -66,15 +66,15 @@ function cff_activate_addon() {
 		if ( ! empty( $_POST['type'] ) ) {
 			$type = sanitize_key( $_POST['type'] );
 		}
-		$plugin = sanitize_text_field( wp_unslash( $_POST['plugin'] ) );
+		$plugin = sanitize_text_field( $_POST['plugin'] );
 
-		// check if intended to enable extension from extensions bundle
+		// check if intended to enable extension from extensions bundle  
 		if ( isset( $_POST['extensions_bundle'] ) && true == $_POST['extensions_bundle'] ) {
 			$cff_ext_options = get_option('cff_extensions_status');
 			$cff_ext_options[ $plugin ] = 'on';
 			$activate = update_option('cff_extensions_status', $cff_ext_options);
 		} else {
-			$activate = activate_plugins( sanitize_text_field( wp_unslash( $_POST['plugin'] ) ) );
+			$activate = activate_plugins( $_POST['plugin'] );
 		}
 
 		if ( ! is_wp_error( $activate ) ) {
@@ -101,7 +101,7 @@ function cff_install_addon() {
 	check_ajax_referer( 'cff-admin', 'nonce' );
 
 	// Check for permissions.
-	if ( ! current_user_can( 'install_plugins' ) ) {
+	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_send_json_error();
 	}
 
@@ -151,7 +151,7 @@ function cff_install_addon() {
 		wp_send_json_error( $error );
 	}
 
-	$installer->install( sanitize_text_field( wp_unslash( $_POST['plugin'] ) ) ); // phpcs:ignore
+	$installer->install( $_POST['plugin'] ); // phpcs:ignore
 
 	// Flush the cache and return the newly installed plugin basename.
 	wp_cache_flush();
@@ -192,11 +192,11 @@ function cff_install_addon() {
 add_action( 'wp_ajax_cff_install_addon', 'cff_install_addon' );
 
 /**
-* Smash Balloon Encrypt or decrypt
-*
+* Smash Balloon Encrypt or decrypt 
+* 
 * @param string @action
 * @param string @string
-*
+* 
 * @return string $output
 */
 function sb_encrypt_decrypt( $action, $string ) {
