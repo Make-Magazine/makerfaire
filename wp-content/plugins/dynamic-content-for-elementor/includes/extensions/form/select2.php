@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Select2 extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class Select2 extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     private $is_common = \false;
     public $has_action = \false;
@@ -27,6 +27,8 @@ class DCE_Extension_Form_Select2 extends \DynamicContentForElementor\Extensions\
     protected function add_actions()
     {
         add_action('elementor/widget/render_content', array($this, '_render_form'), 10, 2);
+        add_action('elementor/element/form/section_form_fields/before_section_end', [$this, 'update_fields_controls']);
+        add_action('elementor/element/form/section_field_style/before_section_end', [$this, 'update_style_controls']);
         add_action('elementor/widget/print_template', function ($template, $widget) {
             if ('form' === $widget->get_name()) {
                 $template = \false;
@@ -130,46 +132,56 @@ class DCE_Extension_Form_Select2 extends \DynamicContentForElementor\Extensions\
         }
         return $content;
     }
-    public static function _add_to_form(Controls_Stack $element, $control_id, $control_data, $options = [])
+    public function update_fields_controls($widget)
     {
-        if ($element->get_name() == 'form') {
-            if ($control_id == 'form_fields') {
-                $control_data['fields']['field_select2'] = array('name' => 'field_select2', 'label' => __('Select2', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'return_value' => 'true', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'select']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
-                $control_data['fields']['field_select2_placeholder'] = array('name' => 'field_select2_placeholder', 'label' => __('Placeholder', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'select'], ['name' => 'field_select2', 'value' => 'true']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
-            }
-            if ($control_id == 'field_text_color') {
-                $control_data['selectors']['{{WRAPPER}} .select2-container--default .select2-selection--single .select2-selection__rendered'] = 'color: {{VALUE}};';
-                $control_data['selectors']['{{WRAPPER}} ..select2-container--default .select2-selection--multiple .select2-selection__rendered'] = 'color: {{VALUE}};';
-            }
-            if (\strpos($control_id, 'field_typography') === 0) {
-                if (!empty($control_data['selectors'])) {
-                    $values = \reset($control_data['selectors']);
-                    $control_data['selectors']['{{WRAPPER}} .select2-container--default .select2-selection--single .select2-selection__rendered'] = $values;
-                    $control_data['selectors']['{{WRAPPER}} .select2-container--default .select2-selection--single .select2-selection__rendered'] = $values;
-                    $control_data['selectors']['{{WRAPPER}} .select2-container--default .select2-selection--single, {{WRAPPER}} .select2-container--default .select2-selection--multiple'] = 'height: auto;';
-                }
-            }
-            if ($control_id == 'field_background_color') {
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2'] = 'background-color: {{VALUE}};';
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2 .elementor-field-textual'] = 'background-color: {{VALUE}};';
-                $control_data['selectors']['{{WRAPPER}} .mce-panel'] = 'background-color: {{VALUE}};';
-            }
-            if ($control_id == 'field_border_color') {
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2'] = 'border-color: {{VALUE}};';
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2 .elementor-field-textual'] = 'border-color: {{VALUE}};';
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .mce-panel'] = 'border-color: {{VALUE}};';
-            }
-            if ($control_id == 'field_border_width') {
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2'] = 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2 .elementor-field-textual'] = 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .mce-panel'] = 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
-            }
-            if ($control_id == 'field_border_radius') {
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2'] = 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2 .elementor-field-textual'] = 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
-                $control_data['selectors']['{{WRAPPER}} .elementor-field-group .mce-panel'] = 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
-            }
+        $elementor = \ElementorPro\Plugin::elementor();
+        $control_data = $elementor->controls_manager->get_control_from_stack($widget->get_unique_name(), 'form_fields');
+        if (is_wp_error($control_data)) {
+            return;
         }
-        return $control_data;
+        $control_data['fields']['field_select2'] = array('name' => 'field_select2', 'label' => __('Select2', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'return_value' => 'true', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'select']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
+        $control_data['fields']['field_select2_placeholder'] = array('name' => 'field_select2_placeholder', 'label' => __('Placeholder', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'select'], ['name' => 'field_select2', 'value' => 'true']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
+        $widget->update_control('form_fields', $control_data);
+    }
+    public function update_style_controls($widget)
+    {
+        Helper::update_elementor_control($widget, 'field_background_color', function ($control_data) {
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2'] = 'background-color: {{VALUE}};';
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2 .elementor-field-textual'] = 'background-color: {{VALUE}};';
+            $control_data['selectors']['{{WRAPPER}} .mce-panel'] = 'background-color: {{VALUE}};';
+            return $control_data;
+        });
+        Helper::update_elementor_control($widget, 'field_text_color', function ($control_data) {
+            $control_data['selectors']['{{WRAPPER}} .select2-container--default .select2-selection--single .select2-selection__rendered'] = 'color: {{VALUE}};';
+            $control_data['selectors']['{{WRAPPER}} ..select2-container--default .select2-selection--multiple .select2-selection__rendered'] = 'color: {{VALUE}};';
+            return $control_data;
+        });
+        Helper::update_elementor_control($widget, 'field_typography', function ($control_data) {
+            if (!empty($control_data['selectors'])) {
+                $values = \reset($control_data['selectors']);
+                $control_data['selectors']['{{WRAPPER}} .select2-container--default .select2-selection--single .select2-selection__rendered'] = $values;
+                $control_data['selectors']['{{WRAPPER}} .select2-container--default .select2-selection--single .select2-selection__rendered'] = $values;
+                $control_data['selectors']['{{WRAPPER}} .select2-container--default .select2-selection--single, {{WRAPPER}} .select2-container--default .select2-selection--multiple'] = 'height: auto;';
+            }
+            return $control_data;
+        });
+        Helper::update_elementor_control($widget, 'field_border_color', function ($control_data) {
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2'] = 'border-color: {{VALUE}};';
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2 .elementor-field-textual'] = 'border-color: {{VALUE}};';
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .mce-panel'] = 'border-color: {{VALUE}};';
+            return $control_data;
+        });
+        Helper::update_elementor_control($widget, 'field_border_width', function ($control_data) {
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2'] = 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2 .elementor-field-textual'] = 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .mce-panel'] = 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
+            return $control_data;
+        });
+        Helper::update_elementor_control($widget, 'field_border_radius', function ($control_data) {
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2'] = 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .elementor-select-wrapper .select2 .elementor-field-textual'] = 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
+            $control_data['selectors']['{{WRAPPER}} .elementor-field-group .mce-panel'] = 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
+            return $control_data;
+        });
     }
 }

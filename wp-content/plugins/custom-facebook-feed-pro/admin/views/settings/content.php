@@ -2,10 +2,10 @@
     <?php
         /**
          * CFF Admin Notices
-         * 
+         *
          * @since 4.0
          */
-        do_action('cff_admin_notices'); 
+        do_action('cff_admin_notices');
     ?>
     <div class="section-header">
         <h1>{{genericText.settings}}</h1>
@@ -61,6 +61,7 @@
 :generic-text="genericText"
 :selected-feed="selectedFeed"
 :svg-icons="svgIcons"
+ref="addSourceRef"
 >
 </sb-add-source-component>
 

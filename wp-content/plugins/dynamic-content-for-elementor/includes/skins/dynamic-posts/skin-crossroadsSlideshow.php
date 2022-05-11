@@ -31,11 +31,12 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
     {
         return __('Crossroads Slideshow', 'dynamic-content-for-elementor');
     }
-    public function register_additional_crossroadsslideshow_controls()
+    public function register_additional_crossroadsslideshow_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
+        $this->parent = $widget;
         $this->start_controls_section('section_crossroadsslideshow', ['label' => __('Crossroads Slideshow', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         // Item settings
-        $this->add_control('slideshow_layout_heading_item_caption', ['label' => __('ITEM CAPTION:', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING]);
+        $this->add_control('slideshow_layout_heading_item_caption', ['label' => __('Item Caption', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING]);
         // Item image caption
         $this->add_control('slideshow_image_caption_text', ['label' => __('Caption Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'item_date', 'options' => ['item_date' => 'Publish Date', 'item_author' => 'Author', 'item_custommeta' => 'Custom Field'], 'frontend_available' => \true]);
         $this->add_control('slideshow_caption_date_format', ['label' => __('Caption Date Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('F j, Y', 'dynamic-content-for-elementor'), 'condition' => [$this->get_control_id('slideshow_image_caption_text') => 'item_date']]);
@@ -45,7 +46,7 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
         $this->add_control('slideshow_metafield_date_format_source', ['label' => __('Date Format: SOURCE', 'dynamic-content-for-elementor'), 'description' => '<a target="_blank" href="https://www.php.net/manual/en/function.date.php">' . __('Use standard PHP format character', 'dynamic-content-for-elementor') . '</a>' . __(', you can also use "timestamp"', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'F j, Y, g:i a', 'placeholder' => __('YmdHis, d/m/Y, m-d-y', 'dynamic-content-for-elementor'), 'condition' => [$this->get_control_id('slideshow_image_caption_text') => 'item_custommeta', $this->get_control_id('slideshow_metafield_type') => 'date']]);
         $this->add_control('slideshow_metafield_date_format_display', ['label' => __('Date Format: DISPLAY', 'dynamic-content-for-elementor'), 'placeholder' => __('YmdHis, d/m/Y, m-d-y', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'F j, Y, g:i a', 'condition' => [$this->get_control_id('slideshow_metafield_type') => 'date']]);
         // Item settings
-        $this->add_control('slideshow_layout_heading_item_image', ['label' => __('ITEM IMAGE OVERLAY:', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
+        $this->add_control('slideshow_layout_heading_item_image', ['label' => __('Item Image Overlay', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         // ----- Item image overlay
         $this->start_controls_tabs('tabs_slideshow_background_overlay');
         $this->start_controls_tab('tab_slideshow_background_overlay_center', ['label' => __('Center', 'dynamic-content-for-elementor')]);
@@ -58,13 +59,13 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'slideshow_background_overlay_normal', 'selector' => '{{WRAPPER}} .dce-grid__item--slide:not(.dce-grid__item--center) .dce-post-block .dce-img-wrap .dce-img-background-overlay']);
         $this->add_control('slideshow_background_overlay_opacity_normal', ['label' => __('Opacity', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0.5], 'range' => ['px' => ['max' => 1, 'step' => 0.01]], 'selectors' => ['{{WRAPPER}} .dce-grid__item--slide:not(.dce-grid__item--center) .dce-post-block .dce-img-wrap .dce-img-background-overlay' => 'opacity: {{SIZE}};'], 'condition' => [$this->get_control_id('slideshow_background_overlay_background') => ['classic', 'gradient']]]);
         $this->add_group_control(Group_Control_Css_Filter::get_type(), ['name' => 'slideshow_css_filters_normal', 'selector' => '{{WRAPPER}} .dce-grid__item--slide:not(.dce-grid__item--center) .dce-post-block .dce-img-wrap .dce-img-background-overlay']);
-        $this->add_control('slideshow_overlay_blend_mode_normal', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => 'Multiply', 'screen' => 'Screen', 'overlay' => 'Overlay', 'darken' => 'Darken', 'lighten' => 'Lighten', 'color-dodge' => 'Color Dodge', 'saturation' => 'Saturation', 'color' => 'Color', 'luminosity' => 'Luminosity'], 'selectors' => ['{{WRAPPER}} .dce-grid__item--slide:not(.dce-grid__item--center) .dce-post-block .dce-img-wrap .dce-img-background-overlay' => 'mix-blend-mode: {{VALUE}}']]);
+        $this->add_control('slideshow_overlay_blend_mode_normal', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => __('Multiply', 'dynamic-content-for-elementor'), 'screen' => __('Screen', 'dynamic-content-for-elementor'), 'overlay' => __('Overlay', 'dynamic-content-for-elementor'), 'darken' => __('Darken', 'dynamic-content-for-elementor'), 'lighten' => __('Lighten', 'dynamic-content-for-elementor'), 'color-dodge' => __('Color Dodge', 'dynamic-content-for-elementor'), 'saturation' => __('Saturation', 'dynamic-content-for-elementor'), 'color' => __('Color', 'dynamic-content-for-elementor'), 'luminosity' => __('Luminosity', 'dynamic-content-for-elementor')], 'selectors' => ['{{WRAPPER}} .dce-grid__item--slide:not(.dce-grid__item--center) .dce-post-block .dce-img-wrap .dce-img-background-overlay' => 'mix-blend-mode: {{VALUE}}']]);
         $this->end_controls_tab();
         $this->start_controls_tab('tab_slideshow_background_overlay_fullview', ['label' => __('Full View', 'dynamic-content-for-elementor')]);
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'slideshow_background_overlay_fullview', 'selector' => '{{WRAPPER}} .dce-content-fullview .dce-img-wrap .dce-img-background-overlay']);
         $this->add_control('slideshow_background_overlay_opacity_fullview', ['label' => __('Opacity', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0.5], 'range' => ['px' => ['max' => 1, 'step' => 0.01]], 'selectors' => ['{{WRAPPER}} .dce-content-fullview .dce-img-wrap .dce-img-background-overlay' => 'opacity: {{SIZE}};'], 'condition' => [$this->get_control_id('slideshow_background_overlay_background') => ['classic', 'gradient']]]);
         $this->add_group_control(Group_Control_Css_Filter::get_type(), ['name' => 'slideshow_css_filters_fullview', 'selector' => '{{WRAPPER}} .dce-content-fullview .dce-img-wrap .dce-img-background-overlay']);
-        $this->add_control('slideshow_overlay_blend_mode_fullview', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => 'Multiply', 'screen' => 'Screen', 'overlay' => 'Overlay', 'darken' => 'Darken', 'lighten' => 'Lighten', 'color-dodge' => 'Color Dodge', 'saturation' => 'Saturation', 'color' => 'Color', 'luminosity' => 'Luminosity'], 'selectors' => ['{{WRAPPER}} .dce-content-fullview .dce-img-wrap .dce-img-background-overlay' => 'mix-blend-mode: {{VALUE}}']]);
+        $this->add_control('slideshow_overlay_blend_mode_fullview', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => __('Multiply', 'dynamic-content-for-elementor'), 'screen' => __('Screen', 'dynamic-content-for-elementor'), 'overlay' => __('Overlay', 'dynamic-content-for-elementor'), 'darken' => __('Darken', 'dynamic-content-for-elementor'), 'lighten' => __('Lighten', 'dynamic-content-for-elementor'), 'color-dodge' => __('Color Dodge', 'dynamic-content-for-elementor'), 'saturation' => __('Saturation', 'dynamic-content-for-elementor'), 'color' => __('Color', 'dynamic-content-for-elementor'), 'luminosity' => __('Luminosity', 'dynamic-content-for-elementor')], 'selectors' => ['{{WRAPPER}} .dce-content-fullview .dce-img-wrap .dce-img-background-overlay' => 'mix-blend-mode: {{VALUE}}']]);
         $this->end_controls_tab();
         $this->end_controls_tabs();
         $this->end_controls_section();
@@ -72,13 +73,11 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
     protected function register_style_controls()
     {
         parent::register_style_controls();
-        $this->start_controls_section('section_style_crossroadsslideshow_grid', ['label' => __('Crossroads Slideshow - Grid View', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
+        $this->start_controls_section('section_style_crossroadsslideshow_grid', ['label' => __('Grid View', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('slideshow_style_background_color', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '#F4F4F4', 'selectors' => ['{{WRAPPER}} .dce-crossroadsslideshow-container .dce-revealer .dce-revealer__inner' => 'background-color: {{VALUE}};']]);
-        // ----- Item title style
         $this->add_control('slideshow_style_heading_item_title', ['label' => __('Item Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'slideshow_item_title_typography', 'label' => __('Typography', 'dynamic-content-for-elementor'), 'default' => '', 'selector' => '{{WRAPPER}} .dce-titles-wrap .dce-grid-crossroadsslideshow.dce-grid--titles .dce-grid__item--title > *']);
         $this->add_control('slideshow_item_title_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-titles-wrap .dce-grid-crossroadsslideshow.dce-grid--titles .dce-grid__item--title > *' => 'color: {{VALUE}};']]);
-        // ----- Item number style
         $this->add_control('slideshow_style_heading_item_number', ['label' => __('Item Number', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'slideshow_item_number_typography', 'label' => __('Typography', 'dynamic-content-for-elementor'), 'default' => '', 'selector' => '{{WRAPPER}} .dce-post-item.dce-crossroadsslideshow-item .dce-post-block .dce-figure-crossroads .dce-number']);
         $this->add_control('slideshow_item_number_text_stroke_color', ['label' => __('Text Stroke Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-post-item.dce-crossroadsslideshow-item .dce-post-block .dce-figure-crossroads .dce-number' => '-webkit-text-stroke-color: {{VALUE}};']]);
@@ -90,7 +89,7 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
         $this->add_control('slideshow_item_image_caption_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-post-item.dce-crossroadsslideshow-item .dce-post-block .dce-figure-crossroads .dce-caption' => 'color: {{VALUE}};']]);
         $this->end_controls_section();
         // Fullview
-        $this->start_controls_section('section_style_crossroadsslideshow_fullview', ['label' => __('Crossroads Slideshow - Full View', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
+        $this->start_controls_section('section_style_crossroadsslideshow_fullview', ['label' => __('Full View', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('slideshow_style_background_color_fullview', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '#F4F4F4', 'selectors' => ['{{WRAPPER}} .dce-crossroadsslideshow-container .dce-content-fullview' => 'background-color: {{VALUE}};']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'slideshow_fullview_title_typography', 'label' => __('Typography', 'dynamic-content-for-elementor'), 'separator' => 'before', 'default' => '', 'selector' => '{{WRAPPER}} .dce-titles-wrap .dce-grid-crossroadsslideshow.dce-grid--titles .dce-grid__item--title > *']);
         $this->add_control('slideshow_fullview_title_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-titles-wrap .dce-grid-crossroadsslideshow.dce-grid--titles .dce-grid__item--title > *' => 'color: {{VALUE}};']]);
@@ -101,9 +100,9 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
     }
     protected function render_post_items()
     {
-        $_skin = $this->parent->get_settings('_skin');
-        $style_items = $this->parent->get_settings('style_items');
-        $post_items = $this->parent->get_settings('list_items');
+        $_skin = $this->get_parent()->get_settings('_skin');
+        $style_items = $this->get_parent()->get_settings('style_items');
+        $post_items = $this->get_parent()->get_settings('list_items');
         $prefix0 = '0';
         $numberlabel = $this->counter + 1;
         if ($numberlabel > 9) {
@@ -145,7 +144,7 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
                         $meta_value = date_i18n($metafield_date_format_display, $timestamp);
                         break;
                     case 'textarea':
-                        //non esiste
+                        // not exists
                         $meta_value = \nl2br($meta_value);
                         break;
                     default:
@@ -159,7 +158,9 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
                 if ($image_url) {
                     echo '<div class="dce-img-background-overlay"></div>';
                 }
-                echo '<div class="dce-img-el" style="background-image: url(' . $image_url[0] . ');"></div>';
+                if (isset($image_url[0])) {
+                    echo '<div class="dce-img-el" style="background-image: url(' . $image_url[0] . ');"></div>';
+                }
                 echo '</div>';
             }
             if ($_id == $this->get_instance_value('slideshow_image_caption_text')) {
@@ -173,8 +174,8 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
         ?>
 		<div class="dce-content-fullview">
 				<?php 
-        $this->parent->query_posts();
-        $query = $this->parent->get_query();
+        $this->get_parent()->query_posts();
+        $query = $this->get_parent()->get_query();
         if (!$query->found_posts) {
             return;
         }
@@ -201,22 +202,27 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
     }
     public function render_content_item()
     {
-        $_skin = $this->parent->get_settings('_skin');
-        $post_items = $this->parent->get_settings('list_items');
+        $_skin = $this->get_parent()->get_settings('_skin');
+        $post_items = $this->get_parent()->get_settings('list_items');
         $image_url = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
         ?>
 		<article class="dce-content__item">
 			<?php 
         foreach ($post_items as $key => $item) {
             $_id = $item['item_id'];
-            // l'immagine .....
             if ($_id == 'item_image') {
                 echo '<div class="dce-img-wrap dce-img-wrap--content">';
                 ?>
 					<div class="dce-img-background-overlay"></div>
+					<?php 
+                if (isset($image_url[0])) {
+                    ?>
 					<div class="dce-img-el dce-img--content elementor-repeater-item-item_image" style="background-image: url(<?php 
-                echo $image_url[0];
-                ?>);"></div>
+                    echo $image_url[0];
+                    ?>);"></div>
+					<?php 
+                }
+                ?>
 
 					<?php 
                 echo '</div>';
@@ -228,13 +234,13 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
                 $this->render_date($item);
                 ?></div>
 						<div class="dce-content__item-header-meta elementor-repeater-item-item_termstaxonomy"><?php 
-                $this->render_termstaxonomy($item);
+                $this->render_terms($item);
                 ?></div>
 						<div class="dce-content__item-header-title elementor-repeater-item-item_title"><?php 
                 $this->render_title($item);
                 ?></div>
 						<div class="dce-content__item-header-meta elementor-repeater-item-item_custommeta"><?php 
-                $this->render_custommeta($item);
+                $this->render_custom_meta($item);
                 ?></div>
 					</div>
 				<?php 
@@ -248,7 +254,7 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
                 ?>
 					</p>
 					<div href="#" class="dce-content__item-copy-more dce-item_readmore elementor-repeater-item-item_readmore"><?php 
-                $this->render_readmore($item);
+                $this->render_read_more($item);
                 ?></div>
 					<?php 
                 echo '</div>';
@@ -264,8 +270,8 @@ class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skin
 			<div class="dce-titles-wrap">
 				<div class="dce-grid-crossroadsslideshow dce-grid--titles">
 					<?php 
-        $this->parent->query_posts();
-        $query = $this->parent->get_query();
+        $this->get_parent()->query_posts();
+        $query = $this->get_parent()->get_query();
         if (!$query->found_posts) {
             return;
         }

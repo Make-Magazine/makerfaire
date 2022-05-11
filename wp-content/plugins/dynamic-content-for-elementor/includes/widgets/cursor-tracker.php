@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_CursorTracker extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class CursorTracker extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -21,7 +21,12 @@ class DCE_Widget_CursorTracker extends \DynamicContentForElementor\Widgets\Widge
     {
         return ['dce-cursorTracker'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_cursorTracker_settings', ['label' => __('Cursor', 'dynamic-content-for-elementor')]);
         $this->add_responsive_control('cursortracker_dimension', ['label' => __('Dimension', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '', 'unit' => 'px'], 'range' => ['px' => ['min' => 10, 'max' => 500, 'step' => 1]], 'selectors' => ['#cursors-{{ID}}' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};']]);
@@ -50,7 +55,7 @@ class DCE_Widget_CursorTracker extends \DynamicContentForElementor\Widgets\Widge
         $this->add_control('responsive_cursorTracker', ['label' => __('Apply cursor on', 'dynamic-content-for-elementor'), 'description' => __('Responsive mode will take place on preview or live pages only, not while editing in Elementor.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'multiple' => \true, 'separator' => 'before', 'label_block' => \true, 'options' => \array_combine(Helper::get_active_devices_list(), Helper::get_active_devices_list()), 'default' => ['desktop', 'tablet', 'mobile'], 'frontend_available' => \true, 'render_type' => 'none']);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

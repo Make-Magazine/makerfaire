@@ -110,50 +110,12 @@ class CFF_Display_Elements_Pro {
 		return CFF_Parse_Pro::get_cover_source( $header_data );
 	}
 
-	public static function bio_style( $feed_options ) {
-		$style = '';
-
-		$atts = array();
-		if ( ! empty( $feed_options['headerbiocolor'] ) && $feed_options['headerbiocolor'] !== 'inherit' ) {
-			$atts['color'] = '#' . str_replace( '#', '', $feed_options['headerbiocolor'] );
-		}
-		if ( ! empty( $feed_options['headerbiosize'] ) && $feed_options['headerbiosize'] !== 'inherit' ) {
-			$atts['font-size'] =  str_replace( 'px', '', $feed_options['headerbiosize'] ) . 'px';
-		}
-
-		if ( ! empty( $atts ) ) {
-			$style = ' style="';
-
-			foreach ( $atts as $property => $value ) {
-				$style .= esc_attr( $property ) . ': ' . esc_attr( $value ) . ';';
-			}
-
-			$style .= '"';
-		}
-		return $style;
+	public static function bio_style( $this_class ) {
+		return $this_class->get_style_attribute( 'bio_style' );
 	}
 
-	public static function title_style( $feed_options ) {
-		$style = '';
-
-		$atts = array();
-		if ( ! empty( $feed_options['headertextcolor'] ) && $feed_options['headertextcolor'] !== 'inherit' ) {
-			$atts['color'] = '#' . str_replace( '#', '', $feed_options['headertextcolor'] );
-		}
-		if ( ! empty( $feed_options['headertextsize'] ) && $feed_options['headertextsize'] !== 'inherit' ) {
-			$atts['font-size'] = str_replace( 'px', '', $feed_options['headertextsize'] ) . 'px';
-		}
-
-		if ( ! empty( $atts ) ) {
-			$style = ' style="';
-
-			foreach ( $atts as $property => $value ) {
-				$style .= esc_attr( $property ) . ': ' . esc_attr( $value ) . ';';
-			}
-
-			$style .= '"';
-		}
-		return $style;
+	public static function title_style( $this_class ) {
+		return $this_class->get_style_attribute( 'title_style' );
 	}
 
 	public static function palette_class( $feed_options, $feed_id ) {

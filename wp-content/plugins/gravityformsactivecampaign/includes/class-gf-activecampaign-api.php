@@ -18,6 +18,18 @@ class GF_ActiveCampaign_API {
 
 	}
 
+	/**
+	 * Makes a request to the ActiveCampaign API.
+	 *
+	 * @since unknown
+	 * @since 2.0 Updated to return WP_Error instead of die().
+	 *
+	 * @param string $action  The API action.
+	 * @param array  $options The request body or query string arguments.
+	 * @param string $method  The request method; defaults to GET.
+	 *
+	 * @return array|WP_Error
+	 */
 	function make_request( $action, $options = array(), $method = 'GET' ) {
 
 		/* Build request options string. */
@@ -45,65 +57,47 @@ class GF_ActiveCampaign_API {
 		switch ( $method ) {
 
 			case 'POST':
-
 				$args     = array(
-					'body' => $options,
+					'body'    => $options,
 					'timeout' => $timeout,
 				);
 				$response = wp_remote_post( $request_url, $args );
 				break;
 
 			case 'GET':
-				$args = array( 'timeout' => $timeout );
+				$args     = array( 'timeout' => $timeout );
 				$response = wp_remote_get( $request_url, $args );
 				break;
 
 		}
 
-		/* If WP_Error, die. Otherwise, return decoded JSON. */
 		if ( is_wp_error( $response ) ) {
-
-			die( 'Request failed. ' . $response->get_error_message() );
-
-		} else {
-
-			return json_decode( $response['body'], true );
-
+			return $response;
 		}
+
+		$response_code = wp_remote_retrieve_response_code( $response );
+		if ( $response_code !== 200 ) {
+			return new WP_Error( $response_code, wp_remote_retrieve_response_message( $response ) );
+		}
+
+		return json_decode( $response['body'], true );
 
 	}
 
 	/**
 	 * Test the provided API credentials.
 	 *
+	 * @since unknown
+	 * @since 2.0 Updated to use make_request().
+	 *
 	 * @access public
-	 * @return bool
+	 * @return bool|WP_Error
 	 */
 	function auth_test() {
 
-		/* Build options string. */
-		$request_options               = $this->default_options();
-		$request_options['api_action'] = 'list_paginator';
-		$request_options               = http_build_query( $request_options );
+		$response = $this->make_request( 'list_paginator' );
 
-		/* Setup request URL. */
-		$request_url = untrailingslashit( $this->api_url ) . '/admin/api.php?' . $request_options;
-
-		/* Execute request. */
-		$response = wp_remote_get( $request_url );
-
-		/* If invalid content type, API URL is invalid. */
-		if ( is_wp_error( $response ) || strpos( $response['headers']['content-type'], 'application/json' ) != 0 && strpos( $response['headers']['content-type'], 'application/json' ) > 0 ) {
-			throw new Exception( 'Invalid API URL.' );
-		}
-
-		/* If result code is false, API key is invalid. */
-		$response['body'] = json_decode( $response['body'], true );
-		if ( $response['body']['result_code'] == 0 ) {
-			throw new Exception( 'Invalid API Key.' );
-		}
-
-		return true;
+		return is_wp_error( $response ) ? $response : true;
 
 	}
 
@@ -115,7 +109,7 @@ class GF_ActiveCampaign_API {
 	 *
 	 * @param array $custom_field
 	 *
-	 * @return array
+	 * @return array|WP_Error
 	 */
 	function add_custom_field( $custom_field ) {
 
@@ -127,7 +121,7 @@ class GF_ActiveCampaign_API {
 	 * Get all custom list fields.
 	 *
 	 * @access public
-	 * @return array
+	 * @return array|WP_Error
 	 */
 	function get_custom_fields() {
 
@@ -139,7 +133,7 @@ class GF_ActiveCampaign_API {
 	 * Get all forms in the system.
 	 *
 	 * @access public
-	 * @return array
+	 * @return array|WP_Error
 	 */
 	function get_forms() {
 
@@ -154,7 +148,7 @@ class GF_ActiveCampaign_API {
 	 *
 	 * @param int $list_id
 	 *
-	 * @return array
+	 * @return array|WP_Error
 	 */
 	function get_list( $list_id ) {
 
@@ -166,7 +160,7 @@ class GF_ActiveCampaign_API {
 	 * Get all lists in the system.
 	 *
 	 * @access public
-	 * @return array
+	 * @return array|WP_Error
 	 */
 	function get_lists() {
 
@@ -181,7 +175,7 @@ class GF_ActiveCampaign_API {
 	 *
 	 * @param mixed $contact
 	 *
-	 * @return array
+	 * @return array|WP_Error
 	 */
 	function sync_contact( $contact ) {
 
@@ -191,6 +185,12 @@ class GF_ActiveCampaign_API {
 
 	/**
 	 * Add note to contact.
+	 *
+	 * @param string $contact_id The ActiveCampaign contact ID.
+	 * @param string $list_id    The ActiveCampaign list ID.
+	 * @param string $note       The note to be added.
+	 *
+	 * @return array|WP_Error
 	 */
 	function add_note( $contact_id, $list_id, $note ) {
 

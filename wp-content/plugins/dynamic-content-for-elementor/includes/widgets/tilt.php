@@ -4,7 +4,7 @@ namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
+use Elementor\Core\Schemes\Color as Scheme_Color;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
@@ -13,13 +13,18 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Tilt extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class Tilt extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
         return ['tilt-lib', 'dce-tilt'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_tilt', ['label' => __('Tilt', 'dynamic-content-for-elementor')]);
         $this->add_control('template', ['label' => __('Select Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library']);
@@ -34,9 +39,12 @@ class DCE_Widget_Tilt extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         $this->add_control('tilt_maxGlare', ['label' => __('Max Glare', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 1, 'min' => 0, 'max' => 1, 'step' => 0.1]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
+        if (empty($settings)) {
+            return;
+        }
         $template = $settings['template'];
         echo '<div class="dce_tilt">';
         echo '<div class="js-tilt">';

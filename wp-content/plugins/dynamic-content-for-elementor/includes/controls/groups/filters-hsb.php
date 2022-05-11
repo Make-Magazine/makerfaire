@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
  * Custom Filters-HSB group control
  *
  */
-class DCE_Group_Control_Filters_HSB extends Group_Control_Base
+class Group_Control_Filters_HSB extends Group_Control_Base
 {
     protected static $fields;
     public static function get_type()

@@ -283,9 +283,14 @@ class SB_Instagram_Parse
 	 * @since 2.2/5.3 added support for a custom avatar in settings
 	 */
 	public static function get_avatar( $header_data, $settings = array( 'favor_local' => false ), $is_header_attr = false ) {
+		if ( $is_header_attr ) {
+			return self::get_avatar_url( $header_data );
+		}
 		if ( ! empty( $settings['customavatar'] ) ) {
 			return $settings['customavatar'];
-		} elseif ( ! empty( $header_data['local_avatar'] ) ) {
+		} elseif ( ! empty( $header_data['local_avatar_url'] ) ) {
+			return $header_data['local_avatar_url'];
+		} elseif ( ! empty( $header_data['local_avatar'] ) && is_string( $header_data['local_avatar'] ) ) {
 			return $header_data['local_avatar'];
 		} else {
 			if ( ! SB_Instagram_GDPR_Integrations::doing_gdpr( $settings ) || $is_header_attr ) {
@@ -301,6 +306,29 @@ class SB_Instagram_Parse
 			} else {
 				return trailingslashit( SBI_PLUGIN_URL ) . 'img/thumb-placeholder.png';
 			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Get the avatar URL from the API response
+	 *
+	 * @param array $account_info
+	 *
+	 * @return string
+	 *
+	 * @since 6.0
+	 */
+	public static function get_avatar_url( $account_info ) {
+		if ( isset( $account_info['profile_picture'] ) ) {
+			return $account_info['profile_picture'];
+		} elseif ( isset( $account_info['profile_picture_url'] ) ) {
+			return $account_info['profile_picture_url'];
+		} elseif ( isset( $account_info['user'] ) ) {
+			return $account_info['user']['profile_picture'];
+		} elseif ( isset( $account_info['data'] ) ) {
+			return $account_info['data']['profile_picture'];
 		}
 
 		return '';
@@ -335,16 +363,21 @@ class SB_Instagram_Parse
 	 * @since 2.2/5.3 added support for a custom bio in settings
 	 */
 	public static function get_bio( $header_data, $settings = array() ) {
-		if ( ! empty( $settings['custombio'] ) ) {
-			return $settings['custombio'];
-		} elseif ( isset( $header_data['data']['bio'] ) ) {
-			return $header_data['data']['bio'];
-		} elseif ( isset( $header_data['bio'] ) ){
-			return $header_data['bio'];
-		} elseif ( isset( $header_data['biography'] ) ){
-			return $header_data['biography'];
+		$customizer = $settings['customizer'];
+		if( $customizer ){
+			return '{{$parent.getHeaderBio()}}';
+		}else{
+			if ( ! empty( $settings['custombio'] ) ) {
+				return $settings['custombio'];
+			} elseif ( isset( $header_data['data']['bio'] ) ) {
+				return $header_data['data']['bio'];
+			} elseif ( isset( $header_data['bio'] ) ){
+				return $header_data['bio'];
+			} elseif ( isset( $header_data['biography'] ) ){
+				return $header_data['biography'];
+			}
+			return '';
 		}
-		return '';
 	}
 
 	/**
@@ -397,7 +430,8 @@ class SB_Instagram_Parse
 		if ( isset( $post['media_product_type'] ) ) {
 			return strtolower( $post['media_product_type'] );
 		}
-
 		return 'feed';
 	}
+
+
 }

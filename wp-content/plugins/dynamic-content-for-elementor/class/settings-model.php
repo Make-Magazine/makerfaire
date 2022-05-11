@@ -4,7 +4,7 @@ namespace DynamicContentForElementor;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Settings\Base\CSS_Model;
-use Elementor\Scheme_Color;
+use Elementor\Core\Schemes\Color as Scheme_Color;
 use Elementor\Utils;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\GlobalSettings;
@@ -42,7 +42,7 @@ class Model extends CSS_Model
      */
     public function get_panel_page_settings()
     {
-        return ['title' => __('Dynamic.ooo', 'dynamic-content-for-elementor')];
+        return ['title' => DCE_PRODUCT_NAME];
     }
     /**
      * Get CSS wrapper selector.
@@ -82,8 +82,10 @@ class Model extends CSS_Model
      * @see Elementor\Controls_Stack
      *
      * @access protected
+     *
+     * @return void
      */
-    protected function _register_controls()
+    protected function register_controls()
     {
         $controls_list = self::get_controls_list();
         foreach ($controls_list as $tab_name => $sections) {

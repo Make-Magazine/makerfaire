@@ -13,15 +13,20 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class AddToWooWishlist extends \DynamicContentForElementor\Widgets\DCE_Widget_Favorites
+class AddToWooWishlist extends \DynamicContentForElementor\Widgets\AddToFavorites
 {
     public function get_name()
     {
         return 'dce-dynamic-woo-wishlist';
     }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
-        parent::_register_controls_content();
+        parent::safe_register_controls();
         $this->update_control('dce_favorite_scope', ['type' => Controls_Manager::HIDDEN, 'default' => 'user']);
         $this->update_control('dce_favorite_counter', ['type' => Controls_Manager::HIDDEN, 'default' => '']);
         $this->update_control('dce_favorite_title_add', ['default' => __('Add to my Wishlist', 'dynamic-content-for-elementor')]);

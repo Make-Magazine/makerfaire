@@ -180,7 +180,7 @@ class PDFLib implements Canvas
         $this->_width = $size[2] - $size[0];
         $this->_height = $size[3] - $size[1];
         $this->_dompdf = $dompdf;
-        $this->_pdf = new \DynamicOOOS\PDFLib();
+        $this->_pdf = new \PDFLib();
         $license = $dompdf->getOptions()->getPdflibLicense();
         if (\strlen($license) > 0) {
             $this->setPDFLibParameter("license", $license);

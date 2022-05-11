@@ -36,10 +36,9 @@ jQuery( document ).on( 'click', '.dce-group-deactivate-all', function( event ) {
 	});
 } );
 
-
-// Dismissable Admin Notices (from https://www.alexgeorgiou.gr/persistently-dismissible-notices-wordpress/):
 (function( $ ) {
     $( function() {
+		// Dismissable Admin Notices (from https://www.alexgeorgiou.gr/persistently-dismissible-notices-wordpress/):
         $( '.dce-dismissible-notice' ).on( 'click', '.notice-dismiss', function( event, el ) {
             var $notice = $(this).parent('.notice.is-dismissible');
             var dismiss_url = $notice.attr('data-dismiss-url');
@@ -47,5 +46,13 @@ jQuery( document ).on( 'click', '.dce-group-deactivate-all', function( event ) {
                 $.get( dismiss_url );
             }
         });
+		let form = $('#dce-rollback-form');
+		let confirmMsg = form.data('confirm');
+		form.on( 'submit', (event) => {
+			if (confirm(confirmMsg)) {
+				return true;
+			}
+			return false;
+		})
     } );
 })( jQuery );

@@ -2,6 +2,7 @@
 
 namespace DynamicContentForElementor;
 
+use DynamicContentForElementor\Helper;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts_Manager;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts\Custom_Fonts;
 // disable phpcs because of a bug with wordpress sniffs with fix not yet released.
@@ -12,6 +13,7 @@ if (!\defined('ABSPATH')) {
 class PdfHtmlTemplates
 {
     const CPT = 'dce_html_template';
+    const FONTS_CACHE_OPTION = 'dce_html_template_fonts_cache';
     const TEMPLATE_META_KEY = 'dce_html_template';
     const FIELD_IS_TEMPLATE = 'dce-html-is-template';
     const FIELD_TEMPLATE_ID = 'dce-html-template-id';
@@ -67,16 +69,51 @@ EOF;
     public function __construct()
     {
         $this->register_post_type();
+        add_action('wp_ajax_dce_pdf_button', [$this, 'pdf_button_ajax']);
+        add_action('wp_ajax_nopriv_dce_pdf_button', [$this, 'pdf_button_ajax']);
         add_action('wp_ajax_dce_preview_pdf_html_template', [$this, 'preview_pdf_html_template']);
         add_action('wp_ajax_dce_get_posts', [$this, 'dce_get_posts_ajax_callback']);
         add_action('add_meta_boxes_' . self::CPT, [$this, 'add_meta_boxes']);
         add_action('save_post_' . self::CPT, [$this, 'save_post_meta'], 10, 3);
+        add_action('save_post_elementor_font', function () {
+            delete_option(self::FONTS_CACHE_OPTION);
+        }, 100);
+    }
+    public function pdf_button_ajax()
+    {
+        $post_id = $_POST['post_id'];
+        $element_id = $_POST['element_id'];
+        if (isset($_POST['queried_id'])) {
+            $queried_id = $_POST['queried_id'];
+        } else {
+            $queried_id = $post_id;
+        }
+        if (get_post_status($post_id) !== 'publish' && !current_user_can('read_post', $post_id)) {
+            wp_send_json_error(['message' => 'Unauthorized']);
+        }
+        if (get_post_status($queried_id) !== 'publish' && !current_user_can('read_post', $queried_id)) {
+            wp_send_json_error(['message' => 'Unauthorized']);
+        }
+        $pdf_button = Helper::get_elementor_element_from_post_data($post_id, $element_id, $queried_id);
+        $settings = $pdf_button['settings'];
+        $get_template_from = $settings['html_converter_get_template_from'];
+        switch ($get_template_from) {
+            case 'post':
+                $format = $settings['dce_pdf_button_html_conv_format'];
+                $orientation = $settings['dce_pdf_button_orientation'] === 'landscape' ? 'L' : 'P';
+                $this->generate_pdf_from_elementor_post($queried_id, $format, $orientation, \false);
+                break;
+            case 'html_template':
+                $t = $settings['html_converter_html_template'];
+                $this->generate_pdf_from_template_id($t, [], \false);
+        }
+        die;
     }
     // Code from https://rudrastyh.com/wordpress/select2-for-metaboxes-with-ajax.html
     public function dce_get_posts_ajax_callback()
     {
         if (!current_user_can('administrator')) {
-            wp_send_json_error(['message' => 'Anauthorized']);
+            wp_send_json_error(['message' => 'Unauthorized']);
         }
         // we will pass post IDs and titles to this array
         $return = array();
@@ -93,14 +130,12 @@ EOF;
         }
         // you can use WP_Query, query_posts() or get_posts() here - it doesn't matter
         $search_results = new \WP_Query($args);
-        if ($search_results->have_posts()) {
-            while ($search_results->have_posts()) {
-                $search_results->the_post();
-                // shorten the title a little
-                $title = \mb_strlen($search_results->post->post_title) > 50 ? \mb_substr($search_results->post->post_title, 0, 49) . '...' : $search_results->post->post_title;
-                $return[] = array($search_results->post->ID, $title);
-                // array( Post ID, Post Title )
-            }
+        while ($search_results->have_posts()) {
+            $search_results->the_post();
+            // shorten the title a little
+            $title = \mb_strlen($search_results->post->post_title) > 50 ? \mb_substr($search_results->post->post_title, 0, 49) . '...' : $search_results->post->post_title;
+            $return[] = array($search_results->post->ID, $title);
+            // array( Post ID, Post Title )
         }
         echo wp_json_encode($return);
         die;
@@ -143,6 +178,24 @@ EOF;
         }
         return \false;
     }
+    /**
+     * Check if a font has an otl table.
+     *
+     * Works by trying to creat a pdf with OTL on and catch a potential error.
+     */
+    private function font_has_otl($dir, $filename)
+    {
+        $dirs = [$dir];
+        $conf = ['test' => ['R' => $filename, 'useOTL' => 0xff, 'useKashida' => 75]];
+        try {
+            $mpdf = new \DynamicOOOS\Mpdf\Mpdf(['tempDir' => \sys_get_temp_dir() . \DIRECTORY_SEPARATOR . 'mpdf', 'fontDir' => $dirs, 'fontdata' => $conf, 'default_font' => 'test', 'mono_fonts' => ['test'], 'serif_fonts' => ['test'], 'sans_fonts' => ['test']]);
+            $mpdf->WriteHTML('hello world');
+            $mpdf->Output(null, 'S');
+        } catch (\DynamicOOOS\Mpdf\Exception\FontException $e) {
+            return \false;
+        }
+        return \true;
+    }
     // given a font by its CPT id, if supported return an array of containing:
     // - dirs: the directories where the font files are contained.
     // - config: the font configuration array.
@@ -151,6 +204,7 @@ EOF;
         $directories = [];
         $config = [];
         $saved = get_post_meta($id, Custom_Fonts::FONT_META_KEY, \true);
+        $has_otl = \true;
         foreach ($saved as $variation) {
             $url = $variation['ttf']['url'] ?? '';
             if (empty($url)) {
@@ -166,15 +220,19 @@ EOF;
             }
             $file_name = \basename($path);
             $dir = \dirname($path);
+            if (!$this->font_has_otl($dir, $file_name)) {
+                $has_otl = \false;
+            }
             $directories[$dir] = \true;
             $config[$font_settings] = $file_name;
         }
         if (empty($config)) {
             return \false;
         } else {
-            // support for unicode special features (see Mpdf documentation). Could harm performance.
-            $config['useOTL'] = 0xff;
-            $config['useKashida'] = 75;
+            if ($has_otl) {
+                $config['useOTL'] = 0xff;
+                $config['useKashida'] = 75;
+            }
             return ['dirs' => $directories, 'config' => $config];
         }
     }
@@ -192,6 +250,13 @@ EOF;
     // - 'dirs' : fontDirs as used by Mpdf.
     public function get_fonts()
     {
+        if (!\class_exists(Fonts_Manager::class)) {
+            return ['dirs' => [], 'fonts' => []];
+        }
+        $fonts_cache = get_option(self::FONTS_CACHE_OPTION);
+        if (\is_array($fonts_cache)) {
+            return $fonts_cache;
+        }
         $fonts = new \WP_Query(['post_type' => Fonts_Manager::CPT, 'posts_per_page' => -1]);
         $directories = [];
         $fonts_config = [];
@@ -207,7 +272,9 @@ EOF;
                 $fonts_config[$font_name] = $res['config'];
             }
         }
-        return ['dirs' => \array_keys($directories), 'fonts' => $fonts_config];
+        $res = ['dirs' => \array_keys($directories), 'fonts' => $fonts_config];
+        update_option(self::FONTS_CACHE_OPTION, $res);
+        return $res;
     }
     private function get_form_data($text)
     {
@@ -217,7 +284,7 @@ EOF;
             if (!(\strpos($line, '|') > 0)) {
                 continue;
             }
-            [$name, $value] = \explode('|', $line);
+            list($name, $value) = \explode('|', $line);
             if (\strpos($value, ',') > 0) {
                 $value = \explode(',', $value);
             }
@@ -225,33 +292,58 @@ EOF;
         }
         return $data;
     }
-    public function generate_pdf_from_template_id($template_id, $form_data, $raw_form_data)
+    /**
+     * @param integer $template_id
+     */
+    public function generate_pdf_from_template_id($template_id, $bindings, $return_string)
     {
         $post_data = get_post_meta($template_id, self::TEMPLATE_META_KEY, \true);
-        return $this->generate_pdf($post_data, $form_data, $raw_form_data, \true);
+        return $this->generate_pdf_from_html_template($post_data, $bindings, $return_string);
     }
-    private function timber_expand($template, $form_data, $raw_form_data)
+    private function timber_expand($template, $var_bindings)
     {
+        // We don't need timber templates inside files, and they can cause
+        // permission problems, so remove them:
+        $fixpaths = function ($paths) {
+            return [];
+        };
+        add_filter('timber/loader/paths', $fixpaths);
         $context = \Timber\Timber::get_context();
-        $context['form'] = $form_data;
-        $context['form_raw'] = $raw_form_data;
+        $context += $var_bindings;
         $context['post'] = new \Timber\Post();
+        $context['current_user'] = new \Timber\User();
         \ob_start();
         \Timber\Timber::render_string($template, $context);
+        remove_filter('timber/loader/paths', $fixpaths);
         return \ob_get_clean();
     }
-    private function generate_pdf($post_data, $form_data, $raw_form_data, $return_string = \false)
+    /**
+     * @param array $post_data
+     * @param array $var_bindings
+     */
+    private function generate_pdf_from_html_template($post_data, $var_bindings, $return_string = \false)
     {
         if (!($post_data[self::FIELD_IS_TEMPLATE] ?? \false)) {
-            $code = $this->timber_expand($post_data[self::FIELD_CODE], $form_data, $raw_form_data);
+            $code = $this->timber_expand($post_data[self::FIELD_CODE], $var_bindings);
         } else {
             $code = \Elementor\Plugin::instance()->frontend->get_builder_content($post_data[self::FIELD_TEMPLATE_ID], \true);
             if (!$code) {
-                wp_send_json_error(['message' => __('Could not fetch Elementor Template', 'dynamic-content-for-elementor')]);
+                throw new \Error(esc_html__('PDF HTML: Could not fetch Elementor Template', 'dynamic-content-for-elementor'));
             }
         }
-        ['dirs' => $font_dirs, 'fonts' => $font_data] = $this->get_fonts();
-        $mpdf = new \DynamicOOOS\Mpdf\Mpdf(['tempDir' => \sys_get_temp_dir() . \DIRECTORY_SEPARATOR . 'mpdf', 'fontDir' => $font_dirs, 'fontdata' => $font_data, 'default_font' => 'ctimes', 'mono_fonts' => ['ccourier'], 'serif_fonts' => ['ctimes'], 'sans_fonts' => ['chelvetica'], 'format' => $post_data[self::FIELD_FORMAT] . '-' . $post_data[self::FIELD_ORIENTATION]]);
+        return $this->generate_pdf($code, $post_data[self::FIELD_FORMAT], $post_data[self::FIELD_ORIENTATION], $return_string);
+    }
+    private function generate_pdf_from_elementor_post($post_id, $format, $orientation, $return_string)
+    {
+        $code = \Elementor\Plugin::instance()->frontend->get_builder_content($post_id, \true);
+        $this->generate_pdf($code, $format, $orientation, $return_string);
+    }
+    private function generate_pdf($code, $format, $orientation, $return_string)
+    {
+        $fonts = $this->get_fonts();
+        $font_dirs = $fonts['dirs'];
+        $font_data = $fonts['fonts'];
+        $mpdf = new \DynamicOOOS\Mpdf\Mpdf(['tempDir' => \sys_get_temp_dir() . \DIRECTORY_SEPARATOR . 'mpdf', 'fontDir' => $font_dirs, 'fontdata' => $font_data, 'default_font' => 'ctimes', 'mono_fonts' => ['ccourier'], 'serif_fonts' => ['ctimes'], 'sans_fonts' => ['chelvetica'], 'format' => $format . '-' . $orientation]);
         $mpdf->WriteHTML($code);
         return $mpdf->Output(null, $return_string ? 'S' : null);
     }
@@ -284,7 +376,8 @@ EOF;
             // widget Text Editor with tokens inside Elementor Templates:
             global $dce_form;
             $dce_form = $form_data;
-            $this->generate_pdf($post_data, $form_data, $raw_form_data);
+            $bindings = ['form' => $form_data, 'form_raw' => $raw_form_data];
+            $this->generate_pdf_from_html_template($post_data, $bindings);
         } catch (\DynamicOOOS\Mpdf\MpdfException $e) {
             wp_send_json_error(['message' => $e->getMessage()]);
         } catch (\Throwable $e) {
@@ -375,12 +468,12 @@ EOF;
         echo __('The available core fonts are: ', 'dynamic-content-for-elementor');
         echo '<code>ctimes</code>, <code>chelvetica</code>, <code>ccourier</code>';
         echo '</p>';
-        echo '<p>' . __('<b>RTL scripts</b>: Please notice that you cannot use the core fonts in a page that contains also an RTL language, like Arabic or Hebrew. Upload them as Custom Fonts if you need them.', 'dynamic-content-for-elementor') . '</p>';
+        echo '<p>' . __('RTL languages: please notice that you cannot use the core fonts in a page that contains also an RTL language, like Arabic or Hebrew. Upload them as Custom Fonts if you need them.', 'dynamic-content-for-elementor') . '</p>';
         echo '<h4>' . __('Custom Fonts', 'dynamic-content-for-elementor') . '</h4>';
         $text = __('Custom Fonts can be added in the <a href="%s">Elementor Custom Fonts menu page</a>. Only the TTF type is supported. Weight can only be normal or bold, style can only be normal or italic. The following are the ones that were detected:', 'dynamic-content-for-elementor');
         $text = \sprintf($text, admin_url('edit.php?post_type=elementor_font'));
         echo '<p>' . $text . '</p>';
-        ['fonts' => $font_data] = $this->get_fonts();
+        $font_data = $this->get_fonts()['fonts'];
         echo '<ul>';
         foreach ($font_data as $font_name => $data) {
             echo '<li><code>' . $font_name . '</code>, ' . __('weight-style variants:', 'dynamic-content-for-elementor') . ' (';
@@ -420,7 +513,7 @@ EOF;
         // do not forget about WP Nonces for security purposes
         $attr = ['name' => $id, 'id' => $id, 'style' => 'width:99%;max-width:25em;'];
         if ($post_id) {
-            $title = get_the_title($post_id);
+            $title = wp_kses_post(get_the_title($post_id));
             $title = \mb_strlen($title) > 50 ? \mb_substr($title, 0, 49) . '...' : $title;
         }
         echo '<p><label for="' . $attr['id'] . '">' . $label . '</label><br />';
@@ -449,7 +542,7 @@ EOF;
         $orientation_attr = ['name' => self::FIELD_ORIENTATION, 'type' => 'radio'];
         $selected_format = $data[self::FIELD_FORMAT] ?? 'A4';
         $selected_orientation = $data[self::FIELD_ORIENTATION] ?? 'P';
-        $formats = ['A4', 'Letter', 'Legal'];
+        $formats = ['A4', 'A5', 'A6', 'Letter', 'Legal', 'Executive', 'Folio'];
         echo '<select ' . $this->get_attribute_string($format_attr) . ' >';
         foreach ($formats as $format) {
             if ($format === $selected_format) {

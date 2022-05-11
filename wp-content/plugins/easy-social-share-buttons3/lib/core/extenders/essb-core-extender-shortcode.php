@@ -97,21 +97,7 @@ if (!function_exists('essb_shortcode_map_shareoptions')) {
 				
 		if (isset($shortcode_options['query'])) {
 			$post_share_details['query'] = $shortcode_options['query'];
-		}
-			
-		if (isset($shortcode_options['utm'])) {
-			if ($shortcode_options['utm'] == 'yes') {
-				$ga_campaign_tracking = essb_option_value('activate_ga_campaign_tracking');
-				$post_ga_campaign_tracking = get_post_meta(get_the_ID(), 'essb_activate_ga_campaign_tracking', true);
-				if ($post_ga_campaign_tracking != '') {
-					$ga_campaign_tracking = $post_ga_campaign_tracking;
-				}
-					
-				if ($ga_campaign_tracking != '') {
-					$post_share_details['url'] = essb_attach_tracking_code($post_share_details['url'], $ga_campaign_tracking);
-				}
-			}
-		}		
+		}				
 		
 		return $post_share_details;
 	}

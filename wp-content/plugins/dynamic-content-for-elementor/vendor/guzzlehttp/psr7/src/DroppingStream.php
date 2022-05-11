@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\GuzzleHttp\Psr7;
+namespace GuzzleHttp\Psr7;
 
 use Psr\Http\Message\StreamInterface;
 /**
@@ -11,7 +11,7 @@ use Psr\Http\Message\StreamInterface;
  */
 class DroppingStream implements StreamInterface
 {
-    use StreamDecoratorTrait;
+    use \GuzzleHttp\Psr7\StreamDecoratorTrait;
     private $maxLength;
     /**
      * @param StreamInterface $stream    Underlying stream to decorate.

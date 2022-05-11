@@ -21,7 +21,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Signature extends \ElementorPro\Modules\Forms\Fields\Field_Base
+class Signature extends \ElementorPro\Modules\Forms\Fields\Field_Base
 {
     private $is_common = \false;
     public $has_action = \false;
@@ -50,25 +50,13 @@ class DCE_Extension_Form_Signature extends \ElementorPro\Modules\Forms\Fields\Fi
     }
     public function add_control_section_to_form($element, $args)
     {
-        $element->start_controls_section('dce_section_signature_buttons_style', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Signature', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE]);
+        $element->start_controls_section('dce_section_signature_buttons_style', ['label' => '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Signature', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE]);
         $element->add_responsive_control('signature_canvas_width', ['label' => __('Width of the Signature Pad', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SLIDER, 'size_units' => ['px'], 'default' => ['unit' => 'px', 'size' => 400], 'range' => ['px' => ['min' => 1, 'max' => 800, 'step' => 5]], 'selectors' => ['{{WRAPPER}} .dce-signature-wrapper' => '--canvas-width: {{SIZE}}{{UNIT}};']]);
         $element->add_control('signature_canvas_border_radius', ['label' => __('Pad Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'default' => ['top' => '3', 'right' => '3', 'bottom' => '3', 'left' => '3', 'size_units' => 'px'], 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-signature-canvas' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'separator' => 'before']);
         $element->add_control('signature_canvas_border_width', ['label' => __('Pad Border Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'default' => ['top' => '1', 'right' => '1', 'bottom' => '1', 'left' => '1', 'size_units' => 'px'], 'size_units' => ['px'], 'selectors' => ['{{WRAPPER}} .dce-signature-canvas' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $element->add_control('signature_canvas_background_color', ['label' => __('Pad Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '#ffffff', 'selectors' => ['{{WRAPPER}} .dce-signature-canvas' => 'background-color: {{VALUE}};']]);
         $element->add_control('signature_canvas_pen_color', ['label' => __('Pen Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '#000000']);
         $element->end_controls_section();
-    }
-    public static function get_description()
-    {
-        return _dce_extension_form_signature('description');
-    }
-    public function get_docs()
-    {
-        return _dce_extension_form_signature('docs');
-    }
-    public static function get_plugin_depends()
-    {
-        return self::$depended_plugins;
     }
     public static function get_satisfy_dependencies()
     {
@@ -94,15 +82,12 @@ class DCE_Extension_Form_Signature extends \ElementorPro\Modules\Forms\Fields\Fi
     {
         return $this->depended_styles;
     }
-    /**
-     * @param      $item
-     * @param      $item_index
-     * @param Form $form
-     */
     public function render($item, $item_index, $form)
     {
         $settings = $form->get_settings_for_display();
-        $form->add_render_attribute('input' . $item_index, 'type', 'hidden', \true);
+        // We do not use type hidden so the browser will honor required:
+        $hidden_css = 'width: 0; height: 0; opacity: 0; position: absolute; pointer-events: none;';
+        $form->add_render_attribute('input' . $item_index, 'style', $hidden_css, \true);
         $form->add_render_attribute('signature-canvas' . $item_index, 'class', 'dce-signature-canvas');
         $form->add_render_attribute('signature-canvas' . $item_index, 'data-pen-color', $settings['signature_canvas_pen_color']);
         $form->add_render_attribute('signature-canvas' . $item_index, 'data-background-color', $settings['signature_canvas_background_color']);
@@ -131,7 +116,7 @@ class DCE_Extension_Form_Signature extends \ElementorPro\Modules\Forms\Fields\Fi
     {
         $id = $field['id'];
         if ($field['required'] && $field['raw_value'] === '') {
-            $ajax_handler->add_error($id, __('This signature field is required. Please sign it and click the button Save before submitting the form.', 'dynamic-content-for-elementor'));
+            $ajax_handler->add_error($id, __('This signature field is required.', 'dynamic-content-for-elementor'));
         }
     }
     public function sanitize_field($value, $field)
@@ -143,10 +128,6 @@ class DCE_Extension_Form_Signature extends \ElementorPro\Modules\Forms\Fields\Fi
     }
     public function save_to_file($data, $dir_name, $extension, $ajax_handler)
     {
-        // sanitize path:
-        if (!\preg_match('/[\\w\\d_]+/', $dir_name)) {
-            $ajax_handler->add_admin_error_message(__('Invalid field ID', 'dynamic-content-for-elementor') . $dir_rel_path);
-        }
         $dir_abs_path = trailingslashit(wp_upload_dir()['basedir']) . 'dynamic/signatures/' . $dir_name;
         Helper::ensure_dir($dir_abs_path);
         // Code from Elementor Upload field:
@@ -181,6 +162,10 @@ class DCE_Extension_Form_Signature extends \ElementorPro\Modules\Forms\Fields\Fi
         // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
         $decoded_image = \base64_decode($encoded_image);
         $dir_name = $settings['_id'];
+        if (!\preg_match('/[\\w\\d_]+/', $dir_name)) {
+            $ajax_handler->add_admin_error_message(__('Invalid field ID', 'dynamic-content-for-elementor'));
+            return;
+        }
         $url = $this->save_to_file($decoded_image, $dir_name, $extension, $ajax_handler);
         $record->update_field($field['id'], 'value', $url);
     }

@@ -184,14 +184,20 @@ class ESSBCore {
 		if (essb_sanitize_option_value('css_mode') == 'slim') {
 			$template_url = ESSB3_PLUGIN_URL.'/assets/css/easy-social-share-buttons-slim'.$use_minifed_css.'.css';
 		}
-		
-		essb_resource_builder()->add_static_resource($template_url, 'easy-social-share-buttons', 'css');
-		
-		// activating core form styles if option is set
-		if (essb_option_bool_value('subscribe_css_always')) {
-			essb_resource_builder()->add_static_resource(ESSB3_PLUGIN_URL .'/assets/css/essb-subscribe'.(ESSBGlobalSettings::$use_minified_css ? ".min": "").'.css', 'easy-social-share-buttons-subscribe', 'css');
+
+		if (essb_sanitize_option_value('css_mode') == 'mini') {
+		    $template_url = ESSB3_PLUGIN_URL.'/assets/css/easy-social-share-buttons-mini'.$use_minifed_css.'.css';
 		}
 		
+		/**
+		 * @since 8.3 - development filter for loading stylesheet
+		 */
+		if (has_filter('essb_get_the_share_stylesheet_file')) {
+		    $template_url = apply_filters('essb_get_the_share_stylesheet_file', $template_url);
+		}
+		
+		essb_resource_builder()->add_static_resource($template_url, 'easy-social-share-buttons', 'css');
+				
 		$core_js = ESSB3_PLUGIN_URL.'/assets/js/essb-core'.$use_minifed_js.'.js';
 		essb_resource_builder()->add_static_resource($core_js, 'easy-social-share-buttons-core', 'js');
 		
@@ -256,6 +262,9 @@ class ESSBCore {
 		
 		if (in_array('booster', $this->general_options['button_position'])) {
 			$display_locations_style = true;
+			$script_url = ESSB3_PLUGIN_URL .'/assets/modules/sharing-booster'.$use_minifed_js.'.js';
+			essb_resource_builder()->add_static_resource($script_url, 'essb-module-sharing-booster', 'js', true);
+			essb_resource_builder()->activate_resource('essb-module-sharing-booster');
 		}
 		
 		if (in_array('heroshare', $this->general_options['button_position'])) {
@@ -263,6 +272,15 @@ class ESSBCore {
 			essb_resource_builder()->add_static_resource($script_url, 'essb-heroshare', 'js', true);
 			essb_resource_builder()->activate_resource('heroshare');
 			$display_locations_style = true;
+		}
+		
+		/**
+		 * @since 8.0 activate the script for the sharing top or bottom bar
+		 */
+		if (in_array('topbar', $this->general_options['button_position']) || in_array('bottombar', $this->general_options['button_position'])) {
+		    $script_url = ESSB3_PLUGIN_URL .'/assets/modules/sharing-bar'.$use_minifed_js.'.js';
+		    essb_resource_builder()->add_static_resource($script_url, 'essb-module-sharing-bar', 'js', true);
+		    essb_resource_builder()->activate_resource('essb-module-sharing-bar');
 		}
 
 		// @since 3.5
@@ -276,6 +294,17 @@ class ESSBCore {
 		
 		if (in_array('flyin', $this->general_options['button_position'])) {
 			$display_locations_style = true;
+			
+			$script_url = ESSB3_PLUGIN_URL .'/assets/modules/sharing-flyin'.$use_minifed_js.'.js';
+			essb_resource_builder()->add_static_resource($script_url, 'essb-module-sharing-flyin', 'js', true);
+			essb_resource_builder()->activate_resource('essb-module-sharing-flyin');
+		}
+		
+		if (in_array('popup', $this->general_options['button_position'])) {
+		    
+		    $script_url = ESSB3_PLUGIN_URL .'/assets/modules/sharing-popup'.$use_minifed_js.'.js';
+		    essb_resource_builder()->add_static_resource($script_url, 'essb-module-sharing-popup', 'js', true);
+		    essb_resource_builder()->activate_resource('essb-module-sharing-popup');
 		}
 		
 		if (in_array('sharebutton', $this->general_options['button_position'])) {
@@ -413,16 +442,13 @@ class ESSBCore {
 		
 		
 		$this->general_options['total_counter_afterbefore_text'] = essb_option_value('total_counter_afterbefore_text');
-		
-		$this->general_options['activate_ga_campaign_tracking'] = essb_option_value('activate_ga_campaign_tracking');
-		
+				
 		$this->general_options['customshare'] = essb_option_bool_value('customshare');
 		$this->general_options['customshare_text'] = essb_option_value('customshare_text');
 		$this->general_options['customshare_url'] = essb_option_value('customshare_url');
 		$this->general_options['customshare_image'] = essb_option_value('customshare_image');
 		$this->general_options['customshare_description'] = essb_option_value('customshare_description');
 		
-		$this->general_options['shorturl_activate'] = essb_option_bool_value('shorturl_activate');
 		$this->general_options['shorturl_type'] = essb_option_value('shorturl_type');
 		$this->general_options['shorturl_bitlyuser'] = essb_option_value('shorturl_bitlyuser');
 		$this->general_options['shorturl_bitlyapi'] = essb_option_value('shorturl_bitlyapi');
@@ -1991,19 +2017,19 @@ class ESSBCore {
 				$post_share_details['user_image_url'] = $media_url;
 			}
 			
-			if (!defined('ESSB3_LIGHTMODE')) {
-				// Google Campaign Tracking code
-				$ga_campaign_tracking = $this->general_options['activate_ga_campaign_tracking'];
-				$post_ga_campaign_tracking = get_post_meta(get_the_ID(), 'essb_activate_ga_campaign_tracking', true);
-				if ($post_ga_campaign_tracking != '') {
-					$ga_campaign_tracking = $post_ga_campaign_tracking;
-				}
-				
-				if ($ga_campaign_tracking != '') {
-					$post_share_details['url'] = essb_attach_tracking_code($post_share_details['url'], $ga_campaign_tracking);
-					$post_share_details['ga_mode'] = true;
-				}						
+			/**
+			 * @since 8.2 Allow setup the post_id
+			 */
+			if (!empty($share_options['force_set_post_id'])) {
+			    $post_share_details['post_id'] = $share_options['force_set_post_id'];
 			}
+
+			// @since 8.0 include the new UTM builder
+			if (!essb_option_bool_value('deactivate_module_google_analytics') && class_exists('ESSB_ShareURL_UTM_Tracking')){
+			    if (ESSB_ShareURL_UTM_Tracking::is_active()) {
+			        $post_share_details['utm_tracking'] = true;
+			    }
+		    }						
 		}
 			
 		// @since 3.1.2 exist filter to control the share address
@@ -2015,17 +2041,6 @@ class ESSBCore {
 	    // code refactor @since 3.4.2
 		$post_share_details ['full_url'] = $post_share_details ['url'];
 		
-		if ($this->general_options['shorturl_activate'] && $post_share_details['full_url'] != 'http://socialsharingplugin.com') {
-			$global_provider = $this->general_options ['shorturl_type'];			
-			
-			essb_helper_maybe_load_feature('short-url');
-			$post_share_details = essb_apply_shorturl($post_share_details, $this->network_options ['twitter_shareshort'], $post_share_details ['url'], $global_provider, get_the_ID (), $this->general_options ['shorturl_bitlyuser'], $this->general_options ['shorturl_bitlyapi']);
-		}
-		else {
-			$post_share_details ['short_url'] = $post_share_details ['url'];
-			$post_share_details ['short_url_twitter'] = $post_share_details ['url'];
-			$post_share_details ['short_url_whatsapp'] = $post_share_details ['url'];
-		}
 		
 		//-- end: short url code block
 		
@@ -2256,12 +2271,16 @@ class ESSBCore {
 		
 		// attache compliled mail message data
 		if (in_array('mail', $social_networks)) {
+		    
+		    /**
+		     * @since 8.2 - code moved to essb_get_share_address function
+		     
 			if (!function_exists('essb_sharing_prepare_mail')) {
 				include_once (ESSB3_PLUGIN_ROOT . 'lib/core/extenders/essb-core-extender-sharing.php');
-			}
+			}			
 			
 			$post_share_details = essb_sharing_prepare_mail($post_share_details);
-			
+			*/
 			// activating mail generation of code from here;
 			essb_resource_builder()->activate_resource('mail');
 		}

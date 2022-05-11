@@ -28,15 +28,15 @@ if (class_exists('ESSBControlCenter')) {
     
     ESSBControlCenter::register_sidebar_block('sharing', 'ti-sharethis', 'Sharing', array('social_heading', 'social', 'where', 'othersharing'));
     ESSBControlCenter::register_sidebar_block('following', 'ti-heart', 'Follow', array('follow_heading', 'follow', 'profiles', 'natives', 'instagram', 'proof-notifications', 'othersocial'));
-    ESSBControlCenter::register_sidebar_block('subscribe', 'ti-email', 'Subscribe', array('subscribe'));
-    ESSBControlCenter::register_sidebar_block('chat', 'ti-comments', 'Chat & Contact', array('chat'));
+    ESSBControlCenter::register_sidebar_block('subscribe', 'ti-email', 'Subscribe', array('subscribe_heading', 'subscribe'));
+    ESSBControlCenter::register_sidebar_block('chat', 'ti-comments', 'Chat & Contact', array('chat_heading', 'chat'));
     ESSBControlCenter::register_sidebar_block('advanced', 'ti-settings', 'Advanced', array('additional_heading', 'advanced', 'translate', 'shortcode'));
-    ESSBControlCenter::register_sidebar_block('styles', 'ti-palette', 'Styles', array('style', 'readymade'));
-    ESSBControlCenter::register_sidebar_block('import', 'ti-reload', 'Import, Export, Reset', array('import'));
+    ESSBControlCenter::register_sidebar_block('styles', 'ti-palette', 'Style Customizations', array('style_heading', 'style', 'readymade'));
+    ESSBControlCenter::register_sidebar_block('import', 'ti-reload', 'Import, Export, Reset', array('import_heading', 'import'));
     ESSBControlCenter::register_sidebar_block('analytics', 'ti-stats-up', 'Analytics', array('analytics_heading', 'analytics', 'conversions'));
-    ESSBControlCenter::register_sidebar_block('developer', 'ti-server', 'Analytics', array('developer'));
-    ESSBControlCenter::register_sidebar_block('about', 'ti-info-alt', 'About, Activate, Extensions', array('about', 'update', 'extensions'));
-    ESSBControlCenter::register_sidebar_block('extensions', 'ti-package', 'Extensions', array());
+    ESSBControlCenter::register_sidebar_block('developer', 'ti-server', 'Developer', array('developer'));
+    ESSBControlCenter::register_sidebar_block('about', 'ti-info-alt', 'About, Activate, Extensions', array('about', 'update', 'status', 'extensions'));
+    ESSBControlCenter::register_sidebar_block('extensions', 'ti-package', 'Installed Extensions', array());
     ESSBControlCenter::set_global_block('extensions');
     
     
@@ -55,8 +55,10 @@ if (class_exists('ESSBControlCenter')) {
 			!essb_option_bool_value('deactivate_module_skypechat') ||
 			!essb_option_bool_value('deactivate_module_subscribe') ||
 			!essb_option_bool_value('deactivate_module_instagram')) {
-		
-		ESSBControlCenter::register_sidebar_heading('follow_heading', esc_html__('Follow, Chat & Subscribe', 'essb'));
+			    			   
+        if (!essb_option_bool_value('deactivate_module_natives') || !essb_option_bool_value('deactivate_module_profiles') || !essb_option_bool_value('deactivate_module_followers')) {
+            ESSBControlCenter::register_sidebar_heading('follow_heading', esc_html__('Social Follow', 'essb'));
+		}
 		
 		if (!essb_option_bool_value('deactivate_module_followers')) {
 			ESSBControlCenter::register_sidebar_section('follow', esc_html__('Followers Counter', 'essb'), '', 'ti-heart');				
@@ -71,10 +73,12 @@ if (class_exists('ESSBControlCenter')) {
 		}
 		
 		if (!essb_option_bool_value('deactivate_module_facebookchat') || !essb_option_bool_value('deactivate_module_skypechat') || !essb_option_bool_value('deactivate_module_clicktochat')) {
+		    ESSBControlCenter::register_sidebar_heading('chat_heading', esc_html__('Social Chat', 'essb'));
 			ESSBControlCenter::register_sidebar_section('chat', esc_html__('Social Chat', 'essb'), '', 'ti-comments');				
 		}
 		
 		if (!essb_option_bool_value('deactivate_module_subscribe')) {
+		    ESSBControlCenter::register_sidebar_heading('subscribe_heading', esc_html__('Mailing List Subscribe', 'essb'));
 			ESSBControlCenter::register_sidebar_section('subscribe', esc_html__('Subscribe Forms', 'essb'), '', 'ti-email');
 		}
 
@@ -94,18 +98,23 @@ if (class_exists('ESSBControlCenter')) {
 	}
 	else {
 		if (ESSBControlCenter::feature_group_has_deactivated('other-social')) {
-			ESSBControlCenter::register_sidebar_heading('follow_heading', esc_html__('Follow, Chat & Subscribe', 'essb'));
+		    if (!ESSBControlCenter::is_new_version()) {
+                ESSBControlCenter::register_sidebar_heading('follow_heading', esc_html__('Social Follow', 'essb'));
+		    }
 			ESSBControlCenter::register_sidebar_section('othersocial', esc_html__('Additional Features', 'essb'), '', 'ti-plug');
 			ESSBControlCenter::register_sidebar_section_menu('othersocial', 'othersocial', esc_html__('Additional Features', 'essb'));
 			ESSBOptionsStructureHelper::field_component('othersocial', 'othersocial', 'essb5_advanced_other_features_global_social_activate', 'false');
 		}		
 	}
+		
 	
-	ESSBControlCenter::register_sidebar_heading('additional_heading', esc_html__('Additional Settings', 'essb'));
+	ESSBControlCenter::register_sidebar_heading('additional_heading', esc_html__('Advanced Settings', 'essb'));
 	ESSBControlCenter::register_sidebar_section('advanced', esc_html__('Advanced', 'essb'), '', 'ti-settings');
 
+	ESSBControlCenter::register_sidebar_heading('style_heading', esc_html__('Styles', 'essb'));
 	ESSBControlCenter::register_sidebar_section('style', esc_html__('Style Settings', 'essb'), '', 'ti-palette');
 	
+	ESSBControlCenter::register_sidebar_heading('import_heading', esc_html__('Import / Export / Reset', 'essb'));
 	ESSBControlCenter::register_sidebar_section('import', esc_html__('Import / Export / Reset', 'essb'), '', 'ti-reload', true);
 	ESSBControlCenter::register_sidebar_section('shortcode', esc_html__('Shortcode Generator', 'essb'), '', 'ti-shortcode', true, false, false, false, true);
 	
@@ -125,7 +134,6 @@ if (class_exists('ESSBControlCenter')) {
 		}
 	}
 	
-	ESSBControlCenter::register_sidebar_heading('advanced_split', '');
 	
 	if (has_filter('essb_unset_activation_page')) {
 	    $result = false;
@@ -138,6 +146,8 @@ if (class_exists('ESSBControlCenter')) {
 	else {
 	   ESSBControlCenter::register_sidebar_section('update', esc_html__('Activate', 'essb'), '', 'ti-lock', false, false, false, false, true);
 	}
+
+	ESSBControlCenter::register_sidebar_section('status', esc_html__('System Status', 'essb'), '', 'ti-receipt', false, false, false, false, true);	
 	
 	if (essb_option_value('functions_mode') != 'light') {
 		if (!essb_option_bool_value('deactivate_stylelibrary')) {

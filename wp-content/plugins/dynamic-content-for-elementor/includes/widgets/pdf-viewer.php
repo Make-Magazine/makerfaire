@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Text_Shadow;
@@ -26,7 +26,12 @@ class PdfViewer extends \DynamicContentForElementor\Widgets\WidgetPrototype
     {
         return ['dce-pdf-js-viewer', 'dce-pdf-viewer'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_pdfviewer', ['label' => $this->get_title()]);
         $this->add_control('source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'media_file', 'options' => ['media_file' => __('Media File', 'dynamic-content-for-elementor'), 'url' => __('URL', 'dynamic-content-for-elementor')], 'frontend_available' => \true]);
@@ -87,7 +92,7 @@ class PdfViewer extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_responsive_control('zoom_controls_text_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .dce-pdf-zoom-controls button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'separator' => 'before']);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

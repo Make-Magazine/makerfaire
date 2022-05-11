@@ -23,11 +23,13 @@ class GravityView_Admin_Views {
 	function __construct() {
 		add_action( 'save_post', array( $this, 'save_postdata' ) );
 
-		// set the blacklist field types across the entire plugin
-		add_filter( 'gravityview_blacklist_field_types', array( $this, 'default_field_blacklist' ), 10, 2 );
+		// set the blocklist field types across the entire plugin
+		add_filter( 'gravityview_blocklist_field_types', array( $this, 'default_field_blocklist' ), 10, 2 );
 
 		// Tooltips
 		add_filter( 'gform_tooltips', array( $this, 'tooltips') );
+
+		add_filter( 'admin_body_class', array( $this, 'add_gf_version_css_class' ) );
 
 		// adding styles and scripts
 		add_action( 'admin_enqueue_scripts', array( 'GravityView_Admin_Views', 'add_scripts_and_styles'), 999 );
@@ -59,6 +61,35 @@ class GravityView_Admin_Views {
 		add_action( 'pre_get_posts', array( $this, 'filter_pre_get_posts' ) );
 
 		add_filter( 'gravityview/support_port/localization_data', array( $this, 'suggest_support_articles' ) );
+	}
+
+	/**
+	 * Allow targeting different versions of Gravity Forms using CSS selectors.
+	 *
+	 * Adds specific version class: `.gf-version-2.6.1.3` as well as point updates: `.gf-minor-version-2.6`.
+	 *
+	 * @internal Do not rely on this remaining public.
+	 * @since 2.14.4
+	 *
+	 * @param string $class Existing body class for the WordPress admin.
+	 *
+	 * @return string Original with two classes added. If GFForms isn't available, returns original string.
+	 */
+	public function add_gf_version_css_class( $class ) {
+
+		if ( ! class_exists( 'GFForms' ) || empty( GFForms::$version ) ) {
+			return $class;
+		}
+
+		$class .= ' gf-version-' . str_replace( '.', '-', GFForms::$version );
+
+		$major_version = explode( '.', GFForms::$version );
+
+		if ( 2 <= sizeof( $major_version ) ) {
+			$class .= ' gf-minor-version-' . esc_attr( $major_version[0] . '-' . $major_version[1] );
+		}
+
+		return $class;
 	}
 
 	/**
@@ -300,11 +331,14 @@ class GravityView_Admin_Views {
 	/**
 	 * List the field types without presentation properties (on a View context)
 	 *
-	 * @param array $array Existing field types to add to a blacklist
-	 * @param string|null $context Context for the blacklist. Default: NULL.
-	 * @return array Default blacklist fields merged with existing blacklist fields
+	 * @since 2.14
+	 *
+	 * @param array $array Existing field types to add to a blocklist
+	 * @param string|null $context Context for the blocklist. Default: NULL.
+	 *
+	 * @return array Default blocklist fields merged with existing blocklist fields
 	 */
-	function default_field_blacklist( $array = array(), $context = NULL ) {
+	public function default_field_blocklist( $array = array(), $context = NULL ) {
 
 		$add = array( 'captcha', 'page' );
 
@@ -316,6 +350,14 @@ class GravityView_Admin_Views {
 		$return = array_merge( $array, $add );
 
 		return $return;
+	}
+
+	/**
+	 * @deprecated 2.14
+	 */
+	public function default_field_blacklist( $array, $context ) {
+		_deprecated_function( __METHOD__, '2.14', 'GravityView_Admin_Views::default_field_blocklist' );
+		$this->default_field_blocklist( $array, $context );
 	}
 
 	/**
@@ -670,17 +712,23 @@ class GravityView_Admin_Views {
 		$form = ( is_string( $form ) && preg_match( '/^preset_/', $form ) ) ? GravityView_Ajax::pre_get_form_fields( $form ) : $form;
 
 		/**
-		 * @filter  `gravityview_blacklist_field_types` Modify the types of fields that shouldn't be shown in a View.
-		 * @param[in,out] array $blacklist_field_types Array of field types to block for this context.
-		 * @param[in] string $context View context ('single', 'directory', or 'edit')
+		 * @deprecated 2.9
 		 */
-		$blacklist_field_types = apply_filters( 'gravityview_blacklist_field_types', array(), $context );
+		$blocklist_field_types = apply_filters_deprecated( 'gravityview_blacklist_field_types', array( array(), $context ), '2.14', 'gravityview_blocklist_field_types' );
 
-		if ( ! is_array( $blacklist_field_types ) ) {
+		/**
+		 * @filter  `gravityview_blocklist_field_types` Modify the types of fields that shouldn't be shown in a View.
+		 * @param array $blocklist_field_types Array of field types which are not proper to be shown for the $context.
+		 * @param string $context View context ('single', 'directory', or 'edit').
+		 * @since 2.9
+		 */
+		$blocklist_field_types = apply_filters( 'gravityview_blocklist_field_types', $blocklist_field_types, $context );
 
-		    gravityview()->log->error( '$blacklist_field_types is not an array', array( 'data' => print_r( $blacklist_field_types, true ) ) );
+		if ( ! is_array( $blocklist_field_types ) ) {
 
-			$blacklist_field_types = array();
+		    gravityview()->log->error( '$blocklist_field_types is not an array', array( 'data' => print_r( $blocklist_field_types, true ) ) );
+
+			$blocklist_field_types = array();
 		}
 
 		$fields = $this->get_available_fields( $form, $context );
@@ -691,7 +739,7 @@ class GravityView_Admin_Views {
 
 			foreach( $fields as $id => $details ) {
 
-				if( in_array( $details['type'], (array) $blacklist_field_types ) ) {
+				if( in_array( $details['type'], (array) $blocklist_field_types ) ) {
 					continue;
 				}
 
@@ -846,7 +894,7 @@ class GravityView_Admin_Views {
 
 		/**
 		 * @filter `gravityview/admin/available_fields` Modify the available fields that can be used in a View.
-		 * @param[in,out] array $fields The fields.
+		 * @param array $fields The fields.
 		 * @param  string|array $form form_ID or form object
 		 * @param  string $zone Either 'single', 'directory', 'header', 'footer'
 		 */
@@ -1082,7 +1130,7 @@ class GravityView_Admin_Views {
 
 				/**
 				 * @filter `gravityview/view/widgets/default` Modify the default widgets for new Views
-				 * @param[in,out] array $widgets A Widget configuration array
+				 * @param array $widgets A Widget configuration array
 				 * @param string $zone The widget zone that's being requested
 				 * @param int $post_id The auto-draft post ID
 				 */
@@ -1325,23 +1373,7 @@ class GravityView_Admin_Views {
 		if ( preg_match( '/script/ism', $filter ) ) {
 
 			$allowed_dependencies = array(
-				'jquery-ui-core',
-				'jquery-ui-dialog',
-				'jquery-ui-tabs',
-				'jquery-ui-draggable',
-				'jquery-ui-droppable',
-				'jquery-ui-sortable',
-				'jquery-ui-tooltip',
-				'gravityview_views_scripts',
-				'gravityview-support',
-				'gravityview-jquery-cookie',
-				'gravityview_views_datepicker',
-				'gravityview_gf_tooltip',
 				'sack',
-				'gform_gravityforms',
-				'gform_forms',
-				'gform_form_admin',
-				'jquery-ui-autocomplete',
 			);
 
 		} elseif ( preg_match( '/style/ism', $filter ) ) {
@@ -1349,10 +1381,6 @@ class GravityView_Admin_Views {
 			$allowed_dependencies = array(
 				'dashicons',
 				'wp-jquery-ui-dialog',
-				'gravityview_views_styles',
-				'gravityview_global',
-				'gravityview_views_datepicker',
-				'gravityview_gf_tooltip',
 			);
 		}
 

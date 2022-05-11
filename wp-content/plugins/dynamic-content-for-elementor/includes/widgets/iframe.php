@@ -8,11 +8,16 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class Iframe extends \DynamicContentForElementor\Widgets\DCE_Widget_RemoteContent
+class Iframe extends \DynamicContentForElementor\Widgets\RemoteContent
 {
-    protected function register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
-        parent::register_controls_content();
+        parent::safe_register_controls();
         $this->update_control('incorporate', ['type' => Controls_Manager::HIDDEN, 'default' => '']);
         $this->update_control('iframe_doc', ['type' => Controls_Manager::HIDDEN, 'default' => '']);
     }

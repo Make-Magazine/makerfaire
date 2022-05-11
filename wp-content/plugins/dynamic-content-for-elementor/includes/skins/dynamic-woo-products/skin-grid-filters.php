@@ -14,9 +14,10 @@ class Dynamic_Woo_Products_Skin_Grid_Filters extends \DynamicContentForElementor
         add_action('elementor/element/dce-dynamic-woo-products/section_dynamicposts/after_section_end', [$this, 'register_additional_filters_controls'], 11);
         add_action('elementor/element/dce-dynamic-woo-products/section_dynamicposts/after_section_end', [$this, 'register_additional_grid_controls'], 20);
     }
-    public function register_additional_filters_controls()
+    public function register_additional_filters_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
-        parent::register_additional_filters_controls();
+        $this->parent = $widget;
+        parent::register_additional_filters_controls($widget);
         $this->update_control('filters_taxonomy', ['default' => 'product_cat']);
     }
 }

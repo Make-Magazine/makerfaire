@@ -1247,7 +1247,7 @@ body{
 }
 
 /*DARK*/
-[data-preview-colorscheme="dark"] .cff-post-item-content{
+[data-preview-colorscheme="dark"]  .cff-post-item-ctn{
 	color: rgba(255,255,255,.75);
 	background-color: rgba(0,0,0,.85)
 }

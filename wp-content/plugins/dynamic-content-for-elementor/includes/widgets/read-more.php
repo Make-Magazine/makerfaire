@@ -3,20 +3,20 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Icons_Manager;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Ajax_Page;
+use DynamicContentForElementor\Controls\Group_Control_Ajax_Page;
 use DynamicContentForElementor\Helper;
 // Exit if accessed directly
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_ReadMore extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class ReadMore extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
@@ -26,18 +26,15 @@ class DCE_Widget_ReadMore extends \DynamicContentForElementor\Widgets\WidgetProt
     {
         return ['dce-ajaxmodal'];
     }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $post_type_object = get_post_type_object(get_post_type());
-        $this->start_controls_section('section_readmore', ['label' => __('Settings', 'dynamic-content-for-elementor')]);
+        $this->start_controls_section('section_readmore', ['label' => __('Button', 'dynamic-content-for-elementor')]);
         $this->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['button' => __('Button', 'dynamic-content-for-elementor'), 'h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'default' => 'div', 'condition' => ['link_to' => 'none']]);
         $this->add_control('type_of_button', ['label' => __('Button type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'html', 'options' => ['text' => __('Text', 'dynamic-content-for-elementor'), 'html' => __('HTML', 'dynamic-content-for-elementor'), 'image' => __('Image', 'dynamic-content-for-elementor')]]);
         $this->add_control('button_text', ['label' => __('Button Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Read More', 'dynamic-content-for-elementor'), 'placeholder' => __('Read More', 'dynamic-content-for-elementor'), 'label_block' => \true, 'dynamic' => ['active' => \true], 'condition' => ['type_of_button' => 'text']]);
@@ -58,7 +55,7 @@ class DCE_Widget_ReadMore extends \DynamicContentForElementor\Widgets\WidgetProt
         $this->end_controls_section();
         // ------------------------------------------- [SECTION Ajax]
         $this->start_controls_section('section_ajax', ['label' => __('Ajax', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['link_to' => 'post']]);
-        $this->add_group_control(DCE_Group_Control_Ajax_Page::get_type(), ['name' => 'ajax_page', 'label' => 'Ajax PAGE', 'selector' => $this->get_id()]);
+        $this->add_group_control(Group_Control_Ajax_Page::get_type(), ['name' => 'ajax_page', 'label' => 'Ajax PAGE', 'selector' => $this->get_id()]);
         $this->end_controls_section();
         // ------------------------------------------- [SECTION STYLE]
         $this->start_controls_section('section_style', ['label' => __('Button', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
@@ -92,14 +89,14 @@ class DCE_Widget_ReadMore extends \DynamicContentForElementor\Widgets\WidgetProt
         $this->add_control('hover_animation', ['label' => __('Hover Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HOVER_ANIMATION, 'condition' => ['link_to!' => 'none', 'style_effect' => ''], 'separator' => 'before']);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }
         $id_page = Helper::get_the_id($settings['other_post_source']);
-        if ($settings['ajax_page_enabled'] == 'open') {
+        if ('open' === $settings['ajax_page_enabled']) {
             ?>
 			<script type='text/javascript'>
 			/* <![CDATA[ */
@@ -112,11 +109,11 @@ class DCE_Widget_ReadMore extends \DynamicContentForElementor\Widgets\WidgetProt
 			<?php 
         }
         $content_button_raw = '';
-        if ($settings['type_of_button'] == 'text') {
+        if ('text' === $settings['type_of_button']) {
             $content_button_raw = wp_kses_post($settings['button_text']);
-        } elseif ($settings['type_of_button'] == 'html') {
+        } elseif ('html' === $settings['type_of_button']) {
             $content_button_raw = $settings['button_html'];
-        } elseif ($settings['type_of_button'] == 'image') {
+        } elseif ('image' === $settings['type_of_button']) {
             $content_button_raw = $settings['button_image']['url'];
         }
         $title = '<span>' . $content_button_raw . '</span>';
@@ -144,14 +141,13 @@ class DCE_Widget_ReadMore extends \DynamicContentForElementor\Widgets\WidgetProt
             case 'home':
                 $link = esc_url(get_home_url());
                 break;
-            case 'none':
             default:
                 $link = \false;
                 break;
         }
-        $target = $settings['link']['is_external'] ? 'target="_blank"' : '';
-        $nofollow = $settings['link']['nofollow'] ? 'rel="nofollow"' : '';
-        if ($settings['custom_field_target']) {
+        $target = !empty($settings['link']['is_external']) ? 'target="_blank"' : '';
+        $nofollow = !empty($settings['link']['nofollow']) ? 'rel="nofollow"' : '';
+        if (!empty($settings['custom_field_target'])) {
             $target = 'target="_blank"';
         }
         $animation_class = !empty($settings['hover_animation']) ? ' elementor-animation-' . $settings['hover_animation'] : '';
@@ -192,7 +188,7 @@ class DCE_Widget_ReadMore extends \DynamicContentForElementor\Widgets\WidgetProt
         if ($link) {
             $html .= \sprintf('<a id="dce-readmore-' . $this->get_id() . '" class="dce-btn-readmore%4$s%5$s%6$s" href="%1$s" %2$s%8$s%7$s>%3$s</a>', $link, $target, $title, $animation_class, $effect_class, $icon_class . $class_typebutton, $data_text_effect, $nofollow);
         } else {
-            $html_tag = $settings['html_tag'] ? \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']) : 'span';
+            $html_tag = !empty($settings['html_tag']) ? \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']) : 'span';
             $html .= \sprintf('<%1$s id="dce-readmore-' . $this->get_id() . '" class="dce-btn-readmore%2$s%3$s%4$s">%5$s</%s>', $html_tag, $animation_class, $effect_class, $icon_class . $class_typebutton, $title);
         }
         $scriptLetters = '';

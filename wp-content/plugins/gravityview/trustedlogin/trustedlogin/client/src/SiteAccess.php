@@ -7,7 +7,7 @@
  * @copyright 2021 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 07-October-2021 using Strauss.
+ * Modified by gravityview on 05-May-2022 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -62,14 +62,14 @@ class SiteAccess {
 			return new WP_Error( 'param_error', __( 'Unexpected action value', 'gravityview' ) );
 		}
 
-		// Ping SaaS and get back tokens.
-		$envelope = new Envelope( $this->config, $encryption );
-
 		$access_key = $this->get_access_key();
 
 		if ( is_wp_error( $access_key ) ) {
 			return $access_key;
 		}
+
+		// Ping SaaS and get back tokens.
+		$envelope = new Envelope( $this->config, $encryption );
 
 		$sealed_envelope = $envelope->get( $secret_id, $site_identifier_hash, $access_key );
 
@@ -139,7 +139,7 @@ class SiteAccess {
 	 *
 	 * @param bool $hashed Should the value be hashed using SHA256?
 	 *
-	 * @return string|WP_Error
+	 * @return string|null|WP_Error License key (hashed if $hashed is true) or null if not found. Returns WP_Error if error occurs.
 	 */
 	public function get_license_key( $hashed = false ) {
 
@@ -165,11 +165,11 @@ class SiteAccess {
 			return new WP_Error( 'invalid_license_key', 'License key was not a string.' );
 		}
 
-		if ( $hashed ) {
+		if ( $hashed && $license_key ) {
 			return hash( 'sha256', $license_key );
 		}
 
-		return $license_key;
+		return empty( $license_key ) ? null : $license_key;
 	}
 
 	/**
@@ -183,7 +183,7 @@ class SiteAccess {
 	 */
 	private function generate_access_key() {
 
-		$hash = Encryption::hash( get_site_url() . $this->config->get_setting( 'auth/api_key' ), 32 );
+		$hash = Encryption::hash( get_current_blog_id() . get_site_url() . $this->config->get_setting( 'auth/api_key' ), 32 );
 
 		if ( is_wp_error( $hash ) ) {
 			return $hash;

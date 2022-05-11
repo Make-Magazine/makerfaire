@@ -9,7 +9,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class WooWishlist extends \DynamicContentForElementor\Widgets\DCE_Widget_DynamicPosts_Base
+class WooWishlist extends \DynamicContentForElementor\Widgets\DynamicPostsBase
 {
     public function get_name()
     {
@@ -21,14 +21,20 @@ class WooWishlist extends \DynamicContentForElementor\Widgets\DCE_Widget_Dynamic
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Grid_Filters($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Carousel($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_DualCarousel($this));
+        $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Accordion($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Timeline($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_3D($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Gridtofullscreen3d($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_CrossroadsSlideshow($this));
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
-        parent::_register_controls();
+        parent::safe_register_controls();
         $this->update_control('list_items', ['default' => [['item_id' => 'item_image'], ['item_id' => 'item_title'], ['item_id' => 'item_productprice'], ['item_id' => 'item_addtocart']]]);
         $this->update_control('query_type', ['type' => Controls_Manager::HIDDEN, 'default' => 'favorites']);
         $this->update_control('favorites_scope', ['type' => Controls_Manager::HIDDEN, 'default' => 'user']);

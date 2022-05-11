@@ -17,7 +17,7 @@ class Cryptocurrency extends Data_Tag
     }
     public function get_title()
     {
-        return 'Cryptocurrency';
+        return __('Cryptocurrency', 'dynamic-content-for-elementor');
     }
     public function get_group()
     {
@@ -25,7 +25,7 @@ class Cryptocurrency extends Data_Tag
     }
     public function get_categories()
     {
-        return \DynamicContentForElementor\Helper::get_dynamic_tags_categories();
+        return ['base', 'text', 'number'];
     }
     public function get_single_quote()
     {
@@ -43,6 +43,7 @@ class Cryptocurrency extends Data_Tag
             if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                 return $e->getMessage();
             }
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions
             \error_log($e->getMessage());
             return 'NA';
         }
@@ -75,6 +76,7 @@ class Cryptocurrency extends Data_Tag
             if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                 return $e->getMessage();
             }
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions
             \error_log($e->getMessage());
             return 'NA';
         }
@@ -103,11 +105,11 @@ class Cryptocurrency extends Data_Tag
             $coins_options = $crypto->get_coins_options();
             $convert_options = $crypto->get_convert_options();
         } catch (CryptocurrencyApiError $e) {
-            $this->add_control('notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="elementor-panel-alert elementor-panel-alert-warning">' . $e->getMessage() . '</div>']);
+            $this->add_control('notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => $e->getMessage(), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             return;
         }
         if ($crypto->is_sandbox()) {
-            $this->add_control('notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="elementor-panel-alert elementor-panel-alert-warning">' . __('You have not yet inserted a Coinmarketcap API key, the data provided are random and for testing purposes.', 'dynamic-content-for-elementor') . '</div>']);
+            $this->add_control('notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('You have not yet inserted a Coinmarketcap API key, the data provided are random and for testing purposes.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
         }
         $this->add_control('coin_id', ['label' => __('Coin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $coins_options, 'default' => 1]);
         $this->add_control('convert_id', ['label' => __('Convert to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $convert_options, 'default' => 2781]);

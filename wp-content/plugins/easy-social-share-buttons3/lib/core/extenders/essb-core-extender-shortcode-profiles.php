@@ -26,6 +26,8 @@ class ESSBCoreExtenderShortcodeProfiles {
 		$sc_columns = isset($atts['columns']) ? $atts['columns'] : '';
 		$sc_profiles_all_networks = isset($atts['profiles_all_networks']) ? $atts['profiles_all_networks'] : '';
 		
+		$preview_mode = isset($atts['preview_mode']) ? $atts['preview_mode'] : '';
+		
 		if ($sc_profiles_all_networks == '' && $sc_networks != '') {
 		    $sc_profiles_all_networks = 'true';
 		}
@@ -112,7 +114,8 @@ class ESSBCoreExtenderShortcodeProfiles {
 				'size' => $sc_size,
 				'cta' => $sc_cta,
 				'cta_vertical' => $sc_cta_vertical,
-				'columns' => $sc_columns
+				'columns' => $sc_columns,
+		        'preview_mode' => $preview_mode
 		);
 		
 		return ESSBSocialProfiles::draw_social_profiles($options);

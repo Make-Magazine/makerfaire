@@ -24,6 +24,20 @@ UI was written using [Svelte](https://svelte.dev/) and requires compilation. Mak
 
 == Changelog ==
 
+= 2.1.14 on January 12, 2022 =
+
+* Fixed: Setting entry's creator to "No User" would bypass the "Currently Logged-in User" filter
+
+= 2.1.13 on January 11, 2022 =
+
+* Fixed: PHP notice when using "Any form field" with field conditional logic
+* Fixed: Fatal PHP error when a filter is added and its operator is not modified
+
+= 2.1.12 on December 19, 2021  =
+
+* Improved: It is now possible to filter only those entries that have been updated since creation
+* Updated: German translation (thanks, Michael Eppers!)
+
 = 2.1.11 on October 25, 2021  =
 
 * Fixed: MySQL error on certain hosts when "Date Updated", "Date Created" or "Payment Date" entry meta are filtered using the "is empty" condition
@@ -229,3 +243,6 @@ Fixed: With Gravity Forms 2.3, when using "Created By" filters, the search mode 
 
 = 1.0.0 on August 4 =
 * Liftoff!
+
+
+= 1652294089-4249 =

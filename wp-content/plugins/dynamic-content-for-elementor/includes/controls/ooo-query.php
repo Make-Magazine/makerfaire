@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
 /**
  * Elementor Control Query
  */
-class DCE_Control_OOO_Query extends Control_Select2
+class Control_OOO_Query extends Control_Select2
 {
     /**
      * Get control type.

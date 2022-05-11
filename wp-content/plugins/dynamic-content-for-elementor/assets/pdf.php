@@ -6,14 +6,14 @@ namespace DynamicOOOS;
 \define('WP_USE_THEMES', \false);
 require '../../../../wp-blog-header.php';
 if (\version_compare(\phpversion(), '7.2', '<')) {
-    echo 'PDF requires PHP 7.2 or greater to works';
+    echo \printf(__('PDF requires PHP %1$s or greater to works', 'dynamic-content-for-elementor'), '7.2');
     return;
 }
 $template_id = 0;
 if (!empty($_GET['post_id'])) {
-    $post_id = \intval($_GET['post_id']);
+    $id = \intval($_GET['post_id']);
 } else {
-    $post_id = 0;
+    $id = 0;
 }
 if (!empty($_GET['element_id'])) {
     $element_id = sanitize_text_field($_GET['element_id']);
@@ -25,14 +25,14 @@ if (!empty($_GET['title'])) {
 } else {
     $pdf_title = \time() . '.pdf';
 }
-if ($element_id && $post_id) {
+if ($element_id && $id) {
     status_header(200);
     global $wp_query, $post;
     $wp_query->is_page = $wp_query->is_singular = \true;
     $wp_query->is_404 = \false;
-    $post = get_post($post_id);
+    $post = get_post($id);
     $wp_query->queried_object = $post;
-    $wp_query->queried_object_id = $post_id;
+    $wp_query->queried_object_id = $id;
     $element = \DynamicContentForElementor\Helper::get_elementor_element_by_id($element_id);
     $settings = $element->get_settings_for_display();
     // defaults
@@ -59,7 +59,7 @@ if ($element_id && $post_id) {
     } else {
         $converter = $settings['dce_pdf_button_converter'];
     }
-    if ($converter === 'dompdf' && isset($settings['dce_pdf_button_dpi'])) {
+    if ('dompdf' === $converter && isset($settings['dce_pdf_button_dpi'])) {
         $dpi = $settings['dce_pdf_button_dpi'];
     }
     if (isset($settings['dce_pdf_button_margin']['top']) && $settings['dce_pdf_button_margin']['top'] !== '') {
@@ -68,7 +68,7 @@ if ($element_id && $post_id) {
     if ($settings['download']) {
         $dest = 'F';
     }
-    if ($template_id || $post_id) {
+    if ($template_id || $id) {
         if (!empty($_GET['user_id'])) {
             $user_id = \intval($_GET['user_id']);
         } else {
@@ -77,8 +77,8 @@ if ($element_id && $post_id) {
         if ($template_id) {
             $set_post = '';
             $set_author = $set_post;
-            if ($post_id) {
-                $set_post = ' post_id="' . $post_id . '"';
+            if ($id) {
+                $set_post = ' post_id="' . $id . '"';
             }
             $pdf_shortcode = '[dce-elementor-template id="' . $template_id . '"' . $set_author . $set_post . ']';
             $pdf_html = do_shortcode($pdf_shortcode);
@@ -87,7 +87,7 @@ if ($element_id && $post_id) {
             foreach ($_COOKIE as $name => $value) {
                 $cookies[] = new \WP_Http_Cookie(array('name' => $name, 'value' => $value));
             }
-            $response = wp_remote_get(get_permalink($post_id), array('cookies' => $cookies));
+            $response = wp_remote_get(get_permalink($id), array('cookies' => $cookies));
             $page_body = wp_remote_retrieve_body($response);
             // may not work for internal calls
             if ($page_body) {
@@ -98,7 +98,7 @@ if ($element_id && $post_id) {
                 $page_body = \reset($tmp);
             } else {
                 // fallback to elementor content
-                $page_body = \Elementor\Plugin::$instance->frontend->get_builder_content($post_id);
+                $page_body = \Elementor\Plugin::$instance->frontend->get_builder_content($id);
                 $page_body = '<html><body>' . $page_body . '</body></html>';
             }
             $pdf_html = $page_body;
@@ -106,7 +106,7 @@ if ($element_id && $post_id) {
         $pdf_html = \DynamicContentForElementor\Helper::get_dynamic_value($pdf_html);
         if ($styles !== 'unstyled') {
             // add CSS
-            $css_id = $template_id ? $template_id : $post_id;
+            $css_id = $template_id ? $template_id : $id;
             $css = \DynamicContentForElementor\Helper::get_post_css($css_id, $styles === 'all');
             // from flex to table
             $css .= '.elementor-section .elementor-container { display: table !important; width: 100% !important; }';
@@ -151,7 +151,7 @@ if ($element_id && $post_id) {
             $pdf_html = $tmp;
         }
         if (!$pdf_html) {
-            echo 'Content NOT found, please check selector or template';
+            echo __('Content NOT found, please check selector or template', 'dynamic-content-for-elementor');
             die;
         }
         if ($margin) {
@@ -219,14 +219,13 @@ if ($element_id && $post_id) {
                 $tagvs = array('img' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'picture' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'section' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'div' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'p' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'h1' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'h2' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'h3' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'h4' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'h5' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'h6' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'ul' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'table' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'tr' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'td' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)), 'th' => array(array('h' => 0, 'n' => 0), array('h' => 0, 'n' => 0)));
                 $pdf->setHtmlVSpace($tagvs);
                 $pdf->writeHTML($pdf_html, \true, \false, \true, \false, '');
-                // reset pointer to the last page
+                // Reset pointer to the last page
                 $pdf->lastPage();
-                // ---------------------------------------------------------
-                //Close and output PDF document
+                // Close and output PDF document
                 $pdf->Output($pdf_title . '.pdf', $dest);
                 break;
         }
     }
     die;
 }
-echo 'ERROR';
+echo \strtoupper(__('Error', 'dynamic-content-for-elementor'));

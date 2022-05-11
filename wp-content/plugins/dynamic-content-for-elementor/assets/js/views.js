@@ -13,7 +13,6 @@
 		}
 
 		var id_post = $scope.attr('data-post-id');
-		var elementorBreakpoints = elementorFrontend.config.breakpoints;
 
 		var viewsSwiperOptions = {
 			autoHeight: true,
@@ -75,11 +74,11 @@
 		if ( 'undefined' === typeof Swiper ) {
 			const asyncSwiper = elementorFrontend.utils.swiper;
 
-			new asyncSwiper( elementSwiper, viewsSwiperOptions ).then( ( newSwiperInstance ) => {
+			new asyncSwiper( jQuery( elementSwiper ), viewsSwiperOptions ).then( ( newSwiperInstance ) => {
 				viewsSwiper = newSwiperInstance;
 			} );
 		} else {
-			viewsSwiper = new Swiper( elementSwiper, viewsSwiperOptions );
+			viewsSwiper = new Swiper( jQuery( elementSwiper ), viewsSwiperOptions );
 		}
 
 		// Pause on hover

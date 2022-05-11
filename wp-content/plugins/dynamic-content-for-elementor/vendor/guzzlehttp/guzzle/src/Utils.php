@@ -64,7 +64,7 @@ final class Utils
         if (\defined('STDOUT')) {
             return \STDOUT;
         }
-        return \DynamicOOOS\GuzzleHttp\Psr7\Utils::tryFopen('php://output', 'w');
+        return \GuzzleHttp\Psr7\Utils::tryFopen('php://output', 'w');
     }
     /**
      * Chooses and creates a default handler to use based on the environment.

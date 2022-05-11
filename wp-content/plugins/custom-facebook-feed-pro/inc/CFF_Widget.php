@@ -19,9 +19,9 @@ class CFF_Widget extends \WP_Widget
         parent::__construct(
             'cff-feed-widget',
             __( 'Facebook Feed', 'custom-facebook-feed' ),
-            array( 
+            array(
                 'classname' => 'cff-feed-widget',
-                'description' => __( 'Display your facebook feed', 'custom-facebook-feed' ), 
+                'description' => __( 'Display your facebook feed', 'custom-facebook-feed' ),
             )
         );
 
@@ -30,7 +30,7 @@ class CFF_Widget extends \WP_Widget
 
     /**
      * CFF Load Feed Widget
-     * 
+     *
      * @since 4.0
      */
     function cff_feed_widget() {
@@ -39,7 +39,7 @@ class CFF_Widget extends \WP_Widget
 
 	/**
 	 * Feed Widget Tooltip
-	 * 
+	 *
 	 * @since 4.0
 	 */
     public function feed_widget_tooltip() {
@@ -55,7 +55,7 @@ class CFF_Widget extends \WP_Widget
 			return;
 		}
 
-		$feed_id = sanitize_text_field( $_GET['cff_feed_id'] );
+		$feed_id = sanitize_text_field( wp_unslash( $_GET['cff_feed_id'] ) );
 
 		?>
 			<script>
@@ -142,9 +142,9 @@ class CFF_Widget extends \WP_Widget
 				}
 			</style>
 		<?php
-		
+
     }
-    
+
     /**
 	 * Output the HTML for this widget.
 	 *

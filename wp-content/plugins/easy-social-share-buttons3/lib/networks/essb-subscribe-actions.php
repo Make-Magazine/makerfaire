@@ -142,7 +142,6 @@ class ESSBNetworks_SubscribeActions {
 				else {
 					$output['code'] = "99";
 					$output['message'] = esc_html__('Missing connection', 'essb');
-
 				}
 				break;
 			case "getresponse":
@@ -218,6 +217,17 @@ class ESSBNetworks_SubscribeActions {
 
 				$output = self::subscribe_conversio($subscribe_conv_api, $subscribe_conv_list, $subscribe_conv_text, $user_email, $user_name);
 				break;
+			case 'fluentcrm':
+			    $subscribe_fcrm_list = essb_object_value($essb_options, 'subscribe_fcrm_list');
+			    self::subscribe_fluentcrm($subscribe_fcrm_list, $user_email, $user_name);
+			    break;
+			case 'acelle':
+			    $subscribe_acelle_url = essb_option_value('subscribe_acelle_url');
+			    $subscribe_acelle_api = essb_option_value('subscribe_acelle_api');
+			    $subscribe_acelle_listid = essb_option_value('subscribe_acelle_listid');
+			    
+			    $output = self::subscribe_acelle($subscribe_acelle_url, $subscribe_conv_api, $subscribe_acelle_listid, $user_email, $user_name);
+			    break;
 			default:
 				$output['code'] = '99';
 				$output['message'] = esc_html__('Service is not supported', 'essb');
@@ -240,12 +250,116 @@ class ESSBNetworks_SubscribeActions {
 
 		return $output;
 	}
+	
+	public static function subscribe_acelle($api_url, $api_token, $api_list, $email, $name = '') {
+	    $debug_mode = isset($_REQUEST['debug']) ? $_REQUEST['debug'] : '';
+	    $response = array();	    
+	    
+	    try {
+            
+	        if (!empty($api_url) && !empty($api_token) && !empty($api_list)) {
+	            $headers = array(
+	                'Content-Type: application/json;charset=UTF-8',
+	                'Accept: application/json'
+	            );
+	            
+	            $url_create_user = $api_url . '/api/v1/subscribers';
+	            $data_create_user = array(
+	                'api_token' => $api_token,
+	                'EMAIL' => $email,
+	                'FIRST_NAME' => $name
+	            );
+	            
+	            $request = http_build_query($data_create_user);
+	            
+	            $curl = curl_init($url_create_user);
+	            curl_setopt ( $curl, CURLOPT_HTTPHEADER, $headers );	
+	            curl_setopt($curl, CURLOPT_POST, true);
+	            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($request));
+	            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+	            curl_setopt($curl, CURLOPT_TIMEOUT, 120);
+	            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	            curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
+	            curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
+	            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+	            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+	            $response_api = curl_exec($curl);
+	            curl_close($curl);
+	            
+	            $result = json_decode($response_api, true);
+	            
+	            if ($debug_mode == 'true') {
+	                print_r($result);
+	            }
+	            
+	            if (isset($result->subscriber_uid) && !empty($result->subscriber_uid)) {
+	                // Add user to the list
+	                $url_add_to_list = $api_url . '/api/v1/subscribers/'.esc_attr($result->subscriber_uid).'/subscribe';
+	                $data_add_to_list = array(
+	                    'api_token' => $api_token,
+	                    'list_uid' => $api_list,
+	                    'uid ' => $result->subscriber_uid
+	                );
+	                
+	                $request = http_build_query($data_add_to_list);
+	                
+	                $curl = curl_init($url_add_to_list);
+	                curl_setopt($curl, CURLOPT_HTTPHEADER, $headers );	
+	                curl_setopt($curl, CURLOPT_POST, true);
+	                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($request));
+	                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
+	                curl_setopt($curl, CURLOPT_TIMEOUT, 120);
+	                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	                curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
+	                curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
+	                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+	                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+	                $response_api = curl_exec($curl);
+	                curl_close($curl);
+	                
+	                if ($debug_mode == 'true') {
+	                    print_r($response_api);
+	                }
+	                
+	                $response ['code'] = '1';
+	                $response ['message'] = 'Thank you';
+	            }
+	        }
+	        else {
+	            // not configured
+	            $response ['code'] = "99";
+	            $response ['message'] = esc_html__( 'Missing connection', 'essb' );
+	        }
+	        
+    	} catch (Exception $e) {
+    	    
+    	    if ($debug_mode == 'true') {
+    	        print_r($e);
+    	    }
+    	    $result = false;
+    	    
+    	    $response ['code'] = "99";
+    	    $response ['message'] = esc_html__( 'Missing connection', 'essb' );
+    	}
+    	
+    	return $response;
+	}
 
 	public static function subscribe_mailchimp($api_key, $list_id, $email, $double_option = false, $send_welcome = false, $name = '') {
 
 		$position = isset ( $_REQUEST ['position'] ) ? $_REQUEST ['position'] : '';
 		$design = isset ( $_REQUEST ['design'] ) ? $_REQUEST ['design'] : '';
 		$title = isset ( $_REQUEST ['title'] ) ? $_REQUEST ['title'] : '';
+		
+		/**
+		 * @since 8.0 Adding support for tags
+		 */
+		$user_tags = essb_sanitize_option_value('subscribe_mc_tags');
+		
+		$design_tags = self::design_specific_tags();
+		if (!empty($design_tags)) {
+		    $user_tags = $design_tags;
+		}
 
 		$dc = "us1";
 		if (strstr ( $api_key, "-" )) {
@@ -311,6 +425,49 @@ class ESSBNetworks_SubscribeActions {
 
 			$response = curl_exec ( $curl );
 			curl_close ( $curl );
+			
+			if (!empty($user_tags)) {
+			    $tags_raw = explode(',', $user_tags);
+			    foreach ($tags_raw as $tag_raw) {
+			        $tag_raw = trim($tag_raw);
+			        if (!empty($tag_raw)) {
+			            $tags_sanitized[] = $tag_raw;
+			        }
+			    }
+			    if (sizeof($tags_sanitized) > 0) {
+			        $tags = array('tags' => array());
+			        foreach ($tags_sanitized as $tag_sanitized) {
+			            $tags['tags'][] = array('name' => $tag_sanitized, 'status' => 'active');
+			        }
+			        
+			        $url = 'https://'.$dc.'.api.mailchimp.com/3.0/lists/'.urlencode($list_id).'/members/'.md5(strtolower($email)).'/tags';
+			        try {
+			            $headers = array(
+			                'Content-Type: application/json;charset=UTF-8',
+			                'Accept: application/json'
+			            );
+			            
+			            $curl = curl_init ( $url );
+			            curl_setopt ( $curl, CURLOPT_HTTPHEADER, $headers );		
+			            curl_setopt ( $curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
+			            curl_setopt ( $curl, CURLOPT_USERPWD, 'lepopup:'.$api_key );			            
+			            curl_setopt ( $curl, CURLOPT_POST, 1 );
+			            curl_setopt ( $curl, CURLOPT_POSTFIELDS, json_encode($tags) );
+			            curl_setopt ( $curl, CURLOPT_TIMEOUT, 10 );
+			            curl_setopt ( $curl, CURLOPT_RETURNTRANSFER, 1 );
+			            curl_setopt ( $curl, CURLOPT_FORBID_REUSE, 1 );
+			            curl_setopt ( $curl, CURLOPT_FRESH_CONNECT, 1 );
+			            curl_setopt ( $curl, CURLOPT_SSL_VERIFYHOST, 0 );
+			            curl_setopt ( $curl, CURLOPT_SSL_VERIFYPEER, 0 );
+			            
+			            $response_tags = curl_exec ( $curl );
+			            curl_close ( $curl );
+			        }
+			        catch (Exception $ex) {
+			        }
+			    }
+			    
+			}
 		}
 		catch ( Exception $e ) {
 		}
@@ -371,41 +528,48 @@ class ESSBNetworks_SubscribeActions {
 
 	public static function subscribe_mailerlite($api_key, $list_id, $email, $name = '') {
 
-		$response = array();
+	    
+	    $response = array();
+	    
+	    $headers = array(
+	        'X-MailerLite-ApiKey: '.$api_key,
+	        'Content-Type: application/json;charset=UTF-8',
+	        'Accept: application/json'
+	    );
+	    
+	    $_data = array('email' => $email, 'name' => $name, 'group_id' => $list_id, 'resubscribe' => '1');
+	    
+	    try {
+	        $url = 'https://api.mailerlite.com/api/v2/'.ltrim('groups/'.urlencode($list_id).'/subscribers', '/');
+	        $curl = curl_init($url);
+	        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+	        if (!empty($_data)) {
+	            curl_setopt($curl, CURLOPT_POST, true);
+	            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($_data));
+	        }
+	        if (!empty($_method)) {
+	            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+	        }
+	        curl_setopt($curl, CURLOPT_TIMEOUT, 120);
+	        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	        curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
+	        curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
+	        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+	        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+	        $response_api = curl_exec($curl);
+	        curl_close($curl);
+	        $result = json_decode($response_api, true);
+	        
+	        $response ['code'] = '1';
+	        $response ['message'] = 'Thank you';
+	    } catch (Exception $e) {
+	        $result = false;
+	        
+	        $response ['code'] = "99";
+	        $response ['message'] = esc_html__( 'Missing connection', 'essb' );
+	    }
 
-		$data = array(
-				'apiKey' => $api_key,
-				'id' => $list_id,
-				'email' => $email,
-				'name' => $name,
-				'resubscribe' => '1'
-		);
-		$request = http_build_query($data);
-
-		try {
-			$curl = curl_init('https://app.mailerlite.com/api/v1/subscribers/'.$list_id.'/');
-			curl_setopt($curl, CURLOPT_POST, 1);
-			curl_setopt($curl, CURLOPT_POSTFIELDS, $request);
-			curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($curl, CURLOPT_FORBID_REUSE, 1);
-			curl_setopt($curl, CURLOPT_FRESH_CONNECT, 1);
-			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-			curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-
-			$server_response = curl_exec($curl);
-			curl_close($curl);
-
-			$response ['code'] = '1';
-			$response ['message'] = 'Thank you';
-		}
-		catch (Exception $e) {
-			$response ['code'] = "99";
-			$response ['message'] = esc_html__( 'Missing connection', 'essb' );
-		}
-
-		return $response;
+	    return $response;
 	}
 
 	public static function subscribe_mymail($list_id, $email, $name = '') {
@@ -617,8 +781,76 @@ class ESSBNetworks_SubscribeActions {
 		return $response;
 	}
 
-
 	public static function subscribe_sendinblue($api_key, $list_id, $email, $name = '') {
+	    $response = array();
+	    
+	    $list_id = str_replace('#', '', $list_id);
+	    
+	    try {
+	        $post_data = array(
+	            'listIds' => array(intval($list_id)),
+	            'email' => $email,
+	            'emailBlacklisted' => false,
+	            'updateEnabled' => true
+	        );
+	        
+	        $attributes = array();
+	        
+	        if (!empty($name)) {
+	            
+	            $name_field = essb_option_value('subscribe_sib_name_param');
+	            
+	            if ($name_field) {
+	                $attributes[$name_field] = $name;
+	            }
+	            else {
+	               $attributes['LASTNAME'] = $name;
+	            }
+	        }
+	        
+	        $gdpr_field = essb_option_value('subscribe_terms_field');
+	        if (!empty($gdpr_field)) {
+    	        $attributes[$gdpr_field] = 'Yes';
+	        }
+
+	        if (!empty($attributes)) $post_data['attributes'] = $attributes;	        
+	        
+	        $headers = array(
+	            'api-key: '.$api_key,
+	            'Content-Type: application/json;charset=UTF-8',
+	            'Accept: application/json'
+	        );	        
+	        
+	        $url = 'https://api.sendinblue.com/v3/contacts';
+	        $curl = curl_init($url);
+	        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+	        if (!empty($post_data)) {
+	            curl_setopt($curl, CURLOPT_POST, true);
+	            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($post_data));
+	        }
+
+	        curl_setopt($curl, CURLOPT_TIMEOUT, 20);
+	        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	        curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
+	        curl_setopt($curl, CURLOPT_FRESH_CONNECT, true);
+	        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+	        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+	        $response_api = curl_exec($curl);
+	        curl_close($curl);
+	        $result = json_decode($response_api, true);
+	        
+	        $response ['code'] = '1';
+	        $response ['message'] = 'Thank you';
+	    }
+	    catch (Exception $e) {
+	        $response ['code'] = "99";
+	        $response ['message'] = esc_html__( 'Missing connection', 'essb' );
+	    }
+	    
+	    return $response;
+	}
+
+	public static function subscribe_sendinblue_v2($api_key, $list_id, $email, $name = '') {
 
 		$response = array();
 
@@ -748,6 +980,52 @@ class ESSBNetworks_SubscribeActions {
 		return $response;
 	}
 	
+	public static function subscribe_fluentcrm($list_id, $email, $name = '') {
+	    $response = array();
+	    $debug_mode = isset($_REQUEST['debug']) ? $_REQUEST['debug'] : '';
+	    
+	    try {
+	        $contactApi = FluentCrmApi('contacts');
+	        
+	        $user_lists = array();
+	        $user_lists[] = $list_id;
+	        
+	        /*
+	         * Update/Insert a contact
+	         * You can create or update a contact in a single call
+	         */
+	        
+	        $data = [
+	            'first_name' => $name,
+	            'last_name' => '',
+	            'email' => $email, // requied
+	            'status' => 'pending',
+	            //'tags' => [1,2,3], // tag ids as an array
+	            'lists' => $user_lists // list ids as an array
+	        ];
+	        
+	        $contact = $contactApi->createOrUpdate($data);
+	        
+	        // send a double opt-in email if the status is pending
+	        if($contact->status == 'pending') {
+	            $contact->sendDoubleOptinEmail();
+	        }
+	        
+	        $response ['code'] = '1';
+	        $response ['message'] = 'Thank you';
+	    }
+	    catch (Exception $e) {
+	        $response ['code'] = "99";
+	        $response ['message'] = esc_html__( 'Missing connection', 'essb' );
+	        	        
+	        if ($debug_mode == 'true') {
+	            print_r($e);
+	        }
+	    }
+	    
+	    return $response;
+	}
+	
 	/**
 	 * Getting the custom form list if set
 	 * 
@@ -806,4 +1084,61 @@ class ESSBNetworks_SubscribeActions {
 	}
 	
 
+    /**
+     * Get design specific MailChimp tags
+     * 
+     * @return string
+     */
+	public static function design_specific_tags() {
+	    $r = '';
+	    
+	    $custom_list = '';
+	    $design = isset($_REQUEST['design']) ? $_REQUEST['design'] : '';
+	    if ($design != '') {
+	        if ($design == 'design1') {
+	            $custom_list = essb_option_value('subscribe_mc_customtags');
+	        }
+	        else if ($design == 'design2') {
+	            $custom_list = essb_option_value('subscribe_mc_customtags2');
+	        }
+	        else if ($design == 'design3') {
+	            $custom_list = essb_option_value('subscribe_mc_customtags3');
+	        }
+	        else if ($design == 'design4') {
+	            $custom_list = essb_option_value('subscribe_mc_customtags4');
+	        }
+	        else if ($design == 'design5') {
+	            $custom_list = essb_option_value('subscribe_mc_customtags5');
+	        }
+	        else if ($design == 'design6') {
+	            $custom_list = essb_option_value('subscribe_mc_customtags6');
+	        }
+	        else if ($design == 'design7') {
+	            $custom_list = essb_option_value('subscribe_mc_customtags7');
+	        }
+	        else if ($design == 'design8') {
+	            $custom_list = essb_option_value('subscribe_mc_customtags8');
+	        }
+	        else if ($design == 'design9') {
+	            $custom_list = essb_option_value('subscribe_mc_customtags9');
+	        }
+	        else {
+	            // custom design
+	            if (! function_exists ( 'essb5_get_form_designs' )) {
+	                include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/helpers/formdesigner-helper.php');
+	            }
+	            
+	            $key = str_replace('userdesign-', '', $design);
+	            $user_forms = essb5_get_form_designs();
+	            $options = isset($user_forms[$key]) ? $user_forms[$key] : array();
+	            
+	            $custom_list = stripslashes(essb_array_value('customtags', $options));
+	        }
+	    }
+	    
+	    if ($custom_list != '') { $r = $custom_list; }
+	    
+	    return $r;
+	}
+	
 }

@@ -12,142 +12,99 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Submit extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class SubmitButton extends \ElementorPro\Modules\Forms\Fields\Field_Base
 {
-    private $is_common = \false;
-    public $has_action = \false;
-    /**
-     * Get Name
-     *
-     * Return the action name
-     *
-     * @access public
-     * @return string
-     */
-    public function get_name()
+    public function __construct()
     {
-        return 'dce_form_submit';
-    }
-    /**
-     * Get Label
-     *
-     * Returns the action label
-     *
-     * @access public
-     * @return string
-     */
-    public function get_label()
-    {
-        return __('submit', 'dynamic-content-for-elementor');
-    }
-    /**
-     * Add Actions
-     *
-     * @since 0.5.5
-     *
-     * @access private
-     */
-    protected function add_actions()
-    {
-        add_action('elementor/widget/render_content', array($this, '_render_form'), 10, 2);
-        add_action('elementor_pro/forms/render_field/submit', array($this, '_render_submit'));
         add_action('elementor/widget/print_template', function ($template, $widget) {
             if ('form' === $widget->get_name()) {
                 $template = \false;
             }
             return $template;
         }, 10, 2);
+        add_filter('elementor_pro/forms/render/item/submit', [$this, 'remove_label']);
+        parent::__construct();
     }
-    public function _render_form($content, $widget)
+    public function get_script_depends()
     {
-        if ($widget->get_name() == 'form') {
-            $settings = $widget->get_settings_for_display();
-            $settings['button_text'];
-            // submit button text
-            $submits = \explode('elementor-field-type-submit', $content);
-            if (\count($submits) > 2) {
-                list($more, $original) = \explode('>', \end($submits), 2);
-                list($original, $more) = \explode('</div>', $original, 2);
-                foreach ($submits as $skey => $asubmit) {
-                    if ($skey && $skey < \count($submits)) {
-                        // remove label
-                        $pieces = \explode('<label', $asubmit, 2);
-                        if (\count($pieces) == 2) {
-                            $more = \explode('</label>', \end($pieces), 2);
-                            $content .= 'elementor-field-type-submit' . \reset($pieces) . \end($more);
-                        } else {
-                            $content .= 'elementor-field-type-submit' . $asubmit;
-                        }
-                    } else {
-                        if ($skey) {
-                            $content = 'elementor-field-type-submit' . $asubmit;
-                        } else {
-                            $content = $asubmit;
-                        }
-                    }
-                }
-            }
-        }
-        return $content;
+        return $this->depended_scripts;
     }
-    public function _render_submit($instance, $item_index = 0, $form = null)
+    public function get_name()
     {
-        $btn_class = '';
-        if (!empty($instance['button_size'])) {
-            $btn_class .= ' elementor-size-' . $instance['button_size'];
+        return __('Submit', 'dynamic-content-for-elementor');
+    }
+    public function get_type()
+    {
+        return 'submit';
+    }
+    public function get_style_depends()
+    {
+        return $this->depended_styles;
+    }
+    public function render($item, $item_index, $form)
+    {
+        // Remove default class 'elementor-field' else it will conflict with the class 'elementor-button'
+        $form->remove_render_attribute('input' . $item_index, 'class', 'elementor-field');
+        $form->add_render_attribute('input' . $item_index, 'class', 'elementor-button');
+        if (!empty($item['button_size'])) {
+            $form->add_render_attribute('input' . $item_index, 'class', 'elementor-size-' . $item['button_size']);
         }
-        if (!empty($instance['button_type'])) {
-            $btn_class .= ' elementor-button-' . $instance['button_type'];
+        if (!empty($item['button_type'])) {
+            $form->add_render_attribute('input' . $item_index, 'class', 'elementor-button-' . $item['button_type']);
         }
-        if (!empty($instance['button_hover_animation'])) {
-            $btn_class .= ' elementor-animation-' . $instance['button_hover_animation'];
-        }
-        ?>
-		<button type="submit" class="elementor-button<?php 
-        echo $btn_class;
-        ?>">
-				<span>
-						<?php 
-        if (!empty($instance['field_icon'])) {
-            ?>
-								<span class="elementor-align-icon-left elementor-button-icon">
-										<?php 
-            Icons_Manager::render_icon($instance['field_icon'], ['aria-hidden' => 'true']);
-            ?>
-										<?php 
-            if (empty($instance['field_label'])) {
-                ?>
-												<span class="elementor-screen-only"><?php 
-                _e('Submit', 'dynamic-content-for-elementor');
-                ?></span>
-										<?php 
-            }
-            ?>
-								</span>
-						<?php 
+        if (!empty($item['button_hover_animation'])) {
+            $form->add_render_attribute('input' . $item_index, 'class', 'elementor-animation-' . $item['button_hover_animation']);
         }
         ?>
-						<?php 
-        if (!empty($instance['field_label'])) {
+
+		<button <?php 
+        $form->print_render_attribute_string('input' . $item_index);
+        ?> >
+			<span>
+			<?php 
+        if (!empty($item['field_icon'])) {
             ?>
-								<span class="elementor-button-text"><?php 
-            echo $instance['field_label'];
-            ?></span>
-						<?php 
-        }
-        ?>
+				<span class="elementor-align-icon-left elementor-button-icon">
+					<?php 
+            Icons_Manager::render_icon($item['field_icon'], ['aria-hidden' => 'true']);
+            ?>
 				</span>
+				<?php 
+        }
+        // Submit Text contains the label value
+        if (!empty($item['submit_text'])) {
+            ?>
+				<span class="elementor-button-text"><?php 
+            echo $item['submit_text'];
+            ?></span>
+			<?php 
+        } else {
+            ?>
+				<span class="elementor-button-text"><?php 
+            _e('Submit', 'dynamic-content-for-elementor');
+            ?></span>
+			<?php 
+        }
+        ?>
+			</span>
 		</button>
 		<?php 
-        return \true;
     }
-    public static function _add_to_form(Controls_Stack $element, $control_id, $control_data, $options = [])
+    public function update_fields_controls($widget)
     {
-        if ($element->get_name() == 'form' && $control_id == 'form_fields') {
-            $control_data['fields']['form_fields_enchanted_tab'] = array('type' => 'tab', 'tab' => 'enchanted', 'label' => '<i class="dynicon icon-dyn-logo-dce" aria-hidden="true"></i>', 'tabs_wrapper' => 'form_fields_tabs', 'name' => 'form_fields_enchanted_tab', 'condition' => ['field_type!' => 'step']);
-            $control_data['fields']['field_type']['options']['submit'] = __('Submit', 'dynamic-content-for-elementor');
-            $control_data['fields']['button_size'] = array('name' => 'button_size', 'label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'sm', 'options' => Helper::get_button_sizes(), 'condition' => ['field_type' => ['submit', 'reset']], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
+        $elementor = \ElementorPro\Plugin::elementor();
+        $control_data = $elementor->controls_manager->get_control_from_stack($widget->get_unique_name(), 'form_fields');
+        if (is_wp_error($control_data)) {
+            return;
         }
-        return $control_data;
+        $field_controls = ['button_size' => ['name' => 'button_size', 'label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'sm', 'options' => Helper::get_button_sizes(), 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab']];
+        $control_data['fields'] = \array_merge($control_data['fields'], $field_controls);
+        $widget->update_control('form_fields', $control_data);
+    }
+    public function remove_label($item)
+    {
+        $item['submit_text'] = $item['field_label'] ?? '';
+        $item['field_label'] = '';
+        return $item;
     }
 }

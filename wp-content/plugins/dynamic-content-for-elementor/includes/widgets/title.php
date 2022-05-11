@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
@@ -13,13 +13,18 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Title extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class Title extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
         return ['dce-title'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $post_type_object = get_post_type_object(get_post_type());
         $this->start_controls_section('section_title', ['label' => __('Title', 'dynamic-content-for-elementor')]);
@@ -59,7 +64,7 @@ class DCE_Widget_Title extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->add_control('hover_animation', ['label' => __('Hover Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HOVER_ANIMATION, 'condition' => ['link_to!' => 'none']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

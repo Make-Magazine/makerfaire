@@ -14,7 +14,7 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class Acf_Flexible_Content extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class AcfFlexibleContent extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -24,25 +24,15 @@ class Acf_Flexible_Content extends \DynamicContentForElementor\Widgets\WidgetPro
     {
         return [];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => $this->get_title()]);
-        $this->add_control('flexible_field', ['label' => __('Select ACF Flexible Content Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'flexible_content', 'dynamic' => ['active' => \false]]);
+        $this->add_control('flexible_field', ['label' => __('Select ACF Flexible Content Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'flexible_content', 'dynamic' => ['active' => \false]]);
         $this->add_control('flexible_field_from', ['label' => __('Retrieve the field from', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'current_post', 'options' => ['current_post' => __('Current Post', 'dynamic-content-for-elementor'), 'current_user' => __('Current User', 'dynamic-content-for-elementor'), 'current_author' => __('Current Author', 'dynamic-content-for-elementor'), 'current_term' => __('Current Term', 'dynamic-content-for-elementor'), 'options_page' => __('Options Page', 'dynamic-content-for-elementor')]]);
         $repeater_layout = new \Elementor\Repeater();
         $repeater_layout->start_controls_tabs('layout_repeater');
@@ -57,7 +47,7 @@ class Acf_Flexible_Content extends \DynamicContentForElementor\Widgets\WidgetPro
         $this->add_control('color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}}' => 'color: {{VALUE}};']]);
         $this->add_responsive_control('alignment', ['label' => __('Global Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \true, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};']]);
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings) || empty($settings['layouts'])) {

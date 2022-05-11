@@ -38,7 +38,7 @@ class CanvasFactory
         if (isset($class) && \class_exists($class, \false)) {
             $class .= "_Adapter";
         } else {
-            if (($backend === "auto" || $backend === "pdflib") && \class_exists("DynamicOOOS\\PDFLib", \false)) {
+            if (($backend === "auto" || $backend === "pdflib") && \class_exists("PDFLib", \false)) {
                 $class = "DynamicOOOS\\Dompdf\\Adapter\\PDFLib";
             } else {
                 if ($backend === "gd" && \extension_loaded('gd')) {

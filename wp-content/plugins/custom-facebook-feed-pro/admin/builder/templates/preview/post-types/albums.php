@@ -1,15 +1,15 @@
 <section id="cff-post-list-section" class="cff-preview-posts-list-ctn cff-fb-fs cff-preview-section" :data-dimmed="!isSectionHighLighted('postList')" :class="customizerFeedData.settings.feedlayout == 'masonry' ? 'cff-preview-posts-masonry' : (customizerFeedData.settings.feedlayout == 'grid' ? 'cff-preview-posts-grid' : '')" v-if="customizerFeedData.settings.feedtype == 'albums'" :data-generate-masonry="customizerFeedData.settings.feedlayout == 'masonry' || customizerFeedData.settings.feedlayout == 'grid' ? generateMasonryGridHeight() : false" :data-feed-layout="customizerFeedData.settings.feedlayout" :data-feed-columns="getFeedColumns()">
-	<div class="cff-albums-item-ctn cff-singlemedia-item cff-post-item-ctn cff-fb-fs" v-for="(singlePost, postIndex) in customizerFeedData.posts" :data-lightbox="customizerFeedData.settings.disablelightbox != 'off' ? 'false' : 'true'">
+	<div class="cff-albums-item-ctn cff-singlemedia-item cff-post-item-ctn cff-fb-fs" v-for="(singlePost, postIndex) in customizerFeedData.posts" v-if="singlePost.count > 0" :data-lightbox="customizerFeedData.settings.disablelightbox != 'off' ? 'false' : 'true'">
 		<div class="cff-post-item-content cff-fb-fs">
 			<div class="cff-albums-item-cover cff-fb-fs">
-				<div v-if="customizerFeedData.settings.feedlayout == 'grid'" :style="'background:url('+(hasOwnNestedProperty(singlePost, 'cover_photo.source') ? singlePost.cover_photo.source : '')+')'" class="cff-post-grid-image"></div>
-				<img v-if="customizerFeedData.settings.feedlayout != 'grid'" :src="hasOwnNestedProperty(singlePost, 'cover_photo.source') ? singlePost.cover_photo.source : ''" class="cff-fb-fs">
+				<div v-if="customizerFeedData.settings.feedlayout == 'grid'" :style="'background:url('+(hasOwnNestedProperty(singlePost, 'cover_photo.source') ? singlePost.cover_photo.source : processPhotoSource(singlePost))+')'" class="cff-post-grid-image"></div>
+				<img v-if="customizerFeedData.settings.feedlayout != 'grid'" :src="hasOwnNestedProperty(singlePost, 'cover_photo.source') ? singlePost.cover_photo.source : processPhotoSource(singlePost)" class="cff-fb-fs">
 			</div>
 			<div class="cff-albums-item-info cff-singlemedia-item-info cff-fb-fs">
-				<h4 class="cff-fb-fs">
+				<h4 class="cff-fb-fs" v-if="valueIsEnabled(customizerFeedData.settings.showalbumtitle)">
 					<a :href="'https://www.facebook.com/'+singlePost.id" target="_blank" v-html="singlePost.name"></a>
 				</h4>
-				<p class="cff-fb-fs">
+				<p class="cff-fb-fs" v-if="valueIsEnabled(customizerFeedData.settings.showalbumnum)">
 					{{singlePost.count}} <span v-html="(singlePost.count > 1) ? genericText.photos : genericText.photo"></span>
 				</p>
 			</div>

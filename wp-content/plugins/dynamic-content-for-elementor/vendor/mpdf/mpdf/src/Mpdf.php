@@ -4,6 +4,7 @@ namespace DynamicOOOS\Mpdf;
 
 use DynamicOOOS\Mpdf\Config\ConfigVariables;
 use DynamicOOOS\Mpdf\Config\FontVariables;
+use DynamicOOOS\Mpdf\Container\SimpleContainer;
 use DynamicOOOS\Mpdf\Conversion;
 use DynamicOOOS\Mpdf\Css\Border;
 use DynamicOOOS\Mpdf\Css\TextVars;
@@ -28,7 +29,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 {
     use Strict;
     use FpdiTrait;
-    const VERSION = '8.0.13';
+    const VERSION = '8.1.1';
     const SCALE = 72 / 25.4;
     var $useFixedNormalLineHeight;
     // mPDF 6
@@ -856,9 +857,17 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
      */
     private $protection;
     /**
-     * @var \Mpdf\RemoteContentFetcher
+     * @var \Mpdf\Http\ClientInterface
      */
-    private $remoteContentFetcher;
+    private $httpClient;
+    /**
+     * @var \Mpdf\File\LocalContentLoaderInterface
+     */
+    private $localContentLoader;
+    /**
+     * @var \Mpdf\AssetFetcher
+     */
+    private $assetFetcher;
     /**
      * @var \Mpdf\Image\ImageProcessor
      */
@@ -928,17 +937,24 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
      */
     private $services;
     /**
-     * @param mixed[] $config
+     * @var \Mpdf\Container\ContainerInterface
      */
-    public function __construct(array $config = [])
+    private $container;
+    /**
+     * @param mixed[] $config
+     * @param \Mpdf\Container\ContainerInterface|null $container Experimental container to override internal services
+     */
+    public function __construct(array $config = [], $container = null)
     {
         $this->_dochecks();
+        \assert(!$container || $container instanceof \DynamicOOOS\Mpdf\Container\ContainerInterface);
         list($mode, $format, $default_font_size, $default_font, $mgl, $mgr, $mgt, $mgb, $mgh, $mgf, $orientation) = $this->initConstructorParams($config);
         $this->logger = new NullLogger();
         $originalConfig = $config;
         $config = $this->initConfig($originalConfig);
-        $serviceFactory = new ServiceFactory();
-        $services = $serviceFactory->getServices($this, $this->logger, $config, $this->restrictColorSpace, $this->languageToFont, $this->scriptToLanguage, $this->fontDescriptor, $this->bmp, $this->directWrite, $this->wmf);
+        $serviceFactory = new ServiceFactory($container);
+        $services = $serviceFactory->getServices($this, $this->logger, $config, $this->languageToFont, $this->scriptToLanguage, $this->fontDescriptor, $this->bmp, $this->directWrite, $this->wmf);
+        $this->container = $container;
         $this->services = [];
         foreach ($services as $key => $service) {
             $this->{$key} = $service;
@@ -4169,7 +4185,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
         } else {
             $bottom = 0;
         }
-        if (!$this->tableLevel && ($this->y + $this->divheight > $this->PageBreakTrigger || $this->y + $h > $this->PageBreakTrigger || $this->y + $h * 2 + $bottom > $this->PageBreakTrigger && $this->blk[$this->blklvl]['page_break_after_avoid']) && !$this->InFooter && $this->AcceptPageBreak()) {
+        if (!$this->tableLevel && ($this->y + $this->divheight > $this->PageBreakTrigger || $this->y + $h > $this->PageBreakTrigger || $this->y + $h * 2 + $bottom > $this->PageBreakTrigger && (isset($this->blk[$this->blklvl]['page_break_after_avoid']) && $this->blk[$this->blklvl]['page_break_after_avoid'])) && !$this->InFooter && $this->AcceptPageBreak()) {
             // mPDF 5.7.2
             $x = $this->x;
             // Current X position
@@ -8559,6 +8575,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
             throw new \DynamicOOOS\Mpdf\MpdfException('mbstring extension must be loaded in order to run mPDF');
         }
         if (!\function_exists('mb_regex_encoding')) {
+            $mamp = '';
             if (\strtoupper(\substr(\PHP_OS, 0, 3)) === 'WIN') {
                 $mamp = ' If using MAMP, there is a bug in its PHP build causing this.';
             }
@@ -10105,14 +10122,11 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
         $this->basepath = \str_replace("\\", "/", $this->basepath);
         // If on Windows
         $tr = \parse_url($this->basepath);
-        if (isset($tr['host']) && $tr['host'] == $host) {
-            $this->basepathIsLocal = \true;
-        } else {
-            $this->basepathIsLocal = \false;
-        }
+        $this->basepathIsLocal = isset($tr['host']) && $tr['host'] == $host;
     }
     public function GetFullPath(&$path, $basepath = '')
     {
+        // @todo make return, remove reference
         // When parsing CSS need to pass temporary basepath - so links are relative to current stylesheet
         if (!$basepath) {
             $basepath = $this->basepath;
@@ -10121,14 +10135,14 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
         $path = \str_replace("\\", '/', $path);
         // If on Windows
         // mPDF 5.7.2
-        if (\substr($path, 0, 2) === '//') {
+        if (\strpos($path, '//') === 0) {
             $scheme = \parse_url($basepath, \PHP_URL_SCHEME);
             $scheme = $scheme ?: 'http';
             $path = $scheme . ':' . $path;
         }
         $path = \preg_replace('|^./|', '', $path);
         // Inadvertently corrects "./path/etc" and "//www.domain.com/etc"
-        if (\substr($path, 0, 1) == '#') {
+        if (\substr($path, 0, 1) === '#') {
             return;
         }
         // Skip schemes not supported by installed stream wrappers
@@ -10137,7 +10151,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
         if (\preg_match($pattern, $path)) {
             return;
         }
-        if (\substr($path, 0, 3) == "../") {
+        if (\substr($path, 0, 3) === "../") {
             // It is a relative link
             $backtrackamount = \substr_count($path, "../");
             $maxbacktrack = \substr_count($basepath, "/") - 3;
@@ -10151,11 +10165,13 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
             for ($i = 0; $i < $backtrackamount + 1; $i++) {
                 $path = \substr($path, 0, \strrpos($path, "/"));
             }
-            $path = $path . "/" . $filepath;
+            $path .= '/' . $filepath;
             // Make it an absolute path
-        } elseif ((\strpos($path, ":/") === \false || \strpos($path, ":/") > 10) && !@\is_file($path)) {
+            return;
+        }
+        if ((\strpos($path, ":/") === \false || \strpos($path, ":/") > 10) && !@\is_file($path)) {
             // It is a local link. Ignore potential file errors
-            if (\substr($path, 0, 1) == "/") {
+            if (\substr($path, 0, 1) === "/") {
                 $tr = \parse_url($basepath);
                 // mPDF 5.7.2
                 $root = '';
@@ -10166,9 +10182,9 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
                 $root .= isset($tr['port']) && $tr['port'] ? ':' . $tr['port'] : '';
                 // mPDF 5.7.3
                 $path = $root . $path;
-            } else {
-                $path = $basepath . $path;
+                return;
             }
+            $path = $basepath . $path;
         }
         // Do nothing if it is an Absolute Link
     }
@@ -24585,7 +24601,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
         $xref_objid = $m[1];
         \preg_match_all('/(\\d{10}) (\\d{5}) (f|n)/', $m[2], $x);
         for ($i = 0; $i < \count($x[0]); $i++) {
-            $xref[] = [\intval($x[1][$i]), $x[2][$i], $x[3][$i]];
+            $xref[] = [(int) $x[1][$i], $x[2][$i], $x[3][$i]];
         }
         $changes = [];
         \preg_match("/<<\\s*\\/Type\\s*\\/Pages\\s*\\/Kids\\s*\\[(.*?)\\]\\s*\\/Count/s", $pdf, $m);

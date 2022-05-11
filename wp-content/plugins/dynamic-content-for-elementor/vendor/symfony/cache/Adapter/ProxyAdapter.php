@@ -76,7 +76,7 @@ class ProxyAdapter implements AdapterInterface, CacheInterface, PruneableInterfa
                     $item["\x00*\x00value"] = ["\x9d" . \pack('VN', (int) (0.1 + $metadata[self::METADATA_EXPIRY] - self::METADATA_EXPIRY_OFFSET), $metadata[self::METADATA_CTIME]) . "_" => $item["\x00*\x00value"]];
                 }
                 $innerItem->set($item["\x00*\x00value"]);
-                $innerItem->expiresAt(null !== $item["\x00*\x00expiry"] ? \DateTime::createFromFormat('U.u', \sprintf('%.6F', 0 === $item["\x00*\x00expiry"] ? \PHP_INT_MAX : $item["\x00*\x00expiry"])) : null);
+                $innerItem->expiresAt(null !== $item["\x00*\x00expiry"] ? \DateTime::createFromFormat('U.u', \sprintf('%.6F', $item["\x00*\x00expiry"])) : null);
             },
             null,
             CacheItem::class

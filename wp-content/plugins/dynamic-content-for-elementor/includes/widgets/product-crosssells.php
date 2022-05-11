@@ -9,7 +9,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class WooProductCrosssells extends \DynamicContentForElementor\Widgets\DCE_Widget_DynamicPosts_Base
+class WooProductCrosssells extends \DynamicContentForElementor\Widgets\DynamicPostsBase
 {
     public function get_name()
     {
@@ -21,10 +21,16 @@ class WooProductCrosssells extends \DynamicContentForElementor\Widgets\DCE_Widge
         $this->add_skin(new Skins\Woo_Product_Crosssells_Skin_Grid_Filters($this));
         $this->add_skin(new Skins\Woo_Product_Crosssells_Skin_Carousel($this));
         $this->add_skin(new Skins\Woo_Product_Crosssells_Skin_DualCarousel($this));
+        $this->add_skin(new Skins\Woo_Product_Crosssells_Skin_Accordion($this));
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
-        parent::_register_controls();
+        parent::safe_register_controls();
         $this->update_control('query_type', ['type' => Controls_Manager::HIDDEN, 'default' => 'product_crosssells']);
         $this->update_control('list_items', ['default' => [['item_id' => 'item_image'], ['item_id' => 'item_title'], ['item_id' => 'item_productprice'], ['item_id' => 'item_addtocart']]]);
         $this->update_control('taxonomy', ['options' => ['' => __('All', 'dynamic-content-for-elementor')] + Helper::get_woocommerce_taxonomies(), 'default' => '']);

@@ -2,14 +2,8 @@
 .dce-carousel-controls .swiper-button-next {
   position: absolute;
   top: 50%;
-  width: 85px;
-  height: 85px;
-  margin-top: -43px;
   z-index: 9;
   cursor: pointer;
-  background-size: 85px 85px;
-  background-position: center;
-  background-repeat: no-repeat;
   outline: none;
 }
 .dce-carousel-controls .swiper-button-prev.swiper-button-disabled,

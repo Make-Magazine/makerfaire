@@ -9,7 +9,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DynamicCountdown extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class DynamicCountdown extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     private $is_common = \false;
     public function get_script_depends()
@@ -23,7 +23,7 @@ class DynamicCountdown extends \DynamicContentForElementor\Extensions\DCE_Extens
     }
     public function add_dynamic_countdown($element, $args)
     {
-        $element->add_control('dynamic_due_date', ['label' => '<span class="color-dce icon icon-dyn-logo-dce"></span> ' . __('Dynamic Due Date', 'dynamic-content-for-elementor'), 'description' => __('This field, if not empty, overwrites the due date value. This value is shown only on frontend mode. It should be in the format "Y-m-d H:i:s"', 'dynamic-content-for-elementor'), 'label_block' => \true, 'separator' => 'before', 'placeholder' => 'Y-m-d H:i:s', 'frontend_available' => \true, 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'condition' => ['countdown_type' => 'due_date']]);
+        $element->add_control('dynamic_due_date', ['label' => '<span class="color-dce icon-dyn-logo-dce"></span> ' . __('Dynamic Due Date', 'dynamic-content-for-elementor'), 'description' => __('This field, if not empty, overwrites the due date value. This value is shown only on frontend mode. It should be in the format "Y-m-d H:i:s"', 'dynamic-content-for-elementor'), 'label_block' => \true, 'separator' => 'before', 'placeholder' => 'Y-m-d H:i:s', 'frontend_available' => \true, 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'condition' => ['countdown_type' => 'due_date']]);
     }
     public function render_countdown($element)
     {

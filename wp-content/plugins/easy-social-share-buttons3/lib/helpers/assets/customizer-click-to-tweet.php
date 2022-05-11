@@ -19,6 +19,16 @@ if (!function_exists('essb_register_dynamic_cct_styles')) {
         
         ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-user:hover', 'background-color', 'customize_cct_bg_hover');
         ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-user:hover', 'color', 'customize_cct_color_hover');
-        ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-user:hover', 'border', 'customizer_cct_border_hover');        
-   }
+        ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-user:hover', 'border', 'customizer_cct_border_hover');   
+        
+        /**
+         * Inline
+         */
+        ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-inline-user', 'background-color', 'customize_cct_bg');
+        ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-inline-user', 'color', 'customize_cct_color');
+        ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-inline-user', 'border-bottom', 'customizer_cct_border');
+        ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-inline-user:hover', 'background-color', 'customize_cct_bg_hover');
+        ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-inline-user:hover', 'color', 'customize_cct_color_hover');
+        ESSB_Dynamic_CSS_Builder::map_option('.essb-ctt-inline-user:hover', 'border-bottom', 'customizer_cct_border_hover');   
+    }
 }

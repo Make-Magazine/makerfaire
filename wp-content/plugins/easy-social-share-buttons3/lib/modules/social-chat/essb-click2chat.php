@@ -58,7 +58,15 @@ if (!function_exists('essb_click2chat_register')) {
 	}
 	
 	function essb_click2chat_register_styles() {
-		if (essb_click2chat_can_run()) {
+		if (essb_click2chat_can_run()) {		    
+		    
+		    /**
+		     * Activate the module main CSS styles
+		     */
+		    if (class_exists('ESSB_Module_Assets')) {
+		        ESSB_Module_Assets::regsiter_click2chat();
+		    }
+		    
 			$styles = '';
 			
 			$click2chat_text = essb_sanitize_option_value('click2chat_text');

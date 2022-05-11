@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
 use DynamicContentForElementor\Helper;
@@ -12,13 +12,18 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_SinglePostsMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class SinglePostsList extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
         return ['dce-list'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => __('Custom menu from single pages', 'dynamic-content-for-elementor')]);
         $this->add_control('singlepage_select', ['label' => __('Select Single Posts', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'multiple' => \true, 'label_block' => \true, 'options' => array()]);
@@ -59,7 +64,7 @@ class DCE_Widget_SinglePostsMenu extends \DynamicContentForElementor\Widgets\Wid
         $this->add_responsive_control('menu_size_separator', ['label' => __('Weight', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 1, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 0, 'max' => 50]], 'selectors' => ['{{WRAPPER}} .dce-menu.horizontal li' => 'border-left-width: {{SIZE}}{{UNIT}};'], 'condition' => ['show_separators' => 'solid', 'menu_style' => 'horizontal']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

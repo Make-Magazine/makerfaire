@@ -154,12 +154,14 @@ function cff_legacy_and_builder_connected_accounts() {
 
 	$new_sources = \CustomFacebookFeed\Builder\CFF_Feed_Builder::get_source_list();
 
+	$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+
 	foreach ( $new_sources as $new_source ) {
 		if ( ! empty( $new_source['account_id'] ) ) {
 			$account_id = $new_source['account_id'];
 			$connected_accounts->{$account_id}              = new StdClass();
 			$connected_accounts->{$account_id}->id          = $account_id;
-			$connected_accounts->{$account_id}->accesstoken = $new_source['access_token'];
+			$connected_accounts->{$account_id}->accesstoken = $encryption->decrypt( $new_source['access_token'] ) ? $encryption->decrypt( $new_source['access_token'] ) : $new_source['access_token'];
 			$connected_accounts->{$account_id}->pagetype    = $new_source['account_type'];
 			$connected_accounts->{$account_id}->name        = $new_source['username'];
 			$connected_accounts->{$account_id}->avatar      = $new_source['avatar_url'];
@@ -168,7 +170,6 @@ function cff_legacy_and_builder_connected_accounts() {
 	}
 
 	return $connected_accounts;
-
 }
 
 // this is where the shortcode arguments would be processed along with the default
@@ -182,12 +183,22 @@ function cff_get_processed_options( $feed_options ) {
 		$feed_options   = $feed_saver->get_feed_settings();
 		$feed_options['include'] = is_array( $feed_options['type'] ) ? implode( ',', $feed_options['include'] ) : $feed_options['include'];
 		$feed_options['type'] = is_array( $feed_options['type'] ) ? implode( ',', $feed_options['type'] ) : $feed_options['type'];
+		$feed_options['pagetype'] = ! empty( $feed_options['sources'][0] ) && $feed_options['sources'][0]['account_type'] === 'group' ? 'group' : 'page';
 
 		return $feed_options;
 	}
 
+	if ( empty( $feed_options['filter'] ) && ! empty( $feed_options['includewords'] )) {
+		$feed_options['filter'] = $feed_options['includewords'];
+	}
 
-    //Which extensions are active?
+	if ( empty( $feed_options['exfilter'] ) && ! empty( $feed_options['excludewords'] )) {
+		$feed_options['exfilter'] = $feed_options['excludewords'];
+	}
+
+
+
+		//Which extensions are active?
     include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
     $cff_ext_options = get_option('cff_extensions_status');
 
@@ -220,41 +231,82 @@ function cff_get_processed_options( $feed_options ) {
     ( is_plugin_active( 'cff-reviews/cff-reviews.php' ) || $cff_extensions_reviews_active ) ? $cff_reviews_active = true : $cff_reviews_active = false;
 
     //Style options
-    $options = get_option('cff_style_settings');
+    $options = get_option( 'cff_style_settings', array() );
     //Create the types string to set as shortcode default
     $type_string = '';
-    if($options[ 'cff_show_links_type' ]) $type_string .= 'links,';
-    if($options[ 'cff_show_event_type' ]) $type_string .= 'events,';
-    if($options[ 'cff_show_video_type' ]) $type_string .= 'videos,';
-    if($options[ 'cff_show_photos_type' ]) $type_string .= 'photos,';
-    //If the album option hasn't been set yet in the $options array (ie. plugin has been updated but the option hasn't been saved) then set albums to display by default
-    if( !isset($options[ 'cff_show_albums_type' ]) ) $options[ 'cff_show_albums_type' ] = true;
-    if($options[ 'cff_show_albums_type' ]) $type_string .= 'albums,';
-    if($options[ 'cff_show_status_type' ]) $type_string .= 'statuses,';
+	if ( ! empty( $options[ 'cff_show_links_type' ] ) ) {
+		if($options[ 'cff_show_links_type' ]) $type_string .= 'links,';
+		if($options[ 'cff_show_event_type' ]) $type_string .= 'events,';
+		if($options[ 'cff_show_video_type' ]) $type_string .= 'videos,';
+		if($options[ 'cff_show_photos_type' ]) $type_string .= 'photos,';
+		//If the album option hasn't been set yet in the $options array (ie. plugin has been updated but the option hasn't been saved) then set albums to display by default
+		if( !isset($options[ 'cff_show_albums_type' ]) ) $options[ 'cff_show_albums_type' ] = true;
+		if($options[ 'cff_show_albums_type' ]) $type_string .= 'albums,';
+		if($options[ 'cff_show_status_type' ]) $type_string .= 'statuses,';
+	}
+
 
     //Create the includes string to set as shortcode default
     $include_string = '';
-    if($options[ 'cff_show_author' ]) $include_string .= 'author,';
-    if($options[ 'cff_show_text' ]) $include_string .= 'text,';
-    if($options[ 'cff_show_desc' ]) $include_string .= 'desc,';
-    if($options[ 'cff_show_shared_links' ]) $include_string .= 'sharedlinks,';
-    if($options[ 'cff_show_date' ]) $include_string .= 'date,';
-    if($options[ 'cff_show_media' ]) $include_string .= 'media,';
-    if($options[ 'cff_show_event_title' ]) $include_string .= 'eventtitle,';
-    if($options[ 'cff_show_event_details' ]) $include_string .= 'eventdetails,';
-    if($options[ 'cff_show_meta' ]) $include_string .= 'social,';
-    if($options[ 'cff_show_link' ]) $include_string .= 'link,';
-    if($options[ 'cff_show_like_box' ]) $include_string .= 'likebox,';
+	if ( ! empty( $options[ 'cff_show_author' ] ) ) {
+
+		if ( $options['cff_show_author'] ) {
+			$include_string .= 'author,';
+		}
+		if ( $options['cff_show_text'] ) {
+			$include_string .= 'text,';
+		}
+		if ( $options['cff_show_desc'] ) {
+			$include_string .= 'desc,';
+		}
+		if ( $options['cff_show_shared_links'] ) {
+			$include_string .= 'sharedlinks,';
+		}
+		if ( $options['cff_show_date'] ) {
+			$include_string .= 'date,';
+		}
+		if ( $options['cff_show_media'] ) {
+			$include_string .= 'media,';
+		}
+		if ( $options['cff_show_event_title'] ) {
+			$include_string .= 'eventtitle,';
+		}
+		if ( $options['cff_show_event_details'] ) {
+			$include_string .= 'eventdetails,';
+		}
+		if ( $options['cff_show_meta'] ) {
+			$include_string .= 'social,';
+		}
+		if ( $options['cff_show_link'] ) {
+			$include_string .= 'link,';
+		}
+		if ( $options['cff_show_like_box'] ) {
+			$include_string .= 'likebox,';
+		}
+	}
 
     //Reviews rated string
     $cff_reviews_string = '';
-    if( isset($options[ 'cff_reviews_rated_5' ]) && isset($options[ 'cff_reviews_rated_4' ]) && isset($options[ 'cff_reviews_rated_3' ]) && isset($options[ 'cff_reviews_rated_2' ]) && isset($options[ 'cff_reviews_rated_1' ]) ){
-        if($options[ 'cff_reviews_rated_5' ]) $cff_reviews_string .= '5,';
-        if($options[ 'cff_reviews_rated_4' ]) $cff_reviews_string .= '4,';
-        if($options[ 'cff_reviews_rated_3' ]) $cff_reviews_string .= '3,';
-        if($options[ 'cff_reviews_rated_2' ]) $cff_reviews_string .= '2,';
-        if($options[ 'cff_reviews_rated_1' ]) $cff_reviews_string .= '1';
-    }
+	if ( ! empty( $options[ 'cff_reviews_rated_5' ] ) ) {
+
+		if ( isset( $options['cff_reviews_rated_5'] ) && isset( $options['cff_reviews_rated_4'] ) && isset( $options['cff_reviews_rated_3'] ) && isset( $options['cff_reviews_rated_2'] ) && isset( $options['cff_reviews_rated_1'] ) ) {
+			if ( $options['cff_reviews_rated_5'] ) {
+				$cff_reviews_string .= '5,';
+			}
+			if ( $options['cff_reviews_rated_4'] ) {
+				$cff_reviews_string .= '4,';
+			}
+			if ( $options['cff_reviews_rated_3'] ) {
+				$cff_reviews_string .= '3,';
+			}
+			if ( $options['cff_reviews_rated_2'] ) {
+				$cff_reviews_string .= '2,';
+			}
+			if ( $options['cff_reviews_rated_1'] ) {
+				$cff_reviews_string .= '1';
+			}
+		}
+	}
 
     //Get masonry extension options if available
     $cff_masonry_options = get_option('cff_masonry_options');
@@ -496,6 +548,7 @@ function cff_get_processed_options( $feed_options ) {
         'videoplayer' => isset($options[ 'cff_video_player' ]) ? $options[ 'cff_video_player' ] : '',
         'sepcolor' => isset($options[ 'cff_sep_color' ]) ? $options[ 'cff_sep_color' ] : '',
         'sepsize' => isset($options[ 'cff_sep_size' ]) ? $options[ 'cff_sep_size' ] : '',
+		'apipostlimit' => '',
 
         //Translate
         'seemoretext' => isset( $options[ 'cff_see_more_text' ] ) ? stripslashes( esc_attr( $options[ 'cff_see_more_text' ] ) ) : '',
@@ -591,7 +644,12 @@ function cff_get_processed_options( $feed_options ) {
     $feed_options['id'] = $page_id;
 
     //If an 'account' is specified then use that instead of the Page ID/token from the settings
-    $cff_account = trim($feed_options['account']);
+	$cff_account = '';
+	if ( ! empty( $feed_options['account'] ) ) {
+		$cff_account = trim($feed_options['account']);
+	} elseif ( ! empty( $feed_options['id'] ) ) {
+		$cff_account = trim($feed_options['id']);
+	}
 
 	$cff_connected_accounts = cff_legacy_and_builder_connected_accounts();
 
@@ -640,7 +698,6 @@ function cff_get_processed_options( $feed_options ) {
         }
     }
 
-
     //If multiple Access Tokens are being used then split them up into an associative array
     $access_token = $feed_options['accesstoken'];
     if ( $cff_ext_multifeed_active && strpos($access_token, ':') !== false ) {
@@ -675,6 +732,7 @@ function cff_get_processed_options( $feed_options ) {
     }
 
     //If the reviews api method is set to be 'auto' then change it based on whether the user is filtering the posts
+
     $cff_reviews_no_text = $feed_options[ 'reviewshidenotext' ];
     ( $cff_reviews_no_text == 'on' || $cff_reviews_no_text == 'true' || $cff_reviews_no_text == true ) ? $cff_reviews_no_text = true : $cff_reviews_no_text = false;
     if( $feed_options[ 'reviewshidenotext' ] == 'false' ) $cff_reviews_no_text = false;

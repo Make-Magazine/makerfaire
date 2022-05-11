@@ -60,7 +60,10 @@ class ESSBSocialFollowersCounterWidget extends WP_Widget {
 		$widget_settings_fields = ESSBSocialFollowersCounterHelper::default_options_structure();
 		
 		foreach ($widget_settings_fields as $field => $options) {
-			$instance[$field] = $new_instance[$field];
+		    
+		    if (isset($new_instance[$field])) {
+                $instance[$field] = $new_instance[$field];
+		    }
 		}
 		
 		return $instance;
@@ -77,6 +80,18 @@ class ESSBSocialFollowersCounterWidget extends WP_Widget {
 		$hide_title = isset($instance['hide_title']) ? $instance['hide_title'] : 0;
 		
 		if (intval($hide_title) == 1) { $title = ""; }
+		
+		/**
+		 * @since 8.4
+		 */
+		if (class_exists('ESSBWpmlBridge')) {
+		    $key = 'wpml_widget_title_followers_counter_'.ESSBWpmlBridge::getFrontEndLanugage();
+		    $translated_title = essb_option_value($key);
+		    
+		    if (!empty($translated_title)) {
+		        $title = $translated_title;
+		    }
+		}
 		
 		if (!empty($title)) {
 			echo $before_widget . $before_title . $title . $after_title;

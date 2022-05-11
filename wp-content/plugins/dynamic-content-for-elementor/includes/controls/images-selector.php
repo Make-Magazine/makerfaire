@@ -16,7 +16,7 @@ if (!\defined('ABSPATH')) {
  *
  * @since 1.0.0
  */
-class DCE_Control_Images_Selector extends Base_Data_Control
+class Control_Images_Selector extends Base_Data_Control
 {
     public function get_type()
     {

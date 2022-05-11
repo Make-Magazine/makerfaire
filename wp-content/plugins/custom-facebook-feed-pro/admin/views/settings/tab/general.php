@@ -37,9 +37,9 @@
             </div>
 
             <div v-if="licenseType === 'pro' && (
-                licenseStatus === 'valid' || 
-                licenseStatus === 'active' || 
-                licenseStatus === 'activated')" 
+                licenseStatus === 'valid' ||
+                licenseStatus === 'active' ||
+                licenseStatus === 'activated')"
                 class="cff-tab-field-inner-wrap cff-license cff-license" :class="['license-' + licenseStatus, 'license-type-' + licenseType, {'form-error': hasError}]">
                 <span class="license-status" v-html="generalTab.licenseBox.activeText"></span>
                 <div class="d-flex">
@@ -76,8 +76,8 @@
                 </div>
             </div>
 
-            <div v-else 
-                class="cff-tab-field-inner-wrap cff-license" 
+            <div v-else
+                class="cff-tab-field-inner-wrap cff-license"
                 :class="['license-' + licenseStatus, 'license-type-' + licenseType, {'form-error': hasError}]"
                 >
                 <span class="license-status" v-html="generalTab.licenseBox.inactiveText"></span>
@@ -159,7 +159,7 @@
                             </span>
                             <span>
                                 <span class="recheck-license-status" v-if="extension.licenseKey" @click="recheckLicense(extension.licenseKey, extension.itemName, extension.name)" v-html="recheckBtnText(extension.name)" :class="recheckLicenseStatus"></span>
-                                
+
                                 <span class="upgrade">
                                     <a :href="extension.upgradeUrl" target="_blank">{{generalTab.licenseBox.upgrade}}</a>
                                 </span>
@@ -177,7 +177,7 @@
         </div>
     </div>
 
-    <div class="sb-tab-box sb-manage-sources-box clearfix">
+    <div id="sb-manage-sources-box" class="sb-tab-box sb-manage-sources-box clearfix">
         <div class="tab-label">
             <h3>{{generalTab.manageSource.title}}</h3>
         </div>
@@ -187,7 +187,7 @@
                     {{generalTab.manageSource.description}}
                 </span>
                 <div class="sb-sources-list">
-                    <div class="sb-srcs-item sb-srcs-new" @click.prevent.default="activateView('sourcePopup')">
+                    <div class="sb-srcs-item sb-srcs-new" @click.prevent.default="activateView('sourcePopup','creationRedirect')">
                         <span class="add-new-icon">
                             <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M14.25 8H8.25V14H6.25V8H0.25V6H6.25V0H8.25V6H14.25V8Z" fill="#0068A0"/>
@@ -205,13 +205,20 @@
                                 <div class="sb-srcs-item-used">
                                     <span v-html="printUsedInText(source.used_in)"></span>
                                     <div v-if="source.used_in > 0" class="sb-control-elem-tltp"><div class="sb-control-elem-tltp-icon" v-html="svgIcons['info']" @click.prevent.default="viewSourceInstances(source)"></div></div>
-                                    <div v-if="source.error !== ''" class="sb-source-error-wrap">
-                                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6.50008 0.666664C3.28008 0.666664 0.666748 3.28 0.666748 6.5C0.666748 9.72 3.28008 12.3333 6.50008 12.3333C9.72008 12.3333 12.3334 9.72 12.3334 6.5C12.3334 3.28 9.72008 0.666664 6.50008 0.666664ZM7.08342 9.41667H5.91675V8.25H7.08342V9.41667ZM7.08342 7.08333H5.91675V3.58333H7.08342V7.08333Z" fill="#D72C2C"/>
-                                        </svg>
+									<div v-if="source.error !== '' || source.error_encryption" class="sb-source-error-wrap">
+										<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M6.50008 0.666664C3.28008 0.666664 0.666748 3.28 0.666748 6.5C0.666748 9.72 3.28008 12.3333 6.50008 12.3333C9.72008 12.3333 12.3334 9.72 12.3334 6.5C12.3334 3.28 9.72008 0.666664 6.50008 0.666664ZM7.08342 9.41667H5.91675V8.25H7.08342V9.41667ZM7.08342 7.08333H5.91675V3.58333H7.08342V7.08333Z" fill="#D72C2C"/>
+										</svg>
 
-                                        <span v-html="genericText.errorSource"></span><a href="#" @click.prevent.default="activateView('sourcePopup')" v-html="genericText.reconnect"></a>
-                                    </div>
+										<span v-html="source.error !== '' ? genericText.errorSource : genericText.errorEncryption"></span><a href="#" @click.prevent.default="activateView('sourcePopup', 'creationRedirect')" v-html="genericText.reconnect"></a>
+									</div>
+									<div v-if="source.error === '' && typeof( source.needs_update ) !== 'undefined' && source.needs_update" class="sb-source-error-wrap">
+										<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M6.50008 0.666664C3.28008 0.666664 0.666748 3.28 0.666748 6.5C0.666748 9.72 3.28008 12.3333 6.50008 12.3333C9.72008 12.3333 12.3334 9.72 12.3334 6.5C12.3334 3.28 9.72008 0.666664 6.50008 0.666664ZM7.08342 9.41667H5.91675V8.25H7.08342V9.41667ZM7.08342 7.08333H5.91675V3.58333H7.08342V7.08333Z" fill="#D72C2C"/>
+										</svg>
+
+										<span v-html="genericText.updateRequired"></span><a href="#" @click.prevent.default="activateView('sourcePopup','creationRedirect')" v-html="genericText.reconnect"></a>
+									</div>
                                 </div>
                             </div>
                             <div class="sb-srcs-item-actions">
@@ -226,11 +233,13 @@
                                 <span>{{source.account_id}}</span>
                                 <div class="cff-fb-srcs-info-icon" v-html="svgIcons['copy2']" @click.prevent.default="copyToClipBoard(source.account_id)"></div>
                             </div>
+                            <!--
                             <div class="cff-fb-srcs-info-item">
                                 <strong>{{genericText.token}}</strong>
                                 <span>{{source.access_token}}</span>
                                 <div class="cff-fb-srcs-info-icon" v-html="svgIcons['copy2']" @click.prevent.default="copyToClipBoard(source.access_token)"></div>
                             </div>
+                        -->
                         </div>
                     </div>
 

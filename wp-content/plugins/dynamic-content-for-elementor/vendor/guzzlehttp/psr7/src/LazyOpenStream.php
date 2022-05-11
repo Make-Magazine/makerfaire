@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\GuzzleHttp\Psr7;
+namespace GuzzleHttp\Psr7;
 
 use Psr\Http\Message\StreamInterface;
 /**
@@ -11,7 +11,7 @@ use Psr\Http\Message\StreamInterface;
  */
 class LazyOpenStream implements StreamInterface
 {
-    use StreamDecoratorTrait;
+    use \GuzzleHttp\Psr7\StreamDecoratorTrait;
     /** @var string File to open */
     private $filename;
     /** @var string */
@@ -32,6 +32,6 @@ class LazyOpenStream implements StreamInterface
      */
     protected function createStream()
     {
-        return Utils::streamFor(Utils::tryFopen($this->filename, $this->mode));
+        return \GuzzleHttp\Psr7\Utils::streamFor(\GuzzleHttp\Psr7\Utils::tryFopen($this->filename, $this->mode));
     }
 }

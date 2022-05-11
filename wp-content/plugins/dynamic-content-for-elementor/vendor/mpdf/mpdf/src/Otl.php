@@ -5631,7 +5631,7 @@ class Otl
         for ($nc = 0; $nc < $numchunks; $nc++) {
             $numchars = isset($cOTLdata[$nc]['char_data']) ? \count($cOTLdata[$nc]['char_data']) : 0;
             for ($i = 0; $i < $numchars; ++$i) {
-                $carac = [];
+                $carac = ['level' => 0];
                 if (isset($cOTLdata[$nc]['GPOSinfo'][$i])) {
                     $carac['GPOSinfo'] = $cOTLdata[$nc]['GPOSinfo'][$i];
                 }
@@ -5652,7 +5652,7 @@ class Otl
                 $bidiData[] = $carac;
             }
         }
-        if ($maxlevel == 0) {
+        if ($maxlevel === 0) {
             return;
         }
         $numchars = \count($bidiData);
@@ -5664,7 +5664,7 @@ class Otl
         //  The types of characters used here are the original types, not those modified by the previous phase cf N1 and N2*******
         //  Because a Paragraph Separator breaks lines, there will be at most one per line, at the end of that line.
         // Set the initial paragraph embedding level
-        if ($blockdir == 'rtl') {
+        if ($blockdir === 'rtl') {
             $pel = 1;
         } else {
             $pel = 0;

@@ -122,6 +122,9 @@ class ESSBAsyncShareCounters {
 				case 'buffer' :
 					$RollingCurlX->addRequest ( $this->prepare_request_url ( $k, $url ), $post_data, array ($this, 'get_counts' ), array ($k ), $headers );
 					break;
+				case 'tumblr' :
+				    $RollingCurlX->addRequest ( $this->prepare_request_url ( $k, $url ), $post_data, array ($this, 'get_counts' ), array ($k ), $headers );
+				    break;
 				case 'love' :
 					if (! $recover_mode) {
 						$this->counters [$k] = $this->get_loves_count ( $this->post_id );
@@ -232,6 +235,9 @@ class ESSBAsyncShareCounters {
 			case 'yummly' :
 				$callback_url = 'https://www.yummly.com/services/yum-count?url=' . $url;
 				break;
+			case 'tumblr':
+			    $callback_url = 'http://api.tumblr.com/v2/share/stats?url=' . $url;
+			    break;
 		}
 		
 		return $callback_url;
@@ -480,6 +486,20 @@ class ESSBAsyncShareCounters {
 						$result = isset($json['count']) ? intval($json['count']) : 0;
 					}
 					break;
+				case 'tumblr':
+				    $result = 0;
+				    if (!empty($data)) {
+				        $response = json_decode ( $data, true );
+				        
+				        if ( isset( $response->meta->status ) && 200 == $response->meta->status ) {
+				            if ( isset( $response->response->note_count ) ) {
+				                $result = intval( $response->response->note_count );
+				            } else {
+				                $result = 0;
+				            }
+				        }
+				    }
+				    break;
 			}
 		}
 		

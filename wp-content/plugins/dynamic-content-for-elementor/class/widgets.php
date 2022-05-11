@@ -47,6 +47,9 @@ class Widgets
             if (\DynamicContentForElementor\Helper::check_plugin_dependencies(\false, $widget_info['plugin_depends']) && (!isset($widget_info['minimum_php']) || isset($widget_info['minimum_php']) && \version_compare(\phpversion(), $widget_info['minimum_php'], '>='))) {
                 $widget_class = '\\DynamicContentForElementor\\' . $widget_info['class'];
                 $widget_object = new $widget_class();
+                if (\method_exists($widget_object, 'run_once')) {
+                    $widget_object->run_once();
+                }
                 \Elementor\Plugin::instance()->widgets_manager->register_widget_type($widget_object);
             }
         }
@@ -61,11 +64,11 @@ class Widgets
     public function add_elementor_widget_categories($elements)
     {
         // Default category for widgets without a category
-        $elements->add_category('dynamic-content-for-elementor', array('title' => 'Dynamic.ooo'));
+        $elements->add_category('dynamic-content-for-elementor', array('title' => DCE_PRODUCT_NAME));
         $groups = \DynamicContentForElementor\Plugin::instance()->features->get_widgets_groups();
         // Add categories
         foreach ($groups as $group_key => $group_name) {
-            $elements->add_category('dynamic-content-for-elementor-' . \strtolower($group_key), array('title' => 'Dynamic.ooo - ' . $group_name));
+            $elements->add_category('dynamic-content-for-elementor-' . \strtolower($group_key), array('title' => DCE_PRODUCT_NAME . ' - ' . $group_name));
         }
     }
 }

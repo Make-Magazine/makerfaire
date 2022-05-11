@@ -114,7 +114,7 @@ class CFF_GDPR_Integrations {
 		}
 		$cff_statuses_option = get_option( 'cff_statuses', array() );
 
-		if ( $cff_statuses_option['gdpr']['from_update_success'] ) {
+		if ( ! empty( $cff_statuses_option['gdpr']['from_update_success'] ) && $cff_statuses_option['gdpr']['from_update_success'] ) {
 			return (CFF_GDPR_Integrations::gdpr_plugins_active() !== false);
 		}
 		return false;

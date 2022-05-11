@@ -728,7 +728,7 @@ font-size: 13px; display: flex; background: #fff; }
  */
 
 .essb-usefull-hint {
-	background: #19073B;
+	background: #172153;
 	color: #fff;
 	padding: 25px;
 	margin-bottom: 15px;
@@ -737,14 +737,14 @@ font-size: 13px; display: flex; background: #fff; }
 }
 
 .essb-usefull-hint .title {
-	color: #F56640 !important;
+	color: #fff !important;
 	font-weight: bold;
 	letter-spacing: -0.5px;
-	margin-bottom: 15px;
+	margin-bottom: 5px;
 }
 
 .essb-usefull-hint .tag-list {
-	margin-top: 15px;
+	margin-top: 10px;
 }
 
 .essb-usefull-hint .tag {
@@ -814,6 +814,7 @@ font-size: 13px; display: flex; background: #fff; }
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 15px;
 	max-width: 1100px;
+	margin: 0 auto;
 }
 
 .essb-extension-list .list .addon-card {
@@ -1130,6 +1131,10 @@ font-size: 13px; display: flex; background: #fff; }
 	border-radius: 3px;
 }
 
+.ao-settings-section.ao-shortcode-panel .ao-panel-icon {
+	color: #02b1ff;
+}
+
 .essb-control-content .ao-settings-section-deactivate {
 	border: 1px solid #ffc1cd;
 	border-radius: 3px;
@@ -1173,3 +1178,51 @@ font-size: 13px; display: flex; background: #fff; }
 
 .essb-svg-size18 svg { width: 18px; height: 18px; vertical-align: middle;}
 .essb-portlet-heading-icon .essb-svg-icon { width: 18px; height: 18px; line-height: 1; }
+
+.essb-control-content .essb-help-hinticon,
+.essb-metabox7 .essb-help-hinticon {
+	display: inline-flex;
+	align-items: center;
+}
+
+/* Help hint icons */
+.essb-control-content .essb-help-hinticon .title,
+.essb-metabox7 .essb-help-hinticon .title { flex: 1; }
+.essb-control-content .essb-help-hinticon .help,
+.essb-metabox7 .essb-help-hinticon .help {
+    /* width: 21px; */
+    height: 21px;
+    background: #f1f1f1;
+    border-radius: 50%;
+    justify-content: center;
+    padding: 0 8px;
+	color: #000;	
+	--microtip-font-size: 12px;
+	position: relative;
+}
+
+.essb-control-content .essb-help-hinticon .help .click-to-learn,
+.essb-metabox7 .essb-help-hinticon .help .click-to-learn { display: none; }
+
+.essb-control-content .essb-help-hinticon .help:hover,
+.essb-metabox7 .essb-help-hinticon .help:hover {
+	background: #5867dd;
+	color: #fff;
+}
+
+.essb-control-content .essb-help-hinticon .help:hover .click-to-learn,
+.essb-metabox7 .essb-help-hinticon .help:hover .click-to-learn {
+	display: inline-block;
+	position: absolute;
+	top: -30px;
+}
+
+.essb-post-clear-shorturl .spinner1,
+.essb-post-clear-shorturl .dashicons-yes,
+.essb-post-clear-counters .dashicons-yes { display: none; }
+
+.essb-options-hint-glowhint {
+	background-color: #eff3fc;
+}
+
+.essb-options-hint-glowhint .essb-options-hint-title { font-size: 14px; margin-bottom: 5px; }

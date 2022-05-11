@@ -13,32 +13,22 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class AddToFavorites extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
-        return ['dce-addtofavorites'];
+        return ['dce-add-to-favorites'];
     }
     public function get_script_depends()
     {
         return ['dce-cookie'];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => __('Settings', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_favorite_scope', ['label' => __('Scope', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['cookie' => ['title' => __('Cookie', 'dynamic-content-for-elementor'), 'icon' => 'icon-dyn-cookie'], 'user' => ['title' => __('User', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-user'], 'global' => ['title' => __('Global', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-globe']], 'toggle' => \false, 'default' => 'user']);
@@ -125,7 +115,7 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPro
         $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['label' => __('Message shadow', 'dynamic-content-for-elementor'), 'name' => 'message_box_shadow', 'selector' => '{{WRAPPER}} .dce-notice']);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -149,10 +139,10 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPro
         $act_remove = \false;
         $act = $this->update_list($element_ID, $post_ID);
         if ($act) {
-            if ($act == 'add') {
+            if ('add' === $act) {
                 $act_add = \true;
             }
-            if ($act == 'remove') {
+            if ('remove' === $act) {
                 $act_remove = \true;
             }
         }
@@ -228,13 +218,14 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPro
             $this->add_render_attribute('button', 'href', $btn_url);
             $this->add_render_attribute('button', 'class', 'elementor-button-link');
         }
+        $this->add_render_attribute('button', 'rel', apply_filters('dynamicooo/add-to-favorites/rel', 'nofollow'));
         if ($settings['hover_animation']) {
             $this->add_render_attribute('button', 'class', 'elementor-animation-' . $settings['hover_animation']);
         }
         ?>
 			<a <?php 
         echo $this->get_render_attribute_string('button');
-        ?> rel="nofollow">
+        ?>>
 				<span <?php 
         echo $this->get_render_attribute_string('content-wrapper');
         ?>>
@@ -451,7 +442,7 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPro
             ?>
 				<script>
 					jQuery(function () {
-						var cookieValue = dce_getCookie("<?php 
+						var cookieValue = dceGetCookie("<?php 
             echo $list['dce_favorite_key'];
             ?>");
 						if (cookieValue) {
@@ -471,12 +462,12 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPro
         ?>
 		</div>
 		<?php 
-        $modal_class = $settings['dce_favorite_msg_floating'] ? ' dce-modal' : '';
+        $modal_class = !empty($settings['dce_favorite_msg_floating']) ? ' dce-modal' : '';
         $modal_class = $settings['dce_favorite_msg_floating'] && !empty($settings['message_align']) ? $modal_class . ' modal-' . $settings['message_align'] : $modal_class;
         $modal_class = $settings['dce_favorite_msg_floating'] && !empty($settings['message_valign']) ? $modal_class . ' modal-' . $settings['message_valign'] : $modal_class;
         ?>
 		<?php 
-        if (($act_add || \Elementor\Plugin::$instance->editor->is_edit_mode()) && $settings['dce_favorite_msg_add_enable']) {
+        if ($settings['dce_favorite_msg_add_enable']) {
             ?>
 			<div class="elementor-message elementor-message-success dce-notice dce-notice-favorite dce-notice-favorite-add elementor-alert elementor-alert-success<?php 
             echo $modal_class;
@@ -497,7 +488,7 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPro
 			</div>
 			<?php 
         }
-        if (($act_remove || \Elementor\Plugin::$instance->editor->is_edit_mode()) && $settings['dce_favorite_msg_remove_enable']) {
+        if ($settings['dce_favorite_msg_remove_enable']) {
             ?>
 			<div class="elementor-message elementor-message-danger dce-notice dce-notice-favorite dce-notice-favorite-remove elementor-alert elementor-alert-warning<?php 
             echo $modal_class;
@@ -576,7 +567,7 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPro
                             $cookie_days = $settings['dce_favorite_cookie_days'] ? \time() + 86400 * $settings['dce_favorite_cookie_days'] : 0;
                             // 86400 = 1 day
                             $http_host = $_SERVER['HTTP_HOST'] == 'localhost' ? '' : sanitize_text_field($_SERVER['HTTP_HOST']);
-                            -@\setcookie($list_key, $favorite_value, $cookie_days, '/', $http_host);
+                            @\setcookie($list_key, $favorite_value, $cookie_days, '/', $http_host);
                             if ($settings['dce_favorite_counter']) {
                                 $cookies = get_option('dce_favorite_cookies', []);
                                 if (isset($cookies[$list_key][$post_ID])) {
@@ -613,7 +604,7 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPro
             $meta_key = sanitize_text_field($settings['dce_favorite_key']);
         }
         $args = ['meta_query' => [['key' => $meta_key, 'value' => \sprintf(':"%s";', $post_ID), 'compare' => 'LIKE']]];
-        $user_query = new \DynamicContentForElementor\Widgets\WP_User_Query($args);
+        $user_query = new \WP_User_Query($args);
         // User Loop
         $count = 0;
         if (!empty($user_query->get_results())) {
@@ -643,7 +634,10 @@ class DCE_Widget_Favorites extends \DynamicContentForElementor\Widgets\WidgetPro
                 }
                 break;
         }
-        return Helper::my_translate_object_id($favorite_value);
+        if (Helper::is_wpml_active()) {
+            return Helper::wpml_translate_object_id($favorite_value);
+        }
+        return $favorite_value;
     }
     public static function get_user_counter($list_key = '')
     {

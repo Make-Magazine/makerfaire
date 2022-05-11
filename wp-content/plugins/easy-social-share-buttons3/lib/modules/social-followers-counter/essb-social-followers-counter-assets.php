@@ -158,12 +158,12 @@ class ESSBSocialFollowersCounterAssets {
                 }
                 
                 if ($single_hover_color != '') {
-                    $hover_colors .= '.essb-profiles .essb-fc-network-'.esc_attr($social_display).':hover {' . self::network_color_variable($social_display) . ':' . $single_hover_color.';' .'}';
+                    $hover_colors .= '.essb-social-followers-variables.essb-profiles .essb-fc-network-'.esc_attr($social_display).':hover {' . self::network_color_variable($social_display) . ':' . $single_hover_color.';' .'}';
                 }
             }
             
             if ($colors != '') {
-                $colors = '.essb-profiles { ' .$colors . '}';
+                $colors = '.essb-social-followers-variables.essb-profiles { ' .$colors . '}';
                 if ($hover_colors != '') {
                     $colors .= $hover_colors;
                 }

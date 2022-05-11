@@ -1,17 +1,18 @@
 <?php
 /*
-  Plugin Name: Embed Plus for YouTube Pro - Embed a YouTube Gallery, Channel, Playlist, Live Stream, Facade
+  Plugin Name: Embed Plus Plugin for YouTube Pro
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.0.1.1
+  Version: 14.1
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
-  Requires at least: 4.1
+  Requires at least: 4.5
+  Tested up to: 5.9
  */
 
 /*
-  Embed Plus for YouTube Pro
-  Copyright (C) 2021 EmbedPlus.com
+  Embed Plus Plugin for YouTube Pro
+  Copyright (C) 2022 EmbedPlus.com
 
  */
 
@@ -22,7 +23,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.0.1.1';
+    public static $version = '14.1';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -119,6 +120,7 @@ class YouTubePrefsPro
     public static $opt_gallery_disptype = 'gallery_disptype';
     public static $opt_not_live_content = 'not_live_content';
     public static $opt_not_live_on = 'not_live_on';
+    public static $opt_not_live_on_channel = 'not_live_on_channel';
     public static $opt_live_chat = 'live_chat';
     public static $opt_admin_off_scripts = 'admin_off_scripts';
     public static $opt_defer_js = 'defer_js';
@@ -211,7 +213,7 @@ class YouTubePrefsPro
         self::$get_api_key_msg = __('The ### feature now requires a (free) YouTube API key from Google. Please follow the easy steps <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">in this video</a> to create and save your API key.', 'text_domain');
         self::$boilerplate_api_error_message = __(' Please make sure you performed the <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">steps in this video</a> to create and save a proper server API key.', 'text_domain');
         self::$dft_gdpr_consent_message = __('<p><strong>Please accept YouTube cookies to play this video.</strong> By accepting you will be accessing content from YouTube, a service provided by an external third party.</p><p><a href="https://policies.google.com/privacy" target="_blank">YouTube privacy policy</a></p><p>If you accept this notice, your choice will be saved and the page will refresh.</p>', 'text_domain');
-    
+
         self::$vi_default_date = date('Y-m-d H:i:s', strtotime('2000-01-01'));
         register_deactivation_hook(__FILE__, array(get_class(), 'on_deactivation'));
         add_action('admin_init', array(get_class(), 'check_double_plugin_warning'));
@@ -317,10 +319,20 @@ class YouTubePrefsPro
                 add_action("wp_ajax_my_embedplus_yt_dash", array(get_class(), 'my_embedplus_yt_dash'));
                 add_action("wp_ajax_nopriv_my_embedplus_yt_dash", array(get_class(), 'my_embedplus_yt_dash'));
             }
+
+            if (!empty(self::$alloptions[self::$opt_not_live_on_channel]))
+            {
+                add_action("wp_footer", array(get_class(), 'live_fallback_template'));
+            }
             /////////////////////////////////////
             include_once(EPYTVI_INCLUDES_PATH . 'vi_actions.php');
             include_once(EPYTGB_INCLUDES_PATH . 'gutenberg_hooks.php');
         }
+    }
+
+    public static function live_fallback_template()
+    {
+        echo '<script type="text/x-template" id="epyt-live-fallback">' . base64_encode(apply_filters('ytprefs_filter_the_content_light', wp_kses_post(self::$alloptions[self::$opt_not_live_content]))) . '</script>';
     }
 
     public static function defer_scripts($tag, $handle, $src)
@@ -802,7 +814,7 @@ class YouTubePrefsPro
                             // cleanup
                             $search = str_replace('/shorts/', '/watch?v=', $search);
                         }
-                        
+
                         if (preg_match(self::$justurlregex, $search))
                         {
                             //$search = esc_url($search);
@@ -1142,7 +1154,7 @@ class YouTubePrefsPro
                                         <div class="clearboth" style="height: 10px;">
                                         </div>
                                         <p>
-                                            <?php _e('If you see a black/empty YouTube player, then it likely means that you do not have any currently running or future live streams that are scheduled in your channel, so the plugin isn\'t getting any data from the YouTube API to show.  If you want to continue to use the channel based live stream embedding method, we suggest regularly scheduling one or more live streams so the player is not black/empty.', 'text_domain'); ?>
+                                            <?php _e('If you see a black/empty YouTube player, then it likely means that you do not have any currently running or future live streams that are scheduled in your channel, so the plugin isn\'t getting any data from the YouTube API to show.  If you want to continue to use the channel based live stream embedding method, we suggest regularly scheduling one or more live streams, or using the live stream fallback content feature, so the player is not black/empty.', 'text_domain'); ?>
                                         </p>
                                         <div class="ep-wizard-preview-video-wrapper">
                                             <iframe src="https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>" allowfullscreen="" frameborder="0"></iframe>
@@ -1405,10 +1417,10 @@ class YouTubePrefsPro
                                     </p>
                                     <ol>
                                         <li>
-                                            <?php _e('Paste in the direct URL of the live stream or premiere below and click Submit. Example', 'text_domain'); ?>: https://www.youtube.com/watch?v=<strong>5qap5aO4i9A</strong>
+                                            <?php _e('Paste in the direct URL of the live stream or premiere below and click Submit. <br> Example', 'text_domain'); ?>: https://www.youtube.com/watch?v=<strong>5qap5aO4i9A</strong>
                                         </li>
                                         <li>
-                                           <?php _e(' On the next screen, customize or insert your video.', 'text_domain'); ?>
+                                            <?php _e(' On the next screen, customize or insert your video.', 'text_domain'); ?>
                                         </li>
                                     </ol>
                                     <form name="wizform_live" method="post" action="" class="wizform" id="wizform_live">
@@ -1434,7 +1446,7 @@ class YouTubePrefsPro
                                     </form>
                                     <?php echo $step1_livechannel_errors ? '<p class="orange bold">' . $step1_livechannel_errors . '</p>' : ''; ?>
                                     <p class="smallnote">
-                                        <?php _e('<strong class="orange">Note</strong>: For now, the "Not Live" custom content feature is not available for channel-based embeds. YouTube\'s standard countdown will appear in the video until the scheduled stream goes live.', 'text_domain'); ?>
+                                        <?php _e('<strong class="orange">New</strong>: The "Not Live" fallback content feature is now available for channel-based embeds! <a href="' . admin_url('admin.php?page=youtube-my-preferences') . '#not_live_content_scroll" target="_blank">Try it out here</a>.', 'text_domain'); ?>
                                     </p>
                                 </div>
                             </div>
@@ -2124,6 +2136,7 @@ class YouTubePrefsPro
                     ajax_compat: <?php echo self::$alloptions[self::$opt_ajax_compat] == '1' ? 'true' : 'false' ?>,
                     ytapi_load: '<?php echo esc_attr(self::$alloptions[self::$opt_ytapi_load]) ?>',
                     pause_others: <?php echo self::$alloptions[self::$opt_pause_others] == '1' ? 'true' : 'false' ?>,
+                    not_live_on_channel: <?php echo self::$alloptions[self::$opt_not_live_on_channel] == '1' ? 'true' : 'false' ?>,
             <?php
             if (isset(self::$alloptions[self::$opt_pro]) && strlen(trim(self::$alloptions[self::$opt_pro])) > 8 && isset(self::$alloptions[self::$opt_dashpre]) && self::$alloptions[self::$opt_dashpre] == '1')
             {
@@ -2240,6 +2253,7 @@ class YouTubePrefsPro
         $_gallery_disptype = 'default';
         $_not_live_content = '';
         $_not_live_on = 0;
+        $_not_live_on_channel = 0;
         $_live_chat = 0;
         $_debugmode = 0;
         $_admin_off_scripts = 0;
@@ -2382,6 +2396,7 @@ class YouTubePrefsPro
             $_not_live_content = self::tryget($arroptions, self::$opt_not_live_content, $_not_live_content);
             $_not_live_content = empty($_not_live_content) ? $_not_live_content : trim($_not_live_content);
             $_not_live_on = self::tryget($arroptions, self::$opt_not_live_on, empty($_not_live_content) ? 0 : $_not_live_on);
+            $_not_live_on_channel = self::tryget($arroptions, self::$opt_not_live_on_channel, $_not_live_on_channel);
             $_live_chat = self::tryget($arroptions, self::$opt_live_chat, $_live_chat);
             $_admin_off_scripts = self::tryget($arroptions, self::$opt_admin_off_scripts, $_admin_off_scripts);
             $_defer_js = self::tryget($arroptions, self::$opt_defer_js, $_defer_js);
@@ -2496,6 +2511,7 @@ class YouTubePrefsPro
             self::$opt_gallery_length_dsc => $_gallery_length_dsc,
             self::$opt_not_live_content => $_not_live_content,
             self::$opt_not_live_on => $_not_live_on,
+            self::$opt_not_live_on_channel => $_not_live_on_channel,
             self::$opt_live_chat => $_live_chat,
             self::$opt_debugmode => $_debugmode,
             self::$opt_admin_off_scripts => $_admin_off_scripts,
@@ -3459,30 +3475,30 @@ class YouTubePrefsPro
             }
             else if (isset($finalparams['list']))
             {
-                $facade_img_src = ' data-facadeoembed="playlist?list=' . $finalparams['list'] .'" ';
-            }                
+                $facade_img_src = ' data-facadeoembed="playlist?list=' . $finalparams['list'] . '" ';
+            }
             $acctitle = str_replace('title="', 'alt="', $acctitle);
             $facade_autoplay = $finalparams[self::$opt_facade_autoplay] == 1 ? ' data-epautoplay="1" ' : '';
             $code_iframe1 = '<div ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs . ' data-origwidth="' . self::$defaultwidth . '" data-origheight="' . self::$defaultheight . '" ' . $relstop .
                     'data-facadesrc="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
-            $code_iframe2 = '" class="__youtube_prefs__ epyt-facade' . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
+            $code_iframe2 = '" class="__youtube_prefs__ epyt-facade ' . (!empty($finalparams['live_stream']) ? ' epyt-live-channel ' : '') . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
                     $voloutput . $galleryid_ifm_data . $facade_autoplay . '><img class="epyt-facade-poster" loading="lazy" ' . $acctitle . $facade_img_src . ' />' .
-                    '<button class="epyt-facade-play" aria-label="Play"><svg height="100%" version="1.1" viewBox="0 0 68 48" width="100%"><path class="ytp-large-play-button-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path><path d="M 45,24 27,14 27,34" fill="#fff"></path></svg></button>' .
+                    '<button class="epyt-facade-play" aria-label="Play"><svg data-no-lazy="1" height="100%" version="1.1" viewBox="0 0 68 48" width="100%"><path class="ytp-large-play-button-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path><path d="M 45,24 27,14 27,34" fill="#fff"></path></svg></button>' .
                     '</div>';
         }
         else
         {
             $code_iframe1 = '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs . ' data-origwidth="' . self::$defaultwidth . '" data-origheight="' . self::$defaultheight . '" ' . $relstop .
                     $dynsrc . 'src="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
-            $code_iframe2 = '" class="__youtube_prefs__ ' . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
-                    $voloutput . $acctitle . $galleryid_ifm_data . ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll=""></iframe>';            
-        }        
-        
+            $code_iframe2 = '" class="__youtube_prefs__ ' . (!empty($finalparams['live_stream']) ? ' epyt-live-channel ' : '') . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
+                    $voloutput . $acctitle . $galleryid_ifm_data . ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll=""></iframe>';
+        }
+
         $code2 = $end_responsive . $end_live_chat_video . $begin_live_chat_box . $end_live_chat_box . $end_live_chat . $endlb . $end_gb_wrapper . $schemaorgoutput;
-        
+
         $code1 .= $code_iframe1;
         $code2 = $code_iframe2 . $code2;
-        
+
         $origin = '';
 
         try
@@ -3527,7 +3543,7 @@ class YouTubePrefsPro
         if (self::gdpr_mode())
         {
             $code1 = $beginlb . '<div ' . $dyntype . $centercode . ' id="_ytid_' . rand(10000, 99999) . '"'; // width="' . self::$defaultwidth . '" height="' . self::$defaultheight . '" ';
-            $code2 = ' class="__youtube_prefs__  __youtube_prefs_gdpr__ ' . ($iscontent ? '' : ' __youtube_prefs_widget__') . ($isoverride ? ' epyt-is-override ' : '')  . $disptypeif . '" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll="">' .
+            $code2 = ' class="__youtube_prefs__  __youtube_prefs_gdpr__ ' . ($iscontent ? '' : ' __youtube_prefs_widget__') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . '" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll="">' .
                     apply_filters('ytprefs_filter_the_content_light', wp_kses_post(self::$alloptions[self::$opt_gdpr_consent_message])) .
                     '<button type="button" class="__youtube_prefs_gdpr__">' . trim(sanitize_text_field(self::$alloptions[self::$opt_gdpr_consent_button])) .
                     '<img src="' . plugins_url('images/icon-check.png', __FILE__) . '" alt="accept" data-no-lazy="1" data-skipgform_ajax_framebjll="" /></button>' .
@@ -4423,7 +4439,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update increases resolution for facade images, fixes a CSS issue with GDPR embeds, adds YouTube Shorts compatibility, and fixes a playing-in-background issue for popup players.";
+        $new_pointer_content .= "This update adds the live stream fallback feature to channel-based live stream embeds, for both free and Pro versions.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -4704,11 +4720,11 @@ class YouTubePrefsPro
                 display: inline;
             }
 
-            #not_live_on ~ #wp-not_live_content-wrap {
+            .not-live-content {
                 opacity: .3;
             }
 
-            #not_live_on:checked ~ #wp-not_live_content-wrap {
+            #not_live_on:checked ~ .not-live-content, #not_live_on_channel:checked ~ .not-live-content {
                 opacity: 1;
             }
 
@@ -5021,192 +5037,192 @@ class YouTubePrefsPro
                             </p>
                             <?php
                             $lang_codes = [
-                                ["Abkhazian","аҧсуа бызшәа, аҧсшәа","ab","abk","abk"],
-                                ["Afar","Afaraf","aa","aar","aar"],
-                                ["Afrikaans","Afrikaans","af","afr","afr"],
-                                ["Akan","Akan","ak","aka","aka"],
-                                ["Albanian","Shqip","sq","sqi","alb"],
-                                ["Amharic","አማርኛ","am","amh","amh"],
-                                ["Arabic","العربية","ar","ara","ara"],
-                                ["Aragonese","aragonés","an","arg","arg"],
-                                ["Armenian","Հայերեն","hy","hye","arm"],
-                                ["Assamese","অসমীয়া","as","asm","asm"],
-                                ["Avaric","авар мацӀ, магӀарул мацӀ","av","ava","ava"],
-                                ["Avestan","avesta","ae","ave","ave"],
-                                ["Aymara","aymar aru","ay","aym","aym"],
-                                ["Azerbaijani","azərbaycan dili","az","aze","aze"],
-                                ["Bambara","bamanankan","bm","bam","bam"],
-                                ["Bashkir","башҡорт теле","ba","bak","bak"],
-                                ["Basque","euskara, euskera","eu","eus","baq"],
-                                ["Belarusian","беларуская мова","be","bel","bel"],
-                                ["Bengali","বাংলা","bn","ben","ben"],
-                                ["Bihari languages","भोजपुरी","bh","bih","bih"],
-                                ["Bislama","Bislama","bi","bis","bis"],
-                                ["Bosnian","bosanski jezik","bs","bos","bos"],
-                                ["Breton","brezhoneg","br","bre","bre"],
-                                ["Bulgarian","български език","bg","bul","bul"],
-                                ["Burmese","ဗမာစာ","my","mya","bur"],
-                                ["Catalan, Valencian","català, valencià","ca","cat","cat"],
-                                ["Chamorro","Chamoru","ch","cha","cha"],
-                                ["Chechen","нохчийн мотт","ce","che","che"],
-                                ["Chichewa, Chewa, Nyanja","chiCheŵa, chinyanja","ny","nya","nya"],
-                                ["Chinese","中文 (Zhōngwén), 汉语, 漢語","zh","zho","chi"],
-                                ["Chuvash","чӑваш чӗлхи","cv","chv","chv"],
-                                ["Cornish","Kernewek","kw","cor","cor"],
-                                ["Corsican","corsu, lingua corsa","co","cos","cos"],
-                                ["Cree","ᓀᐦᐃᔭᐍᐏᐣ","cr","cre","cre"],
-                                ["Croatian","hrvatski jezik","hr","hrv","hrv"],
-                                ["Czech","čeština, český jazyk","cs","ces","cze"],
-                                ["Danish","dansk","da","dan","dan"],
-                                ["Divehi, Dhivehi, Maldivian","ދިވެހި","dv","div","div"],
-                                ["Dutch, Flemish","Nederlands, Vlaams","nl","nld","dut"],
-                                ["Dzongkha","རྫོང་ཁ","dz","dzo","dzo"],
-                                ["English","English","en","eng","eng"],
-                                ["Esperanto","Esperanto","eo","epo","epo"],
-                                ["Estonian","eesti, eesti keel","et","est","est"],
-                                ["Ewe","Eʋegbe","ee","ewe","ewe"],
-                                ["Faroese","føroyskt","fo","fao","fao"],
-                                ["Fijian","vosa Vakaviti","fj","fij","fij"],
-                                ["Finnish","suomi, suomen kieli","fi","fin","fin"],
-                                ["French","français, langue française","fr","fra","fre"],
-                                ["Fulah","Fulfulde, Pulaar, Pular","ff","ful","ful"],
-                                ["Galician","Galego","gl","glg","glg"],
-                                ["Georgian","ქართული","ka","kat","geo"],
-                                ["German","Deutsch","de","deu","ger"],
-                                ["Greek, Modern (1453–)","ελληνικά","el","ell","gre"],
-                                ["Guarani","Avañe'ẽ","gn","grn","grn"],
-                                ["Gujarati","ગુજરાતી","gu","guj","guj"],
-                                ["Haitian, Haitian Creole","Kreyòl ayisyen","ht","hat","hat"],
-                                ["Hausa","(Hausa) هَوُسَ","ha","hau","hau"],
-                                ["Hebrew","עברית","he","heb","heb"],
-                                ["Herero","Otjiherero","hz","her","her"],
-                                ["Hindi","हिन्दी, हिंदी","hi","hin","hin"],
-                                ["Hiri Motu","Hiri Motu","ho","hmo","hmo"],
-                                ["Hungarian","magyar","hu","hun","hun"],
-                                ["Interlingua (International Auxiliary Language Association)","Interlingua","ia","ina","ina"],
-                                ["Indonesian","Bahasa Indonesia","id","ind","ind"],
-                                ["Interlingue, Occidental","(originally:) Occidental, (after WWII:) Interlingue","ie","ile","ile"],
-                                ["Irish","Gaeilge","ga","gle","gle"],
-                                ["Igbo","Asụsụ Igbo","ig","ibo","ibo"],
-                                ["Inupiaq","Iñupiaq, Iñupiatun","ik","ipk","ipk"],
-                                ["Ido","Ido","io","ido","ido"],
-                                ["Icelandic","Íslenska","is","isl","ice"],
-                                ["Italian","Italiano","it","ita","ita"],
-                                ["Inuktitut","ᐃᓄᒃᑎᑐᑦ","iu","iku","iku"],
-                                ["Japanese","日本語 (にほんご)","ja","jpn","jpn"],
-                                ["Javanese","ꦧꦱꦗꦮ, Basa Jawa","jv","jav","jav"],
-                                ["Kalaallisut, Greenlandic","kalaallisut, kalaallit oqaasii","kl","kal","kal"],
-                                ["Kannada","ಕನ್ನಡ","kn","kan","kan"],
-                                ["Kanuri","Kanuri","kr","kau","kau"],
-                                ["Kashmiri","कश्मीरी, كشميري‎","ks","kas","kas"],
-                                ["Kazakh","қазақ тілі","kk","kaz","kaz"],
-                                ["Central Khmer","ខ្មែរ, ខេមរភាសា, ភាសាខ្មែរ","km","khm","khm"],
-                                ["Kikuyu, Gikuyu","Gĩkũyũ","ki","kik","kik"],
-                                ["Kinyarwanda","Ikinyarwanda","rw","kin","kin"],
-                                ["Kirghiz, Kyrgyz","Кыргызча, Кыргыз тили","ky","kir","kir"],
-                                ["Komi","коми кыв","kv","kom","kom"],
-                                ["Kongo","Kikongo","kg","kon","kon"],
-                                ["Korean","한국어","ko","kor","kor"],
-                                ["Kurdish","Kurdî, کوردی‎","ku","kur","kur"],
-                                ["Kuanyama, Kwanyama","Kuanyama","kj","kua","kua"],
-                                ["Latin","latine, lingua latina","la","lat","lat"],
-                                ["Luxembourgish, Letzeburgesch","Lëtzebuergesch","lb","ltz","ltz"],
-                                ["Ganda","Luganda","lg","lug","lug"],
-                                ["Limburgan, Limburger, Limburgish","Limburgs","li","lim","lim"],
-                                ["Lingala","Lingála","ln","lin","lin"],
-                                ["Lao","ພາສາລາວ","lo","lao","lao"],
-                                ["Lithuanian","lietuvių kalba","lt","lit","lit"],
-                                ["Luba-Katanga","Kiluba","lu","lub","lub"],
-                                ["Latvian","latviešu valoda","lv","lav","lav"],
-                                ["Manx","Gaelg, Gailck","gv","glv","glv"],
-                                ["Macedonian","македонски јазик","mk","mkd","mac"],
-                                ["Malagasy","fiteny malagasy","mg","mlg","mlg"],
-                                ["Malay","Bahasa Melayu, بهاس ملايو‎","ms","msa","may"],
-                                ["Malayalam","മലയാളം","ml","mal","mal"],
-                                ["Maltese","Malti","mt","mlt","mlt"],
-                                ["Maori","te reo Māori","mi","mri","mao"],
-                                ["Marathi","मराठी","mr","mar","mar"],
-                                ["Marshallese","Kajin M̧ajeļ","mh","mah","mah"],
-                                ["Mongolian","Монгол хэл","mn","mon","mon"],
-                                ["Nauru","Dorerin Naoero","na","nau","nau"],
-                                ["Navajo, Navaho","Diné bizaad","nv","nav","nav"],
-                                ["North Ndebele","isiNdebele","nd","nde","nde"],
-                                ["Nepali","नेपाली","ne","nep","nep"],
-                                ["Ndonga","Owambo","ng","ndo","ndo"],
-                                ["Norwegian Bokmål","Norsk Bokmål","nb","nob","nob"],
-                                ["Norwegian Nynorsk","Norsk Nynorsk","nn","nno","nno"],
-                                ["Norwegian","Norsk","no","nor","nor"],
-                                ["Sichuan Yi, Nuosu","ꆈꌠ꒿ Nuosuhxop","ii","iii","iii"],
-                                ["South Ndebele","isiNdebele","nr","nbl","nbl"],
-                                ["Occitan","occitan, lenga d'òc","oc","oci","oci"],
-                                ["Ojibwa","ᐊᓂᔑᓈᐯᒧᐎᓐ","oj","oji","oji"],
-                                ["Church Slavic, Old Slavonic, Church Slavonic, Old Bulgarian, Old Church Slavonic","ѩзыкъ словѣньскъ","cu","chu","chu"],
-                                ["Oromo","Afaan Oromoo","om","orm","orm"],
-                                ["Oriya","ଓଡ଼ିଆ","or","ori","ori"],
-                                ["Ossetian, Ossetic","ирон æвзаг","os","oss","oss"],
-                                ["Punjabi, Panjabi","ਪੰਜਾਬੀ, پنجابی‎","pa","pan","pan"],
-                                ["Pali","पालि, पाळि","pi","pli","pli"],
-                                ["Persian","فارسی","fa","fas","per"],
-                                ["Polish","język polski, polszczyzna","pl","pol","pol"],
-                                ["Pashto, Pushto","پښتو","ps","pus","pus"],
-                                ["Portuguese","Português","pt","por","por"],
-                                ["Quechua","Runa Simi, Kichwa","qu","que","que"],
-                                ["Romansh","Rumantsch Grischun","rm","roh","roh"],
-                                ["Rundi","Ikirundi","rn","run","run"],
-                                ["Romanian, Moldavian, Moldovan","Română","ro","ron","rum"],
-                                ["Russian","русский","ru","rus","rus"],
-                                ["Sanskrit","संस्कृतम्","sa","san","san"],
-                                ["Sardinian","sardu","sc","srd","srd"],
-                                ["Sindhi","सिन्धी, سنڌي، سندھی‎","sd","snd","snd"],
-                                ["Northern Sami","Davvisámegiella","se","sme","sme"],
-                                ["Samoan","gagana fa'a Samoa","sm","smo","smo"],
-                                ["Sango","yângâ tî sängö","sg","sag","sag"],
-                                ["Serbian","српски језик","sr","srp","srp"],
-                                ["Gaelic, Scottish Gaelic","Gàidhlig","gd","gla","gla"],
-                                ["Shona","chiShona","sn","sna","sna"],
-                                ["Sinhala, Sinhalese","සිංහල","si","sin","sin"],
-                                ["Slovak","Slovenčina, Slovenský Jazyk","sk","slk","slo"],
-                                ["Slovenian","Slovenski Jezik, Slovenščina","sl","slv","slv"],
-                                ["Somali","Soomaaliga, af Soomaali","so","som","som"],
-                                ["Southern Sotho","Sesotho","st","sot","sot"],
-                                ["Spanish, Castilian","Español","es","spa","spa"],
-                                ["Sundanese","Basa Sunda","su","sun","sun"],
-                                ["Swahili","Kiswahili","sw","swa","swa"],
-                                ["Swati","SiSwati","ss","ssw","ssw"],
-                                ["Swedish","Svenska","sv","swe","swe"],
-                                ["Tamil","தமிழ்","ta","tam","tam"],
-                                ["Telugu","తెలుగు","te","tel","tel"],
-                                ["Tajik","тоҷикӣ, toçikī, تاجیکی‎","tg","tgk","tgk"],
-                                ["Thai","ไทย","th","tha","tha"],
-                                ["Tigrinya","ትግርኛ","ti","tir","tir"],
-                                ["Tibetan","བོད་ཡིག","bo","bod","tib"],
-                                ["Turkmen","Türkmen, Түркмен","tk","tuk","tuk"],
-                                ["Tagalog","Wikang Tagalog","tl","tgl","tgl"],
-                                ["Tswana","Setswana","tn","tsn","tsn"],
-                                ["Tonga (Tonga Islands)","Faka Tonga","to","ton","ton"],
-                                ["Turkish","Türkçe","tr","tur","tur"],
-                                ["Tsonga","Xitsonga","ts","tso","tso"],
-                                ["Tatar","татар теле, tatar tele","tt","tat","tat"],
-                                ["Twi","Twi","tw","twi","twi"],
-                                ["Tahitian","Reo Tahiti","ty","tah","tah"],
-                                ["Uighur, Uyghur","ئۇيغۇرچە‎, Uyghurche","ug","uig","uig"],
-                                ["Ukrainian","Українська","uk","ukr","ukr"],
-                                ["Urdu","اردو","ur","urd","urd"],
-                                ["Uzbek","Oʻzbek, Ўзбек, أۇزبېك‎","uz","uzb","uzb"],
-                                ["Venda","Tshivenḓa","ve","ven","ven"],
-                                ["Vietnamese","Tiếng Việt","vi","vie","vie"],
-                                ["Volapük","Volapük","vo","vol","vol"],
-                                ["Walloon","Walon","wa","wln","wln"],
-                                ["Welsh","Cymraeg","cy","cym","wel"],
-                                ["Wolof","Wollof","wo","wol","wol"],
-                                ["Western Frisian","Frysk","fy","fry","fry"],
-                                ["Xhosa","isiXhosa","xh","xho","xho"],
-                                ["Yiddish","ייִדיש","yi","yid","yid"],
-                                ["Yoruba","Yorùbá","yo","yor","yor"],
-                                ["Zhuang, Chuang","Saɯ cueŋƅ, Saw cuengh","za","zha","zha"],
-                                ["Zulu","isiZulu","zu","zul","zul"]
+                                ["Abkhazian", "аҧсуа бызшәа, аҧсшәа", "ab", "abk", "abk"],
+                                ["Afar", "Afaraf", "aa", "aar", "aar"],
+                                ["Afrikaans", "Afrikaans", "af", "afr", "afr"],
+                                ["Akan", "Akan", "ak", "aka", "aka"],
+                                ["Albanian", "Shqip", "sq", "sqi", "alb"],
+                                ["Amharic", "አማርኛ", "am", "amh", "amh"],
+                                ["Arabic", "العربية", "ar", "ara", "ara"],
+                                ["Aragonese", "aragonés", "an", "arg", "arg"],
+                                ["Armenian", "Հայերեն", "hy", "hye", "arm"],
+                                ["Assamese", "অসমীয়া", "as", "asm", "asm"],
+                                ["Avaric", "авар мацӀ, магӀарул мацӀ", "av", "ava", "ava"],
+                                ["Avestan", "avesta", "ae", "ave", "ave"],
+                                ["Aymara", "aymar aru", "ay", "aym", "aym"],
+                                ["Azerbaijani", "azərbaycan dili", "az", "aze", "aze"],
+                                ["Bambara", "bamanankan", "bm", "bam", "bam"],
+                                ["Bashkir", "башҡорт теле", "ba", "bak", "bak"],
+                                ["Basque", "euskara, euskera", "eu", "eus", "baq"],
+                                ["Belarusian", "беларуская мова", "be", "bel", "bel"],
+                                ["Bengali", "বাংলা", "bn", "ben", "ben"],
+                                ["Bihari languages", "भोजपुरी", "bh", "bih", "bih"],
+                                ["Bislama", "Bislama", "bi", "bis", "bis"],
+                                ["Bosnian", "bosanski jezik", "bs", "bos", "bos"],
+                                ["Breton", "brezhoneg", "br", "bre", "bre"],
+                                ["Bulgarian", "български език", "bg", "bul", "bul"],
+                                ["Burmese", "ဗမာစာ", "my", "mya", "bur"],
+                                ["Catalan, Valencian", "català, valencià", "ca", "cat", "cat"],
+                                ["Chamorro", "Chamoru", "ch", "cha", "cha"],
+                                ["Chechen", "нохчийн мотт", "ce", "che", "che"],
+                                ["Chichewa, Chewa, Nyanja", "chiCheŵa, chinyanja", "ny", "nya", "nya"],
+                                ["Chinese", "中文 (Zhōngwén), 汉语, 漢語", "zh", "zho", "chi"],
+                                ["Chuvash", "чӑваш чӗлхи", "cv", "chv", "chv"],
+                                ["Cornish", "Kernewek", "kw", "cor", "cor"],
+                                ["Corsican", "corsu, lingua corsa", "co", "cos", "cos"],
+                                ["Cree", "ᓀᐦᐃᔭᐍᐏᐣ", "cr", "cre", "cre"],
+                                ["Croatian", "hrvatski jezik", "hr", "hrv", "hrv"],
+                                ["Czech", "čeština, český jazyk", "cs", "ces", "cze"],
+                                ["Danish", "dansk", "da", "dan", "dan"],
+                                ["Divehi, Dhivehi, Maldivian", "ދިވެހި", "dv", "div", "div"],
+                                ["Dutch, Flemish", "Nederlands, Vlaams", "nl", "nld", "dut"],
+                                ["Dzongkha", "རྫོང་ཁ", "dz", "dzo", "dzo"],
+                                ["English", "English", "en", "eng", "eng"],
+                                ["Esperanto", "Esperanto", "eo", "epo", "epo"],
+                                ["Estonian", "eesti, eesti keel", "et", "est", "est"],
+                                ["Ewe", "Eʋegbe", "ee", "ewe", "ewe"],
+                                ["Faroese", "føroyskt", "fo", "fao", "fao"],
+                                ["Fijian", "vosa Vakaviti", "fj", "fij", "fij"],
+                                ["Finnish", "suomi, suomen kieli", "fi", "fin", "fin"],
+                                ["French", "français, langue française", "fr", "fra", "fre"],
+                                ["Fulah", "Fulfulde, Pulaar, Pular", "ff", "ful", "ful"],
+                                ["Galician", "Galego", "gl", "glg", "glg"],
+                                ["Georgian", "ქართული", "ka", "kat", "geo"],
+                                ["German", "Deutsch", "de", "deu", "ger"],
+                                ["Greek, Modern (1453–)", "ελληνικά", "el", "ell", "gre"],
+                                ["Guarani", "Avañe'ẽ", "gn", "grn", "grn"],
+                                ["Gujarati", "ગુજરાતી", "gu", "guj", "guj"],
+                                ["Haitian, Haitian Creole", "Kreyòl ayisyen", "ht", "hat", "hat"],
+                                ["Hausa", "(Hausa) هَوُسَ", "ha", "hau", "hau"],
+                                ["Hebrew", "עברית", "he", "heb", "heb"],
+                                ["Herero", "Otjiherero", "hz", "her", "her"],
+                                ["Hindi", "हिन्दी, हिंदी", "hi", "hin", "hin"],
+                                ["Hiri Motu", "Hiri Motu", "ho", "hmo", "hmo"],
+                                ["Hungarian", "magyar", "hu", "hun", "hun"],
+                                ["Interlingua (International Auxiliary Language Association)", "Interlingua", "ia", "ina", "ina"],
+                                ["Indonesian", "Bahasa Indonesia", "id", "ind", "ind"],
+                                ["Interlingue, Occidental", "(originally:) Occidental, (after WWII:) Interlingue", "ie", "ile", "ile"],
+                                ["Irish", "Gaeilge", "ga", "gle", "gle"],
+                                ["Igbo", "Asụsụ Igbo", "ig", "ibo", "ibo"],
+                                ["Inupiaq", "Iñupiaq, Iñupiatun", "ik", "ipk", "ipk"],
+                                ["Ido", "Ido", "io", "ido", "ido"],
+                                ["Icelandic", "Íslenska", "is", "isl", "ice"],
+                                ["Italian", "Italiano", "it", "ita", "ita"],
+                                ["Inuktitut", "ᐃᓄᒃᑎᑐᑦ", "iu", "iku", "iku"],
+                                ["Japanese", "日本語 (にほんご)", "ja", "jpn", "jpn"],
+                                ["Javanese", "ꦧꦱꦗꦮ, Basa Jawa", "jv", "jav", "jav"],
+                                ["Kalaallisut, Greenlandic", "kalaallisut, kalaallit oqaasii", "kl", "kal", "kal"],
+                                ["Kannada", "ಕನ್ನಡ", "kn", "kan", "kan"],
+                                ["Kanuri", "Kanuri", "kr", "kau", "kau"],
+                                ["Kashmiri", "कश्मीरी, كشميري‎", "ks", "kas", "kas"],
+                                ["Kazakh", "қазақ тілі", "kk", "kaz", "kaz"],
+                                ["Central Khmer", "ខ្មែរ, ខេមរភាសា, ភាសាខ្មែរ", "km", "khm", "khm"],
+                                ["Kikuyu, Gikuyu", "Gĩkũyũ", "ki", "kik", "kik"],
+                                ["Kinyarwanda", "Ikinyarwanda", "rw", "kin", "kin"],
+                                ["Kirghiz, Kyrgyz", "Кыргызча, Кыргыз тили", "ky", "kir", "kir"],
+                                ["Komi", "коми кыв", "kv", "kom", "kom"],
+                                ["Kongo", "Kikongo", "kg", "kon", "kon"],
+                                ["Korean", "한국어", "ko", "kor", "kor"],
+                                ["Kurdish", "Kurdî, کوردی‎", "ku", "kur", "kur"],
+                                ["Kuanyama, Kwanyama", "Kuanyama", "kj", "kua", "kua"],
+                                ["Latin", "latine, lingua latina", "la", "lat", "lat"],
+                                ["Luxembourgish, Letzeburgesch", "Lëtzebuergesch", "lb", "ltz", "ltz"],
+                                ["Ganda", "Luganda", "lg", "lug", "lug"],
+                                ["Limburgan, Limburger, Limburgish", "Limburgs", "li", "lim", "lim"],
+                                ["Lingala", "Lingála", "ln", "lin", "lin"],
+                                ["Lao", "ພາສາລາວ", "lo", "lao", "lao"],
+                                ["Lithuanian", "lietuvių kalba", "lt", "lit", "lit"],
+                                ["Luba-Katanga", "Kiluba", "lu", "lub", "lub"],
+                                ["Latvian", "latviešu valoda", "lv", "lav", "lav"],
+                                ["Manx", "Gaelg, Gailck", "gv", "glv", "glv"],
+                                ["Macedonian", "македонски јазик", "mk", "mkd", "mac"],
+                                ["Malagasy", "fiteny malagasy", "mg", "mlg", "mlg"],
+                                ["Malay", "Bahasa Melayu, بهاس ملايو‎", "ms", "msa", "may"],
+                                ["Malayalam", "മലയാളം", "ml", "mal", "mal"],
+                                ["Maltese", "Malti", "mt", "mlt", "mlt"],
+                                ["Maori", "te reo Māori", "mi", "mri", "mao"],
+                                ["Marathi", "मराठी", "mr", "mar", "mar"],
+                                ["Marshallese", "Kajin M̧ajeļ", "mh", "mah", "mah"],
+                                ["Mongolian", "Монгол хэл", "mn", "mon", "mon"],
+                                ["Nauru", "Dorerin Naoero", "na", "nau", "nau"],
+                                ["Navajo, Navaho", "Diné bizaad", "nv", "nav", "nav"],
+                                ["North Ndebele", "isiNdebele", "nd", "nde", "nde"],
+                                ["Nepali", "नेपाली", "ne", "nep", "nep"],
+                                ["Ndonga", "Owambo", "ng", "ndo", "ndo"],
+                                ["Norwegian Bokmål", "Norsk Bokmål", "nb", "nob", "nob"],
+                                ["Norwegian Nynorsk", "Norsk Nynorsk", "nn", "nno", "nno"],
+                                ["Norwegian", "Norsk", "no", "nor", "nor"],
+                                ["Sichuan Yi, Nuosu", "ꆈꌠ꒿ Nuosuhxop", "ii", "iii", "iii"],
+                                ["South Ndebele", "isiNdebele", "nr", "nbl", "nbl"],
+                                ["Occitan", "occitan, lenga d'òc", "oc", "oci", "oci"],
+                                ["Ojibwa", "ᐊᓂᔑᓈᐯᒧᐎᓐ", "oj", "oji", "oji"],
+                                ["Church Slavic, Old Slavonic, Church Slavonic, Old Bulgarian, Old Church Slavonic", "ѩзыкъ словѣньскъ", "cu", "chu", "chu"],
+                                ["Oromo", "Afaan Oromoo", "om", "orm", "orm"],
+                                ["Oriya", "ଓଡ଼ିଆ", "or", "ori", "ori"],
+                                ["Ossetian, Ossetic", "ирон æвзаг", "os", "oss", "oss"],
+                                ["Punjabi, Panjabi", "ਪੰਜਾਬੀ, پنجابی‎", "pa", "pan", "pan"],
+                                ["Pali", "पालि, पाळि", "pi", "pli", "pli"],
+                                ["Persian", "فارسی", "fa", "fas", "per"],
+                                ["Polish", "język polski, polszczyzna", "pl", "pol", "pol"],
+                                ["Pashto, Pushto", "پښتو", "ps", "pus", "pus"],
+                                ["Portuguese", "Português", "pt", "por", "por"],
+                                ["Quechua", "Runa Simi, Kichwa", "qu", "que", "que"],
+                                ["Romansh", "Rumantsch Grischun", "rm", "roh", "roh"],
+                                ["Rundi", "Ikirundi", "rn", "run", "run"],
+                                ["Romanian, Moldavian, Moldovan", "Română", "ro", "ron", "rum"],
+                                ["Russian", "русский", "ru", "rus", "rus"],
+                                ["Sanskrit", "संस्कृतम्", "sa", "san", "san"],
+                                ["Sardinian", "sardu", "sc", "srd", "srd"],
+                                ["Sindhi", "सिन्धी, سنڌي، سندھی‎", "sd", "snd", "snd"],
+                                ["Northern Sami", "Davvisámegiella", "se", "sme", "sme"],
+                                ["Samoan", "gagana fa'a Samoa", "sm", "smo", "smo"],
+                                ["Sango", "yângâ tî sängö", "sg", "sag", "sag"],
+                                ["Serbian", "српски језик", "sr", "srp", "srp"],
+                                ["Gaelic, Scottish Gaelic", "Gàidhlig", "gd", "gla", "gla"],
+                                ["Shona", "chiShona", "sn", "sna", "sna"],
+                                ["Sinhala, Sinhalese", "සිංහල", "si", "sin", "sin"],
+                                ["Slovak", "Slovenčina, Slovenský Jazyk", "sk", "slk", "slo"],
+                                ["Slovenian", "Slovenski Jezik, Slovenščina", "sl", "slv", "slv"],
+                                ["Somali", "Soomaaliga, af Soomaali", "so", "som", "som"],
+                                ["Southern Sotho", "Sesotho", "st", "sot", "sot"],
+                                ["Spanish, Castilian", "Español", "es", "spa", "spa"],
+                                ["Sundanese", "Basa Sunda", "su", "sun", "sun"],
+                                ["Swahili", "Kiswahili", "sw", "swa", "swa"],
+                                ["Swati", "SiSwati", "ss", "ssw", "ssw"],
+                                ["Swedish", "Svenska", "sv", "swe", "swe"],
+                                ["Tamil", "தமிழ்", "ta", "tam", "tam"],
+                                ["Telugu", "తెలుగు", "te", "tel", "tel"],
+                                ["Tajik", "тоҷикӣ, toçikī, تاجیکی‎", "tg", "tgk", "tgk"],
+                                ["Thai", "ไทย", "th", "tha", "tha"],
+                                ["Tigrinya", "ትግርኛ", "ti", "tir", "tir"],
+                                ["Tibetan", "བོད་ཡིག", "bo", "bod", "tib"],
+                                ["Turkmen", "Türkmen, Түркмен", "tk", "tuk", "tuk"],
+                                ["Tagalog", "Wikang Tagalog", "tl", "tgl", "tgl"],
+                                ["Tswana", "Setswana", "tn", "tsn", "tsn"],
+                                ["Tonga (Tonga Islands)", "Faka Tonga", "to", "ton", "ton"],
+                                ["Turkish", "Türkçe", "tr", "tur", "tur"],
+                                ["Tsonga", "Xitsonga", "ts", "tso", "tso"],
+                                ["Tatar", "татар теле, tatar tele", "tt", "tat", "tat"],
+                                ["Twi", "Twi", "tw", "twi", "twi"],
+                                ["Tahitian", "Reo Tahiti", "ty", "tah", "tah"],
+                                ["Uighur, Uyghur", "ئۇيغۇرچە‎, Uyghurche", "ug", "uig", "uig"],
+                                ["Ukrainian", "Українська", "uk", "ukr", "ukr"],
+                                ["Urdu", "اردو", "ur", "urd", "urd"],
+                                ["Uzbek", "Oʻzbek, Ўзбек, أۇزبېك‎", "uz", "uzb", "uzb"],
+                                ["Venda", "Tshivenḓa", "ve", "ven", "ven"],
+                                ["Vietnamese", "Tiếng Việt", "vi", "vie", "vie"],
+                                ["Volapük", "Volapük", "vo", "vol", "vol"],
+                                ["Walloon", "Walon", "wa", "wln", "wln"],
+                                ["Welsh", "Cymraeg", "cy", "cym", "wel"],
+                                ["Wolof", "Wollof", "wo", "wol", "wol"],
+                                ["Western Frisian", "Frysk", "fy", "fry", "fry"],
+                                ["Xhosa", "isiXhosa", "xh", "xho", "xho"],
+                                ["Yiddish", "ייִדיש", "yi", "yid", "yid"],
+                                ["Yoruba", "Yorùbá", "yo", "yor", "yor"],
+                                ["Zhuang, Chuang", "Saɯ cueŋƅ, Saw cuengh", "za", "zha", "zha"],
+                                ["Zulu", "isiZulu", "zu", "zul", "zul"]
                             ];
-                            
+
                             $selected_val = trim($all[self::$opt_cc_lang_pref]);
                             ?>
                             <p>
@@ -5219,7 +5235,7 @@ class YouTubePrefsPro
                                         $iso_code = $lang_row[2];
                                         $iso_label = $lang_row[0] . ' - ' . $lang_row[1];
                                         ?>
-                                    <option <?php echo $iso_code == $selected_val ? 'selected' : '' ?> value="<?php echo $iso_code ?>"><?php echo $iso_label ?></option>
+                                        <option <?php echo $iso_code == $selected_val ? 'selected' : '' ?> value="<?php echo $iso_code ?>"><?php echo $iso_label ?></option>
                                         <?php
                                     }
                                     ?>
@@ -5259,21 +5275,41 @@ class YouTubePrefsPro
                                 <label for="<?php echo self::$opt_vi_hide_monetize_tab; ?>"><b class="chktitle">Hide "Monetize" Feature:</b> (deprecated) Hide the tab(s) for the deprecated video intelligence feature.</label>
                             </p>
                             <div id="not_live_content_scroll" class="p">
-                                <input name="<?php echo self::$opt_not_live_on; ?>" id="<?php echo self::$opt_not_live_on; ?>" <?php checked($all[self::$opt_not_live_on], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_not_live_on; ?>">
-                                    <b class="chktitle">Default "Not Live" Content:</b> (For direct-link video streams and premieres, <em>not</em> channel streams. <a href="<?php echo self::$epbase ?>/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">More info here</a>)
-                                    When your video is not streaming live or premiering, the YouTube live player will simply display a countdown after the user clicks the play button (Note: turning on auto-play will display the countdown without any user action)..
-                                    Instead of showing that player, you can display some "coming soon" content in that space for your visitors to see until your video begins to live stream or premiere. 
-                                    The plugin will automatically switch to your video's live stream or premiere once it's active.
-                                    Below, enter what you would like to appear until then.                                   
-                                    If you just want to show the standard countdown player that YouTube provides, uncheck this option.
-                                    <strong class="check-note"><span class="orange">NOTE:</span> This feature uses a significant amount of your YouTube API quota. We suggest unchecking it if your site has high traffic. If you chose to use this feature, do not put another live stream embed below.</strong>
-                                </label>
-                                <br>
-                                <br>
-                                <?php
-                                wp_editor(wp_kses_post($all[self::$opt_not_live_content]), self::$opt_not_live_content, array('textarea_rows' => 7));
-                                ?> 
+                                <p>
+                                    <b class="chktitle">Use "Not Live" Fallback Content For Live Streams:</b> (<a href="<?php echo self::$epbase ?>/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">More info here</a>)
+                                    This feature lets you display alternate content if your live stream or premiere is not currently active. There are 2 flavors of this feature: one that affects <strong>direct link</strong> live streams, and 
+                                    one that affects <strong>channel</strong> live streams. Each are explained below. They work a little differently, but both use the same "Not Live" Fallback Content that you can edit below.
+                                </p>
+                                <div class="ytindent chx">
+                                    <input name="<?php echo self::$opt_not_live_on; ?>" id="<?php echo self::$opt_not_live_on; ?>" <?php checked($all[self::$opt_not_live_on], 1); ?> type="checkbox" class="checkbox">
+                                    <label for="<?php echo self::$opt_not_live_on; ?>"><span class="chktitle">Turn on for <b>direct link</b> live streams:</span>
+                                        When your direct-link embed is not streaming live or premiering, the YouTube live player usually displays a countdown after the user clicks the play button.
+                                        Instead of showing that player, you can display some "coming soon" content in that space for your visitors to see until your video begins to live stream or premiere. 
+                                        The plugin will automatically switch to your video's live stream or premiere once it's active. In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear until then.
+                                        You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
+                                        If you just want to show the standard countdown player that YouTube provides, don't use this feature.
+                                        <strong>NOTE: Turning this on for direct-link live streams uses a significant amount of your YouTube API quota. We suggest unchecking it if your site has high traffic. If you chose to use this feature, do not put another live stream embed below.</strong>
+                                    </label>
+                                    <br>
+                                    <br>
+                                    <input name="<?php echo self::$opt_not_live_on_channel; ?>" id="<?php echo self::$opt_not_live_on_channel; ?>" <?php checked($all[self::$opt_not_live_on_channel], 1); ?> type="checkbox" class="checkbox">
+                                    <label for="<?php echo self::$opt_not_live_on_channel; ?>"><span class="chktitle">Turn on for <b>channel</b> live streams:</span> <sup class="orange">beta</sup>
+                                        If your live stream embed is channel-based, YouTube might show an error message if there is no upcoming or currently streaming video from your channel. 
+                                        Instead of showing an error, you can display some "coming soon" content in that space for your visitors to see until you've scheduled a live stream or premiere 
+                                        (Once you've scheduled something, YouTube will display the usual countdown until the stream happens). 
+                                        In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear when nothing is playing or scheduled to play yet on your channel.
+                                        You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
+                                        <strong>NOTE: This feature for channel live streams is experimental, but it will preserve your API quota. We recommend trying this instead of the direct-link option, to see if it works for your site. We hope to improve this feature over time.</strong>
+                                    </label>
+                                    <div class="p not-live-content">
+                                        <p>                                            
+                                            <b>"Not Live" Fallback Content:</b>
+                                        </p>
+                                        <?php
+                                        wp_editor(wp_kses_post($all[self::$opt_not_live_content]), self::$opt_not_live_content, array('textarea_rows' => 7));
+                                        ?> 
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -5476,9 +5512,17 @@ class YouTubePrefsPro
                                 <iframe src="https://www.youtube.com/embed/FWBQc9XhAqM?rel=0" allowfullscreen="" frameborder="0"></iframe>
                             </div>
                         </div>
-                        <p>
-                            If you don't see your page builder listed above, don't worry. For pretty much any page builder with a short code widget, you can also embed your video, gallery, live stream, or premiere by creating the short code using the plugin's wizard and then embedding the code in the short code widget or text widget of your page builder of choice.
-                        </p>
+                        <div class="wiztab-pagebuilder">
+                            <h3>WPBakery</h3>
+                            <div class="epyt-fitvid">
+                                <iframe src="https://www.youtube.com/embed/7T5wPoEujN8?rel=0" allowfullscreen="" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                        <div class="wiztab-pagebuilder">
+                            <p>
+                                If you don't see your page builder listed above, don't worry. For pretty much any page builder with a short code widget, you can also embed your video, gallery, live stream, or premiere by creating the short code using the plugin's wizard and then embedding the code in the short code widget or text widget of your page builder of choice.
+                            </p>
+                        </div>
                     </section>
                     <section class="pattern" id="jumpgallery">
                         <h2>Gallery Settings and Directions</h2>
@@ -6187,7 +6231,7 @@ class YouTubePrefsPro
                                 </label>
                             </div>
                         </div>
-                        
+
                         <div class="p">
                             <input name="<?php echo self::$opt_defer_js; ?>" id="<?php echo self::$opt_defer_js; ?>" <?php checked($all[self::$opt_defer_js], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_defer_js ?>">
@@ -6204,7 +6248,7 @@ class YouTubePrefsPro
                                 </label>
                             </div>
                         </div>
-                        <p><?php _e('Note: Since the YouTube player is loaded in its own iframe from YouTube\'s servers, browser restrictions prevent this plugin from directly deferring the JS inside the iframe.  You can, however, use the lazy loading feature <a href="#jumpprosettings">described here &raquo;</a> to further improve your page speeds.', 'youtube-embed-plus-pro'); ?></p>
+                        <p><?php _e('Note: Since the YouTube player is loaded in its own iframe from YouTube\'s servers, browser restrictions prevent this plugin from directly deferring the JS inside the iframe. However, you can use facade mode above, or the lazy loading feature <a href="#jumpprosettings">described here &raquo;</a> to further improve your page speeds.', 'youtube-embed-plus-pro'); ?></p>
                         <!--                        <div style="width: 50%">
                                                     <div class="epyt-fitvid">
                                                         <iframe allow="encrypted-media" allowfullscreen="" src="https://www.youtube-nocookie.com/embed/?autoplay=0&amp;cc_load_policy=0&amp;iv_load_policy=1&amp;loop=0&amp;modestbranding=0&amp;fs=1&amp;playsinline=0&amp;controls=1&amp;color=red&amp;rel=1&amp;autohide=2&amp;theme=dark&amp;"></iframe>
@@ -6862,6 +6906,7 @@ class YouTubePrefsPro
         $new_options[self::$opt_dohl] = self::postchecked(self::$opt_dohl) ? 1 : 0;
         $new_options[self::$opt_onboarded] = self::postchecked(self::$opt_onboarded) ? 1 : 0;
         $new_options[self::$opt_not_live_on] = self::postchecked(self::$opt_not_live_on) ? 1 : 0;
+        $new_options[self::$opt_not_live_on_channel] = self::postchecked(self::$opt_not_live_on_channel) ? 1 : 0;
         $new_options[self::$opt_live_chat] = self::postchecked(self::$opt_live_chat) ? 1 : 0;
         $new_options[self::$opt_gallery_hideprivate] = self::postchecked(self::$opt_gallery_hideprivate) ? 1 : 0;
         $new_options[self::$opt_gallery_showtitle] = self::postchecked(self::$opt_gallery_showtitle) ? 1 : 0;
@@ -6877,7 +6922,7 @@ class YouTubePrefsPro
         $new_options[self::$opt_vi_hide_monetize_tab] = self::postchecked(self::$opt_vi_hide_monetize_tab) ? 1 : 0;
 
         $new_options[self::$opt_cc_lang_pref] = sanitize_title($_POST[self::$opt_cc_lang_pref]);
-        
+
         $_rel = 0;
         try
         {
@@ -7241,6 +7286,7 @@ class YouTubePrefsPro
             $input[self::$opt_gallery_columns] = intval($input[self::$opt_gallery_columns]);
             $input[self::$opt_not_live_content] = wp_kses_post(stripslashes($input[self::$opt_not_live_content]));
             $input[self::$opt_not_live_on] = intval($input[self::$opt_not_live_on]);
+            $input[self::$opt_not_live_on_channel] = intval($input[self::$opt_not_live_on_channel]);
             $input[self::$opt_live_chat] = intval($input[self::$opt_live_chat]);
 
             if (!in_array($input[self::$opt_ytapi_load], array('always', 'light', 'never')))
@@ -7279,6 +7325,7 @@ class YouTubePrefsPro
             self::$opt_gallery_columns => 3,
             self::$opt_not_live_content => '',
             self::$opt_not_live_on => 0,
+            self::$opt_not_live_on_channel => 0,
             self::$opt_ytapi_load => 'light',
             self::$opt_facade_mode => 0,
             self::$opt_facade_autoplay => 1,
@@ -7517,7 +7564,7 @@ class YouTubePrefsPro
                             <div class="ytprefs-ob-setting yob-single yob-gallery yob-standalone yob-live">
                                 <input value="1" name="<?php echo self::$opt_responsive; ?>" id="<?php echo self::$opt_responsive; ?>" <?php checked($all[self::$opt_responsive], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_responsive; ?>"><?php _e('<b class="chktitle">Responsive Video Sizing:</b> Make your videos responsive so that they dynamically fit in all screen sizes (smart phone, PC and tablet). NOTE: While this is checked, any custom hardcoded widths and heights you may have set will dynamically change too. <b>Do not check this if your theme already handles responsive video sizing.</b>') ?></label>
-                                <p id="boxresponsive_all">
+                                <p id="boxresponsive_all" class="ytindent">
                                     <input type="radio" name="<?php echo self::$opt_responsive_all; ?>" id="<?php echo self::$opt_responsive_all; ?>1" value="1" <?php checked($all[self::$opt_responsive_all], 1); ?> >
                                     <label for="<?php echo self::$opt_responsive_all; ?>1">Responsive for all YouTube videos</label> &nbsp;&nbsp;
                                     <input type="radio" name="<?php echo self::$opt_responsive_all; ?>" id="<?php echo self::$opt_responsive_all; ?>0" value="0" <?php checked($all[self::$opt_responsive_all], 0); ?> >
@@ -7546,21 +7593,41 @@ class YouTubePrefsPro
                                 Enter how many thumbnails can fit per row.  You can later use the embedding wizard to customize this for specific galleries.
                             </div>
                             <div class="ytprefs-ob-setting yob-live">
-                                <input name="<?php echo self::$opt_not_live_on; ?>" id="<?php echo self::$opt_not_live_on; ?>" <?php checked($all[self::$opt_not_live_on], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_not_live_on; ?>">
-                                    <b class="chktitle">Default "Not Live" Content:</b> (For direct-link video streams and premieres, <em>not</em> channel streams. <a href="<?php echo self::$epbase ?>/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">More info here</a>)
-                                    When your video is not streaming live or premiering, the YouTube live player will simply display a countdown after the user clicks the play button (Note: turning on auto-play will display the countdown without any user action)..
-                                    Instead of showing that player, you can display some "coming soon" content in that space for your visitors to see until your video begins to live stream or premiere. 
-                                    The plugin will automatically switch to your video's live stream or premiere once it's active.
-                                    Below, enter what you would like to appear until then.                                   
-                                    If you just want to show the standard countdown player that YouTube provides, uncheck this option.
-                                    <strong class="check-note"><span class="orange">NOTE:</span> This feature uses a significant amount of your YouTube API quota. We suggest unchecking it if your site has high traffic. If you chose to use this feature, do not put another live stream embed below.</strong>
-                                </label>
-                                <br>
-                                <br>
-                                <?php
-                                wp_editor(wp_kses_post($all[self::$opt_not_live_content]), self::$opt_not_live_content, array('textarea_rows' => 7));
-                                ?> 
+                                <p>
+                                    <b class="chktitle">Use "Not Live" Fallback Content For Live Streams:</b> (<a href="<?php echo self::$epbase ?>/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">More info here</a>)
+                                    This feature lets you display alternate content if your live stream or premiere is not currently active. There are 2 flavors of this feature: one that affects <strong>direct link</strong> live streams, and 
+                                    one that affects <strong>channel</strong> live streams. Each are explained below. They work a little differently, but both use the same "Not Live" Fallback Content that you can edit below.
+                                </p>
+                                <div class="ytindent chx">
+                                    <input value="1" name="<?php echo self::$opt_not_live_on; ?>" id="<?php echo self::$opt_not_live_on; ?>" <?php checked($all[self::$opt_not_live_on], 1); ?> type="checkbox" class="checkbox">
+                                    <label for="<?php echo self::$opt_not_live_on; ?>"><span class="chktitle">Turn on for <b>direct link</b> live streams:</span>
+                                        When your direct-link embed is not streaming live or premiering, the YouTube live player usually displays a countdown after the user clicks the play button.
+                                        Instead of showing that player, you can display some "coming soon" content in that space for your visitors to see until your video begins to live stream or premiere. 
+                                        The plugin will automatically switch to your video's live stream or premiere once it's active. In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear until then.
+                                        You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
+                                        If you just want to show the standard countdown player that YouTube provides, don't use this feature.
+                                        <strong>NOTE: Turning this on for direct-link live streams uses a significant amount of your YouTube API quota. We suggest unchecking it if your site has high traffic. If you chose to use this feature, do not put another live stream embed below.</strong>
+                                    </label>
+                                    <br>
+                                    <br>
+                                    <input value="1" name="<?php echo self::$opt_not_live_on_channel; ?>" id="<?php echo self::$opt_not_live_on_channel; ?>" <?php checked($all[self::$opt_not_live_on_channel], 1); ?> type="checkbox" class="checkbox">
+                                    <label for="<?php echo self::$opt_not_live_on_channel; ?>"><span class="chktitle">Turn on for <b>channel</b> live streams:</span> <sup class="orange">beta</sup>
+                                        If your live stream embed is channel-based, YouTube might show an error message if there is no upcoming or currently streaming video from your channel. 
+                                        Instead of showing an error, you can display some "coming soon" content in that space for your visitors to see until you've scheduled a live stream or premiere 
+                                        (Once you've scheduled something, YouTube will display the usual countdown until the stream happens). 
+                                        In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear when nothing is playing or scheduled to play yet on your channel.
+                                        You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
+                                        <strong>NOTE: This feature for channel live streams is experimental, but it will preserve your API quota. We recommend trying this instead of the direct-link option, to see if it works for your site. We hope to improve this feature over time.</strong>
+                                    </label>
+                                    <div class="p not-live-content">
+                                        <p>                                            
+                                            <b>"Not Live" Fallback Content:</b>
+                                        </p>
+                                        <?php
+                                        wp_editor(wp_kses_post($all[self::$opt_not_live_content]), self::$opt_not_live_content, array('textarea_rows' => 7));
+                                        ?> 
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="ytprefs-ob-setting yob-privacy">
@@ -7798,6 +7865,7 @@ class YouTubePrefsPro
                     'ytapi_load' => self::$alloptions[self::$opt_ytapi_load],
                     'pause_others' => self::$alloptions[self::$opt_pause_others] == '1' ? true : false,
                     'stopMobileBuffer' => self::$alloptions[self::$opt_stop_mobile_buffer] == '1' ? true : false,
+                    'not_live_on_channel' => self::$alloptions[self::$opt_not_live_on_channel] == '1' ? true : false,
                     'vi_active' => false, //self::$alloptions[self::$opt_vi_active] == '1' ? true : false,
                     'vi_js_posttypes' => array() // self::$alloptions[self::$opt_vi_js_posttypes]
                 );

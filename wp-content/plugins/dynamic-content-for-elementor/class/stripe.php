@@ -118,7 +118,7 @@ class Stripe
             foreach ($fields as $field) {
                 $field_name = $item[$field] ?? '';
                 if ($field_name !== '' && !isset($_POST['form_fields'][$field_name])) {
-                    $msg = __("Stripe: cannot find customer field `{$field_name}`. Please, do not use shortcode or tokens, just insert the ID of the field as it is.", 'dynamic-content-for-elementor');
+                    $msg = \sprintf(__('Stripe: cannot find customer field `%1$s`. Please, do not use shortcode or tokens, just insert the ID of the field as it is.', 'dynamic-content-for-elementor'), $field_name);
                     wp_send_json_error(['message' => $msg]);
                 }
             }

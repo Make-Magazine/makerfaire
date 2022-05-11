@@ -9,9 +9,13 @@
  */
 
 namespace CustomFacebookFeed;
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class CFF_Oembed{
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+class CFF_Oembed
+{
 	/**
 	 * CFF_Oembed constructor.
 	 *
@@ -146,12 +150,29 @@ class CFF_Oembed{
 		     || strpos( $provider, 'oembed_video' ) !== false ) {
 
 			if ( strpos( $url, '?' ) !== false ) {
-				$exploded = explode( '?', $url );
-				if ( isset( $exploded[1] ) ) {
-					$provider = str_replace( urlencode( '?' . $exploded[1] ), '', $provider );
-				}
+				$provider = self::get_provider_from_url_with_query_vars( $provider, $url );
 			}
 			$provider = add_query_arg( 'access_token', $access_token, $provider );
+		}
+
+		return $provider;
+	}
+
+	/**
+	 * URLs with query variables are handled specially
+	 *
+	 * @param $provider
+	 * @param $url
+	 *
+	 * @return array|mixed|string|string[]
+	 */
+	public static function get_provider_from_url_with_query_vars( $provider, $url ) {
+		$exploded = explode( '?', $url );
+		if ( ! empty( $exploded[1] ) ) {
+			if ( strpos( $url, '?v=' ) !== false ) {
+				$exploded = explode( '&', $url );
+				$provider = str_replace( urlencode( '&' . $exploded[1] ), '', $provider );
+			}
 		}
 
 		return $provider;
@@ -243,11 +264,16 @@ class CFF_Oembed{
 	public static function last_access_token() {
 		$oembed_token_settings = get_option( 'cff_oembed_token', array() );
 		$will_expire = CFF_Oembed::oembed_access_token_will_expire();
+		$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+
 		if ( ! empty( $oembed_token_settings['access_token'] )
 		     && (! $will_expire || $will_expire > time()) ) {
+				$oembed_token_settings['access_token'] = $encryption->maybe_decrypt( $oembed_token_settings['access_token'] );
+
 			return str_replace(":", ":02Sb981f26534g75h091287a46p5l63", $oembed_token_settings['access_token']);
 		} else {
 			$settings_access_token = trim(get_option('cff_access_token'));
+				$settings_access_token = $encryption->maybe_decrypt( $settings_access_token );
 			if ( ! empty( $settings_access_token ) ) {
 				return str_replace(":", ":02Sb981f26534g75h091287a46p5l63", $settings_access_token);
 			}
@@ -255,6 +281,7 @@ class CFF_Oembed{
 			if ( class_exists( 'SB_Instagram_Oembed' ) ) {
 				$sbi_oembed_token_settings = get_option( 'sbi_oembed_token', array() );
 				if ( ! empty( $sbi_oembed_token_settings['access_token'] ) ) {
+						$sbi_oembed_token_settings['access_token'] = $encryption->maybe_decrypt( $sbi_oembed_token_settings['access_token'] );
 					return $sbi_oembed_token_settings['access_token'];
 				}
 			}
@@ -375,7 +402,9 @@ class CFF_Oembed{
 	public static function video_providers() {
 		$video_embed_providers = array(
 			'#https?://www\.facebook\.com/.*/videos/.*#i',
-			'#https?://www\.facebook\.com/video\.php.*#i'
+			'#https?://www\.facebook\.com/video\.php.*#i',
+			'#https?://www\.facebook\.com/watch/.*#i',
+			'#https?://fb\.watch/.*#i'
 		);
 
 		return $video_embed_providers;

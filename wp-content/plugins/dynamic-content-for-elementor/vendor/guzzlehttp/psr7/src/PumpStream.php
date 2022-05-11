@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\GuzzleHttp\Psr7;
+namespace GuzzleHttp\Psr7;
 
 use Psr\Http\Message\StreamInterface;
 /**
@@ -42,12 +42,12 @@ class PumpStream implements StreamInterface
         $this->source = $source;
         $this->size = isset($options['size']) ? $options['size'] : null;
         $this->metadata = isset($options['metadata']) ? $options['metadata'] : [];
-        $this->buffer = new BufferStream();
+        $this->buffer = new \GuzzleHttp\Psr7\BufferStream();
     }
     public function __toString()
     {
         try {
-            return Utils::copyToString($this);
+            return \GuzzleHttp\Psr7\Utils::copyToString($this);
         } catch (\Exception $e) {
             return '';
         }

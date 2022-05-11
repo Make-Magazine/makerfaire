@@ -16,6 +16,11 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 2.6 on December 21, 2021 =
+
+* Added: Auto-Update setting! DataTables will automatically refresh with new entries as they're added. [Learn more about the new Auto-Update feature!](https://docs.gravityview.co/article/821-enable-auto-update-datatables-setting)
+    - You control how frequently the data refreshes. By default, it's every 5 minutes.
+
 = 2.5.1 on November 4, 2021 =
 
 * Fixed: DataTables scripts would not load when manually outputting the contents of the `[gravityview]` shortcode. Requires GravityView 2.13.4 or newer.
@@ -358,4 +363,4 @@ __Developer Notes:__
 
 
 
-= 1639768391-4249 =
+= 1652294093-4249 =

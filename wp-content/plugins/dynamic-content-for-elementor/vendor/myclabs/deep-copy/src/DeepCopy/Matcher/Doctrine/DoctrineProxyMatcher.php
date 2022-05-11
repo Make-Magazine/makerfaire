@@ -3,7 +3,7 @@
 namespace DynamicOOOS\DeepCopy\Matcher\Doctrine;
 
 use DynamicOOOS\DeepCopy\Matcher\Matcher;
-use DynamicOOOS\Doctrine\Common\Persistence\Proxy;
+use DynamicOOOS\Doctrine\Persistence\Proxy;
 /**
  * @final
  */

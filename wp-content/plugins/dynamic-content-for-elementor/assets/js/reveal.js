@@ -1,5 +1,4 @@
 ( function( $ ) {
-	var isReveal = false;
 	var WidgetElements_RevealHandler = function( $scope, $ ) {
 		var elementSettings = dceGetElementSettings( $scope );
 		var rev1;
@@ -14,27 +13,23 @@
 						contentEl.style.opacity = 1;
 					}
 				}
-
 			});
-
 		};
 		var runReveal = function(){
 			rev1.reveal();
 		};
 		if(elementSettings.enabled_reveal){
-
 			var revealId = '#reveal-'+$scope.data('id');
 			var revealistance = document.querySelector(revealId);
-      if (!jQuery(revealId).hasClass('block-revealer')) {
-          revealAction();
-      }
+			if (!jQuery(revealId).hasClass('block-revealer')) {
+				revealAction();
+			}
 
 			var waypointOptions = {
 				offset: '100%',
 				triggerOnce: true
 			};
 			elementorFrontend.waypoint($(revealistance), runReveal, waypointOptions);
-
 		}
 	};
 

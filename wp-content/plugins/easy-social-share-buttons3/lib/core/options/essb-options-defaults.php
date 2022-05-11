@@ -116,7 +116,6 @@ if (!function_exists('essb_available_social_networks')) {
 				'facebook' => array ('name' => 'Facebook', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
 				'facebook_like' => array ('name' => 'Like', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
 				'twitter' => array ('name' => 'Twitter', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
-				'google' => array ('name' => 'Google+', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
 				'pinterest' => array ('name' => 'Pinterest', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
 				'linkedin' => array ('name' => 'LinkedIn', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),
 				'digg' => array ('name' => 'Digg', 'type' => 'buildin', 'supports' => 'desktop,mobile' ),

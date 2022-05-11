@@ -39,7 +39,9 @@ class ESSBOptionsFramework {
 				'essb3_ofob' => 'essb3-ofob', 
 				'essb3_ofof' => 'essb3-ofof',
 				'essb_fake' => 'essb-fake',
-				'essb_hook' => 'essb-hook');
+				'essb_hook' => 'essb-hook',
+		        'essb3_oflock' => 'essb3-oflock'
+		);
 		
 		if (has_filter('essb_additional_settings_key')) {
 			$table = apply_filters('essb_additional_settings_key', $table);
@@ -121,19 +123,22 @@ class ESSBOptionsFramework {
 				break;		
 			case "heading6":
 				self::draw_heading($title, '6', $submenu_link, $description, $class);
-				break;				
+				break;
+			case "heading7":
+			    self::draw_heading($title, '7', $submenu_link, $description, $class, isset($option['icon']) ? $option['icon'] : '');
+			    break;
 			case "switch":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+				self::draw_options_row_start($title, $description, $recommended, $col_width, '', 'essb_field_' . $id, $id);
 				self::draw_switch_field($id, $settings_group, $option_value, $on_text, $off_text, $class);
 				self::draw_options_row_end();
 				break;		
 			case "switch-in-panel":
-				self::draw_advanced_options_panel_start($title, 'ao-panel-'.$id, true);
+			    self::draw_advanced_options_panel_start($title, 'ao-panel-'.$id, true, array(), 'essb_field_' . $id, $id);
 				self::draw_switch_field($id, $settings_group, $option_value, $on_text, $off_text, $class);
 				self::draw_advanced_options_panel_end($description, true);
 				break;		
 			case "text":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+				self::draw_options_row_start($title, $description, $recommended, $col_width, '', 'essb_options_'.$id, $id);
 				self::draw_input_field($id, false, $settings_group, $option_value, $icon, $class, $icon_position, '', $element_options);
 				self::draw_options_row_end();
 				break;		
@@ -148,17 +153,17 @@ class ESSBOptionsFramework {
 				self::draw_advanced_options_panel_end($description);
 				break;				
 			case "text-stretched":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', 'essb_options_'.$id, $id);
 				self::draw_input_field($id, true, $settings_group, $option_value, $icon, $class, $icon_position, '', $element_options);
 				self::draw_options_row_end();
 				break;		
 			case "checkbox":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_checkbox_field($id, $settings_group, $option_value);
 				self::draw_options_row_end();
 				break;		
 			case "checkbox_list":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_checkbox_list_field($id, $listOfValues, $settings_group, $option_value, $element_options);
 				self::draw_options_row_end();
 				break;		
@@ -225,12 +230,12 @@ class ESSBOptionsFramework {
 					}
 				}
 				
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+				self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_checkbox_list_sortable_field($id, $listOfValues, $settings_group, $option_value, $style);
 				self::draw_options_row_end();
 				break;		
 			case "select":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', 'essb_options_'.$id, $id);
 				self::draw_select_field($id, $listOfValues, false, $settings_group, $option_value, $element_options);
 				self::draw_options_row_end();
 				break;	
@@ -240,22 +245,22 @@ class ESSBOptionsFramework {
 				self::draw_advanced_options_panel_end($description);
 				break;	
 			case "textarea":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
-				self::draw_textarea_field($id, $settings_group, $option_value);
+			    self::draw_options_row_start($title, $description, '', $col_width, '', 'essb_options_'.$id, $id);
+			    self::draw_textarea_field($id, $settings_group, $option_value, '', isset($option['rows']) ? $option['rows'] : '');
 				self::draw_options_row_end();
 				break;
 			case "editor":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_editor_field($id, $settings_group, $option_value, $mode);
 				self::draw_options_row_end();
 				break;
 			case "wpeditor":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_wpeditor_field($id, $settings_group, $option_value);
 				self::draw_options_row_end();
 				break;
 			case "color":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', 'essb_field_' . $id, $id);
 				if ($alpha == 'true') {
 					self::draw_acolor_field($id, $settings_group, $option_value);
 				}
@@ -275,33 +280,33 @@ class ESSBOptionsFramework {
 				self::draw_advanced_options_panel_end($description);
 				break;
 			case "image_checkbox":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_image_checkbox_field($id, $listOfValues, $settings_group, $option_value);
 				self::draw_options_row_end();
 				break;
 			case "html_checkbox_buttons":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_image_checkbox_field($id, $listOfValues, $settings_group, $option_value, array('html' => 'true', 'shortcode' => $shortcode, 'width' => $width, 'buttons' => 'true'));
 				self::draw_options_row_end();
 				break;
 			case "image_radio":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_image_radio_field($id, $listOfValues, $settings_group, $option_value);
 				self::draw_options_row_end();
 				break;
 			case "html_radio":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_image_radio_field($id, $listOfValues, $settings_group, $option_value, array('html' => 'true', 'shortcode' => $shortcode, 'width' => $width));
 				self::draw_options_row_end();
 				break;
 			case "html_radio_buttons":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_image_radio_field($id, $listOfValues, $settings_group, $option_value, array('html' => 'true', 'shortcode' => $shortcode, 'width' => $width, 'buttons' => 'true'));
 				self::draw_options_row_end();
 				break;
 			case "func":
 				if ($title != '') {
-					self::draw_options_row_start($title, $description, $recommended, $col_width);
+				    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				}
 				else {
 					self::draw_options_row_start_full();
@@ -332,7 +337,7 @@ class ESSBOptionsFramework {
 				
 				break;
 			case "file":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_fileselect_field($id, $settings_group, $option_value, $icon, $class);
 				self::draw_options_row_end();
 				break;	
@@ -344,18 +349,18 @@ class ESSBOptionsFramework {
 					self::draw_options_row_end();
 				}
 				else {
-					self::draw_options_row_start($title, $description, $recommended, $col_width);
+				    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 					self::draw_fileselect_image_field($id, $settings_group, $option_value, $icon, $class.$mode);
 					self::draw_options_row_end();
 				}
 				break;
 			case "simplesort":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_simplesort_field($id, $listOfValues, $settings_group, $option_value);
 				self::draw_options_row_end();
 				break;
 			case 'section_start':
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_section_start();
 				self::$section_active = true;
 				break;
@@ -365,7 +370,7 @@ class ESSBOptionsFramework {
 				self::$section_active = false;
 				break;
 			case "select2":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_select2_field($id, $listOfValues, false, $settings_group, $option_value, $select2_options);
 				self::draw_options_row_end();
 				break;	
@@ -434,7 +439,7 @@ class ESSBOptionsFramework {
 				self::draw_holder_end();
 				break;
 			case "toggle":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_toggle_field($id, $listOfValues, $settings_group, $option_value, $element_options);
 				self::draw_options_row_end();
 				break;
@@ -447,7 +452,7 @@ class ESSBOptionsFramework {
 				self::draw_settings_panel_end($description, $recommended);
 				break;
 			case "group-select":
-				self::draw_options_row_start($title, $description, $recommended, $col_width);
+			    self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_group_select_field($id, $listOfValues, $settings_group, $option_value, $element_options);
 				self::draw_options_row_end();
 				break;
@@ -669,47 +674,58 @@ class ESSBOptionsFramework {
 		if ($description == '') { 
 			$css_class .= ' essb-portlet-notdesc';
 		}
+		
+		/**
+		 * Add active class if opened
+		 */
+		if ($mode == 'switch' && $switch_value == 'true') {
+		    $css_class .= ' portlet-active';
+		}
 
 		print '<div class="essb-portlet'.($style != "" ? " essb-portlet-".esc_attr($style) : "").($mode != '' ? ' essb-portlet-'.$mode : '').($switch_submit == 'true' ? ' essb-portlet-submit' : '').($css_class != '' ? ' '.esc_attr($css_class): '').'">';
 		
 		print '<div class="essb-portlet-heading'.($state == 'closed' ? ' essb-portlet-heading-closed' : '').($switch_submit == 'true' ? ' essb-portlet-submit' : '').'">';
 
-		if ($mode != '') {
-			if ($mode == 'toggle') {
-				print '<div class="essb-portlet-state">';
-				if ($state == 'closed') {
-					print '<i class="fa fa-chevron-right"></i>';
-				}
-				else {
-					print '<i class="fa fa-chevron-down"></i>';
-				}
-				print '</div>';
-			}
-			
-			if ($mode == 'switch') {
-				print '<div class="essb-portlet-state essb-portlet-state-switch">';
-				self::draw_switch_field($switch_id, $settings_group, $switch_value, $switch_on, $switch_off);
-				print '</div>';
-				
-				if ($switch_value != 'true') {
-					$state = 'closed';
-				}
-			}
-		}
+		echo '<div class="essb-portlet-flex '.($switch_submit == 'true' ? ' essb-portlet-submit' : '').'">';
 		
 		if ($icon != '') {
-			print '<div class="essb-portlet-heading-icon"><i class="'.esc_attr($icon).'"></i></div>';
+		    print '<div class="essb-portlet-heading-icon"><i class="'.esc_attr($icon).'"></i></div>';
 		}
 		else if ($svg_icon != '') {
 		    print '<div class="essb-portlet-heading-icon">'.$svg_icon.'</div>';
 		}
 		
-		print "<h3>".esc_html($title).'</h3>';
-			if ($description != '') {
-			print '<div class="essb-portlet-description">'.($description).'</div>';
+		print "<h3>".$title.'</h3>';
+		
+		if ($mode != '') {
+		    if ($mode == 'toggle') {
+		        print '<div class="essb-portlet-state">';
+		        if ($state == 'closed') {
+		            print '<i class="fa fa-chevron-right"></i>';
+		        }
+		        else {
+		            print '<i class="fa fa-chevron-down"></i>';
+		        }
+		        print '</div>';
+		    }
+		    
+		    if ($mode == 'switch') {
+		        print '<div class="essb-portlet-state essb-portlet-state-switch">';
+		        self::draw_switch_field($switch_id, $settings_group, $switch_value, $switch_on, $switch_off);
+		        print '</div>';
+		        
+		        if ($switch_value != 'true') {
+		            $state = 'closed';
+		        }
+		    }
 		}
 		
- 		
+		echo '</div>';		
+        
+        if ($description != '') {
+			print '<div class="essb-portlet-description">'.($description).'</div>';
+		}
+		 		
 		print '</div>';		
 		// end: heading
 		
@@ -909,7 +925,61 @@ class ESSBOptionsFramework {
 		}
 	}
 	
-	public static function draw_options_row_start($title, $description = '', $recommended = '', $col_width = '', $vertical = '') {
+	/**
+	 * Simple row opening element with title, description and elementid for attribution
+	 * 
+	 * @param string $title
+	 * @param string $description
+	 * @param string $element_id
+	 */
+	public static function draw_options_row_start_advanced_panel($title = '', $description = '', $element_id = '') {
+	    if (empty($title)) {
+	        self::draw_options_row_start_full();
+	        return;
+	    }
+	    
+	    $recommended = '';
+	    
+	    $basic_param_col = '4';
+	    $basic_value_col = '8';
+	    
+	    $col_width = 0;
+	    if (intval($col_width) > 0) {
+	        $basic_param_col = $col_width;
+	        $basic_value_col = 12 - $col_width;
+	    }
+	    
+	    $row_class = "";
+	    if (!self::$section_active) {
+	        $row_class = (self::$was_lastrow_even) ? "odd" : "even";
+	        self::$was_lastrow_even = !self::$was_lastrow_even;
+	    }
+	    
+	    if ($description != '') {
+	        $new_line = "<br/>";
+	        $description = sprintf('%2$s<span class="label">%1$s', ($description), $new_line);
+	    }
+	    
+	    if ($description == '' && $recommended == '') {
+	        $row_class .= ' no-description';
+	    }
+	    
+	    if (!empty($element_id)) {
+	        $panel_class = $element_id;
+	        $panel_class = str_replace('essb_field_', '', $panel_class);
+	        $panel_class = str_replace('essb_options_', '', $panel_class);
+	        $row_class .= ' settings-panel-' . esc_attr($panel_class);
+	        $row_class .= ' ao-panel-' . esc_attr($panel_class);
+	    }
+	    
+	    $for_attribution = $element_id != '' ? 'for="'.esc_attr($element_id).'"': '';
+	    
+	    printf('<div class="essb-flex-grid-r %1$s table-border-bottom">', esc_attr($row_class));
+	    printf('<div class="essb-flex-grid-c c'.esc_attr($basic_param_col).' bold"><label class="title" %4$s>%1$s</label>%3$s%2$s</div>', $title, $description, $recommended, $for_attribution);
+	    echo '<div class="essb-flex-grid-c c'.esc_attr($basic_value_col).'">';
+	}
+	
+	public static function draw_options_row_start($title, $description = '', $recommended = '', $col_width = '', $vertical = '', $element_id = '', $field_id = '') {
 		
 		// @new 4.0 - if field has no title than we use it in full width
 		if (empty($title)) {
@@ -919,6 +989,8 @@ class ESSBOptionsFramework {
 		
 		$basic_param_col = '4';
 		$basic_value_col = '8';
+		
+		$new_style = false;
 		
 		if (intval($col_width) > 0) {
 			$basic_param_col = $col_width;
@@ -930,10 +1002,41 @@ class ESSBOptionsFramework {
 			$row_class = (self::$was_lastrow_even) ? "odd" : "even";
 			self::$was_lastrow_even = !self::$was_lastrow_even;
 		}
+		
+		if (class_exists('ESSBControlCenter') && ESSBControlCenter::is_new_version()) {
+		    $new_style = true;
+		}
+		
+        if (class_exists('ESSBControlCenter') && ESSBControlCenter::is_description_inline($field_id)) {
+            $new_style = false;
+        }
+		
 		if ($description != '') {
 			$new_line = "<br/>";
 			if ($recommended != '') { $new_line = ''; }
-			$description = sprintf('%2$s<span class="label">%1$s', ($description), $new_line);
+			if ($new_style) {
+			    
+			    
+			    $help_link = ESSBControlCenter::get_help_link($field_id);
+			    if ($help_link != '') {
+			        $help_link = ' href="'.esc_url($help_link).'" target="_blank"';
+			        
+			        $description .= " [Click ? to learn more]";
+			    }			    
+			    
+			    
+			    $description = '<a '.$help_link.' class="help" data-microtip-size="large" data-microtip-position="bottom-right" role="tooltip" aria-label="'.$description.'">?';			    
+			    $description .= '</a>';
+			    $recommended = '';
+			    
+			    $has_extra_description = ESSBControlCenter::get_extra_description($field_id);
+			    if ($has_extra_description != '') {
+			        $title .= sprintf('%2$s<span class="label">%1$s', $has_extra_description, $new_line);
+			    }
+			}
+			else {
+                $description = sprintf('%2$s<span class="label">%1$s', ($description), $new_line);
+			}
 		}
 		
 		if ($recommended != '') {
@@ -945,7 +1048,7 @@ class ESSBOptionsFramework {
 		
 		if ($vertical == 'true') {
 			printf('<div class="essb-flex-grid-r %1$s table-border-bottom essb-flex-grid-nomargin">', esc_attr($row_class));
-			printf('<div class="essb-flex-grid-c c12 bold"><span class="title">%1$s</span>%3$s%2$s</div>', esc_html($title), $description, $recommended);
+			printf('<div class="essb-flex-grid-c c12 bold"><label class="title" for="'.esc_attr($element_id).'">%1$s</label>%3$s%2$s</div>', $title, $description, $recommended);
 			echo '</div>';
 			printf('<div class="essb-flex-grid-r %1$s table-border-bottom">', esc_attr($row_class));
 			echo '<div class="essb-flex-grid-c c12">';
@@ -957,8 +1060,23 @@ class ESSBOptionsFramework {
 		        $row_class .= ' no-description';
 		    }
 		    
+		    $for_attribution = $element_id != '' ? 'for="'.esc_attr($element_id).'"': '';
+		    
+		    if ($new_style && $description != '') {
+		        $basic_param_col .= ' essb-help-hinticon';
+		        $row_class .= ' essb-flex-centerv';
+		    }
+		    
+		    if (!empty($element_id)) {
+		        $panel_class = $element_id;
+		        $panel_class = str_replace('essb_field_', '', $panel_class);
+		        $panel_class = str_replace('essb_options_', '', $panel_class);
+		        $row_class .= ' settings-panel-' . esc_attr($panel_class);
+		        $row_class .= ' ao-panel-' . esc_attr($panel_class);
+		    }
+		    
 			printf('<div class="essb-flex-grid-r %1$s table-border-bottom">', esc_attr($row_class));
-			printf('<div class="essb-flex-grid-c c'.esc_attr($basic_param_col).' bold"><span class="title">%1$s</span>%3$s%2$s</div>', esc_html($title), $description, $recommended);
+			printf('<div class="essb-flex-grid-c c'.esc_attr($basic_param_col).' bold"><label class="title" %4$s>%1$s</label>%3$s%2$s</div>', $title, $description, $recommended, $for_attribution);
 			echo '<div class="essb-flex-grid-c c'.esc_attr($basic_value_col).'">';
 		}
 	}
@@ -1011,12 +1129,18 @@ class ESSBOptionsFramework {
 	 * @param {boolean} $is_switch
 	 * @param {array} $element_options
 	 */
-	public static function draw_advanced_options_panel_start($title = '', $panel_id = '', $is_switch = false, $element_options = array()) {
+	public static function draw_advanced_options_panel_start($title = '', $panel_id = '', $is_switch = false, $element_options = array(), $element_id = '', $id = '') {
 		$add_class = isset($element_options['class']) ? $element_options['class'] : '';
 		
 		echo '<div class="advancedoptions-tile advancedoptions-panel '.esc_attr($panel_id).($add_class != '' ? ' '.esc_attr($add_class) : '').'">';
 		echo '<div class="advancedoptions-tile-head">';
-		echo '<div class="advancedoptions-tile-head-title"><h3>'.$title.'</h3></div>';
+		
+		if ($is_switch && $element_id != '') {
+		    echo '<div class="advancedoptions-tile-head-title"><h3><label for="'.$element_id.'">'.$title.'</label></h3></div>';
+		}
+		else {
+            echo '<div class="advancedoptions-tile-head-title"><h3>'.$title.'</h3></div>';
+		}
 		
 		if ($is_switch) {
 			echo '<div class="advancedoptions-tile-head-tools">';	
@@ -1065,7 +1189,7 @@ class ESSBOptionsFramework {
 		echo '</table>';
 	}
 	
-	public static function draw_heading($title, $level = '1', $submenu_link = '', $desc = '', $class = '') {
+	public static function draw_heading($title, $level = '1', $submenu_link = '', $desc = '', $class = '', $icon = '') {
 		$css_class_heading = "";
 		switch ($level) {
 			case "1":
@@ -1086,6 +1210,10 @@ class ESSBOptionsFramework {
 			case "6":
 				$css_class_heading = 'sub6';
 				break;
+			case "7":
+			    $css_class_heading = 'sub7';
+			    $title = '<em>' . $title . '</em>';
+			    break;
 			default:
 				$css_class_heading = "sub";
 				break;
@@ -1106,8 +1234,12 @@ class ESSBOptionsFramework {
 			$title .= '<span class="label">'.$desc.'</span>';
 		}
 		
+		if (!empty($icon)) {
+		    $icon = '<span class="icon">' . $icon . '</span>';
+		}
+		
 		printf('<div class="essb-flex-grid-r'.($class != '' ? ' '.esc_attr($class) : '').'" %1$s>', $submenu_link);
-		printf('<div class="essb-flex-grid-c c12 essb-heading %1$s"><div>%2$s</div></div>', esc_attr($css_class_heading), $title);
+		printf('<div class="essb-flex-grid-c c12 essb-heading %1$s">%3$s<div>%2$s</div></div>', esc_attr($css_class_heading), $title, $icon);
 		print '</div>';
 	}
 	
@@ -1249,9 +1381,14 @@ class ESSBOptionsFramework {
 	}
 	
 	
-	public static function draw_textarea_field($field, $settings_group = 'essb_options', $value = '', $placeholder = '') {
+	public static function draw_textarea_field($field, $settings_group = 'essb_options', $value = '', $placeholder = '', $rows = '') {
+	    
+	    if (empty($rows) || intval($rows) <= 0) {
+	        $rows = '5';
+	    }
+	    
 		$value = esc_textarea ( stripslashes($value));
-		printf('<textarea id="essb_options_%1$s" name="%2$s[%1$s]" class="input-element stretched" rows="5" placeholder="'.$placeholder.'">%3$s</textarea>', $field, $settings_group, $value);
+		printf('<textarea id="essb_options_%1$s" name="%2$s[%1$s]" class="input-element stretched" rows="'.esc_attr($rows).'" placeholder="'.$placeholder.'">%3$s</textarea>', $field, $settings_group, $value);
 	}
 
 	public static function draw_wpeditor_field($field, $settings_group = 'essb_options', $value = '') {
@@ -1319,10 +1456,18 @@ class ESSBOptionsFramework {
 				printf('<span class="essb-input-prefix-icon"><i class="fa %1$s"></i></span>', $icon);
 			}
 			
+			if ($icon != '' && $icon_position == 'right') {
+			    $class .= ' input_icon_right';
+			}
+			
+			if ($icon != '' && $icon_position == 'right') {
+			    $class .= ' input_icon_left';
+			}
+			
 			echo '<input id="essb_options_' . $field_id . '" type="text" name="' . $settings_group . '[' . $field_id . ']" value="' . $value . '" class="input-element' . ($fullwidth ? ' stretched' : '') . ' '.$class.'" placeholder="'.$placeholder_text.'" />';
 	
 			if ($icon != '' && $icon_position == 'right') {
-				printf('<span class="essb-input-suffix-icon"><i class="fa %1$s"></i></span>', $icon);
+			    printf('<span class="essb-input-suffix-icon '.$icon_position.'"><i class="fa %1$s"></i></span>', $icon);
 			}
 		}
 		else {
@@ -1530,10 +1675,24 @@ class ESSBOptionsFramework {
 			if (!is_array($value)) {
 				$value = array();
 			}
-			echo '<select name="' . $group . '[' . $field . '][]" class="input-element essb-select2" id="essb_options_' . $field . '" data-values="'.implode (',', $value).'" multiple="multiple">';
+			echo '<select name="' . $group . '[' . $field . '][]" class="input-element essb-select2" id="essb_options_' . $field . ($group != 'essb_options' ? '_' . $group : '') . '" data-values="'.implode (',', $value).'" multiple="multiple">';
 		} 
 		else {
-			echo '<select name="' . $group . '[' . $field . ']" class="input-element" id="essb_options_' . $field . '">';
+		    
+		    $first_value = '';
+		    
+		    if ($simpleList) {
+		        if (isset($listOfValues[0])) {
+		            $first_value = $listOfValues[0];
+		        }
+		    }
+		    else {
+		        $array = $listOfValues;
+		        reset($array);
+		        $first_value = key($array);
+		    }
+		    
+			echo '<select name="' . $group . '[' . $field . ']" class="input-element" id="essb_options_' . $field . '" data-default="'.esc_attr($first_value).'">';
 		}
 		
 		if ($simpleList) {
@@ -1594,7 +1753,7 @@ class ESSBOptionsFramework {
 		
 		foreach ($listOfValues as $key => $text) {
 			$is_checked = in_array($key, $value) ? ' checked="checked"' : '';
-			echo '<span class="essb_checkbox_list_item"><input id="essb_options_' . $field . '" type="checkbox" name="' . $group . '[' . $field . '][]" value="'.$key.'" ' . $is_checked . ' />'.$text.'</span>';
+			echo '<span class="essb_checkbox_list_item"><input id="essb_options_' . $field .'_'.$key . '" type="checkbox" name="' . $group . '[' . $field . '][]" value="'.$key.'" ' . $is_checked . ' /><label for="essb_options_' . $field.'_'.$key . '">'.$text.'</label></span>';
 		}
 	}
 	

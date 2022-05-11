@@ -5,8 +5,13 @@ if (function_exists('essb_advancedopts_settings_group')) {
 }
 
 // recovery
+
+essb_advanced_options_relation('counter_recover_active', 'switch', array('counter_recover_mode', 'counter_recover_custom', 'counter_recover_protocol', 
+    'counter_recover_prefixdomain', 'counter_recover_subdomain', 'counter_recover_domain', 'counter_recover_newdomain', 'counter_recover_date'));
+
+
 essb_advancedopts_section_open('ao-small-values');
-essb5_draw_switch_option('counter_recover_active', esc_html__('Activate Share Recovery', 'essb'), '');
+essb5_draw_switch_option('counter_recover_active', esc_html__('Activate share recovery', 'essb'), '');
 
 $recover_type = array(
 		'unchanged'			=> esc_html__( 'Unchanged' , 'essb' ),

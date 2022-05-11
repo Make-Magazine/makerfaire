@@ -1,6 +1,15 @@
 
 # Changelog
 
+## 1.3.10
+
+	- Fixed PHP notice that could show if there are submitted File Upload fields without values.
+
+## 1.3.9
+
+	- Fixed conflict where Preview Submission was preventing merge tag drop downs for other plugins/perks such as GP Unique ID from showing fields on the current page.
+	- Added "Update URI" to plugin header to improve security.
+
 ## 1.3.8
 
 	- Fixed issue where File Upload fields in Nested Forms would not show their values in merge tags parsed by GP Preview Submission.

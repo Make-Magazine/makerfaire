@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms ActiveCampaign Add-On
 Plugin URI: https://www.gravityforms.com
 Description: Integrates Gravity Forms with ActiveCampaign, allowing form submissions to be automatically sent to your ActiveCampaign account.
-Version: 1.9
+Version: 2.0
 Author: Gravity Forms
 Author URI: https://gravityforms.com
 License: GPL-2.0+
@@ -11,7 +11,7 @@ Text Domain: gravityformsactivecampaign
 Domain Path: /languages
 
 ------------------------------------------------------------------------
-Copyright 2009-2020 Rocketgenius, Inc.
+Copyright 2009-2021 Rocketgenius, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-define( 'GF_ACTIVECAMPAIGN_VERSION', '1.9' );
+define( 'GF_ACTIVECAMPAIGN_VERSION', '2.0' );
 
 // If Gravity Forms is loaded, bootstrap the ActiveCampaign Add-On.
 add_action( 'gform_loaded', array( 'GF_ActiveCampaign_Bootstrap', 'load' ), 5 );

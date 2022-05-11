@@ -1,9 +1,13 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
+use TwitterFeed\Pro\CTF_Settings_Pro;
+use TwitterFeed\Pro\CTF_Parse_Pro;
+use TwitterFeed\Pro\CTF_Feed_Pro;
 
 add_shortcode( 'social-wall', 'sbsw_feed_init' );
 function sbsw_feed_init( $atts, $content = null ) {
+	do_action( 'sbi_before_display_instagram' );
+
 	wp_enqueue_script( 'sbsw_scripts' );
 	$plugins_with_atts = sbsw_parse_shortcodes( $content );
 	$database_settings = sbsw_get_database_settings();
@@ -823,7 +827,7 @@ function sbsw_background_processing() {
         $social_wall_feed->cache_feed_data( SBSW_CRON_UPDATE_CACHE_TIME, $wall_next_pages );
 	}
 
-	if ( isset( $_POST['posts']['twitter'] ) && function_exists( 'ctf_twitter_cards' ) ) {
+	if ( isset( $_POST['posts']['twitter'] ) && class_exists( 'TwitterFeed\Pro\CTF_Twitter_Card_Manager' ) ) {
 		$url_item_batch = array();
 		if ( isset( $_POST['posts']['twitter']['cards'] ) ) {
             foreach ( $_POST['posts']['twitter']['cards'] as $tc_item ) {
@@ -834,7 +838,7 @@ function sbsw_background_processing() {
             }
 		}
 
-		$twitter_card_batch = CTF_Twitter_Card_Manager::process_url_batch( $url_item_batch );
+		$twitter_card_batch = TwitterFeed\Pro\CTF_Twitter_Card_Manager::process_url_batch( $url_item_batch );
 
 		$twitter_return = array();
 		foreach ( $twitter_card_batch as $twitter_card_array ) {
@@ -842,10 +846,10 @@ function sbsw_background_processing() {
 
 			$twitter_card = $twitter_card_array['twitter_card'];
 
-			$image = CTF_Display_Elements_Pro::get_twitter_card_media_html( $twitter_card );
-			$title = CTF_Parse_Pro::get_twitter_card_title( $twitter_card );
-			$description = CTF_Parse_Pro::get_twitter_card_description( $twitter_card );
-			$link_html = CTF_Display_Elements_Pro::get_icon( 'link' ) . CTF_Display_Elements_Pro::get_twitter_card_link_text( $url );
+			$image = TwitterFeed\Pro\CTF_Display_Elements_Pro::get_twitter_card_media_html( $twitter_card );
+			$title = TwitterFeed\Pro\CTF_Parse_Pro::get_twitter_card_title( $twitter_card );
+			$description = TwitterFeed\Pro\CTF_Parse_Pro::get_twitter_card_description( $twitter_card );
+			$link_html = TwitterFeed\Pro\CTF_Display_Elements_Pro::get_icon( 'link' ) . TwitterFeed\Pro\CTF_Display_Elements_Pro::get_twitter_card_link_text( $url );
 
 			$content = '';
 			if ( ! empty( $title )

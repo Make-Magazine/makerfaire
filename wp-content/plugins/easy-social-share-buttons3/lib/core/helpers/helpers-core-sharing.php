@@ -318,6 +318,12 @@ function essb_core_helper_nonlatin_textencode($str = '') {
     $str = str_replace('\%27', '%27', $str);
     $str = str_replace('%26%238211%3B', '-', $str);
     
+    /**
+     * @since 8.3 Horizontal Ellipsis
+     */
+    $str = str_replace('&#8230;', '...', $str); 
+    $str = str_replace('%26%238230%3B', '...', $str);
+    
     return $str;
 }
 
@@ -350,6 +356,12 @@ function essb_core_helper_textencode($str) {
 	$str = str_replace('|', '%7C', $str);
 	$str = str_replace('\%27', '%27', $str);
 	$str = str_replace('%26%238211%3B', '-', $str);
+	
+	/**
+	 * @since 8.3 Horizontal Ellipsis
+	 */
+	$str = str_replace('&#8230;', '...', $str);
+	$str = str_replace('%26%238230%3B', '...', $str);
 	
 	return $str;
 }

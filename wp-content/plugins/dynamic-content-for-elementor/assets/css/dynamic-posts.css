@@ -491,7 +491,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-content: center; 
+  align-content: center;
 }
 body:not(.elementor-msie) .equalHMR{
   flex: 1 1 100%;
@@ -513,10 +513,10 @@ body:not(.elementor-msie) .equalHMR{
 .dce-pagination .fa{
   line-height: 0;
 }
-.dce-pagination .pageprev .fa, .dce-pagination .pagefirst .fa{
+.dce-pagination .pageprev i, .dce-pagination .pagefirst i{
   margin-right: 7px;
 }
-.dce-pagination .pagenext .fa, .dce-pagination .pagelast .fa{
+.dce-pagination .pagenext i, .dce-pagination .pagelast i{
   margin-left: 7px;
 }
 .dce-pagination span, .dce-pagination a {
@@ -618,7 +618,7 @@ div.infiniteScroll{
 }
 .loader-ellips__dot:nth-child(2),
 .loader-ellips__dot:nth-child(3) {
- animation-name:slide
+ animation-name:dce-slide
 }
 .loader-ellips__dot:nth-child(4) {
  animation-name:reveal;
@@ -632,7 +632,7 @@ div.infiniteScroll{
   transform:scale(1)
  }
 }
-@keyframes slide {
+@keyframes dce-slide {
  to {
   transform:translateX(1.3em)
  }

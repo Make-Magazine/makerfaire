@@ -8,9 +8,14 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Template extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class DynamicTemplate extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_dynamictemplate', ['label' => $this->get_title()]);
         $this->add_control('dynamic_template', ['label' => __('Select Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library']);
@@ -20,7 +25,7 @@ class DCE_Widget_Template extends \DynamicContentForElementor\Widgets\WidgetProt
         $this->add_control('other_author_id', ['label' => __('Select other Author', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Force Author content', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'users', 'condition' => ['data_source' => '']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings) || empty($settings['dynamic_template'])) {

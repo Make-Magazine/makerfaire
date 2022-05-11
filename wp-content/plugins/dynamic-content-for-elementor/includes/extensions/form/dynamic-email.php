@@ -10,7 +10,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Email extends \ElementorPro\Modules\Forms\Classes\Action_Base
+class DynamicEmail extends \ElementorPro\Modules\Forms\Classes\Action_Base
 {
     use ExtensionInfo;
     public $has_action = \true;
@@ -44,7 +44,7 @@ class DCE_Extension_Form_Email extends \ElementorPro\Modules\Forms\Classes\Actio
      */
     public function get_label()
     {
-        return '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Dynamic Email', 'dynamic-content-for-elementor');
+        return '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Dynamic Email', 'dynamic-content-for-elementor');
     }
     public function get_script_depends()
     {
@@ -65,15 +65,15 @@ class DCE_Extension_Form_Email extends \ElementorPro\Modules\Forms\Classes\Actio
     public function register_settings_section($widget)
     {
         $widget->start_controls_section('section_dce_form_email', ['label' => $this->get_label(), 'condition' => ['submit_actions' => $this->get_name()]]);
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && !current_user_can('administrator')) {
-            $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="elementor-panel-alert elementor-panel-alert-warning">' . __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor') . '</div>']);
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
+            $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             $widget->end_controls_section();
             return;
         }
         $repeater_fields = new \Elementor\Repeater();
-        $repeater_fields->add_control('dce_form_email_enable', ['label' => __('Enable email', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes', 'description' => __('You can temporary disable and reactivate it next time without deleting settings ', 'dynamic-content-for-elementor'), 'separator' => 'after']);
+        $repeater_fields->add_control('dce_form_email_enable', ['label' => __('Enable email', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'description' => __('You can temporary disable and reactivate it next time without deleting settings ', 'dynamic-content-for-elementor'), 'separator' => 'after']);
         $repeater_fields->add_control('dce_form_email_condition_field', ['label' => __('Condition', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the form field ID to check, or leave it empty to always execute this action', 'dynamic-content-for-elementor')]);
-        $repeater_fields->add_control('dce_form_email_condition_status', ['label' => __('Condition Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['empty' => ['title' => __('Empty', 'dynamic-content-for-elementor'), 'icon' => 'eicon-circle-o'], 'valued' => ['title' => __('Valorized with any value', 'dynamic-content-for-elementor'), 'icon' => 'eicon-dot-circle-o'], 'lt' => ['title' => __('Less than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-left'], 'gt' => ['title' => __('Greater than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'equal' => ['title' => __('Equal to', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle'], 'contain' => ['title' => __('Contain', 'dynamic-content-for-elementor'), 'icon' => 'eicon-check']], 'default' => 'valued', 'toggle' => \false, 'label_block' => \true, 'condition' => ['dce_form_email_condition_field!' => '']]);
+        $repeater_fields->add_control('dce_form_email_condition_status', ['label' => __('Condition Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['empty' => ['title' => __('Empty', 'dynamic-content-for-elementor'), 'icon' => 'eicon-circle-o'], 'valued' => ['title' => __('Valorized with any value', 'dynamic-content-for-elementor'), 'icon' => 'eicon-dot-circle-o'], 'lt' => ['title' => __('Less than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-left'], 'gt' => ['title' => __('Greater than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'equal' => ['title' => __('Equal to', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle'], 'contain' => ['title' => __('Contains', 'dynamic-content-for-elementor'), 'icon' => 'eicon-check']], 'default' => 'valued', 'toggle' => \false, 'label_block' => \true, 'condition' => ['dce_form_email_condition_field!' => '']]);
         $repeater_fields->add_control('dce_form_email_condition_value', ['label' => __('Condition Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('A value to compare the value of the field', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_email_condition_field!' => '', 'dce_form_email_condition_status' => ['lt', 'gt', 'equal', 'contain']]]);
         /* translators: %s: Site title. */
         $default_message = \sprintf(__('New message from "%s"', 'dynamic-content-for-elementor'), get_option('blogname'));
@@ -91,11 +91,11 @@ class DCE_Extension_Form_Email extends \ElementorPro\Modules\Forms\Classes\Actio
         $repeater_fields->add_control('dce_form_email_content_template', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as body for this Email.', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_email_content_type' => 'html', 'dce_form_email_content_type_advanced' => 'template']]);
         $repeater_fields->add_control('dce_form_email_content_template_style', ['label' => __('Styles', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['' => ['title' => __('Only HTML', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-window-close-o'], 'inline' => ['title' => __('Inline', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left']], 'default' => 'inline', 'condition' => ['dce_form_email_content_type' => 'html', 'dce_form_email_content_type_advanced' => 'template']]);
         $repeater_fields->add_control('dce_form_email_content_template_layout', ['label' => __('Flex or Table', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['flex' => ['title' => __('CSS FLEX', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-leaf'], 'table' => ['title' => __('CSS TABLE', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large'], 'html' => ['title' => __('HTML TABLE', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-table']], 'default' => 'table', 'description' => __('Add more compatibility for columned layout visualization', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_email_content_type' => 'html', 'dce_form_email_content_type_advanced' => 'template', 'dce_form_email_content_template_style' => 'inline']]);
-        $repeater_fields->add_control('dce_form_email_attachments', ['label' => __('Add Upload files as Attachments', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'description' => __('Send all Uploaded Files as Email Attachments', 'dynamic-content-for-elementor'), 'separator' => 'before']);
-        $repeater_fields->add_control('dce_form_email_attachments_delete', ['label' => __('Delete Files after Emails are sent', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'description' => __('Remove all uploaded Files from Server after Email is sent with the Files as Attachments', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_email_attachments!' => '']]);
-        $repeater_fields->add_control('dce_form_pdf_attachments_delete', ['label' => __('Delete PDF attachments after Emails are sent', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'no', 'description' => __('Remove all attached PDF files from Server after Email is sent.', 'dynamic-content-for-elementor')]);
-        $widget->add_control('dce_form_email_repeater', ['label' => __('Emails', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::REPEATER, 'title_field' => '{{{ dce_form_email_subject }}}', 'fields' => $repeater_fields->get_controls(), 'description' => __('Send all Email you need', 'dynamic-content-for-elementor')]);
-        $widget->add_control('dce_form_email_help', ['type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => '<div id="elementor-panel__editor__help" class="p-0"><a id="elementor-panel__editor__help__link" href="' . $this->doc_url . '" target="_blank">' . __('Need Help', 'dynamic-content-for-elementor') . ' <i class="eicon-help-o"></i></a></div>', 'separator' => 'before']);
+        $repeater_fields->add_control('dce_form_email_attachments', ['label' => __('Add Upload files as Attachments', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Send all Uploaded Files as Email Attachments', 'dynamic-content-for-elementor'), 'separator' => 'before']);
+        $repeater_fields->add_control('dce_form_email_attachments_delete', ['label' => __('Delete Files after Emails are sent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Remove all uploaded Files from Server after Email is sent with the Files as Attachments', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_email_attachments!' => '']]);
+        $repeater_fields->add_control('dce_form_pdf_attachments_delete', ['label' => __('Delete PDF attachments after Emails are sent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'no', 'description' => __('Remove all attached PDF files from Server after Email is sent.', 'dynamic-content-for-elementor')]);
+        $widget->add_control('dce_form_email_repeater', ['label' => __('Emails', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'title_field' => '{{{ dce_form_email_subject }}}', 'fields' => $repeater_fields->get_controls(), 'description' => __('Send all Email you need', 'dynamic-content-for-elementor')]);
+        $widget->add_control('dce_form_email_help', ['type' => Controls_Manager::RAW_HTML, 'raw' => '<div id="elementor-panel__editor__help" class="p-0"><a id="elementor-panel__editor__help__link" href="' . $this->doc_url . '" target="_blank">' . __('Need Help', 'dynamic-content-for-elementor') . ' <i class="eicon-help-o"></i></a></div>', 'separator' => 'before']);
         $widget->end_controls_section();
     }
     public function run($record, $ajax_handler)
@@ -120,7 +120,7 @@ class DCE_Extension_Form_Email extends \ElementorPro\Modules\Forms\Classes\Actio
             $settings = $record->get('form_settings');
         }
         $settings = Helper::get_dynamic_value($settings, $fields);
-        $this->dce_elementor_form_email($fields, $settings, $ajax_handler, $record);
+        $this->email($fields, $settings, $ajax_handler, $record);
     }
     public function on_export($element)
     {
@@ -133,7 +133,7 @@ class DCE_Extension_Form_Email extends \ElementorPro\Modules\Forms\Classes\Actio
             }
         }
     }
-    protected function dce_elementor_form_email($fields, $settings = null, $ajax_handler = null, $record = null)
+    protected function email($fields, $settings = null, $ajax_handler = null, $record = null)
     {
         global $phpmailer;
         $remove_uploaded_files = \false;
@@ -471,6 +471,11 @@ class DCE_Extension_Form_Email extends \ElementorPro\Modules\Forms\Classes\Actio
         }
         return $attachments;
     }
+    /**
+     * @copyright Elegant Themes
+     * @link http://www.elegantthemes.com/
+     * @license GPLv2
+     */
     public function replace_content_shortcodes($email_content, $record, $line_break)
     {
         $all_fields_shortcode = '[all-fields]';
@@ -481,6 +486,11 @@ class DCE_Extension_Form_Email extends \ElementorPro\Modules\Forms\Classes\Actio
         $email_content = \str_replace($all_fields_shortcode, $text, $email_content);
         return $email_content;
     }
+    /**
+     * @copyright Elegant Themes
+     * @link http://www.elegantthemes.com/
+     * @license GPLv2
+     */
     public function get_shortcode_value($shortcode, $email_content, $record, $line_break, $show_empty = \true)
     {
         $text = '';

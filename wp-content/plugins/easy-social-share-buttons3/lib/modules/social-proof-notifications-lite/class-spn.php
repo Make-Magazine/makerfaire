@@ -79,7 +79,12 @@ class ESSBSocialProofNotificationsLite {
 			$notification_count = 1;
 		}
 		
+		if (essb_option_bool_value('proofnotifications_activity')) {
+		    $notification_count += intval(essb_sanitize_option_value('proofnotifications_activity_counter'));
+		}
+		
 		$message_pool = array_merge($message_pool, essbspnlite_get_share_notifications_pool(get_the_ID()));
+		$message_pool = array_merge($message_pool, essbspnlite_get_activity_notifications_pool(get_the_ID()));
 		
 		// Compiling the required to display code
 		$message_pool = essbspnlite_compile_message_pool($message_pool);

@@ -31,8 +31,9 @@ class Skin_DualCarousel extends \DynamicContentForElementor\Includes\Skins\Skin_
     {
         return __('Dual Carousel', 'dynamic-content-for-elementor');
     }
-    public function register_additional_dualcarousel_controls()
+    public function register_additional_dualcarousel_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
+        $this->parent = $widget;
         $this->start_controls_section('section_dualcarousel', ['label' => __('Dual Carousel - Thumbnails', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         // slides per row
         $this->add_responsive_control('thumbnails_slidesPerView', ['label' => __('Slides Per View', 'dynamic-content-for-elementor'), 'description' => __('Number of slides per view (slides visible at the same time on sliders container). If you use it with "auto" value and along with loop: true then you need to specify loopedSlides parameter with amount of slides to loop (duplicate). SlidesPerView: "auto"\'" is currently not compatible with multirow mode, when slidesPerColumn greater than 1', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '4', 'tablet_default' => '3', 'mobile_default' => '2', 'separator' => 'before', 'min' => 3, 'max' => 12, 'step' => 1, 'frontend_available' => \true]);
@@ -95,8 +96,8 @@ class Skin_DualCarousel extends \DynamicContentForElementor\Includes\Skins\Skin_
         echo '<div class="dce-dualcarousel-posts">';
         parent::render();
         echo '</div>';
-        $this->parent->query_posts();
-        $query = $this->parent->get_query();
+        $this->get_parent()->query_posts();
+        $query = $this->get_parent()->get_query();
         if (!$query->found_posts) {
             return;
         }

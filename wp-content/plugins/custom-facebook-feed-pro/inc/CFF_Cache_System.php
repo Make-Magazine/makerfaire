@@ -5,6 +5,7 @@
  * @since 3.18
  */
 namespace CustomFacebookFeed;
+use CustomFacebookFeed\SB_Facebook_Data_Encryption;
 
 class CFF_Cache_System {
 
@@ -33,11 +34,12 @@ class CFF_Cache_System {
 	 * @access public
 	 */
 	function cff_get_meta() {
+
 	 	$comments_array_ids = isset($_POST['comments_array_ids']) && !empty($_POST['comments_array_ids']) ? $_POST['comments_array_ids'] : false;
 
 		$atts = isset( $_POST['atts'] ) ? $_POST['atts']: array();
 		$cache_feed_id = ! empty( $atts['feed'] ) ? (int)$atts['feed'] : false;
-		$page = isset( $_POST['page'] ) ? (int)$_POST['page'] : 1;
+		$page = isset( $_POST['page'] ) ? (int)sanitize_text_field( wp_unslash($_POST['page'])) : 1;
 		if ( ! empty( $cache_feed_id ) ) {
 			$feed_cache = new CFF_Cache( $cache_feed_id, $page );
 			$feed_cache->retrieve_and_set();
@@ -45,15 +47,42 @@ class CFF_Cache_System {
 			$meta_cache = $feed_cache->get( 'meta' );
 
 			if ( ! empty( $meta_cache ) ) {
-				echo $meta_cache;
-				wp_die();
+				$meta_array = json_decode( $meta_cache, true );
+				$cff_encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption;
+
+
+				foreach ( $meta_array as $key => $value ) {
+					if ( is_string( $value ) && $cff_encryption->decrypt( $value ) ) {
+						$meta_array[ $key ] = $cff_encryption->decrypt( $value ) ? $cff_encryption->decrypt( $value ) : $value;
+					}
+					if ( strpos( $meta_array[ $key ], '%' ) === 0 ) {
+						$meta_array[ $key ] = urldecode( $meta_array[ $key ] );
+					}
+				}
+				$meta_cache = json_encode( $meta_array );
+
+				if ( ! empty( $meta_cache ) ) {
+					echo $meta_cache;
+					wp_die();
+				}
 			}
+
+
 		}
+		$cff_encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption;
 
 		$result = [];
 		if($comments_array_ids != false):
 			foreach ($comments_array_ids as $single_comment_id) {
-				$result[$single_comment_id] = urldecode($this->get_single_meta($single_comment_id));
+
+				$comment_value = $this->get_single_meta( $single_comment_id );
+				if ( is_string( $comment_value ) && $cff_encryption->decrypt( $comment_value ) ) {
+					$comment_value = $cff_encryption->decrypt( $comment_value ) ? $cff_encryption->decrypt( $comment_value ) : $comment_value;
+				}
+				if ( strpos( $comment_value, '%' ) === 0 ) {
+					$comment_value = urldecode( $comment_value );
+				}
+				$result[$single_comment_id] = $comment_value;
 			}
 		endif;
 
@@ -91,24 +120,27 @@ class CFF_Cache_System {
 	 * @access public
 	 */
 	function get_single_meta($metaID){
+		$encryption = new SB_Facebook_Data_Encryption();
+
 		$transient_name = 'cff_meta_'.$metaID;
 	    $cached_data = '';
 	    //If the cache exists then use the data
 	    if ( false !== get_transient( $transient_name ) ) {
-	        $cached_data = get_transient($transient_name);
+	        $cached_data = $encryption->maybe_decrypt(get_transient($transient_name));
 	    } else {
 	    //Else check for a backup cache
 	        if ( false !== get_transient( '!cff_backup_'.$transient_name ) ) {
-	            $cached_data = get_transient( '!cff_backup_'.$transient_name );
+	            $cached_data = $encryption->maybe_decrypt(get_transient( '!cff_backup_'.$transient_name ));
 	        }
 	    }
 	    //If there's an error cached then use the backup cache
 	    if( strpos($cached_data, '%22%7B%5C%22error%5C%22:%7B%5C%22message%5C%22:') !== false ){
 	        //If there's an error then see if a backup cache exists and use that data
 	        if ( false !== get_transient( '!cff_backup_'.$transient_name ) ) {
-	            $cached_data = get_transient( '!cff_backup_'.$transient_name );
+	            $cached_data = $encryption->maybe_decrypt(get_transient( '!cff_backup_'.$transient_name ));
 	        }
 	    }
+
 	    return $cached_data;
 	}
 
@@ -159,6 +191,7 @@ class CFF_Cache_System {
 		$cache_seconds = $this->cff_get_cache_seconds();
 		$transient_name = 'cff_meta_'.$metaID;
 		$new_data = $metaContent;
+		$encryption = new SB_Facebook_Data_Encryption();
 		//Check data for error
 		if( strpos($new_data, '%22%7B%5C%22error%5C%22:%7B%5C%22message%5C%22:') !== false ){
 			//If there's an error then see if a backup cache exists and use that data
@@ -166,11 +199,13 @@ class CFF_Cache_System {
 				$new_data = get_transient( '!cff_backup_' . $transient_name );
 			}
 		} else {
-		        //If no error then use data in backup cache
-			set_transient( '!cff_backup_' . $transient_name, $new_data, WEEK_IN_SECONDS*2 );
+			$new_data_encrypted = $encryption->maybe_encrypt($new_data);
+			//If no error then use data in backup cache
+			set_transient( '!cff_backup_' . $transient_name, $new_data_encrypted, WEEK_IN_SECONDS*2 );
 		}
 
-		set_transient( $transient_name, $new_data, $cache_seconds );
+		$new_data_encrypted = $encryption->maybe_encrypt($new_data);
+		set_transient( $transient_name, $new_data_encrypted, $cache_seconds );
 	}
 
 	/**
@@ -189,7 +224,7 @@ class CFF_Cache_System {
 	    }
 	    if(is_array($comments_array)){
 		    foreach ($comments_array as $single_comment) {
-		    	$this->cff_save_single_meta($single_comment['id_post'], urlencode( json_encode($single_comment) ) );
+		    	$this->cff_save_single_meta($single_comment['id_post'], json_encode($single_comment) );
 		    }
 
 		    $atts = isset( $_POST['atts'] ) ? $_POST['atts']: array();

@@ -1,10 +1,10 @@
 /*! 
  * Master Slider – Responsive Touch Swipe Slider [lite version]
- * Copyright © 2021 All Rights Reserved. 
+ * Copyright © 2022 All Rights Reserved. 
  *
  * @author Averta [www.averta.net]
- * @version 2.85.12
- * @date Sep 2021
+ * @version 2.85.13
+ * @date Feb 2022
  */
 
 
@@ -2441,8 +2441,9 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 				return false;
 			};
 
-			if(window.MSBrowserInfo.mozilla) this.slider.$element[0].addEventListener('DOMMouseScroll' , this.wheellistener);
-			else this.slider.$element.on('mousewheel', this.wheellistener);
+            this.slider.$element[0].addEventListener('mousewheel' , this.wheellistener, {passive: false});
+			// if(window.MSBrowserInfo.mozilla) this.slider.$element[0].addEventListener('DOMMouseScroll' , this.wheellistener);
+			// else this.slider.$element.on('mousewheel', this.wheellistener);
 		}
 
 		// if(this.so.wheel){
@@ -2657,8 +2658,8 @@ MSSliderEvent.DESTROY				= 'ms_destroy';
 	};
 
 	MasterSlider.author  		= 'Averta Ltd. (www.averta.net)';
-	MasterSlider.version 		= '2.85.12';
-	MasterSlider.releaseDate 	= 'Sep 2021';
+	MasterSlider.version 		= '2.85.13';
+	MasterSlider.releaseDate 	= 'Feb 2022';
 
 	// Master Slider plugins.
 	MasterSlider._plugins = []

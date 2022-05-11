@@ -264,11 +264,11 @@ isEditMode = false;
             if ( 'undefined' === typeof Swiper ) {
               const asyncSwiper = elementorFrontend.utils.swiper;
 
-              new asyncSwiper( elementSwiper, swiperOptions ).then( ( newSwiperInstance ) => {
+              new asyncSwiper( jQuery( elementSwiper ), swiperOptions ).then( ( newSwiperInstance ) => {
                 mySwiper = newSwiperInstance;
               } );
             } else {
-              mySwiper = new Swiper( elementSwiper, swiperOptions );
+              mySwiper = new Swiper( jQuery( elementSwiper ), swiperOptions );
             }
 
             // if autoplay and pause on hover are enabled
@@ -349,7 +349,7 @@ isEditMode = false;
             }
         }
 
-        // Vertical Timeline
+       // Vertical Timeline - by CodyHouse.co
         function VerticalTimeline(element) {
             this.element = element;
             this.blocks = this.element.getElementsByClassName("js-cd-block");

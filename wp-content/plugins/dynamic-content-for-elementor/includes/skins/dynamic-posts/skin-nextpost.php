@@ -27,8 +27,9 @@ class Skin_NextPost extends \DynamicContentForElementor\Includes\Skins\Skin_Base
     {
         return __('Next Post', 'dynamic-content-for-elementor');
     }
-    public function register_additional_nextpost_controls()
+    public function register_additional_nextpost_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
+        $this->parent = $widget;
         $this->start_controls_section('section_nextpost', ['label' => '<i class="dynicon eicon-parallax"></i> ' . __('Next Post', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('nextpost_use_date', ['label' => '<i class="far fa-calendar-alt"></i>&nbsp;&nbsp;' . __('Show Date', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('nextpost_date_format', ['label' => __('Date Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'd/<b>m</b>/y', 'dynamic' => ['active' => \false], 'condition' => [$this->get_control_id('nextpost_use_date') => 'yes']]);
@@ -83,29 +84,9 @@ class Skin_NextPost extends \DynamicContentForElementor\Includes\Skins\Skin_Base
         $this->add_responsive_control('nextpost_height_netx', ['label' => __('Next Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '', 'unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-nextpost-wrapper .dce-page.dce-next.dce-content-hidden .dce-big-image' => 'height: {{SIZE}}%;']]);
         $this->end_controls_section();
     }
-    /*
-    	public function render() {
-    		echo '<div id="app"></div>';
-    		parent::render();
-    
-    
-    		<div class="fullview">
-    			<div class="fullview__item">
-    				<h2 class="fullview__item-title">Paris</h2>
-    			</div>
-    			<div class="fullview__item">
-    				<h2 class="fullview__item-title">Barcelona</h2>
-    			</div>
-    			<div class="fullview__item">
-    				<h2 class="fullview__item-title">Rome</h2>
-    			</div>
-    			<button class="fullview__close" aria-label="Close preview"><svg aria-hidden="true" width="24" height="22px" viewBox="0 0 24 22"><path d="M11 9.586L20.192.393l1.415 1.415L12.414 11l9.193 9.192-1.415 1.415L11 12.414l-9.192 9.193-1.415-1.415L9.586 11 .393 1.808 1.808.393 11 9.586z" /></svg></button>
-    		</div>
-    
-    	}*/
-    protected function render_postsWrapper_before()
+    protected function render_posts_wrapper_before()
     {
-        $_skin = $this->parent->get_settings('_skin');
+        $_skin = $this->get_parent()->get_settings('_skin');
         $content_template_id = $this->get_instance_value('nextpost_content_template_id');
         if ($content_template_id) {
             echo '<div class="dce-hidden">' . do_shortcode('[dce-elementor-template id="' . $content_template_id . '" post_id="' . $this->current_id . '"]') . '</div>';
@@ -185,11 +166,11 @@ class Skin_NextPost extends \DynamicContentForElementor\Includes\Skins\Skin_Base
         echo admin_url('admin-ajax.php');
         ?>"};
 			var dce_listPosts_<?php 
-        echo $this->parent->get_id();
+        echo $this->get_parent()->get_id();
         ?> = [
 		<?php 
     }
-    protected function render_postsWrapper_after()
+    protected function render_posts_wrapper_after()
     {
         ?>
 		];

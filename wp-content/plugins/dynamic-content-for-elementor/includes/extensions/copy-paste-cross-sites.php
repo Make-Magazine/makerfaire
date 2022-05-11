@@ -6,7 +6,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_CopyPaste extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class CopyPaste extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     private $is_common = \false;
     protected function add_actions()

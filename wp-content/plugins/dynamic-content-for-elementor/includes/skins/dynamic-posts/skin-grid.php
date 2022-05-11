@@ -25,8 +25,9 @@ class Skin_Grid extends \DynamicContentForElementor\Includes\Skins\Skin_Base
         add_action('elementor/element/dce-dynamicposts-v2/section_query/after_section_end', [$this, 'register_controls_layout']);
         add_action('elementor/element/dce-dynamicposts-v2/section_dynamicposts/after_section_end', [$this, 'register_additional_grid_controls'], 20);
     }
-    public function register_additional_grid_controls()
+    public function register_additional_grid_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
+        $this->parent = $widget;
         $this->start_controls_section('section_grid', ['label' => __('Grid', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('grid_type', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => 'images_selector', 'toggle' => \false, 'type_selector' => 'icon', 'columns_grid' => 3, 'options' => [
             'flex' => ['title' => __('Flex', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'eicon-gallery-grid'],
@@ -50,7 +51,7 @@ class Skin_Grid extends \DynamicContentForElementor\Includes\Skins\Skin_Base
         $this->add_control('match_height_by_row', ['label' => __('Match Height by Row', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'true', 'frontend_available' => \true, 'condition' => [$this->get_control_id('match_height') => 'yes', $this->get_control_id('grid_type') => ['flex']]]);
         $this->end_controls_section();
         $this->start_controls_section('section_scrollreveal', ['label' => __('Scroll Reveal', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['infiniteScroll_enable' => '', '_skin!' => 'grid-filters']]);
-        $this->add_control('scrollreveal_effect_type', ['label' => __('Effect', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '0', 'separator' => 'after', 'options' => ['0' => 'None', '1' => 'Opacity', '2' => 'Move Up', '3' => 'Scale Up', '4' => 'Fall Perspective', '5' => 'Fly', '6' => 'Flip', '7' => 'Helix', '8' => 'Bounce'], 'frontend_available' => \true]);
+        $this->add_control('scrollreveal_effect_type', ['label' => __('Effect', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '0', 'separator' => 'after', 'options' => ['0' => __('None', 'dynamic-content-for-elementor'), '1' => __('Opacity', 'dynamic-content-for-elementor'), '2' => __('Move Up', 'dynamic-content-for-elementor'), '3' => __('Scale Up', 'dynamic-content-for-elementor'), '4' => __('Fall Perspective', 'dynamic-content-for-elementor'), '5' => __('Fly', 'dynamic-content-for-elementor'), '6' => __('Flip', 'dynamic-content-for-elementor'), '7' => __('Helix', 'dynamic-content-for-elementor'), '8' => __('Bounce', 'dynamic-content-for-elementor')]]);
         $this->end_controls_section();
     }
     protected function register_style_controls()
@@ -63,16 +64,16 @@ class Skin_Grid extends \DynamicContentForElementor\Includes\Skins\Skin_Base
     }
     protected function render_post()
     {
-        $style_items = $this->parent->get_settings('style_items');
+        $style_items = $this->get_parent()->get_settings('style_items');
         $blog_template_id = $this->get_instance_value('blog_template_id');
         $grid_type = $this->get_instance_value('grid_type');
         $this->render_post_start();
-        if ($this->counter == 0 && $blog_template_id && $grid_type == 'blog') {
+        if (0 === $this->counter && $blog_template_id && 'blog' === $grid_type) {
             $this->render_template($blog_template_id);
         } else {
-            if ($style_items == 'template') {
+            if ('template' === $style_items) {
                 $this->render_post_template();
-            } elseif ($style_items == 'html_tokens') {
+            } elseif ('html_tokens' === $style_items) {
                 $this->render_post_html_tokens();
             } else {
                 $this->render_post_items();

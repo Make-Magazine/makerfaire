@@ -5,18 +5,18 @@ namespace DynamicContentForElementor\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use DynamicContentForElementor\Helper;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_CSS;
+use DynamicContentForElementor\Controls\Group_Control_Filters_CSS;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class DynamicUsers extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -26,22 +26,12 @@ class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\Widget
     {
         return ['dce-dynamicUsers'];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $user_meta = Helper::get_user_metas();
         $this->start_controls_section('options_users', ['label' => $this->get_title()]);
@@ -80,7 +70,7 @@ class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\Widget
         $repeater->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'user_page', 'options' => ['user_page' => __('User page', 'dynamic-content-for-elementor'), 'other_url' => __('Meta URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')], 'condition' => ['link_to_page' => 'yes', 'meta!' => ['attachments', 'articles']]]);
         $repeater->add_control('custom_link', ['label' => __('Link url', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
         $user_meta_url = Helper::get_acf_field_urlfile();
-        $repeater->add_control('meta_field_url', ['label' => __('Meta Field Url', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => $user_meta_url, 'default' => __('Select the field', 'dynamic-content-for-elementor'), 'condition' => ['link_to_page' => 'yes', 'link_to' => 'other_url', 'meta!' => ['attachments', 'articles']]]);
+        $repeater->add_control('meta_field_url', ['label' => __('Meta Field Url', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => $user_meta_url, 'default' => __('Select the field...', 'dynamic-content-for-elementor'), 'condition' => ['link_to_page' => 'yes', 'link_to' => 'other_url', 'meta!' => ['attachments', 'articles']]]);
         $repeater->add_control('meta_field_url_target_blank', ['label' => __('Target blank', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['link_to_page' => 'yes', 'link_to' => 'other_url', 'meta!' => ['attachments', 'articles'], 'meta_field_url!' => '']]);
         $repeater->add_control('inline_item', ['label' => __('Inline', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['meta!' => ['attachments', 'articles']]]);
         $repeater->add_control('hide_item', ['label' => __('Hide item', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['meta!' => ['attachments', 'articles', 'button']]]);
@@ -114,11 +104,11 @@ class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('pagination_show_numbers', ['label' => __('Show Numbers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('pagination_range', ['label' => __('Range of numbers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 4, 'condition' => ['pagination_show_numbers' => 'yes']]);
         $this->add_control('pagination_show_prevnext', ['label' => __('Show Prev/Next', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'separator' => 'before']);
-        $this->add_control('pagination_icon_prevnext', ['label' => __('Icon Prev/Next', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICON, 'default' => 'fa fa-long-arrow-right', 'include' => ['fa fa-arrow-right', 'fa fa-angle-right', 'fa fa-chevron-circle-right', 'fa fa-caret-square-o-right', 'fa fa-chevron-right', 'fa fa-caret-right', 'fa fa-angle-double-right', 'fa fa-hand-o-right', 'fa fa-arrow-circle-right', 'fa fa-long-arrow-right', 'fa fa-arrow-circle-o-right'], 'condition' => ['pagination_show_prevnext' => 'yes']]);
+        $this->add_control('selected_pagination_icon_prevnext', ['label' => __('Icon Prev/Next', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'pagination_icon_prevnext', 'default' => ['value' => 'fas fa-long-arrow-alt-right', 'library' => 'fa-solid'], 'recommended' => ['fa-solid' => ['arrow-right', 'angle-right', 'long-arrow-alt-right', 'arrow-alt-circle-right', 'arrow-circle-right', 'caret-right', 'caret-square-right', 'chevron-circle-right', 'chevron-right', 'hand-point-right']], 'condition' => ['pagination_show_prevnext' => 'yes']]);
         $this->add_control('pagination_prev_label', ['label' => __('Previous Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Previous', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_prevnext' => 'yes']]);
         $this->add_control('pagination_next_label', ['label' => __('Next Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Next', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_prevnext' => 'yes']]);
         $this->add_control('pagination_show_firstlast', ['label' => __('Show First/Last', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'separator' => 'before']);
-        $this->add_control('pagination_icon_firstlast', ['label' => __('Icon First/Last', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICON, 'default' => 'fa fa-long-arrow-right', 'include' => ['fa fa-arrow-right', 'fa fa-angle-right', 'fa fa-chevron-circle-right', 'fa fa-caret-square-o-right', 'fa fa-chevron-right', 'fa fa-caret-right', 'fa fa-angle-double-right', 'fa fa-hand-o-right', 'fa fa-arrow-circle-right', 'fa fa-long-arrow-right', 'fa fa-arrow-circle-o-right'], 'condition' => ['pagination_show_firstlast' => 'yes']]);
+        $this->add_control('selected_pagination_icon_firstlast', ['label' => __('Icon First/Last', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'pagination_icon_firstlast', 'default' => ['value' => 'fas fa-long-arrow-alt-right', 'library' => 'fa-solid'], 'recommended' => ['fa-solid' => ['arrow-right', 'angle-right', 'long-arrow-alt-right', 'arrow-alt-circle-right', 'arrow-circle-right', 'caret-right', 'caret-square-right', 'chevron-circle-right', 'chevron-right', 'hand-point-right']], 'condition' => ['pagination_show_firstlast' => 'yes']]);
         $this->add_control('pagination_first_label', ['label' => __('Previous Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('First', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_firstlast' => 'yes']]);
         $this->add_control('pagination_last_label', ['label' => __('Next Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Last', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_firstlast' => 'yes']]);
         $this->add_control('pagination_show_progression', ['label' => __('Show Progression', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'separator' => 'before']);
@@ -153,7 +143,7 @@ class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\Widget
         $this->add_responsive_control('border_radius_avatar', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-item-user .user-avatar, {{WRAPPER}} .dce-item-user .user-avatar img, {{WRAPPER}} .dce-overlay_hover, {{WRAPPER}} .dce-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_control('padding_avatar', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-item-user .user-avatar, {{WRAPPER}} .dce-overlay_hover, {{WRAPPER}} .dce-overlay' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'box_shadow_avatar', 'selector' => '{{WRAPPER}} .dce-item-user .user-avatar']);
-        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), ['name' => 'filters_avatar', 'label' => __('Filters', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-item-user .user-avatar']);
+        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'filters_avatar', 'label' => __('Filters', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-item-user .user-avatar']);
         $this->end_controls_section();
         $this->start_controls_section('section_style_pagination', ['label' => __('Pagination', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['pagination_enable' => 'yes']]);
         $this->add_responsive_control('pagination_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['flex-start' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-center'], 'flex-end' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-right']], 'default' => 'center', 'selectors' => ['{{WRAPPER}} .dce-pagination' => 'text-align: {{VALUE}};']]);
@@ -228,7 +218,7 @@ class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\Widget
         $this->end_controls_tabs();
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -540,7 +530,7 @@ class DCE_Widget_DynamicUsers extends \DynamicContentForElementor\Widgets\Widget
                 } else {
                     $urlToPage = \false;
                 }
-                $target = $item['custom_link']['is_external'] ? 'target="_blank"' : '';
+                $target = !empty($item['custom_link']['is_external']) ? 'target="_blank"' : '';
             }
             if ($item['link_to_page'] == 'yes' && $urlToPage != '') {
                 $openLink = '<a data-dnc="layout_position" href="' . $urlToPage . '" ' . $target . '>';

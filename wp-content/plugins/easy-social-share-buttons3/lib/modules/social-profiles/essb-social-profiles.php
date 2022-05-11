@@ -76,6 +76,13 @@ class ESSBSocialProfiles {
 			return "";
 		}
 		
+		/**
+		 * @since 8.0 Advanced deactivation by various component
+		 */
+		if (ESSB_Plugin_Loader::is_module_deactivated('profiles_sidebar')) {
+		    return '';
+		}
+		
 		
 		$profiles_display_position = essb_option_value('profiles_display_position');
 		$profiles_template = essb_option_value('profiles_template');
@@ -213,6 +220,8 @@ class ESSBSocialProfiles {
 	        $options = apply_filters('essb_profiles_draw_options', $options);
 	    }
 	    
+	    $create_alt_tag = essb_option_bool_value('profiles_alt_text');
+	    
 	    $instance_position = isset ( $options ['position'] ) ? $options ['position'] : '';
 	    $instance_new_window = 1;
 	    $instance_nofollow = 1;
@@ -229,8 +238,12 @@ class ESSBSocialProfiles {
 	    $cta_vertical = isset($options['cta_vertical']) ? $options['cta_vertical'] : '';
 	    $instance_columns = isset($options['columns']) ? $options['columns'] : 'row';
 	    
+	    $preview_mode = isset($options['preview_mode']) ? $options['preview_mode'] : '';
+	    
 	    $link_nofollow = (intval ( $instance_nofollow ) == 1) ? ' rel="noreferrer noopener nofollow"' : '';
 	    $link_newwindow = (intval ( $instance_new_window ) == 1) ? ' target="_blank"' : '';	    
+	    
+	    $alt_text = '';
 	    
 	    	    
 	    // compatibility with previous template slugs
@@ -304,10 +317,20 @@ class ESSBSocialProfiles {
 	     * Begin network drawing
 	     */
 	    $names = ESSBSocialProfilesHelper::get_text_of_buttons();
+	    $available_networks = ESSBSocialProfilesHelper::available_social_networks();
+	    
 	    foreach ($instance_networks as $social => $url) {
 	        $social_display = $social;
 	        if ($social_display == "instgram") {
 	            $social_display = "instagram";
+	        }
+	        
+	        if ($create_alt_tag) {
+	            $alt_text = ' alt="'.(isset($available_networks[$social]) ? $available_networks[$social] : $social).'"';
+	            /**
+	             * @since 8.2
+	             */
+	            $alt_text .= ' aria-label="'.(isset($available_networks[$social]) ? $available_networks[$social] : $social).'"';
 	        }
 	        
 	        /**
@@ -328,10 +351,11 @@ class ESSBSocialProfiles {
 	            'block_classes' => 'essb-fc-network-'.$social_display .' '. ESSBSocialFollowersCounterDraw::block_template_class($instance_template, $social_display),
 	            'block_atts' => '',
 	            'icon_classes' => ESSBSocialFollowersCounterDraw::icon_template_class($instance_template, $social_display),
-	            'url_atts' => $link_nofollow.$link_newwindow
+	            'url_atts' => $link_nofollow.$link_newwindow.$alt_text
 	        );
 	        
 	        $opts['block_classes'] = str_replace( 'essb-fc-tiny-block', '', $opts['block_classes']);
+	        $opts['preview_mode'] = $preview_mode;
 	        
 	        if ($cta == 'yes' && $cta_vertical != 'yes') {  $opts['block_classes'] .= ' essb-fc-tiny-block'; }
 	        	        
@@ -391,6 +415,11 @@ class ESSBSocialProfiles {
 	    $extra_atts = isset($opts['block_atts']) ? $opts['block_atts'] : '';
 	    $url_atts = isset($opts['url_atts']) ? ' '. $opts['url_atts'] : '';
 	    $icon_classes = isset($opts['icon_classes']) ? $opts['icon_classes'] : '';
+	    $preview_mode = isset($opts['preview_mode']) ? $opts['preview_mode'] : '';	
+	    
+	    if (!empty($preview_mode)) {
+	        $url = '';
+	    }
 	    
 	    if ($icon_classes != '') {
 	        $icon_classes = ' class="'.esc_attr($icon_classes). '"';

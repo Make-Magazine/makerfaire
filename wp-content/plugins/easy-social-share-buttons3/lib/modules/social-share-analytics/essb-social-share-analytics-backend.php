@@ -571,7 +571,7 @@ class ESSBSocialShareAnalyticsBackEnd {
 		print "</table>";
 	}
 
-	public static function essb_stat_admin_detail_by_post($month = '', $networks_with_data, $limit = '', $date = '', $position = '', $network = '') {
+	public static function essb_stat_admin_detail_by_post($month = '', $networks_with_data = array(), $limit = '', $date = '', $position = '', $network = '') {
 		global $wpdb, $essb_networks;
 		$table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
 

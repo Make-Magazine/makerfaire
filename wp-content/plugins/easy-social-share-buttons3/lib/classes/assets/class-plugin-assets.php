@@ -288,7 +288,11 @@ class ESSB_Plugin_Assets {
     public function footer() {
         
         // since version 4 we introduce new mail form code added here
-        if ($this->is_activated('mail')) {
+        /**
+         * @since 8.3 A new loading key mail_form replacing the old mail. This is due to optimizations 
+         * where the mail styles are no longer part of the mail CSS.
+         */
+        if ($this->is_activated('mail_form')) {
             essb_depend_load_function('essb_rs_mailform_build', 'lib/core/resource-snippets/essb_rs_code_mailform.php');
         }
         
@@ -321,7 +325,7 @@ class ESSB_Plugin_Assets {
     public function deactivate_actions() {
         remove_action('wp_head', array($this, 'header'));
         remove_action('wp_footer', array($this, 'footer'), 999);
-        remove_action ('wp_enqueue_scripts', array ($this, 'register_front_assets' ), 10 );
+        remove_action('wp_enqueue_scripts', array ($this, 'register_front_assets' ), 10 );
     }
     
     /**
@@ -337,6 +341,21 @@ class ESSB_Plugin_Assets {
      */
     public function is_activated($key = '') {
         return isset(ESSB_Static_CSS_Loader::$active_resources[$key]);
+    }
+    
+    /**
+     * Remove from the list script key
+     * 
+     * @param string $key
+     */
+    public function remove_static_js_resource($key) {
+        if (isset($this->js_static_nonasync[$key])) {
+            unset ($this->js_static_nonasync[$key]);
+        }
+        
+        if (isset($this->js_static[$key])) {
+            unset ($this->js_static[$key]);
+        }
     }
     
     /**
@@ -495,7 +514,10 @@ class ESSB_Plugin_Assets {
     function is_core_style_loaded() {
         $r = false;
         
-        if (!essb_option_bool_value('use_stylebuilder') && !$this->precompile_css && !$this->inline_css_footer) {
+        /**
+         * @since 8.0 replace use_stylebuilder with dont_load_css
+         */
+        if (!essb_option_bool_value('dont_load_css') && !$this->precompile_css && !$this->inline_css_footer) {
             $r = ESSB_Static_CSS_Loader::style_loaded($this->core_style_id());
         }
         
@@ -580,7 +602,10 @@ class ESSB_Plugin_Assets {
         
         $load_in_footer = ($this->js_head) ? false : true;
         
-        if (!essb_option_bool_value('use_stylebuilder')) {
+        /**
+         * @since 8.0 replace use_stylebuilder with dont_load_css
+         */
+        if (!essb_option_bool_value('dont_load_css')) {
             // enqueue all css registered files
             
             /**

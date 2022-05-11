@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\GuzzleHttp\Psr7;
+namespace GuzzleHttp\Psr7;
 
 use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
@@ -11,7 +11,7 @@ use Psr\Http\Message\UriInterface;
  */
 class Request implements RequestInterface
 {
-    use MessageTrait;
+    use \GuzzleHttp\Psr7\MessageTrait;
     /** @var string */
     private $method;
     /** @var string|null */
@@ -29,7 +29,7 @@ class Request implements RequestInterface
     {
         $this->assertMethod($method);
         if (!$uri instanceof UriInterface) {
-            $uri = new Uri($uri);
+            $uri = new \GuzzleHttp\Psr7\Uri($uri);
         }
         $this->method = \strtoupper($method);
         $this->uri = $uri;
@@ -39,7 +39,7 @@ class Request implements RequestInterface
             $this->updateHostFromUri();
         }
         if ($body !== '' && $body !== null) {
-            $this->stream = Utils::streamFor($body);
+            $this->stream = \GuzzleHttp\Psr7\Utils::streamFor($body);
         }
     }
     public function getRequestTarget()

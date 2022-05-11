@@ -85,9 +85,11 @@
 				}
 			);
 
-			gform.addAction('gform_post_conditional_logic_field_action', function (formId, action, targetId, defaultValues, isInit) {
+			gform.addAction('gform_post_conditional_logic_field_action', function ( formId, action, targetId, defaultValues, isInit ) {
 
 				if ( action === 'hide' ) {
+					// @todo Pending a customer report, there is a good chance we should be resseting target fields if
+					//       their source field is hidden via conditional logic.
 					return;
 				}
 
@@ -107,17 +109,32 @@
 
 					triggerIds.push( fieldSettings[i].trigger );
 
-					var $trigger = $( '#field_{0}_{1}'.format( formId, fieldSettings[i].trigger ) ).find( 'input, textarea, select' )
+					var $trigger = $( '#field_{0}_{1}'.format( formId, fieldSettings[i].trigger ) ).find( 'input, textarea, select' );
+
+					/**
+					 * This resolves an issue where copied values that were edited were overwritten unexpectedly when
+					 * the form was reloaded (e.g. navigating pages, validation errors).
+					 *
+					 * The logic here is that we should only overwrite values if the conditional logic action was
+					 * triggered by a field value change rather than GF's default evaluation of conditional logic that
+					 * occurs any time the form is rendered.
+					 *
+					 * Not overwriting on init also matches the default behavior of Copy Cat though I'm uncertain if we
+					 * should be honoring the self.overwriteOnInit property here...
+					 *
+					 * @type {boolean}
+					 */
+					var shouldOverwrite = ! isInit;
 
 					if ( $trigger.is( ':checkbox' ) ) {
 						if ( $trigger.filter( ':checked' ).length ) {
-							self.copyValues( $trigger[0] );
+							self.copyValues( $trigger[0], shouldOverwrite );
 						} else {
 							self.clearValues( $trigger[0] );
 						}
 					}
 					else {
-						self.copyValues( $trigger[0] );
+						self.copyValues( $trigger[0], shouldOverwrite );
 					}
 
 				}
@@ -143,7 +160,15 @@
 		 * @returns {*|array}
 		 */
 		self.getFieldSettings = function ( fieldId ) {
-			return self.fields[ fieldId ] || self.fields[ self.getSourceFieldIdByTarget( fieldId ) ] || self.getSourceFieldIdByTarget( fieldId, true );
+			if (typeof self.fields[ fieldId ] !== 'undefined') {
+				return self.fields[ fieldId ];
+			} else if (self.getSourceFieldIdByTarget( fieldId, true ) !== false) {
+				return self.getSourceFieldIdByTarget( fieldId, true );
+			}  else if (self.getSourceField( fieldId, true ) !== false) {
+				return self.getSourceField( fieldId, true );
+			}
+
+			return [];
 		};
 
 		self.copyValues = function (elem, isOverwrite, forceEmptyCopy) {
@@ -443,11 +468,32 @@
 							isCheckable = $targetElem.is( ':checkbox, :radio' ),
 							isCheckbox  = $targetElem.is( ':checkbox' );
 
+						var sourceValue = sourceValues[i];
+
+						if (targetGroup.length == 1) {
+							// if there is only one input, join the source values
+							// filter out empty values
+							sourceValues = sourceValues.filter(
+								function (item, pos) {
+									return item != '';
+								}
+							);
+
+							sourceValue = sourceValues.join( ' ' );
+						}
+
+						sourceValue = self.cleanValueByInputType( sourceValue );
+
+						/* gppc_copied_value is deprecated. */
+						sourceValue = gform.applyFilters( 'gppc_copied_value', sourceValue, $targetElem, field );
+						/* JSDoc for gpcc_copied_value is in copyValues() */
+						sourceValue = gform.applyFilters( 'gpcc_copied_value', sourceValue, $targetElem, field );
+
 						if (isCheckbox) {
 							$targetElem.prop( 'checked', $.inArray( fieldValue, sourceValues ) !== -1 );
 						} else if (isCheckable) {
 							$targetElem.prop( 'checked', false );
-						} else if (fieldValue == sourceValues[i]) {
+						} else if (fieldValue == sourceValue) {
 							$targetElem.val( '' );
 						}
 
@@ -645,6 +691,29 @@
 				for ( var j = 0; j < fieldSettings.length; j++ ) {
 					var setting = fieldSettings[ j ];
 					if ( parseInt( setting.target ) === parseInt( targetFieldId ) ) {
+						return returnSettings ? fieldSettings : setting.source;
+					}
+				}
+			}
+			return false;
+		}
+
+		/**
+		 * Returns source field by sourceFieldId
+		 *
+		 * @param sourceFieldId
+		 * @param returnSettings   If true, return the settings array instead of the fieldId
+		 * @returns {boolean|*}
+		 */
+		self.getSourceField = function( sourceFieldId, returnSettings ) {
+			for ( var i in self.fields ) {
+				if ( ! self.fields.hasOwnProperty( i ) ) {
+					continue;
+				}
+				var fieldSettings = self.fields[ i ];
+				for ( var j = 0; j < fieldSettings.length; j++ ) {
+					var setting = fieldSettings[ j ];
+					if ( parseInt( setting.source ) === parseInt( sourceFieldId ) ) {
 						return returnSettings ? fieldSettings : setting.source;
 					}
 				}

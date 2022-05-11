@@ -1205,3 +1205,49 @@ textarea[readonly].sbsw-multiple-shortcode{
     border: none;
     resize: none;
 }
+
+
+.sbsw-default-feed-wrap #sbi_admin button.button{
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+}
+.sbsw-default-feed-wrap button.button:hover,
+.sbsw-default-feed-wrap button.button:active{
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    opacity: .7;
+}
+
+
+
+.ctf-btn-orange {
+  background: #FE544F!important;
+  color: #fff!important;
+}
+.ctf-fb-btn-new {
+  position: relative;
+  float: left;
+  margin-left: 20px;
+  font-size: 12px;
+  padding: 8px 12px 8px 32px;
+  font-weight: 700;
+}
+.ctf-fb-btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 9px 38px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  border-radius: 2px;
+  cursor: pointer;
+  color: #fff;
+  outline: none;
+  box-shadow: none;
+  border: none;
+}

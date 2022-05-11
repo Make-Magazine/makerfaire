@@ -3,8 +3,7 @@ if (function_exists('essb_advancedopts_settings_group')) {
 	essb_advancedopts_settings_group('essb_options');
 }
 
-essb5_draw_hint('', esc_html__('Using the manage networks function you can easily select the only networks that will appear on your site. All other networks will remain hidden and they will not appear anywhere. You can change the active networks or deactivate the feature and use all networks again at any time.', 'essb'), '', 'glow');
-essb5_draw_switch_option('activate_networks_manage', esc_html__('Make plugin use only selected networks', 'essb'), esc_html__('Use this feature in case you does not need all networks of plugin. That makes easy to manage and easy to personalize. Also that can save resources on a share counter update because it will refer to active networks only', 'essb'));
+essb5_draw_switch_option('activate_networks_manage', esc_html__('Make plugin use only selected networks', 'essb'), '');
 essb5_draw_heading(esc_html__('Select Active Only Networks', 'essb'), '5');
 
 $all_networks = essb_available_social_networks(true);

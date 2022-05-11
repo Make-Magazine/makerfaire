@@ -18,10 +18,9 @@ if (! isset ( $current_list )) {
 }
 
 ?>
-
+<?php include_once(ESSB3_PLUGIN_ROOT.'lib/admin/helpers/about-page-header.php'); ?>
 <div class="essb-extension-list">
 	<div class="essb-inner-breadcrumb"><i class="title-icon ti-package"></i><?php esc_html_e('Extensions', 'essb'); ?></div>
-	
 	<?php 
 	ESSBOptionsFramework::draw_help('', '', '', array('buttons' => array(esc_html__('Need Help?') => 'https://docs.socialsharingplugin.com/knowledgebase/working-with-plugin-extensions-add-ons-installation-and-update/')));
 	?>

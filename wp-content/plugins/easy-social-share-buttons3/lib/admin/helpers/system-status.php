@@ -44,7 +44,7 @@ foreach ( $active_plugins as $plugin ) {
 		$plugin_name = esc_html( $plugin_data['Name'] );
 
 		if ( ! empty( $plugin_data['PluginURI'] ) ) {
-			$plugin_name = '<a href="' . esc_url( $plugin_data['PluginURI'] ) . '" title="' . esc_html__( 'Visit plugin homepage' , 'passionblogger' ) . '">' . $plugin_name . '</a>';
+			$plugin_name = '<a href="' . esc_url( $plugin_data['PluginURI'] ) . '" title="' . esc_html__( 'Visit plugin homepage' , 'essb' ) . '">' . $plugin_name . '</a>';
 		}
 		$pluginList .= '
 						<tr class="even table-border-bottom">
@@ -82,18 +82,18 @@ $theme = wp_get_theme ();
 $time_limit = ini_get( 'max_execution_time' );
 
 if ( 180 > $time_limit && 0 != $time_limit ) {
-	$time_limit = '<mark class="error">' . sprintf( esc_html__( '%1$s - We recommend setting max execution time to at least 180 if you use share counters or share counter recovery.<br />See: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing max execution to PHP</a>', 'passionblogger' ), $time_limit, 'http://codex.wordpress.org/Common_WordPress_Errors#Maximum_execution_time_exceeded' ) . '</mark>';
+	$time_limit = '<mark class="error">' . sprintf( esc_html__( '%1$s - We recommend setting max execution time to at least 180 if you use share counters or share counter recovery.<br />See: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing max execution to PHP</a>', 'essb' ), $time_limit, 'http://codex.wordpress.org/Common_WordPress_Errors#Maximum_execution_time_exceeded' ) . '</mark>';
 } else {
 	$time_limit = '<mark class="yes">' . $time_limit . '</mark>';
 }
 
 $memory = let_to_num( WP_MEMORY_LIMIT );
 if ( $memory < 64000000 ) {
-	$memory = '<mark class="error">' . sprintf( esc_html__( '%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br /> Please define memory limit in <strong>wp-config.php</strong> file. To learn how, see: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing memory allocated to PHP.</a>', 'passionblogger' ), size_format( $memory ), 'http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP' ) . '</mark>';
+	$memory = '<mark class="error">' . sprintf( esc_html__( '%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br /> Please define memory limit in <strong>wp-config.php</strong> file. To learn how, see: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing memory allocated to PHP.</a>', 'essb' ), size_format( $memory ), 'http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP' ) . '</mark>';
 } else {
 	$memory = '<mark class="yes">' . size_format( $memory ) . '</mark>';
 	if ( $memory < 128000000 ) {
-		$memory .= '<br /><mark class="message">' . esc_html__( 'Your current memory limit is sufficient, but if you use lot of plugins on site or you have many posts you may need to exceed it.', 'passionblogger' ) . '</mark>';
+		$memory .= '<br /><mark class="message">' . esc_html__( 'Your current memory limit is sufficient, but if you use lot of plugins on site or you have many posts you may need to exceed it.', 'essb' ) . '</mark>';
 	}
 }
 
@@ -109,7 +109,7 @@ if ( ! is_numeric( $memory_php ) ) {
 }
 
 if ( $memory_php < 64000000 ) {
-	$memory_php = '<mark class="error">' . sprintf( esc_html__( '%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br /> Please define memory limit in <strong>wp-config.php</strong> file. To learn how, see: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing memory allocated to PHP.</a>', 'passionblogger' ), size_format( $memory_php ), 'http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP' ) . '</mark>';
+	$memory_php = '<mark class="error">' . sprintf( esc_html__( '%1$s - We recommend setting memory to at least <strong>128MB</strong>. <br /> Please define memory limit in <strong>wp-config.php</strong> file. To learn how, see: <a href="%2$s" target="_blank" rel="noopener noreferrer">Increasing memory allocated to PHP.</a>', 'essb' ), size_format( $memory_php ), 'http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP' ) . '</mark>';
 } else {
 	$memory_php = '<mark class="yes">' . size_format( $memory_php ) . '</mark>';
 }
@@ -124,9 +124,10 @@ if ($max_input_vars > 999 && $max_input_vars < 5000) {
 
 
 $system_status = '
+<div class="about-page-panel system-info-panel"><div class="panel-content">
+<h4>Environment Statuses</h4>
 <table cellspacing="0" cellpadding="3" border="0" class="system-status">
 <col width="30%"/><col width="70%"/>
-<tr><td class="sub4" colspan="2"><div>Environment Statuses</div></td><td></td></tr>
 <tr class="even table-border-bottom"><td ><b>Home URL</b></td><td>' . esc_url(get_home_url ()) . '</td></tr>
 <tr class="odd table-border-bottom"><td ><b>Site URL</b></td><td>' . esc_url(get_site_url ()) . '</td></tr>
 <tr class="even table-border-bottom"><td><b>WordPress Version</b></td><td>' . get_bloginfo ( 'version' ) . '</td></tr>
@@ -138,19 +139,41 @@ $system_status = '
 <tr class="even table-border-bottom"><td><b>Max Upload Size</b></td><td>' . size_format(wp_max_upload_size()) . '</td></tr>
 <tr class="odd table-border-bottom"><td><b>PHP Time Limit</b></td><td>' . $time_limit . '</td></tr>
 <tr class="even table-border-bottom"><td><b>Max Input Vars</b></td><td>' . $max_input_vars . '</td></tr>
-<tr><td class="sub4" colspan="2"><div>Connection Statuses</div></td><td></td></tr>
+</table>
+</div>
+</div>
+<div class="about-page-panel system-info-panel"><div class="panel-content">
+<h4>Connection Statuses</h4>
+<table cellspacing="0" cellpadding="3" border="0" class="system-status">
+<col width="30%"/><col width="70%"/>
 <tr class="even table-border-bottom"><td><b>fsockopen</b></td><td>' . $fsockopen . '</td></tr>
 <tr class="odd table-border-bottom"><td><b>cURL</b></td><td>' . $curl_status . '</td></tr>
 <tr class="even table-border-bottom"><td><b>WP Remote Get</b></td><td>' . $remote_get_status . '</td></tr>
 <tr class="odd table-border-bottom"><td><b>WP Remote Post</b></td><td>' . $remote_post_status . '</td></tr>
-<tr><td class="sub4" colspan="2"><div>Active Theme</div></td><td></td></tr>
+</table>
+</div>
+</div>
+
+<div class="about-page-panel system-info-panel"><div class="panel-content">
+<h4>Active Theme</h4>
+<table cellspacing="0" cellpadding="3" border="0" class="system-status">
+<col width="30%"/><col width="70%"/>
 <tr class="even table-border-bottom"><td><b>Theme Name</b></td><td><a href="'.esc_url($theme->get ('ThemeURI')).'" target="_blank">' . $theme ['Name'] . '</a></td></tr>
 <tr class="odd table-border-bottom"><td><b>Theme Version</b></td><td>' . $theme ['Version'] . '</td></tr>
 <tr class="even table-border-bottom"><td><b>Theme Author</b></td><td><a href="'.esc_url($theme->get ('AuthorURI')).'" target="_blank">' . $theme->get ('Author') . '</a></td></tr>
-<tr><td class="sub4" colspan="2"><div>Active Plugins</div></td><td></td></tr>
+</table>
+</div>
+</div>
+
+<div class="about-page-panel system-info-panel"><div class="panel-content">
+<h4>Active Plugins</h4>
+<table cellspacing="0" cellpadding="3" border="0" class="system-status">
+<col width="30%"/><col width="70%"/>
 <tr class="even table-border-bottom"><td><b>Number of Active Plugins</b></td><td><b>' . count( (array) get_option( 'active_plugins' ) ) . '</b></td></tr>
 ' . $pluginList . '
 </table>
+</div>
+</div>
 ';
 
 echo $system_status;

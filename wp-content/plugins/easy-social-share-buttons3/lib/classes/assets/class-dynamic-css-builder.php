@@ -89,8 +89,9 @@ class ESSB_Dynamic_CSS_Builder {
     public static function register_dynamic_assets($buffer) {
         /**
          * Click to Tweet
+         * @since 8.4 Additional check to prevent the generation of the custom template when the module is not running
          */
-        if (essb_option_bool_value('activate_cct_customizer')) {            
+        if (essb_option_bool_value('activate_cct_customizer') && !essb_option_bool_value('deactivate_ctt')) {            
             if (!function_exists('essb_register_dynamic_cct_styles')) {
                 include_once (ESSB3_HELPERS_PATH. 'assets/customizer-click-to-tweet.php');
             }
@@ -158,6 +159,16 @@ class ESSB_Dynamic_CSS_Builder {
                 include_once (ESSB3_HELPERS_PATH. 'assets/share-postbar.php');
             }
             essb_register_dynamic_share_postbar_styles();
+        }
+        
+        /**
+         * Share Buttons: Mobile Buttons Bar
+         */
+        if (essb_is_position_active('sharebar')) {
+            if (!function_exists('essb_register_dynamic_share_sharebar_styles')) {
+                include_once (ESSB3_HELPERS_PATH. 'assets/share-sharebar.php');
+            }
+            essb_register_dynamic_share_sharebar_styles();
         }
         
         /**
@@ -586,5 +597,40 @@ class ESSB_Dynamic_CSS_Builder {
         $brightness = ( ( $c_r * 299 ) + ( $c_g * 587 ) + ( $c_b * 114 ) ) / 1000;
         
         return $brightness > 155 ? $steps_dark : $steps_light;
+    }
+    
+    public static function minify_advanced($css = '') {
+        // Normalize whitespace
+        $css = preg_replace( '/\s+/', ' ', $css );
+        
+        // Remove spaces before and after comment
+        $css = preg_replace( '/(\s+)(\/\*(.*?)\*\/)(\s+)/', '$2', $css );
+        
+        // Remove comment blocks, everything between /* and */, unless
+        // preserved with /*! ... */ or /** ... */
+        $css = preg_replace( '~/\*(?![\!|\*])(.*?)\*/~', '', $css );
+        
+        // Remove ; before }
+        $css = preg_replace( '/;(?=\s*})/', '', $css );
+        
+        // Remove space after , : ; { } */ >
+        $css = preg_replace( '/(,|:|;|\{|}|\*\/|>) /', '$1', $css );
+        
+        // Remove space before , ; { } ( ) >
+        $css = preg_replace( '/ (,|;|\{|}|\(|\)|>)/', '$1', $css );
+        
+        // Strips leading 0 on decimal values (converts 0.5px into .5px)
+        $css = preg_replace( '/(:| )0\.([0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)/i', '${1}.${2}${3}', $css );
+        
+        // Strips units if value is 0 (converts 0px to 0)
+        $css = preg_replace( '/(:| )(\.?)0(%|em|ex|px|in|cm|mm|pt|pc)/i', '${1}0', $css );
+        
+        // Converts all zeros value into short-hand
+        $css = preg_replace( '/0 0 0 0/', '0', $css );
+        
+        // Shortern 6-character hex color codes to 3-character where possible
+        $css = preg_replace( '/#([a-f0-9])\\1([a-f0-9])\\2([a-f0-9])\\3/i', '#\1\2\3', $css );
+        
+        return trim( $css );
     }
 }

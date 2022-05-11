@@ -54,12 +54,12 @@ class SB_Instagram_Blocks {
 			'shortcodeSettings' => array(
 				'type' => 'string',
 			),
-			'noNewChanges' => array(
+			'noNewChanges'      => array(
 				'type' => 'boolean',
 			),
-			'executed' => array(
+			'executed'          => array(
 				'type' => 'boolean',
-			)
+			),
 		);
 
 		register_block_type(
@@ -77,8 +77,6 @@ class SB_Instagram_Blocks {
 	 * @since 2.3/5.4
 	 */
 	public function enqueue_block_editor_assets() {
-		$db = sbi_get_database_settings();
-
 		sb_instagram_scripts_enqueue( true );
 
 		wp_enqueue_style( 'sbi-blocks-styles' );
@@ -90,25 +88,28 @@ class SB_Instagram_Blocks {
 			true
 		);
 
-		$shortcodeSettings = '';
+		$shortcode_settings = '';
 
 		$i18n = array(
-			'addSettings'         => esc_html__( 'Add Settings', 'instagram-feed' ),
-			'shortcodeSettings'   => esc_html__( 'Shortcode Settings', 'instagram-feed' ),
-			'example'             => esc_html__( 'Example', 'instagram-feed' ),
-			'preview'             => esc_html__( 'Apply Changes', 'instagram-feed' ),
+			'addSettings'       => esc_html__( 'Add Settings', 'instagram-feed' ),
+			'shortcodeSettings' => esc_html__( 'Shortcode Settings', 'instagram-feed' ),
+			'example'           => esc_html__( 'Example', 'instagram-feed' ),
+			'preview'           => esc_html__( 'Apply Changes', 'instagram-feed' ),
 
 		);
+
+		if ( ! empty( $_GET['sbi_wizard'] ) ) {
+			$shortcode_settings = 'feed="' . (int) $_GET['sbi_wizard'] . '"';
+		}
 
 		wp_localize_script(
 			'sbi-feed-block',
 			'sbi_block_editor',
 			array(
-				'wpnonce'  => wp_create_nonce( 'sb-instagram-blocks' ),
-				'canShowFeed' => ! empty( $db['connected_accounts'] ),
-				'configureLink' => get_admin_url() . '?page=sb-instagram-feed',
-				'shortcodeSettings'    => $shortcodeSettings,
-				'i18n'     => $i18n,
+				'wpnonce'           => wp_create_nonce( 'sb-instagram-blocks' ),
+				'configureLink'     => get_admin_url() . '?page=sb-instagram-feed',
+				'shortcodeSettings' => $shortcode_settings,
+				'i18n'              => $i18n,
 			)
 		);
 	}
@@ -127,10 +128,19 @@ class SB_Instagram_Blocks {
 		$return = '';
 
 		$shortcode_settings = isset( $attr['shortcodeSettings'] ) ? $attr['shortcodeSettings'] : '';
+		$sbi_statuses       = get_option( 'sbi_statuses', array() );
 
-		$shortcode_settings = str_replace(array( '[instagram-feed', ']' ), '', $shortcode_settings );
+		if ( empty( $sbi_statuses['support_legacy_shortcode'] ) ) {
+			if ( empty( $shortcode_settings ) || strpos( $shortcode_settings, 'feed=' ) === false ) {
+				$feeds = \InstagramFeed\Builder\SBI_Feed_Builder::get_feed_list();
+				if ( ! empty( $feeds[0]['id'] ) ) {
+					$shortcode_settings = 'feed="' . (int) $feeds[0]['id'] . '"';
+				}
+			}
+		}
+		$shortcode_settings = str_replace( array( '[instagram-feed', ']' ), '', $shortcode_settings );
 
-		$return .= do_shortcode( '[instagram-feed '.$shortcode_settings.']' );
+		$return .= do_shortcode( '[instagram-feed ' . $shortcode_settings . ']' );
 
 		return $return;
 

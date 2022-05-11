@@ -1,4 +1,4 @@
-/*! elementor - v3.5.0 - 12-12-2021 */
+/*! elementor - v3.6.5 - 27-04-2022 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -436,7 +436,7 @@ var _usePageTitle = __webpack_require__(/*! ./hooks/use-page-title/use-page-titl
 
 var _environment = _interopRequireDefault(__webpack_require__(/*! elementor-common/utils/environment */ "../core/common/assets/js/utils/environment.js"));
 
-function AdminTopBar(props) {
+function AdminTopBar() {
   var actionButtonsRef = (0, _react.useRef)(); // Handle Top Bar visibility on initiation: Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
 
   (0, _react.useEffect)(function () {
@@ -617,11 +617,7 @@ function ConnectionButton() {
       return;
     }
 
-    jQuery(buttonRef.current).elementorConnect({
-      UTM: function UTM() {
-        return '&utm_source=admin-top-bar&utm_medium=wp-dash&utm_campaign=admin-top-bar&source=generic';
-      }
-    });
+    jQuery(buttonRef.current).elementorConnect();
   }, []);
 
   var tooltipText = __('Connect your account to get access to Elementor\'s Template Library & more.', 'elementor'),

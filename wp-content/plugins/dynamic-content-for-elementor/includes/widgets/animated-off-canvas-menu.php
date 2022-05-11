@@ -4,7 +4,7 @@ namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Repeater;
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
@@ -17,7 +17,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class AnimatedOffCanvasMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -27,7 +27,12 @@ class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widge
     {
         return ['elementor-icons', 'dce-animatedOffcanvasMenu'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_animatedoffcanvasmenu_settings', ['label' => $this->get_title()]);
         $this->add_control('menu_animatedoffcanvasmenu', ['label' => __('Select menu', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_taxonomy_terms('nav_menu'), 'default' => '', 'label_block' => \true, 'render_type' => 'template']);
@@ -200,7 +205,7 @@ class DCE_Widget_AnimatedOffcanvasMenu extends \DynamicContentForElementor\Widge
         //
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

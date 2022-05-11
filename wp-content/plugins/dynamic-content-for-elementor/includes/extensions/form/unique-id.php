@@ -2,6 +2,8 @@
 
 namespace DynamicContentForElementor\Extensions;
 
+use ElementorPro\Modules\Forms\Classes\Form_Record;
+use ElementorPro\Modules\Forms\Classes\Ajax_Handler;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
@@ -39,7 +41,7 @@ class UniqueId extends \ElementorPro\Modules\Forms\Fields\Field_Base
         $form->add_render_attribute('input' . $item_index, 'value', $value, \true);
         echo '<input ' . $form->get_render_attribute_string('input' . $item_index) . '>';
     }
-    public function process_field($field, $record, $ajax_handler)
+    public function process_field($field, Form_Record $record, Ajax_Handler $ajax_handler)
     {
         $record->update_field($field['id'], 'value', \uniqid());
     }

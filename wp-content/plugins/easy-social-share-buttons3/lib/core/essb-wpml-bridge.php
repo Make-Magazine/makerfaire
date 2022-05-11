@@ -238,6 +238,13 @@ if (!function_exists('essb_wpml_translatable_fields')) {
 			}
 		}
 		
+		/**
+		 * @since 8.4 Widget titles are added to the WPML
+		 */
+		$result['menu10'] = array('type' => 'menu', 'title' => esc_html__('Widget Titles', 'essb'));
+		$result['widget_title_followers_counter'] = array('type' => 'input', 'group' => 'menu10', 'title' => 'Followers Counter');
+		$result['widget_title_profiles'] = array('type' => 'input', 'group' => 'menu10', 'title' => 'Social Profiles');
+		
 		return $result;
 	}
 	

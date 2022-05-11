@@ -67,7 +67,12 @@ class CFF_Global_Settings {
 		add_action( 'wp_ajax_cff_export_settings_json', [$this, 'cff_export_settings_json'] );
 		add_action( 'wp_ajax_cff_clear_cache', [$this, 'cff_clear_cache'] );
 		add_action( 'wp_ajax_cff_clear_image_resize_cache', [$this, 'cff_clear_image_resize_cache'] );
+        add_action( 'wp_ajax_cff_clear_error_log', [$this, 'cff_clear_error_log'] );
+
+		add_action( 'wp_ajax_cff_dpa_reset', [$this, 'cff_dpa_reset'] );
+
 	}
+
 
 	/**
 	 * CFF Save Settings
@@ -79,7 +84,15 @@ class CFF_Global_Settings {
 	 * @return CFF_Response
 	 */
 	public function cff_save_settings() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
 		$data = $_POST;
 		$model = isset( $data[ 'model' ] ) ? $data['model'] : null;
 
@@ -89,7 +102,7 @@ class CFF_Global_Settings {
 		}
 
 		// get the cff license key and extensions license key
-		$cff_license_key = sanitize_text_field( $_POST['cff_license_key'] );
+		$cff_license_key = sanitize_text_field( wp_unslash( $_POST['cff_license_key'] ) );
 		$extensions_license_key = json_decode( stripslashes($_POST['extensions_license_key']) );
 
 		// Only update the cff_license_key value when it's inactive
@@ -115,7 +128,7 @@ class CFF_Global_Settings {
 				}
 			}
 		}
-		
+
 		$model = (array) \json_decode( \stripslashes( $model ) );
 		$general = (array) $model['general'];
 		$feeds = (array) $model['feeds'];
@@ -123,16 +136,14 @@ class CFF_Global_Settings {
 		$advanced = (array) $model['advanced'];
 
 		// Get the values and sanitize
-		$cff_locale 							= sanitize_text_field( $feeds['selectedLocale'] );
+		$cff_locale 							= sanitize_text_field( wp_unslash( $feeds['selectedLocale'] ) );
 		$cff_style_settings 					= get_option( 'cff_style_settings' );
-		$cff_style_settings[ 'cff_timezone' ] 	= sanitize_text_field( $feeds['selectedTimezone'] );
-		$cff_style_settings[ 'cff_custom_css' ] = $feeds['customCSS'];
-		$cff_style_settings[ 'cff_custom_js' ] 	= $feeds['customJS'];
-		$cff_style_settings[ 'gdpr' ] 			= sanitize_text_field( $feeds['gdpr'] );
-		$cachingType 							= sanitize_text_field( $feeds['cachingType'] );
-		$cronInterval 							= sanitize_text_field( $feeds['cronInterval'] );
-		$cronTime 								= sanitize_text_field( $feeds['cronTime'] );
-		$cronAmPm 								= sanitize_text_field( $feeds['cronAmPm'] );
+		$cff_style_settings[ 'cff_timezone' ] 	= sanitize_text_field( wp_unslash( $feeds['selectedTimezone'] ) );
+		$cff_style_settings[ 'gdpr' ] 			= sanitize_text_field( wp_unslash( $feeds['gdpr'] ) );
+		$cachingType 							= sanitize_text_field( wp_unslash( $feeds['cachingType'] ) );
+		$cronInterval 							= sanitize_text_field( wp_unslash( $feeds['cronInterval'] ) );
+		$cronTime 								= sanitize_text_field( wp_unslash( $feeds['cronTime'] ) );
+		$cronAmPm 								= sanitize_text_field( wp_unslash( $feeds['cronAmPm'] ) );
 
 		// Save general settings data
 		update_option( 'cff_preserve_settings', $general['preserveSettings'] );
@@ -150,7 +161,7 @@ class CFF_Global_Settings {
 		}
 
 		// Save advanced settings data
-		$cff_ajax = sanitize_text_field( $advanced['cff_ajax'] );
+		$cff_ajax = sanitize_text_field( wp_unslash( $advanced['cff_ajax'] ) );
 
 		foreach( $advanced as $key => $val ) {
 			if ( $key == 'cff_disable_resize' || $key == 'disable_admin_notice' ) {
@@ -198,19 +209,25 @@ class CFF_Global_Settings {
 	 * @return CFF_Response
 	 */
 	public function cff_activate_license() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
 		// do the form validation to check if license_key is not empty
 		if ( empty( $_POST[ 'license_key' ] ) ) {
 			new CFF_Response( false, array(
 				'message' => __( 'License key required!', 'custom-facebook-feed' ),
 			) );
 		}
-		$license_key = sanitize_text_field( $_POST[ 'license_key' ] );
+		$license_key = sanitize_text_field( wp_unslash( $_POST[ 'license_key' ] ) );
 		// make the remote api call and get license data
 		$cff_license_data = $this->get_license_data( $license_key, 'activate_license', WPW_SL_ITEM_NAME );
 		// update the license data
 		if( !empty( $cff_license_data ) ) {
-			update_option( 'cff_license_data', $cff_license_data ); 
+			update_option( 'cff_license_data', $cff_license_data );
 		}
 		// update the licnese key only when the license status is activated
 		update_option( 'cff_license_key', $license_key );
@@ -236,12 +253,18 @@ class CFF_Global_Settings {
 	 * @return CFF_Response
 	 */
 	public function cff_deactivate_license() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
 		$license_key = trim( get_option( 'cff_license_key' ) );
 		$cff_license_data = $this->get_license_data( $license_key, 'deactivate_license', WPW_SL_ITEM_NAME );
 		// update the license data
 		if( !empty( $cff_license_data ) ) {
-			update_option( 'cff_license_data', $cff_license_data ); 
+			update_option( 'cff_license_data', $cff_license_data );
 		}
 		if ( ! $cff_license_data['success'] ) {
 			new CFF_Response( false, array() );
@@ -264,16 +287,24 @@ class CFF_Global_Settings {
 	 * @return CFF_Response
 	 */
 	public function cff_activate_extension_license() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
 		// do the form validation to check if license_key is not empty
 		if ( empty( $_POST[ 'license_key' ] ) ) {
 			new CFF_Response( false, array(
 				'message' => __( 'License key required!', 'custom-facebook-feed' ),
 			) );
 		}
-		$license_key = sanitize_text_field( $_POST[ 'license_key' ] );
-		$extension_name = sanitize_text_field( $_POST[ 'extension_name' ] );
-		$extension_item_name = sanitize_text_field( $_POST[ 'extension_item_name' ] );
+		$license_key = sanitize_text_field( wp_unslash( $_POST[ 'license_key' ] ) );
+		$extension_name = sanitize_text_field( wp_unslash( $_POST[ 'extension_name' ] ) );
+		$extension_item_name = sanitize_text_field( wp_unslash( $_POST[ 'extension_item_name' ] ) );
 
 		// make the remote api call and get license data
 		$cff_license_data = $this->get_license_data( $license_key, 'activate_license', $extension_item_name );
@@ -298,9 +329,17 @@ class CFF_Global_Settings {
 	 * @return CFF_Response
 	 */
 	public function cff_deactivate_extension_license() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
-		$extension_name = sanitize_text_field( $_POST[ 'extension_name' ] );
-		$extension_item_name = sanitize_text_field( $_POST[ 'extension_item_name' ] );
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
+		$extension_name = sanitize_text_field( wp_unslash( $_POST[ 'extension_name' ] ) );
+		$extension_item_name = sanitize_text_field( wp_unslash( $_POST[ 'extension_item_name' ] ) );
 		$license_key = get_option( 'cff_license_key_' . $extension_name );
 		$license_status = get_option( 'cff_license_status_' . $extension_name );
 
@@ -311,7 +350,7 @@ class CFF_Global_Settings {
 		}
 
 		// remove the license keys and update license key status
-		if( $cff_license_data['license'] == 'deactivated' ) {		
+		if( $cff_license_data['license'] == 'deactivated' ) {
 			delete_option( 'cff_license_status_' . $extension_name );
 			$data = array(
 				'licenseStatus' => $cff_license_data['license']
@@ -319,7 +358,7 @@ class CFF_Global_Settings {
 			new CFF_Response( true, $data );
 		}
 	}
-	
+
 	/**
 	 * CFF Test Connection
 	 *
@@ -328,7 +367,15 @@ class CFF_Global_Settings {
 	 * @return CFF_Response
 	 */
 	public function cff_test_connection() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
 		$license_key = get_option( 'cff_license_key' );
 		$cff_api_params = array(
 			'edd_action'=> 'check_license',
@@ -353,7 +400,7 @@ class CFF_Global_Settings {
 			'hasError' => false
 		) );
 	}
-	
+
 	/**
 	 * CFF Re-Check License
 	 *
@@ -362,18 +409,26 @@ class CFF_Global_Settings {
 	 * @return CFF_Response
 	 */
 	public function cff_recheck_connection() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
 		// Do the form validation
-		$license_key = isset( $_POST['license_key'] ) ? sanitize_text_field( $_POST['license_key'] ) : '';
-		$item_name = isset( $_POST['item_name'] ) ? sanitize_text_field( $_POST['item_name'] ) : '';
-		$option_name = isset( $_POST['option_name'] ) ? sanitize_text_field( $_POST['option_name'] ) : '';
+		$license_key = isset( $_POST['license_key'] ) ? sanitize_text_field( wp_unslash( $_POST['license_key'] ) ) : '';
+		$item_name = isset( $_POST['item_name'] ) ? sanitize_text_field( wp_unslash( $_POST['item_name'] ) ) : '';
+		$option_name = isset( $_POST['option_name'] ) ? sanitize_text_field( wp_unslash( $_POST['option_name'] ) ) : '';
 		if ( empty( $license_key ) || empty( $item_name ) ) {
 			new CFF_Response( false, array() );
 		}
 
 		// make the remote license check API call
 		$cff_license_data = $this->get_license_data( $license_key, 'check_license', $item_name );
-	
+
 		// update options data
 		$license_changed = $this->update_recheck_license_data( $cff_license_data, $item_name, $option_name );
 
@@ -386,13 +441,13 @@ class CFF_Global_Settings {
 
 	/**
 	 * Update License Data
-	 * 
+	 *
 	 * @since 4.0
-	 * 
+	 *
 	 * @param array $license_data
 	 * @param string $item_name
 	 * @param string $option_name
-	 * 
+	 *
 	 * @return bool $license_changed
 	 */
 	public function update_recheck_license_data( $license_data, $item_name, $option_name ) {
@@ -432,7 +487,15 @@ class CFF_Global_Settings {
 	 * @return CFF_Response
 	 */
 	public function cff_import_settings_json() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
 		$filename = $_FILES['file']['name'];
 		$ext = pathinfo($filename, PATHINFO_EXTENSION);
 		if ( 'json' !== $ext ) {
@@ -471,22 +534,30 @@ class CFF_Global_Settings {
 	 * @return CFF_Response
 	 */
 	public function cff_export_settings_json() {
-		CFF_Feed_Builder::check_privilege( false );
-		if ( ! isset( $_GET['feed_id'] ) ) {
-			return;
+		//Security Checks
+		if(check_ajax_referer( 'cff_admin_nonce' , 'nonce', false) || check_ajax_referer( 'cff-admin' , 'nonce', false) ){
+
+			$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+			$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+			if ( ! current_user_can( $cap ) ) {
+				wp_send_json_error(); // This auto-dies.
+			}
+			if ( ! isset( $_GET['feed_id'] ) ) {
+				return;
+			}
+			$feed_id = filter_var( sanitize_text_field( wp_unslash( $_GET['feed_id'] ) ), FILTER_SANITIZE_NUMBER_INT );
+			$feed = CFF_Feed_Saver_Manager::get_export_json( $feed_id );
+			$feed_info = CFF_Db::feeds_query( array('id' => $feed_id) );
+			$feed_name = strtolower( $feed_info[0]['feed_name'] );
+			$filename = 'cff-feed-' . $feed_name . '.json';
+			// create a new empty file in the php memory
+			$file  = fopen( 'php://memory', 'w' );
+			fwrite( $file, $feed );
+			fseek( $file, 0 );
+			header( 'Content-type: application/json' );
+			header( 'Content-disposition: attachment; filename = "' . $filename . '";' );
+			fpassthru( $file );
 		}
-		$feed_id = filter_var( $_GET['feed_id'], FILTER_SANITIZE_NUMBER_INT );
-		$feed = CFF_Feed_Saver_Manager::get_export_json( $feed_id );
-		$feed_info = CFF_Db::feeds_query( array('id' => $feed_id) );
-		$feed_name = strtolower( $feed_info[0]['feed_name'] );
-		$filename = 'cff-feed-' . $feed_name . '.json';
-		// create a new empty file in the php memory
-		$file  = fopen( 'php://memory', 'w' );
-		fwrite( $file, $feed );
-		fseek( $file, 0 );
-		header( 'Content-type: application/json' );
-		header( 'Content-disposition: attachment; filename = "' . $filename . '";' );
-		fpassthru( $file );
 		exit;
 	}
 
@@ -496,9 +567,17 @@ class CFF_Global_Settings {
 	 * @since 4.0
 	 */
 	public function cff_clear_cache() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
 		// Get the updated cron schedule interval and time settings from user input and update the database
-		$model = isset( $_POST[ 'model' ] ) ? sanitize_text_field( $_POST['model'] ) : null;
+		$model = isset( $_POST[ 'model' ] ) ? sanitize_text_field( wp_unslash( $_POST['model'] ) ) : null;
 		if ( $model !== null ) {
 			$model = (array) \json_decode( \stripslashes( $model ) );
 			$feeds = (array) $model['feeds'];
@@ -558,7 +637,16 @@ class CFF_Global_Settings {
 	 * @since 4.0
 	 */
 	public function clear_stored_caches() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
+
 		global $wpdb;
 
 		$cache_table_name = $wpdb->prefix . 'cff_feed_caches';
@@ -615,6 +703,10 @@ class CFF_Global_Settings {
 		if ( method_exists( 'LiteSpeed_Cache_API', 'purge' ) ) {
 			LiteSpeed_Cache_API::purge( 'esi.custom-facebook-feed' );
 		}
+
+		if( has_action( 'litespeed_purge_all' ) ) {
+			do_action( 'litespeed_purge_all' );
+		}
 	}
 
 	/**
@@ -623,12 +715,41 @@ class CFF_Global_Settings {
 	 * @since 4.0
 	 */
 	public function cff_clear_image_resize_cache() {
-		CFF_Feed_Builder::check_privilege( 'nonce', 'cff_admin_nonce' );
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
 		CFF_Resizer::delete_resizing_table_and_images();
 		\cff_main_pro()->cff_error_reporter->add_action_log( 'Reset resizing tables.' );
 		if ( !CFF_Resizer::create_resizing_table_and_uploads_folder() ) {
 			return;
 		}
+
+		wp_send_json_success();
+	}
+
+	/**
+	 * CFF Clear Error Log
+	 *
+	 * @since 4.0
+	 */
+	public function cff_clear_error_log() {
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+
+		\cff_main_pro()->cff_error_reporter->remove_all_errors();
+		cff_delete_cache();
 
 		new CFF_Response( true, [] );
 	}
@@ -680,8 +801,8 @@ class CFF_Global_Settings {
 			$license_key = get_option('cff_license_key');
 		}
 
-		$upgrade_url 	= sprintf('https://smashballoon.com/custom-facebook-feed/pricing/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-license', $license_key);
-		$renew_url 		= sprintf('https://smashballoon.com/checkout/?license_key=%s&download_id=%s&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-license&utm_content=renew-license', $license_key, $cff_download_id);
+		$upgrade_url 	= sprintf('https://smashballoon.com/custom-facebook-feed/pricing/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-license', $license_key);
+		$renew_url 		= sprintf('https://smashballoon.com/checkout/?edd_license_key=%s&download_id=%s&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-license&utm_content=renew-license', $license_key, $cff_download_id);
 		$learn_more_url = 'https://smashballoon.com/doc/my-license-key-wont-activate/?utm_campaign=facebook-pro&utm_source=settings&utm_medium=license&utm_content=learn-more';
 
 		// Check if the license key reached max site installations
@@ -834,7 +955,7 @@ class CFF_Global_Settings {
 			$has_license_error = true;
 		}
 
-		$upgrade_url			= sprintf('https://smashballoon.com/custom-facebook-feed/pricing/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-license', $license_key);
+		$upgrade_url			= sprintf('https://smashballoon.com/custom-facebook-feed/pricing/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-license', $license_key);
 		$usage_tracking_url 	= 'https://smashballoon.com/custom-facebook-feed/docs/usage-tracking/';
 		$feed_issue_email_url 	= 'https://smashballoon.com/email-report-is-not-in-my-inbox/';
 
@@ -959,17 +1080,19 @@ class CFF_Global_Settings {
 							__( 'The “Load more” button will be disabled', 'custom-facebook-feed'),
 							__( 'The “Like Box” widget will be disabled', 'custom-facebook-feed'),
 							__( 'For album feeds, only the album cover image is available in lightbox', 'custom-facebook-feed'),
-							__( 'The maximum image resoltuion will be 700px wide in the lightbox. If your images are smaller, reset the “resized images” using the button in “Advanced” section.', 'custom-facebook-feed'),
+							__( 'The maximum image resolution will be 700px wide in the lightbox. If your images are smaller, reset the “resized images” using the button in “Advanced” section.', 'custom-facebook-feed'),
 						)
 					)
 				),
 				'customCSSBox' => array(
 					'title'	=> __( 'Custom CSS', 'custom-facebook-feed' ),
 					'placeholder' => __( 'Enter any custom CSS here', 'custom-facebook-feed' ),
+					'message' => sprintf( __( 'The Custom CSS field has been deprecated. Your CSS has been moved into the native WordPress Custom CSS field instead. This is located %shere%s at <i>Appearance > Customize > Additional CSS.</i>', '' ), '<a href="' . esc_url( wp_customize_url() ) . '" target="_blank" rel="noopener noreferrer">', '</a>' )
 				),
 				'customJSBox' => array(
 					'title'	=> __( 'Custom JS', 'custom-facebook-feed' ),
 					'placeholder' => __( 'Enter any custom JS here', 'custom-facebook-feed' ),
+					'message' => sprintf( __( 'The Custom JS field has been deprecated. Your JavaScript is displayed below. To continue using this JavaScript, please first review the code below and follow the directions in %sthis doc%s.', '' ), '<a href="https://smashballoon.com/doc/moving-custom-javascript-code-out-of-our-plugins/?utm_campaign=facebook-pro&utm_source=settings&utm_medium=move-js" target="_blank" rel="noopener noreferrer">', '</a>' )
 				)
 			),
 			'translationTab' => array(
@@ -1007,6 +1130,8 @@ class CFF_Global_Settings {
 					'likeShareComment' => __( 'Likes, Shares and Comments', 'custom-facebook-feed' ),
 					'viewMore' => __( 'View more comments', 'custom-facebook-feed' ),
 					'usedIn2' => __( 'Used in the comments section (when applicable)', 'custom-facebook-feed' ),
+					'viewAllReviews' => __( 'View all Reviews', 'custom-facebook-feed' ),
+					'usedIn3' => __( 'Used in View all reviews', 'custom-facebook-feed' ),
 					'commentOnFB' => __( 'Comment on Facebook', 'custom-facebook-feed' ),
 					'usedAt' => __( 'Used at the bottom of the comments section', 'custom-facebook-feed' ),
 					'photos' => __( 'photos', 'custom-facebook-feed' ),
@@ -1074,6 +1199,11 @@ class CFF_Global_Settings {
 					'helpText' => __( 'This will create multiple local copies of images in different sizes. The plugin then displays the smallest version based on the size of the feed. This setting is auto-enabled when the GDPR setting is enabled.', 'custom-facebook-feed' ),
 					'reset' => __( 'Reset', 'custom-facebook-feed' ),
 				),
+                'resetErrorBox' => array(
+					'title' => __( 'Reset Error Log', 'custom-facebook-feed' ),
+					'helpText' => __( 'Clear all errors stored in the error log.', 'custom-facebook-feed' ),
+					'reset' => __( 'Reset', 'custom-facebook-feed' ),
+				),
 				'usageBox' => array(
 					'title' => __( 'Usage Tracking', 'custom-facebook-feed' ),
 					'helpText' => __( 'This helps to prevent plugin and theme conflicts by sending a report in the background once per week about your settings and relevant site stats. It does not send sensitive information like access tokens, email addresses, or user info. This will also not affect your site performace. <a href="'. $usage_tracking_url .'" target="_blank">Learn More</a>', 'custom-facebook-feed' ),
@@ -1130,6 +1260,11 @@ class CFF_Global_Settings {
 						),
 					)
 				),
+				'dpaClear' => array(
+					'title' => __( 'Manage Data', 'custom-facebook-feed' ),
+					'helpText' => __( 'Warning: Clicking this button will permanently delete all Facebook data, including all connected accounts, cached posts, and stored images.', 'custom-facebook-feed' ),
+					'clear' => __( 'Delete all Platform Data', 'custom-facebook-feed' ),
+				),
 			),
 			'dialogBoxPopupScreen'  => array(
 				'deleteSource' => array(
@@ -1167,9 +1302,9 @@ class CFF_Global_Settings {
 
 	/**
 	 * Get Extensions License Information
-	 * 
+	 *
 	 * @since 4.0
-	 * 
+	 *
 	 * @return array
 	 */
 	public function get_extensions_license() {
@@ -1187,7 +1322,7 @@ class CFF_Global_Settings {
 				$status_text = __('Your <b>Extensions</b> license is Inactive!', 'custom-facebook-feed');
 			}
 			$upgrade_url = sprintf(
-				'https://smashballoon.com/custom-facebook-feed/pricing/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
+				'https://smashballoon.com/custom-facebook-feed/pricing/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
 				$license_key
 			);
 
@@ -1222,7 +1357,7 @@ class CFF_Global_Settings {
 				$status_text = __('Your <b>Multifeed</b> license is Inactive!', 'custom-facebook-feed');
 			}
 			$upgrade_url = sprintf(
-				'https://smashballoon.com/custom-facebook-feed/pricing/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
+				'https://smashballoon.com/custom-facebook-feed/pricing/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
 				$license_key
 			);
 			$data[] = array(
@@ -1246,7 +1381,7 @@ class CFF_Global_Settings {
 				$status_text = __('Your <b>Reviews</b> license is Inactive!', 'custom-facebook-feed');
 			}
 			$upgrade_url = sprintf(
-				'https://smashballoon.com/custom-facebook-feed/pricing/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
+				'https://smashballoon.com/custom-facebook-feed/pricing/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
 				$license_key
 			);
 			$data[] = array(
@@ -1258,7 +1393,7 @@ class CFF_Global_Settings {
 				'licenseStatus' => $license_status,
 			);
 		}
-		
+
 		// If carousel extension is activated
 		if ( $carousel_active ) {
 			$license_key = get_option( 'cff_license_key_ext_carousel' );
@@ -1270,7 +1405,7 @@ class CFF_Global_Settings {
 				$status_text = __('Your <b>Carousel</b> license is Inactive!', 'custom-facebook-feed');
 			}
 			$upgrade_url = sprintf(
-				'https://smashballoon.com/custom-facebook-feed/pricing/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
+				'https://smashballoon.com/custom-facebook-feed/pricing/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
 				$license_key
 			);
 			$data[] = array(
@@ -1294,7 +1429,7 @@ class CFF_Global_Settings {
 				$status_text = __('Your <b>Date Range</b> license is Inactive!', 'custom-facebook-feed');
 			}
 			$upgrade_url = sprintf(
-				'https://smashballoon.com/custom-facebook-feed/pricing/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
+				'https://smashballoon.com/custom-facebook-feed/pricing/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
 				$license_key
 			);
 			$data[] = array(
@@ -1318,7 +1453,7 @@ class CFF_Global_Settings {
 				$status_text = __('Your <b>Featured Post</b> license is Inactive!', 'custom-facebook-feed');
 			}
 			$upgrade_url = sprintf(
-				'https://smashballoon.com/custom-facebook-feed/pricing/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
+				'https://smashballoon.com/custom-facebook-feed/pricing/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
 				$license_key
 			);
 			$data[] = array(
@@ -1342,7 +1477,7 @@ class CFF_Global_Settings {
 				$status_text = __('Your <b>Album</b> license is Inactive!', 'custom-facebook-feed');
 			}
 			$upgrade_url = sprintf(
-				'https://smashballoon.com/custom-facebook-feed/pricing/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
+				'https://smashballoon.com/custom-facebook-feed/pricing/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=settings&utm_medium=upgrade-licen',
 				$license_key
 			);
 			$data[] = array(
@@ -1370,7 +1505,7 @@ class CFF_Global_Settings {
 		if ( get_option('cff_license_key') ) {
 			$license_key = get_option('cff_license_key');
 		}
-		$all_access_bundle_popup = sprintf('https://smashballoon.com/all-access/?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=balloon&utm_medium=all-access', $license_key);
+		$all_access_bundle_popup = sprintf('https://smashballoon.com/all-access/?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=balloon&utm_medium=all-access', $license_key);
 
 		return array(
 			'manageLicense' => 'https://smashballoon.com/account/downloads/?utm_campaign=facebook-pro&utm_source=settings&utm_medium=manage-license',
@@ -1403,6 +1538,32 @@ class CFF_Global_Settings {
 
         // Force enable the disable resize images option when GDPR is enabled.
         $cff_style_settings[ 'cff_disable_resize' ] = ( $cff_style_settings[ 'gdpr' ] !== 'no') ? false : $cff_style_settings[ 'cff_disable_resize' ];
+		$custom_js_text = ! empty( $cff_style_settings['cff_custom_js'] ) && trim( wp_unslash( $cff_style_settings['cff_custom_js'] ) ) !== '' ? wp_unslash( $cff_style_settings['cff_custom_js'] ) : '';
+		if ( ! empty( $custom_js_text ) ) {
+			$js_wrapper_array = [
+				esc_html('<!-- Custom Facebook Feed JS -->')  . "\n",
+				esc_html('<script type="text/javascript">' ) . "\n",
+				esc_html('function cff_custom_js($){' ) . "\n",
+				esc_html('    var $ = jQuery;' ) . "\n",
+				esc_html('}cff_custom_js($);')  . "\n",
+				esc_html('</script>' ) . "\n"
+			];
+			foreach ($js_wrapper_array as $single_wrapper) {
+				$custom_js_text = str_replace($single_wrapper, '', $custom_js_text);
+			}
+
+			$js_html = esc_html( '<!-- Custom Facebook Feed JS -->' ) . "\n";
+			$js_html .= esc_html( '<script type="text/javascript">' ) . "\n";
+			$js_html .= esc_html( 'function cff_custom_js($){' ) . "\n";
+			$js_html .= esc_html( '    var $ = jQuery;' ) . "\n";
+			$js_html .= esc_html( $custom_js_text ) . "\n";
+			$js_html .= esc_html( '}cff_custom_js($);' ) . "\n";
+			$js_html .= esc_html( '</script>' ) . "\n";
+
+
+
+			$custom_js_text = $js_html;
+		}
 
 		return array(
 			'general' => array(
@@ -1417,8 +1578,8 @@ class CFF_Global_Settings {
 				'cronAmPm'			=> $cff_cache_cron_am_pm,
 				'gdpr'				=> $cff_style_settings['gdpr'],
 				'gdprPlugin'		=> $active_gdpr_plugin,
-				'customCSS'			=> isset( $cff_style_settings['cff_custom_css'] ) ? stripslashes( $cff_style_settings['cff_custom_css'] ) : '',
-				'customJS'			=> stripslashes( isset( $cff_style_settings['cff_custom_js'] ) ? $cff_style_settings['cff_custom_js'] : '' ),
+				'customCSS'			=> isset( $cff_style_settings['cff_custom_css_read_only'] ) ? esc_html( stripslashes( trim( $cff_style_settings['cff_custom_css_read_only'] ) ) ) : '',
+				'customJS'			=> $custom_js_text,
 			),
 			'translation' => array(
 				'cff_see_more_text' => $cff_style_settings['cff_see_more_text'],
@@ -1433,6 +1594,7 @@ class CFF_Global_Settings {
 				'cff_load_more_text' => $cff_style_settings['cff_load_more_text'],
 				'cff_no_more_posts_text' => $cff_style_settings['cff_no_more_posts_text'],
 				'cff_translate_view_previous_comments_text' => $cff_style_settings['cff_translate_view_previous_comments_text'],
+				'cff_reviews_link_text' => $cff_style_settings['cff_reviews_link_text'],
 				'cff_translate_comment_on_facebook_text' => $cff_style_settings['cff_translate_comment_on_facebook_text'],
 				'cff_translate_photos_text' => $cff_style_settings['cff_translate_photos_text'],
 				'cff_translate_like_this_text' => $cff_style_settings['cff_translate_like_this_text'],
@@ -1500,6 +1662,7 @@ class CFF_Global_Settings {
 			'cff_load_more_text'        					=> 'Load more',
 			'cff_no_more_posts_text'    					=> 'No more posts',
 			'cff_translate_view_previous_comments_text'     => 'View more comments',
+			'cff_reviews_link_text' 						=> 'View all Reviews',
 			'cff_translate_comment_on_facebook_text'        => 'Comment on Facebook',
 			'cff_translate_photos_text'                     => 'photos',
 			'cff_translate_likes_this_text'                 => 'likes this',
@@ -1598,6 +1761,24 @@ class CFF_Global_Settings {
 	 */
 	public function global_settings(){
 		return CFF_View::render( 'settings.index' );
+	}
+
+	/**
+	 * CFF Clear Everything
+	 *
+	 * @since 4.1
+	 */
+	public function cff_dpa_reset() {
+		//Security Checks
+		check_ajax_referer( 'cff_admin_nonce', 'nonce'  );
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+		cff_delete_all_platform_data();
+		new CFF_Response( true, [] );
 	}
 
 }

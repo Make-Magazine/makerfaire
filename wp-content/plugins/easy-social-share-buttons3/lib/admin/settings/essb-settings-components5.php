@@ -196,6 +196,10 @@ function essb_component_base_template_selection($position = '', $field_id = '', 
 		
 		$button_style['template'] = $key;
 		
+		if (class_exists('ESSB_Short_URL')) {
+		    ESSB_Short_URL::deactivate();
+		}
+		
 		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-template-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
 		echo '<div class="inner-content">'.ESSBButtonHelper::draw_share_buttons(essb_component_base_dummy_share(), $button_style, $buttons, $order_buttons, $button_texts, "shortcode", "1112233").'</div>';
@@ -242,6 +246,10 @@ function essb_component_base_button_style_selection($position = '', $pinterest_m
 	
 		$button_style['template'] = $template;
 		$button_style['button_style'] = $key;
+		
+		if (class_exists('ESSB_Short_URL')) {
+		    ESSB_Short_URL::deactivate();
+		}
 	
 		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-template-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
@@ -326,6 +334,10 @@ function essb_component_base_counter_position_selection($position = '', $field_i
 		$button_style['template'] = $template;
 		$button_style['counter_pos'] = $key;
 
+		if (class_exists('ESSB_Short_URL')) {
+		    ESSB_Short_URL::deactivate();
+		}
+		
 		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-counterpos-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
 		echo '<div class="inner-content">'.ESSBButtonHelper::draw_share_buttons(essb_component_base_dummy_share(), $button_style, array("facebook","twitter"), array("facebook","twitter","google"), array("facebook" => "Facebook", "twitter" => "Twitter", "google" => "Google"), "shortcode", "1112233").'</div>';
@@ -399,6 +411,10 @@ function essb_component_base_total_counter_position_selection($position = '', $f
 		$button_style['template'] = $template;
 		$button_style['total_counter_pos'] = $key;
 
+		if (class_exists('ESSB_Short_URL')) {
+		    ESSB_Short_URL::deactivate();
+		}
+		
 		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-counterpos-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
 		echo '<div class="inner-content">'.ESSBButtonHelper::draw_share_buttons(essb_component_base_dummy_share(), $button_style, array("facebook","twitter"), array("facebook","twitter","google"), array("facebook" => "Facebook", "twitter" => "Twitter", "google" => "Google"), "shortcode", "1112233").'</div>';
@@ -544,6 +560,10 @@ function essb_component_base_animation_selection($position = '', $field_id = '',
 		$button_style['template'] = $template;
 		$button_style['button_animation'] = $key;
 
+		if (class_exists('ESSB_Short_URL')) {
+		    ESSB_Short_URL::deactivate();
+		}
+		
 		echo '<div class="essb-component-clickselect'.($selected == $key ? ' active': '').' essb-counterpos-select-'.esc_attr($key).'" data-value="'.esc_attr($key).'" data-text="'.esc_attr($name).'">';
 		echo '<div class="inner-title">'.$name.'</div>';
 		echo '<div class="inner-content">'.ESSBButtonHelper::draw_share_buttons(essb_component_base_dummy_share(), $button_style, array("facebook","twitter"), array("facebook","twitter","google"), array("facebook" => "Facebook", "twitter" => "Twitter", "google" => "Google"), "shortcode", "1112233").'</div>';
@@ -694,7 +714,7 @@ function essb5_stylemanager_include_buttons($options = array()) {
 	$show_save = isset($element_options['show_save']) ? $element_options['show_save'] : '';
 	
 	?>
-<div class="essb-options-hint essb-options-hint-glowstyles">
+<div class="essb-options-hint essb-options-hint-glowstyles essb-style-library">
 	<div class="essb-options-hint-icon"><i class="fa32 ti-paint-roller"></i></div>
 	<div class="essb-options-hint-withicon">
 		<div class="content-part">
@@ -863,6 +883,33 @@ function essb5_has_setting_values($value_fields = array(), $switch_fields = arra
 	return $r;
 }
 
+function essb5_has_not_setting_values($value_fields = array(), $switch_fields = array()) {
+    $r = false;
+    
+    foreach ($value_fields as $field) {
+        if (essb_option_value($field) == '') {
+            $r = true;
+            break;
+        }
+    }    
+    
+    if (!$r) {
+        $one_enabled = false;
+        foreach ($switch_fields as $field) {
+            if (essb_option_bool_value($field)) {
+                $one_enabled = true;
+                break;
+            }
+        }
+        
+        if (!$one_enabled && count($switch_fields) > 0) {
+            $r = true;
+        }
+    }
+    
+    return $r;
+}
+
 /**
  * Generating settings row with editor field
  * 
@@ -875,7 +922,7 @@ function essb5_draw_editor_option($field_id, $title = '', $description = '', $mo
 	$value = $user_value ? $value : essb_option_value($field_id);
 	
 	$value = stripslashes($value);
-	ESSBOptionsFramework::draw_options_row_start($title, $description);
+	ESSBOptionsFramework::draw_options_row_start_advanced_panel($title, $description);
 	ESSBOptionsFramework::draw_editor_field($field_id, 'essb_options', $value, $mode);
 	ESSBOptionsFramework::draw_options_row_end();
 }
@@ -891,7 +938,7 @@ function essb5_draw_editor_option($field_id, $title = '', $description = '', $mo
 function essb5_draw_input_option($field_id, $title = '', $description = '', $full_width = false, $user_value = false, $value = '') {
 	$value = $user_value ? $value : essb_option_value($field_id);
 	$value = stripslashes($value);
-	ESSBOptionsFramework::draw_options_row_start($title, $description);
+	ESSBOptionsFramework::draw_options_row_start_advanced_panel($title, $description, 'essb_field_'.$field_id);
 	ESSBOptionsFramework::draw_input_field($field_id, $full_width, 'essb_options', $value);
 	ESSBOptionsFramework::draw_options_row_end();
 }
@@ -907,9 +954,17 @@ function essb5_draw_input_option($field_id, $title = '', $description = '', $ful
 function essb5_draw_textarea_option($field_id, $title = '', $description = '', $user_value = false, $value = '') {
     $value = $user_value ? $value : essb_option_value($field_id);
     $value = stripslashes($value);
-    ESSBOptionsFramework::draw_options_row_start($title, $description);
+    ESSBOptionsFramework::draw_options_row_start_advanced_panel($title, $description, 'essb_field_'.$field_id);
     ESSBOptionsFramework::draw_textarea_field($field_id, 'essb_options', $value);
     ESSBOptionsFramework::draw_options_row_end();
+}
+
+function essb5_draw_field_group_open($custom_class = '') {
+    echo '<div class="essb-related-heading7 essb-related-heading7ao'.($custom_class != '' ? ' '.$custom_class : '').'">';
+}
+
+function essb5_draw_field_group_close() {
+    echo '</div>';
 }
 
 /**
@@ -922,7 +977,7 @@ function essb5_draw_textarea_option($field_id, $title = '', $description = '', $
 function essb5_draw_switch_option($field_id, $title = '', $description = '', $user_value = false, $value = '') {
 	$value = $user_value ? $value : essb_option_value($field_id);
 	$value = stripslashes($value);
-	ESSBOptionsFramework::draw_options_row_start($title, $description);
+	ESSBOptionsFramework::draw_options_row_start_advanced_panel($title, $description, 'essb_field_'.$field_id);
 	ESSBOptionsFramework::draw_switch_field($field_id, 'essb_options', $value);
 	ESSBOptionsFramework::draw_options_row_end();
 }
@@ -940,8 +995,8 @@ function essb5_draw_help($title = '', $description = '', $buttons = array(), $in
  * @param unknown_type $title
  * @param unknown_type $level
  */
-function essb5_draw_heading($title = '', $level = '5', $desc = '') {
-	ESSBOptionsFramework::draw_heading($title, $level, '', $desc);
+function essb5_draw_heading($title = '', $level = '5', $desc = '', $class = '', $icon = '') {
+	ESSBOptionsFramework::draw_heading($title, $level, '', $desc, $class, $icon);
 }
 
 function essb5_draw_hint($title = '', $description = '', $icon = '', $style = '', $in_section = 'false') {
@@ -963,7 +1018,7 @@ function essb5_draw_network_select($id = '', $position = '', $all_networks = fal
 function essb5_draw_color_option($field_id, $title = '', $description = '', $alpha = false, $user_value = false, $value = '') {
 	$value = $user_value ? $value : essb_option_value($field_id);
 	$value = stripslashes($value);
-	ESSBOptionsFramework::draw_options_row_start($title, $description);
+	ESSBOptionsFramework::draw_options_row_start_advanced_panel($title, $description);
 	if ($alpha) {
 		ESSBOptionsFramework::draw_acolor_field($field_id, 'essb_options', $value);
 	}
@@ -983,7 +1038,7 @@ function essb5_draw_color_option($field_id, $title = '', $description = '', $alp
 function essb5_draw_file_option($field_id = '', $title = '', $description = '', $user_value = false, $value = '') {
 	$value = $user_value ? $value : essb_option_value($field_id);
 	$value = stripslashes($value);
-	ESSBOptionsFramework::draw_options_row_start($title, $description);
+	ESSBOptionsFramework::draw_options_row_start_advanced_panel($title, $description);
 	ESSBOptionsFramework::draw_fileselect_field($field_id, 'essb_options', $value);
 	ESSBOptionsFramework::draw_options_row_end();
 }
@@ -1000,7 +1055,7 @@ function essb5_draw_file_option($field_id = '', $title = '', $description = '', 
 function essb5_draw_toggle_option($field_id = '', $title = '', $description = '', $values = array(), $user_value = false, $value = '') {
 	$value = $user_value ? $value : essb_option_value($field_id);
 	$value = stripslashes($value);
-	ESSBOptionsFramework::draw_options_row_start($title, $description);
+	ESSBOptionsFramework::draw_options_row_start_advanced_panel($title, $description);
 	ESSBOptionsFramework::draw_toggle_field($field_id, $values, 'essb_options', $value);
 	ESSBOptionsFramework::draw_options_row_end();
 }
@@ -1013,10 +1068,16 @@ function essb5_draw_toggle_option($field_id = '', $title = '', $description = ''
  * @param unknown_type $description
  * @param unknown_type $values
  */
-function essb5_draw_select_option($field_id = '', $title = '', $description = '', $values = array(), $user_value = false, $value = '') {
+function essb5_draw_select_option($field_id = '', $title = '', $description = '', $values = array(), $user_value = false, $value = '', $multiple = false) {
 	$value = $user_value ? $value : essb_option_value($field_id);
-	ESSBOptionsFramework::draw_options_row_start($title, $description);
-	ESSBOptionsFramework::draw_select_field($field_id, $values, false, 'essb_options', $value);
+	ESSBOptionsFramework::draw_options_row_start_advanced_panel($title, $description, 'essb_field_'.$field_id);
+	
+	if ($multiple) {
+	    ESSBOptionsFramework::draw_select_field($field_id, $values, false, 'essb_options', $value, array('multiple' => 'true'));
+	}
+	else {
+	   ESSBOptionsFramework::draw_select_field($field_id, $values, false, 'essb_options', $value);
+	}
 	ESSBOptionsFramework::draw_options_row_end();
 }
 
@@ -1038,12 +1099,12 @@ function essb5_generate_code_advanced_button($text = '', $icon = '', $ao_option 
 
 function essb5_generate_code_advanced_setting_panel_open($title = '', $desc = '', $class = '') {
 	$code = '';
-	$code .= '<div class="ao-settings-section ao-settings-section-panel '.esc_attr($class).'">';
+	$code .= '<div class="ao-settings-section ao-settings-section-panel '.esc_attr($class).' ao-settings-section-simple-panel">';
 	
 	if ($title != '' || $desc != '') {
 	$code .= '<div class="panel-title">';
 		if ($title != '') {
-			$code .= '<span class="title">'.esc_html($title).$running_code_state.'</span>';
+			$code .= '<span class="title">'.esc_html($title).'</span>';
 		}
 		if ($desc != '') {
 			$code .= '<span class="label">'.esc_html($desc).'</span>';
@@ -1076,12 +1137,20 @@ function essb5_generate_code_advanced_deactivate_panel($title = '', $desc = '', 
 	$code .= '<div class="ao-settings-section ao-settings-section-deactivate '.esc_attr($panel_class).'">';
 	
 	$code .= '<div class="title-col">';
+	
+	if ($panel_icon != '') {
+	    $code .= '<div class="icon-holder">'.$panel_icon.'</div>';
+	}
+	$code .= '<div class="content-holder">';
+	
 	if ($title != '') {
-		$code .= '<span class="title">'.$panel_icon.esc_html($title).'</span>';
+		$code .= '<span class="title">'.esc_html($title).'</span>';
 	}
 	if ($desc != '') {
 		$code .= '<span class="label">'.esc_html($desc).'</span>';
 	}
+	$code .= '</div>';
+	
 	$code .= '</div>';
 	$code .= '<div class="action-col">';
 	$code .= '<a href="#" class="ao-options-btn-deactivate" data-field="'.esc_attr($field).'"><span class="essb_icon '.esc_attr($button_icon).'"></span><span>'.esc_html($button_text).'</span></a>';
@@ -1109,12 +1178,20 @@ function essb5_generate_code_advanced_activate_panel($title = '', $desc = '', $f
 	$code .= '<div class="ao-settings-section ao-settings-section-activate '.esc_attr($panel_class).'">';
 
 	$code .= '<div class="title-col">';
+	
+	if ($panel_icon != '') {
+	    $code .= '<div class="icon-holder">'.$panel_icon.'</div>';
+	}
+	$code .= '<div class="content-holder">';
+	
 	if ($title != '') {
-		$code .= '<span class="title">'.$panel_icon.esc_html($title).'</span>';
+		$code .= '<span class="title">'.esc_html($title).'</span>';
 	}
 	if ($desc != '') {
 		$code .= '<span class="label">'.esc_html($desc).'</span>';
 	}
+	
+	$code .= '</div>';
 	$code .= '</div>';
 	$code .= '<div class="action-col">';
 	$code .= '<a href="#" class="ao-options-btn-activate" data-field="'.esc_attr($field).'" '.($custom_activate_value != '' ? 'data-uservalue="'.esc_attr($custom_activate_value).'"' : '').'><span class="essb_icon '.esc_attr($button_icon).'"></span><span>'.esc_html($button_text).'</span></a>';
@@ -1166,6 +1243,10 @@ function essb5_generate_code_advanced_settings_panel($title = '', $desc = '', $a
 	 */
 	
 	$has_check_settings = essb5_advanced_settings_running_checks($ao_option);
+	$has_disabled_settings = essb5_advanced_settings_disabled_checks($ao_option);
+	$has_notrunning_settings = essb5_advanced_settings_notrunning_checks($ao_option);
+	$has_notconfigured_settings = essb5_advanced_settings_notconfigured_checks($ao_option);
+	
 	$running_code_state = '';
 	
 	if ($has_check_settings['active']) {
@@ -1178,8 +1259,44 @@ function essb5_generate_code_advanced_settings_panel($title = '', $desc = '', $a
 			if (!empty($running_tag)) {
 				$running_code_state = '<span class="running">'.$running_tag.'</span>';
 			}
-		}
+		}		
 	}
+	
+	/**
+	 * Not running
+	 */
+	
+	if ($has_notrunning_settings['active']) {
+	    $advanced_option_running = essb5_has_not_setting_values($has_notrunning_settings['value'], $has_notrunning_settings['switch']);
+	    
+	    if ($advanced_option_running) {
+	        $running_code_state = '<span class="running notrunning">'.esc_html__('Not Running', 'essb').'</span>';
+	    }
+	}
+	
+	/**
+	 * Disabled
+	 */
+	if ($has_disabled_settings['active']) {
+	    $advanced_option_running = essb5_has_setting_values($has_disabled_settings['value'], $has_disabled_settings['switch']);
+	    
+	    if ($advanced_option_running) {
+	        $running_code_state = '<span class="running disabled">'.esc_html__('Disabled', 'essb').'</span>';
+	    }
+	}
+	
+	/**
+	 * Not Configured
+	 */
+	if ($has_notconfigured_settings['active']) {
+	    $advanced_option_running = essb5_has_not_setting_values($has_notconfigured_settings['value'], $has_notconfigured_settings['switch']);
+	    
+	    
+	    if ($advanced_option_running) {
+	        $running_code_state = '<span class="running notconfigured">'.esc_html__('Not Configured', 'essb').'</span>';
+	    }
+	}
+	
 	
 	if ($desc == '') {
 	    $panel_class .= ' ao-settings-nodesc';
@@ -1188,8 +1305,15 @@ function essb5_generate_code_advanced_settings_panel($title = '', $desc = '', $a
 	$code = '';
 	$code .= '<div class="ao-settings-section '.esc_attr($panel_class).'">';
 	$code .= '<div class="title-col">';
+	
+	if ($panel_icon != '') {
+	    $code .= '<div class="icon-holder">'.$panel_icon.'</div>';
+	}
+	
+	$code .= '<div class="content-holder">';
+	
 	if ($title != '') {
-		$code .= '<span class="title">'.$panel_icon.esc_html($title).$running_code_state.'</span>';
+	    $code .= '<span class="title">'.essb_wp_kses_title($title).$running_code_state.'</span>';
 	}
 	if ($desc != '') {
 		$code .= '<span class="label">'.esc_html($desc).'</span>';
@@ -1210,8 +1334,8 @@ function essb5_generate_code_advanced_settings_panel($title = '', $desc = '', $a
 	if ($window_title == '') { 
 		$window_title = $title;
 	}
-	
-	$code .= '</div>';
+	$code .= '</div>'; // content-holder
+	$code .= '</div>'; // title-col
 	$code .= '<div class="action-col">';
 	$code .= essb5_generate_code_advanced_button($button_text, $button_icon, $ao_option, $class, $window_title, $reload, $width, $hide_save);
 	$code .= '</div>';
@@ -1220,10 +1344,130 @@ function essb5_generate_code_advanced_settings_panel($title = '', $desc = '', $a
 	return $code;
 }
 
+function essb5_advanced_settings_notrunning_checks($ao_option = '') {
+    $has_settings = false;
+    $value_checks = array();
+    $switch_checks = array();  
+    
+    if ($ao_option == 'internal-counter') {
+        $has_settings = true;
+        $switch_checks[] = 'active_internal_counters';
+        $switch_checks[] = 'active_internal_counters_advanced';
+    }
+    
+    if ($ao_option == 'avoid-negative-proof') {
+        $has_settings = true;
+        $switch_checks[] = 'social_proof_enable';
+    }
+    
+    if ($ao_option == 'share-recovery') {
+        $has_settings = true;
+        $switch_checks[] = 'counter_recover_active';
+    }    
+    
+    if ($ao_option == 'share-fake') {
+        $has_settings = true;
+        $switch_checks[] = 'activate_fake_counters';
+    }
+    
+    if ($ao_option == 'analytics') {
+        $has_settings = true;
+        $switch_checks[] = 'stats_active';
+    }
+    
+    if ($ao_option == 'share-conversions') {
+        $has_settings = true;
+        $switch_checks[] = 'conversions_lite_run';
+    }
+    
+    if ($ao_option == 'metrics-lite') {
+        $has_settings = true;
+        $switch_checks[] = 'esml_active';
+    }
+    
+    if ($ao_option == 'share-google-analytics') {
+        $has_settings = true;
+        $switch_checks[] = 'activate_ga_tracking';
+        $switch_checks[] = 'activate_utm';
+        $switch_checks[] = 'activate_ga_layers';
+        $switch_checks[] = 'activate_ga_ntg_tracking';
+    }
+    
+    if ($ao_option == 'integration-mycred') {
+        $has_settings = true;
+        $switch_checks[] = 'mycred_activate';
+        $switch_checks[] = 'mycred_activate_custom';
+        $switch_checks[] = 'mycred_referral_activate';
+        $switch_checks[] = 'mycred_referral_activate_shortcode';
+    }
+    
+    if ($ao_option == 'integration-affiliatewp') {
+        $has_settings = true;
+        $switch_checks[] = 'affwp_active';
+    }
+    
+    if ($ao_option == 'integration-affiliates') {
+        $has_settings = true;
+        $switch_checks[] = 'affs_active';
+    }
+    
+    if ($ao_option == 'advanced-networks') {
+        $has_settings = true;
+        $switch_checks[] = 'activate_networks_manage';
+    }
+    
+    if ($ao_option == 'advanced-networks-visibility') {
+        $has_settings = true;
+        $switch_checks[] = 'activate_networks_responsive';
+    }    
+    
+    return array('active' => $has_settings, 'value' => $value_checks, 'switch' => $switch_checks);
+}
+
+function essb5_advanced_settings_notconfigured_checks($ao_option = '') {
+    $has_settings = false;
+    $value_checks = array();
+    $switch_checks = array();
+    
+    if ($ao_option == 'update-counter') {
+                
+        $api = essb_sanitize_option_value('facebook_counter_api');
+        if ($api == 'sharedcount') {
+            $value_checks[] = 'sharedcount_token';
+        }
+        else {
+            $value_checks[] = 'facebook_counter_token';
+        }
+        
+        $has_settings = true;
+    }
+    
+    return array('active' => $has_settings, 'value' => $value_checks, 'switch' => $switch_checks);
+}
+
+function essb5_advanced_settings_disabled_checks($ao_option = '') {
+    $has_settings = false;
+    $value_checks = array();
+    $switch_checks = array();
+    
+    if ($ao_option == 'internal-counter') {
+        $has_settings = true;
+        $switch_checks[] = 'deactivate_postcount';
+    }
+    
+    return array('active' => $has_settings, 'value' => $value_checks, 'switch' => $switch_checks);
+}
+
 function essb5_advanced_settings_running_checks($ao_option = '') {
 	$has_settings = false;
 	$value_checks = array();
 	$switch_checks = array();
+	
+	if ($ao_option == 'internal-counter') {
+	    $has_settings = true;
+	    $switch_checks[] = 'active_internal_counters';
+	    $switch_checks[] = 'active_internal_counters_advanced';
+	}
 	
 	if ($ao_option == 'advanced-networks') {
 		$has_settings = true;
@@ -1293,6 +1537,9 @@ function essb5_advanced_settings_running_checks($ao_option = '') {
 	if ($ao_option == 'share-google-analytics') {
 		$has_settings = true;
 		$switch_checks[] = 'activate_ga_tracking';
+		$switch_checks[] = 'activate_utm';
+		$switch_checks[] = 'activate_ga_layers';		
+		$switch_checks[] = 'activate_ga_ntg_tracking';
 	}
 	
 	if ($ao_option == 'excerpts') {
@@ -1305,6 +1552,81 @@ function essb5_advanced_settings_running_checks($ao_option = '') {
 		$switch_checks[] = 'use_stylebuilder';
 	}
 	
+	if ($ao_option == 'update-counter') {
+	    
+	    $api = essb_sanitize_option_value('facebook_counter_api');
+	    if ($api == 'sharedcount') {
+	        $value_checks[] = 'sharedcount_token';
+	    }
+	    else {
+	        $value_checks[] = 'facebook_counter_token';
+	    }
+	    
+	    $has_settings = true;
+	}
+	
 	return array('active' => $has_settings, 'value' => $value_checks, 'switch' => $switch_checks);
 }
 
+function essb_generate_expert_badge() {
+    $code = '<span class="essb-badge essb-badge-expert">' . esc_html__('Expert', 'essb') . '</span>';    
+    return $code;
+}
+
+function essb_generate_running_badge() {
+    $code = '<span class="essb-badge essb-badge-running">' . esc_html__('Running', 'essb') . '</span>';
+    return $code;
+}
+
+function essb_generate_server_side_mobile_badge() {
+    $code = '<span class="essb-badge essb-badge-server-mobile" data-microtip-size="large" data-microtip-position="top-left" title="The feature requires server-side mobile detection.  If you are using a cache plugin that does not store a separate mobile cache (example: Autoptimize, WP SuperCache, W3 Total Cache) the feature may not work properly."><i class="ti-server"></i>' . esc_html__('Server', 'essb') . '</span>';
+    return $code;
+}
+
+/**
+ * Create an advanced visibility control box
+ * @param unknown $tab
+ * @param unknown $menu_id
+ * @param unknown $module
+ * @param string $post_types
+ * @param string $id_list
+ * @param string $url_list
+ */
+function essb_create_exclude_display_on($tab, $menu_id, $module, $post_types = true, $id_list = true, $url_list = true, $homepage = false) {
+    ESSBOptionsStructureHelper::panel_start($tab, $menu_id, esc_html__('Exclude Display On', 'essb') , '', 'fa21 fa fa-eye-slash', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+    
+    if ($homepage) {
+        ESSBOptionsStructureHelper::field_switch($tab, $menu_id, 'home_deactivate_'.$module, esc_html__('Deactivate on homepage', 'essb'), '');        
+    }
+    
+    if ($post_types) {
+        ESSBOptionsStructureHelper::field_select($tab, $menu_id, 'posttype_deactivate_' . $module, esc_html__('Post types', 'essb'), '', ESSB_Plugin_Loader::supported_post_types(), '', '', 'true');
+    }
+    
+    if ($id_list) {
+        ESSBOptionsStructureHelper::field_textbox_stretched($tab, $menu_id, 'deactivate_on_' . $module, esc_html__('Deactivate on the following post IDs', 'essb'), esc_html__('Comma-separated: "11, 15, 125".', 'essb'));
+    }
+    
+    if ($url_list) {
+        ESSBOptionsStructureHelper::field_textarea($tab, $menu_id, 'url_deactivate_' . $module, esc_html__('Deactivate on the following URLs ', 'essb'), esc_html__('One per line without the domain name. Use (.*) wildcards to address multiple URLs under a given path. Example: /profile/(.*)', 'essb'), '10');
+    }
+    
+    ESSBOptionsStructureHelper::panel_end($tab, $menu_id);
+    
+}
+
+function essb_heading_with_related_section_open($tab, $menu_id, $heading = '', $icon = '', $description = '', $top_space = false) {
+    if (!empty($heading)) {
+        ESSBOptionsStructureHelper::field_heading($tab, $menu_id, 'heading7', $heading, '', 'pb0' . ($top_space ? ' mt40' : ''), $icon);        
+    }
+    
+    ESSBOptionsStructureHelper::holder_start($tab, $menu_id, 'essb-related-heading7', '');
+    
+    if (!empty($description)) {
+        ESSBOptionsStructureHelper::hint($tab, $menu_id, '', $description, '', 'glowhint');        
+    }
+}
+
+function essb_heading_with_related_section_close($tab, $menu_id) {
+    ESSBOptionsStructureHelper::holder_end($tab, $menu_id);
+}

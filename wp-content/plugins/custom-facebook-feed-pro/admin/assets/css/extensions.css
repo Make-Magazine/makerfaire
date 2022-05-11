@@ -36,16 +36,16 @@
 }
 /*orange*/
 .sb-btn-orange{
-	background: #E34F0E!important;
+	background: #FE544F!important;
 	color: #fff!important;
 }
 .sb-btn-orange:hover{
-	background: #F37036!important;
+	background: #EC352F!important;
 	color: #fff!important;
 }
 .sb-btn-orange:focus,
 .sb-btn-orange:active{
-	background: #B8400B!important;
+	background: #BC120E!important;
 	color: #fff!important;
 }
 .cff-fb-full-wrapper{
@@ -455,7 +455,7 @@
 }
 .cff-stck-wdg-btn svg{
     width: 25px;
-    fill: #E34F0E;
+    fill: #FE544F;
     height: 33px;
     float: left;
 }

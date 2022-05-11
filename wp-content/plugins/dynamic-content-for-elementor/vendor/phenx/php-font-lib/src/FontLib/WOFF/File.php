@@ -41,10 +41,10 @@ class File extends \DynamicOOOS\FontLib\TrueType\File
             $this->seek($entry->offset);
             $data = $this->read($entry->length);
             if ($entry->length < $entry->origLength) {
-                $data = \gzuncompress($data);
+                $data = (string) \gzuncompress($data);
             }
             // Prepare data ...
-            $length = \strlen($data);
+            $length = \mb_strlen($data, '8bit');
             $entry->length = $entry->origLength = $length;
             $entry->offset = $dataOffset;
             // Write ...

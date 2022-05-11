@@ -7,7 +7,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Rellax extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class Rellax extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     public $name = 'Rellax';
     public $has_controls = \true;

@@ -36,11 +36,11 @@ var Widget_DCE_Dynamicposts_dualcarousel_Handler = function ($scope, $) {
 	if ( 'undefined' === typeof Swiper ) {
 		const asyncSwiper = elementorFrontend.utils.swiper;
 
-		new asyncSwiper( elementSwiper[0], dceSwiperOptions ).then( ( newSwiperInstance ) => {
+		new asyncSwiper(jQuery( elementSwiper[0] ), dceSwiperOptions ).then( ( newSwiperInstance ) => {
 			galleryThumbs = newSwiperInstance;
 		} );
 	  } else {
-		galleryThumbs = new Swiper( elementSwiper[0], dceSwiperOptions );
+		galleryThumbs = new Swiper( jQuery( elementSwiper[0] ), dceSwiperOptions );
 	  }
 
     Widget_DCE_Dynamicposts_carousel_Handler($scope, $);
@@ -51,6 +51,7 @@ var Widget_DCE_Dynamicposts_dualcarousel_Handler = function ($scope, $) {
 jQuery(window).on('elementor/frontend/init', function () {
     elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamicposts-v2.dualcarousel', Widget_DCE_Dynamicposts_dualcarousel_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-products-cart.dualcarousel', Widget_DCE_Dynamicposts_dualcarousel_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-products-cart-on-sale.dualcarousel', Widget_DCE_Dynamicposts_dualcarousel_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamic-woo-products.dualcarousel', Widget_DCE_Dynamicposts_dualcarousel_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-product-upsells.dualcarousel', Widget_DCE_Dynamicposts_dualcarousel_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-product-crosssells.dualcarousel', Widget_DCE_Dynamicposts_dualcarousel_Handler);

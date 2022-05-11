@@ -11,12 +11,12 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Video extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class AdvancedVideoControls extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     private $is_common = \false;
     public function get_script_depends()
     {
-        return ['dce-plyr-js', 'dce-advancedvideo'];
+        return ['dce-advanced-video'];
     }
     public function get_style_depends()
     {
@@ -57,9 +57,9 @@ class DCE_Extension_Video extends \DynamicContentForElementor\Extensions\DCE_Ext
     public function add_control_section_to_video($element, $args)
     {
         $element->start_controls_section('dce_video_section', ['label' => __('Advanced', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['video_type' => ['youtube', 'vimeo', 'hosted']]]);
-        $element->add_control('dce_video_custom_controls', ['label' => '<span class="color-dce icon icon-dyn-logo-dce"></span> ' . __('Custom Controls', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'render_type' => 'template', 'selectors' => ['{{WRAPPER}} .plyr, #elementor-lightbox-{{ID}} .plyr' => 'height: auto;', '{{WRAPPER}} input:focus:not([type="button"]):not([type="submit"]), #elementor-lightbox-{{ID}} input:focus:not([type="button"]):not([type="submit"])' => 'background-color: transprent; border: none; box-shadow: none;', '{{WRAPPER}} .plyr input[type="range"]::-moz-range-track, #elementor-lightbox-{{ID}} .plyr input[type="range"]::-moz-range-track, {{WRAPPER}} .plyr input[type="range"]::-moz-range-thumb' => 'box-shadow: none;']]);
+        $element->add_control('dce_video_custom_controls', ['label' => '<span class="color-dce icon-dyn-logo-dce"></span> ' . __('Custom Controls', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'render_type' => 'template', 'selectors' => ['{{WRAPPER}} .plyr, #elementor-lightbox-{{ID}} .plyr' => 'height: auto;', '{{WRAPPER}} input:focus:not([type="button"]):not([type="submit"]), #elementor-lightbox-{{ID}} input:focus:not([type="button"]):not([type="submit"])' => 'background-color: transprent; border: none; box-shadow: none;', '{{WRAPPER}} .plyr input[type="range"]::-moz-range-track, #elementor-lightbox-{{ID}} .plyr input[type="range"]::-moz-range-track, {{WRAPPER}} .plyr input[type="range"]::-moz-range-thumb' => 'box-shadow: none;']]);
         $element->add_control('dce_video_custom_controls_hover', ['label' => __('Show controls only in hover', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'render_type' => 'template', 'selectors' => ['{{WRAPPER}} .plyr:not(:hover) .plyr__controls, {{WRAPPER}} .plyr:not(:hover) .plyr__control' => 'opacity: 0; transition: 0.3s;'], 'condition' => ['dce_video_custom_controls!' => '']]);
-        $element->add_control('dce_video_custom_controls_nodx', ['label' => '<span class="color-dce icon icon-dyn-logo-dce"></span> ' . __('Prevent Video Download', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'render_type' => 'template', 'selectors' => ['{{WRAPPER}} .plyr__video-wrapper:after' => 'content: ""; display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%;'], 'condition' => ['dce_video_custom_controls!' => '', 'video_type' => 'hosted']]);
+        $element->add_control('dce_video_custom_controls_nodx', ['label' => '<span class="color-dce icon-dyn-logo-dce"></span> ' . __('Prevent Video Download', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'render_type' => 'template', 'selectors' => ['{{WRAPPER}} .plyr__video-wrapper:after' => 'content: ""; display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%;'], 'condition' => ['dce_video_custom_controls!' => '', 'video_type' => 'hosted']]);
         $element->add_control('dce_video_controls', ['label' => __('Show these controls', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'multiple' => \true, 'label_block' => \true, 'options' => [
             'play-large' => __('play-large', 'dynamic-content-for-elementor'),
             // The large play button in the center
@@ -93,11 +93,13 @@ class DCE_Extension_Video extends \DynamicContentForElementor\Extensions\DCE_Ext
             // Show a download button with a link to either the current source or a custom URL you specify in your options
             'fullscreen' => __('fullscreen', 'dynamic-content-for-elementor'),
         ], 'default' => ['mute', 'play-large', 'play', 'progress', 'current-time', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'], 'frontend_available' => \true, 'condition' => ['dce_video_custom_controls!' => '']]);
+        $element->add_control('dce_captions_on_start', ['label' => __('Subtitles On by default', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['dce_video_custom_controls!' => '']]);
+        $element->add_control('dce_captions_lang', ['label' => __('Subtitles Track', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'auto', 'frontend_available' => \true, 'condition' => ['dce_captions_on_start' => 'yes', 'dce_video_custom_controls' => 'yes']]);
         $element->end_controls_section();
         $element->start_controls_section('dce_video_style', ['label' => __('Custom Controls', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['dce_video_custom_controls!' => '']]);
         $element->add_control('dce_video_color', ['label' => __('Controls', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .plyr--video .plyr__control_item svg, #elementor-lightbox-{{ID}} .plyr--video .plyr__control_item svg' => 'fill: {{VALUE}}', '{{WRAPPER}} .plyr--video .plyr__controls, #elementor-lightbox-{{ID}} .plyr--video .plyr__controls' => 'color: {{VALUE}}', '{{WRAPPER}} .plyr--video .plyr__progress__buffer, #elementor-lightbox-{{ID}} .plyr--video .plyr__progress__buffer, {{WRAPPER}} .plyr--video .plyr__control--overlaid, #elementor-lightbox-{{ID}} .plyr--video .plyr__control--overlaid' => 'background-color: {{VALUE}}']]);
         $element->add_control('dce_video_bgcolor', ['label' => __('Backgrounds buttons Controls', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .plyr--video .plyr__controls .plyr__control, #elementor-lightbox-{{ID}} .plyr--video .plyr__controls .plyr__control' => 'background-color: {{VALUE}}']]);
-        $element->add_control('dce_video_color_hover', ['label' => __('Controls Color Hover', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .plyr--video .plyr__controls:hover, #elementor-lightbox-{{ID}} .plyr--video .plyr__controls:hover' => 'color: {{VALUE}}', '{{WRAPPER}} .plyr--video .plyr__control.plyr__tab-focus, #elementor-lightbox-{{ID}} .plyr--video .plyr__control.plyr__tab-focus, {{WRAPPER}} .plyr--video .plyr__control:hover, #elementor-lightbox-{{ID}} .plyr--video .plyr__control:hover, {{WRAPPER}} .plyr--video .plyr__control[aria-expanded="true"], #elementor-lightbox-{{ID}} .plyr--video .plyr__control[aria-expanded="true"]' => 'background-color: {{VALUE}}']]);
+        $element->add_control('dce_video_color_hover', ['label' => __('Controls Color Hover', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .plyr--video .plyr__control.plyr__tab-focus, #elementor-lightbox-{{ID}} .plyr--video .plyr__control.plyr__tab-focus, {{WRAPPER}} .plyr--video .plyr__control:hover, #elementor-lightbox-{{ID}} .plyr--video .plyr__control:hover, {{WRAPPER}} .plyr--video .plyr__control[aria-expanded="true"], #elementor-lightbox-{{ID}} .plyr--video .plyr__control[aria-expanded="true"]' => 'background-color: {{VALUE}}']]);
         $element->add_control('dce_video_progress_color', ['label' => __('Progress Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .plyr--full-ui input[type="range"], #elementor-lightbox-{{ID}} .plyr--full-ui input[type="range"]' => 'color: {{VALUE}}']]);
         $element->add_control('dce_video_controlsbackground_color', ['label' => __('Controls Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .plyr--video .plyr__controls, #elementor-lightbox-{{ID}}' => 'background: {{VALUE}}']]);
         $element->add_responsive_control('dce_video_videostyle_border', ['label' => __('Controls Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .plyr--video .plyr__controls, #elementor-lightbox-{{ID}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
@@ -118,7 +120,7 @@ class DCE_Extension_Video extends \DynamicContentForElementor\Extensions\DCE_Ext
     {
         if ('video' === $widget->get_name()) {
             $settings = $widget->get_settings();
-            if ('yes' === $settings['dce_video_custom_controls']) {
+            if (\Elementor\Plugin::$instance->editor->is_edit_mode() || 'yes' === $settings['dce_video_custom_controls']) {
                 $this->enqueue_all();
             }
         }

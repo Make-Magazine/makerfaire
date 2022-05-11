@@ -62,7 +62,7 @@ class GP_Preview_Submission extends GWPerk {
 
 			function gppsMergeTags( mergeTags, elementId, hideAllFields, excludeFieldTypes, isPrepop, option ) {
 
-				if( gppsDoingMergeTags ) {
+				if ( gppsDoingMergeTags || ( elementId != 'field_content' && elementId != 'field_default_value' ) ) {
 					return mergeTags;
 				}
 

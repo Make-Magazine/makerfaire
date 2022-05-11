@@ -19,7 +19,7 @@ class Php extends Tag
     }
     public function get_title()
     {
-        return 'PHP';
+        return __('PHP', 'dynamic-content-for-elementor');
     }
     public function get_group()
     {
@@ -33,11 +33,11 @@ class Php extends Tag
     {
         return 'https://www.dynamic.ooo/widget/dynamic-tag-php/';
     }
-    protected function _register_controls()
+    protected function register_controls()
     {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        if (\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
             $this->register_controls_settings();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        } else {
             $this->register_controls_non_admin_notice();
         }
     }
@@ -51,23 +51,26 @@ class Php extends Tag
     }
     public function render()
     {
-        $settings = $this->get_settings_for_display(null, \true);
+        $settings = $this->get_settings_for_display();
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
+            return;
+        }
         if (empty($settings)) {
             return;
         }
-        $evalError = \false;
+        $error = \false;
         try {
             @eval($settings['custom_php']);
         } catch (\ParseError $e) {
-            $evalError = \true;
+            $error = $e->getMessage();
         } catch (\Throwable $e) {
-            $evalError = \true;
+            $error = $e->getMessage();
         }
-        if ($evalError && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        if ($error && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
             echo '<strong>';
             echo __('Please check your PHP code', 'dynamic-content-for-elementor');
             echo '</strong><br />';
-            echo __('ERROR', 'dynamic-content-for-elementor') . ': ' . $e->getMessage(), "\n";
+            echo __('ERROR', 'dynamic-content-for-elementor') . ': ' . $error, "\n";
         }
     }
 }

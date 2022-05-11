@@ -8,8 +8,8 @@
 .components-modal__frame.epytblock__modal {
 	position: absolute;
 	top: 25px;
-	left: 50%;
-	transform: translateX(-50%);
+	left: 50% !important;
+	transform: translateX(-50%) !important;
 	width: 950px;
 	max-width: 90%;
 	height: calc(100vh - 50px);

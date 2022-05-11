@@ -178,7 +178,7 @@ class GP_Read_Only extends GWPerk {
 			if ( $disable_datepicker ) {
 				// Find 'datepicker' CSS class and replace it with our custom class indicating that we've disabled it.
 				// This class is used by Conditional Logic Dates to identify read-only Datepicker fields.
-				$search['\'datepicker '] = 'gpro-disabled-datepicker ';
+				$search['class=\'datepicker '] = 'class=\'gpro-disabled-datepicker ';
 			}
 		}
 

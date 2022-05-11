@@ -1,3 +1,14 @@
+/**
+* demo3.js
+* http://www.codrops.com
+*
+* Licensed under the MIT license.
+* http://www.opensource.org/licenses/mit-license.php
+*
+* Copyright 2019, Codrops
+* http://www.codrops.com
+*/
+
 var Widget_DCE_Dynamicposts_smoothscroll_Handler = function ($scope, $) {
 
     var smsc = null;
@@ -338,14 +349,3 @@ jQuery(window).on('elementor/frontend/init', function () {
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-sticky-posts.smoothscroll', Widget_DCE_Dynamicposts_smoothscroll_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.smoothscroll', Widget_DCE_Dynamicposts_smoothscroll_Handler);
 });
-
-/**
-* demo3.js
-* http://www.codrops.com
-*
-* Licensed under the MIT license.
-* http://www.opensource.org/licenses/mit-license.php
-*
-* Copyright 2019, Codrops
-* http://www.codrops.com
-*/

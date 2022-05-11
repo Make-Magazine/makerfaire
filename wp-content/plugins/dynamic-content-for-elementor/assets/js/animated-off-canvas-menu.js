@@ -22,12 +22,7 @@
 				var time_side_background_opening = Number( elementSettings.time_side_background_opening.size ) / 1000;
 			}
 			var time_menu_pane_opening = Number( elementSettings.time_menu_pane_opening.size ) / 1000;
-			var time_menu_list_opening = Number( elementSettings.time_menu_list_opening.size );
-			if (time_menu_list_opening === 0) {
-				time_menu_list_opening = 1;
-			}
-			time_menu_list_opening = time_menu_list_opening / 1000;
-
+			var time_menu_list_opening = Number( elementSettings.time_menu_list_opening.size ) / 1000;
 			var time_menu_list_stagger = Number( elementSettings.time_menu_list_stagger.size ) / 1000;
 
 			var deviceMode = $( 'body' ).attr( 'data-elementor-device-mode' );
@@ -101,7 +96,7 @@
 			tl.to(
 				class_quit,
 				{
-					duration:0.6,
+					duration: elementSettings.time_menu_pane_opening.size,
 					scale:1,
 					ease:Expo.easeInOut,
 					delay:0
@@ -114,7 +109,7 @@
 			// Events
 			$scope.on( "click", class_hamburger, function ( e ) {
 				e.preventDefault();
-				$( ".dce-close" ).fadeIn( 3000, function () {
+				$( ".dce-close" ).fadeIn( elementSettings.time_menu_pane_opening.size, function () {
 					$( this ).removeClass( "close-hidden" );
 				} );
 				tl.reversed( ! tl.reversed() );
@@ -132,7 +127,7 @@
 
 			$( document ).on( "click", class_quit, function ( e ) {
 				e.preventDefault();
-				$( ".dce-close" ).fadeOut( 1000,function () {
+				$( ".dce-close" ).fadeOut( elementSettings.time_menu_pane_opening.size,function () {
 					$( this ).addClass( "close-hidden" );
 				} );
 				close_menu();
@@ -140,7 +135,7 @@
 			} );
 			$( document ).on( 'keyup',function ( evt ) {
 				if ( evt.keyCode == 27 && $( ".dce-modal-open" ).length ) {
-					$( ".dce-close" ).fadeOut( 1000,function () {
+					$( ".dce-close" ).fadeOut( elementSettings.time_menu_pane_opening.size,function () {
 						$( this ).addClass( "close-hidden" );
 					} );
 					close_menu();

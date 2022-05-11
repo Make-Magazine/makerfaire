@@ -1,8 +1,6 @@
 <?php
 /**
  * List table for cron schedules.
- *
- * @package wp-crontrol
  */
 
 namespace Crontrol;
@@ -87,7 +85,7 @@ class Schedule_List_Table extends \WP_List_Table {
 	/**
 	 * Returns an array of CSS class names for the table.
 	 *
-	 * @return string[] Array of class names.
+	 * @return array<int,string> Array of class names.
 	 */
 	protected function get_table_classes() {
 		return array( 'widefat', 'fixed', 'striped', 'table-view-list', $this->_args['plural'] );
@@ -96,6 +94,12 @@ class Schedule_List_Table extends \WP_List_Table {
 	/**
 	 * Generates and displays row action links for the table.
 	 *
+	 * @phpstan-param array{
+	 *   interval: int,
+	 *   display: string,
+	 *   name: string,
+	 *   is_too_frequent: bool,
+	 * } $schedule
 	 * @param mixed[] $schedule    The schedule for the current row.
 	 * @param string  $column_name Current column name.
 	 * @param string  $primary     Primary column name.
@@ -107,19 +111,20 @@ class Schedule_List_Table extends \WP_List_Table {
 		}
 
 		$links = array();
+		/** @var array<string,int|string> */
 		$new_scheds = get_option( 'crontrol_schedules', array() );
 
 		if ( in_array( $schedule['name'], self::$core_schedules, true ) ) {
-			$links[] = "<span class='in-use'>" . esc_html__( 'This is a WordPress core schedule and cannot be deleted', 'wp-crontrol' ) . '</span>';
+			$links[] = "<span class='crontrol-in-use'>" . esc_html__( 'This is a WordPress core schedule and cannot be deleted', 'wp-crontrol' ) . '</span>';
 		} elseif ( ! isset( $new_scheds[ $schedule['name'] ] ) ) {
-			$links[] = "<span class='in-use'>" . esc_html__( 'This schedule is added by another plugin and cannot be deleted', 'wp-crontrol' ) . '</span>';
+			$links[] = "<span class='crontrol-in-use'>" . esc_html__( 'This schedule is added by another plugin and cannot be deleted', 'wp-crontrol' ) . '</span>';
 		} elseif ( in_array( $schedule['name'], self::$used_schedules, true ) ) {
-			$links[] = "<span class='in-use'>" . esc_html__( 'This custom schedule is in use and cannot be deleted', 'wp-crontrol' ) . '</span>';
+			$links[] = "<span class='crontrol-in-use'>" . esc_html__( 'This custom schedule is in use and cannot be deleted', 'wp-crontrol' ) . '</span>';
 		} else {
 			$link = add_query_arg( array(
-				'page'   => 'crontrol_admin_options_page',
-				'action' => 'crontrol-delete-schedule',
-				'id'     => rawurlencode( $schedule['name'] ),
+				'page'            => 'crontrol_admin_options_page',
+				'crontrol_action' => 'delete-schedule',
+				'crontrol_id'     => rawurlencode( $schedule['name'] ),
 			), admin_url( 'options-general.php' ) );
 			$link = wp_nonce_url( $link, 'crontrol-delete-schedule_' . $schedule['name'] );
 
@@ -132,6 +137,12 @@ class Schedule_List_Table extends \WP_List_Table {
 	/**
 	 * Returns the output for the icon cell of a table row.
 	 *
+	 * @phpstan-param array{
+	 *   interval: int,
+	 *   display: string,
+	 *   name: string,
+	 *   is_too_frequent: bool,
+	 * } $schedule
 	 * @param mixed[] $schedule The schedule for the current row.
 	 * @return string The cell output.
 	 */
@@ -150,6 +161,12 @@ class Schedule_List_Table extends \WP_List_Table {
 	/**
 	 * Returns the output for the schdule name cell of a table row.
 	 *
+	 * @phpstan-param array{
+	 *   interval: int,
+	 *   display: string,
+	 *   name: string,
+	 *   is_too_frequent: bool,
+	 * } $schedule
 	 * @param mixed[] $schedule The schedule for the current row.
 	 * @return string The cell output.
 	 */
@@ -160,13 +177,19 @@ class Schedule_List_Table extends \WP_List_Table {
 	/**
 	 * Returns the output for the interval cell of a table row.
 	 *
+	 * @phpstan-param array{
+	 *   interval: int,
+	 *   display: string,
+	 *   name: string,
+	 *   is_too_frequent: bool,
+	 * } $schedule
 	 * @param mixed[] $schedule The schedule for the current row.
 	 * @return string The cell output.
 	 */
 	protected function column_crontrol_interval( array $schedule ) {
 		$interval = sprintf(
 			'%s (%s)',
-			esc_html( $schedule['interval'] ),
+			esc_html( "{$schedule['interval']}" ),
 			esc_html( interval( $schedule['interval'] ) )
 		);
 
@@ -189,6 +212,13 @@ class Schedule_List_Table extends \WP_List_Table {
 	 * Returns the output for the display name cell of a table row.
 	 *
 	 * @param mixed[] $schedule The schedule for the current row.
+	 *
+	 * @phpstan-param array{
+	 *   interval: int,
+	 *   display: string,
+	 *   name: string,
+	 *   is_too_frequent: bool,
+	 * } $schedule
 	 * @return string The cell output.
 	 */
 	protected function column_crontrol_display( array $schedule ) {

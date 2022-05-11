@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
  * Custom outline group control
  *
  */
-class DCE_Group_Control_Outline extends Group_Control_Base
+class Group_Control_Outline extends Group_Control_Base
 {
     protected static $fields;
     public static function get_type()

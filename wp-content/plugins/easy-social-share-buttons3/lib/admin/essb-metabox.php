@@ -139,7 +139,7 @@ function essb_register_settings_metabox_optimize() {
 				'default_child' => ''
 		);
 
-		if (essb_option_bool_value('activate_ga_tracking')) {
+		if (essb_option_bool_value('activate_utm')) {
 			$sidebar_options[] = array(
 					'field_id' => 'ga',
 					'title' => esc_html__('GA Campaign Tracking Options', 'essb'),
@@ -182,6 +182,32 @@ function essb_register_settings_metabox_optimize() {
 					'default_child' => ''
 			);
 		}
+		else if (!essb_option_bool_value('deactivate_postcount')) {
+		    $sidebar_options[] = array(
+		        'field_id' => 'internal',
+		        'title' => esc_html__('Internal Counter', 'essb'),
+		        'icon' => 'list-ol',
+		        'type' => 'menu_item',
+		        'action' => 'default',
+		        'default_child' => ''
+		    );
+		}
+		
+		$show_short_urls = false;
+		if (!essb_option_bool_value('deactivate_module_shorturl') && essb_option_bool_value('shorturl_activate') && class_exists('ESSB_Short_URL')) {
+		    $sidebar_options[] = array(
+		        'field_id' => 'shorturl',
+		        'title' => esc_html__('Short URLs', 'essb'),
+		        'icon' => 'scissors',
+		        'type' => 'menu_item',
+		        'action' => 'default',
+		        'default_child' => ''
+		    );
+		    
+		    $show_short_urls = true;
+		}
+		
+		
 		
 		if (has_filter('essb_customize_metabox_extra_sections')) {
 		    $sidebar_options = apply_filters('essb_customize_metabox_extra_sections', $sidebar_options);
@@ -331,7 +357,7 @@ function essb_register_settings_metabox_optimize() {
 		ESSBMetaboxInterface::draw_content_section_end();
 			
 		
-		if (essb_option_bool_value('activate_ga_tracking')) {
+		if (essb_option_bool_value('activate_utm')) {
 			ESSBMetaboxInterface::draw_content_section_start('ga');
 			
 			ESSBOptionsFramework::reset_row_status();
@@ -395,19 +421,34 @@ function essb_register_settings_metabox_optimize() {
 				}
 			}
 			print '</div>';
-			
+
 			$essb_cache_expire = isset ( $custom ['essb_cache_expire'] ) ? $custom ['essb_cache_expire'] [0] : "";
-			ESSBOptionsFramework::draw_options_row_start_full();
-			if ($essb_cache_expire != '') {
-				ESSBOptionsFramework::draw_title('Next counter update will be at '.date(DATE_RFC822, $essb_cache_expire), 'If you wish to make a manual counter update you can use the top Easy Social Share Buttons menu where you have link when post is opened');
+			$counter_description = '';
+			
+			if (!empty($essb_cache_expire)) {
+			    $now = time ();
+			    
+			    if ($now > $essb_cache_expire) {
+			        $counter_description = 'Counters will update on the next post load in the front-end.';
+			    }
+			    else {
+			        $counter_description = 'Next counter update will be at '.date(DATE_RFC822, $essb_cache_expire) . '. You can press the button below to set an immediate update or use the plugin top men while viewing the post logged as administrator.';
+			    }
 			}
 			else {
-				ESSBOptionsFramework::draw_title('Counter update information is not available', 'Time of counter update will appear once first time such is made when you load post. If you wish to make a manual counter update you can use the top Easy Social Share Buttons menu where you have link when post is opened');
+			    $counter_description = 'Counter update information is not available.';
 			}
 			
-			echo '<div>';
-			echo '<a class="essb-btn" href="'.esc_url(add_query_arg('essb_clear_cached_counters', 'true', $post_address)).'" target="_blank">Update Counters Now</a>&nbsp;';
-			echo '<a class="essb-btn essb-btn-red" href="'.esc_url(add_query_arg('essb_clear_counters_history', 'true', $post_address)).'" target="_blank">Delete Stored Counters & Update Now</a>';
+			ESSBOptionsFramework::draw_hint('The information will update only if you are using a design that shows the share counters.', $counter_description, '', 'glowhint');
+			
+						
+			ESSBOptionsFramework::draw_options_row_start_full();
+			
+			echo '<div class="essb-post-clear-counters">';
+			echo '<a class="button button-primary" href="'.esc_url(add_query_arg('essb_clear_cached_counters', 'true', $post_address)).'" target="_blank">Update Counters Now</a>&nbsp;';
+			echo '<a class="button button-secondary" data-post-id="'.esc_attr($post->ID).'" href="#" id="essb-delete-post-counter">Delete Counter Information</a>';
+			echo "<span class='dashicons dashicons-yes'></span>";
+			echo "<span class='spinner'></span>";
 			echo '</div>';
 			
 			ESSBOptionsFramework::draw_options_row_end();
@@ -457,6 +498,78 @@ function essb_register_settings_metabox_optimize() {
 		
 			ESSBMetaboxInterface::draw_content_section_end();
 		}
+		else if (!essb_option_bool_value('deactivate_postcount')) {
+		    ESSBMetaboxInterface::draw_content_section_start('internal');
+		    		    
+		    $list = essb_admin_get_internal_counter_networks();
+		    
+		    ESSBOptionsFramework::reset_row_status();
+		    ESSBOptionsFramework::draw_hint('', esc_html__('The internal counter increases its value with a share button click. And this is the share value you see for the networks that don\'t have a counter (or when you enable an internal counter for all networks). Below you can edit the internal counter values for the networks currently capable of it. Which networks will have an internal counter depends on the settings you made in the Share Counter settings menu.', 'essb'), '', 'glowhelp');
+		    
+		    $listOfNetworks = essb_available_social_networks();
+		    		    
+		    foreach ($list as $key => $name) {
+		        		        
+		        $value = isset ( $custom ["essb_pc_".$key] ) ? $custom ["essb_pc_".$key] [0] : "";
+		        $desc = '';
+		        
+		        if ($key == 'love') {
+		            $value = isset ( $custom ['_essb_love'] ) ? $custom ['_essb_love'] [0] : "";
+		        }
+		        		        
+		        ESSBOptionsFramework::draw_options_row_start($name, $desc);
+		        ESSBOptionsFramework::draw_input_field("essb_pc_".$key, true, 'essb_metabox', $value);
+		        ESSBOptionsFramework::draw_options_row_end();
+		    }
+		    
+		    
+		    ESSBMetaboxInterface::draw_content_section_end();
+		}
+		
+		/**
+		 * @since 8.0 Display all post short URLs and a clear button
+		 */
+		if ($show_short_urls) {
+		    ESSBMetaboxInterface::draw_content_section_start('shorturl');
+            $short_url_cache_id = ESSB_Short_URL::post_base_short_cache_id();
+            $global_short_url = essb_get_post_meta($post->ID, $short_url_cache_id);
+            
+            $other_short_urls = essb_get_post_meta_matching_keys($post->ID, $short_url_cache_id . '_');
+            
+            $url_count = 0;
+            
+            echo '<div class="essb-post-shorturl-list">';
+            
+            if (!empty($global_short_url)) {
+                ESSBOptionsFramework::draw_options_row_start('Global short URL', '');
+                echo esc_url($global_short_url);
+                ESSBOptionsFramework::draw_options_row_end();
+                $url_count++;
+            }
+            
+            foreach ($other_short_urls as $key => $value) {
+                ESSBOptionsFramework::draw_options_row_start(str_replace($short_url_cache_id . '_', '', $key), '');
+                echo esc_url($value);
+                ESSBOptionsFramework::draw_options_row_end();
+                $url_count++;
+            }
+            
+            echo '</div>';
+
+            if ($url_count > 0) {
+                echo '<div class="essb-post-clear-shorturl">';
+                echo '<a class="button button-secondary" id="essb-clear-post-shorturl" data-post-id="'.esc_attr($post->ID).'">Clear short URLs</a>';
+                echo "<span class='dashicons dashicons-yes'></span>";
+                echo "<span class='spinner'></span>";
+                echo '</div>';
+            }
+            else {
+                esc_html_e('This post does not have short URLs stored in the cache.', 'essb');
+            }
+            ESSBMetaboxInterface::draw_content_section_end();
+		}
+		
+		wp_nonce_field('essb_admin_post_action', 'essb_admin_post_action_token');
 		
 		do_action('essb_customize_metabox_extra_options');
 		
@@ -639,6 +752,7 @@ function essb_register_settings_metabox_onoff() {
 		$custom = get_post_custom ( $post->ID );
 		$essb_off = isset ( $custom ["essb_off"] ) ?  $custom ["essb_off"] [0]: "false";
 		$essb_pc_twitter = isset ( $custom ["essb_pc_twitter"] ) ?  $custom ["essb_pc_twitter"] [0]: "";
+		$essb_pc_linkedin = isset ($custom['essb_pc_linkedin']) ? $custom['essb_pc_linkedin'][0] : '';
 		
 		$twitter_counters = essb_option_value('twitter_counters');
 		
@@ -647,23 +761,12 @@ function essb_register_settings_metabox_onoff() {
 		ESSBOptionsFramework::draw_section_start ();
 		
 		ESSBOptionsFramework::draw_options_row_start_full('inner-row');
-		ESSBOptionsFramework::draw_title( esc_html__( 'Turn off Easy Social Share Buttons', 'essb' ), esc_html__ ( 'Turn off automatic button display for that post/page of social share buttons', 'essb' ), 'inner-row' );
+		ESSBOptionsFramework::draw_title( esc_html__( 'Turn off Easy Social Share Buttons', 'essb' ), esc_html__ ( 'Turn off the functions of the plugin and assets loading on this post.', 'essb' ), 'inner-row' );
 		ESSBOptionsFramework::draw_options_row_end ();
 		
 		ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
 		ESSBOptionsFramework::draw_switch_field ( 'essb_off', 'essb_metabox', $essb_off, esc_html__ ( 'Yes', 'essb' ), esc_html__ ( 'No', 'essb' ) );
 		ESSBOptionsFramework::draw_options_row_end ();
-
-		if ($twitter_counters == "self") {
-			ESSBOptionsFramework::draw_options_row_start_full('inner-row');
-			ESSBOptionsFramework::draw_title ( esc_html__ ( 'Twitter Internal Share Counter', 'essb' ), esc_html__ ( 'Customize value of Twitter internal share counter', 'essb' ), 'inner-row' );
-			ESSBOptionsFramework::draw_options_row_end ();
-			
-			ESSBOptionsFramework::draw_options_row_start_full('inner-row-small');
-			ESSBOptionsFramework::draw_input_field('essb_pc_twitter', true, 'essb_metabox', $essb_pc_twitter);
-			ESSBOptionsFramework::draw_options_row_end ();
-		}
-		
 		
 		ESSBOptionsFramework::draw_section_end ();
 		
@@ -717,6 +820,60 @@ function essb_register_settings_metabox_stats() {
 		
 		include_once ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-analytics/dashboard/template-metabox-post.php';
 	}
+}
+
+function essb_admin_get_internal_counter_networks() {
+    $basic_network_list = 'twitter,linkedin,facebook,pinterest,google,stumbleupon,vk,reddit,buffer,love,ok,xing,mail,print,comments,yummly';    
+    $avoid_network_list = 'more,share,subscribe,copy,mwp,comments';
+
+    $basic_array = explode(',', $basic_network_list);
+    $avoid_array = explode(',', $avoid_network_list);
+    $networks_with_api = array('facebook', 'pinterest', 'vk', 'ok', 'reddit', 'buffer', 'xing', 'yummly');    
+    
+    $internal_counters = essb_option_bool_value('active_internal_counters');
+    $no_mail_print_counter = essb_option_bool_value('deactive_internal_counters_mail');
+    $twitter_counter = essb_option_value('twitter_counters');
+    
+    $api_internal_mode = essb_option_bool_value('active_internal_counters_advanced');
+    $api_networks = essb_option_value('active_internal_counters_advanced_networks');
+    
+    if (!is_array($api_networks)) {
+        $api_networks = array();
+    }
+    
+    $count_networks = array();
+
+    $listOfNetworks = essb_available_social_networks();
+    
+    foreach ($listOfNetworks as $key => $data) {
+        if (in_array($key, $avoid_array)) {
+            continue;
+        }
+        
+        if (!in_array($key, $basic_array) && !$internal_counters) {
+            continue;
+        }
+        
+        if (($key == 'print' || $key == 'mail') && $no_mail_print_counter) {
+            continue;
+        }
+        
+        if (in_array($key, $networks_with_api)) {
+            if (!$api_internal_mode) {
+                continue;
+            }
+            else {
+                if (!in_array($key, $api_networks)) {
+                    continue;
+                }
+            }
+        }
+        
+        $count_networks[$key] = $data['name'];
+    }
+            
+    return $count_networks;
+    
 }
 
 ?>

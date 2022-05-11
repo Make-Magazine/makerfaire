@@ -4,9 +4,10 @@
 * Plugin Name: Easy Social Share Buttons for WordPress
 * Description: The first true all in one social media plugin for WordPress, including social share buttons, social followers counter, social profile links, click to tweet, Pinnable images, after share events, subscribe forms, Instagram feed, social proof notifications and much more.
 * Plugin URI: https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo
-* Version: 7.9
+* Version: 8.4
 * Author: CreoApps
 * Author URI: https://codecanyon.net/user/appscreo/portfolio?ref=appscreo
+* Text Domain: essb
 */
 
 
@@ -20,7 +21,7 @@ if (defined('ESSB3_VERSION')) {
     return;
 }
 
-define ( 'ESSB3_VERSION', '7.9' );
+define ( 'ESSB3_VERSION', '8.4' );
 define ( 'ESSB3_PLUGIN_ROOT', dirname ( __FILE__ ) . '/' );
 define ( 'ESSB3_PLUGIN_URL', plugins_url () . '/' . basename ( dirname ( __FILE__ ) ) );
 define ( 'ESSB3_PLUGIN_BASE_NAME', plugin_basename ( __FILE__ ) );
@@ -113,6 +114,7 @@ class ESSB_Manager {
 		// activation/deactivation hooks
 		register_activation_hook ( __FILE__, array ('ESSB_Manager', 'activate' ) );
 		register_deactivation_hook ( __FILE__, array ('ESSB_Manager', 'deactivate' ) );
+		register_uninstall_hook ( __FILE__, array ('ESSB_Manager', 'uninstall' ) );
 
 		// initialize plugin
 		add_action( 'plugins_loaded', array( &$this, 'load_widgets' ), 9);		
@@ -338,12 +340,7 @@ class ESSB_Manager {
 	 */
 	public function resourceBuilder() {		
 	    if (!ESSB_Factory_Loader::running('resource-builder')) {
-	        ESSB_Factory_Loader::activate('resource-builder', 'ESSB_Plugin_Assets');
-	        
-	        /**
-	         * Deprecating the old resource builder
-	         * ESSB_Factory_Loader::activate('resource-builder', 'ESSBResourceBuilder');
-	         */	        
+	        ESSB_Factory_Loader::activate('resource-builder', 'ESSB_Plugin_Assets');     
 	    }
 	    
 	    return ESSB_Factory_Loader::get('resource-builder');
@@ -463,7 +460,7 @@ class ESSB_Manager {
 	 * @param object $class_name
 	 * @since 3.4
 	 */
-	public function factoryActivate($module = '', $class_name) {
+	public function factoryActivate($module, $class_name) {
 		if (!empty($module) && !isset($this->factory[$module])) {
 			$this->factory[$module] = new $class_name;
 		}
@@ -474,9 +471,19 @@ class ESSB_Manager {
 	 */
 
 	public static function activate() {
+	    // Post Meta Class
+	    if (!class_exists('ESSB_Post_Meta')) {
+	        include_once (ESSB3_PLUGIN_ROOT . 'lib/classes/class-post-meta.php');
+	    }
+	    
 		include_once(ESSB3_PLUGIN_ROOT . 'activate.php');
+		
+		// custom databables or updates
+		essb_active_install_or_update();
+		
+		// default options
 		essb_active_oninstall();
-
+				
 		// activate redirection hook
 		if ( ! is_network_admin() ) {
 			set_transient( '_essb_page_welcome_redirect', 1, 30 );
@@ -505,6 +512,39 @@ class ESSB_Manager {
 
 	public static function deactivate() {
 		delete_option(ESSB3_MAIL_SALT);
+		
+		// clearing the cache counter log
+		try {
+    		if (!class_exists('ESSB_Logger_ShareCounter_Update')) {
+    		    include_once (ESSB3_CLASS_PATH . 'loggers/class-sharecounter-update.php');
+    		}
+    		
+    		ESSB_Logger_ShareCounter_Update::clear();
+    		
+    		if (!class_exists('ESSB_Logger_Followers_Update')) {
+    		    include_once (ESSB3_CLASS_PATH . 'loggers/class-followers-update.php');
+    		}
+    		
+    		ESSB_Logger_Followers_Update::clear();
+		}
+		catch (Exception $e) {
+		    
+		}
+	}
+	
+	public static function uninstall() {
+	    if (function_exists('essb_option_bool_value')) {
+    	    if (essb_option_bool_value('uninstall_data')) {
+        	    include_once(ESSB3_PLUGIN_ROOT . 'lib/helpers/helpers-uninstall.php');
+        	    essb_clear_on_uninstall();
+    	    }
+	    }
+	    
+	    if (class_exists('ESSBActivationManager')) {
+	        if (ESSBActivationManager::isActivated()) {
+	           ESSBActivationManager::deactivate_license_uninstall();
+	        }
+	    }
 	}
 }
 

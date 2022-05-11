@@ -33,6 +33,14 @@ function essb_admin_automation_enable($options, $key = '') {
         $options = essb_admin_automation_positions_setup($options);
     }
     
+    if ($key == 'automation-clear-counter-update-log') {
+        if (!class_exists('ESSB_Logger_ShareCounter_Update')) {
+            include_once (ESSB3_CLASS_PATH . 'loggers/class-sharecounter-update.php');
+        }
+        
+        ESSB_Logger_ShareCounter_Update::clear();
+    }
+    
     return $options;
 }
 

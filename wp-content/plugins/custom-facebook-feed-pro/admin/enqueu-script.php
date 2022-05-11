@@ -7,6 +7,13 @@ require_once trailingslashit( CFF_PLUGIN_DIR ) . 'inc/Admin/CFF_Install_Skin.php
 
 
 function cff_ppca_token_check_flag() {
+	check_ajax_referer( 'cff_nonce' , 'cff_nonce');
+
+	$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+	$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+	if ( ! current_user_can( $cap ) ) {
+		wp_send_json_error(); // This auto-dies.
+	}
     if( get_transient('cff_ppca_access_token_invalid') ){
         print_r(true);
     } else {
@@ -20,26 +27,26 @@ add_action( 'wp_ajax_cff_ppca_token_check_flag', 'cff_ppca_token_check_flag' );
 add_action( 'admin_enqueue_scripts' , 'enqueue_admin_scripts_assets' );
 function enqueue_admin_scripts_assets(){
 	wp_register_style(
-		'custom_wp_admin_css', 
-		CFF_PLUGIN_URL . 'admin/assets/css/cff-admin-style.css', 
-		false, 
-		CFFVER 
+		'custom_wp_admin_css',
+		CFF_PLUGIN_URL . 'admin/assets/css/cff-admin-style.css',
+		false,
+		CFFVER
 	);
 	wp_enqueue_style( 'custom_wp_admin_css' );
-	wp_enqueue_style( 
-		'cff-font-awesome', 
-		'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css', 
-		array(), 
-		'4.5.0' 
+	wp_enqueue_style(
+		'cff-font-awesome',
+		'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css',
+		array(),
+		'4.5.0'
 	);
-	
-	wp_enqueue_script( 
-		'cff_admin_script', 
-		CFF_PLUGIN_URL . 'admin/assets/js/cff-admin-scripts.js', 
+
+	wp_enqueue_script(
+		'cff_admin_script',
+		CFF_PLUGIN_URL . 'admin/assets/js/cff-admin-scripts.js',
 		false,
-		CFFVER 
+		CFFVER
 	);
-	
+
 	wp_localize_script( 'cff_admin_script', 'cffA', array(
 		'ajax_url' => admin_url( 'admin-ajax.php' ),
 		'cff_nonce' => wp_create_nonce( 'cff_nonce' )
@@ -71,5 +78,5 @@ function enqueue_admin_scripts_assets(){
 		'cff_admin_script',
 		'cff_admin',
 		$strings
-	);        
-} 
+	);
+}

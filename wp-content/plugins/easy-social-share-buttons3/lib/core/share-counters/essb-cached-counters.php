@@ -19,7 +19,7 @@ class ESSBCachedCounters {
 	 * @param unknown_type $active_networks_list
 	 */
 	public static function prepare_list_of_networks_with_counter($networks, $active_networks_list) {		
-		$basic_network_list = 'twitter,linkedin,facebook,pinterest,google,stumbleupon,vk,reddit,buffer,love,ok,xing,mail,print,comments,yummly';
+		$basic_network_list = 'twitter,linkedin,facebook,pinterest,google,stumbleupon,vk,reddit,buffer,love,ok,xing,mail,print,comments,yummly,tumblr';
 		
 		// updated in version 4.2 - now we have only avoid with counter networks
 		$avoid_network_list = 'more,share,subscribe,copy,mwp';
@@ -143,6 +143,13 @@ class ESSBCachedCounters {
 			$is_fresh = true;
 		}
 		
+		/** 
+		 * @since 8.0 don't update share counters when in preview
+		 */
+		if (is_preview()) {
+		    $is_fresh = true;
+		}
+		
 		
 		return $is_fresh;
 	}
@@ -158,7 +165,15 @@ class ESSBCachedCounters {
 		return $result;
 	}
 	
-	public static function get_counters($post_id, $share = array(), $networks) {
+	/**
+	 * @updated 8.0.2 PHP 8
+	 * 
+	 * @param unknown $post_id
+	 * @param array $share
+	 * @param array $networks
+	 * @return number[]|NULL[]|unknown[]|array
+	 */
+	public static function get_counters($post_id, $share = array(), $networks = array()) {
 		
 		$cached_counters = array();
 		$cached_counters['total'] = 0;
@@ -172,6 +187,15 @@ class ESSBCachedCounters {
 		// @since 6.0 we support importing of AddThis local share counters
 		if (essb_option_bool_value('cache_counter_addthis')) {
 			$networks[] = 'addthis';
+		}
+		
+		/**
+		 * @since 8.0 read previously stored MashShare values
+		 */
+		if (essb_option_bool_value('activate_ms_fbcount_bridge')) {
+		    if (!function_exists('essb_mashshare_integrate_facebook_counter')) {
+		        include_once (ESSB3_HELPERS_PATH . 'share-counters/helpers-mashshare-facebook.php');
+		    }
 		}
 		
 		if (!ESSBCachedCounters::is_fresh_cache($post_id)) {
@@ -286,9 +310,16 @@ class ESSBCachedCounters {
 		
 
 		if (essb_option_bool_value('homepage_total_allposts') && has_filter('essb_homepage_get_cached_counters')) {
-			$cached_counters = apply_filters('essb_homepage_get_cached_counters', $cached_counters);
-			
+			$cached_counters = apply_filters('essb_homepage_get_cached_counters', $cached_counters);			
 			self::rebuild_totals($cached_counters, $networks);
+		}
+		
+		/**
+		 * @since 8.0 Additional share counter integration filter
+		 */
+		if (has_filter('essb_get_post_cached_counters')) {
+		    $cached_counters = apply_filters('essb_get_post_cached_counters', $post_id, $cached_counters);
+		    self::rebuild_totals($cached_counters, $networks);
 		}
 				
 		if (has_filter('essb4_get_cached_counters')) {
@@ -350,6 +381,8 @@ class ESSBCachedCounters {
 			$expire_time = essb_option_value('counter_mode');
 			if ($expire_time == '') { $expire_time = 60; }
 			
+			$default_expire_time = $expire_time;
+			
 			// @since version 5.0 - support for progressive counter update mode
 			if (essb_option_bool_value('cache_counter_increase')) {
 				$post_age = floor( date( 'U' ) - get_post_time( 'U' , false , $post_id ) );
@@ -369,6 +402,11 @@ class ESSBCachedCounters {
 				
 				if (intval($post_age) >= 30) {
 					$expire_time = intval($expire_time) * 5;
+				}
+				
+				if (has_filter('essb_get_advanced_counter_expiration')) {
+				    $opts = array('post_age' => $post_age, 'expire' => $default_expire_time);
+				    $expire_time = apply_filters('essb_get_advanced_counter_expiration', $opts);
 				}
 			}
 			

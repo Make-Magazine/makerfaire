@@ -1,10 +1,10 @@
 === Instagram Feed Pro ===
 Contributors: smashballoon
 Support Website: https://smashballoon/instagram-feed/
-Requires at least: 3.4
-Tested up to: 5.8
-Stable tag: 5.12.5
-Version: 5.12.5
+Requires at least: 4.1
+Tested up to: 5.9.3
+Stable tag: 6.0.6
+Version: 6.0.6
 License: Non-distributable, Not for resale
 
 Display beautifully clean, customizable, and responsive feeds from multiple Instagram accounts
@@ -40,6 +40,92 @@ Display Instagram photos from any non-private Instagram accounts, either in the 
 5. You can display multiple Instagram feeds by using shortcode options, for example: `[instagram-feed id=YOUR_USER_ID_HERE cols=3 width=50 widthunit=%]`
 
 == Changelog ==
+= 6.0.6 =
+* Fix: When using the shoppable feeds feature, trying to view the second page of posts in the customizer would not work.
+* Fix: Only the first 20 sources were available when creating feeds and changing sources for a feed.
+* Fix: Admin notices from other plugins would display on the Instagram Feeds pages when a notification for Instagram Feed was available.
+* Fix: When using the AJAX theme fix, the Lightbox would not work properly
+
+= 6.0.5 =
+* Tweak: Several improvements to moderation mode. Show moderated posts only, improved pagination, and improved how far back in the feed's history posts can be moderated.
+* Tweak: Removed the setting to filter for Instagram Live as this is no longer supported by Instagram.
+* Fix: Posts on the "allow list" would stop displaying if there were a lot of newer posts from the source that were not in the allow list.
+* Fix: Fixed the customizer sidebar being hidden when JetPack's Master Bar feature was enabled.
+* Fix: Added back support for the "class" shortcode setting for all feeds.
+* Fix: The carousel layout was not showing the proper number of posts when there was a different number of posts for mobile and desktop.
+
+= 6.0.4 =
+* Tweak: After clearing the cache for a hashtag feed, the plugin will now also try to get older posts for that feed using a different API method.
+* Tweak: Removed sorting by "likes" for hashtag feeds as sorting by likes is unreliable for this feed type due to limitations of the Instagram API.
+* Tweak: You can now have up to 10 columns for feeds displayed on mobile devices.
+* Fix: Switching the source for a feed would sometimes result in posts from the previous source being added to the feed.
+* Fix: Fixed an issue where our Social Wall plugin was not showing all available Instagram sources.
+* Fix: Pagination for showing more than 20 feeds was not displaying on the "All Feeds" page.
+* Fix: An error would not display if a connected business account had reached the 30 day limit for new hashtag feeds.
+* Fix: Backup method of retrieving video thumbnails was not working in all circumstances.
+* Fix: Dashboard notices were displaying when customizing a feed.
+* Fix: Added support for the shortcode "mediavine=true" to trigger our Media Vine integration features.
+
+= 6.0.3 =
+* Tweak: Updated our logo throughout the plugin to match our new [website](https://smashballoon.com/).
+* Tweak: Changed how the hover color for follow and load more buttons is applied to prevent theme conflicts.
+* Fix: Fixed Instagram Feed JavaScript file missing from the page when using the "AJAX theme loading fix" setting causing blank images to display.
+* Fix: Fixed JavaScript file not being added to the page when using the plugin GDPR Cookie Consent by WebToffee.
+* Fix: Some custom tables were not being created for specific versions of MySQL.
+* Fix: Custom HTML templates were not applying to new feeds.
+* Fix: Added back the ability to use up to 10 columns in feeds for desktop and tablet devices.
+* Fix: Fixed the error message not displaying if there was an error when trying to connect a personal or basic account.
+* Fix: The reconnect link that would display when an account had an error would not redirect to connect.smashballoon.com.
+* Fix: The shortcode setting "showbio" was applying for non-legacy feeds causing confusion when trying to change these settings in the customizer.
+* Fix: Added the ability to create the custom database tables if there was an error when first trying to create them.
+* Fix: Dismissing dashboard notifications would cause the "Add new feed" button to stop working until the page was refreshed.
+
+= 6.0.2 =
+* Fix: Re-added button to reset the error log on the settings page, "Advanced" tab.
+* Fix: Fixed some settings for the carousel which were not applying on the frontend of the site.
+* Fix: Fixed PHP warning "Headers already sent" that would appear when customizing a theme in some circumstances.
+* Fix: Made several improvements to cache clearing.
+
+= 6.0.1 =
+* Fix: Media filters were not working correctly with feeds created with the new customizer.
+* Fix: Fixed a PHP error which occurred in the integration with our [Social Wall plugin](https://smashballoon.com/social-wall/) when trying to connect an Instagram account.
+* Fix: Fixed an error in the plugin updater code which occurred in certain circumstances.
+
+= 6.0 =
+* Important: Minimum supported WordPress version has been raised from 3.5 to 4.1.
+* New: Our biggest update ever! We've completely redesigned the plugin settings from head to toe to make it easier to create, manage, and customize your Instagram feeds.
+* New: All your feeds are now displayed in one place on the "All Feeds" page. This shows a list of any existing (legacy) feeds and any new ones that you create. Note: If you updated from a version prior to v5.11 then you may need to view your feeds on your webpage so that the plugin can locate them and list them here.
+* New: Easily edit individual feed settings for new feeds instead of cumbersome shortcode options.
+* New: It's now much easier to create feeds. Just click "Add New", select your feed type, connect your account, and you're done!
+* New: Brand new feed customizer. We've completely redesigned feed customization from the ground up, reorganizing the settings to make them easier to find.
+* New: Live Feed Preview. You can now see changes you make to your feeds in real time, right in the settings page. Easily preview them on desktop, tablet, and mobile sizes.
+* New: Color Scheme option. It's now easier than ever to change colors across your feed without needing to adjust individual color settings. Just set a color scheme to effortlessly change colors across your entire feed.
+* New: We've improved our Shoppable Feeds feature to allow you to easily add custom links for each Instagram post within the new feed customizer. Just go to Settings > Shoppable Feeds inside the feed editor.
+* New: You can now change the number of columns in your feed across desktop, tablet, and mobile.
+* New: Easily import and export feed settings to make it simple to move feeds across sites.
+
+= 5.12.9 =
+* Fix: Added a content type to JSON responses to improve reliability for loading more posts and creating local images.
+* Fix: The plugin will no longer continue to attempt to connect to the Instagram API if there is an access token encryption error.
+* Fix: Could not load more posts when using moderation mode.
+* Fix: Fixed a PHP error that would occur when trying to retrieve new posts for hashtag feeds.
+
+= 5.12.8 =
+* Tweak: Added a warning if the access token could not be decrypted for use in API requests.
+* Tweak: Added a fallback method to reach the Instagram API if a cURL error 6 error is detected.
+* Fix: Fixed an issue with connecting an additional business account if the first account listed was not selected.
+
+= 5.12.7 =
+* Tweak: Shortened captions will end on the last full word to fix an issue with emoji in captions.
+* Fix: Fixed several accessibility issues in the admin area.
+* Fix: Made a significant number of code quality improvements.
+* Fix: Fixed a PHP warning that would occur when loading posts with AJAX initially.
+* Fix: Periods and underscores in usernames when used as part of the shortcode would cause the load more button not to work.
+
+= 5.12.6 =
+* Fix: Using showheader="true" in the shortcode would not work if the related setting was disabled on the settings page.
+* Fix: Added additional plugin hardening.
+
 = 5.12.5 =
 * Tweak: Error reporting notices are now only displayed if there is an issue with the primary API request, rather than secondary ones such as retrieving stories.
 

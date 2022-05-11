@@ -1,3 +1,9 @@
+### 2.0 | 2022-02-16
+- Updated links to documentation.
+- Fixed an issue where the add-on log uses the "Invalid API URL" message for request failures of any kind.
+- API: Updated the API auth test so the existing gform_activecampaign_request_timeout filter can be used to increase the request timeout period.
+
+
 ### 1.9 | 2021-05-13
 - Fixed an issue that causes the plugin settings to always show the API URL and Key as invalid even when they are correct.
 

@@ -138,25 +138,24 @@ class Metabox
             $output = 'names';
             // names or objects, note names is the default
             $operator = 'and';
-            // 'and' or 'or'
             $class = \get_class();
             $taxonomies_registered = get_taxonomies($args, $output, $operator);
-            foreach ($taxonomies_registered as $chiave) {
-                add_action($chiave . '_add_form_fields', $class . '::taxonomyname_metabox_add', 10, 1);
-                add_action($chiave . '_edit_form_fields', $class . '::taxonomyname_metabox_edit', 10, 1);
-                add_action('created_' . $chiave, $class . '::save_taxonomyname_metadata', 10, 1);
-                add_action('edited_' . $chiave, $class . '::save_taxonomyname_metadata', 10, 1);
+            foreach ($taxonomies_registered as $taxonomy) {
+                add_action($taxonomy . '_add_form_fields', $class . '::taxonomyname_metabox_add', 10, 1);
+                add_action($taxonomy . '_edit_form_fields', $class . '::taxonomyname_metabox_edit', 10, 1);
+                add_action('created_' . $taxonomy, $class . '::save_taxonomyname_metadata', 10, 1);
+                add_action('edited_' . $taxonomy, $class . '::save_taxonomyname_metadata', 10, 1);
             }
         }
     }
-    // Add metabox Terms ----------------------------------------------
+    // Add metabox Terms
     public static function taxonomyname_metabox_add($tag)
     {
         ?>
 		<div id="dce_termbox" class="dce-term-box">
 			<div class="dce-term-head">
 				<h3><?php 
-        _e('Dynamic.ooo Template', 'dynamic-content-for-elementor');
+        echo DCE_PRODUCT_NAME . ' ' . __('Template', 'dynamic-content-for-elementor');
         ?></h3>
 			</div>
 			<div class="form-field dce-term dce-term-add">
@@ -174,7 +173,7 @@ class Metabox
 		<tr class="form-field dce-term dce-term-edit">
 			<th scope="row" valign="top">
 				<label for="dynamic_content"><?php 
-        _e('Dynamic.ooo Template', 'dynamic-content-for-elementor');
+        echo DCE_PRODUCT_NAME . ' ' . __('Template', 'dynamic-content-for-elementor');
         ?></label>
 			</th>
 			<td>
@@ -193,7 +192,7 @@ class Metabox
 		<label><?php 
         _e('Head', 'dynamic-content-for-elementor');
         ?></label>
-		<select class="js-dce-select" id="dynamic_content_head" name="dynamic_content_head"> <!--Supplement an id here instead of using 'name' 'dyncontel_field_archive'.$chiave -->
+		<select class="js-dce-select" id="dynamic_content_head" name="dynamic_content_head">
 		<?php 
         foreach ($templates as $key => $value) {
             if ($mode == 'edit') {
@@ -215,7 +214,7 @@ class Metabox
 		<label><?php 
         _e('Blocks/Canvas', 'dynamic-content-for-elementor');
         ?></label>
-		<select class="js-dce-select" id="dynamic_content_block" name="dynamic_content_block"> <!--Supplement an id here instead of using 'name' 'dyncontel_field_archive'.$chiave -->
+		<select class="js-dce-select" id="dynamic_content_block" name="dynamic_content_block">
 			}
 		<?php 
         foreach ($templates as $key => $value) {
@@ -238,7 +237,7 @@ class Metabox
 		<label><?php 
         _e('Single', 'dynamic-content-for-elementor');
         ?></label>
-		<select class="js-dce-select" id="dynamic_content_single" name="dynamic_content_single"> <!--Supplement an id here instead of using 'name' 'dyncontel_field_archive'.$chiave -->
+		<select class="js-dce-select" id="dynamic_content_single" name="dynamic_content_single">
 		<?php 
         foreach ($templates as $key => $value) {
             if ($mode == 'edit') {

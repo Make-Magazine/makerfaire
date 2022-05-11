@@ -8,6 +8,7 @@
  */
 namespace CustomFacebookFeed;
 use CustomFacebookFeed\CFF_Widget;
+use CustomFacebookFeed\SB_Facebook_Data_Manager;
 use CustomFacebookFeed\Admin\CFF_Tracking;
 use CustomFacebookFeed\Admin\CFF_Admin_Notices;
 use CustomFacebookFeed\Admin\CFF_Notifications;
@@ -295,7 +296,6 @@ final class Custom_Facebook_Feed_Pro{
 			add_action( 'plugins_loaded', [ self::$instance, 'init' ], 0 );
 
 			add_action( 'wp_head', [ self::$instance, 'cff_custom_css' ] );
-			add_action( 'wp_footer', [ self::$instance, 'cff_js' ] );
 
 			add_filter( 'cron_schedules', [ self::$instance, 'cff_pro_cron_custom_interval' ] );
 
@@ -454,8 +454,7 @@ final class Custom_Facebook_Feed_Pro{
 	 */
 	public function enqueue_styles_assets(){
 		$options = get_option('cff_style_settings');
-		isset($options[ 'cff_minify' ]) ? $cff_minify = $options[ 'cff_minify' ] : $cff_minify = '';
-		$cff_minify ? $cff_min = '.min' : $cff_min = '';
+		$cff_min = isset( $_GET['sb_debug'] ) ? '' : '.min';
 
         $cff_ext_options = get_option('cff_extensions_status');
         $cff_extensions_carousel_active = false;
@@ -502,7 +501,7 @@ final class Custom_Facebook_Feed_Pro{
 	 */
 	public function enqueue_scripts_assets(){
 		$options = get_option('cff_style_settings');
-		$cff_min = isset( $options[ 'cff_minify' ] ) && !empty( $options[ 'cff_minify' ] )  ? '.min' : '';
+		$cff_min = isset( $_GET['sb_debug'] ) ? '' : '.min';
 
 		wp_register_script(
 			'cffscripts',
@@ -537,17 +536,6 @@ final class Custom_Facebook_Feed_Pro{
 	function cff_custom_css() {
 		$custom_css_output = '';
 		$options = get_option('cff_style_settings');
-		isset($options[ 'cff_custom_css' ]) ? $cff_custom_css = $options[ 'cff_custom_css' ] : $cff_custom_css = '';
-		if( !empty($cff_custom_css) ){
-			$custom_css_output .= '<!-- Custom Facebook Feed Custom CSS -->';
-			$custom_css_output .= "\r\n";
-			$custom_css_output .= '<style type="text/css">';
-			$custom_css_output .= "\r\n";
-			$custom_css_output .= stripslashes($cff_custom_css);
-			$custom_css_output .= "\r\n";
-			$custom_css_output .= '</style>';
-			$custom_css_output .= "\r\n";
-		}
 
 	    //Link hashtags?
 		isset($options[ 'cff_link_hashtags' ]) ? $cff_link_hashtags = $options[ 'cff_link_hashtags' ] : $cff_link_hashtags = '';
@@ -589,33 +577,11 @@ final class Custom_Facebook_Feed_Pro{
 	 *
 	 * @since 3.18
 	 * @access public
+     *
+     * @deprecated
 	 */
 	function cff_js() {
-		$custom_js_output = '';
 
-		$options = get_option('cff_style_settings');
-		isset($options[ 'cff_custom_js' ]) ? $cff_custom_js = $options[ 'cff_custom_js' ] : $cff_custom_js = '';
-	    //Replace "cff-item" with "cff-new" so that it only runs on new items loaded into the feed
-		$cff_custom_js = str_replace(".cff-item", ".cff-new", $cff_custom_js);
-		if( !empty($cff_custom_js) ){
-			$custom_js_output .= '<!-- Custom Facebook Feed JS -->';
-			$custom_js_output .= "\r\n";
-			$custom_js_output .= '<script type="text/javascript">';
-			$custom_js_output .= "\r\n";
-			$custom_js_output .= "function cff_custom_js($){";
-			$custom_js_output .= "\r\n";
-			$custom_js_output .= "var $ = jQuery;";
-			$custom_js_output .= "\r\n";
-			$custom_js_output .= stripslashes($cff_custom_js);
-			$custom_js_output .= "\r\n";
-			$custom_js_output .= "}";
-			$custom_js_output .= "\r\n";
-			$custom_js_output .= "cff_custom_js($);";
-			$custom_js_output .= "\r\n";
-			$custom_js_output .= '</script>';
-			$custom_js_output .= "\r\n";
-			echo $custom_js_output;
-		}
 	}
 
 
@@ -1145,6 +1111,37 @@ return $wpdb->get_var( "show tables like '$table_name'" ) === $table_name;
 			}
 			update_option( 'cff_db_version', CFF_DBVERSION );
 		}
+
+		if ( (float) $db_ver < 2.3 ) {
+			$manager = new SB_Facebook_Data_Manager();
+			$manager->update_db_for_dpa();
+			update_option( 'cff_db_version', CFF_DBVERSION );
+		}
+
+		if ( version_compare( $db_ver, '2.4', '<' ) ) {
+			update_option( 'cff_db_version', CFF_DBVERSION );
+
+			$groups = \CustomFacebookFeed\Builder\CFF_Db::source_query( array( 'type' => 'group' ) );
+
+			$cff_statuses_option                       = get_option( 'cff_statuses', array() );
+			$cff_statuses_option['groups_need_update'] = false;
+
+			if ( empty( $groups ) ) {
+				update_option( 'cff_statuses', $cff_statuses_option, false );
+			} else {
+				$encryption         = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+				$groups_need_update = false;
+				foreach ( $groups as $source ) {
+					$info   = ! empty( $source['info'] ) ? json_decode( $encryption->decrypt( $source['info'] ) ) : array();
+					if ( \CustomFacebookFeed\Builder\CFF_Source::needs_update( $source, $info ) ) {
+						$groups_need_update = true;
+					}
+				}
+				$cff_statuses_option['groups_need_update'] = $groups_need_update;
+				update_option( 'cff_statuses', $cff_statuses_option, false );
+			}
+		}
+
 	}
 
 	/**

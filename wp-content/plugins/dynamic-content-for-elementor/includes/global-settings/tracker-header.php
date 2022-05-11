@@ -9,15 +9,9 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly.
 }
-class DCE_Settings_TrackerHeader extends \DynamicContentForElementor\Includes\Settings\DCE_Settings_Prototype
+class TrackerHeader extends \DynamicContentForElementor\Includes\Settings\DCE_Settings_Prototype
 {
     public static $name = 'Tracker Header';
-    public function __construct()
-    {
-        if (get_option('enable_trackerheader')) {
-            add_filter('body_class', [$this, 'dce_add_class'], 10);
-        }
-    }
     public function get_name()
     {
         return 'dce-settings_trackerheader';
@@ -25,11 +19,6 @@ class DCE_Settings_TrackerHeader extends \DynamicContentForElementor\Includes\Se
     public function get_css_wrapper_selector()
     {
         return 'body.dce-trackerheader';
-    }
-    public static function dce_add_class($classes)
-    {
-        $classes[] = 'dce-trackerheader';
-        return $classes;
     }
     public static function get_controls()
     {

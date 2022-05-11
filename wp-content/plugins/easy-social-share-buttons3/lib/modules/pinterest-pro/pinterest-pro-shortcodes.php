@@ -188,6 +188,11 @@ if (!function_exists('essb_output_pinable_image_code')) {
 		$custom_class = isset($atts['custom_class']) ? $atts['custom_class'] : '';
 		$image_link = isset($atts['image_link']) ? $atts['image_link'] : '';
 		
+		$output_image_size = false;
+		if (has_filter('essb_pinpro_output_image_size')) {
+		    $output_image_size = apply_filters('essb_pinpro_output_image_size', $output_image_size);
+		}
+		
 		// asigning defaults if nothing is send
 		if (empty($share_url)) { $share_url = get_permalink(); }
 		if (empty($share_message)) { $share_message = get_the_title(); }
@@ -238,7 +243,14 @@ if (!function_exists('essb_output_pinable_image_code')) {
 		if ($image_link != '') {
 			$output .= '<a href="'.esc_url($image_link).'" class="image-link">';
 		}
-		$output .= '<img class="pin-generated" src="'.esc_url($screen_image).'" '.($share_image != '' ? 'data-pin-media="'.esc_url($share_image).'"' : '').' title="'.esc_attr($share_message).'" />';
+		
+		if ($output_image_size) {
+		    $sizes = getimagesize($screen_image);
+		    $output .= '<img class="pin-generated" src="'.esc_url($screen_image).'" '.($share_image != '' ? 'data-pin-media="'.esc_url($share_image).'"' : '').' title="'.esc_attr($share_message).'" '.(isset($sizes[3]) ? $sizes[3] : '').' />';
+		}
+		else {		
+		  $output .= '<img class="pin-generated" src="'.esc_url($screen_image).'" '.($share_image != '' ? 'data-pin-media="'.esc_url($share_image).'"' : '').' title="'.esc_attr($share_message).'" />';
+		}
 		
 		if ($image_link != '') {
 			$output .= '</a>';

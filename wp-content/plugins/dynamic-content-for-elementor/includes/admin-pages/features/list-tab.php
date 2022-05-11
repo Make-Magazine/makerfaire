@@ -37,6 +37,7 @@ abstract class ListTab
         }, $features);
         foreach ($_POST['dce-feature'] ?? [] as $fn => $_) {
             if (!isset($features[$fn])) {
+                // phpcs:ignore WordPress.PHP.DevelopmentFunctions
                 \error_log('Trying to save an unknown feature');
                 continue;
             }
@@ -45,7 +46,7 @@ abstract class ListTab
         \DynamicContentForElementor\Plugin::instance()->features->db_update_features_status($features);
         $this->features = $this->get_all_tab_features();
         // refresh internal features status.
-        \DynamicContentForElementor\Notice::dce_admin_notice__success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
+        \DynamicContentForElementor\Notice::success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
     }
     public function are_all_active()
     {
@@ -78,6 +79,9 @@ END;
         if (!empty($plugin_dependencies_not_satisfied)) {
             echo ' required-plugin';
         }
+        if ($php_version_not_satisfied) {
+            echo ' required-php';
+        }
         if ($is_active) {
             echo ' widget-activated';
         }
@@ -87,34 +91,54 @@ END;
 		<?php 
         if ($php_version_not_satisfied) {
             ?>
-			<p class="php-version"><?php 
-            \printf(__('This feature requires PHP v%1$s+', 'dynamic-content-for-elementor'), $feature_info['minimum_php']);
-            ?></p>
-		<?php 
-        }
-        ?>
-
-		<?php 
-        if (empty($plugin_dependencies_not_satisfied) && !$php_version_not_satisfied) {
-            ?>
 			<div class="dce-check">
-				<input type="checkbox" name="dce-feature[<?php 
-            echo $feature_name;
-            ?>]" value="true" id="dce-feature-<?php 
-            echo $feature_name;
-            ?>" class="dce-checkbox" <?php 
-            if ($is_active) {
-                ?> checked="checked"<?php 
-            }
-            ?>>
-				<label for="dce-feature-<?php 
-            echo $feature_name;
-            ?>"><div id="tick_mark"></div></label>
+				<div class="deactivated"></div>
 			</div>
+			<small class="warning"><span class="dashicons dashicons-warning"></span> <?php 
+            \printf(__('Requires PHP v%1$s+', 'dynamic-content-for-elementor'), $feature_info['minimum_php']);
+            ?></small>
 		<?php 
+        } else {
+            if (empty($plugin_dependencies_not_satisfied)) {
+                ?>
+				<div class="dce-check">
+					<input type="checkbox" name="dce-feature[<?php 
+                echo $feature_name;
+                ?>]" value="true" id="dce-feature-<?php 
+                echo $feature_name;
+                ?>" class="dce-checkbox" <?php 
+                if ($is_active) {
+                    ?> checked="checked"<?php 
+                }
+                ?>>
+					<label for="dce-feature-<?php 
+                echo $feature_name;
+                ?>"><div id="tick_mark"></div></label>
+				</div>
+			<?php 
+            } else {
+                ?>
+				<div class="dce-check">
+					<div class="deactivated"></div>
+				</div>
+			<?php 
+            }
+            ?>
+
+			<?php 
+            if (!empty($plugin_dependencies_not_satisfied)) {
+                ?>
+				<small class="warning">
+					<span class="dashicons dashicons-warning"></span>
+					<?php 
+                _e('Requires', 'dynamic-content-for-elementor');
+                ?> <?php 
+                echo \implode(', ', $plugin_dependencies_not_satisfied);
+                ?>
+				</small>
+				<?php 
+            }
         }
-        ?>
-		<?php 
         if (isset($feature_info['icon'])) {
             ?>
 			<p><i class="icon <?php 
@@ -126,18 +150,6 @@ END;
 		<h4><?php 
         echo esc_html($feature_info['title']);
         ?></h4>
-
-		<?php 
-        if (!empty($plugin_dependencies_not_satisfied)) {
-            ?>
-			<small class="warning text-red red"><span class="dashicons dashicons-warning"></span> <?php 
-            _e('Required plugin', 'dynamic-content-for-elementor');
-            ?>: <?php 
-            echo \implode(', ', $plugin_dependencies_not_satisfied);
-            ?></small>
-			<?php 
-        }
-        ?>
 
 		<?php 
         if (isset($feature_info['description'])) {
@@ -155,7 +167,7 @@ END;
 			<p style="margin-top: -10px"><a href="<?php 
             echo $feature_info['doc_url'];
             ?>" target="_blank"><?php 
-            _e('Documentation', 'dynamic-content-for-elementor');
+            _e('Details', 'dynamic-content-for-elementor');
             ?></a></p>
 		<?php 
         }
@@ -163,11 +175,20 @@ END;
             $this->show_calculate_usage($feature_info['name']);
         }
         if (isset($feature_info['legacy'])) {
-            ?>
-			<p class="legacy"><?php 
-            _e('This feature is deprecated. We recommend to use the new version, but we will not remove this version.', 'dynamic-content-for-elementor');
-            ?></p>
-		<?php 
+            if (isset($feature_info['replaced_by'])) {
+                $new_version_name = \DynamicContentForElementor\Plugin::instance()->features->get_feature_info($feature_info['replaced_by'], 'title');
+                ?>
+				<p class="legacy"><?php 
+                \printf(__('This feature is deprecated. We recommend to use the new version called %1$s, but we will not remove this version.', 'dynamic-content-for-elementor'), '<strong>' . $new_version_name . '</strong>');
+                ?></p>
+			<?php 
+            } else {
+                ?>
+				<p class="legacy"><?php 
+                _e('This feature is deprecated. At the moment we don\'t have a new version and we will not remove this version.', 'dynamic-content-for-elementor');
+                ?></p>
+			<?php 
+            }
         }
         ?>
 		</div>

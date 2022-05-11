@@ -2,7 +2,8 @@
 
 namespace DynamicOOOS;
 
-class UnhandledMatchError extends \Error
-{
+if (\PHP_VERSION_ID < 80000) {
+    class UnhandledMatchError extends \Error
+    {
+    }
 }
-\class_alias('DynamicOOOS\\UnhandledMatchError', 'UnhandledMatchError', \false);

@@ -2,6 +2,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+use TwitterFeed\Pro\CTF_Parse_Pro;
+use TwitterFeed\Pro\CTF_Display_Elements_Pro;
 
 class SW_Display_Elements
 {

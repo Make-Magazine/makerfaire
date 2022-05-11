@@ -2,11 +2,30 @@
 
 namespace DynamicContentForElementor;
 
-trait Trait_WP
+trait Wp
 {
+    /**
+     * Get ALT for attachment
+     *
+     * @param int $attachment_id
+     * @return string
+     */
+    public static function get_attachment_alt($attachment_id)
+    {
+        // Get ALT
+        $thumb_alt = get_post_meta($attachment_id, '_wp_attachment_image_alt', \true);
+        // Return ALT
+        return esc_attr(\trim(wp_strip_all_tags($thumb_alt)));
+    }
+    /**
+     * Get current site domain
+     * @license GPLv3
+     * @copyright Elementor
+     * @return string
+     */
     public static function get_site_domain()
     {
-        return \str_ireplace('www.', '', \parse_url(home_url(), \PHP_URL_HOST));
+        return \str_ireplace('www.', '', wp_parse_url(home_url(), \PHP_URL_HOST));
     }
     public static function get_client_ip()
     {
@@ -777,6 +796,9 @@ trait Trait_WP
     }
     public static function get_dynamic_value($value, $fields = array(), $var = 'form')
     {
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
+            return $value;
+        }
         if (\is_array($value)) {
             if (!empty($value)) {
                 foreach ($value as $key => $setting) {
@@ -835,7 +857,7 @@ trait Trait_WP
     {
         $css = '';
         if (\file_exists($style)) {
-            $css = \file_get_contents($style);
+            $css = wp_remote_retrieve_body(wp_remote_get($style));
         }
         return $css;
     }
@@ -1168,63 +1190,5 @@ trait Trait_WP
             }
         }
         return $array;
-    }
-    public static function my_translate_object_id_by_type($object_id, $type)
-    {
-        $current_language = apply_filters('wpml_current_language', null);
-        // if array
-        if (\is_array($object_id)) {
-            $translated_object_ids = array();
-            foreach ($object_id as $id) {
-                $translated_object_ids[] = apply_filters('wpml_object_id', $id, $type, \true, $current_language);
-            }
-            return $translated_object_ids;
-        } elseif (\is_string($object_id)) {
-            // check if we have a comma separated ID string
-            $is_comma_separated = \strpos($object_id, ',');
-            if ($is_comma_separated !== \false) {
-                // explode the comma to create an array of IDs
-                $object_id = \explode(',', $object_id);
-                $translated_object_ids = array();
-                foreach ($object_id as $id) {
-                    $translated_object_ids[] = apply_filters('wpml_object_id', $id, $type, \true, $current_language);
-                }
-                // make sure the output is a comma separated string (the same way it came in!)
-                return \implode(',', $translated_object_ids);
-            } else {
-                return apply_filters('wpml_object_id', \intval($object_id), $type, \true, $current_language);
-            }
-        } else {
-            return apply_filters('wpml_object_id', $object_id, $type, \true, $current_language);
-        }
-    }
-    public static function my_translate_object_id($object_id)
-    {
-        $current_language = apply_filters('wpml_current_language', null);
-        // if array
-        if (\is_array($object_id)) {
-            $translated_object_ids = array();
-            foreach ($object_id as $id) {
-                $translated_object_ids[] = apply_filters('wpml_object_id', $id, get_post_type($id), \true, $current_language);
-            }
-            return $translated_object_ids;
-        } elseif (\is_string($object_id)) {
-            // check if we have a comma separated ID string
-            $is_comma_separated = \strpos($object_id, ',');
-            if ($is_comma_separated !== \false) {
-                // explode the comma to create an array of IDs
-                $object_id = \explode(',', $object_id);
-                $translated_object_ids = array();
-                foreach ($object_id as $id) {
-                    $translated_object_ids[] = apply_filters('wpml_object_id', $id, get_post_type($id), \true, $current_language);
-                }
-                // make sure the output is a comma separated string (the same way it came in!)
-                return \implode(',', $translated_object_ids);
-            } else {
-                return apply_filters('wpml_object_id', \intval($object_id), get_post_type(\intval($object_id)), \true, $current_language);
-            }
-        } else {
-            return apply_filters('wpml_object_id', $object_id, get_post_type($object_id), \true, $current_language);
-        }
     }
 }

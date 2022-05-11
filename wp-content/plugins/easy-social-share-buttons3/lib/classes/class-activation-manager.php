@@ -158,6 +158,32 @@ class ESSBActivationManager {
         return $purchase_code;
     }
     
+    public static function getMaskedPurchaseCode() {
+        $purchase_code = '';
+        if (self::$option_data) {
+            if (is_array(self::$option_data)) {
+                $purchase_code = isset(self::$option_data['purchase_code']) ? self::$option_data['purchase_code'] : '';
+            }
+        }
+        
+        if ($purchase_code == '') {
+            $purchase_code = essb_option_value('purchase_code');
+        }
+        
+        if ($purchase_code != '') {
+            $max_length = strlen($purchase_code);
+            $mask_length = round(strlen($purchase_code) / 2, 0);
+            
+            $purchase_code = substr($purchase_code, 0, $mask_length);
+            
+            for ($i = $mask_length; $i < $max_length; $i++) {
+                $purchase_code .= '*';
+            }
+        }
+        
+        return $purchase_code;
+    }
+    
     public static function getActivationCode() {
         $activation_code = '';
         if (self::$option_data) {
@@ -194,6 +220,15 @@ class ESSBActivationManager {
         if (strpos($domain, 'localhost') !== false) {
             $result = true;
         }
+        if (strpos($domain, 'dev.') !== false) {
+            $result = true;
+        }
+        if (strpos($domain, 'staging.') !== false) {
+            $result = true;
+        }
+        if (strpos($domain, 'staging-') !== false) {
+            $result = true;
+        }
         
         return $result;
     }
@@ -225,6 +260,26 @@ class ESSBActivationManager {
     
     public static function getBenefitURL() {
         return self::$benefit_url;
+    }
+    
+    /**
+     * Deactivate plugin license on plugin uninstall
+     */
+    public static function deactivate_license_uninstall() {
+        try {
+            $hash = self::getActivationCode();
+            $code = self::getPurchaseCode();
+            $api_url = self::getApiUrl('api') . 'deactivate.php';
+            
+            $api_params = array(
+                'hash' => $hash,
+                'code' => $code
+            );
+            
+            $response = wp_remote_post($api_url, array('timeout' => 15, 'sslverify' => true, 'body' => $api_params));
+        }
+        catch (Exception $e) {
+        }
     }
 }
 

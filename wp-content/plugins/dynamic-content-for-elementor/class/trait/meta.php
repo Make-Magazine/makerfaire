@@ -2,7 +2,7 @@
 
 namespace DynamicContentForElementor;
 
-trait Trait_Meta
+trait Meta
 {
     public static $meta_fields = [];
     public static function get_acf_types()
@@ -122,13 +122,6 @@ trait Trait_Meta
             \ksort($metas);
             $manual_metas = $metas;
             foreach ($manual_metas as $ameta) {
-                if (\substr($ameta, 0, 1) == '_') {
-                    $tmp = \substr($ameta, 1);
-                    $ameta = $tmp;
-                    if (\in_array($tmp, $manual_metas)) {
-                        continue;
-                    }
-                }
                 if (!isset($postMetas[$ameta])) {
                     $userMetas[$ameta] = $ameta;
                     $userMetasGrouped['META'][$ameta] = $ameta;
@@ -189,13 +182,6 @@ trait Trait_Meta
             \ksort($metas);
             $manual_metas = $metas;
             foreach ($manual_metas as $ameta) {
-                if (\substr($ameta, 0, 1) == '_') {
-                    $tmp = \substr($ameta, 1);
-                    $ameta = $tmp;
-                    if (\in_array($tmp, $manual_metas)) {
-                        continue;
-                    }
-                }
                 if (!isset($postMetas[$ameta])) {
                     $termMetas[$ameta] = $ameta;
                     $termMetasGrouped['META'][$ameta] = $ameta;
@@ -509,10 +495,8 @@ trait Trait_Meta
     public static function is_user_meta($meta_name = null)
     {
         $user_fields = array('ID', 'user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_key', 'user_status', 'display_name');
-        if ($meta_name) {
-            if (\in_array($meta_name, $user_fields)) {
-                return \false;
-            }
+        if ($meta_name && \in_array($meta_name, $user_fields)) {
+            return \false;
         }
         return \true;
     }
@@ -533,54 +517,58 @@ trait Trait_Meta
         }
         return \false;
     }
-    public static function get_acf_fields($types = array(), $group = \false, $select = \false)
+    public static function get_acf_fields($types = [], $group = \false, $select = \false)
     {
+        if (!\DynamicContentForElementor\Helper::is_acf_active()) {
+            return [];
+        }
         $acf_list = [];
         if (\is_string($types)) {
             $types = \DynamicContentForElementor\Helper::str_to_array(',', $types);
         }
         if ($select) {
-            $acf_list[0] = __('Select the field', 'dynamic-content-for-elementor');
+            $acf_list[0] = __('Select the field...', 'dynamic-content-for-elementor');
         }
-        if (\DynamicContentForElementor\Helper::is_acf_active()) {
-            $post_type = 'acf-field';
-            $acf_fields = get_posts(['post_type' => $post_type, 'numberposts' => -1, 'post_status' => 'publish', 'orderby' => 'title', 'suppress_filters' => \false]);
-            // ACF Fields saved in JSON or PHP
-            if (acf_have_local_fields()) {
-                $raw_fields = acf_get_local_fields();
-                foreach ($raw_fields as $raw_field) {
-                    $acf_fields[] = acf_get_field($raw_field['key']);
+        // ACF Fields saved in the database
+        $post_type = 'acf-field';
+        $acf_fields = get_posts(['post_type' => $post_type, 'numberposts' => -1, 'post_status' => 'publish', 'orderby' => 'title', 'suppress_filters' => \false]);
+        // ACF Fields saved in JSON or PHP
+        if (acf_have_local_fields()) {
+            $local_fields = acf_get_local_fields();
+            foreach ($local_fields as $key => $value) {
+                $acf_list[$value['key']] = $key . ' > ' . $value['label'] . ' [' . $value['key'] . '] (' . $value['type'] . ')';
+            }
+        }
+        if (empty($acf_fields) && empty($local_fields)) {
+            return [];
+        }
+        foreach ($acf_fields as $acf_field) {
+            $acf_field_parent = \false;
+            if ($acf_field->post_parent) {
+                $acf_field_parent = get_post($acf_field->post_parent);
+                if ($acf_field_parent) {
+                    $acf_field_parent_settings = maybe_unserialize($acf_field_parent->post_content);
                 }
             }
-            if (!empty($acf_fields)) {
-                foreach ($acf_fields as $acf_field) {
-                    $acf_field_parent = \false;
-                    if (isset($acf_field->post_parent) && $acf_field->post_parent) {
-                        if ($acf_field_parent = get_post($acf_field->post_parent)) {
-                            $acf_field_parent_settings = maybe_unserialize($acf_field_parent->post_content);
-                        }
-                    }
-                    $acf_field_settings = maybe_unserialize($acf_field->post_content ?? '');
-                    if (isset($acf_field_settings['type']) && (empty($types) || \in_array($acf_field_settings['type'], $types))) {
-                        if ($group && $acf_field_parent) {
-                            if (empty($acf_list[$acf_field_parent->post_excerpt]) || \is_array($acf_list[$acf_field_parent->post_excerpt])) {
-                                if (isset($acf_field_parent_settings['type']) && $acf_field_parent_settings['type'] == 'group') {
-                                    $acf_list[$acf_field_parent->post_excerpt]['options'][$acf_field_parent->post_excerpt . '_' . $acf_field->post_excerpt] = $acf_field->post_title . ' [' . $acf_field->post_excerpt . '] (' . $acf_field_settings['type'] . ')';
-                                } else {
-                                    $acf_list[$acf_field_parent->post_excerpt]['options'][$acf_field->post_excerpt] = $acf_field->post_title . ' [' . $acf_field->post_excerpt . '] (' . $acf_field_settings['type'] . ')';
-                                }
-                                $acf_list[$acf_field_parent->post_excerpt]['label'] = $acf_field_parent->post_title;
-                            }
+            $acf_field_settings = maybe_unserialize($acf_field->post_content);
+            if (isset($acf_field_settings['type']) && (empty($types) || \in_array($acf_field_settings['type'], $types))) {
+                if ($group && $acf_field_parent) {
+                    if (empty($acf_list[$acf_field_parent->post_excerpt]) || \is_array($acf_list[$acf_field_parent->post_excerpt])) {
+                        if (isset($acf_field_parent_settings['type']) && $acf_field_parent_settings['type'] == 'group') {
+                            $acf_list[$acf_field_parent->post_excerpt]['options'][$acf_field_parent->post_excerpt . '_' . $acf_field->post_excerpt] = $acf_field->post_title . ' [' . $acf_field->post_excerpt . '] (' . $acf_field_settings['type'] . ')';
                         } else {
-                            if ($acf_field_parent) {
-                                if (isset($acf_field_parent_settings['type']) && $acf_field_parent_settings['type'] == 'group') {
-                                    $acf_list[$acf_field_parent->post_excerpt . '_' . $acf_field->post_excerpt] = $acf_field_parent->post_title . ' > ' . $acf_field->post_title . ' [' . $acf_field->post_excerpt . '] (' . $acf_field_settings['type'] . ')';
-                                    //.$acf_field->post_content; //post_name,
-                                } else {
-                                    $acf_list[$acf_field->post_excerpt] = $acf_field_parent->post_title . ' > ' . $acf_field->post_title . ' [' . $acf_field->post_excerpt . '] (' . $acf_field_settings['type'] . ')';
-                                    //.$acf_field->post_content; //post_name,
-                                }
-                            }
+                            $acf_list[$acf_field_parent->post_excerpt]['options'][$acf_field->post_excerpt] = $acf_field->post_title . ' [' . $acf_field->post_excerpt . '] (' . $acf_field_settings['type'] . ')';
+                        }
+                        $acf_list[$acf_field_parent->post_excerpt]['label'] = $acf_field_parent->post_title;
+                    }
+                } else {
+                    if ($acf_field_parent) {
+                        if (isset($acf_field_parent_settings['type']) && $acf_field_parent_settings['type'] == 'group') {
+                            $acf_list[$acf_field_parent->post_excerpt . '_' . $acf_field->post_excerpt] = $acf_field_parent->post_title . ' > ' . $acf_field->post_title . ' [' . $acf_field->post_excerpt . '] (' . $acf_field_settings['type'] . ')';
+                            //.$acf_field->post_content; //post_name,
+                        } else {
+                            $acf_list[$acf_field->post_excerpt] = $acf_field_parent->post_title . ' > ' . $acf_field->post_title . ' [' . $acf_field->post_excerpt . '] (' . $acf_field_settings['type'] . ')';
+                            //.$acf_field->post_content; //post_name,
                         }
                     }
                 }
@@ -590,7 +578,7 @@ trait Trait_Meta
     }
     public static function get_acf_field_urlfile($group = \false)
     {
-        return self::get_acf_fields(array('file', 'url'), $group);
+        return self::get_acf_fields(['file', 'url'], $group);
     }
     public static function get_acf_field_relations()
     {
@@ -642,7 +630,7 @@ trait Trait_Meta
         $sub_fields = array();
         if (self::is_acf_active()) {
             $repeater_id = self::get_acf_field_id($key);
-            // fix repeater in group
+            // Repeater in a group
             $tmp = \explode('_', $key);
             while (empty($repeater_id) && \count($tmp) > 1) {
                 \array_shift($tmp);
@@ -796,7 +784,7 @@ trait Trait_Meta
     public static function get_pods_fields($t = null)
     {
         $podsList = [];
-        $podsList[0] = __('Select the field', 'dynamic-content-for-elementor');
+        $podsList[0] = __('Select the field...', 'dynamic-content-for-elementor');
         $pods = get_posts(array('post_type' => '_pods_field', 'numberposts' => -1, 'post_status' => 'publish', 'suppress_filters' => \false));
         if (!empty($pods)) {
             foreach ($pods as $apod) {
@@ -815,7 +803,7 @@ trait Trait_Meta
     public static function get_toolset_fields($t = null)
     {
         $toolsetList = [];
-        $toolsetList[0] = __('Select the field', 'dynamic-content-for-elementor');
+        $toolsetList[0] = __('Select the field...', 'dynamic-content-for-elementor');
         $toolset = get_option('wpcf-fields', \false);
         if ($toolset) {
             $toolfields = maybe_unserialize($toolset);

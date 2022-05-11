@@ -8,6 +8,12 @@ class ESSBSocialFollowersCounterUpdater {
 		}
 	}
 	
+	public function log($network, $request, $response) {
+	    if (class_exists('ESSB_Logger_Followers_Update')) {
+	        ESSB_Logger_Followers_Update::log($network, $request, $response);
+	    }
+	}	
+	
 	/**
 	 * remote_update_curl
 	 *
@@ -28,6 +34,7 @@ class ESSBSocialFollowersCounterUpdater {
 		curl_setopt ( $ch, CURLOPT_VERBOSE, true );
 		$data = curl_exec ( $ch );
 		curl_close ( $ch );
+				
 		return $data;
 	}
 	
@@ -43,16 +50,20 @@ class ESSBSocialFollowersCounterUpdater {
 	public function remote_update($url, $json = true) {
 		$get_request = wp_remote_get ( $url, array ('timeout' => 5, 'sslverify' => false ) );
 		$request = wp_remote_retrieve_body ( $get_request );
-		if ($json)
+				
+		if ($json) {
 			$request = @json_decode ( $request, true );
+		}
 		return $request;
 	}
 	
 	public function remote_get($url, $json = true, $args = array( 'timeout' => 18 , 'sslverify' => false )) {
 		$get_request = wp_remote_get ( $url, $args );
 		$request = wp_remote_retrieve_body ( $get_request );
-		if ($json)
+				
+		if ($json) {
 			$request = @json_decode ( $request, true );
+		}
 		return $request;
 		
 	}
@@ -76,6 +87,8 @@ class ESSBSocialFollowersCounterUpdater {
 			$result = 0;
 		}
 		
+		$this->log('love', '', $result);
+		
 		return $result;
 	}
 	
@@ -98,16 +111,19 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		$api = new TwitterOAuth ( $consumer_key, $consumer_secret, $access_token, $access_token_secret );
 		$response = $api->get ( 'users/lookup', array ('screen_name' => trim ( $id ) ) );
-		
+						
 		if (isset ( $response->errors )) {
+		    $this->log('twitter', '', json_encode($response->errors));
 			return null;
 		}
 		
 		if (isset ( $response [0] ) && is_array ( $response [0] )) {
-			return $response [0] ['followers_count'];
+		    $this->log('twitter', '', $response [0] ['followers_count']);
+		    return $response [0] ['followers_count'];
 		}
 		
 		if (isset ( $response [0]->followers_count )) {
+		    $this->log('twitter', '', $response [0]->followers_count);
 			return $response [0]->followers_count;
 		}
 	}
@@ -116,8 +132,8 @@ class ESSBSocialFollowersCounterUpdater {
 		$id = ESSBSocialFollowersCounterHelper::get_option ( 'facebook_id' );
 		$access_token = ESSBSocialFollowersCounterHelper::get_option ( 'facebook_access_token' );
 		$account_type = ESSBSocialFollowersCounterHelper::get_option ( 'facebook_account_type', 'page' );
-		$update_method = ESSBSocialFollowersCounterHelper::get_option( 'facebook_update_method', 'method1');
-		
+		$update_method = ESSBSocialFollowersCounterHelper::get_option( 'facebook_update_method', 'method1');		
+				
 		if (!empty($id) && $update_method == 'method2') {
 			return $this->update_facebook_without_token($id);
 		}
@@ -148,18 +164,21 @@ class ESSBSocialFollowersCounterUpdater {
 		preg_match( $pattern, $the_request, $matches );
 				
 		$counter = 0;
-		
+						
 		if ( ! empty( $matches[1] ) ) {
 			$number  = strip_tags( $matches[1] );
 			$counter = '';
 			
-
-		
+			$this->log('facebook', "https://www.facebook.com/plugins/likebox.php?href=https://facebook.com/$social_id&show_faces=true&header=false&stream=false&show_border=false&locale=en_US", $number);			
+								
 			foreach ( str_split( $number ) as $char ) {
 				if ( is_numeric( $char ) ){
 					$counter .= $char;
 				}
 			}
+		}
+		else {
+		    $this->log('facebook', "https://www.facebook.com/plugins/likebox.php?href=https://facebook.com/$social_id&show_faces=true&header=false&stream=false&show_border=false&locale=en_US", '');
 		}
 		
 		return $counter;
@@ -183,11 +202,13 @@ class ESSBSocialFollowersCounterUpdater {
 	private function update_facebook_page() {
 		try {			
 			$response = $this->remote_update ( 'https://graph.facebook.com/v2.8/' . ESSBSocialFollowersCounterHelper::get_option ( 'facebook_id' ) . '?fields=fan_count&access_token=' . ESSBSocialFollowersCounterHelper::get_option ( 'facebook_access_token' ) );
-
+			$this->log('facebook', 'https://graph.facebook.com/v2.8/' . ESSBSocialFollowersCounterHelper::get_option ( 'facebook_id' ) . '?fields=fan_count&access_token=' . ESSBSocialFollowersCounterHelper::get_option ( 'facebook_access_token' ), json_encode($response));
+			
 			if (isset ( $response ['fan_count'] )) {
 				return $response ['fan_count'];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('facebook', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -196,10 +217,12 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		try {
 			$response = $this->remote_update ( 'https://graph.facebook.com/v2.0/me/subscribers?access_token=' . ESSBSocialFollowersCounterHelper::get_option ( 'facebook_access_token' ) );
+			$this->log('facebook', 'https://graph.facebook.com/v2.0/me/subscribers?access_token=' . ESSBSocialFollowersCounterHelper::get_option ( 'facebook_access_token' ), json_encode($response));
 			if (isset ( $response ['summary'] )) {
 				return $response ['summary'] ['total_count'];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('facebook', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -230,12 +253,15 @@ class ESSBSocialFollowersCounterUpdater {
 			
 			$response = @json_decode ( $request );
 			
+			
 			if (isset($response->data) && isset($response->data->user) && isset($response->data->user->follower_count)) {
-				return intval($response->data->user->follower_count);
+			    $this->log('pinterest', 'https://api.pinterest.com/v3/pidgets/users/'.$id.'/pins/', json_encode($response->data->user));
+			    return intval($response->data->user->follower_count);
 			}
 		
 		}
 		catch (Exception $e) {
+		    $this->log('pinterest', '', json_encode($e));
 			return 0;
 		}		
 	}
@@ -327,10 +353,13 @@ class ESSBSocialFollowersCounterUpdater {
 		try {
 			$response = $this->remote_update ( 'https://api.github.com/users/' . $id );
 			
+			$this->log('github', 'https://api.github.com/users/' . $id, json_encode($response));
+			
 			if (isset ( $response["followers"] )) {
 				return $response["followers"];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('github', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -356,10 +385,12 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		try {
 			$response = $this->remote_update ( 'http://vimeo.com/api/v2/channel/' . ESSBSocialFollowersCounterHelper::get_option ( 'vimeo_id' ) . '/info.json' );
+			$this->log('vimeo', 'http://vimeo.com/api/v2/channel/' . ESSBSocialFollowersCounterHelper::get_option ( 'vimeo_id' ) . '/info.json', json_encode($response));
 			if (isset ( $response ['total_subscribers'] )) {
 				return $response ['total_subscribers'];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('vimeo', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -368,10 +399,12 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		try {
 			$response = $this->remote_update ( 'https://api.vimeo.com/users/' . ESSBSocialFollowersCounterHelper::get_option ( 'vimeo_id' ) . '/followers?access_token=' . ESSBSocialFollowersCounterHelper::get_option ( 'vimeo_access_token' ) );
+			$this->log('vimeo', 'https://api.vimeo.com/users/' . ESSBSocialFollowersCounterHelper::get_option ( 'vimeo_id' ) . '/followers?access_token=' . ESSBSocialFollowersCounterHelper::get_option ( 'vimeo_access_token' ), json_encode($response));
 			if (isset ( $response ['total'] )) {
 				return $response ['total'];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('vimeo', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -386,10 +419,12 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		try {
 			$response = $this->remote_update ( 'http://api.dribbble.com/' . $id );
+			$this->log('dribble', 'http://api.dribbble.com/' . $id, json_encode($response));
 			if (isset ( $response["followers_count"] )) {
 				return $response["followers_count"];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('dribble', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -404,10 +439,12 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		try {
 			$response = $this->remote_update ( 'https://marketplace.envato.com/api/edge/user:' . $id . '.json' );
+			$this->log('envato', 'https://marketplace.envato.com/api/edge/user:' . $id . '.json', json_encode($response));
 			if (isset ( $response['user'] ) && isset ( $response['user']['followers'] )) {
 				return $response['user']['followers'];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('envato', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -423,10 +460,12 @@ class ESSBSocialFollowersCounterUpdater {
 		try {
 			
 			$response = $this->remote_update ( 'http://api.soundcloud.com/users/' . $id . '.json?client_id=' . $api_key );
+			$this->log('soundcloud', 'http://api.soundcloud.com/users/' . $id . '.json?client_id=' . $api_key, json_encode($response));
 			if (isset ( $response["followers_count"] )) {
 				return $response["followers_count"];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('soundcloud', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -442,10 +481,12 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		try {
 			$response = $this->remote_update ( 'http://www.behance.net/v2/users/' . $id . '/?api_key=' . $api_key );
+			$this->log('behance', 'http://www.behance.net/v2/users/' . $id . '/?api_key=' . $api_key, json_encode($response));
 			if (isset ( $response["user"] ) && isset ( $response["user"]["stats"] ) && isset ( $response["user"]["stats"]["followers"] )) {
 				return $response["user"]["stats"]["followers"];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('soundcloud', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -459,10 +500,12 @@ class ESSBSocialFollowersCounterUpdater {
 		}
 		try {
 			$response = $this->remote_update ( 'http://feeds.delicious.com/v2/json/userinfo/' . $id );
+			$this->log('delicious', 'http://feeds.delicious.com/v2/json/userinfo/' . $id, json_encode($response));
 			if (isset ( $response ['2'] ) && isset ( $response ['2']->n )) {
 				return $response ['2']->n;
 			}
 		} catch ( Exception $e ) {
+		    $this->log('delicious', '', json_encode($e));
 			return 0;
 		}
 	}
@@ -547,6 +590,7 @@ class ESSBSocialFollowersCounterUpdater {
 		}
 		
 		$response = @json_decode ( $request );
+		$this->log('youtube', 'https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername=' . $id . '&key=' . $api_key, json_encode($response));
 		if (isset ( $response->items ) && isset ( $response->items [0]->statistics )) {
 			return intval ( $response->items [0]->statistics->subscriberCount );
 		}
@@ -568,6 +612,7 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		$response = @json_decode ( $request );	
 		
+		$this->log('youtube', 'https://www.googleapis.com/youtube/v3/channels?part=statistics&id=' . $id . '&key=' . $api_key, json_encode($response));
 		if (isset ( $response->items ) && isset ( $response->items [0]->statistics )) {
 			return intval ( $response->items [0]->statistics->subscriberCount );
 		}
@@ -584,10 +629,13 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		try {
 			$response = $this->remote_update ( 'https://api.foursquare.com/v2/users/self?oauth_token=' . $api_key . '&v=' . date ( 'Ymd' ) );
+			$this->log('foursquare', 'https://api.foursquare.com/v2/users/self?oauth_token=' . $api_key . '&v=' . date ( 'Ymd' ),  json_encode($response));
+
 			if (isset ( $response["response"] ) && isset ( $response["response"]["user"]) && isset ( $response["response"]["user"]["friends"]["count"] )) {
 				return $response["response"]["user"]["friends"]["count"];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('foursquare', '',  json_encode($e));
 			return 0;
 		}
 	}
@@ -602,10 +650,12 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		try {
 			$response = $this->remote_update ( 'http://forrst.com/api/v2/users/info?username=' . $id );
+			$this->log('forrst', 'http://forrst.com/api/v2/users/info?username=' . $id,  json_encode($response));
 			if (isset ( $response["resp"] ) && isset ( $response["resp"]["followers"] )) {
 				return $response["resp"]["followers"];
 			}
 		} catch ( Exception $e ) {
+		    $this->log('forrst', '',  json_encode($e));
 			return 0;
 		}
 	}
@@ -634,6 +684,9 @@ class ESSBSocialFollowersCounterUpdater {
 			));
 			
 			$response = wp_remote_retrieve_body( $response );
+			
+			$this->log('mailchimp', "https://$server.api.mailchimp.com/3.0/lists/$id",  $response);
+			
 			$response = json_decode( $response, true );
 			
 			if( ! empty( $response['stats']['member_count'] ) ){
@@ -643,6 +696,7 @@ class ESSBSocialFollowersCounterUpdater {
 		}
 		catch (Exception $e) {
 			$result = 0;
+			$this->log('mailchimp', '',  json_encode($e));
 		}	
 
 		return $result;		
@@ -670,10 +724,11 @@ class ESSBSocialFollowersCounterUpdater {
 		try {
 			
 			$data = $this->remote_update ( "https://api.vk.com/method/groups.getById?group_id=$id&fields=members_count&v=5.61&access_token=".$token );
-			
+			$this->log('vk',  "https://api.vk.com/method/groups.getById?group_id=$id&fields=members_count&v=5.61&access_token=".$token,  json_encode($data));
 			$result = ( int ) $data ['response'] [0] ['members_count'];
 		} catch ( Exception $e ) {
 			$result = 0;
+			$this->log('vk', '',  json_encode($e));
 		}
 		
 		return $result;
@@ -692,6 +747,8 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		if (false == $request)
 			return 0;
+		
+		$this->log('vk', 'https://api.vk.com/method/users.getFollowers',  $request);
 		
 		$response = json_decode ( @wp_remote_retrieve_body ( $request ), true );
 		
@@ -983,9 +1040,11 @@ class ESSBSocialFollowersCounterUpdater {
 		$result = 0;
 		try {
 			$data = $this->remote_update ( "https://api.twitch.tv/kraken/channels/$id?oauth_token=$api" );
+			$this->log('twitch', "https://api.twitch.tv/kraken/channels/$id?oauth_token=$api",  json_encode($data));
 			$result = isset ( $data ['followers'] ) ? ( int ) $data ['followers'] : 0;
 		} catch ( Exception $e ) {
 			$result = 0;
+			$this->log('twitch', '',  json_encode($e));
 		}
 		
 		return $result;
@@ -1000,13 +1059,16 @@ class ESSBSocialFollowersCounterUpdater {
 		try {
 			if (! empty ( $url ) && strpos ( $url, 'artist' ) !== false) {
 				$data = $this->remote_update ( "https://api.spotify.com/v1/artists/$id" );
+				$this->log('spotify', "https://api.spotify.com/v1/artists/$id",  json_encode($data));
 			} else {
 				$data = $this->remote_update ( "https://api.spotify.com/v1/users/$id" );
+				$this->log('spotify', "https://api.spotify.com/v1/users/$id",  json_encode($data));
 			}
 			$result = ( int ) $data ['followers'] ['total'];
 		
 		} catch ( Exception $e ) {
 			$result = 0;
+			$this->log('spotify', '',  json_encode($e));
 		}
 		
 		return $result;

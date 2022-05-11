@@ -2,6 +2,7 @@
 #use CFF_Utils;
 
 isset($_REQUEST['pageid']) ? $pageid = $_REQUEST['pageid'] : $pageid = '';
+include_once CFF_PLUGIN_DIR . 'inc/SB_Facebook_Data_Encryption.php';
 
 //Use the token from the shortcode
 $shortcode_token = false;
@@ -9,6 +10,11 @@ if( isset($_REQUEST['at']) ){
 
     $at = $_REQUEST['at'];
     // $shortcode_token = $at;
+	$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+
+	if ( ! empty( $at ) && $encryption->decrypt( $at ) ) {
+		$at = $encryption->decrypt( $at );
+	}
 
     if (strpos($at, '02Sb981f26534g75h091287a46p5l63') !== false) {
         $at = str_replace("02Sb981f26534g75h091287a46p5l63","",$at);
@@ -16,7 +22,7 @@ if( isset($_REQUEST['at']) ){
     $shortcode_token = $at;
 
     // if( strpos($at, ':') !== false ){
-    //     $shortcode_token = cffDecodeToken($at,$pageid);        
+    //     $shortcode_token = cffDecodeToken($at,$pageid);
     // }
 }
 
@@ -32,6 +38,11 @@ function cffDecodeToken($at,$pageid){
 
         //Find the token which matches the Page ID passed in
         if( $page_id_only == $pageid ){
+	        $encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+
+	        if ( ! empty( $token_only ) && $encryption->decrypt( $token_only ) ) {
+		        $token_only = $encryption->decrypt( $token_only );
+	        }
             if (strpos($token_only, '02Sb981f26534g75h091287a46p5l63') !== false) {
                 $token_only = str_replace("02Sb981f26534g75h091287a46p5l63","",$token_only);
             }
@@ -86,6 +97,11 @@ if( ( (isset($usegrouptoken) && $usegrouptoken != false) || $useowntoken ) && !$
 	        $results = $wpdb->get_results( $sql, ARRAY_A );
 
 		    if ( isset( $results[0]['access_token'] ) ) {
+			    $encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+
+			    if ( ! empty( $results[0]['access_token'] ) && $encryption->decrypt( $results[0]['access_token'] ) ) {
+				    $results[0]['access_token'] = $encryption->decrypt( $results[0]['access_token'] );
+			    }
 			    $db_query_access_token = $results[0]['access_token'];
 		    }
 	    }
@@ -177,29 +193,15 @@ if( $shortcode_token ){
 
 if ( ! function_exists( 'cff_fetchUrl' ) ) {
 	function cff_fetchUrl($url){
-		//Can we use cURL?
-		if(is_callable('curl_init')){
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate,sdch');
-			$feedData = curl_exec($ch);
-			curl_close($ch);
-			//If not then use file_get_contents
-		} elseif ( ini_get('allow_url_fopen') == 1 || ini_get('allow_url_fopen') === TRUE ) {
-			$feedData = @file_get_contents($url);
-			//Or else use the WP HTTP API
+		$args = array(
+			'timeout' => 60
+		);
+		$response = wp_remote_get( $url, $args );
+		if( is_wp_error( $response ) ) {
+			//Don't display an error, just use the Server config Error Reference message
+			return '';
 		} else {
-			$request = new WP_Http;
-			$response = $request->request($urls, array('timeout' => 60, 'sslverify' => false));
-			if( is_wp_error( $response ) ) {
-				//Don't display an error, just use the Server config Error Reference message
-				echo '';
-			} else {
-				$feedData = wp_remote_retrieve_body($response);
-			}
+			$feedData = wp_remote_retrieve_body($response);
 		}
 
 		return $feedData;

@@ -2,9 +2,10 @@
 
 namespace DynamicContentForElementor;
 
+use Elementor\Icons_Manager;
 trait Navigation
 {
-    public static function dce_numeric_posts_nav()
+    public static function numeric_posts_nav()
     {
         if (is_singular()) {
             return;
@@ -118,14 +119,46 @@ trait Navigation
         $link_next = self::get_wp_link_page_sf($paged + 1);
         return $link_next;
     }
+    /**
+     * @param array<string, mixed> $settings
+     * @param string $key
+     * @return array{left: string|false, right: string|false}
+     */
+    public static function get_leftright_icon($settings, $key)
+    {
+        $old_key = $key;
+        $new_key = 'selected_' . $key;
+        $migration_allowed = Icons_Manager::is_migration_allowed();
+        // old default
+        if (!isset($settings[$old_key]) && !$migration_allowed) {
+            $settings[$old_key] = 'fa fa-long-arrow-right';
+        }
+        $migrated = isset($settings['__fa4_migrated'][$new_key]);
+        $is_new = empty($settings[$old_key]) && $migration_allowed;
+        $icon = ['right' => '', 'left' => ''];
+        if ($migrated || $is_new) {
+            \ob_start();
+            Icons_Manager::render_icon($settings[$new_key] ?? '', ['aria-hidden' => 'true']);
+            $icon['right'] = \ob_get_clean();
+            $left = \str_replace('right', 'left', $settings[$new_key] ?? '');
+            \ob_start();
+            Icons_Manager::render_icon($left, ['aria-hidden' => 'true']);
+            $icon['left'] = \ob_get_clean();
+        } else {
+            $prefix = \str_replace('right', '', $settings[$old_key]);
+            $icon['left'] = "<i class='{$prefix}left'></i>";
+            $icon['right'] = "<i class='{$prefix}right'></i>";
+        }
+        return $icon;
+    }
     public static function numeric_query_pagination($pages, $settings, $class = '')
     {
         $search_filter_query = \false;
         if (isset($settings['query_type']) && $settings['query_type'] === 'search_filter') {
             $search_filter_query = \true;
         }
-        $icon_prevnext = \str_replace('right', '', $settings['pagination_icon_prevnext']);
-        $icon_firstlast = \str_replace('right', '', $settings['pagination_icon_firstlast']);
+        $icon_prevnext = self::get_leftright_icon($settings, 'pagination_icon_prevnext');
+        $icon_firstlast = self::get_leftright_icon($settings, 'pagination_icon_firstlast');
         $range = (int) $settings['pagination_range'] - 1;
         // The numbers displayed at a time
         $showitems = $range * 2 + 1;
@@ -153,53 +186,38 @@ trait Navigation
             // First
             if ($settings['pagination_show_firstlast']) {
                 if ($paged > 2 && $paged > $range + 1 && $showitems < $pages) {
-                    if (!$search_filter_query) {
-                        echo '<a href="' . self::get_wp_link_page(1) . '" class="pagefirst"><i class="' . $icon_firstlast . 'left"></i> ' . wp_kses_post($settings['pagination_first_label']) . '</a>';
-                    } else {
-                        echo '<a href="' . self::get_wp_link_page_sf(1) . '" class="pagefirst"><i class="' . $icon_firstlast . 'left"></i> ' . wp_kses_post($settings['pagination_first_label']) . '</a>';
-                    }
+                    $link = $search_filter_query ? self::get_wp_link_page_sf(1) : self::get_wp_link_page(1);
+                    echo '<a href="' . $link . '" class="pagefirst">' . $icon_firstlast['left'] . ' ' . wp_kses_post($settings['pagination_first_label']) . '</a>';
                 }
             }
             // Prev
             if ($settings['pagination_show_prevnext']) {
                 if ($paged > 1 && $showitems < $pages) {
-                    if (!$search_filter_query) {
-                        echo '<a href="' . self::get_wp_link_page($paged - 1) . '" class="pageprev"><i class="' . $icon_prevnext . 'left"></i> ' . wp_kses_post($settings['pagination_prev_label']) . '</a>';
-                    } else {
-                        echo '<a href="' . self::get_wp_link_page_sf($paged - 1) . '" class="pageprev"><i class="' . $icon_prevnext . 'left"></i> ' . wp_kses_post($settings['pagination_prev_label']) . '</a>';
-                    }
+                    $link = $search_filter_query ? self::get_wp_link_page_sf($paged - 1) : self::get_wp_link_page($paged - 1);
+                    echo '<a href="' . $link . '" class="pageprev">' . $icon_prevnext['left'] . ' ' . wp_kses_post($settings['pagination_prev_label']) . '</a>';
                 }
             }
             // Numbers
             if ($settings['pagination_show_numbers']) {
                 for ($i = 1; $i <= $pages; $i++) {
                     if (1 != $pages && (!($i >= $paged + $range + 1 || $i <= $paged - $range - 1) || $pages <= $showitems)) {
-                        if (!$search_filter_query) {
-                            echo $paged == $i ? '<span class="current">' . $i . '</span>' : "<a href='" . self::get_wp_link_page($i) . "' class=\"inactive\">" . $i . '</a>';
-                        } else {
-                            echo $paged == $i ? '<span class="current">' . $i . '</span>' : "<a href='" . self::get_wp_link_page_sf($i) . "' class=\"inactive\">" . $i . '</a>';
-                        }
+                        $link = $search_filter_query ? self::get_wp_link_page_sf($i) : self::get_wp_link_page($i);
+                        echo $paged == $i ? '<span class="current">' . $i . '</span>' : "<a href='" . $link . "' class=\"inactive\">" . $i . '</a>';
                     }
                 }
             }
             // Next
             if ($settings['pagination_show_prevnext']) {
                 if ($paged < $pages && $showitems < $pages) {
-                    if (!$search_filter_query) {
-                        echo '<a href="' . self::get_wp_link_page($paged + 1) . '" class="pagenext">' . wp_kses_post($settings['pagination_next_label']) . ' <i class="' . $icon_prevnext . 'right"></i></a>';
-                    } else {
-                        echo '<a href="' . self::get_wp_link_page_sf($paged + 1) . '" class="pagenext">' . wp_kses_post($settings['pagination_next_label']) . ' <i class="' . $icon_prevnext . 'right"></i></a>';
-                    }
+                    $link = $search_filter_query ? self::get_wp_link_page_sf($paged + 1) : self::get_wp_link_page($paged + 1);
+                    echo '<a href="' . $link . '" class="pagenext">' . wp_kses_post($settings['pagination_next_label']) . ' ' . $icon_prevnext['right'] . '</a>';
                 }
             }
             // Last
             if ($settings['pagination_show_firstlast']) {
                 if ($paged < $pages - 1 && $paged + $range - 1 < $pages && $showitems < $pages) {
-                    if (!$search_filter_query) {
-                        echo '<a href="' . self::get_wp_link_page($pages) . '" class="pagelast">' . wp_kses_post($settings['pagination_last_label']) . ' <i class="' . $icon_firstlast . 'right"></i></a>';
-                    } else {
-                        echo '<a href="' . self::get_wp_link_page_sf($pages) . '" class="pagelast">' . wp_kses_post($settings['pagination_last_label']) . ' <i class="' . $icon_firstlast . 'right"></i></a>';
-                    }
+                    $link = $search_filter_query ? self::get_wp_link_page_sf($pages) : self::get_wp_link_page($pages);
+                    echo '<a href="' . $link . '" class="pagelast">' . wp_kses_post($settings['pagination_last_label']) . ' ' . $icon_firstlast['right'] . '</a>';
                 }
             }
             echo '</div>';

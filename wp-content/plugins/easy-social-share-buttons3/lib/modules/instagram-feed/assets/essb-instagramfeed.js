@@ -3688,11 +3688,20 @@ jQuery(document).ready(function($){
 					
 					var instaURL = $(this).attr('href') || '',
 						instaImgage = $(this).find('.essb-instagramfeed-single-image img').attr('src') || '',
+						instaType = $(this).find('.essb-instagramfeed-single-image img').attr('data-type') || '',
+						instaVideo = $(this).find('.essb-instagramfeed-single-image img').attr('data-src') || '',
 						instaContent = $(this).find('.essb-instagramfeed-single-image-info').html();
+					
+					var html = '<img src="'+instaImgage+'"/>';
+					if (instaType == 'VIDEO') {
+						html = '<video width="100%" height="100%" controls autoplay loop>';
+						html += '<source src="' + instaVideo + '" type="video/mp4" />';
+						html += '</video>';
+					}
 								
 					SimpleLightbox.open({
 			            content: '<div class="essb-instagramfeed-lightbox-content">' +
-			            			'<div class="essb-instagramfeed-lightbox-content-image"><a href="'+instaURL+'" target="_blank"><img src="'+instaImgage+'"/></a></div>' +
+			            			'<div class="essb-instagramfeed-lightbox-content-image"><a href="'+instaURL+'" target="_blank">'+html+'</a></div>' +
 			            			'<div class="essb-instagramfeed-lightbox-content-info">' + instaContent +''+
 			            			'<div class="essb-instagramfeed-lightbox-button essb-instagramfeed-profile-followbtn"><a href="'+instaURL+'" target="_blank">Visit on Instagram</a>'+
 			            			'</div>'+
@@ -3766,6 +3775,11 @@ jQuery(document).ready(function($){
 		}
 		
 		$('.essb-instagramfeed-popup-overlay').on('click', function(e) {
+			$('.essb-instagramfeed-popup').fadeOut(300);
+			$('.essb-instagramfeed-popup-overlay').fadeOut(300);
+		});
+		
+		$('.essb-instagramfeed-popup .essb-instagramfeed-popup-close').on('click', function(e) {
 			$('.essb-instagramfeed-popup').fadeOut(300);
 			$('.essb-instagramfeed-popup-overlay').fadeOut(300);
 		});

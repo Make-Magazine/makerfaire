@@ -1,6 +1,6 @@
 body{
     background: #red;
-    --cl-orange: #E34F0E;
+    --cl-orange: #FE544F;
     --cl-dark:#2C324C;
     --error-red: #D72C2C;
     --customizer-blue: #0096CC;
@@ -91,15 +91,15 @@ Buttons
 
 /*orange*/
 .cff-btn-orange{
-    background: #E34F0E!important;
+    background: #FE544F!important;
     color: #fff!important;
 }
 .cff-btn-orange:hover{
-    background: #F37036!important;
+    background: #EC352F!important;
     color: #fff!important;
 }
 .cff-btn-orange:focus{
-    background: #B8400B!important;
+    background: #BC120E!important;
     color: #fff!important;
 }
 
@@ -491,6 +491,9 @@ Header
     .sb-customizer-ctn .sb-customizer-sidebar{
         left: 36px;
     }
+  body.jetpack-masterbar .sb-customizer-sidebar {
+    left: 36px;
+  }
 }
 
 .cff-fb-hd-btn{
@@ -761,6 +764,21 @@ Welcome Screen Empty State
 #cff-builder-app .cff-fb-feedtypes-pp-ctn .cff-fb-types {
     margin-top: 20px;
 }
+#cff-builder-app .cff-fb-feedtypes-pp-ctn.sb-fs-boss{
+    position: absolute;
+    min-height: 100%;
+    align-items: unset;
+    padding: 150px 0px;
+}
+#cff-builder-app .cff-fb-feedtypes-pp-ctn.sb-fs-boss .cff-fb-feedtypes-popup.cff-fb-popup-inside{
+    overflow: visible;
+    min-height: 100px;
+    max-height: unset;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 #cff-builder-app .cff-fb-adv-types .cff-adv-types-heading{
     font-style: normal;
     font-weight: bold;
@@ -782,6 +800,65 @@ Welcome Screen Empty State
     grid-column-gap: 1%;
     margin-bottom: 31px;
 }
+.cff-fb-templates-list {
+    display: grid;
+    grid-template-columns: 24.2% 24.2% 24.2% 24.2%;
+    grid-column-gap: 1%;
+    margin: 31px 0px;
+}
+.cff-fb-templates-list .cff-fb-type-el {
+    margin-bottom: 10px;
+}
+.cff-fb-templates-list .cff-fb-type-el-info {
+    padding: 0 10px;
+}
+.cff-fb-templates-list .cff-fb-type-el-img svg {
+    width: 100%;
+}
+.cff-fb-templates-list .cff-fb-type-el-img {
+    border-width: 0px !important;
+}
+.cff-fb-templates-ctn .cff-fb-type-el-img {
+    background: #f3f4f5;
+}
+.cff-fb-templates-ctn .cff-fb-type-el-img.simple_carousel,
+.cff-fb-templates-ctn .cff-fb-type-el-img.showcase_carousel {
+    background-color: #fdf3ef;
+}
+.cff-fb-feedtemplate-alert {
+    padding: 8px 12px 10px;
+    background: #FFF7E5;
+    border: 1px solid #FFDF99;
+    box-sizing: border-box;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 160%;
+    display: flex;
+    align-items: center;
+}
+.cff-fb-feedtemplate-alert span {
+    line-height: 1;
+}
+.cff-fb-feedtemplate-alert svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+}
+#cff-builder-app .cff-fb-feedtemplates-ctn .cff-fb-types {
+    margin-top: -10px;
+}
+#cff-builder-app .cff-fb-templates-list .cff-fb-type-el-info p {
+    margin: 8px 0px 7px;
+}
+#cff-builder-app .cff-fb-templates-ctn .cff-fb-types h4 {
+    margin-bottom: 0px;
+}
+#cff-builder-app .cff-fb-templates-ctn .cff-fb-types .sb-caption {
+    font-size: 12px;
+    line-height: 150%;
+    color: #434960;
+    margin-top: 0px;
+}
 /*
 .cff-fb-adv-types .cff-fb-types-list{
 	grid-template-columns: 24.25% 24.25% 24.25% 24.25%;
@@ -801,6 +878,20 @@ Welcome Screen Empty State
 
 .cff-fb-adv-types .cff-fb-types-list{
     margin-bottom: 71px;
+}
+.sb-control-feedtemplate-ctn .cff-fb-type-el-img{
+    background-color: #f3f4f5;
+}
+.sb-control-feedtemplate-ctn.cff-feedtemplate-showcase_carousel .cff-fb-type-el-img,
+.sb-control-feedtemplate-ctn.cff-feedtemplate-simple_carousel .cff-fb-type-el-img{
+    background-color: #fdf3ef;
+}
+.cff-fb-type-el .cff-fb-type-el-img {
+    background-color: #f3f4f5;
+}
+.cff-fb-type-el.cff-feed-template-showcase_carousel .cff-fb-type-el-img,
+.cff-fb-type-el.cff-feed-template-simple_carousel .cff-fb-type-el-img {
+    background-color: #fdf3ef;
 }
 .cff-fb-type-el{
     display: flex;
@@ -895,6 +986,9 @@ Welcome Screen Empty State
 #cff-builder-app .cff-fb-type-el[data-active="true"] p{
     margin-top: 10px;
 }
+#cff-builder-app .cff-fb-templates-list .cff-fb-type-el[data-active="true"] p {
+    margin: 8px 0px 4px;
+}
 #cff-builder-app .cff-fb-type-el[data-active="true"] .cff-fb-type-el-info {
     padding-bottom: 24px;
 }
@@ -903,6 +997,9 @@ Welcome Screen Empty State
     height: 14px;
     margin-left: 5px;
     vertical-align: middle;
+}
+#cff-builder-app .cff-fb-templates-list .cff-fb-type-el[data-active="true"] .cff-fb-type-el-info {
+    padding-bottom: inherit;
 }
 /*.cff-fb-type-el-info strong{
 	font-weight: 600;
@@ -1471,7 +1568,7 @@ Source Screen
 }
 .cff-stck-wdg-btn svg{
     width: 25px;
-    fill: #E34F0E;
+    fill: #FE544F;
     height: 33px;
     float: left;
 }
@@ -2631,6 +2728,9 @@ Feed Instance Popup
     bottom: 0px;
     padding-bottom: 50px;
 }
+.jetpack-masterbar .sb-customizer-sidebar {
+  left: 272px;
+}
 body.folded .sb-customizer-sidebar{
     left: 36px;
 }
@@ -2690,6 +2790,9 @@ body.folded .sb-customizer-sidebar{
     width: 20px;
     float: left;
     fill: currentColor;
+}
+.sb-customizer-sidebar-section-settings_feedtemplate .sb-customizer-sidebar-sec-el-icon svg {
+    width: 24px !important;
 }
 .sb-customizer-sidebar-sec-elhead{
     height: 50px;
@@ -2815,7 +2918,7 @@ Controls Style
 .sb-control-elem-ctn[data-reverse="true"]{
     flex-direction: row-reverse;
 }
-.sb-control-elem-ctn svg{
+.sb-control-elem-ctn:not([data-type="customview"]) svg{
     fill: currentColor;
 }
 .sb-control-elem-output{
@@ -3638,7 +3741,7 @@ Controls Style
     content: '';
     position: absolute;
     height: 5px;
-    background: #E34F0E;
+    background: #FE544F;
     z-index: 9;
     top: 0;
 }

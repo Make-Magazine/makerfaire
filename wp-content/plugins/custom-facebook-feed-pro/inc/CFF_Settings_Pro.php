@@ -49,12 +49,23 @@ class CFF_Settings_Pro {
 		$this->feed_type_and_terms = array();
 
 		$feed_options = $this->settings;
-
-		//Define vars
+		$cff_encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption;
 		$access_token = $feed_options['accesstoken'];
+
+		if ( is_string( $access_token ) ) {
+			$access_token = $cff_encryption->decrypt( $access_token ) ? $cff_encryption->decrypt( $access_token ) : $access_token;
+		}
+
+		$feed_options['accesstoken'] = $access_token;
+		$this->settings['accesstoken'] = $access_token;
+		//Define vars
+
 		//If the 'Enter my own Access Token' box is unchecked then don't use the user's access token, even if there's one in the field
 		$feed_options['ownaccesstoken'] ? $cff_show_access_token = true : $cff_show_access_token = true;
 		//Reviews Access Token
+		if ( is_string( $feed_options['pagetoken'] ) && ! empty( $feed_options['pagetoken'] ) ) {
+			$feed_options['pagetoken'] = $cff_encryption->decrypt( $feed_options['pagetoken'] );
+		}
 		$page_access_token = $feed_options['pagetoken'];
 		$cff_show_access_token = true;
 		$page_id = trim( $feed_options['id'] );
@@ -78,7 +89,7 @@ class CFF_Settings_Pro {
 		$cff_past_events = $feed_options['pastevents'];
 		//Active extensions
 		$cff_ext_multifeed_active = $feed_options[ 'multifeedactive' ];
-		$cff_ext_date_active = $feed_options[ 'daterangeactive' ];
+		$cff_ext_date_active = $feed_options[ 'daterangeactive' ] && $feed_options[ 'daterangeactive' ] !== 'false';
 		$cff_featured_post_active = $feed_options[ 'featuredpostactive' ];
 		$cff_album_active = $feed_options[ 'albumactive' ];
 		$cff_masonry_columns_active = false; //Deprecated
@@ -160,8 +171,11 @@ class CFF_Settings_Pro {
 		if($cff_cache_time_unit == 'minutes') $cff_cache_time_unit = 60;
 		if($cff_cache_time_unit == 'hour' || $cff_cache_time_unit == 'hours') $cff_cache_time_unit = 60*60;
 		if($cff_cache_time_unit == 'days') $cff_cache_time_unit = 60*60*24;
+		$cff_cache_time = intval( $cff_cache_time ) > 0 ? intval( $cff_cache_time ) : 1;
+		if ( intval( $cff_cache_time_unit ) === 0 ) {
+			$cff_cache_time_unit = 3600;
+		}
 		$cache_seconds = $cff_cache_time * $cff_cache_time_unit;
-
 
 		//********************************************//
 		//*****************GET POSTS******************//
@@ -541,7 +555,6 @@ class CFF_Settings_Pro {
 
 					//If it's a reviews feed then use the reviews token
 					( $cff_reviews ) ? $feed_token = $feed_options['pagetoken'] : $feed_token = $access_token;
-
 					//Replace the Access Token placeholder with the actual token
 					$cff_api_url = str_replace( "x_cff_hide_token_x", $feed_token, $next_url_safe );
 

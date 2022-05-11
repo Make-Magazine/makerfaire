@@ -14,10 +14,16 @@ function essbspnlite_notification_holder_options() {
 	
 	$options[] = 'data-start="'.esc_attr($delay_start).'"';
 
-	$delay_stay = 5;
+	$delay_stay = essb_sanitize_option_value('proofnotifications_stay');
+	if (intval($delay_stay) == 0) {
+	    $delay_stay = 5;
+	}
 	$options[] = 'data-stay="'.esc_attr($delay_stay).'"';
 
-	$delay_wait = 5;
+	$delay_wait = essb_sanitize_option_value('proofnotifications_wait');
+	if (intval($delay_wait) == 0) {
+	    $delay_wait = 5;
+	}
 	$options[] = 'data-delay="'.esc_attr($delay_wait).'"';
 
 	$notification_loop = essb_option_bool_value('proofnotifications_loop');
@@ -139,7 +145,12 @@ function essbspnlite_get_share_notifications_pool($post_id = '') {
 	
 	$share_notification_count = essb_sanitize_option_value('proofnotifications_counter');
 	$share_minimal_value = essb_sanitize_option_value('proofnotifications_min');
-	$share_message_template = '{title} is highly popular post having {value} {network} shares[nl]Share with your friends';
+	
+	$share_message_template = essb_sanitize_option_value('proofnotifications_message');
+	if (empty($share_message_template)) {
+	   $share_message_template = '{title} is highly popular post having {value} {network} shares[nl]Share with your friends';
+	}
+	
 	$share_action_link = 'share';
 	$share_action_custom = '';
 	
@@ -179,6 +190,7 @@ function essbspnlite_get_share_notifications_pool($post_id = '') {
 	
 	if (isset($post_data['title_plain']) && !empty($post_data['title_plain'])) {
 		$post_data['title'] = $post_data['title_plain'];
+		$post_data['title'] = stripcslashes($post_data['title']);
 	}
 	
 	$share['essb_encode_url'] = false;
@@ -239,4 +251,128 @@ function essbspnlite_get_share_notifications_pool($post_id = '') {
 	}
 	
 	return $r;
+}
+
+
+function essbspnlite_get_activity_notifications_pool() {
+    global $wpdb;
+    
+    if (!essb_option_bool_value('proofnotifications_activity')) {
+        return array();
+    }
+    
+    $activity_message_template = essb_sanitize_option_value('proofnotifications_activity_message');
+       
+    $activity_count = essb_sanitize_option_value('proofnotifications_activity_counter');
+    $activity_action_link = 'default';
+    $activity_action_custom = '';
+    
+    $activity_unique = false;
+    $activity_period = '24h';
+    $activity_fake = false;
+    
+    /**
+     * Selected networks only
+     */
+    $use_user_share_networks = false;
+    $notification_networks = array();
+    
+    if (intval($activity_count) == 0) {
+        $activity_count = 1;
+    }
+    
+    if (empty($activity_message_template)) {
+        $activity_message_template = 'Someone share {title} on {network}[nl]{value} ago';
+    }
+    
+    /**
+     * @since 3.3 stripslashes
+     */
+    $activity_message_template = stripslashes($activity_message_template);
+    
+    $message = array();
+    $r = array();
+    
+    $table_name = $wpdb->prefix . ESSB3_TRACKER_TABLE;
+    
+    /**
+     * Generate information only if the analytics is enabled
+     */
+    if (class_exists('ESSBSocialShareAnalytics')) {
+        
+        $all_networks = essb_available_social_networks();
+        $active_networks = array();
+        foreach ($all_networks as $key => $data) {
+            $active_networks[$key] = $data['name'];
+        }
+        
+        
+        if ($activity_unique) {
+            $sql = 'SELECT DISTINCT essb_post_id, essb_service, essb_date FROM '.$table_name.' WHERE essb_date > ';
+        }
+        else {
+            $sql = 'SELECT * FROM '.$table_name.' WHERE essb_date > ';
+        }
+        
+        if ($activity_period == '6h') { $sql .= 'DATE_ADD(NOW(), INTERVAL -6 HOUR)'; }
+        if ($activity_period == '12h') { $sql .= 'DATE_ADD(NOW(), INTERVAL -12 HOUR)'; }
+        if ($activity_period == '24h') { $sql .= 'DATE_ADD(NOW(), INTERVAL -24 HOUR)'; }
+        if ($activity_period == 'week') { $sql .= 'DATE_ADD(NOW(), INTERVAL -7 day)'; }
+        if ($activity_period == 'month') { $sql .= 'DATE_ADD(NOW(), INTERVAL -30 day)'; }
+        if ($activity_period == '3month') { $sql .= 'DATE_ADD(NOW(), INTERVAL -90 day)'; }
+        
+        if ($use_user_share_networks && count($notification_networks) > 0) {
+            $sql .= ' AND essb_service IN (';
+            
+            foreach ($notification_networks as $network) {
+                $sql .= "'".$network. "',";
+            }
+            $sql .= '"")';
+        }
+        
+        $sql .= ' ORDER BY essb_date DESC';
+        
+        $results = $wpdb->get_results ( $sql );
+        
+        $added = 0;
+        
+        foreach ($results as $object) {
+            $post = get_post($object->essb_post_id);
+            $network = $object->essb_service;
+            $date = $object->essb_date;
+            
+            $time = human_time_diff(strtotime($date), current_time( 'timestamp' ));
+            
+            if ($activity_fake) {
+                $time = rand(1, 12);
+                
+                if ($time == 1) {
+                    $time = $time . ' hour';
+                }
+                else {
+                    $time = $time . ' hours';
+                }
+            }
+            
+            $added++;
+            
+            if ($added > intval($activity_count)) {
+                continue;
+            }
+            
+            $r[] = array(
+                'title' => get_the_title($post->ID),
+                'value' => $time,
+                'network' => isset($active_networks[$network]) ? $active_networks[$network] : $network,
+                'image' => get_the_post_thumbnail_url($post->ID),
+                'link' => get_permalink($post->ID),
+                'action_url' => get_permalink($post->ID),
+                'action_command' => '',
+                'template' => $activity_message_template,
+                'output' => ''
+            );
+        }
+    }
+    
+    return $r;
 }

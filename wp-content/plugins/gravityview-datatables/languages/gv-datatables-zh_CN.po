@@ -1,14 +1,14 @@
-# Copyright (C) 2019 GravityView
-# This file is distributed under the GPLv2 or later.
+# Translators:
+# Translators:
+# Translators:
 # Translators:
 # Edi Weigh <michaeledi@163.com>, 2016,2018
 # Zachary Katz <zack@katz.co>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: GravityView DataTables\n"
-"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
-"POT-Creation-Date: 2016-04-04 21:06:01+00:00\n"
-"PO-Revision-Date: 2019-03-28 21:37+0000\n"
+"POT-Creation-Date: 2015-01-18 12:05-0700\n"
+"PO-Revision-Date: 2021-12-22 02:41+0000\n"
 "Last-Translator: Zachary Katz <zack@katz.co>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/katzwebservices/gravityview-datatables/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -16,24 +16,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: grunt-wp-i18n 0.5.4\n"
-"X-Poedit-Basepath: ../\n"
-"X-Poedit-Bookmarks: \n"
-"X-Poedit-Country: United States\n"
-"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Generator: Poedit 1.7.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Textdomain-Support: yes\n"
 
-#: includes/class-admin-datatables.php:41
-msgid "DataTables"
-msgstr "DataTables "
+#: includes/class-admin-datatables.php:32
+msgid "DataTables Settings"
+msgstr "DataTables设置"
 
-#: includes/class-datatables-data.php:771
+#: includes/class-datatables-data.php:325
+msgctxt "Menu label to show all results in DataTables template."
+msgid "All"
+msgstr "全部"
+
+#: includes/class-datatables-data.php:388
 msgid "Loading data&hellip;"
 msgstr "加载数据中&hellip;"
 
-#: includes/class-datatables-data.php:772
+#: includes/class-datatables-data.php:389
 msgid "No entries match your request."
 msgstr "没有条目符合您的要求。"
 
@@ -45,153 +47,142 @@ msgstr "DataTables表格"
 msgid "Display items in a dynamic table powered by DataTables."
 msgstr "使用DataTables来动态显示数据表格"
 
-#: includes/class-datatables-template.php:50
+#: includes/class-datatables-template.php:49
 msgid "Link to single entry"
 msgstr "链接到单个条目"
 
-#: includes/class-datatables-template.php:61
+#: includes/class-datatables-template.php:60
 msgid "Visible Table Columns"
 msgstr "可见表的列"
 
-#: includes/extensions/class-datatables-buttons.php:30
-#: includes/extensions/class-datatables-buttons.php:48
-msgid "Enable Buttons"
-msgstr "启用按钮"
-
-#: includes/extensions/class-datatables-buttons.php:31
-msgid ""
-"Display buttons that allow users to print or export the current results."
-msgstr "显示一系列按钮，允许用户打印或导出当前结果。"
-
-#: includes/extensions/class-datatables-buttons.php:58
-msgid "Buttons"
-msgstr ""
-
-#: includes/extensions/class-datatables-buttons.php:97
-msgid "Column Visibility"
-msgstr ""
-
-#: includes/extensions/class-datatables-buttons.php:99
-msgid "Columns"
-msgstr ""
-
-#: includes/extensions/class-datatables-buttons.php:103
-msgid "Copy"
-msgstr "复制"
-
-#: includes/extensions/class-datatables-buttons.php:107
-msgid "Print"
-msgstr "打印"
-
-#: includes/extensions/class-datatables-fixedheader.php:27
+#: includes/extensions/class-datatables-fixedheader.php:21
 msgid "Keep headers or columns in place and visible while scrolling a table."
 msgstr "在滚动时，固定表头或者指定列。"
 
-#: includes/extensions/class-datatables-fixedheader.php:33
+#: includes/extensions/class-datatables-fixedheader.php:27
 msgid "Enable FixedHeader"
 msgstr "启用固定表头"
 
-#: includes/extensions/class-datatables-fixedheader.php:45
+#: includes/extensions/class-datatables-fixedheader.php:39
 msgid "Enable FixedColumns"
 msgstr "启用固定列"
 
-#: includes/extensions/class-datatables-fixedheader.php:65
+#: includes/extensions/class-datatables-fixedheader.php:59
 msgid "FixedColumns"
 msgstr "固定的列"
 
-#: includes/extensions/class-datatables-fixedheader.php:66
+#: includes/extensions/class-datatables-fixedheader.php:60
 msgid ""
 "Fix the first column in place while horizontally scrolling a table. The "
 "first column and its contents will remain visible at all times."
 msgstr "固定在水平滚动表时的第一列。第一列和其内容将持续可见。"
 
-#: includes/extensions/class-datatables-fixedheader.php:70
+#: includes/extensions/class-datatables-fixedheader.php:64
 msgid "FixedHeader"
 msgstr "固定表头"
 
-#: includes/extensions/class-datatables-fixedheader.php:71
+#: includes/extensions/class-datatables-fixedheader.php:65
 msgid ""
 "Float the column headers above the table to keep the column titles visible "
 "at all times."
 msgstr "浮上面要时刻保持可见的列标题的表的列标题。"
 
-#: includes/extensions/class-datatables-responsive.php:41
+#: includes/extensions/class-datatables-responsive.php:33
 msgid "Responsive Tables"
 msgstr "自适应表格"
 
-#: includes/extensions/class-datatables-responsive.php:42
+#: includes/extensions/class-datatables-responsive.php:34
 msgid ""
 "Optimize table layout for different screen sizes through the dynamic "
 "insertion and removal of columns from the table."
 msgstr "通过动态增加或减少列数，来优化不同屏幕显示时的表格布局。"
 
-#: includes/extensions/class-datatables-responsive.php:68
+#: includes/extensions/class-datatables-responsive.php:60
 msgid "Enable Responsive Tables"
 msgstr "启用自适应表格布局"
 
-#: includes/extensions/class-datatables-scroller.php:35
+#: includes/extensions/class-datatables-scroller.php:29
 msgid "Scroller"
 msgstr "滚动条"
 
-#: includes/extensions/class-datatables-scroller.php:36
+#: includes/extensions/class-datatables-scroller.php:30
 msgid ""
 "Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.\n"
 "\n"
 "\t\t\t\tNote: Scroller will not work well if your View has columns of varying height."
 msgstr "允许条目很多的数据列表在同一个页面上连续显示。数据表的滚动条可以让大型数据集平滑显示 fast.\n\n\t\t\t\t注意︰ 如果你的视图有不同高度的列，滚动条将失效。"
 
-#: includes/extensions/class-datatables-scroller.php:52
+#: includes/extensions/class-datatables-scroller.php:46
 msgid "Enable Scroller"
 msgstr "启用滚动"
 
-#: includes/extensions/class-datatables-scroller.php:62
+#: includes/extensions/class-datatables-scroller.php:56
 msgid "Table Height"
 msgstr "表格高度"
 
-#: lib/EDD_SL_Plugin_Updater.php:201
-msgid ""
-"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
-msgstr "有一个新版本的%1$s可用。%2$s查看版本%3$s详情%4$s。"
+#: includes/extensions/class-datatables-tabletools.php:29
+msgid "TableTools"
+msgstr "表格工具"
 
-#: lib/EDD_SL_Plugin_Updater.php:209
+#: includes/extensions/class-datatables-tabletools.php:30
 msgid ""
-"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
-"or %5$supdate now%6$s."
-msgstr "有一个新版本的%1$s可用。%2$s查看版本%3$s详情或者%5$s现在升级%6$s。"
+"TableTools adds buttons that allow users to print or export the current "
+"results."
+msgstr "表格工具将添加一系列按钮，允许用户打印或导出当前结果。"
 
-#: lib/EDD_SL_Plugin_Updater.php:369
+#: includes/extensions/class-datatables-tabletools.php:47
+msgid "Enable TableTools"
+msgstr "启用表格工具"
+
+#: includes/extensions/class-datatables-tabletools.php:58
+msgid "Display Buttons"
+msgstr "显示按钮"
+
+#: includes/extensions/class-datatables-tabletools.php:89
+msgid "Select All"
+msgstr "全部选择"
+
+#: includes/extensions/class-datatables-tabletools.php:90
+msgid "Deselect All"
+msgstr "全部不选"
+
+#: includes/extensions/class-datatables-tabletools.php:91
+msgid "Copy"
+msgstr "复制"
+
+#: includes/extensions/class-datatables-tabletools.php:95
+msgid "Print"
+msgstr "打印"
+
+#: lib/EDD_SL_Plugin_Updater.php:154
+#, php-format
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" "
+"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+msgstr "有一个新的版本 %1$s可用。<a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">查看版本 %3$s 的详细信息</a>。"
+
+#: lib/EDD_SL_Plugin_Updater.php:161
+#, php-format
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" "
+"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
+"href=\"%4$s\">update now</a>."
+msgstr "有一个新的版本 %1$s可用。<a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">查看版本 %3$s 详情</a>或<a href=\"%4$s\">现在更新</a>。"
+
+#: lib/EDD_SL_Plugin_Updater.php:301
 msgid "You do not have permission to install plugin updates"
 msgstr "你无权安装插件更新"
 
-#: lib/EDD_SL_Plugin_Updater.php:369
+#: lib/EDD_SL_Plugin_Updater.php:301
 msgid "Error"
 msgstr "错误"
 
-#: lib/class-gravityview-extension.php:360
+#: lib/class-gravityview-extension.php:175
+#, php-format
 msgid "Could not activate the %s Extension; GravityView is not active."
 msgstr "不能激活 %s 扩展；GravityView未启用。"
 
-#: lib/class-gravityview-extension.php:364
+#: lib/class-gravityview-extension.php:185
+#, php-format
 msgid "The %s Extension requires GravityView Version %s or newer."
 msgstr "%s 扩展需要GravityView版本 %s 或更高。"
-
-#: lib/class-gravityview-extension.php:368
-msgid ""
-"The %s Extension requires PHP Version %s or newer. Please ask your host to "
-"upgrade your server's PHP."
-msgstr "%s 扩展需要PHP版本 %s 或更新的。请访问您的主机升级服务器的 PHP。"
-
-#: lib/class-gravityview-extension.php:372
-msgid ""
-"The %s Extension is not compatible with this version of GravityView. Please "
-"update the Extension to the latest version."
-msgstr "%s扩展和当前GravityView版本不兼容。请升级插件到最新版本。"
-
-#. Plugin URI of the plugin/theme
-msgid "https://gravityview.co/extensions/datatables/"
-msgstr "https://gravityview.co/extensions/datatables/"
-
-#: includes/class-datatables-data.php:705
-msgctxt "Menu label to show all results in DataTables template."
-msgid "All"
-msgstr "全部"

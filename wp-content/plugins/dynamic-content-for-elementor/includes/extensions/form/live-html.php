@@ -62,23 +62,15 @@ class LiveHtml extends \ElementorPro\Modules\Forms\Fields\Field_Base
     }
     public function update_controls($widget)
     {
-        if (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            return;
-        }
         $elementor = Plugin::elementor();
         $control_data = $elementor->controls_manager->get_control_from_stack($widget->get_unique_name(), 'form_fields');
         if (is_wp_error($control_data)) {
             return;
         }
-        $field_controls = ['dce_live_html' => ['name' => 'dce_live_html', 'label' => __('HTML', 'dynamic-content-for-elementor'), 'description' => __('', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::CODE, 'default' => 'Hi {{ form.name }}', 'language' => 'html', 'label_block' => 'true', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'dce_live_html_real_time' => ['name' => 'dce_live_html_real_time', 'label' => __('Update on each Keypress', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Do not wait for the field to be blurred for the event to be triggered. Do it on each keypress.', 'dynamic-content-for-elementor'), 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]]];
+        $field_controls = ['dce_live_html' => ['name' => 'dce_live_html', 'label' => __('HTML', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::CODE, 'default' => 'Hi {{ form.name }}', 'language' => 'html', 'label_block' => 'true', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'dce_live_html_real_time' => ['name' => 'dce_live_html_real_time', 'label' => __('Update on each Keypress', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Do not wait for the field to be blurred for the event to be triggered. Do it on each keypress.', 'dynamic-content-for-elementor'), 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]]];
         $control_data['fields'] = $this->inject_field_controls($control_data['fields'], $field_controls);
         $widget->update_control('form_fields', $control_data);
     }
-    /**
-     * @param      $item
-     * @param      $item_index
-     * @param Form $form
-     */
     public function render($item, $item_index, $form)
     {
         $form->add_render_attribute('div' . $item_index, 'data-code', do_shortcode($item['dce_live_html']));

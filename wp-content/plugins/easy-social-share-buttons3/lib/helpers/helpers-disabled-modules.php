@@ -32,6 +32,12 @@ if (!function_exists('essb_control_running_disabled_modules')) {
             $options['stats_active'] = 'false';
         }
         
+        if (essb_option_bool_value('deactivate_module_google_analytics')) {
+            $options['activate_ga_tracking'] = 'false';
+            $options['activate_utm'] = 'false';
+            $options['activate_ga_ntg_tracking'] = 'false';
+        }
+        
         if (essb_option_bool_value('deactivate_module_pinterestpro')) {
             $options['pinterest_images'] = 'false';
             $options['pinterest_force_description'] = 'false';
@@ -57,6 +63,39 @@ if (!function_exists('essb_control_running_disabled_modules')) {
         if (essb_option_bool_value('deactivate_fakecounters')) {
             $options['activate_fake_counters'] = 'false';
             $options['activate_fake_counters_internal'] = 'false';
+        }
+        
+        // Mailform disabled in mini mode
+        if (essb_option_value('css_mode') == 'mini') {
+            $options['mail_function'] = 'link';
+            $options['mail_function_disable_change'] = true;
+            
+            $options['more_button_popstyle'] = '';
+            $options['disable_more_button_popstyle'] = true;
+        }
+        
+        // Expert share counter options
+        if (essb_option_bool_value('deactivate_expertcounters')) {
+            $options['homepage_total_allposts'] = 'false';
+            $options['site_total_allposts'] = 'false';
+            $options['hide_counter_homepage'] = 'false';
+            $options['hide_counter_archive'] = 'false';
+            $options['cache_counter_refresh_cache'] = 'false';
+            $options['cache_counter_refresh_async'] = 'false';
+            $options['cache_counter_force'] = 'false';
+            $options['cache_counter_narrow'] = 'false';
+        }
+        
+        // advanced mobile
+        if (essb_option_bool_value('deactivate_method_advanced_mobile')) {
+            $options['activate_automatic_mobile'] = 'false';
+            $options['mobile_positions'] = 'false';
+        }
+        
+        // enable the translation menu if locate is not en-
+        $currentLanguage = get_bloginfo('language');
+        if (strpos($currentLanguage, 'en-') === false) {
+            $options['deactivate_module_translate'] = 'false';
         }
         
         return $options;

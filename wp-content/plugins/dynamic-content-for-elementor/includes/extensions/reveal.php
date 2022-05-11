@@ -8,7 +8,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Reveal extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class Reveal extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     public $name = 'Reveal';
     public $has_controls = \true;
@@ -50,7 +50,7 @@ class DCE_Extension_Reveal extends \DynamicContentForElementor\Extensions\DCE_Ex
     public function reveal_render_template($content, $widget)
     {
         $settings = $widget->get_settings_for_display();
-        if ($settings['enabled_reveal']) {
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() || $settings['enabled_reveal']) {
             $this->enqueue_all();
             $id_item = $widget->get_id();
             $content = '<div id="reveal-' . $id_item . '" class="revealFx">' . $content . '</div>';

@@ -15,6 +15,10 @@ class GP_Field_Nested_Form extends GF_Field {
 		);
 	}
 
+	public function get_form_editor_field_icon() {
+		return gp_nested_forms()->get_base_url() . '/field-icon.svg';
+	}
+
 	public function get_form_editor_field_settings() {
 		return array(
 			'conditional_logic_field_setting',
@@ -183,8 +187,7 @@ class GP_Field_Nested_Form extends GF_Field {
 
 	public function get_add_button( $form_id, $nested_form_id, $tabindex, $label ) {
 		return sprintf(
-			'
-			<button type="button" class="gpnf-add-entry"
+			'<button type="button" class="gpnf-add-entry"
 		        data-formid="%s"
 		        data-nestedformid="%s"
 				data-bind="attr: { disabled: isMaxed }, css: { \'gf-default-disabled\': isMaxed }"
@@ -420,6 +423,17 @@ class GP_Field_Nested_Form extends GF_Field {
 
 	public function get_items_label() {
 		return rgar( $this->get_item_labels(), 'plural' );
+	}
+
+	public function is_value_submission_empty( $form_id ) {
+		/**
+		 * Gravity Flow runs fields through is_value_submission_empty() and expects a falsey value before it'll run validate() on the field.
+		 */
+		if ( function_exists( 'gravity_flow' ) && gravity_flow()->is_workflow_detail_page() ) {
+			return false;
+		}
+
+		return parent::is_value_submission_empty( $form_id );
 	}
 
 	public function validate( $value, $form ) {

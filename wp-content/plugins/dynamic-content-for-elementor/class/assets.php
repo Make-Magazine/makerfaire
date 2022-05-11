@@ -2,7 +2,6 @@
 
 namespace DynamicContentForElementor;
 
-use Elementor\Core\Files\CSS;
 if (!\defined('ABSPATH')) {
     exit;
 }
@@ -11,6 +10,7 @@ class Assets
     public static $dce_styles = [];
     public static $dce_scripts = [];
     public static $styles = array(
+        'dce-icon' => '/assets/css/dce-icon.css',
         'dce-crypto-badge' => '/assets/css/crypto-badge.css',
         'dce-icons-form-style' => '/assets/css/icons-form.css',
         'dce-hidden-label' => 'assets/css/hidden-label.css',
@@ -19,11 +19,11 @@ class Assets
         'dce-animations' => '/assets/css/animations.css',
         'dce-preview' => '/assets/css/preview.css',
         'dce-acf' => '/assets/css/acf-fields.css',
-        'dce-acfRelationship' => '/assets/css/acf-relationship.css',
+        'dce-acf-relationship' => '/assets/css/acf-relationship.css',
         'dce-acfslider' => '/assets/css/acf-slider.css',
         'dce-acfGallery' => '/assets/css/acf-gallery.css',
+        'dce-acf-repeater-old' => '/assets/css/acf-repeater-old.css',
         'dce-acf-repeater' => '/assets/css/acf-repeater.css',
-        'dce-acf-repeater-v2' => '/assets/css/acf-repeater-v2.css',
         'dce-add-to-calendar' => '/assets/css/add-to-calendar.css',
         'dce-dynamic-visibility' => '/assets/css/dynamic-visibility.css',
         'dce-copy-to-clipboard' => '/assets/css/copy-to-clipboard.css',
@@ -43,6 +43,7 @@ class Assets
         'dce-dynamicPosts-grid' => '/assets/css/dynamic-posts-skin-grid.css',
         'dce-dynamicPosts-carousel' => '/assets/css/dynamic-posts-skin-carousel.css',
         'dce-dynamicPosts-dualcarousel' => '/assets/css/dynamic-posts-skin-dual-carousel.css',
+        'dce-dynamicPosts-accordion' => ['path' => '/assets/css/dynamic-posts-skin-accordion.css', 'deps' => ['dce-accordionjs']],
         'dce-dynamicPosts-timeline' => '/assets/css/dynamic-posts-skin-timeline.css',
         'dce-dynamicPosts-smoothscroll' => '/assets/css/dynamic-posts-skin-smoothscroll.css',
         'dce-dynamicPosts-gridtofullscreen3d' => '/assets/css/dynamic-posts-skin-grid-to-fullscreen-3d.css',
@@ -59,7 +60,7 @@ class Assets
         'dce-pageScroll' => '/assets/css/page-scroll.css',
         'dce-reveal' => '/assets/css/reveal.css',
         'dce-threesixtySlider' => '/assets/css/360-slider.css',
-        'dce-twentytwenty' => '/assets/css/before-after.css',
+        'dce-before-after' => '/assets/css/before-after.css',
         'dce-parallax' => '/assets/css/parallax.css',
         'dce-filebrowser' => '/assets/css/file-browser.css',
         'dce-animatetext' => '/assets/css/animated-text.css',
@@ -69,7 +70,7 @@ class Assets
         'dce-title' => '/assets/css/title.css',
         'dce-breadcrumbs' => '/assets/css/breadcrumbs.css',
         'dce-date' => '/assets/css/date.css',
-        'dce-addtofavorites' => '/assets/css/add-to-favorites.css',
+        'dce-add-to-favorites' => '/assets/css/add-to-favorites.css',
         'dce-terms' => '/assets/css/terms-and-taxonomy.css',
         'dce-content' => '/assets/css/content.css',
         'dce-excerpt' => '/assets/css/excerpt.css',
@@ -78,7 +79,7 @@ class Assets
         'dce-svg' => '/assets/css/svg.css',
         'dce-views' => '/assets/css/views.css',
     );
-    public static $vendor_css = array('dce-jquery-confirm' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css', 'dce-osm-map' => 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css', 'dce-photoSwipe_default' => '/assets/lib/photoSwipe/photoswipe.min.css', 'dce-photoSwipe_skin' => '/assets/lib/photoSwipe/default-skin/default-skin.css', 'dce-justifiedGallery' => '/assets/lib/justifiedGallery/css/justifiedGallery.min.css', 'dce-file-icon' => '/assets/lib/file-icon/file-icon-vivid.min.css', 'animatecss' => '/assets/lib/animate/animate.min.css', 'datatables' => '/assets/lib/datatables/datatables.min.css', 'dce-plyr' => 'https://cdn.plyr.io/3.6.9/plyr.css', 'dce-swiper' => '/assets/lib/swiper/css/swiper.min.css');
+    public static $vendor_css = array('dce-jquery-confirm' => '/assets/lib/jquery-confirm/jquery-confirm.min.css', 'dce-osm-map' => '/assets/lib/leaflet/leaflet.css', 'dce-photoSwipe_default' => '/assets/lib/photoSwipe/photoswipe.min.css', 'dce-photoSwipe_skin' => '/assets/lib/photoSwipe/default-skin/default-skin.css', 'dce-justifiedGallery' => '/assets/lib/justifiedGallery/css/justifiedGallery.min.css', 'dce-file-icon' => '/assets/lib/file-icon/file-icon-vivid.min.css', 'animatecss' => '/assets/lib/animate/animate.min.css', 'datatables' => '/assets/lib/datatables/datatables.min.css', 'dce-plyr' => '/assets/lib/plyr/plyr.css', 'dce-swiper' => '/assets/lib/swiper/css/swiper.min.css', 'dce-accordionjs' => '/assets/lib/accordionjs/accordion.css');
     public static $vendor_js;
     private static function init_vendor_js()
     {
@@ -98,17 +99,17 @@ class Assets
         }
         $paypal_currency = get_option('dce_paypal_api_currency', 'USD');
         self::$vendor_js = [
-            'dce-pdf-js' => ['path' => 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js', 'deps' => []],
-            'dce-chart-js' => 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js',
-            'dce-imagesloaded' => 'https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js',
-            'dce-jquery-confirm' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js',
-            'dce-leaflet' => 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js',
+            'dce-pdf-js' => ['path' => '/assets/lib/pdf-js/pdf.min.js', 'deps' => []],
+            'dce-chart-js' => '/assets/lib/chart-js/chart.min.js',
+            'dce-imagesloaded' => '/assets/lib/imagesloaded/imagesloaded.pkgd.min.js',
+            'dce-jquery-confirm' => '/assets/lib/jquery-confirm/jquery-confirm.min.js',
+            'dce-leaflet' => '/assets/lib/leaflet/leaflet.js',
             'dce-expressionlanguage' => '/assets/lib/expressionlanguage/expressionlanguage.min.js',
-            'dce-html2canvas' => 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js',
-            'dce-jspdf' => 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.1.1/jspdf.umd.min.js',
-            'dce-aframe' => ['path' => 'https://cdnjs.cloudflare.com/ajax/libs/aframe/1.0.4/aframe.min.js', 'deps' => [], 'in_footer' => \false],
+            'dce-html2canvas' => '/assets/lib/html2canvas/html2canvas.min.js',
+            'dce-jspdf' => '/assets/lib/js-pdf/jspdf.umd.min.js',
+            'dce-aframe' => ['path' => '/assets/lib/aframe/aframe.min.js', 'deps' => [], 'in_footer' => \false],
             'dce-datatables' => '/assets/lib/datatables/datatables.min.js',
-            'dce-plyr-js' => 'https://cdn.plyr.io/3.6.9/plyr.polyfilled.js',
+            'dce-plyr-js' => '/assets/lib/plyr/plyr.polyfilled.js',
             'dce-dayjs' => '/assets/lib/dayjs/dayjs.min.js',
             'dce-wow' => '/assets/lib/wow/wow.min.js',
             'dce-jquery-match-height' => 'assets/lib/jquery-match-height/jquery.matchHeight-min.js',
@@ -127,10 +128,10 @@ class Assets
             'justifiedGallery-lib' => '/assets/lib/justifiedGallery/js/jquery.justifiedGallery.min.js',
             'dce-parallaxjs-lib' => '/assets/lib/parallaxjs/parallax.min.js',
             'dce-threesixtyslider-lib' => '/assets/lib/threesixty-slider/threesixty.min.js',
-            'dce-jqueryeventmove-lib' => '/assets/lib/twentytwenty/jquery.event.move.js',
+            'dce-jqueryeventmove-lib' => ['path' => '/assets/lib/twentytwenty/jquery.event.move.js', 'deps' => ['jquery']],
             'dce-twentytwenty-lib' => '/assets/lib/twentytwenty/jquery.twentytwenty.js',
             'dce-anime-lib' => '/assets/lib/anime/anime.min.js',
-            'dce-signature-lib' => 'https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js',
+            'dce-signature-lib' => '/assets/lib/signature-pad/signature_pad.min.js',
             'dce-distortion-lib' => '/assets/lib/distortion/distortion-lib.js',
             'dce-threejs-lib' => '/assets/lib/threejs/three.min.js',
             'dce-threejs-figure' => '/assets/lib/threejs/figure.js',
@@ -158,7 +159,7 @@ class Assets
             // WebGL Distortion
             'dce-data-gui' => '/assets/lib/threejs/libs/dat.gui.min.js',
             'dce-displacement-sketch' => '/assets/lib/threejs/sketch.js',
-            // Dynamic Posts v2
+            // Dynamic Posts
             'dce-threejs-gridtofullscreeneffect' => '/assets/lib/threejs/GridToFullscreenEffect.js',
             'dce-threejs-TweenModule' => '/assets/lib/threejs/libs/tween.module.min.js',
             'dce-threejs-TrackballControls' => '/assets/lib/threejs/controls/TrackballControls.js',
@@ -185,12 +186,14 @@ class Assets
             'dce-scrollify' => '/assets/lib/scrollify/jquery.scrollify.js',
             'dce-inertia-scroll' => '/assets/lib/inertiaScroll/jquery-inertiaScroll.js',
             'dce-lax-lib' => '/assets/lib/lax/lax.min.js',
-            'dce-google-maps-markerclusterer' => 'https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js',
-            'dce-google-maps' => '/assets/js/dynamic-google-maps.js',
+            'dce-google-maps-markerclusterer' => '/assets/lib/markerclustererplus/index.min.js',
+            'dce-google-maps' => ['path' => '/assets/js/dynamic-google-maps.js', 'deps' => ['dce-google-maps-markerclusterer', 'dce-google-maps-api']],
             'dce-stripe-js' => 'https://js.stripe.com/v3',
-            'dce-popper' => 'https://unpkg.com/@popperjs/core@2',
-            'dce-tippy' => ['path' => 'https://unpkg.com/tippy.js@6', 'deps' => ['dce-popper']],
-            'dce-jquery-color' => ['path' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery-color/2.1.2/jquery.color.min.js', 'deps' => ['jquery']],
+            'dce-popper' => '/assets/lib/popperjs/popper.min.js',
+            'dce-tippy' => ['path' => '/assets/lib/tippy/tippy-bundle.umd.min.js', 'deps' => ['dce-popper']],
+            'dce-jquery-color' => ['path' => '/assets/lib/jquery-color/jquery.color.min.js', 'deps' => ['jquery']],
+            'dce-tinymce-js' => includes_url('js/tinymce/') . 'wp-tinymce.php',
+            'dce-accordionjs' => '/assets/lib/accordionjs/accordion.min.js',
         ];
         if (!empty($google_maps_api)) {
             self::$vendor_js['dce-google-maps-api'] = "https://maps.googleapis.com/maps/api/js?key={$google_maps_api}&language={$locale2}";
@@ -200,6 +203,7 @@ class Assets
         }
     }
     public static $scripts = array(
+        'dce-pdf-button' => '/assets/js/pdf-button.js',
         'dce-form-address-autocomplete' => ['path' => '/assets/js/form-address-autocomplete.js', 'deps' => ['dce-google-maps-api']],
         'dce-osm-map' => ['path' => '/assets/js/osm-map.js', 'deps' => ['dce-leaflet']],
         'dce-conditional-fields' => ['path' => '/assets/js/conditional-fields.js', 'deps' => ['dce-expressionlanguage']],
@@ -207,11 +211,13 @@ class Assets
         'dce-dynamic-countdown' => '/assets/js/dynamic-countdown.js',
         'dce-js-field' => ['path' => '/assets/js/js-field.js', 'deps' => ['jquery']],
         'dce-amount-field' => '/assets/js/amount-field.js',
+        'dce-range' => '/assets/js/range.js',
         'dce-live-html' => '/assets/js/live-html.js',
         'dce-confirm-dialog' => ['path' => '/assets/js/confirm-dialog.js', 'deps' => ['dce-jquery-confirm', 'dce-live-html']],
         'dce-stripe' => ['path' => '/assets/js/stripe.js', 'deps' => ['dce-stripe-js']],
         'dce-paypal' => ['path' => '/assets/js/paypal.js', 'deps' => ['dce-paypal-sdk']],
         'dce-pdf-jsconv' => ['path' => '/assets/js/pdf-button-js-converter.js', 'deps' => ['dce-jspdf', 'dce-html2canvas']],
+        'dce-discover-tokens' => ['path' => '/assets/js/discover-tokens.js', 'deps' => ['dce-clipboard-js', 'dce-tippy', 'dce-popper']],
         'dce-dynamic-select' => '/assets/js/dynamic-select.js',
         'dce-dynamic-charts' => '/assets/js/dynamic-charts.js',
         'dce-hidden-label' => '/assets/js/hidden-label.js',
@@ -230,13 +236,14 @@ class Assets
         'dce-parallax-js' => '/assets/js/parallax.js',
         'dce-360-slider' => '/assets/js/360-slider.js',
         'dce-views' => '/assets/js/views.js',
-        'dce-twentytwenty' => ['path' => '/assets/js/after-before.js', 'deps' => ['dce-imagesloaded']],
+        'dce-before-after' => ['path' => '/assets/js/before-after.js', 'deps' => ['dce-imagesloaded']],
         'dce-tilt' => '/assets/js/tilt.js',
         'dce-dynamic-posts-old-version' => '/assets/js/dynamic-posts-old-version.js',
         'dce-icons-form' => '/assets/js/icons-form.js',
-        // Dynamic Posts v2
+        // Dynamic Posts
         'dce-dynamicPosts-base' => '/assets/js/dynamic-posts-base.js',
         'dce-dynamicPosts-grid' => '/assets/js/dynamic-posts-skin-grid.js',
+        'dce-dynamicPosts-accordion' => ['path' => '/assets/js/dynamic-posts-skin-accordion.js', 'deps' => ['dce-accordionjs']],
         'dce-dynamicPosts-grid-filters' => ['path' => '/assets/js/dynamic-posts-skin-grid-filters.js', 'deps' => ['dce-imagesloaded']],
         'dce-dynamicPosts-carousel' => '/assets/js/dynamic-posts-skin-carousel.js',
         'dce-dynamicPosts-dualcarousel' => '/assets/js/dynamic-posts-skin-dual-carousel.js',
@@ -259,14 +266,15 @@ class Assets
         'dce-svgdistortion' => '/assets/js/svg-distortion.js',
         'dce-svgfe' => '/assets/js/svg-filter-effects.js',
         'dce-svgblob' => '/assets/js/svg-blob.js',
-        'dce-imagesdistortion-js' => '/assets/js/distortion-image.js',
+        'dce-imagesdistortion-js' => ['path' => '/assets/js/distortion-image.js', 'deps' => ['dce-threejs-lib', 'dce-gsap-lib', 'dce-data-gui', 'dce-displacement-sketch', 'dce-distortion-lib']],
         'dce-scrolling' => '/assets/js/scrolling.js',
         'dce-animatedoffcanvasmenu-js' => '/assets/js/animated-off-canvas-menu.js',
         'dce-cursorTracker-js' => '/assets/js/cursor-tracker.js',
-        'dce-advancedvideo' => '/assets/js/advanced-video.js',
+        'dce-advanced-video' => ['path' => '/assets/js/advanced-video.js', 'deps' => ['dce-plyr-js']],
         'dce-form-summary' => '/assets/js/multi-step-summary.js',
         'dce-signature' => '/assets/js/signature.js',
         'dce-tooltip' => '/assets/js/tooltip.js',
+        'dce-add-to-favorites' => ['path' => '/assets/js/add-to-favorites.js', 'deps' => ['dce-cookie']],
     );
     public function __construct()
     {
@@ -291,11 +299,6 @@ class Assets
         // Custom CSS and JS
         add_action('wp_head', [$this, 'dce_head']);
         add_action('wp_footer', [$this, 'dce_footer'], 100);
-        // add custom body class
-        add_filter('body_class', function ($classes) {
-            $classes[] = 'elementor-dce';
-            return $classes;
-        });
         // force jquery in head
         add_action('wp_enqueue_scripts', function () {
             wp_enqueue_script('jquery');
@@ -303,7 +306,7 @@ class Assets
         // Admin Style
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_styles']);
         // Dashboard
-        add_action('admin_head', [$this, 'dce_icons']);
+        add_action('admin_head', [$this, 'register_and_enqueue_dce_icons']);
         // Scripts
         add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
         add_action('elementor/frontend/after_enqueue_scripts', [$this, 'dce_frontend_enqueue_scripts']);
@@ -319,21 +322,26 @@ class Assets
     }
     public static function dce_globals_stylescript()
     {
-        $is_in_editor = \Elementor\Plugin::$instance->editor->is_edit_mode();
+        // Fix for rare error: calling is_edit_mode on null
+        try {
+            $is_in_editor = \Elementor\Plugin::$instance->editor->is_edit_mode();
+        } catch (\Throwable $e) {
+            $is_in_editor = \false;
+        }
         $features = \DynamicContentForElementor\Plugin::instance()->features;
         // Global
         $smooth_enabled = $features->get_feature_info('gst_smooth_transition', 'status') === 'active';
         $theader_enabled = $features->get_feature_info('gst_tracker_header', 'status') === 'active';
         if ($smooth_enabled && (get_option('enable_smoothtransition') || $is_in_editor)) {
             // Global Settings CSS LIB
-            wp_enqueue_style('animsition-base', DCE_URL . 'assets/lib/animsition/css/animsition.css', array(), DCE_VERSION, \true);
+            wp_enqueue_style('animsition-base', DCE_URL . 'assets/lib/animsition/css/animsition.min.css', array(), DCE_VERSION);
             wp_enqueue_style('dce-animations');
             // Global Settings JS LIB
-            wp_enqueue_script('dce-animsition-lib', DCE_URL . 'assets/lib/animsition/js/animsition.min.js', array('jquery'), DCE_VERSION, \true);
+            wp_enqueue_script('dce-animsition-lib', DCE_URL . 'assets/lib/animsition/js/animsition.min.js', array('jquery'), DCE_VERSION);
         }
         if ($theader_enabled && (get_option('enable_trackerheader') || $is_in_editor)) {
             // Global Settings JS LIB
-            wp_enqueue_script('dce-trackerheader-lib', DCE_URL . 'assets/lib/headroom/headroom.min.js', array('jquery'), DCE_VERSION, \true);
+            wp_enqueue_script('dce-trackerheader-lib', DCE_URL . 'assets/lib/headroom/headroom.min.js', array('jquery'), DCE_VERSION);
         }
         if (($theader_enabled || $smooth_enabled) && (get_option('enable_trackerheader') || get_option('enable_smoothtransition') || $is_in_editor)) {
             wp_enqueue_script('dce-globalsettings-js');
@@ -369,7 +377,8 @@ class Assets
                 $deps = [];
             }
             if ('http' !== \substr($path, 0, 4)) {
-                if (!WP_DEBUG) {
+                if (!(WP_DEBUG || SCRIPT_DEBUG)) {
+                    // @phpstan-ignore-line
                     $path = \str_replace('.css', '.min.css', $path);
                 }
                 $path = plugins_url($path, DCE__FILE__);
@@ -404,7 +413,8 @@ class Assets
                 $deps = [];
             }
             if ('http' !== \substr($path, 0, 4)) {
-                if (!WP_DEBUG) {
+                if (!(WP_DEBUG || SCRIPT_DEBUG)) {
+                    // @phpstan-ignore-line
                     $path = \str_replace('.js', '.min.js', $path);
                 }
                 $path = plugins_url($path, DCE__FILE__);
@@ -450,12 +460,8 @@ class Assets
         $template_id = \DynamicContentForElementor\Elements::get_main_template_id();
         if ($template_id) {
             $widgets = get_post_meta($template_id, 'dce_widgets', \true);
-            if (!empty($widgets)) {
-                if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                    if (isset($widgets['dyncontel-panorama'])) {
-                        echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.0.4/aframe.min.js" integrity="sha512-C5o7nqPhPwvfu3ZXTzTXJMyDMdxu65TtMd+GNHUrxtxhK9TdYS56W4QCtIIL+dvE9jXRsH3HmIkM0sfcfPyjug==" crossorigin="anonymous"></script>';
-                    }
-                }
+            if (!empty($widgets) && !\Elementor\Plugin::$instance->editor->is_edit_mode() && isset($widgets['dyncontel-panorama'])) {
+                echo '<script src="' . DCE_URL . 'assets/lib/aframe/aframe.min.js"></script>';
             }
         }
     }
@@ -629,20 +635,19 @@ class Assets
      */
     public function enqueue_admin_styles()
     {
-        // Register Admin style
+        // Admin style
         wp_register_style('dce-admin-css', DCE_URL . 'assets/css/admin.css', [], DCE_VERSION);
+        wp_enqueue_style('dce-admin-css');
         // select2
         wp_enqueue_style('dce-select2', DCE_URL . 'assets/lib/select2/select2.min.css', [], DCE_VERSION);
         wp_enqueue_script('dce-select2', DCE_URL . 'assets/lib/select2/select2.full.min.js', array('jquery'), DCE_VERSION, \true);
-        // Enqueue Admin Style
-        wp_enqueue_style('dce-admin-css');
         // Enqueue Admin Script
         wp_enqueue_script('dce-admin-js', DCE_URL . 'assets/js/admin.js', [], DCE_VERSION, \true);
     }
-    public function dce_icons()
+    public function register_and_enqueue_dce_icons()
     {
         // Register styles
-        wp_register_style('dce-style-icons', plugins_url('/assets/css/dce-icon.css', DCE__FILE__), [], DCE_VERSION);
+        wp_register_style('dce-style-icons', DCE_URL . '/assets/css/dce-icon.css', [], DCE_VERSION);
         // Enqueue styles Icons
         wp_enqueue_style('dce-style-icons');
     }
@@ -667,7 +672,7 @@ class Assets
         wp_register_script('dce-script-editor-dynamic-visibility', plugins_url('/assets/js/editor-dynamic-visibility.js', DCE__FILE__), [], DCE_VERSION, \true);
         wp_enqueue_script('dce-script-editor-dynamic-visibility');
         // Labels on Dynamic Posts
-        wp_localize_script('dce-script-editor', 'posts_v2_item_label_localization', ['item_title' => '<i class="fa fa-font" aria-hidden="true"></i> ' . __('Title', 'dynamic-content-for-elementor'), 'item_image' => '<i class="eicon-featured-image" aria-hidden="true"></i> ' . __('Featured Image', 'dynamic-content-for-elementor'), 'item_date' => '<i class="fa fa-calendar" aria-hidden="true"></i> ' . __('Date', 'dynamic-content-for-elementor'), 'item_termstaxonomy' => '<i class="eicon-tags" aria-hidden="true"></i> ' . __('Terms', 'dynamic-content-for-elementor'), 'item_content' => '<i class="fa fa-align-left" aria-hidden="true"></i> ' . __('Content', 'dynamic-content-for-elementor'), 'item_author' => '<i class="eicon-user-circle-o" aria-hidden="true"></i> ' . __('Author', 'dynamic-content-for-elementor'), 'item_custommeta' => '<i class="eicon-custom" aria-hidden="true"></i> ' . __('Custom Meta Fields', 'dynamic-content-for-elementor'), 'item_readmore' => '<i class="eicon-button" aria-hidden="true"></i> ' . __('Read More', 'dynamic-content-for-elementor'), 'item_posttype' => '<i class="eicon-post-info" aria-hidden="true"></i> ' . __('Post Type', 'dynamic-content-for-elementor'), 'item_productprice' => '<i class="eicon-product-price" aria-hidden="true"></i> ' . __('Product Price', 'dynamic-content-for-elementor'), 'item_sku' => '<i class="eicon-product-info" aria-hidden="true"></i> ' . __('Product SKU', 'dynamic-content-for-elementor'), 'item_addtocart' => '<i class="eicon-product-add-to-cart" aria-hidden="true"></i> ' . __('Add to Cart', 'dynamic-content-for-elementor')]);
+        wp_localize_script('dce-script-editor', 'posts_v2_item_label_localization', ['item_title' => '<i class="fa fa-font" aria-hidden="true"></i> ' . __('Title', 'dynamic-content-for-elementor'), 'item_image' => '<i class="eicon-featured-image" aria-hidden="true"></i> ' . __('Featured Image', 'dynamic-content-for-elementor'), 'item_date' => '<i class="fa fa-calendar" aria-hidden="true"></i> ' . __('Date', 'dynamic-content-for-elementor'), 'item_termstaxonomy' => '<i class="eicon-tags" aria-hidden="true"></i> ' . __('Terms', 'dynamic-content-for-elementor'), 'item_content' => '<i class="fa fa-align-left" aria-hidden="true"></i> ' . __('Content', 'dynamic-content-for-elementor'), 'item_author' => '<i class="eicon-user-circle-o" aria-hidden="true"></i> ' . __('Author', 'dynamic-content-for-elementor'), 'item_custommeta' => '<i class="eicon-custom" aria-hidden="true"></i> ' . __('Custom Meta Field', 'dynamic-content-for-elementor'), 'item_jetengine' => '<i class="icon-dce-jetengine" aria-hidden="true"></i> ' . __('JetEngine Field', 'dynamic-content-for-elementor'), 'item_readmore' => '<i class="eicon-button" aria-hidden="true"></i> ' . __('Read More', 'dynamic-content-for-elementor'), 'item_posttype' => '<i class="eicon-post-info" aria-hidden="true"></i> ' . __('Post Type', 'dynamic-content-for-elementor'), 'item_productprice' => '<i class="eicon-product-price" aria-hidden="true"></i> ' . __('Product Price', 'dynamic-content-for-elementor'), 'item_sku' => '<i class="eicon-product-info" aria-hidden="true"></i> ' . __('Product SKU', 'dynamic-content-for-elementor'), 'item_addtocart' => '<i class="eicon-product-add-to-cart" aria-hidden="true"></i> ' . __('Add to Cart', 'dynamic-content-for-elementor')]);
     }
     /**
      * Enqueue admin styles
@@ -681,7 +686,12 @@ class Assets
         // Enqueue DCE Elementor Style
         wp_enqueue_style('dce-preview');
     }
-    public static function dce_icon()
+    /**
+     * Enqueue DCE Icons
+     *
+     * @return void
+     */
+    public static function enqueue_dce_icons()
     {
         // Enqueue styles Icons
         wp_enqueue_style('dce-style-icons');

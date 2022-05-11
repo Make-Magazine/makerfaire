@@ -108,13 +108,20 @@ class ESSB_TwitterCards {
 				
 			}
 			if (!empty($twitter_description)) {
+			    /**
+			     * @since 7.9 adding option to fix escaped quotes
+			     */
+			    $twitter_description = esc_html( wp_strip_all_tags( stripslashes( $twitter_description ), true ) );
 				$this->output_metatag('description', esc_attr($twitter_description));				
 			}
 			
 			$this->output_metatag('url', $twitter_url);
 			
 			if (!empty($twitter_image) && is_string($twitter_image) && $this->image_card) {
-				$this->output_metatag('image:src', esc_url($twitter_image));
+			    /**
+			     * @since 8.4 update from image:src to image only
+			     */
+				$this->output_metatag('image', esc_url($twitter_image));
 			}
 		}
 	}

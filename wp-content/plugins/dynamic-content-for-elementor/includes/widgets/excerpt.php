@@ -3,24 +3,27 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use DynamicContentForElementor\Helper;
 // Exit if accessed directly
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Excerpt extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class Excerpt extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
-    public static $remove_recursion_loop = [];
     public function get_style_depends()
     {
         return ['dce-excerpt'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
-        $post_type_object = get_post_type_object(get_post_type());
         $this->start_controls_section('section_content', ['label' => __('Excerpt', 'dynamic-content-for-elementor')]);
         $this->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'default' => 'div']);
         $this->add_control('excerpt_advanced', ['label' => __('Advanced manipulation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
@@ -45,25 +48,21 @@ class DCE_Widget_Excerpt extends \DynamicContentForElementor\Widgets\WidgetProto
         $this->add_control('hover_color', ['label' => __('Hover Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-excerpt a:hover' => 'color: {{VALUE}};'], 'condition' => ['link_to!' => 'none']]);
         $this->add_control('hover_animation', ['label' => __('Hover Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HOVER_ANIMATION, 'condition' => ['link_to!' => 'none']]);
         $this->end_controls_section();
-        $this->start_controls_section('section_dce_settings', ['label' => __('Dynamic Content', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_SETTINGS]);
+        $this->start_controls_section('section_dce_settings', ['label' => __('Source', 'dynamic-content-for-elementor')]);
         $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('other', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
         $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }
         $id_page = Helper::get_the_id($settings['other_post_source']);
-        if (isset($remove_recursion_loop[$id_page])) {
-            return;
-        }
-        $remove_recursion_loop[$id_page] = \true;
         $post = get_post($id_page);
         $excerpt = $post->post_excerpt;
-        if ($settings['excerpt_advanced']) {
+        if (!empty($settings['excerpt_advanced'])) {
             $excerpt = $this->get_the_excerpt($post);
         }
         if (empty($excerpt)) {
@@ -103,13 +102,13 @@ class DCE_Widget_Excerpt extends \DynamicContentForElementor\Widgets\WidgetProto
         $settings = $this->get_settings_for_display();
         $excerpt = $post->post_excerpt;
         if (!\trim(\strip_tags($excerpt))) {
-            if ($settings['excerpt_no_custom']) {
+            if (!empty($settings['excerpt_no_custom'])) {
                 $pieces = \explode('<!--more-->', $post->post_content, 2);
                 $excerpt = \reset($pieces);
             }
         }
         // remove shortcodes
-        if ($settings['excerpt_no_shortcode']) {
+        if (!empty($settings['excerpt_no_shortcode'])) {
             $excerpt = strip_shortcodes($excerpt);
             $excerpt = Helper::vc_strip_shortcodes($excerpt);
         }
@@ -118,7 +117,7 @@ class DCE_Widget_Excerpt extends \DynamicContentForElementor\Widgets\WidgetProto
         // Some kind of precaution against malformed CDATA in RSS feeds I suppose
         $excerpt = \str_replace(']]>', ']]&gt;', $excerpt);
         // Strip HTML if $allowed_tags_option is set to 'remove_all_tags_except'
-        if ($settings['excerpt_strip_tags']) {
+        if (!empty($settings['excerpt_strip_tags'])) {
             $allowed_tags = Helper::str_to_array(',', $settings['excerpt_allowed_tags'], 'strtolower');
             if (!empty($allowed_tags)) {
                 $tag_string = '<' . \implode('><', $allowed_tags) . '>';
@@ -127,9 +126,25 @@ class DCE_Widget_Excerpt extends \DynamicContentForElementor\Widgets\WidgetProto
             }
             $excerpt = \strip_tags($excerpt, $tag_string);
         }
-        // Create the excerpt
-        $excerpt = Helper::text_reduce($excerpt, $settings['excerpt_length'], $settings['excerpt_length_type'], $settings['excerpt_finish']);
-        $excerpt = $excerpt . $settings['excerpt_ellipsis'];
+        // Check if the excerpt is longer than excerpt_length setting
+        $excerpt_is_longer = \true;
+        switch ($settings['excerpt_length_type']) {
+            case 'words':
+                if (\str_word_count($excerpt) < $settings['excerpt_length']) {
+                    $excerpt_is_longer = \false;
+                }
+                break;
+            case 'charachters':
+                if (\strlen($excerpt) < $settings['excerpt_length']) {
+                    $excerpt_is_longer = \false;
+                }
+                break;
+        }
+        // Create the excerpt reduced
+        if ($excerpt_is_longer) {
+            $excerpt = Helper::text_reduce($excerpt, $settings['excerpt_length'], $settings['excerpt_length_type'], $settings['excerpt_finish']);
+            $excerpt = $excerpt . $settings['excerpt_ellipsis'];
+        }
         return $excerpt;
     }
 }

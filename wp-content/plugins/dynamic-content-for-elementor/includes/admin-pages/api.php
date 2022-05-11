@@ -8,18 +8,19 @@ use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Notice;
 class Api
 {
-    // 1. document the following function.
-    public function constructor()
+    public function __construct()
     {
         if (is_admin()) {
             $dce_google_maps_api = get_option('dce_google_maps_api');
             $dce_google_maps_api_acf = get_option('dce_google_maps_api_acf');
             if (!empty($dce_google_maps_api) && !empty($dce_google_maps_api_acf)) {
                 if (Helper::is_acfpro_active()) {
+                    // Set automatically Google Maps Api key for ACF Pro
                     add_action('acf/init', function () use($dce_google_maps_api) {
                         acf_update_setting('google_api_key', $dce_google_maps_api);
                     });
                 } elseif (Helper::is_acf_active()) {
+                    // Set automatically Google Maps Api key for ACF Free
                     add_filter('acf/fields/google_map/api', function ($api) use($dce_google_maps_api) {
                         $api['key'] = $dce_google_maps_api;
                         return $api;
@@ -54,7 +55,7 @@ EOD;
     {
         ?>
 	<div class="wrap">
-	  <h1><?php 
+		<h1><?php 
         echo esc_html(get_admin_page_title());
         ?></h1>
 
@@ -80,7 +81,7 @@ EOD;
             update_option('dce_stripe_api_secret_key_test', sanitize_text_field($_POST['dce_stripe_api_secret_key_test']));
             update_option('dce_stripe_api_mode', sanitize_text_field($_POST['dce_stripe_api_mode']));
             update_option('dce_coinmarketcap_key', sanitize_text_field($_POST['dce_coinmarketcap_key']));
-            Notice::dce_admin_notice__success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
+            Notice::success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
         }
         $coinmarketcap_key = get_option('dce_coinmarketcap_key');
         $dce_google_maps_api = get_option('dce_google_maps_api');
@@ -124,21 +125,25 @@ EOD;
 							<input class="dce-apis dce-apis-gmaps_acf" type="checkbox" name="dce_google_maps_api_acf" id="dce-apis-gmaps_acf"<?php 
             echo !empty($dce_google_maps_api_acf) ? ' checked' : '';
             ?>> <label for="dce-apis-gmaps_acf"><?php 
-            _e('Set this API also in ACF Configuration.', 'dynamic-content-for-elementor');
+            _e('Set this API also in Advanced Custom Fields Configuration.', 'dynamic-content-for-elementor');
             ?> <a href="https://www.advancedcustomfields.com/blog/google-maps-api-settings/" target="_blank"><?php 
             _e('Why?', 'dynamic-content-for-elementor');
             ?></a></label>
 							<?php 
         }
         ?>
-							<div class="dce-apis-gmaps-note">&nbsp;To learn more about the API Key for Google Maps <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">click here</a></div>
+							<div class="dce-apis-gmaps-note">
+								&nbsp;<?php 
+        \printf(__('%1$sLearn more%2$s about the API Key for Google Maps', 'dynamic-content-for-elementor'), '<a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank">', '</a>');
+        ?>
+							</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 
 			<?php 
-        submit_button('Save APIs');
+        submit_button(__('Save Integrations', 'dynamic-content-for-elementor'));
         ?>
 
 			<table class="widefat dce-form-table">
@@ -225,7 +230,7 @@ EOD;
 			</table>
 
 			<?php 
-        submit_button('Save APIs');
+        submit_button(__('Save Integrations', 'dynamic-content-for-elementor'));
         ?>
 
 			<table class="widefat dce-form-table">
@@ -302,16 +307,16 @@ EOD;
 			</table>
 
 			<?php 
-        submit_button('Save APIs');
+        submit_button(__('Save Integrations', 'dynamic-content-for-elementor'));
         ?>
 			<?php 
         $this->coinmarketcap_api($coinmarketcap_key);
         ?>
 			<input type="hidden" name="save-dce-apis" value="1" />
 			<?php 
-        submit_button('Save APIs');
+        submit_button(__('Save Integrations', 'dynamic-content-for-elementor'));
         ?>
 		</form>
-		  <?php 
+		<?php 
     }
 }

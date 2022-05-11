@@ -119,7 +119,7 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	 */
 	public static function get_sbi_link_styles( $settings ) {
 		if ( ! empty( $settings['hovercolor'] ) && $settings['hovercolor'] !== '#000' ) {
-			return 'style="background: rgba(' . esc_attr( sbi_hextorgb( $settings['hovercolor'] ) ) . ',0.85)"';
+			return ' style="background: rgba(' . esc_attr( sbi_hextorgb( $settings['hovercolor'] ) ) . ',0.85)"';
 		}
 		return '';
 	}
@@ -135,7 +135,7 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	 */
 	public static function get_hover_styles( $settings ) {
 		if ( ! empty( $settings['hovertextcolor'] ) && $settings['hovertextcolor'] !== '#000' ) {
-			return 'style="color: rgba(' . esc_attr( sbi_hextorgb( $settings['hovertextcolor'] ) ) . ',1)"';
+			return ' style="color: rgba(' . esc_attr( sbi_hextorgb( $settings['hovertextcolor'] ) ) . ',1)"';
 		}
 		return '';
 	}
@@ -153,7 +153,7 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	public static function get_sbi_info_styles( $settings ) {
 		$styles = '';
 		if ( (! empty( $settings['captionsize'] ) && $settings['captionsize'] !== 'inherit') || ! empty( $settings['captioncolor'] ) ) {
-			$styles = 'style="';
+			$styles = ' style="';
 			if ( ! empty( $settings['captionsize'] ) && $settings['captionsize'] !== 'inherit' ) {
 				$styles .= 'font-size: '. esc_attr( $settings['captionsize'] ) . 'px;';
 			}
@@ -177,7 +177,7 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	 */
 	public static function get_sbi_meta_color_styles( $settings ) {
 		if ( ! empty( $settings['likescolor'] ) ) {
-			return 'style="color: rgb(' . esc_attr( sbi_hextorgb( $settings['likescolor'] ) ). ');"';
+			return ' style="color: rgb(' . esc_attr( sbi_hextorgb( $settings['likescolor'] ) ). ');"';
 		}
 		return '';
 	}
@@ -194,16 +194,17 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	 */
 	public static function get_sbi_meta_size_color_styles( $settings ) {
 		$styles = '';
-		if ( (! empty( $settings['likessize'] ) && $settings['likessize'] !== 'inherit') || ! empty( $settings['likescolor'] ) ) {
-			$styles = 'style="';
+		if ( ( ! empty( $settings['likessize'] ) && $settings['likessize'] !== 'inherit' ) || ! empty( $settings['likescolor'] ) ) {
+			$styles = ' style="';
 			if ( ! empty( $settings['likessize'] ) && $settings['likessize'] !== 'inherit' ) {
-				$styles .= 'font-size: '. esc_attr( $settings['likessize'] ) . 'px;';
+				$styles .= 'font-size: ' . esc_attr( $settings['likessize'] ) . 'px;';
 			}
 			if ( ! empty( $settings['likescolor'] ) ) {
-				$styles .= 'color: rgb(' . esc_attr( sbi_hextorgb( $settings['likescolor'] ) ). ');';
+				$styles .= 'color: rgb(' . esc_attr( sbi_hextorgb( $settings['likescolor'] ) ) . ');';
 			}
 			$styles .= '"';
 		}
+
 		return $styles;
 	}
 
@@ -219,39 +220,44 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	 * @since 5.0
 	 */
 	public static function should_show_element( $element, $settings ) {
+		$customizer = sbi_doing_customizer( $settings );
+		if ( $customizer ) {
+			return true;
+		} else {
+			$hover_elements = array(
+				'hoverusername',
+				'hoverdate',
+				'hoverinstagram',
+				'hoverlocation',
+				'hovercaption',
+				'hoverlikes'
+			);
+			if ( in_array( $element, $hover_elements, true ) ) {
+				$hover_items = explode( ',', str_replace( ' ', '', $settings['hoverdisplay'] ) );
 
-		$hover_elements = array(
-			'hoverusername',
-			'hoverdate',
-			'hoverinstagram',
-			'hoverlocation',
-			'hovercaption',
-			'hoverlikes'
-		);
-		if ( in_array( $element, $hover_elements ) ) {
-			$hover_items = explode( ',', str_replace( ' ', '', $settings['hoverdisplay'] ) );
-			return in_array( str_replace( 'hover', '', $element ), (array)$hover_items );
-		}
+				return in_array( str_replace( 'hover', '', $element ), (array) $hover_items, true );
+			}
 
-		$standard_bool_default_true_options = array(
-			'caption',
-			'likes',
-			'headerfollowers',
-			'headerbio',
-			'headerstory'
-		);
-		$element_settings_pairs = array(
-			'caption' => 'showcaption',
-			'likes' => 'showlikes',
-			'headerfollowers' => 'showfollowers',
-			'headerbio' => 'showbio',
-			'headerstory' => 'stories',
-		);
-		if ( in_array( $element, $standard_bool_default_true_options, true ) ) {
-			return $settings[ $element_settings_pairs[ $element ] ] === 'true'
-			       || $settings[ $element_settings_pairs[ $element ] ] === 'on'
-			       || $settings[ $element_settings_pairs[ $element ] ] === true
-			       || ! isset( $settings[ $element_settings_pairs[ $element ] ] );
+			$standard_bool_default_true_options = array(
+				'caption',
+				'likes',
+				'headerfollowers',
+				'headerbio',
+				'headerstory'
+			);
+			$element_settings_pairs             = array(
+				'caption'         => 'showcaption',
+				'likes'           => 'showlikes',
+				'headerfollowers' => 'showfollowers',
+				'headerbio'       => 'showbio',
+				'headerstory'     => 'stories',
+			);
+			if ( in_array( $element, $standard_bool_default_true_options, true ) ) {
+				return $settings[ $element_settings_pairs[ $element ] ] === 'true'
+				       || $settings[ $element_settings_pairs[ $element ] ] === 'on'
+				       || $settings[ $element_settings_pairs[ $element ] ] === true
+				       || ! isset( $settings[ $element_settings_pairs[ $element ] ] );
+			}
 		}
 
 		return false;
@@ -295,7 +301,7 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	 */
 	public static function get_boxed_header_styles( $settings ) {
 		if ( ! empty( $settings['headerprimarycolor'] ) ) {
-			return 'style="background: rgb(' . esc_attr( sbi_hextorgb( $settings['headerprimarycolor'] ) ). ');"';
+			return ' style="background: rgb(' . esc_attr( sbi_hextorgb( $settings['headerprimarycolor'] ) ). ');"';
 		}
 		return '';
 	}
@@ -311,7 +317,7 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	 */
 	public static function get_header_bar_styles( $settings ) {
 		if ( ! empty( $settings['headersecondarycolor'] ) ) {
-			return 'style="background: rgb(' . esc_attr( sbi_hextorgb( $settings['headersecondarycolor'] ) ). ');"';
+			return ' style="background: rgb(' . esc_attr( sbi_hextorgb( $settings['headersecondarycolor'] ) ). ');"';
 		}
 		return '';
 	}
@@ -327,13 +333,13 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	 */
 	public static function get_header_info_styles( $settings ) {
 		if ( ! empty( $settings['headerprimarycolor'] ) ) {
-			return 'style="color: rgb(' . esc_attr( sbi_hextorgb( $settings['headerprimarycolor'] ) ). ');"';
+			return ' style="color: rgb(' . esc_attr( sbi_hextorgb( $settings['headerprimarycolor'] ) ). ');"';
 		}
 		return '';
 	}
 
 	/**
-	 * Layout for mobile feeds altered with the class added here based on settings.
+	 * Global header classes
 	 *
 	 * @param $settings
 	 *
@@ -341,17 +347,151 @@ class SB_Instagram_Display_Elements_Pro extends SB_Instagram_Display_Elements
 	 *
 	 * @since 5.0
 	 */
-	public static function get_mobilecols_class( $settings ) {
-		$disable_mobile = $settings['disablemobile'];
-		( $disable_mobile == 'on' || $disable_mobile == 'true' || $disable_mobile == true ) ? $disable_mobile = true : $disable_mobile = false;
-		if( $settings[ 'disablemobile' ] === 'false' ) $disable_mobile = '';
-
-		if ( $disable_mobile !== ' sbi_disable_mobile' && $settings['colsmobile'] !== 'same' ) {
-			$colsmobile = (int)( $settings['colsmobile'] ) > 0 ? (int)$settings['colsmobile'] : 'auto';
-			return ' sbi_mob_col_' . $colsmobile;
+	public static function get_header_class( $settings, $avatar, $type = 'normal' ) {
+		$customizer = sbi_doing_customizer( $settings );
+		if ( $customizer ) {
+			return ' :class="$parent.getHeaderClass(\'' . $type . '\')" ';
 		} else {
-			$colsmobile = (int)( $settings['cols'] ) > 0 ? (int)$settings['cols'] : 4;
-			return ' sbi_disable_mobile sbi_mob_col_' . (int)$settings['cols'];
+			$type_class     = SB_Instagram_Display_Elements_Pro::get_feed_type_class( $settings );
+			$centered_class = $settings['headerstyle'] === 'centered' && $type === 'normal' ? ' sbi_centered' : '';
+			$size_class     = SB_Instagram_Display_Elements_Pro::get_header_size_class( $settings );
+			$avatar_class   = $avatar !== '' ? '' : ' sbi_no_avatar';
+			$boxed_class    = $type === 'boxed' ? ' sbi_header_style_boxed' : '';
+			$palette_class  = SB_Instagram_Display_Elements::get_palette_class( $settings, '_header' );
+			$outside_class  = $settings['headeroutside'] ? ' sbi_header_outside' : '';
+
+			return ' class="sb_instagram_header ' . esc_attr( $type_class ) . esc_attr( $centered_class ) . esc_attr( $size_class ) . esc_attr( $outside_class ) . esc_attr( $avatar_class ) . esc_attr( $boxed_class ) . esc_attr( $palette_class ) . '" ';
 		}
 	}
+
+	/**
+	 * Header Story Attributes
+	 *
+	 * @param $customizer, $settings, $header_data, $avatar
+	 *
+	 * @return string
+	 *
+	 * @since 6.0
+	 */
+	public static function get_story_attributes( $customizer, $settings, $header_data, $avatar ){
+		if ( $customizer ) {
+			return ' :data-story-wait="$parent.getStoryData() ? $parent.getStoryDelays() : false" :data-story-data="$parent.getStoryData()" :data-story-avatar="$parent.getStoryData() ? $parent.getHeaderAvatar() : false" ';
+		} else {
+			$stories_delay     = SB_Instagram_Display_Elements_Pro::get_stories_delay( $settings );
+			$story_data        = SB_Instagram_Parse_Pro::get_story_data( $header_data );
+			$should_show_story = ! empty( $story_data ) ? SB_Instagram_Display_Elements_Pro::should_show_element( 'headerstory', $settings ) : false;
+
+			return $should_show_story ? ' data-story-wait="' . (int) $stories_delay . '" data-story-data="' . esc_attr( sbi_json_encode( $story_data ) ) . '" data-story-avatar="' . esc_attr( $avatar ) . '"' : '';
+		}
+	}
+
+	/**
+     * Photo wrap content
+     *
+	 * @param array $post
+	 * @param array $settings
+	 *
+	 * @return string
+     *
+     * @since 6.0
+	 */
+    public static function get_photo_wrap_content( $post, $settings ) {
+	    $post_id        = SB_Instagram_Parse_Pro::get_post_id( $post );
+	    $media_full_res = SB_Instagram_Parse_Pro::get_media_url( $post );
+	    $caption        = SB_Instagram_Parse_Pro::get_caption( $post, '' );
+	    $caption = SB_Instagram_Display_Elements::sanitize_caption( $caption );
+
+	    if ( sbi_doing_customizer( $settings ) ) {
+	    	$moderation_mode = SB_Instagram_Display_Elements_Pro::print_moderation_toggle_button( $post_id );
+	    	$shoppable_button = SB_Instagram_Display_Elements_Pro::print_shoppable_edit_button( $post_id, esc_url( $media_full_res ), $caption );
+		    return $moderation_mode . $shoppable_button;
+	    }
+
+	    return '';
+    }
+
+    /**
+     * Post Item HTML Attributes
+     * Mainly used in the VueJS Feed Preview
+     *
+	 * @param array $post
+	 *
+	 * @return string
+     *
+     * @since 6.0
+	 */
+    public static function get_sbi_item_attributes( $post, $settings = array() ) {
+	    $post_id = SB_Instagram_Parse_Pro::get_post_id( $post );
+	    $post_attributes = '';
+	    if ( sbi_doing_customizer( $settings ) ) {
+		    $post_attributes = ' :data-moderation="$parent.checkPostModertationModeAttribute(\'<?php echo $post_id ?>\')" ';
+	    }
+
+	    if ( $settings['captionlinks'] ) {
+            if ( ! empty( $settings['shoppablelist'][ $post_id ] ) ) {
+	            $post_attributes .= ' data-shoppable="' . esc_attr( $settings['shoppablelist'][ $post_id ] ) . '"';
+            }
+        }
+	    return $post_attributes;
+    }
+
+
+	/**
+     * Print Shoppable Button
+     *
+	 * @param int $post_id
+	 * @param string $media
+	 * @param string $caption
+	 *
+	 * @return string
+	 */
+	public static function print_shoppable_edit_button( $post_id, $media, $caption ){
+		ob_start();
+		$caption = SB_Instagram_Display_Elements::sanitize_caption( $caption );
+	?>
+		<button class="sb-shoppable-edit-btn sbi-btn-grey sb-button-standard"
+			v-if="!$parent.checkPostShoppableFeed(<?php echo $post_id ?>) && $parent.valueIsEnabled( $parent.customizerFeedData.settings.shoppablefeed ) && $parent.customizerScreens.activeSection === 'settings_shoppable_feed'"
+			:data-active="($parent.shoppableFeed.postId == <?php echo $post_id ?> || Object.keys($parent.customizerFeedData.settings.shoppablelist).length == 0 )  && $parent.valueIsEnabled( $parent.customizerFeedData.settings.shoppablefeed ) && $parent.customizerScreens.activeSection === 'settings_shoppable_feed'"
+			@click.prevent.default="$parent.openPostShoppableFeed(<?php echo $post_id ?>, '<?php echo $media ?>', '<?php echo htmlspecialchars($caption) ?>')">
+			<div class="sb-shoppable-edit-btn-link" v-html="$parent.svgIcons['link']"></div>
+			<span v-html="$parent.genericText.add"></span>
+		</button>
+		<button class="sb-shoppable-edit-btn sbi-btn-blue sb-button-standard"
+			v-if="$parent.checkPostShoppableFeed(<?php echo $post_id ?>) && $parent.valueIsEnabled( $parent.customizerFeedData.settings.shoppablefeed ) && $parent.customizerScreens.activeSection === 'settings_shoppable_feed'"
+			:data-active="($parent.shoppableFeed.postId == <?php echo $post_id ?> || Object.keys($parent.customizerFeedData.settings.shoppablelist).length == 0 )  && $parent.valueIsEnabled( $parent.customizerFeedData.settings.shoppablefeed ) && $parent.customizerScreens.activeSection === 'settings_shoppable_feed'"
+			@click.prevent.default="$parent.openPostShoppableFeed(<?php echo $post_id ?>, '<?php echo $media ?>', '<?php echo htmlspecialchars($caption) ?>')" >
+			<div class="sb-shoppable-edit-btn-link" v-html="$parent.svgIcons['link']"></div>
+			<span v-html="$parent.genericText.update"></span>
+		</button>
+	<?php
+		$html = ob_get_contents();
+		ob_get_clean();
+		return $html;
+	}
+
+
+	/**
+     * Print Moderation Toggle Button
+     *
+	 * @param int $post_id
+	 *
+	 * @return string
+	 */
+	public static function print_moderation_toggle_button( $post_id ){
+		ob_start();
+	?>
+		<div class="sbi-moderation-overlay-ctn" v-if="$parent.customizerScreens.activeSection === 'settings_filters_moderation' && $parent.viewsActive.moderationMode && $parent.valueIsEnabled($parent.customizerFeedData.settings.enablemoderationmode) " @click.prevent.default="$parent.addPostToModerationList('<?php echo $post_id ?>')">
+			<div class="sbi-moderation-toggle" :data-type="$parent.checkPostModertationMode('<?php echo $post_id ?>')">
+				<div class="sbi-moderation-toggle-icon sbi-moderation-checkmark"></div>
+				<div class="sbi-moderation-toggle-icon sbi-moderation-x"></div>
+			</div>
+		</div>
+	<?php
+		$html = ob_get_contents();
+		ob_get_clean();
+		return $html;
+	}
+
+
+
 }

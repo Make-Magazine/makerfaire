@@ -25,6 +25,7 @@ namespace DynamicOOOS\Stripe;
  * @property \Stripe\Service\ExchangeRateService $exchangeRates
  * @property \Stripe\Service\FileLinkService $fileLinks
  * @property \Stripe\Service\FileService $files
+ * @property \Stripe\Service\FinancialConnections\FinancialConnectionsServiceFactory $financialConnections
  * @property \Stripe\Service\Identity\IdentityServiceFactory $identity
  * @property \Stripe\Service\InvoiceItemService $invoiceItems
  * @property \Stripe\Service\InvoiceService $invoices
@@ -34,6 +35,7 @@ namespace DynamicOOOS\Stripe;
  * @property \Stripe\Service\OrderReturnService $orderReturns
  * @property \Stripe\Service\OrderService $orders
  * @property \Stripe\Service\PaymentIntentService $paymentIntents
+ * @property \Stripe\Service\PaymentLinkService $paymentLinks
  * @property \Stripe\Service\PaymentMethodService $paymentMethods
  * @property \Stripe\Service\PayoutService $payouts
  * @property \Stripe\Service\PlanService $plans
@@ -57,6 +59,7 @@ namespace DynamicOOOS\Stripe;
  * @property \Stripe\Service\TaxCodeService $taxCodes
  * @property \Stripe\Service\TaxRateService $taxRates
  * @property \Stripe\Service\Terminal\TerminalServiceFactory $terminal
+ * @property \Stripe\Service\TestHelpers\TestHelpersServiceFactory $testHelpers
  * @property \Stripe\Service\TokenService $tokens
  * @property \Stripe\Service\TopupService $topups
  * @property \Stripe\Service\TransferService $transfers

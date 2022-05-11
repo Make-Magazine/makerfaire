@@ -507,7 +507,7 @@
             }
 
         };
-        
+
         this.getModal = function () {
 
             var modal = '<div id="sbspf_modal_overlay">' +
@@ -997,24 +997,34 @@
                     if (typeof manager.state[plugin] !== 'undefined') {
                         var pluginData = manager.state[plugin];
 
+                      if (manager.state[plugin].current.type === 'feed') {
+                        $(this).closest('.sbsw-connected-accounts-wrap').find('.sbsw-connected-account').removeClass('sbsw-selected').find('.sbsw-add-remove-account').html(sbspf.use_text).prop('disabled',false);
+                        $(this).closest('.sbsw-connected-account').addClass('sbsw-selected');
+                        $(this).html(sbspf.selected_text).prop('disabled',true);
+                      } else {
                         if ($(this).closest('.sbsw-connected-account').hasClass('sbsw-selected')) {
-                            $(this).closest('.sbsw-connected-account').removeClass('sbsw-selected');
-                            $(this).html(sbspf.add_text);
+                          $(this).closest('.sbsw-connected-account').removeClass('sbsw-selected');
+                          $(this).html(sbspf.add_text);
                         } else {
-                            $(this).closest('.sbsw-connected-account').addClass('sbsw-selected');
-                            $(this).html(sbspf.remove_text);
-
+                          $(this).closest('.sbsw-connected-account').addClass('sbsw-selected');
+                          $(this).html(sbspf.remove_text);
                         }
+                      }
 
+                      if (manager.state[plugin].current.type === 'feed') {
                         var selected = [];
                         $pluginWrap.find('.sbsw-selected').each(function() {
-                            selected.push($(this).attr('data-user'));
+                          selected = pluginData.current.term = $(this).attr('data-user');
+                        });
+
+                      } else {
+                        var selected = [];
+                        $pluginWrap.find('.sbsw-selected').each(function() {
+                          selected.push($(this).attr('data-user'));
                         });
                         pluginData.current.term = selected.join(',');
-
-
-                        manager.updateShortcode();
-
+                      }
+                      manager.updateShortcode();
                     }
                 });
                 $pluginWrap.find('.sbsw-text-input-wrap input').on('input',function() {
@@ -1045,8 +1055,8 @@
 
                     if (plugin === 'instagram') {
                         var type = pluginData.current.type,
-                            inputType = pluginData.available_types[type].input,
-                            instructions = typeof pluginData.available_types[type].instructions !== 'undefined' ? pluginData.available_types[type].instructions : '';
+                            inputType = typeof pluginData.available_types[type] !== 'undefined' ? pluginData.available_types[type].input : 'connected',
+                            instructions = typeof pluginData.available_types[type] !== 'undefined' && typeof pluginData.available_types[type].instructions !== 'undefined' ? pluginData.available_types[type].instructions : '';
 
                         if (inputType === 'connected') {
                             $(this).find('.sbsw-connected-accounts-wrap').show();
@@ -1061,9 +1071,11 @@
                         $(this).find('.sbsw-text-input-wrap').hide();
                     } else if (plugin === 'twitter') {
                         var type = pluginData.current.type,
-                            inputType = pluginData.available_types[type].input,
-                            instructions = typeof pluginData.available_types[type].instructions !== 'undefined' ? pluginData.available_types[type].instructions : '';
-                        $(this).find('.sbsw-connected-accounts-wrap').hide();
+                          inputType = typeof pluginData.available_types[type] !== 'undefined' ? pluginData.available_types[type].input : 'connected',
+                          instructions = typeof pluginData.available_types[type] !== 'undefined' && typeof pluginData.available_types[type].instructions !== 'undefined' ? pluginData.available_types[type].instructions : '';
+                        if( $(this).find('.sbsw-connected-account').length === 0) {
+                          $(this).find('.sbsw-connected-accounts-wrap').hide();
+                        }
                         if (inputType === 'message') {
                             $(this).find('.sbsw-message-wrap').show();
                             $(this).find('.sbsw-text-input-wrap').hide();
@@ -1111,7 +1123,10 @@
                 var type = this.state.instagram.current.type,
                     term = this.state.instagram.current.term,
                     shortcodeType = '';
-                if (typeof this.state.instagram.available_types[type] !== 'undefined'
+              if (typeof this.state.instagram.available_types[type] === 'undefined') {
+                type = 'feed';
+                shortcodeType =  ' feed="' + this.state.instagram.current.term +'"';
+              } else if (typeof this.state.instagram.available_types[type] !== 'undefined'
                     && this.state.instagram.current.term !== '') {
                     shortcodeType = ' ' + this.state.instagram.settings.type + '="' + type +'"' + ' ' + this.state.instagram.available_types[type].term_shortcode + '="' + this.state.instagram.current.term +'"';
                 }
@@ -1148,7 +1163,10 @@
                 var type = this.state.twitter.current.type,
                     term = this.state.twitter.current.term,
                     shortcodeType = '';
-                if (typeof this.state.twitter.available_types[type] !== 'undefined'
+              if (typeof this.state.twitter.available_types[type] === 'undefined') {
+                type = 'feed';
+                shortcodeType =  ' feed="' + this.state.twitter.current.term +'"';
+              } else if (typeof this.state.twitter.available_types[type] !== 'undefined'
                     && this.state.twitter.current.term !== '') {
                     var term = this.state.twitter.current.term;
 

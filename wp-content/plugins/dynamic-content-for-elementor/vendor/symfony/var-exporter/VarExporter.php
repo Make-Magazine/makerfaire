@@ -34,14 +34,12 @@ final class VarExporter
      * @param bool  &$isStaticValue Set to true after execution if the provided value is static, false otherwise
      * @param bool  &$classes       Classes found in the value are added to this list as both keys and values
      *
-     * @return string
-     *
      * @throws ExceptionInterface When the provided value cannot be serialized
      */
     public static function export($value, bool &$isStaticValue = null, array &$foundClasses = []) : string
     {
         $isStaticValue = \true;
-        if (!\is_object($value) && !(\is_array($value) && $value) && !\is_resource($value) || $value instanceof \DynamicOOOS\UnitEnum) {
+        if (!\is_object($value) && !(\is_array($value) && $value) && !\is_resource($value) || $value instanceof \UnitEnum) {
             return Exporter::export($value);
         }
         $objectsPool = new \SplObjectStorage();

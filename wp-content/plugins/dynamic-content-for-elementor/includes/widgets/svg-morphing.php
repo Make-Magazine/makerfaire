@@ -3,7 +3,7 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
+use Elementor\Core\Schemes\Color as Scheme_Color;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Repeater;
 use DynamicContentForElementor\Helper;
@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_SvgMorphing extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class SvgMorphing extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -23,22 +23,12 @@ class DCE_Widget_SvgMorphing extends \DynamicContentForElementor\Widgets\WidgetP
     }
     private $coeff = 1;
     protected $svg_shapes = array('path' => 'path', 'polyline' => 'polyline');
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $idWidget = $this->get_id();
         $this->start_controls_section('section_svg_controls', ['label' => __('Controls', 'dynamic-content-for-elementor')]);
@@ -46,7 +36,7 @@ class DCE_Widget_SvgMorphing extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')], 'condition' => ['svg_trigger' => 'rollover']]);
         $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true], 'condition' => ['link_to' => 'custom', 'svg_trigger' => 'rollover'], 'default' => ['url' => ''], 'show_label' => \false]);
         $this->add_control('one_by_one', ['label' => __('One by one', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'return_value' => 'yes', 'frontend_available' => \true, 'separator' => 'before', 'condition' => ['svg_trigger' => 'scroll']]);
-        $this->add_control('playpause_control', ['label' => __('Animation Controls', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'default' => 'running', 'description' => __('In pause mode it is possible to shape the shapes. In Play you can manage the animation between one scene and another.', 'dynamic-content-for-elementor'), 'toggle' => \false, 'options' => ['running' => ['title' => __('Play', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-play'], 'paused' => ['title' => __('Pause', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-pause']], 'frontend_available' => \true, 'separator' => 'before', 'render_type' => 'ui', 'condition' => ['svg_trigger!' => 'rollover']]);
+        $this->add_control('playpause_control', ['label' => __('Animation Controls', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'default' => 'running', 'description' => __('In pause mode, it is possible to shape the shapes. You can manage the animation between one scene and another in play mode.', 'dynamic-content-for-elementor'), 'toggle' => \false, 'options' => ['running' => ['title' => __('Play', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-play'], 'paused' => ['title' => __('Pause', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-pause']], 'frontend_available' => \true, 'separator' => 'before', 'render_type' => 'ui', 'condition' => ['svg_trigger!' => 'rollover']]);
         $this->add_control('yoyo', ['label' => __('Yoyo', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true, 'separator' => 'before', 'condition' => ['svg_trigger' => 'animation']]);
         $this->add_control('repeat_morph', ['label' => __('Repeat', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'label_block' => \false, 'frontend_available' => \true, 'description' => __('Infinite: -1 or do not repeat: 0', 'dynamic-content-for-elementor'), 'default' => -1, 'min' => -1, 'max' => 25, 'step' => 1, 'condition' => ['svg_trigger!' => 'rollover', 'one_by_one' => '']]);
         $this->end_controls_section();
@@ -83,7 +73,7 @@ class DCE_Widget_SvgMorphing extends \DynamicContentForElementor\Widgets\WidgetP
         $repeater->add_control('easing_morph_ease', ['label' => __('Equation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Default', 'dynamic-content-for-elementor')] + Helper::get_gsap_timing_functions(), 'default' => '', 'frontend_available' => \true, 'label_block' => \false]);
         $this->end_controls_section();
         $this->start_controls_section('section_svg_animations', ['label' => __('Animations', 'dynamic-content-for-elementor')]);
-        $this->add_control('playpause_info_animation', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('<h2>You\'re on Pause Mode</h2><i>(it would be better to be in Play Mode).</i><br>If you\'re watching the scene in pause you won\'t see the changes to the parameters of the animations.', 'dynamic-content-for-elementor'), 'content_classes' => 'dce-document-settings', 'separator' => 'after', 'condition' => ['playpause_control' => 'paused']]);
+        $this->add_control('playpause_info_animation', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('You\'re on pause mode. It would be better to be in play mode. If you\'re watching the scene in pause mode, you won\'t see the changes to the parameters of the animations', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'separator' => 'after', 'condition' => ['playpause_control' => 'paused']]);
         $this->add_control('speed_morph', ['label' => __('Speed Transition', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0.7], 'range' => ['px' => ['min' => 0.2, 'max' => 5, 'step' => 0.1]], 'frontend_available' => \true]);
         $this->add_control('duration_morph', ['label' => __('Step Duration', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 1], 'range' => ['px' => ['min' => 0, 'max' => 12, 'step' => 0.1]], 'frontend_available' => \true]);
         $this->add_control('easing_morph', ['label' => __('Easing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_gsap_ease(), 'default' => 'easeInOut', 'frontend_available' => \true, 'label_block' => \false]);
@@ -99,14 +89,14 @@ class DCE_Widget_SvgMorphing extends \DynamicContentForElementor\Widgets\WidgetP
                 $default_shape = [['id_shape' => $svgs . '_1', 'shape_numbers' => '0.3,131.7 142.3,42.7 210.3,239.7 265.3,8.7 307.3,220.7 378.3,1.7 443.3,232.7 554.3,175.7 '], ['id_shape' => $svgs . '_2', 'shape_numbers' => '0.2,103.2 157.2,190.2 211.2,65.2 269.2,160.2 361.2,1.2 438.2,227.2 488.2,30.2 554.2,147.2 ']];
             }
             $this->start_controls_section('section_svg_' . $svgs, ['label' => $svgs, 'condition' => ['type_of_shape' => $svgs]]);
-            $this->add_control('playpause_info_' . $svgs, ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('<h2>You are in Play Mode</h2><i>(it would be better to be in Pause Mode).</i><br>If you are watching the scene in play it is difficult to change the parameters of the shapes. Pause and switch between shapes by clicking on the block.', 'dynamic-content-for-elementor'), 'content_classes' => 'dce-document-settings', 'separator' => 'after', 'condition' => ['playpause_control' => 'running']]);
-            $this->add_control('repeater_shape_' . $svgs, ['label' => 'Shape ' . $svgs, 'type' => Controls_Manager::REPEATER, 'default' => $default_shape, 'fields' => $repeater->get_controls(), 'title_field' => '{{{ id_shape }}}', 'frontend_available' => \true]);
+            $this->add_control('playpause_info_' . $svgs, ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('You are in play mode. It would be better to be in Pause Mode. If you are watching the scene in play mode, it is difficult to change the parameters of the shapes. Pause and switch between shapes by clicking on the block', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'separator' => 'after', 'condition' => ['playpause_control' => 'running']]);
+            $this->add_control('repeater_shape_' . $svgs, ['label' => 'Shape ' . $svgs, 'type' => Controls_Manager::REPEATER, 'default' => $default_shape ?? '', 'fields' => $repeater->get_controls(), 'title_field' => '{{{ id_shape }}}', 'frontend_available' => \true]);
             $this->end_controls_section();
             $count++;
         }
         // Section for pattern image
         $this->start_controls_section('section_svg_bgimage', ['label' => __('Pattern image', 'dynamic-content-for-elementor'), 'condition' => ['enable_image' => 'yes']]);
-        $this->add_control('playpause_info_image', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('<h2>You are in Play Mode</h2><i>(it would be better to be in Pause Mode).</i><br>If you are watching the scene in play it is difficult to change the parameters of the shapes. Pause and switch between shapes by clicking on the block.', 'dynamic-content-for-elementor'), 'content_classes' => 'dce-document-settings', 'separator' => 'after', 'condition' => ['playpause_control' => 'running']]);
+        $this->add_control('playpause_info_image', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('You are in play mode. It would be better to be in Pause Mode. If you are watching the scene in play mode, it is difficult to change the parameters of the shapes. Pause and switch between shapes by clicking on the block', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'separator' => 'after', 'condition' => ['playpause_control' => 'running']]);
         $this->add_control('svg_image', ['label' => __('Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'default' => ['url' => ''], 'frontend_available' => \true, 'show_label' => \false, 'dynamic' => ['active' => \true]]);
         $this->add_group_control(Group_Control_Image_Size::get_type(), ['name' => 'image', 'default' => 'thumbnail']);
         $this->add_responsive_control('svg_size', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '100', 'unit' => '%'], 'size_units' => ['%', 'px'], 'range' => ['%' => ['min' => 1, 'max' => 200], 'px' => ['min' => 1, 'max' => 2000]]]);
@@ -126,7 +116,7 @@ class DCE_Widget_SvgMorphing extends \DynamicContentForElementor\Widgets\WidgetP
         $realHeight = $imgsize * $imageProportion;
         return $realHeight;
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -179,7 +169,7 @@ class DCE_Widget_SvgMorphing extends \DynamicContentForElementor\Widgets\WidgetP
         ?>
 		<div class="dce-svg-morph-wrap">
 			<?php 
-        $target = $settings['link']['is_external'] ? 'target="_blank"' : '';
+        $target = !empty($settings['link']['is_external']) ? 'target="_blank"' : '';
         if ($link) {
             echo '<a href="' . $link . '" ' . $target . '>';
         }

@@ -13,6 +13,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+use InstagramFeed\SB_Instagram_Data_Encryption;
 
 class SB_Instagram_Post
 {
@@ -206,7 +207,7 @@ class SB_Instagram_Post
 	 *                custom sizes in the future
 	 */
 	public function resize_and_save_image( $image_sizes, $upload_dir, $upload_url ) {
-        $sbi_statuses_option = get_option( 'sbi_statuses', array() );
+		$sbi_statuses_option = get_option( 'sbi_statuses', array() );
 
 		if ( isset( $this->instagram_api_data['id'] ) ) {
 			$image_source_set    = SB_Instagram_Parse::get_media_src_set( $this->instagram_api_data );
@@ -250,23 +251,23 @@ class SB_Instagram_Post
 
 					$image_editor = wp_get_image_editor( $file_name );
 
-                    // If there is an error then lets try a fallback approach
-                    if ( is_wp_error( $image_editor ) ) {
+					// If there is an error then lets try a fallback approach
+					if ( is_wp_error( $image_editor ) ) {
 
-                        // Gives us access to the download_url() and wp_handle_sideload() functions.
-                        require_once( ABSPATH . 'wp-admin/includes/file.php' );
-                        
-                        $timeout_seconds = 5;
-                
-                        // Download file to temp dir.
-                        $temp_file = download_url( $file_name, $timeout_seconds );
-                        
-                        $image_editor = wp_get_image_editor( $temp_file );
+						// Gives us access to the download_url() and wp_handle_sideload() functions.
+						require_once ABSPATH . 'wp-admin/includes/file.php';
 
-	                    global $sb_instagram_posts_manager;
-	                    $details =  __( 'Using backup editor method.', 'instagram-feed' ) . ' ' . $file_name;
-	                    $sb_instagram_posts_manager->add_error( 'image_editor', $details );
-                    }
+						$timeout_seconds = 5;
+
+						// Download file to temp dir.
+						$temp_file = download_url( $file_name, $timeout_seconds );
+
+						$image_editor = wp_get_image_editor( $temp_file );
+
+						global $sb_instagram_posts_manager;
+						$details =  __( 'Using backup editor method.', 'instagram-feed' ) . ' ' . $file_name;
+						$sb_instagram_posts_manager->add_error( 'image_editor', $details );
+					}
 
 					// not uncommon for the image editor to not work using it this way
 					if ( ! is_wp_error( $image_editor ) ) {
@@ -304,8 +305,11 @@ class SB_Instagram_Post
 						$sb_instagram_posts_manager->add_error( 'image_editor', $message );
 					}
 
-				}
+					if ( ! empty( $temp_file ) ) {
+						@unlink( $temp_file );
+					}
 
+				}
 
 			}
 
@@ -346,7 +350,7 @@ class SB_Instagram_Post
 
 			$posts_table_name = $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE;
 			$stored = $wpdb->get_results( $wpdb->prepare( "SELECT media_id, aspect_ratio FROM $posts_table_name
-			WHERE instagram_id = %s 
+			WHERE instagram_id = %s
 			LIMIT 1", $this->instagram_post_id ), ARRAY_A );
 
 			if ( isset( $stored[0] ) ) {

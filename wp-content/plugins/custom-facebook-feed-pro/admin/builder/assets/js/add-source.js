@@ -23,6 +23,7 @@ var cffStorage = window.localStorage;
             newSourceData        : cff_source.newSourceData ? cff_source.newSourceData : null,
             sourceConnectionURLs : cff_source.sourceConnectionURLs,
             returnedApiSourcesList : [],
+            manualSourcePopupInit : cff_source.manualSourcePopupInit,
             addNewSource : {
                 typeSelected        : 'page',
                 manualSourceID      : null,
@@ -39,6 +40,10 @@ var cffStorage = window.localStorage;
         var self = this;
         if(self.newSourceData != null){
             self.initAddSourceData();
+        }
+        if( self.manualSourcePopupInit != undefined && self.manualSourcePopupInit == true){
+            self.viewsActive.sourcePopupScreen = 'step_3';
+            self.viewsActive.sourcePopup = true;
         }
         self.processFBConnectSuccess();
     },
@@ -128,7 +133,6 @@ var cffStorage = window.localStorage;
             var self = this;
             self.$parent.viewsActive.sourcePopup = true;
             self.$parent.viewsActive.sourcePopupScreen = 'step_2';
-            console.log(self.newSourceData) //Check Error
             if(self.newSourceData && !self.newSourceData.error){
                 if(self.newSourceData.admin || self.newSourceData.member){
                     self.addNewSource.typeSelected = 'group';

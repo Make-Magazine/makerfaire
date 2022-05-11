@@ -8,7 +8,7 @@ use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Settings\Base\CSS_Manager;
 use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager;
-use DynamicContentForElementor\Model as DCE_Settings_Model;
+use DynamicContentForElementor\Model as Settings_Model;
 if (!\defined('ABSPATH')) {
     exit;
 }
@@ -29,7 +29,7 @@ class GlobalSettings extends CSS_Manager
     {
         parent::__construct();
         self::add_panel_tabs();
-        self::dce_GlobalSettings();
+        self::global_settings();
     }
     /**
      * Get manager name.
@@ -112,33 +112,13 @@ class GlobalSettings extends CSS_Manager
     {
         Controls_Manager::add_tab(self::PANEL_TAB_SETTINGS, __('Settings', 'dynamic-content-for-elementor'));
     }
-    protected function dce_GlobalSettings()
+    protected function global_settings()
     {
-        $model_controls = DCE_Settings_Model::get_controls_list();
+        $model_controls = Settings_Model::get_controls_list();
     }
     public function dce_settings()
     {
-        $settings_e_site = $this->get_saved_settings(0);
-        $default_breakpoints = Responsive::get_default_breakpoints();
-        if (get_option('elementor_viewport_md')) {
-            $breakpointsMd = get_option('elementor_viewport_md');
-        } else {
-            $breakpointsMd = $default_breakpoints['md'];
-        }
-        if (get_option('elementor_viewport_lg')) {
-            $breakpointsLg = get_option('elementor_viewport_lg');
-        } else {
-            $breakpointsLg = $default_breakpoints['lg'];
-        }
-        if (get_option('elementor_viewport_xl')) {
-            $breakpointsXl = get_option('elementor_viewport_xl');
-        } else {
-            $breakpointsXl = $default_breakpoints['xl'];
-        }
-        $settings_e_site['elementor_viewport_md'] = $breakpointsMd;
-        $settings_e_site['elementor_viewport_lg'] = $breakpointsLg;
-        $settings_e_site['elementor_viewport_xl'] = $breakpointsXl;
-        return $settings_e_site;
+        return $this->get_saved_settings(0);
     }
     /**
      * Get saved settings.
@@ -154,7 +134,7 @@ class GlobalSettings extends CSS_Manager
      */
     protected function get_saved_settings($id)
     {
-        $model_controls = DCE_Settings_Model::get_controls_list();
+        $model_controls = Settings_Model::get_controls_list();
         $settings = [];
         foreach ($model_controls as $tab_name => $sections) {
             foreach ($sections as $section_name => $section_data) {
@@ -183,7 +163,7 @@ class GlobalSettings extends CSS_Manager
      */
     protected function save_settings_to_db(array $settings, $id)
     {
-        $model_controls = DCE_Settings_Model::get_controls_list();
+        $model_controls = Settings_Model::get_controls_list();
         $one_list_settings = [];
         foreach ($model_controls as $tab_name => $sections) {
             foreach ($sections as $section_name => $section_data) {

@@ -4,7 +4,7 @@ namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Repeater;
-use Elementor\Scheme_Color;
+use Elementor\Core\Schemes\Color as Scheme_Color;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
@@ -13,7 +13,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class SvgBlob extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -23,22 +23,12 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
     {
         return ['dce-svg'];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_blob', ['label' => __('Blob', 'dynamic-content-for-elementor')]);
         $this->add_control('tensionPoints', ['label' => __('Curve Tension', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 2], 'label_block' => \true, 'range' => ['px' => ['min' => 0, 'max' => 10, 'step' => 0.1]], 'frontend_available' => \true]);
@@ -68,7 +58,7 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
         $this->add_responsive_control('svg_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'prefix_class' => 'align-', 'separator' => 'before', 'default' => 'left', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -81,7 +71,7 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
         $stroke_width1 = $settings['stroke_width1']['size'];
         // Pattern Image
         $image_url = Group_Control_Image_Size::get_attachment_image_src($settings['svg_image']['id'], 'image', $settings);
-        if ($settings['svg_image']['id'] != '') {
+        if (!empty($settings['svg_image']['id'])) {
             $imageData = wp_get_attachment_image_src($settings['svg_image']['id'], $settings['image_size']);
             $h = $imageData[2];
             $w = $imageData[1];
@@ -89,12 +79,12 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
             $realHeight = $settings['svg_size']['size'] * $imageProportion;
             $this->add_render_attribute('_wrapper', 'data-coeff', $realHeight);
         }
-        if (!isset($settings['svgimage']) || $settings['svgimage_x']['size'] == '') {
+        if (!isset($settings['svg_image']) || empty($settings['svgimage_x']['size'])) {
             $posX = 0;
         } else {
             $posX = $settings['svgimage_x']['size'];
         }
-        if (!isset($settings['svgimage']) || $settings['svgimage_y']['size'] == '') {
+        if (!isset($settings['svg_image']) || empty($settings['svgimage_y']['size'])) {
             $posY = 0;
         } else {
             $posY = $settings['svgimage_y']['size'];
@@ -121,8 +111,7 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
             ?>" y="<?php 
             echo $posY . $settings['svgimage_y']['unit'];
             ?>">
-
-						<image id="img-pattern" xlink:href="<?php 
+					<image id="img-pattern" xlink:href="<?php 
             echo $image_url;
             ?>" width="<?php 
             echo $settings['svg_size']['size'] . $settings['svg_size']['unit'];
@@ -135,7 +124,6 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
         }
         ?>
 
-
 			<path id="path1-<?php 
         echo $widgetId;
         ?>" fill="<?php 
@@ -145,7 +133,6 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
         ?>" stroke="<?php 
         echo $stroke_color1;
         ?>" stroke-miterlimit="10"></path>
-
 
 			<g id="dot-container"></g>
 
@@ -164,8 +151,6 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
 			<?php 
         }
         ?>
-
-
 		</svg>
 		<?php 
         echo '</div>';
@@ -183,11 +168,11 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
 		var stroke_width1 = settings.stroke_width1.size;
 
 		var image = {
-		  id: settings.svg_image.id,
-		  url: settings.svg_image.url,
-		  size: settings.image_size,
-		  dimension: settings.image_custom_dimension,
-		  model: view.getEditModel()
+			id: settings.svg_image.id,
+			url: settings.svg_image.url,
+			size: settings.image_size,
+			dimension: settings.image_custom_dimension,
+			model: view.getEditModel()
 		};
 		var bgImage = elementor.imagesManager.getImageUrl( image );
 
@@ -212,7 +197,6 @@ class DCE_Widget_SvgBlob extends \DynamicContentForElementor\Widgets\WidgetProto
 				var patternImage = iFrameDOM.find('pattern#pattern-'+idWidget+' image');
 
 				if(patternImage.length){
-
 					var realHeight = data.coef * settings.svg_size.size;
 					pattern.attr('height',realHeight+settings.svg_size.unit);
 					patternImage.attr('height',realHeight+settings.svg_size.unit);

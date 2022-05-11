@@ -65,11 +65,7 @@ if (!function_exists('essb_optin_below_content')) {
 		
 		
 		if ( (is_singular('post') && $of_posts == 'true') || (is_page() && $of_pages == 'true') ) {
-		    $output .= do_shortcode('[easy-subscribe design="'.$of_design.'" mode="mailchimp" conversion="belowcontent" mobile_deactivate="'.$of_deactivate_mobile.'"]');
-			if ($of_creditlink == 'true') {
-				$output .= '<p class="essb-subscribe-poweredby'.($of_deactivate_mobile == 'true' ? ' essb-subscribe-mobile-hidden' : '').'">Powered by <a href="http://go.appscreo.com/essb" target="_blank">Best Social Sharing Plugin for WordPress</a> Easy Social Shre Buttons</p>';
-			}
-			
+		    $output .= do_shortcode('[easy-subscribe design="'.$of_design.'" mode="mailchimp" conversion="belowcontent" mobile_deactivate="'.$of_deactivate_mobile.'"]');			
 			$content .= $output ;
 		}
 		

@@ -13,6 +13,7 @@ namespace DynamicOOOS\Symfony\Component\Cache\Adapter;
 use DynamicOOOS\Predis\Connection\Aggregate\ClusterInterface;
 use DynamicOOOS\Predis\Connection\Aggregate\PredisCluster;
 use DynamicOOOS\Predis\Connection\Aggregate\ReplicationInterface;
+use DynamicOOOS\Predis\Response\ErrorInterface;
 use DynamicOOOS\Predis\Response\Status;
 use DynamicOOOS\Symfony\Component\Cache\CacheItem;
 use DynamicOOOS\Symfony\Component\Cache\Exception\InvalidArgumentException;
@@ -54,6 +55,7 @@ class RedisTagAwareAdapter extends AbstractTagAwareAdapter
      * @var string|null detected eviction policy used on Redis server
      */
     private $redisEvictionPolicy;
+    private $namespace;
     /**
      * @param \Redis|\RedisArray|\RedisCluster|\Predis\ClientInterface|RedisProxy|RedisClusterProxy $redis           The redis client
      * @param string                                                                                $namespace       The default namespace
@@ -73,6 +75,7 @@ class RedisTagAwareAdapter extends AbstractTagAwareAdapter
             }
         }
         $this->init($redis, $namespace, $defaultLifetime, new TagAwareMarshaller($marshaller));
+        $this->namespace = $namespace;
     }
     /**
      * {@inheritdoc}
@@ -138,7 +141,7 @@ EOLUA;
             }
         });
         foreach ($results as $id => $result) {
-            if ($result instanceof \RedisException) {
+            if ($result instanceof \RedisException || $result instanceof ErrorInterface) {
                 CacheItem::log($this->logger, 'Failed to delete key "{key}": ' . $result->getMessage(), ['key' => \substr($id, \strlen($this->namespace)), 'exception' => $result]);
                 continue;
             }
@@ -222,7 +225,7 @@ EOLUA;
 EOLUA;
         $success = \true;
         foreach ($results as $id => $values) {
-            if ($values instanceof \RedisException) {
+            if ($values instanceof \RedisException || $values instanceof ErrorInterface) {
                 CacheItem::log($this->logger, 'Failed to invalidate key "{key}": ' . $values->getMessage(), ['key' => \substr($id, \strlen($this->namespace)), 'exception' => $values]);
                 $success = \false;
                 continue;
@@ -260,6 +263,9 @@ EOLUA;
         }
         foreach ($hosts as $host) {
             $info = $host->info('Memory');
+            if ($info instanceof ErrorInterface) {
+                continue;
+            }
             $info = $info['Memory'] ?? $info;
             return $this->redisEvictionPolicy = $info['maxmemory_policy'];
         }

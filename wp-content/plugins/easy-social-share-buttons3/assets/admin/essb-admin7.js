@@ -7,6 +7,12 @@ jQuery(document).ready(function( $ ){
 				loadedEditorControls[key].refresh();
 			}
  		}
+		
+		setTimeout(function() {
+			$('.CodeMirror').each(function(i, el){
+			    el.CodeMirror.refresh();
+			});
+		}, 100);
 	};
 	
 	$('.essb-menu-item').on('click', function(e){
@@ -193,6 +199,27 @@ jQuery(document).ready(function( $ ){
 			});
 		});
 		
+		function essb_generate_inline_tweet_preview() {
+			var globalTemplate = $('#essb_options_cct_template').val(),
+				currentTemplate = $('#essb_options_cct_template_inline').val(),
+				r = [];
+			
+			if (currentTemplate == 'same') currentTemplate = globalTemplate;
+			
+			r.push('Easy Social Share Buttons for WordPress is developed to be a ');
+			r.push('<a class="essb-ctt-inline '+(currentTemplate != '' ? ' essb-ctt-inline-'+currentTemplate : '')+'">');
+			r.push('complete social media plugin');
+			r.push('<span class="essb-ctt-button"><i class="essb_icon_twitter"></i></span>');
+			r.push('</a>');
+			r.push('. It\'s build to increase your share, grow your followers, get new subscribers, or communicate with your visitors and customers.');
+			
+			if ($('.essb-clicktotweet-inline-preview').length) {
+				$('.essb-clicktotweet-inline-preview').css('max-width', '800px');
+				$('.essb-clicktotweet-inline-preview').css('margin', '30px auto');
+				$('.essb-clicktotweet-inline-preview').html(r.join(''));
+			}
+		}
+		
 		$('#essb_options_cct_template').on('change', function(e){
 			var r = [], template = $(this).val();
 			r.push('<div class="essb-ctt '+(template != '' ? ' essb-ctt-'+template : '')+'">');
@@ -205,6 +232,12 @@ jQuery(document).ready(function( $ ){
 				$('.essb-clicktotweet-preview').css('margin', '0 auto');
 				$('.essb-clicktotweet-preview').html(r.join(''));
 			}
+			
+			essb_generate_inline_tweet_preview();
+		});
+		
+		$('#essb_options_cct_template_inline').on('change', function(e){
+			essb_generate_inline_tweet_preview();
 		});
 		
 		$('#essb_options_mail_function').on('change', function(e) {
@@ -340,6 +373,101 @@ jQuery(document).ready(function( $ ){
 		if ($('#' + optionsSectionID).length) {
 			essb_activate_code_editors('#' + optionsSectionID);
 		}
+		
+	}
+	
+	/**
+	 * Clear short URL feature
+	 */
+	if ($('#essb-clear-post-shorturl').length) {
+		$('#essb-clear-post-shorturl').on('click', function(e) {
+			e.preventDefault();
+			
+			var options = {}, ajaxURL = '';
+			options['action'] = 'essb_admin_post_action';
+			options['cmd'] = 'clear_short';
+			options['essb_admin_post_action_token'] = $('#essb_admin_post_action_token').val();
+			options['post_id'] = $(this).attr('data-post-id') || '';
+			
+			if (typeof(essbcc_strings) != 'undefined') ajaxURL = essbcc_strings.ajax_url || '';
+			
+			if (ajaxURL != '') {
+				if($(this).hasClass('disabled')) {
+					return false;
+				}
+
+				//disable the button
+				$(this).addClass('disabled' );
+
+				//show spinner
+				$(this).siblings('.spinner').addClass('is-active');
+
+				
+				$.ajax({
+		            type: "POST",
+		            url: ajaxURL,
+		            data: options,
+		            success: function (data) {
+		            	console.log(data);
+		            	var button = $('#essb-clear-post-shorturl')
+		            	$(button).siblings('.spinner').removeClass('is-active');
+		            	
+		            	if (data && data.code && data.code == 200) {
+		            		$(button).siblings('.dashicons-yes').fadeIn().css('display', 'inline-block');
+		            		setTimeout(function() { $(button).siblings('.dashicons-yes').fadeOut(); }, 1500);
+		            		$('.essb-post-shorturl-list').html('');
+		            	}
+						$(button).removeClass('disabled');
+		            }
+		    	});
+			}
+		});
+	}
+	
+	// delete share counter
+	if ($('#essb-delete-post-counter').length) {
+		$('#essb-delete-post-counter').on('click', function(e) {
+			e.preventDefault();
+			
+			var options = {}, ajaxURL = '';
+			options['action'] = 'essb_admin_post_action';
+			options['cmd'] = 'clear_share_counters';
+			options['essb_admin_post_action_token'] = $('#essb_admin_post_action_token').val();
+			options['post_id'] = $(this).attr('data-post-id') || '';
+			
+			if (typeof(essbcc_strings) != 'undefined') ajaxURL = essbcc_strings.ajax_url || '';
+			
+			if (ajaxURL != '') {
+				if($(this).hasClass('disabled')) {
+					return false;
+				}
+	
+				//disable the button
+				$(this).addClass('disabled' );
+	
+				//show spinner
+				$(this).siblings('.spinner').addClass('is-active');
+	
+				
+				$.ajax({
+		            type: "POST",
+		            url: ajaxURL,
+		            data: options,
+		            success: function (data) {
+		            	console.log(data);
+		            	var button = $('#essb-delete-post-counter')
+		            	$(button).siblings('.spinner').removeClass('is-active');
+		            	
+		            	if (data && data.code && data.code == 200) {
+		            		$(button).siblings('.dashicons-yes').fadeIn().css('display', 'inline-block');
+		            		setTimeout(function() { $(button).siblings('.dashicons-yes').fadeOut(); }, 1500);
+		            		$('.essb-post-shorturl-list').html('');
+		            	}
+						$(button).removeClass('disabled');
+		            }
+		    	});
+			}
+		});
 		
 	}
 });

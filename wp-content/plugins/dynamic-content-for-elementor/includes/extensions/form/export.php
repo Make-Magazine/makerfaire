@@ -9,7 +9,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Action_Base
+class Export extends \ElementorPro\Modules\Forms\Classes\Action_Base
 {
     public $has_action = \true;
     /**
@@ -42,7 +42,7 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
      */
     public function get_label()
     {
-        return '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Export', 'dynamic-content-for-elementor');
+        return '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Export', 'dynamic-content-for-elementor');
     }
     /**
      * Register Settings Section
@@ -55,8 +55,8 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
     public function register_settings_section($widget)
     {
         $widget->start_controls_section('section_dce_form_export', ['label' => $this->get_label(), 'condition' => ['submit_actions' => $this->get_name()]]);
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && !current_user_can('administrator')) {
-            $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="elementor-panel-alert elementor-panel-alert-warning">' . __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor') . '</div>']);
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
+            $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             $widget->end_controls_section();
             return;
         }
@@ -67,9 +67,9 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
         $widget->add_control('dce_form_export_empty', ['label' => __('Ignore fields with empty value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $widget->add_control('dce_form_export_json', ['label' => __('Encode Post Data in JSON', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_form_export_method' => 'post']]);
         $repeater_fields = new \Elementor\Repeater();
-        $repeater_fields->add_control('dce_form_export_field_key', ['label' => __('Field Key', 'dynamic-content-for-elementor'), 'description' => __('Is the key of the parameter in the request', 'dynamic-content-for-elementor') . '<br>?<b>field_key</b>=FieldValue&<b>page</b>=2&<b>txt</b>=Test<br>', 'type' => Controls_Manager::TEXT]);
-        $repeater_fields->add_control('dce_form_export_field_value', ['label' => __('Field Value', 'dynamic-content-for-elementor'), 'description' => __('Is the value of the parameter in the request', 'dynamic-content-for-elementor') . '<br>?field_key=<b>FieldValue</b>&page=<b>2</b>&txt=<b>Test</b><br>' . __('Can use static text, field Shortcode, Token or mixed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT]);
-        $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'raw' => esc_html__('If you don’t set at least one list argument nothing will be exported', 'dynamic-content-for-elementor')]);
+        $repeater_fields->add_control('dce_form_export_field_key', ['label' => __('Field Key', 'dynamic-content-for-elementor'), 'description' => __('It\'s the key of the parameter in the request', 'dynamic-content-for-elementor') . '<br>?<b>field_key</b>=FieldValue&<b>page</b>=2&<b>txt</b>=Test<br>', 'type' => Controls_Manager::TEXT]);
+        $repeater_fields->add_control('dce_form_export_field_value', ['label' => __('Field Value', 'dynamic-content-for-elementor'), 'description' => __('It\'s the value of the parameter in the request', 'dynamic-content-for-elementor') . '<br>?field_key=<b>FieldValue</b>&page=<b>2</b>&txt=<b>Test</b><br>' . __('Can use static text, field Shortcode, Token or mixed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT]);
+        $widget->add_control('dce_form_export_admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'raw' => esc_html__("If you don't set at least one list argument nothing will be exported", 'dynamic-content-for-elementor')]);
         $widget->add_control('dce_form_export_fields', ['label' => __('Exported Arguments list', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::REPEATER, 'fields' => $repeater_fields->get_controls(), 'title_field' => '{{{ dce_form_export_field_key }}} = {{{ dce_form_export_field_value }}}', 'prevent_empty' => \false]);
         $repeater_headers = new \Elementor\Repeater();
         $repeater_headers->add_control('dce_form_export_header_key', ['label' => __('Header Key', 'dynamic-content-for-elementor'), 'placeholder' => 'Content-Type', 'type' => Controls_Manager::TEXT]);
@@ -94,7 +94,7 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
         $settings = $record->get('form_settings');
         $fields = Helper::get_form_data($record);
         $settings = Helper::get_dynamic_value($settings, $fields);
-        $this->dce_elementor_form_export($fields, $settings, $ajax_handler);
+        $this->export($fields, $settings, $ajax_handler);
     }
     /**
      * On Export
@@ -105,7 +105,7 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
      */
     public function on_export($element)
     {
-        $tmp = array();
+        $tmp = [];
         if (!empty($element)) {
             foreach ($element['settings'] as $key => $value) {
                 if (\substr($key, 0, 4) == 'dce_') {
@@ -114,9 +114,9 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
             }
         }
     }
-    protected function dce_elementor_form_export($fields, $settings = null, $ajax_handler = null)
+    protected function export($fields, $settings = null, $ajax_handler = null)
     {
-        $export_data = array();
+        $export_data = [];
         if (!empty($settings['dce_form_export_fields'])) {
             foreach ($settings['dce_form_export_fields'] as $akey => $adata) {
                 // TOKENIZE parameters repeater
@@ -130,7 +130,7 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
                 $export_data[$adata['dce_form_export_field_key']] = $pvalue;
             }
         }
-        $args = array();
+        $args = [];
         $exp_url = $settings['dce_form_export_url'];
         if ($exp_url) {
             $pieces = \explode('/', $exp_url);
@@ -145,38 +145,14 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
                             $exp_url = add_query_arg($akey, $avalue, $exp_url);
                         }
                     }
-                    /* $args = array(
-                    	  'timeout'     => 5,
-                    	  'redirection' => 5,
-                    	  'httpversion' => '1.0',
-                    	  'user-agent'  => 'WordPress/' . $wp_version . '; ' . home_url(),
-                    	  'blocking'    => true,
-                    	  'headers'     => array(),
-                    	  'cookies'     => array(),
-                    	  'body'        => null,
-                    	  'compress'    => false,
-                    	  'decompress'  => true,
-                    	  'sslverify'   => true,
-                    	  'stream'      => false,
-                    	  'filename'    => null
-                    	  ); */
                 } else {
                     if ($settings['dce_form_export_json']) {
                         $args['body'] = wp_json_encode($export_data);
-                        $args['headers'] = array('Content-Type' => 'application/json; charset=utf-8');
+                        $args['headers'] = ['Content-Type' => 'application/json; charset=utf-8'];
                         $args['data_format'] = 'body';
                     } else {
                         $args['body'] = $export_data;
                     }
-                    /* $args =
-                     * method: POST,
-                     * timeout: 5,
-                     * redirection: 5,
-                     * httpversion: 1.0,
-                     * blocking: true,
-                     * headers: array(),
-                     * body: null,
-                     * cookies: array() */
                 }
                 if (!empty($settings['dce_form_export_headers'])) {
                     foreach ($settings['dce_form_export_headers'] as $akey => $adata) {
@@ -188,14 +164,6 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
                 if (!$settings['dce_form_export_ssl']) {
                     add_filter('https_ssl_verify', '__return_false');
                 }
-                /*
-                curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
-                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-                curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
-                curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, $timeout );
-                curl_setopt( $ch, CURLOPT_TIMEOUT, $timeout );
-                curl_setopt( $ch, CURLOPT_MAXREDIRS, 10 );
-                */
                 $args['follow_redirects'] = \true;
                 // Send the request
                 $req = 'wp_remote_' . $settings['dce_form_export_method'];
@@ -210,10 +178,7 @@ class DCE_Extension_Form_Export extends \ElementorPro\Modules\Forms\Classes\Acti
                     }
                 }
                 if ($settings['dce_form_pdf_log']) {
-                    $ret_body = wp_remote_retrieve_body($ret);
-                    //if (!$ret_body) {
                     $ret_body = $ret;
-                    //}
                     $log = $log . ' - ' . $req . \PHP_EOL;
                     $log .= 'request_url: ' . $exp_url . \PHP_EOL;
                     if ($settings['dce_form_export_method'] == 'post') {

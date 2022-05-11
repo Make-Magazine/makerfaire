@@ -67,7 +67,6 @@ var cffoEmbeds = new Vue({
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 if( data.success == false ) {
                     this.installerStatus = 'error'
                 }
@@ -160,7 +159,7 @@ var cffoEmbeds = new Vue({
 
         /**
          * Toggle Sticky Widget view
-         * 
+         *
          * @since 4.0
          */
          toggleStickyWidget: function() {

@@ -939,7 +939,8 @@ button.msp-img-btn {
     padding: 0;
 }
 .msp-slides>li {
-    float: left;
+    display: inline-block;
+    vertical-align: top;
 }
 .msp-slideframe ul {
     list-style: none;

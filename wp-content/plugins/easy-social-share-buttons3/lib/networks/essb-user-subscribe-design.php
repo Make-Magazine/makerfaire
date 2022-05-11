@@ -78,6 +78,11 @@ if (!function_exists('essb_user_subscribe_form_design')) {
 		$form_image_location = stripslashes(essb_array_value('image_location', $subscribe_design));
 		$has_image = ($form_image != '' && $form_image_location != '' && $form_image_location != 'background') ? true : false; // form contains or not proper image
 		$image_area_width = stripslashes(essb_array_value('image_area_width', $subscribe_design));
+		
+		/**
+		 * @since 8.0 Fields can be on the same line
+		 */
+		$sameline_fields = essb_array_value('sameline_fields', $subscribe_design);
 
 		if ($has_image && $image_area_width == '') { $image_area_width = '30'; }
 		if (!$has_image && $image_area_width != '') { $image_area_width = ''; }
@@ -119,6 +124,10 @@ if (!function_exists('essb_user_subscribe_form_design')) {
 			if ($image_area_width != '') {
 				$form_classes .= ' essb-imagearea-'.$image_area_width;
 			}
+		}
+		
+		if (!empty($sameline_fields) && $sameline_fields == 'true') {
+		    $form_classes .= ' essb-subscribe-linefields';
 		}
 
 		$output = '';
@@ -165,7 +174,7 @@ if (!function_exists('essb_user_subscribe_form_design')) {
 
 		$output .= ESSBNetworks_Subscribe::generate_if_needed_agree_check();
 
-		$output .= '<input class="submit essb-userform-button" name="submit" type="submit" value="'.esc_attr($form_button_placeholder).'" onclick="essb.ajax_subscribe(\''.$salt.'\', event);">';
+		$output .= '<input class="submit essb-userform-button" name="submit" type="submit" value="'.esc_attr($form_button_placeholder).'" onclick="essb_ajax_subscribe(\''.$salt.'\', event);">';
 		$output .= '</form>';
 
 		$output .= '<div class="essb-subscribe-loader"  style="display: none;">

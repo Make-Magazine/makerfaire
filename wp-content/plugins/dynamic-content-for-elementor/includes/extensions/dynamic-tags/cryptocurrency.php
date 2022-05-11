@@ -2,16 +2,16 @@
 
 namespace DynamicContentForElementor\Extensions\DynamicTags;
 
-use DynamicContentForElementor\Extensions\DCE_Extension_Prototype;
+use DynamicContentForElementor\Extensions\ExtensionPrototype;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class Cryptocurrency extends DCE_Extension_Prototype
+class Cryptocurrency extends ExtensionPrototype
 {
-    public function init($param = null)
+    public function __construct()
     {
-        parent::init();
+        parent::__construct();
         $this->add_dynamic_tag('Cryptocurrency');
     }
 }

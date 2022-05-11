@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Image_Size;
@@ -19,29 +19,19 @@ use DynamicContentForElementor\Tokens;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class PostMeta extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => __('Field', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_meta_key', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'default' => '_wp_page_template']);
         $this->add_control('dce_meta_array', ['label' => __('Multiple postmeta', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Enable if post has many postmeta with same meta_key.', 'dynamic-content-for-elementor')]);
-        $this->add_control('dce_meta_array_filter', ['label' => __('Filter occurrences', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['all' => ['title' => __('All', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-bars'], 'first' => ['title' => __('First', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-hand-o-up'], 'last' => ['title' => __('Last', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-hand-o-down']], 'default' => 'all', 'toggle' => \false, 'condition' => ['dce_meta_array!' => '']]);
+        $this->add_control('dce_meta_array_filter', ['label' => __('Filter occurrences', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['all' => __('All', 'dynamic-content-for-elementor'), 'first' => __('First', 'dynamic-content-for-elementor'), 'last' => __('Last', 'dynamic-content-for-elementor')], 'default' => 'all', 'toggle' => \false, 'condition' => ['dce_meta_array!' => '']]);
         $this->end_controls_section();
         $this->start_controls_section('dce_meta_render', ['label' => __('Render mode', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_key!' => '']]);
         $this->add_control('dce_meta_type', ['label' => __('Render as', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => [
@@ -65,7 +55,7 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         $this->end_controls_section();
         // REPEATER
         $this->start_controls_section('dce_meta_section_repeater', ['label' => __('Repeater', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'repeater']]);
-        $this->add_control('dce_meta_repeater', ['label' => __('Custom HTML & Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[ROW]', 'placeholder' => '[ROW]', 'description' => __('Type here some content, you can use HTML and TOKENS like [ROW:field_1], [ROW:field_2] where field name is the sub field configured in repeater.', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_meta_repeater', ['label' => __('Custom HTML & Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[ROW]', 'placeholder' => '[ROW]', 'description' => __('Type here some content, you can use HTML and Tokens like [ROW:field_1], [ROW:field_2] where field name is the sub field configured in repeater.', 'dynamic-content-for-elementor')]);
         $this->end_controls_section();
         // MULTIPLE
         $this->start_controls_section('dce_meta_section_multiple', ['label' => __('Multiple values', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'multiple']]);
@@ -84,14 +74,14 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         // DATE
         $this->start_controls_section('dce_meta_section_date', ['label' => __('Date', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'date']]);
         $this->add_control('dce_meta_date_format_source', ['label' => __('Source Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => '<a target="_blank" href="https://www.php.net/manual/en/function.date.php">' . __('Use standard PHP format character', 'dynamic-content-for-elementor') . '</a>' . __(', you can also use "timestamp"', 'dynamic-content-for-elementor'), 'placeholder' => __('YmdHis, d/m/Y, m-d-y', 'dynamic-content-for-elementor')]);
-        $this->add_control('dce_meta_date_format_display', ['label' => __('Display Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('Y/m/d H:i:s, d/m/Y, m-d-y', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_meta_date_format_display', ['label' => __('Display Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'Y/m/d H:i:s, d/m/Y, m-d-y']);
         $this->end_controls_section();
         // ID
         $this->start_controls_section('dce_meta_section_id', ['label' => __('ID', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'id']]);
         $this->add_control('dce_meta_id_type', ['label' => __('Object Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => 'post']);
         $this->add_control('dce_meta_id_render_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['simple' => ['title' => __('Simple', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-link'], 'text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'simple']);
         $this->add_control('dce_meta_id_render_type_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['dce_meta_id_render_type' => 'template']]);
-        $this->add_control('dce_meta_id_render_type_text', ['label' => __('Object html', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[post:thumb]<h4>[post:title]</h4><p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">READ MORE</a>', 'condition' => ['dce_meta_id_render_type' => 'text']]);
+        $this->add_control('dce_meta_id_render_type_text', ['label' => __('Object HTML and Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[post:thumb]<h4>[post:title]</h4><p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">READ MORE</a>', 'condition' => ['dce_meta_id_render_type' => 'text']]);
         $this->end_controls_section();
         // TEXT
         $this->start_controls_section('dce_meta_section_text', ['label' => __('Text', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'text']]);
@@ -116,8 +106,8 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         // BUTTON
         $this->start_controls_section('dce_meta_button_section_button', ['label' => __('Button', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'button']]);
         $this->add_control('dce_meta_button_type', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '', 'options' => ['' => __('Default', 'dynamic-content-for-elementor'), 'info' => __('Info', 'dynamic-content-for-elementor'), 'success' => __('Success', 'dynamic-content-for-elementor'), 'warning' => __('Warning', 'dynamic-content-for-elementor'), 'danger' => __('Danger', 'dynamic-content-for-elementor')], 'prefix_class' => 'elementor-button-']);
-        $this->add_control('dce_meta_button_text', ['label' => __('Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'default' => __('Click here', 'dynamic-content-for-elementor'), 'placeholder' => __('[META_VALUE], [META_VALUE:title], [META_VALUE:get_the_title]', 'dynamic-content-for-elementor'), 'description' => __('Can use a mix of text, Tokens and META_VALUE data', 'dynamic-content-for-elementor')]);
-        $this->add_control('dce_meta_button_link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'dynamic' => ['active' => \true], 'placeholder' => __('[META_VALUE], [META_VALUE:url], [META_VALUE|get_permalink]', 'dynamic-content-for-elementor'), 'default' => ['url' => '#'], 'description' => __('Can use a mix of text, Tokens and META_VALUE data', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_meta_button_text', ['label' => __('Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'default' => __('Click here', 'dynamic-content-for-elementor'), 'placeholder' => __('[META_VALUE], [META_VALUE:title], [META_VALUE:get_the_title]', 'dynamic-content-for-elementor'), 'description' => __('You can use a mix of text, Tokens and META_VALUE data', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_meta_button_link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'dynamic' => ['active' => \true], 'placeholder' => '[META_VALUE], [META_VALUE:url], [META_VALUE|get_permalink]', 'default' => ['url' => '#'], 'description' => __('You can use a mix of text, Tokens and META_VALUE data', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_meta_button_size', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'sm', 'options' => Helper::get_button_sizes(), 'style_transfer' => \true]);
         $this->add_control('dce_meta_button_icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICON, 'label_block' => \true, 'default' => '']);
         $this->add_control('dce_meta_button_icon_align', ['label' => __('Icon Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'left', 'options' => ['left' => __('Before', 'dynamic-content-for-elementor'), 'right' => __('After', 'dynamic-content-for-elementor')], 'condition' => ['dce_meta_button_icon!' => '']]);
@@ -126,8 +116,8 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         $this->add_control('dce_meta_button_css_id', ['label' => __('Button ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'title' => __('Add your custom id WITHOUT the Pound key. e.g: my-id', 'dynamic-content-for-elementor'), 'label_block' => \false, 'description' => __('Please make sure the ID is unique and not used elsewhere on the page where this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'dynamic-content-for-elementor'), 'separator' => 'before']);
         $this->end_controls_section();
         //* FALLBACK for NO RESULTS *//
-        $this->start_controls_section('dce_meta_section_fallback', ['label' => __('Empty field behaviour', 'dynamic-content-for-elementor')]);
-        $this->add_control('dce_meta_fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('If you want to show something when field is empty (empty, null, void, false, 0).', 'dynamic-content-for-elementor')]);
+        $this->start_controls_section('dce_meta_section_fallback', ['label' => __('Fallback', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_meta_fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('If you want to show something when the field is empty null, void, false, or 0', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_meta_fallback_zero', ['label' => __('Consider 0 as empty', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_meta_fallback!' => '']]);
         $this->add_control('dce_meta_fallback_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'text', 'condition' => ['dce_meta_fallback!' => '']]);
         $this->add_control('dce_meta_fallback_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as content, useful for complex structure.', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_fallback!' => '', 'dce_meta_fallback_type' => 'template']]);
@@ -223,24 +213,24 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         $this->add_control('array_css_classes', ['label' => __('CSS Classes', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'title' => __('Add your custom class WITHOUT the dot. e.g: my-class', 'dynamic-content-for-elementor')]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
-        $settings = $this->get_settings_for_display(null, \true);
-        if (empty($settings) || !$settings['dce_meta_key']) {
+        $settings = $this->get_settings_for_display();
+        if (empty($settings) || empty($settings['dce_meta_key'])) {
             return;
         }
-        $post_id = $id_page = Helper::get_the_id();
-        $page_type = get_post_type($id_page);
+        list($post_id, $id_page) = Helper::get_the_id();
+        $post_type = get_post_type($id_page);
         $meta_key = $settings['dce_meta_key'];
         $meta_name = Helper::get_post_meta_name($meta_key);
         $meta_values = get_post_meta($post_id, $meta_key);
-        if (\count($meta_values) > 1 && $settings['dce_meta_array']) {
+        if (\count($meta_values) > 1 && !empty($settings['dce_meta_array'])) {
             if ($settings['dce_meta_array_filter'] && $settings['dce_meta_array_filter'] != 'all') {
                 if ($settings['dce_meta_array_filter'] == 'first') {
-                    $meta_values = array(\reset($meta_value));
+                    $meta_values = array(\reset($meta_values));
                 }
                 if ($settings['dce_meta_array_filter'] == 'last') {
-                    $meta_values = array(\end($meta_value));
+                    $meta_values = array(\end($meta_values));
                 }
             }
         }
@@ -248,10 +238,10 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         if (!empty($meta_values)) {
             foreach ($meta_values as $mkey => $meta_value) {
                 $original_type = $meta_type = Helper::get_meta_type($meta_key, $meta_value);
-                if ($render_type == 'dynamic') {
+                if ('dynamic' === $render_type) {
                     $render_type = $original_type;
                 }
-                if ($page_type == 'elementor_library' && !$meta_value) {
+                if ('elementor_library' === $post_type && !$meta_value) {
                     switch ($original_type) {
                         case 'text':
                             $meta_value = 'This is a ACF text';
@@ -355,7 +345,7 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                                     $meta_html .= Tokens::replace_var_tokens($txt, 'SINGLE', $avalue);
                                 } else {
                                     $meta_html .= Helper::to_string($avalue);
-                                    if (!$settings['dce_meta_multiple_separator_last'] || $settings['dce_meta_multiple_separator_last'] && $i < \count($meta_value)) {
+                                    if ($i < \count($meta_value)) {
                                         $meta_html .= wp_kses_post($settings['dce_meta_multiple_separator']);
                                     }
                                 }
@@ -463,7 +453,7 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                         $meta_html = $meta_value;
                         break;
                     case 'google_map':
-                        $meta_html = '<a href="https://www.google.com/maps/@' . $meta_value['lat'] . ',' . $meta_value['lng'] . ',15z">' . ($meta_value['address'] ? $meta_value['address'] : $meta_value['lat'] . ',' . $meta_value['lng']) . '</a>';
+                        $meta_html = '<a href="https://www.google.com/maps/@' . $meta_value['lat'] . ',' . $meta_value['lng'] . ',15z">' . (!empty($meta_value['address']) ? $meta_value['address'] : $meta_value['lat'] . ',' . $meta_value['lng']) . '</a>';
                         break;
                     case 'map':
                         $meta_html = $this->_map($meta_value, $settings);
@@ -523,7 +513,7 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                         }
                         break;
                     case 'link':
-                        $meta_html = '<a href="' . $meta_value['url'] . '"' . ($meta_value['target'] ? ' target="' . $meta_value['target'] . '"' : '') . '>' . $meta_value['title'] . '</a>';
+                        $meta_html = '<a href="' . $meta_value['url'] . '"' . (!empty($meta_value['target']) ? ' target="' . $meta_value['target'] . '"' : '') . '>' . $meta_value['title'] . '</a>';
                         break;
                     case 'url':
                     case 'website':
@@ -635,10 +625,10 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                     default:
                         $meta_html = $meta_value;
                 }
-                $meta_html = do_shortcode($meta_html);
-                // if text contain an extra shortcode
-                $meta_html = Tokens::do_tokens($meta_html);
-                // if text contain tokens
+                if (isset($meta_html)) {
+                    $meta_html = do_shortcode($meta_html);
+                    // if text contain an extra shortcode
+                }
                 echo '<div class="dce-meta-value ' . $settings['array_css_classes'] . ' dce-meta-field__' . $settings['dce_meta_key'] . '">';
                 if ($settings['dce_meta_tag']) {
                     echo '<' . $settings['dce_meta_tag'] . ' class="dce-meta-wrapper">';
@@ -654,10 +644,7 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                                 $fallback_content = Helper::strip_tag($fallback_content, 'p');
                             }
                         }
-                        $fallback_content = do_shortcode($fallback_content);
-                        // TODO FIX
-                        $fallback_content = Tokens::do_tokens($fallback_content);
-                        echo $fallback_content;
+                        echo do_shortcode($fallback_content);
                     }
                 } else {
                     // PRINT RESULT HTML
@@ -679,10 +666,7 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                             $fallback_content = Helper::strip_tag($fallback_content, 'p');
                         }
                     }
-                    $fallback_content = do_shortcode($fallback_content);
-                    // TODO FIX
-                    $fallback_content = Tokens::do_tokens($fallback_content);
-                    echo $fallback_content;
+                    echo do_shortcode($fallback_content);
                 }
             } else {
                 if (isset($settings['dce_meta_fallback']) && $settings['dce_meta_fallback']) {
@@ -694,10 +678,7 @@ class DCE_Widget_Meta extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                             $fallback_content = Helper::strip_tag($fallback_content, 'p');
                         }
                     }
-                    $fallback_content = do_shortcode($fallback_content);
-                    // TODO FIX
-                    $fallback_content = Tokens::do_tokens($fallback_content);
-                    echo $fallback_content;
+                    echo do_shortcode($fallback_content);
                 }
             }
         }

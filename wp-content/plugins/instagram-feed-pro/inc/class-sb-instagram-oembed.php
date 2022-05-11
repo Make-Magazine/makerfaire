@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
-class SB_Instagram_Oembed
-{
+class SB_Instagram_Oembed {
+
 	/**
 	 * SB_Instagram_Oembed constructor.
 	 *
@@ -23,15 +23,15 @@ class SB_Instagram_Oembed
 	 * @since 2.5/5.8
 	 */
 	public function __construct() {
-		if ( SB_Instagram_Oembed::can_do_oembed() ) {
-			if ( SB_Instagram_Oembed::can_check_for_old_oembeds() ) {
+		if ( self::can_do_oembed() ) {
+			if ( self::can_check_for_old_oembeds() ) {
 				add_action( 'the_post', array( 'SB_Instagram_Oembed', 'check_page_for_old_oembeds' ) );
 			}
 			add_filter( 'oembed_providers', array( 'SB_Instagram_Oembed', 'oembed_providers' ), 10, 1 );
 			add_filter( 'oembed_fetch_url', array( 'SB_Instagram_Oembed', 'oembed_set_fetch_url' ), 10, 3 );
 			add_filter( 'oembed_result', array( 'SB_Instagram_Oembed', 'oembed_result' ), 10, 3 );
 		}
-		if ( SB_Instagram_Oembed::should_extend_ttl() ) {
+		if ( self::should_extend_ttl() ) {
 			add_filter( 'oembed_ttl', array( 'SB_Instagram_Oembed', 'oembed_ttl' ), 10, 4 );
 		}
 	}
@@ -51,7 +51,7 @@ class SB_Instagram_Oembed
 			return false;
 		}
 
-		$access_token = SB_Instagram_Oembed::last_access_token();
+		$access_token = self::last_access_token();
 		if ( ! $access_token ) {
 			return false;
 		}
@@ -75,7 +75,7 @@ class SB_Instagram_Oembed
 			return false;
 		}
 
-		$will_expire = SB_Instagram_Oembed::oembed_access_token_will_expire();
+		$will_expire = self::oembed_access_token_will_expire();
 		if ( $will_expire ) {
 			return true;
 		}
@@ -105,12 +105,12 @@ class SB_Instagram_Oembed
 	 *
 	 * @param array $providers
 	 *
-	 * @return mixed
+	 * @return array
 	 *
 	 * @since 2.5/5.8
 	 */
 	public static function oembed_providers( $providers ) {
-		$oembed_url = SB_Instagram_Oembed::oembed_url();
+		$oembed_url = self::oembed_url();
 		if ( $oembed_url ) {
 			$providers['#https?://(www\.)?instagr(\.am|am\.com)/(p|tv)/.*#i'] = array( $oembed_url, true );
 			// for WP 4.9
@@ -133,7 +133,7 @@ class SB_Instagram_Oembed
 	 * @since 2.5/5.8
 	 */
 	public static function oembed_set_fetch_url( $provider, $url, $args ) {
-		$access_token = SB_Instagram_Oembed::last_access_token();
+		$access_token = self::last_access_token();
 		if ( ! $access_token ) {
 			return $provider;
 		}
@@ -197,7 +197,7 @@ class SB_Instagram_Oembed
 	 * Depending on whether a business or personal account is connected,
 	 * a different oembed endpoint is used
 	 *
-	 * @return bool|string
+	 * @return string
 	 *
 	 * @since 2.5/5.8
 	 */
@@ -215,29 +215,23 @@ class SB_Instagram_Oembed
 	 */
 	public static function last_access_token() {
 		$oembed_token_settings = get_option( 'sbi_oembed_token', array() );
-		$will_expire = SB_Instagram_Oembed::oembed_access_token_will_expire();
+		$will_expire           = self::oembed_access_token_will_expire();
 		if ( ! empty( $oembed_token_settings['access_token'] )
-		     && (! $will_expire || $will_expire > time()) ) {
-			$return = sbi_maybe_clean( $oembed_token_settings['access_token'] );
-			return $return;
+			 && ( ! $will_expire || $will_expire > time() ) ) {
+			return sbi_maybe_clean( sbi_fixer( $oembed_token_settings['access_token'] ) );
 		} else {
-			$if_database_settings = sbi_get_database_settings();
+			$connected_accounts = SB_Instagram_Connected_Account::get_all_connected_accounts();
 
-			if ( isset( $if_database_settings['connected_accounts'] ) ) {
-				$connected_accounts = $if_database_settings['connected_accounts'];
-				foreach ( $connected_accounts as $connected_account ) {
-					if ( empty( $oembed_token_settings['access_token'] ) ) {
-						if ( isset( $connected_account['type'] ) && $connected_account['type'] === 'business' ) {
-							$oembed_token_settings['access_token'] = $connected_account['access_token'];
-						}
+			foreach ( $connected_accounts as $connected_account ) {
+				if ( empty( $oembed_token_settings['access_token'] ) ) {
+					if ( isset( $connected_account['type'] ) && $connected_account['type'] === 'business' ) {
+						$oembed_token_settings['access_token'] = $connected_account['access_token'];
 					}
-
 				}
 			}
 
 			if ( ! empty( $oembed_token_settings['access_token'] ) ) {
-				$return = sbi_maybe_clean( $oembed_token_settings['access_token'] );
-				return $return;
+				return sbi_maybe_clean( sbi_fixer( $oembed_token_settings['access_token'] ) );
 			}
 
 			if ( class_exists( 'CFF_Oembed' ) ) {
@@ -259,7 +253,7 @@ class SB_Instagram_Oembed
 	 */
 	public static function oembed_access_token_will_expire() {
 		$oembed_token_settings = get_option( 'sbi_oembed_token', array() );
-		$will_expire = isset( $oembed_token_settings['expiration_date'] ) && (int)$oembed_token_settings['expiration_date'] > 0 ? (int)$oembed_token_settings['expiration_date'] : false;
+		$will_expire           = isset( $oembed_token_settings['expiration_date'] ) && (int) $oembed_token_settings['expiration_date'] > 0 ? (int) $oembed_token_settings['expiration_date'] : false;
 
 		return $will_expire;
 	}
@@ -277,12 +271,12 @@ class SB_Instagram_Oembed
 			return;
 		}
 
-		$post_ID = get_the_ID();
-		$done_checking = (int)get_post_meta( $post_ID, '_sbi_oembed_done_checking', true ) === 1;
+		$post_ID       = get_the_ID();
+		$done_checking = (int) get_post_meta( $post_ID, '_sbi_oembed_done_checking', true ) === 1;
 
 		if ( ! $done_checking ) {
 
-			$num_found = SB_Instagram_Oembed::delete_instagram_oembed_caches( $post_ID );
+			$num_found = self::delete_instagram_oembed_caches( $post_ID );
 			if ( $num_found === 0 ) {
 				update_post_meta( $post_ID, '_sbi_oembed_done_checking', 1 );
 			}
@@ -309,7 +303,7 @@ class SB_Instagram_Oembed
 		foreach ( $post_metas as $post_meta_key => $post_meta_value ) {
 			if ( '_oembed_' === substr( $post_meta_key, 0, 8 ) ) {
 				if ( strpos( $post_meta_value[0], 'class="instagram-media"' ) !== false
-				     && strpos( $post_meta_value[0], 'sbi-embed-wrap' ) === false ) {
+					 && strpos( $post_meta_value[0], 'sbi-embed-wrap' ) === false ) {
 					$total_found++;
 					delete_post_meta( $post_ID, $post_meta_key );
 					if ( '_oembed_time_' !== substr( $post_meta_key, 0, 13 ) ) {
@@ -329,15 +323,16 @@ class SB_Instagram_Oembed
 	 */
 	public static function clear_checks() {
 		global $wpdb;
-		$table_name = esc_sql( $wpdb->prefix . "postmeta" );
-		$result = $wpdb->query("
+		$table_name = $wpdb->prefix . 'postmeta';
+		$result     = $wpdb->query(
+			"
 		    DELETE
 		    FROM $table_name
-		    WHERE meta_key = '_sbi_oembed_done_checking';");
+		    WHERE meta_key = '_sbi_oembed_done_checking';"
+		);
 	}
 }
 
 function sbiOembedInit() {
 	return new SB_Instagram_Oembed();
 }
-sbiOembedInit();

@@ -28,6 +28,11 @@
 	opacity: 0;
 }
 
+.essb-instagramfeed-lazyload .essb-instagramfeed-images .essb-instagramfeed-single img {
+	opacity: 1;
+	object-fit: cover
+}
+
 .essb-instagramfeed-images .essb-instagramfeed-single .essb-instagramfeed-single-image-info {
 	display: none;
 	-webkit-transition: all 0.2s ease-in-out;
@@ -525,13 +530,27 @@
 .essb-instagramfeed-popup, .essb-instagramfeed-popup-overlay { display: none; }
 .essb-instagramfeed-popup { background: #fff; border: 1px solid rgb(219, 219, 219); position: fixed; z-index: 1000010; }
 .essb-instagramfeed-popup-overlay {
-	background: rgba(0,0,0,0.4);
+	background: rgba(0,0,0,0.7);
 	position: fixed;
 	z-index: 1000000;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
+}
+
+.essb-instagramfeed-popup .essb-instagramfeed-popup-close {
+	display: inline-block;
+    position: absolute;
+    top: -32px;
+    right: 0;
+	cursor: pointer;
+}
+
+.essb-instagramfeed-popup .essb-instagramfeed-popup-close svg {
+	width: 16px;
+    fill: #fff;
+    height: 16px;
 }
 
 .essb-instagramfeed-popup .essb-instagramfeed {

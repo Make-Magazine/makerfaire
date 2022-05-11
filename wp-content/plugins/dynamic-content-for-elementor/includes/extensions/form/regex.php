@@ -20,10 +20,8 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Regex extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class RegexField extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
-    public static $depended_plugins = ['elementor-pro'];
-    public static $docs = 'https://www.dynamic.ooo/';
     private $is_common = \false;
     public $has_action = \false;
     public function get_name()
@@ -37,6 +35,7 @@ class DCE_Extension_Form_Regex extends \DynamicContentForElementor\Extensions\DC
     protected function add_actions()
     {
         add_action('elementor/widget/render_content', array($this, '_render_form'), 10, 2);
+        add_action('elementor/element/form/section_form_fields/before_section_end', [$this, 'update_fields_controls']);
     }
     public function _render_form($content, $widget)
     {
@@ -50,12 +49,15 @@ class DCE_Extension_Form_Regex extends \DynamicContentForElementor\Extensions\DC
         }
         return $content;
     }
-    public static function _add_to_form(Controls_Stack $element, $control_id, $control_data, $options = [])
+    public function update_fields_controls($widget)
     {
-        if ($element->get_name() == 'form' && $control_id == 'form_fields') {
-            $control_data['fields']['form_fields_enchanted_tab'] = array('type' => 'tab', 'tab' => 'enchanted', 'label' => '<i class="dynicon icon-dyn-logo-dce" aria-hidden="true"></i>', 'tabs_wrapper' => 'form_fields_tabs', 'name' => 'form_fields_enchanted_tab', 'condition' => ['field_type!' => 'step']);
-            $control_data['fields']['field_regex'] = array('name' => 'field_regex', 'label' => __('Regex', 'dynamic-content-for-elementor'), 'description' => __('A regular expression is a sequence of characters that define a pattern. Use it to restrict the characters permitted on this field.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'separator' => 'before', 'return_value' => 'true', 'conditions' => ['terms' => [['name' => 'field_type', 'operator' => 'in', 'value' => ['text', 'textarea', 'email', 'url', 'password']]]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
+        $elementor = \ElementorPro\Plugin::elementor();
+        $control_data = $elementor->controls_manager->get_control_from_stack($widget->get_unique_name(), 'form_fields');
+        if (is_wp_error($control_data)) {
+            return;
         }
-        return $control_data;
+        $field_controls = ['field_regex' => ['name' => 'field_regex', 'label' => __('Regex', 'dynamic-content-for-elementor'), 'description' => __('A regular expression is a sequence of characters that define a pattern. Use it to restrict the characters permitted on this field.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'separator' => 'before', 'return_value' => 'true', 'conditions' => ['terms' => [['name' => 'field_type', 'operator' => 'in', 'value' => ['text', 'textarea', 'email', 'url', 'password']]]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted']];
+        $control_data['fields'] = \array_merge($control_data['fields'], $field_controls);
+        $widget->update_control('form_fields', $control_data);
     }
 }

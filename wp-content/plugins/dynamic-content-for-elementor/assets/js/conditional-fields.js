@@ -111,7 +111,8 @@ const initializeStepsJumping = ($form) => {
 }
 
 const getOnFormChange = ({fields, field_conditions, submit_conditions, $form, lang}) => {
-	const $submitButton = $form.find('.elementor-field-type-submit');
+	const $submitButtonWrapper = $form.find('.elementor-field-type-submit');
+	const $submitButton = $submitButtonWrapper.find('button');
 	// disable the input elements of the given field, also hide it if disableOnly is not set.
 	const deactivateField = (id, disableOnly) => {
 		const $fieldInputs = fields[id].inputs;
@@ -142,12 +143,12 @@ const getOnFormChange = ({fields, field_conditions, submit_conditions, $form, la
 			} catch (error) {
 				$form.prepend(`
 <div class="error">
-Conditional Fields v2 Error (the error is on the conditions of field "<code>${cond.id}</code>"): ${error}
+Conditional Fields Error (the error is on the conditions of field "<code>${cond.id}</code>"): ${error}
 </div>`);
 			}
 			const isActive = cond.mode === 'show' ? result : ! result;
 			if ( ! fields[cond.id] ) {
-				console.warn('Conditintional Fields v2, could not find field ' + cond.id);
+				console.warn('Conditional Fields, could not find field ' + cond.id);
 				continue;
 			}
 			if (isActive) {
@@ -160,22 +161,38 @@ Conditional Fields v2 Error (the error is on the conditions of field "<code>${co
 		}
 	}
 	const handleSubmitConditions = (values) => {
+		let hasDisableCondition = false;
+		let isDisabled = false;
+		let isHidden = false;
 		for (const cond of submit_conditions) {
 			let result;
 			try {
-				result = lang.evaluate(cond, values);
+				result = lang.evaluate(cond.expression, values);
 			} catch (error) {
 				$form.prepend(`
 <div class="error">
-Conditional Fields v2 Error (the error is on the validation condition <code>${cond}</code>"): ${error}
+Conditional Fields Error (the error is on the validation condition <code>${cond}</code>"): ${error}
 </div>`);
 			}
+			if ( cond.hide === 'disable' ) {
+				hasDisableCondition = true;
+			}
 			if (! result) {
-				$submitButton.hide();
-				return;
+				if ( cond.hide === 'hide' ) {
+					isHidden = true;
+					$submitButtonWrapper.hide();
+				} else if (cond.hide === 'disable' ) {
+					isDisabled = true;
+					$submitButton.prop('disabled', true);
+				}
 			}
 		}
-		$submitButton.show();
+		if ( ! isHidden ) {
+			$submitButtonWrapper.show();
+		}
+		if ( hasDisableCondition && ! isDisabled ) {
+			$submitButton.prop('disabled', false);
+		}
 	}
 	const onChange = () => {
 		const values = getFieldsValues(fields);
@@ -195,7 +212,7 @@ function initializeConditionalFields($form) {
 		return; // no conditional fields.
 	}
 	$form.addClass('dce-form-has-conditions');
-	const lang = new expressionLanguage.ExpressionLanguage();
+	const lang = new expressionLanguage.ExpressionLanguage(new expressionLanguage.ArrayAdapter);
 	fieldIds = JSON.parse(fieldIds);
 	field_conditions = JSON.parse(typeof field_conditions === 'string' ? field_conditions : '[]' );
 	submit_conditions = JSON.parse(typeof submit_conditions === 'string' ? submit_conditions : '[]');
@@ -210,8 +227,7 @@ function initializeConditionalFields($form) {
 		lang: lang,
 	});
 	onFormChange();
-	let $all = $form.find('input, select');
-	$all.on('change', onFormChange);
+	$form.on('change', onFormChange);
 }
 
 jQuery(window).on('elementor/frontend/init', function() {

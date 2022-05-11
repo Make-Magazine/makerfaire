@@ -27,8 +27,9 @@ class Skin_Smoothscroll extends \DynamicContentForElementor\Includes\Skins\Skin_
     {
         return __('Smoothscroll', 'dynamic-content-for-elementor');
     }
-    public function register_additional_smoothscroll_controls()
+    public function register_additional_smoothscroll_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
+        $this->parent = $widget;
         $this->start_controls_section('section_smoothscroll', ['label' => __('Smoothscroll', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         // Width
         $this->add_responsive_control('smoothscroll_width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['px', '%', 'vh'], 'default' => ['size' => ''], 'range' => ['px' => ['max' => 800, 'min' => 0, 'step' => 1]], 'selectors' => ['{{WRAPPER}} .dce-smoothscroll-container .dce-smoothscroll-wrapper .dce-smoothscroll-item' => 'width: {{SIZE}}{{UNIT}};']]);
@@ -80,22 +81,22 @@ class Skin_Smoothscroll extends \DynamicContentForElementor\Includes\Skins\Skin_
     		$item = [];
     
     		//
-    		$this->render_repeateritem_start('item_image');
-    		$this->render_image($item);
-    		$this->render_repeateritem_end();
+    		$this->render_repeater_item_start('item_image');
+    		$this->render_featured_image($item);
+    		$this->render_repeater_item_end();
     
-    		$this->render_repeateritem_start('item_title');
+    		$this->render_repeater_item_start('item_title');
     		$this->render_title($item);
-    		$this->render_repeateritem_end();
+    		$this->render_repeater_item_end();
     		//
     
     	}
-    	protected function render_image($settings) {
+    	protected function render_featured_image($settings) {
     
     		$use_bgimage = $this->get_instance_value('use_bgimage');
     		//
     		$use_overlay = $this->get_instance_value('use_overlay');
-    		$use_overlay_hover = $this->parent->get_settings('use_overlay_hover');
+    		$use_overlay_hover = $this->get_parent()->get_settings('use_overlay_hover');
     
     		//
     		$use_link = 'yes'; //$settings['use_link'];;

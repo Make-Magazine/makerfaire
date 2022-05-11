@@ -10,9 +10,10 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+use InstagramFeed\SB_Instagram_Data_Encryption;
 
-class SB_Instagram_Single
-{
+class SB_Instagram_Single {
+
 	/**
 	 * @var string
 	 */
@@ -47,14 +48,14 @@ class SB_Instagram_Single
 	 */
 	public function __construct( $permalink_or_permalink_id ) {
 		if ( strpos( $permalink_or_permalink_id, 'http' ) !== false ) {
-			$this->permalink = $permalink_or_permalink_id;
+			$this->permalink    = $permalink_or_permalink_id;
 			$exploded_permalink = explode( '/', $permalink_or_permalink_id );
-			$permalink_id = $exploded_permalink[4];
+			$permalink_id       = $exploded_permalink[4];
 
 			$this->permalink_id = $permalink_id;
 		} else {
 			$this->permalink_id = $permalink_or_permalink_id;
-			$this->permalink = 'https://www.instagram.com/p/' . $this->permalink_id;
+			$this->permalink    = 'https://www.instagram.com/p/' . $this->permalink_id;
 		}
 		$this->error = false;
 
@@ -71,22 +72,20 @@ class SB_Instagram_Single
 		$this->post = $this->maybe_saved_data();
 
 		if ( empty( $this->post )
-		     || ! $this->was_recently_updated() ) {
+			 || ! $this->was_recently_updated() ) {
 
 			if ( ! $this->should_delay_oembed_request() ) {
 
 				$data = $this->fetch();
 				if ( ! empty( $data ) ) {
-					$data = $this->parse_and_restructure( $data );
+					$data       = $this->parse_and_restructure( $data );
 					$this->post = $data;
 					$this->update_last_update_timestamp();
 					$this->update_single_cache();
 				} elseif ( $data === false ) {
 					$this->add_oembed_request_delay();
 				}
-
 			}
-
 		}
 	}
 
@@ -116,7 +115,7 @@ class SB_Instagram_Single
 			return false;
 		}
 
-		return (time() - 14 * DAY_IN_SECONDS) < $this->post['last_update'];
+		return ( time() - 14 * DAY_IN_SECONDS ) < $this->post['last_update'];
 	}
 
 
@@ -131,7 +130,7 @@ class SB_Instagram_Single
 	 */
 	public function fetch() {
 		// need a connected business account for this to work
-		$access_token = SB_Instagram_Oembed::last_access_token();
+		$access_token = sbi_maybe_clean( SB_Instagram_Oembed::last_access_token() );
 
 		if ( empty( $access_token ) ) {
 			$this->error = 'No access token';
@@ -140,9 +139,13 @@ class SB_Instagram_Single
 
 		$url = SB_Instagram_Oembed::oembed_url();
 
-		$fetch_url = add_query_arg( array(
-			'url' => $this->permalink,
-			'access_token' => $access_token ), $url );
+		$fetch_url = add_query_arg(
+			array(
+				'url'          => $this->permalink,
+				'access_token' => $access_token,
+			),
+			$url
+		);
 
 		$result = wp_remote_get( esc_url_raw( $fetch_url ) );
 
@@ -153,7 +156,7 @@ class SB_Instagram_Single
 			if ( $data && isset( $data['error'] ) ) {
 				$this->add_oembed_request_delay();
 				$this->error = sprintf( __( 'API error %s:', 'instagram-feed' ), $data['error']['code'] ) . ' ' . $data['error']['message'];
-				$data = false;
+				$data        = false;
 			}
 		} else {
 			$error = '';
@@ -176,7 +179,7 @@ class SB_Instagram_Single
 	 * @since 2.5.3/5.8.3
 	 */
 	public function should_delay_oembed_request() {
-		return (get_transient( 'sbi_delay_oembeds_' . $this->permalink_id ) !== false);
+		return ( get_transient( 'sbi_delay_oembeds_' . $this->permalink_id ) !== false );
 	}
 
 	/**
@@ -209,7 +212,7 @@ class SB_Instagram_Single
 		if ( ! is_array( $stored_option ) ) {
 			$stored_option = json_decode( $this->encryption->decrypt( $stored_option ), true );
 		}
-		$new = array( $this->permalink_id => $this->post );
+		$new           = array( $this->permalink_id => $this->post );
 		$stored_option = array_merge( $new, $stored_option );
 		// only latest 400 posts
 		$stored_option = array_slice( $stored_option, 0, 400 );
@@ -232,8 +235,8 @@ class SB_Instagram_Single
 
 		$return = array(
 			'thumbnail_url' => '',
-			'id'=> $this->permalink_id,
-			'media_type' => 'OEMBED'
+			'id'            => $this->permalink_id,
+			'media_type'    => 'OEMBED',
 		);
 
 		if ( ! empty( $data['thumbnail_url'] ) ) {
@@ -270,14 +273,17 @@ class SB_Instagram_Single
 
 				$posts_table_name = $wpdb->prefix . SBI_INSTAGRAM_POSTS_TYPE;
 
-				$results = $wpdb->get_col( $wpdb->prepare(
-					"SELECT json_data FROM $posts_table_name
+				$results = $wpdb->get_col(
+					$wpdb->prepare(
+						"SELECT json_data FROM $posts_table_name
 					WHERE instagram_id = %s
-					LIMIT 1", $this->permalink_id ) );
+					LIMIT 1",
+						$this->permalink_id
+					)
+				);
 				if ( isset( $results[0] ) ) {
 					$data = json_decode( $this->encryption->decrypt( $results[0] ), true );
 				}
-
 			}
 		}
 

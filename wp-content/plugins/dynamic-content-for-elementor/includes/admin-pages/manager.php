@@ -6,8 +6,13 @@ class Manager
 {
     public $features_page;
     public $api;
-    public $licence;
+    public $license;
     public $notices;
+    public $template_system;
+    /**
+     * @var Settings\Settings
+     */
+    public $settings;
     public function __construct()
     {
         $this->features_page = new \DynamicContentForElementor\AdminPages\Features\FeaturesPage();
@@ -15,6 +20,7 @@ class Manager
         $this->template_system = new \DynamicContentForElementor\AdminPages\TemplateSystem();
         $this->license = new \DynamicContentForElementor\AdminPages\License();
         $this->notices = new \DynamicContentForElementor\AdminPages\Notices();
+        $this->settings = new \DynamicContentForElementor\AdminPages\Settings\Settings();
         add_action('admin_init', [$this, 'maybe_redirect_to_wizard_on_activation']);
         add_action('admin_menu', [$this, 'add_menu_pages'], 200);
         add_action('admin_notices', [$this, 'warning_old_conditional']);
@@ -32,6 +38,10 @@ class Manager
         if (is_network_admin() || isset($_GET['activate-multi'])) {
             return;
         }
+        if (get_option('dce_done_activation_redirection')) {
+            return;
+        }
+        update_option('dce_done_activation_redirection', \true);
         wp_safe_redirect(admin_url('admin.php?page=dce-features'));
         exit;
     }
@@ -42,16 +52,19 @@ class Manager
     }
     public function add_menu_pages()
     {
-        // Dynamic Content - Menu
-        add_menu_page('Dynamic.ooo', 'Dynamic.ooo', 'manage_options', 'dce-features', [$this->features_page, 'page_callback'], 'data:image/svg+xml;base64,' . self::get_dynamic_icon_svg_base64(), '58.6');
-        // Dynamic Content - Features
-        add_submenu_page('dce-features', 'Dynamic.ooo - ' . __('Features', 'dynamic-content-for-elementor'), __('Features', 'dynamic-content-for-elementor'), 'manage_options', 'dce-features', [$this->features_page, 'page_callback']);
-        add_submenu_page('dce-features', 'HTML Templates', 'HTML Templates', 'manage_options', 'edit.php?post_type=' . \DynamicContentForElementor\PdfHtmlTemplates::CPT);
-        add_submenu_page('dce-features', 'Dynamic.ooo - ' . __('Template System', 'dynamic-content-for-elementor'), __('Template System', 'dynamic-content-for-elementor'), 'manage_options', 'dce-templatesystem', [$this->template_system, 'display_form']);
-        // Dynamic Content - APIs
-        add_submenu_page('dce-features', 'Dynamic.ooo - ' . __('APIs', 'dynamic-content-for-elementor'), __('APIs', 'dynamic-content-for-elementor'), 'manage_options', 'dce-apis', [$this->api, 'display_form']);
-        // Dynamic Content - License
-        add_submenu_page('dce-features', 'Dynamic.ooo - ' . __('License', 'dynamic-content-for-elementor'), __('License', 'dynamic-content-for-elementor'), 'administrator', 'dce-license', [$this->license, 'show_license_form']);
+        // Menu
+        add_menu_page(DCE_PRODUCT_NAME, DCE_PRODUCT_NAME, 'manage_options', 'dce-features', [$this->features_page, 'page_callback'], 'data:image/svg+xml;base64,' . self::get_dynamic_icon_svg_base64(), '58.6');
+        // Features
+        add_submenu_page('dce-features', DCE_PRODUCT_NAME . ' - ' . __('Features', 'dynamic-content-for-elementor'), __('Features', 'dynamic-content-for-elementor'), 'manage_options', 'dce-features', [$this->features_page, 'page_callback']);
+        add_submenu_page('dce-features', DCE_PRODUCT_NAME . ' - ' . __('Settings', 'dynamic-content-for-elementor'), __('Settings', 'dynamic-content-for-elementor'), 'manage_options', 'dce-settings', [$this->settings, 'display_settings_page']);
+        // HTML Templates
+        add_submenu_page('dce-features', DCE_PRODUCT_NAME . ' - ' . __('HTML Templates', 'dynamic-content-for-elementor'), __('HTML Templates', 'dynamic-content-for-elementor'), 'manage_options', 'edit.php?post_type=' . \DynamicContentForElementor\PdfHtmlTemplates::CPT);
+        // Template System
+        add_submenu_page('dce-features', DCE_PRODUCT_NAME . ' - ' . __('Template System', 'dynamic-content-for-elementor'), __('Template System', 'dynamic-content-for-elementor'), 'manage_options', 'dce-templatesystem', [$this->template_system, 'display_form']);
+        // Integrations
+        add_submenu_page('dce-features', DCE_PRODUCT_NAME . ' - ' . __('Integrations', 'dynamic-content-for-elementor'), __('Integrations', 'dynamic-content-for-elementor'), 'manage_options', 'dce-integrations', [$this->api, 'display_form']);
+        // License
+        add_submenu_page('dce-features', DCE_PRODUCT_NAME . ' - ' . __('License', 'dynamic-content-for-elementor'), __('License', 'dynamic-content-for-elementor'), 'administrator', 'dce-license', [$this->license, 'show_license_form']);
     }
     public function warning_old_conditional()
     {
@@ -64,9 +77,9 @@ class Manager
             $msg = __('It appears that the extension Conditional Fields (old version) for Elementor Pro Form is enabled. Notice that this is a legacy extension that is known to cause problems with form validation. We recommend disabling it if you don’t need it. You can do it from the ', 'dynamic-content-for-elementor');
             $url = admin_url('admin.php?page=dce-features&tab=legacy');
             $msg .= "<a href='{$url}'>" . __('Features Dashboard', 'dynamic-content-for-elementor') . '</a>.';
-            $msg .= ' ' . __('You can use the new version instead: Conditional Fields v2 for Elementor Pro Form.', 'dynamic-content-for-elementor');
+            $msg .= ' ' . __('You can use the new version instead: Conditional Fields for Elementor Pro Form.', 'dynamic-content-for-elementor');
             $msg .= " <a href='https://help.dynamic.ooo/en/articles/5576284-switch-conditional-fields-old-version-to-conditional-fields-v2-for-elementor-pro-form'>" . __('Read more...', 'dynamic-content-for-elementor') . '</a>';
-            \DynamicContentForElementor\Notice::dce_admin_notice__danger($msg);
+            \DynamicContentForElementor\Notice::error($msg);
         }
     }
     public function warning_features_bloat()
@@ -81,7 +94,7 @@ class Manager
         });
         $ratio = \count($active) / \count($features);
         if ($ratio > 0.95) {
-            $msg = __('Most features are currently active. This could slow down the Elementor Editor. It is recommended that you disable the features you don’t need. This can be done on the ', 'dynamic-content-for-elementor');
+            $msg = __('Most features are currently active. This could slow down the Elementor Editor. It is recommended that you disable the features you don\'t need. This can be done on the ', 'dynamic-content-for-elementor');
             $url = admin_url('admin.php?page=dce-features');
             $msg .= "<a href='{$url}'>" . __('Features Page', 'dynamic-content-for-elementor') . '</a>.';
             $this->notices->warning($msg, 'features_bloat');

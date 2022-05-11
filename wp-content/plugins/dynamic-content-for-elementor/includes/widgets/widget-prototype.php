@@ -4,8 +4,8 @@ namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Image_Size;
@@ -19,7 +19,7 @@ use DynamicContentForElementor\Plugin;
 use DynamicContentForElementor\Widgets;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Group_Control_Outline;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_CSS;
+use DynamicContentForElementor\Controls\Group_Control_Filters_CSS;
 if (!\defined('ABSPATH')) {
     exit;
 }
@@ -31,7 +31,7 @@ if (!\defined('ABSPATH')) {
  *
  * @since 0.4.0
  */
-class WidgetPrototype extends Widget_Base
+abstract class WidgetPrototype extends Widget_Base
 {
     /**
      * Settings.
@@ -51,6 +51,7 @@ class WidgetPrototype extends Widget_Base
     public $plugin_depends = [];
     public $doc_url = 'https://www.dynamic.ooo';
     public $keywords = [];
+    public $admin_only;
     /**
      * Raw Data.
      *
@@ -95,6 +96,13 @@ class WidgetPrototype extends Widget_Base
         }
         if (isset($info['keywords'])) {
             $this->keywords = $info['keywords'];
+        }
+        $this->admin_only = $info['admin_only'] ?? \false;
+    }
+    public function run_once()
+    {
+        if ($this->admin_only) {
+            \DynamicContentForElementor\Plugin::instance()->save_guard->register_unsafe_widget($this->get_name());
         }
     }
     public function get_name()
@@ -141,18 +149,54 @@ class WidgetPrototype extends Widget_Base
     {
         return $this->plugin_depends;
     }
+    /**
+     * Register Controls
+     *
+     * @return void
+     */
+    protected final function register_controls()
+    {
+        if ($this->admin_only && !Helper::can_register_unsafe_controls()) {
+            $this->register_controls_non_admin_notice();
+        } else {
+            $this->safe_register_controls();
+        }
+    }
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected abstract function safe_register_controls();
+    /**
+     * Show a notice for non administrators
+     *
+     * @return void
+     */
     protected function register_controls_non_admin_notice()
     {
-        $this->start_controls_section('section_dce_non_admin', ['label' => $this->get_title() . __(' - Notice', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
+        $this->start_controls_section('section_non_admin', ['label' => $this->get_title() . __(' - Notice', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('html_notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('You will need administrator capabilities to edit this widget.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
         $this->end_controls_section();
     }
-    protected function render()
+    public function show_in_panel()
     {
+        if ($this->admin_only && !current_user_can('administrator')) {
+            return \false;
+        }
+        return \true;
     }
+    protected final function render()
+    {
+        if ($this->admin_only && !Helper::can_register_unsafe_controls()) {
+            $this->render_non_admin_notice();
+        }
+        $this->safe_render();
+    }
+    protected abstract function safe_render();
     protected function render_non_admin_notice()
     {
-        echo '<span>' . __('You will need administrator capabilities to edit this widget.', 'dynamic-content-for-elementor') . '</span>';
+        _e('You will need administrator capabilities to edit this widget.', 'dynamic-content-for-elementor');
     }
     protected function content_template()
     {

@@ -11,7 +11,7 @@ class Dashboard
     }
     public function add_dashboard_widget()
     {
-        wp_add_dashboard_widget('dce-dashboard-overview', 'Dynamic.ooo - Dynamic Content for Elementor', [$this, 'dashboard_overview_widget']);
+        wp_add_dashboard_widget('dce-dashboard-overview', DCE_PRODUCT_NAME_LONG, [$this, 'dashboard_overview_widget']);
         global $wp_meta_boxes;
         $dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
         $ours = ['dce-dashboard-overview' => $dashboard['dce-dashboard-overview']];
@@ -28,7 +28,7 @@ class Dashboard
         ?>" width="36" /></div></div>
 				<div class="dce-overview__versions">
 					<span class="dce-overview__version"><?php 
-        echo 'Dynamic.ooo - Dynamic Content for Elementor';
+        echo DCE_PRODUCT_NAME_LONG;
         ?> v<?php 
         echo DCE_VERSION;
         ?></span>
@@ -55,7 +55,11 @@ class Dashboard
 			</div>
 			<div class="dce-overview__footer">
 				<ul>
-					<li class="dce-overview__help"><a href="https://www.dynamic.ooo/" target="_blank">Dynamic.ooo<span class="screen-reader-text">Dynamic.ooo</span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+					<li class="dce-overview__help"><a href="https://www.dynamic.ooo/" target="_blank"><?php 
+        echo DCE_PRODUCT_NAME;
+        ?><span class="screen-reader-text"><?php 
+        echo DCE_PRODUCT_NAME;
+        ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
 					<li class="dce-overview__help"><a href="http://facebook.com/groups/dynamic.ooo" target="_blank"><?php 
         _e('Facebook Community', 'dynamic-content-for-elementor');
         ?><span class="screen-reader-text"><?php 

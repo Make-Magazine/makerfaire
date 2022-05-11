@@ -30,7 +30,6 @@
             };
 
             this.rAF = null;
-
             this.init();
         }
 
@@ -250,9 +249,6 @@
     var is_inertiaScroll = false;
     var directionScroll = 'vertical';
     var coefSpeed_inertiaScroll = 0.05;
-    var html = document.documentElement;
-
-    var scroller = {};
 
     // Version 2
     const body = document.body;
@@ -283,15 +279,20 @@
             $customClass = 'elementor-section:not(.elementor-inner-section)';
         }
 
-        $target_sections = '.elementor-' + currentPostId;
-        if (!$target_sections)
-            $target_sections = '';
+        target_sections = '.elementor-' + currentPostId;
+        if (!target_sections) {
+			target_sections = '';
+		}
 
-        sezioni = $target_sections + '.elementor .elementor-section-wrap .' + $customClass;
-        wrapperSezioni = $($target_sections + '.elementor .elementor-section-wrap');
+		if( ! $('.elementor-section-wrap' ).length ) {
+			$('body .elementor').wrapInner('<div class="elementor-section-wrap"></div>');
+		}
+
+        sezioni = target_sections + '.elementor .elementor-section-wrap .' + $customClass;
+        wrapperSezioni = $(target_sections + '.elementor .elementor-section-wrap');
 
         // Class direction
-        $($target_sections).addClass('scroll-direction-' + settings_page.directionScroll);
+        $(target_sections).addClass('scroll-direction-' + settings_page.directionScroll);
 
         $.scrollify({
             section: sezioni,
@@ -419,17 +420,22 @@
         }
 
         // Get the section widgets of first level in content-page
-        $target_sections = '.elementor-' + currentPostId;
+        target_sections = '.elementor-' + currentPostId;
 
-        if (!$target_sections)
-          $target_sections = '';
+        if (!target_sections) {
+			target_sections = '';
+		}
+		
+		if( ! $('.elementor-section-wrap' ).length ) {
+			$('body .elementor').wrapInner('<div class="elementor-section-wrap"></div>');
+		}
 
-        sezioni = $target_sections + '.elementor .elementor-section-wrap > .' + $customClass;
+        sezioni = target_sections + '.elementor .elementor-section-wrap > .' + $customClass;
         sectionsAvailable = $(sezioni);
-        wrapperSezioni = $($target_sections + '.elementor .elementor-section-wrap');
+        wrapperSezioni = $(target_sections + '.elementor .elementor-section-wrap');
 
         // Class direction
-        $($target_sections).addClass('scroll-direction-' + settings_page.directionScroll);
+        $(target_sections).addClass('scroll-direction-' + settings_page.directionScroll);
 
         // property
         animationType = settings_page.animation_effects || ['spin'];
@@ -508,7 +514,7 @@
     };
 
     // Init - Inertia Scroll
-    var init_InertiaScroll = function () {
+    var initInertiaScroll = function () {
 
         if (settings_page.custom_class_section) {
             $customClass = settings_page.custom_class_section;
@@ -529,47 +535,53 @@
         if (typeof (settings_page.directionScroll) !== 'undefined')
             directionScroll = settings_page.directionScroll || 'vertical';
 
-        $target_sections = '.elementor-' + currentPostId;
-        if (!$target_sections)
-            $target_sections = '';
+        target_sections = '.elementor-' + currentPostId;
+        if (!target_sections) {
+			target_sections = '';
+		}
+            
+		if( ! $('.elementor-section-wrap' ).length ) {
+			$('body .elementor').wrapInner('<div class="elementor-section-wrap"></div>');
+		}
 
-        // Get the section widgets of frst level in content-page
-        sezioni = $target_sections + '.elementor .elementor-section-wrap .' + $customClass;
+        // Get the section widgets of first level in content-page
+        sezioni = target_sections + '.elementor .elementor-section-wrap .' + $customClass;
         sectionsAvailable = $(sezioni);
-        wrapperSezioni = $($target_sections + '.elementor .elementor-section-wrap');
+		wrapperSezioni = $(target_sections + '.elementor .elementor-section-wrap');
 
-        // qui definisco il wrapper ed il subWrapper
+        // Define Wrapper
         if ($('.elementor-template-canvas').length) {
-            main = document.querySelector($target_sections);
-            mainWrap = document.querySelector($target_sections + '.elementor .elementor-section-wrap');
+            main = document.querySelector(target_sections);
+            mainWrap = document.querySelector(target_sections + '.elementor .elementor-section-wrap');
         } else {
             if(settings_page.automatic_wrapper){
-                if( !$('#outer-wrap').length )
-                    $('body').wrapInner('<div id="outer-wrap"><div id="wrap"></div></div>');
-
-                    main = document.querySelector('#outer-wrap');
-                    mainWrap = document.querySelector('#wrap');
-            }else{
+				if( !$('#outer-wrap').length ) {
+					$('body .elementor').wrapInner('<div id="outer-wrap"><div id="wrap"></div></div>');
+				}
+				main = document.querySelector('#outer-wrap');
+				mainWrap = document.querySelector('#wrap');
+            } else {
                 main = document.querySelector(settings_page.scroll_viewport) || document.querySelector('#outer-wrap');
                 mainWrap = document.querySelector(settings_page.scroll_contentScroll) || document.querySelector('#wrap');
             }
-
         }
+
         // per distribuire le section orizzontalmente
         if (directionScroll == 'horizontal') {
             wrapperSezioni.css('display', 'flex');
         }
 
         // Class direction
-        $($target_sections).addClass('scroll-direction-' + directionScroll);
+        $(target_sections).addClass('scroll-direction-' + directionScroll);
 
         // configure
         sectionsAvailable.addClass('inertia-scroll');
 
-        if (smoothScroll)
-            smoothScroll.destroy();
+        if (smoothScroll) {
+			smoothScroll.destroy();
+		}
+        
         smoothScroll = new Smooth();
-
         is_inertiaScroll = true;
     };
 
@@ -759,7 +771,7 @@
             }
             setTimeout(function () {
                 if (settings_page.enable_inertiaScroll)
-                    init_InertiaScroll();
+                    initInertiaScroll();
             }, 100);
         } else {
             // NO
@@ -775,7 +787,7 @@
             }
             setTimeout(function () {
                 if (settings_page.enable_inertiaScroll)
-                    init_InertiaScroll();
+                    initInertiaScroll();
             }, 100);
         } else {
             // NO
@@ -806,8 +818,7 @@
            }
 
            if (is_enable_inertiaScroll && is_enable_dceScrolling && $.inArray(deviceMode, responsive_inertiaScroll) >= 0) {
-
-               init_InertiaScroll();
+               initInertiaScroll();
            }
 
            if (elementorFrontend.isEditMode()) {

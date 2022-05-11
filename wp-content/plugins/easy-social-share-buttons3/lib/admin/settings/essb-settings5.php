@@ -23,6 +23,14 @@ if (!function_exists('essb_display_status_message')) {
 	}
 }
 
+if (!function_exists('essb_display_static_header_message')) {
+    function essb_display_static_header_message ($title = '', $text = '', $icon = '', $additional_class = '') {
+        echo '<div class="essb-static-header-status">';
+        ESSBOptionsFramework::draw_hint($title, $text, $icon, 'status '.$additional_class);
+        echo '</div>';
+    }
+}
+
 // Reset Settings
 $reset_settings = isset ( $_REQUEST ['reset_settings'] ) ? $_REQUEST ['reset_settings'] : '';
 if ($reset_settings == 'true') {
@@ -325,8 +333,8 @@ if ($drawing_tab == 'update' || $drawing_tab == 'status') { $drawing_tab = 'abou
 <?php 
 /***
  * Load the boarding guide for the users
+ * include_once ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-boarding.php';
  */
-include_once ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-boarding.php';
 ?>
 
 <?php
@@ -382,7 +390,7 @@ function essb_settings5_status_notifications() {
 
 	$settings_update = isset ( $_REQUEST ['settings-updated'] ) ? $_REQUEST ['settings-updated'] : '';
 	if ($settings_update == "true") {
-		essb_display_status_message(esc_html__('Options are saved!', 'essb'), 'Your new setup is ready to use. If you use cache plugin (example: W3 Total Cache, WP Super Cache, WP Rocket) or optimization plugin (example: Autoptimize, BWP Minify) it is highly recommended to clear cache or you may not see the changes. '.$cache_plugin_message, 'fa fa-info-circle', 'essb-status-update');
+		essb_display_status_message(esc_html__('Options are saved!', 'essb'), 'Your new setup is ready to use. If you use a cache plugin (example: W3 Total Cache, WP Super Cache, WP Rocket) or an optimization plugin (example: Autoptimize, BWP Minify) it is highly recommended to clear cache or you may not see the changes. '.$cache_plugin_message, 'fa fa-info-circle', 'essb-status-update essb-status-fixed');
 
 	}
 
@@ -394,11 +402,11 @@ function essb_settings5_status_notifications() {
 
 	$settings_imported = isset ( $_REQUEST ['settings-imported'] ) ? $_REQUEST ['settings-imported'] : '';
 	if ($settings_imported == "true") {
-		essb_display_status_message(esc_html__('Options are imported!', 'essb'), 'If you use cache plugin (example: W3 Total Cache, WP Super Cache, WP Rocket) or optimization plugin (example: Autoptimize, BWP Minify) it is highly recommended to clear cache or you may not see the changes. '.$cache_plugin_message, 'fa fa-info-circle');
+		essb_display_status_message(esc_html__('Options are imported!', 'essb'), 'If you use cache plugin (example: W3 Total Cache, WP Super Cache, WP Rocket) or optimization plugin (example: Autoptimize, BWP Minify) it is highly recommended to clear cache or you may not see the changes. '.$cache_plugin_message, 'fa fa-info-circle', 'essb-status-fixed');
 
 	}
 	if ($reset_settings == 'true') {
-		essb_display_status_message(esc_html__('Options are reset to default!', 'essb'), 'If you use cache plugin (example: W3 Total Cache, WP Super Cache, WP Rocket) or optimization plugin (example: Autoptimize, BWP Minify) it is highly recommended to clear cache or you may not see the changes. '.$cache_plugin_message, 'fa fa-info-circle');
+		essb_display_status_message(esc_html__('Options are reset to default!', 'essb'), 'If you use cache plugin (example: W3 Total Cache, WP Super Cache, WP Rocket) or optimization plugin (example: Autoptimize, BWP Minify) it is highly recommended to clear cache or you may not see the changes. '.$cache_plugin_message, 'fa fa-info-circle', 'essb-status-fixed');
 
 	}
 
@@ -442,9 +450,8 @@ function essb_settings5_status_notifications() {
 
 	if ($general_precompiled_resources) {
 		$cache_clear_address = esc_url_raw ( add_query_arg ( array ('rebuild-resource' => 'true' ), essb_get_current_page_url () ) );
-
-		$dismiss_addons_button = '<a href="' . $cache_clear_address . '"  text="' . esc_html__ ( 'Rebuild Resources', 'essb' ) . '" class="status_button float_right" style="margin-right: 5px;"><i class="fa fa-close"></i>&nbsp;' . esc_html__ ( 'Rebuild Resources', 'essb' ) . '</a>';
-		essb_display_status_message(esc_html__('Precompiled Resource Mode is Active!', 'essb'), sprintf('In precompiled mode plugin will load default setup into single static files that will run on entire site. %1$s', $dismiss_addons_button), 'fa fa-history');
+		$dismiss_addons_button = '<a href="' . $cache_clear_address . '"  text="' . esc_html__ ( 'Rebuild Resources', 'essb' ) . '" class="status_button float_right" style="margin-right: 5px;"><i class="fa ti-cloud-down"></i>&nbsp;' . esc_html__ ( 'Rebuild Resources', 'essb' ) . '</a>';
+		essb_display_static_header_message(esc_html__('Combine CSS and Javascript files (Pre-compiled Mode)', 'essb') . essb_generate_running_badge(), $dismiss_addons_button, 'ti-server');
 	}
 
 	if ($backup == 'true') {

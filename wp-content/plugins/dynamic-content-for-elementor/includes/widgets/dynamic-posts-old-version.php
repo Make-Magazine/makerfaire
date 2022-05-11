@@ -3,7 +3,7 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
+use Elementor\Core\Schemes\Color as Scheme_Color;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
@@ -12,14 +12,14 @@ use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
 use Elementor\Utils;
 use DynamicContentForElementor\Helper;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Transform_Element;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_CSS;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Ajax_Page;
+use DynamicContentForElementor\Controls\Group_Control_Transform_Element;
+use DynamicContentForElementor\Controls\Group_Control_Filters_CSS;
+use DynamicContentForElementor\Controls\Group_Control_Ajax_Page;
 if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -29,7 +29,12 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
     {
         return ['animatecss', 'dce-dynamicPosts_slick', 'dce-dynamicPosts_swiper', 'dce-dynamicPosts_timeline', 'dce-dynamic-posts-old-version'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $taxonomies = Helper::get_taxonomies();
         $types = Helper::get_post_types();
@@ -42,84 +47,24 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
             $label_t = $object_t->name;
             $this->add_control('specific_pages' . $t, ['label' => $label_t, 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => $t, 'multiple' => \true, 'condition' => ['query_type' => 'specific_posts']]);
         }
-        $this->add_control('acf_relationship', ['label' => __('Relations (ACF)', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'post_object,relationship', 'condition' => ['query_type' => 'acf_relations']]);
+        $this->add_control('acf_relationship', ['label' => __('Relations (ACF)', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'post_object,relationship', 'condition' => ['query_type' => 'acf_relations']]);
         $this->add_control('acf_relationship_invert', ['label' => __('Invert direction', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('For bidirectional relationships, retrieve all posts that are associated to a current post', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => 'acf_relations']]);
         // --------------------------------- [ Custom Post Type ]
         $this->add_control('post_type', ['label' => __('Post Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $types, 'multiple' => \true, 'label_block' => \true, 'default' => 'post', 'condition' => ['query_type' => 'get_cpt']]);
         $this->add_control('exclude_io', ['label' => __('Exclude Current Post', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode']]]);
         $this->add_control('exclude_page_parent', ['label' => __('Exclude page parent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode']]]);
-        /* $this->add_control(
-        	  'exclude_posts', [
-        	  'label' => __('Exclude posts', 'dynamic-content-for-elementor'),
-        	  'type' => Controls_Manager::SELECT2,
-        	  'separator' => 'before',
-        	  'multiple' => true,
-        	  'options' => Helper::get_all_posts(),
-        	  //'groups' => Helper::get_all_posts(get_the_ID(), true),
-        	  'default' => '',
-        	  'condition' => [
-        	  'query_type' => ['get_cpt', 'dynamic_mode'],
-        	  ],
-        	  ]
-        	  ); */
         $this->add_control('exclude_posts', ['label' => __('Exclude posts', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'separator' => 'before', 'multiple' => \true, 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode']]]);
         $this->add_control('num_posts', ['label' => __('Number of Posts', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '10', 'separator' => 'before', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'acf_relations']]]);
         $this->add_control('post_offset', ['label' => __('Posts Offset', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '0', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode'], 'num_posts!' => '-1']]);
         $this->add_control('orderby', ['label' => __('Order By', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_post_orderby_options(), 'default' => 'date']);
-        /* $this->add_control(
-        	  'acf_metakey', [
-        	  'label' => __('ACF meta', 'dynamic-content-for-elementor'),
-        	  'type' => Controls_Manager::SELECT,
-        	  'groups' => $this->get_acf_field(true, true),
-        	  'default' => '0',
-        	  'condition' => [
-        	  'orderby' => ['meta_value_date', 'meta_value_num'],
-        	  ]
-        	  ]
-        	  ); */
-        $this->add_control('acf_metakey', [
-            'label' => __('Meta Field', 'dynamic-content-for-elementor'),
-            'type' => 'ooo_query',
-            'placeholder' => __('Meta key', 'dynamic-content-for-elementor'),
-            'label_block' => \true,
-            'query_type' => 'acfposts',
-            //'object_type' => 'post',
-            //'description' => __('Selected Post Meta value must be stored if format "Ymd", like ACF Date', 'dynamic-content-for-elementor'),
-            'separator' => 'after',
-            'condition' => ['orderby' => ['meta_value_date', 'meta_value_num', 'meta_value']],
-        ]);
-        $this->add_control('order', ['label' => __('Order', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['ASC' => 'Ascending', 'DESC' => 'Descending'], 'default' => 'DESC', 'condition' => [
-            /* 'query_type' => ['get_cpt', 'dynamic_mode', 'acf_relations'], */
-            'orderby!' => ['random'],
-        ]]);
+        $this->add_control('acf_metakey', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acfposts', 'separator' => 'after', 'condition' => ['orderby' => ['meta_value_date', 'meta_value_num', 'meta_value']]]);
+        $this->add_control('order', ['label' => __('Order', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['ASC' => 'Ascending', 'DESC' => 'Descending'], 'default' => 'DESC', 'condition' => ['orderby!' => ['random']]]);
         $this->end_controls_section();
         $this->start_controls_section('section_queryopt', ['label' => __('Parent Query', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'acf_relations']]]);
         $this->add_control('page_parent', ['label' => __('Enable ParentChild Options', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before']);
-        $this->add_control('specific_page_parent', [
-            'label' => __('Show children from this parent-page', 'dynamic-content-for-elementor'),
-            'type' => 'ooo_query',
-            'placeholder' => __('Page Title', 'dynamic-content-for-elementor'),
-            'label_block' => \true,
-            'query_type' => 'posts',
-            //'object_type' => 'page',
-            'separator' => 'after',
-            'condition' => ['page_parent' => 'yes', 'parent_source' => '', 'child_source' => ''],
-        ]);
+        $this->add_control('specific_page_parent', ['label' => __('Show children from this parent-page', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Page Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'separator' => 'after', 'condition' => ['page_parent' => 'yes', 'parent_source' => '', 'child_source' => '']]);
         $this->add_control('parent_source', ['label' => __('Get from Parent (for template)', 'dynamic-content-for-elementor'), 'description' => __('I take the post parent and I get my siblings out of myself.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('other', 'dynamic-content-for-elementor'), 'condition' => ['page_parent' => 'yes']]);
         $this->add_control('child_source', ['label' => __('Get from Children (for template)', 'dynamic-content-for-elementor'), 'description' => __('Compared to myself-I take my children.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('other', 'dynamic-content-for-elementor'), 'condition' => ['page_parent' => 'yes', 'parent_source' => '']]);
-        /* $this->add_control(
-        	  'specific_page_parent', [
-        	  'label' => __('Get from custom', 'dynamic-content-for-elementor'),
-        	  'type' => Controls_Manager::SELECT,
-        	  'options' => Helper::get_pages(),
-        	  'default' => '0',
-        	  'condition' => [
-        	  'page_parent' => 'yes',
-        	  'parent_source' => '',
-        	  'child_source' => ''
-        	  ],
-        	  ]
-        	  ); */
         $this->end_controls_section();
         $this->start_controls_section('section_querytax', ['label' => __('Taxonomy Query Filter', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode'], 'page_parent' => '']]);
         $this->add_control('taxonomy', ['label' => __('Select Taxonomy', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('All', 'dynamic-content-for-elementor')] + $taxonomies, 'default' => '', 'description' => __('Filter results by selected taxonomy', 'dynamic-content-for-elementor'), 'label_block' => \true, 'condition' => []]);
@@ -128,90 +73,35 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                 $this->add_control('terms_' . $tkey, ['label' => '<b>Include</b> Terms of ' . $tkey, 'type' => 'ooo_query', 'placeholder' => __('All terms', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'terms', 'object_type' => $tkey, 'render_type' => 'template', 'multiple' => \true, 'condition' => ['taxonomy' => $tkey, 'terms_current_post' => '']]);
             }
         }
-        $this->add_control('combination_taxonomy', ['label' => __('<b>Include</b> Combination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['AND' => 'AND', 'OR' => 'OR'], 'toggle' => \false, 'default' => 'OR', 'condition' => ['taxonomy!' => '', 'terms_current_post' => '']]);
-        //
+        $this->add_control('combination_taxonomy', ['label' => __('Include Combination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['AND' => 'AND', 'OR' => 'OR'], 'toggle' => \false, 'default' => 'OR', 'condition' => ['taxonomy!' => '', 'terms_current_post' => '']]);
         foreach ($taxonomies as $tkey => $atax) {
             if ($tkey) {
-                $this->add_control('terms_' . $tkey . '_excluse', ['label' => '<b>Exclude</b> Terms of ' . $tkey, 'type' => 'ooo_query', 'placeholder' => __('No terms', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'terms', 'object_type' => $tkey, 'render_type' => 'template', 'multiple' => \true, 'condition' => ['taxonomy' => $tkey, 'terms_current_post' => '']]);
+                $this->add_control('terms_' . $tkey . '_excluse', ['label' => __('Exclude Terms of ', 'dynamic-content-for-elementor') . $tkey, 'type' => 'ooo_query', 'placeholder' => __('No terms', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'terms', 'object_type' => $tkey, 'render_type' => 'template', 'multiple' => \true, 'condition' => ['taxonomy' => $tkey, 'terms_current_post' => '']]);
             }
         }
-        $this->add_control('combination_taxonomy_excluse', ['label' => __('<b>Exclude</b> Combination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['AND' => 'AND', 'OR' => 'OR'], 'toggle' => \false, 'default' => 'OR', 'condition' => ['taxonomy!' => '', 'terms_current_post' => '']]);
+        $this->add_control('combination_taxonomy_excluse', ['label' => __('Exclude Combination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['AND' => 'AND', 'OR' => 'OR'], 'toggle' => \false, 'default' => 'OR', 'condition' => ['taxonomy!' => '', 'terms_current_post' => '']]);
         $this->add_control('terms_current_post', ['label' => __('Dynamic Current Post Terms', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Filter results by taxonomy terms associated to current post', 'dynamic-content-for-elementor'), 'separator' => 'before', 'condition' => ['taxonomy!' => '', 'terms_from_acf' => '']]);
         $this->add_control('terms_from_acf', ['label' => __('Use ACF Taxonomy', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('The results of the filter for taxonomy terms indicated in the ACF Taxonomy type field. If the ACF Taxonomy value in the post is set, it will ignore the previously defined include / exclude filters.', 'dynamic-content-for-elementor'), 'separator' => 'before', 'condition' => ['terms_current_post' => '']]);
-        // ACF Taxomomy ---------------------
-        /*$this->add_control(
-        				'acf_taxonomy', [
-        			'label' => __('Taxonomy (ACF)', 'dynamic-content-for-elementor'),
-        			'type' => Controls_Manager::SELECT,
-        			//'options' => get_post_taxonomies( $post->ID ),
-        			'options' => Helper::get_acf_fields('taxonomy'),
-        			'default' => '',
-        			'condition' => [
-        				'terms_from_acf' => 'yes',
-        			],
-        				]
-        		);*/
         $this->add_control('acf_taxonomy', ['label' => __('Taxonomy (ACF)', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the Taxonomy', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'taxonomy', 'condition' => ['terms_from_acf!' => '']]);
-        $this->add_control('category', [
-            'label' => __('Terms ID', 'dynamic-content-for-elementor'),
-            'description' => __('Commas separate list of category ids', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::HIDDEN,
-            'default' => '',
-            //do_shortcode('[product_cat_id]'),
-            'label_block' => \true,
-            'separator' => 'before',
-            'condition' => ['taxonomy!' => ''],
-        ]);
+        $this->add_control('category', ['label' => __('Terms ID', 'dynamic-content-for-elementor'), 'description' => __('Commas separate list of category ids', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => '', 'label_block' => \true, 'separator' => 'before', 'condition' => ['taxonomy!' => '']]);
         $this->end_controls_section();
         $this->start_controls_section('section_querydate', ['label' => __('Date Query Filter', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode'], 'page_parent' => '']]);
         $this->add_control('querydate_mode', ['label' => __('Date Filter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '', 'label_block' => \true, 'options' => ['' => __('No Filter', 'dynamic-content-for-elementor'), 'past' => __('Past', 'dynamic-content-for-elementor'), 'future' => __('Future', 'dynamic-content-for-elementor'), 'today' => __('Today', 'dynamic-content-for-elementor'), 'yesterday' => __('Yesterday', 'dynamic-content-for-elementor'), 'days' => __('Past Days', 'dynamic-content-for-elementor'), 'weeks' => __('Past Weeks', 'dynamic-content-for-elementor'), 'months' => __('Past Months', 'dynamic-content-for-elementor'), 'years' => __('Past Years', 'dynamic-content-for-elementor'), 'period' => __('Period', 'dynamic-content-for-elementor')]]);
-        $this->add_control('querydate_field', ['label' => __('Date Field', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'label_block' => \true, 'options' => [
-            'post_date' => ['title' => __('Publish Date', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-calendar'],
-            /* 'post_modified' => [
-            			'title' => __('Modified Date', 'dynamic-content-for-elementor'),
-            			'icon' => 'fa fa-edit',
-            			], */
-            'post_meta' => ['title' => __('Post Meta', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-square'],
-        ], 'default' => 'post_date', 'toggle' => \false, 'condition' => [
-            //'querydate_mode!' => '',
-            'querydate_mode!' => ['', 'future'],
-        ]]);
-        $this->add_control('querydate_field_meta', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'description' => __('Selected Post Meta value must be stored if format "Ymd", like ACF Date', 'dynamic-content-for-elementor'), 'separator' => 'before', 'condition' => ['querydate_mode!' => ['', 'future'], 'querydate_field' => 'post_meta']]);
+        $this->add_control('querydate_field', ['label' => __('Date Field', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'label_block' => \true, 'options' => ['post_date' => ['title' => __('Publish Date', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-calendar'], 'post_meta' => ['title' => __('Post Meta', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-square']], 'default' => 'post_date', 'toggle' => \false, 'condition' => ['querydate_mode!' => ['', 'future']]]);
+        $this->add_control('querydate_field_meta', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'description' => __('Selected Post Meta value must be stored in the "Ymd" format, like ACF Date', 'dynamic-content-for-elementor'), 'separator' => 'before', 'condition' => ['querydate_mode!' => ['', 'future'], 'querydate_field' => 'post_meta']]);
         $this->add_control('querydate_field_meta_format', ['label' => __('Meta Date Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('Y-m-d', 'dynamic-content-for-elementor'), 'label_block' => \true, 'default' => __('Ymd', 'dynamic-content-for-elementor'), 'condition' => ['querydate_mode' => 'past', 'querydate_field' => 'post_meta']]);
         $this->add_control('querydate_field_meta_future', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'description' => __('Selected Post Meta value must be stored if format "Ymd", like ACF Date', 'dynamic-content-for-elementor'), 'separator' => 'before', 'condition' => ['querydate_mode' => 'future']]);
         $this->add_control('querydate_field_meta_future_format', ['label' => __('Meta Date Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('Y-m-d', 'dynamic-content-for-elementor'), 'label_block' => \true, 'default' => __('Ymd', 'dynamic-content-for-elementor'), 'condition' => ['querydate_mode' => 'future']]);
-        // number of days / months / years elapsed
         $this->add_control('querydate_range', ['label' => __('Number of (days/months/years) elapsed', 'dynamic-content-for-elementor'), 'label_block' => \true, 'type' => Controls_Manager::NUMBER, 'default' => 1, 'condition' => ['querydate_mode' => ['days', 'weeks', 'months', 'years']]]);
         $this->add_control('querydate_date_type', ['label' => __('Date Input Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'label_block' => \true, 'options' => ['' => ['title' => __('Static', 'dynamic-content-for-elementor'), 'icon' => 'eicon-pencil'], '_dynamic' => ['title' => __('Dynamic', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-cogs']], 'default' => '_dynamic', 'toggle' => \false, 'separator' => 'before', 'condition' => ['querydate_mode' => 'period']]);
-        $this->add_control('querydate_date_from', ['label' => __('Date FROM', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DATE_TIME, 'condition' => ['querydate_mode' => 'period', 'querydate_date_type' => '']]);
-        $this->add_control('querydate_date_to', ['label' => __('Date TO', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DATE_TIME, 'condition' => ['querydate_mode' => 'period', 'querydate_date_type' => '']]);
-        $this->add_control('querydate_date_from_dynamic', ['label' => __('Date FROM', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'condition' => ['querydate_mode' => 'period', 'querydate_date_type' => '_dynamic']]);
-        $this->add_control('querydate_date_to_dynamic', ['label' => __('Date TO', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'condition' => ['querydate_mode' => 'period', 'querydate_date_type' => '_dynamic']]);
+        $this->add_control('querydate_date_from', ['label' => __('Date from', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DATE_TIME, 'condition' => ['querydate_mode' => 'period', 'querydate_date_type' => '']]);
+        $this->add_control('querydate_date_to', ['label' => __('Date to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DATE_TIME, 'condition' => ['querydate_mode' => 'period', 'querydate_date_type' => '']]);
+        $this->add_control('querydate_date_from_dynamic', ['label' => __('Date from', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'condition' => ['querydate_mode' => 'period', 'querydate_date_type' => '_dynamic']]);
+        $this->add_control('querydate_date_to_dynamic', ['label' => __('Date to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'condition' => ['querydate_mode' => 'period', 'querydate_date_type' => '_dynamic']]);
         $this->end_controls_section();
         $this->start_controls_section('section_queryuser', ['label' => __('Author Query Filter', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode'], 'page_parent' => '']]);
-        $this->add_control('by_users', [
-            'label' => __('<b>Include</b> Author', 'dynamic-content-for-elementor'),
-            'type' => 'ooo_query',
-            'placeholder' => __('Select author', 'dynamic-content-for-elementor'),
-            'label_block' => \true,
-            'multiple' => \true,
-            'query_type' => 'users',
-            //'object_type'   => 'editor',
-            'description' => __('Filter posts by selected Authors', 'dynamic-content-for-elementor'),
-            'condition' => ['by_author' => ''],
-        ]);
-        $this->add_control('exclude_users', [
-            'label' => __('<b>Exclude</b> Author', 'dynamic-content-for-elementor'),
-            'type' => 'ooo_query',
-            'placeholder' => __('No', 'dynamic-content-for-elementor'),
-            'label_block' => \true,
-            'multiple' => \true,
-            'query_type' => 'users',
-            //'object_type'   => 'editor',
-            'description' => __('Filter posts by selected Authors', 'dynamic-content-for-elementor'),
-            'separator' => 'after',
-            'condition' => ['by_author' => ''],
-        ]);
+        $this->add_control('by_users', ['label' => __('Include Author', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select author', 'dynamic-content-for-elementor'), 'label_block' => \true, 'multiple' => \true, 'query_type' => 'users', 'description' => __('Filter posts by selected Authors', 'dynamic-content-for-elementor'), 'condition' => ['by_author' => '']]);
+        $this->add_control('exclude_users', ['label' => __('Exclude Author', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('No', 'dynamic-content-for-elementor'), 'label_block' => \true, 'multiple' => \true, 'query_type' => 'users', 'description' => __('Filter posts by selected Authors', 'dynamic-content-for-elementor'), 'separator' => 'after', 'condition' => ['by_author' => '']]);
         $this->add_control('byauthor_options', ['label' => __('Author (Archive)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING]);
         $this->add_control('by_author', ['label' => __('From current Author', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('From current Post Author or Author in Archive Author page', 'dynamic-content-for-elementor')]);
         $this->end_controls_section();
@@ -224,7 +114,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_responsive_control('text_space', ['label' => __('Vertical Text Movement', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => '%'], 'tablet_default' => ['unit' => '%'], 'mobile_default' => ['unit' => '%'], 'size_units' => ['%', 'px'], 'range' => ['%' => ['min' => -100, 'max' => 100], 'px' => ['min' => -200, 'max' => 200]], 'selectors' => ['{{WRAPPER}} .dce-acfposts_content' => 'top: {{SIZE}}{{UNIT}};'], 'condition' => ['image_position' => 'top', 'text_position' => 'inside', 'posts_style!' => 'timeline', 'order_image' => '']]);
         //
         $this->add_control('dysplay_items', ['label' => __('Display', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
-        //
         $this->add_control('show_title', ['label' => __('Show Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'label_block' => \false, 'toggle' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '1']);
         $this->add_control('show_image', ['label' => __('Show Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '1']);
         $this->add_control('show_textcontent', ['label' => __('Show Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban'], '2' => ['title' => __('Excerpt', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left']], 'default' => '0']);
@@ -234,7 +123,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('show_date', ['label' => __('Show Date', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '0']);
         $this->add_control('show_readmore', ['label' => __('Show Read More', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '0']);
         $this->add_control('show_acfitems', ['label' => __('Show ACF Items', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '0']);
-        // -------- ORDERING
         $repeater = new Repeater();
         $chid = $repeater->get_name();
         $repeater->add_control('list_name', ['label' => __('Name', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::HIDDEN, 'default' => __('List Name', 'dynamic-content-for-elementor'), 'label_block' => \true]);
@@ -245,38 +133,9 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('posts_style', ['label' => __('Render as ', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'flexgrid', 'options' => ['simplegrid' => __('Row', 'dynamic-content-for-elementor'), 'flexgrid' => __('Grid (Flex)', 'dynamic-content-for-elementor'), 'grid' => __('Grid Masonry (filters)', 'dynamic-content-for-elementor'), 'carousel' => __('Slick (carousel)', 'dynamic-content-for-elementor'), 'swiper' => __('Swiper (carousel)', 'dynamic-content-for-elementor'), 'timeline' => __('Timeline', 'dynamic-content-for-elementor')]]);
         $this->add_control('filters_enable', ['label' => __('Show Filters', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['posts_style' => 'grid']]);
         $this->add_control('pagination_enable', ['label' => __('Show Pagination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['posts_style' => ['simplegrid', 'flexgrid', 'grid'], 'infiniteScroll_enable' => '']]);
-        /* $this->add_control(
-        	  'pagination_noscript', [
-        	  'label' => __('NoScript', 'dynamic-content-for-elementor'),
-        	  'description' => __('Il paginatore si visualizzerà solo dal motore di ricerca.', 'dynamic-content-for-elementor'),
-        	  'type' => Controls_Manager::SWITCHER,
-        	  'condition' => [
-        	  'posts_style' => ['simplegrid', 'flexgrid', 'grid'],
-        	  //'infiniteScroll_enable' => ''
-        	  ],
-        	  ]
-        	  ); */
         $this->add_control('infiniteScroll_enable', ['label' => __('Infinite Scroll', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['posts_style' => ['simplegrid', 'flexgrid', 'grid'], 'pagination_enable' => '']]);
-        $this->add_control('unic_date', ['label' => __('Use the years above the block', 'dynamic-content-for-elementor'), 'description' => __('View demo: <a href="https://www.dynamic.ooo/demo/history-posts/" target="_blank" >History</a>', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'condition' => ['posts_style' => ['flexgrid', 'grid']]]);
+        $this->add_control('unic_date', ['label' => __('Use the years above the block', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'condition' => ['posts_style' => ['flexgrid', 'grid']]]);
         $this->add_control('masking_enable', ['label' => __('Remove Masking', 'dynamic-content-for-elementor'), 'description' => __('Remove the mask on the carousel to allow the display of the elements outside', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'prefix_class' => 'no-masking-', 'frontend_available' => \true, 'default' => '', 'condition' => ['posts_style' => ['swiper', 'carousel']]]);
-        /* $this->add_control(
-        		  'masking_style', [
-        		  'label' => __('Mask option', 'dynamic-content-for-elementor'),
-        		  'type' => Controls_Manager::SELECT,
-        		  'default' => 'booth',
-        		  'options' => [
-        		  'y' => __('Y', 'dynamic-content-for-elementor'),
-        		  'x' => __('X', 'dynamic-content-for-elementor'),
-        		  'booth' => __('Booth', 'dynamic-content-for-elementor'),
-        
-        
-        		  ],
-        		  'prefix_class' => 'no-masking-',
-        		  'condition' => [
-        		  'masking_enable' => 'yes',
-        		  ]
-        		  ]
-        		  ); */
         $this->end_controls_section();
         /////////////////////////////////////////////////////////////////// [ SECTION InfiniteScroll ]
         $this->start_controls_section('section_infinitescroll', ['label' => __('Infinite Scroll', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['infiniteScroll_enable' => 'yes']]);
@@ -295,11 +154,11 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('pagination_show_numbers', ['label' => __('Show Numbers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('pagination_range', ['label' => __('Range of numbers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 4, 'condition' => ['pagination_show_numbers' => 'yes']]);
         $this->add_control('pagination_show_prevnext', ['label' => __('Show Prev/Next', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'separator' => 'before']);
-        $this->add_control('pagination_icon_prevnext', ['label' => __('Icon Prev/Next', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICON, 'default' => 'fa fa-long-arrow-right', 'include' => ['fa fa-arrow-right', 'fa fa-angle-right', 'fa fa-chevron-circle-right', 'fa fa-caret-square-o-right', 'fa fa-chevron-right', 'fa fa-caret-right', 'fa fa-angle-double-right', 'fa fa-hand-o-right', 'fa fa-arrow-circle-right', 'fa fa-long-arrow-right', 'fa fa-arrow-circle-o-right'], 'condition' => ['pagination_show_prevnext' => 'yes']]);
+        $this->add_control('selected_pagination_icon_prevnext', ['label' => __('Icon Prev/Next', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'pagination_icon_prevnext', 'default' => ['value' => 'fas fa-long-arrow-alt-right', 'library' => 'fa-solid'], 'recommended' => ['fa-solid' => ['arrow-right', 'angle-right', 'long-arrow-alt-right', 'arrow-alt-circle-right', 'arrow-circle-right', 'caret-right', 'caret-square-right', 'chevron-circle-right', 'chevron-right', 'hand-point-right']], 'condition' => ['pagination_show_prevnext' => 'yes']]);
         $this->add_control('pagination_prev_label', ['label' => __('Previous Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Previous', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_prevnext' => 'yes']]);
         $this->add_control('pagination_next_label', ['label' => __('Next Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Next', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_prevnext' => 'yes']]);
         $this->add_control('pagination_show_firstlast', ['label' => __('Show First/Last', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'separator' => 'before']);
-        $this->add_control('pagination_icon_firstlast', ['label' => __('Icon First/Last', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICON, 'default' => 'fa fa-long-arrow-right', 'include' => ['fa fa-arrow-right', 'fa fa-angle-right', 'fa fa-chevron-circle-right', 'fa fa-caret-square-o-right', 'fa fa-chevron-right', 'fa fa-caret-right', 'fa fa-angle-double-right', 'fa fa-hand-o-right', 'fa fa-arrow-circle-right', 'fa fa-long-arrow-right', 'fa fa-arrow-circle-o-right'], 'condition' => ['pagination_show_firstlast' => 'yes']]);
+        $this->add_control('selected_pagination_icon_firstlast', ['label' => __('Icon First/Last', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'pagination_icon_firstlast', 'default' => ['value' => 'fas fa-long-arrow-alt-right', 'library' => 'fa-solid'], 'recommended' => ['fa-solid' => ['arrow-right', 'angle-right', 'long-arrow-alt-right', 'arrow-alt-circle-right', 'arrow-circle-right', 'caret-right', 'caret-square-right', 'chevron-circle-right', 'chevron-right', 'hand-point-right']], 'condition' => ['pagination_show_firstlast' => 'yes']]);
         $this->add_control('pagination_first_label', ['label' => __('Previous Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('First', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_firstlast' => 'yes']]);
         $this->add_control('pagination_last_label', ['label' => __('Next Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Last', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_firstlast' => 'yes']]);
         $this->add_control('pagination_show_progression', ['label' => __('Show Progression', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'separator' => 'before']);
@@ -323,7 +182,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('carousel_effect', ['label' => __('Effect', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'slide', 'options' => ['slide' => __('Slide', 'dynamic-content-for-elementor'), 'fade' => __('Fade', 'dynamic-content-for-elementor')], 'condition' => ['slides_to_show' => '1'], 'frontend_available' => \true]);
         $this->end_controls_section();
         ///////////////////////////////////////////////////////////// [ SECTION Swiper ]
-        //
         // ------------------------------------------------------------------------------- Base Settings, Slides grid, Grab Cursor
         $this->start_controls_section('section_swiper_settings', ['label' => __('Swiper Settings', 'dynamic-content-for-elementor'), 'condition' => ['posts_style' => 'swiper']]);
         $this->add_control('direction_slider', ['label' => __('Direction', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'options' => ['horizontal' => __('Horizontal', 'dynamic-content-for-elementor'), 'vertical' => __('Vertical', 'dynamic-content-for-elementor')], 'default' => 'horizontal', 'frontend_available' => \true]);
@@ -333,30 +191,8 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         // -------------------------------- Progressione ------
         $this->add_control('slideperview_options', ['label' => __('Slide per wiew', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_responsive_control('spaceBetween', ['label' => __('Space Between', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0, 'tablet_default' => '', 'mobile_default' => '', 'min' => 0, 'max' => 100, 'step' => 1, 'frontend_available' => \true]);
-        $this->add_responsive_control('slidesPerView', [
-            'label' => __('Slides Per View', 'dynamic-content-for-elementor'),
-            'description' => __('Number of slides per view (slides visible at the same time on sliders container). If you use it with "auto" value and along with loop: true then you need to specify loopedSlides parameter with amount of slides to loop (duplicate). SlidesPerView: "auto"\'" is currently not compatible with multirow mode, when slidesPerColumn greater than 1', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::NUMBER,
-            'default' => '1',
-            //'tablet_default' => '',
-            //'mobile_default' => '',
-            'min' => 1,
-            'max' => 12,
-            'step' => 1,
-            'frontend_available' => \true,
-        ]);
-        $this->add_responsive_control('slidesColumn', [
-            'label' => __('Slides Column', 'dynamic-content-for-elementor'),
-            'description' => __('Number of slides per column, for multirow layout.', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::NUMBER,
-            'default' => '1',
-            //'tablet_default' => '',
-            //'mobile_default' => '',
-            'min' => 1,
-            'max' => 4,
-            'step' => 1,
-            'frontend_available' => \true,
-        ]);
+        $this->add_responsive_control('slidesPerView', ['label' => __('Slides Per View', 'dynamic-content-for-elementor'), 'description' => __('Number of slides per view (slides visible at the same time on sliders container). If you use it with "auto" value and along with loop: true then you need to specify loopedSlides parameter with amount of slides to loop (duplicate). SlidesPerView: "auto"\'" is currently not compatible with multirow mode, when slidesPerColumn greater than 1', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '1', 'min' => 1, 'max' => 12, 'step' => 1, 'frontend_available' => \true]);
+        $this->add_responsive_control('slidesColumn', ['label' => __('Slides Column', 'dynamic-content-for-elementor'), 'description' => __('Number of slides per column, for multirow layout.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '1', 'min' => 1, 'max' => 4, 'step' => 1, 'frontend_available' => \true]);
         $this->add_responsive_control('slidesPerGroup', ['label' => __('Slides Per Group', 'dynamic-content-for-elementor'), 'description' => __('Set numbers of slides to define and enable group sliding. Useful to use with slidesPerView > 1', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 1, 'tablet_default' => '', 'mobile_default' => '', 'min' => 1, 'max' => 12, 'step' => 1, 'frontend_available' => \true]);
         // -------------------------------- Free Mode ------
         $this->add_control('freemode_options', ['label' => __('Free Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
@@ -377,9 +213,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('navigation_arrow_color_hover', ['label' => __('Hover color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .swiper-button-next:hover path, {{WRAPPER}} .swiper-button-prev:hover path, ' => 'fill: {{VALUE}};', '{{WRAPPER}} .swiper-button-next:hover line, {{WRAPPER}} .swiper-button-prev:hover line, {{WRAPPER}} .swiper-button-next:hover polyline, {{WRAPPER}} .swiper-button-prev:hover polyline' => 'stroke: {{VALUE}};'], 'condition' => ['useNavigation' => 'yes']]);
         $this->add_responsive_control('pagination_stroke_1', ['label' => __('Stroke Arrow', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'tablet_default' => ['size' => ''], 'mobile_default' => ['size' => ''], 'range' => ['px' => ['max' => 50, 'min' => 0, 'step' => 1.0]], 'selectors' => ['{{WRAPPER}} .swiper-button-prev polyline, {{WRAPPER}} .swiper-button-next polyline' => 'stroke-width: {{SIZE}};'], 'condition' => ['useNavigation' => 'yes']]);
         $this->add_responsive_control('pagination_stroke_2', ['label' => __('Stroke Line', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'tablet_default' => ['size' => ''], 'mobile_default' => ['size' => ''], 'range' => ['px' => ['max' => 50, 'min' => 0, 'step' => 1.0]], 'selectors' => ['{{WRAPPER}} .swiper-button-next line, {{WRAPPER}} .swiper-button-prev line' => 'stroke-width: {{SIZE}};'], 'condition' => ['useNavigation' => 'yes']]);
-        ////////
         $this->add_control('pagination_tratteggio', ['label' => __('Dashed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '0'], 'range' => ['px' => ['max' => 50, 'min' => 0, 'step' => 1.0]], 'selectors' => ['{{WRAPPER}} .swiper-button-prev line, {{WRAPPER}} .swiper-button-next line, {{WRAPPER}} .swiper-button-prev polyline, {{WRAPPER}} .swiper-button-next polyline' => 'stroke-dasharray: {{SIZE}},{{SIZE}};'], 'condition' => ['useNavigation' => 'yes']]);
-        ///////////
         $this->add_responsive_control('pagination_scale', ['label' => __('Scale', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'tablet_default' => ['size' => ''], 'mobile_default' => ['size' => ''], 'range' => ['px' => ['max' => 2, 'min' => 0.1, 'step' => 0.01]], 'selectors' => ['{{WRAPPER}} .swiper-button-next, {{WRAPPER}} .swiper-button-prev' => 'transform: scale({{SIZE}});'], 'condition' => ['useNavigation' => 'yes']]);
         $this->add_responsive_control('pagination_position', ['label' => __('Horizontal Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'tablet_default' => ['size' => ''], 'mobile_default' => ['size' => ''], 'size_units' => ['px'], 'range' => ['px' => ['max' => 100, 'min' => -100, 'step' => 1]], 'selectors' => ['{{WRAPPER}} .swiper-button-prev' => 'left: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .swiper-button-next' => 'right: {{SIZE}}{{UNIT}};'], 'condition' => ['useNavigation' => 'yes']]);
         $this->add_responsive_control('pagination_position_v', ['label' => __('Vertical Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 50, 'unit' => '%'], 'size_units' => ['%', 'px'], 'range' => ['%' => ['max' => 120, 'min' => -20, 'step' => 1], 'px' => ['max' => 200, 'min' => -200, 'step' => 1]], 'selectors' => ['{{WRAPPER}} .swiper-button-prev, {{WRAPPER}} .swiper-button-next' => 'top: {{SIZE}}{{UNIT}};'], 'condition' => ['useNavigation' => 'yes']]);
@@ -440,127 +274,13 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('watchSlidesProgress', ['label' => __('Watch Slides Progress', 'dynamic-content-for-elementor'), 'description' => __('Enable this feature to calculate each slides progress', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
         $this->add_control('watchSlidesVisibility', ['label' => __('Watch Slides Visibility', 'dynamic-content-for-elementor'), 'description' => __('WatchSlidesProgress should be enabled. Enable this option and slides that are in viewport will have additional visible classes', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['watchSlidesProgress' => 'yes']]);
         $this->end_controls_section();
-        // ------------------------------------------------------------------------------- Parallax
-        /* $this->start_controls_section(
-        	  'section_swiper_tarallax',
-        	  [
-        	  'label'         => __( 'Parallax', 'dynamic-content-for-elementor' ),
-        	  'condition' => [
-        	  'posts_style' => 'swiper',
-        	  ]
-        	  ]
-        	  );
-        	  $this->end_controls_section(); */
-        // ------------------------------------------------------------------------------- Touches, Touch Resistance
-        /* $this->start_controls_section(
-        	  'section_swiper_touch',
-        	  [
-        	  'label'         => __( 'Touches & Touch Resistance', 'dynamic-content-for-elementor' ),
-        	  'condition' => [
-        	  'posts_style' => 'swiper',
-        	  ]
-        	  ]
-        	  );
-        	  $this->end_controls_section(); */
-        // ------------------------------------------------------------------------------- Swiping / No swiping
-        /* $this->start_controls_section(
-        	  'section_swiper_swiping',
-        	  [
-        	  'label'         => __( 'Swiping / No swiping', 'dynamic-content-for-elementor' ),
-        	  'condition' => [
-        	  'posts_style' => 'swiper',
-        	  ]
-        	  ]
-        	  );
-        	  $this->end_controls_section(); */
-        // ------------------------------------------------------------------------------- Navigation Controls, Pagination, Navigation Buttons, Scollbar, Accessibility
-        /* $this->start_controls_section(
-        	  'section_swiper_navigation',
-        	  [
-        	  'label'         => __( 'Navigation', 'dynamic-content-for-elementor' ),
-        	  'condition' => [
-        	  'posts_style' => 'swiper',
-        	  ]
-        	  ]
-        	  );
-        	  $this->end_controls_section(); */
-        // ------------------------------------------------------------------------------- Hash/History Navigation
-        /* $this->start_controls_section(
-        	  'section_swiper_hashHistory',
-        	  [
-        	  'label'         => __( 'Hash/History Navigation', 'dynamic-content-for-elementor' ),
-        	  'condition' => [
-        	  'posts_style' => 'swiper',
-        	  ]
-        	  ]
-        	  );
-        	  $this->end_controls_section(); */
-        // ------------------------------------------------------------------------------- Images
-        /* $this->start_controls_section(
-        	  'section_swiper_images',
-        	  [
-        	  'label'         => __( 'Images', 'dynamic-content-for-elementor' ),
-        	  'condition' => [
-        	  'posts_style' => 'swiper',
-        	  ]
-        	  ]
-        	  );
-        	  $this->end_controls_section(); */
         //////////////////////////////////////////////////////////////////////////// [ SECTION Grid ]
         $this->start_controls_section('section_grid', ['label' => __('Grid', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['posts_style' => ['grid', 'flexgrid']]]);
-        /* $this->add_responsive_control(
-        	  'num_col',
-        	  [
-        	  'label' => __( 'Zoom Level', 'dynamic-content-for-elementor' ),
-        	  'type' => Controls_Manager::SLIDER,
-        	  'default' => [
-        	  'size' => 4,
-        	  ],
-        	  'range' => [
-        	  'px' => [
-        	  'min' => 1,
-        	  'max' => 8,
-        	  ],
-        	  ],
-        	  ]
-        	  ); */
-        $this->add_responsive_control('columns_grid', [
-            'label' => __('Columns', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::SELECT,
-            'default' => '5',
-            'tablet_default' => '3',
-            'mobile_default' => '1',
-            'options' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7'],
-            //'frontend_available' => true,
-            //'prefix_class' => 'columns-',
-            'render_type' => 'template',
-            'selectors' => ['{{WRAPPER}} .dce-post-item' => 'width: calc( 100% / {{VALUE}} );', '{{WRAPPER}} .dce-post-item.equalHMR' => 'flex: 0 1 calc( 100% / {{VALUE}} );'],
-            'condition' => ['posts_style' => ['grid', 'flexgrid']],
-        ]);
-        /*
-         flex-grow: 0;
-         flex-shrink: 1;
-         flex-basis: calc(33.3333%)
-        */
+        $this->add_responsive_control('columns_grid', ['label' => __('Columns', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '5', 'tablet_default' => '3', 'mobile_default' => '1', 'options' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7'], 'render_type' => 'template', 'selectors' => ['{{WRAPPER}} .dce-post-item' => 'width: calc( 100% / {{VALUE}} );', '{{WRAPPER}} .dce-post-item.equalHMR' => 'flex: 0 1 calc( 100% / {{VALUE}} );'], 'condition' => ['posts_style' => ['grid', 'flexgrid']]]);
         $this->add_control('fitrow_enable', ['label' => __('Fit Row', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['posts_style' => 'grid']]);
-        $this->add_control('sameheight_enable', [
-            'label' => __('Flex', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::SWITCHER,
-            'default' => 'yes',
-            //'frontend_available' => true,
-            'condition' => ['posts_style' => 'flexgrid'],
-        ]);
+        $this->add_control('sameheight_enable', ['label' => __('Flex', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => ['posts_style' => 'flexgrid']]);
         $this->add_control('flex_grow', ['label' => __('Flex grow', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => ['title' => __('1', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('0', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => 1, 'selectors' => ['{{WRAPPER}} .dce-post-item.equalHMR' => 'flex-grow: {{VALUE}};'], 'condition' => ['posts_style' => 'flexgrid', 'sameheight_enable' => 'yes']]);
-        $this->add_responsive_control('flexgrid_mode', [
-            'label' => __('Alignment grid', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::SELECT,
-            'default' => 'flex-start',
-            'label_block' => \true,
-            'options' => ['flex-start' => 'Flex start', 'flex-end' => 'Flex end', 'center' => 'Center', 'space-between' => 'Space Between', 'space-around' => 'Space Around'],
-            //'frontend_available' => true,
-            'selectors' => ['{{WRAPPER}} .equalHMRWrap' => 'justify-content: {{VALUE}};'],
-            'condition' => ['posts_style' => 'flexgrid', 'sameheight_enable' => 'yes', 'flex_grow' => '0'],
-        ]);
+        $this->add_responsive_control('flexgrid_mode', ['label' => __('Alignment grid', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'flex-start', 'label_block' => \true, 'options' => ['flex-start' => 'Flex start', 'flex-end' => 'Flex end', 'center' => 'Center', 'space-between' => 'Space Between', 'space-around' => 'Space Around'], 'selectors' => ['{{WRAPPER}} .equalHMRWrap' => 'justify-content: {{VALUE}};'], 'condition' => ['posts_style' => 'flexgrid', 'sameheight_enable' => 'yes', 'flex_grow' => '0']]);
         $this->add_responsive_control('v_align_items', ['label' => __('Vertical Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['flex-start' => ['title' => __('Top', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-top'], 'center' => ['title' => __('Middle', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-middle'], 'flex-end' => ['title' => __('Down', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-bottom'], 'stretch' => ['title' => __('Stretch', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-stretch']], 'default' => 'top', 'selectors' => ['{{WRAPPER}} .equalHMR' => 'align-self: {{VALUE}};'], 'condition' => ['posts_style' => 'flexgrid', 'sameheight_enable' => 'yes', 'flex_grow' => '0']]);
         $this->end_controls_section();
         // ------------------------------------------------------------------------------------ [ SECTION Title ]
@@ -574,37 +294,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('textcontent_limit', ['label' => __('Number of characters', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '', 'condition' => ['show_textcontent' => '1']]);
         $this->add_control('textcontent_position', ['label' => __('Text Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'options' => ['bottom_in' => __('Bottom (in)', 'dynamic-content-for-elementor'), 'bottom_out' => __('Bottom (out)', 'dynamic-content-for-elementor'), 'top_out' => __('Top (out)', 'dynamic-content-for-elementor')], 'default' => 'bottom_in', 'prefix_class' => 'textcontent-position-', 'frontend_available' => \true, 'condition' => ['show_textcontent!' => '0']]);
         $this->add_control('nuvoletta_enable', ['label' => __('Enable Tooltip', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['no' => __('No', 'dynamic-content-for-elementor'), 'yes' => __('Yes', 'dynamic-content-for-elementor')], 'default' => '', 'prefix_class' => 'nuvoletta-', 'frontend_available' => \true, 'condition' => ['show_textcontent' => '1', 'posts_style' => ['simplegrid', 'flexgrid', 'grid']]]);
-        /* $this->add_control(
-        	  'nuvoletta_enable',
-        	  [
-        	  'label'         => __( 'Nuvoletta', 'dynamic-content-for-elementor' ),
-        	  'type'          => Controls_Manager::SWITCHER,
-        	  'default'       => '',
-        	  'label_on'      => __( 'Yes', 'dynamic-content-for-elementor' ),
-        	  'label_off'     => __( 'No', 'dynamic-content-for-elementor' ),
-        	  'return_value'  => 'yes',
-        	  'frontend_available' => true,
-        	  'prefix_class' => 'nuvoletta-',
-        	  ]
-        	  ); */
-        /* $this->add_control(
-        		  'nuvoletta_position',
-        		  [
-        		  'label' => __( 'Arrow Position', 'dynamic-content-for-elementor' ),
-        		  'type' => Controls_Manager::SELECT,
-        		  'default' => 'inside',
-        		  'options' => [
-        		  '' => __( 'None', 'dynamic-content-for-elementor' ),
-        		  'top' => __( 'Top', 'dynamic-content-for-elementor' ),
-        		  'bottom' => __( 'Bottom', 'dynamic-content-for-elementor' ),
-        		  ],
-        		  'default' => '',
-        
-        		  'condition' => [
-        		  'nuvoletta_enable' => 'yes',
-        		  ]
-        		  ]
-        		  ); */
         $this->add_responsive_control('nuvolatta_move', ['label' => __('Horizontal Offset Arrow', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 50, 'unit' => '%'], 'tablet_default' => ['unit' => '%'], 'mobile_default' => ['unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce_textcontent:after' => 'left: {{SIZE}}{{UNIT}};'], 'condition' => ['nuvoletta_enable' => 'yes']]);
         $this->add_responsive_control('nuvolatta_size', ['label' => __('Arrow size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 15, 'unit' => 'px'], 'tablet_default' => ['unit' => 'px'], 'mobile_default' => ['unit' => 'px'], 'size_units' => ['px'], 'range' => ['%' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce_textcontent:after' => 'border-width: {{SIZE}}{{UNIT}}; margin-left: -{{SIZE}}{{UNIT}};'], 'condition' => ['nuvoletta_enable' => 'yes']]);
         $this->end_controls_section();
@@ -651,13 +340,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->end_controls_section();
         // ---------------------------------------------- [ SECTION Read More Button ]
         $this->start_controls_section('section_readmore', ['label' => __('Read More Button', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['show_readmore' => '1', 'templatemode_enable' => '', 'native_templatemode_enable' => '']]);
-        $this->add_control('readmore_text', [
-            'label' => __('Text button', 'dynamic-content-for-elementor'),
-            //'description' => __('Separator caracters.','dynamic-content-for-elementor'),
-            'type' => Controls_Manager::TEXT,
-            'default' => __('Read More', 'dynamic-content-for-elementor'),
-            'condition' => ['show_readmore' => '1'],
-        ]);
+        $this->add_control('readmore_text', ['label' => __('Text button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Read More', 'dynamic-content-for-elementor'), 'condition' => ['show_readmore' => '1']]);
         $this->add_control('readmore_inout', ['label' => __('Read More button inside or outside of box', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'options' => ['in' => __('In', 'dynamic-content-for-elementor'), 'out' => __('Out', 'dynamic-content-for-elementor')], 'default' => 'out', 'condition' => ['show_readmore' => '1']]);
         $this->end_controls_section();
         // ---------------------------------------------------- [ ACF repeater START ]
@@ -665,7 +348,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $repeater = new Repeater();
         $repeater->start_controls_tabs('acfitems_repeater');
         $repeater->start_controls_tab('tab_content', ['label' => __('Item', 'dynamic-content-for-elementor')]);
-        $repeater->add_control('acf_field_item', ['label' => __('Fields', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acfposts']);
+        $repeater->add_control('acf_field_item', ['label' => __('Fields', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acfposts']);
         $repeater->add_control('acf_field_type', ['label' => __('Field type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'text', 'options' => ['text' => __('Text', 'dynamic-content-for-elementor'), 'image' => __('Image', 'dynamic-content-for-elementor'), 'date' => __('Date', 'dynamic-content-for-elementor')]]);
         $repeater->add_control('acf_date_format', ['label' => __('Date Format', 'dynamic-content-for-elementor'), 'description' => __('The format of date.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'F j, Y, g:i a', 'condition' => ['acf_field_type' => 'date']]);
         $repeater->add_control('html_tag_item', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'condition' => ['acf_field_type' => 'text'], 'default' => '']);
@@ -681,15 +364,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $repeater->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography_item', 'selector' => '{{WRAPPER}} .dce-acfposts_content {{CURRENT_ITEM}}, {{WRAPPER}} .dce-acfposts_content {{CURRENT_ITEM}} > *', 'render_type' => 'ui', 'condition' => ['acf_field_type' => ['text', 'date']]]);
         $repeater->end_controls_tab();
         $repeater->end_controls_tabs();
-        $this->add_control('acf_items', [
-            'label' => __('Meta Items', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::REPEATER,
-            'fields' => \array_values($repeater->get_controls()),
-            'title_field' => '{{{ acf_field_item }}}',
-            'prevent_empty' => \false,
-            // show_acfitems
-            'condition' => ['show_acfitems' => '1'],
-        ]);
+        $this->add_control('acf_items', ['label' => __('Meta Items', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'fields' => \array_values($repeater->get_controls()), 'title_field' => '{{{ acf_field_item }}}', 'prevent_empty' => \false, 'condition' => ['show_acfitems' => '1']]);
         $this->end_controls_section();
         // ----------------------------------------------- [ SECTION Filters ]
         $this->start_controls_section('section_filters', ['label' => __('Filters', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['posts_style' => 'grid', 'filters_enable' => 'yes']]);
@@ -701,7 +376,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
             }
         }
         $this->add_control('orderby_filters', ['label' => __('Order By', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_post_orderby_options(), 'default' => 'date']);
-        $this->add_control('filters_acf', ['label' => __('Data Filters', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'text,textarea,select,number,date_time_picker,date_picker,oembed,file,url,image,wysiwyg']);
+        $this->add_control('filters_acf', ['label' => __('Data Filters', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'text,textarea,select,number,date_time_picker,date_picker,oembed,file,url,image,wysiwyg']);
         $this->add_control('all_filter', ['label' => __('Add "All" filter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('alltext_filter', ['label' => __('All text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'All', 'condition' => ['all_filter!' => '']]);
         $this->add_control('separator_filter', ['label' => __('Separator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => ' / ']);
@@ -718,7 +393,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('hover_text_effect_animation_out', ['label' => __('OUT Animation effect', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_anim_out(), 'default' => 'fadeOut', 'frontend_available' => \true, 'render_type' => 'template', 'condition' => ['hover_text_effect' => 'cssanimations', 'image_position' => 'top'], 'selectors' => ['{{WRAPPER}} .dce-post-item .dce-hover-effect-content.dce-close' => 'animation-name: {{VALUE}}; -webkit-animation-name: {{VALUE}};']]);
         $this->add_control('hover_text_effect_timingFunction_out', ['label' => __('OUT Effect Timing function', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_anim_timing_functions(), 'default' => 'ease-in-out', 'selectors' => ['{{WRAPPER}} .dce-post-item .dce-hover-effect-content.dce-close' => 'animation-timing-function: {{VALUE}}; -webkit-animation-timing-function: {{VALUE}};'], 'condition' => ['hover_text_effect' => 'cssanimations', 'image_position' => 'top']]);
         $this->add_control('hr', ['type' => \Elementor\Controls_Manager::DIVIDER, 'style' => 'thick']);
-        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), ['name' => 'hover_filters_image', 'label' => 'Filters image', 'selector' => '{{WRAPPER}} .dce-acfposts_image a:hover .acfposts-image']);
+        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'hover_filters_image', 'label' => 'Filters image', 'selector' => '{{WRAPPER}} .dce-acfposts_image a:hover .acfposts-image']);
         $this->add_control('hover_animation', ['label' => __('Hover Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HOVER_ANIMATION, 'separator' => 'before']);
         $this->add_control('use_overlay_hover', ['label' => __('Overlay', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'separator' => 'before', 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '0', 'condition' => ['image_link!' => '']]);
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'overlay_color_hover', 'label' => __('Background', 'dynamic-content-for-elementor'), 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .dce-overlay_hover', 'condition' => ['use_overlay_hover' => '1', 'image_link!' => '']]);
@@ -726,20 +401,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         // ------------------------------------------- [SECTION DYNAMIC CONTENT - DCE ]
         $this->start_controls_section('section_dce', ['label' => __('Dynamic Content', 'dynamic-content-for-elementor')]);
         $this->add_control('templatemode_enable', ['label' => __('Enable Template', 'dynamic-content-for-elementor'), 'description' => __('Enable a template to manage the appearance of individual grid elements ', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'render_type' => 'template', 'prefix_class' => 'templatemode-', 'condition' => ['native_templatemode_enable' => '']]);
-        /* $this->add_control(
-        		  'templatemode_template', [
-        		  'label' => __('Template', 'dynamic-content-for-elementor'),
-        		  'type' => Controls_Manager::SELECT,
-        
-        		  //'options' => get_post_taxonomies( $post->ID ),
-        		  'options' => $templates,
-        		  'default' => '0',
-        		  'condition' => [
-        		  'templatemode_enable!' => '',
-        		  'native_templatemode_enable' => ''
-        		  ],
-        		  ]
-        		  ); */
         $this->add_control('templatemode_template', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['templatemode_enable!' => '', 'native_templatemode_enable' => '']]);
         $this->add_control('templatemode_enable_2', ['label' => __('Enable Template 2', 'dynamic-content-for-elementor'), 'description' => __('Enable a template to manage the appearance of the odd elements of the grid ', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'render_type' => 'template', 'prefix_class' => 'templatemode-', 'condition' => ['native_templatemode_enable' => '']]);
         $this->add_control('templatemode_template_2', ['label' => __('Template for odd posts', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['templatemode_enable!' => '', 'templatemode_enable_2!' => '', 'native_templatemode_enable' => '']]);
@@ -747,7 +408,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('templatemode_linkable', ['label' => __('Linkable', 'dynamic-content-for-elementor'), 'description' => __('Use the extended link on the template block.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'render_type' => 'template']);
         $this->end_controls_section();
         // --------------------------------------------- [SECTION WOW animations ]
-        $this->start_controls_section('section_wow', ['label' => __('Wow Animation', 'dynamic-content-for-elementor'), 'condition' => []]);
+        $this->start_controls_section('section_wow', ['label' => __('Wow Animation', 'dynamic-content-for-elementor')]);
         $this->add_control('enabled_wow', ['label' => __('Enable WOW Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
         // coefficiente per default
         $this->add_control('wow_coef', ['label' => __('Delay coefficient', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0, 'min' => 0.01, 'max' => 1, 'step' => 0.01, 'condition' => ['enabled_wow' => 'yes']]);
@@ -762,7 +423,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->end_controls_section();
         // ------------------------------------------- [SECTION Ajax]
         $this->start_controls_section('section_ajax', ['label' => __('Ajax', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
-        $this->add_group_control(DCE_Group_Control_Ajax_Page::get_type(), ['name' => 'ajax_page', 'label' => 'Ajax PAGE', 'selector' => $this->get_id()]);
+        $this->add_group_control(Group_Control_Ajax_Page::get_type(), ['name' => 'ajax_page', 'label' => 'Ajax PAGE', 'selector' => $this->get_id()]);
         $this->end_controls_section();
         ////////////////////////////////////////////////////////////////////////////////////////// STYLE TAB
         // -------------------------------------------------------------------------- [ section Style - Timeline ]
@@ -779,9 +440,9 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->end_controls_section();
         // -------------------------------------------------------------------------- [ section Style - Block ]
         $this->start_controls_section('section_style_template', ['label' => __('Style Info', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['templatemode_enable!' => '']]);
-        $this->add_control('templatemode_info', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('Styles are managed in the template.', 'dynamic-content-for-elementor'), 'content_classes' => 'dce-document-settings', 'separator' => 'after']);
+        $this->add_control('templatemode_info', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('Styles are managed in the template.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'separator' => 'after']);
         $this->end_controls_section();
-        $this->start_controls_section('section_style_textzone', ['label' => __('Blocks', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => []]);
+        $this->start_controls_section('section_style_textzone', ['label' => __('Blocks', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('textzone_bgcolor', ['label' => __('Blocks Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-post-item .dce-wrapper' => 'background-color: {{VALUE}};']]);
         $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'textzone_boxshadow', 'selector' => '{{WRAPPER}} .dce-post-item .dce-wrapper']);
         $this->add_responsive_control('layout_align', ['label' => __('Text Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => 'left', 'selectors' => ['{{WRAPPER}} .dce-post-item' => 'text-align: {{VALUE}};'], 'prefix_class' => 'acfposts%s-align-', 'condition' => ['posts_style!' => 'timeline', 'templatemode_enable' => ''], 'separator' => 'before']);
@@ -791,7 +452,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_group_control(Group_Control_Border::get_type(), ['name' => 'border_textzone', 'label' => __('Image Border', 'dynamic-content-for-elementor'), 'separator' => 'before', 'selector' => '{{WRAPPER}} .dce-post-item > .dce-wrapper']);
         $this->add_responsive_control('text_padding_item', ['label' => __('Blocks Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'separator' => 'before', 'size_units' => ['px', '%', 'em'], 'selectors' => ['{{WRAPPER}} .dce-post-item .dce-wrapper' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_responsive_control('textzone_margin', ['label' => __('Blocks Margin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em'], 'selectors' => ['{{WRAPPER}} .dce-post-item' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-        // ** questo elemento ha il nome textzone perche nato prima di essere perfezionato con l'are "text zone", in realtà è il border_radius del block
         $this->add_control('border_radius_textzone', ['label' => __('Block Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em'], 'selectors' => ['{{WRAPPER}} .dce-post-item .dce-wrapper' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_control('radius_masking_enable', ['label' => __('BorderRadius add Masking', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'separator' => 'after', 'prefix_class' => 'add-radius-masking-', 'condition' => ['border_radius_textzone[left]!' => '']]);
         $this->end_controls_section();
@@ -801,16 +461,8 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('textarea_bgcolor', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-acfposts_content' => 'background-color: {{VALUE}};']]);
         $this->add_responsive_control('textzone_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-acfposts_content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_responsive_control('textzone_movement', ['label' => __('Movement (%)', 'dynamic-content-for-elementor'), 'type' => 'xy_movement', 'separator' => 'before', 'default' => ['x' => '', 'y' => ''], 'responsive' => \true, 'render_type' => 'ui', 'selectors' => ['{{WRAPPER}} .dce-acfposts_content' => 'transform: translate({{X}}%, {{Y}}%); -webkit-transform: translate({{X}}%, {{Y}}%);']]);
-        $this->add_responsive_control('textzone_width', ['label' => __('Width (%)', 'dynamic-content-for-elementor'), 'description' => 'Available only with [Layout > Position Top]', 'type' => Controls_Manager::SLIDER, 'size_units' => ['%'], 'range' => ['%' => ['min' => 1, 'max' => 100, 'step' => 0.1]], 'selectors' => ['{{WRAPPER}}.image-acfposts-position-top .dce-acfposts_content' => 'width: {{SIZE}}% !important;'], 'condition' => ['posts_style!' => 'timeline']]);
-        // ** vedi sopra
-        $this->add_control('border_radius_textzone_2', [
-            'label' => __('Border Radius', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::DIMENSIONS,
-            'separator' => 'before',
-            'size_units' => ['px', '%', 'em'],
-            //'default' => '',
-            'selectors' => ['{{WRAPPER}} .dce-acfposts_content' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'],
-        ]);
+        $this->add_responsive_control('textzone_width', ['label' => __('Width (%)', 'dynamic-content-for-elementor'), 'description' => __('Available only with [Layout > Position Top]', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['%'], 'range' => ['%' => ['min' => 1, 'max' => 100, 'step' => 0.1]], 'selectors' => ['{{WRAPPER}}.image-acfposts-position-top .dce-acfposts_content' => 'width: {{SIZE}}% !important;'], 'condition' => ['posts_style!' => 'timeline']]);
+        $this->add_control('border_radius_textzone_2', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'separator' => 'before', 'size_units' => ['px', '%', 'em'], 'selectors' => ['{{WRAPPER}} .dce-acfposts_content' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_control('overflow_textzone_2', ['label' => __('Overflow Hidden', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'hidden', 'selectors' => ['{{WRAPPER}} .dce-acfposts_content' => 'overflow: {{VALUE}};']]);
         $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'box_shadow_textzone', 'selector' => '{{WRAPPER}} .dce-acfposts_content']);
         $this->end_controls_section();
@@ -854,62 +506,10 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_responsive_control('img_space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['px', '%'], 'range' => ['px' => ['max' => 100, 'min' => -100, 'step' => 1], '%' => ['max' => 100, 'min' => -100, 'step' => 1]], 'selectors' => ['{{WRAPPER}} .dce-acfposts_image' => 'margin-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['show_image' => '1']]);
         $this->add_control('popover-toggle', ['label' => __('Transform image', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::POPOVER_TOGGLE, 'label_off' => __('Default', 'dynamic-content-for-elementor'), 'label_on' => __('Custom', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
         $this->start_popover();
-        $this->add_group_control(DCE_Group_Control_Transform_Element::get_type(), ['name' => 'transform_image', 'label' => 'Transform image', 'selector' => '{{WRAPPER}} .dce-acfposts_image', 'condition' => ['show_image' => '1']]);
+        $this->add_group_control(Group_Control_Transform_Element::get_type(), ['name' => 'transform_image', 'label' => 'Transform image', 'selector' => '{{WRAPPER}} .dce-acfposts_image', 'condition' => ['show_image' => '1']]);
         $this->end_popover();
-        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), [
-            'name' => 'filters_image',
-            'label' => 'Filters image',
-            //'selector' => '{{WRAPPER}} img, {{WRAPPER}} .dynamic-content-featuredimage-bg',
-            'selector' => '{{WRAPPER}} .dce-acfposts_image .acfposts-image',
-        ]);
-        $this->add_control('blend_mode', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => 'Multiply', 'screen' => 'Screen', 'overlay' => 'Overlay', 'darken' => 'Darken', 'lighten' => 'Lighten', 'color-dodge' => 'Color Dodge', 'saturation' => 'Saturation', 'color' => 'Color', 'difference' => 'Difference', 'exclusion' => 'Exclusion', 'hue' => 'Hue', 'luminosity' => 'Luminosity'], 'selectors' => ['{{WRAPPER}} .dce-acfposts_image' => 'mix-blend-mode: {{VALUE}}'], 'separator' => 'none']);
-        /* $this->add_responsive_control(
-        		  'opacity_image', [
-        		  'label' => __('Opacity (%)', 'dynamic-content-for-elementor'),
-        		  'type' => Controls_Manager::SLIDER,
-        		  'default' => [
-        		  'size' => 1,
-        		  ],
-        		  'range' => [
-        		  'px' => [
-        		  'max' => 1,
-        		  'min' => 0.10,
-        		  'step' => 0.01,
-        		  ],
-        		  ],
-        		  'selectors' => [
-        		  '{{WRAPPER}} .acfposts-image' => 'opacity: {{SIZE}};',
-        		  ],
-        		  'condition' => [
-        		  'show_image' => '1',
-        		  ]
-        		  ]
-        		  );
-        
-        		  $this->add_control(
-        		  'angle_image', [
-        		  'label' => __('Angle (deg)', 'dynamic-content-for-elementor'),
-        		  'type' => Controls_Manager::SLIDER,
-        		  'size_units' => [ 'deg'],
-        		  'default' => [
-        		  'unit' => 'deg',
-        		  'size' => 0,
-        		  ],
-        		  'range' => [
-        		  'deg' => [
-        		  'max' => 360,
-        		  'min' => -360,
-        		  'step' => 1,
-        		  ],
-        		  ],
-        		  'selectors' => [
-        		  '{{WRAPPER}} .acfposts-image' => '-webkit-transform: rotate({{SIZE}}deg); -moz-transform: rotate({{SIZE}}deg); -ms-transform: rotate({{SIZE}}deg); -o-transform: rotate({{SIZE}}deg); transform: rotate({{SIZE}}deg);',
-        		  ],
-        		  'condition' => [
-        		  'show_image' => '1',
-        		  ]
-        		  ]
-        		  ); */
+        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => 'Filters image', 'selector' => '{{WRAPPER}} .dce-acfposts_image .acfposts-image']);
+        $this->add_control('blend_mode', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => __('Multiply', 'dynamic-content-for-elementor'), 'screen' => __('Screen', 'dynamic-content-for-elementor'), 'overlay' => __('Overlay', 'dynamic-content-for-elementor'), 'darken' => __('Darken', 'dynamic-content-for-elementor'), 'lighten' => __('Lighten', 'dynamic-content-for-elementor'), 'color-dodge' => __('Color Dodge', 'dynamic-content-for-elementor'), 'saturation' => __('Saturation', 'dynamic-content-for-elementor'), 'color' => __('Color', 'dynamic-content-for-elementor'), 'difference' => __('Difference', 'dynamic-content-for-elementor'), 'exclusion' => __('Exclusion', 'dynamic-content-for-elementor'), 'hue' => __('Hue', 'dynamic-content-for-elementor'), 'luminosity' => __('Luminosity', 'dynamic-content-for-elementor')], 'selectors' => ['{{WRAPPER}} .dce-acfposts_image' => 'mix-blend-mode: {{VALUE}}'], 'separator' => 'none']);
         $this->add_group_control(Group_Control_Border::get_type(), ['name' => 'border_image', 'label' => __('Image Border', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .acfposts-image', 'condition' => ['show_image' => '1']]);
         $this->add_control('border_radius_image', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .acfposts-image, {{WRAPPER}} .dce-overlay_hover, {{WRAPPER}} .dce-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['show_image' => '1']]);
         $this->add_control('padding_image', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .acfposts-image, {{WRAPPER}} .dce-overlay_hover, {{WRAPPER}} .dce-overlay' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['show_image' => '1']]);
@@ -960,42 +560,15 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_responsive_control('date_align', ['label' => __('Metadata Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-post-date' => 'text-align: {{VALUE}};']]);
         $this->add_control('date_color', ['label' => __('Date Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-post-date ' => 'color: {{VALUE}};', '{{WRAPPER}} .dce-post-date a' => 'color: {{VALUE}};'], 'condition' => ['show_date' => '1']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'date_typography', 'label' => 'Date Typography', 'selector' => '{{WRAPPER}} .dce-post-date', 'condition' => ['show_date' => '1']]);
-        $this->add_control('date_padding', [
-            'label' => __('Date Padding', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::DIMENSIONS,
-            'size_units' => ['px', '%'],
-            'selectors' => ['{{WRAPPER}} .dce-post-date' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'],
-            /* 'condition' => [
-            			'gallery_display_caption' => '',
-            			], */
-            'condition' => ['show_date' => '1'],
-        ]);
+        $this->add_control('date_padding', ['label' => __('Date Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-post-date' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['show_date' => '1']]);
         /* Date 2 */
         $this->add_control('date2_color', ['label' => __('Date2 Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-post-date .d2 ' => 'color: {{VALUE}};', '{{WRAPPER}} .dce-post-date .d2 a' => 'color: {{VALUE}};'], 'condition' => ['show_date' => '1', 'date_format_2!' => '']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'date2_typography', 'label' => 'Date2 Typography', 'selector' => '{{WRAPPER}} .dce-post-date .d2', 'condition' => ['show_date' => '1', 'date_format_2!' => '']]);
-        $this->add_control('date2_padding', [
-            'label' => __('Date2 Padding', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::DIMENSIONS,
-            'size_units' => ['px', '%'],
-            'selectors' => ['{{WRAPPER}} .dce-post-date .d2' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'],
-            /* 'condition' => [
-            			'gallery_display_caption' => '',
-            			], */
-            'condition' => ['show_date' => '1', 'date_format_2!' => ''],
-        ]);
+        $this->add_control('date2_padding', ['label' => __('Date2 Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-post-date .d2' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['show_date' => '1', 'date_format_2!' => '']]);
         /* Date 3 */
         $this->add_control('date3_color', ['label' => __('Date3 Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-post-date .d3 ' => 'color: {{VALUE}};', '{{WRAPPER}} .dce-post-date .d3 a' => 'color: {{VALUE}};'], 'condition' => ['show_date' => '1', 'date_format_3!' => '']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'date3_typography', 'label' => 'Date3 Typography', 'selector' => '{{WRAPPER}} .dce-post-date .d3', 'condition' => ['show_date' => '1', 'date_format_3!' => '']]);
-        $this->add_control('date3_padding', [
-            'label' => __('Date3 Padding', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::DIMENSIONS,
-            'size_units' => ['px', '%'],
-            'selectors' => ['{{WRAPPER}} .dce-post-date .d3' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'],
-            /* 'condition' => [
-            			'gallery_display_caption' => '',
-            			], */
-            'condition' => ['show_date' => '1', 'date_format_3!' => ''],
-        ]);
+        $this->add_control('date3_padding', ['label' => __('Date3 Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-post-date .d3' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['show_date' => '1', 'date_format_3!' => '']]);
         $this->end_controls_section();
         // -------------------------------------------------------------------------- [ section Style - InfiniteScroll ]
         $this->start_controls_section('section_style_infiniteScroll', ['label' => __('Infinite Scroll', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['infiniteScroll_enable' => 'yes']]);
@@ -1143,19 +716,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->start_controls_section('section_style_modal', ['label' => 'Modal of Ajax Page', 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['ajax_page' => 'yes']]);
         // ------------------------- Il Modale
         $this->add_control('fmw_modal', ['label' => __('Modal', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
-        $this->add_group_control(Group_Control_Background::get_type(), [
-            'name' => 'background',
-            'types' => ['classic', 'gradient'],
-            /* 'fields_options' => [
-            	  'background' => [
-            	  'frontend_available' => true,
-            	  ],
-            	  'video_link' => [
-            	  'frontend_available' => true,
-            	  ],
-            	  ], */
-            'selector' => '.modals-p-{{ID}} .wrap-p .modal-p',
-        ]);
+        $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'background', 'types' => ['classic', 'gradient'], 'selector' => '.modals-p-{{ID}} .wrap-p .modal-p']);
         $this->add_responsive_control('fmw_modal_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['.modals-p-{{ID}} .wrap-p .modal-p' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         // ------------- Close Button
         $this->add_control('fmw_closebutton', ['label' => __('Close button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
@@ -1169,7 +730,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_control('fmw_button_background_hover_color', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['.modals-p-{{ID}} .close .dce-quit-ics:hover' => 'background-color: {{VALUE}};']]);
         $this->end_controls_tab();
         $this->end_controls_tabs();
-        //
         $this->add_responsive_control('buttonsize_closemodal', ['label' => __('Button Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'separator' => 'before', 'default' => ['size' => 50, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 20, 'max' => 100, 'step' => 1]], 'selectors' => ['.modals-p-{{ID}} .close .dce-quit-ics' => 'height: {{SIZE}}{{UNIT}}; width: {{SIZE}}{{UNIT}};']]);
         $this->add_control('weight_closemodal', ['label' => __('Close Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 1, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 1, 'max' => 20, 'step' => 1]], 'selectors' => ['.modals-p-{{ID}} .close .dce-quit-ics:after, .modals-p-{{ID}} .close .dce-quit-ics:before' => 'height: {{SIZE}}{{UNIT}}; top: calc(50% - ({{SIZE}}{{UNIT}}/2));']]);
         $this->add_control('size_closemodal', ['label' => __('Close Size (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 60, 'unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 20, 'max' => 200, 'step' => 1]], 'selectors' => ['.modals-p-{{ID}} .close .dce-quit-ics:after, .modals-p-{{ID}} .close .dce-quit-ics:before' => 'width: {{SIZE}}{{UNIT}}; left: calc(50% - ({{SIZE}}{{UNIT}}/2));']]);
@@ -1177,16 +737,14 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $this->add_responsive_control('horizontal_close', ['label' => __('X Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 20, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]], 'selectors' => ['.modals-p-{{ID}} .close .dce-quit-ics' => 'right: {{SIZE}}{{UNIT}};']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }
-        // ------------------------------------------
         $id_page = Helper::get_the_id();
         $type_page = get_post_type();
-        // ------------------------------------------
         $default_posts_per_page = get_option('posts_per_page');
         if ($settings['num_posts'] == 0 || $settings['num_posts'] == '') {
             $settings['num_posts'] = $default_posts_per_page;
@@ -1210,7 +768,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                 }
             }
         }
-        // ------------------------------------------
         // ------- QUERY -----------------------------------------
         $args = [];
         $taxquery = [];
@@ -1235,11 +792,9 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         $terms_query = 'all';
         if ($settings['taxonomy']) {
             /* INCLUDED */
-            // Nuovo!
             if (!empty($settings['terms_' . $settings['taxonomy']])) {
                 $terms_query = $settings['terms_' . $settings['taxonomy']];
             }
-            //if (is_array($terms_query) && !empty($terms_query)) {
             if (\is_array($terms_query) && !empty($terms_query) || $settings['terms_current_post']) {
                 // metodo per recuperare i termini
                 $terms_query = $this->get_terms_query($settings, $id_page);
@@ -1249,19 +804,11 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                         $taxquery['relation'] = $settings['combination_taxonomy'];
                     }
                     foreach ($terms_query as $term_query) {
-                        $taxquery[] = [
-                            'taxonomy' => $settings['taxonomy'],
-                            //'field' => 'id',
-                            'terms' => $term_query,
-                        ];
+                        $taxquery[] = ['taxonomy' => $settings['taxonomy'], 'terms' => $term_query];
                     }
                 }
             } else {
-                $taxquery = [[
-                    'taxonomy' => $settings['taxonomy'],
-                    //'field' => 'id',
-                    'terms' => $terms_query,
-                ]];
+                $taxquery = [['taxonomy' => $settings['taxonomy'], 'terms' => $terms_query]];
             }
             /* EXCLUDED */
             $terms_query_exclued = $settings['terms_' . $settings['taxonomy'] . '_excluse'];
@@ -1271,12 +818,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                     $taxquery_excluded['relation'] = $settings['combination_taxonomy_excluse'];
                 }
                 foreach ($terms_query_exclued as $term_query) {
-                    $taxquery_excluded[] = [
-                        'taxonomy' => $settings['taxonomy'],
-                        //'field' => 'term_id',
-                        'terms' => $term_query,
-                        'operator' => 'NOT IN',
-                    ];
+                    $taxquery_excluded[] = ['taxonomy' => $settings['taxonomy'], 'terms' => $term_query, 'operator' => 'NOT IN'];
                 }
                 if (empty($taxquery)) {
                     $taxquery = $taxquery_excluded;
@@ -1285,7 +827,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                 }
             }
         }
-        //
         // Qui voglio elaborare la cosa in base alla ACF taxonomy che usa la lista dei termini associati nel post specifico
         if ($settings['terms_from_acf'] && $settings['acf_taxonomy']) {
             $acfterm = Helper::get_post_meta($id_page, $settings['acf_taxonomy']);
@@ -1294,11 +835,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                 foreach ($acfterm as $term) {
                     $terms_query[] = $term;
                 }
-                $taxquery = [[
-                    'taxonomy' => $settings['taxonomy'],
-                    //'field' => 'id',
-                    'terms' => $terms_query,
-                ]];
+                $taxquery = [['taxonomy' => $settings['taxonomy'], 'terms' => $terms_query]];
             }
         }
         if ($settings['query_type'] == 'specific_posts') {
@@ -1348,7 +885,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                         if (\count($lista_dei_termini) > 1) {
                             $array_taxquery['relation'] = $settings['combination_taxonomy'];
                         }
-                        //
                         foreach ($lista_dei_termini as $termine) {
                             $array_taxquery[] = ['taxonomy' => $tax, 'field' => 'id', 'terms' => $termine];
                         }
@@ -1369,14 +905,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                             $array_taxquery = ['relation' => 'AND', $array_taxquery, $array_taxquery_excluded];
                         }
                     }
-                    // or and....
-                    /* if (count($lista_dei_termini) > 0) {
-                    			$array_taxquery[] = array(
-                    			'taxonomy' => $tax,
-                    			'field' => 'id',
-                    			'terms' => $lista_dei_termini
-                    			);
-                    			} */
                 }
             }
             // Se la taxQuery dynamica non da risultati uso quella statica.
@@ -1392,24 +920,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                     $type_page = 'post';
                 }
             }
-            $args = [
-                'post_type' => $type_page,
-                'posts_per_page' => $settings['num_posts'],
-                'order' => $settings['order'],
-                'orderby' => $settings['orderby'],
-                'meta_key' => $settings['acf_metakey'],
-                'post__not_in' => \array_merge($posts_excluded, $exclude_io),
-                'post_parent__not_in' => $use_parent_page,
-                'tax_query' => $array_taxquery,
-                /* 'tax_query'         => array(
-                	  array(
-                	  'taxonomy' => $settings['taxonomy'],
-                	  'field' => 'id',
-                	  'terms' => $lista_dei_termini
-                	  )
-                	  ), */
-                'post_status' => 'publish',
-            ];
+            $args = ['post_type' => $type_page, 'posts_per_page' => $settings['num_posts'], 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'meta_key' => $settings['acf_metakey'], 'post__not_in' => \array_merge($posts_excluded, $exclude_io), 'post_parent__not_in' => $use_parent_page, 'tax_query' => $array_taxquery, 'post_status' => 'publish'];
             if (is_date()) {
                 global $wp_query;
                 $args['year'] = $wp_query->query_vars['year'];
@@ -1418,7 +929,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
             }
             // ----------------------------------------------------------
             if ($settings['page_parent']) {
-                //
                 if ($settings['parent_source']) {
                     // rispetto a me-stesso prendo il post genitore
                     $args['post_parent'] = wp_get_post_parent_id($id_page);
@@ -1446,32 +956,14 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                 $relations_ids = ['0'];
             }
             if (!empty($relations_ids)) {
-                //
                 $ordinamentoRelationship = 'post__in';
                 if ($settings['orderby'] != 'menu_order') {
                     $ordinamentoRelationship = $settings['orderby'];
                 }
-                $args = [
-                    'post_type' => 'any',
-                    //$relations_type,
-                    'posts_per_page' => $settings['num_posts'],
-                    'post__in' => $relations_ids,
-                    'post_status' => 'publish',
-                    'orderby' => $ordinamentoRelationship,
-                    'order' => $settings['order'],
-                ];
+                $args = ['post_type' => 'any', 'posts_per_page' => $settings['num_posts'], 'post__in' => $relations_ids, 'post_status' => 'publish', 'orderby' => $ordinamentoRelationship, 'order' => $settings['order']];
             }
         } elseif ($settings['query_type'] == 'get_cpt') {
             $args = ['post_type' => $settings['post_type'], 'posts_per_page' => $settings['num_posts'], 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'post_status' => 'publish'];
-            /* if ($taxquery) {
-            	  if (count($taxquery) == 1) {
-            	  $tmp_tax = reset($taxquery);
-            	  if ($tmp_tax['taxonomy'] == 'category') {
-            	  $args['category'] = implode(',',$tmp_tax['terms']);
-            	  $taxquery = null;
-            	  }
-            	  }
-            	  } */
             if ($taxquery) {
                 $args['tax_query'] = $taxquery;
             }
@@ -1485,9 +977,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
             if (!empty($use_parent_page)) {
                 $args['post_parent__not_in'] = $use_parent_page;
             }
-            //
             if ($settings['page_parent']) {
-                //
                 if ($settings['parent_source']) {
                     // rispetto a me-stesso prendo il post genitore
                     $args['post_parent'] = wp_get_post_parent_id($id_page);
@@ -1503,7 +993,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         }
         global $paged;
         $paged = $this->get_current_page();
-        //(get_query_var('paged')) ? get_query_var('paged') : 1;
         $args['paged'] = $paged;
         $per_page = $settings['num_posts'];
         $offset = ($paged - 1) * $per_page;
@@ -1610,7 +1099,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                 }
                 $args_filters = [];
                 $args_filters['taxonomy'] = $term_filter;
-                $args_filters['hide_empty'] = $settings['filter_hide_empty'] ? \false : \true;
+                $args_filters['hide_empty'] = !empty($settings['filter_hide_empty']) ? \false : \true;
                 // Questa parte è stata aggiungere per gestire i filtri in base ai post restituito ed eviare filtri vuoti.
                 $args_posts = $args;
                 $args_posts['fields'] = 'ids';
@@ -1649,7 +1138,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                         $acffield = Helper::get_post_meta($id_page, $settings['filters_acf']);
                         $acfslug = $this->createSlug($acffield);
                         $obj = (object) ['name' => $acffield, 'slug' => $acfslug];
-                        //
                         if ($acffield) {
                             $term_list_filters[$counter] = $obj;
                         }
@@ -1682,7 +1170,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                             echo $divisore_f;
                         }
                         $term_url = \is_object($filter) && \get_class($filter) == 'WP_Term' ? get_term_link($filter->term_id) : '#';
-                        echo '<' . $tag_filter . ' class="filters-item' . (!$fkey && !$settings['all_filter'] ? ' filter-active' : '') . '"><a href="' . $term_url . '" data-filter=".' . $filter->slug . '">' . $filter->name . '</a></' . $tag_filter . '>';
+                        echo '<' . $tag_filter . ' class="filters-item' . (!$fkey && !!empty($settings['all_filter']) ? ' filter-active' : '') . '"><a href="' . $term_url . '" data-filter=".' . $filter->slug . '">' . $filter->name . '</a></' . $tag_filter . '>';
                     }
                 }
             }
@@ -1696,8 +1184,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         if ($settings['posts_style'] == 'simplegrid') {
             $dataStyle = ' data-style="simple"';
             $styleClass = ' simple-style';
-            /* $dataCarousel = ' data-numcol="'.$settings['slides_to_show'].'" data-numcol-tablet="'.$settings['slides_to_show_tablet'].'" data-numcol-mobile="'.$settings['slides_to_show_mobile'].'"';
-            			$dataCarousel .= ' data-numscroll="'.$settings['slides_to_scroll'].'" data-numscroll-tablet="'.$settings['slides_to_scroll_tablet'].'" data-numscroll-mobile="'.$settings['slides_to_scroll_mobile'].'"'; */
         } elseif ($settings['posts_style'] == 'flexgrid') {
             $dataStyle = ' data-style="flexgrid"';
             $styleClass = ' flexgrid-style';
@@ -1756,7 +1242,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
             $classContainer = 'swiper-container swiper-container-' . $settings['direction_slider'];
             $classWrap = ' swiper-wrapper';
             $classItem = ' swiper-slide';
-            //
             echo '<div class="' . $classContainer . '">';
         }
         if ($settings['posts_style'] == 'timeline') {
@@ -1906,7 +1391,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                     ?>">
 									<?php 
                     $counter_item = 1;
-                    //
                     if (isset($settings['list_layout_posts']) && !empty($settings['list_layout_posts'])) {
                         $items_ordering = $settings['list_layout_posts'];
                         foreach ($items_ordering as $listitem) {
@@ -2007,24 +1491,21 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                     }
                 } else {
                     // end if templatemode_enable NO .. qui comincia l'utilizzo dei template
-                    //
                     if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                         $inlinecss = 'inlinecss="true"';
                     } else {
                         $inlinecss = '';
                     }
-                    //
                     // template DCE
                     if ($settings['templatemode_enable'] && $settings['templatemode_enable_2'] == '') {
                         //
                         // qui chiamo il template Elementor per generare il contenuti dei Blocks.
                         echo do_shortcode('[dce-elementor-template id="' . $settings['templatemode_template'] . '" post_id="' . get_the_id() . '" ' . $inlinecss . ']');
-                        //
                     } elseif ($settings['native_templatemode_enable']) {
                         $type_of_posts = get_post_type(get_the_ID());
                         $cptaxonomy = get_post_taxonomies(get_the_ID());
                         $taxonomy_objects = get_object_taxonomies('post', 'objects');
-                        $options = get_option(DCE_OPTIONS);
+                        $options = get_option(DCE_TEMPLATE_SYSTEM_OPTION);
                         $dce_elementor_templates = 'dyncontel_field_archive' . $type_of_posts;
                         // *********
                         $dce_default_template = $options[$dce_elementor_templates];
@@ -2054,16 +1535,12 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                                     }
                                 }
                             }
-                            //}
                         }
-                        //
                         echo do_shortcode('[dce-elementor-template id="' . $dce_default_template . '" post_id="' . get_the_id() . '" ' . $inlinecss . ']');
                     } elseif ($settings['templatemode_enable'] && $settings['templatemode_enable_2']) {
                         if ($counter % 2 == 0) {
-                            // se pari
                             echo do_shortcode('[dce-elementor-template id="' . $settings['templatemode_template'] . '" post_id="' . get_the_id() . '" ' . $inlinecss . ']');
                         } else {
-                            // se dispari
                             echo do_shortcode('[dce-elementor-template id="' . $settings['templatemode_template_2'] . '" post_id="' . get_the_id() . '" ' . $inlinecss . ']');
                         }
                     }
@@ -2143,8 +1620,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                     ?>"></a>
 							</div>
 						</div>
-
-
 					</nav>
 						<?php 
                 }
@@ -2166,12 +1641,11 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
             // End post check
         }
         // *********************************************************************** end Query POST
-        //
         if ($settings['posts_style'] == 'swiper' && $sonoPronto) {
             // in precedenza prima di aprire la wp_query ho creato il contenitore per lo swiper
             echo '</div> <!-- swiper-wrapper -->';
             // NOTA: la paginazione e la navigazione per lo swiper è fuori dal suo contenitore per poter spostare gli elementi a mio piacimento, visto che il contenitore è in overflow: hidden, e se fossero all'interno (come di default) si nasconderebbero fuori dall'area.
-            if ($settings['usePagination'] && $sonoPronto) {
+            if ($settings['usePagination']) {
                 // Add Pagination
                 echo '<div class="swiper-container-' . $settings['direction_slider'] . '"><div class="swiper-pagination pagination-' . $this->get_id() . '"></div></div>';
             }
@@ -2214,7 +1688,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
     private function generate_author($settings)
     {
         $author = [];
-        $avatar_args['size'] = $settings['author_avatar_size'] || 150;
+        $avatar_args['size'] = $settings['author_avatar_size'] ?? 150;
         $user_id = get_the_author_meta('ID');
         $author['avatar'] = get_avatar_url($user_id, $avatar_args);
         $author['display_name'] = get_the_author_meta('display_name');
@@ -2275,7 +1749,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                 }
             }
             $term_list = Helper::get_the_terms_ordered($id_page, $tax);
-            if ($term_list && \is_array($term_list) && \count($term_list) > 0) {
+            if ($term_list && \is_array($term_list)) {
                 // l'icona
                 if ($settings['metadata_icon_enable']) {
                     $icon_metadata = '';
@@ -2336,7 +1810,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         }
         ?>
 			<?php 
-        //
         if ($settings['show_textcontent'] == 1) {
             if ($settings['textcontent_limit'] == '') {
                 echo wpautop(wp_kses_post(get_the_content()));
@@ -2372,22 +1845,22 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
         }
         switch ($date_type) {
             case 'modified':
-                $date = '<span class="d1">' . get_the_modified_date(wp_kses_post($settings['date_format']), $id_page) . '</span>';
+                $date = '<span class="d1">' . get_the_modified_date(wp_kses_post($settings['date_format'])) . '</span>';
                 if ($settings['date_format_2'] != '') {
-                    $date2 = '<span> class="d2"' . get_the_modified_date(wp_kses_post($settings['date_format_2']), $id_page) . '</span>';
+                    $date2 = '<span> class="d2"' . get_the_modified_date(wp_kses_post($settings['date_format_2'])) . '</span>';
                 }
                 if ($settings['date_format_3'] != '') {
-                    $date3 = '<span> class="d3"' . get_the_modified_date(wp_kses_post($settings['date_format_3']), $id_page) . '</span>';
+                    $date3 = '<span> class="d3"' . get_the_modified_date(wp_kses_post($settings['date_format_3'])) . '</span>';
                 }
                 break;
             case 'publish':
             default:
-                $date = '<span class="d1">' . wp_kses_post(get_the_date($settings['date_format']), $id_page) . '</span>';
+                $date = '<span class="d1">' . wp_kses_post(get_the_date($settings['date_format'])) . '</span>';
                 if ($settings['date_format_2'] != '') {
-                    $date2 = '<span class="d2">' . wp_kses_post(get_the_date($settings['date_format_2']), $id_page) . '</span>';
+                    $date2 = '<span class="d2">' . wp_kses_post(get_the_date($settings['date_format_2'])) . '</span>';
                 }
                 if ($settings['date_format_3'] != '') {
-                    $date3 = '<span class="d3">' . wp_kses_post(get_the_date($settings['date_format_3']), $id_page) . '</span>';
+                    $date3 = '<span class="d3">' . wp_kses_post(get_the_date($settings['date_format_3'])) . '</span>';
                 }
                 break;
         }
@@ -2397,8 +1870,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
     {
         $counter_item = 1;
         $ACFitems = $settings['acf_items'];
-        // DYNAMIC TAGS ACF by ELEMENTO PRO
-        $acf_name = \false;
         if (!empty($ACFitems)) {
             foreach ($ACFitems as $acfkey => $acfitem) {
                 $spazio = '';
@@ -2420,10 +1891,6 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                     case 'custom':
                         if (!empty($acfitem['link']['url'])) {
                             $link = esc_url($acfitem['link']['url']);
-                        } else {
-                            if ($acf_name) {
-                                $link = Helper::get_post_meta($id_page, $acf_name);
-                            }
                         }
                         break;
                     case 'post':
@@ -2437,7 +1904,7 @@ class DCE_Widget_DynamicPosts extends \DynamicContentForElementor\Widgets\Widget
                         $link = esc_url(get_home_url());
                         break;
                 }
-                $target = $acfitem['link']['is_external'] ? ' target="_blank"' : '';
+                $target = !empty($acfitem['link']['is_external']) ? ' target="_blank"' : '';
                 if ($link) {
                     $tag_subitem_start = '<a href="' . $link . '"' . $target . '>';
                     $tag_subitem_end = '</a>';

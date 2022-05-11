@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\GuzzleHttp\Psr7;
+namespace GuzzleHttp\Psr7;
 
 use Psr\Http\Message\StreamInterface;
 /**
@@ -11,7 +11,7 @@ use Psr\Http\Message\StreamInterface;
  */
 class MultipartStream implements StreamInterface
 {
-    use StreamDecoratorTrait;
+    use \GuzzleHttp\Psr7\StreamDecoratorTrait;
     private $boundary;
     /**
      * @param array  $elements Array of associative arrays, each containing a
@@ -59,22 +59,22 @@ class MultipartStream implements StreamInterface
      */
     protected function createStream(array $elements)
     {
-        $stream = new AppendStream();
+        $stream = new \GuzzleHttp\Psr7\AppendStream();
         foreach ($elements as $element) {
             $this->addElement($stream, $element);
         }
         // Add the trailing boundary with CRLF
-        $stream->addStream(Utils::streamFor("--{$this->boundary}--\r\n"));
+        $stream->addStream(\GuzzleHttp\Psr7\Utils::streamFor("--{$this->boundary}--\r\n"));
         return $stream;
     }
-    private function addElement(AppendStream $stream, array $element)
+    private function addElement(\GuzzleHttp\Psr7\AppendStream $stream, array $element)
     {
         foreach (['contents', 'name'] as $key) {
             if (!\array_key_exists($key, $element)) {
                 throw new \InvalidArgumentException("A '{$key}' key is required");
             }
         }
-        $element['contents'] = Utils::streamFor($element['contents']);
+        $element['contents'] = \GuzzleHttp\Psr7\Utils::streamFor($element['contents']);
         if (empty($element['filename'])) {
             $uri = $element['contents']->getMetadata('uri');
             if (\substr($uri, 0, 6) !== 'php://') {
@@ -82,9 +82,9 @@ class MultipartStream implements StreamInterface
             }
         }
         list($body, $headers) = $this->createElement($element['name'], $element['contents'], isset($element['filename']) ? $element['filename'] : null, isset($element['headers']) ? $element['headers'] : []);
-        $stream->addStream(Utils::streamFor($this->getHeaders($headers)));
+        $stream->addStream(\GuzzleHttp\Psr7\Utils::streamFor($this->getHeaders($headers)));
         $stream->addStream($body);
-        $stream->addStream(Utils::streamFor("\r\n"));
+        $stream->addStream(\GuzzleHttp\Psr7\Utils::streamFor("\r\n"));
     }
     /**
      * @return array
@@ -106,7 +106,7 @@ class MultipartStream implements StreamInterface
         // Set a default Content-Type if one was not supplied
         $type = $this->getHeader($headers, 'content-type');
         if (!$type && ($filename === '0' || $filename)) {
-            if ($type = MimeType::fromFilename($filename)) {
+            if ($type = \GuzzleHttp\Psr7\MimeType::fromFilename($filename)) {
                 $headers['Content-Type'] = $type;
             }
         }

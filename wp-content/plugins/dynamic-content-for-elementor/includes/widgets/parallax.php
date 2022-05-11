@@ -11,7 +11,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Parallax extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class Parallax extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -21,7 +21,12 @@ class DCE_Widget_Parallax extends \DynamicContentForElementor\Widgets\WidgetProt
     {
         return ['dce-parallax'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_parallaxsettings', ['label' => __('Parallax', 'dynamic-content-for-elementor')]);
         $this->add_control('parallaxjs_relative_input', ['label' => __('Relative Input', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '']);
@@ -50,7 +55,7 @@ class DCE_Widget_Parallax extends \DynamicContentForElementor\Widgets\WidgetProt
         $this->add_control('parallaxjs', ['label' => __('Items', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'default' => [], 'fields' => $repeater->get_controls(), 'title_field' => 'Parallax Item']);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         $relativeinput = $settings['parallaxjs_relative_input'] == 'yes' ? 'true' : 'false';

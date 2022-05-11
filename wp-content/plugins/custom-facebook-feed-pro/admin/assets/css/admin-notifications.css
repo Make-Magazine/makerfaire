@@ -21,8 +21,11 @@
   width: 34px;
   height: 44px;
 }
+#cff-notifications .bell img,
 #cff-notifications .thumb img {
   max-width: 100%;
+  width: 52px;
+  height: 52px;
 }
 #cff-notifications .thumb .img-overlay {
   top: 42px;
@@ -74,16 +77,16 @@
 }
 /*orange*/
 .cff-btn-orange{
-	background: #E34F0E!important;
+	background: #FE544F!important;
 	color: #fff!important;
 }
 .cff-btn-orange:hover{
-	background: #F37036!important;
+	background: #EC352F!important;
 	color: #fff!important;
 }
 .cff-btn-orange:focus,
 .cff-btn-orange:active{
-	background: #B8400B!important;
+	background: #BC120E!important;
 	color: #fff!important;
 }
 /*grey*/
@@ -113,7 +116,7 @@
   font-size: 12px;
 }
 #cff-notifications .messages .message .buttons a.cff-btn-orange {
-  border: 1px solid #E34F0E
+  border: 1px solid #FE544F
 }
 #cff-notifications .messages .message .buttons a:not(:last-child) {
   margin-right: 8px;

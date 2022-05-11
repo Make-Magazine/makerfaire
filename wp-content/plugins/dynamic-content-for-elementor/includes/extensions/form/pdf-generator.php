@@ -11,9 +11,14 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Extension_Form_PDF extends \ElementorPro\Modules\Forms\Classes\Action_Base
+class PdfGenerator extends \ElementorPro\Modules\Forms\Classes\Action_Base
 {
     public $has_action = \true;
+    /**
+     * @var string|false $pdf_url will contain the pdf url after it's
+     * generated. We provide this for custom user hooks.
+     */
+    public $pdf_url = \false;
     /**
      * Get Name
      *
@@ -26,6 +31,12 @@ class DCE_Extension_Form_PDF extends \ElementorPro\Modules\Forms\Classes\Action_
     {
         return 'dce_form_pdf';
     }
+    public function run_once()
+    {
+        $save_guard = \DynamicContentForElementor\Plugin::instance()->save_guard;
+        $save_guard->register_unsafe_control('form', 'dce_form_pdf_name');
+        $save_guard->register_unsafe_control('form', 'dce_form_pdf_folder');
+    }
     /**
      * Get Label
      *
@@ -36,7 +47,7 @@ class DCE_Extension_Form_PDF extends \ElementorPro\Modules\Forms\Classes\Action_
      */
     public function get_label()
     {
-        return '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('PDF Generator', 'dynamic-content-for-elementor');
+        return '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('PDF Generator', 'dynamic-content-for-elementor');
     }
     public function get_script_depends()
     {
@@ -57,22 +68,18 @@ class DCE_Extension_Form_PDF extends \ElementorPro\Modules\Forms\Classes\Action_
     public function register_settings_section($widget)
     {
         $widget->start_controls_section('section_dce_form_pdf', ['label' => $this->get_label(), 'condition' => ['submit_actions' => $this->get_name()]]);
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && !current_user_can('administrator')) {
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
             $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="elementor-panel-alert elementor-panel-alert-warning">' . __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor') . '</div>']);
             $widget->end_controls_section();
             return;
         }
-        $widget->add_control('dce_form_pdf_converter', ['label' => __('Converter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'description' => __('Choose the converter that will generate the PDF.', 'dynamic-content-for-elementor'), 'options' => ['svg' => 'SVG', 'html' => 'HTML', 'dompdf' => 'DomPDF'], 'toggle' => \false, 'default' => 'svg']);
-        if (!\extension_loaded('imagick')) {
-            $msg_txt = __(' The PHP extension <strong>imagick</strong> is missing but is highly recommended when creating the PDF from an SVG template. As a fallback only a limited subset of SVG is supported and the recommend editor is ', 'dynamic-content-for-elementor');
-            $imagick_warning = <<<EOF
-{$msg_txt}<a href="https://dnmc.ooo/svg">Dynamic SVG Editor</a>
-EOF;
-            $widget->add_control('dce_form_pdf_missing_imagick', ['type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => $imagick_warning, 'separator' => 'before', 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['dce_form_pdf_converter' => 'svg']]);
-        } else {
-            $msg_txt = __('The SVG converter tries to use imagick for better results, but on some old system it might not work correctly, resulting in blank PDFs. If you have problems you can try to disable it. Please notice that if imagick is disabled you will have to use a simple SVG editor like this: ', 'dynamic-content-for-elementor');
-            $imagick_warning = "{$msg_txt}<a href='https://dnmc.ooo/svg'>Dynamic SVG Editor</a>";
-            $widget->add_control('dce_form_pdf_disable_imagick', ['label' => __('Disable Imagick', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'description' => $imagick_warning, 'return_value' => 'disable', 'default' => 'enable', 'separator' => 'before', 'condition' => ['dce_form_pdf_converter' => 'svg']]);
+        $widget->add_control('dce_form_pdf_converter', ['label' => __('Converter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'description' => __('Choose the converter that will generate the PDF.', 'dynamic-content-for-elementor'), 'options' => ['svg' => 'SVG', 'html' => 'HTML', 'dompdf' => esc_html__('DomPDF (deprecated)', 'dynamic-content-for-elementor')], 'toggle' => \false, 'default' => 'svg']);
+        $msg_txt = __('The only official supported SVG editor is ', 'dynamic-content-for-elementor');
+        $imagick_warning = $msg_txt . '<a target="_blank" href="https://dnmc.ooo/svg">Dynamic SVG Editor</a>';
+        $widget->add_control('dce_form_pdf_missing_imagick', ['type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => $imagick_warning, 'separator' => 'before', 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['dce_form_pdf_converter' => 'svg']]);
+        if (\extension_loaded('imagick')) {
+            $msg_txt = __('Disable this if you want smaller PDFs and the quality is not affected.', 'dynamic-content-for-elementor');
+            $widget->add_control('dce_form_pdf_disable_imagick', ['label' => __('Disable Imagick', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'description' => $msg_txt, 'return_value' => 'disable', 'default' => 'enable', 'separator' => 'before', 'condition' => ['dce_form_pdf_converter' => 'svg']]);
         }
         $widget->add_control('dce_form_pdf_name', ['label' => __('Name', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '[date|U]', 'description' => __('The PDF file name, the .pdf extension will automatically added', 'dynamic-content-for-elementor'), 'label_block' => \true, 'separator' => 'before']);
         $widget->add_control('dce_form_pdf_folder', ['label' => __('Folder', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'elementor/pdf/[date|Y]/[date|m]', 'description' => __('The directory inside /wp-content/uploads/ where save the PDF file', 'dynamic-content-for-elementor'), 'label_block' => \true]);
@@ -311,7 +318,8 @@ EOF;
             return \false;
         }
         $module = Plugin::instance()->pdf_html_templates;
-        return $module->generate_pdf_from_template_id($template_id, $form_data, $raw_form_data);
+        $bindings = ['form' => $form_data, 'form_raw' => $raw_form_data];
+        return $module->generate_pdf_from_template_id($template_id, $bindings, \true);
     }
     private function save_pdf_string_to_file($raw_pdf, $settings, $fields)
     {
@@ -326,6 +334,7 @@ EOF;
         $file_path = trailingslashit($dir_abs_path) . $file_name;
         $dce_form['pdf']['path'] = $file_path;
         $dce_form['pdf']['url'] = trailingslashit($dir_url) . $file_name;
+        $this->pdf_url = $dce_form['pdf']['url'];
         \file_put_contents($file_path, $raw_pdf);
     }
     private function svg_converter($settings, $record, $fields, $ajax_handler)
@@ -370,6 +379,7 @@ EOF;
         $pdf_name = $settings['dce_form_pdf_name'] . '.pdf';
         $dce_form['pdf']['path'] = $pdf_dir . $pdf_name;
         $dce_form['pdf']['url'] = $pdf_url . $pdf_name;
+        $this->pdf_url = $dce_form['pdf']['url'];
         $pdf_html = do_shortcode('[dce-elementor-template id="' . $settings['dce_form_pdf_template'] . '"]');
         $pdf_html = Helper::get_dynamic_value($pdf_html, $fields);
         // add CSS

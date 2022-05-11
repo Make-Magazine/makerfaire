@@ -54,7 +54,7 @@ class TCPDFBarcode
      * Array representation of barcode.
      * @protected
      */
-    protected $barcode_array;
+    protected $barcode_array = array();
     /**
      * This is the class constructor.
      * Return an array representations for common 1D barcodes:<ul>
@@ -207,11 +207,11 @@ class TCPDFBarcode
             $fgcol = \imagecolorallocate($png, $color[0], $color[1], $color[2]);
         } elseif (\extension_loaded('imagick')) {
             $imagick = \true;
-            $bgcol = new imagickpixel('rgb(255,255,255');
-            $fgcol = new imagickpixel('rgb(' . $color[0] . ',' . $color[1] . ',' . $color[2] . ')');
+            $bgcol = new \imagickpixel('rgb(255,255,255');
+            $fgcol = new \imagickpixel('rgb(' . $color[0] . ',' . $color[1] . ',' . $color[2] . ')');
             $png = new \Imagick();
             $png->newImage($width, $height, 'none', 'png');
-            $bar = new imagickdraw();
+            $bar = new \imagickdraw();
             $bar->setfillcolor($fgcol);
         } else {
             return \false;
@@ -378,7 +378,7 @@ class TCPDFBarcode
                 $arrcode = $this->barcode_pharmacode2t($code);
                 break;
             default:
-                $this->barcode_array = \false;
+                $this->barcode_array = array();
                 $arrcode = \false;
                 break;
         }

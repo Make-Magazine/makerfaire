@@ -18,34 +18,24 @@ use DynamicContentForElementor\Tokens;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_User extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class UserFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => $this->get_title()]);
-        $this->add_control('dce_user_user', ['label' => __('User', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['logged' => ['title' => __('Current User', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-key'], 'author' => ['title' => __('Author', 'dynamic-content-for-elementor'), 'icon' => 'eicon-pencil'], 'static' => ['title' => __('Select User', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-user-o']], 'default' => 'logged', 'toggle' => \false]);
+        $this->add_control('dce_user_user', ['label' => __('User', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['logged' => ['title' => __('Current User', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-key'], 'author' => ['title' => __('Author', 'dynamic-content-for-elementor'), 'icon' => 'eicon-pencil'], 'static' => ['title' => __('Select User', 'dynamic-content-for-elementor'), 'icon' => 'eicon-user-circle-o']], 'default' => 'logged', 'toggle' => \false]);
         $this->add_control('dce_user_user_id', ['label' => __('User ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'condition' => ['dce_user_user' => 'static']]);
         $this->add_control('dce_user_key', ['label' => __('Field Key', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Field key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'fields', 'object_type' => 'user', 'default' => 'display_name']);
         $this->add_control('icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS]);
         $this->add_control('user_text_before', ['label' => __('Text Before', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'separator' => 'before']);
         $this->add_responsive_control('user_text_before_block', ['label' => __('Before - List or Block', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'label_off' => __('List', 'dynamic-content-for-elementor'), 'label_on' => __('Block', 'dynamic-content-for-elementor'), 'return_value' => 'block', 'selectors' => ['{{WRAPPER}} .dce-meta-value span.tx-before' => 'display: {{VALUE}};'], 'condition' => ['user_text_before!' => '']]);
         $this->add_control('dce_user_array', ['label' => __('Multiple usermeta', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('User has many usermeta with same meta_key', 'dynamic-content-for-elementor'), 'separator' => 'before']);
-        $this->add_control('dce_user_array_filter', ['label' => __('Filter occurrences', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['all' => ['title' => __('All', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-bars'], 'first' => ['title' => __('First', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-hand-o-up'], 'last' => ['title' => __('Last', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-hand-o-down']], 'default' => 'all', 'toggle' => \false, 'condition' => ['dce_user_array!' => '']]);
+        $this->add_control('dce_user_array_filter', ['label' => __('Filter occurrences', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['all' => __('All', 'dynamic-content-for-elementor'), 'first' => __('First', 'dynamic-content-for-elementor'), 'last' => __('Last', 'dynamic-content-for-elementor')], 'default' => 'all', 'toggle' => \false, 'condition' => ['dce_user_array!' => '']]);
         $this->end_controls_section();
         $this->start_controls_section('dce_user_render', ['label' => __('Render Mode', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_key!' => '']]);
         $this->add_control('dce_user_type', ['label' => __('Render as', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => [
@@ -85,7 +75,7 @@ class DCE_Widget_User extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         // DATE
         $this->start_controls_section('dce_user_section_date', ['label' => __('Date', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_type' => 'date']]);
         $this->add_control('dce_user_date_format_source', ['label' => __('Source Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => '<a target="_blank" href="https://www.php.net/manual/en/function.date.php">' . __('Use standard PHP format character', 'dynamic-content-for-elementor') . '</a>, ' . __('you can also use "timestamp"', 'dynamic-content-for-elementor'), 'placeholder' => __('YmdHis, d/m/Y, m-d-y', 'dynamic-content-for-elementor')]);
-        $this->add_control('dce_user_date_format_display', ['label' => __('Display Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('Y/m/d H:i:s, d/m/Y, m-d-y', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_user_date_format_display', ['label' => __('Display Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'Y/m/d H:i:s, d/m/Y, m-d-y']);
         $this->end_controls_section();
         // ID
         $this->start_controls_section('dce_user_section_id', ['label' => __('ID', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_type' => 'id']]);
@@ -121,9 +111,9 @@ class DCE_Widget_User extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         $this->add_control('dce_user_button_text', ['label' => __('Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'default' => __('Click here', 'dynamic-content-for-elementor'), 'placeholder' => __('[META_VALUE], [META_VALUE:title], [META_VALUE:get_the_title]', 'dynamic-content-for-elementor'), 'description' => __('Can use a mix of text, Tokens and META_VALUE data', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_user_button_link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'dynamic' => ['active' => \true], 'placeholder' => __('[META_VALUE], [META_VALUE:url], [META_VALUE|get_permalink]', 'dynamic-content-for-elementor'), 'default' => ['url' => '#'], 'description' => __('You can use text, Tokens and META_VALUE data', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_user_button_size', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'sm', 'options' => Helper::get_button_sizes(), 'style_transfer' => \true]);
-        $this->add_control('dce_user_button_icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICON, 'label_block' => \true, 'default' => '']);
-        $this->add_control('dce_user_button_icon_align', ['label' => __('Icon Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'left', 'options' => ['left' => __('Before', 'dynamic-content-for-elementor'), 'right' => __('After', 'dynamic-content-for-elementor')], 'condition' => ['dce_user_button_icon!' => '']]);
-        $this->add_control('dce_user_button_icon_indent', ['label' => __('Icon Spacing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['max' => 50]], 'condition' => ['dce_user_button_icon!' => ''], 'selectors' => ['{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};']]);
+        $this->add_control('selected_dce_user_button_icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'dce_user_button_icon', 'label_block' => \true]);
+        $this->add_control('dce_user_button_icon_align', ['label' => __('Icon Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'left', 'options' => ['left' => __('Before', 'dynamic-content-for-elementor'), 'right' => __('After', 'dynamic-content-for-elementor')], 'condition' => ['selected_dce_user_button_icon[value]!' => '']]);
+        $this->add_control('dce_user_button_icon_indent', ['label' => __('Icon Spacing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['max' => 50]], 'condition' => ['selected_dce_user_button_icon[value]!' => ''], 'selectors' => ['{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};']]);
         $this->add_control('dce_user_button_view', ['label' => __('View', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => 'traditional']);
         $this->add_control('dce_user_button_css_id', ['label' => __('Button ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'default' => '', 'title' => __('Add your custom id WITHOUT the Pound key. e.g: my-id', 'dynamic-content-for-elementor'), 'label_block' => \false, 'description' => __('Please make sure the ID is unique and not used elsewhere on the page where this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'dynamic-content-for-elementor'), 'separator' => 'before']);
         $this->end_controls_section();
@@ -153,7 +143,7 @@ class DCE_Widget_User extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         $this->start_controls_section('section_style_icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['icon!' => '']]);
         $this->add_control('icon_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} i:before' => 'color: {{VALUE}};', '{{WRAPPER}} svg' => 'fill: {{VALUE}};']]);
         $this->add_responsive_control('icon_size', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['max' => 200, 'min' => 10]], 'selectors' => ['{{WRAPPER}} i' => 'font-size: {{SIZE}}{{UNIT}};']]);
-        $this->add_responsive_control('icon_spacing', ['label' => __('Spacing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['max' => 50]], 'default' => ['unit' => 'px', 'size' => 10], 'selectors' => ['{{WRAPPER}} i' => 'margin-left: {{SIZE}}{{UNIT}};', '{{WRAPPER}} i' => 'margin-right: {{SIZE}}{{UNIT}};']]);
+        $this->add_responsive_control('icon_spacing', ['label' => __('Spacing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['max' => 50]], 'default' => ['unit' => 'px', 'size' => 10], 'selectors' => ['{{WRAPPER}} i' => 'margin-left: {{SIZE}}{{UNIT}}; margin-right: {{SIZE}}{{UNIT}};']]);
         $this->end_controls_section();
         $this->start_controls_section('section_style_textbefore', ['label' => __('Text Before', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['user_text_before!' => '']]);
         $this->add_control('tx_before_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-meta-value span.tx-before' => 'color: {{VALUE}};', '{{WRAPPER}} .dce-meta-value a span.tx-before' => 'color: {{VALUE}};']]);
@@ -231,9 +221,9 @@ class DCE_Widget_User extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         $this->add_control('array_css_classes', ['label' => __('CSS Classes', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'title' => __('Add your custom class WITHOUT the dot. e.g: my-class', 'dynamic-content-for-elementor')]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
-        $settings = $this->get_settings_for_display(null, \true);
+        $settings = $this->get_settings_for_display();
         if (empty($settings) || !$settings['dce_user_key']) {
             return;
         }
@@ -401,7 +391,7 @@ class DCE_Widget_User extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                                     $meta_html .= Tokens::replace_var_tokens($txt, 'SINGLE', $avalue);
                                 } else {
                                     $meta_html .= Helper::to_string($avalue);
-                                    if (!$settings['dce_user_multiple_separator_last'] || $settings['dce_user_multiple_separator_last'] && $i < \count($meta_value)) {
+                                    if ($i < \count($meta_value)) {
                                         $meta_html .= wp_kses_post($settings['dce_user_multiple_separator']);
                                     }
                                 }
@@ -503,7 +493,7 @@ class DCE_Widget_User extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                         $meta_html = $meta_value;
                         break;
                     case 'google_map':
-                        $meta_html = '<a href="https://www.google.com/maps/@' . $meta_value['lat'] . ',' . $meta_value['lng'] . ',15z">' . ($meta_value['address'] ? $meta_value['address'] : $meta_value['lat'] . ',' . $meta_value['lng']) . '</a>';
+                        $meta_html = '<a href="https://www.google.com/maps/@' . $meta_value['lat'] . ',' . $meta_value['lng'] . ',15z">' . (!empty($meta_value['address']) ? $meta_value['address'] : $meta_value['lat'] . ',' . $meta_value['lng']) . '</a>';
                         break;
                     case 'map':
                         $meta_html = $this->map($meta_value, $settings);
@@ -564,7 +554,7 @@ class DCE_Widget_User extends \DynamicContentForElementor\Widgets\WidgetPrototyp
                         }
                         break;
                     case 'link':
-                        $meta_html = '<a href="' . $meta_value['url'] . '"' . ($meta_value['target'] ? ' target="' . $meta_value['target'] . '"' : '') . '>' . $meta_value['title'] . '</a>';
+                        $meta_html = '<a href="' . $meta_value['url'] . '"' . (!empty($meta_value['target']) ? ' target="' . $meta_value['target'] . '"' : '') . '>' . $meta_value['title'] . '</a>';
                         break;
                     case 'url':
                     case 'website':
@@ -802,9 +792,9 @@ class DCE_Widget_User extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         $meta_html = '<div ' . $this->get_render_attribute_string('wrapper') . '>';
         $meta_html .= '<a ' . $this->get_render_attribute_string('button') . '>';
         $meta_html .= '<span ' . $this->get_render_attribute_string('content-wrapper') . '>';
-        if (!empty($settings['dce_user_button_icon'])) {
+        if (isset($settings['dce_user_button_icon']) || isset($settings['selected_dce_user_button_icon'])) {
             $meta_html .= '<span ' . $this->get_render_attribute_string('icon-align') . '>';
-            $meta_html .= '<i class="' . esc_attr($settings['dce_user_button_icon']) . '" aria-hidden="true"></i>';
+            $meta_html .= Helper::get_migrated_icon($settings, 'dce_user_button_icon', '');
             $meta_html .= '</span>';
         }
         $meta_html .= '<span ' . $this->get_render_attribute_string('text') . '>';

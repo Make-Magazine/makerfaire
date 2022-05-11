@@ -3,12 +3,12 @@
 namespace DynamicContentForElementor\Extensions;
 
 use Elementor\Controls_Manager;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Animation_Element;
+use DynamicContentForElementor\Controls\Group_Control_Animation_Element;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Animations extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class DynamicAnimations extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     public $name = 'Animations';
     public $has_controls = \true;
@@ -17,7 +17,7 @@ class DCE_Extension_Animations extends \DynamicContentForElementor\Extensions\DC
     {
         $element_type = $element->get_type();
         $element->add_control('enabled_animations', ['label' => __('Animations', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'yes']);
-        $element->add_group_control(DCE_Group_Control_Animation_Element::get_type(), ['name' => 'animate_image', 'selector' => '{{WRAPPER}} .dce-animations', 'condition' => ['enabled_animations' => 'yes']]);
+        $element->add_group_control(Group_Control_Animation_Element::get_type(), ['name' => 'animate_image', 'selector' => '{{WRAPPER}} .dce-animations', 'condition' => ['enabled_animations' => 'yes']]);
     }
     protected function add_actions()
     {

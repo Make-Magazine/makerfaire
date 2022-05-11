@@ -30,6 +30,9 @@ class Set implements IteratorAggregate
     {
         return \array_keys($this->_elts);
     }
+    /**
+     * @return ArrayIterator
+     */
     #[\ReturnTypeWillChange]
     public function getIterator()
     {

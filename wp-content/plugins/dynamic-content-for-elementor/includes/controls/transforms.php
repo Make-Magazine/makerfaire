@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
  * Elementor Transforms Control.
  *
  */
-class DCE_Control_Transforms extends Control_Base_Multiple
+class Control_Transforms extends Control_Base_Multiple
 {
     /**
      * Get box shadow control type.

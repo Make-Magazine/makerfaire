@@ -14,9 +14,10 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
+use InstagramFeed\SB_Instagram_Data_Encryption;
 
-class SB_Instagram_Comments
-{
+class SB_Instagram_Comments {
+
 	/**
 	 * AJAX listeners related to all of the frontend comment features
 	 *
@@ -36,61 +37,59 @@ class SB_Instagram_Comments
 	 * @since 5.0
 	 */
 	public static function the_ajax_comment_cache() {
+		$comment_cache = self::get_comment_cache();
 
-		$comment_cache = SB_Instagram_Comments::get_comment_cache();
-
-		echo $comment_cache;
-
-		die();
+		wp_send_json_success( $comment_cache );
 	}
 
 	/**
 	 * If no comments are available in the comment cache for a post, or
 	 * the number of comments for the post are greater than the
-	 * number in the cache, new remote comments are retreived.
+	 * number in the cache, new remote comments are retrieved.
 	 *
 	 * @since 5.0
 	 * @since 5.1.2 remote comments only retrieved if API requests are not delayed
 	 */
 	public static function process_remote_comment_request() {
-		$post_id = isset(  $_POST['post_id'] ) ? sanitize_text_field( $_POST['post_id'] ) : false;
-		$user = isset( $_POST['user'] ) ? sanitize_text_field( $_POST['user'] ) : false;
-		$type = isset( $_POST['type'] ) && sanitize_text_field( $_POST['type'] ) === 'personal' ? 'personal' : 'business';
-
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post_id = isset( $_POST['post_id'] ) ? sbi_sanitize_instagram_ids( $_POST['post_id'] ) : false;
+		$user    = isset( $_POST['user'] ) ? sbi_sanitize_username( $_POST['user'] ) : false;
+		$type    = isset( $_POST['type'] ) && $_POST['type'] === 'personal' ? 'personal' : 'business';
 		if ( $post_id && $user ) {
-			$sb_instagram_settings = get_option( 'sb_instagram_settings', array() );
+			$args = array( 'username' => $user );
+			$results = InstagramFeed\Builder\SBI_Db::source_query( $args );
 
-			$account = array();
-			foreach ( $sb_instagram_settings['connected_accounts'] as $connected_account ) {
-				$ca_type = isset( $connected_account['type'] ) ? $connected_account['type'] : 'personal';
-				if ( $connected_account['username'] === $user && $type === $ca_type ) {
-					$account = $connected_account;
-				}
-			}
+			if ( !empty( $results ) ) {
+				$connected_accounts = \InstagramFeed\Builder\SBI_Source::convert_sources_to_connected_accounts( $results );
 
-			if ( ! empty( $account['access_token'] ) ) {
-				global $sb_instagram_posts_manager;
+				foreach ( $connected_accounts as $account ) {
+					if ( ! empty( $account['access_token'] ) && $account['account_type'] === 'business' ) {
+						global $sb_instagram_posts_manager;
 
-				$api_requests_delayed = $sb_instagram_posts_manager->are_current_api_request_delays( $account );
+						$api_requests_delayed = $sb_instagram_posts_manager->are_current_api_request_delays( $account );
 
-				if ( ! $api_requests_delayed ) {
-					$comments = SB_Instagram_Comments::get_remote_comments( $account, $post_id );
+						if ( ! $api_requests_delayed ) {
+							$comments = self::get_remote_comments( $account, $post_id );
 
-					if ( $comments ) {
-						SB_Instagram_Comments::update_comment_cache( $post_id, $comments, count( $comments ) );
+							if ( $comments ) {
+								self::update_comment_cache( $post_id, $comments, count( $comments ) );
+								wp_send_json_success( $comments );
 
-						echo sbi_json_encode( $comments );
-					} else {
-						echo '{}';
+							} else {
+								wp_send_json_success( array() );
+							}
+
+						}
+
 					}
-
 				}
+
 
 			}
 
 		}
 
-		die();
+		wp_send_json_success( array() );
 	}
 
 	/**
@@ -111,9 +110,9 @@ class SB_Instagram_Comments
 			if ( ! empty( $maybe_decrypted ) ) {
 				$comment_cache = $maybe_decrypted;
 			}
-			$comment_cache_data = ! empty( $comment_cache ) ? $comment_cache : '{}';
+			$comment_cache_data = ! empty( $comment_cache ) ? json_decode( $comment_cache ) : '{}';
 		} else {
-			$comment_cache_data = '{}';
+			$comment_cache_data = array();
 		}
 
 		return $comment_cache_data;
@@ -132,20 +131,22 @@ class SB_Instagram_Comments
 	public static function update_comment_cache( $post_id, $comments, $total_comments ) {
 
 		$comment_cache_transient = get_transient( 'sbinst_comment_cache' );
-		$encryption = new SB_Instagram_Data_Encryption();
+		$encryption              = new SB_Instagram_Data_Encryption();
 
 		$maybe_decrypted = $encryption->decrypt( $comment_cache_transient );
 		if ( ! empty( $maybe_decrypted ) ) {
 			$comment_cache_transient = $maybe_decrypted;
 		}
 
-		$comment_cache = $comment_cache_transient ? json_decode( $comment_cache_transient, $assoc = true ) : array();
+		$comment_cache = $comment_cache_transient ? json_decode( $comment_cache_transient, true ) : array();
 
-		if ( ! isset( $comment_cache[ $post_id ] ) && count( $comment_cache ) >= 200 ) {
+		if ( is_array( $comment_cache ) && ! isset( $comment_cache[ $post_id ] ) && count( $comment_cache ) >= 200 ) {
 			array_shift( $comment_cache );
+		} else {
+			$comment_cache = array();
 		}
 
-		$comment_cache[ $post_id ] = array( $comments, time() + (15 * 60), $total_comments );
+		$comment_cache[ $post_id ] = array( $comments, time() + ( 15 * 60 ), $total_comments );
 
 		set_transient( 'sbinst_comment_cache', $encryption->encrypt( sbi_json_encode( $comment_cache ) ), 0 );
 	}
@@ -180,11 +181,11 @@ class SB_Instagram_Comments
 			if ( ! empty( $comments ) && isset( $comments[0]['text'] ) ) {
 				foreach ( $comments as $comment ) {
 
-					$username = isset( $comment['from'] ) ? SB_Instagram_Comments::clean_comment( $comment['from']['username'] ) : SB_Instagram_Comments::clean_comment( $comment['username'] );
+					$username          = isset( $comment['from'] ) ? self::clean_comment( $comment['from']['username'] ) : self::clean_comment( $comment['username'] );
 					$comments_return[] = array(
-						'text' => SB_Instagram_Comments::clean_comment( $comment['text'] ),
-						'id' => esc_html( $comment['id'] ),
-						'username' => esc_html( $username )
+						'text'     => self::clean_comment( $comment['text'] ),
+						'id'       => sbi_sanitize_instagram_ids( $comment['id'] ),
+						'username' => sbi_sanitize_username( $username ),
 					);
 
 				}
@@ -196,7 +197,7 @@ class SB_Instagram_Comments
 			if ( $connection->is_wp_error() ) {
 				SB_Instagram_API_Connect::handle_wp_remote_get_error( $connection->get_wp_error() );
 			} else {
-				SB_Instagram_API_Connect::handle_instagram_error( $connection->get_data(), $account, 'comments' );
+				SB_Instagram_API_Connect::handle_instagram_error( $connection->get_data(), $account );
 			}
 
 			return false;

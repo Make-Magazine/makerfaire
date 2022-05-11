@@ -69,8 +69,65 @@ div.dt-buttons {
 
 		@include dtb-processing();
 	}
+
+
+	&.ui.buttons {
+		flex-wrap: wrap;
+	}
+
+	&.ui.basic.buttons .ui.button {
+		border-bottom: 1px solid rgba(34,36,38,.15);
+		margin-bottom: -1px;
+
+		&:hover {
+			background: transparent !important;
+		}
+	}
 }
 
 span.dt-down-arrow {
 	display: none;
+}
+
+span.dt-button-spacer {
+	cursor: inherit;
+
+	&.bar {
+		padding-left: 1.5em;
+
+		&:empty {
+			height: inherit;
+		}
+	}
+}
+
+div.dt-button-collection span.dt-button-spacer {
+	border-top: 1px solid rgba(34,36,38,.15);
+
+	&.bar {
+		border-bottom: none;
+		padding-left: 1.5em;
+	}
+}
+
+.ui.basic.buttons .button.dt-button-spacer {
+	background-color: rgba(34,36,38,.05) !important;
+}
+
+div.dt-btn-split-wrapper {
+	&:active:not(.disabled),
+	&.active:not(.disabled) {
+		button.button {
+			background-color: #f8f8f8 !important;
+		}
+		button.dt-btn-split-drop {
+			box-shadow: none;
+			background-color: transparent !important;
+		}
+		button.button {
+			&:hover {
+				background-color: transparent !important;
+			}
+		}
+	}
 }

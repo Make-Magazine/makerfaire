@@ -2,321 +2,501 @@
 
 namespace DynamicContentForElementor;
 
+use DynamicContentForElementor\Plugin;
 if (!\defined('ABSPATH')) {
     exit;
 }
 class LicenseSystem
 {
-    public $license_key;
+    const LICENSE_STATUS_OPTION = 'dce_license_status';
+    const LICENSE_ERROR_OPTION = 'dce_license_error';
+    const LICENSE_DOMAIN_OPTION = 'dce_license_domain';
+    const LICENSE_KEY_OPTION = 'dce_license_key';
+    /**
+     * @var bool
+     */
+    private $should_attempt_auto_activation = \false;
+    /**
+     * @var bool
+     */
+    private $is_staging = \false;
     public function __construct()
     {
-        $this->init();
-    }
-    public function init()
-    {
+        add_action('admin_post_dce_rollback', [$this, 'post_rollback']);
         $this->activation_advisor();
         // gestisco lo scaricamento dello zip aggiornato inviando i dati della licenza
         add_filter('upgrader_pre_download', array($this, 'filter_upgrader_pre_download'), 10, 3);
     }
     public function activation_advisor()
     {
-        $license_activated = get_option('dce_license_activated');
-        $tab_license = isset($_GET['page']) && $_GET['page'] == 'dce-license' ? \true : \false;
-        if (!$license_activated && !$tab_license && current_user_can('administrator')) {
-            add_action('admin_notices', '\\DynamicContentForElementor\\Notice::dce_admin_notice__license');
-            add_filter('plugin_action_links_' . DCE_PLUGIN_BASE, '\\DynamicContentForElementor\\License::dce_plugin_action_links_license');
+        $tab_license = isset($_GET['page']) && $_GET['page'] === 'dce-license';
+        if (!$this->is_license_active() && !$tab_license && current_user_can('administrator')) {
+            add_action('admin_notices', '\\DynamicContentForElementor\\Notice::license');
+            add_filter('plugin_action_links_' . DCE_PLUGIN_BASE, [$this, 'plugin_action_links_license']);
         }
     }
-    // define the upgrader_pre_download callback
+    /**
+     * Define the upgrader_pre_download callback
+     */
     public function filter_upgrader_pre_download($false, $package, $instance)
     {
-        // ottengo lo slug del plugin corrente
         $plugin = \false;
         if (\property_exists($instance, 'skin')) {
             if ($instance->skin) {
                 if (\property_exists($instance->skin, 'plugin')) {
-                    // aggiornamento da pagina
+                    // Update from page
                     if ($instance->skin->plugin) {
                         $pezzi = \explode('/', $instance->skin->plugin);
                         $plugin = \reset($pezzi);
                     }
                 }
+                // Update via Ajax
                 if (!$plugin && isset($instance->skin->plugin_info['TextDomain'])) {
-                    // aggiornamento ajax
                     $plugin = $instance->skin->plugin_info['TextDomain'];
                 }
             }
         }
-        // agisco solo per il mio plugin
-        if ($plugin == 'dynamic-content-for-elementor' || isset($_POST['dce_version'])) {
+        if ('dynamic-content-for-elementor' === $plugin || isset($_POST['dce_version'])) {
             return $this->upgrader_pre_download($package, $instance);
         }
         return $false;
     }
     public function upgrader_pre_download($package, $instance = null)
     {
-        // ora verifico la licenza per l'aggiornamento
-        $license = self::call_api('status-check', DCE_LICENSE, \false, \true);
-        if (!self::is_active($license)) {
-            if (!DCE_LICENSE) {
-                // l'utente non ha ancora impostato alcun codice di licenza
-                return new \WP_Error('no_license', __('You have not entered the license.', 'dynamic-content-for-elementor') . ' <a target="_blank" href="https://www.dynamic.ooo/pricing">' . __('If you don’t have one already, you should buy one', 'dynamic-content-for-elementor') . '</a>');
-            }
-            // qualcosa è andato storto...stampo tutti gli errori
-            if (is_wp_error($license) || $license['response']['code'] != 200) {
-                return new \WP_Error('no_license', __('Error connecting to the server.', 'dynamic-content-for-elementor') . ' -- KEY: ' . DCE_LICENSE . ' - DOMAIN: ' . DCE_INSTANCE . ' - STATUS-CHECK: ' . \var_export($license_dump, \true));
-            }
-            // oppure semplicemente la licenza utilizzata non è attiva o valida
-            return new \WP_Error('no_license', __('Your license is not valid', 'dynamic-content-for-elementor') . ' <a href="' . admin_url() . 'admin.php?page=dce-license&licence_check=1">' . __('Check it on the plugin settings', 'dynamic-content-for-elementor') . '</a>.');
+        // Check the license
+        $this->refresh_license_status();
+        if (!$this->is_license_active()) {
+            $linkmsg = ' <a href="' . admin_url() . 'admin.php?page=dce-license">' . __('Check it on the license page', 'dynamic-content-for-elementor') . '</a>.';
+            return new \WP_Error($this->get_license_error() . $linkmsg);
         }
-        if (self::is_expired($license)) {
-            // la licenza è scaduta
-            return new \WP_Error('no_license', __('Your license is not valid for plugin updates, it is probably expired', 'dynamic-content-for-elementor') . ' <a href="' . admin_url() . 'admin.php?page=dce-license&licence_check=1">' . __('Check it on the plugin settings', 'dynamic-content-for-elementor') . '</a>.');
-        }
-        // aggiungo quindi le info aggiuntive della licenza alla richiesta per abilitarmi al download
+        // Additional info required to permit download
         $package .= \strpos($package, '?') === \false ? '?' : '&';
-        $package .= 'license_key=' . DCE_LICENSE . '&license_instance=' . DCE_INSTANCE;
+        $package .= 'license_key=' . $this->get_license_key() . '&license_instance=' . $this->get_current_domain();
         if (get_option('dce_beta', \false)) {
             $package .= '&beta=true';
         }
-        self::plugin_backup();
         $download_file = download_url($package);
         if (is_wp_error($download_file)) {
             return new \WP_Error('download_failed', __('Error downloading the update package', 'dynamic-content-for-elementor'), $download_file->get_error_message());
         }
         return $download_file;
     }
-    public static function plugin_backup()
+    /**
+     * @param bool $fresh false gets cache version, true checks remote status
+     * @return bool
+     */
+    public function is_license_active($fresh = \false)
     {
-        // do a zip of current version
-        $dce_backup = !get_option('dce_backup_disable');
-        if ($dce_backup) {
-            // create zip in /wp-content/backup
-            if (!\is_dir(\DynamicContentForElementor\Plugin::$backup_path)) {
-                \mkdir(\DynamicContentForElementor\Plugin::$backup_path, 0755, \true);
+        if ($fresh) {
+            $this->refresh_license_status();
+        }
+        return get_option(self::LICENSE_STATUS_OPTION, '') === 'active';
+    }
+    /**
+     * Summary
+     *
+     * @param string $status either 'active' or 'inactive'
+     * @return void
+     */
+    private function set_license_status($status)
+    {
+        update_option(self::LICENSE_STATUS_OPTION, $status);
+    }
+    /**
+     * Get error message from last failed status check.
+     *
+     * @return string
+     */
+    private function get_license_error()
+    {
+        return get_option(self::LICENSE_ERROR_OPTION, '');
+    }
+    /**
+     * Set license status to inactive and save error message.
+     *
+     * @param string $error
+     */
+    private function set_license_error($error)
+    {
+        $this->set_license_status('inactive');
+        update_option(self::LICENSE_ERROR_OPTION, $error);
+    }
+    /**
+     * Set License Key
+     *
+     * @param string $key
+     * @return void
+     */
+    private function set_license_key($key)
+    {
+        update_option(self::LICENSE_KEY_OPTION, $key);
+    }
+    /**
+     * Get License Key
+     *
+     * @return string
+     */
+    public function get_license_key()
+    {
+        return get_option(self::LICENSE_KEY_OPTION, '');
+    }
+    /**
+     * Get last 4 digits of License Key
+     *
+     * @return string
+     */
+    public function get_license_key_last_4_digits()
+    {
+        return \substr($this->get_license_key(), -4);
+    }
+    /**
+     * Activate new License Key
+     *
+     * @param string $key
+     * @return array
+     */
+    public function activate_new_license_key($key)
+    {
+        // TODO: check if valid.
+        $this->set_license_key($key);
+        return $this->activate_license();
+    }
+    /**
+     * Get License Domain
+     *
+     * @return string|bool
+     */
+    public function get_last_active_domain()
+    {
+        return get_option(self::LICENSE_DOMAIN_OPTION);
+    }
+    /**
+     * Set License Domain
+     *
+     * @param string $domain
+     * @return void
+     */
+    public function set_last_active_domain($domain)
+    {
+        update_option(self::LICENSE_DOMAIN_OPTION, $domain);
+    }
+    /**
+     * Get current domain without protocol
+     *
+     * @return string
+     */
+    public function get_current_domain()
+    {
+        $protocol = !empty($_SERVER['HTTPS']) && 'off' !== $_SERVER['HTTPS'] || !empty($_SERVER['SERVER_PORT']) && 443 === $_SERVER['SERVER_PORT'] ? 'https://' : 'http://';
+        return \str_replace($protocol, '', get_bloginfo('wpurl'));
+    }
+    /**
+     * Update the license system options and variables based on the server response.
+     *
+     * @param array $response
+     * @return void
+     */
+    public function handle_status_check_response($response)
+    {
+        $this->should_attempt_auto_activation = \false;
+        $this->is_staging = \false;
+        if (!$response) {
+            // trouble contacting the server. No changes:
+            return;
+        }
+        if (($response['staging'] ?? '') === 'yes') {
+            $this->is_staging = \true;
+        }
+        $status_code = $response['status_code'] ?? '';
+        if ('e002' === $status_code) {
+            // key is invalid:
+            $this->set_license_error($response['message']);
+            return;
+        }
+        if (\in_array($status_code, ['s203', 'e204'], \true)) {
+            // key is not active for current domain, we should not attempt activation:
+            $this->set_license_error($response['message']);
+            return;
+        }
+        if (\in_array($status_code, ['s205', 's215'], \true)) {
+            // if license is valid and active for domain:
+            if (($response['license_status'] ?? '') === 'expired') {
+                // But expired:
+                $this->set_license_error($response['message']);
+                $this->should_attempt_auto_activation = \true;
+                return;
             }
-            // Add to the directory an empty index.php
-            if (!\is_file(\DynamicContentForElementor\Plugin::$backup_path . '/index.php')) {
-                $phpempty = "<?php\n//Silence is golden.\n";
-                \file_put_contents(\DynamicContentForElementor\Plugin::$backup_path . '/index.php', $phpempty);
-            }
-            $outZipPath = \DynamicContentForElementor\Plugin::$backup_path . '/dynamic-content-for-elementor_' . DCE_VERSION . '.zip';
-            if (\is_file($outZipPath)) {
-                \unlink($outZipPath);
-            }
-            $options = array('source_directory' => DCE_PATH, 'zip_filename' => $outZipPath, 'zip_foldername' => 'dynamic-content-for-elementor');
-            if (\extension_loaded('zip')) {
-                \DynamicContentForElementor\Helper::zip_folder($options);
-            }
+            $this->set_license_status('active');
+            $this->set_last_active_domain($this->get_current_domain());
+            return;
+        }
+        // other cases, just set the error with message:
+        $this->set_license_error($response['message'] ?? esc_html__('Unknown', 'dynamic-content-for-elementor'));
+    }
+    /**
+     * @return bool|array
+     */
+    public function remote_status_check()
+    {
+        return $this->call_api('status-check', $this->get_license_key(), $this->get_current_domain());
+    }
+    /**
+     * Refresh license status.
+     *
+     * @return void
+     */
+    public function refresh_license_status()
+    {
+        if (!$this->get_license_key()) {
+            $this->set_license_error(esc_html__('No license present', 'dynamic-content-for-elementor'));
+            return;
+        }
+        $response = $this->remote_status_check();
+        $this->handle_status_check_response($response);
+    }
+    /**
+     * Refresh license status. If license was not deliberately deactivated try
+     * to reactivate the license for this domain.
+     *
+     * @return void
+     */
+    public function refresh_and_repair_license_status()
+    {
+        $this->refresh_license_status();
+        if ($this->should_attempt_auto_activation) {
+            $this->activate_license();
+            // TODO: refresh again?
         }
     }
-    public static function call_api($action, $license_key, $iNotice = \false, $debug = \false)
+    /**
+     * Ask to the server to activate the license
+     *
+     * @return string activation message
+     */
+    private function activate_license_request()
+    {
+        $response = $this->call_api('activate', $this->get_license_key(), $this->get_current_domain());
+        if ($response) {
+            return $response['message'];
+        }
+        return esc_html__('Problem contacting the server, try again in a few minutes.', 'dynamic-content-for-elementor');
+    }
+    /**
+     * Ask the server to deactivate the license
+     *
+     * @return string activation message
+     */
+    private function deactivate_license_request()
+    {
+        $response = $this->call_api('deactivate', $this->get_license_key(), $this->get_current_domain());
+        if ($response) {
+            return $response['message'];
+        }
+        return esc_html__('Problem contacting the server, try again in a few minutes.', 'dynamic-content-for-elementor');
+    }
+    /**
+     * Ask the server to deactivate the license. Refresh license status.
+     * Delete the key for staging sites.
+     *
+     * @return array [success, msg]
+     */
+    public function deactivate_license()
+    {
+        $msg = $this->deactivate_license_request();
+        $success = !$this->is_license_active(\true);
+        if ($this->is_staging) {
+            $this->set_license_key('');
+            $this->refresh_license_status();
+            return [\true, esc_html__('Success', 'dynamic-content-for-elementor')];
+        }
+        return [$success, $msg];
+    }
+    /**
+     * Ask the server to activate the license. Refresh license status.
+     *
+     * @return array [success, msg]
+     */
+    public function activate_license()
+    {
+        $msg = $this->activate_license_request();
+        $success = $this->is_license_active(\true);
+        return [$success, $msg];
+    }
+    /**
+     * Active beta releases
+     *
+     * @return void
+     */
+    public function activate_beta_releases()
+    {
+        update_option('dce_beta', \true);
+    }
+    /**
+     * Deactivate beta releases
+     *
+     * @return void
+     */
+    public function deactivate_beta_releases()
+    {
+        update_option('dce_beta', \false);
+    }
+    /**
+     * Check if beta releases are activated
+     *
+     * @return boolean
+     */
+    public function is_beta_releases_activated()
+    {
+        return get_option('dce_beta');
+    }
+    /**
+     * Make a request to license server to activate, deactivate or check the status of the license
+     *
+     * @param string $action
+     * @param string $license_key
+     * @param string $domain
+     * @return bool|array
+     */
+    public function call_api(string $action, string $license_key, string $domain)
     {
         global $wp_version;
-        $args = array('woo_sl_action' => $action, 'licence_key' => $license_key, 'product_unique_id' => 'WP-DCE-1', 'domain' => DCE_INSTANCE, 'api_version' => '1.1', 'wp-version' => $wp_version, 'version' => DCE_VERSION);
+        $args = ['woo_sl_action' => $action, 'licence_key' => $license_key, 'product_unique_id' => 'WP-DCE-1', 'domain' => $domain, 'api_version' => '1.1', 'wp-version' => $wp_version, 'version' => DCE_VERSION];
         $request_uri = DCE_LICENSE_URL . '/api.php?' . \http_build_query($args);
         $data = wp_remote_get($request_uri);
         if (is_wp_error($data)) {
-            if ($debug) {
-                return $data;
-            }
-            //there was a problem establishing a connection to the API server
-            \DynamicContentForElementor\Notice::dce_admin_notice__server_error(__('Could not receive an answer from the License Server, please retry later or contact support.', 'dynamic-content-for-elementor'));
             return \false;
         }
-        if ($data['response']['code'] != 200) {
-            if ($debug) {
-                return $data;
-            }
-            \DynamicContentForElementor\Notice::dce_admin_notice__server_error(__('There was an error contacting the License Server, please retry later or contact support.', 'dynamic-content-for-elementor'));
+        if ($data['response']['code'] !== 200) {
             return \false;
         }
-        $data_body = \json_decode($data['body']);
-        if (\is_array($data_body)) {
-            $data_body = \reset($data_body);
-        }
-        if (isset($data_body->status)) {
-            if ($data_body->status == 'success') {
-                if ($action == 'status-check' && ($data_body->status_code == 's200' || $data_body->status_code == 's205') || $action == 'activate' && ($data_body->status_code == 's100' || $data_body->status_code == 's101') || $action == 'deactivate' && $data_body->status_code == 's201' || $action == 'plugin_update' && $data_body->status_code == 's401') {
-                    //the license is active and the software is active
-                    $message = $data_body->message;
-                    $expiration_date = self::get_expiration_date($data);
-                    if ($expiration_date) {
-                        $message .= '. <b>Expiration date:</b> ' . $expiration_date;
-                        if (self::is_expired($data)) {
-                            update_option('dce_beta', \false);
-                        }
-                    }
-                    if ($iNotice) {
-                        \DynamicContentForElementor\Notice::dce_admin_notice__success($message);
-                    } else {
-                        add_option('dce_notice', $message);
-                        add_action('admin_notices', 'Notice::dce_admin_notice__success');
-                    }
-                    //doing further actions like saving the license and allow the plugin to run
-                    if ($debug) {
-                        return $data;
-                    }
-                    return \true;
-                } else {
-                    if ($debug) {
-                        return $data;
-                    }
-                    if ($iNotice) {
-                        \DynamicContentForElementor\Notice::dce_admin_notice__warning($data_body->message);
-                    } else {
-                        add_option('dce_notice', $data_body->message . ' - domain: ' . DCE_INSTANCE);
-                        add_action('admin_notices', 'Notice::dce_admin_notice__warning');
-                    }
-                    update_option('dce_beta', \false);
-                    return \false;
-                }
-            } else {
-                if ($debug) {
-                    return $data;
-                }
-                //there was a problem activating the license
-                if ($iNotice) {
-                    \DynamicContentForElementor\Notice::dce_admin_notice__warning($data_body->message);
-                } else {
-                    add_option('dce_notice', $data_body->message . ' - domain: ' . DCE_INSTANCE);
-                    add_action('admin_notices', 'Notice::dce_admin_notice__warning');
-                }
-                return \false;
-            }
-        } else {
-            if ($debug) {
-                return $data;
-            }
-            //there was a problem establishing a connection to the API server
-            add_action('admin_notices', 'Notice::dce_admin_notice__server_error');
-            return \false;
-        }
-    }
-    public static function is_active($data)
-    {
-        if (!is_wp_error($data)) {
-            if (isset($data['body'])) {
-                $data_body = \json_decode($data['body']);
-                if (\is_array($data_body)) {
-                    $data_body = \reset($data_body);
-                }
-                if (isset($data_body->status)) {
-                    if ($data_body->status == 'success') {
-                        if ($data_body->status_code == 's200' || $data_body->status_code == 's205' || ($data_body->status_code == 's100' || $data_body->status_code == 's101') || $data_body->status_code == 's201' || $data_body->status_code == 's401') {
-                            return \true;
-                        }
-                    }
-                }
-            }
+        $body = \json_decode($data['body'], \true);
+        if (\is_array($body)) {
+            return \reset($body);
         }
         return \false;
     }
-    public static function get_expiration_date($data)
+    /**
+     * Retrieve all versions of the plugin
+     *
+     * @copyright Elementor
+     * @license GPLv3
+     */
+    private function get_versions()
     {
-        if (!is_wp_error($data)) {
-            if (isset($data['body'])) {
-                $data_body = \json_decode($data['body']);
-                if (\is_array($data_body)) {
-                    $data_body = \reset($data_body);
+        $url = DCE_LICENSE_URL . '/versions.php';
+        $body_args = ['item_name' => DCE_SLUG, 'version' => DCE_VERSION, 'license' => $this->get_license_key(), 'url' => $this->get_current_domain(), 'action' => 'list'];
+        $response = wp_remote_get($url, ['timeout' => 40, 'body' => $body_args]);
+        if (is_wp_error($response)) {
+            return $response;
+        }
+        $response_code = (int) wp_remote_retrieve_response_code($response);
+        $data = \json_decode(wp_remote_retrieve_body($response), \true);
+        if (401 === $response_code) {
+            return new \WP_Error($response_code, $data['message']);
+        }
+        if (200 !== $response_code) {
+            return new \WP_Error($response_code, esc_html__('HTTP Error', 'dynamic-content-for-elementor'));
+        }
+        if (empty($data) || !\is_array($data)) {
+            return new \WP_Error('no_json', esc_html__('An error occurred, please try again', 'dynamic-content-for-elementor'));
+        }
+        return $data;
+    }
+    /**
+     * Retrieve all previous versions so you can make a rollback
+     *
+     * @copyright Elementor
+     * @license GPLv3
+     */
+    public function get_rollback_versions()
+    {
+        $rollback_versions = get_transient('dce_rollback_versions_' . DCE_VERSION);
+        if (\false === $rollback_versions) {
+            $max_versions = 30;
+            $versions = $this->get_versions();
+            if (is_wp_error($versions)) {
+                return [];
+            }
+            $rollback_versions = [];
+            $current_index = 0;
+            foreach ($versions as $version) {
+                if ($max_versions <= $current_index) {
+                    break;
                 }
-                if (\property_exists($data_body, 'licence_expire')) {
-                    if ($data_body->licence_expire) {
-                        return $data_body->licence_expire;
-                    }
+                $lowercase_version = \strtolower($version);
+                $is_valid_rollback_version = !\preg_match('/(trunk|beta|rc|dev)/i', $lowercase_version);
+                if (!$is_valid_rollback_version) {
+                    continue;
                 }
-            }
-        }
-        return \false;
-    }
-    public static function is_expired($data)
-    {
-        $expiration_date = self::get_expiration_date($data);
-        if ($expiration_date) {
-            if ($expiration_date < \gmdate('Y-m-d')) {
-                return \true;
-            }
-        }
-        return \false;
-    }
-    public static function do_rollback()
-    {
-        // rollback or reinstall
-        if (isset($_POST['dce_version']) && sanitize_text_field($_POST['dce_version'])) {
-            if ($_POST['dce_version'] == DCE_VERSION) {
-                // same version...so no change :)
-                $rollback = \true;
-            } else {
-                $backup = \DynamicContentForElementor\Plugin::$backup_path . '/dynamic-content-for-elementor_' . sanitize_file_name($_POST['dce_version']) . '.zip';
-                if (\is_file($backup)) {
-                    // from local backup
-                    $roll_url = DCE_BACKUP_URL . '/dynamic-content-for-elementor_' . sanitize_file_name($_POST['dce_version']) . '.zip';
-                } else {
-                    // from server
-                    $roll_url = DCE_LICENSE_URL . '/last.php?v=' . sanitize_text_field($_POST['dce_version']);
+                if (\version_compare($version, DCE_VERSION, '>=')) {
+                    continue;
                 }
-                \ob_start();
-                $wp_upgrader_skin = new \DynamicContentForElementor\Upgrader_Skin();
-                $wp_upgrader = new \WP_Upgrader($wp_upgrader_skin);
-                $wp_upgrader->init();
-                $rollback = $wp_upgrader->run(array('package' => $roll_url, 'destination' => DCE_PATH, 'clear_destination' => \true));
-                $roll_status = \ob_get_clean();
+                $current_index++;
+                $rollback_versions[] = $version;
             }
-            if ($rollback) {
-                exit(wp_safe_redirect('admin.php?page=dce-features'));
-            } else {
-                die($roll_status);
-            }
+            set_transient('dce_rollback_versions_' . DCE_VERSION, $rollback_versions, WEEK_IN_SECONDS);
         }
+        return $rollback_versions;
     }
-    public static function check_for_updates($file)
+    /**
+     * Return the URL to download a specific version
+     *
+     * @copyright Elementor
+     * @license GPLv3
+     */
+    protected function get_plugin_package_url($version)
     {
-        // Verify updates
-        $info = self::check_for_updates_url();
-        try {
-            $myUpdateChecker = \Puc_v4_Factory::buildUpdateChecker($info, $file, 'dynamic-content-for-elementor');
-        } catch (\Throwable $e) {
-            // Puc is not essential. Do not crash the plugin just because it throws an error.
-            // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-            \error_log('Dynamic.ooo Error in Puc: ' . $e->getMessage() . ' ' . $e->getTraceAsString());
+        $url = DCE_LICENSE_URL . '/versions.php';
+        $body_args = ['item_name' => DCE_SLUG, 'version' => $version, 'license' => $this->get_license_key(), 'url' => $this->get_current_domain(), 'action' => 'download'];
+        $response = wp_remote_get($url, ['timeout' => 40, 'body' => $body_args]);
+        if (is_wp_error($response)) {
+            return $response;
         }
+        $response_code = (int) wp_remote_retrieve_response_code($response);
+        $data = \json_decode(wp_remote_retrieve_body($response), \true);
+        if (401 === $response_code) {
+            return new \WP_Error($response_code, $data['message']);
+        }
+        if (200 !== $response_code) {
+            return new \WP_Error($response_code, esc_html__('HTTP Error', 'dynamic-content-for-elementor'));
+        }
+        if (empty($data) || !\is_array($data)) {
+            return new \WP_Error('no_json', esc_html__('An error occurred, please try again', 'dynamic-content-for-elementor'));
+        }
+        return $data['package_url'];
     }
-    public static function check_for_updates_url()
+    /**
+     * Function fired by 'admin_post_dce_rollback' action
+     *
+     * @return void
+     */
+    public function post_rollback()
     {
-        // Verify updates
-        $info = DCE_LICENSE_URL . '/info.php?s=' . DCE_INSTANCE . '&v=' . DCE_VERSION;
-        if (DCE_LICENSE) {
-            $info .= '&k=' . DCE_LICENSE;
+        if (!wp_verify_nonce($_POST['dce-settings-page'], 'dce-settings-page')) {
+            wp_die(__('Nonce verification error.', 'dynamic-content-for-elementor'));
         }
-        if (get_option('dce_beta', \false)) {
-            $info .= '&beta=true';
+        $rollback_versions = $this->get_rollback_versions();
+        if (empty($_POST['version']) || !\in_array($_POST['version'], $rollback_versions, \true)) {
+            wp_die(esc_html__('Error occurred, the version selected is invalid. Try selecting different version.', 'dynamic-content-for-elementor'));
         }
-        return $info;
+        $package_url = $this->get_plugin_package_url($_POST['version']);
+        if (is_wp_error($package_url)) {
+            wp_die($package_url);
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        }
+        $rollback = new \DynamicContentForElementor\Rollback(['version' => sanitize_text_field($_POST['version']), 'plugin_name' => DCE_PLUGIN_BASE, 'plugin_slug' => DCE_SLUG, 'package_url' => $package_url]);
+        $rollback->run();
+        wp_die('', esc_html__('Rollback to Previous Version', 'dynamic-content-for-elementor'), ['response' => 200]);
     }
-    public static function dce_plugin_action_links_license($links)
+    public function plugin_action_links_license($links)
     {
-        $links['license'] = '<a style="color:brown;" title="Activate license" href="' . admin_url() . 'admin.php?page=dce-license"><b>' . __('License', 'dynamic-content-for-elementor') . '</b></a>';
+        $links['license'] = '<a style="color:brown;" title="' . __('Activate license', 'dynamic-content-for-elementor') . '" href="' . admin_url() . 'admin.php?page=dce-license"><b>' . __('License', 'dynamic-content-for-elementor') . '</b></a>';
         return $links;
     }
-    public static function dce_active_domain_check()
+    public function domain_mismatch_check()
     {
-        $dce_activated = \intval(get_option('dce_license_activated', 0));
-        $dce_domain = \base64_decode(get_option('dce_license_domain'));
-        if ($dce_activated && $dce_domain && $dce_domain != DCE_INSTANCE && current_user_can('administrator')) {
-            \DynamicContentForElementor\Notice::dce_admin_notice__warning(\sprintf(__('License Mismatch. Your license key doesn\'t match your current domain. This is most likely due to a change in the domain URL. Please deactivate the license and reactivate it again. %1$s Reactivate License%2$s', 'dynamic-content-for-elementor'), '<a class="btn button" href="' . admin_url() . 'admin.php?page=dce-license">', '</a>'));
-            return \false;
+        if ($this->get_license_key() && !$this->is_license_active() && $this->get_last_active_domain() && $this->get_last_active_domain() !== $this->get_current_domain()) {
+            \DynamicContentForElementor\Notice::warning(\sprintf(__('License Mismatch. Your license key doesn\'t match your current domain. This is likely due to a change in the domain URL. You can reactivate your license now. Remember to deactivate the one for the old domain from your license area on Dynamic.ooo\'s site', 'dynamic-content-for-elementor'), '<a class="btn button" href="' . admin_url() . 'admin.php?page=dce-license">', '</a>'));
         }
-        return \true;
-    }
-    public static function dce_expired_license_notice()
-    {
-        $dce_expiration_date = get_option('dce_license_expiration');
-        if ($dce_expiration_date && current_user_can('administrator')) {
-            if ($dce_expiration_date < \gmdate('Y-m-d')) {
-                \DynamicContentForElementor\Notice::dce_admin_notice__danger(\sprintf(__('Your License Expired on ' . $dce_expiration_date . '. Please renew your license or you can\'t get more plugin updates. %1$sExtend your license now%2$s', 'dynamic-content-for-elementor'), '<a class="btn button" target="_blank" href="https://www.dynamic.ooo">', '</a>'));
-                return \false;
-            }
-        }
-        return \true;
     }
 }

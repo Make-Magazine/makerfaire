@@ -33,11 +33,11 @@ class Token extends Tag
     {
         return 'https://www.dynamic.ooo/widget/dynamic-tag-token/';
     }
-    protected function _register_controls()
+    protected function register_controls()
     {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        if (\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
             $this->register_controls_settings();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        } else {
             $this->register_controls_non_admin_notice();
         }
     }
@@ -63,22 +63,28 @@ class Token extends Tag
             'date' => ['title' => __('Date', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-calendar'],
             'system' => ['title' => __('System', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-cogs'],
         ];
+        // ACF
         if (\DynamicContentForElementor\Helper::is_acf_active()) {
             $obj_opt['acf'] = ['title' => __('ACF', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-plug'];
+        }
+        // Jet Engine
+        if (\DynamicContentForElementor\Helper::is_jetengine_active()) {
+            $obj_opt['jet'] = ['title' => __('JetEngine', 'dynamic-content-for-elementor'), 'icon' => 'icon-dce-jetengine'];
         }
         $this->add_control('dce_token_object', ['label' => __('Object', 'dynamic-content-for-elementor'), 'label_block' => \true, 'type' => Controls_Manager::CHOOSE, 'options' => $obj_opt, 'default' => 'post', 'toggle' => \false, 'condition' => ['dce_token_wizard!' => '']]);
         $this->add_control('dce_token_field_date', ['label' => __('Date Modificator', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'placeholder' => '+1 week, -2 months, yesterday, timestamp', 'description' => __('A time modificator compatible with strtotime or a timestamp', 'dynamic-content-for-elementor'), 'label_block' => \true, 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => 'date']]);
         $this->add_control('dce_token_field_date_format', ['label' => __('Date Format', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'placeholder' => 'Y-m-d H:i:s', 'label_block' => \true, 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => 'date']]);
         $this->add_control('dce_token_field_system', ['label' => __('Field', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'label_block' => \true, 'placeholder' => __('_GET, _POST, _SERVER, MY_CONSTANT', 'dynamic-content-for-elementor'), 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => 'system']]);
-        foreach ($objects as $aobj) {
-            $this->add_control('dce_token_field_' . $aobj, ['label' => __('Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Field Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'fields', 'object_type' => $aobj, 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => $aobj]]);
+        foreach ($objects as $object) {
+            $this->add_control('dce_token_field_' . $object, ['label' => __('Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Field Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'fields', 'object_type' => $object, 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => $object]]);
         }
         $this->add_control('dce_token_field_option', ['label' => __('Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Option key', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'options', 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => 'option']]);
-        $this->add_control('dce_token_field_acf', ['label' => __('Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('ACF Field name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'acf-field', 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => 'acf']]);
+        $this->add_control('dce_token_field_acf', ['label' => __('Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => 'acf']]);
         $this->add_control('dce_token_acf_settings', ['label' => __('Get Field Settings', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => 'acf']]);
+        $this->add_control('dce_token_field_jet', ['label' => __('Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'jet', 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => 'jet']]);
         $this->add_control('dce_token_subfield', ['label' => __('SubField', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'label_block' => \true, 'placeholder' => __('my_sub:label', 'dynamic-content-for-elementor'), 'condition' => ['dce_token_wizard!' => '', 'dce_token_object!' => 'date']]);
-        foreach ($objects as $aobj) {
-            $this->add_control('dce_token_source_' . $aobj, ['label' => __('Source', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Search', 'dynamic-content-for-elementor') . ' ' . \ucfirst($aobj), 'label_block' => \true, 'query_type' => $aobj . 's', 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => $aobj]]);
+        foreach ($objects as $object) {
+            $this->add_control('dce_token_source_' . $object, ['label' => __('Source', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Search', 'dynamic-content-for-elementor') . ' ' . \ucfirst($object), 'label_block' => \true, 'query_type' => $object . 's', 'condition' => ['dce_token_wizard!' => '', 'dce_token_object' => $object]]);
         }
         $this->add_control('dce_token_filter', ['label' => __('Filters', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXTAREA, 'rows' => 2, 'placeholder' => 'trim', 'label_block' => \true, 'condition' => ['dce_token_wizard!' => '']]);
         $this->add_control('dce_token_code', ['label' => __('Show code', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'condition' => ['dce_token_wizard!' => '']]);
@@ -91,7 +97,7 @@ class Token extends Tag
     }
     public function render()
     {
-        $settings = $this->get_settings_for_display(null, \true);
+        $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }
@@ -104,12 +110,13 @@ class Token extends Tag
             $objects = array('post', 'user', 'term');
             $token = '[';
             $token .= $settings['dce_token_object'];
-            foreach ($objects as $aobj) {
-                if ($settings['dce_token_field_' . $aobj]) {
-                    $token .= ':' . $settings['dce_token_field_' . $aobj];
+            foreach ($objects as $object) {
+                if ($settings['dce_token_field_' . $object]) {
+                    $token .= ':' . $settings['dce_token_field_' . $object];
                 }
             }
-            if ($settings['dce_token_object'] == 'acf') {
+            if ('acf' === $settings['dce_token_object']) {
+                // Advanced Custom Fields
                 if (isset(self::$acf_names[$settings['dce_token_field_acf']])) {
                     $acf_name = self::$acf_names[$settings['dce_token_field_acf']];
                 } else {
@@ -120,8 +127,14 @@ class Token extends Tag
                 if ($settings['dce_token_acf_settings']) {
                     $token .= ':settings';
                 }
-            }
-            if ($settings['dce_token_object'] == 'date') {
+            } elseif ('jet' === $settings['dce_token_object']) {
+                // Jet Engine
+                $jet_field = $settings['dce_token_field_jet'];
+                if (!empty($jet_field)) {
+                    $token .= ':' . $jet_field;
+                }
+            } elseif ('date' === $settings['dce_token_object']) {
+                // Date
                 if ($settings['dce_token_field_date']) {
                     $token .= ':' . $settings['dce_token_field_date'];
                 }
@@ -142,9 +155,9 @@ class Token extends Tag
                 $filters = \explode(\PHP_EOL, $settings['dce_token_filter']);
                 $token .= '|' . \implode('|', $filters);
             }
-            foreach ($objects as $aobj) {
-                if ($settings['dce_token_source_' . $aobj]) {
-                    $token .= '|' . $settings['dce_token_source_' . $aobj];
+            foreach ($objects as $object) {
+                if ($settings['dce_token_source_' . $object]) {
+                    $token .= '|' . $settings['dce_token_source_' . $object];
                 }
             }
             $token .= ']';
@@ -160,14 +173,14 @@ class Token extends Tag
     }
     public function get_value(array $options = [])
     {
-        $settings = $this->get_settings_for_display(null, \true);
+        $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }
         \DynamicContentForElementor\Tokens::$data = \true;
         $value = $this->get_token_value($settings);
         \DynamicContentForElementor\Tokens::$data = \false;
-        // for MEDIA Control
+        // for Media Controls
         if (\filter_var($value, \FILTER_VALIDATE_URL)) {
             $image_data = ['url' => $value];
             $thumbnail_id = \DynamicContentForElementor\Helper::get_image_id($value);

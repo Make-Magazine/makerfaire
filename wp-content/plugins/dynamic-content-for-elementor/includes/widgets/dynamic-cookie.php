@@ -13,24 +13,14 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_DynamicCookie extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class DynamicCookie extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => $this->get_title()]);
         $this->add_control('setcookie', ['label' => __('Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'label_on' => __('Set', 'dynamic-content-for-elementor'), 'label_off' => __('Unset', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'default' => 'yes']);
@@ -41,7 +31,7 @@ class DCE_Widget_DynamicCookie extends \DynamicContentForElementor\Widgets\Widge
         $this->add_control('cookie_expires_value', ['label' => __('Cookie expiration value in', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'days', 'options' => ['minutes' => __('minutes', 'dynamic-content-for-elementor'), 'days' => __('days', 'dynamic-content-for-elementor')], 'condition' => ['setcookie' => 'yes']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings) || !$settings['cookie_name'] || \Elementor\Plugin::$instance->editor->is_edit_mode()) {

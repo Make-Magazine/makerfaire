@@ -13,31 +13,21 @@ use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_PodsRelationship extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class PodsRelationship extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
         return ['dce-relationship'];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => __('Content', 'dynamic-content-for-elementor')]);
-        $this->add_control('pods_relation_field', ['label' => __('PODS Relationship field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'pods', 'object_type' => 'relationship']);
+        $this->add_control('pods_relation_field', ['label' => __('PODS Relationship field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'pods', 'object_type' => 'relationship']);
         $this->add_control('pods_relation_render', ['label' => __('Render mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['title' => ['title' => __('Title', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-list'], 'text' => ['title' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'title', 'separator' => 'before']);
         $this->add_control('pods_relation_template', ['label' => __('Select Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['pods_relation_render' => 'template']]);
         $this->add_control('pods_relation_text', ['label' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '<h4>[post:title]</h4>[post:thumb]<p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">READ MORE</a>', 'dynamic' => ['active' => \true], 'condition' => ['pods_relation_render' => 'text']]);
@@ -77,7 +67,7 @@ class DCE_Widget_PodsRelationship extends \DynamicContentForElementor\Widgets\Wi
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'pods_relation_bgcolor_pane', 'label' => __('Background', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-view-pane']);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings) || empty($settings['pods_relation_field'])) {
@@ -99,11 +89,11 @@ class DCE_Widget_PodsRelationship extends \DynamicContentForElementor\Widgets\Wi
             $related_posts = wp_list_pluck($related_posts, 'ID');
         }
         if (\count($related_posts) > 1 && $settings['pods_relation_format']) {
-            $labels = array();
-            if (\in_array($settings['pods_relation_format'], array('tab', 'accordion', 'select'))) {
+            $labels = [];
+            if (\in_array($settings['pods_relation_format'], ['tab', 'accordion', 'select'])) {
                 foreach ($related_posts as $arel) {
                     $post = get_post($arel);
-                    $labels[$post->ID] = \DynamicContentForElementor\Tokens::do_tokens($settings['pods_relation_label']);
+                    $labels[$post->ID] = \DynamicContentForElementor\Helper::get_dynamic_value($settings['pods_relation_label']);
                 }
             }
             switch ($settings['pods_relation_format']) {
@@ -134,7 +124,7 @@ class DCE_Widget_PodsRelationship extends \DynamicContentForElementor\Widgets\Wi
 								<<?php 
                         echo \DynamicContentForElementor\Helper::validate_html_tag($settings['pods_relation_tag']);
                         ?> class="elementor-heading-title">
-						<?php 
+								<?php 
                         echo $alabel;
                         ?>
 								</<?php 
@@ -219,7 +209,7 @@ class DCE_Widget_PodsRelationship extends \DynamicContentForElementor\Widgets\Wi
             if ($settings['pods_relation_render'] == 'template' && $settings['pods_relation_template']) {
                 echo do_shortcode('[dce-elementor-template id="' . $settings['pods_relation_template'] . '"]');
             } elseif ($settings['pods_relation_render'] == 'text') {
-                echo \DynamicContentForElementor\Tokens::do_tokens($settings['pods_relation_text']);
+                echo \DynamicContentForElementor\Helper::get_dynamic_value($settings['pods_relation_text']);
             } else {
                 if ($settings['pods_relation_link']) {
                     echo '<a class="dce-pods-relational-post-link" href="' . get_permalink($post->ID) . '">';

@@ -3,18 +3,92 @@
 namespace DynamicContentForElementor\Core\Upgrade;
 
 use DynamicContentForElementor\Extensions;
+use Elementor\Core\Upgrade\Updater;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly.
 }
 class Upgrades
 {
-    public static $extension_translation = ['DCE_Extension_Animations' => 'ext_animations', 'DCE_Extension_CopyPaste' => 'ext_copypaste', 'DCE_Extension_Editor' => 'ext_editor', 'DCE_Extension_Masking' => 'ext_masking', 'DCE_Extension_Rellax' => 'ext_rellax', 'DCE_Extension_Reveal' => 'ext_reveal', 'DCE_Extension_Template' => 'ext_template', 'DCE_Extension_Token' => 'ext_token', 'DCE_Extension_Php' => 'dynamic_tag_php', 'DCE_Extension_Transforms' => 'ext_transforms', 'DCE_Extension_Unwrap' => 'ext_unwrap', 'DCE_Extension_Video' => 'ext_video', 'DCE_Extension_Visibility' => 'ext_visibility', 'DCE_Extension_Form_Address_Autocomplete' => 'ext_form_address_autocomplete', 'DCE_Extension_Form_Amount' => 'ext_form_amount', 'DCE_Extension_Form_description' => 'ext_form_description', 'DCE_Extension_Form_Email' => 'ext_form_email', 'DCE_Extension_Form_Export' => 'ext_form_export', 'DCE_Extension_Form_Icons' => 'ext_form_icons', 'DCE_Extension_Form_Inline_Align' => 'ext_form_inline_align', 'DCE_Extension_Form_Length' => 'ext_form_length', 'DCE_Extension_Form_Message' => 'ext_form_message', 'DCE_Extension_Form_Method' => 'ext_form_method', 'DCE_Extension_Form_Password_Visibility' => 'ext_form_password_visibility', 'DCE_Extension_Form_PDF' => 'ext_form_pdf', 'DCE_Extension_Form_Redirect' => 'ext_form_redirect', 'DCE_Extension_Form_Regex' => 'ext_form_regex', 'DCE_Extension_Form_Reset' => 'ext_form_reset', 'DCE_Extension_Form_Save' => 'ext_form_save', 'DCE_Extension_Form_Select2' => 'ext_form_select2', 'DCE_Extension_Form_Signature' => 'ext_form_signature', 'DCE_Extension_Form_Step' => 'ext_form_step', 'DCE_Extension_Form_Submit_On_Change' => 'ext_form_submit_on_change', 'DCE_Extension_Form_Submit' => 'ext_form_submit', 'DCE_Extension_Form_Telegram' => 'ext_form_telegram', 'DCE_Extension_Form_Visibility' => 'ext_form_visibility', 'ConditionalFieldsV2' => 'ext_conditional_fields_v2', 'DCE_Extension_Form_WYSIWYG' => 'ext_form_wysiwyg', 'DCE_Extension_Form_PayPal' => 'ext_form_paypal', 'DCE_Extension_Form_Stripe' => 'ext_form_stripe', 'CustomValidation' => 'ext_custom_validation', 'JsField' => 'ext_js_field', 'LiveHtml' => 'ext_live_html', 'HiddenLabel' => 'ext_hidden_label', 'DynamicSelect' => 'ext_dynamic_select', 'Tooltip' => 'ext_tooltip', 'DynamicCountdown' => 'ext_dynamic_countdown', 'ConfirmDialog' => 'ext_confirm_dialog'];
-    public static $widget_translation = ['DCE_Widget_Acf' => 'wdg_acf', 'DCE_Widget_Gallery' => 'wdg_gallery', 'DCE_Widget_Relationship' => 'wdg_relationship', 'DCE_Widget_Repeater' => 'wdg_repeater', 'Acf_Repeater_V2' => 'wdg_acf_repeater_v2', 'Acf_Flexible_Content' => 'wdg_acf_flexible_content', 'DCE_Widget_Slider' => 'wdg_slider', 'DCE_Widget_BarCode' => 'wdg_barcode', 'DCE_Widget_Calendar' => 'wdg_calendar', 'DCE_Widget_Clipboard' => 'wdg_clipboard', 'DCE_Widget_DynamicCookie' => 'wdg_dyncookie', 'DCE_Widget_Favorites' => 'wdg_favorites', 'DCE_Widget_ModalWindow' => 'wdg_modal_window', 'DCE_Widget_Pdf' => 'wdg_pdf', 'DCE_Widget_PopUp' => 'wdg_popup', 'DCE_Widget_Template' => 'wdg_template', 'DCE_Widget_Tokens' => 'wdg_tokens', 'DCE_Widget_AnimateText' => 'wdg_animate_text', 'DCE_Widget_Parallax' => 'wdg_parallax', 'DCE_Widget_ThreesixtySlider' => 'wdg_threesixty_slider', 'DCE_Widget_Tilt' => 'wdg_tilt', 'DCE_Widget_TwentyTwenty' => 'wdg_twentytwenty', 'DCE_Widget_DoShortcode' => 'wdg_doshortcode', 'DCE_Widget_IncludeFile' => 'wdg_includefile', 'DCE_Widget_RawPhp' => 'wdg_rawphp', 'DCE_Widget_RemoteContent' => 'wdg_remotecontent', 'Iframe' => 'wdg_iframe', 'GoogleDocumentPreview' => 'wdg_google_doc_preview', 'DCE_Widget_DynamicPosts' => 'wdg_dynamicposts', 'DCE_Widget_DynamicPosts_v2' => 'wdg_dynamicposts_v2', 'DynamicWooProducts' => 'wdg_dynamic_woo_products', 'WooProductsCart' => 'wdg_woo_products_cart', 'WooProductUpsells' => 'wdg_woo_product_upsells', 'WooProductCrosssells' => 'wdg_woo_product_crosssells', 'ShowFavorites' => 'wdg_show_favorites', 'StickyPosts' => 'wdg_stick_yposts', 'SearchResults' => 'wdg_search_results', 'MyPosts' => 'wdg_my_posts', 'DCE_Widget_GoogleMaps' => 'wdg_google_maps', 'DCE_Widget_DynamicUsers' => 'wdg_dynamic_users', 'DCE_Widget_AnimatedOffcanvasMenu' => 'wdg_animated_offcanvas_menu', 'DCE_Widget_CursorTracker' => 'wdg_cursor_tracker', 'DCE_Widget_FileBrowser' => 'wdg_file_browser', 'DCE_Widget_ParentChildMenu' => 'wdg_parent_child_menu', 'DCE_Widget_SearchFilter' => 'wdg_search_filter', 'DCE_Widget_SinglePostsMenu' => 'wdg_single_posts_menu', 'DCE_Widget_TaxonomyTermsMenu' => 'wdg_taxonomy_terms_menu', 'DCE_Widget_Views' => 'wdg_views', 'DCE_Widget_Pods' => 'wdg_pods', 'DCE_Widget_PodsGallery' => 'wdg_pods_gallery', 'DCE_Widget_PodsRelationship' => 'wdg_pods_relationship', 'DCE_Widget_Breadcrumbs' => 'wdg_breadcrumbs', 'DCE_Widget_Content' => 'wdg_content', 'DCE_Widget_Date' => 'wdg_date', 'DCE_Widget_Excerpt' => 'wdg_excerpt', 'DCE_Widget_FeaturedImage' => 'wdg_featured_image', 'DCE_Widget_IconFormat' => 'wdg_icon_format', 'DCE_Widget_Meta' => 'wdg_meta', 'DCE_Widget_NextPrev' => 'wdg_next_prev', 'DCE_Widget_ReadMore' => 'wdg_read_more', 'DCE_Widget_Terms' => 'wdg_terms', 'DCE_Widget_Title' => 'wdg_title', 'DCE_Widget_TitleType' => 'wdg_title_type', 'DCE_Widget_User' => 'wdg_user', 'DCE_Widget_TitleTaxonomy' => 'wdg_title_taxonomy', 'DCE_Widget_SvgBlob' => 'wdg_svg_blob', 'DCE_Widget_SvgDistortion' => 'wdg_svg_distortion', 'DCE_Widget_SvgFilterEffects' => 'wdg_svg_filter_effects', 'DCE_Widget_SvgImagemask' => 'wdg_svg_imagemask', 'DCE_Widget_SvgMorphing' => 'wdg_svg_morphing', 'DCE_Widget_Svg_PathText' => 'wdg_svg_path_text', 'DCE_Widget_Toolset' => 'wdg_toolset', 'DCE_Widget_ToolsetRelationship' => 'wdg_toolset_relationship', 'DCE_Widget_BgCanvas' => 'wdg_bg_canvas', 'DCE_Widget_DistortionImage' => 'wdg_distortion_image', 'DCE_Widget_Panorama' => 'wdg_panorama', 'OsmMap' => 'wdg_osm_map', 'PdfViewer' => 'wdg_pdf_viewer'];
-    public static $setting_translation = ['DCE_Document_Scrolling' => 'pst_scrolling', 'DCE_Settings_SmoothTransition' => 'gst_smooth_transition', 'DCE_Settings_TrackerHeader' => 'gst_tracker_header'];
-    public static function _v_2_3_0_signature_change_default($updater)
+    /**
+     * @param Updater $updater
+     * @return boolean
+     */
+    public static function _v_2_5_0_dynamic_charts_background_repeater($updater)
     {
-        $changes = [['callback' => ['DynamicContentForElementor\\Core\\Upgrade\\Upgrades', '_signature_change_default'], 'control_ids' => []]];
+        $changes = [['callback' => ['DynamicContentForElementor\\Core\\Upgrade\\Upgrades', '_dynamic_charts_background_repeater'], 'control_ids' => []]];
+        return self::_update_widget_settings('dce-dynamic-charts', $updater, $changes);
+    }
+    /**
+     * Set old default value for Dynamic Google Maps in 'acfmap'
+     */
+    public static function _v_2_5_0_dynamic_google_maps_default($updater)
+    {
+        $changes = [['callback' => ['DynamicContentForElementor\\Core\\Upgrade\\Upgrades', '_widget_settings_save_old_default'], 'control_ids' => ['map_data_type' => 'acfmap']]];
+        return self::_update_widget_settings('dyncontel-acf-google-maps', $updater, $changes);
+    }
+    /**
+     * @param Updater $updater
+     * @return boolean
+     */
+    public static function _v_2_5_0_disable_tokens_filters_whitelist($updater)
+    {
+        update_option('dce_tokens_filters_whitelist_status', 'disable');
+        update_option('dce_active_tokens', ['form', 'system', 'date', 'author', 'user', 'post', 'term', 'option', 'wp_query', 'query', 'comment', 'acf', 'product', 'expr']);
+        return \false;
+    }
+    /**
+     * No new features by default, save current status.
+     *
+     * @param Updater $updater
+     * @return boolean
+     */
+    public static function _v_2_5_0_no_new_features_default($updater)
+    {
+        $option = \json_decode(get_option('dce_features_status_option', '[]'), \true);
+        $disable_new_features = \defined('DCE_DISABLE_NEW_FEATURES') && DCE_DISABLE_NEW_FEATURES;
+        $default = \DynamicContentForElementor\Core\Upgrade\UpgradesData::FEATURES_STATUS_2_4_4;
+        if ($disable_new_features) {
+            $default = \array_map(function () {
+                return 'inactive';
+            }, $default);
+        }
+        $status = $option + $default;
+        update_option('dce_features_status_option', wp_json_encode($status));
+        return \false;
+    }
+    public static function _v_2_3_1_remote_content_cache_age($updater)
+    {
+        $changes = [['callback' => ['DynamicContentForElementor\\Core\\Upgrade\\Upgrades', '_remote_content_cache_age'], 'control_ids' => []]];
+        return self::_update_widget_settings('dyncontel-remotecontent', $updater, $changes);
+    }
+    public static function _v_2_3_1_rename_remote_content_headers($updater)
+    {
+        $changes = [['callback' => ['DynamicContentForElementor\\Core\\Upgrade\\Upgrades', '_rename_widget_settings'], 'control_ids' => ['authorization_header' => 'headers']]];
+        return self::_update_widget_settings('dyncontel-remotecontent', $updater, $changes);
+    }
+    /**
+     * Remove HTML Tag from Text Editor with Tokens and move it on text setting
+     */
+    public static function _v_2_3_1_remove_tag_text_editor_tokens($updater)
+    {
+        $changes = [['callback' => ['DynamicContentForElementor\\Core\\Upgrade\\Upgrades', '_tokens_remove_tag'], 'control_ids' => []]];
+        return self::_update_widget_settings('dce-tokens', $updater, $changes);
+    }
+    /**
+     * Remove base64 encoding from option 'dce_license_domain'
+     */
+    public static function _v_2_3_0_remove_base64($updater)
+    {
+        $dce_license_domain = get_option('dce_license_domain');
+        if ($dce_license_domain) {
+            update_option('dce_license_domain', \base64_decode($dce_license_domain));
+        }
+        return \false;
+    }
+    public static function _v_2_3_0_wysiwyg_upgrade($updater)
+    {
+        $changes = [['callback' => ['DynamicContentForElementor\\Core\\Upgrade\\Upgrades', '_wysiwyg_upgrade'], 'control_ids' => []]];
         return self::_update_widget_settings('form', $updater, $changes);
     }
     /** Remove controls from repeater in add to favorites */
@@ -59,10 +133,10 @@ class Upgrades
         $extensions_old += \json_decode(get_option('dce_excluded_dynamic_tags', '[]'), \true);
         $extensions_new = [];
         foreach ($extensions_old as $old_name => $is_excluded) {
-            if (!isset(self::$extension_translation[$old_name])) {
+            if (!isset(\DynamicContentForElementor\Core\Upgrade\UpgradesData::EXTENSION_TRANSLATION[$old_name])) {
                 continue;
             }
-            $new_name = self::$extension_translation[$old_name];
+            $new_name = \DynamicContentForElementor\Core\Upgrade\UpgradesData::EXTENSION_TRANSLATION[$old_name];
             $extensions_new[$new_name] = $is_excluded ? 'inactive' : 'active';
         }
         return $extensions_new;
@@ -72,10 +146,10 @@ class Upgrades
         $widgets_old = \json_decode(get_option('dce_excluded_widgets', '[]'), \true);
         $widgets_new = [];
         foreach ($widgets_old as $old_name => $is_excluded) {
-            if (!isset(self::$widget_translation[$old_name])) {
+            if (!isset(\DynamicContentForElementor\Core\Upgrade\UpgradesData::WIDGET_TRANSLATION[$old_name])) {
                 continue;
             }
-            $new_name = self::$widget_translation[$old_name];
+            $new_name = \DynamicContentForElementor\Core\Upgrade\UpgradesData::WIDGET_TRANSLATION[$old_name];
             $widgets_new[$new_name] = $is_excluded ? 'inactive' : 'active';
         }
         // all widgets that are not set in the option were active by default (including legacy):
@@ -91,10 +165,10 @@ class Upgrades
         $settings_old += \json_decode(get_option('dce_excluded_global_settings', '[]'), \true);
         $settings_new = [];
         foreach ($settings_old as $old_name => $_) {
-            if (!isset(self::$setting_translation[$old_name])) {
+            if (!isset(\DynamicContentForElementor\Core\Upgrade\UpgradesData::SETTING_TRANSLATION[$old_name])) {
                 continue;
             }
-            $new_name = self::$setting_translation[$old_name];
+            $new_name = \DynamicContentForElementor\Core\Upgrade\UpgradesData::SETTING_TRANSLATION[$old_name];
             $settings_new[$new_name] = 'inactive';
         }
         return $settings_new;
@@ -221,9 +295,23 @@ class Upgrades
         }
         return $element;
     }
+    public static function _tokens_remove_tag($element, $args)
+    {
+        $widget_id = $args['widget_id'];
+        if (empty($element['widgetType']) || $widget_id !== $element['widgetType']) {
+            return $element;
+        }
+        if (isset($element['settings']['dce_html_tag'])) {
+            $tag = $element['settings']['dce_html_tag'];
+            unset($element['settings']['dce_html_tag']);
+            $element['settings']['text_w_tokens'] = '<' . $tag . '>' . $element['settings']['text_w_tokens'] . '<\\/' . $tag . '>';
+            $args['do_update'] = \true;
+        }
+        return $element;
+    }
     public static function _rename_tooltip_control($element, $args)
     {
-        if (!($element['settings']['enable_tooltip'] ?? '') === 'yes') {
+        if (!(($element['settings']['enable_tooltip'] ?? '') === 'yes')) {
             return $element;
         }
         $args['do_update'] = \true;
@@ -338,11 +426,11 @@ class Upgrades
         $excluded_globals = \json_decode(get_option('WP-DCE-1_excluded_globals'), \true);
         // Set Option for Frontend Navigator
         if (isset($excluded_globals['DCE_Frontend_Navigator_Enable_Visitor'])) {
-            update_option('dce_frontend_navigator', 'active-visitors');
+            update_option(DCE_FRONTEND_NAVIGATOR_OPTION, 'active-visitors');
         } elseif (!isset($excluded_globals['DCE_Frontend_Navigator'])) {
-            update_option('dce_frontend_navigator', 'active');
+            update_option(DCE_FRONTEND_NAVIGATOR_OPTION, 'active');
         } else {
-            update_option('dce_frontend_navigator', 'inactive');
+            update_option(DCE_FRONTEND_NAVIGATOR_OPTION, 'inactive');
         }
         if ($excluded_globals) {
             update_option('dce_excluded_global_settings', wp_json_encode($excluded_globals));
@@ -414,7 +502,30 @@ class Upgrades
         }
         return \false;
     }
-    public static function _signature_change_default($element, $args)
+    public static function _remote_content_cache_age($element, $args)
+    {
+        $widget_id = $args['widget_id'];
+        if (empty($element['widgetType']) || $widget_id !== $element['widgetType']) {
+            return $element;
+        }
+        $ages_breakpoints = [60 * 3 => '1m', 60 * 10 => '5m', 60 * 30 => '15m', 60 * 60 * 3 => '1h', 60 * 60 * 9 => '6h', 60 * 60 * 18 => '12h', \PHP_INT_MAX => '24h'];
+        if (($element['settings']['data_cache'] ?? '') === 'yes') {
+            $args['do_update'] = \true;
+            $age = $element['settings']['data_cache_maxage'] ?? 86400;
+            if (!$age) {
+                $element['settings']['data_cache'] = 'no';
+            } else {
+                foreach ($ages_breakpoints as $bp => $ref_age) {
+                    if ($age < $bp) {
+                        $element['settings']['cache_age'] = $ref_age;
+                        break;
+                    }
+                }
+            }
+        }
+        return $element;
+    }
+    public static function _wysiwyg_upgrade($element, $args)
     {
         $widget_id = $args['widget_id'];
         if (empty($element['widgetType']) || $widget_id !== $element['widgetType']) {
@@ -423,8 +534,9 @@ class Upgrades
         if (isset($element['settings']['form_fields']) && \is_array($element['settings']['form_fields'])) {
             $fields = $element['settings']['form_fields'];
             foreach ($fields as $i => $field) {
-                if (($field['field_type'] ?? '') === 'dce_form_signature') {
-                    $element['settings']['form_fields'][$i]['signature_save_to_file'] = 'no';
+                if (($field['field_type'] ?? '') === 'textarea' && ($field['field_wysiwyg'] ?? '') === 'true') {
+                    $element['settings']['form_fields'][$i]['field_type'] = 'dce_wysiwyg';
+                    unset($element['settings']['form_fields'][$i]['field_wysiwyg']);
                     $args['do_update'] = \true;
                 }
             }
@@ -460,6 +572,23 @@ class Upgrades
             $element['settings']['list_items'] = $new_items;
             $args['do_update'] = \true;
         }
+        return $element;
+    }
+    /**
+     * @param array<string, mixed> $element
+     * @param array<string, mixed> $args
+     * @return array<string,mixed>
+     */
+    public static function _dynamic_charts_background_repeater($element, $args)
+    {
+        $widget_id = $args['widget_id'];
+        if (empty($element['widgetType']) || $widget_id !== $element['widgetType']) {
+            return $element;
+        }
+        $code = $element['settings']['background_data'] ?? '#E52600';
+        $repeater = [['_id' => wp_unique_id(), 'color' => $code]];
+        $element['settings']['background_data'] = $repeater;
+        $args['do_update'] = \true;
         return $element;
     }
     public static function _pdf_form_new_svg_repeater($element, $args)

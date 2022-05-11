@@ -18,6 +18,7 @@
 			}
 
 			self.bindTriggerEvents();
+			self.listenForChanges();
 
 			window.GPLimitCheckboxes.instances[ self.formId ] = self;
 
@@ -63,6 +64,16 @@
 			} );
 
 		};
+
+		self.listenForChanges = function() {
+			$(document).on('gppa_updated_batch_fields', function(event, formId) {
+				if (formId != self.formId) {
+					return;
+				}
+
+				self.bindTriggerEvents();
+			});
+		}
 
 		self.handleCheckboxClick = function( $elem ) {
 

@@ -66,7 +66,7 @@ if ( $element_id && $md5 ) {
 		}
 
 		if ( $base_dir ) {
-			$folder = \DynamicContentForElementor\Widgets\DCE_Widget_FileBrowser::getRootDir( $base_dir, $settings );
+			$folder = \DynamicContentForElementor\Widgets\FileBrowser::getRootDir( $base_dir, $settings );
 			$files = glob_recursive( $folder, '*' );
 			foreach ( $files as $afile ) {
 				$afile_md5 = md5( $afile );

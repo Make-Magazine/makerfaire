@@ -68,6 +68,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		require_once( 'includes/class-gpnf-entry.php' );
 		require_once( 'includes/class-gpnf-session.php' );
 		require_once( 'includes/class-gpnf-export.php' );
+		require_once( 'includes/class-gpnf-easy-passthrough.php' );
 
 		// Nested Form fields have a dynamically retrieved value set via this filter and needs to be in place as early as possible.
 		add_filter( 'gform_get_input_value', array( $this, 'handle_nested_form_field_value' ), 10, 3 );
@@ -92,6 +93,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		gpnf_zapier();
 		gpnf_merge_tags();
 		gpnf_wc_product_addons();
+		gpnf_easy_passthrough();
 
 		// General Hooks
 		add_action( 'gform_form_args', array( $this, 'stash_shortcode_field_values' ) );
@@ -204,13 +206,14 @@ class GP_Nested_Forms extends GP_Plugin {
 				"
 				DELETE em1 FROM {$wpdb->prefix}gf_entry_meta em1
 				INNER JOIN {$wpdb->prefix}gf_entry_meta em2 ON em2.entry_id = em1.entry_id
-				WHERE em1.meta_key = '%s'
-				AND em2.meta_key = '%s'
+				WHERE em1.meta_key = %s
+				AND em2.meta_key = %s
 				AND concat( '', em2.meta_value * 1 ) = em2.meta_value",
 				GPNF_Entry::ENTRY_EXP_KEY,
 				GPNF_Entry::ENTRY_PARENT_KEY
 			);
 
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->query( $sql );
 
 		}
@@ -233,12 +236,19 @@ class GP_Nested_Forms extends GP_Plugin {
 
 	public function scripts() {
 
-		$scripts = array();
+		$scripts = array(
+			array(
+				'handle'  => 'knockout',
+				'src'     => $this->get_base_url() . '/js/built/knockout.js',
+				'version' => $this->_version,
+				'enqueue' => null,
+			),
+		);
 
 		if ( GFForms::is_gravity_page() ) {
 			$scripts[] = array(
 				'handle'   => 'gp-nested-forms-admin',
-				'src'      => $this->get_base_url() . "/js/built/gp-nested-forms-admin.js",
+				'src'      => $this->get_base_url() . '/js/built/gp-nested-forms-admin.js',
 				'version'  => $this->_version,
 				'deps'     => array( 'jquery', 'gwp-asmselect' ),
 				'enqueue'  => array(
@@ -248,12 +258,12 @@ class GP_Nested_Forms extends GP_Plugin {
 			);
 		}
 
-		$deps = array( 'jquery', 'gform_gravityforms' );
+		$deps = array( 'jquery', 'gform_gravityforms', 'knockout' );
 		if ( $this->use_jquery_ui_dialog() ) {
 			$deps[] = 'jquery-ui-dialog';
 		}
 
-		$src = $this->use_jquery_ui_dialog() ? "/js/built/gp-nested-forms-jquery-ui.js" : "/js/built/gp-nested-forms.js";
+		$src = $this->use_jquery_ui_dialog() ? '/js/built/gp-nested-forms-jquery-ui.js' : '/js/built/gp-nested-forms.js';
 
 		$scripts[] = array(
 			'handle'   => 'gp-nested-forms',
@@ -627,7 +637,7 @@ class GP_Nested_Forms extends GP_Plugin {
 					<select id="gpnf-fields" title="<?php esc_html_e( 'Select your fields', 'gp-nested-forms' ); ?>" class="fieldwidth-3" multiple disabled>
 						<!-- dynamically populated based on selection in 'form' select -->
 					</select>
-					<img class="gpnf-static-spinner" src="<?php echo GFCommon::get_base_url(); ?>/images/<?php echo $this->is_gf_version_gte( '2.5-beta-1' ) ? 'spinner.svg' : 'spinner.gif';?>">
+					<img class="gpnf-static-spinner" src="<?php echo GFCommon::get_base_url(); ?>/images/<?php echo $this->is_gf_version_gte( '2.5-beta-1' ) ? 'spinner.svg' : 'spinner.gif'; ?>">
 				</div>
 
 			</div>
@@ -1518,6 +1528,19 @@ class GP_Nested_Forms extends GP_Plugin {
 		}
 
 		$hr = $format == 'html' ? '<hr class="gpnf-nested-entries-hr" style="height:12px;visibility:hidden;margin:0;border:0;">' : "---\n\n";
+		/**
+		 * Filter the separator between child entry summaries when displaying all child entries either in {all_fields}
+		 * merge tag or a specific Nested Form field's merge tag.
+		 *
+		 * Defaults to an <hr> when the output format is "html".
+		 *
+		 * @since 1.0
+		 *
+		 * @param string                $hr     The horizontal rule to be used.
+		 * @param \GP_Nested_Form_Field $field  The current Nested Form field object.
+		 * @param string                $format The format in which the child entries will be displayed ('html' or 'text').
+		 */
+		$hr = gf_apply_filters( array( 'gpnf_child_entries_separator', $field->formId, $field->id ), $hr, $field, $format );
 
 		if ( $is_all_fields ) {
 			foreach ( $values as &$_value ) {
@@ -1597,8 +1620,8 @@ class GP_Nested_Forms extends GP_Plugin {
 			// Create posts for child entries; the func handles determining if the entry has post fields.
 			GFCommon::create_post( $child_form, $child_entry );
 
-			$child_entry = new GPNF_Entry( $child_entry );
-			$child_entry->set_parent_form( $form['id'], $parent_entry->id );
+			$child_entry      = new GPNF_Entry( $child_entry );
+			$parent_entry->id = $child_entry->set_parent_meta( $form['id'], $parent_entry->id );
 			$child_entry->delete_expiration();
 
 		}
@@ -1668,7 +1691,23 @@ class GP_Nested_Forms extends GP_Plugin {
 			}
 
 			$raw_value = GFFormsModel::get_lead_field_value( $entry, $field );
-			$value     = GFCommon::get_lead_field_display( $field, $raw_value, $entry['currency'], true );
+
+			/**
+			 * Check if multi-input product fields (e.g. Single Product, Calculation) and have a quantity. Without this,
+			 * unselected products will still return their Name and Price creating a confusing UX - and - products with
+			 * a separate quantity field will not display their correct quantity.
+			 */
+			if ( $field->type === 'product' && is_array( $raw_value ) ) {
+				$quantity = $this->get_product_quantity( $field, $entry, $form );
+				if ( empty( $quantity ) ) {
+					$raw_value = array();
+				} else {
+					$raw_value[ "{$field->id}.3" ] = $quantity;
+				}
+			}
+
+			$value = GFCommon::get_lead_field_display( $field, $raw_value, $entry['currency'], true );
+
 			// Run $value through same filter GF uses before displaying on the entry detail view.
 			$value = apply_filters( 'gform_entry_field_value', $value, $field, $entry, $form );
 
@@ -1706,6 +1745,43 @@ class GP_Nested_Forms extends GP_Plugin {
 		$field_values['total'] = $entry->_total;
 
 		return $field_values;
+	}
+
+	/**
+	 * Get the quantity of a product field for the given entry.
+	 *
+	 * Extracted from GP Conditional Pricing and modified for Nested Forms. Used when generating the display value for
+	 * Product fields in the Nested Entries table.
+	 *
+	 * @param $product_field
+	 * @param $entry
+	 * @param $form
+	 *
+	 * @return int
+	 */
+	function get_product_quantity( $product_field, $entry, $form ) {
+
+		$product_value = GFFormsModel::get_lead_field_value( $entry, $product_field );
+		$qty_field     = GFCommon::get_product_fields_by_type( $form, array( 'quantity' ), $product_field->id );
+		$has_qty_field = ! empty( $qty_field );
+
+		if ( $has_qty_field ) {
+			$qty_field = $qty_field[0];
+		}
+
+		$is_qty_field_valid = $has_qty_field && ! GFFormsModel::is_field_hidden( $form, $qty_field, array(), $entry );
+
+		if ( $is_qty_field_valid ) {
+			$quantity = GFFormsModel::get_lead_field_value( $entry, $qty_field );
+		} else {
+			if ( is_array( $product_value ) && ! $product_field->disableQuantity ) {
+				$quantity = rgar( $product_value, "{$product_field->id}.3" );
+			} else {
+				$quantity = 1;
+			}
+		}
+
+		return (int) ( ! $quantity ? 0 : $quantity );
 	}
 
 
@@ -2012,7 +2088,7 @@ class GP_Nested_Forms extends GP_Plugin {
 				'modalHeight'         => 'auto',
 				'hasConditionalLogic' => GFFormDisplay::has_conditional_logic( $nested_form ),
 				'isGF25'              => $this->is_gf_version_gte( '2.5-beta-1' ),
-				'enableFocusTrap'	  => true,
+				'enableFocusTrap'     => true,
 			);
 
 			// Backwards compatibility for deprecated "modalTitle" option.
@@ -2046,7 +2122,7 @@ class GP_Nested_Forms extends GP_Plugin {
 			 *     @var string $modalHeaderColor    A HEX color that will be set as the default background color of the modal header.
 			 *     @var bool   $hasConditionalLogic Indicate whether the current form has conditional logic enabled.
 			 *     @var bool   $hasConditionalLogic Indicate whether the current form has conditional logic enabled.
-			 *     @var bool   $enableFocusTrap 	Whether the nested form should use a focus trap when open to prevent tabbing outside the nested form.
+			 *     @var bool   $enableFocusTrap     Whether the nested form should use a focus trap when open to prevent tabbing outside the nested form.
 			 *
 			 * }
 			 * @param GF_Field $field The current Nested Form field.
@@ -2143,6 +2219,20 @@ class GP_Nested_Forms extends GP_Plugin {
 					$entry_ids = $this->get_child_entry_ids_from_value( $this->get_field_value( $form, $entry, $field->id ) );
 				}
 			}
+
+			/**
+			 * Filter the entry IDs when populating entries into a Nested Form field (typically for editing). This is useful for adding support for editing
+			 * Nested Forms in other plugins such as GP Entry Blocks.
+			 *
+			 * Note, this filter is often used in tandem with `gpnf_bypass_entry_permissions`.
+			 *
+			 * @since 1.0.8
+			 *
+			 * @param array  $entry_ids          Entry IDs to populate the field with.
+			 * @param array  $form               Current form object.
+			 * @param object $field              Current field object.
+			 */
+			$entry_ids = gf_apply_filters( array( 'gpnf_submitted_entry_ids', $form['id'], $field->id ), $entry_ids, $form, $field );
 
 			// Load entries from session.
 			if ( empty( $entry_ids ) ) {
@@ -2303,19 +2393,64 @@ class GP_Nested_Forms extends GP_Plugin {
 
 	public function add_child_entry_meta( $entry ) {
 
-		if ( ! $this->is_nested_form_submission() ) {
+		$is_rest_request = $this->is_valid_rest_api_submissions_request();
+		if ( ! $is_rest_request && ! $this->is_nested_form_submission() ) {
 			return $entry;
 		}
 
-		$parent_form       = GFAPI::get_form( $this->get_parent_form_id() );
-		$nested_form_field = $this->get_posted_nested_form_field( $parent_form );
+		if ( $is_rest_request ) {
 
-		$entry = new GPNF_Entry( $entry );
-		$entry->set_parent_form( $parent_form['id'] );
+			$parent_entry_id      = rgpost( GPNF_Entry::ENTRY_PARENT_KEY );
+			$parent_form_id       = rgpost( GPNF_Entry::ENTRY_PARENT_FORM_KEY );
+			$nested_form_field_id = rgpost( GPNF_Entry::ENTRY_NESTED_FORM_FIELD_KEY );
+
+		} else {
+
+			$parent_form_id       = $this->get_parent_form_id();
+			$nested_form_field_id = $this->get_posted_nested_form_field_id();
+
+			/**
+			 * Account for child entries that were repopulated and are being edited. Preserve the original parent
+			 * entry ID if it is an actual entry and not a session hash.
+			 *
+			 * The child entry will be adopted by the newly submitted parent entry once it is submitted.
+			 */
+			$parent_entry_id = rgar( $entry, GPNF_Entry::ENTRY_PARENT_KEY, false );
+			if ( ! is_numeric( $parent_entry_id ) ) {
+				$parent_entry_id = false;
+			}
+		}
+
+		$parent_form       = GFAPI::get_form( $parent_form_id );
+		$nested_form_field = GFAPI::get_field( $parent_form, $nested_form_field_id );
+
+		$entry           = new GPNF_Entry( $entry );
+		$parent_entry_id = $entry->set_parent_meta( $parent_form['id'], $parent_entry_id );
 		$entry->set_nested_form_field( $nested_form_field->id );
-		$entry->set_expiration();
+
+		if ( ! is_numeric( $parent_entry_id ) ) {
+			$entry->set_expiration();
+		}
 
 		return $entry->get_entry();
+	}
+
+	public function is_valid_rest_api_submissions_request() {
+		global $wp;
+
+		if ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) {
+			return false;
+		}
+
+		if ( ! preg_match( '|wp-json/gf/v2/forms/([\d]+)/submissions|', $wp->request ) ) {
+			return false;
+		}
+
+		if ( ! rgpost( GPNF_Entry::ENTRY_PARENT_KEY ) || ! rgpost( GPNF_Entry::ENTRY_PARENT_FORM_KEY ) || ! rgpost( GPNF_Entry::ENTRY_NESTED_FORM_FIELD_KEY ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 
@@ -2445,8 +2580,6 @@ class GP_Nested_Forms extends GP_Plugin {
 
 						if ( $is_multiple ) {
 							$return[] = array(
-								// Temp filename will not exist as entry is already submitted
-								'temp_filename'     => 'GPNF_DOES_NOT_EXIST.png',
 								'uploaded_filename' => $path_info['basename'],
 							);
 						} else {
@@ -2478,6 +2611,15 @@ class GP_Nested_Forms extends GP_Plugin {
 
 						$entry[ $field['id'] ] = 'multiselect' === $field->get_input_type() ? $categories : implode( '', $categories );
 					}
+					break;
+
+				/*
+				 * Gravity Flow Discussions cannot be edited, only new comments can be added so we need to clear out the value.
+				 *
+				 * Gravity Flow will handle appending the new comment to the discussion.
+				 */
+				case 'workflow_discussion':
+					$entry[ $field['id'] ] = '';
 					break;
 			}
 		}
@@ -2520,6 +2662,7 @@ class GP_Nested_Forms extends GP_Plugin {
 			add_filter( 'gform_use_post_value_for_conditional_logic_save_entry', '__return_true' );
 
 			add_filter( 'gform_entry_post_save', array( $this, 'refresh_product_cache_and_update_total' ), 10, 2 );
+			add_filter( 'gform_entry_post_save', array( $this, 'delete_conditional_logic_field_values' ), 10, 2 );
 
 		}
 
@@ -2577,6 +2720,34 @@ class GP_Nested_Forms extends GP_Plugin {
 				$entry[ $field['id'] ] = GFCommon::get_order_total( $form, $entry );
 				GFAPI::update_entry( $entry );
 			}
+		}
+
+		return $entry;
+	}
+
+	/**
+	 * Gravity Forms will not delete values from fields that are hidden via conditional logic when editing an entry.
+	 * Let's handle this ourselves after editing a child entry.
+	 *
+	 * @param $entry
+	 * @param $form
+	 */
+	public function delete_conditional_logic_field_values( $entry, $form ) {
+
+		$original_entry = $entry;
+
+		foreach ( $form['fields'] as &$field ) {
+			if ( GFFormsModel::is_field_hidden( $form, $field, array(), $entry ) ) {
+				foreach ( $entry as $key => &$value ) {
+					if ( (int) $key === (int) $field->id ) {
+						$value = null;
+					}
+				}
+			}
+		}
+
+		if ( $original_entry !== $entry ) {
+			GFAPI::update_entry( $entry );
 		}
 
 		return $entry;
@@ -2644,10 +2815,6 @@ class GP_Nested_Forms extends GP_Plugin {
 						unset( $value[ $i ] );
 					}
 				}
-
-				// Populate existing images into post where GF will be looking for them.
-				$_POST[ "input_{$field->id}" ] = json_encode( $value );
-
 			}
 			// Handle single file uploads.
 			elseif ( self::is_prepopulated_file_upload( $form['id'], $input_name ) ) {
@@ -2740,8 +2907,8 @@ class GP_Nested_Forms extends GP_Plugin {
 		$child_entries = $parent_entry->get_child_entries();
 
 		foreach ( $child_entries as $child_entry ) {
-			$child_entry = new GPNF_Entry( $child_entry );
-			$child_entry->set_parent_form( $form['id'], $parent_entry->id );
+			$child_entry      = new GPNF_Entry( $child_entry );
+			$parent_entry->id = $child_entry->set_parent_meta( $form['id'], $parent_entry->id );
 			$child_entry->delete_expiration();
 		}
 
@@ -2944,7 +3111,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		$value = rgget( $param );
 
 		// If we didn't find a value in $_GET, let's check our session cookie
-		if( rgblank( $value ) ) {
+		if ( rgblank( $value ) ) {
 			$parent_form_id = rgar( $_REQUEST, 'gpnf_parent_form_id' );
 			if ( $parent_form_id ) {
 				$session = new GPNF_Session( $parent_form_id );
@@ -2958,6 +3125,11 @@ class GP_Nested_Forms extends GP_Plugin {
 
 }
 
+/**
+ * Returns the GP_Nested_Forms singleton.
+ *
+ * @return GP_Nested_Forms
+ */
 function gp_nested_forms() {
 	return GP_Nested_Forms::get_instance();
 }

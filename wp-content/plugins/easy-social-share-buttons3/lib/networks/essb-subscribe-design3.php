@@ -93,7 +93,7 @@ if (!function_exists('essb_subscribe_form_design3')) {
 
 		$output .= ESSBNetworks_Subscribe::generate_if_needed_agree_check();
 		
-		$output .= '<input class="submit '.esc_attr($submit_width).'" name="submit" type="submit" value="'.esc_attr($subscribe_mc_button).'" onclick="essb.ajax_subscribe(\''.$salt.'\', event);">';
+		$output .= '<input class="submit '.esc_attr($submit_width).'" name="submit" type="submit" value="'.esc_attr($subscribe_mc_button).'" onclick="essb_ajax_subscribe(\''.$salt.'\', event);">';
 		$output .= '</form>';
 		
 		$output .= '<div class="essb-subscribe-loader">

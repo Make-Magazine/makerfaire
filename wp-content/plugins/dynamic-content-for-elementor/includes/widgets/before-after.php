@@ -7,8 +7,8 @@ use Elementor\Controls_Manager;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
@@ -17,17 +17,22 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_TwentyTwenty extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class BeforeAfter extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
-        return ['jquery', 'dce-jqueryeventmove-lib', 'dce-twentytwenty-lib', 'dce-twentytwenty'];
+        return ['dce-jqueryeventmove-lib', 'dce-twentytwenty-lib', 'dce-before-after'];
     }
     public function get_style_depends()
     {
-        return ['dce-twentytwenty'];
+        return ['dce-before-after'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_5050base', ['label' => $this->get_title()]);
         $this->add_control('before_image', ['label' => __('Before Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'dynamic' => ['active' => \true], 'default' => ['url' => \Elementor\Utils::get_placeholder_image_src()]]);
@@ -65,7 +70,7 @@ class DCE_Widget_TwentyTwenty extends \DynamicContentForElementor\Widgets\Widget
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'labels_typography', 'label' => __('Labels Typography', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} #container-afterbefore .twentytwenty-overlay .twentytwenty-before-label:before, {{WRAPPER}} #container-afterbefore .twentytwenty-overlay .twentytwenty-after-label:before']);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

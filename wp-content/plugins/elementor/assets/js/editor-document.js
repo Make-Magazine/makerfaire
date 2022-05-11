@@ -1,4 +1,4 @@
-/*! elementor - v3.5.0 - 12-12-2021 */
+/*! elementor - v3.6.5 - 27-04-2022 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -19,6 +19,16 @@ module.exports = __webpack_require__(/*! core-js/library/fn/array/from */ "../no
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 module.exports = __webpack_require__(/*! core-js/library/fn/array/is-array */ "../node_modules/core-js/library/fn/array/is-array.js");
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime-corejs2/core-js/json/stringify.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/@babel/runtime-corejs2/core-js/json/stringify.js ***!
+  \************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__(/*! core-js/library/fn/json/stringify */ "../node_modules/core-js/library/fn/json/stringify.js");
 
 /***/ }),
 
@@ -2657,7 +2667,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var CreateBase = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(CreateBase, _CommandBase);
@@ -2809,7 +2819,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../assets/dev/js/editor/data/globals/colors/commands/index.js"));
 
@@ -2868,7 +2878,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandData = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-data */ "../core/common/assets/js/api/modules/command-data.js"));
+var _commandData = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-data */ "../modules/web-cli/assets/js/modules/command-data.js"));
 
 var Colors = /*#__PURE__*/function (_CommandData) {
   (0, _inherits2.default)(Colors, _CommandData);
@@ -2936,7 +2946,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandData = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-data */ "../core/common/assets/js/api/modules/command-data.js"));
+var _commandData = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-data */ "../modules/web-cli/assets/js/modules/command-data.js"));
 
 var _colors = __webpack_require__(/*! ./colors */ "../assets/dev/js/editor/data/globals/commands/data/colors.js");
 
@@ -2995,7 +3005,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandData = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-data */ "../core/common/assets/js/api/modules/command-data.js"));
+var _commandData = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-data */ "../modules/web-cli/assets/js/modules/command-data.js"));
 
 var Typography = /*#__PURE__*/function (_CommandData) {
   (0, _inherits2.default)(Typography, _CommandData);
@@ -3055,7 +3065,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var _component = _interopRequireDefault(__webpack_require__(/*! ./typography/component */ "../assets/dev/js/editor/data/globals/typography/component.js"));
 
@@ -3281,7 +3291,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../assets/dev/js/editor/data/globals/typography/commands/index.js"));
 
@@ -3316,72 +3326,6 @@ var Component = /*#__PURE__*/function (_ComponentBase) {
 }(_componentBase.default);
 
 exports["default"] = Component;
-
-/***/ }),
-
-/***/ "../assets/dev/js/editor/document/backwards-compatibility.js":
-/*!*******************************************************************!*\
-  !*** ../assets/dev/js/editor/document/backwards-compatibility.js ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var BackwardsCompatibility = /*#__PURE__*/function () {
-  function BackwardsCompatibility() {
-    (0, _classCallCheck2.default)(this, BackwardsCompatibility);
-    elementorCommon.elements.$window.on('elementor:init', this.deprecatedEvents);
-    elementor.channels.data.on('template:before:insert', this.startInsertTemplate).on('template:after:insert', this.endItem);
-  }
-
-  (0, _createClass2.default)(BackwardsCompatibility, [{
-    key: "deprecatedEvents",
-    value: function deprecatedEvents() {
-      var elementorDataEvents = elementor.channels.data._events,
-          deprecatedEvents = ['drag:before:update', 'drag:after:update', 'element:before:add', 'element:after:add', 'element:before:remove', 'element:after:remove', 'element:before:paste:style', 'element:after:paste:style', 'element:before:reset:style', 'element:after:reset:style', 'section:before:drop', 'section:after:drop'];
-      deprecatedEvents.forEach(function (event) {
-        if (elementorDataEvents[event] && elementorDataEvents[event].length) {
-          elementorCommon.helpers.softDeprecated("event: ".concat(event), '2.8.0', '$e.hooks');
-        }
-      });
-    }
-  }, {
-    key: "startInsertTemplate",
-    value: function startInsertTemplate(model) {
-      elementorCommon.helpers.softDeprecated('event: template:before:insert', '2.8.0', "$e.run( 'document/import' )");
-      elementor.documents.getCurrent().history.startItem({
-        type: 'add',
-        title: __('Template', 'elementor'),
-        subTitle: model.get('title'),
-        elementType: 'template'
-      });
-    }
-  }, {
-    key: "endItem",
-    value: function endItem() {
-      elementor.documents.getCurrent().history.endItem();
-    }
-  }]);
-  return BackwardsCompatibility;
-}();
-
-exports["default"] = BackwardsCompatibility;
 
 /***/ }),
 
@@ -3568,7 +3512,7 @@ var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var _commandHistory = _interopRequireDefault(__webpack_require__(/*! ./command-history */ "../assets/dev/js/editor/document/commands/base/command-history.js"));
 
@@ -3717,7 +3661,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var CommandHistory = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(CommandHistory, _CommandBase);
@@ -3853,9 +3797,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
-
-var _backwardsCompatibility = _interopRequireDefault(__webpack_require__(/*! ./backwards-compatibility.js */ "../assets/dev/js/editor/document/backwards-compatibility.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var _commandHistory = _interopRequireDefault(__webpack_require__(/*! ./commands/base/command-history */ "../assets/dev/js/editor/document/commands/base/command-history.js"));
 
@@ -3864,6 +3806,8 @@ var _commandHistoryDebounce = _interopRequireDefault(__webpack_require__(/*! ./c
 var components = _interopRequireWildcard(__webpack_require__(/*! ./ */ "../assets/dev/js/editor/document/index.js"));
 
 var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ */ "../assets/dev/js/editor/document/hooks/index.js"));
+
+var uiStates = _interopRequireWildcard(__webpack_require__(/*! ./ui-states */ "../assets/dev/js/editor/document/ui-states/index.js"));
 
 var Component = /*#__PURE__*/function (_ComponentBase) {
   (0, _inherits2.default)(Component, _ComponentBase);
@@ -3883,7 +3827,6 @@ var Component = /*#__PURE__*/function (_ComponentBase) {
   }, {
     key: "registerAPI",
     value: function registerAPI() {
-      new _backwardsCompatibility.default();
       (0, _values.default)(components).forEach(function (ComponentClass) {
         return $e.components.register(new ComponentClass());
       });
@@ -3899,6 +3842,11 @@ var Component = /*#__PURE__*/function (_ComponentBase) {
     key: "defaultHooks",
     value: function defaultHooks() {
       return this.importHooks(hooks);
+    }
+  }, {
+    key: "defaultUiStates",
+    value: function defaultUiStates() {
+      return this.importUiStates(uiStates);
     }
   }, {
     key: "defaultUtils",
@@ -4383,7 +4331,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../assets/dev/js/editor/document/dynamic/commands/index.js"));
 
@@ -4468,7 +4416,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandInternalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-internal-base */ "../core/common/assets/js/api/modules/command-internal-base.js"));
+var _commandInternalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-internal-base */ "../modules/web-cli/assets/js/modules/command-internal-base.js"));
 
 var SetSettings = /*#__PURE__*/function (_CommandInternal) {
   (0, _inherits2.default)(SetSettings, _CommandInternal);
@@ -4560,7 +4508,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var CopyAll = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(CopyAll, _CommandBase);
@@ -4611,6 +4559,8 @@ _Object$defineProperty(exports, "__esModule", {
 
 exports["default"] = exports.Copy = void 0;
 
+__webpack_require__(/*! core-js/modules/es6.array.find.js */ "../node_modules/core-js/modules/es6.array.find.js");
+
 __webpack_require__(/*! core-js/modules/es6.array.map.js */ "../node_modules/core-js/modules/es6.array.map.js");
 
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
@@ -4621,7 +4571,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Copy = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Copy, _CommandBase);
@@ -4644,7 +4594,8 @@ var Copy = /*#__PURE__*/function (_CommandBase) {
       var _args$storageKey = args.storageKey,
           storageKey = _args$storageKey === void 0 ? 'clipboard' : _args$storageKey,
           _args$containers = args.containers,
-          containers = _args$containers === void 0 ? [args.container] : _args$containers;
+          containers = _args$containers === void 0 ? [args.container] : _args$containers,
+          elements = elementor.getPreviewView().$el.find('.elementor-element');
 
       if (!elementor.selection.isSameType()) {
         elementor.notifications.showToast({
@@ -4657,7 +4608,9 @@ var Copy = /*#__PURE__*/function (_CommandBase) {
         return false;
       }
 
-      elementorCommon.storage.set(storageKey, containers.map(function (container) {
+      elementorCommon.storage.set(storageKey, containers.sort(function (first, second) {
+        return elements.index(first.view.el) - elements.index(second.view.el);
+      }).map(function (container) {
         return container.model.toJSON({
           copyHtmlCache: true
         });
@@ -4742,15 +4695,7 @@ var Create = /*#__PURE__*/function (_CommandHistory) {
           options = _args$options === void 0 ? {} : _args$options,
           _args$containers2 = args.containers,
           containers = _args$containers2 === void 0 ? [args.container] : _args$containers2;
-      var result = []; // BC: Deprecated since 2.8.0 - use `$e.hooks`.
-
-      if (!options.trigger) {
-        options.trigger = {
-          beforeAdd: 'element:before:add',
-          afterAdd: 'element:after:add'
-        };
-      }
-
+      var result = [];
       containers.forEach(function (container) {
         container = container.lookup();
         var createdContainer = container.view.addElement(model, options).getContainer();
@@ -4893,13 +4838,9 @@ var Delete = /*#__PURE__*/function (_CommandHistory) {
               at: container.view._index
             }
           });
-        } // BC: Deprecated since 2.8.0 - use `$e.hooks`.
+        }
 
-
-        elementor.channels.data.trigger('element:before:remove', container.model);
-        container.model.destroy(); // BC: Deprecated since 2.8.0 - use `$e.hooks`.
-
-        elementor.channels.data.trigger('element:after:remove', container.model);
+        container.model.destroy();
         container.panel.refresh();
       });
 
@@ -4971,7 +4912,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var DeselectAll = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(DeselectAll, _CommandBase);
@@ -4985,7 +4926,7 @@ var DeselectAll = /*#__PURE__*/function (_CommandBase) {
 
   (0, _createClass2.default)(DeselectAll, [{
     key: "apply",
-    value: function apply(args) {
+    value: function apply() {
       elementor.selection.remove([], true);
     }
   }]);
@@ -5025,7 +4966,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Deselect = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Deselect, _CommandBase);
@@ -5627,13 +5568,8 @@ var Move = /*#__PURE__*/function (_CommandHistory) {
           if (0 !== count) {
             options.at += count;
           }
-        } // BC: Deprecated since 2.8.0 - use `$e.hooks`.
+        }
 
-
-        options.trigger = {
-          beforeAdd: 'drag:before:update',
-          afterAdd: 'drag:after:update'
-        };
         $e.run('document/elements/create', {
           container: target,
           model: model,
@@ -5820,8 +5756,6 @@ var PasteStyle = /*#__PURE__*/function (_CommandHistory) {
   }, {
     key: "pasteStyle",
     value: function pasteStyle(targetContainer, settings) {
-      // BC: Deprecated since 2.8.0 - use `$e.hooks`.
-      elementor.channels.data.trigger('element:before:paste:style', targetContainer.model);
       var globals = settings.__globals__;
 
       if (globals) {
@@ -5847,10 +5781,8 @@ var PasteStyle = /*#__PURE__*/function (_CommandHistory) {
           }
         });
         targetContainer.panel.refresh();
-      } // BC: Deprecated since 2.8.0 - use `$e.hooks`.
+      }
 
-
-      elementor.channels.data.trigger('element:after:paste:style', targetContainer.model);
       targetContainer.render();
     }
   }]);
@@ -5967,6 +5899,7 @@ var Paste = /*#__PURE__*/function (_CommandHistory) {
         var index = 'undefined' === typeof at ? targetContainer.view.collection.length : at;
         data.forEach(function (model) {
           switch (model.elType) {
+            case 'container':
             case 'section':
               {
                 // If is inner create section for `inner-section`.
@@ -6006,7 +5939,7 @@ var Paste = /*#__PURE__*/function (_CommandHistory) {
                   columns: 0,
                   // section with no columns.
                   options: {
-                    at: index,
+                    at: ++index,
                     edit: false
                   }
                 });
@@ -6030,7 +5963,7 @@ var Paste = /*#__PURE__*/function (_CommandHistory) {
                   },
                   columns: 1,
                   options: {
-                    at: index
+                    at: ++index
                   }
                 }); // Create the element in the column that just was created.
 
@@ -6146,6 +6079,8 @@ var ResetSettings = /*#__PURE__*/function (_CommandHistory) {
     value: function apply(args) {
       var _args$containers2 = args.containers,
           containers = _args$containers2 === void 0 ? [args.container] : _args$containers2,
+          _args$options = args.options,
+          options = _args$options === void 0 ? {} : _args$options,
           _args$settings = args.settings,
           settings = _args$settings === void 0 ? [] : _args$settings;
       containers.forEach(function (container) {
@@ -6169,6 +6104,7 @@ var ResetSettings = /*#__PURE__*/function (_CommandHistory) {
         });
         $e.run('document/elements/settings', {
           container: container,
+          options: options,
           settings: defaultValues
         });
         container.render();
@@ -6261,18 +6197,14 @@ var ResetStyle = /*#__PURE__*/function (_CommandHistory) {
           }
 
           settingsKeys.push(controlName);
-        }); // BC: Deprecated since 2.8.0 - use `$e.hooks`.
-
-        elementor.channels.data.trigger('element:before:reset:style', container.model);
+        });
         $e.run('document/elements/reset-settings', {
           container: container,
           settings: settingsKeys,
           options: {
             external: true
           }
-        }); // BC: Deprecated since 2.8.0 - use `$e.hooks`.
-
-        elementor.channels.data.trigger('element:after:reset:style', container.model);
+        });
         container.view.allowRender = true;
         container.render();
       });
@@ -6318,7 +6250,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var SelectAll = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(SelectAll, _CommandBase);
@@ -6332,7 +6264,7 @@ var SelectAll = /*#__PURE__*/function (_CommandBase) {
 
   (0, _createClass2.default)(SelectAll, [{
     key: "apply",
-    value: function apply(args) {
+    value: function apply() {
       elementor.selection.add(this.flattenContainersList( // The selection mechanism keeps selected elements in a single-dimension object. Therefore, In order to
       // select all document elements, we should convert them into a flatten, single-dimension array.
       elementor.elementsModel.get('elements').map(function (element) {
@@ -6409,7 +6341,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Select = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Select, _CommandBase);
@@ -6668,7 +6600,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var ToggleSelection = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(ToggleSelection, _CommandBase);
@@ -6737,7 +6669,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../assets/dev/js/editor/document/elements/commands/index.js"));
 
@@ -6775,16 +6707,25 @@ var Component = /*#__PURE__*/function (_ComponentBase) {
 
       return {
         isValidChild: function isValidChild(childModel, parentModel) {
-          var parentElType = parentModel.get('elType'),
-              draggedElType = childModel.get('elType'),
-              parentIsInner = parentModel.get('isInner'),
-              draggedIsInner = childModel.get('isInner'); // Block's inner-section at inner-section column.
+          if (childModel instanceof Backbone.Model) {
+            childModel = childModel.attributes;
+          }
+
+          if (parentModel instanceof Backbone.Model) {
+            parentModel = parentModel.attributes;
+          }
+
+          var parentElType = parentModel.elType,
+              draggedElType = childModel.elType,
+              parentIsInner = parentModel.isInner,
+              draggedIsInner = childModel.isInner; // Block's inner-section at inner-section column.
 
           if (draggedIsInner && 'section' === draggedElType && parentIsInner && 'column' === parentElType) {
             return false;
-          }
+          } // Allow only nested containers.
 
-          if (draggedElType === parentElType) {
+
+          if (draggedElType === parentElType && 'container' !== draggedElType) {
             return false;
           }
 
@@ -6793,7 +6734,7 @@ var Component = /*#__PURE__*/function (_ComponentBase) {
           }
 
           var childTypes = elementor.helpers.getElementChildType(parentElType);
-          return childTypes && -1 !== childTypes.indexOf(childModel.get('elType'));
+          return childTypes && -1 !== childTypes.indexOf(draggedElType);
         },
         isValidGrandChild: function isValidGrandChild(childModel, targetContainer) {
           var result;
@@ -7433,7 +7374,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 // TODO: Add dev-tools CSS to see if widget have globals.
 var Unlink = /*#__PURE__*/function (_CommandBase) {
@@ -7583,7 +7524,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../assets/dev/js/editor/document/globals/commands/index.js"));
 
@@ -7646,7 +7587,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandInternalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-internal-base */ "../core/common/assets/js/api/modules/command-internal-base.js"));
+var _commandInternalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-internal-base */ "../modules/web-cli/assets/js/modules/command-internal-base.js"));
 
 var Base = /*#__PURE__*/function (_CommandInternalBase) {
   (0, _inherits2.default)(Base, _CommandInternalBase);
@@ -7703,7 +7644,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Do = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Do, _CommandBase);
@@ -8402,7 +8343,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Redo = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Redo, _CommandBase);
@@ -8456,7 +8397,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var UndoAll = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(UndoAll, _CommandBase);
@@ -8511,7 +8452,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Undo = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Undo, _CommandBase);
@@ -8572,7 +8513,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../assets/dev/js/editor/document/history/commands/index.js"));
 
@@ -8704,7 +8645,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../core/common/assets/js/api/modules/hooks/data/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../modules/web-cli/assets/js/modules/hooks/data/after.js"));
 
 var ResetLayoutBase = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(ResetLayoutBase, _After);
@@ -8907,7 +8848,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../core/common/assets/js/api/modules/hooks/data/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../modules/web-cli/assets/js/modules/hooks/data/after.js"));
 
 var _helper = _interopRequireDefault(__webpack_require__(/*! ../helper */ "../assets/dev/js/editor/document/hooks/data/document/elements/helper.js"));
 
@@ -9003,7 +8944,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _dependency = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/dependency */ "../core/common/assets/js/api/modules/hooks/data/dependency.js"));
+var _dependency = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/dependency */ "../modules/web-cli/assets/js/modules/hooks/data/dependency.js"));
 
 var IsValidChild = /*#__PURE__*/function (_Dependency) {
   (0, _inherits2.default)(IsValidChild, _Dependency);
@@ -9076,7 +9017,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _dependency = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/dependency */ "../core/common/assets/js/api/modules/hooks/data/dependency.js"));
+var _dependency = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/dependency */ "../modules/web-cli/assets/js/modules/hooks/data/dependency.js"));
 
 var SectionColumnsLimit = /*#__PURE__*/function (_Dependency) {
   (0, _inherits2.default)(SectionColumnsLimit, _Dependency);
@@ -9154,7 +9095,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../core/common/assets/js/api/modules/hooks/data/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../modules/web-cli/assets/js/modules/hooks/data/after.js"));
 
 var _helper = _interopRequireDefault(__webpack_require__(/*! ../helper */ "../assets/dev/js/editor/document/hooks/data/document/elements/helper.js"));
 
@@ -9188,7 +9129,7 @@ var SectionColumns = /*#__PURE__*/function (_After) {
   }, {
     key: "getConditions",
     value: function getConditions(args) {
-      return !args.model.elements;
+      return !args.model.elements && 'section' === args.model.elType;
     }
     /**
      * @inheritDoc
@@ -9259,7 +9200,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../core/common/assets/js/api/modules/hooks/data/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../modules/web-cli/assets/js/modules/hooks/data/after.js"));
 
 var CreateColumnForEmptySection = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(CreateColumnForEmptySection, _After);
@@ -9581,7 +9522,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../core/common/assets/js/api/modules/hooks/data/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../modules/web-cli/assets/js/modules/hooks/data/after.js"));
 
 var SectionColumnsSetStructure = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(SectionColumnsSetStructure, _After);
@@ -9698,7 +9639,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _dependency = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/dependency */ "../core/common/assets/js/api/modules/hooks/data/dependency.js"));
+var _dependency = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/dependency */ "../modules/web-cli/assets/js/modules/hooks/data/dependency.js"));
 
 var IsPasteEnabled = /*#__PURE__*/function (_Dependency) {
   (0, _inherits2.default)(IsPasteEnabled, _Dependency);
@@ -9773,7 +9714,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../core/common/assets/js/api/modules/hooks/data/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../modules/web-cli/assets/js/modules/hooks/data/after.js"));
 
 var HandleDynamic = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(HandleDynamic, _After);
@@ -9920,7 +9861,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _dependency = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/dependency */ "../core/common/assets/js/api/modules/hooks/data/dependency.js"));
+var _dependency = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/dependency */ "../modules/web-cli/assets/js/modules/hooks/data/dependency.js"));
 
 var _section = __webpack_require__(/*! elementor-elements/views/section */ "../assets/dev/js/editor/elements/views/section.js");
 
@@ -10038,7 +9979,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../core/common/assets/js/api/modules/hooks/data/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../modules/web-cli/assets/js/modules/hooks/data/after.js"));
 
 var ResizeColumn = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(ResizeColumn, _After);
@@ -10169,7 +10110,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../core/common/assets/js/api/modules/hooks/data/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/data/after */ "../modules/web-cli/assets/js/modules/hooks/data/after.js"));
 
 var SetStructure = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(SetStructure, _After);
@@ -10386,7 +10327,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var ColumnIsPopulated = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(ColumnIsPopulated, _After);
@@ -10505,7 +10446,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var CreateSectionIsFull = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(CreateSectionIsFull, _After);
@@ -10588,7 +10529,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var ColumnIsEmpty = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(ColumnIsEmpty, _After);
@@ -10707,7 +10648,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var DeleteSectionIsFull = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(DeleteSectionIsFull, _After);
@@ -10763,6 +10704,128 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ "../assets/dev/js/editor/document/hooks/ui/document/elements/create/index.js":
+/*!***********************************************************************************!*\
+  !*** ../assets/dev/js/editor/document/hooks/ui/document/elements/create/index.js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+_Object$defineProperty(exports, "MoveResizeableHandle", {
+  enumerable: true,
+  get: function get() {
+    return _moveResizeableHandle.MoveResizeableHandle;
+  }
+});
+
+var _moveResizeableHandle = __webpack_require__(/*! ./move-resizeable-handle */ "../assets/dev/js/editor/document/hooks/ui/document/elements/create/move-resizeable-handle.js");
+
+/***/ }),
+
+/***/ "../assets/dev/js/editor/document/hooks/ui/document/elements/create/move-resizeable-handle.js":
+/*!****************************************************************************************************!*\
+  !*** ../assets/dev/js/editor/document/hooks/ui/document/elements/create/move-resizeable-handle.js ***!
+  \****************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.MoveResizeableHandle = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.array.find.js */ "../node_modules/core-js/modules/es6.array.find.js");
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
+
+/**
+ * Move jQuery UI Resizeable handle to the end each time an element is created inside
+ * a Container, since it causes UI issues and breaks some CSS selectors.
+ */
+var MoveResizeableHandle = /*#__PURE__*/function (_After) {
+  (0, _inherits2.default)(MoveResizeableHandle, _After);
+
+  var _super = (0, _createSuper2.default)(MoveResizeableHandle);
+
+  function MoveResizeableHandle() {
+    (0, _classCallCheck2.default)(this, MoveResizeableHandle);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(MoveResizeableHandle, [{
+    key: "getCommand",
+    value: function getCommand() {
+      return 'document/elements/create';
+    }
+  }, {
+    key: "getId",
+    value: function getId() {
+      return 'move-resizeable-handle';
+    }
+  }, {
+    key: "getConditions",
+    value: function getConditions(args) {
+      var _args$containers = args.containers,
+          containers = _args$containers === void 0 ? [args.container] : _args$containers; // If the element was created in a Container.
+
+      return containers.some(function (
+      /**Container*/
+      container) {
+        return 'container' === container.model.get('elType');
+      });
+    }
+  }, {
+    key: "apply",
+    value: function apply(args) {
+      var _args$containers2 = args.containers,
+          containers = _args$containers2 === void 0 ? [args.container] : _args$containers2;
+      containers.forEach(function (
+      /* Container */
+      container) {
+        var $el = container.view.$el,
+            $resizeHandle = $el.find('> .ui-resizable-handle').first();
+
+        if (!$resizeHandle) {
+          return;
+        } // Move the handle to the end.
+
+
+        $el.append($resizeHandle);
+      });
+    }
+  }]);
+  return MoveResizeableHandle;
+}(_after.default);
+
+exports.MoveResizeableHandle = MoveResizeableHandle;
+var _default = MoveResizeableHandle;
+exports["default"] = _default;
+
+/***/ }),
+
 /***/ "../assets/dev/js/editor/document/hooks/ui/index.js":
 /*!**********************************************************!*\
   !*** ../assets/dev/js/editor/document/hooks/ui/index.js ***!
@@ -10804,6 +10867,20 @@ _Object$keys(_delete).forEach(function (key) {
     enumerable: true,
     get: function get() {
       return _delete[key];
+    }
+  });
+});
+
+var _create2 = __webpack_require__(/*! ./document/elements/create/ */ "../assets/dev/js/editor/document/hooks/ui/document/elements/create/index.js");
+
+_Object$keys(_create2).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _create2[key]) return;
+
+  _Object$defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _create2[key];
     }
   });
 });
@@ -10853,7 +10930,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var ChangePostTitle = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(ChangePostTitle, _After);
@@ -10928,7 +11005,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var ColumnChangeSize = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(ColumnChangeSize, _After);
@@ -11003,7 +11080,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var Draggable = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(Draggable, _After);
@@ -11103,6 +11180,13 @@ _Object$defineProperty(exports, "Resizeable", {
   }
 });
 
+_Object$defineProperty(exports, "SetDirectionMode", {
+  enumerable: true,
+  get: function get() {
+    return _setDirectionMode.SetDirectionMode;
+  }
+});
+
 var _changePostTitle = __webpack_require__(/*! ./change-post-title */ "../assets/dev/js/editor/document/hooks/ui/settings/change-post-title.js");
 
 var _columnChangeSize = __webpack_require__(/*! ./column-change-size */ "../assets/dev/js/editor/document/hooks/ui/settings/column-change-size.js");
@@ -11112,6 +11196,8 @@ var _draggable = __webpack_require__(/*! ./draggable */ "../assets/dev/js/editor
 var _resizeable = __webpack_require__(/*! ./resizeable */ "../assets/dev/js/editor/document/hooks/ui/settings/resizeable.js");
 
 var _reloadPreview = __webpack_require__(/*! ./reload-preview */ "../assets/dev/js/editor/document/hooks/ui/settings/reload-preview.js");
+
+var _setDirectionMode = __webpack_require__(/*! ./set-direction-mode */ "../assets/dev/js/editor/document/hooks/ui/settings/set-direction-mode.js");
 
 /***/ }),
 
@@ -11142,7 +11228,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var ReloadPreview = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(ReloadPreview, _After);
@@ -11222,7 +11308,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var Resizeable = /*#__PURE__*/function (_After) {
   (0, _inherits2.default)(Resizeable, _After);
@@ -11268,6 +11354,111 @@ var Resizeable = /*#__PURE__*/function (_After) {
 
 exports.Resizeable = Resizeable;
 var _default = Resizeable;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../assets/dev/js/editor/document/hooks/ui/settings/set-direction-mode.js":
+/*!********************************************************************************!*\
+  !*** ../assets/dev/js/editor/document/hooks/ui/settings/set-direction-mode.js ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.SetDirectionMode = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
+
+/**
+ * UI hook to set direction mode when changing element's settings.
+ * Currently used to determine the direction of the flex icons in the Container element.
+ * It should be generic and work with any element, and since each element might use a different
+ * setting to determine its direction mode, the hook should listen to any setting change.
+ * Therefore, the `getConditions()` method just checks if the view exists and has UI states.
+ */
+var SetDirectionMode = /*#__PURE__*/function (_After) {
+  (0, _inherits2.default)(SetDirectionMode, _After);
+
+  var _super = (0, _createSuper2.default)(SetDirectionMode);
+
+  function SetDirectionMode() {
+    (0, _classCallCheck2.default)(this, SetDirectionMode);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(SetDirectionMode, [{
+    key: "getCommand",
+    value: function getCommand() {
+      return 'document/elements/settings';
+    }
+  }, {
+    key: "getId",
+    value: function getId() {
+      return 'set-direction-mode--document/elements/settings';
+    }
+  }, {
+    key: "getConditions",
+    value: function getConditions() {
+      var _args$container$rende, _args$container$rende2;
+
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return !!((_args$container$rende = args.container.renderer) !== null && _args$container$rende !== void 0 && (_args$container$rende2 = _args$container$rende.view) !== null && _args$container$rende2 !== void 0 && _args$container$rende2.getCurrentUiStates);
+    }
+  }, {
+    key: "apply",
+    value: function apply(args) {
+      SetDirectionMode.set(args.container);
+    }
+    /**
+     * Get the direction mode from the Container's view & set the UI state accordingly.
+     *
+     * @param {Container} container
+     *
+     * @return {void}
+     */
+
+  }], [{
+    key: "set",
+    value: function set(container) {
+      var _view$getCurrentUiSta;
+
+      // Determine if the direction mode should be set by the parent.
+      var useParent = 'panel/editor/advanced' === $e.routes.getCurrent('panel');
+      container = useParent ? container.parent : container;
+      var view = container.renderer.view,
+          direction = (_view$getCurrentUiSta = view.getCurrentUiStates) === null || _view$getCurrentUiSta === void 0 ? void 0 : _view$getCurrentUiSta.call(view).directionMode;
+
+      if (direction) {
+        $e.uiStates.set('document/direction-mode', direction);
+        return;
+      }
+
+      $e.uiStates.remove('document/direction-mode');
+    }
+  }]);
+  return SetDirectionMode;
+}(_after.default);
+
+exports.SetDirectionMode = SetDirectionMode;
+var _default = SetDirectionMode;
 exports["default"] = _default;
 
 /***/ }),
@@ -11940,7 +12131,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../assets/dev/js/editor/document/repeater/commands/index.js"));
 
@@ -12005,7 +12196,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var BackwardsCompatibility = /*#__PURE__*/function (_ComponentBase) {
   (0, _inherits2.default)(BackwardsCompatibility, _ComponentBase);
@@ -12225,7 +12416,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Base = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Base, _CommandBase);
@@ -12632,7 +12823,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandInternalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-internal-base */ "../core/common/assets/js/api/modules/command-internal-base.js"));
+var _commandInternalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-internal-base */ "../modules/web-cli/assets/js/modules/command-internal-base.js"));
 
 var Save = /*#__PURE__*/function (_CommandInternalBase) {
   (0, _inherits2.default)(Save, _CommandInternalBase);
@@ -12842,7 +13033,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandInternalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-internal-base */ "../core/common/assets/js/api/modules/command-internal-base.js"));
+var _commandInternalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-internal-base */ "../modules/web-cli/assets/js/modules/command-internal-base.js"));
 
 var SetIsModified = /*#__PURE__*/function (_CommandInternalBase) {
   (0, _inherits2.default)(SetIsModified, _CommandInternalBase);
@@ -13350,7 +13541,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var FooterSaverAfterSave = /*#__PURE__*/function (_HookUIAfter) {
   (0, _inherits2.default)(FooterSaverAfterSave, _HookUIAfter);
@@ -13443,7 +13634,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _before = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/before */ "../core/common/assets/js/api/modules/hooks/ui/before.js"));
+var _before = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/before */ "../modules/web-cli/assets/js/modules/hooks/ui/before.js"));
 
 var FooterSaverBeforeSave = /*#__PURE__*/function (_HookUIBefore) {
   (0, _inherits2.default)(FooterSaverBeforeSave, _HookUIBefore);
@@ -13517,7 +13708,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _catch = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/catch */ "../core/common/assets/js/api/modules/hooks/ui/catch.js"));
+var _catch = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/catch */ "../modules/web-cli/assets/js/modules/hooks/ui/catch.js"));
 
 var FooterSaverCatchSave = /*#__PURE__*/function (_HookUICatch) {
   (0, _inherits2.default)(FooterSaverCatchSave, _HookUICatch);
@@ -13626,7 +13817,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var FooterSaverActiveSaveButtons = /*#__PURE__*/function (_HookUIAfter) {
   (0, _inherits2.default)(FooterSaverActiveSaveButtons, _HookUIAfter);
@@ -13718,7 +13909,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../core/common/assets/js/api/modules/hooks/ui/after.js"));
+var _after = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hooks/ui/after */ "../modules/web-cli/assets/js/modules/hooks/ui/after.js"));
 
 var FooterSeverRefreshMenu = /*#__PURE__*/function (_HookUIAfter) {
   (0, _inherits2.default)(FooterSeverRefreshMenu, _HookUIAfter);
@@ -13769,6 +13960,107 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ "../assets/dev/js/editor/document/ui-states/direction-mode.js":
+/*!********************************************************************!*\
+  !*** ../assets/dev/js/editor/document/ui-states/direction-mode.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.DirectionMode = exports.DIRECTION_ROW_REVERSE = exports.DIRECTION_ROW = exports.DIRECTION_COLUMN_REVERSE = exports.DIRECTION_COLUMN = void 0;
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _uiStateBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/core/states/ui-state-base */ "../modules/web-cli/assets/js/core/states/ui-state-base.js"));
+
+var DIRECTION_ROW = 'row';
+exports.DIRECTION_ROW = DIRECTION_ROW;
+var DIRECTION_ROW_REVERSE = 'row-reverse';
+exports.DIRECTION_ROW_REVERSE = DIRECTION_ROW_REVERSE;
+var DIRECTION_COLUMN = 'column';
+exports.DIRECTION_COLUMN = DIRECTION_COLUMN;
+var DIRECTION_COLUMN_REVERSE = 'column-reverse';
+exports.DIRECTION_COLUMN_REVERSE = DIRECTION_COLUMN_REVERSE;
+
+var DirectionMode = /*#__PURE__*/function (_UiStateBase) {
+  (0, _inherits2.default)(DirectionMode, _UiStateBase);
+
+  var _super = (0, _createSuper2.default)(DirectionMode);
+
+  function DirectionMode() {
+    (0, _classCallCheck2.default)(this, DirectionMode);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(DirectionMode, [{
+    key: "getId",
+    value: function getId() {
+      return 'direction-mode';
+    }
+  }, {
+    key: "getOptions",
+    value: function getOptions() {
+      var _ref;
+
+      return _ref = {}, (0, _defineProperty2.default)(_ref, DIRECTION_ROW, ''), (0, _defineProperty2.default)(_ref, DIRECTION_ROW_REVERSE, ''), (0, _defineProperty2.default)(_ref, DIRECTION_COLUMN, ''), (0, _defineProperty2.default)(_ref, DIRECTION_COLUMN_REVERSE, ''), _ref;
+    }
+  }, {
+    key: "getScopes",
+    value: function getScopes() {
+      return [window.document.body, elementor.$previewContents[0].body];
+    }
+  }]);
+  return DirectionMode;
+}(_uiStateBase.default);
+
+exports.DirectionMode = DirectionMode;
+
+/***/ }),
+
+/***/ "../assets/dev/js/editor/document/ui-states/index.js":
+/*!***********************************************************!*\
+  !*** ../assets/dev/js/editor/document/ui-states/index.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+_Object$defineProperty(exports, "DirectionMode", {
+  enumerable: true,
+  get: function get() {
+    return _directionMode.DirectionMode;
+  }
+});
+
+var _directionMode = __webpack_require__(/*! ./direction-mode */ "../assets/dev/js/editor/document/ui-states/direction-mode.js");
+
+/***/ }),
+
 /***/ "../assets/dev/js/editor/document/ui/commands/copy.js":
 /*!************************************************************!*\
   !*** ../assets/dev/js/editor/document/ui/commands/copy.js ***!
@@ -13796,7 +14088,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Copy = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Copy, _CommandBase);
@@ -13858,7 +14150,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Delete = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Delete, _CommandBase);
@@ -13920,7 +14212,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Duplicate = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Duplicate, _CommandBase);
@@ -14044,7 +14336,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var PasteStyle = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(PasteStyle, _CommandBase);
@@ -14116,7 +14408,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var Paste = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(Paste, _CommandBase);
@@ -14239,7 +14531,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
 var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../assets/dev/js/editor/document/ui/commands/index.js"));
 
@@ -14396,12 +14688,22 @@ BaseElementView = BaseContainer.extend({
     var ChildView;
     var elType = model.get('elType');
 
-    if ('section' === elType) {
-      ChildView = __webpack_require__(/*! elementor-elements/views/section */ "../assets/dev/js/editor/elements/views/section.js");
-    } else if ('column' === elType) {
-      ChildView = __webpack_require__(/*! elementor-elements/views/column */ "../assets/dev/js/editor/elements/views/column.js");
-    } else {
-      ChildView = elementor.modules.elements.views.Widget;
+    switch (elType) {
+      case 'section':
+        ChildView = __webpack_require__(/*! elementor-elements/views/section */ "../assets/dev/js/editor/elements/views/section.js");
+        break;
+
+      case 'column':
+        ChildView = __webpack_require__(/*! elementor-elements/views/column */ "../assets/dev/js/editor/elements/views/column.js");
+        break;
+
+      case 'container':
+        ChildView = __webpack_require__(/*! elementor-elements/views/container */ "../assets/dev/js/editor/elements/views/container.js");
+        break;
+
+      default:
+        ChildView = elementor.modules.elements.views.Widget;
+        break;
     }
 
     return elementor.hooks.applyFilters('element/view', ChildView, model, this);
@@ -14647,46 +14949,6 @@ BaseElementView = BaseContainer.extend({
   attachElContent: function attachElContent(html) {
     this.$el.empty().append(this.getHandlesOverlay(), html);
   },
-  startTransport: function startTransport() {
-    elementorCommon.helpers.softDeprecated('element.startTransport', '2.8.0', "$e.run( 'document/elements/copy' )");
-    $e.run('document/elements/copy', {
-      container: this.getContainer()
-    });
-  },
-  copy: function copy() {
-    elementorCommon.helpers.softDeprecated('element.copy', '2.8.0', "$e.run( 'document/elements/copy' )");
-    $e.run('document/elements/copy', {
-      container: this.getContainer()
-    });
-  },
-  cut: function cut() {
-    elementorCommon.helpers.softDeprecated('element.cut', '2.8.0');
-  },
-  paste: function paste() {
-    elementorCommon.helpers.softDeprecated('element.paste', '2.8.0', "$e.run( 'document/elements/paste' )");
-    $e.run('document/elements/paste', {
-      container: this.getContainer(),
-      at: this._parent.collection.indexOf(this.model)
-    });
-  },
-  duplicate: function duplicate() {
-    elementorCommon.helpers.softDeprecated('element.duplicate', '2.8.0', "$e.run( 'document/elements/duplicate' )");
-    $e.run('document/elements/duplicate', {
-      container: this.getContainer()
-    });
-  },
-  pasteStyle: function pasteStyle() {
-    elementorCommon.helpers.softDeprecated('element.pasteStyle', '2.8.0', "$e.run( 'document/elements/paste-style' )");
-    $e.run('document/elements/paste-style', {
-      container: this.getContainer()
-    });
-  },
-  resetStyle: function resetStyle() {
-    elementorCommon.helpers.softDeprecated('element.resetStyle', '2.8.0', "$e.run( 'document/elements/reset-style' )");
-    $e.run('document/elements/reset-style', {
-      container: this.getContainer()
-    });
-  },
   isStyleTransferControl: function isStyleTransferControl(control) {
     if (undefined !== control.style_transfer) {
       return control.style_transfer;
@@ -14716,7 +14978,8 @@ BaseElementView = BaseContainer.extend({
       model.widgetType = elementView.model.get('widgetType');
     } else if ('section' === model.elType) {
       model.isInner = true;
-    } else {
+    } else if ('container' !== model.elType) {
+      // Don't allow adding anything other than widget, inner-section or a container.
       return;
     }
 
@@ -14724,8 +14987,10 @@ BaseElementView = BaseContainer.extend({
 
     if (customData) {
       jQuery.extend(model, customData);
-    }
+    } // Reset the selected element cache.
 
+
+    elementor.channels.panelElements.reply('element:selected', null);
     return $e.run('document/elements/create', {
       container: this.getContainer(),
       model: model,
@@ -14855,7 +15120,7 @@ BaseElementView = BaseContainer.extend({
         }
       }
 
-      var isVisible = elementor.helpers.isActiveControl(control, settings.attributes);
+      var isVisible = elementor.helpers.isActiveControl(control, settings.attributes, settings.controls);
 
       if (isVisible && (classValue || 0 === classValue)) {
         self.$el.addClass(control.prefix_class + classValue);
@@ -14986,6 +15251,8 @@ BaseElementView = BaseContainer.extend({
     this.renderAttributes = {};
   },
   onRender: function onRender() {
+    var _this3 = this;
+
     this.renderUI();
     this.runReadyTrigger();
 
@@ -15001,7 +15268,12 @@ BaseElementView = BaseContainer.extend({
           timeout: 500
         });
       }
-    }
+    } // Defer to wait for all of the children to render.
+
+
+    setTimeout(function () {
+      return _this3.initDraggable();
+    }, 0);
   },
   onEditSettingsChanged: function onEditSettingsChanged(changedModel) {
     elementor.channels.editor.trigger('change:editSettings', changedModel, this);
@@ -15075,6 +15347,87 @@ BaseElementView = BaseContainer.extend({
     this.controlsCSSParser.removeStyleFromDocument();
     this.getEditModel().get('settings').validators = {};
     elementor.channels.data.trigger('element:destroy', this.model);
+  },
+
+  /**
+   * On `$el` drag start event.
+   * Used inside `Draggable` and can be overridden by the extending views.
+   *
+   * @return void
+   */
+  onDragStart: function onDragStart() {// TODO: Override if needed.
+  },
+
+  /**
+   * On `$el` drag end event.
+   * Used inside `Draggable` and can be overridden by the extending views.
+   *
+   * @return void
+   */
+  onDragEnd: function onDragEnd() {// TODO: Override if needed.
+  },
+
+  /**
+   * Create a drag helper element.
+   * Copied from `behaviors/sortable.js` with some refactor.
+   *
+   * @return {HTMLDivElement}
+   */
+  getDraggableHelper: function getDraggableHelper() {
+    var model = this.getEditModel();
+    var helper = document.createElement('div');
+    helper.classList.add('elementor-sortable-helper', "elementor-sortable-helper-".concat(model.get('elType')));
+    helper.innerHTML = "\n\t\t\t<div class=\"icon\">\n\t\t\t\t<i class=\"".concat(model.getIcon(), "\"></i>\n\t\t\t</div>\n\t\t\t<div class=\"elementor-element-title-wrapper\">\n\t\t\t\t<div class=\"title\">").concat(model.getTitle(), "</div>\n\t\t\t</div>\n\t\t");
+    return helper;
+  },
+
+  /**
+   * Initialize the Droppable instance.
+   *
+   * @return void
+   */
+  initDraggable: function initDraggable() {
+    var _this4 = this;
+
+    // Init the draggable only for Containers and their children.
+    if (!this.$el.hasClass('.e-container') && !this.$el.parents('.e-container').length) {
+      return;
+    }
+
+    this.$el.html5Draggable({
+      onDragStart: function onDragStart(e) {
+        var _this4$options$dragga;
+
+        e.stopPropagation(); // Need to stop this event when the element is absolute since it clashes with this one.
+        // See `behaviors/widget-draggable.js`.
+
+        if ((_this4$options$dragga = _this4.options.draggable) !== null && _this4$options$dragga !== void 0 && _this4$options$dragga.isActive) {
+          return;
+        }
+
+        var helper = _this4.getDraggableHelper();
+
+        _this4.$el[0].appendChild(helper); // Set the x & y coordinates of the helper the same as the legacy jQuery sortable.
+
+
+        e.originalEvent.dataTransfer.setDragImage(helper, 25, 20); // Remove the helper element as soon as it's set as a drag image, since the element must be
+        // rendered for at least a fraction of a second in order to set it as a drag image.
+
+        setTimeout(function () {
+          helper.remove();
+        });
+
+        _this4.onDragStart(e);
+
+        elementor.channels.editor.reply('element:dragged', _this4);
+      },
+      onDragEnd: function onDragEnd(e) {
+        e.stopPropagation();
+
+        _this4.onDragEnd(e);
+      },
+      groups: ['elementor-element']
+    });
   }
 });
 module.exports = BaseElementView;
@@ -15311,10 +15664,18 @@ module.exports = Marionette.Behavior.extend({
 /*!********************************************************************!*\
   !*** ../assets/dev/js/editor/elements/views/behaviors/sortable.js ***!
   \********************************************************************/
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
+
+__webpack_require__(/*! core-js/modules/es6.array.find.js */ "../node_modules/core-js/modules/es6.array.find.js");
+
+var _objectSpread2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread2 */ "../node_modules/@babel/runtime-corejs2/helpers/objectSpread2.js"));
 
 var SortableBehavior;
 SortableBehavior = Marionette.Behavior.extend({
@@ -15344,6 +15705,58 @@ SortableBehavior = Marionette.Behavior.extend({
   onDestroy: function onDestroy() {
     this.deactivate();
   },
+
+  /**
+   * Create an item placeholder in order to avoid UI jumps due to flex.
+   *
+   * @param {Object} $element - jQuery element instance to create placeholder for.
+   * @param {string} className - Placeholder class.
+   * @param {boolean} hide - Whether to hide the original element.
+   *
+   * @returns {void}
+   */
+  createPlaceholder: function createPlaceholder($element) {
+    var className = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var hide = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+    // Get the actual item size.
+    $element.css('display', '');
+    var _$element$ = $element[0],
+        width = _$element$.clientWidth,
+        height = _$element$.clientHeight;
+
+    if (hide) {
+      $element.css('display', 'none');
+    }
+
+    jQuery('<div />').css((0, _objectSpread2.default)((0, _objectSpread2.default)({}, $element.css(['flex-basis', 'flex-grow', 'flex-shrink', 'position'])), {}, {
+      width: width,
+      height: height
+    })).addClass(className).insertAfter($element);
+  },
+
+  /**
+   * Return a settings object for jQuery UI sortable to make it swappable.
+   *
+   * @returns {{stop: stop, start: start}}
+   */
+  getSwappableOptions: function getSwappableOptions() {
+    var _this = this;
+
+    var $childViewContainer = this.getChildViewContainer(),
+        placeholderClass = 'e-swappable--item-placeholder';
+    return {
+      start: function start(event, ui) {
+        $childViewContainer.sortable('refreshPositions'); // TODO: Find a better solution than this hack.
+        // Used in order to prevent dragging a container into itself.
+
+        _this.createPlaceholder(ui.item, placeholderClass);
+      },
+      stop: function stop() {
+        // Cleanup.
+        $childViewContainer.find(".".concat(placeholderClass)).remove();
+      }
+    };
+  },
   onToggleSortMode: function onToggleSortMode(isActive) {
     if (isActive) {
       this.activate();
@@ -15369,8 +15782,21 @@ SortableBehavior = Marionette.Behavior.extend({
       start: function start() {
         $childViewContainer.sortable('refreshPositions');
       }
-    },
-        sortableOptions = _.extend(defaultSortableOptions, this.view.getSortableOptions());
+    };
+
+    var sortableOptions = _.extend(defaultSortableOptions, this.view.getSortableOptions()); // Add a swappable behavior (used for flex containers).
+
+
+    if (this.isSwappable()) {
+      $childViewContainer.addClass('e-swappable');
+      sortableOptions = _.extend(sortableOptions, this.getSwappableOptions());
+    } // TODO: Temporary hack for Container.
+    //  Will be removed in the future when the Navigator will use React.
+
+
+    if (sortableOptions.preventInit) {
+      return;
+    }
 
     $childViewContainer.sortable(sortableOptions);
   },
@@ -15397,19 +15823,11 @@ SortableBehavior = Marionette.Behavior.extend({
   getChildViewContainer: function getChildViewContainer() {
     return this.view.getChildViewContainer(this.view);
   },
-  // This method is used to fix widgets index detection when dragging or sorting using the preview interface,
-  // The natural widget index in the column is wrong, since there is a `.elementor-background-overlay` element
-  // at the beginning of the column
+  // The natural widget index in the column is wrong, since there are other elements
+  // at the beginning of the column (background-overlay, element-overlay, resizeable-handle)
   getSortedElementNewIndex: function getSortedElementNewIndex($element) {
-    var draggedModel = elementor.channels.data.request('dragging:model'),
-        draggedElType = draggedModel.get('elType');
-    var newIndex = $element.index();
-
-    if ('widget' === draggedElType && elementorCommon.config.experimentalFeatures['e_dom_optimization']) {
-      newIndex--;
-    }
-
-    return newIndex;
+    var widgets = (0, _values.default)($element.parent().find('> .elementor-element'));
+    return widgets.indexOf($element[0]);
   },
 
   /**
@@ -15423,6 +15841,15 @@ SortableBehavior = Marionette.Behavior.extend({
       childViewContainer.sortable('disable');
     }
   },
+
+  /**
+   * Determine if the current instance of Sortable is swappable.
+   *
+   * @returns {boolean}
+   */
+  isSwappable: function isSwappable() {
+    return !!this.view.getSortableOptions().swappable;
+  },
   startSort: function startSort(event, ui) {
     event.stopPropagation();
     var container = elementor.getContainer(ui.item.attr('data-id'));
@@ -15434,13 +15861,8 @@ SortableBehavior = Marionette.Behavior.extend({
       newIndex = ui.item.index();
     }
 
-    $e.run('document/elements/move', {
-      container: elementor.channels.data.request('dragging:view').getContainer(),
-      target: this.view.getContainer(),
-      options: {
-        at: newIndex
-      }
-    });
+    var child = elementor.channels.data.request('dragging:view').getContainer();
+    this.moveChild(child, newIndex);
   },
   // On receiving element from another container
   receiveSort: function receiveSort(event, ui, newIndex) {
@@ -15465,13 +15887,8 @@ SortableBehavior = Marionette.Behavior.extend({
       newIndex = ui.item.index();
     }
 
-    $e.run('document/elements/move', {
-      container: elementor.channels.data.request('dragging:view').getContainer(),
-      target: this.view.getContainer(),
-      options: {
-        at: newIndex
-      }
-    });
+    var child = elementor.channels.data.request('dragging:view').getContainer();
+    this.moveChild(child, newIndex);
   },
   onSortStart: function onSortStart(event, ui) {
     if ('column' === this.options.elChildType) {
@@ -15517,9 +15934,314 @@ SortableBehavior = Marionette.Behavior.extend({
   },
   onAddChild: function onAddChild(view) {
     view.$el.attr('data-model-cid', view.model.cid);
+  },
+
+  /**
+   * Move a child container to another position.
+   *
+   * @param {Container} child - The child container to move.
+   * @param {int|string} index - New index.
+   *
+   * @returns {void}
+   */
+  moveChild: function moveChild(child, index) {
+    $e.run('document/elements/move', {
+      container: child,
+      target: this.view.getContainer(),
+      options: {
+        at: index
+      }
+    });
   }
 });
 module.exports = SortableBehavior;
+
+/***/ }),
+
+/***/ "../assets/dev/js/editor/elements/views/behaviors/widget-resizeable.js":
+/*!*****************************************************************************!*\
+  !*** ../assets/dev/js/editor/elements/views/behaviors/widget-resizeable.js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _objectSpread3 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread2 */ "../node_modules/@babel/runtime-corejs2/helpers/objectSpread2.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/get */ "../node_modules/@babel/runtime-corejs2/helpers/get.js"));
+
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "../node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _default = /*#__PURE__*/function (_Marionette$Behavior) {
+  (0, _inherits2.default)(_default, _Marionette$Behavior);
+
+  var _super = (0, _createSuper2.default)(_default);
+
+  function _default() {
+    (0, _classCallCheck2.default)(this, _default);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(_default, [{
+    key: "events",
+    value: function events() {
+      return {
+        resizestart: 'onResizeStart',
+        resizestop: 'onResizeStop',
+        resize: 'onResize'
+      };
+    }
+  }, {
+    key: "initialize",
+    value: function initialize() {
+      (0, _get2.default)((0, _getPrototypeOf2.default)(_default.prototype), "initialize", this).call(this);
+      this.listenTo(elementor.channels.dataEditMode, 'switch', this.toggle); // Save this instance for external use eg: ( hooks ).
+
+      this.view.options.resizeable = this;
+    }
+    /**
+     * Get the resizable options object.
+     *
+     * @return {Object}
+     */
+
+  }, {
+    key: "getOptions",
+    value: function getOptions() {
+      // jQuery UI handles are using Cardinal Directions (n, e, s, w, etc.).
+      var handles = 'e, w'; // If it's a container item, add resize handles only at the end of the element in order to prevent UI
+      // glitches when resizing from start.
+
+      if (this.isContainerItem()) {
+        handles = elementorCommon.config.isRTL ? 'w' : 'e';
+      }
+
+      return {
+        handles: handles
+      };
+    }
+  }, {
+    key: "activate",
+    value: function activate() {
+      this.$el.resizable(this.getOptions());
+    }
+  }, {
+    key: "deactivate",
+    value: function deactivate() {
+      if (!this.$el.resizable('instance')) {
+        return;
+      }
+
+      this.$el.resizable('destroy');
+    }
+  }, {
+    key: "toggle",
+    value: function toggle() {
+      var editModel = this.view.getEditModel(),
+          isAbsolute = editModel.getSetting('_position'),
+          isInline = 'initial' === editModel.getSetting('_element_width');
+      this.deactivate();
+
+      if ((isAbsolute || isInline) && this.view.container.isDesignable() || this.isContainerItem()) {
+        this.activate();
+      }
+    }
+    /**
+     * Determine if the current element is a Container element.
+     *
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isContainer",
+    value: function isContainer() {
+      return 'container' === this.view.model.get('elType');
+    }
+    /**
+     * Determine if the current element is a flex container item.
+     *
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isContainerItem",
+    value: function isContainerItem() {
+      var _this$view$getContain, _this$view$getContain2;
+
+      return 'container' === ((_this$view$getContain = this.view.getContainer().parent) === null || _this$view$getContain === void 0 ? void 0 : (_this$view$getContain2 = _this$view$getContain.model) === null || _this$view$getContain2 === void 0 ? void 0 : _this$view$getContain2.get('elType'));
+    }
+    /**
+     * Determine if the Container element is active.
+     *
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isContainerActive",
+    value: function isContainerActive() {
+      return !!elementorCommon.config.experimentalFeatures.container;
+    }
+    /**
+     * Get the width control ID to change when resizing.
+     *
+     * @returns {string}
+     */
+
+  }, {
+    key: "getWidthKey",
+    value: function getWidthKey() {
+      return this.isContainer() ? 'width' : '_element_custom_width';
+    }
+    /**
+     * Get a device-suffixed setting.
+     *
+     * @param {string} setting - Setting name.
+     *
+     * @returns {string}
+     */
+
+  }, {
+    key: "getDeviceSetting",
+    value: function getDeviceSetting(setting) {
+      var currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
+          deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode;
+      return setting + deviceSuffix;
+    }
+    /**
+     * Get a setting value from the current edited model.
+     *
+     * @param {string} setting - Setting name.
+     *
+     * @returns {*}
+     */
+
+  }, {
+    key: "getSetting",
+    value: function getSetting(setting) {
+      var editModel = this.view.getEditModel();
+      return editModel.getSetting(setting);
+    }
+  }, {
+    key: "onRender",
+    value: function onRender() {
+      var _this = this;
+
+      _.defer(function () {
+        return _this.toggle();
+      });
+    }
+  }, {
+    key: "onDestroy",
+    value: function onDestroy() {
+      this.deactivate();
+    }
+  }, {
+    key: "onResizeStart",
+    value: function onResizeStart(event) {
+      event.stopPropagation();
+
+      if (this.view.onResizeStart) {
+        this.view.onResizeStart(event);
+      } // Don't open edit mode when the item is a Container item ( for UX ).
+
+
+      if (!this.isContainerItem()) {
+        this.view.model.trigger('request:edit');
+      }
+    }
+  }, {
+    key: "onResizeStop",
+    value: function onResizeStop(event, ui) {
+      var _objectSpread2,
+          _this2 = this;
+
+      event.stopPropagation();
+
+      if (this.view.onResizeStop) {
+        this.view.onResizeStop(event, ui);
+      }
+
+      var elementWidthSettingKey = this.getDeviceSetting('_element_width'),
+          widthSettingKey = this.getDeviceSetting(this.getWidthKey());
+
+      var _this$getSetting = this.getSetting(widthSettingKey),
+          unit = _this$getSetting.unit,
+          width = elementor.helpers.elementSizeToUnit(this.$el, ui.size.width, unit);
+
+      var settingToChange = (0, _objectSpread3.default)((0, _objectSpread3.default)((0, _objectSpread3.default)({}, this.isContainerActive() ? {
+        _flex_size: 'none'
+      } : {}), this.isContainer() ? {
+        content_width: 'full'
+      } : {}), {}, (_objectSpread2 = {}, (0, _defineProperty2.default)(_objectSpread2, elementWidthSettingKey, 'initial'), (0, _defineProperty2.default)(_objectSpread2, widthSettingKey, {
+        unit: unit,
+        size: width
+      }), _objectSpread2));
+      $e.run('document/elements/settings', {
+        container: this.view.container,
+        settings: settingToChange,
+        options: {
+          external: true
+        }
+      }); // Defer to wait for the widget to re-render and prevent UI glitches.
+
+      setTimeout(function () {
+        _this2.$el.css({
+          width: '',
+          height: '',
+          left: '',
+          'flex-shrink': '',
+          'flex-grow': '',
+          'flex-basis': ''
+        });
+      });
+    }
+  }, {
+    key: "onResize",
+    value: function onResize(event, ui) {
+      event.stopPropagation();
+
+      if (this.view.onResize) {
+        this.view.onResize(event, ui);
+      }
+
+      if (!this.isContainerItem()) {
+        return;
+      } // Set grow & shrink to 0 in order to set a specific size and prevent UI glitches.
+
+
+      this.$el.css({
+        left: '',
+        right: '',
+        'flex-shrink': 0,
+        'flex-grow': 0
+      });
+    }
+  }]);
+  return _default;
+}(Marionette.Behavior);
+
+exports["default"] = _default;
 
 /***/ }),
 
@@ -15693,6 +16415,10 @@ ColumnView = BaseElementView.extend({
 
     var elType = elementView.model.get('elType');
 
+    if ('container' === elType) {
+      return true;
+    }
+
     if ('section' === elType) {
       return !this.isInner();
     }
@@ -15786,16 +16512,12 @@ ColumnView = BaseElementView.extend({
       currentElementClass: 'elementor-html5dnd-current-element',
       placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
       hasDraggingOnChildClass: 'elementor-dragging-on-child',
-      getDropContainer: function getDropContainer() {
-        return _this.getContainer();
-      },
-      getDropIndex: getDropIndex,
       onDropping: function onDropping(side, event) {
-        event.stopPropagation(); // Triggering drag end manually, since it won't fired above iframe
-
+        // Triggering drag end manually, since it won't fired above iframe
         elementor.getPreviewView().onPanelElementDragEnd();
 
-        _this.addElementFromPanel({
+        _this.onDrop(event, {
+          side: side,
           at: getDropIndex(side, event)
         });
       }
@@ -15807,6 +16529,359 @@ ColumnView = BaseElementView.extend({
   }
 });
 module.exports = ColumnView;
+
+/***/ }),
+
+/***/ "../assets/dev/js/editor/elements/views/container.js":
+/*!***********************************************************!*\
+  !*** ../assets/dev/js/editor/elements/views/container.js ***!
+  \***********************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+/* provided dependency */ var sprintf = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["sprintf"];
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
+
+__webpack_require__(/*! core-js/modules/es6.array.find.js */ "../node_modules/core-js/modules/es6.array.find.js");
+
+__webpack_require__(/*! core-js/modules/es7.array.includes.js */ "../node_modules/core-js/modules/es7.array.includes.js");
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _inline = _interopRequireDefault(__webpack_require__(/*! elementor-views/add-section/inline */ "../assets/dev/js/editor/views/add-section/inline.js"));
+
+var _widgetResizeable = _interopRequireDefault(__webpack_require__(/*! ./behaviors/widget-resizeable */ "../assets/dev/js/editor/elements/views/behaviors/widget-resizeable.js"));
+
+var _containerHelper = _interopRequireDefault(__webpack_require__(/*! elementor-editor-utils/container-helper */ "../assets/dev/js/editor/utils/container-helper.js"));
+
+// Most of the code has been copied from `section.js`.
+var BaseElementView = __webpack_require__(/*! elementor-elements/views/base */ "../assets/dev/js/editor/elements/views/base.js"),
+    ColumnEmptyView = __webpack_require__(/*! elementor-elements/views/column-empty */ "../assets/dev/js/editor/elements/views/column-empty.js");
+
+var ContainerView = BaseElementView.extend({
+  template: Marionette.TemplateCache.get('#tmpl-elementor-container-content'),
+  emptyView: ColumnEmptyView,
+  // Child view is empty in order to use the parent element.
+  childViewContainer: '',
+  className: function className() {
+    return "".concat(BaseElementView.prototype.className.apply(this), " e-container");
+  },
+  tagName: function tagName() {
+    return this.model.getSetting('html_tag') || 'div';
+  },
+  // TODO: Copied from `views/column.js`.
+  ui: function ui() {
+    var ui = BaseElementView.prototype.ui.apply(this, arguments);
+    ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
+    return ui;
+  },
+  getCurrentUiStates: function getCurrentUiStates() {
+    var currentDirection = this.container.settings.get('flex_direction');
+    return {
+      directionMode: currentDirection || _containerHelper.default.DIRECTION_DEFAULT
+    };
+  },
+  behaviors: function behaviors() {
+    var behaviors = BaseElementView.prototype.behaviors.apply(this, arguments);
+
+    _.extend(behaviors, {
+      // TODO: Remove. It's a temporary solution for the Navigator sortable.
+      Sortable: {
+        behaviorClass: __webpack_require__(/*! elementor-behaviors/sortable */ "../assets/dev/js/editor/elements/views/behaviors/sortable.js"),
+        elChildType: 'widget'
+      },
+      Resizable: {
+        behaviorClass: _widgetResizeable.default
+      }
+    });
+
+    return elementor.hooks.applyFilters('elements/container/behaviors', behaviors, this);
+  },
+  initialize: function initialize() {
+    BaseElementView.prototype.initialize.apply(this, arguments);
+    this.model.get('editSettings').set('defaultEditRoute', 'layout');
+  },
+
+  /**
+   * TODO: Remove. It's a temporary solution for the Navigator sortable.
+   *
+   * @return {{}}
+   */
+  getSortableOptions: function getSortableOptions() {
+    // TODO: Temporary hack.
+    return {
+      preventInit: true
+    };
+  },
+
+  /**
+   * Get the Container nesting level recursively.
+   * The farthest parent Container is level 0.
+   *
+   * @return {number}
+   */
+  getNestingLevel: function getNestingLevel() {
+    // Use the memoized value if present, to prevent too many calculations.
+    if (this.nestingLevel) {
+      return this.nestingLevel;
+    }
+
+    var parent = this.container.parent; // Start counting nesting level only from the closest Container parent.
+
+    if ('container' !== parent.type) {
+      return 0;
+    }
+
+    return parent.view.getNestingLevel() + 1;
+  },
+  getDroppableAxis: function getDroppableAxis() {
+    var _axisMap;
+
+    var isColumnDefault = _containerHelper.default.DIRECTION_DEFAULT === _containerHelper.default.DIRECTION_COLUMN,
+        currentDirection = this.getContainer().settings.get('flex_direction');
+    var axisMap = (_axisMap = {}, (0, _defineProperty2.default)(_axisMap, _containerHelper.default.DIRECTION_COLUMN, 'vertical'), (0, _defineProperty2.default)(_axisMap, _containerHelper.default.DIRECTION_COLUMN_REVERSED, 'vertical'), (0, _defineProperty2.default)(_axisMap, _containerHelper.default.DIRECTION_ROW, 'horizontal'), (0, _defineProperty2.default)(_axisMap, _containerHelper.default.DIRECTION_ROW_REVERSED, 'horizontal'), (0, _defineProperty2.default)(_axisMap, '', isColumnDefault ? 'vertical' : 'horizontal'), _axisMap);
+    return axisMap[currentDirection];
+  },
+  getDroppableOptions: function getDroppableOptions() {
+    var _this = this;
+
+    return {
+      axis: this.getDroppableAxis(),
+      items: '> .elementor-element, > .elementor-empty-view .elementor-first-add',
+      groups: ['elementor-element'],
+      horizontalThreshold: 5,
+      // TODO: Stop the magic.
+      isDroppingAllowed: this.isDroppingAllowed.bind(this),
+      currentElementClass: 'elementor-html5dnd-current-element',
+      placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
+      hasDraggingOnChildClass: 'e-dragging-over',
+      getDropContainer: function getDropContainer() {
+        return _this.getContainer();
+      },
+      onDropping: function onDropping(side, event) {
+        event.stopPropagation(); // Triggering drag end manually, since it won't fired above iframe
+
+        elementor.getPreviewView().onPanelElementDragEnd();
+        var draggedView = elementor.channels.editor.request('element:dragged'),
+            draggingInSameParent = (draggedView === null || draggedView === void 0 ? void 0 : draggedView.parent) === _this;
+        var $elements = jQuery(event.currentTarget.parentElement).find('> .elementor-element'); // Exclude the dragged element from the indexing calculations.
+
+        if (draggingInSameParent) {
+          $elements = $elements.not(draggedView.$el);
+        }
+
+        var widgetsArray = (0, _values.default)($elements);
+        var newIndex = widgetsArray.indexOf(event.currentTarget); // Plus one in order to insert it after the current target element.
+
+        if (['bottom', 'right'].includes(side)) {
+          newIndex++;
+        } // User is sorting inside a Container.
+
+
+        if (draggedView) {
+          // Reset the dragged element cache.
+          elementor.channels.editor.reply('element:dragged', null);
+          $e.run('document/elements/move', {
+            container: draggedView.getContainer(),
+            target: _this.getContainer(),
+            options: {
+              at: newIndex
+            }
+          });
+          return;
+        } // User is dragging an element from the panel.
+
+
+        _this.onDrop(event, {
+          at: newIndex
+        });
+      }
+    };
+  },
+
+  /**
+   * Save container as a template.
+   *
+   * @returns {void}
+   */
+  saveAsTemplate: function saveAsTemplate() {
+    $e.route('library/save-template', {
+      model: this.model
+    });
+  },
+
+  /**
+   * Add a `Save as Template` button to the context menu.
+   *
+   * @return {object}
+   *
+   */
+  getContextMenuGroups: function getContextMenuGroups() {
+    var groups = BaseElementView.prototype.getContextMenuGroups.apply(this, arguments),
+        transferGroupIndex = groups.indexOf(_.findWhere(groups, {
+      name: 'clipboard'
+    }));
+    groups.splice(transferGroupIndex + 1, 0, {
+      name: 'save',
+      actions: [{
+        name: 'save',
+        title: __('Save as Template', 'elementor'),
+        callback: this.saveAsTemplate.bind(this)
+      }]
+    });
+    return groups;
+  },
+  isDroppingAllowed: function isDroppingAllowed() {
+    // Don't allow dragging items to document which is not editable.
+    if (!this.getContainer().isEditable()) {
+      return false;
+    }
+
+    var elementView = elementor.channels.panelElements.request('element:selected') || elementor.channels.editor.request('element:dragged');
+
+    if (!elementView) {
+      return false;
+    }
+
+    return ['widget', 'container'].includes(elementView.model.get('elType'));
+  },
+
+  /**
+   * Determine if the current container is a nested container.
+   *
+   * @returns {boolean}
+   */
+  isNested: function isNested() {
+    return 'document' !== this.getContainer().parent.model.get('elType');
+  },
+  getEditButtons: function getEditButtons() {
+    var elementData = elementor.getElementData(this.model),
+        editTools = {};
+    editTools.add = {
+      /* translators: %s: Element Name. */
+      title: sprintf(__('Add %s', 'elementor'), elementData.title),
+      icon: 'plus'
+    };
+    editTools.edit = {
+      /* translators: %s: Element Name. */
+      title: sprintf(__('Edit %s', 'elementor'), elementData.title),
+      icon: 'handle'
+    };
+
+    if (elementor.getPreferences('edit_buttons')) {
+      editTools.duplicate = {
+        /* translators: %s: Element Name. */
+        title: sprintf(__('Duplicate %s', 'elementor'), elementData.title),
+        icon: 'clone'
+      };
+    }
+
+    editTools.remove = {
+      /* translators: %s: Element Name. */
+      title: sprintf(__('Delete %s', 'elementor'), elementData.title),
+      icon: 'close'
+    };
+    return editTools;
+  },
+
+  /**
+   * Toggle the `New Section` view when clicking the `add` button in the edit tools.
+   *
+   * @returns {void}
+   *
+   */
+  onAddButtonClick: function onAddButtonClick() {
+    if (this.addSectionView && !this.addSectionView.isDestroyed) {
+      this.addSectionView.fadeToDeath();
+      return;
+    }
+
+    var addSectionView = new _inline.default({
+      at: this.model.collection.indexOf(this.model)
+    });
+    addSectionView.render();
+    this.$el.before(addSectionView.$el);
+    addSectionView.$el.hide(); // Delaying the slide down for slow-render browsers (such as FF)
+
+    setTimeout(function () {
+      addSectionView.$el.slideDown(null, function () {
+        // Remove inline style, for preview mode.
+        jQuery(this).css('display', '');
+      });
+    });
+    this.addSectionView = addSectionView;
+  },
+  onRender: function onRender() {
+    var _this2 = this;
+
+    BaseElementView.prototype.onRender.apply(this, arguments); // Defer to wait for everything to render.
+
+    setTimeout(function () {
+      _this2.nestingLevel = _this2.getNestingLevel();
+      _this2.$el[0].dataset.nestingLevel = _this2.nestingLevel;
+
+      _this2.$el.html5Droppable(_this2.getDroppableOptions());
+    });
+  },
+  renderOnChange: function renderOnChange(settings) {
+    BaseElementView.prototype.renderOnChange.apply(this, arguments); // Re-initialize the droppable in order to make sure the axis works properly.
+
+    if (!!settings.changed.flex_direction) {
+      this.$el.html5Droppable('destroy');
+      this.$el.html5Droppable(this.getDroppableOptions());
+    }
+  },
+  onDragStart: function onDragStart() {
+    this.$el.html5Droppable('destroy');
+  },
+  onDragEnd: function onDragEnd() {
+    this.$el.html5Droppable(this.getDroppableOptions());
+  },
+  // TODO: Copied from `views/column.js`.
+  attachElContent: function attachElContent() {
+    BaseElementView.prototype.attachElContent.apply(this, arguments);
+    var $tooltip = jQuery('<div>', {
+      class: 'elementor-column-percents-tooltip',
+      'data-side': elementorCommon.config.isRTL ? 'right' : 'left'
+    });
+    this.$el.children('.elementor-element-overlay').append($tooltip);
+  },
+  // TODO: Copied from `views/column.js`.
+  getPercentSize: function getPercentSize(size) {
+    if (!size) {
+      size = this.el.getBoundingClientRect().width;
+    }
+
+    return +(size / this.$el.parent().width() * 100).toFixed(3);
+  },
+  // TODO: Copied from `views/column.js`.
+  getPercentsForDisplay: function getPercentsForDisplay() {
+    var width = +this.model.getSetting('width') || this.getPercentSize();
+    return width.toFixed(1) + '%';
+  },
+  onResizeStart: function onResizeStart() {
+    if (this.ui.percentsTooltip) {
+      this.ui.percentsTooltip.show();
+    }
+  },
+  onResize: function onResize() {
+    // TODO: Copied from `views/column.js`.
+    if (this.ui.percentsTooltip) {
+      this.ui.percentsTooltip.text(this.getPercentsForDisplay());
+    }
+  },
+  onResizeStop: function onResizeStop() {
+    if (this.ui.percentsTooltip) {
+      this.ui.percentsTooltip.hide();
+    }
+  }
+});
+module.exports = ContainerView;
 
 /***/ }),
 
@@ -16113,6 +17188,322 @@ module.exports = SectionView;
 module.exports.DEFAULT_INNER_SECTION_COLUMNS = DEFAULT_INNER_SECTION_COLUMNS;
 module.exports.DEFAULT_MIN_COLUMN_SIZE = DEFAULT_MIN_COLUMN_SIZE;
 module.exports.DEFAULT_MAX_COLUMNS = DEFAULT_MAX_COLUMNS;
+
+/***/ }),
+
+/***/ "../assets/dev/js/editor/utils/container-helper.js":
+/*!*********************************************************!*\
+  !*** ../assets/dev/js/editor/utils/container-helper.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.ContainerHelper = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
+
+var _parseInt2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/parse-int */ "../node_modules/@babel/runtime-corejs2/core-js/parse-int.js"));
+
+var _objectSpread2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread2 */ "../node_modules/@babel/runtime-corejs2/helpers/objectSpread2.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+/**
+ * Container element helper functions.
+ */
+var ContainerHelper = /*#__PURE__*/function () {
+  function ContainerHelper() {
+    (0, _classCallCheck2.default)(this, ContainerHelper);
+  }
+
+  (0, _createClass2.default)(ContainerHelper, null, [{
+    key: "createContainers",
+    value: // Flex directions.
+
+    /**
+     * Create multiple container elements.
+     *
+     * @param {Number} count - Count of Containers to create.
+     * @param {Object} settings - Settings to set to each Container.
+     * @param {Container} target - The Container object to create the new Container elements inside.
+     * @param {Object} options - Additional command options.
+     *
+     * @return {Container[]} - Array of the newly created Containers.
+     */
+    function createContainers(count, settings) {
+      var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+      var containers = [];
+
+      for (var i = 0; i < count; i++) {
+        containers.push(this.createContainer(settings, target, options));
+      }
+
+      return containers;
+    }
+    /**
+     * Create a Container element.
+     *
+     * @param {Object} settings - Settings to set to each Container.
+     * @param {Container} target - The Container object to create the new Container elements inside.
+     * @param {Object} options - Additional command options.
+     *
+     * @return {Container} - The newly created Container.
+     */
+
+  }, {
+    key: "createContainer",
+    value: function createContainer() {
+      var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var target = arguments.length > 1 ? arguments[1] : undefined;
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return $e.run('document/elements/create', {
+        container: target,
+        model: {
+          elType: 'container',
+          settings: settings
+        },
+        options: options
+      });
+    }
+    /**
+     * Change Container settings.
+     *
+     * @param {Object} settings - New settings.
+     * @param {Container} container - Container to set the settings to.
+     *
+     * @return {void}
+     */
+
+  }, {
+    key: "setContainerSettings",
+    value: function setContainerSettings(settings, container) {
+      $e.run('document/elements/settings', {
+        container: container,
+        settings: settings,
+        options: {
+          external: true
+        }
+      });
+    }
+    /**
+     * Create a Container element based on a sizes.
+     *
+     * @param {array} sizes - Preset sizes.
+     * @param {Container} target - The target of new created element.
+     * @param {Object} options - Additional command options.
+     * @param {Boolean} [options.createWrapper=true] - Create a wrapper container for the preset.
+     *
+     * @returns {Container} - Container created on.
+     */
+
+  }, {
+    key: "createContainerFromSizes",
+    value: function createContainerFromSizes(sizes, target) {
+      var _this = this;
+
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var _options$createWrappe = options.createWrapper,
+          createWrapper = _options$createWrappe === void 0 ? true : _options$createWrappe,
+          sizesMap = {
+        33: '33.3333',
+        66: '66.6666'
+      },
+          sizesSum = sizes.reduce(function (sum, size) {
+        return sum + (0, _parseInt2.default)(size);
+      }, 0),
+          shouldWrap = sizesSum > 100,
+          settings = (0, _objectSpread2.default)((0, _objectSpread2.default)({
+        flex_direction: this.DIRECTION_ROW
+      }, shouldWrap ? {
+        flex_wrap: 'wrap'
+      } : {}), {}, {
+        flex_gap: {
+          unit: 'px',
+          size: 0 // Set the gap to 0 to override the default inherited from `Site Settings`.
+
+        }
+      }); // Create a parent container to contain all of the sub containers.
+
+      var parentContainer; // The `createWrapper` false option is used in nested-modules for creating containers from preset for custom target(s).
+
+      if (!createWrapper) {
+        $e.run('document/elements/settings', {
+          container: target,
+          settings: settings
+        });
+        parentContainer = target;
+      } else {
+        parentContainer = this.createContainer(settings, target, options);
+      } // Create all sub containers using the sizes array.
+      // Use flex basis to make the sizes explicit.
+
+
+      sizes.forEach(function (size) {
+        size = sizesMap[size] || size;
+
+        _this.createContainer({
+          flex_direction: _this.DIRECTION_COLUMN,
+          content_width: 'full',
+          width: {
+            unit: '%',
+            size: size
+          }
+        }, parentContainer, {
+          edit: false
+        });
+      });
+      return parentContainer;
+    }
+    /**
+     * Create a Container element based on a preset.
+     *
+     * @param {string} preset - Preset structure of the sub containers (e.g. `33-66-66-33`).
+     * @param {Container} target - The target container of the newly created Container.
+     * @param {Object} options - Additional command options.
+     * @param {Boolean} [options.createWrapper=true] - Create a wrapper container for the preset.
+     *
+     * @returns {Container} - Container created on.
+     */
+
+  }, {
+    key: "createContainerFromPreset",
+    value: function createContainerFromPreset(preset) {
+      var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : elementor.getPreviewContainer();
+      var options = arguments.length > 2 ? arguments[2] : undefined;
+      var historyId = $e.internal('document/history/start-log', {
+        type: 'add',
+        title: __('Container', 'elementor')
+      }),
+          _options$createWrappe2 = options.createWrapper,
+          createWrapper = _options$createWrappe2 === void 0 ? true : _options$createWrappe2;
+      var newContainer, settings;
+
+      try {
+        switch (preset) {
+          // Single column Container without sub Containers.
+          case 'c100':
+            newContainer = ContainerHelper.createContainer({}, target, options);
+            break;
+          // Single row Container without sub Containers.
+
+          case 'r100':
+            newContainer = ContainerHelper.createContainer({
+              flex_direction: ContainerHelper.DIRECTION_ROW
+            }, target, options);
+            break;
+          // Exceptional preset.
+
+          case 'c100-c50-50':
+            settings = {
+              flex_direction: ContainerHelper.DIRECTION_ROW,
+              flex_wrap: 'wrap',
+              flex_gap: {
+                unit: 'px',
+                size: 0 // Set the gap to 0 to override the default inherited from `Site Settings`.
+
+              }
+            };
+
+            if (!createWrapper) {
+              $e.run('document/elements/settings', {
+                container: target,
+                settings: settings
+              });
+              newContainer = target;
+            } else {
+              newContainer = ContainerHelper.createContainer(settings, target, options);
+            }
+
+            settings = {
+              content_width: 'full',
+              width: {
+                unit: '%',
+                size: '50'
+              }
+            };
+            ContainerHelper.createContainer(settings, newContainer, {
+              edit: false
+            });
+            var rightContainer = ContainerHelper.createContainer((0, _objectSpread2.default)((0, _objectSpread2.default)({}, settings), {}, {
+              padding: {
+                size: ''
+              },
+              // Create the right Container with 0 padding (default is 10px) to fix UI (ED-4900).
+              flex_gap: {
+                unit: 'px',
+                size: 0 // Set the gap to 0 to override the default inherited from `Site Settings`.
+
+              }
+            }), newContainer, {
+              edit: false
+            });
+            ContainerHelper.createContainers(2, {}, rightContainer, {
+              edit: false
+            });
+            break;
+          // Containers by preset.
+
+          default:
+            var sizes = preset.split('-');
+            newContainer = ContainerHelper.createContainerFromSizes(sizes, target, options);
+        }
+
+        $e.internal('document/history/end-log', {
+          id: historyId
+        });
+      } catch (e) {
+        $e.internal('document/history/delete-log', {
+          id: historyId
+        });
+      }
+
+      return newContainer;
+    }
+    /**
+     * Open edit mode of a Container.
+     *
+     * @param {Container} container - Container to open edit mode for.
+     *
+     * @return void
+     */
+
+  }, {
+    key: "openEditMode",
+    value: function openEditMode(container) {
+      $e.run('panel/editor/open', {
+        model: container.model,
+        view: container.view,
+        container: container
+      });
+    }
+  }]);
+  return ContainerHelper;
+}();
+
+exports.ContainerHelper = ContainerHelper;
+(0, _defineProperty2.default)(ContainerHelper, "DIRECTION_ROW", 'row');
+(0, _defineProperty2.default)(ContainerHelper, "DIRECTION_COLUMN", 'column');
+(0, _defineProperty2.default)(ContainerHelper, "DIRECTION_ROW_REVERSED", 'row-reverse');
+(0, _defineProperty2.default)(ContainerHelper, "DIRECTION_COLUMN_REVERSED", 'column-reverse');
+(0, _defineProperty2.default)(ContainerHelper, "DIRECTION_DEFAULT", ContainerHelper.DIRECTION_COLUMN);
+var _default = ContainerHelper;
+exports["default"] = _default;
 
 /***/ }),
 
@@ -16791,6 +18182,8 @@ __webpack_require__(/*! core-js/modules/es6.regexp.to-string.js */ "../node_modu
 
 
       hashes.sort(function (a, b) {
+        var _aQuery$max, _bQuery$max;
+
         if ('all' === a) {
           return -1;
         }
@@ -16800,8 +18193,22 @@ __webpack_require__(/*! core-js/modules/es6.regexp.to-string.js */ "../node_modu
         }
 
         var aQuery = hashToQuery(a),
-            bQuery = hashToQuery(b);
-        return bQuery.max - aQuery.max;
+            bQuery = hashToQuery(b); // Calculation should be either `max - max` or `min - min`.
+        // Caused when the `min_affected_device` is equal to the current responsive control.
+        // (e.g. `min_affected_device = tablet`, and the user is changing a tablet control).
+
+        if (aQuery.max && bQuery.max) {
+          return bQuery.max - aQuery.max;
+        }
+
+        if (aQuery.min && bQuery.min) {
+          return bQuery.min - aQuery.min;
+        } // If one of the queries has only `min` and the other has only `max`.
+
+
+        var aQueryValue = (_aQuery$max = aQuery.max) !== null && _aQuery$max !== void 0 ? _aQuery$max : aQuery.min;
+        var bQueryValue = (_bQuery$max = bQuery.max) !== null && _bQuery$max !== void 0 ? _bQuery$max : bQuery.min;
+        return bQueryValue - aQueryValue;
       });
       var sortedRules = {};
       hashes.forEach(function (deviceName) {
@@ -16967,6 +18374,8 @@ exports["default"] = void 0;
 
 var _assign = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/assign */ "../node_modules/@babel/runtime-corejs2/core-js/object/assign.js"));
 
+var _objectSpread2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread2 */ "../node_modules/@babel/runtime-corejs2/helpers/objectSpread2.js"));
+
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
 
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
@@ -16974,6 +18383,10 @@ var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _containerHelper = _interopRequireDefault(__webpack_require__(/*! elementor-editor-utils/container-helper */ "../assets/dev/js/editor/utils/container-helper.js"));
 
 var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
   (0, _inherits2.default)(AddSectionBase, _Marionette$ItemView);
@@ -16987,14 +18400,15 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
 
   (0, _createClass2.default)(AddSectionBase, [{
     key: "template",
-    value: function template() {
+    value: // Views.
+    function template() {
       return Marionette.TemplateCache.get('#tmpl-elementor-add-section');
     }
   }, {
     key: "attributes",
     value: function attributes() {
       return {
-        'data-view': 'choose-action'
+        'data-view': AddSectionBase.VIEW_CHOOSE_ACTION
       };
     }
   }, {
@@ -17006,7 +18420,8 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
         addSectionButton: '.elementor-add-section-button',
         addTemplateButton: '.elementor-add-template-button',
         selectPreset: '.elementor-select-preset',
-        presets: '.elementor-preset'
+        presets: '.elementor-preset',
+        containerPresets: '.e-container-preset'
       };
     }
   }, {
@@ -17016,7 +18431,8 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
         'click @ui.addSectionButton': 'onAddSectionButtonClick',
         'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
         'click @ui.closeButton': 'onCloseButtonClick',
-        'click @ui.presets': 'onPresetSelected'
+        'click @ui.presets': 'onPresetSelected',
+        'click @ui.containerPresets': 'onContainerPresetSelected'
       };
     }
   }, {
@@ -17042,12 +18458,12 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
   }, {
     key: "showSelectPresets",
     value: function showSelectPresets() {
-      this.setView('select-preset');
+      this.setView(AddSectionBase.VIEW_SELECT_PRESET);
     }
   }, {
     key: "closeSelectPresets",
     value: function closeSelectPresets() {
-      this.setView('choose-action');
+      this.setView(AddSectionBase.VIEW_CHOOSE_ACTION);
     }
   }, {
     key: "getTemplatesModalOptions",
@@ -17120,14 +18536,27 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
   }, {
     key: "onRender",
     value: function onRender() {
-      this.$el.html5Droppable({
+      this.$el.html5Droppable((0, _objectSpread2.default)({
         axis: ['vertical'],
         groups: ['elementor-element'],
         placeholder: false,
         currentElementClass: 'elementor-html5dnd-current-element',
-        hasDraggingOnChildClass: 'elementor-dragging-on-child',
-        onDropping: this.onDropping.bind(this)
-      });
+        hasDraggingOnChildClass: 'elementor-dragging-on-child'
+      }, this.getDroppableOptions()));
+    }
+  }, {
+    key: "getDroppableOptions",
+    value: function getDroppableOptions() {
+      var _this2 = this;
+
+      return {
+        onDropping: function onDropping(side, event) {
+          elementor.getPreviewView().onDrop(event, {
+            side: side,
+            at: _this2.getOption('at')
+          });
+        }
+      };
     }
   }, {
     key: "onPresetSelected",
@@ -17145,6 +18574,20 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
         options: (0, _assign.default)({}, this.options)
       });
     }
+    /**
+     * Create a Container preset when the user chooses a preset.
+     *
+     * @param {MouseEvent} e - Click event.
+     *
+     * @return {Container}
+     */
+
+  }, {
+    key: "onContainerPresetSelected",
+    value: function onContainerPresetSelected(e) {
+      this.closeSelectPresets();
+      return _containerHelper.default.createContainerFromPreset(e.currentTarget.dataset.preset, elementor.getPreviewContainer(), this.options);
+    }
   }, {
     key: "onDropping",
     value: function onDropping() {
@@ -17157,23 +18600,25 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
         type: 'add',
         title: elementor.helpers.getModelLabel(selectedElement.model)
       }),
-          eSection = $e.run('document/elements/create', {
+          containingElement = $e.run('document/elements/create', {
         model: {
-          elType: 'section'
+          elType: AddSectionBase.IS_CONTAINER_ACTIVE ? 'container' : 'section'
         },
         container: elementor.getPreviewContainer(),
         columns: 1,
         options: {
-          at: this.getOption('at'),
-          // BC: Deprecated since 2.8.0 - use `$e.hooks`.
-          trigger: {
-            beforeAdd: 'section:before:drop',
-            afterAdd: 'section:after:drop'
-          }
+          at: this.getOption('at')
         }
-      }); // Create the element in column.
+      });
 
-      eSection.view.children.findByIndex(0).addElementFromPanel();
+      if (!AddSectionBase.IS_CONTAINER_ACTIVE) {
+        // Create the element in column.
+        containingElement.view.children.findByIndex(0).addElementFromPanel();
+      } else if ('container' !== selectedElement.model.get('elType')) {
+        // Create the element in a Container, only if the dragged element is not a Container already.
+        containingElement.view.addElementFromPanel();
+      }
+
       $e.internal('document/history/end-log', {
         id: historyId
       });
@@ -17185,6 +18630,9 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
   return AddSectionBase;
 }(Marionette.ItemView);
 
+(0, _defineProperty2.default)(AddSectionBase, "IS_CONTAINER_ACTIVE", !!elementorCommon.config.experimentalFeatures.container);
+(0, _defineProperty2.default)(AddSectionBase, "VIEW_CHOOSE_ACTION", 'choose-action');
+(0, _defineProperty2.default)(AddSectionBase, "VIEW_SELECT_PRESET", AddSectionBase.IS_CONTAINER_ACTIVE ? 'select-container-preset' : 'select-preset');
 var _default = AddSectionBase;
 exports["default"] = _default;
 
@@ -17264,16 +18712,39 @@ var AddSectionView = /*#__PURE__*/function (_BaseAddSectionView) {
       this.destroy();
     }
   }, {
+    key: "onContainerPresetSelected",
+    value: function onContainerPresetSelected(e) {
+      (0, _get2.default)((0, _getPrototypeOf2.default)(AddSectionView.prototype), "onContainerPresetSelected", this).call(this, e);
+      this.destroy();
+    }
+  }, {
     key: "onAddTemplateButtonClick",
     value: function onAddTemplateButtonClick() {
       (0, _get2.default)((0, _getPrototypeOf2.default)(AddSectionView.prototype), "onAddTemplateButtonClick", this).call(this);
       this.destroy();
     }
   }, {
+    key: "getDroppableOptions",
+    value: function getDroppableOptions() {
+      var _this = this;
+
+      return {
+        onDropping: function onDropping(side, event) {
+          (0, _get2.default)((0, _getPrototypeOf2.default)(AddSectionView.prototype), "getDroppableOptions", _this).call(_this).onDropping(side, event);
+
+          _this.destroy();
+        }
+      };
+    }
+  }, {
     key: "onDropping",
     value: function onDropping() {
+      var droppableOptions = this.getDroppableOptions();
       (0, _get2.default)((0, _getPrototypeOf2.default)(AddSectionView.prototype), "onDropping", this).call(this);
-      this.destroy();
+
+      if (droppableOptions.onDropping) {
+        droppableOptions.onDropping();
+      }
     }
   }]);
   return AddSectionView;
@@ -17295,13 +18766,21 @@ exports["default"] = _default;
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
 
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/slicedToArray */ "../node_modules/@babel/runtime-corejs2/helpers/slicedToArray.js"));
+
 __webpack_require__(/*! core-js/modules/es6.number.constructor.js */ "../node_modules/core-js/modules/es6.number.constructor.js");
+
+__webpack_require__(/*! core-js/modules/es6.array.filter.js */ "../node_modules/core-js/modules/es6.array.filter.js");
+
+__webpack_require__(/*! core-js/modules/es7.array.includes.js */ "../node_modules/core-js/modules/es7.array.includes.js");
 
 __webpack_require__(/*! core-js/modules/es6.function.name.js */ "../node_modules/core-js/modules/es6.function.name.js");
 
 var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
 
 var _assign = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/assign */ "../node_modules/@babel/runtime-corejs2/core-js/object/assign.js"));
+
+var _entries = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/entries */ "../node_modules/@babel/runtime-corejs2/core-js/object/entries.js"));
 
 module.exports = Marionette.CompositeView.extend({
   templateHelpers: function templateHelpers() {
@@ -17382,7 +18861,9 @@ module.exports = Marionette.CompositeView.extend({
     if (options.edit && elementor.documents.getCurrent().history.getActive()) {
       // Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
       newView.getContainer();
-      newModel.trigger('request:edit');
+      newModel.trigger('request:edit', {
+        scrollIntoView: options.scrollIntoView
+      });
     }
 
     return newView;
@@ -17393,26 +18874,26 @@ module.exports = Marionette.CompositeView.extend({
   },
   createElementFromModel: function createElementFromModel(model) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var container = this.getContainer();
 
     if (model instanceof Backbone.Model) {
       model = model.toJSON();
-    }
-
-    model = (0, _assign.default)(model, model.custom);
-
-    if ('section' === model.elType) {
-      model.isInner = true;
     }
 
     if (elementor.helpers.maybeDisableWidget(model.widgetType)) {
       return;
     }
 
+    model = (0, _assign.default)(model, model.custom); // Check whether the container cannot contain a section, in which case we should use an inner-section.
+
+    if ('section' === model.elType) {
+      model.isInner = true;
+    }
+
     var historyId = $e.internal('document/history/start-log', {
       type: this.getHistoryType(options.event),
       title: elementor.helpers.getModelLabel(model)
     });
-    var container = this.getContainer();
 
     if (options.shouldWrap) {
       var containerExperiment = elementorCommon.config.experimentalFeatures.container;
@@ -17423,12 +18904,7 @@ module.exports = Marionette.CompositeView.extend({
         container: container,
         columns: Number(!containerExperiment),
         options: {
-          at: this.getOption('at'),
-          // BC: Deprecated since 2.8.0 - use `$e.hooks`.
-          trigger: {
-            beforeAdd: 'section:before:drop',
-            afterAdd: 'section:after:drop'
-          }
+          at: options.at
         }
       }); // Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
 
@@ -17448,6 +18924,33 @@ module.exports = Marionette.CompositeView.extend({
     });
     return widget;
   },
+  onDrop: function onDrop(event, options) {
+    var _elementor$channels$p;
+
+    var input = event.originalEvent.dataTransfer.files;
+
+    if (input.length) {
+      $e.run('editor/browser-import/import', {
+        input: input,
+        target: this.getContainer(),
+        options: {
+          event: event,
+          target: {
+            at: options.at
+          }
+        }
+      });
+      return;
+    }
+
+    this.createElementFromModel(Object.fromEntries((0, _entries.default)((_elementor$channels$p = elementor.channels.panelElements.request('element:selected')) === null || _elementor$channels$p === void 0 ? void 0 : _elementor$channels$p.model.attributes) // The `custom` property is responsible for storing global-widgets related data.
+    .filter(function (_ref) {
+      var _ref2 = (0, _slicedToArray2.default)(_ref, 1),
+          key = _ref2[0];
+
+      return ['elType', 'widgetType', 'custom'].includes(key);
+    })), options);
+  },
   getHistoryType: function getHistoryType(event) {
     if (event) {
       if (event.originalEvent) {
@@ -17464,19 +18967,6 @@ module.exports = Marionette.CompositeView.extend({
     }
 
     return 'add';
-  },
-  addChildElement: function addChildElement(data, options) {
-    elementorCommon.helpers.softDeprecated('addChildElement', '2.8.0', "$e.run( 'document/elements/create' )");
-
-    if (Object !== data.constructor) {
-      data = jQuery.extend({}, data);
-    }
-
-    $e.run('document/elements/create', {
-      container: this.getContainer(),
-      model: data,
-      options: options
-    });
   },
   cloneItem: function cloneItem(item) {
     var self = this;
@@ -17529,6 +19019,10 @@ _Object$defineProperty(exports, "__esModule", {
 });
 
 exports["default"] = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
+
+__webpack_require__(/*! core-js/modules/es6.regexp.to-string.js */ "../node_modules/core-js/modules/es6.regexp.to-string.js");
 
 var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/typeof */ "../node_modules/@babel/runtime-corejs2/helpers/typeof.js"));
 
@@ -17649,9 +19143,10 @@ var ArgsObject = /*#__PURE__*/function (_InstanceType) {
     key: "requireArgumentConstructor",
     value: function requireArgumentConstructor(property, type) {
       var args = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.args;
-      this.requireArgument(property, args);
+      this.requireArgument(property, args); // Note: Converting the constructor to string in order to avoid equation issues
+      // due to different memory addresses between iframes (window.Object !== window.top.Object).
 
-      if (args[property].constructor !== type) {
+      if (args[property].constructor.toString() !== type.prototype.constructor.toString()) {
         throw Error("".concat(property, " invalid constructor type."));
       }
     }
@@ -17774,9 +19269,296 @@ exports["default"] = InstanceType;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/core/data/errors/base-error.js":
+/***/ "../assets/dev/js/modules/imports/module.js":
+/*!**************************************************!*\
+  !*** ../assets/dev/js/modules/imports/module.js ***!
+  \**************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+var _create = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/create */ "../node_modules/@babel/runtime-corejs2/core-js/object/create.js"));
+
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/typeof */ "../node_modules/@babel/runtime-corejs2/helpers/typeof.js"));
+
+__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
+
+__webpack_require__(/*! core-js/modules/es6.array.filter.js */ "../node_modules/core-js/modules/es6.array.filter.js");
+
+__webpack_require__(/*! core-js/modules/es6.array.slice.js */ "../node_modules/core-js/modules/es6.array.slice.js");
+
+__webpack_require__(/*! core-js/modules/es6.function.name.js */ "../node_modules/core-js/modules/es6.function.name.js");
+
+var Module = function Module() {
+  var $ = jQuery,
+      instanceParams = arguments,
+      self = this,
+      events = {};
+  var settings;
+
+  var ensureClosureMethods = function ensureClosureMethods() {
+    $.each(self, function (methodName) {
+      var oldMethod = self[methodName];
+
+      if ('function' !== typeof oldMethod) {
+        return;
+      }
+
+      self[methodName] = function () {
+        return oldMethod.apply(self, arguments);
+      };
+    });
+  };
+
+  var initSettings = function initSettings() {
+    settings = self.getDefaultSettings();
+    var instanceSettings = instanceParams[0];
+
+    if (instanceSettings) {
+      $.extend(true, settings, instanceSettings);
+    }
+  };
+
+  var init = function init() {
+    self.__construct.apply(self, instanceParams);
+
+    ensureClosureMethods();
+    initSettings();
+    self.trigger('init');
+  };
+
+  this.getItems = function (items, itemKey) {
+    if (itemKey) {
+      var keyStack = itemKey.split('.'),
+          currentKey = keyStack.splice(0, 1);
+
+      if (!keyStack.length) {
+        return items[currentKey];
+      }
+
+      if (!items[currentKey]) {
+        return;
+      }
+
+      return this.getItems(items[currentKey], keyStack.join('.'));
+    }
+
+    return items;
+  };
+
+  this.getSettings = function (setting) {
+    return this.getItems(settings, setting);
+  };
+
+  this.setSettings = function (settingKey, value, settingsContainer) {
+    if (!settingsContainer) {
+      settingsContainer = settings;
+    }
+
+    if ('object' === (0, _typeof2.default)(settingKey)) {
+      $.extend(settingsContainer, settingKey);
+      return self;
+    }
+
+    var keyStack = settingKey.split('.'),
+        currentKey = keyStack.splice(0, 1);
+
+    if (!keyStack.length) {
+      settingsContainer[currentKey] = value;
+      return self;
+    }
+
+    if (!settingsContainer[currentKey]) {
+      settingsContainer[currentKey] = {};
+    }
+
+    return self.setSettings(keyStack.join('.'), value, settingsContainer[currentKey]);
+  };
+
+  this.getErrorMessage = function (type, functionName) {
+    var message;
+
+    switch (type) {
+      case 'forceMethodImplementation':
+        message = "The method '".concat(functionName, "' must to be implemented in the inheritor child.");
+        break;
+
+      default:
+        message = 'An error occurs';
+    }
+
+    return message;
+  }; // TODO: This function should be deleted ?.
+
+
+  this.forceMethodImplementation = function (functionName) {
+    throw new Error(this.getErrorMessage('forceMethodImplementation', functionName));
+  };
+
+  this.on = function (eventName, callback) {
+    if ('object' === (0, _typeof2.default)(eventName)) {
+      $.each(eventName, function (singleEventName) {
+        self.on(singleEventName, this);
+      });
+      return self;
+    }
+
+    var eventNames = eventName.split(' ');
+    eventNames.forEach(function (singleEventName) {
+      if (!events[singleEventName]) {
+        events[singleEventName] = [];
+      }
+
+      events[singleEventName].push(callback);
+    });
+    return self;
+  };
+
+  this.off = function (eventName, callback) {
+    if (!events[eventName]) {
+      return self;
+    }
+
+    if (!callback) {
+      delete events[eventName];
+      return self;
+    }
+
+    var callbackIndex = events[eventName].indexOf(callback);
+
+    if (-1 !== callbackIndex) {
+      delete events[eventName][callbackIndex]; // Reset array index (for next off on same event).
+
+      events[eventName] = events[eventName].filter(function (val) {
+        return val;
+      });
+    }
+
+    return self;
+  };
+
+  this.trigger = function (eventName) {
+    var methodName = 'on' + eventName[0].toUpperCase() + eventName.slice(1),
+        params = Array.prototype.slice.call(arguments, 1);
+
+    if (self[methodName]) {
+      self[methodName].apply(self, params);
+    }
+
+    var callbacks = events[eventName];
+
+    if (!callbacks) {
+      return self;
+    }
+
+    $.each(callbacks, function (index, callback) {
+      callback.apply(self, params);
+    });
+    return self;
+  };
+
+  init();
+};
+
+Module.prototype.__construct = function () {};
+
+Module.prototype.getDefaultSettings = function () {
+  return {};
+};
+
+Module.prototype.getConstructorID = function () {
+  return this.constructor.name;
+};
+
+Module.extend = function (properties) {
+  var $ = jQuery,
+      parent = this;
+
+  var child = function child() {
+    return parent.apply(this, arguments);
+  };
+
+  $.extend(child, parent);
+  child.prototype = (0, _create.default)($.extend({}, parent.prototype, properties));
+  child.prototype.constructor = child;
+  child.__super__ = parent.prototype;
+  return child;
+};
+
+module.exports = Module;
+
+/***/ }),
+
+/***/ "../core/common/assets/js/utils/environment.js":
+/*!*****************************************************!*\
+  !*** ../core/common/assets/js/utils/environment.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
+
+__webpack_require__(/*! core-js/modules/es6.regexp.to-string.js */ "../node_modules/core-js/modules/es6.regexp.to-string.js");
+
+var matchUserAgent = function matchUserAgent(UserAgentStr) {
+  return userAgent.indexOf(UserAgentStr) >= 0;
+},
+    userAgent = navigator.userAgent,
+    // Solution influenced by https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+// Opera 8.0+
+isOpera = !!window.opr && !!opr.addons || !!window.opera || matchUserAgent(' OPR/'),
+    // Firefox 1.0+
+isFirefox = matchUserAgent('Firefox'),
+    // Safari 3.0+ "[object HTMLElementConstructor]"
+isSafari = /^((?!chrome|android).)*safari/i.test(userAgent) || /constructor/i.test(window.HTMLElement) || function (p) {
+  return '[object SafariRemoteNotification]' === p.toString();
+}(!window.safari || typeof safari !== 'undefined' && safari.pushNotification),
+    // Internet Explorer 6-11
+isIE = /Trident|MSIE/.test(userAgent) && (
+/*@cc_on!@*/
+ false || !!document.documentMode),
+    // Edge 20+
+isEdge = !isIE && !!window.StyleMedia || matchUserAgent('Edg'),
+    // Google Chrome (Not accurate)
+isChrome = !!window.chrome && matchUserAgent('Chrome') && !(isEdge || isOpera),
+    // Blink engine
+isBlink = matchUserAgent('Chrome') && !!window.CSS,
+    // Apple Webkit engine
+isAppleWebkit = matchUserAgent('AppleWebKit') && !isBlink,
+    environment = {
+  appleWebkit: isAppleWebkit,
+  blink: isBlink,
+  chrome: isChrome,
+  edge: isEdge,
+  firefox: isFirefox,
+  ie: isIE,
+  mac: matchUserAgent('Macintosh'),
+  opera: isOpera,
+  safari: isSafari,
+  webkit: matchUserAgent('AppleWebKit')
+};
+
+var _default = environment;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/core/data/errors/base-error.js":
 /*!*******************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/errors/base-error.js ***!
+  !*** ../modules/web-cli/assets/js/core/data/errors/base-error.js ***!
   \*******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -17808,6 +19590,10 @@ var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 var _wrapNativeSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/wrapNativeSuper */ "../node_modules/@babel/runtime-corejs2/helpers/wrapNativeSuper.js"));
 
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _helpers = _interopRequireDefault(__webpack_require__(/*! elementor-api/utils/helpers */ "../modules/web-cli/assets/js/utils/helpers.js"));
+
+var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ../../../utils/force-method-implementation */ "../modules/web-cli/assets/js/utils/force-method-implementation.js"));
 
 var BaseError = /*#__PURE__*/function (_Error) {
   (0, _inherits2.default)(BaseError, _Error);
@@ -17843,7 +19629,7 @@ var BaseError = /*#__PURE__*/function (_Error) {
   (0, _createClass2.default)(BaseError, [{
     key: "notify",
     value: function notify() {
-      elementorCommon.helpers.consoleError((0, _objectSpread2.default)({
+      _helpers.default.consoleError((0, _objectSpread2.default)({
         message: this.message
       }, this));
     }
@@ -17882,7 +19668,7 @@ var BaseError = /*#__PURE__*/function (_Error) {
   }, {
     key: "getHTTPErrorCode",
     value: function getHTTPErrorCode() {
-      elementorModules.ForceMethodImplementation();
+      (0, _forceMethodImplementation.default)();
     }
   }]);
   return BaseError;
@@ -17892,9 +19678,9 @@ exports["default"] = BaseError;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/core/data/errors/default-error.js":
+/***/ "../modules/web-cli/assets/js/core/data/errors/default-error.js":
 /*!**********************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/errors/default-error.js ***!
+  !*** ../modules/web-cli/assets/js/core/data/errors/default-error.js ***!
   \**********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -17919,7 +19705,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _baseError = _interopRequireDefault(__webpack_require__(/*! ./base-error */ "../core/common/assets/js/api/core/data/errors/base-error.js"));
+var _baseError = _interopRequireDefault(__webpack_require__(/*! ./base-error */ "../modules/web-cli/assets/js/core/data/errors/base-error.js"));
 
 var DefaultError = /*#__PURE__*/function (_BaseError) {
   (0, _inherits2.default)(DefaultError, _BaseError);
@@ -17946,9 +19732,9 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/core/data/errors/error-404.js":
+/***/ "../modules/web-cli/assets/js/core/data/errors/error-404.js":
 /*!******************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/errors/error-404.js ***!
+  !*** ../modules/web-cli/assets/js/core/data/errors/error-404.js ***!
   \******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -17973,7 +19759,9 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _baseError = _interopRequireDefault(__webpack_require__(/*! ./base-error */ "../core/common/assets/js/api/core/data/errors/base-error.js"));
+var _baseError = _interopRequireDefault(__webpack_require__(/*! ./base-error */ "../modules/web-cli/assets/js/core/data/errors/base-error.js"));
+
+var _helpers = _interopRequireDefault(__webpack_require__(/*! elementor-api/utils/helpers */ "../modules/web-cli/assets/js/utils/helpers.js"));
 
 var Error404 = /*#__PURE__*/function (_BaseError) {
   (0, _inherits2.default)(Error404, _BaseError);
@@ -17988,7 +19776,7 @@ var Error404 = /*#__PURE__*/function (_BaseError) {
   (0, _createClass2.default)(Error404, [{
     key: "notify",
     value: function notify() {
-      elementorCommon.helpers.consoleWarn(this.message);
+      _helpers.default.consoleWarn(this.message);
     }
   }], [{
     key: "getHTTPErrorCode",
@@ -18005,9 +19793,9 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/core/data/errors/index.js":
+/***/ "../modules/web-cli/assets/js/core/data/errors/index.js":
 /*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/errors/index.js ***!
+  !*** ../modules/web-cli/assets/js/core/data/errors/index.js ***!
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -18034,15 +19822,182 @@ _Object$defineProperty(exports, "Error404", {
   }
 });
 
-var _defaultError = __webpack_require__(/*! ./default-error */ "../core/common/assets/js/api/core/data/errors/default-error.js");
+var _defaultError = __webpack_require__(/*! ./default-error */ "../modules/web-cli/assets/js/core/data/errors/default-error.js");
 
-var _error = __webpack_require__(/*! ./error-404 */ "../core/common/assets/js/api/core/data/errors/error-404.js");
+var _error = __webpack_require__(/*! ./error-404 */ "../modules/web-cli/assets/js/core/data/errors/error-404.js");
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/command-base.js":
+/***/ "../modules/web-cli/assets/js/core/states/ui-state-base.js":
+/*!*****************************************************************!*\
+  !*** ../modules/web-cli/assets/js/core/states/ui-state-base.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ../../utils/force-method-implementation */ "../modules/web-cli/assets/js/utils/force-method-implementation.js"));
+
+var UiStateBase = /*#__PURE__*/function () {
+  /**
+   * Initialize the state object.
+   *
+   * @param {ComponentBase} component - Optional. The component that the state belongs to.
+   *
+   * @return {void}
+   */
+  function UiStateBase(component) {
+    (0, _classCallCheck2.default)(this, UiStateBase);
+    this.component = component;
+    this.id = this.getId();
+    this.options = this.getOptions();
+    this.currentState = null;
+  }
+  /**
+   * Set the current state.
+   *
+   * @param {string} newValue - The new value to set as state. Has to be one of `this.options`.
+   *
+   * @return {void}
+   */
+
+
+  (0, _createClass2.default)(UiStateBase, [{
+    key: "set",
+    value: function set(newValue) {
+      if (newValue && !this.options.hasOwnProperty(newValue)) {
+        throw "Option '".concat(newValue, "' for state '").concat(this.id, "' is invalid.");
+      }
+
+      var callback = this.options[newValue],
+          oldValue = this.currentState; // Change the current state.
+
+      this.currentState = newValue; // Trigger the `onChange` method before the option's callback.
+
+      this.onChange(oldValue, newValue); // Run the callback if it's callable.
+
+      if ('function' === typeof callback) {
+        callback(oldValue, newValue);
+      }
+    }
+    /**
+     * Get current state value.
+     *
+     * @return {string}
+     */
+
+  }, {
+    key: "getCurrent",
+    value: function getCurrent() {
+      return this.currentState;
+    }
+    /**
+     * Get state ID.
+     *
+     * @return {string}
+     */
+
+  }, {
+    key: "getId",
+    value: function getId() {
+      (0, _forceMethodImplementation.default)();
+    }
+    /**
+     * Return the state ID prefix.
+     *
+     * @return {string}
+     */
+
+  }, {
+    key: "getPrefix",
+    value: function getPrefix() {
+      var _this$component;
+
+      return ((_this$component = this.component) === null || _this$component === void 0 ? void 0 : _this$component.getNamespace()) || '';
+    }
+    /**
+     * Get the prefixed state ID.
+     *
+     * @return {string}
+     */
+
+  }, {
+    key: "getPrefixedId",
+    value: function getPrefixedId() {
+      var prefix = this.getPrefix();
+
+      if (!prefix) {
+        return this.getId();
+      }
+
+      return "".concat(prefix, "/").concat(this.getId());
+    }
+    /**
+     * Get state options.
+     * Each option should have unique ID as key and a callback if needed (should be an inner class method).
+     *
+     * @return {object}
+     */
+
+  }, {
+    key: "getOptions",
+    value: function getOptions() {
+      return {
+        on: '',
+        off: ''
+      };
+    }
+    /**
+     * Triggered on every UI state change.
+     *
+     * @param {string} oldValue - Previous UI state value.
+     * @param {string} newValue - New UI state value.
+     *
+     * @return {void}
+     */
+
+  }, {
+    key: "onChange",
+    value: function onChange(oldValue, newValue) {// eslint-disable-line no-unused-vars
+      // Override this method if needed.
+    }
+    /**
+     * Retrieve an array of scopes that the state will be applied to.
+     *
+     * @return {HTMLElement[]}
+     */
+
+  }, {
+    key: "getScopes",
+    value: function getScopes() {
+      return [window.document.body];
+    }
+  }]);
+  return UiStateBase;
+}();
+
+exports["default"] = UiStateBase;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/modules/command-base.js":
 /*!************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/command-base.js ***!
+  !*** ../modules/web-cli/assets/js/modules/command-base.js ***!
   \************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -18092,6 +20047,10 @@ var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
 
 var _argsObject = _interopRequireDefault(__webpack_require__(/*! elementor-assets-js/modules/imports/args-object */ "../assets/dev/js/modules/imports/args-object.js"));
+
+var _helpers = _interopRequireDefault(__webpack_require__(/*! elementor-api/utils/helpers */ "../modules/web-cli/assets/js/utils/helpers.js"));
+
+var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ../utils/force-method-implementation */ "../modules/web-cli/assets/js/utils/force-method-implementation.js"));
 
 var CommandBase = /*#__PURE__*/function (_ArgsObject) {
   (0, _inherits2.default)(CommandBase, _ArgsObject);
@@ -18216,7 +20175,7 @@ var CommandBase = /*#__PURE__*/function (_ArgsObject) {
     value: function apply() {
       var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       // eslint-disable-line no-unused-vars
-      elementorModules.ForceMethodImplementation();
+      (0, _forceMethodImplementation.default)();
     }
     /**
      * Function run().
@@ -18431,7 +20390,8 @@ var CommandBase = /*#__PURE__*/function (_ArgsObject) {
     key: "onCatchApply",
     value: function onCatchApply(e) {
       this.runCatchHooks(e);
-      elementorCommon.helpers.consoleError(e);
+
+      _helpers.default.consoleError(e);
     }
   }], [{
     key: "getInstanceType",
@@ -18465,9 +20425,9 @@ exports["default"] = CommandBase;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/command-data.js":
+/***/ "../modules/web-cli/assets/js/modules/command-data.js":
 /*!************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/command-data.js ***!
+  !*** ../modules/web-cli/assets/js/modules/command-data.js ***!
   \************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -18504,9 +20464,11 @@ var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! ./command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! ./command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
-var errors = _interopRequireWildcard(__webpack_require__(/*! ../core/data/errors/ */ "../core/common/assets/js/api/core/data/errors/index.js"));
+var errors = _interopRequireWildcard(__webpack_require__(/*! ../core/data/errors/ */ "../modules/web-cli/assets/js/core/data/errors/index.js"));
+
+var _helpers = _interopRequireDefault(__webpack_require__(/*! elementor-api/utils/helpers */ "../modules/web-cli/assets/js/utils/helpers.js"));
 
 var CommandData = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(CommandData, _CommandBase);
@@ -18599,7 +20561,7 @@ var CommandData = /*#__PURE__*/function (_CommandBase) {
         type: this.type,
         args: this.args,
         timestamp: new Date().getTime(),
-        endpoint: $e.data.commandToEndpoint(this.currentCommand, elementorCommon.helpers.cloneObject(this.args), this.constructor.getEndpointFormat())
+        endpoint: $e.data.commandToEndpoint(this.currentCommand, _helpers.default.cloneObject(this.args), this.constructor.getEndpointFormat())
       };
     }
   }, {
@@ -18803,9 +20765,9 @@ exports["default"] = CommandData;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/command-internal-base.js":
+/***/ "../modules/web-cli/assets/js/modules/command-internal-base.js":
 /*!*********************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/command-internal-base.js ***!
+  !*** ../modules/web-cli/assets/js/modules/command-internal-base.js ***!
   \*********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -18830,7 +20792,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! ./command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! ./command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var CommandInternalBase = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(CommandInternalBase, _CommandBase);
@@ -18856,9 +20818,9 @@ exports["default"] = CommandInternalBase;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/component-base.js":
+/***/ "../modules/web-cli/assets/js/modules/component-base.js":
 /*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/component-base.js ***!
+  !*** ../modules/web-cli/assets/js/modules/component-base.js ***!
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -18901,8 +20863,12 @@ var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 
 var _toolkit = __webpack_require__(/*! @reduxjs/toolkit */ "../node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
 
-var ComponentBase = /*#__PURE__*/function (_elementorModules$Mod) {
-  (0, _inherits2.default)(ComponentBase, _elementorModules$Mod);
+var _module = _interopRequireDefault(__webpack_require__(/*! elementor-assets-js/modules/imports/module.js */ "../assets/dev/js/modules/imports/module.js"));
+
+var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ../utils/force-method-implementation */ "../modules/web-cli/assets/js/utils/force-method-implementation.js"));
+
+var ComponentBase = /*#__PURE__*/function (_Module) {
+  (0, _inherits2.default)(ComponentBase, _Module);
 
   var _super = (0, _createSuper2.default)(ComponentBase);
 
@@ -18990,7 +20956,7 @@ var ComponentBase = /*#__PURE__*/function (_elementorModules$Mod) {
   }, {
     key: "getNamespace",
     value: function getNamespace() {
-      elementorModules.ForceMethodImplementation();
+      (0, _forceMethodImplementation.default)();
     }
   }, {
     key: "getRootContainer",
@@ -19409,24 +21375,24 @@ var ComponentBase = /*#__PURE__*/function (_elementorModules$Mod) {
   }, {
     key: "toggleRouteClass",
     value: function toggleRouteClass(route, state) {
-      elementorCommon.elements.$body.toggleClass(this.getBodyClass(route), state);
+      document.body.classList.toggle(this.getBodyClass(route), state);
     }
   }, {
     key: "toggleHistoryClass",
     value: function toggleHistoryClass() {
-      elementorCommon.elements.$body.toggleClass('e-routes-has-history', !!$e.routes.getHistory(this.getRootContainer()).length);
+      document.body.classList.toggle('e-routes-has-history', !!$e.routes.getHistory(this.getRootContainer()).length);
     }
   }]);
   return ComponentBase;
-}(elementorModules.Module);
+}(_module.default);
 
 exports["default"] = ComponentBase;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/hook-base.js":
+/***/ "../modules/web-cli/assets/js/modules/hook-base.js":
 /*!*********************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hook-base.js ***!
+  !*** ../modules/web-cli/assets/js/modules/hook-base.js ***!
   \*********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -19448,6 +21414,8 @@ var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
 
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ../utils/force-method-implementation */ "../modules/web-cli/assets/js/utils/force-method-implementation.js"));
 
 var HookBase = /*#__PURE__*/function () {
   /**
@@ -19505,7 +21473,7 @@ var HookBase = /*#__PURE__*/function () {
   }, {
     key: "register",
     value: function register() {
-      elementorModules.ForceMethodImplementation();
+      (0, _forceMethodImplementation.default)();
     }
     /**
      * Function getType().
@@ -19520,7 +21488,7 @@ var HookBase = /*#__PURE__*/function () {
   }, {
     key: "getType",
     value: function getType() {
-      elementorModules.ForceMethodImplementation();
+      (0, _forceMethodImplementation.default)();
     }
     /**
      * Function getCommand().
@@ -19537,7 +21505,7 @@ var HookBase = /*#__PURE__*/function () {
   }, {
     key: "getCommand",
     value: function getCommand() {
-      elementorModules.ForceMethodImplementation();
+      (0, _forceMethodImplementation.default)();
     }
     /**
      * Function getId().
@@ -19552,7 +21520,7 @@ var HookBase = /*#__PURE__*/function () {
   }, {
     key: "getId",
     value: function getId() {
-      elementorModules.ForceMethodImplementation();
+      (0, _forceMethodImplementation.default)();
     }
     /**
      * Function getContainerType().
@@ -19600,7 +21568,7 @@ var HookBase = /*#__PURE__*/function () {
     key: "apply",
     value: function apply(args) {
       // eslint-disable-line no-unused-vars
-      elementorModules.ForceMethodImplementation();
+      (0, _forceMethodImplementation.default)();
     }
     /**
      * Function run().
@@ -19642,9 +21610,9 @@ exports["default"] = HookBase;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/hooks/data/after.js":
+/***/ "../modules/web-cli/assets/js/modules/hooks/data/after.js":
 /*!****************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/data/after.js ***!
+  !*** ../modules/web-cli/assets/js/modules/hooks/data/after.js ***!
   \****************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -19669,7 +21637,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/data/base.js"));
+var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../modules/web-cli/assets/js/modules/hooks/data/base.js"));
 
 var After = /*#__PURE__*/function (_Base) {
   (0, _inherits2.default)(After, _Base);
@@ -19696,9 +21664,9 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/hooks/data/base.js":
+/***/ "../modules/web-cli/assets/js/modules/hooks/data/base.js":
 /*!***************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/data/base.js ***!
+  !*** ../modules/web-cli/assets/js/modules/hooks/data/base.js ***!
   \***************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -19723,7 +21691,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _hookBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hook-base */ "../core/common/assets/js/api/modules/hook-base.js"));
+var _hookBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hook-base */ "../modules/web-cli/assets/js/modules/hook-base.js"));
 
 var Base = /*#__PURE__*/function (_HookBase) {
   (0, _inherits2.default)(Base, _HookBase);
@@ -19750,9 +21718,9 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/hooks/data/dependency.js":
+/***/ "../modules/web-cli/assets/js/modules/hooks/data/dependency.js":
 /*!*********************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/data/dependency.js ***!
+  !*** ../modules/web-cli/assets/js/modules/hooks/data/dependency.js ***!
   \*********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -19777,7 +21745,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/data/base.js"));
+var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../modules/web-cli/assets/js/modules/hooks/data/base.js"));
 
 var Dependency = /*#__PURE__*/function (_Base) {
   (0, _inherits2.default)(Dependency, _Base);
@@ -19804,9 +21772,9 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/hooks/ui/after.js":
+/***/ "../modules/web-cli/assets/js/modules/hooks/ui/after.js":
 /*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/ui/after.js ***!
+  !*** ../modules/web-cli/assets/js/modules/hooks/ui/after.js ***!
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -19831,7 +21799,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/ui/base.js"));
+var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../modules/web-cli/assets/js/modules/hooks/ui/base.js"));
 
 var After = /*#__PURE__*/function (_Base) {
   (0, _inherits2.default)(After, _Base);
@@ -19858,9 +21826,9 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/hooks/ui/base.js":
+/***/ "../modules/web-cli/assets/js/modules/hooks/ui/base.js":
 /*!*************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/ui/base.js ***!
+  !*** ../modules/web-cli/assets/js/modules/hooks/ui/base.js ***!
   \*************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -19885,7 +21853,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _hookBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hook-base */ "../core/common/assets/js/api/modules/hook-base.js"));
+var _hookBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hook-base */ "../modules/web-cli/assets/js/modules/hook-base.js"));
 
 var Base = /*#__PURE__*/function (_HookBase) {
   (0, _inherits2.default)(Base, _HookBase);
@@ -19912,9 +21880,9 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/hooks/ui/before.js":
+/***/ "../modules/web-cli/assets/js/modules/hooks/ui/before.js":
 /*!***************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/ui/before.js ***!
+  !*** ../modules/web-cli/assets/js/modules/hooks/ui/before.js ***!
   \***************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -19939,7 +21907,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/ui/base.js"));
+var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../modules/web-cli/assets/js/modules/hooks/ui/base.js"));
 
 var Before = /*#__PURE__*/function (_Base) {
   (0, _inherits2.default)(Before, _Base);
@@ -19966,9 +21934,9 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/modules/hooks/ui/catch.js":
+/***/ "../modules/web-cli/assets/js/modules/hooks/ui/catch.js":
 /*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/ui/catch.js ***!
+  !*** ../modules/web-cli/assets/js/modules/hooks/ui/catch.js ***!
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -19993,7 +21961,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/ui/base.js"));
+var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../modules/web-cli/assets/js/modules/hooks/ui/base.js"));
 
 var Catch = /*#__PURE__*/function (_Base) {
   (0, _inherits2.default)(Catch, _Base);
@@ -20020,9 +21988,90 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/utils/environment.js":
+/***/ "../modules/web-cli/assets/js/utils/force-method-implementation.js":
+/*!*************************************************************************!*\
+  !*** ../modules/web-cli/assets/js/utils/force-method-implementation.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.ForceMethodImplementation = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
+
+__webpack_require__(/*! core-js/modules/es6.string.starts-with.js */ "../node_modules/core-js/modules/es6.string.starts-with.js");
+
+__webpack_require__(/*! core-js/modules/es6.string.includes.js */ "../node_modules/core-js/modules/es6.string.includes.js");
+
+__webpack_require__(/*! core-js/modules/es7.array.includes.js */ "../node_modules/core-js/modules/es7.array.includes.js");
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _wrapNativeSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/wrapNativeSuper */ "../node_modules/@babel/runtime-corejs2/helpers/wrapNativeSuper.js"));
+
+// TODO: Copied from `assets/dev/js/modules/imports/force-method-implementation.js`;
+var ForceMethodImplementation = /*#__PURE__*/function (_Error) {
+  (0, _inherits2.default)(ForceMethodImplementation, _Error);
+
+  var _super = (0, _createSuper2.default)(ForceMethodImplementation);
+
+  function ForceMethodImplementation() {
+    var _this;
+
+    var info = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    (0, _classCallCheck2.default)(this, ForceMethodImplementation);
+    _this = _super.call(this, "".concat(info.isStatic ? 'static ' : '').concat(info.fullName, "() should be implemented, please provide '").concat(info.functionName || info.fullName, "' functionality."));
+    Error.captureStackTrace((0, _assertThisInitialized2.default)(_this), ForceMethodImplementation);
+    return _this;
+  }
+
+  return ForceMethodImplementation;
+}( /*#__PURE__*/(0, _wrapNativeSuper2.default)(Error));
+
+exports.ForceMethodImplementation = ForceMethodImplementation;
+
+var _default = function _default() {
+  var stack = Error().stack,
+      caller = stack.split('\n')[2].trim(),
+      callerName = caller.startsWith('at new') ? 'constructor' : caller.split(' ')[1],
+      info = {};
+  info.functionName = callerName;
+  info.fullName = callerName;
+
+  if (info.functionName.includes('.')) {
+    var parts = info.functionName.split('.');
+    info.className = parts[0];
+    info.functionName = parts[1];
+  } else {
+    info.isStatic = true;
+  }
+
+  throw new ForceMethodImplementation(info);
+};
+
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/utils/helpers.js":
 /*!*****************************************************!*\
-  !*** ../core/common/assets/js/utils/environment.js ***!
+  !*** ../modules/web-cli/assets/js/utils/helpers.js ***!
   \*****************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -20031,56 +22080,115 @@ exports["default"] = _default;
 
 var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
 _Object$defineProperty(exports, "__esModule", {
   value: true
 });
 
 exports["default"] = void 0;
 
+__webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "../node_modules/core-js/modules/es6.regexp.replace.js");
+
 __webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
 
 __webpack_require__(/*! core-js/modules/es6.regexp.to-string.js */ "../node_modules/core-js/modules/es6.regexp.to-string.js");
 
-var matchUserAgent = function matchUserAgent(UserAgentStr) {
-  return userAgent.indexOf(UserAgentStr) >= 0;
-},
-    userAgent = navigator.userAgent,
-    // Solution influenced by https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-// Opera 8.0+
-isOpera = !!window.opr && !!opr.addons || !!window.opera || matchUserAgent(' OPR/'),
-    // Firefox 1.0+
-isFirefox = matchUserAgent('Firefox'),
-    // Safari 3.0+ "[object HTMLElementConstructor]"
-isSafari = /^((?!chrome|android).)*safari/i.test(userAgent) || /constructor/i.test(window.HTMLElement) || function (p) {
-  return '[object SafariRemoteNotification]' === p.toString();
-}(!window.safari || typeof safari !== 'undefined' && safari.pushNotification),
-    // Internet Explorer 6-11
-isIE = /Trident|MSIE/.test(userAgent) && (
-/*@cc_on!@*/
- false || !!document.documentMode),
-    // Edge 20+
-isEdge = !isIE && !!window.StyleMedia || matchUserAgent('Edg'),
-    // Google Chrome (Not accurate)
-isChrome = !!window.chrome && matchUserAgent('Chrome') && !(isEdge || isOpera),
-    // Blink engine
-isBlink = matchUserAgent('Chrome') && !!window.CSS,
-    // Apple Webkit engine
-isAppleWebkit = matchUserAgent('AppleWebKit') && !isBlink,
-    environment = {
-  appleWebkit: isAppleWebkit,
-  blink: isBlink,
-  chrome: isChrome,
-  edge: isEdge,
-  firefox: isFirefox,
-  ie: isIE,
-  mac: matchUserAgent('Macintosh'),
-  opera: isOpera,
-  safari: isSafari,
-  webkit: matchUserAgent('AppleWebKit')
-};
+var _stringify = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/json/stringify */ "../node_modules/@babel/runtime-corejs2/core-js/json/stringify.js"));
 
-var _default = environment;
-exports["default"] = _default;
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+// TODO: Copied from `core/common/assets/js/utils/helpers.js` and modified into static functions.
+var Helpers = /*#__PURE__*/function () {
+  function Helpers() {
+    (0, _classCallCheck2.default)(this, Helpers);
+  }
+
+  (0, _createClass2.default)(Helpers, null, [{
+    key: "softDeprecated",
+    value: function softDeprecated(name, version, replacement) {
+      if (elementorWebCliConfig.isDebug) {
+        this.deprecatedMessage('soft', name, version, replacement);
+      }
+    }
+  }, {
+    key: "hardDeprecated",
+    value: function hardDeprecated(name, version, replacement) {
+      this.deprecatedMessage('hard', name, version, replacement);
+    }
+  }, {
+    key: "deprecatedMessage",
+    value: function deprecatedMessage(type, name, version, replacement) {
+      var message = "`".concat(name, "` is ").concat(type, " deprecated since ").concat(version);
+
+      if (replacement) {
+        message += " - Use `".concat(replacement, "` instead");
+      }
+
+      this.consoleWarn(message);
+    }
+  }, {
+    key: "consoleWarn",
+    value: function consoleWarn() {
+      var _console;
+
+      var style = "font-size: 12px; background-image: url(\"".concat(elementorWebCliConfig.urls.assets, "images/logo-icon.png\"); background-repeat: no-repeat; background-size: contain;");
+
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      args.unshift('%c  %c', style, '');
+
+      (_console = console).warn.apply(_console, args); // eslint-disable-line no-console
+
+    }
+  }, {
+    key: "consoleError",
+    value: function consoleError(message) {
+      // TODO: function is part of $e.
+      // Show an error if devTools is available.
+      if ($e.devTools) {
+        $e.devTools.log.error(message);
+      } // If not a 'Hook-Break' then show error.
+
+
+      if (!(message instanceof $e.modules.HookBreak)) {
+        // eslint-disable-next-line no-console
+        console.error(message);
+      }
+    }
+  }, {
+    key: "deprecatedMethod",
+    value: function deprecatedMethod(methodName, version, replacement) {
+      this.deprecatedMessage('hard', methodName, version, replacement); // This itself is deprecated.
+
+      this.softDeprecated('Helpers.deprecatedMethod', '2.8.0', 'Helpers.softDeprecated || Helpers.hardDeprecated');
+    }
+  }, {
+    key: "cloneObject",
+    value: function cloneObject(object) {
+      return JSON.parse((0, _stringify.default)(object));
+    }
+  }, {
+    key: "upperCaseWords",
+    value: function upperCaseWords(string) {
+      return (string + '').replace(/^(.)|\s+(.)/g, function ($1) {
+        return $1.toUpperCase();
+      });
+    }
+  }, {
+    key: "getUniqueId",
+    value: function getUniqueId() {
+      return Math.random().toString(16).substr(2, 7);
+    }
+  }]);
+  return Helpers;
+}();
+
+exports["default"] = Helpers;
 
 /***/ }),
 
@@ -20105,6 +22213,21 @@ module.exports = __webpack_require__(/*! ../../modules/_core */ "../node_modules
 
 __webpack_require__(/*! ../../modules/es6.array.is-array */ "../node_modules/core-js/library/modules/es6.array.is-array.js");
 module.exports = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Array.isArray;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/json/stringify.js":
+/*!************************************************************!*\
+  !*** ../node_modules/core-js/library/fn/json/stringify.js ***!
+  \************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var core = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js");
+var $JSON = core.JSON || (core.JSON = { stringify: JSON.stringify });
+module.exports = function stringify(it) { // eslint-disable-line no-unused-vars
+  return $JSON.stringify.apply($JSON, arguments);
+};
 
 
 /***/ }),
@@ -25954,6 +28077,45 @@ $export($export.P + $export.F * !__webpack_require__(/*! ./_strict-method */ "..
 
 /***/ }),
 
+/***/ "../node_modules/core-js/modules/es6.array.slice.js":
+/*!**********************************************************!*\
+  !*** ../node_modules/core-js/modules/es6.array.slice.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/modules/_export.js");
+var html = __webpack_require__(/*! ./_html */ "../node_modules/core-js/modules/_html.js");
+var cof = __webpack_require__(/*! ./_cof */ "../node_modules/core-js/modules/_cof.js");
+var toAbsoluteIndex = __webpack_require__(/*! ./_to-absolute-index */ "../node_modules/core-js/modules/_to-absolute-index.js");
+var toLength = __webpack_require__(/*! ./_to-length */ "../node_modules/core-js/modules/_to-length.js");
+var arraySlice = [].slice;
+
+// fallback for not array-like ES3 strings and DOM objects
+$export($export.P + $export.F * __webpack_require__(/*! ./_fails */ "../node_modules/core-js/modules/_fails.js")(function () {
+  if (html) arraySlice.call(html);
+}), 'Array', {
+  slice: function slice(begin, end) {
+    var len = toLength(this.length);
+    var klass = cof(this);
+    end = end === undefined ? len : end;
+    if (klass == 'Array') return arraySlice.call(this, begin, end);
+    var start = toAbsoluteIndex(begin, len);
+    var upTo = toAbsoluteIndex(end, len);
+    var size = toLength(upTo - start);
+    var cloned = new Array(size);
+    var i = 0;
+    for (; i < size; i++) cloned[i] = klass == 'String'
+      ? this.charAt(start + i)
+      : this[start + i];
+    return cloned;
+  }
+});
+
+
+/***/ }),
+
 /***/ "../node_modules/core-js/modules/es6.function.name.js":
 /*!************************************************************!*\
   !*** ../node_modules/core-js/modules/es6.function.name.js ***!
@@ -26576,6 +28738,35 @@ __webpack_require__(/*! ./_iter-define */ "../node_modules/core-js/modules/_iter
   point = $at(O, index);
   this._i += point.length;
   return { value: point, done: false };
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/modules/es6.string.starts-with.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/core-js/modules/es6.string.starts-with.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+// 21.1.3.18 String.prototype.startsWith(searchString [, position ])
+
+var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/modules/_export.js");
+var toLength = __webpack_require__(/*! ./_to-length */ "../node_modules/core-js/modules/_to-length.js");
+var context = __webpack_require__(/*! ./_string-context */ "../node_modules/core-js/modules/_string-context.js");
+var STARTS_WITH = 'startsWith';
+var $startsWith = ''[STARTS_WITH];
+
+$export($export.P + $export.F * __webpack_require__(/*! ./_fails-is-regexp */ "../node_modules/core-js/modules/_fails-is-regexp.js")(STARTS_WITH), 'String', {
+  startsWith: function startsWith(searchString /* , position = 0 */) {
+    var that = context(this, searchString, STARTS_WITH);
+    var index = toLength(Math.min(arguments.length > 1 ? arguments[1] : undefined, that.length));
+    var search = String(searchString);
+    return $startsWith
+      ? $startsWith.call(that, search, index)
+      : that.slice(index, index + search.length) === search;
+  }
 });
 
 

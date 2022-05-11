@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Css_Filter;
@@ -15,13 +15,18 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class TaxonomyTermsList extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
         return ['dce-list'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $taxonomies = \DynamicContentForElementor\Helper::get_taxonomies();
         $this->start_controls_section('section_content', ['label' => $this->get_title()]);
@@ -40,8 +45,7 @@ class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\W
         $this->add_control('dce_tax_order', ['label' => __('Sorting', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['ASC' => ['title' => __('ASC', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-sort-up'], 'DESC' => ['title' => __('DESC', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-sort-down']], 'toggle' => \false, 'default' => 'ASC']);
         $this->add_control('heading_options_menu', ['label' => __('Options', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_control('show_taxonomy', ['label' => __('Show Taxonomy Name', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '1']);
-        //
-        $this->add_control('tax_text', ['label' => __('Custom Taxonomy Name', 'dynamic-content-for-elementor'), 'description' => __('If you do not want to use your native label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'condition' => ['show_taxonomy' => '1']]);
+        $this->add_control('tax_text', ['label' => __('Custom Taxonomy Name', 'dynamic-content-for-elementor'), 'description' => __("If you don't want to use your native label", 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'condition' => ['show_taxonomy' => '1']]);
         $this->add_control('tax_link', ['label' => __('Custom Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['show_taxonomy' => '1', 'tax_text!' => ''], 'default' => ['url' => ''], 'show_label' => \false]);
         $this->add_control('show_childlist', ['label' => __('Show Child List', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '1']);
         $this->add_control('show_childlist_depth', ['label' => __('Max Child Depth', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 0, 'condition' => ['show_childlist' => '1']]);
@@ -53,11 +57,11 @@ class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\W
         $this->add_responsive_control('menu_space', ['label' => __('Header Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu .dce-parent-title' => 'margin-bottom: calc( {{SIZE}}{{UNIT}} / 2);', '{{WRAPPER}} .dce-menu hr' => 'margin-bottom: calc( {{SIZE}}{{UNIT}} / 2);', '{{WRAPPER}} .dce-menu div.box' => 'padding: {{SIZE}}{{UNIT}};'], 'condition' => ['show_taxonomy' => '1']]);
         $this->add_responsive_control('item_width', ['label' => __('Items width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'size_units' => ['%', 'px'], 'range' => ['px' => ['min' => 0, 'max' => 300], '%' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu.horizontal li' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['menu_style' => 'horizontal']]);
         $this->add_responsive_control('menu_list_space', ['label' => __('List Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu ul.first-level > li' => 'margin-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['show_childlist' => '1']]);
-        $this->add_responsive_control('menu_indent', ['label' => __('Indent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu.vertical li' => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .dce-menu.vertical li .dce-term-separator' => 'margin-left: -{{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};'], 'condition' => ['menu_style' => 'vertical']]);
+        $this->add_responsive_control('menu_indent', ['label' => __('Indent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu li' => 'padding-left: {{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .dce-menu li .dce-term-separator' => 'margin-left: -{{SIZE}}{{UNIT}}; padding-right: {{SIZE}}{{UNIT}};']]);
         if (Helper::is_acf_active()) {
-            $this->add_control('heading_image_acf', ['label' => __('Term image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
+            $this->add_control('heading_image_acf', ['label' => __('Term Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
             $this->add_control('image_acf_enable', ['label' => __('Enable', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
-            $this->add_control('acf_field_image', ['label' => __('Image Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'term', 'condition' => ['image_acf_enable!' => '']]);
+            $this->add_control('acf_field_image', ['label' => __('Image Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'term', 'condition' => ['image_acf_enable!' => '']]);
             $this->add_group_control(Group_Control_Image_Size::get_type(), ['name' => 'size', 'label' => __('Image Size', 'dynamic-content-for-elementor'), 'default' => 'large', 'render_type' => 'template', 'condition' => ['image_acf_enable!' => '']]);
             $this->add_control('block_enable', ['label' => __('Block', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'block', 'selectors' => ['{{WRAPPER}} .dce-menu li img' => 'display: {{VALUE}};'], 'condition' => ['image_acf_enable!' => '']]);
             $this->add_control('image_acf_space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-menu li img' => 'margin-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['image_acf_enable!' => '', 'block_enable' => 'block']]);
@@ -102,7 +106,7 @@ class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\W
         $this->add_responsive_control('dce_image_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'selectors' => ['{{WRAPPER}} .dce-menu li img' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -115,7 +119,7 @@ class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\W
                 if (\get_class($queried_object) == 'WP_Term') {
                     $term_ID = $queried_object->term_id;
                     $term_ID_parent = $queried_object->parent;
-                    $terms_args = array('taxonomy' => $queried_object->taxonomy, 'hide_empty' => $settings['hide_empty'] ? \true : \false, 'orderby' => $settings['dce_tax_orderby'], 'order' => $settings['dce_tax_order']);
+                    $terms_args = array('taxonomy' => $queried_object->taxonomy, 'hide_empty' => !empty($settings['hide_empty']) ? \true : \false, 'orderby' => $settings['dce_tax_orderby'], 'order' => $settings['dce_tax_order']);
                     $parentTerm = $settings['prent_term_' . $settings['taxonomy_select']];
                     if ($parentTerm == 'my_parent') {
                         $terms_args['parent'] = $term_ID_parent;
@@ -126,12 +130,12 @@ class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\W
                 }
             }
             if ($queried_object && \get_class($queried_object) == 'WP_Post' || $id_page && Helper::in_the_loop()) {
-                $terms = wp_get_post_terms($id_page, $settings['taxonomy_select'], array('hide_empty' => $settings['hide_empty'] ? \true : \false, 'orderby' => $settings['dce_tax_orderby'], 'order' => $settings['dce_tax_order']));
+                $terms = wp_get_post_terms($id_page, $settings['taxonomy_select'], array('hide_empty' => !empty($settings['hide_empty']) ? \true : \false, 'orderby' => $settings['dce_tax_orderby'], 'order' => $settings['dce_tax_order']));
             }
         } else {
             // Taxonomy Not Dynamic
             $parentTerm = $settings['prent_term_' . $settings['taxonomy_select']];
-            $terms_args = array('taxonomy' => $settings['taxonomy_select'], 'hide_empty' => $settings['hide_empty'] ? \true : \false, 'orderby' => $settings['dce_tax_orderby'], 'order' => $settings['dce_tax_order']);
+            $terms_args = array('taxonomy' => $settings['taxonomy_select'], 'hide_empty' => !empty($settings['hide_empty']) ? \true : \false, 'orderby' => $settings['dce_tax_orderby'], 'order' => $settings['dce_tax_order']);
             if ($parentTerm) {
                 $terms_args['parent'] = $parentTerm;
             } else {
@@ -164,6 +168,9 @@ class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\W
                     $taxlink = $settings['tax_link']['url'];
                 } elseif ($parentTaxonomy) {
                     $taxlink = get_term_link((int) $parentTaxonomy);
+                    if (is_wp_error($taxlink)) {
+                        $taxlink = '';
+                    }
                 } else {
                     $taxlink = get_post_type_archive_link($settings['taxonomy_select']);
                 }
@@ -272,7 +279,7 @@ class DCE_Widget_TaxonomyTermsMenu extends \DynamicContentForElementor\Widgets\W
         if ($settings['show_childlist_depth'] !== '' && $level > $settings['show_childlist_depth']) {
             return 0;
         }
-        $terms_args = array('taxonomy' => $settings['taxonomy_select'], 'hide_empty' => $settings['hide_empty'] ? \true : \false, 'orderby' => $settings['dce_tax_orderby'], 'order' => $settings['dce_tax_order'], 'parent' => $parent);
+        $terms_args = array('taxonomy' => $settings['taxonomy_select'], 'hide_empty' => !empty($settings['hide_empty']) ? \true : \false, 'orderby' => $settings['dce_tax_orderby'], 'order' => $settings['dce_tax_order'], 'parent' => $parent);
         if ($settings['taxonomy_dynamic']) {
             $queried_object = get_queried_object();
             if ($queried_object && \get_class($queried_object) == 'WP_Post') {

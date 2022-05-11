@@ -48,39 +48,13 @@ class Hydrator
     }
     public static function getHydrator($class)
     {
-        if ('stdClass' === $class) {
-            return self::$hydrators[$class] = static function ($properties, $objects) {
-                foreach ($properties as $name => $values) {
-                    foreach ($values as $i => $v) {
-                        $objects[$i]->{$name} = $v;
-                    }
-                }
-            };
-        }
-        if (!\class_exists($class) && !\interface_exists($class, \false) && !\trait_exists($class, \false)) {
-            throw new ClassNotFoundException($class);
-        }
-        $classReflector = new \ReflectionClass($class);
-        if (!$classReflector->isInternal()) {
-            return self::$hydrators[$class] = (self::$hydrators['stdClass'] ?? self::getHydrator('stdClass'))->bindTo(null, $class);
-        }
-        if ($classReflector->name !== $class) {
-            return self::$hydrators[$classReflector->name] ?? self::getHydrator($classReflector->name);
-        }
         switch ($class) {
-            case 'ArrayIterator':
-            case 'ArrayObject':
-                $constructor = \Closure::fromCallable([$classReflector->getConstructor(), 'invokeArgs']);
-                return self::$hydrators[$class] = static function ($properties, $objects) use($constructor) {
+            case 'stdClass':
+                return self::$hydrators[$class] = static function ($properties, $objects) {
                     foreach ($properties as $name => $values) {
-                        if ("\x00" !== $name) {
-                            foreach ($values as $i => $v) {
-                                $objects[$i]->{$name} = $v;
-                            }
+                        foreach ($values as $i => $v) {
+                            $objects[$i]->{$name} = $v;
                         }
-                    }
-                    foreach ($properties["\x00"] ?? [] as $i => $v) {
-                        $constructor($objects[$i], $v);
                     }
                 };
             case 'ErrorException':
@@ -107,6 +81,33 @@ class Hydrator
                         }
                     }
                 };
+        }
+        if (!\class_exists($class) && !\interface_exists($class, \false) && !\trait_exists($class, \false)) {
+            throw new ClassNotFoundException($class);
+        }
+        $classReflector = new \ReflectionClass($class);
+        switch ($class) {
+            case 'ArrayIterator':
+            case 'ArrayObject':
+                $constructor = \Closure::fromCallable([$classReflector->getConstructor(), 'invokeArgs']);
+                return self::$hydrators[$class] = static function ($properties, $objects) use($constructor) {
+                    foreach ($properties as $name => $values) {
+                        if ("\x00" !== $name) {
+                            foreach ($values as $i => $v) {
+                                $objects[$i]->{$name} = $v;
+                            }
+                        }
+                    }
+                    foreach ($properties["\x00"] ?? [] as $i => $v) {
+                        $constructor($objects[$i], $v);
+                    }
+                };
+        }
+        if (!$classReflector->isInternal()) {
+            return self::$hydrators[$class] = (self::$hydrators['stdClass'] ?? self::getHydrator('stdClass'))->bindTo(null, $class);
+        }
+        if ($classReflector->name !== $class) {
+            return self::$hydrators[$classReflector->name] ?? self::getHydrator($classReflector->name);
         }
         $propertySetters = [];
         foreach ($classReflector->getProperties() as $propertyReflector) {

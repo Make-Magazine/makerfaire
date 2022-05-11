@@ -43,19 +43,15 @@
 
     };
     $(window).on('pronto.render', function (event, eventInfo) {
-        var target = eventInfo.target || eventInfo.srcElement;
         if (typeof eventInfo.delegateTarget !== 'undefined') {
             var element_el = $(eventInfo.delegateTarget.innerHTML).find('.elementor-element');
 
             element_el.each(function (i) {
-                var el = jQuery(this).data('element_type');
                 elementorFrontend.elementsHandler.runReadyTrigger(jQuery(this));
             });
         }
-
         $(window).trigger('elementor/frontend/init');
         $(window).trigger('ready');
-
     });
     // Make sure you run this code under Elementor..
     $(window).on('elementor/frontend/init', function () {

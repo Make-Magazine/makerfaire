@@ -118,8 +118,8 @@ class Views_Route extends Route {
 		}
 
 		/**
-		 * @filter `gravityview/rest/entry/fields` Whitelist more entry fields that are output in regular REST requests.
-		 * @param[in,out] array $allowed The allowed ones, default by_visible, by_position( "context_*" ), i.e. as set in the view.
+		 * @filter `gravityview/rest/entry/fields` Allow more entry fields that are output in regular REST requests.
+		 * @param array $allowed The allowed ones, default by_visible, by_position( "context_*" ), i.e. as set in the view.
 		 * @param \GV\View $view The view.
 		 * @param \GV\Entry $entry The entry.
 		 * @param \WP_REST_Request $request Request object.
@@ -140,7 +140,7 @@ class Views_Route extends Route {
 		$return = array();
 
 		$renderer = new \GV\Field_Renderer();
-		
+
 		$used_ids = array();
 
 		foreach ( $allowed as $field ) {
@@ -164,7 +164,7 @@ class Views_Route extends Route {
 
 			/**
 			 * @filter `gravityview/api/field/key` Filter the key name in the results for JSON output.
-			 * @param[in,out] string $field_id The ID. Should be unique or keys will be gobbled up.
+			 * @param string $field_id The ID. Should be unique or keys will be gobbled up.
 			 * @param \GV\View $view The view.
 			 * @param \GV\Entry $entry The entry.
 			 * @param \WP_REST_Request $request Request object.
@@ -438,9 +438,9 @@ class Views_Route extends Route {
 				case 'not_public':
 				case 'embed_only':
 				case 'no_direct_access':
-					return new \WP_Error( 'rest_forbidden', __( 'You are not allowed to access this content.', 'gravityview' ) );
+					return new \WP_Error( 'rest_forbidden_access_denied', __( 'You are not allowed to access this content.', 'gravityview' ) );
 				case 'no_form_attached':
-					return new \WP_Error( 'rest_forbidden', __( 'This View is not configured properly.', 'gravityview' ) );
+					return new \WP_Error( 'rest_forbidden_no_form_attached', __( 'This View is not configured properly.', 'gravityview' ) );
 				default:
 					return new \WP_Error( 'rest_forbidden', __( 'You are not allowed to access this content.', 'gravityview' ) );
 			}
@@ -448,7 +448,7 @@ class Views_Route extends Route {
 
 		/**
 		 * @filter `gravityview/view/output/rest` Disable rest output. Final chance.
-		 * @param[in,out] bool Enable or not.
+		 * @param bool Enable or not.
 		 * @param \GV\View $view The view.
 		 */
 		if ( ! apply_filters( 'gravityview/view/output/rest', true, $view ) ) {

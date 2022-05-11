@@ -3931,7 +3931,7 @@ msgstr ""
 
 #: inc/Admin/CFF_Global_Settings.php:868
 msgid ""
-"The maximum image resoltuion will be 700px wide in the lightbox. If your images "
+"The maximum image resolution will be 700px wide in the lightbox. If your images "
 "are smaller, reset the “resized images” using the button in “Advanced” section."
 msgstr ""
 

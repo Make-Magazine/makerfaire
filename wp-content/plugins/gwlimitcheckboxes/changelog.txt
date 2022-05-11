@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.4
+
+	- Improved compatibility with GP Populate Anything.
+
 ## 1.3.3
 
 	- Fixed issue where non-editable fields were being validated on Gravity Flow User Input steps.

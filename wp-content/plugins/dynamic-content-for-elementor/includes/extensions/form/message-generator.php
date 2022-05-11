@@ -16,7 +16,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Message extends \ElementorPro\Modules\Forms\Classes\Action_Base
+class MessageGenerator extends \ElementorPro\Modules\Forms\Classes\Action_Base
 {
     use ExtensionInfo;
     public $has_action = \true;
@@ -43,7 +43,7 @@ class DCE_Extension_Form_Message extends \ElementorPro\Modules\Forms\Classes\Act
      */
     public function get_label()
     {
-        return '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Message Generator', 'dynamic-content-for-elementor');
+        return '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Message Generator', 'dynamic-content-for-elementor');
     }
     public function get_script_depends()
     {
@@ -64,8 +64,8 @@ class DCE_Extension_Form_Message extends \ElementorPro\Modules\Forms\Classes\Act
     public function register_settings_section($widget)
     {
         $widget->start_controls_section('section_dce_form_message', ['label' => $this->get_label(), 'condition' => ['submit_actions' => $this->get_name()]]);
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && !current_user_can('administrator')) {
-            $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="elementor-panel-alert elementor-panel-alert-warning">' . __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor') . '</div>']);
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
+            $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             $widget->end_controls_section();
             return;
         }
@@ -80,6 +80,27 @@ class DCE_Extension_Form_Message extends \ElementorPro\Modules\Forms\Classes\Act
         $widget->add_control('dce_form_message_close_position', ['label' => __('Close button Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'selectors' => ['{{WRAPPER}} .elementor-message-dce' => 'position: relative;', '{{WRAPPER}} .elementor-message-btn-dismiss' => 'position: absolute; top: 0; {{VALUE}}: 0; cursor: pointer;'], 'toggle' => \false, 'default' => 'right', 'condition' => ['dce_form_message_close!' => '']]);
         $widget->add_control('dce_form_message_hide', ['label' => __('Hide Form after submit', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $widget->add_control('dce_form_message_help', ['type' => \Elementor\Controls_Manager::RAW_HTML, 'raw' => '<div id="elementor-panel__editor__help" class="p-0"><a id="elementor-panel__editor__help__link" href="' . $this->get_docs() . '" target="_blank">' . __('Need Help', 'dynamic-content-for-elementor') . ' <i class="eicon-help-o"></i></a></div>', 'separator' => 'before']);
+        $widget->end_controls_section();
+    }
+    public function add_style($widget, $args)
+    {
+        $widget->start_controls_section('dce_section_message_generator_style', ['label' => '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Message Generator', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
+        $widget->add_control('success_message_header', ['label' => __('Success Message', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
+        $widget->add_group_control(Group_Control_Background::get_type(), ['name' => 'success_message_bgcolor', 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .elementor-message.elementor-message-success']);
+        $widget->add_group_control(Group_Control_Border::get_type(), ['name' => 'success_message_border', 'selector' => '{{WRAPPER}} .elementor-message.elementor-message-success']);
+        $widget->add_control('success_message_border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-success' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
+        $widget->add_responsive_control('success_message_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-success' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
+        $widget->add_responsive_control('success_message_margin', ['label' => __('Margin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-success' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
+        $widget->add_responsive_control('success_message_width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => '%'], 'tablet_default' => ['unit' => '%'], 'mobile_default' => ['unit' => '%'], 'size_units' => ['%', 'px', 'vw'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 1000], 'vw' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-success' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['dce_form_message_text_floating!' => '']]);
+        $widget->add_control('error_message_header', ['label' => __('Error Message', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
+        $widget->add_group_control(Group_Control_Background::get_type(), ['name' => 'error_message_bgcolor', 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .elementor-message.elementor-message-danger']);
+        $widget->add_group_control(Group_Control_Border::get_type(), ['name' => 'error_message_border', 'selector' => '{{WRAPPER}} .elementor-message.elementor-message-danger']);
+        $widget->add_control('error_message_border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-danger' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
+        $widget->add_responsive_control('error_message_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-danger' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
+        $widget->add_responsive_control('error_message_margin', ['label' => __('Margin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-danger' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
+        $widget->add_responsive_control('error_message_width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => '%'], 'tablet_default' => ['unit' => '%'], 'mobile_default' => ['unit' => '%'], 'size_units' => ['%', 'px', 'vw'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 1000], 'vw' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-danger' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['dce_form_message_text_floating!' => '']]);
+        $widget->add_control('inline_message_header', ['label' => __('Inline Message', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
+        $widget->add_group_control(Group_Control_Background::get_type(), ['name' => 'inline_message_bgcolor', 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .elementor-message.elementor-help-inline']);
         $widget->end_controls_section();
     }
     /**
@@ -143,39 +164,17 @@ class DCE_Extension_Form_Message extends \ElementorPro\Modules\Forms\Classes\Act
             $message_html .= '<div class="elementor-message-btn-dismiss" onClick="jQuery(this).parent().fadeOut();"><i class="eicon-editor-close" aria-hidden="true"></i></div>';
         }
         if ($settings['dce_form_message_hide']) {
-            $message_html .= '<style>.elementor-element-' . $element_id . ' .elementor-form-fields-wrapper, .elementor-element-' . $element_id . ' .dce-form-progressbar {display: none !important;}</style>';
+            $message_html .= '<style>.elementor-element-' . $element_id . ' .elementor-form-fields-wrapper,';
+            $message_html .= '.elementor-element-' . $element_id . ' .dce-form-progressbar,';
+            // Steps:
+            $message_html .= '.elementor-element-' . $element_id . ' .e-form__indicators {display: none !important;}</style>';
         }
         $message_html = Helper::get_dynamic_value($message_html, $fields);
         if ($ajax_handler->is_success) {
-            wp_send_json_success(['message' => $message_html, 'data' => $ajax_handler->data]);
-            die;
+            add_action('elementor_pro/forms/new_record', function ($record, $ajax_handler) use($message_html) {
+                wp_send_json_success(['message' => $message_html, 'data' => $ajax_handler->data]);
+            }, 100000, 2);
         }
         $ajax_handler->add_error_message($message_html);
-    }
-    public static function _add_to_form(Controls_Stack $element, $control_id, $control_data, $options = [])
-    {
-        if ($control_id == 'success_message_color') {
-            $element->add_control('success_message_header', ['label' => __('Success Message', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
-            $element->add_group_control(Group_Control_Background::get_type(), ['name' => 'success_message_bgcolor', 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .elementor-message.elementor-message-success']);
-            $element->add_group_control(Group_Control_Border::get_type(), ['name' => 'success_message_border', 'selector' => '{{WRAPPER}} .elementor-message.elementor-message-success']);
-            $element->add_control('success_message_border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-success' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-            $element->add_responsive_control('success_message_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-success' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-            $element->add_responsive_control('success_message_margin', ['label' => __('Margin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-success' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-            $element->add_responsive_control('success_message_width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => '%'], 'tablet_default' => ['unit' => '%'], 'mobile_default' => ['unit' => '%'], 'size_units' => ['%', 'px', 'vw'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 1000], 'vw' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-success' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['dce_form_message_text_floating!' => '']]);
-        }
-        if ($control_id == 'error_message_color') {
-            $element->add_control('error_message_header', ['label' => __('Error Message', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
-            $element->add_group_control(Group_Control_Background::get_type(), ['name' => 'error_message_bgcolor', 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .elementor-message.elementor-message-error']);
-            $element->add_group_control(Group_Control_Border::get_type(), ['name' => 'error_message_border', 'selector' => '{{WRAPPER}} .elementor-message.elementor-message-error']);
-            $element->add_control('error_message_border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-error' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-            $element->add_responsive_control('error_message_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-error' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-            $element->add_responsive_control('error_message_margin', ['label' => __('Margin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-error' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-            $element->add_responsive_control('error_message_width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => '%'], 'tablet_default' => ['unit' => '%'], 'mobile_default' => ['unit' => '%'], 'size_units' => ['%', 'px', 'vw'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 1000], 'vw' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-error' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['dce_form_message_text_floating!' => '']]);
-        }
-        if ($control_id == 'inline_message_color') {
-            $element->add_control('inline_message_header', ['label' => __('Inline Message', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
-            $element->add_group_control(Group_Control_Background::get_type(), ['name' => 'inline_message_bgcolor', 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .elementor-message.elementor-help-inline']);
-        }
-        return $control_data;
     }
 }

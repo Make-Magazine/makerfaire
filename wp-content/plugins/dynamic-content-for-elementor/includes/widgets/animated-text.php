@@ -4,7 +4,7 @@ namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Repeater;
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
+use Elementor\Core\Schemes\Color as Scheme_Color;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use DynamicContentForElementor\Helper;
@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_AnimateText extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class AnimatedText extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -22,22 +22,12 @@ class DCE_Widget_AnimateText extends \DynamicContentForElementor\Widgets\WidgetP
     {
         return ['dce-animatetext'];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_animateText', ['label' => __('Animated Text', 'dynamic-content-for-elementor')]);
         $this->add_control('animatetext_splittype', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['chars' => __('Chars', 'dynamic-content-for-elementor'), 'words' => __('Words', 'dynamic-content-for-elementor'), 'lines' => __('Lines', 'dynamic-content-for-elementor')], 'frontend_available' => \true, 'default' => 'chars']);
@@ -52,11 +42,11 @@ class DCE_Widget_AnimateText extends \DynamicContentForElementor\Widgets\WidgetP
         $repeater->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography_item', 'label' => 'Typography item', 'selector' => '{{WRAPPER}} .dce-animatetext{{CURRENT_ITEM}}']);
         $repeater->end_controls_tab();
         $repeater->end_controls_tabs();
-        $this->add_control('words', ['label' => __('Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'default' => [['text_word' => __('Type any word', 'dynamic-content-for-elementor')]], 'separator' => 'after', 'frontend_available' => \true, 'fields' => $repeater->get_controls(), 'title_field' => '#', 'title_field' => '{{{ text_word }}}']);
+        $this->add_control('words', ['label' => __('Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'default' => [['text_word' => __('Type any word', 'dynamic-content-for-elementor')]], 'separator' => 'after', 'frontend_available' => \true, 'fields' => $repeater->get_controls(), 'title_field' => '{{{ text_word }}}']);
         $this->add_control('animatetext_repeat', ['label' => __('Repeat', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'label_block' => \false, 'separator' => 'before', 'frontend_available' => \true, 'description' => __('Infinite: -1, repeat it once and hide it: 0', 'dynamic-content-for-elementor'), 'default' => -1, 'min' => -1, 'max' => 25, 'step' => 1]);
         $this->end_controls_section();
         $this->start_controls_section('section_animateText_in', ['label' => __('IN', 'dynamic-content-for-elementor')]);
-        $this->add_control('animatetext_animationstyle_in', ['label' => __('Animation style', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['fading' => __('Fading', 'dynamic-content-for-elementor'), 'from_left' => __('From Left', 'dynamic-content-for-elementor'), 'from_right' => __('From Right', 'dynamic-content-for-elementor'), 'from_top' => __('From Top', 'dynamic-content-for-elementor'), 'from_bottom' => __('From Bottom', 'dynamic-content-for-elementor'), 'zoom_front' => __('Zoom Front', 'dynamic-content-for-elementor'), 'zoom_back' => __('Zoom Back', 'dynamic-content-for-elementor'), 'random_position' => __('Random position', 'dynamic-content-for-elementor'), 'from_bottom' => __('From Bottom', 'dynamic-content-for-elementor')], 'frontend_available' => \true, 'default' => 'fading']);
+        $this->add_control('animatetext_animationstyle_in', ['label' => __('Animation style', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['fading' => __('Fading', 'dynamic-content-for-elementor'), 'from_left' => __('From Left', 'dynamic-content-for-elementor'), 'from_right' => __('From Right', 'dynamic-content-for-elementor'), 'from_top' => __('From Top', 'dynamic-content-for-elementor'), 'from_bottom' => __('From Bottom', 'dynamic-content-for-elementor'), 'zoom_front' => __('Zoom Front', 'dynamic-content-for-elementor'), 'zoom_back' => __('Zoom Back', 'dynamic-content-for-elementor'), 'random_position' => __('Random position', 'dynamic-content-for-elementor')], 'frontend_available' => \true, 'default' => 'fading']);
         $this->add_control('animatetext_splitorigin_in', ['label' => __('Origin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['null' => ['title' => __('Start', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-center'], 'end' => ['title' => __('End', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-right']], 'default' => 'null', 'frontend_available' => \true]);
         $this->add_control('speed_animation_in', ['label' => __('Speed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0.7], 'range' => ['px' => ['min' => 0.2, 'max' => 5, 'step' => 0.1]], 'frontend_available' => \true]);
         $this->add_control('amount_speed_in', ['label' => __('Amount', 'dynamic-content-for-elementor'), 'description' => __('Negative values produce a contrary effect of origin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 1], 'range' => ['px' => ['min' => -100, 'max' => 100, 'step' => 1]], 'frontend_available' => \true]);
@@ -82,7 +72,7 @@ class DCE_Widget_AnimateText extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('blend_mode', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => __('Multiply', 'dynamic-content-for-elementor'), 'screen' => __('Screen', 'dynamic-content-for-elementor'), 'overlay' => __('Overlay', 'dynamic-content-for-elementor'), 'darken' => __('Darken', 'dynamic-content-for-elementor'), 'lighten' => __('Lighten', 'dynamic-content-for-elementor'), 'color-dodge' => __('Color Dodge', 'dynamic-content-for-elementor'), 'saturation' => __('Saturation', 'dynamic-content-for-elementor'), 'color' => __('Color', 'dynamic-content-for-elementor'), 'difference' => __('Difference', 'dynamic-content-for-elementor'), 'exclusion' => __('Exclusion', 'dynamic-content-for-elementor'), 'hue' => __('Hue', 'dynamic-content-for-elementor'), 'luminosity' => __('Luminosity', 'dynamic-content-for-elementor')], 'selectors' => ['{{WRAPPER}} .dce-animatetext' => 'mix-blend-mode: {{VALUE}}'], 'separator' => 'before']);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

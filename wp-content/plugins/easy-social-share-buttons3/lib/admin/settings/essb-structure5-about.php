@@ -15,6 +15,8 @@ $tabs = array( 'about' => '<i class="ti-sharethis"></i> About',
 		);
 $active_tab = isset($_REQUEST['about_tab']) ? $_REQUEST['about_tab'] : 'about';
 
+$help_scroll = false;
+
 $current_tab = (empty ( $_GET ['tab'] )) ? $tab_1 : sanitize_text_field ( urldecode ( $_GET ['tab'] ) );
 $active_settings_page = isset ( $_REQUEST ['page'] ) ? $_REQUEST ['page'] : '';
 if (strpos ( $active_settings_page, 'essb_redirect_' ) !== false) {
@@ -31,6 +33,16 @@ if ($current_tab == 'status') {
 	$active_tab = 'status';
 }
 
+if ($current_tab == 'help') {
+    $active_tab = 'about';
+    $help_scroll = true;
+}
+
+if ($active_tab == 'help') {
+    $active_tab = 'about';
+    $help_scroll = true;
+}
+
 // setting up the default tab if the selected is not existing in the list
 if (!isset($tabs[$active_tab])) { $active_tab = 'about'; }
 
@@ -44,7 +56,23 @@ if (has_filter('essb_unset_activation_page')) {
     }
 }
 
+if ($active_tab == 'activate') {
+    include_once(ESSB3_PLUGIN_ROOT.'lib/admin/helpers/about-page-activate.php');
+    return;
+}
 
+if ($active_tab == 'status') {
+    include_once(ESSB3_PLUGIN_ROOT.'lib/admin/helpers/about-page-status.php');
+    return;
+}
+
+if ($active_tab == 'about') {
+    if ($help_scroll) {
+        include_once(ESSB3_PLUGIN_ROOT.'lib/admin/helpers/about-page-scrollhelp.php');
+    }
+    include_once(ESSB3_PLUGIN_ROOT.'lib/admin/helpers/about-page-about.php');
+    return;
+}
 
 ?>
 

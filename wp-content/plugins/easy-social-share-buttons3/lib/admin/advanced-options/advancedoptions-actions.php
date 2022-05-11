@@ -54,6 +54,10 @@ class ESSBAdvancedOptions {
 		if (! function_exists ( 'essb_get_custom_buttons' )) {
 			include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/helpers/custombuttons-helper.php');
 		}
+		
+		if (! function_exists ( 'essb_get_custom_profile_buttons' )) {
+		    include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/helpers/customprofilebuttons-helper.php');
+		}
 
 		if ($cmd == 'get') {
 			$this->get_options();
@@ -94,6 +98,10 @@ class ESSBAdvancedOptions {
 		if ($cmd == 'remove_custom_button') {
 			$this->remove_custom_button();
 		}
+		
+		if ($cmd == 'remove_custom_profile_button') {
+		    $this->remove_custom_profile_button();
+		}
 
 		if ($cmd == 'reset_command') {
 			$this->reset_plugin_data();
@@ -101,6 +109,14 @@ class ESSBAdvancedOptions {
 
 		if ($cmd == 'conversio_lists') {
 			echo json_encode($this->get_conversio_lists());
+		}
+		
+		if ($cmd == 'clear_subscribe_conversions') {
+		    $this->clear_subscribe_conversions();
+		}
+		
+		if ($cmd == 'clear_share_conversions') {
+		    $this->clear_share_conversions();
 		}
 		
 		/**
@@ -130,9 +146,64 @@ class ESSBAdvancedOptions {
 		if ($cmd == 'enable_automation') {
 		    $this->enable_automation();
 		}
+		
+		if ($cmd == 'migrate') {
+		    $this->legacy_data_migrator();
+		}
+		
+		if ($cmd == 'migrate_clear') {
+		    $this->legacy_data_migrator(true);
+		}
+		
+		if ($cmd == 'export_custom_positions') {
+		    echo $this->export_custom_positions();
+		}
+		
+		if ($cmd == 'import_custom_positions') {
+		    $this->import_custom_positions();
+		}
 
 		// exit command execution
 		wp_die();
+	}
+	
+	public function import_custom_positions() {
+	    $data = isset($_REQUEST['data']) ? $_REQUEST['data'] : '';
+	    
+	    $dataObj = array();
+	    
+	    if ($data != '') {
+	        $data = stripslashes($data);
+	        $dataObj = json_decode($data, true);
+	    }	    
+	    	    
+	    if (is_array($dataObj) && count($dataObj) > 0) {
+	        $positions = get_option('essb_custom_positions');
+	        if (!is_array($positions)) {
+	            $positions = array();
+	        }
+	        
+	        foreach ($dataObj as $key => $name) {
+	            $positions[$key] = $name;
+	        }
+	        
+	        update_option('essb_custom_positions', $positions);
+	    }
+	}
+	
+	public function export_custom_positions() {
+	    $output = '';
+	    
+	    $positions = get_option('essb_custom_positions');
+	    if (!is_array($positions)) {
+	        $positions = array();
+	    }
+	    
+	    if (count($positions) > 0) {
+	        $output = json_encode($positions);
+	    }
+	    
+	    return $output;
 	}
 	
 	/**
@@ -422,6 +493,10 @@ class ESSBAdvancedOptions {
 			$this->load_settings('instagramfeed-shortcode');
 		}
 		
+		if ($current_tab == 'shortcode-ctt') {
+		    $this->load_settings('shortcode-ctt');
+		}
+		
 		if ($current_tab == 'instagramimage-shortcode') {
 			$this->load_settings('instagramimage-shortcode');
 		}
@@ -434,8 +509,20 @@ class ESSBAdvancedOptions {
 			$this->load_settings('button-designer');
 		}
 		
+		if ($current_tab == 'manage-follow-buttons') {
+		    $this->load_settings('button-designer-profile');
+		}
+		
 		if ($current_tab == 'boarding') {
 			$this->load_settings('boarding');
+		}
+		
+		if ($current_tab == 'counter-update-log') {
+		    $this->load_settings('counter-update-log');
+		}
+		
+		if ($current_tab == 'followers-update-log') {
+		    $this->load_settings('followers-update-log');
 		}
 		
 		/**
@@ -486,6 +573,30 @@ class ESSBAdvancedOptions {
 		if ($network_id != '') {
 			essb_remove_custom_button($network_id);
 		}
+	}
+	
+	public function remove_custom_profile_button() {
+	    $network_id = isset($_REQUEST['network_id']) ? $_REQUEST['network_id'] : '';
+	    
+	    if ($network_id != '') {
+	        essb_remove_custom_profile_button($network_id);
+	    }
+	}
+	
+	public function clear_subscribe_conversions() {
+	    if (!class_exists('ESSB_Subscribe_Conversions_Pro')) {
+	        include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-pro/class-subscribe-conversions.php');
+	    }	
+	    
+	    ESSB_Subscribe_Conversions_Pro::clear_data();
+	}
+	
+	public function clear_share_conversions() {
+	    if (!class_exists('ESSB_Share_Conversions_Pro')) {
+	        include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-pro/class-share-conversions.php');
+	    }
+	    
+	    ESSB_Share_Conversions_Pro::clear_data();
 	}
 
 	public function remove_form_design() {
@@ -565,6 +676,9 @@ class ESSBAdvancedOptions {
 		else if ($group == 'essb_options_custom_networks') {
 			$this->save_custom_button($options);
 		}
+		else if ($group == 'essb_options_customprofile_networks') {
+		    $this->save_custom_profile_button($options);
+		}
 		else {
 			// Loading existing saved settings for the options group
 			$current_settings = $this->get_plugin_options($group);
@@ -573,6 +687,12 @@ class ESSBAdvancedOptions {
 				foreach ($options as $key => $value) {
 					$current_settings = $this->apply_settings_value($current_settings, $key, $value);
 					$r[$key] = $value;
+					
+					if ($key == 'use_stylebuilder' && $value == 'true') {
+					    $list_of_styles = isset($options['stylebuilder_css']) ? $options['stylebuilder_css'] : array();
+					    essb_depend_load_function('essb_admin_build_resources', 'lib/admin/helpers/resource-builder-functions.php');
+					    essb_admin_build_resources($list_of_styles);
+					}
 				}
 			}
 
@@ -613,7 +733,7 @@ class ESSBAdvancedOptions {
 		$options = $this->clean_blank_values($options);
 
 		if ($group == '' || $group == 'essb_options') {
-			update_option(ESSB3_OPTIONS_NAME, $options);
+			update_option(ESSB3_OPTIONS_NAME, $options);						
 		}
 
 		$options = apply_filters('essb_advanced_settings_save_options', $group, $options);
@@ -643,6 +763,31 @@ class ESSBAdvancedOptions {
 		}
 		
 		essb_save_custom_buttons($existing);
+	}
+	
+	public function save_custom_profile_button($options = array()) {
+	    $network_id = isset($options['network_id']) ? $options['network_id'] : '';
+	    
+	    $existing = essb_get_custom_profile_buttons();
+	    
+	    
+	    if (isset($existing[$network_id])) {
+	        $existing[$network_id] = array();
+	    }
+	    
+	    foreach ($options as $key => $value) {
+	        if ($key != 'network_button_id' && $key != 'essb_advanced_token' && $key != '_wp_http_referer') {
+	            
+	            // encoding icon to prevent issues with the display
+	            if ($key == 'icon' && $value != '') {
+	                $value = base64_encode($value);
+	            }
+	            
+	            $existing[$network_id][$key] = $value;
+	        }
+	    }
+	    
+	    essb_save_custom_profile_buttons($existing);
 	}
 
 	public function save_subscribe_form($options = array()) {
@@ -713,6 +858,24 @@ class ESSBAdvancedOptions {
 		if ($param == 'functions_mode') {
 			$options = $this->apply_functions_mode($options, $value);
 		}
+		
+		if ($param == 'functions_mode_sharing') {
+		    if ($value != '') {
+		      $options = $this->apply_functions_mode_sharing($options, $value);
+		    }
+		}
+		
+		if ($param == 'functions_mode_other') {
+		    if ($value != '') {
+		        $options = $this->apply_functions_mode_other($options, $value);
+		    }
+		}
+		
+		if ($param == 'functions_mode_optimize') {
+		    if ($value != '') {
+		        $options = $this->apply_functions_mode_optimize($options, $value);
+		    }
+		}
 
 		if ($param == 'activate_mobile_auto') {
 			$options['functions_mode_mobile'] = ($value == 'true') ? 'auto' : '';
@@ -724,6 +887,18 @@ class ESSBAdvancedOptions {
 		        include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-share-analytics/essb-social-share-analytics-backend.php');
 		    }
             ESSBSocialShareAnalyticsBackEnd::install();
+		}
+		
+		// since 8.0
+		if ($param == 'conversions_lite_run' && $value == 'true') {
+		    /**
+		     * @since 8.3 Fix potential problem with missing table
+		     */
+		    if (!class_exists('ESSB_Share_Conversions_Pro')) {
+		        include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-pro/class-share-conversions.php');
+		    }		    
+		    
+		    ESSB_Share_Conversions_Pro::install();
 		}
 		
 		// Sanitize the subscribe form values!
@@ -758,6 +933,224 @@ class ESSBAdvancedOptions {
 
 		return $object;
 	}
+	
+	private function apply_functions_mode_optimize($current_options, $mode = '') {
+	    
+	    $current_options['use_minified_css'] = 'false';
+	    $current_options['load_css_footer'] = 'false';
+	    $current_options['use_minified_js'] = 'false';
+	    $current_options['scripts_in_head'] = 'false';
+	    $current_options['load_js_async'] = 'false';
+	    $current_options['load_js_defer'] = 'false';
+	    $current_options['remove_ver_resource'] = 'false';
+	    $current_options['precompiled_resources'] = 'false';
+	    $current_options['precompiled_mode'] = '';
+	    $current_options['precompiled_folder'] = '';
+	    $current_options['essb_cache_runtime'] = 'false';
+	    $current_options['essb_cache'] = 'false';
+	    $current_options['essb_cache_static'] = 'false';
+	    $current_options['essb_cache_static_js'] = 'false';
+	    $current_options['precompiled_unique'] = 'false';
+	    $current_options['precompiled_preload_css'] = 'false';
+	    $current_options['use_stylebuilder'] = 'false';
+	    
+	    if ($mode == 'level1') {
+	        $current_options['use_minified_css'] = 'true';
+	        $current_options['use_minified_js'] = 'true';	        
+	    }
+	    
+	    if ($mode == 'level2') {
+	        $current_options['use_minified_css'] = 'true';
+	        $current_options['use_minified_js'] = 'true';
+	        $current_options['load_js_async'] = 'true';
+	        $current_options['precompiled_resources'] = 'true';	        
+	        $current_options['precompiled_unique'] = 'true';
+	        $current_options['precompiled_preload_css'] = 'true';
+	        $current_options['precompiled_mode'] = '';
+	        $current_options['precompiled_folder'] = '';
+	    }
+	    
+	    
+	    return $current_options;
+	}
+	
+	private function apply_functions_mode_other($current_options, $mode = '') {
+	    $default_deactivate = array('deactivate_module_followers', 'deactivate_module_profiles',
+	        'deactivate_module_natives', 'deactivate_module_subscribe', 'deactivate_module_facebookchat',
+	        'deactivate_module_skypechat', 'deactivate_module_clicktochat', 'deactivate_module_instagram',
+	        'deactivate_module_proofnotifications'
+	    );
+	    
+	    foreach ($default_deactivate as $module_id) {
+	        $current_options[$module_id] = 'false';
+	    }
+	    
+	    if ($mode == 'no') {
+	        foreach ($default_deactivate as $module_id) {
+	            $current_options[$module_id] = 'true';
+	        }
+	    }
+	    
+	    if ($mode == 'simple') {
+	        $current_options['deactivate_module_followers'] = 'true';
+	        $current_options['deactivate_module_natives'] = 'true';
+	        $current_options['deactivate_module_facebookchat'] = 'true';
+	        $current_options['deactivate_module_skypechat'] = 'true';
+	        $current_options['deactivate_module_clicktochat'] = 'true';
+	        $current_options['deactivate_module_instagram'] = 'true';
+	        $current_options['deactivate_module_proofnotifications'] = 'true';
+	    }
+
+	    if ($mode == 'medium') {
+	        $current_options['deactivate_module_natives'] = 'true';
+	        $current_options['deactivate_module_facebookchat'] = 'true';
+	        $current_options['deactivate_module_skypechat'] = 'true';
+	        $current_options['deactivate_module_clicktochat'] = 'true';
+	        $current_options['deactivate_module_proofnotifications'] = 'true';
+	    }
+
+	    if ($mode == 'advanced') {
+	        $current_options['deactivate_module_natives'] = 'true';
+	        $current_options['deactivate_module_skypechat'] = 'true';
+	        $current_options['deactivate_module_clicktochat'] = 'true';
+	    }
+	    
+	    return $current_options;
+	}
+	
+	private function apply_functions_mode_sharing($current_options, $mode = '') {
+	    $default_deactivate = array( 
+	        'deactivate_ansp', 'deactivate_ssr', 'deactivate_fakecounters', 'deactivate_expertcounters', 
+	        'deactivate_ctt', 'deactivate_module_aftershare', 'deactivate_module_shareoptimize', 'deactivate_module_analytics',
+	        'deactivate_module_pinterestpro', 'deactivate_module_shorturl', 'deactivate_module_affiliate', 'deactivate_module_customshare',
+	        'deactivate_module_message', 'deactivate_module_metrics', 'deactivate_stylelibrary', 'deactivate_module_translate',
+	        'deactivate_custombuttons', 'deactivate_custompositions', 'deactivate_module_conversions',
+	        'deactivate_method_woocommerce', 'deactivate_method_integrations', 'deactivate_settings_post_type',
+	        'deactivate_module_google_analytics'
+	    );
+	    
+	    $positions_deactivate = array(
+	       'deactivate_method_float', 'deactivate_method_postfloat', 'deactivate_method_sidebar',
+	        'deactivate_method_topbar', 'deactivate_method_bottombar', 'deactivate_method_popup',
+	        'deactivate_method_flyin', 'deactivate_method_heroshare', 'deactivate_method_postbar',
+	        'deactivate_method_point', 'deactivate_method_image', 'deactivate_method_native',
+	        'deactivate_method_followme', 'deactivate_method_corner', 'deactivate_method_booster',
+	        'deactivate_method_sharebutton', 'deactivate_method_except', 'deactivate_method_widget',
+	        'deactivate_method_advanced_mobile'
+	    );
+	    
+	    /**
+	     * Advanced options that will be disabled
+	     */
+	    $current_options['activate_mobile_auto'] = 'false';
+	    $current_options['activate_fake'] = 'false';
+	    $current_options['activate_hooks'] = 'false';
+	    $current_options['activate_minimal'] = 'false';
+	    
+	    /**
+	     * Reactivate all modules
+	     */
+	    foreach ($default_deactivate as $module_id) {
+	        $current_options[$module_id] = 'false';
+	    }
+	    
+	    /**
+	     * Reactivate all positions
+	     */
+	    foreach ($positions_deactivate as $module_id) {
+	        $current_options[$module_id] = 'false';
+	    }
+	    
+	    if ($mode == 'simple') {
+	        $current_options['deactivate_fakecounters'] = 'true';
+	        $current_options['deactivate_expertcounters'] = 'true';
+	        $current_options['deactivate_module_aftershare'] = 'true';
+	        $current_options['deactivate_module_analytics'] = 'true';
+	        $current_options['deactivate_module_google_analytics'] = 'true';
+	        $current_options['deactivate_module_affiliate'] = 'true';
+	        $current_options['deactivate_module_customshare'] = 'true';
+	        $current_options['deactivate_module_message'] = 'true';
+	        $current_options['deactivate_module_metrics'] = 'true';
+	        $current_options['deactivate_stylelibrary'] = 'true';
+	        $current_options['deactivate_module_translate'] = 'true';
+	        $current_options['deactivate_custombuttons'] = 'true';
+	        $current_options['deactivate_custompositions'] = 'true';
+	        $current_options['deactivate_module_conversions'] = 'true';
+	        $current_options['deactivate_method_integrations'] = 'true';
+	        $current_options['deactivate_settings_post_type'] = 'true';
+	        
+	        // positions
+	        $current_options['deactivate_method_float'] = 'true';
+	        $current_options['deactivate_method_topbar'] = 'true';
+	        $current_options['deactivate_method_bottombar'] = 'true';
+	        $current_options['deactivate_method_popup'] = 'true';
+	        $current_options['deactivate_method_flyin'] = 'true';
+	        $current_options['deactivate_method_heroshare'] = 'true';
+	        $current_options['deactivate_method_postbar'] = 'true';
+	        $current_options['deactivate_method_point'] = 'true';
+	        $current_options['deactivate_method_image'] = 'true';	        
+	        $current_options['deactivate_method_native'] = 'true';
+	        $current_options['deactivate_method_followme'] = 'true';
+	        $current_options['deactivate_method_corner'] = 'true';
+	        $current_options['deactivate_method_booster'] = 'true';
+	        $current_options['deactivate_method_sharebutton'] = 'true';
+	        $current_options['deactivate_method_except'] = 'true';
+	        $current_options['deactivate_method_widget'] = 'true';
+	        
+	        $current_options['deactivate_method_advanced_mobile'] = 'true';
+	    }
+	    
+	    if ($mode == 'medium') {
+	        $current_options['deactivate_module_analytics'] = 'true';
+	        $current_options['deactivate_module_google_analytics'] = 'true';
+	        $current_options['deactivate_module_affiliate'] = 'true';
+	        $current_options['deactivate_module_customshare'] = 'true';
+	        $current_options['deactivate_module_message'] = 'true';
+	        $current_options['deactivate_module_metrics'] = 'true';
+	        $current_options['deactivate_stylelibrary'] = 'true';
+	        $current_options['deactivate_module_translate'] = 'true';
+	        $current_options['deactivate_module_conversions'] = 'true';
+	        $current_options['deactivate_method_integrations'] = 'true';
+	        $current_options['deactivate_settings_post_type'] = 'true';
+	        
+	        // positions
+	        $current_options['deactivate_method_topbar'] = 'true';
+	        $current_options['deactivate_method_bottombar'] = 'true';
+	        $current_options['deactivate_method_flyin'] = 'true';
+	        $current_options['deactivate_method_heroshare'] = 'true';
+	        $current_options['deactivate_method_postbar'] = 'true';
+	        $current_options['deactivate_method_point'] = 'true';
+	        $current_options['deactivate_method_image'] = 'true';
+	        $current_options['deactivate_method_native'] = 'true';
+	        $current_options['deactivate_method_corner'] = 'true';
+	        $current_options['deactivate_method_booster'] = 'true';
+	        $current_options['deactivate_method_sharebutton'] = 'true';
+	        $current_options['deactivate_method_except'] = 'true';
+	        $current_options['deactivate_method_widget'] = 'true';
+	        $current_options['deactivate_method_advanced_mobile'] = 'true';	        
+	    }
+	    
+	    if ($mode == 'advanced') {
+	        $current_options['deactivate_module_message'] = 'true';
+	        $current_options['deactivate_module_metrics'] = 'true';
+	        $current_options['deactivate_module_translate'] = 'true';
+	        $current_options['deactivate_custombuttons'] = 'true';
+	        $current_options['deactivate_custompositions'] = 'true';
+	        $current_options['deactivate_method_integrations'] = 'true';
+	        
+	        // positions
+	        $current_options['deactivate_method_heroshare'] = 'true';
+	        $current_options['deactivate_method_postbar'] = 'true';
+	        $current_options['deactivate_method_native'] = 'true';
+	        $current_options['deactivate_method_followme'] = 'true';
+	        $current_options['deactivate_method_corner'] = 'true';
+	        $current_options['deactivate_method_booster'] = 'true';
+	        $current_options['deactivate_method_sharebutton'] = 'true';
+	        
+	    }
+	    
+	    return $current_options;
+	}
 
 	/**
 	 * The default plugin options will be changed based on the selected plugin working
@@ -770,6 +1163,7 @@ class ESSBAdvancedOptions {
 	private function apply_functions_mode($current_options, $functions_mode = '') {
 		$current_options['deactivate_module_aftershare'] = 'false';
 		$current_options['deactivate_module_analytics'] = 'false';
+		$current_options['deactivate_module_google_analytics'] = 'false';
 		$current_options['deactivate_module_affiliate'] = 'false';
 		$current_options['deactivate_module_customshare'] = 'false';
 		$current_options['deactivate_module_message'] = 'false';
@@ -815,6 +1209,7 @@ class ESSBAdvancedOptions {
 		if ($functions_mode == 'light') {
 			$current_options['deactivate_module_aftershare'] = 'true';
 			$current_options['deactivate_module_analytics'] = 'true';
+			$current_options['deactivate_module_google_analytics'] = 'true';
 			$current_options['deactivate_module_affiliate'] = 'true';
 			$current_options['deactivate_module_customshare'] = 'true';
 			$current_options['deactivate_module_message'] = 'true';
@@ -861,6 +1256,7 @@ class ESSBAdvancedOptions {
 		if ($functions_mode == 'light_image') {
 			$current_options['deactivate_module_aftershare'] = 'true';
 			$current_options['deactivate_module_analytics'] = 'true';
+			$current_options['deactivate_module_google_analytics'] = 'true';
 			$current_options['deactivate_module_affiliate'] = 'true';
 			$current_options['deactivate_module_customshare'] = 'true';
 			$current_options['deactivate_module_message'] = 'true';
@@ -1054,17 +1450,26 @@ class ESSBAdvancedOptions {
 		/**
 		 * 6. Short URL & Image Cache
 		 */
-		if ($function == 'resetimage') {
-
+		if ($function == 'resetshort') {
 			// short URLs
 			delete_post_meta_by_key('essb_shorturl_googl');
 			delete_post_meta_by_key('essb_shorturl_post');
 			delete_post_meta_by_key('essb_shorturl_bitly');
 			delete_post_meta_by_key('essb_shorturl_ssu');
 			delete_post_meta_by_key('essb_shorturl_rebrand');
-
-			// image cache
-			delete_post_meta_by_key('essb_cached_image');
+			delete_post_meta_by_key('essb_shorturl_pus');
+			
+			if (class_exists('ESSB_Short_URL')) {
+			    ESSB_Short_URL::clear_cached_urls();
+			}
+		}
+		
+		/**
+		 * 6.1. Short URL & Image Cache
+		 */
+		if ($function == 'resetimage') {		    
+		    // image cache
+		    delete_post_meta_by_key('essb_cached_image');
 		}
 		
 		/**
@@ -1077,11 +1482,16 @@ class ESSBAdvancedOptions {
 			delete_post_meta_by_key('essb_shorturl_bitly');
 			delete_post_meta_by_key('essb_shorturl_ssu');
 			delete_post_meta_by_key('essb_shorturl_rebrand');
+			delete_post_meta_by_key('essb_shorturl_pus');
+			
+			if (class_exists('ESSB_Short_URL')) {
+			    ESSB_Short_URL::clear_cached_urls();
+			}
 			
 			// share counters
 			delete_post_meta_by_key('essb_cache_expire');
-			$networks = essb_available_social_networks();
 			
+			$networks = essb_available_social_networks();			
 			foreach ($networks as $key => $data) {
 				delete_post_meta_by_key('essb_c_'.$key);
 				delete_post_meta_by_key('essb_pc_'.$key);
@@ -1105,6 +1515,7 @@ class ESSBAdvancedOptions {
 			delete_post_meta_by_key('essb_post_animations');
 			delete_post_meta_by_key('essb_post_optionsbp');
 			delete_post_meta_by_key('essb_post_content_position');
+			
 			foreach ( essb_available_button_positions() as $position => $name ) {
 				delete_post_meta_by_key("essb_post_button_position_{$position}");
 			}
@@ -1178,10 +1589,48 @@ class ESSBAdvancedOptions {
 			delete_option('essbfcounter_cached');
 			delete_option('essbfcounter_expire');
 			delete_option(ESSB3_MAIL_SALT);
+			delete_option('essb_custom_buttons');
+			delete_option('essb_custom_profile_buttons');
+			delete_option('essb_options_forms');
+			delete_option('essb_stylemaneger_user');
+			delete_option('essb_custom_positions');
+			delete_option('essb_instagram_accounts');
+			
+			delete_option('essb3-of');
+			delete_option('essb3-ofob');
+			delete_option('essb3-ofof');
+			delete_option('essb-fake');
+			delete_option('essb-hook');
+			delete_option('essb3-oflock');
 			
 			global $wpdb;
 			$table  = $wpdb->prefix . ESSB3_TRACKER_TABLE;
 			$wpdb->query( "DROP TABLE IF EXISTS ".$table );
+			
+			if (!class_exists('ESSB_Subscribe_Conversions_Pro')) {
+			    include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-pro/class-subscribe-conversions.php');
+			}
+			
+			ESSB_Subscribe_Conversions_Pro::uninstall();
+			
+			if (!class_exists('ESSB_Logger_ShareCounter_Update')) {
+			    include_once (ESSB3_CLASS_PATH . 'loggers/class-sharecounter-update.php');
+			}
+			
+			ESSB_Logger_ShareCounter_Update::clear();
+			
+			// clear the followers log on settings save
+			if (!class_exists('ESSB_Logger_Followers_Update')) {
+			    include_once (ESSB3_CLASS_PATH . 'loggers/class-followers-update.php');
+			}
+			ESSB_Logger_Followers_Update::clear();
+			
+			// Post Meta Class
+			if (!class_exists('ESSB_Post_Meta')) {
+			    include_once (ESSB3_PLUGIN_ROOT . 'lib/classes/class-post-meta.php');
+			}
+			
+			ESSB_Post_Meta::uninstall();
 		}
 		
 		/**
@@ -1218,6 +1667,28 @@ class ESSBAdvancedOptions {
 		    }
 		}
 	}
+	
+	public function legacy_data_migrator($clear = false) {
+	    $function = isset($_REQUEST['function']) ? $_REQUEST['function'] : '';
+	    
+	    if (empty($function)) {
+	        return;
+	    }
+	    
+	    /**
+	     * For security reasons the actions are specified
+	     */
+	    if ($function == 'shorturl') {	    
+	       include_once ESSB3_PLUGIN_ROOT . 'lib/admin/advanced-options/migration/migrate-'.$function.'.php';
+	       
+	       if ($clear) {
+	           essb_data_migrate_previous_shorturl_clear();
+	       }
+	       else {
+	           essb_data_migrate_previous_shorturl();
+	       }
+	    }
+	}
 }
 
 if (!function_exists('essb_advancedopts_settings_group')) {
@@ -1244,3 +1715,15 @@ if (!function_exists('essb_advancedopts_section_open')) {
 	}
 	
 }
+
+if (!function_exists('essb_advanced_options_relation')) {
+    function essb_advanced_options_relation($main_field = '', $relation_type = 'switch', $connected = array()) {
+        
+        $relation_obj = array('type' => $relation_type, 'fields' => $connected);
+        
+        echo '<script type="' . esc_attr('text/javascript') . '">';
+        echo 'if (!window.advancedRelations) window.advancedRelations = {};';
+        echo 'window.advancedRelations["' . $main_field . '"] = ' . json_encode($relation_obj);
+        echo '</script>';
+    }
+ }

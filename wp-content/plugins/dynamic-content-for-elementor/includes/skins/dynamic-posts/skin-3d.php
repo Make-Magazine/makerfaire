@@ -27,18 +27,20 @@ class Skin_3D extends \DynamicContentForElementor\Includes\Skins\Skin_Base
     {
         return __('3D', 'dynamic-content-for-elementor');
     }
-    public function register_additional_3d_controls()
+    public function register_additional_3d_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
+        $this->parent = $widget;
         $this->start_controls_section('section_3d', ['label' => __('3D', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('type_3d', ['label' => __('3D Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'circle', 'options' => ['circle' => __('Circle', 'dynamic-content-for-elementor'), 'fila' => __('Row', 'dynamic-content-for-elementor')], 'frontend_available' => \true]);
         $this->add_control('size_plane_3d', ['label' => __('Size plane', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'range' => ['px' => ['max' => 1200, 'min' => 0, 'step' => 1]], 'render_type' => 'template', 'frontend_available' => \true, 'selectors' => ['{{WRAPPER}} .dce-posts-container.dce-skin-3d .dce-3d-element' => 'width: {{SIZE}}{{UNIT}};']]);
         $this->add_control('blur_depth_3d', ['label' => __('Depth blur', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true, 'condition' => [$this->get_control_id('type_3d') => 'circle']]);
         $this->add_control('mousewheel_3d', ['label' => __('Mouse wheel', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true]);
+        $this->add_control('mousewheel_3d_stop_at_end', ['label' => __('Free mouse wheel at the end', 'dynamic-content-for-elementor'), 'description' => __('Free mouse wheel after last element is reached', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => [$this->get_control_id('mousewheel_3d') => 'yes']]);
         $this->end_controls_section();
     }
     protected function render_posts_before()
     {
-        $_skin = $this->parent->get_settings('_skin');
+        $_skin = $this->get_parent()->get_settings('_skin');
         ?>
 
 		<div id="dce-scene-3d-container" class="dce-posts-wrapper"></div>

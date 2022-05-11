@@ -9,11 +9,31 @@ $essb_networks = essb_available_social_networks();
 
 ESSB_Plugin_Options::trigger_options_filter('essb4_options_extender');
 
+/**
+ * Loading light frontend ajax handler
+ */
+if (class_exists('ESSB_Ajax')) { ESSB_Ajax::init_frontend(); }
+
 
 include_once (ESSB3_CLASS_PATH . 'class-activation-manager.php');
 
 include_once (ESSB3_HELPERS_PATH . 'helpers-tools.php');
 include_once (ESSB3_HELPERS_PATH . 'helpers-url.php');
+
+// if module is not deactivated
+if (!essb_option_bool_value('deactivate_module_shorturl')) {
+    include_once (ESSB3_CLASS_PATH . 'share-information/class-short-url.php');
+}
+
+// share counter logging
+if (essb_option_bool_value('cache_counter_logging')) {
+    include_once (ESSB3_CLASS_PATH . 'loggers/class-sharecounter-update.php');
+}
+
+// followers logging
+if (essb_option_bool_value('followers_log_update')) {
+    include_once (ESSB3_CLASS_PATH . 'loggers/class-followers-update.php');
+}
 
 // include options helper functions
 include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-global-settings.php');
@@ -31,6 +51,11 @@ if (essb_option_bool_value('subscribe_widget')) {
 
 if (essb_option_bool_value('instagram_widget') && !essb_option_bool_value('deactivate_instagram_feed')) {
     include_once (ESSB3_MODULES_PATH . 'instagram-feed/class-instagram-feed-widget.php');
+}
+
+// @since 8.0
+if (!essb_option_bool_value('deactivate_custombuttons') && essb_option_bool_value('customprofilebuttons_enable')) {
+    include_once (ESSB3_CLASS_PATH . 'utilities/class-custom-profile-networks.php');
 }
 
 // initialize global plugin settings from version 3.4.1
@@ -67,7 +92,7 @@ if (essb_options_bool_value('essb_cache_static') || essb_options_bool_value('ess
 
 
 // dynamic resource builder
-include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-resource-builder.php');
+//include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-resource-builder.php');
 include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-resource-builder-core.php');
 
 if (!defined('ESSB3_LIGHTMODE')) {
@@ -107,6 +132,11 @@ if (! essb_options_bool_value('deactivate_module_shareoptimize')) {
 if (essb_options_bool_value('stats_active') && !essb_options_bool_value('deactivate_module_analytics')) {
     include_once (ESSB3_MODULES_PATH . 'social-share-analytics/essb-social-share-analytics.php');
     ESSB_Runtime_Cache::set('stats-running', true);
+}
+
+// UTM Tracking
+if (!essb_option_bool_value('deactivate_module_google_analytics')) {
+    include_once (ESSB3_CLASS_PATH . 'share-information/class-utm-tracking.php');
 }
 
 if (essb_options_bool_value('mycred_activate') && !essb_options_bool_value('deactivate_module_affiliate')) {
@@ -227,6 +257,10 @@ if (essb_option_bool_value('optin_flyout_activate') && !essb_option_bool_value('
     include_once (ESSB3_MODULES_PATH . 'optin-flyout/class-optin-flyout.php');
 }
 
+if (essb_option_bool_value('optin_locker_activate') && !essb_options_bool_value('deactivate_module_subscribe')) {
+    include_once (ESSB3_MODULES_PATH . 'optin-locker/class-optin-locker.php');
+}
+
 if (essb_option_bool_value('optin_booster_activate') && !essb_options_bool_value('deactivate_module_subscribe')) {
     include_once (ESSB3_MODULES_PATH . 'optin-booster/class-optin-booster.php');
 }
@@ -278,6 +312,10 @@ if (essb_option_value('functions_mode_mobile') == 'auto') {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/helpers/helpers-automatic-mobile.php');
 }
 
+if (essb_is_responsive_mobile()) {
+    include_once (ESSB3_PLUGIN_ROOT . 'lib/core/helpers/helpers-responsive-mobile.php');
+}
+
 if (essb_option_bool_value('activate_networks_manage')) {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/helpers/helpers-manage-networks.php');
 }
@@ -286,12 +324,21 @@ if (essb_sanitize_option_value('css_mode') == 'slim') {
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/helpers/helpers-slimstyles.php');
 }
 
+if (essb_sanitize_option_value('css_mode') == 'mini') {
+    include_once (ESSB3_PLUGIN_ROOT . 'lib/core/helpers/helpers-ministyles.php');
+}
+
+
 if (essb_option_bool_value('activate_fake')) {
     include_once (ESSB3_MODULES_PATH . 'fake-share-counters/fakesharecounters-front.php');
 }
 
 if (essb_option_bool_value('activate_fake_counters')) {
     include_once (ESSB3_MODULES_PATH . 'fake-share-counters/fakesharecounters-adaptive.php');
+}
+
+if (essb_option_bool_value('active_internal_counters_advanced')) {
+    include_once (ESSB3_HELPERS_PATH . 'share-counters/helpers-internal-counters.php'); 
 }
 
 if (essb_option_bool_value('activate_minimal')) {
@@ -304,11 +351,17 @@ if (essb_option_bool_value('activate_hooks')) {
 }
 
 if (essb_option_bool_value('conversions_lite_run') && !essb_options_bool_value('deactivate_module_conversions')) {
-    include_once (ESSB3_MODULES_PATH . 'conversions-lite/class-conversions-lite.php');
+    if (!class_exists('ESSB_Share_Conversions_Pro')) {
+        include_once (ESSB3_MODULES_PATH . 'conversions-pro/class-share-conversions.php');
+    }
+    ESSB_Share_Conversions_Pro::init();
 }
 
 if (essb_option_bool_value('conversions_subscribe_lite_run') && !essb_options_bool_value('deactivate_module_conversions')) {
-    include_once (ESSB3_MODULES_PATH . 'conversions-lite/class-subscribe-conversions-lite.php');
+    if (!class_exists('ESSB_Subscribe_Conversions_Pro')) {
+        include_once (ESSB3_MODULES_PATH . 'conversions-pro/class-subscribe-conversions.php');
+    }    
+    ESSB_Subscribe_Conversions_Pro::init();
 }
 
 /**
@@ -361,7 +414,7 @@ if (!essb_option_bool_value('deactivate_module_proofnotifications')) {
 }
 
 if (!essb_option_bool_value('deactivate_custombuttons') && essb_option_bool_value('custombuttons_enable')) {
-    include_once (ESSB3_CORE_PATH . 'classes/class-register-custom-networks.php');
+    include_once (ESSB3_CLASS_PATH . 'utilities/class-register-custom-networks.php');
 }
 
 ESSB_Plugin_Options::trigger_options_filter('essb4_options_extender_after_load');

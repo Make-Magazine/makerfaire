@@ -1,3 +1,14 @@
+/**
+* demo3.js
+* http://www.codrops.com
+*
+* Licensed under the MIT license.
+* http://www.opensource.org/licenses/mit-license.php
+*
+* Copyright 2019, Codrops
+* http://www.codrops.com
+*/
+
 var dce_crs = null;
 var Widget_DCE_Dynamicposts_crossroadsslideshow_Handler = function ($scope, $) {
     var elementSettings = dceGetElementSettings($scope);
@@ -453,16 +464,3 @@ jQuery(window).on('elementor/frontend/init', function () {
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-sticky-posts.crossroadsslideshow', Widget_DCE_Dynamicposts_crossroadsslideshow_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.crossroadsslideshow', Widget_DCE_Dynamicposts_crossroadsslideshow_Handler);
 });
-
-
-
-/**
-* demo3.js
-* http://www.codrops.com
-*
-* Licensed under the MIT license.
-* http://www.opensource.org/licenses/mit-license.php
-*
-* Copyright 2019, Codrops
-* http://www.codrops.com
-*/

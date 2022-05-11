@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
  * Elementor XY control.
  *
  */
-class DCE_Control_XY_Movement extends Control_Base_Multiple
+class Control_XY_Movement extends Control_Base_Multiple
 {
     /**
      * Get box shadow control type.

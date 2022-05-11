@@ -9,7 +9,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class StickyPosts extends \DynamicContentForElementor\Widgets\DCE_Widget_DynamicPosts_Base
+class StickyPosts extends \DynamicContentForElementor\Widgets\DynamicPostsBase
 {
     public function get_name()
     {
@@ -21,11 +21,17 @@ class StickyPosts extends \DynamicContentForElementor\Widgets\DCE_Widget_Dynamic
         $this->add_skin(new Skins\Sticky_Posts_Skin_Grid_Filters($this));
         $this->add_skin(new Skins\Sticky_Posts_Skin_Carousel($this));
         $this->add_skin(new Skins\Sticky_Posts_Skin_DualCarousel($this));
+        $this->add_skin(new Skins\Sticky_Posts_Skin_Accordion($this));
         $this->add_skin(new Skins\Sticky_Posts_Skin_Timeline($this));
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
-        parent::_register_controls();
+        parent::safe_register_controls();
         $this->update_control('query_type', ['type' => Controls_Manager::HIDDEN, 'default' => 'sticky_posts']);
     }
 }

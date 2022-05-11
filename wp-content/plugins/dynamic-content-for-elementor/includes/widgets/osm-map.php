@@ -18,7 +18,12 @@ class OsmMap extends \DynamicContentForElementor\Widgets\WidgetPrototype
     {
         return ['dce-osm-map'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_map', ['label' => __('Map', 'dynamic-content-for-elementor')]);
         $default_address = __('Piazza San Marco, Venice, Italy', 'dynamic-content-for-elementor');
@@ -57,7 +62,7 @@ class OsmMap extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->end_controls_tabs();
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         $this->add_render_attribute('div', 'class', 'dce-osm-wrapper');

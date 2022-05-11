@@ -5,6 +5,7 @@ var Widget_DCE_Dynamicposts_grid_Handler = function ($scope, $) {
 	var grid = $scope.find('.dce-posts-container.dce-skin-grid .dce-posts-wrapper');
     var masonryGrid = null;
     var isMasonryEnabled = false;
+	let byRow = elementSettings.grid_match_height_by_row || elementSettings.grid_filters_match_height_by_row;
 
 	// MASONRY
 	function activeMasonry(){
@@ -23,25 +24,24 @@ var Widget_DCE_Dynamicposts_grid_Handler = function ($scope, $) {
 	}
 
 	if( elementSettings.grid_match_height || elementSettings.grid_filters_match_height ) {
-		byRow = elementSettings.grid_match_height_by_row || elementSettings.grid_filters_match_height_by_row;
 		if( elementSettings.style_items === 'template' ) {
 			if( $scope.find( '.dce-post-block .elementor-inner-section' ).length ) {
 				$scope.find('.dce-post-block').first().find('.elementor-inner-section').each((i) => {
 					let $els = $scope.find('.dce-post-block').map((_,$e) => {
 						return jQuery($e).find('.elementor-inner-section')[i]
 					})
-					$els.matchHeight( {byRow: byRow ?? false} )
+					$els.matchHeight( {byRow: byRow} )
 					$matchHeightEls = $els;
 				});
 			} else {
 				selector = '.dce-post-block .elementor-top-section';
 				$matchHeightEls = $(selector);
-				$matchHeightEls.matchHeight({byRow: byRow ?? false,});
+				$matchHeightEls.matchHeight({byRow: byRow});
 			}
 		} else {
 			selector = '.dce-post-block';
 			$matchHeightEls = $(selector);
-			$matchHeightEls.matchHeight({byRow: byRow ?? false,});
+			$matchHeightEls.matchHeight({byRow: byRow});
 		}
 	}
 
@@ -87,7 +87,7 @@ var Widget_DCE_Dynamicposts_grid_Handler = function ($scope, $) {
 			grid_container.on( 'append.infiniteScroll', function( event, title, path ) {
 				$matchHeightEls.matchHeight(
 					{
-						byRow: byRow ?? false,
+						byRow: byRow,
 					}
 				);
 				grid_container.isotope('layout');
@@ -109,10 +109,29 @@ var Widget_DCE_Dynamicposts_grid_Handler = function ($scope, $) {
 				}
 
 				// Add inline CSS for background url
-				var allArticles = document.querySelectorAll(".dce-dynamic-posts-collection .elementor-section, .dce-dynamic-posts-collection .elementor-column");
+				var allArticles = document.querySelectorAll(".dce-dynamic-posts-collection .elementor-section, .dce-dynamic-posts-collection .elementor-column, .dce-dynamic-posts-collection .elementor-widget, .dce-dynamic-posts-collection .e-container");
 				allArticles.forEach(function(article) {
 					dce.addCssForBackground( article );
 				});
+			});
+
+			// Fix Background Loop + Match Height after Search and Filter request
+			$(document).on("sf:ajaxfinish", ".searchandfilter", function( e, data ) {
+				if ( elementorFrontend) {
+					if ( elementorFrontend.elementsHandler.runReadyTrigger ) {
+						// Add inline CSS for background url
+						var allArticles = document.querySelectorAll(".dce-dynamic-posts-collection .elementor-section, .dce-dynamic-posts-collection .elementor-column, .dce-dynamic-posts-collection .elementor-widget, .dce-dynamic-posts-collection .e-container");
+						allArticles.forEach(function(article) {
+							dce.addCssForBackground( article );
+						});
+					}
+
+					$matchHeightEls.matchHeight(
+						{
+							byRow: byRow,
+						}
+					);
+				}
 			});
 		}
 
@@ -179,7 +198,7 @@ var Widget_DCE_Dynamicposts_grid_Handler = function ($scope, $) {
     };
     on_scrollReveal();
 
-	// Funzione di callback eseguita quando avvengono le mutazioni
+	// Callback function executed when mutations occur
 	var Dyncontel_MutationObserverCallback = function(mutationsList, observer) {
 	    for(var mutation of mutationsList) {
 	        if (mutation.type == 'attributes') {
@@ -191,7 +210,7 @@ var Widget_DCE_Dynamicposts_grid_Handler = function ($scope, $) {
 	        }
 	    }
 	};
-	observe_Dyncontel_element($scope[0], Dyncontel_MutationObserverCallback);
+	dceObserveElement($scope[0], Dyncontel_MutationObserverCallback);
 };
 
 jQuery(window).on('elementor/frontend/init', function () {
@@ -199,6 +218,8 @@ jQuery(window).on('elementor/frontend/init', function () {
     elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamicposts-v2.grid-filters', Widget_DCE_Dynamicposts_grid_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-products-cart.grid', Widget_DCE_Dynamicposts_grid_Handler);
     elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-products-cart.grid-filters', Widget_DCE_Dynamicposts_grid_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-products-cart-on-sale.grid', Widget_DCE_Dynamicposts_grid_Handler);
+    elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-products-cart-on-sale.grid-filters', Widget_DCE_Dynamicposts_grid_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-product-upsells.grid', Widget_DCE_Dynamicposts_grid_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-product-upsells.grid-filters', Widget_DCE_Dynamicposts_grid_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-product-crosssells.grid', Widget_DCE_Dynamicposts_grid_Handler);

@@ -4,7 +4,7 @@ namespace DynamicContentForElementor\Controls;
 
 use Elementor\Group_Control_Base;
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
+use Elementor\Core\Schemes\Color as Scheme_Color;
 use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
@@ -14,7 +14,7 @@ if (!\defined('ABSPATH')) {
  * Custom Animate-element group control
  *
  */
-class DCE_Group_Control_Animation_Element extends Group_Control_Base
+class Group_Control_Animation_Element extends Group_Control_Base
 {
     protected static $fields;
     public static function get_type()

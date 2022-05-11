@@ -2,7 +2,7 @@
 
 namespace DynamicContentForElementor;
 
-trait Trait_Image
+trait Image
 {
     public static function get_thumbnail_sizes()
     {
@@ -49,6 +49,9 @@ trait Trait_Image
      * @global $_wp_additional_image_sizes
      * @uses   get_intermediate_image_sizes()
      * @return array $sizes Data for all currently-registered image sizes.
+     * @copyright MA-Group
+     * @license GPL v3
+     * @link http://ali2woo.com/
      */
     public static function get_image_sizes()
     {
@@ -71,6 +74,9 @@ trait Trait_Image
      * @uses   get_image_sizes()
      * @param  string $size The image size for which to retrieve data.
      * @return bool|array $size Size data about an image size or false if the size doesn't exist.
+     * @copyright MA-Group
+     * @license GPL v3
+     * @link http://ali2woo.com/
      */
     public static function get_image_size($size)
     {
@@ -86,6 +92,9 @@ trait Trait_Image
      * @uses   get_image_size()
      * @param  string $size The image size for which to retrieve data.
      * @return bool|string $size Width of an image size or false if the size doesn't exist.
+     * @copyright MA-Group
+     * @license GPL v3
+     * @link http://ali2woo.com/
      */
     public static function get_image_width($size)
     {
@@ -103,6 +112,9 @@ trait Trait_Image
      * @uses   get_image_size()
      * @param  string $size The image size for which to retrieve data.
      * @return bool|string $size Height of an image size or false if the size doesn't exist.
+     * @copyright MA-Group
+     * @license GPL v3
+     * @link http://ali2woo.com/
      */
     public static function get_image_height($size)
     {

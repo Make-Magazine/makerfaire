@@ -225,9 +225,11 @@ class ESSBInstagramFeed {
 		
 		$widget = isset($atts['widget']) ? $atts['widget'] : '';
 		
+		$preview_mode = isset($atts['preview_mode']) ? $atts['preview_mode'] : '';
+		
 		if ($username != '') {
 			return $this->draw_instagram($username, $type, $show, $space, $profile == 'true', $follow_button == 'true',
-					$link_mode, $post_info_style, '', $masonry == 'true', $widget == 'true', $profile_size);
+			    $link_mode, $post_info_style, '', $masonry == 'true', $widget == 'true', $profile_size, $preview_mode == 'true');
 		}
 		else {
 			return '';
@@ -237,6 +239,13 @@ class ESSBInstagramFeed {
 	public function draw_widget_popup() {
 		if (!$this->can_add_automatic_popup_widget()) {
 			return;
+		}
+		
+		/**
+		 * Load the SVG icons if not present (prevent potential errors)
+		 */
+		if (!class_exists('ESSB_SVG_Icons')) {
+		    include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
 		}
 		
 		$user = essb_sanitize_option_value('instagramfeed_popup_user');
@@ -271,6 +280,9 @@ class ESSBInstagramFeed {
 			$instagramfeed_popup_disablemobile = essb_option_bool_value('instagramfeed_popup_disablemobile');
 			
 			echo '<div class="essb-instagramfeed-popup" data-delay="'.esc_attr($instagramfeed_popup_delay).'" data-width="'.esc_attr($instagramfeed_popup_width).'" data-hidefor="'.esc_attr($instagramfeed_popup_appear_again).'" data-disablemobile="'.esc_attr($instagramfeed_popup_disablemobile).'">';
+			echo '<div class="essb-instagramfeed-popup-close">';
+			echo ESSB_SVG_Icons::get_icon('close');
+			echo '</div>';
 			echo $instagram_widget;
 			echo '</div>';
 			echo '<div class="essb-instagramfeed-popup-overlay"></div>';
@@ -315,7 +327,7 @@ class ESSBInstagramFeed {
 	
 	public function draw_instagram($username_tag = '', $type = '3cols', $show = 12, $space = '', $profile = false, 
 			$follow_button = false, $link_mode = 'direct', $post_data = '', $image_size = 'original', $masonry = false,
-			$widget = false, $profile_size = '') {
+			$widget = false, $profile_size = '', $preview_mode = false) {
 	    
         $username_tag = str_replace('@', '', $username_tag);
 
@@ -325,6 +337,7 @@ class ESSBInstagramFeed {
 		
 		// Image loading action
 		$instagram_open_as = essb_sanitize_option_value('instagram_open_as');
+		$instagram_lazyload = essb_option_bool_value('instagram_lazyload');
 		
 		$parent_classes = array();
 		$parent_classes[] = 'essb-instagramfeed';
@@ -368,6 +381,10 @@ class ESSBInstagramFeed {
 		    $parent_classes[] = 'essb-instagramfeed-mobilehidden';
 		}
 		
+		if ($instagram_lazyload) {
+		    $parent_classes[] = 'essb-instagramfeed-lazyload';
+		}
+		
 		$output = '';
 		
 		//
@@ -395,9 +412,13 @@ class ESSBInstagramFeed {
 			    $followers_text = $translate_followers_text;
 			}
 			
+			if (empty($account_data['display_name']) && !empty($account_data['username'])) {
+			    $account_data['display_name'] = $account_data['username'];
+			}
+						
 			$output .= '<div class="essb-instagramfeed-profile'.($follow_button && !$widget ? ' essb-instagramfeed-profilefollow': '').'">';
 			$image = !empty($account_data['display_pic']) ? $account_data['display_pic'] : '';
-			$name = !empty($account_data['display_name']) ? $account_data['display_name'] : $account_data['username'];			
+			$name = !empty($account_data['display_name']) ? $account_data['display_name'] : '';			
 			$bio = !empty($account_data['display_bio']) ? $account_data['display_bio'] : '';
 			$followers_value = !empty($account_data['followers']) ? $account_data['followers'] : 0;
 			
@@ -405,7 +426,7 @@ class ESSBInstagramFeed {
 			
 			if (!empty($image)) {
 				$output .= '<div class="essb-instagramfeed-profile-photo">';
-				$output .= '<a href="'.esc_url($instagram_profile_url).'" target="_blank" rel="nofollow noreferrer noopener"><img src="'.esc_url($image).'"/></a>';
+				$output .= '<a href="'.esc_url($instagram_profile_url).'" target="_blank" rel="nofollow noreferrer noopener"><img src="'.esc_url($image).'"'.($instagram_lazyload ? ' loading="lazy"' : '').'/></a>';
 				$output .= '</div>';
 			}
 			
@@ -454,13 +475,24 @@ class ESSBInstagramFeed {
 			$link_url = !empty($image['permalink']) ? $image['permalink'] : '';
 			$type = !empty($image['type']) ? $image['type'] : 'IMAGE';
 			$caption = !empty($image['caption']) ? $image['caption'] : '';
+			$thumb = !empty($image['thumb']) ? $image['thumb'] : '';
+			$video_url = !empty($image['image']) ? $image['image'] : '';
+			
+			if ($type == 'VIDEO') {
+			    $image_url = $thumb;
+			}
 			
 			$key = mt_rand();
 			
-			$output .= '<div class="essb-instagramfeed-single essb-instagramfeed-single-'.esc_attr($key).' essb-instagramfeed-single-'.esc_attr($type).'" style="background-image: url('.esc_url($image_url).');">';
-			$output .= '<a href="'.esc_url($link_url).'" target="_blank" rel="nofollow noreferrer noopener">';
+			$output .= '<div class="essb-instagramfeed-single essb-instagramfeed-single-'.esc_attr($key).' essb-instagramfeed-single-'.esc_attr($type).'" '.(!$instagram_lazyload ?  'style="background-image: url('.esc_url($image_url).');"' : '').'>';
+			if ($preview_mode) {
+			    $output .= '<a>';
+			}
+			else {
+                $output .= '<a href="'.esc_url($link_url).'" target="_blank" rel="nofollow noreferrer noopener">';
+			}
 			$output .= '<div class="essb-instagramfeed-single-image">';
-			$output .= '<img src="'.esc_url($image_url).'"/>';
+			$output .= '<img src="'.esc_url($image_url).'" data-type="'.esc_attr($type).'" data-src="'.esc_url($video_url).'"'.($instagram_lazyload ? ' loading="lazy"' : '').'/>';
 			
 			$output .= '</div>';
 			
@@ -522,7 +554,7 @@ class ESSBInstagramFeed {
 	        $response = wp_remote_get( $url );
 	        
 	        $data = json_decode( wp_remote_retrieve_body( $response ) );
-	        
+	        	        	        
 	        $instagram = array();
 	        
 	        if (!empty($data->data)) {
@@ -534,7 +566,9 @@ class ESSBInstagramFeed {
 	                    'image' => !empty($one_image->media_url) ? $one_image->media_url : '',
 	                    'permalink' => !empty($one_image->permalink) ? $one_image->permalink : '',
 	                    'timestamp' => !empty($one_image->timestamp) ? $one_image->timestamp : '',
-	                    'username' => !empty($one_image->username) ? $one_image->username : ''
+	                    'username' => !empty($one_image->username) ? $one_image->username : '',
+	                    'type' => !empty($one_image->media_type) ? $one_image->media_type : '',
+	                    'thumb' => !empty($one_image->thumbnail_url) ? $one_image->thumbnail_url : ''
 	                );
 	            }
 	        }

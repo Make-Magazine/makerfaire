@@ -6,14 +6,13 @@ var Widget_DCE_Dynamicposts_carousel_Handler = function ($scope, $) {
     var elementSwiper = $scope.find('.dce-posts-container.dce-skin-carousel');
     let dcePostsSwiper = null;
     var isCarouselEnabled = false;
-    var centroDiapo = false;
-    var cicloInfinito = false;
+    var centeredSlides;
+    var infiniteLoop;
     var slideInitNum = 0;
     var slidesPerView = Number(elementSettings[dceDynamicPostsSkinPrefix+'slidesPerView']);
-    var elementorBreakpoints = elementorFrontend.config.breakpoints;
 
-	centerDiapo = Boolean( elementSettings[dceDynamicPostsSkinPrefix+'centeredSlides'] );
-    cicloInfinito = Boolean( elementSettings[dceDynamicPostsSkinPrefix+'loop'] );
+	centeredSlides = Boolean( elementSettings[dceDynamicPostsSkinPrefix+'centeredSlides'] );
+    infiniteLoop = Boolean( elementSettings[dceDynamicPostsSkinPrefix+'loop'] );
 
 	if( elementSettings.carousel_match_height ) {
 		if( elementSettings.style_items === 'template' ) {
@@ -35,6 +34,8 @@ var Widget_DCE_Dynamicposts_carousel_Handler = function ($scope, $) {
 	}
 
     var dceSwiperOptions = {
+		observer: true,
+		observeParents: true,
         direction: String(elementSettings[dceDynamicPostsSkinPrefix+'direction_slider']) || 'horizontal', //vertical
         initialSlide: slideInitNum,
         reverseDirection: Boolean( elementSettings[dceDynamicPostsSkinPrefix+'reverseDirection'] ),
@@ -66,13 +67,13 @@ var Widget_DCE_Dynamicposts_carousel_Handler = function ($scope, $) {
         initialSlide: Number(elementSettings[dceDynamicPostsSkinPrefix+'initialSlide']) || 0,
         slidesPerView: slidesPerView || 'auto',
         slidesPerGroup: Number(elementSettings[dceDynamicPostsSkinPrefix+'slidesPerGroup']) || 1, // Set numbers of slides to define and enable group sliding. Useful to use with slidesPerView > 1
-        slidesPerColumn: Number(elementSettings[dceDynamicPostsSkinPrefix+'slidesColumn']) || 1, // 1, // Number of slides per column, for multirow layout
-        spaceBetween: Number(elementSettings[dceDynamicPostsSkinPrefix+'spaceBetween']) || 0, // 30,
-        slidesOffsetBefore: Number(elementSettings[dceDynamicPostsSkinPrefix+'slidesOffsetBefore']) || 0, //   Add (in px) additional slide offset in the beginning of the container (before all slides)
-        slidesOffsetAfter: Number(elementSettings[dceDynamicPostsSkinPrefix+'slidesOffsetAfter']) || 0, //    Add (in px) additional slide offset in the end of the container (after all slides)
-        slidesPerColumnFill: String(elementSettings[dceDynamicPostsSkinPrefix+'slidesPerColumnFill']) || 'row', //Could be 'column' or 'row'. Defines how slides should fill rows, by column or by row
+        slidesPerColumn: Number(elementSettings[dceDynamicPostsSkinPrefix+'slidesColumn']) || 1, // Number of slides per column, for multirow layout
+        spaceBetween: Number(elementSettings[dceDynamicPostsSkinPrefix+'spaceBetween']) || 0,
+        slidesOffsetBefore: Number(elementSettings[dceDynamicPostsSkinPrefix+'slidesOffsetBefore']) || 0, // Add (in px) additional slide offset in the beginning of the container (before all slides)
+        slidesOffsetAfter: Number(elementSettings[dceDynamicPostsSkinPrefix+'slidesOffsetAfter']) || 0, // Add (in px) additional slide offset in the end of the container (after all slides)
+        slidesPerColumnFill: String(elementSettings[dceDynamicPostsSkinPrefix+'slidesPerColumnFill']) || 'row', // Could be 'column' or 'row'. Defines how slides should fill rows, by column or by row
         centerInsufficientSlides: true,
-        centeredSlides: centroDiapo,
+        centeredSlides: centeredSlides,
         centeredSlidesBounds: Boolean( elementSettings[dceDynamicPostsSkinPrefix+'centeredSlidesBounds'] ),
         grabCursor: Boolean( elementSettings[dceDynamicPostsSkinPrefix+'grabCursor'] ), //true,
         freeMode: Boolean( elementSettings[dceDynamicPostsSkinPrefix+'freeMode'] ),
@@ -83,7 +84,7 @@ var Widget_DCE_Dynamicposts_carousel_Handler = function ($scope, $) {
         freeModeMomentumBounceRatio: Number(elementSettings[dceDynamicPostsSkinPrefix+'speed']) || 1,
         freeModeMinimumVelocity: Number(elementSettings[dceDynamicPostsSkinPrefix+'speed']) || 0.02,
         freeModeSticky: Boolean( elementSettings[dceDynamicPostsSkinPrefix+'freeModeSticky'] ),
-        loop: cicloInfinito,
+        loop: infiniteLoop,
         navigation: {
             nextEl: id_post ? '.elementor-element-' + id_scope + '[data-post-id="' + id_post + '"] .next-' + id_scope : '.next-' + id_scope,
             prevEl: id_post ? '.elementor-element-' + id_scope + '[data-post-id="' + id_post + '"] .prev-' + id_scope : '.prev-' + id_scope,
@@ -189,11 +190,11 @@ var Widget_DCE_Dynamicposts_carousel_Handler = function ($scope, $) {
         if ( 'undefined' === typeof Swiper ) {
 			const asyncSwiper = elementorFrontend.utils.swiper;
 
-			new asyncSwiper( elementSwiper[0], dceSwiperOptions ).then( ( newSwiperInstance ) => {
+			new asyncSwiper( jQuery( elementSwiper[0] ), dceSwiperOptions ).then( ( newSwiperInstance ) => {
 				dcePostsSwiper = newSwiperInstance;
 			} );
         } else {
-          	dcePostsSwiper = new Swiper( elementSwiper[0], dceSwiperOptions );
+          	dcePostsSwiper = new Swiper( jQuery( elementSwiper[0] ), dceSwiperOptions );
         }
 
 	}
@@ -201,7 +202,7 @@ var Widget_DCE_Dynamicposts_carousel_Handler = function ($scope, $) {
 		initSwiperCarousel();
 	}
 
-	// Funzione di callback eseguita quando avvengono le mutazioni
+	// Callback function executed when mutations occur
 	var Dyncontel_MutationObserverCallback = function(mutationsList, observer) {
 	    for(var mutation of mutationsList) {
 	        if (mutation.type == 'attributes' && mutation.attributeName === 'class' && isCarouselEnabled) {
@@ -209,13 +210,14 @@ var Widget_DCE_Dynamicposts_carousel_Handler = function ($scope, $) {
 	        }
 	    }
 	};
-	observe_Dyncontel_element($scope[0], Dyncontel_MutationObserverCallback);
+	dceObserveElement($scope[0], Dyncontel_MutationObserverCallback);
 };
 
 jQuery(window).on('elementor/frontend/init', function () {
     elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamicposts-v2.carousel', Widget_DCE_Dynamicposts_carousel_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-products-cart.carousel', Widget_DCE_Dynamicposts_carousel_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamic-woo-products.carousel', Widget_DCE_Dynamicposts_carousel_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamic-woo-products-on-sale.carousel', Widget_DCE_Dynamicposts_carousel_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-product-upsells.carousel', Widget_DCE_Dynamicposts_carousel_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-product-crosssells.carousel', Widget_DCE_Dynamicposts_carousel_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamic-show-favorites.carousel', Widget_DCE_Dynamicposts_carousel_Handler);

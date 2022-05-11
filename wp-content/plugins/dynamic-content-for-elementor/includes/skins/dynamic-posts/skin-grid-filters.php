@@ -36,8 +36,18 @@ class Skin_Grid_Filters extends \DynamicContentForElementor\Includes\Skins\Skin_
     {
         return __('Grid with Filters', 'dynamic-content-for-elementor');
     }
-    public function register_additional_filters_controls()
+    public function register_additional_grid_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
+        $this->parent = $widget;
+        parent::register_additional_grid_controls($widget);
+        // Remove controls from Skin Grid
+        $this->remove_control('flex_grow');
+        $this->remove_control('v_pos_postitems');
+        $this->remove_control('h_pos_postitems');
+    }
+    public function register_additional_filters_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
+    {
+        $this->parent = $widget;
         $taxonomies = Helper::get_taxonomies();
         $this->start_controls_section('section_filters', ['label' => __('Filters', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_responsive_control('filters_align', ['label' => __('Filters Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => 'left', 'selectors' => ['{{WRAPPER}} .dce-filters' => 'text-align: {{VALUE}};']]);
@@ -48,7 +58,7 @@ class Skin_Grid_Filters extends \DynamicContentForElementor\Includes\Skins\Skin_
                 $this->add_control('filters_taxonomy_terms_' . $tkey, ['label' => __('Data Filters (Selected Terms)', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Term Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'terms', 'object_type' => $tkey, 'description' => __('Use only Selected taxonomy terms or leave empty to use All terms of this taxonomy', 'dynamic-content-for-elementor'), 'multiple' => \true, 'condition' => [$this->get_control_id('filters_taxonomy') => $tkey, $this->get_control_id('filters_taxonomy_first_level_terms') => '']]);
             }
         }
-        $this->add_control('orderby_filters', ['label' => __('Order By', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['parent' => __('Parent', 'dynamic-content-for-elementor'), 'count' => __('Count (number of associated posts)', 'dynamic-content-for-elementor'), 'term_order' => __('Order', 'dynamic-content-for-elementor'), 'name' => __('Name', 'dynamic-content-for-elementor'), 'slug' => __('Slug', 'dynamic-content-for-elementor'), 'term_group' => __('Group', 'dynamic-content-for-elementor'), 'term_id' => 'ID'], 'default' => 'parent', 'default' => 'name']);
+        $this->add_control('orderby_filters', ['label' => __('Order By', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['parent' => __('Parent', 'dynamic-content-for-elementor'), 'count' => __('Count (number of associated posts)', 'dynamic-content-for-elementor'), 'term_order' => __('Order', 'dynamic-content-for-elementor'), 'name' => __('Name', 'dynamic-content-for-elementor'), 'slug' => __('Slug', 'dynamic-content-for-elementor'), 'term_group' => __('Group', 'dynamic-content-for-elementor'), 'term_id' => 'ID'], 'default' => 'name']);
         $this->add_control('order_filters', ['label' => __('Sorting', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['ASC' => ['title' => __('ASC', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-sort-up'], 'DESC' => ['title' => __('DESC', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-sort-down']], 'toggle' => \false, 'default' => 'ASC']);
         $this->add_control('all_filter', ['label' => __('Add "All" filter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('alltext_filter', ['label' => __('All text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('All', 'dynamic-content-for-elementor'), 'condition' => [$this->get_control_id('all_filter!') => '']]);
@@ -75,18 +85,21 @@ class Skin_Grid_Filters extends \DynamicContentForElementor\Includes\Skins\Skin_
     protected function render_grid_filters_bar()
     {
         if ($this->get_instance_value('filters_taxonomy')) {
-            $p_query = $this->parent->get_query();
-            $args = $this->parent->get_query_args();
+            $p_query = $this->get_parent()->get_query();
+            $args = $this->get_parent()->get_query_args();
             $include_terms = 'all';
             $tag_filter = 'span';
             $separator = '';
             $term_filter = esc_html($this->get_instance_value('filters_taxonomy'));
-            $args_filters = array();
+            $args_filters = [];
             $args_filters['taxonomy'] = $term_filter;
             $args_filters['hide_empty'] = $this->get_instance_value('filter_hide_empty') ? \false : \true;
             $args_posts = $args;
             $args_posts['fields'] = 'ids';
             $args_filters['object_ids'] = get_posts($args_posts);
+            if (Helper::is_wpml_active()) {
+                $args_filters['object_ids'] = Helper::wpml_translate_object_id($args_filters['object_ids']);
+            }
             $include_terms = array();
             if ($this->get_instance_value('filters_taxonomy_first_level_terms')) {
                 $terms = get_terms($args_filters);

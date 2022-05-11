@@ -7,8 +7,7 @@ get_header();
 
 global $default_template;
 
-
-$dce_default_options = get_option( DCE_OPTIONS );
+$dce_default_options = get_option( DCE_TEMPLATE_SYSTEM_OPTION );
 $cptype_archive = get_post_type();
 
 // after before data id
@@ -36,8 +35,6 @@ if (
 	$dce_elementor_templates = 'dyncontel_field_archive' . $cptype_archive;
 }
 
-
-
 $dce_default_template = $dce_default_options[ $dce_elementor_templates ]; // ID
 $dce_default_template_base = $dce_default_options[ $dce_elementor_templates . '_template' ]; // canvas | boxed | fullwidth
 
@@ -46,8 +43,7 @@ if ( is_tax() || is_category() || is_tag() ) {
 	$dce_default_template_term = get_term_meta( $termine_id, 'dynamic_content_block', true );
 
 	if ( ! empty( $dce_default_template_term ) && $dce_default_template_term > 1 ) {
-
-				$dce_default_template = $dce_default_template_term;
+		$dce_default_template = $dce_default_template_term;
 	}
 }
 
@@ -81,8 +77,6 @@ $dce_col_xs = $dce_default_options[ $dce_elementor_templates . '_col_xs' ];
 
 						$data_columns = ' data-col-md="' . $dce_col_md . '" data-col-sm="' . $dce_col_sm . '" data-col-xs="' . $dce_col_xs . '"';
 						if ( $dce_default_template ) {
-
-
 							if ( have_posts() ) :
 								while ( have_posts() ) :
 									the_post();
@@ -91,23 +85,20 @@ $dce_col_xs = $dce_default_options[ $dce_elementor_templates . '_col_xs' ];
 									echo '</div>';
 							 endwhile;
 
-								\DynamicContentForElementor\Helper::dce_numeric_posts_nav();
+							\DynamicContentForElementor\Helper::numeric_posts_nav();
 							 else : ?>
 								<p><?php __( 'No posts by this author.', 'dynamic-content-for-elementor' ); ?></p>
 							<?php endif;
 
 						}
 						?>
-					<!-- End Loop -->
-					</div><!-- End Grid -->
+					</div>
 				<?php } ?>
-				</div><!-- End Container -->
-			</div><!-- End Wrapper-container -->
+				</div>
+			</div>
 		<?php do_action( 'dce_after_content_inner' ); ?>
-		</div><!-- End #content -->
-
-	</div><!-- End #primary -->
-
-</div><!-- End #content-wrap -->
+		</div>
+	</div>
+</div>
 
 <?php get_footer(); ?>

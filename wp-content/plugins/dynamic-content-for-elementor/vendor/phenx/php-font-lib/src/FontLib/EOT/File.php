@@ -69,8 +69,8 @@ class File extends \DynamicOOOS\FontLib\TrueType\File
         if ($n < 1) {
             return "";
         }
-        $string = \fread($this->f, $n);
-        $chunks = \str_split($string, 2);
+        $string = (string) \fread($this->f, $n);
+        $chunks = \mb_str_split($string, 2, '8bit');
         $chunks = \array_map("strrev", $chunks);
         return \implode("", $chunks);
     }

@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Password_Visibility extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class PasswordVisibility extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     private $is_common = \false;
     public $has_action = \false;
@@ -49,7 +49,9 @@ class DCE_Extension_Form_Password_Visibility extends \DynamicContentForElementor
      */
     protected function add_actions()
     {
+        // TODO Change hook to render_field
         add_action('elementor/widget/render_content', array($this, '_render_form'), 10, 2);
+        add_action('elementor/element/form/section_form_fields/before_section_end', [$this, 'update_fields_controls']);
         add_action('elementor/widget/print_template', function ($template, $widget) {
             if ('form' === $widget->get_name()) {
                 $template = \false;
@@ -68,7 +70,7 @@ class DCE_Extension_Form_Password_Visibility extends \DynamicContentForElementor
             echo $jkey;
             ?>">
 				(function ($) {
-			<?php 
+				<?php 
             if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                 ?>
 					var <?php 
@@ -139,12 +141,18 @@ class DCE_Extension_Form_Password_Visibility extends \DynamicContentForElementor
         }
         return $content;
     }
-    public static function _add_to_form(Controls_Stack $element, $control_id, $control_data, $options = [])
+    public function update_fields_controls($widget)
     {
-        if ($element->get_name() == 'form' && $control_id == 'form_fields') {
-            $control_data['fields']['form_fields_enchanted_tab'] = array('type' => 'tab', 'tab' => 'enchanted', 'label' => '<i class="dynicon icon-dyn-logo-dce" aria-hidden="true"></i>', 'tabs_wrapper' => 'form_fields_tabs', 'name' => 'form_fields_enchanted_tab', 'condition' => ['field_type!' => 'step']);
-            $control_data['fields']['field_psw_visiblity'] = array('name' => 'field_psw_visiblity', 'label' => __('Password Visibility', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'true', 'separator' => 'before', 'default' => 'true', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'password']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted');
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
+            return;
         }
-        return $control_data;
+        $elementor = \ElementorPro\Plugin::elementor();
+        $control_data = $elementor->controls_manager->get_control_from_stack($widget->get_unique_name(), 'form_fields');
+        if (is_wp_error($control_data)) {
+            return;
+        }
+        $field_controls = ['field_psw_visiblity' => ['name' => 'field_psw_visiblity', 'label' => __('Password Visibility', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'true', 'separator' => 'before', 'default' => 'true', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'password']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted']];
+        $control_data['fields'] = \array_merge($control_data['fields'], $field_controls);
+        $widget->update_control('form_fields', $control_data);
     }
 }

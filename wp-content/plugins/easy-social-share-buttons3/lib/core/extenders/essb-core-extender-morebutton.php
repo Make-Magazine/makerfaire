@@ -165,7 +165,7 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			$code .= sprintf('<div class="essb_morepopup essb_morepopup_%1$s essb_morepopup_%3$s%4$s essb-forced-hidden">
 					<div class="essb_morepopup_header">
 						<span>'.$user_title.'</span>
-						<a href="#" class="essb_morepopup_close" onclick="essb.toggle_less_popup(\'%1$s\'); return false;"><i class="essb_icon_close"></i></a>
+						<a href="#" class="essb_morepopup_close" onclick="essb.toggle_less_popup(\'%1$s\'); return false;"><svg style="width: 24px; height: 24px; padding: 5px;" height="32" viewBox="0 0 32 32" width="32" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M32,25.7c0,0.7-0.3,1.3-0.8,1.8l-3.7,3.7c-0.5,0.5-1.1,0.8-1.9,0.8c-0.7,0-1.3-0.3-1.8-0.8L16,23.3l-7.9,7.9C7.6,31.7,7,32,6.3,32c-0.8,0-1.4-0.3-1.9-0.8l-3.7-3.7C0.3,27.1,0,26.4,0,25.7c0-0.8,0.3-1.3,0.8-1.9L8.7,16L0.8,8C0.3,7.6,0,6.9,0,6.3c0-0.8,0.3-1.3,0.8-1.9l3.7-3.6C4.9,0.2,5.6,0,6.3,0C7,0,7.6,0.2,8.1,0.8L16,8.7l7.9-7.9C24.4,0.2,25,0,25.7,0c0.8,0,1.4,0.2,1.9,0.8l3.7,3.6C31.7,4.9,32,5.5,32,6.3c0,0.7-0.3,1.3-0.8,1.8L23.3,16l7.9,7.9C31.7,24.4,32,25,32,25.7z"/></svg></a>
 					</div>
 					<div class="essb_morepopup_content essb_morepopup_content_%1$s">%2$s</div>%5$s</div>
 					<div class="essb_morepopup_shadow essb_morepopup_shadow_%1$s%6$s" onclick="essb.toggle_less_popup(\'%1$s\'); return false;"></div>',

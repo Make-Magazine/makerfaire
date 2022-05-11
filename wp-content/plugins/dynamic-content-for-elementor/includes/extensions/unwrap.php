@@ -9,7 +9,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Unwrap extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class Unwrap extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     public $name = 'Unwrap';
     public $has_controls = \true;
@@ -108,10 +108,7 @@ class DCE_Extension_Unwrap extends \DynamicContentForElementor\Extensions\DCE_Ex
                     }
                     if ($settings['dce_unwrap_style']) {
                         $css = Helper::get_post_css($template_id);
-                        // https://github.com/tijsverkoyen/CssToInlineStyles
-                        // create instance
                         $cssToInlineStyles = new \DynamicOOOS\TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
-                        // output
                         $content_unwrapped = $cssToInlineStyles->convert($content_unwrapped, $css);
                         list($tmp, $content_unwrapped) = \explode('<body>', $content_unwrapped, 2);
                         list($content_unwrapped, $tmp) = \explode('</body>', $content_unwrapped, 2);
@@ -128,7 +125,7 @@ class DCE_Extension_Unwrap extends \DynamicContentForElementor\Extensions\DCE_Ex
                             }
                             break;
                         case 'section':
-                            $settings['html_tag'] = !empty(\DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag'])) ? \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']) : 'section';
+                            $settings['html_tag'] = !empty($settings['html_tag']) ? \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']) : 'section';
                             list($tmp, $content_unwrapped) = \explode('elementor-row', $content_unwrapped, 2);
                             list($tmp, $content_unwrapped) = \explode('>', $content_unwrapped, 2);
                             $pos = \strrpos($content_unwrapped, '</' . \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']) . '>');

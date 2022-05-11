@@ -8,7 +8,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Address_Autocomplete extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class AddressAutocomplete extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     private $is_common = \false;
     public $has_action = \false;
@@ -52,6 +52,9 @@ class DCE_Extension_Form_Address_Autocomplete extends \DynamicContentForElemento
     }
     public function update_fields_controls($widget)
     {
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
+            return;
+        }
         $elementor = \ElementorPro\Plugin::elementor();
         $control_data = $elementor->controls_manager->get_control_from_stack($widget->get_unique_name(), 'form_fields');
         if (is_wp_error($control_data)) {
@@ -59,9 +62,9 @@ class DCE_Extension_Form_Address_Autocomplete extends \DynamicContentForElemento
         }
         $field_controls = [];
         if (!get_option('dce_google_maps_api')) {
-            $field_controls['field_address_api_notice'] = ['name' => 'field_address_api_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('In order to use Address Autocomplete you should set Google Maps API, with Geocoding API enabled, on APIs section', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted'];
+            $field_controls['field_address_api_notice'] = ['name' => 'field_address_api_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('In order to use Address Autocomplete you should set Google Maps API, with Geocoding API enabled, on Integrations section', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted'];
         }
-        $field_controls += ['form_fields_enchanted_tab' => ['type' => 'tab', 'tab' => 'enchanted', 'label' => '<i class="dynicon icon-dyn-logo-dce" aria-hidden="true"></i>', 'tabs_wrapper' => 'form_fields_tabs', 'name' => 'form_fields_enchanted_tab', 'condition' => ['field_type!' => 'step']], 'field_address' => ['name' => 'field_address', 'label' => __('Address Autocomplete', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'true', 'default' => '', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted'], 'field_address_restrict_country' => ['name' => 'field_address_restrict_country', 'label' => __('Restrict Country', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => Helper::get_iso_3166_1_alpha_2(), 'multiple' => \true, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text'], ['name' => 'field_address', 'operator' => '!=', 'value' => '']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted']];
+        $field_controls += ['field_address' => ['name' => 'field_address', 'label' => __('Address Autocomplete', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'true', 'default' => '', 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted'], 'field_address_restrict_country' => ['name' => 'field_address_restrict_country', 'label' => __('Restrict Country', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => Helper::get_iso_3166_1_alpha_2(), 'multiple' => \true, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'text'], ['name' => 'field_address', 'operator' => '!=', 'value' => '']]], 'tabs_wrapper' => 'form_fields_tabs', 'inner_tab' => 'form_fields_enchanted_tab', 'tab' => 'enchanted']];
         $control_data['fields'] = \array_merge($control_data['fields'], $field_controls);
         $widget->update_control('form_fields', $control_data);
     }

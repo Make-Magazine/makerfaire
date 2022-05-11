@@ -9,7 +9,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DynamicWooProducts extends \DynamicContentForElementor\Widgets\DCE_Widget_DynamicPosts_Base
+class DynamicWooProducts extends \DynamicContentForElementor\Widgets\DynamicPostsBase
 {
     public function get_name()
     {
@@ -21,11 +21,17 @@ class DynamicWooProducts extends \DynamicContentForElementor\Widgets\DCE_Widget_
         $this->add_skin(new Skins\Dynamic_Woo_Products_Skin_Grid_Filters($this));
         $this->add_skin(new Skins\Dynamic_Woo_Products_Skin_Carousel($this));
         $this->add_skin(new Skins\Dynamic_Woo_Products_Skin_DualCarousel($this));
+        $this->add_skin(new Skins\Dynamic_Woo_Products_Skin_Accordion($this));
         $this->add_skin(new Skins\Dynamic_Woo_Products_Skin_Timeline($this));
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
-        parent::_register_controls();
+        parent::safe_register_controls();
         $this->update_control('query_type', ['type' => Controls_Manager::HIDDEN, 'default' => 'get_cpt']);
         $this->update_control('post_type', ['type' => Controls_Manager::HIDDEN, 'default' => 'product']);
         $this->update_control('ignore_sticky_posts', ['type' => Controls_Manager::HIDDEN, 'default' => 'yes']);

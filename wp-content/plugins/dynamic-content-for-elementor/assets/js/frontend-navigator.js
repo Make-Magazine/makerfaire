@@ -27,7 +27,7 @@ jQuery(function () {
         }
     });
 
-    jQuery('#wp-admin-bar-elementor-navigator > .ab-item').on('click', function () {
+    jQuery('#wp-admin-bar-dce-frontend-navigator > .ab-item').on('click', function () {
         if (jQuery('#elementor-navigator').length) {
             if (jQuery('#elementor-navigator').is(':visible')) {
                 jQuery('#elementor-navigator__close').trigger('click');
@@ -39,7 +39,7 @@ jQuery(function () {
     });
 
     jQuery('#elementor-navigator__close').on('click', function () {
-        if (jQuery('body').hasClass('admin-bar') && jQuery('#wp-admin-bar-elementor-navigator .ab-item').length) {
+        if (jQuery('body').hasClass('admin-bar') && jQuery('#wp-admin-bar-dce-frontend-navigator .ab-item').length) {
             jQuery('#elementor-navigator').hide();
         } else {
             jQuery('#elementor-navigator').toggleClass('elementor-closed');

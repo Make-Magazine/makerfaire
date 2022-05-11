@@ -140,7 +140,7 @@ class CFF_Autolink{
 					#
 					# add the url
 					#
-					
+
 					if ($display_url != $link_url && !preg_match('@title=@msi',$tagfill) && $auto_title) {
 
 						$display_quoted = preg_quote($display_url, '!');
@@ -163,8 +163,8 @@ class CFF_Autolink{
 						if( $link_color !== '' ) $buffer .= " style='color: #".$link_color.";' ";
 						$buffer .= ">{$display_url_enc}</a>";
 					}
-					
-				
+
+
 				}else{
 					#echo "fail 3 at $cursor<br />\n";
 

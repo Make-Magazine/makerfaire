@@ -12,10 +12,10 @@
 					<div class="cff-videos-item-source cff-fb-fs" v-html="singlePost.embed_html" v-if="customizerFeedData.settings.videoaction == 'post' && customizerFeedData.settings.disablelightbox != 'off'"></div>
 				</div>
 				<div class="cff-videos-item-info cff-singlemedia-item-info cff-fb-fs">
-					<h4>
+					<h4 v-if="$parent.valueIsEnabled(customizerFeedData.settings.showvideoname)">
 						<a :href="'https://www.facebook.com/'+singlePost.id" target="_blank" v-html="singlePost.title"></a>
 					</h4>
-					<p v-html="(singlePost.description != null && singlePost.description != undefined ? (singlePost.description.substring(0, 50) + (singlePost.description.length > 50 ? '...' : '') ) : '')"></p>
+					<p v-if="$parent.valueIsEnabled(customizerFeedData.settings.showvideodesc)" v-html="(singlePost.description != null && singlePost.description != undefined ? (singlePost.description.substring(0, 50) + (singlePost.description.length > 50 ? '...' : '') ) : '')"></p>
 				</div>
 			</div>
 		</div>

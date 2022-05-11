@@ -13,7 +13,7 @@ class ScheduledQueryRunService extends \DynamicOOOS\Stripe\Service\AbstractServi
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\Sigma\ScheduledQueryRun>
      */
     public function all($params = null, $opts = null)
     {

@@ -222,6 +222,14 @@ jQuery(document).ready(function($){
 
 			if (essb_settings.essb3_ga)
 				essb_ga_tracking(service, url, instance_position);
+			
+			if (essb_settings.essb3_ga_ntg && typeof(gtag) != 'undefined') {
+				gtag('event', 'social share', {
+				    'event_category': 'NTG social',
+				    'event_label': service,
+				    'non_interaction' : false
+				});
+			}
 
 		}
 
@@ -261,6 +269,14 @@ jQuery(document).ready(function($){
 
 			if (essb_settings.essb3_ga)
 				essb_ga_tracking(service, url, custom_position);
+			
+			if (essb_settings.essb3_ga_ntg && gtag) {
+				gtag('event', 'social share', {
+				    'event_category': 'NTG social',
+				    'event_label': service,
+				    'non_interaction' : false
+				});
+			}
 		}
 	};
 
@@ -316,12 +332,14 @@ jQuery(document).ready(function($){
 		var element = $('.essb_'+instance),
 			instance_position = $(element).attr('data-essb-position') || '';
 
-		if (afterShare) {
-			var instance_post_id = $('.essb_'+instance).attr('data-essb-postid') || '';
-			essb_smart_onclose_events(service, instance_post_id);
-
-			if (instance_position == 'booster' && typeof(essb_booster_close_from_action) != 'undefined')
-				essb_booster_close_from_action();
+		if (afterShare) {			
+			setTimeout(function() {			
+				var instance_post_id = $('.essb_'+instance).attr('data-essb-postid') || '';
+				essb_smart_onclose_events(service, instance_post_id);
+	
+				if (instance_position == 'booster' && typeof(essb_booster_close_from_action) != 'undefined')
+					essb_booster_close_from_action();
+			}, 1500);
 		}
 	};
 
@@ -548,8 +566,30 @@ jQuery(document).ready(function($){
 	essb.sharebutton = function(key) {
 		if ($('.essb-windowcs-'+key).length) {
 
+			/**
+			 * @since 8.3 Custom pop-up size
+			 */
+			var win_width = $( window ).width(), win_height = $(window).height(),
+				popup_width = $('.essb-windowcs-'+key).data('width'), popup_height = $('.essb-windowcs-'+key).data('height'),
+				customPosition = false;
+						
+			if (Number(popup_width || 0) > 0 || Number(popup_height || 0) > 0) {
+				if (Number(popup_width) > Number(win_width)) popup_width = win_width;
+				if (Number(popup_height) > Number(win_height)) popup_height = win_height;
+				
+				if (Number(popup_width) > 0) $('.essb-windowcs-'+key).css({ 'width': popup_width + 'px'});
+				if (Number(popup_height) > 0) $('.essb-windowcs-'+key).css({ 'height': popup_height + 'px'});
+				
+				$('.essb-windowcs-'+key).center();
+				customPosition = true;
+			}
+			
+
 			$('.essb-windowcs-'+key).fadeIn(200);
-			$('.essb-windowcs-'+key+' .inner-content').center();
+			if (!customPosition) $('.essb-windowcs-'+key+' .inner-content').center();
+			else {
+				$('.essb-windowcs-'+key+' .inner-content').css( {'position': 'absolute', 'left': '50%', 'top': '50%', 'transform': 'translate(-50%,-50%)', 'width': '90%' });
+			}
 		}
 	};
 
@@ -603,114 +643,6 @@ jQuery(document).ready(function($){
 
 	};
 
-	essb.ajax_subscribe = function(key, event) {
-
-		event.preventDefault();
-
-		var formContainer = $('.essb-subscribe-form-' + key + ' #essb-subscribe-from-content-form-mailchimp'),
-			positionContainer = $('.essb-subscribe-form-' + key + ' .essb-subscribe-form-content');
-
-		var usedPosition = $(positionContainer).attr('data-position') || '',
-			usedDesign = $(positionContainer).attr('data-design') || '';
-
-		if (formContainer.length) {
-			// Additional check for require agree to terms check
-			if ($(formContainer).find('.essb-subscribe-confirm').length) {
-				var state = $(formContainer).find('.essb-subscribe-confirm').is(":checked");
-				if (!state) {
-
-					if (essb_settings.subscribe_terms_error)
-						alert(essb_settings.subscribe_terms_error);
-					else
-						alert('You need to confirm that you agree with our terms');
-					return;
-				}
-			}
-
-			if ($(formContainer).find('.essb-subscribe-form-content-name-field').length && essb_settings.subscribe_validate_name) {
-				if ($(formContainer).find('.essb-subscribe-form-content-name-field').val() == '') {
-					if (essb_settings.subscribe_validate_name_error)
-						alert(essb_settings.subscribe_validate_name_error);
-					else
-						alert('You need to fill name field too');
-					return;
-				}
-			}
-
-			var user_mail = $(formContainer).find('.essb-subscribe-form-content-email-field').val();
-			var user_name = $(formContainer).find('.essb-subscribe-form-content-name-field').length ? $(formContainer).find('.essb-subscribe-form-content-name-field').val() : '';
-			$(formContainer).find('.submit').prop('disabled', true);
-			$(formContainer).hide();
-			$('.essb-subscribe-form-' + key).find('.essb-subscribe-loader').show();
-			var submitapi_call = formContainer.attr('action') + '&mailchimp_email='+user_mail+'&mailchimp_name='+user_name+'&position='+usedPosition+'&design='+usedDesign+'&title='+encodeURIComponent(document.title);
-			
-			/**
-			 * @since 7.7 Additional check to prevent mixed content 
-			 */
-			var current_page_url = window.location.href;
-			if (current_page_url.indexOf('https://') > -1 && submitapi_call.indexOf('https://') == -1) submitapi_call = submitapi_call.replace('http://', 'https://');
-			
-			// validate reCaptcha too
-			if ($('.essb-subscribe-captcha').length) {
-				var recaptcha  = $( '#g-recaptcha-response' ).val();
-				submitapi_call += '&validate_recaptcha=true&recaptcha=' + recaptcha;
-			}
-			
-			
-			$.post(submitapi_call, { mailchimp_email1: user_mail, mailchimp_name1: user_name},
-					function (data) {
-
-						if (data) {
-
-						console.log(data);
-
-						if (data['code'] == '1') {
-							$('.essb-subscribe-form-' + key).find('.essb-subscribe-form-content-success').show();
-							$('.essb-subscribe-form-' + key).find('.essb-subscribe-form-content-error').hide();
-							$(formContainer).hide();
-
-							// subscribe conversions tracking
-							//usedPosition
-							if (typeof(essb_subscribe_tracking) != 'undefined') {
-								essb_subscribe_tracking(usedPosition);
-							}
-
-							// redirecting users if successful redirect URL is set
-							if (data['redirect']) {
-								setTimeout(function() {
-
-									if (data['redirect_new']) {
-										var win = window.open(data['redirect'], '_blank');
-										win.focus();
-									}
-									else
-										window.location.href = data['redirect'];
-								}, 200);
-							}
-
-							essb.trigger('subscribe_success', {'design': usedDesign, 'position': usedPosition, 'email': user_mail, 'name': user_name});
-						}
-						else {
-							var storedMessage = $('.essb-subscribe-form-' + key).find('.essb-subscribe-form-content-error').attr('data-message') || '';
-							if (storedMessage == '') {
-								 $('.essb-subscribe-form-' + key).find('.essb-subscribe-form-content-error').attr('data-message', $('.essb-subscribe-form-' + key).find('.essb-subscribe-form-content-error').text());
-							}
-
-							if (data['code'] == 90)
-								$('.essb-subscribe-form-' + key).find('.essb-subscribe-form-content-error').text(data['message']);
-							else
-								$('.essb-subscribe-form-' + key).find('.essb-subscribe-form-content-error').text(storedMessage);
-							$('.essb-subscribe-form-' + key).find('.essb-subscribe-form-content-error').show();
-							$('.essb-subscribe-form-' + key).find('.essb-subscribe-from-content-form').show();
-							$(formContainer).find('.submit').prop('disabled', false);
-						}
-						$('.essb-subscribe-form-' + key).find('.essb-subscribe-loader').hide();
-					}},
-			'json');
-		}
-
-	};
-
 	essb.is_after_comment = function() {
 		var addr = window.location.href;
 
@@ -727,6 +659,42 @@ jQuery(document).ready(function($){
 		$(".essb-popup-shadow").fadeOut(400);
 	};
 	
+	essb.copy_link_direct = function(currentLocation) {
+		
+		if (!$('#essb_copy_link_field').length) {
+			var output = [];
+			output.push('<div style="display: none;"><input type="text" id="essb_copy_link_field" style="width: 100%;padding: 5px 10px;font-size: 15px;background: #f5f6f7;border: 1px solid #ccc;font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif;" /></div>');
+			output.push('<div id="essb_copy_link_message" style="background: rgba(0,0,0,0.7); color: #fff; z-index: 1100; position: fixed; padding: 15px 25px; font-size: 13px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif;">');
+			output.push(essb_settings.translate_copy_message2 ? essb_settings.translate_copy_message2 : 'Copied to clipboard.');
+			output.push('</div>');
+			$('body').append(output.join(''));
+		}
+		
+		$('#essb_copy_link_field').val(currentLocation);
+		$('#essb_copy_link_field').focus();
+		$('#essb_copy_link_field').select();
+		
+		setTimeout(function() {
+			var copyText = document.querySelector("#essb_copy_link_field");
+			try {
+				copyText.value = currentLocation;
+				copyText.focus();
+				copyText.select();
+				copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+				document.execCommand("copy");
+				navigator.clipboard.writeText(copyText.value);
+				$('#essb_copy_link_message').center();
+				$('#essb_copy_link_message').fadeIn(300);
+				setTimeout(function() {
+					$('#essb_copy_link_message').fadeOut();
+				}, 2000);
+			}
+			catch (e) {
+				console.log('Error link copy to clipboard!');
+			}
+		}, 100);
+	};
+	
 	essb.copy_link = function(instance_id, user_href) {
 		var currentLocation = window.location.href, win_width = $( window ).width();
 				
@@ -737,16 +705,21 @@ jQuery(document).ready(function($){
 		
 		if (user_href && user_href != '') currentLocation = user_href;
 		
+		if (essb_settings && essb_settings.copybutton_direct) {
+			essb.copy_link_direct(currentLocation);
+			return;
+		}
+		
 		if (!$('.essb-copylink-window').length) {
 			var output = [];
 			output.push('<div class="essb_morepopup essb-copylink-window" style="z-index: 1301;">');
-			output.push('<div class="essb_morepopup_header"> <span>&nbsp;</span> <a href="#" class="essb_morepopup_close"><i class="essb_icon_close"></i></a> </div>');
+			output.push('<div class="essb_morepopup_header"> <span>&nbsp;</span> <a href="#" class="essb_morepopup_close"><svg style="width: 24px; height: 24px; padding: 5px;" height="32" viewBox="0 0 32 32" width="32" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M32,25.7c0,0.7-0.3,1.3-0.8,1.8l-3.7,3.7c-0.5,0.5-1.1,0.8-1.9,0.8c-0.7,0-1.3-0.3-1.8-0.8L16,23.3l-7.9,7.9C7.6,31.7,7,32,6.3,32c-0.8,0-1.4-0.3-1.9-0.8l-3.7-3.7C0.3,27.1,0,26.4,0,25.7c0-0.8,0.3-1.3,0.8-1.9L8.7,16L0.8,8C0.3,7.6,0,6.9,0,6.3c0-0.8,0.3-1.3,0.8-1.9l3.7-3.6C4.9,0.2,5.6,0,6.3,0C7,0,7.6,0.2,8.1,0.8L16,8.7l7.9-7.9C24.4,0.2,25,0,25.7,0c0.8,0,1.4,0.2,1.9,0.8l3.7,3.6C31.7,4.9,32,5.5,32,6.3c0,0.7-0.3,1.3-0.8,1.8L23.3,16l7.9,7.9C31.7,24.4,32,25,32,25.7z"/></svg></a> </div>');
 			output.push('<div class="essb_morepopup_content">');
 			output.push('<div class="essb_copy_internal" style="display: flex; align-items: center;">');
 			output.push('<div style="width: calc(100% - 50px); padding: 5px;"><input type="text" id="essb_copy_link_field" style="width: 100%;padding: 5px 10px;font-size: 15px;background: #f5f6f7;border: 1px solid #ccc;font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif;" /></div>');
-			output.push('<div style="width:50px;text-align: center;"><a href="#" class="essb-copy-link" title="'+ (essb_settings.translate_copy_message1 ? essb_settings.translate_copy_message1 : 'Press to copy the link')+'" style="color:#5867dd;background:#fff;padding:10px;text-decoration: none;"><i class="essb_icon essb_icon_copy"></i></a></div>');
+			output.push('<div style="width:50px;text-align: center;"><a href="#" class="essb-copy-link" title="'+ (essb_settings.translate_copy_message1 ? essb_settings.translate_copy_message1 : 'Press to copy the link')+'" style="color:#5867dd;background:#fff;padding:10px;text-decoration: none;"><svg style="width: 24px; height: 24px; fill: currentColor;" class="essb-svg-icon" aria-hidden="true" role="img" focusable="false" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M25.313 28v-18.688h-14.625v18.688h14.625zM25.313 6.688c1.438 0 2.688 1.188 2.688 2.625v18.688c0 1.438-1.25 2.688-2.688 2.688h-14.625c-1.438 0-2.688-1.25-2.688-2.688v-18.688c0-1.438 1.25-2.625 2.688-2.625h14.625zM21.313 1.313v2.688h-16v18.688h-2.625v-18.688c0-1.438 1.188-2.688 2.625-2.688h16z"></path></svg></a></div>');
 			output.push('</div>');
-			output.push('<div class="essb-copy-message" style="font-size: 13px; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif;"></div>');
+			output.push('<div class="essb-copy-message" style="font-size: 13px; font-family: -apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif;"></div>');
 			output.push('</div>');
 			output.push('</div>');
 			
@@ -767,6 +740,7 @@ jQuery(document).ready(function($){
 					copyText.select();
 					copyText.setSelectionRange(0, 99999); /*For mobile devices*/
 					document.execCommand("copy");
+					navigator.clipboard.writeText(copyText.value);
 					$('.essb-copylink-window .essb_morepopup_header span').html(essb_settings.translate_copy_message2 ? essb_settings.translate_copy_message2 : 'Copied to clipboard.');
 					setTimeout(function() {
 						$('.essb-copylink-window .essb_morepopup_header span').html('&nbsp;');
@@ -984,6 +958,7 @@ jQuery(document).ready(function($){
 		$(element_class).center();
 		$(element_class).slideDown(200);
 		$(element_class_shadow).fadeIn(200);
+		$('#essb_mailform_status_message').html('');
 		essb['essb_mailform_opened'] = true;
 		essb.tracking_only("", "mail", unique_id);
 	};
@@ -991,21 +966,37 @@ jQuery(document).ready(function($){
 	var essb_close_mailform = window.essb_close_mailform = function() {
 		$(".essb_mailform").fadeOut(200);
 		$(".essb_mailform_shadow").fadeOut(200);
+		$('#essb_mailform_status_message').html('');
 		essb['essb_mailform_opened'] = false;
 	};
 	
 	var essb_mailform_send = window.essb_mailform_send = function() {
+		var highlight = function(id) {
+			$(id).css('background-color', '#ffd8d8');
+			setTimeout(function() {
+				$(id).css('background-color', '#fff');
+			}, 5000);
+		};
+		
+		$('#essb_mailform_status_message').html('');
+		$('.essb_mailform_content_buttons').css('visibility', 'visible');
+		
 		var sender_email = $("#essb_mailform_from").val(),
 			sender_name = $('#essb_mailform_from_name').val(),
 			recepient_email = $("#essb_mailform_to").val(),
 			captcha_validate = $("#essb_mailform_c").length ? true : false,
 			errorMessage = $('.essb_mailform').attr('data-error') || '',
+			sendingMessage = $('.essb_mailform').attr('data-sending') || '',
 			captcha = captcha_validate ? $("#essb_mailform_c").val() : "",
 			recaptcha  = $( '#g-recaptcha-response' ).val(),
 			custom_message = '';
 		
-		if (sender_email == "" || recepient_email == "" || (captcha == "" && captcha_validate)) {
-			alert(errorMessage);
+		if (sender_name == '' || sender_email == "" || recepient_email == "" || (captcha == "" && captcha_validate)) {
+			
+			if (sender_name == '') highlight("#essb_mailform_from_name");
+			if (sender_email == '') highlight("#essb_mailform_from");
+			if (recepient_email == '') highlight("#essb_mailform_to");
+			$('#essb_mailform_status_message').html('<span style="color: #d80001;">' + errorMessage + '</span>');			
 			return;
 		}
 		
@@ -1013,6 +1004,10 @@ jQuery(document).ready(function($){
 			instance_post_id = $("#essb_mail_post").val();
 		
 		if (typeof(essb_settings) != "undefined") {
+			// hiding buttons before sending of the message
+			$('.essb_mailform_content_buttons').css('visibility', 'hidden');
+			$('#essb_mailform_status_message').html(sendingMessage + ' ' + recepient_email);
+			
 			$.post(essb_settings.ajax_url, {
 				"action": "essb_mail_action",
 				"post_id": instance_post_id,
@@ -1025,8 +1020,17 @@ jQuery(document).ready(function($){
 				'recapcha': recaptcha,
 				"nonce": essb_settings.essb3_nonce
 				}, function (data) { if (data) {
-					alert(data["message"]);
-					if (data["code"] == "1") essb_close_mailform();
+					$('.essb_mailform_content_buttons').css('visibility', 'visible');
+					if (data['message']) $('#essb_mailform_status_message').html('<span style="color: #d80001;">' + data['message'] + '</span>');
+					if (data["code"] == "1") { 
+						essb_close_mailform(); 						
+						alert(data['message']);
+					}
+					if (data['code']) {
+						if (data['code'] == '101' && $("#essb_mailform_c").length) highlight("#essb_mailform_c");
+						if (data['code'] == '102' && $("#essb_mailform_to").length) highlight("#essb_mailform_to");
+						if (data['code'] == '104' && $("#essb_mailform_from").length) highlight("#essb_mailform_from");
+					}
 			}}, 'json');
 		}
 	};
@@ -1566,471 +1570,8 @@ jQuery(document).ready(function($){
 				$(window).on('scroll', debounce(essbPostVerticalFloatScroll, 1));
 		}
 
-		/**
-		 * Display Method: Fly In
-		 */
-		if ($('.essb-flyin').length) {
-
-			var flyinDisplayed = false;
-
-			var essb_flyin_onscroll = function() {
-				if (flyinTriggeredOnScroll) return;
-
-				var current_pos = $(window).scrollTop();
-				var height = $(document).height()-$(window).height();
-				var percentage = current_pos/height*100;
-
-				if (!flyinTriggerEnd) {
-					if (percentage > flyinTriggerPercent && flyinTriggerPercent > 0) {
-						flyinTriggeredOnScroll = true;
-						essb_flyin_show();
-					}
-				}
-				else {
-					var element = $('.essb_break_scroll');
-					if (!element.length) { return; }
-					var top = $('.essb_break_scroll').offset().top - parseFloat($('.essb_break_scroll').css('marginTop').replace(/auto/, 0));
-
-					if (current_pos >= top) {
-						flyinTriggeredOnScroll = true;
-						essb_flyin_show();
-					}
-				}
-			}
-			
-			var essb_flyin_manual_show = window.essb_flyin_manual_show = function() {
-				if (!$('.essb-flyin').length) return;
-				
-				var element = $('.essb-flyin'),
-					popWidth = $(element).attr('data-width') || '',
-					winWidth = $( window ).width(),
-					baseWidth = 400;
-				
-				if (Number(popWidth) && Number(popWidth) > 0) baseWidth = Number(popWidth);
-				if (winWidth < baseWidth) baseWidth = winWidth - 60;
-				
-				$(".essb-flyin").css( { width: baseWidth+'px'});
-				$(".essb-flyin").fadeIn(400);
-			}
-
-			var essb_flyin_show = window.essb_flyin_show = function() {
-				if (flyinDisplayed) return;
-
-				var element = $('.essb-flyin');
-				if (!element.length) return;
-
-				var popWidth = $(element).attr("data-width") || "";
-				var popHideOnClose = $(element).attr("data-close-hide") || "";
-				var popHideOnCloseAll = $(element).attr("data-close-hide-all") || "";
-				var popPostId = $(element).attr("data-postid") || "";
-
-				var popAutoCloseAfter = $(element).attr("data-close-after") || "";
-
-				if (popHideOnClose == "1" || popHideOnCloseAll == "1") {
-					var cookie_name = "";
-					var base_cookie_name = "essb_flyin_";
-					if (popHideOnClose == "1") {
-						cookie_name = base_cookie_name + popPostId;
-
-						var cookieSet = essb.getCookie(cookie_name);
-						if (cookieSet == "yes") return;
-						essb.setCookie(cookie_name, "yes", 7);
-					}
-					if (popHideOnCloseAll == "1") {
-						cookie_name = base_cookie_name + "all";
-
-						var cookieSet = essb.getCookie(cookie_name);
-						if (cookieSet == "yes") return;
-						essb.setCookie(cookie_name, "yes", 7);
-					}
-				}
-
-				var win_width = $( window ).width();
-				var doc_height = $('document').height();
-
-				var base_width = 400;
-				var userwidth = popWidth;
-				if (Number(userwidth) && Number(userwidth) > 0)
-					base_width = userwidth;
-
-
-				if (win_width < base_width) base_width = win_width - 60;
-
-				// automatically close
-				if (Number(popAutoCloseAfter) && Number(popAutoCloseAfter) > 0) {
-
-					var optin_time = parseFloat(popAutoCloseAfter);
-					optin_time = optin_time * 1000;
-					setTimeout(function(){
-						$(".essb-flyin").fadeOut(200);
-					}, optin_time);
-				}
-
-				$(".essb-flyin").css( { width: base_width+'px'});
-				$(".essb-flyin").fadeIn(400);
-
-				flyinDisplayed = true;
-			}
-
-			var flyinTriggeredOnScroll = false;
-			var flyinTriggerPercent = -1;
-			var flyinTriggerEnd = false;
-
-			if (essb.responsiveEventsCanRun($('.essb-flyin'))) {
-				var element = $('.essb-flyin');
-				if (essb.is_after_comment() && element.hasClass("essb-flyin-oncomment")) {
-					essb_flyin_show();
-					return;
-				}
-
-				var popOnPercent = $(element).attr("data-load-percent") || "";
-				var popAfter = $(element).attr("data-load-time") || "";
-				var popOnEnd = $(element).attr("data-load-end") || "";
-				var popManual = $(element).attr("data-load-manual") || "";
-
-				if (popManual == '1') return;
-
-				if (popOnPercent != '' || popOnEnd == "1") {
-					flyinTriggerPercent = Number(popOnPercent);
-					flyinTriggeredOnScroll = false;
-					flyinTriggerEnd = (popOnEnd == "1") ? true : false;
-
-					$(window).on('scroll', debounce(essb_flyin_onscroll, 1));
-				}
-
-				if (popAfter && typeof(popAfter) != "undefined") {
-					if (popAfter != '' && Number(popAfter)) {
-						setTimeout(function() {
-							essb_flyin_show();
-						}, (Number(popAfter) * 1000));
-					}
-					else
-						essb_flyin_show();
-				}
-				else {
-
-					if (popOnPercent == '' && popOnEnd != '1')
-						essb_flyin_show();
-				}
-
-			}
-		}
-
-		/**
-		 * Display Method: Pop up
-		 */
-
-		if ($('.essb-popup').length) {
-
-			var popupTriggeredOnScroll = false;
-			var popupTriggerPercent = -1;
-			var popupTriggerEnd = false;
-			var popupTriggerExit = false;
-			var popupShown = false;
-
-
-			var essb_popup_exit = function(event) {
-				if (popupTriggerExit) return;
-
-				var e = event || window.event;
-
-				var from = e.relatedTarget || e.toElement;
-
-				// Reliable, works on mouse exiting window and user switching active program
-				if(!from || from.nodeName === "HTML") {
-					popupTriggerExit = true;
-					essb_popup_show();
-				}
-			};
-
-			var essb_popup_onscroll = function() {
-				if (popupTriggeredOnScroll) return;
-
-				var current_pos = $(window).scrollTop();
-				var height = $(document).height() - $(window).height();
-				var percentage = current_pos/height*100;
-
-				if (!popupTriggerEnd) {
-					if (percentage > popupTriggerPercent && popupTriggerPercent > 0) {
-						popupTriggeredOnScroll = true;
-						essb_popup_show();
-					}
-				}
-				else {
-					var element = $('.essb_break_scroll');
-					if (!element.length) {
-						var userTriggerPercent = 90;
-						if (percentage > userTriggerPercent && userTriggerPercent > 0) {
-							popupTriggeredOnScroll = true;
-							essb_popup_show();
-						}
-					}
-					else {
-						var top = $('.essb_break_scroll').offset().top - parseFloat($('.essb_break_scroll').css('marginTop').replace(/auto/, 0));
-
-						if (current_pos >= top) {
-							popupTriggeredOnScroll = true;
-							essb_popup_show();
-						}
-					}
-				}
-			};
-			
-			var essb_popup_show = window.essb_popup_show = function() {
-
-				if (popupShown) return;
-
-				var element = $('.essb-popup');
-				if (!element.length) return;
-
-				var popWidth = $(element).attr("data-width") || "";
-				var popHideOnClose = $(element).attr("data-close-hide") || "";
-				var popHideOnCloseAll = $(element).attr("data-close-hide-all") || "";
-				var popPostId = $(element).attr("data-postid") || "";
-
-				var popAutoCloseAfter = $(element).attr("data-close-after") || "";
-
-				if (popHideOnClose == "1" || popHideOnCloseAll == "1") {
-					var cookie_name = "";
-					var base_cookie_name = "essb_popup_";
-					if (popHideOnClose == "1") {
-						cookie_name = base_cookie_name + popPostId;
-
-						var cookieSet = essb.getCookie(cookie_name);
-						if (cookieSet == "yes")  return;
-						essb.setCookie(cookie_name, "yes", 7);
-					}
-					if (popHideOnCloseAll == "1") {
-						cookie_name = base_cookie_name + "all";
-
-						var cookieSet = essb.getCookie(cookie_name);
-						if (cookieSet == "yes") return;
-						essb.setCookie(cookie_name, "yes", 7);
-					}
-				}
-
-				var win_width = $( window ).width();
-				var doc_height = $('document').height();
-
-				var base_width = 800;
-				var userwidth = popWidth;
-				if (Number(userwidth) && Number(userwidth) > 0) {
-					base_width = userwidth;
-				}
-
-				if (win_width < base_width) { base_width = win_width - 60; }
-
-				// automatically close
-				if (Number(popAutoCloseAfter) && Number(popAutoCloseAfter) > 0) {
-
-					optin_time = Number(popAutoCloseAfter) * 1000;
-					setTimeout(function(){
-						essb.popup_close();
-					}, optin_time);
-
-				}
-
-				$(".essb-popup").css( { width: base_width+'px'});
-				$(".essb-popup").center();
-
-				$(".essb-popup").fadeIn(400);
-				$(".essb-popup-shadow").fadeIn(200);
-
-				popupShown = true;
-			};			
-
-			if (essb.responsiveEventsCanRun($('.essb-popup'))) {
-				var element = $('.essb-popup');
-				if (essb.is_after_comment()) {
-					if (element.hasClass("essb-popup-oncomment")) {
-						essb_popup_show();
-						return;
-					}
-				}
-				
-				var popOnPercent = $(element).attr("data-load-percent") || "";
-				var popAfter = $(element).attr("data-load-time") || "";
-				var popOnEnd = $(element).attr("data-load-end") || "";
-				var popManual = $(element).attr("data-load-manual") || "";
-				var popExit = $(element).attr("data-exit-intent") || "";
-
-				if (popManual == '1') {
-					popOnPercent = '';
-					popAfter = '-1';
-					popOnEnd = '';
-					popExit = '';
-				}
-
-				if (popOnPercent != '' || popOnEnd == "1") {
-					popupTriggerPercent = Number(popOnPercent);
-					popupTriggeredOnScroll = false;
-					popupTriggerEnd = (popOnEnd == "1") ? true : false;
-					$(window).on('scroll', essb_popup_onscroll);
-				}
-
-				if (popExit == '1') {
-					function addEvent(obj, evt, fn) {
-						  if (obj.addEventListener) {
-						    obj.addEventListener(evt, fn, false);
-						  } else if (obj.attachEvent) {
-						    obj.attachEvent("on" + evt, fn);
-						  }
-						}
-
-						// Exit intent trigger
-						addEvent(document, 'mouseout', function(evt) {
-							evt = evt ? evt : window.event;
-
-							// If this is an autocomplete element.
-							if(evt.target.tagName.toLowerCase() == "input")
-								return;
-
-							// Get the current viewport width.
-							var vpWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-
-							// If the current mouse X position is within 50px of the right edge
-							// of the viewport, return.
-							if(evt.clientX >= (vpWidth - 50))
-								return;
-
-							// If the current mouse Y position is not within 50px of the top
-							// edge of the viewport, return.
-							// 7.7.3 - replace 50 -> 0
-							if(evt.clientY >= 0)
-								return;
-
-						  if (evt.toElement === null && evt.relatedTarget === null) {
-							  essb_popup_exit();
-						  }
-						});
-				}
-
-				if (popAfter && typeof(popAfter) != "undefined" && popAfter != '-1') {
-					if (popAfter != '' && Number(popAfter)) {
-						setTimeout(function() {
-							essb_popup_show();
-						}, (Number(popAfter) * 1000));
-					}
-					else {
-						essb_popup_show();
-					}
-
-				}
-				else {
-					if (popOnPercent == '' && popOnEnd != '1' && popExit != '1' && popAfter != '-1') {
-						essb_popup_show();
-					}
-
-				}
-			}
-
-		}
-		
-		/**
-		 * Display Method: Bottom Bar
-		 */
-
-		function essb_bottombar_onscroll() {
-			var current_pos = $(window).scrollTop();
-			var height = $(document).height()-$(window).height();
-			var percentage = current_pos/height*100;
 
 		
-			var element;
-			if ($(".essb_bottombar").length)
-				element = $(".essb_bottombar");
-
-
-			if (!element || typeof(element) == "undefined") return;
-
-			var value_appear = essb_int_value($(element).find('.essb_links').data('bottombar-appear') || '');
-			var value_disappear = essb_int_value($(element).find('.essb_links').data('bottombar-disappear') || '');
-
-			if (value_appear > 0 ) {
-				if (percentage >= value_appear && !element.hasClass("essb_active_bottombar")) {
-					element.addClass("essb_active_bottombar");
-					return;
-				}
-
-				if (percentage < value_appear && element.hasClass("essb_active_bottombar")) {
-					element.removeClass("essb_active_bottombar");
-					return;
-				}
-			}
-			if (value_disappear > 0) {
-				if (percentage >= value_disappear && !element.hasClass("hidden-float")) {
-					element.addClass("hidden-float");
-					element.css( {"opacity": "0"});
-					return;
-				}
-				if (percentage < value_disappear && element.hasClass("hidden-float")) {
-					element.removeClass("hidden-float");
-					element.css( {"opacity": "1"});
-					return;
-				}
-			}
-		}
-
-		if ($(".essb_bottombar").length)
-			if (essb.responsiveEventsCanRun($('.essb_bottombar'))) {
-				var element = $('.essb_bottombar');
-				if (($(element).find('.essb_links').data('bottombar-appear') || '') != '' || ($(element).find('.essb_links').data('bottombar-disappear') || '') != '')
-					$(window).on('scroll', debounce(essb_bottombar_onscroll, 1));
-			}
-
-		//TODO: From here to add responsive events class
-
-		/**
-		 * Display Method: Top Bar
-		 */
-
-		function essb_topbar_onscroll() {
-			var current_pos = $(window).scrollTop();
-			var height = $(document).height()-$(window).height();
-			var percentage = current_pos/height*100;
-
-			var element;
-			if ($(".essb_topbar").length)
-				element = $(".essb_topbar");
-
-
-			if (!element || typeof(element) == "undefined") return;
-
-			var value_appear = essb_int_value($(element).find('.essb_links').data('topbar-appear') || '');
-			var value_disappear = essb_int_value($(element).find('.essb_links').data('topbar-disappear') || '');
-
-			if (value_appear > 0 ) {
-				if (percentage >= value_appear && !element.hasClass("essb_active_topbar")) {
-					element.addClass("essb_active_topbar");
-					return;
-				}
-
-				if (percentage < value_appear && element.hasClass("essb_active_topbar")) {
-					element.removeClass("essb_active_topbar");
-					return;
-				}
-			}
-			if (value_disappear > 0) {
-				if (percentage >= value_disappear && !element.hasClass("hidden-float")) {
-					element.addClass("hidden-float");
-					element.css( {"opacity": "0"});
-					return;
-				}
-				if (percentage < value_disappear && element.hasClass("hidden-float")) {
-					element.removeClass("hidden-float");
-					element.css( {"opacity": "1"});
-					return;
-				}
-			}
-		}
-
-		if (essb.responsiveEventsCanRun($('.essb_topbar'))) {
-			if ($(".essb_topbar").length) {
-				var element = $(".essb_topbar");
-				if (($(element).find('.essb_links').data('topbar-appear') || '') != '' || ($(element).find('.essb_links').data('topbar-disappear') || '') != '')
-					$(window).on('scroll', debounce(essb_topbar_onscroll, 1));
-			}
-		}
 
 		/**
 		 * Display Method: Post Vertical Float
@@ -2296,86 +1837,6 @@ jQuery(document).ready(function($){
 		}
 
 
-		/**
-		 * Display Method: Share Booster
-		 */
-
-		if ($('.essb-sharebooster').length) {
-			function essb_booster_trigger() {
-				if (booster_shown) return;
-
-				$('.essb-sharebooster').center();
-				$('.essb-sharebooster').fadeIn(400);
-				$('.essb-sharebooster-overlay').fadeIn(200);
-
-				$('body').addClass('essb-sharebooster-preventscroll');
-
-				booster_shown = true;
-
-				if (Number(booster_autoclose))
-					setTimeout(essb_booster_close, Number(booster_autoclose) * 1000);
-
-			}
-
-			function essb_booster_close() {
-				$('.essb-sharebooster').fadeOut(200);
-				$('.essb-sharebooster-overlay').fadeOut(400);
-
-				$('body').removeClass('essb-sharebooster-preventscroll');
-			}
-
-			function essb_booster_close_from_action() {
-				var boosterCookieKey = booster_donotshow == 'all' ? 'essb_booster_all' : 'essb_booster_' + essb_settings.post_id;
-
-				essb.setCookie(boosterCookieKey, "yes", Number(booster_hide));
-				essb_booster_close();
-			}
-
-			window.essb_booster_close_from_action = essb_booster_close_from_action;
-
-			function essb_booster_scroll() {
-				var current_pos = $(window).scrollTop();
-				var height = $(document).height() - $(window).height();
-				var percentage = current_pos / height * 100,
-					breakPercent = booster_scroll;
-
-				if (percentage > breakPercent)
-					essb_booster_trigger();
-
-			}
-
-			var booster_trigger = $('.essb-sharebooster').attr('data-trigger') || '',
-				booster_time = $('.essb-sharebooster').attr('data-trigger-time') || '',
-				booster_scroll = $('.essb-sharebooster').attr('data-trigger-scroll') || '',
-				booster_hide = $('.essb-sharebooster').attr('data-donotshow') || '',
-				booster_donotshow = $('.essb-sharebooster').attr('data-donotshowon') || '',
-				booster_autoclose = $('.essb-sharebooster').attr('data-autoclose') || '',
-				booster_shown = false;
-
-			if (!Number(booster_hide)) booster_hide = 7;
-
-			var boosterCookieKey = booster_donotshow == 'all' ? 'essb_booster_all' : 'essb_booster_' + essb_settings.post_id;
-			var cookie_set = essb.getCookie(boosterCookieKey);
-
-			// booster is already triggered
-			if (cookie_set) booster_trigger = 'disabled';
-
-			if (essb.responsiveEventsCanRun($('.essb-sharebooster'))) {
-				if (booster_trigger == '')
-					essb_booster_trigger();
-				if (booster_trigger == 'time')
-					setTimeout(essb_booster_trigger, Number(booster_time) * 1000)
-				if (booster_trigger == 'scroll')
-					$(window).on('scroll', debounce(essb_booster_scroll, 1));
-			}
-
-			if ($('.essb-sharebooster-close').length) {
-				$('.essb-sharebooster-close').on('click', function(e){
-					e.preventDefault();
-					essb_booster_close();
-				});
-			}
-		}
 
 		/**
 		 * Click2Chat
@@ -2430,327 +1891,7 @@ jQuery(document).ready(function($){
 				});
 			});
 		}
-		
-		/**
-			* Applying additional Pinterest optimizations for images
-			*/
-		if (essb_settings.force_pin_description && essb_settings.pin_description) {
-			$('img').each(function() {
-				if (!$(this).data('pin-description')) $(this).attr('data-pin-description', essb_settings.pin_description);
-			});
-		}
 				
-		if (essb_settings.pin_pinid_active && essb_settings.pin_pinid) {
-			$('img').each(function() {
-				var hasPinID = $(this).data('pin-id') || '';
-				if (!hasPinID || hasPinID == '') $(this).attr('data-pin-id', essb_settings.pin_pinid);
-			});
-		}
-		
-		if (essb_settings.pin_force_active && essb_settings.pin_force_image) {
-			$('img').each(function() {
-				$(this).attr('data-pin-media', essb_settings.pin_force_image);
-				
-				/**
-				 * Forcing all custom parameters too
-				 */
-				if (!$(this).data('pin-description')) {
-					var pinDescription  = '';
-					if ($(this).attr('title')) pinDescription = $(this).attr('title');
-					else if ($(this).attr('alt')) pinDescription = $(this).attr('alt');
-
-					// give always priority of the custom description if set
-					if (essbPinImages.force_custompin && !essbPinImages.custompin) essbPinImages.custompin = document.title;
-					if (essbPinImages.custompin) pinDescription = essbPinImages.custompin;
-
-					// if title is not genenrated it will use the Document Title
-					if (pinDescription == '') pinDescription = document.title;
-					
-					$(this).attr('data-pin-description', pinDescription);
-				}
-				
-				if (!$(this).data('pin-url')) $(this).attr('data-pin-url', encodeURI(document.URL));
-			});
-		}
-		
-		/**
-		 * Pinterest Pro Gutenberg images integration
-		 */
-		
-		$('.essb-block-image').each(function() {
-			var pinID = $(this).data('essb-pin-id') || '',
-				pinDesc = $(this).data('essb-pin-description') || '',
-				pinAvoid = $(this).data('essb-pin-nopin') || '';						
-			
-			if (pinAvoid.toString() == 'true') {
-				$(this).find('img').attr('data-pin-nopin', 'true');
-				$(this).find('img').addClass('no_pin');
-				return;
-			}
-			
-			if (pinID != '') $(this).find('img').attr('data-pin-id', pinID);
-			if (pinDesc != '') $(this).find('img').attr('data-pin-description', pinDesc);
-		});
-
-		/**
-		 * Pinterest responsive thumbnail correction
-		 */
-		if (essb_settings.force_pin_thumbs) {
-			// setting up a map of parsing images on site
-			var essbReposiveImagesMap = window.essbReposiveImagesMap = {};
-
-			// getting actual size of a single image
-			var essbDetectAndLocateImageSize = window.essbDetectAndLocateImageSize = function(url, element, isResponsive) {
-			  if (isResponsive) {
-			    essbReposiveImagesMap[element].responsive[url] = {};
-			  }
-			  $("<img/>", {
-			    load: function() {
-			      if (essbReposiveImagesMap[element]) {
-			        if (!isResponsive) {
-			          essbReposiveImagesMap[element].originalSize = { 'w': this.width, 'h': this.height, 'done': true };
-			          essbCompileTheDataPinImage(element);
-			        } else {
-			          essbReposiveImagesMap[element].responsive[url] = { 'w': this.width, 'h': this.height, 'done': true };
-			          essbCompileTheDataPinImage(element);
-			        }
-			      }
-
-			    },
-			    src: url
-			  });
-			};
-
-			var essbCompileTheDataPinImage = window.essbCompileTheDataPinImage = function(element) {
-			  var totalImages = 0,
-			    processImages = 0,
-			    currentMaxW = 0,
-			    imageURL = '';
-
-			  for (var rImageURL in essbReposiveImagesMap[element].responsive) {
-			    var dataObj = essbReposiveImagesMap[element].responsive[rImageURL] || {};
-			    totalImages++;
-
-			    if (!dataObj.done) continue;
-			    processImages++;
-			    if (currentMaxW == 0 || currentMaxW < dataObj.w) {
-			      currentMaxW = dataObj.w;
-			      imageURL = rImageURL;
-			    }
-
-			  }
-
-			  if (totalImages == processImages && essbReposiveImagesMap[element].original != imageURL) {
-			    if (essbReposiveImagesMap[element].originalSize.done) {
-			      if (currentMaxW > essbReposiveImagesMap[element].originalSize.w) {
-			        $('[data-pinpro-key="' + element + '"]').attr('data-pin-media', imageURL);
-			        $('[data-pinpro-key="' + element + '"]').attr('data-media', imageURL);
-			        $('[data-pinpro-key="' + element + '"]').attr('data-pin-url', window.location.href);
-					$('[data-pinpro-key="' + element + '"]').removeClass('pin-process');
-					$('[data-pinpro-key="' + element + '"]').each(essbPinImagesGenerateButtons);
-			      }
-			    }
-			  }
-			}
-
-			$('img').each(function() {
-			  var responsiveImages = $(this).attr('srcset') || '',
-			    uniqueID = Math.random().toString(36).substr(2, 9),
-			    element = uniqueID;
-
-			  if (!responsiveImages || responsiveImages == '') return;
-
-			  $(this).attr('data-pinpro-key', uniqueID);
-				$(this).addClass('pin-process');
-			  var responsiveSet = responsiveImages.split(', '),
-			    originalImage = $(this).attr('src') || '',
-			    foundReponsiveImage = '',
-			    foundReponsiveSize = 0;
-
-			  essbReposiveImagesMap[element] = {
-			    source: element,
-			    original: originalImage,
-			    originalSize: {},
-			    responsive: {}
-			  };
-			  essbDetectAndLocateImageSize(originalImage, element);
-			  for (var i = 0; i < responsiveSet.length; i++) {
-			    if (!responsiveSet[i]) continue;
-			    var imageData = responsiveSet[i].split(' '),
-			      imageURL = imageData[0] || '',
-			      imageSize = (imageData[1] || '').replace('w', '');
-
-			    if (!imageURL || !Number(imageSize)) continue;
-
-			    essbDetectAndLocateImageSize(imageURL, element, true);
-
-			  }
-
-			});
-		} // end forcing generation of responsive images
-
-		/**
-		 * Pinterest Images
-		 */
-
-		var essbPinImagesGenerateButtons = function() {
-			var image = $(this);
-			// the option to avoid button over images with links
-			if (essbPinImages.nolinks && $(image).parents().filter("a").length) return;
-
-			// avoid buttons on images that has lower size that setup
-			if (image.outerWidth() < Number(essbPinImages.min_width || 0) || image.outerHeight() < Number(essbPinImages.min_height || 0)) return;
-			// ignore the non Pinable images
-			if (image.hasClass('no_pin') || image.hasClass('no-pin') || image.data('pin-nopin') || image.hasClass('pin-generated') || image.hasClass('pin-process') || image.hasClass('zoomImg') || image.hasClass('lazy-hidden')) return;
-
-			var pinSrc = $(image).prop('src') || '',
-				pinDescription = '', shareBtnCode = [],
-				buttonStyleClasses = '', buttonSizeClasses = '',
-				pinID = $(image).data('pin-id') || '';
-			
-			// additional check for the autoptimize svg placeholder preventing images from load
-			// Pinterest also does not accept SVG images
-			if (pinSrc.indexOf('data:image/svg+xml') > -1 || pinSrc.indexOf('data:image/gif') > -1) return;
-
-			if (image.data('media')) pinSrc = image.data('media');
-			if (image.data('lazy-src')) pinSrc = image.data('lazy-src');
-			if (image.data('pin-media')) pinSrc = image.data('pin-media');
-
-			if (image.data("pin-description")) pinDescription = image.data("pin-description");
-			else if (image.attr('title')) pinDescription = image.attr('title');
-			else if (image.attr('alt')) pinDescription = image.attr('alt');
-
-			// give always priority of the custom description if set
-			if (essbPinImages.force_custompin && !essbPinImages.custompin) essbPinImages.custompin = document.title;
-			if (essbPinImages.custompin) pinDescription = essbPinImages.custompin;
-
-			// if title is not genenrated it will use the Document Title
-			if (pinDescription == '') pinDescription = document.title;
-
-			var shareCmd = 'https://pinterest.com/pin/create/button/?url=' + encodeURI(document.URL) + '&is_video=false' + '&media=' + encodeURI(pinSrc) + '&description=' + encodeURIComponent(pinDescription);
-			
-			if (essbPinImages.legacy_share_cmd)
-				shareCmd = 'https://pinterest.com/pin/create/bookmarklet/?url=' + encodeURI(document.URL) + '&media=' + encodeURI(pinSrc) + '&title=' + encodeURIComponent(pinDescription)+'&description=' + encodeURIComponent(pinDescription) + '&media=' + encodeURI(pinSrc);
-			
-			if (pinID != '') shareCmd = 'https://www.pinterest.com/pin/'+pinID+'/repin/x/';
-
-			var imgClasses = image.attr('class'),
-			    imgStyles = image.attr('style');
-
-			if (essbPinImages ['button_style'] == 'icon_hover') {
-				buttonStyleClasses = ' essb_hide_name';
-			}
-			if (essbPinImages ['button_style'] == 'icon') {
-				buttonStyleClasses = ' essb_force_hide_name essb_force_hide';
-			}
-			if (essbPinImages ['button_style'] == 'button_name') {
-				buttonStyleClasses = ' essb_hide_icon';
-			}
-			if (essbPinImages ['button_style'] == 'vertical') {
-				buttonStyleClasses = ' essb_vertical_name';
-			}
-
-			if (essbPinImages['button_size']) buttonSizeClasses = ' essb_size_' + essbPinImages['button_size'];
-			if (essbPinImages['animation']) buttonSizeClasses += ' ' + essbPinImages['animation'];
-			if (essbPinImages['position']) buttonSizeClasses += ' essb_pos_' + essbPinImages['position'];
-			
-			if (essbPinImages['mobile_position']) buttonSizeClasses += ' essb_mobilepos_' + essbPinImages['mobile_position'];
-			if (essbPinImages['visibility'] && essbPinImages['visibility'] == 'always') buttonSizeClasses += ' essb_always_visible';
-
-			image.removeClass().attr('style', '').wrap('<div class="essb-pin" />');
-			if (imgClasses != '') image.parent('.essb-pin').addClass(imgClasses);
-			if (imgStyles != '') image.parent('.essb-pin').attr('style', imgStyles);
-
-			if (essbPinImages.reposition) {
-				var imgWidth = $(image).width();
-				if (Number(imgWidth) && !isNaN(imgWidth) && Number(imgWidth) > 0) {
-					image.parent('.essb-pin').css({'max-width': imgWidth+'px'});
-				}
-			}
-			
-			var uid = (new Date().getTime()).toString(36);
-
-			shareBtnCode.push('<div class="essb_links essb_displayed_pinimage essb_template_'+essbPinImages.template+buttonSizeClasses+' essb_'+uid+'" data-essb-position="pinit" data-essb-postid="'+(essb_settings.post_id || '')+'" data-essb-instance="'+uid+'">');
-			shareBtnCode.push('<ul class="essb_links_list'+(buttonStyleClasses != '' ? ' ' + buttonStyleClasses : '')+'">');
-			shareBtnCode.push('<li class="essb_item essb_link_pinterest nolightbox">');
-			shareBtnCode.push('<a class="nolightbox" rel="noreferrer noopener nofollow" href="'+shareCmd+'" onclick="essb.window(&#39;'+shareCmd+'&#39;,&#39;pinpro&#39;,&#39;'+uid+'&#39;); return false;" target="_blank"><span class="essb_icon essb_icon_pinterest"></span><span class="essb_network_name">'+(essbPinImages['text'] ? essbPinImages['text'] : 'Pin')+'</span></a>');
-			shareBtnCode.push('</li>');
-			shareBtnCode.push('</ul>');
-			shareBtnCode.push('</div>');
-
-			image.after(shareBtnCode.join(''));
-			image.addClass('pin-generated'); // adding class to avoid generating again the same information
-			//essb.share_window
-			//removing the lazyloading class if posted
-			if (image.parent('.essb-pin').hasClass('lazyloading')) image.parent('.essb-pin').removeClass('lazyloading');
-
-		}
-
-		if (typeof(essbPinImages) != 'undefined' && $('body').hasClass('tcb-edit-mode')) essbPinImages.active = false;
-
-		if (typeof(essbPinImages) != 'undefined' && essbPinImages.active) {
-			// Begin detection of potential images and assign the pinterest generation
-			if (!essbPinImages.min_width || !Number(essbPinImages.min_width)) essbPinImages.min_width = 300;
-			if (!essbPinImages.min_height || !Number(essbPinImages.min_height)) essbPinImages.min_height = 300;
-			
-			// Integration with the mobile minimal width and height (if set)
-			if ($(window).width() < 720) {
-				if (Number(essbPinImages.min_width_mobile)) essbPinImages.min_width = Number(essbPinImages.min_width_mobile);
-				if (Number(essbPinImages.min_height_mobile)) essbPinImages.min_height = Number(essbPinImages.min_height_mobile);
-			}
-
-			if ($('.essb-pin.tve_image').length) {
-				$('.essb-pin.tve_image .essb_links').remove();
-				$('.essb-pin img').removeClass('pin-generated');
-			}
-
-			// WP Rocket Lazy Videos set no-pin class to those images to prevent holding down
-			$('.rll-youtube-player img').each(function() {
-				$(this).addClass('no-pin');
-			});
-			
-			// Hide on images option
-			if (essbPinImages.hideon) {
-				$(essbPinImages.hideon).each(function() {
-					$(this).addClass('no-pin');
-				});
-			}
-
-			window.addEventListener('LazyLoad::Initialized', function (e) {
-				$('.rll-youtube-player img').each(function() {
-					$(this).addClass('no-pin');
-				});
-			});
-
-			var essbPinImagesDetect = function() {
-				
-				// WP Rocket Lazy Videos set no-pin class to those images to prevent holding down
-				$('.rll-youtube-player img').each(function() {
-					$(this).addClass('no-pin');
-				});
-				
-
-				if (essbPinImages.selector) {
-					$(essbPinImages.selector).each(essbPinImagesGenerateButtons);
-				}
-				else {
-					if (!$('.essb-pinterest-images').length) return;
-					$('.essb-pinterest-images').parent().find('img').each(essbPinImagesGenerateButtons);
-				}
-			}
-
-			if (essbPinImages.lazyload) $(window).on('scroll', debounce(essbPinImagesDetect, 10));
-
-			setTimeout(essbPinImagesDetect, 1);
-		}
-
-		if ((typeof(essbPinImages) != 'undefined' && !essbPinImages.active) || typeof(essbPinImages) == 'undefined') {
-			if ($('.essb-pin.tve_image').length) {
-				$('.essb-pin.tve_image .essb_links').remove();
-				$('.essb-pin img').removeClass('pin-generated');
-			}
-		}
-		
 		/** 
 		 * Reveal the social followers counter that comes with a transition effect
 		 */

@@ -1,4 +1,4 @@
-/*! elementor - v3.5.0 - 12-12-2021 */
+/*! elementor - v3.6.5 - 27-04-2022 */
 "use strict";
 (self["webpackChunkelementor"] = self["webpackChunkelementor"] || []).push([["frontend"],{
 
@@ -86,10 +86,19 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 
 var _global = _interopRequireDefault(__webpack_require__(/*! ./handlers/global */ "../assets/dev/js/frontend/handlers/global.js"));
 
-var _section = _interopRequireDefault(__webpack_require__(/*! ./handlers/section/section */ "../assets/dev/js/frontend/handlers/section/section.js"));
+var _background = _interopRequireDefault(__webpack_require__(/*! ./handlers/background */ "../assets/dev/js/frontend/handlers/background.js"));
+
+var _container = _interopRequireDefault(__webpack_require__(/*! ./handlers/container/container */ "../assets/dev/js/frontend/handlers/container/container.js"));
 
 var _column = _interopRequireDefault(__webpack_require__(/*! ./handlers/column */ "../assets/dev/js/frontend/handlers/column.js"));
 
+var _handlesPosition = _interopRequireDefault(__webpack_require__(/*! ./handlers/section/handles-position */ "../assets/dev/js/frontend/handlers/section/handles-position.js"));
+
+var _stretchedSection = _interopRequireDefault(__webpack_require__(/*! ./handlers/section/stretched-section */ "../assets/dev/js/frontend/handlers/section/stretched-section.js"));
+
+var _shapes = _interopRequireDefault(__webpack_require__(/*! ./handlers/section/shapes */ "../assets/dev/js/frontend/handlers/section/shapes.js"));
+
+// Section handlers.
 module.exports = function ($) {
   const handlersInstances = {};
   this.elementsHandlers = {
@@ -108,7 +117,14 @@ module.exports = function ($) {
   const addGlobalHandlers = () => elementorFrontend.hooks.addAction('frontend/element_ready/global', _global.default);
 
   const addElementsHandlers = () => {
-    this.elementsHandlers.section = _section.default;
+    this.elementsHandlers.section = [_stretchedSection.default, // Must run before background handlers to init the slideshow only after the stretch.
+    ..._background.default, _handlesPosition.default, _shapes.default];
+    this.elementsHandlers.container = [..._background.default]; // Add editor-only handlers.
+
+    if (elementorFrontend.isEditMode()) {
+      this.elementsHandlers.container.push(..._container.default);
+    }
+
     this.elementsHandlers.column = _column.default;
     $.each(this.elementsHandlers, (elementName, Handlers) => {
       const elementData = elementName.split('.');
@@ -133,6 +149,10 @@ module.exports = function ($) {
         }, true);
       } else {
         const handlerValue = Handler();
+
+        if (!handlerValue) {
+          return;
+        }
 
         if (handlerValue instanceof Promise) {
           handlerValue.then(({
@@ -185,10 +205,6 @@ module.exports = function ($) {
   };
 
   this.getHandler = function (handlerName) {
-    if (!handlerName) {
-      return;
-    }
-
     const elementHandler = this.elementsHandlers[handlerName];
 
     if (isClassHandler(elementHandler)) {
@@ -662,6 +678,7 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.SwiperBase 
         swiperContainer: 'elementor-background-slideshow swiper-container',
         swiperWrapper: 'swiper-wrapper',
         swiperSlide: 'elementor-background-slideshow__slide swiper-slide',
+        swiperPreloader: 'swiper-lazy-preloader',
         slideBackground: 'elementor-background-slideshow__slide__image',
         kenBurns: 'elementor-ken-burns',
         kenBurnsActive: 'elementor-ken-burns--active',
@@ -672,8 +689,8 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.SwiperBase 
   }
 
   getSwiperOptions() {
-    const elementSettings = this.getElementSettings();
-    const swiperOptions = {
+    const elementSettings = this.getElementSettings(),
+          swiperOptions = {
       grabCursor: false,
       slidesPerView: 1,
       slidesPerGroup: 1,
@@ -713,6 +730,13 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.SwiperBase 
         break;
     }
 
+    if ('yes' === elementSettings.background_slideshow_lazyload) {
+      swiperOptions.lazy = {
+        loadPrevNext: true,
+        loadPrevNextAmount: 1
+      };
+    }
+
     return swiperOptions;
   }
 
@@ -727,7 +751,8 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.SwiperBase 
           $wrapper = jQuery('<div>', {
       class: classes.swiperWrapper
     }),
-          kenBurnsActive = elementSettings.background_slideshow_ken_burns;
+          kenBurnsActive = elementSettings.background_slideshow_ken_burns,
+          lazyload = 'yes' === elementSettings.background_slideshow_lazyload;
     let slideInnerClass = classes.slideBackground;
 
     if (kenBurnsActive) {
@@ -736,15 +761,33 @@ class BackgroundSlideshow extends elementorModules.frontend.handlers.SwiperBase 
       slideInnerClass += ' ' + classes[kenBurnsDirection];
     }
 
+    if (lazyload) {
+      slideInnerClass += ' swiper-lazy';
+    }
+
     this.elements.$slides = jQuery();
     elementSettings.background_slideshow_gallery.forEach(slide => {
       const $slide = jQuery('<div>', {
         class: classes.swiperSlide
-      }),
-            $slidebg = jQuery('<div>', {
-        class: slideInnerClass,
-        style: 'background-image: url("' + slide.url + '");'
       });
+      let $slidebg;
+
+      if (lazyload) {
+        const $slideloader = jQuery('<div>', {
+          class: classes.swiperPreloader
+        });
+        $slidebg = jQuery('<div>', {
+          class: slideInnerClass,
+          'data-background': slide.url
+        });
+        $slidebg.append($slideloader);
+      } else {
+        $slidebg = jQuery('<div>', {
+          class: slideInnerClass,
+          style: 'background-image: url("' + slide.url + '");'
+        });
+      }
+
       $slide.append($slidebg);
       $wrapper.append($slide);
       this.elements.$slides = this.elements.$slides.add($slide);
@@ -815,111 +858,10 @@ exports["default"] = BackgroundSlideshow;
 
 /***/ }),
 
-/***/ "../assets/dev/js/frontend/handlers/column.js":
-/*!****************************************************!*\
-  !*** ../assets/dev/js/frontend/handlers/column.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _backgroundSlideshow = _interopRequireDefault(__webpack_require__(/*! ./background-slideshow */ "../assets/dev/js/frontend/handlers/background-slideshow.js"));
-
-var _default = [_backgroundSlideshow.default];
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../assets/dev/js/frontend/handlers/global.js":
-/*!****************************************************!*\
-  !*** ../assets/dev/js/frontend/handlers/global.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-class GlobalHandler extends elementorModules.frontend.handlers.Base {
-  getWidgetType() {
-    return 'global';
-  }
-
-  animate() {
-    const $element = this.$element,
-          animation = this.getAnimation();
-
-    if ('none' === animation) {
-      $element.removeClass('elementor-invisible');
-      return;
-    }
-
-    const elementSettings = this.getElementSettings(),
-          animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
-    $element.removeClass(animation);
-
-    if (this.currentAnimation) {
-      $element.removeClass(this.currentAnimation);
-    }
-
-    this.currentAnimation = animation;
-    setTimeout(() => {
-      $element.removeClass('elementor-invisible').addClass('animated ' + animation);
-    }, animationDelay);
-  }
-
-  getAnimation() {
-    return this.getCurrentDeviceSetting('animation') || this.getCurrentDeviceSetting('_animation');
-  }
-
-  onInit(...args) {
-    super.onInit(...args);
-
-    if (this.getAnimation()) {
-      const observer = elementorModules.utils.Scroll.scrollObserver({
-        callback: event => {
-          if (event.isInViewport) {
-            this.animate();
-            observer.unobserve(this.$element[0]);
-          }
-        }
-      });
-      observer.observe(this.$element[0]);
-    }
-  }
-
-  onElementChange(propertyName) {
-    if (/^_?animation/.test(propertyName)) {
-      this.animate();
-    }
-  }
-
-}
-
-var _default = $scope => {
-  elementorFrontend.elementsHandler.addHandler(GlobalHandler, {
-    $element: $scope
-  });
-};
-
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../assets/dev/js/frontend/handlers/section/background-video.js":
-/*!**********************************************************************!*\
-  !*** ../assets/dev/js/frontend/handlers/section/background-video.js ***!
-  \**********************************************************************/
+/***/ "../assets/dev/js/frontend/handlers/background-video.js":
+/*!**************************************************************!*\
+  !*** ../assets/dev/js/frontend/handlers/background-video.js ***!
+  \**************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -1209,6 +1151,148 @@ exports["default"] = BackgroundVideo;
 
 /***/ }),
 
+/***/ "../assets/dev/js/frontend/handlers/background.js":
+/*!********************************************************!*\
+  !*** ../assets/dev/js/frontend/handlers/background.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _backgroundSlideshow = _interopRequireDefault(__webpack_require__(/*! ./background-slideshow */ "../assets/dev/js/frontend/handlers/background-slideshow.js"));
+
+var _backgroundVideo = _interopRequireDefault(__webpack_require__(/*! ./background-video */ "../assets/dev/js/frontend/handlers/background-video.js"));
+
+var _default = [_backgroundSlideshow.default, _backgroundVideo.default];
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../assets/dev/js/frontend/handlers/column.js":
+/*!****************************************************!*\
+  !*** ../assets/dev/js/frontend/handlers/column.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+var _backgroundSlideshow = _interopRequireDefault(__webpack_require__(/*! ./background-slideshow */ "../assets/dev/js/frontend/handlers/background-slideshow.js"));
+
+var _default = [_backgroundSlideshow.default];
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../assets/dev/js/frontend/handlers/container/container.js":
+/*!*****************************************************************!*\
+  !*** ../assets/dev/js/frontend/handlers/container/container.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _default = [() => __webpack_require__.e(/*! import() | container */ "container").then(__webpack_require__.bind(__webpack_require__, /*! ./handles-position */ "../assets/dev/js/frontend/handlers/container/handles-position.js")), () => __webpack_require__.e(/*! import() | container */ "container").then(__webpack_require__.bind(__webpack_require__, /*! ./shapes */ "../assets/dev/js/frontend/handlers/container/shapes.js"))];
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../assets/dev/js/frontend/handlers/global.js":
+/*!****************************************************!*\
+  !*** ../assets/dev/js/frontend/handlers/global.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+
+class GlobalHandler extends elementorModules.frontend.handlers.Base {
+  getWidgetType() {
+    return 'global';
+  }
+
+  animate() {
+    const $element = this.$element,
+          animation = this.getAnimation();
+
+    if ('none' === animation) {
+      $element.removeClass('elementor-invisible');
+      return;
+    }
+
+    const elementSettings = this.getElementSettings(),
+          animationDelay = elementSettings._animation_delay || elementSettings.animation_delay || 0;
+    $element.removeClass(animation);
+
+    if (this.currentAnimation) {
+      $element.removeClass(this.currentAnimation);
+    }
+
+    this.currentAnimation = animation;
+    setTimeout(() => {
+      $element.removeClass('elementor-invisible').addClass('animated ' + animation);
+    }, animationDelay);
+  }
+
+  getAnimation() {
+    return this.getCurrentDeviceSetting('animation') || this.getCurrentDeviceSetting('_animation');
+  }
+
+  onInit(...args) {
+    super.onInit(...args);
+
+    if (this.getAnimation()) {
+      const observer = elementorModules.utils.Scroll.scrollObserver({
+        callback: event => {
+          if (event.isInViewport) {
+            this.animate();
+            observer.unobserve(this.$element[0]);
+          }
+        }
+      });
+      observer.observe(this.$element[0]);
+    }
+  }
+
+  onElementChange(propertyName) {
+    if (/^_?animation/.test(propertyName)) {
+      this.animate();
+    }
+  }
+
+}
+
+var _default = $scope => {
+  elementorFrontend.elementsHandler.addHandler(GlobalHandler, {
+    $element: $scope
+  });
+};
+
+exports["default"] = _default;
+
+/***/ }),
+
 /***/ "../assets/dev/js/frontend/handlers/section/handles-position.js":
 /*!**********************************************************************!*\
   !*** ../assets/dev/js/frontend/handlers/section/handles-position.js ***!
@@ -1292,37 +1376,6 @@ class HandlesPosition extends elementorModules.frontend.handlers.Base {
 }
 
 exports["default"] = HandlesPosition;
-
-/***/ }),
-
-/***/ "../assets/dev/js/frontend/handlers/section/section.js":
-/*!*************************************************************!*\
-  !*** ../assets/dev/js/frontend/handlers/section/section.js ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _backgroundSlideshow = _interopRequireDefault(__webpack_require__(/*! ../background-slideshow */ "../assets/dev/js/frontend/handlers/background-slideshow.js"));
-
-var _backgroundVideo = _interopRequireDefault(__webpack_require__(/*! ./background-video */ "../assets/dev/js/frontend/handlers/section/background-video.js"));
-
-var _handlesPosition = _interopRequireDefault(__webpack_require__(/*! ./handles-position */ "../assets/dev/js/frontend/handlers/section/handles-position.js"));
-
-var _stretchedSection = _interopRequireDefault(__webpack_require__(/*! ./stretched-section */ "../assets/dev/js/frontend/handlers/section/stretched-section.js"));
-
-var _shapes = _interopRequireDefault(__webpack_require__(/*! ./shapes */ "../assets/dev/js/frontend/handlers/section/shapes.js"));
-
-var _default = [_stretchedSection.default, // Must run before BackgroundSlideshow to init the slideshow only after the stretch.
-_backgroundSlideshow.default, _backgroundVideo.default, _handlesPosition.default, _shapes.default];
-exports["default"] = _default;
 
 /***/ }),
 
@@ -1820,7 +1873,8 @@ class Swiper {
     } // The Swiper will overlap the column width when applying custom margin values on the column.
 
 
-    container.closest('.elementor-widget-wrap').addClass('e-swiper-container');
+    jQuery(container).closest('.elementor-widget-wrap').addClass('e-swiper-container');
+    jQuery(container).closest('.elementor-widget').addClass('e-widget-swiper');
     return new Promise(resolve => {
       if (!elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading) {
         return resolve(this.createSwiperInstance(container, this.config));
@@ -1916,11 +1970,13 @@ class _default extends elementorModules.ViewModule {
       lightbox: async settings => {
         const lightbox = await elementorFrontend.utils.lightbox;
 
-        if (settings.id) {
-          lightbox.openSlideshow(settings.id, settings.url);
+        if (settings.slideshow) {
+          // Handle slideshow display
+          lightbox.openSlideshow(settings.slideshow, settings.url);
         } else {
-          if (settings.html) {
-            delete settings.html;
+          // If the settings has an ID - the lightbox target content is an image - the ID is an attachment ID.
+          if (settings.id) {
+            settings.type = 'image';
           }
 
           lightbox.showModal(settings);
@@ -1963,8 +2019,15 @@ class _default extends elementorModules.ViewModule {
   }
 
   runHashAction() {
-    if (location.hash) {
-      this.runAction(location.hash);
+    if (!location.hash) {
+      return;
+    } // Only if an element with this action hash exists on the page do we allow running the action.
+
+
+    const elementWithHash = document.querySelector(`[e-action-hash="${location.hash}"], a[href*="${location.hash}"]`);
+
+    if (elementWithHash) {
+      this.runAction(elementWithHash.getAttribute('e-action-hash'));
     }
   }
 

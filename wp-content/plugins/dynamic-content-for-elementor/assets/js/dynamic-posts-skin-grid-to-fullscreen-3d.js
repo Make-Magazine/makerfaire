@@ -1,4 +1,15 @@
-var gtf3d = null;
+/**
+ * demo3.js
+ * http://www.codrops.com
+ *
+ * Licensed under the MIT license.
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * Copyright 2019, Codrops
+ * http://www.codrops.com
+ */
+
+
 var Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler = function($scope, $) {
 
   var elementSettings = dceGetElementSettings($scope);
@@ -9,16 +20,16 @@ var Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler = function($scope, $) {
   var deviceMode = $('body').attr('data-elementor-device-mode');
 
   if (panel_position == 'left' || panel_position == 'right') {
-    const panel_width_desktop = elementSettings.gridtofullscreen3d_gridtofullscreen3d_panel_width.size;
-    const panel_width_tablet = elementSettings.gridtofullscreen3d_gridtofullscreen3d_panel_width_tablet.size;
-    const panel_width_mobile = elementSettings.gridtofullscreen3d_gridtofullscreen3d_panel_width_mobile.size;
-    var panel_width = panel_width_desktop;
-    if (deviceMode == 'tablet' && panel_width_tablet) {
-      panel_width = panel_width_tablet;
-    } else if (deviceMode == 'mobile' && panel_width_mobile) {
-      panel_width = panel_width_mobile;
-    }
-    var title_width = 100 - panel_width;
+	const panel_width_desktop = elementSettings.gridtofullscreen3d_gridtofullscreen3d_panel_width.size;
+	const panel_width_tablet = elementSettings.gridtofullscreen3d_gridtofullscreen3d_panel_width_tablet.size;
+	const panel_width_mobile = elementSettings.gridtofullscreen3d_gridtofullscreen3d_panel_width_mobile.size;
+	var panel_width = panel_width_desktop;
+	if (deviceMode == 'tablet' && panel_width_tablet) {
+		panel_width = panel_width_tablet;
+	} else if (deviceMode == 'mobile' && panel_width_mobile) {
+		panel_width = panel_width_mobile;
+	}
+	var title_width = 100 - panel_width;
   } else {
     // Panel position top or bottom
     const panel_height_desktop = elementSettings.gridtofullscreen3d_gridtofullscreen3d_panel_height.size;
@@ -414,26 +425,26 @@ var Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler = function($scope, $) {
     // Preload all the images in the page
     var allImages = $scope.find('.dce-post-block .dce-post-image img');
     imagesLoaded(allImages, instance => {
-      //https://www.techrepublic.com/article/preloading-and-the-javascript-image-object/
+		//https://www.techrepublic.com/article/preloading-and-the-javascript-image-object/
 
-      // Make Images sets for creating the textures.
-      let images = [];
-      for (var i = 0, imageSet = {}; i < instance.elements.length; i++) {
-        let image = {
-          element: instance.elements[i],
-          image: instance.images[i].isLoaded ? instance.images[i].img : null
-        };
-        if (i % 2 === 0) {
-          imageSet = {};
-          imageSet.small = image;
-        }
+		// Make Images sets for creating the textures.
+		let images = [];
+		for (var i = 0, imageSet = {}; i < instance.elements.length; i++) {
+			let image = {
+				element: instance.elements[i],
+				image: instance.images[i].isLoaded ? instance.images[i].img : null
+			};
+			if (i % 2 === 0) {
+				imageSet = {};
+				imageSet.small = image;
+			}
 
-        if (i % 2 === 1) {
-          imageSet.large = image;
-          images.push(imageSet);
-        }
-      }
-      transitionEffect.createTextures(images);
+			if (i % 2 === 1) {
+				imageSet.large = image;
+				images.push(imageSet);
+			}
+		}
+		transitionEffect.createTextures(images);
     });
   }
 
@@ -449,14 +460,3 @@ jQuery(window).on('elementor/frontend/init', function() {
   elementorFrontend.hooks.addAction('frontend/element_ready/dce-sticky-posts.gridtofullscreen3d', Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler);
   elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.gridtofullscreen3d', Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler);
 });
-
-/**
- * demo3.js
- * http://www.codrops.com
- *
- * Licensed under the MIT license.
- * http://www.opensource.org/licenses/mit-license.php
- *
- * Copyright 2019, Codrops
- * http://www.codrops.com
- */

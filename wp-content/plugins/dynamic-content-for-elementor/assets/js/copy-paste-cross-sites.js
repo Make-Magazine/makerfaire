@@ -130,7 +130,7 @@ function dceAddCopyPasteFallback(value = '', action = 'copy', cid, pasteAction, 
         jQuery('#elementor-preview-responsive-wrapper').append('<div id="dce_copy_paste" class="elementor-context-menu" data-cid="'+cid+'"></div>');
         jQuery('#dce_copy_paste').append('<p><b>DIRECT Paste is not supported</b>, to continue <b>MANUALLY Paste</b> saved content in the below Textarea and <b>click PASTE</b></p>');
         jQuery('#dce_copy_paste').append('<textarea id="dce_copy_paste__textarea" placeholder="Paste HERE">'+value+'</textarea>');
-        jQuery('#dce_copy_paste').append('<button id="dce_copy_paste__btn" data-clipboard-action="'+action+'" data-clipboard-target="#dce_copy_paste__textarea"><span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> PASTE</button>');
+        jQuery('#dce_copy_paste').append('<button id="dce_copy_paste__btn" data-clipboard-action="'+action+'" data-clipboard-target="#dce_copy_paste__textarea"><span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> PASTE</button>');
         jQuery('#dce_copy_paste').append('<a id="dce_copy_paste__close" href="#"><i class="eicon-close"></i></a>');
     }
     jQuery('#dce_copy_paste__textarea').select();

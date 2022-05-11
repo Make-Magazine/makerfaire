@@ -3,7 +3,6 @@
 namespace DynamicContentForElementor\Includes\Skins;
 
 use Elementor\Skin_Base as Elementor_Skin_Base;
-use Elementor\Widget_Base;
 use Elementor\Utils;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Image_Size;
@@ -21,6 +20,8 @@ abstract class Skin_Base extends Elementor_Skin_Base
     protected $current_permalink;
     protected $current_id;
     protected $counter = 0;
+    protected $depended_scripts;
+    protected $depended_styles;
     public function get_script_depends()
     {
         return $this->depended_scripts;
@@ -29,15 +30,31 @@ abstract class Skin_Base extends Elementor_Skin_Base
     {
         return $this->depended_styles;
     }
-    public function register_controls_layout(Widget_Base $widget)
+    public function register_controls_layout(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
         $this->parent = $widget;
-        // BLOCKS generic style
+        // Block Style
         $this->register_style_controls();
-        // PAGINATION style
+        // Pagination Style
         $this->register_style_pagination_controls();
-        //INFINITE SCROLL style
+        // Infinite Scroll Style
         $this->register_style_infinitescroll_controls();
+    }
+    /**
+     * Get Parent or throw an error
+     *
+     * @return \DynamicContentForElementor\Widgets\DynamicPostsBase
+     */
+    protected function get_parent()
+    {
+        /**
+         * @var \DynamicContentForElementor\Widgets\DynamicPostsBase|null $parent
+         */
+        $parent = $this->parent;
+        if ($parent === null) {
+            throw new \Error('Skin Parent is NULL');
+        }
+        return $parent;
     }
     protected function register_style_pagination_controls()
     {
@@ -139,7 +156,7 @@ abstract class Skin_Base extends Elementor_Skin_Base
     protected function register_style_controls()
     {
         // Blocks - Style
-        $this->start_controls_section('section_blocks_style', ['label' => __('Blocks Style', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['style_items!' => ['template']]]);
+        $this->start_controls_section('section_blocks_style', ['label' => __('Blocks', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['style_items!' => ['template']]]);
         $this->add_responsive_control('blocks_align', ['label' => __('Text Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => 'left', 'prefix_class' => 'dce-align%s-', 'selectors' => ['{{WRAPPER}} .dce-post-item' => 'text-align: {{VALUE}};'], 'separator' => 'before']);
         $this->add_responsive_control('blocks_align_v', ['label' => __('Vertical Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['flex-start' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-top'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-middle'], 'flex-end' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-bottom'], 'space-between' => ['title' => __('Space Between', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-stretch'], 'space-around' => ['title' => __('Space Around', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-stretch']], 'separator' => 'after', 'selectors' => ['{{WRAPPER}} .dce-post-block, {{WRAPPER}} .dce-item-area' => 'justify-content: {{VALUE}} !important;'], 'condition' => ['v_pos_postitems' => ['', 'stretch']]]);
         $this->add_control('blocks_bgcolor', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-post-item .dce-post-block' => 'background-color: {{VALUE}};']]);
@@ -161,46 +178,53 @@ abstract class Skin_Base extends Elementor_Skin_Base
     // Render main
     public function render()
     {
-        $this->parent->render();
-        $this->parent->query_posts();
-        $query = $this->parent->get_query();
+        $this->get_parent()->add_render_attribute('_wrapper', 'class', 'dce-dynamic-posts-collection');
+        $this->get_parent()->query_posts();
+        $query = $this->get_parent()->get_query();
         $this->counter = 0;
         $this->add_search_filter_class();
-        $fallback = $this->parent->get_settings_for_display('fallback');
-        if ($this->parent->get_settings('infiniteScroll_enable') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        $fallback = $this->get_parent()->get_settings_for_display('fallback');
+        if ($this->get_parent()->get_settings('infiniteScroll_enable') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
             Helper::notice('', __('Infinite Scroll is not displayed correctly in the Elementor editor due to technical limitations but works correctly in the frontend.', 'dynamic-content-for-elementor'));
         }
         if ('masonry' === $this->get_instance_value('grid_type') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
             Helper::notice('', __('Masonry is not displayed correctly in the Elementor editor due to technical limitations but works correctly in the frontend.', 'dynamic-content-for-elementor'));
         }
-        if ('grid-filters' === $this->parent->get_settings('_skin') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        if ('grid-filters' === $this->get_parent()->get_settings('_skin') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
             Helper::notice('', __('Grid with Filters Skin is not displayed correctly in the Elementor editor due to technical limitations but works correctly in the frontend.', 'dynamic-content-for-elementor'));
         }
+        if (!empty($this->get_parent()->get_settings_for_display('template_id')) && \Elementor\Plugin::$instance->editor->is_edit_mode() && 'loop' === get_post_meta($this->get_parent()->get_settings_for_display('template_id'), '_elementor_template_type', \true)) {
+            Helper::notice(__('Alert', 'dynamic-content-for-elementor'), __('You have used a Loop template, created by Ele Custom Skin specifically for their features. Please use another type of template to avoid incompatibility.', 'dynamic-content-for-elementor'));
+        }
         if (empty($query->found_posts)) {
-            if ($fallback) {
+            if (!empty($fallback)) {
                 $this->render_fallback();
+            } elseif ('search_filter' === $this->get_parent()->get_settings('query_type')) {
+                // Show Container when using Search and Filter Pro to avoid incompatibility issues
+                $this->render_loop_start();
+                $this->render_loop_end();
             }
+            return;
+        }
+        $this->render_loop_start();
+        if ($query->in_the_loop) {
+            $this->current_permalink = get_permalink();
+            $this->current_id = get_the_ID();
+            $this->render_post();
         } else {
-            $this->render_loop_start();
-            if ($query->in_the_loop) {
+            while ($query->have_posts()) {
+                $query->the_post();
                 $this->current_permalink = get_permalink();
                 $this->current_id = get_the_ID();
                 $this->render_post();
-            } else {
-                while ($query->have_posts()) {
-                    $query->the_post();
-                    $this->current_permalink = get_permalink();
-                    $this->current_id = get_the_ID();
-                    $this->render_post();
-                }
             }
-            wp_reset_postdata();
-            $this->render_loop_end();
         }
+        wp_reset_postdata();
+        $this->render_loop_end();
     }
     protected function render_post()
     {
-        $style_items = $this->parent->get_settings('style_items');
+        $style_items = $this->get_parent()->get_settings('style_items');
         $this->render_post_start();
         if ('template' === $style_items) {
             $this->render_post_template();
@@ -214,17 +238,16 @@ abstract class Skin_Base extends Elementor_Skin_Base
     }
     protected function render_post_template()
     {
-        $template_id = $this->parent->get_settings('template_id');
+        $template_id = $this->get_parent()->get_settings_for_display('template_id');
         $template_id = apply_filters('wpml_object_id', $template_id, 'elementor_library', \true);
-        $templatemode_enable_2 = $this->parent->get_settings('templatemode_enable_2');
-        $template_2_id = $this->parent->get_settings('template_2_id');
+        $templatemode_enable_2 = $this->get_parent()->get_settings('templatemode_enable_2');
+        $template_2_id = $this->get_parent()->get_settings_for_display('template_2_id');
         $template_2_id = apply_filters('wpml_object_id', $template_2_id, 'elementor_library', \true);
-        $native_templatemode_enable = $this->parent->get_settings('native_templatemode_enable');
-        $dce_template_system = get_option('dce_template');
-        if ($native_templatemode_enable && isset($dce_template_system) && 'active' === $dce_template_system) {
+        $native_templatemode_enable = $this->get_parent()->get_settings('native_templatemode_enable') ?? '';
+        if ($native_templatemode_enable && \DynamicContentForElementor\Plugin::instance()->template_system->is_active()) {
             $type_of_posts = get_post_type($this->current_id);
             $cptaxonomy = get_post_taxonomies($this->current_id);
-            $options = get_option(DCE_OPTIONS);
+            $options = get_option(DCE_TEMPLATE_SYSTEM_OPTION);
             // 2 - Archive
             $templatesystem_template_key = 'dyncontel_field_archive' . $type_of_posts;
             $post_template_id = $options[$templatesystem_template_key];
@@ -266,31 +289,42 @@ abstract class Skin_Base extends Elementor_Skin_Base
             $this->render_template($post_template_id);
         }
     }
+    /**
+     * Render Post HTML & Tokens
+     *
+     * @return void
+     */
     protected function render_post_html_tokens()
     {
-        $html_tokens = $this->parent->get_settings('html_tokens_editor');
+        $html_tokens = $this->get_parent()->get_settings('html_tokens_editor');
         if (empty($html_tokens)) {
             return;
         }
         echo Helper::get_dynamic_value($html_tokens);
     }
-    protected function render_template($id_temp)
+    /**
+     * Render Template
+     *
+     * @param int $template_id
+     * @return void
+     */
+    protected function render_template(int $template_id)
     {
         if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
             $inlinecss = 'inlinecss="true"';
         } else {
             $inlinecss = '';
         }
-        echo do_shortcode('[dce-elementor-template id="' . $id_temp . '" post_id="' . $this->current_id . '" ' . $inlinecss . ']');
+        echo do_shortcode('[dce-elementor-template id="' . $template_id . '" post_id="' . $this->current_id . '" ' . $inlinecss . ']');
     }
     protected function render_post_items()
     {
-        $_skin = $this->parent->get_settings('_skin');
-        $style_items = $this->parent->get_settings('style_items');
-        $post_items = $this->parent->get_settings('list_items');
-        $hover_animation = $this->parent->get_settings('hover_content_animation');
+        $_skin = $this->get_parent()->get_settings('_skin');
+        $style_items = $this->get_parent()->get_settings('style_items');
+        $post_items = $this->get_parent()->get_settings('list_items');
+        $hover_animation = $this->get_parent()->get_settings('hover_content_animation');
         $animation_class = !empty($hover_animation) && $style_items != 'float' && $_skin != 'gridtofullscreen3d' ? ' elementor-animation-' . $hover_animation : '';
-        $hover_effects = $this->parent->get_settings('hover_text_effect');
+        $hover_effects = $this->get_parent()->get_settings('hover_text_effect');
         $hoverEffects_class = !empty($hover_effects) && $style_items == 'float' && $_skin != 'gridtofullscreen3d' ? ' dce-hover-effect-' . $hover_effects . ' dce-hover-effect-content dce-close' : '';
         $hoverEffects_start = !empty($hover_effects) && $style_items == 'float' && $_skin != 'gridtofullscreen3d' ? '<div class="dce-hover-effect-' . $hover_effects . ' dce-hover-effect-content dce-close">' : '';
         $hoverEffects_end = !empty($hover_effects) && $style_items == 'float' ? '</div>' : '';
@@ -305,9 +339,9 @@ abstract class Skin_Base extends Elementor_Skin_Base
             foreach ($post_items as $item) {
                 $_id = $item['_id'];
                 if ($item['item_id'] == 'item_image') {
-                    $this->render_repeateritem_start($item['_id'], $item['item_id']);
-                    $this->render_image($item);
-                    $this->render_repeateritem_end();
+                    $this->render_repeater_item_start($item['_id'], $item['item_id']);
+                    $this->render_featured_image($item);
+                    $this->render_repeater_item_end();
                 }
             }
             echo $area_end;
@@ -317,19 +351,18 @@ abstract class Skin_Base extends Elementor_Skin_Base
             $_id = $item['item_id'];
             // se ci sono i 2 wrapper (image-area e content-area) escludo dal render immagine
             if ($_id != 'item_image' && $imagearea_start) {
-                $this->render_repeateritem_start($item['_id'], $item['item_id']);
+                $this->render_repeater_item_start($item['_id'], $item['item_id']);
             }
             // se il layout è default renderizzo tutto
             if (!$imagearea_start) {
-                $this->render_repeateritem_start($item['_id'], $item['item_id']);
+                $this->render_repeater_item_start($item['_id'], $item['item_id']);
             }
-            // Display Featured Image (not in Timeline Skin)
-            if ($_id == 'item_image' && !$imagearea_start && 'timeline' !== $_skin) {
-                $this->render_image($item);
+            if ($_id == 'item_image' && !$imagearea_start) {
+                $this->render_featured_image($item);
             } elseif ($_id == 'item_title') {
                 $this->render_title($item);
             } elseif ($_id == 'item_addtocart') {
-                $this->render_addtocart($item);
+                $this->render_add_to_cart($item);
             } elseif ($_id == 'item_productprice') {
                 $this->render_product_price($item);
             } elseif ($_id == 'item_sku') {
@@ -339,41 +372,43 @@ abstract class Skin_Base extends Elementor_Skin_Base
             } elseif ($_id == 'item_author') {
                 $this->render_author($item);
             } elseif ($_id == 'item_termstaxonomy') {
-                $this->render_termstaxonomy($item);
+                $this->render_terms($item);
             } elseif ($_id == 'item_content') {
                 $this->render_content($item);
             } elseif ($_id == 'item_custommeta') {
-                $this->render_custommeta($item);
+                $this->render_custom_meta($item);
+            } elseif ($_id == 'item_jetengine') {
+                $this->render_jetengine($item);
             } elseif ($_id == 'item_readmore') {
-                $this->render_readmore($item);
+                $this->render_read_more($item);
             } elseif ($_id == 'item_posttype') {
-                $this->render_posttype($item);
+                $this->render_post_type($item);
             }
             if ($_id != 'item_image' && $imagearea_start) {
-                $this->render_repeateritem_end();
+                $this->render_repeater_item_end();
             } elseif (!$imagearea_start) {
-                $this->render_repeateritem_end();
+                $this->render_repeater_item_end();
             }
         }
         echo $area_end . $hoverEffects_end;
     }
-    protected function render_repeateritem_start($id, $item_id)
+    protected function render_repeater_item_start($id, $item_id)
     {
-        $this->parent->set_render_attribute('dynposts_' . $id, ['class' => ['dce-item', 'dce-' . $item_id, 'elementor-repeater-item-' . $id]]);
-        echo '<div ' . $this->parent->get_render_attribute_string('dynposts_' . $id) . '>';
+        $this->get_parent()->set_render_attribute('dynposts_' . $id, ['class' => ['dce-item', 'dce-' . $item_id, 'elementor-repeater-item-' . $id]]);
+        echo '<div ' . $this->get_parent()->get_render_attribute_string('dynposts_' . $id) . '>';
     }
-    protected function render_repeateritem_end()
+    protected function render_repeater_item_end()
     {
         echo '</div>';
     }
-    // Render items
-    protected function render_image($settings)
+    /**
+     * Render Featured Image
+     *
+     * @param array<mixed> $settings
+     * @return void
+     */
+    protected function render_featured_image(array $settings)
     {
-        $use_bgimage = $settings['use_bgimage'];
-        $use_overlay = $settings['use_overlay'];
-        $use_overlay_hover = $this->parent->get_settings('use_overlay_hover');
-        $use_link = $settings['use_link'];
-        $open_target_blank = $settings['open_target_blank'];
         $setting_key = $settings['thumbnail_size_size'];
         // alt attribute
         if (!empty(get_the_post_thumbnail_caption())) {
@@ -381,45 +416,60 @@ abstract class Skin_Base extends Elementor_Skin_Base
         } else {
             $alt_attribute = get_the_title() ? esc_html(get_the_title()) : get_the_ID();
         }
+        $this->get_parent()->set_render_attribute('featured-image', 'class', 'dce-post-image');
         $image_attr = ['class' => $this->get_image_class(), 'alt' => $alt_attribute];
-        $image_url = Group_Control_Image_Size::get_attachment_image_src(get_post_thumbnail_id(), 'thumbnail_size', $settings);
         $thumbnail_html = wp_get_attachment_image(get_post_thumbnail_id(), $setting_key, \false, $image_attr);
+        // Fallback
+        if (empty($thumbnail_html) && !empty($settings['featured_image_fallback'])) {
+            $thumbnail_html = wp_get_attachment_image($settings['featured_image_fallback']['id'], $setting_key, \false, $image_attr);
+        }
         if (empty($thumbnail_html)) {
             return;
         }
-        if (isset($settings['ratio_image']['size'])) {
-            $this->parent->set_render_attribute('figure-featured-image', 'data-image-ratio', $settings['ratio_image']['size']);
+        if (!empty($settings['ratio_image']['size'])) {
+            $this->get_parent()->set_render_attribute('figure-featured-image', 'data-image-ratio', $settings['ratio_image']['size']);
         }
-        $bgimage = '';
-        if ($use_bgimage) {
-            $bgimage = ' dce-post-bgimage';
+        if ($settings['use_bgimage']) {
+            // Use Featured Image as background
+            $this->get_parent()->add_render_attribute('featured-image', 'class', 'dce-post-bgimage');
         }
-        $overlayimage = '';
-        if ($use_overlay) {
-            $overlayimage = ' dce-post-overlayimage';
+        if ($settings['use_overlay']) {
+            // Use Overlay
+            $this->get_parent()->add_render_attribute('featured-image', 'class', 'dce-post-overlayimage');
         }
-        $overlayhover = '';
-        if ($use_overlay_hover) {
-            $overlayhover = ' dce-post-overlayhover';
+        if ($this->get_parent()->get_settings('use_overlay_hover')) {
+            // Use Overlay Hover
+            $this->get_parent()->add_render_attribute('featured-image', 'class', 'dce-post-overlayhover');
         }
         $html_tag = 'div';
-        $attribute_link = '';
-        if ($use_link) {
+        if (!empty($settings['use_link'])) {
             $html_tag = 'a';
-            $attribute_link = ' href="' . $this->current_permalink . '"';
-            $open_target_blank = !empty($open_target_blank) ? ' target="_blank"' : '';
+            $this->get_parent()->set_render_attribute('featured-image', 'href', $this->current_permalink);
+            if (!empty($settings['open_target_blank'])) {
+                $this->get_parent()->set_render_attribute('featured-image', 'target', '_blank');
+            }
         }
-        echo '<' . $html_tag . ' class="dce-post-image' . $bgimage . $overlayimage . $overlayhover . '"' . $attribute_link . $open_target_blank . '>';
-        if ($use_bgimage) {
-            echo '<figure ' . $this->parent->get_render_attribute_string('figure-featured-image') . ' class="dce-img dce-bgimage" style="background-image: url(' . $image_url . '); background-repeat: no-repeat; background-size: cover; display: block;"></figure>';
+        echo '<' . $html_tag . ' ' . $this->get_parent()->get_render_attribute_string('featured-image') . '>';
+        if ($settings['use_bgimage']) {
+            // Image as Background
+            $image_url = \false;
+            if (get_post_thumbnail_id()) {
+                $image_url = Group_Control_Image_Size::get_attachment_image_src((string) get_post_thumbnail_id(), 'thumbnail_size', $settings);
+            }
+            if (empty($image_url) && !empty($settings['featured_image_fallback'])) {
+                $image_url = Group_Control_Image_Size::get_attachment_image_src($settings['featured_image_fallback']['id'], 'thumbnail_size', $settings);
+            }
+            if (!empty($image_url)) {
+                echo '<figure ' . $this->get_parent()->get_render_attribute_string('figure-featured-image') . ' class="dce-img dce-bgimage" style="background-image: url(' . $image_url . '); background-repeat: no-repeat; background-size: cover; display: block;"></figure>';
+            }
         } else {
-            echo '<figure ' . $this->parent->get_render_attribute_string('figure-featured-image') . ' class="dce-img">' . $thumbnail_html . '</figure>';
+            echo '<figure ' . $this->get_parent()->get_render_attribute_string('figure-featured-image') . ' class="dce-img">' . $thumbnail_html . '</figure>';
         }
         echo '</' . $html_tag . '>';
     }
     protected function render_title($settings)
     {
-        $html_tag = !empty(\DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag'])) ? \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']) : 'h3';
+        $html_tag = !empty($settings['html_tag']) ? \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']) : 'h3';
         $title_text = get_the_title() ? esc_html(get_the_title()) : get_the_ID();
         $use_link = $settings['use_link'];
         $open_target_blank = $settings['open_target_blank'];
@@ -427,7 +477,7 @@ abstract class Skin_Base extends Elementor_Skin_Base
         echo $this->render_item_link_text($title_text, $use_link, $this->current_permalink, $open_target_blank);
         echo \sprintf('</%s>', $html_tag);
     }
-    protected function render_addtocart($settings)
+    protected function render_add_to_cart($settings)
     {
         if ('product' !== get_post_type(get_the_ID())) {
             return;
@@ -438,14 +488,14 @@ abstract class Skin_Base extends Elementor_Skin_Base
         $attribute_button = 'button_addtocart_' . $this->counter;
         if ($product->is_type('simple')) {
             $button_text = wp_kses_post($settings['add_to_cart_text']);
-            $this->parent->add_render_attribute($attribute_button, 'class', ['elementor-button-link', 'elementor-button', 'dce-button']);
-            $this->parent->add_render_attribute($attribute_button, 'href', $cart_url . '?add-to-cart=' . $product_id);
-            $this->parent->add_render_attribute($attribute_button, 'role', 'button');
+            $this->get_parent()->add_render_attribute($attribute_button, 'class', ['elementor-button-link', 'elementor-button', 'dce-button']);
+            $this->get_parent()->add_render_attribute($attribute_button, 'href', $cart_url . '?add-to-cart=' . $product_id);
+            $this->get_parent()->add_render_attribute($attribute_button, 'role', 'button');
             ?>
 
 			<div class="dce-post-button">
 				<a <?php 
-            echo $this->parent->get_render_attribute_string($attribute_button);
+            echo $this->get_parent()->get_render_attribute_string($attribute_button);
             ?>><?php 
             echo $button_text;
             ?></a>
@@ -491,22 +541,22 @@ abstract class Skin_Base extends Elementor_Skin_Base
             echo esc_html($product->get_sku());
         }
     }
-    protected function render_readmore($settings)
+    protected function render_read_more($settings)
     {
         $readmore_text = wp_kses_post($settings['readmore_text']);
         $readmore_size = $settings['readmore_size'];
         $attribute_button = 'button_' . $this->counter;
         $open_target_blank = $settings['open_target_blank'];
-        $this->parent->add_render_attribute($attribute_button, 'href', $this->current_permalink);
-        $this->parent->add_render_attribute($attribute_button, 'class', ['elementor-button-link', 'elementor-button', 'dce-button']);
-        $this->parent->add_render_attribute($attribute_button, 'role', 'button');
+        $this->get_parent()->add_render_attribute($attribute_button, 'href', $this->current_permalink);
+        $this->get_parent()->add_render_attribute($attribute_button, 'class', ['elementor-button-link', 'elementor-button', 'dce-button']);
+        $this->get_parent()->add_render_attribute($attribute_button, 'role', 'button');
         if (!empty($readmore_size)) {
-            $this->parent->add_render_attribute($attribute_button, 'class', 'elementor-size-' . $readmore_size);
+            $this->get_parent()->add_render_attribute($attribute_button, 'class', 'elementor-size-' . $readmore_size);
         }
         ?>
 		<div class="dce-post-button">
 			<a <?php 
-        echo $this->parent->get_render_attribute_string($attribute_button);
+        echo $this->get_parent()->get_render_attribute_string($attribute_button);
         ?> <?php 
         if ($open_target_blank) {
             echo 'target="_blank"';
@@ -566,22 +616,25 @@ abstract class Skin_Base extends Elementor_Skin_Base
         $textcontent_limit = $settings['textcontent_limit'];
         $use_link = $settings['use_link'];
         echo '<div class="dce-post-content">';
-        // Content
-        if ($content_type == 1) {
+        if ($content_type === '1') {
+            // Content
             if ($textcontent_limit) {
                 echo $this->limit_content($textcontent_limit);
             } else {
                 echo wpautop(get_the_content());
             }
-        }
-        // Excerpt
-        if ($content_type == 0) {
+        } else {
+            // Excerpt
             $post = get_post();
-            echo $post->post_excerpt;
+            if ($content_type === 'auto-excerpt') {
+                echo get_the_excerpt($post);
+            } else {
+                echo $post->post_excerpt;
+            }
         }
         echo '</div>';
     }
-    protected function render_posttype($settings)
+    protected function render_post_type($settings)
     {
         $posttype_label = $settings['posttype_label'];
         $type = get_post_type();
@@ -628,7 +681,7 @@ abstract class Skin_Base extends Elementor_Skin_Base
         echo $icon . $date;
         ?></div><?php 
     }
-    protected function render_custommeta($settings)
+    protected function render_custom_meta($settings)
     {
         $custommeta_key = $settings['metafield_key'];
         if (!empty($custommeta_key)) {
@@ -670,6 +723,7 @@ abstract class Skin_Base extends Elementor_Skin_Base
                     break;
                 case 'image':
                     $image_attr = ['class' => 'dce-img'];
+                    $image_html = "";
                     if (\is_string($meta_value)) {
                         if (\is_numeric($meta_value)) {
                             $image_html = wp_get_attachment_image($meta_value, $image_size_key, \false, $image_attr);
@@ -680,34 +734,32 @@ abstract class Skin_Base extends Elementor_Skin_Base
                         $image_html = wp_get_attachment_image($meta_value, $image_size_key, \false, $image_attr);
                     } elseif (\is_array($meta_value)) {
                         // TODO ... da valutare come gestire il caso di un'array...
-                        $imageSrc = wp_get_attachment_image_src($meta_value['ID'], $thumbnail_size);
+                        $imageSrc = wp_get_attachment_image_src($meta_value['ID'], $image_size_key);
                         $imageSrcUrl = $imageSrc[0];
                     }
                     $meta_html = $image_html;
                     break;
                 case 'button':
-                    $this->parent->add_render_attribute($attribute_a_link, 'href', $meta_value);
-                    $this->parent->add_render_attribute($attribute_a_link, 'role', 'button');
+                    $this->get_parent()->set_render_attribute($attribute_a_link, 'href', $meta_value);
+                    $this->get_parent()->set_render_attribute($attribute_a_link, 'role', 'button');
                     if (!empty($metafield_button_size)) {
-                        $this->parent->add_render_attribute($attribute_a_link, 'class', 'elementor-size-' . $metafield_button_size);
+                        $this->get_parent()->add_render_attribute($attribute_a_link, 'class', 'elementor-size-' . $metafield_button_size);
                     }
-                    $this->parent->add_render_attribute($attribute_a_link, 'class', ['elementor-button-link', 'elementor-button', 'dce-button']);
+                    $this->get_parent()->add_render_attribute($attribute_a_link, 'class', ['elementor-button-link', 'elementor-button', 'dce-button']);
                     $link_to = $meta_value;
                     $meta_html = $metafield_button_label;
                     break;
                 case 'url':
-                    $this->parent->add_render_attribute($attribute_a_link, 'href', $meta_value);
+                    $this->get_parent()->set_render_attribute($attribute_a_link, 'href', $meta_value);
                     $link_to = $meta_value;
                     $meta_html = $meta_value;
                     break;
                 case 'textarea':
-                    //non esiste
+                    // not exists
                     $meta_html = \nl2br($meta_value);
                     break;
-                case 'textfield':
-                //non esiste
                 case 'wysiwyg':
-                    //non esiste
+                    // not exists
                     $meta_html = wpautop($meta_value);
                     break;
                 case 'text':
@@ -722,14 +774,14 @@ abstract class Skin_Base extends Elementor_Skin_Base
             }
             switch ($link_to) {
                 case 'home':
-                    $this->parent->add_render_attribute($attribute_a_link, 'href', esc_url(get_home_url()));
+                    $this->get_parent()->add_render_attribute($attribute_a_link, 'href', esc_url(get_home_url()));
                     break;
                 case 'post':
-                    $this->parent->add_render_attribute($attribute_a_link, 'href', $this->current_permalink);
+                    $this->get_parent()->add_render_attribute($attribute_a_link, 'href', $this->current_permalink);
                     break;
                 case 'custom':
                     if (!empty($link)) {
-                        $this->parent->add_link_attributes($attribute_a_link, $link);
+                        $this->get_parent()->add_link_attributes($attribute_a_link, $link);
                     }
                     break;
                 default:
@@ -737,18 +789,146 @@ abstract class Skin_Base extends Elementor_Skin_Base
             $linkOpen = '';
             $linkClose = '';
             if ($link_to) {
-                $this->parent->add_render_attribute($attribute_a_link, 'class', ['dce-link']);
-                $linkOpen = '<a ' . $this->parent->get_render_attribute_string($attribute_a_link) . '>';
+                $this->get_parent()->add_render_attribute($attribute_a_link, 'class', ['dce-link']);
+                $linkOpen = '<a ' . $this->get_parent()->get_render_attribute_string($attribute_a_link) . '>';
                 $linkClose = '</a>';
             }
             if (isset($meta_html)) {
-                $this->parent->add_render_attribute($attribute_custommeta_item, ['class' => ['dce-meta-item', 'dce-meta-' . $_id, 'dce-meta-' . $metafield_type, 'elementor-repeater-item-' . $settings['_id']]]);
-                echo '<div ' . $this->parent->get_render_attribute_string($attribute_custommeta_item) . '>' . $linkOpen . $meta_html . $linkClose . '</div>';
+                $this->get_parent()->add_render_attribute($attribute_custommeta_item, ['class' => ['dce-meta-item', 'dce-meta-' . $_id, 'dce-meta-' . $metafield_type, 'elementor-repeater-item-' . $settings['_id']]]);
+                echo '<div ' . $this->get_parent()->get_render_attribute_string($attribute_custommeta_item) . '>' . $linkOpen . $meta_html . $linkClose . '</div>';
             }
             echo '</div>';
         }
     }
-    protected function render_termstaxonomy($settings)
+    /**
+     * Render a JetEngine Field
+     *
+     * @param array $settings
+     * @return void
+     */
+    protected function render_jetengine(array $settings)
+    {
+        if (!Helper::is_jetengine_active()) {
+            return;
+        }
+        $field = $settings['jetengine_key'];
+        if (empty($field)) {
+            return;
+        }
+        $_id = $settings['_id'];
+        $metafield_type = $settings['metafield_type'];
+        $image_size_key = $settings['image_size_size'];
+        $metafield_button_label = wp_kses_post($settings['metafield_button_label']);
+        $metafield_button_size = $settings['metafield_button_size'];
+        $metafield_date_format_source = $settings['metafield_date_format_source'];
+        $metafield_date_format_display = $settings['metafield_date_format_display'];
+        $html_tag_item = $settings['html_tag_item'];
+        $link_to = $settings['link_to'];
+        $link = $settings['link'];
+        $attribute_a_link = 'a_link_' . $this->counter;
+        $attribute_custommeta_item = 'custommeta_item-' . $this->counter;
+        $field_value = jet_engine()->listings->data->get_meta($field);
+        if (!$field_value) {
+            return;
+        }
+        echo '<div class="dce-post-jetengine">';
+        $meta_html = '';
+        switch ($metafield_type) {
+            case 'date':
+                if ($metafield_date_format_source) {
+                    if ($metafield_date_format_source == 'timestamp') {
+                        $timestamp = $field_value;
+                    } else {
+                        $d = \DateTime::createFromFormat($metafield_date_format_source, $field_value);
+                        if ($d) {
+                            $timestamp = $d->getTimestamp();
+                        } else {
+                            $timestamp = \strtotime($field_value);
+                        }
+                    }
+                } else {
+                    $timestamp = \strtotime($field_value);
+                }
+                $meta_html = date_i18n($metafield_date_format_display, $timestamp);
+                break;
+            case 'image':
+                $image_attr = ['class' => 'dce-img'];
+                if (\is_string($field_value)) {
+                    if (\is_numeric($field_value)) {
+                        $image_html = wp_get_attachment_image(\intval($field_value), $image_size_key, \false, $image_attr);
+                    } else {
+                        $image_html = '<img src="' . $field_value . '" />';
+                    }
+                } elseif (\is_numeric($field_value)) {
+                    $image_html = wp_get_attachment_image($field_value, $image_size_key, \false, $image_attr);
+                } elseif (\is_array($field_value)) {
+                    // TODO ... da valutare come gestire il caso di un'array...
+                    $imageSrc = wp_get_attachment_image_src($field_value['ID'], $thumbnail_size);
+                    $imageSrcUrl = $imageSrc[0];
+                }
+                $meta_html = $image_html;
+                break;
+            case 'button':
+                $this->get_parent()->add_render_attribute($attribute_a_link, 'href', $field_value);
+                $this->get_parent()->add_render_attribute($attribute_a_link, 'role', 'button');
+                if (!empty($metafield_button_size)) {
+                    $this->get_parent()->add_render_attribute($attribute_a_link, 'class', 'elementor-size-' . $metafield_button_size);
+                }
+                $this->get_parent()->add_render_attribute($attribute_a_link, 'class', ['elementor-button-link', 'elementor-button', 'dce-button']);
+                $link_to = $field_value;
+                $meta_html = $metafield_button_label;
+                break;
+            case 'url':
+                $this->get_parent()->add_render_attribute($attribute_a_link, 'href', $field_value);
+                $link_to = $field_value;
+                $meta_html = $field_value;
+                break;
+            case 'textarea':
+                // not exists
+                $meta_html = \nl2br($field_value);
+                break;
+            case 'wysiwyg':
+                // not exists
+                $meta_html = wpautop($field_value);
+                break;
+            case 'text':
+                if ($html_tag_item) {
+                    $meta_html = '<' . $html_tag_item . '>' . $field_value . '</' . $html_tag_item . '>';
+                } else {
+                    $meta_html = $field_value;
+                }
+                break;
+            default:
+                $meta_html = $field_value;
+        }
+        switch ($link_to) {
+            case 'home':
+                $this->get_parent()->add_render_attribute($attribute_a_link, 'href', esc_url(get_home_url()));
+                break;
+            case 'post':
+                $this->get_parent()->add_render_attribute($attribute_a_link, 'href', $this->current_permalink);
+                break;
+            case 'custom':
+                if (!empty($link)) {
+                    $this->get_parent()->add_link_attributes($attribute_a_link, $link);
+                }
+                break;
+            default:
+        }
+        $linkOpen = '';
+        $linkClose = '';
+        if ($link_to) {
+            $this->get_parent()->add_render_attribute($attribute_a_link, 'class', ['dce-link']);
+            $linkOpen = '<a ' . $this->get_parent()->get_render_attribute_string($attribute_a_link) . '>';
+            $linkClose = '</a>';
+        }
+        if (isset($meta_html)) {
+            $this->get_parent()->add_render_attribute($attribute_custommeta_item, ['class' => ['dce-meta-item', 'dce-meta-' . $_id, 'dce-meta-' . $metafield_type, 'elementor-repeater-item-' . $settings['_id']]]);
+            echo '<div ' . $this->get_parent()->get_render_attribute_string($attribute_custommeta_item) . '>' . $linkOpen . $meta_html . $linkClose . '</div>';
+        }
+        echo '</div>';
+    }
+    protected function render_terms($settings)
     {
         $taxonomy_filter = $settings['taxonomy_filter'];
         $separator_chart = wp_kses_post($settings['separator_chart']);
@@ -819,19 +999,23 @@ abstract class Skin_Base extends Elementor_Skin_Base
             return $link_text ? $link_text : '';
         }
     }
-    // Render post item
+    /**
+     * Render Post - Start
+     *
+     * @return void
+     */
     protected function render_post_start()
     {
-        $hover_animation = $this->parent->get_settings('hover_animation');
+        $hover_animation = $this->get_parent()->get_settings('hover_animation');
         $animation_class = !empty($hover_animation) ? ' elementor-animation-' . $hover_animation : '';
-        $style_items = $this->parent->get_settings('style_items');
-        $hover_effects = $this->parent->get_settings('hover_text_effect');
+        $style_items = $this->get_parent()->get_settings('style_items');
+        $hover_effects = $this->get_parent()->get_settings('hover_text_effect');
         $hoverEffects_class = !empty($hover_effects) && $style_items == 'float' ? ' dce-hover-effects' : '';
         $data_post_id = ' data-dce-post-id="' . $this->current_id . '"';
         $data_post_id .= ' data-dce-post-index="' . $this->counter . '"';
         $item_class = ' ' . $this->get_item_class();
         $data_post_link = '';
-        if ($this->parent->get_settings('templatemode_linkable')) {
+        if ($this->get_parent()->get_settings('templatemode_linkable')) {
             $data_post_link = ' data-post-link="' . get_permalink($this->current_id) . '"';
         }
         ?>
@@ -845,6 +1029,11 @@ abstract class Skin_Base extends Elementor_Skin_Base
         ?>">
 		<?php 
     }
+    /**
+     * Render Post - End
+     *
+     * @return void
+     */
     protected function render_post_end()
     {
         ?>
@@ -854,17 +1043,17 @@ abstract class Skin_Base extends Elementor_Skin_Base
     }
     protected function render_fallback()
     {
-        $fallback_type = $this->parent->get_settings_for_display('fallback_type');
-        $fallback_text = $this->parent->get_settings_for_display('fallback_text');
-        $fallback_template = $this->parent->get_settings_for_display('fallback_template');
-        $this->parent->add_render_attribute('dynposts_container', ['class' => ['dce-posts-container', 'dce-posts', $this->get_scrollreveal_class(), $this->get_container_class()]]);
-        $this->parent->add_render_attribute('dynposts_container_wrap', ['class' => ['dce-posts-fallback']]);
+        $fallback_type = $this->get_parent()->get_settings_for_display('fallback_type');
+        $fallback_text = $this->get_parent()->get_settings_for_display('fallback_text');
+        $fallback_template = $this->get_parent()->get_settings_for_display('fallback_template');
+        $this->get_parent()->add_render_attribute('dynposts_container', ['class' => ['dce-posts-container', 'dce-posts', $this->get_scrollreveal_class(), $this->get_container_class()]]);
+        $this->get_parent()->add_render_attribute('dynposts_container_wrap', ['class' => ['dce-posts-fallback']]);
         ?>
 		<div <?php 
-        echo $this->parent->get_render_attribute_string('dynposts_container');
+        echo $this->get_parent()->get_render_attribute_string('dynposts_container');
         ?>>
 			<div <?php 
-        echo $this->parent->get_render_attribute_string('dynposts_container_wrap');
+        echo $this->get_parent()->get_render_attribute_string('dynposts_container_wrap');
         ?>>
 			<?php 
         if (isset($fallback_type) && $fallback_type === 'template') {
@@ -881,31 +1070,57 @@ abstract class Skin_Base extends Elementor_Skin_Base
     // Render loop wrapper
     protected function render_loop_start()
     {
-        $settings = $this->parent->get_settings_for_display();
-        $p_query = $this->parent->get_query();
-        $this->parent->add_render_attribute('dynposts_container', ['class' => ['dce-posts-container is_infiniteScroll', 'dce-posts', $this->get_scrollreveal_class(), $this->get_container_class()]]);
-        $this->parent->add_render_attribute('dynposts_container_wrap', ['class' => ['dce-posts-wrapper', $this->get_wrapper_class()]]);
-        // Pagination
-        if ($settings['pagination_enable'] && ('top' === $settings['pagination_position'] || 'both' === $settings['pagination_position'])) {
-            Helper::numeric_query_pagination($p_query->max_num_pages, $settings, 'dce-pagination-top');
+        if (!$this->parent) {
+            throw new \Exception('Parent not found');
         }
+        $settings = $this->get_parent()->get_settings_for_display();
+        $p_query = $this->get_parent()->get_query();
+        $this->get_parent()->add_render_attribute('dynposts_container', ['class' => ['dce-posts-container is_infiniteScroll', 'dce-posts', $this->get_scrollreveal_class(), $this->get_container_class()]]);
+        $this->get_parent()->add_render_attribute('dynposts_container_wrap', ['class' => ['dce-posts-wrapper', $this->get_wrapper_class()]]);
+        $this->render_pagination_top();
         ?>
 
 		<div <?php 
-        echo $this->parent->get_render_attribute_string('dynposts_container');
+        echo $this->get_parent()->get_render_attribute_string('dynposts_container');
         ?>>
 			<?php 
         $this->render_posts_before();
         ?>
 			<div <?php 
-        echo $this->parent->get_render_attribute_string('dynposts_container_wrap');
+        echo $this->get_parent()->get_render_attribute_string('dynposts_container_wrap');
         ?>>
-		<?php 
-        $this->render_postsWrapper_before();
+			<?php 
+        $this->render_posts_wrapper_before();
+    }
+    /**
+     * Render Top Pagination
+     *
+     * @return void
+     */
+    protected function render_pagination_top()
+    {
+        $settings = $this->get_parent()->get_settings_for_display();
+        $p_query = $this->get_parent()->get_query();
+        if ($settings['pagination_enable'] && ('top' === $settings['pagination_position'] || 'both' === $settings['pagination_position'])) {
+            Helper::numeric_query_pagination($p_query->max_num_pages, $settings, 'dce-pagination-top');
+        }
+    }
+    /**
+     * Render Bottom Pagination
+     *
+     * @return void
+     */
+    protected function render_pagination_bottom()
+    {
+        $settings = $this->get_parent()->get_settings_for_display();
+        $p_query = $this->get_parent()->get_query();
+        if ($settings['pagination_enable'] && ('bottom' === $settings['pagination_position'] || 'both' === $settings['pagination_position'])) {
+            Helper::numeric_query_pagination($p_query->max_num_pages, $settings, 'dce-pagination-bottom');
+        }
     }
     protected function render_loop_end()
     {
-        $this->render_postsWrapper_after();
+        $this->render_posts_wrapper_after();
         ?>
 			</div>
 			<?php 
@@ -913,15 +1128,84 @@ abstract class Skin_Base extends Elementor_Skin_Base
         ?>
 		</div>
 		<?php 
-        $settings = $this->parent->get_settings_for_display();
-        $p_query = $this->parent->get_query();
+        if (!$this->parent) {
+            throw new \Exception('Parent not found');
+        }
+        $settings = $this->get_parent()->get_settings_for_display();
+        $p_query = $this->get_parent()->get_query();
         $postlength = $p_query->post_count;
         $posts_per_page = $p_query->query_vars['posts_per_page'];
-        // Pagination
-        if ($settings['pagination_enable'] && ('bottom' === $settings['pagination_position'] || 'both' === $settings['pagination_position'])) {
-            Helper::numeric_query_pagination($p_query->max_num_pages, $settings, 'dce-pagination-bottom');
+        $this->render_pagination_bottom();
+        $this->render_infinite_scroll();
+    }
+    protected function render_posts_before()
+    {
+    }
+    protected function render_posts_after()
+    {
+    }
+    protected function render_posts_wrapper_before()
+    {
+    }
+    protected function render_posts_wrapper_after()
+    {
+    }
+    public function get_container_class()
+    {
+        return 'dce-skin-' . $this->get_id();
+    }
+    public function get_wrapper_class()
+    {
+        return 'dce-wrapper-' . $this->get_id();
+    }
+    public function get_item_class()
+    {
+        return 'dce-item-' . $this->get_id();
+    }
+    public function get_image_class()
+    {
+    }
+    public function get_scrollreveal_class()
+    {
+        return '';
+    }
+    public function filter_excerpt_length()
+    {
+        return $this->get_instance_value('textcontent_limit');
+    }
+    public function filter_excerpt_more($more)
+    {
+        return '';
+    }
+    protected function limit_content($limit)
+    {
+        $post = get_post();
+        $content = $post->post_content;
+        $content = \mb_substr(wp_strip_all_tags($content), 0, $limit) . '&hellip;';
+        return $content;
+    }
+    protected function add_search_filter_class()
+    {
+        $search_filter_id = $this->get_parent()->get_settings_for_display('search_filter_id');
+        $search_filter_id = apply_filters('wpml_object_id', $search_filter_id, 'search-filter-widget', \true);
+        if ($this->get_parent()->get_settings('query_type') === 'search_filter' && isset($search_filter_id)) {
+            $sfid = \intval($search_filter_id);
+            $element_class = 'search-filter-results-' . $sfid;
+            $args = array('class' => array($element_class));
+            $this->get_parent()->add_render_attribute('_wrapper', $args);
         }
-        // Infinite Scroll
+    }
+    /**
+     * Render Infinite Scroll
+     *
+     * @return void
+     */
+    protected function render_infinite_scroll()
+    {
+        $settings = $this->get_parent()->get_settings_for_display();
+        $p_query = $this->get_parent()->get_query();
+        $postlength = $p_query->post_count;
+        $posts_per_page = $p_query->query_vars['posts_per_page'];
         if ($settings['infiniteScroll_enable'] && $settings['query_type'] != 'search_filter' && $postlength >= $settings['num_posts'] && $settings['num_posts'] >= 0 || $settings['infiniteScroll_enable'] && $settings['query_type'] == 'search_filter' && $postlength >= $posts_per_page || \Elementor\Plugin::$instance->editor->is_edit_mode()) {
             $preview_mode = '';
             if ($settings['infiniteScroll_enable_status']) {
@@ -989,63 +1273,6 @@ abstract class Skin_Base extends Elementor_Skin_Base
 				</div>
 				<?php 
             }
-        }
-    }
-    protected function render_posts_before()
-    {
-    }
-    protected function render_posts_after()
-    {
-    }
-    protected function render_postsWrapper_before()
-    {
-    }
-    protected function render_postsWrapper_after()
-    {
-    }
-    public function get_container_class()
-    {
-        return 'dce-skin-' . $this->get_id();
-    }
-    public function get_wrapper_class()
-    {
-        return 'dce-wrapper-' . $this->get_id();
-    }
-    public function get_item_class()
-    {
-        return 'dce-item-' . $this->get_id();
-    }
-    public function get_image_class()
-    {
-    }
-    public function get_scrollreveal_class()
-    {
-        return '';
-    }
-    public function filter_excerpt_length()
-    {
-        return $this->get_instance_value('textcontent_limit');
-    }
-    public function filter_excerpt_more($more)
-    {
-        return '';
-    }
-    protected function limit_content($limit)
-    {
-        $post = get_post();
-        $content = $post->post_content;
-        $content = \mb_substr(wp_strip_all_tags($content), 0, $limit) . '&hellip;';
-        return $content;
-    }
-    protected function add_search_filter_class()
-    {
-        $search_filter_id = $this->parent->get_settings_for_display('search_filter_id');
-        $search_filter_id = apply_filters('wpml_object_id', $search_filter_id, 'search-filter-widget', \true);
-        if ($this->parent->get_settings('query_type') === 'search_filter' && isset($search_filter_id)) {
-            $sfid = \intval($search_filter_id);
-            $element_class = 'search-filter-results-' . $sfid;
-            $args = array('class' => array($element_class));
-            $this->parent->add_render_attribute('_wrapper', $args);
         }
     }
 }

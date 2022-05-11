@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
@@ -12,12 +12,12 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Utils;
 use DynamicContentForElementor\Helper;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_CSS;
+use DynamicContentForElementor\Controls\Group_Control_Filters_CSS;
 // Exit if accessed directly
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Slider extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class AcfSlider extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -27,22 +27,21 @@ class DCE_Widget_Slider extends \DynamicContentForElementor\Widgets\WidgetProtot
     {
         return ['dce-photoSwipe_default', 'dce-photoSwipe_skin', 'dce-acfslider'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $post_type_object = get_post_type_object(get_post_type());
         $acf_group = '';
         $this->start_controls_section('section_content', ['label' => __('ACF Slider', 'dynamic-content-for-elementor')]);
-        $this->add_control('acf_field_list', ['label' => __('ACF Gallery Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'gallery']);
+        $this->add_control('acf_field_list', ['label' => __('ACF Gallery Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'gallery']);
+        $this->add_control('acf_gallery_from', ['label' => __('Retrieve the field from', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'current_post', 'options' => ['current_post' => __('Current Post', 'dynamic-content-for-elementor'), 'current_user' => __('Current User', 'dynamic-content-for-elementor'), 'current_author' => __('Current Author', 'dynamic-content-for-elementor'), 'current_term' => __('Current Term', 'dynamic-content-for-elementor'), 'options_page' => __('Options Page', 'dynamic-content-for-elementor')]]);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => '', 'prefix_class' => 'align-', 'selectors' => ['{{WRAPPER}} .dynamic_acfslider' => 'text-align: {{VALUE}};']]);
         $this->add_control('mode_heading', ['label' => __('Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
-        $this->add_control('force_width', [
-            'label' => __('Force Width', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::SWITCHER,
-            'return_value' => 'yes',
-            'render_type' => 'template',
-            // 'prefix_class' => 'forcewidth-',
-            'condition' => ['force_height' => '', 'use_bg_image' => ''],
-        ]);
+        $this->add_control('force_width', ['label' => __('Force Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'yes', 'render_type' => 'template', 'condition' => ['force_height' => '', 'use_bg_image' => '']]);
         $this->add_responsive_control('size_img', ['label' => __('Size (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['%'], 'default' => ['unit' => '%', 'size' => 100], 'tablet_default' => ['unit' => '%'], 'mobile_default' => ['unit' => '%'], 'range' => ['%' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .wrap-item-acfslider' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['force_width' => 'yes']]);
         $this->add_control('force_height', ['label' => __('Force Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'prefix_class' => 'forceheignt-', 'render_type' => 'template', 'condition' => ['force_width' => '', 'use_bg_image' => '']]);
         $this->add_responsive_control('height', ['label' => __('Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'description' => __('If the value is empty the height is automatic.', 'dynamic-content-for-elementor'), 'default' => ['size' => ''], 'size_units' => ['px', 'rem', 'vh'], 'range' => ['rem' => ['min' => 0, 'max' => 100], 'px' => ['min' => 0, 'max' => 1200], 'vw' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dyncontel-swiper .swiper-container' => 'height: {{SIZE}}{{UNIT}};'], 'frontend_available' => \true, 'condition' => ['force_height' => 'yes']]);
@@ -64,7 +63,7 @@ class DCE_Widget_Slider extends \DynamicContentForElementor\Widgets\WidgetProtot
         //  ------------------------------------- [SHADOW]
         $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'image_box_shadow', 'selector' => '{{WRAPPER}} .acfslider-item img']);
         //  ------------------------------------- [FILTERS]
-        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => __('Filters image', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .acfslider-item img']);
+        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => __('Filters image', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .acfslider-item img']);
         $this->end_controls_section();
         // ------------------------------------------------------------------------------- Base Settings, Slides grid, Grab Cursor
         $this->start_controls_section('section_swiper_settings', ['label' => __('Slider Settings', 'dynamic-content-for-elementor')]);
@@ -100,8 +99,6 @@ class DCE_Widget_Slider extends \DynamicContentForElementor\Widgets\WidgetProtot
         $this->end_controls_section();
         // ------------------------------------------------------------------------------- Pagination
         $this->start_controls_section('section_swiper_pagination', ['label' => __('Pagination', 'dynamic-content-for-elementor')]);
-        // --------------------------------------------------- Pagination options ------
-        $this->add_control('pagination_options', ['label' => __('Pagination options', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_control('usePagination', ['label' => __('Pagination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('pagination_type', ['label' => __('Pagination Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['bullets' => __('Bullets', 'dynamic-content-for-elementor'), 'fraction' => __('Fraction', 'dynamic-content-for-elementor'), 'progress' => __('Progress', 'dynamic-content-for-elementor')], 'default' => 'bullets', 'frontend_available' => \true, 'condition' => ['usePagination' => 'yes']]);
         // ------------------------------------------------- Pagination Fraction Options
@@ -182,23 +179,46 @@ class DCE_Widget_Slider extends \DynamicContentForElementor\Widgets\WidgetProtot
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'background', 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .acfslider-overlay_hover', 'popover' => \true, 'condition' => ['enable_overlay_hover' => 'yes']]);
         $this->add_control('hover_effects', ['label' => __('Hover Effects', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'zoom' => __('Zoom', 'dynamic-content-for-elementor')], 'default' => '', 'prefix_class' => 'hovereffect-', 'condition' => ['enable_lightbox' => 'yes']]);
         $this->end_controls_section();
-        // ********************************************************************************* Section STYLE
-        $this->start_controls_section('section_dce_settings', ['label' => __('Dynamic Content', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_SETTINGS]);
+        $this->start_controls_section('section_dce_settings', ['label' => __('Source', 'dynamic-content-for-elementor'), 'condition' => ['acf_gallery_from' => 'current_post']]);
         $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('other', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
         $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }
-        $id_page = Helper::get_the_id($settings['other_post_source']);
-        $idFields = '';
-        $idFields = $settings['acf_field_list'];
-        $galleria = Helper::get_acf_field_value($idFields, $id_page);
-        $title = '';
+        $id_page = '';
+        switch ($settings['acf_gallery_from']) {
+            case 'current_post':
+                $id_page = Helper::get_the_id($settings['other_post_source']);
+                break;
+            case 'current_user':
+                $user_id = get_current_user_id();
+                $id_page = 'user_' . $user_id;
+                break;
+            case 'current_author':
+                $user_id = get_the_author_meta('ID');
+                $id_page = 'user_' . $user_id;
+                break;
+            case 'current_term':
+                $queried_object = get_queried_object();
+                if (!empty($queried_object) && \is_object($queried_object) && \get_class($queried_object) == 'WP_Term') {
+                    $taxonomy = $queried_object->taxonomy;
+                    $term_id = $queried_object->term_id;
+                    $id_page = $taxonomy . '_' . $term_id;
+                }
+                break;
+            case 'options_page':
+                $id_page = 'options';
+                break;
+        }
+        $acf_gallery = Helper::get_acf_field_value($settings['acf_field_list'], $id_page);
+        if (!$acf_gallery) {
+            return;
+        }
         $image_size = $settings['size_size'];
         $enable_lightbox = '';
         $lightbox_type = '';
@@ -225,114 +245,113 @@ class DCE_Widget_Slider extends \DynamicContentForElementor\Widgets\WidgetProtot
         }
         $wrap_effect_start = '<div class="mask"><div class="wrap-filters">';
         $wrap_effect_end = '</div></div>';
-        // ---------------------- Overlay Hover -----------------
         $overlay_hover_block = '';
         $overlay_hover_class = '';
-        if ($settings['enable_overlay_hover'] == 'yes') {
+        if ('yes' == $settings['enable_overlay_hover']) {
             $overlay_hover_block = '<span class="acfslider-overlay_hover"></span>';
             $overlay_hover_class = ' is-overlay ';
         }
-        if ($galleria) {
-            ?>
-			<div class="dynamic_acfslider<?php 
-            echo $enable_lightbox . $lightbox_type . $elementor_lightbox . $overlay_hover_class;
-            ?>" itemscope itemtype="http://schema.org/ImageGallery">
-				<?php 
-            $effect = ' dce-' . $settings['effects'];
-            $direction = ' dce-direction-' . $settings['directionSlide'];
-            echo '<div class="dyncontel-swiper' . $effect . $direction . '">';
-            echo '  <div class="swiper-container">';
-            echo '    <div class="swiper-wrapper">';
-            $counter = 0;
-            foreach ($galleria as $image) {
-                if (!isset($image['id'])) {
-                    $img_id = $image;
-                    $image = $this->dce_get_attachment($img_id);
-                }
-                $img_id = $image['id'];
-                $img_url = $image['url'];
-                $img_alt = $image['alt'];
-                $img_width = $image['width'];
-                $img_height = $image['height'];
-                $img_desc = \false;
-                $data_elementor_open_lightbox = $data_elementor_open_lightbox_base;
-                if ($settings['use_desc']) {
-                    $use_desc = $settings['use_desc'];
-                    $img_desc = $image[$use_desc];
-                    $data_elementor_open_lightbox .= ' data-elementor-lightbox-description="' . $img_desc . '"';
-                }
-                $image_url = Group_Control_Image_Size::get_attachment_image_src($img_id, 'size', $settings);
-                $bg_image_style = '';
-                $bg_image_class = '';
-                if ($settings['use_bg_image'] != '') {
-                    $bg_image_style = ' style="background-image: url(' . $image_url . '); background-repeat: no-repeat; background-size: cover;"';
-                    $bg_image_class = ' acfslider-bg-image';
-                }
-                echo '<div class="swiper-slide">';
-                echo '<figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject"  class="acfslider-item grid-item' . $bg_image_class . '"' . $bg_image_style . '>';
-                if ($enable_lightbox != '' && $settings['use_bg_image'] != '') {
-                    echo '<a class="' . $enable_lightbox . $elementor_lightbox . '" href="' . $img_url . '" itemprop="contentUrl" data-size="' . $img_width . 'x' . $img_height . '"' . $data_elementor_open_lightbox . $data_elementor_slideshow . '>';
-                }
-                if ($settings['use_bg_image'] != '') {
-                    echo '<div class="wrap-item-acfslider" style="height: 100%; " >';
-                } else {
-                    echo '<div class="wrap-item-acfslider">';
-                }
-                if ($enable_lightbox != '' && $settings['use_bg_image'] == '') {
-                    echo '<a class="' . $enable_lightbox . $elementor_lightbox . '" href="' . $img_url . '" itemprop="contentUrl" data-size="' . $img_width . 'x' . $img_height . '"' . $data_elementor_open_lightbox . $data_elementor_slideshow . '>';
-                }
-                if ($settings['use_bg_image'] == '') {
-                    echo '<img src="' . $image_url . '" itemprop="thumbnail" alt="' . $img_alt . '" />';
-                    echo $overlay_hover_block;
-                }
-                if ($img_desc) {
-                    echo '<figcaption itemprop="caption description">' . $img_desc . '</figcaption>';
-                }
-                if ($enable_lightbox && $settings['use_bg_image'] == '') {
-                    echo '</a>';
-                }
-                echo '</div>';
-                echo '</figure>';
-                if ($enable_lightbox != '' && $settings['use_bg_image'] != '') {
-                    echo '</a>';
-                }
-                echo '</div>';
-                $counter++;
+        ?>
+
+		<div class="dynamic_acfslider<?php 
+        echo $enable_lightbox . $lightbox_type . $elementor_lightbox . $overlay_hover_class;
+        ?>" itemscope itemtype="http://schema.org/ImageGallery">
+			<?php 
+        $effect = ' dce-' . $settings['effects'];
+        $direction = ' dce-direction-' . $settings['directionSlide'];
+        echo '<div class="dyncontel-swiper' . $effect . $direction . '">';
+        echo '  <div class="swiper-container">';
+        echo '    <div class="swiper-wrapper">';
+        $counter = 0;
+        foreach ($acf_gallery as $image) {
+            if (!isset($image['id'])) {
+                $img_id = $image;
+                $image = $this->get_attachment($img_id);
             }
-            echo '   </div>';
-            if ($settings['useScrollbar'] != '' && \count($galleria) > 1) {
-                // If we need scrollbar
-                echo '<div class="swiper-scrollbar"></div>';
+            $img_id = $image['id'];
+            $img_url = $image['url'];
+            $img_alt = $image['alt'];
+            $img_width = $image['width'];
+            $img_height = $image['height'];
+            $img_desc = \false;
+            $data_elementor_open_lightbox = $data_elementor_open_lightbox_base;
+            if ($settings['use_desc']) {
+                $use_desc = $settings['use_desc'];
+                $img_desc = $image[$use_desc];
+                $data_elementor_open_lightbox .= ' data-elementor-lightbox-description="' . $img_desc . '"';
+            }
+            $image_url = Group_Control_Image_Size::get_attachment_image_src($img_id, 'size', $settings);
+            $bg_image_style = '';
+            $bg_image_class = '';
+            if ($settings['use_bg_image'] != '') {
+                $bg_image_style = ' style="background-image: url(' . $image_url . '); background-repeat: no-repeat; background-size: cover;"';
+                $bg_image_class = ' acfslider-bg-image';
+            }
+            echo '<div class="swiper-slide">';
+            echo '<figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject"  class="acfslider-item grid-item' . $bg_image_class . '"' . $bg_image_style . '>';
+            if ($enable_lightbox != '' && $settings['use_bg_image'] != '') {
+                echo '<a class="' . $enable_lightbox . $elementor_lightbox . '" href="' . $img_url . '" itemprop="contentUrl" data-size="' . $img_width . 'x' . $img_height . '"' . $data_elementor_open_lightbox . $data_elementor_slideshow . '>';
+            }
+            if ($settings['use_bg_image'] != '') {
+                echo '<div class="wrap-item-acfslider" style="height: 100%; " >';
+            } else {
+                echo '<div class="wrap-item-acfslider">';
+            }
+            if ($enable_lightbox != '' && $settings['use_bg_image'] == '') {
+                echo '<a class="' . $enable_lightbox . $elementor_lightbox . '" href="' . $img_url . '" itemprop="contentUrl" data-size="' . $img_width . 'x' . $img_height . '"' . $data_elementor_open_lightbox . $data_elementor_slideshow . '>';
+            }
+            if ($settings['use_bg_image'] == '') {
+                echo '<img src="' . $image_url . '" itemprop="thumbnail" alt="' . $img_alt . '" />';
+                echo $overlay_hover_block;
+            }
+            if ($img_desc) {
+                echo '<figcaption itemprop="caption description">' . $img_desc . '</figcaption>';
+            }
+            if ($enable_lightbox && $settings['use_bg_image'] == '') {
+                echo '</a>';
             }
             echo '</div>';
-            if ($settings['useNavigation'] != '' && \count($galleria) > 1) {
-                // Add Arrows
-                echo '<div class="swiper-button swiper-button-next next-' . $this->get_id() . '"><svg version="1.1" id="Livello_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="85.039px" height="85.039px" viewBox="378.426 255.12 85.039 85.039" enable-background="new 378.426 255.12 85.039 85.039"
-    xml:space="preserve">
-    <line fill="none" stroke="#C81517" stroke-width="1.3845" stroke-miterlimit="10" x1="458.375" y1="298.077" x2="382.456" y2="298.077"/>
-    <polyline fill="none" stroke="#C81517" stroke-width="1.3845" stroke-miterlimit="10" points="424.543,264.245 458.375,298.077
-    424.543,331.909 "/>
-    </svg></div>';
-                echo '<div class="swiper-button swiper-button-prev prev-' . $this->get_id() . '"><svg version="1.1" id="Livello_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="85.039px" height="85.039px" viewBox="378.426 255.12 85.039 85.039" enable-background="new 378.426 255.12 85.039 85.039"
-    xml:space="preserve">
-    <line fill="none" stroke="#C81517" stroke-width="1.3845" stroke-dasharray="0,0" stroke-miterlimit="10" x1="382.456" y1="298.077" x2="458.375" y2="298.077"/>
-    <polyline fill="none" stroke="#C81517" stroke-width="1.3845" stroke-dasharray="0,0" stroke-miterlimit="10" points="416.287,331.909 382.456,298.077
-    416.287,264.245 "/>
-    </svg></div>';
+            echo '</figure>';
+            if ($enable_lightbox != '' && $settings['use_bg_image'] != '') {
+                echo '</a>';
             }
-            if ($settings['usePagination'] != '' && \count($galleria) > 1) {
-                // Add Pagination
-                echo '<div class="swiper-container-horizontal"><div class="swiper-pagination pagination-' . $this->get_id() . '"></div></div>';
-            }
-            echo '  </div>';
-            ?>
-			</div>
-			<?php 
+            echo '</div>';
+            $counter++;
         }
+        echo '   </div>';
+        if ($settings['useScrollbar'] != '' && \count($acf_gallery) > 1) {
+            // If we need scrollbar
+            echo '<div class="swiper-scrollbar"></div>';
+        }
+        echo '</div>';
+        if ($settings['useNavigation'] != '' && \count($acf_gallery) > 1) {
+            // Add Arrows
+            echo '<div class="swiper-button swiper-button-next next-' . $this->get_id() . '"><svg version="1.1" id="Livello_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+width="85.039px" height="85.039px" viewBox="378.426 255.12 85.039 85.039" enable-background="new 378.426 255.12 85.039 85.039"
+xml:space="preserve">
+<line fill="none" stroke="#C81517" stroke-width="1.3845" stroke-miterlimit="10" x1="458.375" y1="298.077" x2="382.456" y2="298.077"/>
+<polyline fill="none" stroke="#C81517" stroke-width="1.3845" stroke-miterlimit="10" points="424.543,264.245 458.375,298.077
+424.543,331.909 "/>
+</svg></div>';
+            echo '<div class="swiper-button swiper-button-prev prev-' . $this->get_id() . '"><svg version="1.1" id="Livello_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+width="85.039px" height="85.039px" viewBox="378.426 255.12 85.039 85.039" enable-background="new 378.426 255.12 85.039 85.039"
+xml:space="preserve">
+<line fill="none" stroke="#C81517" stroke-width="1.3845" stroke-dasharray="0,0" stroke-miterlimit="10" x1="382.456" y1="298.077" x2="458.375" y2="298.077"/>
+<polyline fill="none" stroke="#C81517" stroke-width="1.3845" stroke-dasharray="0,0" stroke-miterlimit="10" points="416.287,331.909 382.456,298.077
+416.287,264.245 "/>
+</svg></div>';
+        }
+        if (!empty($settings['usePagination']) && \count($acf_gallery) > 1) {
+            // Add Pagination
+            echo '<div class="swiper-container-horizontal"><div class="swiper-pagination pagination-' . $this->get_id() . '"></div></div>';
+        }
+        echo '  </div>';
+        ?>
+		</div>
+
+		<?php 
     }
-    protected function dce_get_attachment($attachment_id)
+    protected function get_attachment($attachment_id)
     {
         $attachment = get_post($attachment_id);
         $img_src = wp_get_attachment_image_src($attachment_id, 'full');

@@ -9,7 +9,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class MyPosts extends \DynamicContentForElementor\Widgets\DCE_Widget_DynamicPosts_Base
+class MyPosts extends \DynamicContentForElementor\Widgets\DynamicPostsBase
 {
     public function get_name()
     {
@@ -21,11 +21,17 @@ class MyPosts extends \DynamicContentForElementor\Widgets\DCE_Widget_DynamicPost
         $this->add_skin(new Skins\My_Posts_Skin_Grid_Filters($this));
         $this->add_skin(new Skins\My_Posts_Skin_Carousel($this));
         $this->add_skin(new Skins\My_Posts_Skin_DualCarousel($this));
+        $this->add_skin(new Skins\My_Posts_Skin_Accordion($this));
         $this->add_skin(new Skins\My_Posts_Skin_Timeline($this));
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
-        parent::_register_controls();
+        parent::safe_register_controls();
         $this->update_control('query_type', ['type' => Controls_Manager::HIDDEN, 'default' => 'get_cpt']);
         $this->update_control('query_filter', ['label' => __('By', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['date' => __('Date', 'dynamic-content-for-elementor'), 'term' => __('Terms & Taxonomy', 'dynamic-content-for-elementor'), 'author' => __('Author', 'dynamic-content-for-elementor'), 'metakey' => __('Metakey', 'dynamic-content-for-elementor')], 'multiple' => \true, 'label_block' => \true, 'default' => ['author']]);
         $this->update_control('heading_query_filter_author', ['type' => Controls_Manager::HIDDEN, 'condition' => ['query_filter' => 'author']]);

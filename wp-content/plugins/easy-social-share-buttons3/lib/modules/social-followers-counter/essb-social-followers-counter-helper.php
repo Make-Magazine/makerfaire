@@ -130,6 +130,10 @@ class ESSBSocialFollowersCounterHelper {
 	public static function clear_deprecated_networks($networks = array()) {
 	    $r = array();
 	    
+	    if (!is_array($networks)) {
+	        $networks = array();
+	    }
+	    
 	    foreach ($networks as $network) {
 	        if (!self::is_deprecated_network($network)) {
 	            $r[] = $network;
@@ -305,7 +309,7 @@ class ESSBSocialFollowersCounterHelper {
 	    $settings['facebook']['account_type'] = array('type' => 'select', 'text' => 'Account type', 'values' => array('page' => 'Page', 'followers' => 'Followers'), 'default' => 'page');
 	    $settings['facebook']['access_token'] = array('type' => 'textbox', 'text' => 'Access token', 'description' => 'Access token is optional parameter. Generate and fill this parameter only if you are not able to see followers counter without it (usually this is required to be filled when Facebook page has limitation set - for age, country or other). To generate access token please visit this link and follow instructions: <a href="http://tools.creoworx.com/facebook/" target="_blank">http://tools.creoworx.com/facebook/</a>', 'authfield' => true);
 	    $settings['facebook']['update_method'] = array('type' => 'select', 'text' => 'Updated Method', 'values' => array('method1' => 'Method #1', 'method2' => 'Method #2'), 'default' => 'method1');
-	    $settings['facebook']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Fans');
+	    $settings['facebook']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Fans');
 	    $settings['facebook']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['twitter']['id'] = array('type' => 'textbox', 'text' => 'Username');
@@ -313,7 +317,7 @@ class ESSBSocialFollowersCounterHelper {
 	    $settings['twitter']['consumer_secret'] = array('type' => 'textbox', 'text' => 'Consumer secret', 'authfield' => true);
 	    $settings['twitter']['access_token'] = array('type' => 'textbox', 'text' => 'Access token', 'authfield' => true);
 	    $settings['twitter']['access_token_secret'] = array('type' => 'textbox', 'text' => 'Access token secret', 'authfield' => true);
-	    $settings['twitter']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['twitter']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['twitter']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['pinterest']['id'] = array('type' => 'textbox', 'text' => 'Username');
@@ -326,63 +330,63 @@ class ESSBSocialFollowersCounterHelper {
 	     */
 	    $settings['linkedin']['id'] = array('type' => 'textbox', 'text' => 'LinkedIn Company ID or Profile URL', "description" => "Example: company ID: envato or profile url: https://www.linkedin.com/in/applications-creo-bb06a29a");
 	    $settings['linkedin']['type'] = array('type' => 'select', 'text' => 'Type', 'values' => array('company' => 'Company', 'profile' => 'Profile'));
-	    $settings['linkedin']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['linkedin']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['linkedin']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['github']['id'] = array('type' => 'textbox', 'text' => 'Username');
-	    $settings['github']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['github']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['github']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['vimeo']['id'] = array('type' => 'textbox', 'text' => 'Channel name/Username');
 	    $settings['vimeo']['account_type'] = array('type' => 'select', 'text' => 'Profile type', 'values' => array('channel' => 'Channel', 'user' => 'User'));
 	    $settings['vimeo']['access_token'] = array('type' => 'textbox', 'text' => 'Access token', 'description' => 'Access token key is required only if you display information for user. To generate this key you need to go to Vimeo Developer Center and create application <a href="https://developer.vimeo.com/" target="_blank">https://developer.vimeo.com/</a>', 'authfield' => true);
-	    $settings['vimeo']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Subscribers');
+	    $settings['vimeo']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Subscribers');
 	    $settings['vimeo']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['dribbble']['id'] = array('type' => 'textbox', 'text' => 'Username');
-	    $settings['dribbble']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['dribbble']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['dribbble']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['envato']['id'] = array('type' => 'textbox', 'text' => 'Username');
 	    $settings['envato']['site'] = array('type' => 'select', 'text' => 'Envato site', 'values' => array('themeforest' => 'Themeforest', 'codecanyon' => 'Codecanyon', '3docean' => '3docean', 'activeden' => 'Activeden', 'audiojungle' => 'Audiojungle', 'graphicriver' => 'Graphicriver', 'photodune' => 'Photodune', 'videohive' => 'Videohive'));
 	    $settings['envato']['ref'] = array('type' => 'textbox', 'text' => 'Referral username', 'description' => 'Provide different username that will appear in the ref link to site');
-	    $settings['envato']['text'] =array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['envato']['text'] =array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['envato']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['soundcloud']['id'] = array('type' => 'textbox', 'text' => 'Username');
 	    $settings['soundcloud']['api_key'] = array('type' => 'textbox', 'text' => 'API Key', 'authfield' => true);
-	    $settings['soundcloud']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['soundcloud']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['soundcloud']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['behance']['id'] = array('type' => 'textbox', 'text' => 'Username');
 	    $settings['behance']['api_key'] = array('type' => 'textbox', 'text' => 'API Key', 'authfield' => true);
-	    $settings['behance']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['behance']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['behance']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['foursquare']['api_key'] = array('type' => 'textbox', 'text' => 'API Key');
-	    $settings['foursquare']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['foursquare']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['foursquare']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['forrst']['id'] = array('type' => 'textbox', 'text' => 'Username');
-	    $settings['forrst']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['forrst']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['forrst']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['mailchimp']['list_id'] = array('type' => 'textbox', 'text' => 'List ID');
 	    $settings['mailchimp']['api_key'] = array('type' => 'textbox', 'text' => 'API Key');
-	    $settings['mailchimp']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Subscribers');
+	    $settings['mailchimp']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Subscribers');
 	    $settings['mailchimp']['list_url'] = array('type' => 'textbox', 'text' => 'List URL address', 'description' => 'Provide subscribe form address where users will be redirected when click on button');
 	    $settings['mailchimp']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['delicious']['id'] = array('type' => 'textbox', 'text' => 'Username');
-	    $settings['delicious']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['delicious']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['delicious']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['instgram']['username'] = array('type' => 'textbox', 'text' => 'Username');
-	    $settings['instgram']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['instgram']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['instgram']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['youtube']['id'] = array('type' => 'textbox', 'text' => 'Channel/User');
-	    $settings['youtube']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Subscribers');
+	    $settings['youtube']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Subscribers');
 	    $settings['youtube']['account_type'] = array('type' => 'select', 'text' => 'Account Type', 'values' => array('channel' => 'Channel', 'user' => 'User'));
 	    $settings['youtube']['icon_type'] = array('type' => 'select', 'text' => 'Icon Type', 'values' => array('' => 'YouTube Logo', 'play' => 'YouTube Play Icon'));
 	    $settings['youtube']['url_type'] = array('type' => 'select', 'text' => 'Channel URL Type', 'values' => array('channel' => 'Full channel url (/channel/)', 'c' => 'Short channel url (/c/)'), "description" => "Choose channel url type according to how you see your address in browser. Default is long format channel which works in more than 90%.");
@@ -393,18 +397,18 @@ class ESSBSocialFollowersCounterHelper {
 	    $settings['vk']['id'] = array('type' => 'textbox', 'text' => 'Your VK.com ID number or Community ID/Name');
 	    $settings['vk']['account_type'] = array('type' => 'select', 'text' => 'Profile type', 'values' => array('profile' => 'Profile', 'community' => 'Community ID/Name'));
 	    $settings['vk']['access_token'] = array('type' => 'textbox', 'text' => 'Access Token Key', 'description' => 'Reading data from that network require access data key. You may not see number of followers appearing if that key is not filled or properly generarated. You can refer to the network support for key generation if you are not sure how this happens.', 'authfield' => true);
-	    $settings['vk']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['vk']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['vk']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['rss']['link'] = array('type' => 'textbox', 'text' => 'URL address of your feed');
 	    $settings['rss']['count'] = array('type' => 'textbox', 'text' => 'Value of subsribers');
-	    $settings['rss']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Subscribers');
+	    $settings['rss']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Subscribers');
 	    $settings['rss']['feedblitz'] = array('type' => 'textbox', 'text' => 'feedblitz.com counter address', 'description' => 'Optional. If you have feedblitz account and wish to display automatically value of subscribers fill here the counter address.');
 	    
 	    $settings['vine']['email'] = array('type' => 'textbox', 'text' => 'Email');
 	    $settings['vine']['password'] = array('type' => 'textbox', 'text' => 'Password');
 	    $settings['vine']['username'] = array('type' => 'textbox', 'text' => 'Username');
-	    $settings['vine']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['vine']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['vine']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['tumblr']['basename'] = array('type' => 'textbox', 'text' => 'Blog basename', 'description' => 'Your blog base name looks like appscreo.tumblr.com');
@@ -412,77 +416,76 @@ class ESSBSocialFollowersCounterHelper {
 	    $settings['tumblr']['api_secret'] = array('type' => 'textbox', 'text' => 'Consumer Secret', 'authfield' => true);
 	    $settings['tumblr']['access_token'] = array('type' => 'textbox', 'text' => 'Access Token', 'authfield' => true);
 	    $settings['tumblr']['access_token_secret'] = array('type' => 'textbox', 'text' => 'Access Token Secret', 'authfield' => true);
-	    $settings['tumblr']['text'] = array('type' => 'textbox','text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['tumblr']['text'] = array('type' => 'textbox','text' => 'Text below number',  'default' => 'Followers');
 	    $settings['tumblr']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['slideshare']['username'] = array('type' => 'textbox', 'text' => 'Username');
-	    $settings['slideshare']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['slideshare']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['slideshare']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['500px']['username'] = array('type' => 'textbox', 'text' => 'Username');
 	    $settings['500px']['api_key'] = array('type' => 'textbox', 'text' => 'API Key', 'authfield' => true);
 	    $settings['500px']['api_secret'] = array('type' => 'textbox', 'text' => 'API Secret', 'authfield' => true);
-	    $settings['500px']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['500px']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['500px']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['flickr']['id'] = array('type' => 'textbox', 'text' => 'Group slug');
 	    $settings['flickr']['api_key'] = array('type' => 'textbox', 'text' => 'API Key', 'authfield' => true);
-	    $settings['flickr']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['flickr']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['flickr']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
-	    $settings['wp_posts']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Posts');
+	    $settings['wp_posts']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Posts');
 	    $settings['wp_posts']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    $settings['wp_posts']['url'] = array('type' => 'textbox', 'text' => 'URL address when user click on total button');
 	    
-	    $settings['wp_comments']['text'] = array('type' => 'textbox','text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Comments');
+	    $settings['wp_comments']['text'] = array('type' => 'textbox','text' => 'Text below number',  'default' => 'Comments');
 	    $settings['wp_comments']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    $settings['wp_comments']['url'] = array('type' => 'textbox', 'text' => 'URL address when user click on total button');
 	    
-	    $settings['wp_users']['text'] = array('type' => 'textbox','text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Users');
+	    $settings['wp_users']['text'] = array('type' => 'textbox','text' => 'Text below number',  'default' => 'Users');
 	    $settings['wp_users']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    $settings['wp_users']['url'] = array('type' => 'textbox', 'text' => 'URL address when user click on total button');
 	    
 	    $settings['audioboo']['id'] = array('type' => 'textbox', 'text' => 'Username');
-	    $settings['audioboo']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['audioboo']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['audioboo']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['steamcommunity']['id'] = array('type' => 'textbox', 'text' => 'Social network profile ID');
-	    $settings['steamcommunity']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['steamcommunity']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['steamcommunity']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['weheartit']['id'] = array('type' => 'textbox', 'text' => 'Username');
-	    $settings['weheartit']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['weheartit']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['weheartit']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['feedly']['url'] = array('type' => 'textbox', 'text' => 'Feedly URL address');
-	    $settings['feedly']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Subscribers');
+	    $settings['feedly']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Subscribers');
 	    $settings['feedly']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['total']['url'] = array('type' => 'textbox', 'text' => 'URL address when user click on total button');
-	    $settings['total']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Total fans');
+	    $settings['total']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Total fans');
 	    
 	    $settings['love']['url'] = array('type' => 'textbox', 'text' => 'URL address when user click on love button');
-	    $settings['love']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Loves');
+	    $settings['love']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Loves');
 	    $settings['love']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['spotify']['id'] = array('type' => 'textbox', 'text' => 'Spotify URI');
-	    $settings['spotify']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['spotify']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['spotify']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['twitch']['id'] = array('type' => 'textbox', 'text' => 'Channel Name');
 	    $settings['twitch']['api'] = array('type' => 'textbox', 'text' => 'Access Token');
-	    $settings['twitch']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['twitch']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['twitch']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['mymail']['id'] = array('type' => 'select', 'text' => 'Choose List', 'values' => self::mymail_get_lists());
 	    $settings['mymail']['url'] = array('type' => 'textbox', 'text' => 'List URL');
-	    $settings['mymail']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Subscribers');
+	    $settings['mymail']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Subscribers');
 	    $settings['mymail']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $mailpoet_lists = self::mailpoet_get_lists();
 	    $mailpoet_lists = array_merge( array( array( 'list_id' => 'all', 'name' => esc_html__(' Total Subscribers from All Lists', ESSB3_TEXT_DOMAIN ))), $mailpoet_lists);
 	    $mailpoet_lists = array_merge( array( array( 'list_id' => '', 'name' => esc_html__(' ', 'essb' ))), $mailpoet_lists);
-	    
 	    $parsed_lists = array();
 	    foreach ($mailpoet_lists as $list) {
 	        $list_id = isset($list['list_id']) ? $list['list_id'] : '';
@@ -492,77 +495,78 @@ class ESSBSocialFollowersCounterHelper {
 	        $list_name = isset($list['name']) ? $list['name'] : '';
 	        $parsed_lists[$list_id] = $list_name;
 	    }
+	    	    
 	    $settings['mailpoet']['id'] = array('type' => 'select', 'text' => 'Choose List', 'values' => $parsed_lists);
 	    $settings['mailpoet']['url'] = array('type' => 'textbox', 'text' => 'List URL');
-	    $settings['mailpoet']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)', 'default' => 'Followers');
+	    $settings['mailpoet']['text'] = array('type' => 'textbox', 'text' => 'Text below number',  'default' => 'Followers');
 	    $settings['mailpoet']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    $settings['mailerlite']['id'] = array('type' => 'textbox', 'text' => 'URL when button is clicked');
-	    $settings['mailerlite']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['mailerlite']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['mailerlite']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_text);
 	    
 	    /** Settings for networks added in version 5 - no counter avaialble */
-	    $settings['itunes']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Posts');
+	    $settings['itunes']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Posts');
 	    $settings['itunes']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['itunes']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['deviantart']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Posts');
+	    $settings['deviantart']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Posts');
 	    $settings['deviantart']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['deviantart']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['paypal']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Posts');
+	    $settings['paypal']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Posts');
 	    $settings['paypal']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['paypal']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['whatsapp']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Posts');
+	    $settings['whatsapp']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Posts');
 	    $settings['whatsapp']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['whatsapp']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['tripadvisor']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Posts');
+	    $settings['tripadvisor']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Posts');
 	    $settings['tripadvisor']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['tripadvisor']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['snapchat']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Posts');
+	    $settings['snapchat']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Posts');
 	    $settings['snapchat']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['snapchat']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['telegram']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Posts');
+	    $settings['telegram']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Posts');
 	    $settings['telegram']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['telegram']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['subscribe']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Subscribers');
+	    $settings['subscribe']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Subscribers');
 	    $settings['subscribe']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['subscribe']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['xing']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['xing']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['xing']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['xing']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['medium']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['medium']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['medium']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['medium']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['patreon']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['patreon']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['patreon']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['patreon']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['mixer']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['mixer']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['mixer']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['mixer']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['tiktok']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['tiktok']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['tiktok']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['tiktok']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
-	    $settings['ok']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['ok']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['ok']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    $settings['ok']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 	    
 	    $settings['subscribe_form']['design'] = array('type' => 'select', 'text' => 'Design', 'values' => essb_optin_designs());
-	    $settings['subscribe_form']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+	    $settings['subscribe_form']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 	    $settings['subscribe_form']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 	    
-		$settings['periscope']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'description' => 'Text that will appear below number of followers (fans, likes, subscribers, followers and etc.)','default' => 'Followers');
+		$settings['periscope']['text'] = array('type' => 'textbox', 'text' => 'Text below number', 'default' => 'Followers');
 		$settings['periscope']['uservalue'] = array('type' => 'textbox', 'text' => $manual_followers_custom_text);
 		$settings['periscope']['url'] = array('type' => 'textbox', 'text' => 'URL address to network profile (address where users will go once button is clicked)');
 		
@@ -594,9 +598,33 @@ class ESSBSocialFollowersCounterHelper {
 		
 		return $options;
 	}
+	
+	public static function mailpoet3_subscribers($list_id = '') {
+	    global $wpdb;
+	    
+	    $table_segment = $wpdb->prefix . 'mailpoet_subscriber_segment';
+	    $table_subscribers = $wpdb->prefix . 'mailpoet_subscribers';
+	    $query = 'SELECT COUNT('.$table_segment.'.id) as count FROM '.$table_segment.' LEFT JOIN '.$table_subscribers.' ON '.$table_subscribers.'.id = '.$table_segment.'.subscriber_id WHERE '.$table_subscribers.'.status = "subscribed"';
+	    	    	    
+	    if ($list_id != '') {
+	        $query .= ' AND '.$table_segment.'.segment_id=' . esc_attr($list_id);
+	    }
+	    
+	    $response = $wpdb->get_row ( $query );
+	    
+	    if ($response && isset($response->count)) {
+	        return $response->count;
+	    }
+	    else {
+	        return '';
+	    }
+	}
 		
 	public static function mailpoet_total_subscribers(){
-		if( class_exists( 'WYSIJA' ) ){
+	    if (class_exists('MailPoet\API\API')) {
+	        return self::mailpoet3_subscribers();
+	    }	    
+		else if( class_exists( 'WYSIJA' ) ){
 			$config = WYSIJA::get('config','model');
 			$result = $config->getValue('total_subscribers');
 			return $result;
@@ -623,8 +651,12 @@ class ESSBSocialFollowersCounterHelper {
 	
 	//Get Subscribers of Specific List
 	public static function mailpoet_get_list_users( $list ){
-		if( class_exists( 'WYSIJA' ) ){
-			$model_user_list = WYSIJA::get('user_list', 'model');$query = 'SELECT COUNT(*) as count
+	    if (class_exists('MailPoet\API\API')) {
+	        return self::mailpoet3_subscribers($list);
+	    }
+		else if( class_exists( 'WYSIJA' ) ){
+			$model_user_list = WYSIJA::get('user_list', 'model');
+			$query = 'SELECT COUNT(*) as count
 			FROM ' . '[wysija]' . $model_user_list->table_name . '
 			WHERE list_id = ' . $list ;
 	

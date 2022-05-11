@@ -12,7 +12,7 @@ class ESSB_Elementor_Sharable_Qutotes_Widget extends Widget_Base {
 	}
 	
 	public function get_icon() {
-		return 'fa fa-twitter';
+		return 'eicon-twitter';
 	}
 	
 	public function get_categories() {

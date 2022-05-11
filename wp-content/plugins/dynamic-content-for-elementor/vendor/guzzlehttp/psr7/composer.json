@@ -61,7 +61,7 @@
     },
     "autoload": {
         "psr-4": {
-            "DynamicOOOS\\GuzzleHttp\\Psr7\\": "src\/"
+            "GuzzleHttp\\Psr7\\": "src\/"
         },
         "files": [
             "src\/functions_include.php"
@@ -69,7 +69,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "DynamicOOOS\\GuzzleHttp\\Tests\\Psr7\\": "tests\/"
+            "GuzzleHttp\\Tests\\Psr7\\": "tests\/"
         }
     },
     "extra": {
@@ -79,6 +79,9 @@
     },
     "config": {
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "bamarni\/composer-bin-plugin": true
+        }
     }
 }

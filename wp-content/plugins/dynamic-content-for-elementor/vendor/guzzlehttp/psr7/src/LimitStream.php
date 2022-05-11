@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\GuzzleHttp\Psr7;
+namespace GuzzleHttp\Psr7;
 
 use Psr\Http\Message\StreamInterface;
 /**
@@ -10,7 +10,7 @@ use Psr\Http\Message\StreamInterface;
  */
 class LimitStream implements StreamInterface
 {
-    use StreamDecoratorTrait;
+    use \GuzzleHttp\Psr7\StreamDecoratorTrait;
     /** @var int Offset to start reading from */
     private $offset;
     /** @var int Limit the number of bytes that can be read */

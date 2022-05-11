@@ -29,8 +29,9 @@ class Skin_Timeline extends \DynamicContentForElementor\Includes\Skins\Skin_Base
     {
         return __('Timeline', 'dynamic-content-for-elementor');
     }
-    public function register_additional_timeline_controls()
+    public function register_additional_timeline_controls(\DynamicContentForElementor\Widgets\DynamicPostsBase $widget)
     {
+        $this->parent = $widget;
         $this->start_controls_section('section_timeline', ['label' => __('Timeline', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('timeline_use_description', ['label' => __('Show Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('timeline_use_date', ['label' => __('Show Date', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
@@ -71,66 +72,27 @@ class Skin_Timeline extends \DynamicContentForElementor\Includes\Skins\Skin_Base
         $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'timeline_content_boxshadow', 'selector' => '{{WRAPPER}} .dce-post-item .dce-post-block']);
         $this->end_controls_section();
     }
-    protected function render_post()
+    protected function render_post_start()
     {
-        $post_items = $this->parent->get_settings('list_items');
-        global $post;
-        $separatorArray = '';
-        if ($this->counter) {
-            $separatorArray = ',';
+        $thumbnail_id = get_post_thumbnail_id();
+        // Featured image
+        $featured_image = wp_get_attachment_image_src($thumbnail_id, 'thumbnail');
+        if (\false === $thumbnail_id) {
+            $featured_image_alt = '';
+        } else {
+            $featured_image_alt = Helper::get_attachment_alt($thumbnail_id);
         }
-        // ID
-        $p_id = $this->current_id;
-        // title
-        $p_title = wp_kses_post(get_the_title());
-        // content
-        // slug
-        $p_slug = $post->post_name;
-        // image
-        $p_image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'thumbnail');
-        $p_alt = $this->get_attachment_alt(get_post_thumbnail_id());
-        // author image
-        $p_author = get_the_author_meta('display_name');
-        $p_authorimage = get_avatar_url(get_the_author_meta('ID'));
-        // date
-        // type base
-        $p_type = get_post_type_object(get_post_type())->rest_base;
-        if (empty($p_type)) {
-            $p_type = get_post_type();
-        }
-        // Terms of taxonomy
-        $p_terms = '';
-        $taxonomy = get_post_taxonomies($this->current_id);
-        $cont = 0;
-        $taxonomy_filter = $this->get_instance_value('nextpost_taxonomy_filter');
-        foreach ($taxonomy as $tax) {
-            if (isset($taxonomy_filter) && !empty($taxonomy_filter)) {
-                if (!\in_array($tax, $taxonomy_filter)) {
-                    continue;
-                }
-            }
-            if ($tax != 'post_format') {
-                $term_list = Helper::get_the_terms_ordered($this->current_id, $tax);
-                if ($term_list && \is_array($term_list) && \count($term_list) > 0) {
-                    foreach ($term_list as $key => $term) {
-                        $sep = $cont ? ',' : '';
-                        $p_terms .= $sep . $term->name;
-                        $cont++;
-                    }
-                }
-            }
-        }
-        $p_link = $this->current_permalink;
         ?>
+
 		<div class="dce-timeline__block">
 			<div class="dce-timeline__img dce-timeline__img--picture">
 				<?php 
-        if (!empty($p_image[0])) {
+        if (!empty($featured_image[0])) {
             ?>
 					<img src="<?php 
-            echo $p_image[0];
+            echo $featured_image[0];
             ?>" alt="<?php 
-            echo $p_alt;
+            echo $featured_image_alt;
             ?>">
 					<?php 
         }
@@ -138,21 +100,14 @@ class Skin_Timeline extends \DynamicContentForElementor\Includes\Skins\Skin_Base
 			</div>
 
 			<div class="dce-timeline__content">
-			<?php 
-        $this->render_post_items();
+		<?php 
+    }
+    protected function render_post_end()
+    {
         ?>
 			</div>
-		</div> <!-- dce-timeline__block -->
-
+		</div>
 		<?php 
-        $this->counter++;
-    }
-    protected function get_attachment_alt($attachment_id)
-    {
-        // Get ALT
-        $thumb_alt = get_post_meta($attachment_id, '_wp_attachment_image_alt', \true);
-        // Return ALT
-        return esc_attr(\trim(wp_strip_all_tags($thumb_alt)));
     }
     // Classes
     public function get_container_class()

@@ -40,7 +40,9 @@ class post extends Table
                     if ($index < 258) {
                         $names[$g] = File::$macCharNames[$index];
                     } else {
-                        $names[$g] = $namesPascal[$index - 258];
+                        if (\array_key_exists($index - 258, $namesPascal)) {
+                            $names[$g] = $namesPascal[$index - 258];
+                        }
                     }
                 }
                 break;

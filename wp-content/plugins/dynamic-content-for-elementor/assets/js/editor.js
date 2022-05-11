@@ -17,7 +17,7 @@ function posts_v2_item_id_to_label(id) {
 	return posts_v2_item_label_localization[id];
 }
 
-// Loading the section items in the widget Dynamic Posts v2 is extremely slow.
+// Loading the section items in the widget Dynamic Posts is extremely slow.
 // We thus want to give a feedback to the user that the section is actually loading.
 jQuery(window).on('elementor:init', function () {
 	elementor.hooks.addAction('panel/open_editor/widget/dce-dynamicposts-v2', function (panel, model, view) {
@@ -85,21 +85,6 @@ function dce_get_setting_name(einput) {
     }
     return einput.data('setting');
 }
-function dce_toBase64(url, callback) {
-    var img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = function () {
-        var canvas = document.createElement("canvas");
-        var ctx = canvas.getContext("2d");
-        canvas.height = this.height;
-        canvas.width = this.width;
-        ctx.drawImage(this, 0, 0);
-        var dataURL = canvas.toDataURL("image/png");
-        callback(dataURL);
-        canvas = null;
-    };
-    img.src = url;
-}
 function dce_getimageSizes(url, callback) {
     var img = new Image();
     img.crossOrigin = "anonymous";
@@ -166,9 +151,9 @@ jQuery(function () {
         const queryCheck = s => document.createDocumentFragment().querySelector(s);
         const isSelectorValid = selector => {
             try {
-              queryCheck(selector);
-            } catch {
-              return false;
+				queryCheck(selector);
+            } catch (e) {
+				return false;
             }
             return true;
         };
@@ -271,7 +256,7 @@ jQuery(window).on('elementor:init', function () {
                 ids = [ids];
             }
 			// no translation needed for these query types:
-			if(queryType === 'pods' || queryType === 'acf') {
+			if(queryType === 'pods' || queryType === 'acf' || queryType === 'jet') {
 				let t = {}
 				for (id of ids) {
 					t[id] = id; // Label is the same as the value.

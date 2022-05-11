@@ -24,11 +24,17 @@ class CaseInsensitiveArray implements \ArrayAccess, \Countable, \IteratorAggrega
     {
         return \count($this->container);
     }
+    /**
+     * @return \ArrayIterator
+     */
     #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new \ArrayIterator($this->container);
     }
+    /**
+     * @return void
+     */
     #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
@@ -39,18 +45,27 @@ class CaseInsensitiveArray implements \ArrayAccess, \Countable, \IteratorAggrega
             $this->container[$offset] = $value;
         }
     }
+    /**
+     * @return bool
+     */
     #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         $offset = static::maybeLowercase($offset);
         return isset($this->container[$offset]);
     }
+    /**
+     * @return void
+     */
     #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $offset = static::maybeLowercase($offset);
         unset($this->container[$offset]);
     }
+    /**
+     * @return mixed
+     */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {

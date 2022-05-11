@@ -581,8 +581,15 @@ class CFF_FB_Settings{
 	 */
 	public static function get_legacy_settings( $shortcode_atts ) {
 		$options 		= get_option( 'cff_legacy_feed_settings', array() );
+		$encryption = new SB_Facebook_Data_Encryption();
+
+		if ( ! empty( $options ) && $encryption->decrypt( $options ) ) {
+			$options = $encryption->decrypt( $options );
+		}
+
 		if ( ! empty( $options ) ) {
 			$options = json_decode( $options, true );
+
 			if ( empty( $options['id'] ) || empty( $options['sources'] ) ) {
 				$options['sources'] = isset( $options['id'] ) && ! isset( $options['sources'] ) ? $options['id'] : '';
 				$options['id'] = $options['sources'];
@@ -711,6 +718,7 @@ class CFF_FB_Settings{
 		$legacy_settings_with_updated_defaults = wp_parse_args( $options, \CustomFacebookFeed\Builder\CFF_Feed_Saver::settings_defaults() );
 
 		$legacy_settings = wp_parse_args( $shortcode_atts, $legacy_settings_with_updated_defaults );
+		$legacy_settings['id'] = ! empty( $legacy_settings['account'] ) ? $legacy_settings['account'] : $legacy_settings['id'];
 
 		$access_tokens = [];
 		$ids_array = explode( ',', str_replace( ' ', '', $legacy_settings['id'] ) );
@@ -732,27 +740,28 @@ class CFF_FB_Settings{
 			$source_query = \CustomFacebookFeed\Builder\CFF_Db::source_query( $args );
 
 			if ( isset( $source_query[0] ) ) {
-				$access_tokens[] = $source_query[0]['access_token'];
-				$id_access_tokens[ $id ] = $source_query[0]['access_token'];
+				$access_tokens[] = $encryption->decrypt( $source_query[0]['access_token'] ) ? $encryption->decrypt( $source_query[0]['access_token'] ) : $source_query[0]['access_token'];
+				$id_access_tokens[ $id ] = $encryption->decrypt( $source_query[0]['access_token'] ) ? $encryption->decrypt( $source_query[0]['access_token'] ) : $source_query[0]['access_token'];
 			} else {
 				$args = array( 'id' => $id );
 				$args['privilege'] = 'events';
 				$source_query = \CustomFacebookFeed\Builder\CFF_Db::source_query( $args );
 				if ( isset( $source_query[0] ) ) {
-					$access_tokens[] = $source_query[0]['access_token'];
-					$id_access_tokens[ $id ] = $source_query[0]['access_token'];
+					$access_tokens[] = $encryption->decrypt( $source_query[0]['access_token'] ) ? $encryption->decrypt( $source_query[0]['access_token'] ) : $source_query[0]['access_token'];
+					$id_access_tokens[ $id ] = $encryption->decrypt( $source_query[0]['access_token'] ) ? $encryption->decrypt( $source_query[0]['access_token'] ) : $source_query[0]['access_token'];
 				}
 
 			}
 			if ( isset( $source_query[0] ) ) {
+				$source_query[0]['access_token'] = $encryption->decrypt( $source_query[0]['access_token'] ) ? $encryption->decrypt( $source_query[0]['access_token'] ) : $source_query[0]['access_token'];
 				$legacy_settings['sources'][] = $source_query[0];
 			} else {
 				$maybe_source_from_connected = \CustomFacebookFeed\Builder\CFF_Source::maybe_one_off_connected_account_update( $id );
 
 				if ( $maybe_source_from_connected ) {
 					$legacy_settings['sources'][] = $maybe_source_from_connected;
-					$access_tokens[] = $maybe_source_from_connected['access_token'];
-					$id_access_tokens[ $id ] = $maybe_source_from_connected['access_token'];
+					$access_tokens[] = $encryption->decrypt( $maybe_source_from_connected['access_token'] ) ? $encryption->decrypt( $maybe_source_from_connected['access_token'] ) : $maybe_source_from_connected['access_token'];
+					$id_access_tokens[ $id ] = $encryption->decrypt( $maybe_source_from_connected['access_token'] ) ? $encryption->decrypt( $maybe_source_from_connected['access_token'] ) : $maybe_source_from_connected['access_token'];
 				}
 			}
 		}

@@ -93,6 +93,11 @@
 	transition: 0.2s all;
 }
 
+.essb-fc-grid .essb-fc-block a label {
+	display: none;
+	opacity: 0;
+}
+
 .essb-fc-grid.essb-fc-nospace .essb-fc-block {
 	margin: 0 !important;	
 }

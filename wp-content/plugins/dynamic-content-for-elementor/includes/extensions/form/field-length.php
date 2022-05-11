@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Length extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class FieldLength extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     private $is_common = \false;
     public $has_action = \false;
@@ -49,7 +49,7 @@ class DCE_Extension_Form_Length extends \DynamicContentForElementor\Extensions\D
      */
     protected function add_actions()
     {
-        add_action('elementor/widget/render_content', array($this, '_render_form'), 10, 2);
+        add_action('elementor/widget/render_content', [$this, '_render_form'], 10, 2);
         add_action('elementor/element/form/section_form_fields/before_section_end', [$this, 'update_fields_controls']);
         add_action('elementor/widget/print_template', function ($template, $widget) {
             if ('form' === $widget->get_name()) {
@@ -77,6 +77,9 @@ class DCE_Extension_Form_Length extends \DynamicContentForElementor\Extensions\D
     }
     public function update_fields_controls($widget)
     {
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
+            return;
+        }
         $elementor = \ElementorPro\Plugin::elementor();
         $control_data = $elementor->controls_manager->get_control_from_stack($widget->get_unique_name(), 'form_fields');
         if (is_wp_error($control_data)) {

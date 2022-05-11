@@ -62,7 +62,7 @@ function sbsw_admin_init() {
 			'slug' => 'masonry',
 			'label' => __( 'Masonry', $text_domain ),
 			'image' => 'img/masonry.png',
-			'note' => __( 'Video thumbnails are displayed in columns and play in a lightbox when clicked.', $text_domain ),
+			'note' => __( 'Posts are displayed in columns in a masonry format. Media opens in a lightbox when clicked.', $text_domain ),
 			'options' => array(
 				array(
 					'name' => 'cols',
@@ -104,7 +104,7 @@ function sbsw_admin_init() {
 			'slug' => 'list',
 			'label' => __( 'List', $text_domain ),
 			'image' => 'img/list.png',
-			'note' => __( 'A single columns of videos that play when clicked.', $text_domain ),
+			'note' => __( 'A single column of posts. Media opens in a lightbox when clicked.', $text_domain ),
 		),
 		array(
 			'slug' => 'carousel',
@@ -274,6 +274,9 @@ function sbsw_admin_scripts() {
 			'nonce' => wp_create_nonce( 'sbspf_nonce' ),
 			'add_text' => __( 'Add', 'social-wall' ),
 			'remove_text' => __( 'Remove', 'social-wall' ),
+			'use_text' => __( 'Use', 'social-wall' ),
+			'selected_text' => __( 'Selected', 'social-wall' ),
+
 		)
 	);
 	wp_enqueue_script('wp-color-picker' );

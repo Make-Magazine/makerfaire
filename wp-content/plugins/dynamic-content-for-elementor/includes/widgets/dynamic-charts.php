@@ -15,32 +15,18 @@ class DynamicCharts extends \DynamicContentForElementor\Widgets\WidgetPrototype
     {
         return ['dce-jquery-color', 'dce-chart-js', 'dce-dynamic-charts'];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_dynamic_charts', ['label' => $this->get_title()]);
         $this->add_control('type', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => 'images_selector', 'type_selector' => 'icon', 'toggle' => \false, 'options' => ['bar' => ['title' => __('Bar', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'icon-dce-dynamic-charts'], 'line' => ['title' => __('Line', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'icon-dce-chart-line'], 'radar' => ['title' => __('Radar', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'icon-dce-chart-radar'], 'doughnut' => ['title' => __('Doughnut', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'icon-dce-chart-doughnut'], 'pie' => ['title' => __('Pie', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'icon-dce-chart-pie']], 'columns_grid' => 5, 'frontend_available' => \true, 'default' => 'bar']);
         $this->add_control('input', ['label' => __('Input Type', 'dynamic-content-for-elementor'), 'type' => 'images_selector', 'options' => ['simple' => ['title' => __('Simple', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'icon-dce-simple'], 'csv' => ['title' => __('CSV', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'icon-dce-csv']], 'type_selector' => 'icon', 'columns_grid' => 5, 'toggle' => \false, 'default' => 'simple', 'frontend_available' => \true]);
         $this->add_control('csv_from', ['label' => __('CSV from', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['url' => __('URL', 'dynamic-content-for-elementor'), 'textarea' => __('Textarea', 'dynamic-content-for-elementor')], 'default' => 'url', 'condition' => ['input' => 'csv']]);
-        if (\function_exists('file_get_contents')) {
-            $this->add_control('csv_url', ['label' => __('CSV Url', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'condition' => ['input' => 'csv', 'csv_from' => 'url']]);
-        } else {
-            $this->add_control('csv_url_notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('file_get_contents() function is not activated. Please ask to your provider to activate it on php.ini', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['input' => 'csv', 'csv_from' => 'url']]);
-        }
+        $this->add_control('csv_url', ['label' => __('CSV Url', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'condition' => ['input' => 'csv', 'csv_from' => 'url']]);
         $this->add_control('csv_textarea', ['label' => __('CSV Textarea', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXTAREA, 'condition' => ['input' => 'csv', 'csv_from' => 'textarea']]);
         $this->add_control('csv_separator', ['label' => __('Separator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => ',', 'condition' => ['input' => 'csv']]);
         $this->end_controls_section();
@@ -65,12 +51,14 @@ class DynamicCharts extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->start_controls_section('section_toggle_style_content', ['label' => __('Content', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_responsive_control('height', ['label' => __('Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'render_type' => 'template', 'range' => ['px' => ['min' => 200, 'max' => 1440], 'vh' => ['min' => 10, 'max' => 100], '%' => ['min' => 10, 'max' => 100]], 'default' => ['size' => 400], 'size_units' => ['px', '%', 'vh'], 'selectors' => ['{{WRAPPER}} .chart-container' => 'height: {{SIZE}}{{UNIT}};']]);
         $this->add_control('background_random_colors', ['label' => __('Random Colors for Background and Border', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'default' => 'yes']);
-        $this->add_control('background_data', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'frontend_available' => \true, 'default' => '#E52600', 'condition' => ['background_random_colors' => '']]);
+        $colors = new \Elementor\Repeater();
+        $colors->add_control('color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'frontend_available' => \true, 'default' => '#E52600']);
+        $this->add_control('background_data', ['label' => __('Colors', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::REPEATER, 'title_field' => '{{{ color }}}', 'fields' => $colors->get_controls(), 'frontend_available' => \true, 'condition' => ['background_random_colors' => '']]);
         $this->add_control('border_width_data', ['label' => __('Border Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'frontend_available' => \true, 'default' => 1, 'min' => 0]);
         $this->add_control('border_data', ['label' => __('Border Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'frontend_available' => \true, 'default' => '#C62100', 'condition' => ['border_width_data!' => 0, 'background_random_colors' => '']]);
         $this->end_controls_section();
     }
-    public function render()
+    public function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -103,9 +91,12 @@ class DynamicCharts extends \DynamicContentForElementor\Widgets\WidgetPrototype
             }
             // CSV content
             if ('url' === $settings['csv_from']) {
-                $csv = \file_get_contents($settings['csv_url']);
+                $csv = wp_remote_retrieve_body(wp_remote_get($settings['csv_url']));
             } elseif ('textarea' === $settings['csv_from']) {
                 $csv = $settings['csv_textarea'];
+            }
+            if (!isset($csv)) {
+                return;
             }
             $records = \explode("\n", $csv);
             // Remove the first row if the CSV has header and set an array $header

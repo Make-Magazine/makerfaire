@@ -44,7 +44,9 @@ class ESSB_Plugin_Options {
         // New after loading options event
         if (has_filter('essb_after_options_load')) {
             self::$core_options = apply_filters('essb_after_options_load', self::$core_options);
-        }                
+        }             
+        
+        add_action('template_redirect', array(__CLASS__, 'on_template_redirect'));
     }
     
     /**
@@ -151,6 +153,23 @@ class ESSB_Plugin_Options {
     }
     
     /**
+     * Do additional checks after all WordPress conditions are loaded. 
+     * Usually used to deactivate components via the menu.
+     * 
+     * @since 8.0
+     */
+    public static function on_template_redirect() {
+        /**
+         * Pinterest Pro
+         */
+        if (self::is('pinterest_images')) {
+            if (ESSB_Plugin_Loader::is_module_deactivated('pinpro')) {
+                 self::set('pinterest_images', 'false');
+            }
+        }
+    }
+    
+    /**
      * Automatic correction of deprecated plugin options
      */
     private static function compatibility_depracated_plugin_options() {
@@ -158,6 +177,13 @@ class ESSB_Plugin_Options {
         // @since 7.1 - the automatic mobile switch is removed because there is an automatic mobile setup menu
         if (isset(self::$core_options['activate_automatic_mobile'])) {
             unset (self::$core_options['activate_automatic_mobile']);
+        }
+        
+        // @since 8.0 - optimization_level does not have level3 value anymore -> switch to level2
+        if (isset(self::$core_options['optimization_level'])) {
+            if (self::$core_options['optimization_level'] == 'level3') {
+                self::$core_options['optimization_level'] = 'level2';
+            }
         }
     }
     

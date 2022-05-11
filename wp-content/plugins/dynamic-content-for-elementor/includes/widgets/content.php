@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 // Exit if accessed directly
-class DCE_Widget_Content extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class Content extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public static $remove_recursion_loop = [];
     public function get_script_depends()
@@ -23,7 +23,12 @@ class DCE_Widget_Content extends \DynamicContentForElementor\Widgets\WidgetProto
     {
         return ['dce-content'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $post_type_object = get_post_type_object(get_post_type());
         $this->start_controls_section('section_content', ['label' => __('Content', 'dynamic-content-for-elementor')]);
@@ -61,7 +66,7 @@ class DCE_Widget_Content extends \DynamicContentForElementor\Widgets\WidgetProto
         $this->add_responsive_control('unfold_alignment', ['label' => __('Icon Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \true, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => 'center', 'selectors' => ['{{WRAPPER}} .unfold-btn' => 'text-align: {{VALUE}}; display: block;']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -84,7 +89,9 @@ class DCE_Widget_Content extends \DynamicContentForElementor\Widgets\WidgetProto
             $html .= \sprintf('</div></%s>', \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']));
         } else {
             // All other Taxonomies
-            if (is_singular() || Helper::in_the_loop() || wp_doing_ajax()) {
+            if (is_author() || is_post_type_archive()) {
+                $content = get_the_archive_description();
+            } else {
                 if ($settings['use_filters_content']) {
                     if (!empty(self::$remove_recursion_loop[$id_page])) {
                         return;
@@ -108,15 +115,9 @@ class DCE_Widget_Content extends \DynamicContentForElementor\Widgets\WidgetProto
                             $content = $default_content;
                         }
                         $content = wpautop($content);
-                        if ($is_elementor) {
-                            \Elementor\Frontend::instance()->remove_content_filter();
-                        }
                         \DynamicContentForElementor\TemplateSystem::$instance->remove_content_filter();
                         $content = apply_filters('the_content', $content);
                         \DynamicContentForElementor\TemplateSystem::$instance->add_content_filter();
-                        if ($is_elementor) {
-                            \Elementor\Frontend::instance()->add_content_filter();
-                        }
                     }
                 } else {
                     $post = get_post($id_page);
@@ -128,8 +129,6 @@ class DCE_Widget_Content extends \DynamicContentForElementor\Widgets\WidgetProto
                         $content = wp_strip_all_tags(\substr($content, 0, $settings['count_content_limit']) . ' ...');
                     }
                 }
-            } else {
-                $content = get_the_archive_description();
             }
             if (empty($content)) {
                 return;

@@ -24,7 +24,10 @@ if (!function_exists('essb_register_dynamic_share_topbar_styles')) {
             $topbar_bg_color = '#ffffff';
         }
         if ($topbar_bg_color != '') {
-            if ($topbar_bg_color_opacity != '') {
+            /**
+             * @since 8.0 - modified to have just one field for color supporting alpha
+             */
+            if ($topbar_bg_color_opacity != '' && strpos($topbar_bg_color, 'rgba') === false) {
                 $topbar_bg_color = essb_hex2rgba($topbar_bg_color, $topbar_bg_color_opacity);
             }
             ESSB_Dynamic_CSS_Builder::register_header_field('.essb_topbar', 'background', $topbar_bg_color, '', true);  

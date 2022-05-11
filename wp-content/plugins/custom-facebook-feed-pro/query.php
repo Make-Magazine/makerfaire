@@ -41,7 +41,12 @@ function check_id($check_id){
 
 //Make the API request to get the data from Facebook
 function api_call($id, $likes, $reactions, $images, $access_token, $attachments){
-	$json_object = cff_fetchUrl("https://graph.facebook.com/v3.2/" . $id . "/?fields=".$likes."comments.summary(true){id,from{id,name,picture{url},link},message,message_tags,created_time,like_count,comment_count,attachment{media}}".$reactions.$images.$attachments."&access_token=" . $access_token);
+	$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+
+	if ( ! empty( $access_token ) && $encryption->decrypt( $access_token ) ) {
+		$access_token = $encryption->decrypt( $access_token );
+	}
+	$json_object = \CustomFacebookFeed\CFF_Utils::cff_fetchUrl("https://graph.facebook.com/v3.2/" . $id . "/?fields=".$likes."comments.summary(true){id,from{id,name,picture{url},link},message,message_tags,created_time,like_count,comment_count,attachment{media}}".$reactions.$images.$attachments."&access_token=" . $access_token);
 
 	return $json_object;
 }
@@ -64,6 +69,18 @@ if( $metaType == 'meta' ){
 		$reactions = "";
 		// $likes = ""; //If it's an event then use the post ID and then can comment this line out
 		$images = "";
+	}
+
+	$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+
+	if ( ! empty( $access_token ) && $encryption->decrypt( $access_token ) ) {
+		$access_token = $encryption->decrypt( $access_token );
+	}else{
+		$source_id = $_REQUEST['pageid'];
+		$source_info = \CustomFacebookFeed\Builder\CFF_Source::get_source_info( $source_id );
+		if( $source_info !== false){
+			$access_token = $encryption->maybe_decrypt( $source_info['access_token'] );
+		}
 	}
 
 	$json_object = api_call($id, $likes, $reactions, $images, $access_token, $attachments);
@@ -128,7 +145,7 @@ if( $metaType == 'meta' ){
     $json_object = str_replace($access_tokens_arr, "x_cff_hide_token_x", $json_object);
 
 	echo $json_object;
-	
+
 }
 
 ?>

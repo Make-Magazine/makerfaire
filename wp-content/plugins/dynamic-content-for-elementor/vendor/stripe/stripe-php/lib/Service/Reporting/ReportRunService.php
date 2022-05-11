@@ -13,7 +13,7 @@ class ReportRunService extends \DynamicOOOS\Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\Reporting\ReportRun>
      */
     public function all($params = null, $opts = null)
     {

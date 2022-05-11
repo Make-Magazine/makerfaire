@@ -12,7 +12,7 @@ class ESSB_Elementor_Instagram_Feed_Widget extends Widget_Base {
 	}
 	
 	public function get_icon() {
-		return 'fa fa-instagram';
+		return 'eicon-instagram-likes';
 	}
 	
 	public function get_categories() {
@@ -93,7 +93,7 @@ class ESSB_Elementor_Instagram_Feed_Widget extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		
 
-		if (function_exists('essb_instagram_feed')) {
+		if (function_exists('essb_instagram_feed') && essb_instagram_feed()) {
 			echo essb_instagram_feed()->generate_shortcode($settings);
 		}
 	}

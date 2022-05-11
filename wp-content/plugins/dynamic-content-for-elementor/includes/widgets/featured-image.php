@@ -3,7 +3,7 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
+use Elementor\Core\Schemes\Color as Scheme_Color;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
@@ -11,18 +11,23 @@ use Elementor\Group_Control_Background;
 use Elementor\Utils;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Group_Control_Outline;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_CSS;
+use DynamicContentForElementor\Controls\Group_Control_Filters_CSS;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class FeaturedImage extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
         return ['dce-featuredImage'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $post_type_object = get_post_type_object(get_post_type());
         $this->start_controls_section('section_content', ['label' => __('Image settings', 'dynamic-content-for-elementor')]);
@@ -42,7 +47,7 @@ class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\Widge
             'type' => Controls_Manager::SELECT,
             'groups' => Helper::get_acf_field_urlfile(\true),
             //'options' => $this->get_acf_field_urlfile(),
-            'default' => 'Select the field',
+            'default' => __('Select the field...', 'dynamic-content-for-elementor'),
             'condition' => ['link_to' => 'acf_url'],
         ]);
         $this->add_control('acf_field_url_target', ['label' => __('Blank', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['link_to' => 'acf_url']]);
@@ -78,7 +83,7 @@ class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\Widge
         $this->add_control('imageanimations_heading', ['label' => __('Rollover Animations', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_control('hover_animation', ['label' => __('Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HOVER_ANIMATION]);
         $this->add_control('imagefilters_heading', ['label' => __('Rollover Filters', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
-        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image_hover', 'label' => __('Filters', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} a:hover .wrap-filters']);
+        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image_hover', 'label' => __('Filters', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} a:hover .wrap-filters']);
         $this->add_control('imageeffects_heading', ['label' => __('Rollover Effects', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_control('hover_effects', ['label' => __('Effects', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'zoom' => __('Zoom', 'dynamic-content-for-elementor')], 'default' => '', 'prefix_class' => 'hovereffect-', 'condition' => ['link_to!' => 'none']]);
         $this->end_controls_section();
@@ -90,8 +95,8 @@ class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\Widge
         $this->add_responsive_control('space', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => '%'], 'size_units' => ['px', '%'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 500]], 'selectors' => ['{{WRAPPER}} .dce-featured-image' => 'width: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .dce-featured-image.is-bg' => 'display: inline-block;'], 'condition' => ['bg_extend' => '']]);
         $this->add_responsive_control('maxwidth', ['label' => __('Max Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => 'px'], 'size_units' => ['px', '%'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 500]], 'selectors' => ['{{WRAPPER}} .dce-featured-image' => 'max-width: {{SIZE}}{{UNIT}};'], 'condition' => ['use_bg' => '0', 'bg_extend' => '']]);
         $this->add_responsive_control('maxheight', ['label' => __('Max Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => 'px'], 'size_units' => ['px'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 500]], 'selectors' => ['{{WRAPPER}} .dce-featured-image' => 'max-height: {{SIZE}}{{UNIT}};'], 'condition' => ['use_bg' => '0', 'bg_extend' => '']]);
-        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => 'Filters image', 'selector' => '{{WRAPPER}} .wrap-filters']);
-        $this->add_control('blend_mode', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => 'Multiply', 'screen' => 'Screen', 'overlay' => 'Overlay', 'darken' => 'Darken', 'lighten' => 'Lighten', 'color-dodge' => 'Color Dodge', 'saturation' => 'Saturation', 'color' => 'Color', 'difference' => 'Difference', 'exclusion' => 'Exclusion', 'hue' => 'Hue', 'luminosity' => 'Luminosity'], 'selectors' => ['{{WRAPPER}} .dce-featured-image' => 'mix-blend-mode: {{VALUE}}'], 'separator' => 'none']);
+        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => 'Filters image', 'selector' => '{{WRAPPER}} .wrap-filters']);
+        $this->add_control('blend_mode', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => __('Multiply', 'dynamic-content-for-elementor'), 'screen' => __('Screen', 'dynamic-content-for-elementor'), 'overlay' => __('Overlay', 'dynamic-content-for-elementor'), 'darken' => __('Darken', 'dynamic-content-for-elementor'), 'lighten' => __('Lighten', 'dynamic-content-for-elementor'), 'color-dodge' => __('Color Dodge', 'dynamic-content-for-elementor'), 'saturation' => __('Saturation', 'dynamic-content-for-elementor'), 'color' => __('Color', 'dynamic-content-for-elementor'), 'difference' => __('Difference', 'dynamic-content-for-elementor'), 'exclusion' => __('Exclusion', 'dynamic-content-for-elementor'), 'hue' => __('Hue', 'dynamic-content-for-elementor'), 'luminosity' => __('Luminosity', 'dynamic-content-for-elementor')], 'selectors' => ['{{WRAPPER}} .dce-featured-image' => 'mix-blend-mode: {{VALUE}}'], 'separator' => 'none']);
         $this->add_group_control(Group_Control_Border::get_type(), ['name' => 'image_border', 'label' => __('Image Border', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-featured-image', 'condition' => ['use_bg' => '0', 'bg_extend' => '']]);
         $this->add_control('image_border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-featured-image, {{WRAPPER}} .dce-featured-image .dce-overlay_hover' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['use_bg' => '0', 'bg_extend' => '']]);
         $this->add_control('image_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-featured-image' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['use_bg' => '0', 'bg_extend' => '']]);
@@ -103,7 +108,7 @@ class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\Widge
         $this->add_control('other_post_parent', ['label' => __('From post parent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'yes', 'condition' => ['data_source' => '']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -176,7 +181,7 @@ class DCE_Widget_FeaturedImage extends \DynamicContentForElementor\Widgets\Widge
             case 'acf_url':
                 if (!empty($settings['acf_field_url'])) {
                     $link = esc_url(\get_field($settings['acf_field_url'], $id_page));
-                    $target = $settings['acf_field_url_target'] ? 'target="_blank"' : '';
+                    $target = !empty($settings['acf_field_url_target']) ? 'target="_blank"' : '';
                 } else {
                     $link = \false;
                 }

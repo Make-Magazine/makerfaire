@@ -2,11 +2,22 @@
 
 namespace DynamicContentForElementor;
 
-trait Trait_Form
+trait Form
 {
+    /** In Elementor forms validation and process functions, Elementor
+     *  unfortunately does not pass the field settings, so we have to fetch
+     *  them manually. */
+    public static function get_form_field_settings($id, $record)
+    {
+        $field_settings = $record->get_form_settings('form_fields');
+        $field_settings = \array_filter($field_settings, function ($field) use($id) {
+            return $field['custom_id'] === $id;
+        });
+        return \array_values($field_settings)[0];
+    }
     public static function sanitize_form_field($str)
     {
-        return \preg_replace('/\\[([\\w-]+)([:\\]])/', '[ $1 $2', $str);
+        return \preg_replace('/\\[([\\w-]+)([:|\\]])/', '[ $1 $2', $str);
     }
     public static function get_form_data($record)
     {

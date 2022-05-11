@@ -620,6 +620,19 @@ class CFF_Styling_Tab{
 				'child'				=> 'true',
 				'heading' 			=> __( 'Customize Text', 'custom-facebook-feed' ),
 			],
+			[
+				'type' 				=> 'separator',
+				'top' 				=> 15,
+				'bottom' 			=> 15,
+			],
+			[
+				'type' 				=> 'text',
+				'id' 				=> 'reviewslinktext',
+				'condition'			=> ['feedtype' => ['timeline','reviews','events']],
+				'strongHeading'		=> 'true',
+				'stacked'			=> 'true',
+				'heading' 			=> __( 'View All Reviews text', 'custom-facebook-feed' ),
+			],
 		];
 	}
 

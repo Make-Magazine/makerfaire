@@ -13,7 +13,7 @@ class EarlyFraudWarningService extends \DynamicOOOS\Stripe\Service\AbstractServi
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\Radar\EarlyFraudWarning>
      */
     public function all($params = null, $opts = null)
     {

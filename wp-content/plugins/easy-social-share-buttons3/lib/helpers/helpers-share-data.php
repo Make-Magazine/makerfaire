@@ -106,6 +106,41 @@ function essb_get_post_tags_as_list ($post) {
     return $twitter_hashtags;
 }
 
+
+/**
+ * Get single post share information using post_id
+ * 
+ * @param string $post_id
+ * @return array
+ */
+function essb_get_single_post_share_details ($post_id = '') {
+    global $post;
+    
+    $r = array ();
+    
+    if (!is_admin()) {
+        if (essb_option_bool_value('reset_postdata')) {
+            wp_reset_postdata();
+            if (isset($post)) {
+                $post_id = $post->ID;
+            }
+        }
+        
+        if (essb_option_bool_value('force_wp_query_postid')) {
+            $current_query_id = get_queried_object_id();
+            $post = get_post($current_query_id);
+            $post_id = $post->ID;
+        }
+    }
+    
+    if (!empty($post_id)) {
+        $post_data = ESSB_Runtime_Cache::get_post_sharing_data($post_id);
+        $r = $post_data->compile_share_object(); 
+    }
+    
+    return $r;
+}
+
 /**
  * Generate sharing information object
  *

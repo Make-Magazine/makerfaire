@@ -1,14 +1,49 @@
 jQuery(document).ready(function( $ ){
 	"use strict";
-
+	
+	function essbGetParameterByName(name, url = window.location.href) {
+	    name = name.replace(/[\[\]]/g, '\\$&');
+	    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+	        results = regex.exec(url);
+	    if (!results) return null;
+	    if (!results[2]) return '';
+	    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+	}
+	
+	/**
+	 * Experimental - vertical scrolling for the screens with too many items inside
+	 */
+	/*if ($(window).width() > 1024 && $('.essb-inner-navigation').length) {
+		var barHeight = ($('#wpadminbar').length) ? $('#wpadminbar').height() : 0;
+		
+		$('.essb-inner-navigation').css('max-height', $(window).height() - barHeight);
+		$('.essb-inner-navigation').addClass('essb-inner-scrolly');
+		
+		$(window).on('resize', function() {
+			var barHeight = ($('#wpadminbar').length) ? $('#wpadminbar').height() : 0;
+			
+			$('.essb-inner-navigation').css('max-height', $(window).height() - barHeight);
+			
+			if ($(window).width() > 1024)
+				$('.essb-inner-navigation').addClass('essb-inner-scrolly');
+			else
+				$('.essb-inner-navigation').removeClass('essb-inner-scrolly');
+		});
+	}*/
+	
 	/**
 	 * Tooltips
 	 */
 	$('.essb-vertical-blocks-nav .nav-block').hover(function(e){ // Hover event
 		var titleText = $(this).attr('title'),
+			desc = $(this).attr('data-description') || '',
+			tooltip = titleText,
 			screenPos = $(this).offset();
+		
+		if (desc != '') tooltip += '<span class="desc">' + desc + '</span>';
+		
 		$(this).data('tiptext', titleText).removeAttr('title');
-		$('<p class="tooltip"></p>').text(titleText).appendTo('body').css('top', (screenPos.top - 5) + 'px').css('left', (screenPos.left + 45) + 'px').fadeIn('200');
+		$('<p class="tooltip"></p>').html(tooltip).appendTo('body').css('top', (screenPos.top - 5) + 'px').css('left', (screenPos.left + 45) + 'px').fadeIn('200');
 	}, function(){ // Hover off event
 		$(this).attr('title', $(this).data('tiptext'));
 		$('.tooltip').remove();
@@ -44,6 +79,10 @@ jQuery(document).ready(function( $ ){
 	});
 	
 	$('.essb-submenu-item').on('click', function(e){
+		if ($(this).find('.essb-inner-menu') && $(this).find('.essb-inner-menu li.active').length) {
+			$(this).find('.essb-inner-menu li.active').trigger('click');
+		}
+
 		if ($(this).parent().hasClass('active-submenu')) {
 			if ($(this).find('.essb-inner-menu').length && !$(this).find('.essb-inner-menu li.active').length) {
 				$(this).find('.essb-inner-menu li').removeClass('active');
@@ -51,7 +90,39 @@ jQuery(document).ready(function( $ ){
 			}
 			
 			if ($('.essb-options-subtitle').length && $(this).data('title')) $('.essb-options-subtitle').text($(this).data('title'));
+		}		
+	});
+	
+	$('.essb-usefull-hint-positions .essb-enable-positions').on('click', function(e) {
+		e.preventDefault();
+		
+		var userWidth = '',
+			settings = 'features',
+			title = 'Manage Plugin Features';
+		
+		essbAdvancedOptions.settings = settings;
+		essbAdvancedOptions.requireReload = true;
+		essbAdvancedOptions.withoutSave = false;
+		
+		essbAdvancedOptions.correctWidthAndPosition(userWidth);
+		
+		if (essbAdvancedOptions.withoutSave) {
+			$('#essb-advancedoptions .advancedoptions-save').hide();
 		}
+		else{
+			$('#essb-advancedoptions .advancedoptions-save').show();
+		}
+
+		$('#essb-advanced-options-form').html('');
+		$('.advancedoptions-modal').fadeIn();
+		$('#essb-advancedoptions').fadeIn();
+		$('#advancedOptions-title').text(title);
+		essbAdvancedOptions.read('get', { 'settings': settings, 'loadingOptions': {}  }, function(content) {			
+			essbAdvancedOptions.load(content);
+			
+			$('.features-container .navigation [data-tab="display"]').trigger('click');
+		});
+		//essbAdvancedOptions.show('features', true, 'Manage Plugin Features', false, {});
 	});
 	
 	/**
@@ -73,5 +144,54 @@ jQuery(document).ready(function( $ ){
 		else {
 			$('.essb-cc-' + activeTab + '-' + activeSection + ' .essb-inner-menu li').first().trigger('click');
 		}
+	}
+	
+	/**
+	 * Display conditions (relations)
+	 */
+
+	if (essbFieldConditions) {
+		for (var section in essbFieldConditions) {
+			for (var field in essbFieldConditions[section]) {
+				var type = essbFieldConditions[section][field].type || '',
+					connected = essbFieldConditions[section][field].fields || [];
+								
+				if (type == 'switch' && $('#essb-container-' + section + ' #essb_field_' + field).length) {
+					$('#essb-container-' + section + ' #essb_field_' + field).attr('data-condition', field);
+					$('#essb-container-' + section + ' #essb_field_' + field).attr('data-section', section);
+					$('#essb-container-' + section + ' #essb_field_' + field).on('change', function(e) {
+						
+						var conditionField = $(this).attr('data-condition') || '',
+							sectionField = $(this).attr('data-section') || '';					
+						
+						if (conditionField == '' || !essbFieldConditions || !essbFieldConditions[sectionField] || !essbFieldConditions[sectionField][conditionField]) return;
+						
+						var connectedToCondition = essbFieldConditions[sectionField][conditionField].fields || [];
+						for (var i = 0; i < connectedToCondition.length; i++) {
+							var connectedID = connectedToCondition[i] || '';
+							if (!$('#essb-container-' + sectionField + ' .settings-panel-' + connectedID).length) continue;
+							
+							$('#essb-container-' + sectionField + ' .settings-panel-' + connectedID).css('display', $(this).is(':checked') ? 'inline-flex': 'none');
+						}
+					});
+					
+					$('#essb-container-' + section + ' #essb_field_' + field).trigger('change');
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Clear pre-compiled cache
+	 */
+	
+	if (essbGetParameterByName('rebuild-resource') == 'true') {
+		$.toast({
+		    heading: 'Static CSS and Javascript files cache is cleared',
+		    showHideTransition: 'fade',
+		    icon: 'success',
+		    position: 'bottom-right',
+		    hideAfter: 5000
+		});
 	}
 });

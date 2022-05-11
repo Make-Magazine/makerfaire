@@ -16,7 +16,6 @@ class ESSBNetworks_Subscribe {
 	
 	public static function register_assets() { 
 		if (!self::$assets_registered) {
-			essb_resource_builder()->add_static_resource_footer(ESSB3_PLUGIN_URL .'/assets/css/essb-subscribe'.(ESSBGlobalSettings::$use_minified_css ? ".min": "").'.css', 'easy-social-share-buttons-subscribe', 'css');
 			self::$assets_registered = true;
 			
 			/**

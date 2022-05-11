@@ -68,15 +68,39 @@ class ESSB_Site_Share_Information {
         }
         else if ($type == 'category') {
             $title = single_cat_title('', false);
+            
+            /**
+             * @since 8.1.4
+             */
+            $custom = self::get_term_custom_data('title');
+            if ($custom != '') {
+                $title = $custom;
+            }
         }
         else if ($type == 'tag') {
             $title = single_tag_title('', false);
+            
+            /**
+             * @since 8.1.4
+             */
+            $custom = self::get_term_custom_data('title');
+            if ($custom != '') {
+                $title = $custom;
+            }
         }
         else if ($type == 'tax') {
             $title = single_term_title('', false);
             if ($title === '') {
                 $term = $GLOBALS['wp_query']->get_queried_object();
                 $title = $term->name;
+            }
+            
+            /**
+             * @since 8.1.4
+             */
+            $custom = self::get_term_custom_data('title');
+            if ($custom != '') {
+                $title = $custom;
             }
         }
         else if ($type == 'author') {

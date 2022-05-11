@@ -17,12 +17,13 @@ if (defined('SBIVER')) {
     ESSBOptionsStructureHelper::hint('instagram', 'instagram', '', esc_html__('Smash Balloon Instagram Feed plugin detected. The plugin shortcode for feed generation can be used with the name [essb-instagram-feed] instead of [instagram-feed].', 'essb'), '', 'blue');
 }
 
-ESSBOptionsStructureHelper::field_select_panel('instagram', 'instagram', 'instagram_open_as', esc_html__('Open items', 'essb'), '', array('' => esc_html__('Pop-up', 'essb'), 'link' => esc_html__('Direct Link', 'essb')));
-ESSBOptionsStructureHelper::field_switch_panel('instagram', 'instagram', 'instagram_widget', esc_html__('Enable widget', 'essb'), esc_html__('Enable also the widget for Instagram that you can add to any sidebar. This option does not reflect regular shortcode or automated usage.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
-ESSBOptionsStructureHelper::field_switch_panel('instagram', 'instagram', 'instagram_styles', esc_html__('Always load styles', 'essb'), esc_html__('Always load Instagram feed styles on site. If not active the styles will load just when feed is added on-page.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
-ESSBOptionsStructureHelper::field_textbox_panel('instagram', 'instagram', 'instagram_cache', esc_html__('Default cache expiration time (hours)', 'essb'), esc_html__('Fill 0 if you wish the feed to update without using cache (default is 6 hours)', 'essb') );
-ESSBOptionsStructureHelper::field_switch_panel('instagram', 'instagram', 'instagram_deactivate_mobile', esc_html__('Don\'t show on mobile', 'essb'), esc_html__('Hide feeds on mobile devices (this also includes the pop-up and content automatic displays).', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
-ESSBOptionsStructureHelper::field_switch_panel('instagram', 'instagram', 'instagram_extra_cache', esc_html__('An additional cache of feed data', 'essb'), esc_html__('Store a permanent cache of the last known feed data. In case of a real-time update fail, the plugin will serve the last know permanent cache data.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
+ESSBOptionsStructureHelper::field_select('instagram', 'instagram', 'instagram_open_as', esc_html__('Open items', 'essb'), '', array('' => esc_html__('Pop-up', 'essb'), 'link' => esc_html__('Direct Link', 'essb')));
+ESSBOptionsStructureHelper::field_switch('instagram', 'instagram', 'instagram_widget', esc_html__('Enable widget', 'essb'), esc_html__('Enable also the widget for Instagram that you can add to any sidebar. This option does not reflect regular shortcode or automated usage.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
+ESSBOptionsStructureHelper::field_switch('instagram', 'instagram', 'instagram_styles', esc_html__('Always load styles', 'essb'), esc_html__('Always load Instagram feed styles on site. If not active the styles will load just when feed is added on-page.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
+ESSBOptionsStructureHelper::field_textbox('instagram', 'instagram', 'instagram_cache', esc_html__('Default cache expiration time (hours)', 'essb'), esc_html__('Fill 0 if you wish the feed to update without using cache (default is 6 hours)', 'essb') );
+ESSBOptionsStructureHelper::field_switch('instagram', 'instagram', 'instagram_deactivate_mobile', esc_html__('Don\'t show on mobile', 'essb'), esc_html__('Hide feeds on mobile devices (this also includes the pop-up and content automatic displays).', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
+ESSBOptionsStructureHelper::field_switch('instagram', 'instagram', 'instagram_extra_cache', esc_html__('An additional cache of feed data', 'essb'), esc_html__('Store a permanent cache of the last known feed data. In case of a real-time update fail, the plugin will serve the last know permanent cache data.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
+ESSBOptionsStructureHelper::field_switch('instagram', 'instagram', 'instagram_lazyload', esc_html__('Add native browser lazy loading support for images', 'essb'), esc_html__('Adding the loading="lazy" attribute to the feed images and removing the background styles.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
 
 
 ESSBOptionsStructureHelper::field_component('instagram', 'instagram', 'essb5_advanced_instagram_shortcode', 'false');
@@ -34,7 +35,8 @@ ESSBOptionsStructureHelper::panel_end('instagram', 'instagram');
 
 ESSBOptionsStructureHelper::help('instagram', 'content', '', '', array('Help With Settings' => 'https://docs.socialsharingplugin.com/knowledgebase/how-to-add-instagram-feed-on-your-website-automatic-or-manual/'));
 ESSBOptionsStructureHelper::panel_start('instagram', 'content', esc_html__('Enable automatic feed display below the content of selected post types', 'essb'), '', 'fa21 fa fa-instagram', array("mode" => "switch", 'switch_id' => 'instagramfeed_content'));
-ESSBOptionsStructureHelper::field_checkbox_list('instagram', 'content', 'instagramfeed_content_types', esc_html__('Post types', 'essb'), '', essb_get_post_types(), '', array('source' => 'post_types'));
+ESSBOptionsStructureHelper::field_select('instagram', 'content', 'instagramfeed_content_types', esc_html__('Post types', 'essb'), esc_html__('Leave blank to display on any post type or do a selection where the feed will show automatically.', 'essb'), ESSB_Plugin_Loader::supported_post_types(false, false), '', '', 'true');
+
 ESSBOptionsStructureHelper::field_select('instagram', 'content', 'instagramfeed_content_user', esc_html__('Username', 'essb'), '', ESSBInstagramFeed::get_account_list());
 
 ESSBOptionsStructureHelper::field_textbox('instagram', 'content', 'instagramfeed_content_images', esc_html__('Number of images', 'essb'), esc_html__('Choose between 1 to 15 images appearing on the Instagram widget below content.', 'essb'));
@@ -77,7 +79,7 @@ ESSBOptionsStructureHelper::panel_end('instagram', 'content');
  */
 ESSBOptionsStructureHelper::help('instagram', 'popup', '', '', array('Help With Settings' => 'https://docs.socialsharingplugin.com/knowledgebase/how-to-add-instagram-feed-on-your-website-automatic-or-manual/'));
 ESSBOptionsStructureHelper::panel_start('instagram', 'popup', esc_html__('Enable automatic feed display as pop-up', 'essb'), '', 'fa21 fa fa-instagram', array("mode" => "switch", 'switch_id' => 'instagramfeed_popup'));
-ESSBOptionsStructureHelper::field_checkbox_list('instagram', 'popup', 'instagramfeed_popup_types', esc_html__('Post types', 'essb'), '', essb_get_post_types());
+ESSBOptionsStructureHelper::field_select('instagram', 'popup', 'instagramfeed_popup_types', esc_html__('Post types', 'essb'), esc_html__('Leave blank to display on any post type or do a selection where the feed will show automatically.', 'essb'), ESSB_Plugin_Loader::supported_post_types(false, false), '', '', 'true');
 ESSBOptionsStructureHelper::field_textbox('instagram', 'popup', 'instagramfeed_popup_delay', esc_html__('Delay display (seconds)', 'essb'), '' );
 ESSBOptionsStructureHelper::field_textbox('instagram', 'popup', 'instagramfeed_popup_width', esc_html__('Custom pop-up width', 'essb'), esc_html__('Numeric value only', 'essb') );
 ESSBOptionsStructureHelper::field_textbox('instagram', 'popup', 'instagramfeed_popup_appear_again', esc_html__('Appear again after x days', 'essb'), esc_html__('Leave blank or enter 0 to make it appear all the time. Otherwise fill a numeric value for the number of days (example: 7)', 'essb') );

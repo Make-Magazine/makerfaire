@@ -48,13 +48,16 @@ function initializeJsField(wrapper, widget) {
 		input.value = jsFieldLocale.syntaxError;
 		return;
 	}
-	let refresher = refresherGenerator(makeGetFieldFunction(form));
+	let refresher = refresherGenerator(makeGetFieldFunction(form), (v) => { input.value = v });
 	if (typeof refresher !== "function") {
 		input.value = jsFieldLocale.returnError;
 		return;
 	}
 	let onChange = () => {
-		input.value = refresher();
+		let newValue = refresher();
+		if (newValue !== undefined) {
+			input.value = newValue;
+		}
 		if ("createEvent" in document) {
 			var evt = document.createEvent("HTMLEvents");
 			evt.initEvent("change", false, true);

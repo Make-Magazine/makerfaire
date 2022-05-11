@@ -19,7 +19,8 @@ if (! function_exists ( 'essb_popular_posts' )) {
 				'nothumb' => '',
 				'date_range' => '',
 				'only_pt' => '',
-				'only_id' => '' 
+				'only_id' => '',
+		        'custom_source' => ''
 				), $atts );
 		
 				
@@ -49,17 +50,29 @@ if (! function_exists ( 'essb_popular_posts' )) {
 		$only_pt = isset($attributes['only_pt']) ? $attributes['only_pt'] : '';
 		$only_id = isset($attributes['only_id']) ? $attributes['only_id'] : '';
 		
+		$custom_source = isset($attributes['custom_source']) ? $attributes['custom_source'] : '';
+		
 		if ($nothumb == 'true') {
 			$show_thumb = '';
 		}
 				
 		$sort_meta = "";
-		if ($source == "shares")
+		if ($source == "shares") {
 			$sort_meta = "essb_c_total";
-		elseif ($source == "loves")
+		}
+		elseif ($source == "loves") {
 			$sort_meta = "_essb_love";
-		elseif ($source == "views")
+		}
+		elseif ($source == "views") {
 			$sort_meta = "essb_views";
+		}
+		
+		/**
+		 * @since 8.0.1.1 Custom sort parameter to the shortcode
+		 */
+		if (!empty($custom_source)) {
+		    $sort_meta = $custom_source;
+		}
 		
 		if ($same_cat == 'true') {
 			global $post;

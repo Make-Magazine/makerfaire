@@ -18,11 +18,11 @@ abstract class GroupedListTab extends \DynamicContentForElementor\AdminPages\Fea
             echo "<div class='dce-feature-group'>";
             echo '<h3>' . $group_label . '</h3>';
             echo <<<END
-\t<p class="dce-group-all">
-\t\t<a href="#" class="dce-group-activate-all"><span class='dot green'></span>{$activate_label}</a>
-\t\t&nbsp;/&nbsp;
-\t\t<a href="#" class="dce-group-deactivate-all"><span class='dot red'></span>{$deactivate_label}</a>
-\t</p>
+\t\t\t\t<p class="dce-group-all">
+\t\t\t\t\t<a href="#" class="dce-group-activate-all"><span class='dot green'></span>{$activate_label}</a>
+\t\t\t\t\t&nbsp;/&nbsp;
+\t\t\t\t\t<a href="#" class="dce-group-deactivate-all"><span class='dot red'></span>{$deactivate_label}</a>
+\t\t\t\t</p>
 END;
             echo '<div class="dce-modules">';
             foreach (wp_list_filter($features, [$this->get_groups_key() => $group_name]) as $fname => $finfo) {

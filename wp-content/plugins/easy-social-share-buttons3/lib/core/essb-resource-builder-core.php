@@ -20,6 +20,12 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 	
 	$code_options['essb3_stats'] = essb_option_bool_value('stats_active');
 	$code_options['essb3_ga'] = essb_option_bool_value('activate_ga_tracking');	
+	
+	/**
+	 * @since 8.0 NTG tracking
+	 */
+	$code_options['essb3_ga_ntg'] = essb_options_bool_value('activate_ga_ntg_tracking');
+	
 	/**
 	 * Google Analytics Mode
 	 */
@@ -107,6 +113,13 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 	}
 	if (essb_option_value('translate_copy_message3') != '') {
 	    $code_options['translate_copy_message3'] = essb_option_value('translate_copy_message3');
+	}
+	
+	/**
+	 * @since 8.4 Direct link copy
+	 */
+	if (essb_options_bool_value('copylink_direct')) {
+	    $code_options['copybutton_direct'] = true;
 	}
 	
 	if (has_filter('essb_extend_ajax_options')) {

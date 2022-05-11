@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use CustomFacebookFeed\CFF_Response;
 use CustomFacebookFeed\CFF_HTTP_Request;
 
-class CFF_Admin_Notices 
+class CFF_Admin_Notices
 {
 
     /**
@@ -34,14 +34,18 @@ class CFF_Admin_Notices
 		add_action( 'in_admin_header', [ $this, 'remove_admin_notices' ] );
 		add_action( 'cff_admin_notices', [ $this, 'cff_license_notices' ] );
 		add_action( 'admin_notices', [ $this, 'cff_license_notices' ] );
+		add_action( 'cff_admin_notices', [ $this, 'cff_custom_cssjs_notice' ] );
+		add_action( 'admin_notices', [ $this, 'cff_custom_cssjs_notice' ] );
 		add_action( 'wp_ajax_cff_check_license', [ $this, 'cff_check_license' ] );
 		add_action( 'wp_ajax_cff_dismiss_license_notice', [ $this, 'cff_dismiss_license_notice' ] );
+		add_action( 'wp_ajax_cff_dismiss_custom_cssjs_notice', [ $this, 'cff_dismiss_custom_cssjs_notice' ] );
+
 	}
 
     /**
      * Remove admin notices from inside our plugin screens so we can show our customized notices
-     * 
-     * @since 4.0 
+     *
+     * @since 4.0
      */
     public function remove_admin_notices() {
         $current_screen = get_current_screen();
@@ -54,7 +58,7 @@ class CFF_Admin_Notices
             'facebook-feed_page_cff-support',
         );
 
-        if ( in_array( $current_screen->base, $not_allowed_screens ) ) {
+        if ( in_array( $current_screen->base, $not_allowed_screens )  || strpos( $current_screen->base, 'cff-' ) !== false  ) {
             remove_all_actions('admin_notices');
             remove_all_actions('all_admin_notices');
         }
@@ -62,9 +66,9 @@ class CFF_Admin_Notices
 
     /**
      * CFF Get Renew License URL
-     * 
+     *
      * @since 4.0
-     * 
+     *
      * @return string $url
      */
     public function get_renew_url() {
@@ -83,14 +87,21 @@ class CFF_Admin_Notices
 
     /**
      * CFF Check License
-     * 
+     *
      * @since 4.0
-     * 
+     *
      * @return CFF_Response
      */
     public function cff_check_license() {
         $cff_license = trim( get_option( 'cff_license_key' ) );
+        check_ajax_referer( 'cff_nonce' , 'cff_nonce');
 
+        $cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+        $cap = apply_filters( 'cff_settings_pages_capability', $cap );
+        if ( ! current_user_can( $cap ) ) {
+            wp_send_json_error(); // This auto-dies.
+        }
+        $user_id = get_current_user_id();
         // Check the API
         $cff_api_params = array(
             'edd_action'=> 'check_license',
@@ -101,7 +112,7 @@ class CFF_Admin_Notices
         $cff_license_data = (array) json_decode( wp_remote_retrieve_body( $cff_response ) );
         // Update the updated license data
         update_option( 'cff_license_data', $cff_license_data );
-        
+
         $cff_todays_date = date('Y-m-d');
         // Check whether it's active
         if( $cff_license_data['license'] !== 'expired' && ( strtotime( $cff_license_data['expires'] ) > strtotime($cff_todays_date) ) ) {
@@ -124,18 +135,48 @@ class CFF_Admin_Notices
 
     /**
      * CFF Dismiss Notice
-     * 
+     *
      * @since 4.0
      */
     public function cff_dismiss_license_notice() {
+        check_ajax_referer( 'cff_nonce' , 'cff_nonce');
+
+        $cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+        $cap = apply_filters( 'cff_settings_pages_capability', $cap );
+        if ( ! current_user_can( $cap ) ) {
+            wp_send_json_error(); // This auto-dies.
+        }
+
         global $current_user;
         $user_id = $current_user->ID;
         update_user_meta( $user_id, 'cff_ignore_dashboard_license_notice', true );
     }
 
+	/**
+	 * Dismiss Custom JS and CSS deprecation notice (AJAX)
+	 *
+	 * @since 4.0.2/4.0.7
+	 */
+    public function cff_dismiss_custom_cssjs_notice() {
+	    check_ajax_referer( 'cff_nonce' , 'cff_nonce');
+
+        $cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+        $cap = apply_filters( 'cff_settings_pages_capability', $cap );
+        if ( ! current_user_can( $cap ) ) {
+            wp_send_json_error(); // This auto-dies.
+        }
+
+	    //Only display notice to admins
+	    if ( !current_user_can( $cap ) ) return;
+
+	    $cff_statuses_option = get_option( 'cff_statuses', array() );
+	    $cff_statuses_option['custom_js_css_dismissed'] = true;
+        update_option( 'cff_statuses', $cff_statuses_option, false );
+    }
+
     /**
      * Display license expire related notices in the plugin's pages
-     * 
+     *
      * @since 4.0
      */
     public function cff_license_notices() {
@@ -157,7 +198,7 @@ class CFF_Admin_Notices
 
         $user_id = $current_user->ID;
         $ignored_on_dashboard_page = get_user_meta( $user_id, 'cff_ignore_dashboard_license_notice', true );
-    
+
         // We will display the license notice only on those allowed screens
         if ( !in_array( $current_screen->base, $allowed_screens )  ) {
             return;
@@ -204,13 +245,13 @@ class CFF_Admin_Notices
 
         //Number of days until license expires
         //If expires param isn't set yet then set it to be a date to avoid PHP notice
-        $cff_license_expires_date = isset( $cff_license_data['expires'] ) ? $cff_license_data['expires'] : '2036-12-31 23:59:59'; 
+        $cff_license_expires_date = isset( $cff_license_data['expires'] ) ? $cff_license_data['expires'] : '2036-12-31 23:59:59';
         if ( $cff_license_expires_date == 'lifetime' ) {
             $cff_license_expires_date = '2036-12-31 23:59:59';
         }
         $cff_todays_date = date('Y-m-d');
         //-1 day to make sure auto-renewal has run before showing expired
-        $cff_interval = round( abs( strtotime( $cff_todays_date  . ' -1 day') - strtotime( $cff_license_expires_date ) ) / 86400 ); 
+        $cff_interval = round( abs( strtotime( $cff_todays_date  . ' -1 day') - strtotime( $cff_license_expires_date ) ) / 86400 );
 
         //Is license expired?
         if( $cff_interval == 0 || strtotime( $cff_license_expires_date ) < strtotime( $cff_todays_date ) ) {
@@ -298,11 +339,50 @@ class CFF_Admin_Notices
         echo $this->get_modal_content();
     }
 
+	/**
+	 * Custom JS and CSS deprecation notice
+     *
+     * @since 4.0.2/4.0.7
+	 */
+    public function cff_custom_cssjs_notice() {
+	    $cff_statuses_option = get_option( 'cff_statuses', array() );
+	    if ( ! empty( $cff_statuses_option['custom_js_css_dismissed'] ) ) {
+	        return;
+        }
+
+	    if ( ! empty( $_GET['cff_dismiss_notice'] ) && $_GET['cff_dismiss_notice'] === 'customjscss' ) {
+		    $cff_statuses_option['custom_js_css_dismissed'] = true;
+		    update_option( 'cff_statuses', $cff_statuses_option, false );
+		    return;
+        }
+	    $cff_style_settings 					= get_option( 'cff_style_settings' );
+
+	    $custom_js_not_empty = ! empty( $cff_style_settings['cff_custom_js'] ) && trim($cff_style_settings['cff_custom_js']) !== '';
+	    $custom_css_not_empty = ! empty( $cff_style_settings['cff_custom_css_read_only'] ) && trim($cff_style_settings['cff_custom_css_read_only']) !== '';
+
+	    if ( ! $custom_js_not_empty && ! $custom_css_not_empty ) {
+	        return;
+        }
+	    $close_href = add_query_arg( array( 'cff_dismiss_notice' => 'customjscss' ) );
+
+	    ?>
+	    <div class="notice notice-warning is-dismissible cff-dismissible">
+            <p><?php if ( $custom_js_not_empty ) : ?>
+            <?php echo sprintf( __( 'You are currently using Custom CSS or JavaScript in the Custom Facebook Feed plugin, however, these settings have now been deprecated. To continue using any custom code, please go to the Custom CSS and JS settings %shere%s and follow the directions.', 'custom-facebook-feed' ), '<a href="' . admin_url( 'admin.php?page=cff-settings&view=feeds' ) . '">', '</a>' ); ?>
+		    <?php else : ?>
+            <?php echo sprintf( __( 'You are currently using Custom CSS in the Custom Facebook Feed plugin, however, this setting has now been deprecated. Your CSS has been moved to the "Additional CSS" field in the WordPress Customizer %shere%s instead.', 'custom-facebook-feed' ), '<a href="' . esc_url( wp_customize_url() ) . '">', '</a>' ); ?>
+		    <?php endif; ?>
+            &nbsp;<a href="<?php echo esc_attr( $close_href ); ?>"><?php echo __( 'Dismiss', 'custom-facebook-feed' ); ?></a>
+            </p>
+        </div>
+		<?php
+    }
+
     /**
      * Get content for expired license notice
-     * 
+     *
      * @since 4.0
-     * 
+     *
      * @return string $output
      */
     public function get_expired_license_notice_content() {
@@ -342,9 +422,9 @@ class CFF_Admin_Notices
 
     /**
      * Get content for successfully renewed license notice
-     * 
+     *
      * @since 4.0
-     * 
+     *
      * @return string $output
      */
     public function get_renewed_license_notice_content() {
@@ -371,9 +451,9 @@ class CFF_Admin_Notices
 
     /**
      * Get modal content that will trigger by "Why Renew" button
-     * 
+     *
      * @since 4.0
-     * 
+     *
      * @return string $output
      */
     public function get_modal_content() {
@@ -427,7 +507,7 @@ class CFF_Admin_Notices
                         <div class="sb-why-renew-list">
                             <div class="sb-icon">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.1583 8.40195C12.8183 7.39434 10.3809 5.88954 8.10558 5.18909C8.91398 7.03648 9.59628 9.00467 10.3023 10.9501C8.89406 11.9642 7.2491 12.7514 5.67754 13.6091C7.0149 14.8758 8.9089 15.609 10.418 16.7112C9.20919 18.1404 6.83433 19.6258 6.25565 20.9211C8.758 20.6207 11.6739 20.1336 14.0021 20.0348C14.5137 22.4989 14.7776 25.2005 15.5052 27.4577C16.5887 24.4706 17.5684 21.384 18.8581 18.5945C20.8485 19.3834 23.2742 20.3453 25.2172 20.8103C23.8539 18.9776 22.6098 17.0307 21.4018 15.0493C23.1895 13.8079 24.9976 12.5862 26.7202 11.2824C24.2854 11.0675 21.7627 10.9367 19.205 10.8394C18.7985 8.31133 18.9053 5.29159 18.28 2.97334C17.3339 4.87343 16.2174 6.61017 15.1583 8.40195ZM16.3145 29.3411C15.993 30.6598 17.0524 31.2007 16.8926 32C15.8465 31.6546 15.0596 31.4771 13.6553 31.6676C13.6992 30.6387 14.6649 30.4932 14.4646 29.2303C-0.500692 27.5999 -0.530751 1.68764 14.349 0.0928438C32.9539 -1.90125 33.5377 28.8829 16.3145 29.3411Z" fill="#E34F0E"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.1583 8.40195C12.8183 7.39434 10.3809 5.88954 8.10558 5.18909C8.91398 7.03648 9.59628 9.00467 10.3023 10.9501C8.89406 11.9642 7.2491 12.7514 5.67754 13.6091C7.0149 14.8758 8.9089 15.609 10.418 16.7112C9.20919 18.1404 6.83433 19.6258 6.25565 20.9211C8.758 20.6207 11.6739 20.1336 14.0021 20.0348C14.5137 22.4989 14.7776 25.2005 15.5052 27.4577C16.5887 24.4706 17.5684 21.384 18.8581 18.5945C20.8485 19.3834 23.2742 20.3453 25.2172 20.8103C23.8539 18.9776 22.6098 17.0307 21.4018 15.0493C23.1895 13.8079 24.9976 12.5862 26.7202 11.2824C24.2854 11.0675 21.7627 10.9367 19.205 10.8394C18.7985 8.31133 18.9053 5.29159 18.28 2.97334C17.3339 4.87343 16.2174 6.61017 15.1583 8.40195ZM16.3145 29.3411C15.993 30.6598 17.0524 31.2007 16.8926 32C15.8465 31.6546 15.0596 31.4771 13.6553 31.6676C13.6992 30.6387 14.6649 30.4932 14.4646 29.2303C-0.500692 27.5999 -0.530751 1.68764 14.349 0.0928438C32.9539 -1.90125 33.5377 28.8829 16.3145 29.3411Z" fill="#FE544F"/>
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M18.2802 2.97314C18.9055 5.2914 18.7987 8.31114 19.2052 10.8391C21.7629 10.9365 24.2856 11.0672 26.7204 11.2823C24.9978 12.586 23.1896 13.8077 21.4019 15.0491C22.61 17.0305 23.8541 18.9774 25.2174 20.8101C23.2744 20.3451 20.8487 19.3832 18.8583 18.5943C17.5686 21.3838 16.5889 24.4704 15.5054 27.4575C14.7778 25.2003 14.5139 22.4987 14.0023 20.0346C11.6741 20.1334 8.7582 20.6205 6.25584 20.9209C6.83452 19.6256 9.20937 18.1402 10.4181 16.7109C8.90907 15.6088 7.01509 14.8756 5.67773 13.6089C7.24929 12.7512 8.89422 11.964 10.3025 10.9499C9.59646 9.00448 8.91419 7.03628 8.10578 5.18889C10.381 5.88935 12.8185 7.39414 15.1585 8.40176C16.2176 6.60997 17.3341 4.87324 18.2802 2.97314Z" fill="white"/>
                             </svg>
                             </div>

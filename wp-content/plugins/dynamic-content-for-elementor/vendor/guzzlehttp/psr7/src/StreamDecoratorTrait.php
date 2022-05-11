@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\GuzzleHttp\Psr7;
+namespace GuzzleHttp\Psr7;
 
 use Psr\Http\Message\StreamInterface;
 /**
@@ -48,7 +48,7 @@ trait StreamDecoratorTrait
     }
     public function getContents()
     {
-        return Utils::copyToString($this);
+        return \GuzzleHttp\Psr7\Utils::copyToString($this);
     }
     /**
      * Allow decorators to implement custom methods

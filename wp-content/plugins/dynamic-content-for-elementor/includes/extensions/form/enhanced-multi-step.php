@@ -15,7 +15,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Step extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class EnhancedMultiStep extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     private $is_common = \false;
     public $has_action = \false;
@@ -66,15 +66,15 @@ class DCE_Extension_Form_Step extends \DynamicContentForElementor\Extensions\DCE
     }
     public function add_control_section_to_steps($element, $args)
     {
-        $element->add_control('dce_step_legend', ['label' => '<span class="color-dce icon icon-dyn-logo-dce"></span> ' . __('Use Label as Legend', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER]);
-        $element->add_control('dce_step_show', ['label' => '<span class="color-dce icon icon-dyn-logo-dce"></span> ' . __('Show All steps', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER]);
-        $element->add_control('dce_step_scroll', ['label' => '<span class="color-dce icon icon-dyn-logo-dce"></span> ' . __('Scroll to Top on Step change', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'condition' => ['dce_step_show' => '']]);
-        $element->add_control('dce_step_summary', ['label' => '<span class="color-dce icon icon-dyn-logo-dce"></span> ' . __('Step Summary', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['dce_step_show' => '']]);
+        $element->add_control('dce_step_legend', ['label' => '<span class="color-dce icon-dyn-logo-dce"></span> ' . __('Use Label as Legend', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER]);
+        $element->add_control('dce_step_show', ['label' => '<span class="color-dce icon-dyn-logo-dce"></span> ' . __('Show All steps', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER]);
+        $element->add_control('dce_step_scroll', ['label' => '<span class="color-dce icon-dyn-logo-dce"></span> ' . __('Scroll to Top on Step change', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'condition' => ['dce_step_show' => '']]);
+        $element->add_control('dce_step_summary', ['label' => '<span class="color-dce icon-dyn-logo-dce"></span> ' . __('Step Summary', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['dce_step_show' => '']]);
         $element->add_control('dce_step_summary_submit_btn_text', ['label' => __('Summary Submit Button', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => __('Submit Form', 'dynamic-content-for-elementor'), 'condition' => ['dce_step_show' => '', 'dce_step_summary!' => '']]);
     }
     public function add_control_section_to_form($element, $args)
     {
-        $element->start_controls_section('dce_step_section_style', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Steps Legend', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE, 'condition' => ['dce_step_legend!' => '']]);
+        $element->start_controls_section('dce_step_section_style', ['label' => '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Steps Legend', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE, 'condition' => ['dce_step_legend!' => '']]);
         $element->add_responsive_control('dce_step_title_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'selectors' => ['{{WRAPPER}} .dce-form-step legend' => 'display: block; text-align: {{VALUE}};']]);
         $element->add_control('dce_step_title_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-form-step legend' => 'color: {{VALUE}};']]);
         $element->add_group_control(Group_Control_Typography::get_type(), ['name' => 'dce_step_title_typography', 'label' => __('Typography', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-form-step legend']);
@@ -82,7 +82,7 @@ class DCE_Extension_Form_Step extends \DynamicContentForElementor\Extensions\DCE
         $element->add_group_control(Group_Control_Text_Shadow::get_type(), ['name' => 'dce_step_text_shadow', 'selector' => '{{WRAPPER}} .dce-form-step legend']);
         $element->end_controls_section();
         // SUMMARY
-        $element->start_controls_section('dce_step_section_summary', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Steps Summary', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE, 'condition' => ['dce_step_summary!' => '', 'dce_step_show' => '']]);
+        $element->start_controls_section('dce_step_section_summary', ['label' => '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Steps Summary', 'dynamic-content-for-elementor'), 'tab' => \Elementor\Controls_Manager::TAB_STYLE, 'condition' => ['dce_step_summary!' => '', 'dce_step_show' => '']]);
         $element->add_control('dce_step_summary_title', ['label' => __('Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING]);
         $element->add_responsive_control('dce_step_summary_title_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'selectors' => ['{{WRAPPER}} .dce-step-summary-title' => 'text-align: {{VALUE}};']]);
         $element->add_group_control(Group_Control_Typography::get_type(), ['name' => 'dce_step_summary_title_typography', 'selector' => '{{WRAPPER}} .dce-step-summary-title']);
@@ -138,15 +138,15 @@ class DCE_Extension_Form_Step extends \DynamicContentForElementor\Extensions\DCE
         $element->add_responsive_control('dce_step_summary_submit_btn_text_margin', ['label' => __('Margin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .elementor-button.elementor-button-submit' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $element->end_controls_section();
     }
-    public static function _add_to_form(Controls_Stack $element, $control_id, $control_data, $options = [])
+    public function update_style_controls($widget)
     {
-        if ($element->get_name() == 'form' && $control_id == 'column_gap') {
+        Helper::update_elementor_control($widget, 'column_gap', function ($control_data) {
             if (isset($control_data['selectors']['{{WRAPPER}} .elementor-field-group'])) {
                 $control_data['selectors']['{{WRAPPER}} .elementor-form-steps legend'] = $control_data['selectors']['{{WRAPPER}} .elementor-field-group'];
             }
             $control_data['selectors']['{{WRAPPER}} .elementor-form-steps .elementor-form-fields-wrapper'] = 'margin: 0;';
-        }
-        return $control_data;
+            return $control_data;
+        });
     }
     public function _summary($widget)
     {
@@ -192,7 +192,7 @@ class DCE_Extension_Form_Step extends \DynamicContentForElementor\Extensions\DCE
             $bar .= '</ul></li>';
             $bar .= '</ul>';
             if (!empty($settings['dce_step_summary_submit_btn_text'])) {
-                $bar .= '<div class="elementor-button-wrapper' . ($settings['dce_step_summary_submit_btn_align'] ? ' elementor-align-' . $settings['dce_step_summary_submit_btn_align'] : '') . '">';
+                $bar .= '<div class="elementor-button-wrapper' . (!empty($settings['dce_step_summary_submit_btn_align']) ? ' elementor-align-' . $settings['dce_step_summary_submit_btn_align'] : '') . '">';
                 $bar .= '<button class="elementor-button elementor-button-submit elementor-size-' . $settings['dce_step_summary_submit_btn_size'] . '">' . $settings['dce_step_summary_submit_btn_text'] . '</button>';
                 $bar .= '</div>';
             }

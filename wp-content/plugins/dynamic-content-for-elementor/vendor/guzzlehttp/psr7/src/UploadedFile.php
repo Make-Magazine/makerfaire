@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\GuzzleHttp\Psr7;
+namespace GuzzleHttp\Psr7;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
@@ -69,7 +69,7 @@ class UploadedFile implements UploadedFileInterface
         if (\is_string($streamOrFile)) {
             $this->file = $streamOrFile;
         } elseif (\is_resource($streamOrFile)) {
-            $this->stream = new Stream($streamOrFile);
+            $this->stream = new \GuzzleHttp\Psr7\Stream($streamOrFile);
         } elseif ($streamOrFile instanceof StreamInterface) {
             $this->stream = $streamOrFile;
         } else {
@@ -86,7 +86,7 @@ class UploadedFile implements UploadedFileInterface
         if (\false === \is_int($error)) {
             throw new InvalidArgumentException('Upload file error status must be an integer');
         }
-        if (\false === \in_array($error, UploadedFile::$errors)) {
+        if (\false === \in_array($error, \GuzzleHttp\Psr7\UploadedFile::$errors)) {
             throw new InvalidArgumentException('Invalid error status for UploadedFile');
         }
         $this->error = $error;
@@ -184,7 +184,7 @@ class UploadedFile implements UploadedFileInterface
         if ($this->stream instanceof StreamInterface) {
             return $this->stream;
         }
-        return new LazyOpenStream($this->file, 'r+');
+        return new \GuzzleHttp\Psr7\LazyOpenStream($this->file, 'r+');
     }
     /**
      * {@inheritdoc}
@@ -208,7 +208,7 @@ class UploadedFile implements UploadedFileInterface
         if ($this->file) {
             $this->moved = \php_sapi_name() == 'cli' ? \rename($this->file, $targetPath) : \move_uploaded_file($this->file, $targetPath);
         } else {
-            Utils::copyToStream($this->getStream(), new LazyOpenStream($targetPath, 'w'));
+            \GuzzleHttp\Psr7\Utils::copyToStream($this->getStream(), new \GuzzleHttp\Psr7\LazyOpenStream($targetPath, 'w'));
             $this->moved = \true;
         }
         if (\false === $this->moved) {

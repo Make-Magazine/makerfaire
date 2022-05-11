@@ -12,7 +12,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Method extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class Method extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     private $is_common = \false;
     public $has_action = \false;
@@ -50,6 +50,7 @@ class DCE_Extension_Form_Method extends \DynamicContentForElementor\Extensions\D
     protected function add_actions()
     {
         add_action('elementor/widget/render_content', array($this, '_render_form'), 10, 2);
+        add_action('elementor/element/form/section_form_options/after_section_start', [$this, 'add_controls_to_form']);
         add_action('elementor/widget/print_template', function ($template, $widget) {
             if ('form' === $widget->get_name()) {
                 $template = \false;
@@ -138,17 +139,13 @@ class DCE_Extension_Form_Method extends \DynamicContentForElementor\Extensions\D
         }
         return $content;
     }
-    public static function _add_to_form(Controls_Stack $element, $control_id, $control_data, $options = [])
+    public function add_controls_to_form($widget)
     {
-        if (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            return $control_data;
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
+            return;
         }
-        if ($element->get_name() == 'form' && $control_id == 'form_id') {
-            $element->add_control('form_method', ['label' => '<span class="color-dce icon icon-dyn-logo-dce"></span> ' . __('Method', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['ajax' => ['title' => __('AJAX (Default)', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-retweet'], 'post' => ['title' => 'POST', 'icon' => 'fa fa-cog'], 'get' => ['title' => 'GET', 'icon' => 'fa fa-link']], 'toggle' => \false, 'default' => 'ajax']);
-            $element->add_control('form_action_hide', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('Using this method, all form Actions After Submit, validations, and conditional fields will not work!', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['form_method!' => 'ajax']]);
-            $element->add_control('form_action', ['label' => __('Action', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'condition' => ['form_method!' => 'ajax']]);
-            $control_data['separator'] = 'before';
-        }
-        return $control_data;
+        $widget->add_control('form_method', ['label' => '<span class="color-dce icon-dyn-logo-dce"></span> ' . __('Method', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['ajax' => __('AJAX (Default)', 'dynamic-content-for-elementor'), 'post' => 'POST', 'get' => 'GET'], 'toggle' => \false, 'default' => 'ajax']);
+        $widget->add_control('form_action_hide', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('Using this method, all form Actions After Submit, validations, and conditional fields will not work!', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['form_method!' => 'ajax']]);
+        $widget->add_control('form_action', ['label' => __('Action', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'condition' => ['form_method!' => 'ajax']]);
     }
 }

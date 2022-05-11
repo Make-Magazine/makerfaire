@@ -33,21 +33,28 @@ class CFF_Source {
 	 * @since 4.0
 	 */
 	public static function builder_update() {
-		CFF_Feed_Builder::check_privilege( false );
-		$source_data = array(
-			'access_token' => sanitize_text_field( $_POST['access_token'] ),
-			'id'           => sanitize_text_field( $_POST['id'] ),
-			'type'         => sanitize_text_field( $_POST['type'] ),
-			'privilege'    => isset( $_POST['privilege'] ) ? sanitize_text_field( $_POST['privilege'] ) : '',
-		);
+		if(check_ajax_referer( 'cff_admin_nonce' , 'nonce', false) || check_ajax_referer( 'cff-admin' , 'nonce', false) ){
+			$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+			$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+			if ( ! current_user_can( $cap ) ) {
+				wp_send_json_error(); // This auto-dies.
+			}
 
-		if ( ! empty( $_POST['name'] ) ) {
-			$source_data['name'] = sanitize_text_field( $_POST['name'] );
+			$source_data = array(
+				'access_token' => sanitize_text_field( wp_unslash( $_POST['access_token'] ) ),
+				'id'           => sanitize_text_field( wp_unslash( $_POST['id'] ) ),
+				'type'         => sanitize_text_field( wp_unslash( $_POST['type'] ) ),
+				'privilege'    => isset( $_POST['privilege'] ) ? sanitize_text_field( wp_unslash( $_POST['privilege'] ) ) : '',
+			);
+
+			if ( ! empty( $_POST['name'] ) ) {
+				$source_data['name'] = sanitize_text_field( wp_unslash( $_POST['name'] ) );
+			}
+
+			$return = CFF_Source::process_connecting_source_data( $source_data );
+
+			echo $return;
 		}
-
-		$return = CFF_Source::process_connecting_source_data( $source_data );
-
-		echo $return;
 
 		wp_die();
 	}
@@ -100,7 +107,8 @@ class CFF_Source {
 
 		// don't update or insert the access token if there is an API error
 		if ( ! isset( $header_details->error ) && ! isset( $header_details->cached_error ) ) {
-			$source_data['error'] = '';
+			$source_data['error']                     = '';
+			$source_data['info']->connected_version   = CFFVER;
 			CFF_Source::update_or_insert( $source_data );
 		}
 
@@ -115,32 +123,40 @@ class CFF_Source {
 	 * @since 4.0
 	 */
 	public static function builder_update_multiple() {
-		CFF_Feed_Builder::check_privilege( false );
-		if(isset($_POST['sourcesList']) && !empty($_POST['sourcesList'])  && is_array($_POST['sourcesList'])){
-			foreach ($_POST['sourcesList'] as $single_source):
-				$source_data = array(
-					'access_token' => sanitize_text_field( $single_source['access_token'] ),
-					'id'           => sanitize_text_field( $single_source['account_id'] ),
-					'name'		   => isset($single_source['name']) ? sanitize_text_field($single_source['name']) : '',
-					'type'         => sanitize_text_field( $_POST['type'] ),
-					'privilege'    => isset( $single_source['privilege'] ) ? sanitize_text_field( $single_source['privilege'] ) : '',
-				);
-				$header_details = \CustomFacebookFeed\CFF_Utils::fetch_header_data( $source_data['id'], $source_data['type'] === 'group', $source_data['access_token'], 0, false, '' );
-				if ( isset( $header_details->shortcode_options ) ) {
-					unset( $header_details->shortcode_options );
-				}
-				if ( isset( $header_details->name ) ) {
-					$source_data['name'] = $header_details->name;
-				}
-				$source_data['info'] = $header_details;
-				// don't update or insert the access token if there is an API error
-				if ( ! isset( $header_details->error ) ) {
-					$source_data['error'] = '';
-					CFF_Source::update_or_insert( $source_data );
-				}
-			endforeach;
+		if(check_ajax_referer( 'cff_admin_nonce' , 'nonce', false) || check_ajax_referer( 'cff-admin' , 'nonce', false) ){
+			$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+			$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+			if ( ! current_user_can( $cap ) ) {
+				wp_send_json_error(); // This auto-dies.
+			}
+
+			if(isset($_POST['sourcesList']) && !empty($_POST['sourcesList'])  && is_array($_POST['sourcesList'])){
+				foreach ($_POST['sourcesList'] as $single_source):
+					$source_data = array(
+						'access_token' => sanitize_text_field( wp_unslash( $single_source['access_token'] ) ),
+						'id'           => sanitize_text_field( wp_unslash( $single_source['account_id'] ) ),
+						'name'		   => isset($single_source['name']) ? sanitize_text_field(wp_unslash( $single_source['name'] )) : '',
+						'type'         => sanitize_text_field( wp_unslash($_POST['type']) ),
+						'privilege'    => isset( $single_source['privilege'] ) ? sanitize_text_field( wp_unslash( $single_source['privilege'] ) ) : '',
+					);
+					$header_details = \CustomFacebookFeed\CFF_Utils::fetch_header_data( $source_data['id'], $source_data['type'] === 'group', $source_data['access_token'], 0, false, '' );
+					if ( isset( $header_details->shortcode_options ) ) {
+						unset( $header_details->shortcode_options );
+					}
+					if ( isset( $header_details->name ) ) {
+						$source_data['name'] = $header_details->name;
+					}
+					$source_data['info'] = $header_details;
+					// don't update or insert the access token if there is an API error
+					if ( ! isset( $header_details->error ) ) {
+						$source_data['error']                     = '';
+						$source_data['info']->connected_version   = CFFVER;
+						CFF_Source::update_or_insert( $source_data );
+					}
+				endforeach;
+			}
+			echo \CustomFacebookFeed\CFF_Utils::cff_json_encode( CFF_Feed_Builder::get_source_list() );
 		}
-		echo \CustomFacebookFeed\CFF_Utils::cff_json_encode( CFF_Feed_Builder::get_source_list() );
 		wp_die();
 	}
 
@@ -150,8 +166,14 @@ class CFF_Source {
 	 * @since 4.0
 	 */
 	public static function get_page() {
-		CFF_Feed_Builder::check_privilege( false );
-		$args = array( 'page' => $_POST['page'] );
+		check_ajax_referer( 'cff-admin' , 'nonce');
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
+		$args = array( 'page' => sanitize_text_field( wp_unslash( $_POST['page'] ) ) );
 		$source_data = CFF_Db::source_query( $args );
 
 		echo \CustomFacebookFeed\CFF_Utils::cff_json_encode( $source_data );
@@ -159,32 +181,42 @@ class CFF_Source {
 		wp_die();
 	}
 
+
+
 	/**
 	 * Using the URL and source ID, info about a single post is returned
 	 *
 	 * @since 4.0
 	 */
 	public static function get_featured_post_preview() {
-		CFF_Feed_Builder::check_privilege( false );
+		check_ajax_referer( 'cff-admin' , 'nonce');
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
 		$query_args = array(
-			'id' => sanitize_text_field( $_POST['source_id'] )
+			'id' => sanitize_text_field( wp_unslash( $_POST['source_id'] ) )
 		);
 		$results = CFF_Db::source_query( $query_args );
 
 		if ( ! isset( $results[0] ) ) {
 			echo '{"error":{"message":"No valid ID found"}}';
 			wp_die();
-
 		}
 		$access_token = $results[0]['access_token'];
+		$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+		if ( $encryption->decrypt( $access_token ) ) {
+			$access_token = $encryption->decrypt( $access_token );
+		}
 
-		$url_or_post_id = $_POST['url_or_id'];
-
+		$url_or_post_id = sanitize_text_field( wp_unslash( $_POST['url_or_id'] ) );
 		$id = CFF_Source::extract_id( $url_or_post_id, 'album' );
 
 
 		if ( isset( $id ) ) {
-			$data = CFF_Source::fetch_featured( $id, sanitize_text_field( $_POST['source_id'] ), $access_token );
+			$data = CFF_Source::fetch_featured( $id, sanitize_text_field( wp_unslash( $_POST['source_id'] ) ), $access_token );
 			echo $data;
 
 		} else {
@@ -200,9 +232,15 @@ class CFF_Source {
 	 * @since 4.0
 	 */
 	public static function get_playlist_post_preview() {
-		CFF_Feed_Builder::check_privilege( false );
+		check_ajax_referer( 'cff-admin' , 'nonce');
+
+		$cap = current_user_can( 'manage_custom_facebook_feed_options' ) ? 'manage_custom_facebook_feed_options' : 'manage_options';
+		$cap = apply_filters( 'cff_settings_pages_capability', $cap );
+		if ( ! current_user_can( $cap ) ) {
+			wp_send_json_error(); // This auto-dies.
+		}
 		$query_args = array(
-			'id' => sanitize_text_field( $_POST['source_id'] )
+			'id' => sanitize_text_field( wp_unslash( $_POST['source_id'] ) )
 		);
 		$results = CFF_Db::source_query( $query_args );
 
@@ -211,8 +249,12 @@ class CFF_Source {
 			wp_die();
 		}
 		$access_token = $results[0]['access_token'];
+		$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+		if ( $encryption->decrypt( $access_token ) ) {
+			$access_token = $encryption->decrypt( $access_token );
+		}
 
-		$url_or_post_id = $_POST['url_or_id'];
+		$url_or_post_id = sanitize_text_field( wp_unslash( $_POST['url_or_id'] ) );
 
 		$id = CFF_Source::extract_id( $url_or_post_id, 'playlist' );
 
@@ -242,6 +284,10 @@ class CFF_Source {
 		// need a connected business account for this to work
 		if ( empty( $access_token ) ) {
 			return false;
+		}
+		$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+		if ( $encryption->decrypt( $access_token ) ) {
+			$access_token = $encryption->decrypt( $access_token );
 		}
 
 		$full_id = $source_id . '_' . $post_id;
@@ -293,7 +339,10 @@ class CFF_Source {
 		if ( empty( $access_token ) ) {
 			return false;
 		}
-
+		$encryption = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+		if ( $encryption->decrypt( $access_token ) ) {
+			$access_token = $encryption->decrypt( $access_token );
+		}
 		$url = 'https://graph.facebook.com/v3.2/'.$playlist_id.'/videos/?access_token='.$access_token.'&fields=published,source,updated_time,created_time,title,description,embed_html,format{picture}&locale=en_US&limit=5';
 
 		$response = wp_remote_get( $url );
@@ -329,14 +378,15 @@ class CFF_Source {
 		$admin_url_state = ($is_settings) ?  admin_url( 'admin.php?page=cff-settings' ) : admin_url( 'admin.php?page=cff-feed-builder' );
 		//If the admin_url isn't returned correctly then use a fallback
 		if ( $admin_url_state == '/wp-admin/admin.php?page=cff-feed-builder'
-		    || $admin_url_state == '/wp-admin/admin.php?page=cff-feed-builder&tab=configuration' ) {
+		     || $admin_url_state == '/wp-admin/admin.php?page=cff-feed-builder&tab=configuration' ) {
 			$admin_url_state = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 		}
 		#$urls['page']  = 'https://api.smashballoon.com/v2/facebook-login.php?state=' . $admin_url_state;
 		#$urls['group'] = 'https://api.smashballoon.com/v2/facebook-group-login.php?state=' . $admin_url_state;
 
-		$urls['page']  = 'https://api.smashballoon.com/v3/facebook-login.php?state=';
-		$urls['group'] = 'https://api.smashballoon.com/v3/facebook-group-login.php?state=';
+		$sb_admin_email = get_option('admin_email');
+		$urls['page']  = 'https://connect.smashballoon.com/auth/fb/?wordpress_user=' . $sb_admin_email . '&vn=' . CFFVER . '&v=pro&state=';
+		$urls['group'] = 'https://connect.smashballoon.com/auth/fb/?wordpress_user=' . $sb_admin_email . '&vn=' . CFFVER . '&v=pro&state=';
 		$urls['stateURL'] = $admin_url_state;
 
 		return $urls;
@@ -360,7 +410,7 @@ class CFF_Source {
 			$reporter = \CustomFacebookFeed\CFF_Utils::cff_is_pro_version() ? cff_main_pro()->cff_error_reporter : cff_main()->cff_error_reporter;
 			$reporter->remove_error( 'accesstoken' );
 
-			$access_token = sanitize_text_field( $_GET['cff_access_token'] );
+			$access_token = sanitize_text_field( wp_unslash( $_GET['cff_access_token'] ) );
 			if ( isset( $_GET['cff_group'] ) ) {
 				$return = CFF_Source::retrieve_available_groups( $access_token );
 			} else {
@@ -544,6 +594,8 @@ class CFF_Source {
 			}
 			CFF_Source::insert( $source_data );
 		}
+
+		CFF_Source::after_update_or_insert( $source_data );
 	}
 
 	/**
@@ -600,9 +652,60 @@ class CFF_Source {
 		if ( isset( $source_data['name'] ) ) {
 			$source_data['username'] = $source_data['name'];
 		}
-		$data                    = $source_data;
+		$data = $source_data;
 
 		return CFF_Db::source_update( $data, $where );
+	}
+
+	/**
+	 * Do something after a source is updated or inserted
+	 *
+	 * @param array $source_data
+	 * @since 4.0.6/4.0.9
+	 */
+	public static function after_update_or_insert( $source_data ) {
+
+		// check to see if all groups updated
+		$cff_statuses_option = get_option( 'cff_statuses', array() );
+
+		if ( empty( $cff_statuses_option['groups_need_update'] ) ) {
+			return;
+		}
+		$groups = \CustomFacebookFeed\Builder\CFF_Db::source_query( array( 'type' => 'group' ) );
+
+		$cff_statuses_option['groups_need_update'] = false;
+		if ( empty( $groups ) ) {
+			update_option( 'cff_statuses', $cff_statuses_option, false );
+		} else {
+			$encryption         = new \CustomFacebookFeed\SB_Facebook_Data_Encryption();
+			$groups_need_update = false;
+			foreach ( $groups as $source ) {
+				$info   = ! empty( $source['info'] ) ? json_decode( $encryption->decrypt( $source['info'] ) ) : array();
+				if ( \CustomFacebookFeed\Builder\CFF_Source::needs_update( $source, $info ) ) {
+					$groups_need_update = true;
+				}
+			}
+			$cff_statuses_option['groups_need_update'] = $groups_need_update;
+			update_option( 'cff_statuses', $cff_statuses_option, false );
+		}
+	}
+
+	/**
+	 * @param array $source
+	 * @param array $source_info
+	 *
+	 * @return bool
+	 * @since 4.0.6/4.0.9
+	 */
+	public static function needs_update( $source, $source_info ) {
+		if ( 'group' === $source['account_type'] ) {
+			$connected_version = is_object( $source_info ) && isset( $source_info->connected_version ) ? $source_info->connected_version : 0;
+			if ( version_compare( $connected_version, '4.0.9', '<' ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -621,7 +724,7 @@ class CFF_Source {
 
 		if ( $type === 'album' ) {
 			if ( strpos( $url_or_post_id, '/' ) === false ) {
-				$id = sanitize_text_field( $url_or_post_id );
+				$id = $url_or_post_id;
 			} elseif( strpos( $url_or_post_id, '&set=a.' ) !== false ) {
 				$things = explode( '&set=a.', $url_or_post_id );
 
@@ -637,7 +740,7 @@ class CFF_Source {
 			}
 		} elseif ( $type === 'playlist') {
 			if ( strpos( $url_or_post_id, '/' ) === false ) {
-				$id = sanitize_text_field( $url_or_post_id );
+				$id = sanitize_text_field( wp_unslash( $url_or_post_id ) );
 			} else { //https://www.facebook.com/watch/539051002877739/1979731855647067/?more=less // https://www.facebook.com/videos/vl.1234567890/
 				$regex = "~(?:vl\.\d+/)?(\d+)~i";
 				if ( stripos( $url_or_post_id, 'videos' ) !== false && preg_match( $regex, $url_or_post_id, $matches ) ) {
@@ -648,7 +751,6 @@ class CFF_Source {
 							$id = explode( '.', $id_pieces )[1];
 						} else {
 							$id = $matches[0];
-							error_log(json_encode($matches));
 						}
 					}
 
@@ -954,5 +1056,21 @@ class CFF_Source {
 			'error' => is_string( $error ) ? $error : \CustomFacebookFeed\CFF_Utils::cff_json_encode( $error )
 		);
 		return \CustomFacebookFeed\Builder\CFF_Source::update_or_insert( $source_data );
+	}
+
+	/**
+	 * Get single source info By Id
+	 *
+	 * @since 4.2.0
+	 */
+	public static function get_source_info( $source_id ) {
+		$query_args = array(
+			'id' => sanitize_text_field( wp_unslash( $source_id ) )
+		);
+		$results = CFF_Db::source_query( $query_args );
+		if ( ! isset( $results[0] ) ) {
+			return false;
+		}
+		return $results[0];
 	}
 }

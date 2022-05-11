@@ -32,14 +32,19 @@ class DirectoryEntry extends BinaryStream
     public $offset;
     public $length;
     protected $origF;
+    /**
+     * @param string $data
+     *
+     * @return int
+     */
     static function computeChecksum($data)
     {
-        $len = \strlen($data);
+        $len = \mb_strlen($data, '8bit');
         $mod = $len % 4;
         if ($mod) {
             $data = \str_pad($data, $len + (4 - $mod), "\x00");
         }
-        $len = \strlen($data);
+        $len = \mb_strlen($data, '8bit');
         $hi = 0x0;
         $lo = 0x0;
         for ($i = 0; $i < $len; $i += 4) {

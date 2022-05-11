@@ -115,9 +115,9 @@ class CFF_About_Us {
 
     /**
      * Page Data to use in front end
-     * 
+     *
      * @since 4.0
-     * 
+     *
      * @return array
      */
     public function page_data() {
@@ -235,7 +235,7 @@ class CFF_About_Us {
                 'title' => __( 'Social Wall', 'custom-facebook-feed' ),
                 'description' => __( 'Combine feeds from all of our plugins into a single wall', 'custom-facebook-feed' ),
                 'graphic' => CFF_PLUGIN_URL . 'admin/assets/img/social-wall-graphic.png',
-                'permalink' => sprintf('https://smashballoon.com/social-wall/demo?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=about&utm_medium=social-wall', $license_key),
+                'permalink' => sprintf('https://smashballoon.com/social-wall/demo?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=about&utm_medium=social-wall', $license_key),
                 'installed' => isset( $installed_plugins['social-wall/social-wall.php'] ) ? true : false,
                 'activated' => is_plugin_active('social-wall/social-wall.php'),
             ),

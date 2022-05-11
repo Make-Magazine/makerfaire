@@ -110,3 +110,65 @@ function essb_advanced_array_to_simple_array($values) {
     
     return $new;
 }
+
+/**
+ * Sanitize title and remove not allwoed code
+ * 
+ * @param string $value
+ * @return string
+ */
+function essb_wp_kses_title($value = '') {
+    $allowed_tags = array(
+        'b' => array(),
+        'span' => array(
+            'class' => array(),
+            'style' => array(),
+            'id' => array()
+        ),
+        'strong' => array(),
+        'div' => array(
+            'class' => array(),
+            'style' => array(),
+            'id' => array()
+        )
+    );
+    
+    return wp_kses($value, $allowed_tags);
+}
+
+/**
+ * Get a SVG icon from the plugin database
+ * 
+ * @param string $icon
+ * @param string $fill
+ * @return NULL|string
+ */
+function essb_svg_icon($icon = '', $fill = '') {
+    if (!class_exists('ESSB_SVG_Icons')) {
+        include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+    }
+    
+    return ESSB_SVG_Icons::get_icon($icon, $fill);
+}
+
+/**
+ * Define constant if not set with the proper value
+ * 
+ * @param unknown $name
+ * @param unknown $value
+ */
+function essb_maybe_define_constant( $name, $value ) {
+    if ( ! defined( $name ) ) {
+        define( $name, $value );
+    }
+}
+
+/**
+ * Boolean constant is set
+ * 
+ * @param unknown $name
+ * @return boolean
+ */
+function essb_constant_is_true($name) {
+    return defined($name);
+}

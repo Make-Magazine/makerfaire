@@ -7,6 +7,7 @@
  * @since 3.19.3
  */
 namespace CustomFacebookFeed;
+use CustomFacebookFeed\SB_Facebook_Data_Encryption;
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
@@ -58,6 +59,11 @@ class CFF_Group_Posts{
 	private $is_event_page;
 
 
+	/**
+	 * @var class
+	*/
+	private $encryption;
+
 
 
 	/**
@@ -69,6 +75,8 @@ class CFF_Group_Posts{
 	 * @access public
 	 */
 	function __construct($group_id, $feed_options, $api_call_url, $data_att_html,$is_event_page) {
+		$this->encryption = new SB_Facebook_Data_Encryption();
+
 		$this->cache_name = '!cff_group_'. $group_id . '_' . str_replace(',', '_', $feed_options['type']);
 		$this->posts_cache_data = get_option($this->cache_name);
 		$this->feed_options = $feed_options;
@@ -82,7 +90,8 @@ class CFF_Group_Posts{
 			$this->posts_cache_data->shortcode_options = $this->data_att_html;
 			$this->posts_cache_data->data = [];
 		}else{
-			$this->posts_cache_data = json_decode($this->posts_cache_data);
+			$this->posts_cache_data = json_decode( $this->encryption->maybe_decrypt( $this->posts_cache_data ) ) ;
+
 		}
 
 	}
@@ -265,7 +274,7 @@ class CFF_Group_Posts{
 		$this->posts_cache_data->is_event_page = $this->is_event_page;
 		$this->posts_cache_data->data = array_slice( $this->posts_array, 0, 100 );
 		if(sizeof($this->posts_array) > 0){
-			update_option( $this->cache_name, json_encode($this->posts_cache_data), false );
+			update_option( $this->cache_name, $this->encryption->maybe_encrypt( json_encode($this->posts_cache_data) ) , false );
 		}
 
 	}
@@ -305,6 +314,7 @@ class CFF_Group_Posts{
 	 */
 	static function cron_update_group_persistent_cache(){
 	    global $wpdb;
+	    $encryption = new SB_Facebook_Data_Encryption();
 	    $table_name = $wpdb->prefix . "options";
 	    $persistent_groups = $wpdb->get_results( "
 	        SELECT `option_name` AS `name`, `option_value` AS `value`
@@ -312,7 +322,7 @@ class CFF_Group_Posts{
 	        WHERE `option_name` LIKE ('%!cff\_group\_%')
 	      " );
 	    foreach ($persistent_groups as $group) {
-			$group_json = json_decode($group->value, true);
+			$group_json = json_decode( $encryption->maybe_decrypt( $group->value ), true);
 	    	CFF_Group_Posts::update_or_add_group($group->name, $group_json);
 	    }
 	}
@@ -329,6 +339,7 @@ class CFF_Group_Posts{
 		$is_event_page 		= isset($group_cache['is_event_page']) ? $group_cache['is_event_page'] : false;
 		$data_att_html 		= $group_cache['shortcode_options'];
 		$new_cached_posts 	= $cached_posts;
+		$encryption = new SB_Facebook_Data_Encryption();
 
 		$posts_array_api = json_decode(CFF_Group_Posts::api_call($api_url, $data_att_html));
 		foreach ($posts_array_api->data as $single_post) {
@@ -366,7 +377,7 @@ class CFF_Group_Posts{
 		$new_cached_posts = array_slice( $new_cached_posts, 0, 100 );
 		$posts_cache_data->data = $new_cached_posts;
 		if(sizeof($new_cached_posts) > 0){
-			update_option( $cache_name, json_encode($posts_cache_data), false );
+			update_option( $cache_name, $encryption->maybe_encrypt( json_encode( $posts_cache_data ) ), false );
 		}
 
 	}

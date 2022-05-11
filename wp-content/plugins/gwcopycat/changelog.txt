@@ -1,6 +1,20 @@
 
 # Changelog
 
+## 1.4.53
+
+	- Fixed issue where GPCC's conditioanl logic handling would overwrite edited values when the form was reloaded.
+
+## 1.4.52
+
+	- Fixed issue where multiple values copied into a single input would not be cleared if unchecking a checkbox.
+	- Fixed issue where using the `gpcc_copied_value` filter would prevent filtered values from being cleared if the checkbox controlling the copying is unchecked.
+	- Added "Update URI" to plugin header to improve security.
+
+## 1.4.51
+
+	- Added `getSourceField` method to `gwCopyObj` to open up more possibilities with snippets such as automatic copying depending on checkbox value.
+
 ## 1.4.50
 
 	- Improved conditional logic handling for accuracy and efficiency. (#40)

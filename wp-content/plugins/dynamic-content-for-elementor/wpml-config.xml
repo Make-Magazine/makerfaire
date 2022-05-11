@@ -1,5 +1,13 @@
 <wpml-config>
     <elementor-widgets>
+        <widget name="dce-max-submissions">
+            <conditions>
+                <condition key="widgetType">form</condition>
+            </conditions>
+            <fields>
+                <field type="Form - Max Submissions - Error Message" editor_type="LINE">dce_max_submissions_error_message</field>
+            </fields>
+        </widget>
         <widget name="dyncontel-animateText">
             <conditions>
                 <condition key="widgetType">dyncontel-animateText</condition>

@@ -2,7 +2,7 @@
 
 namespace DynamicContentForElementor;
 
-trait Trait_Date
+trait Date
 {
     /**
      * Convert date/time format between `date()` and `strftime()`
@@ -18,6 +18,8 @@ trait Trait_Date
      * @param string $format The format to parse.
      * @param string $syntax The format's syntax. Either 'strf' for `strtime()` or 'date' for `date()`.
      * @return bool|string Returns a string formatted according $syntax using the given $format or `false`.
+     * @copyright Chauncey McAskill, Baptiste Placé
+     * @link https://github.com/mcaskill
      */
     public static function date_format_to($format, $syntax)
     {
@@ -81,6 +83,8 @@ trait Trait_Date
      *
      * @param string $strf_format A `strftime()` date/time format
      * @return string
+     * @copyright Chauncey McAskill, Baptiste Placé
+     * @link https://github.com/mcaskill
      */
     public static function strftime_format_to_date_format($strf_format)
     {
@@ -91,6 +95,8 @@ trait Trait_Date
      *
      * @param string $date_format A `date()` date/time format
      * @return string
+     * @copyright Chauncey McAskill, Baptiste Placé
+     * @link https://github.com/mcaskill
      */
     public static function date_format_to_strftime_format($date_format)
     {

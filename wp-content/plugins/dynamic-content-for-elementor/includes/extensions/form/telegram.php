@@ -10,7 +10,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Telegram extends \ElementorPro\Modules\Forms\Classes\Action_Base
+class Telegram extends \ElementorPro\Modules\Forms\Classes\Action_Base
 {
     public $has_action = \true;
     public function get_name()
@@ -19,7 +19,7 @@ class DCE_Extension_Form_Telegram extends \ElementorPro\Modules\Forms\Classes\Ac
     }
     public function get_label()
     {
-        return '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Telegram', 'dynamic-content-for-elementor');
+        return '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Telegram', 'dynamic-content-for-elementor');
     }
     public function get_script_depends()
     {
@@ -29,10 +29,15 @@ class DCE_Extension_Form_Telegram extends \ElementorPro\Modules\Forms\Classes\Ac
     {
         return [];
     }
+    public function run_once()
+    {
+        $save_guard = \DynamicContentForElementor\Plugin::instance()->save_guard;
+        $save_guard->register_unsafe_control('form', 'dce_form_telegram_repeater::dce_form_telegram_token');
+    }
     public function register_settings_section($widget)
     {
         $widget->start_controls_section('section_dce_form_telegram', ['label' => $this->get_label(), 'condition' => ['submit_actions' => $this->get_name()]]);
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && !current_user_can('administrator')) {
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
             $widget->add_control('admin_notice', ['name' => 'admin_notice', 'type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="elementor-panel-alert elementor-panel-alert-warning">' . __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor') . '</div>']);
             $widget->end_controls_section();
             return;
@@ -40,7 +45,7 @@ class DCE_Extension_Form_Telegram extends \ElementorPro\Modules\Forms\Classes\Ac
         $repeater_fields = new \Elementor\Repeater();
         $repeater_fields->add_control('dce_form_telegram_enable', ['label' => __('Enable Message', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'description' => __('You can temporary disable and reactivate it next time without deleting settings', 'dynamic-content-for-elementor'), 'separator' => 'after']);
         $repeater_fields->add_control('dce_form_telegram_condition_field', ['label' => __('Condition', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the form field ID to check, or leave it empty to always execute this action', 'dynamic-content-for-elementor')]);
-        $repeater_fields->add_control('dce_form_telegram_condition_status', ['label' => __('Condition Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['empty' => ['title' => __('Empty', 'dynamic-content-for-elementor'), 'icon' => 'eicon-circle-o'], 'valued' => ['title' => __('Valorized with any value', 'dynamic-content-for-elementor'), 'icon' => 'eicon-dot-circle-o'], 'lt' => ['title' => __('Less than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-left'], 'gt' => ['title' => __('Greater than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'equal' => ['title' => __('Equal to', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle'], 'contain' => ['title' => __('Contain', 'dynamic-content-for-elementor'), 'icon' => 'eicon-check']], 'default' => 'valued', 'toggle' => \false, 'label_block' => \true, 'condition' => ['dce_form_telegram_condition_field!' => '']]);
+        $repeater_fields->add_control('dce_form_telegram_condition_status', ['label' => __('Condition Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['empty' => ['title' => __('Empty', 'dynamic-content-for-elementor'), 'icon' => 'eicon-circle-o'], 'valued' => ['title' => __('Valorized with any value', 'dynamic-content-for-elementor'), 'icon' => 'eicon-dot-circle-o'], 'lt' => ['title' => __('Less than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-left'], 'gt' => ['title' => __('Greater than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'equal' => ['title' => __('Equal to', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle'], 'contain' => ['title' => __('Contains', 'dynamic-content-for-elementor'), 'icon' => 'eicon-check']], 'default' => 'valued', 'toggle' => \false, 'label_block' => \true, 'condition' => ['dce_form_telegram_condition_field!' => '']]);
         $repeater_fields->add_control('dce_form_telegram_condition_value', ['label' => __('Condition Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('A value to compare the value of the field', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_telegram_condition_field!' => '', 'dce_form_telegram_condition_status' => ['lt', 'gt', 'equal', 'contain']]]);
         $repeater_fields->add_control('dce_form_telegram_token', ['label' => __('Telegram authorization token', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'render_type' => 'none', 'separator' => 'before']);
         $repeater_fields->add_control('dce_form_telegram_chat_id', ['label' => __('Chat ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'render_type' => 'none']);
@@ -159,12 +164,6 @@ class DCE_Extension_Form_Telegram extends \ElementorPro\Modules\Forms\Classes\Ac
             }
         }
     }
-    /**
-     * @param string      $email_content
-     * @param Form_Record $record
-     *
-     * @return string
-     */
     public function replace_content_shortcodes($email_content, $record, $line_break)
     {
         $all_fields_shortcode = '[all-fields]';

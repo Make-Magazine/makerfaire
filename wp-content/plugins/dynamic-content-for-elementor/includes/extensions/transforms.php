@@ -3,12 +3,12 @@
 namespace DynamicContentForElementor\Extensions;
 
 use Elementor\Controls_Manager;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Transform_Element;
+use DynamicContentForElementor\Controls\Group_Control_Transform_Element;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Transforms extends \DynamicContentForElementor\Extensions\DCE_Extension_Prototype
+class Transforms extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
     public $name = 'Transforms';
     public $has_controls = \true;
@@ -16,7 +16,7 @@ class DCE_Extension_Transforms extends \DynamicContentForElementor\Extensions\DC
     {
         $element_type = $element->get_type();
         $element->add_control('enabled_transform', ['label' => __('Transforms', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
-        $element->add_group_control(DCE_Group_Control_Transform_Element::get_type(), ['name' => 'transforms', 'label' => __('Transforms', 'dynamic-content-for-elementor'), 'default' => '', 'selector' => '{{WRAPPER}} .dce-transforms', 'condition' => ['enabled_transform!' => '']]);
+        $element->add_group_control(Group_Control_Transform_Element::get_type(), ['name' => 'transforms', 'label' => __('Transforms', 'dynamic-content-for-elementor'), 'default' => '', 'selector' => '{{WRAPPER}} .dce-transforms', 'condition' => ['enabled_transform!' => '']]);
     }
     protected function add_actions()
     {
@@ -38,7 +38,7 @@ class DCE_Extension_Transforms extends \DynamicContentForElementor\Extensions\DC
     public function transforms_render_template($content, $widget)
     {
         $settings = $widget->get_settings_for_display();
-        if ($settings['enabled_transform']) {
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() || $settings['enabled_transform']) {
             $content = '<div class="dce-transforms"><div class="dce-transforms-wrap">' . $content . '</div></div>';
         }
         return $content;

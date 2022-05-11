@@ -10,7 +10,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_BgCanvas extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class BgCanvas extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -20,7 +20,12 @@ class DCE_Widget_BgCanvas extends \DynamicContentForElementor\Widgets\WidgetProt
     {
         return ['dce-bgCanvas'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_bgcanvas', ['label' => __('Image', 'dynamic-content-for-elementor')]);
         $this->add_control('bgcanvas_image', ['label' => __('Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'dynamic' => ['active' => \true], 'default' => ['url' => \Elementor\Utils::get_placeholder_image_src()]]);
@@ -48,7 +53,7 @@ class DCE_Widget_BgCanvas extends \DynamicContentForElementor\Widgets\WidgetProt
         $this->add_control('postprocessing_pixels_size', ['label' => __('Pixels Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'frontend_available' => \true, 'default' => ['size' => 16], 'range' => ['px' => ['min' => 1, 'max' => 100, 'step' => 1]], 'condition' => ['postprocessing_pixels!' => '']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

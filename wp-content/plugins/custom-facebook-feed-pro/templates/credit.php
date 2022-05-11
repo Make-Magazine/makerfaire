@@ -13,6 +13,6 @@ $cff_show_credit = CFF_Utils::check_if_on( $atts['credit'] );
 
 if($cff_show_credit) :
 ?>
-<p class="cff-credit"><a href="https://smashballoon.com/custom-facebook-feed/" target="_blank" style="color: #<?php echo $cff_posttext_link_color ?>" title="<?php echo esc_attr('Smash Balloon Custom Facebook Feed WordPress Plugin') ?>"><span class="cff-credit-logo"></span>The Custom Facebook Feed plugin</a></p>
+<p class="cff-credit"><a href="https://smashballoon.com/custom-facebook-feed/" target="_blank" <?php echo $cff_posttext_link_style ?> title="<?php echo esc_attr('Smash Balloon Custom Facebook Feed WordPress Plugin') ?>"><span class="cff-credit-logo"></span>The Custom Facebook Feed plugin</a></p>
 <?php
-endif; 
+endif;

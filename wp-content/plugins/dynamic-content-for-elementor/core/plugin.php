@@ -3,7 +3,12 @@
 namespace DynamicContentForElementor;
 
 use DynamicContentForElementor\Helper;
+use DynamicContentForElementor\Features;
 use DynamicContentForElementor\Core\Upgrade\Manager as UpgradeManager;
+if (!\defined('ABSPATH')) {
+    exit;
+    // Exit if accessed directly.
+}
 /**
  * Main Plugin Class
  *
@@ -11,8 +16,45 @@ use DynamicContentForElementor\Core\Upgrade\Manager as UpgradeManager;
  */
 class Plugin
 {
-    public static $backup_path = \WP_CONTENT_DIR . '/backup';
-    static $instance;
+    /**
+     * @var \DynamicContentForElementor\LicenseSystem
+     */
+    public $license_system;
+    /**
+     * @var \DynamicContentForElementor\Features
+     */
+    public $features;
+    /**
+     * @var \DynamicContentForElementor\SaveGuard
+     */
+    public $save_guard;
+    /**
+     * @var \DynamicContentForElementor\Cryptocurrency
+     */
+    public $cryptocurrency;
+    /**
+     * @var \DynamicContentForElementor\PdfHtmlTemplates
+     */
+    public $pdf_html_templates;
+    /**
+     * @var \DynamicContentForElementor\TemplateSystem
+     */
+    public $template_system;
+    /**
+     * @var \DynamicContentForElementor\Updates
+     */
+    public $updates;
+    /**
+     * @var \DynamicContentForElementor\Stripe
+     */
+    public $stripe;
+    /**
+     * @var AdminPages\Manager
+     */
+    public $admin_pages;
+    public $assets;
+    protected static $instance;
+    public $cron;
     /**
      * @var UpgradeManager
      */
@@ -21,7 +63,6 @@ class Plugin
      * Constructor
      *
      * @since 0.0.1
-     *
      * @access public
      */
     public function __construct()
@@ -29,6 +70,9 @@ class Plugin
         self::$instance = $this;
         $this->init();
     }
+    /**
+     * @return Plugin
+     */
     public static function instance()
     {
         if (\is_null(self::$instance)) {
@@ -39,31 +83,54 @@ class Plugin
     public function init()
     {
         $this->init_managers();
-        // fire actions
         add_action('elementor/init', [$this, 'add_dce_to_elementor'], 0);
         add_filter('plugin_action_links_' . DCE_PLUGIN_BASE, [$this, 'plugin_action_links']);
         add_filter('plugin_row_meta', [$this, 'plugin_row_meta'], 10, 2);
-        add_filter('pre_handle_404', [$this, 'dce_allow_posts_pagination'], 999, 2);
+        add_filter('pre_handle_404', '\\DynamicContentForElementor\\Helper::allow_posts_pagination', 999, 2);
         add_action('elementor/element/form/section_form_fields/before_section_end', [$this, 'add_form_fields_enchanted_tab']);
     }
     public function init_managers()
     {
-        $this->features = new \DynamicContentForElementor\Features();
+        $this->save_guard = new \DynamicContentForElementor\SaveGuard();
+        $this->features = new Features();
         $this->controls = new \DynamicContentForElementor\Controls();
         $this->page_settings = new \DynamicContentForElementor\PageSettings();
-        $this->admin_pages_manager = new \DynamicContentForElementor\AdminPages\Manager();
+        $this->admin_pages = new \DynamicContentForElementor\AdminPages\Manager();
         $this->widgets = new \DynamicContentForElementor\Widgets();
         $this->stripe = new \DynamicContentForElementor\Stripe();
         $this->pdf_html_templates = new \DynamicContentForElementor\PdfHtmlTemplates();
         $this->cryptocurrency = new \DynamicContentForElementor\Cryptocurrency();
         new \DynamicContentForElementor\Ajax();
-        new \DynamicContentForElementor\Assets();
+        $this->assets = new \DynamicContentForElementor\Assets();
         new \DynamicContentForElementor\Dashboard();
-        new \DynamicContentForElementor\LicenseSystem();
-        new \DynamicContentForElementor\TemplateSystem();
+        $this->license_system = new \DynamicContentForElementor\LicenseSystem();
+        $this->updates = new \DynamicContentForElementor\Updates();
+        $this->cron = new \DynamicContentForElementor\Cron();
+        $this->template_system = new \DynamicContentForElementor\TemplateSystem();
         new \DynamicContentForElementor\Elements();
         // Init hook
         do_action('dynamic_content_for_elementor/init');
+    }
+    /**
+     * Activation fired by 'register_activation_hook'
+     */
+    public static function activation()
+    {
+        set_transient('dce_activation_redirect', \true, MINUTE_IN_SECONDS);
+    }
+    /**
+     * Uninstall fired by 'register_uninstall_hook'
+     */
+    public static function uninstall()
+    {
+        self::instance()->license_system->deactivate_license();
+        // If the deactivation request returns an error the license key is not removed, so it's better to remove the key manually
+        delete_option('dce_license_key');
+        self::instance()->cron->clear_all_tasks();
+        if (\defined('DCE_REMOVE_ALL_DATA') && DCE_REMOVE_ALL_DATA) {
+            delete_option(DCE_TEMPLATE_SYSTEM_OPTION);
+            delete_option(Features::FEATURES_STATUS_OPTION);
+        }
     }
     /**
      * Add Actions
@@ -79,8 +146,10 @@ class Plugin
         $this->upgrade = UpgradeManager::instance();
         // Controls
         add_action('elementor/controls/controls_registered', [$this->controls, 'on_controls_registered']);
-        // Controls Manager
-        \Elementor\Plugin::$instance->controls_manager = new \DynamicContentForElementor\DCE_Controls_Manager(\Elementor\Plugin::$instance->controls_manager);
+        // Force Dynamic Tags
+        if (!\defined('DCE_NO_CM_OVERRIDE') || !DCE_NO_CM_OVERRIDE) {
+            \Elementor\Plugin::$instance->controls_manager = new \DynamicContentForElementor\ForceDynamicTags();
+        }
         // Extensions
         $this->extensions = new \DynamicContentForElementor\Extensions();
         // Page Settings
@@ -114,73 +183,6 @@ class Plugin
             $plugin_meta = \array_merge($plugin_meta, $row_meta);
         }
         return $plugin_meta;
-    }
-    public function dce_allow_posts_pagination($preempt, $wp_query)
-    {
-        if ($preempt || empty($wp_query->query_vars['page']) || empty($wp_query->post) || !is_singular()) {
-            return $preempt;
-        }
-        $allow_pagination = \false;
-        $document = '';
-        $current_post_id = $wp_query->post->ID;
-        $dce_posts_widgets = ['dyncontel-acfposts', 'dce-dynamicposts-v2', 'dyncontel-dynamicusers', 'dce-sticky-posts', 'dce-my-posts', 'dce-dynamic-woo-products', 'dce-search-results', 'dce-dynamic-show-favorites', 'dce-woo-products-cart', 'dce-woo-product-upsells', 'dce-woo-product-crosssells'];
-        // Check if current post/page is built with Elementor and check for DCE posts pagination
-        if (\Elementor\Plugin::$instance->db->is_built_with_elementor($current_post_id) && !$allow_pagination) {
-            $allow_pagination = $this->dce_check_posts_pagination($current_post_id, $dce_posts_widgets);
-        }
-        $dce_template = get_option('dce_template');
-        // Check if single DCE template is active and check for DCE posts pagination in template
-        if (isset($dce_template) && 'active' == $dce_template && !$allow_pagination) {
-            $options = get_option('dyncontel_options');
-            $post_type = get_post_type($current_post_id);
-            if (\is_array($options) && $options['dyncontel_field_single' . $post_type]) {
-                $allow_pagination = $this->dce_check_posts_pagination($options['dyncontel_field_single' . $post_type], $dce_posts_widgets);
-            }
-        }
-        // Check if single Elementor Pro template is active and check for DCE posts pagination in template
-        if (Helper::is_elementorpro_active() && !$allow_pagination) {
-            $locations = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_locations_manager()->get_locations();
-            if (isset($locations['single'])) {
-                $location_docs = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager()->get_documents_for_location('single');
-                if (!empty($location_docs)) {
-                    foreach ($location_docs as $location_doc_id => $settings) {
-                        if ($wp_query->post->ID !== $location_doc_id && !$allow_pagination) {
-                            $allow_pagination = $this->dce_check_posts_pagination($location_doc_id, $dce_posts_widgets);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        if ($allow_pagination) {
-            return $allow_pagination;
-        } else {
-            return $preempt;
-        }
-    }
-    protected function dce_check_posts_pagination($post_id, $dce_posts_widgets, $current_page = null)
-    {
-        $pagination = \false;
-        if ($post_id) {
-            $document = \Elementor\Plugin::$instance->documents->get($post_id);
-            $document_elements = $document->get_elements_data();
-            // Check if DCE posts widgets are present and if pagination or infinite scroll is active
-            \Elementor\Plugin::$instance->db->iterate_data($document_elements, function ($element) use(&$pagination, $dce_posts_widgets) {
-                if (isset($element['widgetType']) && \in_array($element['widgetType'], $dce_posts_widgets, \true)) {
-                    if (isset($element['settings']['pagination_enable'])) {
-                        if ($element['settings']['pagination_enable']) {
-                            $pagination = \true;
-                        }
-                    }
-                    if (isset($element['settings']['infiniteScroll_enable'])) {
-                        if ($element['settings']['infiniteScroll_enable']) {
-                            $pagination = \true;
-                        }
-                    }
-                }
-            });
-        }
-        return $pagination;
     }
 }
 \DynamicContentForElementor\Plugin::instance();

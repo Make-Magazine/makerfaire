@@ -49,7 +49,9 @@ function initializeAmountField(wrapper, widget) {
 	let textBefore = hiddenInput.dataset.textBefore;
 	let textAfter = hiddenInput.dataset.textAfter;
 	let shouldRound = hiddenInput.dataset.shouldRound;
+	let shouldFormat = hiddenInput.dataset.shouldFormat === 'yes';
 	let roundPrecision = hiddenInput.dataset.roundPrecision;
+	let refreshOn = hiddenInput.dataset.refreshOn;
 	let realTime = hiddenInput.dataset.realTime === 'yes';
 	if (hiddenInput.dataset.hide == 'yes') {
 		wrapper.style.display = "none";
@@ -67,8 +69,13 @@ function initializeAmountField(wrapper, widget) {
 		if ( shouldRound === 'yes' ) {
 			result = Number(result).toFixed(roundPrecision);
 		}
+		if (hiddenInput.value === result) {
+			// Field not changed, nohting to do.
+			return;
+		}
+		let dispResult = shouldFormat ? Number(result).toLocaleString() : result;
 		hiddenInput.value = result;
-		visibleInput.value = textBefore + result + textAfter;
+		visibleInput.value = textBefore + dispResult + textAfter;
 		if ("createEvent" in document) {
 			var evt = document.createEvent("HTMLEvents");
 			evt.initEvent("change", false, true);
@@ -79,7 +86,7 @@ function initializeAmountField(wrapper, widget) {
 		};
 	}
 	onChange();
-	form.addEventListener('input', onChange);
+	form.addEventListener(refreshOn, onChange);
 }
 
 function initializeAllAmountFields($scope) {

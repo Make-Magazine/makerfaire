@@ -12,7 +12,7 @@ class ESSB_Elementor_Followers_Counter_Widget extends Widget_Base {
 	}
 	
 	public function get_icon() {
-		return 'fa fa-heart-o';
+		return 'eicon-heart-o';
 	}
 	
 	public function get_categories() {

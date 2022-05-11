@@ -441,7 +441,7 @@ if ( ! class_exists( 'GFCPTAddonBase' ) ) {
 				$terms = get_terms( $args );
 			}
 
-			if ( ! array_key_exists( "errors", $terms ) ) {
+			if ( ! isset( $terms->errors ) ) {
 				foreach ( $terms as $term ) {
 					$choices[] = array( 'value' => $term->term_id, 'text' => $term->name );
 				}
@@ -592,22 +592,42 @@ if ( ! class_exists( 'GFCPTAddonBase' ) ) {
 			return $return;
 		}
 
+		/**
+		 * @param $value
+		 * @param \GF_Field $field
+		 * @param $entry
+		 * @param $form
+		 *
+		 * @return mixed|string
+		 */
 		function display_term_name_on_entry_detail( $value, $field, $entry, $form ) {
+
+			if ( $field->populateTaxonomy && in_array( $field->get_input_type(), array( 'checkbox', 'multiselect' ) ) ) {
+				$values = GFFormsModel::get_lead_field_value( $entry, $field );
+				if ( $field->get_input_type() === 'multiselect' ) {
+					$values = json_decode( $values );
+				}
+				foreach ( $values as &$_value ) {
+					$_value = $this->get_term_name( $_value, $field );
+				}
+				return $field->get_value_entry_detail( $values );
+			}
+
 			return $this->get_term_name( $value, $field );
 		}
 
-		function display_term_name_on_entry_list( $value, $form_id, $field_id ) {
+		function display_term_name_on_entry_list( $value, $form_id, $field_id, $entry = null ) {
 
 			if ( is_numeric( $field_id ) ) {
-				$field = GFFormsModel::get_field( GFAPI::get_form( $form_id ), $field_id );
-				$value = $this->get_term_name( $value, $field );
+				$form  = GFAPI::get_form( $form_id );
+				$value = $this->display_term_name_on_entry_detail( $value, GFAPI::get_field( $form, $field_id ), $entry, $form );
 			}
 
 			return $value;
 		}
 
-		function display_term_name_on_export( $value, $form_id, $field_id ) {
-			return $this->display_term_name_on_entry_list( $value, $form_id, $field_id );
+		function display_term_name_on_export( $value, $form_id, $field_id, $entry = null ) {
+			return $this->display_term_name_on_entry_list( $value, $form_id, $field_id, $entry );
 		}
 
 		function get_post_title( $post_id, $field ) {

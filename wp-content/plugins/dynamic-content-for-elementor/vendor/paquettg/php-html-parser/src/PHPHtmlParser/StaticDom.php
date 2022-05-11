@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace DynamicOOOS\PHPHtmlParser;
 
-use DynamicOOOS\GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Request;
 use DynamicOOOS\GuzzleHttp\Client;
 use DynamicOOOS\PHPHtmlParser\Exceptions\ChildNotFoundException;
 use DynamicOOOS\PHPHtmlParser\Exceptions\CircularException;

@@ -25,6 +25,7 @@ namespace DynamicOOOS\Stripe\Service;
  * @property ExchangeRateService $exchangeRates
  * @property FileLinkService $fileLinks
  * @property FileService $files
+ * @property FinancialConnections\FinancialConnectionsServiceFactory $financialConnections
  * @property Identity\IdentityServiceFactory $identity
  * @property InvoiceItemService $invoiceItems
  * @property InvoiceService $invoices
@@ -34,6 +35,7 @@ namespace DynamicOOOS\Stripe\Service;
  * @property OrderReturnService $orderReturns
  * @property OrderService $orders
  * @property PaymentIntentService $paymentIntents
+ * @property PaymentLinkService $paymentLinks
  * @property PaymentMethodService $paymentMethods
  * @property PayoutService $payouts
  * @property PlanService $plans
@@ -57,6 +59,7 @@ namespace DynamicOOOS\Stripe\Service;
  * @property TaxCodeService $taxCodes
  * @property TaxRateService $taxRates
  * @property Terminal\TerminalServiceFactory $terminal
+ * @property TestHelpers\TestHelpersServiceFactory $testHelpers
  * @property TokenService $tokens
  * @property TopupService $topups
  * @property TransferService $transfers
@@ -67,7 +70,7 @@ class CoreServiceFactory extends \DynamicOOOS\Stripe\Service\AbstractServiceFact
     /**
      * @var array<string, string>
      */
-    private static $classMap = ['accountLinks' => AccountLinkService::class, 'accounts' => AccountService::class, 'applePayDomains' => ApplePayDomainService::class, 'applicationFees' => ApplicationFeeService::class, 'balance' => BalanceService::class, 'balanceTransactions' => BalanceTransactionService::class, 'billingPortal' => BillingPortal\BillingPortalServiceFactory::class, 'charges' => ChargeService::class, 'checkout' => Checkout\CheckoutServiceFactory::class, 'countrySpecs' => CountrySpecService::class, 'coupons' => CouponService::class, 'creditNotes' => CreditNoteService::class, 'customers' => CustomerService::class, 'disputes' => DisputeService::class, 'ephemeralKeys' => EphemeralKeyService::class, 'events' => EventService::class, 'exchangeRates' => ExchangeRateService::class, 'fileLinks' => FileLinkService::class, 'files' => FileService::class, 'identity' => Identity\IdentityServiceFactory::class, 'invoiceItems' => InvoiceItemService::class, 'invoices' => InvoiceService::class, 'issuing' => Issuing\IssuingServiceFactory::class, 'mandates' => MandateService::class, 'oauth' => OAuthService::class, 'orderReturns' => OrderReturnService::class, 'orders' => OrderService::class, 'paymentIntents' => PaymentIntentService::class, 'paymentMethods' => PaymentMethodService::class, 'payouts' => PayoutService::class, 'plans' => PlanService::class, 'prices' => PriceService::class, 'products' => ProductService::class, 'promotionCodes' => PromotionCodeService::class, 'quotes' => QuoteService::class, 'radar' => Radar\RadarServiceFactory::class, 'refunds' => RefundService::class, 'reporting' => Reporting\ReportingServiceFactory::class, 'reviews' => ReviewService::class, 'setupAttempts' => SetupAttemptService::class, 'setupIntents' => SetupIntentService::class, 'shippingRates' => ShippingRateService::class, 'sigma' => Sigma\SigmaServiceFactory::class, 'skus' => SkuService::class, 'sources' => SourceService::class, 'subscriptionItems' => SubscriptionItemService::class, 'subscriptions' => SubscriptionService::class, 'subscriptionSchedules' => SubscriptionScheduleService::class, 'taxCodes' => TaxCodeService::class, 'taxRates' => TaxRateService::class, 'terminal' => Terminal\TerminalServiceFactory::class, 'tokens' => TokenService::class, 'topups' => TopupService::class, 'transfers' => TransferService::class, 'webhookEndpoints' => WebhookEndpointService::class];
+    private static $classMap = ['accountLinks' => AccountLinkService::class, 'accounts' => AccountService::class, 'applePayDomains' => ApplePayDomainService::class, 'applicationFees' => ApplicationFeeService::class, 'balance' => BalanceService::class, 'balanceTransactions' => BalanceTransactionService::class, 'billingPortal' => BillingPortal\BillingPortalServiceFactory::class, 'charges' => ChargeService::class, 'checkout' => Checkout\CheckoutServiceFactory::class, 'countrySpecs' => CountrySpecService::class, 'coupons' => CouponService::class, 'creditNotes' => CreditNoteService::class, 'customers' => CustomerService::class, 'disputes' => DisputeService::class, 'ephemeralKeys' => EphemeralKeyService::class, 'events' => EventService::class, 'exchangeRates' => ExchangeRateService::class, 'fileLinks' => FileLinkService::class, 'files' => FileService::class, 'financialConnections' => FinancialConnections\FinancialConnectionsServiceFactory::class, 'identity' => Identity\IdentityServiceFactory::class, 'invoiceItems' => InvoiceItemService::class, 'invoices' => InvoiceService::class, 'issuing' => Issuing\IssuingServiceFactory::class, 'mandates' => MandateService::class, 'oauth' => OAuthService::class, 'orderReturns' => OrderReturnService::class, 'orders' => OrderService::class, 'paymentIntents' => PaymentIntentService::class, 'paymentLinks' => PaymentLinkService::class, 'paymentMethods' => PaymentMethodService::class, 'payouts' => PayoutService::class, 'plans' => PlanService::class, 'prices' => PriceService::class, 'products' => ProductService::class, 'promotionCodes' => PromotionCodeService::class, 'quotes' => QuoteService::class, 'radar' => Radar\RadarServiceFactory::class, 'refunds' => RefundService::class, 'reporting' => Reporting\ReportingServiceFactory::class, 'reviews' => ReviewService::class, 'setupAttempts' => SetupAttemptService::class, 'setupIntents' => SetupIntentService::class, 'shippingRates' => ShippingRateService::class, 'sigma' => Sigma\SigmaServiceFactory::class, 'skus' => SkuService::class, 'sources' => SourceService::class, 'subscriptionItems' => SubscriptionItemService::class, 'subscriptions' => SubscriptionService::class, 'subscriptionSchedules' => SubscriptionScheduleService::class, 'taxCodes' => TaxCodeService::class, 'taxRates' => TaxRateService::class, 'terminal' => Terminal\TerminalServiceFactory::class, 'testHelpers' => TestHelpers\TestHelpersServiceFactory::class, 'tokens' => TokenService::class, 'topups' => TopupService::class, 'transfers' => TransferService::class, 'webhookEndpoints' => WebhookEndpointService::class];
     protected function getServiceClass($name)
     {
         return \array_key_exists($name, self::$classMap) ? self::$classMap[$name] : null;

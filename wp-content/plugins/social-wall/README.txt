@@ -3,9 +3,9 @@ Author: Smash Balloon
 Contributors: smashballoon
 Support Website: http://smashballoon/social-wall/
 Tags: Social Media, Instagram, Twitter, Facebook, YouTube
-Requires at least: 3.4
-Tested up to: 5.8
-Stable tag: 1.0.4
+Requires at least: 4.1
+Tested up to: 5.9.3
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,6 +83,20 @@ The Social WAll plugin should work in compatibility with most, if not all, cachi
 == Screenshots ==
 
 == Changelog ==
+= 1.0.8 =
+* Fix: Updated the shortcode generator on the "Configure" tab to work with feeds created in version 2.0 of Custom Twitter Feeds.
+* Fix: New Twitter cards were not being created after updating Custom Twitter Feeds Pro.
+
+= 1.0.7 =
+* Fix: Added compatibility with version 2.0 of the Custom Twitter Feeds plugin.
+
+= 1.0.6 =
+* Fix: Updated the shortcode generator on the "Configure" tab to work with feeds created in version 6.0 of Instagram Feed.
+
+= 1.0.5 =
+* Fix: Instagram Feed accounts only being used with Social Wall would be removed after a period of time.
+* Fix: Fixed inability to disable some advanced settings once they were enabled.
+
 = 1.0.4 =
 * Fix: Added compatibility with version 4.0 of the Custom Facebook Feed plugin.
 

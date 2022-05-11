@@ -115,9 +115,9 @@ class CFF_Extensions {
 
     /**
      * Page Data to use in front end
-     * 
+     *
      * @since 4.0
-     * 
+     *
      * @return array
      */
     public function page_data() {
@@ -129,7 +129,7 @@ class CFF_Extensions {
 		if ( get_option('cff_license_key') ) {
 			$license_key = get_option('cff_license_key');
 		}
-        
+
         $installed_plugins = get_plugins();
 
         $cff_ext = is_plugin_active( 'cff-extensions/cff-extensions.php' );
@@ -233,7 +233,7 @@ class CFF_Extensions {
                     'icon' => '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect y="11" width="10" height="24" rx="1" fill="#BFE8FF"/><rect x="12" y="11" width="24" height="24" rx="1" fill="#0096CC"/><rect x="38" y="11" width="10" height="24" rx="1" fill="#BFE8FF"/></svg>',
                     'permalink' => 'http://smashballoon.com/extensions/carousel/?utm_campaign=facebook-pro&utm_source=extensions&utm_medium=carousel',
                     'installed' => $carosel_installed,
-                    'activated' => $cff_ext ? 
+                    'activated' => $cff_ext ?
                         isset( $cff_ext_options['cff_extensions_carousel_active'] ) && $cff_ext_options['cff_extensions_carousel_active'] == true :
                         is_plugin_active('cff-carousel/cff-carousel.php'),
                 ),
@@ -244,8 +244,8 @@ class CFF_Extensions {
                     'icon' => '<svg width="49" height="48" viewBox="0 0 49 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="17.9328" y="9.09863" width="24" height="24" rx="1" transform="rotate(10 17.9328 9.09863)" fill="#BFE8FF"/><rect x="9.66666" y="11" width="24" height="24" rx="1" fill="#0096CC"/><path fill-rule="evenodd" clip-rule="evenodd" d="M30.6666 29L24.6666 21L19.0829 27.3814L16.6667 24L12.6667 29H17.6666L17.6666 29H30.6666Z" fill="white"/><circle cx="17.6667" cy="19" r="2" fill="white"/></svg>',
                     'permalink' => 'http://smashballoon.com/extensions/album/?utm_campaign=facebook-pro&utm_source=extensions&utm_medium=album',
                     'installed' => $album_installed,
-                    'activated' => $cff_ext ? 
-                        isset( $cff_ext_options['cff_extensions_album_active'] ) && $cff_ext_options['cff_extensions_album_active'] == true : 
+                    'activated' => $cff_ext ?
+                        isset( $cff_ext_options['cff_extensions_album_active'] ) && $cff_ext_options['cff_extensions_album_active'] == true :
                         is_plugin_active('cff-album/cff-album.php'),
                 ),
                 'multifeed'  => array(
@@ -255,9 +255,9 @@ class CFF_Extensions {
                     'icon' => '<svg width="49" height="48" viewBox="0 0 49 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10.3826" y="11.1331" width="12" height="12" rx="1" transform="rotate(-10 10.3826 11.1331)" fill="#0096CC"/><rect x="12.3333" y="24" width="12" height="12" rx="1" fill="#BFE8FF"/><rect x="26.3333" y="10" width="12" height="12" rx="1" fill="#BFE8FF"/><rect x="26.3333" y="24" width="12" height="12" rx="1" fill="#BFE8FF"/></svg>',
                     'permalink' => 'http://smashballoon.com/extensions/multifeed/?utm_campaign=facebook-pro&utm_source=extensions&utm_medium=multifeed',
                     'installed' => $multifeed_installed,
-                    'activated' => $cff_ext ? 
-                        isset( $cff_ext_options['cff_extensions_multifeed_active'] ) && $cff_ext_options['cff_extensions_multifeed_active'] == true : 
-                        is_plugin_active('cff-multifeed/cff-multifeed.php'), 
+                    'activated' => $cff_ext ?
+                        isset( $cff_ext_options['cff_extensions_multifeed_active'] ) && $cff_ext_options['cff_extensions_multifeed_active'] == true :
+                        is_plugin_active('cff-multifeed/cff-multifeed.php'),
                 ),
                 'reviews'  => array(
                     'plugin' => $cff_ext ? 'cff_extensions_reviews_active' : 'cff-reviews/cff-reviews.php',
@@ -266,8 +266,8 @@ class CFF_Extensions {
                     'icon' => '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 8C5 7.44772 5.44772 7 6 7H42C42.5523 7 43 7.44772 43 8V30C43 30.5523 42.5523 31 42 31H29.4142C29.149 31 28.8946 31.1054 28.7071 31.2929L23.7385 36.2615C23.3359 36.6641 22.679 36.6498 22.2943 36.2301L17.7973 31.3243C17.6078 31.1176 17.3404 31 17.0601 31H6C5.44772 31 5 30.5523 5 30V8Z" fill="#BFE8FF"/><path d="M23.319 12.4765C23.587 11.8953 24.413 11.8953 24.681 12.4765L26.0813 15.5122C26.1905 15.749 26.415 15.9121 26.674 15.9428L29.9938 16.3364C30.6293 16.4118 30.8845 17.1973 30.4147 17.6318L27.9603 19.9016C27.7688 20.0787 27.683 20.3426 27.7339 20.5984L28.3854 23.8773C28.5101 24.505 27.8419 24.9905 27.2834 24.6779L24.3663 23.0451C24.1387 22.9177 23.8613 22.9177 23.6337 23.0451L20.7166 24.6779C20.1581 24.9905 19.4899 24.505 19.6146 23.8773L20.2661 20.5984C20.317 20.3426 20.2312 20.0787 20.0397 19.9016L17.5853 17.6318C17.1155 17.1973 17.3707 16.4118 18.0062 16.3364L21.326 15.9428C21.585 15.9121 21.8095 15.749 21.9187 15.5122L23.319 12.4765Z" fill="#0096CC"/></svg>',
                     'permalink' => 'http://smashballoon.com/extensions/reviews/?utm_campaign=facebook-pro&utm_source=extensions&utm_medium=reviews',
                     'installed' => $reviews_installed,
-                    'activated' => $cff_ext ? 
-                        isset( $cff_ext_options['cff_extensions_reviews_active'] ) && $cff_ext_options['cff_extensions_reviews_active'] == true : 
+                    'activated' => $cff_ext ?
+                        isset( $cff_ext_options['cff_extensions_reviews_active'] ) && $cff_ext_options['cff_extensions_reviews_active'] == true :
                         is_plugin_active('cff-reviews/cff-reviews.php'),
                 ),
                 'date_range'  => array(
@@ -277,8 +277,8 @@ class CFF_Extensions {
                     'icon' => '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M14 7.5C14 7.22386 14.2239 7 14.5 7H16.5C16.7761 7 17 7.22386 17 7.5V9H30V7.5C30 7.22386 30.2239 7 30.5 7H32.5C32.7761 7 33 7.22386 33 7.5V9H37C38.1046 9 39 9.89543 39 11V17H9V11C9 9.89543 9.89543 9 11 9H14V7.5Z" fill="#0096CC"/><path d="M9 17H39V36C39 37.1046 38.1046 38 37 38H11C9.89543 38 9 37.1046 9 36V17Z" fill="#BFE8FF"/></svg>',
                     'permalink' => 'http://smashballoon.com/extensions/date-range/?utm_campaign=facebook-pro&utm_source=extensions&utm_medium=date-range',
                     'installed' => $date_range_installed,
-                    'activated' => $cff_ext ? 
-                        isset( $cff_ext_options['cff_extensions_date_range_active'] ) && $cff_ext_options['cff_extensions_date_range_active'] == true : 
+                    'activated' => $cff_ext ?
+                        isset( $cff_ext_options['cff_extensions_date_range_active'] ) && $cff_ext_options['cff_extensions_date_range_active'] == true :
                         is_plugin_active('cff-date-range/cff-date-range.php'),
                 ),
                 'featured_posts'  => array(
@@ -288,8 +288,8 @@ class CFF_Extensions {
                     'icon' => '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="9.11111" y="7" width="31.7778" height="33" rx="1.22222" fill="#BFE8FF"/><path d="M9.11111 8.22222C9.11111 7.54721 9.65832 7 10.3333 7H39.6667C40.3417 7 40.8889 7.54721 40.8889 8.22222V30.2222H9.11111V8.22222Z" fill="#0096CC"/><path fill-rule="evenodd" clip-rule="evenodd" d="M36 25.3334L28.6667 15.5557L21.8421 23.3552L18.8889 19.2223L14 25.3334H20.1111H23.2557H36Z" fill="#F7FDFF"/><circle cx="20.1111" cy="14.3334" r="2.44444" fill="#F7FDFF"/><rect x="12.7778" y="33.8889" width="20.7778" height="2" fill="#0096CC"/></svg>',
                     'permalink' => 'http://smashballoon.com/extensions/featured-post/?utm_campaign=facebook-pro&utm_source=extensions&utm_medium=featured-post',
                     'installed' => $featured_posts_installed,
-                    'activated' => $cff_ext ? 
-                        isset( $cff_ext_options['cff_extensions_featured_post_active'] ) && $cff_ext_options['cff_extensions_featured_post_active'] == true : 
+                    'activated' => $cff_ext ?
+                        isset( $cff_ext_options['cff_extensions_featured_post_active'] ) && $cff_ext_options['cff_extensions_featured_post_active'] == true :
                         is_plugin_active('cff-featured-post/cff-featured-post.php'),
                 )
             ),
@@ -338,7 +338,7 @@ class CFF_Extensions {
                 'title' => __( 'Social Wall', 'custom-facebook-feed' ),
                 'description' => __( 'Get all our social plugins and use them in combination', 'custom-facebook-feed' ),
                 'graphic' => CFF_PLUGIN_URL . 'admin/assets/img/social-wall-graphic.png',
-                'permalink' => sprintf('https://smashballoon.com/social-wall/demo?license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=extensions&utm_medium=social-wall', $license_key),
+                'permalink' => sprintf('https://smashballoon.com/social-wall/demo?edd_license_key=%s&upgrade=true&utm_campaign=facebook-pro&utm_source=extensions&utm_medium=social-wall', $license_key),
                 'installed' => isset( $installed_plugins['social-wall/social-wall.php'] ) ? true : false,
                 'activated' => is_plugin_active('social-wall/social-wall.php'),
             ),

@@ -10,7 +10,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly.
 }
-class DCE_Settings_SmoothTransition extends \DynamicContentForElementor\Includes\Settings\DCE_Settings_Prototype
+class SmoothTransition extends \DynamicContentForElementor\Includes\Settings\DCE_Settings_Prototype
 {
     public static $name = 'Smooth Transition';
     public function __construct()
@@ -49,11 +49,11 @@ class DCE_Settings_SmoothTransition extends \DynamicContentForElementor\Includes
             'selector_wrapper' => ['label' => __('Selector Wrapper', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'label_block' => \true, 'placeholder' => __('Type CSS selector (e.g.:#wrapper)', 'dynamic-content-for-elementor'), 'frontend_available' => \true, 'dynamic' => ['active' => \false], 'condition' => ['enable_smoothtransition' => 'yes']],
             'dce_smoothtransition_class_debug' => ['type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="dce-class-debug">...</div>', 'content_classes' => 'dce_class_debug', 'condition' => ['enable_smoothtransition' => 'yes']],
             'dce_smoothtransition_class_controller' => ['label' => __('Controller', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => '', 'frontend_available' => \true, 'selectors' => [$wrapper . $target_smoothTransition => '
-              position: relative;
-              opacity: 0;
-              will-change: opacity;
-              -webkit-animation-fill-mode: both;
-                      animation-fill-mode: both;', $wrapper . '.elementor-editor-active' . $target_smoothTransition . ', ' . $wrapper . '.elementor-editor-preview' . $target_smoothTransition => 'opacity: 1;'], 'condition' => ['enable_smoothtransition' => 'yes']],
+						position: relative;
+						opacity: 0;
+						will-change: opacity;
+						-webkit-animation-fill-mode: both;
+                      	animation-fill-mode: both;', $wrapper . '.elementor-editor-active' . $target_smoothTransition . ', ' . $wrapper . '.elementor-editor-preview' . $target_smoothTransition => 'opacity: 1;'], 'condition' => ['enable_smoothtransition' => 'yes']],
             'dce_smoothtransition_settings_note' => ['type' => Controls_Manager::RAW_HTML, 'raw' => __('The selector wrapper is very important for the proper functioning of the transitions. It indicates the part of the page that needs to be transformed. <a href="https://help.dynamic.ooo/en/articles/4952536-html-structure-of-themes" target="_blank">This article can help you.</a>', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['enable_smoothtransition' => 'yes']],
             'a_class' => ['label' => __('Target [a href] CLASS', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXTAREA, 'label_block' => \true, 'row' => 3, 'default' => 'a:not([target="_blank"]):not([href=""]):not([href^="uploads"]):not([href^="#"]):not([href^="mailto"]):not([href^="tel"]):not(.no-transition):not(.gallery-lightbox):not(.elementor-clickable):not(.oceanwp-lightbox):not(.is-lightbox):not(.elementor-icon):not(.download-link):not([href*="elementor-action"]):not(.dialog-close-button):not([data-elementor-open-lightbox="yes"])', 'placeholder' => 'a:not([target="_blank"]):not([href=""]):not([href^="uploads"]):not([href^="#"]):not([href^="mailto"]):not([href^="tel"]):not(.no-transition):not(.gallery-lightbox):not(.elementor-clickable):not(.oceanwp-lightbox):not(.is-lightbox):not(.elementor-icon):not(.download-link):not([href*="elementor-action"]):not(.dialog-close-button)', 'frontend_available' => \true, 'separator' => 'before', 'condition' => ['enable_smoothtransition' => 'yes', 'dce_smoothtransition_class_controller!' => '']],
             // OUT

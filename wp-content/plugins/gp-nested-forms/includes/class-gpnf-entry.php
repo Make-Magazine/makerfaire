@@ -68,7 +68,12 @@ class GPNF_Entry {
 
 	public function has_children() {
 
-		$entry             = $this->get_entry();
+		$entry = $this->get_entry();
+
+		if ( is_wp_error( $entry ) ) {
+			return false;
+		}
+
 		$form              = GFAPI::get_form( $entry['form_id'] );
 		$has_nested_fields = gp_nested_forms()->has_nested_form_field( $form );
 
@@ -124,7 +129,17 @@ class GPNF_Entry {
 		return $this->_entry;
 	}
 
-	public function set_parent_form( $parent_form_id, $parent_entry_id = false ) {
+	/**
+	 * @deprecated 1.0.2
+	 *
+	 * @return int
+	 */
+	public function set_parent_form( $parent_form_id, &$parent_entry_id = false ) {
+		_deprecated_function( 'GPNF_Entry::set_parent_form', '1.0.1', 'GPNF_Entry::set_parent_meta' );
+		return $this->set_parent_meta( $parent_form_id, $parent_entry_id );
+	}
+
+	public function set_parent_meta( $parent_form_id, $parent_entry_id = false ) {
 		/**
 		 * Filter parent entry ID
 		 *
@@ -154,6 +169,7 @@ class GPNF_Entry {
 		gform_update_meta( $this->_entry_id, self::ENTRY_PARENT_FORM_KEY, $parent_form_id );
 		$this->_entry[ self::ENTRY_PARENT_FORM_KEY ] = $parent_form_id;
 
+		return $parent_entry_id;
 	}
 
 	public function set_nested_form_field( $nested_form_field_id ) {
@@ -183,10 +199,10 @@ class GPNF_Entry {
 
 		$form = GFAPI::get_form( $this->_entry['form_id'] );
 
-		$entry       = $this->_entry;
-		$entry['id'] = null; // Force GFCommon::get_order_total() to get an un-cached total.
+		// Force GFCommon::get_order_total() to get an un-cached total.
+		gform_delete_meta( $this->_entry['id'], 'gform_product_info__' );
 
-		$total        = GFCommon::get_order_total( $form, $entry );
+		$total        = GFCommon::get_order_total( $form, $this->_entry );
 		$this->_total = $total;
 
 	}

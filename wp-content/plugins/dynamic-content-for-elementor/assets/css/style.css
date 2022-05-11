@@ -39,11 +39,6 @@ button[disabled], html input[disabled] {
   z-index: 9999;
 }
 
-/* Helpers */
-body.elementor-dce {
-  overflow-x: hidden;
-}
-
 .elementor:not(.elementor-bc-flex-widget) .elementor-widget-wrap.dce-block,
 .dce-block {
   display: block;
@@ -344,7 +339,9 @@ body.modal-p-off .wrap-p .close .dce-quit-ics {
 }
 
 /* ELEMENTOR PRO FORM */
-.elementor-field-group .elementor-select-wrapper::after {
+
+/* Arrow for Select2 */
+body:not(.rtl) .elementor-field-group .elementor-select-wrapper::after {
   content: "\e92a";
   font-family: eicons;
   font-size: 15px;

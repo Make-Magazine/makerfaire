@@ -33,7 +33,7 @@ final class Middleware
                 }
                 $cookieJar = $options['cookies'];
                 $request = $cookieJar->withCookieHeader($request);
-                return $handler($request, $options)->then(static function (ResponseInterface $response) use($cookieJar, $request) : \Psr\Http\Message\ResponseInterface {
+                return $handler($request, $options)->then(static function (ResponseInterface $response) use($cookieJar, $request) : ResponseInterface {
                     $cookieJar->extractCookies($request, $response);
                     return $response;
                 });
@@ -126,7 +126,7 @@ final class Middleware
      */
     public static function redirect() : callable
     {
-        return static function (callable $handler) : \GuzzleHttp\RedirectMiddleware {
+        return static function (callable $handler) : RedirectMiddleware {
             return new RedirectMiddleware($handler);
         };
     }
@@ -147,7 +147,7 @@ final class Middleware
      */
     public static function retry(callable $decider, callable $delay = null) : callable
     {
-        return static function (callable $handler) use($decider, $delay) : \GuzzleHttp\RetryMiddleware {
+        return static function (callable $handler) use($decider, $delay) : RetryMiddleware {
             return new RetryMiddleware($decider, $handler, $delay);
         };
     }
@@ -171,11 +171,11 @@ final class Middleware
         }
         return static function (callable $handler) use($logger, $formatter, $logLevel) : callable {
             return static function (RequestInterface $request, array $options = []) use($handler, $logger, $formatter, $logLevel) {
-                return $handler($request, $options)->then(static function ($response) use($logger, $request, $formatter, $logLevel) : \Psr\Http\Message\ResponseInterface {
+                return $handler($request, $options)->then(static function ($response) use($logger, $request, $formatter, $logLevel) : ResponseInterface {
                     $message = $formatter->format($request, $response);
                     $logger->log($logLevel, $message);
                     return $response;
-                }, static function ($reason) use($logger, $request, $formatter) : \GuzzleHttp\Promise\PromiseInterface {
+                }, static function ($reason) use($logger, $request, $formatter) : PromiseInterface {
                     $response = $reason instanceof RequestException ? $reason->getResponse() : null;
                     $message = $formatter->format($request, $response, P\Create::exceptionFor($reason));
                     $logger->error($message);
@@ -190,7 +190,7 @@ final class Middleware
      */
     public static function prepareBody() : callable
     {
-        return static function (callable $handler) : \GuzzleHttp\PrepareBodyMiddleware {
+        return static function (callable $handler) : PrepareBodyMiddleware {
             return new PrepareBodyMiddleware($handler);
         };
     }

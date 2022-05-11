@@ -66,6 +66,13 @@ class ESSBAfterCloseShare3 {
 		}
 
 		if ($is_active) {
+		    /**
+		     * Activate the module main CSS styles
+		     */
+		    if (class_exists('ESSB_Module_Assets')) {
+		        ESSB_Module_Assets::register_after_share_actions();
+		    }
+		      
 			add_action ( 'wp_enqueue_scripts', array ($this, 'check_after_postload_settings' ), 1 );
 		}
 	}
@@ -115,7 +122,7 @@ class ESSBAfterCloseShare3 {
 			remove_action ( 'wp_footer', array ($this, 'generate_popular_posts' ), 99 );
 				
 		}
-		else {
+		else {		   		    
 			$this->load($is_active_option);
 		}
 	}

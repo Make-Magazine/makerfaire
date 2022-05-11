@@ -2,7 +2,7 @@
 
 namespace DynamicOOOS\GuzzleHttp\Handler;
 
-use DynamicOOOS\GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Response;
 use DynamicOOOS\GuzzleHttp\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

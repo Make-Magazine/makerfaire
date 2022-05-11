@@ -1,6 +1,6 @@
 <?php
 
-namespace DynamicOOOS\GuzzleHttp\Psr7;
+namespace GuzzleHttp\Psr7;
 
 use Psr\Http\Message\StreamInterface;
 /**
@@ -11,7 +11,7 @@ use Psr\Http\Message\StreamInterface;
  */
 class CachingStream implements StreamInterface
 {
-    use StreamDecoratorTrait;
+    use \GuzzleHttp\Psr7\StreamDecoratorTrait;
     /** @var StreamInterface Stream being wrapped */
     private $remoteStream;
     /** @var int Number of bytes to skip reading due to a write on the buffer */
@@ -25,7 +25,7 @@ class CachingStream implements StreamInterface
     public function __construct(StreamInterface $stream, StreamInterface $target = null)
     {
         $this->remoteStream = $stream;
-        $this->stream = $target ?: new Stream(Utils::tryFopen('php://temp', 'r+'));
+        $this->stream = $target ?: new \GuzzleHttp\Psr7\Stream(\GuzzleHttp\Psr7\Utils::tryFopen('php://temp', 'r+'));
     }
     public function getSize()
     {
@@ -114,8 +114,8 @@ class CachingStream implements StreamInterface
     }
     private function cacheEntireStream()
     {
-        $target = new FnStream(['write' => 'strlen']);
-        Utils::copyToStream($this, $target);
+        $target = new \GuzzleHttp\Psr7\FnStream(['write' => 'strlen']);
+        \GuzzleHttp\Psr7\Utils::copyToStream($this, $target);
         return $this->tell();
     }
 }

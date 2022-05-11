@@ -1,5 +1,31 @@
 # Change Log
 
+## 3.2.1 - 2022-04-19
+
+### Fixed
+- Fixed Uncaught TypeError: in_array()
+
+## 3.2.0 - 2022-04-18
+
+### Added
+- Members Notifications
+
+### Changed
+- Converted `jQuery.fn.click()` (deprecated) to `jQuery.fn.on('click')`
+- Replaced references to Affiliate Royale with Easy Affiliate
+- WP Tested Up To version (5.9)
+
+## 3.1.7 - 2021-12-30
+
+### Fixed
+- Hierarchical roles missing settings
+
+### Changed
+
+- Refactored checks for whether MemberPress is active; added `members_is_memberpress_active()`
+- "Paid Memberships" section of Content Permissions meta box should not show when MemberPress is active
+- Changed wording from "Upgrade to MemberPress" to "Add MemberPress"
+
 ## 3.1.6 - 2021-10-28
 
 ### Fixed
@@ -64,7 +90,7 @@
 
 ### Changed
 
-- Admin UI 
+- Admin UI
 
 ## 3.0.10 - 2020-06-23
 
@@ -74,7 +100,7 @@
 
 ## 3.0.9 - 2020-06-22
 
-### Fixed 
+### Fixed
 
 - Fixed issue with ACF integration trying to bump priority on ACF menu
 

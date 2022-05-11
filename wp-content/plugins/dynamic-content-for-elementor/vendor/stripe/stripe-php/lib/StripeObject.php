@@ -177,7 +177,9 @@ class StripeObject implements \ArrayAccess, \Countable, \JsonSerializable
     {
         return \array_key_exists($k, $this->_values) ? $this->_values[$k] : null;
     }
-    // Countable method
+    /**
+     * @return int
+     */
     #[\ReturnTypeWillChange]
     public function count()
     {
@@ -352,6 +354,9 @@ class StripeObject implements \ArrayAccess, \Countable, \JsonSerializable
             return $value;
         }
     }
+    /**
+     * @return mixed
+     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {

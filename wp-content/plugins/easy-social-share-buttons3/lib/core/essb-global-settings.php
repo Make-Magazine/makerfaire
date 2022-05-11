@@ -33,7 +33,6 @@ class ESSBGlobalSettings {
 	public static $facebookadvanced = false;
 	public static $facebookadvancedappid = "";
 	public static $fbmessengerapp = "";
-	public static $activate_ga_campaign_tracking = "";
 	public static $twitter_message_optimize = false;
 	public static $sidebar_pos = "";	
 	
@@ -112,7 +111,6 @@ class ESSBGlobalSettings {
 		self::$pinterest_sniff_disable = essb_options_bool_value( 'pinterest_sniff_disable' );
 		self::$facebookadvanced = essb_options_bool_value( 'facebookadvanced' );
 		self::$facebookadvancedappid = essb_options_value( 'facebookadvancedappid' );
-		self::$activate_ga_campaign_tracking = essb_options_value( 'activate_ga_campaign_tracking' );
 		self::$twitter_message_optimize = essb_options_bool_value( 'twitter_message_optimize' );
 		self::$sidebar_pos = essb_option_value('sidebar_pos');
 		

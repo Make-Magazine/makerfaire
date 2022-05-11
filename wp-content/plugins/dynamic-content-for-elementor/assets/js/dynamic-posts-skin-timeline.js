@@ -129,7 +129,7 @@ var Widget_DCE_Dynamicposts_timeline_Handler = function ($scope, $) {
 
     initTimeline();
 
-	// Funzione di callback eseguita quando avvengono le mutazioni
+	// Callback function executed when mutations occur
 	var Dyncontel_MutationObserverCallback = function(mutationsList, observer) {
 	    for(var mutation of mutationsList) {
 	        if (mutation.type == 'attributes') {
@@ -141,12 +141,13 @@ var Widget_DCE_Dynamicposts_timeline_Handler = function ($scope, $) {
 	        }
 	    }
 	};
-	observe_Dyncontel_element($scope[0], Dyncontel_MutationObserverCallback);
+	dceObserveElement($scope[0], Dyncontel_MutationObserverCallback);
 };
 
 jQuery(window).on('elementor/frontend/init', function () {
     elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamicposts-v2.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamic-woo-products.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamic-woo-products-on-sale.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamic-show-favorites.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-my-posts.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.timeline', Widget_DCE_Dynamicposts_timeline_Handler);

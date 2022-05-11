@@ -383,25 +383,6 @@
 
 			}
 
-			// Deprecate ------
-			function dce_toBase64( url,callback ) {
-				var img = new Image();
-				img.crossOrigin = "anonymous";
-				img.onload = function () {
-					var canvas = document.createElement( "canvas" );
-					var ctx = canvas.getContext( "2d" );
-					canvas.height = this.height;
-					canvas.width = this.width;
-					ctx.drawImage( this,0,0 );
-
-					var dataURL = canvas.toDataURL( "image/png" );
-					callback( dataURL );
-					canvas = null;
-				};
-
-				img.src = url;
-			}
-
 		};
 
 		$( window ).on( 'elementor/frontend/init',function () {

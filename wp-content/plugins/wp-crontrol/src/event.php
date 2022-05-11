@@ -1,8 +1,6 @@
 <?php
 /**
  * Functions related to cron events.
- *
- * @package wp-crontrol
  */
 
 namespace Crontrol\Event;
@@ -100,7 +98,7 @@ function force_schedule_single_event( $hook, $args = array() ) {
 		'schedule' => $event->schedule,
 		'args'     => $event->args,
 	);
-	uksort( $crons, 'strnatcasecmp' );
+	ksort( $crons );
 
 	$result = _set_cron_array( $crons );
 
@@ -163,8 +161,14 @@ function add( $next_run_local, $schedule, $hook, array $args ) {
 	}
 
 	if ( '_oneoff' === $schedule || '' === $schedule ) {
+		/**
+		 * @var bool|null|\WP_Error $result
+		 */
 		$result = wp_schedule_single_event( $next_run_utc, $hook, $args, true );
 	} else {
+		/**
+		 * @var bool|null|\WP_Error $result
+		 */
 		$result = wp_schedule_event( $next_run_utc, $schedule, $hook, $args, true );
 	}
 
@@ -209,6 +213,9 @@ function delete( $hook, $sig, $next_run_utc ) {
 		return $event;
 	}
 
+	/**
+	 * @var bool|null|\WP_Error $unscheduled
+	 */
 	$unscheduled = wp_unschedule_event( $event->timestamp, $event->hook, $event->args, true );
 
 	/**
@@ -240,7 +247,7 @@ function delete( $hook, $sig, $next_run_utc ) {
 /**
  * Returns a flattened array of cron events.
  *
- * @return stdClass[] An array of cron event objects.
+ * @return array<string,stdClass> An array of cron event objects keyed by unique signature.
  */
 function get() {
 	$crons  = get_core_cron_array();
@@ -278,13 +285,14 @@ function get() {
 /**
  * Gets a single cron event.
  *
- * @param string $hook         The hook name of the event.
- * @param string $sig          The event signature.
- * @param string $next_run_utc The UTC time that the event would be run at.
+ * @param string     $hook         The hook name of the event.
+ * @param string     $sig          The event signature.
+ * @param string|int $next_run_utc The UTC time that the event would be run at.
  * @return stdClass|WP_Error A cron event object, or a WP_Error if it's not found.
  */
 function get_single( $hook, $sig, $next_run_utc ) {
 	$crons = get_core_cron_array();
+	$next_run_utc = (int) $next_run_utc;
 
 	if ( isset( $crons[ $next_run_utc ][ $hook ][ $sig ] ) ) {
 		$event = $crons[ $next_run_utc ][ $hook ][ $sig ];

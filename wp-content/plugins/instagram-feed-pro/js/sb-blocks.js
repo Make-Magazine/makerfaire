@@ -50,6 +50,8 @@
                 _props$attributes$exe = _props$attributes.executed,
                 executed = _props$attributes$exe === void 0 ? false : _props$attributes$exe;
 
+            props.attributes.shortcodeSettings = shortcodeSettings;
+
             function setState(shortcodeSettingsContent) {
                 setAttributes({
                     noNewChanges: false,
@@ -87,7 +89,7 @@
                 key: "sbi-gutenberg-settings",
                 className: "sbi-gutenberg-settings",
                 label: sbi_block_editor.i18n.shortcodeSettings,
-                help: sbi_block_editor.i18n.example + ": 'user=\"smashballoon\" showbutton=\"true\"'",
+                help: sbi_block_editor.i18n.example + ": feed=\"1\"",
                 value: shortcodeSettings,
                 onChange: setState
             }), React.createElement(Button, {

@@ -219,7 +219,18 @@ body.admin_page_dce_info {
   box-sizing: border-box;
   color: #fff;
 }
-
+.notice img.dce-logo {
+  width: 36px;
+  height: 36px;
+}
+body:not(.rtl) .notice img.dce-logo {
+  float: left;
+  margin: 0 15px 0 0;
+}
+body.rtl .notice img.dce-logo {
+  float: right;
+  margin: 0 0 0 15px;
+}
 .dce-notice {
   background: #fff;
   border-left: 4px solid #fff;
@@ -1014,8 +1025,8 @@ body.admin_page_dce_info {
   border-radius: 20px;
 }
 .dce-modules>div.dce-feature p.legacy {
-  background: #AB0000;
-  color: white;
+  border: 1px solid #AB0000;
+  color: #AB0000;
   padding: 10px;
   font-size: 10px;
   border-radius: 20px;
@@ -1076,8 +1087,8 @@ body.admin_page_dce_info {
   flex-direction: column;
 }
 
-.dce-modules>div.dce-feature.required-plugin {
-  background: #FDEFEF;
+.dce-modules>div.dce-feature.required-plugin, .dce-modules>div.dce-feature.required-php {
+  background: #ededed;
 }
 
 .dce-modules>div.dce-feature .warning {
@@ -1122,6 +1133,24 @@ a.dce-feature-activate-all, a.dce-feature-deactivate-all {
   margin-top: 20px;
   height: 50px;
 }
+.required-plugin .dce-check div.deactivated, .required-php .dce-check div.deactivated {
+  position: absolute;
+  top: 7%;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  border-radius: 50%;
+  width: 51px;
+  height: 51px;
+  box-shadow: 0 7px 10px #ccc;
+}
+.required-plugin .warning, .required-php .warning  {
+  position: absolute;
+  top: 12%;
+}
+.dce-check div.deactivated:before {
+  top: 33%;
+}
 .dce-check [id^="dce-feature-"]
 {
     display: none !important;
@@ -1151,8 +1180,7 @@ a.dce-feature-activate-all, a.dce-feature-deactivate-all {
   margin: 0;
 }
 
-.dce-check label:before
-{
+.dce-check label:before {
     content: "";
     position: absolute;
     top: 33%;

@@ -3,21 +3,26 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Breadcrumbs extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class Breadcrumbs extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
         return ['dce-breadcrumbs'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_options', ['label' => __('Options', 'dynamic-content-for-elementor')]);
         if (!\function_exists('yoast_breadcrumb') || !$this->is_yoast_breadcrumbs()) {
@@ -45,7 +50,7 @@ class DCE_Widget_Breadcrumbs extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('separator_color', ['label' => __('Separator Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-separator span' => 'color: {{VALUE}};']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -61,7 +66,7 @@ class DCE_Widget_Breadcrumbs extends \DynamicContentForElementor\Widgets\WidgetP
         }
         $id_page = Helper::get_the_id();
         if (\function_exists('yoast_breadcrumb') && $this->is_yoast_breadcrumbs()) {
-            \yoast_breadcrumb('<div id="' . $id . '" class="' . $class . '">', '</div>');
+            \yoast_breadcrumb('<div>', '</div>');
         } else {
             // Get the query & post information
             global $post, $wp_query;
@@ -169,7 +174,7 @@ class DCE_Widget_Breadcrumbs extends \DynamicContentForElementor\Widgets\WidgetP
             if (empty($options_yoast)) {
                 $options_yoast = get_option('wpseo_internallinks');
             }
-            $breadcrumbs_yoast = \true === (!empty($options_yoast['breadcrumbs-enable']) && $options_yoast['breadcrumbs-enable']);
+            $breadcrumbs_yoast = \true === !empty($options_yoast['breadcrumbs-enable']);
         }
         return $breadcrumbs_yoast;
     }

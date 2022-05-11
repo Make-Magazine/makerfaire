@@ -15,6 +15,9 @@ class ImageTypeGuesser
             // 0xFF 0xD8	// mpDF 5.7.2
             return 'jpeg';
         }
+        if (\in_array(\substr($data, 0, 4), ['RIFF'], \true)) {
+            return 'webp';
+        }
         if (\in_array(\substr($data, 0, 6), ['GIF87a', 'GIF89a'], \true)) {
             return 'gif';
         }

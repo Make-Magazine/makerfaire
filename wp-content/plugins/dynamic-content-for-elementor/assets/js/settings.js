@@ -24,7 +24,7 @@ function dceGetElementSettings($element) {
         return elementSettings;
 }
 
-function observe_Dyncontel_element( $target, $function_callback ){
+function dceObserveElement( $target, $function_callback ){
     if (elementorFrontend.isEditMode()) {
         // Seleziona il nodo di cui monitare la mutazione
         var elemToObserve = $target;

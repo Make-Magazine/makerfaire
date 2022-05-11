@@ -2,31 +2,8 @@
 
 namespace DynamicContentForElementor;
 
-trait Trait_Woo
+trait Woo
 {
-    /**
-     * Find matching product variation
-     *
-     * @param WC_Product $product
-     * @param array $attributes
-     * @return int Matching variation ID or 0.
-     */
-    public function find_matching_product_variation($product, $attributes)
-    {
-        foreach ($attributes as $key => $value) {
-            if (\strpos($key, 'attribute_') === 0) {
-                continue;
-            }
-            unset($attributes[$key]);
-            $attributes[\sprintf('attribute_%s', $key)] = $value;
-        }
-        if (\class_exists('WC_Data_Store')) {
-            $data_store = \WC_Data_Store::load('product');
-            return $data_store->find_matching_product_variation($product, $attributes);
-        } else {
-            return $product->get_matching_variation($attributes);
-        }
-    }
     public function get_fields()
     {
         $fields = array();

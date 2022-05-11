@@ -119,8 +119,9 @@ if (!function_exists('essb_is_plugin_deactivated_on')) {
             }
         }
                 
-        if (!$is_deactivated) {
-            if (essb_is_mobile() && essb_option_bool_value('deactivate_mobile')) {
+        // refactor: moving the above change to elimiate the mobile callback if option is not used
+        if (!$is_deactivated && essb_option_bool_value('deactivate_mobile')) {
+            if (essb_is_mobile()) {
                 $is_deactivated = true;
             }
         }
@@ -209,8 +210,14 @@ if (!function_exists('essb_is_position_active')) {
         $content_position = essb_option_value('content_position');
         $button_positions = essb_option_value('button_position');
         
+        $mobile_position = essb_option_value('button_position_mobile');
+        
         if (!is_array($button_positions)) {
             $button_positions = array();
+        }
+        
+        if (!is_array($mobile_position)) {
+            $mobile_position = array();
         }
         
         if (essb_option_bool_value('positions_by_pt') && isset($post)) {
@@ -246,7 +253,7 @@ if (!function_exists('essb_is_position_active')) {
             }
         }
         
-        return $content_position == $position || in_array($position, $button_positions);
+        return $content_position == $position || in_array($position, $button_positions) || in_array($position, $mobile_position);
     }
 }
 
@@ -416,5 +423,26 @@ if (!function_exists('essb_generate_deactivate_running_uri')) {
         }
         
         return $uris;
+    }
+}
+
+if (!function_exists('essb_is_responsive_mobile')) {
+    /**
+     * Check if positions for responsive mode are enabled
+     * @return boolean
+     */
+    function essb_is_responsive_mobile() {
+        $mode = essb_sanitize_option_value('functions_mode_mobile');
+        
+        if ($mode == 'advanced' && !essb_option_bool_value('mobile_positions')) {
+            $mode = '';
+        }
+        
+        $mobile_positions = essb_option_value('functions_mode_mobile_auto_responsive');
+        if (!is_array($mobile_positions)) {
+            $mobile_positions = array();
+        }        
+        
+        return $mode == '' && count($mobile_positions) > 0;
     }
 }

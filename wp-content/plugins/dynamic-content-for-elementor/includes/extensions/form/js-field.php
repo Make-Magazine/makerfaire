@@ -24,6 +24,11 @@ if (!\defined('ABSPATH')) {
 class JsField extends \ElementorPro\Modules\Forms\Fields\Field_Base
 {
     public $depended_scripts = ['dce-js-field'];
+    public function run_once()
+    {
+        $save_guard = \DynamicContentForElementor\Plugin::instance()->save_guard;
+        $save_guard->register_unsafe_control('form', 'form_fields::dce_js_field_code');
+    }
     public function __construct()
     {
         add_action('elementor/widget/print_template', function ($template, $widget) {
@@ -56,7 +61,7 @@ class JsField extends \ElementorPro\Modules\Forms\Fields\Field_Base
     }
     public function update_controls($widget)
     {
-        if (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
             return;
         }
         $elementor = Plugin::elementor();
@@ -68,11 +73,6 @@ class JsField extends \ElementorPro\Modules\Forms\Fields\Field_Base
         $control_data['fields'] = $this->inject_field_controls($control_data['fields'], $field_controls);
         $widget->update_control('form_fields', $control_data);
     }
-    /**
-     * @param      $item
-     * @param      $item_index
-     * @param Form $form
-     */
     public function render($item, $item_index, $form)
     {
         $method = $form->get_settings('form_method');
@@ -85,7 +85,7 @@ class JsField extends \ElementorPro\Modules\Forms\Fields\Field_Base
         $code = $item['dce_js_field_code'];
         $full_code = <<<EOD
 jQuery(window).on('dce/jsfield-loaded', () => {
-\tdceJsField.registerRefresherGenerator("{$item['custom_id']}", (getField) => {
+\tdceJsField.registerRefresherGenerator("{$item['custom_id']}", (getField, updateSelf) => {
 \t\t{$code}
 \t})
 });

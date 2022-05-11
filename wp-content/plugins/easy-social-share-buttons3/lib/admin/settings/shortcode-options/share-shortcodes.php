@@ -31,9 +31,10 @@ if (!function_exists('essb_get_shortcode_options_social_share_display')) {
 	function essb_get_shortcode_options_social_share_display() {
 		$r = array();
 		
-		$r['design'] = array('type' => 'select', 'title' => esc_html__('Custom display/position', 'essb'),
+		$r['display'] = array('type' => 'select', 'title' => esc_html__('Custom display/position', 'essb'),
 				'options' => essb5_get_custom_positions());
 		$r['force'] = array('type' => 'checkbox', 'title' => esc_html__('Always show', 'essb'), 'description' => esc_html__('Display the custom display/position even when the position is not marked as active in the Where to Display menu.', 'essb'));
+		$r['archive'] = array('type' => 'checkbox', 'title' => esc_html__('Used on archives', 'essb'), '');
 		return $r;
 	}
 }

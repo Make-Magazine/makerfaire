@@ -67,6 +67,19 @@ if (!function_exists('essb_register_messenger')) {
 			$extra_options .= ' logged_out_greeting="'.esc_attr($fbmessenger_loggedout_greeting).'"';
 		}
 		
+		/**
+		 * @since 8.3
+		 */
+		$fbmessenger_greeting_dialog = essb_sanitize_option_value('fbmessenger_greeting_dialog');
+		if (!empty($fbmessenger_greeting_dialog)) {
+		    $extra_options .= ' greeting_dialog_display="'.$fbmessenger_greeting_dialog.'"';
+		}
+		
+		$fbmessenger_greeting_dialog_delay = essb_sanitize_option_value('fbmessenger_greeting_dialog_delay');
+		if (!empty($fbmessenger_greeting_dialog_delay)) {
+		    $extra_options .= ' greeting_dialog_delay="'.$fbmessenger_greeting_dialog_delay.'"';
+		}
+		
 		$minimized_state = essb_option_bool_value('fbmessenger_minimized');				
 		echo '<div class="fb-customerchat" page_id="'.esc_attr(essb_option_value('fbmessenger_pageid')).'" '.($minimized_state ? 'minimized="true"' : '').$extra_options.'></div>';
 		

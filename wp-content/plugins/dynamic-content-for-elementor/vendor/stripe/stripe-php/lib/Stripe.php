@@ -42,7 +42,7 @@ class Stripe
     private static $maxRetryAfter = 60.0;
     /** @var float Initial delay between retries, in seconds */
     private static $initialNetworkRetryDelay = 0.5;
-    const VERSION = '7.107.0';
+    const VERSION = '7.127.0';
     /**
      * @return string the API key used for requests
      */

@@ -220,7 +220,7 @@ class CFF_Resizer {
 		if ( is_array( $ids_or_feed_id ) ) {
 			$ids = $ids_or_feed_id;
 
-			$id_string = "'" . implode( "','", $ids ) . "'";
+			$id_string = "'" . implode( "','", esc_sql( $ids ) ) . "'";
 			$results = $wpdb->get_results( "
 			SELECT p.media_id, p.facebook_id, p.sizes
 			FROM $posts_table_name AS p
@@ -383,11 +383,6 @@ class CFF_Resizer {
 	 */
 	public function image_resizing_disabled() {
 		$disable_resizing = isset( $this->feed_options['disableresize'] ) ? $this->feed_options['disableresize'] === 'on' || $this->feed_options['disableresize'] === true : false;
-
-		if ( ! $disable_resizing ) {
-			$disable_resizing = isset( $this->resizing_tables_exist ) ? ! $this->resizing_tables_exist : ! $this->does_resizing_tables_exist();
-		}
-
 		return $disable_resizing;
 	}
 
@@ -407,7 +402,7 @@ class CFF_Resizer {
 
         $cff_resizing_cache = wp_cache_get( $resizing_key );
 
-		if ( false === $cff_resizing_cache ) {			
+		if ( false === $cff_resizing_cache ) {
 
 			if ( $wpdb->get_var( "show tables like '$table_name'" ) == $table_name ) {
 				wp_cache_set( $resizing_key, true );

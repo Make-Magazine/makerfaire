@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Image_Size;
@@ -13,12 +13,12 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Utils;
 use DynamicContentForElementor\Helper;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_CSS;
+use DynamicContentForElementor\Controls\Group_Control_Filters_CSS;
 // Exit if accessed directly
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Toolset extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class ToolsetFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -28,7 +28,12 @@ class DCE_Widget_Toolset extends \DynamicContentForElementor\Widgets\WidgetProto
     {
         return ['dce-toolset'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => __('Toolset', 'dynamic-content-for-elementor')]);
         $this->add_control('toolset_field_list', ['label' => __('Fields list', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'empty', 'groups' => $this->get_toolset_fields()]);
@@ -40,14 +45,14 @@ class DCE_Widget_Toolset extends \DynamicContentForElementor\Widgets\WidgetProto
         $this->add_control('toolset_text_after', ['label' => __('Text after', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'condition' => ['toolset_field_type!' => 'video']]);
         $this->add_control('toolset_url_enable', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['toolset_field_type' => 'url']]);
         $this->add_control('toolset_url_custom_text', ['label' => __('Custom URL text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'condition' => ['toolset_field_type' => 'url']]);
-        $this->add_control('toolset_url_target', ['label' => __('Target type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['_self' => __('_self', 'dynamic-content-for-elementor'), '_blank' => __('_blank', 'dynamic-content-for-elementor'), '_parent' => __('_parent', 'dynamic-content-for-elementor'), '_top' => __('_top', 'dynamic-content-for-elementor')], 'default' => '_self', 'condition' => ['toolset_field_type' => 'url']]);
+        $this->add_control('toolset_url_target', ['label' => __('Target type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['_self' => '_self', '_blank' => '_blank', '_parent' => '_parent', '_top' => '_top'], 'default' => '_self', 'condition' => ['toolset_field_type' => 'url']]);
         $this->add_control('toolset_date_format', ['label' => __('Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 0, 'options' => ['default' => __('Default from WordPress settings', 'dynamic-content-for-elementor'), '%Y%m%d' => __('YYYYMMDD', 'dynamic-content-for-elementor'), '%Y-%m-%d' => __('YYYY-MM-DD', 'dynamic-content-for-elementor'), '%d/%m/%Y' => __('DD/MM/YYYY', 'dynamic-content-for-elementor'), '%d-%m-%Y' => __('DD-MM-YYYY', 'dynamic-content-for-elementor'), '%Y-%m-%d %H:%M:%S' => __('YYYY-MM-DD H:M:S', 'dynamic-content-for-elementor'), '%d/%m/%Y %H:%M:%S' => __('DD/MM/YY H:M:S', 'dynamic-content-for-elementor'), '%d/%m/%y' => __('D/M/Y', 'dynamic-content-for-elementor'), '%d-%m-%y' => __('D-M-Y', 'dynamic-content-for-elementor'), '%I:%M %p' => __('H:M (12 hours)', 'dynamic-content-for-elementor'), '%A %m %B %Y' => __('Full date', 'dynamic-content-for-elementor'), '%A %m %B %Y at %H:%M' => __('Full date with hours', 'dynamic-content-for-elementor'), 'timestamp' => __('Timestamp', 'dynamic-content-for-elementor'), 'custom' => __('Custom', 'dynamic-content-for-elementor')], 'condition' => ['toolset_field_type' => 'date']]);
         $this->add_control('toolset_date_custom_format', ['label' => __('Custom date format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'condition' => ['toolset_date_format' => 'custom'], 'description' => __('See PHP strftime() function reference', 'dynamic-content-for-elementor')]);
         $this->add_group_control(Group_Control_Image_Size::get_type(), ['name' => 'size', 'label' => __('Image Size', 'dynamic-content-for-elementor'), 'default' => 'large', 'condition' => ['toolset_field_type' => 'image']]);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right'], 'justify' => ['title' => __('Justified', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-justify']], 'default' => '', 'prefix_class' => 'align-dce-', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};'], 'condition' => ['toolset_field_type' => ['textfield', 'url', 'image', 'phone', 'email', 'textarea', 'wysiwyg', 'date', 'numeric']]]);
         $this->add_control('use_bg', ['label' => __('Background', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '0', 'condition' => ['toolset_field_type' => 'image']]);
         $this->add_control('bg_position', ['label' => __('Background position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'top center', 'options' => ['' => __('Default', 'dynamic-content-for-elementor'), 'top left' => __('Top Left', 'dynamic-content-for-elementor'), 'top center' => __('Top Center', 'dynamic-content-for-elementor'), 'top right' => __('Top Right', 'dynamic-content-for-elementor'), 'center left' => __('Center Left', 'dynamic-content-for-elementor'), 'center center' => __('Center Center', 'dynamic-content-for-elementor'), 'center right' => __('Center Right', 'dynamic-content-for-elementor'), 'bottom left' => __('Bottom Left', 'dynamic-content-for-elementor'), 'bottom center' => __('Bottom Center', 'dynamic-content-for-elementor'), 'bottom right' => __('Bottom Right', 'dynamic-content-for-elementor')], 'selectors' => ['{{WRAPPER}} .dynamic-content-for-elementor-toolset-bg' => 'background-position: {{VALUE}};'], 'condition' => ['toolset_field_type' => 'image', 'use_bg' => '1']]);
-        $this->add_control('bg_extend', ['label' => __('Extend background', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'condition' => ['use_bg' => '1'], 'prefix_class' => 'extendbg-', 'condition' => ['toolset_field_type' => 'image', 'use_bg' => '1']]);
+        $this->add_control('bg_extend', ['label' => __('Extend background', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'prefix_class' => 'extendbg-', 'condition' => ['toolset_field_type' => 'image', 'use_bg' => '1']]);
         $this->add_responsive_control('height', ['label' => __('Minimum height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 200, 'unit' => 'px'], 'tablet_default' => ['unit' => 'px'], 'mobile_default' => ['unit' => 'px'], 'size_units' => ['px', '%', 'vh'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 1000], 'vh' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dynamic-content-for-elementor-toolset-bg' => 'min-height: {{SIZE}}{{UNIT}};'], 'condition' => ['toolset_field_type' => 'image', 'use_bg' => '1']]);
         $this->add_control('toolset_phone_number_enable', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'label_off' => __('No', 'dynamic-content-for-elementor'), 'label_on' => __('Yes', 'dynamic-content-for-elementor'), 'default' => 'yes', 'condition' => ['toolset_field_type' => 'phone']]);
         $this->add_control('toolset_phone_number_custom_text', ['label' => __('Custom phone number', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '', 'condition' => ['toolset_field_type' => 'phone']]);
@@ -77,7 +82,7 @@ class DCE_Widget_Toolset extends \DynamicContentForElementor\Widgets\WidgetProto
     protected function get_toolset_fields()
     {
         $fieldList = array();
-        $fieldList[0] = __('Select the field', 'dynamic-content-for-elementor');
+        $fieldList[0] = __('Select the field...', 'dynamic-content-for-elementor');
         if (Helper::is_plugin_active('types')) {
             $toolset_groups = wpcf_admin_fields_get_groups();
             foreach ($toolset_groups as $group) {
@@ -105,7 +110,7 @@ class DCE_Widget_Toolset extends \DynamicContentForElementor\Widgets\WidgetProto
         }
         return $fieldList;
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -140,11 +145,13 @@ class DCE_Widget_Toolset extends \DynamicContentForElementor\Widgets\WidgetProto
                 if (\preg_match('/href="(.*?)" /', $f->value, $match) == 1) {
                     $url = $match[1];
                 }
-                $text_url = $url;
+                if (isset($url)) {
+                    $text_url = $url;
+                }
                 if (!empty($settings['toolset_url_custom_text'])) {
                     $text_url = wp_kses_post($settings['toolset_url_custom_text']);
                 }
-                if ($settings['toolset_url_enable']) {
+                if ($settings['toolset_url_enable'] && isset($url)) {
                     $html = '<a href="' . $url . '" target="' . $settings['toolset_url_target'] . '"> ' . $text_url . '</a>';
                 } else {
                     $html = $text_url;

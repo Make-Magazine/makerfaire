@@ -16,7 +16,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Extension_Form_Amount extends \ElementorPro\Modules\Forms\Fields\Field_Base
+class Amount extends \ElementorPro\Modules\Forms\Fields\Field_Base
 {
     public $depended_scripts = ['dce-amount-field'];
     public function __construct()
@@ -29,6 +29,11 @@ class DCE_Extension_Form_Amount extends \ElementorPro\Modules\Forms\Fields\Field
             return $template;
         }, 10, 2);
         parent::__construct();
+    }
+    public function run_once()
+    {
+        $save_guard = \DynamicContentForElementor\Plugin::instance()->save_guard;
+        $save_guard->register_unsafe_control('form', 'dce_amount_expression');
     }
     public function get_script_depends()
     {
@@ -48,7 +53,7 @@ class DCE_Extension_Form_Amount extends \ElementorPro\Modules\Forms\Fields\Field
     }
     public function update_controls($widget)
     {
-        if (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
             return;
         }
         $field_controlsor = ProPlugin::elementor();
@@ -56,13 +61,13 @@ class DCE_Extension_Form_Amount extends \ElementorPro\Modules\Forms\Fields\Field
         if (is_wp_error($control_data)) {
             return;
         }
-        $field_controls = ['dce_amount_expression' => ['name' => 'dce_amount_expression', 'label' => __('Amount Expression', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('[form:field_1] * [form:field_2] + 1.4', 'dynamic-content-for-elementor'), 'label_block' => \true, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'amount']]], 'frontend_available' => \true, 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_text_before' => ['name' => 'dce_amount_text_before', 'label' => __('Text Before', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'amount']]], 'frontend_available' => \true, 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_text_after' => ['name' => 'dce_amount_text_after', 'label' => __('Text After', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'amount']]], 'frontend_available' => \true, 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_hide' => ['name' => 'dce_amount_hide', 'label' => __('Hide Amount', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Do not display Amount value in frontend form, use its value only in Actions (like Email)', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'field_type', 'value' => 'amount']]], 'frontend_available' => \true, 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_should_round' => ['name' => 'dce_amount_should_round', 'label' => __('Round result', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['field_type' => $this->get_type()], 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_round_precision' => ['name' => 'dce_amount_round_precision', 'label' => __('Round Precision', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 2, 'condition' => ['field_type' => $this->get_type(), 'dce_amount_should_round' => 'yes'], 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab']];
+        $field_controls = ['dce_amount_expression' => ['name' => 'dce_amount_expression', 'label' => __('Amount Expression', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('[form:field_1] * [form:field_2] + 1.4', 'dynamic-content-for-elementor'), 'label_block' => \true, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => $this->get_type()]]], 'frontend_available' => \true, 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_text_before' => ['name' => 'dce_amount_text_before', 'label' => __('Text Before', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => $this->get_type()]]], 'frontend_available' => \true, 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_text_after' => ['name' => 'dce_amount_text_after', 'label' => __('Text After', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'conditions' => ['terms' => [['name' => 'field_type', 'value' => $this->get_type()]]], 'frontend_available' => \true, 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_hide' => ['name' => 'dce_amount_hide', 'label' => __('Hide Amount', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Do not display Amount value in frontend form, use its value only in Actions (like Email)', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'field_type', 'value' => $this->get_type()]]], 'frontend_available' => \true, 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_should_round' => ['name' => 'dce_amount_should_round', 'label' => __('Round result', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['field_type' => $this->get_type()], 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_round_precision' => ['name' => 'dce_amount_round_precision', 'label' => __('Round Precision', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 2, 'condition' => ['field_type' => $this->get_type(), 'dce_amount_should_round' => 'yes'], 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_should_format' => ['name' => 'dce_amount_should_format', 'label' => __('Format Number', 'dynamic-content-for-elementor'), 'description' => __('Format depends on the user browser default language. English example: 10000.65 will be displayed as 10,000.65.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['field_type' => $this->get_type()], 'tabs_wrapper' => 'form_fields_tabs', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab'], 'dce_amount_refresh_on' => ['name' => 'dce_amount_refresh_on', 'label' => esc_html__('Update on', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['input' => esc_html__('Input', 'dynamic-content-for-elementor'), 'change' => esc_html__('Change', 'dynamic-content-for-elementor')], 'default' => 'input', 'description' => __('‘Input’ will update on every key pressed, ‘Change’ only when the field is blurred (use this if you have performance problems)', 'dynamic-content-for-elementor'), 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]]];
         $control_data['fields'] = $this->inject_field_controls($control_data['fields'], $field_controls);
         $widget->update_control('form_fields', $control_data);
     }
     public function add_style_controls($widget)
     {
-        $widget->start_controls_section('dce_amount_section_style', ['label' => '<span class="color-dce icon icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Amount', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
+        $widget->start_controls_section('dce_amount_section_style', ['label' => '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . __('Amount', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $widget->add_control('dce_amount_heading_input', ['label' => __('Input', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING]);
         $widget->add_responsive_control('dce_amount_align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'selectors' => ['{{WRAPPER}} .elementor-field-type-amount.elementor-field-group .dce-amount-visible' => 'text-align: {{VALUE}};']]);
         $widget->add_responsive_control('dce_amount_opacity', ['label' => __('Opacity (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 1], 'range' => ['px' => ['max' => 1, 'min' => 0.1, 'step' => 0.01]], 'selectors' => ['{{WRAPPER}} .elementor-field-type-amount.elementor-field-group .dce-amount-visible' => 'opacity: {{SIZE}};']]);
@@ -85,7 +90,7 @@ class DCE_Extension_Form_Amount extends \ElementorPro\Modules\Forms\Fields\Field
         $method = $form->get_settings('form_method');
         if ($method === 'post' || $method === 'get') {
             echo '<p><span class="elementor-message elementor-message-danger elementor-help-inline elementor-form-help-inline" role="alert">';
-            echo __('Amount is not compatible with the Method Extension Post and Get options.', 'dynamic-content-for-elementor');
+            echo __('Amount is not compatible with the Method Extension POST and GET options.', 'dynamic-content-for-elementor');
             echo '</span></p>';
             return;
         }
@@ -111,6 +116,8 @@ EOD;
         $form->add_render_attribute('input' . $item_index, 'data-text-after', $item['dce_amount_text_after'] ?? '');
         $form->add_render_attribute('input' . $item_index, 'data-should-round', $item['dce_amount_should_round'] ?? '');
         $form->add_render_attribute('input' . $item_index, 'data-round-precision', $item['dce_amount_round_precision'] ?? '');
+        $form->add_render_attribute('input' . $item_index, 'data-refresh-on', $item['dce_amount_refresh_on'] ?? 'input');
+        $form->add_render_attribute('input' . $item_index, 'data-should-format', $item['dce_amount_should_format'] ?? '');
         $form->add_render_attribute('input' . $item_index, 'type', 'hidden');
         $form->add_render_attribute('input' . $item_index, 'class', 'dce-amount-hidden');
         $form->add_render_attribute('input' . $item_index, 'style', 'display: none;');

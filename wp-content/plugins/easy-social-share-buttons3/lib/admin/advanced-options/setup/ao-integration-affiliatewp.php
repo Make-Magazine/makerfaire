@@ -11,4 +11,7 @@ essb5_draw_select_option('affwp_active_mode', esc_html__('ID Append Mode', 'essb
 essb5_draw_switch_option('affwp_active_shortcode', esc_html__('Append Affiliate ID to shortcodes', 'essb'), esc_html__('Automatically appends an affiliate\'s ID to Easy Social Share Buttons sharing links that are generated when shortcode has a custom url parameter.', 'essb'));
 essb5_draw_switch_option('affwp_active_pretty', esc_html__('Use pretty affiliate URLs', 'essb'), esc_html__('Activate this option if you already have make it active inside AffiliateWP to allow Easy Social Share Buttons generate pretty affiliate URLs.', 'essb'));
 
+essb5_draw_switch_option('affwp_bridge_short', esc_html__('Generate separate short URL when affiliate ID is added', 'essb'), esc_html__('The option will integrate the affiliate ID checks inside short URL generation. This will help to build a separate short URL for each of the affiliate users. The option works only if the short URL option inside the plugin is enabled.', 'essb'));
+
+
 essb_advancedopts_section_close();

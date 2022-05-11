@@ -13,7 +13,7 @@ class Cryptocurrency
     private $is_sandbox;
     private $api_key;
     private $fiat_and_crypto_info = \false;
-    public const CACHE_MAX_AGES = ['1m' => 60, '5m' => 60 * 5, '15m' => 60 * 15, '1h' => 60 * 60];
+    const CACHE_MAX_AGES = ['1m' => 60, '5m' => 60 * 5, '15m' => 60 * 15, '1h' => 60 * 60];
     public function is_sandbox()
     {
         return $this->is_sandbox;
@@ -41,7 +41,7 @@ class Cryptocurrency
         \curl_setopt_array($curl, array(\CURLOPT_URL => $request, \CURLOPT_HTTPHEADER => $headers, \CURLOPT_RETURNTRANSFER => 1));
         $response = \curl_exec($curl);
         if (\curl_error($curl)) {
-            throw new \DynamicContentForElementor\CryptocurrencyApiError('Coinmarketcap API Connection Error');
+            throw new \DynamicContentForElementor\CryptocurrencyApiError('Coinmarketcap API Connection Error: ' . \curl_error($curl));
         }
         \curl_close($curl);
         $data = \json_decode($response, \true);

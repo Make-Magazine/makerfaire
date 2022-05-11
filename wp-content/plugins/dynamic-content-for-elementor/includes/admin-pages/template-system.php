@@ -11,7 +11,7 @@ class TemplateSystem
     private $options = [];
     public function __construct()
     {
-        $this->options = get_option(DCE_OPTIONS);
+        $this->options = get_option(DCE_TEMPLATE_SYSTEM_OPTION);
     }
     private function _dce_settings_select_template($dce_key, $templates)
     {
@@ -27,7 +27,7 @@ class TemplateSystem
 		<select class="dce-select-template dce-select js-dce-select" id="<?php 
         echo $dce_key;
         ?>" name="<?php 
-        echo DCE_OPTIONS;
+        echo DCE_TEMPLATE_SYSTEM_OPTION;
         ?>[<?php 
         echo $dce_key;
         ?>]">
@@ -74,7 +74,7 @@ class TemplateSystem
             ?>checked="" <?php 
         }
         ?>name="<?php 
-        echo DCE_OPTIONS;
+        echo DCE_TEMPLATE_SYSTEM_OPTION;
         ?>[<?php 
         echo $dce_key_template;
         ?>]" id="<?php 
@@ -104,7 +104,7 @@ class TemplateSystem
 		<select id="<?php 
         echo $dce_key_template;
         ?>" name="<?php 
-        echo DCE_OPTIONS;
+        echo DCE_TEMPLATE_SYSTEM_OPTION;
         ?>[<?php 
         echo $dce_key_template;
         ?>]" class="dce-select js-dce-select">
@@ -163,7 +163,7 @@ class TemplateSystem
         ?>
 				<div class="field-group">
 					<input class="dce-input dce-input-md" type="number" min="1" name="<?php 
-        echo DCE_OPTIONS;
+        echo DCE_TEMPLATE_SYSTEM_OPTION;
         ?>[<?php 
         echo $dce_col_md;
         ?>]" id="<?php 
@@ -172,7 +172,7 @@ class TemplateSystem
         echo $dce_col_md_val;
         ?>">
 					<input class="dce-input dce-input-sm" type="number" min="1" name="<?php 
-        echo DCE_OPTIONS;
+        echo DCE_TEMPLATE_SYSTEM_OPTION;
         ?>[<?php 
         echo $dce_col_sm;
         ?>]" id="<?php 
@@ -181,7 +181,7 @@ class TemplateSystem
         echo $dce_col_sm_val;
         ?>">
 					<input class="dce-input dce-input-xs" type="number" min="1" name="<?php 
-        echo DCE_OPTIONS;
+        echo DCE_TEMPLATE_SYSTEM_OPTION;
         ?>[<?php 
         echo $dce_col_xs;
         ?>]" id="<?php 
@@ -219,10 +219,10 @@ class TemplateSystem
 		<?php 
         // SAVING DCE TEMPLATE SETTINGS
         if (isset($_POST['action']) && $_POST['action'] == 'update') {
-            update_option(DCE_OPTIONS, Helper::recursive_sanitize_text_field($_POST[DCE_OPTIONS]));
+            update_option(DCE_TEMPLATE_SYSTEM_OPTION, Helper::recursive_sanitize_text_field($_POST[DCE_TEMPLATE_SYSTEM_OPTION]));
             update_option('dce_template', Helper::recursive_sanitize_text_field($_POST['dce_template']));
-            $this->options = Helper::recursive_sanitize_text_field($_POST[DCE_OPTIONS]);
-            Notice::dce_admin_notice__success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
+            $this->options = Helper::recursive_sanitize_text_field($_POST[DCE_TEMPLATE_SYSTEM_OPTION]);
+            Notice::success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
         }
         $templates = array(__('None', 'dynamic-content-for-elementor'));
         $get_templates = Helper::get_templates();
@@ -288,8 +288,6 @@ class TemplateSystem
         $preview[$chiave] = get_author_posts_url(get_current_user_id());
         $dceTemplate['other-pages']['options'][$chiave] = __('User', 'dynamic-content-for-elementor');
         $dceTemplate['other-pages']['templates'][$chiave]['archive'] = __('Archive', 'dynamic-content-for-elementor');
-        $dce_template_option = get_option('dce_template');
-        $dce_template_active = 'active' == $dce_template_option ? \true : \false;
         ?>
 
 	<div class="dce-nav-menus-template nav-menus-php">
@@ -305,7 +303,7 @@ class TemplateSystem
 							<br>
 							<label class="dce-radio-container dce-radio-container-template" onclick="jQuery(this).closest('.accordion-container').find('.accordion-section').addClass('open').removeClass('dce-disabled'); jQuery('#menu-management-liquid').removeClass('dce-disabled');">
 								<input value="active" type="radio"<?php 
-        if ($dce_template_active) {
+        if (\DynamicContentForElementor\Plugin::instance()->template_system->is_active()) {
             ?> checked="checked"<?php 
         }
         ?> name="dce_template">
@@ -316,7 +314,7 @@ class TemplateSystem
 							</label>
 							<label class="dce-radio-container dce-radio-container-template" onclick="jQuery(this).closest('.accordion-container').find('.accordion-section').removeClass('open').addClass('dce-disabled'); jQuery('#menu-management-liquid').addClass('dce-disabled');">
 								<input value="inactive" type="radio"<?php 
-        if (!$dce_template_active) {
+        if (!\DynamicContentForElementor\Plugin::instance()->template_system->is_active()) {
             ?> checked="checked"<?php 
         }
         ?> name="dce_template">
@@ -685,7 +683,7 @@ class TemplateSystem
                             ?> checked="checked"<?php 
                         }
                         ?> name="<?php 
-                        echo DCE_OPTIONS;
+                        echo DCE_TEMPLATE_SYSTEM_OPTION;
                         ?>[<?php 
                         echo $dce_tkey;
                         ?>]">
@@ -700,7 +698,7 @@ class TemplateSystem
                             ?> checked="checked"<?php 
                         }
                         ?> name="<?php 
-                        echo DCE_OPTIONS;
+                        echo DCE_TEMPLATE_SYSTEM_OPTION;
                         ?>[<?php 
                         echo $dce_tkey;
                         ?>]">
@@ -715,7 +713,7 @@ class TemplateSystem
                             ?> checked="checked"<?php 
                         }
                         ?> name="<?php 
-                        echo DCE_OPTIONS;
+                        echo DCE_TEMPLATE_SYSTEM_OPTION;
                         ?>[<?php 
                         echo $dce_tkey;
                         ?>]">
@@ -760,7 +758,7 @@ class TemplateSystem
                             ?> checked="checked"<?php 
                         }
                         ?> name="<?php 
-                        echo DCE_OPTIONS;
+                        echo DCE_TEMPLATE_SYSTEM_OPTION;
                         ?>[<?php 
                         echo $dce_tkey;
                         ?>]">
@@ -775,7 +773,7 @@ class TemplateSystem
                             ?> checked="checked"<?php 
                         }
                         ?> name="<?php 
-                        echo DCE_OPTIONS;
+                        echo DCE_TEMPLATE_SYSTEM_OPTION;
                         ?>[<?php 
                         echo $dce_tkey;
                         ?>]">
@@ -790,7 +788,7 @@ class TemplateSystem
                             ?> checked="checked"<?php 
                         }
                         ?> name="<?php 
-                        echo DCE_OPTIONS;
+                        echo DCE_TEMPLATE_SYSTEM_OPTION;
                         ?>[<?php 
                         echo $dce_tkey;
                         ?>]">
@@ -804,7 +802,7 @@ class TemplateSystem
                             ?> checked="checked"<?php 
                         }
                         ?> name="<?php 
-                        echo DCE_OPTIONS;
+                        echo DCE_TEMPLATE_SYSTEM_OPTION;
                         ?>[<?php 
                         echo $dce_tkey;
                         ?>]">
@@ -818,7 +816,7 @@ class TemplateSystem
                             ?> checked="checked"<?php 
                         }
                         ?> name="<?php 
-                        echo DCE_OPTIONS;
+                        echo DCE_TEMPLATE_SYSTEM_OPTION;
                         ?>[<?php 
                         echo $dce_tkey;
                         ?>]">
@@ -1035,7 +1033,7 @@ class TemplateSystem
 		});
 
 		<?php 
-        if (!$dce_template_active) {
+        if (!\DynamicContentForElementor\Plugin::instance()->template_system->is_active()) {
             ?>
 			jQuery('#menu-management-liquid').addClass('dce-disabled');
 			jQuery('#menu-settings-column .accordion-section').removeClass('open').addClass('dce-disabled');

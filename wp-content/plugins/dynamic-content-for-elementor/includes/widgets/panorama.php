@@ -8,9 +8,14 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Panorama extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class Panorama extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_panorama', ['label' => __('Panorama', 'dynamic-content-for-elementor')]);
         $this->add_control('image_source', ['label' => __('Source image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'frontend_available' => \true, 'options' => ['from_media' => __('From media library', 'dynamic-content-for-elementor'), 'custom_url' => __('Custom URL', 'dynamic-content-for-elementor')], 'default' => 'from_media']);
@@ -24,7 +29,7 @@ class DCE_Widget_Panorama extends \DynamicContentForElementor\Widgets\WidgetProt
         $this->add_control('reversemousecontrol', ['label' => __('Reverse mouse control', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

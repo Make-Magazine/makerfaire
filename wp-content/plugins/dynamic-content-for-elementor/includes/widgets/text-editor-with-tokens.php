@@ -3,50 +3,35 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Group_Control_Typography;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Controls_Manager;
 use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Tokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class TextEditorWithTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_tokens', ['label' => __('Text Editor with Tokens', 'dynamic-content-for-elementor')]);
-        $this->add_control('dce_html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'ul' => 'ul', 'ol' => 'ol', 'p' => 'p', '' => __('None', 'dynamic-content-for-elementor')], 'default' => '']);
         $this->add_control('text_w_tokens', ['label' => '', 'type' => Controls_Manager::WYSIWYG, 'default' => __('Hello', 'dynamic-content-for-elementor') . ' [user:nicename], ' . __('you are using Elementor', 'dynamic-content-for-elementor') . ' [option:elementor_version]', 'dynamic' => ['active' => \true]]);
         $this->end_controls_section();
         $this->start_controls_section('section_style', ['label' => __('Text Editor', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right'], 'justify' => ['title' => __('Justified', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-justify']], 'selectors' => ['{{WRAPPER}} .dce-tokens' => 'text-align: {{VALUE}};']]);
-        $this->add_control('text_color', ['label' => __('Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-tokens, {{WRAPPER}} .dce-tokens *' => 'color: {{VALUE}};']]);
-        $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography', 'selector' => '{{WRAPPER}} .dce-tokens, {{WRAPPER}} .dce-tokens *']);
+        $this->add_control('text_color', ['label' => __('Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-tokens' => 'color: {{VALUE}};']]);
+        $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography', 'selector' => '{{WRAPPER}} .dce-tokens']);
         $text_columns = \range(1, 10);
         $text_columns = \array_combine($text_columns, $text_columns);
         $text_columns[''] = __('Default', 'dynamic-content-for-elementor');
         $this->add_responsive_control('text_columns', ['label' => __('Columns', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'separator' => 'before', 'options' => $text_columns, 'selectors' => ['{{WRAPPER}} .dce-tokens' => 'columns: {{VALUE}};']]);
         $this->add_responsive_control('column_gap', ['label' => __('Columns Gap', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['px', '%', 'em', 'vw'], 'range' => ['px' => ['max' => 100], '%' => ['max' => 10, 'step' => 0.1], 'vw' => ['max' => 10, 'step' => 0.1], 'em' => ['max' => 10, 'step' => 0.1]], 'selectors' => ['{{WRAPPER}} .dce-tokens' => 'column-gap: {{SIZE}}{{UNIT}};']]);
-        $this->end_controls_section();
-        $this->start_controls_section('section_token_style', ['label' => __('Token style', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['dce_html_tag!' => '']]);
-        $this->add_control('tolken_text_color', ['label' => __('Token Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-tokens .dce-token' => 'color: {{VALUE}};']]);
-        $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'tolken_typography', 'label' => __('Token Typography', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-tokens .dce-token']);
         $this->end_controls_section();
         $this->start_controls_section('section_drop_cap', ['label' => __('Drop Cap', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['drop_cap' => 'yes']]);
         $this->add_control('drop_cap_view', ['label' => __('View', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['default' => __('Default', 'dynamic-content-for-elementor'), 'stacked' => __('Stacked', 'dynamic-content-for-elementor'), 'framed' => __('Framed', 'dynamic-content-for-elementor')], 'default' => 'default', 'prefix_class' => 'elementor-drop-cap-view-', 'condition' => ['drop_cap' => 'yes']]);
@@ -59,29 +44,20 @@ class DCE_Widget_Tokens extends \DynamicContentForElementor\Widgets\WidgetProtot
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'drop_cap_typography', 'selector' => '{{WRAPPER}} .elementor-drop-cap-letter', 'exclude' => ['letter_spacing'], 'condition' => ['drop_cap' => 'yes']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
-        if (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->render_non_admin_notice();
-            return;
-        }
-        $settings = $this->get_settings_for_display(null, \true);
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && $settings['text_w_tokens'] == '') {
+        $settings = $this->get_settings_for_display();
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && empty($settings['text_w_tokens'])) {
             Helper::notice('', __('Add text to the widget using Tokens', 'dynamic-content-for-elementor'));
             return;
         }
-        $this->add_render_attribute('tokens', 'class', ['dce-tokens']);
+        $this->add_render_attribute('tokens', 'class', 'dce-tokens');
         ?>
 		<div <?php 
         echo $this->get_render_attribute_string('tokens');
         ?>>
 		<?php 
-        $text_w_tokens = $settings['text_w_tokens'];
-        if (!empty($settings['dce_html_tag'])) {
-            $text_w_tokens = \str_replace('[', '<' . \DynamicContentForElementor\Helper::validate_html_tag($settings['dce_html_tag']) . ' class="dce-token">[', $text_w_tokens);
-            $text_w_tokens = \str_replace(']', ']</' . \DynamicContentForElementor\Helper::validate_html_tag($settings['dce_html_tag']) . '>', $text_w_tokens);
-        }
-        echo Helper::get_dynamic_value($text_w_tokens);
+        echo Helper::get_dynamic_value($settings['text_w_tokens']);
         ?>
 		</div>
 		<?php 

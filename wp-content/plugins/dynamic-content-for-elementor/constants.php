@@ -1,18 +1,20 @@
 <?php
+define( 'DCE_VERSION', '2.5.7' );
+define( 'DCE_SLUG', 'dynamic-content-for-elementor' );
+define( 'DCE_PREFIX', 'dce' );
+define( 'DCE_PRODUCT_NAME', 'Dynamic.ooo' );
+define( 'DCE_PRODUCT_NAME_LONG', 'Dynamic.ooo - ' . __( 'Dynamic Content for Elementor', 'dynamic-content-for-elementor' ) );
 
-define( 'DCE_VERSION', '2.2.4' );
-define( 'DCE__FILE__', __FILE__ );
-define( 'DCE_URL', plugins_url( '/', __FILE__ ) );
-define( 'DCE_PATH', plugin_dir_path( __FILE__ ) );
-define( 'DCE_PLUGIN_BASE', plugin_basename( DCE__FILE__ ) );
-define( 'DCE_MINIMUM_ELEMENTOR_VERSION', '2.9.11' );
-define( 'DCE_ELEMENTOR_PRO_VERSION_REQUIRED', '2.10.0' );
-define( 'DCE_PHP_VERSION_REQUIRED', '7.0' );
-define( 'DCE_PHP_VERSION_SUGGESTED', '7.3' );
-define( 'DCE_OPTIONS', 'dyncontel_options' );
-define( 'DCE_BACKUP_URL', site_url() . '/wp-content/backup' );
+// Required versions
+define( 'DCE_MINIMUM_ELEMENTOR_VERSION', '3.1.0' );
+define( 'DCE_MINIMUM_ELEMENTOR_PRO_VERSION', '3.1.0' );
+define( 'DCE_MINIMUM_PHP_VERSION', '7.0' );
+define( 'DCE_MAXIMUM_PHP_VERSION', '8.0' );
+define( 'DCE_SUGGESTED_PHP_VERSION', '7.3' );
+
 // License and update
 define( 'DCE_LICENSE_URL', 'https://license.dynamic.ooo' );
-$protocol = ( ! empty( $_SERVER['HTTPS'] ) && 'off' !== $_SERVER['HTTPS'] || ( ! empty( $_SERVER['SERVER_PORT'] ) && 443 === $_SERVER['SERVER_PORT'] ) ) ? 'https://' : 'http://';
-define( 'DCE_INSTANCE', str_replace( $protocol, '', get_bloginfo( 'wpurl' ) ) );
-define( 'DCE_LICENSE', get_option( 'dce_license_key' ) );
+
+// Options
+define( 'DCE_TEMPLATE_SYSTEM_OPTION', 'dyncontel_options' );
+define( 'DCE_FRONTEND_NAVIGATOR_OPTION', 'dce_frontend_navigator' );

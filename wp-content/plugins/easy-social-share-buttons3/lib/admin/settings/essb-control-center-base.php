@@ -7,7 +7,7 @@ if (!class_exists('ESSBControlCenter')) {
 	     * @var string
 	     * @since 8.0
 	     */
-	    private static $new_version = false;
+	    private static $new_version = true;
 	    
 	    /**
 	     * Defines a global block to hold all sections that are not distributed
@@ -52,6 +52,27 @@ if (!class_exists('ESSBControlCenter')) {
 		public static $features_group = array();
 		
 		/**
+		 * Contains help links to the help buttons in the new navigation
+		 */
+		public static $help_links = array();
+		
+		/**
+		 * Avoid using the hint pop-up and show again the inline description for those fields
+		 */
+		public static $inline_description = array();
+
+		/**
+		 * Add extran inline description for a field (usually a code sample or URL address)
+		 */
+		public static $additional_description = array();
+		
+		/**
+		 * Register relations between fields to show in display conditions for easier managing of settings
+		 * @var array
+		 */
+		public static $relations = array();
+		
+		/**
 		 * Activate the new version of the settings screen
 		 */
 		public static function set_new_version() {
@@ -65,8 +86,11 @@ if (!class_exists('ESSBControlCenter')) {
 		 */
 		public static function is_new_version() {
 		    return self::$new_version;
-		}
+		}	
 		
+		/**
+		 * Deactivate blocks that won't appear in the new version
+		 */
 	    public static function deprecate_blocks_in_new_version() {
 	        if (self::$new_version) {
 	            $blocks = array('othersharing', 'othersocial');
@@ -78,7 +102,44 @@ if (!class_exists('ESSBControlCenter')) {
 	            }
 	        }
 	    }
-		
+	    
+	    public static function register_help_link($field = '', $url = '') {
+	        self::$help_links[$field] = $url;
+	    }
+	    
+	    public static function get_help_link($field) {
+	        return isset(self::$help_links[$field]) ? self::$help_links[$field] : '';
+	    }
+	    
+	    public static function set_description_inline($field = '') {
+	        self::$inline_description[$field] = true;
+	    }
+	    
+	    public static function is_description_inline($field = '') {
+	        return isset(self::$inline_description[$field]) ? self::$inline_description[$field] : false;
+	    }
+	    
+	    public static function set_extra_description($field = '', $description = '') {
+	        self::$additional_description[$field] = $description;
+	    }
+	    
+	    public static function get_extra_description($field = '') {
+	        return isset(self::$additional_description[$field]) ? self::$additional_description[$field] : '';
+	    }
+	    
+	    /**
+	     * ----------------------
+	     * Relations
+	     */
+	    public static function relation_enabled($section, $field, $connected = array()) {
+	        
+	        if (!isset(self::$relations[$section])) {
+	            self::$relations[$section] = array();
+	        }
+	        
+	        self::$relations[$section][$field] = array( 'type' => 'switch', 'fields' => $connected);
+	    }
+	    		
 		/**
 		 * ---------------------------------------------------------
 		 * Register the features list
@@ -310,11 +371,12 @@ if (!class_exists('ESSBControlCenter')) {
 		}
 		
 		
-		public static function register_sidebar_block($block_id, $icon = '', $title = '', $sections = array()) {
+		public static function register_sidebar_block($block_id, $icon = '', $title = '', $sections = array(), $description = '') {
 		    self::$sidebar_blocks[$block_id] = array(
 		        'icon' => $icon,
 		        'title' => $title,
-		        'sections' => $sections
+		        'sections' => $sections,
+		        'description' => $description
 		    );
 		}
 		
@@ -557,22 +619,35 @@ if (!class_exists('ESSBControlCenter')) {
 		}
 		
 		public static function getting_started_url() {
-			return admin_url('admin.php?page=essb_options');
+			return 'https://socialsharingplugin.com/getting-started/';
 		}
 
 		/**
 		 * Count existing deactivated features from the list (and generate a total count)
 		 */
 		public static function features_count() {
-			$deactivate_keys = array('deactivate_ansp', 'deactivate_ssr', 'deactivate_ctt', 'deactivate_module_aftershare', 'deactivate_module_shareoptimize',
+			$deactivate_keys = array('deactivate_ansp', 'deactivate_ssr', 'deactivate_ctt', 
+			        'deactivate_module_aftershare', 'deactivate_module_shareoptimize',
 					'deactivate_module_analytics', 'deactivate_module_pinterestpro', 'deactivate_module_shorturl',
 					'deactivate_module_affiliate', 'deactivate_module_customshare', 'deactivate_module_message', 'deactivate_module_metrics',
-					'deactivate_module_translate', 'deactivate_module_conversions', 'deactivate_custompositions',
-					'deactivate_method_integrations', 'deactivate_settings_post_type', 'deactivate_module_followers',
-					'deactivate_module_profiles', 'deactivate_module_subscribe', 'deactivate_module_facebookchat',
-					'deactivate_module_skypechat', 'deactivate_module_clicktochat', 'deactivate_fakecounters', 
-					'deactivate_module_instagram', 'deactivate_module_proofnotifications',
-					'deactivate_stylelibrary', 'deactivate_custombuttons');
+					'deactivate_fakecounters', 'deactivate_stylelibrary',
+			        'deactivate_method_float', 'deactivate_method_postfloat', 'deactivate_method_sidebar',
+			        'deactivate_method_topbar', 'deactivate_method_bottombar', 'deactivate_method_popup',
+			        'deactivate_method_flyin', 'deactivate_method_heroshare', 'deactivate_method_postbar',
+			        'deactivate_method_point', 'deactivate_method_image', 'deactivate_method_native',
+			        'deactivate_method_followme', 'deactivate_method_corner', 'deactivate_method_booster',
+			        'deactivate_method_sharebutton', 'deactivate_method_widget', 'deactivate_method_advanced_mobile',
+			        'deactivate_module_followers',
+					'deactivate_module_profiles', 'deactivate_module_natives', 'deactivate_module_subscribe',
+					'deactivate_module_facebookchat', 'deactivate_module_skypechat', 'deactivate_module_clicktochat',
+					'deactivate_module_instagram', 'deactivate_module_proofnotifications', 'deactivate_module_translate', 
+					'deactivate_custombuttons', 'deactivate_custompositions',
+					'deactivate_module_conversions', 'deactivate_method_integrations', 'deactivate_settings_post_type',
+			        'deactivate_method_woocommerce', 'deactivate_method_except',
+			        'deactivate_module_google_analytics'
+			);
+			
+			$activate_keys = array('activate_mobile_auto', 'activate_fake', 'activate_hooks', 'activate_minimal');
 			
 			$cnt_active = 0;
 			foreach ($deactivate_keys as $feature) {
@@ -581,7 +656,13 @@ if (!class_exists('ESSBControlCenter')) {
 				}
 			}
 			
-			return sprintf('%s/%s', $cnt_active, count($deactivate_keys));
+			foreach ($activate_keys as $feature) {
+			    if (essb_option_bool_value($feature)) {
+			        $cnt_active++;
+			    }
+			}
+			
+			return sprintf('%s/%s', $cnt_active, count($deactivate_keys) + count($activate_keys));
 		}
 		
 		/**
@@ -672,6 +753,8 @@ if (!class_exists('ESSBControlCenter')) {
 			$r['deactivate_action_save'] = essb_option_bool_value('deactivate_ajaxsubmit');
 			$r['load_section'] = isset($_REQUEST['section']) ? esc_attr($_REQUEST['section']) : '';
 			$r['load_subsection'] = isset($_REQUEST['subsection']) ? esc_attr($_REQUEST['subsection']) : '';
+			
+			$r['ajax_url'] = esc_url(admin_url ('admin-ajax.php'));
 			
 			return $r;
 		}
@@ -843,7 +926,7 @@ if (!class_exists('ESSBControlCenter')) {
 		            $active_block_id = $block_id;
 		        }
 		        
-		        echo '<div class="nav-block '.($is_active ? ' active' : '').'" title="'.esc_attr($options['title']).'" data-block="'.esc_attr($block_id).'">';
+		        echo '<div class="nav-block '.($is_active ? ' active' : '').'" title="'.esc_attr($options['title']).'" aria-label="'.esc_attr($options['title']).'" data-block="'.esc_attr($block_id).'" data-description="'.esc_attr($options['description']).'">';
 		        echo '<i class="'.esc_attr($options['icon']).'"></i>';
 		        echo '</div>';
 		    }
@@ -968,7 +1051,7 @@ if (!class_exists('ESSBControlCenter')) {
 				echo '<a href="'.esc_url(self::help_url()).'" class="essb-control-btn essb-control-btn-help"><i class="fa fa-life-ring"></i><span>'.esc_html__('Get Support', 'essb').'</span></a>';
 
 				// Onboarding button
-				echo '<a href="'.esc_url(self::getting_started_url()).'" class="essb-control-btn essb-control-btn-onboarding"><i class="fa fa-info-circle"></i><span>'.esc_html__('Getting Started', 'essb').'</span></a>';
+				echo '<a href="'.esc_url(self::getting_started_url()).'" class="essb-control-btn essb-control-btn-onboarding" target="_blank"><i class="fa fa-info-circle"></i><span>'.esc_html__('Getting Started', 'essb').'</span></a>';
 				
 				
 				if (!ESSBActivationManager::isActivated()) {
@@ -1081,7 +1164,7 @@ if (!class_exists('ESSBControlCenter')) {
 		        echo '<a href="'.esc_url(self::help_url()).'" class="essb-control-btn essb-control-btn-help"><i class="fa fa-life-ring"></i><span>'.esc_html__('Get Support', 'essb').'</span></a>';
 		        
 		        // Onboarding button
-		        echo '<a href="'.esc_url(self::getting_started_url()).'" class="essb-control-btn essb-control-btn-onboarding"><i class="fa fa-info-circle"></i><span>'.esc_html__('Getting Started', 'essb').'</span></a>';
+		        echo '<a href="'.esc_url(self::getting_started_url()).'" class="essb-control-btn essb-control-btn-onboarding" target="_blank"><i class="fa fa-info-circle"></i><span>'.esc_html__('Getting Started', 'essb').'</span></a>';
 		        
 		        
 		        if (!ESSBActivationManager::isActivated()) {

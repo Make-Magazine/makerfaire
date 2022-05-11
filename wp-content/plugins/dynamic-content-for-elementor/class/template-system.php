@@ -49,10 +49,10 @@ class TemplateSystem
      */
     public function __construct()
     {
-        add_action('elementor/init', [$this, 'dce_elementor_init']);
-        self::$options = get_option(DCE_OPTIONS, []);
-        $dce_template = get_option('dce_template');
-        if (isset($dce_template) && 'active' === $dce_template) {
+        add_action('elementor/init', [$this, 'template_shortcode']);
+        add_action('elementor/init', [$this, 'css_fix_loop']);
+        self::$options = get_option(DCE_TEMPLATE_SYSTEM_OPTION, []);
+        if ($this->is_active()) {
             // Add Template Columns on Terms and Posts
             add_action('init', [$this, 'add_template_system_columns']);
             if (!is_admin()) {
@@ -73,14 +73,22 @@ class TemplateSystem
         self::$instance = $this;
     }
     /**
+     * Check if Template System is active
+     *
+     * @return bool
+     */
+    public function is_active()
+    {
+        return 'active' === get_option('dce_template');
+    }
+    /**
      * If Template System is active, call the filter for the_content to show the template
      *
      * @return void
      */
     public function add_content_filter()
     {
-        $dce_template = get_option('dce_template');
-        if (isset($dce_template) && 'active' === $dce_template) {
+        if ($this->is_active()) {
             add_filter('the_content', array($this, 'remove_elementor_content_filter_priority'), 1);
             add_filter('the_content', array($this, 'filter_the_content_in_the_main_loop'), 999999);
         }
@@ -94,18 +102,36 @@ class TemplateSystem
     {
         remove_filter('the_content', array($this, 'filter_the_content_in_the_main_loop'), 999999);
     }
-    public function dce_elementor_init()
+    /**
+     * Fix for CSS in a loop
+     *
+     * @return void
+     */
+    public function css_fix_loop()
+    {
+        if (!\defined('DCE_DISABLE_CSS_FIX_LOOP')) {
+            // Add a data attribute to permit to add an inline CSS in a loop
+            // It shouldn't be added all the times but only in a loop. TODO
+            add_action('elementor/frontend/widget/before_render', array($this, 'add_dce_background_data_attributes'));
+            add_action('elementor/frontend/column/before_render', array($this, 'add_dce_background_data_attributes'));
+            add_action('elementor/frontend/section/before_render', array($this, 'add_dce_background_data_attributes'));
+            add_action('elementor/frontend/container/before_render', array($this, 'add_dce_background_data_attributes'));
+            // Fix for CSS in a loop
+            add_action('elementor/frontend/the_content', array($this, 'css_class_fix'));
+            add_action('elementor/frontend/widget/after_render', array($this, 'fix_style'));
+            add_action('elementor/frontend/column/after_render', array($this, 'fix_style'));
+            add_action('elementor/frontend/section/after_render', array($this, 'fix_style'));
+            add_action('elementor/frontend/container/after_render', array($this, 'fix_style'));
+        }
+    }
+    /**
+     * Add dce-elementor-template shortcode
+     *
+     * @return void
+     */
+    public function template_shortcode()
     {
         add_shortcode('dce-elementor-template', array($this, 'add_shortcode_template'));
-        // Add a data attribute to permit to add an inline CSS in a loop
-        // It shouldn't be added all the times but only in a loop. TODO
-        add_action('elementor/frontend/column/before_render', array($this, 'add_dce_background_data_attributes'));
-        add_action('elementor/frontend/section/before_render', array($this, 'add_dce_background_data_attributes'));
-        // Fix for CSS in a loop
-        add_action('elementor/frontend/the_content', array($this, 'css_class_fix'));
-        add_action('elementor/frontend/widget/after_render', array($this, 'fix_style'));
-        add_action('elementor/frontend/column/after_render', array($this, 'fix_style'));
-        add_action('elementor/frontend/section/after_render', array($this, 'fix_style'));
     }
     /**
      * Add Template System Columns on terms and posts for users with 'manage_options' capabilities
@@ -114,30 +140,29 @@ class TemplateSystem
      */
     public function add_template_system_columns()
     {
-        // COLUMNS
-        $args = array('public' => \true);
-        if (current_user_can('manage_options')) {
-            // Template Column for terms
-            $taxonomyesRegistered = get_taxonomies($args, 'names', 'and');
-            $dceExcludedTaxonomies = self::$excluded_taxonomies;
-            $taxonomyesRegistered = \array_diff($taxonomyesRegistered, $dceExcludedTaxonomies);
-            foreach ($taxonomyesRegistered as $key) {
-                add_filter('manage_edit-' . $key . '_columns', array($this, 'taxonomy_columns_head'));
-                add_filter('manage_' . $key . '_custom_column', array($this, 'taxonomy_columns_content'), 10, 3);
-            }
-            // Template Column for Posts/Pages
-            $typesRegistered = self::get_registered_types();
-            foreach ($typesRegistered as $key) {
-                add_filter('manage_' . $key . '_posts_columns', array($this, 'columns_head'));
-                add_action('manage_' . $key . '_posts_custom_column', array($this, 'columns_content'), 10, 2);
-            }
+        $args = ['public' => \true];
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        // Template Column for terms
+        $taxonomies_registered = get_taxonomies($args, 'names', 'and');
+        $taxonomies_registered = \array_diff($taxonomies_registered, self::$excluded_taxonomies);
+        foreach ($taxonomies_registered as $taxonomy) {
+            add_filter('manage_edit-' . $taxonomy . '_columns', [$this, 'taxonomy_columns_head']);
+            add_filter('manage_' . $taxonomy . '_custom_column', [$this, 'taxonomy_columns_content'], 10, 3);
+        }
+        // Template Column for Posts/Pages
+        $cpt_registered = self::get_registered_types();
+        foreach ($cpt_registered as $cpt) {
+            add_filter('manage_' . $cpt . '_posts_columns', [$this, 'columns_head']);
+            add_action('manage_' . $cpt . '_posts_custom_column', [$this, 'columns_content'], 10, 2);
         }
     }
     /**
      * Add columns heading for Template System
      *
      * @param [type] $columns
-     * @return void
+     * @return array
      */
     public function columns_head($columns)
     {
@@ -146,18 +171,19 @@ class TemplateSystem
     }
     public function columns_content($column_name, $post_ID)
     {
-        if ('dce_template' === $column_name) {
-            $template = get_post_meta($post_ID, 'dyncontel_elementor_templates', \true);
-            if ($template) {
-                if ($template != 1) {
-                    echo '<a href="' . get_permalink($template) . '" target="blank">' . wp_kses_post(get_the_title($template)) . '</a> - ';
-                    echo '<a href="' . admin_url('post.php?post=' . $template . '&action=edit') . '" target="blank">' . __('Edit', 'dynamic-content-for-elementor') . '</a>';
-                } else {
-                    echo '<b>' . __('None', 'dynamic-content-for-elementor') . '</b>';
-                }
+        if ('dce_template' !== $column_name) {
+            return;
+        }
+        $template = get_post_meta($post_ID, 'dyncontel_elementor_templates', \true);
+        if ($template) {
+            if ($template != 1) {
+                echo '<a href="' . get_permalink($template) . '" target="blank">' . wp_kses_post(get_the_title($template)) . '</a> - ';
+                echo '<a href="' . admin_url('post.php?post=' . $template . '&action=edit') . '" target="blank">' . __('Edit', 'dynamic-content-for-elementor') . '</a>';
             } else {
-                echo '-';
+                echo '<b>' . __('None', 'dynamic-content-for-elementor') . '</b>';
             }
+        } else {
+            echo '-';
         }
     }
     /**
@@ -168,7 +194,7 @@ class TemplateSystem
      */
     public function taxonomy_columns_head($columns)
     {
-        $columns['dce_template'] = 'Dynamic.ooo Template';
+        $columns['dce_template'] = DCE_PRODUCT_NAME . ' ' . __('Template', 'dynamic-content-for-elementor');
         return $columns;
     }
     public function taxonomy_columns_content($content, $column_name, $term_id = \false)
@@ -551,7 +577,7 @@ class TemplateSystem
         // Search Page
         if (is_search()) {
             if (!empty(self::$options['dyncontel_field_archivesearch_template']) && !empty(self::$options['dyncontel_field_archivesearch']) && 'publish' === get_post_status(self::$options['dyncontel_field_archivesearch'])) {
-                $my_template = DCE_PATH . '/template/page_template/search.php';
+                $my_template = DCE_PATH . '/template/search.php';
             }
         }
         // Author Archive
@@ -859,7 +885,7 @@ class TemplateSystem
      */
     public function add_dce_background_data_attributes($element)
     {
-        // Color
+        // Background Color
         $background_color = $element->get_settings_for_display('background_color');
         if (!empty($background_color)) {
             $element->add_render_attribute('_wrapper', 'data-dce-background-color', $background_color, \true);
@@ -892,6 +918,24 @@ class TemplateSystem
         $background_overlay_hover_image = $element->get_settings_for_display('background_overlay_hover_image');
         if (!empty($background_overlay_hover_image['url'])) {
             $element->add_render_attribute('_wrapper', 'data-dce-background-overlay-hover-image-url', $background_overlay_hover_image['url'], \true);
+        }
+        // Background Color on Advanced
+        $advanced_background_color = $element->get_settings_for_display('_background_color');
+        if (!empty($advanced_background_color)) {
+            $element->add_render_attribute('_wrapper', 'data-dce-advanced-background-color', $advanced_background_color, \true);
+        }
+        $advanced_background_hover_color = $element->get_settings_for_display('_background_hover_color');
+        if (!empty($advanced_background_hover_color)) {
+            $element->add_render_attribute('_wrapper', 'data-dce-advanced-background-hover-color', $advanced_background_hover_color, \true);
+        }
+        // Background Image on Advanced
+        $advanced_background_image = $element->get_settings_for_display('_background_image');
+        if (!empty($advanced_background_image['url'])) {
+            $element->add_render_attribute('_wrapper', 'data-dce-advanced-background-image-url', $advanced_background_image['url'], \true);
+        }
+        $advanced_background_hover_image = $element->get_settings_for_display('background_hover_image');
+        if (!empty($advanced_background_hover_image['url'])) {
+            $element->add_render_attribute('_wrapper', 'data-dce-advanced-background-hover-image-url', $advanced_background_hover_image['url'], \true);
         }
     }
     public static function css_class_fix($content = '', $template_id = 0)

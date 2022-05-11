@@ -2,10 +2,10 @@
     <?php
         /**
          * CFF Admin Notices
-         * 
+         *
          * @since 4.0
          */
-        do_action('cff_admin_notices'); 
+        do_action('cff_admin_notices');
     ?>
     <div class="cff-sb-container">
         <div class="cff-section-header">
@@ -14,7 +14,6 @@
                 <div :href="links.doc" target="_blank" class="cff-search-doc-field">
                     <span class="sb-btn-icon" @click="goToSearchDocumentation()" v-html="icons.magnify"></span>
                     <input class="sb-btn-input" id="cff-search-doc-input" v-model="searchKeywords" v-on:keyup="searchDoc" v-on:paste="searchDocStrings" :placeholder="buttons.searchDoc">
-                    <span class="sb-btn-link-icon" @click="goToSearchDocumentation()" v-html="icons.linkIcon"></span>
                 </div>
             </div>
         </div>
@@ -122,8 +121,8 @@
             </div>
             <div class="cff-system-info">
                 <div v-html="system_info" id="system_info" class="system_info" :class="systemInfoBtnStatus"></div>
-                <button class="cff-expand-btn" @click="expandSystemInfo"> 
-                    <span v-html="icons.downAngle"></span> 
+                <button class="cff-expand-btn" @click="expandSystemInfo">
+                    <span v-html="expandBtnArrow()"></span>
                     <span v-html="expandBtnText()"></span>
                 </button>
             </div>

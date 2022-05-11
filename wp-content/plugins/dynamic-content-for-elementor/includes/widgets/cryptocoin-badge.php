@@ -20,7 +20,12 @@ class CryptocoinBadge extends \DynamicContentForElementor\Widgets\WidgetPrototyp
     {
         return ['dce-crypto-badge'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('coin_section', ['label' => __('Coin', 'dynamic-content-for-elementor')]);
         $crypto = \DynamicContentForElementor\Plugin::instance()->cryptocurrency;
@@ -32,7 +37,7 @@ class CryptocoinBadge extends \DynamicContentForElementor\Widgets\WidgetPrototyp
             return;
         }
         if ($crypto->is_sandbox()) {
-            $this->add_control('notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => '<div class="elementor-panel-alert elementor-panel-alert-warning">' . __('You have not yet inserted a Coinmarketcap API key, the data provided are random and for testing purposes.', 'dynamic-content-for-elementor') . '</div>']);
+            $this->add_control('notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('You have not yet inserted a Coinmarketcap API key, the data provided are random and for testing purposes.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
         }
         $this->add_control('coin_id', ['label' => __('Coin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $coins_options, 'default' => 1]);
         $this->add_control('convert_id', ['label' => __('Convert to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $convert_options, 'default' => 2781]);
@@ -78,14 +83,14 @@ EOF;
             $list_items[] = ['label' => $label, 'content' => \number_format_i18n($quotes[$key], 2)];
         }
         $this->render_template(['coin_name' => $coin_info['name'], 'coin_logo' => $coin_logo, 'pair' => $pair, 'latest_price' => $price, 'list_items' => $list_items]);
-        $this->start_controls_section('section_badge_style', ['label' => __('Badge Style', 'elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
+        $this->start_controls_section('section_badge_style', ['label' => __('Badge Style', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em', 'rem'], 'selectors' => ['{{WRAPPER}} .dce-cryptobadge-wrapper' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_control('padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em', 'rem'], 'selectors' => ['{{WRAPPER}} .dce-cryptobadge-wrapper' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography', 'label' => __('Typography', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}}']);
         $this->add_control('bacground_color', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-cryptobadge-wrapper' => 'background-color: {{VALUE}};']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $coin_id = $this->get_settings('coin_id');
         $convert_id = $this->get_settings('convert_id');
@@ -97,9 +102,12 @@ EOF;
             $convert_info = $crypto->get_fiat_and_crypto_info($convert_id);
             $coin_logo = $crypto->get_coin_logo($coin_id);
         } catch (CryptocurrencyApiError $e) {
+            $quotes = 'NA';
+            $coin_info = 'NA';
+            $convert_info = 'NA';
+            $coin_logo = 'NA';
             if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                 echo $e->getMessage();
-                return;
             }
         }
         $this->render_badge($coin_info, $coin_logo, $convert_info, $quotes);

@@ -4,7 +4,7 @@
         var $map = $scope.find('.map');
 		var map = $map[0];
         var bounds;
-        
+
 		// Positions
 		let positions = $map.data('positions') || [];
 
@@ -50,6 +50,17 @@
         if (elementSettingsMap.map_type && elementSettingsMap.map_type !== "acfmap") {
           	mapParams['mapTypeId'] = elementSettingsMap.map_type;
         }
+
+		// Zoom Minimum and Maximum
+		if (elementSettingsMap.zoom_custom ) {
+			minZoom = elementSettingsMap.zoom_minimum.size || 0;
+			maxZoom = elementSettingsMap.zoom_maximum.size || 20;
+			if( minZoom > maxZoom ) {
+				minZoom = maxZoom;
+			}
+			mapParams['minZoom'] = minZoom;
+			mapParams['maxZoom'] = maxZoom;
+		}
 
         if (elementSettingsMap.style_select === 'custom') {
 			mapParams['styles'] = eval(elementSettingsMap.style_map);
@@ -99,8 +110,7 @@
 
             if (elementSettingsMap.use_query) {
                 bounds = new google.maps.LatLngBounds();
-
-                for (i = 0; i < positions.length; i++) {
+                for (let i = 0; i < positions.length; i++) {
 
                     if (mapDataType == 'address') {
 						addressToLocation(
@@ -172,52 +182,67 @@
                 }
                 if( elementSettingsMap.markerclustererControl ){
                 	// Add a marker clusterer to manage the markers.
-                	new MarkerClusterer(
+                	new markerClusterer.MarkerClusterer({
 						map,
 						markers,
-						{
-							imagePath: '/wp-content/plugins/dynamic-content-for-elementor/assets/lib/gmap/markerclusterer/img/m'
-						}
-					);
+						imagePath: '/wp-content/plugins/dynamic-content-for-elementor/assets/lib/gmap/markerclusterer/img/m'
+					});
                 }
-
             } else {
-
-				var infoWindow = positions[0].infowindow || '';
-
+				var marker;
                 if (mapDataType == 'address') {
-					var address = positions[0].address || '';
-                    addressToLocation(
-						address,
-						imageMarker,
-						infoWindow,
-						null,
-						changeMapLocation,
-						markerWidth,
-						markerHeight
-					);
+					let address = positions[0].address || '';
+					let geocoder = new google.maps.Geocoder();
+					geocoder.geocode( { 'address': address}, function(results, status) {
+						if (status == 'OK') {
+							map.setCenter(results[0].geometry.location);
+							marker = new google.maps.Marker({
+									map: map,
+									position: results[0].geometry.location,
+									icon: imageMarker,
+									animation: google.maps.Animation.DROP,
+							});
+							infoWindow(marker);
+						}
+					});
                 } else if (mapDataType == 'latlng' || mapDataType == 'acfmap') {
                     var latLng = new google.maps.LatLng(latitude, longitude); // Makes a latlng
                     map.panTo(latLng); // Make map global
 
-                    var marker = new google.maps.Marker({
+                    marker = new google.maps.Marker({
+						map: map,
                         position: latLng,
-                        map: map,
                         icon: imageMarker,
                         animation: google.maps.Animation.DROP,
                     });
-                    // Infowindow
-					if (elementSettingsMap.enable_infoWindow && positions[0].infowindow) {
-						var infoWindowMap = new google.maps.InfoWindow({
-							content: positions[0].infowindow,
-						});
-						marker.addListener('click', function () {
-							infoWindowMap.open(map, marker);
-						});
-					}
+					infoWindow(marker);
                 }
+
+
             }
         }
+
+		function infoWindow(marker) {
+			if (elementSettingsMap.enable_infoWindow ) {
+				if( elementSettingsMap.infoWindow_click_to_url && elementSettingsMap.infoWindow_url ) {
+					marker.addListener('click', function () {
+						window.location = elementSettingsMap.infoWindow_url.url;
+					});
+				} else if( positions[0].infowindow ) {
+					var iwOptions = {
+						content: positions[0].infowindow,
+					}
+					if(elementSettingsMap.infoWindow_panel_maxwidth.size){
+						iwOptions['maxWidth'] = elementSettingsMap.infoWindow_panel_maxwidth.size;
+					}
+					var infoWindowMap = new google.maps.InfoWindow(iwOptions);
+
+					marker.addListener('click', function () {
+						infoWindowMap.open(map, marker);
+					});
+				}
+			}
+		}
 
         function changeMapLocation(locations) {
             if (locations && locations.length >= 1) {
@@ -248,9 +273,13 @@
 
 				// Infowindow
                 if (elementSettingsMap.enable_infoWindow && locations[0].infoWindow) {
-					var infoWindowMap = new google.maps.InfoWindow({
+					var iwOptions = {
 						content: locations[0].infoWindow,
-					});
+					}
+					if(elementSettingsMap.infoWindow_panel_maxwidth.size){
+						iwOptions['maxWidth'] = elementSettingsMap.infoWindow_panel_maxwidth.size;
+					}
+					var infoWindowMap = new google.maps.InfoWindow(iwOptions);
                     marker.addListener('click', function () {
                         if (elementSettingsMap.infoWindow_click_to_post) {
                             window.location = locations[0].postLink;

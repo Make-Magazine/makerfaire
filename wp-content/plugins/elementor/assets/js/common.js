@@ -1,4 +1,4 @@
-/*! elementor - v3.5.0 - 12-12-2021 */
+/*! elementor - v3.6.5 - 27-04-2022 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2513,6 +2513,101 @@ function isAsyncThunkAction() {
 
 /***/ }),
 
+/***/ "../assets/dev/js/editor/utils/files-upload-handler.js":
+/*!*************************************************************!*\
+  !*** ../assets/dev/js/editor/utils/files-upload-handler.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+__webpack_require__(/*! core-js/modules/es7.array.includes.js */ "../node_modules/core-js/modules/es7.array.includes.js");
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var FilesUploadHandler = /*#__PURE__*/function () {
+  function FilesUploadHandler() {
+    (0, _classCallCheck2.default)(this, FilesUploadHandler);
+  }
+
+  (0, _createClass2.default)(FilesUploadHandler, null, [{
+    key: "isUploadEnabled",
+    value: function isUploadEnabled(mediaType) {
+      var unfilteredFilesTypes = ['svg', 'application/json'];
+
+      if (!unfilteredFilesTypes.includes(mediaType)) {
+        return true;
+      }
+
+      return elementorCommon.config.filesUpload.unfilteredFiles;
+    }
+  }, {
+    key: "setUploadTypeCaller",
+    value: function setUploadTypeCaller(frame) {
+      frame.uploader.uploader.param('uploadTypeCaller', 'elementor-wp-media-upload');
+    }
+  }, {
+    key: "getUnfilteredFilesNotEnabledDialog",
+    value: function getUnfilteredFilesNotEnabledDialog(callback) {
+      var onConfirm = function onConfirm() {
+        elementorCommon.ajax.addRequest('enable_unfiltered_files_upload', {}, true);
+        elementorCommon.config.filesUpload.unfilteredFiles = true;
+        callback();
+      };
+
+      return elementor.helpers.getSimpleDialog('e-enable-unfiltered-files-dialog', __('Enable Unfiltered File Uploads', 'elementor'), __('Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor'), __('Enable', 'elementor'), onConfirm);
+    }
+  }, {
+    key: "getUnfilteredFilesNotEnabledImportTemplateDialog",
+    value: function getUnfilteredFilesNotEnabledImportTemplateDialog(callback) {
+      return elementorCommon.dialogsManager.createWidget('confirm', {
+        id: 'e-enable-unfiltered-files-dialog-import-template',
+        headerMessage: __('Enable Unfiltered File Uploads', 'elementor'),
+        message: __('Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.', 'elementor') + '<br /><br />' + __('If you do not enable uploading unfiltered files, any SVG or JSON (including lottie) files used in the uploaded template will not be imported.', 'elementor'),
+        position: {
+          my: 'center center',
+          at: 'center center'
+        },
+        strings: {
+          confirm: __('Enable and Import', 'elementor'),
+          cancel: __('Import Without Enabling', 'elementor')
+        },
+        onConfirm: function onConfirm() {
+          elementorCommon.ajax.addRequest('enable_unfiltered_files_upload', {
+            success: function success() {
+              // This utility is used in both the admin and the Editor.
+              elementorCommon.config.filesUpload.unfilteredFiles = true;
+              callback();
+            }
+          }, true);
+        },
+        onCancel: function onCancel() {
+          return callback();
+        }
+      });
+    }
+  }]);
+  return FilesUploadHandler;
+}();
+
+exports["default"] = FilesUploadHandler;
+
+/***/ }),
+
 /***/ "../assets/dev/js/editor/utils/is-instanceof.js":
 /*!******************************************************!*\
   !*** ../assets/dev/js/editor/utils/is-instanceof.js ***!
@@ -2594,6 +2689,10 @@ _Object$defineProperty(exports, "__esModule", {
 });
 
 exports["default"] = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
+
+__webpack_require__(/*! core-js/modules/es6.regexp.to-string.js */ "../node_modules/core-js/modules/es6.regexp.to-string.js");
 
 var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/typeof */ "../node_modules/@babel/runtime-corejs2/helpers/typeof.js"));
 
@@ -2714,9 +2813,10 @@ var ArgsObject = /*#__PURE__*/function (_InstanceType) {
     key: "requireArgumentConstructor",
     value: function requireArgumentConstructor(property, type) {
       var args = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.args;
-      this.requireArgument(property, args);
+      this.requireArgument(property, args); // Note: Converting the constructor to string in order to avoid equation issues
+      // due to different memory addresses between iframes (window.Object !== window.top.Object).
 
-      if (args[property].constructor !== type) {
+      if (args[property].constructor.toString() !== type.prototype.constructor.toString()) {
         throw Error("".concat(property, " invalid constructor type."));
       }
     }
@@ -2839,10 +2939,277 @@ exports["default"] = InstanceType;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/components/wordpress/commands-data/index.js":
-/*!********************************************************************************!*\
-  !*** ../core/common/assets/js/api/components/wordpress/commands-data/index.js ***!
-  \********************************************************************************/
+/***/ "../assets/dev/js/modules/imports/module.js":
+/*!**************************************************!*\
+  !*** ../assets/dev/js/modules/imports/module.js ***!
+  \**************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+var _create = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/create */ "../node_modules/@babel/runtime-corejs2/core-js/object/create.js"));
+
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/typeof */ "../node_modules/@babel/runtime-corejs2/helpers/typeof.js"));
+
+__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
+
+__webpack_require__(/*! core-js/modules/es6.array.filter.js */ "../node_modules/core-js/modules/es6.array.filter.js");
+
+__webpack_require__(/*! core-js/modules/es6.array.slice.js */ "../node_modules/core-js/modules/es6.array.slice.js");
+
+__webpack_require__(/*! core-js/modules/es6.function.name.js */ "../node_modules/core-js/modules/es6.function.name.js");
+
+var Module = function Module() {
+  var $ = jQuery,
+      instanceParams = arguments,
+      self = this,
+      events = {};
+  var settings;
+
+  var ensureClosureMethods = function ensureClosureMethods() {
+    $.each(self, function (methodName) {
+      var oldMethod = self[methodName];
+
+      if ('function' !== typeof oldMethod) {
+        return;
+      }
+
+      self[methodName] = function () {
+        return oldMethod.apply(self, arguments);
+      };
+    });
+  };
+
+  var initSettings = function initSettings() {
+    settings = self.getDefaultSettings();
+    var instanceSettings = instanceParams[0];
+
+    if (instanceSettings) {
+      $.extend(true, settings, instanceSettings);
+    }
+  };
+
+  var init = function init() {
+    self.__construct.apply(self, instanceParams);
+
+    ensureClosureMethods();
+    initSettings();
+    self.trigger('init');
+  };
+
+  this.getItems = function (items, itemKey) {
+    if (itemKey) {
+      var keyStack = itemKey.split('.'),
+          currentKey = keyStack.splice(0, 1);
+
+      if (!keyStack.length) {
+        return items[currentKey];
+      }
+
+      if (!items[currentKey]) {
+        return;
+      }
+
+      return this.getItems(items[currentKey], keyStack.join('.'));
+    }
+
+    return items;
+  };
+
+  this.getSettings = function (setting) {
+    return this.getItems(settings, setting);
+  };
+
+  this.setSettings = function (settingKey, value, settingsContainer) {
+    if (!settingsContainer) {
+      settingsContainer = settings;
+    }
+
+    if ('object' === (0, _typeof2.default)(settingKey)) {
+      $.extend(settingsContainer, settingKey);
+      return self;
+    }
+
+    var keyStack = settingKey.split('.'),
+        currentKey = keyStack.splice(0, 1);
+
+    if (!keyStack.length) {
+      settingsContainer[currentKey] = value;
+      return self;
+    }
+
+    if (!settingsContainer[currentKey]) {
+      settingsContainer[currentKey] = {};
+    }
+
+    return self.setSettings(keyStack.join('.'), value, settingsContainer[currentKey]);
+  };
+
+  this.getErrorMessage = function (type, functionName) {
+    var message;
+
+    switch (type) {
+      case 'forceMethodImplementation':
+        message = "The method '".concat(functionName, "' must to be implemented in the inheritor child.");
+        break;
+
+      default:
+        message = 'An error occurs';
+    }
+
+    return message;
+  }; // TODO: This function should be deleted ?.
+
+
+  this.forceMethodImplementation = function (functionName) {
+    throw new Error(this.getErrorMessage('forceMethodImplementation', functionName));
+  };
+
+  this.on = function (eventName, callback) {
+    if ('object' === (0, _typeof2.default)(eventName)) {
+      $.each(eventName, function (singleEventName) {
+        self.on(singleEventName, this);
+      });
+      return self;
+    }
+
+    var eventNames = eventName.split(' ');
+    eventNames.forEach(function (singleEventName) {
+      if (!events[singleEventName]) {
+        events[singleEventName] = [];
+      }
+
+      events[singleEventName].push(callback);
+    });
+    return self;
+  };
+
+  this.off = function (eventName, callback) {
+    if (!events[eventName]) {
+      return self;
+    }
+
+    if (!callback) {
+      delete events[eventName];
+      return self;
+    }
+
+    var callbackIndex = events[eventName].indexOf(callback);
+
+    if (-1 !== callbackIndex) {
+      delete events[eventName][callbackIndex]; // Reset array index (for next off on same event).
+
+      events[eventName] = events[eventName].filter(function (val) {
+        return val;
+      });
+    }
+
+    return self;
+  };
+
+  this.trigger = function (eventName) {
+    var methodName = 'on' + eventName[0].toUpperCase() + eventName.slice(1),
+        params = Array.prototype.slice.call(arguments, 1);
+
+    if (self[methodName]) {
+      self[methodName].apply(self, params);
+    }
+
+    var callbacks = events[eventName];
+
+    if (!callbacks) {
+      return self;
+    }
+
+    $.each(callbacks, function (index, callback) {
+      callback.apply(self, params);
+    });
+    return self;
+  };
+
+  init();
+};
+
+Module.prototype.__construct = function () {};
+
+Module.prototype.getDefaultSettings = function () {
+  return {};
+};
+
+Module.prototype.getConstructorID = function () {
+  return this.constructor.name;
+};
+
+Module.extend = function (properties) {
+  var $ = jQuery,
+      parent = this;
+
+  var child = function child() {
+    return parent.apply(this, arguments);
+  };
+
+  $.extend(child, parent);
+  child.prototype = (0, _create.default)($.extend({}, parent.prototype, properties));
+  child.prototype.constructor = child;
+  child.__super__ = parent.prototype;
+  return child;
+};
+
+module.exports = Module;
+
+/***/ }),
+
+/***/ "../assets/dev/js/utils/time.js":
+/*!**************************************!*\
+  !*** ../assets/dev/js/utils/time.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = getUserTimestamp;
+
+__webpack_require__(/*! core-js/modules/es6.array.slice.js */ "../node_modules/core-js/modules/es6.array.slice.js");
+
+/**
+ * Returns the timestamp in ISO8601 format with the UTC timezone offset.
+ *
+ * @since 3.6.0
+ *
+ * @returns {Date}
+ */
+function getUserTimestamp() {
+  var date = new Date(),
+      timezoneOffset = date.getTimezoneOffset(); // Local time for the user
+
+  var UTCTimestamp = new Date(date.getTime() - timezoneOffset * 60000).toISOString(); // Remove the Z suffix from the string.
+
+  UTCTimestamp = UTCTimestamp.slice(0, -1); // Create the offset string in the format `+HH:00` (or minus (-) prefix for negative offset instead of plus)
+
+  var timezoneOffsetInHours = timezoneOffset / 60,
+      // Negative offsets include a '-' sign in the getTimezoneOffset value, positive values need a '+' prefix (ISO8601).
+  sign = 0 <= timezoneOffsetInHours ? '+' : '',
+      addedZero = 10 < timezoneOffsetInHours ? '0' : '';
+  var formattedTimezoneOffset = sign + addedZero + timezoneOffsetInHours + ':00';
+  return UTCTimestamp + formattedTimezoneOffset;
+}
+
+/***/ }),
+
+/***/ "../core/common/assets/js/components/wordpress/commands-data/index.js":
+/*!****************************************************************************!*\
+  !*** ../core/common/assets/js/components/wordpress/commands-data/index.js ***!
+  \****************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2861,14 +3228,14 @@ _Object$defineProperty(exports, "Media", {
   }
 });
 
-var _media = __webpack_require__(/*! ./media */ "../core/common/assets/js/api/components/wordpress/commands-data/media.js");
+var _media = __webpack_require__(/*! ./media */ "../core/common/assets/js/components/wordpress/commands-data/media.js");
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/components/wordpress/commands-data/media.js":
-/*!********************************************************************************!*\
-  !*** ../core/common/assets/js/api/components/wordpress/commands-data/media.js ***!
-  \********************************************************************************/
+/***/ "../core/common/assets/js/components/wordpress/commands-data/media.js":
+/*!****************************************************************************!*\
+  !*** ../core/common/assets/js/components/wordpress/commands-data/media.js ***!
+  \****************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -2911,7 +3278,9 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandData = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-data */ "../core/common/assets/js/api/modules/command-data.js"));
+var _commandData = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-data */ "../modules/web-cli/assets/js/modules/command-data.js"));
+
+var _filesUploadHandler = _interopRequireDefault(__webpack_require__(/*! elementor-editor/utils/files-upload-handler */ "../assets/dev/js/editor/utils/files-upload-handler.js"));
 
 var Media = /*#__PURE__*/function (_CommandData) {
   (0, _inherits2.default)(Media, _CommandData);
@@ -2926,7 +3295,6 @@ var Media = /*#__PURE__*/function (_CommandData) {
   (0, _createClass2.default)(Media, [{
     key: "validateArgs",
     value: function validateArgs() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       this.requireArgumentInstance('file', File);
     }
   }, {
@@ -2945,6 +3313,9 @@ var Media = /*#__PURE__*/function (_CommandData) {
       args.headers = {
         'Content-Disposition': "attachment; filename=".concat(this.file.name),
         'Content-Type': this.file.type
+      };
+      args.query = {
+        uploadTypeCaller: 'elementor-wp-media-upload'
       };
       args.data = this.file;
 
@@ -2979,28 +3350,30 @@ var Media = /*#__PURE__*/function (_CommandData) {
                 this.file = this.args.file;
 
                 if (!(this.file.size > (0, _parseInt2.default)(window._wpPluploadSettings.defaults.filters.max_file_size, 10))) {
-                  _context.next = 5;
+                  _context.next = 3;
                   break;
                 }
 
                 throw new Error(__('The file exceeds the maximum upload size for this site.', 'elementor'));
 
-              case 5:
-                if (window._wpPluploadSettings.defaults.filters.mime_types[0].extensions.split(',').includes(this.file.name.split('.').pop())) {
-                  _context.next = 7;
+              case 3:
+                if (!(!window._wpPluploadSettings.defaults.filters.mime_types[0].extensions.split(',').includes(this.file.name.split('.').pop()) && !elementor.config.filesUpload.unfilteredFiles)) {
+                  _context.next = 6;
                   break;
                 }
 
-                throw new Error(__('Sorry, this file type is not permitted for security reasons.', 'elementor'));
+                _filesUploadHandler.default.getUnfilteredFilesNotEnabledDialog(function () {}).show();
 
-              case 7:
-                _context.next = 9;
+                return _context.abrupt("return");
+
+              case 6:
+                _context.next = 8;
                 return (0, _get2.default)((0, _getPrototypeOf2.default)(Media.prototype), "run", this).call(this);
 
-              case 9:
+              case 8:
                 return _context.abrupt("return", _context.sent);
 
-              case 10:
+              case 9:
               case "end":
                 return _context.stop();
             }
@@ -3028,10 +3401,10 @@ exports.Media = Media;
 
 /***/ }),
 
-/***/ "../core/common/assets/js/api/components/wordpress/component.js":
-/*!**********************************************************************!*\
-  !*** ../core/common/assets/js/api/components/wordpress/component.js ***!
-  \**********************************************************************/
+/***/ "../core/common/assets/js/components/wordpress/component.js":
+/*!******************************************************************!*\
+  !*** ../core/common/assets/js/components/wordpress/component.js ***!
+  \******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -3057,9 +3430,9 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
 
-var dataCommands = _interopRequireWildcard(__webpack_require__(/*! ./commands-data/ */ "../core/common/assets/js/api/components/wordpress/commands-data/index.js"));
+var dataCommands = _interopRequireWildcard(__webpack_require__(/*! ./commands-data/ */ "../core/common/assets/js/components/wordpress/commands-data/index.js"));
 
 var Component = /*#__PURE__*/function (_ComponentBase) {
   (0, _inherits2.default)(Component, _ComponentBase);
@@ -3086,7376 +3459,6 @@ var Component = /*#__PURE__*/function (_ComponentBase) {
 }(_componentBase.default);
 
 exports["default"] = Component;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/backwards-compatibility.js":
-/*!********************************************************************!*\
-  !*** ../core/common/assets/js/api/core/backwards-compatibility.js ***!
-  \********************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
-
-var BackwardsCompatibility = /*#__PURE__*/function () {
-  function BackwardsCompatibility() {
-    (0, _classCallCheck2.default)(this, BackwardsCompatibility);
-  }
-
-  (0, _createClass2.default)(BackwardsCompatibility, [{
-    key: "ensureTab",
-    value: function ensureTab(namespace, tabSlug) {
-      var page = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-      var component = $e.components.get(namespace);
-
-      if (!component) {
-        var Component = /*#__PURE__*/function (_ComponentBase) {
-          (0, _inherits2.default)(Component, _ComponentBase);
-
-          var _super = (0, _createSuper2.default)(Component);
-
-          function Component() {
-            (0, _classCallCheck2.default)(this, Component);
-            return _super.apply(this, arguments);
-          }
-
-          (0, _createClass2.default)(Component, [{
-            key: "getNamespace",
-            value: function getNamespace() {
-              return namespace;
-            }
-          }, {
-            key: "renderTab",
-            value: function renderTab(tab) {
-              elementor.getPanelView().setPage(page).activateTab(tab);
-            }
-          }]);
-          return Component;
-        }(_componentBase.default);
-
-        component = $e.components.register(new Component());
-      }
-
-      if (!component.hasTab(tabSlug) && elementor.config.tabs[tabSlug]) {
-        component.addTab(tabSlug, {
-          title: elementor.config.tabs[tabSlug]
-        });
-      }
-    }
-  }]);
-  return BackwardsCompatibility;
-}();
-
-exports["default"] = BackwardsCompatibility;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/backwards-compatibility/commands.js":
-/*!*****************************************************************************!*\
-  !*** ../core/common/assets/js/api/core/backwards-compatibility/commands.js ***!
-  \*****************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-__webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "../node_modules/core-js/modules/es6.regexp.replace.js");
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
-
-var CommandsBackwardsCompatibility = /*#__PURE__*/function (_elementorModules$Mod) {
-  (0, _inherits2.default)(CommandsBackwardsCompatibility, _elementorModules$Mod);
-
-  var _super = (0, _createSuper2.default)(CommandsBackwardsCompatibility);
-
-  function CommandsBackwardsCompatibility() {
-    var _this;
-
-    (0, _classCallCheck2.default)(this, CommandsBackwardsCompatibility);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _super.call.apply(_super, [this].concat(args));
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "on", function (eventName, callback) {
-      if ('run' === eventName) {
-        var componentName = _this.getConstructorID(); // Regex takes the first letter and convert it to lower case.
-
-
-        componentName = componentName.replace(/^./, function (val) {
-          return val.toLowerCase();
-        });
-        elementorCommon.helpers.softDeprecated("$e.".concat(componentName, ".on( 'run', ... )"), '3.0.0', "$e.".concat(componentName, ".on( 'run:before', ... )"));
-
-        _this.onOrig('run:before', callback);
-
-        return;
-      }
-
-      _this.onOrig(eventName, callback);
-    });
-    return _this;
-  }
-
-  (0, _createClass2.default)(CommandsBackwardsCompatibility, [{
-    key: "__construct",
-    value: function __construct() {
-      this.onOrig = this.on;
-    }
-  }]);
-  return CommandsBackwardsCompatibility;
-}(elementorModules.Module);
-
-exports["default"] = CommandsBackwardsCompatibility;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/commands-internal.js":
-/*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/core/commands-internal.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _commands = _interopRequireDefault(__webpack_require__(/*! ./commands.js */ "../core/common/assets/js/api/core/commands.js"));
-
-var CommandsInternal = /*#__PURE__*/function (_Commands) {
-  (0, _inherits2.default)(CommandsInternal, _Commands);
-
-  var _super = (0, _createSuper2.default)(CommandsInternal);
-
-  function CommandsInternal() {
-    (0, _classCallCheck2.default)(this, CommandsInternal);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(CommandsInternal, [{
-    key: "error",
-    value: function error(message) {
-      throw Error('Commands internal: ' + message);
-    }
-  }]);
-  return CommandsInternal;
-}(_commands.default);
-
-exports["default"] = CommandsInternal;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/commands.js":
-/*!*****************************************************!*\
-  !*** ../core/common/assets/js/api/core/commands.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-__webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
-
-__webpack_require__(/*! core-js/modules/es6.array.iterator.js */ "../node_modules/core-js/modules/es6.array.iterator.js");
-
-__webpack_require__(/*! core-js/modules/web.dom.iterable.js */ "../node_modules/core-js/modules/web.dom.iterable.js");
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _commands = _interopRequireDefault(__webpack_require__(/*! ./backwards-compatibility/commands */ "../core/common/assets/js/api/core/backwards-compatibility/commands.js"));
-
-var Commands = /*#__PURE__*/function (_CommandsBackwardsCom) {
-  (0, _inherits2.default)(Commands, _CommandsBackwardsCom);
-
-  var _super = (0, _createSuper2.default)(Commands);
-
-  /**
-   * Function constructor().
-   *
-   * Create `$e.commands` API.
-   *
-   * @param {{}} args
-   */
-  function Commands() {
-    var _this;
-
-    (0, _classCallCheck2.default)(this, Commands);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _super.call.apply(_super, [this].concat(args));
-    _this.current = {};
-    _this.currentArgs = {};
-    _this.currentTrace = [];
-    _this.commands = {};
-    _this.components = {};
-    _this.classes = {};
-    return _this;
-  }
-  /**
-   * @param id
-   * @returns {CommandBase}
-   */
-
-
-  (0, _createClass2.default)(Commands, [{
-    key: "getCommandClass",
-    value: function getCommandClass(id) {
-      return this.classes[id];
-    }
-    /**
-     * Function getAll().
-     *
-     * Receive all loaded commands.
-     *
-     * @returns {string[]}
-     */
-
-  }, {
-    key: "getAll",
-    value: function getAll() {
-      return (0, _keys.default)(this.commands).sort();
-    }
-    /**
-     * Function register().
-     *
-     * Register new command.
-     *
-     * @param {ComponentBase|string} component
-     * @param {string} command
-     * @param {function()} callback
-     *
-     * @returns {Commands}
-     */
-
-  }, {
-    key: "register",
-    value: function register(component, command, callback) {
-      var _this2 = this;
-
-      var namespace;
-
-      if ('string' === typeof component) {
-        namespace = component;
-        component = $e.components.get(namespace);
-
-        if (!component) {
-          this.error("'".concat(namespace, "' component is not exist."));
-        }
-      } else {
-        namespace = component.getNamespace();
-      }
-
-      var fullCommand = namespace + (command ? '/' + command : '');
-
-      if (this.commands[fullCommand]) {
-        this.error("`".concat(fullCommand, "` is already registered."));
-      }
-
-      this.commands[fullCommand] = callback;
-      this.components[fullCommand] = namespace;
-      var shortcuts = component.getShortcuts(),
-          shortcut = shortcuts[command];
-
-      if (shortcut) {
-        shortcut.command = fullCommand;
-
-        shortcut.callback = function (event) {
-          return _this2.runShortcut(fullCommand, event);
-        };
-
-        $e.shortcuts.register(shortcut.keys, shortcut);
-      }
-
-      return this;
-    }
-  }, {
-    key: "unregister",
-    value: function unregister(component, command) {
-      var namespace;
-
-      if ('string' === typeof component) {
-        namespace = component;
-        component = $e.components.get(namespace);
-
-        if (!component) {
-          this.error("'".concat(namespace, "' component is not exist."));
-        }
-      } else {
-        namespace = component.getNamespace();
-      }
-
-      var fullCommand = namespace + (command ? '/' + command : '');
-
-      if (!this.commands[fullCommand]) {
-        this.error("`".concat(fullCommand, "` not exist."));
-      }
-
-      delete this.commands[fullCommand];
-      delete this.components[fullCommand];
-      var shortcuts = component.getShortcuts(),
-          shortcut = shortcuts[command];
-
-      if (shortcut) {
-        $e.shortcuts.unregister(shortcut.keys, shortcut);
-      }
-
-      return this;
-    }
-    /**
-     * Function getComponent().
-     *
-     * Receive Component of the command.
-     *
-     * @param {string} command
-     *
-     * @returns {Component}
-     */
-
-  }, {
-    key: "getComponent",
-    value: function getComponent(command) {
-      var namespace = this.components[command];
-      return $e.components.get(namespace);
-    }
-    /**
-     * Function is().
-     *
-     * Checks if current running command is the same parameter command.
-     *
-     * @param {string} command
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "is",
-    value: function is(command) {
-      var component = this.getComponent(command);
-
-      if (!component) {
-        return false;
-      }
-
-      return command === this.current[component.getRootContainer()];
-    }
-    /**
-     * Function isCurrentFirstTrace().
-     *
-     * Checks if parameter command is the first command in trace that currently running.
-     *
-     * @param {string} command
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "isCurrentFirstTrace",
-    value: function isCurrentFirstTrace(command) {
-      return command === this.getCurrentFirstTrace();
-    }
-    /**
-     * Function getCurrent().
-     *
-     * Receive currently running components and its commands.
-     *
-     * @param {string} container
-     *
-     * @returns {{}|boolean|*}
-     */
-
-  }, {
-    key: "getCurrent",
-    value: function getCurrent() {
-      var container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
-      if (container) {
-        if (!this.current[container]) {
-          return false;
-        }
-
-        return this.current[container];
-      }
-
-      return this.current;
-    }
-    /**
-     * Function getCurrentArgs().
-     *
-     * Receive currently running command args.
-     *
-     * @param {string} container
-     *
-     * @returns {{}|boolean|*}
-     */
-
-  }, {
-    key: "getCurrentArgs",
-    value: function getCurrentArgs() {
-      var container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
-      if (container) {
-        if (!this.currentArgs[container]) {
-          return false;
-        }
-
-        return this.currentArgs[container];
-      }
-
-      return this.currentArgs;
-    }
-    /**
-     * Function getCurrentFirst().
-     *
-     * Receive first command that currently running.
-     *
-     * @returns {string}
-     */
-
-  }, {
-    key: "getCurrentFirst",
-    value: function getCurrentFirst() {
-      return (0, _values.default)(this.current)[0];
-    }
-    /**
-     * Function getCurrentLast().
-     *
-     * Receive last command that currently running.
-     *
-     * @returns {string}
-     */
-
-  }, {
-    key: "getCurrentLast",
-    value: function getCurrentLast() {
-      var current = (0, _values.default)(this.current);
-      return current[current.length - 1];
-    }
-    /**
-     * Function getCurrentFirstTrace().
-     *
-     * Receive first command in trace that currently running
-     *
-     * @returns {string}
-     */
-
-  }, {
-    key: "getCurrentFirstTrace",
-    value: function getCurrentFirstTrace() {
-      return this.currentTrace[0];
-    }
-    /**
-     * Function beforeRun().
-     *
-     * @param {string} command
-     * @param {} args
-     *
-     * @returns {boolean} dependency result
-     */
-
-  }, {
-    key: "beforeRun",
-    value: function beforeRun(command) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      if (!this.commands[command]) {
-        this.error("`".concat(command, "` not found."));
-      }
-
-      this.currentTrace.push(command);
-      return this.getComponent(command).dependency(command, args);
-    }
-    /**
-     * Function run().
-     *
-     * Runs a command.
-     *
-     * @param {string} command
-     * @param {{}} args
-     *
-     * @returns {boolean|*} results
-     */
-
-  }, {
-    key: "run",
-    value: function run(command) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      if (!this.beforeRun(command, args)) {
-        return false;
-      }
-
-      var component = this.getComponent(command),
-          container = component.getRootContainer();
-      this.current[container] = command;
-      this.currentArgs[container] = args;
-      this.trigger('run:before', component, command, args);
-
-      if (args.onBefore) {
-        args.onBefore.apply(component, [args]);
-      }
-
-      var results = this.commands[command].apply(component, [args]); // TODO: Consider add results to `$e.devTools`.
-
-      if (args.onAfter) {
-        args.onAfter.apply(component, [args, results]);
-      }
-
-      this.trigger('run:after', component, command, args, results);
-      this.afterRun(command);
-
-      if (false === args.returnValue) {
-        return true;
-      }
-
-      return results;
-    }
-    /**
-     * Function runShortcut().
-     *
-     * Run shortcut.
-     *
-     * It's separated in order to allow override.
-     *
-     * @param {string} command
-     * @param {*} event
-     *
-     * @returns {boolean|*}
-     */
-
-  }, {
-    key: "runShortcut",
-    value: function runShortcut(command, event) {
-      return this.run(command, event);
-    }
-    /**
-     * Function afterRun().
-     *
-     * Method fired after the command runs.
-     *
-     * @param {string} command
-     */
-
-  }, {
-    key: "afterRun",
-    value: function afterRun(command) {
-      var component = this.getComponent(command),
-          container = component.getRootContainer();
-      this.currentTrace.pop();
-      delete this.current[container];
-      delete this.currentArgs[container];
-    }
-    /**
-     * Function error().
-     *
-     * Throws error.
-     *
-     * @throw {Error}
-     *
-     * @param {string} message
-     */
-
-  }, {
-    key: "error",
-    value: function error(message) {
-      throw Error("Commands: ".concat(message));
-    }
-  }]);
-  return Commands;
-}(_commands.default);
-
-exports["default"] = Commands;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/components.js":
-/*!*******************************************************!*\
-  !*** ../core/common/assets/js/api/core/components.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _default = /*#__PURE__*/function (_elementorModules$Mod) {
-  (0, _inherits2.default)(_default, _elementorModules$Mod);
-
-  var _super = (0, _createSuper2.default)(_default);
-
-  function _default() {
-    var _this;
-
-    (0, _classCallCheck2.default)(this, _default);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _super.call.apply(_super, [this].concat(args));
-    _this.components = {};
-    _this.activeComponents = {};
-    return _this;
-  }
-
-  (0, _createClass2.default)(_default, [{
-    key: "getAll",
-    value: function getAll() {
-      return (0, _keys.default)(this.components).sort();
-    }
-  }, {
-    key: "register",
-    value: function register(component) {
-      if (this.components[component.getNamespace()]) {
-        return;
-      }
-
-      component.registerAPI();
-      this.components[component.getNamespace()] = component;
-      return component;
-    }
-    /**
-     * @returns {Component}
-     */
-
-  }, {
-    key: "get",
-    value: function get(id) {
-      return this.components[id];
-    }
-  }, {
-    key: "getActive",
-    value: function getActive() {
-      return this.activeComponents;
-    }
-  }, {
-    key: "activate",
-    value: function activate(namespace) {
-      // Add as last.
-      this.inactivate(namespace);
-      this.activeComponents[namespace] = true;
-    }
-  }, {
-    key: "inactivate",
-    value: function inactivate(namespace) {
-      delete this.activeComponents[namespace];
-    }
-  }, {
-    key: "isActive",
-    value: function isActive(namespace) {
-      return !!this.activeComponents[namespace];
-    }
-  }]);
-  return _default;
-}(elementorModules.Module);
-
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/data.js":
-/*!*************************************************!*\
-  !*** ../core/common/assets/js/api/core/data.js ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.READABLE = exports.EDITABLE = exports.DELETABLE = exports.CREATABLE = exports.ALLMETHODS = void 0;
-
-var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
-
-__webpack_require__(/*! core-js/modules/es6.string.includes.js */ "../node_modules/core-js/modules/es6.string.includes.js");
-
-__webpack_require__(/*! core-js/modules/es7.array.includes.js */ "../node_modules/core-js/modules/es7.array.includes.js");
-
-__webpack_require__(/*! core-js/modules/es6.array.filter.js */ "../node_modules/core-js/modules/es6.array.filter.js");
-
-__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
-
-__webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "../node_modules/core-js/modules/es6.regexp.replace.js");
-
-__webpack_require__(/*! core-js/modules/es6.array.find.js */ "../node_modules/core-js/modules/es6.array.find.js");
-
-__webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
-
-__webpack_require__(/*! core-js/modules/es6.regexp.to-string.js */ "../node_modules/core-js/modules/es6.regexp.to-string.js");
-
-__webpack_require__(/*! core-js/modules/es6.regexp.constructor.js */ "../node_modules/core-js/modules/es6.regexp.constructor.js");
-
-var _assign = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/assign */ "../node_modules/@babel/runtime-corejs2/core-js/object/assign.js"));
-
-var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
-
-var _entries = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/entries */ "../node_modules/@babel/runtime-corejs2/core-js/object/entries.js"));
-
-var _stringify = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/json/stringify */ "../node_modules/@babel/runtime-corejs2/core-js/json/stringify.js"));
-
-var _promise = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/promise */ "../node_modules/@babel/runtime-corejs2/core-js/promise.js"));
-
-var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/asyncToGenerator */ "../node_modules/@babel/runtime-corejs2/helpers/asyncToGenerator.js"));
-
-var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/slicedToArray */ "../node_modules/@babel/runtime-corejs2/helpers/slicedToArray.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
-
-var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/get */ "../node_modules/@babel/runtime-corejs2/helpers/get.js"));
-
-var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "../node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _argsObject = _interopRequireDefault(__webpack_require__(/*! elementor-assets-js/modules/imports/args-object */ "../assets/dev/js/modules/imports/args-object.js"));
-
-var _commands = _interopRequireDefault(__webpack_require__(/*! ./commands.js */ "../core/common/assets/js/api/core/commands.js"));
-
-var _cache = _interopRequireDefault(__webpack_require__(/*! ./data/cache */ "../core/common/assets/js/api/core/data/cache.js"));
-
-/**
- * @typedef {('create'|'delete'|'get'|'update'|'options')} DataTypes
- */
-
-/**
- * @typedef {{}} RequestData
- * @property {ComponentBase} component
- * @property {string} command
- * @property {{}} args
- * @property {DataTypes} type
- * @property {number} timestamp
- * @property {string} endpoint
- *
- * @property {string} [baseEndpointURL]
- * @property {string} [namespace]
- * @property {string} [version]
- * @property {('hit'|'miss')} [cache]
- */
-
-/**
- * @typedef {object} ExtractedCommand
- * @property {string} command
- * @property {object} args
- */
-// TODO: Return it from the server. Original at WP_REST_Server.
-var READABLE = ['GET'],
-    CREATABLE = ['POST'],
-    EDITABLE = ['POST', 'PUT', 'PATCH'],
-    DELETABLE = ['DELETE'],
-    ALLMETHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
-exports.ALLMETHODS = ALLMETHODS;
-exports.DELETABLE = DELETABLE;
-exports.EDITABLE = EDITABLE;
-exports.CREATABLE = CREATABLE;
-exports.READABLE = READABLE;
-
-var Data = /*#__PURE__*/function (_Commands) {
-  (0, _inherits2.default)(Data, _Commands);
-
-  var _super = (0, _createSuper2.default)(Data);
-
-  function Data() {
-    var _this;
-
-    var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    (0, _classCallCheck2.default)(this, Data);
-    _this = _super.call(this, args);
-    _this.args = (0, _assign.default)(args, {
-      namespace: 'elementor',
-      version: '1',
-      baseEndpointURL: elementorCommon.config.urls.rest
-    });
-    _this.cache = new _cache.default((0, _assertThisInitialized2.default)(_this));
-    _this.validatedRequests = {};
-    _this.commandFormats = {};
-    return _this;
-  }
-  /**
-   * Function getHTTPMethod().
-   *
-   * Returns HTTP Method by type.
-   *
-   * @param {DataTypes} type
-   *
-   * @returns {string|boolean}
-   */
-
-
-  (0, _createClass2.default)(Data, [{
-    key: "getHTTPMethod",
-    value: function getHTTPMethod(type) {
-      switch (type) {
-        case 'create':
-          return 'POST';
-
-        case 'delete':
-          return 'DELETE';
-
-        case 'get':
-          return 'GET';
-
-        case 'update':
-          return 'PUT';
-
-        case 'options':
-          return 'OPTIONS';
-      }
-
-      return false;
-    }
-    /**
-     * Function getAllowedMethods().
-     *
-     * Returns allowed HTTP methods by type.
-     *
-     * @param {DataTypes} type
-     *
-     * @returns {[string]|boolean}
-     */
-
-  }, {
-    key: "getAllowedMethods",
-    value: function getAllowedMethods(type) {
-      switch (type) {
-        case 'create':
-          return CREATABLE;
-
-        case 'delete':
-          return DELETABLE;
-
-        case 'get':
-          return READABLE;
-
-        case 'update':
-          return EDITABLE;
-
-        case 'options':
-          return ['OPTIONS'];
-      }
-
-      return false;
-    }
-    /**
-     * Function getEndpointURL().
-     *
-     * Get remote endpoint address.
-     *
-     * @param {RequestData} requestData
-     * @param {string} [endpoint=requestData.endpoint]
-     *
-     * @returns {string}
-     */
-
-  }, {
-    key: "getEndpointURL",
-    value: function getEndpointURL(requestData) {
-      var endpoint = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : requestData.endpoint;
-      // Allow to request data override default namespace and args.
-      var _requestData$baseEndp = requestData.baseEndpointURL,
-          baseEndpointURL = _requestData$baseEndp === void 0 ? this.args.baseEndpointURL : _requestData$baseEndp,
-          _requestData$namespac = requestData.namespace,
-          namespace = _requestData$namespac === void 0 ? this.args.namespace : _requestData$namespac,
-          _requestData$version = requestData.version,
-          version = _requestData$version === void 0 ? this.args.version : _requestData$version;
-      return "".concat(baseEndpointURL).concat(namespace, "/v").concat(version, "/") + endpoint;
-    }
-    /**
-     * Function commandToEndpoint().
-     *
-     * Convert command to endpoint.
-     *
-     * For example `component/command/{arg}` => `controller/endpoint/8`.
-     *
-     * TODO: Find a better solution.
-     *
-     * @param {string} command
-     * @param {{}} args
-     * @param {string|null} [format]
-     *
-     * @returns {string} endpoint
-     */
-
-  }, {
-    key: "commandToEndpoint",
-    value: function commandToEndpoint(command, args) {
-      var format = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-      var endpoint = command;
-      var argsQueryLength = args !== null && args !== void 0 && args.query ? (0, _values.default)(args.query).length : 0;
-
-      if (argsQueryLength && format && format.includes('/{')) {
-        // Means command includes magic query arguments ( controller/endpoint/{whatever} ).
-        var magicParams = format.split('/').filter(function (str) {
-          return '{' === str.charAt(0);
-        });
-        magicParams.forEach(function (param) {
-          // Remove the '{', '}'.
-          param = param.replace('{', '');
-          param = param.replace('}', '');
-          var formatted = (0, _entries.default)(args.query).find(function (_ref) {
-            var _ref2 = (0, _slicedToArray2.default)(_ref, 1),
-                key = _ref2[0];
-
-            return key === param;
-          });
-
-          if (!formatted) {
-            return;
-          }
-
-          var key = formatted[0],
-              value = formatted[1].toString(); // Replace magic params with values.
-
-          format = format.replace(new RegExp('{' + param + '}', 'g'), value);
-          delete args.query[key];
-        });
-      }
-
-      if (format) {
-        endpoint = format;
-      } // If requested magic param does not exist in args, need to remove it to have fixed endpoint.
-      // eg: 'documents/{documentId}/elements/{elementId}' and args { documentId: 4123 }.
-      // result: 'documents/4123/elements'
-
-
-      if (format && endpoint.includes('/{')) {
-        endpoint = endpoint.substring(0, endpoint.indexOf('/{'));
-      }
-
-      if (args.query && (0, _values.default)(args.query).length) {
-        // Sorting since the endpoint later will be used as key to store the cache.
-        var queryEntries = (0, _entries.default)(args.query).sort(function (_ref3, _ref4) {
-          var _ref5 = (0, _slicedToArray2.default)(_ref3, 1),
-              aKey = _ref5[0];
-
-          var _ref6 = (0, _slicedToArray2.default)(_ref4, 1),
-              bKey = _ref6[0];
-
-          return aKey - bKey;
-        } // Sort by param name.
-        ); // `args.query` will become a part of GET params.
-
-        if (queryEntries.length) {
-          endpoint += '?';
-          queryEntries.forEach(function (_ref7) {
-            var _ref8 = (0, _slicedToArray2.default)(_ref7, 2),
-                name = _ref8[0],
-                value = _ref8[1];
-
-            // Replace the character '/' with the encoded version,
-            // mostly because when saving this endpoint value to the cache it splits the url base on the '/' character.
-            value = "".concat(value).replace(/\//g, '%2F');
-            endpoint += name + '=' + value + '&';
-          });
-        } // If last character is '&' remove it.
-
-
-        endpoint = endpoint.replace(/&$/, '');
-      }
-
-      return endpoint;
-    }
-    /**
-     * Function commandExtractArgs().
-     *
-     * If the command have query convert it to args.
-     *
-     * @param {string} command
-     * @param {object} args
-     *
-     * @returns {ExtractedCommand} command
-     */
-
-  }, {
-    key: "commandExtractArgs",
-    value: function commandExtractArgs(command) {
-      var _command;
-
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      if ((_command = command) !== null && _command !== void 0 && _command.includes('?')) {
-        if (!args.query) {
-          args.query = {};
-        }
-
-        var commandParts = command.split('?'),
-            pureCommand = commandParts[0],
-            queryString = commandParts[1],
-            query = new URLSearchParams(queryString);
-        (0, _assign.default)(args.query, Object.fromEntries(query));
-        command = pureCommand;
-      }
-
-      return {
-        command: command,
-        args: args
-      };
-    }
-    /**
-     * Function validateRequestData().
-     *
-     * Validate request data requirements.
-     *
-     * @param {RequestData} requestData
-     * @param {boolean} [requireArgsData]
-     */
-
-  }, {
-    key: "validateRequestData",
-    value: function validateRequestData(requestData) {
-      var requireArgsData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-      // Do not validate if its already valid.
-      if (requestData.timestamp && this.validatedRequests[requestData.timestamp]) {
-        return;
-      }
-
-      var argsObject = new _argsObject.default(requestData);
-      argsObject.requireArgument('component');
-      argsObject.requireArgumentType('command', 'string');
-      argsObject.requireArgumentType('endpoint', 'string');
-
-      if (requireArgsData) {
-        argsObject.requireArgumentType('data', 'object', requestData.args);
-      } // Ensure timestamp.
-
-
-      if (!requestData.timestamp) {
-        requestData.timestamp = new Date().getTime();
-      }
-
-      this.validatedRequests[requestData.timestamp] = true;
-    }
-    /**
-     * Function prepareHeaders().
-     *
-     * Prepare the headers for each request.
-     *
-     * @param {RequestData} requestData
-     *
-     * @returns {{}} params
-     */
-
-  }, {
-    key: "prepareHeaders",
-    value: function prepareHeaders(requestData) {
-      var _requestData$args, _requestData$args$opt;
-
-      /* global wpApiSettings */
-      var type = requestData.type,
-          nonce = wpApiSettings.nonce,
-          params = {
-        signal: (_requestData$args = requestData.args) === null || _requestData$args === void 0 ? void 0 : (_requestData$args$opt = _requestData$args.options) === null || _requestData$args$opt === void 0 ? void 0 : _requestData$args$opt.signal,
-        credentials: 'include' // cookies is required for wp reset.
-
-      },
-          headers = {
-        'X-WP-Nonce': nonce
-      };
-      /**
-       * Translate:
-       * 'create, delete, get, update' to HTTP Methods:
-       * 'GET, POST, PUT, PATCH, DELETE'
-       */
-
-      var allowedMethods = this.getAllowedMethods(type),
-          method = this.getHTTPMethod(type);
-
-      if ('GET' === method) {
-        (0, _assign.default)(params, {
-          headers: headers
-        });
-      } else if (allowedMethods) {
-        var _requestData$args2, _requestData$args3;
-
-        if (['POST', 'PUT'].includes(method) && !((_requestData$args2 = requestData.args) !== null && _requestData$args2 !== void 0 && _requestData$args2.data)) {
-          throw Error('Invalid requestData.args.data');
-        }
-
-        (0, _assign.default)(headers, {
-          'Content-Type': 'application/json'
-        });
-
-        if ((_requestData$args3 = requestData.args) !== null && _requestData$args3 !== void 0 && _requestData$args3.headers) {
-          (0, _assign.default)(headers, requestData.args.headers);
-        }
-
-        (0, _assign.default)(params, {
-          method: method,
-          headers: headers,
-          body: 'application/json' === headers['Content-Type'] ? (0, _stringify.default)(requestData.args.data) : requestData.args.data
-        });
-      } else {
-        throw Error("Invalid type: '".concat(type, "'"));
-      }
-
-      return params;
-    }
-    /**
-     * Function prepareEndpoint().
-     *
-     * This method response for building a final endpoint,
-     * the main problem is with plain permalink mode + command with query params that creates a weird url,
-     * the current method should fix it.
-     *
-     * @param {RequestData} requestData
-     *
-     * @returns {string} Endpoint URL
-     */
-
-  }, {
-    key: "prepareEndpoint",
-    value: function prepareEndpoint(requestData) {
-      var splitEndpoint = requestData.endpoint.split('?'),
-          endpoint = splitEndpoint.shift();
-      var endpointAddress = this.getEndpointURL(requestData, endpoint);
-
-      if (splitEndpoint.length) {
-        var separator = endpointAddress.includes('?') ? '&' : '?';
-        endpointAddress += separator + splitEndpoint.pop();
-      }
-
-      return endpointAddress;
-    }
-    /**
-     * Function fetch().
-     *
-     * @param {RequestData} requestData
-     * @param {function(input: RequestInfo, init?) : Promise<Response> } [fetchAPI]
-     *
-     * @returns {Promise<Response>}
-     */
-
-  }, {
-    key: "fetch",
-    value: function fetch(requestData) {
-      var _requestData$args$opt2,
-          _this2 = this;
-
-      var fetchAPI = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window.fetch;
-      requestData.cache = 'miss';
-      var params = this.prepareHeaders(requestData),
-          refresh = (_requestData$args$opt2 = requestData.args.options) === null || _requestData$args$opt2 === void 0 ? void 0 : _requestData$args$opt2.refresh,
-          getCache = 'get' === requestData.type && !refresh,
-          saveCache = ['create', 'get'].includes(requestData.type) && !refresh;
-
-      if (getCache) {
-        var cachePromise = this.cache.getAsync(requestData);
-
-        if (cachePromise) {
-          return cachePromise;
-        }
-      }
-
-      return new _promise.default( /*#__PURE__*/function () {
-        var _ref9 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2(resolve, reject) {
-          var endpoint, request, response;
-          return _regenerator.default.wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  _context2.prev = 0;
-                  endpoint = _this2.prepareEndpoint(requestData);
-                  request = fetchAPI(endpoint, params);
-                  _context2.next = 5;
-                  return request.then( /*#__PURE__*/function () {
-                    var _ref10 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee(_response) {
-                      return _regenerator.default.wrap(function _callee$(_context) {
-                        while (1) {
-                          switch (_context.prev = _context.next) {
-                            case 0:
-                              if (_response.ok) {
-                                _context.next = 6;
-                                break;
-                              }
-
-                              if (!_response.headers.get('content-type').includes('application/json')) {
-                                _context.next = 5;
-                                break;
-                              }
-
-                              _context.next = 4;
-                              return _response.json();
-
-                            case 4:
-                              _response = _context.sent;
-
-                            case 5:
-                              throw _response;
-
-                            case 6:
-                              return _context.abrupt("return", _response.json());
-
-                            case 7:
-                            case "end":
-                              return _context.stop();
-                          }
-                        }
-                      }, _callee);
-                    }));
-
-                    return function (_x3) {
-                      return _ref10.apply(this, arguments);
-                    };
-                  }());
-
-                case 5:
-                  response = _context2.sent;
-
-                  // At this point, it got the resolved response from remote.
-                  // So load cache, and resolve it.
-                  if (saveCache) {
-                    _this2.cache.set(requestData, response);
-                  }
-
-                  resolve(response);
-                  _context2.next = 13;
-                  break;
-
-                case 10:
-                  _context2.prev = 10;
-                  _context2.t0 = _context2["catch"](0);
-                  reject(_context2.t0);
-
-                case 13:
-                case "end":
-                  return _context2.stop();
-              }
-            }
-          }, _callee2, null, [[0, 10]]);
-        }));
-
-        return function (_x, _x2) {
-          return _ref9.apply(this, arguments);
-        };
-      }());
-    }
-    /**
-     * Function getCache().
-     *
-     * @param {ComponentBase} component
-     * @param {string} command
-     * @param {{}} query
-     *
-     * @returns {{}}
-     */
-
-  }, {
-    key: "getCache",
-    value: function getCache(component, command) {
-      var query = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var args = {
-        query: query
-      };
-      return this.cache.get({
-        endpoint: this.commandToEndpoint(command, args, this.commandFormats[command]),
-        component: component,
-        command: command,
-        args: args
-      });
-    }
-    /**
-     * Function setCache().
-     *
-     * @param {ComponentBase} component
-     * @param {string} command
-     * @param {{}} query
-     * @param {*} data
-     */
-
-  }, {
-    key: "setCache",
-    value: function setCache(component, command, query, data) {
-      var args = {
-        query: query
-      };
-      this.cache.set({
-        endpoint: this.commandToEndpoint(command, args, this.commandFormats[command]),
-        component: component,
-        command: command,
-        args: args
-      }, data);
-    }
-    /**
-     * Function updateCache().
-     *
-     * The difference between 'setCache' and 'updateCache' is update will only modify exist values.
-     * and 'setCache' will create or update.
-     *
-     * @param {ComponentBase} component
-     * @param {string} command
-     * @param {{}} query
-     * @param {*} data
-     */
-
-  }, {
-    key: "updateCache",
-    value: function updateCache(component, command, query, data) {
-      var args = {
-        query: query,
-        data: data
-      };
-      this.cache.update({
-        endpoint: this.commandToEndpoint(command, args, this.commandFormats[command]),
-        component: component,
-        command: command,
-        args: args
-      });
-    }
-    /**
-     * Function deleteCache().
-     *
-     * @param {ComponentBase} component
-     * @param {string} command
-     * @param {{}} query
-     */
-
-  }, {
-    key: "deleteCache",
-    value: function deleteCache(component, command) {
-      var query = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var args = {
-        query: query
-      };
-      this.cache.delete({
-        endpoint: this.commandToEndpoint(command, args, this.commandFormats[command]),
-        component: component,
-        command: command,
-        args: args
-      });
-    }
-    /**
-     * Function registerFormat().
-     *
-     * Register's format for each command.
-     *
-     * @param {string} command
-     * @param {string} format
-     */
-
-  }, {
-    key: "registerFormat",
-    value: function registerFormat(command, format) {
-      this.commandFormats[command] = format;
-    }
-    /**
-     * Function create().
-     *
-     * Run a command, that will be translated as endpoint for creating new data.
-     *
-     * @param {string} command
-     * @param {*} data
-     * @param {{}} query
-     * @param {{}} options
-     *
-     * @returns {*} result
-     */
-
-  }, {
-    key: "create",
-    value: function create(command, data) {
-      var query = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-      return this.run('create', command, {
-        query: query,
-        options: options,
-        data: data
-      });
-    }
-    /**
-     * Function delete().
-     *
-     * Run a command, that will be translated as endpoint for deleting data.
-     *
-     * @param {string} command
-     * @param {{}} query
-     * @param {{}} options
-     *
-     * @returns {*} result
-     */
-
-  }, {
-    key: "delete",
-    value: function _delete(command) {
-      var query = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.run('delete', command, {
-        query: query,
-        options: options
-      });
-    }
-    /**
-     * Function get().
-     *
-     * Run a command, that will be translated as endpoint for getting data.
-     *
-     * @param {string} command
-     * @param {{}} query
-     * @param {{}} options
-     *
-     * @returns {*} result
-     */
-
-  }, {
-    key: "get",
-    value: function get(command) {
-      var query = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      return this.run('get', command, {
-        query: query,
-        options: options
-      });
-    }
-    /**
-     * Function update().
-     *
-     * Run a command, that will be translated as endpoint for updating data.
-     *
-     * @param {string} command
-     * @param {*} data
-     * @param {{}} query
-     * @param {{}} options
-     *
-     * @returns {*} result
-     */
-
-  }, {
-    key: "update",
-    value: function update(command, data) {
-      var query = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-      return this.run('update', command, {
-        query: query,
-        options: options,
-        data: data
-      });
-    }
-    /**
-     * Function options().
-     *
-     * Run a command, that will be translated as endpoint for requesting options/information about specific endpoint.
-     *
-     * @param {string} command
-     * @param {{}} query
-     * @param {{}} options
-     *
-     * @returns {*} result
-     */
-
-  }, {
-    key: "options",
-    value: function options(command, query) {
-      var _options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-      return this.run('options', command, {
-        query: query,
-        options: _options
-      });
-    }
-  }, {
-    key: "register",
-    value: function register(component, command, callback) {
-      (0, _get2.default)((0, _getPrototypeOf2.default)(Data.prototype), "register", this).call(this, component, command, callback);
-      var fullCommandName = component.getNamespace() + '/' + command,
-          commandInstance = $e.commands.getCommandClass(fullCommandName),
-          format = commandInstance !== null && commandInstance !== void 0 && commandInstance.getEndpointFormat ? commandInstance.getEndpointFormat() : false;
-
-      if (format) {
-        $e.data.registerFormat(fullCommandName, format);
-      }
-
-      return this;
-    }
-    /**
-     * @override
-     *
-     * TODO: Add JSDOC typedef for args ( query and options ).
-     *
-     * @param {DataTypes} type
-     * @param {string} command
-     * @param {{}} args
-     */
-
-  }, {
-    key: "run",
-    value: function run(type, command, args) {
-      args.options.type = type;
-
-      var _this$commandExtractA = this.commandExtractArgs(command, args);
-
-      command = _this$commandExtractA.command;
-      args = _this$commandExtractA.args;
-      return (0, _get2.default)((0, _getPrototypeOf2.default)(Data.prototype), "run", this).call(this, command, args);
-    }
-  }, {
-    key: "error",
-    value: function error(message) {
-      throw Error('Data commands: ' + message);
-    }
-  }]);
-  return Data;
-}(_commands.default);
-
-exports["default"] = Data;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/data/cache.js":
-/*!*******************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/cache.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-__webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "../node_modules/core-js/modules/es6.regexp.replace.js");
-
-__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
-
-__webpack_require__(/*! core-js/modules/es6.string.includes.js */ "../node_modules/core-js/modules/es6.string.includes.js");
-
-__webpack_require__(/*! core-js/modules/es7.array.includes.js */ "../node_modules/core-js/modules/es7.array.includes.js");
-
-var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
-
-var _promise = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/promise */ "../node_modules/@babel/runtime-corejs2/core-js/promise.js"));
-
-var _assign = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/assign */ "../node_modules/@babel/runtime-corejs2/core-js/object/assign.js"));
-
-var _entries = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/entries */ "../node_modules/@babel/runtime-corejs2/core-js/object/entries.js"));
-
-var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/typeof */ "../node_modules/@babel/runtime-corejs2/helpers/typeof.js"));
-
-var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/slicedToArray */ "../node_modules/@babel/runtime-corejs2/helpers/slicedToArray.js"));
-
-var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/asyncToGenerator */ "../node_modules/@babel/runtime-corejs2/helpers/asyncToGenerator.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _localStorage = _interopRequireDefault(__webpack_require__(/*! ./storages/local-storage */ "../core/common/assets/js/api/core/data/storages/local-storage.js"));
-
-/**
- * TODO: Search common logic, create functions to reduce code size.
- */
-var Cache = /*#__PURE__*/function () {
-  /**
-   * Function constructor().
-   *
-   * Create cache.
-   *
-   * @param {Data} manager
-   */
-  function Cache(manager) {
-    (0, _classCallCheck2.default)(this, Cache);
-    this.manager = manager;
-    this.storage = new _localStorage.default();
-  }
-  /**
-   * Function getAsync().
-   *
-   * Receive from cache. the difference between getAsync() and get() is that receive return it as promise...
-   * to fake fetch mechanism.
-   *
-   * @param {RequestData} requestData
-   *
-   * @return {(Promise|boolean)}
-   */
-
-
-  (0, _createClass2.default)(Cache, [{
-    key: "getAsync",
-    value: function getAsync(requestData) {
-      var data = this.get(requestData);
-
-      if (null !== data) {
-        // If data comes from cache, add 'cache = hit' to requestData.
-        requestData.cache = 'hit';
-        return new _promise.default( /*#__PURE__*/function () {
-          var _ref = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee(resolve) {
-            return _regenerator.default.wrap(function _callee$(_context) {
-              while (1) {
-                switch (_context.prev = _context.next) {
-                  case 0:
-                    resolve(data);
-
-                  case 1:
-                  case "end":
-                    return _context.stop();
-                }
-              }
-            }, _callee);
-          }));
-
-          return function (_x) {
-            return _ref.apply(this, arguments);
-          };
-        }());
-      } // TODO: Check if possible, always return promise and reject it.
-
-
-      return false;
-    }
-    /**
-     * Function set().
-     *
-     * set data to cache.
-     *
-     * The difference between set() and update() is that set, will modify the data anyway...
-     * when update() will only modify exist objects/values.
-     *
-     * @param {RequestData} requestData
-     * @param {*} data
-     */
-
-  }, {
-    key: "set",
-    value: function set(requestData, data) {
-      $e.data.validateRequestData(requestData);
-      var componentName = requestData.component.getNamespace(),
-          pureEndpoint = requestData.endpoint.replace(componentName + '/', ''),
-          pureEndpointParts = pureEndpoint.split('/');
-      var newData = {}; // Example of working with reaming endpoint part(s) can be found at 'cache.spec.js' test: 'load(): deep'.
-      // Analyze reaming endpoint.
-
-      if (pureEndpointParts.length && pureEndpoint !== componentName) {
-        // Using reaming endpoint parts, to build new data object.
-        var result = pureEndpointParts.reduce(function (accumulator, pureEndpointPart) {
-          accumulator[pureEndpointPart] = {};
-          return accumulator[pureEndpointPart];
-        }, newData); // 'result' is equal to 'newData' with a deeper pointer, build based on 'pureEndpointParts' ( will effect newData ).
-
-        (0, _assign.default)(result, data);
-      } else {
-        newData = data;
-      }
-
-      var oldData = this.storage.getItem(componentName); // When have old data, merge it recursively with newData using jQuery.extend().
-
-      if (oldData !== null) {
-        newData = jQuery.extend(true, oldData, newData);
-      }
-
-      this.storage.setItem(componentName, newData);
-    }
-    /**
-     * Function get().
-     *
-     * Get from exist storage.
-     *
-     * @param {RequestData} requestData
-     *
-     * @return {{}}
-     */
-
-  }, {
-    key: "get",
-    value: function get(requestData) {
-      $e.data.validateRequestData(requestData);
-      var componentName = requestData.component.getNamespace(),
-          componentData = this.storage.getItem(componentName);
-
-      if (componentData !== null) {
-        if (componentName === requestData.endpoint) {
-          return componentData;
-        } // Example of working with reaming endpoint part(s) can be found at 'cache.spec.js' test: 'get(): complex'.
-        // Analyze reaming endpoint (Using reduce over endpoint parts, build the right index).
-
-
-        var pureEndpoint = requestData.endpoint.replace(requestData.component.getNamespace() + '/', ''),
-            pureEndpointParts = pureEndpoint.split('/'),
-            result = pureEndpointParts.reduce(function (accumulator, endpointPart) {
-          if (accumulator && accumulator[endpointPart]) {
-            return accumulator[endpointPart];
-          }
-        }, componentData); // Since $e.data.cache.receive will reject only if null is the result.
-
-        return result || null;
-      }
-
-      return null;
-    }
-    /**
-     * Function update().
-     *
-     * Update only already exist storage, runs over all storage
-     *
-     * @param {RequestData} requestData
-     *
-     * @return {boolean} is updated
-     */
-
-  }, {
-    key: "update",
-    value: function update(requestData) {
-      $e.data.validateRequestData(requestData, true);
-      var endpoint = requestData.endpoint;
-      var response = {}; // Simulate response from cache.
-
-      (0, _entries.default)(this.storage.getAll()).forEach(function (_ref2) {
-        var _ref3 = (0, _slicedToArray2.default)(_ref2, 2),
-            endpointKey = _ref3[0],
-
-        /*string*/
-        endpointValue = _ref3[1];
-
-        if (endpointValue && endpoint.includes(endpointKey)) {
-          // Assuming it is a specific endpoint.
-          var oldData = endpointValue,
-              pureEndpoint = requestData.endpoint.replace(requestData.component.getNamespace() + '/', ''),
-              pureEndpointParts = pureEndpoint.split('/'),
-              isComponentUpdate = 1 === pureEndpointParts.length && endpointKey === requestData.endpoint && endpointKey === requestData.component.getNamespace(); // Component update or specific update?
-
-          if (isComponentUpdate) {
-            response = jQuery.extend(true, oldData, requestData.args.data);
-          } else {
-            var oldSpecificData = pureEndpointParts.reduce(function (accumulator, pureEndpointPart) {
-              return accumulator[pureEndpointPart];
-            }, oldData);
-            response = jQuery.extend(true, oldSpecificData, requestData.args.data);
-          }
-        }
-      }); // If response not found.
-
-      if (0 === (0, _values.default)(response).length) {
-        return false;
-      } // Update cache.
-
-
-      this.set(requestData, response);
-      return true;
-    }
-    /**
-     * Function delete().
-     *
-     * Delete endpoint from storage.
-     *
-     * @param {RequestData} requestData
-     *
-     * @return {boolean} is deleted
-     */
-
-  }, {
-    key: "delete",
-    value: function _delete(requestData) {
-      $e.data.validateRequestData(requestData);
-      var result = false;
-      var componentName = requestData.component.getNamespace();
-
-      if (componentName !== requestData.endpoint) {
-        var oldData = this.storage.getItem(componentName),
-            newData = {};
-
-        if (null === oldData) {
-          return false;
-        }
-
-        var pureEndpoint = requestData.endpoint.replace(componentName + '/', ''),
-            pureEndpointParts = pureEndpoint.split('/'),
-            lastEndpointPart = pureEndpointParts[pureEndpointParts.length - 1];
-        pureEndpointParts.reduce(function (accumulator, pureEndpointPart) {
-          if (pureEndpointPart === lastEndpointPart) {
-            // Null, means delete.
-            accumulator[pureEndpointPart] = null;
-          } else {
-            accumulator[pureEndpointPart] = {};
-          }
-
-          return accumulator[pureEndpointPart];
-        }, newData);
-
-        if ((0, _keys.default)(oldData).length) {
-          var deleteKeys = function deleteKeys(target, nullsObject) {
-            if (nullsObject) {
-              (0, _keys.default)(nullsObject).forEach(function (key) {
-                if (nullsObject[key] && 'object' === (0, _typeof2.default)(nullsObject[key])) {
-                  deleteKeys(target[key], nullsObject[key]);
-                } else if (null === nullsObject[key]) {
-                  delete target[key];
-                  result = true;
-                }
-              });
-            } else {
-              // Means need to clear all the object.
-              (0, _keys.default)(target).forEach(function (key) {
-                return delete target[key];
-              });
-            }
-
-            return target;
-          };
-
-          this.storage.setItem(componentName, deleteKeys(oldData, newData));
-        }
-      } else {
-        for (var key in this.storage.getAll()) {
-          if (key === requestData.endpoint) {
-            this.storage.removeItem(requestData.endpoint);
-            result = true;
-            break;
-          }
-        }
-      }
-
-      return result;
-    }
-  }]);
-  return Cache;
-}();
-
-exports["default"] = Cache;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/data/errors/base-error.js":
-/*!*******************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/errors/base-error.js ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _objectSpread2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread2 */ "../node_modules/@babel/runtime-corejs2/helpers/objectSpread2.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _wrapNativeSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/wrapNativeSuper */ "../node_modules/@babel/runtime-corejs2/helpers/wrapNativeSuper.js"));
-
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
-
-var BaseError = /*#__PURE__*/function (_Error) {
-  (0, _inherits2.default)(BaseError, _Error);
-
-  var _super = (0, _createSuper2.default)(BaseError);
-
-  /**
-   * Error constructor.
-   *
-   * @param code
-   * @param message
-   * @param data
-   */
-  function BaseError() {
-    var _this;
-
-    var message = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    var code = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-    var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-    (0, _classCallCheck2.default)(this, BaseError);
-    _this = _super.call(this, message);
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "code", '');
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "data", []);
-    _this.code = code;
-    _this.data = data;
-    return _this;
-  }
-  /**
-   * Notify a message when the error occurs.
-   */
-
-
-  (0, _createClass2.default)(BaseError, [{
-    key: "notify",
-    value: function notify() {
-      elementorCommon.helpers.consoleError((0, _objectSpread2.default)({
-        message: this.message
-      }, this));
-    }
-  }], [{
-    key: "create",
-    value:
-    /**
-     * The server error code.
-     *
-     * @type {string}
-     */
-
-    /**
-     * Additional data about the current error.
-     *
-     * @type {*[]}
-     */
-
-    /**
-     * Static helper function to create the error.
-     *
-     * @param message
-     * @param code
-     * @param data
-     * @returns {BaseError}
-     */
-    function create(message) {
-      var code = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-      var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-      return new this(message, code, data);
-    }
-    /**
-     * Returns the status code of the error.
-     */
-
-  }, {
-    key: "getHTTPErrorCode",
-    value: function getHTTPErrorCode() {
-      elementorModules.ForceMethodImplementation();
-    }
-  }]);
-  return BaseError;
-}( /*#__PURE__*/(0, _wrapNativeSuper2.default)(Error));
-
-exports["default"] = BaseError;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/data/errors/default-error.js":
-/*!**********************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/errors/default-error.js ***!
-  \**********************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.DefaultError = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _baseError = _interopRequireDefault(__webpack_require__(/*! ./base-error */ "../core/common/assets/js/api/core/data/errors/base-error.js"));
-
-var DefaultError = /*#__PURE__*/function (_BaseError) {
-  (0, _inherits2.default)(DefaultError, _BaseError);
-
-  var _super = (0, _createSuper2.default)(DefaultError);
-
-  function DefaultError() {
-    (0, _classCallCheck2.default)(this, DefaultError);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(DefaultError, null, [{
-    key: "getHTTPErrorCode",
-    value: function getHTTPErrorCode() {
-      return 501;
-    }
-  }]);
-  return DefaultError;
-}(_baseError.default);
-
-exports.DefaultError = DefaultError;
-var _default = DefaultError;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/data/errors/error-404.js":
-/*!******************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/errors/error-404.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Error404 = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _baseError = _interopRequireDefault(__webpack_require__(/*! ./base-error */ "../core/common/assets/js/api/core/data/errors/base-error.js"));
-
-var Error404 = /*#__PURE__*/function (_BaseError) {
-  (0, _inherits2.default)(Error404, _BaseError);
-
-  var _super = (0, _createSuper2.default)(Error404);
-
-  function Error404() {
-    (0, _classCallCheck2.default)(this, Error404);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Error404, [{
-    key: "notify",
-    value: function notify() {
-      elementorCommon.helpers.consoleWarn(this.message);
-    }
-  }], [{
-    key: "getHTTPErrorCode",
-    value: function getHTTPErrorCode() {
-      return 404;
-    }
-  }]);
-  return Error404;
-}(_baseError.default);
-
-exports.Error404 = Error404;
-var _default = Error404;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/data/errors/index.js":
-/*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/errors/index.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-_Object$defineProperty(exports, "DefaultError", {
-  enumerable: true,
-  get: function get() {
-    return _defaultError.DefaultError;
-  }
-});
-
-_Object$defineProperty(exports, "Error404", {
-  enumerable: true,
-  get: function get() {
-    return _error.Error404;
-  }
-});
-
-var _defaultError = __webpack_require__(/*! ./default-error */ "../core/common/assets/js/api/core/data/errors/default-error.js");
-
-var _error = __webpack_require__(/*! ./error-404 */ "../core/common/assets/js/api/core/data/errors/error-404.js");
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/data/storages/base-prefix-storage.js":
-/*!******************************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/storages/base-prefix-storage.js ***!
-  \******************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-__webpack_require__(/*! core-js/modules/es6.string.starts-with.js */ "../node_modules/core-js/modules/es6.string.starts-with.js");
-
-__webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "../node_modules/core-js/modules/es6.regexp.replace.js");
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/get */ "../node_modules/@babel/runtime-corejs2/helpers/get.js"));
-
-var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "../node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
-
-var _baseStorage = _interopRequireDefault(__webpack_require__(/*! elementor-api/core/data/storages/base-storage */ "../core/common/assets/js/api/core/data/storages/base-storage.js"));
-
-var BasePrefixStorage = /*#__PURE__*/function (_BaseStorage) {
-  (0, _inherits2.default)(BasePrefixStorage, _BaseStorage);
-
-  var _super = (0, _createSuper2.default)(BasePrefixStorage);
-
-  function BasePrefixStorage() {
-    (0, _classCallCheck2.default)(this, BasePrefixStorage);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(BasePrefixStorage, [{
-    key: "clear",
-    value: function clear() {
-      var _this = this;
-
-      (0, _keys.default)(this.getAll()).forEach(function (key) {
-        return _this.removeItem(key);
-      });
-    }
-  }, {
-    key: "getItem",
-    value: function getItem(key) {
-      return (0, _get2.default)((0, _getPrototypeOf2.default)(BasePrefixStorage.prototype), "getItem", this).call(this, BasePrefixStorage.DEFAULT_KEY_PREFIX + key);
-    }
-  }, {
-    key: "removeItem",
-    value: function removeItem(key) {
-      return (0, _get2.default)((0, _getPrototypeOf2.default)(BasePrefixStorage.prototype), "removeItem", this).call(this, BasePrefixStorage.DEFAULT_KEY_PREFIX + key);
-    }
-  }, {
-    key: "setItem",
-    value: function setItem(key, value) {
-      return (0, _get2.default)((0, _getPrototypeOf2.default)(BasePrefixStorage.prototype), "setItem", this).call(this, BasePrefixStorage.DEFAULT_KEY_PREFIX + key, value);
-    }
-  }, {
-    key: "getAll",
-    value: function getAll() {
-      var _this2 = this;
-
-      var DEFAULT_KEY_PREFIX = BasePrefixStorage.DEFAULT_KEY_PREFIX,
-          keys = (0, _keys.default)(this.provider),
-          result = {};
-      keys.forEach(function (key) {
-        if (key.startsWith(DEFAULT_KEY_PREFIX)) {
-          key = key.replace(DEFAULT_KEY_PREFIX, '');
-          result[key] = _this2.getItem(key);
-        }
-      });
-      return result;
-    }
-  }]);
-  return BasePrefixStorage;
-}(_baseStorage.default);
-
-exports["default"] = BasePrefixStorage;
-(0, _defineProperty2.default)(BasePrefixStorage, "DEFAULT_KEY_PREFIX", 'e_');
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/data/storages/base-storage.js":
-/*!***********************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/storages/base-storage.js ***!
-  \***********************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _stringify = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/json/stringify */ "../node_modules/@babel/runtime-corejs2/core-js/json/stringify.js"));
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-/**
- * TODO: Merge all storage's to one.
- * Using this technique give's the ability to use JSDOC from 'window.storage'.
- *
- * @implements {Storage}
- */
-var BaseStorage = /*#__PURE__*/function () {
-  /**
-   * Create storage wrapper.
-   *
-   * @param {Storage} provider
-   */
-  function BaseStorage(provider) {
-    (0, _classCallCheck2.default)(this, BaseStorage);
-
-    if (BaseStorage === (this instanceof BaseStorage ? this.constructor : void 0)) {
-      throw new TypeError('Cannot construct BaseStorage instances directly');
-    }
-
-    this.provider = provider;
-  }
-
-  (0, _createClass2.default)(BaseStorage, [{
-    key: "clear",
-    value: function clear() {
-      return this.provider.clear();
-    }
-  }, {
-    key: "getItem",
-    value: function getItem(key) {
-      var result = this.provider.getItem(key);
-
-      if (null !== result) {
-        return JSON.parse(result);
-      }
-
-      return result;
-    }
-  }, {
-    key: "key",
-    value: function key(index) {
-      return this.provider.key(index);
-    }
-  }, {
-    key: "removeItem",
-    value: function removeItem(key) {
-      return this.provider.removeItem(key);
-    }
-  }, {
-    key: "setItem",
-    value: function setItem(key, value) {
-      return this.provider.setItem(key, (0, _stringify.default)(value));
-    }
-  }, {
-    key: "getAll",
-    value: function getAll() {
-      var _this = this;
-
-      var keys = (0, _keys.default)(this.provider),
-          result = {};
-      keys.forEach(function (key) {
-        result[key] = _this.getItem(key);
-      });
-      return result;
-    }
-  }]);
-  return BaseStorage;
-}();
-
-exports["default"] = BaseStorage;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/data/storages/local-storage.js":
-/*!************************************************************************!*\
-  !*** ../core/common/assets/js/api/core/data/storages/local-storage.js ***!
-  \************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _basePrefixStorage = _interopRequireDefault(__webpack_require__(/*! ./base-prefix-storage */ "../core/common/assets/js/api/core/data/storages/base-prefix-storage.js"));
-
-var LocalStorage = /*#__PURE__*/function (_BasePrefixStorage) {
-  (0, _inherits2.default)(LocalStorage, _BasePrefixStorage);
-
-  var _super = (0, _createSuper2.default)(LocalStorage);
-
-  function LocalStorage() {
-    (0, _classCallCheck2.default)(this, LocalStorage);
-    return _super.call(this, localStorage);
-  }
-
-  (0, _createClass2.default)(LocalStorage, [{
-    key: "debug",
-    value: function debug() {
-      var entries = this.getAll(),
-          ordered = {};
-      (0, _keys.default)(entries).sort().forEach(function (key) {
-        var value = entries[key];
-        ordered[key] = value;
-      });
-      return ordered;
-    }
-  }]);
-  return LocalStorage;
-}(_basePrefixStorage.default);
-
-exports["default"] = LocalStorage;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/hooks.js":
-/*!**************************************************!*\
-  !*** ../core/common/assets/js/api/core/hooks.js ***!
-  \**************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-__webpack_require__(/*! core-js/modules/es6.array.find.js */ "../node_modules/core-js/modules/es6.array.find.js");
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
-
-var _data = _interopRequireDefault(__webpack_require__(/*! ./hooks/data.js */ "../core/common/assets/js/api/core/hooks/data.js"));
-
-var _ui = _interopRequireDefault(__webpack_require__(/*! ./hooks/ui.js */ "../core/common/assets/js/api/core/hooks/ui.js"));
-
-var Hooks = /*#__PURE__*/function () {
-  function Hooks() {
-    (0, _classCallCheck2.default)(this, Hooks);
-    (0, _defineProperty2.default)(this, "data", new _data.default());
-    (0, _defineProperty2.default)(this, "ui", new _ui.default());
-  }
-
-  (0, _createClass2.default)(Hooks, [{
-    key: "activate",
-    value:
-    /**
-     * Function activate().
-     *
-     * Activate all hooks.
-     */
-    function activate() {
-      this.getTypes().forEach(function (hooksType) {
-        hooksType.activate();
-      });
-    }
-    /**
-     * Function deactivate().
-     *
-     * Deactivate all hooks.
-     */
-
-  }, {
-    key: "deactivate",
-    value: function deactivate() {
-      this.getTypes().forEach(function (hooksType) {
-        hooksType.deactivate();
-      });
-    }
-  }, {
-    key: "getAll",
-    value: function getAll() {
-      var flat = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      var result = {};
-      this.getTypes().forEach(function (hooksType) {
-        result[hooksType.getType()] = hooksType.getAll(flat);
-      });
-      return result;
-    }
-  }, {
-    key: "getTypes",
-    value: function getTypes() {
-      return [this.data, this.ui];
-    }
-  }, {
-    key: "getType",
-    value: function getType(type) {
-      return this.getTypes().find(function (hooks) {
-        return type === hooks.getType();
-      });
-    }
-    /**
-     * Function register().
-     *
-     * Register hook.
-     *
-     * @param {string} type
-     * @param {string} event
-     * @param {HookBase} instance
-     *
-     * @returns {{}} Created callback
-     */
-
-  }, {
-    key: "register",
-    value: function register(type, event, instance) {
-      return this.getType(type).register(event, instance);
-    }
-    /**
-     * Function run().
-     *
-     * Run's a hook.
-     *
-     * @param {string} type
-     * @param {string} event
-     * @param {string} command
-     * @param {{}} args
-     * @param {*} result
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "run",
-    value: function run(type, event, command, args) {
-      var result = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : undefined;
-      return this.getType(type).run(event, command, args, result);
-    }
-    /**
-     * Function registerDataAfter().
-     *
-     * Register data hook that's run after the command.
-     *
-     * @param {HookBase} instance
-     *
-     * @returns {{}}
-     */
-
-  }, {
-    key: "registerDataAfter",
-    value: function registerDataAfter(instance) {
-      return this.register('data', 'after', instance);
-    }
-    /**
-     * Function registerDataCatch().
-     *
-     * Register data hook that's run when the command fails.
-     *
-     * @param {HookBase} instance
-     *
-     * @returns {{}}
-     */
-
-  }, {
-    key: "registerDataCatch",
-    value: function registerDataCatch(instance) {
-      return this.register('data', 'catch', instance);
-    }
-    /**
-     * Function registerDataDependency().
-     *
-     * Register data hook that's run before the command as dependency.
-     *
-     * @param {HookBase} instance
-     *
-     * @returns {{}}
-     */
-
-  }, {
-    key: "registerDataDependency",
-    value: function registerDataDependency(instance) {
-      return this.register('data', 'dependency', instance);
-    }
-    /**
-     * Function registerUIAfter().
-     *
-     * Register UI hook that's run after the commands run.
-     *
-     * @param {HookBase} instance
-     *
-     * @returns {{}}
-     */
-
-  }, {
-    key: "registerUIAfter",
-    value: function registerUIAfter(instance) {
-      return this.register('ui', 'after', instance);
-    }
-    /**
-     * Function registerUICatch().
-     *
-     * Register UI hook that's run when the command fails.
-     *
-     * @param {HookBase} instance
-     *
-     * @returns {{}}
-     */
-
-  }, {
-    key: "registerUICatch",
-    value: function registerUICatch(instance) {
-      return this.register('ui', 'catch', instance);
-    }
-    /**
-     * Function registerUIBefore().
-     *
-     * Register UI hook that's run before the command.
-     *
-     * @param {HookBase} instance
-     *
-     * @returns {{}}
-     */
-
-  }, {
-    key: "registerUIBefore",
-    value: function registerUIBefore(instance) {
-      return this.register('ui', 'before', instance);
-    }
-    /**
-     * Function runDataAfter().
-     *
-     * Run data hook that's run after the command.
-     *
-     * @param {string} command
-     * @param {{}} args
-     * @param {*} result
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "runDataAfter",
-    value: function runDataAfter(command, args, result) {
-      return this.run('data', 'after', command, args, result);
-    }
-    /**
-     * Function runDataCatch().
-     *
-     * Run data hook that's run when the command fails.
-     *
-     * @param {string} command
-     * @param {{}} args
-     * @param {*} error
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "runDataCatch",
-    value: function runDataCatch(command, args, error) {
-      return this.run('data', 'catch', command, args, error);
-    }
-    /**
-     * Function runDataDependency().
-     *
-     * Run data hook that's run before the command as dependency.
-     *
-     * @param {string} command
-     * @param {{}} args
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "runDataDependency",
-    value: function runDataDependency(command, args) {
-      return this.run('data', 'dependency', command, args);
-    }
-    /**
-     * Function runUIAfter().
-     *
-     * Run UI hook that's run after the commands run.
-     *
-     * @param {string} command
-     * @param {{}} args
-     * @param {*} result
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "runUIAfter",
-    value: function runUIAfter(command, args, result) {
-      return this.run('ui', 'after', command, args, result);
-    }
-    /**
-     * Function runUICatch().
-     *
-     * Run UI hook that's run when the command fails.
-     *
-     * @param {string} command
-     * @param {{}} args
-     * @param {*} e
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "runUICatch",
-    value: function runUICatch(command, args, e) {
-      return this.run('ui', 'catch', command, args, e);
-    }
-    /**
-     * Function runUIBefore().
-     *
-     * Run UI hook that's run before the command.
-     *
-     * @param {string} command
-     * @param {{}} args
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "runUIBefore",
-    value: function runUIBefore(command, args) {
-      return this.run('ui', 'before', command, args);
-    }
-  }]);
-  return Hooks;
-}();
-
-exports["default"] = Hooks;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/hooks/base.js":
-/*!*******************************************************!*\
-  !*** ../core/common/assets/js/api/core/hooks/base.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var HooksBase = /*#__PURE__*/function (_elementorModules$Mod) {
-  (0, _inherits2.default)(HooksBase, _elementorModules$Mod);
-
-  var _super = (0, _createSuper2.default)(HooksBase);
-
-  /**
-   * Function constructor().
-   *
-   * Create hooks base.
-   *
-   * @param {{}} args
-   */
-  function HooksBase() {
-    var _this;
-
-    (0, _classCallCheck2.default)(this, HooksBase);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _super.call.apply(_super, [this].concat(args));
-    /**
-     * Current command.
-     *
-     * @type {string}
-     */
-
-    _this.current = '';
-    /**
-     * Array of ids which in use.
-     *
-     * @type {Array}
-     */
-
-    _this.usedIds = [];
-    /**
-     * Object of callbacks that was bound by container type.
-     *
-     * @type {{}}
-     */
-
-    _this.callbacks = {
-      after: {},
-      catch: {}
-    };
-    /**
-     * Object of depth.
-     *
-     * @type {{}}
-     */
-
-    _this.depth = {
-      after: {},
-      catch: {}
-    };
-    _this.callbacksFlatList = {};
-    return _this;
-  }
-
-  (0, _createClass2.default)(HooksBase, [{
-    key: "activate",
-    value: function activate() {
-      (0, _values.default)(this.getAll(true)).forEach(function (callback) {
-        callback.activate();
-      });
-    }
-  }, {
-    key: "deactivate",
-    value: function deactivate() {
-      (0, _values.default)(this.getAll(true)).forEach(function (callback) {
-        callback.deactivate();
-      });
-    }
-    /**
-     * Function getType().
-     *
-     * Returns type eg: ( event, hook, etc ... ).
-     *
-     * @returns {string} type
-     */
-
-  }, {
-    key: "getType",
-    value: function getType() {
-      elementorModules.forceMethodImplementation();
-    }
-  }, {
-    key: "get",
-    value: function get(id) {
-      return this.callbacksFlatList[id];
-    }
-    /**
-     * Function getAll().
-     *
-     * Return all possible callbacks.
-     *
-     * @param {boolean} flat
-     *
-     * @returns {{}}
-     */
-
-  }, {
-    key: "getAll",
-    value: function getAll() {
-      var _this2 = this;
-
-      var flat = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-      if (flat) {
-        return this.callbacksFlatList;
-      }
-
-      var result = {};
-      (0, _keys.default)(this.callbacks).forEach(function (event) {
-        if (!result[event]) {
-          result[event] = [];
-        }
-
-        (0, _keys.default)(_this2.callbacks[event]).forEach(function (command) {
-          result[event].push({
-            command: command,
-            callbacks: _this2.callbacks[event][command]
-          });
-        });
-      });
-      return result;
-    }
-    /**
-     * Function getCurrent();
-     *
-     * Return current command.
-     *
-     * @returns {string}
-     */
-
-  }, {
-    key: "getCurrent",
-    value: function getCurrent() {
-      return this.current;
-    }
-    /**
-     * Function getUsedIds().
-     *
-     * Returns the current used ids.
-     *
-     * @returns {Array}
-     */
-
-  }, {
-    key: "getUsedIds",
-    value: function getUsedIds() {
-      return this.usedIds;
-    }
-    /**
-     * Function getCallbacks().
-     *
-     * Get available callbacks for specific event and command.
-     *
-     * @param {string} event
-     * @param {string} command
-     *
-     * @returns {(array|boolean)} callbacks
-     */
-
-  }, {
-    key: "getCallbacks",
-    value: function getCallbacks(event, command, args) {
-      var _args$containers = args.containers,
-          containers = _args$containers === void 0 ? [args.container] : _args$containers,
-          containerType = containers[0] ? containers[0].type : false;
-      var callbacks = [];
-
-      if (this.callbacks[event] && this.callbacks[event][command]) {
-        if (containerType && this.callbacks[event][command][containerType]) {
-          callbacks = callbacks.concat(this.callbacks[event][command][containerType]);
-        }
-
-        if (this.callbacks[event][command].all) {
-          callbacks = callbacks.concat(this.callbacks[event][command].all);
-        }
-      }
-
-      if (callbacks.length) {
-        return callbacks;
-      }
-
-      return false;
-    }
-    /**
-     * function checkEvent().
-     *
-     * Validate if the event is available.
-     *
-     * @param {string} event
-     */
-
-  }, {
-    key: "checkEvent",
-    value: function checkEvent(event) {
-      if (-1 === (0, _keys.default)(this.callbacks).indexOf(event)) {
-        throw Error("".concat(this.getType(), ": '").concat(event, "' is not available."));
-      }
-    }
-    /**
-     * Function checkInstance().
-     *
-     * Validate given instance.
-     *
-     * @param {HookBase} instance
-     */
-
-  }, {
-    key: "checkInstance",
-    value: function checkInstance(instance) {
-      if (instance.getType() !== this.getType()) {
-        throw new Error("invalid instance, please use: 'elementor-api/modules/hook-base.js'. ");
-      }
-    }
-    /**
-     * Function checkId().
-     *
-     * Validate if the id is not used before.
-     *
-     * @param {string} id
-     */
-
-  }, {
-    key: "checkId",
-    value: function checkId(id) {
-      if (-1 !== this.usedIds.indexOf(id)) {
-        throw Error("id: '".concat(id, "' is already in use."));
-      }
-    }
-    /**
-     * Function shouldRun().
-     *
-     * Determine if the event should run.
-     *
-     * @param {array} callbacks
-     *
-     * @return {boolean}
-     *
-     * @throw {Error}
-     */
-
-  }, {
-    key: "shouldRun",
-    value: function shouldRun(callbacks) {
-      return !!callbacks && callbacks.length;
-    }
-    /**
-     * Function register().
-     *
-     * Register the callback instance.
-     *
-     * @param {string} event
-     * @param {HookBase} instance
-     *
-     * @returns {{}} Created callback
-     */
-
-  }, {
-    key: "register",
-    value: function register(event, instance) {
-      var command = instance.getCommand(),
-          id = instance.getId(),
-          containerType = instance.getContainerType();
-      this.checkEvent(event);
-      this.checkInstance(instance);
-      this.checkId(id);
-      return this.registerCallback(id, event, command, instance, containerType);
-    }
-    /**
-     * Function registerCallback().
-     *
-     * Register callback.
-     *
-     * @param {string} id
-     * @param {string} event
-     * @param {string} command
-     * @param {HookBase} instance
-     * @param {string} containerType
-     *
-     * TODO: Consider replace with typedef.
-     * @returns {{callback: *, id: *, isActive: boolean}}
-     */
-
-  }, {
-    key: "registerCallback",
-    value: function registerCallback(id, event, command, instance, containerType) {
-      if (!this.callbacks[event][command]) {
-        this.callbacks[event][command] = [];
-      } // Save used id(s).
-
-
-      this.usedIds.push(id);
-
-      if (!this.callbacks[event][command]) {
-        this.callbacks[event][command] = {};
-      } // TODO: Create HookCallback class/type.
-
-
-      var callback = {
-        id: id,
-        callback: instance.run.bind(instance),
-        isActive: true,
-        activate: function activate() {
-          this.isActive = true;
-        },
-        deactivate: function deactivate() {
-          this.isActive = false;
-        }
-      };
-
-      if (containerType) {
-        if (!this.callbacks[event][command][containerType]) {
-          this.callbacks[event][command][containerType] = [];
-        }
-
-        this.callbacks[event][command][containerType].push(callback);
-      } else {
-        if (!this.callbacks[event][command].all) {
-          this.callbacks[event][command].all = [];
-        }
-
-        this.callbacks[event][command].all.push(callback);
-      }
-
-      this.callbacksFlatList[callback.id] = callback;
-      return callback;
-    }
-    /**
-     * Function run().
-     *
-     * Run the callbacks.
-     *
-     * @param {string} event
-     * @param {string} command
-     * @param {{}} args
-     * @param {*} result
-     *
-     * @returns {*}
-     */
-
-  }, {
-    key: "run",
-    value: function run(event, command, args) {
-      var result = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : undefined;
-      var callbacks = this.getCallbacks(event, command, args);
-
-      if (this.shouldRun(callbacks)) {
-        this.current = command;
-        this.onRun(command, args, event);
-        return this.runCallbacks(event, command, callbacks, args, result);
-      }
-
-      return false;
-    }
-    /**
-     * Function runCallbacks().
-     *
-     * Run's the given callbacks.
-     *
-     * @param {string} event
-     * @param {string} command
-     * @param {array} callbacks
-     * @param {{}} args
-     * @param {[]} result
-     */
-
-  }, {
-    key: "runCallbacks",
-    value: function runCallbacks(event, command, callbacks, args, result) {
-      var callbacksResult = [];
-
-      for (var i in callbacks) {
-        var callback = callbacks[i];
-
-        if (!callback.isActive) {
-          continue;
-        } // If not exist, set zero.
-
-
-        if (undefined === this.depth[event][callback.id]) {
-          this.depth[event][callback.id] = 0;
-        }
-
-        this.depth[event][callback.id]++; // Prevent recursive hooks.
-
-        if (1 === this.depth[event][callback.id]) {
-          this.onCallback(command, args, event, callback.id);
-
-          try {
-            var callbackResult = this.runCallback(event, callback, args, result);
-
-            if (!callbackResult) {
-              throw Error("Callback failed, event: '".concat(event, "'"));
-            }
-
-            callbacksResult.push(callbackResult);
-          } catch (e) {
-            // If its 'Hook-Break' then parent `try {}` will handle it.
-            if (e instanceof $e.modules.HookBreak) {
-              throw e;
-            }
-
-            elementorCommon.helpers.consoleError(e);
-          }
-        }
-
-        this.depth[event][callback.id]--;
-      }
-
-      return callbacksResult;
-    }
-    /**
-     * Function runCallback().
-     *
-     * Run's the given callback.
-     *
-     * @param {string} event
-     * @param {{}} callback
-     * @param {{}} args
-     * @param {*} result
-     *
-     * @returns {*}
-     *
-     * @throw {Error}
-     */
-
-  }, {
-    key: "runCallback",
-    value: function runCallback(event, callback, args, result) {
-      // eslint-disable-line no-unused-vars
-      elementorModules.forceMethodImplementation();
-    }
-    /**
-     * Function onRun().
-     *
-     * Called before run a set of callbacks.
-     *
-     * @param {string} command
-     * @param {{}} args
-     * @param {string} event
-     *
-     * @throw {Error}
-     */
-
-  }, {
-    key: "onRun",
-    value: function onRun(command, args, event) {
-      // eslint-disable-line no-unused-vars
-      elementorModules.forceMethodImplementation();
-    }
-    /**
-     * Function onCallback().
-     *
-     * Called before a single callback.
-     *
-     * @param {string} command
-     * @param {{}} args
-     * @param {string} event
-     * @param {string} id
-     *
-     * @throw {Error}
-     */
-
-  }, {
-    key: "onCallback",
-    value: function onCallback(command, args, event, id) {
-      // eslint-disable-line no-unused-vars
-      elementorModules.forceMethodImplementation();
-    }
-  }]);
-  return HooksBase;
-}(elementorModules.Module);
-
-exports["default"] = HooksBase;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/hooks/data.js":
-/*!*******************************************************!*\
-  !*** ../core/common/assets/js/api/core/hooks/data.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/get */ "../node_modules/@babel/runtime-corejs2/helpers/get.js"));
-
-var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "../node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base.js */ "../core/common/assets/js/api/core/hooks/base.js"));
-
-var Data = /*#__PURE__*/function (_HooksBase) {
-  (0, _inherits2.default)(Data, _HooksBase);
-
-  var _super = (0, _createSuper2.default)(Data);
-
-  function Data() {
-    var _this;
-
-    (0, _classCallCheck2.default)(this, Data);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _super.call.apply(_super, [this].concat(args));
-    _this.callbacks.dependency = {};
-    _this.depth.dependency = {};
-    return _this;
-  }
-
-  (0, _createClass2.default)(Data, [{
-    key: "getType",
-    value: function getType() {
-      return 'data';
-    }
-  }, {
-    key: "runCallback",
-    value: function runCallback(event, callback, args, result) {
-      switch (event) {
-        case 'dependency':
-          {
-            // If callback returns false and its dependency, then 'Hook-Break'.
-            if (!callback.callback(args)) {
-              this.depth[event][callback.id]--; // Throw custom break to be catch by the base for 'Safe' exit.
-
-              throw new $e.modules.HookBreak();
-            }
-
-            return true;
-          }
-
-        case 'catch':
-        case 'after':
-          {
-            /**
-             * When handling HOOK which is data after (not breakable),
-             * even the result of the callback is negative, it is required to return positive,
-             * since result of runCallback determine if the callback succeeded.
-             */
-            return callback.callback(args, result) || 'after' === event;
-          }
-      }
-
-      return false;
-    }
-  }, {
-    key: "shouldRun",
-    value: function shouldRun(callbacks) {
-      return (0, _get2.default)((0, _getPrototypeOf2.default)(Data.prototype), "shouldRun", this).call(this, callbacks) && elementor.documents.getCurrent().history.getActive();
-    }
-  }, {
-    key: "onRun",
-    value: function onRun(command, args, event) {
-      if (!$e.devTools) {
-        return;
-      }
-
-      $e.devTools.log.callbacks().run(this.getType(), command, args, event);
-    }
-  }, {
-    key: "onCallback",
-    value: function onCallback(command, args, event, id) {
-      if (!$e.devTools) {
-        return;
-      }
-
-      $e.devTools.log.callbacks().callback(this.getType(), command, args, event, id);
-    }
-  }]);
-  return Data;
-}(_base.default);
-
-exports["default"] = Data;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/hooks/ui.js":
-/*!*****************************************************!*\
-  !*** ../core/common/assets/js/api/core/hooks/ui.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/core/hooks/base.js"));
-
-var Ui = /*#__PURE__*/function (_HooksBase) {
-  (0, _inherits2.default)(Ui, _HooksBase);
-
-  var _super = (0, _createSuper2.default)(Ui);
-
-  function Ui() {
-    var _this;
-
-    (0, _classCallCheck2.default)(this, Ui);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _super.call.apply(_super, [this].concat(args));
-    _this.callbacks.before = {};
-    _this.depth.before = {};
-    return _this;
-  }
-
-  (0, _createClass2.default)(Ui, [{
-    key: "getType",
-    value: function getType() {
-      return 'ui';
-    }
-  }, {
-    key: "runCallback",
-    value: function runCallback(event, callback, args, result) {
-      switch (event) {
-        case 'before':
-          callback.callback(args);
-          break;
-
-        case 'catch':
-        case 'after':
-          callback.callback(args, result);
-          break;
-
-        default:
-          return false;
-      }
-
-      return true;
-    }
-  }, {
-    key: "onRun",
-    value: function onRun(command, args, event) {
-      if (!$e.devTools) {
-        return;
-      }
-
-      $e.devTools.log.callbacks().run(this.getType(), command, args, event);
-    }
-  }, {
-    key: "onCallback",
-    value: function onCallback(command, args, event, id) {
-      if (!$e.devTools) {
-        return;
-      }
-
-      $e.devTools.log.callbacks().callback(this.getType(), command, args, event, id);
-    }
-  }]);
-  return Ui;
-}(_base.default);
-
-exports["default"] = Ui;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/routes.js":
-/*!***************************************************!*\
-  !*** ../core/common/assets/js/api/core/routes.js ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/get */ "../node_modules/@babel/runtime-corejs2/helpers/get.js"));
-
-var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "../node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _commands = _interopRequireDefault(__webpack_require__(/*! ./commands */ "../core/common/assets/js/api/core/commands.js"));
-
-var Routes = /*#__PURE__*/function (_Commands) {
-  (0, _inherits2.default)(Routes, _Commands);
-
-  var _super = (0, _createSuper2.default)(Routes);
-
-  function Routes() {
-    var _this;
-
-    (0, _classCallCheck2.default)(this, Routes);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _super.call.apply(_super, [this].concat(args));
-    _this.savedStates = {};
-    _this.historyPerComponent = {};
-    return _this;
-  }
-
-  (0, _createClass2.default)(Routes, [{
-    key: "refreshContainer",
-    value: function refreshContainer(container) {
-      var currentRoute = this.getCurrent(container),
-          currentArgs = this.getCurrentArgs(container);
-      this.clearCurrent(container);
-      this.to(currentRoute, currentArgs);
-    }
-  }, {
-    key: "getHistory",
-    value: function getHistory() {
-      var namespaceRoot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
-      if (namespaceRoot) {
-        return this.historyPerComponent[namespaceRoot] || [];
-      }
-
-      return this.historyPerComponent;
-    }
-  }, {
-    key: "clearHistory",
-    value: function clearHistory(namespaceRoot) {
-      delete this.historyPerComponent[namespaceRoot];
-    }
-  }, {
-    key: "clearCurrent",
-    value: function clearCurrent(container) {
-      var route = this.current[container];
-
-      if (!route) {
-        return;
-      }
-
-      delete this.current[container];
-      delete this.currentArgs[container];
-      this.getComponent(route).onCloseRoute(route);
-    }
-  }, {
-    key: "clear",
-    value: function clear() {
-      var _this2 = this;
-
-      (0, _keys.default)(this.current).forEach(function (container) {
-        return _this2.clearCurrent(container);
-      });
-    }
-  }, {
-    key: "saveState",
-    value: function saveState(container) {
-      this.savedStates[container] = {
-        route: this.current[container],
-        args: this.currentArgs[container]
-      };
-      return this;
-    }
-  }, {
-    key: "restoreState",
-    value: function restoreState(container) {
-      if (!this.savedStates[container]) {
-        return false;
-      }
-
-      this.to(this.savedStates[container].route, this.savedStates[container].args);
-      return true;
-    }
-  }, {
-    key: "beforeRun",
-    value: function beforeRun(route, args) {
-      if (!(0, _get2.default)((0, _getPrototypeOf2.default)(Routes.prototype), "beforeRun", this).call(this, route, args)) {
-        return false;
-      }
-
-      if (this.is(route, args) && !args.refresh) {
-        return false;
-      }
-
-      var component = this.getComponent(route),
-          container = component.getRootContainer(),
-          oldRoute = this.current[container];
-
-      if (oldRoute) {
-        this.getComponent(oldRoute).onCloseRoute(oldRoute);
-      }
-
-      if (!component.isOpen || args.reOpen) {
-        component.isOpen = component.open(args);
-      }
-
-      return component.isOpen;
-    }
-  }, {
-    key: "to",
-    value: function to(route, args) {
-      this.run(route, args);
-      var namespaceRoot = this.getComponent(route).getRootContainer();
-
-      if (!this.historyPerComponent[namespaceRoot]) {
-        this.historyPerComponent[namespaceRoot] = [];
-      }
-
-      this.historyPerComponent[namespaceRoot].push({
-        route: route,
-        args: args
-      });
-    }
-  }, {
-    key: "back",
-    value: function back(namespaceRoot) {
-      var history = this.getHistory(namespaceRoot); // Remove current;
-
-      history.pop();
-      var last = history.pop();
-
-      if (!last) {
-        return;
-      }
-
-      this.to(last.route, last.args);
-    } // Don't use the event object.
-
-  }, {
-    key: "runShortcut",
-    value: function runShortcut(command) {
-      this.to(command);
-    } // Don't clear current route.
-
-  }, {
-    key: "afterRun",
-    value: function afterRun(route, args) {
-      this.getComponent(route).onRoute(route, args);
-    }
-  }, {
-    key: "is",
-    value: function is(route) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      if (!(0, _get2.default)((0, _getPrototypeOf2.default)(Routes.prototype), "is", this).call(this, route)) {
-        return false;
-      }
-
-      var container = this.getComponent(route).getRootContainer();
-      return _.isEqual(args, this.currentArgs[container]);
-    }
-  }, {
-    key: "isPartOf",
-    value: function isPartOf(route) {
-      /**
-       * Check against current command hierarchically.
-       * For example `is( 'panel' )` will be true for `panel/elements`
-       * `is( 'panel/editor' )` will be true for `panel/editor/style`
-       */
-      var parts = route.split('/'),
-          container = parts[0],
-          toCheck = [],
-          currentParts = this.current[container] ? this.current[container].split('/') : [];
-      var match = false;
-      currentParts.forEach(function (part) {
-        toCheck.push(part);
-
-        if (toCheck.join('/') === route) {
-          match = true;
-        }
-      });
-      return match;
-    }
-  }, {
-    key: "error",
-    value: function error(message) {
-      throw Error('Routes: ' + message);
-    }
-  }]);
-  return Routes;
-}(_commands.default);
-
-exports["default"] = Routes;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/shortcuts.js":
-/*!******************************************************!*\
-  !*** ../core/common/assets/js/api/core/shortcuts.js ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
-
-__webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "../node_modules/core-js/modules/es6.regexp.replace.js");
-
-__webpack_require__(/*! core-js/modules/es6.array.filter.js */ "../node_modules/core-js/modules/es6.array.filter.js");
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _environment = _interopRequireDefault(__webpack_require__(/*! elementor-common/utils/environment */ "../core/common/assets/js/utils/environment.js"));
-
-var Shortcuts = /*#__PURE__*/function () {
-  function Shortcuts($window) {
-    (0, _classCallCheck2.default)(this, Shortcuts);
-    this.specialKeys = {
-      13: 'enter',
-      27: 'esc',
-      38: 'up',
-      40: 'down',
-      46: 'del',
-      191: '?'
-    };
-    this.component = '';
-    this.handlers = {};
-    this.bindListener($window);
-  }
-
-  (0, _createClass2.default)(Shortcuts, [{
-    key: "bindListener",
-    value: function bindListener($window) {
-      var _this = this;
-
-      $window.on('keydown', function (event) {
-        return _this.handle(event);
-      });
-    }
-  }, {
-    key: "getAll",
-    value: function getAll() {
-      var shortcuts = {};
-      jQuery.each(this.handlers, function (key, handler) {
-        jQuery.each(handler, function (index, config) {
-          shortcuts[config.command] = key;
-        });
-      });
-      return shortcuts;
-    }
-    /**
-     * @param shortcuts
-     * @param {{callback: (function(): boolean), scopes: [void]}} args
-     * @param {callback} args.callback Required
-     * @param {string} args.component Optional
-     * @param {callback} args.dependency Optional
-     * @param {array} args.exclude Optional
-     * @param {bool} args.allowAltKey Optional
-     */
-
-  }, {
-    key: "register",
-    value: function register(shortcuts, args) {
-      var _this2 = this;
-
-      shortcuts.replace(' ', '').split(',').forEach(function (shortcut) {
-        if (!_this2.handlers[shortcut]) {
-          _this2.handlers[shortcut] = [];
-        }
-
-        _this2.handlers[shortcut].push(args);
-      });
-    }
-  }, {
-    key: "unregister",
-    value: function unregister(shortcuts, args) {
-      var _this3 = this;
-
-      shortcuts.replace(' ', '').split(',').forEach(function (shortcut) {
-        _this3.handlers[shortcut].forEach(function (index, handler) {
-          if (args === handler) {
-            delete _this3.handlers[shortcut][index];
-          }
-        });
-      });
-    }
-  }, {
-    key: "handle",
-    value: function handle(event) {
-      var handlers = this.getHandlersByPriority(event);
-
-      if (!handlers) {
-        return;
-      }
-
-      var filteredHandlers = handlers.filter(function (handler) {
-        if (handler.exclude && -1 !== handler.exclude.indexOf('input')) {
-          var $target = jQuery(event.target);
-
-          if ($target.is(':input, .elementor-input') || $target.closest('[contenteditable="true"]').length) {
-            return false;
-          }
-        }
-
-        if (handler.dependency && !handler.dependency(event)) {
-          return false;
-        } // Fix for some keyboard sources that consider alt key as ctrl key
-
-
-        if (!handler.allowAltKey && event.altKey) {
-          return false;
-        }
-
-        return true;
-      });
-
-      if (!filteredHandlers.length) {
-        return;
-      }
-
-      if (1 < filteredHandlers.length && elementorCommon.config.isDebug) {
-        elementorCommon.helpers.consoleWarn('Multiple handlers for shortcut.', filteredHandlers, event);
-      }
-
-      event.preventDefault();
-      filteredHandlers[0].callback(event);
-    }
-  }, {
-    key: "isControlEvent",
-    value: function isControlEvent(event) {
-      return event[_environment.default.mac ? 'metaKey' : 'ctrlKey'];
-    }
-  }, {
-    key: "getEventShortcut",
-    value: function getEventShortcut(event) {
-      var shortcut = [];
-
-      if (event.altKey) {
-        shortcut.push('alt');
-      }
-
-      if (this.isControlEvent(event)) {
-        shortcut.push('ctrl');
-      }
-
-      if (event.shiftKey) {
-        shortcut.push('shift');
-      }
-
-      if (this.specialKeys[event.which]) {
-        shortcut.push(this.specialKeys[event.which]);
-      } else {
-        shortcut.push(String.fromCharCode(event.which).toLowerCase());
-      }
-
-      return shortcut.join('+');
-    }
-  }, {
-    key: "isActiveScope",
-    value: function isActiveScope(scopes) {
-      var activeComponents = (0, _keys.default)($e.components.activeComponents),
-          activeComponent = activeComponents[activeComponents.length - 1],
-          component = $e.components.get(activeComponent);
-
-      if (!component) {
-        return false;
-      }
-
-      var namespace = component.getNamespace(),
-          namespaceRoot = component.getRootContainer();
-      var filteredByNamespace = scopes.some(function (scope) {
-        return namespace === scope;
-      });
-
-      if (filteredByNamespace) {
-        return true;
-      } // Else filter by namespaceRoot.
-
-
-      return scopes.some(function (scope) {
-        return namespaceRoot === scope;
-      });
-    }
-  }, {
-    key: "getHandlersByPriority",
-    value: function getHandlersByPriority(event) {
-      var _this4 = this;
-
-      var handlers = this.handlers[this.getEventShortcut(event)];
-
-      if (!handlers) {
-        return false;
-      } // TODO: Prioritize current scope before roo scope.
-
-
-      var inCurrentScope = handlers.filter(function (handler) {
-        return handler.scopes && _this4.isActiveScope(handler.scopes);
-      });
-
-      if (inCurrentScope.length) {
-        return inCurrentScope;
-      }
-
-      var noScope = handlers.filter(function (handler) {
-        return !handler.scopes;
-      });
-
-      if (noScope.length) {
-        return noScope;
-      }
-    }
-  }]);
-  return Shortcuts;
-}();
-
-exports["default"] = Shortcuts;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/store.js":
-/*!**************************************************!*\
-  !*** ../core/common/assets/js/api/core/store.js ***!
-  \**************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _entries = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/entries */ "../node_modules/@babel/runtime-corejs2/core-js/object/entries.js"));
-
-var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/slicedToArray */ "../node_modules/@babel/runtime-corejs2/helpers/slicedToArray.js"));
-
-var _objectSpread4 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread2 */ "../node_modules/@babel/runtime-corejs2/helpers/objectSpread2.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
-
-var _toolkit = __webpack_require__(/*! @reduxjs/toolkit */ "../node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
-
-var Store = /*#__PURE__*/function () {
-  /**
-   * @type {Object}
-   */
-
-  /**
-   * @type {EnhancedStore<{}, AnyAction, [ThunkMiddlewareFor<{}>]>}
-   */
-
-  /**
-   * Initialize the Store.
-   *
-   * @return {void}
-   */
-  function Store() {
-    (0, _classCallCheck2.default)(this, Store);
-    (0, _defineProperty2.default)(this, "slices", {});
-    (0, _defineProperty2.default)(this, "reduxStore", void 0);
-    this.slices = {};
-    this.reduxStore = this.createStore();
-  }
-  /**
-   * Create a Redux Store object.
-   *
-   * @return {EnhancedStore<{}, AnyAction, [ThunkMiddlewareFor<{}>]>}
-   */
-
-
-  (0, _createClass2.default)(Store, [{
-    key: "createStore",
-    value: function createStore() {
-      return (0, _toolkit.configureStore)({
-        // Use an empty function instead of empty object since an empty object
-        // isn't a valid reducer value.
-        reducer: function reducer() {}
-      });
-    }
-    /**
-     * Inject a new reducer.
-     *
-     * See: https://redux.js.org/usage/code-splitting#defining-an-injectreducer-function
-     *
-     * @param {string} id - Reducer unique ID.
-     * @param {function} newReducer - New reducer to inject.
-     *
-     * @return {void}
-     */
-
-  }, {
-    key: "injectReducer",
-    value: function injectReducer(id, newReducer) {
-      var prevReducers = this.getReducers();
-      this.reduxStore.replaceReducer((0, _toolkit.combineReducers)((0, _objectSpread4.default)((0, _objectSpread4.default)({}, prevReducers), {}, (0, _defineProperty2.default)({}, id, newReducer))));
-    }
-    /**
-     * Register a Redux Store slice.
-     *
-     * @param {string} sliceId - Slice unique ID.
-     * @param {Slice} instance - Slice object to add.
-     *
-     * @return {void}
-     */
-
-  }, {
-    key: "register",
-    value: function register(sliceId, instance) {
-      if (this.slices[sliceId]) {
-        throw "Slice with ID '".concat(sliceId, "' already exists.");
-      }
-
-      this.slices[sliceId] = instance;
-      this.injectReducer(sliceId, instance.reducer);
-    }
-    /**
-     * Get a specific slice.
-     *
-     * @param {string|null} sliceId - Slice ID to get.
-     *
-     * @return {Slice|Object}
-     */
-
-  }, {
-    key: "get",
-    value: function get() {
-      var sliceId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-      if (sliceId) {
-        return this.slices[sliceId];
-      }
-
-      return this.slices;
-    }
-    /**
-     * Get All slices.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: "getAll",
-    value: function getAll() {
-      return (0, _keys.default)(this.slices);
-    }
-    /**
-     * Return the current reducers.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: "getReducers",
-    value: function getReducers() {
-      return (0, _entries.default)(this.slices).reduce(function (reducers, _ref) {
-        var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
-            key = _ref2[0],
-            slice = _ref2[1];
-
-        return (0, _objectSpread4.default)((0, _objectSpread4.default)({}, reducers), {}, (0, _defineProperty2.default)({}, key, slice.reducer));
-      }, {});
-    }
-    /**
-     * Get the actual Redux store object.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: "getReduxStore",
-    value: function getReduxStore() {
-      return this.reduxStore;
-    }
-    /**
-     * Proxy to Redux's `dispatch()` function.
-     *
-     * @return {*}
-     */
-
-  }, {
-    key: "dispatch",
-    value: function dispatch() {
-      var _this$reduxStore;
-
-      return (_this$reduxStore = this.reduxStore).dispatch.apply(_this$reduxStore, arguments);
-    }
-    /**
-     * Proxy to Redux's `getState()` function.
-     *
-     * @return {*}
-     */
-
-  }, {
-    key: "getState",
-    value: function getState() {
-      var _this$reduxStore2;
-
-      return (_this$reduxStore2 = this.reduxStore).getState.apply(_this$reduxStore2, arguments);
-    }
-    /**
-     * Proxy to Redux's `replaceReducer()` function.
-     * TODO: Do we want that?
-     *
-     * @return {*}
-     */
-
-  }, {
-    key: "replaceReducer",
-    value: function replaceReducer() {
-      var _this$reduxStore3;
-
-      return (_this$reduxStore3 = this.reduxStore).replaceReducer.apply(_this$reduxStore3, arguments);
-    }
-    /**
-     * Proxy to Redux's `subscribe()` function.
-     *
-     * @return {*}
-     */
-
-  }, {
-    key: "subscribe",
-    value: function subscribe() {
-      var _this$reduxStore4;
-
-      return (_this$reduxStore4 = this.reduxStore).subscribe.apply(_this$reduxStore4, arguments);
-    }
-  }]);
-  return Store;
-}();
-
-exports["default"] = Store;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/core/ui-states.js":
-/*!******************************************************!*\
-  !*** ../core/common/assets/js/api/core/ui-states.js ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _entries = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/entries */ "../node_modules/@babel/runtime-corejs2/core-js/object/entries.js"));
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/slicedToArray */ "../node_modules/@babel/runtime-corejs2/helpers/slicedToArray.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var UiStates = /*#__PURE__*/function () {
-  /**
-   * Initialize the State Manager.
-   *
-   * @return {void}
-   */
-  function UiStates() {
-    (0, _classCallCheck2.default)(this, UiStates);
-    this.states = {};
-  }
-  /**
-   * Register a new state.
-   *
-   * @param {UiStateBase} instance - State instance.
-   *
-   * @return {void}
-   */
-
-
-  (0, _createClass2.default)(UiStates, [{
-    key: "register",
-    value: function register(instance) {
-      var stateId = instance.getPrefixedId();
-
-      if (this.states[stateId]) {
-        throw "State '".concat(stateId, "' already exists.");
-      }
-
-      this.states[stateId] = instance;
-    }
-    /**
-     * Get all existing states with their options:
-     *
-     * {
-     *     'state-id': [
-     *         'option-1',
-     *         'option-2',
-     *         'option-3',
-     *     ],
-     * }
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: "getAll",
-    value: function getAll() {
-      var states = {};
-      (0, _entries.default)(this.states).forEach(function (_ref) {
-        var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
-            id = _ref2[0],
-            instance = _ref2[1];
-
-        var options = instance.getOptions();
-        states[id] = (0, _keys.default)(options);
-      });
-      return states;
-    }
-    /**
-     * Get the state value, or return all of them if no `state` is set.
-     *
-     * @param {string} state - State ID.
-     *
-     * @return {UiStateBase}
-     */
-
-  }, {
-    key: "get",
-    value: function get(state) {
-      if (state) {
-        return this.states[state];
-      }
-
-      return this.states;
-    }
-    /**
-     * Set the current state value and trigger its callbacks & events.
-     * This function triggers a `e-ui-state:${ stateID }` event to the scope, with `oldValue` & `newValue`
-     * under `e.detail`.
-     * Additionally, it adds a `e-ui-state--${ stateID }__${ value }` class to the scope element.
-     *
-     * @param {string} state - State ID.
-     * @param {string} value - New state value.
-     *
-     * @return {void}
-     */
-
-  }, {
-    key: "set",
-    value: function set(state, value) {
-      // Invalid state or option.
-      if (!this.get(state)) {
-        throw "State '".concat(state, "' doesn't exist.");
-      }
-
-      var oldValue = this.getCurrent(state),
-          classPrefix = "e-ui-state--".concat(state.replaceAll('/', '-')),
-          oldStateClass = "".concat(classPrefix, "__").concat(oldValue),
-          newStateClass = "".concat(classPrefix, "__").concat(value),
-          scopes = this.get(state).getScopes(); // Set the current state to the new value.
-
-      this.get(state).set(value);
-      scopes.forEach(function (scope) {
-        scope.classList.remove(oldStateClass); // Set the new class only if there is a value (i.e. it's not a state removal action).
-
-        if (value) {
-          scope.classList.add(newStateClass);
-        } // Dispatch a custom state-change event to the scope.
-
-
-        var event = new CustomEvent("e-ui-state:".concat(state), {
-          detail: {
-            oldValue: oldValue,
-            newValue: value
-          }
-        });
-        scope.dispatchEvent(event);
-      });
-    }
-    /**
-     * Remove a state.
-     *
-     * @param {string} state - State ID.
-     *
-     * @return {void}
-     */
-
-  }, {
-    key: "remove",
-    value: function remove(state) {
-      this.set(state, '');
-    }
-    /**
-     * Get the current state value.
-     *
-     * @param {string} state - State ID.
-     *
-     * @return {string}
-     */
-
-  }, {
-    key: "getCurrent",
-    value: function getCurrent(state) {
-      var _this$get;
-
-      return (_this$get = this.get(state)) === null || _this$get === void 0 ? void 0 : _this$get.getCurrent();
-    }
-  }]);
-  return UiStates;
-}();
-
-exports["default"] = UiStates;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/extras/hash-commands.js":
-/*!************************************************************!*\
-  !*** ../core/common/assets/js/api/extras/hash-commands.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
-
-var _promise = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/promise */ "../node_modules/@babel/runtime-corejs2/core-js/promise.js"));
-
-__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
-
-var _createForOfIteratorHelper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createForOfIteratorHelper */ "../node_modules/@babel/runtime-corejs2/helpers/createForOfIteratorHelper.js"));
-
-var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/asyncToGenerator */ "../node_modules/@babel/runtime-corejs2/helpers/asyncToGenerator.js"));
-
-var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/slicedToArray */ "../node_modules/@babel/runtime-corejs2/helpers/slicedToArray.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
-
-/**
- * @typedef HashCommand
- * @property {string} method,
- * @property {string} command
- * @property {object} args
- */
-var HashCommands = /*#__PURE__*/function () {
-  /**
-   * Cannot be static since it uses callback(s) that are available only after '$e' is initialized.
-   */
-
-  /**
-   * List of current loaded hash commands.
-   *
-   * @type {Array.<HashCommand>}
-   */
-  function HashCommands() {
-    (0, _classCallCheck2.default)(this, HashCommands);
-    (0, _defineProperty2.default)(this, "dispatchersList", {
-      'e:run': {
-        runner: $e.run,
-        isSafe: function isSafe(command) {
-          var _$e$commands$getComma;
-
-          return (_$e$commands$getComma = $e.commands.getCommandClass(command)) === null || _$e$commands$getComma === void 0 ? void 0 : _$e$commands$getComma.getInfo().isSafe;
-        }
-      },
-      'e:route': {
-        runner: $e.route,
-        isSafe: function isSafe() {
-          return true;
-        }
-      }
-    });
-    (0, _defineProperty2.default)(this, "commands", []);
-    this.commands = this.get();
-  }
-  /**
-   * Function get().
-   *
-   * Get API requests that comes from hash ( eg #e:run ).
-   *
-   * @param {string} hash
-   *
-   * @returns {Array.<HashCommand>}
-   */
-
-
-  (0, _createClass2.default)(HashCommands, [{
-    key: "get",
-    value: function get() {
-      var _this = this;
-
-      var hash = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : location.hash;
-      var result = [];
-
-      if (hash) {
-        // Remove first '#' and split each '&'.
-        var hashList = hash.substr(1).split('&');
-        hashList.forEach(function (hashItem) {
-          var _hashItem$split = hashItem.split('?'),
-              _hashItem$split2 = (0, _slicedToArray2.default)(_hashItem$split, 2),
-              rawCommand = _hashItem$split2[0],
-              rawArgs = _hashItem$split2[1];
-
-          var hashParts = rawCommand.split(':');
-
-          if (3 !== hashParts.length) {
-            return;
-          }
-
-          var method = hashParts[0] + ':' + hashParts[1],
-              dispatcher = _this.dispatchersList[method];
-
-          if (dispatcher) {
-            var command = hashParts[2],
-                args = _this.parseCommandArgs(rawArgs);
-
-            result.push({
-              method: method,
-              command: command,
-              args: args
-            });
-          }
-        });
-      }
-
-      return result;
-    }
-    /**
-     * Function run().
-     *
-     * Run API requests that comes from hash ( eg #e:run ).
-     *
-     * @param {Array.<HashCommand>} [commands=this.commands]
-     */
-
-  }, {
-    key: "run",
-    value: function () {
-      var _run = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
-        var commands,
-            _iterator,
-            _step,
-            hashCommand,
-            dispatcher,
-            _iterator2,
-            _step2,
-            _hashCommand,
-            _args = arguments;
-
-        return _regenerator.default.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                commands = _args.length > 0 && _args[0] !== undefined ? _args[0] : this.commands;
-                // To allow validate the run first.
-                _iterator = (0, _createForOfIteratorHelper2.default)(commands);
-                _context.prev = 2;
-
-                _iterator.s();
-
-              case 4:
-                if ((_step = _iterator.n()).done) {
-                  _context.next = 13;
-                  break;
-                }
-
-                hashCommand = _step.value;
-                dispatcher = this.dispatchersList[hashCommand.method];
-
-                if (dispatcher) {
-                  _context.next = 9;
-                  break;
-                }
-
-                return _context.abrupt("return", _promise.default.reject(new Error("No dispatcher found for the command: `".concat(hashCommand.command, "`."))));
-
-              case 9:
-                if (dispatcher.isSafe(hashCommand.command)) {
-                  _context.next = 11;
-                  break;
-                }
-
-                return _context.abrupt("return", _promise.default.reject(new Error("Attempting to run unsafe or non exist command: `".concat(hashCommand.command, "`."))));
-
-              case 11:
-                _context.next = 4;
-                break;
-
-              case 13:
-                _context.next = 18;
-                break;
-
-              case 15:
-                _context.prev = 15;
-                _context.t0 = _context["catch"](2);
-
-                _iterator.e(_context.t0);
-
-              case 18:
-                _context.prev = 18;
-
-                _iterator.f();
-
-                return _context.finish(18);
-
-              case 21:
-                // This logic will run the promises by sequence (will wait for dispatcher to finish, before run again).
-                _iterator2 = (0, _createForOfIteratorHelper2.default)(commands);
-                _context.prev = 22;
-
-                _iterator2.s();
-
-              case 24:
-                if ((_step2 = _iterator2.n()).done) {
-                  _context.next = 30;
-                  break;
-                }
-
-                _hashCommand = _step2.value;
-                _context.next = 28;
-                return this.dispatchersList[_hashCommand.method].runner(_hashCommand.command, _hashCommand.args);
-
-              case 28:
-                _context.next = 24;
-                break;
-
-              case 30:
-                _context.next = 35;
-                break;
-
-              case 32:
-                _context.prev = 32;
-                _context.t1 = _context["catch"](22);
-
-                _iterator2.e(_context.t1);
-
-              case 35:
-                _context.prev = 35;
-
-                _iterator2.f();
-
-                return _context.finish(35);
-
-              case 38:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this, [[2, 15, 18, 21], [22, 32, 35, 38]]);
-      }));
-
-      function run() {
-        return _run.apply(this, arguments);
-      }
-
-      return run;
-    }()
-    /**
-     * Function runOnce().
-     *
-     * Do same as `run` but clear `this.commands` before leaving.
-     */
-
-  }, {
-    key: "runOnce",
-    value: function runOnce() {
-      var _this2 = this;
-
-      this.run(this.commands).then(function () {
-        _this2.commands = [];
-      });
-    }
-    /**
-     * Takes a args in form of JSON and parse it.
-     *
-     * @param {string} rawArgs
-     * @returns {object}
-     */
-
-  }, {
-    key: "parseCommandArgs",
-    value: function parseCommandArgs(rawArgs) {
-      try {
-        return JSON.parse(decodeURI(rawArgs || '{}'));
-      } catch (e) {
-        elementorCommon.helpers.consoleWarn('Hash commands JSON args cannot be parsed. \n\n', e);
-        return {};
-      }
-    }
-  }]);
-  return HashCommands;
-}();
-
-exports["default"] = HashCommands;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/index.js":
-/*!*********************************************!*\
-  !*** ../core/common/assets/js/api/index.js ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireWildcard */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireWildcard.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _backwardsCompatibility = _interopRequireDefault(__webpack_require__(/*! ./core/backwards-compatibility */ "../core/common/assets/js/api/core/backwards-compatibility.js"));
-
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! ./modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
-
-var _commandInternalBase = _interopRequireDefault(__webpack_require__(/*! ./modules/command-internal-base */ "../core/common/assets/js/api/modules/command-internal-base.js"));
-
-var _commandData = _interopRequireDefault(__webpack_require__(/*! ./modules/command-data */ "../core/common/assets/js/api/modules/command-data.js"));
-
-var _commands = _interopRequireDefault(__webpack_require__(/*! ./core/commands */ "../core/common/assets/js/api/core/commands.js"));
-
-var _commandsInternal = _interopRequireDefault(__webpack_require__(/*! ./core/commands-internal */ "../core/common/assets/js/api/core/commands-internal.js"));
-
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! ./modules/component-base */ "../core/common/assets/js/api/modules/component-base.js"));
-
-var _componentModalBase = _interopRequireDefault(__webpack_require__(/*! ./modules/component-modal-base */ "../core/common/assets/js/api/modules/component-modal-base.js"));
-
-var _components = _interopRequireDefault(__webpack_require__(/*! ./core/components */ "../core/common/assets/js/api/core/components.js"));
-
-var _data = _interopRequireDefault(__webpack_require__(/*! ./core/data.js */ "../core/common/assets/js/api/core/data.js"));
-
-var _hashCommands = _interopRequireDefault(__webpack_require__(/*! ./extras/hash-commands */ "../core/common/assets/js/api/extras/hash-commands.js"));
-
-var _hookBreak = _interopRequireDefault(__webpack_require__(/*! ./modules/hook-break */ "../core/common/assets/js/api/modules/hook-break.js"));
-
-var _hooks = _interopRequireDefault(__webpack_require__(/*! ./core/hooks */ "../core/common/assets/js/api/core/hooks.js"));
-
-var _routes = _interopRequireDefault(__webpack_require__(/*! ./core/routes */ "../core/common/assets/js/api/core/routes.js"));
-
-var _shortcuts = _interopRequireDefault(__webpack_require__(/*! ./core/shortcuts */ "../core/common/assets/js/api/core/shortcuts.js"));
-
-var _store = _interopRequireDefault(__webpack_require__(/*! ./core/store */ "../core/common/assets/js/api/core/store.js"));
-
-var _uiStates = _interopRequireDefault(__webpack_require__(/*! ./core/ui-states */ "../core/common/assets/js/api/core/ui-states.js"));
-
-var hookData = _interopRequireWildcard(__webpack_require__(/*! ./modules/hooks/data/ */ "../core/common/assets/js/api/modules/hooks/data/index.js"));
-
-var hookUI = _interopRequireWildcard(__webpack_require__(/*! ./modules/hooks/ui */ "../core/common/assets/js/api/modules/hooks/ui/index.js"));
-
-/* Alphabetical order */
-var API = /*#__PURE__*/function () {
-  /**
-   * Function constructor().
-   *
-   * Create's 'elementor' api.
-   */
-  function API() {
-    (0, _classCallCheck2.default)(this, API);
-    window.$e = this;
-    this.components = new _components.default();
-    this.commands = new _commands.default();
-    this.commandsInternal = new _commandsInternal.default();
-    this.hooks = new _hooks.default();
-    this.routes = new _routes.default();
-    this.shortcuts = new _shortcuts.default(jQuery(window));
-    this.data = new _data.default();
-    this.store = new _store.default();
-    this.uiStates = new _uiStates.default();
-    this.modules = {
-      CommandBase: _commandBase.default,
-      CommandInternalBase: _commandInternalBase.default,
-      CommandData: _commandData.default,
-      ComponentBase: _componentBase.default,
-      ComponentModalBase: _componentModalBase.default,
-      HookBreak: _hookBreak.default,
-      hookData: hookData,
-      hookUI: hookUI
-    };
-    this.extras = {
-      hashCommands: new _hashCommands.default()
-    }; // Backwards compatibility should be last, in order to handle others.
-
-    this.bc = new _backwardsCompatibility.default();
-  }
-  /**
-   * Function run().
-   *
-   * Alias of `$e.commands.run()`.
-   *
-   * @param {string} command
-   * @param [args={}]
-   *
-   * @returns {*}
-   */
-
-
-  (0, _createClass2.default)(API, [{
-    key: "run",
-    value: function run(command) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      return $e.commands.run(command, args);
-    }
-    /**
-     * Function internal().
-     *
-     * Alias of `$e.commandsInternal.run()`.
-     *
-     * @param {string} command
-     * @param [args={}]
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "internal",
-    value: function internal(command) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      return $e.commandsInternal.run(command, args);
-    }
-    /**
-     * Function route().
-     *
-     * Alias of `$e.routes.to()`.
-     *
-     * @param {string} route
-     * @param [args={}]
-     */
-
-  }, {
-    key: "route",
-    value: function route(_route) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      return $e.routes.to(_route, args);
-    } // TODO: shortcut();
-
-  }]);
-  return API;
-}();
-
-exports["default"] = API;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/command-base.js":
-/*!************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/command-base.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
-
-__webpack_require__(/*! core-js/modules/es6.array.filter.js */ "../node_modules/core-js/modules/es6.array.filter.js");
-
-__webpack_require__(/*! core-js/modules/es6.string.iterator.js */ "../node_modules/core-js/modules/es6.string.iterator.js");
-
-__webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
-
-__webpack_require__(/*! core-js/modules/es6.array.iterator.js */ "../node_modules/core-js/modules/es6.array.iterator.js");
-
-__webpack_require__(/*! core-js/modules/web.dom.iterable.js */ "../node_modules/core-js/modules/web.dom.iterable.js");
-
-var _isArray = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/array/is-array */ "../node_modules/@babel/runtime-corejs2/core-js/array/is-array.js"));
-
-var _promise = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/promise */ "../node_modules/@babel/runtime-corejs2/core-js/promise.js"));
-
-var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/typeof */ "../node_modules/@babel/runtime-corejs2/helpers/typeof.js"));
-
-var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/asyncToGenerator */ "../node_modules/@babel/runtime-corejs2/helpers/asyncToGenerator.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
-
-var _argsObject = _interopRequireDefault(__webpack_require__(/*! elementor-assets-js/modules/imports/args-object */ "../assets/dev/js/modules/imports/args-object.js"));
-
-var CommandBase = /*#__PURE__*/function (_ArgsObject) {
-  (0, _inherits2.default)(CommandBase, _ArgsObject);
-
-  var _super = (0, _createSuper2.default)(CommandBase);
-
-  /**
-   * Function constructor().
-   *
-   * Create Commands Base.
-   *
-   * @param [args={}]
-   * @param [commandsAPI={}]
-   */
-  function CommandBase(args) {
-    var _this;
-
-    var commandsAPI = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : $e.commands;
-    (0, _classCallCheck2.default)(this, CommandBase);
-    _this = _super.call(this, args); // Acknowledge self about which command it run.
-
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "component", void 0);
-    _this.currentCommand = commandsAPI.getCurrentLast(); // Assign instance of current component.
-
-    _this.component = commandsAPI.getComponent(_this.currentCommand); // Who ever need do something before without `super` the constructor can use `initialize` method.
-
-    _this.initialize(args); // Refresh args, maybe the changed via `initialize`.
-
-
-    args = _this.args; // Validate args before run.
-
-    _this.validateArgs(args);
-
-    return _this;
-  }
-  /**
-   * Function requireContainer().
-   *
-   * Validate `arg.container` & `arg.containers`.
-   *
-   * @param {{}} args
-   *
-   * @throws {Error}
-   */
-
-
-  (0, _createClass2.default)(CommandBase, [{
-    key: "requireContainer",
-    value: function requireContainer() {
-      var _this2 = this;
-
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.args;
-
-      if (!args.container && !args.containers) {
-        throw Error('container or containers are required.');
-      }
-
-      if (args.container && args.containers) {
-        throw Error('container and containers cannot go together please select one of them.');
-      }
-
-      var containers = args.containers || [args.container];
-      containers.forEach(function (container) {
-        _this2.requireArgumentInstance('container', elementorModules.editor.Container, {
-          container: container
-        });
-      });
-    }
-    /**
-     * Function initialize().
-     *
-     * Initialize command, called after construction.
-     *
-     * @param [args={}]
-     */
-
-  }, {
-    key: "initialize",
-    value: function initialize() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    } // eslint-disable-line no-unused-vars
-
-    /**
-     * Function validateArgs().
-     *
-     * Validate command arguments.
-     *
-     * @param [args={}]
-     */
-
-  }, {
-    key: "validateArgs",
-    value: function validateArgs() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    } // eslint-disable-line no-unused-vars
-
-    /**
-     * Function isDataChanged().
-     *
-     * Whether the editor needs to set change flag on/off.
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "isDataChanged",
-    value: function isDataChanged() {
-      return false;
-    }
-    /**
-     * Function apply().
-     *
-     * Do the actual command.
-     *
-     * @param [args={}]
-     *
-     * @returns {*}
-     */
-
-  }, {
-    key: "apply",
-    value: function apply() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      // eslint-disable-line no-unused-vars
-      elementorModules.ForceMethodImplementation();
-    }
-    /**
-     * Function run().
-     *
-     * Run command with history & hooks.
-     *
-     * @returns {*}
-     */
-
-  }, {
-    key: "run",
-    value: function run() {
-      var result; // For UI Hooks.
-
-      this.onBeforeRun(this.args);
-
-      try {
-        // For Data hooks.
-        this.onBeforeApply(this.args);
-        result = this.apply(this.args);
-      } catch (e) {
-        this.onCatchApply(e); // Catch 'Hook-Break' that comes from hooks base.
-
-        if (e instanceof $e.modules.HookBreak) {
-          // Bypass.
-          return false;
-        }
-      }
-
-      return this.runAfter(result);
-    }
-  }, {
-    key: "runAfter",
-    value: function runAfter(result) {
-      var _this3 = this;
-
-      var onAfter = function onAfter(_result) {
-        // Run Data hooks.
-        _this3.onAfterApply(_this3.args, _result); // TODO: Create Command-Base for Command-Document and apply it on after.
-
-
-        if (_this3.isDataChanged()) {
-          $e.internal('document/save/set-is-modified', {
-            status: true
-          });
-        } // For UI hooks.
-
-
-        _this3.onAfterRun(_this3.args, _result);
-      },
-          asyncOnAfter = /*#__PURE__*/function () {
-        var _ref = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee(_result) {
-          var results, promises;
-          return _regenerator.default.wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  // Run Data hooks.
-                  results = _this3.onAfterApply(_this3.args, _result), promises = (0, _isArray.default)(results) ? results.flat().filter(function (filtered) {
-                    return filtered instanceof _promise.default;
-                  }) : [];
-
-                  if (!promises.length) {
-                    _context.next = 4;
-                    break;
-                  }
-
-                  _context.next = 4;
-                  return _promise.default.all(promises);
-
-                case 4:
-                  if (_this3.isDataChanged()) {
-                    // TODO: Create Command-Base for Command-Document and apply it on after.
-                    $e.internal('document/save/set-is-modified', {
-                      status: true
-                    });
-                  } // For UI hooks.
-
-
-                  _this3.onAfterRun(_this3.args, _result);
-
-                case 6:
-                case "end":
-                  return _context.stop();
-              }
-            }
-          }, _callee);
-        }));
-
-        return function asyncOnAfter(_x) {
-          return _ref.apply(this, arguments);
-        };
-      }(); // TODO: Temp code determine if it's a jQuery deferred object.
-
-
-      if (result && 'object' === (0, _typeof2.default)(result) && result.promise && result.then && result.fail) {
-        result.fail(this.onCatchApply.bind(this));
-        result.done(onAfter);
-      } else if (result instanceof _promise.default) {
-        // Override initial result ( promise ) to await onAfter promises, first!.
-        return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
-          return _regenerator.default.wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  _context2.next = 2;
-                  return result.catch(_this3.onCatchApply.bind(_this3));
-
-                case 2:
-                  _context2.next = 4;
-                  return result.then(function (_result) {
-                    return asyncOnAfter(_result);
-                  });
-
-                case 4:
-                  return _context2.abrupt("return", result);
-
-                case 5:
-                case "end":
-                  return _context2.stop();
-              }
-            }
-          }, _callee2);
-        }))();
-      } else {
-        onAfter(result);
-      }
-
-      return result;
-    }
-    /**
-     * Run all the catch hooks.
-     *
-     * @param {Error} e
-     */
-
-  }, {
-    key: "runCatchHooks",
-    value: function runCatchHooks(e) {
-      $e.hooks.runDataCatch(this.currentCommand, this.args, e);
-      $e.hooks.runUICatch(this.currentCommand, this.args, e);
-    }
-    /**
-     * Function onBeforeRun.
-     *
-     * Called before run().
-     *
-     * @param [args={}]
-     */
-
-  }, {
-    key: "onBeforeRun",
-    value: function onBeforeRun() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      $e.hooks.runUIBefore(this.currentCommand, args);
-    }
-    /**
-     * Function onAfterRun.
-     *
-     * Called after run().
-     *
-     * @param [args={}]
-     * @param [result={*}]
-     */
-
-  }, {
-    key: "onAfterRun",
-    value: function onAfterRun() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      var result = arguments.length > 1 ? arguments[1] : undefined;
-      $e.hooks.runUIAfter(this.currentCommand, args, result);
-    }
-    /**
-     * Function onBeforeApply.
-     *
-     * Called before apply().
-     *
-     * @param [args={}]
-     */
-
-  }, {
-    key: "onBeforeApply",
-    value: function onBeforeApply() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      $e.hooks.runDataDependency(this.currentCommand, args);
-    }
-    /**
-     * Function onAfterApply.
-     *
-     * Called after apply().
-     *
-     * @param [args={}]
-     * @param [result={*}]
-     */
-
-  }, {
-    key: "onAfterApply",
-    value: function onAfterApply() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      var result = arguments.length > 1 ? arguments[1] : undefined;
-      return $e.hooks.runDataAfter(this.currentCommand, args, result);
-    }
-    /**
-     * Function onCatchApply.
-     *
-     * Called after apply() failed.
-     *
-     * @param {Error} e
-     */
-
-  }, {
-    key: "onCatchApply",
-    value: function onCatchApply(e) {
-      this.runCatchHooks(e);
-      elementorCommon.helpers.consoleError(e);
-    }
-  }], [{
-    key: "getInstanceType",
-    value: function getInstanceType() {
-      return 'CommandBase';
-    }
-    /**
-     * Get info of command.
-     *
-     * Use to provide 'extra' information about the command.
-     *
-     * @returns {Object}
-     */
-
-  }, {
-    key: "getInfo",
-    value: function getInfo() {
-      return {};
-    }
-    /**
-     * Current component.
-     *
-     * @type {Component}
-     */
-
-  }]);
-  return CommandBase;
-}(_argsObject.default);
-
-exports["default"] = CommandBase;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/command-data.js":
-/*!************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/command-data.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireWildcard */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireWildcard.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-__webpack_require__(/*! core-js/modules/es6.array.find.js */ "../node_modules/core-js/modules/es6.array.find.js");
-
-var _assign = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/assign */ "../node_modules/@babel/runtime-corejs2/core-js/object/assign.js"));
-
-var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
-
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! ./command-base */ "../core/common/assets/js/api/modules/command-base.js"));
-
-var errors = _interopRequireWildcard(__webpack_require__(/*! ../core/data/errors/ */ "../core/common/assets/js/api/core/data/errors/index.js"));
-
-var CommandData = /*#__PURE__*/function (_CommandBase) {
-  (0, _inherits2.default)(CommandData, _CommandBase);
-
-  var _super = (0, _createSuper2.default)(CommandData);
-
-  function CommandData(args) {
-    var _this$args$options;
-
-    var _this;
-
-    var commandsAPI = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : $e.data;
-    (0, _classCallCheck2.default)(this, CommandData);
-    _this = _super.call(this, args, commandsAPI);
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "data", void 0);
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "type", void 0);
-
-    if ((_this$args$options = _this.args.options) !== null && _this$args$options !== void 0 && _this$args$options.type) {
-      _this.type = _this.args.options.type;
-    }
-
-    return _this;
-  }
-  /**
-   * Function getEndpointFormat().
-   *
-   * @returns {(null|string)}
-   */
-
-
-  (0, _createClass2.default)(CommandData, [{
-    key: "getApplyMethods",
-    value:
-    /**
-     * @param {DataTypes} type
-     *
-     * @returns {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}}
-     */
-    function getApplyMethods() {
-      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.type;
-      var before, after;
-
-      switch (type) {
-        case 'create':
-          before = this.applyBeforeCreate;
-          after = this.applyAfterCreate;
-          break;
-
-        case 'delete':
-          before = this.applyBeforeDelete;
-          after = this.applyAfterDelete;
-          break;
-
-        case 'get':
-          before = this.applyBeforeGet;
-          after = this.applyAfterGet;
-          break;
-
-        case 'update':
-          before = this.applyBeforeUpdate;
-          after = this.applyAfterUpdate;
-          break;
-
-        case 'options':
-          before = this.applyBeforeOptions;
-          after = this.applyAfterOptions;
-          break;
-
-        default:
-          return false;
-      }
-
-      return {
-        before: before.bind(this),
-        after: after.bind(this)
-      };
-    }
-    /**
-     * Function getRequestData().
-     *
-     * @returns {RequestData}
-     */
-
-  }, {
-    key: "getRequestData",
-    value: function getRequestData() {
-      return {
-        component: this.component,
-        command: this.currentCommand,
-        type: this.type,
-        args: this.args,
-        timestamp: new Date().getTime(),
-        endpoint: $e.data.commandToEndpoint(this.currentCommand, elementorCommon.helpers.cloneObject(this.args), this.constructor.getEndpointFormat())
-      };
-    }
-  }, {
-    key: "apply",
-    value: function apply() {
-      var _this2 = this;
-
-      var applyMethods = this.getApplyMethods(); // Run 'before' method.
-
-      this.args = applyMethods.before(this.args);
-      var requestData = this.getRequestData();
-      return $e.data.fetch(requestData).then(function (data) {
-        _this2.data = data; // Run 'after' method.
-
-        _this2.data = applyMethods.after(data, _this2.args);
-        _this2.data = {
-          data: _this2.data
-        }; // Append requestData.
-
-        _this2.data = (0, _assign.default)({
-          __requestData__: requestData
-        }, _this2.data);
-        return _this2.data;
-      });
-    }
-    /**
-     * @param [args={}]
-     * @returns {{}} filtered args
-     */
-
-  }, {
-    key: "applyBeforeCreate",
-    value: function applyBeforeCreate() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      return args;
-    }
-    /**
-     * @param {{}} data
-     * @param [args={}]
-     * @returns {{}} filtered result
-     */
-
-  }, {
-    key: "applyAfterCreate",
-    value: function applyAfterCreate(data) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      // eslint-disable-line no-unused-vars
-      return data;
-    }
-    /**
-     * @param [args={}]
-     * @returns {{}} filtered args
-     */
-
-  }, {
-    key: "applyBeforeDelete",
-    value: function applyBeforeDelete() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      return args;
-    }
-    /**
-     * @param {{}} data
-     * @param [args={}]
-     * @returns {{}} filtered result
-     */
-
-  }, {
-    key: "applyAfterDelete",
-    value: function applyAfterDelete(data) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      // eslint-disable-line no-unused-vars
-      return data;
-    }
-    /**
-     * @param [args={}]
-     * @returns {{}} filtered args
-     */
-
-  }, {
-    key: "applyBeforeGet",
-    value: function applyBeforeGet() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      return args;
-    }
-    /**
-     * @param {{}} data
-     * @param [args={}]
-     * @returns {{}} filtered result
-     */
-
-  }, {
-    key: "applyAfterGet",
-    value: function applyAfterGet(data) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      // eslint-disable-line no-unused-vars
-      return data;
-    }
-    /**
-     * @param [args={}]
-     * @returns {{}} filtered args
-     */
-
-  }, {
-    key: "applyBeforeUpdate",
-    value: function applyBeforeUpdate() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      return args;
-    }
-    /**
-     * @param {{}} data
-     * @param [args={}]
-     * @returns {{}} filtered result
-     */
-
-  }, {
-    key: "applyAfterUpdate",
-    value: function applyAfterUpdate(data) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      // eslint-disable-line no-unused-vars
-      return data;
-    }
-    /**
-     * @param [args={}]
-     * @returns {{}} filtered args
-     */
-
-  }, {
-    key: "applyBeforeOptions",
-    value: function applyBeforeOptions() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      return args;
-    }
-    /**
-     * @param {{}} data
-     * @param [args={}]
-     * @returns {{}} filtered result
-     */
-
-  }, {
-    key: "applyAfterOptions",
-    value: function applyAfterOptions(data) {
-      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      // eslint-disable-line no-unused-vars
-      return data;
-    }
-    /**
-     * @param {BaseError} e
-     */
-
-  }, {
-    key: "applyAfterCatch",
-    value: function applyAfterCatch(e) {
-      e.notify();
-    }
-  }, {
-    key: "onCatchApply",
-    value: function onCatchApply(e) {
-      var _e, _e$data;
-
-      // TODO: If the errors that returns from the server is consistent remove the '?' from 'e'
-      var httpErrorCode = ((_e = e) === null || _e === void 0 ? void 0 : (_e$data = _e.data) === null || _e$data === void 0 ? void 0 : _e$data.status) || 501;
-      var dataError = (0, _values.default)(errors).find(function (error) {
-        return error.getHTTPErrorCode() === httpErrorCode;
-      });
-
-      if (!dataError) {
-        dataError = errors.DefaultError;
-      }
-
-      e = dataError.create(e.message, e.code, e.data || []);
-      this.runCatchHooks(e);
-      this.applyAfterCatch(e);
-    }
-  }], [{
-    key: "getInstanceType",
-    value:
-    /**
-     * Data returned from remote.
-     *
-     * @type {*}
-     */
-
-    /**
-     * Fetch type.
-     *
-     * @type {DataTypes}
-     */
-    function getInstanceType() {
-      return 'CommandData';
-    }
-  }, {
-    key: "getEndpointFormat",
-    value: function getEndpointFormat() {
-      return null;
-    }
-  }]);
-  return CommandData;
-}(_commandBase.default);
-
-exports["default"] = CommandData;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/command-internal-base.js":
-/*!*********************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/command-internal-base.js ***!
-  \*********************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! ./command-base */ "../core/common/assets/js/api/modules/command-base.js"));
-
-var CommandInternalBase = /*#__PURE__*/function (_CommandBase) {
-  (0, _inherits2.default)(CommandInternalBase, _CommandBase);
-
-  var _super = (0, _createSuper2.default)(CommandInternalBase);
-
-  function CommandInternalBase(args) {
-    var commandsAPI = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : $e.commandsInternal;
-    (0, _classCallCheck2.default)(this, CommandInternalBase);
-    return _super.call(this, args, commandsAPI);
-  }
-
-  (0, _createClass2.default)(CommandInternalBase, null, [{
-    key: "getInstanceType",
-    value: function getInstanceType() {
-      return 'CommandInternalBase';
-    }
-  }]);
-  return CommandInternalBase;
-}(_commandBase.default);
-
-exports["default"] = CommandInternalBase;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/commands/close.js":
-/*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/commands/close.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Close = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
-
-var Close = /*#__PURE__*/function (_CommandBase) {
-  (0, _inherits2.default)(Close, _CommandBase);
-
-  var _super = (0, _createSuper2.default)(Close);
-
-  function Close() {
-    (0, _classCallCheck2.default)(this, Close);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Close, [{
-    key: "apply",
-    value: function apply() {
-      this.component.close();
-    }
-  }]);
-  return Close;
-}(_commandBase.default);
-
-exports.Close = Close;
-var _default = Close;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/commands/index.js":
-/*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/commands/index.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-_Object$defineProperty(exports, "Close", {
-  enumerable: true,
-  get: function get() {
-    return _close.Close;
-  }
-});
-
-_Object$defineProperty(exports, "Open", {
-  enumerable: true,
-  get: function get() {
-    return _open.Open;
-  }
-});
-
-_Object$defineProperty(exports, "Toggle", {
-  enumerable: true,
-  get: function get() {
-    return _toggle.Toggle;
-  }
-});
-
-var _close = __webpack_require__(/*! ./close */ "../core/common/assets/js/api/modules/commands/close.js");
-
-var _open = __webpack_require__(/*! ./open */ "../core/common/assets/js/api/modules/commands/open.js");
-
-var _toggle = __webpack_require__(/*! ./toggle */ "../core/common/assets/js/api/modules/commands/toggle.js");
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/commands/open.js":
-/*!*************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/commands/open.js ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Open = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
-
-var Open = /*#__PURE__*/function (_CommandBase) {
-  (0, _inherits2.default)(Open, _CommandBase);
-
-  var _super = (0, _createSuper2.default)(Open);
-
-  function Open() {
-    (0, _classCallCheck2.default)(this, Open);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Open, [{
-    key: "apply",
-    value: function apply() {
-      $e.route(this.component.getNamespace());
-    }
-  }]);
-  return Open;
-}(_commandBase.default);
-
-exports.Open = Open;
-var _default = Open;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/commands/toggle.js":
-/*!***************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/commands/toggle.js ***!
-  \***************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Toggle = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
-
-var Toggle = /*#__PURE__*/function (_CommandBase) {
-  (0, _inherits2.default)(Toggle, _CommandBase);
-
-  var _super = (0, _createSuper2.default)(Toggle);
-
-  function Toggle() {
-    (0, _classCallCheck2.default)(this, Toggle);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Toggle, [{
-    key: "apply",
-    value: function apply() {
-      if (this.component.isOpen) {
-        this.component.close();
-      } else {
-        $e.route(this.component.getNamespace());
-      }
-    }
-  }]);
-  return Toggle;
-}(_commandBase.default);
-
-exports.Toggle = Toggle;
-var _default = Toggle;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/component-base.js":
-/*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/component-base.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
-
-__webpack_require__(/*! core-js/modules/es6.array.filter.js */ "../node_modules/core-js/modules/es6.array.filter.js");
-
-__webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "../node_modules/core-js/modules/es6.regexp.replace.js");
-
-var _entries = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/entries */ "../node_modules/@babel/runtime-corejs2/core-js/object/entries.js"));
-
-var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
-
-var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
-
-var _objectSpread2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread2 */ "../node_modules/@babel/runtime-corejs2/helpers/objectSpread2.js"));
-
-var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/slicedToArray */ "../node_modules/@babel/runtime-corejs2/helpers/slicedToArray.js"));
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _toolkit = __webpack_require__(/*! @reduxjs/toolkit */ "../node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
-
-var ComponentBase = /*#__PURE__*/function (_elementorModules$Mod) {
-  (0, _inherits2.default)(ComponentBase, _elementorModules$Mod);
-
-  var _super = (0, _createSuper2.default)(ComponentBase);
-
-  function ComponentBase() {
-    (0, _classCallCheck2.default)(this, ComponentBase);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(ComponentBase, [{
-    key: "__construct",
-    value: function __construct() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      if (args.manager) {
-        this.manager = args.manager;
-      }
-
-      this.commands = this.defaultCommands();
-      this.commandsInternal = this.defaultCommandsInternal();
-      this.hooks = this.defaultHooks();
-      this.routes = this.defaultRoutes();
-      this.tabs = this.defaultTabs();
-      this.shortcuts = this.defaultShortcuts();
-      this.utils = this.defaultUtils();
-      this.data = this.defaultData();
-      this.uiStates = this.defaultUiStates();
-      this.states = this.defaultStates();
-      this.defaultRoute = '';
-      this.currentTab = '';
-    }
-  }, {
-    key: "registerAPI",
-    value: function registerAPI() {
-      var _this = this;
-
-      (0, _entries.default)(this.getTabs()).forEach(function (tab) {
-        return _this.registerTabRoute(tab[0]);
-      });
-      (0, _entries.default)(this.getRoutes()).forEach(function (_ref) {
-        var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
-            route = _ref2[0],
-            callback = _ref2[1];
-
-        return _this.registerRoute(route, callback);
-      });
-      (0, _entries.default)(this.getCommands()).forEach(function (_ref3) {
-        var _ref4 = (0, _slicedToArray2.default)(_ref3, 2),
-            command = _ref4[0],
-            callback = _ref4[1];
-
-        return _this.registerCommand(command, callback);
-      });
-      (0, _entries.default)(this.getCommandsInternal()).forEach(function (_ref5) {
-        var _ref6 = (0, _slicedToArray2.default)(_ref5, 2),
-            command = _ref6[0],
-            callback = _ref6[1];
-
-        return _this.registerCommandInternal(command, callback);
-      });
-      (0, _values.default)(this.getHooks()).forEach(function (instance) {
-        return _this.registerHook(instance);
-      });
-      (0, _entries.default)(this.getData()).forEach(function (_ref7) {
-        var _ref8 = (0, _slicedToArray2.default)(_ref7, 2),
-            command = _ref8[0],
-            callback = _ref8[1];
-
-        return _this.registerData(command, callback);
-      });
-      (0, _values.default)(this.getUiStates()).forEach(function (instance) {
-        return _this.registerUiState(instance);
-      });
-      (0, _entries.default)(this.getStates()).forEach(function (_ref9) {
-        var _ref10 = (0, _slicedToArray2.default)(_ref9, 2),
-            id = _ref10[0],
-            state = _ref10[1];
-
-        return _this.registerState(id, state);
-      });
-    }
-    /**
-     * @returns {string}
-     */
-
-  }, {
-    key: "getNamespace",
-    value: function getNamespace() {
-      elementorModules.ForceMethodImplementation();
-    }
-  }, {
-    key: "getRootContainer",
-    value: function getRootContainer() {
-      var parts = this.getNamespace().split('/');
-      return parts[0];
-    }
-  }, {
-    key: "defaultTabs",
-    value: function defaultTabs() {
-      return {};
-    }
-  }, {
-    key: "defaultRoutes",
-    value: function defaultRoutes() {
-      return {};
-    }
-  }, {
-    key: "defaultCommands",
-    value: function defaultCommands() {
-      return {};
-    }
-  }, {
-    key: "defaultCommandsInternal",
-    value: function defaultCommandsInternal() {
-      return {};
-    }
-  }, {
-    key: "defaultHooks",
-    value: function defaultHooks() {
-      return {};
-    }
-    /**
-     * Get the component's default UI states.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: "defaultUiStates",
-    value: function defaultUiStates() {
-      return {};
-    }
-    /**
-     * Get the component's Redux slice settings.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: "defaultStates",
-    value: function defaultStates() {
-      return {};
-    }
-  }, {
-    key: "defaultShortcuts",
-    value: function defaultShortcuts() {
-      return {};
-    }
-  }, {
-    key: "defaultUtils",
-    value: function defaultUtils() {
-      return {};
-    }
-  }, {
-    key: "defaultData",
-    value: function defaultData() {
-      return {};
-    }
-  }, {
-    key: "getCommands",
-    value: function getCommands() {
-      return this.commands;
-    }
-  }, {
-    key: "getCommandsInternal",
-    value: function getCommandsInternal() {
-      return this.commandsInternal;
-    }
-  }, {
-    key: "getHooks",
-    value: function getHooks() {
-      return this.hooks;
-    }
-    /**
-     * Retrieve the component's UI states.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: "getUiStates",
-    value: function getUiStates() {
-      return this.uiStates;
-    }
-    /**
-     * Retrieve the component's Redux Slice.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: "getStates",
-    value: function getStates() {
-      return this.states;
-    }
-  }, {
-    key: "getRoutes",
-    value: function getRoutes() {
-      return this.routes;
-    }
-  }, {
-    key: "getTabs",
-    value: function getTabs() {
-      return this.tabs;
-    }
-  }, {
-    key: "getShortcuts",
-    value: function getShortcuts() {
-      return this.shortcuts;
-    }
-  }, {
-    key: "getData",
-    value: function getData() {
-      return this.data;
-    }
-  }, {
-    key: "registerCommand",
-    value: function registerCommand(command, callback) {
-      $e.commands.register(this, command, callback);
-    }
-    /**
-     * @param {HookBase} instance
-     */
-
-  }, {
-    key: "registerHook",
-    value: function registerHook(instance) {
-      return instance.register();
-    }
-    /**
-     * Register a UI state.
-     *
-     * @param {UiStateBase} instance - UI state instance.
-     *
-     * @return {void}
-     */
-
-  }, {
-    key: "registerUiState",
-    value: function registerUiState(instance) {
-      $e.uiStates.register(instance);
-    }
-    /**
-     * Register a Redux Slice.
-     *
-     * @param {string} id - State id.
-     * @param {Object} stateConfig - The state config.
-     *
-     * @return {void}
-     */
-
-  }, {
-    key: "registerState",
-    value: function registerState(id, stateConfig) {
-      id = this.getNamespace() + (id ? "/".concat(id) : '');
-      var slice = (0, _toolkit.createSlice)((0, _objectSpread2.default)((0, _objectSpread2.default)({}, stateConfig), {}, {
-        name: id
-      }));
-      $e.store.register(id, slice);
-    }
-  }, {
-    key: "registerCommandInternal",
-    value: function registerCommandInternal(command, callback) {
-      $e.commandsInternal.register(this, command, callback);
-    }
-  }, {
-    key: "registerRoute",
-    value: function registerRoute(route, callback) {
-      $e.routes.register(this, route, callback);
-    }
-  }, {
-    key: "registerData",
-    value: function registerData(command, callback) {
-      $e.data.register(this, command, callback);
-    }
-  }, {
-    key: "unregisterRoute",
-    value: function unregisterRoute(route) {
-      $e.routes.unregister(this, route);
-    }
-  }, {
-    key: "registerTabRoute",
-    value: function registerTabRoute(tab) {
-      var _this2 = this;
-
-      this.registerRoute(tab, function (args) {
-        return _this2.activateTab(tab, args);
-      });
-    }
-  }, {
-    key: "dependency",
-    value: function dependency() {
-      return true;
-    }
-  }, {
-    key: "open",
-    value: function open() {
-      return true;
-    }
-  }, {
-    key: "close",
-    value: function close() {
-      if (!this.isOpen) {
-        return false;
-      }
-
-      this.isOpen = false;
-      this.inactivate();
-      $e.routes.clearCurrent(this.getNamespace());
-      $e.routes.clearHistory(this.getRootContainer());
-      return true;
-    }
-  }, {
-    key: "activate",
-    value: function activate() {
-      $e.components.activate(this.getNamespace());
-    }
-  }, {
-    key: "inactivate",
-    value: function inactivate() {
-      $e.components.inactivate(this.getNamespace());
-    }
-  }, {
-    key: "isActive",
-    value: function isActive() {
-      return $e.components.isActive(this.getNamespace());
-    }
-  }, {
-    key: "onRoute",
-    value: function onRoute(route) {
-      this.toggleRouteClass(route, true);
-      this.toggleHistoryClass();
-      this.activate();
-      this.trigger('route/open', route);
-    }
-  }, {
-    key: "onCloseRoute",
-    value: function onCloseRoute(route) {
-      this.toggleRouteClass(route, false);
-      this.inactivate();
-      this.trigger('route/close', route);
-    }
-  }, {
-    key: "setDefaultRoute",
-    value: function setDefaultRoute(route) {
-      this.defaultRoute = this.getNamespace() + '/' + route;
-    }
-  }, {
-    key: "getDefaultRoute",
-    value: function getDefaultRoute() {
-      return this.defaultRoute;
-    }
-  }, {
-    key: "removeTab",
-    value: function removeTab(tab) {
-      delete this.tabs[tab];
-      this.unregisterRoute(tab);
-    }
-  }, {
-    key: "hasTab",
-    value: function hasTab(tab) {
-      return !!this.tabs[tab];
-    }
-  }, {
-    key: "addTab",
-    value: function addTab(tab, args, position) {
-      var _this3 = this;
-
-      this.tabs[tab] = args; // It can be 0.
-
-      if ('undefined' !== typeof position) {
-        var newTabs = {};
-        var ids = (0, _keys.default)(this.tabs); // Remove new tab
-
-        ids.pop(); // Add it to position.
-
-        ids.splice(position, 0, tab);
-        ids.forEach(function (id) {
-          newTabs[id] = _this3.tabs[id];
-        });
-        this.tabs = newTabs;
-      }
-
-      this.registerTabRoute(tab);
-    }
-  }, {
-    key: "getTabsWrapperSelector",
-    value: function getTabsWrapperSelector() {
-      return '';
-    }
-  }, {
-    key: "getTabRoute",
-    value: function getTabRoute(tab) {
-      return this.getNamespace() + '/' + tab;
-    }
-  }, {
-    key: "renderTab",
-    value: function renderTab(tab) {} // eslint-disable-line
-
-  }, {
-    key: "activateTab",
-    value: function activateTab(tab, args) {
-      var _this4 = this;
-
-      this.currentTab = tab;
-      this.renderTab(tab, args);
-      jQuery(this.getTabsWrapperSelector() + ' .elementor-component-tab').off('click').on('click', function (event) {
-        $e.route(_this4.getTabRoute(event.currentTarget.dataset.tab), args);
-      }).removeClass('elementor-active').filter('[data-tab="' + tab + '"]').addClass('elementor-active');
-    }
-  }, {
-    key: "getActiveTabConfig",
-    value: function getActiveTabConfig() {
-      return this.tabs[this.currentTab] || {};
-    }
-  }, {
-    key: "getBodyClass",
-    value: function getBodyClass(route) {
-      return 'e-route-' + route.replace(/\//g, '-');
-    }
-    /**
-     * If command includes uppercase character convert it to lowercase and add `-`.
-     * e.g: `CopyAll` is converted to `copy-all`.
-     */
-
-  }, {
-    key: "normalizeCommandName",
-    value: function normalizeCommandName(commandName) {
-      return commandName.replace(/[A-Z]/g, function (match, offset) {
-        return (offset > 0 ? '-' : '') + match.toLowerCase();
-      });
-    }
-  }, {
-    key: "importCommands",
-    value: function importCommands(commandsFromImport) {
-      var _this5 = this;
-
-      var commands = {}; // Convert `Commands` to `ComponentBase` workable format.
-
-      (0, _entries.default)(commandsFromImport).forEach(function (_ref11) {
-        var _ref12 = (0, _slicedToArray2.default)(_ref11, 2),
-            className = _ref12[0],
-            Class = _ref12[1];
-
-        var command = _this5.normalizeCommandName(className);
-
-        commands[command] = function (args) {
-          return new Class(args).run();
-        }; // TODO: Temporary code, remove after merge with 'require-commands-base' branch.
-        // should not return callback, but Class or Instance without run ( gain performance ).
-
-
-        $e.commands.classes[_this5.getNamespace() + '/' + command] = Class;
-      });
-      return commands;
-    }
-  }, {
-    key: "importHooks",
-    value: function importHooks(hooksFromImport) {
-      var hooks = {};
-
-      for (var key in hooksFromImport) {
-        var hook = new hooksFromImport[key]();
-        hooks[hook.getId()] = hook;
-      }
-
-      return hooks;
-    }
-    /**
-     * Import & initialize the component's UI states.
-     * Should be used inside `defaultUiState()`.
-     *
-     * @param {Object} statesFromImport - UI states from import.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: "importUiStates",
-    value: function importUiStates(statesFromImport) {
-      var _this6 = this;
-
-      var uiStates = {};
-      (0, _values.default)(statesFromImport).forEach(function (className) {
-        var uiState = new className(_this6);
-        uiStates[uiState.getId()] = uiState;
-      });
-      return uiStates;
-    }
-    /**
-     * Set a UI state value.
-     * TODO: Should we provide such function? Maybe the developer should implicitly pass the full state ID?
-     *
-     * @param state - Non-prefixed state ID.
-     * @param value - New state value.
-     *
-     * @return {void}
-     */
-
-  }, {
-    key: "setUiState",
-    value: function setUiState(state, value) {
-      $e.uiStates.set("".concat(this.getNamespace(), "/").concat(state), value);
-    }
-  }, {
-    key: "toggleRouteClass",
-    value: function toggleRouteClass(route, state) {
-      elementorCommon.elements.$body.toggleClass(this.getBodyClass(route), state);
-    }
-  }, {
-    key: "toggleHistoryClass",
-    value: function toggleHistoryClass() {
-      elementorCommon.elements.$body.toggleClass('e-routes-has-history', !!$e.routes.getHistory(this.getRootContainer()).length);
-    }
-  }]);
-  return ComponentBase;
-}(elementorModules.Module);
-
-exports["default"] = ComponentBase;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/component-modal-base.js":
-/*!********************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/component-modal-base.js ***!
-  \********************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireWildcard */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireWildcard.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/get */ "../node_modules/@babel/runtime-corejs2/helpers/get.js"));
-
-var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "../node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _componentBase = _interopRequireDefault(__webpack_require__(/*! ./component-base */ "../core/common/assets/js/api/modules/component-base.js"));
-
-var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../core/common/assets/js/api/modules/commands/index.js"));
-
-var ComponentModalBase = /*#__PURE__*/function (_ComponentBase) {
-  (0, _inherits2.default)(ComponentModalBase, _ComponentBase);
-
-  var _super = (0, _createSuper2.default)(ComponentModalBase);
-
-  function ComponentModalBase() {
-    (0, _classCallCheck2.default)(this, ComponentModalBase);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(ComponentModalBase, [{
-    key: "registerAPI",
-    value: function registerAPI() {
-      var _this = this;
-
-      (0, _get2.default)((0, _getPrototypeOf2.default)(ComponentModalBase.prototype), "registerAPI", this).call(this);
-      $e.shortcuts.register('esc', {
-        scopes: [this.getNamespace()],
-        callback: function callback() {
-          return _this.close();
-        }
-      });
-    }
-  }, {
-    key: "defaultCommands",
-    value: function defaultCommands() {
-      return this.importCommands(commands);
-    }
-  }, {
-    key: "defaultRoutes",
-    value: function defaultRoutes() {
-      return {
-        '': function _() {
-          /* Nothing to do, it's already rendered. */
-        }
-      };
-    }
-  }, {
-    key: "open",
-    value: function open() {
-      var _this2 = this;
-
-      if (!this.layout) {
-        var layout = this.getModalLayout();
-        this.layout = new layout({
-          component: this
-        });
-        this.layout.getModal().on('hide', function () {
-          return _this2.close();
-        });
-      }
-
-      this.layout.showModal();
-      return true;
-    }
-  }, {
-    key: "close",
-    value: function close() {
-      if (!(0, _get2.default)((0, _getPrototypeOf2.default)(ComponentModalBase.prototype), "close", this).call(this)) {
-        return false;
-      }
-
-      this.layout.getModal().hide();
-      return true;
-    }
-  }, {
-    key: "getModalLayout",
-    value: function getModalLayout() {
-      elementorModules.ForceMethodImplementation();
-    }
-  }]);
-  return ComponentModalBase;
-}(_componentBase.default);
-
-exports["default"] = ComponentModalBase;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hook-base.js":
-/*!*********************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hook-base.js ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
-
-var HookBase = /*#__PURE__*/function () {
-  /**
-   * Callback type, eg ( hook, event ).
-   *
-   * @type {string}
-   */
-
-  /**
-   * Full command address, that will hook the callback.
-   *
-   * @type (string)
-   */
-
-  /**
-   * Unique id of the callback.
-   *
-   * @type {string}
-   */
-
-  /**
-   * Function constructor().
-   *
-   * Create callback base.
-   */
-  function HookBase() {
-    (0, _classCallCheck2.default)(this, HookBase);
-    (0, _defineProperty2.default)(this, "type", void 0);
-    (0, _defineProperty2.default)(this, "command", void 0);
-    (0, _defineProperty2.default)(this, "id", void 0);
-    this.initialize();
-    this.type = this.getType();
-    this.command = this.getCommand();
-    this.id = this.getId();
-  }
-  /**
-   * Function initialize().
-   *
-   * Called after creation of the base, used for initialize extras.
-   * Without expending constructor.
-   */
-
-
-  (0, _createClass2.default)(HookBase, [{
-    key: "initialize",
-    value: function initialize() {}
-    /**
-     * Function register().
-     *
-     * Used to register the callback.
-     *
-     * @throws {Error}
-     */
-
-  }, {
-    key: "register",
-    value: function register() {
-      elementorModules.ForceMethodImplementation();
-    }
-    /**
-     * Function getType().
-     *
-     * Get type eg: ( hook, event, etc ... ).
-     *
-     * @returns {string}
-     *
-     * @throws {Error}
-     */
-
-  }, {
-    key: "getType",
-    value: function getType() {
-      elementorModules.ForceMethodImplementation();
-    }
-    /**
-     * Function getCommand().
-     *
-     * Returns the full command path for callback binding.
-     *
-     * Supports array of strings ( commands ).
-     *
-     * @returns {string}
-     *
-     * @throws {Error}
-     */
-
-  }, {
-    key: "getCommand",
-    value: function getCommand() {
-      elementorModules.ForceMethodImplementation();
-    }
-    /**
-     * Function getId().
-     *
-     * Returns command id for the hook (should be unique).
-     *
-     * @returns {string}
-     *
-     * @throws {Error}
-     */
-
-  }, {
-    key: "getId",
-    value: function getId() {
-      elementorModules.ForceMethodImplementation();
-    }
-    /**
-     * Function getContainerType().
-     *
-     * Bind eContainer type to callback.
-     *
-     * Used to gain performance.
-     *
-     * @return {string} type
-     */
-
-  }, {
-    key: "getContainerType",
-    value: function getContainerType() {}
-    /**
-     * Function getConditions().
-     *
-     * Condition for running the callback, if true, call to apply().
-     *
-     * @param [args={}]
-     * @param [result=*]
-     *
-     * @returns {boolean}
-     */
-
-  }, {
-    key: "getConditions",
-    value: function getConditions() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      var result = arguments.length > 1 ? arguments[1] : undefined;
-      // eslint-disable-line no-unused-vars
-      return true;
-    }
-    /**
-     * Function apply().
-     *
-     * Apply the callback, ( The actual affect of the callback ).
-     *
-     * @param [args={}]
-     *
-     * @returns {*}
-     */
-
-  }, {
-    key: "apply",
-    value: function apply(args) {
-      // eslint-disable-line no-unused-vars
-      elementorModules.ForceMethodImplementation();
-    }
-    /**
-     * Function run().
-     *
-     * Run the callback.
-     *
-     * @param {*} args
-     *
-     * @returns {*}
-     */
-
-  }, {
-    key: "run",
-    value: function run() {
-      var _ref = arguments.length <= 0 ? undefined : arguments[0],
-          _ref$options = _ref.options,
-          options = _ref$options === void 0 ? {} : _ref$options; // Disable callback if requested by args.options.
-
-
-      if (options.callbacks && false === options.callbacks[this.id]) {
-        return true;
-      }
-
-      if (this.getConditions.apply(this, arguments)) {
-        if ($e.devTools) {
-          $e.devTools.log.callbacks().active(this.type, this.command, this.id);
-        }
-
-        return this.apply.apply(this, arguments);
-      }
-
-      return true;
-    }
-  }]);
-  return HookBase;
-}();
-
-exports["default"] = HookBase;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hook-break.js":
-/*!**********************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hook-break.js ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _wrapNativeSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/wrapNativeSuper */ "../node_modules/@babel/runtime-corejs2/helpers/wrapNativeSuper.js"));
-
-var HookBreak = /*#__PURE__*/function (_Error) {
-  (0, _inherits2.default)(HookBreak, _Error);
-
-  var _super = (0, _createSuper2.default)(HookBreak);
-
-  function HookBreak() {
-    (0, _classCallCheck2.default)(this, HookBreak);
-    return _super.call(this, 'HookBreak');
-  }
-
-  return HookBreak;
-}( /*#__PURE__*/(0, _wrapNativeSuper2.default)(Error));
-
-exports["default"] = HookBreak;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/data/after.js":
-/*!****************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/data/after.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.After = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/data/base.js"));
-
-var After = /*#__PURE__*/function (_Base) {
-  (0, _inherits2.default)(After, _Base);
-
-  var _super = (0, _createSuper2.default)(After);
-
-  function After() {
-    (0, _classCallCheck2.default)(this, After);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(After, [{
-    key: "register",
-    value: function register() {
-      $e.hooks.registerDataAfter(this);
-    }
-  }]);
-  return After;
-}(_base.default);
-
-exports.After = After;
-var _default = After;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/data/base.js":
-/*!***************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/data/base.js ***!
-  \***************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Base = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _hookBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hook-base */ "../core/common/assets/js/api/modules/hook-base.js"));
-
-var Base = /*#__PURE__*/function (_HookBase) {
-  (0, _inherits2.default)(Base, _HookBase);
-
-  var _super = (0, _createSuper2.default)(Base);
-
-  function Base() {
-    (0, _classCallCheck2.default)(this, Base);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Base, [{
-    key: "getType",
-    value: function getType() {
-      return 'data';
-    }
-  }]);
-  return Base;
-}(_hookBase.default);
-
-exports.Base = Base;
-var _default = Base;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/data/catch.js":
-/*!****************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/data/catch.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Catch = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/data/base.js"));
-
-var Catch = /*#__PURE__*/function (_Base) {
-  (0, _inherits2.default)(Catch, _Base);
-
-  var _super = (0, _createSuper2.default)(Catch);
-
-  function Catch() {
-    (0, _classCallCheck2.default)(this, Catch);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Catch, [{
-    key: "register",
-    value: function register() {
-      $e.hooks.registerDataCatch(this);
-    }
-  }]);
-  return Catch;
-}(_base.default);
-
-exports.Catch = Catch;
-var _default = Catch;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/data/dependency.js":
-/*!*********************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/data/dependency.js ***!
-  \*********************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Dependency = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/data/base.js"));
-
-var Dependency = /*#__PURE__*/function (_Base) {
-  (0, _inherits2.default)(Dependency, _Base);
-
-  var _super = (0, _createSuper2.default)(Dependency);
-
-  function Dependency() {
-    (0, _classCallCheck2.default)(this, Dependency);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Dependency, [{
-    key: "register",
-    value: function register() {
-      $e.hooks.registerDataDependency(this);
-    }
-  }]);
-  return Dependency;
-}(_base.default);
-
-exports.Dependency = Dependency;
-var _default = Dependency;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/data/index.js":
-/*!****************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/data/index.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-_Object$defineProperty(exports, "After", {
-  enumerable: true,
-  get: function get() {
-    return _after.After;
-  }
-});
-
-_Object$defineProperty(exports, "Base", {
-  enumerable: true,
-  get: function get() {
-    return _base.Base;
-  }
-});
-
-_Object$defineProperty(exports, "Catch", {
-  enumerable: true,
-  get: function get() {
-    return _catch.Catch;
-  }
-});
-
-_Object$defineProperty(exports, "Dependency", {
-  enumerable: true,
-  get: function get() {
-    return _dependency.Dependency;
-  }
-});
-
-var _after = __webpack_require__(/*! ./after */ "../core/common/assets/js/api/modules/hooks/data/after.js");
-
-var _base = __webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/data/base.js");
-
-var _catch = __webpack_require__(/*! ./catch */ "../core/common/assets/js/api/modules/hooks/data/catch.js");
-
-var _dependency = __webpack_require__(/*! ./dependency */ "../core/common/assets/js/api/modules/hooks/data/dependency.js");
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/ui/after.js":
-/*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/ui/after.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.After = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/ui/base.js"));
-
-var After = /*#__PURE__*/function (_Base) {
-  (0, _inherits2.default)(After, _Base);
-
-  var _super = (0, _createSuper2.default)(After);
-
-  function After() {
-    (0, _classCallCheck2.default)(this, After);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(After, [{
-    key: "register",
-    value: function register() {
-      $e.hooks.registerUIAfter(this);
-    }
-  }]);
-  return After;
-}(_base.default);
-
-exports.After = After;
-var _default = After;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/ui/base.js":
-/*!*************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/ui/base.js ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Base = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _hookBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/hook-base */ "../core/common/assets/js/api/modules/hook-base.js"));
-
-var Base = /*#__PURE__*/function (_HookBase) {
-  (0, _inherits2.default)(Base, _HookBase);
-
-  var _super = (0, _createSuper2.default)(Base);
-
-  function Base() {
-    (0, _classCallCheck2.default)(this, Base);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Base, [{
-    key: "getType",
-    value: function getType() {
-      return 'ui';
-    }
-  }]);
-  return Base;
-}(_hookBase.default);
-
-exports.Base = Base;
-var _default = Base;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/ui/before.js":
-/*!***************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/ui/before.js ***!
-  \***************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Before = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/ui/base.js"));
-
-var Before = /*#__PURE__*/function (_Base) {
-  (0, _inherits2.default)(Before, _Base);
-
-  var _super = (0, _createSuper2.default)(Before);
-
-  function Before() {
-    (0, _classCallCheck2.default)(this, Before);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Before, [{
-    key: "register",
-    value: function register() {
-      $e.hooks.registerUIBefore(this);
-    }
-  }]);
-  return Before;
-}(_base.default);
-
-exports.Before = Before;
-var _default = Before;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/ui/catch.js":
-/*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/ui/catch.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = exports.Catch = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
-
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
-
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
-
-var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/ui/base.js"));
-
-var Catch = /*#__PURE__*/function (_Base) {
-  (0, _inherits2.default)(Catch, _Base);
-
-  var _super = (0, _createSuper2.default)(Catch);
-
-  function Catch() {
-    (0, _classCallCheck2.default)(this, Catch);
-    return _super.apply(this, arguments);
-  }
-
-  (0, _createClass2.default)(Catch, [{
-    key: "register",
-    value: function register() {
-      $e.hooks.registerUICatch(this);
-    }
-  }]);
-  return Catch;
-}(_base.default);
-
-exports.Catch = Catch;
-var _default = Catch;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/api/modules/hooks/ui/index.js":
-/*!**************************************************************!*\
-  !*** ../core/common/assets/js/api/modules/hooks/ui/index.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-_Object$defineProperty(exports, "After", {
-  enumerable: true,
-  get: function get() {
-    return _after.After;
-  }
-});
-
-_Object$defineProperty(exports, "Base", {
-  enumerable: true,
-  get: function get() {
-    return _base.Base;
-  }
-});
-
-_Object$defineProperty(exports, "Before", {
-  enumerable: true,
-  get: function get() {
-    return _before.Before;
-  }
-});
-
-_Object$defineProperty(exports, "Catch", {
-  enumerable: true,
-  get: function get() {
-    return _catch.Catch;
-  }
-});
-
-var _after = __webpack_require__(/*! ./after */ "../core/common/assets/js/api/modules/hooks/ui/after.js");
-
-var _base = __webpack_require__(/*! ./base */ "../core/common/assets/js/api/modules/hooks/ui/base.js");
-
-var _before = __webpack_require__(/*! ./before */ "../core/common/assets/js/api/modules/hooks/ui/before.js");
-
-var _catch = __webpack_require__(/*! ./catch */ "../core/common/assets/js/api/modules/hooks/ui/catch.js");
 
 /***/ }),
 
@@ -10515,9 +3518,9 @@ var Debug = function Debug() {
     self.addError({
       type: error.name,
       message: error.message,
-      url: originalEvent.filename,
-      line: originalEvent.lineno,
-      column: originalEvent.colno
+      url: event.originalEvent.filename,
+      line: event.originalEvent.lineno,
+      column: event.originalEvent.colno
     });
   };
 
@@ -10599,70 +3602,6 @@ var Debug = function Debug() {
 };
 
 module.exports = Debug;
-
-/***/ }),
-
-/***/ "../core/common/assets/js/utils/environment.js":
-/*!*****************************************************!*\
-  !*** ../core/common/assets/js/utils/environment.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = void 0;
-
-__webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
-
-__webpack_require__(/*! core-js/modules/es6.regexp.to-string.js */ "../node_modules/core-js/modules/es6.regexp.to-string.js");
-
-var matchUserAgent = function matchUserAgent(UserAgentStr) {
-  return userAgent.indexOf(UserAgentStr) >= 0;
-},
-    userAgent = navigator.userAgent,
-    // Solution influenced by https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-// Opera 8.0+
-isOpera = !!window.opr && !!opr.addons || !!window.opera || matchUserAgent(' OPR/'),
-    // Firefox 1.0+
-isFirefox = matchUserAgent('Firefox'),
-    // Safari 3.0+ "[object HTMLElementConstructor]"
-isSafari = /^((?!chrome|android).)*safari/i.test(userAgent) || /constructor/i.test(window.HTMLElement) || function (p) {
-  return '[object SafariRemoteNotification]' === p.toString();
-}(!window.safari || typeof safari !== 'undefined' && safari.pushNotification),
-    // Internet Explorer 6-11
-isIE = /Trident|MSIE/.test(userAgent) && (
-/*@cc_on!@*/
- false || !!document.documentMode),
-    // Edge 20+
-isEdge = !isIE && !!window.StyleMedia || matchUserAgent('Edg'),
-    // Google Chrome (Not accurate)
-isChrome = !!window.chrome && matchUserAgent('Chrome') && !(isEdge || isOpera),
-    // Blink engine
-isBlink = matchUserAgent('Chrome') && !!window.CSS,
-    // Apple Webkit engine
-isAppleWebkit = matchUserAgent('AppleWebKit') && !isBlink,
-    environment = {
-  appleWebkit: isAppleWebkit,
-  blink: isBlink,
-  chrome: isChrome,
-  edge: isEdge,
-  firefox: isFirefox,
-  ie: isIE,
-  mac: matchUserAgent('Macintosh'),
-  opera: isOpera,
-  safari: isSafari,
-  webkit: matchUserAgent('AppleWebKit')
-};
-
-var _default = environment;
-exports["default"] = _default;
 
 /***/ }),
 
@@ -11273,6 +4212,21 @@ var _default = /*#__PURE__*/function (_elementorModules$Vie) {
       var counter = 0;
 
       jQuery.fn.elementorConnect = function (options) {
+        var _this = this;
+
+        // Open the Connect Dialog in a popup window.
+        if (options !== null && options !== void 0 && options.popup) {
+          jQuery(this).on('click', function (event) {
+            var _options$popup, _options$popup2;
+
+            event.preventDefault();
+            var width = ((_options$popup = options.popup) === null || _options$popup === void 0 ? void 0 : _options$popup.width) || 600,
+                height = ((_options$popup2 = options.popup) === null || _options$popup2 === void 0 ? void 0 : _options$popup2.height) || 700;
+            window.open(jQuery(_this).attr('href') + '&mode=popup', 'elementorConnect', "toolbar=no, menubar=no, width=".concat(width, ", height=").concat(height, ", top=200, left=0"));
+          });
+          delete options.popup;
+        }
+
         var settings = jQuery.extend({
           // These are the defaults.
           success: function success() {
@@ -11335,6 +4289,170 @@ var _default = /*#__PURE__*/function (_elementorModules$Vie) {
 }(elementorModules.ViewModule);
 
 exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../core/common/modules/event-tracker/assets/js/data/commands-data/index.js":
+/*!**********************************************************************************!*\
+  !*** ../core/common/modules/event-tracker/assets/js/data/commands-data/index.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.Index = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _commandData = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-data */ "../modules/web-cli/assets/js/modules/command-data.js"));
+
+var Index = /*#__PURE__*/function (_CommandData) {
+  (0, _inherits2.default)(Index, _CommandData);
+
+  var _super = (0, _createSuper2.default)(Index);
+
+  function Index() {
+    (0, _classCallCheck2.default)(this, Index);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(Index, null, [{
+    key: "getEndpointFormat",
+    value: function getEndpointFormat() {
+      return 'send-event';
+    }
+  }]);
+  return Index;
+}(_commandData.default);
+
+exports.Index = Index;
+
+/***/ }),
+
+/***/ "../core/common/modules/event-tracker/assets/js/data/component.js":
+/*!************************************************************************!*\
+  !*** ../core/common/modules/event-tracker/assets/js/data/component.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireWildcard */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireWildcard.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
+
+var commandsData = _interopRequireWildcard(__webpack_require__(/*! ./commands-data/ */ "../core/common/modules/event-tracker/assets/js/data/commands-data/index.js"));
+
+var Component = /*#__PURE__*/function (_ComponentBase) {
+  (0, _inherits2.default)(Component, _ComponentBase);
+
+  var _super = (0, _createSuper2.default)(Component);
+
+  function Component() {
+    (0, _classCallCheck2.default)(this, Component);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(Component, [{
+    key: "getNamespace",
+    value: function getNamespace() {
+      return 'event-tracker';
+    }
+  }, {
+    key: "defaultData",
+    value: function defaultData() {
+      return this.importCommands(commandsData);
+    }
+  }]);
+  return Component;
+}(_componentBase.default);
+
+exports["default"] = Component;
+
+/***/ }),
+
+/***/ "../core/common/modules/event-tracker/assets/js/events.js":
+/*!****************************************************************!*\
+  !*** ../core/common/modules/event-tracker/assets/js/events.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _time = _interopRequireDefault(__webpack_require__(/*! elementor-utils/time */ "../assets/dev/js/utils/time.js"));
+
+var Events = /*#__PURE__*/function () {
+  function Events() {
+    (0, _classCallCheck2.default)(this, Events);
+  }
+
+  (0, _createClass2.default)(Events, [{
+    key: "dispatchEvent",
+    value: function dispatchEvent(eventData) {
+      if (!elementorCommon.config['event-tracker'].isUserDataShared || !eventData) {
+        return;
+      }
+
+      eventData.ts = (0, _time.default)(); // No need to wait for response, no need to block browser in any way.
+
+      $e.data.create('event-tracker/index', {
+        event_data: eventData
+      });
+    }
+  }]);
+  return Events;
+}();
+
+exports["default"] = Events;
 
 /***/ }),
 
@@ -11409,7 +4527,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var NavigateDown = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(NavigateDown, _CommandBase);
@@ -11463,7 +4581,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var NavigateSelect = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(NavigateSelect, _CommandBase);
@@ -11517,7 +4635,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../core/common/assets/js/api/modules/command-base.js"));
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
 
 var NavigateUp = /*#__PURE__*/function (_CommandBase) {
   (0, _inherits2.default)(NavigateUp, _CommandBase);
@@ -11579,7 +4697,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-c
 
 var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
 
-var _componentModalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-modal-base */ "../core/common/assets/js/api/modules/component-modal-base.js"));
+var _componentModalBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/component-modal-base */ "../modules/web-cli/assets/js/modules/component-modal-base.js"));
 
 var _layout = _interopRequireDefault(__webpack_require__(/*! ./modal/views/layout */ "../core/common/modules/finder/assets/js/modal/views/layout.js"));
 
@@ -12425,6 +5543,2151 @@ var _default = /*#__PURE__*/function (_elementorModules$com) {
 }(elementorModules.common.views.modal.Layout);
 
 exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/core/data/errors/base-error.js":
+/*!*******************************************************************!*\
+  !*** ../modules/web-cli/assets/js/core/data/errors/base-error.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+var _objectSpread2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread2 */ "../node_modules/@babel/runtime-corejs2/helpers/objectSpread2.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _wrapNativeSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/wrapNativeSuper */ "../node_modules/@babel/runtime-corejs2/helpers/wrapNativeSuper.js"));
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _helpers = _interopRequireDefault(__webpack_require__(/*! elementor-api/utils/helpers */ "../modules/web-cli/assets/js/utils/helpers.js"));
+
+var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ../../../utils/force-method-implementation */ "../modules/web-cli/assets/js/utils/force-method-implementation.js"));
+
+var BaseError = /*#__PURE__*/function (_Error) {
+  (0, _inherits2.default)(BaseError, _Error);
+
+  var _super = (0, _createSuper2.default)(BaseError);
+
+  /**
+   * Error constructor.
+   *
+   * @param code
+   * @param message
+   * @param data
+   */
+  function BaseError() {
+    var _this;
+
+    var message = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    var code = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+    (0, _classCallCheck2.default)(this, BaseError);
+    _this = _super.call(this, message);
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "code", '');
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "data", []);
+    _this.code = code;
+    _this.data = data;
+    return _this;
+  }
+  /**
+   * Notify a message when the error occurs.
+   */
+
+
+  (0, _createClass2.default)(BaseError, [{
+    key: "notify",
+    value: function notify() {
+      _helpers.default.consoleError((0, _objectSpread2.default)({
+        message: this.message
+      }, this));
+    }
+  }], [{
+    key: "create",
+    value:
+    /**
+     * The server error code.
+     *
+     * @type {string}
+     */
+
+    /**
+     * Additional data about the current error.
+     *
+     * @type {*[]}
+     */
+
+    /**
+     * Static helper function to create the error.
+     *
+     * @param message
+     * @param code
+     * @param data
+     * @returns {BaseError}
+     */
+    function create(message) {
+      var code = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+      var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+      return new this(message, code, data);
+    }
+    /**
+     * Returns the status code of the error.
+     */
+
+  }, {
+    key: "getHTTPErrorCode",
+    value: function getHTTPErrorCode() {
+      (0, _forceMethodImplementation.default)();
+    }
+  }]);
+  return BaseError;
+}( /*#__PURE__*/(0, _wrapNativeSuper2.default)(Error));
+
+exports["default"] = BaseError;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/core/data/errors/default-error.js":
+/*!**********************************************************************!*\
+  !*** ../modules/web-cli/assets/js/core/data/errors/default-error.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.DefaultError = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _baseError = _interopRequireDefault(__webpack_require__(/*! ./base-error */ "../modules/web-cli/assets/js/core/data/errors/base-error.js"));
+
+var DefaultError = /*#__PURE__*/function (_BaseError) {
+  (0, _inherits2.default)(DefaultError, _BaseError);
+
+  var _super = (0, _createSuper2.default)(DefaultError);
+
+  function DefaultError() {
+    (0, _classCallCheck2.default)(this, DefaultError);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(DefaultError, null, [{
+    key: "getHTTPErrorCode",
+    value: function getHTTPErrorCode() {
+      return 501;
+    }
+  }]);
+  return DefaultError;
+}(_baseError.default);
+
+exports.DefaultError = DefaultError;
+var _default = DefaultError;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/core/data/errors/error-404.js":
+/*!******************************************************************!*\
+  !*** ../modules/web-cli/assets/js/core/data/errors/error-404.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.Error404 = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _baseError = _interopRequireDefault(__webpack_require__(/*! ./base-error */ "../modules/web-cli/assets/js/core/data/errors/base-error.js"));
+
+var _helpers = _interopRequireDefault(__webpack_require__(/*! elementor-api/utils/helpers */ "../modules/web-cli/assets/js/utils/helpers.js"));
+
+var Error404 = /*#__PURE__*/function (_BaseError) {
+  (0, _inherits2.default)(Error404, _BaseError);
+
+  var _super = (0, _createSuper2.default)(Error404);
+
+  function Error404() {
+    (0, _classCallCheck2.default)(this, Error404);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(Error404, [{
+    key: "notify",
+    value: function notify() {
+      _helpers.default.consoleWarn(this.message);
+    }
+  }], [{
+    key: "getHTTPErrorCode",
+    value: function getHTTPErrorCode() {
+      return 404;
+    }
+  }]);
+  return Error404;
+}(_baseError.default);
+
+exports.Error404 = Error404;
+var _default = Error404;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/core/data/errors/index.js":
+/*!**************************************************************!*\
+  !*** ../modules/web-cli/assets/js/core/data/errors/index.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+_Object$defineProperty(exports, "DefaultError", {
+  enumerable: true,
+  get: function get() {
+    return _defaultError.DefaultError;
+  }
+});
+
+_Object$defineProperty(exports, "Error404", {
+  enumerable: true,
+  get: function get() {
+    return _error.Error404;
+  }
+});
+
+var _defaultError = __webpack_require__(/*! ./default-error */ "../modules/web-cli/assets/js/core/data/errors/default-error.js");
+
+var _error = __webpack_require__(/*! ./error-404 */ "../modules/web-cli/assets/js/core/data/errors/error-404.js");
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/modules/command-base.js":
+/*!************************************************************!*\
+  !*** ../modules/web-cli/assets/js/modules/command-base.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
+
+__webpack_require__(/*! core-js/modules/es6.array.filter.js */ "../node_modules/core-js/modules/es6.array.filter.js");
+
+__webpack_require__(/*! core-js/modules/es6.string.iterator.js */ "../node_modules/core-js/modules/es6.string.iterator.js");
+
+__webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
+
+__webpack_require__(/*! core-js/modules/es6.array.iterator.js */ "../node_modules/core-js/modules/es6.array.iterator.js");
+
+__webpack_require__(/*! core-js/modules/web.dom.iterable.js */ "../node_modules/core-js/modules/web.dom.iterable.js");
+
+var _isArray = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/array/is-array */ "../node_modules/@babel/runtime-corejs2/core-js/array/is-array.js"));
+
+var _promise = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/promise */ "../node_modules/@babel/runtime-corejs2/core-js/promise.js"));
+
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/typeof */ "../node_modules/@babel/runtime-corejs2/helpers/typeof.js"));
+
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/asyncToGenerator */ "../node_modules/@babel/runtime-corejs2/helpers/asyncToGenerator.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _argsObject = _interopRequireDefault(__webpack_require__(/*! elementor-assets-js/modules/imports/args-object */ "../assets/dev/js/modules/imports/args-object.js"));
+
+var _helpers = _interopRequireDefault(__webpack_require__(/*! elementor-api/utils/helpers */ "../modules/web-cli/assets/js/utils/helpers.js"));
+
+var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ../utils/force-method-implementation */ "../modules/web-cli/assets/js/utils/force-method-implementation.js"));
+
+var CommandBase = /*#__PURE__*/function (_ArgsObject) {
+  (0, _inherits2.default)(CommandBase, _ArgsObject);
+
+  var _super = (0, _createSuper2.default)(CommandBase);
+
+  /**
+   * Function constructor().
+   *
+   * Create Commands Base.
+   *
+   * @param [args={}]
+   * @param [commandsAPI={}]
+   */
+  function CommandBase(args) {
+    var _this;
+
+    var commandsAPI = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : $e.commands;
+    (0, _classCallCheck2.default)(this, CommandBase);
+    _this = _super.call(this, args); // Acknowledge self about which command it run.
+
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "component", void 0);
+    _this.currentCommand = commandsAPI.getCurrentLast(); // Assign instance of current component.
+
+    _this.component = commandsAPI.getComponent(_this.currentCommand); // Who ever need do something before without `super` the constructor can use `initialize` method.
+
+    _this.initialize(args); // Refresh args, maybe the changed via `initialize`.
+
+
+    args = _this.args; // Validate args before run.
+
+    _this.validateArgs(args);
+
+    return _this;
+  }
+  /**
+   * Function requireContainer().
+   *
+   * Validate `arg.container` & `arg.containers`.
+   *
+   * @param {{}} args
+   *
+   * @throws {Error}
+   */
+
+
+  (0, _createClass2.default)(CommandBase, [{
+    key: "requireContainer",
+    value: function requireContainer() {
+      var _this2 = this;
+
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.args;
+
+      if (!args.container && !args.containers) {
+        throw Error('container or containers are required.');
+      }
+
+      if (args.container && args.containers) {
+        throw Error('container and containers cannot go together please select one of them.');
+      }
+
+      var containers = args.containers || [args.container];
+      containers.forEach(function (container) {
+        _this2.requireArgumentInstance('container', elementorModules.editor.Container, {
+          container: container
+        });
+      });
+    }
+    /**
+     * Function initialize().
+     *
+     * Initialize command, called after construction.
+     *
+     * @param [args={}]
+     */
+
+  }, {
+    key: "initialize",
+    value: function initialize() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    } // eslint-disable-line no-unused-vars
+
+    /**
+     * Function validateArgs().
+     *
+     * Validate command arguments.
+     *
+     * @param [args={}]
+     */
+
+  }, {
+    key: "validateArgs",
+    value: function validateArgs() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    } // eslint-disable-line no-unused-vars
+
+    /**
+     * Function isDataChanged().
+     *
+     * Whether the editor needs to set change flag on/off.
+     *
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isDataChanged",
+    value: function isDataChanged() {
+      return false;
+    }
+    /**
+     * Function apply().
+     *
+     * Do the actual command.
+     *
+     * @param [args={}]
+     *
+     * @returns {*}
+     */
+
+  }, {
+    key: "apply",
+    value: function apply() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      // eslint-disable-line no-unused-vars
+      (0, _forceMethodImplementation.default)();
+    }
+    /**
+     * Function run().
+     *
+     * Run command with history & hooks.
+     *
+     * @returns {*}
+     */
+
+  }, {
+    key: "run",
+    value: function run() {
+      var result; // For UI Hooks.
+
+      this.onBeforeRun(this.args);
+
+      try {
+        // For Data hooks.
+        this.onBeforeApply(this.args);
+        result = this.apply(this.args);
+      } catch (e) {
+        this.onCatchApply(e); // Catch 'Hook-Break' that comes from hooks base.
+
+        if (e instanceof $e.modules.HookBreak) {
+          // Bypass.
+          return false;
+        }
+      }
+
+      return this.runAfter(result);
+    }
+  }, {
+    key: "runAfter",
+    value: function runAfter(result) {
+      var _this3 = this;
+
+      var onAfter = function onAfter(_result) {
+        // Run Data hooks.
+        _this3.onAfterApply(_this3.args, _result); // TODO: Create Command-Base for Command-Document and apply it on after.
+
+
+        if (_this3.isDataChanged()) {
+          $e.internal('document/save/set-is-modified', {
+            status: true
+          });
+        } // For UI hooks.
+
+
+        _this3.onAfterRun(_this3.args, _result);
+      },
+          asyncOnAfter = /*#__PURE__*/function () {
+        var _ref = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee(_result) {
+          var results, promises;
+          return _regenerator.default.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  // Run Data hooks.
+                  results = _this3.onAfterApply(_this3.args, _result), promises = (0, _isArray.default)(results) ? results.flat().filter(function (filtered) {
+                    return filtered instanceof _promise.default;
+                  }) : [];
+
+                  if (!promises.length) {
+                    _context.next = 4;
+                    break;
+                  }
+
+                  _context.next = 4;
+                  return _promise.default.all(promises);
+
+                case 4:
+                  if (_this3.isDataChanged()) {
+                    // TODO: Create Command-Base for Command-Document and apply it on after.
+                    $e.internal('document/save/set-is-modified', {
+                      status: true
+                    });
+                  } // For UI hooks.
+
+
+                  _this3.onAfterRun(_this3.args, _result);
+
+                case 6:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee);
+        }));
+
+        return function asyncOnAfter(_x) {
+          return _ref.apply(this, arguments);
+        };
+      }(); // TODO: Temp code determine if it's a jQuery deferred object.
+
+
+      if (result && 'object' === (0, _typeof2.default)(result) && result.promise && result.then && result.fail) {
+        result.fail(this.onCatchApply.bind(this));
+        result.done(onAfter);
+      } else if (result instanceof _promise.default) {
+        // Override initial result ( promise ) to await onAfter promises, first!.
+        return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2() {
+          return _regenerator.default.wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  _context2.next = 2;
+                  return result.catch(_this3.onCatchApply.bind(_this3));
+
+                case 2:
+                  _context2.next = 4;
+                  return result.then(function (_result) {
+                    return asyncOnAfter(_result);
+                  });
+
+                case 4:
+                  return _context2.abrupt("return", result);
+
+                case 5:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2);
+        }))();
+      } else {
+        onAfter(result);
+      }
+
+      return result;
+    }
+    /**
+     * Run all the catch hooks.
+     *
+     * @param {Error} e
+     */
+
+  }, {
+    key: "runCatchHooks",
+    value: function runCatchHooks(e) {
+      $e.hooks.runDataCatch(this.currentCommand, this.args, e);
+      $e.hooks.runUICatch(this.currentCommand, this.args, e);
+    }
+    /**
+     * Function onBeforeRun.
+     *
+     * Called before run().
+     *
+     * @param [args={}]
+     */
+
+  }, {
+    key: "onBeforeRun",
+    value: function onBeforeRun() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      $e.hooks.runUIBefore(this.currentCommand, args);
+    }
+    /**
+     * Function onAfterRun.
+     *
+     * Called after run().
+     *
+     * @param [args={}]
+     * @param [result={*}]
+     */
+
+  }, {
+    key: "onAfterRun",
+    value: function onAfterRun() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var result = arguments.length > 1 ? arguments[1] : undefined;
+      $e.hooks.runUIAfter(this.currentCommand, args, result);
+    }
+    /**
+     * Function onBeforeApply.
+     *
+     * Called before apply().
+     *
+     * @param [args={}]
+     */
+
+  }, {
+    key: "onBeforeApply",
+    value: function onBeforeApply() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      $e.hooks.runDataDependency(this.currentCommand, args);
+    }
+    /**
+     * Function onAfterApply.
+     *
+     * Called after apply().
+     *
+     * @param [args={}]
+     * @param [result={*}]
+     */
+
+  }, {
+    key: "onAfterApply",
+    value: function onAfterApply() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var result = arguments.length > 1 ? arguments[1] : undefined;
+      return $e.hooks.runDataAfter(this.currentCommand, args, result);
+    }
+    /**
+     * Function onCatchApply.
+     *
+     * Called after apply() failed.
+     *
+     * @param {Error} e
+     */
+
+  }, {
+    key: "onCatchApply",
+    value: function onCatchApply(e) {
+      this.runCatchHooks(e);
+
+      _helpers.default.consoleError(e);
+    }
+  }], [{
+    key: "getInstanceType",
+    value: function getInstanceType() {
+      return 'CommandBase';
+    }
+    /**
+     * Get info of command.
+     *
+     * Use to provide 'extra' information about the command.
+     *
+     * @returns {Object}
+     */
+
+  }, {
+    key: "getInfo",
+    value: function getInfo() {
+      return {};
+    }
+    /**
+     * Current component.
+     *
+     * @type {Component}
+     */
+
+  }]);
+  return CommandBase;
+}(_argsObject.default);
+
+exports["default"] = CommandBase;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/modules/command-data.js":
+/*!************************************************************!*\
+  !*** ../modules/web-cli/assets/js/modules/command-data.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireWildcard */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireWildcard.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.array.find.js */ "../node_modules/core-js/modules/es6.array.find.js");
+
+var _assign = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/assign */ "../node_modules/@babel/runtime-corejs2/core-js/object/assign.js"));
+
+var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "../node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! ./command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
+
+var errors = _interopRequireWildcard(__webpack_require__(/*! ../core/data/errors/ */ "../modules/web-cli/assets/js/core/data/errors/index.js"));
+
+var _helpers = _interopRequireDefault(__webpack_require__(/*! elementor-api/utils/helpers */ "../modules/web-cli/assets/js/utils/helpers.js"));
+
+var CommandData = /*#__PURE__*/function (_CommandBase) {
+  (0, _inherits2.default)(CommandData, _CommandBase);
+
+  var _super = (0, _createSuper2.default)(CommandData);
+
+  function CommandData(args) {
+    var _this$args$options;
+
+    var _this;
+
+    var commandsAPI = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : $e.data;
+    (0, _classCallCheck2.default)(this, CommandData);
+    _this = _super.call(this, args, commandsAPI);
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "data", void 0);
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)(_this), "type", void 0);
+
+    if ((_this$args$options = _this.args.options) !== null && _this$args$options !== void 0 && _this$args$options.type) {
+      _this.type = _this.args.options.type;
+    }
+
+    return _this;
+  }
+  /**
+   * Function getEndpointFormat().
+   *
+   * @returns {(null|string)}
+   */
+
+
+  (0, _createClass2.default)(CommandData, [{
+    key: "getApplyMethods",
+    value:
+    /**
+     * @param {DataTypes} type
+     *
+     * @returns {boolean|{before: (function(*=): {}), after: (function({}, *=): {})}}
+     */
+    function getApplyMethods() {
+      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.type;
+      var before, after;
+
+      switch (type) {
+        case 'create':
+          before = this.applyBeforeCreate;
+          after = this.applyAfterCreate;
+          break;
+
+        case 'delete':
+          before = this.applyBeforeDelete;
+          after = this.applyAfterDelete;
+          break;
+
+        case 'get':
+          before = this.applyBeforeGet;
+          after = this.applyAfterGet;
+          break;
+
+        case 'update':
+          before = this.applyBeforeUpdate;
+          after = this.applyAfterUpdate;
+          break;
+
+        case 'options':
+          before = this.applyBeforeOptions;
+          after = this.applyAfterOptions;
+          break;
+
+        default:
+          return false;
+      }
+
+      return {
+        before: before.bind(this),
+        after: after.bind(this)
+      };
+    }
+    /**
+     * Function getRequestData().
+     *
+     * @returns {RequestData}
+     */
+
+  }, {
+    key: "getRequestData",
+    value: function getRequestData() {
+      return {
+        component: this.component,
+        command: this.currentCommand,
+        type: this.type,
+        args: this.args,
+        timestamp: new Date().getTime(),
+        endpoint: $e.data.commandToEndpoint(this.currentCommand, _helpers.default.cloneObject(this.args), this.constructor.getEndpointFormat())
+      };
+    }
+  }, {
+    key: "apply",
+    value: function apply() {
+      var _this2 = this;
+
+      var applyMethods = this.getApplyMethods(); // Run 'before' method.
+
+      this.args = applyMethods.before(this.args);
+      var requestData = this.getRequestData();
+      return $e.data.fetch(requestData).then(function (data) {
+        _this2.data = data; // Run 'after' method.
+
+        _this2.data = applyMethods.after(data, _this2.args);
+        _this2.data = {
+          data: _this2.data
+        }; // Append requestData.
+
+        _this2.data = (0, _assign.default)({
+          __requestData__: requestData
+        }, _this2.data);
+        return _this2.data;
+      });
+    }
+    /**
+     * @param [args={}]
+     * @returns {{}} filtered args
+     */
+
+  }, {
+    key: "applyBeforeCreate",
+    value: function applyBeforeCreate() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return args;
+    }
+    /**
+     * @param {{}} data
+     * @param [args={}]
+     * @returns {{}} filtered result
+     */
+
+  }, {
+    key: "applyAfterCreate",
+    value: function applyAfterCreate(data) {
+      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      // eslint-disable-line no-unused-vars
+      return data;
+    }
+    /**
+     * @param [args={}]
+     * @returns {{}} filtered args
+     */
+
+  }, {
+    key: "applyBeforeDelete",
+    value: function applyBeforeDelete() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return args;
+    }
+    /**
+     * @param {{}} data
+     * @param [args={}]
+     * @returns {{}} filtered result
+     */
+
+  }, {
+    key: "applyAfterDelete",
+    value: function applyAfterDelete(data) {
+      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      // eslint-disable-line no-unused-vars
+      return data;
+    }
+    /**
+     * @param [args={}]
+     * @returns {{}} filtered args
+     */
+
+  }, {
+    key: "applyBeforeGet",
+    value: function applyBeforeGet() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return args;
+    }
+    /**
+     * @param {{}} data
+     * @param [args={}]
+     * @returns {{}} filtered result
+     */
+
+  }, {
+    key: "applyAfterGet",
+    value: function applyAfterGet(data) {
+      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      // eslint-disable-line no-unused-vars
+      return data;
+    }
+    /**
+     * @param [args={}]
+     * @returns {{}} filtered args
+     */
+
+  }, {
+    key: "applyBeforeUpdate",
+    value: function applyBeforeUpdate() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return args;
+    }
+    /**
+     * @param {{}} data
+     * @param [args={}]
+     * @returns {{}} filtered result
+     */
+
+  }, {
+    key: "applyAfterUpdate",
+    value: function applyAfterUpdate(data) {
+      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      // eslint-disable-line no-unused-vars
+      return data;
+    }
+    /**
+     * @param [args={}]
+     * @returns {{}} filtered args
+     */
+
+  }, {
+    key: "applyBeforeOptions",
+    value: function applyBeforeOptions() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return args;
+    }
+    /**
+     * @param {{}} data
+     * @param [args={}]
+     * @returns {{}} filtered result
+     */
+
+  }, {
+    key: "applyAfterOptions",
+    value: function applyAfterOptions(data) {
+      var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      // eslint-disable-line no-unused-vars
+      return data;
+    }
+    /**
+     * @param {BaseError} e
+     */
+
+  }, {
+    key: "applyAfterCatch",
+    value: function applyAfterCatch(e) {
+      e.notify();
+    }
+  }, {
+    key: "onCatchApply",
+    value: function onCatchApply(e) {
+      var _e, _e$data;
+
+      // TODO: If the errors that returns from the server is consistent remove the '?' from 'e'
+      var httpErrorCode = ((_e = e) === null || _e === void 0 ? void 0 : (_e$data = _e.data) === null || _e$data === void 0 ? void 0 : _e$data.status) || 501;
+      var dataError = (0, _values.default)(errors).find(function (error) {
+        return error.getHTTPErrorCode() === httpErrorCode;
+      });
+
+      if (!dataError) {
+        dataError = errors.DefaultError;
+      }
+
+      e = dataError.create(e.message, e.code, e.data || []);
+      this.runCatchHooks(e);
+      this.applyAfterCatch(e);
+    }
+  }], [{
+    key: "getInstanceType",
+    value:
+    /**
+     * Data returned from remote.
+     *
+     * @type {*}
+     */
+
+    /**
+     * Fetch type.
+     *
+     * @type {DataTypes}
+     */
+    function getInstanceType() {
+      return 'CommandData';
+    }
+  }, {
+    key: "getEndpointFormat",
+    value: function getEndpointFormat() {
+      return null;
+    }
+  }]);
+  return CommandData;
+}(_commandBase.default);
+
+exports["default"] = CommandData;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/modules/commands/close.js":
+/*!**************************************************************!*\
+  !*** ../modules/web-cli/assets/js/modules/commands/close.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.Close = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
+
+var Close = /*#__PURE__*/function (_CommandBase) {
+  (0, _inherits2.default)(Close, _CommandBase);
+
+  var _super = (0, _createSuper2.default)(Close);
+
+  function Close() {
+    (0, _classCallCheck2.default)(this, Close);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(Close, [{
+    key: "apply",
+    value: function apply() {
+      this.component.close();
+    }
+  }]);
+  return Close;
+}(_commandBase.default);
+
+exports.Close = Close;
+var _default = Close;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/modules/commands/index.js":
+/*!**************************************************************!*\
+  !*** ../modules/web-cli/assets/js/modules/commands/index.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+_Object$defineProperty(exports, "Close", {
+  enumerable: true,
+  get: function get() {
+    return _close.Close;
+  }
+});
+
+_Object$defineProperty(exports, "Open", {
+  enumerable: true,
+  get: function get() {
+    return _open.Open;
+  }
+});
+
+_Object$defineProperty(exports, "Toggle", {
+  enumerable: true,
+  get: function get() {
+    return _toggle.Toggle;
+  }
+});
+
+var _close = __webpack_require__(/*! ./close */ "../modules/web-cli/assets/js/modules/commands/close.js");
+
+var _open = __webpack_require__(/*! ./open */ "../modules/web-cli/assets/js/modules/commands/open.js");
+
+var _toggle = __webpack_require__(/*! ./toggle */ "../modules/web-cli/assets/js/modules/commands/toggle.js");
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/modules/commands/open.js":
+/*!*************************************************************!*\
+  !*** ../modules/web-cli/assets/js/modules/commands/open.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.Open = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
+
+var Open = /*#__PURE__*/function (_CommandBase) {
+  (0, _inherits2.default)(Open, _CommandBase);
+
+  var _super = (0, _createSuper2.default)(Open);
+
+  function Open() {
+    (0, _classCallCheck2.default)(this, Open);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(Open, [{
+    key: "apply",
+    value: function apply() {
+      $e.route(this.component.getNamespace());
+    }
+  }]);
+  return Open;
+}(_commandBase.default);
+
+exports.Open = Open;
+var _default = Open;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/modules/commands/toggle.js":
+/*!***************************************************************!*\
+  !*** ../modules/web-cli/assets/js/modules/commands/toggle.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.Toggle = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _commandBase = _interopRequireDefault(__webpack_require__(/*! elementor-api/modules/command-base */ "../modules/web-cli/assets/js/modules/command-base.js"));
+
+var Toggle = /*#__PURE__*/function (_CommandBase) {
+  (0, _inherits2.default)(Toggle, _CommandBase);
+
+  var _super = (0, _createSuper2.default)(Toggle);
+
+  function Toggle() {
+    (0, _classCallCheck2.default)(this, Toggle);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(Toggle, [{
+    key: "apply",
+    value: function apply() {
+      if (this.component.isOpen) {
+        this.component.close();
+      } else {
+        $e.route(this.component.getNamespace());
+      }
+    }
+  }]);
+  return Toggle;
+}(_commandBase.default);
+
+exports.Toggle = Toggle;
+var _default = Toggle;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/modules/component-base.js":
+/*!**************************************************************!*\
+  !*** ../modules/web-cli/assets/js/modules/component-base.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
+
+__webpack_require__(/*! core-js/modules/es6.array.filter.js */ "../node_modules/core-js/modules/es6.array.filter.js");
+
+__webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "../node_modules/core-js/modules/es6.regexp.replace.js");
+
+var _entries = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/entries */ "../node_modules/@babel/runtime-corejs2/core-js/object/entries.js"));
+
+var _values = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/values */ "../node_modules/@babel/runtime-corejs2/core-js/object/values.js"));
+
+var _keys = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/object/keys */ "../node_modules/@babel/runtime-corejs2/core-js/object/keys.js"));
+
+var _objectSpread2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread2 */ "../node_modules/@babel/runtime-corejs2/helpers/objectSpread2.js"));
+
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/slicedToArray */ "../node_modules/@babel/runtime-corejs2/helpers/slicedToArray.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _toolkit = __webpack_require__(/*! @reduxjs/toolkit */ "../node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js");
+
+var _module = _interopRequireDefault(__webpack_require__(/*! elementor-assets-js/modules/imports/module.js */ "../assets/dev/js/modules/imports/module.js"));
+
+var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ../utils/force-method-implementation */ "../modules/web-cli/assets/js/utils/force-method-implementation.js"));
+
+var ComponentBase = /*#__PURE__*/function (_Module) {
+  (0, _inherits2.default)(ComponentBase, _Module);
+
+  var _super = (0, _createSuper2.default)(ComponentBase);
+
+  function ComponentBase() {
+    (0, _classCallCheck2.default)(this, ComponentBase);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(ComponentBase, [{
+    key: "__construct",
+    value: function __construct() {
+      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      if (args.manager) {
+        this.manager = args.manager;
+      }
+
+      this.commands = this.defaultCommands();
+      this.commandsInternal = this.defaultCommandsInternal();
+      this.hooks = this.defaultHooks();
+      this.routes = this.defaultRoutes();
+      this.tabs = this.defaultTabs();
+      this.shortcuts = this.defaultShortcuts();
+      this.utils = this.defaultUtils();
+      this.data = this.defaultData();
+      this.uiStates = this.defaultUiStates();
+      this.states = this.defaultStates();
+      this.defaultRoute = '';
+      this.currentTab = '';
+    }
+  }, {
+    key: "registerAPI",
+    value: function registerAPI() {
+      var _this = this;
+
+      (0, _entries.default)(this.getTabs()).forEach(function (tab) {
+        return _this.registerTabRoute(tab[0]);
+      });
+      (0, _entries.default)(this.getRoutes()).forEach(function (_ref) {
+        var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
+            route = _ref2[0],
+            callback = _ref2[1];
+
+        return _this.registerRoute(route, callback);
+      });
+      (0, _entries.default)(this.getCommands()).forEach(function (_ref3) {
+        var _ref4 = (0, _slicedToArray2.default)(_ref3, 2),
+            command = _ref4[0],
+            callback = _ref4[1];
+
+        return _this.registerCommand(command, callback);
+      });
+      (0, _entries.default)(this.getCommandsInternal()).forEach(function (_ref5) {
+        var _ref6 = (0, _slicedToArray2.default)(_ref5, 2),
+            command = _ref6[0],
+            callback = _ref6[1];
+
+        return _this.registerCommandInternal(command, callback);
+      });
+      (0, _values.default)(this.getHooks()).forEach(function (instance) {
+        return _this.registerHook(instance);
+      });
+      (0, _entries.default)(this.getData()).forEach(function (_ref7) {
+        var _ref8 = (0, _slicedToArray2.default)(_ref7, 2),
+            command = _ref8[0],
+            callback = _ref8[1];
+
+        return _this.registerData(command, callback);
+      });
+      (0, _values.default)(this.getUiStates()).forEach(function (instance) {
+        return _this.registerUiState(instance);
+      });
+      (0, _entries.default)(this.getStates()).forEach(function (_ref9) {
+        var _ref10 = (0, _slicedToArray2.default)(_ref9, 2),
+            id = _ref10[0],
+            state = _ref10[1];
+
+        return _this.registerState(id, state);
+      });
+    }
+    /**
+     * @returns {string}
+     */
+
+  }, {
+    key: "getNamespace",
+    value: function getNamespace() {
+      (0, _forceMethodImplementation.default)();
+    }
+  }, {
+    key: "getRootContainer",
+    value: function getRootContainer() {
+      var parts = this.getNamespace().split('/');
+      return parts[0];
+    }
+  }, {
+    key: "defaultTabs",
+    value: function defaultTabs() {
+      return {};
+    }
+  }, {
+    key: "defaultRoutes",
+    value: function defaultRoutes() {
+      return {};
+    }
+  }, {
+    key: "defaultCommands",
+    value: function defaultCommands() {
+      return {};
+    }
+  }, {
+    key: "defaultCommandsInternal",
+    value: function defaultCommandsInternal() {
+      return {};
+    }
+  }, {
+    key: "defaultHooks",
+    value: function defaultHooks() {
+      return {};
+    }
+    /**
+     * Get the component's default UI states.
+     *
+     * @return {Object}
+     */
+
+  }, {
+    key: "defaultUiStates",
+    value: function defaultUiStates() {
+      return {};
+    }
+    /**
+     * Get the component's Redux slice settings.
+     *
+     * @return {Object}
+     */
+
+  }, {
+    key: "defaultStates",
+    value: function defaultStates() {
+      return {};
+    }
+  }, {
+    key: "defaultShortcuts",
+    value: function defaultShortcuts() {
+      return {};
+    }
+  }, {
+    key: "defaultUtils",
+    value: function defaultUtils() {
+      return {};
+    }
+  }, {
+    key: "defaultData",
+    value: function defaultData() {
+      return {};
+    }
+  }, {
+    key: "getCommands",
+    value: function getCommands() {
+      return this.commands;
+    }
+  }, {
+    key: "getCommandsInternal",
+    value: function getCommandsInternal() {
+      return this.commandsInternal;
+    }
+  }, {
+    key: "getHooks",
+    value: function getHooks() {
+      return this.hooks;
+    }
+    /**
+     * Retrieve the component's UI states.
+     *
+     * @return {Object}
+     */
+
+  }, {
+    key: "getUiStates",
+    value: function getUiStates() {
+      return this.uiStates;
+    }
+    /**
+     * Retrieve the component's Redux Slice.
+     *
+     * @return {Object}
+     */
+
+  }, {
+    key: "getStates",
+    value: function getStates() {
+      return this.states;
+    }
+  }, {
+    key: "getRoutes",
+    value: function getRoutes() {
+      return this.routes;
+    }
+  }, {
+    key: "getTabs",
+    value: function getTabs() {
+      return this.tabs;
+    }
+  }, {
+    key: "getShortcuts",
+    value: function getShortcuts() {
+      return this.shortcuts;
+    }
+  }, {
+    key: "getData",
+    value: function getData() {
+      return this.data;
+    }
+  }, {
+    key: "registerCommand",
+    value: function registerCommand(command, callback) {
+      $e.commands.register(this, command, callback);
+    }
+    /**
+     * @param {HookBase} instance
+     */
+
+  }, {
+    key: "registerHook",
+    value: function registerHook(instance) {
+      return instance.register();
+    }
+    /**
+     * Register a UI state.
+     *
+     * @param {UiStateBase} instance - UI state instance.
+     *
+     * @return {void}
+     */
+
+  }, {
+    key: "registerUiState",
+    value: function registerUiState(instance) {
+      $e.uiStates.register(instance);
+    }
+    /**
+     * Register a Redux Slice.
+     *
+     * @param {string} id - State id.
+     * @param {Object} stateConfig - The state config.
+     *
+     * @return {void}
+     */
+
+  }, {
+    key: "registerState",
+    value: function registerState(id, stateConfig) {
+      id = this.getNamespace() + (id ? "/".concat(id) : '');
+      var slice = (0, _toolkit.createSlice)((0, _objectSpread2.default)((0, _objectSpread2.default)({}, stateConfig), {}, {
+        name: id
+      }));
+      $e.store.register(id, slice);
+    }
+  }, {
+    key: "registerCommandInternal",
+    value: function registerCommandInternal(command, callback) {
+      $e.commandsInternal.register(this, command, callback);
+    }
+  }, {
+    key: "registerRoute",
+    value: function registerRoute(route, callback) {
+      $e.routes.register(this, route, callback);
+    }
+  }, {
+    key: "registerData",
+    value: function registerData(command, callback) {
+      $e.data.register(this, command, callback);
+    }
+  }, {
+    key: "unregisterRoute",
+    value: function unregisterRoute(route) {
+      $e.routes.unregister(this, route);
+    }
+  }, {
+    key: "registerTabRoute",
+    value: function registerTabRoute(tab) {
+      var _this2 = this;
+
+      this.registerRoute(tab, function (args) {
+        return _this2.activateTab(tab, args);
+      });
+    }
+  }, {
+    key: "dependency",
+    value: function dependency() {
+      return true;
+    }
+  }, {
+    key: "open",
+    value: function open() {
+      return true;
+    }
+  }, {
+    key: "close",
+    value: function close() {
+      if (!this.isOpen) {
+        return false;
+      }
+
+      this.isOpen = false;
+      this.inactivate();
+      $e.routes.clearCurrent(this.getNamespace());
+      $e.routes.clearHistory(this.getRootContainer());
+      return true;
+    }
+  }, {
+    key: "activate",
+    value: function activate() {
+      $e.components.activate(this.getNamespace());
+    }
+  }, {
+    key: "inactivate",
+    value: function inactivate() {
+      $e.components.inactivate(this.getNamespace());
+    }
+  }, {
+    key: "isActive",
+    value: function isActive() {
+      return $e.components.isActive(this.getNamespace());
+    }
+  }, {
+    key: "onRoute",
+    value: function onRoute(route) {
+      this.toggleRouteClass(route, true);
+      this.toggleHistoryClass();
+      this.activate();
+      this.trigger('route/open', route);
+    }
+  }, {
+    key: "onCloseRoute",
+    value: function onCloseRoute(route) {
+      this.toggleRouteClass(route, false);
+      this.inactivate();
+      this.trigger('route/close', route);
+    }
+  }, {
+    key: "setDefaultRoute",
+    value: function setDefaultRoute(route) {
+      this.defaultRoute = this.getNamespace() + '/' + route;
+    }
+  }, {
+    key: "getDefaultRoute",
+    value: function getDefaultRoute() {
+      return this.defaultRoute;
+    }
+  }, {
+    key: "removeTab",
+    value: function removeTab(tab) {
+      delete this.tabs[tab];
+      this.unregisterRoute(tab);
+    }
+  }, {
+    key: "hasTab",
+    value: function hasTab(tab) {
+      return !!this.tabs[tab];
+    }
+  }, {
+    key: "addTab",
+    value: function addTab(tab, args, position) {
+      var _this3 = this;
+
+      this.tabs[tab] = args; // It can be 0.
+
+      if ('undefined' !== typeof position) {
+        var newTabs = {};
+        var ids = (0, _keys.default)(this.tabs); // Remove new tab
+
+        ids.pop(); // Add it to position.
+
+        ids.splice(position, 0, tab);
+        ids.forEach(function (id) {
+          newTabs[id] = _this3.tabs[id];
+        });
+        this.tabs = newTabs;
+      }
+
+      this.registerTabRoute(tab);
+    }
+  }, {
+    key: "getTabsWrapperSelector",
+    value: function getTabsWrapperSelector() {
+      return '';
+    }
+  }, {
+    key: "getTabRoute",
+    value: function getTabRoute(tab) {
+      return this.getNamespace() + '/' + tab;
+    }
+  }, {
+    key: "renderTab",
+    value: function renderTab(tab) {} // eslint-disable-line
+
+  }, {
+    key: "activateTab",
+    value: function activateTab(tab, args) {
+      var _this4 = this;
+
+      this.currentTab = tab;
+      this.renderTab(tab, args);
+      jQuery(this.getTabsWrapperSelector() + ' .elementor-component-tab').off('click').on('click', function (event) {
+        $e.route(_this4.getTabRoute(event.currentTarget.dataset.tab), args);
+      }).removeClass('elementor-active').filter('[data-tab="' + tab + '"]').addClass('elementor-active');
+    }
+  }, {
+    key: "getActiveTabConfig",
+    value: function getActiveTabConfig() {
+      return this.tabs[this.currentTab] || {};
+    }
+  }, {
+    key: "getBodyClass",
+    value: function getBodyClass(route) {
+      return 'e-route-' + route.replace(/\//g, '-');
+    }
+    /**
+     * If command includes uppercase character convert it to lowercase and add `-`.
+     * e.g: `CopyAll` is converted to `copy-all`.
+     */
+
+  }, {
+    key: "normalizeCommandName",
+    value: function normalizeCommandName(commandName) {
+      return commandName.replace(/[A-Z]/g, function (match, offset) {
+        return (offset > 0 ? '-' : '') + match.toLowerCase();
+      });
+    }
+  }, {
+    key: "importCommands",
+    value: function importCommands(commandsFromImport) {
+      var _this5 = this;
+
+      var commands = {}; // Convert `Commands` to `ComponentBase` workable format.
+
+      (0, _entries.default)(commandsFromImport).forEach(function (_ref11) {
+        var _ref12 = (0, _slicedToArray2.default)(_ref11, 2),
+            className = _ref12[0],
+            Class = _ref12[1];
+
+        var command = _this5.normalizeCommandName(className);
+
+        commands[command] = function (args) {
+          return new Class(args).run();
+        }; // TODO: Temporary code, remove after merge with 'require-commands-base' branch.
+        // should not return callback, but Class or Instance without run ( gain performance ).
+
+
+        $e.commands.classes[_this5.getNamespace() + '/' + command] = Class;
+      });
+      return commands;
+    }
+  }, {
+    key: "importHooks",
+    value: function importHooks(hooksFromImport) {
+      var hooks = {};
+
+      for (var key in hooksFromImport) {
+        var hook = new hooksFromImport[key]();
+        hooks[hook.getId()] = hook;
+      }
+
+      return hooks;
+    }
+    /**
+     * Import & initialize the component's UI states.
+     * Should be used inside `defaultUiState()`.
+     *
+     * @param {Object} statesFromImport - UI states from import.
+     *
+     * @return {Object}
+     */
+
+  }, {
+    key: "importUiStates",
+    value: function importUiStates(statesFromImport) {
+      var _this6 = this;
+
+      var uiStates = {};
+      (0, _values.default)(statesFromImport).forEach(function (className) {
+        var uiState = new className(_this6);
+        uiStates[uiState.getId()] = uiState;
+      });
+      return uiStates;
+    }
+    /**
+     * Set a UI state value.
+     * TODO: Should we provide such function? Maybe the developer should implicitly pass the full state ID?
+     *
+     * @param state - Non-prefixed state ID.
+     * @param value - New state value.
+     *
+     * @return {void}
+     */
+
+  }, {
+    key: "setUiState",
+    value: function setUiState(state, value) {
+      $e.uiStates.set("".concat(this.getNamespace(), "/").concat(state), value);
+    }
+  }, {
+    key: "toggleRouteClass",
+    value: function toggleRouteClass(route, state) {
+      document.body.classList.toggle(this.getBodyClass(route), state);
+    }
+  }, {
+    key: "toggleHistoryClass",
+    value: function toggleHistoryClass() {
+      document.body.classList.toggle('e-routes-has-history', !!$e.routes.getHistory(this.getRootContainer()).length);
+    }
+  }]);
+  return ComponentBase;
+}(_module.default);
+
+exports["default"] = ComponentBase;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/modules/component-modal-base.js":
+/*!********************************************************************!*\
+  !*** ../modules/web-cli/assets/js/modules/component-modal-base.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireWildcard */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireWildcard.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/get */ "../node_modules/@babel/runtime-corejs2/helpers/get.js"));
+
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "../node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _componentBase = _interopRequireDefault(__webpack_require__(/*! ./component-base */ "../modules/web-cli/assets/js/modules/component-base.js"));
+
+var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../modules/web-cli/assets/js/modules/commands/index.js"));
+
+var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ../utils/force-method-implementation */ "../modules/web-cli/assets/js/utils/force-method-implementation.js"));
+
+var ComponentModalBase = /*#__PURE__*/function (_ComponentBase) {
+  (0, _inherits2.default)(ComponentModalBase, _ComponentBase);
+
+  var _super = (0, _createSuper2.default)(ComponentModalBase);
+
+  function ComponentModalBase() {
+    (0, _classCallCheck2.default)(this, ComponentModalBase);
+    return _super.apply(this, arguments);
+  }
+
+  (0, _createClass2.default)(ComponentModalBase, [{
+    key: "registerAPI",
+    value: function registerAPI() {
+      var _this = this;
+
+      (0, _get2.default)((0, _getPrototypeOf2.default)(ComponentModalBase.prototype), "registerAPI", this).call(this);
+      $e.shortcuts.register('esc', {
+        scopes: [this.getNamespace()],
+        callback: function callback() {
+          return _this.close();
+        }
+      });
+    }
+  }, {
+    key: "defaultCommands",
+    value: function defaultCommands() {
+      return this.importCommands(commands);
+    }
+  }, {
+    key: "defaultRoutes",
+    value: function defaultRoutes() {
+      return {
+        '': function _() {
+          /* Nothing to do, it's already rendered. */
+        }
+      };
+    }
+  }, {
+    key: "open",
+    value: function open() {
+      var _this2 = this;
+
+      if (!this.layout) {
+        var layout = this.getModalLayout();
+        this.layout = new layout({
+          component: this
+        });
+        this.layout.getModal().on('hide', function () {
+          return _this2.close();
+        });
+      }
+
+      this.layout.showModal();
+      return true;
+    }
+  }, {
+    key: "close",
+    value: function close() {
+      if (!(0, _get2.default)((0, _getPrototypeOf2.default)(ComponentModalBase.prototype), "close", this).call(this)) {
+        return false;
+      }
+
+      this.layout.getModal().hide();
+      return true;
+    }
+  }, {
+    key: "getModalLayout",
+    value: function getModalLayout() {
+      (0, _forceMethodImplementation.default)();
+    }
+  }]);
+  return ComponentModalBase;
+}(_componentBase.default);
+
+exports["default"] = ComponentModalBase;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/utils/force-method-implementation.js":
+/*!*************************************************************************!*\
+  !*** ../modules/web-cli/assets/js/utils/force-method-implementation.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = exports.ForceMethodImplementation = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../node_modules/core-js/modules/es6.regexp.split.js");
+
+__webpack_require__(/*! core-js/modules/es6.string.starts-with.js */ "../node_modules/core-js/modules/es6.string.starts-with.js");
+
+__webpack_require__(/*! core-js/modules/es6.string.includes.js */ "../node_modules/core-js/modules/es6.string.includes.js");
+
+__webpack_require__(/*! core-js/modules/es7.array.includes.js */ "../node_modules/core-js/modules/es7.array.includes.js");
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "../node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "../node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _createSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createSuper */ "../node_modules/@babel/runtime-corejs2/helpers/createSuper.js"));
+
+var _wrapNativeSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/wrapNativeSuper */ "../node_modules/@babel/runtime-corejs2/helpers/wrapNativeSuper.js"));
+
+// TODO: Copied from `assets/dev/js/modules/imports/force-method-implementation.js`;
+var ForceMethodImplementation = /*#__PURE__*/function (_Error) {
+  (0, _inherits2.default)(ForceMethodImplementation, _Error);
+
+  var _super = (0, _createSuper2.default)(ForceMethodImplementation);
+
+  function ForceMethodImplementation() {
+    var _this;
+
+    var info = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    (0, _classCallCheck2.default)(this, ForceMethodImplementation);
+    _this = _super.call(this, "".concat(info.isStatic ? 'static ' : '').concat(info.fullName, "() should be implemented, please provide '").concat(info.functionName || info.fullName, "' functionality."));
+    Error.captureStackTrace((0, _assertThisInitialized2.default)(_this), ForceMethodImplementation);
+    return _this;
+  }
+
+  return ForceMethodImplementation;
+}( /*#__PURE__*/(0, _wrapNativeSuper2.default)(Error));
+
+exports.ForceMethodImplementation = ForceMethodImplementation;
+
+var _default = function _default() {
+  var stack = Error().stack,
+      caller = stack.split('\n')[2].trim(),
+      callerName = caller.startsWith('at new') ? 'constructor' : caller.split(' ')[1],
+      info = {};
+  info.functionName = callerName;
+  info.fullName = callerName;
+
+  if (info.functionName.includes('.')) {
+    var parts = info.functionName.split('.');
+    info.className = parts[0];
+    info.functionName = parts[1];
+  } else {
+    info.isStatic = true;
+  }
+
+  throw new ForceMethodImplementation(info);
+};
+
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/web-cli/assets/js/utils/helpers.js":
+/*!*****************************************************!*\
+  !*** ../modules/web-cli/assets/js/utils/helpers.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _Object$defineProperty = __webpack_require__(/*! @babel/runtime-corejs2/core-js/object/define-property */ "../node_modules/@babel/runtime-corejs2/core-js/object/define-property.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "../node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = void 0;
+
+__webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "../node_modules/core-js/modules/es6.regexp.replace.js");
+
+__webpack_require__(/*! core-js/modules/es6.object.to-string.js */ "../node_modules/core-js/modules/es6.object.to-string.js");
+
+__webpack_require__(/*! core-js/modules/es6.regexp.to-string.js */ "../node_modules/core-js/modules/es6.regexp.to-string.js");
+
+var _stringify = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/json/stringify */ "../node_modules/@babel/runtime-corejs2/core-js/json/stringify.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "../node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "../node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+// TODO: Copied from `core/common/assets/js/utils/helpers.js` and modified into static functions.
+var Helpers = /*#__PURE__*/function () {
+  function Helpers() {
+    (0, _classCallCheck2.default)(this, Helpers);
+  }
+
+  (0, _createClass2.default)(Helpers, null, [{
+    key: "softDeprecated",
+    value: function softDeprecated(name, version, replacement) {
+      if (elementorWebCliConfig.isDebug) {
+        this.deprecatedMessage('soft', name, version, replacement);
+      }
+    }
+  }, {
+    key: "hardDeprecated",
+    value: function hardDeprecated(name, version, replacement) {
+      this.deprecatedMessage('hard', name, version, replacement);
+    }
+  }, {
+    key: "deprecatedMessage",
+    value: function deprecatedMessage(type, name, version, replacement) {
+      var message = "`".concat(name, "` is ").concat(type, " deprecated since ").concat(version);
+
+      if (replacement) {
+        message += " - Use `".concat(replacement, "` instead");
+      }
+
+      this.consoleWarn(message);
+    }
+  }, {
+    key: "consoleWarn",
+    value: function consoleWarn() {
+      var _console;
+
+      var style = "font-size: 12px; background-image: url(\"".concat(elementorWebCliConfig.urls.assets, "images/logo-icon.png\"); background-repeat: no-repeat; background-size: contain;");
+
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      args.unshift('%c  %c', style, '');
+
+      (_console = console).warn.apply(_console, args); // eslint-disable-line no-console
+
+    }
+  }, {
+    key: "consoleError",
+    value: function consoleError(message) {
+      // TODO: function is part of $e.
+      // Show an error if devTools is available.
+      if ($e.devTools) {
+        $e.devTools.log.error(message);
+      } // If not a 'Hook-Break' then show error.
+
+
+      if (!(message instanceof $e.modules.HookBreak)) {
+        // eslint-disable-next-line no-console
+        console.error(message);
+      }
+    }
+  }, {
+    key: "deprecatedMethod",
+    value: function deprecatedMethod(methodName, version, replacement) {
+      this.deprecatedMessage('hard', methodName, version, replacement); // This itself is deprecated.
+
+      this.softDeprecated('Helpers.deprecatedMethod', '2.8.0', 'Helpers.softDeprecated || Helpers.hardDeprecated');
+    }
+  }, {
+    key: "cloneObject",
+    value: function cloneObject(object) {
+      return JSON.parse((0, _stringify.default)(object));
+    }
+  }, {
+    key: "upperCaseWords",
+    value: function upperCaseWords(string) {
+      return (string + '').replace(/^(.)|\s+(.)/g, function ($1) {
+        return $1.toUpperCase();
+      });
+    }
+  }, {
+    key: "getUniqueId",
+    value: function getUniqueId() {
+      return Math.random().toString(16).substr(2, 7);
+    }
+  }]);
+  return Helpers;
+}();
+
+exports["default"] = Helpers;
 
 /***/ }),
 
@@ -17188,25 +12451,6 @@ module.exports = !__webpack_require__(/*! ./_descriptors */ "../node_modules/cor
 
 /***/ }),
 
-/***/ "../node_modules/core-js/modules/_inherit-if-required.js":
-/*!***************************************************************!*\
-  !*** ../node_modules/core-js/modules/_inherit-if-required.js ***!
-  \***************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/modules/_is-object.js");
-var setPrototypeOf = __webpack_require__(/*! ./_set-proto */ "../node_modules/core-js/modules/_set-proto.js").set;
-module.exports = function (that, target, C) {
-  var S = target.constructor;
-  var P;
-  if (S !== C && typeof S == 'function' && (P = S.prototype) !== C.prototype && isObject(P) && setPrototypeOf) {
-    setPrototypeOf(that, P);
-  } return that;
-};
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/modules/_iobject.js":
 /*!***************************************************!*\
   !*** ../node_modules/core-js/modules/_iobject.js ***!
@@ -17508,49 +12752,6 @@ module.exports = __webpack_require__(/*! ./_descriptors */ "../node_modules/core
 
 /***/ }),
 
-/***/ "../node_modules/core-js/modules/_object-gopd.js":
-/*!*******************************************************!*\
-  !*** ../node_modules/core-js/modules/_object-gopd.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-var pIE = __webpack_require__(/*! ./_object-pie */ "../node_modules/core-js/modules/_object-pie.js");
-var createDesc = __webpack_require__(/*! ./_property-desc */ "../node_modules/core-js/modules/_property-desc.js");
-var toIObject = __webpack_require__(/*! ./_to-iobject */ "../node_modules/core-js/modules/_to-iobject.js");
-var toPrimitive = __webpack_require__(/*! ./_to-primitive */ "../node_modules/core-js/modules/_to-primitive.js");
-var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/modules/_has.js");
-var IE8_DOM_DEFINE = __webpack_require__(/*! ./_ie8-dom-define */ "../node_modules/core-js/modules/_ie8-dom-define.js");
-var gOPD = Object.getOwnPropertyDescriptor;
-
-exports.f = __webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/modules/_descriptors.js") ? gOPD : function getOwnPropertyDescriptor(O, P) {
-  O = toIObject(O);
-  P = toPrimitive(P, true);
-  if (IE8_DOM_DEFINE) try {
-    return gOPD(O, P);
-  } catch (e) { /* empty */ }
-  if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
-};
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/modules/_object-gopn.js":
-/*!*******************************************************!*\
-  !*** ../node_modules/core-js/modules/_object-gopn.js ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-var $keys = __webpack_require__(/*! ./_object-keys-internal */ "../node_modules/core-js/modules/_object-keys-internal.js");
-var hiddenKeys = __webpack_require__(/*! ./_enum-bug-keys */ "../node_modules/core-js/modules/_enum-bug-keys.js").concat('length', 'prototype');
-
-exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
-  return $keys(O, hiddenKeys);
-};
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/modules/_object-gpo.js":
 /*!******************************************************!*\
   !*** ../node_modules/core-js/modules/_object-gpo.js ***!
@@ -17614,17 +12815,6 @@ var enumBugKeys = __webpack_require__(/*! ./_enum-bug-keys */ "../node_modules/c
 module.exports = Object.keys || function keys(O) {
   return $keys(O, enumBugKeys);
 };
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/modules/_object-pie.js":
-/*!******************************************************!*\
-  !*** ../node_modules/core-js/modules/_object-pie.js ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-exports.f = {}.propertyIsEnumerable;
 
 
 /***/ }),
@@ -17785,65 +12975,6 @@ if (PATCH) {
 }
 
 module.exports = patchedExec;
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/modules/_set-proto.js":
-/*!*****************************************************!*\
-  !*** ../node_modules/core-js/modules/_set-proto.js ***!
-  \*****************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-// Works with __proto__ only. Old v8 can't work with null proto objects.
-/* eslint-disable no-proto */
-var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/modules/_is-object.js");
-var anObject = __webpack_require__(/*! ./_an-object */ "../node_modules/core-js/modules/_an-object.js");
-var check = function (O, proto) {
-  anObject(O);
-  if (!isObject(proto) && proto !== null) throw TypeError(proto + ": can't set as prototype!");
-};
-module.exports = {
-  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
-    function (test, buggy, set) {
-      try {
-        set = __webpack_require__(/*! ./_ctx */ "../node_modules/core-js/modules/_ctx.js")(Function.call, __webpack_require__(/*! ./_object-gopd */ "../node_modules/core-js/modules/_object-gopd.js").f(Object.prototype, '__proto__').set, 2);
-        set(test, []);
-        buggy = !(test instanceof Array);
-      } catch (e) { buggy = true; }
-      return function setPrototypeOf(O, proto) {
-        check(O, proto);
-        if (buggy) O.__proto__ = proto;
-        else set(O, proto);
-        return O;
-      };
-    }({}, false) : undefined),
-  check: check
-};
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/modules/_set-species.js":
-/*!*******************************************************!*\
-  !*** ../node_modules/core-js/modules/_set-species.js ***!
-  \*******************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/modules/_global.js");
-var dP = __webpack_require__(/*! ./_object-dp */ "../node_modules/core-js/modules/_object-dp.js");
-var DESCRIPTORS = __webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/modules/_descriptors.js");
-var SPECIES = __webpack_require__(/*! ./_wks */ "../node_modules/core-js/modules/_wks.js")('species');
-
-module.exports = function (KEY) {
-  var C = global[KEY];
-  if (DESCRIPTORS && C && !C[SPECIES]) dP.f(C, SPECIES, {
-    configurable: true,
-    get: function () { return this; }
-  });
-};
 
 
 /***/ }),
@@ -18215,6 +13346,45 @@ addToUnscopables('entries');
 
 /***/ }),
 
+/***/ "../node_modules/core-js/modules/es6.array.slice.js":
+/*!**********************************************************!*\
+  !*** ../node_modules/core-js/modules/es6.array.slice.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/modules/_export.js");
+var html = __webpack_require__(/*! ./_html */ "../node_modules/core-js/modules/_html.js");
+var cof = __webpack_require__(/*! ./_cof */ "../node_modules/core-js/modules/_cof.js");
+var toAbsoluteIndex = __webpack_require__(/*! ./_to-absolute-index */ "../node_modules/core-js/modules/_to-absolute-index.js");
+var toLength = __webpack_require__(/*! ./_to-length */ "../node_modules/core-js/modules/_to-length.js");
+var arraySlice = [].slice;
+
+// fallback for not array-like ES3 strings and DOM objects
+$export($export.P + $export.F * __webpack_require__(/*! ./_fails */ "../node_modules/core-js/modules/_fails.js")(function () {
+  if (html) arraySlice.call(html);
+}), 'Array', {
+  slice: function slice(begin, end) {
+    var len = toLength(this.length);
+    var klass = cof(this);
+    end = end === undefined ? len : end;
+    if (klass == 'Array') return arraySlice.call(this, begin, end);
+    var start = toAbsoluteIndex(begin, len);
+    var upTo = toAbsoluteIndex(end, len);
+    var size = toLength(upTo - start);
+    var cloned = new Array(size);
+    var i = 0;
+    for (; i < size; i++) cloned[i] = klass == 'String'
+      ? this.charAt(start + i)
+      : this[start + i];
+    return cloned;
+  }
+});
+
+
+/***/ }),
+
 /***/ "../node_modules/core-js/modules/es6.function.name.js":
 /*!************************************************************!*\
   !*** ../node_modules/core-js/modules/es6.function.name.js ***!
@@ -18258,59 +13428,6 @@ if (test + '' != '[object z]') {
     return '[object ' + classof(this) + ']';
   }, true);
 }
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/modules/es6.regexp.constructor.js":
-/*!*****************************************************************!*\
-  !*** ../node_modules/core-js/modules/es6.regexp.constructor.js ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/modules/_global.js");
-var inheritIfRequired = __webpack_require__(/*! ./_inherit-if-required */ "../node_modules/core-js/modules/_inherit-if-required.js");
-var dP = __webpack_require__(/*! ./_object-dp */ "../node_modules/core-js/modules/_object-dp.js").f;
-var gOPN = __webpack_require__(/*! ./_object-gopn */ "../node_modules/core-js/modules/_object-gopn.js").f;
-var isRegExp = __webpack_require__(/*! ./_is-regexp */ "../node_modules/core-js/modules/_is-regexp.js");
-var $flags = __webpack_require__(/*! ./_flags */ "../node_modules/core-js/modules/_flags.js");
-var $RegExp = global.RegExp;
-var Base = $RegExp;
-var proto = $RegExp.prototype;
-var re1 = /a/g;
-var re2 = /a/g;
-// "new" creates a new object, old webkit buggy here
-var CORRECT_NEW = new $RegExp(re1) !== re1;
-
-if (__webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/modules/_descriptors.js") && (!CORRECT_NEW || __webpack_require__(/*! ./_fails */ "../node_modules/core-js/modules/_fails.js")(function () {
-  re2[__webpack_require__(/*! ./_wks */ "../node_modules/core-js/modules/_wks.js")('match')] = false;
-  // RegExp constructor can alter flags and IsRegExp works correct with @@match
-  return $RegExp(re1) != re1 || $RegExp(re2) == re2 || $RegExp(re1, 'i') != '/a/i';
-}))) {
-  $RegExp = function RegExp(p, f) {
-    var tiRE = this instanceof $RegExp;
-    var piRE = isRegExp(p);
-    var fiU = f === undefined;
-    return !tiRE && piRE && p.constructor === $RegExp && fiU ? p
-      : inheritIfRequired(CORRECT_NEW
-        ? new Base(piRE && !fiU ? p.source : p, f)
-        : Base((piRE = p instanceof $RegExp) ? p.source : p, piRE && fiU ? $flags.call(p) : f)
-      , tiRE ? this : proto, $RegExp);
-  };
-  var proxy = function (key) {
-    key in $RegExp || dP($RegExp, key, {
-      configurable: true,
-      get: function () { return Base[key]; },
-      set: function (it) { Base[key] = it; }
-    });
-  };
-  for (var keys = gOPN(Base), i = 0; keys.length > i;) proxy(keys[i++]);
-  proto.constructor = $RegExp;
-  $RegExp.prototype = proto;
-  __webpack_require__(/*! ./_redefine */ "../node_modules/core-js/modules/_redefine.js")(global, 'RegExp', $RegExp);
-}
-
-__webpack_require__(/*! ./_set-species */ "../node_modules/core-js/modules/_set-species.js")('RegExp');
 
 
 /***/ }),
@@ -20933,9 +16050,11 @@ var _finder = _interopRequireDefault(__webpack_require__(/*! elementor-common-mo
 
 var _connect = _interopRequireDefault(__webpack_require__(/*! elementor-common-modules/connect/assets/js/connect */ "../core/common/modules/connect/assets/js/connect.js"));
 
-var _api = _interopRequireDefault(__webpack_require__(/*! ./api/ */ "../core/common/assets/js/api/index.js"));
+var _component = _interopRequireDefault(__webpack_require__(/*! ./components/wordpress/component */ "../core/common/assets/js/components/wordpress/component.js"));
 
-var _component = _interopRequireDefault(__webpack_require__(/*! elementor-api/components/wordpress/component */ "../core/common/assets/js/api/components/wordpress/component.js"));
+var _component2 = _interopRequireDefault(__webpack_require__(/*! elementor-common-modules/event-tracker/assets/js/data/component */ "../core/common/modules/event-tracker/assets/js/data/component.js"));
+
+var _events = _interopRequireDefault(__webpack_require__(/*! elementor-common-modules/event-tracker/assets/js/events */ "../core/common/modules/event-tracker/assets/js/events.js"));
 
 var ElementorCommonApp = /*#__PURE__*/function (_elementorModules$Vie) {
   (0, _inherits2.default)(ElementorCommonApp, _elementorModules$Vie);
@@ -20971,11 +16090,13 @@ var ElementorCommonApp = /*#__PURE__*/function (_elementorModules$Vie) {
   }, {
     key: "initComponents",
     value: function initComponents() {
+      this.events = new _events.default();
       this.debug = new _debug.default();
       this.helpers = new _helpers.default();
       this.storage = new _storage.default();
       this.dialogsManager = new DialogsManager.Instance();
-      this.api = new _api.default();
+      this.api = window.$e;
+      $e.components.register(new _component2.default());
       elementorCommon.elements.$window.on('elementor:init-components', function () {
         $e.components.register(new _component.default());
       });

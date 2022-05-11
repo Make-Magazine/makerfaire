@@ -40,7 +40,7 @@ if( isset($cff_from_id) ):
 	</div>
 	<div class="cff-author-img <?php echo $cff_author_img_class ?>" data-avatar="<?php echo esc_url( $cff_author_src )  ?>"><!--
 		--><<?php echo $cff_author_link_el .''.$cff_author_link_atts ?>><!--
-			--><img src="<?php echo esc_url($cff_author_img_src) ?>" alt="<?php echo esc_attr( $cff_author_name ) ?>" width=40 height=40 onerror="this.style.display='none'"><!--
+			--><img src="<?php echo esc_url($cff_author_img_src) ?>" class="cff-feed-image" alt="<?php echo esc_attr( $cff_author_name ) ?>" width=40 height=40 onerror="this.style.display='none'"><!--
 		--></<?php echo $cff_author_link_el ?>><!--
 	--></div>
 </div>

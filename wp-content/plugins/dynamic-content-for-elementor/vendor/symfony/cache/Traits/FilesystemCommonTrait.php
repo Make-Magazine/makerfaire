@@ -94,7 +94,8 @@ trait FilesystemCommonTrait
             \fwrite($h, $data);
             \fclose($h);
             if (null !== $expiresAt) {
-                \touch($this->tmp, $expiresAt);
+                \touch($this->tmp, $expiresAt ?: \time() + 31556952);
+                // 1 year in seconds
             }
             return \rename($this->tmp, $file);
         } finally {

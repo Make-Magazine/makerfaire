@@ -603,22 +603,25 @@ class BotApi
      * On success, the sent Message is returned.
      * Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.
      *
-     * @param int|string $chatId chat_id or @channel_name
+     * @param int|string       $chatId chat_id or @channel_name
      * @param \CURLFile|string $voice
-     * @param int|null $duration
-     * @param int|null $replyToMessageId
+     * @param string           $caption Voice message caption, 0-1024 characters after entities parsing
+     * @param int|null         $duration
+     * @param int|null         $replyToMessageId
      * @param Types\ReplyKeyboardMarkup|Types\ReplyKeyboardHide|Types\ForceReply|
      *        Types\ReplyKeyboardRemove|null $replyMarkup
-     * @param bool $disableNotification
-     * @param string|null $parseMode
+     * @param bool             $disableNotification
+     * @param bool             $allowSendingWithoutReply Pass True, if the message should be sent even if the specified
+     *     replied-to message is not found
+     * @param string|null      $parseMode
      *
      * @return \TelegramBot\Api\Types\Message
      * @throws \TelegramBot\Api\InvalidArgumentException
      * @throws \TelegramBot\Api\Exception
      */
-    public function sendVoice($chatId, $voice, $duration = null, $replyToMessageId = null, $replyMarkup = null, $disableNotification = \false, $parseMode = null)
+    public function sendVoice($chatId, $voice, $caption = null, $duration = null, $replyToMessageId = null, $replyMarkup = null, $disableNotification = \false, $allowSendingWithoutReply = \false, $parseMode = null)
     {
-        return Message::fromResponse($this->call('sendVoice', ['chat_id' => $chatId, 'voice' => $voice, 'duration' => $duration, 'reply_to_message_id' => $replyToMessageId, 'reply_markup' => \is_null($replyMarkup) ? $replyMarkup : $replyMarkup->toJson(), 'disable_notification' => (bool) $disableNotification, 'parse_mode' => $parseMode]));
+        return Message::fromResponse($this->call('sendVoice', ['chat_id' => $chatId, 'voice' => $voice, 'caption' => $caption, 'duration' => $duration, 'reply_to_message_id' => $replyToMessageId, 'reply_markup' => \is_null($replyMarkup) ? $replyMarkup : $replyMarkup->toJson(), 'disable_notification' => (bool) $disableNotification, 'allow_sending_without_reply' => $allowSendingWithoutReply, 'parse_mode' => $parseMode]));
     }
     /**
      * Use this method to forward messages of any kind. On success, the sent Message is returned.
@@ -808,7 +811,7 @@ class BotApi
      * The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
      *
      * @param $callbackQueryId
-     * @param null $text
+     * @param string|null $text
      * @param bool $showAlert
      *
      * @return bool
@@ -891,8 +894,8 @@ class BotApi
      * @param $chatId
      * @param $messageId
      * @param InputMedia $media
-     * @param null $inlineMessageId
-     * @param null $replyMarkup
+     * @param string|null $inlineMessageId
+     * @param string|null $replyMarkup
      * @return bool|Message
      * @throws Exception
      * @throws HttpException
@@ -1323,14 +1326,14 @@ class BotApi
      * @param string $question Poll question, 1-255 characters
      * @param array $options A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
      * @param bool $isAnonymous True, if the poll needs to be anonymous, defaults to True
-     * @param null $type Poll type, “quiz” or “regular”, defaults to “regular”
+     * @param string|null $type Poll type, “quiz” or “regular”, defaults to “regular”
      * @param bool $allowsMultipleAnswers True, if the poll allows multiple answers,
      *                          ignored for polls in quiz mode, defaults to False
-     * @param null $correctOptionId 0-based identifier of the correct answer option, required for polls in quiz mode
+     * @param string|null $correctOptionId 0-based identifier of the correct answer option, required for polls in quiz mode
      * @param bool $isClosed Pass True, if the poll needs to be immediately closed. This can be useful for poll preview.
      * @param bool $disableNotification Sends the message silently. Users will receive a notification with no sound.
      * @param int|null $replyToMessageId If the message is a reply, ID of the original message
-     * @param null $replyMarkup Additional interface options. A JSON-serialized object for an inline keyboard,
+     * @param object|null $replyMarkup Additional interface options. A JSON-serialized object for an inline keyboard,
      *                          custom reply keyboard, instructions to remove reply
      *                          keyboard or to force a reply from the user.
      * @return \TelegramBot\Api\Types\Message
@@ -1347,21 +1350,27 @@ class BotApi
      * On success, the sent Message is returned. (Yes, we're aware of the “proper” singular of die.
      * But it's awkward, and we decided to help it change. One dice at a time!)
      *
-     * @param $chatId string|int Unique identifier for the target chat or username of the target channel
+     * @param      $chatId string|int Unique identifier for the target chat or username of the target channel
      *                (in the format @channelusername)
+     * @param      $emoji string Emoji on which the dice throw animation is based. Currently, must be one of “🎲”,
+     *     “🎯”, “🏀”, “⚽”, or “🎰”. Dice can have values 1-6 for “🎲” and “🎯”, values 1-5 for “🏀” and “⚽”, and
+     *     values 1-64 for “🎰”. Defaults to “🎲
      * @param bool $disableNotification Sends the message silently. Users will receive a notification with no sound.
-     * @param null $replyToMessageId If the message is a reply, ID of the original message
-     * @param null $replyMarkup Additional interface options. A JSON-serialized object for an inline keyboard,
+     * @param string|null $replyToMessageId If the message is a reply, ID of the original message
+     * @param bool $$allowSendingWithoutReply Pass True, if the message should be sent even if the specified replied-to
+     *     message is not found,
+     * @param object|null $replyMarkup Additional interface options. A JSON-serialized object for an inline keyboard,
      *                          custom reply keyboard, instructions to remove reply
      *                          keyboard or to force a reply from the user.
+     *
      * @return bool|Message
      * @throws Exception
      * @throws HttpException
      * @throws InvalidJsonException
      */
-    public function sendDice($chatId, $disableNotification = \false, $replyToMessageId = null, $replyMarkup = null)
+    public function sendDice($chatId, $emoji, $disableNotification = \false, $replyToMessageId = null, $allowSendingWithoutReply = \false, $replyMarkup = null)
     {
-        return Message::fromResponse($this->call('sendDice', ['chat_id' => $chatId, 'disable_notification' => (bool) $disableNotification, 'reply_to_message_id' => (int) $replyToMessageId, 'reply_markup' => $replyMarkup === null ? $replyMarkup : $replyMarkup->toJson()]));
+        return Message::fromResponse($this->call('sendDice', ['chat_id' => $chatId, 'emoji' => $emoji, 'disable_notification' => (bool) $disableNotification, 'reply_to_message_id' => (int) $replyToMessageId, 'allow_sending_without_reply' => (bool) $allowSendingWithoutReply, 'reply_markup' => $replyMarkup === null ? $replyMarkup : $replyMarkup->toJson()]));
     }
     /**
      * Use this method to stop a poll which was sent by the bot.

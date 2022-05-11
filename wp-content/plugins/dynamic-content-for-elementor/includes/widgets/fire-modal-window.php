@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
@@ -15,7 +15,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_ModalWindow extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class FireModalWindow extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -25,7 +25,12 @@ class DCE_Widget_ModalWindow extends \DynamicContentForElementor\Widgets\WidgetP
     {
         return ['dce-modalWindow'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_modalwindow', ['label' => __('Fire Modal Window', 'dynamic-content-for-elementor')]);
         $this->add_control('text_btn', ['label' => __('Text Button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Fire Modal Window', 'dynamic-content-for-elementor')]);
@@ -75,7 +80,7 @@ class DCE_Widget_ModalWindow extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_responsive_control('horizontal_close', ['label' => __('X Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 20, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 0, 'max' => 100, 'step' => 1]], 'selectors' => ['{{WRAPPER}} .cd-modal-close .dce-quit-ics' => 'right: {{SIZE}}{{UNIT}};']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         $template = $settings['template'];
@@ -107,7 +112,7 @@ class DCE_Widget_ModalWindow extends \DynamicContentForElementor\Widgets\WidgetP
         if (!empty($template)) {
             echo do_shortcode('[dce-elementor-template id="' . $template . '"]');
         }
-        ?>				
+        ?>
 				</div>
 			</div>
 			<a href="#" class="cd-modal-close">

@@ -3,7 +3,6 @@ if (function_exists('essb_advancedopts_settings_group')) {
 	essb_advancedopts_settings_group('essb_options');
 }
 
-essb5_draw_hint('', esc_html__('With the device visibility, you can choose the networks that will be visible on the desktop and those that will be visible just on mobile. You can also deactivate the unused social networks using the "Manage Available & Install Networks" button.', 'essb'), '', 'glow');
 essb5_draw_switch_option('activate_networks_responsive', esc_html__('Activate network device visibility control', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 
 $all_networks = essb_available_social_networks();

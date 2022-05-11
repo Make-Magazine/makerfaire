@@ -27,6 +27,9 @@ class ESSBAdminControler {
 	function __construct() {
 		global $pagenow;
 		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
+		
+		$post = isset($_REQUEST['post']) ? $_REQUEST['post'] : '';
+		$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 
 		/**
 		 * Validate access to plugin settings. Require if user limits the setup
@@ -38,11 +41,22 @@ class ESSBAdminControler {
 
 		add_action ( 'admin_menu', 	array ($this, 'register_menu' ) );
 		add_action ( 'admin_enqueue_scripts', array ($this, 'register_admin_assets' ), 99 );
+		add_action ( 'enqueue_block_editor_assets', array($this, 'register_block_assets') );
 
 		$hook = (defined ( 'WP_NETWORK_ADMIN' ) && WP_NETWORK_ADMIN) ? 'network_admin_menu' : 'admin_menu';
 
 		if (current_user_can($essb_settings_access) && strpos($page, 'essb_') !== false ) {
 			add_action ( $hook, array ($this, 'handle_save_settings' ) );
+		}
+		
+		/**
+		 * Post short URL clear button
+		 */
+		if (is_admin()) {
+		    if (!function_exists('essb_admin_ajax_helper_post_actions')) {
+		        include_once(ESSB3_PLUGIN_ROOT . 'lib/admin/helpers/action-post-edit.php');
+		    }
+		    add_action ( 'wp_ajax_essb_admin_post_action', 'essb_admin_ajax_helper_post_actions' );
 		}
 
 		if (is_admin() && current_user_can($essb_settings_access)) {
@@ -502,6 +516,12 @@ class ESSBAdminControler {
 		if (!empty($essb_pc_twitter)) {
 			$this->save_metabox_value_simple($post_id, 'essb_pc_twitter', $essb_pc_twitter, 'text');
 		}
+		
+		// LinkedIn Custom Value
+		$essb_pc_linkedin = essb_object_value($essb_metabox, 'essb_pc_linkedin');
+		if (!empty($essb_pc_linkedin)) {
+		    $this->save_metabox_value_simple($post_id, 'essb_pc_linkedin', $essb_pc_linkedin, 'text');
+		}
 
 
 		// @since 5.0
@@ -514,6 +534,20 @@ class ESSBAdminControler {
 
 				$this->save_metabox_value_simple($post_id, $param, $value, 'text');
 			}
+		}
+		else if (!essb_option_bool_value('deactivate_postcount')) {
+		    $listOfNetworks = essb_available_social_networks();
+		    foreach ($listOfNetworks as $key => $data) {
+		        $param = 'essb_pc_'.$key;
+		        $value = essb_object_value($essb_metabox, $param);
+		        
+		        if (!empty($value) || $value == '0') {
+		            if ($key == 'love') {
+		                $param = '_essb_love';
+		            }
+                    $this->save_metabox_value_simple($post_id, $param, $value, 'text');
+		        }
+		    }
 		}
 
 		// @since 3.4.1
@@ -665,6 +699,32 @@ class ESSBAdminControler {
 	public function essb_settings_load() {
 		include (ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-settings5.php');
 	}
+	
+	/**
+	 * Loading block editor required assets
+	 */
+	public function register_block_assets() {
+	    
+	    $template_file = ESSB3_PLUGIN_URL . '/assets/css/easy-social-share-buttons.css';
+	    // loading slim version of the stylesheet
+	    if (essb_sanitize_option_value('css_mode') == 'slim') {
+	        $template_url = ESSB3_PLUGIN_URL.'/assets/css/easy-social-share-buttons-slim.css';
+	    }
+	    
+	    if (essb_sanitize_option_value('css_mode') == 'mini') {
+	        $template_url = ESSB3_PLUGIN_URL.'/assets/css/easy-social-share-buttons-mini.css';
+	    }
+	    
+	    /**
+	     * @since 8.3 - development filter for loading stylesheet
+	     */
+	    if (has_filter('essb_get_the_share_stylesheet_file')) {
+	        $template_url = apply_filters('essb_get_the_share_stylesheet_file', $template_url);
+	    }
+	    
+	    wp_register_style ( 'essb-admin3-style', $template_file, array (), ESSB3_VERSION );
+	    wp_enqueue_style ( 'essb-admin3-style' );
+	}
 
 	public function register_admin_assets($hook) {
 		global $essb_admin_options;
@@ -691,6 +751,8 @@ class ESSBAdminControler {
 		wp_enqueue_style ( 'essb-shortcode', ESSB3_PLUGIN_URL.'/assets/admin/essb-shortcode-generator.css' );
 		
 		wp_enqueue_script( 'jquery-ui-sortable' );		
+
+		wp_enqueue_style ( 'microtip', ESSB3_PLUGIN_URL.'/assets/admin/microtip.min.css' );
 		
 		$deactivate_fa = essb_options_bool_value('deactivate_fa');
 		// styles
@@ -729,14 +791,40 @@ class ESSBAdminControler {
 		if (class_exists('ESSBControlCenter') && ESSBControlCenter::is_new_version()) {
 		    // new interface
 		    wp_enqueue_style ( 'essb-admin8', ESSB3_PLUGIN_URL.'/assets/admin/essb-admin8.css' );
-		    wp_enqueue_script ( 'essb-admin8', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin8.js', array ('jquery' ), ESSB3_VERSION, true );
+		    wp_register_script ( 'essb-admin8', ESSB3_PLUGIN_URL . '/assets/admin/essb-admin8.js', array ('jquery' ), ESSB3_VERSION, true );
+		    wp_localize_script( 'essb-admin8', 'essbFieldConditions', ESSBControlCenter::$relations );
+		    wp_enqueue_script ( 'essb-admin8');
+		    
 		}
 		
 		add_action('admin_footer', array($this, 'generate_shortcode_settings'));
 		
 
-		wp_register_style ( 'essb-admin3-style', ESSB3_PLUGIN_URL . '/assets/css/easy-social-share-buttons.css', array (), ESSB3_VERSION );
+		$template_file = ESSB3_PLUGIN_URL . '/assets/css/easy-social-share-buttons.css';
+		// loading slim version of the stylesheet
+		if (essb_sanitize_option_value('css_mode') == 'slim') {
+		    $template_url = ESSB3_PLUGIN_URL.'/assets/css/easy-social-share-buttons-slim.css';
+		}
+		
+		if (essb_sanitize_option_value('css_mode') == 'mini') {
+		    $template_url = ESSB3_PLUGIN_URL.'/assets/css/easy-social-share-buttons-mini.css';
+		}
+		
+		/**
+		 * @since 8.3 - development filter for loading stylesheet
+		 */
+		if (has_filter('essb_get_the_share_stylesheet_file')) {
+		    $template_url = apply_filters('essb_get_the_share_stylesheet_file', $template_url);
+		}
+		
+		wp_register_style ( 'essb-admin3-style', $template_file, array (), ESSB3_VERSION );
 		wp_enqueue_style ( 'essb-admin3-style' );
+		
+		/**
+		 * @since 8.4 - the new Click to Tweet styles
+		 */
+		wp_register_style ( 'essbcct-admin3-style', ESSB3_PLUGIN_URL.'/assets/modules/click-to-tweet.css', array (), ESSB3_VERSION );
+		wp_enqueue_style ( 'essbcct-admin3-style' );
 		
 		wp_register_style ( 'essbfc-admin3-style', ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/social-profiles.min.css', array (), ESSB3_VERSION );
 		wp_enqueue_style ( 'essbfc-admin3-style' );
@@ -772,7 +860,7 @@ class ESSBAdminControler {
 		wp_enqueue_script ( 'essb-raphael', ESSB3_PLUGIN_URL . '/assets/admin/raphael-min.js', array ('jquery' ), ESSB3_VERSION );
 		wp_enqueue_style ( 'essb-opensans', 'https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,latin-ext' );
 		wp_enqueue_style ( 'essb-roboto', 'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap&subset=latin-ext' );
-		
+				
 		wp_enqueue_style ( 'essb-admin5-core', ESSB3_PLUGIN_URL.'/assets/admin/essb-admin5-core.css' );
 
 		wp_enqueue_script ( 'essb-sweetalerts', ESSB3_PLUGIN_URL . '/assets/admin/sweetalert.min.js', array ('jquery' ), ESSB3_VERSION, true );
@@ -798,6 +886,10 @@ class ESSBAdminControler {
 
 		if ($requested != 'easy-social-metrics-lite') {
 			wp_enqueue_style ( 'essb-advancedoptions', ESSB3_PLUGIN_URL.'/lib/admin/advanced-options/advancedoptions-core.css' );
+			
+			wp_register_script ( 'essb-advancedoptions', ESSB3_PLUGIN_URL . '/lib/admin/advanced-options/advancedoptions-core.js', array ('jquery' ), ESSB3_VERSION, true );			
+			wp_enqueue_script ( 'essb-advancedoptions');
+			
 			wp_enqueue_script ( 'essb-advancedoptions', ESSB3_PLUGIN_URL . '/lib/admin/advanced-options/advancedoptions-core.js', array ('jquery' ), ESSB3_VERSION, true );
 	
 			wp_enqueue_style ( 'essb-toast', ESSB3_PLUGIN_URL.'/assets/admin/jquery.toast.css' );
@@ -1203,7 +1295,40 @@ class ESSBAdminControler {
 					ESSBSocialShareAnalyticsBackEnd::install();
 				}
 			}
+			
+			// since 8.0
+			if ($key == 'conversions_subscribe_lite_run' && $value == 'true' && class_exists('ESSB_Subscribe_Conversions_Pro')) {
+			    ESSB_Subscribe_Conversions_Pro::install();
+			}
+			
+			// since 8.0
+			if ($key == 'conversions_lite_run' && $value == 'true' && class_exists('ESSB_Share_Conversions_Pro')) {
+			    ESSB_Share_Conversions_Pro::install();
+			}
+			
+			// since 8.2
+			if ($key == 'cache_counter_logging') {
+			    if ($value != 'true') {
+			        if (!class_exists('ESSB_Logger_ShareCounter_Update')) {
+			            include_once (ESSB3_CLASS_PATH . 'loggers/class-sharecounter-update.php');
+			        }
+			        
+			        ESSB_Logger_ShareCounter_Update::clear();
+			    }
+			}
+			
 		}
+		
+		// since 8.0 double check to create post meta table if deleted on saving settings
+		if (class_exists('ESSB_Post_Meta')) {
+		    ESSB_Post_Meta::install();
+		}
+		
+		// clear the followers log on settings save
+		if (!class_exists('ESSB_Logger_Followers_Update')) {
+		    include_once (ESSB3_CLASS_PATH . 'loggers/class-followers-update.php');
+		}		
+		ESSB_Logger_Followers_Update::clear();
 
 		if ($current_tab == 'advanced') {
 			$this->temporary_activate_post_type_settings();
@@ -1402,6 +1527,16 @@ class ESSBAdminControler {
 								ESSBSocialShareAnalyticsBackEnd::install();
 							}
 						}
+						
+						// since 8.0
+						if ($key == 'conversions_subscribe_lite_run' && $value == 'true' && class_exists('ESSB_Subscribe_Conversions_Pro')) {
+						    ESSB_Subscribe_Conversions_Pro::install();
+						}
+						
+						// since 8.0
+						if ($key == 'conversions_lite_run' && $value == 'true' && class_exists('ESSB_Share_Conversions_Pro')) {
+						    ESSB_Share_Conversions_Pro::install();
+						}
 
 						if ($id == 'use_stylebuilder' && $option_value == 'true') {
 							$list_of_styles = isset($user_options['stylebuilder_css']) ? $user_options['stylebuilder_css'] : array();
@@ -1421,6 +1556,7 @@ class ESSBAdminControler {
 			// clear all fields before setup the correct mode
 			$current_options['deactivate_module_aftershare'] = 'false';
 			$current_options['deactivate_module_analytics'] = 'false';
+			$current_options['deactivate_module_google_analytics'] = 'false';
 			$current_options['deactivate_module_affiliate'] = 'false';
 			$current_options['deactivate_module_customshare'] = 'false';
 			$current_options['deactivate_module_message'] = 'false';

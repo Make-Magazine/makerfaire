@@ -150,9 +150,8 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 
 			if ($single == 'no') { continue; }
 			
-			// since version 7 Google+ and StumbleUpon won't show even choosed
 			/**
-			 * @since 7.3 - remove also ManageWP (network closed)
+			 * @since 7.3 - remove also ManageWP, StumbleUpon, Google+ (network closed)
 			 */
 			if ($single == 'google' || $single == 'stumbleupon' || $single == 'mwp') { continue; }
 
@@ -379,9 +378,41 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 			}
 			
 			$custom_svg_icon = '';
+			$additional_a_class = '';
+			$additional_icon_class = '';
+			
+			/**
+			 * Development integration for the SVG icons
+			 */
+			if (defined('ESSB_SVG_SHARE_ICONS')) {
+			    if (!class_exists('ESSB_SVG_Icons')) {
+			        include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+			    }
+			    
+			    if ($additional_icon == 'facebook-official') {
+			        $custom_svg_icon = ESSB_SVG_Icons::get_icon('facebook_like');
+			    }
+			    else if ($additional_icon == 'more_dots' || $single == 'share') {
+			        $custom_svg_icon = ESSB_SVG_Icons::get_icon($additional_icon);
+			    }
+			    else {
+                    $custom_svg_icon = ESSB_SVG_Icons::get_icon($single);
+			    }
+			    
+			    // @param $additional_icon defines the additional icon class
+			    // @param $more_after_class defines the additional class on the parent
+			    // @param $additional_a_class defines the additional link class
+			}
 			
 			if (has_filter("essb_network_svg_icon_{$single}")) {
 				$custom_svg_icon = apply_filters("essb_network_svg_icon_{$single}", $custom_svg_icon);
+			}
+			
+			/**
+			 * @since 8.3 Include an extra class specify that button has an SVG icon
+			 */
+			if (!empty($custom_svg_icon)) {
+			    $more_after_class .= ' essb_link_svg_icon';
 			}
 			
 			
@@ -390,11 +421,34 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 			    $mycred_token .= apply_filters("essb_network_custom_url_options_{$single}", $share);
 			}
 
+			/**
+			 * @since 8.3 Include an extra class for the link
+			 */
+			if (has_filter('essb_draw_button_additional_a_class')) {
+			    $additional_a_class = apply_filters('essb_draw_button_additional_a_class', $single, $style);
+			}
+			
+			if (!empty($additional_a_class)) {
+			    $additional_a_class = ' ' . $additional_a_class;
+			}
+			
+			/**
+			 * @since 8.3 Include an extra class for the icon
+			 */
+			if (has_filter('essb_draw_button_additional_icon_class')) {
+			    $additional_icon_class = apply_filters('essb_draw_button_additional_icon_class', $single, $style);
+			}
+			
+			if (!empty($additional_icon_class)) {
+			    $additional_icon_class = ' ' . $additional_icon_class;
+			}
+			
 			$content .= sprintf('<li class="essb_item essb_link_%8$s nolightbox%2$s">
-					%12$s<a href="%3$s" title="%4$s" onclick="%5$s" target="%10$s" rel="%11$s" class="nolightbox" %7$s>%13$s<span class="essb_icon essb_icon_%17$s">%19$s</span><span class="essb_network_name%9$s">%14$s%6$s%15$s</span>%18$s</a>%16$s</li>',
-					$single, $more_after_class, $url, $hover_text, $api_command, $name, $mycred_token, $icon, $noname_class, $link_target, $button_follow_state,
+					%12$s<a href="%3$s" title="%4$s" onclick="%5$s" target="%10$s" rel="%11$s" class="nolightbox%20$s" %7$s>%13$s<span class="essb_icon essb_icon_%17$s%21$s">%19$s</span><span class="essb_network_name%9$s">%14$s%6$s%15$s</span>%18$s</a>%16$s</li>',
+					$single, $more_after_class, $url, $hover_text, $api_command, $name, $mycred_token, $icon, $noname_class, 
+			        $link_target, $button_follow_state,
 					$cached_code_left, $cached_code_before, $cached_code_insidebefore, $cached_code_insideafter,
-					$cached_code_right, $additional_icon, $cached_code_after, $custom_svg_icon);
+					$cached_code_right, $additional_icon, $cached_code_after, $custom_svg_icon, $additional_a_class, $additional_icon_class);
 
 			// at the end toggle more button state
 			if ($single == 'more') {
@@ -411,10 +465,18 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 		$share_details = essb_get_share_address('less', $share, $salt);
 		$url = $share_details['url'];
 		$api_command = $share_details['api_command'];
+		
+		if (defined('ESSB_SVG_SHARE_ICONS')) {
+		    if (!class_exists('ESSB_SVG_Icons')) {
+		        include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+		    }
+		    
+	        $custom_svg_icon = ESSB_SVG_Icons::get_icon('less');
+		}
 
 		$content .= sprintf('<li class="essb_item essb_link_%1$s nolightbox%2$s">
-				<a href="%3$s" title="%4$s" onclick="%5$s" target="_blank" rel="nofollow"><span class="essb_icon essb_icon_%1$s"></span><span class="essb_network_name">%6$s</span></a></li>',
-				"less", $more_after_class, esc_url($url), "", $api_command, "");
+				<a href="%3$s" title="%4$s" onclick="%5$s" target="_blank" rel="nofollow"><span class="essb_icon essb_icon_%1$s">%7$s</span><span class="essb_network_name">%6$s</span></a></li>',
+		    "less", $more_after_class, esc_url($url), "", $api_command, "", $custom_svg_icon);
 
 	}
 
@@ -438,13 +500,26 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 		essb_depend_load_function('essb_apply_advanced_custom_share', 'lib/core/extenders/essb-buttonhelper-extender-advancedshare.php');
 		$share = essb_apply_advanced_custom_share($share, $network);
 	}
-
-	// @since version 3.0.3 - fixes the GA Campaign tracking fields
-	$ga_tracking_code = ESSBGlobalSettings::$activate_ga_campaign_tracking;
-	if ($ga_tracking_code != '' || isset($share['ga_mode'])) {
-		essb_depend_load_function('essb_correct_url_on_tracking_code', 'lib/core/extenders/essb-buttonhelper-extender-encode.php');
-		$share = essb_correct_url_on_tracking_code($share, $network);
-	}	
+	
+	/**
+	 * @since 8.0
+	 * UTM tracking code is attached to the outgoing shared URL here
+	 */
+	if (isset($share['utm_tracking']) && class_exists('ESSB_ShareURL_UTM_Tracking')) {
+	    $share = ESSB_ShareURL_UTM_Tracking::attach_to_share_object($share, $network);
+	}
+	
+	/**
+	 * @since 8.0
+	 * Short URL generation goes from per social network. That makes it possible to cache a different 
+	 * short URL for each social network in case of UTM options are set.
+	 */
+	if (class_exists('ESSB_Short_URL')) {
+	    if (ESSB_Short_URL::active()) {
+	        $share = ESSB_Short_URL::apply_short_to_share_object($share, $network);
+	    }
+	}
+	
 	
 	if (!isset($share['query'])) {
 		if (isset($share['essb_encode_url'])) {
@@ -467,6 +542,16 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 				$share['twitter_tweet'] = str_replace('+', '%20', $share['twitter_tweet']);
 			}
 		}
+	}
+	
+	/**
+	 * @since 8.2
+	 */
+	if ($network == 'mail') {	    
+	    if (!function_exists('essb_sharing_prepare_mail')) {
+	        include_once (ESSB3_PLUGIN_ROOT . 'lib/core/extenders/essb-core-extender-sharing.php');
+	    }
+	    $share = essb_sharing_prepare_mail($share);
 	}
 
 	$share['url'] = rawurlencode(esc_url($share['url']));		
@@ -493,6 +578,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 	if (strpos($share['title'], '%26amp%3B') !== false) {
 	    $share['title'] = str_replace('%26amp%3B', '%26', $share['title']);
 	}
+	
 
 	// adding additional support for hashtags everywhere
 	$share['title'] = str_replace('#', '%23', $share['title']);
@@ -514,8 +600,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 	$pinterest_description = essb_core_helper_textencode($pinterest_description);
 
 	// @since version 3.0.4 - fix for shorturl
-	$shorturl_activate = essb_options_bool_value( 'shorturl_activate');
-	if ($shorturl_activate && !empty($share['short_url'])) {
+	if (essb_options_bool_value( 'shorturl_activate') && !empty($share['short_url'])) {
 		$share['url'] = $share['short_url'];
 	}
 
@@ -652,7 +737,10 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			$url = sprintf ( 'http://service.weibo.com/share/share.php?url=%1$s&title=%2$s&pic=%3$s', $share ['url'], essb_core_helper_textencode($share['title']), $share['image'] );
 			break;
 		case 'xing' :
-			$url = sprintf ( 'https://www.xing.com/social_plugins/share?h=1;url=%1$s', $share ['url'] );
+		    /**
+		     * Legacy command prior version 8.2.1 $url = sprintf ( 'https://www.xing.com/social_plugins/share?h=1;url=%1$s', $share ['url'] );
+			*/
+		    $url = sprintf ( 'https://www.xing.com/spi/shares/new?url=%1$s', $share ['url'] );
 			break;
 		case 'pocket' :
 			$url = sprintf ( 'https://getpocket.com/save?title=%1$s&url=%2$s', essb_core_helper_textencode($share ['title']), ( $share ['url'] ) );
@@ -713,6 +801,11 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 		case 'mail_form' :
 			$url = "#";
 			$api_command = "essb_open_mailform(&#39;" . $salt . "&#39;); return false;";
+			
+			/**
+			 * @since 8.3 Activation of the mail form draw in the footer
+			 */
+			essb_resource_builder()->activate_resource('mail_form');
 			break;
 		case 'share':
 		case 'more' :
@@ -1141,21 +1234,6 @@ function essb_draw_buttons_start($style = array(), $position = '', $salt = '', $
 	$counter_url = $share['url'];
 	$counter_full_url = $share['full_url'];
 
-	if (!defined('ESSB3_LIGHTMODE')) {
-		$ga_tracking_code = ESSBGlobalSettings::$activate_ga_campaign_tracking;
-		if ($ga_tracking_code != '' || strpos($counter_url, '{network}') !== false) {
-
-			$post_ga_campaign_tracking = get_post_meta(get_the_ID(), 'essb_activate_ga_campaign_tracking', true);
-			if ($post_ga_campaign_tracking != '') {
-				$ga_tracking_code = $post_ga_campaign_tracking;
-			}
-			$ga_tracking_code = str_replace('&', '%26', $ga_tracking_code);
-			$counter_url = str_replace($ga_tracking_code, '', $counter_url);
-			$counter_full_url = str_replace('{network}', 'twitter', $counter_full_url);
-			$counter_full_url = str_replace('{title}', '', $counter_full_url);
-		}
-	}
-
 	$extra_start_options = '';
 
 	$buttons_id = 'essb_displayed_'.$position.'_'.$salt;
@@ -1184,6 +1262,18 @@ function essb_draw_buttons_start($style = array(), $position = '', $salt = '', $
 		$position_code_before = do_shortcode($position_code_before);
 
 		$links_start .= $position_code_before;
+	}
+	
+	/**
+	 * @since 8.0
+	 * Direct custom CSS field
+	 */
+	if (essb_option_bool_value($position.'_css')) {
+	    $css_code_before = essb_option_value($position.'_css_code');
+	    $css_code_before = stripslashes($css_code_before);
+	    $css_code_before = str_replace('{selector}', '.essb_links.essb_'.$salt, $css_code_before);
+	    
+	    $links_start .= '<style type="text/css">' . ESSB_Dynamic_CSS_Builder::minify_advanced( $css_code_before ). '</style>';
 	}
 
 	$links_start .= sprintf ( '<div class="essb_links%1$s%2$s essb_displayed_%3$s%4$s%5$s essb_%6$s%13$s%14$s%15$s%16$s print-no"

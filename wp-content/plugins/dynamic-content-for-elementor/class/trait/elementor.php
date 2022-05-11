@@ -2,7 +2,8 @@
 
 namespace DynamicContentForElementor;
 
-trait Trait_Elementor
+use ElementorPro\Modules\Forms\Module as Forms_Module;
+trait Elementor
 {
     public static function get_current_post_id()
     {
@@ -11,14 +12,44 @@ trait Trait_Elementor
         }
         return get_the_ID();
     }
+    /**
+     * Fetch an the elementor element.
+     *
+     * Fetch $element_id inside $post_id. Side effect: It also switches post
+     * to $queried_id for the element dynamic settings.
+     *
+     * @copyright Elementor
+     * @license GPLv3
+     */
+    public static function get_elementor_element_from_post_data($post_id, $element_id, $queried_id)
+    {
+        $elementor = \Elementor\Plugin::$instance;
+        $elementor->db->switch_to_post($queried_id);
+        $document = $elementor->documents->get($post_id);
+        $element = null;
+        $template_id = null;
+        if ($document) {
+            $element = self::find_element_recursive($document->get_elements_data(), $element_id);
+        }
+        if (!empty($element['templateID'])) {
+            $template = $elementor->documents->get($element['templateID']);
+            if (!$template) {
+                return \false;
+            }
+            $template_id = $template->get_id();
+            $element = $template->get_elements_data()[0];
+        }
+        $widget = $elementor->elements_manager->create_element_instance($element);
+        $element['settings'] = $widget->get_settings_for_display();
+        $element['settings']['id'] = $element_id;
+        return $element;
+    }
     public static $documents = [];
     // ************************************** ELEMENTOR ***************************/
     public static function get_all_template($def = null)
     {
-        $type_template = array('elementor_library', 'oceanwp_library');
-        // Return elementor templates array
         if ($def) {
-            $templates[0] = 'Default';
+            $templates[0] = __('Default', 'dynamic-content-for-elementor');
             $templates[1] = __('None', 'dynamic-content-for-elementor');
         } else {
             $templates[0] = __('None', 'dynamic-content-for-elementor');
@@ -262,6 +293,12 @@ trait Trait_Elementor
         }
         return \false;
     }
+    /**
+     * @pararm array<mixed> $elements
+     * @param string $element_id
+     *
+     * @return array<string, mixed>|false
+     */
     public static function find_element_recursive($elements, $element_id)
     {
         foreach ($elements as $element) {
@@ -327,10 +364,10 @@ trait Trait_Elementor
             $current_url = home_url(add_query_arg(array(), $wp->request));
             $id_page = url_to_postid($current_url);
         }
-        // 1) ME-STESSO (naturale)
+        // Myself
         $type_page = get_post_type($id_page);
         $id_page = self::get_rev_ID($id_page, $type_page);
-        // DEMO
+        // Demo
         if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
             global $product;
             global $post;
@@ -369,7 +406,7 @@ trait Trait_Elementor
     {
         $template_id = 0;
         if (\DynamicContentForElementor\Helper::is_elementorpro_active()) {
-            // check with Elementor PRO Theme Builder
+            // check with Elementor Pro Theme Builder
             if (!$location) {
                 if (is_singular()) {
                     $location = 'single';
@@ -473,37 +510,6 @@ trait Trait_Elementor
             }
         }
         return $html;
-    }
-    public static function get_dynamic_tags_categories()
-    {
-        $refl = new \ReflectionClass('\\Elementor\\Modules\\DynamicTags\\Module');
-        $all_categories = $refl->getConstants();
-        if (!empty($all_categories)) {
-            return \array_values($all_categories);
-        }
-        return [
-            'base',
-            //\Elementor\Modules\DynamicTags\Module::BASE_GROUP
-            'text',
-            //\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY,
-            'url',
-            //\Elementor\Modules\DynamicTags\Module::URL_CATEGORY,
-            'number',
-            //\Elementor\Modules\DynamicTags\Module::NUMBER_CATEGORY,
-            'post_meta',
-            //\Elementor\Modules\DynamicTags\Module::NUMBER_CATEGORY
-            'date',
-            //\Elementor\Modules\DynamicTags\Module::NUMBER_CATEGORY,
-            'datetime',
-            //\Elementor\Modules\DynamicTags\Module::NUMBER_CATEGORY,
-            'media',
-            //\Elementor\Modules\DynamicTags\Module::MEDIA_CATEGORY,
-            'image',
-            //\Elementor\Modules\DynamicTags\Module::IMAGE_CATEGORY,
-            'gallery',
-            //\Elementor\Modules\DynamicTags\Module::GALLERY_CATEGORY,
-            'color',
-        ];
     }
     public static function validate_html_tag($tag)
     {

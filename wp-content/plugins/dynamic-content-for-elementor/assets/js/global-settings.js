@@ -291,18 +291,20 @@ var is_trackerheader = false;
             var responsive_smoothtransition = settings_global.responsive_smoothtransition || ['desktop', 'tablet', 'mobile'];
             var enableSmoothtransition = settings_global.enable_smoothtransition || '';
             var smoothtransitionClassController = settings_global.dce_smoothtransition_class_controller || '';
-
             var responsive_trackerheader = settings_global.responsive_trackerheader || ['desktop', 'tablet', 'mobile'];
             var enableTrackerHeader = settings_global.enable_trackerheader || '';
             var trackerheaderClassController = settings_global.dce_trackerheader_class_controller || '';
-
             var deviceMode = $('body').attr('data-elementor-device-mode') || 'desktop';
 
-            if (enableSmoothtransition && $.inArray(deviceMode, responsive_smoothtransition) >= 0 && smoothtransitionClassController)
-                smoothTransitionHandler();
-
-            if (enableTrackerHeader && $.inArray(deviceMode, responsive_trackerheader) >= 0 && trackerheaderClassController)
-                trackerHeaderHandler();
+            if (enableSmoothtransition && $.inArray(deviceMode, responsive_smoothtransition) >= 0 && smoothtransitionClassController) {
+				smoothTransitionHandler();
+			}
+                
+            if (enableTrackerHeader && $.inArray(deviceMode, responsive_trackerheader) >= 0 && trackerheaderClassController) {
+				$('body').addClass('dce-trackerheader');
+				trackerHeaderHandler();
+			}
+               
         }
     });
 })(jQuery);

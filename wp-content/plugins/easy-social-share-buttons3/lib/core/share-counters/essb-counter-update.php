@@ -123,6 +123,9 @@ function essb_counter_update_simple($post_id, $url, $full_url, $networks = array
 			case 'yummly' :
 				$cached_counters [$k] = essb_get_yummly_count($url);
 				break;
+			case 'tumblr':
+			    $cached_counters [$k] = essb_get_tumblr_count($url);
+			    break;
 			case 'addthis' :
 				// @since 7.0
 				// According to customers addthis stores the internal counter no matter of 
@@ -206,6 +209,39 @@ function essb_get_comments_count($post_id) {
 	return $comments_count->approved;
 }
 
+function essb_counter_may_log_request($network, $url, $request_url, $response) {
+    if (class_exists('ESSB_Logger_ShareCounter_Update')) {
+        ESSB_Logger_ShareCounter_Update::log($network, $url, $request_url, $response);
+    }
+}
+
+function essb_get_tumblr_count($url) {
+    
+    $original_url = $url;
+    
+    $url = 'http://api.tumblr.com/v2/share/stats?url=' . $url;
+    
+    $data  = essb_counter_request($url);
+    
+    essb_counter_may_log_request('tumblr', $original_url, $url, $data);
+    
+    if ($data != '') {
+        $response = json_decode ( $data, true );
+        
+        if ( isset( $response->meta->status ) && 200 == $response->meta->status ) {
+            if ( isset( $response->response->note_count ) ) {
+                $count = intval( $response->response->note_count );
+            } else {
+                $count = 0;
+            }
+        }
+    }
+    
+    $count = 0;
+    
+    return $count;
+}
+
 function essb_get_xing_count($url) {
 	$buttonURL = sprintf('https://www.xing-share.com/app/share?op=get_share_button;url=%s;counter=top;lang=en;type=iframe;hovercard_position=2;shape=rectangle', urlencode($url));
 	$data  = essb_counter_request($buttonURL);
@@ -274,6 +310,9 @@ function essb_get_odnoklassniki_count( $url ) {
 	$check_url = $CHECK_URL_PREFIX . $url;
 		
 	$data   = essb_counter_request( $check_url );
+	
+	essb_counter_may_log_request('odnoklassniki', $url, $check_url, $data);
+	
 	$shares = array();
 	try {
 	    /**
@@ -297,9 +336,18 @@ function essb_get_vkontake_count( $url ) {
 	$data   = essb_counter_request( $check_url );
 	$shares = array();
 
-	preg_match( '/^VK\.Share\.count\(\d, (\d+)\);$/i', $data, $shares );
-
-	return $shares[ 1 ];
+	essb_counter_may_log_request('vkontakte', $url, $check_url, $data);
+	
+	/**
+	 * @since 8.0 prevent error message on counter fail
+	 */
+	try {
+	   preg_match( '/^VK\.Share\.count\(\d, (\d+)\);$/i', $data, $shares );
+	   return $shares[ 1 ];
+	}
+	catch (Exception $e) {
+	    return 0;
+	}
 }
 
 function essb_get_managewp_count($url = '') {
@@ -338,6 +386,9 @@ function essb_get_reddit_count($url) {
 	//http://stackoverflow.com/questions/8963485/error-429-when-invoking-reddit-api-from-google-app-engine
 	/* action */
 	$content = essb_counter_request( $reddit_url );
+	
+	essb_counter_may_log_request('reddit', $url, $reddit_url, $content);
+	
 	if($content) {
 		if($format == 'json') {
 			$json = json_decode($content,true);
@@ -389,6 +440,8 @@ function essb_get_facebook_count($url) {
 	$content = essb_counter_request ( $parse_url );
 	$result = 0;
 	$result_comments = 0;
+	
+	essb_counter_may_log_request('facebook', $url, $parse_url, $content);
 
 	if ($content != '') {
 		$content = json_decode ( $content, true );
@@ -430,6 +483,9 @@ function essb_get_facebook_count($url) {
 
 function essb_get_tweets_newsc_count($url) {
 	$json_string = essb_counter_request( 'https://public.newsharecounts.com/count.json?url=' . $url );
+	
+	essb_counter_may_log_request('twitter', $url, 'https://public.newsharecounts.com/count.json?url=' . $url, $json_string);
+	
 	$json = json_decode ( $json_string, true );
 	$result = isset ( $json ['count'] ) ? intval ( $json ['count'] ) : 0;
 
@@ -438,6 +494,7 @@ function essb_get_tweets_newsc_count($url) {
 
 function essb_get_tweets_twitcount_count($url) {
 	$json_string = essb_counter_request( 'https://counts.twitcount.com/counts.php?url=' . $url );
+	essb_counter_may_log_request('twitter', $url, 'https://counts.twitcount.com/counts.php?url=' . $url, $json_string);
 	$json = json_decode ( $json_string, true );
 	$result = isset ( $json ['count'] ) ? intval ( $json ['count'] ) : 0;
 
@@ -446,6 +503,7 @@ function essb_get_tweets_twitcount_count($url) {
 
 function essb_get_tweets_opensc_count($url) {
 	$json_string = essb_counter_request( 'https://opensharecount.com/count.json?url=' . $url );
+	essb_counter_may_log_request('twitter', $url, 'https://opensharecount.com/count.json?url=' . $url, $json_string);
 	$json = json_decode ( $json_string, true );
 	$result = isset ( $json ['count'] ) ? intval ( $json ['count'] ) : 0;
 
@@ -462,6 +520,7 @@ function essb_get_linkedin_count($url) {
 
 function essb_get_pinterest_count($url) {
 	$return_data = essb_counter_request ( 'https://api.pinterest.com/v1/urls/count.json?url=' . $url );
+	essb_counter_may_log_request('pinterest', $url, 'https://api.pinterest.com/v1/urls/count.json?url=' . $url, $return_data);
 	$json_string = preg_replace ( '/^receiveCount\((.*)\)$/', "\\1", $return_data );
 	$json = json_decode ( $json_string, true );
 	$result = isset ( $json ['count'] ) ? intval ( $json ['count'] ) : 0;
@@ -471,7 +530,7 @@ function essb_get_pinterest_count($url) {
 
 function essb_get_buffer_count($url) {
 	$return_data = essb_counter_request ('https://api.bufferapp.com/1/links/shares.json?url='.$url);
-
+	essb_counter_may_log_request('buffer', $url, 'https://api.bufferapp.com/1/links/shares.json?url='.$url, $return_data);
 	$result = 0;
 	if (!empty($return_data)) {
 		$json = json_decode($return_data, true);
@@ -485,6 +544,8 @@ function essb_get_stumbleupon_count($url) {
 	$count = 0;
 	$content = essb_counter_request ( 'http://www.stumbleupon.com/services/1.01/badge.getinfo?url='.$url );
 
+	essb_counter_may_log_request('stumbleupon', $url, 'http://www.stumbleupon.com/services/1.01/badge.getinfo?url='.$url, $content);
+	
 	$result = json_decode ( $content );
 	if (isset ( $result->result->views )) {
 		$count = $result->result->views;
@@ -496,6 +557,8 @@ function essb_get_stumbleupon_count($url) {
 function essb_get_yummly_count($url) {
 	$return_data = essb_counter_request('https://www.yummly.com/services/yum-count?url='.$url);
 
+	essb_counter_may_log_request('yummly', $url, 'https://www.yummly.com/services/yum-count?url='.$url, $return_data);
+	
 	$result = 0;
 	if (!empty($return_data)) {
 		$json = json_decode($return_data, true);
@@ -508,6 +571,8 @@ function essb_get_yummly_count($url) {
 function essb_get_addthis_count($url) {
 	$return_data = essb_counter_request('https://api-public.addthis.com/url/shares.json?url='.$url);
 
+	essb_counter_may_log_request('addthis', $url, 'https://api-public.addthis.com/url/shares.json?url='.$url, $return_data);
+	
 	$result = 0;
 	if (!empty($return_data)) {
 		$json = json_decode($return_data, true);

@@ -44,9 +44,7 @@ class ESSBOptinFlyout {
 		}
 		
 		if ($this->option_bool_value ( 'ofof_time' ) || $this->option_bool_value ( 'ofof_scroll' ) || $this->option_bool_value ( 'ofof_exit' )) {
-			add_action ( 'wp_footer', array (&$this, 'draw_forms' ), 99 );
-			add_action ( 'init', array (&$this, 'load_assets' ), 99 );
-		
+			add_action ( 'wp_footer', array (&$this, 'draw_forms' ), 99 );		
 		}
 	
 	}
@@ -79,26 +77,21 @@ class ESSBOptinFlyout {
 			}
 		}
 		
-		if (essb_option_bool_value('optin_flyout_activate_posttypes')) {
-			$posttypes = $this->option_value('posttypes');
-			if (!is_array($posttypes)) {
-				$posttypes = array();
-			}
-				
-			if (!is_singular($posttypes)) {
-				$is_deactivated = true;
-			}
+		$posttypes = $this->option_value('posttypes');
+		if (!is_array($posttypes)) {
+		    $posttypes = array();
+		}
+		
+		if (!empty($posttypes)) {
+		    if (!is_singular($posttypes)) {
+		        $is_deactivated = true;
+		    }
 		}
 		
 		
 		return $is_deactivated;
 	}
 	
-	public function load_assets() {
-		if (function_exists ( 'essb_resource_builder' )) {
-			essb_resource_builder ()->add_static_resource_footer ( ESSB3_OFOF_PLUGIN_URL . 'assets/essb-optin-flyout.min.js', 'essb-optin-flyout', 'js' );
-		}
-	}
 	
 	public function option_value($param) {
 		global $essb3ofof_options;
@@ -162,7 +155,7 @@ class ESSBOptinFlyout {
 		}
 		
 		$ofof_single = $this->option_bool_value ( 'ofof_single' );
-		$ofof_creditlink = $this->option_bool_value ( 'ofof_creditlink' );
+		$ofof_creditlink = false;
 		
 		if ($this->option_bool_value ( 'ofof_time' )) {
 			$ofof_time_delay = $this->option_value ( 'ofof_time_delay' );
@@ -222,7 +215,7 @@ class ESSBOptinFlyout {
 		}
 		
 		if ($close_text == '') {
-			$close_text = esc_html__( "No thanks. I don't want.", 'easy-optin-flyout' );
+			$close_text = esc_html__( "No thanks. I don't want.", 'essb' );
 		}
 		
 		$output .= '<div class="essb-optinflyout essb-optinflyout-' . esc_attr($position) . ' essb-optinflyout-' . esc_attr($event) . ($ofof_deactivate_mobile ? ' essb-subscribe-mobile-hidden' : '') . '" ' . $event_fire . ' ' . ($overlay_color != '' ? ' style="background-color:' . esc_attr($overlay_color) . '!important;"' : '') . '>';

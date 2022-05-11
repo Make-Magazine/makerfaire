@@ -13,7 +13,7 @@ class SubscriptionScheduleService extends \DynamicOOOS\Stripe\Service\AbstractSe
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\SubscriptionSchedule>
      */
     public function all($params = null, $opts = null)
     {

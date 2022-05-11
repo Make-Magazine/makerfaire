@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
@@ -13,13 +13,13 @@ use Elementor\Group_Control_Background;
 use Elementor\Utils;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Group_Control_Outline;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_CSS;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Transform_Element;
+use DynamicContentForElementor\Controls\Group_Control_Filters_CSS;
+use DynamicContentForElementor\Controls\Group_Control_Transform_Element;
 // Exit if accessed directly
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class AcfGallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -29,10 +29,15 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetProto
     {
         return ['animatecss', 'dce-photoSwipe_default', 'dce-photoSwipe_skin', 'dce-justifiedGallery', 'animatecss', 'dce-acfGallery'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => $this->get_title()]);
-        $this->add_control('acf_field_list', ['label' => __('ACF Gallery Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'gallery']);
+        $this->add_control('acf_field_list', ['label' => __('ACF Gallery Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'object_type' => 'gallery']);
         $this->add_control('acf_gallery_from', ['label' => __('Retrieve the field from', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'current_post', 'options' => ['current_post' => __('Current Post', 'dynamic-content-for-elementor'), 'current_user' => __('Current User', 'dynamic-content-for-elementor'), 'current_author' => __('Current Author', 'dynamic-content-for-elementor'), 'current_term' => __('Current Term', 'dynamic-content-for-elementor'), 'options_page' => __('Options Page', 'dynamic-content-for-elementor')]]);
         $this->add_control('enabled_wow', ['label' => __('WOW Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true]);
         $this->end_controls_section();
@@ -69,9 +74,9 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetProto
         $this->add_responsive_control('size_img', ['label' => __('Size (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 100, 'unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .wrap-item-acfgallery' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['force_width' => 'yes']]);
         $this->add_control('popover-toggle', ['label' => __('Transform', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::POPOVER_TOGGLE, 'return_value' => 'yes']);
         $this->start_popover();
-        $this->add_group_control(DCE_Group_Control_Transform_Element::get_type(), ['name' => 'transform_image', 'label' => __('Transform', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-acf-gallery', 'separator' => 'before']);
+        $this->add_group_control(Group_Control_Transform_Element::get_type(), ['name' => 'transform_image', 'label' => __('Transform', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-acf-gallery', 'separator' => 'before']);
         $this->end_popover();
-        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => __('Filters', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .acfgallery-item img']);
+        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => __('Filters', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .acfgallery-item img']);
         $this->add_responsive_control('desc_margin', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} figcaption' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['use_desc!' => '']]);
         $this->add_control('figure_title_heading', ['label' => __('Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['use_desc' => 'title']]);
         $this->add_control('acf_space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['max' => 100, 'min' => 0, 'step' => 1]], 'selectors' => ['{{WRAPPER}} figcaption .title' => 'margin-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['use_desc' => 'title']]);
@@ -100,11 +105,11 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetProto
         $this->add_control('hover_effects', ['label' => __('Hover Effects', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'zoom' => __('Zoom', 'dynamic-content-for-elementor')], 'default' => '', 'separator' => 'before', 'prefix_class' => 'hovereffect-', 'condition' => ['enable_lightbox!' => '']]);
         $this->end_controls_section();
         $this->start_controls_section('section_dce_settings', ['label' => __('Source', 'dynamic-content-for-elementor'), 'condition' => ['acf_gallery_from' => 'current_post']]);
-        $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('Other', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
+        $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('Other', 'dynamic-content-for-elementor')]);
         $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -196,7 +201,7 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetProto
         if (!empty($settings['limit']) && 'yes' === $settings['limit'] && !empty($settings['limit_images'])) {
             $acf_gallery = \array_slice($acf_gallery, 0, $settings['limit_images']);
         }
-        $this->add_render_attribute('container', ['class' => ['dce-acf-gallery', 'dce-acf-gallery-' . $settings['gallery_type'], $enable_lightbox, $elementor_lightbox, $lightbox_type, $overlay_hover_class, $settings['columns_grid'] ? 'column-' . $settings['columns_grid'] : '']]);
+        $this->add_render_attribute('container', ['class' => ['dce-acf-gallery', 'dce-acf-gallery-' . $settings['gallery_type'], $enable_lightbox, $elementor_lightbox, $lightbox_type, $overlay_hover_class, !empty($settings['columns_grid']) ? 'column-' . $settings['columns_grid'] : '']]);
         $this->add_render_attribute('container', 'itemtype', '');
         $this->add_render_attribute('container', 'itemscope', 'http://schema.org/ImageGallery');
         ?>
@@ -210,7 +215,7 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetProto
             $counter++;
         }
         ?>
-		</div>	
+		</div>
 		<?php 
     }
     /**
@@ -230,10 +235,8 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetProto
         }
         $image_url = Group_Control_Image_Size::get_attachment_image_src($image['id'], 'size', $settings);
         $elementor_lightbox = '';
-        $data_elementor_open_lightbox = '';
-        $data_elementor_slideshow = '';
         $overlay_hover_class = 'is-overlay ';
-        //  Overlay Hover
+        // Overlay Hover
         $overlay_hover_block = '';
         $overlay_hover_class = '';
         if ($settings['gallery_type'] == 'hexagon') {
@@ -244,12 +247,8 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetProto
         if ($settings['enable_lightbox']) {
             $enable_lightbox = ' is-lightbox';
         }
-        if ($settings['lightbox_type'] == 'photoswipe') {
-            $data_elementor_open_lightbox = 'data-elementor-open-lightbox="no"';
-        } else {
-            $data_elementor_slideshow = ' data-elementor-lightbox-slideshow="' . $this->get_id() . '"';
+        if ('photoswipe' !== $settings['lightbox_type']) {
             $elementor_lightbox = 'gallery-lightbox';
-            $data_elementor_open_lightbox = 'data-elementor-open-lightbox="yes"';
         }
         $type_gallery_item_a = '';
         if ($settings['gallery_type'] == 'hexagon' && $enable_lightbox != '') {
@@ -280,9 +279,31 @@ class DCE_Widget_Gallery extends \DynamicContentForElementor\Widgets\WidgetProto
 			<?php 
         }
         if ($enable_lightbox) {
-            echo '<a class="' . $type_gallery_item_a . $enable_lightbox . $elementor_lightbox . '" href="' . $image['url'] . '" itemprop="contentUrl" data-size="' . $image['width'] . 'x' . $image['height'] . '"' . $data_elementor_open_lightbox . $data_elementor_slideshow . '>';
+            $this->set_render_attribute('a', ['class' => [$type_gallery_item_a, $enable_lightbox, $elementor_lightbox]]);
+            $this->set_render_attribute('a', 'href', $image['url']);
+            if (isset($image['width']) && isset($image['height'])) {
+                $this->set_render_attribute('a', 'data-size', $image['width'] . 'x' . $image['height']);
+            }
+            if ('photoswipe' === $settings['lightbox_type']) {
+                $this->set_render_attribute('a', 'data-elementor-open-lightbox', 'no');
+            } else {
+                $this->set_render_attribute('a', 'data-elementor-open-lightbox', 'yes');
+                $this->set_render_attribute('a', 'data-elementor-lightbox-slideshow', $this->get_id());
+            }
+            ?>
+			<a <?php 
+            echo $this->get_render_attribute_string('a');
+            ?>>
+			<?php 
         } elseif ($settings['enable_lightbox_link']) {
-            echo '<a class="' . $type_gallery_item_a . '" href="' . $image['url'] . '" itemprop="contentUrl" >';
+            $this->add_render_attribute('a', ['class' => [$type_gallery_item_a]]);
+            $this->add_render_attribute('a', 'href', $image['url']);
+            $this->add_render_attribute('a', 'itemprop', 'contentUrl');
+            ?>
+			<a <?php 
+            echo $this->get_render_attribute_string('a');
+            ?>>
+			<?php 
         }
         echo '<img src="' . $image_url . '" itemprop="thumbnail" alt="' . $image['alt'] . '" />';
         echo $overlay_hover_block;

@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
@@ -13,14 +13,14 @@ use Elementor\Group_Control_Background;
 use Elementor\Utils;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Group_Control_Outline;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_CSS;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Transform_Element;
+use DynamicContentForElementor\Controls\Group_Control_Filters_CSS;
+use DynamicContentForElementor\Controls\Group_Control_Transform_Element;
 //
 // Exit if accessed directly
 if (!\defined('ABSPATH')) {
     exit;
 }
-class DCE_Widget_PodsGallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class PodsGallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -30,10 +30,15 @@ class DCE_Widget_PodsGallery extends \DynamicContentForElementor\Widgets\WidgetP
     {
         return ['dce-photoSwipe_default', 'dce-photoSwipe_skin', 'dce-justifiedGallery', 'animatecss', 'dce-pods-gallery'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => 'PODS', 'dynamic-content-for-elementor']);
-        $this->add_control('gallery_field_list', ['label' => __('PODS Field', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_pods_fields('file'), 'default' => 'Select the field']);
+        $this->add_control('gallery_field_list', ['label' => __('PODS Field', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_pods_fields('file'), 'default' => __('Select the field...', 'dynamic-content-for-elementor')]);
         $this->end_controls_section();
         // ********************************************************************************* Section GALLERY
         $this->start_controls_section('section_settings_gallery', ['label' => 'Gallery', 'dynamic-content-for-elementor', 'condition' => []]);
@@ -64,9 +69,9 @@ class DCE_Widget_PodsGallery extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_responsive_control('size_img', ['label' => __('Size (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 100, 'unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .wrap-item-gallery' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['force_width' => 'yes']]);
         $this->add_control('popover-toggle', ['label' => __('Transform image', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::POPOVER_TOGGLE, 'return_value' => 'yes']);
         $this->start_popover();
-        $this->add_group_control(DCE_Group_Control_Transform_Element::get_type(), ['name' => 'transform_image', 'label' => 'Transform image', 'selector' => '{{WRAPPER}} .dynamic_gallery', 'separator' => 'before']);
+        $this->add_group_control(Group_Control_Transform_Element::get_type(), ['name' => 'transform_image', 'label' => 'Transform image', 'selector' => '{{WRAPPER}} .dynamic_gallery', 'separator' => 'before']);
         $this->end_popover();
-        $this->add_group_control(DCE_Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => 'Filters image', 'selector' => '{{WRAPPER}} .gallery-item img']);
+        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => 'Filters image', 'selector' => '{{WRAPPER}} .gallery-item img']);
         $this->add_responsive_control('desc_margin', ['label' => __('space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} figcaption' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['use_desc!' => '']]);
         $this->add_control('figure_title_heading', ['label' => __('Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['use_desc' => 'title']]);
         $this->add_control('acf_space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 0], 'range' => ['px' => ['max' => 100, 'min' => 0, 'step' => 1]], 'selectors' => ['{{WRAPPER}} figcaption .title' => 'margin-bottom: {{SIZE}}{{UNIT}};'], 'condition' => ['use_desc' => 'title']]);
@@ -99,7 +104,7 @@ class DCE_Widget_PodsGallery extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {

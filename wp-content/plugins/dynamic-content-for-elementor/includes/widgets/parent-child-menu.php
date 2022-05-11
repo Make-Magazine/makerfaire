@@ -3,21 +3,26 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class ParentChildMenu extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_style_depends()
     {
         return ['dce-list'];
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => $this->get_title()]);
         $this->add_control('parentpage_select', ['label' => __('Parent Page', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['dynamic_parentchild' => '']]);
@@ -67,7 +72,7 @@ class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\Wid
         $this->add_responsive_control('menu_size_separator', ['label' => __('Weight', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 1, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 0, 'max' => 50]], 'selectors' => ['{{WRAPPER}} .dce-menu.horizontal li' => 'border-left-width: {{SIZE}}{{UNIT}};'], 'condition' => ['show_separators' => 'solid', 'menu_style' => 'horizontal']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -78,7 +83,7 @@ class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\Wid
             $id_page = $settings['parentpage_select'];
         } else {
             $parent_page = wp_get_post_parent_id($id_page);
-            if (isset($parent_page) && $parent_page) {
+            if ($parent_page) {
                 if ($settings['use_second_level']) {
                     $ancestors = get_post_ancestors($id_page);
                     $root = \count($ancestors) - 1;
@@ -128,7 +133,7 @@ class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\Wid
                     $linkActive = '';
                 }
                 if (!$settings['exclude_io'] || $page->ID != $id_page) {
-                    if ($linkActive || !$linkActive && !$settings['no_siblings']) {
+                    if ($linkActive || !$settings['no_siblings']) {
                         echo '<li class="item-' . $page->ID . '">';
                         if (!$settings['only_children']) {
                             echo '<a href="' . get_permalink($page->ID) . '"' . $linkActive . '>' . wp_kses_post($page->post_title) . '</a>';
@@ -149,7 +154,7 @@ class DCE_Widget_ParentChildMenu extends \DynamicContentForElementor\Widgets\Wid
                                 echo '</ul>';
                             }
                         }
-                        if ($linkActive || !$linkActive && !$settings['no_siblings']) {
+                        if ($linkActive || !$settings['no_siblings']) {
                             echo '</li>';
                         }
                     }

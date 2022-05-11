@@ -3,8 +3,8 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Image_Size;
@@ -17,7 +17,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -27,38 +27,30 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
     {
         return ['animatecss', 'dce-animations', 'dce-modal'];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_popup_content', ['label' => __('Content', 'dynamic-content-for-elementor')]);
-        $this->add_control('show_popup_editor', ['label' => __('Show Modal Preview in Editor Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
+        $this->add_control('show_popup_editor', ['label' => __('Show Modal Preview in Edit Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('content_hr', ['type' => \Elementor\Controls_Manager::DIVIDER, 'style' => 'thick']);
         $this->add_control('content_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['content' => ['title' => __('Content', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'default' => 'content']);
-        $this->add_control('template', ['label' => __('Modal Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as content of the modal, helpful for complex structure.', 'dynamic-content-for-elementor'), 'condition' => ['content_type' => 'template']]);
-        $this->add_control('modal_content', ['label' => __('Modal Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'placeholder' => __('Type here the content', 'dynamic-content-for-elementor'), 'description' => __('The main content of the modal. You can use Shortcode and Tokens.', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true], 'condition' => ['content_type' => 'content']]);
+        $this->add_control('template', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as the content of the modal', 'dynamic-content-for-elementor'), 'condition' => ['content_type' => 'template']]);
+        $this->add_control('modal_content', ['label' => __('Modal Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'placeholder' => __('Type here the content', 'dynamic-content-for-elementor'), 'description' => __('The main content of the modal. You can use Shortcode and Tokens', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true], 'condition' => ['content_type' => 'content']]);
         $this->end_controls_section();
         $this->start_controls_section('section_popup_settings', ['label' => __('Settings', 'dynamic-content-for-elementor')]);
-        $this->add_control('trigger', ['label' => __('Trigger', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'onload', 'options' => ['onload' => __('On Page Load', 'dynamic-content-for-elementor'), 'button' => __('On Click Button', 'dynamic-content-for-elementor'), 'scroll' => __('On Scroll Page', 'dynamic-content-for-elementor'), 'widget' => __('On Widget position', 'dynamic-content-for-elementor')]]);
+        $this->add_control('trigger', ['label' => __('Trigger', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'onload', 'frontend_available' => \true, 'options' => ['onload' => __('On Page Load', 'dynamic-content-for-elementor'), 'button' => __('On Click Button', 'dynamic-content-for-elementor'), 'scroll' => __('On Scroll Page', 'dynamic-content-for-elementor'), 'widget' => __('On Widget position', 'dynamic-content-for-elementor')]]);
+        $this->add_control('trigger_other', ['label' => __('Catch other elements', 'dynamic-content-for-elementor'), 'description' => __('Other elements on the page can show this modal', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['trigger' => 'button']]);
+        $this->add_control('trigger_other_selectors', ['label' => __('Selectors', 'dynamic-content-for-elementor'), 'description' => __('Type here the CSS selector of the other elements in jQuery format. For example "#name, .button"', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'frontend_available' => \true, 'condition' => ['trigger' => 'button', 'trigger_other!' => '']]);
         $this->add_control('hr_button', ['type' => Controls_Manager::DIVIDER, 'style' => 'thick', 'condition' => ['trigger' => 'button']]);
         $this->add_control('title_button', ['label' => __('Button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'condition' => ['trigger' => 'button']]);
         $this->add_control('button_type', ['label' => __('Button type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'default' => 'text', 'options' => ['text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-italic'], 'image' => ['title' => __('Image', 'dynamic-content-for-elementor'), 'icon' => 'eicon-image'], 'hamburger' => ['title' => __('Hamburger', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-bars']], 'condition' => ['trigger' => 'button']]);
         $this->add_control('hamburger_style', ['label' => __('Hamburger Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'x', 'options' => ['x' => 'X', 'arrow_left' => __('Arrow Left', 'dynamic-content-for-elementor'), 'arrow_right' => __('Arrow Right', 'dynamic-content-for-elementor'), 'fall' => __('Fall', 'dynamic-content-for-elementor')], 'condition' => ['trigger' => 'button', 'button_type' => 'hamburger']]);
         $this->add_control('button_text', ['label' => __('Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Get Started', 'dynamic-content-for-elementor'), 'placeholder' => __('Get Started', 'dynamic-content-for-elementor'), 'label_block' => \true, 'dynamic' => ['active' => \true], 'condition' => ['trigger' => 'button', 'button_type' => 'text']]);
-        $this->add_control('button_icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICON, 'label_block' => \true, 'default' => '', 'condition' => ['trigger' => 'button', 'button_type' => 'text']]);
+        $this->add_control('selected_button_icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'button_icon', 'label_block' => \true, 'condition' => ['trigger' => 'button', 'button_type' => 'text']]);
         $this->add_control('button_image', ['label' => __('Button Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'dynamic' => ['active' => \true], 'default' => ['url' => ''], 'condition' => ['trigger' => 'button', 'button_type' => 'image'], 'description' => __('Use an image instead of the button', 'dynamic-content-for-elementor')]);
         $this->add_control('button_purpose', ['label' => __('Button Purpose', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['open' => ['title' => __('Default', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-expand'], 'close' => ['title' => __('Use the button in the template to close', 'dynamic-content-for-elementor'), 'icon' => 'eicon-close']], 'default' => 'open', 'description' => __('Decide if this is a simple Call-To-Action button to insert it in another modal to generate no modals for this widget. If you need to use another element to close the modal, add class <strong>.dce-button-close-modal</strong> to them.', 'dynamic-content-for-elementor'), 'condition' => ['trigger' => 'button'], 'separator' => 'before']);
         $this->add_control('scroll_display_displacement', ['label' => __('Scroll displacement', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0, 'description' => __('Pixel to wait until make modal appear', 'dynamic-content-for-elementor'), 'frontend_available' => \true, 'condition' => ['trigger' => 'scroll']]);
@@ -71,7 +63,7 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->end_controls_section();
         $this->start_controls_section('section_popup_animations', ['label' => __('Animations', 'dynamic-content-for-elementor')]);
         $this->add_control('enabled_push', ['label' => __('Push', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'separator' => 'before', 'description' => __('Move body wrapper', 'dynamic-content-for-elementor'), 'condition' => ['button_purpose!' => 'close']]);
-        $this->add_control('wrapper_maincontent', ['label' => __('Wrapper of Content', 'dynamic-content-for-elementor'), 'description' => __('The ID of the main content of your site. (OceanWP uses: #wrap, Astra uses: #page)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'frontend_available' => \true, 'default' => '#wrap', 'placeholder' => '#wrap', 'condition' => ['button_purpose!' => 'close', 'enabled_push!' => '']]);
+        $this->add_control('wrapper_maincontent', ['label' => __('Wrapper of Content', 'dynamic-content-for-elementor'), 'description' => __('The ID of the main content on your site', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'frontend_available' => \true, 'default' => '#wrap', 'placeholder' => '#wrap', 'condition' => ['button_purpose!' => 'close', 'enabled_push!' => '']]);
         $this->add_control('close_animation_push', ['label' => __('Close body push', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_anim_close(), 'default' => 'exitToScaleBack', 'frontend_available' => \true, 'separator' => 'after', 'render_type' => 'template', 'condition' => ['button_purpose!' => 'close', 'enabled_push!' => ''], 'selectors' => ['body.modal-open-dce-popup-{{ID}} .dce-push' => 'animation-name: {{VALUE}}; -webkit-animation-name: {{VALUE}};']]);
         $this->add_control('open_animation_push', ['label' => __('Open body push', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_anim_open(), 'default' => 'enterFormScaleBack', 'frontend_available' => \true, 'render_type' => 'template', 'condition' => ['button_purpose!' => 'close', 'enabled_push!' => ''], 'selectors' => ['body.modal-close-dce-popup-{{ID}} .dce-push' => 'animation-name: {{VALUE}}; -webkit-animation-name: {{VALUE}};']]);
         $this->add_control('title_open_modal', ['label' => __('Open Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['button_purpose!' => 'close']]);
@@ -106,9 +98,9 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['label' => __('Box Shadow', 'dynamic-content-for-elementor'), 'name' => 'modal_box_shadow', 'selector' => '.dce-modal.dce-popup-{{ID}} .modal-content', 'separator' => 'before']);
         $this->end_controls_section();
         $this->start_controls_section('section_style_button', ['label' => __('Button', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['trigger' => 'button']]);
-        $this->add_control('button_icon_align', ['label' => __('Icon Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'left', 'options' => ['left' => __('Before', 'dynamic-content-for-elementor'), 'right' => __('After', 'dynamic-content-for-elementor')], 'condition' => ['button_icon!' => '', 'button_image[id]' => '']]);
-        $this->add_responsive_control('button_icon_size', ['label' => __('Icon Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['min' => 6, 'max' => 300]], 'default' => ['size' => '', 'unit' => 'px'], 'selectors' => ['{{WRAPPER}} .dce-button-icon' => 'font-size: {{SIZE}}{{UNIT}};'], 'condition' => ['enable_close_button!' => '', 'button_icon!' => '', 'button_image[id]' => '']]);
-        $this->add_responsive_control('button_icon_indent', ['label' => __('Icon Spacing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['max' => 50]], 'condition' => ['button_icon!' => '', 'button_image[id]' => ''], 'selectors' => ['{{WRAPPER}} .dce-button-popoup .dce-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .dce-button-popoup .dce-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};']]);
+        $this->add_control('button_icon_align', ['label' => __('Icon Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'left', 'options' => ['left' => __('Before', 'dynamic-content-for-elementor'), 'right' => __('After', 'dynamic-content-for-elementor')], 'condition' => ['selected_button_icon[value]!' => '', 'button_image[id]' => '']]);
+        $this->add_responsive_control('button_icon_size', ['label' => __('Icon Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['min' => 6, 'max' => 300]], 'default' => ['size' => '', 'unit' => 'px'], 'selectors' => ['{{WRAPPER}} .dce-button-icon' => 'font-size: {{SIZE}}{{UNIT}};'], 'condition' => ['enable_close_button!' => '', 'selected_button_icon[value]!' => '', 'button_image[id]' => '']]);
+        $this->add_responsive_control('button_icon_indent', ['label' => __('Icon Spacing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['max' => 50]], 'condition' => ['selected_button_icon[value]!' => '', 'button_image[id]' => ''], 'selectors' => ['{{WRAPPER}} .dce-button-popoup .dce-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .dce-button-popoup .dce-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};']]);
         $this->add_control('button_image_size', ['label' => __('Image Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 6, 'max' => 300], 'em' => ['min' => 0, 'max' => 20]], 'size_units' => ['px', '%', 'em'], 'default' => ['size' => '', 'unit' => 'px'], 'selectors' => ['{{WRAPPER}} .dce-button-img' => 'max-width: {{SIZE}}{{UNIT}};'], 'condition' => ['button_image[id]!' => '', 'button_type' => 'image']]);
         $this->add_control('title_button_colors', ['label' => __('Colors', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'condition' => ['button_type!' => 'image']]);
         $this->start_controls_tabs('buttontext_colors');
@@ -141,7 +133,7 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->start_controls_section('section_style_close', ['label' => __('Close Button', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['button_purpose!' => 'close']]);
         $this->add_control('enable_close_button', ['label' => __('Close Button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('close_type', ['label' => __('Close type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['x' => ['title' => __('X', 'dynamic-content-for-elementor'), 'icon' => 'eicon-close'], 'icon' => ['title' => __('Icon', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-asterisk'], 'image' => ['title' => __('Image', 'dynamic-content-for-elementor'), 'icon' => 'eicon-image'], 'text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-italic']], 'toggle' => \false, 'default' => 'x', 'condition' => ['enable_close_button!' => '']]);
-        $this->add_control('close_icon', ['label' => __('Close Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICON, 'label_block' => \true, 'default' => 'fa fa-times', 'condition' => ['close_type' => 'icon', 'enable_close_button!' => '']]);
+        $this->add_control('selected_close_icon', ['label' => __('Close Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'close_icon', 'label_block' => \true, 'default' => ['library' => 'fa-solid', 'value' => 'fas fa-times'], 'condition' => ['close_type' => 'icon', 'enable_close_button!' => '']]);
         $this->add_control('close_image', ['label' => __('Close Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'default' => ['url' => ''], 'condition' => ['close_type' => 'image', 'enable_close_button!' => '']]);
         $this->add_control('close_text', ['label' => __('Close Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Close', 'dynamic-content-for-elementor'), 'condition' => ['close_type' => 'text', 'enable_close_button!' => '']]);
         $this->start_controls_tabs('close_colors');
@@ -162,7 +154,6 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->add_control('close_bg_color_hover', ['label' => __('Background color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['.dce-modal.dce-popup-{{ID}} button.dce-close:hover' => 'border-color: {{VALUE}};'], 'condition' => ['enable_close_button!' => '', 'close_bg_border_border!' => '']]);
         $this->end_controls_tab();
         $this->end_controls_tabs();
-        //
         $this->add_responsive_control('x_buttonsize_closemodal', ['label' => __('Button Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'separator' => 'before', 'default' => ['size' => 50, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 20, 'max' => 100, 'step' => 1]], 'condition' => ['close_type' => 'x', 'enable_close_button!' => ''], 'selectors' => ['{{WRAPPER}} .dce-modal-close .dce-quit-ics, .dce-modal.dce-popup-{{ID}} .dce-modal-close .dce-quit-ics' => 'height: {{SIZE}}{{UNIT}}; width: {{SIZE}}{{UNIT}};']]);
         $this->add_control('x_weight_closemodal', ['label' => __('Close Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 1, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 1, 'max' => 20, 'step' => 1]], 'condition' => ['close_type' => 'x', 'enable_close_button!' => ''], 'selectors' => ['{{WRAPPER}} .dce-modal-close .dce-quit-ics:after, {{WRAPPER}} .dce-modal-close .dce-quit-ics:before, .dce-modal.dce-popup-{{ID}} .dce-modal-close .dce-quit-ics:after, .dce-modal.dce-popup-{{ID}} .dce-modal-close .dce-quit-ics:before' => 'height: {{SIZE}}{{UNIT}}; top: calc(50% - ({{SIZE}}{{UNIT}}/2));']]);
         $this->add_control('x_size_closemodal', ['label' => __('Close Size (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 60, 'unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 20, 'max' => 200, 'step' => 1]], 'condition' => ['close_type' => 'x', 'enable_close_button!' => ''], 'selectors' => ['{{WRAPPER}} .dce-modal-close .dce-quit-ics:after, {{WRAPPER}} .dce-modal-close .dce-quit-ics:before, .dce-modal.dce-popup-{{ID}} .dce-modal-close .dce-quit-ics:after, .dce-modal.dce-popup-{{ID}} .dce-modal-close .dce-quit-ics:before' => 'width: {{SIZE}}{{UNIT}}; left: calc(50% - ({{SIZE}}{{UNIT}}/2));']]);
@@ -177,13 +168,15 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->add_control('close_padding', ['label' => __('Close Padding', 'dynamic-content-for-elementor'), 'description' => __('Please note that padding bottom has no effect - Left/Right padding will depend on button position!', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['.dce-modal.dce-popup-{{ID}} button.dce-close' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'separator' => 'before', 'condition' => ['close_type!' => 'x', 'enable_close_button!' => '']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }
         if ($settings['trigger'] == 'button' && ($settings['button_type'] == 'text' || $settings['button_type'] == 'image')) {
+            $has_button_icon = isset($settings['selected_button_icon']) || isset($settings['button_icon']);
+            $button_icon = Helper::get_migrated_icon($settings, 'button_icon', '');
             ?>
 			<div class="dce-button-wrapper">
 				<?php 
@@ -228,14 +221,14 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
                 ?>
 							>
 					<?php 
-                if ($settings['button_icon'] && $settings['button_icon_align'] == 'left') {
+                if ($has_button_icon && $settings['button_icon_align'] == 'left') {
                     ?>
 							<span class="dce-button-icon dce-align-icon-<?php 
                     echo $settings['button_icon_align'];
                     ?>">
-								<i class="<?php 
-                    echo esc_attr($settings['button_icon']);
-                    ?>"></i>
+								<?php 
+                    echo $button_icon;
+                    ?>
 							</span>
 						<?php 
                 }
@@ -244,14 +237,14 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
                 echo $settings['button_text'];
                 ?></span>
 					<?php 
-                if ($settings['button_icon'] && $settings['button_icon_align'] == 'right') {
+                if ($has_button_icon && $settings['button_icon_align'] == 'right') {
                     ?>
 							<span class="dce-button-icon dce-align-icon-<?php 
                     echo $settings['button_icon_align'];
                     ?>">
-								<i class="<?php 
-                    echo esc_attr($settings['button_icon']);
-                    ?>"></i>
+								<?php 
+                    echo $button_icon;
+                    ?>
 							</span>
 					<?php 
                 }
@@ -325,7 +318,7 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
     public function generate_modals()
     {
         $settings = $this->get_settings_for_display();
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && $settings['show_popup_editor'] && $settings['button_purpose'] != 'close' || !\Elementor\Plugin::$instance->editor->is_edit_mode() && !$this->checkCookie() || !\Elementor\Plugin::$instance->editor->is_edit_mode() && $settings['trigger'] == 'button') {
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && $settings['show_popup_editor'] && $settings['button_purpose'] != 'close' || !\Elementor\Plugin::$instance->editor->is_edit_mode() && !$this->check_cookie() || !\Elementor\Plugin::$instance->editor->is_edit_mode() && $settings['trigger'] == 'button') {
             $infinite = '';
             if ($settings['extend_full_window']) {
                 $fullWindow = ' dce-poup-full-window';
@@ -405,9 +398,7 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
             } else {
                 $modal_content = wp_kses_post($settings['modal_content']);
             }
-            $modal_content = do_shortcode($modal_content);
-            $modal_content = \DynamicContentForElementor\Tokens::do_tokens($modal_content);
-            echo $modal_content;
+            echo do_shortcode($modal_content);
             ?>
 							</div>
 
@@ -432,10 +423,8 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
 
 									<?php 
                 if ($settings['close_type'] == 'icon') {
-                    if ($settings['close_icon']) {
-                        ?><i class="<?php 
-                        echo esc_attr($settings['close_icon']);
-                        ?>" aria-hidden="true"></i><?php 
+                    if (isset($settings['close_icon']) || isset($settings['selected_close_icon'])) {
+                        echo Helper::get_migrated_icon($settings, 'close_icon', 'fa fa-times');
                     }
                 }
                 ?>
@@ -469,7 +458,7 @@ class DCE_Widget_PopUp extends \DynamicContentForElementor\Widgets\WidgetPrototy
 			<?php 
         }
     }
-    protected function checkCookie()
+    protected function check_cookie()
     {
         $settings = $this->get_settings_for_display();
         if ($settings['always_visible']) {

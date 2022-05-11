@@ -3,7 +3,7 @@
 Plugin Name: GravityView - Advanced Filter Extension
 Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 2.1.11
+Version: 2.1.14
 Author: GravityView
 Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
@@ -38,7 +38,7 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '2.1.11';
+		protected $_version = '2.1.14';
 
 		protected $_min_gravityview_version = '2.0';
 
@@ -443,18 +443,27 @@ HTML;
 				// $match[0] = `table_name`.`date_updated|date_created|payment_date` = ''
 				// $match[1] = `table_name`.`date_updated|date_created|payment_date`
 				// $match[2] = `table_name`
-				preg_match( "/((`\w+`)\.`(?:date_updated|date_created|payment_date)`) = ''/ism", rgar( $sql, 'where' ), $match );
+				preg_match( "/((`\w+`)\.`(?:date_updated|date_created|payment_date)`) !?= ''/ism", rgar( $sql, 'where' ), $match );
 
 				if ( empty( $sql['where'] ) || ! $match ) {
 					return $sql;
 				}
 
-				$new_condition = sprintf( 'UNIX_TIMESTAMP(%s) = 0', $match[1] );
+				$operator = strpos( $match[0], '!=' ) !== false ? '!=' : '=';
 
+				$new_condition = sprintf( 'UNIX_TIMESTAMP(%s) %s 0', $match[1], $operator );
+
+				// Change "date_updated = ''" to "UNIX_TIMESTAMP(date_updated) = 0" (or "!= 0) depending on the operator
 				$sql['where'] = str_replace( $match[0], $new_condition, $sql['where'] );
 
 				if ( strpos( $match[0], 'date_updated' ) !== false ) {
-					$sql['where'] = str_replace( $new_condition, sprintf( '%s OR %s = %s.`date_created`', $new_condition, $match[1], $match[2] ), $sql['where'] );
+					// Add "OR date_updated = date_created" condition
+					if ( '=' === $operator ) {
+						$sql['where'] = str_replace( $new_condition, sprintf( '(%s OR %s = %s.`date_created`)', $new_condition, $match[1], $match[2] ), $sql['where'] );
+					} else {
+						// Add "AND date_updated != date_created" condition
+						$sql['where'] = str_replace( $new_condition, sprintf( '(%s AND %s != %s.`date_created`)', $new_condition, $match[1], $match[2] ), $sql['where'] );
+					}
 				}
 
 				return $sql;
@@ -555,13 +564,15 @@ HTML;
 		 * @return array $filter The modified filter.
 		 */
 		static function get_user_id_value( $filter, $view ) {
-
 			switch ( $filter['key'] ) {
 				case 'created_by':
+					$lock_filter = self::get_lock_filter();
+					$lock_filter['value'] = -1;
+
 					switch ( $filter['value'] ) {
 						case 'created_by':
 							if ( ! is_user_logged_in() ) {
-								return self::get_lock_filter(); // Nothing to show for
+								return $lock_filter; // Nothing to show for
 							}
 
 							$filter['value'] = get_current_user_id();
@@ -584,7 +595,7 @@ HTML;
 							}
 
 							if ( ! is_user_logged_in() ) {
-								return self::get_lock_filter(); // Nothing to show for
+								return $lock_filter; // Nothing to show for
 							}
 
 							$filter['key']   = 'created_by';
@@ -592,7 +603,7 @@ HTML;
 
 							break;
 						case '':
-							return self::get_lock_filter(); // Empty, wut?
+							return $lock_filter; // Empty, wut?
 						default:
 							break;
 					};
@@ -981,7 +992,7 @@ HTML;
 				);
 			}
 
-			if ( $approved_column = GravityView_Admin_ApproveEntries::get_approved_column( $form ) ) {
+			if ( $approved_column = GravityView_Entry_Approval::get_approved_column( $form ) ) {
 				$approved_column = intval( floor( $approved_column ) );
 			}
 
@@ -1013,12 +1024,13 @@ HTML;
 			if ( $option_fields = GFAPI::get_fields_by_type( $form, array( 'option' ) ) ) {
 				$option_fields_ids = wp_list_pluck( $option_fields, 'id' );
 			}
+
 			// 1.0.14
 			if ( $product_fields = GFAPI::get_fields_by_type( $form, array( 'product' ) ) ) {
 				$product_fields_ids = wp_list_pluck( $product_fields, 'id' );
 			}
 
-			// Add currently logged in user option
+			// Add currently logged-in user option
 			foreach ( $field_filters as &$filter ) {
 
 				// Add negative match to approval column
@@ -1094,23 +1106,25 @@ HTML;
 				 *
 				 * @param array $operators
 				 */
-				$_add_proxy_operators = function ( $operators ) {
+				$_add_proxy_operators = function ( $operators, $filter_key ) {
+					if ( 'date_created' === $filter_key ) {
+						return $operators;
+					}
 
 					if ( in_array( 'is', $operators, true ) ) {
 						$operators[] = 'isempty';
 					}
 
-					if ( in_array( 'isnot', $operators, true ) ) {
+					if ( 'date_updated' === $filter_key || in_array( 'isnot', $operators, true ) ) {
 						$operators[] = 'isnotempty';
 					}
 
 					return $operators;
-
 				};
 
 				if ( ! empty( $filter['filters'] ) ) {
 					foreach ( $filter['filters'] as &$data ) {
-						$data['operators'] = $_add_proxy_operators( $data['operators'] );
+						$data['operators'] = $_add_proxy_operators( $data['operators'], $filter['key'] );
 					}
 				}
 
@@ -1121,7 +1135,7 @@ HTML;
 				 * 3) "any form field" ("is empty" does not work: https://github.com/gravityview/Advanced-Filter/issues/91)
 				 */
 				if ( isset( $filter['operators'] ) && ! isset( $filter['values'] ) && ! in_array( $filter['key'], array( 'entry_id', '0' ) ) ) {
-					$filter['operators'] = $_add_proxy_operators( $filter['operators'] );
+					$filter['operators'] = $_add_proxy_operators( $filter['operators'], $filter['key'] );
 				}
 			}
 
@@ -1276,19 +1290,22 @@ HTML;
 						$field_value         = '';
 					}
 
+					$form = $context->view->form;
+
 					if ( '0' === $filter_condition['key'] ) { // process "any form field" condition
 						$_result = false;
-						foreach ( $entry as $id => $data ) {
-							if ( ! is_numeric( $id ) ) { // form fields always have numeric IDs
+
+						foreach ( $entry as $field_id => $entry_value ) {
+							if ( ! is_numeric( $field_id ) ) { // form fields always have numeric IDs
 								continue;
 							}
 
-							$field = $context->field->by_id( $context->source, $filter_condition['key'] );
+							$field = $form::get_field( $form, $field_id );
 
-							if ( 'date' === $field->type && $_this->compare_dates( $data, $field_value, $comparison_operator ) ) {
+							if ( $field && 'date' === $field->type && $_this->compare_dates( $entry_value, $field_value, $comparison_operator ) ) {
 								$_result = true; // a single match satisfies condition
 								break;
-							} elseif ( GFFormsModel::matches_operation( $data, $field_value, $comparison_operator ) ) {
+							} elseif ( GFFormsModel::matches_operation( $entry_value, $field_value, $comparison_operator ) ) {
 								$_result = true; // a single match satisfies condition
 								break;
 							}
@@ -1296,7 +1313,6 @@ HTML;
 
 						$results[] = $_result;
 					} else {
-						$form     = $context->view->form;
 						$field_id = $filter_condition['key'];
 
 						if ( strpos( $filter_condition['key'], '.' ) !== false ) {

@@ -1,8 +1,7 @@
 /**
 * Nested Forms, mama!
 */
-
-import ko from 'knockout';
+const ko = window.ko;
 
 ( function( $ ) {
 

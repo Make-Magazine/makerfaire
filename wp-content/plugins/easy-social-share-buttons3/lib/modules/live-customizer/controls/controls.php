@@ -120,7 +120,7 @@ class ESSBLiveCustomizerControls {
 		<?php 
 	}
 	
-	public static function draw_image_radio_field($field, $update_at = 'options', $value = '', $listOfValues) {
+	public static function draw_image_radio_field($field, $update_at = 'options', $value = '', $listOfValues = array()) {
 		$exist_user_value = true;
 	
 	

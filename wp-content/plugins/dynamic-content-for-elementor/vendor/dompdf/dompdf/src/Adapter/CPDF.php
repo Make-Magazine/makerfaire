@@ -502,7 +502,7 @@ class CPDF implements Canvas
             }
             $func_name = "\\Dompdf\\Helpers::" . $func_name;
         }
-        \set_error_handler(array("\\Dompdf\\Helpers", "record_warnings"));
+        \set_error_handler(array("\\DynamicOOOS\\Dompdf\\Helpers", "record_warnings"));
         $im = \call_user_func($func_name, $image_url);
         if ($im) {
             \imageinterlace($im, \false);

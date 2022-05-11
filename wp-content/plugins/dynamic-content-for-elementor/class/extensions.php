@@ -44,6 +44,9 @@ class Extensions
             $class = '\\DynamicContentForElementor\\' . $extension_info['class'];
             if (\DynamicContentForElementor\Helper::check_plugin_dependencies(\false, $extension_info['plugin_depends']) && (!isset($extension_info['minimum_php']) || \version_compare(\phpversion(), $extension_info['minimum_php'], '>='))) {
                 $extension = new $class($extension_info);
+                if (\method_exists($extension, 'run_once')) {
+                    $extension->run_once();
+                }
                 if (isset($extension->has_action) && $extension->has_action) {
                     $this->add_form_action($extension);
                 }

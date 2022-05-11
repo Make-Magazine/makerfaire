@@ -26,7 +26,7 @@ class Elements
         if (!is_admin()) {
             // elements report
             add_action('elementor/frontend/widget/before_render', array($this, 'start_element'), 11, 2);
-            $option = get_option('dce_frontend_navigator');
+            $option = get_option(DCE_FRONTEND_NAVIGATOR_OPTION);
             if ('active' === $option || 'active-visitors' === $option) {
                 self::$user_can_elementor = \DynamicContentForElementor\Helper::user_can_elementor();
                 if (self::$user_can_elementor || isset($_GET['dce-nav']) && 'active-visitors' === $option) {
@@ -39,7 +39,11 @@ class Elements
                     add_action('elementor/frontend/section/after_render', array($this, 'end_element'), 11, 2);
                     add_action('elementor/frontend/column/after_render', array($this, 'end_element'), 11, 2);
                     add_action('elementor/frontend/widget/after_render', array($this, 'end_element'), 11, 2);
-                    add_action('admin_bar_menu', array($this, 'add_elementor_navigator'), 100, 2);
+                    add_action('wp_enqueue_scripts', function () {
+                        \DynamicContentForElementor\Plugin::instance()->assets->register_and_enqueue_dce_icons();
+                        wp_enqueue_style('dce-admin-bar', plugins_url('/assets/css/admin-bar.css', DCE__FILE__), [], DCE_VERSION);
+                    });
+                    add_action('admin_bar_menu', array($this, 'add_frontend_navigator'), 100, 2);
                     if (isset($_GET['dce-nav'])) {
                         add_action('wp_head', function () {
                             echo '<meta name="robots" content="noindex" />';
@@ -66,13 +70,13 @@ class Elements
     }
     public static function get_template_ids()
     {
-        $templates = array();
+        $templates = [];
         // check with DCE Template System
         $template_id = \DynamicContentForElementor\TemplateSystem::get_template_id(\true);
         if ($template_id) {
             $templates['dce'] = $template_id;
         }
-        // check with Elemento PRO Theme Builder
+        // check with Elementor PRO Theme Builder
         $pro_template_id = \DynamicContentForElementor\Helper::get_theme_builder_template_id();
         if ($pro_template_id) {
             $templates['pro'] = $pro_template_id;
@@ -174,13 +178,17 @@ class Elements
         }
         return \false;
     }
-    public function add_elementor_navigator($admin_bar)
+    /**
+     * Add Frontend Navigator
+     *
+     * @param \WP_Admin_Bar $admin_bar
+     * @return void
+     */
+    public function add_frontend_navigator(\WP_Admin_Bar $admin_bar)
     {
         global $wp;
-        $href = home_url(add_query_arg(array('dce-nav' => ''), $wp->request));
-        $admin_bar->add_menu(array('id' => 'elementor-navigator', 'title' => '<i class="icon icon-dyn-logo-dce"></i> Navigator', 'href' => $href, 'meta' => array('title' => __('Frontend Navigator', 'dynamic-content-for-elementor'), 'class' => 'menupop')));
-        \DynamicContentForElementor\Assets::dce_icon();
-        wp_enqueue_style('dce-admin-bar', plugins_url('/assets/css/admin-bar.css', DCE__FILE__), [], DCE_VERSION);
+        $href = home_url(add_query_arg(['dce-nav' => ''], $wp->request));
+        $admin_bar->add_menu(['id' => 'dce-frontend-navigator', 'title' => 'Frontend Navigator', 'href' => $href, 'meta' => ['title' => __('Frontend Navigator', 'dynamic-content-for-elementor'), 'class' => 'menupop']]);
         add_action('wp_footer', [$this, 'print_frontend_navigator_submenu']);
         wp_enqueue_script('dce-frontend-navigator-admin-bar', plugins_url('/assets/js/frontend-navigator-admin-bar.js', DCE__FILE__), [], DCE_VERSION);
     }
@@ -202,7 +210,7 @@ class Elements
 				</div>
 				<?php 
             } else {
-                ?><style>#wp-admin-bar-elementor-navigator{display: none;}</style><?php 
+                ?><style>#wp-admin-bar-dce-frontend-navigator{display: none;}</style><?php 
             }
         }
     }
@@ -283,14 +291,14 @@ class Elements
 			<div id="elementor-navigator__inner">
 				<div id="elementor-navigator__header">
 					<i id="elementor-navigator__toggle-all" class="eicon-expand" data-elementor-action="expand"></i>
-					<div id="elementor-navigator__header__title"><i class="color-dce icon icon-dyn-logo-dce" style="color: #e52600;"></i> <?php 
-        _e('Navigator', 'dynamic-content-for-elementor');
+					<div id="elementor-navigator__header__title"><i class="color-dce icon-dyn-logo-dce" style="color: #e52600;"></i> <?php 
+        _e('Frontend Navigator', 'dynamic-content-for-elementor');
         ?></div>
 					<i id="elementor-navigator__close" class="eicon-close"></i>
 				</div>
 				<div id="elementor-navigator__elements">
 					<div data-model-cid="c44" class="elementor-navigator__element elementor-navigator__element--has-children">
-		<?php 
+						<?php 
         $this->print_elementor_navigator(self::$elementor_data, 0, self::$user_can_elementor);
         ?>
 					</div>
@@ -333,54 +341,52 @@ class Elements
 					<?php 
                     if (\is_array($evalue)) {
                         ?>
-								<a href="#" class="elementor-navigator__element__list-toggle"><i class="eicon-sort-down"></i></a>
+						<a href="#" class="elementor-navigator__element__list-toggle"><i class="eicon-sort-down"></i></a>
 					<?php 
                     } else {
                         ?>
-								<span class="elementor-navigator__element__list-spacer"></span>
+						<span class="elementor-navigator__element__list-spacer"></span>
+					<?php 
+                    }
+                    ?>
+						<span class="elementor-navigator__element__element-type"><i class="<?php 
+                    echo $element_icon;
+                    ?>"></i></span>
+						<span class="elementor-navigator__element__title"><span class="elementor-navigator__element__title__text"><?php 
+                    echo $aname;
+                    ?></span></span>
+
+						<div class="elementor-navigator__element__indicators">
+						<?php 
+                    if (self::$user_can_elementor) {
+                        ?>
+							<div class="elementor-navigator__element__indicator" data-section="section_edit" original-title="Edit">
+								<a class="elementor-navigator__element__edit" href="<?php 
+                        echo $edit_link;
+                        ?>" target="_blank"><i class="eicon-pencil"></i></a>
+							</div>
 						<?php 
                     }
                     ?>
 
-							<span class="elementor-navigator__element__element-type"><i class="<?php 
-                    echo $element_icon;
-                    ?>"></i></span>
-							<span class="elementor-navigator__element__title"><span class="elementor-navigator__element__title__text"><?php 
-                    echo $aname;
-                    ?></span></span>
+							<div class="elementor-navigator__element__indicator elementor-navigator__element__indicator__info" data-section="section_info" original-title="Info">
+								<a class="elementor-navigator__element__info"><i class="eicon-info-circle"></i></a>
+							</div>
 
-
-							<div class="elementor-navigator__element__indicators">
-					<?php 
-                    if (self::$user_can_elementor) {
-                        ?>
-									<div class="elementor-navigator__element__indicator" data-section="section_edit" original-title="Edit">
-										<a class="elementor-navigator__element__edit" href="<?php 
-                        echo $edit_link;
-                        ?>" target="_blank"><i class="eicon-pencil"></i></a>
-									</div>
-					<?php 
-                    }
-                    ?>
-
-								<div class="elementor-navigator__element__indicator elementor-navigator__element__indicator__info" data-section="section_info" original-title="Info">
-									<a class="elementor-navigator__element__info"><i class="eicon-info-circle"></i></a>
-								</div>
-
-								<div class="elementor-navigator__element__indicator" data-section="section_toggle" original-title="Toggle" <?php 
+							<div class="elementor-navigator__element__indicator" data-section="section_toggle" original-title="Toggle" <?php 
                     if (!self::$user_can_elementor || !isset(self::$elements_hidden[$id])) {
                         ?>style="display: none;"<?php 
                     }
                     ?>>
-									<a class="elementor-navigator__element__toggle"><i class="fa fas fa-eye<?php 
+								<a class="elementor-navigator__element__toggle"><i class="fa fas fa-eye<?php 
                     if (isset(self::$elements_hidden[$id]) && empty(self::$elements_hidden[$id]['fallback'])) {
                         ?>-slash<?php 
                     }
                     ?>"></i></a>
-								</div>
 							</div>
-
 						</div>
+
+					</div>
 
 					<?php 
                     $this->print_elementor_navigator($evalue, $template_id);
@@ -400,8 +406,9 @@ class Elements
 								<div class="dce-title-h4"><?php 
                     echo \ucfirst($type);
                     ?></div>
-								<div class="dce-title-h5">ID: <?php 
-                    echo $id;
+								<div class="dce-title-h5"><?php 
+                    _e('ID', 'dynamic-content-for-elementor');
+                    echo ': ' . $id;
                     ?></div>
 								<hr>
 								<div class="elementor-navigator__element__infobox__details">
@@ -414,7 +421,7 @@ class Elements
                     ?></dt> <dd><?php 
                     echo $name;
                     ?></dd>
-					<?php 
+										<?php 
                     if (!empty(self::$elements_time[$id]) && !empty(self::$elements_time[$id]['start']) && !empty(self::$elements_time[$id]['end'])) {
                         ?>
 											<dt><?php 
@@ -422,7 +429,7 @@ class Elements
                         ?></dt> <dd><?php 
                         echo self::$elements_time[$id]['end'] - self::$elements_time[$id]['start'];
                         ?></dd>
-					<?php 
+										<?php 
                     }
                     ?>
 										<dt><?php 
@@ -574,7 +581,7 @@ class Elements
                     ?>"></i>
 									</a>
 
-					<?php 
+									<?php 
                     $element_settings = \false;
                     if (self::$user_can_elementor) {
                         if (!empty($element_settings)) {
@@ -625,7 +632,7 @@ class Elements
                                 break;
                             default:
                                 if (\substr($acat, 0, 29) == 'dynamic-content-for-elementor') {
-                                    echo '<a href="https://www.dynamic.ooo/" target="_blank"><i class="color-dce icon icon-dyn-logo-dce" style="color: #e52600;"></i></a>';
+                                    echo '<a href="https://www.dynamic.ooo/" target="_blank"><i class="color-dce icon-dyn-logo-dce" style="color: #e52600;"></i></a>';
                                 } else {
                                     if (!empty(self::$elements_categories[$acat]['icon'])) {
                                         echo '<i class="' . self::$elements_categories[$acat]['icon'] . '"></i>';
@@ -688,20 +695,17 @@ class Elements
     }
     public function get_element_title_by_id($id, $type, $name, $template_id = 0)
     {
-        if ($type == 'template') {
-            return wp_kses_post(get_the_title($id));
-        }
-        if ($type == 'column') {
+        if ('template' === $type) {
+            return esc_html(get_the_title($id));
+        } elseif ('column' === $type) {
             return __('Column', 'dynamic-content-for-elementor');
-        }
-        if ($type == 'section') {
+        } elseif ('section' === $type) {
             $settings = \DynamicContentForElementor\Helper::get_elementor_element_settings_by_id($id, $template_id);
             if (!empty($settings['_title'])) {
                 return $settings['_title'];
             }
             return __('Section', 'dynamic-content-for-elementor');
-        }
-        if ($type == 'widget') {
+        } elseif ('widget' === $type) {
             if ($name) {
                 $widget = \Elementor\Plugin::instance()->widgets_manager->get_widget_types($name);
                 if ($widget) {

@@ -13,6 +13,9 @@ namespace DynamicOOOS\Symfony\Component\Cache;
 use DynamicOOOS\Doctrine\Common\Cache\CacheProvider;
 use Psr\Cache\CacheItemPoolInterface;
 use DynamicOOOS\Symfony\Contracts\Service\ResetInterface;
+if (!\class_exists(CacheProvider::class)) {
+    return;
+}
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */

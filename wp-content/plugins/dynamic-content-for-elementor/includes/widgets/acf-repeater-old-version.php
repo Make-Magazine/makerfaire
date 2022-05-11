@@ -3,7 +3,7 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Border;
@@ -18,38 +18,28 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Repeater extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class AcfRepeaterOldVersion extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
-        return ['imagesloaded', 'swiper', 'jquery-masonry', 'dce-wow', 'dce-acf-repeater', 'dce-datatables'];
+        return ['imagesloaded', 'swiper', 'jquery-masonry', 'dce-wow', 'dce-acf-repeater-old', 'dce-datatables'];
     }
     public function get_style_depends()
     {
-        return ['dce-acfRepeater', 'datatables'];
+        return ['dce-acf-repeater-old', 'datatables'];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_dynamictemplate', ['label' => $this->get_title()]);
         $this->add_control('deprecated', ['raw' => __('This widget is deprecated. You can continue to use it but we recommend that you use ACF Repeater widget new version instead, it\'s more fast.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::RAW_HTML, 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
         $repeaters = Helper::get_acf_fields('repeater');
         $this->add_control('dce_acf_repeater', ['label' => __('ACF Repeater', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'label_block' => \true, 'options' => $repeaters]);
-        $this->add_control('dce_acf_repeater_mode', ['label' => __('Display mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['repeater' => ['title' => __('Repeater', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-list-ul'], 'html' => ['title' => __('HTML & Token', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-code'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'repeater']);
+        $this->add_control('dce_acf_repeater_mode', ['label' => __('Display mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['repeater' => ['title' => __('Repeater', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-list-ul'], 'html' => ['title' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-code'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'repeater']);
         foreach ($repeaters as $arepeater => $arepeater_title) {
             $arepeater_fields = Helper::get_acf_repeater_fields($arepeater);
             $default = [];
@@ -96,7 +86,7 @@ class DCE_Widget_Repeater extends \DynamicContentForElementor\Widgets\WidgetProt
             $this->add_control('dce_acf_repeater_fields_' . $arepeater, ['label' => __('Repeater fields', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::REPEATER, 'fields' => $repeater_fields->get_controls(), 'title_field' => '{{{ dce_views_select_field_label }}} [{{{dce_acf_repeater_field_name}}}] ({{{dce_acf_repeater_field_type}}})', 'default' => $default, 'item_actions' => ['add' => \false, 'duplicate' => \false, 'remove' => \false, 'sort' => \true], 'condition' => ['dce_acf_repeater' => $arepeater, 'dce_acf_repeater_mode' => 'repeater']]);
         }
         $this->add_control('dce_acf_repeater_html', ['label' => __('Custom HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CODE, 'default' => '[ROW]', 'description' => __('Type here some content, you can use HTML and TOKENS.', 'dynamic-content-for-elementor'), 'condition' => ['dce_acf_repeater_mode' => 'html']]);
-        $this->add_control('dce_acf_repeater_template', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select Template', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as content of repeater', 'dynamic-content-for-elementor'), 'condition' => ['dce_acf_repeater_mode' => 'template']]);
+        $this->add_control('dce_acf_repeater_template', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select Template', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as content of the repeater', 'dynamic-content-for-elementor'), 'condition' => ['dce_acf_repeater_mode' => 'template']]);
         $this->add_control('dce_acf_repeater_pagination', ['label' => __('Show row item', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'first, last, 1, 3-4', 'description' => __('Leave empty to print all rows, otherwise write the number of them. Use "first" and "last" to indicate the first and last element.', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_acf_repeater_inverted', ['label' => __('Invert row order', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->end_controls_section();
@@ -107,7 +97,7 @@ class DCE_Widget_Repeater extends \DynamicContentForElementor\Widgets\WidgetProt
         $this->add_responsive_control('dce_acf_repeater_field_row', ['label' => __('Row space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'tablet_default' => ['size' => ''], 'mobile_default' => ['size' => ''], 'range' => ['px' => ['max' => 50, 'min' => 0, 'step' => 1.0]], 'selectors' => ['{{WRAPPER}} .dce-acf-repeater-item' => 'padding-bottom: {{SIZE}}{{UNIT}};']]);
         $this->end_controls_section();
         $this->start_controls_section('dce_acf_repeater_h_render', ['label' => __('Render', 'dynamic-content-for-elementor')]);
-        $this->add_control('dce_acf_repeater_format', ['label' => __('Render as ', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'frontend_available' => \true, 'options' => array('' => 'Natural', 'grid' => 'Grid', 'masonry' => 'Masonry', 'slider_carousel' => 'Slider/Carousel', 'table' => 'Table (No Template)', 'list' => 'List', 'accordion' => 'Accordion'), 'default' => 'grid']);
+        $this->add_control('dce_acf_repeater_format', ['label' => __('Render as', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'frontend_available' => \true, 'options' => ['' => __('Natural', 'dynamic-content-for-elementor'), 'grid' => __('Grid', 'dynamic-content-for-elementor'), 'masonry' => __('Masonry', 'dynamic-content-for-elementor'), 'slider_carousel' => __('Slider/Carousel', 'dynamic-content-for-elementor'), 'table' => __('Table (No Template)', 'dynamic-content-for-elementor'), 'list' => __('List', 'dynamic-content-for-elementor'), 'accordion' => __('Accordion', 'dynamic-content-for-elementor')], 'default' => 'grid']);
         // -------------------------------- SHOW LABEL ON GRID
         $this->add_control('dce_acf_repeater_grid_label', ['label' => __('Show label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_acf_repeater_format' => 'grid']]);
         $this->add_control('dce_acf_repeater_separator', ['label' => __('Separator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => ', ', 'condition' => ['dce_acf_repeater_format' => '']]);
@@ -116,7 +106,7 @@ class DCE_Widget_Repeater extends \DynamicContentForElementor\Widgets\WidgetProt
         $this->add_control('selected_icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'separator' => 'before', 'fa4compatibility' => 'icon', 'default' => ['value' => 'fas fa-plus', 'library' => 'fa-solid'], 'skin' => 'inline', 'label_block' => \false, 'condition' => ['dce_acf_repeater_format' => 'accordion']]);
         $this->add_control('selected_active_icon', ['label' => __('Active Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'icon_active', 'default' => ['value' => 'fas fa-minus', 'library' => 'fa-solid'], 'skin' => 'inline', 'label_block' => \false, 'condition' => ['dce_acf_repeater_format' => 'accordion', 'selected_icon[value]!' => '']]);
         $this->add_control('dce_acf_repeater_accordion_heading_size', ['label' => __('Heading HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'p' => 'p'], 'default' => 'h4', 'condition' => ['dce_acf_repeater_format' => 'accordion']]);
-        $this->add_control('dce_acf_repeater_accordion_start', ['label' => __('Initially open', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['none' => ['title' => __('None', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-left'], 'first' => ['title' => __('First', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'all' => ['title' => __('All', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-double-right']], 'inline' => \true, 'toggle' => \false, 'default' => 'none', 'condition' => ['dce_acf_repeater_format' => 'accordion']]);
+        $this->add_control('dce_acf_repeater_accordion_start', ['label' => __('Initially open', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['none' => ['title' => __('None', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban'], 'first' => ['title' => __('First', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'all' => ['title' => __('All', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-double-right']], 'inline' => \true, 'toggle' => \false, 'default' => 'none', 'condition' => ['dce_acf_repeater_format' => 'accordion']]);
         $this->add_control('dce_acf_repeater_accordion_close', ['label' => __('Automatically close other Tabs', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['dce_acf_repeater_format' => 'accordion']]);
         // ---------------------------------- LIST
         $this->add_control('dce_acf_repeater_list', ['label' => __('List type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['ul' => ['title' => __('Unordered list', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-list-ul'], 'ol' => ['title' => __('Ordered list', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-list-ol']], 'toggle' => \false, 'default' => 'ul', 'condition' => ['dce_acf_repeater_format' => 'list']]);
@@ -238,7 +228,7 @@ class DCE_Widget_Repeater extends \DynamicContentForElementor\Widgets\WidgetProt
         $this->add_group_control(Group_Control_Border::get_type(), ['name' => 'content_border', 'label' => __('Border', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .elementor-accordion .elementor-tab-content']);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
@@ -271,7 +261,7 @@ class DCE_Widget_Repeater extends \DynamicContentForElementor\Widgets\WidgetProt
             }
             $rows = \get_field($settings['dce_acf_repeater'], $id_page);
             if (have_rows($settings['dce_acf_repeater'], $id_page)) {
-                echo '<div class="dce-acf-repater-' . ($settings['dce_acf_repeater_format'] == 'table' && $settings['dce_acf_repeater_datatables'] ? 'data' : '') . $settings['dce_acf_repeater_format'] . '">';
+                echo '<div class="dce-acf-repater-' . ($settings['dce_acf_repeater_format'] == 'table' && !empty($settings['dce_acf_repeater_datatables']) ? 'data' : '') . $settings['dce_acf_repeater_format'] . '">';
                 $row_id = 0;
                 $sub_fields = Helper::get_acf_repeater_fields($settings['dce_acf_repeater']);
                 if (!empty($sub_fields)) {

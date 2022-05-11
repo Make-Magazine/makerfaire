@@ -147,7 +147,7 @@ class GFActiveCampaign extends GFFeedAddOn {
 	 *
 	 * @since  1.0
 	 * @access protected
-	 * @var    object $api If initialized, an instance of the ActiveCampaign API library.
+	 * @var    null|false|GF_ActiveCampaign_API $api If initialized, an instance of the ActiveCampaign API library.
 	 */
 	protected $api = null;
 
@@ -316,6 +316,12 @@ class GFActiveCampaign extends GFFeedAddOn {
 		$this->log_debug( __METHOD__ . '(): Contact to be added => ' . print_r( $contact, true ) );
 		$sync_contact = $this->api->sync_contact( $contact );
 
+		if ( is_wp_error( $sync_contact ) ) {
+			$this->log_error( __METHOD__ . "(): {$contact['email']} was not added; code: {$sync_contact->get_error_code()}; message: {$sync_contact->get_error_message()}" );
+
+			return false;
+		}
+
 		if ( $sync_contact['result_code'] == 1 ) {
 
 			$this->log_debug( __METHOD__ . "(): {$contact['email']} has been added; {$sync_contact['result_message']}." );
@@ -472,7 +478,7 @@ class GFActiveCampaign extends GFFeedAddOn {
 		$description = '<p>';
 		$description .= sprintf(
 			esc_html__( 'ActiveCampaign makes it easy to send email newsletters to your customers, manage your subscriber lists, and track campaign performance. Use Gravity Forms to collect customer information and automatically add it to your ActiveCampaign list. If you don\'t have an ActiveCampaign account, you can %1$ssign up for one here.%2$s', 'gravityformsactivecampaign' ),
-			'<a href="http://www.activecampaign.com/" target="_blank">', '</a>'
+			'<a href="https://www.activecampaign.com/" target="_blank">', '</a>'
 		);
 		$description .= '</p>';
 
@@ -563,7 +569,7 @@ class GFActiveCampaign extends GFFeedAddOn {
 		/* Get campaign and return name */
 		$list = $this->api->get_list( $feed['meta']['list'] );
 
-		return ( $list['result_code'] == 1 ) ? $list['name'] : $feed['meta']['list'];
+		return ( ! is_wp_error( $list ) && $list['result_code'] == 1 ) ? $list['name'] : $feed['meta']['list'];
 
 	}
 
@@ -636,7 +642,7 @@ class GFActiveCampaign extends GFFeedAddOn {
 				'label'      => esc_html__( 'Double Opt-In Form', 'gravityformsactivecampaign' ),
 				'type'       => 'select',
 				'dependency' => 'list',
-				'choices'    => $this->forms_for_feed_setting(),
+				'choices'    => $forms,
 				'tooltip'    => '<h6>' . esc_html__( 'Double Opt-In Form', 'gravityformsactivecampaign' ) . '</h6>' . esc_html__( 'Select which ActiveCampaign form will be used when exporting to ActiveCampaign to send the opt-in email.', 'gravityformsactivecampaign' )
 			);
 
@@ -725,6 +731,10 @@ class GFActiveCampaign extends GFFeedAddOn {
 		/* Get available ActiveCampaign lists. */
 		$ac_lists = $this->api->get_lists();
 
+		if ( is_wp_error( $ac_lists ) ) {
+			return $lists;
+		}
+
 		/* Add ActiveCampaign lists to array and return it. */
 		foreach ( $ac_lists as $list ) {
 
@@ -754,7 +764,7 @@ class GFActiveCampaign extends GFFeedAddOn {
 			'name'       => 'email',
 			'label'      => esc_html__( 'Email Address', 'gravityformsactivecampaign' ),
 			'required'   => true,
-			'tooltip'  => '<h6>' . esc_html__( 'Email Field Mapping', 'gravityformsactivecampaign' ) . '</h6>' . sprintf( esc_html__( 'Only email and hidden fields are available to be mapped. To add support for other field types, visit %sour documentation site%s', 'gravityformsactivecampaign' ), '<a href="https://docs.gravityforms.com/category/activecampaign/">', '</a>' ),
+			'tooltip'  => '<h6>' . esc_html__( 'Email Field Mapping', 'gravityformsactivecampaign' ) . '</h6>' . sprintf( esc_html__( 'Only email and hidden fields are available to be mapped. To add support for other field types, visit %sour documentation site%s.', 'gravityformsactivecampaign' ), '<a href="https://docs.gravityforms.com/gform_activecampaign_supported_field_types_email_map/" target="_blank" rel="noopener noreferrer">', '</a>' ),
 		);
 
 		/**
@@ -815,7 +825,7 @@ class GFActiveCampaign extends GFFeedAddOn {
 		$ac_fields = $this->api->get_custom_fields();
 
 		/* If no ActiveCampaign fields exist, return the fields array. */
-		if ( empty( $ac_fields ) ) {
+		if ( is_wp_error( $ac_fields ) || empty( $ac_fields ) ) {
 			return $fields;
 		}
 
@@ -905,31 +915,28 @@ class GFActiveCampaign extends GFFeedAddOn {
 			return $forms;
 		}
 
-		// Get list ID.
-		$list_id = $this->get_setting( 'list' );
-
 		// Get available ActiveCampaign forms.
 		$ac_forms = $this->api->get_forms();
+		if ( is_wp_error( $ac_forms ) || empty( $ac_forms ) ) {
+			return $forms;
+		}
 
-		// Add ActiveCampaign forms to array and return it.
-		if ( ! empty( $ac_forms ) ) {
+		$list_id = $this->get_setting( 'list' );
 
-			foreach ( $ac_forms as $form ) {
+		foreach ( $ac_forms as $form ) {
 
-				if ( ! is_array( $form ) ) {
-					continue;
-				}
-
-				if ( $form['sendoptin'] == 0 || ! is_array( $form['lists'] ) || ! in_array( $list_id, $form['lists'] ) ) {
-					continue;
-				}
-
-				$forms[] = array(
-					'label' => $form['name'],
-					'value' => $form['id'],
-				);
-
+			if ( ! is_array( $form ) ) {
+				continue;
 			}
+
+			if ( $form['sendoptin'] == 0 || ! is_array( $form['lists'] ) || ! in_array( $list_id, $form['lists'] ) ) {
+				continue;
+			}
+
+			$forms[] = array(
+				'label' => $form['name'],
+				'value' => $form['id'],
+			);
 
 		}
 
@@ -985,23 +992,29 @@ class GFActiveCampaign extends GFFeedAddOn {
 			// Add new field.
 			$new_field = $this->api->add_custom_field( $custom_field );
 
-			// Replace key for field with new shortcut name and reset custom key.
-			if ( $new_field['result_code'] == 1 ) {
-
-				$field['key']        = $new_field['fieldid'];
-				$field['custom_key'] = '';
-
-				// Update POST field to ensure front-end display is up-to-date.
-				$_gaddon_posted_settings['custom_fields'][ $index ]['key']        = $new_field['fieldid'];
-				$_gaddon_posted_settings['custom_fields'][ $index ]['custom_key'] = '';
-
-				// Push to new custom fields array to update the UI.
-				$this->_new_custom_fields[] = array(
-					'label' => $custom_key,
-					'value' => $new_field['fieldid'],
-				);
-
+			if ( is_wp_error( $new_field ) ) {
+				$this->log_error( __METHOD__ . "(): Unable to add custom field: {$custom_key}; code: {$new_field->get_error_code()}; message: {$new_field->get_error_message()}" );
+				continue;
 			}
+
+			if ( $new_field['result_code'] != 1 ) {
+				$this->log_error( __METHOD__ . "(): Unable to add custom field: {$custom_key}; message: {$new_field['result_message']}" );
+				continue;
+			}
+
+			// Replace key for field with new shortcut name and reset custom key.
+			$field['key']        = $new_field['fieldid'];
+			$field['custom_key'] = '';
+
+			// Update POST field to ensure front-end display is up-to-date.
+			$_gaddon_posted_settings['custom_fields'][ $index ]['key']        = $new_field['fieldid'];
+			$_gaddon_posted_settings['custom_fields'][ $index ]['custom_key'] = '';
+
+			// Push to new custom fields array to update the UI.
+			$this->_new_custom_fields[] = array(
+				'label' => $custom_key,
+				'value' => $new_field['fieldid'],
+			);
 
 		}
 
@@ -1020,8 +1033,10 @@ class GFActiveCampaign extends GFFeedAddOn {
 			return true;
 		}
 
-		/* Load the ActiveCampaign API library. */
-		require_once 'includes/class-gf-activecampaign-api.php';
+		if ( $this->api === false ) {
+			// Aborting; the auth test has already been attempted and failed during the current request.
+			return false;
+		}
 
 		/* Get the plugin settings */
 		$settings = $this->get_saved_plugin_settings();
@@ -1031,31 +1046,25 @@ class GFActiveCampaign extends GFFeedAddOn {
 			return null;
 		}
 
+		/* Load the ActiveCampaign API library. */
+		require_once 'includes/class-gf-activecampaign-api.php';
+
 		$this->log_debug( __METHOD__ . "(): Validating API info for {$settings['api_url']} / {$settings['api_key']}." );
 
 		$activecampaign = new GF_ActiveCampaign_API( $settings['api_url'], $settings['api_key'] );
+		$result         = $activecampaign->auth_test();
 
-		try {
-
-			/* Run API test. */
-			$activecampaign->auth_test();
-
-			/* Log that test passed. */
-			$this->log_debug( __METHOD__ . '(): API credentials are valid.' );
-
-			/* Assign ActiveCampaign object to the class. */
-			$this->api = $activecampaign;
-
-			return true;
-
-		} catch ( Exception $e ) {
-
-			/* Log that test failed. */
-			$this->log_error( __METHOD__ . '(): API credentials are invalid; ' . $e->getMessage() );
+		if ( is_wp_error( $result ) ) {
+			$this->api = false;
+			$this->log_error( __METHOD__ . "(): Unable to validate credentials; code: {$result->get_error_code()}; message: {$result->get_error_message()}" );
 
 			return false;
-
 		}
+
+		$this->log_debug( __METHOD__ . '(): API credentials are valid.' );
+		$this->api = $activecampaign;
+
+		return true;
 
 	}
 

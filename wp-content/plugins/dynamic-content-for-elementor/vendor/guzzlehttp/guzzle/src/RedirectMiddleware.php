@@ -66,6 +66,10 @@ class RedirectMiddleware
         }
         $this->guardMax($request, $response, $options);
         $nextRequest = $this->modifyRequest($request, $options, $response);
+        // If authorization is handled by curl, unset it if host is different.
+        if ($request->getUri()->getHost() !== $nextRequest->getUri()->getHost() && \defined('\\CURLOPT_HTTPAUTH')) {
+            unset($options['curl'][\CURLOPT_HTTPAUTH], $options['curl'][\CURLOPT_USERPWD]);
+        }
         if (isset($options['allow_redirects']['on_redirect'])) {
             $options['allow_redirects']['on_redirect']($request, $response, $nextRequest->getUri());
         }
@@ -127,7 +131,7 @@ class RedirectMiddleware
             $uri = Utils::idnUriConvert($uri, $idnOptions);
         }
         $modify['uri'] = $uri;
-        Psr7\Message::rewindBody($request);
+        \GuzzleHttp\Psr7\Message::rewindBody($request);
         // Add the Referer header if it is told to do so and only
         // add the header if we are not redirecting from https to http.
         if ($options['allow_redirects']['referer'] && $modify['uri']->getScheme() === $request->getUri()->getScheme()) {
@@ -140,14 +144,14 @@ class RedirectMiddleware
         if ($request->getUri()->getHost() !== $modify['uri']->getHost()) {
             $modify['remove_headers'][] = 'Authorization';
         }
-        return Psr7\Utils::modifyRequest($request, $modify);
+        return \GuzzleHttp\Psr7\Utils::modifyRequest($request, $modify);
     }
     /**
      * Set the appropriate URL on the request based on the location header
      */
     private function redirectUri(RequestInterface $request, ResponseInterface $response, array $protocols) : UriInterface
     {
-        $location = Psr7\UriResolver::resolve($request->getUri(), new Psr7\Uri($response->getHeaderLine('Location')));
+        $location = \GuzzleHttp\Psr7\UriResolver::resolve($request->getUri(), new \GuzzleHttp\Psr7\Uri($response->getHeaderLine('Location')));
         // Ensure that the redirect URI is allowed based on the protocols.
         if (!\in_array($location->getScheme(), $protocols)) {
             throw new BadResponseException(\sprintf('Redirect URI, %s, does not use one of the allowed redirect protocols: %s', $location, \implode(', ', $protocols)), $request, $response);

@@ -69,10 +69,10 @@ if (!class_exists('ESSBPinterestProAdmin')) {
 					'input' => 'html',
 					'html' => "
 <select name='attachments[{$post->ID}][essb_pin_nopin]' id='attachments[{$post->ID}][essb_pin_nopin]'>
-    <option value='false'>No</option>
-    <option value='true'>Yes</option>
+<option value='false' ".(get_post_meta( $post->ID, 'essb_pin_nopin', true ) == "false" ? "selected" : "").">No</option>
+    <option value='true' ".(get_post_meta( $post->ID, 'essb_pin_nopin', true ) == "true" ? "selected" : "").">Yes</option>
 </select>",
-					'value' => (bool) get_post_meta( $post->ID, 'essb_pin_nopin', true )
+					'value' =>  get_post_meta( $post->ID, 'essb_pin_nopin', true )
 			);
 			
 			return $form_fields;

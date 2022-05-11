@@ -98,6 +98,11 @@
                             <td>{{translationTab.table.usedIn2}}</td>
                         </tr>
                         <tr>
+                            <td>{{translationTab.table.viewAllReviews}}</td>
+                            <td><input type="text" class="cff-input" :placeholder="model.translation.cff_reviews_link_text" v-model:value="model.translation.cff_reviews_link_text"></td>
+                            <td>{{translationTab.table.usedIn3}}</td>
+                        </tr>
+                        <tr>
                             <td>{{translationTab.table.commentOnFB}}</td>
                             <td><input type="text" class="cff-input" :placeholder="model.translation.cff_translate_comment_on_facebook_text" v-model:value="model.translation.cff_translate_comment_on_facebook_text"></td>
                             <td>{{translationTab.table.usedAt}}</td>

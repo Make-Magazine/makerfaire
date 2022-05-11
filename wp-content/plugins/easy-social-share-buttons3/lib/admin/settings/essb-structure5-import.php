@@ -9,10 +9,12 @@
 if (class_exists('ESSBControlCenter')) {
 	ESSBControlCenter::register_sidebar_section_menu('import', 'backup', esc_html__('Export Settings', 'essb'));
 	ESSBControlCenter::register_sidebar_section_menu('import', 'backupimport', esc_html__('Import Settings', 'essb'));
-	ESSBControlCenter::register_sidebar_section_menu('import', 'reset', esc_html__('Reset Settings & Data', 'essb'));
-	ESSBControlCenter::register_sidebar_section_menu('import', 'rollback', esc_html__('Rollback Settings', 'essb'));
 	ESSBControlCenter::register_sidebar_section_menu('import', 'backup2', esc_html__('Export Followers Settings', 'essb'));
 	ESSBControlCenter::register_sidebar_section_menu('import', 'backupimport2', esc_html__('Import Followers Settings', 'essb'));
+	ESSBControlCenter::register_sidebar_section_menu('import', 'positions', esc_html__('Custom Positions', 'essb'));
+	ESSBControlCenter::register_sidebar_section_menu('import', 'reset', esc_html__('Reset Settings & Data', 'essb'));
+	ESSBControlCenter::register_sidebar_section_menu('import', 'rollback', esc_html__('Rollback Settings', 'essb'));
+	ESSBControlCenter::register_sidebar_section_menu('import', 'migrate', esc_html__('Migrate & Update', 'essb'));
 }
 
 ESSBOptionsStructureHelper::menu_item('import', 'backup', esc_html__('Export Settings', 'essb'), 'download');
@@ -43,6 +45,10 @@ ESSBOptionsStructureHelper::field_func('import', 'rollback', 'essb3_text_roolbac
 
 ESSBOptionsStructureHelper::help('import', 'reset', '', '', array('Help With Settings' => 'https://docs.socialsharingplugin.com/knowledgebase/import-export-plugin-settings-reset-plugin-settings-or-data/#Reset_Settings_&_Data'));
 ESSBOptionsStructureHelper::field_component('import', 'reset', 'essb5_reset_settings_actions');
+
+ESSBOptionsStructureHelper::field_component('import', 'migrate', 'essb_admin_migrate_data_actions');
+
+ESSBOptionsStructureHelper::field_component('import', 'positions', 'essb_admin_positions_export_import');
 
 function essb3_text_roolback() {
 	$history_container = get_option(ESSB5_SETTINGS_ROLLBACK);
@@ -164,6 +170,28 @@ function essb3_text_backup1() {
 	<?php 
 }
 
+function essb_admin_migrate_data_actions() {
+    ?>
+<div class="advanced-grid col3 advanced-grid-additional">
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon">
+		<i class="fa fa-cut"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php esc_html_e('Short URL Cache', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php esc_html_e('Convert and move current saved short URLs to the new structure.', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn essb-migrate-settings" data-migrate="shorturl" data-title="<?php esc_html_e('Short URL Cache', 'essb'); ?>"><i class="fa fa-refresh"></i><?php esc_html_e('Migrate', 'essb'); ?></a>
+		<a href="#" class="essb-btn tile-deactivate essb-migrate-settings" data-migrate-clear="shorturl" data-title="<?php esc_html_e('Short URL Cache', 'essb'); ?>"><i class="fa fa-times"></i><?php esc_html_e('Clear Old Data', 'essb'); ?></a>
+	</div>
+</div>
+</div>
+    <?php 
+}
+
 function essb5_reset_settings_actions() {
 	?>
 <div class="advanced-grid col3 advanced-grid-additional">
@@ -247,15 +275,31 @@ function essb5_reset_settings_actions() {
 		<i class="fa fa-cut"></i>
 	</div>
 	<div class="advnacedoptions-tile-subtitle">
-		<h3><?php esc_html_e('Short URL Cache & Image Cache', 'essb'); ?></h3>
+		<h3><?php esc_html_e('Short URL Cache', 'essb'); ?></h3>
 	</div>
 	<div class="advancedoptions-tile-body">
-		<?php esc_html_e('The function will clear the generated cached share images and it will also clear the cached short URLs (if function used).', 'essb'); ?>
+		<?php esc_html_e('Clear all cached short URLs generated and used by the plugin.', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="resetshort" data-title="<?php esc_html_e('Counters Last Update', 'essb'); ?>"><i class="fa fa-times"></i><?php esc_html_e('Reset Data', 'essb'); ?></a>
+	</div>
+</div>
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon">
+		<i class="fa fa-picture-o"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php esc_html_e('Image Cache', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php esc_html_e('Clear generated cached images used by plugin for the shared information.', 'essb'); ?>
 	</div>
 	<div class="advancedoptions-tile-foot">
 		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="resetimage" data-title="<?php esc_html_e('Counters Last Update', 'essb'); ?>"><i class="fa fa-times"></i><?php esc_html_e('Reset Data', 'essb'); ?></a>
 	</div>
 </div>
+
 
 <div class="advancedoptions-tile advancedoptions-smalltile center-c">
 	<div class="advnacedoptions-tile-icon">
@@ -319,4 +363,41 @@ function essb5_reset_settings_actions() {
 	
 </div>
 	<?php 
+}
+
+function essb_admin_positions_export_import() {    
+    ?>
+    
+    <div class="essb-flex-grid-r pb0">
+    	<div class="essb-flex-grid-c c12 essb-heading sub7">
+    		<span class="icon"><i class="ti-cloud-down"></i></span>
+    		<div><em>Export</em></div>
+    	</div>
+    </div>
+    
+    <div class="essb-related-heading7">
+    	<div>
+    		<textarea id="essb-exporting-custompositions-area" class="essb-textarea-medium"></textarea>
+    		<a class="button button-secondary" href="#" id="essb-advanced-export-custompositions">Export</a>
+    	</div>
+    </div>
+
+    <div class="essb-flex-grid-r pb0 mt40">
+    	<div class="essb-flex-grid-c c12 essb-heading sub7">
+    		<span class="icon"><i class="ti-cloud-up"></i></span>
+    		<div><em>Import</em></div>
+    	</div>
+    </div>
+    
+    <div class="essb-related-heading7">
+		<div class="essb-options-hint essb-options-hint-glowhint">
+	    	<div class="essb-options-hint-desc">The import won't overwrite all of your existing positions. It will add the positions from the fields to the existing (it may change the name only if the key is the same).</div>
+		</div>
+    	<div class="mt25">
+    		<textarea id="essb-importing-custompositions-area" class="essb-textarea-medium"></textarea>
+    		<a class="button button-primary" href="#" id="essb-advanced-import-custompositions">Import</a>
+    	</div>
+    </div>
+    
+    <?php 
 }

@@ -392,7 +392,7 @@ class Dompdf
             $str = \substr($str, 3);
         }
         // Store parsing warnings as messages
-        \set_error_handler(array("\\Dompdf\\Helpers", "record_warnings"));
+        \set_error_handler(array("\\DynamicOOOS\\Dompdf\\Helpers", "record_warnings"));
         // @todo Take the quirksmode into account
         // http://hsivonen.iki.fi/doctype/
         // https://developer.mozilla.org/en/mozilla's_quirks_mode

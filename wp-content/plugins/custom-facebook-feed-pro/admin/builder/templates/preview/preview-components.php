@@ -114,13 +114,13 @@
 				</a>
 			</div>
 			<div class="cff-post-item-action-link" v-if="customizerFeedData.settings.include.includes('link')">
-				<a class="cff-post-item-action-txt" v-if="$parent.$parent.valueIsEnabled(customizerFeedData.settings.showfacebooklink)" :href="'https://www.facebook.com/'+singlePost.id" target="_blank">{{customizerFeedData.settings.facebooklinktext}}</a>
+				<a class="cff-post-item-action-txt" v-if="$parent.$parent.valueIsEnabled(customizerFeedData.settings.showfacebooklink)" :href="'https://www.facebook.com/'+singlePost.id" target="_blank" v-html="$parent.$parent.checkNotEmpty(customizerFeedData.settings.facebooklinktext ) ? customizerFeedData.settings.facebooklinktext : translatedText.translations.cff_facebook_link_text"></a>
 				<span class="cff-post-item-action-txt cff-post-item-dot" v-if="$parent.$parent.valueIsEnabled(customizerFeedData.settings.showfacebooklink) && $parent.$parent.valueIsEnabled(customizerFeedData.settings.showsharelink)">&middot;</span>
 				<span class="cff-post-item-share-link" v-if="$parent.$parent.valueIsEnabled(customizerFeedData.settings.showsharelink)">
 					<div class="cff-post-item-share-tooltip" v-show="$parent.$parent.showedSocialShareTooltip == singlePost.id">
 						<a v-for="(socialLink, socialName) in $parent.$parent.socialShareLink" :href="socialLink + 'https://www.facebook.com/'+singlePost.id" :class="'cff-bghv-'+socialName" v-html="$parent.$parent.svgIcons[socialName +'Share']" target="_blank"></a>
 					</div>
-					<span class="cff-post-item-action-txt" @click.prevent.default="$parent.$parent.toggleSocialShareTooltip(singlePost.id)">{{customizerFeedData.settings.sharelinktext}}</span>
+					<span class="cff-post-item-action-txt" @click.prevent.default="$parent.$parent.toggleSocialShareTooltip(singlePost.id)" v-html="$parent.$parent.checkNotEmpty(customizerFeedData.settings.sharelinktext ) ? customizerFeedData.settings.sharelinktext : translatedText.translations.cff_facebook_share_text"></span>
 				</span>
 			</div>
 		</div>
@@ -157,14 +157,14 @@
 	<div class="cff-post-event-detail cff-fb-fs"  v-if="customizerFeedData.settings.feedtype == 'events' || (singlePost.status_type == 'created_event' && $parent.$parent.hasOwnNestedProperty(singlePost, 'owner'))">
 		<p class="cff-post-event-date cff-fb-fs" v-if="customizerFeedData.settings.eventdatepos == 'above'">
 			<span class="cff-post-event-start-date" v-if="$parent.$parent.hasOwnNestedProperty(singlePost, 'start_time')" v-html="$parent.$parent.printDate(singlePost.start_time, true)"></span>
-			<span class="cff-post-event-end-date" v-if="$parent.$parent.hasOwnNestedProperty(singlePost, 'end_time')" v-html="'-' + $parent.$parent.printDate(singlePost.end_time, true)"></span>
+			<span class="cff-post-event-end-date" v-if="$parent.$parent.hasOwnNestedProperty(singlePost, 'end_time')" v-html="'-' + $parent.$parent.printEventEndDate(singlePost.start_time, singlePost.end_time)"></span>
 		</p>
 		<p class="cff-post-event-title cff-fb-fs" v-if="customizerFeedData.settings.include.includes('eventtitle')">
 			<a :href="'https://facebook.com/events/'+singlePost.id" target="_blank" v-html="singlePost.name"></a>
 		</p>
 		<p class="cff-post-event-date cff-fb-fs" v-if="customizerFeedData.settings.eventdatepos == 'below'">
 			<span class="cff-post-event-start-date" v-if="$parent.$parent.hasOwnNestedProperty(singlePost, 'start_time')" v-html="$parent.$parent.printDate(singlePost.start_time, true)"></span>
-			<span class="cff-post-event-end-date" v-if="$parent.$parent.hasOwnNestedProperty(singlePost, 'end_time')" v-html="'-' + $parent.$parent.printDate(singlePost.end_time, true)"></span>
+			<span class="cff-post-event-end-date" v-if="$parent.$parent.hasOwnNestedProperty(singlePost, 'end_time')" v-html="'-' + $parent.$parent.printEventEndDate(singlePost.start_time, singlePost.end_time)"></span>
 		</p>
 
 		<p class="cff-post-event-location cff-fb-fs" v-if="$parent.$parent.hasOwnNestedProperty(singlePost, 'place') && customizerFeedData.settings.include.includes('eventdetails')">
@@ -185,7 +185,7 @@
 	<article class="cff-post-item-ctn" v-if="$parent.checkShowPost(singlePost)" :data-post-layout="customizerFeedData.settings.layout" :data-post-type="$parent.getPostTypeTimeline(singlePost)">
 		<div class="cff-post-item-content cff-fb-fs">
 			<cff-post-author-component :single-post="singlePost" :customizer-feed-data="customizerFeedData"></cff-post-author-component>
-			<div class="cff-post-item-text cff-fb-fs" v-if="customizerFeedData.settings.mediaposition == 'below'">
+			<div class="cff-post-item-text cff-fb-fs" v-if="customizerFeedData.settings.mediaposition == 'below' || $parent.getPostTypeTimeline(singlePost) == 'links'">
 				<cff-post-event-detail-component :single-post="singlePost" :customizer-feed-data="customizerFeedData"></cff-post-event-detail-component>
 				<span v-html="$parent.expandedPostText.includes(singlePost.id) ? $parent.printPostText( singlePost, true ) : $parent.printPostText( singlePost )" v-if="customizerFeedData.settings.include.includes('text')"></span>
 				<span class="cff-post-item-text-expand" v-if="singlePost.message && singlePost.message.length > customizerFeedData.settings.textlength && customizerFeedData.settings.include.includes('text')">
@@ -194,7 +194,7 @@
 			</div>
 			<cff-post-media-component :single-post="singlePost" :customizer-feed-data="customizerFeedData"></cff-post-media-component>
 			<cff-iframe-media-component v-if="$parent.processIframeAndLinkAndVideo( singlePost ) !== false" :single-post="singlePost" :postmedia="$parent.processIframeAndLinkAndVideo( singlePost )" :customizer-feed-data="customizerFeedData"></cff-iframe-media-component>
-			<div class="cff-post-item-text cff-fb-fs" v-if="customizerFeedData.settings.mediaposition == 'above'">
+			<div class="cff-post-item-text cff-fb-fs" v-if="customizerFeedData.settings.mediaposition == 'above' && $parent.getPostTypeTimeline(singlePost) != 'links'">
 				<cff-post-event-detail-component :single-post="singlePost" :customizer-feed-data="customizerFeedData"></cff-post-event-detail-component>
 				<span v-html="$parent.expandedPostText.includes(singlePost.id) ? $parent.printPostText( singlePost, true ) : $parent.printPostText( singlePost )" v-if="customizerFeedData.settings.include.includes('text')"></span>
 				<span class="cff-post-item-text-expand" v-if="singlePost.message && singlePost.message.length > customizerFeedData.settings.textlength && customizerFeedData.settings.include.includes('text')">

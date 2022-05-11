@@ -5,7 +5,6 @@ namespace DynamicContentForElementor;
 use Elementor\Controls_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module as Elementor_Ajax;
 use Elementor\Widget_Base;
-use Elementor\Core\Base\Module;
 use Elementor\TemplateLibrary\Source_Local;
 if (!\defined('ABSPATH')) {
     exit;
@@ -14,10 +13,6 @@ class Ajax
 {
     public $query_control;
     public function __construct()
-    {
-        $this->init();
-    }
-    public function init()
     {
         add_action('wp_ajax_wpa_update_postmetas', array($this, 'wpa_update_postmetas'));
         add_action('wp_ajax_wpa_update_options', array($this, 'wpa_update_options'));
@@ -39,7 +34,7 @@ class Ajax
         add_action('wp_ajax_dce_add_to_favorites', [$this, 'add_to_favorites']);
         add_action('wp_ajax_nopriv_dce_add_to_favorites', [$this, 'add_to_favorites']);
         // Ajax Select2 autocomplete
-        $this->query_control = new \DynamicContentForElementor\Modules\QueryControl\QueryControl();
+        $this->query_control = new \DynamicContentForElementor\Modules\QueryControl\Module();
     }
     public function add_to_favorites()
     {
@@ -177,7 +172,7 @@ class Ajax
                 if ($post_id) {
                     $settings = \DynamicContentForElementor\Helper::get_settings_by_id($element_id, $post_id);
                     if (isset($settings['enabled_visibility']) && $settings['enabled_visibility']) {
-                        if (\DynamicContentForElementor\Extensions\DCE_Extension_Visibility::is_hidden($settings)) {
+                        if (\DynamicContentForElementor\Extensions\DynamicVisibility::is_hidden($settings)) {
                             \DynamicContentForElementor\Helper::set_settings_by_id($element_id, 'enabled_visibility', null, $post_id);
                         } else {
                             \DynamicContentForElementor\Helper::set_settings_by_id($element_id, 'dce_visibility_hidden', 'yes', $post_id);
@@ -203,7 +198,7 @@ class Ajax
                 $post_id = \intval($_REQUEST['post_id']);
                 $settings = \DynamicContentForElementor\Helper::get_settings_by_id($element_id, $post_id);
                 if (isset($settings['enabled_visibility']) && $settings['enabled_visibility']) {
-                    if (\DynamicContentForElementor\Extensions\DCE_Extension_Visibility::is_hidden($settings)) {
+                    if (\DynamicContentForElementor\Extensions\DynamicVisibility::is_hidden($settings)) {
                         echo $element_id;
                         wp_die();
                     }

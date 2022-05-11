@@ -13,7 +13,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_Clipboard extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class CopyToClipboard extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public function get_script_depends()
     {
@@ -23,22 +23,12 @@ class DCE_Widget_Clipboard extends \DynamicContentForElementor\Widgets\WidgetPro
     {
         return ['dce-copy-to-clipboard'];
     }
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->_register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function _register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $this->start_controls_section('section_button', ['label' => __('Button', 'dynamic-content-for-elementor')]);
         $this->add_control('button_type', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Default', 'dynamic-content-for-elementor'), 'info' => __('Info', 'dynamic-content-for-elementor'), 'success' => __('Success', 'dynamic-content-for-elementor'), 'warning' => __('Warning', 'dynamic-content-for-elementor'), 'danger' => __('Danger', 'dynamic-content-for-elementor')], 'prefix_class' => 'elementor-button-']);
@@ -128,7 +118,7 @@ class DCE_Widget_Clipboard extends \DynamicContentForElementor\Widgets\WidgetPro
         $this->add_control('dce_clipboard_btn_hide', ['label' => __('Button Visibility', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'default' => '1', 'options' => ['1' => ['title' => __('Always visible', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-square'], '0' => ['title' => __('On Hover', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-square-o']], 'toggle' => \false, 'selectors' => ['{{WRAPPER}} .dce-clipboard-wrapper .elementor-button' => 'opacity: {{VALUE}}; z-index: 3;', '{{WRAPPER}} .dce-clipboard-wrapper:hover .elementor-button' => 'opacity: 1;', '{{WRAPPER}} .dce-clipboard-wrapper .elementor-button.animated' => 'opacity: 1;'], 'render_type' => 'template', 'condition' => ['dce_clipboard_btn_position' => 'absolute']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         $this->add_render_attribute('wrapper', 'class', 'dce-clipboard-wrapper');
@@ -147,10 +137,10 @@ class DCE_Widget_Clipboard extends \DynamicContentForElementor\Widgets\WidgetPro
             wp_enqueue_script('wp-codemirror');
             wp_enqueue_code_editor(array('type' => $settings['dce_clipboard_code_type'], 'codemirror' => array('indentUnit' => 2, 'tabSize' => 2)));
             if ($settings['dce_clipboard_code_type']) {
-                wp_enqueue_script('dce-codemirror-mode', DCE_URL . 'assets/lib/codemirror/mode/' . $settings['dce_clipboard_code_type'] . '/' . $settings['dce_clipboard_code_type'] . '.js', '', DCE_VERSION);
+                wp_enqueue_script('dce-codemirror-mode', DCE_URL . 'assets/lib/codemirror/mode/' . $settings['dce_clipboard_code_type'] . '/' . $settings['dce_clipboard_code_type'] . '.js', [], DCE_VERSION);
             }
             if ($settings['dce_clipboard_code_theme']) {
-                wp_enqueue_style('dce-codemirror-theme', DCE_URL . 'assets/lib/codemirror/theme/' . $settings['dce_clipboard_code_theme'] . '.css', '', DCE_VERSION);
+                wp_enqueue_style('dce-codemirror-theme', DCE_URL . 'assets/lib/codemirror/theme/' . $settings['dce_clipboard_code_theme'] . '.css', [], DCE_VERSION);
             }
         }
         $this->add_render_attribute('button', 'class', 'elementor-button');
@@ -184,7 +174,7 @@ class DCE_Widget_Clipboard extends \DynamicContentForElementor\Widgets\WidgetPro
 			<?php 
         if ($settings['dce_clipboard_type'] == 'text') {
             $this->add_render_attribute('input', 'type', 'text');
-            $this->add_render_attribute('input', 'value', Helper::get_dynamic_value($settings['dce_clipboard_text']));
+            $this->add_render_attribute('input', 'value', $settings['dce_clipboard_text']);
             $this->add_render_attribute('input', 'class', 'dce-form-control');
             ?>
 				<?php 
@@ -225,7 +215,7 @@ class DCE_Widget_Clipboard extends \DynamicContentForElementor\Widgets\WidgetPro
 				<textarea <?php 
             echo $this->get_render_attribute_string('input');
             ?>><?php 
-            echo $settings['dce_clipboard_type'] == 'textarea' ? Helper::get_dynamic_value($settings['dce_clipboard_textarea']) : $settings['dce_clipboard_code'];
+            echo $settings['dce_clipboard_type'] == 'textarea' ? $settings['dce_clipboard_textarea'] : $settings['dce_clipboard_code'];
             ?></textarea>
 			<?php 
         }
@@ -245,10 +235,10 @@ class DCE_Widget_Clipboard extends \DynamicContentForElementor\Widgets\WidgetPro
             echo $settings['dce_clipboard_code_type'];
             ?>',
 							readOnly: <?php 
-            echo $settings['dce_clipboard_readonly'] ? 'true' : 'false';
+            echo !empty($settings['dce_clipboard_readonly']) ? 'true' : 'false';
             ?>,
 							theme: '<?php 
-            echo $settings['dce_clipboard_code_theme'] ? $settings['dce_clipboard_code_theme'] : 'default';
+            echo !empty($settings['dce_clipboard_code_theme']) ? $settings['dce_clipboard_code_theme'] : 'default';
             ?>',
 						}
 					);

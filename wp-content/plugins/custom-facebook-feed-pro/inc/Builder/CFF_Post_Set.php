@@ -181,7 +181,7 @@ class CFF_Post_Set {
 		);
 
 		foreach ( $settings_with_multiples as $array_setting ) {
-			if ( is_array( $builder_settings[ $array_setting ] ) ) {
+			if ( is_array( $builder_settings ) && is_array( $builder_settings[ $array_setting ] ) ) {
 				$builder_settings[ $array_setting ] = implode( ',', $builder_settings[ $array_setting ] );
 			}
 		}
@@ -243,10 +243,10 @@ class CFF_Post_Set {
 
 		if ( empty( $builder_settings['pagetoken'] )
 		     || (is_array( $builder_settings['pagetoken'] ) && empty( $builder_settings['pagetoken'][0]) ) ) {
-			$builder_settings['pagetoken'] = $builder_settings['accesstoken'];
+			$builder_settings['pagetoken'] = ! empty( $builder_settings['accesstoken'] ) ? $builder_settings['accesstoken'] : '';
 		}
 
-		if ( $builder_settings['feedtype'] === 'reviews' ) {
+		if ( ! empty( $builder_settings['feedtype'] ) && $builder_settings['feedtype'] === 'reviews' ) {
 			$builder_settings['type'] = 'review';
 		}
 

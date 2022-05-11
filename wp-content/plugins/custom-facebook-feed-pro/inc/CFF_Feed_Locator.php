@@ -585,7 +585,7 @@ class CFF_Feed_Locator{
 		if ( ! isset( $_POST['feed_id'] )  ) {
 			die( 'invalid feed ID');
 		}
-		$feed_id = sanitize_text_field( $_POST['feed_id'] );
+		$feed_id = sanitize_text_field( wp_unslash( $_POST['feed_id'] ) );
 		$atts_raw = isset( $_POST['atts'] ) ? json_decode( stripslashes( $_POST['atts'] ), true ) : array();
 		if ( is_array( $atts_raw ) ) {
 			array_map( 'sanitize_text_field', $atts_raw );
@@ -594,8 +594,8 @@ class CFF_Feed_Locator{
 		}
 		$atts = $atts_raw; // now sanitized
 
-		$location = isset( $_POST['location'] ) && in_array( $_POST['location'], array( 'header', 'footer', 'sidebar', 'content' ), true ) ? sanitize_text_field( $_POST['location'] ) : 'unknown';
-		$post_id = isset( $_POST['post_id'] ) && $_POST['post_id'] !== 'unknown' ? (int)$_POST['post_id'] : 'unknown';
+		$location = isset( $_POST['location'] ) && in_array( $_POST['location'], array( 'header', 'footer', 'sidebar', 'content' ), true ) ? sanitize_text_field( wp_unslash( $_POST['location'] ) ) : 'unknown';
+		$post_id = isset( $_POST['post_id'] ) && $_POST['post_id'] !== 'unknown' ? (int)sanitize_text_field( wp_unslash($_POST['post_id'])) : 'unknown';
 		$feed_details = array(
 			'feed_id' => $feed_id,
 			'atts' => $atts,

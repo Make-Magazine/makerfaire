@@ -6,10 +6,17 @@ use Closure;
 use ReflectionFunction;
 use DynamicOOOS\TelegramBot\Api\Events\EventCollection;
 use DynamicOOOS\TelegramBot\Api\Types\Update;
+use DynamicOOOS\TelegramBot\Api\Types\Message;
+use DynamicOOOS\TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
+use DynamicOOOS\TelegramBot\Api\Types\ReplyKeyboardRemove;
+use DynamicOOOS\TelegramBot\Api\Types\ForceReply;
+use DynamicOOOS\TelegramBot\Api\Types\ReplyKeyboardHide;
+use DynamicOOOS\TelegramBot\Api\Types\ReplyKeyboardMarkup;
 /**
  * Class Client
  *
  * @package TelegramBot\Api
+ * @method Message editMessageText(string $chatId, int $messageId, string $text, string $parseMode = null, bool $disablePreview = false, ReplyKeyboardMarkup|ReplyKeyboardHide|ForceReply|ReplyKeyboardRemove|InlineKeyboardMarkup|null $replyMarkup = null, string $inlineMessageId = null)
  */
 class Client
 {

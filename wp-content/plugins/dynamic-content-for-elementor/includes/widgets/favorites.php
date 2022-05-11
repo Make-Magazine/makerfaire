@@ -9,7 +9,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class ShowFavorites extends \DynamicContentForElementor\Widgets\DCE_Widget_DynamicPosts_Base
+class ShowFavorites extends \DynamicContentForElementor\Widgets\DynamicPostsBase
 {
     public function get_name()
     {
@@ -21,14 +21,20 @@ class ShowFavorites extends \DynamicContentForElementor\Widgets\DCE_Widget_Dynam
         $this->add_skin(new Skins\Show_Favorites_Skin_Grid_Filters($this));
         $this->add_skin(new Skins\Show_Favorites_Skin_Carousel($this));
         $this->add_skin(new Skins\Show_Favorites_Skin_DualCarousel($this));
+        $this->add_skin(new Skins\Show_Favorites_Skin_Accordion($this));
         $this->add_skin(new Skins\Show_Favorites_Skin_Timeline($this));
         $this->add_skin(new Skins\Show_Favorites_Skin_3D($this));
         $this->add_skin(new Skins\Show_Favorites_Skin_Gridtofullscreen3d($this));
         $this->add_skin(new Skins\Show_Favorites_Skin_CrossroadsSlideshow($this));
     }
-    protected function _register_controls()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
-        parent::_register_controls();
+        parent::safe_register_controls();
         $this->update_control('query_type', ['type' => Controls_Manager::HIDDEN, 'default' => 'favorites']);
     }
 }

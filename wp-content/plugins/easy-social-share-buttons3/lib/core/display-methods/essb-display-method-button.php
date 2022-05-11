@@ -22,7 +22,7 @@ if (!function_exists('essb5_generate_share_button')) {
 		$button_position = essb_option_value('sharebutton_position');
 		$button_total = essb_option_bool_value('sharebutton_total');
 		$button_icon = essb_option_value('sharebutton_icon');
-		
+				
 		if ($button_icon == '') {
 			$button_icon = 'share';
 		}
@@ -102,6 +102,13 @@ if (!function_exists('essb5_generate_share_button')) {
 		
 		$button_window_title = essb_option_value('sharebutton_window_title');
 		$button_user_message = essb_option_value('sharebutton_user_message');
+		
+		/**
+		 * @since 8.2.3
+		 * New fields in the settings to customize the window width and height
+		 */
+		$sharebutton_win_width = essb_option_value('sharebutton_win_width');
+		$sharebutton_win_height = essb_option_value('sharebutton_win_height');
 
 		$salt = mt_rand();
 		// Generating the share button that will appear on screen
@@ -140,7 +147,7 @@ if (!function_exists('essb5_generate_share_button')) {
 		}
 		
 				
-		$output .= '<div class="essb-share-button-window essb-windowcs-'.$salt.' essb-bl-'.esc_attr($button_position).'">';
+		$output .= '<div class="essb-share-button-window essb-windowcs-'.$salt.' essb-bl-'.esc_attr($button_position).'"'.(!empty($sharebutton_win_width) ? ' data-width="'.$sharebutton_win_width.'"' : '').(!empty($sharebutton_win_height) ? ' data-height="'.$sharebutton_win_height.'"' : '').'>';
 		$output .= '<a href="#" class="essb-share-button-close" onclick="essb.sharebutton_close(\''.$salt.'\'); return false;"></a>';
 		$output .= '<div class="inner-content">';
 		

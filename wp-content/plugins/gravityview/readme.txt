@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 5.8
+Tested up to: 5.9.3
 Requires PHP: 5.6.30
 Stable tag: trunk
 Contributors: The GravityView Team
@@ -20,6 +20,97 @@ Beautifully display your Gravity Forms entries. Learn more on [gravityview.co](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.14.5 on May 4, 2022 =
+
+* Added: A link that allows administrators to disable the "Show only approved entries" View setting from the front-end
+* Fixed: Configuring new Search Bar WordPress widgets wasn't working in WordPress 5.8+
+* Fixed: Styling of form settings dropdowns on the Gravity Forms "Forms" page
+
+= 2.14.4 on April 27, 2022 =
+
+* Added: Search Bar support for the [Chained Selects](https://www.gravityforms.com/add-ons/chained-selects/) field type
+* Improved: Plugin updater script now supports auto-updates and better supports multisite installations
+* Improved: If a View does not support joined forms, log as a notice, not an error
+* Fixed: Merge Tag picker behavior when using Gravity Forms 2.6
+* Fixed: Deleting a file when editing an entry as a non-administrator user on Gravity Forms 2.6.1 results in a server error
+* Fixed: When The Events Calendar Pro plugin is active, Views became un-editable
+* Tweak: Additional translation strings related to View editing
+
+Note: We will be requiring Gravity Forms 2.5 and WordPress 5.3 in the near future; please upgrade!
+
+__Developer Updates:__
+
+* Added: Search URLs now support `input_{field ID}` formats as well as `filter_{field ID}`; the following will both be treated the same:
+	- `/view/example/?filter_3=SEARCH`
+	- `/view/example/?input_3=SEARCH`
+* Added: In the admin, CSS classes are now added to the `body` tag based on Gravity Forms version. See `GravityView_Admin_Views::add_gf_version_css_class()`
+* Modified: Allow non-admin users with "edit entry" permissions to delete uploaded files
+* Updated: EDD_SL_Plugin_Updater script to version 1.9.1
+
+= 2.14.3 on March 24, 2022 =
+
+* Added: Support for displaying WebP images
+* Improved: Internal logging of notices and errors
+* Fixed: Images hosted on Dropbox sometimes would not display properly on the Safari browser. Thanks, Kevin M. Dean!
+
+__Developer Updates:__
+
+* Added: `GravityView_Image::get_image_extensions()` static method to fetch full list of extension types interpreted as images by GravityView.
+* Added: `webp` as a valid image extension
+
+= 2.14.2.1 on March 11, 2022 =
+
+* Fixed: Empty values in search widget fields may return incorrect results
+
+__Developer Updates:__
+
+* Added: `gravityview/search/ignore-empty-values` filter to control strict matching of empty field values
+
+= 2.14.2 on March 10, 2022 =
+
+* Fixed: Potential fatal error on PHP 8 when exporting View entries in CSV and TSV formats
+* Fixed: Search widget would cause a fatal error when the Number field is used with the "is" operator
+* Fixed: Search widget returning incorrect results when a field value is blank and the operator is set to "is"
+* Fixed: Gravity Forms widget icon not showing
+* Fixed: Gravity Forms widget not displaying available forms when the View is saved
+
+= 2.14.1 on January 25, 2022 =
+
+* Tested with WordPress 5.9
+* Improved: The [Members plugin](https://wordpress.org/plugins/members/) now works with No-Conflict Mode enabled
+* Improved: Performance when saving Views with many fields
+* Improved: Performance when loading the Edit View screen when a View has many fields
+* Fixed: Gravity Forms widget used in the View editor would initialize on all admin pages
+* Fixed: PHP notice when editing an entry in Gravity Forms that was created by user that no longer exists
+* Fixed: Error activating on sites that use the Danish language
+* Fixed: Entry approval scripts not loading properly when using Full Site Editing themes in WordPress 5.9
+* Updated: TrustedLogin client to Version 1.2, which now supports logins for WordPress Multisite installations
+* Updated: Polish translation. Thanks, Dariusz!
+
+__Developer Updates:__
+
+* Modified: Refactored drag & drop in the View editor to improve performance: we only initialize drag & drop on the active tab instead of globally.
+	* Added: `gravityview/tab-ready` jQuery trigger to `body` when each GravityView tab is ready (drag & drop initialized). [See example of binding to this event](https://gist.github.com/zackkatz/a2844e9f6b68879e79ba7d6f66ba0850).
+
+= 2.14.0.1 on December 30, 2021 =
+
+Fixed: Deprecated filter message when adding fields to the View
+
+= 2.14 on December 21, 2021 =
+
+This would be a minor version update (2.13.5), except that we renamed many functions. See "Developer Updates" for this release below.
+
+* Added: `{is_starred}` Merge Tag. [Learn more about using `{is_starred}`](https://docs.gravityview.co/article/820-the-isstarred-merge-tag)
+* Fixed: Media files uploaded to Dropbox were not properly embedded
+* Fixed: JavaScript error when trying to edit entry's creator
+* Fixed: Recent Entries widget would cause a fatal error on WP 5.8 or newer
+* Fixed: When using Multiple Forms, editing an entry in a joined form now works properly if the "Edit Entry" tab has not been configured
+* Fixed: View settings not hiding automatically on page load
+
+__Developer Updates:__
+
+We renamed all instances of `blacklist` to `blocklist` and `whitelist` to `allowlist`. All methods and filters have been deprecated using `apply_filters_deprecated()` and `_deprecated_function()`. [See a complete list of modified methods and filters](https://docs.gravityview.co/article/816-renamed-filters-methods-in-2-14).
 
 = 2.13.4 on November 4, 2021 =
 
@@ -2513,4 +2604,4 @@ We're just getting started with what can be done with DataTables. We'll have muc
 * Liftoff!
 
 
-= 1639768091-4249 =
+= 1652293946-4249 =

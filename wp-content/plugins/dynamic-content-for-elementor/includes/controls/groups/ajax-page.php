@@ -10,7 +10,7 @@ if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly.
 }
-class DCE_Group_Control_Ajax_Page extends Group_Control_Base
+class Group_Control_Ajax_Page extends Group_Control_Base
 {
     protected static $fields;
     protected static $control_id;
@@ -34,7 +34,7 @@ class DCE_Group_Control_Ajax_Page extends Group_Control_Base
         $fields['enabled'] = ['label' => __('Ajax Page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'open', 'frontend_available' => \true, 'prefix_class' => 'ajax-'];
         $fields['change_url'] = ['label' => __('Force URL update', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'return_value' => 'yes', 'frontend_available' => \true, 'condition' => ['enabled' => 'open']];
         $fields['template'] = ['label' => __('Select Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'frontend_available' => \true, 'condition' => ['enabled' => 'open']];
-        $fields['animations_heading_modal'] = ['label' => __('Animation MODAL', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['enabled' => 'open']];
+        $fields['animations_heading_modal'] = ['label' => __('Animation Modal', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['enabled' => 'open']];
         $fields['animation_open_modal'] = ['label' => _x('Enter modal from', 'Animation Control', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'enterFromRight', 'options' => self::get_anim_open(), 'condition' => ['enabled' => 'open'], 'selectors' => ['body.modal-p-on.modal-p-{{ID}} .wrap-p .modal-p' => 'animation-name: {{VALUE}}; -webkit-animation-name: {{VALUE}};']];
         $fields['animation_close_modal'] = ['label' => _x('Close modal to', 'Animation Control', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'exitToRight', 'options' => self::get_anim_close(), 'condition' => ['enabled' => 'open'], 'selectors' => ['body.modal-p-off.modal-p-{{ID}} .wrap-p .modal-p' => 'animation-name: {{VALUE}}; -webkit-animation-name: {{VALUE}};']];
         $fields['animations_timingFunction_heading_modal'] = ['label' => __('Timing Function', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'condition' => ['enabled' => 'open']];
@@ -43,7 +43,7 @@ class DCE_Group_Control_Ajax_Page extends Group_Control_Base
         $fields['animations_time_heading_modal'] = ['label' => __('Time', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'condition' => ['enabled' => 'open']];
         $fields['duration_modal'] = ['label' => _x('Duration', 'Animation Control', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => 's', 'size' => 0.7], 'range' => ['s' => ['min' => 0, 'max' => 10, 'step' => 0.1]], 'size_units' => ['s'], 'selectors' => ['body.modal-p-{{ID}} .wrap-p .modal-p' => 'animation-duration: {{SIZE}}{{UNIT}}; -webkit-animation-duration: {{SIZE}}{{UNIT}};'], 'condition' => ['enabled' => 'open']];
         $fields['delay_modal'] = ['label' => _x('Enter delay', 'Animation Control', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['unit' => 's', 'size' => 0], 'range' => ['s' => ['min' => 0, 'max' => 10, 'step' => 0.1]], 'size_units' => ['s'], 'selectors' => ['body.modal-p-on.modal-p-{{ID}} .wrap-p .modal-p' => 'animation-delay: {{SIZE}}{{UNIT}}; -webkit-animation-delay: {{SIZE}}{{UNIT}};'], 'condition' => ['enabled' => 'open'], 'separator' => 'after'];
-        $fields['animations_heading_body'] = ['label' => __('Animation BODY', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['enabled' => 'open']];
+        $fields['animations_heading_body'] = ['label' => __('Animation Body', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['enabled' => 'open']];
         $fields['animation_close_body'] = ['label' => _x('Exit body to', 'Animation Control', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'exitToLeft', 'options' => self::get_anim_close(), 'condition' => ['enabled' => 'open'], 'selectors' => ['body.modal-p-on.modal-p-{{ID}} #dce-wrap' => 'animation-name: {{VALUE}}; -webkit-animation-name: {{VALUE}};']];
         $fields['animation_open_body'] = ['label' => _x('Return body from', 'Animation Control', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'enterFromLeft', 'options' => self::get_anim_open(), 'condition' => ['enabled' => 'open'], 'selectors' => ['body.modal-p-off.modal-p-{{ID}} #dce-wrap' => 'animation-name: {{VALUE}}; -webkit-animation-name: {{VALUE}};']];
         $fields['animations_timingFunction_heading_body'] = ['label' => __('Timing Function', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'condition' => ['enabled' => 'open']];

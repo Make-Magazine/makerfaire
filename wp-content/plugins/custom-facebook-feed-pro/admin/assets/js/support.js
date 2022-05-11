@@ -60,6 +60,13 @@ var cffsupport = new Vue({
         expandSystemInfo: function() {
             this.systemInfoBtnStatus = ( this.systemInfoBtnStatus == 'collapsed' ) ? 'expanded' : 'collapsed';
         },
+        expandBtnArrow: function() {
+            if ( this.systemInfoBtnStatus == 'collapsed' ) {
+                return this.icons.downAngle;
+            } else if ( this.systemInfoBtnStatus == 'expanded' ) {
+                return this.icons.upAngle;
+            }
+        },
         expandBtnText: function() {
             if ( this.systemInfoBtnStatus == 'collapsed' ) {
                 return this.buttons.expand;
@@ -73,7 +80,7 @@ var cffsupport = new Vue({
                 return;
             }
 
-            let url = this.ajax_handler + '?action=cff_export_settings_json&feed_id=' + this.exportFeed;
+            let url = this.ajax_handler + '?action=cff_export_settings_json&feed_id=' + this.exportFeed + '&nonce=' + this.nonce;
             window.location = url;
         },
         searchDoc: function() {
@@ -112,7 +119,7 @@ var cffsupport = new Vue({
         },
         /**
          * Toggle Sticky Widget view
-         * 
+         *
          * @since 4.0
          */
          toggleStickyWidget: function() {

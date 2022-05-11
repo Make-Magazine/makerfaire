@@ -165,6 +165,8 @@
 				.on( 'dblclick', ".gv-fields:not(.gv-nonexistent-form-field)", vcfg.openFieldSettings )
 
 				// Update checkbox visibility when having dependency checkboxes
+				.on( 'gravityview/loaded', vcfg.toggleCheckboxes )
+
 				.on( 'change', ".gv-setting-list, #gravityview_settings, .gv-dialog-options", vcfg.toggleCheckboxes )
 
 				.on( 'change', "#gravityview_settings", vcfg.zebraStripeSettings )
@@ -254,6 +256,23 @@
 			if( gvGlobals.passed_form_id ) {
 				vcfg.gvSelectForm.trigger( 'change' );
 			}
+
+			// Enable inserting GF merge tags into WP's CodeMirror
+			var _sendToEditor = window.send_to_editor;
+
+			window.send_to_editor = function ( val ) {
+				var $el = $( '#' + window.wpActiveEditor );
+
+				if ( !$el.hasClass( 'codemirror' ) && _sendToEditor ) {
+					return _sendToEditor( val );
+				}
+
+				var codeMirror = $el.next( '.CodeMirror' )[ 0 ].CodeMirror;
+				var cursorPosition = codeMirror.getCursor();
+				codeMirror.replaceRange( val, window.wp.CodeMirror.Pos( cursorPosition.line, cursorPosition.ch ) );
+			};
+
+			$( 'div .gform-dropdown__trigger' ).on( 'click.gravityforms', vcfg.sendMergeTagValueToCodemirrorEditor );
 		},
 
 		getCookieVal: function ( cookie ) {
@@ -854,8 +873,9 @@
 					vcfg.setupFieldDetails( thisDialog );
 					vcfg.setupCodeMirror( thisDialog );
 
-					$( '#directory-fields, #single-fields' ).find( ".active-drop-widget" ).sortable( 'disable' );
-					$( '#directory-fields, #single-fields, #edit-fields' ).find( ".active-drop-field" ).sortable('disable');
+					$( '.ui-widget-content[aria-hidden="false"]' )
+						.find( ".active-drop-widget" ).sortable( 'disable' ).end()
+						.find( ".active-drop-field" ).sortable('disable');
 
 					return true;
 				},
@@ -881,8 +901,9 @@
 						$( this ).remove();
 					} );
 
-					$( '#directory-fields, #single-fields' ).find( ".active-drop-widget" ).sortable( 'enable' );
-					$( '#directory-fields, #single-fields, #edit-fields' ).find( ".active-drop-field" ).sortable('enable');
+					$( '.ui-widget-content[aria-hidden="false"]' )
+						.find( ".active-drop-widget" ).sortable( 'enable' ).end()
+						.find( ".active-drop-field" ).sortable('enable');
 
 					$( 'body' ).trigger( 'gravityview/dialog-closed', thisDialog );
 				},
@@ -899,6 +920,7 @@
 		 * @param {jQuery} dialog
 		 */
 		setupCodeMirror: function ( dialog ) {
+			var vcfg = viewConfiguration;
 
 			$( 'textarea.code', dialog ).each( function () {
 				var editor = wp.codeEditor.initialize( $( this ), {
@@ -914,7 +936,9 @@
 				var initialEditorCursorPos = editor.codemirror.getCursor();
 
 				// Move merge tag before before CodeMirror in DOM to fix floating issue
-				$textarea.parent().find( '.all-merge-tags' ).insertBefore( $textarea );
+				$textarea.parent().find( '.all-merge-tags' ).detach().insertBefore( $textarea );
+
+				$textarea.parent().find( 'div .gform-dropdown__trigger' ).on( 'click.gravityforms', vcfg.sendMergeTagValueToCodemirrorEditor );
 
 				// Set up Merge Tag autocomplete
 				$textarea.autocomplete( {
@@ -995,6 +1019,27 @@
 		},
 
 		/**
+		 * Event handler that inserts the merge tag value (data-value property) to WP's CodeMirror
+		 *
+		 * @since 2.14.4
+		 * @param {jQueryEvent} e
+		 */
+		sendMergeTagValueToCodemirrorEditor: function ( e ) {
+			// Always make sure the active editor is set.
+			// This can also be overridden by other plugins (like Members), so make a backup.
+			var _activeEditorBackup = window.wpActiveEditor;
+
+			window.wpActiveEditor = $( e.currentTarget ).parentsUntil( '.gv-setting-container' ).find( 'textarea' ).attr( 'id' );
+
+			if ( window.wpActiveEditor ) {
+				window.send_to_editor( $( this ).data( 'value' ) );
+			}
+
+			// Restore prior active editor
+			window.wpActiveEditor = _activeEditorBackup;
+		},
+
+		/**
 		 * When opening a dialog, restore the Field Details visibility based on cookie
 		 * @since 2.10
 		 * @param {jQuery} dialog
@@ -1048,10 +1093,13 @@
 		 * Toggle visibility for field details
 		 * @since 2.10
 		 * @param {jQuery}  $dialog The open dialog
-		 * @param {boolean} show_details Whether to show the field details or not
+		 * @param {boolean|string} show_details Whether to show the field details or not
 		 */
 		toggleFieldDetails: function ( $dialog, show_details ) {
-			$dialog
+
+			$parent = $dialog.parent();
+
+			$parent
 				.find( '.gv-field-details' ).toggleClass( 'gv-field-details--closed', ! show_details ).end()
 				.find( '.gv-field-details--toggle .dashicons' )
 				.toggleClass( 'dashicons-arrow-down', !! show_details )
@@ -1144,7 +1192,6 @@
 
 			viewGeneralSettings.metaboxObj.show();
 			viewConfiguration.toggleDropMessage();
-			viewConfiguration.init_droppables();
 			viewConfiguration.init_tooltips();
 
 			$( document ).trigger( 'gv_admin_views_showViewConfig' );
@@ -1466,6 +1513,11 @@
 
 		init_tooltips: function (el) {
 
+			// Already initialized.
+			if ( 0 === $( el || '.gv-add-field' ).not( ':ui-tooltip' ).length ) {
+				return;
+			}
+
 			$( el || ".gv-add-field" ).tooltip( {
 				show:    150,
 				hide:    200,
@@ -1786,9 +1838,16 @@
 		 * @since 1.22.1
 		 */
 		refresh_merge_tags: function() {
+			// GF 2.6+
+			if ( window.gform && window.gform.instances && window.gform.mergeTags ) {
+				// Remove existing merge tags, since otherwise GF will add another
+				$( '.all-merge-tags' ).remove();
 
-			// Remove existing merge tags, since otherwise GF will add another
-			$( '.all-merge-tags' ).remove();
+				// Until GF provides access to a method to initialize merge tags, we need to re-trigger the DOMContentLoaded event
+				document.dispatchEvent( new Event( 'DOMContentLoaded' ) );
+
+				return;
+			}
 
 			$merge_tag_supported = $('.merge-tag-support');
 
@@ -1797,12 +1856,12 @@
 
 				if ( window.gfMergeTags ) {
 
-					if ( gfMergeTags.hasOwnProperty('destroy') ) {
+					if ( gfMergeTags.hasOwnProperty( 'destroy' ) ) {
 
 						// 2.3 re-init
 						$merge_tag_supported.each( function () {
 							new gfMergeTagsObj( form, $( this ) );
-						});
+						} );
 
 					} else {
 
@@ -1846,12 +1905,17 @@
 		},
 
 		// Sortables and droppables
-		init_droppables: function () {
+		init_droppables: function ( panel ) {
+
+			// Already initialized.
+			if( $( panel ).find( ".active-drop-field" ).sortable( 'instance' ) ) {
+				return;
+			}
 
 			var vcfg = viewConfiguration;
 
 			// widgets
-			$( '#directory-fields, #single-fields' ).find( ".active-drop-widget" ).sortable( {
+			$( panel ).find( ".active-drop-widget" ).sortable( {
 				placeholder: "fields-placeholder",
 				items: '> .gv-fields',
 				distance: 2,
@@ -1879,17 +1943,17 @@
 			} );
 
 			//fields
-			$( '#directory-fields, #single-fields, #edit-fields' ).find( ".active-drop-field" ).sortable( {
+			$( panel ).find( ".active-drop-field" ).sortable( {
 				placeholder: "fields-placeholder",
 				items: '> .gv-fields',
 				distance: 2,
 				revert: 75,
 				connectWith: ".active-drop-field",
 				start: function( event, ui ) {
-					$( '#directory-fields, #single-fields, #edit-fields' ).find( ".active-drop-container-field" ).addClass('is-receivable');
+					$( panel ).find( ".active-drop-container-field" ).addClass('is-receivable');
 				},
 				stop: function( event, ui ) {
-					$( '#directory-fields, #single-fields, #edit-fields' ).find( ".active-drop-container-field" ).removeClass('is-receivable');
+					$( panel ).find( ".active-drop-container-field" ).removeClass('is-receivable');
 				},
 				receive: function ( event, ui ) {
 					// Check if field comes from another active area and if so, update name attributes.
@@ -2134,7 +2198,7 @@
 			$post.data( 'gv-valid', false );
 
 			if ( $post.data( 'gv-serialized' ) ) {
-				// Guard against double seralization/remove attempts
+				// Guard against double serialization/remove attempts
 				serialized_data = $post.data( 'gv-serialized' );
 			} else {
 				// Get all the fields where the `name` attribute start with `fields`
@@ -2143,21 +2207,23 @@
 				// Serialize the data
 				serialized_data = $fields.serialize();
 
-				// Remove the fields from the $_POSTed data
-				$fields.remove();
+				// Don't include the fields in the $_POSTed data
+				$fields.prop( 'disabled', true );
 
 				$post.data( 'gv-serialized', serialized_data );
 			}
 
-			// Add a field to the form that contains all the data.
-			$post.find( ':input[name=gv_fields]' ).remove();
+			// Also exclude these fields from $_POST...
+			$post.find( ':input[name=gv_fields]' ).prop( 'disabled', true );
+
+			// ...instead, add a single field to the form that contains all the data.
 			$post.append( $( '<input/>', {
 				'name': 'gv_fields',
 				'value': serialized_data,
 				'type': 'hidden'
 			} ) );
 
-			// make sure the "slow" browsers did append all the serialized data to the form
+			// Make sure slow browsers did append all the serialized data to the form
 			setTimeout( function () {
 
 				$post.data( 'gv-valid', true );
@@ -2431,11 +2497,22 @@
 			active: activate_tab,
 			hide: false,
 			show: false,
+			create: function ( event, ui ) {
+				viewConfiguration.init_droppables( ui.panel );
+
+				/** @since 2.14.1 */
+				$( 'body' ).trigger( 'gravityview/tab-ready', ui.panel );
+
+				$( 'body' ).trigger( 'gravityview/tabs-ready' );
+			},
 			activate: function ( event, ui ) {
 				// When the tab is activated, set a new cookie
 				$.cookie( cookie_key, ui.newTab.index(), { path: gvGlobals.cookiepath } );
 
-				$( 'body' ).trigger( 'gravityview/tabs-ready' );
+				viewConfiguration.init_droppables( ui.newPanel );
+
+				/** @since 2.14.1 */
+				$( 'body' ).trigger( 'gravityview/tab-ready', ui.newPanel );
 			}
 		} );
 
@@ -2448,22 +2525,4 @@
 		removeTooltips: viewConfiguration.remove_tooltips,
 		showDialog: viewConfiguration.showDialog,
 	};
-
-	// Enable inserting GF merge tags into WP's CodeMirror
-	$( window ).on( 'load', function() {
-		var _sendToEditor = window.send_to_editor;
-
-		window.send_to_editor = function( val ) {
-			var $el = $( '#' + window.wpActiveEditor );
-
-			if ( ! $el.hasClass( 'codemirror' ) ) {
-				return _sendToEditor( val );
-			}
-
-			var codeMirror = $el.next( '.CodeMirror' )[ 0 ].CodeMirror;
-			var cursorPosition = codeMirror.getCursor();
-			codeMirror.replaceRange( val, window.wp.CodeMirror.Pos( cursorPosition.line, cursorPosition.ch ) );
-		};
-	} );
-
 }(jQuery));

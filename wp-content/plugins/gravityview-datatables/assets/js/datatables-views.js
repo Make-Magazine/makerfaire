@@ -80,6 +80,14 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				}
 
 				var table = $( this ).DataTable( options );
+
+				// Init Auto Update
+				if( options.updateInterval && options.updateInterval > 0 ){
+					setInterval(function() {
+						table.ajax.reload();
+					}, ( options.updateInterval * 1 ) );
+				}
+
 				table
 				.on( 'draw.dt', function ( e, settings ) {
 					var api = new $.fn.dataTable.Api( settings );

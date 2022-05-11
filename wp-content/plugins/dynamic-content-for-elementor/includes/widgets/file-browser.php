@@ -3,42 +3,32 @@
 namespace DynamicContentForElementor\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
+use Elementor\Core\Schemes\Color as Scheme_Color;
+use Elementor\Core\Schemes\Typography as Scheme_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Box_Shadow;
-use DynamicContentForElementor\Controls\DCE_Group_Control_Filters_HSB;
+use DynamicContentForElementor\Controls\Group_Control_Filters_HSB;
 use DynamicContentForElementor\Helper;
 if (!\defined('ABSPATH')) {
     exit;
     // Exit if accessed directly
 }
-class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
+class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
     public $file_metadata = array();
     // save it in a hidden field in json, values only for this post
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
     public function get_style_depends()
     {
         return ['dce-filebrowser', 'dce-file-icon'];
     }
-    protected function _register_controls()
-    {
-        if (current_user_can('administrator') || !\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_content();
-        } elseif (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->register_controls_non_admin_notice();
-        }
-    }
-    protected function register_controls_content()
+    /**
+     * Register controls after check if this feature is only for admin
+     *
+     * @return void
+     */
+    protected function safe_register_controls()
     {
         $post_metas = array();
         $this->start_controls_section('section_filebrowser', ['label' => __('FileBrowser', 'dynamic-content-for-elementor')]);
@@ -131,7 +121,7 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('heading_folders_icon', ['label' => __('Icons', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_responsive_control('folder_icon_size', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 40], 'range' => ['px' => ['min' => 0, 'max' => 180]], 'selectors' => ['{{WRAPPER}} .dce-list .fiv-icon-folder' => 'font-size: {{SIZE}}{{UNIT}};']]);
         $this->add_responsive_control('folder_icon_space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => -50, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-list .fiv-icon-folder' => 'margin-right: {{SIZE}}{{UNIT}};']]);
-        $this->add_group_control(DCE_Group_Control_Filters_HSB::get_type(), ['name' => 'icon_hue_filters', 'label' => 'Color (HSB)', 'selector' => '{{WRAPPER}} .dce-list .fiv-icon-folder']);
+        $this->add_group_control(Group_Control_Filters_HSB::get_type(), ['name' => 'icon_hue_filters', 'label' => __('Color (HSB)', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-list .fiv-icon-folder']);
         $this->end_controls_section();
         $this->start_controls_section('section_style_subfolders', ['label' => __('Sub Folders', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('subfoldername_color', ['label' => __('Name Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} li.dir li.dir a .dce-dir-title' => 'color: {{VALUE}};']]);
@@ -146,7 +136,7 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('heading_subfolders_icon', ['label' => __('Icons', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_control('subfolder_icon_size', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 40], 'range' => ['px' => ['min' => 0, 'max' => 180]], 'selectors' => ['{{WRAPPER}} .dce-list li.dir li.dir .fiv-icon-folder' => 'font-size: {{SIZE}}{{UNIT}};']]);
         $this->add_control('subfolder_icon_space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => -50, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-list li.dir li.dir .fiv-icon-subfolder' => 'margin-right: {{SIZE}}{{UNIT}};']]);
-        $this->add_group_control(DCE_Group_Control_Filters_HSB::get_type(), ['name' => 'subf_icon_hue_filters', 'label' => 'Color (HSB)', 'selector' => '{{WRAPPER}} .dce-list li.dir li.dir .fiv-icon-folder']);
+        $this->add_group_control(Group_Control_Filters_HSB::get_type(), ['name' => 'subf_icon_hue_filters', 'label' => __('Color (HSB)', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-list li.dir li.dir .fiv-icon-folder']);
         $this->end_controls_section();
         $this->start_controls_section('section_style_files', ['label' => __('Files', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('filename_color', ['label' => __('Name Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} a.dce-file-download' => 'color: {{VALUE}};']]);
@@ -161,7 +151,7 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('heading_files_icon', ['label' => __('Icons', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_control('file_icon_size', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 40], 'range' => ['px' => ['min' => 10, 'max' => 180]], 'selectors' => ['{{WRAPPER}} .dce-list .dce-file-download .fiv-viv' => 'font-size: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .dce-list .dce-file-download .dce-img-icon' => 'width: {{SIZE}}{{UNIT}}; height: auto;', '{{WRAPPER}} .dce-list .dce-file-description' => 'margin-left: {{SIZE}}{{UNIT}};']]);
         $this->add_control('file_icon_space', ['label' => __('Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 10], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-list .dce-file-download .fiv-viv' => 'margin-right: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .dce-list .dce-file-download .dce-img-icon' => 'margin-right: {{SIZE}}{{UNIT}};']]);
-        $this->add_group_control(DCE_Group_Control_Filters_HSB::get_type(), ['name' => 'fileicon_hue_filters', 'label' => 'Color (HSB)', 'selector' => '{{WRAPPER}} .dce-list .dce-file-download .fiv-viv']);
+        $this->add_group_control(Group_Control_Filters_HSB::get_type(), ['name' => 'fileicon_hue_filters', 'label' => __('Color (HSB)', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-list .dce-file-download .fiv-viv']);
         $this->add_control('heading_files_size', ['label' => __('Label Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['enable_metadata_size' => 'yes']]);
         $this->add_control('filesizes_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'condition' => ['enable_metadata_size' => 'yes'], 'selectors' => ['{{WRAPPER}} .dce-list .dce-file-download .dce-file-size-label' => 'color: {{VALUE}};']]);
         $this->add_control('filesize_icon_size', ['label' => __('Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'range' => ['px' => ['min' => 10, 'max' => 180]], 'condition' => ['enable_metadata_size' => 'yes'], 'selectors' => ['{{WRAPPER}} .dce-list .dce-file-download .dce-file-size-label' => 'font-size: {{SIZE}}{{UNIT}};']]);
@@ -221,11 +211,11 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('buttonfind_border_color_hover', ['label' => __('Hover Border color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-search-buttons input.reset:hover' => 'border-color: {{VALUE}};']]);
         $this->end_controls_section();
     }
-    protected function render()
+    protected function safe_render()
     {
-        if (!current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
+        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
             $this->render_non_admin_notice();
-        } elseif (current_user_can('administrator') && \Elementor\Plugin::$instance->editor->is_edit_mode() || !is_admin()) {
+        } else {
             $settings = $this->get_settings_for_display();
             $baseDir = \false;
             $files = $dirs = array();
@@ -288,10 +278,8 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\WidgetP
                             $taxonomy = get_taxonomy($settings['taxonomy']);
                             if ($taxonomy) {
                                 $baseTitle = $taxonomy->label;
-                                if ($term_id) {
-                                    $term = get_term_by('term_taxonomy_id', $term_id);
-                                    $baseTitle = $term->name;
-                                }
+                                $term = get_term_by('term_taxonomy_id', $term_id);
+                                $baseTitle = $term->name;
                             }
                             $medias = Helper::get_term_posts($term_id, 'attachment');
                             if (!empty($medias)) {
@@ -338,7 +326,7 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\WidgetP
                         $htblock = 'Options -Indexes' . \PHP_EOL . '<files "*">' . \PHP_EOL . 'order allow,deny' . \PHP_EOL . 'deny from all' . \PHP_EOL . '</files>';
                         if (empty($settings['private_access'])) {
                             if (\is_file($htaccess)) {
-                                $htfile = \file_get_contents($htaccess);
+                                $htfile = wp_remote_retrieve_body(wp_remote_get($htaccess));
                                 if ($htfile == $htblock) {
                                     if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
                                         echo '<div class="elementor-alert elementor-alert-danger"><h5 class="elementor-alert-title">Warning</h5>The folder is secured. The HTACCESS file will be removed.</div>';
@@ -772,11 +760,7 @@ class DCE_Widget_FileBrowser extends \DynamicContentForElementor\Widgets\WidgetP
                     }
                     echo '<a class="' . ($customTitle ? 'inline-' : '') . 'block btn-block dce-file-download" href="' . $direct_link . '"  data-md5="' . $md5 . '"' . ($post_id ? ' data-post-id="' . $post_id . '"' : '') . ' target="_blank">';
                     if (!empty($settings['img_icon']) && \in_array($ext, $image_exts) && $post_id) {
-                        if ($post_id) {
-                            echo wp_get_attachment_image($post_id, 'thumbnail', \true, array('class' => 'middle dce-img-icon'));
-                        } else {
-                            // TODO: img preview for non media
-                        }
+                        echo wp_get_attachment_image($post_id, 'thumbnail', \true, array('class' => 'middle dce-img-icon'));
                     } else {
                         echo '<span class="middle fiv-viv fiv-icon-' . $ext . '"></span>';
                     }

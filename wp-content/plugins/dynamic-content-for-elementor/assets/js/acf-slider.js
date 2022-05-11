@@ -1,15 +1,12 @@
 (function ($) {
     var WidgetElements_ACFSliderHandler = function ($scope, $) {
+        let elementSettings = dceGetElementSettings($scope);
+        let elementSwiper = $scope.find('.swiper-container')[0];
+        let id_scope = $scope.attr('data-id');
+        let id_post = $scope.closest('.elementor').attr('data-post-id');
+        let interleaveOffset = -0.5;
 
-        var elementSettings = dceGetElementSettings($scope);
-
-        var elementSwiper = $scope.find('.swiper-container')[0];
-        var id_scope = $scope.attr('data-id');
-        var id_post = $scope.closest('.elementor').attr('data-post-id');
-
-        var interleaveOffset = -0.5;
-
-        var interleaveEffect = {
+        let interleaveEffect = {
 
             onProgress: function (swiper, progress) {
 
@@ -64,72 +61,41 @@
                 }
             }
         };
-        var swpEffect = 'slide';
+        let swpEffect = 'slide';
         if (elementSettings.effects != 'custom1') {
             swpEffect = elementSettings.effects || 'slide';
         }
-        var centroDiapo = false;
-        var cicloInfinito = false;
+        let centeredSlides = Boolean(elementSettings.centeredSlides);
+        let loop = Boolean(elementSettings.loop);
 
-        centroDiapo = Boolean(elementSettings.centeredSlides);
-        cicloInfinito = Boolean(elementSettings.loop);
-
-        var elementorBreakpoints = elementorFrontend.config.breakpoints;
         var swiperOptions = {
-            //------------------- Base Settings
             direction: String(elementSettings.directionSlide) || 'horizontal',
             speed: Number(elementSettings.speedSlide) || 300,
-            //setWrapperSize: Boolean( elementSettings.setWrapperSize ),
-            //virtualTranslate:  Boolean( elementSettings.virtualTranslate ),
             autoHeight: Boolean(elementSettings.autoHeight),
             roundLengths: Boolean(elementSettings.roundLengths),
             nested: Boolean(elementSettings.nested),
             grabCursor: Boolean(elementSettings.grabCursor),
-            //------------------- Autoplay
-            //autoplay: Number(elementSettings.autoplay) || '',
-            //autoplayStopOnLast: Boolean( elementSettings.autoplayStopOnLast ),
-            //autoplayDisableOnInteraction: Boolean( elementSettings.autoplayDisableOnInteraction ),
-            //------------------- Progress
             watchSlidesProgress: Boolean(elementSettings.watchSlidesProgress),
             watchSlidesVisibility: Boolean(elementSettings.watchSlidesVisibility),
-            //------------------- Freemode
             freeMode: Boolean(elementSettings.freeMode),
             freeModeMomentum: Boolean(elementSettings.freeModeMomentum),
             freeModeMomentumRatio: Number(elementSettings.freeModeMomentumRatio) || 1,
             freeModeMomentumVelocityRatio: Number(elementSettings.freeModeMomentumVelocityRatio) || 1,
             freeModeMomentumBounce: Boolean(elementSettings.freeModeMomentumBounce),
-            //freeModeMomentumBounceRatio: Number(elementSettings.speed) || 1,
-            //freeModeMinimumVelocity: Number(elementSettings.speed) || 0.02,
             freeModeSticky: Boolean(elementSettings.freeModeSticky),
-            //------------------- Effects
             effect: swpEffect,
-            //------------------- Grid Swiper
             centerInsufficientSlides: true,
             watchOverflow: true,
-            centeredSlides: centroDiapo,
-
+            centeredSlides: centeredSlides,
             spaceBetween: Number(elementSettings.spaceBetween.size) || 0,
             slidesPerView: Number(elementSettings.slidesPerView) || 'auto',
             slidesPerGroup: Number(elementSettings.slidesPerGroup) || 1,
             slidesPerColumn: Number(elementSettings.slidesColumn) || 1, // 1, // Number of slides per column, for multirow layout
             slidesPerColumnFill: 'row', // Could be 'column' or 'row'. Defines how slides should fill rows, by column or by row
-
-            //------------------- Parallax
-
-            //------------------- Touches, Touch
-            //------------------- Swiping / No
-            //------------------- Navigation
-            //------------------- Keyboard / Mousewheel
             keyboard: Boolean(elementSettings.keyboardControl),
             mousewheel: Boolean(elementSettings.mousewheelControl),
-            //------------------- Hash/History
-            //------------------- Images
-            //------------------- Loop
-            loop: cicloInfinito,
-            //------------------- Zoom
-
-
-            pagination: {
+            loop: loop,
+			pagination: {
                 el: id_post ? '.dce-elementor-post-' + id_post + ' .elementor-element-' + id_scope + ' .pagination-' + id_scope : '.pagination-' + id_scope, //'.swiper-pagination', //'.pagination-acfslider-'+id_scope,
                 clickable: true,
                 type: String(elementSettings.pagination_type) || 'bullets',
@@ -150,11 +116,9 @@
             },
             // And if we need scrollbar
             scrollbar: '.swiper-scrollbar',
-            //
         };
 
         if (elementSettings.useAutoplay) {
-
             //default
             swiperOptions = $.extend(swiperOptions, {autoplay: true});
 
@@ -165,10 +129,9 @@
                 autoplayDelay = Number(elementSettings.autoplay);
             }
             swiperOptions = $.extend(swiperOptions, {autoplay: {delay: autoplayDelay, disableOnInteraction: Boolean(elementSettings.autoplayDisableOnInteraction), stopOnLastSlide: Boolean(elementSettings.autoplayStopOnLast)}});
-
         }
 
-        //------------------- Responsive Params
+        // Responsive Params
         swiperOptions.breakpoints = dynamicooo.makeSwiperBreakpoints({
 			slidesPerView: {
 				elementor_key: 'slidesPerView',
@@ -194,15 +157,14 @@
         }
 
         if ($scope.find('.swiper-slide').length > 1){
-
             if ( 'undefined' === typeof Swiper ) {
               const asyncSwiper = elementorFrontend.utils.swiper;
 
-              new asyncSwiper( elementSwiper, swiperOptions ).then( ( newSwiperInstance ) => {
+              new asyncSwiper( jQuery( elementSwiper ), swiperOptions ).then( ( newSwiperInstance ) => {
                   dce_swiper = newSwiperInstance;
                 } );
               } else {
-                dce_swiper = new Swiper( elementSwiper, swiperOptions );
+                dce_swiper = new Swiper( jQuery( elementSwiper ), swiperOptions );
               }
 
             if (elementSettings.useAutoplay && elementSettings.autoplayStopOnHover) {
@@ -217,9 +179,6 @@
             }
         }
 
-        ///////////////////////////////////////////////////////////////////////////
-        // 								PHOTO SWIPE 							//
-        //////////////////////////////////////////////////////////////////////////
         var initPhotoSwipeFromDOM = function (gallerySelector) {
             // parse slide data (url, title, size ...) from DOM elements
             // (children of gallerySelector)

@@ -129,7 +129,7 @@
 		border-radius: 3px;
 	}
 
-	.gpnf-nested-entries tbody tr td {
+	.gpnf-nested-entries tbody tr:not(.gpnf-no-entries) td {
 		border: none;
 		border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
 		position: relative;
