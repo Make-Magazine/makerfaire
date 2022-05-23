@@ -43,6 +43,9 @@ add_theme_support('post-thumbnails');
 add_image_size('schedule-thumb', 140, 140, true);
 remove_filter('the_content', 'wpautop');
 
+/* Turn off secure file download. This was conflicting with LargeFS on wpengine */
+add_filter( 'gform_secure_file_download_location', '__return_false' );
+
 // Define our current Version number using the stylesheet version
 function my_wp_default_styles($styles) {
     $my_theme = wp_get_theme();
