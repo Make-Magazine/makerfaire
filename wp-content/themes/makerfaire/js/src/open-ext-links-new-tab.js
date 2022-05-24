@@ -4,8 +4,5 @@ jQuery(document).ready(function($) {
 		if($(this).attr("target") != "_self" && $(this).not('[href*="mailto:"]') && $(this).not('[href*="javascript:void(0);"]') && $(this).attr("href") != "javascript:void(0);" ){
 			return this.hostname.indexOf("make") == -1;
 		}
-		if($(this).not('.ab-item') && $(this).not('#LoginBtn')) {
-			return;
-		}
 	}).attr('target', '_blank');
 });
