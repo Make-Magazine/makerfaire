@@ -83,7 +83,33 @@ class Upcoming_Faires extends Widget_Base {
 				'default' => 4,
 			]
 		);
+		$this->end_controls_section();
 
+		$this->start_controls_section(
+			'section_style',
+			[
+				'label' => esc_html__( 'Style', 'plugin-name' ),
+				'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Typography::get_type(),
+			[
+				'name' => 'title_typography',
+				'label' => __( 'Faire Title Typography', 'makerfaire' ),
+				'selector' => '{{WRAPPER}} .uf-title',
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Typography::get_type(),
+			[
+				'name' => 'date_typography',
+				'label' => __( 'Faire Date Typography', 'makerfaire' ),
+				'selector' => '{{WRAPPER}} .uf-date',
+			]
+		);
 
         $this->end_controls_section();
     }
@@ -115,8 +141,8 @@ class Upcoming_Faires extends Widget_Base {
 				$name = isset($row->faire_nicename) ? $row->faire_nicename : $row->faire_name;
 				$return .= "<li><a href='$row->faire_url'>";
 				$return .=      "<img src='$row->faire_image'>";
-				$return .=      "<p>$row->event_dt</p>";
-				$return .=      "<h3>$name</h3>";
+				$return .=      "<p class='uf-date'>$row->event_dt</p>";
+				$return .=      "<h3 class='uf-title'>$name</h3>";
 				$return .= "</a></li>";
 				if (++$i == $limit) break;
 			}
