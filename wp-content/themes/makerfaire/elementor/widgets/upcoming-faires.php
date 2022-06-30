@@ -111,6 +111,84 @@ class Upcoming_Faires extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			\Elementor\Group_Control_Typography::get_type(),
+			[
+				'name' => 'country_typography',
+				'label' => __( 'Faire Country Typography', 'makerfaire' ),
+				'selector' => '{{WRAPPER}} .uf-date',
+				'condition' => [
+					'show_country' => 'true',
+				],
+			]
+		);
+
+		$this->add_control(
+			'show_images',
+			[
+				'label' => __( 'Show Images', 'makerfaire' ),
+				'label_block' => true,
+				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'options' => [
+					'false' => [
+						'title' => __( 'Hide', 'plugin-domain' ),
+						'icon' => 'fas fa-eye-slash ',
+					],
+					'true' => [
+						'title' => __( 'Show', 'plugin-domain' ),
+						'icon' => 'fas fa-eye',
+					],
+				],
+				'default' => 'true',
+				'toggle' => true,
+				'description' => __( "Choose whether or not to show the Faire Images", 'makerfaire' ),
+			]
+		);
+
+		$this->add_control(
+			'show_country',
+			[
+				'label' => __( 'Show Country', 'makerfaire' ),
+				'label_block' => true,
+				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'options' => [
+					'false' => [
+						'title' => __( 'Hide', 'plugin-domain' ),
+						'icon' => 'fas fa-eye-slash ',
+					],
+					'true' => [
+						'title' => __( 'Show', 'plugin-domain' ),
+						'icon' => 'fas fa-eye',
+					],
+				],
+				'default' => 'false',
+				'toggle' => true,
+				'description' => __( "Choose whether or not to show the Faire Country", 'makerfaire' ),
+			]
+		);
+
+		$this->add_control(
+			'show_type_flag',
+			[
+				'label' => __( 'Show Type Flag', 'makerfaire' ),
+				'label_block' => true,
+				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'options' => [
+					'false' => [
+						'title' => __( 'Hide', 'plugin-domain' ),
+						'icon' => 'fas fa-eye-slash ',
+					],
+					'true' => [
+						'title' => __( 'Show', 'plugin-domain' ),
+						'icon' => 'fas fa-eye',
+					],
+				],
+				'default' => 'false',
+				'toggle' => true,
+				'description' => __( "Choose whether or not to show a flag in the top right representing the Faire Type", 'makerfaire' ),
+			]
+		);
+
         $this->end_controls_section();
     }
 
@@ -133,16 +211,26 @@ class Upcoming_Faires extends Widget_Base {
 
 		$return = "<ul class='flex-list faire-list'>";
 
-		$rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM ".$wpdb->prefix."mf_global_faire WHERE event_type in(".$faire_type.") ".$past_or_future." ORDER BY event_start_dt", OBJECT );
+		$rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, venue_address_country, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM ".$wpdb->prefix."mf_global_faire WHERE event_type in(".$faire_type.") ".$past_or_future." ORDER BY event_start_dt", OBJECT );
 
 		$i = 0;
 		foreach($rows as $row){
 			if($row->faire_image && $row->event_dt) {
 				$name = isset($row->faire_nicename) ? $row->faire_nicename : $row->faire_name;
 				$return .= "<li><a href='$row->faire_url'>";
-				$return .=      "<img src='$row->faire_image'>";
-				$return .=      "<p class='uf-date'>$row->event_dt</p>";
+				if($settings['show_images'] == 'true') {
+					$return .=  "<img src='$row->faire_image'>";
+				}
+				$return .= 		"<div class='uf-date-row'>";
+				$return .=      	"<p class='uf-date'>$row->event_dt</p>";
+				if($settings['show_type_flag'] == 'true') {
+					$return .=  	"<div class='uf-flag type-$row->event_type'>$row->event_type</div>";
+				}
+				$return .= 		"</div>";
 				$return .=      "<h3 class='uf-title'>$name</h3>";
+				if($settings['show_country'] == 'true') {
+					$return .=  "<h4 class='uf-country'>$row->venue_address_country</h4>";
+				}
 				$return .= "</a></li>";
 				if (++$i == $limit) break;
 			}

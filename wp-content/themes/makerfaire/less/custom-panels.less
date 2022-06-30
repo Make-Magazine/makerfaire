@@ -1920,6 +1920,7 @@
 
 .faire-list {
 	li {
+		position: relative;
 		border: solid 1px #f1f1f1;
 		background: #fff;
 		border-radius: 10px;
@@ -1943,6 +1944,27 @@
 			padding-bottom: 5px;
 		}
 		a:hover { text-decoration: none;}
+		.uf-date-row {
+			display: flex;
+			justify-self: space-between;
+			position: relative;
+		}
+		.uf-flag {
+			position: absolute;
+			right: -13px;
+			background-color: #ea002a;
+			padding: 10px 15px 10px 40px;
+			text-align: right;
+			clip-path: polygon(100% 0,100% 50%,100% 100%,0 100%,25% 50%,0 0);
+			top: -15px;
+			color: #fff;
+			font-weight: bold;
+			&.type-Mini { background-color: #3fafed; }
+			&.type-School { background-color: #005e9a; }
+			a {
+				color: #fff;
+			 }
+		}
 	}
 }
 
