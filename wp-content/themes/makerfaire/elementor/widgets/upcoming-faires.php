@@ -216,7 +216,7 @@ class Upcoming_Faires extends Widget_Base {
 		$i = 0;
 		foreach($rows as $row){
 			if($row->faire_image && $row->event_dt) {
-				$name = isset($row->faire_nicename) ? $row->faire_nicename : $row->faire_name;
+				$name = (isset($row->faire_nicename) && $row->faire_nicename != "") ? $row->faire_nicename : $row->faire_name;
 				$event_type = ($row->event_type == "Mini") ? $event_type = "Community" : $event_type = $row->event_type;
 				$return .= "<li><a href='$row->faire_url'>";
 				if($settings['show_images'] == 'true') {
