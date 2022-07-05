@@ -73,6 +73,28 @@ class Upcoming_Faires extends Widget_Base {
 		);
 
 		$this->add_control(
+			'order',
+			[
+				'label' => __( 'Change Faire Order', 'makerfaire' ),
+				'label_block' => true,
+				'type' => \Elementor\Controls_Manager::CHOOSE,
+				'options' => [
+					'ASC' => [
+						'title' => __( 'Ascending', 'plugin-domain' ),
+						'icon' => 'fas fa-arrow-up',
+					],
+					'DESC' => [
+						'title' => __( 'Descending', 'plugin-domain' ),
+						'icon' => 'fas fa-arrow-down',
+					],
+				],
+				'default' => 'ASC',
+				'toggle' => true,
+				'description' => __( "Switch between Ascending or Descending for Faire order", 'makerfaire' ),
+			]
+		);
+
+		$this->add_control(
 			'number',
 			[
 				'label' => __( 'Number', 'makerfaire' ),
@@ -81,6 +103,20 @@ class Upcoming_Faires extends Widget_Base {
 				'min' => 1,
 				'step' => 1,
 				'default' => 4,
+			]
+		);
+
+		$this->add_control(
+			'require_images',
+			[
+				'label' => __( 'RMT Images required', 'makerfaire' ),
+				'label_block' => true,
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Yes', 'makerfaire' ),
+				'label_off' => esc_html__( 'No', 'makerfaire' ),
+				'return_value' => 'yes',
+				'default' => 'yes',
+				'description' => __( "If on, only Faires with images set in RMT will appear. If off, all faires will appear and default images will be used for the faires where no images have been provided.", 'makerfaire' ),
 			]
 		);
 		$this->end_controls_section();
@@ -200,6 +236,7 @@ class Upcoming_Faires extends Widget_Base {
 
 		$faire_type = "'" . implode("', '", $settings['type']) . "'";
 		$past_or_future_value = $settings['past_or_future'];
+		$order = $settings['order'];
 
 		$past_or_future = "";
 		if($past_or_future_value == '>') {
@@ -211,16 +248,24 @@ class Upcoming_Faires extends Widget_Base {
 
 		$return = "<ul class='flex-list faire-list'>";
 
-		$rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, venue_address_country, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM ".$wpdb->prefix."mf_global_faire WHERE event_type in(".$faire_type.") ".$past_or_future." ORDER BY event_start_dt", OBJECT );
+		$rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, venue_address_country, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM ".$wpdb->prefix."mf_global_faire WHERE event_type in(".$faire_type.") ".$past_or_future." ORDER BY event_start_dt ".$order, OBJECT );
 
 		$i = 0;
 		foreach($rows as $row){
-			if($row->faire_image && $row->event_dt) {
+			if($row->event_dt) {
+				// if we are requiring images, skip this faire if it doesn't have an image
+				if(empty($row->faire_image) && $settings['require_images'] == 'yes') {
+					continue;
+				}
 				$name = (isset($row->faire_nicename) && $row->faire_nicename != "") ? $row->faire_nicename : $row->faire_name;
 				$event_type = ($row->event_type == "Mini") ? $event_type = "Community" : $event_type = $row->event_type;
 				$return .= "<li><a href='$row->faire_url'>";
 				if($settings['show_images'] == 'true') {
-					$return .=  "<img src='$row->faire_image'>";
+					if(!empty($row->faire_image)) {
+						$return .=  "<img src='$row->faire_image' />";
+					} else {
+						$return .=  "<img src='".random_pic(wp_upload_dir()['basedir'] . '/MF_RMT_defaults')."' />";
+					}
 				}
 				$return .= 		"<div class='uf-date-row'>";
 				$return .=      	"<p class='uf-date'>$row->event_dt</p>";
