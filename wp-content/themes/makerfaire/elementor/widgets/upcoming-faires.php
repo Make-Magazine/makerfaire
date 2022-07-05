@@ -274,6 +274,7 @@ class Upcoming_Faires extends Widget_Base {
 				}
 				$return .= 		"</div>";
 				$return .=      "<h3 class='uf-title'>$name</h3>";
+				$return .=		"<hr>";
 				if($settings['show_country'] == 'true') {
 					$return .=  "<h4 class='uf-country'>$row->venue_address_country</h4>";
 				}

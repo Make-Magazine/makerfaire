@@ -1925,6 +1925,11 @@
 		background: #fff;
 		border-radius: 10px;
 		padding: 10px;
+		a {
+			display: flex;
+			flex-grow: 1;
+			flex-direction: column;
+		}
 		p {
 			color: #444;
 			font-size: 16px;
@@ -1939,9 +1944,12 @@
 			font-size: 44px;
 			display: block;
 			margin-top: 0;
-			margin-bottom: 0;
-			border-bottom: 2px solid red;
+			margin-bottom: auto;
 			padding-bottom: 5px;
+		}
+		hr {
+			height: 2px;
+			background-color: #ea002a;
 		}
 		a:hover { text-decoration: none;}
 		.uf-date-row {
