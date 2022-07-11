@@ -3,7 +3,7 @@ jQuery(document).ready(function() {
    var currentDate = new Date();
 	var oneYearAgo = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
 	var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
-	var typeFilters = ["Featured", "Flagship", "Mini"];
+	var typeFilters = ["Featured", "Flagship", "Mini", "School"];
    Vue.use(VueTables.ClientTable);
    Vue.use(VueTables.Event);
 
@@ -330,8 +330,7 @@ jQuery(document).ready(function() {
 				// this.map.addListener('zoom_changed', function(){ // this is how to add an event listener });
 				this.map.mapTypes.set('styled_map', styledMapType);
 				this.map.setMapTypeId('styled_map');
-            this.addMarkers();
-				jQuery("input#School").click(); // DEFAULT SCHOOL TO UNCHECKED
+            	this.addMarkers();
          },
          getLocation: function() {
 				// first, clear all other searches and data

@@ -5,7 +5,7 @@ jQuery(document).ready(function () {
   var oneYearAgo = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
 
-  var typeFilters = ["Featured", "Flagship", "Mini"];
+  var typeFilters = ["Featured", "Flagship", "Mini", "School"];
   Vue.use(VueTables.ClientTable);
   Vue.use(VueTables.Event);
   var vm = new Vue({
@@ -293,7 +293,6 @@ jQuery(document).ready(function () {
         this.map.mapTypes.set('styled_map', styledMapType);
         this.map.setMapTypeId('styled_map');
         this.addMarkers();
-        jQuery("input#School").click(); // DEFAULT SCHOOL TO UNCHECKED
       },
       getLocation: function getLocation() {
         // first, clear all other searches and data
