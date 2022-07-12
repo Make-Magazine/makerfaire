@@ -107,6 +107,18 @@ class Upcoming_Faires extends Widget_Base {
 		);
 
 		$this->add_control(
+			'year',
+			[
+				'label' => __( 'Year', 'makerfaire' ),
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'description' => __( "Set a specific year to pull faires from (leave at 0 or a year past the current year to pull from all)", 'makerfaire' ),
+				'min' => 2006,
+				'step' => 1,
+				'default' => 0,
+			]
+		);
+
+		$this->add_control(
 			'require_images',
 			[
 				'label' => __( 'RMT Images required', 'makerfaire' ),
@@ -244,11 +256,12 @@ class Upcoming_Faires extends Widget_Base {
 		} else if($past_or_future_value == '<') {
 			$past_or_future = " AND event_start_dt < '" . $date_start . "'";
 		}
+		$year = ($settings['year'] == 0 || $settings['year'] > date("Y")) ? "" : " AND faire_year = " . $settings['year'] . " ";
 		$limit = $settings['number'];
 
 		$return = "<ul class='flex-list faire-list'>";
 
-		$rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, venue_address_country, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM ".$wpdb->prefix."mf_global_faire WHERE event_type in(".$faire_type.") ".$past_or_future." ORDER BY event_start_dt ".$order, OBJECT );
+		$rows = $wpdb->get_results( "SELECT faire_name, faire_nicename, event_type, venue_address_country, faire_year, event_dt, event_start_dt, event_end_dt, faire_url, cfm_url, faire_image, cfm_image FROM ".$wpdb->prefix."mf_global_faire WHERE event_type in(".$faire_type.") " . $past_or_future . $year. "  ORDER BY event_start_dt ".$order, OBJECT );
 
 		$i = 0;
 		foreach($rows as $row){
