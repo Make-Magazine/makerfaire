@@ -179,11 +179,11 @@ class Upcoming_Faires extends Widget_Base {
 				'type' => \Elementor\Controls_Manager::CHOOSE,
 				'options' => [
 					'false' => [
-						'title' => __( 'Hide', 'plugin-domain' ),
+						'title' => __( 'Hide', 'makerfaire' ),
 						'icon' => 'fas fa-eye-slash ',
 					],
 					'true' => [
-						'title' => __( 'Show', 'plugin-domain' ),
+						'title' => __( 'Show', 'makerfaire' ),
 						'icon' => 'fas fa-eye',
 					],
 				],
@@ -201,11 +201,11 @@ class Upcoming_Faires extends Widget_Base {
 				'type' => \Elementor\Controls_Manager::CHOOSE,
 				'options' => [
 					'false' => [
-						'title' => __( 'Hide', 'plugin-domain' ),
+						'title' => __( 'Hide', 'makerfaire' ),
 						'icon' => 'fas fa-eye-slash ',
 					],
 					'true' => [
-						'title' => __( 'Show', 'plugin-domain' ),
+						'title' => __( 'Show', 'makerfaire' ),
 						'icon' => 'fas fa-eye',
 					],
 				],
@@ -223,11 +223,11 @@ class Upcoming_Faires extends Widget_Base {
 				'type' => \Elementor\Controls_Manager::CHOOSE,
 				'options' => [
 					'false' => [
-						'title' => __( 'Hide', 'plugin-domain' ),
+						'title' => __( 'Hide', 'makerfaire' ),
 						'icon' => 'fas fa-eye-slash ',
 					],
 					'true' => [
-						'title' => __( 'Show', 'plugin-domain' ),
+						'title' => __( 'Show', 'makerfaire' ),
 						'icon' => 'fas fa-eye',
 					],
 				],

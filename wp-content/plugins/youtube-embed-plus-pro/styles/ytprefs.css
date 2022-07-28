@@ -11,6 +11,11 @@ iframe.__youtube_prefs__
     text-align: center;
 }
 
+.epyt-gallery .epyt-figure {
+    margin-inline: 0;
+    margin-block: 0;
+}
+
 /*.epyt-gallery div[tabindex]:focus {
     outline: none;
 }*/

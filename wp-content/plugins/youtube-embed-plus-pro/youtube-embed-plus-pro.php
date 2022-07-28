@@ -3,11 +3,10 @@
   Plugin Name: Embed Plus Plugin for YouTube Pro
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.1
+  Version: 14.1.2
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
-  Tested up to: 5.9
  */
 
 /*
@@ -23,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.1';
+    public static $version = '14.1.2';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -35,6 +34,7 @@ class YouTubePrefsPro
     public static $opt_glance = 'glance';
     public static $opt_autoplay = 'autoplay';
     public static $opt_debugmode = 'debugmode';
+    public static $opt_uninstall_data = 'uninstall_data';
     public static $opt_old_script_method = 'old_script_method';
     public static $opt_cc_load_policy = 'cc_load_policy';
     public static $opt_cc_lang_pref = 'cc_lang_pref';
@@ -780,7 +780,7 @@ class YouTubePrefsPro
             $step1_live_errors = '';
             $step1_live_error_invalid = __('Sorry, that does not seem to be a valid link to an existing live video.', 'text_domain') . ' ' . $step1_api_error_msg;
             $step1_livechannel_errors = '';
-            $step1_livechannel_error_invalid = __('Sorry, that does not seem to be a link to an existing channel.', 'text_domain');
+            $step1_livechannel_error_invalid = __('Sorry, that does not seem to be a link to an existing channel. Note: the custom channel name will not work. Please enter either a) the official channel format shown above, or b) any any single video belonging to the channel and the plugin can retrieve the official channel format for you.', 'text_domain');
 
             $if_live_preview = false;
 
@@ -1116,18 +1116,42 @@ class YouTubePrefsPro
                         {
                             throw new Exception();
                         }
-                        if (preg_match('@/channel/(.+)@', $search))
+                        if (preg_match(self::$justurlregex, $search) || preg_match('@/channel/(.+)@', $search))
                         {
                             try
                             {
                                 $thechannelid = null;
-                                // channel id
-                                $chanmatch = array();
-                                preg_match('@/channel/(.+)@', $search, $chanmatch);
-                                if (!empty($chanmatch))
+                                if (preg_match(self::$justurlregex, $search))
                                 {
-                                    $thechannelid = $chanmatch[1];
-                                    //$thechannel = self::get_channel_snippet($chanmatch[1]);
+                                    // single id
+                                    $theytid = null;
+                                    try
+                                    {
+                                        $theytid = self::try_get_ytid($search);
+                                    }
+                                    catch (Exception $ex)
+                                    {
+                                        
+                                    }
+                                    $chanvid = null;
+                                    if ($theytid)
+                                    {
+                                        $chanvid = self::get_video_snippet($theytid);
+                                    }
+                                    if ($chanvid)
+                                    {
+                                        $thechannelid = $chanvid->snippet->channelId;
+                                    }
+                                }
+                                else
+                                {
+                                    // channel id
+                                    $chanmatch = array();
+                                    preg_match('@/channel/(.+)@', $search, $chanmatch);
+                                    if (!empty($chanmatch))
+                                    {
+                                        $thechannelid = $chanmatch[1];
+                                    }
                                 }
                                 if (!empty($thechannelid))
                                 {
@@ -1251,10 +1275,7 @@ class YouTubePrefsPro
                                 }
                                 ?>
                                 <p>
-                                    <?php _e('<strong>Is your live stream not working?</strong>  According to Google/YouTube rules, there must be an active AdSense account that\'s connected to the live 
-                                    stream\'s channel (for monetization) in order embed the stream. If you own the channel, we suggest that you attach an AdSense account. Otherwise, you will 
-                                    likely just see a blank screen when you embed your stream, even if it is visible on YouTube.com.
-                                    Read more here: <a href="https://support.google.com/youtube/answer/2474026?hl=en" target="_blank">https://support.google.com/youtube/answer/2474026?hl=en</a>', 'text_domain'); ?>
+                                    <?php _e('<strong>Is your live stream not working?</strong> Read more here: <a href="https://support.google.com/youtube/answer/2474026?hl=en" target="_blank">https://support.google.com/youtube/answer/2474026?hl=en</a>', 'text_domain'); ?>
                                 </p>
                             </div>
                             <?php
@@ -1399,13 +1420,6 @@ class YouTubePrefsPro
                         else
                         {
                             ?>
-                            <p>
-                                <?php _e('Important: You can embed any public livestreams or premieres from any channel that YouTube/Google has approved to be <strong>Eligible</strong> and <strong>Enabled</strong>.
-                                If you\'re trying to embed a livestream from your own channel, you can check make sure it is <strong>Eligible</strong> and <strong>Enabled</strong> by <a href="https://www.youtube.com/features" target="_blank">visiting here.</a>
-                                You are verified if you see the word "Enabled" at the bottom of the box that is labeled "Embed live streams." Note that verification can only be done directly through YouTube/Google with the link above, and this plugin cannot automatically do that.
-                                YouTube/Google also requires <strong>Monetization</strong> enabled. <a href="https://www.embedplus.com/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">You can read more here &raquo;</a>', 'text_domain'); ?>
-                            </p>
-
                             <div class="livestream-tabs">
                                 <ul>
                                     <li><a href="#livestream-tabs-2"><?php _e('Channel-based livestream (recommended)', 'text_domain'); ?><sup class="orange"><?php _e('new', 'text_domain'); ?></sup></a></li>
@@ -1433,11 +1447,16 @@ class YouTubePrefsPro
                                 </div>
                                 <div id="livestream-tabs-2">
                                     <p>
-                                        <?php _e('This will embed a video that will automatically display the next upcoming live stream from a channel.', 'text_domain'); ?>
+                                        <?php _e('This will embed a video that will automatically display the next upcoming live stream from a channel. You have 2 choices:', 'text_domain'); ?>
                                     </p>
-                                    <p>
-                                        <?php _e('Enter the link to the channel page below (note the word "channel" should be in the link).<br>Example', 'text_domain'); ?>: https://www.youtube.com/<strong>channel</strong>/UCL0iAkpqV5YaIVG7xkDtS4Q
-                                    </p>                                    
+                                    <ol>
+                                        <li>
+                                            <?php _e('Enter the link to the official channel page below (note the word "channel" should be in the link, with a long ID afterward).<br>Example', 'text_domain'); ?>: https://www.youtube.com/<strong>channel</strong>/UCL0iAkpqV5YaIVG7xkDtS4Q
+                                        </li>
+                                        <li>
+                                            <?php _e('Or, if you do not know where to find the above format, you can enter any single video that is owned by the channel, and the plugin can retrieve the above format for you.<br>Example', 'text_domain'); ?>: https://www.youtube.com/watch?<strong>v=3tXY8YSIxHM</strong>
+                                        </li>
+                                    </ol>
                                     <form name="wizform_livechannel" method="post" action="" class="wizform" id="wizform_livechannel">
                                         <?php wp_nonce_field('_epyt_wiz', '_epyt_nonce', true); ?>
                                         <div class="center txt-button-align">
@@ -2136,6 +2155,7 @@ class YouTubePrefsPro
                     ajax_compat: <?php echo self::$alloptions[self::$opt_ajax_compat] == '1' ? 'true' : 'false' ?>,
                     ytapi_load: '<?php echo esc_attr(self::$alloptions[self::$opt_ytapi_load]) ?>',
                     pause_others: <?php echo self::$alloptions[self::$opt_pause_others] == '1' ? 'true' : 'false' ?>,
+                    facade_mode: <?php echo self::$alloptions[self::$opt_facade_mode] == '1' ? 'true' : 'false' ?>,
                     not_live_on_channel: <?php echo self::$alloptions[self::$opt_not_live_on_channel] == '1' ? 'true' : 'false' ?>,
             <?php
             if (isset(self::$alloptions[self::$opt_pro]) && strlen(trim(self::$alloptions[self::$opt_pro])) > 8 && isset(self::$alloptions[self::$opt_dashpre]) && self::$alloptions[self::$opt_dashpre] == '1')
@@ -2256,6 +2276,7 @@ class YouTubePrefsPro
         $_not_live_on_channel = 0;
         $_live_chat = 0;
         $_debugmode = 0;
+        $_uninstall_data = 0;
         $_admin_off_scripts = 0;
         $_defer_js = 0;
         $_defer_jquery = 0;
@@ -2309,6 +2330,7 @@ class YouTubePrefsPro
             $_glance = self::tryget($arroptions, self::$opt_glance, $_glance);
             $_autoplay = self::tryget($arroptions, self::$opt_autoplay, 0);
             $_debugmode = self::tryget($arroptions, self::$opt_debugmode, 0);
+            $_uninstall_data = self::tryget($arroptions, self::$opt_uninstall_data, 0);
             $_old_script_method = self::tryget($arroptions, self::$opt_old_script_method, 0);
             $_cc_load_policy = self::tryget($arroptions, self::$opt_cc_load_policy, 0);
             $_cc_lang_pref = self::tryget($arroptions, self::$opt_cc_lang_pref, $_cc_lang_pref);
@@ -2318,7 +2340,7 @@ class YouTubePrefsPro
             $_rel = self::tryget($arroptions, self::$opt_rel, 1);
             $_fs = self::tryget($arroptions, self::$opt_fs, 1);
             $_playsinline = self::tryget($arroptions, self::$opt_playsinline, 0);
-            $_origin = self::tryget($arroptions, self::$opt_origin, 0);
+            $_origin = self::tryget($arroptions, self::$opt_origin, 1);
             $_hl = self::tryget($arroptions, self::$opt_hl, '');
             $_dohl = self::tryget($arroptions, self::$opt_dohl, 0);
             $_theme = self::tryget($arroptions, self::$opt_theme, 'dark');
@@ -2514,6 +2536,7 @@ class YouTubePrefsPro
             self::$opt_not_live_on_channel => $_not_live_on_channel,
             self::$opt_live_chat => $_live_chat,
             self::$opt_debugmode => $_debugmode,
+            self::$opt_uninstall_data => $_uninstall_data,
             self::$opt_admin_off_scripts => $_admin_off_scripts,
             self::$opt_defer_js => $_defer_js,
             self::$opt_defer_jquery => $_defer_jquery,
@@ -3458,7 +3481,7 @@ class YouTubePrefsPro
         if ($iscontent && !$isoverride && $finalparams[self::$opt_gb_compat] == 1 && empty($begin_live_chat) && empty($beginlb) && current_theme_supports('responsive-embeds'))// self::using_gutenberg())
         {
             // don't do the following if: overriding default YT, is widget, is livechat, is popup
-            $begin_gb_wrapper = '<figure class="wp-block-embed wp-block-embed-youtube is-type-video is-provider-youtube"><div class="wp-block-embed__wrapper">';
+            $begin_gb_wrapper = '<figure class="wp-block-embed wp-block-embed-youtube is-type-video is-provider-youtube epyt-figure"><div class="wp-block-embed__wrapper">';
             //wp-block-embed-youtube is-type-video is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio
             $end_gb_wrapper = '</div></figure>';
         }
@@ -4439,7 +4462,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update adds the live stream fallback feature to channel-based live stream embeds, for both free and Pro versions.";
+        $new_pointer_content .= "This update provides higher quality images for facades, and avoids unused javascript for facade mode in free and Pro versions.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -5288,18 +5311,18 @@ class YouTubePrefsPro
                                         The plugin will automatically switch to your video's live stream or premiere once it's active. In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear until then.
                                         You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
                                         If you just want to show the standard countdown player that YouTube provides, don't use this feature.
-                                        <strong>NOTE: Turning this on for direct-link live streams uses a significant amount of your YouTube API quota. We suggest unchecking it if your site has high traffic. If you chose to use this feature, do not put another live stream embed below.</strong>
+                                        <strong>NOTE: Turning this on for direct-link live streams uses a significant amount of your YouTube API quota. We suggest unchecking it if your site has high traffic. If you chose to use this feature, do <u>not</u> put another live stream embed below.</strong>
                                     </label>
                                     <br>
                                     <br>
                                     <input name="<?php echo self::$opt_not_live_on_channel; ?>" id="<?php echo self::$opt_not_live_on_channel; ?>" <?php checked($all[self::$opt_not_live_on_channel], 1); ?> type="checkbox" class="checkbox">
-                                    <label for="<?php echo self::$opt_not_live_on_channel; ?>"><span class="chktitle">Turn on for <b>channel</b> live streams:</span> <sup class="orange">beta</sup>
+                                    <label for="<?php echo self::$opt_not_live_on_channel; ?>"><span class="chktitle">Turn on for <b>channel</b> live streams: <sup class="orange">beta</sup></span> 
                                         If your live stream embed is channel-based, YouTube might show an error message if there is no upcoming or currently streaming video from your channel. 
                                         Instead of showing an error, you can display some "coming soon" content in that space for your visitors to see until you've scheduled a live stream or premiere 
                                         (Once you've scheduled something, YouTube will display the usual countdown until the stream happens). 
                                         In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear when nothing is playing or scheduled to play yet on your channel.
                                         You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
-                                        <strong>NOTE: This feature for channel live streams is experimental, but it will preserve your API quota. We recommend trying this instead of the direct-link option, to see if it works for your site. We hope to improve this feature over time.</strong>
+                                        <strong>NOTE: This feature for channel live streams is experimental, but it will preserve your API quota. We recommend trying this instead of the direct-link option, to see if it works for your site. We hope to improve this feature over time. If you chose to use this feature, do <u>not</u> put another live stream embed below.</strong>
                                     </label>
                                     <div class="p not-live-content">
                                         <p>                                            
@@ -6128,6 +6151,13 @@ class YouTubePrefsPro
                                     It may print out some diagnostic info so that we can help you solve your issue. 
                                 </label>
                             </p>
+                            <p>
+                                <input name="<?php echo self::$opt_uninstall_data; ?>" id="<?php echo self::$opt_uninstall_data; ?>" <?php checked($all[self::$opt_uninstall_data], 1); ?> type="checkbox" class="checkbox">
+                                <label for="<?php echo self::$opt_uninstall_data; ?>">
+                                    <b class="chktitle">Delete Options When Uninstalling: <sup class="orange">new</sup></b> Checking this box will permanently delete your options the next time you uninstall the plugin. Leave it unchecked
+                                    to preserve your options between installations.
+                                </label>
+                            </p>
 
                         </div>
 
@@ -6183,7 +6213,7 @@ class YouTubePrefsPro
                         </h3>
                         <p>
                             Suppose you have a few videos that need to be different from the above defaults. You can add options to the end of a link as displayed below to override the above defaults. Each option should begin with '&'.
-                            <br><span class="orange">PRO users: You can use the big <a href="<?php echo self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=manual' ?>" target="_blank">customize</a> buttons that you will see inside the wizard, instead of memorizing the following codes.</span>
+                            <br><span class="orange">PRO users: You can use the <a href="<?php echo self::$epbase . '/dashboard/pro-easy-video-analytics.aspx?ref=manual' ?>" target="_blank">customize</a> buttons that you will see inside the wizard, instead of memorizing the following codes.</span>
                         </p>
                         <?php
                         _e('<ul class="reglist">');
@@ -6262,7 +6292,15 @@ class YouTubePrefsPro
                 <section class="pattern" id="jumpsupport">
                     <h2>Plugin Support</h2>
                     <div id="nonprosupport">
-                        We've found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these suggestions is usually the fix:
+                        <p>
+                            Here is a short video explaining a few of the plugin's features:
+                        </p>                        
+                        <div class="epyt-fitvid">
+                            <iframe src="https://www.youtube.com/embed/QDdvXBqfrzM?rel=0" allowfullscreen="" frameborder="0"></iframe>
+                        </div>
+                        <p>
+                            We've also found that a common support request has been from users that are pasting video links on single lines, as required, but are not seeing the video embed show up. One of these suggestions is usually the fix:                            
+                        </p>                        
                         <ul class="reglist">
                             <li>Make sure the URL is really on its own line by itself. Or, if you need multiple videos on the same line, make sure each URL is wrapped properly with the shortcode (Example:  <code>[embedyt]http://www.youtube.com/watch?v=ABCDEFGHIJK&width=400&height=250[/embedyt]</code>)</li>
                             <li>Make sure the URL is not an active hyperlink (i.e., it should just be plain text). Otherwise, highlight the URL and click the "unlink" button in your editor: <img src="<?php echo plugins_url('images/unlink.png', __FILE__) ?>"/>.</li>
@@ -6861,6 +6899,7 @@ class YouTubePrefsPro
         $new_options[self::$opt_glance] = self::postchecked(self::$opt_glance) ? 1 : 0;
         $new_options[self::$opt_autoplay] = self::postchecked(self::$opt_autoplay) ? 1 : 0;
         $new_options[self::$opt_debugmode] = self::postchecked(self::$opt_debugmode) ? 1 : 0;
+        $new_options[self::$opt_uninstall_data] = self::postchecked(self::$opt_uninstall_data) ? 1 : 0;
         $new_options[self::$opt_admin_off_scripts] = self::postchecked(self::$opt_admin_off_scripts) ? 1 : 0;
         $new_options[self::$opt_defer_js] = self::postchecked(self::$opt_defer_js) ? 1 : 0;
         $new_options[self::$opt_defer_jquery] = self::postchecked(self::$opt_defer_jquery) ? 1 : 0;
@@ -7516,6 +7555,18 @@ class YouTubePrefsPro
                             <button type="button" class="button-secondary ytprefs-ob-nav-close">Cancel</button>
                             <button type="button" disabled class="button-primary ytprefs-ob-nav-next">Next &raquo;</button>
                         </div>
+                        <h2>
+                            Intro Video
+                        </h2>
+                        <p>
+                            Want a quick visual overview? Here's a preview of some of the free features of the plugin. Your Pro version has more features available on the Pro Settings tab.
+                        </p>
+                        <div class="epyt-fitvid">
+                            <iframe src="https://www.youtube.com/embed/QDdvXBqfrzM?rel=0" allowfullscreen="" frameborder="0"></iframe>
+                        </div>
+                        <p>
+
+                        </p>
                     </div>
                 </div>
                 <div class="ytprefs-ob-step ytprefs-ob-step2">
@@ -7865,6 +7916,7 @@ class YouTubePrefsPro
                     'ytapi_load' => self::$alloptions[self::$opt_ytapi_load],
                     'pause_others' => self::$alloptions[self::$opt_pause_others] == '1' ? true : false,
                     'stopMobileBuffer' => self::$alloptions[self::$opt_stop_mobile_buffer] == '1' ? true : false,
+                    'facade_mode' => self::$alloptions[self::$opt_facade_mode] == '1' ? true : false,
                     'not_live_on_channel' => self::$alloptions[self::$opt_not_live_on_channel] == '1' ? true : false,
                     'vi_active' => false, //self::$alloptions[self::$opt_vi_active] == '1' ? true : false,
                     'vi_js_posttypes' => array() // self::$alloptions[self::$opt_vi_js_posttypes]
