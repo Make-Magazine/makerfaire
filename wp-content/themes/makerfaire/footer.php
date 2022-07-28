@@ -1,3 +1,5 @@
+</div> <!-- end of site-content -->
+
 <?php
    echo basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/page-elements/universal-footer.html');
 ?>
@@ -103,7 +105,7 @@ if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookie
 
 
 <iframe id="auth0Logout" style="display: none;" ></iframe>
-
+</div> <!-- end of .site-container -->
 </body>
 
 </html>

@@ -129,6 +129,7 @@
     </head>
 
     <body id="makerfaire" <?php body_class('no-js'); ?>>
+		<div id="page" class="site-container">
         <?php
         // Tracking pixels users can turn off through the cookie law checkbox
         if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
@@ -171,3 +172,4 @@
 			  );
 			?>
 		</div>
+		<div id="content" class="site-content">
