@@ -251,7 +251,7 @@ if ($displayNav) {
                                         <div class="row sched-row">
                                             <div class="sched-col-1">
                                                 <a href="/maker/entry/{{schedule.id}}">
-                                                    <div class="sched-img" style="background:url({{schedule.thumb_img_url}});"></div>
+                                                    <div class="sched-img" style="background-image:url({{schedule.thumb_img_url}});"></div>
                                                 </a>
                                             </div>
 

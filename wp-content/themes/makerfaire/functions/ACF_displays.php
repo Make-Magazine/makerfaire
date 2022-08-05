@@ -23,7 +23,7 @@ function do_image_grid($args) {
                     $imageArr = get_sub_field('grid_image');
 
                     $image_url = $imageArr['url'];
-                    $return .= '<a target="_blank" href="' . $image_url . '"><div class="grid-image=" style="background:url(' . $image_url . ');"></div></a>';
+                    $return .= '<a target="_blank" href="' . $image_url . '"><div class="grid-image=" style="background-image:url(' . $image_url . ');"></div></a>';
 
                     $return .= '<div class="img-size">' . $imageArr['width'] . ' x ' . $imageArr['height'] . '</div>';
                     $return .= '<button class="btn universal-btn btn-info btn-copy-html" onclick="copyMe(\'img_' . $imageArr['id'] . '\')">COPY HTML</button>';

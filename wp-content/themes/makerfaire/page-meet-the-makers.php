@@ -150,7 +150,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                                 </div>
                                 <h3>{{maker.name}}</h3>
                             </div>
-                            <div class="mtm-image" style="background:url({{maker.large_img_url}});"></div>
+                            <div class="mtm-image" style="background-image:url({{maker.large_img_url}});"></div>
                         </article>
                     </a>
                 </div>

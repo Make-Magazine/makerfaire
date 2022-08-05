@@ -171,7 +171,7 @@ function getFeatMkPanel($row_layout) {
     foreach ($makerArr as $maker) {
         // var_dump($maker);
         // echo '<br />';
-        $return .= '<div class="grid-item" style="background:url(' . $maker['image'] . ');">';
+        $return .= '<div class="grid-item" style="background-image:url(' . $maker['image'] . ');">';
 
         if (!empty($maker['desc'])) {
             $markup = !empty($maker['maker_url']) ? 'a' : 'div';
@@ -338,7 +338,7 @@ function getFeatEvPanel($row_layout) {
         $return .= '<div class="featured-event col-xs-6">' .
                 ($event['maker_url'] != '' ? '<a href="' . $event['maker_url'] . '">' : '') .
                 '<div class="col-xs-12 col-sm-4 nopad">
-              <div class="event-img" style="background:url(' . $event['image'] . ');"></div>
+              <div class="event-img" style="background-image:url(' . $event['image'] . ');"></div>
             </div>
             <div class="col-xs-12 col-sm-8">
               <div class="event-description">
@@ -599,7 +599,7 @@ function get1ColLayout() {
 
             $hero_image_url = (isset($hero_image_random["url"]) ? $hero_image_random["url"] : '');
 
-            $image = '<div class="hero-img" style="background:url(' . $hero_image_url . ');"></div>';
+            $image = '<div class="hero-img" style="background-image:url(' . $hero_image_url . ');"></div>';
             $cta_link = get_sub_field('image_cta');
 
             if (!empty($cta_link)) {
@@ -955,7 +955,7 @@ function getImgCarouselSquare() {
             $text = get_sub_field('text');
             $url = get_sub_field('url');
             $image = get_sub_field('image');
-            $return .= '<div class="mtm-car-image" style="background:url(' . $image['url'] . ');" style="background-repeat: no-repeat; background-position: center center;background-size: cover;"></div>';
+            $return .= '<div class="mtm-car-image" style="background-image:url(' . $image['url'] . ');" style="background-repeat: no-repeat; background-position: center center;background-size: cover;"></div>';
         }
         $return .= '
     </div>
@@ -1030,7 +1030,7 @@ function getSliderPanel() {
             $return .= '<a href="' . $slide['slide_link'] . '">';
         }
         $return .= '     <div class="item slide">
-        		                   <div class="slide-image-section" style="background:url(' . $imageObj['url'] . ');">';
+        		                   <div class="slide-image-section" style="background-image:url(' . $imageObj['url'] . ');">';
         if (!empty($slide['slide_title']) && get_sub_field("column_number") > 1) {
             $return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
         }
