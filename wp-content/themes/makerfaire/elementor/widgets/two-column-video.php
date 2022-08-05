@@ -121,7 +121,7 @@ class Two_Column_Video extends Widget_Base {
                     $return .= '  </div>';
                     $return .= '  <div class="col-sm-8 col-xs-12">
                             <div class="embed-youtube">
-                              <iframe class="lazyload" src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                              <iframe src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                             </div>
                           </div>';
                     $return .= '</div>';
@@ -129,7 +129,7 @@ class Two_Column_Video extends Widget_Base {
                     $return .= '<div class="row">';
                     $return .= '  <div class="col-sm-8 col-xs-12">
                                 <div class="embed-youtube">
-                                  <iframe class="lazyload" src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                  <iframe src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                                 </div>
                               </div>';
                     $return .= '  <div class="col-sm-4 col-xs-12">

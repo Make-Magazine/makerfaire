@@ -23,11 +23,11 @@ function do_image_grid($args) {
                     $imageArr = get_sub_field('grid_image');
 
                     $image_url = $imageArr['url'];
-                    $return .= '<a target="_blank" href="' . $image_url . '"><div class="grid-image lazyload" data-bg="' . $image_url . '"></div></a>';
+                    $return .= '<a target="_blank" href="' . $image_url . '"><div class="grid-image=" style="background:url(' . $image_url . ');"></div></a>';
 
                     $return .= '<div class="img-size">' . $imageArr['width'] . ' x ' . $imageArr['height'] . '</div>';
                     $return .= '<button class="btn universal-btn btn-info btn-copy-html" onclick="copyMe(\'img_' . $imageArr['id'] . '\')">COPY HTML</button>';
-                    $return .= '<div class="copyDiv" id="img_' . $imageArr['id'] . '"><a href="https://makerfaire.com/bay-area/"><img src="' . $imageArr['url'] . '" alt="' . $imageArr['title'] . '" width="' . $imageArr['width'] . '" height="' . $imageArr['height'] . '" border="0" class="lazyload" /></a></div>';
+                    $return .= '<div class="copyDiv" id="img_' . $imageArr['id'] . '"><a href="https://makerfaire.com/bay-area/"><img src="' . $imageArr['url'] . '" alt="' . $imageArr['title'] . '" width="' . $imageArr['width'] . '" height="' . $imageArr['height'] . '" border="0" /></a></div>';
 
                     $return .= '</div>';
                 }
@@ -49,7 +49,7 @@ function do_featured_presenter_grid($args) {
     // $content .= '<div class="row">';
     // $content .= '<div class="col-xs-12 grid-inner">';
     foreach ($args as $key => $value) {
-        $content .= '<div class="grid-item lazyload" data-bg="' . $value['pres_image'] . '">';
+        $content .= '<div class="grid-item" style="background:url(' . $value['pres_image'] . ');">';
 
         $content .= '  <div class="grid-item-title-block">';
         $content .= '     <h3>' . $value['pres_name'] . '</h3>';
@@ -98,11 +98,11 @@ function do_featured_presenter_grid($args) {
 								 }
 
 								 jQuery(jQuery(this).find(".desc-body")).css("mask-image", "-webkit-linear-gradient(top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)");
-								 
+
 								 if( 561 > jQuery(window).width() ) {
 								   jQuery(jQuery(this).find(".desc-body")).css("mask-image", "none");
 									jQuery(jQuery(this).find(".desc-body")).css("height", "auto");
-								 } else { 
+								 } else {
 								 	jQuery(jQuery(this).find(".desc-body")).css("height", availableHeight);
 								 }
 							 });
@@ -141,4 +141,3 @@ function get_acf_content() {
         };
     }
 }
-

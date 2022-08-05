@@ -95,14 +95,14 @@ if (isset($entry->errors)) {
     }
     $categoryDisplay = display_categories($categories);
 
-    //get makers info        
+    //get makers info
     $makers = getMakerInfo($entry);
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
-    //field 287 and field 877 can be used in a form for any text input question. 
-    //We will display these on the entry detail form 
+    //field 287 and field 877 can be used in a form for any text input question.
+    //We will display these on the entry detail form
     $field_287 = '';
     $field_887 = '';
     if (isset($entry['287'])) {
@@ -246,7 +246,7 @@ if (!empty($project_video) && validate_url($project_video)) {
     }
     $video = '<div class="entry-video">
               <div class="embed-youtube">
-                <iframe class="lazyload" src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
               </div>
             </div>';
 }
@@ -261,7 +261,7 @@ if (!empty($project_video2) && validate_url($project_video2)) {
     }
     $video2 = '<div class="entry-video">
               <div class="embed-youtube">
-                <iframe class="lazyload" src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
               </div>
             </div>';
 }
@@ -292,7 +292,7 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
             var dispDate = s.format("{day}, {month} {date}");
             jQuery("#startDT").text(dispDate);
 
-            //end time        
+            //end time
             var e = spacetime(jQuery("#end_dt").val(), tzone);
             e = e.goto(this.value);
             dispEndTime = e.format('time');
@@ -527,11 +527,11 @@ function display_categories($catArray) {
 function getMakerInfo($entry) {
     $makers = array();
 
-    /* for VMF2020 we had two nested forms, one for makers one for entries. We determined this was too confusing for 
-     * our makers, and switched to one parent form for entry with one nested form for multiple makers. 
+    /* for VMF2020 we had two nested forms, one for makers one for entries. We determined this was too confusing for
+     * our makers, and switched to one parent form for entry with one nested form for multiple makers.
      */
     if (isset($entry['gpnf_entry_parent']) && $entry['gpnf_entry_parent'] != '') { //is this a nested form with parent information
-        //pull maker information from nested form - VMF2020     
+        //pull maker information from nested form - VMF2020
         $makers = getMakerInfoNested($entry);
     } elseif (isset($entry['854'])) {
         // after VMF2020
@@ -545,7 +545,7 @@ function getMakerInfo($entry) {
 }
 
 function getMakerInfoLegacy($entry) {
-    //set group information    
+    //set group information
     global $isGroup;
     global $isList;
     global $isSingle;
@@ -633,18 +633,18 @@ function handsOnMarker($entry) {
 
 function getSocial($entrySocial) {
 	$socialBlock = '';
-	
+
 	if (isset($entrySocial)) {
 		$entrySocial = (string) $entrySocial;
-		$socialArray = (is_serialized($entrySocial)?unserialize($entrySocial):array());		
-		
+		$socialArray = (is_serialized($entrySocial)?unserialize($entrySocial):array());
+
 		$socialBlock = '<span class="social-links">';
-		
+
 		//only show the first 3 social links entered
 		foreach ($socialArray as $link) {
-			//verify that the social media link provided is not blank and is a valid url			
+			//verify that the social media link provided is not blank and is a valid url
 			if ($link && isset($link['Your Link']) && $link['Your Link'] != '' && validate_url($link['Your Link'])) {
-		    	
+
 				//platform was misspelled as plateform in some earlier forms
 				if(isset($link['Platform'])){
 					$platform = $link['Platform'];
@@ -657,7 +657,7 @@ function getSocial($entrySocial) {
 		}
 		$socialBlock .= '</span>';
 	}
-	
+
     return $socialBlock;
 }
 
@@ -762,15 +762,15 @@ function displayEntryFooter() {
     global $program_guide;
     global $makerEdit;
     global $faire_location_db;
-    
+
     $faire_location = "Bay Area";
     $faire_link = "/bay-area";
-    
+
     if (strpos($faire, 'new-york') !== false) {
         $faire_location = "New York";
         $faire_link = "/new-york";
     }
-    if (strpos($faire, 'virtual') !== false) {   
+    if (strpos($faire, 'virtual') !== false) {
         $faire_location = "";
         $faire_link = "";
     } else {
@@ -783,7 +783,7 @@ function displayEntryFooter() {
         	$faire_link = '/' . $url_sub_path;
     	}
     }
-    
+
     // we're going to check if the schedule page exists
     //find the parent page
     $parentPage = get_page_by_path('/' . $url_sub_path . '/');
@@ -861,7 +861,7 @@ function getMakerInfoNested($entry) {
     }
     $child_entryID_array = (isset($entry['854'])?explode(",", $entry['854']):array()); //field 854 contains the makers, 852 contains the projects
 
-    //get maker information    
+    //get maker information
     $makers = array();
 
     foreach ($child_entryID_array as $child_entryID) {

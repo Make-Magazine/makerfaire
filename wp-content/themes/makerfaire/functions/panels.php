@@ -171,7 +171,7 @@ function getFeatMkPanel($row_layout) {
     foreach ($makerArr as $maker) {
         // var_dump($maker);
         // echo '<br />';
-        $return .= '<div class="grid-item lazyload" data-bg="' . $maker['image'] . '">';
+        $return .= '<div class="grid-item" style="background:url(' . $maker['image'] . ');">';
 
         if (!empty($maker['desc'])) {
             $markup = !empty($maker['maker_url']) ? 'a' : 'div';
@@ -338,7 +338,7 @@ function getFeatEvPanel($row_layout) {
         $return .= '<div class="featured-event col-xs-6">' .
                 ($event['maker_url'] != '' ? '<a href="' . $event['maker_url'] . '">' : '') .
                 '<div class="col-xs-12 col-sm-4 nopad">
-              <div class="event-img lazyload" data-bg="' . $event['image'] . '"></div>
+              <div class="event-img" style="background:url(' . $event['image'] . ');"></div>
             </div>
             <div class="col-xs-12 col-sm-8">
               <div class="event-description">
@@ -403,7 +403,7 @@ function get3ColLayout() {
             case 'image':     // Image with optional link
                 $alignment = $data['column_list_alignment'];
                 $imageArr = $data['column_image_field'];
-                $image = '<img alt="' . $imageArr['alt'] . '" class="img-responsive lazyload" src="' . $imageArr['url'] . '" />';
+                $image = '<img alt="' . $imageArr['alt'] . '" class="img-responsive" src="' . $imageArr['url'] . '" />';
 
                 $cta_link = $data['image_cta'];
                 $ctaText = $data['image_cta_text'];
@@ -501,7 +501,7 @@ function get6ColLayout() {
 
         if (!empty($cta_link)) {
             if (!empty($imageArr['url'])) {
-                $columnInfo = '<a class="six-col-img lazyload" href="' . $cta_link . '" ' . $imgStyle . ' target="' . $target . '"></a>';
+                $columnInfo = '<a class="six-col-img" href="' . $cta_link . '" ' . $imgStyle . ' target="' . $target . '"></a>';
             }
             if (!empty($ctaText)) {
                 $columnInfo .= '<h4 class="text-center sub-caption-bottom ' . $bgColor . '"><a href="' . $cta_link . '" target="' . $target . '">' . $ctaText . '</a></h4>';
@@ -599,7 +599,7 @@ function get1ColLayout() {
 
             $hero_image_url = (isset($hero_image_random["url"]) ? $hero_image_random["url"] : '');
 
-            $image = '<div class="hero-img lazyload" data-bg="' . $hero_image_url . '"></div>';
+            $image = '<div class="hero-img" style="background:url(' . $hero_image_url . ');"></div>';
             $cta_link = get_sub_field('image_cta');
 
             if (!empty($cta_link)) {
@@ -665,7 +665,7 @@ function getVideoPanel() {
             $return .= '  </div>';
             $return .= '  <div class="col-sm-8 col-xs-12">
 			                 <div class="embed-youtube">
-									 <iframe class="lazyload" src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+									 <iframe src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 								  </div>
 			              </div>';
             $return .= '</div>';
@@ -673,7 +673,7 @@ function getVideoPanel() {
             $return .= '<div class="row">';
             $return .= '  <div class="col-sm-8 col-xs-12">
 								  <div class="embed-youtube">
-									 <iframe class="lazyload" src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+									 <iframe src="https://www.youtube.com/embed/' . $video['video_code'] . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 								  </div>
 							  </div>';
             $return .= '  <div class="col-sm-4 col-xs-12">
@@ -724,7 +724,7 @@ function getImagePanel() {
             if (isset($image['image_overlay']['image_overlay_link'])) {
                 $return .= ' 		  <a href="' . $image['image_overlay']['image_overlay_link'] . '">';
             }
-            $return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
+            $return .= '			 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
             if (isset($image['image_overlay']['image_overlay_text'])) {
                 $return .= '  <div class="image-overlay-text">' . $image['image_overlay']['image_overlay_text'] . '</div>';
             }
@@ -741,7 +741,7 @@ function getImagePanel() {
             if (isset($image['image_overlay']['image_overlay_link'])) {
                 $return .= ' 		  <a href="' . $image['image_overlay']['image_overlay_link'] . '">';
             }
-            $return .= '			 <img class="img-responsive lazyload" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
+            $return .= '			 <img class="img-responsive" src="' . $imageObj['url'] . '" alt="' . $imageObj['alt'] . '" />';
             if (isset($image['image_overlay']['image_overlay_text'])) {
                 $return .= '  <div class="image-overlay-text">' . $image['image_overlay']['image_overlay_text'] . '</div>';
                 ;
@@ -891,7 +891,7 @@ function getImgCarousel() {
                     $return .= '<a href="' . $url . '">';
                 }
                 $return .= '
-            <img class="lazyload" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
+            <img src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
                 if ($text) {
                     $return .= '
               <div class="carousel-caption">
@@ -905,7 +905,7 @@ function getImgCarousel() {
         </div>';
             } else {
                 $return .= '<div class="item">
-          <img class="lazyload" src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
+          <img src="' . $image['url'] . '" alt="' . $image['alt'] . '" />';
                 if ($text) {
                     $return .= '
           <div class="carousel-caption">
@@ -955,7 +955,7 @@ function getImgCarouselSquare() {
             $text = get_sub_field('text');
             $url = get_sub_field('url');
             $image = get_sub_field('image');
-            $return .= '<div class="mtm-car-image lazyload" data-bg="' . $image["url"] . '" style="background-repeat: no-repeat; background-position: center center;background-size: cover;"></div>';
+            $return .= '<div class="mtm-car-image" style="background:url(' . $image['url'] . ');" style="background-repeat: no-repeat; background-position: center center;background-size: cover;"></div>';
         }
         $return .= '
     </div>
@@ -1030,7 +1030,7 @@ function getSliderPanel() {
             $return .= '<a href="' . $slide['slide_link'] . '">';
         }
         $return .= '     <div class="item slide">
-        		                   <div class="slide-image-section lazyload" data-bg="' . $imageObj['url'] . '">';
+        		                   <div class="slide-image-section" style="background:url(' . $imageObj['url'] . ');">';
         if (!empty($slide['slide_title']) && get_sub_field("column_number") > 1) {
             $return .= '     <p class="slide-title">' . $slide['slide_title'] . '</p>';
         }
@@ -1197,7 +1197,7 @@ function getNewsletterPanel() {
                   <div class="col-xs-12 col-sm-6 align-middle">
                      <div class="row row-eq-height" style="width:100%">
                         <div class="col-xs-12 col-sm-2 align-middle">
-                   <!--        <img class="img-responsive lazyload" src="/wp-content/themes/makerfaire/img/makey_outlined.svg" />-->
+                   <!--        <img class="img-responsive" src="/wp-content/themes/makerfaire/img/makey_outlined.svg" />-->
                         </div>
                         <div class="col-xs-12 col-sm-10 align-middle">
                            <input id="wc-email" class="form-control nl-panel-input" name="email" placeholder="' . __('Enter your Email', 'MiniMakerFaire') . '" required type="email">
@@ -1341,7 +1341,7 @@ function getSponsorPanel() {
                     if (get_sub_field('url')) {
                         $return .= '      <a href="' . $sub_field_2 . '" target="_blank">';
                     }
-                    $return .= '            <img class="lazyload" src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" />';
+                    $return .= '            <img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" />';
                     if (get_sub_field('url')) {
                         $return .= '      </a>';
                     }
@@ -1509,7 +1509,7 @@ function getMakeyBanner() {
     $content = '<div class="makey-banner ' . ($acf_blocks ? get_field('background-color') : get_sub_field('background-color')) . '">';
     $content .= '   <div class="container">';
     $content .= '      <div class="picture-holder">';
-    $content .= '         <img alt="Maker Robot" height="74" class="lazyload" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';
+    $content .= '         <img alt="Maker Robot" height="74" src="/wp-content/uploads/2015/04/maker-robot.png" width="53">';
     $content .= '      </div>';
     $content .= '      <a href="' . $URL . '">' . $title . ' <i class="icon-arrow-right"></i></a>';
     $content .= '   </div>';

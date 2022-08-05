@@ -31,12 +31,12 @@
 
             <!-- Project Image -->
             <p id="proj_img">
-                <img class="img-responsive dispPhoto lazyload" src="<?php echo $project_photo; ?>" />
+                <img class="img-responsive dispPhoto" src="<?php echo $project_photo; ?>" />
             </p>
 
             <!-- Project Short Description -->
             <div id="project_short" class="lead">
-                <p><?php echo nl2br($project_short); ?></p>                
+                <p><?php echo nl2br($project_short); ?></p>
                 <?php if (isset($field_287) && $field_287 != '') { ?>
                     <p><b><?php echo $label_287; ?>:</b><br/><?php echo nl2br($field_287); ?></p>
                 <?php } ?>
@@ -78,12 +78,12 @@
                 if (!empty($viewNow)) {
                     ?>
                     <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
-                <?php } ?>    
+                <?php } ?>
             </div>
 
 
             <div class="sidebar-type"> <!-- Maker/Group/Worskhop etc -->
-                <?php if ($dispMakerInfo) { ?>                    
+                <?php if ($dispMakerInfo) { ?>
                     <?php
                     if ($isGroup) {
                         ?>
@@ -95,7 +95,7 @@
                                 </div>
                                 <div class="col-xs-12">
                                     <div class="entry-page-maker-img">
-                                        <img class="img-responsive lazyload" src="<?php echo (!empty($groupphoto) ? legacy_get_fit_remote_image_url($groupphoto, 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
+                                        <img class="img-responsive" src="<?php echo (!empty($groupphoto) ? legacy_get_fit_remote_image_url($groupphoto, 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
                                     </div>
                                 </div>
                             </div>
@@ -127,7 +127,7 @@
                                         </div>
                                         <div class="col-xs-12">
                                             <div class="entry-page-maker-img">
-                                                <img class="img-responsive lazyload" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : get_stylesheet_directory_uri() . '/images/makey-profile-default.png' ); ?>" />
+                                                <img class="img-responsive" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : get_stylesheet_directory_uri() . '/images/makey-profile-default.png' ); ?>" />
                                             </div>
                                         </div>
                                     </div>

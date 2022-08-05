@@ -123,7 +123,7 @@ class Sponsors extends Widget_Base {
 	                    if (get_sub_field('url')) {
 	                        $return .= '      <a href="' . $sub_field_2 . '" target="_blank">';
 	                    }
-	                    $return .= '            <img class="lazyload" src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" />';
+	                    $return .= '            <img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" />';
 	                    if (get_sub_field('url')) {
 	                        $return .= '      </a>';
 	                    }
