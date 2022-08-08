@@ -67,7 +67,7 @@
         if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
             get_template_part('dfp');
             ?>
-			<!-- Global site tag (gtag.js) - Google Analytics -->
+			<!-- Global site tag (gtag.js) - Google Analytics (Universal) -->
 			<script async src="https://www.googletagmanager.com/gtag/js?id=UA-51157-7"></script>
 			<script>
 				window.dataLayer = window.dataLayer || [];
@@ -81,6 +81,15 @@
 					page_path: location.pathname + location.search + location.hash,
 					send_to: 'UA-51157-7'
 				})
+			</script>
+			<!-- Google tag (gtag.js) GA4 -->
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-51PP9YXQ8B"></script>
+			<script>
+			  window.dataLayer = window.dataLayer || [];
+			  function gtag(){dataLayer.push(arguments);}
+			  gtag('js', new Date());
+
+			  gtag('config', 'G-51PP9YXQ8B');
 			</script>
 
             <!-- Facebook Pixel Code -->
