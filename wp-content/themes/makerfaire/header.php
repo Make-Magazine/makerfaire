@@ -50,8 +50,6 @@
             }());
         </script>
 
-
-
         <script>
             var _prum = [['id', '53fcea2fabe53d341d4ae0eb'],
                 ['mark', 'firstbyte', (new Date()).getTime()]];
@@ -69,6 +67,22 @@
         if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
             get_template_part('dfp');
             ?>
+			<!-- Global site tag (gtag.js) - Google Analytics -->
+			<script async src="https://www.googletagmanager.com/gtag/js?id=UA-51157-7"></script>
+			<script>
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+
+				gtag('config', 'UA-51157-7', {
+					send_page_view: false
+				});
+				gtag('event', 'page_view', {
+					page_path: location.pathname + location.search + location.hash,
+					send_to: 'UA-51157-7'
+				})
+			</script>
+
             <!-- Facebook Pixel Code -->
             <script>
                 !function (f, b, e, v, n, t, s) {
@@ -95,33 +109,7 @@
             </script>
             <noscript></noscript>
             <!-- End Facebook Pixel Code -->
-
-            <script>
-                (function (i, s, o, g, r, a, m) {
-                    i['GoogleAnalyticsObject'] = r;
-                    i[r] = i[r] || function () {
-                        (i[r].q = i[r].q || []).push(arguments)
-                    }, i[r].l = 1 * new Date();
-                    a = s.createElement(o),
-                            m = s.getElementsByTagName(o)[0];
-                    a.async = 1;
-                    a.src = g;
-                    m.parentNode.insertBefore(a, m)
-                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
-                ga('create', 'UA-51157-7', 'auto');
-                ga('send', 'pageview', {
-                    'page': location.pathname + location.search + location.hash
-                });
-            </script>
-
-    <?php if (is_404()) : // Load this last.  ?>
-                <script>
-                    // Track our 404 errors and log them to GA
-                    ga('send', 'event', '404', 'URL', document.location.pathname + document.location.search);
-                </script>
-            <?php endif; ?>
-<?php } // end cookie law if  ?>
+		<?php } // end cookie law if  ?>
 
         <script type="text/javascript">
             dataLayer = [];
@@ -148,7 +136,7 @@
                         })(window, document, 'script', 'dataLayer', 'GTM-PCDDDV');</script>
             <!-- End Google Tag Manager -->
             <script type="text/javascript">document.body.className = document.body.className.replace('no-js', 'js');</script>
-<?php } // end cookie law if  ?>
+		<?php } // end cookie law if  ?>
 
         <a name="topofpage"></a>
 
