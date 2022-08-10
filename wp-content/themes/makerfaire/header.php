@@ -67,10 +67,22 @@
         if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
             get_template_part('dfp');
             ?>
+			<!-- Data layer Object -->
+			<script type="text/javascript">
+				window.dataLayer = window.dataLayer || [];
+			</script>
+
+			<!-- Google Tag Manager -->
+			<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+			'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+			})(window,document,'script','dataLayer','GTM-PCDDDV');</script>
+			<!-- End Google Tag Manager -->
+
 			<!-- Global site tag (gtag.js) - Google Analytics (Universal) -->
 			<script async src="https://www.googletagmanager.com/gtag/js?id=UA-51157-7"></script>
 			<script>
-				window.dataLayer = window.dataLayer || [];
 				function gtag(){dataLayer.push(arguments);}
 				gtag('js', new Date());
 
@@ -85,11 +97,9 @@
 			<!-- Google tag (gtag.js) GA4 -->
 			<script async src="https://www.googletagmanager.com/gtag/js?id=G-51PP9YXQ8B"></script>
 			<script>
-			  window.dataLayer = window.dataLayer || [];
-			  function gtag(){dataLayer.push(arguments);}
-			  gtag('js', new Date());
-
-			  gtag('config', 'G-51PP9YXQ8B');
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+				gtag('config', 'G-51PP9YXQ8B');
 			</script>
 
             <!-- Facebook Pixel Code -->
@@ -120,9 +130,6 @@
             <!-- End Facebook Pixel Code -->
 		<?php } // end cookie law if  ?>
 
-        <script type="text/javascript">
-            dataLayer = [];
-        </script>
     </head>
 
     <body id="makerfaire" <?php body_class('no-js'); ?>>
@@ -131,19 +138,10 @@
         // Tracking pixels users can turn off through the cookie law checkbox
         if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
             ?>
-            <!-- Google Tag Manager MakerFaire -->
-            <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
-                              height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-            <script>(function (w, d, s, l, i) {
-                    w[l] = w[l] || [];w[l].push({'gtm.start':
-                                new Date().getTime(), event: 'gtm.js'});var f = d.getElementsByTagName(s)[0],
-                            j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
-                    j.async = true;
-                    j.src =
-                            '//www.googletagmanager.com/gtm.js?id=' + i + dl;
-                    f.parentNode.insertBefore(j, f);
-                        })(window, document, 'script', 'dataLayer', 'GTM-PCDDDV');</script>
-            <!-- End Google Tag Manager -->
+			<!-- Google Tag Manager (noscript) -->
+			<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
+			height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+			<!-- End Google Tag Manager (noscript) -->
             <script type="text/javascript">document.body.className = document.body.className.replace('no-js', 'js');</script>
 		<?php } // end cookie law if  ?>
 
