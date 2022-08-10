@@ -100,6 +100,7 @@ function load_scripts() {
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
     wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
     wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.6/css/jquery.fancybox.min.css', '', 'all');
+    wp_enqueue_style('universal-firstload.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/css/universal-firstload.min.css', array(), $my_version);
     wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/css/universal.min.css', array(), $my_version);
 
     // font awesome load script
