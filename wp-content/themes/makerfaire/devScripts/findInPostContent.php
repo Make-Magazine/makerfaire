@@ -16,12 +16,14 @@ global $wpdb;
 $table = 'wp_posts';
 $postArray = array();
 
-$postResults = $wpdb->get_results('select ID, post_title, post_date from ' . $table.' where post_content like "%'.$findme.'%" order by post_date', ARRAY_A);
+$postResults = $wpdb->get_results('select ID, post_title, post_date, post_status, post_type from ' . $table.' where post_content like "%'.$findme.'%" order by post_date', ARRAY_A);
 
 foreach ($postResults as $postRow) {
   $postArray[] = array(
       'post_id'    => $postRow['ID'],
       'post_date'  => $postRow['post_date'],
+      'post_status'  => $postRow['post_status'],
+      'post_type'  => $postRow['post_type'],
       'post_title' => $postRow['post_title']
   );
 }
@@ -99,14 +101,18 @@ if ((isset($_GET['debug']) && trim($_GET['debug']) != '')) {
                     <tr>
                         <td width="5%">Post ID</td>
                         <td width="15%">Post Date</td>
-                        <td width="80%">Post Name</td>
+                        <td width="5%">Post Status</td>
+                        <td width="15%">Post Type</td>
+                        <td width="60%">Post Name</td>
                     </tr>
                     <?php
                     foreach ($postArray as $postData) {
                       echo '<tr>';
                         echo '<td>' . $postData['post_id']    . '</td>';
                         echo '<td>' . $postData['post_date']    . '</td>';
-                        echo '<td><a target="_blank" href="https://' . get_site_url() . '/?p='.$postData['post_id'].'">' . $postData['post_title'] . '</a></td>';
+                        echo '<td>' . $postData['post_status']    . '</td>';
+                        echo '<td>' . $postData['post_type']    . '</td>';
+                        echo '<td><a target="_blank" href="' . get_site_url() . '/?p='.$postData['post_id'].'">' . $postData['post_title'] . '</a></td>';
                       echo '</tr>';
                     }
                     ?>
