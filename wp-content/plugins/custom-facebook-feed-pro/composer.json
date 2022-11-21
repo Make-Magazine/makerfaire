@@ -1,8 +1,0 @@
-{
-    "name": "smashballoon/custom-facebook-feed-pro",
-    "autoload": {
-        "psr-4": {
-            "CustomFacebookFeed\\": "inc/"
-        }
-    }
-}

@@ -1,14 +1,18 @@
 *~
 .DS_Store
-.svn
-.cvs
-.buildpath
-.project
 *.bak
 *.swp
 Thumbs.db
-.buildpath
-.project
+
+# ignore log files
+*.log
+
+# ignore node/grunt dependency directories
+node_modules/
+
+# ignore cache files
+*.cache
+wp-content/wp-rocket-config/*
 
 # wordpress specific
 wp-config.php
@@ -20,26 +24,23 @@ wp-content/advanced-cache.php
 wp-content/wp-cache-config.php
 wp-content/cache/*
 wp-content/cache/supercache/*
-wp-content/gallery/*
-wp-content/exports/*
-wp-content/themes/makerfaire/partials/data/*
-wp-content/themes/makerfaire/signs/*
-wp-content/themes/twenty*
 
 # wpengine specific
 .smushit-status
 .gitattributes
 .htaccess
-last-mod
-_wpeprivate
+_wpeprivate*
 wp-content/object-cache.php
-wp-content/mu-plugins/*
+wp-content/mu-plugins/mu-plugin.php
+wp-content/mu-plugins/slt-force-strong-passwords.php
+wp-content/mu-plugins/stop-long-comments.php
+wp-content/mu-plugins/force-strong-passwords*
+wp-content/mu-plugins/wpengine-common*
 wp-content/mysql.sql
+wp-content/mu-plugins/wpengine-security-auditor.php
+wp-content/mu-plugins/wpe-wp-sign-on-plugin*
 
-# for dev use
-wp-content/plugins/filter-page-by-template
-
-# wp core (as of 3.4.1)
+# wp core (as of 4.9.5)
 /db-config.php
 /index.php
 /license.txt
@@ -70,9 +71,21 @@ wp-content/plugins/filter-page-by-template
 /wp-includes
 /wp-content/index.php
 /wp-content/themes/twentyten
+/wp-content/themes/twentyeleven
+/wp-content/themes/twentytwelve
+/wp-content/themes/twentythirteen
+/wp-content/themes/twentyfourteen
+/wp-content/themes/twentyfifteen
+/wp-content/themes/twentysixteen
+/wp-content/themes/twentyseventeen
+/wp-content/themes/twentyeighteen
+/wp-content/themes/twentynineteen
+/wp-content/themes/twentytwenty
+/wp-content/themes/twentytwentyone
+/wp-content/themes/twentytwentytwo
 /wp-content/themes/index.php
 /wp-content/plugins/index.php
-/wp-content/debug.log
+/wp-content/plugins/akismet*
 
 # large/disallowed file types
 # a CDN should be used for these
@@ -108,17 +121,8 @@ wp-content/plugins/filter-page-by-template
 *.asf
 *.wmv
 *.avi
-*.csv
-*.ics
-.netbeans.xml
-FixFor Users.sql
-wp-content/themes/twentyseventeen
-debug.log.*
-.wpe-devkit
-.wpengine-conf
-.wpe-pull-ignore
-.wpe-push-ignore
-googled013dbd6063e50f3.html
-robots.txt
-wp-content/mu-plugins-bk
-wp-content/wp-rocket-config
+
+#mf specific
+/wp-content/exports
+/wp-content/gallery
+/wp-content/themes/makerfaire/FaireSchedule.ics
