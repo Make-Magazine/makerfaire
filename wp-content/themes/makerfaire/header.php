@@ -27,7 +27,7 @@
             var templateUrl = '<?= get_site_url(); ?>';
         </script>
         <!-- Le styles -->
-        <?php wp_head(); global $post; ?>
+        <?php wp_head(); ?>
         <!-- Remarketing pixel -->
         <script type="text/javascript">
             adroll_adv_id = "QZ72KCGOPBGLLLPAE3SDSI";
