@@ -142,13 +142,9 @@
                r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(t,r)}}
                ("https://s.pinimg.com/ct/core.js"); pintrk('load', '2617466540835'); pintrk('page');
              </script>
-             <noscript>
-               <img height="1" width="1" style="display:none;" alt="" src="https://ct.pinterest.com/v3/?tid=2617466540835&noscript=1" />
-             </noscript>
-             <script>pintrk('track', 'pagevisit', {event_id: '<?php echo $pageUniq; ?>'});</script>
-             <noscript>
-               <img height="1" width="1" style="display:none;" alt="" src="https://ct.pinterest.com/v3/?tid=2617466540835&event=pagevisit&noscript=1" />
-             </noscript>
+            <noscript><img height="1" width="1" style="display:none;" alt="" src="https://ct.pinterest.com/v3/?tid=2617466540835&noscript=1" /></noscript>
+            <script>pintrk('track', 'pagevisit', {event_id: '<?php echo $pageUniq; ?>'});</script>
+            <noscript><img height="1" width="1" style="display:none;" alt="" src="https://ct.pinterest.com/v3/?tid=2617466540835&event=pagevisit&noscript=1" /> </noscript>
 			<!-- end Pinterest Tag -->
 		<?php } // end cookie law if  ?>
 
