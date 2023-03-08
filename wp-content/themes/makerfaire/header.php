@@ -66,10 +66,6 @@
         // Tracking pixels users can turn off through the cookie law checkbox -- defaults to yes
         if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
             get_template_part('dfp');
-			$pageUniq = trim(strtok($_SERVER["REQUEST_URI"], '?'), '/');
-			if(is_front_page()) {
-				$pageUniq = "home";
-			}
             ?>
 			<!-- Data layer Object -->
 			<script type="text/javascript">
@@ -133,19 +129,6 @@
             <noscript></noscript>
             <!-- End Facebook Pixel Code -->
             
-            <!-- Pinterest Tag -->
-			<script>
-			 !function(e){if(!window.pintrk){window.pintrk=function(){window.pintrk.queue.push(
-               Array.prototype.slice.call(arguments))};var
-               n=window.pintrk;n.queue=[],n.version="3.0";var
-               t=document.createElement("script");t.async=!0,t.src=e;var
-               r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(t,r)}}
-               ("https://s.pinimg.com/ct/core.js"); pintrk('load', '2617466540835'); pintrk('page');
-             </script>
-            <noscript><img height="1" width="1" style="display:none;" alt="" src="https://ct.pinterest.com/v3/?tid=2617466540835&noscript=1" /></noscript>
-            <script>pintrk('track', 'pagevisit', {event_id: '<?php echo $pageUniq; ?>'});</script>
-            <noscript><img height="1" width="1" style="display:none;" alt="" src="https://ct.pinterest.com/v3/?tid=2617466540835&event=pagevisit&noscript=1" /> </noscript>
-			<!-- end Pinterest Tag -->
 		<?php } // end cookie law if  ?>
 
     </head>
