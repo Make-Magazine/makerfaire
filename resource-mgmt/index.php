@@ -1,5 +1,6 @@
 <?php
-
+/* This tool users UI grid. documentation can be found here http://ui-grid.info/docs
+*/
 if ( ! defined( 'WP_ADMIN' ) ) {
 	define( 'WP_ADMIN', false );
 }
