@@ -67,15 +67,23 @@ function save_data($mysqli, $table = '', $data = '', $pkeyField = '') {
 			// loop thru the passed information
 			foreach ( $data as $key => $value ) {
 				// skip if the field is an additional field and not part of this table
-				if (! isset ( $tableOptions [$table] ['addlFields'] [$key] )) {
+				if (! isset ( $tableOptions[$table]['addlFields'][$key] )) {
 					if ($key != $pkeyField && $key != '$$hashKey' && $key != 'sending') { // not valid table fields
-					                                                                      // if $id is empty this is an insert not an update
+						//check for NULL on blank
+						if($value==''){																	
+							$addKey = array_search($key, array_column($tableOptions[$table]['addlFields'], 'fieldName'));								
+							if($addKey !== false && isset($tableOptions[$table]['addlFields'][$addKey]['null_on_blank']) ){
+								if($tableOptions[$table]['addlFields'][$addKey]['null_on_blank'])	
+									$value = NULL;																		
+							}								
+						}
+
+					  // if $id is empty this is an insert not an update
 						if (empty ( $id )) {
-							$field_names [] = $key;
-							// tbd clean input data
-							$field_values [] = ( string ) $value;
-						} else {
-							$updateField [] = $key . '="' . $value . '"';
+							$field_names [] = $key;														
+							$field_values [] = ($value!=NULL? ( string ) $value : NULL);							
+						} else {							
+							$updateField [] = ($value!=NULL?$key . '="' . $value . '"':$key . '=NULL');
 						}
 					}
 				}

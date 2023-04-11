@@ -50,10 +50,7 @@ $tableOptions['wp_rmt_entry_resources']['fkey']    = array(
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
         'fieldName' => 'venue_address_region', 'filterType'=>'dropdown', 'fieldLabel'=>'Region', 
 		'enableCellEdit' => true, 'width' => 150,
-        'options' => array( 'Europe'        =>  'Europe',         'North America' =>  'North America',
-                 			'Asia'          =>  'Asia',           'Australia'     =>  'Australia',
-                  			'South America' =>  'South America',  'Middle East'   =>  'Middle East',
-                  			'PACIFIC'       =>  'Pacific',        'Africa'        =>  'Africa')
+        'options' => array('Europe', 'North America', 'Asia', 'Australia', 'South America', 'Middle East', 'Pacific', 'Africa')
     );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
         'fieldName' => 'venue_address_country', 'filterType'=>'dropdown', 'fieldLabel'=>'Country', 
@@ -66,14 +63,30 @@ $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
     'options' => array('Mini' => 'Mini', 'Featured' => 'Featured', 'Flagship' => 'Flagship', 'School' => 'School')
   );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
-		'fieldName' => 'event_start_dt', 'fieldLabel'=>'Start Date'
+		'fieldName' => 'event_start_dt', 'fieldLabel'=>'Start Date', 
+                'null_on_blank'=>true
   );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
-                'fieldName' => 'lat', 'type'=>'number', 'fieldLabel' => 'Latitude',
+                'fieldName' => 'event_end_dt', 'fieldLabel'=>'End Date', 
+                'null_on_blank'=>true
+  );
+$tableOptions['wp_mf_global_faire']['addlFields'][] = array(
+                'fieldName' => 'cfm_start_dt', 'fieldLabel'=>'CFM Start Date', 
+                'cellFilter'=>'date',
+                'null_on_blank'=>true
+  );
+$tableOptions['wp_mf_global_faire']['addlFields'][] = array(
+                'fieldName' => 'cfm_end_dt', 'fieldLabel'=>'CFM End Date', 
+                'null_on_blank'=>true
+  );
+$tableOptions['wp_mf_global_faire']['addlFields'][] = array(
+                'fieldName' => 'lat', 'type'=>'number', 'fieldLabel' => 'Latitude', 
+                'null_on_blank'=>true,
                 'sort' => array('direction' => 'uiGridConstants.DESC', 'priority' => 1)
 );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
-                'fieldName' => 'lng', 'type'=>'number',  'fieldLabel' => 'Longitude',
+                'fieldName' => 'lng', 'type'=>'number',  'fieldLabel' => 'Longitude', 
+                'null_on_blank'=>true,
                 'sort' => array('direction' => 'uiGridConstants.DESC', 'priority' => 1)
 );
 $tableOptions['wp_mf_global_faire']['addlFields'][] = array(
