@@ -100,8 +100,8 @@ function load_scripts() {
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
     wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
     wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.6/css/jquery.fancybox.min.css', '', 'all');
-    wp_enqueue_style('universal-firstload.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/css/universal-firstload.min.css', array(), $my_version);
-    wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/css/universal.min.css', array(), $my_version);
+    wp_enqueue_style('universal-firstload.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/css/universal-firstload.min.css', array(), $my_version);
+    wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/css/universal.min.css', array(), $my_version);
 
     // font awesome load script
     wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true);
@@ -116,8 +116,8 @@ function load_scripts() {
     wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), '', true);
     // wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
     wp_enqueue_script('jquery-sticky', get_stylesheet_directory_uri() . '/js/libs/jquery.sticky.js', array('jquery'), '', true);
-    wp_enqueue_script('universal-auth0', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/js/min/universal-auth0.min.js', array(), $my_version, true);
-    wp_enqueue_script('universal', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/js/min/universal.min.js', array(), $my_version, true);
+    wp_enqueue_script('universal-auth0', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/js/min/universal-auth0.min.js', array(), $my_version, true);
+    wp_enqueue_script('universal', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/js/min/universal.min.js', array(), $my_version, true);
 
     wp_enqueue_script('thickbox', null);
 

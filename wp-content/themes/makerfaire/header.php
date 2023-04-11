@@ -151,7 +151,7 @@
 
 		<?php
 		// Universal Nav
-		echo basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/page-elements/universal-topnav.html');
+		echo basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/page-elements/universal-topnav.html');
 		?>
 		<div id="universal-subnav" class="nav-level-2">
 			<?php

@@ -1,7 +1,7 @@
 </div> <!-- end of site-content -->
 
 <?php
-   echo basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v1/page-elements/universal-footer.html');
+   echo basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/page-elements/universal-footer.html');
 ?>
 
 <!-- Clear the WP admin bar when in mobile fixed header -->

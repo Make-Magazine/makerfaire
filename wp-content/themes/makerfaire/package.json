@@ -1,6 +1,6 @@
 {
    "name": "makerfaire",
-   "version": "4.33.341",
+   "version": "4.33.342",
    "description": "Maker Faire",
    "main": "",
    "private": true,
@@ -75,7 +75,7 @@
       "replace-in-file": "^3.4.4",
       "uglify-js": "^3.9.2"
    },
-   "author": "Maker Media",
+   "author": "Make: Community",
    "license": "UNLICENSED",
    "dependencies": {
       "@fancyapps/fancybox": "^3.5.7",

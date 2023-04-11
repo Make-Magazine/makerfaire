@@ -59,7 +59,7 @@ I'm a Maryland-based cosplayer and costumer who has a passion for teaching. I'm 
                 "partner_opp_url"   =>  "https://make.co/makercampus/sewing-for-cosplay-101-lesson-4-shaping-fabric/",
                 "partner_name"      =>  "Maker Campus",
                 "partner_website"   =>  "https://makercampus.com",
-                "partner_logo_url"  =>  "https://make.co/wp-content/universal-assets/v1/images/MakerCampus_Logo_Boxless.png",
+                "partner_logo_url"  =>  "https://make.co/wp-content/universal-assets/v2/images/MakerCampus_Logo_Boxless.png",
                 "entity_type"	      =>  "opportunity",
                 "opp_topics"        =>  array("art", "engineering", "design", "education"),
                 "tags"              =>  array("Craft & Design", "Makeup & Costumes", "Wearables"),
