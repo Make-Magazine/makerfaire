@@ -309,6 +309,10 @@ function gravityview_show_approved_entries_column( $show_approve_column, $form_i
     return false;
   }
 
+  //all other forms, remove the approval column
+  return true;
+}
+
 /* Quick fix for BA17 Add approve option  to entry list first column */
 add_action('gform_entries_first_column_actions', 'first_column_actions', 10, 5);
 
