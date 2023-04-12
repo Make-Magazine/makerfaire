@@ -300,7 +300,18 @@ function remove_gf_filter($filter_links, $form, $include_counts) {
 }
 
 //remove teh approve/dissaprove column added by gravity view
-add_filter('gravityview/approve_entries/hide-if-no-connections', '__return_true');
+add_filter('gravityview/approve_entries/show-column','gravityview_show_approved_entries_column', 10, 2 );
+
+function gravityview_show_approved_entries_column( $show_approve_column, $form_id ) {
+  
+  // In this example, we want to show the column for Gravity Forms form ID 2
+  if( $form_id === 254 || $form_id === 253 || $form_id ===  252 ) {
+    return false;
+  }
+  
+  // For other forms, hide the option
+  return TRUE;
+}
 
 /* Quick fix for BA17 Add approve option  to entry list first column */
 add_action('gform_entries_first_column_actions', 'first_column_actions', 10, 5);
