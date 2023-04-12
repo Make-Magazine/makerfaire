@@ -306,11 +306,11 @@ function gravityview_show_approved_entries_column( $show_approve_column, $form_i
   
   //we want to show the column for Gravity Forms form ID 2
   if( $form_id === 254 || $form_id === 253 || $form_id ===  252 ) {
-    return false;
+    return true;
   }
 
   //all other forms, remove the approval column
-  return true;
+  return false;
 }
 
 /* Quick fix for BA17 Add approve option  to entry list first column */
