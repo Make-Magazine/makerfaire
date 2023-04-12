@@ -304,7 +304,7 @@ add_filter('gravityview/approve_entries/show-column','gravityview_show_approved_
 
 function gravityview_show_approved_entries_column( $show_approve_column, $form_id ) {
   
-  // In this example, we want to show the column for Gravity Forms form ID 2
+  //we want to show the column for Gravity Forms form ID 2
   if( $form_id === 254 || $form_id === 253 || $form_id ===  252 ) {
     return false;
   }
