@@ -69,6 +69,7 @@ if ( $type == 'map' ) {
 			`venue_address_country`,
 			`venue_address_postal_code`,
 			`venue_address_region`,
+      'faire_image',
 			states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state';
 
   $where = ' WHERE ';
