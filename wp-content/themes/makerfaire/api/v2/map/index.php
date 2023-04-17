@@ -46,31 +46,7 @@ if ( $type == 'map' ) {
     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
   }
 
-  $select_query = '
-    SELECT  `ID`,
-			`faire_shortcode`,
-			`faire_name`,
-			`lat`,
-			`lng`,
-			`faire_year`,
-			`event_type`,
-			`event_dt`,
-			`event_start_dt`,
-			`event_end_dt`,
-			`cfm_start_dt`,
-			`cfm_end_dt`,
-			`cfm_url`,
-			`faire_url`,
-			`ticket_site_url`,
-			`free_event`,
-			`venue_address_street`,
-			`venue_address_city`,
-			`venue_address_state`,
-			`venue_address_country`,
-			`venue_address_postal_code`,
-			`venue_address_region`,
-      'faire_image',
-			states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state';
+  $select_query = "SELECT ID, faire_shortcode, faire_name, lat, lng, faire_year, event_type, event_dt, event_start_dt, event_end_dt, cfm_start_dt, cfm_end_dt, cfm_url, faire_url, ticket_site_url, free_event, venue_address_street, venue_address_city, venue_address_state, venue_address_country, venue_address_postal_code, venue_address_region, faire_image, states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state";
 
   $where = ' WHERE ';
   $order = '';
