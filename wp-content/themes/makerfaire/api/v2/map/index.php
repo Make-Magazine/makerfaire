@@ -115,6 +115,10 @@ if ( $type == 'map' ) {
     $point['venue_address_country']     = html_entity_decode(trim( $row['venue_address_country'] ));
     $point['venue_address_postal_code'] = html_entity_decode(trim( $row['venue_address_postal_code'] ));
     $point['venue_address_region']      = html_entity_decode(trim( $row['venue_address_region'] ));
+
+    //return the faire image
+    $point['faire_image']               = html_entity_decode(trim( $row['faire_image'] ));
+    
     // Get the child locations
     $point['lat']                       = $row['lat'];
     $point['lng']                       = $row['lng'];
