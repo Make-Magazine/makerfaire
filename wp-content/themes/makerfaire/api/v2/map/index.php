@@ -46,30 +46,7 @@ if ( $type == 'map' ) {
     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
   }
 
-  $select_query = '
-    SELECT  `ID`,
-			`faire_shortcode`,
-			`faire_name`,
-			`lat`,
-			`lng`,
-			`faire_year`,
-			`event_type`,
-			`event_dt`,
-			`event_start_dt`,
-			`event_end_dt`,
-			`cfm_start_dt`,
-			`cfm_end_dt`,
-			`cfm_url`,
-			`faire_url`,
-			`ticket_site_url`,
-			`free_event`,
-			`venue_address_street`,
-			`venue_address_city`,
-			`venue_address_state`,
-			`venue_address_country`,
-			`venue_address_postal_code`,
-			`venue_address_region`,
-			states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state';
+  $select_query = "SELECT ID, faire_shortcode, faire_name, lat, lng, faire_year, event_type, event_dt, event_start_dt, event_end_dt, cfm_start_dt, cfm_end_dt, cfm_url, faire_url, ticket_site_url, free_event, venue_address_street, venue_address_city, venue_address_state, venue_address_country, venue_address_postal_code, venue_address_region, faire_image, states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state";
 
   $where = ' WHERE ';
   $order = '';
@@ -138,6 +115,10 @@ if ( $type == 'map' ) {
     $point['venue_address_country']     = html_entity_decode(trim( $row['venue_address_country'] ));
     $point['venue_address_postal_code'] = html_entity_decode(trim( $row['venue_address_postal_code'] ));
     $point['venue_address_region']      = html_entity_decode(trim( $row['venue_address_region'] ));
+
+    //return the faire image
+    $point['faire_image']               = html_entity_decode(trim( $row['faire_image'] ));
+    
     // Get the child locations
     $point['lat']                       = $row['lat'];
     $point['lng']                       = $row['lng'];
