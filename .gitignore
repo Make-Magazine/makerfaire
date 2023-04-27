@@ -119,3 +119,4 @@ wp-content/mu-plugins/*
 /wp-content/exports
 /wp-content/gallery
 /wp-content/themes/makerfaire/FaireSchedule.ics
+/wp-content/mysql.sql
