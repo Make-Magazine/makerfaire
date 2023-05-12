@@ -5,12 +5,15 @@ use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use ElementorPro\Modules\Woocommerce\Classes\Products_Renderer;
+use ElementorPro\Modules\Woocommerce\Traits\Product_Id_Trait;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 abstract class Base_Widget extends \ElementorPro\Base\Base_Widget {
+
+	use Product_Id_Trait;
 
 	protected $gettext_modifications;
 
@@ -80,8 +83,6 @@ abstract class Base_Widget extends \ElementorPro\Base\Base_Widget {
 				return function_exists( 'wc_coupons_enabled' ) && wc_coupons_enabled();
 			case 'signup_and_login_from_checkout':
 				return 'yes' === get_option( 'woocommerce_enable_signup_and_login_from_checkout' );
-			case 'additional_options':
-				return ! wc_ship_to_billing_address_only();
 			case 'ship_to_billing_address_only':
 				return wc_ship_to_billing_address_only();
 		}

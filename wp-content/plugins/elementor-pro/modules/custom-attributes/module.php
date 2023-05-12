@@ -36,7 +36,8 @@ class Module extends Module_Base {
 			 * Filters the attributes that won't be rendered in the wrapper element.
 			 *
 			 * By default Elementor doesn't render some attributes to prevent things
-			 * from breaking down. But this list of attributes can be changed.
+			 * from breaking down. This hook allows developers to alter this list of
+			 * attributes.
 			 *
 			 * @since 2.2.0
 			 *
@@ -77,7 +78,11 @@ class Module extends Module_Base {
 					'active' => true,
 				],
 				'placeholder' => esc_html__( 'key|value', 'elementor-pro' ),
-				'description' => sprintf( esc_html__( 'Set custom attributes for the wrapper element. Each attribute in a separate line. Separate attribute key from the value using %s character.', 'elementor-pro' ), '<code>|</code>' ),
+				'description' => sprintf(
+					/* translators: %s: The `|` separate char. */
+					esc_html__( 'Set custom attributes for the wrapper element. Each attribute in a separate line. Separate attribute key from the value using %s character.', 'elementor-pro' ),
+					'<code>|</code>'
+				),
 				'classes' => 'elementor-control-direction-ltr',
 			]
 		);

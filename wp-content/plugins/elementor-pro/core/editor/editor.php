@@ -33,6 +33,28 @@ class Editor extends App {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
+
+		add_filter( 'elementor/editor-v2/packages/config', function ( $config ) {
+			$config['elementor-pro-v2-theme-builder-actions'] = [
+				'handle' => 'elementor-pro-v2-theme-builder-actions',
+				'src' => $this->get_js_assets_url( 'v2-theme-builder-actions' ),
+				'i18n' => [
+					'domain' => 'elementor-pro',
+					'replace_requested_file' => false,
+				],
+				'type' => 'extension',
+				'deps' => [
+					'elementor-packages-icons',
+					'elementor-packages-documents',
+					'elementor-packages-documents-ui',
+					'elementor-packages-ui',
+					'wp-i18n',
+					'react',
+				],
+			];
+
+			return $config;
+		} );
 	}
 
 	public function get_init_settings() {
@@ -45,13 +67,17 @@ class Editor extends App {
 		];
 
 		/**
-		 * Editor settings.
+		 * Localized editor settings.
 		 *
-		 * Filters the editor settings.
+		 * Filters the localized settings used in the editor as JavaScript variables.
+		 *
+		 * By default Elementor Pro passes some editor settings to be consumed as JavaScript
+		 * variables. This hook allows developers to add extra settings values to be consumed
+		 * using JavaScript in the editor.
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array $settings settings.
+		 * @param array $settings Localized editor settings.
 		 */
 		$settings = apply_filters( 'elementor_pro/editor/localize_settings', $settings );
 
@@ -108,6 +134,10 @@ class Editor extends App {
 
 	public function on_elementor_init() {
 		Plugin::elementor()->editor->notice_bar = new Notice_Bar();
+
+		if ( isset( Plugin::elementor()->editor->promotion ) ) {
+			Plugin::elementor()->editor->promotion = new Promotion();
+		}
 	}
 
 	public function on_elementor_editor_init() {

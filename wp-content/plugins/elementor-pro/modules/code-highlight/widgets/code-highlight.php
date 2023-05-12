@@ -120,13 +120,25 @@ class Code_Highlight extends Base_Widget {
 			'aspnet' => 'ASP.NET (C#)',
 		];
 
+		/**
+		 * Code highlight languages.
+		 *
+		 * Filters the available programming languages in the code highlight.
+		 *
+		 * By default supports a code list of programming languages. This hook
+		 * allows developers to add or remove languages.
+		 *
+		 * @param array $language_option An array of languages.
+		 */
+		$language_option = apply_filters( 'elementor_pro/code_highlight/languages', $language_option );
+
 		$this->add_control(
 			'language',
 			[
 				'label' => esc_html__( 'Language', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT2,
 				'multiple' => false,
-				'options' => apply_filters( 'elementor_pro/code_highlight/languages', $language_option ),
+				'options' => $language_option,
 				'default' => 'javascript',
 			]
 		);
@@ -175,6 +187,9 @@ class Code_Highlight extends Base_Widget {
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
 				'placeholder' => '1, 3-6',
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -213,7 +228,7 @@ class Code_Highlight extends Base_Widget {
 			[
 				'label' => esc_html__( 'Height', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'vh', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 115,
@@ -235,7 +250,7 @@ class Code_Highlight extends Base_Widget {
 			[
 				'label' => esc_html__( 'Font Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'vw' ],
+				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'min' => 1,

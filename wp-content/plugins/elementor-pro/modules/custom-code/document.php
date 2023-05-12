@@ -25,6 +25,10 @@ class Document extends Theme_Document {
 		return esc_html__( 'Custom Code', 'elementor-pro' );
 	}
 
+	public static function get_type() {
+		return Module::DOCUMENT_TYPE;
+	}
+
 	public function get_name() {
 		return Module::DOCUMENT_TYPE;
 	}
@@ -41,6 +45,14 @@ class Document extends Theme_Document {
 			// PHPCS - the main content of custom code
 			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
+	}
+
+	public static function get_create_url() {
+		$query_args = [
+			'post_type' => Module::CPT,
+		];
+
+		return add_query_arg( $query_args, admin_url( 'post-new.php' ) );
 	}
 
 	private function print_snippet_with_elementor_comment( $content ) {

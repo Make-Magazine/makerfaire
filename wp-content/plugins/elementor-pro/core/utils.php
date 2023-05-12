@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Utils {
+
 	public static function get_public_post_types( $args = [] ) {
 		$post_type_args = [
 			// Default is the value $public.
@@ -31,15 +32,21 @@ class Utils {
 		}
 
 		/**
-		 * Public Post types
+		 * Supported post types.
 		 *
-		 * Allow 3rd party plugins to filters the public post types elementor should work on
+		 * Filters the allowed post types Elementor should work on.
+		 *
+		 * By default Elementor can be applied on publicly available post
+		 * types. This hook allows developers to alter those post types to
+		 * add new and remove existing types.
 		 *
 		 * @since 2.3.0
 		 *
-		 * @param array $post_types Elementor supported public post types.
+		 * @param array $post_types Elementor supported post types.
 		 */
-		return apply_filters( 'elementor_pro/utils/get_public_post_types', $post_types );
+		$post_types = apply_filters( 'elementor_pro/utils/get_public_post_types', $post_types );
+
+		return $post_types;
 	}
 
 	public static function get_client_ip() {
@@ -54,8 +61,9 @@ class Utils {
 		];
 
 		foreach ( $server_ip_keys as $key ) {
-			if ( isset( $_SERVER[ $key ] ) && filter_var( $_SERVER[ $key ], FILTER_VALIDATE_IP ) ) {
-				return $_SERVER[ $key ];
+			$value = self::_unstable_get_super_global_value( $_SERVER, $key );
+			if ( $value && filter_var( $value, FILTER_VALIDATE_IP ) ) {
+				return $value;
 			}
 		}
 
@@ -110,48 +118,48 @@ class Utils {
 			$title = sprintf( esc_html__( 'Search Results for: %s', 'elementor-pro' ), get_search_query() );
 
 			if ( get_query_var( 'paged' ) ) {
-				/* translators: %s is the page number. */
+				/* translators: %s: Page number. */
 				$title .= sprintf( esc_html__( '&nbsp;&ndash; Page %s', 'elementor-pro' ), get_query_var( 'paged' ) );
 			}
 		} elseif ( is_category() ) {
 			$title = single_cat_title( '', false );
 
 			if ( $include_context ) {
-				/* translators: Category archive title. 1: Category name */
+				/* translators: Category archive title. %s: Category name. */
 				$title = sprintf( esc_html__( 'Category: %s', 'elementor-pro' ), $title );
 			}
 		} elseif ( is_tag() ) {
 			$title = single_tag_title( '', false );
 			if ( $include_context ) {
-				/* translators: Tag archive title. 1: Tag name */
+				/* translators: Tag archive title. %s: Tag name. */
 				$title = sprintf( esc_html__( 'Tag: %s', 'elementor-pro' ), $title );
 			}
 		} elseif ( is_author() ) {
 			$title = '<span class="vcard">' . get_the_author() . '</span>';
 
 			if ( $include_context ) {
-				/* translators: Author archive title. 1: Author name */
+				/* translators: Author archive title. %s: Author name. */
 				$title = sprintf( esc_html__( 'Author: %s', 'elementor-pro' ), $title );
 			}
 		} elseif ( is_year() ) {
 			$title = get_the_date( _x( 'Y', 'yearly archives date format', 'elementor-pro' ) );
 
 			if ( $include_context ) {
-				/* translators: Yearly archive title. 1: Year */
+				/* translators: Yearly archive title. %s: Year. */
 				$title = sprintf( esc_html__( 'Year: %s', 'elementor-pro' ), $title );
 			}
 		} elseif ( is_month() ) {
 			$title = get_the_date( _x( 'F Y', 'monthly archives date format', 'elementor-pro' ) );
 
 			if ( $include_context ) {
-				/* translators: Monthly archive title. 1: Month name and year */
+				/* translators: Monthly archive title. %s: Month name and a year. */
 				$title = sprintf( esc_html__( 'Month: %s', 'elementor-pro' ), $title );
 			}
 		} elseif ( is_day() ) {
 			$title = get_the_date( _x( 'F j, Y', 'daily archives date format', 'elementor-pro' ) );
 
 			if ( $include_context ) {
-				/* translators: Daily archive title. 1: Date */
+				/* translators: Daily archive title. %s: Date. */
 				$title = sprintf( esc_html__( 'Day: %s', 'elementor-pro' ), $title );
 			}
 		} elseif ( is_tax( 'post_format' ) ) {
@@ -178,7 +186,7 @@ class Utils {
 			$title = post_type_archive_title( '', false );
 
 			if ( $include_context ) {
-				/* translators: Post type archive title. 1: Post type name */
+				/* translators: Post type archive title. %s: Post type name. */
 				$title = sprintf( esc_html__( 'Archives: %s', 'elementor-pro' ), $title );
 			}
 		} elseif ( is_tax() ) {
@@ -186,7 +194,7 @@ class Utils {
 
 			if ( $include_context ) {
 				$tax = get_taxonomy( get_queried_object()->taxonomy );
-				/* translators: Taxonomy term archive title. 1: Taxonomy singular name, 2: Current taxonomy term */
+				/* translators: Taxonomy term archive title. 1: Taxonomy singular name, 2: Current taxonomy term. */
 				$title = sprintf( esc_html__( '%1$s: %2$s', 'elementor-pro' ), $tax->labels->singular_name, $title );
 			}
 		} elseif ( is_archive() ) {
@@ -196,13 +204,17 @@ class Utils {
 		} // End if().
 
 		/**
-		 * The archive title.
+		 * Page title.
 		 *
-		 * Filters the archive title.
+		 * Filters the title of the page.
+		 *
+		 * By default different pages have different titles depending of the page
+		 * context (archive, singular, 404 etc.). This hook allows developers to
+		 * alter those titles.
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param string $title Archive title to be displayed.
+		 * @param string $title Page title to be displayed.
 		 */
 		$title = apply_filters( 'elementor/utils/get_the_archive_title', $title );
 
@@ -313,5 +325,73 @@ class Utils {
 		}
 
 		return $text;
+	}
+
+	/**
+	 * Get a user option with default value as fallback.
+	 * TODO: Use `\Elementor\User::get_user_option_with_default()` after this PR is merged:
+	 *  https://github.com/elementor/elementor/pull/17745
+	 *
+	 * @param string $option  - Option key.
+	 * @param int    $user_id - User ID
+	 * @param mixed  $default - Default fallback value.
+	 *
+	 * @return mixed
+	 */
+	public static function get_user_option_with_default( $option, $user_id, $default ) {
+		$value = get_user_option( $option, $user_id );
+
+		return ( false === $value ) ? $default : $value;
+	}
+
+	/**
+	 * TODO: Use core method instead (after merging PR of the original function in core).
+	 *  PR URL: https://github.com/elementor/elementor/pull/18670.
+	 *
+	 * @param $file
+	 * @param mixed ...$args
+	 * @return false|string
+	 */
+	public static function _unstable_file_get_contents( $file, ...$args ) {
+		if ( ! is_file( $file ) || ! is_readable( $file ) ) {
+			return false;
+		}
+
+		return file_get_contents( $file, ...$args );
+	}
+
+	/**
+	 * TODO: Use core method instead (after Pro minimum requirements is updated).
+	 * PR URL: https://github.com/elementor/elementor/pull/20392
+	 */
+	public static function _unstable_get_super_global_value( $super_global, $key ) {
+		if ( ! isset( $super_global[ $key ] ) ) {
+			return null;
+		}
+
+		if ( $_FILES === $super_global ) {
+			$super_global[ $key ]['name'] = sanitize_file_name( $super_global[ $key ]['name'] );
+			return $super_global[ $key ];
+		}
+
+		return wp_kses_post_deep( wp_unslash( $super_global[ $key ] ) );
+	}
+
+	/**
+	 * TODO: Use a core method instead (after Pro minimum requirements is updated).
+	 * @throws \Exception
+	 */
+	public static function _unstable_get_document_for_edit( $id ) {
+		$document = Plugin::elementor()->documents->get( $id );
+
+		if ( ! $document ) {
+			throw new \Exception( 'Not found.' );
+		}
+
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
+		return $document;
 	}
 }

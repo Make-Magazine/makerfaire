@@ -2,7 +2,10 @@
 namespace Elementor;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Core\Utils\Force_Locale;
+use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -77,7 +80,7 @@ class Widgets_Manager {
 		$this->_widget_types = [];
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
-			include( ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php' );
+			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
 
 			$class_name = str_replace( '-', '_', $widget_filename );
 
@@ -85,6 +88,8 @@ class Widgets_Manager {
 
 			$this->register( new $class_name() );
 		}
+
+		$this->register_promoted_widgets();
 
 		$this->register_wp_widgets();
 
@@ -131,21 +136,6 @@ class Widgets_Manager {
 	private function register_wp_widgets() {
 		global $wp_widget_factory;
 
-		// Skip Pojo widgets.
-		$pojo_allowed_widgets = [
-			'Pojo_Widget_Recent_Posts',
-			'Pojo_Widget_Posts_Group',
-			'Pojo_Widget_Gallery',
-			'Pojo_Widget_Recent_Galleries',
-			'Pojo_Slideshow_Widget',
-			'Pojo_Forms_Widget',
-			'Pojo_Widget_News_Ticker',
-
-			'Pojo_Widget_WC_Products',
-			'Pojo_Widget_WC_Products_Category',
-			'Pojo_Widget_WC_Product_Categories',
-		];
-
 		// Allow themes/plugins to filter out their widgets.
 		$black_list = [];
 
@@ -163,10 +153,6 @@ class Widgets_Manager {
 		foreach ( $wp_widget_factory->widgets as $widget_class => $widget_obj ) {
 
 			if ( in_array( $widget_class, $black_list ) ) {
-				continue;
-			}
-
-			if ( $widget_obj instanceof \Pojo_Widget_Base && ! in_array( $widget_class, $pojo_allowed_widgets ) ) {
 				continue;
 			}
 
@@ -190,6 +176,17 @@ class Widgets_Manager {
 	*/
 	private function require_files() {
 		require ELEMENTOR_PATH . 'includes/base/widget-base.php';
+	}
+
+	private function pluck_default_controls( $controls ) {
+		return ( new Collection( $controls ) )
+			->reduce( function ( $controls_defaults, $control, $control_key ) {
+				if ( ! empty( $control['default'] ) ) {
+					$controls_defaults[ $control_key ]['default'] = $control['default'];
+				}
+
+				return $controls_defaults;
+			}, [] );
 	}
 
 	/**
@@ -233,6 +230,20 @@ class Widgets_Manager {
 		$this->_widget_types[ $widget_instance->get_name() ] = $widget_instance;
 
 		return true;
+	}
+
+	/** register promoted widgets
+	 *
+	 * Since we cannot allow widgets to place themselves is a specific
+	 * location on our widgets panel we need to use an hard coded solution fort his
+	 *
+	 * @return void
+	 */
+	private function register_promoted_widgets() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'nested-elements' ) ) {
+			$nested_tabs = new NestedTabs();
+			$this->_widget_types = [ $nested_tabs->get_name() => $nested_tabs ] + $this->_widget_types;
+		}
 	}
 
 	/**
@@ -324,7 +335,14 @@ class Widgets_Manager {
 		return $config;
 	}
 
+	/**
+	 * @throws \Exception
+	 */
 	public function ajax_get_widget_types_controls_config( array $data ) {
+		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
+
+		wp_raise_memory_limit( 'admin' );
+
 		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
@@ -339,6 +357,32 @@ class Widgets_Manager {
 		}
 
 		return $config;
+	}
+
+	public function ajax_get_widgets_default_value_translations( array $data = [] ) {
+		$locale = empty( $data['locale'] )
+			? get_locale()
+			: $data['locale'];
+
+		$force_locale = new Force_Locale( $locale );
+		$force_locale->force();
+
+		$controls = ( new Collection( $this->get_widget_types() ) )
+			->map( function ( Widget_Base $widget ) {
+				$controls = $widget->get_stack( false )['controls'];
+
+				return [
+					'controls' => $this->pluck_default_controls( $controls ),
+				];
+			} )
+			->filter( function ( $widget ) {
+				return ! empty( $widget['controls'] );
+			} )
+			->all();
+
+		$force_locale->restore();
+
+		return $controls;
 	}
 
 	/**
@@ -362,11 +406,7 @@ class Widgets_Manager {
 	 * }
 	 */
 	public function ajax_render_widget( $request ) {
-		$document = Plugin::$instance->documents->get( $request['editor_post_id'] );
-
-		if ( ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
-		}
+		$document = Plugin::$instance->documents->get_with_permissions( $request['editor_post_id'] );
 
 		// Override the global $post for the render.
 		query_posts(
@@ -404,8 +444,11 @@ class Widgets_Manager {
 	 * @param array $request Ajax request.
 	 *
 	 * @return bool|string Rendered widget form.
+	 * @throws \Exception
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
+		Plugin::$instance->documents->check_permissions( $request['editor_post_id'] );
+
 		if ( empty( $request['widget_type'] ) ) {
 			return false;
 		}
@@ -584,5 +627,9 @@ class Widgets_Manager {
 		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
 		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
 		$ajax_manager->register_ajax_action( 'get_widgets_config', [ $this, 'ajax_get_widget_types_controls_config' ] );
+
+		$ajax_manager->register_ajax_action( 'get_widgets_default_value_translations', function ( array $data ) {
+			return $this->ajax_get_widgets_default_value_translations( $data );
+		} );
 	}
 }

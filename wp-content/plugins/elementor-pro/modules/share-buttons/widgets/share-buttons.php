@@ -120,6 +120,9 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => esc_html__( 'Custom Label', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -283,6 +286,9 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => esc_html__( 'Link', 'elementor-pro' ),
 				'type' => Controls_Manager::URL,
+				'dynamic' => [
+					'active' => true,
+				],
 				'options' => false,
 				'placeholder' => esc_html__( 'https://your-link.com', 'elementor-pro' ),
 				'condition' => [
@@ -308,6 +314,7 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => esc_html__( 'Columns Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 10,
 				],
@@ -324,6 +331,7 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => esc_html__( 'Rows Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 10,
 				],
@@ -358,6 +366,7 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => esc_html__( 'Icon Size', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'em' => [
 						'min' => 0.5,
@@ -378,7 +387,6 @@ class Share_Buttons extends Base_Widget {
 				'mobile_default' => [
 					'unit' => 'em',
 				],
-				'size_units' => [ 'em', 'px' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-share-btn__icon' => '--e-share-buttons-icon-size: {{SIZE}}{{UNIT}};',
 				],
@@ -393,6 +401,7 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => esc_html__( 'Button Height', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'em' => [
 						'min' => 1,
@@ -413,7 +422,6 @@ class Share_Buttons extends Base_Widget {
 				'mobile_default' => [
 					'unit' => 'em',
 				],
-				'size_units' => [ 'em', 'px' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-share-btn' => 'height: {{SIZE}}{{UNIT}};',
 				],
@@ -423,20 +431,18 @@ class Share_Buttons extends Base_Widget {
 		$this->add_responsive_control(
 			'border_size',
 			[
-				'label' => esc_html__( 'Border Size', 'elementor-pro' ),
+				'label' => esc_html__( 'Border Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'default' => [
 					'size' => 2,
 				],
 				'range' => [
 					'px' => [
-						'min' => 1,
 						'max' => 20,
 					],
 					'em' => [
 						'max' => 2,
-						'step' => 0.1,
 					],
 				],
 				'selectors' => [
@@ -556,7 +562,7 @@ class Share_Buttons extends Base_Widget {
 			[
 				'label' => esc_html__( 'Text Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} a.elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -572,7 +578,7 @@ class Share_Buttons extends Base_Widget {
 	}
 
 	protected function render() {
-		$settings = $this->get_active_settings();
+		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['share_buttons'] ) ) {
 			return;
@@ -597,12 +603,15 @@ class Share_Buttons extends Base_Widget {
 				$social_network_class = ' elementor-share-btn_' . $network_name;
 				?>
 					<div class="elementor-grid-item">
-						<div class="<?php echo esc_attr( $button_classes . $social_network_class ); ?>" tabindex="0">
+						<div
+							class="<?php echo esc_attr( $button_classes . $social_network_class ); ?>"
+							role="button"
+							tabindex="0"
+							aria-label="<?php echo sprintf( esc_attr__( 'Share on %s', 'elementor-pro' ), esc_attr( $network_name ) ); ?>"
+						>
 							<?php if ( 'icon' === $settings['view'] || 'icon-text' === $settings['view'] ) : ?>
 								<span class="elementor-share-btn__icon">
 								<?php self::render_share_icon( $network_name ); ?>
-								<span
-									class="elementor-screen-only"><?php echo sprintf( esc_html__( 'Share on %s', 'elementor-pro' ), esc_html( $network_name ) ); ?></span>
 							</span>
 							<?php endif; ?>
 							<?php if ( $show_text ) : ?>
@@ -654,11 +663,10 @@ class Share_Buttons extends Base_Widget {
 						socialNetworkClass = 'elementor-share-btn_' + networkName;
 					#>
 					<div class="elementor-grid-item">
-						<div class="{{ buttonClass }} {{ socialNetworkClass }}" tabindex="0">
+						<div class="{{ buttonClass }} {{ socialNetworkClass }}" role="button" tabindex="0" aria-label="Share on {{{ networkName }}}">
 							<# if ( 'icon' === settings.view || 'icon-text' === settings.view ) { #>
 							<span class="elementor-share-btn__icon">
 								<i class="{{ shareButtonsEditorModule.getNetworkClass( networkName ) }}" aria-hidden="true"></i>
-								<span class="elementor-screen-only">Share on {{{ networkName }}}</span>
 							</span>
 							<# } #>
 							<# if ( showText ) { #>

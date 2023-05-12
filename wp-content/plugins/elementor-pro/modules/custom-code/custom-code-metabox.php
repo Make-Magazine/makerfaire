@@ -64,12 +64,14 @@ class Custom_Code_Metabox extends Assets_Base {
 		return [
 			self::OPTION_LOCATION_HEAD => '<head>',
 			self::OPTION_LOCATION_BODY_START => sprintf(
-			/* translators: %s: Body open tag. */
-				esc_html__( '%s - Start', 'elementor-pro' ), '<body>'
+				/* translators: %s: Body opening tag. */
+				esc_html__( '%s - Start', 'elementor-pro' ),
+				'<body>'
 			),
 			self::OPTION_LOCATION_BODY_END => sprintf(
-			/* translators: %s: Body end tag. */
-				esc_html__( '%s - End', 'elementor-pro' ), '</body>'
+				/* translators: %s: Body closing tag. */
+				esc_html__( '%s - End', 'elementor-pro' ),
+				'</body>'
 			),
 		];
 	}
@@ -292,8 +294,7 @@ class Custom_Code_Metabox extends Assets_Base {
 		$fields = $this->get_fields();
 
 		if ( ! empty( $_REQUEST['action'] ) && 'edit' == $_REQUEST['action'] ) {
-			$post = get_post( $_REQUEST['post'] );
-
+			$post = get_post( \ElementorPro\Core\Utils::_unstable_get_super_global_value( $_REQUEST, 'post' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 			foreach ( self::INPUT_FIELDS as $input_field ) {
 				$field_meta = get_post_meta( $post->ID, "_elementor_$input_field", true );
 
@@ -309,7 +310,16 @@ class Custom_Code_Metabox extends Assets_Base {
 		// The method, support fields only.
 		$this->print_metabox( $fields );
 
-		// Render before enqueue, since enqueue depends on render handlers.
+		/**
+		 * Elementor metabox render.
+		 *
+		 * Fires before custom scripts are enqueued, since enqueue depends on
+		 * render handlers.
+		 *
+		 * @param Custom_Code_Metabox $this An instance of custom code metabox.
+		 * @param int|false           $id   The ID of the current WordPress post.
+		 *                                  False if post is not set.
+		 */
 		do_action( 'elementor-pro/metabox/render', $this, get_the_ID() );
 
 		// Init codemirror.
@@ -354,8 +364,7 @@ class Custom_Code_Metabox extends Assets_Base {
 
 				foreach ( self::INPUT_OPTIONS as $input_option ) {
 					$key = self::FILED_EXTRA_OPTIONS . '_' . $input_option;
-					// PHP - The request is safe.
-					$input_option_value = ! empty( $_POST[ $key ] ) ? $_POST[ $key ] : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+					$input_option_value = \ElementorPro\Core\Utils::_unstable_get_super_global_value( $post_data, $key );
 
 					if ( 'on' === $input_option_value ) {
 						$input_options [] = $input_option;

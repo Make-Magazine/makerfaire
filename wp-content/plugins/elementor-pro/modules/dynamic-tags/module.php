@@ -5,6 +5,7 @@ use Elementor\Modules\DynamicTags\Module as TagsModule;
 use ElementorPro\Modules\DynamicTags\ACF;
 use ElementorPro\Modules\DynamicTags\Toolset;
 use ElementorPro\Modules\DynamicTags\Pods;
+use ElementorPro\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -26,6 +27,11 @@ class Module extends TagsModule {
 
 	const ACTION_GROUP = 'action';
 
+	const WOOCOMMERCE_GROUP = 'woocommerce';
+
+	// TODO: Remove when Core 3.10.0 is released.
+	const DATETIME_CATEGORY = 'datetime';
+
 	public function __construct() {
 		parent::__construct();
 
@@ -41,6 +47,37 @@ class Module extends TagsModule {
 		if ( function_exists( 'pods' ) ) {
 			$this->add_component( 'pods', new Pods\Module() );
 		}
+
+		/*
+		 * WooCommerce Add To Cart Dynamic Tag.
+		 *
+		 * The WC ATC Dynamic Tag returns a URL that adds items to a users cart
+		 * via the URL parameters `?add-to-cart=' . $product_id . '&quantity=' . $quantity`.
+		 * Normally this URL method redirects to the website's Home page after adding the items to
+		 * the cart.
+		 *
+		 * Since the behavior of the Tag should be identical to the "Add to Cart" widget, clicking an
+		 * element that is using the tag needs to redirect to the Single Product page for the added
+		 * product or the Cart page after this process if the user selected that setting in WooCommerce.
+		 *
+		 * To accomplish that, an extra parameter in the URL ('&e-redirect=') is used. When this
+		 * paramater is found, the WooCommerce Add to Cart Dynamic Tag will redirect to the
+		 * appropriate page.
+		 */
+
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The nonce is verified in the WC class.
+		$add_to_cart = Utils::_unstable_get_super_global_value( $_REQUEST, 'add-to-cart' );
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The nonce is verified in the WC class.
+		$redirect = Utils::_unstable_get_super_global_value( $_REQUEST, 'e-redirect' );
+
+		if ( $add_to_cart && $redirect ) {
+			add_filter( 'woocommerce_add_to_cart_redirect', [ $this, 'filter_woocommerce_add_to_cart_redirect' ], 10, 1 );
+		}
+	}
+
+	public function filter_woocommerce_add_to_cart_redirect( $wc_get_cart_url ) {
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		return esc_url( Utils::_unstable_get_super_global_value( $_REQUEST, 'e-redirect' ) );
 	}
 
 	public function get_name() {
@@ -84,6 +121,7 @@ class Module extends TagsModule {
 			'Contact_URL',
 			'User_Info',
 			'User_Profile_Picture',
+			'Woocommerce_Add_To_Cart',
 		];
 	}
 
@@ -109,6 +147,9 @@ class Module extends TagsModule {
 			],
 			self::COMMENTS_GROUP => [
 				'title' => esc_html__( 'Comments', 'elementor-pro' ),
+			],
+			self::WOOCOMMERCE_GROUP => [
+				'title' => esc_html__( 'WooCommerce', 'elementor-pro' ),
 			],
 		];
 	}

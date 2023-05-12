@@ -99,6 +99,7 @@ trait Skin_Content_Base {
 			[
 				'label' => esc_html__( 'Image Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'%' => [
 						'min' => 10,
@@ -121,7 +122,6 @@ trait Skin_Content_Base {
 					'size' => 100,
 					'unit' => '%',
 				],
-				'size_units' => [ '%', 'px' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-post__thumbnail__link' => 'width: {{SIZE}}{{UNIT}};',
 				],
@@ -145,6 +145,7 @@ trait Skin_Content_Base {
 			[
 				'label' => esc_html__( 'Rows Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default' => [
 					'size' => 35,
 				],
@@ -202,7 +203,15 @@ trait Skin_Content_Base {
 		<?php
 	}
 
-	public function render_post_content( $with_wrapper = false ) {
+	/**
+	 * Render post content.
+	 *
+	 * @param boolean     $with_wrapper - Whether to wrap the content with a div.
+	 * @param boolean     $with_css - Decides whether to print inline CSS before the post content.
+	 *
+	 * @return void
+	 */
+	public function render_post_content( $with_wrapper = false, $with_css = true ) {
 		static $did_posts = [];
 		static $level = 0;
 
@@ -253,7 +262,7 @@ trait Skin_Content_Base {
 			$editor->set_edit_mode( false );
 
 			// Print manually (and don't use `the_content()`) because it's within another `the_content` filter, and the Elementor filter has been removed to avoid recursion.
-			$content = Plugin::elementor()->frontend->get_builder_content( $post->ID, true );
+			$content = Plugin::elementor()->frontend->get_builder_content( $post->ID, $with_css );
 
 			Plugin::elementor()->frontend->remove_content_filter();
 

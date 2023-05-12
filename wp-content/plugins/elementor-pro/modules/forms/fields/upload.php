@@ -6,6 +6,7 @@ use ElementorPro\Modules\Forms\Classes;
 use Elementor\Controls_Manager;
 use ElementorPro\Modules\Forms\Widgets\Form;
 use ElementorPro\Plugin;
+use ElementorPro\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -134,11 +135,11 @@ class Upload extends Field_Base {
 			'error',
 			'size',
 		];
-		$files = $_FILES['form_fields'];
+		$files = $_FILES['form_fields']; // phpcs:ignore -- escaped when processing the file later on.
 		// iterate over each uploaded file
 		foreach ( $files as $key => $part ) {
 			$key = (string) $key;
-			if ( in_array( $key, $names ) && is_array( $part ) ) {
+			if ( in_array( $key, $names, true ) && is_array( $part ) ) {
 				foreach ( $part as $position => $value ) {
 					if ( is_array( $value ) ) {
 						foreach ( $value as $index => $inner_val ) {
@@ -198,23 +199,62 @@ class Upload extends Field_Base {
 	}
 
 	/**
-	 * a set of black listed file extensions
+	 * A blacklist of file extensions.
 	 *
 	 * @return array
 	 */
 	private function get_blacklist_file_ext() {
 		static $blacklist = false;
 		if ( ! $blacklist ) {
-			$blacklist = [ 'php', 'php3', 'php4', 'php5', 'php6', 'phps', 'php7', 'phtml', 'shtml', 'pht', 'swf', 'html', 'asp', 'aspx', 'cmd', 'csh', 'bat', 'htm', 'hta', 'jar', 'exe', 'com', 'js', 'lnk', 'htaccess', 'htpasswd', 'phtml', 'ps1', 'ps2', 'py', 'rb', 'tmp', 'cgi' ];
+			$blacklist = [
+				'php',
+				'php3',
+				'php4',
+				'php5',
+				'php6',
+				'phps',
+				'php7',
+				'phtml',
+				'shtml',
+				'pht',
+				'swf',
+				'html',
+				'asp',
+				'aspx',
+				'cmd',
+				'csh',
+				'bat',
+				'htm',
+				'hta',
+				'jar',
+				'exe',
+				'com',
+				'js',
+				'lnk',
+				'htaccess',
+				'htpasswd',
+				'phtml',
+				'ps1',
+				'ps2',
+				'py',
+				'rb',
+				'tmp',
+				'cgi',
+				'svg',
+			];
 
 			/**
-			 * Forms file types black list.
+			 * Elementor forms blacklisted file extensions.
 			 *
-			 * Filters the black list of  file types that won’t be uploaded using the forms.
+			 * Filters the list of file types that won't be uploaded using Elementor forms.
+			 *
+			 * By default Elementor forms doesn't upload some file types for security reasons.
+			 * This hook allows developers to alter this list, either add more file types to
+			 * strengthen the security or remove file types to increase flexibility.
 			 *
 			 * @since 1.0.0
 			 *
-			 * @param array $blacklist A black list of file types.
+			 * @param array $blacklist A blacklist of file extensions.
 			 */
 			$blacklist = apply_filters( 'elementor_pro/forms/filetypes/blacklist', $blacklist );
 		}
@@ -250,9 +290,10 @@ class Upload extends Field_Base {
 		}
 
 		$id = $field['id'];
+		$files = Utils::_unstable_get_super_global_value( $_FILES, 'form_fields' );
 
 		if ( ! empty( $field['max_files'] ) ) {
-			if ( count( $_FILES['form_fields'][ $id ] ) > $field['max_files'] ) {
+			if ( count( $files[ $id ] ) > $field['max_files'] ) {
 				$error_message = sprintf(
 					/* translators: %d: The number of allowed files. */
 					_n( 'You can upload only %d file.', 'You can upload up to %d files.', intval( $field['max_files'] ), 'elementor-pro' ),
@@ -264,7 +305,7 @@ class Upload extends Field_Base {
 			}
 		}
 
-		foreach ( $_FILES['form_fields'][ $id ] as $index => $file ) {
+		foreach ( $files[ $id ] as $index => $file ) {
 			// not uploaded
 			if ( ! $field['required'] && UPLOAD_ERR_NO_FILE === $file['error'] ) {
 				return;
@@ -306,13 +347,16 @@ class Upload extends Field_Base {
 		$path = $wp_upload_dir['basedir'] . '/elementor/forms';
 
 		/**
-		 * Upload file path.
+		 * Elementor forms upload file path.
 		 *
 		 * Filters the path to a file uploaded using Elementor forms.
 		 *
+		 * By default Elementor forms defines a path to uploaded file. This
+		 * hook allows developers to alter this path.
+		 *
 		 * @since 1.0.0
 		 *
-		 * @param string $url File URL.
+		 * @param string $path Path to uploaded files.
 		 */
 		$path = apply_filters( 'elementor_pro/forms/upload_path', $path );
 
@@ -331,14 +375,17 @@ class Upload extends Field_Base {
 		$url = $wp_upload_dir['baseurl'] . '/elementor/forms/' . $file_name;
 
 		/**
-		 * Upload file URL.
+		 * Elementor forms upload file URL.
 		 *
 		 * Filters the URL to a file uploaded using Elementor forms.
 		 *
+		 * By default Elementor forms defines a URL to uploaded file. This
+		 * hook allows developers to alter this URL.
+		 *
 		 * @since 1.0.0
 		 *
-		 * @param string $url       File URL.
-		 * @param string $file_name File name.
+		 * @param string $url       Upload file URL.
+		 * @param string $file_name Upload file name.
 		 */
 		$url = apply_filters( 'elementor_pro/forms/upload_url', $url, $file_name );
 
@@ -415,7 +462,8 @@ class Upload extends Field_Base {
 	 */
 	public function process_field( $field, Classes\Form_Record $record, Classes\Ajax_Handler $ajax_handler ) {
 		$id = $field['id'];
-		foreach ( $_FILES['form_fields'][ $id ] as $index => $file ) {
+		$files = Utils::_unstable_get_super_global_value( $_FILES, 'form_fields' );
+		foreach ( $files[ $id ] as $index => $file ) {
 			if ( UPLOAD_ERR_NO_FILE === $file['error'] ) {
 				continue;
 			}
