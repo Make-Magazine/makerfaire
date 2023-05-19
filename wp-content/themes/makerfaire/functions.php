@@ -151,7 +151,6 @@ function load_scripts() {
 add_action('wp_enqueue_scripts', 'load_scripts');
 
 function remove_unnecessary_scripts() {
-	remove_action( 'wp_enqueue_scripts', 'news_vibrant_scripts' );
     if (is_admin()) {
 		if (is_plugin_active( 'elementor/elementor.php' )) {
             wp_deregister_script( 'elementor-ai' );
