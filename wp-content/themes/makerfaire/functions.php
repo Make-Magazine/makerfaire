@@ -150,6 +150,25 @@ function load_scripts() {
 
 add_action('wp_enqueue_scripts', 'load_scripts');
 
+function remove_unnecessary_scripts() {
+	remove_action( 'wp_enqueue_scripts', 'news_vibrant_scripts' );
+    if (is_admin()) {
+		if (is_plugin_active( 'elementor/elementor.php' )) {
+            wp_deregister_script( 'elementor-ai' );
+			wp_dequeue_script( 'elementor-ai' );
+		}
+    } 
+}
+add_action( 'wp_print_scripts', 'remove_unnecessary_scripts', PHP_INT_MAX ); // we want this to happen absolutely last
+
+function remove_unnecessary_styles() {
+    if (is_admin()) {
+		wp_deregister_style( 'elementor-ai' );
+		wp_dequeue_style( 'elementor-ai' );
+	}
+}
+add_action( 'wp_print_styles', 'remove_unnecessary_styles', PHP_INT_MAX ); // we want this to happen absolutely last
+
 //Load custom gravity forms js for barnes and noble forms
 //Change the formid below to load for barnes and noble
 
