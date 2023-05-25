@@ -37,7 +37,11 @@ function jetpack_migrate_gallery_widget() {
 		 * It may be the case that the user has already created a core Gallery Widget
 		 * before the migration begins. (Maybe Jetpack was deactivated during core's upgrade).
 		 */
-		for ( $i = 0; $i < 10 && array_key_exists( $new_id, array( $media_gallery ) ); $i++, $new_id++ ); // phpcs:ignore Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed
+		for ( // phpcs:ignore Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed
+			$i = 0;
+			$i < 10 && array_key_exists( $new_id, array( $media_gallery ) );
+			$i++, $new_id++
+		);
 
 		$widget_copy = jetpack_migrate_gallery_widget_upgrade_widget( $widget );
 
@@ -57,7 +61,7 @@ function jetpack_migrate_gallery_widget() {
 
 		// Now un-register old widgets and register new.
 		foreach ( $widgets_to_unregister as $id => $new_id ) {
-			wp_unregister_sidebar_widget( "gallery-${id}" );
+			wp_unregister_sidebar_widget( "gallery-{$id}" );
 
 			// register new widget.
 			$media_gallery_widget = new WP_Widget_Media_Gallery();
@@ -216,6 +220,5 @@ function jetpack_migrate_gallery_widget_bump_stats( $bin, $group = 'widget-migra
 		$jetpack = Jetpack::init();
 		$jetpack->stat( $group, $bin );
 	}
-
 }
 add_action( 'widgets_init', 'jetpack_migrate_gallery_widget' );

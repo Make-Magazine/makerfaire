@@ -37,8 +37,13 @@ class Jetpack_Modules_List_Table extends WP_List_Table {
 		$this->items           = $this->all_items;
 		$this->items           = $this->filter_displayed_table_items( $this->items );
 		$this->_column_headers = array( $this->get_columns(), array(), array(), 'name' );
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a view, not a model or controller.
-		$modal_info = isset( $_GET['info'] ) ? $_GET['info'] : false;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce: This is a view, not a model or controller. InputNotSanitized: Sanitized below via `$this->module_info_check()`.
+		$modal_info = isset( $_GET['info'] ) ? wp_unslash( $_GET['info'] ) : false;
+
+		// Adding in a hidden h1 heading for screen-readers.
+		?>
+		<h1 class="screen-reader-text"><?php esc_html_e( 'Jetpack Modules List', 'jetpack' ); ?></h1>
+		<?php
 
 		wp_register_script(
 			'models.jetpack-modules',
@@ -46,7 +51,7 @@ class Jetpack_Modules_List_Table extends WP_List_Table {
 				'_inc/build/jetpack-modules.models.min.js',
 				'_inc/jetpack-modules.models.js'
 			),
-			array( 'backbone', 'underscore' ),
+			array( 'jquery', 'backbone', 'underscore' ),
 			JETPACK__VERSION,
 			false // @todo Can this be put in the footer?
 		);
@@ -56,7 +61,7 @@ class Jetpack_Modules_List_Table extends WP_List_Table {
 				'_inc/build/jetpack-modules.views.min.js',
 				'_inc/jetpack-modules.views.js'
 			),
-			array( 'backbone', 'underscore', 'wp-util' ),
+			array( 'jquery', 'backbone', 'underscore', 'wp-util' ),
 			JETPACK__VERSION,
 			false // @todo Can this be put in the footer?
 		);
@@ -157,6 +162,7 @@ class Jetpack_Modules_List_Table extends WP_List_Table {
 		$modules              = apply_filters( 'jetpack_modules_list_table_items', Jetpack_Admin::init()->get_modules() );
 		$array_of_module_tags = wp_list_pluck( $modules, 'module_tags' );
 		$module_tags          = array_merge( ...array_values( $array_of_module_tags ) );
+		$module_tags          = array_map( 'jetpack_get_module_i18n_tag', $module_tags );
 		$module_tags_unique   = array_count_values( $module_tags );
 		ksort( $module_tags_unique );
 
@@ -218,8 +224,8 @@ class Jetpack_Modules_List_Table extends WP_List_Table {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a view, not a model or controller.
 		if ( ! empty( $_REQUEST['module_tag'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a view, not a model or controller.
-			$module_tag = sanitize_text_field( $_REQUEST['module_tag'] );
-			if ( ! in_array( $module_tag, $module['module_tags'], true ) ) {
+			$module_tag = sanitize_text_field( wp_unslash( $_REQUEST['module_tag'] ) );
+			if ( ! in_array( $module_tag, array_map( 'jetpack_get_module_i18n_tag', $module['module_tags'] ), true ) ) {
 				return false;
 			}
 		}
@@ -337,7 +343,6 @@ class Jetpack_Modules_List_Table extends WP_List_Table {
 		</a>
 		<?php
 		return ob_get_clean();
-
 	}
 
 	/**
@@ -413,7 +418,7 @@ class Jetpack_Modules_List_Table extends WP_List_Table {
 	 */
 	public function column_module_tags( $item ) {
 		$module_tags = array();
-		foreach ( $item['module_tags'] as $module_tag ) {
+		foreach ( array_map( 'jetpack_get_module_i18n_tag', $item['module_tags'] ) as $module_tag ) {
 			$module_tags[] = sprintf( '<a href="%3$s" data-title="%2$s">%1$s</a>', esc_html( $module_tag ), esc_attr( $module_tag ), esc_url( add_query_arg( 'module_tag', rawurlencode( $module_tag ) ) ) );
 		}
 		return implode( ', ', $module_tags );

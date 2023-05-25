@@ -47,6 +47,8 @@ class Jetpack_Plan {
 				'whatsapp-button',
 				'social-previews',
 				'videopress',
+				'videopress/video',
+				'v6-video-frame-poster',
 
 				'core/video',
 				'core/cover',
@@ -60,6 +62,7 @@ class Jetpack_Plan {
 				'personal-bundle',
 				'personal-bundle-monthly',
 				'personal-bundle-2y',
+				'starter-plan',
 			),
 			'supports' => array(
 				'akismet',

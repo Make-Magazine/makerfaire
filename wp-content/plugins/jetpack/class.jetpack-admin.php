@@ -8,6 +8,7 @@
 use Automattic\Jetpack\Assets\Logo as Jetpack_Logo;
 use Automattic\Jetpack\Partner_Coupon as Jetpack_Partner_Coupon;
 use Automattic\Jetpack\Status;
+use Automattic\Jetpack\Status\Host;
 
 /**
  * Build the Jetpack admin menu as a whole.
@@ -51,22 +52,22 @@ class Jetpack_Admin {
 
 	/** Constructor. */
 	private function __construct() {
-		jetpack_require_lib( 'admin-pages/class.jetpack-react-page' );
-		$this->jetpack_react = new Jetpack_React_Page();
+		require_once JETPACK__PLUGIN_DIR . '_inc/lib/admin-pages/class.jetpack-react-page.php';
+		$jetpack_react = new Jetpack_React_Page();
 
-		jetpack_require_lib( 'admin-pages/class.jetpack-settings-page' );
-		$this->fallback_page = new Jetpack_Settings_Page();
+		require_once JETPACK__PLUGIN_DIR . '_inc/lib/admin-pages/class.jetpack-settings-page.php';
+		$fallback_page = new Jetpack_Settings_Page();
 
-		jetpack_require_lib( 'admin-pages/class-jetpack-about-page' );
-		$this->jetpack_about = new Jetpack_About_Page();
+		require_once JETPACK__PLUGIN_DIR . '_inc/lib/admin-pages/class-jetpack-about-page.php';
+		$jetpack_about = new Jetpack_About_Page();
 
-		add_action( 'admin_init', array( $this->jetpack_react, 'react_redirects' ), 0 );
-		add_action( 'admin_menu', array( $this->jetpack_react, 'add_actions' ), 998 );
-		add_action( 'jetpack_admin_menu', array( $this->jetpack_react, 'jetpack_add_dashboard_sub_nav_item' ) );
-		add_action( 'jetpack_admin_menu', array( $this->jetpack_react, 'jetpack_add_settings_sub_nav_item' ) );
+		add_action( 'admin_init', array( $jetpack_react, 'react_redirects' ), 0 );
+		add_action( 'admin_menu', array( $jetpack_react, 'add_actions' ), 998 );
+		add_action( 'jetpack_admin_menu', array( $jetpack_react, 'jetpack_add_dashboard_sub_nav_item' ) );
+		add_action( 'jetpack_admin_menu', array( $jetpack_react, 'jetpack_add_settings_sub_nav_item' ) );
 		add_action( 'jetpack_admin_menu', array( $this, 'admin_menu_debugger' ) );
-		add_action( 'jetpack_admin_menu', array( $this->fallback_page, 'add_actions' ) );
-		add_action( 'jetpack_admin_menu', array( $this->jetpack_about, 'add_actions' ) );
+		add_action( 'jetpack_admin_menu', array( $fallback_page, 'add_actions' ) );
+		add_action( 'jetpack_admin_menu', array( $jetpack_about, 'add_actions' ) );
 
 		// Add redirect to current page for activation/deactivation of modules.
 		add_action( 'jetpack_pre_activate_module', array( $this, 'fix_redirect' ), 10, 2 );
@@ -100,6 +101,9 @@ class Jetpack_Admin {
 			}
 		}
 
+		// Ensure an Additional CSS menu item is added to the Appearance menu whenever Jetpack is connected.
+		add_action( 'admin_menu', array( $this, 'additional_css_menu' ) );
+
 		add_filter( 'jetpack_display_jitms_on_screen', array( $this, 'should_display_jitms_on_screen' ), 10, 2 );
 
 		// Register Jetpack partner coupon hooks.
@@ -117,6 +121,98 @@ class Jetpack_Admin {
 		$logo_base64_url = "data:image/svg+xml;base64,{$logo_base64}";
 		$style           = ".akismet-masthead__logo-container { background: url({$logo_base64_url}) no-repeat .25rem; height: 1.8125rem; } .akismet-masthead__logo { display: none; }";
 		wp_add_inline_style( 'admin-bar', $style );
+	}
+
+	/**
+	 * Handle our Additional CSS menu item and legacy page declaration.
+	 *
+	 * @since 11.0 . Prior to that, this function was located in custom-css-4.7.php (now custom-css.php).
+	 */
+	public static function additional_css_menu() {
+
+		// If the site is a WoA site and the custom-css feature is not available, return.
+		// See https://github.com/Automattic/jetpack/pull/19965 for more on how this menu item is dealt with on WoA sites.
+		if ( ( new Host() )->is_woa_site() && ! ( in_array( 'custom-css', Jetpack::get_available_modules(), true ) ) ) {
+			return;
+		} elseif ( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'custom-css' ) ) { // If the Custom CSS module is enabled, add the Additional CSS menu item and link to the Customizer.
+			// Add in our legacy page to support old bookmarks and such.
+			add_submenu_page( '', __( 'CSS', 'jetpack' ), __( 'Additional CSS', 'jetpack' ), 'edit_theme_options', 'editcss', array( __CLASS__, 'customizer_redirect' ) );
+
+			// Add in our new page slug that will redirect to the customizer.
+			$hook = add_theme_page( __( 'CSS', 'jetpack' ), __( 'Additional CSS', 'jetpack' ), 'edit_theme_options', 'editcss-customizer-redirect', array( __CLASS__, 'customizer_redirect' ) );
+			add_action( "load-{$hook}", array( __CLASS__, 'customizer_redirect' ) );
+		} elseif ( class_exists( 'Jetpack' ) && Jetpack::is_connection_ready() ) { // Link to the Jetpack Settings > Writing page, highlighting the Custom CSS setting.
+			add_submenu_page( '', __( 'CSS', 'jetpack' ), __( 'Additional CSS', 'jetpack' ), 'edit_theme_options', 'editcss', array( __CLASS__, 'theme_enhancements_redirect' ) );
+
+			$hook = add_theme_page( __( 'CSS', 'jetpack' ), __( 'Additional CSS', 'jetpack' ), 'edit_theme_options', 'editcss-theme-enhancements-redirect', array( __CLASS__, 'theme_enhancements_redirect' ) );
+			add_action( "load-{$hook}", array( __CLASS__, 'theme_enhancements_redirect' ) );
+		}
+	}
+
+	/**
+	 * Handle the redirect for the customizer.  This is necessary because
+	 * we can't directly add customizer links to the admin menu.
+	 *
+	 * @since 11.0 . Prior to that, this function was located in custom-css-4.7.php (now custom-css.php).
+	 *
+	 * There is a core patch in trac that would make this unnecessary.
+	 *
+	 * @link https://core.trac.wordpress.org/ticket/39050
+	 */
+	public static function customizer_redirect() {
+		wp_safe_redirect(
+			self::customizer_link(
+				array(
+					'return_url' => wp_get_referer(),
+				)
+			)
+		);
+		exit;
+	}
+
+	/**
+	 * Handle the Additional CSS redirect to the Jetpack settings Theme Enhancements section.
+	 *
+	 * @since 11.0
+	 */
+	public static function theme_enhancements_redirect() {
+		wp_safe_redirect(
+			'admin.php?page=jetpack#/writing?term=custom-css'
+		);
+		exit;
+	}
+
+	/**
+	 * Build the URL to deep link to the Customizer.
+	 *
+	 * You can modify the return url via $args.
+	 *
+	 * @since 11.0 in this file. This method is also located in custom-css-4.7.php to cover legacy scenarios.
+	 *
+	 * @param array $args Array of parameters.
+	 * @return string
+	 */
+	public static function customizer_link( $args = array() ) {
+		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+			$args = wp_parse_args(
+				$args,
+				array(
+					'return_url' => rawurlencode( wp_unslash( $_SERVER['REQUEST_URI'] ) ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				)
+			);
+		}
+
+		return add_query_arg(
+			array(
+				array(
+					'autofocus' => array(
+						'section' => 'custom_css',
+					),
+				),
+				'return' => $args['return_url'],
+			),
+			admin_url( 'customize.php' )
+		);
 	}
 
 	/**
@@ -316,7 +412,6 @@ class Jetpack_Admin {
 		}
 
 		return Jetpack_Plan::supports( $module['module'] );
-
 	}
 
 	/**
@@ -402,8 +497,7 @@ class Jetpack_Admin {
 					break;
 				}
 
-				$modules = (array) $_GET['modules'];
-				$modules = array_map( 'sanitize_key', $modules );
+				$modules = isset( $_GET['modules'] ) ? array_map( 'sanitize_key', wp_unslash( (array) $_GET['modules'] ) ) : array();
 				foreach ( $modules as $module ) {
 					Jetpack::log( 'activate', $module );
 					Jetpack::activate_module( $module, false );
@@ -417,8 +511,7 @@ class Jetpack_Admin {
 					break;
 				}
 
-				$modules = (array) $_GET['modules'];
-				$modules = array_map( 'sanitize_key', $modules );
+				$modules = isset( $_GET['modules'] ) ? array_map( 'sanitize_key', wp_unslash( (array) $_GET['modules'] ) ) : array();
 				foreach ( $modules as $module ) {
 					Jetpack::log( 'deactivate', $module );
 					Jetpack::deactivate_module( $module );
@@ -454,10 +547,10 @@ class Jetpack_Admin {
 	 * Add debugger admin menu.
 	 */
 	public function admin_menu_debugger() {
-		jetpack_require_lib( 'debugger' );
+		require_once JETPACK__PLUGIN_DIR . '_inc/lib/debugger.php';
 		Jetpack_Debugger::disconnect_and_redirect();
 		$debugger_hook = add_submenu_page(
-			null,
+			'',
 			__( 'Debugging Center', 'jetpack' ),
 			'',
 			'manage_options',
@@ -475,14 +568,14 @@ class Jetpack_Admin {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			die( '-1' );
 		}
-		Jetpack_Admin_Page::wrap_ui( array( $this, 'debugger_page' ) );
+		Jetpack_Admin_Page::wrap_ui( array( $this, 'debugger_page' ), array( 'is-wide' => true ) );
 	}
 
 	/**
 	 * Display debugger page.
 	 */
 	public function debugger_page() {
-		jetpack_require_lib( 'debugger' );
+		require_once JETPACK__PLUGIN_DIR . '_inc/lib/debugger.php';
 		Jetpack_Debugger::jetpack_debug_display_handler();
 	}
 

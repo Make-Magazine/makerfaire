@@ -9,6 +9,8 @@
 
 namespace Automattic\Jetpack\Publicize;
 
+use Automattic\Jetpack\Connection\Client;
+use Automattic\Jetpack\Current_Plan;
 use Automattic\Jetpack\Redirect;
 use Automattic\Jetpack\Status;
 
@@ -60,6 +62,13 @@ abstract class Publicize_Base {
 	 * @var string
 	 */
 	const POST_PUBLICIZE_FEATURE_ENABLED = '_wpas_feature_enabled';
+
+	/**
+	 * Post meta key for Jetpack Social options.
+	 *
+	 * @var string
+	 */
+	const POST_JETPACK_SOCIAL_OPTIONS = '_wpas_options';
 
 	/**
 	 * Connection ID appended to indicate that a connection should NOT be publicized to.
@@ -147,9 +156,8 @@ abstract class Publicize_Base {
 				/**
 				 * Filter the default Publicize message.
 				 *
-				 * @module publicize
-				 *
-				 * @since 2.0.0
+				 * @since 0.1.0
+				 * @since-jetpack 2.0.0
 				 *
 				 * @param string $this->default_message Publicize's default message. Default is the post title.
 				 */
@@ -164,9 +172,8 @@ abstract class Publicize_Base {
 				/**
 				 * Filter the message prepended to the Publicize custom message.
 				 *
-				 * @module publicize
-				 *
-				 * @since 2.0.0
+				 * @since 0.1.0
+				 * @since-jetpack 2.0.0
 				 *
 				 * @param string $this->default_prefix String prepended to the Publicize custom message.
 				 */
@@ -180,9 +187,8 @@ abstract class Publicize_Base {
 				/**
 				 * Filter the message appended to the Publicize custom message.
 				 *
-				 * @module publicize
-				 *
-				 * @since 2.0.0
+				 * @since 0.1.0
+				 * @since-jetpack 2.0.0
 				 *
 				 * @param string $this->default_suffix String appended to the Publicize custom message.
 				 */
@@ -197,9 +203,8 @@ abstract class Publicize_Base {
 		 * All users with this cap can un-globalize all other global connections, and globalize any of their own
 		 * Globalized connections cannot be unselected by users without this capability when publishing.
 		 *
-		 * @module publicize
-		 *
-		 * @since 2.2.1
+		 * @since 0.1.0
+		 * @since-jetpack 2.2.1
 		 *
 		 * @param string $this->GLOBAL_CAP default capability in control of global Publicize connection options. Default to edit_others_posts.
 		 */
@@ -212,6 +217,7 @@ abstract class Publicize_Base {
 
 		// Default checkbox state for each Connection.
 		add_filter( 'publicize_checkbox_default', array( $this, 'publicize_checkbox_default' ), 10, 2 );
+		add_filter( 'jetpack_open_graph_tags', array( $this, 'add_jetpack_social_og_images' ), 12, 1 ); // $priority = 12, to run after Jetpack adds the tags in the Jetpack_Twitter_Cards class.
 
 		// Alter the "Post Publish" admin notice to mention the Connections we Publicized to.
 		add_filter( 'post_updated_messages', array( $this, 'update_published_message' ), 20, 1 );
@@ -219,8 +225,13 @@ abstract class Publicize_Base {
 		// Connection test callback.
 		add_action( 'wp_ajax_test_publicize_conns', array( $this, 'test_publicize_conns' ) );
 
-		add_action( 'init', array( $this, 'add_post_type_support' ) );
+		// Custom priority to ensure post type support is added prior to thumbnail support being added to the theme.
+		add_action( 'init', array( $this, 'add_post_type_support' ), 8 );
 		add_action( 'init', array( $this, 'register_post_meta' ), 20 );
+
+		// The custom priority for this action ensures that any existing code that
+		// removes post-thumbnails support during 'init' continues to work.
+		add_action( 'init', __NAMESPACE__ . '\add_theme_post_thumbnails_support', 8 );
 	}
 
 	/**
@@ -445,7 +456,8 @@ abstract class Publicize_Base {
 				return false;
 			}
 
-			$profile_url_query = wp_parse_url( $cmeta['connection_data']['meta']['profile_url'], PHP_URL_QUERY );
+			$profile_url_query      = wp_parse_url( $cmeta['connection_data']['meta']['profile_url'], PHP_URL_QUERY );
+			$profile_url_query_args = null;
 			wp_parse_str( $profile_url_query, $profile_url_query_args );
 
 			$id = null;
@@ -717,7 +729,8 @@ abstract class Publicize_Base {
 	 * data directly as array so it can be retrieved for static HTML generation
 	 * or JSON consumption.
 	 *
-	 * @since 6.7.0
+	 * @since 0.1.0
+	 * @since-jetpack 6.7.0
 	 *
 	 * @param integer $selected_post_id Optional. Post ID to query connection status for.
 	 *
@@ -771,9 +784,8 @@ abstract class Publicize_Base {
 				/**
 				 * Filter whether a post should be publicized to a given service.
 				 *
-				 * @module publicize
-				 *
-				 * @since 2.0.0
+				 * @since 0.1.0
+				 * @since-jetpack 2.0.0
 				 *
 				 * @param bool true Should the post be publicized to a given service? Default to true.
 				 * @param int $post_id Post ID.
@@ -816,9 +828,8 @@ abstract class Publicize_Base {
 				/**
 				 * Filter the checkbox state of each Publicize connection appearing in the post editor.
 				 *
-				 * @module publicize
-				 *
-				 * @since 2.0.1
+				 * @since 0.1.0
+				 * @since-jetpack 2.0.1
 				 *
 				 * @param bool $enabled Should the Publicize checkbox be enabled for a given service.
 				 * @param int $post_id Post ID.
@@ -837,9 +848,8 @@ abstract class Publicize_Base {
 					/**
 					 * Filters the checkboxes for global connections with non-prilvedged users.
 					 *
-					 * @module publicize
-					 *
-					 * @since 3.7.0
+					 * @since 0.1.0
+					 * @since-jetpack 3.7.0
 					 *
 					 * @param bool   $enabled Indicates if this connection should be enabled. Default true.
 					 * @param int    $post_id ID of the current post
@@ -860,7 +870,6 @@ abstract class Publicize_Base {
 					'service_label'   => $this->get_service_label( $service_name ),
 					'display_name'    => $this->get_display_name( $service_name, $connection ),
 					'profile_picture' => $this->get_profile_picture( $connection ),
-
 					'enabled'         => $enabled,
 					'done'            => $done,
 					'toggleable'      => $toggleable,
@@ -875,7 +884,8 @@ abstract class Publicize_Base {
 	/**
 	 * Checks if post has already been shared by Publicize in the past.
 	 *
-	 * @since 6.7.0
+	 * @since 0.1.0
+	 * @since-jetpack 6.7.0
 	 *
 	 * @param integer $post_id Optional. Post ID to query connection status for: will use current post if missing.
 	 *
@@ -889,7 +899,8 @@ abstract class Publicize_Base {
 	 * Retrieves current available publicize service connections
 	 * with associated labels and URLs.
 	 *
-	 * @since 6.7.0
+	 * @since 0.1.0
+	 * @since-jetpack 6.7.0
 	 *
 	 * @return array {
 	 *     Array of UI service connection data for all services
@@ -972,9 +983,8 @@ abstract class Publicize_Base {
 		/**
 		 * Filter what user capability is required to use the publicize form on the edit post page. Useful if publish post capability has been removed from role.
 		 *
-		 * @module publicize
-		 *
-		 * @since 4.1.0
+		 * @since 0.1.0
+		 * @since-jetpack 4.1.0
 		 *
 		 * @param string $capability User capability needed to use publicize
 		 */
@@ -1005,7 +1015,7 @@ abstract class Publicize_Base {
 	public function register_post_meta() {
 		$message_args = array(
 			'type'          => 'string',
-			'description'   => __( 'The message to use instead of the title when sharing to Publicize Services', 'jetpack-publicize-pkg' ),
+			'description'   => __( 'The message to use instead of the title when sharing to Jetpack Social services', 'jetpack-publicize-pkg' ),
 			'single'        => true,
 			'default'       => '',
 			'show_in_rest'  => array(
@@ -1036,6 +1046,78 @@ abstract class Publicize_Base {
 			'auth_callback' => array( $this, 'message_meta_auth_callback' ),
 		);
 
+		$already_shared_flag_args = array(
+			'type'          => 'boolean',
+			'description'   => __( 'Whether or not the post has already been shared.', 'jetpack-publicize-pkg' ),
+			'single'        => true,
+			'default'       => false,
+			'show_in_rest'  => array(
+				'name' => 'jetpack_social_post_already_shared',
+			),
+			'auth_callback' => array( $this, 'message_meta_auth_callback' ),
+		);
+
+		$jetpack_social_options_args = array(
+			'type'          => 'object',
+			'description'   => __( 'Post options related to Jetpack Social.', 'jetpack-publicize-pkg' ),
+			'single'        => true,
+			'default'       => array(
+				'image_generator_settings' => array(
+					'template' => ( new Social_Image_Generator\Settings() )->get_default_template(),
+					'enabled'  => false,
+				),
+			),
+			'show_in_rest'  => array(
+				'name'   => 'jetpack_social_options',
+				'schema' => array(
+					'type'       => 'object',
+					'properties' => array(
+						'attached_media'               => array(
+							'type'  => 'array',
+							'items' => array(
+								'type'       => 'object',
+								'properties' => array(
+									'id'  => array(
+										'type' => 'number',
+									),
+									'url' => array(
+										'type' => 'string',
+									),
+								),
+							),
+						),
+						'should_upload_attached_media' => array(
+							'type' => 'boolean',
+						),
+						'image_generator_settings'     => array(
+							'type'       => 'object',
+							'properties' => array(
+								'enabled'     => array(
+									'type' => 'boolean',
+								),
+								'custom_text' => array(
+									'type' => 'string',
+								),
+								'image_type'  => array(
+									'type' => 'string',
+								),
+								'image_id'    => array(
+									'type' => 'number',
+								),
+								'template'    => array(
+									'type' => 'string',
+								),
+								'token'       => array(
+									'type' => 'string',
+								),
+							),
+						),
+					),
+				),
+			),
+			'auth_callback' => array( $this, 'message_meta_auth_callback' ),
+		);
+
 		foreach ( get_post_types() as $post_type ) {
 			if ( ! $this->post_type_is_publicizeable( $post_type ) ) {
 				continue;
@@ -1044,10 +1126,14 @@ abstract class Publicize_Base {
 			$message_args['object_subtype']                  = $post_type;
 			$tweetstorm_args['object_subtype']               = $post_type;
 			$publicize_feature_enable_args['object_subtype'] = $post_type;
+			$already_shared_flag_args['object_subtype']      = $post_type;
+			$jetpack_social_options_args['object_subtype']   = $post_type;
 
 			register_meta( 'post', $this->POST_MESS, $message_args );
 			register_meta( 'post', $this->POST_TWEETSTORM, $tweetstorm_args );
 			register_meta( 'post', self::POST_PUBLICIZE_FEATURE_ENABLED, $publicize_feature_enable_args );
+			register_meta( 'post', $this->POST_DONE . 'all', $already_shared_flag_args );
+			register_meta( 'post', self::POST_JETPACK_SOCIAL_OPTIONS, $jetpack_social_options_args );
 		}
 	}
 
@@ -1063,22 +1149,16 @@ abstract class Publicize_Base {
 			$submit_post = false;
 		}
 
-		// On quick edit, autosave, etc but do fire on p2, quickpress, and instapost ajax.
 		if (
-			defined( 'DOING_AJAX' )
+			defined( 'DOING_AUTOSAVE' )
 		&&
-			DOING_AJAX
-		&&
-			! did_action( 'p2_ajax' )
-		&&
-			! did_action( 'wp_ajax_json_quickpress_post' )
-		&&
-			! did_action( 'wp_ajax_instapost_publish' )
-		&&
-			! did_action( 'wp_ajax_post_reblog' )
-		&&
-			! did_action( 'wp_ajax_press-this-save-post' )
+			DOING_AUTOSAVE
 		) {
+			$submit_post = false;
+		}
+
+		// To stop quick edits from getting publicized.
+		if ( did_action( 'wp_ajax_inline-save' ) ) {
 			$submit_post = false;
 		}
 
@@ -1219,7 +1299,8 @@ abstract class Publicize_Base {
 				 * Users may hook in here and do anything else they need to after meta is written,
 				 * and before the post is processed for Publicize.
 				 *
-				 * @since 2.1.2
+				 * @since 0.1.0
+				 * @since-jetpack 2.1.2
 				 *
 				 * @param bool $submit_post Should the post be publicized.
 				 * @param int $post->ID Post ID.
@@ -1409,6 +1490,107 @@ abstract class Publicize_Base {
 	}
 
 	/**
+	 * Get the attached image for a post.
+	 *
+	 * @param int $post_id ID of the post to get attached media for.
+	 * @return array {
+	 *     Array of image data, or empty array if no image is available.
+	 *
+	 *     @type string $url Image source URL.
+	 *     @type int    $width Image width in pixels.
+	 *     @type int    $height Image height in pixels.
+	 * }
+	 */
+	public function get_attached_media_image( $post_id ) {
+		$options = get_post_meta( $post_id, self::POST_JETPACK_SOCIAL_OPTIONS, true );
+
+		if ( ! is_array( $options ) || empty( $options['attached_media'] ) || empty( $options['attached_media'][0]['id'] ) ) {
+			return array();
+		}
+
+		$media_id = $options['attached_media'][0]['id'];
+
+		if ( ! wp_attachment_is_image( $media_id ) ) {
+			return array();
+		}
+
+		$image = wp_get_attachment_image_src( $media_id, array( 1200 ) );
+
+		if ( ! $image ) {
+			return array();
+		}
+
+		return array(
+			'url'    => $image[0],
+			'width'  => $image[1],
+			'height' => $image[2],
+		);
+	}
+
+	/**
+	 * Get the OpenGraph image for a post.
+	 *
+	 * @param int $post_id ID of the post to get OpenGraph image for.
+	 * @return array {
+	 *     Array of image data, or empty array if no image is available.
+	 *
+	 *     @type string $url Image source URL.
+	 *     @type int    $width Image width in pixels.
+	 *     @type int    $height Image height in pixels.
+	 * }
+	 */
+	public function get_social_opengraph_image( $post_id ) {
+		$generated_image_url = Social_Image_Generator\get_image_url( $post_id );
+
+		if ( ! empty( $generated_image_url ) ) {
+			return array(
+				'url'    => $generated_image_url,
+				'width'  => 1200,
+				'height' => 630,
+			);
+		}
+
+		$attached_media = $this->get_attached_media_image( $post_id );
+
+		if ( $attached_media ) {
+			return $attached_media;
+		}
+
+		return array();
+	}
+
+	/**
+	 * Add the Jetpack Social images (attached media, SIG image) to the OpenGraph tags.
+	 *
+	 * @param array $tags Current tags.
+	 */
+	public function add_jetpack_social_og_images( $tags ) {
+		$opengraph_image = $this->get_social_opengraph_image( get_the_ID() );
+
+		if ( empty( $opengraph_image ) ) {
+			return $tags;
+		}
+
+		// If this code is running in Jetpack, we need to add Twitter cards.
+		// Some active plugins disable Jetpack's Twitter Cards, so we need
+		// to check if the class was instantiated before adding the cards.
+		$needs_twitter_cards = class_exists( 'Jetpack_Twitter_Cards' );
+
+		return array_merge(
+			$tags,
+			array(
+				'og:image'        => $opengraph_image['url'],
+				'og:image:width'  => $opengraph_image['width'],
+				'og:image:height' => $opengraph_image['height'],
+			),
+			$needs_twitter_cards ? array(
+				'twitter:image' => $opengraph_image['url'],
+				'twitter:card'  => 'summary_large_image',
+			) : array()
+		);
+	}
+
+	/**
 	 * Util
 	 */
 
@@ -1433,7 +1615,148 @@ abstract class Publicize_Base {
 		}
 		return str_replace( $search, $replace, $string );
 	}
+
+	/**
+	 * Get Calypso URL for Publicize connections.
+	 *
+	 * @param string $source The idenfitier of the place the function is called from.
+	 * @return string
+	 */
+	public function publicize_connections_url( $source = 'calypso-marketing-connections' ) {
+		$allowed_sources = array( 'jetpack-social-connections-admin-page', 'jetpack-social-connections-classic-editor', 'calypso-marketing-connections' );
+		$source          = in_array( $source, $allowed_sources, true ) ? $source : 'calypso-marketing-connections';
+		return Redirect::get_url( $source, array( 'site' => ( new Status() )->get_site_suffix() ) );
+	}
+
+	/**
+	 * Get the Jetpack Social info from the API.
+	 *
+	 * @param int $blog_id The WPCOM blog_id for the current blog.
+	 * @return array
+	 */
+	public function get_api_data( $blog_id ) {
+		static $api_data_response = null;
+		$key                      = 'jetpack_social_api_data';
+
+		if ( isset( $api_data_response ) ) {
+			return ! is_wp_error( $api_data_response ) ? $api_data_response : array();
+		}
+
+		$rest_controller   = new REST_Controller();
+		$response          = Client::wpcom_json_api_request_as_blog(
+			sprintf( 'sites/%d/jetpack-social', absint( $blog_id ) ),
+			'2',
+			array(
+				'headers' => array( 'content-type' => 'application/json' ),
+				'method'  => 'GET',
+			),
+			null,
+			'wpcom'
+		);
+		$api_data_response = $rest_controller->make_proper_response( $response );
+
+		if ( ! is_wp_error( $api_data_response ) ) {
+			set_transient( $key, $api_data_response, DAY_IN_SECONDS );
+			return $api_data_response;
+		}
+
+		$cached_response = get_transient( $key );
+		if ( ! empty( $cached_response ) ) {
+			return $cached_response;
+		}
+
+		return array();
+	}
+
+	/**
+	 * Get the Publicize shares info.
+	 *
+	 * @param string $blog_id The WPCOM blog_id for the current blog.
+	 * @return ?array
+	 */
+	public function get_publicize_shares_info( $blog_id ) {
+		$data = $this->get_api_data( $blog_id );
+
+		if ( empty( $data ) ) {
+			return null;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Check if enhanced publishing is enabled.
+	 *
+	 * @param int $blog_id The blog ID for the current blog.
+	 * @return bool
+	 */
+	public function is_enhanced_publishing_enabled( $blog_id ) {
+		$data = $this->get_api_data( $blog_id );
+
+		if ( empty( $data ) ) {
+			return false;
+		}
+
+		return ! empty( $data['is_enhanced_publishing_enabled'] );
+	}
+
+	/**
+	 * Check if the social image generator is enabled.
+	 *
+	 * @deprecated 0.24.2 use Automattic\Jetpack\Publicize\Publicize_Base\has_social_image_generator_feature instead.
+	 * @param int $blog_id The blog ID for the current blog.
+	 * @return bool
+	 */
+	public function is_social_image_generator_enabled( $blog_id ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		return $this->has_social_image_generator_feature();
+	}
+
+	/**
+	 * Check if the social image generator is enabled.
+	 *
+	 * @return bool
+	 */
+	public function has_social_image_generator_feature() {
+		return Current_Plan::supports( 'social-image-generator' );
+	}
+
+	/**
+	 * Call the WPCOM REST API to calculate the scheduled shares.
+	 *
+	 * @param string $blog_id The blog_id.
+	 */
+	public function calculate_scheduled_shares( $blog_id ) {
+		$response        = Client::wpcom_json_api_request_as_blog(
+			sprintf( 'sites/%d/jetpack-social/count-scheduled-shares', absint( $blog_id ) ),
+			'2',
+			array(
+				'headers' => array( 'content-type' => 'application/json' ),
+				'method'  => 'GET',
+			),
+			null,
+			'wpcom'
+		);
+		$rest_controller = new REST_Controller();
+		return $rest_controller->make_proper_response( $response );
+	}
+
+	/**
+	 * Check if we have a paid Jetpack Social plan.
+	 *
+	 * @param bool $refresh_from_wpcom Whether to force refresh the plan check.
+	 *
+	 * @return bool True if we have a paid plan, false otherwise.
+	 */
+	public function has_paid_plan( $refresh_from_wpcom = false ) {
+		static $has_paid_plan = null;
+		if ( ! $has_paid_plan ) {
+			$has_paid_plan = Current_Plan::supports( 'social-shares-1000', $refresh_from_wpcom );
+		}
+		return $has_paid_plan;
+	}
 }
+
+// phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- TODO: Move these functions to some other file.
 
 /**
  * Get Calypso URL for Publicize connections.
@@ -1441,5 +1764,16 @@ abstract class Publicize_Base {
  * @return string
  */
 function publicize_calypso_url() {
+	_deprecated_function( __METHOD__, '0.2.0', 'Publicize::publicize_connections_url' );
 	return Redirect::get_url( 'calypso-marketing-connections', array( 'site' => ( new Status() )->get_site_suffix() ) );
+}
+
+/**
+ * Adds support for the post-thumbnails feature, regardless of underlying theme support.
+ *
+ * This ensures the featured image UI appears in the editor, allowing the user to
+ * explicitly set an image for their social media post.
+ */
+function add_theme_post_thumbnails_support() {
+	add_theme_support( 'post-thumbnails', get_post_types_by_support( 'publicize' ) );
 }

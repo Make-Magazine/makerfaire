@@ -56,6 +56,8 @@ class Jetpack_SEO {
 		add_filter( 'jetpack_open_graph_tags', array( $this, 'set_custom_og_tags' ) );
 		Jetpack_SEO_Posts::register_post_meta();
 		Jetpack_SEO_Posts::register_gutenberg_extension();
+		// Exclude posts with 'jetpack_seo_noindex' set true from the Jetpack sitemap.
+		add_filter( 'jetpack_sitemap_skip_post', array( 'Jetpack_SEO_Posts', 'exclude_noindex_posts_from_jetpack_sitemap' ), 10, 2 );
 	}
 
 	/**
@@ -91,12 +93,17 @@ class Jetpack_SEO {
 		$post_custom_description = Jetpack_SEO_Posts::get_post_custom_description( get_post() );
 		$front_page_meta         = Jetpack_SEO_Utils::get_front_page_meta_description();
 
+		if ( class_exists( 'woocommerce' ) && is_shop() ) {
+			$shop_page_id = get_option( 'woocommerce_shop_page_id' );
+			if ( $shop_page_id ) {
+				$post_custom_description = Jetpack_SEO_Posts::get_post_custom_description( get_post( $shop_page_id ) );
+			}
+		}
+
 		if ( is_front_page() && ! empty( $front_page_meta ) ) {
 			$tags['og:description'] = $front_page_meta;
-		} else {
-			if ( ! empty( $post_custom_description ) ) {
-				$tags['og:description'] = $post_custom_description;
-			}
+		} elseif ( ! empty( $post_custom_description ) ) {
+			$tags['og:description'] = $post_custom_description;
 		}
 
 		return $tags;
@@ -218,6 +225,11 @@ class Jetpack_SEO {
 
 			$authors             = $this->get_authors();
 			$meta['description'] = wp_sprintf( $template, count( $wp_query->posts ), $authors, $period );
+		}
+
+		$mark_as_noindex = Jetpack_SEO_Posts::get_post_noindex_setting( get_post() );
+		if ( $mark_as_noindex ) {
+			$meta['robots'] = 'noindex';
 		}
 
 		/**
