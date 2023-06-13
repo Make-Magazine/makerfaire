@@ -69,6 +69,10 @@ class PaypalField extends \ElementorPro\Modules\Forms\Fields\Field_Base
     }
     public function render($item, $item_index, $form)
     {
+        if (!wp_script_is('dce-paypal-sdk', 'registered')) {
+            echo esc_html__('There was an error loading PayPal. Is the PayPal Client ID valid?', 'dynamic-content-for-elementor');
+            return;
+        }
         $settings = $form->get_settings_for_display();
         $name = Helper::get_dynamic_value($item['dce_form_paypal_item_name']);
         $value = Helper::get_dynamic_value($item['dce_form_paypal_item_value']);

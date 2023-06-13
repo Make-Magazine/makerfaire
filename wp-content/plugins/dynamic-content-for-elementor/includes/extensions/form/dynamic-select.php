@@ -74,7 +74,7 @@ class DynamicSelect extends \ElementorPro\Modules\Forms\Fields\Field_Base
         $options = ['' => []];
         $current_value = '';
         foreach ($lines as $line) {
-            if (\preg_match('/^\\[([^\\]]+)\\]$/', $line, $matches)) {
+            if (\preg_match('/^\\[([^\\]]+)\\]\\s*$/', $line, $matches)) {
                 $current_value = $matches[1];
                 $options[$current_value] = [];
             } elseif (!\preg_match('/^\\s*$/', $line)) {

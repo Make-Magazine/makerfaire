@@ -109,24 +109,6 @@ class DynamicRedirect extends \ElementorPro\Modules\Forms\Classes\Action_Base
         $settings = Helper::get_dynamic_value($settings, $fields);
         $this->redirection($fields, $settings, $ajax_handler, $record);
     }
-    /**
-     * On Export
-     *
-     * Clears form settings on export
-     * @access Public
-     * @param array $element
-     */
-    public function on_export($element)
-    {
-        $tmp = array();
-        if (!empty($element)) {
-            foreach ($element['settings'] as $key => $value) {
-                if (\substr($key, 0, 4) == 'dce_') {
-                    unset($element['settings'][$key]);
-                }
-            }
-        }
-    }
     protected function redirection($fields, $settings = null, $ajax_handler = null, $record = null)
     {
         foreach ($settings['dce_form_redirect_repeater'] as $mkey => $aredirect) {
@@ -195,5 +177,9 @@ class DynamicRedirect extends \ElementorPro\Modules\Forms\Classes\Action_Base
             }
         }
         return \false;
+    }
+    public function on_export($element)
+    {
+        return $element;
     }
 }

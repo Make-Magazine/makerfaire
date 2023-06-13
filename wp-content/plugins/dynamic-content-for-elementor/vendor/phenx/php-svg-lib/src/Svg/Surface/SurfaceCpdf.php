@@ -3,7 +3,7 @@
 /**
  * @package php-svg-lib
  * @link    http://github.com/PhenX/php-svg-lib
- * @author  Fabien Ménager <fabien.menager@gmail.com>
+ * @author  Fabien M�nager <fabien.menager@gmail.com>
  * @license GNU LGPLv3+ http://www.gnu.org/copyleft/lesser.html
  */
 namespace DynamicOOOS\Svg\Surface;
@@ -13,7 +13,7 @@ use DynamicOOOS\Svg\Style;
 class SurfaceCpdf implements SurfaceInterface
 {
     const DEBUG = \false;
-    /** @var \Svg\Surface\CPdf */
+    /** @var \CPdf\CPdf */
     private $canvas;
     private $width;
     private $height;
@@ -28,7 +28,7 @@ class SurfaceCpdf implements SurfaceInterface
         $w = $dimensions["width"];
         $h = $dimensions["height"];
         if (!$canvas) {
-            $canvas = new \DynamicOOOS\Svg\Surface\CPdf(array(0, 0, $w, $h));
+            $canvas = new \DynamicOOOS\CPdf\CPdf(array(0, 0, $w, $h));
             $refl = new \ReflectionClass($canvas);
             $canvas->fontcache = \realpath(\dirname($refl->getFileName()) . "/../../fonts/") . "/";
         }
@@ -155,7 +155,7 @@ class SurfaceCpdf implements SurfaceInterface
         } else {
             $data = \file_get_contents($image);
         }
-        $image = \tempnam(\sys_get_temp_dir(), "svg");
+        $image = \tempnam("", "svg");
         \file_put_contents($image, $data);
         $img = $this->image($image, $sx, $sy, $sw, $sh, "normal");
         \unlink($image);
@@ -375,11 +375,7 @@ class SurfaceCpdf implements SurfaceInterface
         if ($style->strokeDasharray) {
             $dashArray = \preg_split('/\\s*,\\s*/', $style->strokeDasharray);
         }
-        $phase = 0;
-        if ($style->strokeDashoffset) {
-            $phase = $style->strokeDashoffset;
-        }
-        $canvas->setLineStyle($style->strokeWidth, $style->strokeLinecap, $style->strokeLinejoin, $dashArray, $phase);
+        $canvas->setLineStyle($style->strokeWidth, $style->strokeLinecap, $style->strokeLinejoin, $dashArray);
         $this->setFont($style->fontFamily, $style->fontStyle, $style->fontWeight);
     }
     public function setFont($family, $style, $weight)

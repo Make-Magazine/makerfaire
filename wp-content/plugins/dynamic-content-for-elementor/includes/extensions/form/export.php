@@ -75,6 +75,7 @@ class Export extends \ElementorPro\Modules\Forms\Classes\Action_Base
         $repeater_headers->add_control('dce_form_export_header_key', ['label' => __('Header Key', 'dynamic-content-for-elementor'), 'placeholder' => 'Content-Type', 'type' => Controls_Manager::TEXT]);
         $repeater_headers->add_control('dce_form_export_header_value', ['label' => __('Header Value', 'dynamic-content-for-elementor'), 'placeholder' => 'application/json', 'type' => Controls_Manager::TEXT]);
         $widget->add_control('dce_form_export_headers', ['label' => __('Add Headers', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::REPEATER, 'fields' => $repeater_headers->get_controls(), 'title_field' => '{{{ dce_form_export_header_key }}}: {{{ dce_form_export_header_value }}}', 'default' => [['dce_form_export_header_key' => 'Connection', 'dce_form_export_header_value' => 'keep-alive']], 'prevent_empty' => \false]);
+        $widget->add_control('dce_form_export_timeout', ['label' => __('Request Timeout in seconds', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '']);
         $widget->add_control('dce_form_pdf_log', ['label' => __('Enable log', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Create a log for Export result', 'dynamic-content-for-elementor'), 'default' => 'yes']);
         $widget->add_control('dce_form_pdf_log_path', ['label' => __('Log Path', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'elementor/export/log_' . $widget->get_id() . '_[date|Ymd].txt', 'description' => __('The Log path', 'dynamic-content-for-elementor'), 'label_block' => \true, 'condition' => ['dce_form_pdf_log!' => '']]);
         $widget->add_control('dce_form_pdf_error', ['label' => __('Show error on failure', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('If the remote request fails (not response code 200) then an error is going to be displayed', 'dynamic-content-for-elementor'), 'default' => 'yes']);
@@ -95,24 +96,6 @@ class Export extends \ElementorPro\Modules\Forms\Classes\Action_Base
         $fields = Helper::get_form_data($record);
         $settings = Helper::get_dynamic_value($settings, $fields);
         $this->export($fields, $settings, $ajax_handler);
-    }
-    /**
-     * On Export
-     *
-     * Clears form settings on export
-     * @access Public
-     * @param array $element
-     */
-    public function on_export($element)
-    {
-        $tmp = [];
-        if (!empty($element)) {
-            foreach ($element['settings'] as $key => $value) {
-                if (\substr($key, 0, 4) == 'dce_') {
-                    unset($element['settings'][$key]);
-                }
-            }
-        }
     }
     protected function export($fields, $settings = null, $ajax_handler = null)
     {
@@ -154,6 +137,10 @@ class Export extends \ElementorPro\Modules\Forms\Classes\Action_Base
                         $args['body'] = $export_data;
                     }
                 }
+                $timeout = $settings['dce_form_export_timeout'];
+                if (\is_numeric($timeout) && $timeout > 0) {
+                    $args['timeout'] = (int) $timeout;
+                }
                 if (!empty($settings['dce_form_export_headers'])) {
                     foreach ($settings['dce_form_export_headers'] as $akey => $adata) {
                         // TOKENIZE parameters repeater
@@ -165,15 +152,30 @@ class Export extends \ElementorPro\Modules\Forms\Classes\Action_Base
                     add_filter('https_ssl_verify', '__return_false');
                 }
                 $args['follow_redirects'] = \true;
-                // Send the request
                 $req = 'wp_remote_' . $settings['dce_form_export_method'];
-                $ret = \call_user_func($req, $exp_url, $args);
-                $ret_code = wp_remote_retrieve_response_code($ret);
-                if ($ret_code == 200) {
+                // Send the request
+                switch ($settings['dce_form_export_method']) {
+                    case 'get':
+                        $ret = wp_remote_get($exp_url, $args);
+                        break;
+                    case 'post':
+                        $ret = wp_remote_post($exp_url, $args);
+                        break;
+                    case 'head':
+                        $ret = wp_remote_head($exp_url, $args);
+                        break;
+                    default:
+                        // this should never happen:
+                        $ajax_handler->add_admin_error_message('DCE Error: AHPH6P');
+                        return;
+                }
+                if (!is_wp_error($ret)) {
                     $log = 'Form Export: OK';
                 } else {
+                    $ret_code = wp_remote_retrieve_response_code($ret);
                     $log = 'Form Export: ERROR ' . $ret_code;
                     if ($settings['dce_form_pdf_error']) {
+                        $ajax_handler->add_admin_error_message($ret->get_error_message());
                         $ajax_handler->add_error_message(\ElementorPro\Modules\Forms\Classes\Ajax_Handler::get_default_message(\ElementorPro\Modules\Forms\Classes\Ajax_Handler::SERVER_ERROR, $settings));
                     }
                 }
@@ -182,7 +184,7 @@ class Export extends \ElementorPro\Modules\Forms\Classes\Action_Base
                     $log = $log . ' - ' . $req . \PHP_EOL;
                     $log .= 'request_url: ' . $exp_url . \PHP_EOL;
                     if ($settings['dce_form_export_method'] == 'post') {
-                        $log .= 'request_data: ' . \var_export($args['body'], \true) . \PHP_EOL;
+                        $log .= 'request_data: ' . \var_export($args['body'] ?? '', \true) . \PHP_EOL;
                     }
                     $log .= 'return_body: ' . \var_export($ret_body, \true);
                     $log = \PHP_EOL . '[' . \date('Y-m-d H:i:s') . '] ' . $log;
@@ -196,5 +198,9 @@ class Export extends \ElementorPro\Modules\Forms\Classes\Action_Base
                 }
             }
         }
+    }
+    public function on_export($element)
+    {
+        return $element;
     }
 }

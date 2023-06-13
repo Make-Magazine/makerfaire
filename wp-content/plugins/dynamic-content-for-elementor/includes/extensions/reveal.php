@@ -23,7 +23,7 @@ class Reveal extends \DynamicContentForElementor\Extensions\ExtensionPrototype
     private function add_controls($element, $args)
     {
         $element_type = $element->get_type();
-        $element->add_control('enabled_reveal', ['label' => __('Reveal', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'yes', 'frontend_available' => \true]);
+        $element->add_control('enabled_reveal', ['label' => __('Reveal', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
         $element->add_control('reveal_direction', ['label' => __('Direction', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'c', 'options' => ['c' => __('Center', 'dynamic-content-for-elementor'), 'lr' => __('Left to Right', 'dynamic-content-for-elementor'), 'rl' => __('Right to Left', 'dynamic-content-for-elementor'), 'tb' => __('Top to Bottom', 'dynamic-content-for-elementor'), 'bt' => __('Bottom to top', 'dynamic-content-for-elementor')], 'frontend_available' => \true, 'condition' => ['enabled_reveal' => 'yes']]);
         $element->add_control('reveal_speed', ['label' => __('Speed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['min' => 0, 'max' => 10, 'step' => 0.1]], 'default' => ['size' => 5], 'frontend_available' => \true, 'condition' => ['enabled_reveal' => 'yes']]);
         $element->add_control('reveal_delay', ['label' => __('Delay', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'range' => ['px' => ['min' => 0, 'max' => 20, 'step' => 0.1]], 'default' => ['size' => 0], 'frontend_available' => \true, 'condition' => ['enabled_reveal' => 'yes']]);

@@ -33,7 +33,8 @@ class Extensions
             $priority = $extension->action_priority;
         }
         add_action('dce/register_form_actions', function () use($extension) {
-            \ElementorPro\Plugin::instance()->modules_manager->get_modules('forms')->add_form_action($extension->get_label(), $extension);
+            $module = \ElementorPro\Plugin::instance()->modules_manager->get_modules('forms');
+            $module->actions_registrar->register($extension);
         }, $priority);
     }
     public function load_extensions()

@@ -79,6 +79,8 @@ class PasswordVisibility extends \DynamicContentForElementor\Extensions\Extensio
 						if ($scope.hasClass("elementor-element-<?php 
                 echo $widget->get_id();
                 ?>")) {
+							if ($scope.data('dce-psw-set') === 'yes') return;
+							$scope.data('dce-psw-set', 'yes');
 				<?php 
             }
             $has_psw = \false;

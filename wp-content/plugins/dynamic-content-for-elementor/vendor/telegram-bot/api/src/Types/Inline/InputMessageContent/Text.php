@@ -8,7 +8,6 @@
  */
 namespace DynamicOOOS\TelegramBot\Api\Types\Inline\InputMessageContent;
 
-use DynamicOOOS\TelegramBot\Api\BaseType;
 use DynamicOOOS\TelegramBot\Api\TypeInterface;
 use DynamicOOOS\TelegramBot\Api\Types\Inline\InputMessageContent;
 /**
@@ -42,19 +41,19 @@ class Text extends InputMessageContent implements TypeInterface
      * Optional. Send Markdown or HTML,
      * if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message.
      *
-     * @var string
+     * @var string|null
      */
     protected $parseMode;
     /**
      * Optional. Disables link previews for links in the sent message
      *
-     * @var bool
+     * @var bool|null
      */
     protected $disableWebPagePreview;
     /**
      * Text constructor.
      * @param string $messageText
-     * @param string $parseMode
+     * @param string|null $parseMode
      * @param bool $disableWebPagePreview
      */
     public function __construct($messageText, $parseMode = null, $disableWebPagePreview = \false)
@@ -72,34 +71,40 @@ class Text extends InputMessageContent implements TypeInterface
     }
     /**
      * @param string $messageText
+     *
+     * @return void
      */
     public function setMessageText($messageText)
     {
         $this->messageText = $messageText;
     }
     /**
-     * @return string
+     * @return string|null
      */
     public function getParseMode()
     {
         return $this->parseMode;
     }
     /**
-     * @param string $parseMode
+     * @param string|null $parseMode
+     *
+     * @return void
      */
     public function setParseMode($parseMode)
     {
         $this->parseMode = $parseMode;
     }
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isDisableWebPagePreview()
     {
         return $this->disableWebPagePreview;
     }
     /**
-     * @param boolean $disableWebPagePreview
+     * @param bool|null $disableWebPagePreview
+     *
+     * @return void
      */
     public function setDisableWebPagePreview($disableWebPagePreview)
     {

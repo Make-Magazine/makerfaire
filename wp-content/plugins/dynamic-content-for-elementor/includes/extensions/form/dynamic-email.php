@@ -122,24 +122,12 @@ class DynamicEmail extends \ElementorPro\Modules\Forms\Classes\Action_Base
         $settings = Helper::get_dynamic_value($settings, $fields);
         $this->email($fields, $settings, $ajax_handler, $record);
     }
-    public function on_export($element)
-    {
-        $tmp = array();
-        if (!empty($element)) {
-            foreach ($element['settings'] as $key => $value) {
-                if (\substr($key, 0, 4) == 'dce_') {
-                    unset($element['settings'][$key]);
-                }
-            }
-        }
-    }
     protected function email($fields, $settings = null, $ajax_handler = null, $record = null)
     {
-        global $phpmailer;
         $remove_uploaded_files = \false;
+        $all_pdf_attachments = [];
+        $remove_pdf_files = \false;
         foreach ($settings['dce_form_email_repeater'] as $mkey => $amail) {
-            $remove_pdf_files = \false;
-            $all_pdf_attachments = [];
             if ($amail['dce_form_email_enable']) {
                 $condition_satisfy = \true;
                 if (!empty($amail['dce_form_email_condition_field'])) {
@@ -186,173 +174,165 @@ class DynamicEmail extends \ElementorPro\Modules\Forms\Classes\Action_Base
                             break;
                     }
                 }
-                if ($condition_satisfy) {
-                    $use_template = \false;
-                    if (!empty($amail['dce_form_email_content_type_advanced']) && $amail['dce_form_email_content_type_advanced'] == 'template') {
-                        $use_template = \true;
+                $use_template = \false;
+                if (!empty($amail['dce_form_email_content_type_advanced']) && $amail['dce_form_email_content_type_advanced'] == 'template') {
+                    $use_template = \true;
+                }
+                $send_html = 'plain' !== $amail['dce_form_email_content_type'] || $use_template;
+                $line_break = $send_html ? '<br />' : "\n";
+                $attachments = array();
+                $email_fields = [
+                    'dce_form_email_to' => get_option('admin_email'),
+                    /* translators: %s: Site title. */
+                    'dce_form_email_subject' => \sprintf(__('New message from "%s"', 'dynamic-content-for-elementor'), get_bloginfo('name')),
+                    'dce_form_email_content' => '[all-fields]',
+                    'dce_form_email_from_name' => get_bloginfo('name'),
+                    'dce_form_email_from' => get_bloginfo('admin_email'),
+                    'dce_form_email_reply_to' => 'no-reply@' . Helper::get_site_domain(),
+                    'dce_form_email_to_cc' => '',
+                    'dce_form_email_to_bcc' => '',
+                ];
+                foreach ($email_fields as $key => $default) {
+                    $setting = $amail[$key];
+                    if (!empty($setting)) {
+                        $email_fields[$key] = $setting;
                     }
-                    $send_html = 'plain' !== $amail['dce_form_email_content_type'] || $use_template;
-                    $line_break = $send_html ? '<br />' : "\n";
-                    $attachments = array();
-                    $email_fields = [
-                        'dce_form_email_to' => get_option('admin_email'),
-                        /* translators: %s: Site title. */
-                        'dce_form_email_subject' => \sprintf(__('New message from "%s"', 'dynamic-content-for-elementor'), get_bloginfo('name')),
-                        'dce_form_email_content' => '[all-fields]',
-                        'dce_form_email_from_name' => get_bloginfo('name'),
-                        'dce_form_email_from' => get_bloginfo('admin_email'),
-                        'dce_form_email_reply_to' => 'no-reply@' . Helper::get_site_domain(),
-                        'dce_form_email_to_cc' => '',
-                        'dce_form_email_to_bcc' => '',
-                    ];
-                    foreach ($email_fields as $key => $default) {
-                        $setting = $amail[$key];
-                        if (!empty($setting)) {
-                            $email_fields[$key] = $setting;
+                }
+                $headers = \sprintf('From: %s <%s>' . "\r\n", $email_fields['dce_form_email_from_name'], $email_fields['dce_form_email_from']);
+                if (!empty($email_fields['dce_form_email_reply_to'])) {
+                    if (\filter_var($email_fields['dce_form_email_reply_to'], \FILTER_VALIDATE_EMAIL)) {
+                        // control if is a valid email
+                        $headers .= \sprintf('Reply-To: %s' . "\r\n", $email_fields['dce_form_email_reply_to']);
+                    }
+                }
+                if ($send_html) {
+                    $headers .= 'Content-Type: text/html; charset=UTF-8' . "\r\n";
+                }
+                $cc_header = '';
+                if (!empty($email_fields['dce_form_email_to_cc'])) {
+                    $cc_header = 'Cc: ' . $email_fields['dce_form_email_to_cc'] . "\r\n";
+                }
+                $bcc_header = '';
+                if (!empty($email_fields['dce_form_email_to_bcc'])) {
+                    $bcc_header = 'Bcc: ' . $email_fields['dce_form_email_to_bcc'] . "\r\n";
+                }
+                /**
+                 * Email headers.
+                 *
+                 * Filters the additional headers sent when the form send an email.
+                 *
+                 * @since 1.0.0
+                 *
+                 * @param string|array $headers Additional headers.
+                 */
+                $headers = apply_filters('elementor_pro/forms/wp_mail_headers', $headers);
+                /**
+                 * Email content.
+                 *
+                 * Filters the content of the email sent by the form.
+                 *
+                 * @since 1.0.0
+                 *
+                 * @param string $email_content Email content.
+                 */
+                if ($use_template) {
+                    // using a template
+                    $inline = '';
+                    if ($amail['dce_form_email_content_template_style'] == 'embed') {
+                        $inline = ' inlinecss="true"';
+                    }
+                    $author = '';
+                    $current_user_id = get_current_user_id();
+                    if ($current_user_id) {
+                        $author = ' author_id="' . $current_user_id . '"';
+                    }
+                    $t_post = '';
+                    if (get_the_ID()) {
+                        $t_post = ' post_id="' . get_the_ID() . '"';
+                    }
+                    $dce_form_email_content = do_shortcode('[dce-elementor-template id="' . $amail['dce_form_email_content_template'] . '"' . $t_post . $inline . $author . ']');
+                    $pdf_attachments = $this->get_email_pdf_attachments($dce_form_email_content, $fields, $amail, $settings);
+                    $all_pdf_attachments += $pdf_attachments;
+                    $upload_attachments = $this->get_email_upload_attachments($dce_form_email_content, $fields, $amail, $settings);
+                    $attachments = $pdf_attachments + $upload_attachments;
+                    $dce_form_email_content = $this->remove_attachment_tokens($dce_form_email_content, $fields);
+                    $dce_form_email_content = $this->replace_content_shortcodes($dce_form_email_content, $record, $line_break);
+                    $dce_form_email_content = Helper::get_dynamic_value($dce_form_email_content, $fields);
+                    if ($amail['dce_form_email_content_template_style']) {
+                        $css = Helper::get_post_css($amail['dce_form_email_content_template']);
+                        // add some fixies
+                        $css .= '/*.elementor-column-wrap,*/ .elementor-widget-wrap { display: block !important; }';
+                        if (!empty($amail['dce_form_email_content_template_layout']) && $amail['dce_form_email_content_template_layout'] != 'flex') {
+                            // from flex to table
+                            $css .= '.elementor-section .elementor-container { display: table !important; width: 100% !important; }';
+                            $css .= '.elementor-row { display: table-row !important; }';
+                            $css .= '.elementor-column { display: table-cell !important; }';
+                            $css .= '.elementor-column-wrap, .elementor-widget-wrap { display: block !important; }';
+                            $css = \str_replace(':not(.elementor-motion-effects-element-type-background) > .elementor-element-populated', ':not(.elementor-motion-effects-element-type-background)', $css);
                         }
-                    }
-                    $headers = \sprintf('From: %s <%s>' . "\r\n", $email_fields['dce_form_email_from_name'], $email_fields['dce_form_email_from']);
-                    if (!empty($email_fields['dce_form_email_reply_to'])) {
-                        if (\filter_var($email_fields['dce_form_email_reply_to'], \FILTER_VALIDATE_EMAIL)) {
-                            // control if is a valid email
-                            $headers .= \sprintf('Reply-To: %s' . "\r\n", $email_fields['dce_form_email_reply_to']);
+                        if ($amail['dce_form_email_content_template_style'] == 'inline') {
+                            // https://github.com/tijsverkoyen/CssToInlineStyles
+                            // create instance
+                            $cssToInlineStyles = new \DynamicOOOS\TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
+                            // output
+                            $dce_form_email_content = $cssToInlineStyles->convert($dce_form_email_content, $css);
                         }
-                    }
-                    if ($send_html) {
-                        $headers .= 'Content-Type: text/html; charset=UTF-8' . "\r\n";
-                    }
-                    $cc_header = '';
-                    if (!empty($email_fields['dce_form_email_to_cc'])) {
-                        $cc_header = 'Cc: ' . $email_fields['dce_form_email_to_cc'] . "\r\n";
-                    }
-                    $bcc_header = '';
-                    if (!empty($email_fields['dce_form_email_to_bcc'])) {
-                        $bcc_header = 'Bcc: ' . $email_fields['dce_form_email_to_bcc'] . "\r\n";
-                    }
-                    /**
-                     * Email headers.
-                     *
-                     * Filters the additional headers sent when the form send an email.
-                     *
-                     * @since 1.0.0
-                     *
-                     * @param string|array $headers Additional headers.
-                     */
-                    $headers = apply_filters('elementor_pro/forms/wp_mail_headers', $headers);
-                    /**
-                     * Email content.
-                     *
-                     * Filters the content of the email sent by the form.
-                     *
-                     * @since 1.0.0
-                     *
-                     * @param string $email_content Email content.
-                     */
-                    if ($use_template) {
-                        // using a template
-                        $inline = '';
+                        if (!empty($amail['dce_form_email_content_template_layout']) && $amail['dce_form_email_content_template_layout'] == 'html') {
+                            // from div to table
+                            $dce_form_email_content = Helper::tablefy($dce_form_email_content);
+                        }
                         if ($amail['dce_form_email_content_template_style'] == 'embed') {
-                            $inline = ' inlinecss="true"';
+                            $dce_form_email_content = '<style>' . $css . '</style>' . $dce_form_email_content;
                         }
-                        $author = '';
-                        $current_user_id = get_current_user_id();
-                        if ($current_user_id) {
-                            $author = ' author_id="' . $current_user_id . '"';
-                        }
-                        $t_post = '';
-                        if (get_the_ID()) {
-                            $t_post = ' post_id="' . get_the_ID() . '"';
-                        }
-                        $dce_form_email_content = do_shortcode('[dce-elementor-template id="' . $amail['dce_form_email_content_template'] . '"' . $t_post . $inline . $author . ']');
-                        $pdf_attachments = $this->get_email_pdf_attachments($dce_form_email_content, $fields, $amail, $settings);
-                        $all_pdf_attachments += $pdf_attachments;
-                        $upload_attachments = $this->get_email_upload_attachments($dce_form_email_content, $fields, $amail, $settings);
-                        $attachments = $pdf_attachments + $upload_attachments;
-                        $dce_form_email_content = $this->remove_attachment_tokens($dce_form_email_content, $fields);
-                        $dce_form_email_content = $this->replace_content_shortcodes($dce_form_email_content, $record, $line_break);
-                        $dce_form_email_content = Helper::get_dynamic_value($dce_form_email_content, $fields);
-                        if ($amail['dce_form_email_content_template_style']) {
-                            $css = Helper::get_post_css($amail['dce_form_email_content_template']);
-                            // add some fixies
-                            $css .= '/*.elementor-column-wrap,*/ .elementor-widget-wrap { display: block !important; }';
-                            if (!empty($amail['dce_form_email_content_template_layout']) && $amail['dce_form_email_content_template_layout'] != 'flex') {
-                                // from flex to table
-                                $css .= '.elementor-section .elementor-container { display: table !important; width: 100% !important; }';
-                                $css .= '.elementor-row { display: table-row !important; }';
-                                $css .= '.elementor-column { display: table-cell !important; }';
-                                $css .= '.elementor-column-wrap, .elementor-widget-wrap { display: block !important; }';
-                                $css = \str_replace(':not(.elementor-motion-effects-element-type-background) > .elementor-element-populated', ':not(.elementor-motion-effects-element-type-background)', $css);
-                            }
-                            if ($amail['dce_form_email_content_template_style'] == 'inline') {
-                                // https://github.com/tijsverkoyen/CssToInlineStyles
-                                // create instance
-                                $cssToInlineStyles = new \DynamicOOOS\TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
-                                // output
-                                $dce_form_email_content = $cssToInlineStyles->convert($dce_form_email_content, $css);
-                            }
-                            if (!empty($amail['dce_form_email_content_template_layout']) && $amail['dce_form_email_content_template_layout'] == 'html') {
-                                // from div to table
-                                $dce_form_email_content = Helper::tablefy($dce_form_email_content);
-                            }
-                            if ($amail['dce_form_email_content_template_style'] == 'embed') {
-                                $dce_form_email_content = '<style>' . $css . '</style>' . $dce_form_email_content;
-                            }
-                        }
-                        $dce_form_email_content_txt = '';
-                    } else {
-                        $settings_raw = $record->get('form_settings');
-                        // from message textarea with dynamic token
-                        $dce_form_email_content = $settings_raw['dce_form_email_repeater'][$mkey]['dce_form_email_content'];
-                        $pdf_attachments = $this->get_email_pdf_attachments($dce_form_email_content, $fields, $amail, $settings);
-                        $all_pdf_attachments += $pdf_attachments;
-                        $upload_attachments = $this->get_email_upload_attachments($dce_form_email_content, $fields, $amail, $settings);
-                        $attachments = \array_merge($pdf_attachments, $upload_attachments);
-                        $dce_form_email_content = $this->remove_attachment_tokens($dce_form_email_content, $fields);
-                        $dce_form_email_content = $this->replace_content_shortcodes($dce_form_email_content, $record, $line_break);
-                        $dce_form_email_content = Helper::get_dynamic_value($dce_form_email_content, $fields);
-                        // generate the TEXT/PLAIN version
-                        $dce_form_email_content_txt = $dce_form_email_content;
-                        $dce_form_email_content_txt = \str_replace('</p>', '</p><br /><br />', $dce_form_email_content_txt);
-                        $dce_form_email_content_txt = \str_replace('<br />', "\n", $dce_form_email_content_txt);
-                        $dce_form_email_content_txt = \str_replace('<br>', "\n", $dce_form_email_content_txt);
-                        $dce_form_email_content_txt = \strip_tags($dce_form_email_content_txt);
-                        if ($send_html) {
-                            add_action('phpmailer_init', [$this, 'set_wp_mail_altbody']);
-                        } else {
-                            $dce_form_email_content = $dce_form_email_content_txt;
-                            $dce_form_email_content_txt = '';
-                        }
-                        $dce_form_email_content = apply_filters('elementor_pro/forms/wp_mail_message', $dce_form_email_content);
                     }
-                    self::$txt = $dce_form_email_content_txt;
-                    // replace single fields shorcode
-                    $dce_form_email_content = Helper::replace_setting_shortcodes($dce_form_email_content, $fields);
+                    $dce_form_email_content_txt = '';
+                } else {
+                    $settings_raw = $record->get('form_settings');
+                    // from message textarea with dynamic token
+                    $dce_form_email_content = $settings_raw['dce_form_email_repeater'][$mkey]['dce_form_email_content'];
+                    $pdf_attachments = $this->get_email_pdf_attachments($dce_form_email_content, $fields, $amail, $settings);
+                    $all_pdf_attachments += $pdf_attachments;
+                    $upload_attachments = $this->get_email_upload_attachments($dce_form_email_content, $fields, $amail, $settings);
+                    $attachments = \array_merge($pdf_attachments, $upload_attachments);
+                    $dce_form_email_content = $this->remove_attachment_tokens($dce_form_email_content, $fields);
+                    $dce_form_email_content = $this->replace_content_shortcodes($dce_form_email_content, $record, $line_break);
+                    $dce_form_email_content = Helper::get_dynamic_value($dce_form_email_content, $fields);
+                    // generate the TEXT/PLAIN version
+                    $dce_form_email_content_txt = $dce_form_email_content;
+                    $dce_form_email_content_txt = \str_replace('</p>', '</p><br /><br />', $dce_form_email_content_txt);
+                    $dce_form_email_content_txt = \str_replace('<br />', "\n", $dce_form_email_content_txt);
+                    $dce_form_email_content_txt = \str_replace('<br>', "\n", $dce_form_email_content_txt);
+                    $dce_form_email_content_txt = \strip_tags($dce_form_email_content_txt);
+                    if ($send_html) {
+                        add_action('phpmailer_init', [$this, 'set_wp_mail_altbody']);
+                    } else {
+                        $dce_form_email_content = $dce_form_email_content_txt;
+                        $dce_form_email_content_txt = '';
+                    }
+                    $dce_form_email_content = apply_filters('elementor_pro/forms/wp_mail_message', $dce_form_email_content);
+                }
+                self::$txt = $dce_form_email_content_txt;
+                // replace single fields shorcode
+                $dce_form_email_content = Helper::replace_setting_shortcodes($dce_form_email_content, $fields);
+                if ($condition_satisfy) {
                     $email_sent = wp_mail($email_fields['dce_form_email_to'], $email_fields['dce_form_email_subject'], $dce_form_email_content, $headers . $cc_header . $bcc_header, $attachments);
-                    $phpmailer = null;
-                    // reset the mailer
-                    remove_action('phpmailer_init', [$this, 'set_wp_mail_altbody']);
-                    /**
-                     * Elementor form mail sent.
-                     *
-                     * Fires when an email was sent successfully.
-                     *
-                     * @since 1.0.0
-                     *
-                     * @param array       $settings Form settings.
-                     * @param Form_Record $record   An instance of the form record.
-                     */
                     do_action('elementor_pro/forms/mail_sent', $amail, $record);
                     if (!$email_sent) {
                         $ajax_handler->add_error_message(\ElementorPro\Modules\Forms\Classes\Ajax_Handler::get_default_message(\ElementorPro\Modules\Forms\Classes\Ajax_Handler::SERVER_ERROR, $amail));
-                    } else {
-                        if ($amail['dce_form_email_attachments'] && $amail['dce_form_email_attachments_delete']) {
-                            $remove_uploaded_files = \true;
-                        }
-                        if (($amail['dce_form_pdf_attachments_delete'] ?? '') === 'yes') {
-                            $remove_pdf_files = \true;
-                        }
                     }
                 }
+                if ($amail['dce_form_email_attachments'] && $amail['dce_form_email_attachments_delete']) {
+                    $remove_uploaded_files = \true;
+                }
+                if (($amail['dce_form_pdf_attachments_delete'] ?? '') === 'yes') {
+                    $remove_pdf_files = \true;
+                }
+                global $phpmailer;
+                if (isset($phpmailer) && $phpmailer !== NULL) {
+                    $phpmailer->AltBody = '';
+                    // clear the previous alt body for the next email.
+                }
+                remove_action('phpmailer_init', [$this, 'set_wp_mail_altbody']);
             }
         }
         if ($remove_pdf_files) {
@@ -385,7 +365,9 @@ class DynamicEmail extends \ElementorPro\Modules\Forms\Classes\Action_Base
     }
     public static function set_wp_mail_altbody($phpmailer)
     {
-        $phpmailer->AltBody = self::$txt;
+        if (isset($phpmailer) && $phpmailer !== NULL) {
+            $phpmailer->AltBody = self::$txt;
+        }
     }
     public function remove_attachment_tokens($dce_form_email_content, $fields)
     {
@@ -518,5 +500,9 @@ class DynamicEmail extends \ElementorPro\Modules\Forms\Classes\Action_Base
         // Add Email Template Type
         $dce_email = 'Elementor\\Modules\\Library\\Documents\\Email';
         \Elementor\Plugin::instance()->documents->register_document_type($dce_email::get_name_static(), \Elementor\Modules\Library\Documents\Email::get_class_full_name());
+    }
+    public function on_export($element)
+    {
+        return $element;
     }
 }

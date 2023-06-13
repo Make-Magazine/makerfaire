@@ -101,8 +101,8 @@ class Parallax extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 $factor = $parallaxitem['factor_item'];
                 $imageParallaxItem = plugins_url('/assets/lib/parallaxjs/img/layer' . ($key + 1) . '.png', DCE__FILE__);
                 if ($factor == 0) {
-                    $factor = $key * $settings['parallax_coef'];
-                    //0.2;
+                    $coef = \is_numeric($settings['parallax_coef']) ? $settings['parallax_coef'] : 0.2;
+                    $factor = $key * $coef;
                 }
                 if ($parallaxitem['parallax_image']['url'] != '') {
                     $imageParallaxItem = $parallaxitem['parallax_image']['url'];

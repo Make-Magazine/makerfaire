@@ -119,24 +119,6 @@ class MessageGenerator extends \ElementorPro\Modules\Forms\Classes\Action_Base
         $settings = Helper::get_dynamic_value($settings, $fields);
         $this->message($fields, $settings, $ajax_handler);
     }
-    /**
-     * On Export
-     *
-     * Clears form settings on export
-     * @access Public
-     * @param array $element
-     */
-    public function on_export($element)
-    {
-        $tmp = array();
-        if (!empty($element)) {
-            foreach ($element['settings'] as $key => $value) {
-                if (\substr($key, 0, 4) == 'dce_') {
-                    unset($element['settings'][$key]);
-                }
-            }
-        }
-    }
     protected function message($fields, $settings = null, $ajax_handler = null)
     {
         $element_id = $settings['id'];
@@ -174,7 +156,12 @@ class MessageGenerator extends \ElementorPro\Modules\Forms\Classes\Action_Base
             add_action('elementor_pro/forms/new_record', function ($record, $ajax_handler) use($message_html) {
                 wp_send_json_success(['message' => $message_html, 'data' => $ajax_handler->data]);
             }, 100000, 2);
+        } else {
+            $ajax_handler->add_error_message($message_html);
         }
-        $ajax_handler->add_error_message($message_html);
+    }
+    public function on_export($element)
+    {
+        return $element;
     }
 }

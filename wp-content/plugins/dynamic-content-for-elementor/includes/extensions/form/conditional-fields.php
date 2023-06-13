@@ -42,7 +42,29 @@ class ConditionalFields extends \DynamicContentForElementor\Extensions\Extension
     public function get_lang()
     {
         if ($this->expression_language === null) {
-            $this->expression_language = new ExpressionLanguage();
+            $expressionLanguage = new ExpressionLanguage();
+            $this->expression_language = $expressionLanguage;
+            $expressionLanguage->register('in_array', function ($str) {
+                return 'false';
+            }, function ($arguments, $el, $arr) {
+                if (!\is_array($arr)) {
+                    return $el === $arr;
+                }
+                return \in_array($el, $arr, \true);
+            });
+            $expressionLanguage->register('to_number', function ($str) {
+                return 'false';
+            }, function ($arguments, $str) {
+                $dec = \filter_var($str, \FILTER_VALIDATE_INT);
+                if ($dec !== \false) {
+                    return $dec;
+                }
+                $fl = \filter_var($str, \FILTER_VALIDATE_FLOAT);
+                if ($fl !== \false) {
+                    return $fl;
+                }
+                return 0;
+            });
         }
         return $this->expression_language;
     }
@@ -81,7 +103,7 @@ class ConditionalFields extends \DynamicContentForElementor\Extensions\Extension
             $hide = $validation['hide_submit'];
             if ($validation['disabled'] !== 'yes' && $hide !== '' && $hide !== 'visible') {
                 $conditions[] = [
-                    'expression' => $validation['expression'],
+                    'expression' => self::and_join_lines($validation['expression']),
                     // yes is the old value of the option
                     'hide' => $hide === 'yes' ? 'hide' : $hide,
                 ];
@@ -91,13 +113,25 @@ class ConditionalFields extends \DynamicContentForElementor\Extensions\Extension
     }
     public function print_js_error_notice()
     {
-        echo '<div class="dce-conditions-js-error-notice  elementor-message elementor-message-danger">';
+        echo '<div class="dce-conditions-js-error-notice elementor-message elementor-message-danger" style="display: none;">';
         if (current_user_can('administrator')) {
             echo __('Dynamic.ooo - Conditional Fields: a JS Error has been detected. This could be caused by a JS Optimizer plugin. Please read this <a href="https://dnmc.ooo/jserror">article</a>. This message is not visible to site visitors', 'dynamic-content-for-elementor');
         } else {
             echo __('A problem was detected in the following Form. Submitting it could result in errors. Please contact the site administrator.', 'dynamic-content-for-elementor');
         }
+        // the message is hidden on page load to avoid flash of content. If
+        // everything is ok the error is than deleted by the js file of
+        // conditional fields. If not we want the error to appear:
         echo '</div>';
+        echo <<<SCRIPT
+\t\t\t<script>
+\t\t\tsetTimeout(function() {
+\t\t\t\tlet el = document.querySelector(".dce-conditions-js-error-notice");
+\t\t\t\tif (el)
+\t\t\t\t\tel.style.display = "block";
+\t\t\t}, 2000);
+\t\t\t</script>
+SCRIPT;
     }
     public function add_assets_depends($instance, $form)
     {
@@ -239,7 +273,7 @@ class ConditionalFields extends \DynamicContentForElementor\Extensions\Extension
     /**
      * Determine all field visibilities based on the conditions.
      */
-    public function determine_visibilities($conditions, $values)
+    public function determine_visibilities($conditions, $values, $ajax_handler)
     {
         $visibility = [];
         // Assume they are all visible at the beginning:
@@ -247,7 +281,14 @@ class ConditionalFields extends \DynamicContentForElementor\Extensions\Extension
             $visibility[$id] = \true;
         }
         foreach ($conditions as $id => $condition) {
-            $res = $this->get_lang()->evaluate($condition['condition'], $values);
+            try {
+                $res = $this->get_lang()->evaluate($condition['condition'], $values);
+            } catch (\Throwable $e) {
+                $msg = esc_html__('Conditional Fields error (field: %s)', 'dynamic-content-for-elementor');
+                $ajax_handler->add_error_message(\sprintf($msg, $id));
+                $ajax_handler->add_admin_error_message($e->getMessage());
+                return \false;
+            }
             $res = $condition['mode'] === 'show' ? $res : !$res;
             if (!$res) {
                 // we don't want an inactive field value to influence
@@ -317,10 +358,16 @@ class ConditionalFields extends \DynamicContentForElementor\Extensions\Extension
                 $conditions[$field['custom_id']] = ['condition' => self::and_join_lines($field['dce_conditions_expression']), 'mode' => $field['dce_field_conditions_mode']];
             }
         }
-        $visibilities = $this->determine_visibilities($conditions, $values);
+        $visibilities = $this->determine_visibilities($conditions, $values, $ajax_handler);
+        if ($visibilities === \false) {
+            return;
+        }
         foreach ($visibilities as $id => $visible) {
             if (!$visible) {
-                if (!empty($values[$id])) {
+                $type = $record->get_field(['id' => $id])[$id]['type'];
+                // counter value is always present because set by its validation function.
+                if ($type !== 'dce_counter' && !empty($values[$id])) {
+                    // this can happen because JS expressionlanguage work slightly differently than PHP:
                     $ajax_handler->add_admin_error_message(__('Conditional Fields Error: When you have a field where you can pick multiple items, like checkbox or the select field with multiple select active, you must use the operator in. If instead you have a field where you pick only one value (like Select) you most likely want to use == and not in. Check the docs if unsure.', 'dynamic-content-for-elementor'));
                 } else {
                     // Remove potential validation error related to the field:
@@ -340,8 +387,9 @@ class ConditionalFields extends \DynamicContentForElementor\Extensions\Extension
         foreach ($validations as $validation) {
             if ($validation['disabled'] !== 'yes') {
                 try {
-                    $res = $this->get_lang()->evaluate($validation['expression'], $values);
+                    $res = $this->get_lang()->evaluate(self::and_join_lines($validation['expression']), $values);
                 } catch (\DynamicOOOS\Symfony\Component\ExpressionLanguage\SyntaxError $e) {
+                    $ajax_handler->add_error('*no-field*', 'error');
                     $ajax_handler->add_admin_error_message(__('Conditional validation error: ', 'dynamic-content-for-elementor') . $e->getMessage());
                     return;
                 }

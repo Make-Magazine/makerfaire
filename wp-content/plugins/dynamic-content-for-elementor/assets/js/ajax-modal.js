@@ -1,14 +1,15 @@
 var urlAttuale;
 var titoloAttuale;
-
-var ajaxPage_init = function (elementSettings, scopeId) {
+let dceModalFilled = false;
+let dceScrollBlocked = false;
+var ajaxPage_init = function (elementSettings, scopeId, $scope) {
 
     var tid = elementSettings.ajax_page_template;
     if (jQuery('#dce-wrap').length == 0) {
         jQuery('body').addClass('dce-ajax-page-open');
         jQuery('body').wrapInner('<div id="dce-outer-wrap"><div id="dce-wrap"></div></div>');
     }
-    jQuery('.ajax-open[data-id=' + scopeId + ']').on('click', '.dce-wrapper a', function (e) {
+    $scope.find('.ajax-open[data-id=' + scopeId + ']').on('click', '.dce-wrapper a', function (e) {
 
         urlAttuale = location.pathname;
         titoloAttuale = document.title;
@@ -63,6 +64,10 @@ function googleAnalytics_view(path, title, scopeId) {
 }
 function riempiModale(data, url, scopeId) {
     if (0 != data) {
+		if (dceModalFilled)
+			return;
+		dceModalFilled = true;
+		dceScrollBlocked = false;
         var posScroll = jQuery('body').scrollTop();
 
 
@@ -77,7 +82,10 @@ function riempiModale(data, url, scopeId) {
         jQuery('.modals-p-' + scopeId + ' .modal-p').html(elementSelected);
 
         jQuery('body.modal-p-on.modal-p-' + scopeId + ' .wrap-p .modal-p').one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function (el) {
-
+			if (dceScrollBlocked) {
+				return;
+			}
+			dceScrollBlocked = true;
             jQuery('html, body').addClass('no-scroll');
             jQuery('body').addClass('cancella-body');
         });
@@ -100,6 +108,7 @@ function riempiModale(data, url, scopeId) {
 }
 
 function chiudiModale(url, scopeId) {
+	dceModalFilled = false;
     jQuery('html, body').removeClass('no-scroll');
     //
     jQuery('body').removeClass('modal-p-on cancella-body').addClass('modal-p-off');
@@ -130,13 +139,10 @@ function requestContent(file) {
 }
 
 ( function( $ ) {
-$( window ).on( 'elementor/frontend/init', function() {
-    if (jQuery('.ajax-open').length > 0) {
-
-        jQuery('.ajax-open').each(function (i, el) {
-            var elementSettings_ajaxOpen = dceGetElementSettings(jQuery(this));
-            ajaxPage_init(elementSettings_ajaxOpen, jQuery(this).attr('data-id'));
-        });
-    }
-} );
+	$( window ).on( 'elementor/frontend/init', function() {
+		jQuery('.ajax-open').each(function (i, el) {
+			var elementSettings_ajaxOpen = dceGetElementSettings(jQuery(this));
+			ajaxPage_init(elementSettings_ajaxOpen, jQuery(this).attr('data-id'), $(this));
+		});
+	} );
 } )( jQuery );

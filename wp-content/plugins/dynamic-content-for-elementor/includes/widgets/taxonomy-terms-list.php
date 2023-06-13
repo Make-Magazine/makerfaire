@@ -129,7 +129,7 @@ class TaxonomyTermsList extends \DynamicContentForElementor\Widgets\WidgetProtot
                     $terms = get_terms($terms_args);
                 }
             }
-            if ($queried_object && \get_class($queried_object) == 'WP_Post' || $id_page && Helper::in_the_loop()) {
+            if ($queried_object && \get_class($queried_object) == 'WP_Post' || $id_page && in_the_loop()) {
                 $terms = wp_get_post_terms($id_page, $settings['taxonomy_select'], array('hide_empty' => !empty($settings['hide_empty']) ? \true : \false, 'orderby' => $settings['dce_tax_orderby'], 'order' => $settings['dce_tax_order']));
             }
         } else {

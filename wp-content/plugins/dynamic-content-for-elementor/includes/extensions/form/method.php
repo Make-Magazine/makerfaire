@@ -95,44 +95,29 @@ class Method extends \DynamicContentForElementor\Extensions\ExtensionPrototype
                     $content = \str_replace('<form ', '<form rel="nofollow" ', $content);
                 }
                 $jkey = 'dce_' . $widget->get_type() . '_form_' . $widget->get_id() . '_action';
-                \ob_start();
-                ?>
-				<script id="<?php 
-                echo $jkey;
-                ?>">
-					(function ($) {
-					<?php 
-                if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                    ?>
-							var <?php 
-                    echo $jkey;
-                    ?> = function ($scope, $) {
-								if ($scope.hasClass("elementor-element-<?php 
-                    echo $widget->get_id();
-                    ?>")) {
-				<?php 
-                }
-                ?>
-								jQuery('.elementor-element-<?php 
-                echo $widget->get_id();
-                ?> .elementor-form').off();
-					<?php 
-                if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                    ?>
+                $add_js = "<script id='{$jkey}'>(function (\$) {";
+                $add_js .= "const wid = 'elementor-element-{$widget->get_id()}';";
+                $add_js .= <<<'END'
+							const stopForm  = function ($scope, $) {
+								if (! $scope.hasClass(wid)) {
+									return;
 								}
+								let $submit = $scope.find('button[type="submit"]');
+								$submit.on('click', (event) => {
+										event.stopImmediatePropagation();
+										$form = $scope.find('form').first();
+										$form.off();
+										if ($form[0].checkValidity()) {
+											$form.submit();
+										}
+								})
 							};
 							$(window).on("elementor/frontend/init", function () {
-								elementorFrontend.hooks.addAction("frontend/element_ready/form.default", <?php 
-                    echo $jkey;
-                    ?>);
+								elementorFrontend.hooks.addAction("frontend/element_ready/form.default", stopForm);
 							});
-				<?php 
-                }
-                ?>
-					})(jQuery, window);
+					})(jQuery);
 				</script>
-				<?php 
-                $add_js = \ob_get_clean();
+END;
                 $add_js = \DynamicContentForElementor\Assets::dce_enqueue_script($jkey, $add_js);
                 return $content . $add_js;
             }
@@ -145,7 +130,7 @@ class Method extends \DynamicContentForElementor\Extensions\ExtensionPrototype
             return;
         }
         $widget->add_control('form_method', ['label' => '<span class="color-dce icon-dyn-logo-dce"></span> ' . __('Method', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['ajax' => __('AJAX (Default)', 'dynamic-content-for-elementor'), 'post' => 'POST', 'get' => 'GET'], 'toggle' => \false, 'default' => 'ajax']);
-        $widget->add_control('form_action_hide', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('Using this method, all form Actions After Submit, validations, and conditional fields will not work!', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['form_method!' => 'ajax']]);
+        $widget->add_control('form_action_hide', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('Using this method, all form Actions After Submit, validations, conditional fields and saving signature will not work!', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['form_method!' => 'ajax']]);
         $widget->add_control('form_action', ['label' => __('Action', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'condition' => ['form_method!' => 'ajax']]);
     }
 }

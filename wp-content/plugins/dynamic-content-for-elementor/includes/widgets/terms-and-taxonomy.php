@@ -76,7 +76,7 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->add_control('tx_after_color', ['label' => __('Text After Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .dce-terms span.text-after' => 'color: {{VALUE}};', '{{WRAPPER}} .dce-terms a span.text-after' => 'color: {{VALUE}};'], 'condition' => ['text_after!' => '']]);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography_tx_after', 'label' => __('Typography After', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-terms span.text-after', 'condition' => ['text_after!' => '']]);
         $this->end_controls_section();
-        $this->start_controls_section('section_dce_settings', ['label' => __('Source', 'dynamic-content-for-elementor')]);
+        $this->start_controls_section('section_source', ['label' => __('Source', 'dynamic-content-for-elementor')]);
         $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('Other', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
         $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
         $this->end_controls_section();
@@ -105,12 +105,10 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
                 return;
             }
             Helper::notice('', __('This is a dummy content to help you choose the style and settings', 'dynamic-content-for-elementor'));
-            $dummy = ['Term1' => (object) ['term_id' => 1, 'name' => 'Term1', 'slug' => 'term1', 'term_group' => 0, 'term_order' => NULL, 'term_taxonomy_id' => 1, 'taxonomy' => 'category', 'description' => 'Description1', 'parent' => 0, 'count' => 1, 'object_id' => NULL], 'Term2' => (object) ['term_id' => 2, 'name' => 'Term2', 'slug' => 'term2', 'term_group' => 0, 'term_order' => NULL, 'term_taxonomy_id' => 1, 'taxonomy' => 'category', 'description' => 'Description2', 'parent' => 0, 'count' => 1, 'object_id' => NULL], 'Term3' => (object) ['term_id' => 3, 'name' => 'Term3', 'slug' => 'term3', 'term_group' => 0, 'term_order' => NULL, 'term_taxonomy_id' => 1, 'taxonomy' => 'category', 'description' => 'Description3', 'parent' => 0, 'count' => 1, 'object_id' => NULL]];
-            // Set dummy content on terms
-            $terms = $dummy;
+            $terms = get_terms(['taxonomy' => 'category', 'hide_empty' => \false]);
         }
         $separator = '';
-        $this->add_render_attribute('wrapper', 'class', 'dce-terms');
+        $this->set_render_attribute('wrapper', 'class', 'dce-terms');
         if (!empty($settings['hover_animation'])) {
             $this->add_render_attribute('wrapper', 'class', 'elementor-animation-' . $settings['hover_animation']);
         }
@@ -123,7 +121,7 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
 		<?php 
         if (!empty($settings['text_before'])) {
             // Text before
-            $this->add_render_attribute('text-before', 'class', 'text-before');
+            $this->set_render_attribute('text-before', 'class', 'text-before');
             ?>
 			<span <?php 
             echo $this->get_render_attribute_string('text-before');
@@ -135,9 +133,9 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
 		<?php 
         }
         if (!empty($settings['block_enable'])) {
-            $this->add_render_attribute('ul', 'class', 'dce-image-block');
+            $this->set_render_attribute('ul', 'class', 'dce-image-block');
         } else {
-            $this->add_render_attribute('ul', 'class', 'dce-image-inline');
+            $this->set_render_attribute('ul', 'class', 'dce-image-inline');
         }
         ?>
 
@@ -162,7 +160,10 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
 
 			<li>
 
+
 			<?php 
+            $this->set_render_attribute('term-item', 'class', 'dce-term-item');
+            $this->add_render_attribute('term-item', 'class', 'term' . $term->term_id);
             if (Helper::is_acf_active()) {
                 if (!empty($settings['image_acf_enable']) && !empty($settings['acf_field_image'])) {
                     $image_field = get_term_meta($term->term_id, $settings['acf_field_image'], \true);
@@ -179,13 +180,13 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
                         }
                     }
                     if ($image_src) {
-                        $this->add_render_attribute('term-wrapper', 'class', 'dce-term-wrap');
+                        $this->set_render_attribute('term-wrapper', 'class', 'dce-term-wrap');
                         ?>
 						<span <?php 
                         echo $this->get_render_attribute_string('term-wrapper');
                         ?>>
 						<img src="<?php 
-                        echo sanitize_url($image_src);
+                        echo esc_url($image_src);
                         ?>" />
 					<?php 
                     }
@@ -202,13 +203,13 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
                     }
                     if ($field_color) {
                         if ($field_color_mode == 'text') {
-                            $this->add_render_attribute('term-item', 'style', 'color:' . $field_color);
+                            $this->set_render_attribute('term-item', 'style', 'color:' . $field_color);
                             $this->add_render_attribute('term-item', 'class', 'dce-term-mode-text');
                         } elseif ($field_color_mode == 'background') {
-                            $this->add_render_attribute('term-item', 'style', 'background-color:' . $field_color);
+                            $this->set_render_attribute('term-item', 'style', 'background-color:' . $field_color);
                             $this->add_render_attribute('term-item', 'class', 'dce-term-mode-background');
                         } elseif ($field_color_mode == 'border') {
-                            $this->add_render_attribute('term-item', 'style', 'border-bottom-color:' . $field_color);
+                            $this->set_render_attribute('term-item', 'style', 'border-bottom-color:' . $field_color);
                             $this->add_render_attribute('term-item', 'class', 'dce-term-mode-border');
                         }
                     }
@@ -216,28 +217,24 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
                     $field_color_hover = \false;
                     if ($settings['acf_field_color_hover_dyn']) {
                         $field_color_hover = get_term_meta($term->term_id, $settings['acf_field_color_hover_dyn'], \true);
-                    } else {
-                        if ($settings['acf_field_color_hover']) {
-                            $idField_color_hover = $settings['acf_field_color_hover'];
-                            $field_color_hover = \get_field($idField_color_hover, 'term_' . $term->term_id);
-                        }
+                    } elseif ($settings['acf_field_color_hover']) {
+                        $idField_color_hover = $settings['acf_field_color_hover'];
+                        $field_color_hover = \get_field($idField_color_hover, 'term_' . $term->term_id);
                     }
                     if ($field_color_hover) {
                         if ('text' === $field_color_mode) {
-                            $this->add_render_attribute('term-item', 'onmouseover', 'this.style.color=' . $field_color_hover);
-                            $this->add_render_attribute('term-item', 'onmouseout', 'this.style.color=' . $field_color);
+                            $this->set_render_attribute('term-item', 'onmouseover', 'this.style.color=' . $field_color_hover);
+                            $this->set_render_attribute('term-item', 'onmouseout', 'this.style.color=' . $field_color);
                         } elseif ('background' === $field_color_mode) {
-                            $this->add_render_attribute('term-item', 'onmouseover', 'this.style.background=' . $field_color_hover);
-                            $this->add_render_attribute('term-item', 'onmouseout', 'this.style.background=' . $field_color);
+                            $this->set_render_attribute('term-item', 'onmouseover', 'this.style.background=' . $field_color_hover);
+                            $this->set_render_attribute('term-item', 'onmouseout', 'this.style.background=' . $field_color);
                         } elseif ('border' === $field_color_mode) {
-                            $this->add_render_attribute('term-item', 'onmouseover', 'this.style.borderBottomColor=' . $field_color_hover);
-                            $this->add_render_attribute('term-item', 'onmouseout', 'this.style.borderBottomColor=' . $field_color);
+                            $this->set_render_attribute('term-item', 'onmouseover', 'this.style.borderBottomColor=' . $field_color_hover);
+                            $this->set_render_attribute('term-item', 'onmouseout', 'this.style.borderBottomColor=' . $field_color);
                         }
                     }
                 }
             }
-            $this->set_render_attribute('term-item', 'class', 'dce-term-item');
-            $this->add_render_attribute('term-item', 'class', 'term' . $term->term_id);
             switch ($settings['link_to']) {
                 case 'term':
                     ?>
@@ -266,7 +263,7 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
                     break;
             }
             if ($settings['use_termdescription']) {
-                $this->add_render_attribute('term-description', 'class', 'dce-term-description');
+                $this->set_render_attribute('term-description', 'class', 'dce-term-description');
                 ?>
 				<div <?php 
                 echo $this->get_render_attribute_string('term-description');
@@ -297,7 +294,7 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
                 $i++;
             }
             ?>
-			
+
 			</li>
 			<?php 
         }
@@ -307,7 +304,7 @@ class TermsAndTaxonomy extends \DynamicContentForElementor\Widgets\WidgetPrototy
 		<?php 
         if (!empty($settings['text_after'])) {
             // Text after
-            $this->add_render_attribute('text-after', 'class', 'text-after');
+            $this->set_render_attribute('text-after', 'class', 'text-after');
             ?>
 			<span <?php 
             echo $this->get_render_attribute_string('text-after');

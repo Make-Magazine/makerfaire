@@ -1,9 +1,7 @@
 ( function( $ ) {
 	var WidgetElements_ParallaxHandler = function( $scope, $ ) {
-
 		var scene = $scope.find('#scene');
-		var parallax = new Parallax( scene[0] );
-		
+		new Parallax( scene[0] );
 	};
 	
 	// Make sure you run this code under Elementor..

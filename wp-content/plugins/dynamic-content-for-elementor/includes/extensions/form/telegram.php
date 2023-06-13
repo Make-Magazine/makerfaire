@@ -91,14 +91,8 @@ class Telegram extends \ElementorPro\Modules\Forms\Classes\Action_Base
     }
     public function on_export($element)
     {
-        $tmp = array();
-        if (!empty($element)) {
-            foreach ($element['settings'] as $key => $value) {
-                if (\substr($key, 0, 4) == 'dce_') {
-                    unset($element['settings'][$key]);
-                }
-            }
-        }
+        unset($element['settings']['dce_form_telegram_token']);
+        return $element;
     }
     function dce_elementor_form_telegram($fields, $settings = null, $ajax_handler = null, $record = null)
     {

@@ -1,6 +1,5 @@
-dce = { 
-	addCssForBackground: function( element ) {
-
+dce = {
+    addCssForBackground: function( element ) {
 		// Background Color
 		backgroundColor = jQuery(element).data( "dce-background-color" );
 		this.addCssForBackgroundColor( element, backgroundColor );
@@ -52,8 +51,8 @@ dce = {
 
 		backgroundUrl = jQuery(element).data( "dce-advanced-background-overlay-hover-image-url" );
 		this.addCssForBackgroundImage( element, backgroundUrl );
-	},
-	addCssForBackgroundImage: function( element, value ) {
+    },
+    addCssForBackgroundImage: function( element, value ) {
 		if( value ) {
 			if( jQuery(element).hasClass( "elementor-section") ) {
 				// Section
@@ -65,13 +64,13 @@ dce = {
 				} else {
 					jQuery(element).find('.elementor-widget-wrap').first().css('background-image', 'url(' + value + ')');
 				}
-			} else if( jQuery(element).hasClass( "e-container") ) {
+			} else if( jQuery(element).hasClass( "e-container") || jQuery(element).hasClass( "e-con") ) {
 				// Flex Container
 				jQuery(element).css('background-image', 'url(' + value + ')');
 			}
 		}
-	},
-	addCssForBackgroundColor: function( element, value ) {
+    },
+    addCssForBackgroundColor: function( element, value ) {
 		if( value ) {
 			if( jQuery(element).hasClass( "elementor-section") ) {
 				// section
@@ -87,10 +86,10 @@ dce = {
 			} else if( jQuery(element).hasClass( "elementor-widget-container") || jQuery(element).hasClass( "elementor-widget") ) {
 				// Widget
 				jQuery(element).find('.elementor-widget-container').first().css('background-color', value );
-			} else if( jQuery(element).hasClass( "e-container") ) {
+			} else if( jQuery(element).hasClass( "e-container") || jQuery(element).hasClass( "e-con") ) {
 				// Flex Container
 				jQuery(element).css('background-color', value );
 			}
 		}
-	}
+    }
 };

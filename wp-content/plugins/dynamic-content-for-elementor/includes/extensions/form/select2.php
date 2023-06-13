@@ -76,6 +76,7 @@ class Select2 extends \DynamicContentForElementor\Extensions\ExtensionPrototype
                         ?> #form-field-<?php 
                         echo $afield['custom_id'];
                         ?>');
+						field2.addClass('dce-ext-select2');
 						let form = $scope.find('form')[0];
 						field2.on('select2:select', () => {
 							let evtChange = document.createEvent("HTMLEvents");
@@ -90,9 +91,9 @@ class Select2 extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 							//containerCssClass: classes,
 						<?php 
                         if (!empty($afield['field_select2_placeholder'])) {
-                            ?>placeholder: '<?php 
-                            echo $afield['field_select2_placeholder'];
-                            ?>',<?php 
+                            ?>placeholder: <?php 
+                            echo \json_encode($afield['field_select2_placeholder']);
+                            ?>,<?php 
                         }
                         ?>
 									});

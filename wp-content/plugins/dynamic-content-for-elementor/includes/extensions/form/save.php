@@ -12,8 +12,23 @@ if (!\defined('ABSPATH')) {
 class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
 {
     public $has_action = \true;
-    // first Dynamic.ooo form action to be run, because if there is an error it stops the other actions by dying. Not sure if it's a great idea.
     public $action_priority = 2;
+    public function run_once()
+    {
+        $save_guard = \DynamicContentForElementor\Plugin::instance()->save_guard;
+        $save_guard->register_unsafe_control('form', 'dce_form_save_type_obj_id');
+        $save_guard->register_unsafe_control('form', 'dce_form_save_type_user_role');
+        $save_guard->register_unsafe_control('form', 'dce_form_save_metas');
+        $save_guard->register_unsafe_control('form', 'dce_form_save_override');
+    }
+    public function get_script_depends()
+    {
+        return [];
+    }
+    public function get_style_depends()
+    {
+        return [];
+    }
     /**
      * Get Name
      *
@@ -25,14 +40,6 @@ class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
     public function get_name()
     {
         return 'dce_form_save';
-    }
-    public function get_script_depends()
-    {
-        return [];
-    }
-    public function get_style_depends()
-    {
-        return [];
     }
     /**
      * Get Label
@@ -56,7 +63,7 @@ class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
      */
     public function register_settings_section($widget)
     {
-        $roles = Helper::get_roles();
+        $roles = Helper::get_roles(\false, \true);
         $post_types = Helper::get_post_types();
         $taxonomies = Helper::get_taxonomies();
         $widget->start_controls_section('section_dce_form_save', ['label' => $this->get_label(), 'condition' => ['submit_actions' => $this->get_name()]]);
@@ -94,7 +101,7 @@ class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
         $widget->add_control('dce_form_save_type_user_login', ['label' => __('Auto Login', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('The new user will be automatically logged in and its data will be available when the next page is loaded', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_save_type' => 'user', 'dce_form_save_override' => '']]);
         $default_message = \ElementorPro\Modules\Forms\Classes\Ajax_Handler::get_default_message(\ElementorPro\Modules\Forms\Classes\Ajax_Handler::SUBSCRIBER_ALREADY_EXISTS, array());
         $widget->add_control('dce_form_save_type_user_error', ['label' => __('User registration Error Message', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => $default_message, 'label_block' => \true, 'separator' => 'before', 'condition' => ['dce_form_save_type' => 'user', 'dce_form_save_override' => '']]);
-        $widget->add_control('dce_form_save_type_user_error_stop', ['label' => __('Stop Actions on Error', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Stop Dynamic.ooo form actions (it doesn’t stop Elementor actions) on Error,  username or email are not valid', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_save_type' => 'user', 'dce_form_save_override' => '']]);
+        $widget->add_control('dce_form_save_type_user_error_stop', ['label' => __('Stop Actions on Error', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Stop Dynamic.ooo form actions (it doesn\'t stop Elementor actions) on Error,  username or email are not valid', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_save_type' => 'user', 'dce_form_save_override' => '']]);
         $widget->add_control('dce_form_save_type_term_name', ['label' => __('Term Name', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'Term [field id="name"]', 'description' => __('Can use static text, field Shortcode, and Tokens. Leave it empty for random values', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_save_type' => 'term'], 'label_block' => 'true', 'separator' => 'before']);
         $widget->add_control('dce_form_save_type_term_description', ['label' => __('Term Description', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '[field id="message"]', 'description' => __('You can use text, Shortcodes and Tokens', 'dynamic-content-for-elementor'), 'condition' => ['dce_form_save_type' => 'term'], 'label_block' => 'true']);
         $widget->add_control('dce_form_save_type_term_taxonomy', ['label' => __('Term Taxonomy', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $taxonomies, 'default' => 'category', 'condition' => ['dce_form_save_type' => 'term'], 'label_block' => 'true']);
@@ -122,24 +129,6 @@ class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
         $fields = Helper::get_form_data($record);
         $settings = $record->get('form_settings');
         $this->save($fields, $settings, $ajax_handler);
-    }
-    /**
-     * On Export
-     *
-     * Clears form settings on export
-     * @access Public
-     * @param array $element
-     */
-    public function on_export($element)
-    {
-        $tmp = array();
-        if (!empty($element)) {
-            foreach ($element['settings'] as $key => $value) {
-                if (\substr($key, 0, 4) == 'dce_') {
-                    unset($element['settings'][$key]);
-                }
-            }
-        }
     }
     private function save($record, $settings = null, $ajax_handler = null)
     {
@@ -273,10 +262,6 @@ class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
                 }
                 break;
             case 'user':
-                if (!get_option('users_can_register')) {
-                    $ajax_handler->add_error_message(__('User registration is currently disabled, Please enable it in WordPress Settings - General - Membership.', 'dynamic-content-for-elementor'));
-                    return;
-                }
                 $settings['dce_form_save_type_user_username'] = sanitize_user(Helper::get_dynamic_value($settings['dce_form_save_type_user_username'], $fields));
                 if (!$settings['dce_form_save_type_user_username']) {
                     $settings['dce_form_save_type_user_username'] = 'user_' . \time();
@@ -308,6 +293,10 @@ class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
                 }
                 $error_msg = !empty($settings['dce_form_save_type_user_error']) ? $settings['dce_form_save_type_user_error'] : \ElementorPro\Modules\Forms\Classes\Ajax_Handler::get_default_message(\ElementorPro\Modules\Forms\Classes\Ajax_Handler::SUBSCRIBER_ALREADY_EXISTS, $settings);
                 if (!$obj_id || !$settings['dce_form_save_override']) {
+                    if (!get_option('users_can_register')) {
+                        $ajax_handler->add_error_message(__('User registration is currently disabled, Please enable it in WordPress Settings - General - Membership.', 'dynamic-content-for-elementor'));
+                        return;
+                    }
                     if ($user_email_exist || $user_login_exist) {
                         $ajax_handler->add_error_message($error_msg);
                         if ($settings['dce_form_save_type_user_error_stop']) {
@@ -466,10 +455,19 @@ class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
                         if ('term' == $settings['dce_form_save_type']) {
                             $obj_id = $obj_id['term_id'];
                         }
-                        $meta_upd = 'update_' . $settings['dce_form_save_type'] . '_meta';
                         /* allow users to use meta keys names different than field names: */
                         $akey = apply_filters('dynamicooo/form-save/meta-key', $akey, $settings['form_name']);
-                        \call_user_func($meta_upd, $obj_id, $akey, $adata);
+                        switch ($settings['dce_form_save_type']) {
+                            case 'post':
+                                update_post_meta($obj_id, $akey, $adata);
+                                break;
+                            case 'user':
+                                update_user_meta($obj_id, $akey, $adata);
+                                break;
+                            case 'term':
+                                update_term_meta($obj_id, $akey, $adata);
+                                break;
+                        }
                     }
                 }
             }
@@ -484,8 +482,18 @@ class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
             do_action('save_post', $obj_id, $obj, $is_update);
         }
         if ($settings['dce_form_save_redirect']) {
-            $get_link = 'get_' . $settings['dce_form_save_type'] . '_link';
-            $redirect_to = Helper::$get_link($obj_id);
+            switch ($settings['dce_form_save_type']) {
+                case 'post':
+                    $redirect_to = get_permalink($obj_id);
+                    break;
+                case 'user':
+                    $author_id = get_the_author_meta('ID');
+                    $redirect_to = get_author_posts_url($obj_id ?? $author_id);
+                    break;
+                case 'term':
+                    $redirect_to = get_term_link($obj_id);
+                    break;
+            }
             $redirect_to = apply_filters('dynamicooo/save/redirect-url', $redirect_to, $obj_id, $settings['form_name']);
             if (!empty($redirect_to) && \filter_var($redirect_to, \FILTER_VALIDATE_URL)) {
                 $ajax_handler->add_response_data('redirect_url', $redirect_to);
@@ -518,5 +526,9 @@ class Save extends \ElementorPro\Modules\Forms\Classes\Action_Base
             return \false;
         }
         return $obj_id;
+    }
+    public function on_export($element)
+    {
+        return $element;
     }
 }

@@ -43,7 +43,7 @@ class RegexField extends \DynamicContentForElementor\Extensions\ExtensionPrototy
             $settings = $widget->get_settings_for_display();
             foreach ($settings['form_fields'] as $key => $afield) {
                 if ($afield['field_type'] == 'text' && !empty($afield['field_regex'])) {
-                    $content = \str_replace('id="form-field-' . $afield['custom_id'] . '"', 'id="form-field-' . $afield['custom_id'] . '" data-regex="true" pattern="' . $afield['field_regex'] . '"', $content);
+                    $content = \str_replace('id="form-field-' . $afield['custom_id'] . '"', 'id="form-field-' . $afield['custom_id'] . '" data-regex="true" pattern="' . esc_attr($afield['field_regex']) . '"', $content);
                 }
             }
         }

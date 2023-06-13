@@ -21,12 +21,17 @@ class TextEditorWithTokens extends \DynamicContentForElementor\Widgets\WidgetPro
     protected function safe_register_controls()
     {
         $this->start_controls_section('section_tokens', ['label' => __('Text Editor with Tokens', 'dynamic-content-for-elementor')]);
-        $this->add_control('text_w_tokens', ['label' => '', 'type' => Controls_Manager::WYSIWYG, 'default' => __('Hello', 'dynamic-content-for-elementor') . ' [user:nicename], ' . __('you are using Elementor', 'dynamic-content-for-elementor') . ' [option:elementor_version]', 'dynamic' => ['active' => \true]]);
+        $this->add_control('text_w_tokens', ['label' => '', 'type' => Controls_Manager::WYSIWYG, 'default' => __('Hello', 'dynamic-content-for-elementor') . ' [user:nicename], ' . __('you are using Elementor', 'dynamic-content-for-elementor') . ' [option:elementor_version]', 'description' => esc_html__('If you add custom html tags, you can use the class `dce-force-style` to apply the style as selected in the Style tab. ', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true]]);
         $this->end_controls_section();
         $this->start_controls_section('section_style', ['label' => __('Text Editor', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right'], 'justify' => ['title' => __('Justified', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-justify']], 'selectors' => ['{{WRAPPER}} .dce-tokens' => 'text-align: {{VALUE}};']]);
         $this->add_control('text_color', ['label' => __('Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '', 'selectors' => ['{{WRAPPER}} .dce-tokens' => 'color: {{VALUE}};']]);
-        $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'typography', 'selector' => '{{WRAPPER}} .dce-tokens']);
+        $this->add_group_control(Group_Control_Typography::get_type(), [
+            'name' => 'typography',
+            // With custom HTML you can use the class dce-force-style to
+            // try to make this style win over other rules.
+            'selector' => '{{WRAPPER}} .dce-tokens .dce-force-style, {{WRAPPER}} .dce-tokens',
+        ]);
         $text_columns = \range(1, 10);
         $text_columns = \array_combine($text_columns, $text_columns);
         $text_columns[''] = __('Default', 'dynamic-content-for-elementor');

@@ -25,10 +25,7 @@ jQuery( window ).on( 'elementor:init', function() {
 		onLinkResetXYPositions: function( event ) {
 			event.preventDefault();
 			event.stopPropagation();
-
-
 			this.ui.controls.val('');
-
 			this.updateXYPositionsValue();
 		},
 
@@ -37,8 +34,6 @@ jQuery( window ).on( 'elementor:init', function() {
 				$input = this.ui.input.filter( '[data-setting="' + type + '"]' );
 
 			$input.val( ui.value );
-
-
 			this.updateXYPositions();
 		},
 
@@ -126,8 +121,6 @@ jQuery( window ).on( 'elementor:init', function() {
 			];
 		},
 		onInputChange: function( event ) {
-			var inputSetting = event.target.dataset.setting;
-
 			var type = event.currentTarget.dataset.setting,
 			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' );
 			$slider[0].noUiSlider.set( this.getControlValue( type ) );

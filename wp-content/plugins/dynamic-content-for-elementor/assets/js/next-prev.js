@@ -42,17 +42,6 @@
         }
 
     };
-    $(window).on('pronto.render', function (event, eventInfo) {
-        if (typeof eventInfo.delegateTarget !== 'undefined') {
-            var element_el = $(eventInfo.delegateTarget.innerHTML).find('.elementor-element');
-
-            element_el.each(function (i) {
-                elementorFrontend.elementsHandler.runReadyTrigger(jQuery(this));
-            });
-        }
-        $(window).trigger('elementor/frontend/init');
-        $(window).trigger('ready');
-    });
     // Make sure you run this code under Elementor..
     $(window).on('elementor/frontend/init', function () {
         elementorFrontend.hooks.addAction('frontend/element_ready/dyncontel-post-nextprev.default', WidgetElements_NextPrevHandler);

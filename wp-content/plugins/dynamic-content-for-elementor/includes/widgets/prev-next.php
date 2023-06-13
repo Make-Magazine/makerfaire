@@ -42,7 +42,7 @@ class PrevNext extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['%', 'px'], 'default' => ['size' => 50, 'unit' => '%'], 'range' => ['px' => ['min' => 10, 'max' => 300], '%' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .nav-links > div' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['custom_width' => '1']]);
         $this->end_controls_section();
         $this->start_controls_section('section_position', ['label' => __('Position', 'dynamic-content-for-elementor')]);
-        $this->add_control('fluttua', ['label' => __('Floating', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'prefix_class' => 'float']);
+        $this->add_control('fluttua', ['label' => __('Floating', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'prefix_class' => 'dce-float']);
         $this->add_control('verticale', ['label' => __('Vertical', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'prefix_class' => 'vertical']);
         $this->end_controls_section();
         $this->start_controls_section('section_style', ['label' => $this->get_title(), 'tab' => Controls_Manager::TAB_STYLE]);

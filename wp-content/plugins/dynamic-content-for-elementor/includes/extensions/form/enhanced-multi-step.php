@@ -223,6 +223,17 @@ class EnhancedMultiStep extends \DynamicContentForElementor\Extensions\Extension
                     $content = \str_replace('class="elementor-form"', 'class="elementor-form elementor-form-steps"', $content);
                 }
                 $jkey = 'dce_' . $widget->get_type() . '_form_' . $widget->get_id() . '_steps';
+                $filtered_fields = \array_map(function ($field) {
+                    $allowed = ["field_label", "custom_id", "field_type"];
+                    $filtered = [];
+                    foreach ($field as $key => $value) {
+                        if (\in_array($key, $allowed, \true)) {
+                            $field[$key] = $value;
+                        }
+                    }
+                    return $field;
+                }, $settings['form_fields']);
+                $filtered_settings = ['dce_step_scroll' => $settings['dce_step_scroll'], 'form_fields' => $filtered_fields];
                 // add custom js
                 \ob_start();
                 ?>
@@ -246,12 +257,24 @@ class EnhancedMultiStep extends \DynamicContentForElementor\Extensions\Extension
 								var form_id = '<?php 
                 echo $widget->get_id();
                 ?>';
-								var settings = <?php 
-                echo wp_json_encode($settings);
-                ?>;
+								var settings = "<?php 
+                echo \addslashes(wp_json_encode($filtered_settings) ?: '');
+                ?>";
+								settings = JSON.parse(settings);
 								var step_last = false;
 								window.$form = $('.elementor-element-' + form_id);
-
+								if ( settings['dce_step_scroll'] === 'yes' ) {
+									// Scroll to Top on change
+									setTimeout(function(){
+										let nextButtons = $form.find('.elementor-field-type-next');
+										let prevButtons = $form.find('.elementor-field-type-previous');
+										let stepButtons = nextButtons.add(prevButtons);
+										let formOffset = $form.offset().top - 70;
+										stepButtons.on('click', function() {
+											$("html, body").animate({ scrollTop: formOffset });
+										} );
+									}, 200);
+								}
 								if (settings['form_fields'].length) {
 
 									jQuery(settings.form_fields).each(function (index, afield) {
@@ -267,20 +290,6 @@ class EnhancedMultiStep extends \DynamicContentForElementor\Extensions\Extension
                     ?>
 													// Legend
 													field.prepend('<legend class="elementor-step-legend elementor-column elementor-col-100">' + afield.field_label + '</legend>');
-												<?php 
-                }
-                if ($settings['dce_step_scroll']) {
-                    ?>
-													// Scroll to Top on change
-													setTimeout(function(){
-														let nextButtons = $form.find('.elementor-field-type-next');
-														let prevButtons = $form.find('.elementor-field-type-previous');
-														let stepButtons = nextButtons.add(prevButtons);
-														let formOffset = $form.offset().top - 70;
-														stepButtons.on('click', function() {
-															$("html, body").animate({ scrollTop: formOffset });
-														} );
-													}, 200);
 												<?php 
                 }
                 ?>

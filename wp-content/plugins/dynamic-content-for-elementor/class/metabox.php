@@ -29,7 +29,7 @@ class Metabox
     public static function metabox_template_select($post_object)
     {
         $html = '';
-        $templates = \DynamicContentForElementor\Helper::get_all_template(\true);
+        $templates = \DynamicContentForElementor\Helper::get_all_templates(\true);
         $dyncontel_elementor_templates = get_post_meta($post_object->ID, 'dyncontel_elementor_templates', \true);
         if (!empty($templates)) {
             $html .= '<label for="dce_post_template"><strong>' . esc_html__('Assign an Elementor Template', 'dynamic-content-for-elementor') . '</strong></label><br /><select id="dce_post_template" name="dyncontel_elementor_templates" class="js-dce-select">';
@@ -186,7 +186,7 @@ class Metabox
     }
     public static function render_select_metabox($tag, $mode)
     {
-        $templates = \DynamicContentForElementor\Helper::get_all_template(\true);
+        $templates = \DynamicContentForElementor\Helper::get_all_templates(\true);
         $isSel = '';
         ?>
 		<label><?php 

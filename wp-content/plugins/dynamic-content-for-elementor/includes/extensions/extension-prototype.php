@@ -25,7 +25,7 @@ class ExtensionPrototype
         add_action('elementor/frontend/after_enqueue_scripts', [$this, 'enqueue_scripts']);
         // Enqueue styles
         add_action('elementor/frontend/after_enqueue_styles', [$this, 'enqueue_styles']);
-        if ($this->is_common) {
+        if ($this->is_common()) {
             // Add the advanced section required to display controls
             $this->add_common_sections_actions();
         }
@@ -133,7 +133,10 @@ class ExtensionPrototype
         $this->_enqueue_styles();
         $this->_enqueue_scripts();
     }
-    public function get_low_name()
+    /**
+     * @return string
+     */
+    public function get_id()
     {
         $low_name = \strtolower($this->name);
         $low_name = \str_replace(' ', '_', $low_name);
@@ -141,7 +144,7 @@ class ExtensionPrototype
     }
     public final function add_common_sections($element, $args)
     {
-        $low_name = $this->get_low_name();
+        $low_name = $this->get_id();
         $section_name = 'dce_section_' . $low_name . '_advanced';
         if (!$this->has_controls) {
             // no need settings
@@ -201,14 +204,17 @@ class ExtensionPrototype
      */
     public function add_dynamic_tag($class_name)
     {
-        add_action('elementor/dynamic_tags/register_tags', function ($dynamic_tags) use($class_name) {
+        add_action('elementor/dynamic_tags/register', function ($dynamic_tags) use($class_name) {
             // To register that group as well before the tag
             $tags_config = \Elementor\Plugin::$instance->dynamic_tags->get_config();
             if (!isset($tags_config['groups']['dce'])) {
                 \Elementor\Plugin::$instance->dynamic_tags->register_group('dce', ['title' => DCE_PRODUCT_NAME]);
             }
+            if (!isset($tags_config['groups']['dce-dynamic-google-maps-directions'])) {
+                \Elementor\Plugin::$instance->dynamic_tags->register_group('dce-dynamic-google-maps-directions', ['title' => DCE_PRODUCT_NAME . ' - Dynamic Google Maps Directions']);
+            }
             $class_name = '\\DynamicContentForElementor\\Modules\\DynamicTags\\Tags\\' . $class_name;
-            $dynamic_tags->register_tag($class_name);
+            $dynamic_tags->register(new $class_name());
         });
     }
 }

@@ -44,7 +44,7 @@ class Signature extends \ElementorPro\Modules\Forms\Fields\Field_Base
         if (is_wp_error($control_data)) {
             return;
         }
-        $field_controls = ['signature_save_to_file' => ['name' => 'signature_save_to_file', 'label' => __('Save to file', 'dynamic-content-for-elementor'), 'default' => 'yes', 'type' => Controls_Manager::SWITCHER, 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'signature_jpeg' => ['name' => 'signature_jpeg', 'label' => __('Transmit using JPEG', 'dynamic-content-for-elementor'), 'description' => __('Use this option to if the signature does not appear in the PDF.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'no', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]]];
+        $field_controls = ['signature_save_to_file' => ['name' => 'signature_save_to_file', 'label' => __('Save to file', 'dynamic-content-for-elementor'), 'default' => 'yes', 'type' => Controls_Manager::SWITCHER, 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'signature_jpeg' => ['name' => 'signature_jpeg', 'label' => __('Transmit using JPEG', 'dynamic-content-for-elementor'), 'description' => __('Use this option if the signature does not appear in the PDF.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'no', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]]];
         $control_data['fields'] = $this->inject_field_controls($control_data['fields'], $field_controls);
         $widget->update_control('form_fields', $control_data);
     }
@@ -118,13 +118,12 @@ class Signature extends \ElementorPro\Modules\Forms\Fields\Field_Base
         if ($field['required'] && $field['raw_value'] === '') {
             $ajax_handler->add_error($id, __('This signature field is required.', 'dynamic-content-for-elementor'));
         }
-    }
-    public function sanitize_field($value, $field)
-    {
-        if (\preg_match('&^data:image/(jpeg|png);base64,[\\w\\d/+]+=*$&', $value, $matches)) {
-            return $value;
+        if ($field['raw_value'] === '') {
+            return;
         }
-        return '';
+        if (!\preg_match('&^data:image/(jpeg|png);base64,[\\w\\d/+]+=*$&', $field['raw_value'])) {
+            $ajax_handler->add_error($id, __('Invalid signature.', 'dynamic-content-for-elementor'));
+        }
     }
     public function save_to_file($data, $dir_name, $extension, $ajax_handler)
     {
@@ -141,7 +140,7 @@ class Signature extends \ElementorPro\Modules\Forms\Fields\Field_Base
                 $perms = 0644;
                 @\chmod($new_file, $perms);
                 $url = wp_upload_dir()['baseurl'] . '/dynamic/signatures/' . trailingslashit($dir_name) . $filename;
-                return $url;
+                return ['url' => $url, 'loc' => $new_file];
             } else {
                 $ajax_handler->add_error_message(esc_html__('There was an error while trying to save your signature.', 'dynamic-content-for-elementor'));
             }
@@ -152,6 +151,9 @@ class Signature extends \ElementorPro\Modules\Forms\Fields\Field_Base
     public function process_field($field, Classes\Form_Record $record, Classes\Ajax_Handler $ajax_handler)
     {
         $value = $field['value'];
+        if ($value === '') {
+            return;
+        }
         $settings = Helper::get_form_field_settings($field['id'], $record);
         if (($settings['signature_save_to_file'] ?? '') !== 'yes') {
             return;
@@ -166,7 +168,8 @@ class Signature extends \ElementorPro\Modules\Forms\Fields\Field_Base
             $ajax_handler->add_admin_error_message(__('Invalid field ID', 'dynamic-content-for-elementor'));
             return;
         }
-        $url = $this->save_to_file($decoded_image, $dir_name, $extension, $ajax_handler);
+        list('url' => $url, 'loc' => $loc) = $this->save_to_file($decoded_image, $dir_name, $extension, $ajax_handler);
         $record->update_field($field['id'], 'value', $url);
+        $record->update_field($field['id'], 'raw_value', $loc);
     }
 }

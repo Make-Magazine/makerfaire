@@ -11,125 +11,178 @@ if (!\defined('ABSPATH')) {
 // Exit if accessed directly
 class DynamicVisibility extends \DynamicContentForElementor\Extensions\ExtensionPrototype
 {
+    /**
+     * @return bool
+     */
+    public function is_common()
+    {
+        return \false;
+    }
+    /**
+     * @return void
+     */
+    public function register_controls_sections_hooks()
+    {
+        foreach ($this->get_sections_injection_locations() as $location) {
+            // Activate action for elements
+            add_action('elementor/element/' . $location['element'] . '/' . $location['section_id'] . '/after_section_end', function ($element, $args) {
+                $this->register_controls_sections($element);
+            }, 10, 2);
+        }
+    }
     public function __construct()
     {
         Controls_Manager::add_tab('dce_visibility', __('Visibility', 'dynamic-content-for-elementor'));
+        $this->register_controls_sections_hooks();
         parent::__construct();
     }
     const CUSTOM_PHP_CONTROL_NAME = 'dce_visibility_custom_condition_php';
     public function run_once()
     {
+        //+exclude_start
         $save_guard = \DynamicContentForElementor\Plugin::instance()->save_guard;
         $save_guard->register_unsafe_control('any', self::CUSTOM_PHP_CONTROL_NAME);
+        //+exclude_end
+        \DynamicContentForElementor\Plugin::instance()->wpml->add_extensions_fields(['dce_visibility_fallback_text' => ['field' => 'dce_visibility_fallback_text', 'type' => 'Fallback Text', 'editor_type' => 'AREA']]);
     }
     public function get_style_depends()
     {
         return ['dce-dynamic-visibility'];
     }
-    public $name = 'Visibility';
+    public $name = 'Dynamic Visibility';
+    /**
+     * @return string
+     */
+    public function get_id()
+    {
+        return 'visibility';
+    }
     public $has_controls = \true;
-    public $common_sections_actions = [['element' => 'common', 'action' => '_section_style'], ['element' => 'section', 'action' => 'section_advanced'], ['element' => 'column', 'action' => 'section_advanced'], ['element' => 'container', 'action' => '_section_responsive']];
+    /**
+     * @var array<string> Element types taken by the whole page in Elementor
+     */
+    public $page_target_elements = [
+        'wp-post',
+        'wp-page',
+        'post',
+        'page',
+        'header',
+        'footer',
+        'single',
+        'single-post',
+        'single-page',
+        'archive',
+        'search-results',
+        //+exclude_start
+        'popup',
+    ];
+    /**
+     * All element types where visibility is applied
+     * @return array<string>
+     */
+    public function get_target_element_types()
+    {
+        return \array_merge($this->page_target_elements, ['common', 'section', 'column', 'container']);
+    }
+    /**
+     * Post Functions
+     *
+     * @return array<string,string>
+     */
+    protected static function get_whitelist_post_functions()
+    {
+        return ['is_sticky' => __('Is Sticky', 'dynamic-content-for-elementor'), 'is_post_type_hierarchical' => __('Is Hierarchical Post Type', 'dynamic-content-for-elementor'), 'is_post_type_archive' => __('Is Post Type Archive', 'dynamic-content-for-elementor'), 'comments_open' => __('Comments are open', 'dynamic-content-for-elementor'), 'pings_open' => __('Pings are open', 'dynamic-content-for-elementor'), 'has_tag' => __('Has Tags', 'dynamic-content-for-elementor'), 'has_term' => __('Has Terms', 'dynamic-content-for-elementor'), 'has_excerpt' => __('Has Excerpt', 'dynamic-content-for-elementor'), 'has_post_thumbnail' => __('Has Post Thumbnail', 'dynamic-content-for-elementor'), 'has_nav_menu' => __('Has Nav menu', 'dynamic-content-for-elementor')];
+    }
+    /**
+     * Page Functions
+     *
+     * @return array<string,string>
+     */
+    protected static function get_whitelist_page_functions()
+    {
+        return ['is_front_page' => __('Front Page', 'dynamic-content-for-elementor'), 'is_home' => __('Home', 'dynamic-content-for-elementor'), 'is_404' => __('404 Not Found', 'dynamic-content-for-elementor'), 'is_single' => __('Single', 'dynamic-content-for-elementor'), 'is_page' => __('Page', 'dynamic-content-for-elementor'), 'is_attachment' => __('Attachment', 'dynamic-content-for-elementor'), 'is_preview' => __('Preview', 'dynamic-content-for-elementor'), 'is_admin' => __('Admin', 'dynamic-content-for-elementor'), 'is_page_template' => __('Page Template', 'dynamic-content-for-elementor'), 'is_comments_popup' => __('Comments Popup', 'dynamic-content-for-elementor'), 'is_woocommerce' => __('WooCommerce Page', 'dynamic-content-for-elementor'), 'is_shop' => __('Shop', 'dynamic-content-for-elementor'), 'is_product' => __('Product', 'dynamic-content-for-elementor'), 'is_product_taxonomy' => __('Product Taxonomy', 'dynamic-content-for-elementor'), 'is_product_category' => __('Product Category', 'dynamic-content-for-elementor'), 'is_product_tag' => __('Product Tag', 'dynamic-content-for-elementor'), 'is_cart' => __('Cart', 'dynamic-content-for-elementor'), 'is_checkout' => __('Checkout', 'dynamic-content-for-elementor'), 'is_add_payment_method_page' => __('Add Payment method', 'dynamic-content-for-elementor'), 'is_checkout_pay_page' => __('Checkout Page', 'dynamic-content-for-elementor'), 'is_account_page' => __('Account Page', 'dynamic-content-for-elementor'), 'is_edit_account_page' => __('Edit Account', 'dynamic-content-for-elementor'), 'is_lost_password_page' => __('Lost Password', 'dynamic-content-for-elementor'), 'is_view_order_page' => __('Order Summary', 'dynamic-content-for-elementor'), 'is_order_received_page' => __('Order Received', 'dynamic-content-for-elementor')];
+    }
+    /**
+     * Archive functions
+     *
+     * @return array<string,string>
+     */
+    protected static function get_whitelist_archive_functions()
+    {
+        return ['is_blog' => __('Home blog (latest posts)', 'dynamic-content-for-elementor'), 'posts_page' => __('Posts page', 'dynamic-content-for-elementor'), 'is_tax' => __('Taxonomy', 'dynamic-content-for-elementor'), 'is_category' => __('Category', 'dynamic-content-for-elementor'), 'is_tag' => __('Tag', 'dynamic-content-for-elementor'), 'is_author' => __('Author', 'dynamic-content-for-elementor'), 'is_date' => __('Date', 'dynamic-content-for-elementor'), 'is_year' => __('Year', 'dynamic-content-for-elementor'), 'is_month' => __('Month', 'dynamic-content-for-elementor'), 'is_day' => __('Day', 'dynamic-content-for-elementor'), 'is_time' => __('Time', 'dynamic-content-for-elementor'), 'is_new_day' => __('New Day', 'dynamic-content-for-elementor'), 'is_search' => __('Search', 'dynamic-content-for-elementor'), 'is_paged' => __('Paged', 'dynamic-content-for-elementor'), 'is_main_query' => __('Main Query', 'dynamic-content-for-elementor'), 'in_the_loop' => __('In the Loop', 'dynamic-content-for-elementor')];
+    }
+    /**
+     * Site Functions
+     *
+     * @return array<string,string>
+     */
+    protected static function get_whitelist_site_functions()
+    {
+        return ['is_dynamic_sidebar' => __('Dynamic sidebar', 'dynamic-content-for-elementor'), 'is_active_sidebar' => __('Active sidebar', 'dynamic-content-for-elementor'), 'is_rtl' => __('RTL', 'dynamic-content-for-elementor'), 'is_multisite' => __('Multisite', 'dynamic-content-for-elementor'), 'is_main_site' => __('Main site', 'dynamic-content-for-elementor'), 'is_child_theme' => __('Child theme', 'dynamic-content-for-elementor'), 'is_customize_preview' => __('Customize preview', 'dynamic-content-for-elementor'), 'is_multi_author' => __('Multi author', 'dynamic-content-for-elementor'), 'is feed' => __('Feed', 'dynamic-content-for-elementor'), 'is_trackback' => __('Trackback', 'dynamic-content-for-elementor')];
+    }
+    /**
+     * @return array<mixed>
+     */
+    public function get_sections_injection_locations()
+    {
+        $locations = [['element' => 'common', 'section_id' => '_section_style'], ['element' => 'section', 'section_id' => 'section_advanced'], ['element' => 'column', 'section_id' => 'section_advanced'], ['element' => 'container', 'section_id' => '_section_responsive']];
+        if (Helper::is_elementorpro_active()) {
+            $section_id_for_pages = 'section_custom_css';
+        } else {
+            $section_id_for_pages = 'section_custom_css_pro';
+        }
+        foreach ($this->page_target_elements as $element) {
+            $locations[] = ['element' => $element, 'section_id' => $section_id_for_pages];
+        }
+        return $locations;
+    }
     public static $tabs = ['post' => 'Post & Page', 'user' => 'User & Role', 'archive' => 'Archive', 'dynamic_tag' => 'Dynamic Tags', 'device' => 'Device & Browser', 'datetime' => 'Date & Time', 'geotargeting' => 'Geotargeting', 'context' => 'Context', 'woocommerce' => 'WooCommerce', 'myfastapp' => 'My FastAPP', 'random' => 'Random', 'custom' => 'Custom Condition', 'events' => 'Events', 'repeater' => 'Advanced', 'fallback' => 'Fallback'];
     public static $triggers = ['user' => ['label' => 'User & Role', 'options' => ['role', 'users', 'usermeta']], 'device' => ['label' => 'Device & Browser', 'options' => ['browser', 'responsive']], 'post' => ['label' => 'Current Post', 'options' => ['leaf', 'parent', 'node', 'root']]];
-    public static function condition_satisfy($field, $status, $value)
+    /**
+     * @return void
+     */
+    public function enqueue_editor_scripts()
     {
-        switch ($status) {
-            case 'isset':
-                if (!empty($field)) {
-                    return \true;
-                }
-                break;
-            case 'not':
-                if (empty($field)) {
-                    return \true;
-                }
-                break;
-            case 'lt':
-                if (\is_array($field) && \count($field) < $value) {
-                    return \true;
-                }
-                if (!empty($field) && $field < $value) {
-                    return \true;
-                }
-                break;
-            case 'gt':
-                if (\is_array($field) && \count($field) > $value) {
-                    return \true;
-                }
-                if (!empty($field) && $field > $value) {
-                    return \true;
-                }
-                break;
-            case 'contain':
-                if (!empty($field)) {
-                    if (\is_array($field) && \in_array($value, $field)) {
-                        return \true;
-                    }
-                }
-                if (\is_string($field) && \strpos($field, $value) !== \false) {
-                    return \true;
-                }
-                break;
-            case 'not_contain':
-                if (empty($field)) {
-                    return \true;
-                }
-                if (\is_array($field) && !\in_array($value, $field)) {
-                    return \true;
-                }
-                if (\is_string($field) && \strpos($field, $value) === \false) {
-                    return \true;
-                }
-                break;
-            case 'in_array':
-                if (!\is_array($value)) {
-                    $value = Helper::to_string($value);
-                    $value = Helper::str_to_array(',', $value);
-                }
-                if (\is_array($value) && \in_array($field, $value)) {
-                    return \true;
-                }
-                break;
-            case 'not_value':
-                if ($field != $value) {
-                    return \true;
-                }
-            // no break
-            case 'value':
-                if ($field == $value) {
-                    return \true;
-                }
-        }
-        return \false;
+        // JS for Dynamic Visibility on editor mode
+        wp_register_script('dce-script-editor-dynamic-visibility', plugins_url('/assets/js/editor-dynamic-visibility.js', DCE__FILE__), [], DCE_VERSION, \true);
+        wp_enqueue_script('dce-script-editor-dynamic-visibility');
     }
     protected function add_actions()
     {
+        // this is for client, so they can prevent visibility from running on certain pages:
+        $should_run = apply_filters('dynamicooo/visibility/should-run', \true);
+        if (!$should_run) {
+            return;
+        }
         add_action('elementor/widget/render_content', [$this, 'render_template'], 9, 2);
-        $elements = ['common', 'section', 'column', 'container'];
+        add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_editor_scripts']);
+        $elements = $this->get_target_element_types();
         foreach ($elements as $el_type) {
-            add_action('elementor/element/' . $el_type . '/dce_section_visibility_advanced/before_section_end', function ($element, $args) {
-                $this->add_controls($element, $args);
-            }, 10, 2);
+            add_action('elementor/element/' . $el_type . '/dce_section_visibility_advanced/before_section_end', function ($element) {
+                $this->add_controls($element, 'advanced');
+            });
             foreach (self::$tabs as $tkey => $tvalue) {
                 // Activate controls for column
-                add_action('elementor/element/' . $el_type . '/dce_section_visibility_' . $tkey . '/before_section_end', function ($element, $args) use($tkey) {
-                    $args['section'] = $tkey;
-                    $this->add_controls($element, $args);
-                }, 10, 2);
+                add_action('elementor/element/' . $el_type . '/dce_section_visibility_' . $tkey . '/before_section_end', function ($element) use($tkey) {
+                    $this->add_controls($element, $tkey);
+                });
             }
         }
-        // WIDGET
+        // Document
+        add_filter('elementor/frontend/the_content', [$this, 'document_filter']);
+        // Widget
         add_action('elementor/frontend/widget/before_render', [$this, 'start_element'], 10, 1);
         add_action('elementor/frontend/widget/after_render', [$this, 'end_element'], 10, 1);
-        // FLEX CONTAINER
+        // Flex Container
         add_action('elementor/frontend/container/before_render', [$this, 'start_element'], 10, 1);
         add_action('elementor/frontend/container/after_render', [$this, 'end_element'], 10, 1);
-        // SECTION
+        // Section
         add_action('elementor/frontend/section/before_render', [$this, 'start_element'], 10, 1);
         add_action('elementor/frontend/section/after_render', [$this, 'end_element'], 10, 1);
-        // COLUMN
+        // Column
         add_action('elementor/frontend/column/before_render', [$this, 'start_element'], 10, 1);
         add_action('elementor/frontend/column/after_render', [$this, 'end_element'], 10, 1);
+        // Section
         add_action('elementor/frontend/section/before_render', function ($element) {
             $columns = $element->get_children();
             if (!empty($columns)) {
@@ -159,9 +212,38 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
         }, 10, 1);
     }
     /**
+     * @param string $content
+     * @return string
+     */
+    public function document_filter($content)
+    {
+        $document = \Elementor\Plugin::instance()->documents->get_current();
+        $settings = $document->get_settings_for_display();
+        if (($settings['enabled_visibility'] ?? '') === 'yes') {
+            $hidden = self::is_hidden($document);
+            if ($hidden) {
+                if ($this->should_remove_from_dom($settings)) {
+                    $content = '<!-- dce invisible -->';
+                } else {
+                    $content = \preg_replace('/class=(["\'])/', 'class=\\1dce-visibility-element-hidden ', $content, 1) ?? '';
+                }
+                $fallback = self::get_fallback_content($settings);
+                if ($fallback !== \false) {
+                    \ob_start();
+                    \Elementor\Utils::print_html_attributes($document->get_container_attributes());
+                    $content .= '<div ' . \ob_get_clean() . '>';
+                    $content .= $fallback;
+                    $content .= '</div>';
+                }
+                return $content;
+            }
+        }
+        return $content;
+    }
+    /**
      * Should Remove from DOM
      *
-     * @param array $settings
+     * @param array<mixed> $settings
      * @return boolean
      */
     public function should_remove_from_dom($settings)
@@ -174,6 +256,10 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
         }
         return \false;
     }
+    /**
+     * @param \Elementor\Element_Base $element
+     * @return void
+     */
     public function start_element($element)
     {
         $settings = $element->get_settings_for_display();
@@ -187,6 +273,10 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     $element->add_render_attribute('_wrapper', 'class', 'dce-visibility-original-content');
                 }
             }
+            if (\in_array('events', $settings['dce_visibility_triggers'] ?? [])) {
+                $element->add_render_attribute('_wrapper', 'class', 'dce-visibility-event');
+                $element->add_script_depends('dce-visibility');
+            }
             $this->set_element_view_counters($element, $hidden);
         }
     }
@@ -197,21 +287,43 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
             if (self::is_hidden($element)) {
                 if ($this->should_remove_from_dom($settings)) {
                     $content = \ob_get_clean();
+                    $content = $content ? $content : '';
+                    // Elementor Improved CSS Loading will put CSS inline on
+                    // the first widget of a certain type. If it's invisibile
+                    // because of visibility, the style will be lost for any
+                    // other widget of the same type on the page.
+                    //
+                    // NOTE: There are clients who wants to use custom style
+                    // tags that follow the visibility rules. The have been
+                    // told to add the data-visibility-ok attribute to the
+                    // style tag. So future changes should take that into
+                    // account.
+                    \preg_match_all('$<style>.*?</style>$s', $content, $matches);
+                    foreach ($matches[0] as $m) {
+                        echo $m;
+                    }
+                    \preg_match_all('$<link\\s+rel=.?stylesheet.*?>$s', $content, $slinks);
+                    foreach ($slinks[0] as $l) {
+                        echo $l;
+                    }
                 }
                 $fallback = self::get_fallback($settings, $element);
-                if ($fallback) {
+                if (!empty($fallback)) {
                     $fallback = \str_replace('dce-visibility-element-hidden', '', $fallback);
                     $fallback = \str_replace('dce-visibility-original-content', 'dce-visibility-fallback-content', $fallback);
                     echo $fallback;
                 }
             }
-            $this->print_scripts($element, $settings);
         }
     }
-    public function get_control_section($section_name, $element)
+    /**
+     * @param \Elementor\Controls_Stack $element
+     * @return void
+     */
+    public function register_controls_sections($element)
     {
-        $low_name = $this->get_low_name();
-        $element->start_controls_section($section_name, ['tab' => 'dce_' . $low_name, 'label' => '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . $this->name]);
+        $low_name = $this->get_id();
+        $element->start_controls_section('dce_section_visibility_advanced', ['tab' => 'dce_' . $low_name, 'label' => '<span class="color-dce icon-dyn-logo-dce pull-right ml-1"></span> ' . $this->name]);
         $element->end_controls_section();
         foreach (self::$tabs as $tkey => $tlabel) {
             $section_name = 'dce_section_' . $low_name . '_' . $tkey;
@@ -244,27 +356,24 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
      *
      * @access private
      */
-    private function add_controls($element, $args)
+    private function add_controls($element, $section)
     {
         $taxonomies = Helper::get_taxonomies();
-        if (isset($args['section'])) {
-            $section = $args['section'];
-        } else {
-            $section = 'advanced';
-        }
         $element_type = $element->get_type();
         if ($section == 'advanced') {
             $element->add_control('enabled_visibility', ['label' => __('Visibility', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
             $element->add_control('dce_visibility_hidden', ['label' => __('Always hide this element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['enabled_visibility' => 'yes'], 'separator' => 'before']);
             $element->add_control('dce_visibility_dom', ['label' => __('Keep HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Keep the HTML element in the DOM and hide this element via CSS', 'dynamic-content-for-elementor'), 'condition' => ['enabled_visibility' => 'yes'], 'separator' => 'before']);
             $element->add_control('dce_visibility_mode', ['label' => __('Composition mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => 'quick']);
-            $element->add_control('dce_visibility_selected', ['label' => __('Display mode', 'dynamic-content-for-elementor'), 'description' => __('Hide or show an element when a condition is triggered', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['yes' => ['title' => __('Show', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye'], 'hide' => ['title' => __('Hide', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye-slash']], 'default' => 'yes', 'toggle' => \false, 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
+            $element->add_control('dce_visibility_selected', ['label' => __('Display mode', 'dynamic-content-for-elementor'), 'description' => __('Hide or show an element when a condition is triggered', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['yes' => ['title' => __('Show', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye'], 'hide' => ['title' => __('Hide', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-eye-slash']], 'default' => 'yes', 'toggle' => \false, 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => ''], 'frontend_available' => \true]);
             $element->add_control('dce_visibility_logical_connective', ['label' => __('Logical connective', 'dynamic-content-for-elementor'), 'description' => __('This setting determines how the conditions are combined. If OR is selected the condition is satisfied when at least one condition is satisfied. If AND is selected all conditions must be satisfied', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'or', 'return_value' => 'and', 'label_on' => __('AND', 'dynamic-content-for-elementor'), 'label_off' => __('OR', 'dynamic-content-for-elementor'), 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
             $_triggers = self::$tabs;
             unset($_triggers['repeater']);
             unset($_triggers['fallback']);
+            if (\in_array($element_type, $this->page_target_elements, \true)) {
+                unset($_triggers['events']);
+            }
             $element->add_control('dce_visibility_triggers', ['label' => __('Triggers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $_triggers, 'default' => \array_keys($_triggers), 'multiple' => \true, 'separator' => 'before', 'label_block' => \true, 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
-            $element->add_control('dce_visibility_debug', ['label' => __('Debug', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Get a report of triggered rule', 'dynamic-content-for-elementor'), 'separator' => 'before', 'condition' => ['enabled_visibility' => 'yes', 'dce_visibility_hidden' => '']]);
             if (\defined('DVE_PLUGIN_BASE')) {
                 $element->add_control('dce_visibility_review', ['label' => '<b>' . __('Did you enjoy Dynamic Visibility extension?', 'dynamic-content-for-elementor') . '</b>', 'type' => Controls_Manager::RAW_HTML, 'raw' => __('Please leave us a', 'dynamic-content-for-elementor') . ' <a target="_blank" href="https://wordpress.org/support/plugin/dynamic-visibility-for-elementor/reviews/?filter=5/#new-post">★★★★★</a> ' . __('rating.<br>We really appreciate your support!', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             }
@@ -276,7 +385,8 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
             $element->add_control('dce_visibility_dynamic_tag_value', ['type' => Controls_Manager::TEXT, 'label' => __('Value', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_dynamic_tag_status!' => ['not', 'isset']]]);
         }
         if ($section == 'user') {
-            $element->add_control('dce_visibility_role', ['label' => __('Roles', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Roles', 'dynamic-content-for-elementor'), 'label_block' => \true, 'multiple' => \true, 'query_type' => 'users', 'object_type' => 'role', 'description' => __('Limit visualization to specific user roles', 'dynamic-content-for-elementor')]);
+            $element->add_control('dce_visibility_role', ['label' => __('Roles', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'placeholder' => __('Roles', 'dynamic-content-for-elementor'), 'label_block' => \true, 'multiple' => \true, 'options' => wp_roles()->get_names() + ['visitor' => 'Visitor (User not logged in)'], 'description' => __('Limit visualization to specific user roles', 'dynamic-content-for-elementor')]);
+            $element->add_control('dce_visibility_role_all', ['label' => __('Match All Roles', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('All roles should match not just one', 'dynamic-content-for-elementor')]);
             $element->add_control('dce_visibility_users', ['label' => __('Selected Users', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the list of users who will be able to view (or not) this element. You can use their ID, email or username. Simply separate them by a comma. (e.g. \\"23, email@yoursite.com, username\\")', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_can', ['label' => __('User can', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Trigger by User capability, for example: "manage_options"', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_usermeta', ['label' => __('User Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \false], 'label_block' => \true, 'query_type' => 'fields', 'object_type' => 'user', 'separator' => 'before']);
@@ -284,11 +394,13 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
             $element->add_control('dce_visibility_usermeta_value', ['label' => __('User Field Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('The specific value of the User Field', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_usermeta!' => '', 'dce_visibility_usermeta_status!' => ['not', 'isset']]]);
             $element->add_control('dce_visibility_ip', ['label' => __('Remote IP', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the list of IP who will be able to view this element.<br>Separate IPs by comma. (ex. "123.123.123.123, 8.8.8.8, 4.4.4.4")', 'dynamic-content-for-elementor') . '<br><b>' . __('Your current IP is: ', 'dynamic-content-for-elementor') . sanitize_text_field($_SERVER['REMOTE_ADDR']) . '</b>', 'separator' => 'before']);
             $element->add_control('dce_visibility_referrer', ['label' => __('Referrer', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered when previous page is a specific page.', 'dynamic-content-for-elementor'), 'separator' => 'before']);
+            $element->add_control('dce_visibility_referrer_host_only', ['label' => __('Check host only', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'description' => __('check only the host part of the URL', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_referrer' => 'yes']]);
             $element->add_control('dce_visibility_referrer_list', ['label' => __('Specific referral site authorized', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXTAREA, 'placeholder' => 'facebook.com' . \PHP_EOL . 'google.com', 'description' => __('Only selected referral, once per line. If empty it is triggered for all external site.', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_referrer' => 'yes']]);
             $element->add_control('dce_visibility_max_user', ['label' => __('Max per User', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'separator' => 'before']);
         }
         if ($section == 'geotargeting') {
             if (Helper::is_geoipdetect_active()) {
+                $element->add_control('dce_visibility_geotargeting_notice_cache', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('This features doesn\'t work correctly if you use a plugin to cache your site', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
                 $geoinfo = \geoip_detect2_get_info_from_current_ip();
                 $countryInfo = new \YellowTree\GeoipDetect\Geonames\CountryInformation();
                 // @phpstan-ignore-line
@@ -309,7 +421,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
             $element->add_control('dce_visibility_browser', ['label' => __('Browser', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['is_chrome' => 'Google Chrome', 'is_gecko' => 'FireFox', 'is_safari' => 'Safari', 'is_IE' => 'Internet Explorer', 'is_edge' => 'Microsoft Edge', 'is_NS4' => 'Netscape', 'is_opera' => 'Opera', 'is_lynx' => 'Lynx', 'is_iphone' => 'iPhone Safari'], 'description' => __('Trigger visibility for a specific browser.', 'dynamic-content-for-elementor'), 'multiple' => \true, 'separator' => 'before']);
         }
         if ($section == 'datetime') {
-            $element->add_control('dce_visibility_datetime_important_note', ['type' => Controls_Manager::RAW_HTML, 'raw' => '<small>' . __('We will use the WordPress time you set in', 'dynamic-content-for-elementor') . ' <a target="_blank" href="' . admin_url('options-general.php') . '">' . __('WordPress General preferences', 'dynamic-content-for-elementor') . '</a>.<br>' . __('WordPress time is', 'dynamic-content-for-elementor') . current_time('j M Y H:i') . '</small>', 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
+            $element->add_control('dce_visibility_datetime_important_note', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('We will use the WordPress time you set in', 'dynamic-content-for-elementor') . ' <a target="_blank" href="' . admin_url('options-general.php') . '">' . __('WordPress General preferences', 'dynamic-content-for-elementor') . '</a>.<br>' . __('The time is', 'dynamic-content-for-elementor') . ' ' . current_time('j M Y H:i'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
             $element->add_control('dce_visibility_date_dynamic', ['label' => __('Use Dynamic Dates', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
             $element->add_control('dce_visibility_date_dynamic_from', ['label' => __('Date FROM', 'dynamic-content-for-elementor'), 'label_block' => \true, 'type' => Controls_Manager::TEXT, 'placeholder' => 'Y-m-d H:i:s', 'description' => __('If set the element will appear after this date', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_date_dynamic!' => ''], 'dynamic' => ['active' => \true]]);
             $element->add_control('dce_visibility_date_dynamic_to', ['label' => __('Date TO', 'dynamic-content-for-elementor'), 'label_block' => \true, 'type' => Controls_Manager::TEXT, 'placeholder' => 'Y-m-d H:i:s', 'description' => __('If set the element will be visible until this date', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_date_dynamic!' => ''], 'dynamic' => ['active' => \true]]);
@@ -331,7 +443,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
             $element->add_control('dce_visibility_parameter_method', ['label' => __('Parameter Method', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['GET' => 'GET', 'POST' => 'POST', 'REQUEST' => 'REQUEST', 'COOKIE' => 'COOKIE', 'SERVER' => 'SERVER'], 'default' => 'REQUEST', 'condition' => ['dce_visibility_parameter!' => '']]);
             $element->add_control('dce_visibility_parameter_status', ['label' => __('Parameter Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => Helper::compare_options(), 'default' => 'isset', 'toggle' => \false, 'label_block' => \true, 'condition' => ['dce_visibility_parameter!' => '']]);
             $element->add_control('dce_visibility_parameter_value', ['label' => __('Parameter Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('The specific value of the parameter', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_parameter!' => '', 'dce_visibility_parameter_status!' => ['not', 'isset']]]);
-            $element->add_control('dce_visibility_conditional_tags_site', ['label' => __('Site', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['is_dynamic_sidebar' => __('Dynamic sidebar', 'dynamic-content-for-elementor'), 'is_active_sidebar' => __('Active sidebar', 'dynamic-content-for-elementor'), 'is_rtl' => __('RTL', 'dynamic-content-for-elementor'), 'is_multisite' => __('Multisite', 'dynamic-content-for-elementor'), 'is_main_site' => __('Main site', 'dynamic-content-for-elementor'), 'is_child_theme' => __('Child theme', 'dynamic-content-for-elementor'), 'is_customize_preview' => __('Customize preview', 'dynamic-content-for-elementor'), 'is_multi_author' => __('Multi author', 'dynamic-content-for-elementor'), 'is feed' => __('Feed', 'dynamic-content-for-elementor'), 'is_trackback' => __('Trackback', 'dynamic-content-for-elementor')], 'multiple' => \true, 'separator' => 'before']);
+            $element->add_control('dce_visibility_conditional_tags_site', ['label' => __('Site', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => self::get_whitelist_site_functions(), 'multiple' => \true, 'separator' => 'before']);
             $element->add_control('dce_visibility_max_day', ['label' => __('Max per Day', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'separator' => 'before']);
             $element->add_control('dce_visibility_max_total', ['label' => __('Max Total', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'separator' => 'before']);
             $select_lang = [];
@@ -410,8 +522,8 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
             $element->add_control('dce_visibility_sibling', ['label' => __('Has Siblings', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for post with siblings', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_friend', ['label' => __('Has Term Buddies', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Triggered for posts grouped in taxonomies with other posts', 'dynamic-content-for-elementor'), 'separator' => 'before']);
             $element->add_control('dce_visibility_friend_term', ['label' => __('Terms where find Buddies', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Term Name', 'dynamic-content-for-elementor'), 'query_type' => 'terms', 'description' => __('Specific a Term for current post has friends.', 'dynamic-content-for-elementor'), 'multiple' => \true, 'label_block' => \true, 'condition' => ['dce_visibility_friend!' => '']]);
-            $element->add_control('dce_visibility_conditional_tags_post', ['label' => __('Conditional Tags - Post', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['is_sticky' => __('Is Sticky', 'dynamic-content-for-elementor'), 'is_post_type_hierarchical' => __('Is Hierarchical Post Type', 'dynamic-content-for-elementor'), 'is_post_type_archive' => __('Is Post Type Archive', 'dynamic-content-for-elementor'), 'comments_open' => __('Comments are open', 'dynamic-content-for-elementor'), 'pings_open' => __('Pings are open', 'dynamic-content-for-elementor'), 'has_tag' => __('Has Tags', 'dynamic-content-for-elementor'), 'has_term' => __('Has Terms', 'dynamic-content-for-elementor'), 'has_excerpt' => __('Has Excerpt', 'dynamic-content-for-elementor'), 'has_post_thumbnail' => __('Has Post Thumbnail', 'dynamic-content-for-elementor'), 'has_nav_menu' => __('Has Nav menu', 'dynamic-content-for-elementor')], 'multiple' => \true, 'separator' => 'before', 'condition' => ['dce_visibility_post_id' => 'current']]);
-            $element->add_control('dce_visibility_special', ['label' => __('Conditional Tags - Page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['is_front_page' => __('Front Page', 'dynamic-content-for-elementor'), 'is_home' => __('Home', 'dynamic-content-for-elementor'), 'is_404' => __('404 Not Found', 'dynamic-content-for-elementor'), 'is_single' => __('Single', 'dynamic-content-for-elementor'), 'is_page' => __('Page', 'dynamic-content-for-elementor'), 'is_attachment' => __('Attachment', 'dynamic-content-for-elementor'), 'is_preview' => __('Preview', 'dynamic-content-for-elementor'), 'is_admin' => __('Admin', 'dynamic-content-for-elementor'), 'is_page_template' => __('Page Template', 'dynamic-content-for-elementor'), 'is_comments_popup' => __('Comments Popup', 'dynamic-content-for-elementor'), 'is_woocommerce' => __('WooCommerce Page', 'dynamic-content-for-elementor'), 'is_shop' => __('Shop', 'dynamic-content-for-elementor'), 'is_product' => __('Product', 'dynamic-content-for-elementor'), 'is_product_taxonomy' => __('Product Taxonomy', 'dynamic-content-for-elementor'), 'is_product_category' => __('Product Category', 'dynamic-content-for-elementor'), 'is_product_tag' => __('Product Tag', 'dynamic-content-for-elementor'), 'is_cart' => __('Cart', 'dynamic-content-for-elementor'), 'is_checkout' => __('Checkout', 'dynamic-content-for-elementor'), 'is_add_payment_method_page' => __('Add Payment method', 'dynamic-content-for-elementor'), 'is_checkout_pay_page' => __('Checkout Page', 'dynamic-content-for-elementor'), 'is_account_page' => __('Account Page', 'dynamic-content-for-elementor'), 'is_edit_account_page' => __('Edit Account', 'dynamic-content-for-elementor'), 'is_lost_password_page' => __('Lost Password', 'dynamic-content-for-elementor'), 'is_view_order_page' => __('Order Summary', 'dynamic-content-for-elementor'), 'is_order_received_page' => __('Order Received', 'dynamic-content-for-elementor')], 'multiple' => \true, 'separator' => 'before', 'condition' => ['dce_visibility_post_id' => 'current']]);
+            $element->add_control('dce_visibility_conditional_tags_post', ['label' => __('Conditional Tags - Post', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => self::get_whitelist_post_functions(), 'multiple' => \true, 'separator' => 'before', 'condition' => ['dce_visibility_post_id' => 'current']]);
+            $element->add_control('dce_visibility_special', ['label' => __('Conditional Tags - Page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => self::get_whitelist_page_functions(), 'multiple' => \true, 'separator' => 'before', 'condition' => ['dce_visibility_post_id' => 'current']]);
         }
         if ($section == 'woocommerce') {
             if (Helper::is_woocommerce_active()) {
@@ -447,20 +559,18 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
             }
         }
         if ($section == 'events') {
-            $element->add_control('dce_visibility_events_note', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('Using an Event trigger is necessary in order to activate "Keep HTML" from base settings', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['dce_visibility_dom' => '']]);
-            $element->add_control('dce_visibility_event', ['label' => __('Event', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'click', 'options' => ['click' => 'click', 'mouseover' => 'mouseover', 'dblclick' => 'dblclick', 'touchstart' => 'touchstart', 'touchmove' => 'touchmove'], 'condition' => ['dce_visibility_dom!' => '']]);
-            $element->add_control('dce_visibility_click', ['label' => __('Trigger on this element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the Selector in jQuery format. For example #name', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_dom!' => '']]);
-            $element->add_control('dce_visibility_click_show', ['label' => __('Show Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_jquery_display_mode(), 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
-            $element->add_control('dce_visibility_click_other', ['label' => __('Hide other elements', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the Selector in jQuery format. For example .elements', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
-            $element->add_control('dce_visibility_click_toggle', ['label' => __('Toggle', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
-            $element->add_control('dce_visibility_load', ['label' => __('On Page Load', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_visibility_dom!' => ''], 'separator' => 'before']);
-            $element->add_control('dce_visibility_load_delay', ['label' => __('Delay time', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 0, 'default' => 0, 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_load!' => '']]);
-            $element->add_control('dce_visibility_load_show', ['label' => __('Show Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_jquery_display_mode(), 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_load!' => '']]);
+            $element->add_control('dce_visibility_events_note', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('Using an Event trigger is necessary to activate "Keep HTML" from settings', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['dce_visibility_dom' => '']]);
+            $element->add_control('dce_visibility_event', ['frontend_available' => \true, 'label' => __('Event', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'click', 'options' => ['click' => 'click', 'mouseover' => 'mouseover', 'dblclick' => 'dblclick', 'touchstart' => 'touchstart', 'touchmove' => 'touchmove'], 'condition' => ['dce_visibility_dom!' => '']]);
+            $element->add_control('dce_visibility_click', ['frontend_available' => \true, 'label' => __('Trigger on this element', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the Selector in jQuery format. For example #name', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true], 'condition' => ['dce_visibility_dom!' => '']]);
+            $element->add_control('dce_visibility_click_show', ['frontend_available' => \true, 'label' => __('Show Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_jquery_display_mode(), 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
+            $element->add_control('dce_visibility_click_other', ['frontend_available' => \true, 'label' => __('Hide other elements', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Type here the Selector in jQuery format. For example .elements', 'dynamic-content-for-elementor'), 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
+            $element->add_control('dce_visibility_click_toggle', ['frontend_available' => \true, 'label' => __('Toggle', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_click!' => '']]);
+            $element->add_control('dce_visibility_load', ['frontend_available' => \true, 'label' => __('On Page Load', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_visibility_dom!' => ''], 'separator' => 'before']);
+            $element->add_control('dce_visibility_load_delay', ['frontend_available' => \true, 'label' => __('Delay time', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 0, 'default' => 0, 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_load!' => '']]);
+            $element->add_control('dce_visibility_load_show', ['frontend_available' => \true, 'label' => __('Show Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_jquery_display_mode(), 'condition' => ['dce_visibility_dom!' => '', 'dce_visibility_load!' => '']]);
         }
         if ($section == 'archive') {
-            // https://codex.wordpress.org/Conditional_Tags
-            // https://codex.wordpress.org/Special:SpecialPages
-            $element->add_control('dce_visibility_archive', ['label' => __('Archive Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['is_blog' => __('Home blog (latest posts)', 'dynamic-content-for-elementor'), 'posts_page' => __('Posts page', 'dynamic-content-for-elementor'), 'is_tax' => __('Taxonomy', 'dynamic-content-for-elementor'), 'is_category' => __('Category', 'dynamic-content-for-elementor'), 'is_tag' => __('Tag', 'dynamic-content-for-elementor'), 'is_author' => __('Author', 'dynamic-content-for-elementor'), 'is_date' => __('Date', 'dynamic-content-for-elementor'), 'is_year' => __('Year', 'dynamic-content-for-elementor'), 'is_month' => __('Month', 'dynamic-content-for-elementor'), 'is_day' => __('Day', 'dynamic-content-for-elementor'), 'is_time' => __('Time', 'dynamic-content-for-elementor'), 'is_new_day' => __('New Day', 'dynamic-content-for-elementor'), 'is_search' => __('Search', 'dynamic-content-for-elementor'), 'is_paged' => __('Paged', 'dynamic-content-for-elementor'), 'is_main_query' => __('Main Query', 'dynamic-content-for-elementor'), 'in_the_loop' => __('In the Loop', 'dynamic-content-for-elementor')], 'separator' => 'before']);
+            $element->add_control('dce_visibility_archive', ['label' => __('Archive Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => self::get_whitelist_archive_functions(), 'separator' => 'before']);
             // TODO: specify what Category, Tag or CustomTax
             $element->add_control('dce_visibility_archive_tax', ['label' => __('Taxonomy', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $taxonomies, 'multiple' => \false, 'separator' => 'before', 'condition' => ['dce_visibility_archive' => 'is_tax']]);
             foreach ($taxonomies as $tkey => $atax) {
@@ -599,43 +709,60 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
             }
         }
     }
-    public static function get_fallback($settings, $element = null)
+    /**
+     * @param array<mixed> $settings
+     * @return string|false
+     */
+    public static function get_fallback_content($settings)
     {
         if (!empty($settings['dce_visibility_fallback'])) {
             if (isset($settings['dce_visibility_fallback_type']) && $settings['dce_visibility_fallback_type'] == 'template') {
-                $fallback_content = do_shortcode('[dce-elementor-template id="' . $settings['dce_visibility_fallback_template'] . '"]');
+                return do_shortcode('[dce-elementor-template id="' . $settings['dce_visibility_fallback_template'] . '"]');
             } else {
-                $fallback_content = $settings['dce_visibility_fallback_text'];
+                return $settings['dce_visibility_fallback_text'];
             }
-            if ($fallback_content && (!isset($settings['dce_visibility_fallback_section']) || $settings['dce_visibility_fallback_section'] == 'yes')) {
-                // BUG - Fix it
-                if ($element->get_type() == 'section') {
-                    $fallback_content = '
-							<div class="elementor-element elementor-column elementor-col-100 elementor-top-column" data-element_type="column">
-								<div class="elementor-column-wrap elementor-element-populated">
-									<div class="elementor-widget-wrap">
-										<div class="elementor-element elementor-widget">
-											<div class="elementor-widget-container dce-visibility-fallback">' . $fallback_content . '</div>
-										</div>
+        } else {
+            return \false;
+        }
+    }
+    /**
+     * Get Fallback
+     *
+     * @return string|null
+     */
+    public static function get_fallback($settings, $element)
+    {
+        $fallback_content = self::get_fallback_content($settings);
+        if (!$fallback_content) {
+            return;
+        }
+        if ($element->get_type() == 'section' && (!isset($settings['dce_visibility_fallback_section']) || $settings['dce_visibility_fallback_section'] == 'yes')) {
+            $fallback_content = '
+						<div class="elementor-element elementor-column elementor-col-100 elementor-top-column" data-element_type="column">
+							<div class="elementor-column-wrap elementor-element-populated">
+								<div class="elementor-widget-wrap">
+									<div class="elementor-element elementor-widget">
+										<div class="elementor-widget-container dce-visibility-fallback">' . $fallback_content . '</div>
 									</div>
 								</div>
-							</div>';
-                }
-                \ob_start();
-                $element->before_render();
-                echo $fallback_content;
-                $element->after_render();
-                $fallback_content = \ob_get_clean();
-            }
-            return $fallback_content;
+							</div>
+						</div>';
         }
-        return '';
+        \ob_start();
+        $element->before_render();
+        echo $fallback_content;
+        $element->after_render();
+        $fallback_content = \ob_get_clean();
+        return $fallback_content;
     }
     public static function is_hidden($element = null, $why = \false)
     {
         $settings = $element->get_settings_for_display();
         if (empty($settings['enabled_visibility'])) {
             return \false;
+        }
+        if (!\is_array($settings['dce_visibility_triggers'] ?? \false)) {
+            $settings['dce_visibility_triggers'] = [];
         }
         $triggers_n = 0;
         $conditions = [];
@@ -667,8 +794,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
             $triggers['dce_visibility_hidden'] = $conditions['dce_visibility_hidden'];
         } else {
             // DATETIME
-            if (empty($settings['dce_visibility_triggers']) || \in_array('datetime', $settings['dce_visibility_triggers'])) {
-                $everytimehidden = \false;
+            if (\in_array('datetime', $settings['dce_visibility_triggers'])) {
                 if ($settings['dce_visibility_date_dynamic']) {
                     if ($settings['dce_visibility_date_dynamic_from'] && $settings['dce_visibility_date_dynamic_to']) {
                         $triggers['date'] = __('Date Dynamic', 'dynamic-content-for-elementor');
@@ -680,7 +806,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if (current_time('timestamp') >= $dateFrom && current_time('timestamp') <= $dateTo) {
                             $conditions['date'] = __('Date Dynamic', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     } else {
                         if ($settings['dce_visibility_date_dynamic_from']) {
@@ -689,7 +814,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                             $triggers_n++;
                             if (current_time('timestamp') >= $dateFrom) {
                                 $conditions['dce_visibility_date_dynamic_from'] = __('Date Dynamic From', 'dynamic-content-for-elementor');
-                                $everytimehidden = \true;
                             }
                         }
                         if ($settings['dce_visibility_date_dynamic_to']) {
@@ -698,7 +822,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                             $triggers_n++;
                             if (current_time('timestamp') <= $dateTo) {
                                 $conditions['dce_visibility_date_dynamic_to'] = __('Date Dynamic To', 'dynamic-content-for-elementor');
-                                $everytimehidden = \true;
                             }
                         }
                     }
@@ -713,7 +836,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if (current_time('timestamp') >= $dateFrom && current_time('timestamp') <= $dateTo) {
                             $conditions['date'] = __('Date', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     } else {
                         if ($settings['dce_visibility_date_from']) {
@@ -722,7 +844,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                             $triggers_n++;
                             if (current_time('timestamp') >= $dateFrom) {
                                 $conditions['dce_visibility_date_from'] = __('Date From', 'dynamic-content-for-elementor');
-                                $everytimehidden = \true;
                             }
                         }
                         if ($settings['dce_visibility_date_to']) {
@@ -731,7 +852,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                             $triggers_n++;
                             if (current_time('timestamp') <= $dateTo) {
                                 $conditions['dce_visibility_date_to'] = __('Date To', 'dynamic-content-for-elementor');
-                                $everytimehidden = \true;
                             }
                         }
                     }
@@ -746,13 +866,11 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     if (\false !== $period_from && \false !== $period_to && $period_from->getTimestamp() <= $period_to->getTimestamp()) {
                         if (current_time('U') >= $period_from->getTimestamp() && current_time('U') <= $period_to->getTimestamp()) {
                             $conditions['period'] = __('Period', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     } elseif (\false !== $period_from && \false !== $period_to) {
                         // Period From > Period To. For example between 20 Dec - 11 Jan
                         if (current_time('U') >= $period_from->getTimestamp() || current_time('U') <= $period_to->getTimestamp()) {
                             $conditions['period'] = __('Period', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     }
                 } else {
@@ -761,7 +879,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if (date_i18n('m/d') >= $settings['dce_visibility_period_from']) {
                             $conditions['dce_visibility_period_from'] = __('Period From', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     }
                     if ($settings['dce_visibility_period_to']) {
@@ -769,7 +886,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if (date_i18n('m/d') <= $settings['dce_visibility_period_to']) {
                             $conditions['dce_visibility_period_to'] = __('Period To', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     }
                 }
@@ -778,7 +894,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     $triggers_n++;
                     if (\in_array(current_time('w'), $settings['dce_visibility_time_week'])) {
                         $conditions['dce_visibility_time_week'] = __('Day of Week', 'dynamic-content-for-elementor');
-                        $everytimehidden = \true;
                     }
                 }
                 if ($settings['dce_visibility_time_from'] && $settings['dce_visibility_time_to']) {
@@ -791,13 +906,11 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     if ($time_from <= $time_to) {
                         if (current_time('H:i') >= $time_from && current_time('H:i') <= $time_to) {
                             $conditions['time'] = __('Time', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     } else {
                         // Time From > Time To. For example between 18:00 - 07:00
                         if (current_time('H:i') >= $time_from || current_time('H:i') <= $time_to) {
                             $conditions['time'] = __('Time', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     }
                 } else {
@@ -807,7 +920,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if (current_time('H:i') >= $time_from) {
                             $conditions['dce_visibility_time_from'] = __('Time From', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     }
                     if ($settings['dce_visibility_time_to']) {
@@ -816,15 +928,13 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if (current_time('H:i') <= $time_to) {
                             $conditions['dce_visibility_time_to'] = __('Time To', 'dynamic-content-for-elementor');
-                            $everytimehidden = \true;
                         }
                     }
                 }
             }
             // USER & ROLES
-            if (empty($settings['dce_visibility_triggers']) || \in_array('user', $settings['dce_visibility_triggers'])) {
+            if (\in_array('user', $settings['dce_visibility_triggers'])) {
                 if (!isset($settings['dce_visibility_everyone']) || !$settings['dce_visibility_everyone']) {
-                    $everyonehidden = \false;
                     //roles
                     if (isset($settings['dce_visibility_role']) && !empty($settings['dce_visibility_role'])) {
                         $triggers['dce_visibility_role'] = __('User Role', 'dynamic-content-for-elementor');
@@ -836,18 +946,24 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                                 $user_roles = [$user_roles];
                             }
                             if (\is_array($settings['dce_visibility_role'])) {
-                                $tmp_role = \array_intersect($user_roles, $settings['dce_visibility_role']);
                                 $triggers_n++;
-                                if (!empty($tmp_role)) {
-                                    $conditions['dce_visibility_role'] = __('User Role', 'dynamic-content-for-elementor');
-                                    $everyonehidden = \true;
+                                if (($settings['dce_visibility_role_all'] ?? 'no') === 'yes') {
+                                    \sort($user_roles);
+                                    \sort($settings['dce_visibility_role']);
+                                    if ($user_roles === $settings['dce_visibility_role']) {
+                                        $conditions['dce_visibility_role'] = __('User Role', 'dynamic-content-for-elementor');
+                                    }
+                                } else {
+                                    $tmp_role = \array_intersect($user_roles, $settings['dce_visibility_role']);
+                                    if (!empty($tmp_role)) {
+                                        $conditions['dce_visibility_role'] = __('User Role', 'dynamic-content-for-elementor');
+                                    }
                                 }
                             }
                         } else {
                             $triggers_n++;
                             if (\in_array('visitor', $settings['dce_visibility_role'])) {
                                 $conditions['dce_visibility_role'] = __('User not logged', 'dynamic-content-for-elementor');
-                                $everyonehidden = \true;
                             }
                         }
                     }
@@ -877,7 +993,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if ($is_user) {
                             $conditions['dce_visibility_users'] = __('Specific User', 'dynamic-content-for-elementor');
-                            $everyonehidden = \true;
                         }
                     }
                     if (isset($settings['dce_visibility_can']) && $settings['dce_visibility_can']) {
@@ -890,7 +1005,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if ($user_can) {
                             $conditions['dce_visibility_can'] = __('User can', 'dynamic-content-for-elementor');
-                            $everyonehidden = \true;
                         }
                     }
                     if (isset($settings['dce_visibility_usermeta']) && !empty($settings['dce_visibility_usermeta'])) {
@@ -902,7 +1016,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         } else {
                             $usermeta = $current_user->{$settings['dce_visibility_usermeta']};
                         }
-                        $condition_result = self::condition_satisfy($usermeta, $settings['dce_visibility_usermeta_status'], $settings['dce_visibility_usermeta_value']);
+                        $condition_result = Helper::is_condition_satisfied($usermeta, $settings['dce_visibility_usermeta_status'], $settings['dce_visibility_usermeta_value']);
                         $triggers_n++;
                         if ($condition_result) {
                             $conditions['dce_visibility_usermeta'] = __('User Field', 'dynamic-content-for-elementor');
@@ -944,14 +1058,21 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                             $referrers = \array_map('trim', $referrers);
                             $ref_found = \false;
                             foreach ($referrers as $aref) {
-                                if ($aref == $referrer || $aref == \str_replace('www.', '', $referrer) || $aref == $_SERVER['HTTP_REFERER']) {
-                                    $ref_found = \true;
+                                if ($settings['dce_visibility_referrer_host_only'] === 'yes') {
+                                    if ($aref == $referrer || $aref == \str_replace('www.', '', $referrer) || $aref == $_SERVER['HTTP_REFERER']) {
+                                        $ref_found = \true;
+                                    }
+                                } else {
+                                    $arefnh = \preg_replace('$^https?://$', '', $aref);
+                                    $refnh = \preg_replace('$^https?://$', '', $_SERVER['HTTP_REFERER']);
+                                    if ($arefnh === $refnh) {
+                                        $ref_found = \true;
+                                    }
                                 }
                             }
                             $triggers_n++;
                             if ($ref_found) {
                                 $conditions['dce_visibility_referrer_list'] = __('Referer', 'dynamic-content-for-elementor');
-                                $everyonehidden = \true;
                             }
                         }
                     }
@@ -962,7 +1083,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if (\in_array($_SERVER['REMOTE_ADDR'], $ips)) {
                             $conditions['dce_visibility_ip'] = __('Remote IP', 'dynamic-content-for-elementor');
-                            $everyonehidden = \true;
                         }
                     }
                 }
@@ -983,7 +1103,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                 }
             }
             // DEVICE
-            if (empty($settings['dce_visibility_triggers']) || \in_array('device', $settings['dce_visibility_triggers'])) {
+            if (\in_array('device', $settings['dce_visibility_triggers'])) {
                 if (!isset($settings['dce_visibility_device']) || !$settings['dce_visibility_device']) {
                     $ahidden = \false;
                     // responsive
@@ -1022,9 +1142,8 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                 }
             }
             // POST
-            if (empty($settings['dce_visibility_triggers']) || \in_array('post', $settings['dce_visibility_triggers'])) {
+            if (\in_array('post', $settings['dce_visibility_triggers'])) {
                 if (!isset($settings['dce_visibility_context']) || !$settings['dce_visibility_context']) {
-                    $contexthidden = \false;
                     // cpt
                     if (isset($settings['dce_visibility_cpt']) && !empty($settings['dce_visibility_cpt']) && \is_array($settings['dce_visibility_cpt'])) {
                         $triggers['dce_visibility_cpt'] = __('Post Type', 'dynamic-content-for-elementor');
@@ -1032,7 +1151,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if (\in_array($cpt, $settings['dce_visibility_cpt'])) {
                             $conditions['dce_visibility_cpt'] = __('Post Type', 'dynamic-content-for-elementor');
-                            $contexthidden = \true;
                         }
                     }
                     // post
@@ -1046,18 +1164,13 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if (\in_array($post_ID, $visibility_post)) {
                             $conditions['dce_visibility_post'] = __('Post', 'dynamic-content-for-elementor');
-                            $contexthidden = \true;
                         }
                     }
                     if (isset($settings['dce_visibility_tax']) && $settings['dce_visibility_tax']) {
                         $triggers['dce_visibility_tax'] = __('Taxonomy', 'dynamic-content-for-elementor');
                         $tax = get_post_taxonomies();
                         $triggers_n++;
-                        if (!\in_array($settings['dce_visibility_tax'], $tax)) {
-                            $conditions['dce_visibility_tax'] = __('Taxonomy', 'dynamic-content-for-elementor');
-                            $contexthidden = \true;
-                        } else {
-                            $triggers['terms'] = __('Terms', 'dynamic-content-for-elementor');
+                        if (\in_array($settings['dce_visibility_tax'], $tax)) {
                             // term
                             $terms = get_the_terms($post_ID, $settings['dce_visibility_tax']);
                             $tmp = [];
@@ -1074,20 +1187,14 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                             $tkey = 'dce_visibility_term_' . $settings['dce_visibility_tax'];
                             if (!empty($settings[$tkey]) && \is_array($settings[$tkey])) {
                                 if (!empty($terms)) {
-                                    $triggers_n++;
                                     // Retrieve terms searched on the current language
                                     $term_searched_current_language = Helper::wpml_translate_object_id_by_type($settings[$tkey], $settings['dce_visibility_tax']);
                                     if (\array_intersect($terms, $term_searched_current_language)) {
-                                        $conditions[$tkey] = __('Terms', 'dynamic-content-for-elementor');
-                                        $contexthidden = \true;
+                                        $conditions[$tkey] = __('Taxonomy', 'dynamic-content-for-elementor');
                                     }
                                 }
                             } else {
-                                $triggers_n++;
-                                if (!empty($terms)) {
-                                    $conditions['terms'] = __('Terms', 'dynamic-content-for-elementor');
-                                    $contexthidden = \true;
-                                }
+                                $conditions['dce_visibility_tax'] = __('Taxonomy', 'dynamic-content-for-elementor');
                             }
                         }
                     }
@@ -1126,13 +1233,12 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if ($metavalued) {
                             $conditions['dce_visibility_meta'] = __('Post Metas', 'dynamic-content-for-elementor');
-                            $contexthidden = \true;
                         }
                     }
                     if (isset($settings['dce_visibility_field']) && !empty($settings['dce_visibility_field'])) {
                         $triggers['dce_visibility_field'] = __('Post Field', 'dynamic-content-for-elementor');
                         $postmeta = Helper::get_post_value($post_ID, $settings['dce_visibility_field']);
-                        $condition_result = self::condition_satisfy($postmeta, $settings['dce_visibility_field_status'], $settings['dce_visibility_field_value']);
+                        $condition_result = Helper::is_condition_satisfied($postmeta, $settings['dce_visibility_field_status'], $settings['dce_visibility_field_value']);
                         $triggers_n++;
                         if ($condition_result) {
                             $conditions['dce_visibility_field'] = __('Post Field', 'dynamic-content-for-elementor');
@@ -1246,60 +1352,54 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         }
                     }
                 }
-                if (isset($settings['dce_visibility_conditional_tags_post']) && \is_array($settings['dce_visibility_conditional_tags_post']) && !empty($settings['dce_visibility_conditional_tags_post'])) {
-                    $triggers['dce_visibility_conditional_tags_post'] = __('Conditional tags Post', 'dynamic-content-for-elementor');
-                    $context_conditional_tags = \false;
-                    $post_type = get_post_type();
-                    foreach ($settings['dce_visibility_conditional_tags_post'] as $conditional_tags) {
-                        if (!$context_conditional_tags) {
-                            switch ($conditional_tags) {
-                                case 'is_post_type_hierarchical':
-                                case 'is_post_type_archive':
-                                    if (\is_callable($conditional_tags)) {
-                                        $context_conditional_tags = \call_user_func($conditional_tags, $post_type);
-                                    }
-                                    break;
-                                case 'has_post_thumbnail':
-                                    if (\is_callable($conditional_tags)) {
-                                        $context_conditional_tags = \call_user_func($conditional_tags, $post_ID);
-                                    }
-                                    break;
-                                default:
-                                    if (\is_callable($conditional_tags)) {
-                                        $context_conditional_tags = \call_user_func($conditional_tags);
-                                    }
-                            }
-                        }
-                    }
+                // Conditional Tags - Post
+                if (!empty($settings['dce_visibility_conditional_tags_post']) && \is_array($settings['dce_visibility_conditional_tags_post'])) {
                     $triggers_n++;
-                    if ($context_conditional_tags) {
-                        $conditions['dce_visibility_conditional_tags_post'] = __('Conditional tags Post', 'dynamic-content-for-elementor');
-                        $contexttags = \true;
+                    $callable_functions = \array_filter($settings['dce_visibility_conditional_tags_post'], function ($function) {
+                        return \in_array($function, \array_keys(self::get_whitelist_post_functions()), \true) && \is_callable($function);
+                    });
+                    $condition_satisfied = \false;
+                    foreach ($callable_functions as $function) {
+                        switch ($function) {
+                            case 'is_post_type_hierarchical':
+                            case 'is_post_type_archive':
+                                if (\call_user_func($function, get_post_type())) {
+                                    $condition_satisfied = \true;
+                                }
+                                break;
+                            case 'has_post_thumbnail':
+                                if (\call_user_func($function, $post_ID)) {
+                                    $condition_satisfied = \true;
+                                }
+                                break;
+                            default:
+                                if (\call_user_func($function)) {
+                                    $condition_satisfied = \true;
+                                }
+                        }
+                        if ($condition_satisfied) {
+                            $conditions['dce_visibility_conditional_tags_post'] = __('Conditional tags Post', 'dynamic-content-for-elementor');
+                            break;
+                        }
                     }
                 }
-                // specials
-                if (isset($settings['dce_visibility_special']) && \is_array($settings['dce_visibility_special']) && !empty($settings['dce_visibility_special'])) {
+                // Conditional Tags - Page
+                if (!empty($settings['dce_visibility_special']) && \is_array($settings['dce_visibility_special'])) {
                     $triggers['dce_visibility_special'] = __('Conditional tags Special', 'dynamic-content-for-elementor');
-                    $context_special = \false;
-                    foreach ($settings['dce_visibility_special'] as $special) {
-                        if (!$context_special) {
-                            switch ($special) {
-                                default:
-                                    if (\is_callable($special)) {
-                                        $context_special = \call_user_func($special);
-                                    }
-                            }
-                        }
-                    }
                     $triggers_n++;
-                    if ($context_special) {
-                        $conditions['dce_visibility_special'] = __('Conditional tags Special', 'dynamic-content-for-elementor');
-                        $contexttags = \true;
+                    $callable_functions = \array_filter($settings['dce_visibility_special'], function ($function) {
+                        return \in_array($function, \array_keys(self::get_whitelist_page_functions()), \true) && \is_callable($function);
+                    });
+                    foreach ($callable_functions as $function) {
+                        if (\call_user_func($function)) {
+                            $conditions['dce_visibility_special'] = __('Conditional tags Special', 'dynamic-content-for-elementor');
+                            break;
+                        }
                     }
                 }
             }
             // CONTEXT
-            if (empty($settings['dce_visibility_triggers']) || \in_array('context', $settings['dce_visibility_triggers'])) {
+            if (\in_array('context', $settings['dce_visibility_triggers'])) {
                 if (isset($settings['dce_visibility_parameter']) && $settings['dce_visibility_parameter']) {
                     $triggers['dce_visibility_parameter'] = __('Parameter', 'dynamic-content-for-elementor');
                     $my_val = null;
@@ -1322,7 +1422,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                                 $my_val = sanitize_text_field($_REQUEST[$settings['dce_visibility_parameter']]);
                             }
                     }
-                    $condition_result = self::condition_satisfy($my_val, $settings['dce_visibility_parameter_status'], $settings['dce_visibility_parameter_value']);
+                    $condition_result = Helper::is_condition_satisfied($my_val, $settings['dce_visibility_parameter_status'], $settings['dce_visibility_parameter_value']);
                     $triggers_n++;
                     if ($condition_result) {
                         $conditions['dce_visibility_parameter'] = __('Parameter', 'dynamic-content-for-elementor');
@@ -1383,29 +1483,21 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     }
                 }
                 if (!empty($settings['dce_visibility_conditional_tags_site']) && \is_array($settings['dce_visibility_conditional_tags_site'])) {
-                    $triggers['dce_visibility_conditional_tags_site'] = __('Conditional tags Site', 'dynamic-content-for-elementor');
-                    $context_conditional_tags = \false;
-                    foreach ($settings['dce_visibility_conditional_tags_site'] as $conditional_tags) {
-                        if (!$context_conditional_tags) {
-                            switch ($conditional_tags) {
-                                default:
-                                    if (\is_callable($conditional_tags)) {
-                                        $context_conditional_tags = \call_user_func($conditional_tags);
-                                    }
-                            }
-                        }
-                    }
                     $triggers_n++;
-                    if ($context_conditional_tags) {
-                        $conditions['dce_visibility_conditional_tags_site'] = __('Conditional tags Site', 'dynamic-content-for-elementor');
-                        $contexttags = \true;
+                    $callable_functions = \array_filter($settings['dce_visibility_conditional_tags_site'], function ($function) {
+                        return \in_array($function, \array_keys(self::get_whitelist_site_functions()), \true) && \is_callable($function);
+                    });
+                    foreach ($callable_functions as $function) {
+                        if (\call_user_func($function)) {
+                            $conditions['dce_visibility_conditional_tags_site'] = __('Conditional tags Site', 'dynamic-content-for-elementor');
+                            break;
+                        }
                     }
                 }
             }
             // ARCHIVE
-            if (empty($settings['dce_visibility_triggers']) || \in_array('archive', $settings['dce_visibility_triggers'])) {
+            if (\in_array('archive', $settings['dce_visibility_triggers'])) {
                 if (!empty($settings['dce_visibility_archive'])) {
-                    $triggers['dce_visibility_archive'] = __('Conditional tags Archive', 'dynamic-content-for-elementor');
                     $context_archive = \false;
                     $archive = $settings['dce_visibility_archive'];
                     switch ($archive) {
@@ -1419,7 +1511,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         case 'is_month':
                         case 'is_day':
                         case 'is_search':
-                            if (\is_callable($archive)) {
+                            if (\in_array($archive, \array_keys(self::get_whitelist_archive_functions()), \true) && \is_callable($archive)) {
                                 $context_archive = \call_user_func($archive);
                             }
                             break;
@@ -1472,7 +1564,6 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                         $triggers_n++;
                         if ($context_archive_advanced) {
                             $conditions['dce_visibility_archive'] = __('Archive', 'dynamic-content-for-elementor');
-                            $contexttags = \true;
                         }
                     }
                 }
@@ -1543,18 +1634,18 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     }
                 }
             }
-            if (empty($settings['dce_visibility_triggers']) || \in_array('dynamic_tag', $settings['dce_visibility_triggers'])) {
+            if (\in_array('dynamic_tag', $settings['dce_visibility_triggers'])) {
                 if (!empty($settings['__dynamic__']) && !empty($settings['__dynamic__']['dce_visibility_dynamic_tag'])) {
                     $triggers['dce_visibility_dynamic_tag'] = __('Dynamic Tag', 'dynamic-content-for-elementor');
                     $my_val = $settings['dce_visibility_dynamic_tag'];
-                    $condition_result = self::condition_satisfy($my_val, $settings['dce_visibility_dynamic_tag_status'], $settings['dce_visibility_dynamic_tag_value']);
+                    $condition_result = Helper::is_condition_satisfied($my_val, $settings['dce_visibility_dynamic_tag_status'], $settings['dce_visibility_dynamic_tag_value']);
                     $triggers_n++;
                     if ($condition_result) {
                         $conditions['dce_visibility_dynamic_tag'] = __('Dynamic Tag', 'dynamic-content-for-elementor');
                     }
                 }
             }
-            if (empty($settings['dce_visibility_triggers']) || \in_array('random', $settings['dce_visibility_triggers'])) {
+            if (\in_array('random', $settings['dce_visibility_triggers'])) {
                 if (!empty($settings['dce_visibility_random']['size'])) {
                     $triggers['dce_visibility_random'] = __('Random', 'dynamic-content-for-elementor');
                     $rand = \mt_rand(1, 100);
@@ -1565,7 +1656,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     }
                 }
             }
-            if (empty($settings['dce_visibility_triggers']) || \in_array('events', $settings['dce_visibility_triggers'])) {
+            if (\in_array('events', $settings['dce_visibility_triggers'])) {
                 if (!empty($settings['dce_visibility_click'])) {
                     $triggers['dce_visibility_click'] = __('On Event', 'dynamic-content-for-elementor');
                 }
@@ -1573,7 +1664,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     $triggers['dce_visibility_load'] = __('On Page Load', 'dynamic-content-for-elementor');
                 }
             }
-            if (empty($settings['dce_visibility_triggers']) || \in_array('woocommerce', $settings['dce_visibility_triggers'])) {
+            if (\in_array('woocommerce', $settings['dce_visibility_triggers'])) {
                 // WOOCOMMERCE
                 if (Helper::is_woocommerce_active()) {
                     if ('select' !== $settings['dce_visibility_woo_cart']) {
@@ -1586,7 +1677,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     if (!empty($settings['dce_visibility_woo_product_type']) && 'select' !== $settings['dce_visibility_woo_product_type']) {
                         $triggers['dce_visibility_woo_product_type'] = __('Product Type is', 'dynamic-content-for-elementor');
                         $product = \wc_get_product(get_the_ID());
-                        if ($product->is_type($settings['dce_visibility_woo_product_type'])) {
+                        if ($product && $product->is_type($settings['dce_visibility_woo_product_type'])) {
                             $conditions['dce_visibility_woo_product_type'] = __('Product Type is', 'dynamic-content-for-elementor');
                         }
                     }
@@ -1666,7 +1757,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     }
                 }
             }
-            if (empty($settings['dce_visibility_triggers']) || \in_array('myfastapp', $settings['dce_visibility_triggers'])) {
+            if (\in_array('myfastapp', $settings['dce_visibility_triggers'])) {
                 if (Helper::is_myfastapp_active() && isset($settings['dce_visibility_myfastapp']) && 'all' !== $settings['dce_visibility_myfastapp']) {
                     $triggers['dce_visibility_myfastapp'] = 'My FastAPP';
                     $headers = \getallheaders();
@@ -1676,7 +1767,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
                     }
                 }
             }
-            if (empty($settings['dce_visibility_triggers']) || \in_array('custom', $settings['dce_visibility_triggers'])) {
+            if (\in_array('custom', $settings['dce_visibility_triggers'])) {
                 // CUSTOM CONDITION
                 if (!isset($settings['dce_visibility_custom_condition']) || !$settings['dce_visibility_custom_condition']) {
                     if (isset($settings[self::CUSTOM_PHP_CONTROL_NAME]) && \preg_match('/\\S/', $settings[self::CUSTOM_PHP_CONTROL_NAME])) {
@@ -1707,7 +1798,7 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
         if ($hidden) {
             \DynamicContentForElementor\Elements::$elements_hidden[$element->get_id()]['triggers'] = $triggers;
             \DynamicContentForElementor\Elements::$elements_hidden[$element->get_id()]['conditions'] = $conditions;
-            \DynamicContentForElementor\Elements::$elements_hidden[$element->get_id()]['fallback'] = self::get_fallback($settings, $element);
+            \DynamicContentForElementor\Elements::$elements_hidden[$element->get_id()]['fallback'] = self::get_fallback_content($settings);
         }
         return $hidden;
     }
@@ -1733,256 +1824,8 @@ class DynamicVisibility extends \DynamicContentForElementor\Extensions\Extension
         return \false;
         //+exclude_end
     }
-    public function print_conditions($element, $settings = null)
-    {
-        if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            if (empty($settings)) {
-                $settings = $element->get_settings_for_display();
-            }
-            if ($settings['dce_visibility_debug']) {
-                $conditions = self::is_hidden($element, \true);
-                if (!empty($conditions)) {
-                    echo '<a onClick="jQuery(this).next().fadeToggle(); return false;" href="#box-visibility-debug-' . $element->get_ID() . '" class="dce-btn-visibility dce-btn-visibility-debug"><i class="dce-icon-visibility fa fa fa-eye exclamation-triangle" aria-hidden="true"></i></a>';
-                    echo '<div id="#box-visibility-debug-' . $element->get_ID() . '" class="dce-box-visibility-debug"><ul>';
-                    foreach ($conditions as $key => $value) {
-                        echo '<li>';
-                        echo $value;
-                        if (isset($settings[$key])) {
-                            echo ': ';
-                            if (\is_array($settings[$key])) {
-                                if ($key == 'dce_visibility_random') {
-                                    echo $settings[$key]['size'] . '%';
-                                } else {
-                                    echo \implode(', ', $settings[$key]);
-                                }
-                            } else {
-                                echo \print_r($settings[$key], \true);
-                            }
-                        }
-                        echo '</li>';
-                    }
-                    echo '</ul></div>';
-                }
-            }
-        }
-    }
-    public function print_scripts($element, $settings = null)
-    {
-        if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            if (empty($settings)) {
-                $settings = $element->get_settings_for_display();
-            }
-            if (empty($settings['dce_visibility_triggers']) || \in_array('events', $settings['dce_visibility_triggers'])) {
-                if ($settings['dce_visibility_click']) {
-                    switch ($settings['dce_visibility_click_show']) {
-                        case 'slide':
-                            $jFunction = 'slideDown';
-                            $jFunctionHide = 'slideUp';
-                            break;
-                        case 'fade':
-                            $jFunction = 'fadeIn';
-                            $jFunctionHide = 'fadeOut';
-                            break;
-                        default:
-                            $jFunction = 'removeClass("dce-visibility-element-hidden").show';
-                            $jFunctionHide = 'addClass("dce-visibility-element-hidden").hide';
-                    }
-                    $show = \true;
-                    if ($settings['dce_visibility_selected'] == 'hide') {
-                        $show = \false;
-                        $jFunction = $jFunctionHide;
-                    }
-                    if ($settings['dce_visibility_click_toggle']) {
-                        if ($settings['dce_visibility_click_show']) {
-                            $jFunctionToggle = $settings['dce_visibility_click_show'] . 'Toggle';
-                        } else {
-                            $jFunctionToggle = 'toggle';
-                        }
-                        $jFunction = $jFunctionToggle;
-                    } else {
-                        if ($show) {
-                            $jFunctionToggle = $jFunctionHide;
-                        } else {
-                            $jFunctionToggle = $jFunction;
-                        }
-                    }
-                    ?>
-						<script>
-						jQuery(function () {
-							jQuery('<?php 
-                    echo $settings['dce_visibility_click'];
-                    ?>').on('<?php 
-                    echo $settings['dce_visibility_event'];
-                    ?>', function () {
-
-								<?php 
-                    if ($settings['dce_visibility_click_other']) {
-                        ?>
-									jQuery('<?php 
-                        echo $settings['dce_visibility_click_other'];
-                        ?>').stop();
-
-									<?php 
-                        $other_css_classes_without_dots = \str_replace('.', '', $settings['dce_visibility_click_other']);
-                        $css_classes = '';
-                        if (isset($settings['_css_classes'])) {
-                            $css_classes = \str_replace($other_css_classes_without_dots, '', $settings['_css_classes']);
-                        }
-                        ?>
-
-									// Hide other elements
-									<?php 
-                        if (!empty($css_classes) && !empty($settings['_element_id'])) {
-                            ?>
-										// The element has got a CSS ID and a CSS Class
-										jQuery('<?php 
-                            echo $settings['dce_visibility_click_other'];
-                            ?>').not('#<?php 
-                            echo $settings['_element_id'];
-                            ?>.<?php 
-                            echo $css_classes;
-                            ?>').<?php 
-                            echo $jFunctionToggle;
-                            ?>(<?php 
-                            echo $settings['dce_visibility_click_show'] ? '400, function() {' : ');';
-                            ?>
-									<?php 
-                        } elseif (!empty($css_classes)) {
-                            ?>
-										// The element has got a CSS Class and it doesn't have a CSS ID
-										jQuery('<?php 
-                            echo $settings['dce_visibility_click_other'];
-                            ?>').not('.<?php 
-                            echo $css_classes;
-                            ?>').<?php 
-                            echo $jFunctionToggle;
-                            ?>(<?php 
-                            echo $settings['dce_visibility_click_show'] ? '400, function() {' : ');';
-                            ?>
-									<?php 
-                        } elseif (!empty($settings['_element_id'])) {
-                            ?>
-										// The element has got a CSS ID and it doesn't have a CSS Class
-										jQuery('<?php 
-                            echo $settings['dce_visibility_click_other'];
-                            ?>').not('#<?php 
-                            echo $settings['_element_id'];
-                            ?>').<?php 
-                            echo $jFunctionToggle;
-                            ?>(<?php 
-                            echo $settings['dce_visibility_click_show'] ? '400, function() {' : ');';
-                            ?>
-									<?php 
-                        } else {
-                            ?>
-										// The element doesn't have a CSS ID or a CSS Class
-										jQuery('<?php 
-                            echo $settings['dce_visibility_click_other'];
-                            ?>').not('.elementor-element-<?php 
-                            echo $element->get_id();
-                            ?>').<?php 
-                            echo $jFunctionToggle;
-                            ?>(<?php 
-                            echo $settings['dce_visibility_click_show'] ? '400, function() {' : ');';
-                            ?>
-									<?php 
-                        }
-                        ?>
-								<?php 
-                    }
-                    ?>
-
-								<?php 
-                    if (!empty($settings['_css_classes']) && !empty($settings['_element_id'])) {
-                        ?>
-									// The element has got a CSS ID and a CSS Class
-									jQuery("#<?php 
-                        echo $settings['_element_id'];
-                        ?>.<?php 
-                        echo $settings['_css_classes'];
-                        ?>")<?php 
-                        echo $settings['dce_visibility_click_show'] ? '.delay(400)' : '';
-                        ?>.<?php 
-                        echo $jFunction;
-                        ?>();
-								<?php 
-                    } elseif (!empty($css_classes)) {
-                        ?>
-									// The element has got a CSS Class and it doesn't have a CSS ID
-									jQuery('.<?php 
-                        echo $settings['_css_classes'];
-                        ?>')<?php 
-                        echo $settings['dce_visibility_click_show'] ? '.delay(400)' : '';
-                        ?>.<?php 
-                        echo $jFunction;
-                        ?>();
-								<?php 
-                    } elseif (!empty($settings['_element_id'])) {
-                        ?>
-									// The element has got a CSS ID and it doesn't have a CSS Class
-									jQuery('#<?php 
-                        echo $settings['_element_id'];
-                        ?>')<?php 
-                        echo $settings['dce_visibility_click_show'] ? '.delay(400)' : '';
-                        ?>.<?php 
-                        echo $jFunction;
-                        ?>();
-								<?php 
-                    } else {
-                        ?>
-									// The element doesn't have a CSS ID or a CSS Class
-									jQuery('.elementor-element-<?php 
-                        echo $element->get_id();
-                        ?>')<?php 
-                        echo $settings['dce_visibility_click_show'] ? '.delay(400)' : '';
-                        ?>.<?php 
-                        echo $jFunction;
-                        ?>();
-								<?php 
-                    }
-                    ?>
-
-					<?php 
-                    if ($settings['dce_visibility_click_other'] && $settings['dce_visibility_click_show']) {
-                        echo '});';
-                    }
-                    ?>
-							if (jQuery(this).attr('href') == '#') {
-								return false;
-				}
-				});
-				});
-				</script>
-					<?php 
-                }
-                if ($settings['dce_visibility_load']) {
-                    if ($settings['dce_visibility_load_show']) {
-                        $jFunctionToggle = $settings['dce_visibility_load_show'] . 'Toggle';
-                    } else {
-                        $jFunctionToggle = 'toggle';
-                    }
-                    ?>
-						<script>
-						jQuery(function () {
-								setTimeout(function () {
-									jQuery('.elementor-element-<?php 
-                    echo $element->get_id();
-                    ?>').<?php 
-                    echo $jFunctionToggle;
-                    ?>();
-				}, <?php 
-                    echo !empty($settings['dce_visibility_load_delay']) ? $settings['dce_visibility_load_delay'] : '0';
-                    ?>);
-				});
-				</script>
-					<?php 
-                }
-            }
-        }
-    }
     public function render_template($content, $widget)
     {
-        $settings = $widget->get_settings_for_display();
         $this->enqueue_all();
         return $content;
     }

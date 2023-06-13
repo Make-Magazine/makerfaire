@@ -96,7 +96,7 @@ class Exporter
                 }
                 $properties = ['SplObjectStorage' => ["\x00" => $properties]];
                 $arrayValue = (array) $value;
-            } elseif ($value instanceof \Serializable || $value instanceof \__PHP_Incomplete_Class || $value instanceof \DatePeriod || \PHP_VERSION_ID >= 80200 && ($value instanceof \DateTimeInterface || $value instanceof \DateTimeZone || $value instanceof \DateInterval)) {
+            } elseif ($value instanceof \Serializable || $value instanceof \__PHP_Incomplete_Class || \PHP_VERSION_ID < 80200 && $value instanceof \DatePeriod) {
                 ++$objectsCount;
                 $objectsPool[$value] = [$id = \count($objectsPool), \serialize($value), [], 0];
                 $value = new Reference($id);
@@ -133,6 +133,7 @@ class Exporter
                 }
                 if (null !== $sleep) {
                     if (!isset($sleep[$n]) || $i && $c !== $class) {
+                        unset($arrayValue[$name]);
                         continue;
                     }
                     $sleep[$n] = \false;
@@ -147,6 +148,9 @@ class Exporter
                         \trigger_error(\sprintf('serialize(): "%s" returned as member variable from __sleep() but does not exist', $n), \E_USER_NOTICE);
                     }
                 }
+            }
+            if (\method_exists($class, '__unserialize')) {
+                $properties = $arrayValue;
             }
             prepare_value:
             $objectsPool[$value] = [$id = \count($objectsPool)];
@@ -181,7 +185,7 @@ class Exporter
             case '' === $value:
                 return "''";
             case $value instanceof \UnitEnum:
-                return \ltrim(\var_export($value, \true), '\\');
+                return '\\' . \ltrim(\var_export($value, \true), '\\');
         }
         if ($value instanceof Reference) {
             if (0 <= $value->id) {

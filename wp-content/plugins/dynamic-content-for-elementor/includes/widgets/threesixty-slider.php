@@ -59,7 +59,7 @@ class ThreesixtySlider extends \DynamicContentForElementor\Widgets\WidgetPrototy
         foreach ($images as $image) {
             $pieces = \explode('.', $image);
             $ext = \strtolower(\array_pop($pieces));
-            if (\in_array($ext, array('svg', 'jpg', 'png', 'gif'))) {
+            if (\in_array($ext, array('svg', 'jpg', 'png', 'gif', 'webp'))) {
                 $total_frame++;
                 $settings['format_file'] = $ext;
             }

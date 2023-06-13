@@ -37,6 +37,8 @@ class Document extends AbstractTag
     protected $subPathInit;
     protected $pathBBox;
     protected $viewBox;
+    /** @var resource */
+    protected $parser;
     /** @var SurfaceInterface */
     protected $surface;
     /** @var AbstractTag[] */
@@ -55,7 +57,7 @@ class Document extends AbstractTag
         \xml_parser_set_option($parser, \XML_OPTION_CASE_FOLDING, \false);
         \xml_set_element_handler($parser, array($this, "_tagStart"), array($this, "_tagEnd"));
         \xml_set_character_data_handler($parser, array($this, "_charData"));
-        return $parser;
+        return $this->parser = $parser;
     }
     public function __construct()
     {

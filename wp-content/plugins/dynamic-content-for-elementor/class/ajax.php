@@ -21,14 +21,11 @@ class Ajax
         add_action('wp_ajax_dce_get_next_post', array($this, 'dce_get_next_post'));
         add_action('wp_ajax_nopriv_dce_get_next_post', array($this, 'dce_get_next_post'));
         add_action('wp_ajax_dce_visibility_is_hidden', array($this, 'dce_visibility_is_hidden'));
-        add_action('wp_ajax_dce_visibility_toggle', array($this, 'dce_visibility_toggle'));
         // Ajax page open Actions
         add_action('wp_ajax_modale_action', array($this, 'dce_ajax_action'));
         add_action('wp_ajax_nopriv_modale_action', array($this, 'dce_ajax_action'));
         add_action('wp_ajax_dualview_action', array($this, 'dce_dual_view_ajax_action'));
         add_action('wp_ajax_nopriv_dualview_action', array($this, 'dce_dual_view_ajax_action'));
-        add_action('wp_ajax_dce_finder_search', array($this, 'dce_finder_search'));
-        add_action('wp_ajax_nopriv_dce_finder_search', array($this, 'dce_finder_search'));
         add_action('wp_ajax_dce_elementor_template', array($this, 'dce_elementor_template'));
         add_action('wp_ajax_nopriv_dce_elementor_template', array($this, 'dce_elementor_template'));
         add_action('wp_ajax_dce_add_to_favorites', [$this, 'add_to_favorites']);
@@ -64,30 +61,28 @@ class Ajax
     public function wpa_update_postmetas()
     {
         // The $_REQUEST contains all the data sent via ajax
-        if (isset($_REQUEST)) {
-            $post_id = 0;
-            if (isset($_REQUEST['post_id'])) {
-                $post_id = \intval($_REQUEST['post_id']);
-            }
-            if ($post_id) {
-                foreach ($_REQUEST as $key => $value) {
-                    if ($key != 'action' && $key != 'post_id') {
-                        if ($value) {
-                            $tmp = get_post_meta($post_id, $key, \true);
-                            if (\is_array($value)) {
-                                if (!empty($tmp)) {
-                                    $value = \array_merge($tmp, $value);
-                                }
+        $post_id = 0;
+        if (isset($_REQUEST['post_id'])) {
+            $post_id = \intval($_REQUEST['post_id']);
+        }
+        if ($post_id) {
+            foreach ($_REQUEST as $key => $value) {
+                if ($key != 'action' && $key != 'post_id') {
+                    if ($value) {
+                        $tmp = get_post_meta($post_id, $key, \true);
+                        if (\is_array($value)) {
+                            if (!empty($tmp)) {
+                                $value = \array_merge($tmp, $value);
                             }
-                            update_post_meta($post_id, $key, $value);
-                        } else {
-                            delete_post_meta($post_id, $key);
                         }
+                        update_post_meta($post_id, $key, $value);
+                    } else {
+                        delete_post_meta($post_id, $key);
                     }
                 }
-            } else {
-                return \false;
             }
+        } else {
+            return \false;
         }
         echo wp_json_encode($_REQUEST);
         // Always die in functions echoing ajax content
@@ -97,20 +92,18 @@ class Ajax
     public function wpa_update_options()
     {
         // The $_REQUEST contains all the data sent via ajax
-        if (isset($_REQUEST)) {
-            foreach ($_REQUEST as $key => $value) {
-                if ($key != 'action') {
-                    if ($value) {
-                        if (\is_array($value)) {
-                            $tmp = get_option($key);
-                            if (!empty($tmp)) {
-                                $value = \array_merge($tmp, $value);
-                            }
+        foreach ($_REQUEST as $key => $value) {
+            if ($key != 'action') {
+                if ($value) {
+                    if (\is_array($value)) {
+                        $tmp = get_option($key);
+                        if (!empty($tmp)) {
+                            $value = \array_merge($tmp, $value);
                         }
-                        update_option($key, $value);
-                    } else {
-                        delete_option($key);
                     }
+                    update_option($key, $value);
+                } else {
+                    delete_option($key);
                 }
             }
         }
@@ -162,47 +155,16 @@ class Ajax
         wp_die();
         // this is required to terminate immediately and return a proper response
     }
-    public function dce_visibility_toggle()
-    {
-        // The $_REQUEST contains all the data sent via ajax
-        if (isset($_REQUEST)) {
-            if (isset($_REQUEST['element_id']) && isset($_REQUEST['post_id'])) {
-                $element_id = sanitize_text_field($_REQUEST['element_id']);
-                $post_id = \intval($_REQUEST['post_id']);
-                if ($post_id) {
-                    $settings = \DynamicContentForElementor\Helper::get_settings_by_id($element_id, $post_id);
-                    if (isset($settings['enabled_visibility']) && $settings['enabled_visibility']) {
-                        if (\DynamicContentForElementor\Extensions\DynamicVisibility::is_hidden($settings)) {
-                            \DynamicContentForElementor\Helper::set_settings_by_id($element_id, 'enabled_visibility', null, $post_id);
-                        } else {
-                            \DynamicContentForElementor\Helper::set_settings_by_id($element_id, 'dce_visibility_hidden', 'yes', $post_id);
-                        }
-                    } else {
-                        \DynamicContentForElementor\Helper::set_settings_by_id($element_id, 'enabled_visibility', 'yes', $post_id);
-                        \DynamicContentForElementor\Helper::set_settings_by_id($element_id, 'dce_visibility_hidden', 'yes', $post_id);
-                    }
-                }
-            }
-        }
-        echo sanitize_text_field($_REQUEST['element_id']);
-        // Always die in functions echoing ajax content
-        wp_die();
-        // this is required to terminate immediately and return a proper response
-    }
     public function dce_visibility_is_hidden()
     {
         // The $_REQUEST contains all the data sent via ajax
-        if (isset($_REQUEST)) {
-            if (isset($_REQUEST['element_id']) && isset($_REQUEST['post_id'])) {
-                $element_id = sanitize_text_field($_REQUEST['element_id']);
-                $post_id = \intval($_REQUEST['post_id']);
-                $settings = \DynamicContentForElementor\Helper::get_settings_by_id($element_id, $post_id);
-                if (isset($settings['enabled_visibility']) && $settings['enabled_visibility']) {
-                    if (\DynamicContentForElementor\Extensions\DynamicVisibility::is_hidden($settings)) {
-                        echo $element_id;
-                        wp_die();
-                    }
-                }
+        if (isset($_REQUEST['element_id']) && isset($_REQUEST['post_id'])) {
+            $element_id = sanitize_text_field($_REQUEST['element_id']);
+            $post_id = \intval($_REQUEST['post_id']);
+            $settings = \DynamicContentForElementor\Helper::get_settings_by_id($element_id, $post_id);
+            if (!empty($settings['enabled_visibility']) && \DynamicContentForElementor\Extensions\DynamicVisibility::is_hidden($settings)) {
+                echo $element_id;
+                wp_die();
             }
         }
         echo '0';
@@ -210,7 +172,13 @@ class Ajax
         wp_die();
         // this is required to terminate immediately and return a proper response
     }
-    public function wpa_dce_get_next_post($id = null)
+    /**
+     * Get Next Post
+     *
+     * @param string $id
+     * @return void
+     */
+    public function dce_get_next_post($id = null)
     {
         $ret = array();
         // The $_REQUEST contains all the data sent via ajax
@@ -314,55 +282,5 @@ class Ajax
             self::get_template_for_ajax($template_id, $obj_id, $type);
         }
         wp_die();
-    }
-    //https://premium.wpmudev.org/blog/how-to-use-ajax-in-wordpress-to-load-search-results/
-    public function dce_finder_search()
-    {
-        $ret = array();
-        // The $_REQUEST contains all the data sent via ajax
-        if (isset($_REQUEST)) {
-            $eid = sanitize_text_field($_REQUEST['eid']);
-            $pid = \intval($_REQUEST['post_id']);
-            $search = sanitize_text_field($_REQUEST['search']);
-            $settings = \DynamicContentForElementor\Helper::get_settings_by_id($eid, $pid);
-            $posts_id = array();
-            global $wpdb;
-            $search = esc_sql($search);
-            $title_results = $wpdb->get_results("SELECT ID FROM {$wpdb->prefix}posts WHERE post_status LIKE 'publish' AND post_title LIKE '%" . $search . "%'", OBJECT);
-            if (!empty($title_results)) {
-                foreach ($title_results as $key => $title_result) {
-                    $posts_id[] = $title_result->ID;
-                }
-            }
-            $taxonomies = array();
-            if (!empty($settings)) {
-                if ($settings['taxonomies']) {
-                    $taxonomies = get_taxonomies();
-                    $taxonomies_terms = \DynamicContentForElementor\Helper::get_taxonomies_terms();
-                }
-            }
-            $taxonomies_html = '';
-            $taxonomies_html = \var_export($settings, \true);
-            $args = array('post__in' => $posts_id);
-            $posts = array();
-            foreach ($posts_id as $pid) {
-                $posts[$pid] = array('title' => wp_kses_post(get_the_title($pid)), 'thumb' => get_the_post_thumbnail($pid), 'excerpt' => get_the_excerpt($pid), 'permalink' => get_permalink($pid));
-            }
-            $posts_html = '';
-            foreach ($posts as $post_id => $apost) {
-                $featuredImageID = get_post_thumbnail_id($post_id);
-                if ($featuredImageID) {
-                    $featured_img_url = \Elementor\Group_Control_Image_Size::get_attachment_image_src($featuredImageID, 'size', $settings);
-                } else {
-                    $featured_img_url = $settings['custom_placeholder_image']['url'];
-                }
-                $posts_html .= '<div class="dce-finder-result-post dce-finder-result-post-card col">' . '<a href="' . $apost['permalink'] . '"><img src="' . $featured_img_url . '"></a>' . '<a href="' . $apost['permalink'] . '"><h4>' . $apost['title'] . '</h4></a>' . '<p>' . $apost['excerpt'] . '</p>' . '<a href="' . $apost['permalink'] . '" class="btn button">' . __('Read more', 'dynamic-content-for-elementor') . '</a>' . '</div>';
-            }
-            $ret = array('totals' => \count($posts), 'posts' => $posts_html, 'taxonomies' => $taxonomies_html);
-        }
-        echo wp_json_encode($ret);
-        // Always die in functions echoing ajax content
-        wp_die();
-        // this is required to terminate immediately and return a proper response
     }
 }

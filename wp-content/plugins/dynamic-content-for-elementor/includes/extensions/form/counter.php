@@ -20,6 +20,13 @@ class Counter extends \ElementorPro\Modules\Forms\Fields\Field_Base
     {
         // low priority because we want to update the counter after payments have been processed:
         add_action('elementor_pro/forms/process', [$this, 'update_counters'], 1000, 2);
+        add_filter("elementor_pro/forms/render/item/{$this->get_type()}", function ($item, $item_index, $form) {
+            // this is done to hide the label without using JS:
+            if (($item['dce_counter_hide'] ?? 'no') === 'yes') {
+                $form->add_render_attribute('field-group' . $item_index, 'style', 'display: none;');
+            }
+            return $item;
+        }, 10, 3);
     }
     public function get_script_depends()
     {
@@ -44,7 +51,7 @@ class Counter extends \ElementorPro\Modules\Forms\Fields\Field_Base
         if (is_wp_error($control_data)) {
             return;
         }
-        $field_controls = ['html_notice_value' => ['name' => 'html_notice_value', 'type' => Controls_Manager::RAW_HTML, 'raw' => \sprintf(esc_html__('Notice that the counter field is only increased after submit. The value shown in the page is not necessarily unique and %1$s does not represent %2$s the value the field will have while doing the Form Actions.', 'dynamic-content-for-elementor'), '<strong>', '</strong>'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'dce_counter_start' => ['name' => 'dce_counter_start', 'type' => Controls_Manager::NUMBER, 'label' => esc_html__('Start counter at', 'dynamic-content-for-elementor'), 'default' => 0, 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'dce_counter_step' => ['name' => 'dce_counter_step', 'type' => Controls_Manager::TEXT, 'label' => __('Counter Step', 'dynamic-content-for-elementor'), 'default' => '1', 'tab' => 'content', 'description' => esc_html__('A token or shortcode for another field can also be used.', 'dynamic-content-for-elementor'), 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()], 'dynamic' => ['active' => \true]], 'dce_counter_hide' => ['name' => 'dce_counter_hide', 'type' => Controls_Manager::SWITCHER, 'label' => esc_html__('Hide the counter', 'dynamic-content-for-elementor'), 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]]];
+        $field_controls = ['html_notice_value' => ['name' => 'html_notice_value', 'type' => Controls_Manager::RAW_HTML, 'raw' => \sprintf(esc_html__('Notice that the counter field is only increased after submit. The value shown in the page is not necessarily unique and %1$s does not represent %2$s the value the field will have while doing the Form Actions.', 'dynamic-content-for-elementor'), '<strong>', '</strong>'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'dce_counter_start' => ['name' => 'dce_counter_start', 'type' => Controls_Manager::NUMBER, 'label' => esc_html__('Start counter at', 'dynamic-content-for-elementor'), 'default' => 0, 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'dce_counter_step' => ['name' => 'dce_counter_step', 'type' => Controls_Manager::TEXT, 'label' => __('Counter Step', 'dynamic-content-for-elementor'), 'default' => '1', 'tab' => 'content', 'description' => esc_html__('A token or shortcode for another field can also be used.', 'dynamic-content-for-elementor'), 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()], 'dynamic' => ['active' => \true]], 'dce_counter_hide' => ['name' => 'dce_counter_hide', 'type' => Controls_Manager::SWITCHER, 'label' => esc_html__('Hide the counter', 'dynamic-content-for-elementor'), 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]], 'dce_counter_unique' => ['name' => 'dce_counter_unique', 'type' => Controls_Manager::SWITCHER, 'label' => esc_html__('Unique Counter', 'dynamic-content-for-elementor'), 'default' => 'yes', 'description' => esc_html__('This option affects the counter when the form is inside a template: ' . 'If on, the counter will have an unique value accross all occurences of the form. ' . 'If off, the counter will have a different value for each object the form is included in.', 'dynamic-content-for-elementor'), 'tab' => 'content', 'inner_tab' => 'form_fields_content_tab', 'tabs_wrapper' => 'form_fields_tabs', 'condition' => ['field_type' => $this->get_type()]]];
         $control_data['fields'] = $this->inject_field_controls($control_data['fields'], $field_controls);
         $widget->update_control('form_fields', $control_data);
     }
@@ -56,50 +63,52 @@ class Counter extends \ElementorPro\Modules\Forms\Fields\Field_Base
     {
         $post_id = \ElementorPro\Core\Utils::get_current_post_id();
         $meta = $this->get_meta_key($form->get_id(), $item['_id']);
+        if ($item['dce_counter_unique'] !== 'yes' && is_singular()) {
+            $post_id = get_the_ID();
+        }
         $value = get_post_meta($post_id, $meta, \true);
-        $is_edit_mode = \Elementor\Plugin::$instance->editor->is_edit_mode();
-        if ($value === '') {
-            if ($is_edit_mode) {
-                $msg = esc_html__('Counter not initialized. You need to view the form at least once in the frontend page to set the counter to the initial value. After that the value can no longer be changed. But you have the option of deleting the counter and creating a new one with the same field name.', 'dynamic-content-for-elementor');
-                Helper::notice('', $msg);
-            } else {
-                $value = $item['dce_counter_start'];
-                if (!\is_numeric($value)) {
-                    Helper::notice(__('Error: Counter Value is not numeric.', 'dynamic-content-for-elementor'));
-                    return;
-                }
-                update_post_meta($post_id, $meta, $value);
-            }
+        if ($value === \false || $value === '') {
+            $value = $item['dce_counter_start'];
         }
-        if ($item['dce_counter_hide'] === 'yes') {
-            $form->add_render_attribute('input' . $item_index, 'type', 'hidden', \true);
-        } else {
-            $form->add_render_attribute('input' . $item_index, 'class', 'elementor-field-textual');
-            $form->add_render_attribute('input' . $item_index, 'readonly', \true);
-        }
+        $form->add_render_attribute('input' . $item_index, 'class', 'elementor-field-textual');
+        $form->add_render_attribute('input' . $item_index, 'readonly', \true);
         $form->add_render_attribute('input' . $item_index, 'value', $value, \true);
         echo '<input ' . $form->get_render_attribute_string('input' . $item_index) . '>';
     }
     public function validation($field, Form_Record $record, Ajax_Handler $ajax_handler)
     {
         $post_id = $_POST['post_id'];
-        $field__id = \DynamicContentForElementor\Helper::get_form_field_settings($field['id'], $record)['_id'];
+        $settings = \DynamicContentForElementor\Helper::get_form_field_settings($field['id'], $record);
+        if ($settings['dce_counter_unique'] !== 'yes' && isset($_POST['queried_id'])) {
+            $post_id = $_POST['queried_id'];
+        }
+        $field__id = $settings['_id'];
         $form_id = $record->get_form_settings('id');
         $meta = $this->get_meta_key($form_id, $field__id);
         $value = get_post_meta($post_id, $meta, \true);
-        if ($value === \false) {
-            $ajax_handler->add_admin_error_message(\sprintf(esc_html__('Counter Field %$1s value not found', 'dynamic-content-for-elementor'), $field['id']));
+        if ($value === \false || $value === '') {
+            $value = $settings['dce_counter_start'];
         }
+        // temporary value, needed for max submissions:
         $record->update_field($field['id'], 'value', $value);
         $record->update_field($field['id'], 'raw_value', $value);
     }
-    public function update_counter($post_id, $meta_key, $step)
+    /**
+     * Returns the final unique value of the field.
+     */
+    public function update_counter($post_id, $meta_key, $start, $step)
     {
         global $wpdb;
         $wpdb->query('start transaction');
         $curr = $wpdb->get_var($wpdb->prepare("select meta_value from {$wpdb->postmeta} where post_id = %d and meta_key = %s for update", $post_id, $meta_key));
-        $wpdb->update($wpdb->postmeta, ['meta_value' => $curr + $step], ['post_id' => $post_id, 'meta_key' => $meta_key]);
+        if ($curr === null) {
+            $curr = $start;
+            $res = $wpdb->insert($wpdb->postmeta, ['meta_value' => $curr + $step, 'post_id' => $post_id, 'meta_key' => $meta_key]);
+        } else {
+            $wpdb->update($wpdb->postmeta, ['meta_value' => $curr + $step], ['post_id' => $post_id, 'meta_key' => $meta_key]);
+        }
         $wpdb->query('commit');
+        return $curr;
     }
     public function get_step($step, $record)
     {
@@ -116,7 +125,6 @@ class Counter extends \ElementorPro\Modules\Forms\Fields\Field_Base
     }
     public function update_counters($record, $ajax_handler)
     {
-        $post_id = $_POST['post_id'];
         $form_id = $record->get_form_settings('id');
         $fields = $record->get_form_settings('form_fields');
         foreach ($fields as $field) {
@@ -129,7 +137,18 @@ class Counter extends \ElementorPro\Modules\Forms\Fields\Field_Base
                 $ajax_handler->add_admin_error_message(__('Counter Step is not numeric.', 'dynamic-content-for-elementor'));
                 return;
             }
-            $this->update_counter($post_id, $meta_key, $step);
+            $start = $field['dce_counter_start'];
+            if (!\is_numeric($start)) {
+                $ajax_handler->add_admin_error_message(__('Counter Start is not numeric.', 'dynamic-content-for-elementor'));
+                return;
+            }
+            $post_id = $_POST['post_id'];
+            if ($field['dce_counter_unique'] !== 'yes' && isset($_POST['queried_id'])) {
+                $post_id = $_POST['queried_id'];
+            }
+            $value = $this->update_counter($post_id, $meta_key, $start, $step);
+            $record->update_field($field['custom_id'], 'value', $value);
+            $record->update_field($field['custom_id'], 'raw_value', $value);
         }
     }
 }

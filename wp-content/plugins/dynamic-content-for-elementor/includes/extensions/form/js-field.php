@@ -24,10 +24,24 @@ if (!\defined('ABSPATH')) {
 class JsField extends \ElementorPro\Modules\Forms\Fields\Field_Base
 {
     public $depended_scripts = ['dce-js-field'];
+    /**
+     * @var int
+     */
+    private static $field_index = 0;
+    /**
+     * @return int
+     */
+    private function get_field_index()
+    {
+        return self::$field_index++;
+    }
     public function run_once()
     {
         $save_guard = \DynamicContentForElementor\Plugin::instance()->save_guard;
         $save_guard->register_unsafe_control('form', 'form_fields::dce_js_field_code');
+        add_action('wp_enqueue_scripts', function () {
+            wp_localize_script('dce-js-field', 'jsFieldLocale', ['syntaxError' => __('Your JS Field code contains errors, check the browser console!', 'dynamic-content-for-elementor'), 'returnError' => __('Your JS Field code should return a function.', 'dynamic-content-for-elementor')]);
+        }, 100);
     }
     public function __construct()
     {
@@ -83,19 +97,19 @@ class JsField extends \ElementorPro\Modules\Forms\Fields\Field_Base
             return;
         }
         $code = $item['dce_js_field_code'];
+        $field_index = $this->get_field_index();
         $full_code = <<<EOD
 jQuery(window).on('dce/jsfield-loaded', () => {
-\tdceJsField.registerRefresherGenerator("{$item['custom_id']}", (getField, updateSelf) => {
+\tdceJsField.registerRefresherGenerator({$field_index}, (getField, updateSelf) => {
 \t\t{$code}
 \t})
 });
 EOD;
         wp_add_inline_script('dce-js-field', $full_code, 'before');
-        wp_localize_script('dce-js-field', 'jsFieldLocale', ['syntaxError' => __('Your JS Field code contains errors, check the browser console!', 'dynamic-content-for-elementor'), 'returnError' => __('Your JS Field code should return a function.', 'dynamic-content-for-elementor')]);
         if ($item['dce_js_field_hide'] === 'yes') {
             $form->add_render_attribute('input' . $item_index, 'data-hide', 'yes');
         }
-        $form->add_render_attribute('input' . $item_index, 'data-field-id', $item['custom_id']);
+        $form->add_render_attribute('input' . $item_index, 'data-field-index', $field_index);
         $form->add_render_attribute('input' . $item_index, 'data-real-time', $item['dce_js_field_real_time'] ?? 'no');
         $form->add_render_attribute('input' . $item_index, 'class', 'elementor-field-textual');
         $form->add_render_attribute('input' . $item_index, 'type', 'text');

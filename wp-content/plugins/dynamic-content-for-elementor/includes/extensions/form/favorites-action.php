@@ -291,23 +291,8 @@ class FavoritesAction extends \ElementorPro\Modules\Forms\Classes\Action_Base
         }
         update_option('dce_favorite_cookies', $cookies_counter);
     }
-    /**
-     * On Export
-     *
-     * Clears form settings on export
-     * @access Public
-     * @param array<mixed> $element
-     * @return void
-     */
     public function on_export($element)
     {
-        $tmp = array();
-        if (!empty($element)) {
-            foreach ($element['settings'] as $key => $value) {
-                if ('dce_' === \substr($key, 0, 4)) {
-                    unset($element['settings'][$key]);
-                }
-            }
-        }
+        return $element;
     }
 }

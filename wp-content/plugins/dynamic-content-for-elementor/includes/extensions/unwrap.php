@@ -31,11 +31,11 @@ class Unwrap extends \DynamicContentForElementor\Extensions\ExtensionPrototype
             $section_exists = \Elementor\Plugin::instance()->controls_manager->get_control_from_stack($element->get_unique_name(), $section_name);
             if (!is_wp_error($section_exists)) {
                 // We can't and should try to add this section to the stack
-                return \false;
+                return;
             }
             $element->start_controls_section($section_name, ['tab' => Controls_Manager::TAB_ADVANCED, 'label' => __('Unwrap', 'dynamic-content-for-elementor')]);
             $element->end_controls_section();
-        }, 10, 2);
+        }, 10, 1);
         // Activate controls for elements
         add_action('elementor/element/wp-post/dce_section_unwrap_advanced/before_section_end', function ($element, $args) {
             $this->add_controls($element, $args);
@@ -56,7 +56,7 @@ class Unwrap extends \DynamicContentForElementor\Extensions\ExtensionPrototype
             $this->add_controls($element, $args);
         }, 10, 2);
         add_action('elementor/frontend/before_render', array($this, 'start_element'), 10, 2);
-        add_action('elementor/frontend/after_render', array($this, 'end_element'), 10, 2);
+        add_action('elementor/frontend/after_render', array($this, 'end_element'));
     }
     public function start_element($element = \false, $template_id = 0)
     {
