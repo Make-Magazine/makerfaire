@@ -39,7 +39,6 @@ function initializeStripeField(wrapper, $scope) {
 	const $elementsWrapper = $wrapper.find('.dce-stripe-elements');
 	const required = $elementsWrapper.attr('data-required') === 'true';
 	const fieldIndex = $elementsWrapper.attr('data-field-index');
-	const intentNonce = $elementsWrapper.attr('data-nonce');
 	const intentURL = $elementsWrapper.attr('data-intent-url');
 	const style = makeElementsStyle( {
 		color: $elementsWrapper.css('color'),
@@ -48,6 +47,14 @@ function initializeStripeField(wrapper, $scope) {
 		fontWeight: $elementsWrapper.css('font-weight'),
 		fontStyle: $elementsWrapper.css('font-style'),
 	});
+	const reenableSubmit = () => {
+		$submitButton.removeAttr('disabled');
+		$submitButton.removeClass('dce-submit-disabled');
+	}
+	const disableSubmit = () => {
+		$submitButton.attr('disabled', 'disabled');
+		$submitButton.addClass('dce-submit-disabled');
+	}
 	const cardElement = elements.create('card', {style: style, hidePostalCode: false });
 	const isCardEmpty = () => {
 		return $elementsWrapper.hasClass('StripeElement--empty');
@@ -60,7 +67,7 @@ function initializeStripeField(wrapper, $scope) {
 			card: cardElement,
 		}}).then((result) => {
 			if (result.error) {
-				$submitButton.removeAttr('disabled');
+				reenableSubmit();
 				$error.text(result.error.message);
 				$error.show();
 			} else {
@@ -77,7 +84,6 @@ function initializeStripeField(wrapper, $scope) {
 		let query = window.location.search.slice(1);
 		let url = intentURL + '&' + query;
 		let data = new FormData($form[0]);
-		data.set('intent_nonce', intentNonce);
 		data.set('field_index', fieldIndex);
 		return fetch(url, {
 			method: 'POST',
@@ -98,13 +104,13 @@ function initializeStripeField(wrapper, $scope) {
 		}
 		event.preventDefault();
 		event.stopImmediatePropagation();
-		$submitButton.attr('disabled', 'disabled');
+		disableSubmit();
 		$error.hide();
 		fetchClientSecret().then(data => {
 			if (! data.success) {
 				$error.text(data.data.message);
 				$error.show();
-				$submitButton.removeAttr('disabled');
+				reenableSubmit();
 			} else {
 				confirmPayment(data.data.client_secret, data.data.subscription_id);
 			}

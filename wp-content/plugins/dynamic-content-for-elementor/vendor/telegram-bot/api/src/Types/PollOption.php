@@ -3,7 +3,6 @@
 namespace DynamicOOOS\TelegramBot\Api\Types;
 
 use DynamicOOOS\TelegramBot\Api\BaseType;
-use DynamicOOOS\TelegramBot\Api\InvalidArgumentException;
 use DynamicOOOS\TelegramBot\Api\TypeInterface;
 /**
  * Class PollOption
@@ -46,6 +45,7 @@ class PollOption extends BaseType implements TypeInterface
     }
     /**
      * @param string $text
+     * @return void
      */
     public function setText($text)
     {
@@ -60,6 +60,7 @@ class PollOption extends BaseType implements TypeInterface
     }
     /**
      * @param int $voterCount
+     * @return void
      */
     public function setVoterCount($voterCount)
     {

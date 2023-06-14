@@ -28,7 +28,7 @@ class UserFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
     protected function safe_register_controls()
     {
         $this->start_controls_section('section_content', ['label' => $this->get_title()]);
-        $this->add_control('dce_user_user', ['label' => __('User', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['logged' => ['title' => __('Current User', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-key'], 'author' => ['title' => __('Author', 'dynamic-content-for-elementor'), 'icon' => 'eicon-pencil'], 'static' => ['title' => __('Select User', 'dynamic-content-for-elementor'), 'icon' => 'eicon-user-circle-o']], 'default' => 'logged', 'toggle' => \false]);
+        $this->add_control('dce_user_user', ['label' => __('User', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['logged' => __('Current User', 'dynamic-content-for-elementor'), 'author' => __('Author', 'dynamic-content-for-elementor'), 'static' => __('Select User', 'dynamic-content-for-elementor')], 'default' => 'logged', 'toggle' => \false]);
         $this->add_control('dce_user_user_id', ['label' => __('User ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'min' => 1, 'condition' => ['dce_user_user' => 'static']]);
         $this->add_control('dce_user_key', ['label' => __('Field Key', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Field key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'fields', 'object_type' => 'user', 'default' => 'display_name']);
         $this->add_control('icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS]);
@@ -55,14 +55,14 @@ class UserFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
         ], 'default' => 'dynamic']);
         $this->add_control('dce_user_raw', ['label' => __('Use Raw data', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Use value stored in usermeta, without any plugin modification', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_user_custom', ['label' => __('Custom HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[META_VALUE]', 'placeholder' => '[META_VALUE]', 'description' => __('Type here your content, you can use HTML and Tokens', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_type' => 'custom']]);
-        $this->add_control('dce_user_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'ul' => 'ul', 'ol' => 'ol', 'p' => 'p', '' => __('None', 'dynamic-content-for-elementor')], 'default' => 'span']);
+        $this->add_control('dce_user_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(['ul', 'ol'], \true), 'default' => 'span']);
         $this->end_controls_section();
         $this->start_controls_section('dce_user_section_repeater', ['label' => __('Repeater', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_type' => 'repeater']]);
         $this->add_control('dce_user_repeater', ['label' => __('Custom HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[ROW]', 'placeholder' => '[ROW]', 'description' => __('Type here your content, you can use HTML and Tokens like [ROW:field_1], [ROW:field_2] where field name is the sub field configured in the repeater', 'dynamic-content-for-elementor')]);
         $this->end_controls_section();
         // MULTIPLE
         $this->start_controls_section('dce_user_section_multiple', ['label' => __('Multiple values', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_type' => 'multiple']]);
-        $this->add_control('dce_user_multiple_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'li' => 'li', 'p' => 'p', 'custom' => __('Custom', 'dynamic-content-for-elementor'), '' => __('None', 'dynamic-content-for-elementor')]]);
+        $this->add_control('dce_user_multiple_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(['li', 'p', 'custom'], \true)]);
         $this->add_control('dce_user_multiple_custom', ['label' => __('Custom HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[SINGLE]', 'placeholder' => '[SINGLE]', 'description' => __('Type here your content, you can use HTML and Tokens', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_multiple_tag' => 'custom']]);
         $this->add_control('dce_user_multiple_separator', ['label' => __('Separator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'condition' => ['dce_user_multiple_tag!' => 'custom']]);
         $this->add_control('dce_user_multiple_separator_last', ['label' => __('Not on last item', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_user_multiple_tag!' => 'custom', 'dce_user_multiple_separator!' => '']]);
@@ -82,7 +82,7 @@ class UserFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('dce_user_id_type', ['label' => __('Object Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => 'post']);
         $this->add_control('dce_user_id_render_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['simple' => ['title' => __('Simple', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-link'], 'text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'simple']);
         $this->add_control('dce_user_id_render_type_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['dce_user_id_render_type' => 'template']]);
-        $this->add_control('dce_user_id_render_type_text', ['label' => __('Object html', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[post:thumb]<h4>[post:title]</h4><p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">' . __('Read More', 'dynamic-content-for-elementor') . '</a>', 'condition' => ['dce_user_id_render_type' => 'text']]);
+        $this->add_control('dce_user_id_render_type_text', ['label' => __('Object html', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[post:thumb]<h4>[post:title|esc_html]</h4><p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">' . __('Read More', 'dynamic-content-for-elementor') . '</a>', 'condition' => ['dce_user_id_render_type' => 'text']]);
         $this->end_controls_section();
         // TEXT
         $this->start_controls_section('dce_user_section_text', ['label' => __('Text', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_type' => 'text']]);
@@ -118,8 +118,8 @@ class UserFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('dce_user_button_css_id', ['label' => __('Button ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'default' => '', 'title' => __('Add your custom id WITHOUT the Pound key. e.g: my-id', 'dynamic-content-for-elementor'), 'label_block' => \false, 'description' => __('Please make sure the ID is unique and not used elsewhere on the page where this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'dynamic-content-for-elementor'), 'separator' => 'before']);
         $this->end_controls_section();
         //* FALLBACK for NO RESULTS *//
-        $this->start_controls_section('dce_user_section_fallback', ['label' => __('Fallback for the Empty Field', 'dynamic-content-for-elementor')]);
-        $this->add_control('dce_user_fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Show something when field is empty null, void, false or 0', 'dynamic-content-for-elementor')]);
+        $this->start_controls_section('dce_user_section_fallback', ['label' => __('Fallback', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_user_fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Show something when the field is empty null, void, false or 0', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_user_fallback_zero', ['label' => __('Consider 0 as empty', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_user_fallback!' => '']]);
         $this->add_control('dce_user_fallback_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'text', 'condition' => ['dce_user_fallback!' => '']]);
         $this->add_control('dce_user_fallback_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'description' => __('Use an Elementor Template as content, useful for complex structure', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_fallback!' => '', 'dce_user_fallback_type' => 'template']]);
@@ -127,7 +127,7 @@ class UserFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('dce_user_fallback_autop', ['label' => __('Remove auto paragraph', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['dce_user_fallback!' => '', 'dce_user_fallback_type' => 'text']]);
         $this->end_controls_section();
         $this->start_controls_section('dce_user_array_section', ['label' => __('Multiple Usermeta', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_array!' => '']]);
-        $this->add_control('dce_user_array_fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Show something when this post meta is not found', 'dynamic-content-for-elementor')]);
+        $this->add_control('dce_user_array_fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Show something when this user meta is not found', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_user_array_fallback_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'text', 'condition' => ['dce_user_array_fallback!' => '']]);
         $this->add_control('dce_user_array_fallback_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['dce_user_array_fallback!' => '', 'dce_user_array_fallback_type' => 'template']]);
         $this->add_control('dce_user_array_fallback_text', ['label' => __('Text Fallback', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => __('This field is empty.', 'dynamic-content-for-elementor'), 'description' => __('Type here your content, you can use HTML and Tokens', 'dynamic-content-for-elementor'), 'condition' => ['dce_user_array_fallback!' => '', 'dce_user_array_fallback_type' => 'text']]);
@@ -224,12 +224,20 @@ class UserFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
     protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
-        if (empty($settings) || !$settings['dce_user_key']) {
+        if (empty($settings)) {
+            return;
+        }
+        if (empty($settings['dce_user_key'])) {
+            Helper::notice('', __('Type a user field in the corresponding field', 'dynamic-content-for-elementor'));
             return;
         }
         switch ($settings['dce_user_user']) {
             case 'static':
                 $user_id = $settings['dce_user_user_id'];
+                if (empty($user_id)) {
+                    Helper::notice('', __('Type a user ID in the corresponding field', 'dynamic-content-for-elementor'));
+                    return;
+                }
                 break;
             case 'author':
                 $user_id = \false;

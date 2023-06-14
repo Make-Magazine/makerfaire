@@ -1,7 +1,8 @@
 (function ($) {
     var WidgetElements_ACFSliderHandler = function ($scope, $) {
         let elementSettings = dceGetElementSettings($scope);
-        let elementSwiper = $scope.find('.swiper-container')[0];
+		let swiper_class = elementorFrontend.config.experimentalFeatures.e_swiper_latest ? '.swiper' : '.swiper-container';
+        let elementSwiper = $scope.find(swiper_class);
         let id_scope = $scope.attr('data-id');
         let id_post = $scope.closest('.elementor').attr('data-post-id');
         let interleaveOffset = -0.5;
@@ -106,13 +107,12 @@
                             '<span class="' + totalClass + '"></span>';
                 },
             },
-
             // *********************************************************************************************
             // Navigation arrows
             spaceBetween: Number(elementSettings.slidesPerView) || 0,
             navigation: {
-                nextEl: id_post ? '.dce-elementor-post-' + id_post + ' .elementor-element-' + id_scope + ' .next-' + id_scope : '.next-' + id_scope,
-                prevEl: id_post ? '.dce-elementor-post-' + id_post + ' .elementor-element-' + id_scope + ' .prev-' + id_scope : '.prev-' + id_scope,
+				nextEl: $scope.find('.swiper-button-next')[0],
+				prevEl: $scope.find('.swiper-button-prev')[0],
             },
             // And if we need scrollbar
             scrollbar: '.swiper-scrollbar',
@@ -121,13 +121,7 @@
         if (elementSettings.useAutoplay) {
             //default
             swiperOptions = $.extend(swiperOptions, {autoplay: true});
-
-            var autoplayDelay = Number(elementSettings.autoplay);
-            if (!autoplayDelay) {
-                autoplayDelay = 3000;
-            } else {
-                autoplayDelay = Number(elementSettings.autoplay);
-            }
+            var autoplayDelay = Number(elementSettings.autoplay) || 3000;
             swiperOptions = $.extend(swiperOptions, {autoplay: {delay: autoplayDelay, disableOnInteraction: Boolean(elementSettings.autoplayDisableOnInteraction), stopOnLastSlide: Boolean(elementSettings.autoplayStopOnLast)}});
         }
 
@@ -157,15 +151,11 @@
         }
 
         if ($scope.find('.swiper-slide').length > 1){
-            if ( 'undefined' === typeof Swiper ) {
-              const asyncSwiper = elementorFrontend.utils.swiper;
-
-              new asyncSwiper( jQuery( elementSwiper ), swiperOptions ).then( ( newSwiperInstance ) => {
-                  dce_swiper = newSwiperInstance;
-                } );
-              } else {
-                dce_swiper = new Swiper( jQuery( elementSwiper ), swiperOptions );
-              }
+			const asyncSwiper = elementorFrontend.utils.swiper;
+			
+			new asyncSwiper( elementSwiper, swiperOptions ).then( ( newSwiperInstance ) => {
+				dce_swiper = newSwiperInstance;
+			} ).catch( error => console.log(error) );
 
             if (elementSettings.useAutoplay && elementSettings.autoplayStopOnHover) {
                 $(elementSwiper).on({

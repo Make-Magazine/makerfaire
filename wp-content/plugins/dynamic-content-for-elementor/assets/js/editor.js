@@ -17,6 +17,40 @@ function posts_v2_item_id_to_label(id) {
 	return posts_v2_item_label_localization[id];
 }
 
+// Add WP_Query args in Context Menu
+elementor.hooks.addFilter( 'elements/widget/contextMenuGroups', function ( groups, element ) {
+	// Features with collection "dynamic-posts"
+	let features = dce_features_collection_dynamic_posts;
+
+	if ( ! features.includes( element.options.model.get('widgetType') ) ) {
+		return groups;
+	}
+
+	groups.push(
+		{
+			name: 'dce_dynamic_collection_query_args',
+			actions: [
+				{
+					name: 'dce_dynamic_collection_query_args',
+					title: 'Get Query Args for Debug',
+					icon: 'icon-dyn-logo-dce',
+					callback: function() {
+						let query_args = jQuery( element.el ).find( '.dce-posts-container' ).data( 'dce-debug-query-args' );
+						query_args = JSON.stringify( query_args, null, 2 );
+		
+						navigator.clipboard.writeText( query_args ).then( function() {
+							elementor.notifications.showToast( {
+								message: 'WP_Query Args copied to clipboard',
+							} );
+						} );
+					}
+				}
+			]
+		}
+	);
+	return groups;
+});
+
 // Loading the section items in the widget Dynamic Posts is extremely slow.
 // We thus want to give a feedback to the user that the section is actually loading.
 jQuery(window).on('elementor:init', function () {
@@ -68,23 +102,6 @@ function dce_get_element_id_from_cid(cid) {
     return eid;
 }
 
-function dce_get_setting_name(einput) {
-    if (einput.hasClass('elementor-input')) {
-        if (einput.data('setting') == 'url') {
-            var settingName = '';
-            jQuery.each(einput.closest('.elementor-control').attr('class').split(' '), function (index, element) {
-                if (index == 1) {
-                    settingName = element.replace('elementor-control-', '');
-                    return false;
-                }
-            });
-            if (settingName) {
-                return settingName;
-            }
-        }
-    }
-    return einput.data('setting');
-}
 function dce_getimageSizes(url, callback) {
     var img = new Image();
     img.crossOrigin = "anonymous";
@@ -115,11 +132,6 @@ jQuery(function () {
                 return elementorCommon.api.route("".concat(namespace, "/settings"));
                 }
             };
-            // Elementor v2 backwards compatibility
-            if (elementor.config.version.split('.')[0] == 2){
-                groupName = 'settings';
-                beforeItem = 'elementor-settings';
-            }
             elementorCommon.api.bc.ensureTab(namespace, 'settings', menuItemOptions.pageName);
             elementor.modules.layouts.panel.pages.menu.Menu.addItem(menuItemOptions, groupName, beforeItem);
         });
@@ -144,7 +156,7 @@ jQuery(function () {
     });
     //---- global settings -----
     var inputSelector = ".elementor-control-selector_wrapper.elementor-control-type-text input, .elementor-control-selector_header.elementor-control-type-text input";
-    var detect_contet_frame = function ($content) {
+    var detect_content_frame = function ($content) {
 
         var iFrameDOM = jQuery("iframe#elementor-preview-iframe").contents();
         var classController = ".elementor-control-dce_smoothtransition_class_controller input, .elementor-control-dce_trackerheader_class_controller input";
@@ -162,14 +174,13 @@ jQuery(function () {
             var sectorList = $content.split(',');
             var sectorListLength = sectorList.length;
             var countSelectorValid = 0;
-            sectorList.forEach(selectotIteration);
-            function selectotIteration(value) {
+            sectorList.forEach(selectorIteration);
+            function selectorIteration(value) {
                 value = value.trim();
                 if (iFrameDOM.find(value).length && value.length > 1 && (value.substring(0, 1) == '.' || value.substring(0, 1) == '#')) {
                     countSelectorValid++;
                 }
             }
-
             if (countSelectorValid >= sectorListLength) {
                 jQuery(".dce-class-debug").text('Detected').addClass('detected');
                 jQuery(classController).val('detected').trigger('input');
@@ -181,7 +192,7 @@ jQuery(function () {
     };
     var detect_from_text = function ($target) {
         var selectorVal = $target;
-        detect_contet_frame(selectorVal);
+        detect_content_frame(selectorVal);
     };
     jQuery(document).on('mousedown', '#elementor-panel-dynamicooo-settings, .elementor-panel-menu-item-undefined', function (e) {
         setTimeout(function () {
@@ -241,7 +252,7 @@ jQuery(window).on('elementor:init', function () {
                 escapeMarkup: function escapeMarkup(markup) {
                     return markup;
                 },
-                minimumInputLength: 1
+                minimumInputLength: 2
             });
         },
 		// translate with an ajax post ids to post titles.
@@ -256,7 +267,7 @@ jQuery(window).on('elementor:init', function () {
                 ids = [ids];
             }
 			// no translation needed for these query types:
-			if(queryType === 'pods' || queryType === 'acf' || queryType === 'jet') {
+			if(queryType === 'pods' || queryType === 'acf' || queryType === 'jet' || queryType === 'metabox' || queryType === 'metabox_relationship' ) {
 				let t = {}
 				for (id of ids) {
 					t[id] = id; // Label is the same as the value.

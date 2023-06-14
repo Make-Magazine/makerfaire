@@ -3,16 +3,13 @@
 		var WidgetElements_SvgDistortionHandler = function ( $scope,$ ) {
 			var elementSettings = dceGetElementSettings( $scope );
 			var id_scope = $scope.attr( 'data-id' );
-
-			var imgDisplacment = elementSettings.displacement_image.url;
-
 			var image_url = $scope.find( '.dce_distortion' ).attr( 'data-dispimage' );
 
 			if ( ! image_url ) {
 				return;
 			}
 
-			// Il filtro displacenent
+			// Il filtro displacement
 			var feDisp = $scope.find( 'feDisplacementMap#displacement-map' )[ 0 ];
 			// L'immagine di distorsione
 			var feImage = $scope.find( 'feImage#displacement-image' )[ 0 ];
@@ -48,27 +45,20 @@
 
 				if ( random_animation ) {
 					random_animation_range = Number( elementSettings.random_animation_range.size );
-
 					var scaleMap_rand_min = Number( scaleMap - random_animation_range );
 					var scaleMap_rand_max = Number( scaleMap + random_animation_range );
-
-					var scaleImage_rand_min = Number( scaleImage - random_animation_range );
-					var scaleImage_rand_max = Number( scaleImage + random_animation_range );
 
 					// parto dal valore 1 impostato
 					var random_val_1 = scaleMap;
 					// passo ad un valore casuale compreso nel range
 					var random_val_2 = getRandomValue( scaleMap_rand_min,scaleMap_rand_max );
-
 				}
 
 			}
 			// per tutte le animazioni
 			if ( elementSettings.svg_trigger != 'static' ) {
-
 				var animation_delay = elementSettings.delay_animation.size || 1;
 				var animation_speed = elementSettings.speed_animation.size || 3;
-
 				var easing_animation_ease = elementSettings.easing_animation_ease || 'Power3';
 				var easing_animation = elementSettings.easing_animation || 'easeInOut';
 				var easeFunction = easing_animation_ease + '.' + easing_animation;
@@ -77,7 +67,6 @@
 
 			// in caso di random vado dal valore di partenza ad un valore a caso vicino (considero un range)
 
-			var is_running = false;
 			var run = $( '#dce-svg-' + id_scope ).attr( 'data-run' );
 
 			// pulisco tutto
@@ -95,34 +84,16 @@
 				   ' a' ).off( 'touchend' );
 			}
 
-			var svg_trigger = elementSettings.svg_trigger;
 			var tl = new gsap.timeline( { repeat:-1,repeatDelay:animation_delay } );
 			var tli = new gsap.timeline( { repeat:-1,repeatDelay:animation_delay } );
 
-			var interrompi = function () {
-				tl.pause( 0 );
-				tli.pause( 0 );
-				is_running = false;
-			};
 			var ferma = function () {
 				tl.pause();
 				tli.pause();
-				is_running = false;
 			};
 			var riproduci = function () {
 				tl.play();
 				tli.play();
-				is_running = true;
-			};
-			var inverti = function () {
-				tl.reverse();
-				tli.reverse();
-				is_running = true;
-			}
-			var riprendi = function () {
-				tl.restart();
-				tli.restart();
-				is_running = true;
 			};
 
 			var playShapeEl = function () {
@@ -143,10 +114,9 @@
 					requestAnimationFrame( repeatOften );
 
 				}
-
 				requestAnimationFrame( repeatOften );
 			};
-			// ------------------ ANIMATIONS
+			// Animations
 			var moveFnComplete = function () {
 				random_val_1 = random_val_2;
 				random_val_2 = getRandomValue( scaleMap_rand_min,scaleMap_rand_max );
@@ -203,7 +173,6 @@
 						animation_speed
 					);
 				}
-				is_running = true;
 				if ( run == 'paused' && elementorFrontend.isEditMode() ) {
 					ferma();
 				} else {
@@ -273,14 +242,13 @@
 					0
 				);
 			};
-			// ------------------- SCROLL
+			// Scroll
 			var active_scrollAnalysi = function ( $el ) {
 				if ( $el ) {
 
 					tl = new gsap.timeline( { repeat:0,paused:true, } );
 
 					var runAnim = function ( dir ) {
-						//
 						if ( dir == 'down' ) {
 
 							tl.to(
@@ -340,9 +308,6 @@
 						}
 					};
 					var waypointOptions = {
-						/*offset: function() {
-						 return -this.element.clientHeight
-						 },*/
 						triggerOnce:false,
 						continuous:true
 					};
@@ -372,8 +337,7 @@
 
 				active_scrollAnalysi( '#dce-svg-' + id_scope );
 			}
-
-			//
+			
 			function getRandomValue( min,max ) {
 				min = Math.ceil( min );
 				max = Math.floor( max );

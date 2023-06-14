@@ -10,13 +10,6 @@ if (!\defined('ABSPATH')) {
 // Exit if accessed directly
 class PhpRaw extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
-    public function show_in_panel()
-    {
-        if (!current_user_can('administrator')) {
-            return \false;
-        }
-        return \true;
-    }
     /**
      * Register controls after check if this feature is only for admin
      *

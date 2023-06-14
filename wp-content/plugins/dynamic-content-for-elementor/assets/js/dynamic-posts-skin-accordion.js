@@ -77,4 +77,6 @@ jQuery(window).on('elementor/frontend/init', function () {
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-my-posts.accordion', Widget_DCE_Dynamicposts_accordion_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-sticky-posts.accordion', Widget_DCE_Dynamicposts_accordion_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.accordion', Widget_DCE_Dynamicposts_accordion_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-metabox-relationship.accordion', Widget_DCE_Dynamicposts_accordion_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-acf-relationship.accordion', Widget_DCE_Dynamicposts_accordion_Handler);
 });

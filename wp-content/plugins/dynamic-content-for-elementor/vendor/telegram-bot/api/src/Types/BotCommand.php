@@ -3,8 +3,9 @@
 namespace DynamicOOOS\TelegramBot\Api\Types;
 
 use DynamicOOOS\TelegramBot\Api\BaseType;
+use DynamicOOOS\TelegramBot\Api\Collection\CollectionItemInterface;
 use DynamicOOOS\TelegramBot\Api\TypeInterface;
-class BotCommand extends BaseType implements TypeInterface
+class BotCommand extends BaseType implements TypeInterface, CollectionItemInterface
 {
     /**
      * {@inheritdoc}
@@ -39,6 +40,7 @@ class BotCommand extends BaseType implements TypeInterface
     }
     /**
      * @param string $command
+     * @return void
      */
     public function setCommand($command)
     {
@@ -53,6 +55,7 @@ class BotCommand extends BaseType implements TypeInterface
     }
     /**
      * @param string $description
+     * @return void
      */
     public function setDescription($description)
     {

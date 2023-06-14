@@ -38,6 +38,8 @@ class FiltersParser
     private function match_regex($regex)
     {
         $matches = [];
+        // regex should always be anchored at the beginning of the string
+        $regex = $regex[0] . '\\G' . \substr($regex, 1);
         if (!\preg_match($regex, $this->str, $matches, 0, $this->current)) {
             return \false;
         }
@@ -81,7 +83,7 @@ class FiltersParser
     private function fn_name()
     {
         // The following is the precise regex for a function name.
-        $name = $this->match_regex('/\\G\\s*([a-zA-Z_\\x80-\\xff][a-zA-Z0-9_\\x80-\\xff]*)\\s*/');
+        $name = $this->match_regex('/\\s*([a-zA-Z_\\x80-\\xff][a-zA-Z0-9_\\x80-\\xff]*)\\s*/');
         if ($name === \false) {
             return 'error';
         }
@@ -102,7 +104,7 @@ class FiltersParser
     }
     private function skip_spaces()
     {
-        $this->match_regex('/\\G\\s*/');
+        $this->match_regex('/\\s*/');
     }
     private function fn_arg()
     {
@@ -120,7 +122,7 @@ class FiltersParser
             }
             $this->captures[] = $qstr;
         } else {
-            $arg = $this->match_regex('/\\G([^\\s,\\)]+)\\s*/');
+            $arg = $this->match_regex('/([^\\s,\\)]+)\\s*/');
             if ($arg === \false) {
                 return 'error';
             }
@@ -166,18 +168,18 @@ class FiltersParser
 class Tokens
 {
     const OPTIONS_WHITELIST = ['siteurl' => \true, 'home' => \true, 'blogname' => \true, 'blogdescription' => \true, 'start_of_week' => \true, 'posts_per_page' => \true, 'date_format' => \true, 'time_format' => \true, 'timezone_string' => \true, 'sticky_posts' => \true, 'elementor_version' => \true, 'www_user_roles' => \true, 'thumbnail_size_h' => \true, 'thumbnail_size_w' => \true, 'users_can_register' => \true, 'avatar_default' => \true];
-    const DEFAULT_FILTERS_WHITELIST = ['absint' => \true, 'array_keys' => \true, 'ceil' => \true, 'count' => \true, 'current_time' => \true, 'date' => \true, 'date_i18n' => \true, 'do_shortcode' => \true, 'empty' => \true, 'end' => \true, 'esc_attr' => \true, 'esc_html' => \true, 'esc_js' => \true, 'esc_textarea' => \true, 'esc_url' => \true, 'esc_url_raw' => \true, 'explode' => \true, 'filter_var' => \true, 'floatval' => \true, 'floor' => \true, 'get_cat_ID' => \true, 'get_cat_name' => \true, 'get_categories' => \true, 'get_category' => \true, 'get_category_by_path' => \true, 'get_category_by_slug' => \true, 'get_date_from_gmt' => \true, 'get_permalink' => \true, 'get_post' => \true, 'get_post_field' => \true, 'get_post_format' => \true, 'get_post_meta' => \true, 'get_post_status' => \true, 'get_post_type' => \true, 'get_tag' => \true, 'get_tags' => \true, 'get_taxonomies' => \true, 'get_taxonomy' => \true, 'get_term' => \true, 'get_term_by' => \true, 'get_the_author' => \true, 'get_the_category' => \true, 'get_the_category_by_ID' => \true, 'get_the_content' => \true, 'get_the_date' => \true, 'get_the_excerpt' => \true, 'get_the_ID' => \true, 'get_the_post_thumbnail' => \true, 'get_the_time' => \true, 'get_the_title' => \true, 'htmlentities2' => \true, 'implode' => \true, 'intval' => \true, 'json_decode' => \true, 'json_encode' => \true, 'max' => \true, 'md5' => \true, 'microtime' => \true, 'min' => \true, 'nl2br' => \true, 'rand' => \true, 'reset' => \true, 'round' => \true, 'rtrim' => \true, 'strsub' => \true, 'sanitize_email' => \true, 'sanitize_file_name' => \true, 'sanitize_html_class' => \true, 'sanitize_key' => \true, 'sanitize_mime_type' => \true, 'sanitize_option' => \true, 'sanitize_text_field' => \true, 'sanitize_title' => \true, 'sanitize_user' => \true, 'single_cat_title' => \true, 'single_tag_title' => \true, 'size_format' => \true, 'str_replace' => \true, 'str_shuffle' => \true, 'stripslashes' => \true, 'strlen' => \true, 'strpost' => \true, 'strrev' => \true, 'strtolower' => \true, 'strtotime' => \true, 'strtoupper' => \true, 'strtr' => \true, 'substr' => \true, 'the_category' => \true, 'the_ID' => \true, 'the_permalink' => \true, 'time' => \true, 'trim' => \true, 'ucwords' => \true, 'uniqid' => \true, 'urlencode' => \true, 'wordwrap' => \true, 'wp_count_posts' => \true, 'wp_filter_kses' => \true, 'wp_filter_nohtml_kses' => \true, 'wp_filter_post_kses' => \true, 'wp_get_attachment_image' => \true, 'wp_get_attachment_image_src' => \true, 'wp_get_attachment_link' => \true, 'wp_get_attachment_metadata' => \true, 'wp_get_attachment_thumb_file' => \true, 'wp_get_attachment_thumb_url' => \true, 'wp_get_attachment_url' => \true, 'wp_get_current_user' => \true, 'wp_kses' => \true, 'wp_kses_attr' => \true, 'wp_kses_post' => \true, 'wp_kses_post_deep' => \true, 'wp_list_pluck' => \true, 'wp_logout_url' => \true, 'wp_trim_words' => \true, 'wpautop' => \true];
+    const DEFAULT_FILTERS_WHITELIST = ['var_dump' => \true, 'absint' => \true, 'array_keys' => \true, 'ceil' => \true, 'count' => \true, 'current_time' => \true, 'date' => \true, 'date_i18n' => \true, 'do_shortcode' => \true, 'empty' => \true, 'end' => \true, 'esc_attr' => \true, 'esc_html' => \true, 'esc_js' => \true, 'esc_textarea' => \true, 'esc_url' => \true, 'esc_url_raw' => \true, 'explode' => \true, 'filter_var' => \true, 'floatval' => \true, 'floor' => \true, 'get_avatar' => \true, 'get_avatar_url' => \true, 'get_cat_ID' => \true, 'get_cat_name' => \true, 'get_categories' => \true, 'get_category' => \true, 'get_category_by_path' => \true, 'get_category_by_slug' => \true, 'get_date_from_gmt' => \true, 'get_permalink' => \true, 'get_post_field' => \true, 'get_post_format' => \true, 'get_post_status' => \true, 'get_post_type' => \true, 'get_tag' => \true, 'get_tags' => \true, 'get_taxonomies' => \true, 'get_taxonomy' => \true, 'get_term' => \true, 'get_term_by' => \true, 'get_the_author' => \true, 'get_the_category' => \true, 'get_the_category_by_ID' => \true, 'get_the_content' => \true, 'get_the_date' => \true, 'get_the_excerpt' => \true, 'get_the_ID' => \true, 'get_the_post_thumbnail' => \true, 'get_the_time' => \true, 'get_the_title' => \true, 'htmlentities2' => \true, 'implode' => \true, 'intval' => \true, 'json_decode' => \true, 'json_encode' => \true, 'max' => \true, 'md5' => \true, 'microtime' => \true, 'min' => \true, 'nl2br' => \true, 'rand' => \true, 'reset' => \true, 'round' => \true, 'rtrim' => \true, 'strsub' => \true, 'sanitize_email' => \true, 'sanitize_file_name' => \true, 'sanitize_html_class' => \true, 'sanitize_key' => \true, 'sanitize_mime_type' => \true, 'sanitize_option' => \true, 'sanitize_text_field' => \true, 'sanitize_title' => \true, 'sanitize_user' => \true, 'single_cat_title' => \true, 'single_tag_title' => \true, 'size_format' => \true, 'str_replace' => \true, 'str_shuffle' => \true, 'stripslashes' => \true, 'strlen' => \true, 'strpost' => \true, 'strrev' => \true, 'strtolower' => \true, 'strtotime' => \true, 'strtoupper' => \true, 'strtr' => \true, 'substr' => \true, 'the_category' => \true, 'the_ID' => \true, 'the_permalink' => \true, 'time' => \true, 'trim' => \true, 'ucwords' => \true, 'uniqid' => \true, 'urlencode' => \true, 'wordwrap' => \true, 'wp_count_posts' => \true, 'wp_filter_kses' => \true, 'wp_filter_nohtml_kses' => \true, 'wp_filter_post_kses' => \true, 'wp_get_attachment_image' => \true, 'wp_get_attachment_image_src' => \true, 'wp_get_attachment_link' => \true, 'wp_get_attachment_metadata' => \true, 'wp_get_attachment_thumb_file' => \true, 'wp_get_attachment_thumb_url' => \true, 'wp_get_attachment_url' => \true, 'wp_kses' => \true, 'wp_kses_attr' => \true, 'wp_kses_post' => \true, 'wp_kses_post_deep' => \true, 'wp_list_pluck' => \true, 'wp_logout_url' => \true, 'wp_trim_words' => \true, 'wpautop' => \true];
     /**
      * @var ?array<string, boolean>
      */
     private static $filters_whitelist;
     private static $filters_blacklist = ['__halt_compiler' => \true, 'apache_child_terminate' => \true, 'base64_decode' => \true, 'bzdecompress' => \true, 'call_user_func' => \true, 'call_user_func_array' => \true, 'call_user_method' => \true, 'call_user_method_array' => \true, 'convert_uudecode' => \true, 'file_get_contents' => \true, 'file_put_contents' => \true, 'fsockopen' => \true, 'gzdecode' => \true, 'gzinflate' => \true, 'gzuncompress' => \true, 'include' => \true, 'include_once' => \true, 'invokeargs' => \true, 'pcntl_exec' => \true, 'pcntl_fork' => \true, 'pfsockopen' => \true, 'posix_getcwd' => \true, 'posix_getpwuid' => \true, 'posix_getuid' => \true, 'posix_uname' => \true, 'ReflectionFunction' => \true, 'require' => \true, 'require_once' => \true, 'shell_exec' => \true, 'str_rot13' => \true, 'sys_get_temp_dir' => \true, 'wp_remote_fopen' => \true, 'wp_remote_get' => \true, 'wp_remote_head' => \true, 'wp_remote_post' => \true, 'wp_remote_request' => \true, 'wp_safe_remote_get' => \true, 'wp_safe_remote_head' => \true, 'wp_safe_remote_post' => \true, 'wp_safe_remote_request' => \true, 'zlib_decode' => \true, 'eval' => \true];
     /**
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public static function get_tokens_list()
     {
-        return ['form' => ['callback' => 'replace_form_tokens'], 'system' => ['callback' => 'replace_system_tokens'], 'date' => ['callback' => 'replace_date_tokens'], 'author' => ['callback' => 'replace_author_tokens'], 'user' => ['callback' => 'replace_user_tokens'], 'post' => ['callback' => 'replace_post_tokens'], 'term' => ['callback' => 'replace_term_tokens'], 'option' => ['callback' => 'replace_option_tokens', 'default_inactive' => \true], 'wp_query' => ['callback' => 'replace_wp_query_tokens'], 'query' => ['callback' => 'replace_query_tokens'], 'acf' => ['callback' => 'replace_acf_tokens'], 'product' => ['callback' => 'replace_product_tokens'], 'expr' => ['callback' => 'replace_expr_tokens']];
+        return ['form' => ['callback' => 'replace_form_tokens'], 'system' => ['callback' => 'replace_system_tokens'], 'date' => ['callback' => 'replace_date_tokens'], 'author' => ['callback' => 'replace_author_tokens'], 'user' => ['callback' => 'replace_user_tokens'], 'post' => ['callback' => 'replace_post_tokens'], 'term' => ['callback' => 'replace_term_tokens'], 'option' => ['callback' => 'replace_option_tokens'], 'wp_query' => ['callback' => 'replace_wp_query_tokens'], 'query' => ['callback' => 'replace_query_tokens'], 'acf' => ['callback' => 'replace_acf_tokens'], 'product' => ['callback' => 'replace_product_tokens'], 'expr' => ['callback' => 'replace_expr_tokens']];
     }
     /**
      * @return array<string, string>
@@ -186,23 +188,9 @@ class Tokens
     {
         $options = [];
         foreach (self::get_tokens_list() as $key => $token) {
-            $options[$key] = $key === 'post' ? 'post, jet' : $key;
+            $options[$key] = $key === 'post' ? 'post, jet, metabox' : $key;
         }
         return $options;
-    }
-    /**
-     * @return array<string>
-     */
-    public static function get_default_active_tokens()
-    {
-        $defaults = [];
-        foreach (self::get_tokens_list() as $key => $token) {
-            if ($token['default_inactive'] ?? \false) {
-                continue;
-            }
-            $defaults[] = $key;
-        }
-        return $defaults;
     }
     public static $data = \false;
     public static function do_tokens($text = '')
@@ -211,7 +199,12 @@ class Tokens
             return $text;
         }
         $tokens = self::get_tokens_list();
-        $active_tokens = get_option('dce_active_tokens', self::get_default_active_tokens());
+        $active_tokens = get_option('dce_active_tokens', \array_keys($tokens));
+        if (!\is_array($active_tokens)) {
+            // not clear how can this end up not being an array at this point,
+            // but it has happended.
+            $active_tokens = \array_keys($tokens);
+        }
         foreach ($tokens as $key => $token) {
             if (!\in_array($key, $active_tokens, \true)) {
                 continue;
@@ -271,7 +264,11 @@ class Tokens
                     // GET SUB ARRAY
                     $metaKey = \explode(':', $metaName);
                     $metaKey = \reset($metaKey);
-                    $replaceValue = \DynamicOOOS\jlawrence\eos\Parser::solve($metaKey);
+                    try {
+                        $replaceValue = \DynamicOOOS\jlawrence\eos\Parser::solve($metaKey);
+                    } catch (\Throwable $e) {
+                        $replaceValue = esc_html__('Expression Token Error', 'dynamic-content-for-elementor');
+                    }
                     if (\count($altriPezzi) == 2) {
                         // APPLY FILTERS
                         $replaceValue = self::apply_filters($replaceValue, \end($altriPezzi));
@@ -420,6 +417,12 @@ class Tokens
     }
     public static function replace_post_tokens($text)
     {
+        if (\DynamicContentForElementor\Helper::is_jetengine_active()) {
+            $text = \str_replace('[jet:', '[post:', $text);
+        }
+        if (\DynamicContentForElementor\Helper::is_metabox_active()) {
+            $text = \str_replace('[metabox:', '[post:', $text);
+        }
         $text = \str_replace('[post]', '[post:post_title]', $text);
         $text = \str_replace('[post|', '[post:ID|', $text);
         // post field
@@ -990,7 +993,7 @@ class Tokens
                 if (\get_class($queried_object) == 'WP_Term') {
                     $terms = array($queried_object);
                 }
-                if (\get_class($queried_object) == 'WP_Post' || \DynamicContentForElementor\Helper::in_the_loop()) {
+                if (\get_class($queried_object) == 'WP_Post' || in_the_loop()) {
                     $terms = \DynamicContentForElementor\Helper::get_post_terms(0, null, array(), array());
                 }
             }
@@ -1090,19 +1093,27 @@ class Tokens
     public static function get_option_value($name)
     {
         $whitelist = apply_filters('dynamicooo/tokens/options-whitelist', self::OPTIONS_WHITELIST);
+        // Whitelist or JetEngine
         if (($whitelist[$name] ?? \false) || \DynamicContentForElementor\Helper::is_jetengine_active() && jet_engine()->options_pages->registered_pages[$name]) {
             return get_option($name);
         }
+        // ACF
         if (\strpos($name, 'options_') === 0 && \DynamicContentForElementor\Helper::is_acfpro_active()) {
             $res = \get_field(\substr($name, 8), 'option');
             if ($res !== null) {
                 return $res;
             }
         }
+        // Meta Box
+        if (\DynamicContentForElementor\Helper::is_metabox_active()) {
+            $all_meta_box_settings = rwmb_get_registry('field')->get_by_object_type('setting');
+            if (\array_key_exists($name, $all_meta_box_settings)) {
+                return get_option($name);
+            }
+        }
     }
     public static function replace_option_tokens($text)
     {
-        // /wp-admin/options.php
         $pezzi = \explode('[option:', $text);
         if (\count($pezzi) > 1) {
             foreach ($pezzi as $dce_key => $avalue) {
@@ -1242,11 +1253,7 @@ class Tokens
                     } elseif (\array_key_exists($value, $val) || isset($val[$value])) {
                         $val = $val[$value];
                     } else {
-                        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && current_user_can('administrator')) {
-                            return '<pre>' . \var_export($val, \true) . '</pre>';
-                        } else {
-                            return \false;
-                        }
+                        return \false;
                     }
                 } elseif (\is_object($val)) {
                     $val_class = \get_class($val);
@@ -1279,11 +1286,7 @@ class Tokens
                             }
                         }
                     } else {
-                        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && current_user_can('administrator')) {
-                            return '<pre>' . \var_export($val, \true) . '</pre>';
-                        } else {
-                            return \false;
-                        }
+                        return \false;
                     }
                 }
             }
@@ -1306,6 +1309,13 @@ class Tokens
         }
         return $parameters;
     }
+    public static function fix_filters_whitelist()
+    {
+        $option = get_option('dce_tokens_filters_whitelist');
+        $option = \implode("\n", \array_keys($option));
+        update_option('dce_tokens_filters_whitelist', $option);
+        return $option;
+    }
     /**
      * @return array<string, bool>
      */
@@ -1314,7 +1324,10 @@ class Tokens
         if (self::$filters_whitelist === null) {
             $option = get_option('dce_tokens_filters_whitelist');
             $wl = [];
-            if ($option) {
+            if (\is_array($option)) {
+                $option = self::fix_filters_whitelist();
+            }
+            if (\is_string($option)) {
                 $list = \explode("\n", $option);
                 foreach ($list as $f) {
                     $wl[\trim($f)] = \true;
@@ -1445,12 +1458,14 @@ class Tokens
                     $replaceValue = gallery_shortcode($args);
                     continue;
                 }
-                if (get_option('dce_tokens_filters_whitelist_status') === 'disable') {
+                if (apply_filters('dce_tokens_filters_whitelist_force_disable', \false)) {
                     if (isset(self::$filters_blacklist[$afilter])) {
                         continue;
                     }
                 } else {
                     if (!self::is_filter_safe($afilter)) {
+                        $post_id = get_the_ID();
+                        \error_log('Dynamic.ooo non-whitelisted tokens filter found, post: ' . ($post_id ? $post_id : '') . ', filter: ' . $afilter);
                         if (\Elementor\Plugin::$instance->editor->is_edit_mode() || current_user_can('administrator')) {
                             $fmt = esc_html__('Filter %1$s is not whitelisted, please add it to the %2$swhitelist%3$s, you can find it in WP Dashboard > Dynamic.ooo > Settings > Tokens', 'dynamic-content-for-elementor');
                             $url = admin_url('admin.php?page=dce-settings#tab-tokens');

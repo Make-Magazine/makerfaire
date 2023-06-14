@@ -5,6 +5,11 @@ namespace DynamicContentForElementor;
 use ElementorPro\Modules\Forms\Module as Forms_Module;
 trait Elementor
 {
+    /**
+     * Get Current Post ID
+     *
+     * @return int
+     */
     public static function get_current_post_id()
     {
         if (isset(\Elementor\Plugin::instance()->documents)) {
@@ -31,6 +36,9 @@ trait Elementor
         if ($document) {
             $element = self::find_element_recursive($document->get_elements_data(), $element_id);
         }
+        if ($element === \false) {
+            return \false;
+        }
         if (!empty($element['templateID'])) {
             $template = $elementor->documents->get($element['templateID']);
             if (!$template) {
@@ -45,10 +53,15 @@ trait Elementor
         return $element;
     }
     public static $documents = [];
-    // ************************************** ELEMENTOR ***************************/
-    public static function get_all_template($def = null)
+    /**
+     * Get All Templates
+     *
+     * @param boolean $default
+     * @return array<int|string,string>
+     */
+    public static function get_all_templates(bool $default = \false)
     {
-        if ($def) {
+        if ($default) {
             $templates[0] = __('Default', 'dynamic-content-for-elementor');
             $templates[1] = __('None', 'dynamic-content-for-elementor');
         } else {
@@ -68,7 +81,7 @@ trait Elementor
     }
     public static function get_element_by_id_with_post_id($element_id, $post_id)
     {
-        $elementor_data = self::get_elementor_data($post_id, '_elementor_data', \true);
+        $elementor_data = self::get_elementor_data($post_id);
         if ($elementor_data) {
             if ($element_id) {
                 $element = self::array_find_deep_value($elementor_data, $element_id, 'id');
@@ -90,7 +103,7 @@ trait Elementor
             }
         }
         if ($post_id) {
-            $element = get_element_by_id_with_post_id($element_id, $post_id);
+            $element = self::get_element_by_id_with_post_id($element_id, $post_id);
             if ($element) {
                 return $element;
             }
@@ -132,12 +145,11 @@ trait Elementor
             // find element settings (because it may not be on post, but in a template)
             global $wpdb;
             $table = $wpdb->prefix . 'postmeta';
-            $query = 'SELECT post_id FROM ' . esc_sql($table) . " WHERE meta_key LIKE '_elementor_data' AND meta_value LIKE '%\"id\":\"" . esc_sql($element_id) . "\",%'";
+            $query = $wpdb->prepare("SELECT post_id FROM {$table} WHERE meta_key LIKE %s AND meta_value LIKE %s", '_elementor_data', '%"id":"' . $wpdb->esc_like($element_id) . '",%');
             if ($post_id) {
-                $query .= ' AND post_id = ' . esc_sql($post_id);
+                $query .= $wpdb->prepare(' AND post_id = %d', $post_id);
             } else {
-                $query .= ' AND post_id IN (
-                    SELECT id FROM ' . $wpdb->prefix . "posts\n                    WHERE post_status LIKE 'publish'\n                  )";
+                $query .= " AND post_id IN (\n\t\t\t\t\tSELECT id FROM {$wpdb->prefix}posts\n\t\t\t\t\tWHERE post_status LIKE 'publish'\n\t\t\t\t)";
             }
             $results = $wpdb->get_results($query);
             if (!empty($results)) {
@@ -294,12 +306,12 @@ trait Elementor
         return \false;
     }
     /**
-     * @pararm array<mixed> $elements
+     * @param array<mixed> $elements
      * @param string $element_id
      *
-     * @return array<string, mixed>|false
+     * @return array<string,mixed>|false
      */
-    public static function find_element_recursive($elements, $element_id)
+    public static function find_element_recursive(array $elements, string $element_id)
     {
         foreach ($elements as $element) {
             if ($element_id === $element['id']) {
@@ -328,7 +340,7 @@ trait Elementor
                 }
             }
         }
-        return array();
+        return [];
     }
     public static function array_find_deep_value($array, $value, $key)
     {
@@ -448,7 +460,7 @@ trait Elementor
     public static function get_elementor_elements($type = '')
     {
         global $wpdb;
-        $sql_query = 'SELECT * FROM ' . $wpdb->prefix . "postmeta\n\t\tWHERE meta_key LIKE '_elementor_data'\n\t\tAND meta_value LIKE '%\"widgetType\":\"" . $type . "\"%'\n            AND post_id IN (\n            SELECT id FROM " . $wpdb->prefix . "posts\n            WHERE post_status LIKE 'publish'\n          )";
+        $sql_query = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}postmeta\n\t\t\tWHERE meta_key LIKE %s\n\t\t\tAND meta_value LIKE %s\n\t\t\tAND post_id IN (\n\t\t\t\tSELECT id FROM {$wpdb->prefix}posts\n\t\t\t\tWHERE post_status LIKE 'publish'\n\t\t\t)", '_elementor_data', '%"widgetType":"' . $wpdb->esc_like($type) . '"%');
         $results = $wpdb->get_results($sql_query);
         if (!\count($results)) {
             return \false;
@@ -514,13 +526,13 @@ trait Elementor
     public static function validate_html_tag($tag)
     {
         $allowed_tags = self::ALLOWED_HTML_WRAPPER_TAGS;
-        return \in_array(\strtolower($tag), $allowed_tags) ? $tag : 'div';
+        return \in_array(\strtolower($tag), $allowed_tags, \true) ? $tag : 'div';
     }
     public static function get_active_devices_list()
     {
         if (!\version_compare(ELEMENTOR_VERSION, '3.4.0', '>')) {
             return ['desktop', 'tablet', 'mobile'];
         }
-        return \Elementor\Plugin::$instance->breakpoints->get_active_devices_list();
+        return \Elementor\Plugin::$instance->breakpoints->get_active_devices_list(['reverse' => \true]);
     }
 }

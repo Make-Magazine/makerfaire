@@ -19,25 +19,25 @@ class InputMediaVideo extends InputMedia
     /**
      * Optional. Video width.
      *
-     * @var string
+     * @var int|null
      */
     protected $width;
     /**
      * Optional. Video height.
      *
-     * @var string
+     * @var int|null
      */
     protected $height;
     /**
      * Optional. Video duration.
      *
-     * @var string
+     * @var int|null
      */
     protected $duration;
     /**
      * Optional. Pass True, if the uploaded video is suitable for streaming.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $supportsStreaming;
     /**
@@ -63,56 +63,64 @@ class InputMediaVideo extends InputMedia
         $this->supportsStreaming = $supportsStreaming;
     }
     /**
-     * @return string
+     * @return int|null
      */
     public function getWidth()
     {
         return $this->width;
     }
     /**
-     * @param string $width
+     * @param int|null $width
+     *
+     * @return void
      */
     public function setWidth($width)
     {
         $this->width = $width;
     }
     /**
-     * @return string
+     * @return int|null
      */
     public function getHeight()
     {
         return $this->height;
     }
     /**
-     * @param string $height
+     * @param int|null $height
+     *
+     * @return void
      */
     public function setHeight($height)
     {
         $this->height = $height;
     }
     /**
-     * @return string
+     * @return int|null
      */
     public function getDuration()
     {
         return $this->duration;
     }
     /**
-     * @param string $duration
+     * @param int|null $duration
+     *
+     * @return void
      */
     public function setDuration($duration)
     {
         $this->duration = $duration;
     }
     /**
-     * @return bool
+     * @return bool|null
      */
     public function getSupportsStreaming()
     {
         return $this->supportsStreaming;
     }
     /**
-     * @param bool $supportsStreaming
+     * @param bool|null $supportsStreaming
+     *
+     * @return void
      */
     public function setSupportsStreaming($supportsStreaming)
     {

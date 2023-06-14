@@ -146,13 +146,11 @@ isEditMode = false;
 
         } else if ($($scope).find($block_acfposts).data('style') == 'swiper') {
 
-            // Swiper 4  (Non uso ancora per compatibilità con Elementor)
-
             var elementSettings = dceGetElementSettings($scope);
-            var elementSwiper = $scope.find('.swiper-container')[0];
+			let swiper_class = elementorFrontend.config.experimentalFeatures.e_swiper_latest ? '.swiper' : '.swiper-container';
 
+            var elementSwiper = $scope.find(swiper_class);
             var id_scope = $scope.attr('data-id');
-
             var centroDiapo = false;
             var cicloInfinito = false;
             var slideInitNum = 0;
@@ -261,16 +259,13 @@ isEditMode = false;
 				},
 			}, elementSettings);
 
-            if ( 'undefined' === typeof Swiper ) {
-              const asyncSwiper = elementorFrontend.utils.swiper;
+			
+			const asyncSwiper = elementorFrontend.utils.swiper;
 
-              new asyncSwiper( jQuery( elementSwiper ), swiperOptions ).then( ( newSwiperInstance ) => {
-                mySwiper = newSwiperInstance;
-              } );
-            } else {
-              mySwiper = new Swiper( jQuery( elementSwiper ), swiperOptions );
-            }
-
+			new asyncSwiper( elementSwiper, swiperOptions ).then( ( newSwiperInstance ) => {
+				mySwiper = newSwiperInstance;
+			} ).catch( error => console.log(error) );
+           
             // if autoplay and pause on hover are enabled
             if (elementSettings.useAutoplay && elementSettings.autoplayStopOnHover) {
                 $(elementSwiper).on({

@@ -39,21 +39,21 @@ class Contact extends BaseType implements TypeInterface
     /**
      * Optional. Contact's last name
      *
-     * @var string
+     * @var string|null
      */
     protected $lastName;
     /**
      * Optional. Contact's user identifier in Telegram
      *
-     * @var int
+     * @var int|null
      */
     protected $userId;
     /**
      * Optional. Additional data about the contact in the form of a vCard
      *
-     * @var string
+     * @var string|null
      */
-    protected $vCard;
+    protected $vcard;
     /**
      * @return string
      */
@@ -63,13 +63,14 @@ class Contact extends BaseType implements TypeInterface
     }
     /**
      * @param string $firstName
+     * @return void
      */
     public function setFirstName($firstName)
     {
         $this->firstName = $firstName;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getLastName()
     {
@@ -77,6 +78,7 @@ class Contact extends BaseType implements TypeInterface
     }
     /**
      * @param string $lastName
+     * @return void
      */
     public function setLastName($lastName)
     {
@@ -91,13 +93,14 @@ class Contact extends BaseType implements TypeInterface
     }
     /**
      * @param string $phoneNumber
+     * @return void
      */
     public function setPhoneNumber($phoneNumber)
     {
         $this->phoneNumber = $phoneNumber;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserId()
     {
@@ -105,23 +108,25 @@ class Contact extends BaseType implements TypeInterface
     }
     /**
      * @param int $userId
+     * @return void
      */
     public function setUserId($userId)
     {
         $this->userId = $userId;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getVCard()
     {
-        return $this->vCard;
+        return $this->vcard;
     }
     /**
-     * @param string $vCard
+     * @param string $vcard
+     * @return void
      */
-    public function setVCard($vCard)
+    public function setVCard($vcard)
     {
-        $this->vCard = $vCard;
+        $this->vcard = $vcard;
     }
 }

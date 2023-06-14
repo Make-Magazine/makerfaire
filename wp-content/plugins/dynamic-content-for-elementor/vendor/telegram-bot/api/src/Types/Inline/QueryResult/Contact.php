@@ -45,25 +45,25 @@ class Contact extends AbstractInlineQueryResult
     /**
      * Optional. Contact's last name
      *
-     * @var string
+     * @var string|null
      */
     protected $lastName;
     /**
      * Optional. Url of the thumbnail for the result
      *
-     * @var string
+     * @var string|null
      */
     protected $thumbUrl;
     /**
      * Optional. Thumbnail width
      *
-     * @var int
+     * @var int|null
      */
     protected $thumbWidth;
     /**
      * Optional. Thumbnail height
      *
-     * @var int
+     * @var int|null
      */
     protected $thumbHeight;
     /**
@@ -98,6 +98,8 @@ class Contact extends AbstractInlineQueryResult
     }
     /**
      * @param string $phoneNumber
+     *
+     * @return void
      */
     public function setPhoneNumber($phoneNumber)
     {
@@ -112,62 +114,72 @@ class Contact extends AbstractInlineQueryResult
     }
     /**
      * @param string $firstName
+     *
+     * @return void
      */
     public function setFirstName($firstName)
     {
         $this->firstName = $firstName;
     }
     /**
-     * @return string
+     * @return string|null
      */
     public function getLastName()
     {
         return $this->lastName;
     }
     /**
-     * @param string $lastName
+     * @param string|null $lastName
+     *
+     * @return void
      */
     public function setLastName($lastName)
     {
         $this->lastName = $lastName;
     }
     /**
-     * @return string
+     * @return string|null
      */
     public function getThumbUrl()
     {
         return $this->thumbUrl;
     }
     /**
-     * @param string $thumbUrl
+     * @param string|null $thumbUrl
+     *
+     * @return void
      */
     public function setThumbUrl($thumbUrl)
     {
         $this->thumbUrl = $thumbUrl;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getThumbWidth()
     {
         return $this->thumbWidth;
     }
     /**
-     * @param int $thumbWidth
+     * @param int|null $thumbWidth
+     *
+     * @return void
      */
     public function setThumbWidth($thumbWidth)
     {
         $this->thumbWidth = $thumbWidth;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getThumbHeight()
     {
         return $this->thumbHeight;
     }
     /**
-     * @param int $thumbHeight
+     * @param int|null $thumbHeight
+     *
+     * @return void
      */
     public function setThumbHeight($thumbHeight)
     {

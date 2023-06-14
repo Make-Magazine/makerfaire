@@ -6,7 +6,6 @@ use DynamicContentForElementor\Assets;
 use DynamicContentForElementor\LicenseSystem;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Plugin;
-use DynamicContentForElementor\Notice;
 class License
 {
     public static function show_license_form()
@@ -28,19 +27,19 @@ class License
             if ($_POST['license_activated']) {
                 list($success, $msg) = $license_system->deactivate_license();
                 if (!$success) {
-                    Notice::error($msg);
+                    \DynamicContentForElementor\Plugin::instance()->admin_pages->notices->error($msg);
                 } else {
-                    $msg = esc_html__('License key succesfully deactivated for this site', 'dynamic-content-for-elementor');
-                    Notice::success($msg);
+                    $msg = esc_html__('License key successfully deactivated for this site', 'dynamic-content-for-elementor');
+                    \DynamicContentForElementor\Plugin::instance()->admin_pages->notices->success($msg);
                 }
             } else {
                 $license_key = $_POST['license_key'];
                 list($success, $msg) = $license_system->activate_new_license_key($license_key);
                 if (!$success) {
-                    Notice::error($msg);
+                    \DynamicContentForElementor\Plugin::instance()->admin_pages->notices->error($msg);
                 } else {
-                    $msg = esc_html__('License key succesfully activated for this site', 'dynamic-content-for-elementor');
-                    Notice::success($msg);
+                    $msg = esc_html__('License key successfully activated for this site', 'dynamic-content-for-elementor');
+                    \DynamicContentForElementor\Plugin::instance()->admin_pages->notices->success($msg);
                 }
             }
         } else {
@@ -56,9 +55,9 @@ class License
             }
         }
         $is_license_active = $license_system->is_license_active();
-        $dce_domain = get_option('dce_license_domain');
+        $license_domain = get_option(DCE_PREFIX . '_license_domain');
         $classes = $is_license_active ? 'dce-success dce-notice-success' : 'dce-error dce-notice-error';
-        if ($is_license_active && $dce_domain && $dce_domain !== Plugin::instance()->license_system->get_current_domain()) {
+        if ($is_license_active && $license_domain && $license_domain !== Plugin::instance()->license_system->get_current_domain()) {
             $classes = 'dce-warning dce-notice-warning';
         }
         ?>
@@ -87,7 +86,7 @@ class License
 			</form>
 		<?php 
         if ($is_license_active) {
-            if ($dce_domain && $dce_domain !== Plugin::instance()->license_system->get_current_domain()) {
+            if ($license_domain && $license_domain !== Plugin::instance()->license_system->get_current_domain()) {
                 ?>
 					<p><strong style="color:#f0ad4e;"><?php 
                 _e('Your license is valid but there is something wrong: license mismatch.', 'dynamic-content-for-elementor');
@@ -120,7 +119,7 @@ class License
 
 		<?php 
         if ($is_license_active) {
-            $dce_beta = get_option('dce_beta');
+            $dce_beta = get_option(DCE_PREFIX . '_beta');
             ?>
 			<div class="dce-notice dce-success dce-notice-success">
 				<h3><?php 
@@ -145,7 +144,7 @@ class License
 			</div>
 
 			<?php 
-            $rollback_versions = \DynamicContentForElementor\Plugin::instance()->license_system->get_rollback_versions();
+            $rollback_versions = \DynamicContentForElementor\Plugin::instance()->rollback_manager->get_rollback_versions();
             $confirm = esc_attr__('Are you sure you want to make rollback Dynamic.ooo - Dynamic Content for Elementor to a previous version?', 'dynamic-content-for-elementor');
             ?>
 			<div class="dce-notice dce-success dce-notice-success">

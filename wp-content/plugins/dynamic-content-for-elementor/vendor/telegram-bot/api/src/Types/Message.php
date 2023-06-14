@@ -21,17 +21,17 @@ class Message extends BaseType implements TypeInterface
      *
      * @var array
      */
-    protected static $map = ['message_id' => \true, 'from' => User::class, 'date' => \true, 'chat' => Chat::class, 'forward_from' => User::class, 'forward_from_chat' => Chat::class, 'forward_from_message_id' => \true, 'forward_date' => \true, 'forward_signature' => \true, 'forward_sender_name' => \true, 'reply_to_message' => Message::class, 'via_bot' => User::class, 'edit_date' => \true, 'media_group_id' => \true, 'author_signature' => \true, 'text' => \true, 'entities' => ArrayOfMessageEntity::class, 'caption_entities' => ArrayOfMessageEntity::class, 'audio' => Audio::class, 'document' => Document::class, 'animation' => Animation::class, 'photo' => ArrayOfPhotoSize::class, 'sticker' => Sticker::class, 'video' => Video::class, 'voice' => Voice::class, 'caption' => \true, 'contact' => Contact::class, 'location' => Location::class, 'venue' => Venue::class, 'poll' => Poll::class, 'dice' => Dice::class, 'new_chat_members' => ArrayOfUser::class, 'left_chat_member' => User::class, 'new_chat_title' => \true, 'new_chat_photo' => ArrayOfPhotoSize::class, 'delete_chat_photo' => \true, 'group_chat_created' => \true, 'supergroup_chat_created' => \true, 'channel_chat_created' => \true, 'migrate_to_chat_id' => \true, 'migrate_from_chat_id' => \true, 'pinned_message' => Message::class, 'invoice' => Invoice::class, 'successful_payment' => SuccessfulPayment::class, 'connected_website' => \true];
+    protected static $map = ['message_id' => \true, 'from' => User::class, 'date' => \true, 'chat' => Chat::class, 'forward_from' => User::class, 'forward_from_chat' => Chat::class, 'forward_from_message_id' => \true, 'forward_date' => \true, 'forward_signature' => \true, 'forward_sender_name' => \true, 'reply_to_message' => Message::class, 'via_bot' => User::class, 'edit_date' => \true, 'media_group_id' => \true, 'author_signature' => \true, 'text' => \true, 'entities' => ArrayOfMessageEntity::class, 'caption_entities' => ArrayOfMessageEntity::class, 'audio' => Audio::class, 'document' => Document::class, 'animation' => Animation::class, 'photo' => ArrayOfPhotoSize::class, 'sticker' => Sticker::class, 'video' => Video::class, 'voice' => Voice::class, 'caption' => \true, 'contact' => Contact::class, 'location' => Location::class, 'venue' => Venue::class, 'poll' => Poll::class, 'dice' => Dice::class, 'new_chat_members' => ArrayOfUser::class, 'left_chat_member' => User::class, 'new_chat_title' => \true, 'new_chat_photo' => ArrayOfPhotoSize::class, 'delete_chat_photo' => \true, 'group_chat_created' => \true, 'supergroup_chat_created' => \true, 'channel_chat_created' => \true, 'migrate_to_chat_id' => \true, 'migrate_from_chat_id' => \true, 'pinned_message' => Message::class, 'invoice' => Invoice::class, 'successful_payment' => SuccessfulPayment::class, 'connected_website' => \true, 'forum_topic_created' => ForumTopicCreated::class, 'forum_topic_closed' => ForumTopicClosed::class, 'forum_topic_reopened' => ForumTopicReopened::class, 'is_topic_message' => \true, 'message_thread_id' => \true, 'web_app_data' => WebAppData::class, 'reply_markup' => InlineKeyboardMarkup::class];
     /**
      * Unique message identifier
      *
-     * @var int
+     * @var int|float
      */
     protected $messageId;
     /**
      * Optional. Sender name. Can be empty for messages sent to channels
      *
-     * @var \TelegramBot\Api\Types\User
+     * @var \TelegramBot\Api\Types\User|null
      */
     protected $from;
     /**
@@ -49,171 +49,171 @@ class Message extends BaseType implements TypeInterface
     /**
      * Optional. For forwarded messages, sender of the original message
      *
-     * @var \TelegramBot\Api\Types\User
+     * @var \TelegramBot\Api\Types\User|null
      */
     protected $forwardFrom;
     /**
      * Optional. For messages forwarded from channels, information about
      * the original channel
      *
-     * @var \TelegramBot\Api\Types\Chat
+     * @var \TelegramBot\Api\Types\Chat|null
      */
     protected $forwardFromChat;
     /**
      * Optional. For messages forwarded from channels, identifier of
      * the original message in the channel
      *
-     * @var int
+     * @var int|null
      */
     protected $forwardFromMessageId;
     /**
      * Optional. For messages forwarded from channels, signature of the post author if present
      *
-     * @var string
+     * @var string|null
      */
     protected $forwardSignature;
     /**
      * Optional. Sender's name for messages forwarded from users who disallow adding a link to their account
      * in forwarded messages
      *
-     * @var string
+     * @var string|null
      */
     protected $forwardSenderName;
     /**
      * Optional. For forwarded messages, date the original message was sent in Unix time
      *
-     * @var int
+     * @var int|null
      */
     protected $forwardDate;
     /**
      * Optional. For replies, the original message. Note that the Message object in this field will not contain further
      * reply_to_message fields even if it itself is a reply.
      *
-     * @var \TelegramBot\Api\Types\Message
+     * @var \TelegramBot\Api\Types\Message|null
      */
     protected $replyToMessage;
     /**
      * Optional. Bot through which the message was sent.
      *
-     * @var \TelegramBot\Api\Types\User
+     * @var \TelegramBot\Api\Types\User|null
      */
     protected $viaBot;
     /**
      * Optional. Date the message was last edited in Unix time
      *
-     * @var int
+     * @var int|null
      */
     protected $editDate;
     /**
      * Optional. The unique identifier of a media message group
      * this message belongs to
      *
-     * @var int
+     * @var int|null
      */
     protected $mediaGroupId;
     /**
      * Optional. Signature of the post author for messages in channels
      *
-     * @var string
+     * @var string|null
      */
     protected $authorSignature;
     /**
      * Optional. For text messages, the actual UTF-8 text of the message
      *
-     * @var string
+     * @var string|null
      */
     protected $text;
     /**
      * Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text.
      * array of \TelegramBot\Api\Types\MessageEntity
      *
-     * @var array
+     * @var array|null
      */
     protected $entities;
     /**
      * Optional. For messages with a caption, special entities like usernames,
      * URLs, bot commands, etc. that appear in the caption
      *
-     * @var ArrayOfMessageEntity
+     * @var ArrayOfMessageEntity|null
      */
     protected $captionEntities;
     /**
      * Optional. Message is an audio file, information about the file
      *
-     * @var \TelegramBot\Api\Types\Audio
+     * @var \TelegramBot\Api\Types\Audio|null
      */
     protected $audio;
     /**
      * Optional. Message is a general file, information about the file
      *
-     * @var \TelegramBot\Api\Types\Document
+     * @var \TelegramBot\Api\Types\Document|null
      */
     protected $document;
     /**
      * Optional. Message is a animation, information about the animation
      *
-     * @var \TelegramBot\Api\Types\Animation
+     * @var \TelegramBot\Api\Types\Animation|null
      */
     protected $animation;
     /**
      * Optional. Message is a photo, available sizes of the photo
      * array of \TelegramBot\Api\Types\Photo
      *
-     * @var array
+     * @var array|null
      */
     protected $photo;
     /**
      * Optional. Message is a sticker, information about the sticker
      *
-     * @var \TelegramBot\Api\Types\Sticker
+     * @var \TelegramBot\Api\Types\Sticker|null
      */
     protected $sticker;
     /**
      * Optional. Message is a video, information about the video
      *
-     * @var \TelegramBot\Api\Types\Video
+     * @var \TelegramBot\Api\Types\Video|null
      */
     protected $video;
     /**
      * Optional. Message is a voice message, information about the file
      *
-     * @var \TelegramBot\Api\Types\Voice
+     * @var \TelegramBot\Api\Types\Voice|null
      */
     protected $voice;
     /**
      * Optional. Text description of the video (usually empty)
      *
-     * @var string
+     * @var string|null
      */
     protected $caption;
     /**
      * Optional. Message is a shared contact, information about the contact
      *
-     * @var \TelegramBot\Api\Types\Contact
+     * @var \TelegramBot\Api\Types\Contact|null
      */
     protected $contact;
     /**
      * Optional. Message is a shared location, information about the location
      *
-     * @var \TelegramBot\Api\Types\Location
+     * @var \TelegramBot\Api\Types\Location|null
      */
     protected $location;
     /**
      * Optional. Message is a venue, information about the venue
      *
-     * @var \TelegramBot\Api\Types\Venue
+     * @var \TelegramBot\Api\Types\Venue|null
      */
     protected $venue;
     /**
      * Optional. Message is a native poll, information about the poll
      *
-     * @var \TelegramBot\Api\Types\Poll
+     * @var \TelegramBot\Api\Types\Poll|null
      */
     protected $poll;
     /**
      * Optional. Message is a dice with random value from 1 to 6
      *
-     * @var \TelegramBot\Api\Types\Dice
+     * @var \TelegramBot\Api\Types\Dice|null
      */
     protected $dice;
     /**
@@ -221,106 +221,142 @@ class Message extends BaseType implements TypeInterface
      * (the bot itself may be one of these members)
      * array of \TelegramBot\Api\Types\User
      *
-     * @var array
+     * @var array|null
      */
     protected $newChatMembers;
     /**
      * Optional. A member was removed from the group, information about them (this member may be bot itself)
      *
-     * @var \TelegramBot\Api\Types\User
+     * @var \TelegramBot\Api\Types\User|null
      */
     protected $leftChatMember;
     /**
      * Optional. A group title was changed to this value
      *
-     * @var string
+     * @var string|null
      */
     protected $newChatTitle;
     /**
      * Optional. A group photo was change to this value
      *
-     * @var mixed
+     * @var PhotoSize[]|null
      */
     protected $newChatPhoto;
     /**
      * Optional. Informs that the group photo was deleted
      *
-     * @var bool
+     * @var bool|null
      */
     protected $deleteChatPhoto;
     /**
      * Optional. Informs that the group has been created
      *
-     * @var bool
+     * @var bool|null
      */
     protected $groupChatCreated;
     /**
      * Optional. Service message: the supergroup has been created
      *
-     * @var bool
+     * @var bool|null
      */
     protected $supergroupChatCreated;
     /**
      * Optional. Service message: the channel has been created
      *
-     * @var bool
+     * @var bool|null
      */
     protected $channelChatCreated;
     /**
      * Optional. The group has been migrated to a supergroup with the specified identifier,
      * not exceeding 1e13 by absolute value
      *
-     * @var int
+     * @var int|null
      */
     protected $migrateToChatId;
     /**
      * Optional. The supergroup has been migrated from a group with the specified identifier,
      * not exceeding 1e13 by absolute value
      *
-     * @var int
+     * @var int|null
      */
     protected $migrateFromChatId;
     /**
      * Optional. Specified message was pinned.Note that the Message object in this field
      * will not contain further reply_to_message fields even if it is itself a reply.
      *
-     * @var Message
+     * @var Message|null
      */
     protected $pinnedMessage;
     /**
      * Optional. Message is an invoice for a payment, information about the invoice.
      *
-     * @var Invoice
+     * @var Invoice|null
      */
     protected $invoice;
     /**
      * Optional. Message is a service message about a successful payment, information about the payment.
      *
-     * @var SuccessfulPayment
+     * @var SuccessfulPayment|null
      */
     protected $successfulPayment;
     /**
      * Optional. The domain name of the website on which the user has logged in.
      *
-     * @var string
+     * @var string|null
      */
     protected $connectedWebsite;
     /**
+     * Optional. Service message: data sent by a Web App
+     *
+     * @var WebAppData|null
+     */
+    protected $webAppData;
+    /**
      * Optional. Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
      *
-     * @var InlineKeyboardMarkup
+     * @var InlineKeyboardMarkup|null
      */
     protected $replyMarkup;
     /**
-     * @return int
+     * Optional. Service message: forum topic created
+     *
+     * @var ForumTopicCreated|null
+     */
+    protected $forumTopicCreated;
+    /**
+     * Optional. Service message: forum topic closed
+     *
+     * @var ForumTopicReopened|null
+     */
+    protected $forumTopicReopened;
+    /**
+     * Optional. Service message: forum topic reopened
+     *
+     * @var ForumTopicClosed|null
+     */
+    protected $forumTopicClosed;
+    /**
+     * Optional. True, if the message is sent to a forum topic
+     *
+     * @var bool|null
+     */
+    protected $isTopicMessage;
+    /**
+     * Optional. Unique identifier of a message thread to which the message belongs; for supergroups only
+     *
+     * @var int|null
+     */
+    protected $messageThreadId;
+    /**
+     * @return int|float
      */
     public function getMessageId()
     {
         return $this->messageId;
     }
     /**
-     * @param int $messageId
-     *
+     * @param mixed $messageId
+     * @return void
      * @throws InvalidArgumentException
      */
     public function setMessageId($messageId)
@@ -332,7 +368,7 @@ class Message extends BaseType implements TypeInterface
         }
     }
     /**
-     * @return User
+     * @return User|null
      */
     public function getFrom()
     {
@@ -340,6 +376,7 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param User $from
+     * @return void
      */
     public function setFrom(User $from)
     {
@@ -354,6 +391,7 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Chat $chat
+     * @return void
      */
     public function setChat(Chat $chat)
     {
@@ -367,8 +405,8 @@ class Message extends BaseType implements TypeInterface
         return $this->date;
     }
     /**
-     * @param int $date
-     *
+     * @param mixed $date
+     * @return void
      * @throws InvalidArgumentException
      */
     public function setDate($date)
@@ -380,7 +418,7 @@ class Message extends BaseType implements TypeInterface
         }
     }
     /**
-     * @return User
+     * @return User|null
      */
     public function getForwardFrom()
     {
@@ -388,13 +426,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param User $forwardFrom
+     * @return void
      */
     public function setForwardFrom(User $forwardFrom)
     {
         $this->forwardFrom = $forwardFrom;
     }
     /**
-     * @return Chat
+     * @return Chat|null
      */
     public function getForwardFromChat()
     {
@@ -402,13 +441,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Chat $forwardFromChat
+     * @return void
      */
     public function setForwardFromChat(Chat $forwardFromChat)
     {
         $this->forwardFromChat = $forwardFromChat;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getForwardFromMessageId()
     {
@@ -416,13 +456,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param int $forwardFromMessageId
+     * @return void
      */
     public function setForwardFromMessageId($forwardFromMessageId)
     {
         $this->forwardFromMessageId = $forwardFromMessageId;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getForwardSignature()
     {
@@ -430,13 +471,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param string $forwardSignature
+     * @return void
      */
     public function setForwardSignature($forwardSignature)
     {
         $this->forwardSignature = $forwardSignature;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getForwardSenderName()
     {
@@ -444,21 +486,22 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param string $forwardSenderName
+     * @return void
      */
     public function setForwardSenderName($forwardSenderName)
     {
         $this->forwardSenderName = $forwardSenderName;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getForwardDate()
     {
         return $this->forwardDate;
     }
     /**
-     * @param int $forwardDate
-     *
+     * @param mixed $forwardDate
+     * @return void
      * @throws InvalidArgumentException
      */
     public function setForwardDate($forwardDate)
@@ -470,7 +513,7 @@ class Message extends BaseType implements TypeInterface
         }
     }
     /**
-     * @return Message
+     * @return null|self
      */
     public function getReplyToMessage()
     {
@@ -478,13 +521,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Message $replyToMessage
+     * @return void
      */
     public function setReplyToMessage(Message $replyToMessage)
     {
         $this->replyToMessage = $replyToMessage;
     }
     /**
-     * @return User
+     * @return User|null
      */
     public function getViaBot()
     {
@@ -492,21 +536,22 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param User $viaBot
+     * @return void
      */
     public function setViaBot(User $viaBot)
     {
         $this->viaBot = $viaBot;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getEditDate()
     {
         return $this->editDate;
     }
     /**
-     * @param int $editDate
-     *
+     * @param mixed $editDate
+     * @return void
      * @throws InvalidArgumentException
      */
     public function setEditDate($editDate)
@@ -518,7 +563,7 @@ class Message extends BaseType implements TypeInterface
         }
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getMediaGroupId()
     {
@@ -526,13 +571,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param int $mediaGroupId
+     * @return void
      */
     public function setMediaGroupId($mediaGroupId)
     {
         $this->mediaGroupId = $mediaGroupId;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getAuthorSignature()
     {
@@ -540,13 +586,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param string $authorSignature
+     * @return void
      */
     public function setAuthorSignature($authorSignature)
     {
         $this->authorSignature = $authorSignature;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getText()
     {
@@ -554,13 +601,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param string $text
+     * @return void
      */
     public function setText($text)
     {
         $this->text = $text;
     }
     /**
-     * @return array
+     * @return array|null
      */
     public function getEntities()
     {
@@ -568,13 +616,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param array $entities
+     * @return void
      */
     public function setEntities($entities)
     {
         $this->entities = $entities;
     }
     /**
-     * @return ArrayOfMessageEntity
+     * @return ArrayOfMessageEntity|null
      */
     public function getCaptionEntities()
     {
@@ -582,13 +631,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param ArrayOfMessageEntity $captionEntities
+     * @return void
      */
     public function setCaptionEntities($captionEntities)
     {
         $this->captionEntities = $captionEntities;
     }
     /**
-     * @return Audio
+     * @return Audio|null
      */
     public function getAudio()
     {
@@ -596,13 +646,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Audio $audio
+     * @return void
      */
     public function setAudio(Audio $audio)
     {
         $this->audio = $audio;
     }
     /**
-     * @return Document
+     * @return Document|null
      */
     public function getDocument()
     {
@@ -610,13 +661,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Document $document
+     * @return void
      */
     public function setDocument($document)
     {
         $this->document = $document;
     }
     /**
-     * @return Animation
+     * @return Animation|null
      */
     public function getAnimation()
     {
@@ -624,13 +676,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Animation $animation
+     * @return void
      */
     public function setAnimation(Animation $animation)
     {
         $this->animation = $animation;
     }
     /**
-     * @return array
+     * @return array|null
      */
     public function getPhoto()
     {
@@ -638,13 +691,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param array $photo
+     * @return void
      */
     public function setPhoto(array $photo)
     {
         $this->photo = $photo;
     }
     /**
-     * @return Sticker
+     * @return Sticker|null
      */
     public function getSticker()
     {
@@ -652,13 +706,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Sticker $sticker
+     * @return void
      */
     public function setSticker(Sticker $sticker)
     {
         $this->sticker = $sticker;
     }
     /**
-     * @return Video
+     * @return Video|null
      */
     public function getVideo()
     {
@@ -666,13 +721,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Video $video
+     * @return void
      */
     public function setVideo(Video $video)
     {
         $this->video = $video;
     }
     /**
-     * @return Voice
+     * @return Voice|null
      */
     public function getVoice()
     {
@@ -680,13 +736,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Voice $voice
+     * @return void
      */
     public function setVoice($voice)
     {
         $this->voice = $voice;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getCaption()
     {
@@ -694,13 +751,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param string $caption
+     * @return void
      */
     public function setCaption($caption)
     {
         $this->caption = $caption;
     }
     /**
-     * @return Contact
+     * @return Contact|null
      */
     public function getContact()
     {
@@ -708,13 +766,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Contact $contact
+     * @return void
      */
     public function setContact(Contact $contact)
     {
         $this->contact = $contact;
     }
     /**
-     * @return Location
+     * @return Location|null
      */
     public function getLocation()
     {
@@ -722,13 +781,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Location $location
+     * @return void
      */
     public function setLocation(Location $location)
     {
         $this->location = $location;
     }
     /**
-     * @return Venue
+     * @return Venue|null
      */
     public function getVenue()
     {
@@ -736,13 +796,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Venue $venue
+     * @return void
      */
     public function setVenue($venue)
     {
         $this->venue = $venue;
     }
     /**
-     * @return Poll
+     * @return Poll|null
      */
     public function getPoll()
     {
@@ -750,13 +811,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Poll $poll
+     * @return void
      */
     public function setPoll($poll)
     {
         $this->poll = $poll;
     }
     /**
-     * @return Dice
+     * @return Dice|null
      */
     public function getDice()
     {
@@ -764,13 +826,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Dice $dice
+     * @return void
      */
     public function setDice(Dice $dice)
     {
         $this->dice = $dice;
     }
     /**
-     * @return array
+     * @return array|null
      */
     public function getNewChatMembers()
     {
@@ -778,13 +841,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param array $newChatMembers
+     * @return void
      */
     public function setNewChatMembers($newChatMembers)
     {
         $this->newChatMembers = $newChatMembers;
     }
     /**
-     * @return User
+     * @return User|null
      */
     public function getLeftChatMember()
     {
@@ -792,13 +856,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param User $leftChatMember
+     * @return void
      */
     public function setLeftChatMember($leftChatMember)
     {
         $this->leftChatMember = $leftChatMember;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getNewChatTitle()
     {
@@ -806,83 +871,89 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param string $newChatTitle
+     * @return void
      */
     public function setNewChatTitle($newChatTitle)
     {
         $this->newChatTitle = $newChatTitle;
     }
     /**
-     * @return array
+     * @return PhotoSize[]|null
      */
     public function getNewChatPhoto()
     {
         return $this->newChatPhoto;
     }
     /**
-     * @param array $newChatPhoto
+     * @param PhotoSize[]|null $newChatPhoto
+     * @return void
      */
     public function setNewChatPhoto($newChatPhoto)
     {
         $this->newChatPhoto = $newChatPhoto;
     }
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isDeleteChatPhoto()
     {
         return $this->deleteChatPhoto;
     }
     /**
-     * @param boolean $deleteChatPhoto
+     * @param mixed $deleteChatPhoto
+     * @return void
      */
     public function setDeleteChatPhoto($deleteChatPhoto)
     {
         $this->deleteChatPhoto = (bool) $deleteChatPhoto;
     }
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isGroupChatCreated()
     {
         return $this->groupChatCreated;
     }
     /**
-     * @param boolean $groupChatCreated
+     * @param mixed $groupChatCreated
+     * @return void
      */
     public function setGroupChatCreated($groupChatCreated)
     {
         $this->groupChatCreated = (bool) $groupChatCreated;
     }
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isSupergroupChatCreated()
     {
         return $this->supergroupChatCreated;
     }
     /**
-     * @param boolean $supergroupChatCreated
+     * @param bool $supergroupChatCreated
+     * @return void
      */
     public function setSupergroupChatCreated($supergroupChatCreated)
     {
         $this->supergroupChatCreated = $supergroupChatCreated;
     }
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isChannelChatCreated()
     {
         return $this->channelChatCreated;
     }
     /**
-     * @param boolean $channelChatCreated
+     * @param bool $channelChatCreated
+     * @return void
      */
     public function setChannelChatCreated($channelChatCreated)
     {
         $this->channelChatCreated = $channelChatCreated;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getMigrateToChatId()
     {
@@ -890,13 +961,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param int $migrateToChatId
+     * @return void
      */
     public function setMigrateToChatId($migrateToChatId)
     {
         $this->migrateToChatId = $migrateToChatId;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getMigrateFromChatId()
     {
@@ -904,13 +976,14 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param int $migrateFromChatId
+     * @return void
      */
     public function setMigrateFromChatId($migrateFromChatId)
     {
         $this->migrateFromChatId = $migrateFromChatId;
     }
     /**
-     * @return Message
+     * @return null|self
      */
     public function getPinnedMessage()
     {
@@ -918,6 +991,7 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param Message $pinnedMessage
+     * @return void
      */
     public function setPinnedMessage($pinnedMessage)
     {
@@ -925,7 +999,8 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @author MY
-     * @return Invoice
+     *
+     * @return Invoice|null
      */
     public function getInvoice()
     {
@@ -934,6 +1009,7 @@ class Message extends BaseType implements TypeInterface
     /**
      * @author MY
      * @param Invoice $invoice
+     * @return void
      */
     public function setInvoice($invoice)
     {
@@ -941,7 +1017,8 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @author MY
-     * @return SuccessfulPayment
+     *
+     * @return SuccessfulPayment|null
      */
     public function getSuccessfulPayment()
     {
@@ -950,13 +1027,14 @@ class Message extends BaseType implements TypeInterface
     /**
      * @author MY
      * @param SuccessfulPayment $successfulPayment
+     * @return void
      */
     public function setSuccessfulPayment($successfulPayment)
     {
         $this->successfulPayment = $successfulPayment;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getConnectedWebsite()
     {
@@ -964,13 +1042,29 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param string $connectedWebsite
+     * @return void
      */
     public function setConnectedWebsite($connectedWebsite)
     {
         $this->connectedWebsite = $connectedWebsite;
     }
     /**
-     * @return InlineKeyboardMarkup
+     * @return WebAppData|null
+     */
+    public function getWebAppData()
+    {
+        return $this->webAppData;
+    }
+    /**
+     * @param WebAppData|null $webAppData
+     * @return void
+     */
+    public function setWebAppData($webAppData)
+    {
+        $this->webAppData = $webAppData;
+    }
+    /**
+     * @return InlineKeyboardMarkup|null
      */
     public function getReplyMarkup()
     {
@@ -978,9 +1072,85 @@ class Message extends BaseType implements TypeInterface
     }
     /**
      * @param InlineKeyboardMarkup $replyMarkup
+     * @return void
      */
     public function setReplyMarkup($replyMarkup)
     {
         $this->replyMarkup = $replyMarkup;
+    }
+    /**
+     * @return ForumTopicCreated|null
+     */
+    public function getForumTopicCreated()
+    {
+        return $this->forumTopicCreated;
+    }
+    /**
+     * @param ForumTopicCreated $forumTopicCreated
+     * @return void
+     */
+    public function setForumTopicCreated($forumTopicCreated)
+    {
+        $this->forumTopicCreated = $forumTopicCreated;
+    }
+    /**
+     * @return ForumTopicClosed|null
+     */
+    public function getForumTopicClosed()
+    {
+        return $this->forumTopicClosed;
+    }
+    /**
+     * @param ForumTopicClosed $forumTopicClosed
+     * @return void
+     */
+    public function setForumTopicClosed($forumTopicClosed)
+    {
+        $this->forumTopicClosed = $forumTopicClosed;
+    }
+    /**
+     * @return ForumTopicReopened|null
+     */
+    public function getForumTopicReopened()
+    {
+        return $this->forumTopicReopened;
+    }
+    /**
+     * @param ForumTopicReopened $forumTopicReopened
+     * @return void
+     */
+    public function setForumTopicReopened($forumTopicReopened)
+    {
+        $this->forumTopicReopened = $forumTopicReopened;
+    }
+    /**
+     * @return bool|null
+     */
+    public function getIsTopicMessage()
+    {
+        return $this->isTopicMessage;
+    }
+    /**
+     * @param bool $isTopicMessage
+     * @return void
+     */
+    public function setIsTopicMessage($isTopicMessage)
+    {
+        $this->isTopicMessage = $isTopicMessage;
+    }
+    /**
+     * @return int|null
+     */
+    public function getMessageThreadId()
+    {
+        return $this->messageThreadId;
+    }
+    /**
+     * @param int|null $messageThreadId
+     * @return void
+     */
+    public function setMessageThreadId($messageThreadId)
+    {
+        $this->messageThreadId = $messageThreadId;
     }
 }

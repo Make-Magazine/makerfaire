@@ -22,6 +22,8 @@ class WooProductsCart extends \DynamicContentForElementor\Widgets\DynamicPostsBa
         $this->add_skin(new Skins\Woo_Products_Cart_Skin_Carousel($this));
         $this->add_skin(new Skins\Woo_Products_Cart_Skin_DualCarousel($this));
         $this->add_skin(new Skins\Woo_Products_Cart_Skin_Accordion($this));
+        $this->add_skin(new Skins\Woo_Products_Cart_Skin_List($this));
+        $this->add_skin(new Skins\Woo_Products_Cart_Skin_Table($this));
     }
     /**
      * Register controls after check if this feature is only for admin

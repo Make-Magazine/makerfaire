@@ -27,7 +27,7 @@ class File extends BaseType implements TypeInterface
      *
      * @var array
      */
-    protected static $map = ['file_id' => \true, 'file_size' => \true, 'file_path' => \true];
+    protected static $map = ['file_id' => \true, 'file_unique_id' => \true, 'file_size' => \true, 'file_path' => \true];
     /**
      * Unique identifier for this file
      *
@@ -37,15 +37,21 @@ class File extends BaseType implements TypeInterface
     /**
      * Optional. File size, if known
      *
-     * @var int
+     * @var int|null
      */
     protected $fileSize;
     /**
      * Optional. File path. Use https://api.telegram.org/file/bot<token>/<file_path> to get the file.
      *
-     * @var string
+     * @var string|null
      */
     protected $filePath;
+    /**
+     * Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
+     *
+     * @var string
+     */
+    protected $fileUniqueId;
     /**
      * @return string
      */
@@ -55,21 +61,22 @@ class File extends BaseType implements TypeInterface
     }
     /**
      * @param string $fileId
+     * @return void
      */
     public function setFileId($fileId)
     {
         $this->fileId = $fileId;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getFileSize()
     {
         return $this->fileSize;
     }
     /**
-     * @param int $fileSize
-     *
+     * @param mixed $fileSize
+     * @return void
      * @throws InvalidArgumentException
      */
     public function setFileSize($fileSize)
@@ -81,7 +88,7 @@ class File extends BaseType implements TypeInterface
         }
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getFilePath()
     {
@@ -89,9 +96,25 @@ class File extends BaseType implements TypeInterface
     }
     /**
      * @param string $filePath
+     * @return void
      */
     public function setFilePath($filePath)
     {
         $this->filePath = $filePath;
+    }
+    /**
+     * @return string
+     */
+    public function getFileUniqueId()
+    {
+        return $this->fileUniqueId;
+    }
+    /**
+     * @param string $fileUniqueId
+     * @return void
+     */
+    public function setFileUniqueId($fileUniqueId)
+    {
+        $this->fileUniqueId = $fileUniqueId;
     }
 }

@@ -1,24 +1,17 @@
 /**
-* demo3.js
-* http://www.codrops.com
-*
-* Licensed under the MIT license.
-* http://www.opensource.org/licenses/mit-license.php
-*
+* Crossroads Slideshow
+* https://github.com/codrops/CrossroadsSlideshow
+
 * Copyright 2019, Codrops
 * http://www.codrops.com
 */
 
 var dce_crs = null;
 var Widget_DCE_Dynamicposts_crossroadsslideshow_Handler = function ($scope, $) {
-    var elementSettings = dceGetElementSettings($scope);
-    var id_scope = $scope.attr('data-id');
-    var splitter;
     var split;
 
     const MathUtils = {
         lineEq: (y2, y1, x2, x1, currentVal) => {
-            // y = mx + b
             var m = (y2 - y1) / (x2 - x1), b = y1 - m * x1;
             return m * currentVal + b;
         },
@@ -60,15 +53,13 @@ var Widget_DCE_Dynamicposts_crossroadsslideshow_Handler = function ($scope, $) {
             this.DOM.title = title;
             split = new SplitText(this.DOM.title, {
                 type: ['chars','words','lines'],
-                //wordDelimiter: "*"
               });
-            this.DOM.titleLetters = split.chars;//[...this.DOM.title.querySelectorAll('span')];
+            this.DOM.titleLetters = split.chars;
             this.DOM.titleLetters.sort(() => Math.round(Math.random())-0.5);
             this.DOM.number = this.DOM.el.querySelector('.dce-number');
             this.DOM.subtitle = this.DOM.el.querySelector('.dce-caption');
             this.DOM.imgWrap = this.DOM.el.querySelector('.dce-img-wrap');
             this.DOM.img = this.DOM.imgWrap.querySelector('.dce-img-el');
-
         }
         move(direction, val) {
             return new Promise((resolve, reject) => {
@@ -276,13 +267,11 @@ var Widget_DCE_Dynamicposts_crossroadsslideshow_Handler = function ($scope, $) {
 
             let mouseMoveVals = {translation: 0, rotation: -8};
             const render = () => {
-                //if ( !this.isAnimating ) {
-                    mouseMoveVals.translation = MathUtils.lerp(mouseMoveVals.translation, MathUtils.lineEq(-15, 15, winsize.width, 0, mousePos.x), 0.03);
-                    for (let i = 0; i <= this.slidesTotal - 1; ++i) {
-                        TweenMax.set(this.slides[i].DOM.img, {x: mouseMoveVals.translation});
-                        TweenMax.set(this.DOM.titlesInner, {x: -4*mouseMoveVals.translation});
-                    }
-                //}
+				mouseMoveVals.translation = MathUtils.lerp(mouseMoveVals.translation, MathUtils.lineEq(-15, 15, winsize.width, 0, mousePos.x), 0.03);
+				for (let i = 0; i <= this.slidesTotal - 1; ++i) {
+					TweenMax.set(this.slides[i].DOM.img, {x: mouseMoveVals.translation});
+					TweenMax.set(this.DOM.titlesInner, {x: -4*mouseMoveVals.translation});
+				}
                 requestAnimationFrame(render);
             }
             requestAnimationFrame(render);
@@ -312,9 +301,6 @@ var Widget_DCE_Dynamicposts_crossroadsslideshow_Handler = function ($scope, $) {
 
             this.clickCenterFn = () => this.openSlide();
             this.DOM.interaction.center.addEventListener('click', this.clickCenterFn);
-
-
-
             this.mouseenterCenterFn = () => {
                 if ( this.isAnimating ) {
                     return;
@@ -354,7 +340,6 @@ var Widget_DCE_Dynamicposts_crossroadsslideshow_Handler = function ($scope, $) {
             });
 
             document.addEventListener("keyup", (e) => {
-
                 if (e.keyCode == 27) { // esc
                    this.closeSlide();
                 }
@@ -364,7 +349,6 @@ var Widget_DCE_Dynamicposts_crossroadsslideshow_Handler = function ($scope, $) {
                 if (e.keyCode == 37) { // left
                    this.clickLeftFn();
                 }
-
             });
         }
         navigate(direction) {
@@ -377,7 +361,7 @@ var Widget_DCE_Dynamicposts_crossroadsslideshow_Handler = function ($scope, $) {
                     this.center < this.slidesTotal-2 ? this.center+2 : Math.abs(this.slidesTotal-2-this.center):
                     this.center >= 2 ? this.center-2 : Math.abs(this.slidesTotal-2+this.center);
 
-            // Update current.
+            // Update current
             this.center = direction === 'right' ?
                     this.center < this.slidesTotal-1 ? this.center+1 : 0 :
                     this.center > 0 ? this.center-1 : this.slidesTotal-1;
@@ -451,8 +435,6 @@ var Widget_DCE_Dynamicposts_crossroadsslideshow_Handler = function ($scope, $) {
     [...document.querySelectorAll('.frame__mode input[type="radio"]')].forEach(radio => radio.addEventListener('click', () => {
         document.body.classList[radio.parentNode.classList.contains('frame__mode-item--dark') ? 'add' : 'remove']('dark-mode');
     }));
-
-
 };
 
 jQuery(window).on('elementor/frontend/init', function () {
@@ -463,4 +445,6 @@ jQuery(window).on('elementor/frontend/init', function () {
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-my-posts.crossroadsslideshow', Widget_DCE_Dynamicposts_crossroadsslideshow_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-sticky-posts.crossroadsslideshow', Widget_DCE_Dynamicposts_crossroadsslideshow_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.crossroadsslideshow', Widget_DCE_Dynamicposts_crossroadsslideshow_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-metabox-relationship.crossroadsslideshow', Widget_DCE_Dynamicposts_crossroadsslideshow_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-acf-relationship.crossroadsslideshow', Widget_DCE_Dynamicposts_crossroadsslideshow_Handler);
 });

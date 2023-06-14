@@ -137,8 +137,6 @@ jQuery( window ).on( 'elementor:init', function() {
 				];
 		},
 		onInputChange: function( event ) {
-			var inputSetting = event.target.dataset.setting;
-
 			var type = event.currentTarget.dataset.setting,
 				$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' );
 				$slider[0].noUiSlider.set(this.getControlValue(type));

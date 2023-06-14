@@ -62,6 +62,8 @@ class Location extends InputMessageContent implements TypeInterface
     }
     /**
      * @param float $latitude
+     *
+     * @return void
      */
     public function setLatitude($latitude)
     {
@@ -76,6 +78,8 @@ class Location extends InputMessageContent implements TypeInterface
     }
     /**
      * @param float $longitude
+     *
+     * @return void
      */
     public function setLongitude($longitude)
     {

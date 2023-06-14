@@ -33,12 +33,13 @@
 				rate_menuside = rate_menuside_mobile;
 			}
 
-			var close_menu = function () {
+			var closeMenu = function () {
+				timescale = 10;
 				tl.reversed( ! tl.reversed() );
 				$( class_hamburger ).find( '.con' ).removeClass( 'actived' ).removeClass( 'open' );
 
 				if ( ! elementorFrontend.isEditMode() ) {
-					$( 'body,html' ).removeClass( 'dce-modal-open' );
+					$( 'body,html' ).removeClass( 'dce-off-canvas-menu-open' );
 				}
 			};
 			// GSAP animations Timeline
@@ -96,7 +97,7 @@
 			tl.to(
 				class_quit,
 				{
-					duration: elementSettings.time_menu_pane_opening.size,
+					duration: time_menu_pane_opening,
 					scale:1,
 					ease:Expo.easeInOut,
 					delay:0
@@ -109,43 +110,61 @@
 			// Events
 			$scope.on( "click", class_hamburger, function ( e ) {
 				e.preventDefault();
-				$( ".dce-close" ).fadeIn( elementSettings.time_menu_pane_opening.size, function () {
+				$( class_quit ).fadeIn( time_menu_pane_opening, function () {
 					$( this ).removeClass( "close-hidden" );
 				} );
 				tl.reversed( ! tl.reversed() );
 				$( this ).find( '.con' ).toggleClass( 'actived' );
 
 				if ( ! elementorFrontend.isEditMode() ) {
-					$( 'body, html' ).addClass( 'dce-modal-open' );
+					$( 'body, html' ).addClass( 'dce-off-canvas-menu-open' );
 				}
 				return false;
 			} );
 
 			$( animatedoffcanvasmenu ).on( "click",'a:not(.dce-close):not(.no-link)',function ( e ) {
-				close_menu();
+				closeMenu();
 			} );
 
 			$( document ).on( "click", class_quit, function ( e ) {
 				e.preventDefault();
-				$( ".dce-close" ).fadeOut( elementSettings.time_menu_pane_opening.size,function () {
+				closeMenu();
+				$( class_quit ).fadeOut( time_menu_pane_opening,function () {
 					$( this ).addClass( "close-hidden" );
 				} );
-				close_menu();
+
 				return false;
 			} );
-			$( document ).on( 'keyup',function ( evt ) {
-				if ( evt.keyCode == 27 && $( ".dce-modal-open" ).length ) {
-					$( ".dce-close" ).fadeOut( elementSettings.time_menu_pane_opening.size,function () {
+			$( document ).on( 'keyup',function ( e ) {
+				if ( e.keyCode == 27 && $( ".dce-off-canvas-menu-open" ).length ) {
+					closeMenu();
+					$( class_quit ).fadeOut( time_menu_pane_opening,function () {
 						$( this ).addClass( "close-hidden" );
 					} );
-					close_menu();
 				}
 			} );
+
+			if ( ! side_background ) {
+				// Close the menu on click outside
+				$(document).click(function(e) {
+					if( ! $('body').hasClass( 'dce-off-canvas-menu-open' ) ) {
+						return;
+					}
+					var $target = $(e.target);
+					if( !$target.closest( animatedoffcanvasmenu ).length ) {
+						e.preventDefault();
+						closeMenu();
+						$( class_quit ).fadeOut( time_menu_pane_opening,function () {
+							$( this ).addClass( "close-hidden" );
+						} );
+					}
+				});
+			}
 
 			$( '.animatedoffcanvasmenu ul > li.menu-item-has-children > .menu-item-wrap' ).append( '<span class="indicator-child no-transition">+</span>' );
 			$( '.animatedoffcanvasmenu ul li span a:not([href])' ).addClass( "no-link no-transition" );
 			$( '.animatedoffcanvasmenu ul li span a[href="#"]' ).addClass( "no-link no-transition" );
-			
+
 			// Accordion Menu
 			$( '.animatedoffcanvasmenu ul > li.menu-item-has-children > .menu-item-wrap .indicator-child' ).click( function ( e ) {
 				e.preventDefault();

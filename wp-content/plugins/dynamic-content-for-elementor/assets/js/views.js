@@ -1,13 +1,16 @@
 (function ($) {
-    var WidgetElements_ViewsHandler = function ($scope, $) {
+	var WidgetElements_ViewsHandler = function ($scope, $) {
 
 		var id_scope = $scope.attr('data-id');
 		var elementSettings = dceGetElementSettings($scope);
-		var elementSwiper = '.elementor-element-' + id_scope + ' .swiper-container';
+		let swiper_class = elementorFrontend.config.experimentalFeatures.e_swiper_latest ? '.swiper' : '.swiper-container';
+		var elementSwiper = $scope.find(swiper_class);
 		var speed = elementSettings.transition_speed;
 		var disableOnInteraction = Boolean( elementSettings.pause_on_interaction ) || false;
 		var loop = false;
-
+		if ( elementSettings.dce_views_style_format !== 'slideshow' ) {
+			return;
+		}
 		if ( 'yes' === elementSettings.infinite) {
 			loop = true;
 		}
@@ -70,16 +73,11 @@
 			});
 		}
 
-		// Instance
-		if ( 'undefined' === typeof Swiper ) {
-			const asyncSwiper = elementorFrontend.utils.swiper;
+		const asyncSwiper = elementorFrontend.utils.swiper;
 
-			new asyncSwiper( jQuery( elementSwiper ), viewsSwiperOptions ).then( ( newSwiperInstance ) => {
-				viewsSwiper = newSwiperInstance;
-			} );
-		} else {
-			viewsSwiper = new Swiper( jQuery( elementSwiper ), viewsSwiperOptions );
-		}
+		new asyncSwiper( elementSwiper, viewsSwiperOptions ).then( ( newSwiperInstance ) => {
+			viewsSwiper = newSwiperInstance;
+		} ).catch( error => console.log(error) );
 
 		// Pause on hover
 		if ( elementSettings.autoplay && elementSettings.pause_on_hover ) {
@@ -93,10 +91,10 @@
 			});
 		}
 
-    };
+	};
 
-    // Make sure you run this code under Elementor..
-    $(window).on('elementor/frontend/init', function () {
-        elementorFrontend.hooks.addAction('frontend/element_ready/dce-views.default', WidgetElements_ViewsHandler);
-    });
+	// Make sure you run this code under Elementor..
+	$(window).on('elementor/frontend/init', function () {
+		elementorFrontend.hooks.addAction('frontend/element_ready/dce-views.default', WidgetElements_ViewsHandler);
+	});
 })(jQuery);

@@ -199,14 +199,44 @@
 			responsive: true,
 			maintainAspectRatio: false,
 		};
+
+		// Legend Options
+		if( elementSettings.show_legend ) {
+			options.plugins = {
+				legend: {
+					display: elementSettings.show_legend || true,
+					labels: {
+						color: elementSettings.legend_color || Chart.defaults.color,
+					},
+					position: elementSettings.legend_position || 'top',
+					align: elementSettings.legend_align || 'center',
+				},
+			};
+		}
+
 		scales = {
 			scales: {
 				y: {
 					beginAtZero: Boolean(elementSettings.begin_at_zero),
-					grace: elementSettings.grace ? elementSettings.grace : 0,
-				}
+					grace: elementSettings.grace || 0,
+					ticks: {
+						color: elementSettings.axis_y_labels_color || Chart.defaults.color,
+                    },
+					grid: {
+						color: elementSettings.axis_y_grid_color || Chart.defaults.color,
+					}
+				},
+				x: {
+					ticks: { 
+						color: elementSettings.axis_x_labels_color || Chart.defaults.color,
+					},
+					grid: {
+						color: elementSettings.axis_x_grid_color || Chart.defaults.color,
+					}
+				},
 			},
 		};
+	
 		if( 'line' === elementSettings.type || 'bar' === elementSettings.type ) {
 			$.extend(options, scales);
 		}
@@ -221,7 +251,7 @@
 					data: data,
 					backgroundColor: backgroundColors,
 					borderColor: borderColors,
-					borderWidth: elementSettings.border_width_data ? elementSettings.border_width_data : 0,
+					borderWidth: elementSettings.border_width_data || 0,
 				}]
 			},
 			options: options,

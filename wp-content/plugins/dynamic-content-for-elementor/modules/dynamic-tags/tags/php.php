@@ -12,7 +12,6 @@ if (!\defined('ABSPATH')) {
 }
 class Php extends Tag
 {
-    protected static $acf_names = [];
     public function get_name()
     {
         return 'dce-dynamic-tag-php';
@@ -47,30 +46,59 @@ class Php extends Tag
     }
     protected function register_controls_settings()
     {
+        $this->add_control('data', ['label' => __('Return as Data', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SWITCHER, 'description' => __('Instead of echo you use return and the result can be any php value instead of only strings. The advanced section does not apply in this case.', 'dynamic-content-for-elementor')]);
         $this->add_control('custom_php', ['label' => __('Custom PHP', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CODE, 'language' => 'php', 'default' => 'echo "Hello World!";']);
     }
-    public function render()
+    /**
+     * @param string $code
+     * @param bool $echo_error
+     * @return string
+     */
+    public function eval_php($code, $echo_error = \false)
     {
-        $settings = $this->get_settings_for_display();
         if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
-            return;
-        }
-        if (empty($settings)) {
-            return;
+            return '';
         }
         $error = \false;
+        $result = null;
         try {
-            @eval($settings['custom_php']);
+            $result = @eval($code);
         } catch (\ParseError $e) {
             $error = $e->getMessage();
         } catch (\Throwable $e) {
             $error = $e->getMessage();
         }
-        if ($error && \Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            echo '<strong>';
-            echo __('Please check your PHP code', 'dynamic-content-for-elementor');
-            echo '</strong><br />';
-            echo __('ERROR', 'dynamic-content-for-elementor') . ': ' . $error, "\n";
+        if ($error && current_user_can('administrator')) {
+            $msg = '<strong>';
+            $msg .= __('Please check your PHP code', 'dynamic-content-for-elementor');
+            $msg .= '</strong><br />';
+            $msg .= __('ERROR', 'dynamic-content-for-elementor') . ': ' . $error . "\n";
+            if ($echo_error) {
+                echo $msg;
+                return '';
+            } else {
+                return $msg;
+            }
+        } else {
+            return $result;
+        }
+    }
+    public function render()
+    {
+        $settings = $this->get_settings_for_display();
+        $this->eval_php($settings['custom_php'] ?? '', \true);
+    }
+    /**
+     * @param array<mixed> $options
+     * @return string
+     */
+    public function get_content(array $options = [])
+    {
+        $settings = $this->get_settings_for_display();
+        if ($settings['data'] === 'yes') {
+            return $this->eval_php($settings['custom_php'] ?? '');
+        } else {
+            return parent::get_content();
         }
     }
 }

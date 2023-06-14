@@ -165,6 +165,11 @@ class AddToCalendar extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 $link = $link->google();
                 break;
             case 'ics':
+                if (current_user_can('administrator') && \strpos(wp_timezone_string(), ':')) {
+                    echo '<div style="color: red">';
+                    echo esc_html__('ICS file may be invalid. In the WordPress settings the Timezone is set as an offset, for example UTC+1. This isn’t supported. To fix this please set it with a city, for example Rome.', 'dynamic-content-for-elementor');
+                    echo '</div>';
+                }
                 $link = $link->ics();
                 if (!empty($settings['filename'])) {
                     $this->add_render_attribute('button', 'download', sanitize_file_name($settings['filename']));
@@ -196,7 +201,7 @@ class AddToCalendar extends \DynamicContentForElementor\Widgets\WidgetPrototype
             $this->add_render_attribute('button', 'class', 'elementor-animation-' . sanitize_text_field($settings['hover_animation']));
         }
         ?>
-		
+
 		<div <?php 
         echo $this->get_render_attribute_string('wrapper');
         ?>>

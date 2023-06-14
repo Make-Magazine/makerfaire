@@ -236,10 +236,6 @@ body.rtl .dce-elementor-navigator__element__toggle {
   outline-offset: -1px;
 }
 
-.dce-icon-visibility {
-  color: black;
-}
-
 .dce-icon-visibility.fa-eye, .dce-icon-visibility.fa-eye-slash {
   font-family: FontAwesome, 'Font Awesome 5 Free';
 }
@@ -254,9 +250,10 @@ body.rtl .dce-elementor-navigator__element__toggle {
   padding: 15px;
 }
 
-.elementor-panel #elementor-panel-page-editor .elementor-tab-control-dce_visibility a:before {
-  font-family: FontAwesome, 'Font Awesome 5 Free';
-  content: '\f06e';
+/* Elementor uses span since version 3.13: */
+.elementor-panel .elementor-tab-control-dce_visibility a:before,
+.elementor-panel .elementor-tab-control-dce_visibility span:before {
+  content: '\e8ac';
 }
 
 .elementor-control.elementor-control-dce_visibility_selected .elementor-choices input:checked+.elementor-choices-label {
@@ -534,6 +531,23 @@ body.rtl .dce-elementor-navigator__element__toggle {
   display: block;
 }
 
+.dce-pagination-top {
+  margin-top: 15px;
+  margin-bottom: -15px;
+}
+
+.dce-pagination-top img {
+  width: 50%;
+}
+.dce-pagination-bottom {
+  margin-top: -15px;
+  margin-bottom: 15px;
+}
+
+.dce-pagination-bottom img {
+  width: 50%;
+}
+
 .dce-pagination-dis {
   margin-top: -15px;
   margin-bottom: 15px;
@@ -545,7 +559,7 @@ body.rtl .dce-elementor-navigator__element__toggle {
 
 .elementor-control.elementor-control-skin_dis_customtemplate,
 .elementor-control.elementor-control-skin_dis_infinitescroll,
-.elementor-control.elementor-control-skin_dis_pagination {
+.elementor-control.elementor-control-skin_pagination_bottom {
   padding: 0;
 }
 
@@ -572,7 +586,6 @@ body.rtl .dce-elementor-navigator__element__toggle {
 }
 
 /* Hide WYSYWYG Editor on FileBrowser - Medias setting */
-.elementor-control-medias .wp-editor-container, .elementor-control-medias .wp-editor-tabs { 
-  display: none; 
+.elementor-control-medias .wp-editor-container, .elementor-control-medias .wp-editor-tabs {
+  display: none;
 }
-

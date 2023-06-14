@@ -15,7 +15,6 @@ use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Group_Control_Outline;
 use DynamicContentForElementor\Controls\Group_Control_Filters_CSS;
 use DynamicContentForElementor\Controls\Group_Control_Transform_Element;
-//
 // Exit if accessed directly
 if (!\defined('ABSPATH')) {
     exit;
@@ -37,7 +36,7 @@ class PodsGallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
      */
     protected function safe_register_controls()
     {
-        $this->start_controls_section('section_content', ['label' => 'PODS', 'dynamic-content-for-elementor']);
+        $this->start_controls_section('section_content', ['label' => __('PODS', 'dynamic-content-for-elementor')]);
         $this->add_control('gallery_field_list', ['label' => __('PODS Field', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_pods_fields('file'), 'default' => __('Select the field...', 'dynamic-content-for-elementor')]);
         $this->end_controls_section();
         // ********************************************************************************* Section GALLERY
@@ -52,7 +51,7 @@ class PodsGallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('gap_honeycombs', ['label' => __('Gap Hexagon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 10, 'min' => 0, 'max' => 100, 'step' => 1, 'frontend_available' => \true, 'condition' => ['gallery_type' => 'hexagon']]);
         $this->add_control('enabled_wow', ['label' => __('WOW Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true]);
         $this->end_controls_section();
-        $this->start_controls_section('section_style_gallery', ['label' => 'Gallery', 'dynamic-content-for-elementor', 'tab' => Controls_Manager::TAB_STYLE]);
+        $this->start_controls_section('section_style_gallery', ['label' => __('Gallery', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => '', 'prefix_class' => 'align-', 'selectors' => ['{{WRAPPER}} .dynamic_gallery' => 'text-align: {{VALUE}};']]);
         $this->add_responsive_control('v_align', ['label' => __('Vertical Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['top' => ['title' => __('Top', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-top'], 'middle' => ['title' => __('Middle', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-middle'], 'down' => ['title' => __('Down', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-bottom']], 'default' => 'top', 'selectors' => ['{{WRAPPER}} .dynamic_gallery  .gallery-item' => 'vertical-align: {{VALUE}};'], 'condition' => ['gallery_type' => ['grid']]]);
         $this->add_responsive_control('items_padding', ['label' => __('Paddings Items', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .gallery-item' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['gallery_type!' => ['hexagon']]]);
@@ -67,7 +66,7 @@ class PodsGallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->start_controls_section('section_style_images', ['label' => 'Images', 'dynamic-content-for-elementor', 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_control('force_width', ['label' => __('Force Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'prefix_class' => 'forcewidth-']);
         $this->add_responsive_control('size_img', ['label' => __('Size (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 100, 'unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .wrap-item-gallery' => 'width: {{SIZE}}{{UNIT}};'], 'condition' => ['force_width' => 'yes']]);
-        $this->add_control('popover-toggle', ['label' => __('Transform image', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::POPOVER_TOGGLE, 'return_value' => 'yes']);
+        $this->add_control('popover-toggle', ['label' => __('Transform image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::POPOVER_TOGGLE, 'return_value' => 'yes']);
         $this->start_popover();
         $this->add_group_control(Group_Control_Transform_Element::get_type(), ['name' => 'transform_image', 'label' => 'Transform image', 'selector' => '{{WRAPPER}} .dynamic_gallery', 'separator' => 'before']);
         $this->end_popover();
@@ -99,7 +98,7 @@ class PodsGallery extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'background', 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .gallery-overlay_hover, {{WRAPPER}} .inner_span', 'popover' => \true]);
         $this->add_control('hover_effects', ['label' => __('Hover Effects', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'zoom' => __('Zoom', 'dynamic-content-for-elementor')], 'default' => '', 'separator' => 'before', 'prefix_class' => 'hovereffect-', 'condition' => ['enable_lightbox!' => '']]);
         $this->end_controls_section();
-        $this->start_controls_section('section_dce_settings', ['label' => __('Dynamic Content', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_SETTINGS]);
+        $this->start_controls_section('section_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('Other', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
         $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
         $this->end_controls_section();

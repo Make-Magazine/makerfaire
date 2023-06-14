@@ -72,9 +72,6 @@ class Stripe
     }
     public function get_payment_intent_ajax()
     {
-        if (!wp_verify_nonce($_POST['intent_nonce'] ?? '', 'dce-stripe-intent')) {
-            wp_send_json_error(['message' => 'Nonce Error']);
-        }
         $form = $this->get_form_element();
         if (empty($form)) {
             wp_send_json_error(['message' => 'Invalid Form']);
@@ -178,8 +175,9 @@ class Stripe
         if ($amount <= 0) {
             wp_send_json_error(['message' => 'Invalid amount given']);
         }
-        $amount = $this->get_amount_in_currency_smallest_unit($amount, $item['dce_form_stripe_currency']);
-        $intent_data = ['amount' => $amount, 'currency' => $item['dce_form_stripe_currency'], 'confirmation_method' => 'automatic', 'confirm' => \false, 'capture_method' => 'manual', 'description' => $this->expand_description_form_tokens($item['dce_form_stripe_item_description'] ?? ''), 'metadata' => ['dce_id' => $form['settings']['id'] . '-' . $item['custom_id'], 'sku' => $item['dce_form_stripe_item_sku'] ?? '']];
+        $currency = \trim($item['dce_form_stripe_currency']);
+        $amount = $this->get_amount_in_currency_smallest_unit($amount, $currency);
+        $intent_data = ['amount' => $amount, 'currency' => $currency, 'confirmation_method' => 'automatic', 'confirm' => \false, 'capture_method' => 'manual', 'description' => $this->expand_description_form_tokens($item['dce_form_stripe_item_description'] ?? ''), 'metadata' => ['dce_id' => $form['settings']['id'] . '-' . $item['custom_id'], 'sku' => $item['dce_form_stripe_item_sku'] ?? '']];
         if (($item['dce_stripe_future_usage'] ?? '') === 'yes') {
             $intent_data['setup_future_usage'] = 'off_session';
         }

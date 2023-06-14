@@ -3,6 +3,7 @@
 namespace DynamicContentForElementor\AdminPages\Features;
 
 use DynamicContentForElementor\Helper;
+use DynamicContentForElementor\Plugin;
 abstract class ListTab
 {
     private $name;
@@ -46,7 +47,7 @@ abstract class ListTab
         \DynamicContentForElementor\Plugin::instance()->features->db_update_features_status($features);
         $this->features = $this->get_all_tab_features();
         // refresh internal features status.
-        \DynamicContentForElementor\Notice::success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
+        \DynamicContentForElementor\Plugin::instance()->admin_pages->notices->success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
     }
     public function are_all_active()
     {
@@ -68,6 +69,7 @@ END;
         $is_active = $feature_info['status'] === 'active';
         $plugin_dependencies_not_satisfied = Helper::check_plugin_dependencies(\true, $feature_info['plugin_depends']);
         $php_version_not_satisfied = isset($feature_info['minimum_php']) && \version_compare(\phpversion(), $feature_info['minimum_php'], '<');
+        $is_bundled_feature = isset($feature_info['activated_by']);
         ?>
 
 		<div class="dce-feature dce-feature-group-<?php 
@@ -82,7 +84,10 @@ END;
         if ($php_version_not_satisfied) {
             echo ' required-php';
         }
-        if ($is_active) {
+        if ($is_bundled_feature) {
+            echo ' bundled-feature';
+        }
+        if ($is_active || $is_bundled_feature && Plugin::instance()->features->is_feature_active($feature_info['activated_by'])) {
             echo ' widget-activated';
         }
         ?>
@@ -98,8 +103,23 @@ END;
             \printf(__('Requires PHP v%1$s+', 'dynamic-content-for-elementor'), $feature_info['minimum_php']);
             ?></small>
 		<?php 
+        } elseif ($is_bundled_feature) {
+            ?>
+			<small class="warning">
+				<span class="dashicons dashicons-warning"></span>
+				<?php 
+            if (Plugin::instance()->features->is_feature_active($feature_info['activated_by'])) {
+                $status = __('active', 'dynamic-content-for-elementor');
+            } else {
+                $status = __('deactivated', 'dynamic-content-for-elementor');
+            }
+            $activated_by = Plugin::instance()->features->get_feature_title($feature_info['activated_by']);
+            \printf(__('This feature is %1$s. Its activation depends on %2$s', 'dynamic-content-for-elementor'), '<strong>' . $status . '</strong>', '<strong>' . $activated_by . '</strong>');
+            ?>
+			</small>
+		<?php 
         } else {
-            if (empty($plugin_dependencies_not_satisfied)) {
+            if (empty($plugin_dependencies_not_satisfied) && !$is_bundled_feature) {
                 ?>
 				<div class="dce-check">
 					<input type="checkbox" name="dce-feature[<?php 
@@ -175,7 +195,13 @@ END;
             $this->show_calculate_usage($feature_info['name']);
         }
         if (isset($feature_info['legacy'])) {
-            if (isset($feature_info['replaced_by'])) {
+            if (isset($feature_info['replaced_by_custom_message'])) {
+                ?>
+				<p class="legacy"><?php 
+                echo $feature_info['replaced_by_custom_message'];
+                ?></p>
+				<?php 
+            } elseif (isset($feature_info['replaced_by'])) {
                 $new_version_name = \DynamicContentForElementor\Plugin::instance()->features->get_feature_info($feature_info['replaced_by'], 'title');
                 ?>
 				<p class="legacy"><?php 
@@ -229,7 +255,7 @@ END;
             $this->save_form();
         }
         $this->render_toggle_all_button();
-        if ($this->get_count() > 10) {
+        if ($this->get_count() > 6) {
             submit_button(__('Save', 'dynamic-content-for-elementor') . ' ' . $this->get_label());
         }
         $this->render_list();

@@ -22,7 +22,7 @@ class ReplyKeyboardMarkup extends BaseType
      *
      * @var array
      */
-    protected static $map = ['keyboard' => \true, 'one_time_keyboard' => \true, 'resize_keyboard' => \true, 'selective' => \true];
+    protected static $map = ['keyboard' => \true, 'one_time_keyboard' => \true, 'resize_keyboard' => \true, 'selective' => \true, 'is_persistent' => \true, 'input_field_placeholder' => \true];
     /**
      * Array of button rows, each represented by an Array of Strings
      * Array of Array of String
@@ -35,13 +35,13 @@ class ReplyKeyboardMarkup extends BaseType
      * (e.g., make the keyboard smaller if there are just two rows of buttons).
      * Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $resizeKeyboard;
     /**
      * Optional. Requests clients to hide the keyboard as soon as it's been used. Defaults to false.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $oneTimeKeyboard;
     /**
@@ -50,15 +50,38 @@ class ReplyKeyboardMarkup extends BaseType
      * 1) users that are @mentioned in the text of the Message object;
      * 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $selective;
-    public function __construct($keyboard, $oneTimeKeyboard = null, $resizeKeyboard = null, $selective = null)
+    /**
+     * Optional. Requests clients to always show the keyboard when the regular keyboard is hidden.
+     * Defaults to false, in which case the custom keyboard can be hidden and opened with a keyboard icon.
+     *
+     * @var bool|null
+     */
+    protected $isPersistent;
+    /**
+     * Optional. The placeholder to be shown in the input field when the keyboard is active; 1-64 characters
+     *
+     * @var string|null
+     */
+    protected $inputFieldPlaceholder;
+    /**
+     * @param array $keyboard
+     * @param bool|null $oneTimeKeyboard
+     * @param bool|null $resizeKeyboard
+     * @param bool|null $selective
+     * @param bool|null $isPersistent
+     * @param string|null $inputFieldPlaceholder
+     */
+    public function __construct($keyboard = [], $oneTimeKeyboard = null, $resizeKeyboard = null, $selective = null, $isPersistent = null, $inputFieldPlaceholder = null)
     {
         $this->keyboard = $keyboard;
         $this->oneTimeKeyboard = $oneTimeKeyboard;
         $this->resizeKeyboard = $resizeKeyboard;
         $this->selective = $selective;
+        $this->isPersistent = $isPersistent;
+        $this->inputFieldPlaceholder = $inputFieldPlaceholder;
     }
     /**
      * @return array
@@ -69,51 +92,85 @@ class ReplyKeyboardMarkup extends BaseType
     }
     /**
      * @param array $keyboard
+     * @return void
      */
     public function setKeyboard($keyboard)
     {
         $this->keyboard = $keyboard;
     }
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isOneTimeKeyboard()
     {
         return $this->oneTimeKeyboard;
     }
     /**
-     * @param boolean $oneTimeKeyboard
+     * @param bool $oneTimeKeyboard
+     * @return void
      */
     public function setOneTimeKeyboard($oneTimeKeyboard)
     {
         $this->oneTimeKeyboard = $oneTimeKeyboard;
     }
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isResizeKeyboard()
     {
         return $this->resizeKeyboard;
     }
     /**
-     * @param boolean $resizeKeyboard
+     * @param bool $resizeKeyboard
+     * @return void
      */
     public function setResizeKeyboard($resizeKeyboard)
     {
         $this->resizeKeyboard = $resizeKeyboard;
     }
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isSelective()
     {
         return $this->selective;
     }
     /**
-     * @param boolean $selective
+     * @param bool $selective
+     * @return void
      */
     public function setSelective($selective)
     {
         $this->selective = $selective;
+    }
+    /**
+     * @return bool|null
+     */
+    public function getIsPersistent()
+    {
+        return $this->isPersistent;
+    }
+    /**
+     * @param bool $isPersistent
+     * @return void
+     */
+    public function setIsPersistent($isPersistent)
+    {
+        $this->isPersistent = $isPersistent;
+    }
+    /**
+     * @return string|null
+     */
+    public function getInputFieldPlaceholder()
+    {
+        return $this->inputFieldPlaceholder;
+    }
+    /**
+     * @param string|null $inputFieldPlaceholder
+     * @return void
+     */
+    public function setInputFieldPlaceholder($inputFieldPlaceholder)
+    {
+        $this->inputFieldPlaceholder = $inputFieldPlaceholder;
     }
 }

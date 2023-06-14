@@ -24,7 +24,7 @@
     },
     "autoload": {
         "files": [
-            "load-v4p11.php"
+            "load-v4p13.php"
         ]
     }
 }

@@ -79,16 +79,27 @@ class BeforeAfter extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_render_attribute('container', 'id', 'container-afterbefore');
         // Set class twentytwenty-container to avoid Flash of unstyled content (FOUC)
         $this->add_render_attribute('container', 'class', 'twentytwenty-container');
+        // Before
+        $this->add_render_attribute('before', 'src', $settings['before_image']['url']);
+        if (!empty($settings['before_image']['id'])) {
+            $this->add_render_attribute('before', 'alt', Helper::get_image_alt($settings['before_image']['id']));
+        }
+        // After
+        $this->add_render_attribute('after', 'src', $settings['after_image']['url']);
+        if (!empty($settings['after_image']['id'])) {
+            $this->add_render_attribute('after', 'alt', Helper::get_image_alt($settings['after_image']['id']));
+        }
         ?>
+
 		<div <?php 
         echo $this->get_render_attribute_string('container');
         ?>>
-			<img src="<?php 
-        echo $settings['before_image']['url'];
-        ?>" />
-			<img src="<?php 
-        echo $settings['after_image']['url'];
-        ?>" />
+			<img <?php 
+        echo $this->get_render_attribute_string('before');
+        ?> />
+			<img <?php 
+        echo $this->get_render_attribute_string('after');
+        ?> />
 		</div>
 		<?php 
     }

@@ -20,11 +20,40 @@ trait Options
      */
     public static function compare_options()
     {
-        return ['not' => ['title' => __('Not set or empty', 'dynamic-content-for-elementor'), 'icon' => 'eicon-circle-o'], 'isset' => ['title' => __('Valorized with any value', 'dynamic-content-for-elementor'), 'icon' => 'eicon-dot-circle-o'], 'lt' => ['title' => __('Less than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-left'], 'gt' => ['title' => __('Greater than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'contain' => ['title' => __('Contains', 'dynamic-content-for-elementor'), 'icon' => 'eicon-check'], 'not_contain' => ['title' => __('Doesn\'t contains', 'dynamic-content-for-elementor'), 'icon' => 'eicon-close'], 'in_array' => ['title' => __('In Array', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-bars'], 'value' => ['title' => __('Equal to', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle'], 'not_value' => ['title' => __('Not Equal to', 'dynamic-content-for-elementor'), 'icon' => 'eicon-exchange']];
+        return ['not' => ['title' => __('Not set or empty', 'dynamic-content-for-elementor'), 'icon' => 'eicon-circle-o'], 'isset' => ['title' => __('Valorized with any value', 'dynamic-content-for-elementor'), 'icon' => 'eicon-dot-circle-o'], 'lt' => ['title' => __('Less than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-left'], 'gt' => ['title' => __('Greater than', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-angle-right'], 'contain' => ['title' => __('Contains', 'dynamic-content-for-elementor'), 'icon' => 'eicon-check'], 'not_contain' => ['title' => __('Doesn\'t contain', 'dynamic-content-for-elementor'), 'icon' => 'eicon-close'], 'in_array' => ['title' => __('In Array', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-bars'], 'value' => ['title' => __('Equal to', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-circle'], 'not_value' => ['title' => __('Not Equal to', 'dynamic-content-for-elementor'), 'icon' => 'eicon-exchange']];
     }
+    /**
+     * Get Post Order By Options
+     *
+     * @return array<string,string>
+     */
     public static function get_post_orderby_options()
     {
-        return ['ID' => __('Post ID', 'dynamic-content-for-elementor'), 'author' => __('Post Author', 'dynamic-content-for-elementor'), 'title' => __('Title', 'dynamic-content-for-elementor'), 'date' => __('Date', 'dynamic-content-for-elementor'), 'modified' => __('Last Modified Date', 'dynamic-content-for-elementor'), 'parent' => __('Parent ID', 'dynamic-content-for-elementor'), 'rand' => __('Random', 'dynamic-content-for-elementor'), 'comment_count' => __('Comment Count', 'dynamic-content-for-elementor'), 'menu_order' => __('Menu Order', 'dynamic-content-for-elementor'), 'meta_value_num' => __('Meta Value NUM', 'dynamic-content-for-elementor'), 'meta_value_date' => __('Meta Value DATE', 'dynamic-content-for-elementor'), 'meta_value' => __('Meta Value', 'dynamic-content-for-elementor'), 'none' => __('None', 'dynamic-content-for-elementor'), 'type' => __('Type', 'dynamic-content-for-elementor'), 'relevance' => __('Relevance', 'dynamic-content-for-elementor'), 'post__in' => __('Preserve Post ID order given', 'dynamic-content-for-elementor')];
+        return ['ID' => __('Post ID', 'dynamic-content-for-elementor'), 'author' => __('Post Author', 'dynamic-content-for-elementor'), 'title' => __('Title', 'dynamic-content-for-elementor'), 'date' => __('Date', 'dynamic-content-for-elementor'), 'modified' => __('Last Modified Date', 'dynamic-content-for-elementor'), 'parent' => __('Parent ID', 'dynamic-content-for-elementor'), 'rand' => __('Random', 'dynamic-content-for-elementor'), 'comment_count' => __('Comment Count', 'dynamic-content-for-elementor'), 'menu_order' => __('Menu Order', 'dynamic-content-for-elementor'), 'meta_value_num' => __('Meta Value NUM', 'dynamic-content-for-elementor'), 'meta_value_date' => __('Meta Value DATE', 'dynamic-content-for-elementor'), 'meta_value' => __('Meta Value', 'dynamic-content-for-elementor'), 'none' => __('None', 'dynamic-content-for-elementor'), 'name' => __('Name', 'dynamic-content-for-elementor'), 'type' => __('Type', 'dynamic-content-for-elementor'), 'relevance' => __('Relevance', 'dynamic-content-for-elementor'), 'post__in' => __('Preserve Post ID order given', 'dynamic-content-for-elementor')];
+    }
+    /**
+     * Get Term Order By Options
+     *
+     * @return array<string,string>
+     */
+    public static function get_term_orderby_options()
+    {
+        return ['parent' => __('Parent', 'dynamic-content-for-elementor'), 'count' => __('Count (number of associated posts)', 'dynamic-content-for-elementor'), 'term_order' => __('Order', 'dynamic-content-for-elementor'), 'name' => __('Name', 'dynamic-content-for-elementor'), 'slug' => __('Slug', 'dynamic-content-for-elementor'), 'term_group' => __('Group', 'dynamic-content-for-elementor'), 'term_id' => 'ID'];
+    }
+    /**
+     * Get Public Taxonomies
+     *
+     * @return array<string,string>
+     */
+    public static function get_public_taxonomies()
+    {
+        $taxonomies = get_taxonomies(['public' => \true]);
+        $taxonomy_array = [];
+        foreach ($taxonomies as $taxonomy) {
+            $taxonomy_object = get_taxonomy($taxonomy);
+            $taxonomy_array[$taxonomy] = sanitize_text_field($taxonomy_object->labels->name);
+        }
+        return $taxonomy_array;
     }
     public static function get_anim_timing_functions()
     {
@@ -101,5 +130,22 @@ trait Options
     public static function get_string_comparison()
     {
         return ['empty' => __('empty', 'dynamic-content-for-elementor'), 'not_empty' => __('not empty', 'dynamic-content-for-elementor'), 'equal_to' => __('equals to', 'dynamic-content-for-elementor'), 'not_equal' => __('not equals', 'dynamic-content-for-elementor'), 'gt' => __('greater than', 'dynamic-content-for-elementor'), 'ge' => __('greater than or equal', 'dynamic-content-for-elementor'), 'lt' => __('less than', 'dynamic-content-for-elementor'), 'le' => __('less than or equal', 'dynamic-content-for-elementor'), 'contain' => __('contains', 'dynamic-content-for-elementor'), 'not_contain' => __('not contains', 'dynamic-content-for-elementor'), 'is_checked' => __('is checked', 'dynamic-content-for-elementor'), 'not_checked' => __('not checked', 'dynamic-content-for-elementor')];
+    }
+    /**
+     * Get HTML Tags
+     *
+     * @param array<string> $tags_to_add
+     * @param bool $add_none
+     * @return array<string,string>
+     */
+    public static function get_html_tags(array $tags_to_add = [], bool $add_none = \false)
+    {
+        $default = ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'p' => 'p'];
+        if ($add_none) {
+            $none = ['' => __('None', 'dynamic-content-for-elementor')];
+            $default = \array_merge($none, $default);
+        }
+        $tags_to_add = \array_combine($tags_to_add, $tags_to_add);
+        return \array_merge($default, $tags_to_add);
     }
 }

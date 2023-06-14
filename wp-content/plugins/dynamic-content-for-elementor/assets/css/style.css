@@ -54,7 +54,7 @@ button[disabled], html input[disabled] {
   display: inline-block !important;
 }
 
-.float {
+.dce-float {
   float: left !important;
 }
 
@@ -341,7 +341,7 @@ body.modal-p-off .wrap-p .close .dce-quit-ics {
 /* ELEMENTOR PRO FORM */
 
 /* Arrow for Select2 */
-body:not(.rtl) .elementor-field-group .elementor-select-wrapper::after {
+body:not(.rtl) .dce-ext-select2::after {
   content: "\e92a";
   font-family: eicons;
   font-size: 15px;
@@ -432,21 +432,6 @@ body:not(.rtl) .elementor-field-group .elementor-select-wrapper::after {
   list-style: none;
   padding-left: 0;
   margin-left: 0;
-}
-
-.dce-conditions-js-error-notice {
-  animation: 2s dceJsErrorFadeIn;
-  animation-fill-mode: forwards;
-  visibility: hidden;
-}
-
-@keyframes dceJsErrorFadeIn {
-  99% {
-    visibility: hidden;
-  }
-  100% {
-    visibility: visible;
-  }
 }
 
 /* form autocomplete in popups, google menu was below modal:  */

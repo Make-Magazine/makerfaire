@@ -5,8 +5,8 @@ window.dceAmountField = {
 	refresherGenerators: {}
 };
 
-dceAmountField.registerRefresherGenerator = function(field_id, refresherGenerator) {
-	this.refresherGenerators[field_id] = refresherGenerator;
+dceAmountField.registerRefresherGenerator = function(fieldIndex, refresherGenerator) {
+	this.refresherGenerators[fieldIndex] = refresherGenerator;
 }
 
 dceAmountField.getFieldValue = (form, id) => {
@@ -45,18 +45,19 @@ function initializeAmountField(wrapper, widget) {
 	let hiddenInput = wrapper.getElementsByClassName('dce-amount-hidden')[0];
 	let visibleInput = wrapper.getElementsByClassName('dce-amount-visible')[0];
 	let form = widget.getElementsByTagName('form')[0];
-	let fieldId = hiddenInput.dataset.fieldId;
+	let fieldIndex = hiddenInput.dataset.fieldIndex;
 	let textBefore = hiddenInput.dataset.textBefore;
 	let textAfter = hiddenInput.dataset.textAfter;
 	let shouldRound = hiddenInput.dataset.shouldRound;
 	let shouldFormat = hiddenInput.dataset.shouldFormat === 'yes';
+	let formatPrecision = hiddenInput.dataset.formatPrecision;
 	let roundPrecision = hiddenInput.dataset.roundPrecision;
 	let refreshOn = hiddenInput.dataset.refreshOn;
 	let realTime = hiddenInput.dataset.realTime === 'yes';
 	if (hiddenInput.dataset.hide == 'yes') {
 		wrapper.style.display = "none";
 	}
-	let refresherGenerator = dceAmountField.refresherGenerators[fieldId];
+	let refresherGenerator = dceAmountField.refresherGenerators[fieldIndex];
 	// if the user code has a syntax error the registration will have failed and
 	// we won't find the field:
 	if (! refresherGenerator) {
@@ -73,7 +74,8 @@ function initializeAmountField(wrapper, widget) {
 			// Field not changed, nohting to do.
 			return;
 		}
-		let dispResult = shouldFormat ? Number(result).toLocaleString() : result;
+		let dispResult = shouldFormat ? Number(result)
+			.toLocaleString(undefined, { minimumFractionDigits: formatPrecision, maximumFractionDigits: formatPrecision}) : result;
 		hiddenInput.value = result;
 		visibleInput.value = textBefore + dispResult + textAfter;
 		if ("createEvent" in document) {

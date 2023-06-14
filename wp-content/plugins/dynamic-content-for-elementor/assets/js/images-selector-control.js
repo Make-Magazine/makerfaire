@@ -1,6 +1,5 @@
 jQuery( window ).on( 'elementor:init', function() {
-var ControlBaseDataView = elementor.modules.controls.BaseData,
-	ControlXY_MovementItemView;
+var ControlBaseDataView = elementor.modules.controls.BaseData;
 
 var imagesSelectorView = ControlBaseDataView.extend({
     ui: function ui() {

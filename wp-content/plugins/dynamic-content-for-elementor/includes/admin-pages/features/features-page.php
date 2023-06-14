@@ -64,12 +64,20 @@ class FeaturesPage {
 					return $extensions;
 				}
 			},
-			new class( 'dynamic-tags' ) extends ListTab {
+			new class( 'dynamic-tags' ) extends GroupedListTab {
 				public function get_label() {
 					return __( 'Dynamic Tags', 'dynamic-content-for-elementor' );
 				}
+				public function get_groups() {
+					return \DynamicContentForElementor\Features::get_dynamic_tags_groups();
+				}
+				public function get_groups_key() {
+					return 'category';
+				}
 				public function get_all_tab_features() {
 					$extensions = Plugin::instance()->features->filter( [ 'type' => 'extension' ] );
+					$bundled = Plugin::instance()->features->filter_bundled( [ 'type' => 'extension' ] );
+					$extensions += $bundled;
 					// We want all extension that are dynamic tag and not legacy
 					$extensions = array_filter( $extensions, function( $e ) {
 						return ( $e['extension_type'] ?? '' ) === 'dynamic-tag' && ! ( $e['legacy'] ?? false );
@@ -162,10 +170,9 @@ class FeaturesPage {
 		echo '<div id="dce-settings-tabs-wrapper" class="nav-tab-wrapper">';
 		$active_tab_name = $_GET['tab'] ?? 'widgets';
 		foreach ( $this->tabs as $tab ) {
+			$tab_class = '';
 			if ( $active_tab_name === $tab->get_name() ) {
 				$tab_class = 'nav-tab-active';
-			} else {
-				$tab_class = 'nav-tab-inactive';
 			}
 			$tab_name = $tab->get_name();
 			echo "<a class='nav-tab $tab_class' href='?page=dce-features&tab=${tab_name}'>";

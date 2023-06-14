@@ -43,6 +43,7 @@ class Dice extends BaseType implements TypeInterface
     }
     /**
      * @param string $emoji
+     * @return void
      */
     public function setEmoji($emoji)
     {
@@ -57,6 +58,7 @@ class Dice extends BaseType implements TypeInterface
     }
     /**
      * @param int $value
+     * @return void
      */
     public function setValue($value)
     {

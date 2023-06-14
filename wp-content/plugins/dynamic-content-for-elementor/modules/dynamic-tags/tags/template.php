@@ -24,11 +24,7 @@ class Template extends Tag
     }
     public function get_categories()
     {
-        return [
-            'base',
-            //\Elementor\Modules\DynamicTags\Module::BASE_GROUP
-            'text',
-        ];
+        return ['base', 'text'];
     }
     public function get_docs()
     {

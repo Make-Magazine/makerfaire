@@ -2,7 +2,6 @@
 
 namespace DynamicContentForElementor\AdminPages\Features;
 
-use DynamicContentForElementor\Notice;
 use DynamicContentForElementor\Helper;
 use DynamicContentForElementor\Assets;
 class FrontendNavigator
@@ -48,7 +47,7 @@ class FrontendNavigator
         wp_nonce_field('dce-settings-page', 'dce-settings-page');
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['frontend_navigator'])) {
             update_option(DCE_FRONTEND_NAVIGATOR_OPTION, $_POST['frontend_navigator']);
-            Notice::success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
+            \DynamicContentForElementor\Plugin::instance()->admin_pages->notices->success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
         }
         ?>
 			<?php 

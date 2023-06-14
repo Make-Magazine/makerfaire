@@ -27,6 +27,9 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
     }
     public function get_style_depends()
     {
+        if (\Elementor\Plugin::$instance->experiments->is_feature_active('e_swiper_latest')) {
+            return ['animatecss', 'dce-dynamicPosts_slick', 'dce-dynamicPosts_timeline', 'dce-dynamic-posts-old-version'];
+        }
         return ['animatecss', 'dce-dynamicPosts_slick', 'dce-dynamicPosts_swiper', 'dce-dynamicPosts_timeline', 'dce-dynamic-posts-old-version'];
     }
     /**
@@ -88,7 +91,7 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
         $this->start_controls_section('section_querydate', ['label' => __('Date Query Filter', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode'], 'page_parent' => '']]);
         $this->add_control('querydate_mode', ['label' => __('Date Filter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '', 'label_block' => \true, 'options' => ['' => __('No Filter', 'dynamic-content-for-elementor'), 'past' => __('Past', 'dynamic-content-for-elementor'), 'future' => __('Future', 'dynamic-content-for-elementor'), 'today' => __('Today', 'dynamic-content-for-elementor'), 'yesterday' => __('Yesterday', 'dynamic-content-for-elementor'), 'days' => __('Past Days', 'dynamic-content-for-elementor'), 'weeks' => __('Past Weeks', 'dynamic-content-for-elementor'), 'months' => __('Past Months', 'dynamic-content-for-elementor'), 'years' => __('Past Years', 'dynamic-content-for-elementor'), 'period' => __('Period', 'dynamic-content-for-elementor')]]);
         $this->add_control('querydate_field', ['label' => __('Date Field', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'label_block' => \true, 'options' => ['post_date' => ['title' => __('Publish Date', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-calendar'], 'post_meta' => ['title' => __('Post Meta', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-square']], 'default' => 'post_date', 'toggle' => \false, 'condition' => ['querydate_mode!' => ['', 'future']]]);
-        $this->add_control('querydate_field_meta', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'description' => __('Selected Post Meta value must be stored in the "Ymd" format, like ACF Date', 'dynamic-content-for-elementor'), 'separator' => 'before', 'condition' => ['querydate_mode!' => ['', 'future'], 'querydate_field' => 'post_meta']]);
+        $this->add_control('querydate_field_meta', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'separator' => 'before', 'condition' => ['querydate_mode!' => ['', 'future'], 'querydate_field' => 'post_meta']]);
         $this->add_control('querydate_field_meta_format', ['label' => __('Meta Date Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('Y-m-d', 'dynamic-content-for-elementor'), 'label_block' => \true, 'default' => __('Ymd', 'dynamic-content-for-elementor'), 'condition' => ['querydate_mode' => 'past', 'querydate_field' => 'post_meta']]);
         $this->add_control('querydate_field_meta_future', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'description' => __('Selected Post Meta value must be stored if format "Ymd", like ACF Date', 'dynamic-content-for-elementor'), 'separator' => 'before', 'condition' => ['querydate_mode' => 'future']]);
         $this->add_control('querydate_field_meta_future_format', ['label' => __('Meta Date Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('Y-m-d', 'dynamic-content-for-elementor'), 'label_block' => \true, 'default' => __('Ymd', 'dynamic-content-for-elementor'), 'condition' => ['querydate_mode' => 'future']]);
@@ -176,8 +179,8 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_responsive_control('carousel_dots_enable', ['label' => __('Dots', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
         $this->add_control('carousel_infinite_enable', ['label' => __('Loop', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
         $this->add_control('carousel_speed', ['label' => __('Animation Speed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 500, 'frontend_available' => \true]);
-        $this->add_control('carousel_autoplay_enable', ['label' => __('Auto Play', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
-        $this->add_control('carousel_autoplayspeed', ['label' => __('Autoplay Speed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 5000, 'frontend_available' => \true, 'condition' => ['carousel_autoplay_enable!' => '']]);
+        $this->add_control('carousel_autoplay_enable', ['label' => __('Autoplay', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
+        $this->add_control('carousel_autoplayspeed', ['label' => __('Autoplay Delay (ms)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 5000, 'frontend_available' => \true, 'condition' => ['carousel_autoplay_enable!' => '']]);
         $this->add_control('carousel_center_enable', ['label' => __('Center Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
         $this->add_control('carousel_effect', ['label' => __('Effect', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'slide', 'options' => ['slide' => __('Slide', 'dynamic-content-for-elementor'), 'fade' => __('Fade', 'dynamic-content-for-elementor')], 'condition' => ['slides_to_show' => '1'], 'frontend_available' => \true]);
         $this->end_controls_section();
@@ -189,7 +192,7 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('effects', ['label' => __('Effect of transition', 'dynamic-content-for-elementor'), 'description' => __('Transition effect between slides', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['slide' => __('Slide', 'dynamic-content-for-elementor'), 'fade' => __('Fade', 'dynamic-content-for-elementor'), 'cube' => __('Cube', 'dynamic-content-for-elementor'), 'coverflow' => __('Coverflow', 'dynamic-content-for-elementor'), 'flip' => __('Flip', 'dynamic-content-for-elementor')], 'default' => 'slide', 'frontend_available' => \true]);
         $this->add_control('centeredSlides', ['label' => __('Centered Slides', 'dynamic-content-for-elementor'), 'description' => __('If true, then active slide will be centered, not always on the left side.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
         // -------------------------------- Progressione ------
-        $this->add_control('slideperview_options', ['label' => __('Slide per wiew', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
+        $this->add_control('slideperview_options', ['label' => __('Slide per view', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_responsive_control('spaceBetween', ['label' => __('Space Between', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0, 'tablet_default' => '', 'mobile_default' => '', 'min' => 0, 'max' => 100, 'step' => 1, 'frontend_available' => \true]);
         $this->add_responsive_control('slidesPerView', ['label' => __('Slides Per View', 'dynamic-content-for-elementor'), 'description' => __('Number of slides per view (slides visible at the same time on sliders container). If you use it with "auto" value and along with loop: true then you need to specify loopedSlides parameter with amount of slides to loop (duplicate). SlidesPerView: "auto"\'" is currently not compatible with multirow mode, when slidesPerColumn greater than 1', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '1', 'min' => 1, 'max' => 12, 'step' => 1, 'frontend_available' => \true]);
         $this->add_responsive_control('slidesColumn', ['label' => __('Slides Column', 'dynamic-content-for-elementor'), 'description' => __('Number of slides per column, for multirow layout.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '1', 'min' => 1, 'max' => 4, 'step' => 1, 'frontend_available' => \true]);
@@ -247,7 +250,7 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
         // -------------------------------- Autoplay ------
         $this->add_control('autoplay_options', ['label' => __('Autoplay options', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_control('useAutoplay', ['label' => __('Use Autoplay', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
-        $this->add_control('autoplay', ['label' => __('Auto Play', 'dynamic-content-for-elementor'), 'description' => __('Delay between transitions (in ms). If this parameter is not specified (by default), autoplay will be disabled', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '', 'min' => 0, 'max' => 15000, 'step' => 100, 'frontend_available' => \true, 'condition' => ['useAutoplay' => 'yes']]);
+        $this->add_control('autoplay', ['label' => __('Autoplay Delay (ms)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => '', 'min' => 0, 'max' => 15000, 'step' => 100, 'frontend_available' => \true, 'condition' => ['useAutoplay' => 'yes']]);
         $this->add_control('autoplayStopOnHover', ['label' => __('Autoplay stop on hover', 'dynamic-content-for-elementor'), 'description' => __('Enable this parameter and autoplay will be stopped on hover', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['useAutoplay' => 'yes']]);
         $this->add_control('autoplayStopOnLast', ['label' => __('Autoplay stop on last slide', 'dynamic-content-for-elementor'), 'description' => __('Enable this parameter and autoplay will be stopped when it reaches the last slide (has no effect in loop mode)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['useAutoplay' => 'yes']]);
         $this->add_control('autoplayDisableOnInteraction', ['label' => __('Autoplay Disable on interaction', 'dynamic-content-for-elementor'), 'description' => __('Set to "false" and autoplay will not be disabled after user interactions (swipes), it will be restarted every time after interaction', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'frontend_available' => \true, 'condition' => ['useAutoplay' => 'yes']]);
@@ -286,7 +289,7 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
         // ------------------------------------------------------------------------------------ [ SECTION Title ]
         $this->start_controls_section('section_title', ['label' => __('Title', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['show_title' => '1', 'templatemode_enable' => '', 'native_templatemode_enable' => '']]);
         $this->add_control('title_inout', ['label' => __('Title inside or outside of box', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'options' => ['in' => __('In', 'dynamic-content-for-elementor'), 'out' => __('Out', 'dynamic-content-for-elementor')], 'default' => 'out', 'condition' => ['show_title' => '1']]);
-        $this->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'default' => 'h3', 'condition' => ['show_title' => '1']]);
+        $this->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(), 'default' => 'h3', 'condition' => ['show_title' => '1']]);
         $this->add_control('title_link', ['label' => __('Use link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => ['show_title' => '1']]);
         $this->end_controls_section();
         // --------------------------------------------------------- [ SECTION TextContent ]
@@ -351,7 +354,7 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
         $repeater->add_control('acf_field_item', ['label' => __('Fields', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acfposts']);
         $repeater->add_control('acf_field_type', ['label' => __('Field type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'text', 'options' => ['text' => __('Text', 'dynamic-content-for-elementor'), 'image' => __('Image', 'dynamic-content-for-elementor'), 'date' => __('Date', 'dynamic-content-for-elementor')]]);
         $repeater->add_control('acf_date_format', ['label' => __('Date Format', 'dynamic-content-for-elementor'), 'description' => __('The format of date.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'F j, Y, g:i a', 'condition' => ['acf_field_type' => 'date']]);
-        $repeater->add_control('html_tag_item', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'condition' => ['acf_field_type' => 'text'], 'default' => '']);
+        $repeater->add_control('html_tag_item', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags([], \true), 'condition' => ['acf_field_type' => 'text'], 'default' => '']);
         $repeater->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'post' => 'Post URL', 'custom' => __('Custom URL', 'dynamic-content-for-elementor')]]);
         $repeater->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'default' => ['url' => ''], 'show_label' => \false]);
         $repeater->add_control('taxonomy_metadata', ['label' => __('Taxonomy', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => $taxonomies, 'default' => 'category', 'condition' => ['acf_field_item' => 'taxonomy']]);
@@ -392,14 +395,14 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
         $this->add_control('hover_text_effect_timingFunction_in', ['label' => __('IN Effect Timing function', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_anim_timing_functions(), 'default' => 'ease-in-out', 'selectors' => ['{{WRAPPER}} .dce-post-item:hover .dce-hover-effect-content.dce-open' => 'animation-timing-function: {{VALUE}}; -webkit-animation-timing-function: {{VALUE}};'], 'condition' => ['hover_text_effect' => 'cssanimations', 'image_position' => 'top']]);
         $this->add_control('hover_text_effect_animation_out', ['label' => __('OUT Animation effect', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_anim_out(), 'default' => 'fadeOut', 'frontend_available' => \true, 'render_type' => 'template', 'condition' => ['hover_text_effect' => 'cssanimations', 'image_position' => 'top'], 'selectors' => ['{{WRAPPER}} .dce-post-item .dce-hover-effect-content.dce-close' => 'animation-name: {{VALUE}}; -webkit-animation-name: {{VALUE}};']]);
         $this->add_control('hover_text_effect_timingFunction_out', ['label' => __('OUT Effect Timing function', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_anim_timing_functions(), 'default' => 'ease-in-out', 'selectors' => ['{{WRAPPER}} .dce-post-item .dce-hover-effect-content.dce-close' => 'animation-timing-function: {{VALUE}}; -webkit-animation-timing-function: {{VALUE}};'], 'condition' => ['hover_text_effect' => 'cssanimations', 'image_position' => 'top']]);
-        $this->add_control('hr', ['type' => \Elementor\Controls_Manager::DIVIDER, 'style' => 'thick']);
-        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'hover_filters_image', 'label' => 'Filters image', 'selector' => '{{WRAPPER}} .dce-acfposts_image a:hover .acfposts-image']);
+        $this->add_control('hr', ['type' => Controls_Manager::DIVIDER, 'style' => 'thick']);
+        $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'hover_filters_image', 'label' => __('Filters Image', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .dce-acfposts_image a:hover .acfposts-image']);
         $this->add_control('hover_animation', ['label' => __('Hover Animation', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HOVER_ANIMATION, 'separator' => 'before']);
         $this->add_control('use_overlay_hover', ['label' => __('Overlay', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'label_block' => \false, 'separator' => 'before', 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '0', 'condition' => ['image_link!' => '']]);
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'overlay_color_hover', 'label' => __('Background', 'dynamic-content-for-elementor'), 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .dce-overlay_hover', 'condition' => ['use_overlay_hover' => '1', 'image_link!' => '']]);
         $this->end_controls_section();
         // ------------------------------------------- [SECTION DYNAMIC CONTENT - DCE ]
-        $this->start_controls_section('section_dce', ['label' => __('Dynamic Content', 'dynamic-content-for-elementor')]);
+        $this->start_controls_section('section_template', ['label' => __('Template', 'dynamic-content-for-elementor')]);
         $this->add_control('templatemode_enable', ['label' => __('Enable Template', 'dynamic-content-for-elementor'), 'description' => __('Enable a template to manage the appearance of individual grid elements ', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'render_type' => 'template', 'prefix_class' => 'templatemode-', 'condition' => ['native_templatemode_enable' => '']]);
         $this->add_control('templatemode_template', ['label' => __('Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['templatemode_enable!' => '', 'native_templatemode_enable' => '']]);
         $this->add_control('templatemode_enable_2', ['label' => __('Enable Template 2', 'dynamic-content-for-elementor'), 'description' => __('Enable a template to manage the appearance of the odd elements of the grid ', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'render_type' => 'template', 'prefix_class' => 'templatemode-', 'condition' => ['native_templatemode_enable' => '']]);
@@ -1239,7 +1242,8 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
         $classItemDate = '';
         $classItemReadMore = '';
         if ($settings['posts_style'] == 'swiper') {
-            $classContainer = 'swiper-container swiper-container-' . $settings['direction_slider'];
+            $swiper_class = \Elementor\Plugin::$instance->experiments->is_feature_active('e_swiper_latest') ? 'swiper' : 'swiper-container';
+            $classContainer = $swiper_class . ' swiper-container-' . $settings['direction_slider'];
             $classWrap = ' swiper-wrapper';
             $classItem = ' swiper-slide';
             echo '<div class="' . $classContainer . '">';
@@ -1655,15 +1659,13 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
                 width="85.039px" height="85.039px" viewBox="378.426 255.12 85.039 85.039" enable-background="new 378.426 255.12 85.039 85.039"
                 xml:space="preserve">
                 <line fill="none" stroke="#000000" stroke-width="1.3845" stroke-dasharray="0,0" stroke-miterlimit="10" x1="382.456" y1="298.077" x2="458.375" y2="298.077"/>
-                <polyline fill="none" stroke="#000000" stroke-width="1.3845" stroke-dasharray="0,0" stroke-miterlimit="10" points="416.287,331.909 382.456,298.077
-                416.287,264.245 "/>
+                <polyline fill="none" stroke="#000000" stroke-width="1.3845" stroke-dasharray="0,0" stroke-miterlimit="10" points="416.287,331.909,382.456,298.077,416.287,264.245 "/>
                 </svg></div>';
                 echo '<div class="swiper-button-next next-' . $this->get_id() . '"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                 width="85.039px" height="85.039px" viewBox="378.426 255.12 85.039 85.039" enable-background="new 378.426 255.12 85.039 85.039"
                 xml:space="preserve">
                 <line fill="none" stroke="#000000" stroke-width="1.3845" stroke-miterlimit="10" x1="458.375" y1="298.077" x2="382.456" y2="298.077"/>
-                <polyline fill="none" stroke="#000000" stroke-width="1.3845" stroke-miterlimit="10" points="424.543,264.245 458.375,298.077
-                424.543,331.909 "/>
+                <polyline fill="none" stroke="#000000" stroke-width="1.3845" stroke-miterlimit="10" points="424.543,264.245 458.375,298.077,424.543,331.909 "/>
                 </svg></div>';
             }
         }
@@ -1699,12 +1701,12 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
         if ($settings['enable_author_image']) {
             echo '<div class="dce_author-avatar"><a href="' . $author['posts_url'] . '">' . '<img src="' . $author['avatar'] . '" alt="' . $author['display_name'] . '" />' . '</a></div>';
         }
-        echo '  <div class="dce_author-text">';
-        echo '      <div class="dce_author-name">' . $author['display_name'] . '</div>';
+        echo '<div class="dce_author-text">';
+        echo '<div class="dce_author-name">' . $author['display_name'] . '</div>';
         if ($settings['enable_author_bio']) {
-            echo '      <div class="dce_author-bio">' . $author['bio'] . '</div>';
+            echo '<div class="dce_author-bio">' . $author['bio'] . '</div>';
         }
-        echo '  </div>';
+        echo '</div>';
         echo '</div>';
     }
     private function generate_title($settings)
@@ -1767,7 +1769,6 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
                     if ($settings['only_parent_metadata']) {
                         $termparent = $term->parent;
                     }
-                    // ----------------
                     if (!$termparent || !$settings['only_parent_metadata']) {
                         echo '<' . $tag_metadata . '>';
                         $term_url = trailingslashit(get_term_link($term));
@@ -1787,7 +1788,6 @@ class DynamicPostsOldVersion extends \DynamicContentForElementor\Widgets\WidgetP
                         echo '</' . $tag_metadata . '>';
                     }
                 }
-                // fine ciclo
             }
         }
         echo '</div>';

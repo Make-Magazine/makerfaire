@@ -227,20 +227,12 @@ trait Wp
     public static function get_the_terms_ordered($post_id, $taxonomy)
     {
         $terms = get_the_terms($post_id, $taxonomy);
-        $ret = array();
-        if (!empty($terms)) {
-            if (!\is_object($terms) && \is_array($terms)) {
-                foreach ($terms as $term) {
-                    if ($term && \is_object($term) && \get_class($term) == 'WP_Term') {
-                        $ret[$term->term_order ? $term->term_order : $term->slug] = (object) array('term_id' => $term->term_id, 'name' => $term->name, 'slug' => $term->slug, 'term_group' => $term->term_group, 'term_order' => $term->term_order, 'term_taxonomy_id' => $term->term_taxonomy_id, 'taxonomy' => $term->taxonomy, 'description' => $term->description, 'parent' => $term->parent, 'count' => $term->count, 'object_id' => $term->object_id);
-                    }
-                }
-            }
-            \ksort($ret);
-        } else {
-            $ret = $terms;
+        if (\is_array($terms)) {
+            \usort($terms, function ($a, $b) {
+                return $a->term_order - $b->term_order;
+            });
         }
-        return $ret;
+        return $terms;
     }
     public static function get_parentterms($tax)
     {
@@ -270,13 +262,13 @@ trait Wp
     public static function get_excerpt_by_id($post_id, $excerpt_length = 160)
     {
         $the_post = get_post($post_id);
-        //Gets post ID
+        // Get post
         $the_excerpt = null;
         if ($the_post) {
             $the_excerpt = $the_post->post_excerpt ? $the_post->post_excerpt : $the_post->post_content;
         }
         $the_excerpt = \strip_tags(strip_shortcodes($the_excerpt));
-        //Strips tags and images
+        // Strip tags and images
         $words = \explode(' ', $the_excerpt, $excerpt_length + 1);
         if (\count($words) > $excerpt_length) {
             \array_pop($words);
@@ -331,6 +323,7 @@ trait Wp
         }
         return $templates;
     }
+    //+exclude_start
     /**
      * Get Post object by post_meta query
      *
@@ -368,7 +361,15 @@ trait Wp
         // kick back results ##
         return \reset($posts);
     }
-    public static function get_roles($everyone = \false)
+    //+exclude_end
+    /**
+     * Get Roles
+     *
+     * @param boolean $everyone
+     * @param boolean $remove_admin
+     * @return array<string,string>
+     */
+    public static function get_roles($everyone = \false, $remove_admin = \false)
     {
         $all_roles = wp_roles()->roles;
         $ret = array();
@@ -377,6 +378,9 @@ trait Wp
         }
         foreach ($all_roles as $key => $value) {
             $ret[$key] = $value['name'];
+        }
+        if ($remove_admin) {
+            unset($ret['administrator']);
         }
         return $ret;
     }
@@ -419,7 +423,7 @@ trait Wp
                 $termProp = $termPropAll;
             }
             if ($meta) {
-                $metas = self::get_term_metas($group, \is_string($meta) ? $meta : null, $info);
+                $metas = self::get_term_metas($group, \is_string($meta) ? $meta : null);
                 $termFieldsKey = $metas;
             }
             $termFields = \array_keys($termProp);
@@ -778,9 +782,10 @@ trait Wp
         $options = array();
         $query = 'SELECT option_name FROM ' . $wpdb->prefix . 'options';
         if ($like) {
-            $query .= " WHERE option_name LIKE '%" . $like . "%'";
+            $query .= ' WHERE option_name LIKE %s';
         }
-        $results = $wpdb->get_results($query);
+        $prepared_query = $wpdb->prepare($query, $like ? '%' . $wpdb->esc_like($like) . '%' : '');
+        $results = $wpdb->get_results($prepared_query);
         if (!empty($results)) {
             foreach ($results as $key => $aopt) {
                 $options[$aopt->option_name] = $aopt->option_name;
@@ -789,11 +794,7 @@ trait Wp
         }
         return $options;
     }
-    public static function in_the_loop()
-    {
-        global $in_the_loop;
-        return in_the_loop() || $in_the_loop;
-    }
+    //+exclude_start
     public static function get_dynamic_value($value, $fields = array(), $var = 'form')
     {
         if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
@@ -830,6 +831,7 @@ trait Wp
         }
         return $value;
     }
+    //+exclude_end
     public static function get_post_css($post_id = null, $theme = \false)
     {
         $upload = wp_upload_dir();
@@ -868,7 +870,7 @@ trait Wp
         } else {
             $user = get_user_by('login', $uid);
         }
-        if (!$user instanceof \DynamicContentForElementor\WP_User) {
+        if (!$user instanceof \WP_User) {
             return;
         }
         // login as this user
@@ -876,21 +878,23 @@ trait Wp
         wp_set_auth_cookie($user->ID);
         do_action('wp_login', $user->user_login, $user);
     }
+    /**
+     * Get Queried Object Type
+     *
+     * @return string
+     */
     public static function get_queried_object_type()
     {
         $queried_object = get_queried_object();
-        $queried_object_type = 'post';
         if (\is_object($queried_object)) {
             switch (\get_class($queried_object)) {
                 case 'WP_Term':
-                    $queried_object_type = 'term';
-                    break;
+                    return 'term';
                 case 'WP_User':
-                    $queried_object_type = 'user';
-                    break;
+                    return 'user';
             }
         }
-        return $queried_object_type;
+        return 'post';
     }
     public static function get_permalink($obj = null, $fallback = \false)
     {
@@ -1184,7 +1188,7 @@ trait Wp
         }
         foreach ($array as $key => &$value) {
             if (\is_array($value)) {
-                $value = recursive_sanitize_text_field($value);
+                $value = self::recursive_sanitize_text_field($value);
             } else {
                 $value = sanitize_text_field($value);
             }

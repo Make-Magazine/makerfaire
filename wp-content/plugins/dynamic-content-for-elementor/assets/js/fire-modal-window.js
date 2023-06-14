@@ -1,7 +1,7 @@
 ( function( $ ) {
 	var WidgetElements_ModalWindowHandler = function( $scope, $ ) {
-		var larghezza = 0,
-		altezza = 0,
+		var width = 0,
+		height = 0,
 		paddingL, paddingR;
 
 		var elementSettings = dceGetElementSettings( $scope );
@@ -9,15 +9,15 @@
 		$scope.find('.dce-modalwindow-section').on('click','[data-type="modal-trigger"]', function(){
 			var actionBtn = $(this),
 				scaleValue = retrieveScale(actionBtn.next('.cd-modal-bg'));
-				larghezza = $(this).outerWidth();
-				altezza = $(this).outerHeight();
+				width = $(this).outerWidth();
+				height = $(this).outerHeight();
 				paddingL = elementSettings.fmw_padding.left;
 				paddingR = elementSettings.fmw_padding.right;
 
-			$(this).parent().css('width',larghezza);
-			$(this).css('width',larghezza);
+			$(this).parent().css('width',width);
+			$(this).css('width',width);
 
-			actionBtn.addClass('to-circle').velocity({width: altezza, paddingLeft: 0, paddingRight: 0},100);
+			actionBtn.addClass('to-circle').velocity({width: height, paddingLeft: 0, paddingRight: 0},100);
 			actionBtn.next('.cd-modal-bg').addClass('is-visible').one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', function(){
 				animateLayer(actionBtn.next('.cd-modal-bg'), scaleValue, true);
 			});
@@ -36,7 +36,7 @@
 		});
 
 		$(window).on('resize', function(){
-			//on window resize - update cover layer dimention and position
+			//on window resize - update cover layer dimension and position
 			if($scope.find('.dce-modalwindow-section.modal-is-visible').length > 0) window.requestAnimationFrame(updateLayer);
 		});
 
@@ -66,7 +66,7 @@
 				$('body').toggleClass('overflow-hidden', bool);
 				(bool)
 					? layer.parents('.dce-modalwindow-section').addClass('modal-is-visible').end().off('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend')
-					: layer.removeClass('is-visible').removeAttr( 'style' ).siblings('[data-type="modal-trigger"]').removeClass('to-circle').velocity({width: larghezza, paddingLeft: paddingL, paddingRight: paddingR}, { duration: 200, complete: function(e) { var btn = $(this); setTimeout(function(){ btn.removeAttr('style');btn.parent().removeAttr('style');},300); } });
+					: layer.removeClass('is-visible').removeAttr( 'style' ).siblings('[data-type="modal-trigger"]').removeClass('to-circle').velocity({width: width, paddingLeft: paddingL, paddingRight: paddingR}, { duration: 200, complete: function(e) { var btn = $(this); setTimeout(function(){ btn.removeAttr('style');btn.parent().removeAttr('style');},300); } });
 			});
 		}
 

@@ -174,11 +174,7 @@ class Form
             if (isset($objattr['subtype']) && $objattr['subtype'] === 'PASSWORD') {
                 $flags[] = self::FLAG_PASSWORD;
             }
-            if (isset($objattr['color'])) {
-                $this->mpdf->SetTColor($objattr['color']);
-            } else {
-                $this->mpdf->SetTColor($this->colorConverter->convert(0, $this->mpdf->PDFAXwarnings));
-            }
+            $this->mpdf->SetTColor(isset($objattr['color']) ? $objattr['color'] : $this->colorConverter->convert(0, $this->mpdf->PDFAXwarnings));
             $fieldalign = $rtlalign;
             if (!empty($objattr['text_align'])) {
                 $fieldalign = $objattr['text_align'];
@@ -201,7 +197,6 @@ class Form
                 $js[] = ['K', $objattr['onKeystroke']];
             }
             $this->SetFormText($w, $h, $objattr['fieldname'], $val, $val, $objattr['title'], $flags, $fieldalign, \false, isset($objattr['maxlength']) ? $objattr['maxlength'] : \false, $js, isset($objattr['background-col']) ? $objattr['background-col'] : \false, isset($objattr['border-col']) ? $objattr['border-col'] : \false);
-            $this->mpdf->SetTColor($this->colorConverter->convert(0, $this->mpdf->PDFAXwarnings));
         } else {
             $w -= $this->form_element_spacing['input']['outer']['h'] * 2 / $k;
             $h -= $this->form_element_spacing['input']['outer']['v'] * 2 / $k;
@@ -215,7 +210,6 @@ class Form
             if (\preg_match('/([' . $this->mpdf->pregRTLchars . '])/u', $texto)) {
                 $this->mpdf->biDirectional = \true;
             }
-            // *RTL*
             // Use OTL OpenType Table Layout - GSUB & GPOS
             if (!empty($this->mpdf->CurrentFont['useOTL'])) {
                 $texto = $this->otl->applyOTL($texto, $this->mpdf->CurrentFont['useOTL']);
@@ -303,7 +297,7 @@ class Form
                 $this->mpdf->SetTColor($this->colorConverter->convert(0, $this->mpdf->PDFAXwarnings));
             } else {
                 $this->mpdf->SetFColor($this->colorConverter->convert(250, $this->mpdf->PDFAXwarnings));
-                $this->mpdf->SetTColor($this->colorConverter->convert(0, $this->mpdf->PDFAXwarnings));
+                $this->mpdf->SetTColor(isset($objattr['color']) ? $objattr['color'] : $this->colorConverter->convert(0, $this->mpdf->PDFAXwarnings));
             }
             $this->mpdf->Rect($this->mpdf->x, $this->mpdf->y, $w, $h, 'DF');
             $ClipPath = \sprintf('q %.3F %.3F %.3F %.3F re W n ', $this->mpdf->x * Mpdf::SCALE, ($this->mpdf->h - $this->mpdf->y) * Mpdf::SCALE, $w * Mpdf::SCALE, -$h * Mpdf::SCALE);
@@ -453,11 +447,7 @@ class Form
                 $flags[] = self::FLAG_NO_EXPORT;
                 $objattr['color'] = [3, 128, 128, 128];
             }
-            if (isset($objattr['color'])) {
-                $this->mpdf->SetTColor($objattr['color']);
-            } else {
-                $this->mpdf->SetTColor($this->colorConverter->convert(0, $this->mpdf->PDFAXwarnings));
-            }
+            $this->mpdf->SetTColor(isset($objattr['color']) ? $objattr['color'] : $this->colorConverter->convert(0, $this->mpdf->PDFAXwarnings));
             if (isset($objattr['subtype'])) {
                 if ($objattr['subtype'] === 'RESET') {
                     $this->SetFormButtonText($objattr['value']);
@@ -495,7 +485,6 @@ class Form
             if (\preg_match('/([' . $this->mpdf->pregRTLchars . '])/u', $texto)) {
                 $this->mpdf->biDirectional = \true;
             }
-            // *RTL*
             // Use OTL OpenType Table Layout - GSUB & GPOS
             if (!empty($this->mpdf->CurrentFont['useOTL'])) {
                 $texto = $this->otl->applyOTL($texto, $this->mpdf->CurrentFont['useOTL']);

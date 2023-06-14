@@ -4,7 +4,7 @@ namespace DynamicContentForElementor;
 
 trait Plugins
 {
-    protected static $plugin_dependency_names = ['acf' => 'Advanced Custom Fields', 'advanced-custom-fields-pro' => 'Advanced Custom Fields Pro', 'elementor-pro' => 'Elementor Pro', 'jet-engine' => 'JetEngine', 'pods' => 'Pods', 'search-filter-pro' => 'Search & Filter Pro', 'types' => 'Toolset', 'woocommerce' => 'WooCommerce'];
+    protected static $plugin_dependency_names = ['acf' => 'Advanced Custom Fields', 'advanced-custom-fields-pro' => 'Advanced Custom Fields Pro', 'elementor-pro' => 'Elementor Pro', 'jet-engine' => 'JetEngine', 'metabox' => 'Meta Box', 'pods' => 'Pods', 'search-filter-pro' => 'Search & Filter Pro', 'timber' => 'Timber', 'types' => 'Toolset', 'woocommerce' => 'WooCommerce'];
     public static $checked_plugins = [];
     public static function get_plugin_dependency_names($plugin)
     {
@@ -18,7 +18,11 @@ trait Plugins
         if (isset(self::$checked_plugins[$plugin])) {
             return self::$checked_plugins[$plugin];
         }
-        $is_active = self::is_acf_pro($plugin) || self::is_plugin_must_use($plugin) || self::is_plugin_active_for_local($plugin) || self::is_plugin_active_for_network($plugin);
+        if ($plugin === 'elementor-pro') {
+            $is_active = self::is_elementorpro_active();
+        } else {
+            $is_active = self::is_acf_pro($plugin) || self::is_plugin_must_use($plugin) || self::is_plugin_active_for_local($plugin) || self::is_plugin_active_for_network($plugin);
+        }
         self::$checked_plugins[$plugin] = $is_active;
         return $is_active;
     }
@@ -165,6 +169,18 @@ trait Plugins
     public static function is_jetengine_active()
     {
         if (\class_exists('Jet_Engine')) {
+            return \true;
+        }
+        return \false;
+    }
+    /**
+     * Check if Meta Box is active
+     *
+     * @return boolean
+     */
+    public static function is_metabox_active()
+    {
+        if (\class_exists('RWMB_Core')) {
             return \true;
         }
         return \false;

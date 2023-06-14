@@ -1,37 +1,50 @@
 var Widget_DCE_Dynamicposts_grid_filters_Handler = function ($scope, $) {
-	var elementSettings = dceGetElementSettings($scope);
-	var grid_container = $scope.find('.dce-posts-container.dce-skin-grid .dce-posts-wrapper');
-	var $layoutMode = elementSettings[dceDynamicPostsSkinPrefix+'grid_type'];
-	grid_container.imagesLoaded(() => {
-		grid_container.isotope({
+	if (elementorFrontend.isEditMode()) {
+		return;
+	}
+	let elementSettings = dceGetElementSettings($scope);
+	let container = $scope.find('.dce-posts-container.dce-skin-grid .dce-posts-wrapper');
+	let layoutMode = elementSettings[ dceDynamicPostsSkinPrefix+'grid_type' ];
+	let rtl = Boolean( elementSettings[ 'rtl' ] );
+
+	let $filterItems = $scope.find('.dce-filters .filters-item');
+	// if all is not present at start we need to filter by the first filter
+	let defaultFilter = $filterItems.first().find('a').attr('data-filter');
+	container.imagesLoaded(() => {
+		container.isotope({
 			itemSelector: '.dce-post-item',
-			layoutMode: 'masonry' === $layoutMode ? 'masonry' : 'fitRows',
+			layoutMode: 'masonry' === layoutMode ? 'masonry' : 'fitRows',
 			sortBy: 'original-order',
+			filter: defaultFilter,
 			percentPosition: true,
+			originLeft: ! rtl,
 			masonry: {
 				columnWidth: '.dce-post-item'
 			}
 		});
 	});
-	$scope.find('.dce-filters .filters-item').on('click', 'a', function (e) {
+
+	$filterItems.on('click', 'a', function (e) {
 		$(this).parent().siblings().removeClass('filter-active');
 		$(this).parent().addClass('filter-active');
-		var filterValue = $(this).attr('data-filter');
-		grid_container.isotope({
+		let filterValue = $(this).attr('data-filter');
+		container.isotope({
 			filter: filterValue,
 		});
+
 		// Match Height when layout is complete
 		if( elementSettings.grid_filters_match_height ) {
-			grid_container.on( 'layoutComplete', function(event, laidOutItems ) {
+			container.on( 'layoutComplete', function(event, laidOutItems ) {
 				jQuery.fn.matchHeight._update();
 			});
 		}
+
 		return false;
 	});
 };
 
 jQuery(window).on('elementor/frontend/init', function () {
-    elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamicposts-v2.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamicposts-v2.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-woo-products-cart.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamic-woo-products.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-dynamic-woo-products-on-sale.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
@@ -41,4 +54,6 @@ jQuery(window).on('elementor/frontend/init', function () {
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-my-posts.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-sticky-posts.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-metabox-relationship.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-acf-relationship.grid-filters', Widget_DCE_Dynamicposts_grid_filters_Handler);
 });

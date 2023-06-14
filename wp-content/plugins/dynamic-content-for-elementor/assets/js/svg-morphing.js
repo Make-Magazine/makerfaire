@@ -1,25 +1,21 @@
 ( function( $ ) {
 
 	var WidgetElements_SvgMorphHandler = function( $scope, $ ) {
-
 		var elementSettings = dceGetElementSettings($scope);
 		var id_scope = $scope.attr('data-id');
-
 		var forma = elementSettings.type_of_shape;
 		var playpause_control = elementSettings.playpause_control || 'paused';
-
 		var step = 0;
 		var run = $('#dce-svg-'+id_scope).attr('data-run');
-
 		var is_running = false;
 		var trigger_svg = elementSettings.svg_trigger;
-
 		var one_by_one = elementSettings.one_by_one;
 		var enable_image = elementSettings.enable_image || 0;
-
 		var pattern_image = '';
-		if(enable_image) pattern_image = elementSettings.svg_image.id;
 
+		if (enable_image) {
+			pattern_image = elementSettings.svg_image.id;
+		}
 
 		// ciclo il ripetitore in base alla Forma
 		var ripetitore = 'repeater_shape_'+forma;
@@ -27,27 +23,18 @@
 		var contentElemsTotal = repeaterShape.length;
 		var numberOfElements = repeaterShape.length;
 		var shapes = [];
-
-		/*
-		easingSinusoidalInOut,
-		easingQuadraticInOut,
-		easingCubicInOut,
-		easingQuarticInOut,
-		easingQuinticInOut,
-		easingCircularInOut,
-		easingExponentialInOut.
-		*/
-
 		var dceshape = "#forma-"+id_scope;
 		var dceshape_svg = "#dce-svg-"+id_scope;
 
-		// gsap.timeline
-		if(tl) tl.kill($(dceshape));
+		if(tl) {
+			tl.kill($(dceshape));
+		}
 		var tl = null;
 		tl = new gsap.timeline();
 
-
-		if(tlpos) tlpos.kill($(dceshape_svg));
+		if(tlpos) {
+			tlpos.kill($(dceshape_svg));
+		}
 		var tlpos = null;
 		tlpos = new gsap.timeline();
 
@@ -67,7 +54,6 @@
 
 		if(transitionTl) transitionTlpos.kill($(dceshape_svg));
 		var transitionTlpos = null;
-
 
 		var get_data_anim = function(){
 			var duration_anim = elementSettings.duration_morph.size || 3;
@@ -109,10 +95,7 @@
 
 				var fillColor = pippo.fill_color;
 				var strokeColor = pippo.stroke_color;
-				var fillImage = pippo.fill_image.id;
-
 				var strokeWidth = pippo.stroke_width.size || 0;
-
 				var shapeX = pippo.shape_x.size || 0;
 				var shapeY = pippo.shape_y.size || 0;
 				var shapeRotate = pippo.shape_rotation.size || 0;
@@ -191,9 +174,9 @@
 			return easing_morph;
 		};
 		var createTween = function(){
-    		if($("#forma-"+id_scope).length){
+			if($("#forma-"+id_scope).length){
 
-    			var tweenSVG = 'tlpos';
+				var tweenSVG = 'tlpos';
 				var tweenString = 'tl';
 
 				$.each(shapes, function(i, el){
@@ -233,7 +216,7 @@
 			}
 
 			// alla fine dell'intero ciclo
-			tl.eventCallback("onRepeat", myFunction, ["param1","param2"]);
+			tl.eventCallback("onRepeat", myFunction1, ["param1","param2"]);
 
 
 			if(repeat_morph != 0){
@@ -251,14 +234,7 @@
 			}
 
 		};
-		var myFunction = function(a,b){
-			// ad ogni giro
-			/*if( 1 == $('#dce-svg-'+id_scope).attr('data-morphid')){
-			tl.delay(elementSettings.duration_morph.size);
-			tlpos.delay(elementSettings.duration_morph.size);
-			}*/
 
-		};
 		var myFunction1 = function(id_step){
 			// ad ogni trasformazione
 			$('#dce-svg-'+id_scope).attr('data-morphid',id_step);
@@ -309,36 +285,26 @@
 			tlpos.play();
 			is_running = true;
 		};
-		var inverti = function(){
-			tl.reverse();
-			tlpos.reverse();
-			is_running = true;
-		};
-		var riprendi = function(){
-			tl.restart();
-			tlpos.restart();
-			is_running = true;
-		};
+
 		var moveToStep = function(step){
+			get_data_shape();
 
-				get_data_shape();
+			if (typeof shapes[step] !== "undefined") {
+				if(transitionTl) transitionTl.kill($(dceshape));
+				if(transitionTlpos) transitionTlpos.kill($(dceshape_svg));
 
-				if (typeof shapes[step] !== "undefined") {
-					if(transitionTl) transitionTl.kill($(dceshape));
-					if(transitionTlpos) transitionTlpos.kill($(dceshape_svg));
-
-					var fill_element = 'fill:"'+shapes[step].fill.color+'", ';
-					if(enable_image && (shapes[step].fill.image || pattern_image)){
-						fill_element = '';
-						$(dceshape).attr('fill','url(#pattern-'+id_scope+')');
-					}
-					var tweenString = 'transitionTl.to("'+dceshape+'", '+getCustomData_speed(step)+', {onStart: moveFnStart, onStartParams:['+step+'], onComplete: movetoFn, onCompleteParams:['+step+'], morphSVG:`'+shapes[step].points+'`, ease: '+getCustomData_easing(step)+'.'+getCustomData_morph(step)+', attr:{'+fill_element+'"stroke-width":'+shapes[step].stroke.width+', stroke:"'+shapes[step].stroke.color+'"}});';
-					var tweenStringPos = 'transitionTlpos.to("'+dceshape_svg+'", '+getCustomData_speed(step)+', {rotation: '+shapes[step].svg.rotate+', x:'+shapes[step].svg.x+', y:'+shapes[step].svg.y+', ease: '+getCustomData_easing(step)+'.'+getCustomData_morph(step)+'});';
-
-				    eval(tweenStringPos);
-				    eval(tweenString);
-
+				var fill_element = 'fill:"'+shapes[step].fill.color+'", ';
+				if(enable_image && (shapes[step].fill.image || pattern_image)){
+					fill_element = '';
+					$(dceshape).attr('fill','url(#pattern-'+id_scope+')');
 				}
+				var tweenString = 'transitionTl.to("'+dceshape+'", '+getCustomData_speed(step)+', {onStart: moveFnStart, onStartParams:['+step+'], onComplete: movetoFn, onCompleteParams:['+step+'], morphSVG:`'+shapes[step].points+'`, ease: '+getCustomData_easing(step)+'.'+getCustomData_morph(step)+', attr:{'+fill_element+'"stroke-width":'+shapes[step].stroke.width+', stroke:"'+shapes[step].stroke.color+'"}});';
+				var tweenStringPos = 'transitionTlpos.to("'+dceshape_svg+'", '+getCustomData_speed(step)+', {rotation: '+shapes[step].svg.rotate+', x:'+shapes[step].svg.x+', y:'+shapes[step].svg.y+', ease: '+getCustomData_easing(step)+'.'+getCustomData_morph(step)+'});';
+
+				eval(tweenStringPos);
+				eval(tweenString);
+
+			}
 		};
 
 		var playShapeEl = function() {
@@ -377,7 +343,6 @@
 			requestAnimationFrame(repeatOften);
 		};
 
-		// ------------------------------
 		var active_scrollAnalysi = function($el){
 			if($el){
 

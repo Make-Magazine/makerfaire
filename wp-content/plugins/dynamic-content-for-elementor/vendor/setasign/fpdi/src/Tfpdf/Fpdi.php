@@ -27,7 +27,7 @@ class Fpdi extends FpdfTpl
      *
      * @string
      */
-    const VERSION = '2.3.6';
+    const VERSION = '2.3.7';
     public function _enddoc()
     {
         parent::_enddoc();

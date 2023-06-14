@@ -236,6 +236,11 @@
   outline: none;
   outline-width: 0;
 }
+/* Swiper 8 */
+.dynamic_acfslider .swiper-button-prev:after,
+.dynamic_acfslider .swiper-button-next:after {
+  display: none;
+}
 .dynamic_acfslider .swiper-button-prev svg,
 .dynamic_acfslider .swiper-button-next svg{
   width: 100%;

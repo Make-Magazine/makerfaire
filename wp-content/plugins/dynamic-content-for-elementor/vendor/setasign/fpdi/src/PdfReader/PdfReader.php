@@ -164,7 +164,8 @@ class PdfReader
         if (\count($this->pages) > 0) {
             return;
         }
-        $readPages = function ($kids, $count) use(&$readPages, $readAll) {
+        $expectedPageCount = $this->getPageCount();
+        $readPages = function ($kids, $count) use(&$readPages, $readAll, $expectedPageCount) {
             $kids = PdfArray::ensure($kids);
             $isLeaf = $count->value === \count($kids->value);
             foreach ($kids->value as $reference) {
@@ -179,6 +180,10 @@ class PdfReader
                     $readPages(PdfDictionary::get($object->value, 'Kids'), PdfDictionary::get($object->value, 'Count'));
                 } else {
                     $this->pages[] = $object;
+                }
+                // stop if all pages are read - faulty documents exists with additional entries with invalid data.
+                if (\count($this->pages) === $expectedPageCount) {
+                    break;
                 }
             }
         };

@@ -28,7 +28,7 @@ class UserProfilePhotos extends BaseType implements TypeInterface
     /**
      * Total number of profile pictures the target user has
      *
-     * @var Integer
+     * @var int
      */
     protected $totalCount;
     /**
@@ -47,6 +47,8 @@ class UserProfilePhotos extends BaseType implements TypeInterface
     }
     /**
      * @param array $photos
+     *
+     * @return void
      */
     public function setPhotos($photos)
     {
@@ -60,9 +62,11 @@ class UserProfilePhotos extends BaseType implements TypeInterface
         return $this->totalCount;
     }
     /**
-     * @param int $totalCount
+     * @param mixed $totalCount
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
     public function setTotalCount($totalCount)
     {

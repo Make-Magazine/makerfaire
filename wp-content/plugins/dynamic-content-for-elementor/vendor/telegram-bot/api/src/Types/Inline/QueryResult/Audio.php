@@ -50,13 +50,13 @@ class Audio extends AbstractInlineQueryResult
     /**
      * Optional. Performer
      *
-     * @var string
+     * @var string|null
      */
     protected $performer;
     /**
      * Optional. Audio duration in seconds
      *
-     * @var int
+     * @var int|null
      */
     protected $audioDuration;
     /**
@@ -86,34 +86,40 @@ class Audio extends AbstractInlineQueryResult
     }
     /**
      * @param string $audioUrl
+     *
+     * @return void
      */
     public function setAudioUrl($audioUrl)
     {
         $this->audioUrl = $audioUrl;
     }
     /**
-     * @return string
+     * @return string|null
      */
     public function getPerformer()
     {
         return $this->performer;
     }
     /**
-     * @param string $performer
+     * @param string|null $performer
+     *
+     * @return void
      */
     public function setPerformer($performer)
     {
         $this->performer = $performer;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getAudioDuration()
     {
         return $this->audioDuration;
     }
     /**
-     * @param int $audioDuration
+     * @param int|null $audioDuration
+     *
+     * @return void
      */
     public function setAudioDuration($audioDuration)
     {

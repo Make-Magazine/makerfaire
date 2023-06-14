@@ -1,33 +1,437 @@
-.dce-carousel-controls .swiper-button-prev,
-.dce-carousel-controls .swiper-button-next {
+/* fix bug of carousel getting bigger and bigger in some cases */
+.dce-posts-container.swiper-container, .dce-posts-container.swiper {
+    max-width: 100%;
+}
+
+.dce-dynamic-posts-collection:after {
+  display: none;
+}
+
+.dce-item_image {
+  display: flex;
+  overflow: hidden;
+}
+
+.dce-align-left .dce-item_image {
+  justify-content: flex-start;
+}
+
+.dce-align-right .dce-item_image {
+  justify-content: flex-end;
+}
+
+.dce-align-center .dce-item_image {
+  justify-content: center;
+}
+
+[data-elementor-device-mode="desktop"] .dce-align-desktop-left .dce-item_image {
+  justify-content: flex-start;
+}
+
+[data-elementor-device-mode="desktop"] .dce-align-desktop-right .dce-item_image {
+  justify-content: flex-end;
+}
+
+[data-elementor-device-mode="desktop"] .dce-align-desktop-center .dce-item_image {
+  justify-content: center;
+}
+
+[data-elementor-device-mode="tablet"] .dce-align-tablet-left .dce-item_image {
+  justify-content: flex-start;
+}
+
+[data-elementor-device-mode="tablet"] .dce-align-tablet-right .dce-item_image {
+  justify-content: flex-end;
+}
+
+[data-elementor-device-mode="tablet"] .dce-align-tablet-center .dce-item_image {
+  justify-content: center;
+}
+
+[data-elementor-device-mode="mobile"] .dce-align-mobile-left .dce-item_image {
+  justify-content: flex-start;
+}
+
+[data-elementor-device-mode="mobile"] .dce-align-mobile-right .dce-item_image {
+  justify-content: flex-end;
+}
+
+[data-elementor-device-mode="mobile"] .dce-align-mobile-center .dce-item_image {
+  justify-content: center;
+}
+
+.dce-dynamicposts-mask {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* SVG */
+.dce-dynamicposts-mask {
+  overflow: visible;
+}
+
+.dce-posts-container .dce-item>* {
+  transition: background-color 0.4s;
+}
+
+.dce-posts-container .dce-item>* a {
+  transition: color 0.4s;
+}
+
+/* image */
+.dce-posts-container .dce-post-image {
+  width: 100%;
+}
+
+.dce-posts-container a.dce-post-image {
+  transition: filter 0.3s, opacity 0.3s;
+}
+
+.dce-posts-container .dce-post-image.dce-post-bgimage {
+  height: 100px;
+}
+
+.dce-posts-container .dce-post-image .dce-img {
+  overflow: hidden;
+}
+
+.dce-post-item .dce-post-image .dce-img {
+  position: relative;
+}
+
+.dce-posts-container.dce-is-ratio .dce-post-image .dce-img {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.dce-posts-container .dce-post-image .dce-img img {
+  display: block;
+  width: 100%;
+  max-height: none;
+  max-width: none;
+  transition: filter 0.3s;
+}
+
+.dce-posts-container.dce-is-ratio .dce-post-image .dce-img img {
+  width: 100%;
+  height: auto;
+  position: absolute;
+  top: calc(50% + 1px);
+  left: calc(50% + 1px);
+  transform: scale(1.01) translate(-50%, -50%);
+}
+
+.dce-posts-container.dce-is-ratio .dce-post-image .dce-img.dce-fit-img img {
+  width: auto;
+  height: 100%;
+}
+
+/* Background image */
+.dce-posts-container .dce-post-image.dce-post-bgimage .dce-img.dce-bgimage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-position: center center;
+}
+
+/* Overlay image */
+.dce-posts-container .dce-post-image.dce-post-overlayimage {
+  position: relative;
+}
+
+.dce-posts-container .dce-post-image.dce-post-overlayimage:after,
+.dce-posts-container a.dce-post-image.dce-post-overlayhover:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.dce-posts-container a.dce-post-image.dce-post-overlayhover:before {
+  z-index: 2;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.dce-posts-container a.dce-post-image.dce-post-overlayhover:hover:before {
+  opacity: 1;
+}
+
+/* Author */
+.dce-post-author {
+  display: inline-flex;
+  align-items: center;
+}
+
+.dce-author-image img {
+  border-radius: 500px;
+  margin-right: 10px;
+}
+
+.dce-author-description {
+  font-size: 13px;
+  font-style: italic;
+}
+
+.dce-author-name {
+  line-height: 1.2;
+}
+
+ul.dce-terms-list {
+  padding: 0;
+  margin: 0;
+}
+
+li.dce-term-item {
+  display: inline;
+}
+
+.dce-terms-list .dce-separator {
+  padding: 0 4px;
+}
+
+.dce-posts-container.dce-skin-carousel .dce-post-item {
+  display: flex;
+  word-break: break-word;
+}
+
+.dce-posts-container .dce-post-item .dce-post-block {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+/* Distribution */
+.dce-posts-layout-left .dce-image-area, .dce-posts-layout-left .dce-content-area,
+.dce-posts-layout-right .dce-image-area, .dce-posts-layout-right .dce-content-area,
+.dce-posts-layout-alternate .dce-image-area, .dce-posts-layout-alternate .dce-content-area {
+  width: 50%
+}
+
+/* Top */
+.dce-posts-layout-default .dce-post-item .dce-post-block {
+  flex-direction: column;
+}
+
+/* Left */
+.dce-posts-layout-left .dce-post-item .dce-post-block {
+  flex-direction: row;
+}
+
+.dce-posts-layout-left .dce-content-area {
+  padding: 1rem;
+}
+
+/* Right */
+.dce-posts-layout-right .dce-post-item .dce-post-block {
+  flex-direction: row-reverse;
+}
+
+.dce-posts-layout-right .dce-content-area {
+  padding: 1rem;
+}
+
+/* Alternate */
+.dce-posts-layout-alternate .dce-post-item:nth-child(odd) .dce-post-block {
+  flex-direction: row;
+}
+
+.dce-posts-layout-alternate .dce-post-item:nth-child(even) .dce-post-block {
+  flex-direction: row-reverse;
+}
+
+.dce-posts-layout-alternate .dce-content-area {
+  padding: 1rem;
+}
+
+[data-elementor-device-mode="mobile"] .force-default-mobile-yes .dce-post-item .dce-post-block {
+  flex-direction: column;
+}
+
+[data-elementor-device-mode="mobile"] .force-default-mobile-yes .dce-image-area,
+[data-elementor-device-mode="mobile"] .force-default-mobile-yes .dce-content-area {
+  width: 100%;
+}
+
+/* Overlay */
+.dce-posts-layout-overlay .dce-post-item .dce-post-block {
+  flex-direction: column;
+}
+
+.dce-posts-layout-overlay .dce-content-area {
+  position: relative;
+  width: 80%;
+  margin-top: -20%;
+  margin-left: 10%;
+  background-color: #ffffff;
+  padding: 1rem;
+}
+
+/* Textzone */
+.dce-posts-layout-textzone .dce-post-item .dce-post-block {
+  flex-direction: column;
+}
+
+.dce-posts-layout-textzone .dce-image-area {
+  width: 80%;
+}
+
+.dce-posts-layout-textzone .dce-content-area {
+  position: relative;
+  width: 60%;
+  margin-top: -20%;
+  margin-left: 40%;
+  background-color: #ffffff;
+  padding: 1rem;
+}
+
+/* Float */
+.dce-posts-layout-float .dce-post-item .dce-post-block {
+  flex-direction: column;
+  position: relative;
+}
+
+.dce-posts-layout-float .dce-content-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  padding: 1rem;
+  margin: 0;
+}
+
+/* TextZone Effect */
+.dce-post-block .dce-hover-effect-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+}
+
+.dce-posts-layout-float .dce-hover-effect-content .dce-content-area {
+  position: relative;
+}
+
+.dce-post-block.dce-hover-effects {
+  overflow: hidden;
+}
+
+.dce-post-block.dce-hover-effects .dce-hover-effect-content:not(.dce-hover-effect-cssanimations) {
+  transition: all 0.5s ease-in-out;
+}
+
+/* Fade */
+.dce-hovertexteffect-fade .dce-post-block.dce-hover-effects .dce-hover-effect-content {
+  opacity: 0;
+}
+
+.dce-hovertexteffect-fade .dce-post-block.dce-hover-effects:hover .dce-hover-effect-content {
+  opacity: 1
+}
+
+/* Slide Bottom */
+.dce-hovertexteffect-slidebottom .dce-post-block.dce-hover-effects .dce-hover-effect-content {
+  transform: translateY(100%);
+}
+
+.dce-hovertexteffect-slidebottom .dce-post-block.dce-hover-effects:hover .dce-hover-effect-content {
+  transform: translateY(0);
+}
+
+/* Slide top */
+.dce-hovertexteffect-slidetop .dce-post-block.dce-hover-effects .dce-hover-effect-content {
+  transform: translateY(-100%);
+}
+
+.dce-hovertexteffect-slidetop .dce-post-block.dce-hover-effects:hover .dce-hover-effect-content {
+  transform: translateY(0);
+}
+
+/* Slide left */
+.dce-hovertexteffect-slideleft .dce-post-block.dce-hover-effects .dce-hover-effect-content {
+  transform: translateX(-100%);
+}
+
+.dce-hovertexteffect-slideleft .dce-post-block.dce-hover-effects:hover .dce-hover-effect-content {
+  transform: translateX(0);
+}
+
+/* Slide right */
+.dce-hovertexteffect-slideright .dce-post-block.dce-hover-effects .dce-hover-effect-content {
+  transform: translateX(100%);
+}
+
+.dce-hovertexteffect-slideright .dce-post-block.dce-hover-effects:hover .dce-hover-effect-content {
+  transform: translateX(0);
+}
+
+/* Slide horizontal */
+.dce-hovertexteffect-slidehorizontal .dce-post-block.dce-hover-effects .dce-hover-effect-content {
+  transform: translateX(100%);
+}
+
+.dce-hovertexteffect-slidehorizontal .dce-post-block.dce-hover-effects:hover .dce-hover-effect-content {
+  transform: translateX(0);
+}
+
+/* Zooom in */
+.dce-hovertexteffect-zoomin .dce-post-block.dce-hover-effects .dce-hover-effect-content {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.dce-hovertexteffect-zoomin .dce-post-block.dce-hover-effects:hover .dce-hover-effect-content {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.dce-hovertexteffect-cssanimations .dce-post-block.dce-hover-effects .dce-hover-effect-content {
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  animation-direction: revert;
+  animation-iteration-count: 1;
+}
+
+.dce-carousel-controls .swiper-button-left,
+.dce-carousel-controls .swiper-button-right {
   position: absolute;
   top: 50%;
   z-index: 9;
   cursor: pointer;
   outline: none;
 }
-.dce-carousel-controls .swiper-button-prev.swiper-button-disabled,
-.dce-carousel-controls .swiper-button-next.swiper-button-disabled {
+.dce-carousel-controls .swiper-button-left.swiper-button-disabled,
+.dce-carousel-controls .swiper-button-right.swiper-button-disabled {
   opacity: 0;
   cursor: auto;
   pointer-events: none;
 }
-.dce-carousel-controls .swiper-button-prev svg line,
-.dce-carousel-controls .swiper-button-prev svg polyline,
-.dce-carousel-controls .swiper-button-next svg line,
-.dce-carousel-controls .swiper-button-next svg polyline{
+.dce-carousel-controls .swiper-button-left svg line,
+.dce-carousel-controls .swiper-button-left svg polyline,
+.dce-carousel-controls .swiper-button-right svg line,
+.dce-carousel-controls .swiper-button-right svg polyline{
   transition: stroke 0.8s linear;
   -webkit-transition: stroke 0.8s linear;
   -moz-transition: stroke 0.8s linear;
   -o-transition: stroke 0.8s linear;
   -ms-transition: stroke 0.8s linear;
 }
-.dce-carousel-controls.hoveranim-yes .swiper-button-prev:hover svg,
-.dce-carousel-controls.hoveranim-yes .swiper-button-next:hover svg{
+.dce-dynamic-posts-collection.hover-animation-yes .dce-carousel-controls .swiper-button-left:hover svg,
+.dce-dynamic-posts-collection.hover-animation-yes .dce-carousel-controls .swiper-button-right:hover svg{
   transform: scale(1.2);
 }
-.dce-carousel-controls .swiper-button-prev svg,
-.dce-carousel-controls .swiper-button-next svg{
+.dce-carousel-controls .swiper-button-left svg,
+.dce-carousel-controls .swiper-button-right svg{
   overflow: visible;
   -webkit-transform: scale(1);
   -ms-transform: scale(1);
@@ -39,42 +443,42 @@
   -o-transition: transform .6s cubic-bezier(.46,.03,.14,.93);
   -ms-transition: transform .6s cubic-bezier(.46,.03,.14,.93);
 }
-.dce-carousel-controls .swiper-button-prev.swiper-button-disabled svg,
-.dce-carousel-controls .swiper-button-next.swiper-button-disabled svg{
+.dce-carousel-controls .swiper-button-left.swiper-button-disabled svg,
+.dce-carousel-controls .swiper-button-right.swiper-button-disabled svg{
   -webkit-transform: scale(0.1);
   -ms-transform: scale(0.1);
   -o-transform: scale(0.1);
   transform: scale(0.1);
 }
 
-.dce-carousel-controls .swiper-button-next:focus,
-.dce-carousel-controls .swiper-button-prev:focus{
+.dce-carousel-controls .swiper-button-right:focus,
+.dce-carousel-controls .swiper-button-left:focus{
   outline: none;
 }
-.dce-carousel-controls .swiper-button-prev,
-.dce-carousel-controls .swiper-container-rtl .swiper-button-next,
-.dce-carousel-controls .swiper-button-next,
-.dce-carousel-controls .swiper-container-rtl .swiper-button-prev{
+.dce-carousel-controls .swiper-button-left,
+.dce-carousel-controls .swiper-container-rtl .swiper-button-right,
+.dce-carousel-controls .swiper-button-right,
+.dce-carousel-controls .swiper-container-rtl .swiper-button-left{
   background-image: none;
 }
-.dce-carousel-controls .swiper-button-prev,
-.dce-carousel-controls .swiper-container-rtl .swiper-button-prev {
+.dce-carousel-controls .swiper-button-left,
+.dce-carousel-controls .swiper-container-rtl .swiper-button-left {
   left: 10px;
   right: auto;
   background-image: none;
 }
-.dce-carousel-controls .swiper-button-next,
-.dce-carousel-controls .swiper-container-rtl .swiper-button-next {
+.dce-carousel-controls .swiper-button-right,
+.dce-carousel-controls .swiper-container-rtl .swiper-button-right {
   right: 10px;
   left: auto;
   background-image: none;
 }
-.dce-carousel-controls .swiper-button-prev:after,
-.dce-carousel-controls .swiper-container-rtl .swiper-button-next:after {
+.dce-carousel-controls .swiper-button-left:after,
+.dce-carousel-controls .swiper-container-rtl .swiper-button-right:after {
  content: none;
 }
-.dce-carousel-controls .swiper-button-next:after,
-.dce-carousel-controls .swiper-container-rtl .swiper-button-prev:after {
+.dce-carousel-controls .swiper-button-right:after,
+.dce-carousel-controls .swiper-container-rtl .swiper-button-left:after {
  content: none;
 }
 
@@ -95,6 +499,7 @@
 }
 .dce-dynamic-posts-collection.no-masking-yes,
 .dce-dynamic-posts-collection.no-masking-yes .swiper-container,
+.dce-dynamic-posts-collection.no-masking-yes .swiper,
 .dce-dynamic-posts-collection.no-masking-yes .swiper-slide
 {
   overflow: visible;

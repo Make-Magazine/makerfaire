@@ -640,3 +640,6 @@ div.infiniteScroll{
 .infinite-scroll-nav {
  display:none
 }
+article[data-post-link] {
+  cursor: pointer;
+}

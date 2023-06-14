@@ -69,12 +69,10 @@ class SvgImageMask extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $viewBoxW = $settings['viewbox_width'];
         $viewBoxH = $settings['viewbox_height'];
         $id_svg_class = $settings['id_svg_class'];
-        $image_url = Group_Control_Image_Size::get_attachment_image_src($settings['mask_image']['id'], 'image', $settings);
-        $image_masking_url = Group_Control_Image_Size::get_attachment_image_src($settings['image_masking']['id'], 'size_masking', $settings);
         echo '<div class="dce_imagemask-wrapper">';
         ?>
 
-		<svg  id="dce-svg-<?php 
+		<svg id="dce-svg-<?php 
         echo $widgetId;
         ?>" class="dce-svg-imagemask" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 <?php 
         echo $viewBoxW;
@@ -89,55 +87,56 @@ class SvgImageMask extends \DynamicContentForElementor\Widgets\WidgetPrototype
 					<?php 
         // https://codepen.io/tutsplus/pen/zREZGe
         if ($settings['mask_shape_type'] == 'image') {
+            $image_masking_url = Group_Control_Image_Size::get_attachment_image_src($settings['image_masking']['id'], 'size_masking', $settings);
             ?>
-					<image xlink:href="<?php 
+						<image xlink:href="<?php 
             echo $image_masking_url;
             ?>"
-					width="100%" height="100%"></image>
+						width="100%" height="100%"></image>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'ring') {
             ?>
-					<circle id="outer" cx="50%" cy="50%" r="50%" fill="white"/>
-					<circle id="inner" cx="50%" cy="50%" r="<?php 
+						<circle id="outer" cx="50%" cy="50%" r="50%" fill="white"/>
+						<circle id="inner" cx="50%" cy="50%" r="<?php 
             echo $settings['radius_inner_circle']['size'];
             ?>%"/>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'triangle') {
             ?>
-					<path id="outer" d="M447.6,259.4L599,518.7H299.5H0l151.4-259.4L299.5,0L447.6,259.4z" fill="white"/>
+						<path id="outer" d="M447.6,259.4L599,518.7H299.5H0l151.4-259.4L299.5,0L447.6,259.4z" fill="white"/>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'circle') {
             ?>
-					<circle id="outer" cx="50%" cy="50%" r="50%" fill="white"/>
+						<circle id="outer" cx="50%" cy="50%" r="50%" fill="white"/>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'hexagon') {
             ?>
-					<polygon id="outer" points="446.3,0 148.8,0 0,257.7 148.8,515.3 446.3,515.3 595,257.7 " fill="white"/>
+						<polygon id="outer" points="446.3,0 148.8,0 0,257.7 148.8,515.3 446.3,515.3 595,257.7 " fill="white"/>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'pentagonal') {
             ?>
-					<polygon id="outer" x="0" y="0" points="298.6,0 0,217 114.1,568 483.2,568 597.2,217 " fill="white"/>
+						<polygon id="outer" x="0" y="0" points="298.6,0 0,217 114.1,568 483.2,568 597.2,217 " fill="white"/>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'rhombus') {
             ?>
-					<path id="outer" d="M586,293L293,586L147.4,438.6L0,293L293,0l147.1,148.9L586,293z" fill="white"/>
+						<path id="outer" d="M586,293L293,586L147.4,438.6L0,293L293,0l147.1,148.9L586,293z" fill="white"/>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'star') {
             ?>
-					<path id="outer" d="M298,0l92.1,186.6L596,216.5L447,361.7l35.2,205.1L298,470l-184.2,96.8L149,361.7L0,216.5l205.9-29.9L298,0z" fill="white"/>
+						<path id="outer" d="M298,0l92.1,186.6L596,216.5L447,361.7l35.2,205.1L298,470l-184.2,96.8L149,361.7L0,216.5l205.9-29.9L298,0z" fill="white"/>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'heart') {
             ?>
-					<path id="outer" class="st0" d="M299,546.5L51.3,298.8c-68.4-68.4-68.4-179.2,0-247.5c68.4-68.4,179.2-68.4,247.5,0l0.2,0.2l0.2-0.2
+						<path id="outer" class="st0" d="M299,546.5L51.3,298.8c-68.4-68.4-68.4-179.2,0-247.5c68.4-68.4,179.2-68.4,247.5,0l0.2,0.2l0.2-0.2
 		c68.4-68.4,179.2-68.4,247.5,0c68.4,68.4,68.4,179.2,0,247.5L299,546.5z" fill="white"/>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'text') {
             ?>
-					<text id="outer" fill="white"/>>Lorem ipsum</text>
+						<text id="outer" fill="white"/>>Lorem ipsum</text>
 						<?php 
         } elseif ($settings['mask_shape_type'] == 'custom_path') {
             ?>
-					<path id="outer" d="<?php 
+						<path id="outer" d="<?php 
             echo $settings['shape_numbers'];
             ?>" fill="white"/>
 						<?php 
@@ -147,8 +146,9 @@ class SvgImageMask extends \DynamicContentForElementor\Widgets\WidgetPrototype
 			</defs>
 			<?php 
         if (!$settings['mask_output']) {
+            $image_url = Group_Control_Image_Size::get_attachment_image_src($settings['mask_image']['id'], 'image', $settings);
             ?>
-			<image width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xlink:href="<?php 
+				<image width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xlink:href="<?php 
             echo $image_url;
             ?>" mask="url(#image-mask-<?php 
             echo $widgetId;
@@ -169,9 +169,6 @@ class SvgImageMask extends \DynamicContentForElementor\Widgets\WidgetPrototype
 				}
 			<?php 
         }
-        ?>
-
-			<?php 
         if ($settings['mask_output'] && $settings['id_svg_class'] != '') {
             if (!$settings['mask_output_direct']) {
                 ?>

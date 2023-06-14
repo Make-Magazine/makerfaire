@@ -4,7 +4,6 @@ namespace DynamicOOOS\Mpdf;
 
 use DynamicOOOS\Mpdf\Config\ConfigVariables;
 use DynamicOOOS\Mpdf\Config\FontVariables;
-use DynamicOOOS\Mpdf\Container\SimpleContainer;
 use DynamicOOOS\Mpdf\Conversion;
 use DynamicOOOS\Mpdf\Css\Border;
 use DynamicOOOS\Mpdf\Css\TextVars;
@@ -29,7 +28,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 {
     use Strict;
     use FpdiTrait;
-    const VERSION = '8.1.1';
+    const VERSION = '8.1.2';
     const SCALE = 72 / 25.4;
     var $useFixedNormalLineHeight;
     // mPDF 6
@@ -7862,7 +7861,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
         // Automatic width and height calculation if needed
         if ($w == 0 and $h == 0) {
             /* -- IMAGES-WMF -- */
-            if ($info['type'] == 'wmf') {
+            if ($info['type'] === 'wmf') {
                 // WMF units are twips (1/20pt)
                 // divide by 20 to get points
                 // divide by k to get user units
@@ -7870,7 +7869,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
                 $h = \abs($info['h']) / (20 * Mpdf::SCALE);
             } else {
                 /* -- END IMAGES-WMF -- */
-                if ($info['type'] == 'svg') {
+                if ($info['type'] === 'svg') {
                     // returned SVG units are pts
                     // divide by k to get user units (mm)
                     $w = \abs($info['w']) / Mpdf::SCALE;
@@ -8552,6 +8551,28 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
                 throw new \DynamicOOOS\Mpdf\MpdfException(\sprintf('Incorrect output destination %s', $dest));
         }
         $this->cache->clearOld();
+    }
+    public function OutputBinaryData()
+    {
+        return $this->Output(null, Destination::STRING_RETURN);
+    }
+    public function OutputHttpInline()
+    {
+        return $this->Output(null, Destination::INLINE);
+    }
+    /**
+     * @param string $fileName
+     */
+    public function OutputHttpDownload($fileName)
+    {
+        return $this->Output($fileName, Destination::DOWNLOAD);
+    }
+    /**
+     * @param string $fileName
+     */
+    public function OutputFile($fileName)
+    {
+        return $this->Output($fileName, Destination::FILE);
     }
     // *****************************************************************************
     //                                                                             *
@@ -10142,7 +10163,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
         }
         $path = \preg_replace('|^./|', '', $path);
         // Inadvertently corrects "./path/etc" and "//www.domain.com/etc"
-        if (\substr($path, 0, 1) === '#') {
+        if (\strpos($path, '#') === 0) {
             return;
         }
         // Skip schemes not supported by installed stream wrappers
@@ -10151,11 +10172,11 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
         if (\preg_match($pattern, $path)) {
             return;
         }
-        if (\substr($path, 0, 3) === "../") {
+        if (\strpos($path, '../') === 0) {
             // It is a relative link
-            $backtrackamount = \substr_count($path, "../");
-            $maxbacktrack = \substr_count($basepath, "/") - 3;
-            $filepath = \str_replace("../", '', $path);
+            $backtrackamount = \substr_count($path, '../');
+            $maxbacktrack = \substr_count($basepath, '/') - 3;
+            $filepath = \str_replace('../', '', $path);
             $path = $basepath;
             // If it is an invalid relative link, then make it go to directory root
             if ($backtrackamount > $maxbacktrack) {
@@ -10171,7 +10192,7 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
         }
         if ((\strpos($path, ":/") === \false || \strpos($path, ":/") > 10) && !@\is_file($path)) {
             // It is a local link. Ignore potential file errors
-            if (\substr($path, 0, 1) === "/") {
+            if (\strpos($path, '/') === 0) {
                 $tr = \parse_url($basepath);
                 // mPDF 5.7.2
                 $root = '';

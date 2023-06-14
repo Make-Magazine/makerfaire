@@ -21,6 +21,8 @@ class DynamicWooProductsOnSale extends \DynamicContentForElementor\Widgets\Dynam
         $this->add_skin(new Skins\Dynamic_Woo_Products_On_Sale_Skin_Grid_Filters($this));
         $this->add_skin(new Skins\Dynamic_Woo_Products_On_Sale_Skin_Carousel($this));
         $this->add_skin(new Skins\Dynamic_Woo_Products_On_Sale_Skin_DualCarousel($this));
+        $this->add_skin(new Skins\Dynamic_Woo_Products_On_Sale_Skin_List($this));
+        $this->add_skin(new Skins\Dynamic_Woo_Products_On_Sale_Skin_Table($this));
         $this->add_skin(new Skins\Dynamic_Woo_Products_On_Sale_Skin_Accordion($this));
         $this->add_skin(new Skins\Dynamic_Woo_Products_On_Sale_Skin_Timeline($this));
     }

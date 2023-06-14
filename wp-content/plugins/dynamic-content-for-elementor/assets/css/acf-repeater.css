@@ -161,6 +161,11 @@
   background-repeat: no-repeat;
   outline: none;
 }
+/* Swiper 8 */
+.elementor-widget-dce-acf-repeater-v2 .swiper-button-prev:after,
+.elementor-widget-dce-acf-repeater-v2 .swiper-button-next:after {
+  display: none;
+}
 .elementor-widget-dce-acf-repeater-v2.hoveranim-yes .swiper-button-prev:hover svg,
 .elementor-widget-dce-acf-repeater-v2.hoveranim-yes .swiper-button-next:hover svg{
   transform: scale(1.2);
@@ -632,7 +637,26 @@
 .elementor-widget-dce-acf-repeater-v2 .dce-acf-repater-table {
   overflow-x: auto;
 }
-/* ACF repeater */
+
 .elementor-widget-dce-acf-repeater-v2 .dce-acf-repeater-masonry .dce-acf-repeater-item {
   float: left;
+}
+
+/* Accordion */
+.accordion .acc_section.acc_active .acc_head .icon {
+  display: none;
+}
+.accordion .acc_section:not(.acc_active) .acc_head .icon-active {
+  display: none;
+}
+.accordion .icon-active, .accordion .icon {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.accordion .accordion-icon-right {
+  float: right;
+  text-align: right;
+}
+.dce-accordion-icon svg {
+    width: 1em;
 }

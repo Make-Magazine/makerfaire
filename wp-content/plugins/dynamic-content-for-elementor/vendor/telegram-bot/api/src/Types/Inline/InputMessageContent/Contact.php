@@ -8,7 +8,6 @@
  */
 namespace DynamicOOOS\TelegramBot\Api\Types\Inline\InputMessageContent;
 
-use DynamicOOOS\TelegramBot\Api\BaseType;
 use DynamicOOOS\TelegramBot\Api\TypeInterface;
 use DynamicOOOS\TelegramBot\Api\Types\Inline\InputMessageContent;
 /**
@@ -48,7 +47,7 @@ class Contact extends InputMessageContent implements TypeInterface
     /**
      * Optional. Contact's last name
      *
-     * @var string
+     * @var string|null
      */
     protected $lastName;
     /**
@@ -73,6 +72,8 @@ class Contact extends InputMessageContent implements TypeInterface
     }
     /**
      * @param string $phoneNumber
+     *
+     * @return void
      */
     public function setPhoneNumber($phoneNumber)
     {
@@ -87,20 +88,24 @@ class Contact extends InputMessageContent implements TypeInterface
     }
     /**
      * @param mixed $firstName
+     *
+     * @return void
      */
     public function setFirstName($firstName)
     {
         $this->firstName = $firstName;
     }
     /**
-     * @return string
+     * @return string|null
      */
     public function getLastName()
     {
         return $this->lastName;
     }
     /**
-     * @param string $lastName
+     * @param string|null $lastName
+     *
+     * @return void
      */
     public function setLastName($lastName)
     {

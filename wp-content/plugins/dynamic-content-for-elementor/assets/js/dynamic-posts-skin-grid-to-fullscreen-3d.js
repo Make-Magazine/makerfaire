@@ -459,4 +459,6 @@ jQuery(window).on('elementor/frontend/init', function() {
   elementorFrontend.hooks.addAction('frontend/element_ready/dce-my-posts.gridtofullscreen3d', Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler);
   elementorFrontend.hooks.addAction('frontend/element_ready/dce-sticky-posts.gridtofullscreen3d', Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler);
   elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.gridtofullscreen3d', Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler);
+  elementorFrontend.hooks.addAction('frontend/element_ready/dce-metabox-relationship.gridtofullscreen3d', Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler);
+  elementorFrontend.hooks.addAction('frontend/element_ready/dce-acf-relationship.gridtofullscreen3d', Widget_DCE_Dynamicposts_gridtofullscreen3d_Handler);
 });

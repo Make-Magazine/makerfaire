@@ -69,31 +69,24 @@ class Lzw implements FilterInterface
         $this->bytePointer = 0;
         $this->nextData = 0;
         $this->nextBits = 0;
-        $oldCode = 0;
+        $prevCode = 0;
         $uncompData = '';
         while (($code = $this->getNextCode()) !== 257) {
             if ($code === 256) {
                 $this->initsTable();
-                $code = $this->getNextCode();
-                if ($code === 257) {
-                    break;
-                }
+            } elseif ($prevCode === 256) {
                 $uncompData .= $this->sTable[$code];
-                $oldCode = $code;
+            } elseif ($code < $this->tIdx) {
+                $string = $this->sTable[$code];
+                $uncompData .= $string;
+                $this->addStringToTable($this->sTable[$prevCode], $string[0]);
             } else {
-                if ($code < $this->tIdx) {
-                    $string = $this->sTable[$code];
-                    $uncompData .= $string;
-                    $this->addStringToTable($this->sTable[$oldCode], $string[0]);
-                    $oldCode = $code;
-                } else {
-                    $string = $this->sTable[$oldCode];
-                    $string .= $string[0];
-                    $uncompData .= $string;
-                    $this->addStringToTable($string);
-                    $oldCode = $code;
-                }
+                $string = $this->sTable[$prevCode];
+                $string .= $string[0];
+                $uncompData .= $string;
+                $this->addStringToTable($string);
             }
+            $prevCode = $code;
         }
         return $uncompData;
     }
@@ -131,7 +124,7 @@ class Lzw implements FilterInterface
     /**
      * Returns the next 9, 10, 11 or 12 bits.
      *
-     * @return integer
+     * @return int
      */
     protected function getNextCode()
     {

@@ -32,6 +32,9 @@ class Cryptocurrency
     }
     public function api_request($endpoint, $parameters = [])
     {
+        if (!\function_exists('curl_init')) {
+            throw new \DynamicContentForElementor\CryptocurrencyApiError(esc_html__('You need the PHP curl extension to use the cryptocurrency features.', 'dynamic-content-for-elementor'));
+        }
         $subdomain = $this->is_sandbox ? 'sandbox-api' : 'pro-api';
         $url = "https://{$subdomain}.coinmarketcap.com/v1" . $endpoint;
         $headers = ['Accepts: application/json', 'X-CMC_PRO_API_KEY: ' . $this->get_api_key()];

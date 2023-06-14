@@ -2,8 +2,6 @@
     var WidgetElements_SvgBlobHandler = function ($scope, $) {
         var elementSettings = dceGetElementSettings($scope);
         var id_scope = $scope.attr('data-id');
-
-
         var numPoints = elementSettings.numPoints.size;
         var minRadius = elementSettings.minmaxRadius.sizes.start;
         var maxRadius = elementSettings.minmaxRadius.sizes.end;
@@ -25,7 +23,7 @@
 
         // To show the points
         if(is_showPoints){
-          createDots([blob1/*, blob2*/]);
+          createDots([blob1]);
         }
         function createBlob(options) {
 

@@ -16,7 +16,11 @@ function dceGetCookie(cname) {
 
 function dceSetCookie(cname, cvalue, exdays) {
 	var d = new Date();
-	d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-	var expires = "expires=" + d.toUTCString();
-	document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	let fmt = cname + "=" + cvalue + ";path=/";
+	if (exdays) {
+		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+		let expires = ";expires=" + d.toUTCString();
+		fmt = fmt + expires;
+	}
+	document.cookie = fmt;
 }

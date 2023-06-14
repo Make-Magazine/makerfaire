@@ -36,7 +36,7 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
     {
         $this->start_controls_section('section_content', ['label' => $this->get_title()]);
         $this->add_control('acf_field_list', ['label' => __('Select ACF Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'dynamic' => ['active' => \false], 'frontend_available' => \true]);
-        $this->add_control('acf_type', ['label' => __('ACF Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['empty' => __('Empty', 'dynamic-content-for-elementor'), 'text' => __('Text', 'dynamic-content-for-elementor'), 'wysiwyg' => __('Wysiwyg Editor', 'dynamic-content-for-elementor'), 'textarea' => __('TextArea', 'dynamic-content-for-elementor'), 'date' => __('Date', 'dynamic-content-for-elementor'), 'number' => __('Number', 'dynamic-content-for-elementor'), 'email' => __('Email', 'dynamic-content-for-elementor'), 'url' => __('Url', 'dynamic-content-for-elementor'), 'select' => __('Select', 'dynamic-content-for-elementor'), 'list' => __('List (Radio or Checkbox)', 'dynamic-content-for-elementor'), 'image' => __('Image', 'dynamic-content-for-elementor'), 'video' => __('Video oembed', 'dynamic-content-for-elementor')], 'default' => 'text', 'frontend_available' => \true]);
+        $this->add_control('acf_type', ['label' => __('ACF Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['empty' => __('Empty', 'dynamic-content-for-elementor'), 'text' => __('Text', 'dynamic-content-for-elementor'), 'display' => __('ACF Display', 'dynamic-content-for-elementor'), 'wysiwyg' => __('Wysiwyg Editor', 'dynamic-content-for-elementor'), 'textarea' => __('TextArea', 'dynamic-content-for-elementor'), 'date' => __('Date', 'dynamic-content-for-elementor'), 'number' => __('Number', 'dynamic-content-for-elementor'), 'email' => __('Email', 'dynamic-content-for-elementor'), 'url' => __('Url', 'dynamic-content-for-elementor'), 'select' => __('Select', 'dynamic-content-for-elementor'), 'list' => __('List (Radio or Checkbox)', 'dynamic-content-for-elementor'), 'image' => __('Image', 'dynamic-content-for-elementor'), 'video' => __('Video oembed', 'dynamic-content-for-elementor')], 'default' => 'text', 'frontend_available' => \true]);
         $this->add_control('acf_dynamic', ['label' => __('Apply Shortcodes', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['acf_type' => ['text', 'textarea', 'wysiwyg']]]);
         $this->add_control('acf_currency_mode', ['label' => __('Currency Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => ['acf_type' => 'number']]);
         $this->add_control('acf_currency_type', ['label' => __('Currency type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::number_format_currency(), 'default' => 'en-US', 'frontend_available' => \true, 'condition' => ['acf_currency_mode!' => '', 'acf_type' => 'number']]);
@@ -52,9 +52,13 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('list_array_return', ['label' => __('List Return Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Label: Value', 'dynamic-content-for-elementor'), 'label' => __('Label', 'dynamic-content-for-elementor'), 'value' => __('Value', 'dynamic-content-for-elementor')], 'default' => '', 'condition' => ['acf_type' => 'list']]);
         $this->add_control('list_style', ['label' => __('List Style', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['inline-block' => __('Horizontal', 'dynamic-content-for-elementor'), 'block' => __('Vertical', 'dynamic-content-for-elementor')], 'default' => 'inline-block', 'separator' => 'after', 'render_type' => 'template', 'condition' => ['acf_type' => 'list'], 'selectors' => ['{{WRAPPER}} .dce-acf-list' => 'display: {{VALUE}};']]);
         $this->add_control('list_separator', ['label' => __('Text before', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => ' / ', 'condition' => ['list_style' => 'inline-block']]);
-        $this->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor'), 'code' => 'code'], 'default' => 'div', 'condition' => ['acf_type!' => 'empty']]);
+        $this->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(['code']), 'default' => 'div', 'condition' => ['acf_type!' => 'empty']]);
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'post_url' => __('Post URL', 'dynamic-content-for-elementor'), 'acf_url' => __('ACF URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')]]);
-        $this->add_control('acf_field_url', ['label' => __('ACF Field URL', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_acf_field_urlfile(\true), 'default' => __('Select the field...', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'acf_url']]);
+        $acf_url_groups = [];
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() || ($_REQUEST['action'] ?? '') === 'elementor_ajax') {
+            $acf_url_groups = Helper::get_acf_field_urlfile(\true);
+        }
+        $this->add_control('acf_field_url', ['label' => __('ACF Field URL', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => $acf_url_groups, 'default' => __('Select the field...', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'acf_url']]);
         $this->add_control('acf_field_url_target', ['label' => __('Blank', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['link_to' => 'acf_url']]);
         $this->add_control('acf_field_url_nofollow', ['label' => __('NoFollow', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['link_to' => 'acf_url']]);
         $this->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'default' => ['url' => ''], 'show_label' => \false, 'condition' => ['link_to' => 'custom']]);
@@ -76,9 +80,13 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'filters_image', 'label' => 'Filters image', 'selector' => '{{WRAPPER}} .wrap-filters']);
         $this->add_control('blend_mode', ['label' => __('Blend Mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Normal', 'dynamic-content-for-elementor'), 'multiply' => __('Multiply', 'dynamic-content-for-elementor'), 'screen' => __('Screen', 'dynamic-content-for-elementor'), 'overlay' => __('Overlay', 'dynamic-content-for-elementor'), 'darken' => __('Darken', 'dynamic-content-for-elementor'), 'lighten' => __('Lighten', 'dynamic-content-for-elementor'), 'color-dodge' => __('Color Dodge', 'dynamic-content-for-elementor'), 'saturation' => __('Saturation', 'dynamic-content-for-elementor'), 'color' => __('Color', 'dynamic-content-for-elementor'), 'difference' => __('Difference', 'dynamic-content-for-elementor'), 'exclusion' => __('Exclusion', 'dynamic-content-for-elementor'), 'hue' => __('Hue', 'dynamic-content-for-elementor'), 'luminosity' => __('Luminosity', 'dynamic-content-for-elementor')], 'selectors' => ['{{WRAPPER}} .acf-image' => 'mix-blend-mode: {{VALUE}}'], 'separator' => 'none']);
         $this->end_controls_section();
-        $this->start_controls_section('section_dce_settings', ['label' => __('Source', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
+        $this->start_controls_section('section_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('other', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
         $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
+        $this->end_controls_section();
+        $this->start_controls_section('section_fallback', ['label' => __('Fallback', 'dynamic-content-for-elementor')]);
+        $this->add_control('fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('If you want to show something when the field is empty', 'dynamic-content-for-elementor')]);
+        $this->add_control('fallback_text', ['label' => __('Text Fallback', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => __('Empty field', 'dynamic-content-for-elementor'), 'condition' => ['fallback!' => '']]);
         $this->end_controls_section();
         $this->start_controls_section('section_style', ['label' => __('Style', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE]);
         $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right'], 'justify' => ['title' => __('Justified', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-justify']], 'default' => '', 'prefix_class' => 'align-dce-', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};']]);
@@ -270,6 +278,8 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
             if ('elementor_library' === $type_page && $acfResult == '') {
                 $acfResult = '#';
             }
+        } elseif ($typeField === 'display') {
+            $acfResult = \get_field($idFields, $id_page ? $id_page : null);
         } elseif ($typeField == 'email') {
             $acfResult = $acf_field_value;
             $acfResult = '<a href="mailto:' . $acfResult . '">' . $acfResult . '</a>';
@@ -289,7 +299,12 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 }
                 $d = \DateTime::createFromFormat($dataDate['return_format'], $acfResult);
                 if ($d) {
-                    \setlocale(\LC_TIME, get_locale());
+                    $locale = get_locale();
+                    if (!\strpos($locale, '.')) {
+                        // avoid months being printed in other encodings
+                        $locale = "{$locale}.UTF-8";
+                    }
+                    \setlocale(\LC_TIME, $locale);
                     $date_format = Helper::date_format_to_strftime_format($format_display);
                     $acfResult = \strftime($date_format, \intval($d->format('U')));
                 } else {
@@ -308,7 +323,7 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 return;
             }
             if ($use_bg == 0) {
-                $acfResult = '<div class="acf-image">' . $wrap_effect_start . '<img src="' . $imageSrcUrl . '" alt="' . $imageField['description'] . '" />' . $wrap_effect_end . $overlay_block . $overlay_hover_block . '</div>';
+                $acfResult = '<div class="acf-image">' . $wrap_effect_start . '<img src="' . $imageSrcUrl . '" />' . $wrap_effect_end . $overlay_block . $overlay_hover_block . '</div>';
             } else {
                 $bg_featured_image = '<div class="acf-image acf-bg-image">' . $wrap_effect_start . '<figure class="dynamic-content-for-elementor-acfimage-bg" style="background-image: url(' . $imageSrcUrl . '); background-repeat: no-repeat; background-size: cover;"></figure>' . $wrap_effect_end . $overlay_block . $overlay_hover_block . '</div>';
                 $acfResult = $bg_featured_image;
@@ -359,7 +374,7 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
             if (empty($video_field)) {
                 return;
             }
-            add_filter('oembed_result', [$this, 'filter_oembed_result'], 50, 3);
+            add_filter('oembed_result', [$this, 'filter_oembed_result'], 50);
             $video_html = wp_oembed_get($video_field, wp_embed_defaults());
             remove_filter('oembed_result', [$this, 'filter_oembed_result'], 50);
             if (!$video_html) {
@@ -447,7 +462,8 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 break;
             case 'acf_url':
                 if (!empty($settings['acf_field_url'])) {
-                    $link = esc_url(Helper::get_acf_field_value($settings['acf_field_url'], $id_page));
+                    $link = Helper::get_acf_field_value($settings['acf_field_url'], $id_page);
+                    $link = esc_url(\is_string($link) ? $link : '');
                     $target = !empty($settings['acf_field_url_target']) ? ' target="_blank"' : '';
                     $target .= !empty($settings['acf_field_url_nofollow']) ? ' rel="nofollow"' : '';
                 } else {
@@ -477,11 +493,11 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
             if ($settings['acf_currency_mode'] || $settings['acf_settoDecimal']) {
                 $acfResult = '<div id=' . $settings['acf_field_list'] . '>' . $acfResult . '</div>';
             }
-            $tagField = 'div';
+            $html_tag = 'div';
             if ($settings['html_tag']) {
-                $tagField = \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']);
+                $html_tag = \DynamicContentForElementor\Helper::validate_html_tag($settings['html_tag']);
             }
-            $html = '<' . $tagField . ' class="dynamic-content-for-elementor-acf ' . $animation_class . '">';
+            $html = '<' . $html_tag . ' class="dynamic-content-for-elementor-acf ' . $animation_class . '">';
             if ($settings['acf_text_before'] != '') {
                 $acfResult = '<span class="tx-before">' . wp_kses_post($settings['acf_text_before']) . '</span>' . $acfResult;
             }
@@ -493,11 +509,13 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
             } else {
                 $html .= $acfResult;
             }
-            $html .= '</' . $tagField . '>';
+            $html .= '</' . $html_tag . '>';
         }
         if ('' !== $acf_field_value) {
             // Don't show if is '', show if it's 0
             echo $html;
+        } elseif (!empty($this->get_settings_for_display('fallback'))) {
+            $this->render_fallback();
         }
     }
     public function filter_oembed_result($html)
@@ -570,5 +588,16 @@ class AcfFields extends \DynamicContentForElementor\Widgets\WidgetPrototype
     {
         $settings = $this->get_settings_for_display();
         return !empty($settings['image_overlay']['url']) && 'yes' === $settings['show_image_overlay'];
+    }
+    protected function render_fallback()
+    {
+        $html_tag = $this->get_settings_for_display('html_tag') ?? 'div';
+        $this->set_render_attribute('fallback', 'class', ['dynamic-content-for-elementor-acf', 'dce-fallback']);
+        if (!empty($this->get_settings_for_display('hover_animation'))) {
+            $this->add_render_attribute('fallback', 'class', 'elementor-animation-' . $this->get_settings_for_display('hover_animation'));
+        }
+        echo '<' . Helper::validate_html_tag($html_tag) . ' ' . $this->get_render_attribute_string('fallback') . '>';
+        echo $this->get_settings_for_display('fallback_text');
+        echo '</' . Helper::validate_html_tag($html_tag) . '>';
     }
 }

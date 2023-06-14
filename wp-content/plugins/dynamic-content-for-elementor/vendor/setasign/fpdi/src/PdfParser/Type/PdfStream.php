@@ -42,19 +42,15 @@ class PdfStream extends PdfType
         $offset = $reader->getOffset();
         // Find the first "newline"
         while (($firstByte = $reader->getByte($offset)) !== \false) {
-            if ($firstByte !== "\n" && $firstByte !== "\r") {
-                $offset++;
-            } else {
+            $offset++;
+            if ($firstByte === "\n" || $firstByte === "\r") {
                 break;
             }
         }
         if ($firstByte === \false) {
             throw new PdfTypeException('Unable to parse stream data. No newline after the stream keyword found.', PdfTypeException::NO_NEWLINE_AFTER_STREAM_KEYWORD);
         }
-        $sndByte = $reader->getByte($offset + 1);
-        if ($firstByte === "\n" || $firstByte === "\r") {
-            $offset++;
-        }
+        $sndByte = $reader->getByte($offset);
         if ($sndByte === "\n" && $firstByte !== "\n") {
             $offset++;
         }

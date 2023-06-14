@@ -12,13 +12,18 @@ if (!\defined('ABSPATH')) {
 }
 class Skin_3D extends \DynamicContentForElementor\Includes\Skins\Skin_Base
 {
+    /**
+     * Register Controls Actions
+     *
+     * @return void
+     */
     protected function _register_controls_actions()
     {
         add_action('elementor/element/dce-dynamicposts-v2/section_query/after_section_end', [$this, 'register_controls_layout']);
         add_action('elementor/element/dce-dynamicposts-v2/section_dynamicposts/after_section_end', [$this, 'register_additional_3d_controls']);
     }
     public $depended_scripts = ['dce-threejs-lib', 'dce-gsap-lib', 'dce-threejs-OrbitControls', 'dce-threejs-CSS3DRenderer', 'dce-dynamicPosts-3d', 'dce-ScrollToPlugin-lib'];
-    public $depended_styles = ['dce-dynamicPosts-grid', 'dce-dynamicPosts-3d'];
+    public $depended_styles = ['dce-dynamicPosts-3d'];
     public function get_id()
     {
         return '3d';
@@ -36,6 +41,7 @@ class Skin_3D extends \DynamicContentForElementor\Includes\Skins\Skin_Base
         $this->add_control('blur_depth_3d', ['label' => __('Depth blur', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true, 'condition' => [$this->get_control_id('type_3d') => 'circle']]);
         $this->add_control('mousewheel_3d', ['label' => __('Mouse wheel', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'frontend_available' => \true]);
         $this->add_control('mousewheel_3d_stop_at_end', ['label' => __('Free mouse wheel at the end', 'dynamic-content-for-elementor'), 'description' => __('Free mouse wheel after last element is reached', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'condition' => [$this->get_control_id('mousewheel_3d') => 'yes']]);
+        $this->add_control('3d_center_at_start', ['label' => __('Center the first item at the start', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true]);
         $this->end_controls_section();
     }
     protected function render_posts_before()
@@ -47,7 +53,6 @@ class Skin_3D extends \DynamicContentForElementor\Includes\Skins\Skin_Base
 		<div class="dce-3d-navigation">
 			<div class="dce-3d-prev dce-3d-arrow"><i class="fas fa-arrow-left"></i></div>
 			<div class="dce-3d-next dce-3d-arrow"><i class="fas fa-arrow-right"></i></div>
-
 		</div>
 		<div class="dce-3d-quit"><i class="fas fa-times"></i></div>
 		<?php 

@@ -19,7 +19,7 @@ class Assets
         'dce-animations' => '/assets/css/animations.css',
         'dce-preview' => '/assets/css/preview.css',
         'dce-acf' => '/assets/css/acf-fields.css',
-        'dce-acf-relationship' => '/assets/css/acf-relationship.css',
+        'dce-acf-relationship-old-version' => '/assets/css/acf-relationship-old-version.css',
         'dce-acfslider' => '/assets/css/acf-slider.css',
         'dce-acfGallery' => '/assets/css/acf-gallery.css',
         'dce-acf-repeater-old' => '/assets/css/acf-repeater-old.css',
@@ -28,6 +28,7 @@ class Assets
         'dce-dynamic-visibility' => '/assets/css/dynamic-visibility.css',
         'dce-copy-to-clipboard' => '/assets/css/copy-to-clipboard.css',
         'dce-google-maps' => '/assets/css/dynamic-google-maps.css',
+        'dce-dynamic-google-maps-directions' => '/assets/css/dynamic-google-maps-directions.css',
         'dce-pods' => '/assets/css/pods-fields.css',
         'dce-pods-gallery' => '/assets/css/pods-gallery.css',
         'dce-toolset' => '/assets/css/toolset-fields.css',
@@ -67,7 +68,7 @@ class Assets
         'dce-imagesDistortion' => '/assets/css/distortion-image.css',
         'dce-animatedOffcanvasMenu' => '/assets/css/animated-off-canvas-menu.css',
         'dce-cursorTracker' => '/assets/css/cursor-tracker.css',
-        'dce-title' => '/assets/css/title.css',
+        'dce-dynamic-title' => '/assets/css/dynamic-title.css',
         'dce-breadcrumbs' => '/assets/css/breadcrumbs.css',
         'dce-date' => '/assets/css/date.css',
         'dce-add-to-favorites' => '/assets/css/add-to-favorites.css',
@@ -79,7 +80,7 @@ class Assets
         'dce-svg' => '/assets/css/svg.css',
         'dce-views' => '/assets/css/views.css',
     );
-    public static $vendor_css = array('dce-jquery-confirm' => '/assets/lib/jquery-confirm/jquery-confirm.min.css', 'dce-osm-map' => '/assets/lib/leaflet/leaflet.css', 'dce-photoSwipe_default' => '/assets/lib/photoSwipe/photoswipe.min.css', 'dce-photoSwipe_skin' => '/assets/lib/photoSwipe/default-skin/default-skin.css', 'dce-justifiedGallery' => '/assets/lib/justifiedGallery/css/justifiedGallery.min.css', 'dce-file-icon' => '/assets/lib/file-icon/file-icon-vivid.min.css', 'animatecss' => '/assets/lib/animate/animate.min.css', 'datatables' => '/assets/lib/datatables/datatables.min.css', 'dce-plyr' => '/assets/lib/plyr/plyr.css', 'dce-swiper' => '/assets/lib/swiper/css/swiper.min.css', 'dce-accordionjs' => '/assets/lib/accordionjs/accordion.css');
+    public static $vendor_css = array('dce-jquery-confirm' => '/assets/lib/jquery-confirm/jquery-confirm.min.css', 'dce-osm-map' => '/assets/lib/leaflet/leaflet.css', 'dce-osm-map-marker-cluster' => '/assets/lib/leaflet/plugins/markercluster/MarkerCluster.css', 'dce-photoSwipe_default' => '/assets/lib/photoSwipe/photoswipe.min.css', 'dce-photoSwipe_skin' => '/assets/lib/photoSwipe/default-skin/default-skin.css', 'dce-justifiedGallery' => '/assets/lib/justifiedGallery/css/justifiedGallery.min.css', 'dce-file-icon' => '/assets/lib/file-icon/file-icon-vivid.min.css', 'animatecss' => '/assets/lib/animate/animate.min.css', 'datatables' => '/assets/lib/datatables/datatables.min.css', 'dce-plyr' => '/assets/lib/plyr/plyr.css', 'dce-swiper' => '/assets/lib/swiper/css/swiper.min.css', 'dce-accordionjs' => '/assets/lib/accordionjs/accordion.css');
     public static $vendor_js;
     private static function init_vendor_js()
     {
@@ -90,7 +91,7 @@ class Assets
         } else {
             $paypal_option = get_option('dce_paypal_api_client_id_live');
         }
-        // Many user have incorecctly set their email as client id, make sure
+        // Many user have incorrectly set their email as client id, make sure
         // this is not the case:
         if (!\strpos($paypal_option, '@')) {
             $paypal_client_id = $paypal_option;
@@ -104,6 +105,7 @@ class Assets
             'dce-imagesloaded' => '/assets/lib/imagesloaded/imagesloaded.pkgd.min.js',
             'dce-jquery-confirm' => '/assets/lib/jquery-confirm/jquery-confirm.min.js',
             'dce-leaflet' => '/assets/lib/leaflet/leaflet.js',
+            'dce-leaflet-markercluster' => '/assets/lib/leaflet/plugins/markercluster/leaflet.markercluster.js',
             'dce-expressionlanguage' => '/assets/lib/expressionlanguage/expressionlanguage.min.js',
             'dce-html2canvas' => '/assets/lib/html2canvas/html2canvas.min.js',
             'dce-jspdf' => '/assets/lib/js-pdf/jspdf.umd.min.js',
@@ -187,7 +189,10 @@ class Assets
             'dce-inertia-scroll' => '/assets/lib/inertiaScroll/jquery-inertiaScroll.js',
             'dce-lax-lib' => '/assets/lib/lax/lax.min.js',
             'dce-google-maps-markerclusterer' => '/assets/lib/markerclustererplus/index.min.js',
+            // MODULES
+            'dce-google-modules_helpers' => '/assets/js/modules/google-api-module-helpers.js',
             'dce-google-maps' => ['path' => '/assets/js/dynamic-google-maps.js', 'deps' => ['dce-google-maps-markerclusterer', 'dce-google-maps-api']],
+            'dce-dynamic-google-maps-directions' => ['path' => '/assets/js/dynamic-google-maps-directions.js', 'deps' => ['dce-google-maps-api']],
             'dce-stripe-js' => 'https://js.stripe.com/v3',
             'dce-popper' => '/assets/lib/popperjs/popper.min.js',
             'dce-tippy' => ['path' => '/assets/lib/tippy/tippy-bundle.umd.min.js', 'deps' => ['dce-popper']],
@@ -196,7 +201,7 @@ class Assets
             'dce-accordionjs' => '/assets/lib/accordionjs/accordion.min.js',
         ];
         if (!empty($google_maps_api)) {
-            self::$vendor_js['dce-google-maps-api'] = "https://maps.googleapis.com/maps/api/js?key={$google_maps_api}&language={$locale2}";
+            self::$vendor_js['dce-google-maps-api'] = ['deps' => ['dce-settings'], 'path' => "https://maps.googleapis.com/maps/api/js?key={$google_maps_api}&language={$locale2}&callback=initMap"];
         }
         if (!empty($paypal_client_id)) {
             self::$vendor_js['dce-paypal-sdk'] = "https://www.paypal.com/sdk/js?client-id={$paypal_client_id}&currency={$paypal_currency}";
@@ -204,8 +209,10 @@ class Assets
     }
     public static $scripts = array(
         'dce-pdf-button' => '/assets/js/pdf-button.js',
+        'dce-visibility' => '/assets/js/visibility.js',
         'dce-form-address-autocomplete' => ['path' => '/assets/js/form-address-autocomplete.js', 'deps' => ['dce-google-maps-api']],
         'dce-osm-map' => ['path' => '/assets/js/osm-map.js', 'deps' => ['dce-leaflet']],
+        'dce-dynamic-osm-map' => ['path' => '/assets/js/dynamic-osm-map.js', 'deps' => ['dce-leaflet', 'dce-leaflet-markercluster']],
         'dce-conditional-fields' => ['path' => '/assets/js/conditional-fields.js', 'deps' => ['dce-expressionlanguage']],
         'dce-pdf-viewer' => ['path' => '/assets/js/pdf-viewer.js', 'deps' => ['dce-pdf-js']],
         'dce-dynamic-countdown' => '/assets/js/dynamic-countdown.js',
@@ -246,15 +253,14 @@ class Assets
         'dce-dynamicPosts-accordion' => ['path' => '/assets/js/dynamic-posts-skin-accordion.js', 'deps' => ['dce-accordionjs']],
         'dce-dynamicPosts-grid-filters' => ['path' => '/assets/js/dynamic-posts-skin-grid-filters.js', 'deps' => ['dce-imagesloaded']],
         'dce-dynamicPosts-carousel' => '/assets/js/dynamic-posts-skin-carousel.js',
-        'dce-dynamicPosts-dualcarousel' => '/assets/js/dynamic-posts-skin-dual-carousel.js',
         'dce-dynamicPosts-timeline' => '/assets/js/dynamic-posts-skin-timeline.js',
         'dce-dynamicPosts-smoothscroll' => '/assets/js/dynamic-posts-skin-smoothscroll.js',
         'dce-dynamicPosts-gridtofullscreen3d' => '/assets/js/dynamic-posts-skin-grid-to-fullscreen-3d.js',
         'dce-dynamicPosts-crossroadsslideshow' => '/assets/js/dynamic-posts-skin-crossroads-slideshow.js',
         'dce-dynamicPosts-nextpost' => '/assets/js/dynamic-posts-skin-next-post.js',
         'dce-dynamicPosts-3d' => '/assets/js/dynamic-posts-skin-3d.js',
+        'dce-acf-repeater-old' => '/assets/js/acf-repeater-old.js',
         'dce-acf-repeater' => '/assets/js/acf-repeater.js',
-        'dce-acf-repeater-v2' => '/assets/js/acf-repeater-v2.js',
         'dce-content-js' => '/assets/js/content.js',
         'dce-dynamic_users' => '/assets/js/dynamic-users.js',
         'dce-acf_fields' => '/assets/js/acf-fields.js',
@@ -285,7 +291,7 @@ class Assets
     // script, for example by adding the module type.
     public function loader_tag_filter($tag, $handle, $src)
     {
-        $modules_script = ['dce-live-html'];
+        $modules_script = ['dce-live-html', 'dce-dynamic-google-maps-directions'];
         if (!\in_array($handle, $modules_script, \true)) {
             return $tag;
         }
@@ -303,20 +309,21 @@ class Assets
         add_action('wp_enqueue_scripts', function () {
             wp_enqueue_script('jquery');
         });
-        // Admin Style
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_styles']);
+        // Admin Scripts
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts']);
         // Dashboard
         add_action('admin_head', [$this, 'register_and_enqueue_dce_icons']);
         // Scripts
         add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
-        add_action('elementor/frontend/after_enqueue_scripts', [$this, 'dce_frontend_enqueue_scripts']);
         // Styles
         add_action('wp_enqueue_scripts', [$this, 'register_styles']);
         add_action('wp_enqueue_scripts', [$this, 'register_vendor_styles']);
         add_action('elementor/frontend/after_enqueue_styles', [$this, 'dce_frontend_enqueue_style']);
         // Editor
-        add_action('elementor/editor/after_enqueue_scripts', [$this, 'dce_editor']);
-        add_action('elementor/preview/enqueue_styles', [$this, 'dce_preview']);
+        add_action('elementor/editor/after_enqueue_scripts', [$this, 'editor_enqueue']);
+        add_action('elementor/preview/enqueue_styles', [$this, 'preview_enqueue']);
+        // Frontend
+        add_action('elementor/frontend/after_enqueue_scripts', [$this, 'frontend_enqueue']);
         // Global enqueue Script and Style
         add_action('wp_enqueue_scripts', [$this, 'dce_globals_stylescript']);
     }
@@ -352,7 +359,6 @@ class Assets
     }
     public static function dce_frontend_enqueue_style()
     {
-        wp_enqueue_style('dce-style');
         wp_enqueue_style('dashicons');
     }
     public static function add_depends($element)
@@ -369,16 +375,18 @@ class Assets
     public function register_styles()
     {
         foreach (self::$styles as $name => $path) {
+            $deps = [];
             // if the styles specifies dependencies:
             if (\is_array($path)) {
                 $deps = $path['deps'];
                 $path = $path['path'];
-            } else {
-                $deps = [];
+            }
+            if ('dce-style' !== $name) {
+                // Add dce-style dependency for all styles
+                $deps[] = 'dce-style';
             }
             if ('http' !== \substr($path, 0, 4)) {
                 if (!(WP_DEBUG || SCRIPT_DEBUG)) {
-                    // @phpstan-ignore-line
                     $path = \str_replace('.css', '.min.css', $path);
                 }
                 $path = plugins_url($path, DCE__FILE__);
@@ -405,16 +413,19 @@ class Assets
     public static function register_dce_scripts()
     {
         foreach (self::$scripts as $name => $path) {
+            $deps = [];
             // if the script specifies dependencies:
             if (\is_array($path)) {
                 $deps = $path['deps'];
                 $path = $path['path'];
-            } else {
-                $deps = [];
+            }
+            if ('dce-fix-background-loop' !== $name && 'dce-settings' !== $name) {
+                // Add dce-fix-background-loop and dce-settings as dependencies for all scripts
+                $deps[] = 'dce-fix-background-loop';
+                $deps[] = 'dce-settings';
             }
             if ('http' !== \substr($path, 0, 4)) {
                 if (!(WP_DEBUG || SCRIPT_DEBUG)) {
-                    // @phpstan-ignore-line
                     $path = \str_replace('.js', '.min.js', $path);
                 }
                 $path = plugins_url($path, DCE__FILE__);
@@ -449,11 +460,6 @@ class Assets
     {
         self::register_dce_scripts();
         self::register_vendor_scripts();
-    }
-    public function dce_frontend_enqueue_scripts()
-    {
-        wp_enqueue_script('dce-settings');
-        wp_enqueue_script('dce-fix-background-loop');
     }
     public function dce_head()
     {
@@ -627,27 +633,22 @@ class Assets
         return $style;
     }
     /**
-     * Enqueue admin styles
+     * Enqueue Admin Scripts
      *
-     * @since 0.0.3
-     *
-     * @access public
+     * @return void
      */
-    public function enqueue_admin_styles()
+    public function enqueue_admin_scripts()
     {
-        // Admin style
-        wp_register_style('dce-admin-css', DCE_URL . 'assets/css/admin.css', [], DCE_VERSION);
-        wp_enqueue_style('dce-admin-css');
         // select2
-        wp_enqueue_style('dce-select2', DCE_URL . 'assets/lib/select2/select2.min.css', [], DCE_VERSION);
-        wp_enqueue_script('dce-select2', DCE_URL . 'assets/lib/select2/select2.full.min.js', array('jquery'), DCE_VERSION, \true);
+        wp_enqueue_style('dce-select2', plugins_url('assets/lib/select2/select2.min.css', DCE__FILE__), [], DCE_VERSION);
+        wp_enqueue_script('dce-select2', plugins_url('assets/lib/select2/select2.full.min.js', DCE__FILE__), array('jquery'), DCE_VERSION, \true);
         // Enqueue Admin Script
-        wp_enqueue_script('dce-admin-js', DCE_URL . 'assets/js/admin.js', [], DCE_VERSION, \true);
+        wp_enqueue_script('dce-admin-js', plugins_url('assets/js/admin.js', DCE__FILE__), [], DCE_VERSION, \true);
     }
     public function register_and_enqueue_dce_icons()
     {
         // Register styles
-        wp_register_style('dce-style-icons', DCE_URL . '/assets/css/dce-icon.css', [], DCE_VERSION);
+        wp_register_style('dce-style-icons', plugins_url('/assets/css/dce-icon.css', DCE__FILE__), [], DCE_VERSION);
         // Enqueue styles Icons
         wp_enqueue_style('dce-style-icons');
     }
@@ -656,7 +657,7 @@ class Assets
      * loading the elementor editor the wp actions used for the registrations
      * are not run.
      */
-    public function dce_editor()
+    public function editor_enqueue()
     {
         // Register styles
         wp_register_style('dce-style-icons', plugins_url('/assets/css/dce-icon.css', DCE__FILE__), [], DCE_VERSION);
@@ -668,20 +669,33 @@ class Assets
         // JS for Editor
         wp_register_script('dce-script-editor', plugins_url('/assets/js/editor.js', DCE__FILE__), [], DCE_VERSION, \true);
         wp_enqueue_script('dce-script-editor');
-        // JS for Dynamic Visibility on editor mode
-        wp_register_script('dce-script-editor-dynamic-visibility', plugins_url('/assets/js/editor-dynamic-visibility.js', DCE__FILE__), [], DCE_VERSION, \true);
-        wp_enqueue_script('dce-script-editor-dynamic-visibility');
-        // Labels on Dynamic Posts
-        wp_localize_script('dce-script-editor', 'posts_v2_item_label_localization', ['item_title' => '<i class="fa fa-font" aria-hidden="true"></i> ' . __('Title', 'dynamic-content-for-elementor'), 'item_image' => '<i class="eicon-featured-image" aria-hidden="true"></i> ' . __('Featured Image', 'dynamic-content-for-elementor'), 'item_date' => '<i class="fa fa-calendar" aria-hidden="true"></i> ' . __('Date', 'dynamic-content-for-elementor'), 'item_termstaxonomy' => '<i class="eicon-tags" aria-hidden="true"></i> ' . __('Terms', 'dynamic-content-for-elementor'), 'item_content' => '<i class="fa fa-align-left" aria-hidden="true"></i> ' . __('Content', 'dynamic-content-for-elementor'), 'item_author' => '<i class="eicon-user-circle-o" aria-hidden="true"></i> ' . __('Author', 'dynamic-content-for-elementor'), 'item_custommeta' => '<i class="eicon-custom" aria-hidden="true"></i> ' . __('Custom Meta Field', 'dynamic-content-for-elementor'), 'item_jetengine' => '<i class="icon-dce-jetengine" aria-hidden="true"></i> ' . __('JetEngine Field', 'dynamic-content-for-elementor'), 'item_readmore' => '<i class="eicon-button" aria-hidden="true"></i> ' . __('Read More', 'dynamic-content-for-elementor'), 'item_posttype' => '<i class="eicon-post-info" aria-hidden="true"></i> ' . __('Post Type', 'dynamic-content-for-elementor'), 'item_productprice' => '<i class="eicon-product-price" aria-hidden="true"></i> ' . __('Product Price', 'dynamic-content-for-elementor'), 'item_sku' => '<i class="eicon-product-info" aria-hidden="true"></i> ' . __('Product SKU', 'dynamic-content-for-elementor'), 'item_addtocart' => '<i class="eicon-product-add-to-cart" aria-hidden="true"></i> ' . __('Add to Cart', 'dynamic-content-for-elementor')]);
+        // Labels on Dynamic Collection
+        wp_localize_script('dce-script-editor', 'posts_v2_item_label_localization', ['item_title' => '<i class="fa fa-font" aria-hidden="true"></i> ' . __('Title', 'dynamic-content-for-elementor'), 'item_image' => '<i class="eicon-featured-image" aria-hidden="true"></i> ' . __('Featured Image', 'dynamic-content-for-elementor'), 'item_date' => '<i class="fa fa-calendar" aria-hidden="true"></i> ' . __('Date', 'dynamic-content-for-elementor'), 'item_termstaxonomy' => '<i class="eicon-tags" aria-hidden="true"></i> ' . __('Terms', 'dynamic-content-for-elementor'), 'item_content' => '<i class="fa fa-align-left" aria-hidden="true"></i> ' . __('Content', 'dynamic-content-for-elementor'), 'item_author' => '<i class="eicon-user-circle-o" aria-hidden="true"></i> ' . __('Author', 'dynamic-content-for-elementor'), 'item_custommeta' => '<i class="eicon-custom" aria-hidden="true"></i> ' . __('Custom Meta Field', 'dynamic-content-for-elementor'), 'item_jetengine' => '<i class="icon-dce-jetengine" aria-hidden="true"></i> ' . __('JetEngine Field', 'dynamic-content-for-elementor'), 'item_metabox' => '<i class="icon-dce-metabox" aria-hidden="true"></i> ' . __('Meta Box Field', 'dynamic-content-for-elementor'), 'item_readmore' => '<i class="eicon-button" aria-hidden="true"></i> ' . __('Read More', 'dynamic-content-for-elementor'), 'item_posttype' => '<i class="eicon-post-info" aria-hidden="true"></i> ' . __('Post Type', 'dynamic-content-for-elementor'), 'item_productprice' => '<i class="eicon-product-price" aria-hidden="true"></i> ' . __('Product Price', 'dynamic-content-for-elementor'), 'item_sku' => '<i class="eicon-product-info" aria-hidden="true"></i> ' . __('Product SKU', 'dynamic-content-for-elementor'), 'item_addtocart' => '<i class="eicon-product-add-to-cart" aria-hidden="true"></i> ' . __('Add to Cart', 'dynamic-content-for-elementor')]);
+        // Features by Collection 'dynamic-posts'
+        wp_localize_script('dce-script-editor', 'dce_features_collection_dynamic_posts', $this->features_collection_dynamic_posts());
+    }
+    public function frontend_enqueue()
+    {
+        // Features by Collection 'dynamic-posts'
+        wp_localize_script('dce-dynamicPosts-base', 'dce_features_collection_dynamic_posts', $this->features_collection_dynamic_posts());
     }
     /**
-     * Enqueue admin styles
+     * Features Collection Dynamic Posts
+     *
+     * @return array<string>
+     */
+    public function features_collection_dynamic_posts()
+    {
+        return \DynamicContentForElementor\Plugin::instance()->features->get_feature_info_by_array(\DynamicContentForElementor\Plugin::instance()->features->filter_by_collection('dynamic-posts'), 'name');
+    }
+    /**
+     * Enqueue preview styles
      *
      * @since 1.0.3
      *
      * @access public
      */
-    public function dce_preview()
+    public function preview_enqueue()
     {
         // Enqueue DCE Elementor Style
         wp_enqueue_style('dce-preview');

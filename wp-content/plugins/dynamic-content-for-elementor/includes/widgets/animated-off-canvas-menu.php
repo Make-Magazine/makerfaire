@@ -96,7 +96,9 @@ class AnimatedOffCanvasMenu extends \DynamicContentForElementor\Widgets\WidgetPr
         $this->start_controls_tabs('hamburger_colors');
         //@@@@@@@@@@@@@@@@@@@@@@@ NormalStyle @@@@@@@@@@@@@@@@@@@@@@@@@
         $this->start_controls_tab('hamburger_style_normal', ['label' => __('Normal', 'dynamic-content-for-elementor')]);
-        $this->add_control('hamburger_svg_fill', ['label' => __('Fill Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '#000000', 'selectors' => [$svgSelector => 'fill: {{VALUE}};', '{{WRAPPER}} #dce_hamburger' => 'color: {{VALUE}}']]);
+        $this->add_control('hamburger_force_fill', ['label' => __('Force Fill Color', 'dynamic-content-for-elementor'), 'description' => esc_html__('When switchen on this will fill try to fill all parts of the icon. Altro ty this if the above setting has no effect', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
+        $this->add_control('hamburger_svg_fill', ['label' => __('Fill Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '#000000', 'selectors' => [$svgSelector => 'fill: {{VALUE}};', '{{WRAPPER}} #dce_hamburger' => 'color: {{VALUE}}'], 'condition' => ['hamburger_force_fill' => '']]);
+        $this->add_control('hamburger_svg_fill_forced', ['label' => __('Fill Color (Force)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '#000000', 'selectors' => ['#dce_hamburger' => 'fill: {{VALUE}};', '#dce_hamburger' => 'color: {{VALUE}};'], 'condition' => ['hamburger_force_fill' => 'yes']]);
         $this->add_control('hamburger_svg_strokelines', ['label' => __('Stroke Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'default' => '#000000', 'selectors' => ['{{WRAPPER}} #dce_hamburger g line, {{WRAPPER}} #dce_hamburger g path, {{WRAPPER}} #dce_hamburger g polygon' => 'stroke: {{VALUE}};'], 'condition' => ['hamburger_style' => ['bars', 'barsround', 'wave', 'arrow', 'plus', 'circlebar']]]);
         $this->add_responsive_control('hamburger_svg_strokewidth', ['label' => __('Stroke Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 3, 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 0.1, 'max' => 20, 'step' => 0.1]], 'selectors' => [$svgSelector => 'stroke-width: {{SIZE}};'], 'condition' => ['hamburger_style' => ['bars', 'barsround', 'wave', 'arrow', 'plus', 'circlebar']]]);
         // .....
@@ -356,7 +358,7 @@ class AnimatedOffCanvasMenu extends \DynamicContentForElementor\Widgets\WidgetPr
         ?>
 			<div class="dce-nav">
 				<div class="dce-menu-aocm">
-					<a class="dce-close close-hidden close-<?php 
+					<div class="dce-close close-hidden close-<?php 
         echo $settings['close_type'];
         ?>" aria-label="Close">
 
@@ -394,7 +396,7 @@ class AnimatedOffCanvasMenu extends \DynamicContentForElementor\Widgets\WidgetPr
 						<?php 
         }
         ?>
-					</a>
+						</div>
 
 					<div class="dce-nav-menu">
 

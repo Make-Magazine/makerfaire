@@ -22,6 +22,8 @@ class WooProductCrosssells extends \DynamicContentForElementor\Widgets\DynamicPo
         $this->add_skin(new Skins\Woo_Product_Crosssells_Skin_Carousel($this));
         $this->add_skin(new Skins\Woo_Product_Crosssells_Skin_DualCarousel($this));
         $this->add_skin(new Skins\Woo_Product_Crosssells_Skin_Accordion($this));
+        $this->add_skin(new Skins\Woo_Product_Crosssells_Skin_List($this));
+        $this->add_skin(new Skins\Woo_Product_Crosssells_Skin_Table($this));
     }
     /**
      * Register controls after check if this feature is only for admin

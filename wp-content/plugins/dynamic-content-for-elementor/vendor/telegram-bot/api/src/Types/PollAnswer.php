@@ -48,6 +48,7 @@ class PollAnswer extends BaseType
     }
     /**
      * @param string $id
+     * @return void
      */
     public function setPollId($id)
     {
@@ -62,24 +63,21 @@ class PollAnswer extends BaseType
     }
     /**
      * @param User $from
+     * @return void
      */
     public function setUser(User $from)
     {
         $this->user = $from;
     }
     /**
+     * @deprecated
+     *
      * @return User
      */
     public function getFrom()
     {
+        @\trigger_error(\sprintf('Access user with %s is deprecated, use "%s::getUser" method', __METHOD__, __CLASS__), \E_USER_DEPRECATED);
         return $this->getUser();
-    }
-    /**
-     * @param User $from
-     */
-    public function setFrom(User $from)
-    {
-        return $this->setUser($from);
     }
     /**
      * @return int[]
@@ -90,6 +88,7 @@ class PollAnswer extends BaseType
     }
     /**
      * @param int[] $optionIds
+     * @return void
      */
     public function setOptionIds($optionIds)
     {

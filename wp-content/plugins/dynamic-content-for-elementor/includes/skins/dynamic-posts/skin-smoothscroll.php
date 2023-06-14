@@ -12,6 +12,11 @@ if (!\defined('ABSPATH')) {
 }
 class Skin_Smoothscroll extends \DynamicContentForElementor\Includes\Skins\Skin_Base
 {
+    /**
+     * Register Controls Actions
+     *
+     * @return void
+     */
     protected function _register_controls_actions()
     {
         add_action('elementor/element/dce-dynamicposts-v2/section_query/after_section_end', [$this, 'register_controls_layout']);

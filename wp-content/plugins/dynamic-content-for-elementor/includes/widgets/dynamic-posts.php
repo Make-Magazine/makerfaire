@@ -24,6 +24,8 @@ class DynamicPosts extends \DynamicContentForElementor\Widgets\DynamicPostsBase
         $this->add_skin(new Skins\Skin_Carousel($this));
         $this->add_skin(new Skins\Skin_DualCarousel($this));
         $this->add_skin(new Skins\Skin_Accordion($this));
+        $this->add_skin(new Skins\Skin_List($this));
+        $this->add_skin(new Skins\Skin_Table($this));
         $this->add_skin(new Skins\Skin_Timeline($this));
         $this->add_skin(new Skins\Skin_3D($this));
         $this->add_skin(new Skins\Skin_Gridtofullscreen3d($this));

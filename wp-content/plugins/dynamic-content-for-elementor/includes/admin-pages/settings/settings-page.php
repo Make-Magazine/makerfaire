@@ -43,7 +43,7 @@ abstract class SettingsPage
      * @since 1.5.0
      * @access protected
      * @abstract
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     protected abstract function create_tabs();
     /**
@@ -198,7 +198,7 @@ abstract class SettingsPage
      *
      * @param string $tab_id     Tab ID.
      * @param string $section_id Section ID.
-     * @param array<string, mixed>  $fields     {
+     * @param array<string,mixed>  $fields     {
      *    An array of fields.
      *
      *    @type string $field_id   Field ID.

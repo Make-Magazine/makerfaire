@@ -38,11 +38,11 @@ class Settings extends \DynamicContentForElementor\AdminPages\Settings\SettingsP
         echo __('You can manipulate the results with filters, which are PHP and WordPress functions.', 'dynamic-content-for-elementor') . '</p>';
     }
     /**
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function create_tabs()
     {
-        $tabs = ['tokens' => ['label' => esc_html__('Tokens', 'dynamic-content-for-elementor'), 'sections' => ['tokens' => ['callback' => [$this, 'render_tokens_intro'], 'fields' => ['tokens_status' => ['label' => esc_html__('Status', 'dynamic-content-for-elementor'), 'field_args' => ['type' => 'select', 'std' => 'enable', 'options' => ['enable' => esc_html__('Enable', 'dynamic-content-for-elementor'), 'disable' => esc_html__('Disable', 'dynamic-content-for-elementor')]]], 'active_tokens' => ['label' => esc_html__('Active Tokens', 'dynamic-content-for-elementor'), 'field_args' => ['type' => 'checkbox_list', 'std' => Tokens::get_default_active_tokens(), 'options' => Tokens::get_tokens_options()]], 'tokens_filters_whitelist_status' => ['label' => esc_html__('Filters Whitelist Status', 'dynamic-content-for-elementor'), 'field_args' => ['type' => 'select', 'std' => 'enable', 'options' => ['enable' => esc_html__('Enable', 'dynamic-content-for-elementor'), 'disable' => esc_html__('Disable', 'dynamic-content-for-elementor')], 'desc' => '<span style="color: red;">' . esc_html__('Disabling the whitelist is not recommended.', 'dynamic-content-for-elementor') . '</span>']], 'tokens_filters_whitelist' => ['label' => esc_html__('Filters Whitelist', 'dynamic-content-for-elementor'), 'field_args' => ['type' => 'raw_html', 'html' => $this->tokens_filters_whitelist('tokens_filters_whitelist')]]]]]]];
+        $tabs = ['tokens' => ['label' => esc_html__('Tokens', 'dynamic-content-for-elementor'), 'sections' => ['tokens' => ['callback' => [$this, 'render_tokens_intro'], 'fields' => ['tokens_status' => ['label' => esc_html__('Status', 'dynamic-content-for-elementor'), 'field_args' => ['type' => 'select', 'std' => 'enable', 'options' => ['enable' => esc_html__('Enable', 'dynamic-content-for-elementor'), 'disable' => esc_html__('Disable', 'dynamic-content-for-elementor')]]], 'active_tokens' => ['label' => esc_html__('Active Tokens', 'dynamic-content-for-elementor'), 'field_args' => ['type' => 'checkbox_list', 'std' => \array_keys(Tokens::get_tokens_list()), 'options' => Tokens::get_tokens_options()]], 'tokens_filters_whitelist' => ['label' => esc_html__('Filters Whitelist', 'dynamic-content-for-elementor'), 'field_args' => ['type' => 'raw_html', 'html' => $this->tokens_filters_whitelist('tokens_filters_whitelist')]]]]]]];
         return $tabs;
     }
 }

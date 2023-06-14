@@ -65,7 +65,7 @@ class Skin_Accordion extends \DynamicContentForElementor\Includes\Skins\Skin_Bas
         $this->start_controls_section('section_accordion', ['label' => $this->get_title(), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'separator' => 'before', 'default' => ['value' => 'fas fa-plus', 'library' => 'fa-solid'], 'skin' => 'inline', 'label_block' => \false]);
         $this->add_control('icon_active', ['label' => __('Active Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'default' => ['value' => 'fas fa-minus', 'library' => 'fa-solid'], 'skin' => 'inline', 'label_block' => \false]);
-        $this->add_control('html_tag', ['label' => __('Heading HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'p' => 'p'], 'default' => 'span']);
+        $this->add_control('html_tag', ['label' => __('Heading HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(), 'default' => 'span']);
         $this->add_control('start', ['label' => __('Initially open', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'first' => __('First', 'dynamic-content-for-elementor'), 'custom' => __('Custom Index', 'dynamic-content-for-elementor'), 'all' => __('All', 'dynamic-content-for-elementor')], 'inline' => \true, 'default' => 'none', 'frontend_available' => \true]);
         $this->add_control('start_custom', ['label' => __('Active Index', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'frontend_available' => \true, 'default' => 1, 'condition' => [$this->get_control_id('start') => ['custom']]]);
         $this->add_control('close_other_sections', ['label' => __('Automatically close other tabs', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'default' => 'yes']);
@@ -84,8 +84,8 @@ class Skin_Accordion extends \DynamicContentForElementor\Includes\Skins\Skin_Bas
         $this->add_control('title_heading', ['label' => __('Heading', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_control('heading_background', ['label' => __('Background', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .acc_head' => 'background-color: {{VALUE}};']]);
         $this->add_control('heading_active_background', ['label' => __('Active Background', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .acc_active .acc_head' => 'background-color: {{VALUE}};']]);
-        $this->add_control('heading_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .acc_head' => 'color: {{VALUE}};']]);
-        $this->add_control('heading_active_color', ['label' => __('Active Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .acc_active .acc_head' => 'color: {{VALUE}} !important;']]);
+        $this->add_control('heading_color', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .acc_head *' => 'color: {{VALUE}};']]);
+        $this->add_control('heading_active_color', ['label' => __('Active Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .acc_active .acc_head *' => 'color: {{VALUE}} !important;']]);
         $this->add_group_control(Group_Control_Border::get_type(), ['name' => 'border_width', 'label' => __('Border Width', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} .acc_section']);
         $this->add_group_control(Group_Control_Typography::get_type(), ['name' => 'heading_typography', 'selector' => '{{WRAPPER}} .acc_head']);
         $this->add_responsive_control('heading_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .acc_head' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
@@ -113,19 +113,19 @@ class Skin_Accordion extends \DynamicContentForElementor\Includes\Skins\Skin_Bas
     {
         $settings = $this->get_parent()->get_settings_for_display();
         $p_query = $this->get_parent()->get_query();
-        $this->get_parent()->add_render_attribute('dynposts_container', ['class' => ['dce-posts-container is_infiniteScroll', 'dce-posts', $this->get_scrollreveal_class(), $this->get_container_class()]]);
-        $this->get_parent()->add_render_attribute('dynposts_container_wrap', ['class' => ['dce-posts-wrapper', $this->get_wrapper_class()]]);
+        $this->get_parent()->add_render_attribute('container', ['class' => ['dce-posts-container', 'dce-posts', $this->get_scrollreveal_class(), $this->get_container_class()]]);
+        $this->get_parent()->add_render_attribute('container_wrap', ['class' => ['dce-posts-wrapper', $this->get_wrapper_class()]]);
         $this->render_pagination_top();
         ?>
 
 		<div <?php 
-        echo $this->get_parent()->get_render_attribute_string('dynposts_container');
+        echo $this->get_parent()->get_render_attribute_string('container');
         ?>>
 			<?php 
         $this->render_posts_before();
         ?>
 			<ul <?php 
-        echo $this->get_parent()->get_render_attribute_string('dynposts_container_wrap');
+        echo $this->get_parent()->get_render_attribute_string('container_wrap');
         ?>>
 			<?php 
         $this->render_posts_wrapper_before();
@@ -205,7 +205,9 @@ class Skin_Accordion extends \DynamicContentForElementor\Includes\Skins\Skin_Bas
         $title = esc_html(get_the_title());
         $html_tag = !empty($settings['accordion_html_tag']) ? Helper::validate_html_tag($settings['accordion_html_tag']) : 'h4';
         echo \sprintf('<%1$s>', $html_tag);
-        $this->render_heading_icon();
+        if ('right' !== $this->get_instance_value('blocks_align')) {
+            $this->render_heading_icon();
+        }
         $this->get_parent()->add_render_attribute('accordion_title', ['class' => 'accordion-title']);
         $this->render_pagination_top();
         ?>
@@ -217,7 +219,11 @@ class Skin_Accordion extends \DynamicContentForElementor\Includes\Skins\Skin_Bas
         echo $title;
         ?>
 		</span>
+
 		<?php 
+        if ('right' === $this->get_instance_value('blocks_align')) {
+            $this->render_heading_icon();
+        }
         echo \sprintf('</%s>', $html_tag);
     }
     /**
@@ -228,14 +234,18 @@ class Skin_Accordion extends \DynamicContentForElementor\Includes\Skins\Skin_Bas
     public function render_heading_icon()
     {
         $settings = $this->get_parent()->get_settings_for_display();
-        $icon = $this->get_parent()->get_settings_for_display('accordion_icon');
-        $icon_active = $this->get_parent()->get_settings_for_display('accordion_icon_active');
-        $icon_align = $this->get_parent()->get_settings_for_display('accordion_icon_align') ?? 'left';
+        $icon = $settings['accordion_icon'];
+        $icon_active = $settings['accordion_icon_active'];
+        $icon_align = $settings['accordion_icon_align'] ?? 'left';
         if (!empty($icon)) {
-            Icons_Manager::render_icon($icon, ['aria-hidden' => 'true', 'class' => ['icon', 'accordion-icon-' . $icon_align]]);
+            echo "<span class='icon dce-accordion-icon accordion-icon-{$icon_align}'>";
+            Icons_Manager::render_icon($icon, ['aria-hidden' => 'true']);
+            echo '</span>';
         }
         if (!empty($icon_active)) {
-            Icons_Manager::render_icon($icon_active, ['aria-hidden' => 'true', 'class' => ['icon-active', 'accordion-icon-' . $icon_align]]);
+            echo "<span class='icon-active dce-accordion-icon accordion-icon-{$icon_align}'>";
+            Icons_Manager::render_icon($icon_active, ['aria-hidden' => 'true']);
+            echo '</span>';
         }
     }
     /**
@@ -250,7 +260,7 @@ class Skin_Accordion extends \DynamicContentForElementor\Includes\Skins\Skin_Bas
     /**
      * Get Scroll Reveal Class
      *
-     * @return string|null
+     * @return string|void
      */
     public function get_scrollreveal_class()
     {

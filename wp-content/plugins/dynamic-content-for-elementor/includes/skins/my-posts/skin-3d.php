@@ -8,6 +8,11 @@ if (!\defined('ABSPATH')) {
 }
 class My_Posts_Skin_3D extends \DynamicContentForElementor\Includes\Skins\Skin_3D
 {
+    /**
+     * Register Controls Actions
+     *
+     * @return void
+     */
     protected function _register_controls_actions()
     {
         add_action('elementor/element/dce-my-posts/section_query/after_section_end', [$this, 'register_controls_layout']);

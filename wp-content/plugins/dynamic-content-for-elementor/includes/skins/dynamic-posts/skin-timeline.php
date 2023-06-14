@@ -14,13 +14,18 @@ if (!\defined('ABSPATH')) {
 }
 class Skin_Timeline extends \DynamicContentForElementor\Includes\Skins\Skin_Base
 {
+    /**
+     * Register Controls Actions
+     *
+     * @return void
+     */
     protected function _register_controls_actions()
     {
         add_action('elementor/element/dce-dynamicposts-v2/section_query/after_section_end', [$this, 'register_controls_layout']);
         add_action('elementor/element/dce-dynamicposts-v2/section_dynamicposts/after_section_end', [$this, 'register_additional_timeline_controls']);
     }
     public $depended_scripts = ['dce-dynamicPosts-timeline', 'dce-infinitescroll'];
-    public $depended_styles = ['dce-dynamicPosts-grid', 'dce-dynamicPosts-timeline'];
+    public $depended_styles = ['dce-dynamicPosts-timeline'];
     public function get_id()
     {
         return 'timeline';
@@ -33,14 +38,11 @@ class Skin_Timeline extends \DynamicContentForElementor\Includes\Skins\Skin_Base
     {
         $this->parent = $widget;
         $this->start_controls_section('section_timeline', ['label' => __('Timeline', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
-        $this->add_control('timeline_use_description', ['label' => __('Show Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
-        $this->add_control('timeline_use_date', ['label' => __('Show Date', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_responsive_control('timeline_imagesize', ['label' => __('Image Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'separator' => 'before', 'default' => ['size' => '64', 'unit' => 'px'], 'size_units' => ['px'], 'range' => ['px' => ['min' => 0, 'max' => 400]], 'selectors' => ['{{WRAPPER}} .dce-timeline__img' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};']]);
-        $this->add_responsive_control('timeline_verticalposition', ['label' => __('Vertical Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['px', '%'], 'default' => ['size' => '32', 'unit' => 'px'], 'range' => ['px' => ['min' => 0, 'max' => 400], '%' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-timeline__block .dce-timeline__content::before, {{WRAPPER}} .dce-timeline__block .dce-timeline__img, {{WRAPPER}} .dce-timeline__block .dce-timeline__date' => 'top: {{SIZE}}{{UNIT}};']]);
+        $this->add_responsive_control('timeline_verticalposition', ['label' => __('Vertical Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['px', '%'], 'default' => ['size' => '32', 'unit' => 'px'], 'range' => ['px' => ['min' => 0, 'max' => 400], '%' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-timeline__block .dce-timeline__content::before, {{WRAPPER}} .dce-timeline__block .dce-timeline__img' => 'top: {{SIZE}}{{UNIT}};']]);
         $this->add_responsive_control('timeline_width', ['label' => __('Timeline Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'separator' => 'before', 'size_units' => ['px', '%', 'vw'], 'default' => ['size' => ''], 'range' => ['px' => ['max' => 1200, 'min' => 0, 'step' => 1]], 'selectors' => ['{{WRAPPER}} .dce-timeline-wrapper' => 'width: {{SIZE}}{{UNIT}};']]);
-        $this->add_control('timeline_space_content', ['label' => __('Content Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'separator' => 'before', 'size_units' => ['px', '%', 'vw'], 'default' => ['size' => ''], 'range' => ['px' => ['max' => 1200, 'min' => 0, 'step' => 1]], 'selectors' => ['body[data-elementor-device-mode=desktop] {{WRAPPER}} .dce-timeline__content' => 'width: calc((100% / 2) - ({{SIZE}}{{UNIT}} / 2))', 'body[data-elementor-device-mode=desktop] {{WRAPPER}} .dce-timeline__block:nth-child(odd) .dce-timeline__date' => 'left: calc(100% + {{SIZE}}{{UNIT}})', 'body[data-elementor-device-mode=desktop] {{WRAPPER}} .dce-timeline__block:nth-child(even) .dce-timeline__date' => 'right: calc(100% + {{SIZE}}{{UNIT}})']]);
+        $this->add_control('timeline_space_content', ['label' => __('Content Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'separator' => 'before', 'size_units' => ['px', '%', 'vw'], 'default' => ['size' => ''], 'range' => ['px' => ['max' => 1200, 'min' => 0, 'step' => 1]], 'selectors' => ['body[data-elementor-device-mode=desktop] {{WRAPPER}} .dce-timeline__content' => 'width: calc((100% / 2) - ({{SIZE}}{{UNIT}} / 2))']]);
         $this->add_responsive_control('timeline_rowspace', ['label' => __('Row Space', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '', 'unit' => 'px'], 'size_units' => ['px', 'em'], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'render_type' => 'template', 'frontend_available' => \true, 'selectors' => ['{{WRAPPER}} .dce-timeline__block' => 'margin-bottom: {{SIZE}}{{UNIT}};']]);
-        $this->add_control('timeline_shift_date', ['label' => __('Date shift', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['px'], 'default' => ['size' => ''], 'range' => ['px' => ['max' => 200, 'min' => -200, 'step' => 1]], 'selectors' => ['body[data-elementor-device-mode=desktop] {{WRAPPER}} .dce-timeline__block:nth-child(odd) .dce-timeline__date' => 'margin-left: {{SIZE}}{{UNIT}};', 'body[data-elementor-device-mode=desktop] {{WRAPPER}} .dce-timeline__block:nth-child(even) .dce-timeline__date' => 'margin-right: {{SIZE}}{{UNIT}};']]);
         $this->end_controls_section();
     }
     protected function register_style_controls()
@@ -64,7 +66,6 @@ class Skin_Timeline extends \DynamicContentForElementor\Includes\Skins\Skin_Base
         $this->add_control('timeline_activeborderimage_size', ['label' => __('Border image size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'range' => ['px' => ['min' => 0, 'max' => 30]], 'selectors' => ['{{WRAPPER}} .dce-timeline__block.dce-timeline__focus .dce-timeline__img' => 'border-width: {{SIZE}}{{UNIT}};']]);
         $this->end_controls_tab();
         $this->end_controls_tabs();
-        // ------------------- CONTENT PANEL
         $this->add_control('timeline_heading_panelcontent', ['label' => __('Panel Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_responsive_control('timeline_content_padding', ['label' => __('Content Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .dce-timeline__content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_control('timeline_radius_content', ['label' => __('Content Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '', 'unit' => 'px'], 'size_units' => ['px', '%'], 'range' => ['%' => ['min' => 0, 'max' => 50], 'px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-timeline__content' => 'border-radius: {{SIZE}}{{UNIT}};']]);

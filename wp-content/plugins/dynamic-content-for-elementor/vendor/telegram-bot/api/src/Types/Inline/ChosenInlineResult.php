@@ -40,7 +40,7 @@ class ChosenInlineResult extends BaseType
     /**
      * Optional. Sender location, only for bots that require user location
      *
-     * @var Location
+     * @var Location|null
      */
     protected $location;
     /**
@@ -48,7 +48,7 @@ class ChosenInlineResult extends BaseType
      * Available only if there is an inline keyboard attached to the message.
      * Will be also received in callback queries and can be used to edit the message.
      *
-     * @var string
+     * @var string|null
      */
     protected $inlineMessageId;
     /**
@@ -66,6 +66,8 @@ class ChosenInlineResult extends BaseType
     }
     /**
      * @param string $resultId
+     *
+     * @return void
      */
     public function setResultId($resultId)
     {
@@ -80,13 +82,15 @@ class ChosenInlineResult extends BaseType
     }
     /**
      * @param User $from
+     *
+     * @return void
      */
     public function setFrom(User $from)
     {
         $this->from = $from;
     }
     /**
-     * @return Location
+     * @return Location|null
      */
     public function getLocation()
     {
@@ -94,13 +98,15 @@ class ChosenInlineResult extends BaseType
     }
     /**
      * @param Location $location
+     *
+     * @return void
      */
     public function setLocation($location)
     {
         $this->location = $location;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getInlineMessageId()
     {
@@ -108,6 +114,8 @@ class ChosenInlineResult extends BaseType
     }
     /**
      * @param string $inlineMessageId
+     *
+     * @return void
      */
     public function setInlineMessageId($inlineMessageId)
     {
@@ -122,6 +130,8 @@ class ChosenInlineResult extends BaseType
     }
     /**
      * @param string $query
+     *
+     * @return void
      */
     public function setQuery($query)
     {

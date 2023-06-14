@@ -298,9 +298,12 @@ EOF;
     public function generate_pdf_from_template_id($template_id, $bindings, $return_string)
     {
         $post_data = get_post_meta($template_id, self::TEMPLATE_META_KEY, \true);
+        if (!$post_data) {
+            throw new \Error(esc_html__('PDF HTML: Could not fetch HTML Template, was it deleted?', 'dynamic-content-for-elementor'));
+        }
         return $this->generate_pdf_from_html_template($post_data, $bindings, $return_string);
     }
-    private function timber_expand($template, $var_bindings)
+    public function timber_expand($template, $var_bindings)
     {
         // We don't need timber templates inside files, and they can cause
         // permission problems, so remove them:
@@ -412,7 +415,7 @@ EOF;
             return;
         }
         $post_data = stripslashes_deep($post_data);
-        $data = [self::FIELD_CODE => $post_data[self::FIELD_CODE], self::FIELD_IS_TEMPLATE => $post_data[self::FIELD_IS_TEMPLATE], self::FIELD_TEMPLATE_ID => $post_data[self::FIELD_TEMPLATE_ID], self::FIELD_PREVIEW_FORM_DATA => $post_data[self::FIELD_PREVIEW_FORM_DATA], self::FIELD_PREVIEW_POST => $post_data[self::FIELD_PREVIEW_POST], self::FIELD_FORMAT => $post_data[self::FIELD_FORMAT], self::FIELD_ORIENTATION => $post_data[self::FIELD_ORIENTATION]];
+        $data = [self::FIELD_CODE => $post_data[self::FIELD_CODE] ?? '', self::FIELD_IS_TEMPLATE => $post_data[self::FIELD_IS_TEMPLATE] ?? '', self::FIELD_TEMPLATE_ID => $post_data[self::FIELD_TEMPLATE_ID] ?? '', self::FIELD_PREVIEW_FORM_DATA => $post_data[self::FIELD_PREVIEW_FORM_DATA] ?? '', self::FIELD_PREVIEW_POST => $post_data[self::FIELD_PREVIEW_POST] ?? '', self::FIELD_FORMAT => $post_data[self::FIELD_FORMAT] ?? '', self::FIELD_ORIENTATION => $post_data[self::FIELD_ORIENTATION] ?? ''];
         update_post_meta($post_id, self::TEMPLATE_META_KEY, $data);
     }
     public function get_attribute_string($attributes)
@@ -504,7 +507,7 @@ EOF;
         echo '<code>&lt;img src="{{ Image( &lt;ID&gt; ).file_loc }}"&gt;</code>';
         echo '<p>' . __('Notice how we used <code>.file_loc</code> , which is a file system path, instead of a URL. Avoid image URLs as they will be slow to fetch.', 'dynamic-content-for-elementor') . '</p>';
         echo '<p>' . __('To insert a signature you can use:', 'dynamic-content-for-elementor') . '</p>';
-        echo '<code>&lt;img src="{{ form.signature_field_id }}"&gt;</code>';
+        echo '<code>&lt;img src="{{ form_raw.signature_field_id }}"&gt;</code>';
     }
     // Render a select2 input where $id is its id, and $post_id is the
     // preselected post id.

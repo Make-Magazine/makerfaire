@@ -27,7 +27,6 @@ class Helper
     use \DynamicContentForElementor\Options;
     use \DynamicContentForElementor\Date;
     use \DynamicContentForElementor\Pagination;
-    use \DynamicContentForElementor\Conditions;
     use \DynamicContentForElementor\I18n;
     public static function can_register_unsafe_controls()
     {
@@ -72,7 +71,7 @@ class Helper
      */
     const ALLOWED_HTML_WRAPPER_TAGS = ['article', 'aside', 'div', 'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'main', 'nav', 'p', 'section', 'span', 'code'];
     /**
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      * @param string $key
      * @param string $old_default
      * @return string
@@ -97,5 +96,84 @@ class Helper
             $class = $settings[$old_key];
             return "<i class='{$class}'></i>";
         }
+    }
+    /**
+     * Is Condition Satisfied
+     *
+     * @param mixed $field
+     * @param string $status
+     * @param mixed $value
+     * @return boolean
+     */
+    public static function is_condition_satisfied($field, string $status, $value)
+    {
+        switch ($status) {
+            case 'isset':
+                if (!empty($field)) {
+                    return \true;
+                }
+                break;
+            case 'not':
+                if (empty($field)) {
+                    return \true;
+                }
+                break;
+            case 'lt':
+                if (\is_array($field) && \count($field) < $value) {
+                    return \true;
+                }
+                if (!empty($field) && $field < $value) {
+                    return \true;
+                }
+                break;
+            case 'gt':
+                if (\is_array($field) && \count($field) > $value) {
+                    return \true;
+                }
+                if (!empty($field) && $field > $value) {
+                    return \true;
+                }
+                break;
+            case 'contain':
+                if (!empty($field)) {
+                    if (\is_array($field) && \in_array($value, $field)) {
+                        return \true;
+                    }
+                }
+                if (\is_string($field) && $value !== '' && \strpos($field, $value) !== \false) {
+                    return \true;
+                }
+                break;
+            case 'not_contain':
+                if (empty($field)) {
+                    return \true;
+                }
+                if (\is_array($field) && !\in_array($value, $field)) {
+                    return \true;
+                }
+                if (\is_string($field) && $value !== '' && \strpos($field, $value) === \false) {
+                    return \true;
+                }
+                break;
+            case 'in_array':
+                if (!\is_array($value)) {
+                    $value = \DynamicContentForElementor\Helper::to_string($value);
+                    $value = \DynamicContentForElementor\Helper::str_to_array(',', $value);
+                }
+                if (\is_array($value) && \in_array($field, $value)) {
+                    return \true;
+                }
+                break;
+            case 'not_value':
+                if ($field != $value) {
+                    return \true;
+                }
+            // no break
+            case 'value':
+                if ($field == $value) {
+                    return \true;
+                }
+        }
+        return \false;
     }
 }

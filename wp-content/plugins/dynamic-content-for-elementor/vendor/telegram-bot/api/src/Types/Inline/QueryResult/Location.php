@@ -56,19 +56,19 @@ class Location extends AbstractInlineQueryResult
     /**
      * Optional. Url of the thumbnail for the result
      *
-     * @var string
+     * @var string|null
      */
     protected $thumbUrl;
     /**
      * Optional. Thumbnail width
      *
-     * @var int
+     * @var int|null
      */
     protected $thumbWidth;
     /**
      * Optional. Thumbnail height
      *
-     * @var int
+     * @var int|null
      */
     protected $thumbHeight;
     /**
@@ -78,9 +78,9 @@ class Location extends AbstractInlineQueryResult
      * @param float $latitude
      * @param float $longitude
      * @param string $title
-     * @param string $thumbUrl
-     * @param int $thumbWidth
-     * @param int $thumbHeight
+     * @param string|null $thumbUrl
+     * @param int|null $thumbWidth
+     * @param int|null $thumbHeight
      * @param InlineKeyboardMarkup|null $inlineKeyboardMarkup
      * @param InputMessageContent|null $inputMessageContent
      */
@@ -102,6 +102,8 @@ class Location extends AbstractInlineQueryResult
     }
     /**
      * @param float $latitude
+     *
+     * @return void
      */
     public function setLatitude($latitude)
     {
@@ -116,48 +118,56 @@ class Location extends AbstractInlineQueryResult
     }
     /**
      * @param float $longitude
+     *
+     * @return void
      */
     public function setLongitude($longitude)
     {
         $this->longitude = $longitude;
     }
     /**
-     * @return string
+     * @return string|null
      */
     public function getThumbUrl()
     {
         return $this->thumbUrl;
     }
     /**
-     * @param string $thumbUrl
+     * @param string|null $thumbUrl
+     *
+     * @return void
      */
     public function setThumbUrl($thumbUrl)
     {
         $this->thumbUrl = $thumbUrl;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getThumbWidth()
     {
         return $this->thumbWidth;
     }
     /**
-     * @param int $thumbWidth
+     * @param int|null $thumbWidth
+     *
+     * @return void
      */
     public function setThumbWidth($thumbWidth)
     {
         $this->thumbWidth = $thumbWidth;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getThumbHeight()
     {
         return $this->thumbHeight;
     }
     /**
-     * @param int $thumbHeight
+     * @param int|null $thumbHeight
+     *
+     * @return void
      */
     public function setThumbHeight($thumbHeight)
     {

@@ -28,30 +28,30 @@ class AbstractInlineQueryResult extends BaseType
     /**
      * Title for the result
      *
-     * @var string
+     * @var string|null
      */
     protected $title;
     /**
      * Content of the message to be sent instead of the file
      *
-     * @var InputMessageContent
+     * @var InputMessageContent|null
      */
     protected $inputMessageContent;
     /**
      * Optional. Inline keyboard attached to the message
      *
-     * @var InlineKeyboardMarkup
+     * @var InlineKeyboardMarkup|null
      */
     protected $replyMarkup;
     /**
      * AbstractInlineQueryResult constructor.
      *
      * @param string $id
-     * @param string $title
+     * @param string|null $title
      * @param InputMessageContent|null $inputMessageContent
      * @param InlineKeyboardMarkup|null $replyMarkup
      */
-    public function __construct($id, $title, $inputMessageContent = null, $replyMarkup = null)
+    public function __construct($id, $title = null, $inputMessageContent = null, $replyMarkup = null)
     {
         $this->id = $id;
         $this->title = $title;
@@ -67,6 +67,8 @@ class AbstractInlineQueryResult extends BaseType
     }
     /**
      * @param string $type
+     *
+     * @return void
      */
     public function setType($type)
     {
@@ -81,48 +83,56 @@ class AbstractInlineQueryResult extends BaseType
     }
     /**
      * @param string $id
+     *
+     * @return void
      */
     public function setId($id)
     {
         $this->id = $id;
     }
     /**
-     * @return string
+     * @return string|null
      */
     public function getTitle()
     {
         return $this->title;
     }
     /**
-     * @param string $title
+     * @param string|null $title
+     *
+     * @return void
      */
     public function setTitle($title)
     {
         $this->title = $title;
     }
     /**
-     * @return InputMessageContent
+     * @return InputMessageContent|null
      */
     public function getInputMessageContent()
     {
         return $this->inputMessageContent;
     }
     /**
-     * @param InputMessageContent $inputMessageContent
+     * @param InputMessageContent|null $inputMessageContent
+     *
+     * @return void
      */
     public function setInputMessageContent($inputMessageContent)
     {
         $this->inputMessageContent = $inputMessageContent;
     }
     /**
-     * @return InlineKeyboardMarkup
+     * @return InlineKeyboardMarkup|null
      */
     public function getReplyMarkup()
     {
         return $this->replyMarkup;
     }
     /**
-     * @param InlineKeyboardMarkup $replyMarkup
+     * @param InlineKeyboardMarkup|null $replyMarkup
+     *
+     * @return void
      */
     public function setReplyMarkup($replyMarkup)
     {

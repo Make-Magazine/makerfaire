@@ -19,6 +19,12 @@ if (!\defined('ABSPATH')) {
 }
 class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
+    /**
+     * Unique ID
+     *
+     * @var string
+     */
+    protected $unique_id;
     public function get_script_depends()
     {
         return ['dce-jquery-visible', 'dce-cookie', 'dce-modals'];
@@ -58,8 +64,10 @@ class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('scroll_hide', ['label' => __('Hide on scroll', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Hide the modal when the user scrolls the page', 'dynamic-content-for-elementor'), 'condition' => ['button_purpose!' => 'close']]);
         $this->add_control('close_delay', ['label' => __('Close Delay (ms)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0, 'frontend_available' => \true, 'condition' => ['scroll_hide!' => ['', '0'], 'button_purpose!' => 'close']]);
         $this->add_control('esc_hide', ['label' => __('Hide on press ESC', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'description' => __('Hide the modal when the user press ESC button', 'dynamic-content-for-elementor'), 'condition' => ['button_purpose!' => 'close']]);
-        $this->add_control('always_visible', ['label' => __('Show the modal on every page load', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'frontend_available' => \true, 'condition' => ['button_purpose!' => 'close', 'trigger!' => 'button']]);
-        $this->add_control('cookie_lifetime', ['label' => __('Cookie expiration', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0, 'frontend_available' => \true, 'description' => __('Time in seconds. 86400 seconds is a day. 0 is still browser is open.', 'dynamic-content-for-elementor'), 'condition' => ['always_visible' => '', 'button_purpose!' => 'close', 'trigger!' => 'button']]);
+        $this->add_control('always_visible', ['label' => __('Don’t use cookies', 'dynamic-content-for-elementor'), 'description' => esc_html__('Yes will show the modal on every page load.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'frontend_available' => \true, 'condition' => ['button_purpose!' => 'close', 'trigger!' => 'button']]);
+        $this->add_control('cookie_name', ['label' => __('Cookie name', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => 'modals_accepted', 'frontend_available' => \true, 'description' => __('<b>Should be unique</b>, or it will affect all modals on your site. Only letters, digits and underscores accepted.', 'dynamic-content-for-elementor'), 'condition' => ['always_visible' => '', 'button_purpose!' => 'close', 'trigger!' => 'button']]);
+        $this->add_control('cookie_set', ['label' => __('Set Cookie on Close', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'frontend_available' => \true, 'description' => __('If Yes the cookie will be set when closing the modal. If No, the cookie will be checked but never set. Useful for those who set the cookie manually.', 'dynamic-content-for-elementor'), 'condition' => ['always_visible' => '', 'button_purpose!' => 'close', 'trigger!' => 'button']]);
+        $this->add_control('cookie_lifetime', ['label' => __('Cookie expiration', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 0, 'frontend_available' => \true, 'description' => __('Time in days. 0 means that is active only while the browser remains open.', 'dynamic-content-for-elementor'), 'condition' => ['always_visible' => '', 'button_purpose!' => 'close', 'trigger!' => 'button']]);
         $this->end_controls_section();
         $this->start_controls_section('section_popup_animations', ['label' => __('Animations', 'dynamic-content-for-elementor')]);
         $this->add_control('enabled_push', ['label' => __('Push', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'frontend_available' => \true, 'separator' => 'before', 'description' => __('Move body wrapper', 'dynamic-content-for-elementor'), 'condition' => ['button_purpose!' => 'close']]);
@@ -168,12 +176,33 @@ class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('close_padding', ['label' => __('Close Padding', 'dynamic-content-for-elementor'), 'description' => __('Please note that padding bottom has no effect - Left/Right padding will depend on button position!', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['.dce-modal.dce-popup-{{ID}} button.dce-close' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'separator' => 'before', 'condition' => ['close_type!' => 'x', 'enable_close_button!' => '']]);
         $this->end_controls_section();
     }
+    /**
+     * Get Unique ID
+     *
+     * @return string
+     */
+    protected function get_unique_id()
+    {
+        return $this->unique_id;
+    }
+    /**
+     * Set Unique ID
+     *
+     * @return void
+     */
+    protected function set_unique_id()
+    {
+        $uuid = wp_generate_uuid4();
+        // modals.js expects the id without `-`s
+        $this->unique_id = \str_replace('-', '', $uuid);
+    }
     protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
         if (empty($settings)) {
             return;
         }
+        $this->set_unique_id();
         if ($settings['trigger'] == 'button' && ($settings['button_type'] == 'text' || $settings['button_type'] == 'image')) {
             $has_button_icon = isset($settings['selected_button_icon']) || isset($settings['button_icon']);
             $button_icon = Helper::get_migrated_icon($settings, 'button_icon', '');
@@ -194,7 +223,7 @@ class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
                         ?>data-target="dce-popup-<?php 
                         echo $this->get_id();
                         ?>-<?php 
-                        echo get_the_id();
+                        echo $this->get_unique_id();
                         ?>"<?php 
                     }
                     ?>
@@ -215,7 +244,7 @@ class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
                     ?>data-target="dce-popup-<?php 
                     echo $this->get_id();
                     ?>-<?php 
-                    echo get_the_id();
+                    echo $this->get_unique_id();
                     ?>"<?php 
                 }
                 ?>
@@ -269,7 +298,7 @@ class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 ?>data-target="dce-popup-<?php 
                 echo $this->get_id();
                 ?>-<?php 
-                echo get_the_id();
+                echo $this->get_unique_id();
                 ?>"<?php 
             }
             ?>
@@ -338,7 +367,7 @@ class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
 					<div id="dce-popup-<?php 
                 echo $this->get_id();
                 ?>-<?php 
-                echo get_the_id();
+                echo $this->get_unique_id();
                 ?>-background" class="animated dce-modal-background-layer<?php 
                 if ($settings['background_layer_close']) {
                     ?> dce-modal-background-layer-close<?php 
@@ -350,7 +379,7 @@ class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 ?>" data-dismiss="modal" data-target="dce-popup-<?php 
                 echo $this->get_id();
                 ?>-<?php 
-                echo get_the_id();
+                echo $this->get_unique_id();
                 ?>"></div>
 			<?php 
             }
@@ -359,7 +388,7 @@ class Modals extends \DynamicContentForElementor\Widgets\WidgetPrototype
 				<div id="dce-popup-<?php 
             echo $this->get_id();
             ?>-<?php 
-            echo get_the_id();
+            echo $this->get_unique_id();
             ?>"
 					 class="dce-popup-<?php 
             echo $this->get_id();

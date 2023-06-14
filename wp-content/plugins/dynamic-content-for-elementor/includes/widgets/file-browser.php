@@ -30,15 +30,13 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
      */
     protected function safe_register_controls()
     {
-        $post_metas = array();
         $this->start_controls_section('section_filebrowser', ['label' => __('FileBrowser', 'dynamic-content-for-elementor')]);
         $this->add_control('path_selection', ['label' => __('Select path', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['uploads' => ['title' => __('Uploads', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-upload'], 'custom' => ['title' => __('Custom', 'dynamic-content-for-elementor'), 'icon' => 'eicon-custom'], 'media' => ['title' => __('Media Library', 'dynamic-content-for-elementor'), 'icon' => 'eicon-image'], 'taxonomy' => ['title' => __('Taxonomy', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-tags'], 'post' => ['title' => __('Post Medias', 'dynamic-content-for-elementor'), 'icon' => 'eicon-post']], 'default' => 'uploads', 'toggle' => \false]);
-        $this->add_control('folder_custom', ['label' => __('Custom Path', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'myfolder/docs', 'description' => __('A custom path from site root. You can use Token for dynamic path.', 'dynamic-content-for-elementor') . '<br>Ex: \'myfolder/document/[post:my_meta_field]\'', 'default' => 'wp-content/uploads', 'condition' => ['path_selection' => ['custom', 'csv']]]);
+        $this->add_control('folder_custom', ['label' => __('Custom Path', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'myfolder/docs', 'description' => __('A custom path from site root', 'dynamic-content-for-elementor'), 'default' => 'wp-content/uploads', 'condition' => ['path_selection' => ['custom']]]);
         $this->add_control('medias_field', ['label' => __('Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Field Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'fields', 'object_type' => 'any', 'condition' => ['path_selection' => 'media']]);
         $this->add_control('medias', ['label' => __('Choose Files', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::WYSIWYG, 'condition' => ['path_selection' => 'media', 'medias_field' => '']]);
         $this->add_control('remove_media', ['label' => __('Remove All Files', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::BUTTON, 'event' => 'dceFileBrowser:removeMedia', 'text' => __('Remove', 'dynamic-content-for-elementor'), 'description' => '', 'condition' => ['path_selection' => 'media', 'medias_field' => '']]);
-        $this->add_control('metas', ['label' => __('Post Meta field', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::SELECT2, 'options' => $post_metas, 'condition' => ['path_selection' => 'meta']]);
-        $this->add_control('folder', ['label' => __('Root Folder', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $this->getFolders(), 'default' => \date('Y'), 'description' => __('You can add more files trought MediaLibrary or via FTP', 'dynamic-content-for-elementor'), 'condition' => ['path_selection' => 'uploads']]);
+        $this->add_control('folder', ['label' => __('Root Folder', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => $this->getFolders(), 'default' => \date('Y'), 'description' => __('You can add more files through the MediaLibrary or via FTP', 'dynamic-content-for-elementor'), 'condition' => ['path_selection' => 'uploads']]);
         foreach ($this->getFolders() as $key => $value) {
             $subfolders = $this->getFoldersRic(self::getRootDir($value), \false, $value);
             $subfolders = \array_reverse($subfolders, \true);
@@ -60,7 +58,7 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('user_role', ['label' => __('Roles', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Roles', 'dynamic-content-for-elementor'), 'label_block' => \true, 'multiple' => \true, 'query_type' => 'users', 'object_type' => 'role', 'description' => __('Limit visualization to specific user roles', 'dynamic-content-for-elementor'), 'condition' => ['private_access!' => '', 'path_selection' => ['custom', 'uploads']]]);
         $this->add_control('user_redirect', ['label' => __('Redirect', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('/subscribe-plan-page', 'dynamic-content-for-elementor'), 'description' => __('Redirect Unauthorized users', 'dynamic-content-for-elementor'), 'condition' => ['private_access!' => '', 'path_selection' => ['custom', 'uploads']]]);
         $this->add_control('title', ['label' => __('Show folder title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'condition' => ['path_selection!' => 'media']]);
-        $this->add_control('title_size', ['label' => __('Title HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'p' => 'p'], 'default' => 'h4', 'condition' => ['path_selection!' => 'media', 'title!' => '']]);
+        $this->add_control('title_size', ['label' => __('Title HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(), 'default' => 'h4', 'condition' => ['path_selection!' => 'media', 'title!' => '']]);
         $this->add_control('empty', ['label' => __('Show empty folders', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['path_selection' => ['uploads', 'custom']]]);
         $this->add_control('resized', ['label' => __('Show resized images', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('WordPress automatically create for every uploaded image many resized version (e.g.:my-image-150x150.png, another-img-310x250.jpg), if you want to view them, enable this setting', 'dynamic-content-for-elementor'), 'condition' => ['path_selection' => ['uploads', 'custom']]]);
         $this->add_control('order', ['label' => __('Order', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => array(\SCANDIR_SORT_NONE => __('None', 'dynamic-content-for-elementor'), 0 => __('Ascending', 'dynamic-content-for-elementor'), 1 => __('Descending', 'dynamic-content-for-elementor')), 'default' => '0', 'description' => __('Select file order', 'dynamic-content-for-elementor'), 'condition' => ['path_selection' => ['uploads', 'custom']]]);
@@ -70,18 +68,9 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('search', ['label' => __('Quick search form', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before']);
         $this->add_control('enable_metadata', ['separator' => 'before', 'label' => __('Metadata info', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->end_controls_section();
-        $this->start_controls_section('section_file_csv', ['label' => __('CSV', 'dynamic-content-for-elementor'), 'condition' => ['path_selection' => 'csv']]);
-        $this->add_control('folder_csv', ['label' => __('CSV Path', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'myfolder/file_list.csv']);
-        $this->add_control('folder_csv_filter', ['label' => __('CSV Folder Path Filter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'myfolder/docs']);
-        $this->add_control('folder_csv_separator', ['label' => __('CSV Folder Separator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '/']);
-        $this->add_control('folder_csv_header', ['label' => __('CSV Header line', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
-        $this->add_control('folder_csv_col_dir', ['label' => __('CSV Directory col', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 1, 'min' => 1]);
-        $this->add_control('folder_csv_col_file', ['label' => __('CSV File col', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 2, 'min' => 1]);
-        $this->add_control('folder_csv_title', ['label' => __('Use Dir basename as file Title', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
-        $this->end_controls_section();
         $this->start_controls_section('section_file_form', ['label' => __('Search Form', 'dynamic-content-for-elementor'), 'condition' => ['search!' => '']]);
         $this->add_control('search_text', ['label' => __('Search Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Quick Search', 'dynamic-content-for-elementor')]);
-        $this->add_control('search_text_size', ['label' => __('Form Title HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'p' => 'p'], 'default' => 'h4', 'condition' => ['search_text!' => '']]);
+        $this->add_control('search_text_size', ['label' => __('Form Title HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(), 'default' => 'h4', 'condition' => ['search_text!' => '']]);
         $this->add_control('search_notice', ['label' => __('Search Notice', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('* at least 3 characters', 'dynamic-content-for-elementor'), 'placeholder' => __('* at least 3 characters', 'dynamic-content-for-elementor')]);
         $this->add_control('search_quick', ['label' => __('Quick Search', 'dynamic-content-for-elementor'), 'description' => __('Search on input change, no buttons needed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER]);
         $this->add_control('search_find_text', ['label' => __('Find Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Find', 'dynamic-content-for-elementor'), 'condition' => ['search_quick' => '']]);
@@ -213,275 +202,149 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
     }
     protected function safe_render()
     {
-        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
-            $this->render_non_admin_notice();
-        } else {
-            $settings = $this->get_settings_for_display();
-            $baseDir = \false;
-            $files = $dirs = array();
-            switch ($settings['path_selection']) {
-                case 'custom':
-                    $baseDir = $settings['folder_custom'];
-                    $tmpTit = \explode('/', $baseDir);
-                    $baseTitle = \end($tmpTit);
-                    break;
-                case 'csv':
-                    $baseDir = $settings['folder_custom'];
-                    $pieces = \explode('.', $settings['folder_csv']);
-                    $ext = \end($pieces);
-                    $baseTitle = \basename($settings['folder_csv'], '.' . $ext);
-                    break;
-                case 'uploads':
-                    $baseDir = $settings['folder'];
-                    $baseTitle = $settings['folder'];
-                    if ($settings['subfolder_' . $settings['folder']]) {
-                        $baseDir .= $settings['subfolder_' . $settings['folder']];
-                        if ($settings['subfolder_' . $settings['folder']] != '/') {
-                            $tmpTit = \explode('/', $settings['subfolder_' . $settings['folder']]);
-                            $baseTitle = \end($tmpTit);
-                        }
-                    }
-                    break;
-                case 'media':
-                    $baseTitle = \false;
-                    $baseDir = 'wp-content/uploads';
-                    if ($settings['medias_field']) {
-                        $medias = get_post_meta(get_the_ID(), $settings['medias_field'], \true);
-                    } else {
-                        $medias = $settings['medias'];
-                    }
-                    $src_identifier = 'http';
-                    $tmp = \explode($src_identifier, $medias);
-                    foreach ($tmp as $fkey => $afile) {
-                        if ($fkey) {
-                            list($furl, $other) = \explode('"', $afile, 2);
-                            $resized = Helper::is_resized_image($furl);
-                            if ($resized) {
-                                $furl = $resized;
-                            }
-                            list($other, $fpath) = \explode($baseDir, $furl, 2);
-                            $files[] = \substr($fpath, 1);
-                        }
-                    }
-                    \array_filter($files);
-                    $files = \array_unique($files);
-                    if (empty($files)) {
-                        $baseDir = \false;
-                    }
-                    break;
-                case 'taxonomy':
-                    $baseTitle = \false;
-                    $baseDir = 'wp-content/uploads';
-                    if ($settings['taxonomy']) {
-                        $term_id = \intval($settings['terms_' . $settings['taxonomy']]);
-                        if ($term_id) {
-                            $taxonomy = get_taxonomy($settings['taxonomy']);
-                            if ($taxonomy) {
-                                $baseTitle = $taxonomy->label;
-                                $term = get_term_by('term_taxonomy_id', $term_id);
-                                $baseTitle = $term->name;
-                            }
-                            $medias = Helper::get_term_posts($term_id, 'attachment');
-                            if (!empty($medias)) {
-                                foreach ($medias as $amedia) {
-                                    list($other, $fpath) = \explode($baseDir, $amedia->guid, 2);
-                                    $files[] = \substr($fpath, 1);
-                                }
-                            }
-                        }
-                    }
-                    // TODO - subfolder
-                    \array_filter($files);
-                    if (empty($files)) {
-                        $baseDir = \false;
-                    }
-                    break;
-                case 'meta':
-                    $baseTitle = \false;
-                    $meta_key = $settings['metas'];
-                    if (!empty($files)) {
-                        $baseDir = 'wp-content/uploads';
-                    }
-                    break;
-                case 'post':
-                    $baseTitle = wp_kses_post(get_the_title());
-                    $baseDir = 'wp-content/uploads';
-                    $medias = get_attached_media('', get_the_ID());
-                    if (!empty($medias)) {
-                        foreach ($medias as $amedia) {
-                            list($other, $fpath) = \explode($baseDir, $amedia->guid, 2);
-                            $files[] = \substr($fpath, 1);
-                        }
-                    }
-                    \array_filter($files);
-                    if (empty($files)) {
-                        $baseDir = \false;
-                    }
-            }
-            if ($baseDir) {
-                if (\is_dir(self::getRootDir($baseDir, $settings))) {
-                    if ($settings['path_selection'] == 'uploads' || $settings['path_selection'] == 'custom') {
-                        $private_folder = self::getRootDir($baseDir, $settings);
-                        $htaccess = $private_folder . '.htaccess';
-                        $htblock = 'Options -Indexes' . \PHP_EOL . '<files "*">' . \PHP_EOL . 'order allow,deny' . \PHP_EOL . 'deny from all' . \PHP_EOL . '</files>';
-                        if (empty($settings['private_access'])) {
-                            if (\is_file($htaccess)) {
-                                $htfile = wp_remote_retrieve_body(wp_remote_get($htaccess));
-                                if ($htfile == $htblock) {
-                                    if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                                        echo '<div class="elementor-alert elementor-alert-danger"><h5 class="elementor-alert-title">Warning</h5>The folder is secured. The HTACCESS file will be removed.</div>';
-                                    } else {
-                                        \unlink($htaccess);
-                                    }
-                                }
-                            }
-                        } else {
-                            if (!\is_file($htaccess)) {
-                                if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                                    echo '<div class="elementor-alert elementor-alert-danger"><h5 class="elementor-alert-title">Warning</h5>The folder is not secured. An HTACCESS file will be generated.</div>';
-                                } else {
-                                    \file_put_contents($htaccess, $htblock);
-                                }
-                            }
-                        }
-                    }
-                    if (isset($settings['enable_metadata']) && $settings['enable_metadata']) {
-                        $this->file_metadata = get_option('dce-file-browser', array());
-                    }
-                    if (isset($settings['search']) && $settings['search']) {
-                        $this->displayFileSearch($settings);
-                    }
-                    if (isset($settings['title']) && $settings['title'] && $baseTitle) {
-                        echo '<' . $settings['title_size'] . ' class="dce-filebrowser-title">' . $baseTitle . '</' . $settings['title_size'] . '>';
-                    }
-                    echo '<ul class="list-unstyled dce-list dce-list-root"';
-                    if (isset($settings['enable_metadata']) && $settings['enable_metadata'] && isset($settings['enable_metadata_hide']) && $settings['enable_metadata_hide'] && $settings['enable_metadata_hide_reverse']) {
-                        echo ' data-hide-reverse="1"';
-                    }
-                    echo '>';
-                    if ($settings['path_selection'] == 'csv') {
-                        if ($settings['folder_csv']) {
-                            $row_file = $settings['folder_csv_col_file'] - 1;
-                            $row_path = $settings['folder_csv_col_dir'] - 1;
-                            $csv_path = ABSPATH . $settings['folder_csv'];
-                            if (\file_exists($csv_path)) {
-                                $csv = \file($csv_path);
-                                if (!empty($csv)) {
-                                    $hide = \true;
-                                    foreach ($csv as $ckey => $arow) {
-                                        if ($settings['folder_csv_header'] && !$ckey) {
-                                            // header row
-                                        } else {
-                                            $cols = \explode(';', $arow);
-                                            if (isset($cols[$row_path])) {
-                                                $chunk = \explode($settings['folder_csv_separator'], $cols[$row_path]);
-                                                $chunk = \array_map('trim', $chunk);
-                                                $chunk = \array_filter($chunk);
-                                                $filedir = \implode($settings['folder_csv_separator'], $chunk);
-                                                if (isset($cols[$row_file])) {
-                                                    if ($row_file == $row_path) {
-                                                        $filename = \array_pop($chunk);
-                                                    } else {
-                                                        $filename = $cols[$row_file];
-                                                    }
-                                                    $filename = \trim(\basename($filename));
-                                                    $last = \end($chunk);
-                                                    if ($filename && $filename != 'NULL' && $last) {
-                                                        $filepath = $baseDir . \DIRECTORY_SEPARATOR . $filename;
-                                                        if (\file_exists($filepath)) {
-                                                            $files[$filename] = $last;
-                                                        }
-                                                    }
-                                                    if (\array_key_exists($filename, $files)) {
-                                                        $tmp = array();
-                                                        $filename_title = $filename;
-                                                        if ($settings['folder_csv_title']) {
-                                                            $filename_title = \array_pop($chunk);
-                                                        }
-                                                        if (empty($chunk)) {
-                                                            if ($row_file == $row_path) {
-                                                                if ($settings['folder_csv_title']) {
-                                                                    $chunk[] = $files[$filename];
-                                                                }
-                                                            }
-                                                        }
-                                                        if (!empty($chunk)) {
-                                                            foreach ($chunk as $kkey => $cnk) {
-                                                                $tmp[] = $cnk;
-                                                                $arr_key = '["' . \implode('"]["', $tmp) . '"]';
-                                                                $tmp_value = Helper::get_array_value_by_keys($dirs, $tmp);
-                                                                if (!$tmp_value) {
-                                                                    $dirs = Helper::set_array_value_by_keys($dirs, $tmp, array());
-                                                                }
-                                                                if ($kkey == \count($chunk) - 1) {
-                                                                    $dkey = '';
-                                                                    if ($row_file == $row_path) {
-                                                                        if ($settings['folder_csv_title']) {
-                                                                            $folder_csv = \explode($settings['folder_csv_separator'], $settings['folder_csv_filter']);
-                                                                            if ($filename_title == \end($folder_csv)) {
-                                                                                $dkey = '"' . $filename_title . '"';
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                    $tmp_add = $tmp;
-                                                                    $tmp_add[] = $dkey;
-                                                                    $dirs = Helper::set_array_value_by_keys($dirs, $tmp_add, array($filename_title => $filename));
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            if ($settings['folder_csv_filter']) {
-                                $folder_csv = \explode($settings['folder_csv_separator'], $settings['folder_csv_filter']);
-                                $tmp_value = Helper::get_array_value_by_keys($dirs, $folder_csv);
-                                if ($tmp_value) {
-                                    if (\is_array($tmp_value)) {
-                                        $dirs = $tmp_value;
-                                    } else {
-                                        $dirs = array($tmp_value);
-                                    }
-                                } else {
-                                    $dirs = \false;
-                                    $files = \false;
-                                }
-                                if (!$dirs && !$files) {
-                                    return \false;
-                                }
-                            }
-                        }
-                        if (\Elementor\Plugin::$instance->editor->is_edit_mode() && empty($dirs)) {
-                            Helper::notice('', __('Empty CSV folder', 'dynamic-content-for-elementor'));
-                            return \false;
-                        }
-                    }
-                    $this->dirToHtml(self::getRootDir($baseDir, $settings), null, $files, $dirs);
-                    echo '</ul>';
-                    $this->editorJavascript();
-                } else {
-                    if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                        Helper::notice('', __('Root folder not found', 'dynamic-content-for-elementor'));
+        $settings = $this->get_settings_for_display();
+        $baseDir = \false;
+        $files = $dirs = array();
+        switch ($settings['path_selection']) {
+            case 'custom':
+                $baseDir = $settings['folder_custom'];
+                $tmpTit = \explode('/', $baseDir);
+                $baseTitle = \end($tmpTit);
+                break;
+            case 'uploads':
+                $baseDir = $settings['folder'];
+                $baseTitle = $settings['folder'];
+                if ($settings['subfolder_' . $settings['folder']]) {
+                    $baseDir .= $settings['subfolder_' . $settings['folder']];
+                    if ($settings['subfolder_' . $settings['folder']] != '/') {
+                        $tmpTit = \explode('/', $settings['subfolder_' . $settings['folder']]);
+                        $baseTitle = \end($tmpTit);
                     }
                 }
+                break;
+            case 'media':
+                $baseTitle = \false;
+                $baseDir = 'wp-content/uploads';
+                if ($settings['medias_field']) {
+                    $medias = get_post_meta(get_the_ID(), $settings['medias_field'], \true);
+                } else {
+                    $medias = $settings['medias'];
+                }
+                $src_identifier = 'http';
+                $tmp = \explode($src_identifier, $medias);
+                foreach ($tmp as $fkey => $afile) {
+                    if ($fkey) {
+                        list($furl, $other) = \explode('"', $afile, 2);
+                        $resized = Helper::is_resized_image($furl);
+                        if ($resized) {
+                            $furl = $resized;
+                        }
+                        list($other, $fpath) = \explode($baseDir, $furl, 2);
+                        $files[] = \substr($fpath, 1);
+                    }
+                }
+                \array_filter($files);
+                $files = \array_unique($files);
+                if (empty($files)) {
+                    $baseDir = \false;
+                }
+                break;
+            case 'taxonomy':
+                $baseTitle = \false;
+                $baseDir = 'wp-content/uploads';
+                if ($settings['taxonomy']) {
+                    $term_id = \intval($settings['terms_' . $settings['taxonomy']]);
+                    if ($term_id) {
+                        $taxonomy = get_taxonomy($settings['taxonomy']);
+                        if ($taxonomy) {
+                            $baseTitle = $taxonomy->label;
+                            $term = get_term_by('term_taxonomy_id', $term_id);
+                            $baseTitle = $term->name;
+                        }
+                        $medias = Helper::get_term_posts($term_id, 'attachment');
+                        if (!empty($medias)) {
+                            foreach ($medias as $amedia) {
+                                list($other, $fpath) = \explode($baseDir, $amedia->guid, 2);
+                                $files[] = \substr($fpath, 1);
+                            }
+                        }
+                    }
+                }
+                // TODO - subfolder
+                \array_filter($files);
+                if (empty($files)) {
+                    $baseDir = \false;
+                }
+                break;
+            case 'post':
+                $baseTitle = wp_kses_post(get_the_title());
+                $baseDir = 'wp-content/uploads';
+                $medias = get_attached_media('', get_the_ID());
+                if (!empty($medias)) {
+                    foreach ($medias as $amedia) {
+                        list($other, $fpath) = \explode($baseDir, $amedia->guid, 2);
+                        $files[] = \substr($fpath, 1);
+                    }
+                }
+                \array_filter($files);
+                if (empty($files)) {
+                    $baseDir = \false;
+                }
+        }
+        if ($baseDir) {
+            if (\is_dir(self::getRootDir($baseDir, $settings))) {
+                if ($settings['path_selection'] == 'uploads' || $settings['path_selection'] == 'custom') {
+                    $private_folder = self::getRootDir($baseDir, $settings);
+                    $htaccess = $private_folder . '.htaccess';
+                    $htblock = 'Options -Indexes' . \PHP_EOL . '<files "*">' . \PHP_EOL . 'order allow,deny' . \PHP_EOL . 'deny from all' . \PHP_EOL . '</files>';
+                    if (empty($settings['private_access'])) {
+                        if (\is_file($htaccess)) {
+                            $htfile = wp_remote_retrieve_body(wp_remote_get($htaccess));
+                            if ($htfile == $htblock) {
+                                if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                                    echo '<div class="elementor-alert elementor-alert-danger"><h5 class="elementor-alert-title">Warning</h5>The folder is secured. The HTACCESS file will be removed.</div>';
+                                } else {
+                                    \unlink($htaccess);
+                                }
+                            }
+                        }
+                    } else {
+                        if (!\is_file($htaccess)) {
+                            if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                                echo '<div class="elementor-alert elementor-alert-danger"><h5 class="elementor-alert-title">Warning</h5>The folder is not secured. An HTACCESS file will be generated.</div>';
+                            } else {
+                                \file_put_contents($htaccess, $htblock);
+                            }
+                        }
+                    }
+                }
+                if (isset($settings['enable_metadata']) && $settings['enable_metadata']) {
+                    $this->file_metadata = get_option('dce-file-browser', array());
+                }
+                if (isset($settings['search']) && $settings['search']) {
+                    $this->displayFileSearch($settings);
+                }
+                if (isset($settings['title']) && $settings['title'] && $baseTitle) {
+                    echo '<' . $settings['title_size'] . ' class="dce-filebrowser-title">' . $baseTitle . '</' . $settings['title_size'] . '>';
+                }
+                echo '<ul class="list-unstyled dce-list dce-list-root"';
+                if (isset($settings['enable_metadata']) && $settings['enable_metadata'] && isset($settings['enable_metadata_hide']) && $settings['enable_metadata_hide'] && $settings['enable_metadata_hide_reverse']) {
+                    echo ' data-hide-reverse="1"';
+                }
+                echo '>';
+                $this->dirToHtml(self::getRootDir($baseDir, $settings), null, $files, $dirs);
+                echo '</ul>';
+                $this->editorJavascript();
             } else {
                 if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-                    Helper::notice('', __('Select root folder or files', 'dynamic-content-for-elementor'));
+                    Helper::notice('', __('Root folder not found', 'dynamic-content-for-elementor'));
                 }
             }
+        } else {
+            if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                Helper::notice('', __('Select root folder or files', 'dynamic-content-for-elementor'));
+            }
         }
-    }
-    public static function agetRootDir($folder = \false)
-    {
-        $dir = wp_upload_dir();
-        $dir = $dir['basedir'];
-        if ($folder) {
-            $dir = $dir . \DIRECTORY_SEPARATOR . $folder;
-        }
-        return $dir;
     }
     public static function getRootDir($folder = \false, $settings = array())
     {
@@ -544,10 +407,8 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
         if (!empty($dirs) && \is_array($dirs)) {
             $cdir = $dirs;
         }
-        if ($settings['path_selection'] != 'csv') {
-            if (!empty($files) && \is_array($files)) {
-                $cdir = $files;
-            }
+        if (!empty($files) && \is_array($files)) {
+            $cdir = $files;
         }
         if (empty($cdir)) {
             $cdir = \scandir($dir, isset($settings['order']) ? $settings['order'] : null);
@@ -560,29 +421,6 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
             $title = \false;
             if (\is_array($value)) {
                 $fulldir = $dir . \DIRECTORY_SEPARATOR . $key;
-                if ($settings['path_selection'] == 'csv') {
-                    if (\count($value) == 1) {
-                        if (\is_int($key)) {
-                            $value = \reset($value);
-                            if (!empty($files) && \is_array($files)) {
-                                $filename = $value;
-                                // TO FIX
-                                if (\is_array($filename)) {
-                                    $filename = \reset($filename);
-                                    $value = $filename;
-                                    if (\is_array($filename)) {
-                                        $keys = \array_keys($filename);
-                                        $filename = \reset($filename);
-                                    }
-                                }
-                                if (isset($files[$filename])) {
-                                    $title = $files[$filename];
-                                }
-                            }
-                            $fulldir = ABSPATH . $settings['folder_custom'] . \DIRECTORY_SEPARATOR . $filename;
-                        }
-                    }
-                }
             } else {
                 if (\substr($dir, -1, 1) == '/') {
                     $fulldir = $dir . $value;
@@ -653,7 +491,7 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
                             ?>][title]" value="<?php 
                             echo $title;
                             ?>" /> <a class="inline-block" href="<?php 
-                            echo Helper::path_to_url($fulldir);
+                            echo $this->path_to_url($fulldir);
                             ?>" target="_blank">
 							<?php 
                         } else {
@@ -683,11 +521,6 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
                     $ext = \strtolower(\end($pezzi));
                 } else {
                     $ext = 'blank';
-                }
-                if ($settings['path_selection'] == 'csv') {
-                    if (isset($files[$filename])) {
-                        $title = $files[$filename];
-                    }
                 }
                 if (!empty($extensions)) {
                     if (isset($settings['file_type_show'])) {
@@ -729,11 +562,6 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
                     $hide = !$hide;
                 }
                 if (\Elementor\Plugin::$instance->editor->is_edit_mode() || !$hide) {
-                    if (\file_exists(DCE_PATH . '/assets/lib/file-icon/icons/vivid/' . $ext . '.svg')) {
-                        $icon = DCE_URL . '/assets/lib/file-icon/icons/vivid/' . $ext . '.svg';
-                    } else {
-                        $icon = DCE_URL . '/assets/lib/file-icon/icons/vivid/unknown.svg';
-                    }
                     if (!\file_exists(DCE_PATH . '/assets/lib/file-icon/icons/vivid/' . $ext . '.svg')) {
                         $ext = 'blank';
                     }
@@ -752,7 +580,7 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
                     if (\Elementor\Plugin::$instance->editor->is_edit_mode() && $settings['enable_metadata'] && $settings['enable_metadata_custom_title']) {
                         $customTitle = 1;
                     }
-                    $direct_link = Helper::path_to_url($fulldir);
+                    $direct_link = $this->path_to_url($fulldir);
                     if ($settings['path_selection'] == 'uploads' || $settings['path_selection'] == 'custom') {
                         if (!empty($settings['private_access'])) {
                             $direct_link = DCE_URL . 'assets/file.php?element_id=' . $this->get_id() . '&md5=' . $md5;
@@ -786,7 +614,7 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
                         } else {
                             echo '<input type="text" class="dce-file-title" data-md5="' . $md5 . '"' . ($post_id ? ' data-post-id="' . $post_id . '"' : '') . ' name="dce-file-browser[' . $md5 . '][title]" value="' . $title . '" />';
                         }
-                        echo '<a class="inline-block" href="' . Helper::path_to_url($fulldir) . '" target="_blank">';
+                        echo '<a class="inline-block" href="' . $this->path_to_url($fulldir) . '" target="_blank">';
                     } else {
                         echo '<strong class="dce-file-title">' . $title . '</strong>';
                     }
@@ -841,23 +669,29 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
         }
         return $fallback;
     }
+    /**
+     * Path to URL
+     *
+     * @param string $dir
+     * @return string
+     */
+    public function path_to_url($dir)
+    {
+        $dirs = wp_upload_dir();
+        $url = \str_replace($dirs['basedir'], $dirs['baseurl'], $dir);
+        $url = \str_replace(ABSPATH, get_site_url(null, '/'), $url);
+        return $url;
+    }
     public function get_dir_meta($dir_id, $meta = '', $fallback = '')
     {
         $ret = get_option('dce-dir-' . $dir_id);
-        if ($ret) {
-            if (isset($ret[$meta])) {
-                return $ret[$meta];
-            }
+        if ($ret && isset($ret[$meta])) {
+            return $ret[$meta];
         }
         if (isset($this->file_metadata[$dir_id])) {
             return $this->file_metadata[$dir_id][$meta];
         }
         return $fallback;
-    }
-    public function plainDirToArray($dir)
-    {
-        $folders = Helper::dir_to_array($dir, \false, \false);
-        return '/';
     }
     public function displayFileSearch($settings)
     {
@@ -950,7 +784,6 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
             }
             if ($settings['enable_metadata_hide']) {
                 ?>
-						//jQuery(document).on("click",".dce-file-hide",function(event){
 						jQuery(document).on("click", ".dce-file-hide, .dce-dir-hide", function (event) {
 							if (!jQuery(this).attr('data-stop')) {
 								var data = {};
@@ -1030,8 +863,6 @@ class FileBrowser extends \DynamicContentForElementor\Widgets\WidgetPrototype
 									jQuery(this).hide();
 								}
 							});
-						} else {
-
 						}
 						return false;
 					});

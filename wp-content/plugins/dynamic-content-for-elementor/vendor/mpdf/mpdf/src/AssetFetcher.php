@@ -36,7 +36,7 @@ class AssetFetcher implements \Psr\Log\LoggerAwareInterface
             throw new \DynamicOOOS\Mpdf\Exception\AssetFetchingException('File contains an invalid stream. Only ' . \implode(', ', $wrapperChecker->getWhitelistedStreamWrappers()) . ' streams are allowed.');
         }
         $this->mpdf->GetFullPath($path);
-        return $this->isPathLocal($path) ? $this->fetchLocalContent($path, $originalSrc) : $this->fetchRemoteContent($path);
+        return $this->isPathLocal($path) || $originalSrc !== null && $this->isPathLocal($originalSrc) ? $this->fetchLocalContent($path, $originalSrc) : $this->fetchRemoteContent($path);
     }
     public function fetchLocalContent($path, $originalSrc)
     {

@@ -16,13 +16,18 @@ if (!\defined('ABSPATH')) {
 }
 class Skin_CrossroadsSlideshow extends \DynamicContentForElementor\Includes\Skins\Skin_Base
 {
+    /**
+     * Register Controls Actions
+     *
+     * @return void
+     */
     protected function _register_controls_actions()
     {
         add_action('elementor/element/dce-dynamicposts-v2/section_query/after_section_end', [$this, 'register_controls_layout']);
         add_action('elementor/element/dce-dynamicposts-v2/section_dynamicposts/after_section_end', [$this, 'register_additional_crossroadsslideshow_controls']);
     }
     public $depended_scripts = ['dce-threejs-lib', 'dce-gsap-lib', 'imagesloaded', 'dce-dynamicPosts-crossroadsslideshow', 'dce-splitText-lib', 'dce-ScrollToPlugin-lib'];
-    public $depended_styles = ['dce-dynamicPosts-grid', 'dce-dynamicPosts-crossroadsslideshow'];
+    public $depended_styles = ['dce-dynamicPosts-crossroadsslideshow'];
     public function get_id()
     {
         return 'crossroadsslideshow';

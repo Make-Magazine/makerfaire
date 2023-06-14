@@ -46,11 +46,14 @@ class Widgets
         foreach ($widgets as $widget_info) {
             if (\DynamicContentForElementor\Helper::check_plugin_dependencies(\false, $widget_info['plugin_depends']) && (!isset($widget_info['minimum_php']) || isset($widget_info['minimum_php']) && \version_compare(\phpversion(), $widget_info['minimum_php'], '>='))) {
                 $widget_class = '\\DynamicContentForElementor\\' . $widget_info['class'];
+                /**
+                 * @var \Elementor\Widget_Base $widget_object;
+                 */
                 $widget_object = new $widget_class();
                 if (\method_exists($widget_object, 'run_once')) {
                     $widget_object->run_once();
                 }
-                \Elementor\Plugin::instance()->widgets_manager->register_widget_type($widget_object);
+                \Elementor\Plugin::instance()->widgets_manager->register($widget_object);
             }
         }
     }

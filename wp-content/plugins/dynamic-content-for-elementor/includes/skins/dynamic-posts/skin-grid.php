@@ -20,6 +20,11 @@ class Skin_Grid extends \DynamicContentForElementor\Includes\Skins\Skin_Base
     {
         return __('Grid', 'dynamic-content-for-elementor');
     }
+    /**
+     * Register Controls Actions
+     *
+     * @return void
+     */
     protected function _register_controls_actions()
     {
         add_action('elementor/element/dce-dynamicposts-v2/section_query/after_section_end', [$this, 'register_controls_layout']);
@@ -40,7 +45,7 @@ class Skin_Grid extends \DynamicContentForElementor\Includes\Skins\Skin_Base
             'blog' => ['title' => __('Blog', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'icon-dce-blog'],
         ], 'default' => 'flex', 'frontend_available' => \true]);
         $this->add_control('blog_template_id', ['label' => __('First item Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'separator' => 'after', 'condition' => [$this->get_control_id('grid_type') => ['blog']]]);
-        $this->add_responsive_control('column_blog', ['label' => __('First item Column', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '1', 'tablet_default' => '3', 'mobile_default' => '1', 'options' => ['1' => '1/1', '2' => '1/2', '3' => '1/3', '1.5' => '2/3', '4' => '1/4', '1.34' => '3/4', '1.67' => '3/5', '1.25' => '4/5'], 'selectors' => ['{{WRAPPER}} .dce-posts-container.dce-skin-grid-blog .dce-post-item:nth-child(1)' => 'width: calc(100% / {{VALUE}}); flex-basis: calc( 100% / {{VALUE}} );'], 'condition' => [$this->get_control_id('grid_type') => ['blog']]]);
+        $this->add_responsive_control('column_blog', ['label' => __('First Item Column', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '1', 'tablet_default' => '3', 'mobile_default' => '1', 'options' => ['1' => '1/1', '2' => '1/2', '3' => '1/3', '1.5' => '2/3', '4' => '1/4', '1.34' => '3/4', '1.67' => '3/5', '1.25' => '4/5'], 'selectors' => ['{{WRAPPER}} .dce-posts-container.dce-skin-grid-blog .dce-post-item:nth-child(1)' => 'width: calc(100% / {{VALUE}}); flex-basis: calc( 100% / {{VALUE}} );'], 'condition' => [$this->get_control_id('grid_type') => ['blog']]]);
         $this->add_responsive_control('columns_grid', ['label' => __('Columns', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '4', 'tablet_default' => '3', 'mobile_default' => '1', 'options' => ['1' => '1', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', '11' => '11', '12' => '12'], 'prefix_class' => 'dce-col%s-', 'selectors' => ['{{WRAPPER}} .dce-posts-container.dce-skin-grid .dce-post-item' => 'width: calc(100% / {{VALUE}}); flex: 0 1 calc( 100% / {{VALUE}} );']]);
         $this->add_responsive_control('grid_item_width', ['label' => __('Width', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['px', '%', 'vh'], 'default' => ['size' => ''], 'range' => ['px' => ['max' => 800, 'min' => 0, 'step' => 1]], 'condition' => [$this->get_control_id('columns_grid') => '1', $this->get_control_id('grid_type') => 'flex'], 'selectors' => ['{{WRAPPER}} .dce-posts-container.dce-skin-grid' => 'margin: 0 auto; width: {{SIZE}}{{UNIT}};']]);
         $this->add_responsive_control('grid_alternate', ['label' => __('Alternate', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'size_units' => ['px', '%', 'vw'], 'default' => ['size' => ''], 'range' => ['px' => ['max' => 400, 'min' => 0, 'step' => 1]], 'condition' => [$this->get_control_id('columns_grid') => '1', $this->get_control_id('grid_type') => 'flex'], 'selectors' => ['{{WRAPPER}} .dce-posts-container.dce-skin-grid .dce-posts-wrapper .dce-post-item:nth-child(even)' => 'margin-right: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .dce-posts-container.dce-skin-grid .dce-posts-wrapper .dce-post-item:nth-child(odd)' => 'margin-left: {{SIZE}}{{UNIT}};']]);
@@ -88,7 +93,7 @@ class Skin_Grid extends \DynamicContentForElementor\Includes\Skins\Skin_Base
     }
     public function get_scrollreveal_class()
     {
-        if ($this->get_instance_value('scrollreveal_effect_type')) {
+        if ($this->get_instance_value('scrollreveal_effect_type') && $this->get_parent()->get_settings('infiniteScroll_enable') !== 'yes') {
             return 'reveal-effect reveal-effect-' . $this->get_instance_value('scrollreveal_effect_type');
         }
     }

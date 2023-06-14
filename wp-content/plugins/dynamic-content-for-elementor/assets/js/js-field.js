@@ -4,8 +4,8 @@ window.dceJsField = {
 	refresherGenerators: {}
 };
 
-dceJsField.registerRefresherGenerator = function(field_id, refresherGenerator) {
-	this.refresherGenerators[field_id] = refresherGenerator;
+dceJsField.registerRefresherGenerator = function(fieldIndex, refresherGenerator) {
+	this.refresherGenerators[fieldIndex] = refresherGenerator;
 }
 
 jQuery(window).trigger('dce/jsfield-loaded');
@@ -36,12 +36,12 @@ let makeGetFieldFunction = (form) => {
 function initializeJsField(wrapper, widget) {
 	let input = wrapper.getElementsByTagName('input')[0];
 	let form = widget.getElementsByTagName('form')[0];
-	let fieldId = input.dataset.fieldId;
+	let fieldIndex = input.dataset.fieldIndex;
 	let realTime = input.dataset.realTime === 'yes';
 	if (input.dataset.hide == 'yes') {
 		wrapper.style.display = "none";
 	}
-	let refresherGenerator = dceJsField.refresherGenerators[fieldId];
+	let refresherGenerator = dceJsField.refresherGenerators[fieldIndex];
 	// if the user code has a syntax error the registration will have failed and
 	// we won't find the field:
 	if (! refresherGenerator) {

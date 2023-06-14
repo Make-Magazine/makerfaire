@@ -177,6 +177,9 @@ var Widget_DCE_Dynamicposts_3d_Handler = function ($scope, $) {
 			// rilancio base per elaborare le cose dopo averle spostate negli elements..
 			Widget_DCE_Dynamicposts_base_Handler($scope, $);
 		},300);
+		if ( elementSettings[dceDynamicPostsSkinPrefix+'3d_center_at_start'] === 'yes' ) {
+			centerItem(0, 1000);
+		}
 	}
 
 	let scrollStopAtEnd = elementSettings[dceDynamicPostsSkinPrefix+'mousewheel_3d_stop_at_end'] === 'yes';
@@ -480,7 +483,9 @@ var Widget_DCE_Dynamicposts_3d_Handler = function ($scope, $) {
 	}
 
 	function blurObject(object,animated = false){
-		var point1 = camera.matrixWorld.getPosition().clone();
+		var point1 = new THREE.Vector3()
+		point1.setFromMatrixPosition( camera.matrixWorld );
+		var point1 = point1.clone();
 		var point2 = object.position;
 		var distance = (point1.distanceTo( point2 )/distanza)-1;
 		distance = distance * (3*distance);
@@ -506,4 +511,6 @@ jQuery(window).on('elementor/frontend/init', function () {
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-my-posts.3d', Widget_DCE_Dynamicposts_3d_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-sticky-posts.3d', Widget_DCE_Dynamicposts_3d_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.3d', Widget_DCE_Dynamicposts_3d_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-metabox-relationship.3d', Widget_DCE_Dynamicposts_3d_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-acf-relationship.3d', Widget_DCE_Dynamicposts_3d_Handler);
 });

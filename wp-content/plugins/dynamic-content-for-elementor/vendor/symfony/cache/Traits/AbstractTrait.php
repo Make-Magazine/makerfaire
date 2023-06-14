@@ -259,7 +259,7 @@ trait AbstractTrait
         CacheItem::validateKey($key);
         $this->ids[$key] = $key;
         if (\count($this->ids) > 1000) {
-            \array_splice($this->ids, 0, 500);
+            $this->ids = \array_slice($this->ids, 500, null, \true);
             // stop memory leak if there are many keys
         }
         if (null === $this->maxIdLength) {

@@ -3,7 +3,6 @@
 namespace DynamicOOOS\TelegramBot\Api\Types\Payments\Query;
 
 use DynamicOOOS\TelegramBot\Api\BaseType;
-use DynamicOOOS\TelegramBot\Api\Types\Payments\ArrayOfLabeledPrice;
 use DynamicOOOS\TelegramBot\Api\Types\Payments\ShippingAddress;
 use DynamicOOOS\TelegramBot\Api\Types\User;
 /**
@@ -58,7 +57,10 @@ class ShippingQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $id
+     *
+     * @return void
      */
     public function setId($id)
     {
@@ -74,7 +76,10 @@ class ShippingQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param User $from
+     *
+     * @return void
      */
     public function setFrom($from)
     {
@@ -90,7 +95,10 @@ class ShippingQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $invoicePayload
+     *
+     * @return void
      */
     public function setInvoicePayload($invoicePayload)
     {
@@ -106,7 +114,10 @@ class ShippingQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param ShippingAddress $shippingAddress
+     *
+     * @return void
      */
     public function setShippingAddress($shippingAddress)
     {

@@ -4,10 +4,23 @@ namespace DynamicContentForElementor;
 
 trait Notices
 {
-    public static function notice($title = '', $content = '')
+    /**
+     * Notice
+     *
+     * @param string $title
+     * @param string $content
+     * @param string $class
+     * @param string $id
+     * @return void
+     */
+    public static function notice($title = '', $content = '', $class = 'elementor-alert-info', $id = '')
     {
         ?>
-	<div class="elementor-alert elementor-alert-info" role="alert">
+	<div <?php 
+        echo $id ? "id='{$id}'" : '';
+        ?>  class="elementor-alert <?php 
+        echo $class;
+        ?> " role="alert">
 		<?php 
         if ($title) {
             ?>

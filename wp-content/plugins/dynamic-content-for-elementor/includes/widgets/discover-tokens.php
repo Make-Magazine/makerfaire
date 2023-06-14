@@ -43,7 +43,7 @@ class DiscoverTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
     protected function safe_register_controls()
     {
         $this->start_controls_section('section_tokens', ['label' => $this->get_title()]);
-        $this->add_control('type', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['acf' => 'acf', 'author' => 'author', 'date' => 'date', 'expr' => 'expr', 'jet' => 'jet', 'option' => 'option', 'post' => 'post', 'product' => 'product', 'query' => 'query', 'system' => 'system', 'term' => 'term', 'user' => 'user', 'wp_query' => 'wp_query'], 'default' => 'post']);
+        $this->add_control('type', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['acf' => 'acf', 'author' => 'author', 'date' => 'date', 'expr' => 'expr', 'jet' => 'jet', 'metabox' => 'metabox', 'option' => 'option', 'post' => 'post', 'product' => 'product', 'query' => 'query', 'system' => 'system', 'term' => 'term', 'user' => 'user', 'wp_query' => 'wp_query'], 'default' => 'post']);
         $this->add_control('notice_resource_intensive', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('This token can be resource intensive as it queries the database and the speed depends on how many elements you have on your site', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['type' => 'query']]);
         $this->end_controls_section();
     }
@@ -77,9 +77,11 @@ class DiscoverTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
     protected function show_list(string $type)
     {
         echo '<h4>' . $type . '</h4>';
-        $realtype = $type === 'jet' ? 'post' : $type;
+        $realtype = $type === 'jet' || $type === 'metabox' ? 'post' : $type;
+        $tokens = Tokens::get_tokens_list();
         // Check if this type is active
-        if (!\in_array($realtype, get_option('dce_active_tokens', Tokens::get_default_active_tokens()), \true)) {
+        $active_tokens = get_option('dce_active_tokens', \array_keys($tokens));
+        if (!\in_array($realtype, get_option('dce_active_tokens', $active_tokens), \true)) {
             _e('This token type is not active. If you want to use it you can activate it from WP Dashboard > Dynamic.ooo > Settings > Tokens > Active Tokens', 'dynamic-content-for-elementor');
             return;
         }
@@ -227,9 +229,7 @@ class DiscoverTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
         echo '<td>' . $this->remove_filters($field) . '</td>';
         $token = $this->maybe_sanitize($type, $field, $token);
         echo '<td><code>' . $token . '</code>';
-        if (!\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            $this->render_copy_button($token);
-        }
+        $this->render_copy_button($token);
         echo '</td>';
         echo '<td>' . Helper::get_dynamic_value($token) . '</td>';
         echo '</tr>';
@@ -380,9 +380,22 @@ class DiscoverTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
         }
     }
     /**
+     * Retrieve all Meta Box Fields for the current post ID
+     *
+     * @return array<string,mixed>
+     */
+    protected static function get_all_metabox_fields()
+    {
+        if (get_the_ID() === \false) {
+            // phpstan
+            return [];
+        }
+        return rwmb_get_object_fields(get_the_ID());
+    }
+    /**
      * Retrieve all WP_Query vars
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     protected static function get_all_wp_query_vars()
     {
@@ -392,7 +405,7 @@ class DiscoverTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
     /**
      * Retrieve all post types set as public
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     protected static function get_public_post_types()
     {
@@ -546,6 +559,13 @@ class DiscoverTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 $all_options['options_' . $key] = $value;
             }
         }
+        // Meta Box Settings Pages
+        if (Helper::is_metabox_active()) {
+            $all_meta_box_settings = rwmb_get_registry('field')->get_by_object_type('setting');
+            foreach ($all_meta_box_settings as $key => $value) {
+                $all_options[$key] = \array_values(get_option($key))[0] ?? '';
+            }
+        }
         return $all_options;
     }
     /**
@@ -596,6 +616,21 @@ class DiscoverTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 'functions' => [['name' => 'get_post_meta', 'parameters' => 'get_the_id']],
             ],
             // *******************************************************************************************
+            // Meta Box
+            // *******************************************************************************************
+            'metabox' => [
+                // Description to show before the table
+                'description' => __('This token is useful for retrieving Meta Box Fields', 'dynamic-content-for-elementor'),
+                // Plugin dependencies
+                'plugin_depends' => ['meta-box'],
+                // Static fields to show
+                'fields' => [],
+                // Fields to hide when executed 'functions'
+                'hidden' => $this->hidden_post_meta,
+                // Functions to populate fields
+                'functions' => [['name' => 'self::get_all_metabox_fields']],
+            ],
+            // *******************************************************************************************
             // Post
             // *******************************************************************************************
             'post' => [
@@ -628,7 +663,7 @@ class DiscoverTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
                 // Description to show before the table
                 'description' => __('This token is useful for retrieving the fields of the current user', 'dynamic-content-for-elementor'),
                 // Static fields to show
-                'fields' => ['ID', 'email', 'nicename', 'roles'],
+                'fields' => ['ID', 'email', 'nicename', 'roles', 'ID|get_avatar_url', 'ID|get_avatar'],
                 // Fields to hide when executed 'functions'
                 'hidden' => ['password'],
                 // Functions to populate fields
@@ -660,7 +695,7 @@ class DiscoverTokens extends \DynamicContentForElementor\Widgets\WidgetPrototype
             // *******************************************************************************************
             'option' => [
                 // Description to show before the table
-                'description' => __('This token is useful for retrieving options. Options are pieces of data that WordPress uses to store various preferences and configuration settings. You can also retrieve Advanced Custom Fields and JetEngine Fields created on options pages', 'dynamic-content-for-elementor'),
+                'description' => __('This token is useful for retrieving options. Options are pieces of data that WordPress uses to store various preferences and configuration settings. You can also retrieve Advanced Custom Fields and JetEngine Fields created on options pages and Meta Box Fields created on Setting Pages', 'dynamic-content-for-elementor'),
                 // Static fields to show
                 'fields' => [],
                 // Functions to populate fields

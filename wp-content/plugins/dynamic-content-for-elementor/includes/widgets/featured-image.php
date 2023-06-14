@@ -33,37 +33,16 @@ class FeaturedImage extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->start_controls_section('section_content', ['label' => __('Image settings', 'dynamic-content-for-elementor')]);
         $this->add_control('preview', ['type' => Controls_Manager::RAW_HTML, 'raw' => get_the_post_thumbnail(), 'separator' => 'none']);
         $this->add_group_control(Group_Control_Image_Size::get_type(), ['name' => 'size', 'label' => __('Image Size', 'dynamic-content-for-elementor'), 'default' => 'large']);
-        $this->add_responsive_control('align', [
-            'label' => __('Alignment', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::CHOOSE,
-            'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']],
-            'default' => '',
-            //'prefix_class' => 'image-align-',
-            'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};', '' => ''],
-        ]);
+        $this->add_responsive_control('align', ['label' => __('Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-right']], 'default' => '', 'selectors' => ['{{WRAPPER}}' => 'text-align: {{VALUE}};', '' => '']]);
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'post' => 'Post URL', 'acf_url' => __('ACF URL', 'dynamic-content-for-elementor'), 'file' => __('Media File URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')]]);
-        $this->add_control('acf_field_url', [
-            'label' => __('ACF Field Url', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::SELECT,
-            'groups' => Helper::get_acf_field_urlfile(\true),
-            //'options' => $this->get_acf_field_urlfile(),
-            'default' => __('Select the field...', 'dynamic-content-for-elementor'),
-            'condition' => ['link_to' => 'acf_url'],
-        ]);
+        $this->add_control('acf_field_url', ['label' => __('ACF Field Url', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => Helper::get_acf_field_urlfile(\true), 'default' => __('Select the field...', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'acf_url']]);
         $this->add_control('acf_field_url_target', ['label' => __('Blank', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['link_to' => 'acf_url']]);
         $this->add_control('link', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'show_label' => \false]);
         $this->end_controls_section();
         /* -------------------- Background ------------------ */
         $post_type_object = get_post_type_object(get_post_type());
         $this->start_controls_section('section_backgroundimage', ['label' => __('Background', 'dynamic-content-for-elementor')]);
-        $this->add_control('use_bg', [
-            'label' => __('Background', 'dynamic-content-for-elementor'),
-            'type' => Controls_Manager::CHOOSE,
-            'toggle' => \false,
-            'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']],
-            //'prefix_class' => 'usebg-',
-            'default' => '0',
-        ]);
+        $this->add_control('use_bg', ['label' => __('Background', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'toggle' => \false, 'options' => ['1' => ['title' => __('Yes', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-check'], '0' => ['title' => __('No', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-ban']], 'default' => '0']);
         $this->add_control('bg_position', ['label' => __('Background position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'top center', 'options' => ['' => __('Default', 'dynamic-content-for-elementor'), 'top left' => __('Top Left', 'dynamic-content-for-elementor'), 'top center' => __('Top Center', 'dynamic-content-for-elementor'), 'top right' => __('Top Right', 'dynamic-content-for-elementor'), 'center left' => __('Center Left', 'dynamic-content-for-elementor'), 'center center' => __('Center Center', 'dynamic-content-for-elementor'), 'center right' => __('Center Right', 'dynamic-content-for-elementor'), 'bottom left' => __('Bottom Left', 'dynamic-content-for-elementor'), 'bottom center' => __('Bottom Center', 'dynamic-content-for-elementor'), 'bottom right' => __('Bottom Right', 'dynamic-content-for-elementor')], 'selectors' => ['{{WRAPPER}} .dynamic-content-featuredimage-bg' => 'background-position: {{VALUE}};'], 'condition' => ['use_bg' => '1']]);
         $this->add_control('bg_extend', ['label' => __('Extend Background', 'dynamic-content-for-elementor'), 'description' => __('Absolutely position the image by spreading it over the entire column. Warning: the height of the image depends on the elements contained in the column.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'condition' => ['use_bg' => '1'], 'prefix_class' => 'extendbg-']);
         $this->add_responsive_control('minimum_height', ['label' => __('Minimum Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '', 'unit' => 'px'], 'tablet_default' => ['size' => '', 'unit' => 'px'], 'mobile_default' => ['size' => '', 'unit' => 'px'], 'size_units' => ['px', '%', 'vh'], 'range' => ['%' => ['min' => 1, 'max' => 100], 'px' => ['min' => 1, 'max' => 1000], 'vh' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dynamic-content-featuredimage-bg' => 'min-height: {{SIZE}}{{UNIT}};'], 'condition' => ['use_bg' => '1', 'bg_extend' => 'yes']]);
@@ -102,7 +81,7 @@ class FeaturedImage extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('image_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} .dce-featured-image' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['use_bg' => '0', 'bg_extend' => '']]);
         $this->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'image_box_shadow', 'selector' => '{{WRAPPER}} .dce-featured-image', 'condition' => ['use_bg' => '0', 'bg_extend' => '']]);
         $this->end_controls_section();
-        $this->start_controls_section('section_dce_settings', ['label' => __('Dynamic Content', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_SETTINGS]);
+        $this->start_controls_section('section_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('data_source', ['label' => __('Source', 'dynamic-content-for-elementor'), 'description' => __('Select the data source', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => __('Same', 'dynamic-content-for-elementor'), 'label_off' => __('other', 'dynamic-content-for-elementor'), 'return_value' => 'yes']);
         $this->add_control('other_post_source', ['label' => __('Select from other source post', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'condition' => ['data_source' => '']]);
         $this->add_control('other_post_parent', ['label' => __('From post parent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'return_value' => 'yes', 'condition' => ['data_source' => '']]);

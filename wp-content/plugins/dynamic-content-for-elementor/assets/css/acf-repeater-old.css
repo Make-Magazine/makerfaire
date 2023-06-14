@@ -161,6 +161,11 @@
   background-repeat: no-repeat;
   outline: none;
 }
+/* Swiper 8 */
+.elementor-widget-dyncontel-acf-repeater .swiper-button-prev:after,
+.elementor-widget-dyncontel-acf-repeater .swiper-button-next:after {
+  display: none;
+}
 .elementor-widget-dyncontel-acf-repeater.hoveranim-yes .swiper-button-prev:hover svg,
 .elementor-widget-dyncontel-acf-repeater.hoveranim-yes .swiper-button-next:hover svg{
   transform: scale(1.2);

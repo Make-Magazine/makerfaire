@@ -1,13 +1,16 @@
 jQuery(window).on('elementor:init', function () {
     elementor.hooks.addFilter('elements/widget/contextMenuGroups', function (groups, widget) {
-            return dceAddPasteAction(groups, widget);
+        return dceAddPasteAction(groups, widget);
     });
     elementor.hooks.addFilter('elements/column/contextMenuGroups', function (groups, column) {
-            return dceAddPasteAction(groups, column);
+        return dceAddPasteAction(groups, column);
     });
     elementor.hooks.addFilter('elements/section/contextMenuGroups', function (groups, section) {
-            return dceAddPasteAction(groups, section);
+        return dceAddPasteAction(groups, section);
     });
+	elementor.hooks.addFilter('elements/container/contextMenuGroups', function (groups, section) {
+		return dceAddPasteAction(groups, section);
+	});
 });
 
 // add context menu item to add-section
@@ -72,6 +75,7 @@ function dceAddPasteAction(groups, element) {
                 {
                     name: 'dce_paste',
                     title: 'Paste from Clipboard',
+					icon: 'icon-dyn-logo-dce',
                     callback: function () {
                         pasteAction = _.findWhere(transferGroup.actions, { name: 'paste' });
                         return dcePasteFromClipboard(pasteAction);
@@ -80,6 +84,7 @@ function dceAddPasteAction(groups, element) {
                 {
                     name: 'dce_paste_style',
                     title: 'Paste Style from Clipboard',
+					icon: 'icon-dyn-logo-dce',
                     callback: function () {
                         // do your stuff, element should be available here
                         pasteStyleAction = _.findWhere(transferGroup.actions, { name: 'pasteStyle' });
@@ -101,14 +106,14 @@ function dcePasteFromClipboard(pasteAction, pasteBtn) {
     }
     if (dceCanJsPaste()) {
         navigator.clipboard.readText()
-                .then(text => {
-                    // `text` contains the text read from the clipboard
-                    dcePasteAction(text, pasteAction, pasteBtn, cid);
-                })
-                .catch(err => {
-                    // maybe user didn't grant access to read from clipboard
-                    console.log('Something went wrong', err);
-                });
+			.then(text => {
+				// `text` contains the text read from the clipboard
+				dcePasteAction(text, pasteAction, pasteBtn, cid);
+			})
+			.catch(err => {
+				// maybe user didn't grant access to read from clipboard
+				console.log('Something went wrong', err);
+		});
     } else {
         jQuery(pasteBtn).closest('.elementor-context-menu').hide()
         dceAddCopyPasteFallback('', 'paste', cid, pasteAction, pasteBtn);

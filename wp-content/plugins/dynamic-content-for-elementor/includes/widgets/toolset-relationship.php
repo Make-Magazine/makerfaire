@@ -26,16 +26,16 @@ class ToolsetRelationship extends \DynamicContentForElementor\Widgets\WidgetProt
      */
     protected function safe_register_controls()
     {
-        $rels = Helper::get_toolset_fields('post');
-        $this->start_controls_section('section_content', ['label' => __('Content', 'dynamic-content-for-elementor')]);
-        $this->add_control('toolset_relation_field', ['label' => __('TOOLSET Relation Fields List', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => $rels, 'default' => '0']);
+        $rels = Helper::get_toolset_relationship_fields();
+        $this->start_controls_section('section_content', ['label' => $this->get_title()]);
+        $this->add_control('toolset_relation_field', ['label' => __('Toolset Relationship Field', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'groups' => $rels, 'default' => '0']);
         $this->add_control('toolset_relation_render', ['label' => __('Render mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['title' => ['title' => __('Title', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-list'], 'text' => ['title' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'title', 'separator' => 'before']);
         $this->add_control('toolset_relation_template', ['label' => __('Select Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['toolset_relation_render' => 'template']]);
-        $this->add_control('toolset_relation_text', ['label' => __('Post html', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '<h4>[post:title]</h4>[post:thumb]<p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">READ MORE</a>', 'description' => __('Define related post structure.', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true], 'condition' => ['toolset_relation_render' => 'text']]);
-        $this->add_control('toolset_relation_format', ['label' => __('Display mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Natural', 'dynamic-content-for-elementor'), 'ul' => __('Unordered list', 'dynamic-content-for-elementor'), 'ol' => __('Ordered list', 'dynamic-content-for-elementor'), 'grid' => __('Grid', 'dynamic-content-for-elementor'), 'tab' => __('Tabs', 'dynamic-content-for-elementor'), 'accordion' => __('Accordion', 'dynamic-content-for-elementor'), 'select' => __('Select', 'dynamic-content-for-elementor')]]);
-        $this->add_control('toolset_relation_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'p' => 'p'], 'default' => 'h2']);
+        $this->add_control('toolset_relation_text', ['label' => __('HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '<h4>[post:title|esc_html]</h4>[post:thumb]<p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">READ MORE</a>', 'description' => __('Define related post structure.', 'dynamic-content-for-elementor'), 'dynamic' => ['active' => \true], 'condition' => ['toolset_relation_render' => 'text']]);
+        $this->add_control('toolset_relation_format', ['label' => __('Display mode', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('Natural', 'dynamic-content-for-elementor'), 'ul' => __('Unordered List', 'dynamic-content-for-elementor'), 'ol' => __('Ordered List', 'dynamic-content-for-elementor'), 'grid' => __('Grid', 'dynamic-content-for-elementor'), 'tab' => __('Tabs', 'dynamic-content-for-elementor'), 'accordion' => __('Accordion', 'dynamic-content-for-elementor'), 'select' => __('Select', 'dynamic-content-for-elementor')]]);
+        $this->add_control('toolset_relation_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(), 'default' => 'h2']);
         $this->add_control('toolset_relation_link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['toolset_relation_render' => 'title']]);
-        $this->add_control('toolset_relation_label', ['label' => __('Label', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => '[post:title]', 'placeholder' => '[post:title]', 'condition' => ['toolset_relation_format' => ['tab', 'accordion', 'select']]]);
+        $this->add_control('toolset_relation_label', ['label' => __('Label', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::TEXT, 'default' => '[post:title|esc_html]', 'placeholder' => '[post:title|esc_html]', 'condition' => ['toolset_relation_format' => ['tab', 'accordion', 'select']]]);
         $this->add_control('toolset_relation_close', ['label' => __('Close by default', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['toolset_relation_format' => ['accordion', 'select']]]);
         $this->add_control('toolset_relation_close_label', ['label' => __('Empty value text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Choose an option', 'dynamic-content-for-elementor'), 'condition' => ['toolset_relation_close!' => '', 'toolset_relation_format' => 'select']]);
         $this->add_responsive_control('toolset_relation_col', ['label' => __('Columns', 'dynamic-content-for-elementor'), 'type' => \Elementor\Controls_Manager::NUMBER, 'default' => 3, 'min' => 1, 'description' => __('Set 1 to show one result per line', 'dynamic-content-for-elementor'), 'condition' => ['toolset_relation_format' => 'grid']]);
@@ -77,22 +77,13 @@ class ToolsetRelationship extends \DynamicContentForElementor\Widgets\WidgetProt
         global $post;
         $old_post = $post;
         if ($settings['toolset_relation_field']) {
-            $pezzi = \explode('-', $settings['toolset_relation_field'], 2);
-            $field = \end($pezzi);
-            $rel_posts = types_render_field($field, array('post_id' => $post->ID));
-            if (\is_numeric($rel_posts)) {
-                $rel_post = array($rel_posts);
-            } elseif (isset($rel_posts['ID'])) {
-                $rel_post = array($rel_posts['ID']);
-            } elseif (\is_array($rel_posts)) {
-                $rel_post = wp_list_pluck($rel_posts, 'ID');
-            }
-            if ($rel_post) {
-                if (\is_array($rel_post) && !empty($rel_post)) {
-                    if (\count($rel_post) > 1 && $settings['toolset_relation_format']) {
+            $rel_posts = toolset_get_related_posts(get_the_ID(), $settings['toolset_relation_field'], ['query_by_role' => 'parent', 'return' => 'post_id']);
+            if ($rel_posts) {
+                if (!empty($rel_posts)) {
+                    if (\count($rel_posts) > 1 && $settings['toolset_relation_format']) {
                         $labels = array();
                         if (\in_array($settings['toolset_relation_format'], array('tab', 'accordion', 'select'))) {
-                            foreach ($rel_post as $arel) {
+                            foreach ($rel_posts as $arel) {
                                 $post = get_post($arel);
                                 $labels[$post->ID] = \DynamicContentForElementor\Tokens::do_tokens($settings['toolset_relation_label']);
                             }
@@ -157,9 +148,9 @@ class ToolsetRelationship extends \DynamicContentForElementor\Widgets\WidgetProt
                                 break;
                         }
                     }
-                    foreach ($rel_post as $rkey => $arel) {
+                    foreach ($rel_posts as $rkey => $arel) {
                         $post = get_post($arel);
-                        if (\count($rel_post) > 1) {
+                        if (\count($rel_posts) > 1) {
                             switch ($settings['toolset_relation_format']) {
                                 case 'ul':
                                 case 'ol':
@@ -219,7 +210,7 @@ class ToolsetRelationship extends \DynamicContentForElementor\Widgets\WidgetProt
                                 echo '</a>';
                             }
                         }
-                        if (\count($rel_post) > 1) {
+                        if (\count($rel_posts) > 1) {
                             switch ($settings['toolset_relation_format']) {
                                 case 'ul':
                                 case 'ol':
@@ -231,7 +222,7 @@ class ToolsetRelationship extends \DynamicContentForElementor\Widgets\WidgetProt
                             }
                         }
                     }
-                    if (\count($rel_post) > 1 && $settings['toolset_relation_format']) {
+                    if (\count($rel_posts) > 1 && $settings['toolset_relation_format']) {
                         switch ($settings['toolset_relation_format']) {
                             case 'ul':
                                 echo '</ul>';

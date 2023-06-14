@@ -38,6 +38,7 @@ class ChatPhoto extends BaseType
     }
     /**
      * @param string $smallFileId
+     * @return void
      */
     public function setSmallFileId($smallFileId)
     {
@@ -52,6 +53,7 @@ class ChatPhoto extends BaseType
     }
     /**
      * @param string $bigFileId
+     * @return void
      */
     public function setBigFileId($bigFileId)
     {

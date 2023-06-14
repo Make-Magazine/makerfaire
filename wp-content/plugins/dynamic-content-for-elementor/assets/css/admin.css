@@ -972,11 +972,6 @@ body.rtl .notice img.dce-logo {
   background-color: #999;
 }
 
-.dce-disabled {
-  opacity: 0.5;
-}
-
-
 /* Dashboard */
 .dce-modules {
   margin-bottom: 15px;
@@ -1129,6 +1124,7 @@ a.dce-feature-activate-all, a.dce-feature-deactivate-all {
 .dce-container .dot.green {
   background-color: #5ABF4B;
 }
+
 .dce-check {
   margin-top: 20px;
   height: 50px;

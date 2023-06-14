@@ -22,6 +22,17 @@
 {
   overflow: visible;
 }
+
+.elementor-widget-dyncontel-acfposts .swiper-button-prev:after,
+.elementor-widget-dyncontel-acfposts .swiper-button-next:after {
+  display: none;
+}
+.elementor-widget-dyncontel-acfposts .swiper-button-prev,
+.elementor-widget-dyncontel-acfposts .swiper-button-next {
+  width: 85px;
+  height: 85px;
+  margin-top: -43px;
+}
 .flexgrid-style .dce-post-item, .grid-style .dce-post-item{
   float: left;
 }
@@ -447,9 +458,7 @@
   display: inline-block;
   position: relative;
 }
-.swiper-slide .dce-acfposts_image a{
 
-}
 .bgimage-yes .dce-acfposts_image a, .bgimage-yes .swiper-slide .dce-acfposts_image a{
   display: inline-block;
   width: 100%;

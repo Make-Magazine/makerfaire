@@ -67,7 +67,6 @@ trait Meta
     }
     public static function get_user_metas($grouped = \false, $like = '', $info = \true)
     {
-        global $wp_meta_keys;
         $userMetasGrouped = array();
         $userMetas = $userMetasGrouped;
         // ACF
@@ -111,7 +110,7 @@ trait Meta
         }
         $query = 'SELECT DISTINCT meta_key FROM ' . esc_sql($table);
         if ($like) {
-            $query .= " WHERE meta_key LIKE '%" . esc_sql($like) . "%'";
+            $query .= $wpdb->prepare(" WHERE meta_key LIKE %s", '%' . $wpdb->esc_like($like) . '%');
         }
         $results = $wpdb->get_results($query);
         if (!empty($results)) {
@@ -122,10 +121,8 @@ trait Meta
             \ksort($metas);
             $manual_metas = $metas;
             foreach ($manual_metas as $ameta) {
-                if (!isset($postMetas[$ameta])) {
-                    $userMetas[$ameta] = $ameta;
-                    $userMetasGrouped['META'][$ameta] = $ameta;
-                }
+                $userMetas[$ameta] = $ameta;
+                $userMetasGrouped['META'][$ameta] = $ameta;
             }
         }
         if ($grouped) {
@@ -135,7 +132,6 @@ trait Meta
     }
     public static function get_term_metas($grouped = \false, $like = '')
     {
-        global $wp_meta_keys;
         $termMetasGrouped = array();
         $termMetas = $termMetasGrouped;
         // ACF
@@ -157,9 +153,6 @@ trait Meta
                                 }
                             }
                             $field_name = $aacf->post_title;
-                            if ($info) {
-                                $field_name .= ' [' . $aacf_meta['type'] . ']';
-                            }
                             $termMetas[$aacf->post_excerpt] = $field_name;
                             $termMetasGrouped['ACF'][$aacf->post_excerpt] = $termMetas[$aacf->post_excerpt];
                         }
@@ -169,10 +162,7 @@ trait Meta
         }
         // MANUAL
         global $wpdb;
-        $query = 'SELECT DISTINCT meta_key FROM ' . $wpdb->prefix . 'termmeta';
-        if ($like) {
-            $query .= " WHERE meta_key LIKE '%" . esc_sql($like) . "%'";
-        }
+        $query = $wpdb->prepare("SELECT DISTINCT meta_key FROM {$wpdb->termmeta} WHERE meta_key LIKE %s", '%' . $wpdb->esc_like($like) . '%');
         $results = $wpdb->get_results($query);
         if (!empty($results)) {
             $metas = array();
@@ -182,10 +172,8 @@ trait Meta
             \ksort($metas);
             $manual_metas = $metas;
             foreach ($manual_metas as $ameta) {
-                if (!isset($postMetas[$ameta])) {
-                    $termMetas[$ameta] = $ameta;
-                    $termMetasGrouped['META'][$ameta] = $ameta;
-                }
+                $termMetas[$ameta] = $ameta;
+                $termMetasGrouped['META'][$ameta] = $ameta;
             }
         }
         if ($grouped) {
@@ -245,8 +233,9 @@ trait Meta
         // ACF
         if (self::is_acf_active()) {
             global $wpdb;
-            $sql = 'SELECT post_content FROM ' . $wpdb->prefix . "posts WHERE post_excerpt = '" . esc_sql($meta_key) . "' AND post_type = 'acf-field';";
-            $acf_result = $wpdb->get_col($sql);
+            $sql = 'SELECT post_content FROM ' . $wpdb->prefix . 'posts WHERE post_excerpt = %s AND post_type = "acf-field";';
+            $prepared_sql = $wpdb->prepare($sql, $meta_key);
+            $acf_result = $wpdb->get_col($prepared_sql);
             if (!empty($acf_result)) {
                 $acf_content = \reset($acf_result);
                 $acf_field_object = maybe_unserialize($acf_content);
@@ -258,8 +247,8 @@ trait Meta
         // PODS
         if (self::is_plugin_active('pods')) {
             $pods = get_page_by_path($meta_key, OBJECT, '_pods_field');
-            if ($pods) {
-                $meta_type = get_post_meta($apod->ID, 'type', \true);
+            if ($pods instanceof \WP_Post) {
+                $meta_type = get_post_meta($pods->ID, 'type', \true);
             }
         }
         if ($meta_value) {
@@ -332,7 +321,6 @@ trait Meta
     }
     public static function get_post_metas($grouped = \false, $like = '', $info = \true)
     {
-        global $wp_meta_keys;
         $postMetasGrouped = array();
         $postMetas = $postMetasGrouped;
         // REGISTERED in FUNCTION
@@ -424,9 +412,12 @@ trait Meta
         global $wpdb;
         $query = 'SELECT DISTINCT meta_key FROM ' . $wpdb->prefix . 'postmeta';
         if ($like) {
-            $query .= " WHERE meta_key LIKE '%" . esc_sql($like) . "%'";
+            $query .= " WHERE meta_key LIKE %s";
+            $prepared_query = $wpdb->prepare($query, '%' . $wpdb->esc_like($like) . '%');
+        } else {
+            $prepared_query = $query;
         }
-        $results = $wpdb->get_results($query);
+        $results = $wpdb->get_results($prepared_query);
         if (!empty($results)) {
             $metas = array();
             foreach ($results as $key => $apost) {
@@ -582,14 +573,13 @@ trait Meta
     }
     public static function get_acf_field_relations()
     {
-        return self::get_acf_fields('relationship', $group);
+        return self::get_acf_fields('relationship');
     }
     public static function get_acf_field_value_relationship_invert($acf_relation_field, $post_id = 0)
     {
         if (!$post_id) {
             $post_id = get_the_ID();
         }
-        global $wpdb;
         $posts_related = get_posts(array('post_type' => 'any', 'numberposts' => '-1', 'fields' => 'ids', 'meta_query' => array(array(
             'key' => $acf_relation_field,
             'value' => '"' . $post_id . '"',
@@ -668,8 +658,9 @@ trait Meta
             return self::$meta_fields[$key]['ID'];
         }
         global $wpdb;
-        $query = 'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_type LIKE "acf-field" AND post_excerpt LIKE "' . esc_sql($key) . '"';
-        $results = $wpdb->get_results($query);
+        $query = 'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_type = "acf-field" AND post_excerpt LIKE %s';
+        $prepared_query = $wpdb->prepare($query, $wpdb->esc_like($key));
+        $results = $wpdb->get_results($prepared_query);
         if (\count($results) > 1) {
             // bad acf configuration
             $field_ids = array();
@@ -681,7 +672,7 @@ trait Meta
             }
             return \reset($field_ids);
         }
-        $result = $wpdb->get_var($query);
+        $result = $wpdb->get_var($prepared_query);
         if ($result) {
             self::$meta_fields[$key]['ID'] = $result;
             return $result;
@@ -706,7 +697,7 @@ trait Meta
         if (isset(self::$meta_fields[$key]['post'])) {
             return self::$meta_fields[$key]['post'];
         }
-        if (\is_int($key)) {
+        if (\is_numeric($key)) {
             $post = get_post($key);
             self::$meta_fields[$key]['post'] = $post;
             return $post;
@@ -734,14 +725,15 @@ trait Meta
     public static function get_acf_field_value($idField, $id_page = null, $format = \true)
     {
         if (!$id_page) {
-            $id_page = get_queried_object_id();
+            $id_page = acf_get_valid_post_id();
         }
         $dataACFieldPost = self::get_acf_field_post($idField);
         // field in a Repeater or in a Flexible content
         if ($dataACFieldPost) {
             $parentID = $dataACFieldPost->post_parent;
             $parent_settings = self::get_acf_field_settings($parentID);
-            if (isset($parent_settings['type']) && ($parent_settings['type'] == 'repeater' || $parent_settings['type'] == 'flexible_content')) {
+            $custom_in_loop = apply_filters('dynamicooo/acf/in-loop', \false, $parent_settings);
+            if (isset($parent_settings['type']) && ($parent_settings['type'] == 'repeater' || $parent_settings['type'] == 'flexible_content') || $custom_in_loop) {
                 $parent_post = get_post($parentID);
                 $row = acf_get_loop('active');
                 if (!$row) {
@@ -802,8 +794,8 @@ trait Meta
     }
     public static function get_toolset_fields($t = null)
     {
-        $toolsetList = [];
-        $toolsetList[0] = __('Select the field...', 'dynamic-content-for-elementor');
+        $toolset_list = [];
+        $toolset_list[0] = __('Select the field...', 'dynamic-content-for-elementor');
         $toolset = get_option('wpcf-fields', \false);
         if ($toolset) {
             $toolfields = maybe_unserialize($toolset);
@@ -815,11 +807,29 @@ trait Meta
                         if (!$t) {
                             $title .= ' [' . $type . ']';
                         }
-                        $toolsetList[$atool['meta_key']] = $title;
+                        $toolset_list[$atool['meta_key']] = $title;
                     }
                 }
             }
         }
-        return $toolsetList;
+        return $toolset_list;
+    }
+    /**
+     * Get Toolset Relationship Fields
+     *
+     * @return array<string, string>
+     */
+    public static function get_toolset_relationship_fields()
+    {
+        $toolset_list = [];
+        $toolset_list[0] = __('Select the field...', 'dynamic-content-for-elementor');
+        $relationships = toolset_get_relationships([]);
+        if (!empty($relationships)) {
+            foreach ($relationships as $relationship) {
+                $relationship_slug = $relationship['slug'];
+                $toolset_list[$relationship_slug] = $relationship['labels']['plural'];
+            }
+        }
+        return $toolset_list;
     }
 }

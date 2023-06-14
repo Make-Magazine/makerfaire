@@ -5,7 +5,6 @@ namespace DynamicContentForElementor\AdminPages;
 use DynamicContentForElementor\Assets;
 use DynamicContentForElementor\License;
 use DynamicContentForElementor\Helper;
-use DynamicContentForElementor\Notice;
 class Api
 {
     public function __construct()
@@ -81,7 +80,7 @@ EOD;
             update_option('dce_stripe_api_secret_key_test', sanitize_text_field($_POST['dce_stripe_api_secret_key_test']));
             update_option('dce_stripe_api_mode', sanitize_text_field($_POST['dce_stripe_api_mode']));
             update_option('dce_coinmarketcap_key', sanitize_text_field($_POST['dce_coinmarketcap_key']));
-            Notice::success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
+            \DynamicContentForElementor\Plugin::instance()->admin_pages->notices->success(__('Your preferences have been saved.', 'dynamic-content-for-elementor'));
         }
         $coinmarketcap_key = get_option('dce_coinmarketcap_key');
         $dce_google_maps_api = get_option('dce_google_maps_api');

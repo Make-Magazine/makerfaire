@@ -53,6 +53,10 @@ abstract class WidgetPrototype extends Widget_Base
     public $keywords = [];
     public $admin_only;
     /**
+     * @var array<string>
+     */
+    public $tags;
+    /**
      * Raw Data.
      *
      * Holds all the raw data including the element type, the child elements,
@@ -98,6 +102,7 @@ abstract class WidgetPrototype extends Widget_Base
             $this->keywords = $info['keywords'];
         }
         $this->admin_only = $info['admin_only'] ?? \false;
+        $this->tags = $info['tag'] ?? [];
     }
     public function run_once()
     {
@@ -137,10 +142,20 @@ abstract class WidgetPrototype extends Widget_Base
     {
         return $this->icon;
     }
+    /**
+     * Is Reload Preview Required
+     *
+     * @return boolean
+     */
     public function is_reload_preview_required()
     {
         return \false;
     }
+    /**
+     * Get Categories
+     *
+     * @return array<string>
+     */
     public function get_categories()
     {
         return ['dynamic-content-for-elementor-' . \strtolower($this->categories)];
@@ -186,18 +201,41 @@ abstract class WidgetPrototype extends Widget_Base
         }
         return \true;
     }
+    /**
+     * Render
+     *
+     * @return void
+     */
     protected final function render()
     {
         if ($this->admin_only && !Helper::can_register_unsafe_controls()) {
             $this->render_non_admin_notice();
         }
+        if (\in_array('loop', $this->tags, \true)) {
+            $this->add_render_attribute('_wrapper', 'class', 'dce-fix-background-loop');
+        }
         $this->safe_render();
     }
+    /**
+     * Safe Render
+     *
+     * @return void
+     */
     protected abstract function safe_render();
+    /**
+     * Render Non Admin Notice
+     *
+     * @return void
+     */
     protected function render_non_admin_notice()
     {
         _e('You will need administrator capabilities to edit this widget.', 'dynamic-content-for-elementor');
     }
+    /**
+     * Content Template
+     *
+     * @return void
+     */
     protected function content_template()
     {
     }

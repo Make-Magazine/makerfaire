@@ -7,6 +7,7 @@ trait Image
     public static function get_thumbnail_sizes()
     {
         $sizes = get_intermediate_image_sizes();
+        $ret = [];
         foreach ($sizes as $s) {
             $ret[$s] = $s;
         }
@@ -32,7 +33,7 @@ trait Image
     public static function get_image_id($image_url)
     {
         global $wpdb;
-        $sql = 'SELECT ID FROM ' . $wpdb->prefix . "posts WHERE post_type LIKE 'attachment' AND guid LIKE '%" . esc_sql($image_url) . "';";
+        $sql = $wpdb->prepare("SELECT ID FROM {$wpdb->prefix}posts WHERE post_type LIKE 'attachment' AND guid LIKE %s;", '%' . $wpdb->esc_like($image_url) . '%');
         $attachment = $wpdb->get_col($sql);
         $img_id = \reset($attachment);
         if (!$img_id) {
@@ -46,8 +47,6 @@ trait Image
     /**
      * Get size information for all currently-registered image sizes.
      *
-     * @global $_wp_additional_image_sizes
-     * @uses   get_intermediate_image_sizes()
      * @return array $sizes Data for all currently-registered image sizes.
      * @copyright MA-Group
      * @license GPL v3
@@ -71,9 +70,8 @@ trait Image
     /**
      * Get size information for a specific image size.
      *
-     * @uses   get_image_sizes()
-     * @param  string $size The image size for which to retrieve data.
-     * @return bool|array $size Size data about an image size or false if the size doesn't exist.
+     * @param string $size The image size for which to retrieve data.
+     * @return false|array $size Size data about an image size or false if the size doesn't exist.
      * @copyright MA-Group
      * @license GPL v3
      * @link http://ali2woo.com/
@@ -89,9 +87,8 @@ trait Image
     /**
      * Get the width of a specific image size.
      *
-     * @uses   get_image_size()
-     * @param  string $size The image size for which to retrieve data.
-     * @return bool|string $size Width of an image size or false if the size doesn't exist.
+     * @param string $size The image size for which to retrieve data.
+     * @return false|string $size Width of an image size or false if the size doesn't exist.
      * @copyright MA-Group
      * @license GPL v3
      * @link http://ali2woo.com/
@@ -109,21 +106,35 @@ trait Image
     /**
      * Get the height of a specific image size.
      *
-     * @uses   get_image_size()
-     * @param  string $size The image size for which to retrieve data.
-     * @return bool|string $size Height of an image size or false if the size doesn't exist.
+     * @param string $size The image size for which to retrieve data.
+     * @return false|string $size Height of an image size or false if the size doesn't exist.
      * @copyright MA-Group
      * @license GPL v3
      * @link http://ali2woo.com/
      */
     public static function get_image_height($size)
     {
-        if (!($size = get_image_size($size))) {
+        $size = self::get_image_size($size);
+        if (!$size) {
             return \false;
         }
         if (isset($size['height'])) {
             return $size['height'];
         }
         return \false;
+    }
+    /**
+     * Get Image alt
+     *
+     * @param integer $attachment_ID
+     * @return string
+     */
+    public static function get_image_alt(int $attachment_ID)
+    {
+        $alt = get_post_meta($attachment_ID, '_wp_attachment_image_alt', \true);
+        if (!empty($alt)) {
+            return esc_attr($alt);
+        }
+        return '';
     }
 }

@@ -45,19 +45,19 @@ class Video extends AbstractInlineQueryResult
     /**
      * Optional. Video width
      *
-     * @var int
+     * @var int|null
      */
     protected $videoWidth;
     /**
      * Optional. Video height
      *
-     * @var int
+     * @var int|null
      */
     protected $videoHeight;
     /**
      * Optional. Video duration in seconds
      *
-     * @var int
+     * @var int|null
      */
     protected $videoDuration;
     /**
@@ -69,13 +69,13 @@ class Video extends AbstractInlineQueryResult
     /**
      * Optional. Short description of the result
      *
-     * @var string
+     * @var string|null
      */
     protected $caption;
     /**
      * Optional. Short description of the result
      *
-     * @var string
+     * @var string|null
      */
     protected $description;
     /**
@@ -115,6 +115,8 @@ class Video extends AbstractInlineQueryResult
     }
     /**
      * @param string $videoUrl
+     *
+     * @return void
      */
     public function setVideoUrl($videoUrl)
     {
@@ -129,48 +131,56 @@ class Video extends AbstractInlineQueryResult
     }
     /**
      * @param string $mimeType
+     *
+     * @return void
      */
     public function setMimeType($mimeType)
     {
         $this->mimeType = $mimeType;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getVideoWidth()
     {
         return $this->videoWidth;
     }
     /**
-     * @param int $videoWidth
+     * @param int|null $videoWidth
+     *
+     * @return void
      */
     public function setVideoWidth($videoWidth)
     {
         $this->videoWidth = $videoWidth;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getVideoHeight()
     {
         return $this->videoHeight;
     }
     /**
-     * @param int $videoHeight
+     * @param int|null $videoHeight
+     *
+     * @return void
      */
     public function setVideoHeight($videoHeight)
     {
         $this->videoHeight = $videoHeight;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getVideoDuration()
     {
         return $this->videoDuration;
     }
     /**
-     * @param int $videoDuration
+     * @param int|null $videoDuration
+     *
+     * @return void
      */
     public function setVideoDuration($videoDuration)
     {
@@ -185,34 +195,40 @@ class Video extends AbstractInlineQueryResult
     }
     /**
      * @param mixed $thumbUrl
+     *
+     * @return void
      */
     public function setThumbUrl($thumbUrl)
     {
         $this->thumbUrl = $thumbUrl;
     }
     /**
-     * @return string
+     * @return string|null
      */
     public function getCaption()
     {
         return $this->caption;
     }
     /**
-     * @param string $caption
+     * @param string|null $caption
+     *
+     * @return void
      */
     public function setCaption($caption)
     {
         $this->caption = $caption;
     }
     /**
-     * @return string
+     * @return string|null
      */
     public function getDescription()
     {
         return $this->description;
     }
     /**
-     * @param string $description
+     * @param string|null $description
+     *
+     * @return void
      */
     public function setDescription($description)
     {

@@ -9,10 +9,12 @@ function initializePdfButton($scope) {
 	let ajax_url = button.data('ajax-url');
 	let ajax_action = button.data('ajax-action');
 	let title = button.data('title');
+	let preview = button.data('preview') === 'yes';
 	if (converter !== 'html') {
 		return;
 	}
 	const fetchPdf = async function (ajaxUrl) {
+		button.addClass('fetching-pdf');
 		// // Backend might need current get parameters for setting the item value:
 		let data = new FormData();
 		data.set('queried_id', queried_id);
@@ -37,8 +39,11 @@ function initializePdfButton($scope) {
 		let blob = await response.blob()
 		let link = document.createElement('a');
 		link.href = window.URL.createObjectURL(blob);
-		link.download = title;
+		if (!preview) {
+			link.download = title;
+		}
 		link.click();
+		button.removeClass('fetching-pdf');
 	}
 	button.on('click', () => {
 		fetchPdf(ajax_url);

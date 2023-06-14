@@ -3,7 +3,6 @@
         var elementSettings = dceGetElementSettings($scope);
         var $block_acfgallery = '.dce-acf-repeater';
 
-
         if (elementSettings.dce_acf_repeater_format == 'accordion') {
             $scope.find('.elementor-tab-title').on('click', function(){
                 if (elementSettings.dce_acf_repeater_accordion_close) {
@@ -44,100 +43,36 @@
 
 
         } else if (elementSettings.dce_acf_repeater_format == 'slider_carousel') {
-
-            var elementSwiper = $scope.find('.dce-acf-repeater-slider_carousel')[0];
+		
+            var elementSwiper = $scope.find('.dce-acf-repeater-slider_carousel');
 
             var id_scope = $scope.attr('data-id');
             var id_post = $scope.closest('.elementor').attr('data-post-id');
             var counter_id = $scope.find('.dce-acf-repeater-slider_carousel').attr('counter-id');
-
-            var centroDiapo = false;
-            var cicloInfinito = false;
+            var centroDiapo = Boolean(elementSettings.centeredSlides);
+            var cicloInfinito = Boolean(elementSettings.loop);
             var slideInitNum = 0;
             var slidesPerView = Number(elementSettings.slidesPerView);
-
-            var slideNum = $scope.find('.repeater-item').length;
-
-            centerDiapo = Boolean(elementSettings.centeredSlides);
-            cicloInfinito = Boolean(elementSettings.loop);
-
             var elementorBreakpoints = elementorFrontend.config.breakpoints;
 
             var swiperOptions = {
                 // Optional parameters
-                direction: 'horizontal', //String(elementSettings.direction_slider) || 'horizontal', //vertical
-
+                direction: 'horizontal',
                 initialSlide: slideInitNum,
-
                 speed: Number(elementSettings.speed_slider) || 300,
-                // setWrapperSize: false, // Enabled this option and plugin will set width/height on swiper wrapper equal to total size of all slides. It should be used mostly as a compatibility fallback option for browser that don’t support flexbox layouts well
-                // virtualTranslate: false, // Enabled this option and swiper will be operated as usual except it will not move, real translate values on wrapper will not be set. Useful when you may need to create custom slide transition
                 autoHeight: Boolean(elementSettings.autoHeight), //false, // Set to true and slider wrapper will adopt its height to the height of the currently active slide
                 roundLengths: Boolean(elementSettings.roundLengths), //false, // Set to true to round values of slides width and height to prevent blurry texts on usual resolution screens (if you have such)
-                // nested : Boolean( elementSettings.nested ), //false, // Set to true on nested Swiper for correct touch events interception. Use only on nested swipers that use same direction as the parent one
-                // uniqueNavElements: true, // If enabled (by default) and navigation elements' parameters passed as a string (like ".pagination") then Swiper will look for such elements through child elements first. Applies for pagination, prev/next buttons and scrollbar elements
-                //
-                //effect: 'cube', //"slide", "fade", "cube", "coverflow" or "flip"
                 effect: elementSettings.effects || 'slide',
-                /*cubeEffect: {
-                 shadow: true,
-                 slideShadows: true,
-                 shadowOffset: 20,
-                 shadowScale: 0.94,
-                 },*/
-                /*coverflowEffect: {
-                 rotate: 50,
-                 stretch: 0,
-                 depth: 100,
-                 modifier: 1,
-                 slideShadows : true,
-                 },*/
-                /*flipEffect: {
-                 rotate: 30,
-                 //slideShadows: true, //   Enables slides shadows
-                 //limitRotation: true, //  Limit edge slides rotation
-                 },*/
-
-                // PARALLAX (è da implementare)
-                //paralax: true,
-
-                // LAZY-LOADING (è da implementare)
-                //lazy: true,
-                /*lazy {
-                 loadPrevNext: false, //    Set to "true" to enable lazy loading for the closest slides images (for previous and next slide images)
-                 loadPrevNextAmount: 1, //  Amount of next/prev slides to preload lazy images in. Can't be less than slidesPerView
-                 loadOnTransitionStart: false, //   By default, Swiper will load lazy images after transition to this slide, so you may enable this parameter if you need it to start loading of new image in the beginning of transition
-                 elementClass: 'swiper-lazy', //    CSS class name of lazy element
-                 loadingClass: 'swiper-lazy-loading', //    CSS class name of lazy loading element
-                 loadedClass: 'swiper-lazy-loaded', //  CSS class name of lazy loaded element
-                 preloaderClass: 'swiper-lazy-preloader', //    CSS class name of lazy preloader
-                 },*/
-
-                // ZOOM (è da implementare)
-                /*zoom {
-                 maxRatio:  3, // Maximum image zoom multiplier
-                 minRatio: 1, //    Minimal image zoom multiplier
-                 toggle: true, //   Enable/disable zoom-in by slide's double tap
-                 containerClass:    'swiper-zoom-container', // CSS class name of zoom container
-                 zoomedSlideClass: 'swiper-slide-zoomed' // CSS class name of zoomed in container
-                 },*/
-                //slidesPerView: 'auto',
                 slidesPerView: slidesPerView || 'auto',
                 slidesPerGroup: Number(elementSettings.slidesPerGroup) || 1, // Set numbers of slides to define and enable group sliding. Useful to use with slidesPerView > 1
-
-
-                spaceBetween: Number(elementSettings.spaceBetween) || 0, // 30,
-                // ----------------------------
+                spaceBetween: Number(elementSettings.spaceBetween) || 0,
                 slidesOffsetBefore: 0, //   Add (in px) additional slide offset in the beginning of the container (before all slides)
                 slidesOffsetAfter: 0, //    Add (in px) additional slide offset in the end of the container (after all slides)
-
                 slidesPerColumn: Number(elementSettings.slidesColumn) || 1, // 1, // Number of slides per column, for multirow layout
                 slidesPerColumnFill: 'row', // Could be 'column' or 'row'. Defines how slides should fill rows, by column or by row
-
                 centerInsufficientSlides: true,
                 watchOverflow: true,
                 centeredSlides: centroDiapo,
-
                 grabCursor: Boolean(elementSettings.grabCursor), //true,
 
                 //------------------- Freemode
@@ -149,36 +84,13 @@
                 freeModeMomentumBounceRatio: Number(elementSettings.speed) || 1,
                 freeModeMinimumVelocity: Number(elementSettings.speed) || 0.02,
                 freeModeSticky: Boolean(elementSettings.freeModeSticky),
-
-                loop: cicloInfinito, // true,
-                //loopFillGroupWithBlank: true,
-
-                // ----------------------------
-                // HASH (è da implementare)
-                /*hashNavigation: {
-                 //watchState   //default: false    Set to true to enable also navigation through slides (when hashnav is enabled) by browser history or by setting directly hash on document location
-                 replaceState: true,    // default: false //    Works in addition to hashnav to replace current url state with the new one instead of adding it to history
-                 },*/
-                // HISTORY (è da implementare)
-                //history: false,
-                /*history: {
-                 replaceState: false, //    Works in addition to hashnav or history to replace current url state with the new one instead of adding it to history
-                 key: 'slides' //   Url key for slides
-                 },*/
-                // CONTROLLER (è da implementare)
-                //controller: false,
-                /*controller: {
-                 control:   [Swiper Instance]   undefined   Pass here another Swiper instance or array with Swiper instances that should be controlled by this Swiper
-                 inverse: false, // Set to true and controlling will be in inverse direction
-                 by: 'slide', // Can be 'slide' or 'container'. Defines a way how to control another slider: slide by slide (with respect to other slider's grid) or depending on all slides/container (depending on total slider percentage)
-                 },*/
-
+                loop: cicloInfinito, 
                 navigation: {
-                    nextEl: id_post ? '.dce-elementor-post-'+id_post+' .elementor-element-' + id_scope + ' .next-' + counter_id : '.next-' + counter_id,
-                    prevEl: id_post ? '.dce-elementor-post-'+id_post+' .elementor-element-' + id_scope + ' .prev-' + counter_id : '.prev-' + counter_id,
+                    nextEl: $scope.find('.swiper-button-next')[0],
+					prevEl: $scope.find('.swiper-button-prev')[0],
                 },
                 pagination: {
-                    el: id_post ? '.dce-elementor-post-'+id_post+' .elementor-element-' + id_scope + ' .pagination-' + counter_id : '.pagination-' + counter_id, //'.swiper-pagination', //'.pagination-acfslider-'+id_scope,
+                    el: $scope.find('.swiper-pagination')[0],
                     clickable: true,
                     type: String(elementSettings.pagination_type) || 'bullets',
                     dynamicBullets: true,
@@ -203,18 +115,10 @@
                 }
             };
             if (elementSettings.useAutoplay) {
-
                 //default
                 swiperOptions = $.extend(swiperOptions, {autoplay: true});
-
-                var autoplayDelay = Number(elementSettings.autoplay);
-                if (!autoplayDelay) {
-                    autoplayDelay = 3000;
-                } else {
-                    autoplayDelay = Number(elementSettings.autoplay);
-                }
+                var autoplayDelay = Number(elementSettings.autoplay) || 3000;
                 swiperOptions = $.extend(swiperOptions, {autoplay: {delay: autoplayDelay, disableOnInteraction: Boolean(elementSettings.autoplayDisableOnInteraction), stopOnLastSlide: Boolean(elementSettings.autoplayStopOnLast)}});
-
             }
 
             //------------------- Responsive Params
@@ -252,16 +156,11 @@
                 slidesPerColumn: Number(elementSettings.slidesColumn_mobile) || Number(elementSettings.slidesColumn_tablet) || Number(elementSettings.slidesColumn) || 1,
             };
             swiperOptions = $.extend(swiperOptions, responsivePoints);
+			const asyncSwiper = elementorFrontend.utils.swiper;
 
-            if ( 'undefined' === typeof Swiper ) {
-              const asyncSwiper = elementorFrontend.utils.swiper;
-
-              new asyncSwiper( jQuery( elementSwiper ), swiperOptions ).then( ( newSwiperInstance ) => {
-                mySwiper = newSwiperInstance;
-              } );
-            } else {
-              mySwiper = new Swiper( jQuery( elementSwiper ), swiperOptions );
-            }
+			new asyncSwiper( elementSwiper, swiperOptions ).then( ( newSwiperInstance ) => {
+				mySwiper = newSwiperInstance;
+			} ).catch( error => console.log(error) );
 
             if (elementSettings.useAutoplay && elementSettings.autoplayStopOnHover) {
                 $(elementSwiper).on({
@@ -274,9 +173,8 @@
                 });
             }
 
-        } // end if SliderCarousel
+        } 
 
-        // ======================================================================================
         if (elementSettings.enabled_wow) {
             var wow = new WOW(
                     {
@@ -387,8 +285,6 @@
                     }
                     nodeIndex++;
                 }
-
-
 
                 if (index >= 0) {
                     // open PhotoSwipe if valid index found

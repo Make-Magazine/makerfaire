@@ -3,7 +3,6 @@
 namespace DynamicOOOS\TelegramBot\Api\Types\Payments\Query;
 
 use DynamicOOOS\TelegramBot\Api\BaseType;
-use DynamicOOOS\TelegramBot\Api\Types\Payments\ArrayOfLabeledPrice;
 /**
  * Class AnswerPreCheckoutQuery
  * Use this method to respond to such pre-checkout queries.
@@ -40,7 +39,7 @@ class AnswerPreCheckoutQuery extends BaseType
     protected $errorMessage;
     /**
      * @author MY
-     * @return true
+     * @return bool
      */
     public function getOk()
     {
@@ -48,7 +47,10 @@ class AnswerPreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
-     * @param true $ok
+     *
+     * @param bool $ok
+     *
+     * @return void
      */
     public function setOk($ok)
     {
@@ -64,7 +66,10 @@ class AnswerPreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $errorMessage
+     *
+     * @return void
      */
     public function setErrorMessage($errorMessage)
     {
@@ -80,7 +85,10 @@ class AnswerPreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $preCheckoutQueryId
+     *
+     * @return void
      */
     public function setPreCheckoutQueryId($preCheckoutQueryId)
     {

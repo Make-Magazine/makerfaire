@@ -1,20 +1,42 @@
-(function ($) {
-    var widgetElementsDiscoverTokens = function ($scope, $) {
-		discoverTokens = $scope[0];
-		let copyInstances = discoverTokens.querySelectorAll("span.copy");
+jQuery(window).on('elementor/frontend/init', () => {
+    class DiscoverTokens extends elementorModules.frontend.handlers.Base {
 
-		copyInstances.forEach(function(copy) {
-			tippy( copy, {
-				content: 'Copied!',
-				arrow: true,
-				trigger:'click',
-			});
-			new ClipboardJS(copy);
-		});
+        getDefaultSettings() {
+            return {};
+        }
+
+        getDefaultElements() {
+            return {
+                wrapper: this.$element[0]
+            };
+        }
+
+        initStart() {
+            let copyInstances = this.elements.wrapper.querySelectorAll("span.copy");
+
+            copyInstances.forEach( () => {	
+				let clipboard = new ClipboardJS('span.copy');
+                clipboard.on( 'success', (e) => {
+                    let tooltip = tippy( e.trigger, {
+						content: 'Copied!',
+                        arrow: true,
+                    });
+                    tooltip.setContent('Copied');
+                    tooltip.show();
+                    e.clearSelection();
+                });
+            });
+        }
+
+        onInit() {
+            super.onInit();
+            this.initStart();
+        }
+    }
+
+    const addHandler = ($element) => {
+        elementorFrontend.elementsHandler.addHandler(DiscoverTokens, { $element });
     };
+    elementorFrontend.hooks.addAction('frontend/element_ready/dce-discover-tokens.default', addHandler);
 
-    // Make sure you run this code under Elementor..
-    $(window).on('elementor/frontend/init', function () {
-        elementorFrontend.hooks.addAction('frontend/element_ready/dce-discover-tokens.default', widgetElementsDiscoverTokens);
-    });
-})(jQuery);
+});

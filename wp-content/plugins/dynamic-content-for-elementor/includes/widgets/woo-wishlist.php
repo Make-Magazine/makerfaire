@@ -22,6 +22,8 @@ class WooWishlist extends \DynamicContentForElementor\Widgets\DynamicPostsBase
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Carousel($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_DualCarousel($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Accordion($this));
+        $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_List($this));
+        $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Table($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Timeline($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_3D($this));
         $this->add_skin(new Skins\Show_Woo_Wishlist_Skin_Gridtofullscreen3d($this));

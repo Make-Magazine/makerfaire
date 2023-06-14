@@ -10,6 +10,10 @@ namespace DynamicOOOS\TelegramBot\Api\Types;
 
 abstract class ArrayOfMessageEntity
 {
+    /**
+     * @param array $data
+     * @return MessageEntity[]
+     */
     public static function fromResponse($data)
     {
         $arrayOfMessageEntity = [];

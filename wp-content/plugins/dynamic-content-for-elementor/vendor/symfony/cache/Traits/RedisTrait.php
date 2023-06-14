@@ -143,6 +143,9 @@ trait RedisTrait
             $class = $params['redis_cluster'] ? \RedisCluster::class : (1 < \count($hosts) ? \RedisArray::class : \Redis::class);
         } else {
             $class = $params['class'] ?? \DynamicOOOS\Predis\Client::class;
+            if (isset($params['redis_sentinel']) && !\is_a($class, \DynamicOOOS\Predis\Client::class, \true)) {
+                throw new CacheException(\sprintf('Cannot use Redis Sentinel: class "%s" does not extend "Predis\\Client": "%s".', $class, $dsn));
+            }
         }
         if (\is_a($class, \Redis::class, \true)) {
             $connect = $params['persistent'] || $params['persistent_id'] ? 'pconnect' : 'connect';
@@ -319,7 +322,7 @@ trait RedisTrait
     {
         if ($this->redis instanceof \DynamicOOOS\Predis\ClientInterface) {
             $prefix = $this->redis->getOptions()->prefix ? $this->redis->getOptions()->prefix->getPrefix() : '';
-            $prefixLen = \strlen($prefix);
+            $prefixLen = \strlen($prefix ?? '');
         }
         $cleared = \true;
         $hosts = $this->getHosts();

@@ -50,7 +50,7 @@ class Voice extends AbstractInlineQueryResult
     /**
      * Optional. Audio duration in seconds
      *
-     * @var int
+     * @var int|null
      */
     protected $voiceDuration;
     /**
@@ -80,20 +80,24 @@ class Voice extends AbstractInlineQueryResult
     }
     /**
      * @param string $voiceUrl
+     *
+     * @return void
      */
     public function setVoiceUrl($voiceUrl)
     {
         $this->voiceUrl = $voiceUrl;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getVoiceDuration()
     {
         return $this->voiceDuration;
     }
     /**
-     * @param int $voiceDuration
+     * @param int|null $voiceDuration
+     *
+     * @return void
      */
     public function setVoiceDuration($voiceDuration)
     {

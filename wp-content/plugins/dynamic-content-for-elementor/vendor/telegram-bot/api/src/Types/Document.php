@@ -19,13 +19,13 @@ class Document extends BaseType implements TypeInterface
      *
      * @var array
      */
-    protected static $map = ['file_id' => \true, 'thumb' => PhotoSize::class, 'file_name' => \true, 'mime_type' => \true, 'file_size' => \true];
+    protected static $map = ['file_id' => \true, 'file_unique_id' => \true, 'thumb' => PhotoSize::class, 'file_name' => \true, 'mime_type' => \true, 'file_size' => \true];
     /**
      * {@inheritdoc}
      *
      * @var array
      */
-    protected static $requiredParams = ['file_id'];
+    protected static $requiredParams = ['file_id', 'file_unique_id'];
     /**
      * Unique identifier for this file
      *
@@ -41,21 +41,27 @@ class Document extends BaseType implements TypeInterface
     /**
      * Optional. Original filename as defined by sender
      *
-     * @var string
+     * @var string|null
      */
     protected $fileName;
     /**
      * Optional. MIME type of the file as defined by sender
      *
-     * @var string
+     * @var string|null
      */
     protected $mimeType;
     /**
      * Optional. File size
      *
-     * @var int
+     * @var int|null
      */
     protected $fileSize;
+    /**
+     * Unique identifier for this file, which is supposed to be the same over time and for different bots. Can't be used to download or reuse the file.
+     *
+     * @var string
+     */
+    protected $fileUniqueId;
     /**
      * @return string
      */
@@ -65,13 +71,14 @@ class Document extends BaseType implements TypeInterface
     }
     /**
      * @param string $fileId
+     * @return void
      */
     public function setFileId($fileId)
     {
         $this->fileId = $fileId;
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getFileName()
     {
@@ -79,21 +86,22 @@ class Document extends BaseType implements TypeInterface
     }
     /**
      * @param string $fileName
+     * @return void
      */
     public function setFileName($fileName)
     {
         $this->fileName = $fileName;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getFileSize()
     {
         return $this->fileSize;
     }
     /**
-     * @param int $fileSize
-     *
+     * @param mixed $fileSize
+     * @return void
      * @throws InvalidArgumentException
      */
     public function setFileSize($fileSize)
@@ -105,7 +113,7 @@ class Document extends BaseType implements TypeInterface
         }
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getMimeType()
     {
@@ -113,6 +121,7 @@ class Document extends BaseType implements TypeInterface
     }
     /**
      * @param string $mimeType
+     * @return void
      */
     public function setMimeType($mimeType)
     {
@@ -127,9 +136,25 @@ class Document extends BaseType implements TypeInterface
     }
     /**
      * @param PhotoSize $thumb
+     * @return void
      */
     public function setThumb(PhotoSize $thumb)
     {
         $this->thumb = $thumb;
+    }
+    /**
+     * @return string
+     */
+    public function getFileUniqueId()
+    {
+        return $this->fileUniqueId;
+    }
+    /**
+     * @param string $fileUniqueId
+     * @return void
+     */
+    public function setFileUniqueId($fileUniqueId)
+    {
+        $this->fileUniqueId = $fileUniqueId;
     }
 }

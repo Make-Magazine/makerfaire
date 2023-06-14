@@ -4,6 +4,10 @@ namespace DynamicOOOS\TelegramBot\Api\Types\Payments;
 
 abstract class ArrayOfLabeledPrice
 {
+    /**
+     * @param array $data
+     * @return LabeledPrice[]
+     */
     public static function fromResponse($data)
     {
         $arrayOfLabeledPrice = [];

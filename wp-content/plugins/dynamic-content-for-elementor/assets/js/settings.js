@@ -96,20 +96,36 @@ dynamicooo.makeSwiperBreakpoints = (swiperSettings, elementorSettings, elementor
 	elementorSettingsPrefix = elementorSettingsPrefix || '';
 	swiperBreakpoints = {}
 	let elementorBreakpoints = dynamicooo.getActiveBreakpointsMinPointAndPostfix();
+	let first = true;
 	for(let device in elementorBreakpoints) {
 		let min_point = elementorBreakpoints[device].min_point;
+		if (first) {
+			min_point = 0;
+			first = false;
+		}
 		let postfix = elementorBreakpoints[device].postfix;
 		let breakpointSettings = {}
 		for(let swiperSettingsKey in swiperSettings) {
+
+			// slidesPerGroup is not visible in the settings if slidesPerView is == 1. 
+			// In this case we must force the value of slidesPerGroup to 1
+			// otherwise it may inherit a wrong value set on another breakpoint
+			if ( swiperSettingsKey == 'slidesPerGroup' ) {
+				let slidesPerView = elementorSettings[ elementorSettingsPrefix + swiperSettings['slidesPerView'].elementor_key + postfix ];
+				if ( slidesPerView == 1 ) {
+					breakpointSettings[swiperSettingsKey] = 1;
+					continue;
+				}
+			}
 			let elementorSettingsKey = elementorSettingsPrefix + swiperSettings[swiperSettingsKey].elementor_key;
 			let default_value = swiperSettings[swiperSettingsKey].default_value;
 			let postfixedKey = elementorSettingsKey + postfix;
-			let value
+			let value;
 			if (typeof elementorSettings[postfixedKey] !== "undefined") {
 				value = elementorSettings[postfixedKey];
 			} else {
 				// fallback to desktop value:
-				value = elementorSettings[elementorSettingsKey]
+				value = elementorSettings[elementorSettingsKey];
 			}
 			if (typeof value !== "undefined") {
 				let filter = Number;
@@ -125,4 +141,9 @@ dynamicooo.makeSwiperBreakpoints = (swiperSettings, elementorSettings, elementor
 		swiperBreakpoints[min_point] = breakpointSettings;
 	}
 	return swiperBreakpoints;
+}
+
+window.initMap = () => {
+	const event = new Event('dce-google-maps-api-loaded');
+	window.dispatchEvent(event);
 }

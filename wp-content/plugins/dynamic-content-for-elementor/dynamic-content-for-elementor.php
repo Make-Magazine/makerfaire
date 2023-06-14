@@ -1,24 +1,24 @@
 <?php
 /**
  *
- * @copyright Copyright (C) 2018-2022, Ovation S.r.l. - support@dynamic.ooo
+ * @copyright Copyright (C) 2018-2023, Ovation S.r.l. - support@dynamic.ooo
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License, version 3 or higher
  *
  * @wordpress-plugin
  * Plugin Name: Dynamic.ooo - Dynamic Content for Elementor
  * Plugin URI: https://www.dynamic.ooo/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
- * Description: Building powerful websites by extending Elementor. We give you over 140 features that will save you time and money on achieving complex results. The only limit is your imagination.
- * Version: 2.5.7
+ * Description: Building powerful websites by extending Elementor. We give you over 150 features that will save you time and money on achieving complex results. The only limit is your imagination.
+ * Version: 2.10.3
  * Requires at least: 5.2
- * Requires PHP: 7.0
+ * Requires PHP: 7.2
  * Author: Dynamic.ooo
  * Author URI: https://www.dynamic.ooo/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Text Domain: dynamic-content-for-elementor
  * Domain Path: /languages
  * License: GPL-3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.txt
- * Elementor tested up to: 3.6.2
- * Elementor Pro tested up to: 3.6.4
+ * Elementor tested up to: 3.13.4
+ * Elementor Pro tested up to: 3.13.2
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +137,13 @@ define( 'DCE_URL', plugins_url( '/', __FILE__ ) ); // {site}/wp-content/plugins/
 define( 'DCE_PATH', plugin_dir_path( __FILE__ ) ); // {path}/wp-content/plugins/{dce-folder}
 
 require_once __DIR__ . '/constants.php';
+require_once __DIR__ . '/includes/admin-pages/notices.php';
+
+// Admin Style - Load it now because we could display a notice for PHP version and the plugin is not be loaded
+add_action( 'admin_enqueue_scripts', function() {
+	wp_register_style( 'dce-admin', DCE_URL . 'assets/css/admin.css', [], DCE_VERSION );
+	wp_enqueue_style( 'dce-admin' );
+});
 
 // Check PHP version
 if ( version_compare( phpversion(), DCE_MINIMUM_PHP_VERSION, '<' ) ) {
@@ -163,9 +170,10 @@ if ( ! function_exists( 'str_contains' ) ) {
 	}
 }
 
-if ( version_compare( phpversion(), '7.1', '>=' ) ) {
-	require_once __DIR__ . '/vendor/symfony/polyfill-php80/bootstrap.php';
-}
+require_once __DIR__ . '/vendor/symfony/polyfill-php80/bootstrap.php';
+
+// Dynamic License
+require_once __DIR__ . '/dynamic-license/license.php';
 
 register_activation_hook( DCE_PLUGIN_BASE, '\DynamicContentForElementor\Plugin::activation' );
 register_uninstall_hook( DCE_PLUGIN_BASE, '\DynamicContentForElementor\Plugin::uninstall' );
@@ -173,7 +181,7 @@ register_uninstall_hook( DCE_PLUGIN_BASE, '\DynamicContentForElementor\Plugin::u
 add_action( 'plugins_loaded', 'dce_load' );
 
 /**
- * Load Dynamic Content for Elementor
+ * Load Dynamic.ooo - Dynamic Content for Elementor
  *
  * Load the plugin after Elementor is loaded.
  *
@@ -186,62 +194,48 @@ function dce_load() {
 	// Enqueue Admin CSS
 	add_action( 'admin_enqueue_scripts', 'dce_enqueue_admin_styles' );
 
-	// Notice if Elementor Free is not active
-	if ( ! did_action( 'elementor/loaded' ) ) {
-		add_action( 'admin_notices', 'dce_fail_load' );
-		return;
-	}
-
-	// Check Elementor version
-	// @phpstan-ignore-next-line (complained about if always true)
-	if ( version_compare( ELEMENTOR_VERSION, DCE_MINIMUM_ELEMENTOR_VERSION, '<' ) ) {
-		add_action( 'admin_notices', 'dce_admin_notice_minimum_elementor_version' );
-		return;
-	}
-
-	// Check Elementor Pro version
-	if ( defined( 'ELEMENTOR_PRO_VERSION' ) && version_compare( ELEMENTOR_PRO_VERSION, DCE_MINIMUM_ELEMENTOR_PRO_VERSION, '<' ) ) {
-		add_action( 'admin_notices', 'dce_admin_notice_minimum_elementor_pro_version' );
-		return;
-	}
-
 	require_once DCE_PATH . '/core/plugin.php';
 }
 
 function dce_enqueue_admin_styles() {
 	// Admin style
-	wp_register_style( 'dce-admin-css', DCE_URL . 'assets/css/admin.css', [], DCE_VERSION );
-	wp_enqueue_style( 'dce-admin-css' );
+	wp_register_style( 'dce-admin', DCE_URL . 'assets/css/admin.css', [], DCE_VERSION );
+	wp_enqueue_style( 'dce-admin' );
 }
 
 /**
- * Handles admin notice for non-active
- * Elementor plugin situations
+ * Handles admin notice for non-active Elementor plugin situations
  *
- * @since 0.1.0
+ * @return void
  */
 function dce_fail_load() {
-	\DynamicContentForElementor\Notice::error( sprintf( __( 'You need %1$s"Elementor"%2$s for the %1$s"Dynamic.ooo - Dynamic Content for Elementor"%2$s plugin to work.', 'dynamic-content-for-elementor' ), '<strong>', '</strong>' ) );
+	$msg = sprintf( __( '%1$sElementor%2$s is required for the %1$s%3$s%2$s plugin to work.', 'dynamic-content-for-elementor' ), '<strong>', '</strong>', DCE_PRODUCT_NAME_LONG );
+	\DynamicContentForElementor\AdminPages\Notices::render_notice( $msg, 'error' );
 }
 
 function dce_admin_notice_minimum_elementor_version() {
-	\DynamicContentForElementor\Notice::error( sprintf( __( 'Dynamic.ooo - Dynamic Content for Elementor requires Elementor version %1$s or greater.', 'dynamic-content-for-elementor' ), DCE_MINIMUM_ELEMENTOR_VERSION ) );
+	$msg = sprintf( __( '%1$s requires Elementor version %2$s or greater.', 'dynamic-content-for-elementor' ), DCE_PRODUCT_NAME_LONG, DCE_MINIMUM_ELEMENTOR_VERSION );
+	\DynamicContentForElementor\AdminPages\Notices::render_notice( $msg, 'error' );
 }
 
 function dce_admin_notice_minimum_elementor_pro_version() {
-	\DynamicContentForElementor\Notice::error( sprintf( __( 'If you want to use Elementor Pro with Dynamic.ooo - Dynamic Content for Elementor, it requires version %1$s or greater.', 'dynamic-content-for-elementor' ), DCE_MINIMUM_ELEMENTOR_PRO_VERSION ) );
+	$msg = sprintf( __( 'If you want to use Elementor Pro with %1$s, it requires version %2$s or greater.', 'dynamic-content-for-elementor' ), DCE_PRODUCT_NAME_LONG, DCE_MINIMUM_ELEMENTOR_PRO_VERSION );
+	\DynamicContentForElementor\AdminPages\Notices::render_notice( $msg, 'error' );
 }
 
 function dce_admin_notice_minimum_php_version() {
-	\DynamicContentForElementor\Notice::error( sprintf( __( 'You are using PHP version %1$s. This version is not more supported. Ask your provider to use PHP version %2$s+.', 'dynamic-content-for-elementor' ), phpversion(), DCE_MINIMUM_PHP_VERSION ) );
+	$msg = sprintf( __( 'You are using PHP version %1$s. This version is not more supported. Ask your provider to use PHP version %2$s+.', 'dynamic-content-for-elementor' ), phpversion(), DCE_MINIMUM_PHP_VERSION );
+	\DynamicContentForElementor\AdminPages\Notices::render_notice( $msg, 'error' );
 }
 
 function dce_admin_notice_maximum_php_version() {
-	\DynamicContentForElementor\Notice::error( sprintf( __( 'You are using PHP version %1$s and it\'s not yet fully supported. The maximum version supported is %2$s.', 'dynamic-content-for-elementor' ), phpversion(), DCE_MAXIMUM_PHP_VERSION ) );
+	$msg = sprintf( __( 'You are using PHP version %1$s and it\'s not yet fully supported. The maximum version supported is %2$s.', 'dynamic-content-for-elementor' ), phpversion(), DCE_MAXIMUM_PHP_VERSION );
+	\DynamicContentForElementor\AdminPages\Notices::render_notice( $msg, 'error' );
 }
 
 function dce_admin_notice_suggest_new_php_version() {
 	if ( isset( $_GET['page'] ) && 'dce-features' === $_GET['page'] ) {
-		\DynamicContentForElementor\Notice::warning( sprintf( __( 'You are using PHP version %1$s. It\'s suggested to use PHP version %2$s+.', 'dynamic-content-for-elementor' ), phpversion(), DCE_SUGGESTED_PHP_VERSION ) );
+		$msg = sprintf( __( 'You are using PHP version %1$s. It\'s suggested to use PHP version %2$s+.', 'dynamic-content-for-elementor' ), phpversion(), DCE_SUGGESTED_PHP_VERSION );
+		\DynamicContentForElementor\AdminPages\Notices::render_notice( $msg, 'warning' );
 	}
 }

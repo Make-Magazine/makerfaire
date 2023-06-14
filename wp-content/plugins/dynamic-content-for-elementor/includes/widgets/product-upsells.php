@@ -22,6 +22,8 @@ class WooProductUpsells extends \DynamicContentForElementor\Widgets\DynamicPosts
         $this->add_skin(new Skins\Woo_Product_Upsells_Skin_Carousel($this));
         $this->add_skin(new Skins\Woo_Product_Upsells_Skin_DualCarousel($this));
         $this->add_skin(new Skins\Woo_Product_Upsells_Skin_Accordion($this));
+        $this->add_skin(new Skins\Woo_Product_Upsells_Skin_List($this));
+        $this->add_skin(new Skins\Woo_Product_Upsells_Skin_Table($this));
     }
     /**
      * Register controls after check if this feature is only for admin

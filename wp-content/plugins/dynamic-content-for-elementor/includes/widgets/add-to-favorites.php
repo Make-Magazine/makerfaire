@@ -15,6 +15,24 @@ if (!\defined('ABSPATH')) {
 // Exit if accessed directly
 class AddToFavorites extends \DynamicContentForElementor\Widgets\WidgetPrototype
 {
+    /**
+     * @return void
+     */
+    public function run_once()
+    {
+        add_shortcode('dce-favorites', function ($atts = [], $content = null) {
+            $key = $atts['key'] ?? 'my_favorites';
+            $get = $atts['get'] ?? '';
+            if ($get === 'count') {
+                $favs = get_user_meta(get_current_user_id(), $key, \true);
+                if (\is_array($favs)) {
+                    return \count($favs);
+                }
+                return '';
+            }
+            return '';
+        });
+    }
     public function get_style_depends()
     {
         return ['dce-add-to-favorites'];
@@ -106,7 +124,7 @@ class AddToFavorites extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('success_message_color', ['label' => __('Success Message Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-success' => 'color: {{COLOR}};']]);
         $this->add_control('error_message_color', ['label' => __('Error Message Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .elementor-message.elementor-message-danger' => 'color: {{COLOR}};']]);
         $this->add_control('message_full_width', ['label' => __('Extend to Full Window Size (100%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'selectors' => ['{{WRAPPER}} .dce-notice' => 'width: 100%; left: 0;'], 'condition' => ['dce_favorite_msg_floating!' => '']]);
-        $this->add_control('message_align', ['label' => __('Horizontal alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-right']], 'default' => 'right', 'condition' => ['dce_favorite_msg_floating!' => '', 'message_full_width' => '']]);
+        $this->add_control('message_align', ['label' => __('Horizontal Alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-left'], 'center' => ['title' => __('Center', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-center'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'icon' => 'eicon-h-align-right']], 'default' => 'right', 'condition' => ['dce_favorite_msg_floating!' => '', 'message_full_width' => '']]);
         $this->add_control('message_valign', ['label' => __('Vertical alignment', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['bottom' => ['title' => __('Bottom', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-bottom'], 'middle' => ['title' => __('Middle', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-middle'], 'top' => ['title' => __('Top', 'dynamic-content-for-elementor'), 'icon' => 'eicon-v-align-top']], 'default' => 'bottom', 'condition' => ['dce_favorite_msg_floating!' => '']]);
         $this->add_control('message_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em'], 'default' => ['top' => '15', 'right' => '40', 'bottom' => '15', 'left' => '15', 'unit' => 'px', 'isLinked' => \false], 'selectors' => ['{{WRAPPER}} .dce-notice' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $this->add_control('message_margin', ['label' => __('Margin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em'], 'selectors' => ['{{WRAPPER}} .dce-notice' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
@@ -642,7 +660,7 @@ class AddToFavorites extends \DynamicContentForElementor\Widgets\WidgetPrototype
     public static function get_user_counter($list_key = '')
     {
         global $wpdb;
-        $sql = 'SELECT COUNT(user_id) as ucount FROM ' . $wpdb->prefix . "usermeta um WHERE meta_key LIKE '" . esc_sql($list_key) . "' AND meta_value LIKE '%i:" . esc_sql(get_the_ID()) . ";%'";
+        $sql = $wpdb->prepare('SELECT COUNT(user_id) as ucount FROM ' . $wpdb->prefix . 'usermeta um WHERE meta_key LIKE %s AND meta_value LIKE %s', esc_sql($list_key), '%i:' . esc_sql(get_the_ID()) . ';%');
         $results = $wpdb->get_results($sql);
         if (!empty($results)) {
             return \reset($results)->ucount;

@@ -1,9 +1,5 @@
 var Widget_DCE_Dynamicposts_timeline_Handler = function ($scope, $) {
-
-	var smsc = null;
-
 	var elementSettings = dceGetElementSettings($scope);
-
 	var timelineEl = $scope.find('.dce-timeline-container.dce-skin-timeline');
     var primoBlocco = 0;
 	var primoBloccoPos = 0;
@@ -65,7 +61,6 @@ var Widget_DCE_Dynamicposts_timeline_Handler = function ($scope, $) {
 		rowspace = Number(elementSettings[dceDynamicPostsSkinPrefix+'timeline_rowspace']['size']);
 		checkTimelineScroll();
 	}
-	if(smsc) smsc.remove();
 
 	// Vertical Timeline - by CodyHouse.co
 	function VerticalTimeline( element ) {
@@ -152,4 +147,6 @@ jQuery(window).on('elementor/frontend/init', function () {
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-my-posts.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-search-results.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
 	elementorFrontend.hooks.addAction('frontend/element_ready/dce-sticky-posts.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-metabox-relationship.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
+	elementorFrontend.hooks.addAction('frontend/element_ready/dce-acf-relationship.timeline', Widget_DCE_Dynamicposts_timeline_Handler);
 });

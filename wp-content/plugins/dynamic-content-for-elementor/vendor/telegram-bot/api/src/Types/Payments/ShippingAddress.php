@@ -46,13 +46,13 @@ class ShippingAddress extends BaseType
     /**
      * Second line for the address
      *
-     * @var integer
+     * @var string
      */
     protected $streetLine2;
     /**
      * Address post code
      *
-     * @var integer
+     * @var string
      */
     protected $postCode;
     /**
@@ -65,7 +65,10 @@ class ShippingAddress extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $countryCode
+     *
+     * @return void
      */
     public function setCountryCode($countryCode)
     {
@@ -81,7 +84,10 @@ class ShippingAddress extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $state
+     *
+     * @return void
      */
     public function setState($state)
     {
@@ -97,7 +103,10 @@ class ShippingAddress extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $city
+     *
+     * @return void
      */
     public function setCity($city)
     {
@@ -113,7 +122,10 @@ class ShippingAddress extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $streetLine1
+     *
+     * @return void
      */
     public function setStreetLine1($streetLine1)
     {
@@ -121,7 +133,7 @@ class ShippingAddress extends BaseType
     }
     /**
      * @author MY
-     * @return int
+     * @return string
      */
     public function getStreetLine2()
     {
@@ -129,7 +141,10 @@ class ShippingAddress extends BaseType
     }
     /**
      * @author MY
-     * @param int $streetLine2
+     *
+     * @param string $streetLine2
+     *
+     * @return void
      */
     public function setStreetLine2($streetLine2)
     {
@@ -137,7 +152,7 @@ class ShippingAddress extends BaseType
     }
     /**
      * @author MY
-     * @return int
+     * @return string
      */
     public function getPostCode()
     {
@@ -145,7 +160,10 @@ class ShippingAddress extends BaseType
     }
     /**
      * @author MY
-     * @param int $postCode
+     *
+     * @param string $postCode
+     *
+     * @return void
      */
     public function setPostCode($postCode)
     {

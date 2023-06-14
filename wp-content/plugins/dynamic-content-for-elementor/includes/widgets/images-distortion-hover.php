@@ -42,13 +42,13 @@ class ImagesDistortionHover extends \DynamicContentForElementor\Widgets\WidgetPr
         $this->add_control('intensity_distortion_subdivisionblow', ['label' => __('Intensity', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => 50], 'range' => ['px' => ['min' => 1, 'max' => 100, 'step' => 1]], 'condition' => ['distortion_effect' => ['subdivision', 'blow']]]);
         $this->add_control('speed_distortion', ['label' => __('Speed', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'separator' => 'before', 'default' => ['size' => 1.6], 'range' => ['px' => ['min' => 0, 'max' => 5, 'step' => 0.01]]]);
         $this->add_control('easing_distortion', ['label' => __('Easing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_gsap_ease(), 'default' => 'easeInOut', 'label_block' => \false]);
-        $this->add_control('hr3', ['type' => \Elementor\Controls_Manager::DIVIDER, 'style' => 'thick']);
+        $this->add_control('hr3', ['type' => Controls_Manager::DIVIDER, 'style' => 'thick']);
         $this->add_control('image_1', ['label' => __('Before Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'default' => ['url' => \Elementor\Utils::get_placeholder_image_src()]]);
         $this->add_control('image_2', ['label' => __('After image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'default' => ['url' => \Elementor\Utils::get_placeholder_image_src()]]);
         $this->add_group_control(Group_Control_Image_Size::get_type(), ['name' => 'size', 'label' => __('Image Size', 'dynamic-content-for-elementor'), 'default' => 'large']);
         $this->add_control('image_displacement', ['label' => __('Displacement Image', 'dynamic-content-for-elementor'), 'type' => 'images_selector', 'toggle' => \false, 'type_selector' => 'image', 'description' => __('Displacement image map, generates the movement of the pixels', 'dynamic-content-for-elementor'), 'columns_grid' => 4, 'options' => ['disp1' => ['title' => 'Displacement 1', 'image' => DCE_URL . 'assets/displacement/1.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/1.jpg'], 'disp2' => ['title' => 'Displacement 2', 'image' => DCE_URL . 'assets/displacement/2.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/2.jpg'], 'disp3' => ['title' => 'Displacement 3', 'image' => DCE_URL . 'assets/displacement/3.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/3.jpg'], 'disp4' => ['title' => 'Displacement 4', 'image' => DCE_URL . 'assets/displacement/4.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/4.jpg'], 'disp5' => ['title' => 'Displacement 5', 'image' => DCE_URL . 'assets/displacement/5.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/5.jpg'], 'disp6' => ['title' => 'Displacement 6', 'image' => DCE_URL . 'assets/displacement/6.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/6.jpg'], 'disp7' => ['title' => 'Displacement 7', 'image' => DCE_URL . 'assets/displacement/7.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/7.jpg'], 'disp8' => ['title' => 'Displacement 8', 'image' => DCE_URL . 'assets/displacement/8.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/8.jpg'], 'disp9' => ['title' => 'Displacement 9', 'image' => DCE_URL . 'assets/displacement/9.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/9.jpg'], 'disp10' => ['title' => 'Displacement 10', 'image' => DCE_URL . 'assets/displacement/10.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/10.jpg'], 'disp11' => ['title' => 'Displacement 11', 'image' => DCE_URL . 'assets/displacement/11.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/11.jpg'], 'disp12' => ['title' => 'Displacement 12', 'image' => DCE_URL . 'assets/displacement/12.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/12.jpg'], 'disp14' => ['title' => 'Displacement 14', 'image' => DCE_URL . 'assets/displacement/14.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/14.jpg'], 'disp15' => ['title' => 'Displacement 15', 'image' => DCE_URL . 'assets/displacement/15.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/15.jpg'], 'disp16' => ['title' => 'Displacement 16', 'image' => DCE_URL . 'assets/displacement/16.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/16.jpg'], 'disp17' => ['title' => 'Displacement 17', 'image' => DCE_URL . 'assets/displacement/17.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/17.jpg'], 'disp18' => ['title' => 'Displacement 18', 'image' => DCE_URL . 'assets/displacement/18.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/18.jpg'], 'disp19' => ['title' => 'Displacement 19', 'image' => DCE_URL . 'assets/displacement/19.jpg', 'image_preview' => DCE_URL . 'assets/displacement/low/19.jpg'], 'disp_custom' => ['title' => 'Displacement Custom', 'return_val' => 'val', 'image' => DCE_URL . 'assets/displacement/custom.jpg', 'image_preview' => DCE_URL . 'assets/displacement/custom.jpg']], 'default' => \Elementor\Utils::get_placeholder_image_src(), 'condition' => ['distortion_effect' => ['ring ', 'horizdisp', 'displacement']]]);
         $this->add_control('displacementImage', ['label' => __('Displacement Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::MEDIA, 'default' => ['url' => \Elementor\Utils::get_placeholder_image_src()], 'condition' => ['image_displacement' => 'disp_custom']]);
-        $this->add_control('hr1', ['type' => \Elementor\Controls_Manager::DIVIDER, 'style' => 'thick']);
+        $this->add_control('hr1', ['type' => Controls_Manager::DIVIDER, 'style' => 'thick']);
         $this->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'none', 'options' => ['none' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')]]);
         $this->add_control('link', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'condition' => ['link_to' => 'custom'], 'show_label' => \false]);
         $this->end_controls_section();
@@ -176,25 +176,25 @@ class ImagesDistortionHover extends \DynamicContentForElementor\Widgets\WidgetPr
 		var fragmentStyle = settings.distortion_effect;
 
 		var image1 = {
-		  id: settings.image_1.id,
-		  url: settings.image_1.url,
-		  size: settings.size,
-		  dimension: settings.image_custom_dimension,
-		  model: view.getEditModel()
+			id: settings.image_1.id,
+			url: settings.image_1.url,
+			size: settings.size,
+			dimension: settings.image_custom_dimension,
+			model: view.getEditModel()
 		};
 		var image2 = {
-		  id: settings.image_2.id,
-		  url: settings.image_2.url,
-		  size: settings.size,
-		  dimension: settings.image_custom_dimension,
-		  model: view.getEditModel()
+			id: settings.image_2.id,
+			url: settings.image_2.url,
+			size: settings.size,
+			dimension: settings.image_custom_dimension,
+			model: view.getEditModel()
 		};
 		var imageDisplacement = {
-		  id: settings.displacementImage.id,
-		  url: settings.displacementImage.url,
-		  size: settings.size,
-		  dimension: settings.image_custom_dimension,
-		  model: view.getEditModel()
+			id: settings.displacementImage.id,
+			url: settings.displacementImage.url,
+			size: settings.size,
+			dimension: settings.image_custom_dimension,
+			model: view.getEditModel()
 		};
 		var url_image1 = elementor.imagesManager.getImageUrl( image1 );
 		var url_image2 = elementor.imagesManager.getImageUrl( image2 );

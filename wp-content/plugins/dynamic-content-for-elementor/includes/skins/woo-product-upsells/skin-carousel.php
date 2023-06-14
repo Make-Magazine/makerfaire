@@ -8,6 +8,11 @@ if (!\defined('ABSPATH')) {
 }
 class Woo_Product_Upsells_Skin_Carousel extends \DynamicContentForElementor\Includes\Skins\Skin_Carousel
 {
+    /**
+     * Register Controls Actions
+     *
+     * @return void
+     */
     protected function _register_controls_actions()
     {
         add_action('elementor/element/dce-woo-product-upsells/section_query/after_section_end', [$this, 'register_controls_layout']);

@@ -47,13 +47,13 @@ class Voice extends BaseType implements TypeInterface
     /**
      * Optional. MIME type of the file as defined by sender
      *
-     * @var string
+     * @var string|null
      */
     protected $mimeType;
     /**
      * Optional. File size
      *
-     * @var int
+     * @var int|null
      */
     protected $fileSize;
     /**
@@ -65,6 +65,8 @@ class Voice extends BaseType implements TypeInterface
     }
     /**
      * @param string $fileId
+     *
+     * @return void
      */
     public function setFileId($fileId)
     {
@@ -79,6 +81,8 @@ class Voice extends BaseType implements TypeInterface
     }
     /**
      * @param string $fileUniqueId
+     *
+     * @return void
      */
     public function setFileUniqueId($fileUniqueId)
     {
@@ -92,9 +96,11 @@ class Voice extends BaseType implements TypeInterface
         return $this->duration;
     }
     /**
-     * @param int $duration
+     * @param mixed $duration
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
     public function setDuration($duration)
     {
@@ -105,7 +111,7 @@ class Voice extends BaseType implements TypeInterface
         }
     }
     /**
-     * @return string
+     * @return null|string
      */
     public function getMimeType()
     {
@@ -113,22 +119,26 @@ class Voice extends BaseType implements TypeInterface
     }
     /**
      * @param string $mimeType
+     *
+     * @return void
      */
     public function setMimeType($mimeType)
     {
         $this->mimeType = $mimeType;
     }
     /**
-     * @return int
+     * @return int|null
      */
     public function getFileSize()
     {
         return $this->fileSize;
     }
     /**
-     * @param int $fileSize
+     * @param mixed $fileSize
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
     public function setFileSize($fileSize)
     {

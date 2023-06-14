@@ -22,6 +22,8 @@ class StickyPosts extends \DynamicContentForElementor\Widgets\DynamicPostsBase
         $this->add_skin(new Skins\Sticky_Posts_Skin_Carousel($this));
         $this->add_skin(new Skins\Sticky_Posts_Skin_DualCarousel($this));
         $this->add_skin(new Skins\Sticky_Posts_Skin_Accordion($this));
+        $this->add_skin(new Skins\Sticky_Posts_Skin_List($this));
+        $this->add_skin(new Skins\Sticky_Posts_Skin_Table($this));
         $this->add_skin(new Skins\Sticky_Posts_Skin_Timeline($this));
     }
     /**

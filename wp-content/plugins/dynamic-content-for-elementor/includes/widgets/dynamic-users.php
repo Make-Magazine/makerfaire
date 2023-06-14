@@ -453,7 +453,7 @@ class DynamicUsers extends \DynamicContentForElementor\Widgets\WidgetPrototype
         }
         echo '</div>';
         if ($settings['pagination_enable'] && $settings['results_per_page'] != '-1') {
-            Helper::numeric_query_pagination(\ceil($number_of_users / $settings['results_per_page']), $settings);
+            Helper::numeric_query_pagination(\intval(\ceil($number_of_users / $settings['results_per_page'])), $settings);
         }
     }
     protected function get_attachments($tx_before, $users, $size_attach, $is_attachment_url)

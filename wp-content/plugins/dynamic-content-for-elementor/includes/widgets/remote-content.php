@@ -21,7 +21,7 @@ class RemoteContent extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->start_controls_section('section_remotecontent', ['label' => $this->get_title(), 'tab' => Controls_Manager::TAB_CONTENT]);
         $this->add_control('url', ['label' => __('URL', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => '']);
         $this->add_control('incorporate', ['label' => __('Incorporate in the page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'description' => __('Insert remote content in the HTML page or add it as an iframe', 'dynamic-content-for-elementor')]);
-        $this->add_control('method', ['label' => __('Method', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'get', 'options' => ['GET' => 'GET', 'POST' => 'POST'], 'condition' => ['incorporate!' => '']]);
+        $this->add_control('method', ['label' => __('Method', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'GET', 'options' => ['GET' => 'GET', 'POST' => 'POST'], 'condition' => ['incorporate!' => '']]);
         $this->add_control('headers', ['label' => __('Headers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXTAREA, 'placeholder' => 'Authorization: <type> <token>', 'description' => __('Please use the format "Key: value", one per line', 'dynamic-content-for-elementor'), 'rows' => '3', 'condition' => ['incorporate!' => '']]);
         $repeater_parameters = new \Elementor\Repeater();
         $repeater_parameters->add_control('key', ['label' => __('Key', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT]);
@@ -37,7 +37,7 @@ class RemoteContent extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('iframe_doc', ['label' => __('Use Google Document preview', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['incorporate' => '']]);
         $this->add_responsive_control('iframe_height', ['label' => __('Height', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '80', 'unit' => 'vh'], 'range' => ['px' => ['min' => 0, 'max' => 1920, 'step' => 1], '%' => ['min' => 5, 'max' => 100, 'step' => 1], 'vh' => ['min' => 5, 'max' => 100, 'step' => 1]], 'size_units' => ['%', 'px', 'vh'], 'selectors' => ['{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};'], 'condition' => ['incorporate' => '']]);
         $this->end_controls_section();
-        $this->start_controls_section('section_data', ['label' => __('Data', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT]);
+        $this->start_controls_section('section_data', ['label' => __('Data', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['incorporate!' => '']]);
         $this->add_control('data_json', ['label' => __('Data is JSON formatted', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['incorporate!' => '']]);
         $this->add_control('tag_id', ['label' => __('Tag, ID or Class', 'dynamic-content-for-elementor'), 'description' => __('To include only subcontent of remote page. Use like jQuery selector (footer, #element, h2.big, etc).', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => 'body', 'default' => 'body', 'condition' => ['incorporate!' => '', 'data_json' => '']]);
         $this->add_control('limit_tags', ['label' => __('Limit elements', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'description' => __('Set -1 for unlimited', 'dynamic-content-for-elementor'), 'default' => -1, 'condition' => ['incorporate!' => '', 'data_json' => '']]);
@@ -56,10 +56,6 @@ class RemoteContent extends \DynamicContentForElementor\Widgets\WidgetPrototype
     protected function safe_render()
     {
         $settings = $this->get_settings_for_display();
-        if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
-            $this->render_non_admin_notice();
-            return;
-        }
         if (empty($settings['url'])) {
             Helper::notice('', __('Add an URL to begin', 'dynamic-content-for-elementor'));
             return;
@@ -200,6 +196,7 @@ class RemoteContent extends \DynamicContentForElementor\Widgets\WidgetPrototype
                             }
                             $aElem = \implode('<a ', $anchors);
                         }
+                        $aElem = apply_filters('dynamicooo/remote-content/html-element', $aElem);
                         echo $aElem;
                         echo '</div>';
                     }
@@ -210,9 +207,18 @@ class RemoteContent extends \DynamicContentForElementor\Widgets\WidgetPrototype
         } else {
             // view as simple iframe
             if ($settings['iframe_doc']) {
-                $url = 'https://docs.google.com/viewer?embedded=true&url=' . \urlencode($url);
+                $this->set_render_attribute('iframe', 'src', 'https://docs.google.com/viewer?embedded=true&url=' . \urlencode($url));
+            } else {
+                $this->set_render_attribute('iframe', 'src', $url);
             }
-            echo '<iframe src="' . $url . '" frameborder="0" width="100%" height="' . $settings['iframe_height']['size'] . '"></iframe>';
+            $this->set_render_attribute('iframe', 'frameborder', '0');
+            $this->set_render_attribute('iframe', 'width', '100%');
+            $this->set_render_attribute('iframe', 'height', $settings['iframe_height']['size']);
+            ?>
+			<iframe <?php 
+            echo $this->get_render_attribute_string('iframe');
+            ?>></iframe>
+			<?php 
         }
     }
     protected function get_transient_prefix()

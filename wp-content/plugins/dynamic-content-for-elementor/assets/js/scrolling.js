@@ -84,15 +84,6 @@
             document.body.style.height = `${height}px`;
         }
 
-        resize() {
-            if (directionScroll == 'vertical') {
-                this.setHeight();
-            } else if (directionScroll == 'horizontal') {
-                this.setWidth();
-            }
-            this.scroll();
-        }
-
         preload() {
             imagesLoaded(this.dom.content, (instance) => {
                 if (directionScroll == 'vertical') {
@@ -177,6 +168,7 @@
             } else if (directionScroll == 'horizontal') {
                 this.setWidth();
             }
+			this.scroll();
         }
 
         addEvents() {
@@ -256,13 +248,6 @@
     var mainWrap = {};
     var skew_inertiaScroll = 20;
     var bounce_inertiaScroll = 0;
-
-    let sx = 0;
-    let sy = 0;
-
-    let dx = sx;
-    let dy = sy;
-
     var requestId;
 
     // Init - Page Snap
@@ -276,7 +261,7 @@
 				$customClass = settings_page.custom_class_section_sfy.substring(1);
 			}
         } else {
-            $customClass = 'elementor-section:not(.elementor-inner-section)';
+            $customClass = 'elementor-section:not(.elementor-inner-section):not(.elementor-sticky__spacer)';
         }
 
         target_sections = '.elementor-' + currentPostId;
@@ -519,7 +504,7 @@
         if (settings_page.custom_class_section) {
             $customClass = settings_page.custom_class_section;
         } else {
-            $customClass = 'elementor-section';
+            $customClass = 'elementor-top-section';
         }
 
         // SPEED

@@ -17,6 +17,8 @@ trait Navigation
         }
         $paged = get_query_var('paged') ? absint(get_query_var('paged')) : 1;
         $max = \intval($wp_query->max_num_pages);
+        $links = [];
+        //phpstan
         $prev_arrow = is_rtl() ? 'fa fa-angle-right' : 'fa fa-angle-left';
         $next_arrow = is_rtl() ? 'fa fa-angle-left' : 'fa fa-angle-right';
         /** Add current page to the array */
@@ -120,7 +122,7 @@ trait Navigation
         return $link_next;
     }
     /**
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      * @param string $key
      * @return array{left: string|false, right: string|false}
      */
@@ -151,7 +153,16 @@ trait Navigation
         }
         return $icon;
     }
-    public static function numeric_query_pagination($pages, $settings, $class = '')
+    /**
+     *  Numeric Query Pagination
+     *
+     * @param int|string $pages
+     * @param array<mixed> $settings
+     * @param string $class
+     * @param bool $rtl
+     * @return void
+     */
+    public static function numeric_query_pagination($pages, $settings, $class = '', $rtl = \false)
     {
         $search_filter_query = \false;
         if (isset($settings['query_type']) && $settings['query_type'] === 'search_filter') {
@@ -173,11 +184,19 @@ trait Navigation
                 $pages = 1;
             }
         }
-        if (1 != $pages) {
+        if ($pages !== 1) {
             if ($class) {
-                echo '<div class="dce-pagination ' . $class . '">';
+                if (!$rtl) {
+                    echo '<div class="dce-pagination ' . $class . '">';
+                } else {
+                    echo '<div class="dce-pagination ' . $class . '" dir="rtl">';
+                }
             } else {
-                echo '<div class="dce-pagination">';
+                if (!$rtl) {
+                    echo '<div class="dce-pagination">';
+                } else {
+                    echo '<div class="dce-pagination" dir="rtl">';
+                }
             }
             // Progression
             if ($settings['pagination_show_progression']) {

@@ -38,37 +38,43 @@ class ReplyKeyboardHide extends BaseType
      * 1) users that are @mentioned in the text of the Message object;
      * 2) if the bot's message is a reply (has reply_to_message_id), sender of the original message.
      *
-     * @var bool
+     * @var bool|null
      */
     protected $selective;
+    /**
+     * @param bool $hideKeyboard
+     * @param bool|null $selective
+     */
     public function __construct($hideKeyboard = \true, $selective = null)
     {
         $this->hideKeyboard = $hideKeyboard;
         $this->selective = $selective;
     }
     /**
-     * @return boolean
+     * @return bool
      */
     public function isHideKeyboard()
     {
         return $this->hideKeyboard;
     }
     /**
-     * @param boolean $hideKeyboard
+     * @param bool $hideKeyboard
+     * @return void
      */
     public function setHideKeyboard($hideKeyboard)
     {
         $this->hideKeyboard = $hideKeyboard;
     }
     /**
-     * @return boolean
+     * @return bool|null
      */
     public function isSelective()
     {
         return $this->selective;
     }
     /**
-     * @param boolean $selective
+     * @param bool $selective
+     * @return void
      */
     public function setSelective($selective)
     {

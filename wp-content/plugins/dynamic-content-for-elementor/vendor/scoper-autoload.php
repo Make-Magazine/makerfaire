@@ -12,101 +12,101 @@ if (!class_exists('PucReadmeParser', false) && !interface_exists('PucReadmeParse
 if (!class_exists('Parsedown', false) && !interface_exists('Parsedown', false) && !trait_exists('Parsedown', false)) {
     spl_autoload_call('DynamicOOOS\Parsedown');
 }
-if (!class_exists('Puc_v4p11_Vcs_ThemeUpdateChecker', false) && !interface_exists('Puc_v4p11_Vcs_ThemeUpdateChecker', false) && !trait_exists('Puc_v4p11_Vcs_ThemeUpdateChecker', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Vcs_ThemeUpdateChecker');
+if (!class_exists('Puc_v4p13_Vcs_ThemeUpdateChecker', false) && !interface_exists('Puc_v4p13_Vcs_ThemeUpdateChecker', false) && !trait_exists('Puc_v4p13_Vcs_ThemeUpdateChecker', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Vcs_ThemeUpdateChecker');
 }
-if (!class_exists('Puc_v4p11_Vcs_Reference', false) && !interface_exists('Puc_v4p11_Vcs_Reference', false) && !trait_exists('Puc_v4p11_Vcs_Reference', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Vcs_Reference');
+if (!class_exists('Puc_v4p13_Vcs_Reference', false) && !interface_exists('Puc_v4p13_Vcs_Reference', false) && !trait_exists('Puc_v4p13_Vcs_Reference', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Vcs_Reference');
 }
-if (!class_exists('Puc_v4p11_Vcs_PluginUpdateChecker', false) && !interface_exists('Puc_v4p11_Vcs_PluginUpdateChecker', false) && !trait_exists('Puc_v4p11_Vcs_PluginUpdateChecker', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Vcs_PluginUpdateChecker');
+if (!class_exists('Puc_v4p13_Vcs_PluginUpdateChecker', false) && !interface_exists('Puc_v4p13_Vcs_PluginUpdateChecker', false) && !trait_exists('Puc_v4p13_Vcs_PluginUpdateChecker', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Vcs_PluginUpdateChecker');
 }
-if (!class_exists('Puc_v4p11_Vcs_GitLabApi', false) && !interface_exists('Puc_v4p11_Vcs_GitLabApi', false) && !trait_exists('Puc_v4p11_Vcs_GitLabApi', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Vcs_GitLabApi');
+if (!class_exists('Puc_v4p13_Vcs_GitLabApi', false) && !interface_exists('Puc_v4p13_Vcs_GitLabApi', false) && !trait_exists('Puc_v4p13_Vcs_GitLabApi', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Vcs_GitLabApi');
 }
-if (!class_exists('Puc_v4p11_Vcs_GitHubApi', false) && !interface_exists('Puc_v4p11_Vcs_GitHubApi', false) && !trait_exists('Puc_v4p11_Vcs_GitHubApi', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Vcs_GitHubApi');
+if (!class_exists('Puc_v4p13_Vcs_GitHubApi', false) && !interface_exists('Puc_v4p13_Vcs_GitHubApi', false) && !trait_exists('Puc_v4p13_Vcs_GitHubApi', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Vcs_GitHubApi');
 }
-if (!class_exists('Puc_v4p11_Vcs_BitBucketApi', false) && !interface_exists('Puc_v4p11_Vcs_BitBucketApi', false) && !trait_exists('Puc_v4p11_Vcs_BitBucketApi', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Vcs_BitBucketApi');
+if (!class_exists('Puc_v4p13_Vcs_BitBucketApi', false) && !interface_exists('Puc_v4p13_Vcs_BitBucketApi', false) && !trait_exists('Puc_v4p13_Vcs_BitBucketApi', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Vcs_BitBucketApi');
 }
-if (!class_exists('Puc_v4p11_Vcs_BaseChecker', false) && !interface_exists('Puc_v4p11_Vcs_BaseChecker', false) && !trait_exists('Puc_v4p11_Vcs_BaseChecker', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Vcs_BaseChecker');
+if (!class_exists('Puc_v4p13_Vcs_BaseChecker', false) && !interface_exists('Puc_v4p13_Vcs_BaseChecker', false) && !trait_exists('Puc_v4p13_Vcs_BaseChecker', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Vcs_BaseChecker');
 }
-if (!class_exists('Puc_v4p11_Vcs_Api', false) && !interface_exists('Puc_v4p11_Vcs_Api', false) && !trait_exists('Puc_v4p11_Vcs_Api', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Vcs_Api');
+if (!class_exists('Puc_v4p13_Vcs_Api', false) && !interface_exists('Puc_v4p13_Vcs_Api', false) && !trait_exists('Puc_v4p13_Vcs_Api', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Vcs_Api');
 }
-if (!class_exists('Puc_v4p11_Utils', false) && !interface_exists('Puc_v4p11_Utils', false) && !trait_exists('Puc_v4p11_Utils', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Utils');
+if (!class_exists('Puc_v4p13_Utils', false) && !interface_exists('Puc_v4p13_Utils', false) && !trait_exists('Puc_v4p13_Utils', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Utils');
 }
-if (!class_exists('Puc_v4p11_UpgraderStatus', false) && !interface_exists('Puc_v4p11_UpgraderStatus', false) && !trait_exists('Puc_v4p11_UpgraderStatus', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_UpgraderStatus');
+if (!class_exists('Puc_v4p13_UpgraderStatus', false) && !interface_exists('Puc_v4p13_UpgraderStatus', false) && !trait_exists('Puc_v4p13_UpgraderStatus', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_UpgraderStatus');
 }
-if (!class_exists('Puc_v4p11_UpdateChecker', false) && !interface_exists('Puc_v4p11_UpdateChecker', false) && !trait_exists('Puc_v4p11_UpdateChecker', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_UpdateChecker');
+if (!class_exists('Puc_v4p13_UpdateChecker', false) && !interface_exists('Puc_v4p13_UpdateChecker', false) && !trait_exists('Puc_v4p13_UpdateChecker', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_UpdateChecker');
 }
-if (!class_exists('Puc_v4p11_Update', false) && !interface_exists('Puc_v4p11_Update', false) && !trait_exists('Puc_v4p11_Update', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Update');
+if (!class_exists('Puc_v4p13_Update', false) && !interface_exists('Puc_v4p13_Update', false) && !trait_exists('Puc_v4p13_Update', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Update');
 }
-if (!class_exists('Puc_v4p11_Theme_UpdateChecker', false) && !interface_exists('Puc_v4p11_Theme_UpdateChecker', false) && !trait_exists('Puc_v4p11_Theme_UpdateChecker', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Theme_UpdateChecker');
+if (!class_exists('Puc_v4p13_Theme_UpdateChecker', false) && !interface_exists('Puc_v4p13_Theme_UpdateChecker', false) && !trait_exists('Puc_v4p13_Theme_UpdateChecker', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Theme_UpdateChecker');
 }
-if (!class_exists('Puc_v4p11_Theme_Update', false) && !interface_exists('Puc_v4p11_Theme_Update', false) && !trait_exists('Puc_v4p11_Theme_Update', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Theme_Update');
+if (!class_exists('Puc_v4p13_Theme_Update', false) && !interface_exists('Puc_v4p13_Theme_Update', false) && !trait_exists('Puc_v4p13_Theme_Update', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Theme_Update');
 }
-if (!class_exists('Puc_v4p11_Theme_Package', false) && !interface_exists('Puc_v4p11_Theme_Package', false) && !trait_exists('Puc_v4p11_Theme_Package', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Theme_Package');
+if (!class_exists('Puc_v4p13_Theme_Package', false) && !interface_exists('Puc_v4p13_Theme_Package', false) && !trait_exists('Puc_v4p13_Theme_Package', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Theme_Package');
 }
-if (!class_exists('Puc_v4p11_StateStore', false) && !interface_exists('Puc_v4p11_StateStore', false) && !trait_exists('Puc_v4p11_StateStore', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_StateStore');
+if (!class_exists('Puc_v4p13_StateStore', false) && !interface_exists('Puc_v4p13_StateStore', false) && !trait_exists('Puc_v4p13_StateStore', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_StateStore');
 }
-if (!class_exists('Puc_v4p11_Scheduler', false) && !interface_exists('Puc_v4p11_Scheduler', false) && !trait_exists('Puc_v4p11_Scheduler', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Scheduler');
+if (!class_exists('Puc_v4p13_Scheduler', false) && !interface_exists('Puc_v4p13_Scheduler', false) && !trait_exists('Puc_v4p13_Scheduler', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Scheduler');
 }
-if (!class_exists('Puc_v4p11_Plugin_UpdateChecker', false) && !interface_exists('Puc_v4p11_Plugin_UpdateChecker', false) && !trait_exists('Puc_v4p11_Plugin_UpdateChecker', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Plugin_UpdateChecker');
+if (!class_exists('Puc_v4p13_Plugin_UpdateChecker', false) && !interface_exists('Puc_v4p13_Plugin_UpdateChecker', false) && !trait_exists('Puc_v4p13_Plugin_UpdateChecker', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Plugin_UpdateChecker');
 }
-if (!class_exists('Puc_v4p11_Plugin_Update', false) && !interface_exists('Puc_v4p11_Plugin_Update', false) && !trait_exists('Puc_v4p11_Plugin_Update', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Plugin_Update');
+if (!class_exists('Puc_v4p13_Plugin_Update', false) && !interface_exists('Puc_v4p13_Plugin_Update', false) && !trait_exists('Puc_v4p13_Plugin_Update', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Plugin_Update');
 }
-if (!class_exists('Puc_v4p11_Plugin_Ui', false) && !interface_exists('Puc_v4p11_Plugin_Ui', false) && !trait_exists('Puc_v4p11_Plugin_Ui', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Plugin_Ui');
+if (!class_exists('Puc_v4p13_Plugin_Ui', false) && !interface_exists('Puc_v4p13_Plugin_Ui', false) && !trait_exists('Puc_v4p13_Plugin_Ui', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Plugin_Ui');
 }
-if (!class_exists('Puc_v4p11_Plugin_Package', false) && !interface_exists('Puc_v4p11_Plugin_Package', false) && !trait_exists('Puc_v4p11_Plugin_Package', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Plugin_Package');
+if (!class_exists('Puc_v4p13_Plugin_Package', false) && !interface_exists('Puc_v4p13_Plugin_Package', false) && !trait_exists('Puc_v4p13_Plugin_Package', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Plugin_Package');
 }
-if (!class_exists('Puc_v4p11_Plugin_Info', false) && !interface_exists('Puc_v4p11_Plugin_Info', false) && !trait_exists('Puc_v4p11_Plugin_Info', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Plugin_Info');
+if (!class_exists('Puc_v4p13_Plugin_Info', false) && !interface_exists('Puc_v4p13_Plugin_Info', false) && !trait_exists('Puc_v4p13_Plugin_Info', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Plugin_Info');
 }
-if (!class_exists('Puc_v4p11_OAuthSignature', false) && !interface_exists('Puc_v4p11_OAuthSignature', false) && !trait_exists('Puc_v4p11_OAuthSignature', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_OAuthSignature');
+if (!class_exists('Puc_v4p13_OAuthSignature', false) && !interface_exists('Puc_v4p13_OAuthSignature', false) && !trait_exists('Puc_v4p13_OAuthSignature', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_OAuthSignature');
 }
-if (!class_exists('Puc_v4p11_Metadata', false) && !interface_exists('Puc_v4p11_Metadata', false) && !trait_exists('Puc_v4p11_Metadata', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Metadata');
+if (!class_exists('Puc_v4p13_Metadata', false) && !interface_exists('Puc_v4p13_Metadata', false) && !trait_exists('Puc_v4p13_Metadata', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Metadata');
 }
-if (!class_exists('Puc_v4p11_InstalledPackage', false) && !interface_exists('Puc_v4p11_InstalledPackage', false) && !trait_exists('Puc_v4p11_InstalledPackage', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_InstalledPackage');
+if (!class_exists('Puc_v4p13_InstalledPackage', false) && !interface_exists('Puc_v4p13_InstalledPackage', false) && !trait_exists('Puc_v4p13_InstalledPackage', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_InstalledPackage');
 }
-if (!class_exists('Puc_v4p11_Factory', false) && !interface_exists('Puc_v4p11_Factory', false) && !trait_exists('Puc_v4p11_Factory', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Factory');
+if (!class_exists('Puc_v4p13_Factory', false) && !interface_exists('Puc_v4p13_Factory', false) && !trait_exists('Puc_v4p13_Factory', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Factory');
 }
-if (!class_exists('Puc_v4p11_DebugBar_ThemePanel', false) && !interface_exists('Puc_v4p11_DebugBar_ThemePanel', false) && !trait_exists('Puc_v4p11_DebugBar_ThemePanel', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_DebugBar_ThemePanel');
+if (!class_exists('Puc_v4p13_DebugBar_ThemePanel', false) && !interface_exists('Puc_v4p13_DebugBar_ThemePanel', false) && !trait_exists('Puc_v4p13_DebugBar_ThemePanel', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_DebugBar_ThemePanel');
 }
-if (!class_exists('Puc_v4p11_DebugBar_PluginPanel', false) && !interface_exists('Puc_v4p11_DebugBar_PluginPanel', false) && !trait_exists('Puc_v4p11_DebugBar_PluginPanel', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_DebugBar_PluginPanel');
+if (!class_exists('Puc_v4p13_DebugBar_PluginPanel', false) && !interface_exists('Puc_v4p13_DebugBar_PluginPanel', false) && !trait_exists('Puc_v4p13_DebugBar_PluginPanel', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_DebugBar_PluginPanel');
 }
-if (!class_exists('Puc_v4p11_DebugBar_PluginExtension', false) && !interface_exists('Puc_v4p11_DebugBar_PluginExtension', false) && !trait_exists('Puc_v4p11_DebugBar_PluginExtension', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_DebugBar_PluginExtension');
+if (!class_exists('Puc_v4p13_DebugBar_PluginExtension', false) && !interface_exists('Puc_v4p13_DebugBar_PluginExtension', false) && !trait_exists('Puc_v4p13_DebugBar_PluginExtension', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_DebugBar_PluginExtension');
 }
-if (!class_exists('Puc_v4p11_DebugBar_Panel', false) && !interface_exists('Puc_v4p11_DebugBar_Panel', false) && !trait_exists('Puc_v4p11_DebugBar_Panel', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_DebugBar_Panel');
+if (!class_exists('Puc_v4p13_DebugBar_Panel', false) && !interface_exists('Puc_v4p13_DebugBar_Panel', false) && !trait_exists('Puc_v4p13_DebugBar_Panel', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_DebugBar_Panel');
 }
-if (!class_exists('Puc_v4p11_DebugBar_Extension', false) && !interface_exists('Puc_v4p11_DebugBar_Extension', false) && !trait_exists('Puc_v4p11_DebugBar_Extension', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_DebugBar_Extension');
+if (!class_exists('Puc_v4p13_DebugBar_Extension', false) && !interface_exists('Puc_v4p13_DebugBar_Extension', false) && !trait_exists('Puc_v4p13_DebugBar_Extension', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_DebugBar_Extension');
 }
-if (!class_exists('Puc_v4p11_Autoloader', false) && !interface_exists('Puc_v4p11_Autoloader', false) && !trait_exists('Puc_v4p11_Autoloader', false)) {
-    spl_autoload_call('DynamicOOOS\Puc_v4p11_Autoloader');
+if (!class_exists('Puc_v4p13_Autoloader', false) && !interface_exists('Puc_v4p13_Autoloader', false) && !trait_exists('Puc_v4p13_Autoloader', false)) {
+    spl_autoload_call('DynamicOOOS\Puc_v4p13_Autoloader');
 }
 if (!class_exists('TCPDF_PARSER', false) && !interface_exists('TCPDF_PARSER', false) && !trait_exists('TCPDF_PARSER', false)) {
     spl_autoload_call('DynamicOOOS\TCPDF_PARSER');
@@ -174,8 +174,8 @@ if (!class_exists('HTML5_Data', false) && !interface_exists('HTML5_Data', false)
 if (!class_exists('Cpdf', false) && !interface_exists('Cpdf', false) && !trait_exists('Cpdf', false)) {
     spl_autoload_call('DynamicOOOS\Cpdf');
 }
-if (!class_exists('ComposerAutoloaderInit5d26c7d34a9037d88bb3128cb3eb0696', false) && !interface_exists('ComposerAutoloaderInit5d26c7d34a9037d88bb3128cb3eb0696', false) && !trait_exists('ComposerAutoloaderInit5d26c7d34a9037d88bb3128cb3eb0696', false)) {
-    spl_autoload_call('DynamicOOOS\ComposerAutoloaderInit5d26c7d34a9037d88bb3128cb3eb0696');
+if (!class_exists('ComposerAutoloaderInite622c2046eeddb5a642e1961c9bd4918', false) && !interface_exists('ComposerAutoloaderInite622c2046eeddb5a642e1961c9bd4918', false) && !trait_exists('ComposerAutoloaderInite622c2046eeddb5a642e1961c9bd4918', false)) {
+    spl_autoload_call('DynamicOOOS\ComposerAutoloaderInite622c2046eeddb5a642e1961c9bd4918');
 }
 if (!class_exists('Mustache_Tokenizer', false) && !interface_exists('Mustache_Tokenizer', false) && !trait_exists('Mustache_Tokenizer', false)) {
     spl_autoload_call('DynamicOOOS\Mustache_Tokenizer');
@@ -334,6 +334,11 @@ if (!function_exists('trailingslashit')) {
         return \DynamicOOOS\trailingslashit(...func_get_args());
     }
 }
+if (!function_exists('plugins_url')) {
+    function plugins_url() {
+        return \DynamicOOOS\plugins_url(...func_get_args());
+    }
+}
 if (!function_exists('untrailingslashit')) {
     function untrailingslashit() {
         return \DynamicOOOS\untrailingslashit(...func_get_args());
@@ -342,6 +347,11 @@ if (!function_exists('untrailingslashit')) {
 if (!function_exists('is_wp_error')) {
     function is_wp_error() {
         return \DynamicOOOS\is_wp_error(...func_get_args());
+    }
+}
+if (!function_exists('add_query_arg')) {
+    function add_query_arg() {
+        return \DynamicOOOS\add_query_arg(...func_get_args());
     }
 }
 if (!function_exists('wp_remote_get')) {
@@ -357,11 +367,6 @@ if (!function_exists('wp_remote_retrieve_response_code')) {
 if (!function_exists('wp_remote_retrieve_body')) {
     function wp_remote_retrieve_body() {
         return \DynamicOOOS\wp_remote_retrieve_body(...func_get_args());
-    }
-}
-if (!function_exists('add_query_arg')) {
-    function add_query_arg() {
-        return \DynamicOOOS\add_query_arg(...func_get_args());
     }
 }
 if (!function_exists('add_filter')) {
@@ -614,11 +619,6 @@ if (!function_exists('check_ajax_referer')) {
         return \DynamicOOOS\check_ajax_referer(...func_get_args());
     }
 }
-if (!function_exists('plugins_url')) {
-    function plugins_url() {
-        return \DynamicOOOS\plugins_url(...func_get_args());
-    }
-}
 if (!function_exists('get_theme_root_uri')) {
     function get_theme_root_uri() {
         return \DynamicOOOS\get_theme_root_uri(...func_get_args());
@@ -644,9 +644,9 @@ if (!function_exists('trigger_deprecation')) {
         return \DynamicOOOS\trigger_deprecation(...func_get_args());
     }
 }
-if (!function_exists('composerRequire5d26c7d34a9037d88bb3128cb3eb0696')) {
-    function composerRequire5d26c7d34a9037d88bb3128cb3eb0696() {
-        return \DynamicOOOS\composerRequire5d26c7d34a9037d88bb3128cb3eb0696(...func_get_args());
+if (!function_exists('composerRequiree622c2046eeddb5a642e1961c9bd4918')) {
+    function composerRequiree622c2046eeddb5a642e1961c9bd4918() {
+        return \DynamicOOOS\composerRequiree622c2046eeddb5a642e1961c9bd4918(...func_get_args());
     }
 }
 if (!function_exists('get_header')) {
@@ -677,16 +677,6 @@ if (!function_exists('do_shortcode')) {
 if (!function_exists('the_content')) {
     function the_content() {
         return \DynamicOOOS\the_content(...func_get_args());
-    }
-}
-if (!function_exists('_e')) {
-    function _e() {
-        return \DynamicOOOS\_e(...func_get_args());
-    }
-}
-if (!function_exists('get_search_query')) {
-    function get_search_query() {
-        return \DynamicOOOS\get_search_query(...func_get_args());
     }
 }
 if (!function_exists('get_search_form')) {
@@ -729,6 +719,11 @@ if (!function_exists('plugin_dir_path')) {
         return \DynamicOOOS\plugin_dir_path(...func_get_args());
     }
 }
+if (!function_exists('wp_register_style')) {
+    function wp_register_style() {
+        return \DynamicOOOS\wp_register_style(...func_get_args());
+    }
+}
 if (!function_exists('register_activation_hook')) {
     function register_activation_hook() {
         return \DynamicOOOS\register_activation_hook(...func_get_args());
@@ -752,11 +747,6 @@ if (!function_exists('load_plugin_textdomain')) {
 if (!function_exists('dce_enqueue_admin_styles')) {
     function dce_enqueue_admin_styles() {
         return \DynamicOOOS\dce_enqueue_admin_styles(...func_get_args());
-    }
-}
-if (!function_exists('wp_register_style')) {
-    function wp_register_style() {
-        return \DynamicOOOS\wp_register_style(...func_get_args());
     }
 }
 if (!function_exists('dce_fail_load')) {

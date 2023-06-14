@@ -154,13 +154,13 @@ class Breadcrumbs extends \DynamicContentForElementor\Widgets\WidgetPrototype
                     echo '<li class="item-current item-current-' . $userdata->user_nicename . '"><span class="bread-current bread-current-' . $userdata->user_nicename . '" title="' . $userdata->display_name . '">' . __('Author', 'dynamic-content-for-elementor') . $userdata->display_name . '</span></li>';
                 } elseif (get_query_var('paged')) {
                     // Paginated archives
-                    echo '<li class="item-current item-current-' . get_query_var('paged') . '"><span class="bread-current bread-current-' . get_query_var('paged') . '" title="Page ' . get_query_var('paged') . '">' . __('Page', 'dynamic-content-for-elementor') . ' ' . get_query_var('paged') . '</span></li>';
+                    echo '<li class="item-current item-current-' . get_query_var('paged') . '"><span class="bread-current bread-current-' . get_query_var('paged') . '" title="' . __('Page', 'dynamic-content-for-elementor') . ' ' . get_query_var('paged') . '">' . __('Page', 'dynamic-content-for-elementor') . ' ' . get_query_var('paged') . '</span></li>';
                 } elseif (is_search()) {
                     // Search results page
-                    echo '<li class="item-current item-current-' . get_search_query() . '"><span class="bread-current bread-current-' . get_search_query() . '" title="Search results for: ' . get_search_query() . '">Search results for: ' . get_search_query() . '</span></li>';
+                    echo '<li class="item-current item-current-' . get_search_query() . '"><span class="bread-current bread-current-' . get_search_query() . '" title="' . __('Search results for:', 'dynamic-content-for-elementor') . ' ' . get_search_query() . '">' . __('Search results for:', 'dynamic-content-for-elementor') . ' ' . get_search_query() . '</span></li>';
                 } elseif (is_404()) {
                     // 404 page
-                    echo '<li>Error 404</li>';
+                    echo '<li>' . __('Error 404', 'dynamic-content-for-elementor') . '/li>';
                 }
             }
             echo '</ul>';

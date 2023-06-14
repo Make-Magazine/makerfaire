@@ -30,6 +30,7 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         parent::run_once();
         $save_guard = \DynamicContentForElementor\Plugin::instance()->save_guard;
         $save_guard->register_unsafe_control('any', 'custom_query_code');
+        $save_guard->register_unsafe_control('any', 'html_tokens_editor');
     }
     protected $depended_scripts = ['dce-dynamicPosts-base'];
     protected $depended_styles = ['dce-dynamic-posts'];
@@ -100,54 +101,33 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->register_pagination_controls();
         $this->register_infinitescroll_controls();
         $this->register_query_controls();
+        $this->register_style_direction_controls();
+    }
+    /**
+     * Register Widget Specific Controls
+     *
+     * @return void
+     */
+    protected function register_widget_specific_controls()
+    {
     }
     protected function register_base_controls()
     {
         $taxonomies = Helper::get_taxonomies();
-        $types = Helper::get_post_types();
         $this->start_controls_section('section_dynamicposts', ['label' => $this->get_title(), 'tab' => Controls_Manager::TAB_CONTENT]);
-        // skin: Template
-        $this->add_control('skin_dis_customtemplate', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/template.png" />', 'content_classes' => 'dce-skin-dis dce-ect-dis', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel'], 'style_items' => 'template']]);
-        // skin: Carousel
-        $this->add_control('skin_dis_default', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/default.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'row']]);
-        // skin: Grid
-        $this->add_control('skin_dis_grid', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/grid.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'grid']]);
-        // skin: Carousel
-        $this->add_control('skin_dis_carousel', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/carousel.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'carousel']]);
-        // skin: Filters
-        $this->add_control('skin_dis_filters', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/filters.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'grid-filters']]);
-        // skin: Dual Carousel
-        $this->add_control('skin_dis_dualcarousel', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/dualcarousel.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'dualcarousel']]);
-        // skin: Accordion
-        $this->add_control('skin_dis_accordion', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/accordion.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'accordion']]);
-        // skin: Timeline
-        $this->add_control('skin_dis_timeline', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/timeline.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'timeline']]);
-        // skin: smoothscroll
-        $this->add_control('skin_dis_smoothscroll', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/smoothscroll.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'smoothscroll']]);
-        // skin: gridtofullscreen3d
-        $this->add_control('skin_dis_gridtofullscreen3d', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/gridtofullscreen3d.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'gridtofullscreen3d']]);
-        // skin: crossroadsslideshow
-        $this->add_control('skin_dis_crossroadsslideshow', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/crossroadsslideshow.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'crossroadsslideshow']]);
-        // skin: nextpost
-        $this->add_control('skin_dis_nextpost', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/nextpost.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'nextpost']]);
-        // skin: 3d
-        $this->add_control('skin_dis_3d', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/3d.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => '3d']]);
-        // skin: pagination classic
-        $this->add_control('skin_dis_pagination', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/pagination.png" />', 'content_classes' => 'dce-skin-dis dce-pagination-dis', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => '']]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => '']]]]]]);
-        // skin: infinitescroll
-        $this->add_control('skin_dis_infinitescroll', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/infinitescroll.png" />', 'content_classes' => 'dce-skin-dis dce-pagination-dis', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => 'yes']]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => 'yes']]]]]]);
+        $this->register_skins_images();
         // +********************* Pagination
-        $this->add_control('pagination_enable', ['label' => __('Pagination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']]]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']]]]]]]);
+        $this->add_control('pagination_enable', ['label' => __('Pagination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']]]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']]]]]]]);
         $this->add_control('infiniteScroll_enable', ['label' => __('Infinite Scroll', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'frontend_available' => \true, 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']], ['name' => 'pagination_enable', 'operator' => '!=', 'value' => '']]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']], ['name' => 'pagination_enable', 'operator' => '!=', 'value' => '']]]]]]);
         $this->add_control('style_items', ['label' => __('Items Style', 'dynamic-content-for-elementor'), 'type' => 'images_selector', 'type_selector' => 'image', 'columns_grid' => 5, 'separator' => 'before', 'options' => ['default' => ['title' => __('Default', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'image' => DCE_URL . 'assets/img/layout/top.png'], 'left' => ['title' => __('Left', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'image' => DCE_URL . 'assets/img/layout/left.png'], 'right' => ['title' => __('Right', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'image' => DCE_URL . 'assets/img/layout/right.png'], 'alternate' => ['title' => __('Alternate', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'image' => DCE_URL . 'assets/img/layout/alternate.png'], 'textzone' => ['title' => __('Text Zone', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'image' => DCE_URL . 'assets/img/layout/textzone.png'], 'overlay' => ['title' => __('Overlay', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'image' => DCE_URL . 'assets/img/layout/overlay.png'], 'float' => ['title' => __('Float', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'image' => DCE_URL . 'assets/img/layout/float.png'], 'html_tokens' => ['title' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'image' => DCE_URL . 'assets/img/layout/html_tokens.png'], 'template' => ['title' => __('Elementor Template', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'image' => DCE_URL . 'assets/img/layout/template.png']], 'toggle' => \false, 'render_type' => 'template', 'prefix_class' => 'dce-posts-layout-', 'default' => 'default', 'frontend_available' => \true, 'condition' => ['_skin' => ['', 'grid', 'grid-filters', 'carousel', 'filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion']]]);
         // +********************* Style: Left, Right, Alternate
         $this->add_responsive_control('image_rate', ['label' => __('Distribution (%)', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => '', 'unit' => '%'], 'size_units' => ['%'], 'range' => ['%' => ['min' => 1, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-image-area' => 'width: {{SIZE}}%;', '{{WRAPPER}} .dce-content-area' => 'width: calc( 100% - {{SIZE}}% );'], 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items' => ['left', 'right', 'alternate']]]);
         // +********************* Float Hover style descripton:
-        $this->add_control('float_hoverstyle_description', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('The Float style allows you to create animations between the content and the underlying image, from the Hover effect panel you can set the features.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items' => ['float']]]);
+        $this->add_control('float_hoverstyle_description', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('The Float style allows you to create animations between the content and the image. From the Hover Effect panel you can choose the settings', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items' => ['float']]]);
         if (!\DynamicContentForElementor\Helper::can_register_unsafe_controls()) {
             $this->add_control('html_tokens_notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('You will need administrator capabilities to edit these settings.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning']);
         } else {
-            $this->add_control('html_tokens_editor', ['label' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CODE, 'default' => '<a href="[post:permalink]">[post:thumb]</a><h4><a href="[post:permalink]">[post:title]</a></h4><p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">' . __('Read more', 'dynamic-content-for-elementor') . '</a>', 'description' => __('Type here your content, you can use HTML and Tokens.', 'dynamic-content-for-elementor'), 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items' => 'html_tokens']]);
+            $this->add_control('html_tokens_editor', ['label' => __('HTML & Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CODE, 'default' => '<a href="[post:permalink]">[post:thumb]</a><h4><a href="[post:permalink]">[post:title|esc_html]</a></h4><p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">' . __('Read more', 'dynamic-content-for-elementor') . '</a>', 'description' => __('Type here your content, you can use HTML and Tokens.', 'dynamic-content-for-elementor'), 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items' => 'html_tokens']]);
         }
         // +********************* Image Zone Style:
         $this->add_control('heading_imagezone', ['label' => __('Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items!' => ['default', 'template', 'html_tokens']]]);
@@ -168,7 +148,7 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         // +********************* Image Zone: Filters
         $this->add_group_control(Group_Control_Filters_CSS::get_type(), ['name' => 'imagezone_filters', 'label' => __('Filters', 'dynamic-content-for-elementor'), 'render_type' => 'ui', 'selector' => '{{WRAPPER}} .dce-post-block .dce-post-image img', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items!' => ['default', 'template', 'html_tokens']]]);
         // +********************* Content Zone Style:
-        $this->add_control('heading_contentzone', ['label' => __('Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items!' => ['default', 'template', 'html_tokens']]]);
+        $this->add_control('heading_contentzone', ['label' => __('Content Area', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items!' => ['default', 'template', 'html_tokens']]]);
         // +********************* Content Zone: Style
         $this->add_control('contentstyle_popover', ['label' => __('Style', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::POPOVER_TOGGLE, 'label_off' => __('Default', 'dynamic-content-for-elementor'), 'label_on' => __('Custom', 'dynamic-content-for-elementor'), 'return_value' => 'yes', 'render_type' => 'ui', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', 'accordion'], 'style_items!' => ['default', 'template', 'html_tokens']]]);
         $this->start_popover();
@@ -203,10 +183,11 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         if (\DynamicContentForElementor\Plugin::instance()->template_system->is_active()) {
             $this->add_control('native_templatemode_enable', ['label' => __('Template System Block', 'dynamic-content-for-elementor'), 'description' => __('Use the template associated with the type (Menu: Dynamic.ooo > Template System) to manage the appearance of the individual elements of the grid ', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'render_type' => 'template', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion'], 'style_items' => 'template', 'templatemode_enable_2' => '']]);
         }
-        $this->add_control('templatemode_linkable', ['label' => __('Linkable', 'dynamic-content-for-elementor'), 'description' => __('Apply the extended link on the template block.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'frontend_available' => \true, 'render_type' => 'template', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d'], 'style_items' => 'template']]);
+        $this->add_control('templatemode_linkable', ['label' => __('Linkable', 'dynamic-content-for-elementor'), 'description' => __('Apply the extended link to the entire block', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'separator' => 'before', 'frontend_available' => \true, 'render_type' => 'template', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel', 'smoothscroll', '3d']]]);
         $this->end_controls_section();
+        $this->register_widget_specific_controls();
         // ------------------------------------------------------------------ [SECTION ITEMS]
-        $this->start_controls_section('section_items', ['label' => __('Items', 'dynamic-content-for-elementor'), 'condition' => ['_skin!' => ['nextpost'], 'style_items!' => ['template', 'html_tokens']]]);
+        $this->start_controls_section('section_items', ['label' => __('Items', 'dynamic-content-for-elementor'), 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => 'style_items', 'operator' => '!in', 'value' => ['template', 'html_tokens']], ['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'carousel', 'filters', 'dualcarousel', 'smoothscroll', '3d', 'accordion']]]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['list', 'table', 'crossroadsslideshow', 'timeline']]]]]]]);
         $repeater = new Repeater();
         // Items for WooCommerce
         $woocommerce_items = [];
@@ -218,7 +199,12 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         if (Helper::is_jetengine_active()) {
             $jetengine_item = ['item_jetengine' => __('JetEngine Field', 'dynamic-content-for-elementor')];
         }
-        $repeater->add_control('item_id', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'label_block' => \false, 'options' => \array_merge(['item_title' => __('Title', 'dynamic-content-for-elementor'), 'item_image' => __('Featured Image', 'dynamic-content-for-elementor'), 'item_date' => __('Date', 'dynamic-content-for-elementor'), 'item_termstaxonomy' => __('Terms', 'dynamic-content-for-elementor'), 'item_content' => __('Content', 'dynamic-content-for-elementor'), 'item_author' => __('Author', 'dynamic-content-for-elementor'), 'item_custommeta' => __('Custom Meta Field', 'dynamic-content-for-elementor')], $jetengine_item, ['item_readmore' => __('Read More', 'dynamic-content-for-elementor'), 'item_posttype' => __('Post Type', 'dynamic-content-for-elementor')], $woocommerce_items), 'default' => 'item_title']);
+        // Metabox Item
+        $metabox_item = [];
+        if (Helper::is_metabox_active()) {
+            $metabox_item = ['item_metabox' => __('Meta Box Field', 'dynamic-content-for-elementor')];
+        }
+        $repeater->add_control('item_id', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'label_block' => \false, 'options' => \array_merge(['item_title' => __('Title', 'dynamic-content-for-elementor'), 'item_image' => __('Featured Image', 'dynamic-content-for-elementor'), 'item_date' => __('Date', 'dynamic-content-for-elementor'), 'item_termstaxonomy' => __('Terms', 'dynamic-content-for-elementor'), 'item_content' => __('Content', 'dynamic-content-for-elementor'), 'item_author' => __('Author', 'dynamic-content-for-elementor'), 'item_custommeta' => __('Custom Meta Field', 'dynamic-content-for-elementor')], $jetengine_item, $metabox_item, ['item_readmore' => __('Read More', 'dynamic-content-for-elementor'), 'item_posttype' => __('Post Type', 'dynamic-content-for-elementor')], $woocommerce_items), 'default' => 'item_title']);
         // TABS ----------
         $repeater->start_controls_tabs('items_repeater_tab');
         $repeater->start_controls_tab('tab_content', ['label' => __('Content', 'dynamic-content-for-elementor')]);
@@ -239,19 +225,23 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $repeater->add_control('metafield_key', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'default' => '', 'dynamic' => ['active' => \false], 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_custommeta']]]]);
         // Jet Engine
         $repeater->add_control('jetengine_key', ['label' => __('JetEngine Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Field name or key', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'jet', 'dynamic' => ['active' => \false], 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_jetengine']]]]);
-        $repeater->add_control('metafield_type', ['label' => __('Field type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'text', 'options' => ['image' => __('Image', 'dynamic-content-for-elementor'), 'date' => __('Date', 'dynamic-content-for-elementor'), 'text' => __('Text', 'dynamic-content-for-elementor'), 'textarea' => __('Textarea', 'dynamic-content-for-elementor'), 'button' => __('Button (URL)', 'dynamic-content-for-elementor'), 'url' => __('URL', 'dynamic-content-for-elementor')], 'condition' => ['item_id' => ['item_custommeta', 'item_jetengine']]]);
-        $repeater->add_group_control(Group_Control_Image_Size::get_type(), ['name' => 'image_size', 'label' => __('Image Format', 'dynamic-content-for-elementor'), 'default' => 'large', 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'IN', 'value' => ['item_custommeta', 'item_jetengine']], ['name' => 'metafield_type', 'value' => 'image']]]]);
-        $repeater->add_control('metafield_date_format_source', ['label' => __('Date Format - Source', 'dynamic-content-for-elementor'), 'description' => '<a target="_blank" href="https://www.php.net/manual/en/function.date.php">' . __('Use standard PHP format characters', 'dynamic-content-for-elementor') . '</a>', 'type' => Controls_Manager::TEXT, 'default' => 'F j, Y, g:i a', 'placeholder' => 'YmdHis, d/m/Y, m-d-y', 'label_block' => \true, 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_custommeta', 'item_jetengine']], ['name' => 'metafield_type', 'value' => 'date']]]]);
-        $repeater->add_control('metafield_date_format_display', ['label' => __('Date Format - Display', 'dynamic-content-for-elementor'), 'placeholder' => 'YmdHis, d/m/Y, m-d-y', 'type' => Controls_Manager::TEXT, 'default' => 'F j, Y, g:i a', 'label_block' => \true, 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_custommeta', 'item_jetengine']], ['name' => 'metafield_type', 'value' => 'date']]]]);
-        $repeater->add_control('metafield_button_label', ['label' => __('Button Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Click me', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_custommeta', 'item_jetengine']], ['name' => 'metafield_type', 'value' => 'button']]]]);
-        $repeater->add_control('metafield_button_size', ['label' => __('Button Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'sm', 'options' => Helper::get_button_sizes(), 'style_transfer' => \true, 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_custommeta', 'item_jetengine']], ['name' => 'metafield_type', 'value' => 'button']]]]);
+        // Metabox
+        $repeater->add_control('metabox_key', ['label' => __('Meta Box Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Field name or key', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metabox', 'dynamic' => ['active' => \false], 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_metabox']]]]);
+        $repeater->add_control('metafield_type', ['label' => __('Field type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'text', 'options' => ['image' => __('Image', 'dynamic-content-for-elementor'), 'date' => __('Date', 'dynamic-content-for-elementor'), 'text' => __('Text', 'dynamic-content-for-elementor'), 'textarea' => __('Textarea', 'dynamic-content-for-elementor'), 'button' => __('Button (URL)', 'dynamic-content-for-elementor'), 'url' => __('URL', 'dynamic-content-for-elementor')], 'condition' => ['item_id' => ['item_custommeta', 'item_jetengine', 'item_metabox']]]);
+        $repeater->add_group_control(Group_Control_Image_Size::get_type(), ['name' => 'image_size', 'label' => __('Image Format', 'dynamic-content-for-elementor'), 'default' => 'large', 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'IN', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox']], ['name' => 'metafield_type', 'value' => 'image']]]]);
+        $repeater->add_control('metafield_date_format_source', ['label' => __('Date Format - Source', 'dynamic-content-for-elementor'), 'description' => '<a target="_blank" href="https://www.php.net/manual/en/function.date.php">' . __('Use standard PHP format characters', 'dynamic-content-for-elementor') . '</a>', 'type' => Controls_Manager::TEXT, 'default' => 'F j, Y, g:i a', 'placeholder' => 'YmdHis, d/m/Y, m-d-y', 'label_block' => \true, 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox']], ['name' => 'metafield_type', 'value' => 'date']]]]);
+        $repeater->add_control('metafield_date_format_display', ['label' => __('Date Format - Display', 'dynamic-content-for-elementor'), 'placeholder' => 'YmdHis, d/m/Y, m-d-y', 'type' => Controls_Manager::TEXT, 'default' => 'F j, Y, g:i a', 'label_block' => \true, 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox']], ['name' => 'metafield_type', 'value' => 'date']]]]);
+        $repeater->add_control('metafield_button_label', ['label' => __('Button Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Click me', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox']], ['name' => 'metafield_type', 'value' => 'button']]]]);
+        $repeater->add_control('metafield_button_size', ['label' => __('Button Size', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'sm', 'options' => Helper::get_button_sizes(), 'style_transfer' => \true, 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox']], ['name' => 'metafield_type', 'value' => 'button']]]]);
         $repeater->add_control('price_format', ['label' => __('Price Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'both', 'options' => ['both' => __('Both', 'dynamic-content-for-elementor'), 'regular' => __('Regular Price', 'dynamic-content-for-elementor'), 'sale' => __('Sale Price', 'dynamic-content-for-elementor')], 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_productprice']]]]);
+        $repeater->add_control('add_to_cart_action', ['label' => __('Action', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'cart_page', 'options' => ['cart_page' => __('Add to Cart and redirect to Cart Page', 'dynamic-content-for-elementor'), 'ajax' => __('Add to Cart via Ajax', 'dynamic-content-for-elementor')], 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_addtocart']]]]);
+        $repeater->add_control('add_to_cart_ajax_forward', ['label' => __('Hide "View Cart" message after it is added', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'none', 'return_value' => 'none', 'render_type' => 'template', 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} .wc-forward' => 'display: {{VALUE}}'], 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_addtocart'], ['name' => 'add_to_cart_action', 'operator' => '==', 'value' => 'ajax']]]]);
         $repeater->add_control('add_to_cart_text', ['label' => __('Text', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Add to Cart', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_addtocart']]]]);
-        $repeater->add_control('html_tag_item', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'conditions' => ['terms' => [['name' => 'item_id', 'value' => ['item_custommeta', 'item_jetengine']], ['name' => 'metafield_type', 'value' => 'text']]], 'default' => '']);
-        $repeater->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '', 'separator' => 'before', 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'post' => __('Post URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')], 'conditions' => ['terms' => [['name' => 'item_id', 'value' => ['item_custommeta', 'item_jetengine']], ['name' => 'metafield_type', 'operator' => '!==', 'value' => 'button']]]]);
-        $repeater->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'value' => ['item_custommeta', 'item_jetengine']], ['name' => 'link_to', 'value' => 'custom']]], 'default' => ['url' => ''], 'show_label' => \false]);
+        $repeater->add_control('html_tag_item', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags([], \true), 'conditions' => ['terms' => [['name' => 'item_id', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox']], ['name' => 'metafield_type', 'value' => 'text']]], 'default' => '']);
+        $repeater->add_control('link_to', ['label' => __('Link to', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '', 'separator' => 'before', 'options' => ['' => __('None', 'dynamic-content-for-elementor'), 'home' => __('Home URL', 'dynamic-content-for-elementor'), 'post' => __('Post URL', 'dynamic-content-for-elementor'), 'custom' => __('Custom URL', 'dynamic-content-for-elementor')], 'conditions' => ['terms' => [['name' => 'item_id', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox']], ['name' => 'metafield_type', 'operator' => '!==', 'value' => 'button']]]]);
+        $repeater->add_control('link', ['label' => __('Link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::URL, 'placeholder' => __('https://your-link.com', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox']], ['name' => 'link_to', 'value' => 'custom']]], 'default' => ['url' => ''], 'show_label' => \false]);
         // +********************* Title
-        $repeater->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => __('H1', 'dynamic-content-for-elementor'), 'h2' => __('H2', 'dynamic-content-for-elementor'), 'h3' => __('H3', 'dynamic-content-for-elementor'), 'h4' => __('H4', 'dynamic-content-for-elementor'), 'h5' => __('H5', 'dynamic-content-for-elementor'), 'h6' => __('H6', 'dynamic-content-for-elementor'), 'p' => __('p', 'dynamic-content-for-elementor'), 'div' => __('div', 'dynamic-content-for-elementor'), 'span' => __('span', 'dynamic-content-for-elementor')], 'default' => 'h3', 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_title']]]]);
+        $repeater->add_control('html_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(), 'default' => 'h3', 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_title']]]]);
         // +********************* Date
         $repeater->add_control('date_type', ['label' => __('Date Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['publish' => __('Publish Date', 'dynamic-content-for-elementor'), 'modified' => __('Last Modified Date', 'dynamic-content-for-elementor')], 'default' => 'publish', 'conditions' => ['terms' => [['name' => 'item_id', 'value' => 'item_date']]]]);
         // added block_enable
@@ -285,29 +275,57 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $repeater->add_control('color_item', ['label' => __('Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} > *' => 'color: {{VALUE}};', '{{WRAPPER}} {{CURRENT_ITEM}} a' => 'color: {{VALUE}};'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_image']]]]]);
         $repeater->add_control('color_item_separator', ['label' => __('Separator Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} .dce-term-item .dce-separator' => 'color: {{VALUE}};'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_termstaxonomy']], ['name' => 'block_enable', 'value' => '']]]]);
         $repeater->add_control('color_item_icon', ['label' => __('Icon Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} .dce-post-icon' => 'color: {{VALUE}};'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_termstaxonomy', 'item_date']], ['name' => 'icon_enable', 'value' => 'yes']]]]);
-        $repeater->add_control('bgcolor_item', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} *:not(.dce-post-button) > *' => 'background-color: {{VALUE}};', '{{WRAPPER}} {{CURRENT_ITEM}} a.dce-button' => 'background-color: {{VALUE}};'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_image', 'item_author']]]]]);
+        $repeater->add_control('bgcolor_item', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} *:not(.dce-post-button) > *' => 'background-color: {{VALUE}};', '{{WRAPPER}} {{CURRENT_ITEM}} .dce-post-content' => 'background-color: {{VALUE}};', '{{WRAPPER}} {{CURRENT_ITEM}} a.dce-button' => 'background-color: {{VALUE}};'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_image', 'item_author']]]]]);
         $repeater->add_control('hover_color_item', ['label' => __('Hover Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} a:hover' => 'color: {{VALUE}};'], 'conditions' => ['relation' => 'or', 'terms' => [['name' => 'metafield_type', 'operator' => '!=', 'value' => 'image'], ['name' => 'link_to', 'operator' => '!=', 'value' => '']]]]);
-        $repeater->add_control('hover_bgcolor_item', ['label' => __('Hover Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} a:hover' => 'background-color: {{VALUE}};'], 'condition' => ['metafield_type' => 'button']]);
-        $repeater->add_control('padding_item', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_readmore', 'item_addtocart', 'item_jetengine']]]]]);
+        $repeater->add_control('hover_bgcolor_item', ['label' => __('Hover Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} a:hover' => 'background-color: {{VALUE}};'], 'conditions' => ['relation' => 'or', 'terms' => [['name' => 'metafield_type', 'operator' => '==', 'value' => 'button'], ['name' => 'item_id', 'operator' => '==', 'value' => 'item_addtocart']]]]);
+        $repeater->add_control('title_added', ['label' => __('Added', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'conditions' => ['relation' => 'and', 'terms' => [['name' => 'item_id', 'operator' => '==', 'value' => 'item_addtocart'], ['name' => 'add_to_cart_action', 'operator' => '==', 'value' => 'ajax']]]]);
+        $repeater->add_control('added_color_item', ['label' => __('Text Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} a.added' => 'color: {{VALUE}};'], 'conditions' => ['relation' => 'and', 'terms' => [['name' => 'item_id', 'operator' => '==', 'value' => 'item_addtocart'], ['name' => 'add_to_cart_action', 'operator' => '==', 'value' => 'ajax']]]]);
+        $repeater->add_control('added_bgcolor_item', ['label' => __('Background Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} a.added' => 'background-color: {{VALUE}};'], 'conditions' => ['relation' => 'and', 'terms' => [['name' => 'item_id', 'operator' => '==', 'value' => 'item_addtocart'], ['name' => 'add_to_cart_action', 'operator' => '==', 'value' => 'ajax']]]]);
+        $repeater->add_control('padding_item', ['label' => __('Padding Normal', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%'], 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_readmore', 'item_addtocart', 'item_jetengine']]]]]);
         $repeater->add_control('heading_item_button', ['label' => __('Button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['metafield_type' => 'button']]);
         $repeater->add_control('heading_item_image', ['label' => __('Image', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['metafield_type' => 'image']]);
         $repeater->add_responsive_control('border_radius_item', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em'], 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} .dce-button, {{WRAPPER}} {{CURRENT_ITEM}} .dce-img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'], 'condition' => ['metafield_type' => ['button', 'image']]]);
         $repeater->add_group_control(Group_Control_Border::get_type(), ['name' => 'border_item', 'label' => __('Border', 'dynamic-content-for-elementor'), 'selector' => '{{WRAPPER}} {{CURRENT_ITEM}} .dce-button', 'condition' => ['metafield_type' => ['button', 'image']]]);
         // ------------ SPACES
-        $repeater->add_responsive_control('item_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'rem'], 'separator' => 'before', 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}}:not(.dce-item_readmore) > *, {{WRAPPER}} {{CURRENT_ITEM}} a.dce-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
+        $repeater->add_responsive_control('item_padding', ['label' => __('Padding Special', 'dynamic-content-for-elementor'), 'description' => esc_html__('Will also apply to some of the elements inside the item.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'rem'], 'separator' => 'before', 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}}:not(.dce-item_readmore) > *, {{WRAPPER}} {{CURRENT_ITEM}} a.dce-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $repeater->add_responsive_control('item_margin', ['label' => __('Margin', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'rem'], 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}}' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-        $repeater->add_responsive_control('item_border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_image', 'item_readmore', 'item_custommeta', 'item_jetengine', 'item_addtocart']]]], 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} > *' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-        $repeater->add_group_control(Group_Control_Border::get_type(), ['name' => 'item_border', 'label' => __('Border', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_image', 'item_readmore', 'item_author', 'item_custommeta', 'item_jetengine', 'item_addtocart']]]], 'selector' => '{{WRAPPER}} {{CURRENT_ITEM}} > *']);
-        $repeater->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'box_shadow', 'label' => __('Box Shadow', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_image', 'item_readmore', 'item_author', 'item_custommeta', 'item_jetengine', 'item_addtocart']]]], 'selector' => '{{WsRAPPER}} {{CURRENT_ITEM}} > *']);
+        $repeater->add_responsive_control('item_border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_image', 'item_readmore', 'item_custommeta', 'item_jetengine', 'item_metabox', 'item_addtocart']]]], 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} > *' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
+        $repeater->add_group_control(Group_Control_Border::get_type(), ['name' => 'item_border', 'label' => __('Border', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_image', 'item_readmore', 'item_author', 'item_custommeta', 'item_jetengine', 'item_metabox', 'item_addtocart']]]], 'selector' => '{{WRAPPER}} {{CURRENT_ITEM}} > *']);
+        $repeater->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'box_shadow', 'label' => __('Box Shadow', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_image', 'item_readmore', 'item_author', 'item_custommeta', 'item_jetengine', 'item_metabox', 'item_addtocart']]]], 'selector' => '{{WsRAPPER}} {{CURRENT_ITEM}} > *']);
         $repeater->add_responsive_control('item_in_border_radius', ['label' => __('Border Radius', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', '%', 'em'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_image', 'item_readmore', 'item_addtocart']]]], 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} .dce-button, {{WRAPPER}} {{CURRENT_ITEM}} .dce-img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
         $repeater->add_group_control(Group_Control_Border::get_type(), ['name' => 'item_in_border', 'label' => __('Border', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_image', 'item_readmore', 'item_author', 'item_addtocart']]]], 'selector' => '{{WRAPPER}} {{CURRENT_ITEM}} .dce-button, {{WRAPPER}} {{CURRENT_ITEM}} .dce-img']);
         $repeater->add_group_control(Group_Control_Box_Shadow::get_type(), ['name' => 'box_in_shadow', 'label' => __('Box Shadow', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_image', 'item_readmore', 'item_author', 'item_addtocart']]]], 'selector' => '{{WRAPPER}} {{CURRENT_ITEM}} .dce-button, {{WRAPPER}} {{CURRENT_ITEM}} .dce-img']);
-        $repeater->add_control('display_inline', ['label' => __('Display', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'label_on' => 'Inline', 'label_off' => 'Block', 'return_value' => 'inline-block', 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} > *' => 'display: {{VALUE}};'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_title', 'item_posttype', 'item_date', 'item_content', 'item_termstaxonomy']]]]]);
+        $repeater->add_control('display_inline', ['label' => __('Display', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'inline-block', 'label_on' => 'Inline', 'label_off' => 'Block', 'return_value' => 'inline-block', 'selectors' => ['{{WRAPPER}} {{CURRENT_ITEM}} > *' => 'display: {{VALUE}};'], 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => 'in', 'value' => ['item_title', 'item_posttype', 'item_date', 'item_content', 'item_termstaxonomy']]]]]);
         $repeater->end_controls_tab();
-        $repeater->start_controls_tab('tab_advanced', ['label' => __('Advanced', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_custommeta', 'item_author', 'item_custommeta', 'item_jetengine', 'item_addtocart']]]]]);
+        $repeater->start_controls_tab('tab_advanced', ['label' => __('Advanced', 'dynamic-content-for-elementor'), 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_custommeta', 'item_author', 'item_custommeta', 'item_jetengine', 'item_metabox', 'item_addtocart']]]]]);
         // ADVANCED - TAB
-        $repeater->add_control('use_link', ['label' => __('Use link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_custommeta', 'item_jetengine', 'item_author', 'item_date', 'item_readmore', 'item_addtocart', 'item_content', 'item_posttype']]]]]);
-        $repeater->add_control('open_target_blank', ['label' => __('Open link in a new window', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'conditions' => ['terms' => [['name' => 'use_link', 'value' => 'yes'], ['name' => 'item_id', 'operator' => '!in', 'value' => ['item_custommeta', 'item_jetengine', 'item_author', 'item_date', 'item_content', 'item_posttype', 'item_sku', 'item_addtocart', 'item_productprice']]]]]);
+        $repeater->add_control('use_link', ['label' => __('Use link', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'conditions' => ['terms' => [['name' => 'item_id', 'operator' => '!in', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox', 'item_author', 'item_date', 'item_readmore', 'item_addtocart', 'item_content', 'item_posttype']]]]]);
+        $repeater->add_control('open_target_blank', ['label' => __('Open link in a new window', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'conditions' => ['terms' => [['name' => 'use_link', 'value' => 'yes'], ['name' => 'item_id', 'operator' => '!in', 'value' => ['item_custommeta', 'item_jetengine', 'item_metabox', 'item_author', 'item_date', 'item_content', 'item_posttype', 'item_sku', 'item_addtocart', 'item_productprice']]]]]);
+        $repeater->end_controls_tab();
+        $repeater->start_controls_tab('tab_responsive', ['label' => __('Responsive', 'dynamic-content-for-elementor')]);
+        /**
+         * Responsive
+         *
+         * @copyright Elementor
+         * @license GPLv3
+         */
+        $repeater->add_control('responsive_description', ['raw' => esc_html__('Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::RAW_HTML, 'content_classes' => 'elementor-descriptor']);
+        $active_devices = Helper::get_active_devices_list();
+        foreach ($active_devices as $breakpoint_key) {
+            /**
+             * @var \Elementor\Core\Breakpoints\Breakpoint $breakpoint
+             */
+            $breakpoint = \Elementor\Plugin::$instance->breakpoints->get_active_breakpoints($breakpoint_key);
+            $label = 'desktop' === $breakpoint_key ? __('Desktop', 'dynamic-content-for-elementor') : $breakpoint->get_label();
+            $repeater->add_control('hide_' . $breakpoint_key, [
+                /* translators: %s: Device name. */
+                'label' => \sprintf(__('Hide On %s', 'dynamic-content-for-elementor'), $label),
+                'type' => Controls_Manager::SWITCHER,
+                'label_on' => __('Hide', 'dynamic-content-for-elementor'),
+                'label_off' => __('Show', 'dynamic-content-for-elementor'),
+                'render_type' => 'template',
+            ]);
+        }
         $repeater->end_controls_tab();
         $repeater->end_controls_tabs();
         $this->add_control('list_items', ['type' => Controls_Manager::REPEATER, 'label' => __('Show these items', 'dynamic-content-for-elementor'), 'fields' => $repeater->get_controls(), 'item_actions' => ['add' => \true, 'duplicate' => \false, 'remove' => \true, 'sort' => \true], 'default' => [['item_id' => 'item_title'], ['item_id' => 'item_image']], 'title_field' => '{{{ posts_v2_item_id_to_label(item_id) }}}']);
@@ -341,13 +359,62 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->end_controls_tabs();
         $this->end_controls_section();
     }
+    /**
+     * Register Skins Images
+     *
+     * @return void
+     */
+    protected function register_skins_images()
+    {
+        // skin: Template
+        $this->add_control('skin_dis_customtemplate', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/template.png" />', 'content_classes' => 'dce-skin-dis dce-ect-dis', 'condition' => ['_skin' => ['', 'grid', 'carousel', 'grid-filters', 'dualcarousel'], 'style_items' => 'template']]);
+        // Skin - Pagination Top
+        $this->add_control('skin_pagination_top', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/pagination.png" />', 'content_classes' => 'dce-skin-dis dce-pagination-top', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => ''], ['name' => 'pagination_position', 'operator' => 'in', 'value' => ['top', 'both']], ['name' => 'rtl', 'operator' => '==', 'value' => '']]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => ''], ['name' => 'pagination_position', 'operator' => 'in', 'value' => ['top', 'both']], ['name' => 'rtl', 'operator' => '==', 'value' => '']]]]]]);
+        // Skin - Pagination Top
+        $this->add_control('skin_pagination_top_rtl', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/pagination_rtl.png" />', 'content_classes' => 'dce-skin-dis dce-pagination-top', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => ''], ['name' => 'pagination_position', 'operator' => 'in', 'value' => ['top', 'both']], ['name' => 'rtl', 'operator' => '!=', 'value' => '']]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => ''], ['name' => 'pagination_position', 'operator' => 'in', 'value' => ['top', 'both']], ['name' => 'rtl', 'operator' => '!=', 'value' => '']]]]]]);
+        // skin: Carousel
+        $this->add_control('skin_dis_default', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/default.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'row']]);
+        // skin: Grid
+        $this->add_control('skin_dis_grid', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/grid.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'grid', 'rtl' => '']]);
+        $this->add_control('skin_dis_grid_rtl', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/grid_rtl.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'grid', 'rtl!' => '']]);
+        // skin: Carousel
+        $this->add_control('skin_dis_carousel', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/carousel.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'carousel']]);
+        // skin: Filters
+        $this->add_control('skin_dis_filters', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/filters.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'grid-filters', 'rtl' => '']]);
+        $this->add_control('skin_dis_filters_rtl', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/filters_rtl.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'grid-filters', 'rtl!' => '']]);
+        // skin: Dual Carousel
+        $this->add_control('skin_dis_dualcarousel', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/dualcarousel.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'dualcarousel']]);
+        // skin: Accordion
+        $this->add_control('skin_dis_accordion', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/accordion.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'accordion', 'rtl' => '']]);
+        $this->add_control('skin_dis_accordion_rtl', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/accordion_rtl.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'accordion', 'rtl!' => '']]);
+        // skin: List
+        $this->add_control('skin_dis_list', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/list.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'list', 'rtl' => '']]);
+        $this->add_control('skin_dis_list_rtl', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/list_rtl.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'list', 'rtl!' => '']]);
+        // skin: Table
+        $this->add_control('skin_dis_table', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/table.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'table']]);
+        // skin: Timeline
+        $this->add_control('skin_dis_timeline', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/timeline.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'timeline', 'rtl' => '']]);
+        $this->add_control('skin_dis_timeline_rtl', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/timeline_rtl.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'timeline', 'rtl!' => '']]);
+        // skin: gridtofullscreen3d
+        $this->add_control('skin_dis_gridtofullscreen3d', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/gridtofullscreen3d.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'gridtofullscreen3d']]);
+        // skin: crossroadsslideshow
+        $this->add_control('skin_dis_crossroadsslideshow', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/crossroadsslideshow.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => 'crossroadsslideshow']]);
+        // skin: 3d
+        $this->add_control('skin_dis_3d', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/3d.png" />', 'content_classes' => 'dce-skin-dis', 'condition' => ['_skin' => '3d']]);
+        // Skin - Pagination Bottom
+        $this->add_control('skin_pagination_bottom', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/pagination.png" />', 'content_classes' => 'dce-skin-dis dce-pagination-bottom', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => ''], ['name' => 'pagination_position', 'operator' => 'in', 'value' => ['bottom', 'both']], ['name' => 'rtl', 'operator' => '==', 'value' => '']]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => ''], ['name' => 'pagination_position', 'operator' => 'in', 'value' => ['bottom', 'both']], ['name' => 'rtl', 'operator' => '==', 'value' => '']]]]]]);
+        $this->add_control('skin_pagination_bottom_rtl', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/pagination_rtl.png" />', 'content_classes' => 'dce-skin-dis dce-pagination-bottom', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => ''], ['name' => 'pagination_position', 'operator' => 'in', 'value' => ['bottom', 'both']], ['name' => 'rtl', 'operator' => '!=', 'value' => '']]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => ''], ['name' => 'pagination_position', 'operator' => 'in', 'value' => ['bottom', 'both']], ['name' => 'rtl', 'operator' => '!=', 'value' => '']]]]]]);
+        // skin: infinitescroll
+        $this->add_control('skin_dis_infinitescroll', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => '<img src="' . DCE_URL . 'assets/img/skins/infinitescroll.png" />', 'content_classes' => 'dce-skin-dis dce-pagination-dis', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list']], ['name' => 'post_offset', 'operator' => 'in', 'value' => [0, '']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => 'yes']]], ['terms' => [['name' => '_skin', 'operator' => 'in', 'value' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion']], ['name' => 'query_type', 'operator' => '!in', 'value' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites']], ['name' => 'pagination_enable', 'operator' => '==', 'value' => 'yes'], ['name' => 'infiniteScroll_enable', 'operator' => '==', 'value' => 'yes']]]]]]);
+    }
     protected function register_pagination_controls()
     {
-        $this->start_controls_section('section_pagination', ['label' => __('Pagination', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['pagination_enable' => 'yes', 'infiniteScroll_enable' => '', 'post_offset' => [0, ''], '_skin' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion']]]);
+        $this->start_controls_section('section_pagination', ['label' => __('Pagination', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_CONTENT, 'condition' => ['pagination_enable!' => '', 'infiniteScroll_enable' => '', 'post_offset' => [0, ''], '_skin' => ['', 'grid', 'grid-filters', 'gridtofullscreen3d', 'accordion', 'list', 'table']]]);
         $this->add_control('pagination_position', ['label' => __('Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['top' => __('Top', 'dynamic-content-for-elementor'), 'bottom' => __('Bottom', 'dynamic-content-for-elementor'), 'both' => __('Both', 'dynamic-content-for-elementor')], 'default' => 'bottom']);
         $this->add_control('pagination_show_numbers', ['label' => __('Show Numbers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes']);
         $this->add_control('pagination_range', ['label' => __('Range of numbers', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'default' => 4, 'condition' => ['pagination_show_numbers' => 'yes']]);
         $this->add_control('pagination_show_prevnext', ['label' => __('Show Prev/Next', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'separator' => 'before']);
+        $this->add_control('prevnext_notice', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => esc_html__('These arrows only appear when the number of pages that result from the query exceed the value in the setting "Range of numbers"', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['pagination_show_prevnext' => 'yes']]);
         $this->add_control('selected_pagination_icon_prevnext', ['label' => __('Icon Prev/Next', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'pagination_icon_prevnext', 'default' => ['value' => 'fas fa-long-arrow-alt-right', 'library' => 'fa-solid'], 'recommended' => ['fa-solid' => ['arrow-right', 'angle-right', 'long-arrow-alt-right', 'arrow-alt-circle-right', 'arrow-circle-right', 'caret-right', 'caret-square-right', 'chevron-circle-right', 'chevron-right', 'hand-point-right']], 'condition' => ['pagination_show_prevnext' => 'yes']]);
         $this->add_control('pagination_prev_label', ['label' => __('Previous Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Previous', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_prevnext' => 'yes']]);
         $this->add_control('pagination_next_label', ['label' => __('Next Label', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Next', 'dynamic-content-for-elementor'), 'condition' => ['pagination_show_prevnext' => 'yes']]);
@@ -374,16 +441,15 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
     protected function register_query_controls()
     {
         $taxonomies = Helper::get_taxonomies();
-        $sql_operators = Helper::get_sql_operators();
         $this->start_controls_section('section_query', ['label' => __('Query', 'dynamic-content-for-elementor')]);
         $this->add_control('query_type', ['label' => __('Query Type', 'dynamic-content-for-elementor'), 'type' => 'images_selector', 'toggle' => \false, 'type_selector' => 'icon', 'columns_grid' => 5, 'separator' => 'before', 'options' => [
             'get_cpt' => ['title' => __('From Post Type', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'eicon-post-content'],
             'dynamic_mode' => ['title' => __('Dynamic - Current Query', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'fa fa-cogs'],
             'relationship' => ['title' => __('ACF Relationship', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'fa fa-american-sign-language-interpreting'],
             // 'jetengine_relations' => [
-            // 	'title' => __( 'JetEngine Relations', 'dynamic-content-for-elementor' ),
-            // 	'return_val' => 'val',
-            // 	'icon' => 'fa fa-american-sign-language-interpreting',
+            //	'title' => __( 'JetEngine Relations', 'dynamic-content-for-elementor' ),
+            //	'return_val' => 'val',
+            //	'icon' => 'fa fa-american-sign-language-interpreting',
             // ],
             'pods_relationship' => ['title' => __('Pods Relationship', 'dynamic-content-for-elementor'), 'return_val' => 'val', 'icon' => 'icon-dyn-relation'],
             'search_filter' => ['title' => 'Search & Filter Pro', 'return_val' => 'val', 'icon' => 'icon-dyn-search-filter'],
@@ -418,9 +484,10 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         if (!Helper::is_woocommerce_active()) {
             $this->add_control('products_notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('In order to use this feature you need install WooCommerce.', 'dynamic-content-for-elementor'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'condition' => ['query_type' => ['products_cart', 'product_upsells', 'product_crosssells']]]);
         }
-        // --------------------------------- [ META relationship ]
-        $this->add_control('relationship_meta', ['label' => __('ACF Relationship field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'dynamic' => ['active' => \false], 'object_type' => 'post_object,relationship', 'condition' => ['query_type' => 'relationship']]);
-        $this->add_control('relationship_invert', ['label' => __('Invert direction', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('For bidirectional relationships, retrieve all posts that are associated with the current post', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => 'relationship']]);
+        // On ACF Relationship widget we need to move these controls on another section
+        if ('DynamicContentForElementor\\Widgets\\AcfRelationship' !== \get_called_class()) {
+            $this->add_acf_relationship_controls();
+        }
         if (Helper::is_pods_active()) {
             $this->add_control('pods_relationship_field', ['label' => __('PODS Relationship field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'pods', 'object_type' => 'relationship', 'default' => '0', 'condition' => ['query_type' => 'pods_relationship']]);
         } else {
@@ -430,29 +497,32 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->add_control('post_type', ['label' => __('Post Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => Helper::get_post_types(), 'multiple' => \true, 'label_block' => \true, 'default' => [], 'condition' => ['query_type' => ['get_cpt', 'search_page', 'sticky_posts']]]);
         $this->add_control('post_status', ['label' => __('Post Status', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => get_post_statuses(), 'multiple' => \true, 'label_block' => \true, 'default' => [], 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'favorites']]]);
         $this->add_control('ignore_sticky_posts', ['label' => __('Ignore Sticky Posts', 'dynamic-content-for-elementor'), 'description' => __('Ignores that a post is sticky and shows the posts in the normal order. Your sticky posts will appear in the loop, however they will not be placed on the top', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'favorites'], 'remove_sticky_posts' => '']]);
-        $this->add_control('remove_sticky_posts', ['label' => __('Remove Sticky Posts from the loop', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'specific_posts']]]);
-        $this->add_control('num_posts', ['label' => __('Results per page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'separator' => 'before', 'default' => '10', 'condition' => ['query_type' => ['get_cpt', 'relationship', 'dynamic_mode', 'jetengine_relations', 'pods_relationship', 'search_page', 'post_parent', 'sticky_posts', 'favorites', 'products_cart', 'product_upsells', 'product_crosssells']]]);
+        $this->add_control('force_sticky_posts_at_the_top', ['label' => __('Force Sticky Posts at the top', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'conditions' => ['relation' => 'or', 'terms' => [['terms' => [['name' => 'query_type', 'operator' => 'in', 'value' => ['get_cpt', 'dynamic_mode', 'favorites']], ['name' => 'remove_sticky_posts', 'operator' => '==', 'value' => ''], ['name' => 'ignore_sticky_posts', 'operator' => '==', 'value' => '']]], ['terms' => [['name' => 'query_type', 'operator' => 'in', 'value' => ['specific_posts']]]]]]]);
+        $this->add_control('remove_sticky_posts', ['label' => __('Remove Sticky Posts from the loop', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'specific_posts', 'id_list']]]);
+        $this->add_control('num_posts', ['label' => __('Results per page', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'separator' => 'before', 'default' => '10', 'condition' => ['query_type' => ['get_cpt', 'relationship', 'dynamic_mode', 'jetengine_relations', 'pods_relationship', 'search_page', 'post_parent', 'sticky_posts', 'favorites', 'products_cart', 'product_upsells', 'product_crosssells', 'id_list']]]);
         $this->add_control('num_posts_notice', ['type' => Controls_Manager::RAW_HTML, 'raw' => __('If you use pagination in Query Type "Dynamic - Current Query" the number of results per page should match the value you set in "Settings > Reading > Blog pages show at most". You have set the value', 'dynamic-content-for-elementor') . ' ' . get_option('posts_per_page'), 'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning', 'separator' => 'before', 'condition' => ['query_type' => ['dynamic_mode']]]);
         $this->add_control('post_offset', ['label' => __('Posts Offset', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::NUMBER, 'description' => __('Warning: posts offset doesn\'t support pagination', 'dynamic-content-for-elementor'), 'default' => 0, 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'favorites'], 'num_posts!' => '-1']]);
         $this->add_control('orderby', ['label' => __('Order By', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_post_orderby_options(), 'default' => 'date', 'condition' => ['query_type!' => ['search_filter', 'custom_query']]]);
         $this->add_control('metakey', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'separator' => 'after', 'dynamic' => ['active' => \false], 'condition' => ['orderby' => ['meta_value_date', 'meta_value_num', 'meta_value']]]);
-        $this->add_control('order', ['label' => __('Order', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['ASC' => __('Ascending', 'dynamic-content-for-elementor'), 'DESC' => __('Descending', 'dynamic-content-for-elementor')], 'default' => 'DESC', 'condition' => ['query_type!' => ['search_filter', 'custom_query'], 'orderby!' => ['rand', 'none']]]);
+        $this->add_control('order', ['label' => __('Order', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['ASC' => __('Ascending', 'dynamic-content-for-elementor'), 'DESC' => __('Descending', 'dynamic-content-for-elementor')], 'default' => 'DESC', 'condition' => ['query_type!' => ['search_filter', 'custom_query'], 'orderby!' => ['rand', 'none', 'post__in']]]);
+        $this->add_control('reverse_order_posts', ['label' => __('Reverse Order of Posts', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => '', 'condition' => ['query_type' => ['specific_posts', 'favorites'], 'orderby' => ['post__in']]]);
         // --------------------------------- [ Posts Exclusion ]
-        $this->add_control('heading_query_options', ['label' => __('Exclude', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'search_page', 'sticky_posts']]]);
-        $this->add_control('exclude_io', ['label' => __('Current Post', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'sticky_posts']]]);
+        $this->add_control('heading_query_options', ['label' => __('Exclude', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'search_page', 'sticky_posts', 'post_parent']]]);
+        $this->add_control('exclude_io', ['label' => __('Current Post', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'sticky_posts', 'post_parent']]]);
         $this->add_control('exclude_page_parent', ['label' => __('Page parent', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'sticky_posts']]]);
-        $this->add_control('exclude_posts', ['label' => __('Specific Posts', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'multiple' => \true, 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'search_page', 'sticky_posts']]]);
+        $this->add_control('exclude_posts', ['label' => __('Specific Posts', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Post Title', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'multiple' => \true, 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'search_page', 'sticky_posts', 'post_parent']]]);
         $this->end_controls_section();
-        // ------------------------------------------------------------------ [SECTION QUERY-FILTER]
-        $this->start_controls_section('section_query_filter', ['label' => __('Query Filter', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'search_page', 'relationship', 'jetengine_relations', 'id_list', 'sticky_posts']]]);
-        $this->add_control('query_filter', ['label' => __('By', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['date' => __('Date', 'dynamic-content-for-elementor'), 'term' => __('Terms & Taxonomies', 'dynamic-content-for-elementor'), 'author' => __('Author', 'dynamic-content-for-elementor'), 'metakey' => __('Metakey', 'dynamic-content-for-elementor')], 'multiple' => \true, 'label_block' => \true, 'default' => []]);
+        // Query Filter
+        $this->start_controls_section('section_query_filter', ['label' => __('Query Filter', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => ['get_cpt', 'dynamic_mode', 'search_page', 'relationship', 'jetengine_relations', 'id_list', 'sticky_posts', 'favorites']]]);
+        $this->add_control('query_filter', ['label' => __('By', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT2, 'options' => ['date' => __('Date', 'dynamic-content-for-elementor'), 'term' => __('Terms & Taxonomies', 'dynamic-content-for-elementor'), 'author' => __('Author', 'dynamic-content-for-elementor'), 'metakey' => __('Metakey', 'dynamic-content-for-elementor'), 'query_id' => __('Query ID', 'dynamic-content-for-elementor')], 'multiple' => \true, 'label_block' => \true, 'default' => []]);
         // +********************* Date
         $this->add_control('heading_query_filter_date', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('Date Filters', 'dynamic-content-for-elementor'), 'label_block' => \false, 'separator' => 'before', 'content_classes' => 'dce-icon-heading', 'condition' => ['query_filter' => 'date']]);
         $this->add_control('querydate_mode', ['label' => __('Date Filter', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => '', 'label_block' => \true, 'options' => ['' => __('No Filter', 'dynamic-content-for-elementor'), 'past' => __('Past', 'dynamic-content-for-elementor'), 'future' => __('Future', 'dynamic-content-for-elementor'), 'today' => __('Today', 'dynamic-content-for-elementor'), 'yesterday' => __('Yesterday', 'dynamic-content-for-elementor'), 'days' => __('Past Days', 'dynamic-content-for-elementor'), 'weeks' => __('Past Weeks', 'dynamic-content-for-elementor'), 'months' => __('Past Months', 'dynamic-content-for-elementor'), 'years' => __('Past Years', 'dynamic-content-for-elementor'), 'period' => __('Period', 'dynamic-content-for-elementor')], 'condition' => ['query_filter' => 'date']]);
         $this->add_control('querydate_field', ['label' => __('Date Field', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'label_block' => \false, 'options' => ['post_date' => ['title' => __('Publish Date', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-calendar'], 'post_modified' => ['title' => __('Modified Date', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-edit'], 'post_meta' => ['title' => __('Post Meta', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-square']], 'default' => 'post_date', 'toggle' => \false, 'condition' => ['query_filter' => 'date', 'querydate_mode!' => ['', 'future']]]);
+        $this->add_control('querydate_use_utc', ['label' => __('Stored as UTC', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'description' => esc_html__('Date is Saved in the database as UTC. This is usually not the case for ACF Fields.', 'dynamic-content-for-elementor'), 'conditions' => ['relation' => 'or', 'terms' => [['name' => 'querydate_field', 'operator' => '==', 'value' => 'post_meta'], ['name' => 'querydate_mode', 'operator' => '==', 'value' => 'future']]]]);
         $this->add_control('querydate_field_meta', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'description' => __('Selected Post Meta value must be stored in the "Ymd" format, like ACF Date', 'dynamic-content-for-elementor'), 'separator' => 'before', 'dynamic' => ['active' => \false], 'condition' => ['query_filter' => 'date', 'querydate_mode!' => 'future', 'querydate_field' => 'post_meta']]);
         $this->add_control('querydate_field_meta_format', ['label' => __('Meta Date Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('Ymd', 'dynamic-content-for-elementor'), 'label_block' => \true, 'default' => __('Ymd', 'dynamic-content-for-elementor'), 'condition' => ['query_filter' => 'date', 'querydate_mode!' => 'future', 'querydate_field' => 'post_meta']]);
-        $this->add_control('querydate_field_meta_future', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'description' => __('Selected Post Meta value must be stored in the "Ymd" format, like ACF Date', 'dynamic-content-for-elementor'), 'separator' => 'before', 'dynamic' => ['active' => \false], 'condition' => ['query_filter' => 'date', 'querydate_mode' => 'future']]);
+        $this->add_control('querydate_field_meta_future', ['label' => __('Meta Field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'separator' => 'before', 'dynamic' => ['active' => \false], 'condition' => ['query_filter' => 'date', 'querydate_mode' => 'future']]);
         $this->add_control('querydate_field_meta_future_format', ['label' => __('Meta Date Format', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'placeholder' => __('Y-m-d', 'dynamic-content-for-elementor'), 'label_block' => \false, 'default' => __('Ymd', 'dynamic-content-for-elementor'), 'condition' => ['query_filter' => 'date', 'querydate_mode' => 'future']]);
         $this->add_control('querydate_field_meta_future_contains_today', ['label' => __('Future dates contains today\'s date', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'condition' => ['query_filter' => 'date', 'querydate_mode' => 'future']]);
         $this->add_control('querydate_range', ['label' => __('Number of (days/months/years) elapsed', 'dynamic-content-for-elementor'), 'label_block' => \false, 'type' => Controls_Manager::NUMBER, 'default' => 1, 'condition' => ['query_filter' => 'date', 'querydate_mode' => ['days', 'weeks', 'months', 'years']]]);
@@ -503,10 +573,15 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->add_control('metakey_from', ['label' => __('Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'label_block' => \false, 'options' => ['post_metakey' => ['title' => __('Select Metakey', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-key'], 'post_meta' => ['title' => __('Post Meta Key', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-square']], 'default' => 'post_metakey', 'toggle' => \false, 'condition' => ['query_filter' => 'metakey']]);
         // Post Meta
         $this->add_control('metakey_field_meta', ['label' => __('Post Metakey custom meta field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Meta key or name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metas', 'object_type' => 'post', 'dynamic' => ['active' => \false], 'condition' => ['metakey_from' => 'post_meta', 'query_filter' => 'metakey']]);
-        $this->add_control('metakey_field_meta_operator', ['label' => __('Operator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => $sql_operators, 'default' => '=', 'condition' => ['metakey_from' => 'post_meta', 'query_filter' => 'metakey']]);
-        $this->add_control('metakey_field_meta_value', ['label' => __('Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'condition' => ['metakey_from' => 'post_meta', 'query_filter' => 'metakey']]);
-        // [Post Meta String]
-        $this->add_control('metakey_field_meta_string', ['label' => __('Post Metakey string field', 'dynamic-content-for-elementor'), 'description' => __('Type the Post Meta value. Type a sequence of metakey-type IDs separated by commas. (e.g.:"5,27,88")', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'label_block' => \true, 'render_type' => 'template', 'default' => '', 'condition' => ['metakey_from' => 'dynamicstring', 'query_filter' => 'metakey']]);
+        $this->add_control('metakey_field_meta_operator', ['label' => __('Operator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_sql_operators(), 'default' => '=', 'condition' => ['metakey_from' => 'post_meta', 'query_filter' => 'metakey']]);
+        $this->add_control('metakey_field_meta_value', ['label' => __('Value', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'dynamic' => ['active' => \true], 'condition' => ['metakey_from' => 'post_meta', 'query_filter' => 'metakey']]);
+        // Query ID
+        $this->add_control('heading_query_id', ['type' => Controls_Manager::RAW_HTML, 'show_label' => \false, 'raw' => __('Query ID Filter', 'dynamic-content-for-elementor'), 'separator' => 'before', 'content_classes' => 'dce-icon-heading', 'condition' => ['query_filter' => 'query_id']]);
+        /**
+         * @copyright Elementor
+         * @license GPLv3
+         */
+        $this->add_control('query_id', ['label' => __('Query ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'description' => __('Give your Query a custom unique id to allow server side filtering', 'dynamic-content-for-elementor'), 'condition' => ['query_filter' => 'query_id']]);
         // [Post Term]
         $this->add_control('include_metakey', ['label' => __('Include Metakey', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('All metakeys', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'metakeys', 'description' => __('Filter results by selected metakey', 'dynamic-content-for-elementor'), 'render_type' => 'template', 'dynamic' => ['active' => \false], 'multiple' => \true, 'condition' => ['query_filter' => 'metakey', 'metakey_from' => 'post_metakey']]);
         $this->add_control('include_metakey_combination', ['label' => __('Include Combination', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['AND' => 'AND', 'OR' => 'OR'], 'toggle' => \false, 'default' => 'OR', 'conditions' => ['terms' => [['name' => 'query_filter', 'operator' => 'contains', 'value' => 'metakey'], ['name' => 'query_filter', 'operator' => '!=', 'value' => []], ['name' => 'include_metakey', 'operator' => '!=', 'value' => ''], ['name' => 'include_metakey', 'operator' => '!=', 'value' => []], ['name' => 'metakey_from', 'value' => 'post_metakey']]]]);
@@ -515,14 +590,50 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $this->end_controls_section();
         // FALLBACK for NO RESULTS
         $this->start_controls_section('section_fallback', ['label' => __('No Results Behaviour', 'dynamic-content-for-elementor')]);
-        $this->add_control('fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('If you want to show something when no elements are found.', 'dynamic-content-for-elementor')]);
+        $this->add_control('fallback', ['label' => __('Fallback Content', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => 'yes', 'description' => __('If you want to show something when no elements are found.', 'dynamic-content-for-elementor')]);
         $this->add_control('fallback_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'text', 'condition' => ['fallback!' => '']]);
         $this->add_control('fallback_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['fallback!' => '', 'fallback_type' => 'template']]);
         $this->add_control('fallback_text', ['label' => __('Text Fallback', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => __('No results found.', 'dynamic-content-for-elementor'), 'description' => __('Type here your content, you can use HTML and Tokens.', 'dynamic-content-for-elementor'), 'condition' => ['fallback!' => '', 'fallback_type' => 'text']]);
         $this->end_controls_section();
     }
+    public function add_acf_relationship_controls()
+    {
+        $this->add_control('relationship_meta', ['label' => __('ACF Relationship field', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Select the field...', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'acf', 'dynamic' => ['active' => \false], 'object_type' => 'post_object,relationship', 'condition' => ['query_type' => 'relationship']]);
+        $this->add_control('acf_relationship_from', ['label' => __('Retrieve the field from', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'current_post', 'options' => ['current_post' => __('Current Post', 'dynamic-content-for-elementor'), 'current_user' => __('Current User', 'dynamic-content-for-elementor'), 'current_author' => __('Current Author', 'dynamic-content-for-elementor'), 'current_term' => __('Current Term', 'dynamic-content-for-elementor'), 'options_page' => __('Options Page', 'dynamic-content-for-elementor')], 'condition' => ['query_type' => 'relationship']]);
+        $this->add_control('relationship_invert', ['label' => __('Invert direction', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('For bidirectional relationships, retrieve all posts that are associated with the current post', 'dynamic-content-for-elementor'), 'condition' => ['query_type' => 'relationship', 'acf_relationship_from' => 'current_post']]);
+    }
+    /**
+     * Register Direction Controls
+     *
+     * @return void
+     */
+    protected function register_style_direction_controls()
+    {
+        $this->start_controls_section('section_direction_style', ['label' => __('Direction', 'dynamic-content-for-elementor'), 'tab' => Controls_Manager::TAB_STYLE, 'condition' => ['_skin' => ['', 'accordion', 'grid', 'carousel', 'grid-filters', 'gridtofullscreen3d', 'list', 'dualcarousel', 'table', 'timeline']]]);
+        $this->add_control('rtl', ['label' => __('RTL', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'default' => is_rtl() ? 'yes' : '', 'frontend_available' => \true]);
+        $this->end_controls_section();
+    }
     public function safe_render()
     {
+    }
+    /**
+     * Helper method similar to wp_date bu simplified timezone.
+     *
+     * @param string $format
+     * @param int $timestamp
+     * @param bool $use_utc
+     * @return string|false
+     */
+    private function date($format = null, $timestamp = null, $use_utc = \true)
+    {
+        if (empty($format)) {
+            $format = 'Y-m-d H:i:s';
+        }
+        $tz = null;
+        if ($use_utc) {
+            $tz = new \DateTimeZone('UTC');
+        }
+        return wp_date($format, $timestamp, $tz);
     }
     public function query_posts()
     {
@@ -543,6 +654,7 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         $terms_query = 'all';
         $terms_query_excluded = [];
         $post_status = '';
+        $query_id = '';
         if (empty($settings['post_status'])) {
             $post_status = 'publish';
         } else {
@@ -555,7 +667,7 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         } elseif (is_home() || is_archive()) {
             $exclude_current_post = [];
         }
-        if ($settings['exclude_posts']) {
+        if ($settings['exclude_posts'] && \is_array($settings['exclude_posts'])) {
             $posts_excluded = $settings['exclude_posts'];
         }
         if ($settings['exclude_page_parent']) {
@@ -576,9 +688,7 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
             if (empty($post_type)) {
                 $post_type[] = 'any';
             }
-            if (is_search()) {
-                $args = \array_merge($args, ['s' => sanitize_text_field($_GET['s']), 'post_type' => $post_type, 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'meta_key' => $settings['metakey'], 'posts_per_page' => $settings['num_posts'] ?? get_option('posts_per_page'), 'post__not_in' => $posts_excluded, 'post_parent__not_in' => $use_parent_page]);
-            }
+            $args = \array_merge($args, ['s' => sanitize_text_field($_GET['s']), 'post_type' => $post_type, 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'meta_key' => $settings['metakey'], 'posts_per_page' => $settings['num_posts'] ?? get_option('posts_per_page'), 'post__not_in' => $posts_excluded, 'post_parent__not_in' => $use_parent_page]);
         } elseif ($settings['query_type'] == 'dynamic_mode') {
             // Query Type - Dynamic
             $array_taxquery = [];
@@ -684,13 +794,36 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
             if ($settings['child_source']) {
                 $args = \array_merge($args, ['post_type' => $type_page, 'post_parent' => $id_page]);
             }
-            $args = \array_merge($args, ['posts_per_page' => $settings['num_posts'], 'order' => $settings['order'], 'orderby' => $settings['orderby']]);
+            $args = \array_merge($args, ['post__not_in' => \array_merge($posts_excluded, $exclude_current_post), 'posts_per_page' => $settings['num_posts'], 'order' => $settings['order'], 'orderby' => $settings['orderby']]);
         } elseif ('relationship' === $settings['query_type']) {
             // Query Type - ACF Relationship
+            if (empty($settings['relationship_meta'])) {
+                if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                    Helper::notice('', __('Select an ACF Relationship Field', 'dynamic-content-for-elementor'));
+                }
+                $this->query = '';
+                return;
+            }
             if ($settings['relationship_invert']) {
                 $relations_ids = Helper::get_acf_field_value_relationship_invert($settings['relationship_meta'], $id_page);
             } else {
-                $relations_ids = get_post_meta($id_page, $settings['relationship_meta'], \false);
+                if ($settings['acf_relationship_from'] == 'current_post') {
+                    $relations_ids = get_post_meta(get_the_ID(), $settings['relationship_meta'], \true);
+                } elseif ($settings['acf_relationship_from'] == 'current_author') {
+                    $relations_ids = get_the_author_meta($settings['relationship_meta']);
+                } elseif ($settings['acf_relationship_from'] == 'current_user') {
+                    $relations_ids = get_user_meta(get_current_user_id(), $settings['relationship_meta'], \true);
+                } elseif ($settings['acf_relationship_from'] == 'current_term') {
+                    $terms = get_the_terms(get_the_ID(), $settings['acf_relation_taxonomy']);
+                    $relations_ids = get_term_meta($terms[0]->term_id, $settings['relationship_meta'], \true);
+                } elseif ($settings['acf_relationship_from'] == 'options_page') {
+                    $rel_posts_objects = \get_field($settings['relationship_meta'], 'option');
+                    $rel_posts_ids = [];
+                    foreach ($rel_posts_objects as $rel_post) {
+                        \array_push($rel_posts_ids, $rel_post->ID);
+                    }
+                    $relations_ids = $rel_posts_ids;
+                }
             }
             if (!empty($relations_ids) && !\is_array($relations_ids)) {
                 $relations_ids = [$relations_ids];
@@ -709,7 +842,36 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
             if ($settings['metakey']) {
                 $args['meta_key'] = $settings['metakey'];
             }
+            // Remove Sticky Posts but not posts on the ACF Relationship field
+            $sticky_posts = get_option('sticky_posts');
+            if (!empty($sticky_posts)) {
+                $args['post__not_in'] = \array_diff($sticky_posts, $relations_ids);
+            }
             $args = \array_merge($args, ['post_type' => 'any', 'posts_per_page' => $settings['num_posts'], 'post_status' => 'publish', 'post__in' => $relations_ids, 'orderby' => $settings['orderby'], 'order' => $settings['order']]);
+        } elseif ('metabox_relationship' === $settings['query_type']) {
+            // Query Type - Meta Box Relationship
+            if (empty($settings['metabox_relationship_id'])) {
+                if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                    Helper::notice('', __('Type the Meta Box Relationship ID', 'dynamic-content-for-elementor'));
+                }
+                $this->query = '';
+                return;
+            }
+            $metabox_relationship['id'] = $settings['metabox_relationship_id'];
+            // Check if the Meta Box Relationship ID exists
+            if (!\array_key_exists($metabox_relationship['id'], \MB_Relationships_API::get_all_relationships())) {
+                if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+                    Helper::notice('', __("The Meta Box Relationship ID doesn't exist", 'dynamic-content-for-elementor'));
+                }
+                $this->query = '';
+                return;
+            }
+            if ('from' === $settings['metabox_relationship_relation']) {
+                $metabox_relationship['from'] = get_the_ID();
+            } else {
+                $metabox_relationship['to'] = get_the_ID();
+            }
+            $args = \array_merge($args, ['relationship' => $metabox_relationship, 'post_status' => 'publish', 'orderby' => $settings['orderby'], 'order' => $settings['order']]);
         } elseif ('pods_relationship' === $settings['query_type'] && Helper::is_pods_active()) {
             // Query Type - PODS Relationship
             if (pods(get_post_type(), get_the_ID())) {
@@ -736,7 +898,7 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
                 $related_posts_id = Helper::wpml_translate_object_id($related_posts_id);
             }
             $args = \array_merge($args, ['post_type' => 'any', 'posts_per_page' => $settings['num_posts'], 'post_status' => 'publish', 'post__in' => $related_posts_id, 'orderby' => $settings['orderby'], 'order' => $settings['order']]);
-        } elseif ($settings['query_type'] == 'specific_posts') {
+        } elseif ('specific_posts' === $settings['query_type']) {
             // Query Type - From Specific Posts
             $post__in = [];
             $specific_posts = $settings['specific_posts'];
@@ -759,9 +921,16 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
                 $post__in = Helper::wpml_translate_object_id($post__in);
             }
             $args = \array_merge($args, ['post_type' => 'any', 'post__in' => $post__in, 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'meta_key' => $settings['metakey'], 'post_status' => 'publish', 'posts_per_page' => -1]);
+            if ('post__in' === $args['orderby'] && 'yes' === $settings['reverse_order_posts']) {
+                $args['post__in'] = \array_reverse($args['post__in']);
+            }
         } elseif ('id_list' === $settings['query_type']) {
             // Query Type - ID List
-            $args = \array_merge($args, ['post_type' => 'any', 'post__in' => \explode(',', sanitize_text_field($settings['id_list'])), 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'meta_key' => $settings['metakey'], 'post_status' => 'publish', 'posts_per_page' => -1]);
+            $args = \array_merge($args, ['post_type' => 'any', 'post__in' => \explode(',', sanitize_text_field($settings['id_list'])), 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'meta_key' => $settings['metakey'], 'post_status' => 'publish', 'posts_per_page' => $settings['num_posts']]);
+            // Remove Sticky Posts
+            if (!empty($sticky_posts_to_remove)) {
+                $args['post__not_in'] = $sticky_posts_to_remove;
+            }
         } elseif ('woo_products_on_sale' === $settings['query_type']) {
             // Query Type - Dynamic Woo Products On Sale
             $products_on_sale = \wc_get_product_ids_on_sale();
@@ -796,8 +965,13 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
             }
             if (!empty($favorites_post_in)) {
                 if ('dce_wishlist' !== $settings['favorites_key']) {
+                    // Favorites
                     $args = \array_merge($args, ['post_type' => 'any', 'post__in' => $favorites_post_in, 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'meta_key' => $settings['metakey'], 'post_status' => $post_status, 'posts_per_page' => $settings['num_posts']]);
+                    if ('post__in' === $args['orderby'] && 'yes' === $settings['reverse_order_posts']) {
+                        $args['post__in'] = \array_reverse($args['post__in']);
+                    }
                 } else {
+                    // Woo Wishlist
                     if (!is_user_logged_in()) {
                         $this->query = '';
                         return;
@@ -866,7 +1040,12 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
             }
         } elseif ('sticky_posts' === $settings['query_type']) {
             // Query Type - Sticky Posts
-            $args = \array_merge($args, ['post__in' => get_option('sticky_posts'), 'post_type' => $settings['post_type'], 'posts_per_page' => $settings['num_posts'], 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'meta_key' => $settings['metakey'], 'post__not_in' => \array_merge($posts_excluded, $exclude_current_post), 'post_parent__not_in' => $use_parent_page, 'post_status' => $post_status]);
+            if (empty(get_option('sticky_posts'))) {
+                // No Sticky Posts
+                $this->query = '';
+                return;
+            }
+            $args = \array_merge($args, ['ignore_sticky_posts' => '1', 'post__in' => get_option('sticky_posts'), 'post_type' => $settings['post_type'], 'posts_per_page' => $settings['num_posts'], 'order' => $settings['order'], 'orderby' => $settings['orderby'], 'meta_key' => $settings['metakey'], 'post__not_in' => \array_merge($posts_excluded, $exclude_current_post), 'post_parent__not_in' => $use_parent_page, 'post_status' => $post_status, 'offset' => $settings['post_offset'] ?? 0]);
         } elseif ('search_filter' === $settings['query_type']) {
             // Query Type - Search and Filter
             if (Helper::is_searchandfilterpro_active()) {
@@ -887,16 +1066,25 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
             }
         }
         // Query Filter
-        if (\is_array($settings['query_filter'])) {
+        if (\is_array($settings['query_filter']) && !empty($settings['query_filter'])) {
             // Date query filter
-            if (\in_array('date', $settings['query_filter'])) {
+            if (\in_array('date', $settings['query_filter'], \true)) {
+                $datetime_stored_as_utc = \true;
                 $querydate_field_meta_format = 'Ymd';
                 $date_field = $settings['querydate_field'];
+                if ($settings['querydate_field'] === 'post_meta') {
+                    if ($settings['querydate_use_utc'] !== 'yes') {
+                        $datetime_stored_as_utc = \false;
+                    }
+                }
                 if ($settings['querydate_mode'] != 'future' && $settings['querydate_field'] == 'post_meta') {
                     $date_field_meta = sanitize_key($settings['querydate_field_meta']);
                     $querydate_field_meta_format = sanitize_text_field($settings['querydate_field_meta_format']);
                 }
                 if ($settings['querydate_mode'] == 'future') {
+                    if ($settings['querydate_use_utc'] !== 'yes') {
+                        $datetime_stored_as_utc = \false;
+                    }
                     $date_field_meta = sanitize_key($settings['querydate_field_meta_future']);
                     $querydate_field_meta_format = sanitize_text_field($settings['querydate_field_meta_future_format']);
                     if ($settings['querydate_field_meta_future_contains_today']) {
@@ -904,22 +1092,22 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
                     } else {
                         $future_compare = '>';
                     }
-                    $args['meta_query'] = [['key' => $date_field_meta, 'value' => \date($querydate_field_meta_format, \time()), 'meta_type' => 'DATETIME', 'compare' => $future_compare]];
+                    $args['meta_query'] = [['key' => $date_field_meta, 'value' => $this->date($querydate_field_meta_format, null, $datetime_stored_as_utc), 'meta_type' => 'DATETIME', 'compare' => $future_compare]];
                 }
                 if ($date_field) {
                     $date_after = \false;
                     $date_before = \false;
                     switch ($settings['querydate_mode']) {
                         case 'past':
-                            $date_before = \date('Y-m-d H:i:s');
+                            $date_before = $date_field !== 'post_meta' ? \time() : $this->date(null, null, $datetime_stored_as_utc);
                             break;
                         case 'today':
-                            $date_after = \date('Y-m-d 00:00:00');
-                            $date_before = \date('Y-m-d 23:59:59');
+                            $date_after = $this->date(null, \strtotime('today 00:00'), $datetime_stored_as_utc);
+                            $date_before = $this->date(null, \strtotime('today 23:59'), $datetime_stored_as_utc);
                             break;
                         case 'yesterday':
-                            $date_after = \date('Y-m-d 00:00:00', \strtotime('-1 day'));
-                            $date_before = \date('Y-m-d 23:59:59', \strtotime('-1 day'));
+                            $date_after = $this->date(null, \strtotime('yesterday 00:00'), $datetime_stored_as_utc);
+                            $date_before = $this->date(null, \strtotime('yesterday 23:59'), $datetime_stored_as_utc);
                             break;
                         case 'days':
                         case 'weeks':
@@ -942,10 +1130,10 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
                     } elseif ($settings['querydate_field'] == 'post_meta') {
                         // compare by post meta
                         if ($date_after) {
-                            $date_after = \date($querydate_field_meta_format, \strtotime($date_after));
+                            $date_after = $this->date($querydate_field_meta_format, \strtotime($date_after), $datetime_stored_as_utc);
                         }
                         if ($date_before) {
-                            $date_before = \date($querydate_field_meta_format, \strtotime($date_before));
+                            $date_before = $this->date($querydate_field_meta_format, \strtotime($date_before), $datetime_stored_as_utc);
                         }
                         if ($date_before && $date_after) {
                             $args['meta_query'] = [['key' => $date_field_meta, 'value' => [$date_after, $date_before], 'meta_type' => 'DATETIME', 'compare' => 'BETWEEN']];
@@ -1001,9 +1189,11 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
                     }
                 } elseif ('post_meta' === $settings['term_from']) {
                     // Post Meta Term
-                    if ($settings['term_field_meta']) {
-                        $args['tax_query'][] = ['operator' => 'IN', 'taxonomy' => $settings['taxonomy'], 'terms' => 'all'];
-                        $args['meta_query'][] = ['key' => $settings['term_field_meta']];
+                    $post_id_for_meta = get_the_ID();
+                    if ($post_id_for_meta !== \false && $settings['term_field_meta']) {
+                        foreach ($settings['taxonomy'] as $taxonomy) {
+                            $args['tax_query'][] = ['operator' => 'IN', 'taxonomy' => $taxonomy, 'terms' => get_post_meta($post_id_for_meta, $settings['term_field_meta'])];
+                        }
                     }
                 } elseif ('dynamicstring' === $settings['term_from']) {
                     // Dynamic String
@@ -1013,7 +1203,7 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
                 }
             }
             // Author query filter
-            if (\in_array('author', $settings['query_filter'])) {
+            if (\in_array('author', $settings['query_filter'], \true)) {
                 $author_id = get_the_author_meta('ID');
                 if (!is_singular()) {
                     $queried_object = get_queried_object();
@@ -1038,12 +1228,12 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
                 }
             }
             // Meta Key query filter
-            if (\in_array('metakey', $settings['query_filter'])) {
+            if (\in_array('metakey', $settings['query_filter'], \true)) {
                 if ($settings['metakey_from'] == 'post_metakey') {
-                    if ($settings['include_metakey'] && $settings('include_metakey_combination')) {
+                    if ($settings['include_metakey'] && $settings['include_metakey_combination']) {
                         $args['meta_query'][] = ['key' => $settings['include_metakey'], 'compare' => $settings['include_metakey_combination']];
                     }
-                    if ($settings['exclude_metakey'] && $settings('exclude_metakey_combination')) {
+                    if ($settings['exclude_metakey'] && $settings['exclude_metakey_combination']) {
                         $args['meta_query'][] = ['key' => $settings['exclude_metakey'], 'compare' => $settings['exclude_metakey_combination']];
                     }
                 } elseif ($settings['metakey_from'] == 'post_meta') {
@@ -1056,10 +1246,56 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
                     }
                 }
             }
+            // Query ID filter
+            if (\in_array('query_id', $settings['query_filter'], \true)) {
+                $query_id = $this->get_settings_for_display('query_id');
+            }
+        }
+        if (!empty($query_id)) {
+            add_action('pre_get_posts', [$this, 'pre_get_posts_query_filter']);
         }
         $query_p = new \WP_Query($args);
+        if (!empty($query_id)) {
+            remove_action('pre_get_posts', [$this, 'pre_get_posts_query_filter']);
+        }
+        // Force Sticky Posts at the Top
+        if ('yes' !== $settings['ignore_sticky_posts'] && 'yes' === $settings['force_sticky_posts_at_the_top']) {
+            $query_p = $this->force_sticky_posts_at_the_top($query_p);
+        }
+        do_action('dynamicooo/posts/query_results', $query_p);
         $this->query = $query_p;
         $this->query_args = $args;
+    }
+    /**
+     * @copyright Elementor
+     * @license GPLv3
+     *
+     * @param \WP_Query $wp_query
+     * @return void
+     */
+    public function pre_get_posts_query_filter($wp_query)
+    {
+        $query_id = $this->get_settings_for_display('query_id');
+        do_action("dynamicooo/query/{$query_id}", $wp_query, $this);
+    }
+    /**
+     * Force Sticky Posts at the Top
+     *
+     * @param \WP_Query $query_p
+     * @return \WP_Query $query_p
+     */
+    public function force_sticky_posts_at_the_top(\WP_Query $query_p)
+    {
+        $sticky_posts = [];
+        foreach ($query_p->posts as $key => $post) {
+            if ($post instanceof \WP_Post && is_sticky($post->ID) || \is_int($post) && is_sticky($post)) {
+                $sticky_posts[] = $post;
+                unset($query_p->posts[$key]);
+            }
+        }
+        $query_p->posts = \array_values(\array_filter($query_p->posts));
+        \array_unshift($query_p->posts, ...$sticky_posts);
+        return $query_p;
     }
     /**
      * Get Terms for the current post, useful for Dynamic Current Post Terms
@@ -1084,7 +1320,7 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
         // Da implementare oR & AND tems ...
         if (is_singular()) {
             if (\false === $id_page) {
-                throw new \Exception("ID not valid", 1);
+                throw new \Exception('ID not valid', 1);
             }
             $terms_list = wp_get_post_terms($id_page, $taxonomy, ['orderby' => 'name', 'order' => 'ASC', 'fields' => 'all', 'hide_empty' => \true]);
             if (!empty($terms_list)) {
@@ -1139,11 +1375,5 @@ class DynamicPostsBase extends \DynamicContentForElementor\Widgets\WidgetPrototy
             return 1;
         }
         return \max(1, get_query_var('paged'), get_query_var('page'));
-    }
-    protected function limit_content($limit)
-    {
-    }
-    protected function limit_excerpt($limit)
-    {
     }
 }

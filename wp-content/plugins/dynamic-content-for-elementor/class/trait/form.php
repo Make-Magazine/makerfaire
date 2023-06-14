@@ -60,6 +60,8 @@ trait Form
     {
         $this_page = \false;
         $referrer = isset($_POST['referrer']) ? sanitize_text_field($_POST['referrer']) : '';
+        $form_name = '';
+        //phpstan
         if (\is_object($record)) {
             $form_name = $record->get_form_settings('form_name');
         } else {

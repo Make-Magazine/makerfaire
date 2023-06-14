@@ -4,6 +4,10 @@ namespace DynamicOOOS\TelegramBot\Api\Types;
 
 abstract class ArrayOfPhotoSize
 {
+    /**
+     * @param array $data
+     * @return PhotoSize[]
+     */
     public static function fromResponse($data)
     {
         $arrayOfPhotoSize = [];

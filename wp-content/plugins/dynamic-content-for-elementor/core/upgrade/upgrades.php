@@ -10,6 +10,47 @@ if (!\defined('ABSPATH')) {
 }
 class Upgrades
 {
+    public static function _v_2_10_1_fix_filter_php_error($updater)
+    {
+        $option = get_option('dce_tokens_filters_whitelist');
+        if (\is_array($option)) {
+            $option = \implode("\n", \array_keys($option));
+            update_option('dce_tokens_filters_whitelist', $option);
+        }
+        return \false;
+    }
+    public static function _v_2_10_0_merge_used_filters($updater)
+    {
+        $option = get_option('dce_tokens_filters_whitelist');
+        $wl = [];
+        if (\is_string($option)) {
+            $list = \explode("\n", $option);
+            foreach ($list as $f) {
+                $wl[\trim($f)] = \true;
+            }
+        }
+        $used_filters = get_option('dce_tokens_used_filters', []);
+        update_option('dce_tokens_filters_whitelist', $wl + $used_filters);
+        return \false;
+    }
+    /**
+     * @param Updater $updater
+     * @return boolean
+     */
+    public static function _v_2_8_0_conditional_validation_join_lines($updater)
+    {
+        $changes = [['callback' => ['DynamicContentForElementor\\Core\\Upgrade\\Upgrades', '_conditional_validation_join_lines'], 'control_ids' => []]];
+        return self::_update_widget_settings('form', $updater, $changes);
+    }
+    /**
+     * @param Updater $updater
+     * @return boolean
+     */
+    public static function _v_2_6_1_views_change_default($updater)
+    {
+        $changes = [['callback' => ['DynamicContentForElementor\\Core\\Upgrade\\Upgrades', '_widget_settings_save_old_default'], 'control_ids' => ['dce_views_order_by_no_nulls' => 'no']]];
+        return self::_update_widget_settings('dce-views', $updater, $changes);
+    }
     /**
      * @param Updater $updater
      * @return boolean
@@ -525,6 +566,28 @@ class Upgrades
         }
         return $element;
     }
+    /**
+     * @param array<mixed> $element
+     * @param array<mixed> $args
+     * @return array<mixed>
+     */
+    public static function _conditional_validation_join_lines($element, $args)
+    {
+        $widget_id = $args['widget_id'];
+        if (empty($element['widgetType']) || $widget_id !== $element['widgetType']) {
+            return $element;
+        }
+        if (isset($element['settings']['dce_conditional_validations']) && \is_array($element['settings']['dce_conditional_validations'])) {
+            foreach ($element['settings']['dce_conditional_validations'] as &$validation) {
+                $old = $validation['expression'];
+                $validation['expression'] = \preg_replace('/\\s/', ' ', $validation['expression']);
+                if ($old !== $validation['expression']) {
+                    $args['do_update'] = \true;
+                }
+            }
+        }
+        return $element;
+    }
     public static function _wysiwyg_upgrade($element, $args)
     {
         $widget_id = $args['widget_id'];
@@ -575,8 +638,8 @@ class Upgrades
         return $element;
     }
     /**
-     * @param array<string, mixed> $element
-     * @param array<string, mixed> $args
+     * @param array<string,mixed> $element
+     * @param array<string,mixed> $args
      * @return array<string,mixed>
      */
     public static function _dynamic_charts_background_repeater($element, $args)

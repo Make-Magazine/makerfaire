@@ -51,7 +51,7 @@ class PostMeta extends \DynamicContentForElementor\Widgets\WidgetPrototype
         ], 'default' => 'dynamic']);
         $this->add_control('dce_meta_raw', ['label' => __('Use Raw data', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SWITCHER, 'description' => __('Use value stored in postmeta, without any plugin modification.', 'dynamic-content-for-elementor')]);
         $this->add_control('dce_meta_custom', ['label' => __('Custom HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[META_VALUE]', 'placeholder' => '[META_VALUE]', 'description' => __('Type here your content, you can use HTML and Tokens.', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'custom']]);
-        $this->add_control('dce_meta_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'ul' => 'ul', 'ol' => 'ol', 'p' => 'p', '' => __('None', 'dynamic-content-for-elementor')], 'default' => 'div']);
+        $this->add_control('dce_meta_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(['ul', 'ol'], \true), 'default' => 'div']);
         $this->end_controls_section();
         // REPEATER
         $this->start_controls_section('dce_meta_section_repeater', ['label' => __('Repeater', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'repeater']]);
@@ -59,7 +59,7 @@ class PostMeta extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->end_controls_section();
         // MULTIPLE
         $this->start_controls_section('dce_meta_section_multiple', ['label' => __('Multiple values', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'multiple']]);
-        $this->add_control('dce_meta_multiple_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => ['h1' => 'H1', 'h2' => 'H2', 'h3' => 'H3', 'h4' => 'H4', 'h5' => 'H5', 'h6' => 'H6', 'div' => 'div', 'span' => 'span', 'li' => 'li', 'p' => 'p', 'custom' => __('Custom', 'dynamic-content-for-elementor'), '' => __('None', 'dynamic-content-for-elementor')]]);
+        $this->add_control('dce_meta_multiple_tag', ['label' => __('HTML Tag', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'options' => Helper::get_html_tags(['li', 'custom'], \true)]);
         $this->add_control('dce_meta_multiple_id', ['label' => __('ID', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['' => ['title' => __('None', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-file-o'], 'post' => ['title' => __('Post', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-file'], 'term' => ['title' => __('Taxonomy Term', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-tags'], 'user' => ['title' => __('User', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-user']], 'toggle' => \false, 'description' => __('Obtain object data from ID of the selected type. Enable if Meta data is the ID', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_multiple_tag' => 'custom']]);
         $this->add_control('dce_meta_multiple_custom', ['label' => __('Custom HTML', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[SINGLE]', 'placeholder' => '[SINGLE]', 'description' => __('Type here your content, you can use HTML and Tokens.', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_multiple_tag' => 'custom']]);
         $this->add_control('dce_meta_multiple_separator', ['label' => __('Separator', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'condition' => ['dce_meta_multiple_tag!' => 'custom']]);
@@ -81,7 +81,7 @@ class PostMeta extends \DynamicContentForElementor\Widgets\WidgetPrototype
         $this->add_control('dce_meta_id_type', ['label' => __('Object Type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HIDDEN, 'default' => 'post']);
         $this->add_control('dce_meta_id_render_type', ['label' => __('Content type', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::CHOOSE, 'options' => ['simple' => ['title' => __('Simple', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-link'], 'text' => ['title' => __('Text', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-align-left'], 'template' => ['title' => __('Template', 'dynamic-content-for-elementor'), 'icon' => 'fa fa-th-large']], 'toggle' => \false, 'default' => 'simple']);
         $this->add_control('dce_meta_id_render_type_template', ['label' => __('Render Template', 'dynamic-content-for-elementor'), 'type' => 'ooo_query', 'placeholder' => __('Template Name', 'dynamic-content-for-elementor'), 'label_block' => \true, 'query_type' => 'posts', 'object_type' => 'elementor_library', 'condition' => ['dce_meta_id_render_type' => 'template']]);
-        $this->add_control('dce_meta_id_render_type_text', ['label' => __('Object HTML and Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[post:thumb]<h4>[post:title]</h4><p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">READ MORE</a>', 'condition' => ['dce_meta_id_render_type' => 'text']]);
+        $this->add_control('dce_meta_id_render_type_text', ['label' => __('Object HTML and Tokens', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::WYSIWYG, 'default' => '[post:thumb]<h4>[post:title|esc_html]</h4><p>[post:excerpt]</p><a class="btn btn-primary" href="[post:permalink]">READ MORE</a>', 'condition' => ['dce_meta_id_render_type' => 'text']]);
         $this->end_controls_section();
         // TEXT
         $this->start_controls_section('dce_meta_section_text', ['label' => __('Text', 'dynamic-content-for-elementor'), 'condition' => ['dce_meta_type' => 'text']]);
@@ -219,7 +219,8 @@ class PostMeta extends \DynamicContentForElementor\Widgets\WidgetPrototype
         if (empty($settings) || empty($settings['dce_meta_key'])) {
             return;
         }
-        list($post_id, $id_page) = Helper::get_the_id();
+        $post_id = Helper::get_the_id();
+        $id_page = $post_id;
         $post_type = get_post_type($id_page);
         $meta_key = $settings['dce_meta_key'];
         $meta_name = Helper::get_post_meta_name($meta_key);

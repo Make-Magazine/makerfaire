@@ -7,6 +7,7 @@ use DateInterval;
 use DateTimeInterface;
 use DateTimeZone;
 use DynamicOOOS\DeepCopy\Exception\CloneException;
+use DynamicOOOS\DeepCopy\Filter\ChainableFilter;
 use DynamicOOOS\DeepCopy\Filter\Filter;
 use DynamicOOOS\DeepCopy\Matcher\Matcher;
 use DynamicOOOS\DeepCopy\Reflection\ReflectionHelper;
@@ -184,6 +185,9 @@ class DeepCopy
                 $filter->apply($object, $property->getName(), function ($object) {
                     return $this->recursiveCopy($object);
                 });
+                if ($filter instanceof ChainableFilter) {
+                    continue;
+                }
                 // If a filter matches, we stop processing this property
                 return;
             }

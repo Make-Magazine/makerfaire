@@ -23,6 +23,11 @@ jQuery(window).on('elementor:init', function() {
 		dce_model_cid = cid;
 		temporary_disable_visibility(cid);
 	} );
+	elementor.hooks.addAction( 'panel/open_editor/container', function( panel, model, view ) {
+		var cid = model.cid;
+		dce_model_cid = cid;
+		temporary_disable_visibility(cid);
+	} );
 
     elementor.channels.editor.on( 'change', ( childView, editedElement ) => {
 		if (childView.model.attributes.name !== "enabled_visibility") {
@@ -33,28 +38,19 @@ jQuery(window).on('elementor:init', function() {
 	});
 
 	// Add Visibility in Context Menu
-	elementor.hooks.addFilter( 'elements/widget/contextMenuGroups', function( groups, element ) {
-		groups.push(
-			{
-				name: 'dce_visibility_frontend',
-				actions: [
-					{
-						name: 'toggle_visibility',
-						title: 'Toggle Visibility in Frontend',
-						icon: 'fa fa-eye',
-						callback: function() {
-							if (element.model.getSetting('enabled_visibility') == 'yes') {
-								element.model.setSetting('enabled_visibility', 'no');
-							} else {
-								element.model.setSetting('enabled_visibility', 'yes');
-							}
-						}
-					}
-				]
-			}
-		);
-		return groups;
-	} );
+	elementor.hooks.addFilter( 'elements/widget/contextMenuGroups', function ( groups, element ) {
+		return dce_add_toggle_visibility( groups, element );
+	});
+
+	elementor.hooks.addFilter( 'elements/section/contextMenuGroups', function ( groups, element ) {
+		return dce_add_toggle_visibility( groups, element );
+	});
+	elementor.hooks.addFilter( 'elements/column/contextMenuGroups', function ( groups, element ) {
+		return dce_add_toggle_visibility( groups, element );
+	});
+	elementor.hooks.addFilter( 'elements/container/contextMenuGroups', function ( groups, element ) {
+		return dce_add_toggle_visibility( groups, element );
+	});
 
 	// Visibility Toggle
     jQuery(document).on('click', '.dce-elementor-navigator__element__toggle', function() {
@@ -78,6 +74,29 @@ jQuery(window).on('elementor:init', function() {
         dce_visibility_toggle(cid, false);
     });
 });
+
+function dce_add_toggle_visibility( groups, element ) {
+	groups.push(
+		{
+			name: 'dce_visibility_frontend',
+			actions: [
+				{
+					name: 'toggle_visibility',
+					title: 'Toggle Visibility in Frontend',
+					icon: 'fa fa-eye',
+					callback: function() {
+						if (element.model.getSetting('enabled_visibility') == 'yes') {
+							element.model.setSetting('enabled_visibility', 'no');
+						} else {
+							element.model.setSetting('enabled_visibility', 'yes');
+						}
+					}
+				}
+			]
+		}
+	);
+	return groups;
+}
 
 function temporary_disable_visibility(cid) {
     var iFrameDOM = jQuery("iframe#elementor-preview-iframe").contents();

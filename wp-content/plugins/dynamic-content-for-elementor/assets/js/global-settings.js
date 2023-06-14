@@ -1,6 +1,5 @@
-var is_animsition = false;
-var is_trackerheader = false;
 (function ($) {
+	var is_animsition = false;
     var structure_wrapper = '';
     var structure_header = '';
     var settings_global = null;
@@ -19,10 +18,8 @@ var is_trackerheader = false;
             $('#main').wrapInner('<div class="animsition" data-animsition-in-class="fade-in" data-animsition-in-duration="1000" data-animsition-out-class="fade-out" data-animsition-out-duration="800"></div>');
         }
     };
-    var trackerHeaderHandler = function ( ) {
+    var trackerHeaderHandler = function () {
         structure_header = settings_global.selector_header || '';
-        // in futuro la classe header comprenderà il wrapper di vari elementi, tipo la top-bar la header
-        // e altri elementi che vogliono far parte del trackerHeader.
         is_overlay = Boolean(settings_global.trackerheader_overlay) || false;
 
         trackerHeader_element = $(structure_header);
@@ -42,7 +39,7 @@ var is_trackerheader = false;
                 },
                 offset: 10,
                 classes: {
-                    // when element is initialised
+                    // when element is initialized
                     initial: "trackerheader",
                     // when scrolling up
                     pinned: "trackerheader--pinned",
@@ -52,7 +49,7 @@ var is_trackerheader = false;
                     top: "trackerheader--top",
                     // when below offset
                     notTop: "trackerheader--not-top",
-                    // when at bottom of scoll area
+                    // when at bottom of scroll area
                     bottom: "trackerheader--bottom",
                     // when not at bottom of scroll area
                     notBottom: "trackerheader--not-bottom",
@@ -61,7 +58,6 @@ var is_trackerheader = false;
                 },
             });
             headroom.init();
-            is_trackerheader = true;
         }
         if (is_overlay) {
             generate_overlay();
@@ -73,7 +69,6 @@ var is_trackerheader = false;
         if (trackerHeader_element !== null && trackerHeader_element.length) {
             headroom.destroy();
             generate_overlay();
-            is_trackerheader = false;
         }
     };
     var resizeHandle = function () {

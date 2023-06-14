@@ -26,6 +26,8 @@ class Elements
         if (!is_admin()) {
             // elements report
             add_action('elementor/frontend/widget/before_render', array($this, 'start_element'), 11, 2);
+            //+exclude_start
+            // Frontend Navigator
             $option = get_option(DCE_FRONTEND_NAVIGATOR_OPTION);
             if ('active' === $option || 'active-visitors' === $option) {
                 self::$user_can_elementor = \DynamicContentForElementor\Helper::user_can_elementor();
@@ -43,7 +45,7 @@ class Elements
                         \DynamicContentForElementor\Plugin::instance()->assets->register_and_enqueue_dce_icons();
                         wp_enqueue_style('dce-admin-bar', plugins_url('/assets/css/admin-bar.css', DCE__FILE__), [], DCE_VERSION);
                     });
-                    add_action('admin_bar_menu', array($this, 'add_frontend_navigator'), 100, 2);
+                    add_action('admin_bar_menu', array($this, 'add_frontend_navigator'), 100);
                     if (isset($_GET['dce-nav'])) {
                         add_action('wp_head', function () {
                             echo '<meta name="robots" content="noindex" />';
@@ -52,8 +54,10 @@ class Elements
                     }
                 }
             }
+            //+exclude_end
         }
     }
+    //+exclude_start
     public static function get_main_template_id()
     {
         $templates = self::get_template_ids();
@@ -68,23 +72,28 @@ class Elements
         }
         return \false;
     }
+    //+exclude_end
     public static function get_template_ids()
     {
         $templates = [];
+        //+exclude_start
         // check with DCE Template System
         $template_id = \DynamicContentForElementor\TemplateSystem::get_template_id(\true);
         if ($template_id) {
             $templates['dce'] = $template_id;
         }
+        //+exclude_end
         // check with Elementor PRO Theme Builder
         $pro_template_id = \DynamicContentForElementor\Helper::get_theme_builder_template_id();
         if ($pro_template_id) {
             $templates['pro'] = $pro_template_id;
         }
+        //+exclude_start
         $post_template_id = \DynamicContentForElementor\TemplateSystem::get_post_template_id();
         if ($post_template_id) {
             $templates['post'] = $post_template_id;
         }
+        //+exclude_end
         return $templates;
     }
     public function start_element($element = \false, $template_id = 0)
@@ -178,6 +187,7 @@ class Elements
         }
         return \false;
     }
+    //+exclude_start
     /**
      * Add Frontend Navigator
      *
@@ -682,6 +692,7 @@ class Elements
         }
         return 'eicon-widget eicon-square';
     }
+    //+exclude_end
     public function get_widget_by_id($id)
     {
         $name = $this->get_element_name_by_id($id, 'widget');

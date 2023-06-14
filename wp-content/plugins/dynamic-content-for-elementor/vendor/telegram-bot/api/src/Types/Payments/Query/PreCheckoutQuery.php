@@ -3,9 +3,7 @@
 namespace DynamicOOOS\TelegramBot\Api\Types\Payments\Query;
 
 use DynamicOOOS\TelegramBot\Api\BaseType;
-use DynamicOOOS\TelegramBot\Api\Types\Payments\ArrayOfLabeledPrice;
 use DynamicOOOS\TelegramBot\Api\Types\Payments\OrderInfo;
-use DynamicOOOS\TelegramBot\Api\Types\Payments\ShippingAddress;
 use DynamicOOOS\TelegramBot\Api\Types\User;
 /**
  * Class PreCheckoutQuery
@@ -56,13 +54,13 @@ class PreCheckoutQuery extends BaseType
     /**
      * Optional. Identifier of the shipping option chosen by the user
      *
-     * @var string
+     * @var string|null
      */
     protected $shippingOptionId;
     /**
      * Optional. Order info provided by the user
      *
-     * @var OrderInfo
+     * @var OrderInfo|null
      */
     protected $orderInfo;
     /**
@@ -75,7 +73,10 @@ class PreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $id
+     *
+     * @return void
      */
     public function setId($id)
     {
@@ -91,7 +92,10 @@ class PreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param User $from
+     *
+     * @return void
      */
     public function setFrom($from)
     {
@@ -107,7 +111,10 @@ class PreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $currency
+     *
+     * @return void
      */
     public function setCurrency($currency)
     {
@@ -123,7 +130,10 @@ class PreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param int $totalAmount
+     *
+     * @return void
      */
     public function setTotalAmount($totalAmount)
     {
@@ -139,7 +149,10 @@ class PreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param mixed $invoicePayload
+     *
+     * @return void
      */
     public function setInvoicePayload($invoicePayload)
     {
@@ -147,7 +160,8 @@ class PreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
-     * @return string
+     *
+     * @return null|string
      */
     public function getShippingOptionId()
     {
@@ -155,7 +169,10 @@ class PreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param string $shippingOptionId
+     *
+     * @return void
      */
     public function setShippingOptionId($shippingOptionId)
     {
@@ -163,7 +180,8 @@ class PreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
-     * @return OrderInfo
+     *
+     * @return OrderInfo|null
      */
     public function getOrderInfo()
     {
@@ -171,7 +189,10 @@ class PreCheckoutQuery extends BaseType
     }
     /**
      * @author MY
+     *
      * @param OrderInfo $orderInfo
+     *
+     * @return void
      */
     public function setOrderInfo($orderInfo)
     {

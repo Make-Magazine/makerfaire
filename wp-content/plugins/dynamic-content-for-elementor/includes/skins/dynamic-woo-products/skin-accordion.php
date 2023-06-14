@@ -13,6 +13,11 @@ class Dynamic_Woo_Products_Skin_Accordion extends \DynamicContentForElementor\In
      *
      * @return void
      */
+    /**
+     * Register Controls Actions
+     *
+     * @return void
+     */
     protected function _register_controls_actions()
     {
         add_action('elementor/element/dce-dynamic-woo-products/section_query/after_section_end', [$this, 'register_controls_layout']);

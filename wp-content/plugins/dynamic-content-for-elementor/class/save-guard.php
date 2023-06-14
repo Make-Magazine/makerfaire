@@ -71,7 +71,7 @@ class SaveGuard
     /**
      * @param string $id
      *
-     * @return array<string, mixed>|false
+     * @return array<string,mixed>|false
      */
     private function find_saved_element($id)
     {
@@ -82,7 +82,7 @@ class SaveGuard
      * @param string $repeater_name
      * @param string $field__id
      *
-     * @return array<string, mixed>|false
+     * @return array<string,mixed>|false
      */
     private function find_saved_repeater_field($element_id, $repeater_name, $field__id)
     {
@@ -94,7 +94,7 @@ class SaveGuard
     }
     /**
      * @param string $id
-     * @return array<string, mixed>|never
+     * @return array<string,mixed>|never
      */
     private function find_saved_element_or_deny($id)
     {
@@ -108,10 +108,10 @@ class SaveGuard
         return $el;
     }
     /**
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      * @param Callable $saved_settings_callback
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     private function filter_dynamic_tags_flat($settings, $saved_settings_callback)
     {
@@ -135,9 +135,9 @@ class SaveGuard
     }
     /**
      * @param string $element_id
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     private function filter_dynamic_tags($element_id, $settings)
     {
@@ -164,10 +164,10 @@ class SaveGuard
     }
     /**
      * @param string $element_id
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      * @param string $widget_type
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     private function filter_unsafe_controls($element_id, $settings, $widget_type)
     {
@@ -202,10 +202,10 @@ class SaveGuard
     }
     /**
      * @param string $element_id
-     * @param array<string, mixed> $settings
+     * @param array<string,mixed> $settings
      * @param string $widget_type
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     private function filter_settings($element_id, $settings, $widget_type)
     {
@@ -213,9 +213,9 @@ class SaveGuard
         return $this->filter_unsafe_controls($element_id, $settings, $widget_type);
     }
     /**
-     * @param array<string, mixed> $element
+     * @param array<string,mixed> $element
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     private function filter_element($element)
     {
@@ -235,7 +235,7 @@ class SaveGuard
     /**
      * @param Document $document
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function get_saved_data($document)
     {
@@ -249,10 +249,10 @@ class SaveGuard
         return ['elements' => $elements, 'settings' => $settings];
     }
     /**
-     * @param array<string, mixed> $data
+     * @param array<string,mixed> $data
      * @param Document $document
      *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     public function filter_save_data($data, $document)
     {

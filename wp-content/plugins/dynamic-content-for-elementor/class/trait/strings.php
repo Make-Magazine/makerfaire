@@ -136,16 +136,9 @@ trait Strings
         }
         return \trim(force_balance_tags($out));
     }
-    public static function path_to_url($dir)
-    {
-        $dirs = wp_upload_dir();
-        $url = \str_replace($dirs['basedir'], $dirs['baseurl'], $dir);
-        $url = \str_replace(ABSPATH, get_home_url(null, '/'), $url);
-        return $url;
-    }
+    //+exclude_start
     public static function tablefy($html = '')
     {
-        $table_replaces = array('table' => '.elementor-container', 'tr' => '.elementor-row', 'td' => '.elementor-column');
         $dom = new \DynamicOOOS\PHPHtmlParser\Dom();
         $dom->loadStr($html);
         foreach ($dom->find('.elementor-container') as $tag) {
@@ -169,6 +162,7 @@ trait Strings
         $html_table = (string) $dom;
         return $html_table;
     }
+    //+exclude_end
     public static function get_array_value_by_keys($array = array(), $keys = array())
     {
         if (!empty($keys)) {

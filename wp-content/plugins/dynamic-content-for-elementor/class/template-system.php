@@ -116,8 +116,7 @@ class TemplateSystem
             add_action('elementor/frontend/column/before_render', array($this, 'add_dce_background_data_attributes'));
             add_action('elementor/frontend/section/before_render', array($this, 'add_dce_background_data_attributes'));
             add_action('elementor/frontend/container/before_render', array($this, 'add_dce_background_data_attributes'));
-            // Fix for CSS in a loop
-            add_action('elementor/frontend/the_content', array($this, 'css_class_fix'));
+            // CSS Fix for Background Images in a loop
             add_action('elementor/frontend/widget/after_render', array($this, 'fix_style'));
             add_action('elementor/frontend/column/after_render', array($this, 'fix_style'));
             add_action('elementor/frontend/section/after_render', array($this, 'fix_style'));
@@ -189,8 +188,8 @@ class TemplateSystem
     /**
      * Column heading for Template System on Taxonomies
      *
-     * @param [type] $columns
-     * @return void
+     * @param string[] $columns
+     * @return string[]
      */
     public function taxonomy_columns_head($columns)
     {
@@ -311,8 +310,6 @@ class TemplateSystem
                                     $add_styles .= \DynamicContentForElementor\Assets::wp_print_styles($style, \false);
                                 }
                             }
-                            $template = \Elementor\Plugin::$instance->documents->get_current();
-                            $id = $template->get_main_id();
                             // add also current document file
                             return $content . $add_styles;
                         });
@@ -395,7 +392,7 @@ class TemplateSystem
             if (!empty(self::$options['dyncontel_before_field_archive' . $cptype])) {
                 $dce_default_template = self::$options['dyncontel_before_field_archive' . $cptype];
             }
-            if (isset(get_queried_object()->taxonomy)) {
+            if (get_queried_object() instanceof \WP_Term) {
                 $taxo = get_queried_object()->taxonomy;
                 // 3 - Taxonomy
                 if (isset(self::$options['dyncontel_before_field_archive_taxonomy_' . $taxo]) && self::$options['dyncontel_before_field_archive_taxonomy_' . $taxo] > 0) {
@@ -453,8 +450,8 @@ class TemplateSystem
     /**
      * Layout for archives
      *
-     * @param [type] $single_template
-     * @return void
+     * @param string $single_template
+     * @return string
      */
     public function layout_archive_templates($single_template)
     {
@@ -477,8 +474,8 @@ class TemplateSystem
     /**
      * Load from Elementor folder '/modules/page-templates/templates/' the layout between 'header-footer' (Full-Width in our settings) and 'canvas'
      *
-     * @param [type] $my_template
-     * @return void
+     * @param string $my_template
+     * @return string
      */
     public function layout_static_templates($my_template)
     {
@@ -608,8 +605,8 @@ class TemplateSystem
     /**
      * Remove content filter priority from Elementor
      *
-     * @param [type] $content
-     * @return void
+     * @param string $content
+     * @return string
      */
     public function remove_elementor_content_filter_priority($content)
     {
@@ -628,6 +625,12 @@ class TemplateSystem
         }
         return $content;
     }
+    /**
+     * Filter the Content in the Main Loop
+     *
+     * @param string $content
+     * @return string
+     */
     public function filter_the_content_in_the_main_loop($content)
     {
         // if current post has not its Elementor Template
@@ -654,17 +657,23 @@ class TemplateSystem
             $queried_object = get_queried_object();
             if (!empty($queried_object) && 'WP_Post' === \get_class($queried_object)) {
                 $post = get_post();
-                if ($post) {
-                    // check if the post is built with Elementor
-                    $created_with_elementor = get_post_meta($post->ID, '_elementor_edit_mode', \true);
-                    if ($created_with_elementor) {
-                        return $post->ID;
-                    }
+                if ($post === null) {
+                    return \false;
+                }
+                $doc = \Elementor\Plugin::$instance->documents->get($post->ID);
+                if ($doc && $doc->is_built_with_elementor()) {
+                    return $post->ID;
                 }
             }
         }
         return \false;
     }
+    /**
+     * Get Template ID
+     *
+     * @param boolean $head
+     * @return int|void
+     */
     public static function get_template_id($head = \false)
     {
         if (self::$template_id) {
@@ -676,7 +685,7 @@ class TemplateSystem
         }
         $dce_template = 0;
         // Check if we're inside the main loop in a single post page.
-        if (Helper::in_the_loop() && is_main_query() || $head) {
+        if (in_the_loop() && is_main_query() || $head) {
             global $post;
             $cptype = \false;
             if ($post) {
@@ -864,9 +873,8 @@ class TemplateSystem
         }
         // If WPML is active, retrieve the translation of the current template
         $template_id = apply_filters('wpml_object_id', $template_id, 'elementor_library', \true);
-        // Check if the template is created with Elementor
-        $created_with_elementor = get_post_meta($template_id, '_elementor_edit_mode', \true);
-        if ($created_with_elementor) {
+        $doc = \Elementor\Plugin::$instance->documents->get($template_id);
+        if ($doc && $doc->is_built_with_elementor()) {
             $template_page = \Elementor\Plugin::instance()->frontend->get_builder_content($template_id, $inline_css);
             $template_page = self::css_class_fix($template_page, $template_id);
             return $template_page;
@@ -880,10 +888,10 @@ class TemplateSystem
     /**
      * Add Data Attributes to fix issue for templates in a loop
      *
-     * @param [type] $element
+     * @param \Elementor\Element_Base $element
      * @return void
      */
-    public function add_dce_background_data_attributes($element)
+    public function add_dce_background_data_attributes(\Elementor\Element_Base $element)
     {
         // Background Color
         $background_color = $element->get_settings_for_display('background_color');
@@ -938,52 +946,71 @@ class TemplateSystem
             $element->add_render_attribute('_wrapper', 'data-dce-advanced-background-hover-image-url', $advanced_background_hover_image['url'], \true);
         }
     }
-    public static function css_class_fix($content = '', $template_id = 0)
+    /**
+     * CSS Class Fix
+     *
+     * @param string $content
+     * @param int $template_id
+     * @return string
+     */
+    public static function css_class_fix(string $content = '', int $template_id = 0)
     {
-        if ($content) {
-            $template_html_id = Helper::get_template_id_by_html($content);
-            if ($template_id && $template_id != $template_html_id) {
-                $content = \str_replace('class="elementor elementor-' . $template_html_id . ' ', 'class="elementor elementor-' . $template_id . ' ', $content);
-            } else {
-                $template_id = $template_html_id;
+        if (empty($content)) {
+            return $content;
+        }
+        $template_html_id = Helper::get_template_id_by_html($content);
+        if ($template_id && $template_id !== $template_html_id) {
+            $content = \str_replace('class="elementor elementor-' . $template_html_id . ' ', 'class="elementor elementor-' . $template_id . ' ', $content);
+        } else {
+            $template_id = $template_html_id;
+        }
+        if ($template_id) {
+            $queried_object = get_queried_object();
+            $queried_object_id = get_queried_object_id();
+            $queried_object_type = Helper::get_queried_object_type();
+            if ('post' === $queried_object_type) {
+                $queried_object_id = get_the_ID();
             }
-            if ($template_id) {
-                $queried_object = get_queried_object();
-                $queried_object_id = get_queried_object_id();
-                $queried_object_type = Helper::get_queried_object_type();
-                if ($queried_object_type == 'post') {
-                    $queried_object_id = get_the_ID();
+            if (Helper::is_acfpro_active()) {
+                $row = acf_get_loop('active');
+                if ($row) {
+                    $queried_object_type = 'row';
+                    $queried_object_id = get_row_index();
                 }
-                if (Helper::is_acfpro_active()) {
-                    $row = acf_get_loop('active');
-                    if ($row) {
-                        $queried_object_type = 'row';
-                        $queried_object_id = get_row_index();
-                    }
-                }
-                $content = \str_replace('class="elementor elementor-' . $template_id . ' ', 'class="elementor elementor-' . $template_id . ' dce-elementor-' . $queried_object_type . '-' . $queried_object_id . ' ', $content);
-                $content = \str_replace('class="elementor elementor-' . $template_id . '"', 'class="elementor elementor-' . $template_id . ' dce-elementor-' . $queried_object_type . '-' . $queried_object_id . '"', $content);
-                $pieces = \explode('data-elementor-id="', $content, 2);
-                foreach ($pieces as $pkey => $apiece) {
-                    if ($pkey) {
-                        list($eid, $more) = \explode('"', $apiece, 2);
-                        $new_content .= 'data-elementor-id="' . $eid . '" data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-obj-id="' . $queried_object_id . '"' . $more;
-                    } else {
-                        $new_content = $apiece;
-                    }
-                }
-                $content = $new_content;
-                $content = \str_replace('data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-' . $queried_object_type . '-id="' . $queried_object_id . '"', 'data-' . $queried_object_type . '-id="' . $queried_object_id . '"', $content);
-                $content = \str_replace('data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-' . $queried_object_type . '-id="', 'data-' . $queried_object_type . '-id="', $content);
-                $content = \str_replace('data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-obj-id="' . $queried_object_id . '" data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-obj-id="' . $queried_object_id . '"', 'data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-obj-id="' . $queried_object_id . '"', $content);
             }
+            $content = \str_replace('class="elementor elementor-' . $template_id . ' ', 'class="elementor elementor-' . $template_id . ' dce-elementor-' . $queried_object_type . '-' . $queried_object_id . ' ', $content);
+            $content = \str_replace('class="elementor elementor-' . $template_id . '"', 'class="elementor elementor-' . $template_id . ' dce-elementor-' . $queried_object_type . '-' . $queried_object_id . '"', $content);
+            $pieces = \explode('data-elementor-id="', $content, 2);
+            foreach ($pieces as $pkey => $apiece) {
+                if ($pkey) {
+                    list($eid, $more) = \explode('"', $apiece, 2);
+                    $new_content .= 'data-elementor-id="' . $eid . '" data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-obj-id="' . $queried_object_id . '"' . $more;
+                } else {
+                    $new_content = $apiece;
+                }
+            }
+            $content = $new_content;
+            $content = \str_replace('data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-' . $queried_object_type . '-id="' . $queried_object_id . '"', 'data-' . $queried_object_type . '-id="' . $queried_object_id . '"', $content);
+            $content = \str_replace('data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-' . $queried_object_type . '-id="', 'data-' . $queried_object_type . '-id="', $content);
+            $content = \str_replace('data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-obj-id="' . $queried_object_id . '" data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-obj-id="' . $queried_object_id . '"', 'data-' . $queried_object_type . '-id="' . $queried_object_id . '" data-obj-id="' . $queried_object_id . '"', $content);
         }
         return $content;
     }
-    public function fix_style($element)
+    /**
+     * Fix Style
+     *
+     * Change Selector to fix background images in a loop
+     *
+     * @param \Elementor\Element_Base $element
+     * @return void
+     */
+    public function fix_style(\Elementor\Element_Base $element)
     {
-        $css = '';
         $settings = $element->get_settings_for_display();
+        if (empty($settings['__dynamic__'])) {
+            return;
+        }
+        $css = '';
         $element_id = $element->get_id();
         $element_controls = $element->get_controls();
         $queried_object_type = Helper::get_queried_object_type();
@@ -995,37 +1022,35 @@ class TemplateSystem
                 $queried_object_id = get_row_index();
             }
         }
-        if (!empty($settings['__dynamic__'])) {
-            foreach ($settings['__dynamic__'] as $dkey => $dsetting) {
-                $tmp = \explode('_', $dkey);
-                $device = \array_pop($tmp);
-                $rkeys = array('desktop' => $dkey);
-                if ($device == 'tablet' || $device == 'mobile') {
-                    $rkeys = array($device => $dkey);
+        foreach ($settings['__dynamic__'] as $key => $dsetting) {
+            $tmp = \explode('_', $key);
+            $device_detected = \array_pop($tmp);
+            if (\in_array($device_detected, ['tablet', 'mobile'], \true)) {
+                $devices = [$device_detected => $key];
+            } else {
+                $devices = ['desktop' => $key];
+            }
+            foreach ($devices as $device => $setting_key) {
+                $selector = '.dce-fix-background-loop .dce-elementor-' . $queried_object_type . '-' . $queried_object_id;
+                if ('desktop' !== $device) {
+                    $selector = '[data-elementor-device-mode="' . $device . '"] ' . $selector;
                 }
-                foreach ($rkeys as $rkey => $rvalue) {
-                    $selector = '.elementor .dce-elementor-' . $queried_object_type . '-' . $queried_object_id;
-                    if ($rkey != 'desktop') {
-                        $selector = '[data-elementor-device-mode="' . $rkey . '"] ' . $selector;
-                    }
-                    if (isset($element_controls[$rvalue])) {
-                        if (!empty($element_controls[$dkey]['selectors'])) {
-                            foreach ($element_controls[$dkey]['selectors'] as $skey => $svalue) {
-                                $rule_value = \false;
-                                $rule_selector = \str_replace('{{WRAPPER}}', $selector . ' .elementor-element.elementor-element-' . $element_id, $skey);
-                                if (!empty($settings[$rvalue])) {
-                                    if (\is_array($settings[$rvalue])) {
-                                        if (!empty($settings[$rvalue]['url'])) {
-                                            $rule_value = \str_replace('{{URL}}', $settings[$rvalue]['url'], $svalue);
-                                        }
-                                        // TODO (other replacement)
-                                    } else {
-                                        $rule_value = \str_replace('{{VALUE}}', $settings[$rvalue], $svalue);
+                if (isset($element_controls[$setting_key])) {
+                    if (!empty($element_controls[$key]['selectors'])) {
+                        foreach ($element_controls[$key]['selectors'] as $skey => $svalue) {
+                            $rule_value = \false;
+                            $rule_selector = \str_replace('{{WRAPPER}}', $selector . ' .elementor-element.elementor-element-' . $element_id, $skey);
+                            if (!empty($settings[$setting_key])) {
+                                if (\is_array($settings[$setting_key])) {
+                                    if (!empty($settings[$setting_key]['url'])) {
+                                        $rule_value = \str_replace('{{URL}}', $settings[$setting_key]['url'], $svalue);
                                     }
+                                } else {
+                                    $rule_value = \str_replace('{{VALUE}}', $settings[$setting_key], $svalue);
                                 }
-                                if ($rule_value) {
-                                    $css .= $rule_selector . '{' . $rule_value . '}';
-                                }
+                            }
+                            if ($rule_value) {
+                                $css .= $rule_selector . '{' . $rule_value . '}';
                             }
                         }
                     }

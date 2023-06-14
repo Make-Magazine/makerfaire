@@ -33,7 +33,7 @@ class FireModalWindow extends \DynamicContentForElementor\Widgets\WidgetPrototyp
     protected function safe_register_controls()
     {
         $this->start_controls_section('section_modalwindow', ['label' => __('Fire Modal Window', 'dynamic-content-for-elementor')]);
-        $this->add_control('text_btn', ['label' => __('Text Button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Fire Modal Window', 'dynamic-content-for-elementor')]);
+        $this->add_control('text_btn', ['label' => __('Text Button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::TEXT, 'default' => __('Open', 'dynamic-content-for-elementor')]);
         $this->add_control('icon', ['label' => __('Icon', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::ICONS, 'fa4compatibility' => 'icon_fmw', 'skin' => 'inline', 'label_block' => \false]);
         $this->add_control('icon_fmw_align', ['label' => __('Icon Position', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SELECT, 'default' => 'left', 'options' => ['left' => __('Before', 'dynamic-content-for-elementor'), 'right' => __('After', 'dynamic-content-for-elementor')], 'condition' => ['icon!' => '']]);
         $this->add_control('space_icon_fmw', ['label' => __('Icon spacing', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::SLIDER, 'default' => ['size' => ''], 'range' => ['px' => ['min' => 0, 'max' => 100]], 'selectors' => ['{{WRAPPER}} .dce-modalwindow-section .icon-left' => 'padding-right: {{SIZE}}{{UNIT}};', '{{WRAPPER}} .dce-modalwindow-section .icon-right' => 'padding-left: {{SIZE}}{{UNIT}};'], 'condition' => ['icon!' => '']]);
@@ -62,7 +62,7 @@ class FireModalWindow extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         $this->add_control('fmw_modal', ['label' => __('Modal', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->add_group_control(Group_Control_Background::get_type(), ['name' => 'background', 'types' => ['classic', 'gradient'], 'selector' => '{{WRAPPER}} .cd-modal-action .cd-modal-bg.is-visible']);
         $this->add_responsive_control('fmw_modal_padding', ['label' => __('Padding', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::DIMENSIONS, 'size_units' => ['px', 'em', '%'], 'selectors' => ['{{WRAPPER}} .cd-modal .cd-modal-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};']]);
-        $this->add_control('fmw_closebutton', ['label' => __('Close button', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
+        $this->add_control('fmw_closebutton', ['label' => __('Close Tutton', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::HEADING, 'separator' => 'before']);
         $this->start_controls_tabs('fmw_button_colors');
         $this->start_controls_tab('fmw_button_text_colors', ['label' => __('Normal', 'dynamic-content-for-elementor')]);
         $this->add_control('color_closemodal', ['label' => __('Color', 'dynamic-content-for-elementor'), 'type' => Controls_Manager::COLOR, 'selectors' => ['{{WRAPPER}} .cd-modal-close .dce-quit-ics:after, {{WRAPPER}} .cd-modal-close .dce-quit-ics:before' => 'background-color: {{VALUE}};']]);
@@ -96,7 +96,7 @@ class FireModalWindow extends \DynamicContentForElementor\Widgets\WidgetPrototyp
         if ($settings['icon'] && $settings['icon_fmw_align'] == 'left') {
             Icons_Manager::render_icon($settings['icon'], ['class' => 'icon-' . sanitize_text_field($settings['icon_fmw_align'])]);
         }
-        echo sanitize_text_field($settings['text_btn']);
+        echo $settings['text_btn'];
         if ($settings['icon'] && $settings['icon_fmw_align'] == 'right') {
             Icons_Manager::render_icon($settings['icon'], ['class' => 'icon-' . sanitize_text_field($settings['icon_fmw_align'])]);
         }
