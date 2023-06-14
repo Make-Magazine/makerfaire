@@ -1,6 +1,6 @@
 /*! 
  * Master Slider WordPress Lite Panel - Required JS Modules 
- * @date Feb 2022
+ * @date May 2023
  */
 /*!
  * @overview  Averta JavaScript Libraries

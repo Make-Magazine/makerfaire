@@ -1,9 +1,9 @@
 <?php
 /*
-  Plugin Name: Embed Plus Plugin for YouTube Pro
+  Plugin Name: Embed Plus YouTube WordPress Plugin Pro
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.1.2
+  Version: 14.1.6.2
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -11,7 +11,7 @@
 
 /*
   Embed Plus Plugin for YouTube Pro
-  Copyright (C) 2022 EmbedPlus.com
+  Copyright (C) 2023 EmbedPlus.com
 
  */
 
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.1.2';
+    public static $version = '14.1.6.2';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -74,6 +74,7 @@ class YouTubePrefsPro
     public static $opt_restrict_wizard = 'restrict_wizard';
     public static $opt_restrict_wizard_roles = 'restrict_wizard_roles';
     public static $opt_ajax_compat = 'ajax_compat';
+    public static $opt_maxres_facade = 'maxres_facade';
     public static $opt_ytapi_load = 'ytapi_load';
     public static $opt_defaultdims = 'defaultdims';
     public static $opt_defaultwidth = 'width';
@@ -152,9 +153,9 @@ class YouTubePrefsPro
         'do_shortcode',
         'convert_smilies'
     );
-    public static $get_api_key_msg = ''; //'The ### feature now requires a (free) YouTube API key from Google. Please follow the easy steps <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">in this video</a> to create and save your API key.';
-    public static $boilerplate_api_error_message = ''; //' Please make sure you performed the <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">steps in this video</a> to create and save a proper server API key.';
-    public static $dft_gdpr_consent_message = ''; //'<p><strong>Please accept YouTube cookies to play this video.</strong> By accepting you will be accessing content from YouTube, a service provided by an external third party.</p><p><a href="https://policies.google.com/privacy" target="_blank">YouTube privacy policy</a></p><p>If you accept this notice, your choice will be saved and the page will refresh.</p>';
+    public static $get_api_key_msg = '';
+    public static $boilerplate_api_error_message = '';
+    public static $dft_gdpr_consent_message = '';
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     public static $vi_default_date = ''; // date('Y-m-d H:i:s', strtotime('2000-01-01'));
     public static $vi_last_category_update_interval = '1 hour';
@@ -210,8 +211,8 @@ class YouTubePrefsPro
         {
             self::$epbase = EMBEDPLUS_BASE_URL;
         }
-        self::$get_api_key_msg = __('The ### feature now requires a (free) YouTube API key from Google. Please follow the easy steps <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">in this video</a> to create and save your API key.', 'text_domain');
-        self::$boilerplate_api_error_message = __(' Please make sure you performed the <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">steps in this video</a> to create and save a proper server API key.', 'text_domain');
+        self::$get_api_key_msg = __('The ### feature now requires a (free) YouTube API key from Google. Please follow the easy steps <a href="https://www.youtube.com/watch?v=ZCfrNvu6nMc" target="_blank">in this video</a> to create and save your API key.', 'text_domain');
+        self::$boilerplate_api_error_message = __(' Please make sure you performed the <a href="https://www.youtube.com/watch?v=ZCfrNvu6nMc" target="_blank">steps in this video</a> to create and save a proper server API key.', 'text_domain');
         self::$dft_gdpr_consent_message = __('<p><strong>Please accept YouTube cookies to play this video.</strong> By accepting you will be accessing content from YouTube, a service provided by an external third party.</p><p><a href="https://policies.google.com/privacy" target="_blank">YouTube privacy policy</a></p><p>If you accept this notice, your choice will be saved and the page will refresh.</p>', 'text_domain');
 
         self::$vi_default_date = date('Y-m-d H:i:s', strtotime('2000-01-01'));
@@ -1625,7 +1626,7 @@ class YouTubePrefsPro
                             </div>
                             <div ng-if="model.doing_live" id="panLiveOptions">
                                 <h2><?php _e('Livestream/Premiere Options', 'text_domain') ?></h2>
-                                <label><input ng-click="live_chatChange()" <?php checked($wiz_defaults[self::$opt_live_chat], 1); ?> id="chklive_chat" type="checkbox" name="chklive_chat"><?php _e('Add live chat <sup class="orange">new</sup>', 'text_domain') ?></label>
+                                <label><input ng-click="live_chatChange()" <?php checked($wiz_defaults[self::$opt_live_chat], 1); ?> id="chklive_chat" type="checkbox" name="chklive_chat"><?php _e('Add live chat', 'text_domain') ?></label>
                             </div>
                             <h2><?php _e('Other Options', 'text_domain'); ?></h2>
                             <p class="smallnote"><?php _e('Your site\'s current defaults have been pre-checked for this video.', 'text_domain'); ?></p>
@@ -1737,7 +1738,7 @@ class YouTubePrefsPro
     {
         $apiEndpoint = 'https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&maxResults=1&type=video&eventType=live&safeSearch=none&videoEmbeddable=true&key=' . self::$alloptions[self::$opt_apikey]
                 . '&channelId=' . urlencode($channel);
-        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout));
+        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
 
         if (is_wp_error($apiResult))
         {
@@ -1763,7 +1764,7 @@ class YouTubePrefsPro
     {
         $apiEndpoint = 'https://www.googleapis.com/youtube/v3/videos?part=snippet&maxResults=1&key=' . self::$alloptions[self::$opt_apikey]
                 . '&id=' . urlencode($vid);
-        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout));
+        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
 
         if (is_wp_error($apiResult))
         {
@@ -1789,7 +1790,7 @@ class YouTubePrefsPro
     {
         $apiEndpoint = 'https://www.googleapis.com/youtube/v3/channels?part=contentDetails,snippet&key=' . self::$alloptions[self::$opt_apikey]
                 . '&id=' . urlencode($channid);
-        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout));
+        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
 
         if (is_wp_error($apiResult))
         {
@@ -1813,7 +1814,7 @@ class YouTubePrefsPro
 
     public static function clean_api_error($raw_message)
     {
-        return htmlspecialchars(strip_tags(preg_replace('@&key=[^& ]+@i', '&key=*******', $raw_message)));
+        return htmlspecialchars(strip_tags(preg_replace('@&key=[^& ]+@i', '&key=*******', $raw_message)), ENT_QUOTES, 'UTF-8');
     }
 
     public static function clean_api_error_html($raw_message, $add_boilerplate)
@@ -1847,7 +1848,7 @@ class YouTubePrefsPro
         }
 
         $code = '';
-        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout));
+        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
 
         if (is_wp_error($apiResult))
         {
@@ -2153,6 +2154,7 @@ class YouTubePrefsPro
                     epdovol: true,
                     evselector: '<?php echo self::get_evselector(); ?>',
                     ajax_compat: <?php echo self::$alloptions[self::$opt_ajax_compat] == '1' ? 'true' : 'false' ?>,
+                    maxres_facade: '<?php echo esc_attr(self::$alloptions[self::$opt_maxres_facade]) ?>',
                     ytapi_load: '<?php echo esc_attr(self::$alloptions[self::$opt_ytapi_load]) ?>',
                     pause_others: <?php echo self::$alloptions[self::$opt_pause_others] == '1' ? 'true' : 'false' ?>,
                     facade_mode: <?php echo self::$alloptions[self::$opt_facade_mode] == '1' ? 'true' : 'false' ?>,
@@ -2171,7 +2173,7 @@ class YouTubePrefsPro
     public static function fitvids()
     {
         $loggedin = current_user_can('edit_posts');
-        if (!($loggedin && self::$alloptions[self::$opt_admin_off_scripts]))
+        if (!($loggedin && self::$alloptions[self::$opt_admin_off_scripts]) && (self::$alloptions[self::$opt_responsive] || self::$alloptions[self::$opt_widgetfit]))
         {
             wp_enqueue_script('__ytprefsfitvids__', plugins_url('scripts/fitvids' . self::$min . '.js', __FILE__), array('__ytprefs__'), self::$version, true);
         }
@@ -2228,6 +2230,7 @@ class YouTubePrefsPro
         $_restrict_wizard = 0;
         $_restrict_wizard_roles = self::$dft_roles;
         $_ajax_compat = 0;
+        $_maxres_facade = 'eager';
         $_ytapi_load = 'light';
         $_schemaorg = 0;
         $_ftpostimg = 0;
@@ -2372,6 +2375,7 @@ class YouTubePrefsPro
             $_restrict_wizard = self::tryget($arroptions, self::$opt_restrict_wizard, 0);
             $_restrict_wizard_roles = self::tryget($arroptions, self::$opt_restrict_wizard_roles, self::$dft_roles);
             $_ajax_compat = self::tryget($arroptions, self::$opt_ajax_compat, 0);
+            $_maxres_facade = self::tryget($arroptions, self::$opt_maxres_facade, $_maxres_facade);
             $_ytapi_load = self::tryget($arroptions, self::$opt_ytapi_load, $_ytapi_load);
             $_schemaorg = self::tryget($arroptions, self::$opt_schemaorg, 0);
             if (defined('WPSEO_VIDEO_FILE'))
@@ -2492,6 +2496,7 @@ class YouTubePrefsPro
             self::$opt_restrict_wizard => $_restrict_wizard,
             self::$opt_restrict_wizard_roles => $_restrict_wizard_roles,
             self::$opt_ajax_compat => $_ajax_compat,
+            self::$opt_maxres_facade => $_maxres_facade,
             self::$opt_ytapi_load => $_ytapi_load,
             self::$opt_schemaorg => $_schemaorg,
             self::$opt_ftpostimg => $_ftpostimg,
@@ -2804,7 +2809,7 @@ class YouTubePrefsPro
         $code = '';
         $init_id = null;
 
-        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout));
+        $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
 
         if (is_wp_error($apiResult))
         {
@@ -3002,7 +3007,8 @@ class YouTubePrefsPro
 //        }
         $code = $pagination . $code . $pagination;
 
-        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_spdc] == 1 && !(bool) self::$alloptions[self::$opt_gdpr_consent])
+        if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_spdc] == 1 && !(bool) self::$alloptions[self::$opt_gdpr_consent]
+                && !empty($jsonResult->items))
         {
             $daysecs = self::$alloptions[self::$opt_spdcexp] * 60 * 60;
             set_transient($spdckey, $code, $daysecs);
@@ -3108,7 +3114,7 @@ class YouTubePrefsPro
 
         if (isset($linkparams['live']) && $linkparams['live'] == '1')
         {
-            $live_error_msg = __(' To embed live videos, please make sure you performed the <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">steps in this video</a> to create and save a proper server API key.', 'text_domain');
+            $live_error_msg = __(' To embed live videos, please make sure you performed the <a href="https://www.youtube.com/watch?v=ZCfrNvu6nMc" target="_blank">steps in this video</a> to create and save a proper server API key.', 'text_domain');
             if (isset(self::$alloptions[self::$opt_apikey]))
             {
                 if (isset($linkparams['channel']))
@@ -3119,7 +3125,7 @@ class YouTubePrefsPro
                         try
                         {
                             $ytapilink_live = 'https://www.googleapis.com/youtube/v3/search?order=date&maxResults=1&type=video&eventType=live&safeSearch=none&videoEmbeddable=true&channelId=' . $linkparams['channel'] . '&part=snippet&key=' . self::$alloptions[self::$opt_apikey];
-                            $apidata_live = wp_remote_get($ytapilink_live, array('timeout' => self::$curltimeout));
+                            $apidata_live = wp_remote_get($ytapilink_live, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
                             if (!is_wp_error($apidata_live))
                             {
                                 $raw = wp_remote_retrieve_body($apidata_live);
@@ -3151,11 +3157,11 @@ class YouTubePrefsPro
                         if (self::$alloptions[self::$opt_not_live_on])
                         {
                             // if not_live_content isn't being used, just process as a normal single video. otherwise: if not currently live (nor upcoming?), unset $linkparams['v']
-                            $not_live_content = trim(htmlspecialchars_decode(wp_strip_all_tags(self::$alloptions[self::$opt_not_live_content], true)));
+                            $not_live_content = trim(htmlspecialchars_decode(wp_strip_all_tags(self::$alloptions[self::$opt_not_live_content], true), ENT_QUOTES));
                             if (!empty($not_live_content))
                             {
                                 $ytapilink_live = 'https://www.googleapis.com/youtube/v3/videos?id=' . $linkparams['v'] . '&part=snippet&key=' . self::$alloptions[self::$opt_apikey];
-                                $apidata_live = wp_remote_get($ytapilink_live, array('timeout' => self::$curltimeout));
+                                $apidata_live = wp_remote_get($ytapilink_live, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
                                 if (!is_wp_error($apidata_live))
                                 {
                                     $raw = wp_remote_retrieve_body($apidata_live);
@@ -3305,6 +3311,7 @@ class YouTubePrefsPro
                 $beginlb = '<div class="lity-hide">';
                 $endlb = '</div>';
                 $disptypeif = ' epyt-lbif';
+                $dynsrc = 'data-lb';
             }
         }
         else
@@ -3422,7 +3429,7 @@ class YouTubePrefsPro
             {
                 $subbutton = '<div class="epyt-gallery-subscribe"><a target="_blank" class="epyt-gallery-subbutton" href="' .
                         esc_url(self::$alloptions[self::$opt_gallery_channelsublink]) . '?sub_confirmation=1"><img alt="subscribe" src="' . plugins_url('images/play-subscribe.png', __FILE__) . '" />' .
-                        htmlspecialchars(self::$alloptions[self::$opt_gallery_channelsubtext], ENT_QUOTES) . '</a></div>';
+                        htmlspecialchars(self::$alloptions[self::$opt_gallery_channelsubtext], ENT_QUOTES, 'UTF-8') . '</a></div>';
             }
 
 
@@ -3489,12 +3496,12 @@ class YouTubePrefsPro
 
         $code1 = $begin_gb_wrapper . $beginlb . $begin_live_chat . $begin_live_chat_video . $begin_responsive;
         $code_iframe1 = $code_iframe2 = '';
-        if ($videoidoutput != 'live_stream' && $finalparams[self::$opt_facade_mode] == 1)
+        if ($videoidoutput != 'live_stream' && stripos($disptype, 'epyt-lb') === false && $finalparams[self::$opt_facade_mode] == 1)
         {
             $facade_img_src = '';
             if (!empty($videoidoutput))
             {
-                $facade_img_src = ' src="https://i.ytimg.com/vi/' . $videoidoutput . '/maxresdefault.jpg" ';
+                $facade_img_src = ' src="https://i.ytimg.com/vi/' . $videoidoutput . ($finalparams[self::$opt_maxres_facade] == 'eager' ? '/maxresdefault.jpg' : '/hqdefault.jpg') . '" ';
             }
             else if (isset($finalparams['list']))
             {
@@ -3505,7 +3512,7 @@ class YouTubePrefsPro
             $code_iframe1 = '<div ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs . ' data-origwidth="' . self::$defaultwidth . '" data-origheight="' . self::$defaultheight . '" ' . $relstop .
                     'data-facadesrc="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
             $code_iframe2 = '" class="__youtube_prefs__ epyt-facade ' . (!empty($finalparams['live_stream']) ? ' epyt-live-channel ' : '') . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
-                    $voloutput . $galleryid_ifm_data . $facade_autoplay . '><img class="epyt-facade-poster" loading="lazy" ' . $acctitle . $facade_img_src . ' />' .
+                    $voloutput . $galleryid_ifm_data . $facade_autoplay . '><img data-spai-excluded="true" class="epyt-facade-poster skip-lazy" loading="lazy" ' . $acctitle . $facade_img_src . ' />' .
                     '<button class="epyt-facade-play" aria-label="Play"><svg data-no-lazy="1" height="100%" version="1.1" viewBox="0 0 68 48" width="100%"><path class="ytp-large-play-button-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path><path d="M 45,24 27,14 27,34" fill="#fff"></path></svg></button>' .
                     '</div>';
         }
@@ -3552,7 +3559,7 @@ class YouTubePrefsPro
                     {
                         if (!((isset($finalparams['live']) || isset($finalparams['live_stream'])) && $key == 'loop')) // don't add loop for channel streaming
                         {
-                            $finalsrc .= htmlspecialchars($key) . '=' . htmlspecialchars($value) . '&';
+                            $finalsrc .= htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . '=' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '&';
                             if ($key == 'loop' && $value == 1 && !isset($finalparams['list']))
                             {
                                 $finalsrc .= 'playlist=' . $finalparams['v'] . '&';
@@ -3679,7 +3686,7 @@ class YouTubePrefsPro
             $ytapilink = 'https://www.googleapis.com/youtube/v3/videos?id=' . $vidid . '&part=contentDetails,snippet&key=' . self::$alloptions[self::$opt_apikey];
 
 
-            $apidata = wp_remote_get($ytapilink, array('timeout' => self::$curltimeout));
+            $apidata = wp_remote_get($ytapilink, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
             if (!is_wp_error($apidata))
             {
                 $raw = wp_remote_retrieve_body($apidata);
@@ -3909,7 +3916,7 @@ class YouTubePrefsPro
                         . '&maxResults=10&key=' . self::$alloptions[self::$opt_apikey];
                 try
                 {
-                    $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout));
+                    $apiResult = wp_remote_get($apiEndpoint, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
                     if (!is_wp_error($apiResult))
                     {
                         $jsonResult = json_decode($apiResult['body']);
@@ -4094,9 +4101,9 @@ class YouTubePrefsPro
             self::$admin_page_hooks[] = add_menu_page(__('YouTube Settings', 'text_domain'), __('YouTube', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
             self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'));
         }
-        self::$admin_page_hooks[] = add_submenu_page(null, __('YouTube Posts', 'text_domain'), __('YouTube Posts', 'text_domain'), 'manage_options', 'youtube-ep-glance', array(get_class(), 'glance_page'));
-        self::$admin_page_hooks[] = self::$wizard_hook = add_submenu_page(null, __('YouTube Wizard', 'text_domain'), __('YouTube Wizard', 'text_domain'), 'edit_posts', 'youtube-ep-wizard', array(get_class(), 'wizard'));
-        self::$admin_page_hooks[] = self::$onboarding_hook = add_submenu_page(null, __('YouTube Setup', 'text_domain'), __('YouTube Setup', 'text_domain'), 'manage_options', 'youtube-ep-onboarding', array(get_class(), 'ytprefs_show_onboarding'));
+        self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Posts', 'text_domain'), __('YouTube Posts', 'text_domain'), 'manage_options', 'youtube-ep-glance', array(get_class(), 'glance_page'));
+        self::$admin_page_hooks[] = self::$wizard_hook = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Wizard', 'text_domain'), __('YouTube Wizard', 'text_domain'), 'edit_posts', 'youtube-ep-wizard', array(get_class(), 'wizard'));
+        self::$admin_page_hooks[] = self::$onboarding_hook = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Setup', 'text_domain'), __('YouTube Setup', 'text_domain'), 'manage_options', 'youtube-ep-onboarding', array(get_class(), 'ytprefs_show_onboarding'));
     }
 
     public static function remove_stats_validation()
@@ -4462,7 +4469,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update provides higher quality images for facades, and avoids unused javascript for facade mode in free and Pro versions.";
+        $new_pointer_content .= "This update provides the latest instructions for creating a YouTube API key, for both free and Pro versions.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -4922,13 +4929,12 @@ class YouTubePrefsPro
                     <input type="hidden" name="<?php echo $ytprefs_submitted; ?>" value="Y">
                     <?php wp_nonce_field('_epyt_save', '_epyt_nonce', true); ?>
                     <section class="pattern" id="jumpapikey">
-                        <img class="wiztab-screenshots" src="<?php echo plugins_url('images/apikey-server.png', __FILE__) ?>">
                         <h2>
                             YouTube API Key
                         </h2>
                         <p>
-                            Some features (such as galleries, and some wizard features) now require you to create a free YouTube API <strong>Server</strong> key from Google.
-                            Make sure it's a YouTube Data API v3 "Web Server" key as shown in the screenshot (i.e. not web browser or anything else). <a href="https://www.embedplus.com/how-to-create-a-youtube-api-key.aspx" target="_blank">Click this link &raquo;</a> and follow the instructions to get your API key. Don't worry, it's an easy process.
+                            Some features (such as galleries, and some wizard features) now require you to create a free YouTube API key from Google.
+                            The instructions for this are very specific, so we created a video for you that's hopefully easy to follow: <a href="https://www.embedplus.com/how-to-create-a-youtube-api-key.aspx" target="_blank">Click this link</a> and follow the steps on the page. Then save your API key below.
                         </p>
                         <p>
                             <b class="chktitle">YouTube API Key:</b> 
@@ -5552,7 +5558,7 @@ class YouTubePrefsPro
                         <img class="ssgallery" src="<?php echo plugins_url('images/ssgallery.png', __FILE__) ?>">
                         <p>
                             <a target="_blank" href="<?php echo self::$epbase ?>/responsive-youtube-playlist-channel-gallery-for-wordpress.aspx">You can now make playlist embeds (and channel-playlist embeds) have a gallery layout &raquo;</a>. <strong>First, you must obtain your YouTube API key</strong>. 
-                            Don't worry, it's an easy process. Just <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">click this link &raquo;</a> and follow the video on that page to get your server API key. Since Google updates their API Key generation directions frequently, follow the general steps shown in the video.
+                            Don't worry, it's an easy process. Just <a href="https://www.youtube.com/watch?v=ZCfrNvu6nMc" target="_blank">click this link &raquo;</a> and follow the video on that page to get your server API key. Since Google updates their API Key generation directions frequently, follow the general steps shown in the video.
                             Then paste your API key in the "API Key" tab, and click the "Save Changes" button.
                         </p>
 
@@ -5894,7 +5900,7 @@ class YouTubePrefsPro
                                     </label>
                                     <span id="boxschemaorg">
                                         <span class="apikey-msg">
-                                            The video SEO tags include data like the title, description, and thumbnail information of each video you embed. This plugin automatically extracts this data directly from YouTube using the version 3 API. This particular API version requires that you obtain a server API key so that YouTube can authenticate the requests. <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">Watch this video to see how to create your own key</a>. Then, paste it in the "YouTube API Key" box at the top of this screen, and click the "Save Changes" button.
+                                            The video SEO tags include data like the title, description, and thumbnail information of each video you embed. This plugin automatically extracts this data directly from YouTube using the version 3 API. This particular API version requires that you obtain a server API key so that YouTube can authenticate the requests. <a href="https://www.youtube.com/watch?v=ZCfrNvu6nMc" target="_blank">Watch this video to see how to create your own key</a>. Then, paste it in the "YouTube API Key" box at the top of this screen, and click the "Save Changes" button.
                                         </span>
                                     </span>
                                 </p>
@@ -6154,7 +6160,7 @@ class YouTubePrefsPro
                             <p>
                                 <input name="<?php echo self::$opt_uninstall_data; ?>" id="<?php echo self::$opt_uninstall_data; ?>" <?php checked($all[self::$opt_uninstall_data], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_uninstall_data; ?>">
-                                    <b class="chktitle">Delete Options When Uninstalling: <sup class="orange">new</sup></b> Checking this box will permanently delete your options the next time you uninstall the plugin. Leave it unchecked
+                                    <b class="chktitle">Delete Options When Uninstalling:</b> Checking this box will permanently delete your options the next time you uninstall the plugin. Leave it unchecked
                                     to preserve your options between installations.
                                 </label>
                             </p>
@@ -6259,6 +6265,26 @@ class YouTubePrefsPro
                                         <?php _e('After clicking once on the facade (aka light thumbnail), it is replaced with the real player. Check this option to have the real player play immediately, otherwise it will require an additional click. Note that checking this option will use YouTube\'s autoplay feature, which will not contribute toward play counts.  If you\'re embedding videos from someone else\'s channel, we recommend checking this.  If you\'re embedding videos that are from your channel, then you should self-evaluate the tradeoff involving play counts and additional clicking.', 'youtube-embed-plus-pro'); ?>
                                     </span>
                                 </label>
+                                <br>
+                                <br>
+                                <label>
+                                    <b class="chktitle"><?php _e('Force Maximum Quality for Facade Images: <sup class="orange">new</sup>', 'text_domain') ?></b>
+                                    <?php _e('Attempt to load the maximum resolution image for the facade image. This max quality image does not exist for all videos, so you have a few choices below.', 'text_domain'); ?>
+                                </label>
+                                <ul class="indent-option">
+                                    <li>
+                                        <input type="radio" name="<?php echo self::$opt_maxres_facade; ?>" id="<?php echo self::$opt_maxres_facade; ?>_eager" value="eager" <?php checked($all[self::$opt_maxres_facade], 'eager'); ?>>
+                                        <label for="<?php echo self::$opt_maxres_facade; ?>_eager"> <?php _e("<em>Eager:</em> Try loading the max resolution image by default. If the max-res image does not exist for the video, the next highest available resolution will immediately load instead. This option is best for websites that embed videos having very high resolutions (i.e. the max-res images will likely exist).", 'text_domain') ?> </label> <br>
+                                    </li>
+                                    <li>
+                                        <input type="radio" name="<?php echo self::$opt_maxres_facade; ?>" id="<?php echo self::$opt_maxres_facade; ?>_soft" value="soft" <?php checked($all[self::$opt_maxres_facade], 'soft'); ?>>
+                                        <label for="<?php echo self::$opt_maxres_facade; ?>_soft"> <?php _e("<em>Soft:</em> Load a relatively high resolution image that is guaranteed to exist, but immediately try updating the image to maximum resolution if it exists. This option is best for sites with some videos that may have a missing max resolution image.", 'text_domain') ?> </label>  <br>
+                                    </li>
+                                    <li>
+                                        <input type="radio" name="<?php echo self::$opt_maxres_facade; ?>" id="<?php echo self::$opt_maxres_facade; ?>_off" value="off" <?php checked($all[self::$opt_maxres_facade], 'off'); ?>>
+                                        <label for="<?php echo self::$opt_maxres_facade; ?>_off"><?php _e("<em>Off:</em> Don't try to maximize facade image quality. Just load the relatively high resolution image that all videos have.", 'text_domain') ?></label>  <br>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
 
@@ -6333,15 +6359,17 @@ class YouTubePrefsPro
                             <em>
                                 <input type="checkbox"/> I understand that the EmbedPlus.com form uses cookies, and the following will need to be sent with the form in order to get help with my issue:
                                 <ul class="reglist">
-                                    <li>My browser version</li>
-                                    <li>My domain name</li>
+                                    <li>Browser version</li>
+                                    <li>Domain name</li>
+                                    <li>WordPress version</li>
+                                    <li>Plugin version</li>
                                 </ul>
                             </em>
                         </label>
                         <p>
                             <button disabled type="button" class="button-primary">Click to load priority support form</button>
                         </p>
-                        <iframe data-src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo esc_attr($all[self::$opt_pro]); ?>&domain=<?php echo site_url(); ?>" width="500" height="<?php echo ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0) ? "500" : "140"; ?>"></iframe>
+                        <iframe data-src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo esc_attr($all[self::$opt_pro]); ?>&domain=<?php echo site_url(); ?>&wpversion=<? echo get_bloginfo('version'); ?>&pluginversion=<? echo self::$version ?>" width="500" height="<?php echo ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0) ? "500" : "140"; ?>"></iframe>
                     </div>
 
                 </section>
@@ -7010,6 +7038,21 @@ class YouTubePrefsPro
             
         }
         $new_options[self::$opt_ytapi_load] = $_ytapi_load;
+
+        $_maxres_facade = 'eager';
+        try
+        {
+            $_maxres_facade_temp = filter_input(INPUT_POST, self::$opt_maxres_facade);
+            if (in_array($_maxres_facade_temp, array('eager', 'soft', 'off')))
+            {
+                $_maxres_facade = $_maxres_facade_temp;
+            }
+        }
+        catch (Exception $ex)
+        {
+            
+        }
+        $new_options[self::$opt_maxres_facade] = $_maxres_facade;
 
         $_restrict_wizard_roles = self::$dft_roles;
         try
@@ -7751,15 +7794,13 @@ class YouTubePrefsPro
                 </div>
                 <div class="ytprefs-ob-step ytprefs-ob-step3">
                     <div class="ytprefs-ob-content">
-                        <img class="wiztab-screenshots" src="<?php echo plugins_url('images/apikey-server.png', __FILE__) ?>">
                         <h2>
                             YouTube API Key
                         </h2>
                         <form id="form-onboarding-apikey">
                             <input type="hidden" name="action" value="my_embedplus_onboarding_save_apikey_ajax"/>
                             <p>
-                                Some features (such as galleries, and some wizard features) now require you to create a free YouTube API <strong>Server</strong> key from Google.
-                                Make sure it's a YouTube Data API v3 "Web Server" key as shown in the screenshot (i.e. not web browser or anything else).
+                                Some features (such as galleries, and some wizard features) now require you to create a free YouTube API key from Google.
                             </p>
                             <?php
                             if (!empty($all[self::$opt_apikey]) && strlen($all[self::$opt_apikey]) > 0)
@@ -7774,7 +7815,7 @@ class YouTubePrefsPro
                             {
                                 ?>
                                 <p>
-                                    <a href="https://www.youtube.com/watch?v=VqML5F8hcRQ" target="_blank">Click this link &raquo;</a> and follow the video to get your API key. Don't worry, it's an easy process.
+                                    The instructions for this are very specific, so we created a video for you that's hopefully easy to follow: <a href="https://www.embedplus.com/how-to-create-a-youtube-api-key.aspx" target="_blank">Click this link</a> and follow the steps on the page. Then save your API key here.
                                 </p>                            
                                 <?php
                             }
@@ -7913,6 +7954,7 @@ class YouTubePrefsPro
                     'version' => self::$alloptions[self::$opt_version],
                     'evselector' => self::get_evselector(),
                     'ajax_compat' => self::$alloptions[self::$opt_ajax_compat] == '1' ? true : false,
+                    'maxres_facade' => esc_attr(self::$alloptions[self::$opt_maxres_facade]),
                     'ytapi_load' => self::$alloptions[self::$opt_ytapi_load],
                     'pause_others' => self::$alloptions[self::$opt_pause_others] == '1' ? true : false,
                     'stopMobileBuffer' => self::$alloptions[self::$opt_stop_mobile_buffer] == '1' ? true : false,
@@ -10551,6 +10593,10 @@ margin: 0 auto;
         // backend styels
         self::ytprefsscript();
         self::fitvids();
+        if (!empty(self::$alloptions[self::$opt_not_live_on_channel]))
+        {
+            add_action("admin_print_footer_scripts", array(get_class(), 'live_fallback_template'));
+        }
 
         if (!self::is_restrict_wizard() && current_user_can('edit_posts'))
         {

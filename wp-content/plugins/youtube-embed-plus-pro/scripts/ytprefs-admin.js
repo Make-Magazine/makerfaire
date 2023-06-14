@@ -235,7 +235,10 @@
         window._EPADashboard_.apiInit();
         window._EPADashboard_.log("YT API GB");
         window._EPADashboard_.pageReady();
-        jQuery('body').fitVidsEP();
+        if (typeof $.fn.fitVidsEP !== 'undefined')
+        {
+            $('body').fitVidsEP();
+        }
         if (typeof (window._EPADashboard_.embdyn) !== 'undefined')
         {
             window._EPADashboard_.embdyn();
@@ -395,7 +398,7 @@
 
         $(document).on('wp-before-tinymce-init.ytprefs-media_button', function (event, init)
         {
-            $media_buttons = $(init.selector).closest('.wp-editor-wrap').find('.wp-media-buttons');
+            var $media_buttons = $(init.selector).closest('.wp-editor-wrap').find('.wp-media-buttons');
             if (!$media_buttons.find('.ytprefs_media_link').length)
             {
                 $media_buttons.append('<a href="' + encodeURI(window._EPYTA_.wizhref) + '" class="thickbox button ytprefs_media_link ytprefs_wiz_button_widget_text" title="Visual YouTube Search Tool and Wizard - For easier embedding"><span></span> YouTube</a>');
@@ -432,32 +435,6 @@
             {
                 ev.preventDefault();
                 $(this).find('.ytprefs-ajax-form--submit:not([disabled])').trigger('click');
-            }
-        });
-
-        $(window).on('hashchange', function ()
-        {
-            if (window.location.hash.length > 0 && false) // stop; due to vi deprecation
-            {
-                $section = $('section' + window.location.hash);
-                if ($section.length > 0)
-                {
-                    $section.find('h2').addClass('ytvi-hash-scroll');
-                    setTimeout(function ()
-                    {
-                        $section.find('h2').removeClass('ytvi-hash-scroll');
-                    }, 2000);
-                }
-
-                $jumper = $('.jumper' + window.location.hash);
-                if ($jumper.length > 0)
-                {
-                    $('.jumper' + window.location.hash + ' + h3.sect').addClass('ytvi-hash-scroll');
-                    setTimeout(function ()
-                    {
-                        $('.jumper' + window.location.hash + ' + h3.sect').removeClass('ytvi-hash-scroll');
-                    }, 2000);
-                }
             }
         });
 

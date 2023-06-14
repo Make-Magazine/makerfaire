@@ -17,7 +17,7 @@ function msp_get_slider_starter_sections () {
             'id'      => 'masterslider_pro_custom_samples1',
             'title'   => '',
             'desc'    => '',
-            'content' => '<h4>'. __( 'Starter Templates (Pro version)', MSWP_TEXT_DOMAIN ) .'</h4><p>'. __( 'To kick start with Master Slider ready to use sliders.', MSWP_TEXT_DOMAIN ) .'</p><a href="http://avt.li/msfunlock" class="msp-ac-btn msp-btn-blue" target="_blank">'. __( 'Upgrade to unlock', MSWP_TEXT_DOMAIN ) .'</a>'
+            'content' => '<h4>'. __( 'Starter Templates (Pro version)', MSWP_TEXT_DOMAIN ) .'</h4><p>'. __( 'To kick start with Master Slider ready to use sliders.', MSWP_TEXT_DOMAIN ) .'</p><a href="https://avt.li/msfunlock" class="msp-ac-btn msp-btn-blue" target="_blank">'. __( 'Upgrade to unlock', MSWP_TEXT_DOMAIN ) .'</a>'
         ),
         array(
             'id'    => 'masterslider_dynamic_group',

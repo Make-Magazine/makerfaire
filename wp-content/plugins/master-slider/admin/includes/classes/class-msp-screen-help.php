@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 if( ! class_exists( 'MSP_Screen_Help' ) ) :
 
@@ -14,7 +14,7 @@ class MSP_Screen_Help extends Axiom_Screen_Help {
 
     // define tabs data
       $tabs = array (
-          
+
           array('id'    => 'msp-how-use-tab',
               'title'     => __( 'Display Sliders on pages', 'master-slider' ),
               'callback'  => array( $this, 'display_masterslider' ) // callback to display tab content @km!
@@ -36,7 +36,7 @@ class MSP_Screen_Help extends Axiom_Screen_Help {
     <hr />
 
     <div class="row-fluid">
-      
+
       <div>
         <h3>1 - Inserting the slider with shortcode (Easiest way)</h3>
         <p>You can place your sliders into pages and posts with their shortcodes.</p>
@@ -55,13 +55,13 @@ class MSP_Screen_Help extends Axiom_Screen_Help {
       <div >
         <h3>2 - Inserting the slider with the Master Slider WP widget</h3>
         <p>
-          MasterSlider WP supports widgets, so you can place your slider in your front-end page just by a drag n' drop. To do that, navigate to the Appearance menu on your left sidebar and select "Widgets". Grab the MasterSlider WP Widget and drop it into one of your widget area. 
+          MasterSlider WP supports widgets, so you can place your slider in your front-end page just by a drag n' drop. To do that, navigate to the Appearance menu on your left sidebar and select "Widgets". Grab the MasterSlider WP Widget and drop it into one of your widget area.
 
           Please note that some themes may not support a widget area what you need. In this case, you can create a new widget area by editing your theme files.
                 </p>
             </div>
         </div>
-    
+
     <hr>
 
     <div class="row-fluid">
@@ -76,9 +76,9 @@ class MSP_Screen_Help extends Axiom_Screen_Help {
         <p>Displays Master Slider markup for specific slider ID</p>
 
         <h5>Usage :</h5>
-        <p><code>&lt;?php masterslider( $id ); ?&gt;</code></p>It's equal to : 
+        <p><code>&lt;?php masterslider( $id ); ?&gt;</code></p>It's equal to :
         <p><code>&lt;?php echo get_masterslider( $id ); ?&gt;</code></p>
-        
+
         <h5>Parameters :</h5>
         <dl>
           <dt><tt>$id</tt></dt>
@@ -89,7 +89,7 @@ class MSP_Screen_Help extends Axiom_Screen_Help {
         <p>If you've created a slider and the slider ID is equal to <code>1</code> you can use the following code to display the slider on your website.</p>
         <p><code>&lt;?php masterslider ( 1 ); ?&gt;</code></p>OR
         <p><code>&lt;?php echo get_masterslider ( 1 ); ?&gt;</code></p><br />
-        
+
         <hr>
 
         <p>
@@ -97,7 +97,7 @@ class MSP_Screen_Help extends Axiom_Screen_Help {
                 </p>
             </div>
         </div>
-        
+
     <?php
   }
 
@@ -108,7 +108,7 @@ class MSP_Screen_Help extends Axiom_Screen_Help {
 
     <h4>If you have any questions please follow these steps:</h4>
     <ol>
-      <li>Please read item's <a href="http://masterslider.com/doc/wp/free" target="_blank">Documentation </a> </li>
+      <li>Please read item's <a href="https://masterslider.com/doc/wp/free" target="_blank">Documentation </a> </li>
       <li>Take a look in our <a href="http://wordpress.org/plugins/master-slider/faq/" target="_blank">FAQ</a> page</li>
       <li>Search plugin's support forum using <a href="https://www.google.com/search?q=site:wordpress.org+%22master+slider%22+%22support%22+your+question+here" target="_blank">this link</a> for finding already asked or similar questions.</li>
       <li>If you did not find your answer, please post new topic in <a href="http://wordpress.org/support/plugin/master-slider" target="_blank">support forum</a></li>
@@ -136,15 +136,15 @@ class MSP_Screen_Help extends Axiom_Screen_Help {
       <li>Support for third party software and plug-ins</li>
     </ul>
     <br/>
-    
+
     <p><span class="label label-info">Note</span> We <strong>CANNOT</strong> provide support via email, Please ask your support related questions only in <a href="http://wordpress.org/support/plugin/master-slider/" target="_blank">support forum</a>.</p>
     <br />
     <p><span class="label label-info">Important Note</span> For the fast troubleshooting, please send us detailed informations about the issue and make sure that you don't forget to send us your site url where you are using or want to use the item. Please note, that we cannot troubleshoot from screencast videos or screenshots.</p>
 
     <?php
   }
-    
-    
+
+
 }
 
 endif;

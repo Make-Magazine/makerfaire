@@ -5,7 +5,7 @@
  * @package   MasterSlider
  * @author    averta [averta.net]
  * @license   LICENSE.txt
- * @link      http://masterslider.com
+ * @link      https://masterslider.com
  * @copyright Copyright © 2014 averta
  */
 
@@ -19,7 +19,7 @@ function msp_thankyou_footer() {
 
     $text = sprintf(
         __('If you like %sMaster Slider%s and want to support us, please rate us %s ★★★★★ %s, that is a huge help!', 'master-slider' ),
-        '<a href="http://masterslider.com/?msl" title="Version ' . MSWP_AVERTA_VERSION . '" target="_blank">',
+        '<a href="https://masterslider.com/?msl" title="Version ' . MSWP_AVERTA_VERSION . '" target="_blank">',
         '</a>',
         '<a href="https://wordpress.org/support/view/plugin-reviews/master-slider/?filter=5#new-post" target="_blank">',
         '</a>'

@@ -311,6 +311,15 @@ tbody .latest-updates {
 #msp-slider-type-select {
 	display:none;
 }
+
+#msp-slider-type-select .depicter-banner > a {
+	display:block;
+}
+
+#msp-slider-type-select .depicter-banner img {
+	max-width: 100%;
+}
+
 #msp-slider-type-select .msp-templates-list {
 	top:47px;
 }
@@ -808,4 +817,3 @@ tbody .latest-updates {
   .msp-type-masterslider_pro_custom_samples1 .msp-ac-btn:focus{
      color: #fff;
  }
-

@@ -48,7 +48,7 @@ class MSP_Notices {
             'ms-notice-info-global'
         );
 
-        $this->base_url = 'http://cdn.averta.net/project/masterslider/free/info/';
+        $this->base_url = 'https://cdn.averta.net/project/masterslider/free/info/';
     }
 
     // Methods using the plugin API

@@ -1,7 +1,7 @@
 === Jetpack - WP Security, Backup, Speed, & Growth ===
 Contributors: automattic, adamkheckler, adrianmoldovanwp, aduth, akirk, allendav, alternatekev, andy, annamcphee, annezazu, apeatling, arcangelini, azaozz, batmoo, barry, beaulebens, bindlegirl, biskobe, blobaugh, bjorsch, brbrr, cainm, cena, cfinke, chaselivingston, chellycat, clickysteve, csonnek, danielbachhuber, davoraltman, daniloercoli, delawski, designsimply, dllh, drawmyface, dsmart, dzver, ebinnion, egregor, eliorivero, enej, eoigal, erania-pinnera, ethitter, fgiannar, gcorne, georgestephanis, gibrown, goldsounds, hew, hugobaeta, hypertextranch, iammattthomas, iandunn, jblz, jasmussen, jeffgolenski, jeherve, jenhooks, jenia, jessefriedman, jgs, jkudish, jmdodd, joanrho, johnjamesjacoby, jshreve, kbrownkd, keoshi, koke, kraftbj, lancewillett, leogermani, lschuyler, macmanx, martinremy, matt, matveb, mattwiebe, maverick3x6, mcsf, mdawaffe, mdbitz, MichaelArestad, migueluy, mikeyarce, mkaz, nancythanki, nickmomrik, obenland, oskosk, pento, professor44, rachelsquirrel, rdcoll, ryancowles, richardmuscat, richardmtl, robertbpugh, roccotripaldi, samhotchkiss, samiff, scarstocea, scottsweb, sdixon194, sdquirk, sermitr, simison, stephdau, tmoorewp, tyxla, Viper007Bond, westi, wpkaren, yoavf, zinigor
 Tags: Security, backup, Woo, malware, scan, spam, CDN, search, social
-Stable tag: 12.1
+Stable tag: 12.2.1
 Requires at least: 6.1
 Requires PHP: 5.6
 Tested up to: 6.2
@@ -43,7 +43,7 @@ Get blazing fast site speed with Jetpack. Jetpack’s free CDN (content delivery
 = POWERFUL TOOLS FOR GROWTH =
 Create and customize your WordPress site, optimize it for visitors and revenue, and enjoy watching your stats tick up. Build it, share it, and watch it grow.
 
-* Auto publish blog posts and products to social media by simply using our tools to connect to Facebook, Tumblr, and LinkedIn.
+* Auto publish blog posts and products to social media by simply using our tools to connect to Facebook, Tumblr, Mastodon, and LinkedIn.
 * Easily share Instagram posts on your pages and blog posts.
 * Collect a payment or donation, sell a product, service, or membership with simple integrations with PayPal and Stripe.
 * Grow traffic with SEO tools for Google, Bing, Facebook, and WordPress.com. XML sitemap created automatically.
@@ -64,6 +64,17 @@ With Jetpack Stats, you don’t need to be a data scientist to see how your site
 * Get detailed insights on the referrers that bring traffic to your site.
 * Discover what countries your visitors are coming from.
 * Measure link clicks, video plays, and file downloads within your site.
+
+= WRITE SMARTER, NOT HARDER. =
+Experience the ease of crafting professional content with intuitive and powerful AI. Jetpack AI Assistant effortlessly integrates with your WordPress editor, offering an intuitive interface to interact with AI.
+This powerful block lets you generate diverse content at your command, significantly reducing the time and effort required in content creation.
+
+Simply provide a prompt, and watch as Jetpack AI Assistant crafts compelling blog posts, detailed pages, structured lists, and comprehensive tables - all tailored to your needs.
+
+* Harness AI power directly from your editor.
+* Unlock high-quality, tailored content at your command.
+* Maintain professional standards with ease.
+* AI-powered translations across numerous languages at your fingertips, breaking down language barriers.
 
 = PROMOTE YOUR CONTENT EASILY WITH JETPACK BLAZE =
 Find new fans by promoting your posts and pages across millions of sites in the WordPress.com and Tumblr ad network.
@@ -280,48 +291,12 @@ Jetpack Backup can do a full website migration to a new host, migrate theme file
 6. See what’s working with content performance metrics. Simple, yet powerful stats to grow your site.
 7. Stunning‑quality video with none of the hassle. Drag and drop videos through the WordPress editor and keep the focus on your content, not the ads.
 
+
 == Changelog ==
-### 12.1 - 2023-05-02
-#### Enhancements
-- Block editor: collapse Jetpack feature panels by default.
-- Dashboard: added Jetpack Starter bundle post-activation screen and plan header.
-- Dashboard: add link to renew expired subscription.
-- Dashboard: align Protect information display with Akismet.
-- Dashboard: improve the general appearance.
-- Dashboard: redesign the At a Glance page.
-- Dashboard: Remove a confusing "Click to view" link from the stats call to action screen.
-- Dashboard: update the links to the Mobile apps to allow opening links in the appropriate app store right away.
-- Dashboard: use the latest version of the Jetpack logo.
-- Dashboard: visually refresh the Debug page.
-- Forms: Update Forms child blocks to allow any transformation between the blocks.
-- Jetpack Visual Refresh: "At A Glance" Dashboard adjustments.
-- Markdown Block: add support for footnotes.
-- Newsletters: display the correct locked content text for newsletters when Stripe is disconnected.
-- Newsletters: display the correct locked content text for paid newsletters.
-- Publicize: improve page metadata by using attached media for the OpenGraph image.
-- Search: implemented a "tabbed" variation for static filters, adding tabs on top of the results for each filter group.
-- Stats Widget: improve appearance of footer buttons.
-- Stats Widget: make frame sections balanced with long titles.
-- Stats Widget: make the new version of the widget available to general audience.
-- Subscriptions: add counts in the newsletter panel to show the newsletter reach.
-
-#### Improved compatibility
-- General: Jetpack now requires WordPress version 6.1.
-- General: remove WordPress 6.0 backwards-compatibility code, now that Jetpack requires WordPress 6.1.
-- Security: ensure blocks are always fully displayed on your site, even when using a caching plugin.
-
+### 12.2.1 - 2023-06-14
 #### Bug fixes
-- 3rd-party plugin support code: improve loading performance.
-- Assets: avoid fatal errors with plugins that use outdated Jetpack package versions.
-- Button Block: ensure no borders are added by default browser styles.
-- Cookie Consent Block: return fresh HTML when the user revists after accepting cookies.
-- Dashboard: fix a link on the stats chart.
-- Dashboard: improve contrast for the Stats chart tooltip.
-- Dashboard: improve upgrade description for users with Akismet already installed and active.
-- Forms: Fix Forms styles when inside Cover blocks.
-- Jetpack Social: Render Social Image Generator panel even when its default one is disabled.
-- Newsletters: properly gate the feature based on the configuration of the site.
-- Payment Block: update the visibility setting of inner blocks on click to ensure that the inner block renders.
+- Newsletters: fix sidebar panel in WordPress 6.1.
+- Newsletters: show paid Newsletter subscriber reach numbers in the past tense when the post has already been published.
 
 --------
 

@@ -205,7 +205,7 @@ function msp_api_stats_shortcode( $atts , $content = null ) {
     }
 
     // request data
-    $remote_url   = 'http://api.averta.net/';
+    $remote_url   = 'https://api.averta.net/';
     $request_args = $atts;
     unset( $request_args['cache_in_minutes'] );
 

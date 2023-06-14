@@ -5,7 +5,7 @@
  * @package   MasterSlider
  * @author    averta [averta.net]
  * @license   LICENSE.txt
- * @link      http://masterslider.com
+ * @link      https://masterslider.com
  * @copyright Copyright © 2014 averta
  */
 
@@ -179,7 +179,7 @@ class Master_Slider_Admin {
           $slider_id  = sanitize_text_field( $_REQUEST['slider_id'] );
           global $mspdb;
           $custom_fonts = $mspdb->get_slider_field_val( $slider_id, 'custom_fonts' );
-  
+
           if ( ! empty( $custom_fonts ) )
             wp_enqueue_style( 'master-slider-admin-fonts', 'http://fonts.googleapis.com/css?family=' . $custom_fonts, [], false, 'all' );
         }
@@ -232,7 +232,7 @@ class Master_Slider_Admin {
   public function add_action_links( $links ) {
 
     $links['settings'] = '<a href="' . admin_url( 'admin.php?page=' . MSWP_SLUG . '-setting' ) . '">' . __( 'Settings', 'master-slider' ) . '</a>';
-    $links['go_pro']   = '<a href="http://avt.li/mslgo">' . __( 'Go Pro', 'master-slider' ) . '</a>';
+    $links['go_pro']   = '<a href="https://avt.li/mslgo">' . __( 'Go Pro', 'master-slider' ) . '</a>';
 
     return $links;
   }

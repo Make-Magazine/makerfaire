@@ -191,6 +191,14 @@
 	height: 19px;
 }
 
+.msp-ico-pro {
+    background-position: -225px -255px;
+    width: 21px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .msp-ico-notice {
     width: 17px;
     height: 18px;
@@ -270,8 +278,10 @@
 	margin-right: 1px;
 	border-bottom: solid 7px #2A95BC;
 	text-decoration: none;
-	display: block;
 	position: relative;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
 }
 
 .msp-main-nav ul li a>.msp-ico{
@@ -295,6 +305,7 @@
 .msp-main-nav ul li a.active .msp-ico-facebook { background-position: -250px -200px; }
 .msp-main-nav ul li a.active .msp-ico-posts { background-position: -250px -225px; }
 .msp-main-nav ul li a.active .msp-ico-wooc { background-position: -200px -200px; }
+.msp-main-nav ul li a.active .msp-ico-pro {background-position: -249px -255px;}
 
 .msp-save-bar-placeholder {
 	height: 35px;
@@ -2544,4 +2555,109 @@ New pro tab styles
     overflow: hidden;
     display: inline-block;
     white-space: nowrap;
+}
+
+
+/* ------------------------------------------------------------------------------ */
+
+.depicter-banner {
+    margin: 20px 20px;
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+}
+
+.depicter-banner-overlay {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    position: absolute;
+    z-index: 1;
+    top: 88px;
+    left: 21px;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
+    gap: 10px;
+}
+
+.depicter-banner-cta:hover {
+    color: inhert;
+    background-color: white;
+}
+
+
+.msp-main-nav ul .msp-depicter-btn  a {
+    background-color: #ffd300;
+    color: black;
+    border-color: #c3a930;
+}
+
+.depicter-banner-cta2:hover {
+    color: inhert;
+    background-color: white;
+}
+
+.depicter-banner-cta {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    text-decoration: none;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 23.5px;
+    width: 115px;
+    height: 45px;
+    background: #D6EF37;
+    box-shadow: 0px 27.4125px 86.1536px rgba(73, 176, 88, 0.2);
+    border-radius: 123.356px;
+    font-weight: 700;
+    color: black;
+    font-size: 14px;
+}
+
+.depicter-banner-cta2 {
+    box-sizing: border-box;
+    text-decoration: none;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 23.5px;
+    width: 123px;
+    height: 45px;
+    border: 2px solid #FFFFFF;
+    filter: drop-shadow(0px 27.4125px 86.1536px rgba(73, 176, 88, 0.2));
+    border-radius: 47.9143px;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.depicter-banner-coupon {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 145%;
+    color: #000000;
+    position: relative;
+    top: 14px;
+    left: 58px;
 }

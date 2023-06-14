@@ -101,7 +101,12 @@ class wsScreenOptions14 {
 
 		//In WP 5.0 or above convert_to_screen() can indirectly call use_block_editor_for_post_type() which
 		//might not be available at this point if another plugin loaded the screen API directly.
-		if ( isset($GLOBALS['wp_version']) && version_compare($GLOBALS['wp_version'], '5.0', '>=') ) {
+		//The condition is designed to also catch sites that hide the WP version or that change
+		//the version number to something invalid (e.g. "abc") or implausibly old (e.g. "0.1").
+		if ( !isset($GLOBALS['wp_version'])
+			|| version_compare($GLOBALS['wp_version'], '3.0', '<')
+			|| version_compare($GLOBALS['wp_version'], '5.0', '>=')
+		) {
 			$can_use_screen_api = $can_use_screen_api && function_exists('use_block_editor_for_post_type');
 		}
 

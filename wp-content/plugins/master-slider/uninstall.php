@@ -7,7 +7,7 @@
  * @package   MasterSlider
  * @author    averta [averta.net]
  * @license   LICENSE.txt
- * @link      http://masterslider.com
+ * @link      https://masterslider.com
  * @copyright Copyright © 2014 averta
  */
 
@@ -19,7 +19,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 // To uninstall the plugin completely you need to define MS_UNINSTALL_PLUGIN constant in wp-config.php file
 // before deleting it from plugins page
 if ( defined( 'MS_UNINSTALL_PLUGIN' ) ) {
-	
+
 	global $wpdb;
 
 	// MasterSlider Tables
@@ -31,9 +31,9 @@ if ( defined( 'MS_UNINSTALL_PLUGIN' ) ) {
 
 	foreach ( $roles as $role ) {
 		$role = get_role( $role );
-		$role->remove_cap( 'access_masterslider'  ); 
-		$role->remove_cap( 'publish_masterslider' ); 
-		$role->remove_cap( 'delete_masterslider'  ); 
+		$role->remove_cap( 'access_masterslider'  );
+		$role->remove_cap( 'publish_masterslider' );
+		$role->remove_cap( 'delete_masterslider'  );
 		$role->remove_cap( 'create_masterslider'  );
 		$role->remove_cap( 'export_masterslider'  );
 		$role->remove_cap( 'duplicate_masterslider'  );

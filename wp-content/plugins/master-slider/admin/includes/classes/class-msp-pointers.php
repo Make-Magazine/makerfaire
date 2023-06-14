@@ -5,21 +5,21 @@
  * @package   MasterSlider
  * @author    averta [averta.net]
  * @license   LICENSE.txt
- * @link      http://masterslider.com
+ * @link      https://masterslider.com
  * @copyright Copyright © 2014 averta
  */
 
 /**
- * 
+ *
  */
 class MSP_Pointers {
-  
+
     /*  */
     public $pointers     = array();
     public $seen_ids     = array();
     public $not_seen_pointers = array();
     public $version_file = '';
-    
+
     /**
      * Set theme or plugine file path to get version from
      * @param string $version_file   a path to plugin or theme file to get and compare version with it
@@ -27,75 +27,75 @@ class MSP_Pointers {
   function __construct( $version_file = '' ) {
         $this->version_file = $version_file;
     }
-    
-    
-    
+
+
+
     public function add( $options = array() ){
         // return if no data passed
         if( empty( $options ) || ! is_array( $options ) ) return false;
-        
+
         $options = array_merge( $this->default_point(), $options );
         // add pointer to pointers list
         $this->pointers[] = $options;
-        
+
         return true;
     }
-    
-    
-    
-    
+
+
+
+
     public function init(){
         global $wp_version;
 
         if ( version_compare( $wp_version, '3.4', '<' ) )
             return false;
-        
+
         if( ! count( $this->pointers) ) return "No Point Available.";
-        
+
         add_action( 'admin_enqueue_scripts'     , array( $this, 'add_hooks' ) );
         add_action( 'admin_print_footer_scripts', array( $this, 'print_pointer_scripts' ) );
         return true;
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     public function add_hooks(){
         if ( ! current_user_can( 'manage_options' ) ) return;
-        
+
         if( ! count( $this->pointers ) ) return false;
-        
+
         $this->seen_ids = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
-        
+
         foreach ( $this->pointers as $key => $pointer_data ) {
             if( ! in_array( $pointer_data["id"], $this->seen_ids ) )
                 $this->not_seen_pointers[] = $pointer_data;
         }
-        
+
         if( count( $this->not_seen_pointers ) ) {
             /* Load wp-pointer scripts and styles */
             wp_enqueue_style ( 'wp-pointer' );
             wp_enqueue_script( 'wp-pointer' );
-            
+
             add_action( 'admin_print_footer_scripts', array( $this, 'print_pointer_scripts' ) );
         }
-        
+
         return true;
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     public function print_pointer_scripts() {
         if ( ! current_user_can( 'manage_options' ) ) return;
-        
+
         global $hook_suffix;
 
         $info = empty( $this->version_file ) ? wp_get_theme() : get_plugin_data( $this->version_file );
-        
+
         foreach ( $this->not_seen_pointers as $key => $pointer_data ) {
             // check if we are on correct page to display pointer
             if( ! empty( $pointer_data["hook_suffix"] ) && $pointer_data["hook_suffix"] != $hook_suffix ) continue;
@@ -128,10 +128,10 @@ class MSP_Pointers {
             printf( '<style>%s</style>', $pointer_data["css"] );
         }
     }
-    
-    
-    
-    
+
+
+
+
     public function default_point(){
         return array(
                     'id'         => 'mspo',        // Unique id for pointer
@@ -140,7 +140,7 @@ class MSP_Pointers {
                     'version'    => '1',           // The theme or plugin version to display tooltip on
                     'title'      => '',            // Tooltip title
                     'content'    => '',            // Tooltip description
-                    'position'   =>  array( 
+                    'position'   =>  array(
                                          'edge'  => 'left',  //top, bottom, left, right
                                          'align' => 'middle' //top, bottom, left, right, middle
                                         )
@@ -154,7 +154,7 @@ class MSP_Pointers {
 /*-----------------------------------------------------------------------------------*/
 
 function msp_add_custom_pointers(){
-    
+
     // admin pointers /////////////////////////////////////////////////////////
     $msp_pointers = new MSP_Pointers( MSWP_AVERTA_DIR . '/' . MSWP_SLUG . '.php' );
     $msp_pointers->add( array(
@@ -166,15 +166,15 @@ function msp_add_custom_pointers(){
                             'content'    => sprintf( __( 'Please open contextual help panel (click the %s button at top right side of this page)', 'master-slider' ), '<strong style="color:#1D86AC;">'.__( 'Help', 'master-slider' ).'</strong>' ), // Tooltip description
                             'width'      => 370,
                             'css'        => '.master_1_0_view_help { left:auto !important; right:20px !important; } .master_1_0_view_help .wp-pointer-arrow { left:auto !important; right:25px; }',
-                            'position'   => array( 
+                            'position'   => array(
                                                 'edge'  => 'top',   //top, bottom, left, right
                                                 'align' => 'middle' //top, bottom, left, right, middle
                                                 )
                             )
                        );
-                          
+
     $msp_pointers->init();
-    
+
 }
 
 // msp_add_custom_pointers();

@@ -5,7 +5,7 @@
  * @package   MasterSlider
  * @author    averta [averta.net]
  * @license   LICENSE.txt
- * @link      http://masterslider.com
+ * @link      https://masterslider.com
  * @copyright Copyright © 2014 averta
  */
 

@@ -5,7 +5,7 @@
  * @package   MasterSlider
  * @author    averta [averta.net]
  * @license   LICENSE.txt
- * @link      http://masterslider.com
+ * @link      https://masterslider.com
  * @copyright Copyright © 2015 averta
  */
 
@@ -43,6 +43,8 @@
                 <li>{{#link-to 'controls'}} <?php _e('Slider Controls', MSWP_TEXT_DOMAIN); ?> <span class="msp-ico msp-ico-controls"></span>{{/link-to}}</li>
                 <li>{{#link-to 'callbacks'}} <?php _e('Slider Callbacks', MSWP_TEXT_DOMAIN); ?> <span class="msp-ico msp-ico-api"></span>{{/link-to}}</li>
                 <li class="msp-upgrade-btn"> {{#link-to 'pro-features'}}Upgrade to PRO <span class="msp-ico msp-ico-pro"></span>{{/link-to}}</li>
+                <li class="msp-depicter-btn"> {{#link-to 'depicter'}}Meet Depicter Slider{{/link-to}}</li>
+
             </ul>
         </nav>
         <div class="clear"></div>
@@ -295,6 +297,20 @@
 		</div>
 	{{/meta-box}}
 </script>
+
+<script type="text/x-handlebars" id="depicter">
+    {{#meta-box }}
+    <div class="depicter-banner">
+        <div class="depicter-banner-overlay">
+            <a href="https://depicter.com/pricing/?utm_source=master-plugin&utm_medium=editor-tab&utm_campaign=MS2DP23" target="_blank" class="depicter-banner-cta" >Get It Now</a>
+            <a href="https://depicter.com/?utm_source=master-plugin&utm_medium=editor-tab&utm_campaign=MS2DP23" target="_blank" class="depicter-banner-cta2" >Meet Depicter</a>
+            <span class="depicter-banner-coupon">MSTODP23</span>
+        </div>
+        <img usemap="#primary"  class="depicter-banner-img" src="<?php echo MSWP_AVERTA_ADMIN_URL . '/views/slider-panel'; ?>/images/depicter-banner.png" alt="">
+    </div>
+    {{/meta-box}}
+</script>
+
 
 <!-- Slider Settings Page -->
 <script type="text/x-handlebars" id="settings">
@@ -573,7 +589,7 @@
             <label><?php _e('Autoplay video :', MSWP_TEXT_DOMAIN); ?> </label>  {{switch-box value=currentSlide.autoplayVideo}}
         </div>
         <div class="msp-metabox-indented">
-            <a href="http://masterslider.com/doc/wp/#embed-url" target="_blank"><?php _e('Where to find the Youtube/Vimeo embed URL.', MSWP_TEXT_DOMAIN); ?></a>
+            <a href="https://masterslider.com/doc/wp/#embed-url" target="_blank"><?php _e('Where to find the Youtube/Vimeo embed URL.', MSWP_TEXT_DOMAIN); ?></a>
         </div>
     </div>
 </script>

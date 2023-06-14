@@ -14,8 +14,8 @@ add_filter( 'masterslider_admin_menu_title', 'msp_filter_masterslider_admin_menu
 
 function after_master_slider_row_meta( $plugin_meta, $plugin_file, $plugin_data, $status ){
   if( MSWP_AVERTA_BASE_NAME == $plugin_file ) {
-    $plugin_meta[] = '<a href="http://wordpress.org/support/view/plugin-reviews/' . MSWP_SLUG . '?rating=5#postform" target="_blank" title="' . esc_attr__( 'Rate this plugin', 'master-slider' ) . '">' . __( 'Rate this plugin', 'master-slider' ) . '</a>';
-    $plugin_meta[] = '<a href="http://masterslider.com/doc/wp/free/#donate" target="_blank" title="' . esc_attr__( 'Donate', 'master-slider' ) . '">' . __( 'Donate', 'master-slider' ) . '</a>';
+    $plugin_meta[] = '<a href="https://wordpress.org/support/view/plugin-reviews/' . MSWP_SLUG . '?rating=5#postform" target="_blank" title="' . esc_attr__( 'Rate this plugin', 'master-slider' ) . '">' . __( 'Rate this plugin', 'master-slider' ) . '</a>';
+    $plugin_meta[] = '<a href="https://masterslider.com/doc/wp/free/#donate" target="_blank" title="' . esc_attr__( 'Donate', 'master-slider' ) . '">' . __( 'Donate', 'master-slider' ) . '</a>';
   }
   return $plugin_meta;
 }
@@ -179,4 +179,3 @@ add_filter( 'masterslider_starter_fields', 'msp_premium_sliders' );
  }
 
  add_action( 'save_post', 'msp_flush_cashe_after_publishing_new_post', 10, 3 );
-

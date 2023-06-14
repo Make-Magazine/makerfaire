@@ -6,7 +6,7 @@
             "version_normalized": "3.3.4.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/auth0/php-jwt.git",
+                "url": "git@github.com:auth0/php-jwt.git",
                 "reference": "a0daa1a728cf85230843ebb8c1183047fe493284"
             },
             "dist": {
@@ -56,19 +56,7 @@
                 "JWS",
                 "jwt"
             ],
-            "support": {
-                "source": "https://github.com/auth0/php-jwt/tree/3.3.4"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/lcobucci",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.patreon.com/lcobucci",
-                    "type": "patreon"
-                }
-            ],
+            "abandoned": "auth0/auth0-php",
             "install-path": "../auth0/php-jwt"
         }
     ],

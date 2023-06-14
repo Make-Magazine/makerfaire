@@ -125,7 +125,7 @@
 
             var $element = $($elements[i]),
                     elementSize = {height: $element[0].offsetHeight, width: $element[0].offsetWidth},
-            elementOffset = $element.offset(),
+                    elementOffset = $element.offset(),
                     inView = $element.data('inview');
 
             // Don't ask me why because I haven't figured out yet:
@@ -199,7 +199,10 @@
                         $vid.removeAttr('data-ep-src');
                         setTimeout(function ()
                         {
-                            $($vid.parent()).fitVidsEP();
+                            if (typeof $.fn.fitVidsEP !== 'undefined')
+                            {
+                                $($vid.parent()).fitVidsEP();
+                            }
                             $vid.addClass('animated ' + $vid.attr('data-ep-a'));
                         }, 1);
                     }

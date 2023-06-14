@@ -23,8 +23,12 @@
 if( current_user_can( 'create_masterslider' ) ) { ?>
 
     <div id="msp-slider-type-select" >
-
         <div class="msp-templates-list">
+            <div class="depicter-banner">
+              <a href="https://avt.li/msfdp-templates" target="_blank">
+                <img src="<?php echo MSWP_AVERTA_ADMIN_URL . '/assets/images/depicter-banner.jpg';?>" alt="depicter-banner">
+              </a>
+            </div>
 
             <?php
             sanitize_title( '' );

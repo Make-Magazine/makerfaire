@@ -313,6 +313,9 @@ class WP_Auth0_LoginManager {
 					}
 				}
 
+				// Temporarily disable the email sync, since the changes are coming from Auth0, no need to update them there.
+				remove_action( 'profile_update', 'wp_auth0_profile_change_email', 100 );
+
 				wp_update_user(
 					(object) [
 						'ID'          => $user->data->ID,
@@ -320,6 +323,9 @@ class WP_Auth0_LoginManager {
 						'description' => $description,
 					]
 				);
+
+				// Turn the email sync back on
+				add_action( 'profile_update', 'wp_auth0_profile_change_email', 100, 2 );
 			}
 
 			$this->users_repo->update_auth0_object( $user->data->ID, $userinfo );
@@ -448,19 +454,28 @@ class WP_Auth0_LoginManager {
 		// Nonce is not needed here as this is not processing form data.
 		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
 
-		$opts = WP_Auth0_Options::Instance();
+		$opts         = WP_Auth0_Options::Instance();
+		$customParams = trim( $opts->get( 'auto_login_params' ) ?? '' );
+		$params       = [];
 
-		$params = [
-			'connection'    => $connection,
-			'client_id'     => $opts->get( 'client_id' ),
-			'organization'  => $opts->get( 'organization' ),
-			'scope'         => self::get_userinfo_scope( 'authorize_url' ),
-			'nonce'         => WP_Auth0_Nonce_Handler::get_instance()->get_unique(),
-			'max_age'       => absint( apply_filters( 'auth0_jwt_max_age', null ) ),
-			'response_type' => 'code',
-			'response_mode' => 'query',
-			'redirect_uri'  => $opts->get_wp_auth0_url(),
-		];
+		if ( $customParams ) {
+			parse_str( $customParams, $params );
+		}
+
+		$params = array_merge(
+			$params,
+			[
+				'connection'    => $connection,
+				'client_id'     => $opts->get( 'client_id' ),
+				'organization'  => $opts->get( 'organization' ),
+				'scope'         => self::get_userinfo_scope( 'authorize_url' ),
+				'nonce'         => WP_Auth0_Nonce_Handler::get_instance()->get_unique(),
+				'max_age'       => absint( apply_filters( 'auth0_jwt_max_age', null ) ),
+				'response_type' => 'code',
+				'response_mode' => 'query',
+				'redirect_uri'  => $opts->get_wp_auth0_url(),
+			]
+		);
 
 		// Where should the user be redirected after logging in?
 		if ( empty( $redirect_to ) ) {

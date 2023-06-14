@@ -1,19 +1,19 @@
 === Master Slider - Responsive Touch Slider ===
 Contributors: averta, averta_support
-Donate link: http://averta.net/
+Donate link: https://averta.net/
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: slider, image slider, wordpress slider, video slider, best slider plugin, slideshow, swipe, touch slider, content slider, SEO, vertical slider, HTML5 slider, hardware accelerate, animation, mobile slider, iOS, android, youtube slider, horizontal slider, responsive slider, fullscreen slider, post slider, photo slider, online album, mobile slider, WordPress slider,wpml, ,ultisite, wistia, woocommerce, product slider, woocommerce slider, portfolio, gallery, lightweight slider
 Requires PHP: 5.4
 Requires at least: 5.0
-Tested up to: 5.9.0
-Stable tag: 3.8.1
+Tested up to: 6.2.2
+Stable tag: 3.9.1
 
 Build SEO friendly sliders fast and easy with Master Slider. The most advanced responsive HTML5 WordPress slider plugin, with touch swipe navigation that works smoothly on desktop and devices.
 
 == Description ==
 
->[Demos](http://avt.li/mswftem "Live demos of Master Slider free version") | [Features](http://avt.li/mswfea "All features") | [Documentation](http://avt.li/mswfdoc "Master Slider documentation") | [All Video tutorials](http://avt.li/msfvids "Watch all video tutorials") | [Support](http://wordpress.org/support/plugin/master-slider "Free support")
+[Demos](http://avt.li/mswftem "Live demos of Master Slider free version") | [Features](http://avt.li/mswfea "All features") | [Documentation](http://avt.li/mswfdoc "Master Slider documentation") | [Videos](http://avt.li/msfvids "Watch all video tutorials") | [Support](http://wordpress.org/support/plugin/master-slider "Free support")
 
 [youtube https://www.youtube.com/watch?v=nyjpGEHwOn8]
 
@@ -69,7 +69,7 @@ Master Slider is built using WordPress best practices both on the front and the 
 • Translate Ready
 • Multisite Compatible
 • Extensive Developer API
-* [Full List of Features](http://masterslider.com/wordpress/free/?mslf)
+* [Full List of Features](https://masterslider.com/wordpress/free/?mslf)
 
 
 = Compatible Browsers =
@@ -121,10 +121,10 @@ Master Slider is built using WordPress best practices both on the front and the 
 * Moving Layers by Arrow Keys
 * Using WordPress Native Text Editor
 * Using Google Fonts (600+ Fonts)
-* [Full List of Pro Features](http://masterslider.com/wordpress/pro/?mslf)
+* [Full List of Pro Features](https://masterslider.com/wordpress/pro/?mslf)
 
 
-Upgrade to [Pro Version](http://masterslider.com/purchase/?mslf)
+Upgrade to [Pro Version](https://masterslider.com/purchase/?mslf)
 
 
 = Demo for PRO Version =
@@ -136,7 +136,7 @@ Upgrade to [Pro Version](http://masterslider.com/purchase/?mslf)
 
 = Documentations =
 
-If you have any question about working with "Master Slider", you can take a look at [online documentations](http://masterslider.com/doc/wp/free/)
+If you have any question about working with "Master Slider", you can take a look at [online documentations](https://masterslider.com/doc/wp/free/)
 
 
 = Translation =
@@ -237,7 +237,16 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Changelog ==
 
-= 3.8.1 =
+= 3.9.1 =
+
+= Version 3.9.1/ (12.06.2023) =
+- [Fixed]: Minor bugs fixed.
+
+= Version 3.8.7/ (07.12.2022) =
+- [Fixed]: An issue with loading slider in the editor fixed.
+
+= Version 3.8.5/ (20.11.2022) =
+- [Fixed]: An incompatibility with the new version of WordPress fixed.
 
 = Version 3.8.1/ (10.02.2022) =
 - [Fixed]: An issue with mouse wheel in chrome fixed.
@@ -504,5 +513,5 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Upgrade Notice ==
 
-= Version 3.7.10/ (11.10.2021) =
-- [Fixed]: An issue which caused controls `autohide` option didn't work.
+= Version 3.9.1/ (12.06.2023) =
+- [Fixed]: Minor bugs fixed.

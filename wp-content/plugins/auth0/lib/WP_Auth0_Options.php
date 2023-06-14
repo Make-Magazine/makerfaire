@@ -394,6 +394,7 @@ class WP_Auth0_Options {
 
 			// Features
 			'auto_login'                => true,
+			'auto_login_params'         => '',
 			'auto_login_method'         => '',
 			'singlelogout'              => true,
 			'override_wp_avatars'       => true,
@@ -423,6 +424,8 @@ class WP_Auth0_Options {
 			'migration_ips'             => '',
 			'valid_proxy_ip'            => '',
 			'auth0_server_domain'       => 'auth0.auth0.com',
+			'cookie_domain'             => '',
+			'disable_logging'           => false,
 		];
 	}
 }

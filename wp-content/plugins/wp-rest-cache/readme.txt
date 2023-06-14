@@ -2,9 +2,9 @@
 Contributors: acato, rockfire, yoeridekker
 Tags: cache, wp-rest-api, api, rest, rest cache, rest api cache
 Requires at least: 4.7
-Tested up to: 5.8
-Requires PHP: 5.5
-Stable tag: 2021.4.1
+Tested up to: 6.1
+Requires PHP: 7.0
+Stable tag: 2023.1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -171,6 +171,53 @@ Yes you can! Use the `wp wp-rest-cache flush` command to flush caches. Type `wp 
 
 == Changelog ==
 
+= 2023.1.1 =
+Release Date: February 8th, 2023
+
+Hotfix: Fix uncaught TypeError which might occur in rare situations.
+
+= 2023.1.0 =
+Release Date: February 6th, 2023
+
+Feature: Added WordPress Oembed endpoint for caching.
+Feature: Added action fired when deleting caches.
+Feature: Added filter to skip cron deletion of caches and immediately delete the caches.
+
+= 2022.2.2 =
+Release Date: October 10th, 2022
+
+Fix: WP CLI command wasn't working correctly anymore.
+
+= 2022.2.1 =
+Release Date: August 25th, 2022
+
+Hotfix: Settings page wasn't displayed correctly.
+
+= 2022.2.0 =
+Release Date: August 25th, 2022
+
+Feature: Added filter to allow filtering of cache output.
+Improvement: Fix conflict with Wordfence.
+Improvement: Added notice upon any plugin (de/)activation that cache might need to be cleared.
+Improvement: Added phpstan checks and fixed all errors.
+
+= 2022.1.2 =
+Release Date: August 12th, 2022
+
+Bugfix: prevent error on clean install.
+
+= 2022.1.1 =
+Release Date: July 15th, 2022
+
+Bugfix: prevent notice.
+
+= 2022.1.0 =
+Release Date: July 13th, 2022
+
+Bugfix: Fixed regeneration of flushed caches.
+Bugfix: Fix possible fatal error on variable not being an array.
+Bugfix: Fix deprecation notice for PHP 8.
+
 = 2021.4.1 =
 Release Date: September 15th, 2021
 
@@ -310,7 +357,7 @@ Release Date: April 2nd, 2019
 
 Feature: Added function to programatically flush cache records by endpoint path.
 Bugfix: Fix correct filtering of allowed endpoints.
-Bugfix: Fix fatal error with object in stead of array in cache.
+Bugfix: Fix fatal error with object instead of array in cache.
 
 = 2019.1.6 =
 Release Date: March 25th, 2019

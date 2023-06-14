@@ -41,12 +41,16 @@ class Flush_Command extends \WP_CLI_Command {
 	 *      wp wp-rest-cache flush post                 # Flush all caches for posts.
 	 *      wp wp-rest-cache flush page --related=12    # Flush all related cache for page with ID=12.
 	 *
-	 * @param   array $args All positional arguments for the command.
-	 * @param   array $assoc_args All associative arguments for the command.
+	 * @subcommand flush
+	 *
+	 * @param   array<int,mixed>    $args All positional arguments for the command.
+	 * @param   array<string,mixed> $assoc_args All associative arguments for the command.
+	 *
+	 * @return void
 	 *
 	 * @throws \Exception An exception is thrown when an error occurs.
 	 */
-	public function __invoke( $args, $assoc_args ) {
+	public function flush( $args, $assoc_args ) {
 		$object_type = isset( $args[0] ) ? $args[0] : false;
 		$delete      = \WP_CLI\Utils\get_flag_value( $assoc_args, 'delete', false );
 		$related     = \WP_CLI\Utils\get_flag_value( $assoc_args, 'related', false );
