@@ -28,6 +28,164 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 
 		tablesData: {},
 
+		/**
+		 * Initialize DataTables field filters.
+		 *
+		 * @since {2.7}
+		 * @param {DataTables.Api} datatable {@see https://datatables.net/reference/api/}
+		 * @param {object} settings {@see https://datatables.net/reference/type/DataTables.Settings}
+		 */
+		setUpFieldFilters: function ( datatable, settings ) {
+
+			var field_filters_location = datatable.init().field_filters;
+
+			if ( !field_filters_location ) {
+				return;
+			}
+
+			// Filters are already initialized.
+			if ( $( datatable.columns().header() ).find( '.gv-dt-field-filter' ).length ) {
+				return;
+			}
+
+			var delayed_search = $.fn.dataTable.util.throttle( function ( table, val ) {
+				table
+					.search( val, false, false )
+					.draw();
+			}, 200 );
+
+			datatable.columns().every( function ( index ) {
+
+				var column = settings.aoColumns[ index ];
+				var that = this;
+				var input;
+
+				if ( !column.searchable ) {
+					return;
+				}
+
+				if ( 'select' === column.atts.type && column.atts.options ) {
+
+					input = $( '<select></select>' )
+						.append( $( '<option>' )
+							.val( '' )
+							.text( column.atts.placeholder || '' ) );
+
+					var options;
+
+					try {
+						options = JSON.parse( column.atts.options );
+					} catch ( e ) {
+						console.log( e );
+						return;
+					}
+
+					$.each( options, function ( d, j ) {
+						input.append( $( '<option>' )
+							.val( $( '<div />' ).html( j.value ).text() )
+							.text( (j.text || j.label) ) );
+					} );
+
+				} else {
+					input = $( '<input/>' )
+						.attr( 'type', column.atts.type )
+						.attr( 'placeholder', column.atts.placeholder )
+						.attr( 'min', (column.atts.min || null) )
+						.attr( 'max', (column.atts.max || null) )
+						.attr( 'step', (column.atts.step || null) );
+				}
+
+				var input_search_value = settings.oSavedState ? settings.oSavedState.columns[ index ].search.search : '';
+
+				input.val( input_search_value );
+
+				$( input )
+					.attr( 'class', column.atts.class )
+					.attr( 'data-uid', column.atts.uid ) // used to sync header and footer values
+
+					// Prevent clicks inside header inputs from sorting the column
+					.on( 'click', function ( e ) {
+						e.stopPropagation();
+					} )
+					/*.on('keypress.DT keyup.DT input.DT paste.DT cut.DT change.DT clear.DT', function ( e ) {
+
+					})*/
+					.on( 'keydown', function ( e ) {
+						if ( e.metaKey || e.ctrlKey ) {
+							gvDataTables.cmdOrCtrlPressed = 'keydown';
+						}
+					} )
+					.on( 'keyup', function ( e ) {
+						gvDataTables.cmdOrCtrlPressed = false;
+					} )
+					.on( 'keydown keyup', function ( e ) {
+						var keyCode = e.keyCode || e.which;
+
+						// Don't submit the form if the user presses Enter (this will sort the column and the filters are submitted per-keypress already)
+						if ( 13 === keyCode ) {
+							e.preventDefault();
+							return false;
+						}
+
+						// Manually select the text in the input field if the user presses Command+A (Mac) or Ctrl+A (Windows/Linux)
+						if ( 'a' === e.key && gvDataTables.cmdOrCtrlPressed ) {
+							$(this)[0].select();
+						}
+
+						return true;
+					} )
+					.on( 'keyup.DT input.DT paste.DT cut.DT change.DT clear', function ( e ) {
+
+						var keyCode = e.keyCode || e.which;
+
+						// Control, command, arrows, page up/down
+						var ignore_keys = [
+							13, // Return
+							16, // Shift
+							17, // Ctrl
+							18, // Alt
+							33, // Page up
+							34, // Page down
+							35, // End
+							36, // Home
+							37, // Left
+							38, // Up
+							39, // Right
+							40, // Down
+							91, // Command (Left)
+							93, // Command (Right)
+						];
+
+						// Function keys
+						var is_function_keys = (keyCode < 130 && keyCode > 112);
+
+						if ( -1 !== ignore_keys.indexOf( keyCode ) || is_function_keys ) {
+							return true;
+						}
+
+						$( this )
+							.parents( 'table.gv-datatables' )
+							.find( '.gv-dt-field-filter[data-uid=' + $( this ).data( 'uid' ) + ']' )
+							.val( this.value );
+
+						if ( that.search() !== this.value ) {
+							delayed_search( that, this.value );
+						}
+					} );
+
+				if ( 'both' === field_filters_location ) {
+					$( input )
+						.appendTo( $( that.footer() ).empty() )
+						.clone( true )
+						.appendTo( $( that.header() ) );
+				} else if ( 'header' === field_filters_location ) {
+					$( input ).appendTo( $( that.header() ) );
+				} else {
+					$( input ).appendTo( $( that.footer() ).empty() );
+				}
+			} );
+		},
+
 		init: function () {
 
 			$( '.gv-datatables' ).each( function ( i, e ) {
@@ -52,6 +210,17 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 					$( window ).trigger( 'gravityview-inline-edit/init' );
 				};
 
+				/**
+				 * Add per-field search inputs
+				 *
+				 * @since 2.5
+				 *
+				 * @param {DataTables.Settings} settings
+				 */
+				options.initComplete = function( settings ) {
+					gvDataTables.setUpFieldFilters( this.api(), settings );
+				};
+
 				// convert ajax data object to method that return values from the global object
 				options.ajax.data = function ( e ) {
 					return $.extend( {}, e, gvDataTables.tablesData[ viewId ] );
@@ -61,7 +230,9 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				if ( i < gvDTFixedHeaderColumns.length && gvDTFixedHeaderColumns.hasOwnProperty( i ) ) {
 
 					if ( gvDTFixedHeaderColumns[ i ].fixedheader.toString() === '1' ) {
-						options.fixedHeader = true;
+						options.fixedHeader = {
+							headerOffset: $( '#wpadminbar' ).outerHeight()
+						};
 					}
 
 					if ( gvDTFixedHeaderColumns[ i ].fixedcolumns.toString() === '1' ) {
@@ -76,6 +247,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 						options.responsive = { details: { renderer: gvDataTables.customResponsiveRowRenderer } };
 					} else {
 						options.responsive = true;
+						options.fixedColumns = false;
 					}
 				}
 
@@ -93,11 +265,52 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 					var api = new $.fn.dataTable.Api( settings );
 					if ( api.column( 0 ).data().length ) {
 						$( e.target )
-						.parents( '.gv-container-no-results' )
-						.removeClass( 'gv-container-no-results' )
-						.siblings( '.gv-widgets-no-results' )
-						.removeClass( 'gv-widgets-no-results' );
+							.parents( '.gv-container-no-results' )
+							.removeClass( 'gv-container-no-results' )
+							.siblings( '.gv-widgets-no-results' )
+							.removeClass( 'gv-widgets-no-results' );
 					}
+
+					var viewId = $( e.target ).data( 'viewid' );
+					var tableData = ( gvDataTables.tablesData && viewId ) ? gvDataTables.tablesData[ viewId ] : null;
+					var getData = ( tableData && tableData.hasOwnProperty('getData') ) ? tableData.getData : null;
+
+					if (
+						api.data().length === 0 && // No entries.
+						0 === api.search().length && // No global search.
+						0 === api.columns().search().filter( function( string ) {
+							  return string !== "";
+						  } ).length && // No field filters per-column search.
+						! getData // Search Bar is not being used to search.
+					) {
+						// No entries.
+						$( e.target ).find( '.dataTables_empty' ).text( options.language.zeroRecords );
+
+						var noEntriesOption = tableData && tableData.hasOwnProperty('noEntriesOption') ? tableData.noEntriesOption * 1 : null;
+
+						switch ( noEntriesOption ) {
+							case 1: // Show a form.
+								$container = $( e.target ).parents( 'div[id^=gv-view-]' );
+								$container
+									.find('[id^=gv-datatables-],.gv-widgets-header,.gv-powered-by').hide().end()
+									.find( '.gv-datatables-form-container' ).removeClass( 'gv-hidden' );
+								break;
+							case 2: // Redirect to the URL.
+								var redirectURL = tableData && tableData.hasOwnProperty('redirectURL') ? tableData.redirectURL : null;
+								if ( redirectURL.length ) {
+									window.location = redirectURL;
+								}
+								break;
+							case 3: // Hide the View (should already be hidden, but just in case).
+								$( e.target ).parents( '.gv-datatables-container' ).hide();
+								break;
+						}
+
+					} else {
+						// No search results.
+						$( e.target ).find( '.dataTables_empty' ).text( options.language.emptyTable );
+					}
+
 					$( window ).trigger( 'gravityview-datatables/event/draw', { e: e, settings: settings } );
 				} )
 				.on( 'preXhr.dt', function ( e, settings, data ) {
@@ -107,6 +320,13 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 						data: data
 					} );
 				} )
+				.on( 'processing.dt', function ( e, settings, processing ) {
+					if ( ! processing ) {
+						return;
+					}
+
+					gvDataTables.repositionLoader( $( e.target ) );
+				} )
 				.on( 'xhr.dt', function ( e, settings, json, xhr ) {
 					$( window ).trigger( 'gravityview-datatables/event/xhr', {
 						e: e,
@@ -114,8 +334,14 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 						json: json,
 						xhr: xhr
 					} );
-				} ).on( 'responsive-display', function ( e, datatable, row, showHide, update ) {
-					$( window ).trigger( 'gravityview-datatables/event/responsive');
+				} )
+				.on( 'responsive-resize', function ( e, datatable, columns ) {
+
+					// Re-initialize field filters, if enabled.
+					gvDataTables.setUpFieldFilters( datatable, datatable.settings()[0] );
+				} )
+				.on( 'responsive-display', function ( e, datatable, row, showHide, update ) {
+					$( window ).trigger( 'gravityview-datatables/event/responsive' );
 					var visible_divs, div_attr;
 
 					// Fix duplicate images in Fancybox in datatables on mobile.
@@ -134,6 +360,62 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 			} );
 
 		}, // end of init
+
+		/**
+		 * Reposition the loader based on what parts of the table is visible.
+		 * @since 2.7
+		 * @param {jQuery} $table The current DataTables table DOM element.
+		 */
+		repositionLoader: function ( $table ) {
+			var $container = $table.parents( '.gv-datatables-container' );
+			var $thead = $table.find( 'thead' );
+			var $tbody = $table.find( 'tbody' );
+			var $tfoot = $table.find( 'tfoot' );
+			var $loader = $( 'div.dataTables_processing', $container );
+
+			$.fn.isInViewport = function () {
+				var elementTop = $( this ).offset().top;
+				var elementBottom = elementTop + $( this ).outerHeight();
+
+				var viewportTop = $( window ).scrollTop();
+				var viewportBottom = viewportTop + $( window ).height();
+
+				return elementTop >= viewportTop && elementBottom <= viewportBottom;
+			};
+
+			var tbodyTop = $tbody.position().top;
+			var theadHeight = $thead.outerHeight();
+			var scrollTop = $( window ).scrollTop();
+			var containerTop = $container.offset().top;
+			var windowHeight = ( window.innerHeight || document.documentElement.clientHeight );
+			var loaderHeight = $loader.outerHeight();
+			var adjustedViewportTop = scrollTop - containerTop + theadHeight;
+			var adjustedViewportBottom = scrollTop + windowHeight - containerTop - loaderHeight;
+			var viewportTop = Math.max( 0, scrollTop - containerTop );
+			var viewportBottom = Math.min( $container.outerHeight(), scrollTop + windowHeight - containerTop );
+			var visibleTbodyTop = Math.min( viewportBottom - loaderHeight, Math.max( viewportTop, tbodyTop + theadHeight ) );
+
+			var tableIsInViewport = $table.isInViewport();
+			var topPosition;
+
+			if ( tableIsInViewport && $tbody.height() > $loader.height() ) {
+				// The full table is visible and the loader fits in the tbody. The default loader position works.
+				topPosition = '50%';
+			} else if ( tableIsInViewport ) {
+				// If the full table is visible, but the loader is too big. Place it at the top of the tbody so it doesn't overlap the header.
+				topPosition = visibleTbodyTop;
+			} else if ( $tfoot.isInViewport() ) {
+				// If the table is not in the viewport, but the footer is, place the loader near the footer.
+				topPosition = ( ( $tfoot.position().top - adjustedViewportTop ) / 2 ) + adjustedViewportTop;
+			} else if ( $thead.isInViewport() ) {
+				topPosition = ( ( adjustedViewportBottom - visibleTbodyTop ) / 2 ) + visibleTbodyTop;
+			}
+
+			$loader.css( {
+				position: 'absolute',
+				top: topPosition,
+			} );
+		},
 
 		/**
 		 * Set button options for DataTables
@@ -233,7 +515,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				var dtPrivate = api.settings()[ 0 ];
 				var cellData = dtPrivate.oApi._fnGetCellData( dtPrivate, idx.row, idx.column, 'display' );
 
-				return '<li data-dtr-index="' + idx.column + '">' + '<span class="dtr-title">' + header.text() + ':' + '</span> ' + '<span class="dtr-data">' + cellData + '</span>' + '</li>';
+				return '<li data-dtr-index="' + idx.column + '">' + '<span class="dtr-title">' + header.find('.gv-dt-field-filter').remove().end().text() + ':' + '</span> ' + '<span class="dtr-data">' + cellData + '</span>' + '</li>';
 			} ).toArray().join( '' );
 
 			return data ? $( '<ul data-dtr-index="' + rowIdx + '"/>' ).append( data ) : false;
@@ -336,9 +618,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 			}
 
 			if ( tableData.hideUntilSearched * 1 ) {
-				$table.on( 'draw.dt', function () {
-					$container.toggleClass( 'hidden', inputs.length <= 1 );
-				} );
+				$container.toggleClass( 'hidden gv-hidden', inputs.length <= 1 );
 			}
 
 			// assemble getData object with filter name/value pairs

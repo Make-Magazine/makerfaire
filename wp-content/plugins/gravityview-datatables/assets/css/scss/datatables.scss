@@ -1,5 +1,5 @@
 // Include the DataTables source
-@import "../../datatables-src/css/jquery.dataTables.scss";
+@import "../../../node_modules/datatables.net-src/css/jquery.dataTables.scss";
 
 .gv-datatables-container {
 
@@ -18,17 +18,44 @@
 
 	.dataTables_wrapper .dataTables_processing {
 		z-index: 100000 !important;
-		height: auto !important;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		line-height: 1.5em;
-		min-width: 300px;
+		height: auto;
+
+		background: rgba( 255, 255, 255, .98 );
+		border: 1px solid rgba( 230, 230, 230, .98 );
+		border-radius: 9px;
+
+		.dataTables_processing_text {
+			display: block;
+			padding: .75em .5em .5em .5em;
+			line-height: 1.5em;
+		}
+	}
+
+	.gv-dt-field-filter {
+		display: block;
 	}
 
 	// When Scroller is active, hide the page length selector
 	//div.DTS .dataTables_length{
 	//	display: none;
 	//}
+
+	.dataTables_length select {
+		padding-right: 25px;
+	}
+
+	input::-webkit-datetime-edit {
+		line-height: 1;
+		padding: 0;
+		margin-bottom: -.2em;
+	}
+
+}
+
+html[dir="rtl"] .gv-datatables-container {
+	.dataTables_length select {
+		padding-left: 25px;
+	}
 }
 
 .gv-table-view .gv-gallery .gv-field-file-uploads {

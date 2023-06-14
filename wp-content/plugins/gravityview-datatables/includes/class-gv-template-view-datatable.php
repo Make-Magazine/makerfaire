@@ -35,17 +35,20 @@ class View_DataTable_Template extends View_Template {
 	 */
 	public function the_columns() {
 		$fields = $this->view->fields->by_position( 'directory_table-columns' );
-		$form = $this->view->form;
+		$form   = $this->view->form;
 
 		/** @todo Add class filters from the old code. */
 		foreach ( $fields->by_visible()->all() as $field ) {
 
 			$column_label = apply_filters( 'gravityview/template/field_label', $field->get_label( $this->view, $form ), $field->as_configuration(), $form->form ? $form->form : null, null );
 
-			printf( '<th id="gv-field-%d-%s" class="gv-field-%d-%s %s"%s scope="col"><span class="gv-field-label">%s</span></th>',
-				esc_attr( $form->ID ), esc_attr( $field->ID ), esc_attr( $form->ID ), esc_attr( $field->ID ), gravityview_sanitize_html_class( $field->custom_class ),
-				$field->width ? sprintf( ' style="width: %d%%"', $field->width ) : '', $column_label
-			);
+			echo strtr( '<th id="gv-field-{form_id}-{field_id}" class="gv-field-{form_id}-{field_id} {css_class}" {width} scope="col"><span class="gv-field-label">{label}</span></th>', array(
+				'{form_id}'   => esc_attr( $form->ID ),
+				'{field_id}'  => esc_attr( $field->ID ),
+				'{css_class}' => gravityview_sanitize_html_class( $field->custom_class ),
+				'{width}'     => $field->width ? sprintf( ' style="width: %d%%"', $field->width ) : '',
+				'{label}'     => $column_label,
+			) );
 		}
 	}
 

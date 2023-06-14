@@ -68,6 +68,43 @@ class GravityView_DataTables_Template extends GravityView_Template {
 
 		parent::__construct( $id, $settings, $field_options, $areas );
 
+		add_action( 'gravityview/template/after', array( $this, 'render_gravity_form' ) );
+	}
+
+	/**
+	 * Render a hidden form (revealed via JS) if the View "No Entries Behavior" is set to "Display a Form".
+	 *
+	 * @since 3.0
+	 *
+	 * @param \GV\Template_Context $context
+	 *
+	 * @return void
+	 */
+	public function render_gravity_form( $context ) {
+
+		if ( ! $context->template instanceof \GV\View_DataTable_Template ) {
+			return;
+		}
+
+		$no_entries_option = (int) $context->view->settings->get( 'no_entries_options', 0 );
+
+		// Only continue if the option is set to "Display a Form".
+		if ( 1 !== $no_entries_option ) {
+			return;
+		}
+
+		$form_id = (int) $context->view->settings->get( 'no_entries_form' );
+
+		if ( empty( $form_id ) ) {
+			return;
+		}
+
+		$form_title = $context->view->settings->get( 'no_entries_form_title', true );
+		$form_desc  = $context->view->settings->get( 'no_entries_form_description', true );
+
+		echo strtr( '<div class="gv-hidden gv-datatables-form-container">{{form}}</div>', array(
+			'{{form}}' => \GFForms::get_form( $form_id, $form_title, $form_desc ),
+		) );
 	}
 
 }

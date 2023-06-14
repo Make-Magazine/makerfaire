@@ -23,15 +23,15 @@
 
 			$('#gravityview_directory_template')
 				.on( 'change', gvDataTablesExt.toggleMetabox )
-				.change();
+				.trigger('change');
 
 			$('#datatables_settingsbuttons, #datatables_settingsscroller, #datatables_settingsauto_update')
 				.on( 'change', gvDataTablesExt.showGroupOptions )
-				.change();
+				.trigger('change');
 
 			$('#datatables_settingsscroller')
 				.on( 'change', gvDataTablesExt.toggleNonCompatible )
-				.change();
+				.trigger('change');
 
 			$('body')
 				.on( 'gravityview/settings/tab/enable', gvDataTablesExt.showMetabox )

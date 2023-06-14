@@ -58,7 +58,7 @@ abstract class GravityView_Extension {
 	/**
 	 * @var string The URL to fetch license info from. Do not change unless you know what you're doing.
 	 */
-	protected $_remote_update_url = 'https://gravityview.co';
+	protected $_remote_update_url = 'https://www.gravitykit.com';
 
 	/**
 	 * @var string Author of plugin, sent when fetching license info.
@@ -76,11 +76,6 @@ abstract class GravityView_Extension {
 	static $is_compatible = true;
 
 	function __construct() {
-
-		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
-
-		add_action( 'admin_init', array( $this, 'settings') );
-
 		add_action( 'admin_notices', array( $this, 'admin_notice' ), 100 );
 
 		add_action( 'gravityview/metaboxes/before_render', array( $this, 'add_metabox_tab' ) );
@@ -95,7 +90,6 @@ abstract class GravityView_Extension {
 		add_action( 'save_post', array( $this, 'save_post' ), 14 );
 
 		$this->add_hooks();
-
 	}
 
 	/**
@@ -158,51 +152,6 @@ abstract class GravityView_Extension {
 	}
 
 	/**
-	 * Load translations for the extension
-	 *
-	 * 1. Check  `wp-content/languages/gravityview/` folder and load using `load_textdomain()`
-	 * 2. Check  `wp-content/plugins/gravityview/languages/` folder for `gravityview-[locale].mo` file and load using `load_textdomain()`
-	 * 3. Load default file using `load_plugin_textdomain()` from `wp-content/plugins/gravityview/languages/`
-	 *
-	 * @return void
-	 */
-	public function load_plugin_textdomain() {
-
-		if( empty( $this->_text_domain ) ) {
-			do_action( 'gravityview_log_debug', __METHOD__ . ': Extension translation cannot be loaded; the `_text_domain` variable is not defined', $this );
-			return;
-		}
-
-		// Backward compat for Ratings & Reviews / Maps
-		$path = isset( $this->_path ) ? $this->_path : ( isset( $this->plugin_file ) ? $this->plugin_file : '' );
-
-		// Set filter for plugin's languages directory
-		$lang_dir = dirname( plugin_basename( $path ) ) . '/languages/';
-
-		// Traditional WordPress plugin locale filter
-		$locale = apply_filters( 'plugin_locale',  get_locale(), $this->_text_domain );
-
-		$mofile = sprintf( '%1$s-%2$s.mo', $this->_text_domain, $locale );
-
-		// Setup paths to current locale file
-		$mofile_local  = $lang_dir . $mofile;
-		$mofile_global = WP_LANG_DIR . '/' . $this->_text_domain . '/' . $mofile;
-
-		if ( file_exists( $mofile_global ) ) {
-			// Look in global /wp-content/languages/[plugin-dir]/ folder
-			load_textdomain( $this->_text_domain, $mofile_global );
-		}
-		elseif ( file_exists( $mofile_local ) ) {
-			// Look in local /wp-content/plugins/[plugin-dir]/languages/ folder
-			load_textdomain( $this->_text_domain, $mofile_local );
-		}
-		else {
-			// Load the default language files
-			load_plugin_textdomain( $this->_text_domain, false, $lang_dir );
-		}
-	}
-
-	/**
 	 * Get license information from GravityView
 	 *
 	 * @since 1.8 (Extension version 1.0.7)
@@ -217,49 +166,6 @@ abstract class GravityView_Extension {
 		$license = GravityView_Settings::getSetting('license');
 
 		return $license;
-	}
-
-	/**
-	 * Register the updater for the Extension using GravityView license information
-	 *
-	 * @return void
-	 */
-	public function settings() {
-
-		// If doing ajax, get outta here
-		if( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) )  {
-			return;
-		}
-
-		if( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
-
-
-			$file_path = plugin_dir_path( __FILE__ ) . 'lib/EDD_SL_Plugin_Updater.php';
-
-			// This file may be in the lib/ directory already
-			if( ! file_exists( $file_path ) ) {
-				$file_path = plugin_dir_path( __FILE__ ) . '/EDD_SL_Plugin_Updater.php';
-			}
-
-			include_once $file_path;
-		}
-
-		$license = $this->get_license();
-
-		// Don't update if invalid license.
-		if( false === $license || empty( $license['status'] ) || strtolower( $license['status'] ) !== 'valid' ) { return; }
-
-		new EDD_SL_Plugin_Updater(
-			$this->_remote_update_url,
-			$this->_path,
-			array(
-				'version'	=> $this->_version, // current version number
-				'license'	=> $license['license'],
-				'item_id'   => $this->_item_id, // The ID of the download on _remote_update_url
-				'item_name' => $this->_title,  // name of this plugin
-				'author' 	=> strip_tags( $this->_author )  // author of this plugin
-			)
-		);
 	}
 
 	/**

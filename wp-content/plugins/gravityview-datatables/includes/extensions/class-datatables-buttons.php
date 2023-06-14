@@ -19,21 +19,6 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 		return $settings;
 	}
 
-	/**
-	 * Register the tooltip with Gravity Forms
-	 * @param  array  $tooltips Existing tooltips
-	 * @return array           Modified tooltips
-	 */
-	function tooltips( $tooltips = array() ) {
-
-		$tooltips['gv_datatables_buttons'] = array(
-			'title' => __('Enable Buttons', 'gv-datatables'),
-			'value' => __('Display buttons that allow users to print or export the current results.', 'gv-datatables')
-		);
-
-		return $tooltips;
-	}
-
 	function settings_row( $ds ) {
 
 		$buttons_labels = self::button_labels('admin');
@@ -46,9 +31,10 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 					<?php
 						echo GravityView_Render_Settings::render_field_option( 'datatables_settings[buttons]', array(
 								'label' => __( 'Enable Buttons', 'gv-datatables' ),
+								'desc' => esc_html__('Display buttons that allow users to print or export the current results.', 'gv-datatables'),
 								'type' => 'checkbox',
 								'value' => 1,
-								'tooltip' => 'gv_datatables_buttons',
+                                'tooltip' => true,
                                 'article' => array(
                                     'id' => '5ea73bab04286364bc9914ba',
                                     'url' => 'https://docs.gravityview.co/article/710-datatables-buttons',
@@ -60,7 +46,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 			<tr valign="top">
 				<td colspan="2">
 					<label><?php esc_html_e( 'Buttons', 'gv-datatables' ); ?></label>
-					<ul >
+					<ul>
 						<?php
 
 						$export_button_settings = $ds['export_buttons'];
@@ -127,37 +113,77 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 	 * Inject Buttons Scripts and Styles if needed
 	 */
 	function add_scripts( $dt_configs, $views, $post ) {
-
 		if( ! $add_scripts = parent::add_scripts( $dt_configs, $views, $post ) ) {
 			return;
 		}
 
-		$path = plugins_url( 'assets/datatables-buttons/', GV_DT_FILE );
+		$script_debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+		$script_path = plugins_url( 'assets/js/third-party/', GV_DT_FILE );
+		$style_path  = plugins_url( 'assets/css/third-party/', GV_DT_FILE );
 
 		//jsZip
-		wp_enqueue_script( 'gv-dt-buttons-jszip', plugins_url( 'assets/jszip/dist/jszip.min.js', GV_DT_FILE ), array( 'jquery' ), GV_Extension_DataTables::version, true );
+		wp_enqueue_script(
+			'gv-dt-buttons-jszip',
+			$script_path . 'jszip/jszip' . $script_debug . '.js',
+			array( 'jquery' ),
+			GV_Extension_DataTables::version,
+			true
+		);
 
 		//pdfmake
-		wp_enqueue_script( 'gv-dt-buttons-pdfmake', plugins_url( 'assets/pdfmake/build/pdfmake.min.js', GV_DT_FILE ), array( 'jquery' ), GV_Extension_DataTables::version, true );
-		wp_enqueue_script( 'gv-dt-buttons-vfs-fonts', plugins_url( 'assets/pdfmake/build/vfs_fonts.js', GV_DT_FILE ), array( 'jquery' ), GV_Extension_DataTables::version, true );
+		wp_enqueue_script(
+			'gv-dt-buttons-pdfmake',
+			$script_path . 'pdfmake/pdfmake' . $script_debug . '.js',
+			array( 'jquery' ),
+			GV_Extension_DataTables::version,
+			true
+		);
+		wp_enqueue_script(
+			'gv-dt-buttons-vfs-fonts',
+			$script_path . 'pdfmake/vfs_fonts' . $script_debug . '.js',
+			array( 'jquery' ),
+			GV_Extension_DataTables::version,
+			true
+		);
 
 		/**
 		 * @filter `gravityview_dt_buttons_script_src` Use your own DataTables Buttons core script
 		 * @since 2.0
 		 * @param string $script_url The JS script url for Buttons
 		 */
-		wp_enqueue_script( 'gv-dt-buttons', apply_filters( 'gravityview_dt_buttons_script_src', $path .'js/gv-buttons.min.js' ), array( 'jquery', 'gv-datatables', 'gv-dt-buttons-jszip', 'gv-dt-buttons-pdfmake', 'gv-dt-buttons-vfs-fonts' ), GV_Extension_DataTables::version, true );
-
+		wp_enqueue_script(
+			'gv-dt-buttons',
+			apply_filters(
+				'gravityview_dt_buttons_script_src',
+				$script_path . 'datatables/dataTables.buttons' . $script_debug . '.js'
+			),
+			array( 'jquery', 'gv-datatables', 'gv-dt-buttons-jszip', 'gv-dt-buttons-pdfmake', 'gv-dt-buttons-vfs-fonts' ),
+			GV_Extension_DataTables::version,
+			true
+		);
+        wp_enqueue_script(
+			'gv-dt-buttons-custom',
+	        $script_path . 'datatables/gv-buttons' . $script_debug . '.js',
+			array( 'jquery', 'gv-dt-buttons' )
+        );
 
 		/**
 		 * @filter `gravityview_dt_buttons_style_src` Use your own Buttons stylesheet
-		 * @since 2.0
+		 * @since  2.0
+		 *
 		 * @param string $styles_url The CSS url for Buttons
 		 */
-		wp_enqueue_style( 'gv-dt_buttons_style', apply_filters( 'gravityview_dt_buttons_style_src', $path.'css/buttons.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
-
+		wp_enqueue_style(
+			'gv-dt_buttons_style',
+			apply_filters(
+				'gravityview_dt_buttons_style_src',
+				$style_path . 'datatables/buttons.dataTables' . $script_debug . '.css'
+			),
+			array( 'gravityview_style_datatables_table' ),
+			GV_Extension_DataTables::version
+		);
 	}
-
 
 	/**
 	 * Buttons add specific config data based on admin settings

@@ -33,7 +33,7 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 							'label' => __( 'Enable FixedHeader', 'gv-datatables' ),
 							'type' => 'checkbox',
 							'value' => 1,
-							'tooltip' => 'gv_datatables_fixedheader',
+							'desc'  => esc_html__('Float the column headers above the table to keep the column titles visible at all times.', 'gv-datatables' ),
 						), $ds['fixedheader'] );
 					?>
 				</td>
@@ -45,33 +45,13 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 							'label' => __( 'Enable FixedColumns', 'gv-datatables' ),
 							'type' => 'checkbox',
 							'value' => 1,
-							'tooltip' => 'gv_datatables_fixedcolumns',
+							'desc' => esc_html__( 'Fix the first column in place while horizontally scrolling a table. The first column and its contents will remain visible at all times.', 'gv-datatables' ),
 						), $ds['fixedcolumns'] );
 					?>
 				</td>
 			</tr>
 		</table>
 	<?php
-	}
-
-	/**
-	 * Register the tooltip with Gravity Forms
-	 * @param  array  $tooltips Existing tooltips
-	 * @return array           Modified tooltips
-	 */
-	function tooltips( $tooltips = array() ) {
-
-		$tooltips['gv_datatables_fixedcolumns'] = array(
-			'title' => __('FixedColumns', 'gv-datatables'),
-			'value' => __('Fix the first column in place while horizontally scrolling a table. The first column and its contents will remain visible at all times.', 'gv-datatables')
-		);
-
-		$tooltips['gv_datatables_fixedheader'] = array(
-			'title' => __('FixedHeader', 'gv-datatables'),
-			'value' => __('Float the column headers above the table to keep the column titles visible at all times.', 'gv-datatables')
-		);
-
-		return $tooltips;
 	}
 
 	/**
@@ -85,15 +65,48 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 
 		$script_debug = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
 
-		$path = plugins_url( 'assets/datatables-fixedheader/', GV_DT_FILE );
+		$script_path = plugins_url( 'assets/js/third-party/datatables/', GV_DT_FILE );
+		$style_path = plugins_url( 'assets/css/third-party/datatables/', GV_DT_FILE );
 
-		wp_enqueue_script( 'gv-dt-fixedheader', apply_filters( 'gravityview_dt_fixedheader_script_src', $path.'js/dataTables.fixedHeader'.$script_debug.'.js' ), array( 'jquery', 'gv-datatables' ), GV_Extension_DataTables::version, true );
-		wp_enqueue_style( 'gv-dt_fixedheader_style', apply_filters( 'gravityview_dt_fixedheader_style_src', $path.'css/fixedHeader.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
+		wp_enqueue_script(
+			'gv-dt-fixedheader',
+			apply_filters(
+				'gravityview_dt_fixedheader_script_src',
+				$script_path . 'dataTables.fixedHeader' . $script_debug . '.js'
+			),
+			array( 'jquery', 'gv-datatables' ),
+			GV_Extension_DataTables::version, true
+		);
 
-		$path = plugins_url( 'assets/datatables-fixedcolumns/', GV_DT_FILE );
+		wp_enqueue_style(
+			'gv-dt_fixedheader_style',
+			apply_filters(
+				'gravityview_dt_fixedheader_style_src',
+				$style_path . 'fixedHeader.dataTables' . $script_debug . '.css'
+			),
+			array( 'gravityview_style_datatables_table' ),
+			GV_Extension_DataTables::version
+		);
 
-		wp_enqueue_script( 'gv-dt-fixedcolumns', apply_filters( 'gravityview_dt_fixedcolumns_script_src', $path.'js/dataTables.fixedColumns'.$script_debug.'.js' ), array( 'jquery', 'gv-datatables' ), GV_Extension_DataTables::version, true );
-		wp_enqueue_style( 'gv-dt_fixedcolumns_style', apply_filters( 'gravityview_dt_fixedcolumns_style_src', $path.'css/fixedColumns.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
+		wp_enqueue_script(
+			'gv-dt-fixedcolumns',
+			apply_filters(
+				'gravityview_dt_fixedcolumns_script_src',
+				$script_path . 'dataTables.fixedColumns' . $script_debug . '.js'
+			),
+			array( 'jquery', 'gv-datatables' ),
+			GV_Extension_DataTables::version,
+			true
+		);
+		wp_enqueue_style(
+			'gv-dt_fixedcolumns_style',
+			apply_filters(
+				'gravityview_dt_fixedcolumns_style_src',
+				$style_path . 'fixedColumns.dataTables' . $script_debug . '.css'
+			),
+			array( 'gravityview_style_datatables_table' ),
+			GV_Extension_DataTables::version
+		);
 	}
 
 	/**

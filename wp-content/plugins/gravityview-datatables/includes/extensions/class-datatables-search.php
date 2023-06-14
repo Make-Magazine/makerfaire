@@ -3,7 +3,7 @@
  * Searching.
  */
 class GV_Extension_DataTables_Search extends GV_DataTables_Extension {
-	
+
 	public $settings_key = 'search';
 
 	/**
@@ -21,20 +21,23 @@ class GV_Extension_DataTables_Search extends GV_DataTables_Extension {
 	 * @return array The modified options.
 	 */
 	public function maybe_add_config( $dt_config, $view_id, $post  ) {
-
 	    $dt_config['searching'] = true;
 
+		$view = gravityview()->views->get( $view_id );
+
+		if ( ! $view ) {
+			return $dt_config;
+		}
+
 		/**
-		 * Do not show if a search widget is present.
+		 * Disable built-in DT search if a search widget is present.
 		 */
-		if ( $view = gravityview()->views->get( $view_id ) ) {
-			foreach ( $view['widgets'] as $position ) {
-				foreach ( $position as $widget ) {
-					if ( 'search_bar' === $widget['id'] ) {
-						$dt_config['searching'] = false;
-						break 2;
-					}
-				}
+		foreach ( $view->widgets->all() as $widget ) {
+			if ( $widget instanceof GravityView_Widget_Search ) {
+				// Remove built-in search ("f") from DOM setting.
+				// @see https://datatables.net/reference/option/dom
+				$dt_config['dom'] = empty( $dt_config['dom'] ) ? 'lrtip' : str_replace( 'f', '', $dt_config['dom'] );
+				break;
 			}
 		}
 

@@ -12,22 +12,21 @@
  *
  * @wordpress-plugin
  * Plugin Name: GravityView - DataTables Extension
- * Plugin URI: https://gravityview.co/extensions/datatables/
+ * Plugin URI: https://www.gravitykit.com/extensions/datatables/
  * Description: Display entries in a dynamic table powered by DataTables & GravityView.
- * Version: 2.6
- * Author: The GravityView Team
- * Author URI:  https://gravityview.co
+ * Version: 3.1.2
+ * Author: The GravityKit Team
+ * Author URI:  https://www.gravitykit.com
  * Text Domain: gv-datatables
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Domain Path: /languages
  */
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'GV_DT_VERSION', '2.6' );
+define( 'GV_DT_VERSION', '3.1.2' );
 
 /** @define "GV_DT_FILE" "./" */
 define( 'GV_DT_FILE', __FILE__ );
@@ -38,6 +37,8 @@ define( 'GV_DT_URL', plugin_dir_url( __FILE__ ) );
 define( 'GV_DT_DIR', plugin_dir_path( __FILE__ ) );
 
 add_action( 'plugins_loaded', 'gv_extension_datatables_load' );
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 /**
  * Wrapper function to make sure GravityView_Extension has loaded
@@ -65,9 +66,9 @@ function gv_extension_datatables_load() {
 
 		protected $_text_domain = 'gv-datatables';
 
-		protected $_min_gravityview_version = '2.0-dev';
+		protected $_min_gravityview_version = '2.15';
 
-		protected $_path = __FILE__;
+		protected $_path = GV_DT_FILE;
 
 		public function add_hooks() {
 
@@ -91,6 +92,7 @@ function gv_extension_datatables_load() {
 			include_once GV_DT_DIR . 'includes/class-datatables-data.php';
 
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-extension.php';
+			include_once GV_DT_DIR . 'includes/class-datatables-field-filters.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-search.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-buttons.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-scroller.php';
@@ -107,6 +109,13 @@ function gv_extension_datatables_load() {
 	}
 
 	new GV_Extension_DataTables;
-
 }
 
+// Register the extension with Foundation, which will enable translations and other features.
+add_action( 'gravityview/loaded', function () {
+	if ( ! class_exists( 'GravityKit\GravityView\Foundation\Core' ) ) {
+		return;
+	}
+
+	GravityKit\GravityView\Foundation\Core::register( __FILE__ );
+} );

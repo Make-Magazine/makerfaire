@@ -4,6 +4,13 @@ abstract class GV_DataTables_Extension {
 
 	protected $settings_key = '';
 
+	/**
+	 * @internal
+	 * @var int Hook priority for add_scripts() to be run. Default: 10.
+	 * @since 2.5
+	 */
+	protected $script_priority = 10;
+
 	function __construct() {
 
 		/**

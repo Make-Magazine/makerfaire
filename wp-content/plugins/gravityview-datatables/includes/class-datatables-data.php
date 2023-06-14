@@ -278,7 +278,7 @@ class GV_Extension_DataTables_Data {
 
 		// Pass $_GET variables to the View functions, since they're relied on heavily
 		// for searching and filtering, for example the A-Z widget
-		$_GET = isset( $_POST['getData'] ) ? json_decode( stripslashes( $_POST['getData'] ), true ) : array();
+		$_GET = ! empty( $_POST['getData'] ) ? json_decode( stripslashes( $_POST['getData'] ), true ) : array();
 
 		$view_id = intval( $_POST['view_id'] );
 
@@ -381,11 +381,14 @@ class GV_Extension_DataTables_Data {
 
 			// cache depends on offset
 			// TODO: Verify the $_GET variables are related to valid field searches
-			$atts['getData'] = $_GET;
+			$atts['getData'] = (array) $_GET;
+
+			$atts['columns'] = \GV\Utils::_POST( 'columns', array() );
 
 			$Cache = new GravityView_Cache( $form_id, $atts );
 
 			if ( $output = $Cache->get() ) {
+
 				gravityview()->log->debug( '[DataTables] Cached output found; using cache with key ' . $Cache->get_key() );
 
 				// update DRAW (mr DataTables is very sensitive!)
@@ -408,12 +411,51 @@ class GV_Extension_DataTables_Data {
 		$page = ( ( $offset - ( $view->settings->get( 'offset', 0 ) ?: 0 ) ) / ( $view->settings->get( 'page_size', 20 ) ?: 20 ) ) + 1;
 
 		if ( gravityview()->plugin->supports( \GV\Plugin::FEATURE_GFQUERY ) ) {
-			add_action( 'gravityview/view/query', $callback = function ( $query ) use ( $page ) {
 
+		    add_action( 'gravityview/view/query', $callback = function ( $query ) use ( $page, $view ) {
+
+		        /** @var GF_Query $query */
 				$query->page( $page );
+
+				// Get an array of configured field IDs to make sure searches ONLY search available fields
+			    $configured_fields = $view->fields->by_visible()->as_configuration();
+			    $configured_field_ids = wp_list_pluck( $configured_fields['directory_table-columns'], 'id' );
+
+			    foreach ( \GV\Utils::_POST( 'columns', array() ) as $dt_column ) {
+
+				    if ( empty( $dt_column['searchable'] ) || ! isset( $dt_column['search']['value'] ) ) {
+					    continue;
+				    }
+
+				    if ( '' === $dt_column['search']['value'] ) {
+					    continue;
+				    }
+
+				    $field_id_or_meta_name = str_replace( 'gv_', '', sanitize_text_field( $dt_column['name'] ) );
+
+				    // Field doesn't exist in View configuration; bail!
+				    if ( ! in_array( $field_id_or_meta_name, $configured_field_ids, true ) ) {
+					    continue;
+				    }
+
+				    #ray( [ $dt_column, $field_id_or_meta_name ] );
+
+				    $condition = new \GF_Query_Condition(
+					    new \GF_Query_Column( $field_id_or_meta_name ),
+					    \GF_Query_Condition::LIKE,
+					    new \GF_Query_Literal( '%' . sanitize_text_field( $dt_column['search']['value'] ) . '%' )
+				    );
+
+				    $q = $query->_introspect();
+
+				    $query->where( \GF_Query_Condition::_and( $q['where'], $condition ) );
+			    }
 			} );
+
 			$entries = $view->get_entries( gravityview()->request );
+
 			remove_action( 'gravityview/view/query', $callback );
+
 		} else {
 			$entries = $view->get_entries( gravityview()->request );
 			$entries = $entries->page( $page );
@@ -560,6 +602,7 @@ class GV_Extension_DataTables_Data {
 
 		// build output data
 		$data = array();
+		$_POST = isset( $_POST ) ? (array) $_POST : array();
 		if ( $entries->total() ) {
 
 			$fields          = $view->fields->by_position( 'directory_table-columns' )->by_visible()->all();
@@ -788,7 +831,7 @@ class GV_Extension_DataTables_Data {
 			ob_start();
 
 			// Get the JSON file
-			include GV_DT_DIR . 'assets/js/translations/' . $translations[ $locale ] . '.json';
+			include GV_DT_DIR . 'assets/js/third-party/datatables/translations/' . $translations[ $locale ] . '.json';
 
 			$json_string = ob_get_clean();
 
@@ -807,18 +850,28 @@ class GV_Extension_DataTables_Data {
 
 		} else {
 
+			$no_entries_text = $view->settings->get( 'no_results_text', __( 'No entries match your request.', 'gv-datatables' ) );
+			$no_entries_text = ! $no_entries_text ? __( 'No entries match your request.', 'gv-datatables' ) : $no_entries_text;
+
+			$no_results_text = $view->settings->get( 'no_search_results_text', __( 'This search returned no results.', 'gv-datatables' ) );
+			$no_results_text = ! $no_results_text ? __( 'This search returned no results.', 'gv-datatables' ) : $no_results_text;
+
+            /**
+             * @filter `gravityview_datatables_loading_text` Modify the text shown when DataTables is loaded
+             *
+             * @since  2.5 Added $view parameter
+             *
+             * @param string $loading_text Default: Loading data…
+             * @param \GV\View $view The View
+             */
+			$loading_text = apply_filters( 'gravityview_datatables_loading_text', esc_html__( 'Loading data&hellip;', 'gv-datatables' ), $view );
+			$loading_text = $loading_text ? '<div class="dataTables_processing_text">' . $loading_text . '</div>' : null;
+
 			// Otherwise, load default English text with filters.
 			$language = array(
-				/**
-				 * @filter `gravityview_datatables_loading_text` Modify the text shown when DataTables is loaded
-				 *
-				 * @since  2.5 Added $view parameter
-				 *
-				 * @param string   $loading_text Default: Loading data…
-				 * @param \GV\View $view         The View
-				 */
-				'processing' => esc_html( apply_filters( 'gravityview_datatables_loading_text', __( 'Loading data&hellip;', 'gv-datatables' ), $view ) ),
-				'emptyTable' => esc_html( $view->settings->get( 'no_results_text', __( 'No entries match your request.', 'gv-datatables' ) ) ),
+				'processing'  => $loading_text,
+				'zeroRecords' => esc_html( $no_entries_text ),
+				'emptyTable' => esc_html( $no_results_text ),
 			);
 
 		}
@@ -845,71 +898,98 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @since 1.2.3
 	 *
-	 * @return array Key is the WordPress locale string; Value is the name of the file in assets/js/translations/ without .json
+	 * @return array Key is the WordPress locale string; Value is the name of the file in assets/js/third-party/datatables/translations/ without .json
 	 */
 	private function get_translations() {
-
 		$translations = array(
-			'af'    => 'Afrikaans',
-			'sq'    => 'Albanian',
-			'ar'    => 'Arabic',
-			'hy'    => 'Armenian',
-			'az'    => 'Azerbaijan',
-			'bn_BD' => 'Bangla',
-			'eu'    => 'Basque',
-			'bel'   => 'Belarusian',
-			'bg_BG' => 'Bulgarian',
-			'ca'    => 'Catalan',
-			'zh_CN' => 'Chinese',
-			'hr'    => 'Croatian',
-			'cs_CZ' => 'Czech',
-			'da_DK' => 'Danish',
-			'nl_NL' => 'Dutch',
-			#'en_US' => 'English',
-			'et'    => 'Estonian',
-			'fi'    => 'Finnish',
-			'fr_FR' => 'French',
-			'gl_ES' => 'Galician',
-			'ka_GE' => 'Georgian',
-			'de_DE' => 'German',
-			'el'    => 'Greek',
-			'gu'    => 'Gujarati',
-			'he_IL' => 'Hebrew',
-			'hi_IN' => 'Hindi',
-			'hu_HU' => 'Hungarian',
-			'is_IS' => 'Icelandic',
-			'id_ID' => 'Indonesian',
-			'ga'    => 'Irish',
-			'it_IT' => 'Italian',
-			'ja'    => 'Japanese',
-			'ko_KR' => 'Korean',
-			'ky_KY' => 'Kyrgyz',
-			'lv'    => 'Latvian',
-			'lt_LT' => 'Lithuanian',
-			'mk_MK' => 'Macedonian',
-			'ms_MY' => 'Malay',
-			'mm'    => 'Mongolian',
-			'nb_NO' => 'Norwegian',
-			'fa_IR' => 'Persian',
-			'pl_PL' => 'Polish',
-			'pt_BR' => 'Portuguese-Brasil',
-			'pt_PT' => 'Portuguese',
-			'ro_RO' => 'Romanian',
-			'ru_RU' => 'Russian',
-			'sr_RS' => 'Serbian',
-			'si_LK' => 'Sinhala',
-			'sk_SK' => 'Slovak',
-			'sl_SI' => 'Slovenian',
-			'es_ES' => 'Spanish',
-			'sw'    => 'Swahili',
-			'sv_SE' => 'Swedish',
-			'ta_IN' => 'Tamil',
-			'th'    => 'Thai',
-			'tr_TR' => 'Turkish',
-			'uk'    => 'Ukranian',
-			'ur'    => 'Urdu',
-			'uz_UZ' => 'Uzbek',
-			'vi'    => 'Vietnamese',
+			'af'    => 'af', // Afrikaans
+			'sq'    => 'sq', // Albanian
+			'ar'    => 'ar', // Arabic
+			'hy'    => 'hy', // Armenian
+			'az'    => 'az-AZ', // Azerbaijani
+			'bn_BD' => 'bn', // Bengali
+			'eu'    => 'eu', // Basque
+			'bel'   => 'be', // Belarusian
+			'bs_BA' => 'bs-BA', // Bosnian
+			'bg_BG' => 'bg', // Bulgarian
+			'ca'    => 'ca', // Catalan
+			'zh_CN' => 'zh', // Chinese
+			'co'    => 'co', // Corsican
+			'hr'    => 'hr', // Croatian
+			'cs_CZ' => 'Czech', // Czech
+			'da_DK' => 'da', // Danish
+			'nl_NL' => 'nl-NL', // Dutch
+			'en-GB' => 'en-GB', // British English
+			'eo'    => 'eo', // Esperanto
+			'et'    => 'et', // Estonian
+			// Filipino (not in WP)
+			'fi'    => 'fi', // Finnish
+			'fr_FR' => 'fr-FR', // French
+			'gl_ES' => 'gl', // Galician
+			'ka_GE' => 'ka', // Georgian
+			'de_DE' => 'de-DE', // German
+			'el'    => 'el', // Greek
+			'gu'    => 'gu', // Gujarati
+			'he_IL' => 'he', // Hebrew
+			'hi_IN' => 'hi', // Hindi
+			'hu_HU' => 'hu', // Hungarian
+			'is_IS' => 'is', // Icelandic
+			'id_ID' => 'id', // Indonesian
+			'ga'    => 'ga', // Irish
+			'it_IT' => 'it-IT', // Italian
+			'ja'    => 'ja', // Japanese
+			'jv_ID' => 'jv', // Javanese
+			'kn'    => 'kn', // Kannada
+			'kk'    => 'kk', // Kazakh
+			'km'    => 'km', // Khmer
+			'ko_KR' => 'ko', // Korean
+			'kmr'   => 'ku', // Kurdish
+			'kir'   => 'ky', // Kyrgyz
+			'lo'    => 'lao', // Lao
+			'lv'    => 'lv', // Latvian
+			'lt_LT' => 'lt', // Lithuanian
+			'lug'   => 'ug', // Luganda
+			'mk_MK' => 'mk', // Macedonian
+			'ms_MY' => 'ms', // Malay
+			'mr'    => 'mr', // Marathi
+			'mn'    => 'mn', // Mongolian
+			'ne_NP' => 'ne', // Nepali
+			'nb_NO' => 'no-NB', // Norwegian Bokmål
+			'nn_NO' => 'no-NO', // Norwegian Nynorsk
+			'ps'    => 'ps', // Pashto
+			'fa_IR' => 'fa', // Persian
+			'pl_PL' => 'pl', // Polish
+			'pt_PT' => 'pt-PT', // Portuguese
+			'pt_BR' => 'pt-BR', // Brazilian Portuguese
+			'pa_IN' => 'pa', // Punjabi
+			'ro_RO' => 'ro', // Romanian
+			'roh'   => 'rm', // Romansh
+			'ru_RU' => 'ru', // Russian
+			'sr_RS' => 'sr', // Serbian
+			// Serbian (Latin) (not in WP)
+			'sd_PK' => 'snd', // Sindhi
+			'si_LK' => 'si', // Sinhala
+			'sk_SK' => 'sk', // Slovak
+			'sl_SI' => 'sl', // Slovenian
+			'es_ES' => 'es-ES', // Spanish
+			'es_AR' => 'es-AR', // Spanish (Argentina)
+			'es_CL' => 'es-CL', // Spanish (Chile)
+			'es_CO' => 'es-CO', // Spanish (Colombia)
+			'es_MX' => 'es-MX', // Spanish (Mexico)
+			'sw'    => 'sq', // Swahili
+			'sv_SE' => 'sv-SE', // Swedish
+			'tg'    => 'tg', // Tajik
+			'ta_IN' => 'ta', // Tamil
+			'te'    => 'te', // Telugu
+			'th'    => 'th', // Thai
+			'tr_TR' => 'tr', // Turkish
+			'tuk'   => 'tk', // Turkmen
+			'uk'    => 'uk', // Ukrainian
+			'ur'    => 'ur', // Urdu
+			'uz_UZ' => 'uz', // Uzbek
+			// Uzbek - Cryllic (not in WP)
+			'vi'    => 'vi', // Vietnamese
+			'cy'    => 'cy', // Welsh
 		);
 
 		return $translations;
@@ -942,9 +1022,11 @@ class GV_Extension_DataTables_Data {
 			'view_id'           => $view->ID,
 			'post_id'           => $post->ID,
 			'nonce'             => wp_create_nonce( 'gravityview_datatables_data' ),
-			'getData'           => json_encode( (array) $_GET ), // Pass URL args to $_POST request
+			'getData'           => empty( $_GET ) ? false : json_encode( (array) $_GET ), // Pass URL args to $_POST request
 			'hideUntilSearched' => $view->settings->get( 'hide_until_searched' ),
 			'setUrlOnSearch'    => apply_filters( 'gravityview/search/method', 'get' ) === 'get',
+			'noEntriesOption'   => (int) $view->settings->get( 'no_entries_options', '0' ),
+			'redirectURL'       => $view->settings->get( 'no_entries_redirect', '' ),
 		);
 
 		// apply shortcode atts
@@ -991,10 +1073,13 @@ class GV_Extension_DataTables_Data {
 				$field_id = $field->ID;
 			}
 
+			$field_config = $field->as_configuration();
+
 			$field_column = array(
 				'name'  => 'gv_' . $field_id,
-				'width' => $this->get_column_width( $field->as_configuration() ),
-				'className' => gravityview_sanitize_html_class( \GV\Utils::get( $field->as_configuration(), 'custom_class', '' ) ),
+				'width' => $this->get_column_width( $field_config ),
+				'form_id' => rgar( $field_config, 'form_id' ),
+				'className' => gravityview_sanitize_html_class( \GV\Utils::get( $field_config, 'custom_class', '' ) ),
 			);
 
 			/**
@@ -1073,16 +1158,21 @@ class GV_Extension_DataTables_Data {
 
 		$script_debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		$path = plugins_url( 'assets/datatables/media/js/jquery.dataTables' . $script_debug . '.js', GV_DT_FILE );
-
 		/**
 		 * @filter `gravityview_datatables_script_src` Modify the DataTables core script used
 		 *
 		 * @param string $path Full URL to the jQuery DataTables file
 		 */
-		$path = apply_filters( 'gravityview_datatables_script_src', $path );
-
-		wp_enqueue_script( 'gv-datatables', $path, array( 'jquery' ), GV_Extension_DataTables::version, true );
+		wp_enqueue_script(
+			'gv-datatables',
+			apply_filters(
+				'gravityview_datatables_script_src',
+				plugins_url( 'assets/js/third-party/datatables/jquery.dataTables' . $script_debug . '.js', GV_DT_FILE )
+			),
+			array( 'jquery' ),
+			GV_Extension_DataTables::version,
+			true
+		);
 
 		/**
 		 * Use your own DataTables stylesheet by using the `gravityview_datatables_style_src` filter
@@ -1144,12 +1234,13 @@ class GV_Extension_DataTables_Data {
 		}
 
 		global $post;
+		static $_printed_scripts = array();
 
 		$script_config_json = json_encode( $this->get_datatables_script_configuration( $post, $gravityview->view ) );
 
 		$hash_of_config = sha1( $script_config_json . json_encode( $gravityview->view->settings->all() ) );
 
-		if ( did_action( 'datatables_print_script_' . $hash_of_config ) ) {
+		if ( isset( $_printed_scripts[ $hash_of_config ] ) ) {
 			return;
 		}
 		?>
@@ -1162,7 +1253,7 @@ class GV_Extension_DataTables_Data {
         </script>
 		<?php
 
-		do_action( 'datatables_print_script_' . $hash_of_config );
+		$_printed_scripts[ $hash_of_config ] = true;
 	}
 
 	/**

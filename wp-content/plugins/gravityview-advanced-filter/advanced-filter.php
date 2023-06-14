@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: GravityView - Advanced Filter Extension
-Plugin URI: https://gravityview.co/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
+Plugin URI: https://www.gravitykit.com/extensions/advanced-filter/?utm_source=advanced-filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal
 Description: Filter which entries are shown in a View based on their values.
-Version: 2.1.14
-Author: GravityView
-Author URI: https://gravityview.co/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
+Version: 2.2
+Author: GravityKit
+Author URI: https://www.gravitykit.com/?utm_source=advanced-filter&utm_medium=meta&utm_content=author_uri&utm_campaign=internal
 Text Domain: gravityview-advanced-filter
 Domain Path: /languages/
 */
@@ -14,6 +14,8 @@ Domain Path: /languages/
 if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
+
+define( 'GRAVITYKIT_ADVANCED_FILTERING_VERSION', '2.2' );
 
 add_action( 'plugins_loaded', 'gv_extension_advanced_filtering_load' );
 
@@ -38,7 +40,7 @@ function gv_extension_advanced_filtering_load() {
 
 		protected $_title = 'Advanced Filtering';
 
-		protected $_version = '2.1.14';
+		protected $_version = GRAVITYKIT_ADVANCED_FILTERING_VERSION;
 
 		protected $_min_gravityview_version = '2.0';
 
@@ -143,7 +145,7 @@ HTML;
 				'tooltip'    => true,
 				'article'    => array(
 					'id'  => '611420b6766e8844fc34f9a3',
-					'url' => 'https://docs.gravityview.co/article/775-field-conditional-logic-doesnt-hide-empty-fields',
+					'url' => 'https://docs.gravitykit.com/article/775-field-conditional-logic-doesnt-hide-empty-fields',
 				),
 				'merge_tags' => 'force',
 				'group'      => 'visibility',
@@ -184,7 +186,7 @@ HTML;
 		}
 
 		/**
-		 * Add the scripts to the no-conflict mode whitelist
+		 * Add the scripts to the no-conflict mode allowlist
 		 *
 		 * @param array $scripts Array of script keys
 		 *
@@ -202,7 +204,7 @@ HTML;
 		}
 
 		/**
-		 * Add the styles to the no-conflict mode whitelist
+		 * Add the styles to the no-conflict mode allowlist
 		 *
 		 * @since 2.0
 		 *
@@ -507,16 +509,30 @@ HTML;
 				}
 
 				$form_id = \GV\Utils::get( $filter, 'form_id', $view->form->ID );
+				$key = \GV\Utils::get( $filter, 'key' );
+
+				$field = GFAPI::get_field( $form_id, $key );
 
 				unset( $filter['_id'] );
 				unset( $filter['form_id'] );
-				$key = \GV\Utils::get( $filter, 'key' );
 
 				$_tmp_query       = new GF_Query( $form_id, array( 'field_filters' => array( 'mode' => 'all', $filter ) ) );
 				$_tmp_query_parts = $_tmp_query->_introspect();
 				$_filter_value    = $filter['value'];
 
 				$filter = $_tmp_query_parts['where'];
+
+				if ( $field && in_array( $field->type, [ 'total' ] ) && in_array( $filter->operator, [ $filter::LT, $filter::GT ] ) ) {
+					$cast_to_decimal = function ( GF_Query_Condition $class ) {
+						$class->_left = GF_Query_Call::CAST( $class->_left, GF_Query::TYPE_DECIMAL );
+
+						return $class;
+					};
+
+					$cast_to_decimal = $cast_to_decimal->bindTo( $filter, GF_Query_Condition::class );
+
+					$filter = $cast_to_decimal( $filter );
+				}
 
 				if ( is_numeric( $key ) && in_array( $filter->operator, array( $filter::NLIKE, $filter::NBETWEEN, $filter::NEQ, $filter::NIN ) ) && '' !== $_filter_value ) {
 					global $wpdb;
@@ -710,7 +726,7 @@ HTML;
 
 			if ( ! $form && ! empty( $view_id ) ) {
 				if ( $view = \GV\View::by_id( $view_id ) ) {
-					$form = GFAPI::get_form( $view->form->ID );
+					$form = $view->form->form;
 				}
 			}
 
@@ -778,7 +794,7 @@ HTML;
 				 * @since 2.1.10
 				 */
 				case 'fileupload':
-					if ( $field->multipleFiles && in_array( $filter['operator'], array( 'isempty', 'isnotempty' ) ) ) {
+					if ( ! empty( $field ) && $field->multipleFiles && in_array( $filter['operator'], array( 'isempty', 'isnotempty' ) ) ) {
 						$filter['value'] = '[]';
 					}
 					break;
@@ -841,11 +857,10 @@ HTML;
 		 * @return void
 		 */
 		function admin_enqueue_scripts( $hook ) {
-
 			global $post;
 
 			// Don't process any scripts below here if it's not a GravityView page.
-			if ( ! gravityview()->request->is_admin( $hook ) || empty( $post->ID ) ) {
+			if ( empty( $post->ID ) || 'gravityview' !== $post->post_type || 'post.php' !== $hook ) {
 				return;
 			}
 
@@ -1394,6 +1409,7 @@ HTML;
 
 			$conditional_logic_fail_output = rgar( $context->field->as_configuration(), self::CONDITIONAL_LOGIC_FAIL_OUTPUT_META, false );
 			$conditional_logic_fail_output = self::process_merge_tags( $conditional_logic_fail_output, $context->view->form->form, $entry );
+			$conditional_logic_fail_output = do_shortcode( $conditional_logic_fail_output );
 
 			/**
 			 * @filter `gravityview/field/value/empty` What to display when this field is empty.

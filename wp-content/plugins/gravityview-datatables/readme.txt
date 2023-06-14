@@ -1,9 +1,9 @@
 === GravityView - DataTables Extension ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 5.8
+Tested up to: 6.2
 Stable tag: trunk
-Contributors: The GravityView Team
+Contributors: The GravityKit Team
 License: GPL 3 or higher
 
 Display entries in a dynamic table powered by DataTables & GravityView.
@@ -16,9 +16,48 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 3.1.2 on May 17, 2023 =
+
+* Fixed: Field filters not working under specific conditions
+* Fixed: JavaScript error caused by delayed search when the "Hide View data until search is performed" option is enabled
+
+= 3.1.1 on May 16, 2023 =
+
+* Fixed: Style not loading for the FixedHeader DataTables extension
+
+= 3.1 on May 16, 2023 =
+
+* Fixed: "Enable Inline Edit" toggle disappearing when using GravityEdit version 2.0 or newer
+
+= 3.0.1 on April 20, 2023 =
+
+* Fixed: Error while fetching data after clearing a search
+
+= 3.0 on April 20, 2023 =
+
+* Added: **Deep-dive into your data using per-column filtering!** [Learn more about the new column filtering feature](https://docs.gravitykit.com/article/931-datatables-column-filters)
+* Added: Support for GravityView 2.17's "No Entries Behavior" setting (support for showing a form or redirecting to a URL when a View has no entries)
+* Improved: The "Loading…" text is now always visible, regardless of the table size
+* Improved: The "Show {x} entries" dropdown default appearance
+* Modified: DataTables scripts, which changed the "Loading…" styling
+* Modified: Requires GravityView 2.15 or newer
+* Fixed: "Hide View data until search is performed" compatibility with GravityView 2.17.1
+
+__Developer Updates:__
+
+* Modified: `gravityview_datatables_loading_text` filter output is no longer run through `esc_html()`, allowing HTML to be used in the loading text
+* Modified: Loading text is now wrapped in `<div class="dataTables_processing_text"></div>` to allow for styling
+* Updated: DataTables script from 1.10.20 to 1.12
+    - Buttons from 2.2.2 to 2.3.6
+    - FixedColumns from 4.0.2 to 4.2.2
+    - FixedHeader from 3.2.2 to 3.3.2
+    - Responsive from 2.2.9 to 2.4.1
+    - Scroller from 2.0.5 to 2.1.1
+* Fixed: jQuery Migrate deprecation warnings
+
 = 2.6 on December 21, 2021 =
 
-* Added: Auto-Update setting! DataTables will automatically refresh with new entries as they're added. [Learn more about the new Auto-Update feature!](https://docs.gravityview.co/article/821-enable-auto-update-datatables-setting)
+* Added: Auto-Update setting! DataTables will automatically refresh with new entries as they're added. [Learn more about the new Auto-Update feature!](https://docs.gravitykit.com/article/821-enable-auto-update-datatables-setting)
     - You control how frequently the data refreshes. By default, it's every 5 minutes.
 
 = 2.5.1 on November 4, 2021 =
@@ -57,7 +96,7 @@ __Developer Updates:__
 
 = 2.4.6 on September 24, 2020 =
 
-* Now the plugin dynamically refreshes events in [our Gravity Forms Calendar plugin](https://gravityview.co/extensions/calendar/) if using "Entries shown on page" setting in the Calendar widget
+* Now the plugin dynamically refreshes events in [our Gravity Forms Calendar plugin](https://www.gravitykit.com/extensions/calendar/) if using "Entries shown on page" setting in the Calendar widget
 * Updated: Russian translation (thanks, Irina F.!) and Turkish translation (thanks, Süha K!)
 
 __Developer Updates:__
@@ -102,7 +141,7 @@ __Developer Updates:__
 
 = 2.4.1 on October 9, 2019 =
 
-* Fixed: Fields added using [Multiple Forms](https://gravityview.co/extensions/multiple-forms/) don't display on a Single Entry page
+* Fixed: Fields added using [Multiple Forms](https://www.gravitykit.com/extensions/multiple-forms/) don't display on a Single Entry page
 * Updated translations:
     - Russian (Thanks, Viktor S!)
     - Polish (Thanks, Dariusz Z!)
@@ -118,7 +157,7 @@ __Developer Updates:__
 
 = 2.4 on April 2, 2019 =
 
-* Added: Support for multi-sorting columns - [learn how!](https://docs.gravityview.co/article/569-multi-sorting-columns-datatables) (_requires GravityView 2.3_)
+* Added: Support for multi-sorting columns - [learn how!](https://docs.gravitykit.com/article/569-multi-sorting-columns-datatables) (_requires GravityView 2.3_)
 * Added: Allow users to show and hide columns with a new button ("Column Visibility")
 * Removed the border around the Scroller "Loading data..." message
 
@@ -133,7 +172,7 @@ __Developer Updates:__
 * Fixed: Error loading more than two DataTables Views on a page
 * Fixed: Error when using the Search Bar "Reset" link on non-DataTables Views
 * Fixed: Allow for multiple embeds of the same View with different settings passed using the shortcode
-* Fixed: Compatibility with the [Multiple Forms plugin](https://gravityview.co/extensions/multiple-forms/)
+* Fixed: Compatibility with the [Multiple Forms plugin](https://www.gravitykit.com/extensions/multiple-forms/)
 
 = 2.3.3 on November 1, 2018 =
 
@@ -162,7 +201,7 @@ __Developer Updates:__
 This is a big update, bringing some great new functionality to DataTables!
 
 * Added: Searching with the Search Bar now refreshes results live—no refresh needed!
-* Added: Support for [GravityView Inline Edit](https://gravityview.co/extension/inline-edit/) (requires Inline Edit 1.3 or newer)
+* Added: Support for [GravityView Inline Edit](https://www.gravitykit.com/extension/inline-edit/) (requires Inline Edit 1.3 or newer)
 * Fixed: Results being cached during search
 * Fixed: "Hide empty fields" setting not working in "Single Entry" context
 * Fixed: Entry Notes not working in DataTables (requires GravityView 2.0.13)
@@ -295,7 +334,7 @@ __Developer Notes:__
 
 = 1.2.2 on January 18, 2015 =
 * Fixed: Not showing entries when TableTools were disabled.
-* Added: Hook to manage table strings like 'No entries match your request.' and 'Loading Data...'. [Read more](https://gravityview.co/support/documentation/203282029/).
+* Added: Hook to manage table strings like 'No entries match your request.' and 'Loading Data...'. [Read more](https://docs.gravitykit.com/article/200-how-to-customize-the-no-data-available-in-table-text).
 * Fixed: Loading translations
 * Fixed: Prevent AJAX errors from being triggered by PHP minor warnings
 * Improved CSV Export:
@@ -363,4 +402,4 @@ __Developer Notes:__
 
 
 
-= 1652294093-4249 =
+= 1686766562-4249 =

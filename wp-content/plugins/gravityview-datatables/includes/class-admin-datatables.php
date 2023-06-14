@@ -80,12 +80,25 @@ class GV_Extension_DataTables_Admin {
 		// View DataTables settings
 		$settings = get_post_meta( $post->ID, '_gravityview_datatables_settings', true );
 
+		/**
+		 * Hook: gravityview_dt_default_settings.
+		 *
+		 * @action gravityview_dt_default_settings
+		 * @hooked GV_DataTables_Extension::defaults - 10
+		 * @param array $defaults Empty array of settings, to be filled-in by DT extensions
+		 */
 		$defaults = apply_filters( 'gravityview_dt_default_settings', array() );
 
 		$ds = wp_parse_args( $settings, $defaults );
 
+		/**
+		 * Hook: gravityview_datatables_settings_row.
+		 *
+		 * @action gravityview_datatables_settings_row
+		 * @hooked GV_DataTables_Extension::settings_row - 10
+		 * @param array $ds DataTables settings stored in `_gravityview_datatables_settings` postmeta
+		 */
 		do_action( 'gravityview_datatables_settings_row', $ds );
-
 	}
 
 	/**
@@ -102,7 +115,7 @@ class GV_Extension_DataTables_Admin {
 		}
 
 		// validate post_type
-		if ( ! isset( $_POST['post_type'] ) || 'gravityview' != $_POST['post_type'] ) {
+		if ( ! isset( $_POST['post_type'] ) || 'gravityview' !== $_POST['post_type'] ) {
 			return;
 		}
 
@@ -144,7 +157,7 @@ class GV_Extension_DataTables_Admin {
 	}
 
 	/**
-	 * Add admin script to the whitelist
+	 * Add admin script to the allowlist
 	 */
 	function register_no_conflict( $required ) {
 		$required[] = 'gravityview_datatables_admin';

@@ -7,6 +7,7 @@
  * @link https://datatables.net/extensions/scroller/
  */
 class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
+	const DEFAULT_SCROLL_Y = 500;
 
 	protected $settings_key = 'scroller';
 
@@ -19,26 +20,9 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 	function defaults( $settings ) {
 
 		$settings['scroller'] = false;
-		$settings['scrolly'] = 500;
+		$settings['scrolly'] = self::DEFAULT_SCROLL_Y;
 
 		return $settings;
-	}
-
-	/**
-	 * Register the tooltip with Gravity Forms
-	 * @param  array  $tooltips Existing tooltips
-	 * @return array           Modified tooltips
-	 */
-	function tooltips( $tooltips = array() ) {
-
-		$tooltips['gv_datatables_scroller'] = array(
-			'title' => __('Scroller', 'gv-datatables'),
-			'value' => __('Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.
-
-				Note: Scroller will not work well if your View has columns of varying height.', 'gv-datatables'),
-		);
-
-		return $tooltips;
 	}
 
 	function settings_row( $ds ) {
@@ -52,7 +36,10 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 								'label' => __( 'Enable Scroller', 'gv-datatables' ),
 								'type' => 'checkbox',
 								'value' => 1,
-								'tooltip' => 'gv_datatables_scroller',
+								'desc' => esc_html__( "Allow large datasets to be drawn on screen in one continuous page. The aim of Scroller for DataTables is to make rendering large data sets fast.
+								
+				Note: Scroller will not work well if your View has columns of varying height.", 'gv-datatables'),
+								'tooltip' => true,
                                 'article' => array(
 	                                'id' => '5ea73c1a04286364bc9914c0',
                                     'url' => 'https://docs.gravityview.co/article/711-datatables-scroller',
@@ -66,7 +53,7 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 					<label for="gravityview_dt_scrollerheight"><?php esc_html_e( 'Table Height', 'gv-datatables'); ?></label>
 				</td>
 				<td>
-					<input name="datatables_settings[scrolly]" id="gravityview_dt_scrollerheight" type="number" step="1" min="50" value="<?php empty( $ds['scrolly'] ) ? print 500 : print $ds['scrolly']; ?>" class="small-text">
+					<input name="datatables_settings[scrolly]" id="gravityview_dt_scrollerheight" type="number" step="1" min="50" value="<?php empty( $ds['scrolly'] ) ? print self::DEFAULT_SCROLL_Y : print $ds['scrolly']; ?>" class="small-text">
 				</td>
 			</tr>
 		</table>
@@ -82,20 +69,38 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 		    return;
         }
 
-		$script_debug = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
+		$script_debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		$path = plugins_url( 'assets/datatables-scroller/', GV_DT_FILE );
+		$script_path = plugins_url( 'assets/js/third-party/datatables/', GV_DT_FILE );
+		$style_path  = plugins_url( 'assets/css/third-party/datatables/', GV_DT_FILE );
 
 		/**
 		 * Include Scroller core script (DT plugin)
 		 * Use your own DataTables core script by using the `gravityview_dt_scroller_script_src` filter
 		 */
-		wp_enqueue_script( 'gv-dt-scroller', apply_filters( 'gravityview_dt_scroller_script_src', $path.'js/dataTables.scroller'.$script_debug.'.js' ), array( 'jquery', 'gv-datatables' ), GV_Extension_DataTables::version, true );
+		wp_enqueue_script(
+			'gv-dt-scroller',
+			apply_filters(
+				'gravityview_dt_scroller_script_src',
+				$script_path . 'dataTables.scroller' . $script_debug . '.js'
+			),
+			array( 'jquery', 'gv-datatables' ),
+			GV_Extension_DataTables::version,
+			true
+		);
 
 		/**
 		 * Use your own Scroller stylesheet by using the `gravityview_dt_scroller_style_src` filter
 		 */
-		wp_enqueue_style( 'gv-dt_scroller_style', apply_filters( 'gravityview_dt_scroller_style_src', $path.'css/scroller.css' ), array('gravityview_style_datatables_table'), GV_Extension_DataTables::version, 'all' );
+		wp_enqueue_style(
+			'gv-dt_scroller_style',
+			apply_filters(
+				'gravityview_dt_scroller_style_src',
+				$style_path . 'scroller.dataTables' . $script_debug . '.css'
+			),
+			array( 'gravityview_style_datatables_table' ),
+			GV_Extension_DataTables::version
+		);
 	}
 
 	/**
@@ -148,7 +153,7 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 		);
 
 		// set table height
-		$scrolly = $this->get_setting( $view_id, 'scrolly', 500 );
+		$scrolly = $this->get_setting( $view_id, 'scrolly', self::DEFAULT_SCROLL_Y );
 
 		// Use passed value, if already set
 		$scrolly = empty( $dt_config['scrollY'] ) ? $scrolly : $dt_config['scrollY'];

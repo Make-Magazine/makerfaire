@@ -1,9 +1,9 @@
 === GravityView - Advanced Filter Extension ===
-Tags: gravityview
+Tags: gravitykit
 Requires at least: 4.4
-Tested up to: 5.8
+Tested up to: 6.2
 Stable tag: trunk
-Contributors: The GravityView Team
+Contributors: The GravityKit Team
 License: GPL 3 or higher
 
 Filter which entries are shown in a View based on their values.
@@ -23,6 +23,12 @@ UI was written using [Svelte](https://svelte.dev/) and requires compilation. Mak
 3. Compile assets by running `npm run build`
 
 == Changelog ==
+
+= 2.2 on March 22, 2023 =
+
+* Added: Shortcode processing in the content that's displayed when the field value does not meet conditional logic
+* Improved: Advanced Filter is now loaded only in the View editor
+* Fixed: "Greater than" and "Less than" comparisons not working with the "Total" field
 
 = 2.1.14 on January 12, 2022 =
 
@@ -245,4 +251,4 @@ Fixed: With Gravity Forms 2.3, when using "Created By" filters, the search mode 
 * Liftoff!
 
 
-= 1652294089-4249 =
+= 1686766503-4249 =

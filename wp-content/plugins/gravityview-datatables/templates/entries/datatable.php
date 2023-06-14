@@ -20,7 +20,7 @@
 
         if ( $gravityview->fields->by_position( 'single_table-columns' )->by_visible()->count() ): ?>
 			<thead>
-				<?php gravityview_header(); ?>
+				<?php gravityview_header( $gravityview ); ?>
 			</thead>
 			<tbody>
 				<?php
@@ -28,7 +28,7 @@
 				?>
 			</tbody>
 			<tfoot>
-				<?php gravityview_footer(); ?>
+				<?php gravityview_footer( $gravityview ); ?>
 			</tfoot>
 		<?php endif; ?>
 	</table>

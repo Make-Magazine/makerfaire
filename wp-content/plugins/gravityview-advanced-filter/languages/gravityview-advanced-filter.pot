@@ -1,110 +1,110 @@
-# Copyright (C) 2022 GravityView
+# Copyright (C) 2023 GravityKit
 # This file is distributed under the same license as the GravityView - Advanced Filter Extension package.
 msgid ""
 msgstr ""
-"Project-Id-Version: GravityView - Advanced Filter Extension 2.1.14\n"
+"Project-Id-Version: GravityView - Advanced Filter Extension 2.2\n"
 "Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
-"POT-Creation-Date: 2016-01-21 18:05:06+00:00\n"
+"POT-Creation-Date: 2023-03-22 11:27:38+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
 "Last-Translator: GravityView <support@gravityview.co>\n"
 "Language-Team: GravityView <support@gravityview.co>\n"
-"X-Generator: grunt-wp-i18n 0.5.4\n"
-"X-Poedit-KeywordsList: "
-"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
-"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
 "Language: en_US\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Country: United States\n"
 "X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
+"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
+"X-Generator: grunt-wp-i18n 1.0.3\n"
 
-#: advanced-filter.php:121
+#: advanced-filter.php:123
 msgid "Conditional Logic"
 msgstr ""
 
-#: advanced-filter.php:122
+#: advanced-filter.php:124
 msgid "Only show the field if the configured conditions apply."
 msgstr ""
 
-#: advanced-filter.php:123
+#: advanced-filter.php:125
 msgid "Empty Field Content"
 msgstr ""
 
-#: advanced-filter.php:124
+#: advanced-filter.php:126
 msgid "Display custom content when field value does not meet conditional logic"
 msgstr ""
 
-#: advanced-filter.php:874
+#: advanced-filter.php:889
 msgid ""
 "Advanced Filter does not work in Internet Explorer. Please upgrade to "
 "another browser."
 msgstr ""
 
-#: advanced-filter.php:875
+#: advanced-filter.php:890
 msgid ""
 "Form fields are not available. Please try refreshing the page or saving the "
 "View."
 msgstr ""
 
-#: advanced-filter.php:876
+#: advanced-filter.php:891
 msgid "Add Condition"
 msgstr ""
 
-#: advanced-filter.php:893
+#: advanced-filter.php:908
 msgid "Remove Field"
 msgstr ""
 
-#: advanced-filter.php:894
+#: advanced-filter.php:909
 msgid "Return to Field Choices"
 msgstr ""
 
-#: advanced-filter.php:895
+#: advanced-filter.php:910
 msgid "Return to the list of choices defined by the field."
 msgstr ""
 
-#: advanced-filter.php:896
+#: advanced-filter.php:911
 msgid "Custom Choice"
 msgstr ""
 
-#: advanced-filter.php:897
+#: advanced-filter.php:912
 msgid "Untitled"
 msgstr ""
 
-#: advanced-filter.php:898
+#: advanced-filter.php:913
 msgid "Form field ID #%d is no longer available. Please remove this condition."
 msgstr ""
 
-#: advanced-filter.php:938
+#: advanced-filter.php:953
 msgid "Any Role of Current User"
 msgstr ""
 
-#: advanced-filter.php:979
+#: advanced-filter.php:994
 msgid "Created By User Role"
 msgstr ""
 
-#: advanced-filter.php:989
+#: advanced-filter.php:1004
 msgid "Date Updated"
 msgstr ""
 
-#: advanced-filter.php:1081
+#: advanced-filter.php:1096
 msgid "Created By"
 msgstr ""
 
-#: advanced-filter.php:1085
+#: advanced-filter.php:1100
 msgid "Currently Logged-in User (Disabled for Administrators)"
 msgstr ""
 
-#: advanced-filter.php:1089
+#: advanced-filter.php:1104
 msgid "Currently Logged-in User"
 msgstr ""
 
-#: advanced-filter.php:1210
+#: advanced-filter.php:1225
 msgid "Entry Approval Status"
 msgstr ""
 
@@ -159,82 +159,98 @@ msgid ""
 "will first be filtered by these settings."
 msgstr ""
 
-#: advanced-filter.php:877
+#. Plugin URI of the plugin/theme
+msgid ""
+"https://www.gravitykit.com/extensions/advanced-filter/?utm_source=advanced-"
+"filter&utm_content=plugin_uri&utm_medium=meta&utm_campaign=internal"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "GravityKit"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid ""
+"https://www.gravitykit.com/?utm_source=advanced-filter&utm_medium=meta&utm_"
+"content=author_uri&utm_campaign=internal"
+msgstr ""
+
+#: advanced-filter.php:892
 msgctxt "Join using \"and\" operator"
 msgid "and"
 msgstr ""
 
-#: advanced-filter.php:878
+#: advanced-filter.php:893
 msgctxt "Join using \"or\" operator"
 msgid "or"
 msgstr ""
 
-#: advanced-filter.php:879
+#: advanced-filter.php:894
 msgctxt "Filter operator (e.g., A is TRUE)"
 msgid "is"
 msgstr ""
 
-#: advanced-filter.php:880
+#: advanced-filter.php:895
 msgctxt "Filter operator (e.g., A is not TRUE)"
 msgid "is not"
 msgstr ""
 
-#: advanced-filter.php:881
+#: advanced-filter.php:896
 msgctxt "Filter operator (e.g., A is greater than B)"
 msgid "greater than"
 msgstr ""
 
-#: advanced-filter.php:882
+#: advanced-filter.php:897
 msgctxt "Filter operator (e.g., A is less than B)"
 msgid "less than"
 msgstr ""
 
-#: advanced-filter.php:883
+#: advanced-filter.php:898
 msgctxt "Filter operator (e.g., AB contains B)"
 msgid "contains"
 msgstr ""
 
-#: advanced-filter.php:884
+#: advanced-filter.php:899
 msgctxt "Filter operator (e.g., AB contains B)"
 msgid "does not contain"
 msgstr ""
 
-#: advanced-filter.php:885
+#: advanced-filter.php:900
 msgctxt "Filter operator (e.g., AB starts with A)"
 msgid "starts with"
 msgstr ""
 
-#: advanced-filter.php:886
+#: advanced-filter.php:901
 msgctxt "Filter operator (e.g., AB ends with B)"
 msgid "ends with"
 msgstr ""
 
-#: advanced-filter.php:887
+#: advanced-filter.php:902
 msgctxt "Filter operator (e.g., A is before date B)"
 msgid "is before"
 msgstr ""
 
-#: advanced-filter.php:888
+#: advanced-filter.php:903
 msgctxt "Filter operator (e.g., A is after date B)"
 msgid "is after"
 msgstr ""
 
-#: advanced-filter.php:889
+#: advanced-filter.php:904
 msgctxt "Filter operator (e.g., A is on date B)"
 msgid "is on"
 msgstr ""
 
-#: advanced-filter.php:890
+#: advanced-filter.php:905
 msgctxt "Filter operator (e.g., A is not on date B)"
 msgid "is not on"
 msgstr ""
 
-#: advanced-filter.php:891
+#: advanced-filter.php:906
 msgctxt "Filter operator (e.g., A is empty)"
 msgid "is empty"
 msgstr ""
 
-#: advanced-filter.php:892
+#: advanced-filter.php:907
 msgctxt "Filter operator (e.g., A is not empty)"
 msgid "is not empty"
 msgstr ""
