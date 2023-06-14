@@ -22,8 +22,8 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 	function __construct() {
 
 		$this->widget_id = 'poll';
-		$this->widget_description = __('Displays the results of Poll Fields that exist in the form.', 'gravityview' );
-		$this->widget_subtitle = sprintf( _x('Note: this will display poll results for %sall form entries%s, not only the entries displayed in the View.', 'The string placeholders are for emphasis HTML', 'gravityview' ), '<em>', '</em>' );
+		$this->widget_description = __('Displays the results of Poll Fields that exist in the form.', 'gk-gravityview' );
+		$this->widget_subtitle = sprintf( _x('Note: this will display poll results for %sall form entries%s, not only the entries displayed in the View.', 'The string placeholders are for emphasis HTML', 'gk-gravityview' ), '<em>', '</em>' );
 
 		$default_values = array(
 			'header' => 1,
@@ -32,27 +32,27 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 
 		$settings = array(
 			'percentages' => array(
-				'label' => __('Display Percentages', 'gravityview'),
+				'label' => __('Display Percentages', 'gk-gravityview'),
 				'type' => 'checkbox',
 				'value' => true,
-				'tooltip' => __( 'Display results percentages as part of results? Supported values are: true, false. Defaults to "true".', 'gravityview' ),
+				'tooltip' => __( 'Display results percentages as part of results? Supported values are: true, false. Defaults to "true".', 'gk-gravityview' ),
 			),
 			'counts' => array(
-				'label' => __('Display Counts', 'gravityview'),
+				'label' => __('Display Counts', 'gk-gravityview'),
 				'type' => 'checkbox',
 				'value' => true,
-				'tooltip' => __( 'Display number of times each choice has been selected when displaying results? Supported values are: true, false. Defaults to "true".', 'gravityview' ),
+				'tooltip' => __( 'Display number of times each choice has been selected when displaying results? Supported values are: true, false. Defaults to "true".', 'gk-gravityview' ),
 			),
 			'style' => array(
 				'type' => 'select',
-				'label' => __('Style', 'gravityview'),
-				'tooltip' => __( 'The Polls Add-On currently supports 4 built in styles: red, green, orange, blue. Defaults to "green".', 'gravityview' ),
+				'label' => __('Style', 'gk-gravityview'),
+				'tooltip' => __( 'The Polls Add-On currently supports 4 built in styles: red, green, orange, blue. Defaults to "green".', 'gk-gravityview' ),
 				'value' => 'green',
 				'choices' => array(
-					'green' => __('Green', 'gravityview'),
-					'blue' => __('Blue', 'gravityview'),
-					'red' => __('Red', 'gravityview'),
-					'orange' => __('Orange', 'gravityview'),
+					'green' => __('Green', 'gk-gravityview'),
+					'blue' => __('Blue', 'gk-gravityview'),
+					'red' => __('Red', 'gk-gravityview'),
+					'orange' => __('Orange', 'gk-gravityview'),
 				),
 			),
 		);
@@ -62,7 +62,7 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 			add_filter( 'gravityview_template_paths', array( $this, 'add_template_path' ) );
 		}
 
-		parent::__construct( __( 'Poll Results', 'gravityview' ) , null, $default_values, $settings );
+		parent::__construct( __( 'Poll Results', 'gk-gravityview' ) , null, $default_values, $settings );
 	}
 
 	/**
@@ -93,15 +93,23 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 
 		$GFPolls->localize_scripts();
 
-		wp_enqueue_style('gpoll_css', $GFPolls->get_base_url() . '/css/gpoll.css', null, $GFPolls->_version);
+		if( version_compare( $GFPolls->_version, '4.0', '>=' ) ) {
+			wp_enqueue_style('gpoll_css', $GFPolls->get_base_url() . '/assets/css/dist/theme.css', null, $GFPolls->_version);
+		} else {
+			wp_enqueue_style('gpoll_css', $GFPolls->get_base_url() . '/css/gpoll.css', null, $GFPolls->_version);
+		}
+
 	}
 
 	/**
 	 * @inheritDoc
 	 *
 	 * @since 1.8
+	 * @since 2.17.3 Added $context param
+	 *
+	 * @param string|GV\Template_Context $context Context. Default: empty string.
 	 */
-	public function pre_render_frontend() {
+	public function pre_render_frontend( $context = '' ) {
 
 		if( ! class_exists('GFPolls') ) {
 
@@ -110,7 +118,7 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 			return false;
 		}
 
-		$view = gravityview()->views->get();
+		$view = $this->get_view( $context );
 
 		$poll_fields = array( $view->form->form['id'] => GFCommon::get_fields_by_type( $view->form, array( 'poll' ) ) );
 
@@ -127,7 +135,7 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 
 		$this->poll_fields = $poll_fields;
 
-		return parent::pre_render_frontend();
+		return parent::pre_render_frontend( $context );
 	}
 
 	/**
@@ -167,7 +175,7 @@ class GravityView_Widget_Poll extends GravityView_Widget {
 	 */
 	public function render_frontend( $widget_args, $content = '', $context = '' ) {
 
-		if( ! $this->pre_render_frontend() ) {
+		if ( ! $this->pre_render_frontend( $context ) ) {
 			return;
 		}
 

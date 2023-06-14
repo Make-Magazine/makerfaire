@@ -93,7 +93,7 @@ abstract class Widget {
 	 * Supports these icon formats:
 	 * - Gravity Forms icon class: The string starts with "gform-icon". Note: the site must be running GF 2.5+. No need to also pass "gform-icon".
 	 * - Dashicons: The string starts with "dashicons". No need to also pass "dashicons".
-	 * - Inline SVG: Starts with "data:"
+	 * - Inline SVG: Starts with "data:". Note: No single quotes are allowed!
 	 * - If not matching those formats, the value will be used as a CSS class in a `<i>` element.
 	 *
 	 * @see GravityView_Admin_View_Item::getOutput
@@ -167,8 +167,8 @@ abstract class Widget {
 		if ( $enable_custom_class ) {
 			$settings['custom_class'] = array(
 				'type'       => 'text',
-				'label'      => __( 'Custom CSS Class:', 'gravityview' ),
-				'desc'       => __( 'This class will be added to the widget container', 'gravityview' ),
+				'label'      => __( 'Custom CSS Class:', 'gk-gravityview' ),
+				'desc'       => __( 'This class will be added to the widget container', 'gk-gravityview' ),
 				'value'      => '',
 				'merge_tags' => true,
 				'class'      => 'widefat code',
@@ -223,7 +223,7 @@ abstract class Widget {
 				'1-1' => array(
 					   array(
 						   'areaid' => 'top',
-						   'title' => __( 'Top', 'gravityview' ) ,
+						   'title' => __( 'Top', 'gk-gravityview' ) ,
 						   'subtitle' => ''
 					   ),
 				   ),
@@ -232,14 +232,14 @@ abstract class Widget {
 				'1-2' => array(
 					array(
 						'areaid' => 'left',
-						'title' => __( 'Left', 'gravityview' ) ,
+						'title' => __( 'Left', 'gk-gravityview' ) ,
 						'subtitle' => ''
 					),
 				),
 				'2-2' => array(
 					array(
 						'areaid' => 'right',
-						'title' => __( 'Right', 'gravityview' ) ,
+						'title' => __( 'Right', 'gk-gravityview' ) ,
 						'subtitle' => ''
 					),
 				),
@@ -368,14 +368,56 @@ abstract class Widget {
 	}
 
 	/**
+	 * Gets View considering the current context.
+	 *
+	 * @since 2.17.3
+	 *
+	 * @param string|\GV\Template_Context $context Context. Default: empty string.
+	 *
+	 * @return \GV\View|null
+	 */
+	public function get_view( $context = '' ) {
+
+		// $context should be passed to pre_render_frontend() and render_frontend().
+		if ( $context instanceof \GV\Template_Context && $context->view instanceof \GV\View ) {
+			return $context->view;
+		}
+
+		// If it's not passed, parse the $post content.
+		$views = gravityview()->views->get();
+
+		// No views are found.
+		if ( ! $views ) {
+			return null;
+		}
+
+		// If there's only one view, return it.
+		if ( $views instanceof \GV\View ) {
+			return $views;
+		}
+
+		// If there are multiple views, return the first one.
+		if ( $views instanceof \GV\View_Collection ) {
+			gravityview()->log->debug( 'The widget lacks $context and there are multiple Views on this page. Returning the first.' );
+
+			return $views->first();
+		}
+
+		return null;
+	}
+
+	/**
 	 * General validations when rendering the widget
 	 *
 	 * Always call this from your `render_frontend()` override!
 	 *
+	 * @since 2.17.3 Added $context param.
+	 *
+	 * @param string|\GV\Template_Context $context Context. Default: empty string.
+	 *
 	 * @return boolean True: render frontend; False: don't render frontend
 	 */
-	public function pre_render_frontend() {
-
+	public function pre_render_frontend( $context = '' ) {
 		/**
 		 * Assume shown regardless of hide_until_search setting.
 		 */
@@ -395,7 +437,9 @@ abstract class Widget {
 		 */
 		$allowlist = apply_filters( 'gravityview/widget/hide_until_searched/allowlist', $allowlist );
 
-		if ( ( $view = gravityview()->views->get() ) && ! in_array( $this->get_widget_id(), $allowlist ) ) {
+		$view = $this->get_view( $context );
+
+		if ( $view && ! in_array( $this->get_widget_id(), $allowlist ) ) {
 			$hide_until_searched = $view->settings->get( 'hide_until_searched' );
 		} else {
 			$hide_until_searched = false;

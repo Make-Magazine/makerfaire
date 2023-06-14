@@ -95,7 +95,7 @@ class GravityView_Plugin_Hooks_Gravity_Forms_Chained_Selects extends GravityView
 
 		/**
 		 * Prevent Chained Select Search Bar input fields from outputting styles.
-		 * @since TODO
+		 * @since 2.14.4
 		 * @param bool $should_print_styles True: Output styles; False: don't.
 		 * @param GravityView_Widget_Search $this GravityView Widget instance.
 		 * @param array{key:string,label:string,value:string,type:string,choices:array} $search_field
@@ -148,6 +148,10 @@ class GravityView_Plugin_Hooks_Gravity_Forms_Chained_Selects extends GravityView
 			return;
 		}
 
+		if ( ! class_exists( 'GFFormDisplay' ) ) {
+			return;
+		}
+
 		// Adds the gform hooks required by Chained Selects. See gforms_hooks.js.
 		if ( empty( GFFormDisplay::$hooks_js_printed ) ) {
 			echo GFCommon::get_hooks_javascript_code();
@@ -188,7 +192,7 @@ class GravityView_Plugin_Hooks_Gravity_Forms_Chained_Selects extends GravityView
 
 	function add_input_label( $input_labels = array() ) {
 
-		$input_labels[ self::INPUT_TYPE ] = esc_html__( 'Chained Select', 'gravityview' );
+		$input_labels[ self::INPUT_TYPE ] = esc_html__( 'Chained Select', 'gk-gravityview' );
 
 		return $input_labels;
 	}

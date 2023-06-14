@@ -25,7 +25,7 @@ class GravityView_Widget_Gravity_Forms extends \GV\Widget {
 			return;
 		}
 
-		$this->widget_description = __('Display a Gravity Forms form.', 'gravityview' );
+		$this->widget_description = __('Display a Gravity Forms form.', 'gk-gravityview' );
 
 		$default_values = array(
 			'header' => 1,
@@ -35,69 +35,38 @@ class GravityView_Widget_Gravity_Forms extends \GV\Widget {
 		$settings = array(
 			'widget_form_id' => array(
 				'type' => 'select',
-				'label' => __( 'Form to display', 'gravityview' ),
+				'label' => __( 'Form to display', 'gk-gravityview' ),
 				'value' => '',
-				'options' => $this->_get_form_choices(),
+				'options' => GVCommon::get_forms_as_options(),
 			),
 			'title' => array(
 				'type' => 'checkbox',
-				'label' => __( 'Show form title?', 'gravityview' ),
+				'label' => __( 'Show form title?', 'gk-gravityview' ),
 				'value' => 1,
 			),
 			'description' => array(
 				'type' => 'checkbox',
-				'label' => __( 'Show form description?', 'gravityview' ),
+				'label' => __( 'Show form description?', 'gk-gravityview' ),
 				'value' => 1,
 			),
 			'ajax' => array(
 				'type' => 'checkbox',
-				'label' => __( 'Enable AJAX', 'gravityview' ),
+				'label' => __( 'Enable AJAX', 'gk-gravityview' ),
 				'desc' => '',
 				'value' => 1,
 			),
 			'field_values' => array(
 				'type' => 'text',
 				'class' => 'code widefat',
-				'label' => __( 'Field value parameters', 'gravityview' ),
-				'desc' => '<a href="https://docs.gravityforms.com/using-dynamic-population/" rel="external">' . esc_html__( 'Learn how to dynamically populate a field.', 'gravityview' ) . '</a>',
+				'label' => __( 'Field value parameters', 'gk-gravityview' ),
+				'desc' => '<a href="https://docs.gravityforms.com/using-dynamic-population/" rel="external">' . esc_html__( 'Learn how to dynamically populate a field.', 'gk-gravityview' ) . '</a>',
 				'value' => '',
 			),
 		);
 
 		add_filter( 'gravityview/widget/hide_until_searched/allowlist', array( $this, 'add_to_allowlist' ) );
 
-		parent::__construct( __( 'Gravity Forms', 'gravityview' ) , 'gravityforms', $default_values, $settings );
-	}
-
-	/**
-	 * Returns an array of active forms to show as choices for the widget
-	 *
-	 * @since 2.9.0.1
-	 *
-	 * @return array Array with key set to Form ID => Form Title, with `0` as default placeholder.
-	 */
-	private function _get_form_choices() {
-		$choices = array(
-			0 => '&mdash; ' . esc_html__( 'list of forms', 'gravityview' ) . '&mdash;',
-		);
-
-		if ( ! class_exists( 'GFAPI' ) ) {
-			return $choices;
-		}
-
-		global $wpdb;
-
-		$table = GFFormsModel::get_form_table_name();
-
-		$results = $wpdb->get_results( "SELECT id, title FROM ${table} WHERE is_active = 1" );
-
-		if ( ! empty( $results ) ) {
-			foreach ( $results as $form ) {
-				$choices[ $form->id ] = $form->title;
-			}
-		}
-
-		return $choices;
+		parent::__construct( __( 'Gravity Forms', 'gk-gravityview' ) , 'gravityforms', $default_values, $settings );
 	}
 
 	/**
@@ -116,12 +85,12 @@ class GravityView_Widget_Gravity_Forms extends \GV\Widget {
 
 	/**
 	 * @param array $widget_args
-	 * @param string $content
+	 * @param string|\GV\Template_Context $content
 	 * @param string $context
 	 */
 	public function render_frontend( $widget_args, $content = '', $context = '') {
 
-		if ( ! $this->pre_render_frontend() ) {
+		if ( ! $this->pre_render_frontend( $context ) ) {
 			return;
 		}
 

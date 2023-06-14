@@ -197,7 +197,17 @@ function GravityView_API_field_value( $entry, $field_settings, $format ) {
 	$field->update_configuration( $field_settings );
 
 	$renderer = new \GV\Field_Renderer();
-	return $renderer->render( $field, gravityview()->views->get(), $source == \GV\Source::BACKEND_GRAVITYFORMS ? $form : null, isset( $multientry ) ? $multientry : $entry, gravityview()->request );
+	$views = gravityview()->views->get();
+
+	if ( $views instanceof \GV\View_Collection ) {
+		$view = $views->first();
+	} else if ( $views instanceof \GV\View ) {
+		$view = $views;
+	} else {
+		return null;
+	}
+
+	return $renderer->render( $field, $view, $source == \GV\Source::BACKEND_GRAVITYFORMS ? $form : null, isset( $multientry ) ? $multientry : $entry, gravityview()->request );
 }
 
 /**
@@ -631,7 +641,7 @@ final class Legacy_Context {
 						'\GravityView_View::context' => (
 							$value->is_entry() ? 'single' :
 							( $value->is_edit_entry() ? 'edit' :
-									( $value->is_view() ? 'directory': null )
+									( $value->is_view( false ) ? 'directory': null )
 								)
 						),
 						'\GravityView_frontend::is_search' => $value->is_search(),

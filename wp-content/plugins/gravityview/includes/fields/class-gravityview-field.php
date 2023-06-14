@@ -201,6 +201,36 @@ abstract class GravityView_Field {
 	}
 
 	/**
+	 * Returns the icon for a field
+	 *
+	 * @since 2.17
+	 *
+	 * @return string The dashicon or gform-icon class name for a field.
+	 */
+	public function get_icon() {
+
+		// GF only has icons in 2.5+
+		if ( ! gravityview()->plugin->is_GF_25() ) {
+			return $this->icon;
+		}
+
+		// If the field doesn't have an associated GF field class, return the default icon.
+		if ( empty( $this->_gf_field_class_name ) || ! class_exists( $this->_gf_field_class_name ) ) {
+			return $this->icon;
+		}
+
+		/** @var GF_Field $gf_field */
+		$gf_field = GF_Fields::get( $this->name );
+
+		// If the field exists and is a GF_Field, return the icon.
+		if( $gf_field && $gf_field instanceof GF_Field ) {
+			return $gf_field->get_form_editor_field_icon();
+		}
+
+		return $this->icon;
+	}
+
+	/**
 	 * Add the field to the Filter & Sort available fields
 	 *
 	 * @since 1.19
@@ -418,32 +448,32 @@ abstract class GravityView_Field {
 		$options = array(
 			'link_to_post' => array(
 				'type' => 'checkbox',
-				'label' => __( 'Link to the post', 'gravityview' ),
-				'desc' => __( 'Link to the post created by the entry.', 'gravityview' ),
+				'label' => __( 'Link to the post', 'gk-gravityview' ),
+				'desc' => __( 'Link to the post created by the entry.', 'gk-gravityview' ),
 				'value' => false,
 				'priority' => 1200,
 				'group' => 'display',
 			),
 			'link_to_term' => array(
 				'type' => 'checkbox',
-				'label' => __( 'Link to the category or tag', 'gravityview' ),
-				'desc' => __( 'Link to the current category or tag. "Link to single entry" must be unchecked.', 'gravityview' ),
+				'label' => __( 'Link to the category or tag', 'gk-gravityview' ),
+				'desc' => __( 'Link to the current category or tag. "Link to single entry" must be unchecked.', 'gk-gravityview' ),
 				'value' => false,
 				'priority' => 1210,
 				'group' => 'display',
 			),
 			'dynamic_data' => array(
 				'type' => 'checkbox',
-				'label' => __( 'Use the live post data', 'gravityview' ),
-				'desc' => __( 'Instead of using the entry data, instead use the current post data.', 'gravityview' ),
+				'label' => __( 'Use the live post data', 'gk-gravityview' ),
+				'desc' => __( 'Instead of using the entry data, instead use the current post data.', 'gk-gravityview' ),
 				'value' => true,
 				'priority' => 1100,
 				'group' => 'display',
 			),
 			'date_display' => array(
 				'type' => 'text',
-				'label' => __( 'Override Date Format', 'gravityview' ),
-				'desc' => sprintf( __( 'Define how the date is displayed (using %sthe PHP date format%s)', 'gravityview'), '<a href="https://wordpress.org/support/article/formatting-date-and-time/" rel="external">', '</a>' ),
+				'label' => __( 'Override Date Format', 'gk-gravityview' ),
+				'desc' => sprintf( __( 'Define how the date is displayed (using %sthe PHP date format%s)', 'gk-gravityview'), '<a href="https://wordpress.org/support/article/formatting-date-and-time/" rel="external">', '</a>' ),
 				/**
 				 * @filter `gravityview_date_format` Override the date format with a [PHP date format](https://codex.wordpress.org/Formatting_Date_and_Time)
 				 * @param null|string $date_format Date Format (default: null)
@@ -455,7 +485,7 @@ abstract class GravityView_Field {
 			),
 			'new_window' => array(
 				'type' => 'checkbox',
-				'label' => __( 'Open link in a new tab or window?', 'gravityview' ),
+				'label' => __( 'Open link in a new tab or window?', 'gk-gravityview' ),
 				'value' => false,
 				'group' => 'display',
 				'priority' => 1300,
@@ -552,7 +582,7 @@ abstract class GravityView_Field {
 			return false;
 		}
 
-		$form = GFAPI::get_form( $connected_form );
+		$form = GVCommon::get_form( $connected_form );
 
 		if ( ! $form ) {
 			gravityview()->log->error( 'Form not found for field ID of "{field_id}", when checking for a form with ID of "{form_id}"', array( 'field_id' => $this->_field_id, 'form_id' => $connected_form ) );

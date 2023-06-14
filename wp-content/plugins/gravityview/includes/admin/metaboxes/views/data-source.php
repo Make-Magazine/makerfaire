@@ -15,8 +15,15 @@ $current_form = (int) \GV\Utils::_GET( 'form_id', gravityview_get_form_id( $post
 // If form is in trash or not existing, show error
 GravityView_Admin::connected_form_warning( $current_form );
 
+/**
+ * @filter `gk/gravityview/metaboxes/data-source/order-by` Modify the default orderby field for the Data Source dropdown.
+ * @since 2.17.8
+ * @param mixed $order_by Either the field name to order by or an array of multiple orderby fields as $orderby => $order.
+ */
+$order_by = apply_filters( 'gk/gravityview/metaboxes/data-source/order-by', 'title' );
+
 // check for available gravity forms
-$forms = gravityview_get_forms('any', false, 'title' );
+$forms = gravityview_get_forms( 'any', false, $order_by );
 
 /**
  * @param int $current_form Form currently selected in the View (0 if none selected)
@@ -26,53 +33,58 @@ $forms = gravityview_get_forms('any', false, 'title' );
 do_action( 'gravityview/metaboxes/data-source/before', $current_form, $forms );
 
 ?>
-<label for="gravityview_form_id" ><?php esc_html_e( 'Where would you like the data to come from for this View?', 'gravityview' ); ?></label>
+<label for="gravityview_form_id" ><?php esc_html_e( 'Where would you like the data to come from for this View?', 'gk-gravityview' ); ?></label>
 
 <p>
 	<?php
 
 	if ( empty( $current_form ) && GVCommon::has_cap( 'gravityforms_create_form' ) ) {
 		?>
-		<a class="button button-primary" href="#gv_start_fresh" title="<?php esc_attr_e( 'Use a Form Preset', 'gravityview' ); ?>"><?php esc_html_e( 'Use a Form Preset', 'gravityview' ); ?></a>
+		<a class="button button-primary" href="#gv_start_fresh" title="<?php esc_attr_e( 'Use a Form Preset', 'gk-gravityview' ); ?>"><?php esc_html_e( 'Use a Form Preset', 'gk-gravityview' ); ?></a>
 
 		<?php if( !empty( $forms ) ) { ?>
-			<span>&nbsp;<?php esc_html_e( 'or use an existing form', 'gravityview' ); ?>&nbsp;</span>
+			<span>&nbsp;<?php esc_html_e( 'or use an existing form', 'gk-gravityview' ); ?>&nbsp;</span>
 		<?php }
 	}
 
 	// If there are no forms to select, show no forms.
 	if( !empty( $forms ) ) { ?>
 		<select name="gravityview_form_id" id="gravityview_form_id">
-			<option value="" <?php selected( '', $current_form, true ); ?>>&mdash; <?php esc_html_e( 'list of forms', 'gravityview' ); ?> &mdash;</option>
+			<option value="" <?php selected( '', $current_form, true ); ?>>&mdash; <?php esc_html_e( 'list of forms', 'gk-gravityview' ); ?> &mdash;</option>
 			<?php foreach( $forms as $form ) { ?>
-				<option value="<?php echo $form['id']; ?>" <?php selected( $form['id'], $current_form, true ); ?>><?php echo esc_html( $form['title'] ); ?></option>
+				<option value="<?php echo $form['id']; ?>" <?php selected( $form['id'], $current_form, true ); ?>><?php
+					echo esc_html( sprintf( '%s &ndash; #%d', $form['title'], $form['id'] ) );
+					if ( empty( $form['is_active'] ) ) {
+						printf( ' (%s)', esc_html_x( 'Inactive', 'Indicates that a form is inactive.', 'gk-gravityview' ) );
+					}
+				?></option>
 			<?php } ?>
 		</select>
 	<?php } else { ?>
 		<select name="gravityview_form_id" id="gravityview_form_id" class="hidden"><option selected="selected" value=""></option></select>
 	<?php } ?>
 
-	&nbsp;<button class="button button-primary" <?php if( empty( $current_form ) ) { echo 'style="display:none;"'; } ?> id="gv_switch_view_button" title="<?php esc_attr_e( 'Switch View', 'gravityview' ); ?>"><?php esc_html_e( 'Switch View Type', 'gravityview' ); ?></button>
+	&nbsp;<button class="button button-primary" <?php if( empty( $current_form ) ) { echo 'style="display:none;"'; } ?> id="gv_switch_view_button" title="<?php esc_attr_e( 'Switch View', 'gk-gravityview' ); ?>"><?php esc_html_e( 'Switch View Type', 'gk-gravityview' ); ?></button>
 </p>
 
 <?php // confirm dialog box ?>
-<div id="gravityview_change_form_dialog" class="gv-dialog-options gv-dialog-warning" title="<?php esc_attr_e( 'Attention', 'gravityview' ); ?>">
-	<p><?php esc_html_e( 'Changing the form will reset your field configuration. Changes will be permanent once you save the View.', 'gravityview' ); ?></p>
+<div id="gravityview_change_form_dialog" class="gv-dialog-options gv-dialog-warning" title="<?php esc_attr_e( 'Attention', 'gk-gravityview' ); ?>">
+	<p><?php esc_html_e( 'Changing the form will reset your field configuration. Changes will be permanent once you save the View.', 'gk-gravityview' ); ?></p>
 </div>
 
 <?php // confirm template dialog box ?>
-<div id="gravityview_switch_template_dialog" class="gv-dialog-options gv-dialog-warning" title="<?php esc_attr_e( 'Attention', 'gravityview' ); ?>">
-	<p><?php esc_html_e( 'Changing the View Type will reset your field configuration. Changes will be permanent once you save the View.', 'gravityview' ); ?></p>
+<div id="gravityview_switch_template_dialog" class="gv-dialog-options gv-dialog-warning" title="<?php esc_attr_e( 'Attention', 'gk-gravityview' ); ?>">
+	<p><?php esc_html_e( 'Changing the View Type will reset your field configuration. Changes will be permanent once you save the View.', 'gk-gravityview' ); ?></p>
 </div>
 
 <?php // confirm template dialog box ?>
-    <div id="gravityview_select_preset_dialog" class="gv-dialog-options gv-dialog-warning" title="<?php esc_attr_e( 'Attention', 'gravityview' ); ?>">
-        <p><?php esc_html_e( 'Using a preset will reset your field configuration. Changes will be permanent once you save the View.', 'gravityview' ); ?></p>
+    <div id="gravityview_select_preset_dialog" class="gv-dialog-options gv-dialog-warning" title="<?php esc_attr_e( 'Attention', 'gk-gravityview' ); ?>">
+        <p><?php esc_html_e( 'Using a preset will reset your field configuration. Changes will be permanent once you save the View.', 'gk-gravityview' ); ?></p>
     </div>
 
 <?php // no js notice ?>
 <div class="error hide-if-js">
-	<p><?php esc_html_e( 'GravityView requires Javascript to be enabled.', 'gravityview' ); ?></p>
+	<p><?php esc_html_e( 'GravityView requires Javascript to be enabled.', 'gk-gravityview' ); ?></p>
 </div>
 
 <?php
