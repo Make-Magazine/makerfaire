@@ -110,9 +110,42 @@ class GF_Field_Time extends GF_Field {
 	}
 
 	/**
+	 * Get the default properties.
+	 *
+	 * Inputs are required for the field to function correctly, so this ensures that the inputs exist.
+	 *
+	 * @since 2.7.4
+	 *
+	 * @return array[] Array of default properties.
+	 */
+	public function get_default_properties() {
+		return array(
+			'inputs' => array(
+				array(
+					'id' => "{$this->id}.1",
+					'label' => 'Hour',
+					'name' => '',
+				),
+				array(
+					'id' => "{$this->id}.2",
+					'label' => 'Minute',
+					'name' => '',
+				),
+				array(
+					'id' => "{$this->id}.3",
+					'label' => 'AM/PM',
+					'name' => '',
+				),
+			)
+		);
+	}
+
+
+	/**
 	 * Validates the field inputs.
 	 *
-	 * @since  Unknown
+	 * @since 1.9
+	 * @since 2.5.6 Updated to use set_required_error().
 	 * @access public
 	 *
 	 * @used-by GFFormDisplay::validate()
@@ -136,15 +169,7 @@ class GF_Field_Time extends GF_Field {
 		}
 
 		if ( is_array( $value ) && $this->isRequired ) {
-			$required_inputs = array( 0, 1 );
-
-			$message = $this->complex_validation_message( $value, $required_inputs );
-
-			if ( $message ) {
-				$this->failed_validation  = true;
-				$message_intro            = empty( $this->errorMessage ) ? __( 'This field is required.', 'gravityforms' ) : $this->errorMessage;
-				$this->validation_message = $message_intro . ' ' . $message;
-			}
+			$this->set_required_error( $value, true );
 		}
 
 		$hour   = rgar( $value, 0 );
@@ -167,35 +192,20 @@ class GF_Field_Time extends GF_Field {
 	}
 
 	/**
-	 * Create a validation message for a required field with multiple inputs.
+	 * Updates the value to use the input ids as the keys before it's used to generate the complex validation message.
 	 *
-	 * The validation message will specify which inputs need to be filled out.
+	 * @since 2.6.5
 	 *
-	 * @since 2.5
+	 * @param array $value The value to be prepared.
 	 *
-	 * @param array $value            The value entered by the user.
-	 * @param array $required_inputs  The required inputs to validate.
-	 *
-	 * @return string|void
+	 * @return array
 	 */
-	public function complex_validation_message( $value, $required_inputs ) {
-		$error_inputs = array();
-
-		foreach ( $required_inputs as $input ) {
-			if ( '' == $value[ $input ] ) {
-				$input_id       = $input + 1;
-				$error_inputs[] = $this->get_input_property( $input_id, 'label' );
-			}
-		}
-
-		if ( ! empty( $error_inputs ) ) {
-			$field_list = implode( ', ', $error_inputs );
-
-			// Translators: comma-separated list of the labels of missing fields.
-			return sprintf( __( 'Please complete the following fields: %s.', 'gravityforms' ), $field_list );
-		}
-
-		return false;
+	public function prepare_complex_validation_value( $value ) {
+		return array(
+			"{$this->id}.1" => rgar( $value, 0 ),
+			"{$this->id}.2" => rgar( $value, 1 ),
+			"{$this->id}.3" => rgar( $value, 2 ),
+		);
 	}
 
 	/**
@@ -297,13 +307,13 @@ class GF_Field_Time extends GF_Field {
 		if ( $is_form_editor || $this->timeFormat != '24' ) {
 			$am_text = esc_html__( 'AM', 'gravityforms' );
 			$pm_text = esc_html__( 'PM', 'gravityforms' );
-			$ampm_field = "<div class='gfield_time_ampm ginput_container ginput_container_time {$colon_pmam_placement}' {$ampm_field_style}>
+			$ampm_field = "<div class='gfield_time_ampm ginput_container ginput_container_time {$colon_pmam_placement} gform-grid-col' {$ampm_field_style}>
                                 " . ( $output_shim ? "<div class='gfield_time_ampm_shim' aria-hidden='true'>&nbsp;</div>" : "" ) . "
                                 <select name='input_{$id}[]' id='{$field_id}_3' $ampm_tabindex {$disabled_text}>
                                     <option value='am' {$am_selected}>{$am_text}</option>
                                     <option value='pm' {$pm_selected}>{$pm_text}</option>
                                 </select> 
-                                <label class='am_pm_label screen-reader-text' for='{$field_id}_3'>" . esc_html__( 'AM/PM', 'gravityforms' ) . "</label>                                
+                                <label class='gform-field-label gform-field-label--type-sub am_pm_label screen-reader-text' for='{$field_id}_3'>" . esc_html__( 'AM/PM', 'gravityforms' ) . "</label>                                
                            </div>";
 		} else {
 			$ampm_field = '';
@@ -344,38 +354,38 @@ class GF_Field_Time extends GF_Field {
 		$aria_describedby       = $this->get_aria_describedby();
 
 		$legacy_markup_colon = GFCommon::is_legacy_markup_enabled( $form ) ? '<i>:</i>' : '';
-		$new_markup_colon    = GFCommon::is_legacy_markup_enabled( $form ) ? '' : '<div class="' . $colon_pmam_placement . ' hour_minute_colon">:</div>';
+		$new_markup_colon    = GFCommon::is_legacy_markup_enabled( $form ) ? '' : '<div class="' . $colon_pmam_placement . ' hour_minute_colon gform-grid-col">:</div>';
 
 		if ( $is_sub_label_above ) {
 			$markup = "{$clear_multi_div_open}
-                        <div class='gfield_time_hour ginput_container ginput_container_time' id='{$field_id}'>
-                            <label class='hour_label{$hour_label_class}' for='{$field_id}_1'>{$hour_label}</label>
+                        <div class='gfield_time_hour ginput_container ginput_container_time gform-grid-col' id='{$field_id}'>
+                            <label class='gform-field-label gform-field-label--type-sub hour_label{$hour_label_class}' for='{$field_id}_1'>{$hour_label}</label>
                             <input type='{$input_type}' maxlength='2' name='input_{$id}[]' id='{$field_id}_1' value='{$hour}' {$hour_tabindex} {$hour_html5_attributes} {$disabled_text} {$hour_placeholder_attribute} {$hour_aria_attributes} {$aria_describedby}/> {$legacy_markup_colon}
                         </div>
                         {$new_markup_colon}
-                        <div class='gfield_time_minute ginput_container ginput_container_time'>
-                            <label class='minute_label{$minute_label_class}' for='{$field_id}_2'>{$minute_label}</label>
+                        <div class='gfield_time_minute ginput_container ginput_container_time gform-grid-col'>
+                            <label class='gform-field-label gform-field-label--type-sub minute_label{$minute_label_class}' for='{$field_id}_2'>{$minute_label}</label>
                             <input type='{$input_type}' maxlength='2' name='input_{$id}[]' id='{$field_id}_2' value='{$minute}' {$minute_tabindex} {$minute_html5_attributes} {$disabled_text} {$minute_placeholder_attribute} {$minute_aria_attributes}/>
                         </div>
                         {$ampm_field}
                     {$clear_multi_div_close}";
 		} else {
 			$markup = "{$clear_multi_div_open}
-                        <div class='gfield_time_hour ginput_container ginput_container_time' id='{$field_id}'>
+                        <div class='gfield_time_hour ginput_container ginput_container_time gform-grid-col' id='{$field_id}'>
                             <input type='{$input_type}' maxlength='2' name='input_{$id}[]' id='{$field_id}_1' value='{$hour}' {$hour_tabindex} {$hour_html5_attributes} {$disabled_text} {$hour_placeholder_attribute} {$hour_aria_attributes} {$aria_describedby}/> {$legacy_markup_colon}
-                            <label class='hour_label{$hour_label_class}' for='{$field_id}_1'>{$hour_label}</label>
+                            <label class='gform-field-label gform-field-label--type-sub hour_label{$hour_label_class}' for='{$field_id}_1'>{$hour_label}</label>
                         </div>
                         {$new_markup_colon}
-                        <div class='gfield_time_minute ginput_container ginput_container_time'>
+                        <div class='gfield_time_minute ginput_container ginput_container_time gform-grid-col'>
                             <input type='{$input_type}' maxlength='2' name='input_{$id}[]' id='{$field_id}_2' value='{$minute}' {$minute_tabindex} {$minute_html5_attributes} {$disabled_text} {$minute_placeholder_attribute} {$minute_aria_attributes}/>
-                            <label class='minute_label{$minute_label_class}' for='{$field_id}_2'>{$minute_label}</label>
+                            <label class='gform-field-label gform-field-label--type-sub minute_label{$minute_label_class}' for='{$field_id}_2'>{$minute_label}</label>
                         </div>
                         {$ampm_field}
                     {$clear_multi_div_close}";
 		}
 
 
-		return sprintf( '<div class="ginput_complex">%s</div>', $markup );
+		return sprintf( '<div class="ginput_container ginput_complex gform-grid-row">%s</div>', $markup );
 	}
 
 	/**
@@ -403,12 +413,15 @@ class GF_Field_Time extends GF_Field {
 	 */
 	public function is_value_submission_empty( $form_id ) {
 		$value = rgpost( 'input_' . $this->id );
-		if ( is_array( $value ) ) {
-			// If some but not all inputs are empty, return false so that this field's validation method will be triggered.
-			return empty( array_filter( $value ) );
-		} else {
+
+		if ( ! is_array( $value ) ) {
 			return strlen( trim( $value ) ) <= 0;
 		}
+
+		// Ignoring the AM/PM value; it's always set for embedded forms.
+		unset( $value[2] );
+
+		return GFCommon::is_empty_array( $value );
 	}
 
 	/**

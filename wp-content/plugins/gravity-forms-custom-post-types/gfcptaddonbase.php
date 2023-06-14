@@ -184,7 +184,7 @@ if ( ! class_exists( 'GFCPTAddonBase' ) ) {
 				if ( $form_or_field->get_input_type() == 'text' && $form_or_field->saveToTaxonomy && $form_or_field->taxonomyEnhanced ) {
 					return true;
 				}
-			} else {
+			} else if ( is_array( rgar( $form_or_field, 'fields' ) ) ) {
 				foreach ( $form_or_field['fields'] as $field ) {
 					if ( $this->has_tax_enhanced_ui( $field ) ) {
 						return true;

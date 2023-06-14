@@ -292,6 +292,20 @@ class GF_Field extends stdClass implements ArrayAccess {
 	}
 
 
+	/**
+	 * Get default properties for a field.
+	 *
+	 * Used to populate a field with default properties if any properties are required for a field to function correctly.
+	 *
+	 * @since 2.7.4
+	 *
+	 * @return array
+	 */
+	public function get_default_properties() {
+		return array();
+	}
+
+
 	// # FORM EDITOR & FIELD MARKUP -------------------------------------------------------------------------------------
 
 	/**
@@ -542,11 +556,13 @@ class GF_Field extends stdClass implements ArrayAccess {
 	 *
 	 * @since unknown
 	 * @since 2.5     Added `screen-reader-text` if the label hasn't been set; added `gfield_label_before_complex` if the field has inputs.
+	 * @since 2.7     Added `gform-field-label` for the theme framework.
 	 *
 	 * @return string
 	 */
 	public function get_field_label_class() {
 		$class = 'gfield_label';
+		$class .= ' gform-field-label';
 
 		// Added `screen-reader-text` if the label hasn't been set.
 		$class .= ( rgblank( $this->label ) ) ? ' screen-reader-text' : '';
@@ -555,6 +571,17 @@ class GF_Field extends stdClass implements ArrayAccess {
 		$class .= is_array( $this->inputs ) ? ' gfield_label_before_complex' : '';
 
 		return $class;
+	}
+
+	/**
+	 * Get field CSS class.
+	 *
+	 * @since 2.7
+	 *
+	 * @return string
+	 */
+	public function get_field_css_class() {
+		return '';
 	}
 
 	/**
@@ -714,11 +741,53 @@ class GF_Field extends stdClass implements ArrayAccess {
 	 * Return the result (bool) by setting $this->failed_validation.
 	 * Return the validation message (string) by setting $this->validation_message.
 	 *
+	 * @since 1.9
+	 *
 	 * @param string|array $value The field value from get_value_submission().
 	 * @param array        $form  The Form Object currently being processed.
+	 *
+	 * @return void
 	 */
 	public function validate( $value, $form ) {
 		//
+	}
+
+	/**
+	 * Sets the failed_validation and validation_message properties for a required field error.
+	 *
+	 * @since 2.6.5
+	 *
+	 * @param mixed $value                   The field value.
+	 * @param bool  $require_complex_message Indicates if the field must have a complex validation message for the error to be set.
+	 *
+	 * @return void
+	 */
+	public function set_required_error( $value, $require_complex_message = false ) {
+		$complex_message = $this->complex_validation_message( $value, $this->get_required_inputs_ids() );
+
+		if ( $require_complex_message && ! $complex_message ) {
+			return;
+		}
+
+		$this->failed_validation  = true;
+		$this->validation_message = empty( $this->errorMessage ) ? __( 'This field is required.', 'gravityforms' ) : $this->errorMessage;
+
+		if ( $complex_message ) {
+			$this->validation_message .= ' ' . $complex_message;
+		}
+	}
+
+	/**
+	 * Override to modify the value before it's used to generate the complex validation message.
+	 *
+	 * @since 2.6.5
+	 *
+	 * @param array $value The value to be prepared.
+	 *
+	 * @return array
+	 */
+	public function prepare_complex_validation_value( $value ) {
+		return $value;
 	}
 
 	/**
@@ -727,31 +796,37 @@ class GF_Field extends stdClass implements ArrayAccess {
 	 * The validation message will specify which inputs need to be filled out.
 	 *
 	 * @since 2.5
+	 * @since 2.6.5 Updated to use prepare_complex_validation_value().
 	 *
 	 * @param array $value            The value entered by the user.
 	 * @param array $required_inputs  The required inputs to validate.
 	 *
-	 * @return string|void
+	 * @return string|false
 	 */
 	public function complex_validation_message( $value, $required_inputs ) {
+		if ( empty( $this->inputs ) || empty( $required_inputs ) ) {
+			return false;
+		}
+
+		$value        = $this->prepare_complex_validation_value( $value );
 		$error_inputs = array();
 
 		foreach ( $required_inputs as $input ) {
-			if ( '' == rgar( $value, $this->id . '.' . $input )  && ! $this->get_input_property( $input, 'isHidden' ) ) {
+			if ( rgblank( rgar( $value, $this->id . '.' . $input ) ) && ! $this->get_input_property( $input, 'isHidden' ) ) {
 				$custom_label   = $this->get_input_property( $input, 'customLabel' );
 				$label          = $custom_label ? $custom_label : $this->get_input_property( $input, 'label' );
 				$error_inputs[] = $label;
 			}
 		}
 
-		if ( ! empty( $error_inputs ) ) {
-			$field_list = implode( ', ', $error_inputs );
-			// Translators: comma-separated list of the labels of missing fields.
-			$message = sprintf( __( 'Please complete the following fields: %s.', 'gravityforms' ), $field_list );
-			return $message;
+		if ( empty( $error_inputs ) ) {
+			return false;
 		}
 
-		return false;
+		$field_list = implode( ', ', $error_inputs );
+
+		// Translators: comma-separated list of the labels of missing fields.
+		return sprintf( __( 'Please complete the following fields: %s.', 'gravityforms' ), $field_list );
 	}
 
 	/**
@@ -1445,7 +1520,7 @@ class GF_Field extends stdClass implements ArrayAccess {
 					onkeypress='StartDuplicateField(this); return false;'
 					aria-label='" . esc_html( $this->get_field_action_aria_label( $duplicate_aria_action ) ) . "'
 				>
-					<svg width='25' height='25' fill='none' xmlns='http://www.w3.org/2000/svg'>
+					<svg width='25' height='25'  role='presentation' focusable='false'  fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<path class='stroke' d='M6 4.75h14c.69 0 1.25.56 1.25 1.25v14c0 .69-.56 1.25-1.25 1.25H6c-.69 0-1.25-.56-1.25-1.25V6c0-.69.56-1.25 1.25-1.25z' stroke='#242748' stroke-width='1.5'/>
 						<path class='stroke fill' d='M10 5L6 9.5V5h4z' fill='#242748' stroke='#242748'/>
 						<path class='stroke' d='M9 13h8M13 9v8' stroke='#242748' stroke-width='1.5'/>
@@ -1626,11 +1701,10 @@ class GF_Field extends stdClass implements ArrayAccess {
 	 * @return string The aria-describedby text or a blank string.
 	 */
 	public function maybe_add_aria_describedby( $input, $field_id, $form_id ) {
-		$form                  = GFAPI::get_form( $form_id );
-		$first_input_for_field = self::get_first_input_id( GFAPI::get_form( $form_id ) );
+		$first_input_for_field = $this->get_first_input_id( GFFormsModel::get_form_meta( $form_id ) );
 		$field_id_as_array     = explode( '_', $field_id );
 		$first_input_as_array  = explode( '_', $first_input_for_field );
-		$subelement_id         =  end( $field_id_as_array ) . '.' . end( $first_input_as_array  );
+		$subelement_id         = end( $field_id_as_array ) . '.' . end( $first_input_as_array );
 
 		if ( $input['id'] === $subelement_id ) {
 			return $this->get_aria_describedby();
@@ -2272,7 +2346,7 @@ class GF_Field extends stdClass implements ArrayAccess {
 			}
 
 			if ( isset( $choice['text'] ) ) {
-				$choice['text'] = $this->maybe_wp_kses( $choice['text'] );
+				$choice['text'] = wp_kses( $choice['text'], 'post' );
 			}
 
 			if ( isset( $choice['value'] ) ) {
@@ -2430,6 +2504,7 @@ class GF_Field extends stdClass implements ArrayAccess {
 	 *
 	 * @since 2.1.3  Clear any field validation errors that have been saved to the form in the database.
 	 * @since 2.5.11 Set validateState property for back-compat.
+	 * @since 2.7.4  Set default properties.
 	 */
 	public function post_convert_field() {
 		unset( $this->failed_validation );
@@ -2441,6 +2516,15 @@ class GF_Field extends stdClass implements ArrayAccess {
 			&& ( in_array( $this->type, array( 'consent', 'donation' ) ) || GFCommon::is_product_field( $this->type ) )
 		) {
 			$this->validateState = true;
+		}
+
+		$default_properties = $this->get_default_properties();
+		if ( ! empty( $default_properties ) ) {
+			foreach( $default_properties as $property => $value ) {
+				if ( ! isset ( $this[ $property ] ) ) {
+					$this[ $property ] = $value;
+				}
+			}
 		}
 	}
 
@@ -2580,7 +2664,7 @@ class GF_Field extends stdClass implements ArrayAccess {
 			'gform_product_quantity',
 			$form_id,
 			$this->id,
-		), esc_html__( 'Quantity:', 'gravityforms' ), $form_id );
+		), esc_html__( 'Quantity', 'gravityforms' ), $form_id );
 	}
 
 	/**
