@@ -26,6 +26,19 @@ class GFGEO_Coordinates_Field extends GF_Field {
 	public $type = 'gfgeo_coordinates';
 
 	/**
+	 * Returns the field's form editor icon.
+	 *
+	 * This could be an icon url or a gform-icon class.
+	 *
+	 * @since 2.5
+	 *
+	 * @return string
+	 */
+	public function get_form_editor_field_icon() {
+		return 'gform-icon--place';
+	}
+
+	/**
 	 * Field button
 	 *
 	 * @return [type] [description]
@@ -52,11 +65,36 @@ class GFGEO_Coordinates_Field extends GF_Field {
 	 * @return [type] [description]
 	 */
 	public function get_form_editor_field_settings() {
+
+		// Gravity Forms v2.5+.
+		if ( GFGEO_GF_2_5 ) {
+
+			return array(
+				// ggf options.
+				'gfgeo-geocoder-id',
+				'gfgeo-coordinates-field-settings',
+				// gform options.
+				'post_custom_field_setting',
+				'conditional_logic_field_setting',
+				'prepopulate_field_setting',
+				'error_message_setting',
+				'label_setting',
+				'label_placement_setting',
+				'admin_label_setting',
+				'size_setting',
+				'rules_setting',
+				'visibility_setting',
+				'duplicate_setting',
+				'description_setting',
+				'css_class_setting',
+				'gfgeo-google-maps-link',
+			);
+		}
+
 		return array(
 			// ggf options.
 			'gfgeo-geocoder-id',
-			'gfgeo-latitude-placeholder',
-			'gfgeo-longitude-placeholder',
+			'gfgeo-coordinates-field-settings',
 			'gfgeo-custom-field-method',
 			// gform options.
 			'post_custom_field_setting',
@@ -86,6 +124,31 @@ class GFGEO_Coordinates_Field extends GF_Field {
 	}
 
 	/**
+	 * Save value as an array.
+	 *
+	 * @return boolean [description]
+	 */
+	public function is_value_submission_array() {
+		return true;
+	}
+
+	/**
+	 * Override this method to perform custom validation logic.
+	 *
+	 * Return the result (bool) by setting $this->failed_validation.
+	 * Return the validation message (string) by setting $this->validation_message.
+	 *
+	 * @param string|array $value The field value from get_value_submission().
+	 * @param array        $form  The Form Object currently being processed.
+	 */
+	public function validate( $value, $form ) {
+
+		if ( ! empty( $this->isRequired ) && ( empty( $value['latitude'] ) || empty( $value['longitude'] ) ) ) {
+			$this->failed_validation = true;
+		}
+	}
+
+	/**
 	 * Generate the front-end input field
 	 *
 	 * @param  [type] $form  [description].
@@ -99,20 +162,22 @@ class GFGEO_Coordinates_Field extends GF_Field {
 		$form_id         = absint( $form['id'] );
 		$is_entry_detail = $this->is_entry_detail();
 		$is_form_editor  = $this->is_form_editor();
-		$id              = (int) $this->id;
-		$field_id        = $is_entry_detail || $is_form_editor || 0 === absint( $form_id ) ? "input_$id" : 'input_' . $form_id . "_$id";
-		$size            = esc_attr( $this->size );
-		$class_suffix    = $is_entry_detail ? '_admin' : '';
-		$class           = $class_suffix;
-		$max_length      = is_numeric( $this->maxLength ) ? "maxlength='{$this->maxLength}'" : '';
-		$tabindex        = $this->get_tabindex();
-		$disabled_text   = $is_form_editor ? 'disabled="disabled"' : '';
-		$geocoder_id     = ! empty( $this->gfgeo_geocoder_id ) ? esc_attr( $form_id . '_' . $this->gfgeo_geocoder_id ) : '';
 
-		$lat_placeholder_value = ! empty( $this->gfgeo_latitude_placeholder ) ? $this->gfgeo_latitude_placeholder : __( 'Latitude', 'gfgeo' );
-		$lng_placeholder_value = ! empty( $this->gfgeo_longitude_placeholder ) ? $this->gfgeo_longitude_placeholder : __( 'Longitude', 'gfgeo' );
-		$lat_placeholder       = sprintf( "placeholder='%s'", esc_attr( $lat_placeholder_value ) );
-		$lng_placeholder       = sprintf( "placeholder='%s'", esc_attr( $lng_placeholder_value ) );
+		$id       = (int) $this->id;
+		$field_id = $is_entry_detail || $is_form_editor || 0 === $form_id ? "input_$id" : 'input_' . $form_id . "_$id";
+
+		$size               = $this->size;
+		$class_suffix       = $is_entry_detail ? '_admin' : '';
+		$tabindex           = $this->get_tabindex();
+		$disabled_text      = $is_form_editor ? 'disabled="disabled"' : '';
+		$required_attribute = $this->isRequired ? 'aria-required="true"' : '';
+		$aria_describedby   = $this->get_aria_describedby();
+
+		$geocoder_id = ! empty( $this->gfgeo_geocoder_id ) ? esc_attr( $this->gfgeo_geocoder_id ) : '';
+		$gfgeo_id    = ! empty( $this->gfgeo_id ) ? esc_attr( $this->gfgeo_id ) : $form_id . '_' . $id;
+
+		$lat_placeholder = ! empty( $this->gfgeo_latitude_placeholder ) ? sprintf( "placeholder='%s'", esc_attr( $this->gfgeo_latitude_placeholder ) ) : '';
+		$lng_placeholder = ! empty( $this->gfgeo_longitude_placeholder ) ? sprintf( "placeholder='%s'", esc_attr( $this->gfgeo_longitude_placeholder ) ) : '';
 
 		if ( ! is_array( $value ) && ! is_serialized( $value ) ) {
 
@@ -142,16 +207,16 @@ class GFGEO_Coordinates_Field extends GF_Field {
 		$latitude_val  = ! empty( $value['latitude'] ) ? sanitize_text_field( esc_attr( $value['latitude'] ) ) : '';
 		$longitude_val = ! empty( $value['longitude'] ) ? sanitize_text_field( esc_attr( $value['longitude'] ) ) : '';
 
-		$input  = '<span id="' . $field_id . '_latitude_container" class="ginput_left">';
-		$input .= '<input name="input_' . $id . '[latitude]" id="' . $field_id . '_latitude" data-field_id="' . $form_id . '_' . $id . '" data-coords_field="latitude" data-geocoder_id="' . $geocoder_id . '" type="text" value="' . $latitude_val . '" class="' . $class . ' gfgeo-coordinates-field gfgeo-latitude-field" ' . $max_length . ' ' . $tabindex . ' ' . $lat_placeholder . ' ' . $disabled_text . ' />';
+		$input  = "<span id='{$field_id}_latitude_container' class='ginput_gfgeo_latitude{$class_suffix} ginput_left'>";
+		$input .= "<input name='input_{$id}[latitude]' id='{$field_id}_latitude' type='text' value='{$latitude_val}' class='gfgeo-coordinates-field gfgeo-latitude-field' {$aria_describedby} {$tabindex} {$lat_placeholder} {$required_attribute} {$disabled_text} autocomplete='off' data-field_id='{$gfgeo_id}' data-coords_field='latitude' data-geocoder_id='{$geocoder_id}' type='text' />";
 		$input .= '</span>';
 
-		$input .= '<span id="' . $field_id . '_longitude_container" class="ginput_right">';
-		$input .= '<input name="input_' . $id . '[longitude]" id="' . $field_id . '_longitude" data-field_id="' . $form_id . '_' . $id . '" data-coords_field="longitude" data-geocoder_id="' . $geocoder_id . '" type="text" value="' . $longitude_val . '" class="' . $class . ' gfgeo-coordinates-field gfgeo-longitude-field" ' . $max_length . ' ' . $tabindex . ' ' . $lng_placeholder . ' ' . $disabled_text . '/>';
-
+		$input .= "<span id='{$field_id}_longitude_container' class='ginput_gfgeo_longitude{$class_suffix} ginput_right'>";
+		$input .= "<input name='input_{$id}[longitude]' id='{$field_id}_longitude' type='text' value='{$longitude_val}' class='gfgeo-coordinates-field gfgeo-longitude-field' {$aria_describedby} {$tabindex} {$lng_placeholder} {$required_attribute} {$disabled_text} autocomplete='off' data-field_id='{$gfgeo_id}' data-coords_field='longitude' data-geocoder_id='{$geocoder_id}' type='text' />";
 		$input .= '</span>';
+		$input .= "<input name='input_{$id}[0]' id='{$field_id}_0' type='hidden' value='1' />";
 
-		return sprintf( "<div id='gfgeo-coordinates-wrapper-%s' class='ginput_complex ginput_container gfgeo-coordinates-wrapper' data-geocoder_id='%s' data-field_id='%s'>%s</div>", $form_id . '_' . $id, $geocoder_id, $form_id . '_' . $id, $input );
+		return sprintf( "<div id='gfgeo-coordinates-wrapper-%s' class='ginput_complex{$class_suffix} ginput_container {$size} gfgeo_complex ginput_container_gfgeo_coordinates gfgeo-coordinates-wrapper' data-geocoder_id='%s' data-field_id='%s'>%s<div class='gf_clear gf_clear_complex'></div></div>", $gfgeo_id, $geocoder_id, $gfgeo_id, $input );
 	}
 
 	/**
@@ -274,7 +339,7 @@ class GFGEO_Coordinates_Field extends GF_Field {
 		} else {
 
 			// if passing via querystring.
-			if ( ! empty( $form['confirmation']['queryString'] ) ) {
+			if ( ! empty( $form['confirmation']['queryString'] ) && strpos( $form['confirmation']['queryString'], ':' . $input_id ) !== false ) {
 
 				if ( is_array( $coordinates ) ) {
 
@@ -288,9 +353,7 @@ class GFGEO_Coordinates_Field extends GF_Field {
 				// confirmation page or email.
 			} else {
 
-				$map_link = ! empty( $this->gfgeo_google_maps_link ) ? true : false;
-
-				return $this->get_output_coordinates( $coordinates, $map_link );
+				return $this->get_output_coordinates( $coordinates, true );
 			}
 		}
 	}
@@ -309,6 +372,8 @@ class GFGEO_Coordinates_Field extends GF_Field {
 	public function get_value_save_entry( $value, $form, $input_name, $lead_id, $lead ) {
 
 		if ( is_array( $value ) ) {
+
+			unset( $value[0] );
 
 			foreach ( $value as &$v ) {
 				$v = $this->sanitize_entry_value( $v, $form['id'] );
@@ -370,14 +435,12 @@ class GFGEO_Coordinates_Field extends GF_Field {
 		// if in front-end submission display map link only if needed.
 		if ( ! empty( $_POST['gform_submit'] ) ) { // WPCS: CSRF ok.
 
-			$map_link = ! empty( $this->gfgeo_google_maps_link ) ? true : false;
-
-			return $this->get_output_coordinates( $value, $map_link );
+			return $this->get_output_coordinates( $value, false );
 
 			// in back end entry page display it all the time.
 		} else {
 
-			return $this->get_output_coordinates( $value, true );
+			return $this->get_output_coordinates( $value, false );
 		}
 	}
 
@@ -401,23 +464,14 @@ class GFGEO_Coordinates_Field extends GF_Field {
 		$output .= '<li><strong>' . __( 'Latitude', 'gfgeo' ) . ':</strong> ' . $value['latitude'] . '</li>';
 		$output .= '<li><strong>' . __( 'Longitude', 'gfgeo' ) . ':</strong> ' . $value['longitude'] . '</li>';
 
-		if ( $map_link ) {
+		if ( apply_filters( 'gfgeo_coordinates_field_output_map_link', $map_link ) ) {
 
 			$map_it = GFGEO_Helper::get_map_link( $value );
 
 			$output .= '<li>' . $map_it . '</li>';
 		}
 
-		return "<ul class='bulleted'>{$output}</ul>";
-	}
-
-	/**
-	 * Allow HTML.
-	 *
-	 * @return [type] [description]
-	 */
-	public function allow_html() {
-		return false;
+		return "<ul style='list-style:none;'>{$output}</ul>";
 	}
 }
 GF_Fields::register( new GFGEO_Coordinates_Field() );

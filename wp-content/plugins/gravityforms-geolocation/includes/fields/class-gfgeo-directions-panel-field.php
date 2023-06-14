@@ -24,6 +24,19 @@ class GFGEO_Directions_Panel_Field extends GF_Field {
 	public $type = 'gfgeo_directions_panel';
 
 	/**
+	 * Returns the field's form editor icon.
+	 *
+	 * This could be an icon url or a gform-icon class.
+	 *
+	 * @since 2.5
+	 *
+	 * @return string
+	 */
+	public function get_form_editor_field_icon() {
+		return 'gform-icon--place';
+	}
+
+	/**
 	 * Field button.
 	 *
 	 * @return [type] [description]
@@ -59,6 +72,7 @@ class GFGEO_Directions_Panel_Field extends GF_Field {
 			'duplicate_setting',
 			'description_setting',
 			'css_class_setting',
+			'size_settings',
 		);
 	}
 
@@ -69,6 +83,15 @@ class GFGEO_Directions_Panel_Field extends GF_Field {
 	 */
 	public function is_conditional_logic_supported() {
 		return false;
+	}
+
+	/**
+	 * Save value as an array.
+	 *
+	 * @return boolean [description]
+	 */
+	public function is_value_submission_array() {
+		return true;
 	}
 
 	/**
@@ -94,23 +117,77 @@ class GFGEO_Directions_Panel_Field extends GF_Field {
 		// Form Editor.
 		if ( $this->is_form_editor() ) {
 
-			$content  = '<div class="gfgeo-hidden-container" style="border: 1px solid #E4E4E4;padding: 20px;background-color: #F6F6F6">';
-			$content .= __( 'Note: This field will be hidden when the form first load in the front-end and will be dynamically generated with the directions data when available.', 'gfgeo' );
-			$content .= '</span></div>';
+			$content  = '<div class="gfgeo-admin-hidden-container">';
+			$content .= '<p>' . __( 'This field will be hidden when the form first load in the front-end and will be dynamically generated with the directions data when available.', 'gfgeo' ) . '</p>';
+			$content .= '</div>';
 
 			return $content;
 
 			// Front-end form.
 		} else {
 
-			$field_id = esc_attr( $form['id'] . '_' . $this->id );
+			$form_id         = absint( $form['id'] );
+			$is_entry_detail = $this->is_entry_detail();
+			$is_form_editor  = $this->is_form_editor();
 
-			return '<div id="gfgeo-directions-panel-holder-' . $field_id . '" class="gfgeo-directions-panel-holder"></div>';
+			$id       = (int) $this->id;
+			$field_id = $is_entry_detail || $is_form_editor || 0 === $form_id ? "input_$id" : 'input_' . $form_id . "_$id";
+			$gfgeo_id = ! empty( $this->gfgeo_id ) ? esc_attr( $this->gfgeo_id ) : $form_id . '_' . $id;
+			$size     = $this->size;
+
+			$input = "<input type='hidden' name='input_{$id}' id='{$field_id}' class='gfgeo-directions-panel-field-value' data-field_id='{$gfgeo_id}' value='' />";
+
+			return sprintf( "<div id='gfgeo-directions-panel-holder-%s' class='ginput_container ginput_container_gfgeo_directions_panel gfgeo-directions-panel-holder {$size}'>%s</div>", $gfgeo_id, $input );
 		}
 	}
 
 	/**
-	 * Generate field data for email template tags.
+	 * Save the directions data in the entry.
+	 *
+	 * @param  [type] $value      [description].
+	 * @param  [type] $form       [description].
+	 * @param  [type] $input_name [description].
+	 * @param  [type] $entry_id   [description].
+	 * @param  [type] $entry      [description].
+	 *
+	 * @return [type]             [description]
+	 */
+	public function get_value_save_entry( $value, $form, $input_name, $entry_id, $entry ) {
+
+		if ( empty( $value ) ) {
+			return $value;
+		}
+
+		// Sanitize value.
+		$value = $this->sanitize_entry_value( $value, $form['id'] );
+
+		// This should be a JSON encoded array value.
+		$value = json_decode( stripslashes( $value ), true );
+
+		if ( empty( $value ) || ! is_array( $value ) ) {
+			return '';
+		}
+
+		return maybe_serialize( $value );
+	}
+
+	/**
+	 * Display directions link in entry list page.
+	 *
+	 * @param  [type] $value         [description].
+	 * @param  [type] $entry         [description].
+	 * @param  [type] $field_id      [description].
+	 * @param  [type] $columns       [description].
+	 * @param  [type] $form          [description].
+	 *
+	 * @return [type]                [description]
+	 */
+	public function get_value_entry_list( $value, $entry, $field_id, $columns, $form ) {
+		return GFGEO_Helper::get_directions_link( $value );
+	}
+
+	/**
+	 * Generate directions link for notifications when using merge tags.
 	 *
 	 * @param  [type] $value      [description].
 	 * @param  [type] $input_id   [description].
@@ -126,7 +203,22 @@ class GFGEO_Directions_Panel_Field extends GF_Field {
 	 * @return [type]             [description]
 	 */
 	public function get_value_merge_tag( $value, $input_id, $entry, $form, $modifier, $raw_value, $url_encode, $esc_html, $format, $nl2br ) {
-		return $this->get_directions_link( $raw_value );
+		return GFGEO_Helper::get_directions_link( $raw_value );
+	}
+
+	/**
+	 * Display the directions link in the entry page.
+	 *
+	 * @param  [type]  $value         [description].
+	 * @param  string  $currency      [description].
+	 * @param  boolean $use_text      [description].
+	 * @param  string  $format        [description].
+	 * @param  string  $media         [description].
+	 *
+	 * @return [type]                 [description]
+	 */
+	public function get_value_entry_detail( $value, $currency = '', $use_text = false, $format = 'html', $media = 'screen' ) {
+		return GFGEO_Helper::get_directions_link( $value );
 	}
 
 	/**
@@ -139,111 +231,8 @@ class GFGEO_Directions_Panel_Field extends GF_Field {
 	 *
 	 * @return [type]            [description]
 	 */
-	public function get_value_export( $entry, $input_id = '', $use_text = false, $is_csv = false ) {
+	/*public function get_value_export( $entry, $input_id = '', $use_text = false, $is_csv = false ) {
 		return $value;
-	}
-
-	/**
-	 * Save the directions link in the entry.
-	 *
-	 * @param  [type] $value      [description].
-	 * @param  [type] $form       [description].
-	 * @param  [type] $input_name [description].
-	 * @param  [type] $entry_id   [description].
-	 * @param  [type] $entry      [description].
-	 *
-	 * @return [type]             [description]
-	 */
-	public function get_value_save_entry( $value, $form, $input_name, $entry_id, $entry ) {
-
-		$directions = array(
-			'status'      => 0,
-			'origin'      => array(
-				'latitude'  => '',
-				'longitude' => '',
-			),
-			'destination' => array(
-				'latitude'  => '',
-				'longitude' => '',
-			),
-		);
-
-		foreach ( $form['fields'] as $field ) {
-
-			if ( 'gfgeo_geocoder' === $field->type ) {
-
-				if ( ! empty( $field->gfgeo_distance_directions_panel_id ) && absint( $field->gfgeo_distance_directions_panel_id ) === absint( $this->id ) && ! empty( $field->gfgeo_distance_destination_geocoder_id ) ) {
-
-					$origin_geocoder      = ! empty( $_POST[ 'input_' . $field->id ] ) ? maybe_unserialize( $_POST[ 'input_' . $field->id ] ) : array(); // WPCS: CSRF ok, sanitization ok.
-					$destination_geocoder = ! empty( $_POST[ 'input_' . $field->gfgeo_distance_destination_geocoder_id ] ) ? maybe_unserialize( $_POST[ 'input_' . $field->gfgeo_distance_destination_geocoder_id ] ) : array(); // WPCS: CSRF ok, sanitization ok.
-
-					if ( ! empty( $origin_geocoder['latitude'] ) && ! empty( $origin_geocoder['longitude'] ) && ! empty( $destination_geocoder['latitude'] ) && ! empty( $destination_geocoder['longitude'] ) ) {
-
-						$directions['status']                   = 1;
-						$directions['origin']['latitude']       = $origin_geocoder['latitude'];
-						$directions['origin']['longitude']      = $origin_geocoder['longitude'];
-						$directions['destination']['latitude']  = $destination_geocoder['latitude'];
-						$directions['destination']['longitude'] = $destination_geocoder['longitude'];
-
-						return maybe_serialize( $directions );
-					}
-				}
-			}
-		}
-
-		return maybe_serialize( $directions );
-	}
-
-	/**
-	 * Display directions link in entry list page.
-	 *
-	 * @param  [type] $value         [description].
-	 * @param  [type] $entry         [description].
-	 * @param  [type] $field_id      [description].
-	 * @param  [type] $columns       [description].
-	 * @param  [type] $form          [description].
-	 *
-	 * @return [type]                [description]
-	 */
-	public function get_value_entry_list( $value, $entry, $field_id, $columns, $form ) {
-		return $this->get_directions_link( $value );
-	}
-
-	/**
-	 * Display field data in entry page.
-	 *
-	 * This will output a directions link in the entry page.
-	 *
-	 * @param  [type]  $value         [description].
-	 * @param  string  $currency      [description].
-	 * @param  boolean $use_text      [description].
-	 * @param  string  $format        [description].
-	 * @param  string  $media         [description].
-	 *
-	 * @return [type]                 [description]
-	 */
-	public function get_value_entry_detail( $value, $currency = '', $use_text = false, $format = 'html', $media = 'screen' ) {
-		return $this->get_directions_link( $value );
-	}
-
-	/**
-	 * Generate directions link.
-	 *
-	 * @param  [type] $value [description].
-	 * @return [type]        [description].
-	 */
-	public function get_directions_link( $value ) {
-
-		$value = maybe_unserialize( $value );
-
-		if ( ! empty( $value['status'] ) ) {
-
-			$link = 'https://www.google.com/maps/dir/?api=1&origin=' . $value['origin']['latitude'] . ',' . $value['origin']['longitude'] . '&destination=' . $value['destination']['latitude'] . ',' . $value['destination']['longitude'];
-
-			return '<a href="' . esc_url( $link ) . '" target="_blank">' . esc_html__( 'View Directions on Google Maps', 'gfgeo' ) . '</a>';
-		} else {
-			return __( 'Directions not available', 'gfgeo' );
-		}
-	}
+	}*/
 }
 GF_Fields::register( new GFGEO_Directions_Panel_Field() );

@@ -1,0 +1,285 @@
+### 3.1.4 | 2022-7-12
+- Fix: error when trying to save the plugin's setting.
+
+### 3.1.3 | 2022-7-7
+- Tweak: add CSS Class settings to the geocoder field.
+- Tweak: Update some JavaScript filters.
+- Tweak: change license key field type from text to password to hide the license key.
+- Fix: prevent submission alert message when trying to navigate away from the Geolocation tab of the Setting page.
+- Fix: the output of the merge tag value of the coordinates field in a query string does not work properly.
+- Tweak: Increase license auto verification to once a week.
+
+### 3.1.2 | 2022-3-6
+- Compatibility with WordPress 6.0.
+- Fix: PHP fatal error.
+- Security patch.
+- Update polish translation.
+
+### 3.1.1 | 2022-2-13
+
+- Fix: issue when setting the Coordinates field as required.
+- Fix: do not pass Google Maps link from address field via query string.
+- Tweak: set the link of the address field in merge tags and Entry List page to false by default.
+- Tweak: verify when coordinates field passes via query string.
+- Tweak: new JS action hook 'gfgeo_map_rendered'. Fires after the map were rendered.
+- Tweak: add a short delay before resizing the map to allow more time when navigating between form pages.
+- Tweak: Add additional check for city field during geocoding.
+- Filter: "gfgeo_geocoder_field_value_export" to modify the value of the geocoder field during export.
+
+### 3.1 | 2021-11-24
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Please note that Since version 3.0 of the plugin, your license key must be activated in order for the plugin to work. Make sure to activate your license key after updating the plugin if you are updating from a version previous to v3.0.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- Fix: conflict with GravityWiz Nested Forms plugin.
+- Fix: 'gfgeo_full_address_field_output_map_link' filter didn't effect the map link output.
+- Enhancement: compatibility with Gravity Forms v2.5.
+- Enhance the main JavaScript file of the plugin. Support for GF v2.5.
+- Enhancement: improved plugin updater file.
+- Tweak: we no longer add an additional field for the address autocomplete feature when using the advanced address field of Gravity Forms. The autocomplete is now enabled on the first text field of the address field.
+- Tweak: map link is now enabled by default in the address field output.
+- Tweak: verify that the fieldSettings JS variable exists to prevent JavaScript error in the form editor page.
+- Tweak: apply a short delay before changing the position of the geolocation fields tab element in the form editor.
+- Tweak: update plugin stylesheet.
+- Tweak: replace the locator.png and loader.gif file of the locator button with SVG files.
+- Tweak: new form editor javaScript file for Gravity Forms v2.5. Old files were renamed to *.2-4.js and only needed when using the Gravity Forms version lower than 2.5.
+- Tweak: clear some CSS classes that were added to the "CSS class" option of the geolocation fields by accident.
+- Tweak: move the file class-gfgeo-fields-group.php into the "fields" folder.
+- Enhance code.
+- Remove unused code.
+- delete unused files.
+- Various bug fixes and improvements.
+
+### 3.0 | 2021-03-15
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---- Please note that with version 3.0 your license key must be activated in order for the plugin to work. Make sure to activate your license key after updating the plugin to version 3.0. ----
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Version 3.0 is a major release. It brings many new features, bug fixes, and improvements.
+New: Directions form field added to the form editor. The directions field replaces the directions feature that was generated via the Geocoder field.
+New: Directions now support waypoints via the new Directions field.
+New: Reset Location field button.
+New: Map field now supports multiple markers via the Geocoder field.
+Marker options are now included in the Geocoder field.
+New: Mashup Map shortcode [gfgeo_mashup_map] to display a map with locations from form submissions.
+New: various new options added to the different geolocation fields.
+New: the address autocomplete feature is now enabled on the first field of the Gravity Forms address field. That is instead of adding an additional field.
+New: address field option to set the address autocomplete restriction type. This is a dropdown select menu that shows/hides the different restriction options based on the restriction type selected.
+New: restrict autocomplete based on proximity.
+New: address field option to force users to select an address from the address autocomplete suggested results. When not selecting an address and trying to enter an address manually, a warning message will popup up and the address field will become blank.
+New: Server-side geocoder. Can be used with a custom function when needed to geocode address via server-side.
+Tweak: new IP Address providers: IPapi and IP Registry.
+Enhancement: restrict the address autocomplete to return the basic SKU fields only. This prevents the Atmosphere and Contact SKU Data from being generated and will decrease the Google Maps API data usage.
+Fix: location won't get saved into GEO my WP database when the user ID is missing ( mainly when the user is logged out ).
+Fix: distance value is not generated properly in the dynamic field.
+Fix: geocode the default address value in the address field only when the form first loads.
+Fix: missing locator button label option.
+Fix: set a default value for $markers to prevent static map errors.
+Fix: wrong field key is generated when updating a post.
+Fix: wrong geocoder_id passes when the form first loads and looking for default coordinates.
+Fix: alert error message in the Form Editor page when a map does not have default coordinates.
+Fix: Geocoder field label disappeared from the Form Editor page.
+Tweak: visually enhance the geolocation fields options.
+Tweak: Don’t retrieve the place name if already exists.
+Tweak: allow dynamically triggering a value in the address field when the form first loads.
+Tweak: remove license key input box from plugin’s page. It now lives on the settings page.
+Tweak: do not enqueue scripts and styles via the class-gfgeo-render-form.php file. We now do it using the Gravity Forms enqueue_scripts() function instead.
+Tweak: check if updating an entry when using gravity View plugin.
+Tweak: include the GFGEO_Helper file earlier.
+Tweak: execute form submission function when updating an entry from the Edit Entry page of Gravity Forms.
+Tweak: remove google-maps as a dependency for when enqueuing the main javascript file of the plugin. That is in case that Google Maps is disabled on the settings page, we still want to load the main JS file.
+Tweak: when the "Disable Google API" checkbox is enabled, disable the script only in the front-end but keep it enabled in the back-end.
+Tweak: make sure we are not on the Edit Entry page when disabling the draggable marker and setting the widget and height. This should happen on the form builder page only.
+Tweak: add default value field option to address field and geocode the default address when available on page load.
+Tweak: remove used code.
+Tweak: no need to remove the label from the geocoder field on page load. It will be hidden instead.
+Filter: 'gfgeo_disable_script_init' to prevent the plugin from initialing the main JS function when the form first loads. That is in case that it is needed to be initialized manually using a function.
+Filter: 'gfgeo_geocode_default_location' to enable/disable the geocoding of an existing location, as the default location, when editing an entry.
+delete unused files.
+Various bug fixes.
+various code improvements.
+
+### 2.7.0.1 | 2020-08-18
+Fix: conflict with WordPress 5.5.
+
+### 2.7 | 2019-11-15
+New: Directions Panel form field to display the directions between 2 locations.
+New: display direction route on the Google Map field.
+Fix: issue where the geolocation field\'s data is not being updated when editing an entry via the Gravity View plugin.
+Tweak: Compatibility with the Gravity Forms Post Creation add-on.
+Enhancement: the coordinates of a location are now saved in the Google map\'s field in the form entry directly, instead of saving it in the geocoder field only. The coordinates are saved as a serialized array.
+Translation: update Polish translation files.
+
+### 2.6.1 | 2019-08-15
+Fix: improve styling to make sure that the geocoder field is completely hidden in the front-end and does not generate empty space.
+Improvement: better register and enqueue the JS and CSS files of the plugin to prevent conflict with other plugins.
+Filter: new argument ‘hide_error_messages’ added to the ‘gfgeo_render_form_options’ filter to allow disabling/enabling the geocoder and locator error message.
+
+### 2.6 | 2019-08-04
+New: driving distance and duration calculation between 2 geocoders. You can find the new \"Distance\" options in the geocoder field.
+New: dynamic field values: distance ( text ), distance ( value ), duration ( text ), and duration ( value in seconds ).
+Filter: new filter \'gfgeo_enable_page_locator_on_update_forms\' to enable page auto-locator on update forms ( post and user ).
+Tweak: use \'gform_enqueue_scripts\' instead of \'wp_enqueue_scripts\' to properly register scripts and styles.
+Improve: styling of the geolocation field options in the form editor.
+Fix: use prop( \'selected\' ) instead of attr( \'selected\' ) to prevent issues with select fields.
+Fix: prevent form submission when enter key pressed when in the address field.
+Filter: \'gfgeo_render_form_options\' to modify the form options before it is loaded.
+
+### 2.5.5 | 2019-04-30
+Fix: save the original address entered by the user in the address field of Gravity Forms in the \'address\' value of the Geocoder field.
+Fix: Address field values are not being saved in BP xProfile fields.
+Fix: issue when excluding multiple countries from address autocomplete.
+Tweak: update license updater class.
+Tweak: Exclude location button from jQuery lazy load.
+
+### 2.5.4 | 2019-02-17
+New: filter to disable Chrome\'s browser autocomplete on the address field.
+Fix: remove GF\'s deprecated function get_conditional_logic_event();
+Fix: issue with Gravity View integration.
+Tweak: no need to check if GEO my WP is activated when verifying the license key.
+Tweak: update updater files.
+Tweak: remove unnecessary code related to GEO my WP.
+Enhancement: update location automatically when the mouse leaves the wrapper element of the advanced address field.
+
+### 2.5.3.1 | 2018-12-17
+Fix: license key box doesn\'t show in the plugin\'s page.
+
+### 2.5.3 | 2018-12-13
+Compatibility: compatible with Gravity Forms 2.4+
+Fix: issues with the Geocoder and Coordinates fields when using Gravity Forms 2.4+.
+Fix: GEO my WP location is not deleted when form submitted without a location.
+Fix: trim white spaces from API key, language code, and country code values.
+Fix: misspelled \'place_id\' prevented the place name value from generating in a dynamic field.
+Tweak: improve the get_value_merge_tag() method. Sanitize and improve the formatting of the field\'s value.
+Function: add get_value_export(); method to the geocoder and coordinates fields for better formatting of the field value when exporting entries to CSV.
+Enhancement: coding standards & Gravity Forms Add-on structure standards.
+Security: various sanitization and escaping.
+Language: Polish translation ( Thanks to Dariusz Zielonka ).
+Various bugs fix.
+
+### 2.5.2.1 | 2018-10-03
+Fix: missing GFGEO_Form_Submission::gmw_delete_user_location() method.
+
+### 2.5.2 | 2018-10-02
+Fix: trigger ‘change’ event missing from some dynamic fields.
+Fix: issue with email template tags and Gravity Views plugin.
+New: new javascript hooks.
+New: New street ( street name + street number ) dynamic fields.
+Tweak: remove the verification system for coordinates geocoding. It is now not required to have an address returned when geocoding coordinates. So the map marker can be placed in the middle of the ocean or other points that do not return an address and use the coordinates only without showing an error message.
+Tweak: add a checkbox in the advanced address field to disable geocoding so it can be used as a dynamic fields only.
+Tweak: add the class option to the Geocoder field options.
+
+### 2.5.1 | 2018-05-02
+Fix: use post author instead of logged in user ID as user ID when saving post location into GEO my WP database.
+Fix: duplicate license key input box in plugins page when GEO my WP is installed.
+Tweak: use $this->is_form_editor() instead of IS_ADMIN in geocoder file.
+Tweak: Include files once.
+Tweak: load class-gfgeo-render-form.php file on both front and back-end to support integration with other plugins.
+Enhancement: rename files and classes to better meet coding standards.
+
+### 2.5.0.1 | 2018-02-06
+Fix: user and post location do not updated properly in GEO my WP locations database table.
+
+### 2.5 | 2018-01-25
+Compatibility with GEO my WP 3.0 when updating post and user location.
+Tweak: show license key input box in plugins page even when GEO my WP 3.0 installed.
+Tweak: allow saving geocoder location to a user in GEO my WP, even if not registering or updating user information. The location will be saved to the user who is submitting the form.
+
+### 2.4.3 | 2018-01-18
+New: New checkbox to hide the locator failed message ( show in developer console instead of popup alert ).
+Fix: load page locator only on the page where the geocoder field is. Fix: When first loads, check if form is loaded from \"saved and continue\" to load saved data instead of geocoding it.
+Tweak: if city value ( locality, political ) is not found when geocoding an address, look for \'postal_town\' instead.
+Tweak: Trigger country dropdown in advanced address field using country code in addition to country name. - This will fix an issue when the countries are being translated.
+New filter allows to modify the static map on both email notifications and entry page. New: map styles option added to the map field.
+New JS filter ( gfgeo_form_object ) allows to modify the GF_Geo object when form first loads ( on ajax powered form only at the moment ).
+
+### 2.4.2 | 2017-7-10
+Fix: GF_Field::get_value_entry_list() method does not fire properly when viewing entry list page.
+Update: Load extension using gform_loaded instead of plugins loaded.
+Update: use GFAddOn::register( \'Gravity_Forms_Geolocation\' ); to initiate the extension.
+Update coordinates field to use the new map_link function.
+Update Address and Geocoder fields to use the new map_link() function.
+Update language files.
+Update: updater version tag.
+New function: get_map_link() function to generate a Google Maps link.
+New: coordinates field option to enable/disable map link in notification emails and confirmation page.
+New: Display map link for coordinates field in entry page.
+
+### 2.4.1 | 2017-06-05
+Fix: coordinates field merge tags not properly generated when passing value via query string.
+Fix: geocoder field merge tags not properly generated when passing value via query string.
+Fix: when updating post, geocoder data returned as comma separated array instead of serialized array. We now pull the data directly from the custom field.
+Fix: when updating form pass data from user meta or custom field to default coords to automatically generated the saved location.
+Fix: variable check if page load or if updating form and pass it into $form and JS.
+Fix: issues when geocoding default location on page load and when updating form.
+Fix: geocoder data not being saved properly in custom field and user meta. Changed unserialize to serialize.
+Fix: remove the geocoder field label to make sure it does not appear in the front-end.
+New: added support for ipinfo.io IP address geocoder.
+New: option and token input field for ipinfo.io in Settings page.
+
+### 2.4 | 2017-03-07
+New: IP address locator using MaxMind API. Use this feature to get the user\'s current location based on IP address. It can be used instead of the browser\'s locator or as a fall-back in case that the browser\'s locator fails to retrieve the location. The feature can be enabled in the Geolocation settings page. Note that this is a beta feature and might cause issue.
+New: field option that disables the Google Map link for the address field output.
+New: field option to save the coordinates custom field as a serialized array or as comma separated.
+New: merge tags to display the latitude and longitude as separated values in confirmation pages and email notifications.
+New: field option that disables the Google Map link for the geocoder field output. - New: merge tags to display each of the geocoder fields as separated values in confirmation pages and email notifications.
+New: high accuracy mode for the browser\'s geolocator ( checkbox to enable/disable this feature added to the Settings page ).
+Updated: license updater system was updated to improve performance and to fix issues with license activation/deactivation.
+Fix: License key input box shows twice when GEO my WP plugin is activated.
+Fix: impossible to activate/deactivate the license key without checking the plugin\'s checkbox.
+Fix: Geocoder field label shows in the front-end in some cases.
+
+### 2.3 | 2016-10-22
+New API key settings to set the default country, default language and an option to disable the API key. That is in case that other plugins already register Google API key.
+Allow to move the map marker with a mouse click instead of dragging.
+Strict map to output coordinates only, without changing the address fields.
+New output address fields added “subpremise” and “place name”.
+Fix: Conflict with Google Map field when set to “admin only” in the field settings.
+
+### 2.2.1 | 2016-09-13
+Fix: added missing \"GEO my WP User Integration\" checkbox to the geocoder field.
+Update language files.
+
+
+### 2.2 | 2016-08-28
+Fix: premise field won’t populate value.
+Fix: readonly fields will become readable after geocoding takes place.
+Tweak: new filters added to JavaScript.
+Tweak: allow for default coordinates to pass between forms into the Geocoder field.
+Tweak: add \"Pre-populate\" option to geocoder field options. geocoder field.
+
+### 2.1.1 | 2016-07-04
+Fix: Map is not showing properly in email notifications.
+
+### 2.1 | 2016-07-04
+New: add a Google Maps API input box. New text input box added to the Gravity Forms Settings page under a new “Geolocation” tab. Since June 22nd Google requires an API key in order to use it Google Maps features. If you haven’t done so already, you will need to create an API key and enter it in the new input box.
+Fix: issue with map marker draggable feature. a map marker which the draggable feature is set to false, will now stay draggable even after setting a new location via address field, locator button or coordinates.
+Fix: Remove PHP warnings related to newer PHP versions.
+Hook: New filters. Allow to modify the map settings of the map displayed in the form entries and email notifications.
+
+### 2.0 | 2016-05-29
+This is a major update. Please read this post before updating your plugin.
+
+### 1.5 | 2014-05-29
+New: Address Field as Text field type. Can be used instead of Custom Post field type to prevent the creation of unnecessary posts when submitting a form.
+Improved: automatic updates systme.
+Fix: Users location not being saved when using User Registration add-on with manual user activation.
+
+### 1.4 | 2014-03-27
+New improved code
+Compatibility with GEO my WP 2.4
+Auto-locate user on form load
+Auto-locator button to get the user\'s current location on click
+Improved Autocomplete field using Google Places
+Restrict autocomplete result to a certain country
+Trigger Autocomplete on any text field ( Post Fields only )
+Add map when using single or multiple address fields
+Choose Map type
+Set zoom level for the map
+Many bug fix
+
+1.3
+Major Update - the plugin now works as a stand alone
+Plugin button.
+Ability to have autocomplete on more than one field
+Save autocomplete value in custom field other than _wppl_address
+1.0.1: Fix language files
+1.0 : Initial release.

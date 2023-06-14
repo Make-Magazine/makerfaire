@@ -22,6 +22,19 @@ class GFGEO_GMW_Map_Icons_Field extends GF_Field {
 	public $type = 'gfgeo_gmw_map_icons';
 
 	/**
+	 * Returns the field's form editor icon.
+	 *
+	 * This could be an icon url or a gform-icon class.
+	 *
+	 * @since 2.5
+	 *
+	 * @return string
+	 */
+	public function get_form_editor_field_icon() {
+		return 'gform-icon--place';
+	}
+
+	/**
 	 * Field Title.
 	 *
 	 * @return [type] [description]

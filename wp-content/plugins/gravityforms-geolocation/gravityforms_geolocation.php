@@ -3,16 +3,17 @@
  * Plugin Name: Gravity Forms Geolocation Add-on
  * Plugin URI: http://www.geomywp.com
  * Description: Enhance Gravity Forms plugin with geolocation features
- * Version: 2.7.0.1
+ * Version: 3.1.4
  * Author: Eyal Fitoussi
  * Author URI: http://www.geomywp.com
  * Requires at least: 4.0
- * Tested up to: 5.0
- * Gravity Forms: 2.0+
- * Gravity Forms User Registration: 3.0+
- * GEO my WP: 2.6.1+
+ * Requires PHP: 5.6
+ * Tested up to: 6.0
+ * Gravity Forms: 2.5+
  * Text Domain: gfgeo
  * Domain Path: /languages/
+ *
+ * Copyright: 2022 Gravity Geolocation
  *
  * @package gravityforms-geolocation
  */
@@ -21,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'GFGEO_VERSION', '2.7.0.1' );
+define( 'GFGEO_VERSION', '3.1.4' );
 
 add_action( 'gform_loaded', array( 'GF_Geolocation_AddOn_Bootstrap', 'load' ), 8 );
 

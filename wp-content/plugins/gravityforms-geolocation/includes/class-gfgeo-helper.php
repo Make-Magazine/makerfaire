@@ -17,6 +17,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class GFGEO_Helper {
 
 	/**
+	 * [__construct description]
+	 */
+	public function __construct() {
+
+		// Modify fields settings if needed.
+		add_filter( 'gfgeo_field_settings_args', array( $this, 'modify_field_settings' ) );
+		add_action( 'gfgeo_update_option_prefix', array( $this, 'update_prefix' ), 10 );
+	}
+
+	/**
 	 * Get location fields array.
 	 *
 	 * @return [type] [description]
@@ -24,33 +34,86 @@ class GFGEO_Helper {
 	public static function get_location_fields() {
 
 		return array(
-			''                  => __( 'N/A', 'gfgeo' ),
-			'status'            => '',
-			'place_name'        => __( 'Place Name', 'gfgeo' ),
-			'street_number'     => __( 'Street Number', 'gfgeo' ),
-			'street_name'       => __( 'Street Name', 'gfgeo' ),
-			'street'            => __( 'Street ( number + name )', 'gfgeo' ),
-			'street_bw'         => __( 'Street ( name + number )', 'gfgeo' ),
-			'premise'           => __( 'Premise', 'gfgeo' ),
-			'subpremise'        => __( 'Subpremise', 'gfgeo' ),
-			'neighborhood'      => __( 'Neighborhood', 'gfgeo' ),
-			'city'              => __( 'City', 'gfgeo' ),
-			'county'            => __( 'County', 'gfgeo' ),
-			'region_code'       => __( 'Region Code ( state code )', 'gfgeo' ),
-			'region_name'       => __( 'Region Name ( state name )', 'gfgeo' ),
-			'postcode'          => __( 'Postcode / Zipcode', 'gfgeo' ),
-			'country_code'      => __( 'Country Code', 'gfgeo' ),
-			'country_name'      => __( 'Country Name', 'gfgeo' ),
-			'address'           => __( 'Address', 'gfgeo' ),
-			'formatted_address' => __( 'Formatted Address', 'gfgeo' ),
-			'latitude'          => __( 'Latitude', 'gfgeo' ),
-			'longitude'         => __( 'Longitude', 'gfgeo' ),
-			'distance_text'     => __( 'Distance ( text )', 'gfgeo' ),
-			'distance_value'    => __( 'Distance ( value )', 'gfgeo' ),
-			'duration_text'     => __( 'Duration ( text )', 'gfgeo' ),
-			'duration_value'    => __( 'Duration ( value in seconds )', 'gfgeo' ),
+			''                   => __( 'Disabled', 'gfgeo' ),
+			'status'             => '',
+			'place_name'         => __( 'Place Name', 'gfgeo' ),
+			'street_number'      => __( 'Street Number', 'gfgeo' ),
+			'street_name'        => __( 'Street Name', 'gfgeo' ),
+			'street'             => __( 'Street ( number + name )', 'gfgeo' ),
+			'street_bw'          => __( 'Street ( name + number )', 'gfgeo' ),
+			'premise'            => __( 'Premise', 'gfgeo' ),
+			'subpremise'         => __( 'Subpremise', 'gfgeo' ),
+			'neighborhood'       => __( 'Neighborhood', 'gfgeo' ),
+			'city'               => __( 'City', 'gfgeo' ),
+			'county'             => __( 'County', 'gfgeo' ),
+			'region_code'        => __( 'Region Code ( state code )', 'gfgeo' ),
+			'region_name'        => __( 'Region Name ( state name )', 'gfgeo' ),
+			'postcode'           => __( 'Postcode / Zipcode', 'gfgeo' ),
+			'country_code'       => __( 'Country Code', 'gfgeo' ),
+			'country_name'       => __( 'Country Name', 'gfgeo' ),
+			'address'            => __( 'Address', 'gfgeo' ),
+			'formatted_address'  => __( 'Formatted Address', 'gfgeo' ),
+			'latitude'           => __( 'Latitude', 'gfgeo' ),
+			'longitude'          => __( 'Longitude', 'gfgeo' ),
+			'distance_text'      => __( 'Distance ( text )', 'gfgeo' ),
+			'distance_value'     => __( 'Distance ( value )', 'gfgeo' ),
+			'distance_in_meters' => __( 'Distance ( value in meters )', 'gfgeo' ),
+			'duration_text'      => __( 'Duration ( text )', 'gfgeo' ),
+			'duration_value'     => __( 'Duration ( value in seconds )', 'gfgeo' ),
 		);
 	}
+
+	/**
+	 * Get location fields array.
+	 *
+	 * @return [type] [description]
+	 */
+	public static function get_dynamic_directions_fields() {
+
+		return array(
+			''                   => __( 'disabled', 'gfgeo' ),
+			'distance_text'      => __( 'Distance ( text )', 'gfgeo' ),
+			'distance_value'     => __( 'Distance ( value )', 'gfgeo' ),
+			'distance_in_meters' => __( 'Distance ( value in meters )', 'gfgeo' ),
+			'duration_text'      => __( 'Duration ( text )', 'gfgeo' ),
+			'duration_value'     => __( 'Duration ( value in seconds )', 'gfgeo' ),
+		);
+	}
+
+	/**
+	 * Register Google Maps API
+	 */
+	public static function get_google_maps_url() {
+
+		wp_deregister_script( 'google-maps' );
+
+		// Build Google API url. Elements can be modified via filters.
+		return apply_filters(
+			'gfgeo_google_maps_api_url',
+			array(
+				'protocol' => is_ssl() ? 'https' : 'http',
+				'url_base' => '://maps.googleapis.com/maps/api/js?',
+				'url_data' => http_build_query(
+					apply_filters(
+						'gfgeo_google_maps_api_args',
+						array(
+							'libraries' => 'places',
+							'region'    => trim( GFGEO_GOOGLE_MAPS_COUNTRY ),
+							'language'  => trim( GFGEO_GOOGLE_MAPS_LANGUAGE ),
+							'key'       => trim( GFGEO_GOOGLE_MAPS_API ),
+						)
+					)
+				),
+			)
+		);
+	}
+
+	/**
+	 * Lk_status.
+	 *
+	 * @var [type]
+	 */
+	public static $lk_status = false;
 
 	/**
 	 * Check if user update form.
@@ -82,6 +145,8 @@ class GFGEO_Helper {
 
 	/**
 	 * Get user location from GEO my WP database.
+	 *
+	 * Not being used anymore?
 	 *
 	 * @param  integer $post_id [description].
 	 *
@@ -127,6 +192,8 @@ class GFGEO_Helper {
 	/**
 	 * Get user location from GEO my WP database.
 	 *
+	 * Not being used anymore?
+	 *
 	 * @param  integer $user_id [description].
 	 *
 	 * @return [type]           [description]
@@ -169,7 +236,7 @@ class GFGEO_Helper {
 	}
 
 	/**
-	 * Generate map link.
+	 * Generate link to Google Maps showing the address.
 	 *
 	 * @param  [type] $data [description].
 	 *
@@ -182,31 +249,19 @@ class GFGEO_Helper {
 		}
 
 		$map_link = array();
+		$location = is_array( $data ) ? $data['latitude'] . ',' . $data['longitude'] : str_replace( ' ', '+', $data );
 
-		// if array it is coordiantes.
-		if ( is_array( $data ) ) {
-
-			$map_link['a']     = '<a style="font-size:13px;text-decoration: underline" class="gfgeo-map-link coordinates" href="' . esc_url( 'http://www.google.com/maps/place/' . $data['latitude'] . ',' . $data['longitude'] ) . '" target="_blank">';
-			$map_link['title'] = __( 'View in Google Maps', 'gfgeo' );
-			$map_link['/a']    = '</a>';
-
-			// otherwise, address if this is string.
-		} else {
-
-			$map_link['a']     = '<a style="font-size:13px;text-decoration: underline" class="gfgeo-map-link address" href="' . esc_url( 'http://www.google.com/maps/place/' . str_replace( ' ', '+', $data ) ) . '" target="_blank">';
-			$map_link['title'] = __( 'View in Google Maps', 'gfgeo' );
-			$map_link['/a']    = '</a>';
-
-		}
+		$map_link['a']     = '<a style="font-size:13px;text-decoration: underline" class="gfgeo-map-link coordinates" href="' . esc_url( 'https://www.google.com/maps/search/?api=1&query=' . $location ) . '" target="_blank">';
+		$map_link['title'] = __( 'View in Google Maps', 'gfgeo' );
+		$map_link['/a']    = '</a>';
 
 		$map_link = apply_filters( 'gfgeo_map_link_output', $map_link, $data );
 
 		return implode( '', $map_link );
 	}
 
-
 	/**
-	 * Display bp profile fields dropdown.
+	 * Output bp profile fields dropdown.
 	 *
 	 * @param  [type] $field [description].
 	 */
@@ -222,13 +277,14 @@ class GFGEO_Helper {
 
 					<?php $field = esc_attr( $field ); ?>
 
-					<label for="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_xprofile_field ?>"> 
+					<label for="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_xprofile_field ?>" class="section_label"> 
 						<?php esc_html_e( 'BuddyPress Profile Field', 'gfgeo' ); ?>
 					</label> 
 
 					<select 
 						name="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_xprofile_field" 
-						id="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_xprofile_field" 
+						id="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_xprofile_field"
+						style="width: 100%"
 						onchange="SetFieldProperty( 'gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_xprofile_field', jQuery( this ).val() );">
 						<option value="">
 							<?php esc_html_e( 'Disable', 'gfgeo' ); ?>	
@@ -274,36 +330,32 @@ class GFGEO_Helper {
 
 			$field = esc_attr( $field );
 			?>
-			<li>
+			<li class="gfgeo-setting">
 				<label for="gmw-<?php echo esc_attr( $name ); ?>" class="section_label">
 					<?php echo esc_html( $name ); ?>
 				</label> 
 
 				<div class="custom-field-content">
 
-					<label for="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_post_meta"> 
+					<label for="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_post_meta" class="section_label"> 
 						<?php esc_html_e( 'Post Meta ( custom field )', 'gfgeo' ); ?>
 					</label> 
 					<input 
-						style="display: block"
+						style="display: block; width: 100%;margin-bottom:20px"
 						name="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_post_meta"
 						type="text" 
-						size="35" 
 						id="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_post_meta" 
-						class="" 
 						onkeyup="SetFieldProperty( jQuery( this ).attr( 'name' ), this.value );"
 					/>
 
-					<label for="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_user_meta ?>"> 
+					<label for="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_user_meta ?>" class="section_label"> 
 						<?php esc_html_e( 'User Meta', 'gfgeo' ); ?>
 					</label> 
 					<input 
-						style="display: block"
+						style="display: block; width: 100%;margin-bottom:20px"
 						name="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_user_meta"
 						type="text" 
-						size="35" 
 						id="gfgeo_<?php echo $field; // WPCS: XSS ok. ?>_user_meta" 
-						class="" 
 						onkeyup="SetFieldProperty( jQuery( this ).attr( 'name' ), this.value );"
 					/>
 					<!-- BuddyPress profile fields -->
@@ -320,6 +372,221 @@ class GFGEO_Helper {
 	}
 
 	/**
+	 * Generate Google static map.
+	 *
+	 * @param  [type] $value       [description].
+	 *
+	 * @param  [type] $map_field   [description].
+	 *
+	 * @param  [type] $has_markers [description].
+	 *
+	 * @param  [type] $where       [description].
+	 *
+	 * @return [type]              [description]
+	 */
+	public static function generate_static_map( $value, $map_field, $has_markers, $where ) {
+
+		$map_values = maybe_unserialize( $value );
+
+		// Zoom level.
+		if ( ! empty( $value['zoom_level'] ) ) {
+
+			$zoom_level = $value['zoom_level'];
+
+		} else {
+
+			$zoom_level = ! empty( $map_field->gfgeo_zoom_level ) ? $map_field->gfgeo_zoom_level : '7';
+		}
+
+		// Map type.
+		if ( ! empty( $value['map_type'] ) ) {
+
+			$map_type = $value['map_type'];
+
+		} else {
+			$map_type = ! empty( $map_field->gfgeo_map_type ) ? $map_field->gfgeo_map_type : 'ROADMAP';
+		}
+
+		// Map center.
+		if ( isset( $value['map_center'] ) ) {
+
+			$map_center = $value['map_center'];
+
+		} else {
+
+			$map_center = array(
+				'lat' => ! empty( $map_field->gfgeo_map_default_latitude ) ? $map_field->gfgeo_map_default_latitude : '40.7827096',
+				'lng' => ! empty( $map_field->gfgeo_map_default_longitude ) ? $map_field->gfgeo_map_default_longitude : '-73.965309',
+			);
+		}
+
+		$markers = '';
+
+		if ( $has_markers ) {
+
+			$markers           = 'icon:' . $map_values['markers'][0]['marker_url'] . '|' . $map_values['markers'][0]['lat'] . ',' . $map_values['markers'][0]['lng'];
+			$count             = 0;
+			$map_center['lat'] = $map_values['markers'][0]['lat'];
+			$map_center['lng'] = $map_values['markers'][0]['lng'];
+
+			if ( 1 < count( $map_values['markers'] ) ) {
+
+				foreach ( $map_values['markers'] as $marker ) {
+
+					$count++;
+
+					if ( $count > 1 ) {
+						$markers .= '&markers=icon:' . $marker['marker_url'] . '| ' . $marker['lat'] . ',' . $marker['lng'];
+					}
+				}
+
+				$zoom_level = '';
+			}
+		}
+
+		$url_args = array(
+			'center'  => $map_center['lat'] . ',' . $map_center['lng'],
+			'markers' => $markers,
+			'size'    => '500x300',
+			'zoom'    => $zoom_level,
+			'maptype' => strtolower( $map_type ),
+			'key'     => GFGEO_GOOGLE_MAPS_API,
+		);
+
+		// build the map query. Map settings can be modified via the filters below.
+		$map_args = apply_filters(
+			'gfgeo_google_map_field_map_settings',
+			array(
+				'protocol' => is_ssl() ? 'https' : 'http',
+				'url_base' => '://maps.googleapis.com/maps/api/staticmap?',
+				'url_data' => urldecode(
+					http_build_query(
+						apply_filters(
+							'gfgeo_google_map_field_map_settings_args',
+							$url_args,
+							$where
+						),
+						'',
+						'&amp;'
+					)
+				),
+			),
+			$where
+		);
+
+		return '<div class="gfgeo-static-map-warpper"><img src="' . esc_url( implode( '', $map_args ) ) . '" /></div>';
+	}
+
+	/**
+	 * Set plugin's prefix in database so we could easily retrieve it when needed.
+	 *
+	 * @param string $prefix prefix.
+	 */
+	public function update_prefix( $prefix ) {
+		update_option( 'gfgeo_prefix', $prefix );
+	}
+
+	/**
+	 * Get directions details.
+	 *
+	 * @param  [type] $value [description].
+	 *
+	 * @return [type]        [description]
+	 */
+	public static function get_directions_details_output( $value ) {
+
+		// unserialize data.
+		$value = maybe_unserialize( $value );
+
+		if ( ! is_array( $value ) ) {
+			return __( 'Data is not available', 'gfgeo' );
+		}
+
+		$count   = 1;
+		$output  = '';
+		$output .= '<div class="gfgeo-directions-details-wrapper">';
+		$output .= '<div class="gfgeo-directions-details-total-distance"><strong>' . __( 'Total Distance:', 'gfgeo' ) . '</strong> ' . $value['complete']['distance']['text'] . '</div>';
+
+		if ( ! empty( $value['complete']['duration']['text'] ) ) {
+			$output .= '<div class="gfgeo-directions-details-total-duration"><strong>' . __( 'Total Duration:', 'gfgeo' ) . '</strong> ' . $value['complete']['duration']['text'] . '</div>';
+		}
+
+		$output .= '<span class="gfgeo-directions-details-trigger" onClick=\'jQuery( this ).closest( ".gfgeo-directions-details-wrapper" ).find( ".gfgeo-directions-details-inner" ).slideToggle();\'>Show legs details</span>';
+		$output .= '<div class="gfgeo-directions-details-inner" >';
+
+		foreach ( $value['legs'] as $leg ) {
+
+			$output .= '<ul class="gfgeo-directions-details-leg-wrapper">';
+			$output .= '<li class="gfgeo-directions-details-label">Leg ' . $count . '</li>';
+			$output .= '<li class="gfgeo-directions-details-label">Origin ( Geocoder ' . explode( '_', $leg['geocoders'][0], 2 )[1] . ' )</li>';
+			$output .= '<li class="gfgeo-directions-details-content">' . $leg['addresses'][0] . '</li>';
+			$output .= '<li class="gfgeo-directions-details-label">Destination ( Geocoder ' . explode( '_', $leg['geocoders'][1], 2 )[1] . ' )</li>';
+			$output .= '<li class="gfgeo-directions-details-content">' . $leg['addresses'][1] . '</li>';
+			$output .= '<li class="gfgeo-directions-details-label">' . __( 'Distance', 'gfgeo' ) . '</li>';
+			$output .= '<li class="gfgeo-directions-details-content"><span>' . $leg['distance']['text'] . '</span></li>';
+
+			if ( ! empty( $leg['duration']['text'] ) ) {
+				$output .= '<li class="gfgeo-directions-details-label">' . __( 'Duration', 'gfgeo' ) . '</li>';
+				$output .= '<li class="gfgeo-directions-details-content"><span>' . $leg['duration']['text'] . '</span></li>';
+			}
+
+			$output .= '</ul>';
+
+			$count++;
+		}
+
+		$output .= '</div>';
+		$output .= self::get_directions_link( $value );
+		$output .= '</div>';
+
+		return $output;
+	}
+
+	/**
+	 * Generate link to Google Maps showing the directions.
+	 *
+	 * @param  [type] $value [description].
+	 *
+	 * @return [type]        [description].
+	 */
+	public static function get_directions_link( $value ) {
+
+		$value = maybe_unserialize( $value );
+
+		if ( empty( $value ) || ! is_array( $value ) ) {
+			return __( 'Directions are not available', 'gfgeo' );
+		}
+
+		$waypoints = array();
+		$wp_link   = '';
+
+		if ( ! empty( $value['waypoints'] ) ) {
+
+			// Remove last waypoint which is the destination location.
+			array_pop( $value['waypoints'] );
+
+			foreach ( $value['waypoints'] as $wp ) {
+				$waypoints[] = implode( ',', $wp );
+			}
+
+			$wp_link = '&waypoints=' . implode( '|', $waypoints );
+		}
+
+		$link = 'https://www.google.com/maps/dir/?api=1&origin=' . implode( ',', $value['origin'] ) . $wp_link . '&destination=' . implode( ',', $value['destination'] );
+
+		return '<div class="gfgeo-get-directions-link-wrapper"><a href="' . esc_url( $link ) . '" target="_blank">' . esc_html__( 'View Directions on Google Maps', 'gfgeo' ) . '</a></div>';
+	}
+
+	/**
+	 * Modify fields settings only if needed.
+	 *
+	 * @return [type]           [description]
+	 */
+	public function modify_field_settings() {
+		return array();
+	}
+
+	/**
 	 * Get locator button.
 	 *
 	 * @param  integer $form_id the form ID.
@@ -332,32 +599,32 @@ class GFGEO_Helper {
 	 */
 	public static function get_locator_button( $form_id, $field, $type = 'button' ) {
 
-		// make sure field is array.
-		$field          = (array) $field;
-		$field_id       = esc_attr( $form_id . '_' . $field['id'] );
-		$geocoder_id    = ! empty( $field['gfgeo_geocoder_id'] ) ? esc_attr( $field['formId'] . '_' . $field['gfgeo_geocoder_id'] ) : '';
-		$found_message  = ! empty( $field['gfgeo_location_found_message'] ) ? esc_attr( $field['gfgeo_location_found_message'] ) : '';
-		$failed_message = ! empty( $field['gfgeo_hide_location_failed_message'] ) ? 1 : 0;
-		$button_label   = ! empty( $field['gfgeo_locator_button_label'] ) ? $field['gfgeo_locator_button_label'] : '';
-
+		$form_id      = absint( $form_id );
+		$id           = (int) $field->id;
+		$field_id     = ! empty( $field->gfgeo_id ) ? esc_attr( $field->gfgeo_id ) : esc_attr( $form_id . '_' . $id );
+		$geocoder_id  = ! empty( $field->gfgeo_geocoder_id ) ? esc_attr( $field->gfgeo_geocoder_id ) : esc_attr( $form_id . '_' . $field->gfgeo_geocoder_id );
+		$button_label = ! empty( $field->gfgeo_locator_button_label ) ? $field->gfgeo_locator_button_label : '';
 		$button_label = apply_filters( 'gfgeo_locator_button_label', $button_label, $form_id, $field, $type );
+		$type         = esc_attr( $type );
 
-		$ip_locator = ! empty( $field['gfgeo_ip_locator_status'] ) ? $field['gfgeo_ip_locator_status'] : '';
+		$loader_img = GFGEO_URL . '/assets/images/loader.svg';
+
+		// loader.
+		$loader = "<img src='{$loader_img}' class='gfgeo-locator-loader gfgeo-icon-spinner loader-{$field_id} skip-lazy' style='display:none;box-shadow:none;border-radius:0' width='16' height='auto' />";
 
 		// generate the button element.
-		$output  = '';
-		$output .= '<div id="gfgeo-locator-button-wrapper-' . $field_id . '" class="gfgeo-locator-button-wrapper ' . esc_attr( $type ) . '">';
+		$output = "<div id='gfgeo-locator-button-wrapper-{$field_id}' class='gfgeo-locator-button-wrapper {$type}-locator'>";
 
 		if ( 'infield' === $type ) {
 
-			$output .= '<img id="gfgeo-infield-locator-button-' . $field_id . '" style="box-shadow: none;border-radius:0" src="' . GFGEO_URL . '/assets/images/locator.png" class="gfgeo-locator-button infield-locator skip-lazy" data-geocoder_id="' . $geocoder_id . '" data-locator_id="' . $field_id . '" data-ip_locator="' . $ip_locator . '" data-found_message="' . $found_message . '" data-hide_failed_message="' . $failed_message . '" />';
+			$image_url = GFGEO_URL . '/assets/images/locator.svg';
+
+			$output .= "<img src='{$image_url}' id='gfgeo-infield-locator-button-{$field_id}' class='gfgeo-locator-button infield-locator skip-lazy' data-geocoder_id='{$geocoder_id}' data-field_id='{$field_id}' style='box-shadow: none;border-radius:0'  width='16' height='auto' />";
+			$output .= $loader;
 
 		} else {
-			$output .= '<input type="button" id="gfgeo-locator-button-' . $field_id . '" data-geocoder_id="' . $geocoder_id . '" data-locator_id="' . $field_id . '" data-found_message="' . $found_message . '" class="gfgeo-locator-button" data-ip_locator="' . $ip_locator . '" value="' . $button_label . '" data-hide_failed_message="' . $failed_message . '" />';
+			$output .= "<button id='gfgeo-locator-button-{$field_id}' class='gfgeo-locator-button gfgeo-form-button' data-geocoder_id='{$geocoder_id}' data-field_id='{$field_id}' value='{$button_label}'><span>{$button_label}</span>{$loader}</button>";
 		}
-
-		// loader.
-		$output .= '<img class="gfgeo-locator-loader loader-' . $field_id . ' skip-lazy" style="display:none;box-shadow: none;border-radius:0" src="' . GFGEO_URL . '/assets/images/loader.gif" />';
 
 		$output .= '</div>';
 
@@ -633,3 +900,4 @@ class GFGEO_Helper {
 		return $countries;
 	}
 }
+new GFGEO_Helper();

@@ -25,7 +25,8 @@ class GFGEO_Form_Submission {
 	public function __construct() {
 
 		// If GEO my WP exists.
-		add_action( 'gform_after_submission', array( $this, 'form_submission' ), 10, 5 );
+		add_action( 'gform_after_submission', array( $this, 'form_submission' ), 10, 2 );
+		add_action( 'gform_after_update_entry', array( $this, 'edit_entry_submission' ), 10, 3 );
 
 		// When using Post Creation add-on.
 		add_action( 'gform_advancedpostcreation_post_after_creation', array( $this, 'post_creation' ), 10, 4 );
@@ -57,6 +58,19 @@ class GFGEO_Form_Submission {
 	}
 
 	/**
+	 * Run form submission functions when updating an entry in the "Edit entry" page of Gravity forms.
+	 *
+	 * @param  object $form     form.
+	 *
+	 * @param  int    $entry_id entry ID.
+	 *
+	 * @param  ojbect $entry    entry.
+	 */
+	public function edit_entry_submission( $form, $entry_id, $entry ) {
+		$this->form_submission( $entry, $form );
+	}
+
+	/**
 	 * Execute some functions on form submission.
 	 *
 	 * Save meta fields and saved information to GEO my WP tables
@@ -85,15 +99,15 @@ class GFGEO_Form_Submission {
 
 		unset( $address_fields[0], $address_fields[1] );
 
-		// loop through form fields.
+		// loop through form fields and saved custom fields.
 		foreach ( $form['fields'] as $field ) {
 
 			// Save/delete address custom fields.
 			if ( 'gfgeo_address' === $field['type'] && ! empty( $field['postCustomFieldName'] ) ) {
 
-				$field_value = ! empty( $_POST[ 'input_' . $field['id'] ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'input_' . $field['id'] ] ) ) : ''; // WPCS: CSRF ok.
+				if ( ! empty( $_POST[ 'input_' . $field['id'] ] ) ) {
 
-				if ( ! empty( $field_value ) ) {
+					$field_value = sanitize_text_field( wp_unslash( $_POST[ 'input_' . $field['id'] ] ) );
 
 					update_post_meta( $post_id, $field['postCustomFieldName'], $field_value );
 
@@ -107,7 +121,6 @@ class GFGEO_Form_Submission {
 			if ( 'gfgeo_coordinates' === $field['type'] && ! empty( $field['postCustomFieldName'] ) ) {
 
 				$field_value = ! empty( $_POST[ 'input_' . $field['id'] ] ) ? maybe_unserialize( $_POST[ 'input_' . $field['id'] ] ) : array(); // WPCS: CSRF ok, sanitization ok.
-
 				$field_value = array_map( 'sanitize_text_field', $field_value );
 
 				if ( ! empty( $field_value ) && array_filter( $field_value ) ) {
@@ -128,6 +141,7 @@ class GFGEO_Form_Submission {
 				}
 			}
 
+			// Gravity's address field.
 			if ( 'address' === $field['type'] && ! empty( $field['postCustomFieldName'] ) ) {
 
 				$address_array = array(
@@ -149,24 +163,41 @@ class GFGEO_Form_Submission {
 				}
 			}
 
+			// Save/delete address custom fields.
+			if ( 'gfgeo_directions' === $field['type'] && ! empty( $field['postCustomFieldName'] ) ) {
+
+				if ( ! empty( $_POST[ 'input_' . $field['id'] ] ) ) {
+
+					// Sanitize value.
+					$field_value = sanitize_text_field( $_POST[ 'input_' . $field['id'] ] );
+
+					// This should be a JSON encoded array value.
+					$field_value = json_decode( stripslashes( $field_value ), true );
+
+					update_post_meta( $post_id, $field['postCustomFieldName'], maybe_serialize( $field_value ) );
+
+				} else {
+
+					delete_post_meta( $post_id, $field['postCustomFieldName'] );
+				}
+			}
+
 			// look for geocoder field.
 			if ( 'gfgeo_geocoder' === $field['type'] ) {
 
 				$field_value = ! empty( $_POST[ 'input_' . $field['id'] ] ) ? maybe_unserialize( $_POST[ 'input_' . $field['id'] ] ) : array(); // WPCS: CSRF ok, sanitization ok, XSS ok.
-
 				$field_value = array_map( 'sanitize_text_field', $field_value );
 
 				// verify geocoded data.
-				if ( empty( $field_value ) || empty( $field_value['status'] ) ) {
-
-					$geocoded_ok = false;
-
-				} else {
+				if ( ! empty( $field_value['status'] ) ) {
 
 					$geocoded_ok = true;
 
 					// get geocoded data.
 					$geocoded_data = $field_value;
+
+				} else {
+					$geocoded_ok = false;
 				}
 
 				// save complete geocoded data as serialized array in custom field if needed.
@@ -335,10 +366,19 @@ class GFGEO_Form_Submission {
 
 		} elseif ( class_exists( 'GMW_Location' ) ) {
 
+			if ( ! empty( $form['postAuthor'] ) ) {
+
+				$user_id = $form['postAuthor'];
+
+			} elseif ( function_exists( 'get_current_user_id' ) ) {
+
+				$user_id = get_current_user_id();
+			}
+
 			$location_args = array(
 				'object_type'       => 'post',
 				'object_id'         => (int) $post_id,
-				'user_id'           => $form['postAuthor'],
+				'user_id'           => ! empty( $user_id ) ? absint( $user_id ) : 1,
 				'parent'            => 0,
 				'status'            => 1,
 				'featured'          => 0,
@@ -550,15 +590,32 @@ class GFGEO_Form_Submission {
 
 		} elseif ( class_exists( 'GMW_Location' ) ) {
 
-			$user_data = get_userdata( $user_id );
+			$user_data     = get_userdata( $user_id );
+			$location_id   = 0;
+			$location_type = 0;
+
+			if ( ! empty( $field['gfgeo_gmw_user_location_usage'] ) && 'location_type' === $field['gfgeo_gmw_user_location_usage'] && ! empty( $field['gfgeo_gmw_user_location_type'] ) ) {
+
+				$location_type  = absint( $field['gfgeo_gmw_user_location_type'] );
+				$user_locations = gmw_get_user_locations( $user_id );
+
+				foreach ( $user_locations as $user_location ) {
+
+					if ( ! empty( $user_location->location_type ) && absint( $user_location->location_type ) === $location_type ) {
+						$location_id = $user_location->ID;
+					}
+				}
+			}
 
 			$location_args = array(
+				'ID'                => $location_id,
 				'object_type'       => 'user',
 				'object_id'         => (int) $user_id,
 				'user_id'           => (int) $user_id,
 				'parent'            => 0,
 				'status'            => 1,
 				'featured'          => 0,
+				'location_type'     => $location_type,
 				'title'             => $user_data->display_name,
 				'latitude'          => $geocoded_data['latitude'],
 				'longitude'         => $geocoded_data['longitude'],
@@ -583,6 +640,7 @@ class GFGEO_Form_Submission {
 			// save location.
 			$location_id = GMW_Location::update( $location_args );
 
+			//$location_id = gmw_insert_location( $location_args );
 		} else {
 			return;
 		}
