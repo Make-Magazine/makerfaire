@@ -8,83 +8,112 @@
 // make sure GV_MAPS exists
 window.GV_MAPS = window.GV_MAPS || {};
 
-(function($){
+function gm_authFailure() {
+	gvMapsDisplayErrorNotice( window.GV_MAPS.google_maps_api_error );
+}
 
-	"use strict";
+/**
+ * Inserts an error message before each map
+ *
+ * @param {string} error_text The API error message to display.
+ *
+ * @since 1.7
+ *
+ * @return {void}
+ */
+function gvMapsDisplayErrorNotice( error_text ) {
+	var notice;
+
+	if ( window.GV_MAPS.display_errors ) {
+		notice = jQuery( '<div/>', {
+			text: error_text,
+			'class': 'gv-notice gv-error error'
+		} );
+	} else {
+		notice = jQuery( document.createComment( error_text ) );
+	}
+
+	jQuery( '.gv-map-canvas' ).hide().each( function () {
+		notice.insertBefore( jQuery( this ) );
+	} );
+}
+
+( function ( $ ) {
+
+	'use strict';
 
 	/**
 	 * Passed by wp_localize_script() with some settings
 	 * @type {object}
 	 */
-    var self = $.extend( {
-        'did_scroll': false,
-        'map_offset': 0,
-        "map_sticky_container": null,
-        "map_entries_container_selector": '.gv-map-entries',
-        'markers': [],
-		'maps': [], // Google Map object, set up in `self.setupMaps`
-        'is_single_entry': false,
+	var self = $.extend( {
+		'did_scroll': false,
+		'map_offset': 0,
+		'map_sticky_container': null,
+		'map_entries_container_selector': '.gv-map-entries',
+		'markers': [],
+		'maps': [], // Google Map object, set up in `self.setup_maps`
+		'is_single_entry': false,
 		'infowindow': {
 			'no_empty': true,
-			'max_width': 300
+			'max_width': 300,
 		},
-		'mobile_breakpoint': 600 // # of pixels to be considered mobile
-    }, window.GV_MAPS );
+		'mobile_breakpoint': 600, // # of pixels to be considered mobile
+	}, window.GV_MAPS );
 
-	var bounds = new google.maps.LatLngBounds();
-
-    var infowindow = new google.maps.InfoWindow({
-        content: '',
-        maxWidth: parseInt( self.infowindow.max_width, 10 )
-    });
+	/**
+	 * Attach all the hooks into the Actions and Filters used by the maps system.
+	 *
+	 * @since TBD
+	 */
+	self.hook = () => {
+		self.hooks.addAction( 'gravitykit_maps_after_process_map_markers', 'gravitykit/maps', self.processCluster );
+		self.hooks.addAction( 'gravitykit_maps_after_process_map_markers', 'gravitykit/maps', self.processSpider );
+	};
 
 	/**
 	 * Set up the map functionality
-	 * @return {[type]} [description]
+	 *
+	 * @since ??
 	 */
-	self.init = function() {
+	self.init = () => {
+		const $maps = self.getMaps();
+		if ( ! $maps.length ) {
+			return;
+		}
 
-        var first_map = document.getElementById( self.map_id_prefix + '-0' );
 
-		// Do we really need to process maps?
-        if( null === first_map ) {
-            return;
-        }
+		//check if it is a single entry view
+		self.is_single_entry = $( '.gv-map-single-container' ).length > 0;
 
-        //check if it is a single entry view
-        if( $('.gv-map-single-container').length > 0  ) {
-            self.is_single_entry = true;
-        }
+		self.hooks.doAction( 'gravitykit_maps_beforeInit', self );
 
-        // convert multiple maps to a number
-        self.multiple_maps = parseInt( self.multiple_maps, 10 );
-
-        // make sure map canvas is less than 50% of the window height (default 400px)
-        self.sticky_canvas_prepare();
+		// make sure map canvas is less than 50% of the window height (default 400px)
+		self.sticky_canvas_prepare();
 
 		self.setup_map_options();
-		self.setup_maps();
-		self.markers_process();
+		self.initMaps();
 
-        // mobile behaviour
-        self.mobile_init();
+		// mobile behaviour
+		self.mobile_init();
 
-        self.start_scroll_check();
+		self.start_scroll_check();
 
-        // bind markers animations
-        self.markers_animate_init();
+		// bind markers animations
+		self.markers_animate_init();
+
+		self.hooks.doAction( 'gravitykit_maps_afterInit', self );
 	};
 
 	/**
 	 *
 	 */
-	self.setup_map_options = function () {
+	self.setup_map_options = () => {
 
 		self.MapOptions.zoom = parseInt( self.MapOptions.zoom, 10 );
 		self.MapOptions.mapTypeId = google.maps.MapTypeId[ self.MapOptions.mapTypeId ];
 
-
-		if( self.MapOptions.hasOwnProperty('zoomControl') && true === self.MapOptions.zoomControl && self.MapOptions.zoomControlOptions && self.MapOptions.zoomControlOptions.hasOwnProperty('position') ) {
+		if ( self.MapOptions.hasOwnProperty( 'zoomControl' ) && true === self.MapOptions.zoomControl && self.MapOptions.zoomControlOptions && self.MapOptions.zoomControlOptions.hasOwnProperty( 'position' ) ) {
 
 			/**
 			 * Convert map type setting into google.maps object
@@ -95,396 +124,741 @@ window.GV_MAPS = window.GV_MAPS || {};
 			 * Options include: BOTTOM_CENTER, BOTTOM_LEFT, BOTTOM_RIGHT, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP, TOP_CENTER, TOP_LEFT, TOP_RIGHT
 			 */
 			self.MapOptions.zoomControlOptions = {
-				'position': google.maps.ControlPosition[ self.MapOptions.zoomControlOptions.position ]
+				'position': google.maps.ControlPosition[ self.MapOptions.zoomControlOptions.position ],
 			};
 		}
 	};
 
 	/**
+	 * The storage for the scroll observer, used for loading maps conditionally.
+	 *
+	 * @since TBD
+	 *
+	 * @type {null|IntersectionObserver}
+	 */
+	self.observer = null;
+
+	self.onMapIntersection = ( entries, opts ) => {
+		const $entries = $( entries );
+		entries.forEach( entry => {
+			const map = entry.target;
+			const $map = $( map );
+			const data = $map.data( 'gkMap' );
+
+			entry.target.classList.toggle( 'gk-map-visible', entry.isIntersecting );
+
+			if ( entry.isIntersecting ) {
+				if ( ! $map.hasClass( 'gk-map-generated' ) ) {
+					self.initMap( $entries.index( $map ), map );
+				}
+
+				if ( ! $map.hasClass( 'gk-map-markers-generated' ) ) {
+					self.processMapMarker( map );
+				}
+			}
+		} );
+	};
+
+	/**
 	 * Initiate the map object, stored in map
+	 *
+	 * @since TBD
+	 *
 	 * @return {void}
 	 */
-	self.setup_maps = function() {
-        var m;
+	self.initMaps = ( $container ) => {
+		const $maps = self.getMaps( $container );
 
-		var map_element;
+		self.hooks.doAction( 'gravitykit_maps_init_maps', $maps, $container );
 
-        for( var i = 0; i <= self.multiple_maps; i++ ) {
-
-            map_element = document.getElementById( self.map_id_prefix + '-' + i.toString() );
-
-            if( null === map_element ) {
-                if( console ) {
-                    console.error( 'GravityView map DOM element not found at #' + self.map_id_prefix + '-' + i.toString() + '; map not created.' );
-                }
-                continue;
-            }
-
-	        var trafficLayer = new google.maps.TrafficLayer();
-	        var transitLayer = new google.maps.TransitLayer();
-	        var bicyclingLayer =  new google.maps.BicyclingLayer();
-
-            m = new google.maps.Map( map_element, self.MapOptions );
-
-            if( 1 === self.layers.bicycling ) {
-                bicyclingLayer.setMap( m );
-            }
-            if( 1 === self.layers.transit ) {
-                transitLayer.setMap( m );
-            }
-            if( 1 === self.layers.traffic ) {
-                trafficLayer.setMap( m );
-            }
-
-            self.maps.push( m );
-
-            self.set_zoom( m );
-        }
-
+		$maps.each( ( key, map ) => self.getObserver().observe( map ) );
 	};
 
 	/**
-     * Fixes issue where fitBounds() zooms in too far after adding markers
-     *
-     * @see http://stackoverflow.com/a/4065006/480856
-     * @since 1.3
-     * @param map Google map object
-     */
-    self.set_zoom = function( map ) {
-        google.maps.event.addListenerOnce( map, "idle", function() {
-            if ( map.getZoom() > self.MapOptions.zoom) {
-                map.setZoom( self.MapOptions.zoom );
-            }
-        });
-    };
-
-	/**
-	 * Add markers to the maps
-	 * @return {void}
+	 * Gets the observer stored for this page, if not set it will create a new one.
+	 *
+	 * @since TBD
+	 *
+	 * @returns {IntersectionObserver}
 	 */
-	self.markers_process = function() {
-        for ( var i in self.markers_info ) {
-	        if( self.markers_info.hasOwnProperty( i ) ) {
-		        self.maps.forEach( self.marker_add, self.markers_info[ i ] );
-	        }
-        }
+	self.getObserver = () => {
+		if ( ! self.observer ) {
+			// define an observer instance
+			self.observer = new IntersectionObserver( self.onMapIntersection, {
+				root: null,   // default is the viewport
+				rootMargin: '-50px',
+				threshold: 0.01, // percentage of target's visible area. Triggers "onMapIntersection"
+			} );
+		}
+
+		return self.observer;
 	};
 
-    /**
-     * Add marker to a map
-     *
-     * @param map google.maps.Map object
-     * @param i array index
-     * @param array
-     *
-     * 'this' gets the forEach thisArg (extra argument)
-     *
-     */
-    self.marker_add = function( map, i, array ) {
+	/**
+	 * Initializes a single Map.
+	 *
+	 * @param index
+	 * @param mapEl
+	 */
+	self.initMap = ( index, mapEl ) => {
+		const $map = $( mapEl );
+		let data;
 
-        // For single Entry Maps, filter the markers to match the entry ID
+		// Prevents loading of all maps.
+		if ( ! $map.hasClass( 'gk-map-visible' ) ) {
+			return;
+		}
 
-        // Get the entry ID associated to the current map
-        var entryID = document.getElementById( self.map_id_prefix + '-' + i.toString() ).getAttribute( 'data-entryid' );
+		if ( $map.hasClass( 'gk-map-generated' ) ) {
+			return;
+		}
 
-        // If entry ID is is set and is different then the current marker (entry ID) do not add it to the map
-        if ( entryID && entryID != this.entry_id ) {
-            return;
-        }
+		data = $map.data( 'gkMap' );
 
-        var geo = new google.maps.LatLng( this.lat, this.long),
-            icon = this.icon_url || self.icon;
+		self.hooks.doAction( 'gravitykit_maps_before_init_map', $map );
 
-        var marker = new google.maps.Marker({
-            map: map,
-            icon: icon,
-            url: this.url,
-            position: geo,
-            entryId: this.entry_id,
-            content: this.content
-        });
+		const options = $.extend( {}, self.MapOptions, {
+			_index: index,
+			_entryId: data.entry_id,
+			_element: $map,
+			_bounds: new google.maps.LatLngBounds()
+		} );
 
-        // If there's no entry ID, this is an aggregate map and we want to extend the global bounds
-        if( ! entryID ) {
-            bounds.extend( marker.position );
-            self.maps[ i ].fitBounds( bounds );
-        }
-        // Otherwise, we want to set the bounds for a single-marker map
-        else {
-	        self.maps[ i ].fitBounds( new google.maps.LatLngBounds().extend( marker.position ) );
-        }
+		data.map = new google.maps.Map( mapEl, options );
 
-        self.marker_add_events( marker, map );
+		// Store the Data for the map on a data prop.
+		$map.data( 'gkMap', data );
 
-        self.markers.push( marker );
-    };
+		if ( 1 === self.layers.bicycling ) {
+			const bicyclingLayer = new google.maps.BicyclingLayer();
+			bicyclingLayer.setMap( data.map );
+		}
+		if ( 1 === self.layers.transit ) {
+			const transitLayer = new google.maps.TransitLayer();
+			transitLayer.setMap( data.map );
+		}
+		if ( 1 === self.layers.traffic ) {
+			const trafficLayer = new google.maps.TrafficLayer();
+			trafficLayer.setMap( data.map );
+		}
+
+		self.set_zoom_and_center( data.map, $map );
+
+		$map.addClass( 'gk-map-generated' );
+
+		self.hooks.doAction( 'gravitykit_maps_after_init_map', $map );
+	};
 
 	/**
-	 * Add event listeners to Markers
+	 * Fixes issue where fitBounds() zooms in too far after adding markers
+	 *
+	 * @see http://stackoverflow.com/a/4065006/480856
+	 *
+	 * @since 1.3
+	 * @since 1.7 added centering
+	 *
+	 * @param map Google map object
+	 */
+	self.set_zoom_and_center = ( map, $map ) => {
+		google.maps.event.addListenerOnce( map, 'idle', () => {
+			if (
+				(
+					typeof $map !== 'undefined'
+					&& $map.hasClass( ' gk-multi-entry-map' )
+				)
+				&& map.getZoom() > self.MapOptions.zoom
+			) {
+				map.setZoom( self.MapOptions.zoom );
+			}
+
+			if ( 'undefined' !== typeof self.MapOptions.center && self.MapOptions.center.lat && self.MapOptions.center.lng ) {
+				map.setCenter( self.MapOptions.center );
+			}
+		} );
+	};
+
+	/**
+	 * Process all markers for a given Map.
+	 *
+	 * It will use the DOM element to determine which map we need to process the markers for.
+	 *
+	 * @since TBD
+	 *
+	 * @param {Element} map
+	 */
+	self.processMapMarker = ( map ) => {
+		const $map = $( map );
+		const data = $map.data( 'gkMap' );
+
+		self.hooks.doAction( 'gravitykit_maps_before_process_map_markers', $map, data, self );
+
+		data.markers_data.forEach( ( marker ) => self.addMarker( $map, data, marker ) );
+
+		self.hooks.doAction( 'gravitykit_maps_after_process_map_markers', $map, data, self );
+
+		$map.addClass( 'gk-map-markers-generated' );
+
+		// It's important to have the timout here to avoid race conditions around clustering.
+		setTimeout( () => google.maps.event.trigger( data.map, 'idle' ), 50 );
+	};
+
+
+	/**
+	 * Sets up the Clustering of a given set of maps.
+	 *
+	 * Note: This is not native to Google Maps, it uses a Google Supported API but not native.
+	 *
+	 * @since TBD
+	 *
+	 * @link https://developers.google.com/maps/documentation/javascript/marker-clustering
+	 *
+	 * @param {jQuery} $map
+	 * @param {object} data
+	 */
+	self.processCluster = ( $map, data ) => {
+		$map = $( $map );
+		if ( ! $map.is( '.gk-multi-entry-map' ) ) {
+			return;
+		}
+
+		if ( ! data || ! data.markers ) {
+			return;
+		}
+
+		// Cluster markers if option is set and map contains markers
+		if ( ! self.MapOptions.markerClustering || ! data.markers ) {
+			return;
+		}
+
+		// remove if this particular map already has a cluster.
+		if ( data.cluster ) {
+			data.cluster.clearMarkers();
+		}
+
+		google.maps.event.addListenerOnce( data.map, 'idle', () => {
+			data.cluster = new MarkerClusterer( data.map, data.markers, {
+				imagePath: self.markerClusterIconPath,
+				maxZoom: self.MapOptions.markerClusteringMaxZoom || self.MapOptions.zoom,
+			} );
+
+			$map.data( 'gkMap', data );
+		} );
+	};
+
+	/**
+	 * Configures the Spider, which handles when too many markers are on top of each other.
+	 *
+	 * Note: This uses a third party API, not default to Google API.
+	 *
+	 * @since TBD
+	 *
+	 * @link https://github.com/jawj/OverlappingMarkerSpiderfier
+	 *
+	 * @param {jQuery} $map
+	 * @param {object} data
+	 */
+	self.processSpider = ( $map, data ) => {
+		// It's important to have the timout here to avoid race conditions around clustering.
+		setTimeout( () => {
+			google.maps.event.addListener( data.map, 'idle', () => {
+				// Spiderfy markers
+				const oms = new OverlappingMarkerSpiderfier( data.map, {
+					markersWontMove: true,
+					markersWontHide: true,
+					keepSpiderfied: true,
+				} );
+
+				data.markers.forEach( marker => oms.addMarker( marker ) );
+			} );
+		}, 55 );
+	};
+
+	/**
+	 * Given a Container gets all maps.
+	 *
+	 * @since TBD
+	 *
+	 * @param {jQuery} $container
+	 * @param {boolean} filterByGenerated
+	 *
+	 * @returns {jQuery}
+	 */
+	self.getMaps = ( $container, filterByGenerated = false ) => {
+		if ( ! $container || 0 === $container.length ) {
+			$container = $( document );
+		}
+
+		let $maps = $container.find( '.gv-map-canvas' );
+
+		if ( filterByGenerated ) {
+			$maps = $maps.filter( '.gk-map-generated' );
+		}
+
+		return self.hooks.applyFilters( 'gravitykit_maps_getMaps', $maps, filterByGenerated );
+	};
+
+	/**
+	 * Given a Container gets all Search enabled Maps.
+	 *
+	 * @since TBD
+	 *
+	 * @param {jQuery} $container
+	 * @param {boolean} filterByGenerated
+	 *
+	 * @returns {jQuery}
+	 */
+	self.getSearchMaps = ( $container, filterByGenerated = false ) => {
+		const $maps = self.getMaps( $container, filterByGenerated );
+
+		return self.hooks.applyFilters( 'gravitykit_maps_getSearchMaps', $maps.filter( '.gk-multi-entry-map' ), filterByGenerated );
+	};
+
+	/**
+	 * Adds an individual marker to a particular map, it will use the jQuery/DOM element of the map.
+	 * Will also store that given marker into the `gkMap` data object.
+	 *
+	 * @since TBD
+	 *
+	 * @param {jQuery} $map
+	 * @param {object} data
+	 * @param {object} markerData
+	 */
+	self.addMarker = ( $map, data, markerData ) => {
+		if ( ! data.markers ) {
+			data.markers = [];
+		}
+
+		let marker;
+
+		if ( data.is_multi_entry_map ) {
+			const index = self.markerExists( $map, markerData );
+
+			if ( false !== index && data.markers[ index ] ) {
+				marker = data.markers[ index ];
+				marker.setMap( data.map );
+				marker.set( 'gkVisible', true );
+				marker.setVisible( true );
+			}
+		}
+
+		if ( ! marker ) {
+			const geo = new google.maps.LatLng( markerData.lat, markerData.long );
+			const icon = {
+				url: self.icon,
+			};
+
+			if ( markerData.icon ) {
+
+				if ( markerData.icon.url && markerData.icon.url.length ) {
+					icon.url = markerData.icon.url;
+				}
+
+				if ( markerData.icon.scaledSize && markerData.icon.scaledSize.length === 2 ) {
+					icon.size = new google.maps.Size( markerData.icon.scaledSize[ 0 ], markerData.icon.scaledSize[ 1 ] );
+				}
+
+				if ( markerData.icon.origin && markerData.icon.origin.length === 2 ) {
+					icon.origin = new google.maps.Point( markerData.icon.origin[ 0 ], markerData.icon.origin[ 1 ] );
+				}
+
+				if ( markerData.icon.anchor && markerData.icon.anchor.length === 2 ) {
+					icon.anchor = new google.maps.Point( markerData.icon.anchor[ 0 ], markerData.icon.anchor[ 1 ] );
+				}
+
+				if ( markerData.icon.scaledSize && markerData.icon.scaledSize.length === 2 ) {
+					icon.scaledSize = new google.maps.Size( markerData.icon.scaledSize[ 0 ], markerData.icon.scaledSize[ 1 ] );
+				}
+			}
+
+			marker = new google.maps.Marker( {
+				map: data.map,
+				icon: icon,
+				url: markerData.url,
+				position: geo,
+				gkVisible: true,
+				entryId: markerData.entry_id,
+				content: markerData.content,
+			} );
+
+			data.markers.push( marker );
+			self.bindMarkerEvents( marker, data.map );
+		}
+
+		$map.data( 'gkMap', data );
+
+		// Extend map bounds using marker position
+		data.map._bounds.extend( marker.position );
+
+		if ( ! $map.hasClass( 'gk-multi-entry-map-avoid-rebound' ) ) {
+			data.map.fitBounds( data.map._bounds );
+		}
+
+		// Add this particular marker to all the search maps in the container.
+		if ( ! data.is_multi_entry_map ) {
+			self.getSearchMaps( data.$container, true ).each( ( index, searchMap ) => {
+				const $searchMap = $( searchMap );
+				const searchMapData = $searchMap.data( 'gkMap' );
+
+				if ( ! self.markerExists( $searchMap, marker ) ) {
+					searchMapData.markers.concat( marker );
+					searchMapData.markers_data.concat( markerData );
+				}
+
+				$searchMap.data( 'gkMap', searchMapData );
+			} );
+		}
+	};
+
+	/**
+	 * Given a Map jQuery object test to see if we have a particular marker already set, uses the entryId for check.
+	 *
+	 * @since TBD
+	 *
+	 * @param {jQuery} $map
+	 * @param {object} checkMarker
+	 *
+	 * @returns {boolean|int}
+	 */
+	self.markerExists = ( $map, checkMarker ) => {
+		const data = $map.data( 'gkMap' );
+		let exists = false;
+
+		data.markers.forEach( ( marker, index ) => {
+			if ( checkMarker.entryId && checkMarker.entryId == marker.entryId ) {
+				exists = index;
+			}
+			if ( checkMarker.entry_id && checkMarker.entry_id == marker.entryId ) {
+				exists = index;
+			}
+		} );
+
+		return exists;
+	};
+
+	/**
+	 * Given a Map jQuery object test to see if we have a particular marker data already set, uses the entryId for check.
+	 *
+	 * Marker data is used before the marker is configured with Google Maps API.
+	 *
+	 * @since TBD
+	 *
+	 * @param {jQuery} $map
+	 * @param {object} checkMarker
+	 *
+	 * @returns {boolean|int}
+	 */
+	self.markerDataExists = ( $map, checkMarker ) => {
+		const data = $map.data( 'gkMap' );
+		let exists = false;
+
+		data.markers_data.forEach( ( marker, index ) => {
+			if ( checkMarker.entryId && checkMarker.entryId == marker.entry_id ) {
+				exists = index;
+			}
+			if ( checkMarker.entry_id && checkMarker.entry_id == marker.entry_id ) {
+				exists = index;
+			}
+		} );
+
+		return exists;
+	};
+
+	/**
+	 * Add event listeners to Markers.
+	 *
+	 * @since TBD
 	 *
 	 * @param {object} marker google.maps.Marker
 	 * @param {object} map google.maps.Map
 	 */
-	self.marker_add_events = function( marker, map ) {
-
-        if( self.is_single_entry ) {
-            return;
-        }
+	self.bindMarkerEvents = ( marker, map ) => {
+		if ( self.is_single_entry ) {
+			return;
+		}
 
 		// The marker has been clicked.
-        google.maps.event.addListener( marker, 'click', self.marker_on_click( marker ) );
+		google.maps.event.addListener( marker, 'spider_click', () => self.onMarkerClick( marker ) );
 
 		// on Mouse over
-		google.maps.event.addListener( marker, 'mouseover', self.marker_on_over( marker ) );
+		google.maps.event.addListener( marker, 'mouseover', self.onMarkerMouseOver( marker ) );
 
 		// on mouseout
-		google.maps.event.addListener( marker, 'mouseout', self.marker_on_mouseout( marker ) );
+		google.maps.event.addListener( marker, 'mouseout', self.onMarkerMouseOut( marker ) );
 
 		// Close infowindow when clicking the map
-		google.maps.event.addListener( map, 'click', function() {
-			infowindow.close();
-		});
+		google.maps.event.addListener( map, 'click', () => infowindow.close() );
+	};
+
+	/**
+	 * Open infowindow or go to entry link when marker has been clicked
+	 *
+	 * @since TBD
+	 *
+	 * @param {object} marker google.maps.Marker Google maps marker object
+	 * @param {string} marker.content Infowindow markup string
+	 * @param {object} marker.map A google.maps.Map object
+	 * @param {string} marker.url Full URL to the marker's single entry page
+	 * @param {object} marker.position A google.maps.LatLng object
+	 * @param {int|string} marker.entryId Entry ID # or slug
+	 */
+	self.onMarkerClick = ( marker ) => {
+		var content = self.infowindow_get_content( marker.content );
+
+		// Open infowindow if content is set
+		if ( content ) {
+			infowindow.setContent( content );
+			infowindow.open( marker.map, marker );
+
+			return;
+		}
+
+		// Go to entry link
+		infowindow.close();
+		window.open( marker.url, self.marker_link_target );
+	};
+
+	/**
+	 * Check if the infowindow content is empty and if so add a link to the single entry (by default)
+	 *
+	 * @param {string} content Infowindow markup string
+	 *
+	 * @returns {string} Prepared Infowindow HTML, with empty image tags removed and default text added to empty links
+	 */
+	self.infowindow_get_content = ( content ) => {
+
+		/**
+		 * Do we accept empty infowindows?
+		 * @see \GravityKit\GravityMaps\Render_Map::parse_map_options
+		 */
+		if ( ! self.infowindow.no_empty ) {
+			return content;
+		}
+
+		var $content = $( content );
+
+		$content
+			.find( 'img[src=""]' ).remove() // Remove empty images
+			.end()
+			.addClass( function () {
+				if ( 0 === $content.find( 'img' ).length ) {
+					return 'gv-infowindow-no-image';
+				}
+			} )
+			.find( 'a.gv-infowindow-entry-link:not([allow-empty]):empty' ).text( self.infowindow.empty_text ); // Empty links get some text, unless "allow-empty" attribute is set
+
+		return $content.prop( 'outerHTML' );
+	};
+
+	/**
+	 * Highlights the assigned entry on mouse over a Marker
+	 *
+	 * @since TBD
+	 *
+	 * @param marker google.maps.Marker Google maps marker object
+	 *
+	 * @returns {Function}
+	 */
+	self.onMarkerMouseOver = ( marker ) => () => $( '#gv_map_' + marker.entryId ).addClass( 'gv-highlight-entry' );
+
+	/**
+	 * Remove the highlight of the assigned entry on mouse out a Marker
+	 *
+	 * @since TBD
+	 *
+	 * @param marker google.maps.Marker Google maps marker object
+	 *
+	 * @returns {Function}
+	 */
+	self.onMarkerMouseOut = ( marker ) => () => $( '#gv_map_' + marker.entryId ).removeClass( 'gv-highlight-entry' );
+
+	// Animate markers when mouse is over an entry
+
+	/**
+	 *  Bind events when mouse is over an entry
+	 */
+	self.markers_animate_init = () => {
+		if ( self.is_single_entry || '' === self.icon_bounce ) {
+			return;
+		}
+		$( '.gv-map-view' ).on( 'mouseenter', self.marker_animate );
+	};
+
+	/**
+	 * Starts and Stops the marker animation
+	 *
+	 * @param event object Event
+	 */
+	self.marker_animate = function ( event ) { // Dont convert to a => function just uet.
+		var id = this.id.replace( 'gv_map_', '' );
+
+		self.markers.forEach( self.marker_animation_start, id );
+	};
+
+	/**
+	 * Starts Bounce marker animation for the marker associated with the Entry
+	 *
+	 * @param marker google.maps.Marker Google maps marker object
+	 * @param i
+	 * @param array
+	 */
+	self.marker_animation_start = ( marker, i, array ) => {
+		if ( marker.entryId === this ) {
+
+			// Don't interrupt something beautiful
+			if ( marker.animating ) {
+				return;
+			}
+
+			marker.setAnimation( google.maps.Animation.BOUNCE );
+
+			// stop the animation after one bounce
+			setTimeout( self.marker_animation_stop, 750, marker );
+		}
+	};
+
+	/**
+	 * Stops all the marker animations
+	 *
+	 * @param marker google.maps.Marker Google maps marker object
+	 * @param i
+	 */
+	self.marker_animation_stop = ( marker, i ) => {
+		marker.setAnimation( null );
+	};
+
+	// sticky maps functions
+	/**
+	 * Set properties for sticky map and make sure Map Canvas height is less than 50% of window height viewport
+	 * Default Canvas height = 400 px (@see assets/css/gv-maps.css )
+	 */
+	self.sticky_canvas_prepare = () => {
+		// set map container (just for sticky purposes)
+		self.map_sticky_container = $( '.gv-map-sticky-container' );
+
+		const windowHeight = $( window ).height();
+		const doubleCanvasHeight = self.map_sticky_container.height() * 2;
+
+		// if viewport height is less than 2x 400 px
+		if ( windowHeight < doubleCanvasHeight ) {
+			$( '.gv-map-canvas' ).height( windowHeight / 2 );
+		}
 
 	};
 
+	self.window_scroll_init_offset = () => {
+		self.map_offset = self.map_sticky_container.offset().top;
+	};
 
-    /**
-     * Open the entry link when marker has been clicked
-     *
-     * @param {object} marker google.maps.Marker Google maps marker object
-     * @param {string} marker.content Infowindow markup string
-     * @param {object} marker.map A google.maps.Map object
-     * @param {string} marker.url Full URL to the marker's single entry page
-     * @param {object} marker.position A google.maps.LatLng object
-     * @param {int|string} marker.entryId Entry ID # or slug
-     *
-     * @returns {Function} If there's an infowindow, show it. Otherwise, go to the marker.url URL
-     */
-    self.marker_on_click = function( marker ) {
-        return function() {
-            var content = self.infowindow_get_content( marker.content );
-            if( content ) {
-                infowindow.setContent( content );
-                infowindow.open( marker.map, marker );
-            } else {
-                infowindow.close();
-                window.open( marker.url, self.marker_link_target );
-            }
-        };
-    };
+	self.scroll_set = () => {
+		self.did_scroll = true;
+	};
 
+	self.start_scroll_check = () => {
+		if ( self.map_sticky_container.length > 0 ) {
+			$( window ).one( 'scroll', self.window_scroll_init_offset );
+			setInterval( self.window_on_scroll, 250 );
+		}
+	};
 
-    /**
-     * Check if the infowindow content is empty and if so add a link to the single entry (by default)
-     * @param {string} content Infowindow markup string
-     * @returns {string} Prepared Infowindow HTML, with empty image tags removed and default text added to empty links
-     */
-    self.infowindow_get_content = function( content ) {
+	self.window_on_scroll = () => {
+		if ( self.did_scroll ) {
+			self.did_scroll = false;
+			var scroll = $( window ).scrollTop();
+			var canvasObj = self.map_sticky_container.find( '.' + self.map_id_prefix );
+			var listObj = $( self.map_entries_container_selector );
+			var canvasWidth = canvasObj.width(),
+				canvasHeight = canvasObj.height();
+			if ( scroll >= self.map_offset ) {
+				canvasObj.width( canvasWidth );
+				self.map_sticky_container.addClass( 'gv-sticky' );
+				if ( self.template_layout === 'top' ) {
+					listObj.css( 'margin-top', canvasHeight + 'px' );
+				}
 
-        /**
-         * Do we accept empty infowindows?
-         * @see \GravityView_Maps_Render_Map::parse_map_options
-         */
-        if( ! self.infowindow.no_empty ) {
-            return content;
-        }
+			} else {
+				canvasObj.width( '100%' );
+				self.map_sticky_container.removeClass( 'gv-sticky' );
+				if ( self.template_layout === 'top' ) {
+					listObj.css( 'margin-top', '' );
+				}
+			}
 
-	    var $content = $( content );
+		}
+	};
 
-	    $content
-		    .find( 'img[src=""]' ).remove() // Remove empty images
-		    .end()
-		    .addClass(function() {
-		        if( 0 === $content.find('img').length ) {
-			        return 'gv-infowindow-no-image';
-		        }
-		    })
-		    .find( 'a.gv-infowindow-entry-link:not([allow-empty]):empty' ).text( self.infowindow.empty_text ); // Empty links get some text, unless "allow-empty" attribute is set
+	// Mobile
 
-        return $content.prop('outerHTML');
-    };
+	/**
+	 * Check if the page is being loaded in a tablet/mobile environment,
+	 *  and if yes, run special functions
+	 * $mobile-portrait: 320px;
+	 * $mobile-landscape: 480px;
+	 * $small-tablet: 600px;
+	 */
+	self.mobile_init = () => {
+		// only apply this logic for the map template containing the sticky map (even if it is not pinned)
+		if ( self.map_sticky_container.length <= 0 ) {
+			return;
+		}
 
-    /**
-     * Highlights the assigned entry on mouse over a Marker
-     *
-     * @param marker google.maps.Marker Google maps marker object
-     * @returns {Function}
-     */
-    self.marker_on_over = function( marker ) {
-        return function() {
-            $( '#gv_map_' + marker.entryId ).addClass('gv-highlight-entry');
-        };
-    };
+		if ( $( window ).width() <= parseInt( self.mobile_breakpoint, 10 ) ) {
+			self.mobile_map_to_top();
+		}
+	};
 
-    /**
-     * Remove the highlight of the assigned entry on mouse out a Marker
-     *
-     * @param marker google.maps.Marker Google maps marker object
-     * @returns {Function}
-     */
-    self.marker_on_mouseout = function( marker ) {
-        return function() {
-            $( '#gv_map_' + marker.entryId ).removeClass('gv-highlight-entry');
-        };
-    };
+	/**
+	 * Move the sticky map to the top, when aligned to the right.
+	 */
+	self.mobile_map_to_top = () => {
+		var parent = self.map_sticky_container.parent(),
+			grandpa = $( '.gv-map-container' );
 
+		if ( parent.hasClass( 'gv-grid-col-1-3' ) && 1 === parent.index() ) {
+			parent.detach().prependTo( grandpa );
+		}
 
+	};
 
-    // Animate markers when mouse is over an entry
+	// Initialize maps
+	if ( ! self.api_key ) {
+		gvMapsDisplayErrorNotice( self.google_maps_api_key_not_found );
+	} else if ( 'undefined' === typeof window.google ) {
+		gvMapsDisplayErrorNotice( self.google_maps_script_not_loaded );
+	} else if ( ! self.can_use_rest ) {
+		gvMapsDisplayErrorNotice( self.cannot_use_rest_error );
+	} else if ( self.address_field_missing ) {
+		gvMapsDisplayErrorNotice( self.address_field_missing );
+	} else if ( self.hide_until_searched !== '1' && ! self.markers_info.length && ! window.GV_MAPS.is_search ) {
+		gvMapsDisplayErrorNotice( self.entries_missing_coordinates );
+	} else {
 
-    /**
-     *  Bind events when mouse is over an entry
-     */
-    self.markers_animate_init = function () {
-        if(  self.is_single_entry || '' === self.icon_bounce ) {
-            return;
-        }
-        $('.gv-map-view').on( 'mouseenter', self.marker_animate );
-    };
+		var infowindow = new google.maps.InfoWindow( {
+			content: '',
+			maxWidth: parseInt( self.infowindow.max_width, 10 ),
+		} );
+	}
 
-    /**
-     * Starts and Stops the marker animation
-     * @param e object Event
-     */
-    self.marker_animate = function ( e ) {
-
-        var id = this.id.replace( 'gv_map_','' );
-
-        self.markers.forEach( self.marker_animation_start, id );
-    };
-
-    /**
-     * Starts Bounce marker animation for the marker associated with the Entry
-     *
-     * @param marker google.maps.Marker Google maps marker object
-     * @param i
-     * @param array
-     */
-    self.marker_animation_start = function( marker, i, array ) {
-        if( marker.entryId === this ) {
-
-	        // Don't interrupt something beautiful
-	        if( marker.animating ) { return; }
-
-	        marker.setAnimation( google.maps.Animation.BOUNCE );
-
-            // stop the animation after one bounce
-            setTimeout( self.marker_animation_stop, 750, marker );
-        }
-    };
-
-    /**
-     * Stops all the marker animations
-     *
-     * @param marker google.maps.Marker Google maps marker object
-     * @param i
-     */
-    self.marker_animation_stop = function( marker, i ) {
-        marker.setAnimation( null );
-    };
-
-
-    // sticky maps functions
-    /**
-     * Set properties for sticky map and make sure Map Canvas height is less than 50% of window height viewport
-     * Default Canvas height = 400 px (@see assets/css/gv-maps.css )
-     */
-    self.sticky_canvas_prepare = function() {
-        // set map container (just for sticky purposes)
-        self.map_sticky_container = $( '.gv-map-sticky-container' );
-
-        var windowHeight = $( window ).height(),
-            doubleCanvasHeight = self.map_sticky_container.height() * 2;
-
-        // if viewport height is less than 2x 400 px
-        if( windowHeight < doubleCanvasHeight ) {
-            $( '.gv-map-canvas').height( windowHeight / 2 );
-        }
-
-    };
-
-    self.window_scroll_init_offset = function() {
-        self.map_offset = self.map_sticky_container.offset().top;
-    };
-
-    self.scroll_set = function() {
-      self.did_scroll = true;
-    };
-
-    self.start_scroll_check = function() {
-        if( self.map_sticky_container.length > 0 ) {
-            $(window).one( 'scroll', self.window_scroll_init_offset );
-            setInterval( self.window_on_scroll, 250 );
-        }
-    };
-
-    self.window_on_scroll = function() {
-        if( self.did_scroll ) {
-            self.did_scroll = false;
-            var scroll = $(window).scrollTop();
-            var canvasObj = self.map_sticky_container.find( '.' + self.map_id_prefix );
-            var listObj = $( self.map_entries_container_selector );
-            var canvasWidth = canvasObj.width(),
-                canvasHeight = canvasObj.height();
-            if( scroll >= self.map_offset ) {
-                canvasObj.width( canvasWidth );
-                self.map_sticky_container.addClass('gv-sticky');
-                if( self.template_layout === 'top' ) {
-                    listObj.css( 'margin-top', canvasHeight+'px' );
-                }
-
-            } else {
-                canvasObj.width( '100%' );
-                self.map_sticky_container.removeClass('gv-sticky');
-                if( self.template_layout === 'top' ) {
-                    listObj.css( 'margin-top', '' );
-                }
-            }
-
-        }
-    };
-
-    // Mobile
-
-    /**
-     * Check if the page is being loaded in a tablet/mobile environment,
-     *  and if yes, run special functions
-     * $mobile-portrait: 320px;
-     * $mobile-landscape: 480px;
-     * $small-tablet: 600px;
-     */
-    self.mobile_init = function() {
-        // only apply this logic for the map template containing the sticky map (even if it is not pinned)
-        if( self.map_sticky_container.length <= 0 ) {
-            return;
-        }
-
-        if( $( window ).width() <= parseInt( self.mobile_breakpoint, 10 ) ) {
-            self.mobile_map_to_top();
-        }
-
-    };
-
-    /**
-     * Move the sticky map to the top, when aligned to the right.
-     */
-    self.mobile_map_to_top = function() {
-        var parent =  self.map_sticky_container.parent(),
-            grandpa = $('.gv-map-container');
-
-        if( parent.hasClass('gv-grid-col-1-3') && 1 === parent.index() ) {
-            parent.detach().prependTo( grandpa );
-        }
-
-    };
-
-	// Init!
-	$( self.init );
-
-    // window scroll
-    $( window ).scroll( self.scroll_set );
+	/**
+	 * Creates a local WP hooks variable.
+	 *
+	 * @since TBD
+	 *
+	 * @var {Object}
+	 */
+	self.hooks = wp.hooks.createHooks();
 
 	// Update global variable reference
 	window.GV_MAPS = self;
 
-}(jQuery));
+	/**
+	 * We need to make sure the callbacks are registered to their specific hooks as early as we load the file.
+	 */
+	self.hook();
+
+	// We will possibly need to use `window.GV_MAPS.init` as the callback from Google Maps API.
+	$( document ).ready( self.init );
+
+	// Window scroll
+	$( window ).scroll( self.scroll_set );
+
+}( jQuery ) );

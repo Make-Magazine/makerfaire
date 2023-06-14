@@ -1,47 +1,69 @@
 <?php
 /*
 Plugin Name: GravityView - Maps
-Plugin URI: https://gravityview.co/extensions/maps/
-Description: Display your GravityView entries on a map.
-Version: 1.4.2
-Author: Katz Web Services, Inc.
-Author URI: https://gravityview.co
-Text Domain: gravityview-maps
-Domain Path: /languages/
+Plugin URI: https://www.gravitykit.com/extensions/maps/
+Description: Display your Gravity Forms entries on a map.
+Version: 2.1
+Author: GravityKit
+Author URI: https://www.gravitykit.com
+Text Domain: gk-gravitymaps
 */
-
 
 defined( 'ABSPATH' ) || exit;
 
+require_once __DIR__ . '/vendor_prefixed/gravitykit/foundation/src/preflight_check.php';
+
+if ( ! GravityKit\GravityMaps\Foundation\should_load( __FILE__ ) ) {
+	return;
+}
+
+/** @since 1.7.7 */
+define( 'GRAVITYVIEW_MAPS_VERSION', '2.1' );
+
+/** @since 1.7.7 */
+define( 'GRAVITYVIEW_MAPS_FILE', __FILE__ );
+
+/** @since 1.7.8 */
+define( 'GRAVITYVIEW_MAPS_MIN_GV_VERSION', '2.16' );
+
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/vendor_prefixed/autoload.php';
+
+GravityKit\GravityMaps\Foundation\Core::register( GRAVITYVIEW_MAPS_FILE );
+
 function gravityview_extension_maps_loader() {
+	$_add_admin_notice = function ( $notice ) {
+		add_action( 'admin_notices', function () use ( $notice ) {
+			echo "<div class='error' style='padding: 1.25em 0 1.25em 1em;'>{$notice}</div>";
+		} );
+	};
 
-	if( !class_exists( 'GravityView_Extension' ) ) {
+	if ( ! defined( 'GV_PLUGIN_VERSION' ) || version_compare( GV_PLUGIN_VERSION, GRAVITYVIEW_MAPS_MIN_GV_VERSION, '<' ) ) {
+		$notice = strtr(
+			esc_html_x( 'GravityView Maps requires [url]GravityView[/url] [version] or newer.', 'Placeholders inside [] are not to be translated.', 'gk-gravitymaps' ),
+			[
+				'[url]'     => '<a href="https://www.gravitykit.com/features/">',
+				'[/url]'    => '</a>',
+				'[version]' => GRAVITYVIEW_MAPS_MIN_GV_VERSION
+			]
+		);
 
-		if( class_exists('GravityView_Plugin') && is_callable( array( 'GravityView_Plugin', 'include_extension_framework' ) ) ) {
-			GravityView_Plugin::include_extension_framework();
-		} else {
-			// We prefer to use the one bundled with GravityView, but if it doesn't exist, go here.
-			include_once plugin_dir_path( __FILE__ ) . 'lib/class-gravityview-extension.php';
-		}
+		return $_add_admin_notice( $notice );
 	}
 
-	require_once dirname( __FILE__ ) . '/includes/class-gravityview-maps-loader.php';
+	if ( ! class_exists( 'GFCommon' ) ) {
+		$notice = strtr(
+			esc_html_x( 'GravityView Maps requires [url]Gravity Forms[/url] to be active.', 'Placeholders inside [] are not to be translated.', 'gk-gravitymaps' ),
+			[
+				'[url]'  => '<a href="https://www.gravityforms.com/">',
+				'[/url]' => '</a>',
+			]
+		);
 
-	// Make sure PHP 5.3 is supported
-	if( version_compare( phpversion(), '5.3' ) <= 0) {
-
-		$message = sprintf( __("%s requires PHP Version 5.3 or higher. Please contact your web host and ask them to upgrade your server.", 'gravityview-maps'), 'GravityView Maps' );
-
-		GravityView_Maps_Loader::add_notice( array(
-			'message' => wpautop( $message ),
-			'class' => 'error',
-		));
-
-	} else {
-
-		$GLOBALS['gravityview_maps'] = new GravityView_Maps_Loader( __FILE__, '1.4.2' );
-
+		return $_add_admin_notice( $notice );
 	}
+
+	$GLOBALS['gravityview_maps'] = new GravityKit\GravityMaps\Loader( GRAVITYVIEW_MAPS_FILE, GRAVITYVIEW_MAPS_VERSION );
 }
 
 add_action( 'plugins_loaded', 'gravityview_extension_maps_loader' );

@@ -4,22 +4,59 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitfd4423192fda5d9101a3808fbb030a6b
+class ComposerStaticInit8fc6cafafecc5fc03ebf517bfd7c3379
 {
-    public static $prefixesPsr0 = array (
+    public static $prefixLengthsPsr4 = array (
         'G' => 
         array (
-            'Geocoder' => 
-            array (
-                0 => __DIR__ . '/..' . '/willdurand/geocoder/src',
-            ),
+            'GravityKit\\GravityMaps\\' => 23,
         ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'GravityKit\\GravityMaps\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
+        ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'GravityKit\\GravityMaps\\Admin' => __DIR__ . '/../..' . '/src/Admin.php',
+        'GravityKit\\GravityMaps\\Available_Icons' => __DIR__ . '/../..' . '/src/Available_Icons.php',
+        'GravityKit\\GravityMaps\\Cache_Markers' => __DIR__ . '/../..' . '/src/Cache_Markers.php',
+        'GravityKit\\GravityMaps\\Component' => __DIR__ . '/../..' . '/src/Component.php',
+        'GravityKit\\GravityMaps\\Custom_Map_Icons' => __DIR__ . '/../..' . '/src/Custom_Map_Icons.php',
+        'GravityKit\\GravityMaps\\Data' => __DIR__ . '/../..' . '/src/Data.php',
+        'GravityKit\\GravityMaps\\Fields' => __DIR__ . '/../..' . '/src/Fields.php',
+        'GravityKit\\GravityMaps\\Form_Fields' => __DIR__ . '/../..' . '/src/Form_Fields.php',
+        'GravityKit\\GravityMaps\\GF_Entry_Geocoding' => __DIR__ . '/../..' . '/src/GF_Entry_Geocoding.php',
+        'GravityKit\\GravityMaps\\GF_Field_Icon_Picker' => __DIR__ . '/../..' . '/src/GF_Field_Icon_Picker.php',
+        'GravityKit\\GravityMaps\\Geocoding' => __DIR__ . '/../..' . '/src/Geocoding.php',
+        'GravityKit\\GravityMaps\\HTTP_Adapter' => __DIR__ . '/../..' . '/src/HTTP_Adapter.php',
+        'GravityKit\\GravityMaps\\Icon' => __DIR__ . '/../..' . '/src/Icon.php',
+        'GravityKit\\GravityMaps\\InfoWindow' => __DIR__ . '/../..' . '/src/InfoWindow.php',
+        'GravityKit\\GravityMaps\\Loader' => __DIR__ . '/../..' . '/src/Loader.php',
+        'GravityKit\\GravityMaps\\Marker' => __DIR__ . '/../..' . '/src/Marker.php',
+        'GravityKit\\GravityMaps\\Markers' => __DIR__ . '/../..' . '/src/Markers.php',
+        'GravityKit\\GravityMaps\\Render_Map' => __DIR__ . '/../..' . '/src/Render_Map.php',
+        'GravityKit\\GravityMaps\\Search_Filter' => __DIR__ . '/../..' . '/src/Search_Filter.php',
+        'GravityKit\\GravityMaps\\Search_GF_Query_Bounds_Condition' => __DIR__ . '/../..' . '/src/Search_GF_Query_Bounds_Condition.php',
+        'GravityKit\\GravityMaps\\Search_GF_Query_Radius_Condition' => __DIR__ . '/../..' . '/src/Search_GF_Query_Radius_Condition.php',
+        'GravityKit\\GravityMaps\\Settings' => __DIR__ . '/../..' . '/src/Settings.php',
+        'GravityKit\\GravityMaps\\Template_Map_Default' => __DIR__ . '/../..' . '/src/Template_Map_Default.php',
+        'GravityKit\\GravityMaps\\Template_Preset_Business_Map' => __DIR__ . '/../..' . '/src/Template_Preset_Business_Map.php',
+        'GravityKit\\GravityMaps\\Templates' => __DIR__ . '/../..' . '/src/Templates.php',
+        'GravityKit\\GravityMaps\\View_Widget' => __DIR__ . '/../..' . '/src/View_Widget.php',
+        'GravityKit\\GravityMaps\\Widgets' => __DIR__ . '/../..' . '/src/Widgets.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixesPsr0 = ComposerStaticInitfd4423192fda5d9101a3808fbb030a6b::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit8fc6cafafecc5fc03ebf517bfd7c3379::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit8fc6cafafecc5fc03ebf517bfd7c3379::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit8fc6cafafecc5fc03ebf517bfd7c3379::$classMap;
 
         }, null, ClassLoader::class);
     }
