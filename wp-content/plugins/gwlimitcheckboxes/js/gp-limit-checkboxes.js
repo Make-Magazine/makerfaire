@@ -1,3 +1,4 @@
+/* eslint-disable */
 ( function( $ ) {
 
 	window.GPLimitCheckboxes = function( args ) {
@@ -49,7 +50,8 @@
 				// On AJAX-enabled forms, GF will evaluate conditional logic *before* GPLC can test for checkboxes which
 				// are disabled by default. If the field is hidden by conditional logic, GPLC will incorrectly think that
 				// it is disabled by default. Let's account for this...
-				if ( ! $parent.data( 'gf-disabled-assessed' ) || $( this ).hasClass( 'gf-default-disabled' ) ) {
+				// Added a second check to prevent double binding making deselected checkboxes permanently disabled.
+				if ( ( ! $parent.data( 'gf-disabled-assessed' ) || $( this ).hasClass( 'gf-default-disabled' ) ) && ! $( this ).hasClass( 'gplc-disabled' ) ) {
 					$( this ).filter( ':disabled' ).addClass( 'gplc-pre-disabled' );
 				}
 			} );
@@ -73,6 +75,19 @@
 
 				self.bindTriggerEvents();
 			});
+
+			gform.addAction( 'gpi_field_refreshed', function( $targetField, $triggerField, initialLoad ) {
+				var formId = $targetField
+					.closest('form')
+					.prop('id')
+					.replace('gform_', '');
+
+				if (formId != self.formId) {
+					return;
+				}
+
+				self.bindTriggerEvents();
+			} );
 		}
 
 		self.handleCheckboxClick = function( $elem ) {
@@ -81,28 +96,37 @@
 				enableFieldIds  = [],
 				fieldId         = typeof $elem != 'undefined' ? parseInt( $elem.attr( 'id' ).split( '_' )[2] ) : null;
 
+			/**
+			 * Filter the input selectors used to exclude inputs from being checked/unchecked.
+			 *
+			 * @since 1.3.11
+			 *
+			 * @param array  excludedInputSelectors Input selectors to exclude from checking/unchecking.
+			 * @param int    fieldId The ID of the field that triggered the event.
+			 * @param object $elem   A jQuery object of the element that triggered the event.
+			 * @param object gplc    The current instance of the GPLimitCheckboxes object.
+			 */
+			var excludedInputSelectors = window.gform.applyFilters('gplc_excluded_input_selectors', [], fieldId, $elem, self ).join( ', ' );
+
 			// loops through ALL groups to make sure that overlapping groups are covered
 			for ( var i = 0; i < self.groups.length; i++ ) {
-
-				if ( self.groups[ i ].fields.indexOf( fieldId ) === -1 ) {
-					continue;
-				}
 
 				/**
 				 * Filter the group of checkboxes that are about to be processed.
 				 *
 				 * @since 1.2
 				 *
-				 * @param object group The current group.
-				 * @param object $elem A jQuery object of the element that triggered the event.
-				 * @param object gplc  The current instance of the GPLimitCheckboxes object.
+				 * @param object group   The current group.
+				 * @param int    fieldId The ID of the field that triggered the event.
+				 * @param object $elem   A jQuery object of the element that triggered the event.
+				 * @param object gplc    The current instance of the GPLimitCheckboxes object.
 				 */
 				var group = gform.applyFilters( 'gplc_group', $.extend( true, {}, self.groups[ i ] ), fieldId, $elem, self );
 
 				if ( self.isGroupMaxed( group ) ) {
-					disableFieldIds = $.merge( disableFieldIds, group.fields );
+					$.merge( disableFieldIds, group.fields );
 				} else {
-					enableFieldIds = $.merge( enableFieldIds, group.fields );
+					$.merge( enableFieldIds, group.fields );
 				}
 
 			}
@@ -115,7 +139,10 @@
 				var $enableFields = self.getCheckboxesByFieldIds( enableFieldIds );
 
 				// Enable applicable checkboxes.
-				$enableFields.not( '.gplc-pre-disabled, .gplc-select-all' ).attr( 'disabled', false );
+				$enableFields.not( '.gplc-pre-disabled, .gplc-select-all' )
+					.not( excludedInputSelectors )
+					.attr( 'disabled', false )
+					.removeClass( 'gplc-disabled' );
 
 			}
 
@@ -124,17 +151,23 @@
 				var $disableFields = self.getCheckboxesByFieldIds( disableFieldIds );
 
 				// Disable applicable checkboxes.
-				$disableFields.not( ':checked, .gplc-pre-disabled, .gplc-select-all' ).attr( 'disabled', true );
+				$disableFields.not( ':checked, .gplc-pre-disabled, .gplc-select-all' )
+					.not( excludedInputSelectors )
+					.attr( 'disabled', true )
+					.addClass( 'gplc-disabled' );
 
 				// Supports GF 2.3 Select All option; uncheck any disabled checkbox that was not pre-disabled. Potential
 				// complications: this does not trigger onclick events.
-				$disableFields.filter( ':checked:disabled:not( .gplc-pre-disabled )' ).attr( 'checked', false ).trigger( 'change' );
+				$disableFields
+					.filter( ':checked:disabled:not( .gplc-pre-disabled )' )
+					.not( excludedInputSelectors )
+					.attr( 'checked', false ).trigger( 'change' );
 
 			}
 
 		};
 
-		self.isGroupMaxed = function( group ) {
+		self.getCheckboxCheckedCount = function( group ) {
 			var count = 0;
 			$( self.getSelector( group.fields ) ).filter( ':checked:not( .gplc-select-all )' ).each( function() {
 				var idIndex = this.id.split( '_' );
@@ -152,7 +185,16 @@
 				 */
 				count += gform.applyFilters( 'gplcb_checkbox_count', 1, self.formId, parseInt( idIndex[2] ), parseInt( idIndex[3] ) );
 			} );
-			return count >= group.max;
+
+			return count;
+		}
+
+		self.isGroupMaxed = function( group ) {
+			return self.getCheckboxCheckedCount( group ) >= group.max;
+		};
+
+		self.isGroupBelowMin = function( group ) {
+			return self.getCheckboxCheckedCount( group ) < group.min;
 		};
 
 		self.getSelector = function( fieldIds ) {

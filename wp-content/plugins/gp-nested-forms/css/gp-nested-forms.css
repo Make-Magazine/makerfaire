@@ -99,7 +99,7 @@
 	font-weight: bold;
 }
 
-@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px)/*, (any-hover:none)*/ {
+@media only screen and (max-width: 760px), (min-device-width: 760px) and (max-device-width: 1024px) {
 
 	/* Force table to not be like tables anymore */
 	table.gpnf-nested-entries,
@@ -140,7 +140,7 @@
 		border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
 	}
 
-    .gpnf-nested-entries tbody tr td:last-child,
+	.gpnf-nested-entries tbody tr td:last-child,
 	.gpnf-nested-entries tbody tr:last-child td:last-child {
 		border: 0;
 	}
@@ -158,6 +158,10 @@
 
 	.gpnf-nested-entries td:last-child {
 		background-color: rgba( 0, 0, 0, 0.03 );
+	}
+
+	.gpnf-nested-entries tbody tr:not(.gpnf-no-entries) td:last-child {
+		padding-left: 0;
 	}
 
 	.gpnf-nested-entries td[data-value=""] {
@@ -361,7 +365,8 @@ body .gpnf-dialog .gform_wrapper ul li.gfield:first-child {
 }
 
 .gpnf-modal .gform_wrapper .gform_footer,
-.gpnf-modal .gform_wrapper .gform_page_footer {
+.gpnf-modal .gform_wrapper .gform_page_footer,
+.gpnf-modal .gform_wrapper .gfield--type-submit {
 	visibility: hidden;
 	position: absolute;
 	text-indent: -999rem;

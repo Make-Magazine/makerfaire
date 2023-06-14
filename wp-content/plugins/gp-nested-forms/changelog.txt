@@ -1,6 +1,186 @@
 
 # Changelog
 
+## 1.1.27
+
+	- Fixed PHP 8 warnings that could show when importing forms with forward slashes in the form names.
+
+## 1.1.26
+
+	- Fixed a PHP notice due to implicit number conversion.
+	- Added `gpnf_template_args` filter to the `nested-entries-simple-list` template args.
+
+## 1.1.25
+
+	- Updated how soon we load `GFFormDisplay` to prevent errors when printing parent forms with no child entries.
+	- Fixed an issue where using the `index` modifier with All Fields Template would skip empty values which could cause confusing results.
+	- Fixed issue where forms for individual entries were not passed through the `gpnf_get_nested_form` filter for every entry which could cause choice values instead of choice labels to show in some situations when using the `{all_fields}` merge tag.
+
+## 1.1.24
+
+	- Fixed issue where parent form was submitted instead of child form when the parent form's "Submit Button Location" was configured to "End of last row."
+
+## 1.1.23
+
+	- Fixed an issue with Save & Continue not working when nested entries were spammed or deleted.
+
+## 1.1.22
+
+	- Added bullet-proofing to ensure that child forms always have AJAX enabled.
+
+## 1.1.21
+
+	- Fixed issue where the submit button for child forms would not be properly handled if the child form's submit button's location is set to end of the last row.
+
+## 1.1.20
+
+	- Updated how we ensure `GFFormDisplay` is loaded when printing entries to also prevent the error when printing with Gravity Flow and other add-ons.
+	- Fixed issue where "Honeypot validation" enabled for nested child forms could cause the child form submission to fail in certain cases.
+
+## 1.1.19
+
+	- Fixed issue where runtime hashcode was not unique to the session.
+	- Fixed a potential fatal error that can happen when printing parent forms with Nested Form fields using Gravity Forms 2.7 or newer.
+	- Fixed issue where PHP warnings and/or notices could show if a Nested Form field has a form that does not exist selected as the child form.
+
+## 1.1.18
+
+	- Added support for including post payment actions (like delaying feed processing until payment is collected) based on child feeds.
+
+## 1.1.17
+
+	- Added `gpnf_should_load_child_entries_from_session` filter to allow disabling loading child entries from the session. This will be used by Advanced Save & Continue to prevent drafts from inheriting child entries from other drafts.
+
+## 1.1.16
+
+	- Improved reliability of skipping initialization of Nested Form fields on pages that are hidden in forms with conditional logic.
+
+## 1.1.15
+
+	- Added `gp_parse_template_output` filter to allow customizing template s via filter rather than requiring a template file. (#216)
+
+## 1.1.14
+
+	- Updated CSS styles for Row Actions on small screen sizes.
+
+## 1.1.13
+
+	- Added support for optionally including the Row ID column in post-submission output (i.e. merge tags, templates).
+
+## 1.1.12
+
+	- Added new [`gpnf_row_id_value`](https://gravitywiz.com/documentation/gpnf_row_id_value) JavaScript filter hook for manipulating the value used in the Row ID summary column.
+
+## 1.1.11
+
+	- Fixed potential PHP error if an array is passed to `GPNF_Parent_Merge_Tag::parse_parent_merge_tag()`.
+	- Added [`gpnf_should_open_modal`](https://gravitywiz.com/gravity-forms-custom-javascript/) JavaScript filter hook.
+
+## 1.1.10
+
+	- Fixed potential PHP error if creating GP Nested Forms sessions programmatically.
+
+## 1.1.9
+
+	- Added German translations. Credit: Florian Rinnhofer of sportunion.at
+	- Fixed issue where the Knockout instance would not be properly re-used on AJAX forms.
+
+## 1.1.8
+
+	- Fixed an issue where Nested Forms could conflict with GP Auto List Field.
+
+## 1.1.7
+
+	- Fixed issue where, under certain conditions, PHP would throw an error in form preview when no Nested Form Field entries were yet present.
+
+## 1.1.6
+
+	- Fixed `{Parent:id}` merge tag not working in places such as notifications.
+	- Added `$entry` argument to `gpnf_get_nested_form` filter hook to improve compatibility with GP Populate Anything.
+
+## 1.1.5
+
+	- Fixed an issue where the session cookie could become oversized on complex multi-page forms and result in a server error.
+	- Added new [`gpnf_calc_entries`](https://gravitywiz.com/gpnf_calc_entries) and [`gpnf_calc_replacement_value`](https://gravitywiz.com/gpnf_calc_replacement_value) filter hooks.
+
+## 1.1.4
+
+	- Fixed issue with :sum and :total merge tag modifiers where they would not calculate very small float values due to them being converted to scientific notation.
+
+## 1.1.3
+
+	- Added new [`gpnf_row_id_label`](https://gravitywiz.com/documentation/gpnf_row_id_label) filter hook.
+
+## 1.1.2
+
+	- Fixed issue where the "Row ID" field would show in `{all_fields}` and the merge tag output for Nested Forms.
+
+## 1.1.1
+
+	- Fixed PHP error that could occur for some forms.
+
+## 1.0.28
+
+	- Added the ability to optionally show an AjaxSpinner when deleting nested form entry rows.
+	- Added new public `GPNestedForms.deleteEntry()` method for calling on the frontend and in snippets.
+
+## 1.0.27
+
+	- Improved support for `{Parent}` merge tags referencing the parent entry details such as `{Parent:entry_id}` when set to a field's default value and sent in notifications.
+
+## 1.0.26
+
+	- Added `:set` merge tag modifier for calculations which allows you to reutrn a list of values for use Advanced Calculation functions like `min()` and `max()`.
+
+## 1.0.25
+
+	- Added support for filtering the Save & Continue token that will be used to populate child entries into a Nested Form field.
+
+## 1.0.24
+
+	- Fixed `@media` query for Nested Form table layouts to resolve an inconsistency between `760px` and `768px`.
+
+## 1.0.23
+
+	- Improved compatibility with Gravity Flow User Input steps by bringing back compatibility layer.
+
+## 1.0.22
+
+	- Fixed potential PHP warning if using Gravity Flow by reverting the addition of a new compatibility layer. It will be re-added soon!
+
+## 1.0.21
+
+	- Fixed potential PHP error in Gravity Flow compatibility layer.
+
+## 1.0.20
+
+	- Added new [`gpnf_all_entries_nested_entry_markup`](https://gravitywiz.com/documentation/gpnf_all_entries_nested_entry_markup) filter.
+	- Fixed issue where Save & Continue entries would be un-editable/deletable in some situations.
+	- Fixed compatibility issues with Gravity Flow user input steps where child entries wouldn't show after editing a child entry, leaving the page, and coming back. Additionally, child entry edit permission handling has been improved.
+
+## 1.0.19
+
+	- Fixed potential PHP error that could occur on the Entry Details page if GravityView is activated.
+
+## 1.0.18
+
+	- Fixed issue where the count template would always be used if GravityView is activated.
+
+## 1.0.17
+
+	- Fixed issue where the Count templates were not being used in GravityView if the view is embedded using a shortcode.
+	- Fixed potential PHP error introduced in 1.0.15.
+	- Fixed an issue where the event handler in Nested Forms would not properly handle Chained Selects thus causing the placeholder to be incorrect on subsequent openings of the nested form.
+
+## 1.0.16
+
+	- Fixed issue where child form markup was not refreshed after editing which could result in stagnant form markup.
+
+## 1.0.15
+
+	- Fixed issue where early child entry adoption via Partial Entries would prevent child entries from being loaded, edited, or deleted in the current session.
+	- Improved compatibility with GP Page Transitions Soft Validation functionality.
+
 ## 1.0.14
 
 	- Fixed conflict with eComerce Fields that was caused by Nested Forms unsetting child entry ID to null to ensure a fresh total was generated.

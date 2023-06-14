@@ -1,6 +1,15 @@
 
 # Changelog
 
+## 1.2.1
+
+	- Fixed margin for step links in forms using the new Gravity Forms Theme Framework.
+
+## 1.2
+
+	- Added support for using GP Multi-Page Navigation with GP Page Transitions.
+	- Added "Update URI" to plugin header to improve security.
+
 ## 1.1.4
 
 	- Fixed a fatal error introduced in 1.1.3.

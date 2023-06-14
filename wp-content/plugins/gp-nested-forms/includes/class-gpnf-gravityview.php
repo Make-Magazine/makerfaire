@@ -7,7 +7,7 @@ class GPNF_GravityView {
 	private static $form_has_gv_buttons = array();
 
 	public static function get_instance() {
-		if ( null == self::$instance ) {
+		if ( self::$instance == null ) {
 			self::$instance = new self;
 		}
 		return self::$instance;
@@ -17,7 +17,7 @@ class GPNF_GravityView {
 
 		add_action( 'gpnf_pre_nested_forms_markup', array( $this, 'remove_gravityview_edit_hooks' ) );
 		add_action( 'gpnf_nested_forms_markup', array( $this, 'add_gravityview_edit_hooks' ) );
-		add_action( 'gravityview/view/query', array( $this, 'filter_unsubmitted_child_entries'), 10, 3 );
+		add_action( 'gravityview/view/query', array( $this, 'filter_unsubmitted_child_entries' ), 10, 3 );
 
 	}
 
@@ -58,8 +58,9 @@ class GPNF_GravityView {
 	 * These don't work well with the Nested Form so we need to temporarily unhook the filters/actions and re-add them.
 	 */
 	public function remove_gravityview_edit_hooks( $form ) {
+		$render_instance = $this->gravityview_edit_render_instance();
 
-		if ( $render_instance = $this->gravityview_edit_render_instance() ) {
+		if ( $render_instance ) {
 			self::$form_has_gv_buttons[ $form['id'] ] =
 				has_filter( 'gform_submit_button', array( $render_instance, 'render_form_buttons' ) )
 				|| has_filter( 'gform_submit_button', array( $render_instance, 'modify_edit_field_input' ) );
@@ -76,7 +77,9 @@ class GPNF_GravityView {
 			return;
 		}
 
-		if ( $render_instance = $this->gravityview_edit_render_instance() ) {
+		$render_instance = $this->gravityview_edit_render_instance();
+
+		if ( $render_instance ) {
 			add_filter( 'gform_submit_button', array( $render_instance, 'render_form_buttons' ) );
 			add_filter( 'gform_field_input', array( $render_instance, 'modify_edit_field_input' ), 10, 5 );
 		}

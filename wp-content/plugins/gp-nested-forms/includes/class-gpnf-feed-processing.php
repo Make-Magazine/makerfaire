@@ -5,7 +5,7 @@ class GPNF_Feed_Processing {
 	private static $instance = null;
 
 	public static function get_instance() {
-		if ( null == self::$instance ) {
+		if ( self::$instance == null ) {
 			self::$instance = new self;
 		}
 		return self::$instance;
@@ -21,6 +21,8 @@ class GPNF_Feed_Processing {
 
 		add_filter( 'gform_trigger_payment_delayed_feeds', array( $this, 'process_delayed_feeds' ), 10, 3 );
 		add_filter( 'gform_paypal_fulfillment', array( $this, 'process_delayed_feeds_for_paypal' ), 10, 3 );
+
+		add_filter( 'gform_addon_feed_settings_fields', array( $this, 'add_post_payment_actions_based_on_child_feeds' ), 10, 2 );
 
 	}
 
@@ -55,7 +57,6 @@ class GPNF_Feed_Processing {
 		}
 		// Check if we are pre-processing feeds from a parent form submission for a nested entry.
 		elseif ( ! empty( $this->_parent_form_data ) ) {
-
 			$is_filtered       = true;
 			$parent_form       = $this->_parent_form_data['form'];
 			$nested_form_field = $this->_parent_form_data['field'];
@@ -185,6 +186,37 @@ class GPNF_Feed_Processing {
 
 	public function process_delayed_feeds_for_paypal( $parent_entry, $payment_feed, $transaction_id ) {
 		$this->process_delayed_feeds( $transaction_id, $payment_feed, $parent_entry );
+	}
+
+	public function add_post_payment_actions_based_on_child_feeds( $feed_settings_fields, $payment_addon ) {
+
+		$parent_form_id     = absint( rgget( 'id' ) );
+		$nested_form_fields = GFFormsModel::get_fields_by_type( GFAPI::get_form( $parent_form_id ), array( 'form' ) );
+		if ( empty( $nested_form_fields ) ) {
+			return $feed_settings_fields;
+		}
+
+		$addons = GFAddon::get_registered_addons();
+
+		foreach ( $addons as $addon ) {
+			$addon = call_user_func( array( $addon, 'get_instance' ) );
+			if ( ! $addon instanceof GFFeedAddOn ) {
+				continue;
+			}
+			foreach ( $nested_form_fields as $nested_form_field ) {
+				$nested_form = gp_nested_forms()->get_nested_form( $nested_form_field->gpnfForm );
+				/**
+				 * Yucky ducky! Required because GFFeedAddon::add_post_payment_actions() gets the form ID directly from
+				 * this query parameter. If this ever causes issues, let's reach out to GF and see if the method can
+				 * be updated to accept the form ID as a parameter.
+				 */
+				$_GET['id']           = $nested_form['id'];
+				$feed_settings_fields = $addon->add_post_payment_actions( $feed_settings_fields, $payment_addon );
+				$_GET['id']           = $parent_form_id;
+			}
+		}
+
+		return $feed_settings_fields;
 	}
 
 }

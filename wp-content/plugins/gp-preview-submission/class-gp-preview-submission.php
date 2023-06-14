@@ -123,12 +123,16 @@ class GP_Preview_Submission extends GWPerk {
 	}
 
 	function has_any_merge_tag( $string ) {
+		if ( ! is_string( $string ) || is_serialized( $string ) ) {
+			return false;
+		}
+
 		// Negative lookbehind to prevent replacement of GP Populate Anything Live Merge Tags
 		return preg_match_all( '/(?<!@){.+}/', $string, $matches, PREG_SET_ORDER );
 	}
 
-	function has_gppa_parent_merge_tag( $text ) {
-		return is_callable( 'gpnf_parent_merge_tag' ) && preg_match( '/\{Parent:(.*?)\}/i', $text );
+	function has_gpnf_parent_merge_tag( $text ) {
+		return is_string( $text ) && is_callable( 'gpnf_parent_merge_tag' ) && preg_match( '/\{Parent:(.*?)\}/i', $text );
 	}
 
 }

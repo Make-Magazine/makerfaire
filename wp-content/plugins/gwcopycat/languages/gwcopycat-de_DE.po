@@ -1,0 +1,42 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GP Copy Cat\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-20 11:40+0000\n"
+"PO-Revision-Date: 2022-10-24 14:11-0400\n"
+"Last-Translator: Florian Rinnhofer\n"
+"Language-Team: Deutsch\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.2\n"
+"X-Loco-Version: 2.5.7; wp-5.8.3\n"
+"X-Domain: gwcopycat\n"
+
+#. Description of the plugin
+msgid ""
+"Allow users to copy the value of one field to another automatically or by "
+"clicking a checkbox. Is your shipping address the same as your billing? Copy "
+"cat!"
+msgstr ""
+"Erlaubt Nutzenden, den Wert eines Feldes automatisch in ein anderes zu "
+"kopieren, indem eine Checkbox aktiviert wird. Ist die Versandadresse "
+"identisch mit deiner Rechnungsadresse? Copy cat!"
+
+#. Name of the plugin
+msgid "GP Copy Cat"
+msgstr "GP Copy Cat"
+
+#. Author of the plugin
+msgid "Gravity Wiz"
+msgstr "Gravity Wiz"
+
+#. Author URI of the plugin
+msgid "http://gravitywiz.com/"
+msgstr "http://gravitywiz.com/"
+
+#. URI of the plugin
+msgid "https://gravitywiz.com/documentation/gravity-forms-copy-cat/"
+msgstr "https://gravitywiz.com/documentation/gravity-forms-copy-cat/"

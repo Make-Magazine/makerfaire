@@ -59,6 +59,33 @@ class GWPreviewConfirmation {
 		return $form;
 	}
 
+	/**
+	 * If we're editing an entry, we need to provide it when replacing variables so things like existing files
+	 * can be properly merged in with new files.
+	 *
+	 * @return array|null
+	 */
+	public static function maybe_get_editing_entry() {
+		if ( rgpost( 'gpnf_entry_id' ) && class_exists( 'GPNF_Entry' ) ) {
+			$entry = GFAPI::get_entry( rgpost( 'gpnf_entry_id' ) );
+
+			if ( GPNF_Entry::can_current_user_edit_entry( $entry ) && ! is_wp_error( $entry ) ) {
+				return $entry;
+			}
+		}
+
+		if ( function_exists( 'gp_entry_blocks' ) ) {
+			$entry_id = gp_entry_blocks()->block_edit_form->get_submitted_edit_entry_id();
+			$entry    = GFAPI::get_entry( $entry_id );
+
+			if ( ! is_wp_error( $entry ) ) {
+				return $entry;
+			}
+		}
+
+		return null;
+	}
+
 	public static function replace_field_label_merge_tags( $form, $entry = null ) {
 
 		$replace_merge_tags_in_labels = apply_filters( 'gppc_replace_merge_tags_in_labels', false, $form );
@@ -247,7 +274,7 @@ class GWPreviewConfirmation {
 		// entries via the Nested Form field merge tag and {all_fields}).
 		$_modifiers = self::parse_modifiers( $modifiers );
 		$entry_id   = rgar( $_modifiers, 'entry' );
-		$entry      = $entry_id ? GFAPI::get_entry( $entry_id ) : self::create_lead( $form );
+		$entry = $entry_id ? GFAPI::get_entry( $entry_id ) : self::create_lead( $form );
 
 		if ( is_array( rgar( $field, 'inputs' ) ) ) {
 			$value = GFFormsModel::get_lead_field_value( $entry, $field );
@@ -256,8 +283,14 @@ class GWPreviewConfirmation {
 
 			switch ( $input_type ) {
 				case 'fileupload':
+					/*
+					 * For multi-file uploads, we need to work off of the entry being edited vs. creating a new entry
+					 * so files can be merged in correctly and the paths are correct.
+					 */
+					$file_upload_entry = self::maybe_get_editing_entry() ? self::maybe_get_editing_entry() : $entry;
+
 					$existing_value = $value;
-					$value          = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
+					$value          = self::preview_image_value( "input_{$field['id']}", $field, $form, $file_upload_entry );
 
 					// Use existing value if it's present. This is needed for GP Nested Forms as the entry is different.
 					if ( $value === '' && $existing_value ) {
@@ -276,7 +309,9 @@ class GWPreviewConfirmation {
 
 							if ( $file_info ) {
 								foreach ( $file_info as $file ) {
-									$value = str_replace( '>' . $file['temp_filename'], '>' . $file['uploaded_filename'], $value );
+									if ( rgar( $file, 'temp_filename' ) ) {
+										$value = str_replace( '>' . $file['temp_filename'], '>' . $file['uploaded_filename'], $value );
+									}
 								}
 							}
 						} else {
@@ -328,10 +363,18 @@ class GWPreviewConfirmation {
 
 			case 'fileupload':
 				if ( rgar( $field, 'multipleFiles' ) ) {
-					$file_names = wp_list_pluck( $file_info, 'temp_filename' );
-					$value      = array();
-					foreach ( $file_names as $file_name ) {
-						$value[] = GFFormsModel::get_upload_url( $form['id'] ) . '/tmp/' . basename( $file_name );
+					$value = array();
+
+					foreach ( $file_info as $file ) {
+						$temp_filename     = rgar( $file, 'temp_filename' );
+						$uploaded_filename = rgar( $file, 'uploaded_filename' );
+						$existing_file_url = self::get_existing_file_url_in_entry( $uploaded_filename, $field, $entry );
+
+						if ( $temp_filename ) {
+							$value[] = GFFormsModel::get_upload_url( $form['id'] ) . '/tmp/' . basename( $temp_filename );
+						} elseif ( $existing_file_url ) {
+							$value[] = $existing_file_url;
+						}
 					}
 				} else {
 					$value = $source;
@@ -341,6 +384,34 @@ class GWPreviewConfirmation {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * @param string $uploaded_filename
+	 * @param GF_Field_FileUpload $field
+	 * @param array $entry
+	 *
+	 * @return string|null
+	 */
+	public static function get_existing_file_url_in_entry( $uploaded_filename, $field, $entry ) {
+		if ( ! is_array( $entry ) ) {
+			return null;
+		}
+
+		$input_id       = str_replace( 'input_', '', $field->id );
+		$existing_files = GFAddOn::maybe_decode_json( rgar( $entry, $input_id ) );
+
+		if ( is_array( $existing_files ) ) {
+			foreach ( $existing_files as $existing_file ) {
+				$existing_file_pathinfo = pathinfo( $existing_file );
+
+				if ( $uploaded_filename === $existing_file_pathinfo['basename'] ) {
+					return $existing_file;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	public static function preview_image_display( $field, $form, $value ) {
@@ -488,7 +559,7 @@ class GWPreviewConfirmation {
 
 	public static function preview_replace_variables( $content, $form, $entry = null ) {
 
-		if ( gp_preview_submission()->has_gppa_parent_merge_tag( $content ) ) {
+		if ( gp_preview_submission()->has_gpnf_parent_merge_tag( $content ) ) {
 			return $content;
 		}
 

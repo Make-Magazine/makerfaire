@@ -1,6 +1,22 @@
 
 # Changelog
 
+## 1.3.14
+
+	- Fixed potential conflict with Populate Anything when populating List fields.
+
+## 1.3.13
+
+	- Fixed issue where values wouldn't update correctly in some cases when editing entries using GP Nested Forms or GP Entry Blocks.
+
+## 1.3.12
+
+	- Fixed improperly named method.
+
+## 1.3.11
+
+	- Improved support for displaying a multi-file upload field's files while editing entries using GP Entry Blocks or GP Nested Forms.
+
 ## 1.3.10
 
 	- Fixed PHP notice that could show if there are submitted File Upload fields without values.

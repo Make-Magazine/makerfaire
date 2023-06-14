@@ -14,3 +14,7 @@
 .gravity-theme .gpmpn-page-link .gf_step_label {
 	text-decoration: underline;
 }
+
+.gform-theme--framework .gf_step_number {
+	margin-right: var(--gform-theme-field-page-steps-step-gap);
+}

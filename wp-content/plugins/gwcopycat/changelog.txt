@@ -1,6 +1,48 @@
 
 # Changelog
 
+## 1.4.63
+
+	- Fixed issue where numbers using decimal comma format could get converted incorrectly. For example, `1.000` (one thousand) could become just `1` in some situations.
+
+## 1.4.62
+
+	- Fixed an issue where decimal comma numbers would be copied into the quantity field which does not support decimal comma formatted numbers.
+
+## 1.4.61
+
+	- Added ability to add "if" condition for conditional copying based on other field values. Example usage: `copy-1-to-2-if-3` to check if field ID `3` has a value. `copy-1-to-2-if-3.0` will copy if field ID `3`'s first choice is selected.
+	- Added compatibility for GP Limit Date’s Inline Date Picker.
+
+## 1.4.60
+
+	- Added `sourceValues` as a fourth parameter for all instances of the `gpcc_copied_value` JavaScript filter.
+
+## 1.4.59
+
+	- Added support for using Advanced Phone Fields as source and target fields.
+
+## 1.4.58
+
+	- Added support for Select All/Unselect All buttons for checkbox fields.
+
+## 1.4.57
+
+	- Added German translations. Credit: Florian Rinnhofer of sportunion.at
+
+## 1.4.56
+
+	- Fixed issue with List fields not properly removing rows in target List fields if using newer form markup versions.
+
+## 1.4.55
+
+	- Fixed an issue that could occur with infinite recursion in some form setups with conditional logic.
+
+## 1.4.54
+
+	- Fixed performance issue when clearing values was triggered via conditional logic.
+	- Fixed an issue where clearing values for checkbox triggers when a target input was revealed via conditional logic could created an infinite loop.
+
 ## 1.4.53
 
 	- Fixed issue where GPCC's conditioanl logic handling would overwrite edited values when the form was reloaded.

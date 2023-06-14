@@ -154,7 +154,7 @@ class GPNF_Export {
 			}
 		}
 
-		if ( empty ( $lines ) ) {
+		if ( empty( $lines ) ) {
 			return $line;
 		}
 
@@ -281,7 +281,9 @@ class GPNF_Export {
 
 		$form_titles = wp_list_pluck( $forms, 'title' );
 
-		$matches = preg_grep( sprintf( '/%s(\([0-9]+\))?/i', preg_quote( $child_form_title ) ), $form_titles );
+		$child_form_title = preg_quote( $child_form_title, '/' );
+		$pattern          = sprintf( '/%s(\([0-9]+\))?/i', $child_form_title );
+		$matches          = preg_grep( $pattern, $form_titles );
 		if ( ! empty( $matches ) ) {
 			$match = array_keys( $matches );
 			$index = array_shift( $match );

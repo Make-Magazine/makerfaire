@@ -7,10 +7,12 @@ class GP_Read_Only extends GWPerk {
 	protected $min_gravity_forms_version = '2.4';
 	protected $min_wp_version            = '3.0';
 
-	private $unsupported_field_types  = array( 'hidden', 'html', 'captcha', 'page', 'section' );
+	private $unsupported_field_types  = array( 'hidden', 'html', 'captcha', 'page', 'section', 'form' );
 	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'date', 'name', 'address', 'workflow_user', 'workflow_role', 'workflow_assignee_select' );
 
 	public function init() {
+
+		load_plugin_textdomain( 'gwreadonly', false, basename( dirname( __file__ ) ) . '/languages/' );
 
 		$this->add_tooltip( $this->key( 'readonly' ), __( '<h6>Read-only</h6> Set field as "readonly". Read-only fields will be visible on the form but cannot be modified by the user.', 'gravityperks' ) );
 		$this->enqueue_field_settings();
@@ -154,6 +156,16 @@ class GP_Read_Only extends GWPerk {
 					'<select' => "<select disabled='disabled'",
 				);
 				break;
+			case 'signature':
+				$input_html = preg_replace( '/<a href=[\'"]#[\'"].*?signature_image.*?>.*?<\/a>/', '', $input_html ); // Remove sign again button
+
+				if ( rgblank( $value ) ) {
+					$input_html = preg_replace( '/<div ((style)|(class)=\'.*\')?\s*?><div id=\'input_' . $form_id . '_' . $field->id . '_Container\' .*?>.*?<\/div><\/div>/', '<div style="display: none;"></div><!-- GPRO placeholder -->', $input_html ); // Remove HTML that contains the canvas
+				}
+
+				$search  = '<input';
+				$replace = $search . " readonly='readonly'";
+				break;
 			default:
 				$search  = '<input';
 				$replace = $search . " readonly='readonly'";
@@ -176,9 +188,12 @@ class GP_Read_Only extends GWPerk {
 			 */
 			$disable_datepicker = gf_apply_filters( array( 'gpro_disable_datepicker', $form_id, $field->id ), true, $field, $entry_id );
 			if ( $disable_datepicker ) {
-				// Find 'datepicker' CSS class and replace it with our custom class indicating that we've disabled it.
+				// Find 'datepicker' and 'gform-datepicker' CSS class and replace it with our custom class indicating that we've disabled it.
 				// This class is used by Conditional Logic Dates to identify read-only Datepicker fields.
-				$search['class=\'datepicker '] = 'class=\'gpro-disabled-datepicker ';
+				$search['class=\'datepicker gform-datepicker '] = 'class=\'gpro-disabled-datepicker ';
+
+				// Replace only 'datepicker' class for older GF versions.
+				$search['class=\'datepicker ']  = 'class=\'gpro-disabled-datepicker ';
 			}
 		}
 
@@ -189,14 +204,15 @@ class GP_Read_Only extends GWPerk {
 		// add hidden capture input markup for disabled field types
 		if ( in_array( $input_type, $this->disable_attr_field_types ) ) {
 
-			$value           = $this->get_field_value( $field );
+			// Use $value if we have it as it'll likely be from dynamic population (e.g. query param or shortcode).
+			$value           = ! rgblank( $value ) ? $value : $this->get_field_value( $field );
 			$hc_input_markup = '';
 
 			if ( is_array( $field['inputs'] ) ) {
 
 				switch ( $input_type ) {
 					case 'time':
-						$hc_input_markup .= $this->get_hidden_capture_markup( $form_id, $field->id . '.3', array_pop( $value ) );
+						$hc_input_markup .= $this->get_hidden_capture_markup( $form_id, $field->id . '.3', is_array( $value ) ? array_pop( $value ) : $value );
 						break;
 					case 'date':
 						switch ( rgar( $field, 'dateFormat' ) ) {
@@ -219,7 +235,7 @@ class GP_Read_Only extends GWPerk {
 
 						break;
 					case 'address':
-						$input_id        = sprintf( '%d.%d', $field->id, $this->get_address_select_input_id( $field ) );
+						$input_id         = sprintf( '%d.%d', $field->id, $this->get_address_select_input_id( $field ) );
 						$hc_input_markup .= $this->get_hidden_capture_markup( $form_id, $input_id, rgar( $value, $input_id ) );
 						break;
 					default:
@@ -237,7 +253,7 @@ class GP_Read_Only extends GWPerk {
 			if ( strpos( $input_html, '</div>' ) !== false ) {
 				// Append GPRO hidden input before last closing div tag.
 				// This ensures that GPPA will replace the hidden GPRO input during XHR requests.
-				$input_html = preg_replace( '((.*)<\/div>)', '$1' . str_replace( '$', '\$', $hc_input_markup ) . '</div>', $input_html );
+				$input_html = preg_replace( '/<\/div>(?!\s*<\/?div>?\s*)(.*)/', str_replace( '$', '\$', $hc_input_markup ) . '</div>$1', $input_html );
 			} else {
 				// No closing div tag, append GPRO hidden input to the end
 				$input_html .= $hc_input_markup;
@@ -363,6 +379,12 @@ class GP_Read_Only extends GWPerk {
 		if ( function_exists( 'gravityview' ) && gravityview()->request->is_edit_entry() ) {
 			$gv_entry = gravityview()->request->is_edit_entry();
 			$value    = rgar( $gv_entry->as_entry(), $field->id );
+		} elseif (
+			method_exists( 'GP_Entry_Blocks\GF_Queryer', 'attach_to_current_block' )
+			&& GP_Entry_Blocks\GF_Queryer::attach_to_current_block()
+			&& GP_Entry_Blocks\GF_Queryer::attach_to_current_block()->is_edit_entry()
+		) {
+			$value = rgar( GP_Entry_Blocks\GF_Queryer::attach_to_current_block()->entry, $field->id );
 		} elseif ( is_array( $submitted_values ) ) {
 			$value = $submitted_values[ $field->id ];
 		} else {
@@ -373,7 +395,7 @@ class GP_Read_Only extends GWPerk {
 		$choices = array_filter( $choices );
 
 		// Use GPPA hydrated value if current value is empty and gppa-values is enabled
-		if ( rgar( $field, 'gppa-values-enabled', false ) && ! $value ) {
+		if ( rgar( $field, 'gppa-values-enabled', false ) && GFCommon::is_empty_array( $value ) ) {
 			$value = $field->gppa_hydrated_value;
 		}
 		if ( ! $value && $field->get_input_type() == 'time' ) {
@@ -437,8 +459,8 @@ class GP_Read_Only extends GWPerk {
 	public function get_address_select_input_id( $field ) {
 		$input_id = false;
 		switch ( $field->addressType ) {
-			case 'us':
-			case 'canadian':
+			// US, Canadian, and any added using https://docs.gravityforms.com/gform_address_types/
+			default:
 				$input_id = 4;
 				break;
 			case 'international':

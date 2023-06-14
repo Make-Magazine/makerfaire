@@ -11,9 +11,41 @@
 		self.activationType                         = args.activationType;
 		self.labels                                 = args.labels;
 		self.enableSubmissionFromLastPageWithErrors = args.enableSubmissionFromLastPageWithErrors;
+		self.addedButtons							= [];
 
 		self.init = function() {
+			window.gform.addAction('gppt_after_transition', function(gppt) {
+				self.updateUI();
+				$( 'input#gw_page_progression' ).val( gppt.currentPage );
+			});
 
+			var pageLinksSelector = 'a.gpmpn-page-link, a.gwmpn-page-link, .gpmpn-page-link a';
+
+			$( document ).on( 'click', pageLinksSelector, function( event ) {
+				event.preventDefault();
+
+				var hrefArray = $( this ).attr( 'href' ).split( '#' );
+
+				if ( hrefArray.length >= 2 ) {
+
+					var $parentForm = $( this ).parents( 'form' ),
+						$formElem   = $parentForm.length > 0 ? $parentForm : $( '.gform_wrapper form' ),
+						// Get form element for WC GF Add-on.
+						$formElem  = $formElem.length > 0 ? $formElem : $( '.gform_wrapper' ).parent( 'form' ),
+						formId     = $formElem.attr( 'id' ).split( '_' )[1],
+						pageNumber = hrefArray.pop();
+
+					GPMultiPageNavigation.postToPage( pageNumber, formId, true );
+
+				}
+
+			} );
+
+
+			self.updateUI();
+		}
+
+		self.updateUI = function() {
 			if ( self.$formElem.length <= 0 ) {
 				self.$formElem = $( '#gform_wrapper_' + self.formId );
 			}
@@ -40,6 +72,15 @@
 				if ( stepNumber != self.getCurrentPage() ) {
 					$( this ).html( self.getPageLinkMarkup( stepNumber, $( this ).html() ) ).addClass( 'gpmpn-step-linked' );
 				} else {
+					// If this step was changed to a link, remove the link.
+					$( this )
+						.find('a')
+						.children()
+						.unwrap();
+
+					$( this )
+						.find('a').remove();
+
 					$( this ).addClass( 'gpmpn-step-current' );
 				}
 
@@ -52,28 +93,6 @@
 			} else if ( self.activationType == 'first_page' && ! self.isLastPage() && self.wasFinalSubmissionAttempted() ) {
 				self.addNextPageWithErrorsButton();
 			}
-
-			var pageLinksSelector = 'a.gpmpn-page-link, a.gwmpn-page-link, .gpmpn-page-link a';
-
-			$( document ).on( 'click', pageLinksSelector, function( event ) {
-				event.preventDefault();
-
-				var hrefArray = $( this ).attr( 'href' ).split( '#' );
-
-				if ( hrefArray.length >= 2 ) {
-
-					var $parentForm = $( this ).parents( 'form' ),
-						$formElem   = $parentForm.length > 0 ? $parentForm : $( '.gform_wrapper form' ),
-						// Get form element for WC GF Add-on.
-						$formElem  = $formElem.length > 0 ? $formElem : $( '.gform_wrapper' ).parent( 'form' ),
-						formId     = $formElem.attr( 'id' ).split( '_' )[1],
-						pageNumber = hrefArray.pop();
-
-					GPMultiPageNavigation.postToPage( pageNumber, formId, true );
-
-				}
-
-			} );
 
 			self.$formElem.data( 'GPMultiPageNavigation', self );
 
@@ -110,14 +129,22 @@
 		};
 
 		self.insertButton = function( $button ) {
+			// Prevent duplicate buttons from being added.
+			if ( self.addedButtons.indexOf( $button ) >= 0 ) {
+				return;
+			}
+
 			if ( self.$saveAndContinueButton.length > 0 ) {
 				self.$saveAndContinueButton.before( $button );
 			} else {
 				self.$footer.append( $button );
 			}
+
+			self.addedButtons.push( $button );
 		};
 
 		self.getCurrentPage = function() {
+			return self.$formElem.find( 'input#gform_source_page_number_' + self.formId ).val();
 
 			if ( ! self.currentPage ) {
 				self.currentPage = self.$formElem.find( 'input#gform_source_page_number_' + self.formId ).val();
@@ -154,9 +181,42 @@
 		GPMultiPageNavigation.postToPage = function( page, formId, bypassValidation ) {
 
 			var $form            = $( 'form#gform_' + formId ),
-				$targetPageInput = $form.find( 'input#gform_target_page_number_' + formId );
+				$targetPageInput = $form.find( 'input#gform_target_page_number_' + formId ),
+				currentPage		 = self.getCurrentPage();
 
 			$targetPageInput.val( page );
+
+			// Handle GPPT Soft Validation differently. Posting the form will do some weird stuff!
+			var gppt = window['GPPageTransitions_' + formId];
+
+			if ( typeof gppt !== 'undefined' && gppt.enableSoftValidation ) {
+				if ( ! bypassValidation && ! gppt.validate() ) {
+					return;
+				}
+
+				// Get the index for the next page.
+				var $activeSlides = self.$formElem
+					.find('.swiper-slide:not(.swiper-slide-disabled');
+
+				var $targetSlide = self.$formElem.find( '#gform_page_' + self.formId + '_' + page );
+
+				// Transition to the slide.
+				gppt.swiper.slideTo($activeSlides.index($targetSlide));
+
+				// Update page numbers, the naming is admittedly kind of confusing.
+				gppt.currentPage = page;
+				gppt.sourcePage = currentPage;
+
+				gppt.updateProgressIndicator(currentPage);
+
+				self.$formElem.trigger('softValidationPageLoad.gppt', [
+					page,
+					currentPage,
+					formId,
+				]);
+
+				return;
+			}
 
 			if ( bypassValidation ) {
 				var $bypassValidationInput = $( '<input type="hidden" name="gw_bypass_validation" id="gw_bypass_validation" value="1" />' );

@@ -8,6 +8,8 @@ class GP_Copy_Cat extends GWPerk {
 
 	public function init() {
 
+		load_plugin_textdomain( 'gwcopycat', false, basename( dirname( __file__ ) ) . '/languages/' );
+
 		$this->register_scripts();
 
 		add_filter( 'gform_enqueue_scripts', array( $this, 'enqueue_form_scripts' ) );
@@ -94,7 +96,7 @@ class GP_Copy_Cat extends GWPerk {
 
 		foreach ( $form['fields'] as &$field ) {
 
-			preg_match_all( '/copy-([0-9]+(?:.[0-9]+)*)-to-([0-9]+(?:.[0-9]+)*)/', $field['cssClass'], $matches, PREG_SET_ORDER );
+			preg_match_all( '/copy-([0-9]+(?:.[0-9]+)*)-to-([0-9]+(?:.[0-9]+)*)(?:-if-([0-9]+(?:.[0-9]+)*))?/', $field['cssClass'], $matches, PREG_SET_ORDER );
 			if ( empty( $matches ) ) {
 				continue;
 			}
@@ -103,7 +105,9 @@ class GP_Copy_Cat extends GWPerk {
 
 				list( $class, $source_field_id, $target_field_id ) = $match;
 
-				$source_form_id = $target_form_id = $form['id'];
+				$source_form_id       = $form['id'];
+				$target_form_id       = $form['id'];
+				$if_condition_form_id = $form['id'];
 
 				$source_bits  = explode( '.', $source_field_id );
 				$source_field = GFFormsModel::get_field( $form, intval( $source_field_id ) );
@@ -127,12 +131,35 @@ class GP_Copy_Cat extends GWPerk {
 					$target_field_id = $target_bits[1] == 0 ? $target_bits[0] : implode( '.', $target_bits );
 				}
 
+				$if_condition_field_id = null;
+
+				if ( isset( $match[3] ) ) {
+					$if_condition_field_id = $match[3];
+				}
+
+				$if_condition_pieces = explode( '.', $if_condition_field_id );
+				if ( count( $if_condition_pieces ) == 3 && $source_field->get_input_type() != 'list' ) {
+					$if_condition_form_id  = array_shift( $if_condition_pieces );
+					$if_condition_field_id = $if_condition_pieces[1] == 0 ? $if_condition_pieces[0] : implode( '.', $if_condition_pieces );
+				}
+
+				$if_condition_field = null;
+				if ( ! empty( $if_condition_field_id ) ) {
+					$if_condition_field = GFFormsModel::get_field( $form, intval( $if_condition_field_id ) );
+				}
+
+				if ( empty( $if_condition_field ) ) {
+					$if_condition_field_id = null;
+				}
+
 				$copy_fields[ $field['id'] ][] = array(
-					'source'       => $source_field_id,
-					'target'       => $target_field_id,
-					'sourceFormId' => $source_form_id,
-					'targetFormId' => $target_form_id,
-					'trigger'      => $field['id'],
+					'source'          => $source_field_id,
+					'target'          => $target_field_id,
+					'condition'       => $if_condition_field_id,
+					'sourceFormId'    => $source_form_id,
+					'targetFormId'    => $target_form_id,
+					'conditionFormId' => $if_condition_form_id,
+					'trigger'         => $field['id'],
 				);
 
 			}

@@ -21,9 +21,14 @@
 			 * number instead of a cleaned number.
 			 *
 			 * In order to keep behavior consistent, this filter will clean any formatted numbers from the total field.
+			 *
+			 * Additionally, the quantity field does not support decimal comma format, so we need to clean the number going into it.
 			 */
 			gform.addFilter('gpcc_copied_value', function(value, $targetElem, field) {
-				if ($( '#input_{0}_{1}'.format( self.formId, field.source ) ).hasClass( 'ginput_total' )) {
+				if (
+					$( '#input_{0}_{1}'.format( self.formId, field.source ) ).hasClass( 'ginput_total' )
+					|| $targetElem.hasClass( 'ginput_quantity' )
+				) {
 					var numberFormat = gf_get_field_number_format( field.source, self.formId );
 
 					if ( ! numberFormat) {
@@ -62,7 +67,7 @@
 				}
 			);
 
-			$formWrapper.find( '.gwcopy' ).find( 'input, textarea, select' ).each(
+			$formWrapper.find( '.gwcopy' ).find( 'input, textarea, select, button' ).each(
 				function () {
 					// `.gfield_chainedselect` as a parent indicates a GFCS field that should not be copied during init
 					// this is due to a race condition where we and GFCS may try to update the next dropdown field in the chain.
@@ -71,6 +76,43 @@
 						self.copyValues( this, self.overwriteOnInit );
 					} else if ($( this ).is( ':checked' )) {
 						self.copyValues( this, self.overwriteOnInit );
+					}
+
+					if ( $( this ).is( 'button' ) ) {
+						// Only to be processed for Select All button in Checkboxes.
+						if ( ! $( this )[0].id.includes( '_select_all' ) ) {
+							return;
+						}
+
+						var selectText   = $( this ).attr( 'data-label-select' );
+						var deselectText = $( this ).attr( 'data-label-deselect' );
+
+						// Disable default click action for select all.
+						$( this )[0].onclick = null;
+						// Process click on all checkboxes to load/unload copy cat values.
+						$( this ).on( 'click', function() {
+							var buttonText = $( this ).text();
+							$( this ).siblings().each( function( i, value ) {
+								if ( buttonText == selectText ) {
+									// Select All Buttons case.
+									if ( ! $( value ).find( 'input' ).prop( 'checked' ) ) {
+										$( value ).find( 'input' ).click();
+									}
+								} else {
+									// Deselect All Buttons case.
+									if ( $( value ).find( 'input' ).prop( 'checked' ) ) {
+										$( value ).find( 'input' ).click();
+									}
+								}
+							});
+
+							// When click is complete, toggle the Select/Deselect label on the button.
+							if ( buttonText == selectText ) {
+								$( this ).text( deselectText );
+							} else {
+								$( this ).text( selectText );
+							}
+						});
 					}
 				}
 			);
@@ -85,6 +127,17 @@
 				}
 			);
 
+			/**
+			 * Keep track of trigger IDs that have been processed in `gform_post_conditional_logic_field_action` to prevent recursion.
+			 *
+			 * We then clear it out in the action below set to a later priority which will run after gform_post_conditional_logic_field_action.
+			 */
+			var triggerIds = [];
+
+			gform.addAction('gform_input_change', function() {
+				triggerIds = [];
+			}, 15);
+
 			gform.addAction('gform_post_conditional_logic_field_action', function ( formId, action, targetId, defaultValues, isInit ) {
 
 				if ( action === 'hide' ) {
@@ -95,7 +148,6 @@
 
 				var fieldId       = gf_get_input_id_by_html_id( targetId );
 				var fieldSettings = self.getFieldSettings( fieldId );
-				var triggerIds    = [];
 
 				if ( ! fieldSettings ) {
 					return;
@@ -130,7 +182,13 @@
 						if ( $trigger.filter( ':checked' ).length ) {
 							self.copyValues( $trigger[0], shouldOverwrite );
 						} else {
-							self.clearValues( $trigger[0] );
+							/**
+							 * We shouldn't need to clear values as inputs hidden via conditional logic already have their
+							 * value reset. It looks like this was added preemptively without any specific real world use-case
+							 * and it can can cause an infinite loop (see HS#34808). As such, let's remove it for now and
+							 * revisit if a customer presents a need.
+							 */
+							// self.clearValues( $trigger[0] );
 						}
 					}
 					else {
@@ -183,6 +241,8 @@
 				var field         = fields[i],
 					sourceFieldId = field['source'],
 					targetFieldId = field['target'],
+					conditionFieldId = field['condition'],
+					conditionFormId = field['conditionFormId'],
 					sourceGroup   = self.getFieldGroup( field, 'source' ),
 					targetGroup   = self.getFieldGroup( field, 'target' ),
 					isListToList  = self.isListField( sourceGroup ) && self.isListField( targetGroup ),
@@ -199,6 +259,19 @@
 						targetInputId: targetFieldId
 						}
 					);
+
+				/**
+				 * Handle checking for a "copy condition" and skip copying if the conditional field has no value.
+				 */
+				if ( conditionFieldId ) {
+					var idPieces = conditionFieldId.split('.');
+					var fieldId = idPieces[0];
+					var inputId = idPieces[1];
+
+					if ( ! doesFormInputHaveValue( conditionFormId, fieldId, inputId ) ) {
+						continue;
+					}
+				}
 
 				/**
 				 * Handle copying fields manually
@@ -241,7 +314,7 @@
 						targetGroup.each(
 							function () {
 								var _sourceValues = getObjectValues( sourceValues );
-								if ($.inArray( $( this ).val(), _sourceValues ) === -1 && $( this ).parents( '.gfield_list' ).find( 'tbody tr' ).length > 1) {
+								if ($.inArray( $( this ).val(), _sourceValues ) === -1 && $( this ).parents( '.gfield_list' ).find( '.gfield_list_group' ).length > 1) {
 									gformDeleteListItem( $( this ), maxRows );
 								}
 							}
@@ -318,7 +391,7 @@
 								value = sourceValues[index];
 							}
 							/** Deprecated. */
-							value = gform.applyFilters( 'gppc_copied_value', value, $targetElem, field );
+							value = gform.applyFilters( 'gppc_copied_value', value, $targetElem, field, sourceValues );
 							/**
 							 * Filter the copied value before moving it over.
 							 *
@@ -328,11 +401,11 @@
 							 * @param array   $targetElem A jQuery object with the target element.
 							 * @param mixed   $field Current field being copied.
 							 */
-							value = gform.applyFilters( 'gpcc_copied_value', value, $targetElem, field );
+							value = gform.applyFilters( 'gpcc_copied_value', value, $targetElem, field, sourceValues );
 							$targetElem.val( value );
 						} else if (isCheckable) {
 							/** This filter is documented in js/gp-copy-cat.js */
-							if ($.inArray( $targetElem.val(), gform.applyFilters( 'gpcc_copied_value', sourceValues, $targetElem, field ) ) != -1) {
+							if ($.inArray( $targetElem.val(), gform.applyFilters( 'gpcc_copied_value', sourceValues, $targetElem, field, sourceValues ) ) != -1) {
 								$targetElem.prop( 'checked', true );
 								$targetElem.trigger( 'change' );
 								// Recalculate totals if the radio button is a product field. Total field doesn't seem to update on change, see HS#25830
@@ -342,9 +415,9 @@
 							}
 						} else if (targetGroup.length > 1) {
 							/** Deprecated. */
-							value = gform.applyFilters( 'gppc_copied_value', sourceValues[index], $targetElem, field );
+							value = gform.applyFilters( 'gppc_copied_value', sourceValues[index], $targetElem, field, sourceValues );
 							/** This filter is documented in js/gp-copy-cat.js */
-							value = gform.applyFilters( 'gpcc_copied_value', value, $targetElem, field );
+							value = gform.applyFilters( 'gpcc_copied_value', value, $targetElem, field, sourceValues );
 							$targetElem.val( value );
 						} else { // if there is only one input, join the source values
 							// filter out empty values
@@ -377,6 +450,39 @@
 								}
 							}
 						}
+
+						// Copy Cat for Advanced Phone Field.
+						if ( $( $targetElem.parent()[0] ).hasClass( 'iti--separate-dial-code' ) ) {
+							var targetFieldID   = $targetElem[0].id.replace( 'input', '' )
+							var targetFieldName = 'gp_advanced_phone_field' + targetFieldID;
+							var targetValue;
+
+							var targetId = targetFieldID.split( '_' ).pop();
+							var sourceId = self.getSourceFieldIdByTarget( targetId, false );
+
+							var sourceFieldID   = '_' + self.formId + '_' + sourceId;
+							var sourceElemId    = '#field' + sourceFieldID;
+							var sourceFieldName = 'gp_advanced_phone_field' + sourceFieldID;
+
+							if ( typeof window[sourceFieldName] !== 'undefined' ) {
+								// Source is also Advanced Phone Field Type.
+								targetValue = window[sourceFieldName].getFormattedNumber();
+							} else {
+								// Source is not Advanced Phone Field Type.
+								targetValue = $( sourceElemId ).find( ':input' )[0].value;
+							}
+
+							// Update the Advanced Phone Field target.
+							window[targetFieldName].iti.setNumber( targetValue );
+						}
+
+						// Copy Cat for Inline Date Picker
+						if ( $( $targetElem[0] ).hasClass( 'has-inline-datepicker' ) ) {
+							var targetFieldId = $targetElem[0].id.split('_').pop();
+							var formId = self.formId;
+							$( '#datepicker_' + formId + '_' + targetFieldId ).datepicker( "setDate", value );
+						}
+
 						// Only append gpcc-populated classes when an actual value has been copied
 						if ( value ) {
 							$targetElem.addClass( 'gpcc-populated-input' ).parents( '.gfield' ).addClass( 'gpcc-populated' );
@@ -485,21 +591,29 @@
 						sourceValue = self.cleanValueByInputType( sourceValue );
 
 						/* gppc_copied_value is deprecated. */
-						sourceValue = gform.applyFilters( 'gppc_copied_value', sourceValue, $targetElem, field );
+						sourceValue = gform.applyFilters( 'gppc_copied_value', sourceValue, $targetElem, field, sourceValues );
 						/* JSDoc for gpcc_copied_value is in copyValues() */
-						sourceValue = gform.applyFilters( 'gpcc_copied_value', sourceValue, $targetElem, field );
+						sourceValue = gform.applyFilters( 'gpcc_copied_value', sourceValue, $targetElem, field, sourceValues );
 
-						if (isCheckbox) {
-							$targetElem.prop( 'checked', $.inArray( fieldValue, sourceValues ) !== -1 );
-						} else if (isCheckable) {
-							$targetElem.prop( 'checked', false );
-						} else if (fieldValue == sourceValue) {
-							$targetElem.val( '' );
+						if ( isCheckbox && $targetElem.is( ':checked' ) ) {
+							$targetElem.prop( 'checked', $.inArray( fieldValue, sourceValues ) !== -1 ).change();
+						} else if ( isCheckable && $targetElem.is( ':checked' ) ) {
+							$targetElem.prop( 'checked', false ).change();
+						} else if ( fieldValue !== '' && fieldValue == sourceValue ) {
+							$targetElem.val( '' ).change();
+						}
+
+						// Advanced Phone Field.
+						if ( $( $targetElem.parent()[0] ).hasClass( 'iti--separate-dial-code' ) ) {
+							var targetFieldID   = $targetElem[0].id.replace( 'input', '' )
+							var targetFieldName = 'gp_advanced_phone_field' + targetFieldID;
+
+							window[targetFieldName].iti.setNumber( '' );
 						}
 
 						$targetElem.removeClass( 'gpcc-populated-input' ).parents( '.gfield' ).removeClass( 'gpcc-populated' );
 					}
-				).change();
+				)
 
 				// remove empty rows from List fields; only applicable when clearing from a non-List-field to a List field (i.e. Checkbox to List field).
 				if (self.isListField( targetGroup )) {
@@ -518,9 +632,16 @@
 		};
 
 		self.cleanValueByInputType = function (value, inputType) {
-
 			if (inputType == 'number') {
-				value = gformToNumber( value );
+				/*
+				 * GF's Currency JS class will run parseFloat() if the value is numeric with no regards to the
+				 * thousand sep which will immediately convert numbers such as "1.000" (one thousand) to just "1"
+				 *
+				 * To get around this, we call gformCleanNumber ourselves.
+				 */
+				var currency = new Currency(gf_global.gf_currency_config);
+
+				value = gformCleanNumber(value, currency['symbol_right'], currency['symbol_left'], currency['decimal_separator']);
 			}
 
 			return value;
@@ -797,5 +918,64 @@
 		self.init();
 
 	};
+
+	/**
+	 * Checks whether a given field (and input) has a value.
+	 *
+	 * @param {number} formId The ID of the form.
+	 * @param {number} fieldId The ID of the field.
+	 * @param {number} inputId (optional) The ID of the input. If specified, this functio will assume
+	 *                 that the field type has "sub inputs" (e.g. checkboxes, radio buttons, address fields etc).
+	 */
+	function doesFormInputHaveValue( formId, fieldId, inputId ) {
+		var rcheckableType = /^(?:checkbox|radio)$/i;
+
+		var $form = $( '#gform_' + formId );
+
+		var formElements = $.makeArray(
+			$form.prop( 'elements' )
+		);
+
+		var regexStr = '^[a-z]*_' + formId + '_' + fieldId;
+
+		if ( inputId ) {
+			regexStr += '_' + inputId;
+		}
+
+		regexStr += '$';
+
+		var regex = new RegExp( regexStr, 'gi' );
+
+		var input = null;
+
+		for ( var i = 0; i < formElements.length; i++ ) {
+			var id = formElements[i].id;
+
+			if ( !id ) {
+				continue;
+			}
+
+			var isInput = regex.test( id );
+
+			if ( isInput ) {
+				input = formElements[i];
+				break;
+			}
+		}
+
+		if ( !input ) {
+			return false;
+		}
+
+		if ( rcheckableType.test( input.type ) ) {
+			return input.checked;
+		}
+
+		/**
+		 * Since input values are always strings, this implicity supports "0" as a valid value since the
+		 * string "0" is considered truthy.
+		 */
+		return !! input.value;
+	}
 
 })( jQuery );

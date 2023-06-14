@@ -5,7 +5,7 @@ class GPNF_Notification_Processing {
 	private static $instance = null;
 
 	public static function get_instance() {
-		if ( null == self::$instance ) {
+		if ( self::$instance == null ) {
 			self::$instance = new self;
 		}
 
@@ -54,12 +54,14 @@ class GPNF_Notification_Processing {
 			return $value;
 		}
 
+		$parent_form_id = rgar( $entry, GPNF_Entry::ENTRY_PARENT_FORM_KEY );
+
 		if ( gp_nested_forms()->is_nested_form_submission() ) {
 			$parent_form       = GFAPI::get_form( gp_nested_forms()->get_parent_form_id() );
 			$nested_form_field = gp_nested_forms()->get_posted_nested_form_field( $parent_form );
 
 			return ! $this->should_send_notification( 'child', $notification, $parent_form, $nested_form_field, $entry, $form );
-		} elseif ( $parent_form_id = rgar( $entry, GPNF_Entry::ENTRY_PARENT_FORM_KEY ) ) {
+		} elseif ( $parent_form_id ) {
 			$parent_form       = GFAPI::get_form( $parent_form_id );
 			$nested_form_field = GFFormsModel::get_field( $parent_form, rgar( $entry, GPNF_Entry::ENTRY_NESTED_FORM_FIELD_KEY ) );
 

@@ -328,7 +328,8 @@ class GP_Limit_Checkboxes extends GWPerk {
 			if ( $this->is_applicable_field( $field ) && ! in_array( $field->id, $step->get_editable_fields() ) ) {
 				$field->failed_validation = false;
 			} elseif ( $field->failed_validation ) {
-				$validation_result['is_valid'] = true;
+				// If the field has failed validation, the validation result should be updated to 'false'.
+				$validation_result['is_valid'] = false;
 			}
 		}
 
@@ -520,12 +521,12 @@ class GP_Limit_Checkboxes extends GWPerk {
 						
 						setSelectOptions(checkboxFields, field);
 
-						if ($("#field_"+field.id+" .asmContainer").length > 0)
-							return;
-
 						// All setTimeouts are set as I was hitting an issue where the fieldSettings dom object
 						// was not added before the select fields were being dynamically set.
 						setTimeout(function() {
+							if ($("#gwlimitcheckboxes_settings .asmContainer").length > 0)
+								return;
+
 							jQuery(".<?php echo $this->slug; ?>_"+field.id).asmSelect({
 								addItemTarget: 'bottom',
 								animate: true,

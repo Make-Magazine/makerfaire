@@ -32,6 +32,7 @@ class GPNF_Entry {
 			return $this->_entry[ $name ];
 		}
 
+		// phpcs:ignore PHPCompatibility.FunctionUse.ArgumentFunctionsReportCurrentValue.NeedsInspection
 		$trace = debug_backtrace();
 		trigger_error( sprintf( 'Undefined property via __get(): %s in %s on line %s', $name, $trace[0]['file'], $trace[0]['line'] ), E_USER_NOTICE );
 
@@ -130,12 +131,11 @@ class GPNF_Entry {
 	}
 
 	/**
-	 * @deprecated 1.0.2
-	 *
 	 * @return int
+	 * @deprecated 1.0.23
+	 *
 	 */
 	public function set_parent_form( $parent_form_id, &$parent_entry_id = false ) {
-		_deprecated_function( 'GPNF_Entry::set_parent_form', '1.0.1', 'GPNF_Entry::set_parent_meta' );
 		return $this->set_parent_meta( $parent_form_id, $parent_entry_id );
 	}
 
@@ -143,9 +143,10 @@ class GPNF_Entry {
 		/**
 		 * Filter parent entry ID
 		 *
+		 * @param string $parent_entry_id Parent entry ID to link child entries to
+		 *
 		 * @since 1.0-beta-9.10
 		 *
-		 * @param string $parent_entry_id  Parent entry ID to link child entries to
 		 */
 		$parent_entry_id = gf_apply_filters( array( 'gpnf_set_parent_entry_id', $parent_form_id ), $parent_entry_id );
 
@@ -225,9 +226,10 @@ class GPNF_Entry {
 		/**
 		 * Modify how long entries submitted from a nested form should be saved before being moved to the trash.
 		 *
+		 * @param int $seconds The number of seconds until the entry should be "expired".
+		 *
 		 * @since 1.0
 		 *
-		 * @param int $seconds The number of seconds until the entry should be "expired".
 		 */
 		return apply_filters( 'gpnf_expiration_modifier', WEEK_IN_SECONDS );
 	}
@@ -261,16 +263,25 @@ class GPNF_Entry {
 		$parent_form_field_id = gform_get_meta( $entry['id'], self::ENTRY_NESTED_FORM_FIELD_KEY );
 
 		$session = new GPNF_Session( $parent_form_id );
+		$hash    = $session->get( 'hash' );
 
 		$save_and_continue_entry_ids = gp_nested_forms()->get_save_and_continue_child_entry_ids( $parent_form_id, $parent_form_field_id );
 
-		if ( $session->has_data() && $parent_entry_id == $session->get( 'hash' ) ) {
+		if ( $parent_entry_id == $hash ) {
 			$can_user_edit_entry = true;
+		}
 		/**
 		 * In some cases, the session cookie may not be available in which case we need to pull the child entry list
 		 * again and bypass the permissions.
 		 */
-		} else if ( count( $save_and_continue_entry_ids ) && in_array( $entry['id'], $save_and_continue_entry_ids ) ) {
+		elseif ( count( $save_and_continue_entry_ids ) && in_array( $entry['id'], $save_and_continue_entry_ids ) ) {
+			$can_user_edit_entry = true;
+		}
+		/**
+		 * With Partial Entries, child entries are adopted prior to parent form submission. In this case, we associate the
+		 * child entries with the current session via the session hash saved to the parent entry.
+		 */
+		elseif ( gform_get_meta( $parent_entry_id, GPNF_Session::SESSION_HASH_META_KEY ) == $hash ) {
 			$can_user_edit_entry = true;
 		}
 

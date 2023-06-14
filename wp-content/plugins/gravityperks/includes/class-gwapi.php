@@ -28,12 +28,12 @@ class GWAPI {
 	function __construct( $args ) {
 
 		/**
-		 * @var $license
-		 * @var $plugin_file
-		 * @var $item_name
-		 * @var $author
-		 * @var $versiion
-		 */
+		* @var $license
+		* @var $plugin_file
+		* @var $item_name
+		* @var $author
+		* @var $versiion
+		*/
 		extract( wp_parse_args( $args ) );
 
 		$this->license_key = $license;
@@ -48,16 +48,16 @@ class GWAPI {
 	private function request( $args ) {
 
 		/**
-		 * @var $action
-		 * @var $api_params
-		 * @var $callback
-		 * @var $method
-		 * @var $cache
-		 * @var $flush
-		 * @var $transient
-		 * @var $cache_expiration
-		 * @var $output
-		 */
+		* @var $action
+		* @var $api_params
+		* @var $callback
+		* @var $method
+		* @var $cache
+		* @var $flush
+		* @var $transient
+		* @var $cache_expiration
+		* @var $output
+		*/
 		extract( wp_parse_args( $args, array(
 			'action'           => '',
 			'api_params'       => array(),
@@ -74,8 +74,11 @@ class GWAPI {
 			$transient = 'gwapi_' . $action;
 		}
 
+		// Suffix transient with the current Gravity Perks version in case behavior changes between versions.
+		$transient = $transient . '_' . GRAVITY_PERKS_VERSION;
+
 		if ( $cache && ! $flush ) {
-			$cached = get_transient( $transient );
+			$cached = get_site_transient( $transient );
 
 			if ( $cached !== false ) {
 				return $cached;
@@ -109,7 +112,7 @@ class GWAPI {
 
 		if ( is_wp_error( $response ) ) {
 			if ( $cache ) {
-				set_transient( $transient, null, $cache_expiration );
+				set_site_transient( $transient, null, $cache_expiration );
 			}
 
 			return false;
@@ -120,15 +123,15 @@ class GWAPI {
 		}
 
 		$response_body = wp_remote_retrieve_body( $response );
-		$response = json_decode( $response_body, $output === ARRAY_A);
+		$response      = json_decode( $response_body, $output === ARRAY_A );
 
 		/**
-		 * We check that the response is not an array as an empty array evaluates as false when it is a valid response
-		 * in this situation.
-		 */
-		if ( ! $response && ! is_array ( $response ) ) {
+		* We check that the response is not an array as an empty array evaluates as false when it is a valid response
+		* in this situation.
+		*/
+		if ( ! $response && ! is_array( $response ) ) {
 			if ( $cache ) {
-				set_transient( $transient, null, $cache_expiration );
+				set_site_transient( $transient, null, $cache_expiration );
 			}
 
 			return false;
@@ -139,7 +142,7 @@ class GWAPI {
 		}
 
 		if ( $cache ) {
-			set_transient( $transient, $response, $cache_expiration );
+			set_site_transient( $transient, $response, $cache_expiration );
 		}
 
 		return $response;
@@ -151,6 +154,54 @@ class GWAPI {
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'pre_set_site_transient_update_plugins_filter' ), 99999 );
 		add_filter( 'plugins_api', array( $this, 'products_plugins_api_filter' ), 100, 3 );
 		add_filter( 'http_request_host_is_external', array( $this, 'allow_gwiz_external_redirects' ), 15, 3 );
+		add_filter( 'upgrader_package_options', array( $this, 'upgrader_package_options_filter' ) );
+
+	}
+
+	public function upgrader_package_options_filter( $options ) {
+
+		if ( ! isset( $options['package'] ) || ! is_string( $options['package'] ) ) {
+			return $options;
+		}
+
+		if ( strpos( $options['package'], GW_DOMAIN ) === false ) {
+			return $options;
+		}
+
+		$plugin_file     = rgars( $options, 'hook_extra/plugin' );
+		$product_version = '';
+
+		if ( $plugin_file ) {
+			$product_version = $this->get_local_product_version( $plugin_file );
+		}
+
+		$license = GravityPerks::get_license_data();
+
+		$options['package'] = str_replace(
+			array(
+				'%URL%',
+				'%LICENSE_ID%',
+				'%LICENSE_HASH%',
+				'%PRODUCT_VERSION%',
+			),
+			array(
+				rawurlencode( GWAPI::get_site_url() ),
+				rawurlencode( isset( $license['ID'] ) ? $license['ID'] : '' ),
+				rawurlencode( md5( GWPerks::get_license_key() ) ),
+				$product_version,
+			),
+			$options['package']
+		);
+
+		/*
+		 * If we're installing a new perk, flush the license info. We know we're installing a new perk if
+		 * $abort_if_destination_exists is true.
+		 */
+		if ( rgar( $options, 'abort_if_destination_exists' ) ) {
+			GravityPerks::flush_license();
+		}
+
+		return $options;
 
 	}
 
@@ -165,20 +216,20 @@ class GWAPI {
 	}
 
 	/**
-	 * Get all available perks from the store.
-	 */
+	* Get all available perks from the store.
+	*/
 	public function get_products( $flush = false ) {
 
 		return $this->request( array(
 			'action'   => 'get_products',
 			'output'   => OBJECT,
-			'callback' => array( __CLASS__, 'process_get_products' ),
-            'flush'    => $flush,
+			'callback' => array( $this, 'process_get_products' ),
+			'flush'    => $flush,
 		) );
 
 	}
 
-	public static function process_get_products( $response ) {
+	public function process_get_products( $response ) {
 
 		$perks = array();
 
@@ -187,18 +238,6 @@ class GWAPI {
 			if ( property_exists( $perk, 'sections' ) ) {
 				$perk->sections = maybe_unserialize( $perk->sections );
 			}
-
-			$license = GravityPerks::get_license_data();
-
-			$perk->package = str_replace(array(
-				'%URL%',
-				'%LICENSE_ID%',
-				'%LICENSE_HASH%',
-			), array(
-				rawurlencode( GWAPI::get_site_url() ),
-				rawurlencode( isset( $license['ID'] ) ? $license['ID'] : '' ),
-				rawurlencode( md5( GWPerks::get_license_key() ) ),
-			), $perk->package);
 
 			$perk->download_link = $perk->package;
 
@@ -211,8 +250,8 @@ class GWAPI {
 	}
 
 	/**
-	 * Get Dashboard Announcements
-	 */
+	* Get Dashboard Announcements
+	*/
 	public function get_dashboard_announcements() {
 
 		return $this->request( array(
@@ -223,11 +262,11 @@ class GWAPI {
 	}
 
 	/**
-	 * This is the function that let's WordPress know if there is an update avialable
-	 * for one of our products.
-	 *
-	 * @param mixed $_transient_data
-	 */
+	* This is the function that lets WordPress know if there is an update available
+	* for one of our products.
+	*
+	* @param mixed $_transient_data
+	*/
 	public function pre_set_site_transient_update_plugins_filter( $_transient_data ) {
 
 		/* Make sure this is only ran once. */
@@ -270,7 +309,22 @@ class GWAPI {
 		foreach ( $remote_products as $remote_product_file => $remote_product ) {
 			$local_product_version = $this->get_local_product_version( $remote_product_file );
 
-			if ( $local_product_version && version_compare( $local_product_version, $remote_product->new_version, '<' ) ) {
+			/* Handle legacy versions if available */
+			if ( $this->should_use_legacy_version( $remote_product, $local_product_version ) ) {
+				GravityPerks::log_debug( "Local product version: {$local_product_version}" );
+
+				// Modify the remote product and swap the legacy version in for the new version
+				$remote_product->new_version = $remote_product->legacy_version;
+				$remote_product->version     = $remote_product->legacy_version;
+
+				if ( isset( $remote_product->sections['legacy_changelog'] ) ) {
+					$remote_product->sections['changelog'] = $remote_product->sections['legacy_changelog'];
+				}
+
+				if ( version_compare( $local_product_version, $remote_product->new_version, '<' ) ) {
+					$product_update_data[ $remote_product_file ] = $remote_product;
+				}
+			} elseif ( $local_product_version && version_compare( $local_product_version, $remote_product->new_version, '<' ) ) {
 				GravityPerks::log_debug( 'Product update found. Adding to local product update data.' . print_r( $remote_product, true ) );
 				$product_update_data[ $remote_product_file ] = $remote_product;
 			}
@@ -285,16 +339,34 @@ class GWAPI {
 	}
 
 	/**
-	 * Provides download package when installing and information on the "View version x.x details" page.
-	 *
-	 * @uses api_request()
-	 *
-	 * @param mixed $_data
-	 * @param string $_action
-	 * @param object $_args
-	 *
-	 * @return object $_data
+	 * Check if the product has a legacy version and meets the requirements
 	 */
+	public function should_use_legacy_version( $remote_product, $local_product_version ) {
+		$has_legacy_version             = property_exists( $remote_product, 'legacy_version' ) && $remote_product->legacy_version;
+		$has_legacy_version_requirement = property_exists( $remote_product, 'legacy_version_requirement' ) && $remote_product->legacy_version_requirement;
+
+		if ( $has_legacy_version_requirement ) {
+			preg_match( '/^([<>]=?)(.*)$/', $remote_product->legacy_version_requirement, $legacy_version_requirement_matches );
+		}
+
+		return $local_product_version
+			&& $has_legacy_version
+			&& $has_legacy_version_requirement
+			&& ! empty( $legacy_version_requirement_matches )
+			&& version_compare( $local_product_version, $legacy_version_requirement_matches[2], $legacy_version_requirement_matches[1] );
+	}
+
+	/**
+	* Provides download package when installing and information on the "View version x.x details" page.
+	*
+	* @uses api_request()
+	*
+	* @param mixed $_data
+	* @param string $_action
+	* @param object $_args
+	*
+	* @return object $_data
+	*/
 	public function products_plugins_api_filter( $_data, $_action = '', $_args = null ) {
 
 		GravityPerks::log_debug( 'products_plugins_api_filter() start. Retrieves download package and plugin info.' );
@@ -324,7 +396,15 @@ class GWAPI {
 			return $_data;
 		}
 
-		$product->sections['changelog'] = GWPerks::format_changelog( $product->sections['changelog'] );
+		if ( $this->should_use_legacy_version( $product, $this->get_local_product_version( $plugin_file ) ) ) {
+			if ( isset( $product->legacy_changelog ) ) {
+				$product->sections['changelog'] = $product->legacy_changelog;
+			}
+
+			$product->version = $product->legacy_version;
+		}
+
+		$product->sections['changelog'] = GWPerks::format_changelog( $product->sections['changelog'], $product );
 
 		GravityPerks::log_debug( 'Ok! Everything looks good. Let\'s build the response needed for WordPress.' );
 
@@ -335,9 +415,6 @@ class GWAPI {
 
 		// remove all the filters causes an infinite loop so add one dummy function so the loop can break itself
 		add_filter( 'plugins_api', array( new GP_Late_Static_Binding(), 'GWAPI_dummy_func' ) );
-
-		// @TODO only do this if the product is being installed
-		GWPerks::flush_license();
 
 		return $product;
 
@@ -357,10 +434,11 @@ class GWAPI {
 
 		return $this->request( array(
 			'action'     => 'check_license',
+			'method'     => 'POST',
 			'transient'  => 'gwp_license_data',
 			'flush'      => $flush,
 			'cache'      => true,
-			'callback'   => array($this, 'process_license_data'),
+			'callback'   => array( $this, 'process_license_data' ),
 			'api_params' => array(
 				'license'   => GWPerks::get_license_key(),
 				'item_name' => urlencode( $this->get_product_name() ),
@@ -383,7 +461,6 @@ class GWAPI {
 			} else {
 				$has_valid_license = $response['license'] == 'valid';
 			}
-
 		}
 
 		$response['valid'] = $has_valid_license;
@@ -460,7 +537,7 @@ class GWAPI {
 			'action'     => 'register_perk',
 			'api_params' => array(
 				'license' => GWPerks::get_license_key(),
-				'perk_id' => $perk_id
+				'perk_id' => $perk_id,
 			),
 			'cache'      => false,
 			'method'     => 'POST',
@@ -476,7 +553,7 @@ class GWAPI {
 			'action'     => 'deregister_perk',
 			'api_params' => array(
 				'license' => GWPerks::get_license_key(),
-				'perk_id' => $perk_id
+				'perk_id' => $perk_id,
 			),
 			'cache'      => false,
 			'method'     => 'POST',
@@ -489,16 +566,24 @@ class GWAPI {
 	public static function get_api_args( $args = array() ) {
 		return wp_parse_args( $args, array(
 			'url'     => self::get_site_url(),
-			'timeout' => 15
+			'timeout' => 15,
 		) );
 	}
 
 	public static function get_request_args( $args = array() ) {
-		return wp_parse_args( $args, array(
+		$default_args = array(
 			'user-agent' => 'Gravity Perks ' . GWPerks::get_version(),
 			'timeout'    => 15,
 			'sslverify'  => (bool) apply_filters( 'edd_sl_api_request_verify_ssl', true ),
-		) );
+		);
+
+		if ( defined( 'GW_BASIC_AUTH_USERNAME' ) && defined( 'GW_BASIC_AUTH_PASSWORD' ) ) {
+			$default_args['headers'] = array(
+				'Authorization' => 'Basic ' . base64_encode( GW_BASIC_AUTH_USERNAME . ':' . GW_BASIC_AUTH_PASSWORD ),
+			);
+		}
+
+		return wp_parse_args( $args, $default_args );
 	}
 
 	public static function get_site_url() {

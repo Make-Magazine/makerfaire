@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
 * Nested Forms, mama!
 */
@@ -20,12 +22,19 @@ const ko = window.ko;
 		}
 
 		self.destroy = function() {
-			self.modal.destroy();
+			self.modal?.destroy();
 			$( document ).off( '.{0}'.format( self.getNamespace() ) );
 			window.gform.removeHook( 'action', 'gform_list_post_item_add', 10, self.getNamespace() );
 			window.gform.removeHook( 'action', 'gform_list_post_item_delete', 10, self.getNamespace() );
 			gform.removeFilter( 'gform_calculation_formula', 10, 'gpnf_{0}_{1}'.format( self.formId, self.fieldId ) );
-			ko.cleanNode(self.$fieldContainer[0]);
+
+			/*
+			 * Important placeholder! Knockout is not destroyed in this function as rebinding to an already-bound
+			 * container will cause major issues due to templates not being present after the initial binding.
+			 *
+			 * Specifically, items in a foreach will be removed after binding and are not available for subsequent
+			 * bindings. This will result in errors saying no template contents found.
+			 */
 		}
 
 		self.init = function() {
@@ -33,12 +42,9 @@ const ko = window.ko;
 			self.id 				  = self.getDebugId();
 			self.$fieldContainer      = $( '#field_{0}_{1}'.format( self.formId, self.fieldId ) );
 			self.$parentFormContainer = self.$fieldContainer.parents('form').first();
-			self.$currentPage 		  = self.$parentFormContainer.find('.gform_page:visible');
 			self.$modalSource         = $( '.gpnf-nested-form-{0}-{1}'.format( self.formId, self.fieldId ) );
 			self.isActive             = false;
-
-			var inHiddenPage = !!(self.$currentPage.length &&
-				!self.$currentPage.find(self.$fieldContainer).length);
+			self.initialized          = false;
 
 			// Handle init when form is reloaded via AJAX.
 			if ( typeof window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] !== 'undefined' ) {
@@ -57,7 +63,31 @@ const ko = window.ko;
 			self.initKnockout();
 			self.initCalculations();
 
-			if (inHiddenPage) {
+			window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] = self;
+
+			self.finalizeInit();
+		};
+
+		self.inHiddenPage = function() {
+			var currentPageNumber = $( '#gform_source_page_number_{0}'.format( self.formId ) ).val();
+			var $currentPage = self.$parentFormContainer.find('#gform_page_{0}_{1}'.format( self.formId, currentPageNumber ) );
+
+			return !!($currentPage.length &&
+				!$currentPage.find(self.$fieldContainer).length);
+		}
+
+		/**
+		 * Handles setting up the session, binding the Add Entry button, the Tingle modal, and more.
+		 *
+		 * Runs only if the field/page is visible as setting up the session triggers an XHR request and can overload the server in rare (but possible) circumstances. Everything else such as
+		 * Knockout will be initialized prior to this method and initialized regardless of field visibility.
+		 *
+		 * This method was originally added for Page Transitions to call it when pages are navigating if using Soft Validation.
+		 *
+		 * @return void
+		 */
+		self.finalizeInit = function() {
+			if (self.inHiddenPage()) {
 				console.debug('Nested form is not visible. Skipping loading.');
 
 				return;
@@ -70,8 +100,6 @@ const ko = window.ko;
 
 			self.initModal();
 			self.addColorStyles();
-
-			window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] = self;
 
 			/**
 			 * Filter whether or not the child form HTML should be immediately fetched when the parent form is loaded.
@@ -86,7 +114,9 @@ const ko = window.ko;
 			if (gform.applyFilters('gpnf_fetch_form_html_on_load', true, self.formId, self.fieldId, self)) {
 				sessionPromise.always(self.getFormHtml);
 			}
-		};
+
+			self.initialized = true;
+		}
 
 		/**
 		 * Initialize cookie for GPNF via AJAX.
@@ -222,21 +252,14 @@ const ko = window.ko;
 			/**
 			 * If VM already exists, reset the observable array as rebinding can cause issues.
 			 */
-			if (self.viewModel && ko.dataFor(self.$fieldContainer[0])) {
-				self.viewModel.entries(self.prepareEntriesForKnockout(self.entries));
+			if (ko.dataFor(self.$fieldContainer[0])) {
+				ko.dataFor(self.$fieldContainer[0]).entries(self.prepareEntriesForKnockout(self.entries));
 				return;
 			}
 
 			// Setup Knockout to handle our Nested Form field entries.
 			self.viewModel = new EntriesModel(self.prepareEntriesForKnockout(self.entries), self);
-
-			/*
-			 * Preserve jQuery data as KO's cleanNode method will remove it. This is specifically needed for
-			 * Gravity Forms' disable assessment.
-			 */
-			const preservedData = jQuery(self.$fieldContainer).data();
-			ko.cleanNode(self.$fieldContainer[0]);
-			self.$fieldContainer.data(preservedData);
+			self.addRowIdComputedToEntries( self.viewModel.entries );
 
 			ko.applyBindings(self.viewModel, self.$fieldContainer[0]);
 		};
@@ -267,6 +290,23 @@ const ko = window.ko;
 		};
 
 		self.openModal = function( trigger ) {
+			/**
+			 * Filter whether the nested form modal should open or not.
+			 *
+			 * @since 1.1.9
+			 *
+			 * @param bool  			shouldOpenModal 	Whether the modal should open or not.
+			 * @param object 			modal				The tingle.js modal object.
+			 * @param int 				formId				The form ID of the parent form containing the nested form field.
+			 * @param int 				fieldId				The field ID of the nested form field.
+			 * @param {GPNestedForms} 	gpnf      			Current instance of the GPNestedForms object.
+			 */
+			var shouldOpenModal = window.gform.applyFilters( 'gpnf_should_open_modal', true, self.modal, self.formId, self.fieldId, self );
+
+			if ( !shouldOpenModal ) {
+				return;
+			}
+
 			self.saveParentFocus( trigger );
 			self.modal.open();
 			/**
@@ -561,7 +601,7 @@ const ko = window.ko;
 			 * The .first() call here is used in the event that the parent form markup is on the page more than one time. This can happen with
 			 * third-party plugins such as wpDataTables.
 			 */
-			return $( '#gform_page_{0}_{1} .gform_page_footer, #gform_{0} .gform_footer'.format( self.nestedFormId, self.getCurrentPage() ) ).first().find( 'input[type="button"], input[type="submit"], input[type="image"], button' );
+			return $( '#gform_page_{0}_{1} .gform_page_footer, #gform_{0} .gform_footer, #gform_{0} .gfield--type-submit'.format( self.nestedFormId, self.getCurrentPage() ) ).first().find( 'input[type="button"], input[type="submit"], input[type="image"], button' );
 		};
 
 		self.handleCancelClick = function( $button ) {
@@ -621,8 +661,9 @@ const ko = window.ko;
 				}
 			} );
 
-			gform.addAction( 'gform_list_post_item_add', self.modal.checkOverflow, 10, self.getNamespace() );
-			gform.addAction( 'gform_list_post_item_delete', self.modal.checkOverflow, 10, self.getNamespace() );
+			// Use .bind() to ensure that the "this" context is set correctly.
+			gform.addAction( 'gform_list_post_item_add', self.modal.checkOverflow.bind(self.modal), 10, self.getNamespace() );
+			gform.addAction( 'gform_list_post_item_delete', self.modal.checkOverflow.bind(self.modal), 10, self.getNamespace() );
 
 		};
 
@@ -637,8 +678,15 @@ const ko = window.ko;
 			return entries;
 		};
 
-		self.prepareEntryForKnockout = function( entry ) {
+		self.addRowIdComputedToEntries = function( entries ) {
+			for ( var i = 0; i < entries().length; i++ ) {
+				entries.splice( i, 1, self.addRowIdComputedToEntry( entries()[i] ) );
+			}
 
+			return entries;
+		};
+
+		self.prepareEntryForKnockout = function( entry ) {
 			// IE8 hack to fix recursive loop issue; props to Josh Casey
 			var entryTemplate = $.extend( {}, entry );
 
@@ -652,8 +700,46 @@ const ko = window.ko;
 				}
 			}
 
+			entry = self.addRowIdComputedToEntry( entry );
+
 			return entry;
 		};
+
+		/*
+		 * Row ID should be computed otherwise we'd need to update all entries using AJAX on delete, etc.
+		 *
+		 * We also need to do it after Knockout is actually initialized so the computed works correctly upon reload.
+		 */
+		self.addRowIdComputedToEntry = function( entry ) {
+			var rowIdComputed = ko.computed( function () {
+				var entryIds = $.map( self.viewModel ? self.viewModel.entries() : self.entries, function ( entry ) {
+					return parseInt( entry.id );
+				} );
+
+				var rowId = entryIds.indexOf( parseInt( entry.id ) ) + 1;
+
+				/**
+				 * Filter the row ID summary column value.
+				 *
+				 * @since 1.1.12
+				 *
+				 * @param {number} 			rowId 		The entry's row ID summary column value.
+				 * @param {object} 			entry 		The child entry being displayed.
+				 * @param {GPNestedForms} 	gpnf      	Current instance of the GPNestedForms object.
+				 */
+				return window.gform.applyFilters( 'gpnf_row_id_value', rowId, entry, self );
+			}, self.viewModel );
+
+			var rowId = {
+				label: rowIdComputed,
+				value: rowIdComputed,
+			};
+
+			entry['row_id'] = rowId;
+			entry['frow_id'] = rowId;
+
+			return entry;
+		}
 
 		self.refreshMarkup = function() {
 
@@ -694,7 +780,7 @@ const ko = window.ko;
 
 		};
 
-		self.deleteEntry = function( item, $trigger ) {
+		self.deleteEntry = function( item, $trigger, opts ) {
 
 			/**
 			 * Filter whether the child entry should be deleted. Useful for
@@ -711,7 +797,17 @@ const ko = window.ko;
 				return;
 			}
 
-			var $spinner = new AjaxSpinner( $trigger, self.spinnerUrl, '' );
+			var defaultOpts = {
+				showSpinner: true
+			};
+
+			opts = $.extend({}, defaultOpts, opts)
+
+			var $spinner = null;
+			if (opts.showSpinner) {
+				$spinner = new AjaxSpinner( $trigger, self.spinnerUrl, '' );
+			}
+
 			$trigger.css( { visibility: 'hidden' } );
 
 			$.post( self.ajaxUrl, {
@@ -720,7 +816,10 @@ const ko = window.ko;
 				gpnf_entry_id: item.id
 				}, function( response ) {
 
-					$spinner.destroy();
+					if ($spinner) {
+						$spinner.destroy();
+					}
+
 					$trigger.css( { visibility: 'visible' } );
 
 					if ( ! response ) {
@@ -732,7 +831,9 @@ const ko = window.ko;
 					}
 
 					// Success!
-					self.viewModel.entries.remove( item );
+					self.viewModel.entries.remove(function (currItem) {
+						return currItem.id === item.id || currItem === item;
+					} );
 
 					/**
 					 * Filter to determine if the child form HTML should be refreshed after deleting child entries.
@@ -869,7 +970,7 @@ const ko = window.ko;
 				return formula;
 			}
 
-			var matches = getMatchGroups( formula, /{[^{]*?:([0-9]+):(sum|total|count)=?([0-9]*)}/i );
+			var matches = getMatchGroups( formula, /{[^{]*?:([0-9]+):(sum|total|count|set)=?([0-9]*)}/i );
 			$.each( matches, function( i, group ) {
 
 				var search            = group[0],
@@ -890,10 +991,30 @@ const ko = window.ko;
 					return 0;
 				}
 
+				/**
+				 * Filter the child entries used for Nested Forms' calculation merge tag modifiers such as :count, :sum,
+				 * and more. This is useful for conditionally including/excluding entries while calculating the results.
+				 *
+				 * @since 1.1.5
+				 *
+				 * @param {array}           entries         Child entries to be used for calculations
+				 * @param {object}          match           Information about the matched merge tag.
+				 * @param {int}             fieldId         ID of the Nested Form field.
+				 * @param {int}             formId          ID of the child form.
+				 * @param {GPNestedForms}   gpnf            Current instance of the GPNestedForms object.
+				 * @param {object}          formulaField    The formula field with the merge tag in it.
+				 */
+				var entries = window.gform.applyFilters( 'gpnf_calc_entries', self.viewModel.entries(), {
+					search,
+					nestedFormFieldId,
+					func,
+					targetFieldId,
+				}, self.fieldId, self.formId, self, formulaField );
+
 				switch ( func ) {
 					case 'sum':
 						var total = 0;
-						self.viewModel.entries().forEach( function( entry ) {
+						entries.forEach( function( entry ) {
 							var value = 0;
 							if ( typeof entry[ targetFieldId ] !== 'undefined' ) {
 								value = entry[ targetFieldId ].value ? gformToNumber( entry[ targetFieldId ].value ) : 0;
@@ -904,15 +1025,46 @@ const ko = window.ko;
 						break;
 					case 'total':
 						var total = 0;
-						self.viewModel.entries().forEach( function( entry ) {
+						entries.forEach( function( entry ) {
 							total += parseFloat( entry.total );
 						} );
 						replace = total;
 						break;
 					case 'count':
-						replace = self.viewModel.entries().length;
+						replace = entries.length;
+						break;
+					case 'set':
+						var items = [];
+						entries.forEach( function( entry ) {
+							var value = 0;
+							if ( typeof entry[ targetFieldId ] !== 'undefined' && entry[ targetFieldId ].value ) {
+								value = gformToNumber( entry[ targetFieldId ].value );
+							}
+							items.push( value );
+						} );
+						replace = items.join( ', ' );
 						break;
 				}
+
+				/**
+				 * Filter the replacement values for Nested Forms calculation merge tag modifiers such as :sum.
+				 *
+				 * @since 1.1.5
+				 *
+				 * @param {float}             replace         Replacement value to use for the merge tag in the calculation.
+				 * @param {object}            match           Information about the matched merge tag.
+				 * @param {array}             entries         Child entries to be used for calculations
+				 * @param {int}               fieldId         ID of the Nested Form field.
+				 * @param {int}               formId          ID of the child form.
+				 * @param {GPNestedForms}     gpnf            Current instance of the GPNestedForms object.
+				 * @param {object}            formulaField    The formula field with the merge tag in it.
+				 */
+				replace = window.gform.applyFilters( 'gpnf_calc_replacement_value', replace, {
+					search,
+					nestedFormFieldId,
+					func,
+					targetFieldId,
+				}, entries, self.fieldId, self.formId, self, formulaField );
 
 				formula = formula.replace( search, replace );
 
@@ -1059,7 +1211,7 @@ const ko = window.ko;
 				}
 
 				if ( currentValue != value ) {
-					$( this ).val( value ).change().trigger( "chosen:updated" );
+					$( this ).val( value ).change().trigger( "chosen:updated" ).trigger('gpnfUpdatedFromParentMergeTag');
 
 					// TinyMCE appears to initialize _before_ the parent merge tags are handled. Instead of changing priority, reset the TinyMCE editor content accordingly.
 					const inputIdBits = $( this ).prop( 'id' )?.split( '_' );
@@ -1164,6 +1316,10 @@ const ko = window.ko;
 				} );
 		}
 
+		GPNestedForms.deleteEntry = function( item, $trigger, opts ) {
+			self.deleteEntry( item, $trigger, opts );
+		};
+
 		/**
 		 * Static function called via the confirmation of the nested form. Loads the newly created entry into the
 		 * Nested Form field displayed on the parent form.
@@ -1173,10 +1329,11 @@ const ko = window.ko;
 		GPNestedForms.loadEntry = function( args ) {
 
 			/** @var \GPNestedForms gpnf */
-			var gpnf = window[ 'GPNestedForms_{0}_{1}'.format( args.formId, args.fieldId ) ];
+			var gpnf          = window[ 'GPNestedForms_{0}_{1}'.format( args.formId, args.fieldId ) ];
+			var refreshMarkup = true;
 
-			const entry    = gpnf.prepareEntryForKnockout( args.fieldValues );
-			entry.id = args.entryId;
+			const entry = gpnf.prepareEntryForKnockout( args.fieldValues );
+			entry.id    = args.entryId;
 
 			// edit
 			if ( args.mode == 'edit' ) {
@@ -1207,10 +1364,25 @@ const ko = window.ko;
 				 * @param int             	fieldId   			The field ID of the Nested Form field.
 				 * @param {GPNestedForms} 	gpnf      			Current instance of the GPNestedForms object.
 				 */
-				if ( window.gform.applyFilters( 'gpnf_fetch_form_html_after_add', true, self.formId, self.fieldId, self ) ) {
-					gpnf.refreshMarkup();
-				}
+				refreshMarkup = window.gform.applyFilters( 'gpnf_fetch_form_html_after_add', refreshMarkup, self.formId, self.fieldId, self );
 
+			}
+
+			/**
+			 * Filter to determine if the child form HTML should be refreshed after adding or editing entries.
+			 *
+			 * Return "false" here to disable refreshing child form HTML via AJAX after new entries are added or edited.
+			 *
+			 * @since 1.0.15
+			 *
+			 * @param boolean         refreshMarkup Whether or not to refresh HTML after adding entries.
+			 * @param int             formId        The parent form ID.
+			 * @param int             fieldId       The field ID of the Nested Form field.
+			 * @param {GPNestedForms} gpnf          Current instance of the GPNestedForms object.
+			 * @param object          args          The details of the request to add/edit the current entry.
+			 */
+			if ( window.gform.applyFilters( 'gpnf_fetch_form_html_after_add_or_edit', refreshMarkup, self.formId, self.fieldId, self, args ) ) {
+				gpnf.refreshMarkup();
 			}
 
 			if ( gpnf.isActive ) {

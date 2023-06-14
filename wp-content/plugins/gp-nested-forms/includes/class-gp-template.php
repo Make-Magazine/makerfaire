@@ -172,8 +172,19 @@ if ( ! class_exists( 'GP_Template' ) ) {
 		 */
 		public function parse_template( $template_names, $load = true, $require_once = true, $args = array() ) {
 			ob_start();
-			$this->locate_template( $template_names, $load, $require_once, $args );
-			return ob_get_clean();
+			$located_template = $this->locate_template( $template_names, $load, $require_once, $args );
+
+			/**
+			 * Filter the output of the located template.
+			 *
+			 * @since 1.1.15
+			 *
+			 * @param string $output           The output of the located template.
+			 * @param string $located_template The path to the located template.
+			 * @param bool   $load             Whether the template should be loaded.
+			 * @param array  $args             The arguments passed to the template.
+			 */
+			return gf_apply_filters( 'gp_template_output', $args['template'], ob_get_clean(), $located_template, $load, $args );
 		}
 
 		/**
@@ -204,6 +215,7 @@ if ( ! class_exists( 'GP_Template' ) ) {
 			global $posts, $post, $wp_did_header, $wp_query, $wp_rewrite, $wpdb, $wp_version, $wp, $id, $comment, $user_ID;
 
 			if ( is_array( $wp_query->query_vars ) ) {
+				// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 				extract( $wp_query->query_vars, EXTR_SKIP );
 			}
 
@@ -211,6 +223,7 @@ if ( ! class_exists( 'GP_Template' ) ) {
 				$s = esc_attr( $s );
 			}
 
+			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 			extract( $args );
 
 			if ( $require_once ) {
