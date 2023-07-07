@@ -1827,16 +1827,17 @@
 				.p-title {
 					font-size: 18px;
 					line-height: 1.3em;
-					overflow: visible;
+					display: -webkit-box;
+               -webkit-box-orient: vertical;
+               -webkit-line-clamp: 2;
+               overflow: hidden;
 					font-weight: bold;
 				}
 				@media screen and (min-width: 767px) {
 					margin-bottom: 5px;
-					.p-title { height: auto; }
 				}
 				@media screen and (min-width: 982px) {
 					margin-bottom: 20px;
-					.p-title { height: 35px; }
 				}
 			}
 			.content {
