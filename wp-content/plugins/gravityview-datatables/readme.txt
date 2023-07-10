@@ -16,6 +16,10 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 3.2 on June 29, 2023 =
+
+* Added: Support for **grouping by row values!** [Learn more about the new, powerful grouping feature](https://www.gravitykit.com/announcing-datatables-3-2/)
+
 = 3.1.2 on May 17, 2023 =
 
 * Fixed: Field filters not working under specific conditions
@@ -402,4 +406,4 @@ __Developer Notes:__
 
 
 
-= 1686766562-4249 =
+= 1688664044-4249 =

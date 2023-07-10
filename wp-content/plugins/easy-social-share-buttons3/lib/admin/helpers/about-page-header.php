@@ -22,8 +22,9 @@ $support_locked = !ESSBActivationManager::isActivated() ? 'support-locked' : '';
 	</div>
 
 	<div class="usefull-links">
+		<a href="<?php echo esc_url(admin_url('admin.php?page=essb_redirect_addons')); ?>">Add-Ons</a>
 		<a href="https://docs.socialsharingplugin.com" target="_blank">Documentation</a>
-		<a href="https://support.creoworx.com/create-new-support-topic/" target="_blank" class="<?php echo esc_attr($support_locked);?>">Get Support</a>
+		<a href="https://my.socialsharingplugin.com" target="_blank" class="<?php echo esc_attr($support_locked);?>">Get Support</a>
 	</div>
 </div>
 

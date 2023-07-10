@@ -9,7 +9,7 @@
 ?>
 <div class="gpnf-nested-entries-container-<?php echo $field->formId; ?>-<?php echo $field->id; ?> gpnf-nested-entries-container gpnf-entry-view ginput_container">
 
-	<table class="gpnf-nested-entries">
+	<table class="gpnf-nested-entries gpnf-nested-entries-simple">
 
 		<thead>
 		<tr>
@@ -25,8 +25,15 @@
 		<?php foreach ( $entries as $entry ) : ?>
 			<?php $field_values = gp_nested_forms()->get_entry_display_values( $entry, $nested_form, $nested_field_ids ); ?>
 			<tr>
-				<?php foreach ( $nested_fields as $nested_field ) : ?>
-					<td class="gpnf-field"><?php echo rgars( $field_values, "{$nested_field['id']}/label" ); ?></td>
+				<?php
+				foreach ( $nested_fields as $nested_field ) :
+					$field_value = rgars( $field_values, "{$nested_field['id']}/label" );
+					?>
+					<td class="gpnf-field"
+						data-heading="<?php echo GFCommon::get_label( $nested_field ); ?>"
+						data-value="<?php echo esc_attr( $field_value ); ?>">
+						<?php echo $field_value; ?>
+					</td>
 				<?php endforeach; ?>
 			</tr>
 		<?php endforeach; ?>

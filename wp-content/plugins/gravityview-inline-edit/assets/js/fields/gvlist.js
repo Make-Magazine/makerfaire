@@ -14,6 +14,7 @@
 
 	var Gvlist = function ( options ) {
 		this.init( 'gvlist', options, Gvlist.defaults );
+
 		this.sourceData = null;
 	};
 
@@ -46,6 +47,10 @@
 			var columnCount = this.options.colcount;
 			var counter = 0;
 			var inputValue, propertyName, $addButton = null;
+			var isLegacy = false;
+			if($(this.$tpl).find('table.gfield_list_container').length > 0){
+				isLegacy = true;
+			}
 
 			if ( value ) {//After the field has been updated using inline-edit
 				sourceData = value;
@@ -58,13 +63,24 @@
 			if ( ( $.isArray( sourceData ) && sourceData.length ) ) {
 				//Create empty fields for all the list items.
 				$addButton = this.$tpl.find( '.add_list_item' );
+
+				if(isLegacy){
+					$(this.$tpl).find('table.gfield_list_container').parents( '.gform_wrapper' ).addClass('gform_legacy_markup_wrapper');
+				}
+
 				for ( var i = 1; i < sourceData.length; i++ ) {
 					gformAddListItem( $addButton, 0 );
 				}
+
 				//Populate the fields
 				this.$tpl.find( "input[name^='input_']" ).each( function ( i, el ) {
+
 					if ( isMultiColumn ) {
-						propertyName = $( el ).parents( 'td' ).data( 'label' );
+						if(isLegacy){
+							propertyName = $( el ).parents( 'td' ).data( 'label' );
+						}else{
+							propertyName = $( el ).parents( '.gfield_list_group_item' ).data( 'label' );
+						}
 						counter = Math.floor( i / columnCount );
 						inputValue = sourceData[ counter ][ propertyName ];
 					} else {
@@ -82,6 +98,11 @@
 			var listRow = {};
 			var isMultiColumn = this.options.multicolumn;
 			var columnCount = this.options.colcount;
+			var isLegacy = false;
+			if($(this.$tpl).find('table.gfield_list_container').length > 0){
+				isLegacy = true;
+			}
+
 
 			if ( isMultiColumn && 'undefined' === typeof columnCount ) {//Multicolumn field that was originally empty
 				columnCount = this.$tpl.find( "input[name^='input_']" ).length;
@@ -92,7 +113,11 @@
 			//those the user might have added after render
 			this.$tpl.find( "input[name^='input_']" ).each( function ( i, el ) {
 				if ( isMultiColumn ) {
-					propertyName = $( el ).parents( 'td' ).data( 'label' );
+					if(isLegacy){
+						propertyName = $( el ).parents( 'td' ).data( 'label' );
+					}else{
+						propertyName = $( el ).parents( '.gfield_list_group_item' ).data( 'label' );
+					}
 					rowNumber = Math.floor( i / columnCount );//which row should this value be stored in
 					if ( listValues[ rowNumber ] ) {
 						listValues[ rowNumber ][ propertyName ] = $( el ).val();
@@ -119,7 +144,7 @@
 				$( element ).empty();
 				return;
 			}
-
+			
 			var valueHtml = null;
 
 			var valueArray = $.map( value, function ( val, index ) {

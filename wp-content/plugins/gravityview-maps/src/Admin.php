@@ -829,13 +829,6 @@ class Admin extends Component {
 	 * @return \GV\View[] \GV\View objects without REST API enabled.
 	 */
 	protected function get_map_views_without_rest(): array {
-
-		$view = $this->is_single_view();
-
-		if ( $view && self::is_rest_disabled( $view ) ) {
-			return [ $view ];
-		}
-
 	    // Try to get the cached results
 	    $cached_views = isset( $_GET['cache'] ) ? false : get_transient( self::TRANSIENT_KEY_MAPS_WITHOUT_REST );
 
@@ -894,6 +887,23 @@ class Admin extends Component {
 			return;
 		}
 
+		$is_single = $this->is_single_view();
+		$view_id = $is_single && ! empty( $_GET['post'] ) ? (int) $_GET['post'] : null;
+
+		// When single edit page for view there are special conditions.
+		if ( $is_single ) {
+			// If the current View is a new view, don't show the notice.
+			if ( ! $view_id ) {
+				return;
+			}
+
+			// Now check if the current View is in the list of Map Views without REST API enabled.
+			$map_views_without_rest = wp_list_pluck( $views, 'ID' );
+			if ( ! in_array( $view_id, $map_views_without_rest, true )  ) {
+				return;
+			}
+		}
+
 		wp_enqueue_script( 'gravityview_maps_admin' );
 
 		$button_args = [
@@ -902,10 +912,10 @@ class Admin extends Component {
 			'data-gk-single-view-id' => null,
 		];
 
-		if ( $this->is_single_view() ) {
+		if ( $is_single ) {
 			$message = esc_html__( 'This View is using the Map View Type, which needs REST API access to work properly.', 'gk-gravitymaps' );
 			$button_text = esc_html__( 'Enable REST API for this View', 'gk-gravitymaps' );
-			$button_args['data-gk-single-view-id'] = $views[0]->ID;
+			$button_args['data-gk-single-view-id'] = $view_id;
 		} else {
 			$message = esc_html__( 'You currently have Views using the Map View Type that need REST API access to work properly.', 'gk-gravitymaps' );
 			$button_text = sprintf( _n( 'Enable REST API for %d View', 'Enable REST API for %d Views', count( $views ), 'gk-gravitymaps' ), count( $views ) );

@@ -445,7 +445,7 @@ function essb_register_settings_metabox_optimize() {
 			ESSBOptionsFramework::draw_options_row_start_full();
 			
 			echo '<div class="essb-post-clear-counters">';
-			echo '<a class="button button-primary" href="'.esc_url(add_query_arg('essb_clear_cached_counters', 'true', $post_address)).'" target="_blank">Update Counters Now</a>&nbsp;';
+			echo '<a class="button button-primary" href="'.esc_url(add_query_arg('essb_counter_update', 'true', $post_address)).'" target="_blank">Update Counters Now</a>&nbsp;';
 			echo '<a class="button button-secondary" data-post-id="'.esc_attr($post->ID).'" href="#" id="essb-delete-post-counter">Delete Counter Information</a>';
 			echo "<span class='dashicons dashicons-yes'></span>";
 			echo "<span class='spinner'></span>";

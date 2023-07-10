@@ -2,11 +2,15 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 16-May-2023 using Strauss.
+ * Modified by gravityview on 20-June-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityView\Foundation\WP;
+
+use GravityKit\GravityView\Foundation\Core;
+use GravityKit\GravityView\Foundation\Helpers\Arr;
+use GravityKit\GravityView\Foundation\Settings\Framework as SettingsFramework;
 
 /**
  * This class is responsible for adding a GravityKit menu and submenu items to the WP admin panel.
@@ -117,17 +121,24 @@ class AdminMenu {
 				 */
 				$badge_count = (int) apply_filters( "gk/foundation/admin-menu/submenu/{$submenu_item['id']}/counter", 0 );
 
+				if ( Arr::get( $submenu, 'hide' ) ) {
+					$badge_count = 0;
+				}
+
 				if ( $badge_count > 0 ) {
 					$total_badge_count += $badge_count;
 				}
 
+				$submenu_item_id = Arr::get( $submenu_item, 'id' );
+
 				$filtered_submenu = [
+					'id'         => $submenu_item_id,
 					'slug'       => self::WP_ADMIN_MENU_SLUG,
-					'page_title' => $submenu_item['page_title'],
-					'menu_title' => $submenu_item['menu_title'] . $this->get_badge_counter_markup( $submenu_item['id'], $badge_count ),
-					'capability' => $submenu_item['capability'],
-					'id'         => $submenu_item['id'],
-					'callback'   => $submenu_item['callback']
+					'page_title' => Arr::get( $submenu_item, 'page_title' ),
+					'menu_title' => Arr::get( $submenu_item, 'menu_title' ) . $this->get_badge_counter_markup( $submenu_item_id, $badge_count ),
+					'capability' => Arr::get( $submenu_item, 'capability' ),
+					'callback'   => Arr::get( $submenu_item, 'callback' ),
+					'hide'       => Arr::get( $submenu_item, 'hide' ),
 				];
 
 				if ( $index === count( $submenu_data ) - 1 ) {
@@ -167,14 +178,6 @@ class AdminMenu {
 			$menu_position
 		);
 
-		add_filter( 'gk/foundation/inline-styles', function ( $styles ) {
-			$styles[] = [
-				'style' => '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' div.wp-menu-image.svg { background-size: 1.5em auto; }',
-			];
-
-			return $styles;
-		} );
-
 		/**
 		 * @filter `gk/foundation/admin-menu/counter` Displays counter next to the top-menu title.
 		 *
@@ -188,6 +191,31 @@ class AdminMenu {
 			if ( $menu_item[2] === self::WP_ADMIN_MENU_SLUG ) {
 				$menu_item[0] .= $this->get_badge_counter_markup( self::WP_ADMIN_MENU_SLUG, $total_badge_count );
 			}
+		}
+
+		$top_level_menu_action = SettingsFramework::get_instance()->get_plugin_setting( Core::ID, 'top_level_menu_action', 'submenu' );
+
+		if ( in_array( $top_level_menu_action, Arr::pluck( $filtered_submenus, 'id' ) ) && $top_level_menu_action !== Arr::get( $filtered_submenus, '0.id' ) ) {
+			// Add and hide a first submenu item that will be used as an action for the top-level menu GravityKit menu.
+			// An alternative is to use the `parent_file` filter, but that would still show the first submenu item's ID in the URL.
+			add_submenu_page(
+				self::WP_ADMIN_MENU_SLUG,
+				'',
+				'',
+				$user_first_met_capability,
+				$top_level_menu_action
+			);
+
+			add_filter( 'gk/foundation/inline-styles', function ( $styles ) {
+				$styles[] = [
+					'style' => '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li:nth-child(2) {
+						display: none;
+					}',
+				];
+
+				return $styles;
+			} );
+
 		}
 
 		// Add submenus.
@@ -219,6 +247,34 @@ class AdminMenu {
 				unset( $submenu[ self::WP_ADMIN_MENU_SLUG ][ $key ] );
 			}
 		}
+
+		add_filter( 'gk/foundation/inline-styles', function ( $styles ) use ( $filtered_submenus ) {
+			// Top-level menu item SVG icon style.
+			$styles[] = [
+				'style' => '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' div.wp-menu-image.svg { background-size: 1.5em auto; }',
+			];
+
+			// Styles for submenus that should be hidden.
+			$hide_styles = [];
+
+			foreach ( $filtered_submenus as $index => $submenu ) {
+				if ( isset( $submenu['top_level_menu_action'] ) ) {
+					$hide_styles[] = '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li:nth-child(2)';
+				}
+
+				if ( $submenu['hide'] ) {
+					$hide_styles[] = '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li a[href*="' . $submenu['id'] . '"]';
+				}
+			}
+
+			if ( empty( $hide_styles ) ) {
+				return $styles;
+			}
+
+			$styles[] = [ 'style' => join( ',', $hide_styles ) . ' { display: none !important; }' ];
+
+			return $styles;
+		} );
 	}
 
 	/**
@@ -232,7 +288,7 @@ class AdminMenu {
 	 * @retun void
 	 */
 	static function add_submenu_item( $submenu, $position = 'top' ) {
-		if ( ! isset( $submenu['id'] ) && ! isset( $_submenus[ $position ] ) ) {
+		if ( ! isset( $submenu['id'] ) && ! isset( self::$_submenus[ $position ] ) ) {
 			return;
 		}
 

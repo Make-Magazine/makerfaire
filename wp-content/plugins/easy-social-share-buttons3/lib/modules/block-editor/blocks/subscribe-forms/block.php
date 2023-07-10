@@ -50,6 +50,8 @@ function essb_block_register_subscribe() {
 function essb_block_render_subscribe( $attributes ) {
 	/** @var  $is_in_edit_mode  Check if we are in the editor */
 	$is_in_edit_mode = strrpos( $_SERVER['REQUEST_URI'], "context=edit" );
+	
+	if (strrpos( $_SERVER['REQUEST_URI'], "action=edit" )) $is_in_edit_mode = true;
 
 	$template = isset($attributes['template']) ? $attributes['template'] : '';
 

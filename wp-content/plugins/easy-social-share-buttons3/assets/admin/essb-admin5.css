@@ -4006,6 +4006,10 @@ display: inline-block;
 	margin-top: 20px;
 }
 
+.essb-admin-dashboard-widget .essb-admindash-row.essb-admindash-row-nomt {
+	margin-top: 0;
+}
+
 .essb-admin-dashboard-widget .essb-admindash-footer .portfolio-button {
 	color:#FD5B03;
 }

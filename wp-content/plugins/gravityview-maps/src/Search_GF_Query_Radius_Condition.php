@@ -1,8 +1,9 @@
 <?php
 
 namespace GravityKit\GravityMaps;
-use \GFFormsModel;
 
+use \GFFormsModel;
+use GF_Query;
 
 /**
  * Class Search_GF_Query_Radius_Condition
@@ -63,6 +64,8 @@ class Search_GF_Query_Radius_Condition extends \GF_Query_Condition {
 		if ( ! $callbacks ) {
 			return $this;
 		}
+
+		$this->mode = $type;
 
 		$this->fields = array_map( static function ( $id ) use ( $callbacks ) {
 			return [

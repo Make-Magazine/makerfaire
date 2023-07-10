@@ -282,14 +282,16 @@ class Render_Map extends Component {
 	 * @return void
 	 */
 	protected function maybe_register_scripts() {
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.js' : '.min.js';
+
+		wp_register_script( 'gk-maps-base', plugins_url( "assets/js/base{$suffix}", $this->loader->path ), [ 'wp-hooks' ], $this->loader->plugin_version );
+
 		// Our work here is already done.
 		if ( wp_script_is( 'gv-google-maps-spiderfier', 'registered' ) ) {
 			return;
 		}
 
 		$this->determine_google_script_handle();
-
-		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.js' : '.min.js';
 
 		wp_register_script( $this->get_google_script_handle(), $this->get_google_script_url(), [], null );
 
@@ -300,18 +302,19 @@ class Render_Map extends Component {
 		wp_register_script( 'gk-maps-search-fields', plugins_url( "assets/js/gk-maps-search-fields{$suffix}", $this->loader->path ), [
 			'jquery',
 			'gravityview-maps',
+			'gk-maps-base',
 		], $this->loader->plugin_version );
 
 		wp_register_script( 'gk-maps-address-auto-complete', plugins_url( "assets/js/gk-maps-address-auto-complete{$suffix}", $this->loader->path ), [
 			'jquery',
-			'wp-hooks',
+			'gk-maps-base',
 			$this->get_google_script_handle(),
 		], $this->loader->plugin_version );
 
 		/** @see Render_Map::enqueue_when_needed() for Google Map script JIT registration */
 		wp_register_script( 'gravityview-maps', plugins_url( '/assets/js/gv-maps' . $suffix, $this->loader->path ), [
 			'jquery',
-			'wp-hooks',
+			'gk-maps-base',
 			$this->get_google_script_handle(),
 			'gv-google-maps-clusterer',
 			'gv-google-maps-spiderfier',
@@ -567,7 +570,7 @@ class Render_Map extends Component {
 			'google_maps_script_not_loaded' => esc_html__( 'Google Maps script failed to load.', 'gk-gravitymaps' ),
 			'google_maps_api_error'         => esc_html__( 'Google Maps API returned an error. Please check the browser console for more information.', 'gk-gravitymaps' ),
 			'entries_missing_coordinates'   => esc_html__( 'None of the address fields have latitude/longitude coordinates. Please make sure that at least one address is geocoded before a map can be displayed.', 'gk-gravitymaps' ),
-			'cannot_use_rest_error'         => esc_html__( 'Rest API cannot be disabled to be able to use the Maps functionality.', 'gk-gravitymaps' ),
+			'cannot_use_rest_error'         => esc_html__( 'Rest API cannot be disabled when using the Maps functionality. Please make sure this view has Rest API enabled.', 'gk-gravitymaps' ),
 			'hide_until_searched'           => (bool) $view->settings->get( 'hide_until_searched' ),
 			'can_use_rest'                  => $this->can_view_use_rest( $view_id ),
 		];

@@ -1,0 +1,107 @@
+# Copyright (C) 2018 GravityView
+# This file is distributed under the GPLv2 or later.
+# Translators:
+# Dariusz Zielonka <info@dariusz-zielonka.pl>, 2018
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView - DIY Layout 2.0\n"
+"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
+"POT-Creation-Date: 2018-05-03 20:55:07+00:00\n"
+"PO-Revision-Date: 2018-04-27 23:07+0000\n"
+"Last-Translator: Dariusz Zielonka <info@dariusz-zielonka.pl>, 2018\n"
+"Language-Team: Polish (Poland) (https://www.transifex.com/katzwebservices/teams/18775/pl_PL/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Textdomain-Support: yes\n"
+
+#: class-gravityview-diy-template.php:23
+msgid "A flexible, powerful layout for designers & developers."
+msgstr "Elastyczny, potężny układ dla projektantów i programistów."
+
+#: class-gravityview-diy-template.php:33
+msgid "Link to single entry"
+msgstr "Link do pojedynczej pozycji"
+
+#: class-gravityview-diy-template.php:39
+msgid "Wrapper"
+msgstr "Wrapper"
+
+#: class-gravityview-diy-template.php:49
+msgid "Fields to Display"
+msgstr "Pola do wyświetlenia"
+
+#: class-gravityview-diy-template.php:50
+msgid "The field values will need to be styled using CSS."
+msgstr "Wartości pól będą musiały być stylizowane przy użyciu CSS."
+
+#: class-gravityview-diy-template.php:100
+msgid "Custom Label"
+msgstr "Własna etykieta"
+
+#: class-gravityview-diy-template.php:101
+msgid ""
+"This label is to make it easier to organize your fields. It is not visible "
+"on the front-end."
+msgstr ""
+"Ta etykieta ma na celu ułatwiać organizację Twoich pól. Nie jest widoczna na"
+" front-endzie."
+
+#: class-gravityview-diy-template.php:109
+msgid "Before Output"
+msgstr "Przed outputem"
+
+#: class-gravityview-diy-template.php:110
+msgid "before"
+msgstr "przed"
+
+#: class-gravityview-diy-template.php:120
+msgid "Container Tag"
+msgstr "Tag kontenera"
+
+#: class-gravityview-diy-template.php:121
+msgid "This HTML tag will be used to wrap the field value."
+msgstr ""
+"Ten znacznik HTML będzie używany jako wrapper do zawijania wartości pola."
+
+#: class-gravityview-diy-template.php:133
+msgid "After Output"
+msgstr "Po outpucie"
+
+#: class-gravityview-diy-template.php:134
+msgid "after"
+msgstr "za"
+
+#: class-gravityview-diy-template.php:164
+msgid "None"
+msgstr "Brak"
+
+#: class-gravityview-diy-template.php:22
+msgctxt "DIY means \"Do It Yourself\""
+msgid "DIY"
+msgstr "Zrób to sam (DYI)"
+
+#: class-gravityview-diy-template.php:90
+msgctxt ""
+"Same description for before and after areas. %s replaced by \"before\" and "
+"\"after\""
+msgid "Display HTML %s the field output. Supports Merge Tags."
+msgstr "Wyświetl HTML %s danymi wyjściowymi pola. Obsługuje Merge Tagi."
+
+#: gravityview-diy.php:44
+msgctxt ""
+"First placeholder: Name of the Extension. Second: Version of GravityView not"
+" found"
+msgid "%s was not loaded: GravityView %s was not found!"
+msgstr ""
+"Rozszerzenie %s nie zostało wczytane: GravityView %s nie został znaleziony!"

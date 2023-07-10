@@ -1,16 +1,16 @@
-=== Inline Edit by GravityView ===
-Tags: gravity forms
-Requires at least: 3.3
-Tested up to: 5.8
-Stable tag: trunk
-Contributors: The GravityView Team
+=== GravityEdit ===
+Tags: gravity forms, inline edit, gravityview
+Requires at least: 4.4
+Tested up to: 6.2
+Contributors: The GravityKit Team
 License: GPL 2
+Requires PHP: 7.2.0
 
 Easily edit your Gravity Forms field values without having to go to the Edit Entry screen.
 
 == Description ==
 
-Inline Editing is a powerful way to quickly make changes to a form entry without needing to enter an Edit Entry form individually. [Learn more about the plugin](https://gravityview.co/extensions/inline-edit/).
+Inline Editing is a powerful way to quickly make changes to a form entry without needing to enter an Edit Entry form individually. [Learn more about the plugin](https://www.gravitykit.com/extensions/gravityview-inline-edit/).
 
 == Installation ==
 
@@ -19,6 +19,125 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.0 on May 11, 2023 =
+
+* Fixed: File uploads were being saved to the WordPress upload directory, not the Gravity Forms uploads directory
+* Fixed: When Inline Edit was enabled for a View, multi-file upload fields were not rendering properly
+* Fixed: Speed issues related to GravityView, even when inline editing was disabled for a View
+* Fixed: Incompatibility with some plugins/themes that use Laravel components
+* Fixed: Removed active call to deprecated method.
+* Improved: Enhanced performance when used in conjunction with Gravity Forms Populate Anything by Gravity Wiz
+
+__Developer Updates:__
+
+**The version includes API-incompatible changes:**
+
+* The GravityView integration now uses GravityView's `\GV\Template_Context` instead of `GravityView_frontend::getInstance()`
+* Uses GV 2.0 actions (`gravityview/template/header` instead of `gravityview_header`) and filters (`gravityview/template/field/output` instead of `gravityview_field_entry_value`)
+* Adds `$context` parameter to `gravityview-inline-edit/wrapper-attributes` and `gravityview-inline-edit/{field-type}-wrapper-attributes` filters
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.0.12
+
+= 1.8.5 on April 5, 2023 =
+
+* Fixed: Potential fatal error when activating GravityView after GravityEdit
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.0.11
+
+= 1.8.4 on February 20, 2023 =
+
+**Note: GravityEdit now requires PHP 7.2 or newer**
+
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.0.9
+
+= 1.8.3 on February 13, 2023 =
+
+* Fixed: Compatibility with [GP Google Sheets by Gravity Wiz](https://gravitywiz.com/documentation/gravity-forms-google-sheets/?ref=263)
+* Updated: [Foundation](https://www.gravitykit.com/foundation/)
+
+= 1.8.2 on January 5, 2023 =
+
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.0.8
+
+= 1.8.1 on December 21, 2022 =
+
+* Fixed: PHP 8.1 notices
+* Fixed: Fatal error on some hosts due to a conflict with one of the plugin dependencies (psr/log)
+* Fixed: It was not possible to remove an expired license key
+
+= 1.8 on November 30, 2022 =
+
+* Added: You can now inline edit File Upload fields! (Including support for multiple files)
+* Added: Support for editing entry metadata (Created By, Date Created, Payment Date, etc.)
+* Added: Support for the Gravity Forms User Registration Add-On (When entry details are changed, changes will be made to the User profile)
+* Improved: Styling of the form
+* Fixed: Time field AM/PM inputs were not showing
+* Fixed: Time, Number, Website, and Product fields with User-Defined Price were not updating correctly
+* Fixed: Datepicker appearance
+
+= 1.7.3 on November 14, 2022 =
+
+* Fixed: Fatal error when loading plugin translations
+* Fixed: Slow loading times on some hosts
+* Fixed: Plugin failing to install on some hosts
+
+= 1.7.2 on November 3, 2022 =
+
+* Fixed: Fatal error when editing Number fields with calculations
+
+= 1.7.1 on October 31, 2022 =
+
+* Improved: Clicking on a column header to edit all fields in a column no longer requires submitting changes; changes are saved when leaving the input
+* Fixed: Plugin was not appearing in the "Add-Ons" section of the Gravity Forms System Status page
+
+= 1.7.0.2 on October 20, 2022 =
+
+* Fixed: Potential error when the plugin tries to log an unsuccessful operation
+
+= 1.7.0.1 on October 19, 2022 =
+
+* Fixed: Error when trying to activate license keys
+
+= 1.7 on October 19, 2022 =
+
+* Added: New WordPress admin menu where you can now centrally manage all your GravityKit product licenses and settings ([learn more about the new GravityKit menu](https://www.gravitykit.com/foundation/))
+    - Go to the WordPress sidebar and check out the GravityKit menu!
+    - We have automatically migrated your existing GravityEdit license, which was previously entered in the Gravity Forms settings page
+    - Request support using the "Grant Support Access" menu item
+* Added: Live-update all calculations that rely on a number field (instead of just one)
+* Added: GravityEdit icon to the Gravity Forms settings screen
+* Improved: Typography and editor size for textarea fields
+* Improved: Submit/Cancel button alignment is much nicer and more consistent
+* Improved: Reduced number of database queries when loading GravityEdit functionality
+* Fixed: Popup width was set to 100%, making it unusable in certain contexts
+* Fixed: Fatal error when inline-editing an address field if GravityView is not active
+* Fixed: PHP warnings when editing a Name field without the Prefix input
+
+= 1.6 on July 28, 2022 =
+
+* [GravityView (the company) is now GravityKit](https://www.gravitykit.com/rebrand/) and this plugin is now called GravityEdit!
+* Fixed: List field editing did not work in Gravity Forms 2.5 or newer
+* Added: Support for Gravity Wiz's Populate Anything and other extensions modifying form field values
+* Added: Support for field calculations
+
+__Developer Updates:__
+
+**IMPORTANT: `GRAVITYVIEW_INLINE_*` constants were renamed to `GRAVITYEDIT_*` and future plugin versions will see similar name changes to namespaces, class names, and hooks**
+
+= 1.5 on January 26, 2022 =
+
+* Added: GravityView field setting to disable Inline Edit for a field ([read how set this up](https://docs.gravityview.co/article/826-how-to-enable-or-disable-inline-edit-per-field))
+* Added: Support for creating entry revisions after each edit (requires the [Gravity Forms Entry Revisions](https://gravityview.co/extensions/entry-revisions/) add-on Version 1.1 or newer)
+* Improved: Made the input sizes larger when using "Popup" Inline Edit Mode
+* Improved: Display of Inline Edit settings in Gravity Forms 2.5+
+* Updated: Polish translation (thanks, Dariusz!) and German translation (thanks, Michael!)
+
+__Developer Updates:__
+
+* Renamed `GravityView_Inline_Edit_GravityView::add_to_blacklist()` to `GravityView_Inline_Edit_GravityView::add_to_blocklist()`
+
+= 1.4.4 on November 9, 2021 =
+
+* Fixed: Inline Edit would not work in DataTables View when using a responsive mode. Requires DataTables 2.5 or newer.
 
 = 1.4.3 on August 26, 2021 =
 
@@ -189,3 +308,6 @@ __Developer Updates:__
 = 1.0 =
 
 - Blastoff!
+
+
+= 1688664048-4249 =

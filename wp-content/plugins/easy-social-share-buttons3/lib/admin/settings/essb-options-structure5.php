@@ -35,7 +35,7 @@ if (class_exists('ESSBControlCenter')) {
     ESSBControlCenter::register_sidebar_block('import', 'ti-reload', 'Import, Export, Reset', array('import_heading', 'import'));
     ESSBControlCenter::register_sidebar_block('analytics', 'ti-stats-up', 'Analytics', array('analytics_heading', 'analytics', 'conversions'));
     ESSBControlCenter::register_sidebar_block('developer', 'ti-server', 'Developer', array('developer'));
-    ESSBControlCenter::register_sidebar_block('about', 'ti-info-alt', 'About, Activate, Extensions', array('about', 'update', 'status', 'extensions'));
+    ESSBControlCenter::register_sidebar_block('about', 'ti-info-alt', 'About, Activate, Add-Ons', array('about', 'update', 'status', 'extensions', 'addons'));
     ESSBControlCenter::register_sidebar_block('extensions', 'ti-package', 'Installed Extensions', array());
     ESSBControlCenter::set_global_block('extensions');
     
@@ -153,7 +153,11 @@ if (class_exists('ESSBControlCenter')) {
 		if (!essb_option_bool_value('deactivate_stylelibrary')) {
 			ESSBControlCenter::register_sidebar_section('readymade', esc_html__('Style Library', 'essb'), '', 'ti-brush', true, false, false, false, true);
 		}
-		ESSBControlCenter::register_sidebar_section('extensions', esc_html__('Extensions', 'essb'), '', 'ti-package', true, false, false, true, false);
+		/**
+		 * @since 8.6 Hiding the original add-ons page from the control center because TGMA will add a new page entry in the menu
+		 * ESSBControlCenter::register_sidebar_section('extensions', esc_html__('Add-Ons', 'essb'), '', 'ti-package', true, false, false, true, true);
+		 */
+		
 	}
 	
 	if (essb_installed_wpml() || essb_installed_polylang()) {

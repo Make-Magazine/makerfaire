@@ -2209,6 +2209,11 @@ class GP_Nested_Forms extends GP_Plugin {
 			$entries        = $this->get_submitted_nested_entries( $form, $field->id );
 			$primary_color  = $field->gpnfModalHeaderColor ? $field->gpnfModalHeaderColor : '#3498db';
 
+			$ajax_context = array();
+			if ( get_queried_object_id() ) {
+				$ajax_context['post_id'] = get_queried_object_id();
+			}
+
 			$args = array(
 				'formId'              => $form['id'],
 				'fieldId'             => $field['id'],
@@ -2250,6 +2255,7 @@ class GP_Nested_Forms extends GP_Plugin {
 				'hasConditionalLogic' => GFFormDisplay::has_conditional_logic( $nested_form ),
 				'isGF25'              => $this->is_gf_version_gte( '2.5-beta-1' ),
 				'enableFocusTrap'     => true,
+				'ajaxContext'         => $ajax_context,
 			);
 
 			// Backwards compatibility for deprecated "modalTitle" option.

@@ -69,14 +69,14 @@ if (!function_exists('essb_subscribe_form_design9')) {
 		global $wp;
 		$current_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
 
-		$input_cols = !$subscribe_mc_namefield ? "essb-subscribe-form-inputwidth1" : "essb-subscribe-form-inputwidth2";
-		$submit_width = !$subscribe_mc_namefield ? "essb-subscribe-form-submitwidth1" : "essb-subscribe-form-submitwidth2";
+		$input_cols = '';
+		$submit_width = '';
 
 		$secure_nonce = wp_create_nonce('essb3_subscribe_nonce');
 		$current_url = add_query_arg('essb3_subscribe_nonce', $secure_nonce, $current_url);
 
 		$output = '<div class="essb-subscribe-form-content essb-subscribe-from-design9'.($is_widget ? " essb-subscribe-form-inwidget" :"").'" data-position="'.esc_attr($position).'" data-design="design9">';
-		$output .= '<div class="essb-subscribe9-icon"><i class="essb_icon_envelope-o"></i></div>';
+		$output .= '<div class="essb-subscribe9-icon">'.essb_svg_replace_font_icon('envelope-o').'</div>';
 
 		$output .= '<div class="essb-subscribe-form-content-top">';
 
@@ -93,6 +93,7 @@ if (!function_exists('essb_subscribe_form_design9')) {
 			$output .= '<input class="essb-subscribe-form-content-name-field '.$input_cols.'" type="text" value="" placeholder="'.esc_attr($subscribe_mc_name).'" name="mailchimp_name">';
 		}
 
+		$output .= ESSBNetworks_Subscribe::generate_custom_fields();
 		$output .= '<input class="essb-subscribe-form-content-email-field '.$input_cols.'" type="text" value="" placeholder="'.esc_attr($subscribe_mc_email).'" name="mailchimp_email">';
 
 		$output .= ESSBNetworks_Subscribe::generate_if_needed_agree_check();

@@ -448,6 +448,10 @@ if (!essb_option_bool_value('deactivate_module_followers')) {
     		ESSBOptionsStructureHelper::field_switch('follow', 'follow-6', 'customprofilebuttons_enable', esc_html__('Enable custom follow buttons', 'essb'), esc_html__('You need to set this to Yes to see your custom network button in the list of social networks.', 'essb'), '', '', '', '', '', 'true');
     		
     		if (essb_option_bool_value('customprofilebuttons_enable')) {
+    		    if (!ESSBActivationManager::isActivated()) {
+    		        ESSBOptionsStructureHelper::hint('follow', 'follow-6', 'Unlock network import/export function', 'The custom networks support the import and export of a custom network button. The function can be used only if the plugin is fully activated with a direct purchase code. The function allows you to migrate custom buttons from one site to another. You can also use it to import networks from our HUB.', '', 'glowhint');    		        
+    		    }
+    		    
     		    ESSBOptionsStructureHelper::field_component('follow', 'follow-6', 'essb_create_customfollowbuttons', 'true');
     		}
     		essb_heading_with_related_section_close('follow', 'follow-6');
@@ -468,6 +472,8 @@ if (!essb_option_bool_value('deactivate_module_profiles')) {
 		ESSBOptionsStructureHelper::field_checkbox_list_sortable('profiles', 'profiles-1', 'profile_networks', esc_html__('Select and order the social networks you will use on your website', 'essb'), esc_html__('Enable and order the global social profiles you will use on your site. Later you can automatically use them in shortcodes, widgets or automated displays. There are also shortcode & widgets that you can use to add other profiles (not listed in the settings).', 'essb'), ESSBSocialProfilesHelper::available_social_networks());
 		ESSBOptionsStructureHelper::field_switch('profiles', 'profiles-1', 'profiles_alt_text', esc_html__('Include alternative text to the profile links', 'essb'), esc_html__('Recommended if you optimize your website for accessibility. It will add an alternative text of all social profile links showing the name of the social network.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		ESSBOptionsStructureHelper::panel_end('profiles', 'profiles-1');
+		
+		ESSBOptionsStructureHelper::field_component('profiles', 'profiles-1', 'essb_profiles_shortcode_generator', 'false');		
 		
 		
 		ESSBOptionsStructureHelper::help('profiles', 'profiles-2', '', '', array('Help With Settings' => 'https://docs.socialsharingplugin.com/knowledgebase/social-profile-links-general-setup/'));
@@ -502,6 +508,7 @@ if (!essb_option_bool_value('deactivate_module_profiles')) {
 		$listOfOptions = array("" => esc_html__("Default", "essb"), "full" => esc_html__("Fluid Full Width", "essb"));
 		ESSBOptionsStructureHelper::field_select('profiles', 'profiles-4', 'profiles_post_width', esc_html__('Profile buttons width', 'essb'), esc_html__('The fluid full width is not recommended if you are using a large amount of share buttons. There may not be enough space to show all buttons at same time.', 'essb'), $listOfOptions);
 		ESSBOptionsStructureHelper::field_switch('profiles', 'profiles-4', 'profiles_post_show_text', esc_html__('Show CTA texts', 'essb'), esc_html__('Set to Yes to make the buttons has icon and text filled inside settings', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+		ESSBOptionsStructureHelper::field_switch('profiles', 'profiles-4', 'profiles_post_show_number', esc_html__('Show numbers', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		ESSBOptionsStructureHelper::field_switch('profiles', 'profiles-4', 'profiles_post_nospace', esc_html__('Remove spacing between buttons', 'essb'), esc_html__('Activate this option to remove default space between share buttons.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		ESSBOptionsStructureHelper::field_select('profiles', 'profiles-4', 'profiles_post_template', esc_html__('Choose template that you will use for sidebar', 'essb'), esc_html__('Template assigned here will be used for sidebar and also for default template for widget and shortcodes if you use such. Each widget or shortcode includes options to personalize it.', 'essb'), ESSBSocialProfilesHelper::available_templates());
 		ESSBOptionsStructureHelper::field_select('profiles', 'profiles-4', 'profiles_post_animation', esc_html__('Choose animation that you will use for sidebar', 'essb'), esc_html__('Animation assigned here will be used for sidebar and also for default template for widget and shortcodes if you use such. Each widget or shortcode includes options to personalize it.', 'essb'), ESSBSocialProfilesHelper::available_animations());
@@ -514,6 +521,9 @@ if (!essb_option_bool_value('deactivate_module_profiles')) {
     		ESSBOptionsStructureHelper::field_switch('profiles', 'profiles-5', 'customprofilebuttons_enable', esc_html__('Enable custom follow buttons', 'essb'), esc_html__('You need to set this to Yes to see your custom network button in the list of social networks.', 'essb'), '', '', '', '', '', 'true');
     		
     		if (essb_option_bool_value('customprofilebuttons_enable')) {
+    		    if (!ESSBActivationManager::isActivated()) {
+    		        ESSBOptionsStructureHelper::hint('profiles', 'profiles-5', 'Unlock network import/export function', 'The custom networks support the import and export of a custom network button. The function can be used only if the plugin is fully activated with a direct purchase code. The function allows you to migrate custom buttons from one site to another. You can also use it to import networks from our HUB.', '', 'glowhint');    		    
+    		    }
     		    ESSBOptionsStructureHelper::field_component('profiles', 'profiles-5', 'essb_create_customfollowbuttons', 'true');
     		}
     		essb_heading_with_related_section_close('profiles', 'profiles-5');
@@ -619,6 +629,7 @@ function essb_prepare_social_profiles_fields($tab_id, $menu_id) {
             ESSBOptionsStructureHelper::field_textbox_stretched($tab_id, $menu_id, 'profile_'.$key, esc_html__('Full address to profile', 'essb'), esc_html__('Enter address to your profile in social network', 'essb'));
 		}
 		ESSBOptionsStructureHelper::field_textbox_stretched($tab_id, $menu_id, 'profile_text_'.$key, esc_html__('Display text with icon', 'essb'), esc_html__('Enter custom text that will be displayed with link to your social profile. Example: Follow us on '.$text, 'essb'));
+		ESSBOptionsStructureHelper::field_textbox_stretched($tab_id, $menu_id, 'profile_count_'.$key, esc_html__('Display followers\' value (manually input the number or add a custom text)', 'essb'), '');
 		ESSBOptionsStructureHelper::panel_end($tab_id, $menu_id);
 		
 		ESSBOptionsStructureHelper::holder_end($tab_id, $menu_id);
@@ -652,6 +663,14 @@ function essb_create_customfollowbuttons($options = array()) {
     
     echo '<div class="essb-flex-grid-r">';
     echo '<a href="#" class="ao-new-subscribe-design ao-new-followcustom-button" data-title="'.esc_html__('New Custom Button', 'essb').'"><span class="essb_icon fa fa-plus-square"></span><span>'.esc_html__('Create new custom button', 'essb').'</span></a>';
+    
+    if (ESSBActivationManager::isActivated()) {
+        echo '<a href="#" class="ao-new-subscribe-design ao-import-followcustom-button" data-title="'.esc_html__('Import Custom Button', 'essb').'"><span class="essb_icon fa fa-cloud-upload"></span><span>'.esc_html__('Import', 'essb').'</span></a>';
+    }
+    echo '<a href="#" class="ao-new-subscribe-design ao-deleteall-followcustom-button" data-title="'.esc_html__('Delete All', 'essb').'"><span class="essb_icon fa fa-close"></span><span>'.esc_html__('Remove All', 'essb').'</span></a>';
+    
+    echo '<a href="https://socialsharingplugin.com/library/" target="_blank" class="ao-new-subscribe-design ao-hub-followcustom-button" data-title="'.esc_html__('Go to HUB', 'essb').'"><span class="essb_icon fa fa-database"></span><span>'.esc_html__('Get more networks', 'essb').'</span></a>';
+    
     echo '</div>';
     
     if (! function_exists ( 'essb_get_custom_profile_buttons' )) {
@@ -690,6 +709,9 @@ function essb_create_customfollowbuttons($options = array()) {
         
         $custom_buttons = '<a href="#" class="essb-btn tile-config ao-new-followcustom-button" data-network="'.$id.'" data-title="Manage Existing Button"><i class="fa fa-cog"></i>'.esc_html__('Edit', 'essb').'</a>';
         $custom_buttons .= '<a href="#" class="essb-btn tile-deactivate ao-remove-followcustom-button" data-network="'.$id.'" data-title="Remove Existing Button"><i class="fa fa-close"></i>'.esc_html__('Remove', 'essb').'</a>';
+        if (ESSBActivationManager::isActivated()) {
+            $custom_buttons .= '<a href="#" class="essb-btn tile-general ao-export-followcustom-button" data-network="'.$id.'" data-title="Export Existing Button"><i class="fa fa-cloud-download"></i>'.esc_html__('Export', 'essb').'</a>';
+        }
         
         $options_load = array();
         $options_load['title'] = $name;
@@ -709,5 +731,13 @@ function essb_followers_update_log_viewer() {
         esc_html__('Update Log', 'essb') . essb_generate_expert_badge(),
         'Trace the counter update. The log shows the last request and values from the followers\' counter update.',
         'followers-update-log', '', esc_html__('View', 'essb'), 'ti-server', 'no', '1000', '', '', esc_html__('Update Log', 'essb'), false);
+        
+}
+
+function essb_profiles_shortcode_generator() {
+    echo essb5_generate_code_advanced_settings_panel(
+        esc_html__('Generate Social Pofiles Shortcode [easy-profiles]', 'essb'),
+        esc_html__('Generate social profiles shortcode which you can use to add profile links anywhere on the website. Each shortcode can have a separate list of social networks (and profiles).', 'essb'),
+        'easy-profiles-shortcode', 'ao-shortcode', esc_html__('Generate', 'essb'), 'fa fa-code', 'no', '500', '', 'ti-share', esc_html__('[easy-profiles] Code Generation', 'essb'), true);
         
 }

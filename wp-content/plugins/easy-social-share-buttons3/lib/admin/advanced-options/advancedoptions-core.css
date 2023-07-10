@@ -7,9 +7,14 @@
 	text-decoration: none;
 	font-weight: 600;
 	display: inline-block;
+	cursor: pointer;
 }
 .ao-new-subscribe-design span.essb_icon { margin-right: 5px; }
 .ao-new-subscribe-design:hover { background: rgba(0,0,0,0.2); color: #111; }
+
+.ao-hidden {
+	display: none;
+}
 
 .ao-remove-igaccounts {
 	background: #e74c3c;
@@ -21,6 +26,44 @@
 	color: #fff;
 }
 
+.ao-import-followcustom-button,
+.ao-import-sharecustom-button {
+	background: #ff8822;
+	color: #fff;
+	margin-left: 5px;
+}
+
+
+.ao-import-followcustom-button:hover,
+.ao-import-sharecustom-button:hover {
+	background: #dd9944;
+	color: #fff;
+}
+
+.ao-deleteall-followcustom-button,
+.ao-deleteall-sharecustom-button {
+	background: #f4516c;
+	color: #fff;
+	margin-left: 5px;
+}
+
+
+.ao-deleteall-followcustom-button:hover,
+.ao-deleteall-sharecustom-button:hover {
+	background: #f22d4e;
+	color: #fff;
+}
+
+.ao-hub-followcustom-button {
+	background: rgba(0,102,204,0.14);
+	color: #2b4b80;
+	margin-left: 15px;
+}
+
+.ao-hub-followcustom-button:hover {
+	background: #02b1ff;
+	color: #fff;
+}
 
 .ao-options-btn {
 
@@ -232,6 +275,13 @@
 }
 .advancedoptions-tile .advancedoptions-tile-foot .essb-btn.tile-deactivate:hover {
 	background: #f22d4e;
+}
+
+.advancedoptions-tile .advancedoptions-tile-foot .essb-btn.tile-general {
+	background: #878787;
+}
+.advancedoptions-tile .advancedoptions-tile-foot .essb-btn.tile-general:hover {
+	background: #585858;
 }
 
 .advancedoptions-tile .essb-btn.tile-deactivate {
@@ -884,6 +934,22 @@ margin-right: 5px;
 
 .shortcode-options textarea {
 	min-height: 70px;
+}
+
+.shortcode-options-section {
+	border: 1px solid #8c8f94;
+	padding: 20px;
+}
+
+.shortcode-options-separator label {
+	display: block;
+	font-size: 18px;
+}
+
+.shortcode-options-separator-small label {
+	display: block;
+	font-size: 14px;
+	margin-top: 2em;
 }
 
 /**
@@ -1557,4 +1623,58 @@ body.essb-boarding-open #wpcontent {
 
 .select2-container {
 	z-index: 99999;
+}
+
+.features-container .content .content-tab .features-addon {
+	display: flex;
+	align-items: center;
+	margin-bottom: 15px;
+	border: 1px solid #e3e6ef;
+	padding: 10px 15px;
+	transition: 0.2s all;
+	border-radius: 3px;
+}
+
+.features-container .content .content-tab .features-addon:hover {
+    box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
+}	
+
+.features-container .content .content-tab .features-addon .features-addon-image {
+	width: 80px;
+	margin-right: 10px;
+}
+
+.features-container .content .content-tab .features-addon .features-addon-image img {
+	width: 100%;
+	height: auto;
+	min-width: 80px;
+}
+
+.features-container .content .content-tab .features-addon .features-addon-data {
+	display: flex;
+	width: 100%;
+	align-items: center;
+}
+
+.features-container .content .content-tab .features-addon .features-addon-data .commands {
+	flex: 1;
+	margin-left: 15px;
+}
+
+.features-container .content .content-tab .features-addon .features-addon-data .commands .button-deactivate {
+	color: #b32d2e;
+	border-color: #b32d2e;
+}
+
+
+.features-container .content .content-tab .features-addon .features-addon-data .details {
+	width: 100%;
+}
+
+.features-container .content .content-tab .features-addon .features-addon-data .details .title {
+	font-size: 15px;
+}
+
+.features-container .content .content-tab .features-addon .features-addon-data .details .desc {
+	font-size: 13px;
 }

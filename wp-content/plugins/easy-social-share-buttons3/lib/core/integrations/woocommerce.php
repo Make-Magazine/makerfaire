@@ -17,7 +17,10 @@ if (!function_exists('essb_woocommerce_integration')) {
 		essb_depend_load_function('essb_check_applicability_module', 'lib/core/extenders/essb-core-extender-check-applicability-module.php');
 		
 		if (essb_check_applicability_module('woocommerce', $essb_options, essb_option_value('display_exclude_from'))) {
-			printf('%1$s<div class="essb_clear"></div>', essb_core()->generate_share_buttons('woocommerce', 'share', array('only_share' => false, 'post_type' => 'woocommerce')));
+		    /**
+		     * @since 8.6 Changing the key from 'woocommerce' to 'woocommerce_content'
+		     */
+			printf('%1$s<div class="essb_clear"></div>', essb_core()->generate_share_buttons('woocommerce_content', 'share', array('only_share' => false, 'post_type' => 'woocommerce')));
 		}
 	}	
 }

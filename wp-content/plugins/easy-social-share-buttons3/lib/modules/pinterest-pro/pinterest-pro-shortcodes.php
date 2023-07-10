@@ -207,7 +207,20 @@ if (!function_exists('essb_output_pinable_image_code')) {
 		$pinsc_text = essb_option_value('pinsc_text');
 		$pinsc_alwayscustom = essb_option_bool_value('pinsc_alwayscustom');
 		
+		$pinsc_link_class = '';
+		$pinsc_icon_class = '';
+		
 		$pinsc_template = essb_template_folder($pinsc_template);
+		
+		if (class_exists('ESSB_Share_Button_Styles')) {
+		    $pinsc_link_class = ESSB_Share_Button_Styles::get_network_element_classes(essb_option_value('pinsc_template'), 'pinterest');
+		    $pinsc_icon_class = ESSB_Share_Button_Styles::get_network_icon_classes(essb_option_value('pinsc_template'), 'pinterest');
+		    
+		    $additional_template_classes = ESSB_Share_Button_Styles::get_root_template_classes(essb_option_value('pinsc_template'));
+		    if (!empty($additional_template_classes)) {
+		        $pinsc_template .= ' ' . $additional_template_classes;
+		    }
+		}
 		
 		if ($pinsc_alwayscustom) {
 			$custom_post_pin = get_post_meta( get_the_ID(), 'essb_post_pin_desc', true);
@@ -258,8 +271,8 @@ if (!function_exists('essb_output_pinable_image_code')) {
 		
 		$output .= '<div class="essb_links essb_displayed_pinimage essb_template_'.esc_attr($pinsc_template).esc_attr($buttonSizeClasses).'">';
 		$output .= '<ul class="essb_links_list'.($buttonStyleClasses != '' ? ' ' . esc_attr($buttonStyleClasses) : '').'">';
-		$output .= '<li class="essb_item essb_link_pinterest nolightbox">';
-		$output .= '<a class="nolightbox" href="'.esc_url($shareCmd).'" target="_blank" onclick="essb.share_window(&#39;'.$shareCmd.'&#39;, &#39;pinit&#39;, &#39;pinterest&#39;); return false;"><span class="essb_icon essb_icon_pinterest"></span><span class="essb_network_name">'.($pinsc_text != '' ? $pinsc_text : 'Pin').'</span></a>';
+		$output .= '<li class="essb_item essb_link_pinterest nolightbox essb_link_svg_icon">';
+		$output .= '<a class="nolightbox'.esc_attr($pinsc_link_class).'" href="'.esc_url($shareCmd).'" target="_blank" onclick="essb.share_window(&#39;'.$shareCmd.'&#39;, &#39;pinit&#39;, &#39;pinterest&#39;); return false;"><span class="essb_icon essb_svg_icon_pinterest'.esc_attr($pinsc_icon_class).'">'.essb_svg_icon('pinterest').'</span><span class="essb_network_name">'.($pinsc_text != '' ? $pinsc_text : 'Pin').'</span></a>';
 		$output .= '</li>';
 		$output .= '</ul>';
 		$output .= '</div>';

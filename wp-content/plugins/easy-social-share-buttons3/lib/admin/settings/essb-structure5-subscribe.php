@@ -96,6 +96,7 @@ ESSBOptionsStructureHelper::field_switch('subscribe', 'optin-11', 'essb3_ofob|of
 ESSBOptionsStructureHelper::field_textbox('subscribe', 'optin-11', 'essb3_ofob|ofob_single_time', esc_html__('Do not show again period (days)', 'essb'), esc_html__('Overwrite the default value of 14 days for the do not show again cookie. Numeric value only.', 'essb'), '', 'input60', 'fa-calendar', 'right');
 ESSBOptionsStructureHelper::field_textbox_stretched('subscribe', 'optin-11', 'essb3_ofob|ofob_exclude', esc_html__('Do not show on', 'essb'), esc_html__('Exclude display of form on selected IDs of posts/pages or custom post types (comma separated). Example: 100, 200, 30', 'essb'), '');
 ESSBOptionsStructureHelper::field_switch('subscribe', 'optin-11', 'essb3_ofob|ofob_deactivate_mobile', esc_html__('Don\'t show on mobile devices', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+ESSBOptionsStructureHelper::field_switch('subscribe', 'optin-11', 'essb3_ofob|ofob_deactivate_desktop', esc_html__('Don\'t show on desktop devices', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBControlCenter::set_extra_description('ofob_manual_mode', 'Shortcode: <code>[booster-subscribe-form]</code>');
 ESSBOptionsStructureHelper::field_switch('subscribe', 'optin-11', 'essb3_ofob|ofob_manual_mode', esc_html__('Manual insertion mode', 'essb'), 'With manual mode, you can show the pop-up form using a shortcode. Just place that shortcode anywhere in the content and form will work.', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::holder_end('subscribe', 'optin-11');
@@ -468,6 +469,12 @@ ESSBOptionsStructureHelper::panel_start('subscribe', 'optin-1', esc_html__('Add 
 ESSBOptionsStructureHelper::field_switch('subscribe', 'optin-1', 'subscribe_recaptcha', esc_html__('Enable Google\'s reCAPTCHA v2', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 ESSBOptionsStructureHelper::field_textbox_stretched('subscribe', 'optin-1', 'subscribe_recaptcha_site', esc_html__('reCAPTCHA Site Key', 'essb'), '');
 ESSBOptionsStructureHelper::field_textbox_stretched('subscribe', 'optin-1', 'subscribe_recaptcha_secret', esc_html__('reCAPTCHA Secret Key', 'essb'), '');
+ESSBOptionsStructureHelper::panel_end('subscribe', 'optin-1');
+
+ESSBOptionsStructureHelper::panel_start('subscribe', 'optin-1', esc_html__('Add CloudFlare Turnstile protection to subscribe forms', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
+ESSBOptionsStructureHelper::field_switch('subscribe', 'optin-1', 'subscribe_turnstile', esc_html__('Enable CloudFlare\'s Turnstile', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+ESSBOptionsStructureHelper::field_textbox_stretched('subscribe', 'optin-1', 'subscribe_turnstile_site', esc_html__('Turnstile Site Key', 'essb'), '');
+ESSBOptionsStructureHelper::field_textbox_stretched('subscribe', 'optin-1', 'subscribe_turnstile_secret', esc_html__('Turnstile Secret Key', 'essb'), '');
 ESSBOptionsStructureHelper::panel_end('subscribe', 'optin-1');
 
 

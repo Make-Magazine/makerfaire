@@ -103,16 +103,23 @@ class ProductManager {
 	 */
 	public function ajax_install_product( array $payload ) {
 		$payload = wp_parse_args( $payload, [
-			'id'       => null,
-			'download' => null,
-			'activate' => false,
+			'id'                     => null,
+			'download'               => null,
+			'activate'               => false,
+			'pause_after_completion' => false,
 		] );
 
 		if ( ! Framework::get_instance()->current_user_can( 'install_products' ) ) {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravitymaps' ) );
 		}
 
-		return $this->install_product( $payload );
+		$result = $this->install_product( $payload );
+
+		if ( $payload['pause_after_completion'] ) {
+			sleep( (int) $payload['pause_after_completion'] );
+		}
+
+		return $result;
 	}
 
 	/**
@@ -219,14 +226,21 @@ class ProductManager {
 	 */
 	public function ajax_activate_product( array $payload ) {
 		$payload = wp_parse_args( $payload, [
-			'path' => null,
+			'path'                   => null,
+			'pause_after_completion' => false,
 		] );
 
 		if ( ! Framework::get_instance()->current_user_can( 'activate_products' ) ) {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravitymaps' ) );
 		}
 
-		return $this->activate_product( $payload['path'] );
+		$result = $this->activate_product( $payload['path'] );
+
+		if ( $payload['pause_after_completion'] ) {
+			sleep( (int) $payload['pause_after_completion'] );
+		}
+
+		return $result;
 	}
 
 	/**
@@ -270,14 +284,21 @@ class ProductManager {
 	 */
 	public function ajax_deactivate_product( array $payload ) {
 		$payload = wp_parse_args( $payload, [
-			'path' => null,
+			'path'                   => null,
+			'pause_after_completion' => false,
 		] );
 
 		if ( ! Framework::get_instance()->current_user_can( 'deactivate_products' ) ) {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravitymaps' ) );
 		}
 
-		return $this->deactivate_product( $payload['path'] );
+		$result = $this->deactivate_product( $payload['path'] );
+
+		if ( $payload['pause_after_completion'] ) {
+			sleep( (int) $payload['pause_after_completion'] );
+		}
+
+		return $result;
 	}
 
 	/**
@@ -321,14 +342,21 @@ class ProductManager {
 	 */
 	public function ajax_update_product( array $payload ) {
 		$payload = wp_parse_args( $payload, [
-			'path' => null,
+			'path'                   => null,
+			'pause_after_completion' => false,
 		] );
 
 		if ( ! Framework::get_instance()->current_user_can( 'activate_products' ) ) {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravitymaps' ) );
 		}
 
-		return $this->update_product( $payload['path'] );
+		$return = $this->update_product( $payload['path'] );
+
+		if ( $payload['pause_after_completion'] ) {
+			sleep( (int) $payload['pause_after_completion'] );
+		}
+
+		return $return;
 	}
 
 	/**
@@ -343,6 +371,8 @@ class ProductManager {
 	 * @return array{active: bool, network_activated: bool, installed_version: string, update_available: bool}
 	 */
 	public function update_product( $product_path ) {
+		$products_data = $this->get_products_data();
+
 		if ( ! file_exists( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' ) ) {
 			throw new Exception( esc_html__( 'Unable to load core WordPress files required to install the product.', 'gk-gravitymaps' ) );
 		}
@@ -451,8 +481,9 @@ class ProductManager {
 
 				if ( ! Arr::get( $formatted_products, $category_slug ) ) {
 					$formatted_products[ $category_slug ] = [
-						'category' => $category_name,
-						'products' => [],
+						'category_slug' => $category_slug,
+						'category_name' => $category_name,
+						'products'      => [],
 					];
 				}
 
@@ -465,6 +496,7 @@ class ProductManager {
 				$formatted_products[ $category_slug ]['products'][] = [
 					'id'                  => Arr::get( $remote_product, 'info.id' ),
 					'slug'                => Arr::get( $remote_product, 'info.slug' ),
+					'category'            => $category_slug,
 					'text_domain'         => Arr::get( $remote_product, 'info.textdomain' ),
 					'coming_soon'         => Arr::get( $remote_product, 'info.coming_soon' ),
 					'title'               => Arr::get( $remote_product, 'info.title' ),
@@ -713,7 +745,7 @@ class ProductManager {
 		$update_count = 0;
 
 		foreach ( $products_data as $product ) {
-			if ( $product['update_available'] && $product['active'] && ! empty( $product['licenses'] ) ) {
+			if ( $product['update_available'] && ! empty( $product['licenses'] ) ) {
 				$update_count++;
 			}
 		}

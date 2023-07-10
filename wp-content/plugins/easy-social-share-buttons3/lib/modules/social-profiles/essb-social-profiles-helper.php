@@ -53,6 +53,18 @@ class ESSBSocialProfilesHelper {
 		return $names;
 	}
 
+	public static function get_count_of_buttons() {
+	    $networks = self::available_social_networks();
+	    
+	    $names = array();
+	    foreach ($networks as $key => $name) {
+	        $has_text = essb_option_value('profile_count_'.$key);
+	        $names[$key] = $has_text;
+	    }
+	    
+	    return $names;
+	}
+	
 	/**
 	 * @since 6.3
 	 * Google+ removed as of service shut down
@@ -158,7 +170,7 @@ class ESSBSocialProfilesHelper {
 	}
 	
 	public static function available_sizes() {
-		$sizes = array('' => 'Default', 'small' => 'Small', 'medium' => 'Medium', 'large' => 'Large', 'xlarge' => 'Extra Large');
+		$sizes = array('' => 'Default', 'small' => 'Small', 'medium' => 'Medium', 'large' => 'Large', 'xlarge' => 'Extra Large', 'xxlarge' => 'Extra Extra Large');
 		
 		return $sizes;
 	}

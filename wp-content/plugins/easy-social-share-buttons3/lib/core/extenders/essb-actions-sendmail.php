@@ -51,6 +51,7 @@ if (!function_exists('essb_actions_sendmail')) {
 		$mail_salt = essb_object_value($_REQUEST, 'salt');
 		$cu = essb_object_value($_REQUEST, 'cu');
 		$from_name = essb_object_value($_REQUEST, 'from_name');
+		$affid = essb_object_value($_REQUEST, 'affid');
 
 		$post_id = sanitize_text_field($post_id);
 		$from = sanitize_email($from);
@@ -143,6 +144,11 @@ if (!function_exists('essb_actions_sendmail')) {
 			    $url = essb_generate_affiliatewp_referral_link($url);
 			}
 			
+			if (essb_option_bool_value('slicewp_active')) {
+			    essb_helper_maybe_load_feature('integration-slicewp');
+			    $url = essb_generate_slicewp_referral_link($url);
+			}
+			
 			if (essb_option_bool_value('affs_active')) {
 			    $url = do_shortcode('[affiliates_url]'.$url.'[/affiliates_url]');
 			}
@@ -167,6 +173,20 @@ if (!function_exists('essb_actions_sendmail')) {
 				
 			if (has_filter('essb_mailshare_url')) {
 				$url = apply_filters('essb_mailshare_url', $url);
+			}
+			
+			if (!empty($affid)) {
+			    if (strpos($affid, '/') === false) {
+			        if (strpos($url, '?') === false) {
+			            $url .= '?' . $affid;
+			        }
+			        else {
+			            $url .= '&' . $affid;
+			        }
+			    }
+			    else {
+			        $url = trailingslashit($url) . $affid;
+			    }
 			}
 								
 			$base_post_url = $url;
@@ -281,9 +301,26 @@ if (!function_exists('essb_actions_sendmail')) {
 			}
 			
 			$message_body = essb_sendmail_generate_header() . $message_body . essb_sendmail_generate_footer();
+			
+			/**
+			 * @since 8.8.2
+			 * Additional filter that allows changing the sender's email address
+			 */
+			$header_from = "From: ".get_bloginfo('name').' <'.get_bloginfo('admin_email').'>';
+			if (has_filter('essb_mailshare_from_header')) {
+			    $options = array(
+			        'from_email' => $from,
+			        'from_name' => $from_name,
+			        'to_email' => $to,
+			        'site_email' => get_bloginfo('admin_email'),
+			        'site_name' => get_bloginfo('name')
+			    );
+			    
+			    $header_from = apply_filters('essb_mailshare_from_header', $options);
+			}
 				
 			$headers = array();
-			$headers['From'] = "From: ".get_bloginfo('name').' <'.get_bloginfo('admin_email').'>';//admin_email
+			$headers['From'] = $header_from;//admin_email
 			$headers['Reply-To'] = "Reply-To: ".$from;
 			$headers['Content-type:'] = "Content-type: text/html; charset=".get_option( 'blog_charset' );
 

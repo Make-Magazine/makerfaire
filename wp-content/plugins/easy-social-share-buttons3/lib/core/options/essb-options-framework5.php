@@ -175,60 +175,50 @@ class ESSBOptionsFramework {
 				}
 				else {
 					//$essb_admin_options_fanscounter
-					$ordered_values = isset($essb_admin_options_fanscounter[$id.'_order']) ? $essb_admin_options_fanscounter[$id.'_order'] : array();
-					
+					$ordered_values = isset($essb_admin_options_fanscounter[$id.'_order']) ? $essb_admin_options_fanscounter[$id.'_order'] : array();					
+				}			
+				
+				if (is_array($ordered_values) && count($ordered_values) > 0) {
+				    $listOfValues = $ordered_values;
+				    
+				    /**
+				     * @since 8.5 Apply the additional networks that are required
+				     */
+				    if ($is_fans_counter) {
+				        if (has_filter('essb4_followers_networks_update_list')) {
+				            $listOfValues = apply_filters('essb4_followers_networks_update_list', $listOfValues);
+				        }
+				    }
+				    else {
+				        if (strpos($id, "profile_") === false) {
+				            if (has_filter('essb4_social_networks_update_list')) {
+				                $listOfValues = apply_filters('essb4_social_networks_update_list', $listOfValues);
+				            }
+				            
+				            if (function_exists('essb_available_social_profiles')) {
+				                $all_profiles = essb_available_social_profiles();
+				            }
+				        }
+				        else {
+				            if (has_filter('essb4_profile_networks_update_list')) {
+				                $listOfValues = apply_filters('essb4_profile_networks_update_list', $listOfValues);
+				            }
+				        }
+				    }
+				    
+				    // transform the values
+				    $listOfValues = self::translate_key_array($listOfValues);
+				    
+				    if ($is_fans_counter) {
+				        $listOfValues = self::remove_old_networks(ESSBSocialFollowersCounterHelper::available_social_networks(), $listOfValues);
+				    }
+				    else {
+				        if (strpos($id, "profile_") !== false) {
+				            $listOfValues = self::remove_old_networks(essb_available_social_profiles(), $listOfValues);
+				        }
+				    }
 				}
 				
-				if (is_array($ordered_values)) {
-					if (count($ordered_values) > 0) {
-						$listOfValues = $ordered_values;
-						
-						if ($is_fans_counter) {
-							if (!in_array('mailpoet|MailPoet', $listOfValues)) {
-								$listOfValues[] = 'mailpoet|MailPoet';
-							}
-							if (!in_array('mymail|myMail', $listOfValues)) {
-								$listOfValues[] = 'mymail|myMail';
-							}
-							if (!in_array('spotify|Spotify', $listOfValues)) {
-								$listOfValues[] = 'spotify|Spotify';
-							}
-							if (!in_array('twitch|Twitch', $listOfValues)) {
-								$listOfValues[] = 'twitch|Twitch';
-							}
-							
-							if (!in_array('telegram|Telegram', $listOfValues)) {
-								$listOfValues[] = 'telegram|Telegram';
-							}
-							if (!in_array('mailerlite|MailerLite', $listOfValues)) {
-								$listOfValues[] = 'mailerlite|MailerLite';
-							}
-							
-							if (has_filter('essb4_followers_networks_update_list')) {
-								$listOfValues = apply_filters('essb4_followers_networks_update_list', $listOfValues);
-							}
-						}
-						else {
-							if (strpos($id, "profile_") === false) {
-								if (has_filter('essb4_social_networks_update_list')) {
-									$listOfValues = apply_filters('essb4_social_networks_update_list', $listOfValues);
-								}								
-							}
-							else {
-								if (has_filter('essb4_profile_networks_update_list')) {
-									$listOfValues = apply_filters('essb4_profile_networks_update_list', $listOfValues);
-								}
-							}
-							
-							if (strpos($id, "profile_") > -1) {
-								if (!in_array('xing|Xing', $listOfValues)) {
-									$listOfValues[] = 'xing|Xing';
-								}
-							}
-						}
-						$listOfValues = self::translate_key_array($listOfValues);
-					}
-				}
 				
 				self::draw_options_row_start($title, $description, $recommended, $col_width, '', '', $id);
 				self::draw_checkbox_list_sortable_field($id, $listOfValues, $settings_group, $option_value, $style);
@@ -1388,7 +1378,14 @@ class ESSBOptionsFramework {
 	    }
 	    
 		$value = esc_textarea ( stripslashes($value));
-		printf('<textarea id="essb_options_%1$s" name="%2$s[%1$s]" class="input-element stretched" rows="'.esc_attr($rows).'" placeholder="'.$placeholder.'">%3$s</textarea>', $field, $settings_group, $value);
+
+		/**
+		 * @since 8.8.1
+		 * Output refactored to ensure compatibility with PHP 8.1
+		 * printf('<textarea id="essb_options_%1$s" name="%2$s[%1$s]" class="input-element stretched" rows="'.esc_attr($rows).'" placeholder="'.$placeholder.'">%3$s</textarea>', $field, $settings_group, $value);
+		 */
+		
+		echo '<textarea id="essb_options_'.$field.'" name="'.$settings_group.'['.$field.']" class="input-element stretched" rows="'.esc_attr($rows).'" placeholder="'.$placeholder.'">'.$value.'</textarea>';
 	}
 
 	public static function draw_wpeditor_field($field, $settings_group = 'essb_options', $value = '') {
@@ -1757,8 +1754,8 @@ class ESSBOptionsFramework {
 		}
 	}
 	
-	public static function draw_checkbox_list_sortable_field($field, $listOfValues, $group = 'essb_options', $value = '', $style = '') {
-		if (!is_array($value)) {
+	public static function draw_checkbox_list_sortable_field($field, $listOfValues, $group = 'essb_options', $value = '', $style = '') {	    
+	    if (!is_array($value)) {
 			$value = array();
 		}
 	
@@ -1841,6 +1838,23 @@ class ESSBOptionsFramework {
 		}
 		
 		return $key_array;
+	}
+	
+	/**
+	 * Compare ordered values and remove outdated networks
+	 * @param unknown $all_networks
+	 * @param unknown $ordered_networks
+	 */
+	public static function remove_old_networks($all_networks, $ordered_networks) {
+        $r = array();        
+        
+        foreach ($ordered_networks as $key => $text) {
+            if (isset($all_networks[$key])) {
+                $r[$key] = $text;
+            }
+        }
+        
+        return $r;
 	}
 
 }

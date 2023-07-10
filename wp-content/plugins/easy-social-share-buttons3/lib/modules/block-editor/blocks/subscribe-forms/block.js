@@ -38,22 +38,25 @@ registerBlockType('essb/essb-subscribe', {
 
         if (props.isSelected) {
             // console.debug(props.attributes);
-        }
-        ;
+        };
+        
+        var designKey = props.attributes.template || '',
+        	displayText = 'Select from design from the block settings';
+        
+        if (designKey != '') displayText = 'Form design # ' + (essb_block_subscribe_designs[designKey] || designKey);
 
         return [
             /**
              * Server side render
              */
             el("div", {
-                    className: "essb-editor-container",
-                    style: {textAlign: "left"}
-                },
-                el(ServerSideRender, {
-                    block: 'essb/essb-subscribe',
-                    attributes: props.attributes
-                })
-            ),
+                	className: "essb-block-editor-container",
+                	style: {}
+	            },
+	            el("div", { className: "essb-block-editor-icon"}),
+	            el("div", { className: "essb-block-editor-command-tag essb-block-editor-command-tag-subscribe"}, "Subscribe Form"),
+	            el("div", { className: "essb-block-editor-subscribe essb-block-editor-content"}, displayText)
+	        ),
 
             /**
              * Inspector

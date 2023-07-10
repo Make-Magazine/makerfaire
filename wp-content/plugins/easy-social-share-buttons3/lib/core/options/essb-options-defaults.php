@@ -173,6 +173,21 @@ if (!function_exists('essb_available_social_networks')) {
 			$essb_available_social_networks = apply_filters('essb4_social_networks', $essb_available_social_networks);
 		}
 		
+		/**
+		 * @since 8.9
+		 * Allows easy to register or deregister social networks from the plugin
+		 */
+		if (has_filter('essb_available_social_share_networks')) {
+		    $essb_available_social_networks = apply_filters('essb_available_social_share_networks', $essb_available_social_networks);
+		}
+		
+	    /**
+	     * @since 8.6
+	     */
+		if (has_filter('essb_additional_social_networks')) {
+		    $essb_available_social_networks = apply_filters('essb_additional_social_networks', $essb_available_social_networks);
+		}
+		
 		if (!$always_show_all && has_filter('essb_manage_networks')) {
 			$essb_available_social_networks = apply_filters('essb_manage_networks', $essb_available_social_networks);
 		}

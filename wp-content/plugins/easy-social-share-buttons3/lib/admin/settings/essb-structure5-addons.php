@@ -12,6 +12,11 @@ if (class_exists ( 'ESSBAddonsHelper' )) {
 	$current_list = $essb_addons->get_addons ();
 }
 
+if ( ! function_exists( 'get_plugins' ) ) {
+    require_once wp_normalize_path( ABSPATH . 'wp-admin/includes/plugin.php' );
+}
+$plugins = ESSB_TGM_Plugin_Activation::$instance->plugins; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
+$current_plugins = essb_get_site_plugins();
 
 if (! isset ( $current_list )) {
 	$current_list = array ();
@@ -48,56 +53,72 @@ if (! isset ( $current_list )) {
 		$check_type = isset($check_exist['type']) ? $check_exist['type'] : 'param';
 		$check_for = isset($check_exist['param']) ? $check_exist['param'] : '';
 		
+		$price_tag = '';
+		$data['price'] = '';
+		
 		if ($check_for != '' && $check_type != '') {
 			$is_installed = $check_type == 'param' ? defined($check_for) : function_exists($check_for);
 		}
 		
+        $url_install = '';
+        $url_activate = '';
+        $url_deactivate = '';
+        
+        $url_command = '';
+        $command_text = '';
+		
+        if ($is_free) {
+		    
+		    $url_install = wp_nonce_url(
+		        add_query_arg(
+		            array(
+		                'plugin'           => urlencode( $key ),
+		                'essb-tgmpa-install' => 'install-plugin',
+		            ),
+		            ESSB_TGM_Plugin_Activation::$instance->get_tgmpa_url()
+		            ),
+		        'essb-tgmpa-install',
+		        'essb-tgmpa-nonce'
+		        );
+		    
+		    
+		    $url_command = $url_install;
+		    $command_text = 'Install';
+		    $command_class = 'button-primary';
+		    
+		    if (isset($current_plugins[$key])) {
+		        $addon_slug = $current_plugins[$key]['path'];
+                $url_activate = wp_nonce_url( "plugins.php?action=activate&plugin={$addon_slug}", "activate-plugin_{$addon_slug}" );
+                $url_deactivate = wp_nonce_url( "plugins.php?action=deactivate&plugin={$addon_slug}", "deactivate-plugin_{$addon_slug}" );
+                
+                $url_command = $current_plugins[$key]['active'] ? $url_deactivate : $url_activate;
+                $command_text = $current_plugins[$key]['active'] ? 'Deactivate' : 'Activate';
+                $command_class = $current_plugins[$key]['active'] ? 'button-deactivate' : 'button-activate';
+		    }		    
+		}
 		
 		echo '<div class="addon-card '.($is_installed ? 'addon-card-installed' : '').'">';
 		echo '<div class="header"><img src="'.esc_url(ESSB3_PLUGIN_URL .'/assets/images/'.$data['icon'].'.svg' ).'"/>'.$price_tag.'</div>';
 		
 		echo '<div class="main">';
 		echo '<div class="title">'.$data['name'].'</div>';
-		echo '<div class="desc">'.$data['description'].'</div>';
-		
-		if ($actual_version != '') {
-		    echo '<div class="essb-column-compatibility column-version">';
-		    echo '<span class="compatibility-compatible">'.esc_html__('Latest Version: ', 'essb').'<b>'.esc_attr($actual_version).'</b>'.'</span>';
-		    echo '</div>';
-		}
-		
-		if ($require != '' || $version7 == '') {
-		echo '<div class="essb-column-compatibility column-compatibility">';
-			if ($version7 == '') {
-				echo '<span class="compatibility-untested2">'.esc_html__('The extension is not tested with the version 7 interface update and may not work properly.', 'essb').'</span>';
-			}
-			else {
-				if (version_compare ( ESSB3_VERSION, $require, '<' )) {
-					echo '<span class="compatibility-untested">Requires plugin version <b>' . $require . '</b> or newer</span>';
-				} else {
-					echo '<span class="compatibility-compatible"><b>Compatible</b> with your version of plugin</span>';
-				
-				}
-			}
-			echo '</div>';
-		}
+		echo '<div class="desc">'.$data['description'].'</div>';		
 		
 		echo '</div>';
 		
 		echo '<div class="footer">';
-		echo '<div class="price">'.$data['price'].'</div>';
 		echo '<div class="action">';
 		
 		if (!$is_free) {
-			echo '<a class="action-btn action-open-btn" target="_blank" href="'.esc_url($url).'">'.esc_html__('Learn More', 'essb').' &rarr;</a>';
+			echo '<a class="button button-orange" target="_blank" href="'.esc_url($url).'">'.esc_html__('Learn More', 'essb').' &rarr;</a>';
 		}
 		else {
 			if ($is_installed) {
-				echo '<span class="installed">'.esc_html__('Installed', 'essb').'</span>';
+			    echo '<a class="button '.esc_attr($command_class).'" href="'.esc_url($url_command).'">' . $command_text . '</a>';
 			}
 			else {
 				if (ESSBActivationManager::isActivated()) {
-					echo '<a class="action-btn action-download-btn" target="_blank"  href="' . esc_url($url) .'&url='.get_bloginfo('url') .'&code='.ESSBActivationManager::getActivationCode() . '" onclick="essbShowFreeAddonInstallation();">Download &rarr;</a>';
+				    echo '<a class="button '.esc_attr($command_class).'" href="'.esc_url($url_command).'">' . $command_text . '</a>';
 				}
 				else {
 					echo '<span class="not-activated">'.ESSBAdminActivate::activateToUnlock(esc_html__('Activate plugin to download', 'essb')).'</span>';
@@ -106,6 +127,7 @@ if (! isset ( $current_list )) {
 		}
 		
 		echo '</div>';
+		echo '<div class="price">'.$data['price'].'</div>';
 		echo '</div>';
 		
 		echo '</div>';

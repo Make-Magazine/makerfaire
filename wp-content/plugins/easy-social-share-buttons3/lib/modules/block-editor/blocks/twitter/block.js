@@ -51,21 +51,24 @@ registerBlockType('essb/essb-twitter', {
 
         if (props.isSelected) {
             // console.debug(props.attributes);
-        }
-        ;
+        };
+        
+        var displayTweet = "The sharable quote for Tweet is not set yet. Select the block and use the settings to set Tweet and additional options.";
+        if (props.attributes.tweet) displayTweet = props.attributes.tweet;
+        if (props.attributes.username) displayTweet += ', @' + props.attributes.username;
+        if (props.attributes.hashtags) displayTweet += ', #' + props.attributes.hashtags;
 
         return [
             /**
              * Server side render
              */
             el("div", {
-                    className: "essb-editor-container",
-                    style: {textAlign: "left"}
+                    className: "essb-block-editor-container",
+                    style: {}
                 },
-                el(ServerSideRender, {
-                    block: 'essb/essb-twitter',
-                    attributes: props.attributes
-                })
+                el("div", { className: "essb-block-editor-icon"}),
+                el("div", { className: "essb-block-editor-command-tag essb-block-editor-command-tag-cct"}, "Click to Tweet"),
+                el("div", { className: "essb-block-editor-ctt essb-block-editor-content"}, displayTweet)
             ),
 
             /**
@@ -83,7 +86,7 @@ registerBlockType('essb/essb-twitter', {
                             onChange: (value) => {
                                 props.setAttributes({tweet: value});
                             }
-                        }, props.attributes.mb_text),
+                        }, props.attributes.tweet),
 
                         el(TextControl, {
                             label: 'Username',

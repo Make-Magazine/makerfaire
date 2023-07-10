@@ -278,12 +278,14 @@
 				}
 			}
 			
-			var uid = (new Date().getTime()).toString(36);
+			var uid = (new Date().getTime()).toString(36);		
+			
+			var iconMainClass = essbPinImages.svgIcon ? 'essb_icon_svg_pinterest' : 'essb_icon_pinterest';
 
 			shareBtnCode.push('<div class="essb_links essb_displayed_pinimage essb_template_'+essbPinImages.template+buttonSizeClasses+' essb_'+uid+'" data-essb-position="pinit" data-essb-postid="'+(essb_settings.post_id || '')+'" data-essb-instance="'+uid+'">');
 			shareBtnCode.push('<ul class="essb_links_list'+(buttonStyleClasses != '' ? ' ' + buttonStyleClasses : '')+'">');
-			shareBtnCode.push('<li class="essb_item essb_link_pinterest nolightbox">');
-			shareBtnCode.push('<a class="nolightbox" rel="noreferrer noopener nofollow" href="'+shareCmd+'" onclick="essb.window(&#39;'+shareCmd+'&#39;,&#39;pinpro&#39;,&#39;'+uid+'&#39;); return false;" target="_blank"><span class="essb_icon essb_icon_pinterest"></span><span class="essb_network_name">'+(essbPinImages['text'] ? essbPinImages['text'] : 'Pin')+'</span></a>');
+			shareBtnCode.push('<li class="essb_item essb_link_pinterest nolightbox'+(essbPinImages['svgIcon'] ? ' essb_link_svg_icon' : '')+'">');
+			shareBtnCode.push('<a class="nolightbox'+(essbPinImages['template_a_class'] ? ' ' + essbPinImages['template_a_class'] : '')+'" rel="noreferrer noopener nofollow" href="'+shareCmd+'" onclick="essb.window(&#39;'+shareCmd+'&#39;,&#39;pinpro&#39;,&#39;'+uid+'&#39;); return false;" target="_blank"><span class="essb_icon '+iconMainClass+(essbPinImages['template_icon_class'] ? ' ' + essbPinImages['template_icon_class'] : '')+'">'+(essbPinImages.svgIcon || '')+'</span><span class="essb_network_name">'+(essbPinImages['text'] ? essbPinImages['text'] : 'Pin')+'</span></a>');
 			shareBtnCode.push('</li>');
 			shareBtnCode.push('</ul>');
 			shareBtnCode.push('</div>');
@@ -337,8 +339,14 @@
 				// WP Rocket Lazy Videos set no-pin class to those images to prevent holding down
 				$('.rll-youtube-player img').each(function() {
 					$(this).addClass('no-pin');
-				});
+				});				
 				
+				// Hide on images option
+				if (essbPinImages.hideon) {
+					$(essbPinImages.hideon).each(function() {
+						$(this).addClass('no-pin');
+					});
+				}
 
 				if (essbPinImages.selector) {
 					$(essbPinImages.selector).each(essbPinImagesGenerateButtons);
@@ -351,7 +359,38 @@
 
 			if (essbPinImages.lazyload) $(window).on('scroll', debounce(essbPinImagesDetect, 10));
 
-			setTimeout(essbPinImagesDetect, 1);
+			if (!essbPinImages.optimize_load) setTimeout(essbPinImagesDetect, 1);
+			else {
+				const essbPinUserInteractions =["keydown","mousedown","mousemove","wheel","touchmove","touchstart","touchend"];
+				essbPinUserInteractions.forEach(function(event) {
+				    window.addEventListener(event, essbPinTriggerDOMListener, {passive:true});
+				});
+				
+				document.addEventListener("visibilitychange", essbPinTriggerDOMListener);
+				
+				function essbPinTriggerDOMListener() {
+				    //remove existing user interaction event listeners
+					essbPinUserInteractions.forEach(function(event) {
+				        window.removeEventListener(event, essbPinTriggerDOMListener, {passive:true});
+				    });
+
+				    //remove visibility change listener
+				    document.removeEventListener("visibilitychange", essbPinTriggerDOMListener);
+
+				    //add dom listner if page is still loading
+				    if(document.readyState === 'loading') {
+				        document.addEventListener("DOMContentLoaded", essbPinTriggerDetector);
+				    }
+				    else {
+				        //trigger delayed script process
+				    	essbPinTriggerDetector();
+				    }
+				}
+				
+				function essbPinTriggerDetector() {
+					setTimeout(essbPinImagesDetect, 1);
+				}
+			}
 		}
 
 		if ((typeof(essbPinImages) != 'undefined' && !essbPinImages.active) || typeof(essbPinImages) == 'undefined') {

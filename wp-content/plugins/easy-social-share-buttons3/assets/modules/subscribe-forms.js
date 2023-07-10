@@ -49,6 +49,25 @@
 			var submitapi_call = formContainer.attr('action') + '&mailchimp_email='+user_mail+'&mailchimp_name='+user_name+'&position='+usedPosition+'&design='+usedDesign+'&title='+encodeURIComponent(document.title);
 			
 			/**
+			 * @since 8.6 custom fields support for Mailchimp
+			 */
+			var elCustomFields = document.querySelectorAll('.essb-subscribe-form-' + key + ' #essb-subscribe-from-content-form-mailchimp .essb-subscribe-custom'),
+				isCustomError = false;
+			for (var i = 0; i < elCustomFields.length; i++) {
+				if (elCustomFields[i].value == '' && elCustomFields[i].classList.contains('essb-subscribe-required')) {
+					isCustomError = true;
+					var place = elCustomFields[i].getAttribute('placeholder') || '';
+					alert('You need to fill ' + place);
+					break;
+				}
+				
+				var param = elCustomFields[i].getAttribute('data-field') || '';
+				if (param != '') submitapi_call += '&mailchimp_' + param + '=' + elCustomFields[i].value;
+			}
+			
+			if (isCustomError) return;
+			
+			/**
 			 * @since 7.7 Additional check to prevent mixed content 
 			 */
 			var current_page_url = window.location.href;
@@ -57,6 +76,8 @@
 			// validate reCaptcha too
 			if ($('.essb-subscribe-captcha').length) {
 				var recaptcha  = $( '#g-recaptcha-response' ).val();
+				
+				if ($('input[name="cf-turnstile-response"]').length) recaptcha  = $( 'input[name="cf-turnstile-response"]' ).val();
 				submitapi_call += '&validate_recaptcha=true&recaptcha=' + recaptcha;
 			}
 			
@@ -519,6 +540,23 @@
 			});
 		});
 		
-		
+		/**
+		 * Subscribe reCaptcha		
+		 */
+		if ($('.essb-subscribe-captcha').length) {
+			$('.essb-subscribe-captcha').each(function() {
+				var id = $(this).attr('id') || '';
+				if (id == '') return;				
+				
+				// Maybe load reCAPTCHA.
+				if ( typeof(essb_subscribe_recaptcha) != 'undefined' && essb_subscribe_recaptcha && essb_subscribe_recaptcha.recaptchaSitekey ) {
+					setTimeout(function() {
+						grecaptcha.render(essb_subscribe_recaptcha.turnstile ? '#' + id : id, {
+							sitekey:  essb_subscribe_recaptcha.recaptchaSitekey
+						} );
+					}, 500);
+				}
+			});
+		}				
 	});
 } )( jQuery );

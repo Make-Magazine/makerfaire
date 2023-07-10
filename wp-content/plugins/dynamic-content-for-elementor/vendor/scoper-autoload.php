@@ -174,8 +174,8 @@ if (!class_exists('HTML5_Data', false) && !interface_exists('HTML5_Data', false)
 if (!class_exists('Cpdf', false) && !interface_exists('Cpdf', false) && !trait_exists('Cpdf', false)) {
     spl_autoload_call('DynamicOOOS\Cpdf');
 }
-if (!class_exists('ComposerAutoloaderInite622c2046eeddb5a642e1961c9bd4918', false) && !interface_exists('ComposerAutoloaderInite622c2046eeddb5a642e1961c9bd4918', false) && !trait_exists('ComposerAutoloaderInite622c2046eeddb5a642e1961c9bd4918', false)) {
-    spl_autoload_call('DynamicOOOS\ComposerAutoloaderInite622c2046eeddb5a642e1961c9bd4918');
+if (!class_exists('ComposerAutoloaderInit14c6472a47cca0d6da3592808fbf847b', false) && !interface_exists('ComposerAutoloaderInit14c6472a47cca0d6da3592808fbf847b', false) && !trait_exists('ComposerAutoloaderInit14c6472a47cca0d6da3592808fbf847b', false)) {
+    spl_autoload_call('DynamicOOOS\ComposerAutoloaderInit14c6472a47cca0d6da3592808fbf847b');
 }
 if (!class_exists('Mustache_Tokenizer', false) && !interface_exists('Mustache_Tokenizer', false) && !trait_exists('Mustache_Tokenizer', false)) {
     spl_autoload_call('DynamicOOOS\Mustache_Tokenizer');
@@ -644,9 +644,9 @@ if (!function_exists('trigger_deprecation')) {
         return \DynamicOOOS\trigger_deprecation(...func_get_args());
     }
 }
-if (!function_exists('composerRequiree622c2046eeddb5a642e1961c9bd4918')) {
-    function composerRequiree622c2046eeddb5a642e1961c9bd4918() {
-        return \DynamicOOOS\composerRequiree622c2046eeddb5a642e1961c9bd4918(...func_get_args());
+if (!function_exists('composerRequire14c6472a47cca0d6da3592808fbf847b')) {
+    function composerRequire14c6472a47cca0d6da3592808fbf847b() {
+        return \DynamicOOOS\composerRequire14c6472a47cca0d6da3592808fbf847b(...func_get_args());
     }
 }
 if (!function_exists('get_header')) {

@@ -132,7 +132,7 @@ jQuery(document).ready(function($){
 	 * @since 5.0
 	 * @author appscreo
 	 */
-	var essb = {};
+	var essb = window.essb = {};
 
 	var debounce = function( func, wait ) {
 		var timeout, args, context, timestamp;
@@ -989,6 +989,7 @@ jQuery(document).ready(function($){
 			sendingMessage = $('.essb_mailform').attr('data-sending') || '',
 			captcha = captcha_validate ? $("#essb_mailform_c").val() : "",
 			recaptcha  = $( '#g-recaptcha-response' ).val(),
+			sender_aff_id = $('#essb_mail_affiliate_id').length ? $('#essb_mail_affiliate_id').val() : '',
 			custom_message = '';
 		
 		if (sender_name == '' || sender_email == "" || recepient_email == "" || (captcha == "" && captcha_validate)) {
@@ -1017,6 +1018,7 @@ jQuery(document).ready(function($){
 				"c": captcha,
 				"cu": custom_message,
 				"salt": mail_salt,
+				'affid': sender_aff_id,
 				'recapcha': recaptcha,
 				"nonce": essb_settings.essb3_nonce
 				}, function (data) { if (data) {
@@ -1309,14 +1311,23 @@ jQuery(document).ready(function($){
 			var value_contenthidden = $(element).data('sidebar-contenthidden') || '';
 			if (value_appear_unit == 'px') percentage = current_pos;
 			
+			var visibleByDisplayCond = true;
+			
+			if (value_appear > 0 || value_disappear > 0) {
+				visibleByDisplayCond = false;
+				if (value_appear && percentage >= value_appear) visibleByDisplayCond = true;
+				if (value_disappear && percentage <= value_disappear) visibleByDisplayCond = true;
+			}
+			
 			// Hiding share buttons when content is visible
 			if (value_contenthidden == 'yes' && ($('.essb_displayed_top').length || $('.essb_displayed_bottom').length)) {
 				
 				if (($('.essb_displayed_top').length && isVisibleSelector($('.essb_displayed_top'))) ||
 						($('.essb_displayed_bottom').length && isVisibleSelector($('.essb_displayed_bottom'))))
 					element.fadeOut(100);
-				else
-					element.fadeIn(100);				
+				else {
+					if (visibleByDisplayCond) element.fadeIn(100);
+				}
 			}
 			
 			if (value_appear > 0 && value_disappear == 0) {
@@ -1373,71 +1384,6 @@ jQuery(document).ready(function($){
 				}
 			}
 		}
-
-		/**
-		 * Display Method: Post Bar
-		 */
-		if ($('.essb-postbar').length) {
-
-	        // Define Variables
-	        var ttr_start = $(".essb_postbar_start"),
-	            ttr_end = $(".essb_postbar_end");
-	        if (ttr_start.length) {
-	            var docOffset = ttr_start.offset().top,
-	        	docEndOffset = ttr_end.offset().top,
-	            elmHeight = docEndOffset - docOffset,
-	            progressBar = $('.essb-postbar-progress-bar'),
-	            winHeight = $(window).height(),
-	            docScroll,viewedPortion;
-
-
-		        $(".essb-postbar-prev-post a").on('mouseenter touchstart', function(){
-		            $(this).next('div').css("top","-162px");
-		        });
-		        $(".essb-postbar-close-prev").on('click', function(){
-		        	$(".essb-postbar-prev-post a").next('div').css("top","46px");
-		        });
-		        $(".essb-postbar-next-post a").on('mouseenter touchstart', function(){
-		            $(this).next('div').css("top","-162px");
-		        });
-		        $(".essb-postbar-close-next").on('click', function(){
-		        	$(".essb-postbar-next-post a").next('div').css("top","46px");
-		        });
-
-		        $(window).on('load', function(){
-		            docOffset = ttr_start.offset().top,
-		            docEndOffset = ttr_end.offset().top,
-		            elmHeight = docEndOffset - docOffset;
-		        });
-
-		        $(window).on('scroll', function() {
-
-					docScroll = $(window).scrollTop(),
-		            viewedPortion = winHeight + docScroll - docOffset;
-
-					if(viewedPortion < 0) {
-						viewedPortion = 0;
-					}
-		            if(viewedPortion > elmHeight) {
-		            	viewedPortion = elmHeight;
-		            }
-		            var viewedPercentage = (viewedPortion / elmHeight) * 100;
-					progressBar.css({ width: viewedPercentage + '%' });
-
-				});
-
-				$(window).on('resize', function() {
-					docOffset = ttr_start.offset().top;
-					docEndOffset = ttr_end.offset().top;
-					elmHeight = docEndOffset - docOffset;
-					winHeight = $(window).height();
-					$(window).trigger('scroll');
-				});
-
-				$(window).trigger('scroll');
-	        }
-
-		};
 
 		/**
 		 * Display Method: Post Vertical Float
@@ -1836,61 +1782,7 @@ jQuery(document).ready(function($){
 
 		}
 
-
-
-		/**
-		 * Click2Chat
-		 */
-		if ($('.essb-click2chat').length) {
-			$('.essb-click2chat').on('click', function(event) {
-				event.preventDefault();
-
-				$('.essb-click2chat-window').toggleClass('active');
-			});
-
-			if ($('.essb-click2chat-window .chat-close').length) {
-				$('.essb-click2chat-window .chat-close').on('click', function(event) {
-					event.preventDefault();
-
-					$('.essb-click2chat-window').toggleClass('active');
-				});
-			}
-
-			$('.essb-click2chat-window .operator').each(function() {
-				$(this).on('click', function(event) {
-					event.preventDefault();
-
-					var app = $(this).attr('data-app') || '',
-						number = $(this).attr('data-number') || '',
-						message = $(this).attr('data-message') || '',
-						cmd = '';
-
-					var instance_mobile = false;
-					if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent) ) {
-						instance_mobile = true;
-					}
-
-					if (app == 'whatsapp') {
-						cmd = 'https://api.whatsapp.com/send?phone='+number+'&text=' + message;
-					}
-					if (app == 'viber') {
-						cmd = 'viber://chat?number='+number+'&text=' + message;
-					}
-					if (app == 'email') {
-						cmd = 'mailto:'+number+'&body=' + message;
-					}
-					if (app == 'phone') {
-						cmd = 'tel:'+number;
-					}
-					
-					if (instance_mobile) window.location.href = cmd;
-					else {
-						window.open(cmd, '_blank');
-					}
-
-				});
-			});
-		}
+	
 				
 		/** 
 		 * Reveal the social followers counter that comes with a transition effect
@@ -1903,22 +1795,6 @@ jQuery(document).ready(function($){
 			});
 		}
 		
-		/**
-		 * Subscribe reCaptcha		
-		 */
-		if ($('.essb-subscribe-captcha').length) {
-			$('.essb-subscribe-captcha').each(function() {
-				var id = $(this).attr('id') || '';
-				if (id == '') return;
-				
-				// Maybe load reCAPTCHA.
-				if ( typeof(essb_subscribe_recaptcha) != 'undefined' && essb_subscribe_recaptcha && essb_subscribe_recaptcha.recaptchaSitekey ) {
-					grecaptcha.render( id, {
-						sitekey:  essb_subscribe_recaptcha.recaptchaSitekey
-					} );
-				}
-			});
-		}		
 	});
 
 

@@ -232,7 +232,7 @@ class WPSEO_Sitemaps_Renderer {
 			$output .= "\t\t\t<image:loc>" . $this->encode_and_escape( $img['src'] ) . "</image:loc>\n";
 			$output .= "\t\t</image:image>\n";
 		}
-		unset( $img, $title, $alt );
+		unset( $img );
 
 		$output .= "\t</url>\n";
 
@@ -269,6 +269,7 @@ class WPSEO_Sitemaps_Renderer {
 		$url = $this->encode_url_rfc3986( $url );
 		$url = esc_url( $url );
 		$url = str_replace( '&#038;', '&amp;', $url );
+		$url = str_replace( '&#039;', '&apos;', $url );
 
 		if ( strpos( $url, '//' ) === 0 ) {
 			// Schema-relative URL for which esc_url() does not add a scheme.

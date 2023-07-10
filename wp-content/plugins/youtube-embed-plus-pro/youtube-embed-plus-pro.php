@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus YouTube WordPress Plugin Pro
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.1.6.2
+  Version: 14.1.6.3
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.1.6.2';
+    public static $version = '14.1.6.3';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -2780,11 +2780,11 @@ class YouTubePrefsPro
             $apiEndpoint .= '&pageToken=' . $options->pageToken;
         }
         $spdckey = '';
+        $optionsstr = json_encode($options);
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 9 && self::$alloptions[self::$opt_spdc] == 1 && !(bool) self::$alloptions[self::$opt_gdpr_consent])
         {
             try
             {
-                $optionsstr = json_encode($options);
                 $spdckey = self::$spdcprefix . '_' . md5($apiEndpoint . $optionsstr);
                 $spdcval = get_transient($spdckey);
                 if (!empty($spdcval))
@@ -4435,6 +4435,7 @@ class YouTubePrefsPro
             {
                 ?>
                         $('<?php echo $array['anchor_id']; ?>').pointer({
+                            pointerClass: 'wp-pointer ytprefs-pointer',
                             content: '<?php echo $array['content']; ?>',
                             position: {
                                 edge: '<?php echo $array['edge']; ?>',
@@ -4469,7 +4470,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update provides the latest instructions for creating a YouTube API key, for both free and Pro versions.";
+        $new_pointer_content .= "This update fixes a compatibility issue with Contact Forms 7 for both free and Pro versions.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -5306,15 +5307,16 @@ class YouTubePrefsPro
                             <div id="not_live_content_scroll" class="p">
                                 <p>
                                     <b class="chktitle">Use "Not Live" Fallback Content For Live Streams:</b> (<a href="<?php echo self::$epbase ?>/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">More info here</a>)
-                                    This feature lets you display alternate content if your live stream or premiere is not currently active. There are 2 flavors of this feature: one that affects <strong>direct link</strong> live streams, and 
+                                    This feature lets you display alternate content if your live stream is not currently active. There are 2 flavors of this feature: one that affects <strong>direct link</strong> live streams, and 
                                     one that affects <strong>channel</strong> live streams. Each are explained below. They work a little differently, but both use the same "Not Live" Fallback Content that you can edit below.
+                                    <strong>Note: This feature does not currently work for premieres, but we are hoping the YouTube API will support it in the future.</strong>
                                 </p>
                                 <div class="ytindent chx">
                                     <input name="<?php echo self::$opt_not_live_on; ?>" id="<?php echo self::$opt_not_live_on; ?>" <?php checked($all[self::$opt_not_live_on], 1); ?> type="checkbox" class="checkbox">
                                     <label for="<?php echo self::$opt_not_live_on; ?>"><span class="chktitle">Turn on for <b>direct link</b> live streams:</span>
-                                        When your direct-link embed is not streaming live or premiering, the YouTube live player usually displays a countdown after the user clicks the play button.
-                                        Instead of showing that player, you can display some "coming soon" content in that space for your visitors to see until your video begins to live stream or premiere. 
-                                        The plugin will automatically switch to your video's live stream or premiere once it's active. In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear until then.
+                                        When your direct-link embed is not streaming live, the YouTube live player usually displays a countdown after the user clicks the play button.
+                                        Instead of showing that player, you can display some "coming soon" content in that space for your visitors to see until your video begins to live stream. 
+                                        The plugin will automatically switch to your video's live stream once it's active. In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear until then.
                                         You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
                                         If you just want to show the standard countdown player that YouTube provides, don't use this feature.
                                         <strong>NOTE: Turning this on for direct-link live streams uses a significant amount of your YouTube API quota. We suggest unchecking it if your site has high traffic. If you chose to use this feature, do <u>not</u> put another live stream embed below.</strong>
@@ -5324,7 +5326,7 @@ class YouTubePrefsPro
                                     <input name="<?php echo self::$opt_not_live_on_channel; ?>" id="<?php echo self::$opt_not_live_on_channel; ?>" <?php checked($all[self::$opt_not_live_on_channel], 1); ?> type="checkbox" class="checkbox">
                                     <label for="<?php echo self::$opt_not_live_on_channel; ?>"><span class="chktitle">Turn on for <b>channel</b> live streams: <sup class="orange">beta</sup></span> 
                                         If your live stream embed is channel-based, YouTube might show an error message if there is no upcoming or currently streaming video from your channel. 
-                                        Instead of showing an error, you can display some "coming soon" content in that space for your visitors to see until you've scheduled a live stream or premiere 
+                                        Instead of showing an error, you can display some "coming soon" content in that space for your visitors to see until you've scheduled a live stream
                                         (Once you've scheduled something, YouTube will display the usual countdown until the stream happens). 
                                         In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear when nothing is playing or scheduled to play yet on your channel.
                                         You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
@@ -5725,7 +5727,7 @@ class YouTubePrefsPro
                                     <img class="ssaltgallery" src="<?php echo plugins_url('images/ss-live-chat.jpg', __FILE__) ?>" />
                                     <input name="<?php echo self::$opt_live_chat; ?>" id="<?php echo self::$opt_live_chat; ?>" <?php checked($all[self::$opt_live_chat], 1); ?> type="checkbox" class="checkbox">
                                     <label for="<?php echo self::$opt_live_chat; ?>">
-                                        <b><?php _e('(PRO)') ?> </b> <b class="chktitle"><?php _e('Enable Live Chat:') ?></b> <?php _e('Add more interaction to your site by including the YouTube live chat box as part of each live stream or premiere embed. Note that live chat can also be an option for earning money from your audience by using the Super Chat feature. <a href="https://creatoracademy.youtube.com/page/lesson/superchat" target="_blank">Learn more here</a>.') ?>
+                                        <b><?php _e('(PRO)') ?> </b> <b class="chktitle"><?php _e('Enable Live Chat:') ?></b> <?php _e('Add more interaction to your site by including the YouTube live chat box as part of each live stream embed. Note that live chat can also be an option for earning money from your audience by using the Super Chat feature. <a href="https://creatoracademy.youtube.com/page/lesson/superchat" target="_blank">Learn more here</a>.') ?>
                                         <strong class="check-note"><?php _e('<span class="orange">NOTE:</span> In wide containers, the chat box will appear to the right of the player. It will appear below the player when the container is less than 964px. Also, Google/YouTube disables live chat on mobile devices. So for mobile phones and tablets, the chat box will be hidden.') ?></strong>
                                     </label>
                                     <br>
@@ -6352,7 +6354,7 @@ class YouTubePrefsPro
                         Priority Support
                     </h3>
                     <p>
-                        <strong>PRO users:</strong> Below, We've enabled the ability to have priority support with our team.  Use this to get one-on-one help with any issues you might have or to send us suggestions for future features.  We typically respond during normal work hours. We're always happy to accept any testimonials you might have as well.
+                        <strong>PRO users:</strong> Below, We've enabled the ability to have priority support with our team.*  Use this to get one-on-one help with any issues you might have or to send us suggestions for future features.  We typically respond during normal work hours. We're always happy to accept any testimonials you might have as well.
                     </p>
                     <div class="ytprefs-pro-support">
                         <label>
@@ -6368,6 +6370,9 @@ class YouTubePrefsPro
                         </label>
                         <p>
                             <button disabled type="button" class="button-primary">Click to load priority support form</button>
+                        </p>
+                        <p>
+                            <em>*Has your priority support period ended? <a href="https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx" target="_blank">Start a new one here &raquo;</a></em>
                         </p>
                         <iframe data-src="<?php echo self::$epbase ?>/dashboard/prosupport.aspx?simple=1&prokey=<?php echo esc_attr($all[self::$opt_pro]); ?>&domain=<?php echo site_url(); ?>&wpversion=<? echo get_bloginfo('version'); ?>&pluginversion=<? echo self::$version ?>" width="500" height="<?php echo ($all[self::$opt_pro] && strlen(trim($all[self::$opt_pro])) > 0) ? "500" : "140"; ?>"></iframe>
                     </div>
@@ -7689,15 +7694,16 @@ class YouTubePrefsPro
                             <div class="ytprefs-ob-setting yob-live">
                                 <p>
                                     <b class="chktitle">Use "Not Live" Fallback Content For Live Streams:</b> (<a href="<?php echo self::$epbase ?>/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">More info here</a>)
-                                    This feature lets you display alternate content if your live stream or premiere is not currently active. There are 2 flavors of this feature: one that affects <strong>direct link</strong> live streams, and 
+                                    This feature lets you display alternate content if your live stream is not currently active. There are 2 flavors of this feature: one that affects <strong>direct link</strong> live streams, and 
                                     one that affects <strong>channel</strong> live streams. Each are explained below. They work a little differently, but both use the same "Not Live" Fallback Content that you can edit below.
+                                    <strong>Note: This feature does not currently work for premieres, but we are hoping the YouTube API will support it in the future.</strong>
                                 </p>
                                 <div class="ytindent chx">
                                     <input value="1" name="<?php echo self::$opt_not_live_on; ?>" id="<?php echo self::$opt_not_live_on; ?>" <?php checked($all[self::$opt_not_live_on], 1); ?> type="checkbox" class="checkbox">
                                     <label for="<?php echo self::$opt_not_live_on; ?>"><span class="chktitle">Turn on for <b>direct link</b> live streams:</span>
-                                        When your direct-link embed is not streaming live or premiering, the YouTube live player usually displays a countdown after the user clicks the play button.
-                                        Instead of showing that player, you can display some "coming soon" content in that space for your visitors to see until your video begins to live stream or premiere. 
-                                        The plugin will automatically switch to your video's live stream or premiere once it's active. In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear until then.
+                                        When your direct-link embed is not streaming live, the YouTube live player usually displays a countdown after the user clicks the play button.
+                                        Instead of showing that player, you can display some "coming soon" content in that space for your visitors to see until your video begins to live stream. 
+                                        The plugin will automatically switch to your video's live stream once it's active. In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear until then.
                                         You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
                                         If you just want to show the standard countdown player that YouTube provides, don't use this feature.
                                         <strong>NOTE: Turning this on for direct-link live streams uses a significant amount of your YouTube API quota. We suggest unchecking it if your site has high traffic. If you chose to use this feature, do not put another live stream embed below.</strong>
@@ -7707,7 +7713,7 @@ class YouTubePrefsPro
                                     <input value="1" name="<?php echo self::$opt_not_live_on_channel; ?>" id="<?php echo self::$opt_not_live_on_channel; ?>" <?php checked($all[self::$opt_not_live_on_channel], 1); ?> type="checkbox" class="checkbox">
                                     <label for="<?php echo self::$opt_not_live_on_channel; ?>"><span class="chktitle">Turn on for <b>channel</b> live streams:</span> <sup class="orange">beta</sup>
                                         If your live stream embed is channel-based, YouTube might show an error message if there is no upcoming or currently streaming video from your channel. 
-                                        Instead of showing an error, you can display some "coming soon" content in that space for your visitors to see until you've scheduled a live stream or premiere 
+                                        Instead of showing an error, you can display some "coming soon" content in that space for your visitors to see until you've scheduled a live stream 
                                         (Once you've scheduled something, YouTube will display the usual countdown until the stream happens). 
                                         In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear when nothing is playing or scheduled to play yet on your channel.
                                         You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).

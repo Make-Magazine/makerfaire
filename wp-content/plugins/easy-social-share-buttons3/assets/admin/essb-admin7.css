@@ -807,6 +807,8 @@ font-size: 13px; display: flex; background: #fff; }
 
 /** Extensions **/
 
+.essb-tgmpa-hidden { display: none !important; }
+
 .essb-extension-list { padding: 25px; }
 .essb-extension-list .essb-options-helprow .help-heading .fa32 { margin-right: 5px; }
 .essb-extension-list .list {   
@@ -814,7 +816,13 @@ font-size: 13px; display: flex; background: #fff; }
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 15px;
 	max-width: 1100px;
-	margin: 0 auto;
+}
+
+@media (min-width: 1600px) {
+	.essb-extension-list .list {
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+		max-width: 100%;
+	}
 }
 
 .essb-extension-list .list .addon-card {
@@ -825,7 +833,11 @@ font-size: 13px; display: flex; background: #fff; }
 	overflow: hidden;
 }
 
-.essb-extension-list .list .addon-card-installed { opacity: 0.35; }
+.essb-extension-list .list .addon-card {
+	font-family: 'Open Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+}
+
+.essb-extension-list .list .addon-card-installed { opacity: 1; }
 
 .essb-extension-list .list .addon-card .header {
 	padding: 30px 20px;
@@ -866,11 +878,11 @@ font-size: 13px; display: flex; background: #fff; }
 
 .essb-extension-list .list .addon-card .main {
 	padding: 15px 20px;
-	margin-bottom: 45px;
+	margin-bottom: 50px;
 }
 
 .essb-extension-list .list .addon-card .main .title {
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: 600;
 	margin-bottom: 10px;
 }
@@ -899,8 +911,8 @@ font-size: 13px; display: flex; background: #fff; }
 	left: 0;
 	display: flex;
 	align-items: center;
-	height: 45px;
-	background: #f5f9fa;
+	height: 50px;
+	background: #f2f3f4;
 	padding: 0 15px;
 	overflow: hidden;
 }
@@ -914,19 +926,34 @@ font-size: 13px; display: flex; background: #fff; }
 }
 
 .essb-extension-list .list .addon-card .footer .action {
-	text-align: right;
 	width: 75%;
+}
+
+.essb-extension-list .list .addon-card .footer .action .button-deactivate {
+	color: #b32d2e;
+	border-color: #b32d2e;
+}
+
+.essb-extension-list .list .addon-card .footer .action .button-orange {
+	background-color: #e67e22;
+	border-color: #e67e22;
+	color: #fff;
+}
+
+.essb-extension-list .list .addon-card .footer .action .button-orange:hover {
+	background-color: #b05d14;
+	border-color: #b05d14;
 }
 
 .essb-extension-list .list .addon-card .footer .action .action-open-btn {
 	background: #e67e22;
 	color: #fff;
-	font-size: 14px;
+	font-size: 13px;
 	padding: 8px 20px;
 	border-radius: 3px;
-	margin-right: 35px;
+	margin-right: 25px;
 	text-decoration: none;
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .essb-extension-list .list .addon-card .footer .action .action-open-btn:hover {
@@ -936,23 +963,23 @@ font-size: 13px; display: flex; background: #fff; }
 .essb-extension-list .list .addon-card .footer .action .action-download-btn {
 	background: #02b1ff;
 	color: #fff;
-	font-size: 14px;
+	font-size: 13px;
 	padding: 8px 20px;
 	border-radius: 3px;
-	margin-right: 35px;
+	margin-right: 25px;
 	text-decoration: none;
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .essb-extension-list .list .addon-card .footer .action .installed {
 	background: #9899A0;
 	color: #fff;
-	font-size: 14px;
+	font-size: 13px;
 	padding: 8px 20px;
 	border-radius: 3px;
-	margin-right: 35px;
+	margin-right: 25px;
 	text-decoration: none;
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .essb-extension-list .list .addon-card .footer .action .action-download-btn:hover {
@@ -1045,9 +1072,9 @@ font-size: 13px; display: flex; background: #fff; }
 	padding: 10px;
 }
 
-.essb-custom-button-list .advancedoptions-tile-body .icon svg {
-	max-width: 96px;
-	height: auto;
+.essb-custom-button-list .advancedoptions-tile-body .icon svg {	
+	height: 80px;
+	width: auto;
 }
 
 /**
@@ -1199,6 +1226,7 @@ font-size: 13px; display: flex; background: #fff; }
 	color: #000;	
 	--microtip-font-size: 12px;
 	position: relative;
+	margin-left: 5px;
 }
 
 .essb-control-content .essb-help-hinticon .help .click-to-learn,
@@ -1226,3 +1254,44 @@ font-size: 13px; display: flex; background: #fff; }
 }
 
 .essb-options-hint-glowhint .essb-options-hint-title { font-size: 14px; margin-bottom: 5px; }
+
+/** Block Editor **/
+.essb-block-editor-container {
+	background-color: #eff3fc;
+	padding: 15px;
+	display: flex;
+	align-items: center;
+	border-radius: 10px;
+	margin-bottom: 1em;
+}
+
+.essb-block-editor-container .essb-block-editor-icon {
+	width: 48px;
+	height: 48px;
+	background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDQ0IDQ0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA0NCA0NCIgd2lkdGg9IjMycHgiIGhlaWdodD0iMzJweCI+CiAgPGc+CiAgICA8cGF0aCBkPSJtMTUsMTljLTEuMSwwLTIsMC45LTIsMnMwLjksMiAyLDJjMC42LDAgMS4yLTAuMyAxLjYtMC44IDAuMi0wLjIgMC40LTAuNiAwLjQtMS4yIDAtMC4zLTAuMS0wLjUtMC4yLTAuOC0wLjMtMC43LTEtMS4yLTEuOC0xLjJ6IiBmaWxsPSIjRkZGRkZGIi8+CiAgICA8cGF0aCBkPSJtMjYsMzFjMS4xLDAgMi0wLjkgMi0ycy0wLjktMi0yLTJjLTAuNiwwLTEuMiwwLjMtMS42LDAuOC0wLjIsMC4yLTAuNCwwLjYtMC40LDEuMiAwLDEuMSAwLjksMiAyLDJ6IiBmaWxsPSIjRkZGRkZGIi8+CiAgICA8cGF0aCBkPSJtMjIsMGMtMTIuMiwwLTIyLDkuOC0yMiwyMnM5LjgsMjIgMjIsMjIgMjItOS44IDIyLTIyLTkuOC0yMi0yMi0yMnptNywyMWMtMS42LDAtMy4xLTAuNy00LjItMS43LTAuMS0wLjEtMC40LTAuMi0wLjUtMC4xbC0zLDEuM2MtMC4yLDAuMS0wLjMsMC4zLTAuMywwLjUgMCwwLjUtMC4xLDEtMC4yLDEuNCAwLDAuMiAwLDAuNCAwLjIsMC41bDEuMywuOWMwLjIsMC4xIDAuNCwwLjEgMC42LDAgMC45LTAuNSAyLTAuOSAzLjEtMC45IDMuMywwIDYsMi43IDYsNnMtMi43LDYtNiw2LTYtMi43LTYtNmMwLTAuNSAwLjEtMC45IDAuMi0xLjQgMC0wLjIgMC0wLjQtMC4yLTAuNWwtMS4zLTFjLTAuMi0wLjEtMC40LTAuMS0wLjYsMC0wLjksMC42LTIsMC45LTMuMSwwLjktMy4zLDAtNi0yLjctNi02czIuNy02IDYtNmMxLjYsMCAzLjEsMC43IDQuMiwxLjcgMC4xLDAuMSAwLjQsMC4yIDAuNSwwLjFsMy0xLjNjMC4yLTAuMSAwLjMtMC4zIDAuMy0wLjUgMCwwIDAsMCAwLTAuMSAwLTMuMyAyLjctNiA2LTZzNiwyLjcgNiw2LTIuNyw2LjItNiw2LjJ6IiBmaWxsPSIjRkZGRkZGIi8+CiAgICA8cGF0aCBkPSJtMjksMTNjLTEuMSwwLTIsMC45LTIsMiAwLDAuMyAwLjEsMC41IDAuMiwwLjggMC4zLDAuNyAxLDEuMiAxLjgsMS4yIDEuMSwwIDItMC45IDItMnMtMC45LTItMi0yeiIgZmlsbD0iI0ZGRkZGRiIvPgogIDwvZz4KPC9zdmc+Cg==) !important;
+	background-position: center;
+    background-repeat: no-repeat;
+    background-color: #02b1ff;
+    border-radius: 50%;
+}
+
+.essb-block-editor-container .essb-block-editor-command-tag {
+	letter-spacing: 0.6px;
+    padding: 2px 10px;
+    border-radius: 0;
+    border-radius: 0.75rem;
+    line-height: 20px;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 600;
+    margin: 0 8px;
+    background: #36a3f7;
+	color: #fff;
+}
+
+.essb-block-editor-container .essb-block-editor-content {
+	padding: 8px;
+	flex: 1;
+	font-size: 14px;
+	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+}

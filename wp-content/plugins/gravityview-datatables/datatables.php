@@ -6,15 +6,15 @@
  *
  * @package   GravityView-DataTables-Ext
  * @license   GPL2+
- * @author    GravityView <hello@gravityview.co>
- * @link      https://gravityview.co
+ * @author    GravityKit <hello@gravitykit.com>
+ * @link      https://www.gravitykit.com
  * @copyright Copyright 2021, Katz Web Services, Inc.
  *
  * @wordpress-plugin
  * Plugin Name: GravityView - DataTables Extension
  * Plugin URI: https://www.gravitykit.com/extensions/datatables/
  * Description: Display entries in a dynamic table powered by DataTables & GravityView.
- * Version: 3.1.2
+ * Version: 3.2
  * Author: The GravityKit Team
  * Author URI:  https://www.gravitykit.com
  * Text Domain: gv-datatables
@@ -26,7 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'GV_DT_VERSION', '3.1.2' );
+define( 'GV_DT_VERSION', '3.2' );
 
 /** @define "GV_DT_FILE" "./" */
 define( 'GV_DT_FILE', __FILE__ );
@@ -59,7 +59,7 @@ function gv_extension_datatables_load() {
 		const version = GV_DT_VERSION;
 
 		/**
-		 * @var int The download ID on gravityview.co
+		 * @var int The download ID on the GravityKit website
 		 * @since 1.3.2
 		 */
 		protected $_item_id = 268;
@@ -99,6 +99,7 @@ function gv_extension_datatables_load() {
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-fixedheader.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-responsive.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-auto-update.php';
+			include_once GV_DT_DIR . 'includes/extensions/class-datatables-rowgroup.php';
 		}
 
 		function register_templates() {

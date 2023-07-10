@@ -31,6 +31,35 @@ GravityView Maps uses map icons from the [Maps Icons Collection by Nicolas Molle
 
 == Changelog ==
 
+= 2.2 on July 6, 2023 =
+
+* Fixed: A notice requesting REST API access shows up for all View types, not just Views with maps
+* Fixed: The front-end notice alerting administrators that the REST API setting is disabled was not worded clearly
+* Fixed: Using custom longitude and latitude values on forms without an Address field
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.1.0
+
+__Developer Notes:__
+
+* Added: `Marker::from_address_field()` and `Marker::from_coordinate_fields()` methods to construct a Marker object from an Address field or Longitude/Latitude fields
+* Added: `base.js` file to the `assets/js` directory, used to handle global JS hooks
+* Added: JavaScript filter to modify the options used to build a Marker: `gk.maps.marker_options`
+* Added: JavaScript action after a Marker is added: `gk.maps.after_add_marker`
+* Modified: Renamed many JavaScript hooks to use standard GravityKit naming structure:
+	- `gravitykit/maps/autocomplete_field_id` => `gk.maps.autocomplete_field_id`
+	- `gravitykit/maps/autocomplete_input_id` => `gk.maps.autocomplete_input_id`
+	- `gravitykit/maps/autocomplete_field_init` => `gk.maps.autocomplete_field_init`
+	- 'gravitykit_maps_invalid_coordinates' => `gk.maps.invalid_map_coordinates`
+	- `gravitykit_maps_after_process_map_markers` => `gk.maps.after_process_map_markers`
+	- `gravitykit_maps_beforeInit` => `gk.maps.before_maps_init`
+	- `gravitykit_maps_afterInit` => `gk.maps.after_maps_init`
+	- `gravitykit_maps_init_maps` => `gk.maps.init_maps`
+	- `gravitykit_maps_before_init_map` => `gk.maps.before_init_map`
+	- `gravitykit_maps_after_init_map` => `gk.maps.after_init_map`
+	- `gravitykit_maps_before_process_map_markers` => `gk.maps.before_process_map_markers`
+	- `gravitykit_maps_after_process_map_markers` => `gk.maps.after_process_map_markers`
+	- `gravitykit_maps_getMaps` => `gk.maps.get_maps`
+	- `gravitykit_maps_getSearchMaps` => `gk.maps.get_search_maps`
+
 = 2.1 on May 16, 2023 =
 
 * Improved: Accessibility of the temporary notice displayed during the executing of an Ajax request
@@ -324,4 +353,4 @@ __Developer Notes:__
 * Initial release
 
 
-= 1686766802-4249 =
+= 1688751481-4249 =

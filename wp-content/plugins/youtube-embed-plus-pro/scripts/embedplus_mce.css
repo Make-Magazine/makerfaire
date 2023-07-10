@@ -120,3 +120,11 @@ body #TB_window.epyt-thickbox {
     content: "\f311";
     top: 2px;
 }
+
+
+.ytprefs-pointer .wp-pointer-buttons,
+.ytprefs-pointer .wp-pointer-buttons a.close
+{
+    display: block !important;
+    opacity: 1 !important;
+}

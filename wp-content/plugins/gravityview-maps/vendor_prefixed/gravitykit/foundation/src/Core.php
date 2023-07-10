@@ -24,7 +24,7 @@ use GravityKit\GravityMaps\Foundation\Helpers\Arr;
 use GravityKit\GravityMaps\Foundation\WP\RESTController;
 
 class Core {
-	const VERSION = '1.0.12';
+	const VERSION = '1.1.0';
 
 	const ID = 'gk_foundation';
 
@@ -283,12 +283,31 @@ class Core {
 				}
 
 				$default_settings = [
-					'support_email'    => get_bloginfo( 'admin_email' ),
-					'support_port'     => 1,
-					'no_conflict_mode' => 1,
-					'powered_by'       => 0,
-					'beta'             => 0,
+					'top_level_menu_action' => $this->licenses()::ID,
+					'support_email'         => get_bloginfo( 'admin_email' ),
+					'support_port'          => 1,
+					'no_conflict_mode'      => 1,
+					'powered_by'            => 0,
+					'beta'                  => 0,
 				];
+
+				$admin_menu_items = Arr::flatten( $this->admin_menu()->get_submenus(), 1 );
+
+				$top_level_menu_action_choices = array_map( function ( $menu_item ) {
+					if ( Arr::get( $menu_item, 'hide' ) || Arr::get( $menu_item, 'exclude_from_top_level_menu_action' ) ) {
+						return;
+					}
+
+					return [
+						'title' => $menu_item['menu_title'],
+						'value' => $menu_item['id'],
+					];
+				}, $admin_menu_items );
+
+				$top_level_menu_action_value = Arr::get( $gk_settings, 'top_level_menu_action' );
+				$top_level_menu_action_value = in_array( $top_level_menu_action_value, Arr::flatten( $top_level_menu_action_choices ) ) ? $top_level_menu_action_value : $default_settings['top_level_menu_action'];
+
+				$top_level_menu_action_choices = array_values( array_filter( $top_level_menu_action_choices ) );
 
 				$general_settings = [];
 
@@ -334,6 +353,14 @@ HTML;
 				$general_settings = array_merge(
 					$general_settings,
 					[
+						[
+							'id'          => 'top_level_menu_action',
+							'type'        => 'select',
+							'value'       => $top_level_menu_action_value,
+							'choices'     => $top_level_menu_action_choices,
+							'title'       => esc_html__( 'GravityKit Menu Item Action', 'gk-gravitymaps' ),
+							'description' => esc_html__( 'Open the selected page when clicking the GravityKit menu item.', 'gk-gravitymaps' ),
+						],
 						[
 							'id'          => 'powered_by',
 							'type'        => 'checkbox',
@@ -548,7 +575,7 @@ HTML;
 		// Ajax logic was moved to a GravityKit\Foundation\WP\AjaxRouter in 1.0.11
 		// TODO: remove when other plugins are updated not to use GravityKitFoundation::get_ajax_params().
 		if ( 'get_ajax_params' === $name ) {
-			return AjaxRouter::get_instance()->get_ajax_params( $arguments );
+			return $this->_components['ajax_router']->get_ajax_params( Arr::get( $arguments, 0, '' ) );
 		}
 
 		if ( ! isset( $this->_components[ $name ] ) ) {

@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.2
+
+	- Fixed an issue where page links could duplicate if using Multi-page Navigation with Page Transitions.
+
 ## 1.2.1
 
 	- Fixed margin for step links in forms using the new Gravity Forms Theme Framework.

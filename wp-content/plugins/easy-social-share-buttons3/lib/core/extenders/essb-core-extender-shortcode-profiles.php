@@ -12,8 +12,8 @@
 
 class ESSBCoreExtenderShortcodeProfiles {
 	
-	public static function parse_shortcode($atts, $options) {
-		
+	public static function parse_shortcode($atts, $options) {		
+	    
 		$sc_networks = isset($atts['networks']) ? $atts['networks'] : '';
 		$sc_template = isset($atts['template']) ? $atts['template'] : 'flat';
 		$sc_animation = isset($atts['animation']) ? $atts['animation'] : '';
@@ -23,6 +23,7 @@ class ESSBCoreExtenderShortcodeProfiles {
 		$sc_size = isset($atts['size']) ? $atts['size'] : '';
 		$sc_cta = isset($atts['cta']) ? $atts['cta'] : '';
 		$sc_cta_vertical = isset($atts['cta_vertical']) ? $atts['cta_vertical'] : '';
+		$sc_cta_number = isset($atts['cta_number']) ? $atts['cta_number'] : '';
 		$sc_columns = isset($atts['columns']) ? $atts['columns'] : '';
 		$sc_profiles_all_networks = isset($atts['profiles_all_networks']) ? $atts['profiles_all_networks'] : '';
 		
@@ -39,9 +40,11 @@ class ESSBCoreExtenderShortcodeProfiles {
 		$sc_nospace = essb_unified_true($sc_nospace);	
 		$sc_cta = essb_unified_true($sc_cta);
 		$sc_cta_vertical = essb_unified_true($sc_cta_vertical);
+		$sc_cta_number = essb_unified_true($sc_cta_number);
 		
 		$profile_networks = array();
 		$profile_networks_text = array();
+		$profile_networks_count = array();
 		if ($sc_networks != '') {
 			$profile_networks = explode(',', $sc_networks);
 		}
@@ -65,7 +68,8 @@ class ESSBCoreExtenderShortcodeProfiles {
 		foreach ($profile_networks as $network) {
 			$value = isset($atts[$network]) ? $atts[$network] : '';
 			$text = isset($atts['profile_text_'.$network]) ? $atts['profile_text_'.$network] : '';
-				
+			$count = isset($atts['profile_count_' . $network]) ? $atts['profile_count_' . $network] : '';
+			
 			if (empty($value)) {
 				$value = isset($atts['profile_'.$network]) ? $atts['profile_'.$network] : '';
 			}
@@ -77,6 +81,10 @@ class ESSBCoreExtenderShortcodeProfiles {
 			if (empty($text)) {
 				$text = essb_object_value($options, 'profile_text_'.$network);
 			}
+			
+			if (empty($count)) { 
+			    $count = essb_object_value($options, 'profile_count_' . $network);
+			}
 				
 			if (!empty($value)) {
 				$sc_network_address[$network] = $value;
@@ -85,22 +93,18 @@ class ESSBCoreExtenderShortcodeProfiles {
 			if (!empty($text)) {
 				$profile_networks_text[$network] = $text;
 			}
-		}
-		
-		
-		if (!defined('ESSB3_SOCIALPROFILES_ACTIVE')) {
-			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles.php');
-			include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/social-profiles/essb-social-profiles-helper.php');
-			define('ESSB3_SOCIALPROFILES_ACTIVE', 'true');
-			$template_url = ESSBSocialProfilesHelper::get_stylesheet_url();
-			essb_resource_builder()->add_static_footer_css($template_url, 'essb-social-followers-counter');
-		}
-		else {
-			if (!essb_resource_builder()->is_activated('profiles_css')) {
-			    $template_url = ESSBSocialProfilesHelper::get_stylesheet_url();
-				essb_resource_builder()->add_static_footer_css($template_url, 'essb-social-followers-counter');				
+			
+			if (!empty($count)) {
+			    $profile_networks_count[$network] = $count;
 			}
 		}
+		
+		
+		if (!essb_resource_builder()->is_activated('social-profiles')) {
+		    $template_url = ESSBSocialProfilesHelper::get_stylesheet_url();
+		    essb_resource_builder()->add_static_footer_css($template_url, 'essb-social-followers-counter');		
+		}	
+		
 		
 		$options = array(
 				'position' => '',
@@ -109,6 +113,7 @@ class ESSBCoreExtenderShortcodeProfiles {
 				'nospace' => $sc_nospace,
 				'networks' => $sc_network_address,
 				'networks_text' => $profile_networks_text,
+		        'networks_count' => $profile_networks_count,
 				'class' => $sc_class,
 				'align' => $sc_align,
 				'size' => $sc_size,
@@ -118,7 +123,12 @@ class ESSBCoreExtenderShortcodeProfiles {
 		        'preview_mode' => $preview_mode
 		);
 		
-		return ESSBSocialProfiles::draw_social_profiles($options);
+		if (class_exists('ESSBSocialProfiles')) {
+            return ESSBSocialProfiles::draw_social_profiles($options);
+		}
+		else {
+		    return '';
+		}
 	}
 	
 }

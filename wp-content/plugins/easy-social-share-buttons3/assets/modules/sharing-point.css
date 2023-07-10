@@ -1,0 +1,293 @@
+/* ==========================================================================
+   Point
+   ========================================================================== */
+
+.essb-point {
+	position: fixed;
+-webkit-transition: all 0.2s ease;
+-moz-transition: all 0.2s ease;
+-ms-transition: all 0.2s ease;
+-o-transition: all 0.2s ease;
+transition: all 0.2s ease;
+z-index: 2000;
+}
+
+.essb-point-bottomright {
+	right: 40px;
+	bottom: 40px;
+}
+
+.essb-point-bottomleft {
+	left: 40px;
+	bottom: 40px;
+}
+
+.essb-point-topright {
+	right: 40px;
+	top: 40px;
+}
+
+.essb-point-topleft {
+	left: 40px;
+	top: 40px;
+}
+
+.essb-point-bottomright.essb-point-open, .essb-point-topright.essb-point-open {
+	right: 320px;
+}
+
+.essb-point-bottomleft.essb-point-open, .essb-point-topleft.essb-point-open {
+	left: 320px;
+}
+
+
+.essb-point .essb_svg_icon_share {
+	font-size: 21px;
+	line-height: 21px;
+	color: #fff;
+	background-color: #1D628B;
+	padding: 12px !important;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;	
+	transition: 0.2s all;
+}
+
+.essb-point .essb_svg_icon_share svg {
+	fill: currentColor;
+	width: 21px;
+	height: 21px;
+}
+
+.essb-point.essb-point-round .essb_svg_icon_share {
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;	
+}
+
+.essb-point.essb-point-rounded .essb_svg_icon_share {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;	
+}
+
+
+.essb-point .essb_svg_icon_share:hover {
+	background-color: #144461;
+}
+
+.essb-point .essb-point-total {
+	background-color:#D33257;
+	color: #fff;
+	padding: 5px;
+	position: absolute;
+	right: 0px;
+	top: -10px;
+	font-size: 11px;
+	line-height: 11px;
+	font-weight:bold;
+	border-radius: 3px;
+}
+
+.essb-point-share-buttons-advanced { 
+-webkit-transition: all 0.2s linear;
+-moz-transition: all 0.2s linear;
+-ms-transition: all 0.2s linear;
+-o-transition: all 0.2s linear;
+transition: all 0.2s linear;
+position: fixed;
+z-index: 2001;
+	background: #fff;
+-webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+	-ms-box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+	-o-box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+	width:300px;
+}
+.essb-point-share-buttons-advanced.essb-point-share-buttons-bottomright {
+	
+	right: 10px;
+	bottom: 10px;
+	margin-right: -330px;
+}
+
+.essb-point-share-buttons-advanced.essb-point-share-buttons-topright {
+	
+	right: 10px;
+	top: 10px;
+	width:300px;
+	margin-right: -330px;
+}
+
+
+.essb-point-share-buttons-advanced.essb-point-share-buttons-bottomright.essb-point-share-buttons-active, .essb-point-share-buttons-advanced.essb-point-share-buttons-topright.essb-point-share-buttons-active {
+	margin-right: 0px;
+}
+
+.essb-point-share-buttons-advanced.essb-point-share-buttons-bottomleft {
+	left: 10px;
+	margin-left: -330px;
+	bottom: 10px;
+}
+
+.essb-point-share-buttons-advanced.essb-point-share-buttons-topleft {
+	left: 10px;
+	margin-left: -330px;
+	top: 10px;
+}
+
+.essb-point-share-buttons-advanced.essb-point-share-buttons-bottomleft.essb-point-share-buttons-active, .essb-point-share-buttons-advanced.essb-point-share-buttons-topleft.essb-point-share-buttons-active {
+	margin-left: 0px;
+}
+
+.essb-point-share-buttons-advanced.essb-point-share-buttons .essb-point-share-buttons-content {
+	margin: 10px;
+}
+
+.essb-point-share-buttons-simple { 
+-webkit-transition: all 0.2s linear;
+-moz-transition: all 0.2s linear;
+-ms-transition: all 0.2s linear;
+-o-transition: all 0.2s linear;
+transition: all 0.2s linear;
+position: fixed;
+z-index: 2001;
+	width:60px;
+}
+.essb-point-share-buttons-simple.essb-point-share-buttons-bottomright {
+	
+	right: 30px;
+	bottom: 105px;
+	margin-right: -330px;
+}
+
+.essb-point-share-buttons-simple.essb-point-share-buttons-topright {
+	
+	right: 30px;
+	top: 100px;
+	margin-right: -330px;
+}
+
+.essb-point-share-buttons-simple.essb-point-share-buttons-topright .essb-point-share-buttons-content,
+.essb-point-share-buttons-simple.essb-point-share-buttons-bottomright .essb-point-share-buttons-content {
+	float: right;
+}
+.essb-point-share-buttons-simple.essb-point-share-buttons-bottomright.essb-point-share-buttons-active, .essb-point-share-buttons-simple.essb-point-share-buttons-topright.essb-point-share-buttons-active {
+	margin-right: 0px;
+}
+
+.essb-point-share-buttons-simple.essb-point-share-buttons-bottomleft {
+	left: 40px;
+	margin-left: -330px;
+	bottom: 105px;
+}
+
+.essb-point-share-buttons-simple.essb-point-share-buttons-topleft {
+	left: 40px;
+	margin-left: -330px;
+	top: 100px;
+}
+
+.essb-point-share-buttons-simple.essb-point-share-buttons-bottomleft.essb-point-share-buttons-active, .essb-point-share-buttons-simple.essb-point-share-buttons-topleft.essb-point-share-buttons-active {
+	margin-left: 0px;
+}
+
+.essb-point-share-buttons-simple.essb-point-share-buttons .essb-point-share-buttons-content {
+	margin: 0px;
+}
+
+.essb-point-share-buttons-simple.essb-point-share-buttons .essb_links { margin: 0 !important; }
+
+.essb-point-share-buttons .essb_fixedwidth_65_right .essb_network_name {
+	margin-top: 10px;
+	font-weight: bold;
+}
+
+/* Prev/Next post styling */
+.essb-point-share-buttons-advanced .essb-point-prevnext-post { margin-top: 10px; }
+.essb-point-share-buttons-advanced .essb-point-prevnext-post a { text-decoration: none; color: #111; }
+.essb-point-share-buttons-advanced .essb-point-prevnext-post .essbpb-prev,
+.essb-point-share-buttons-advanced .essb-point-prevnext-post .essbpb-next {
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	margin-right: 5px;
+}
+
+.essb-point-share-buttons-advanced .essb-point-prevnext-post .essb-point-prevnext-post-title span {
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.essb-point-share-buttons-advanced .essb-point-prevnext-post .essb-point-prevnext-post-category {
+	font-size: 11px;
+	text-transform: uppercase;
+	color: #999;
+	margin-bottom: 10px;
+	margin-top: 5px;
+}
+
+.essb-point-share-buttons-advanced .essb-point-prevnext-post .essb-point-prevnext-post-desc {
+	font-size: 13px;
+}
+
+.essb-point-share-buttons-simple .essb_template_bold-retina.essb_fixedwidth_30_center a,
+.essb-point-share-buttons-simple .essb_template_bold-retina.essb_fixedwidth_30_right a,
+.essb-point-share-buttons-simple .essb_template_bold-retina.essb_fixedwidth_30 a
+ {
+	width: 40px !important;
+}
+
+.essb-point-share-buttons-simple .essb_template_bold-retina.essb_fixedwidth_65_center a,
+.essb-point-share-buttons-simple .essb_template_bold-retina.essb_fixedwidth_65_right a,
+.essb-point-share-buttons-simple .essb_template_bold-retina.essb_fixedwidth_65 a
+ {
+	width: 90px !important;
+}
+
+.essb-point-share-buttons .essb_template_bold-retina.essb_fixedwidth_65_right .essb_network_name {
+	margin-top: 6px !important;
+}
+
+.essb-point-share-buttons-simple .essb_template_fancy-bold-retina.essb_fixedwidth_65_center a,
+.essb-point-share-buttons-simple .essb_template_fancy-bold-retina.essb_fixedwidth_65_right a,
+.essb-point-share-buttons-simple .essb_template_fancy-bold-retina.essb_fixedwidth_65 a
+ {
+	width: 90px !important;
+}
+
+.essb-point-share-buttons .essb_template_fancy-bold-retina.essb_fixedwidth_65_right .essb_network_name {
+	margin-top: 8px !important;
+}
+
+.essb-point-share-buttons-simple .essb_template_metro-bold-retina.essb_fixedwidth_65_center a,
+.essb-point-share-buttons-simple .essb_template_metro-bold-retina.essb_fixedwidth_65_right a,
+.essb-point-share-buttons-simple .essb_template_metro-bold-retina.essb_fixedwidth_65 a
+ {
+	width: 90px !important;
+}
+
+.essb-point-share-buttons .essb_template_metro-bold-retina.essb_fixedwidth_65_right .essb_network_name {
+	margin-top: 8px !important;
+}
+
+.essb-point-share-buttons-simple .essb_template_metro-bold-retina.essb_fixedwidth_30_center a,
+.essb-point-share-buttons-simple .essb_template_metro-bold-retina.essb_fixedwidth_30_right a,
+.essb-point-share-buttons-simple .essb_template_metro-bold-retina.essb_fixedwidth_30 a
+ {
+	width: 46px !important;
+}
+
+.essb-point-share-buttons-simple .essb_template_fancy-bold-retina.essb_fixedwidth_30_center a,
+.essb-point-share-buttons-simple .essb_template_fancy-bold-retina.essb_fixedwidth_30_right a,
+.essb-point-share-buttons-simple .essb_template_fancy-bold-retina.essb_fixedwidth_30 a {
+	width: 46px !important;
+}
+
+.essb-point-share-buttons-advanced .essb_links.essb_template_bold-retina.essb_width_columns_1 li a,
+.essb-point-share-buttons-advanced .essb_links.essb_template_metro-bold-retina.essb_width_columns_1 li a,
+.essb-point-share-buttons-advanced .essb_links.essb_template_fancy-bold-retina.essb_width_columns_1 li a {
+	width: 100% !important;
+}

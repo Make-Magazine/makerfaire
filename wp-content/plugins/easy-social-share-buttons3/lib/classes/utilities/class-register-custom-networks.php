@@ -157,6 +157,8 @@ class ESSB_Register_Custom_Networks {
 			$bgcolor = isset($data['bgcolor']) ? $data['bgcolor'] : '';
 			$iconcolor = isset($data['iconcolor']) ? $data['iconcolor'] : '';
 			$textcolor = isset($data['textcolor']) ? $data['textcolor'] : '';
+			
+			$network_color = isset($data['network_color']) ? $data['network_color'] : '';
 
 			$bgcolor_hover = isset($data['bgcolor_hover']) ? $data['bgcolor_hover'] : '';
 			$iconcolor_hover = isset($data['iconcolor_hover']) ? $data['iconcolor_hover'] : '';
@@ -164,11 +166,12 @@ class ESSB_Register_Custom_Networks {
 			
 			$padding_left = isset($data['padding_left']) ? $data['padding_left'] : '';
 			$padding_top = isset($data['padding_top']) ? $data['padding_top'] : '';
-			
-			if (intval($padding_left) == 0) { $padding_left = '8'; }
-			if (intval($padding_top) == 0) { $padding_top = '10'; }
-				
+							
 			$icon = isset($data['icon']) ? $data['icon'] : '';
+			
+			if (!empty($network_color)) {
+			    $css_code .= '.essb_links .essb_link_'.esc_attr($id).' { --essb-network: '.esc_attr($network_color).'}';
+			}
 			
 			if ($bgcolor != '' || $textcolor != '') {
 				$css_code .= '.essb_links .essb_link_'.esc_attr($id).' a { ';
@@ -193,8 +196,13 @@ class ESSB_Register_Custom_Networks {
 			}
 			
 			if ($icon != '') {
-				$css_code .= '.essb_links .essb_link_'.esc_attr($id).' a svg { height: calc(100% - '.($padding_top * 2).'px); width: auto; padding-top: '.esc_attr($padding_top).'px; padding-left: '.esc_attr($padding_left).'px; } ';
-				
+			    if (!empty($padding_left) && intval($padding_left) > 0) {
+			        $css_code .= '.essb_links .essb_link_'.esc_attr($id).' a svg { padding-left: '.esc_attr($padding_left).'px; } ';
+			    }
+			    if (!empty($padding_top) && intval($padding_top) > 0) {
+			        $css_code .= '.essb_links .essb_link_'.esc_attr($id).' a svg { padding-top: '.esc_attr($padding_top).'px; } ';
+			    }
+			    
 				if ($iconcolor != '') {
 					$css_code .= '.essb_links .essb_link_'.esc_attr($id).' a svg, .essb_links .essb_link_'.esc_attr($id).' a svg path { fill: '.esc_attr($iconcolor).'!important; } ';
 				}

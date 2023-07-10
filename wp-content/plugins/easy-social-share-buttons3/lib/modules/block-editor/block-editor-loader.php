@@ -71,4 +71,13 @@ function essb_register_custom_block_assets() {
 		wp_register_style ( 'essb-instagram-feed', $template_file, array (), ESSB3_VERSION );
 		wp_enqueue_style ( 'essb-instagram-feed' );
 	}
+	
+	/**
+	 * @since 8.5 fixing Click to Tweet styles load
+	 */
+	if (!essb_option_bool_value('deactivate_ctt')) {
+	    $template_file = ESSB3_PLUGIN_URL . '/assets/modules/click-to-tweet.css';
+	    wp_register_style ( 'essb-click-to-tweet', $template_file, array (), ESSB3_VERSION );
+	    wp_enqueue_style ( 'essb-click-to-tweet' );
+	}
 }

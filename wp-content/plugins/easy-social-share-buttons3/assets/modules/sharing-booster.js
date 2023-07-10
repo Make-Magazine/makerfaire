@@ -41,12 +41,46 @@ jQuery(document).ready(function($){
 		};
 	}
 	
+	var essb_responsiveEventsCanRun = function(element) {
+		var hideOnMobile = $(element).hasClass('essb_mobile_hidden'),
+			hideOnDesktop = $(element).hasClass('essb_desktop_hidden'),
+			hideOnTablet = $(element).hasClass('essb_tablet_hidden'),
+			windowWidth = $(window).width(),
+			canRun = true;
+	
+		if (windowWidth <= 768 && hideOnMobile) canRun = false;
+		if (windowWidth > 768 && windowWidth <= 1100 && hideOnTablet) canRun = false;
+		if (windowWidth > 1100 && hideOnDesktop) canRun = false;
+		
+		if (!$(element).length) canRun = false;
+	
+		return canRun;
+	};
+	
 	var essb_int_value = function(value) {
 		value = parseInt(value);
 		
 		if (isNaN(value) || !isFinite(value)) value = 0;
 		return value;
 	};
+	
+	var essb_setCookie = function(cname, cvalue, exdays) {
+	    var d = new Date();
+	    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+	    var expires = "expires="+d.toGMTString();
+	    document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
+	};
+	
+	var essb_getCookie = function(cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i=0; i<ca.length; i++) {
+	        var c = ca[i].trim();
+	        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+	    }
+	    return "";
+	};
+
 	
 
 	/**
@@ -80,7 +114,7 @@ jQuery(document).ready(function($){
 		function essb_booster_close_from_action() {
 			var boosterCookieKey = booster_donotshow == 'all' ? 'essb_booster_all' : 'essb_booster_' + essb_settings.post_id;
 
-			essb.setCookie(boosterCookieKey, "yes", Number(booster_hide));
+			essb_setCookie(boosterCookieKey, "yes", Number(booster_hide));
 			essb_booster_close();
 		}
 
@@ -108,12 +142,12 @@ jQuery(document).ready(function($){
 		if (!Number(booster_hide)) booster_hide = 7;
 
 		var boosterCookieKey = booster_donotshow == 'all' ? 'essb_booster_all' : 'essb_booster_' + essb_settings.post_id;
-		var cookie_set = essb.getCookie(boosterCookieKey);
+		var cookie_set = essb_getCookie(boosterCookieKey);
 
 		// booster is already triggered
 		if (cookie_set) booster_trigger = 'disabled';
 
-		if (essb.responsiveEventsCanRun($('.essb-sharebooster'))) {
+		if (essb_responsiveEventsCanRun($('.essb-sharebooster'))) {
 			if (booster_trigger == '')
 				essb_booster_trigger();
 			if (booster_trigger == 'time')

@@ -63,7 +63,8 @@ function essb_block_register_social_profiles() {
 			),
 			'cta_vertical' => array(
 				'type' => 'boolean'
-			)
+			),
+		    'cta_number' => array( 'type' => 'boolean')
 		),
 
 		/** Define the category for your block */

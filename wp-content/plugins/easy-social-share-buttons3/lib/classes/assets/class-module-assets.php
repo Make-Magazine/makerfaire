@@ -31,11 +31,13 @@ class ESSB_Module_Assets {
      */
     private static $assets_to_load = array();
     
+    private static $loaded_assets = array();
+    
     /**
      * Return when optimized the minified extension of the file
      * @return string
      */
-    private static function is_optimized($type = '') {
+    public static function is_optimized($type = '') {
         
         if ($type == 'js') {
             return self::$optimized_js ? '.min' : '';
@@ -78,7 +80,15 @@ class ESSB_Module_Assets {
      * @param string $type
      */
     private static function register_resource($module_id = '', $file = '', $type = '') {
-        self::$assets_to_load[$module_id] = array('file' => $file, 'type' => $type);
+        self::$assets_to_load[$module_id] = array('file' => $file, 'type' => $type);        
+    }
+    
+    public static function get_modules_base_folder() {
+        return self::$module_base_folder;
+    }
+    
+    public static function is_registered($module_id = '') {
+        return isset(self::$loaded_assets[$module_id]) ? true : false;
     }
     
     /**
@@ -124,7 +134,8 @@ class ESSB_Module_Assets {
     
     public static function regsiter_click2chat() {
         self::register_resource('click2chat-css', self::$module_base_folder . 'click-to-chat' . self::is_optimized('css') . '.css', 'css');        
-    }
+        self::register_resource('click2chat-js', self::$module_base_folder . 'click-to-chat' . self::is_optimized('js') . '.js', 'js');
+    }    
     
     public static function register_click2tweet() {
         /**
@@ -141,7 +152,6 @@ class ESSB_Module_Assets {
      * Register and load all module static assets
      */
     public static function register_and_load() {
-        
         self::$optimized_css = essb_option_bool_value('use_minified_css');
         self::$optimized_js = essb_option_bool_value('use_minified_js');
         
@@ -159,6 +169,7 @@ class ESSB_Module_Assets {
          * Loading registered assets
          */       
         foreach (self::$assets_to_load as $module_id => $resource) {
+            $loaded_assets[$module_id] = true;
             if ($resource['type'] == 'css') {
                 essb_resource_builder()->add_static_resource($resource['file'], $module_id, 'css');
             }
@@ -166,6 +177,14 @@ class ESSB_Module_Assets {
                 essb_resource_builder()->add_static_resource($resource['file'], $module_id, 'js');                
             }
         }
+    }
+    
+    public static function load_css_resource($module_id = '', $path = '', $type = '') {
+        essb_resource_builder()->enqueue_style_single_css($module_id, $path, ESSB3_VERSION);
+    }
+    
+    public static function load_js_resource($module_id = '', $path = '', $type = '') {
+        wp_enqueue_script ( $module_id, $path, array ( 'jquery' ), ESSB3_VERSION, true );
     }
     
     /**

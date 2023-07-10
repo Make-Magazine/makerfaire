@@ -106,6 +106,11 @@
 	line-height: 1;
 }
 
+.essb-fc-block .essb-fc-block-icon svg {
+	width: 32px;
+	height: 32px;
+}
+
 .essb-fc-grid .essb-fc-block .essb-fc-block-icon,
 .essb-fc-grid .essb-fc-block .essb-fc-block-details { 
 	z-index: 2;
@@ -145,39 +150,6 @@
 	height: 18px;
 }
 
-.essb-fc-grid.essb-fc-profile-size-xsmall i svg {
-	width: 10px;
-	height: 10px;
-}
-
-.essb-fc-grid.essb-fc-profile-size-small i svg {
-	width: 14px;
-	height: 14px;
-}
-
-.essb-fc-grid.essb-fc-profile-size-large i svg {
-	width: 22px;
-	height: 22px;
-}
-
-.essb-fc-grid.essb-fc-profile-size-large .essb-fc-block {
-	padding: 12px;
-}
-
-.essb-fc-grid.essb-fc-profile-size-xlarge i svg {
-	width: 26px;
-	height: 26px;
-}
-
-.essb-fc-grid.essb-fc-profile-size-xxlarge i svg {
-	width: 32px;
-	height: 32px;
-}
-
-.essb-fc-grid.essb-fc-profile-size-xlarge .essb-fc-block,
-.essb-fc-grid.essb-fc-profile-size-xxlarge .essb-fc-block {
-	padding: 16px;
-}
 
 .essb-fc-grid.essb-profiles .essb-fc-block .essb-fc-block-details .text {
 	font-size: 13px;
@@ -382,6 +354,66 @@
 	height: 21px;
 }
 
+
+/** Sizes */
+.essb-fc-grid.essb-fc-profile-size-xsmall i svg {
+	width: 10px;
+	height: 10px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-xsmall .essb-fc-block-details .text {
+	font-size: 10px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-xsmall .essb-fc-block-details .count {
+	font-size: 12px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-small i svg {
+	width: 14px;
+	height: 14px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-small .essb-fc-block-details .text {
+	font-size: 11px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-small .essb-fc-block-details .count {
+	font-size: 14px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-large i svg {
+	width: 22px;
+	height: 22px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-large .essb-fc-block {
+	padding: 12px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-xlarge i svg {
+	width: 26px;
+	height: 26px;
+}
+
+
+.essb-fc-grid.essb-fc-profile-size-xlarge .essb-fc-block-details .count {
+	font-size: 26px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-xxlarge i svg {
+	width: 32px;
+	height: 32px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-xxlarge .essb-fc-block-details .count {
+	font-size: 28px;
+}
+
+.essb-fc-grid.essb-fc-profile-size-xlarge .essb-fc-block,
+.essb-fc-grid.essb-fc-profile-size-xxlarge .essb-fc-block {
+	padding: 16px;
+}
 
 
 /** Templates */

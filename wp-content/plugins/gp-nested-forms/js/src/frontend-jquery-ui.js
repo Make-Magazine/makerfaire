@@ -5,6 +5,20 @@ const ko = window.ko;
 
 ( function( $ ) {
 
+	/*
+	 * String.format was deprecated in GF 2.7.1 and will be removed in GF 2.8 in favor of String.prototype.gformFormat.
+	 *
+	 * As we support older versions of GF, we need to add String.prototype.gformFormat if it doesn't exist.
+	 */
+	if (!String.prototype.gformFormat) {
+		String.prototype.gformFormat = function () {
+			var args = arguments;
+			return this.replace(/{(\d+)}/g, function (match, number) {
+				return typeof args[number] != 'undefined' ? args[number] : match;
+			});
+		};
+	}
+
 	window.GPNestedForms = function( args ) {
 
 		var self = this;
@@ -20,10 +34,10 @@ const ko = window.ko;
 			self.initSession();
 
 			// Handle init when form is reloaded via AJAX.
-			if( typeof window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] !== 'undefined' ) {
-				var oldGPNF = window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ];
+			if( typeof window[ 'GPNestedForms_{0}_{1}'.gformFormat( self.formId, self.fieldId ) ] !== 'undefined' ) {
+				var oldGPNF = window[ 'GPNestedForms_{0}_{1}'.gformFormat( self.formId, self.fieldId ) ];
 				self.entries = oldGPNF.entries;
-				gform.removeFilter( 'gform_calculation_formula', 10, 'gpnf_{0}_{1}'.format( self.formId, self.fieldId ) );
+				gform.removeFilter( 'gform_calculation_formula', 10, 'gpnf_{0}_{1}'.gformFormat( self.formId, self.fieldId ) );
 				/* Hack: fixes issue when Beaver Builder triggers ready event again without reloading UI */
 				self.viewModel = oldGPNF.viewModel;
 			}
@@ -132,13 +146,13 @@ const ko = window.ko;
 			} );
 
 			// Init calculation functionality.
-			gform.addFilter( 'gform_calculation_formula', self.parseCalcs, 10, 'gpnf_{0}_{1}'.format( self.formId, self.fieldId ) );
+			gform.addFilter( 'gform_calculation_formula', self.parseCalcs, 10, 'gpnf_{0}_{1}'.gformFormat( self.formId, self.fieldId ) );
 
 			self.runCalc( self.formId );
 
 			self.parentFormContainer.data( 'GPNestedForms_' + self.fieldId, self );
 
-			window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] = self;
+			window[ 'GPNestedForms_{0}_{1}'.gformFormat( self.formId, self.fieldId ) ] = self;
 
 		};
 

@@ -5,7 +5,6 @@
  *
  */
 
-
 /**
  * @since 1.0
  */
@@ -77,7 +76,8 @@ final class GravityView_Inline_Edit_Scripts {
 	 * @return void
 	 */
 	private function _add_hooks() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts_and_styles' ) );
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts_and_styles' ), 35000 );
 		add_action( 'admin_init', array( $this, 'register_scripts_and_styles' ) );
 		add_filter( 'gform_noconflict_scripts', array( $this, 'noconflict_scripts' ) );
 		add_filter( 'gform_noconflict_styles', array( $this, 'noconflict_styles' ) );
@@ -135,25 +135,30 @@ final class GravityView_Inline_Edit_Scripts {
 	 */
 	public function enqueue_scripts( $item_id = array() ) {
 
+		if ( ! wp_script_is( 'gv-inline-editable' ) || ! wp_script_is( 'gv-inline-edit-address' ) ) {
+			$this->register_scripts_and_styles();
+		}
+
 		wp_enqueue_script( GravityView_Inline_Edit::get_instance()->get_edit_style() );
 
 		wp_enqueue_script( 'gv-inline-editable' );
 
 		if( is_admin() ){
-			$no_fields_text = esc_html__( 'The visible columns do not contain any fields editable by Inline Edit. Click the gear icon in the table header to modify visible columns.', 'gravityview-inline-edit' );
+			$no_fields_text = esc_html__( 'The visible columns do not contain any fields editable by Inline Edit. Click the gear icon in the table header to modify visible columns.', 'gk-gravityedit' );
 		} else{
-			$no_fields_text = esc_html__( 'This View does not contain fields editable by Inline Edit. Edit the View to add fields.', 'gravityview-inline-edit' );
+			$no_fields_text = esc_html__( 'This View does not contain fields editable by Inline Edit. Edit the View to add fields.', 'gk-gravityedit' );
 		}
 
 		$js_settings = array(
-			'mode'        => GravityView_Inline_Edit::get_instance()->get_edit_mode(),
-			'buttons'     => GravityView_Inline_Edit::get_instance()->get_buttons_template(),
-			'container'   => 'body',
-			'showbuttons' => 'bottom',
-			'onblur'      => 'cancel',
-			'showinputs'  => false,
-			'emptytext'   => esc_html__('Empty', 'gravityview-inline-edit'),
-			'nofieldstext' => $no_fields_text,
+			'mode'               => GravityView_Inline_Edit::get_instance()->get_edit_mode(),
+			'buttons'            => GravityView_Inline_Edit::get_instance()->get_buttons_template(),
+			'container'          => 'body',
+			'showbuttons'        => 'bottom',
+			'onblur'             => 'cancel',
+			'showinputs'         => false,
+			'emptytext'          => esc_html__( 'Empty', 'gk-gravityedit' ),
+			'searchforuserstext' => esc_html__( 'Search for users', 'gk-gravityedit' ),
+			'nofieldstext'       => $no_fields_text,
 		);
 
 		/**
@@ -168,7 +173,7 @@ final class GravityView_Inline_Edit_Scripts {
 		 *  @type string $container When using `popup` $mode, jQuery selector used to attach the popup container [Default: "body"]
 		 *  @type string|bool $showbuttons Where to show buttons. Form without buttons is auto-submitted. Options are "top", "bottom", "left", "right", or false. [Default: "bottom"]
 		 *  @type string $onblur Action when user clicks outside the inline edit form container. Options are "cancel", "submit", "ignore". Setting ignore allows to have several containers open. [Default: "cancel"]
-		 *  @type bool|string $showinputs jQuery selectors for which inputs to show without clicking. NOTE: `onblur` must be set to "ignore" {@see http://docs.gravityview.co/article/418-showing-inputs-on-load}
+		 *  @type bool|string $showinputs jQuery selectors for which inputs to show without clicking. NOTE: `onblur` must be set to "ignore" {@see https://docs.gravitykit.com/article/418-inline-edit-enable-editing}
 		 * }
 		 * @param array $item_id Array with [form_id] key set for Form ID, or [view_id] key set for View ID currently being displayed
 		 */
@@ -252,7 +257,8 @@ final class GravityView_Inline_Edit_Scripts {
 			'radiolist',
 			'tel',
 			'textarea',
-			'url'
+			'url',
+			'file'
 		);
 
 		foreach ( $custom_inline_edit_field_types as $custom_field ) {
@@ -263,7 +269,20 @@ final class GravityView_Inline_Edit_Scripts {
 			);
 
 			if ( 'gvlist' === $custom_field ) {
+
+				if ( ! is_callable( 'GFCommon::get_hooks_javascript_code' ) ) {
+					GravityKitFoundation::logger()->error( 'GFCommon::get_hooks_javascript_code is not available; GravityEdit requires Gravity Forms 2.5 or newer.' );
+					continue;
+				}
+
+				add_filter( 'gform_force_hooks_js_output', '__return_true' );
+
 				$dependencies[] = 'gform_gravityforms';
+				$dependencies[] = 'wp-a11y';
+				$hooks_code     = GFCommon::get_hooks_javascript_code();
+
+				wp_add_inline_script( 'gform_gravityforms', $hooks_code, 'before' );
+				wp_localize_script( 'gform_gravityforms', 'gf_global', GFCommon::gf_global( false, true ) );
 			}
 
 			wp_register_script(
@@ -286,6 +305,11 @@ final class GravityView_Inline_Edit_Scripts {
 	 * @return void
 	 */
 	private function _register_scripts() {
+
+		// The script is already registered
+		if( wp_script_is( 'gv-inline-editable' ) ) {
+			return;
+		}
 
 		$edit_style = GravityView_Inline_Edit::get_instance()->get_edit_style();
 
@@ -343,6 +367,15 @@ final class GravityView_Inline_Edit_Scripts {
 		), GravityView_Inline_Edit::get_version() );
 		$this->_scripts[] = 'gv-inline-edit-gvutils';
 
+
+		wp_register_script( 'gv-inline-edit-select2', GRAVITYVIEW_INLINE_URL . 'assets/js/select2' . $script_debug . '.js', array(
+			'jquery',
+			$edit_style,
+		), GravityView_Inline_Edit::get_version() );
+		$this->_scripts[] = 'gv-inline-edit-select2';
+
+
+
 		wp_register_script( 'gv-inline-edit-wysihtml5', GRAVITYVIEW_INLINE_URL . 'assets/js/wysihtml5-0.3.0.min.js', array(), GravityView_Inline_Edit::get_version() );
 
 		if ( 'bootstrap3-editable' === $edit_style ) {//Register Bootstrap 3 wysihtml5 with deps
@@ -367,6 +400,11 @@ final class GravityView_Inline_Edit_Scripts {
 	 * @return void
 	 */
 	private function _register_styles() {
+
+		// The style is already registered
+		if ( wp_style_is( 'gv-inline-edit-fields' ) ) {
+			return;
+		}
 
 		/**
 		 * @filter `gravityview-inline-edit/jquery-ui-theme` Modify the jQuery UI theme to use, if jQuery UI editor style is active
@@ -412,7 +450,9 @@ final class GravityView_Inline_Edit_Scripts {
 
 		$script_debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_register_style( 'gv-inline-edit-jquery-ui', GRAVITYVIEW_INLINE_URL . 'bower_components/jquery-ui/themes/' . $jquery_ui_theme . '/jquery-ui' . $script_debug . '.css' );
+		$registered_styles = array();
+
+		$registered_styles['gv-inline-edit-jquery-ui'] = wp_register_style( 'gv-inline-edit-jquery-ui', GRAVITYVIEW_INLINE_URL . 'bower_components/jquery-ui/themes/' . $jquery_ui_theme . '/jquery-ui' . $script_debug . '.css' );
 
 		/**
 		 * @filter `gravityview-inline-edit/poshytip-theme` Modify the Poshytip theme to use, if jQuery editor style is active
@@ -430,11 +470,16 @@ final class GravityView_Inline_Edit_Scripts {
 		// Only allow valid theme options
 		$poshytip_theme = in_array( $poshytip_theme, $poshytip_themes ) ? $poshytip_theme : 'yellowsimple';
 
-		wp_register_style( 'poshytip', GRAVITYVIEW_INLINE_URL . 'bower_components/poshytip/src/tip-' . $poshytip_theme . '/tip-' . $poshytip_theme . '.css' );
+		$registered_styles['poshytip'] = wp_register_style( 'poshytip', GRAVITYVIEW_INLINE_URL . 'bower_components/poshytip/src/tip-' . $poshytip_theme . '/tip-' . $poshytip_theme . '.css' );
 
-		wp_register_style( 'gv-inline-edit-datepicker', GRAVITYVIEW_INLINE_URL . 'assets/css/datepicker.min.css', array(), GravityView_Inline_Edit::get_version() );
+		$registered_styles['gv-inline-edit-datepicker'] = wp_register_style( 'gv-inline-edit-datepicker', GRAVITYVIEW_INLINE_URL . 'assets/css/datepicker.css', array(), GravityView_Inline_Edit::get_version() );
 
-		wp_register_style( 'gv-inline-edit-wysihtml5', GRAVITYVIEW_INLINE_URL . 'assets/css/bootstrap-wysihtml5-0.0.3.css', array(), GravityView_Inline_Edit::get_version() );
+		$registered_styles['gv-inline-edit-wysihtml5'] = wp_register_style( 'gv-inline-edit-wysihtml5', GRAVITYVIEW_INLINE_URL . 'assets/css/bootstrap-wysihtml5-0.0.3.css', array(), GravityView_Inline_Edit::get_version() );
+
+		$registered_styles['gv-inline-edit-select2'] = wp_register_style( 'gv-inline-edit-select2', GRAVITYVIEW_INLINE_URL . 'assets/css/select2'.$script_debug.'.css', array(), GravityView_Inline_Edit::get_version() );
+
+
+		wp_register_style( 'gv-inline-edit-select2', GRAVITYVIEW_INLINE_URL . 'assets/css/select2'.$script_debug.'.css', array(), GravityView_Inline_Edit::get_version() );
 
 		//Supported versions and their corresponding file names and dependencies
 		$supported_styles_versions = array(
@@ -453,21 +498,18 @@ final class GravityView_Inline_Edit_Scripts {
 		);
 
 		foreach ( $supported_styles_versions as $key => $style ) {
-			wp_register_style( 'gv-inline-edit-style-' . $key, GRAVITYVIEW_INLINE_URL . 'assets/css/' . $style['file'], $style['deps'] );
+			$registered_styles[ 'gv-inline-edit-style-' . $key ] = wp_register_style( 'gv-inline-edit-style-' . $key, GRAVITYVIEW_INLINE_URL . 'assets/css/' . $style['file'], $style['deps'] );
 			$this->_styles[] = 'gv-inline-edit-style-' . $key;
 		}
 
-		wp_register_style( 'gv-inline-edit-fields', GRAVITYVIEW_INLINE_URL . 'assets/css/inline-editable.css', array( 'gv-inline-edit-style-' . GravityView_Inline_Edit::get_instance()->get_edit_style() ) );
+		$registered_styles['gv-inline-edit-fields'] = wp_register_style( 'gv-inline-edit-fields', GRAVITYVIEW_INLINE_URL . 'assets/css/inline-editable.css', array( 'gv-inline-edit-style-' . GravityView_Inline_Edit::get_instance()->get_edit_style() ) );
 
-		$styles = array(
-			'gv-inline-edit-fields',
-			'gv-inline-edit-jquery-ui',
-			'poshytip',
-			'gv-inline-edit-datepicker',
-			'gv-inline-edit-wysihtml5',
-		);
+		// Some styles weren't registered.
+		if ( count( $registered_styles ) !== count( array_filter( $registered_styles ) ) ) {
+			GravityKitFoundation::logger()->error( 'One or more styles failed to register: ' . print_r( array_diff( $registered_styles, array_filter( $registered_styles ) ), true ) );
+		}
 
-		$this->_styles = array_merge( $styles, $this->_styles );
+		$this->_styles = array_merge( $registered_styles, $this->_styles );
 	}
 
 	/**
@@ -478,6 +520,12 @@ final class GravityView_Inline_Edit_Scripts {
 	 * @return void
 	 */
 	public function enqueue_styles() {
+
+		// Make sure styles have been enqueued (espacially on block themes)
+		if( ! wp_style_is( 'gv-inline-edit-fields', 'registered' ) ) {
+			$this->register_scripts_and_styles();
+		}
+
 		wp_enqueue_style( 'gv-inline-edit-fields' );
 	}
 

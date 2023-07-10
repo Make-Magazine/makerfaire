@@ -2,8 +2,12 @@ window.gravitykit = window.gravitykit || {};
 window.gravitykit.maps = window.gravitykit.maps || {};
 window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 
-( ( $, obj ) => {
+( ( $, obj, GravityMaps ) => {
 	"use strict";
+
+	// Create a global Reference for this globally.
+	GravityMaps.searchFields = obj;
+
 	// Run some magic to allow a better handling of class names for jQuery.hasClass type of methods
 	obj.className = ( value ) => {
 		// Prevent Non Strings to be included
@@ -23,7 +27,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Object holding all the selectors used for this module.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @type {{currentLocationButton: string, currentLocationLat: string, currentLocationAccuracy: string, currentLocationLng: string}}
 	 */
@@ -54,7 +58,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * The jQuery object holding the current button for currentLocation.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @type {null|jQuery}
 	 */
@@ -63,7 +67,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Internationalization for teh Maps Search fields JS.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @type {object}
 	 */
@@ -72,7 +76,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Pull the current location and saves on a hidden field in the search form.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {Event} event
 	 *
@@ -110,7 +114,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Handles saving the current location on the fields related to the button that was clicked.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {Object} position
 	 *
@@ -126,7 +130,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 		const $searchField = $searchBox.find( obj.selectors.searchField );
 
 		if ( ! obj.isValidCoordinates( coordinates ) ) {
-			window.GV_MAPS.hooks.doAction( 'gravitykit_maps_invalid_coordinates', coordinates );
+			window.GV_MAPS.hooks.doAction( 'gk.maps.invalid_map_coordinates', coordinates );
 			return;
 		}
 
@@ -150,7 +154,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Displays an error using the default gvMaps error for when invalid Coordinates were passed.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {object} coordinates
 	 */
@@ -161,7 +165,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Determines if a given object is valid as coordinates.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {object} coordinates
 	 *
@@ -209,7 +213,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	 *
 	 * @todo Determine if there a localized way of getting these fields.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return {{unit: string, accuracy: string, radius: number, long: number, lat: number, hasSearch: boolean}}
 	 */
@@ -231,7 +235,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	 *
 	 * @todo Error handling need to be visible to the user.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {Object} error
 	 *
@@ -256,7 +260,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Gets the jQuery object based on the map object from Google API.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param map
 	 *
@@ -291,7 +295,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Generates a UUID.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @returns {string}
 	 */
@@ -392,7 +396,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Handles the Search inside a set of bounds.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {Element} map
 	 * @param {function|null} onCompleteCallback
@@ -446,7 +450,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	 * loading HTML, as well as trigger a before and after hook so third-party developers can always extend all
 	 * requests.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param  {jqXHR}       jqXHR    Request object
 	 * @param  {Object} settings Settings that this request will be made with
@@ -474,7 +478,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	 * Triggered on jQuery.ajax() complete action, which we hook into to reset appropriate variables and remove the
 	 * loading HTML, as well as trigger a before and after hook so third-party developers can always extend all requests
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param  {jqXHR}  jqXHR       Request object
 	 * @param  {String} textStatus Status for the request
@@ -500,7 +504,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	 * Triggered on jQuery.ajax() success action, which we hook into to replace the contents of the modal, as well as
 	 * trigger a before and after hook so third-party developers can always extend all requests
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param  {String} data       HTML sent from the AJAX request.
 	 * @param  {String} textStatus Status for the request.
@@ -590,7 +594,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Look at the given container and make sure any Maps that already exist don't get regenerated.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {string} viewType
 	 * @param {jQuery} $mapsContainer
@@ -662,7 +666,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Get the REST API based on the PHP sent variables.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {Element} map
 	 *
@@ -705,7 +709,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	 *
 	 * This method will wait until the map is idle to draw.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {jQuery} $map
 	 * @param {object} data
@@ -792,7 +796,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Calculate KM from a miles numeric value.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {number} miles
 	 *
@@ -805,7 +809,7 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 	/**
 	 * Triggers when Ready of the document.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return {void}
 	 */
@@ -816,13 +820,13 @@ window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
 
 		obj.setupCurrentLocationFieldInteractions( $( obj.selectors.searchField ) );
 
-		window.GV_MAPS.hooks.addAction( 'gravitykit_maps_after_process_map_markers', 'gravitykit/maps', obj.drawRadiusOnMap );
-		window.GV_MAPS.hooks.addAction( 'gravitykit_maps_after_process_map_markers', 'gravitykit/maps', obj.includeSearchOnMoveBox );
-		window.GV_MAPS.hooks.addAction( 'gravitykit_maps_invalid_coordinates', 'gravitykit/maps', obj.throwInvalidCoordinatesError )
+		window.GV_MAPS.hooks.addAction( 'gk.maps.after_process_map_markers', 'gravitykit/maps', obj.drawRadiusOnMap );
+		window.GV_MAPS.hooks.addAction( 'gk.maps.after_process_map_markers', 'gravitykit/maps', obj.includeSearchOnMoveBox );
+		window.GV_MAPS.hooks.addAction( 'gk.maps.invalid_map_coordinates', 'gravitykit/maps', obj.throwInvalidCoordinatesError )
 	};
 
 	$( document ).on( 'click', obj.selectors.currentLocationButton, obj.onCurrentLocationClick );
 
 	$( document ).ready( obj.ready );
-} )( jQuery, window.gravitykit.maps.searchFields );
+} )( jQuery, {}, window.GravityKit.GravityMaps );
 

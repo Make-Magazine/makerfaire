@@ -15,18 +15,18 @@ class ESSBDisplayMethodMobile {
 		$output = '';
 		
 		$output .= '<div class="essb-mobile-sharepoint" onclick="essb.mobile_sharebar_open();">';
-		$output .= '<div class="essb-mobile-sharepoint-icon"><i class="essb_icon_share"></i></div>';
+		$output .= '<div class="essb-mobile-sharepoint-icon">'.essb_svg_replace_font_icon('share').'</div>';
 		$output .= '</div>';
 		
 		$output .= '<div class="essb-mobile-sharebar-window">';
 		$output .= '<div class="essb-mobile-sharebar-window-close-title" onclick="essb.mobile_sharebar_close(); return false;">';
-		$output .= '<a href="#" class="essb-mobile-sharebar-window-close" ><i class="essb_icon_close"></i></a>';
+		$output .= '<a href="#" class="essb-mobile-sharebar-window-close">'.essb_svg_replace_font_icon('close').'</a>';
 		$output .= '</div>';
 		$output .= '<div class="essb-mobile-sharebar-window-content">';
 		$output .= $share_buttons;
 		$output .= '</div>';
 		$output .= '</div>';
-		$output .= '<div class="essb-mobile-sharebar-window-shadow"></div>';
+		$output .= '<div class="essb-mobile-sharebar-window-shadow"></div>';		
 		
 		return $output;
 	}
@@ -42,12 +42,14 @@ class ESSBDisplayMethodMobile {
 		$output = "";
 			
 		$output .= '<div class="essb-mobile-sharebar" onclick="essb.mobile_sharebar_open();">';
-		$output .= sprintf ('<div class="essb-mobile-sharebar-icon"><i class="essb_icon_share"></i></div><div class="essb-mobile-sharebar-text">%1$s</div>', $mobile_sharebar_text);
+		$output .= '<div class="essb-mobile-sharebar-inner">';
+		$output .= sprintf ('<div class="essb-mobile-sharebar-icon">'.essb_svg_replace_font_icon('share').'</div><div class="essb-mobile-sharebar-text">%1$s</div>', $mobile_sharebar_text);
+		$output .= '</div>';
 		$output .= '</div>';
 			
 		$output .= '<div class="essb-mobile-sharebar-window">';
 		$output .= '<div class="essb-mobile-sharebar-window-close-title" onclick="essb.mobile_sharebar_close(); return false;">';
-		$output .= '<a href="#" class="essb-mobile-sharebar-window-close" ><i class="essb_icon_close"></i></a>';
+		$output .= '<a href="#" class="essb-mobile-sharebar-window-close" >'.essb_svg_replace_font_icon('close').'</a>';
 		$output .= '</div>';
 		$output .= '<div class="essb-mobile-sharebar-window-content">';
 		

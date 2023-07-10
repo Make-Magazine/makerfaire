@@ -137,7 +137,13 @@ class ESSB_Custom_Profile_Networks {
         foreach (self::$buttons as $key => $data) {
             $url = ESSBSocialFollowersCounterHelper::get_option ( $key . '_url' );
             if (!empty($url)) {
-                $networks[] = $key;
+                
+                /**
+                 * @since 8.8.2
+                 */
+                if (!in_array($key, $networks)) {                
+                    $networks[] = $key;
+                }
             }
         }
         return $networks;

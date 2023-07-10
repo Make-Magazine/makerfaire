@@ -56,7 +56,7 @@ class ESSBSkinnedNativeButtons {
 		return $css;
 	}
 	
-	public static function generate_skinned_button($type, $code, $text = '', $force_text = '', $width = '', $user_skin) {
+	public static function generate_skinned_button($type, $code, $text = '', $force_text = '', $width = '', $user_skin = '') {
 		
 		$text_replace = isset(self::$text_replace[$type]) ? self::$text_replace[$type] : '';
 		

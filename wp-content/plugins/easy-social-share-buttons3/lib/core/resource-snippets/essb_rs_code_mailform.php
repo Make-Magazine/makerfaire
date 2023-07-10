@@ -130,6 +130,14 @@ if (!function_exists('essb_rs_mailform_build')) {
 		$code .= '<input type="hidden" id="essb_mail_instance" value=""/>';
 		$code .= '<input type="hidden" id="essb_mail_post" value=""/>';
 		
+		if (essb_option_bool_value('affwp_active')) {
+		    essb_helper_maybe_load_feature('integration-affiliatewp');
+		    
+		    if (function_exists('essb_generate_affiliatewp_referral_id')) {
+		        $code .= '<input type="hidden" id="essb_mail_affiliate_id" value="'.essb_generate_affiliatewp_referral_id().'"/>';
+		    }
+		}
+		
 		$code .= '</div>';
 		$code .= '</div>';
 		$code .= '<div class="essb_mailform_shadow"></div>';

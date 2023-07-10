@@ -3,7 +3,7 @@
 Plugin Name: GravityView - Maps
 Plugin URI: https://www.gravitykit.com/extensions/maps/
 Description: Display your Gravity Forms entries on a map.
-Version: 2.1
+Version: 2.2
 Author: GravityKit
 Author URI: https://www.gravitykit.com
 Text Domain: gk-gravitymaps
@@ -18,7 +18,7 @@ if ( ! GravityKit\GravityMaps\Foundation\should_load( __FILE__ ) ) {
 }
 
 /** @since 1.7.7 */
-define( 'GRAVITYVIEW_MAPS_VERSION', '2.1' );
+define( 'GRAVITYVIEW_MAPS_VERSION', '2.2' );
 
 /** @since 1.7.7 */
 define( 'GRAVITYVIEW_MAPS_FILE', __FILE__ );

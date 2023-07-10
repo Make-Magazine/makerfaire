@@ -71,6 +71,17 @@ class ESSBAdminControler {
 				ESSBAdvancedOptions::get_instance();
 			}
 		}
+		
+		/**
+		 * @since 8.7
+		 */
+		if (class_exists('ESSB_MyAPI')) {
+		    ESSB_MyAPI::define_validate_action();
+		    
+		    if (!essb_option_bool_value('deactivate_appscreo')) {
+		        ESSB_MyAPI::define_news_update_action();
+		    }
+		}
 
 		/**
 		 * Since version 6.2 it is possible to modify the access to the plugin metabox editing options on the
@@ -192,7 +203,7 @@ class ESSBAdminControler {
 	 */
 	public function add_dashboard_widget() {
 		// Create the widget
-		wp_add_dashboard_widget( 'appscreo_news', apply_filters( 'appscreo_dashboard_widget_title', esc_html__( 'AppsCreo Overview', 'essb' ) ), array( $this, 'display_news_dashboard_widget' ) );
+		wp_add_dashboard_widget( 'appscreo_news', apply_filters( 'appscreo_dashboard_widget_title', esc_html__( 'Easy Social Share Buttons for WordPress', 'essb' ) ), array( $this, 'display_news_dashboard_widget' ) );
 
 		// Make sure our widget is on top off all others
 		global $wp_meta_boxes;
@@ -255,26 +266,17 @@ class ESSBAdminControler {
 			<?php }
 			?>
 
-			<div class="essb-admindash-row">
+			<div class="essb-admindash-row essb-admindash-row-nomt">
 				<div class="essb-admindash-heading">News & Updates</div>
 			</div>
-
-			<?php
-			$feeds = array(
-					'first' => array(
-							'link'         => 'https://appscreo.com/',
-							'url'          => 'https://appscreo.com/feed/',
-							'title'        => esc_html__( 'AppsCreo News', 'essb' ),
-							'items'        => 4,
-							'show_summary' => 0,
-							'show_author'  => 0,
-							'show_date'    => 1,
-					),
-			);
-
-
-			wp_dashboard_primary_output( 'appscreo_news', $feeds );
+			
+			<?php 
+			$current_news = ESSB_MyAPI::get_latest_news();
+			if (is_array($current_news)) {
+			    echo ESSB_MyAPI::generate_news_output($current_news);
+			}
 			?>
+
 			<div class="essb-admindash-row">
 				<div class="essb-admindash-heading">Subscribe for News & Updates</div>
 			</div>
@@ -290,15 +292,15 @@ class ESSBAdminControler {
 			    </div>
 			</form>
 			</div>
-
+			
 			<!--End mc_embed_signup-->
 			
 			<div class="essb-admindash-footer">
 				<ul>
-				<li class=""><a href="https://socialsharingplugin.com/version-changes/" target="_blank">What's New <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
-				<li class=""><a href="https://docs.socialsharingplugin.com" target="_blank">Docs <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
-				<li class=""><a href="http://support.creoworx.com" target="_blank">Get Support <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
-				<li class=""><a href="http://go.appscreo.com/portfolio" class="portfolio-button" target="_blank">Our Products <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+				<li><a href="https://socialsharingplugin.com/version-changes/" target="_blank">What's New <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+				<li><a href="https://docs.socialsharingplugin.com" target="_blank">Docs <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+				<li><a href="https://my.socialsharingplugin.com" target="_blank">Get Help <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
+				<li><a href="https://1.envato.market/Jek0N" class="portfolio-button" target="_blank">Buy Now <span class="screen-reader-text"><?php esc_html_e( '(opens in a new window)', 'essb' ); ?></span><span aria-hidden="true" class="dashicons dashicons-external"></span></a></li>
 				</ul>
 			</div>
 		</div>
@@ -671,7 +673,8 @@ class ESSBAdminControler {
 				}
 				else {
 					if ($is_hidden) {
-						add_submenu_page( null, $label, $label, $essb_access, 'essb_redirect_'.$name, array ($this, 'essb_settings_redirect1' ));
+					    /** @since 8.9 updated from null to '' */
+						add_submenu_page( '', $label, $label, $essb_access, 'essb_redirect_'.$name, array ($this, 'essb_settings_redirect1' ));
 					}
 					else {
 						add_submenu_page( 'essb_options', $label, $label, $essb_access, 'essb_redirect_'.$name, array ($this, 'essb_settings_redirect1' ));

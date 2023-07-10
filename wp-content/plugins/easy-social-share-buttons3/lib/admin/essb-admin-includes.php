@@ -30,7 +30,10 @@ if (!essb_option_bool_value('deactivate_module_pinterestpro')) {
 }
 
 if (!essb_option_bool_value('deactivate_module_pinterestpro') || !essb_option_bool_value('essb_deactivate_ctt')) {
-    include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/class-essb-tinymce-loader.php');
+    // option added in version 8.5
+    if (!essb_option_bool_value('classic_editor_disable_plugins')) {
+        include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/class-essb-tinymce-loader.php');
+    }
 }
 
 /**
@@ -70,6 +73,17 @@ if (!class_exists('ESSBControlCenterShortcodes')) {
 	
 	include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/essb-media-buttons.php');
 }
+
+/**
+ * Register the add-ons installer
+ */
+
+include_once (ESSB3_CLASS_PATH . 'utilities/class-essb-tgm-plugin-activation.php');
+if (!class_exists ( 'ESSBAddonsHelper' )) {
+    include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/addons/essb-addons-helper4.php');
+}
+
+add_action( 'essb_tgmpa_register', 'essb_map_addons_to_tmga' );
 
 
 ?>

@@ -150,6 +150,17 @@ class ESSB_Dynamic_CSS_Builder {
         }
         
         /**
+         * Share Buttons: Post Vertical Float
+         */
+        if (self::should_add_position_styles('point')) {
+            if (!function_exists('essb_register_dynamic_share_point_styles')) {
+                include_once (ESSB3_HELPERS_PATH. 'assets/share-point.php');
+            }
+            
+            essb_register_dynamic_share_point_styles();
+        }
+        
+        /**
          * Share Buttons: Post Bar
          * 
          * Styles will appear only if the Post Bar is enabled as position
@@ -169,6 +180,13 @@ class ESSB_Dynamic_CSS_Builder {
                 include_once (ESSB3_HELPERS_PATH. 'assets/share-sharebar.php');
             }
             essb_register_dynamic_share_sharebar_styles();
+        }
+        
+        if (essb_is_position_active('sharepoint')) {
+            if (!function_exists('essb_register_dynamic_share_sharepoint_styles')) {
+                include_once (ESSB3_HELPERS_PATH. 'assets/share-sharepoint.php');
+            }
+            essb_register_dynamic_share_sharepoint_styles();
         }
         
         /**

@@ -57,6 +57,10 @@ class ESSBNetworks_SubscribeActions {
 		print json_encode($output);
 	}
 	
+	public static function should_add_turnstile() {
+	    return essb_option_bool_value('subscribe_turnstile') && ! empty( essb_sanitize_option_value('subscribe_turnstile_site') ) && ! empty( essb_sanitize_option_value('subscribe_turnstile_secret') );
+	}
+	
 	public static function validate_recaptha($recaptcha = '') {
 		$valid = true;
 		$error = '';
@@ -66,7 +70,13 @@ class ESSBNetworks_SubscribeActions {
 			$error = esc_html__('Code not filled', 'essb');
 		}
 		
-		$api_results = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . essb_sanitize_option_value('subscribe_recaptcha_secret') . '&response=' . $recaptcha );
+		//
+		if (self::should_add_turnstile()) {
+		    $api_results = wp_remote_get( 'https://challenges.cloudflare.com/turnstile/v0/siteverify?secret=' . essb_sanitize_option_value('subscribe_recaptcha_secret') . '&response=' . $recaptcha );
+		}
+		else {
+		  $api_results = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . essb_sanitize_option_value('subscribe_recaptcha_secret') . '&response=' . $recaptcha );
+		}
 		$results     = json_decode( wp_remote_retrieve_body( $api_results ) );
 		if ( empty( $results->success ) ) {
 			$valid = false;
@@ -126,10 +136,8 @@ class ESSBNetworks_SubscribeActions {
 				$output['name'] = $user_name;
 				$output['email'] = $user_email;
 
-				if ($result) {
-					$result = json_decode($result);
-
-					if ($result->euid) {
+				if ($result) {					
+					if ($result == '200') {
 						$output['code'] = '1';
 						$output['message'] = 'Thank you';
 					}
@@ -226,7 +234,7 @@ class ESSBNetworks_SubscribeActions {
 			    $subscribe_acelle_api = essb_option_value('subscribe_acelle_api');
 			    $subscribe_acelle_listid = essb_option_value('subscribe_acelle_listid');
 			    
-			    $output = self::subscribe_acelle($subscribe_acelle_url, $subscribe_conv_api, $subscribe_acelle_listid, $user_email, $user_name);
+			    $output = self::subscribe_acelle($subscribe_acelle_url, $subscribe_acelle_api, $subscribe_acelle_listid, $user_email, $user_name);
 			    break;
 			default:
 				$output['code'] = '99';
@@ -267,7 +275,8 @@ class ESSBNetworks_SubscribeActions {
 	            $data_create_user = array(
 	                'api_token' => $api_token,
 	                'EMAIL' => $email,
-	                'FIRST_NAME' => $name
+	                'FIRST_NAME' => $name,
+	                'list_uid' => $api_list
 	            );
 	            
 	            $request = http_build_query($data_create_user);
@@ -409,11 +418,29 @@ class ESSBNetworks_SubscribeActions {
 		if ($subscribe_mc_customtitle != '' && $title != '') {
 			$data['merge_vars'][$subscribe_mc_customtitle] = $title;
 		}
+		
+		/**
+		 * @since 8.6 custom fields
+		 */
+		if (has_filter('essb_custom_subscribe_form_fields')) {
+		    $custom_fields = array();
+		    $custom_fields = apply_filters('essb_custom_subscribe_form_fields', $custom_fields);
+		    
+		    foreach ($custom_fields as $key => $field_data) {
+		        $param = 'mailchimp_' . $key;
+		        $bind = isset($field_data['map']) ? $field_data['map'] : '';
+		        $value = isset($_REQUEST[$param]) ? $_REQUEST[$param] : '';
+		        
+		        if ($param != '' && $value != '') {
+		            $data['merge_vars'][$bind] = $value;
+		        }
+		    }
+		}
 
 		$request = json_encode ( $data );
 		$response = array();
 		try {
-			$curl = curl_init ( $mailchimp_url );
+			/*$curl = curl_init ( $mailchimp_url );
 			curl_setopt ( $curl, CURLOPT_POST, 1 );
 			curl_setopt ( $curl, CURLOPT_POSTFIELDS, $request );
 			curl_setopt ( $curl, CURLOPT_TIMEOUT, 10 );
@@ -422,9 +449,12 @@ class ESSBNetworks_SubscribeActions {
 			curl_setopt ( $curl, CURLOPT_FRESH_CONNECT, 1 );
 			curl_setopt ( $curl, CURLOPT_SSL_VERIFYHOST, 0 );
 			curl_setopt ( $curl, CURLOPT_SSL_VERIFYPEER, 0 );
+		    
 
 			$response = curl_exec ( $curl );
-			curl_close ( $curl );
+			curl_close ( $curl );*/
+		    
+		    $response = self::subscribe_mailchimp_api3($api_key, $list_id, $email, $name, $double_option);
 			
 			if (!empty($user_tags)) {
 			    $tags_raw = explode(',', $user_tags);
@@ -473,6 +503,51 @@ class ESSBNetworks_SubscribeActions {
 		}
 
 		return $response;
+	}
+	
+	public static function subscribe_mailchimp_api3($apiKey, $listId, $email, $name, $double_option) {
+	    $fname = '';
+	    $lname = '';
+	    
+	    if (!empty($name)) {
+	        $fname = $name;
+	        $lname = '';
+	        if ($space_pos = strpos($name, ' ')) {
+	            $fname = substr($name, 0, $space_pos);
+	            $lname = substr($name, $space_pos);
+	        }
+	        
+	    }
+	    
+	    $memberId = md5(strtolower($email));
+	    $dataCenter = substr($apiKey,strpos($apiKey,'-')+1);
+	    $url = 'https://' . $dataCenter . '.api.mailchimp.com/3.0/lists/' . $listId . '/members/' . $memberId;
+	    
+	    $json = json_encode([
+	        'email_address' => $email,
+	        'status'        => $double_option ? 'pending': 'subscribed', // "subscribed","unsubscribed","cleaned","pending"
+	        'merge_fields'  => [
+	            'FNAME'     => $fname,
+	            'LNAME'     => $lname
+	        ]
+	    ]);
+	    	    
+	    
+	    $ch = curl_init($url);
+	    
+	    curl_setopt($ch, CURLOPT_USERPWD, 'user:' . $apiKey);
+	    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+	    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+	    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	    curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+	    
+	    $result = curl_exec($ch);
+	    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	    curl_close($ch);	    
+	    
+	    return $httpCode;
 	}
 
 	public static function subscribe_getresponse($api_key, $list_id, $email, $name = '') {

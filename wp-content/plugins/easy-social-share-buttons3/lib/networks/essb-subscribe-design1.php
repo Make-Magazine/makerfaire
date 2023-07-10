@@ -70,6 +70,8 @@ if (!function_exists('essb_subscribe_form_design1')) {
 			$output .= '<input class="essb-subscribe-form-content-name-field" type="text" value="" placeholder="'.esc_attr($subscribe_mc_name).'" name="mailchimp_name">';				
 		}
 		
+		$output .= ESSBNetworks_Subscribe::generate_custom_fields();
+		
 		$output .= '<input class="essb-subscribe-form-content-email-field" type="text" value="" placeholder="'.esc_attr($subscribe_mc_email).'" name="mailchimp_email">';
 		
 		$output .= ESSBNetworks_Subscribe::generate_if_needed_agree_check();

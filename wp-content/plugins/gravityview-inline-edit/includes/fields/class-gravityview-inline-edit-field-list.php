@@ -21,7 +21,7 @@ class GravityView_Inline_Edit_Field_List extends GravityView_Inline_Edit_Field {
 	 * @param $current_form
 	 * @param GF_Field_List $gf_field
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
 
@@ -76,7 +76,7 @@ class GravityView_Inline_Edit_Field_List extends GravityView_Inline_Edit_Field {
 	 */
 	public function sanitize_gv_list( $list_array ) {
 		$value           = array();
-		$is_multi_column = ( isset( $list_array[0] ) && is_array( $list_array[0] ) ? true : false );
+		$is_multi_column = isset( $list_array[0] ) && is_array( $list_array[0] );
 
 		foreach ( $list_array as $list_key => $list_item ) {
 			if ( ! $is_multi_column && empty( $list_item ) ) {//Don't leave out blank entries in multi-column layouts

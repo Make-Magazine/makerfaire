@@ -85,7 +85,7 @@ else {
     ?>	
 	<div class="open-support-topic">
 			<a
-				href="https://support.creoworx.com/forums/forum/wordpress-plugins/easy-social-share-buttons/"
+				href="https://my.socialsharingplugin.com/"
 				target="_blank"
 				class="essb-btn essb-btn-green essb-back-to-settings1">Submit a
 				Topic<i class="fa fa-external-link"></i>

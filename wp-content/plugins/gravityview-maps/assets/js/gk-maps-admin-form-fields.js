@@ -1,8 +1,7 @@
-window.gravitykit = window.gravitykit || {};
-window.gravitykit.maps = window.gravitykit.maps || {};
-window.gravitykit.maps.adminFields = window.gravitykit.maps.adminFields || {};
+( ( $, obj, GravityMaps ) => {
+	// Create a global Reference for this globally.
+	GravityMaps.adminFields = obj;
 
-( ( $, obj ) => {
     /**
      * Initializes address autocomplete field,
      *
@@ -29,7 +28,7 @@ window.gravitykit.maps.adminFields = window.gravitykit.maps.adminFields || {};
     /**
      * Method that will be called when you change the autocomplete field.
      *
-     * @since TBD
+     * @since 2.2
      *
      * @return {void}
      */
@@ -45,7 +44,7 @@ window.gravitykit.maps.adminFields = window.gravitykit.maps.adminFields || {};
     /**
      * Triggers when Ready of the document.
      *
-     * @since TBD
+     * @since 2.2
      *
      * @return {void}
      */
@@ -55,5 +54,5 @@ window.gravitykit.maps.adminFields = window.gravitykit.maps.adminFields || {};
     };
 
     $( document ).ready( obj.ready );
-} )( jQuery, window.gravitykit.maps.adminFields );
+} )( jQuery, {}, window.GravityKit.GravityMaps );
 

@@ -41,6 +41,22 @@ jQuery(document).ready(function($){
 		if (isNaN(value) || !isFinite(value)) value = 0;
 		return value;
 	}
+	
+	var essb_responsiveEventsCanRun = function(element) {
+		var hideOnMobile = $(element).hasClass('essb_mobile_hidden'),
+			hideOnDesktop = $(element).hasClass('essb_desktop_hidden'),
+			hideOnTablet = $(element).hasClass('essb_tablet_hidden'),
+			windowWidth = $(window).width(),
+			canRun = true;
+	
+		if (windowWidth <= 768 && hideOnMobile) canRun = false;
+		if (windowWidth > 768 && windowWidth <= 1100 && hideOnTablet) canRun = false;
+		if (windowWidth > 1100 && hideOnDesktop) canRun = false;
+		
+		if (!$(element).length) canRun = false;
+	
+		return canRun;
+	};
 
 	function essb_bottombar_onscroll() {
 		var current_pos = $(window).scrollTop();
@@ -84,7 +100,7 @@ jQuery(document).ready(function($){
 	}
 
 	if ($(".essb_bottombar").length)
-		if (essb.responsiveEventsCanRun($('.essb_bottombar'))) {
+		if (essb_responsiveEventsCanRun($('.essb_bottombar'))) {
 			var element = $('.essb_bottombar');
 			if (($(element).find('.essb_links').data('bottombar-appear') || '') != '' || ($(element).find('.essb_links').data('bottombar-disappear') || '') != '')
 				$(window).on('scroll', debounce(essb_bottombar_onscroll, 1));
@@ -134,7 +150,7 @@ jQuery(document).ready(function($){
 		}
 	}
 
-	if (essb.responsiveEventsCanRun($('.essb_topbar'))) {
+	if (essb_responsiveEventsCanRun($('.essb_topbar'))) {
 		if ($(".essb_topbar").length) {
 			var element = $(".essb_topbar");
 			if (($(element).find('.essb_links').data('topbar-appear') || '') != '' || ($(element).find('.essb_links').data('topbar-disappear') || '') != '')

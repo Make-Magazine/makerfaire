@@ -667,17 +667,6 @@
 	display: none;
 }
 
-.essb_links .essb_link_more a,
-.essb_links .essb_link_more a:hover,
-.essb_links .essb_link_more a:focus,
-.essb_links .essb_link_more_dots a,
-.essb_links .essb_link_more_dots a:hover,
-.essb_links .essb_link_more_dots a:focus,
-.essb_links .essb_link_less a,
-.essb_links .essb_link_less a:hover,
-.essb_links .essb_link_less a:focus {
-	background-color: #c5c5c5 !important;
-}
 
 .essb_links .essb_link_less a .essb_icon,
 .essb_links .essb_hide_name .essb_link_less a:hover .essb_icon,
@@ -699,291 +688,146 @@
  * Building the default template codes 
  */
 
-.essb_links .essb_link_meneame a,.essb_links .essb_link_meneame a:hover,.essb_links .essb_link_meneame a:focus,
-.essb_links.essb_template_clear-retina .essb_link_meneame a .essb_icon {
-	background-color: #FF7D12 !important;
+.essb_links .essb-s-c-light, .essb_links .essb-s-ch-light:hover {
+	color: #fff !important;
+	fill: #fff;
 }
 
-.essb_links .essb_link_whatsapp a,.essb_links .essb_link_whatsapp a:hover,.essb_links .essb_link_whatsapp a:focus,
-.essb_links.essb_template_clear-retina .essb_link_whatsapp a .essb_icon {
-	background-color: #1D9E11 !important;
+.essb_links .essb-s-c-dark, .essb_links .essb-s-ch-dark:hover {
+	color: #212121 !important;
+	fill: #212121;
 }
 
-.essb_links .essb_link_flattr a,.essb_links .essb_link_flattr a:hover,.essb_links .essb_link_flattr a:focus,
-.essb_links.essb_template_clear-retina .essb_link_flattr a .essb_icon {
-	background-color: #8CB55B !important;
+.essb_links .essb-s-bgh-dark {
+	background-color: #212121 !important;
 }
 
-.essb_links .essb_link_ok a,.essb_links .essb_link_ok a:hover,.essb_links .essb_link_ok a:focus,
-.essb_links.essb_template_clear-retina .essb_link_ok a .essb_icon {
-	background-color: #F4731C !important;
+.essb_links .essb-s-bh-dark:hover {
+	border-color: #212121;
 }
 
-.essb_links .essb_link_xing a,.essb_links .essb_link_xing a:hover,.essb_links .essb_link_xing a:focus,
-.essb_links.essb_template_clear-retina .essb_link_xing a .essb_icon {
-	background-color: #135a5b !important;
+.essb_links .essb_link_svg_icon .essb_icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 }
 
-.essb_links .essb_link_weibo a,.essb_links .essb_link_weibo a:hover,.essb_links .essb_link_weibo a:focus,
-.essb_links.essb_template_clear-retina .essb_link_weibo a .essb_icon {
-	background-color: #ED1C24 !important;
+.essb_links .essb_link_svg_icon svg {
+	height: 18px;
+	width: auto;
+	fill: currentColor;
 }
 
-.essb_links .essb_link_pocket a,.essb_links .essb_link_pocket a:hover,.essb_links .essb_link_pocket a:focus,
-.essb_links.essb_template_clear-retina .essb_link_pocket a .essb_icon
-	{
-	background-color: #EE4055 !important;
+.essb_links.essb_size_xs .essb_link_svg_icon svg {
+	height: 14px;
+	width: auto;
 }
 
-.essb_links .essb_link_tumblr a,.essb_links .essb_link_tumblr a:hover,.essb_links .essb_link_tumblr a:focus,
-.essb_links.essb_template_clear-retina .essb_link_tumblr a .essb_icon
-	{
-	background-color: #2c4762 !important;
+.essb_links.essb_size_s .essb_link_svg_icon svg {
+	height: 16px;
+	width: auto;
 }
 
-.essb_links .essb_link_print a,.essb_links .essb_link_print a:hover,.essb_links .essb_link_print a:focus,
-.essb_links.essb_template_clear-retina .essb_link_print a .essb_icon,
-.essb_links .essb_link_mail a,.essb_links .essb_link_mail a:hover,.essb_links .essb_link_mail a:focus,
-.essb_links.essb_template_clear-retina .essb_link_mail a .essb_icon,
-.essb_links .essb_link_copy a,.essb_links .essb_link_copy a:hover,.essb_links .essb_link_copy a:focus,
-.essb_links.essb_template_clear-retina .essb_link_copy a .essb_icon
-	{
-	background-color: #404040 !important;
+.essb_links.essb_size_m .essb_link_svg_icon svg {
+	height: 18px;
+	width: auto;
 }
 
-.essb_links .essb_link_del a,.essb_links .essb_link_del a:hover,.essb_links .essb_link_del a:focus,
-.essb_links.essb_template_clear-retina .essb_link_del a .essb_icon
-	{
-	background-color: #3398fc !important;
+.essb_links.essb_size_l .essb_link_svg_icon svg {
+	height: 20px;
+	width: auto;
 }
 
-.essb_links .essb_link_buffer a,.essb_links .essb_link_buffer a:hover,.essb_links .essb_link_buffer a:focus,
-.essb_links.essb_template_clear-retina .essb_link_buffer a .essb_icon
-	{
-	background-color: #111111 !important;
+.essb_links.essb_size_xl .essb_link_svg_icon svg {
+	height: 24px;
+	width: auto;
 }
 
-.essb_links .essb_link_love a,.essb_links .essb_link_love a:hover,.essb_links .essb_link_love a:focus,
-.essb_links.essb_template_clear-retina .essb_link_love a .essb_icon
-	{
-	background-color: #ED1C24 !important;
+.essb_links.essb_size_xxl .essb_link_svg_icon svg {
+	height: 28px;
+	width: auto;
 }
 
-.essb_links .essb_link_twitter a,.essb_links .essb_link_twitter a:hover,.essb_links .essb_link_twitter a:focus,
-.essb_links.essb_template_clear-retina .essb_link_twitter a .essb_icon
-	{
-	background-color: #00abf0 !important;
+.essb_links .essb-s-bg-network {
+	background-color: var(--essb-network) !important;
 }
 
-.essb_links .essb_link_facebook a,.essb_links .essb_link_facebook a:hover,.essb_links .essb_link_facebook a:focus,
-.essb_links.essb_template_clear-retina .essb_link_facebook a .essb_icon
-	{
-	background-color: #3a579a !important;
+.essb_links .essb-s-bgh-network:hover {
+	background-color: var(--essb-network) !important;
 }
 
-.essb_links .essb_link_pinterest a,.essb_links .essb_link_pinterest a:hover,.essb_links .essb_link_pinterest a:focus,
-.essb_links.essb_template_clear-retina .essb_link_pinterest a .essb_icon
-	{
-	background-color: #cd1c1f !important;
+.essb_links .essb-s-c-network {
+	color: var(--essb-network) !important;
+	fill: var(--essb-network);
 }
 
-.essb_links .essb_link_digg a,.essb_links .essb_link_digg a:hover,.essb_links .essb_link_digg a:focus,
-.essb_links.essb_template_clear-retina .essb_link_digg a .essb_icon
-	{
-	background-color: #1b5791 !important;
+.essb_links .essb-s-ch-network:hover {
+	color: var(--essb-network) !important;
+	fill: var(--essb-network);
 }
 
-.essb_links .essb_link_linkedin a,.essb_links .essb_link_linkedin a:hover,.essb_links .essb_link_linkedin a:focus,
-.essb_links.essb_template_clear-retina .essb_link_linkedin a .essb_icon
-	{
-	background-color: #127bb6 !important;
+.essb_links .essb-s-b-network {
+	border-color: var(--essb-network);
 }
 
-.essb_links .essb_link_vk a,.essb_links .essb_link_vk a:hover,.essb_links .essb_link_vk a:focus,
-.essb_links.essb_template_clear-retina .essb_link_vk a .essb_icon
-	{
-	background-color: #4c75a3 !important;
+.essb_links .essb-s-bh-network:hover {
+	border-color: var(--essb-network) !important;
 }
 
-.essb_links .essb_link_reddit a,.essb_links .essb_link_reddit a:hover,.essb_links .essb_link_reddit a:focus,
-.essb_links.essb_template_clear-retina .essb_link_reddit a .essb_icon
-	{
-	background-color: #333 !important;
-}
-
-.essb_links .essb_link_blogger a,.essb_links .essb_link_blogger a:hover,.essb_links .essb_link_blogger a:focus,
-.essb_links.essb_template_clear-retina .essb_link_blogger a .essb_icon
-	{
-	background-color: #f59038 !important;
-}
-
-.essb_links .essb_link_amazon a,.essb_links .essb_link_amazon a:hover,.essb_links .essb_link_amazon a:focus,
-.essb_links.essb_template_clear-retina .essb_link_amazon a .essb_icon
-	{
-	background-color: #111111 !important;
-}
-
-.essb_links .essb_link_yahoomail a,.essb_links .essb_link_yahoomail a:hover,.essb_links .essb_link_yahoomail a:focus,
-.essb_links.essb_template_clear-retina .essb_link_yahoomail a .essb_icon
-	{
-	background-color: #511295 !important;
-}
-
-.essb_links .essb_link_gmail a,.essb_links .essb_link_gmail a:hover,.essb_links .essb_link_gmail a:focus,
-.essb_links.essb_template_clear-retina .essb_link_gmail a .essb_icon
-	{
-	background-color: #dd4b39 !important;
-}
-
-.essb_links .essb_link_newsvine a,.essb_links .essb_link_newsvine a:hover,.essb_links .essb_link_newsvine a:focus,
-.essb_links.essb_template_clear-retina .essb_link_newsvine a .essb_icon
-	{
-	background-color: #0d642e !important;
-}
-
-.essb_links .essb_link_hackernews a,.essb_links .essb_link_hackernews a:hover,.essb_links .essb_link_hackernews a:focus,
-.essb_links.essb_template_clear-retina .essb_link_hackernews a .essb_icon
-	{
-	background-color: #f08641 !important;
-}
-
-.essb_links .essb_link_evernote a,.essb_links .essb_link_evernote a:hover,.essb_links .essb_link_evernote a:focus,
-.essb_links.essb_template_clear-retina .essb_link_evernote a .essb_icon
-	{
-	background-color: #7cbf4b !important;
-}
-
-.essb_links .essb_link_aol a,.essb_links .essb_link_aol a:hover,.essb_links .essb_link_aol a:focus,
-.essb_links.essb_template_clear-retina .essb_link_aol a .essb_icon
-	{
-	background-color: #111111 !important;
-}
-
-.essb_links .essb_link_myspace a,.essb_links .essb_link_myspace a:hover,.essb_links .essb_link_myspace a:focus,
-.essb_links.essb_template_clear-retina .essb_link_myspace a .essb_icon
-	{
-	background-color: #3a5998 !important;
-}
-
-.essb_links .essb_link_mailru a,.essb_links .essb_link_mailru a:hover,.essb_links .essb_link_mailru a:focus,
-.essb_links.essb_template_clear-retina .essb_link_mailru a .essb_icon
-	{
-	background-color: #FAA519 !important;
-}
-
-.essb_links .essb_link_viadeo a,.essb_links .essb_link_viadeo a:hover,.essb_links .essb_link_viadeo a:focus,
-.essb_links.essb_template_clear-retina .essb_link_viadeo a .essb_icon
-	{
-	background-color: #222222 !important;
-}
-
-.essb_links .essb_link_line a,.essb_links .essb_link_line a:hover,.essb_links .essb_link_line a:focus,
-.essb_links.essb_template_clear-retina .essb_link_line a .essb_icon 
-	{
-	background-color: #2CBF13 !important;
-}
-
-.essb_links .essb_link_flipboard a,.essb_links .essb_link_flipboard a:hover,.essb_links .essb_link_flipboard a:focus,
-.essb_links.essb_template_clear-retina .essb_link_flipboard a .essb_icon
-	{
-	background-color: #B31F17 !important;
-}
-
-.essb_links .essb_link_comments a,.essb_links .essb_link_comments a:hover,.essb_links .essb_link_comments a:focus,
-.essb_links.essb_template_clear-retina .essb_link_comments a .essb_icon
-	{
-	background-color: #444 !important;
-}
-
-.essb_links .essb_link_yummly a,.essb_links .essb_link_yummly a:hover,.essb_links .essb_link_yummly a:focus,
-.essb_links.essb_template_clear-retina .essb_link_yummly a .essb_icon
-	{
-	background-color: #e26326 !important;
-}
-
-.essb_links .essb_link_sms a,.essb_links .essb_link_sms a:hover,.essb_links .essb_link_sms a:focus,
-.essb_links.essb_template_clear-retina .essb_link_sms a .essb_icon
-	{
-	background-color: #4ea546 !important;
-}
-
-.essb_links .essb_link_viber a,.essb_links .essb_link_viber a:hover,.essb_links .essb_link_viber a:focus,
-.essb_links.essb_template_clear-retina .essb_link_viber a .essb_icon
-	{
-	background-color: #7d539d !important;
-}
-
-.essb_links .essb_link_telegram a,.essb_links .essb_link_telegram a:hover,.essb_links .essb_link_telegram a:focus,
-.essb_links.essb_template_clear-retina .essb_link_telegram a .essb_icon
-	{
-	background-color: #0088cc !important;
-}
-
-.essb_links .essb_link_subscribe a,.essb_links .essb_link_subscribe a:hover,.essb_links .essb_link_subscribe a:focus,
-.essb_links.essb_template_clear-retina .essb_link_subscribe a .essb_icon
-	{
-	background-color: #f47555 !important;
-}
-
-.essb_links .essb_link_skype a,.essb_links .essb_link_skype a:hover,.essb_links .essb_link_skype a:focus,
-.essb_links.essb_template_clear-retina .essb_link_skype a .essb_icon
-	{
-	background-color: #00aff0 !important;
-}
-
-.essb_links .essb_link_messenger a,.essb_links .essb_link_messenger a:hover,.essb_links .essb_link_messenger a:focus,
-.essb_links.essb_template_clear-retina .essb_link_messenger a .essb_icon
-	{
-	background-color: #0d87ff !important;
-}
-
-.essb_links .essb_link_kakaotalk a,.essb_links .essb_link_kakaotalk a:hover,.essb_links .essb_link_kakaotalk a:focus,
-.essb_links.essb_template_clear-retina .essb_link_kakaotalk a .essb_icon
-	{
-	background-color: #FBE600 !important;
-	color: #000 !important;
-}
-
-.essb_links .essb_link_sharebtn a,.essb_links .essb_link_sharebtn a:hover,.essb_links .essb_link_sharebtn a:focus,
-.essb_links.essb_template_clear-retina .essb_link_sharebtn a .essb_icon
-	{
-	background-color: #2B6A94 !important;
-}
-
-.essb_links .essb_link_livejournal a,.essb_links .essb_link_livejournal a:hover,.essb_links .essb_link_livejournal a:focus,
-.essb_links.essb_template_clear-retina .essb_link_livejournal a .essb_icon
-	{
-	background-color: #0ca8ec !important;
-}
-
-.essb_links .essb_link_yammer a,.essb_links .essb_link_yammer a:hover,.essb_links .essb_link_yammer a:focus,
-.essb_links.essb_template_clear-retina .essb_link_yammer a .essb_icon
-	{
-	background-color: #3469BA !important;
-}
-
-.essb_links .essb_link_meetedgar a,.essb_links .essb_link_meetedgar a:hover,.essb_links .essb_link_meetedgar a:focus,
-.essb_links.essb_template_clear-retina .essb_link_meetedgar a .essb_icon
-	{
-	background-color: #6cbdc5 !important;
-}
-
-.essb_links .essb_link_fintel a,.essb_links .essb_link_fintel a:hover,.essb_links .essb_link_fintel a:focus,
-.essb_links .essb_link_instapaper a,.essb_links .essb_link_instapaper a:hover,.essb_links .essb_link_instapaper a:focus
-.essb_links.essb_template_clear-retina .essb_link_fintel a .essb_icon,
-.essb_links.essb_template_clear-retina .essb_link_instapaper a .essb_icon
-	{
-	background-color: #404040 !important;
-}
-
-.essb_links .essb_link_mix a,.essb_links .essb_link_mix a:hover,.essb_links .essb_link_mix a:focus,
-.essb_links.essb_template_clear-retina .essb_link_mix a .essb_icon
-	{
-	background-color: #ff8226 !important;
-}
-
-
-
+.essb_links .essb_link_facebook { --essb-network:#3a579a; }
+.essb_links .essb_link_facebook_like { --essb-network:#3a579a; }
+.essb_links .essb_link_del { --essb-network: #3398fc; }
+.essb_links .essb_link_twitter { --essb-network:#00abf0; }
+.essb_links .essb_link_pinterest { --essb-network:#cd1c1f; }
+.essb_links .essb_link_linkedin { --essb-network:#007bb6; }
+.essb_links .essb_link_digg { --essb-network:#1b5791; }
+.essb_links .essb_link_tumblr { --essb-network:#32506d; }
+.essb_links .essb_link_vk { --essb-network:#45668e; }
+.essb_links .essb_link_print { --essb-network:#404040; }
+.essb_links .essb_link_mail { --essb-network:#404040; }
+.essb_links .essb_link_flattr { --essb-network:#8CB55B; }
+.essb_links .essb_link_reddit { --essb-network:#FF5700; }
+.essb_links .essb_link_buffer { --essb-network:#111111; }
+.essb_links .essb_link_love { --essb-network:#ED1C24; }
+.essb_links .essb_link_weibo { --essb-network:#ED1C24; }
+.essb_links .essb_link_pocket { --essb-network:#EE4055; }
+.essb_links .essb_link_xing { --essb-network:#135a5b; }
+.essb_links .essb_link_ok { --essb-network:#F4731C; }
+.essb_links .essb_link_more { --essb-network:#c5c5c5; }
+.essb_links .essb_link_less { --essb-network:#c5c5c5; }
+.essb_links .essb_link_whatsapp { --essb-network:#1D9E11; }
+.essb_links .essb_link_meneame { --essb-network:#FF7D12; }
+.essb_links .essb_link_blogger { --essb-network:#f59038; }
+.essb_links .essb_link_amazon { --essb-network:#111111; }
+.essb_links .essb_link_yahoomail { --essb-network:#511295; }
+.essb_links .essb_link_gmail { --essb-network:#dd4b39; }
+.essb_links .essb_link_aol { --essb-network:#111111; }
+.essb_links .essb_link_newsvine { --essb-network:#0d642e; }
+.essb_links .essb_link_hackernews { --essb-network:#f08641; }
+.essb_links .essb_link_evernote { --essb-network:#7cbf4b; }
+.essb_links .essb_link_myspace { --essb-network:#3a5998; }
+.essb_links .essb_link_mailru { --essb-network:#FAA519; }
+.essb_links .essb_link_viadeo { --essb-network:#222222; }
+.essb_links .essb_link_line { --essb-network:#2CBF13; }
+.essb_links .essb_link_flipboard { --essb-network:#B31F17; }
+.essb_links .essb_link_comments { --essb-network:#444; }
+.essb_links .essb_link_yummly { --essb-network:#e26326; }
+.essb_links .essb_link_sms { --essb-network:#4ea546; }
+.essb_links .essb_link_viber { --essb-network:#7d539d; }
+.essb_links .essb_link_telegram { --essb-network:#0088cc; }
+.essb_links .essb_link_subscribe { --essb-network:#2c9ab7; }
+.essb_links .essb_link_skype { --essb-network:#00aff0; }
+.essb_links .essb_link_messenger { --essb-network:#0d87ff; }
+.essb_links .essb_link_kakaotalk { --essb-network:#FBE600; }
+.essb_links .essb_link_share { --essb-network:#2B6A94; }
+.essb_links .essb_link_sharebtn { --essb-network:#2B6A94; }
+.essb_links .essb_link_livejournal { --essb-network:#0ca8ec; }
+.essb_links .essb_link_yammer { --essb-network:#3469BA; }
+.essb_links .essb_link_meetedgar { --essb-network:#6cbdc5; }
+.essb_links .essb_link_fintel { --essb-network:#404040; }
+.essb_links .essb_link_mix { --essb-network:#ff8226; }
+.essb_links .essb_link_instapaper { --essb-network:#404040; }
+.essb_links .essb_link_copy { --essb-network:#404040; }
 
 
 /*********************************************************************************/
@@ -1253,352 +1097,6 @@
 	{
 	background-color: transparent !important;
 }
-
-.essb_links.essb_template_light-retina li a:hover,.essb_links.essb_template_light-retina li a:focus
-	{
-	color: #212121 !important;
-}
-
-.essb_links.essb_template_light-retina li.essb_link_more a,.essb_links.essb_template_light-retina li.essb_link_more_dots a,.essb_links.essb_template_light-retina li.essb_link_less a
-	{
-	color: #212121 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_meneame a,
-.essb_links.essb_template_round-retina .essb_link_meneame a,
-.essb_links.essb_template_modern-retina .essb_link_meneame a,
-.essb_links.essb_template_dimmed-retina .essb_link_meneame a {
-	color: #FF7D12 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_whatsapp a,
-.essb_links.essb_template_round-retina .essb_link_whatsapp a,
-.essb_links.essb_template_modern-retina .essb_link_whatsapp a,
-.essb_links.essb_template_dimmed-retina .essb_link_whatsapp a {
-	color: #1D9E11 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_flattr a,
-.essb_links.essb_template_round-retina .essb_link_flattr a,
-.essb_links.essb_template_modern-retina .essb_link_flattr a,
-.essb_links.essb_template_dimmed-retina .essb_link_flattr a {
-	color: #8CB55B !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_ok a,
-.essb_links.essb_template_round-retina .essb_link_ok a,
-.essb_links.essb_template_modern-retina .essb_link_ok a,
-.essb_links.essb_template_dimmed-retina .essb_link_ok a {
-	color: #F4731C !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_xing a,
-.essb_links.essb_template_round-retina .essb_link_xing a,
-.essb_links.essb_template_modern-retina .essb_link_xing a,
-.essb_links.essb_template_dimmed-retina .essb_link_xing a {
-	color: #135a5b !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_weibo a,
-.essb_links.essb_template_round-retina .essb_link_weibo a,
-.essb_links.essb_template_modern-retina .essb_link_weibo a,
-.essb_links.essb_template_dimmed-retina .essb_link_weibo a {
-	color: #ED1C24 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_pocket a,
-.essb_links.essb_template_round-retina .essb_link_pocket a,
-.essb_links.essb_template_modern-retina .essb_link_pocket a,
-.essb_links.essb_template_dimmed-retina .essb_link_pocket a {
-	color: #EE4055 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_tumblr a,
-.essb_links.essb_template_round-retina .essb_link_tumblr a,
-.essb_links.essb_template_modern-retina .essb_link_tumblr a,
-.essb_links.essb_template_dimmed-retina .essb_link_tumblr a {
-	color: #2c4762 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_print a,
-.essb_links.essb_template_round-retina .essb_link_print a,
-.essb_links.essb_template_modern-retina .essb_link_print a,
-.essb_links.essb_template_dimmed-retina .essb_link_print a,
-.essb_links.essb_template_light-retina .essb_link_mail a,
-.essb_links.essb_template_round-retina .essb_link_mail a,
-.essb_links.essb_template_modern-retina .essb_link_mail a,
-.essb_links.essb_template_dimmed-retina .essb_link_mail a,
-.essb_links.essb_template_light-retina .essb_link_copy a,
-.essb_links.essb_template_round-retina .essb_link_copy a,
-.essb_links.essb_template_modern-retina .essb_link_copy a,
-.essb_links.essb_template_dimmed-retina .essb_link_copy a {
-	color: #404040 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_del a,
-.essb_links.essb_template_round-retina .essb_link_del a,
-.essb_links.essb_template_modern-retina .essb_link_del a,
-.essb_links.essb_template_dimmed-retina .essb_link_del a {
-	color: #3398fc !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_buffer a,
-.essb_links.essb_template_round-retina .essb_link_buffer a,
-.essb_links.essb_template_modern-retina .essb_link_buffer a,
-.essb_links.essb_template_dimmed-retina .essb_link_buffer a {
-	color: #111111 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_love a,
-.essb_links.essb_template_round-retina .essb_link_love a,
-.essb_links.essb_template_modern-retina .essb_link_love a,
-.essb_links.essb_template_dimmed-retina .essb_link_love a {
-	color: #ED1C24 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_twitter a,
-.essb_links.essb_template_round-retina .essb_link_twitter a,
-.essb_links.essb_template_modern-retina .essb_link_twitter a,
-.essb_links.essb_template_dimmed-retina .essb_link_twitter a {
-	color: #00abf0 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_facebook a,
-.essb_links.essb_template_round-retina .essb_link_facebook a,
-.essb_links.essb_template_modern-retina .essb_link_facebook a,
-.essb_links.essb_template_dimmed-retina .essb_link_facebook a {
-	color: #3a579a !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_pinterest a,
-.essb_links.essb_template_round-retina .essb_link_pinterest a,
-.essb_links.essb_template_modern-retina .essb_link_pinterest a,
-.essb_links.essb_template_dimmed-retina .essb_link_pinterest a {
-	color: #cd1c1f !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_digg a,
-.essb_links.essb_template_round-retina .essb_link_digg a,
-.essb_links.essb_template_modern-retina .essb_link_digg a,
-.essb_links.essb_template_dimmed-retina .essb_link_digg a {
-	color: #1b5791 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_linkedin a,
-.essb_links.essb_template_round-retina .essb_link_linkedin a,
-.essb_links.essb_template_modern-retina .essb_link_linkedin a,
-.essb_links.essb_template_dimmed-retina .essb_link_linkedin a {
-	color: #127bb6 !important;
-}
-
-
-.essb_links.essb_template_light-retina .essb_link_vk a,
-.essb_links.essb_template_round-retina .essb_link_vk a,
-.essb_links.essb_template_modern-retina .essb_link_vk a,
-.essb_links.essb_template_dimmed-retina .essb_link_vk a {
-	color: #4c75a3 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_reddit a,
-.essb_links.essb_template_round-retina .essb_link_reddit a,
-.essb_links.essb_template_modern-retina .essb_link_reddit a,
-.essb_links.essb_template_dimmed-retina .essb_link_reddit a {
-	color: #333 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_blogger a,
-.essb_links.essb_template_round-retina .essb_link_blogger a,
-.essb_links.essb_template_modern-retina .essb_link_blogger a,
-.essb_links.essb_template_dimmed-retina .essb_link_blogger a {
-	color: #f59038 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_amazon a,
-.essb_links.essb_template_round-retina .essb_link_amazon a,
-.essb_links.essb_template_modern-retina .essb_link_amazon a,
-.essb_links.essb_template_dimmed-retina .essb_link_amazon a {
-	color: #111111 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_yahoomail a,
-.essb_links.essb_template_round-retina .essb_link_yahoomail a,
-.essb_links.essb_template_modern-retina .essb_link_yahoomail a,
-.essb_links.essb_template_dimmed-retina .essb_link_yahoomail a {
-	color: #511295 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_gmail a,
-.essb_links.essb_template_round-retina .essb_link_gmail a,
-.essb_links.essb_template_modern-retina .essb_link_gmail a,
-.essb_links.essb_template_dimmed-retina .essb_link_gmail a {
-	color: #dd4b39 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_newsvine a,
-.essb_links.essb_template_round-retina .essb_link_newsvine a,
-.essb_links.essb_template_modern-retina .essb_link_newsvine a,
-.essb_links.essb_template_dimmed-retina .essb_link_newsvine a {
-	color: #0d642e !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_hackernews a,
-.essb_links.essb_template_round-retina .essb_link_hackernews a,
-.essb_links.essb_template_modern-retina .essb_link_hackernews a,
-.essb_links.essb_template_dimmed-retina .essb_link_hackernews a {
-	color: #f08641 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_evernote a,
-.essb_links.essb_template_round-retina .essb_link_evernote a,
-.essb_links.essb_template_modern-retina .essb_link_evernote a,
-.essb_links.essb_template_dimmed-retina .essb_link_evernote a {
-	color: #7cbf4b !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_aol a,
-.essb_links.essb_template_round-retina .essb_link_aol a,
-.essb_links.essb_template_modern-retina .essb_link_aol a,
-.essb_links.essb_template_dimmed-retina .essb_link_aol a {
-	color: #111111 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_myspace a,
-.essb_links.essb_template_round-retina .essb_link_myspace a,
-.essb_links.essb_template_modern-retina .essb_link_myspace a,
-.essb_links.essb_template_dimmed-retina .essb_link_myspace a {
-	color: #3a5998 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_mailru a,
-.essb_links.essb_template_round-retina .essb_link_mailru a,
-.essb_links.essb_template_modern-retina .essb_link_mailru a,
-.essb_links.essb_template_dimmed-retina .essb_link_mailru a {
-	color: #FAA519 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_viadeo a,
-.essb_links.essb_template_round-retina .essb_link_viadeo a,
-.essb_links.essb_template_modern-retina .essb_link_viadeo a,
-.essb_links.essb_template_dimmed-retina .essb_link_viadeo a {
-	color: #222222 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_line a,
-.essb_links.essb_template_round-retina .essb_link_line a,
-.essb_links.essb_template_modern-retina .essb_link_line a,
-.essb_links.essb_template_dimmed-retina .essb_link_line a {
-	color: #2CBF13 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_flipboard a,
-.essb_links.essb_template_round-retina .essb_link_flipboard a,
-.essb_links.essb_template_modern-retina .essb_link_flipboard a,
-.essb_links.essb_template_dimmed-retina .essb_link_flipboard a {
-	color: #B31F17 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_comments a,
-.essb_links.essb_template_round-retina .essb_link_comments a,
-.essb_links.essb_template_modern-retina .essb_link_comments a,
-.essb_links.essb_template_dimmed-retina .essb_link_comments a {
-	color: #444 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_yummly a,
-.essb_links.essb_template_round-retina .essb_link_yummly a,
-.essb_links.essb_template_modern-retina .essb_link_yummly a,
-.essb_links.essb_template_dimmed-retina .essb_link_yummly a {
-	color: #e26326 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_sms a,
-.essb_links.essb_template_round-retina .essb_link_sms a,
-.essb_links.essb_template_modern-retina .essb_link_sms a,
-.essb_links.essb_template_dimmed-retina .essb_link_sms a {
-	color: #4ea546 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_viber a,
-.essb_links.essb_template_round-retina .essb_link_viber a,
-.essb_links.essb_template_modern-retina .essb_link_viber a,
-.essb_links.essb_template_dimmed-retina .essb_link_viber a {
-	color: #7d539d !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_telegram a,
-.essb_links.essb_template_round-retina .essb_link_telegram a,
-.essb_links.essb_template_modern-retina .essb_link_telegram a,
-.essb_links.essb_template_dimmed-retina .essb_link_telegram a {
-	color: #0088cc !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_subscribe a,
-.essb_links.essb_template_round-retina .essb_link_subscribe a,
-.essb_links.essb_template_modern-retina .essb_link_subscribe a,
-.essb_links.essb_template_dimmed-retina .essb_link_subscribe a {
-	color: #f47555 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_skype a,
-.essb_links.essb_template_round-retina .essb_link_skype a,
-.essb_links.essb_template_modern-retina .essb_link_skype a,
-.essb_links.essb_template_dimmed-retina .essb_link_skype a {
-	color: #00aff0 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_messenger a,
-.essb_links.essb_template_round-retina .essb_link_messenger a,
-.essb_links.essb_template_modern-retina .essb_link_messenger a,
-.essb_links.essb_template_dimmed-retina .essb_link_messenger a {
-	color: #0d87ff !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_sharebtn a,
-.essb_links.essb_template_round-retina .essb_link_sharebtn a,
-.essb_links.essb_template_modern-retina .essb_link_sharebtn a,
-.essb_links.essb_template_dimmed-retina .essb_link_sharebtn a {
-	color: #2B6A94 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_livejournal a,
-.essb_links.essb_template_round-retina .essb_link_livejournal a,
-.essb_links.essb_template_modern-retina .essb_link_livejournal a,
-.essb_links.essb_template_dimmed-retina .essb_link_livejournal a {
-	color: #0ca8ec !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_yammer a,
-.essb_links.essb_template_round-retina .essb_link_yammer a,
-.essb_links.essb_template_modern-retina .essb_link_yammer a,
-.essb_links.essb_template_dimmed-retina .essb_link_yammer a {
-	color: #3469BA !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_meetedgar a,
-.essb_links.essb_template_round-retina .essb_link_meetedgar a,
-.essb_links.essb_template_modern-retina .essb_link_meetedgar a,
-.essb_links.essb_template_dimmed-retina .essb_link_meetedgar a {
-	color: #6cbdc5 !important;
-}
-
-.essb_links.essb_template_light-retina .essb_link_fintel a,
-.essb_links.essb_template_round-retina .essb_link_fintel a,
-.essb_links.essb_template_modern-retina .essb_link_fintel a,
-.essb_links.essb_template_light-retina .essb_link_instapaper a,
-.essb_links.essb_template_round-retina .essb_link_instapaper a,
-.essb_links.essb_template_modern-retina .essb_link_instapaper a,
-.essb_links.essb_template_dimmed-retina .essb_link_fintel a,
-.essb_links.essb_template_dimmed-retina .essb_link_instapaper a  {
-	color: #404040 !important;
-}
-
-
-.essb_links.essb_template_light-retina .essb_link_mix a,
-.essb_links.essb_template_round-retina .essb_link_mix a,
-.essb_links.essb_template_modern-retina .essb_link_mix a {
-	color: #ff8226 !important;
-}
-
 
 /** Flat Retina **/
 .essb_links.essb_template_flat-retina li a {
@@ -2235,27 +1733,14 @@ transition-property: background-color;
 	background-color: #111;
 	color: #fafafa;
 	position: fixed;
-	bottom: 0px;
-	left: 0px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
+	bottom: 0;
+	left: 0;
 	border-radius: 5px;
-	width: 42px;
-	height: 42px;
-	opacity: 0.8;
+	padding: 15px;
 }
 
-.essb-mobile-sharepoint-icon {
-	width: 26px;
-	height: 26px;
-	display: inline-block;
-	vertical-align: middle;
-	margin-left: 10px;
-	margin-top: 7px;
-	opacity: 0.9;
-}
-
-.essb-mobile-sharepoint-icon i { font-size: 20px; }
+.essb-mobile-sharepoint-icon i { display: flex; align-items: center; justify-content: center; }
+.essb-mobile-sharepoint-icon i svg { width: 24px; fill: #fff; height: 24px; }
 
 .essb-mobile-sharebar {
 	background-color: #111;
@@ -2273,10 +1758,24 @@ transition-property: background-color;
 	z-index: 1000;
 }
 
+.essb-mobile-sharebar-inner {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	justify-content: center;
+}
+
 .essb-mobile-sharebar-icon {
 	height: 18px;
-	display: inline-block;
-	vertical-align: middle;
+	display: inline-flex;
+	align-items: center;
+	margin-right: 5px;
+}
+
+.essb-mobile-sharebar-icon svg {
+	width: 18px;
+	height: 18px;
+	fill: #fff;
 }
 
 .essb-mobile-sharebar-text {
@@ -2350,7 +1849,7 @@ transition-property: background-color;
 	z-index: 1001;
 }
 
-
+.essb-mobile-sharebar-window-close svg { width: 18px; height: 18px; }
 
 /*** More Popup ***/
 

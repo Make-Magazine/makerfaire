@@ -61,6 +61,47 @@ if (! function_exists ( 'essb_generate_affiliatewp_referral_link' )) {
 			}
 		}
 		return $permalink;
-	}
-	
+	}	
+}
+
+if (!function_exists('essb_generate_affiliatewp_referral_id')) {
+    /**
+     * Generate the affiliate query parameter and user ID to append to any URL
+     * @return string
+     */
+    function essb_generate_affiliatewp_referral_id() {        
+        $r = '';
+        
+        if (!function_exists('affwp_is_affiliate')) {
+            return '';
+        }
+        
+        if (! (is_user_logged_in () && affwp_is_affiliate ())) {
+            return '';
+        }
+        
+        $affwp_active_mode = essb_options_value ( 'affwp_active_mode' );
+        $affwp_active_pretty = essb_options_bool_value ( 'affwp_active_pretty' );        
+        
+        // append referral variable and affiliate ID to sharing links in ESSB
+        if ($affwp_active_mode == 'name') {
+            if ($affwp_active_pretty) {
+                $r = affiliate_wp ()->tracking->get_referral_var () . '/' . affwp_get_affiliate_username ();
+            }
+            else {
+                $r = affiliate_wp ()->tracking->get_referral_var () . '=' . affwp_get_affiliate_username ();
+            }
+        } 
+        else {
+            
+            if ($affwp_active_pretty) {
+                $r = affiliate_wp ()->tracking->get_referral_var () . '/' . affwp_get_affiliate_id ();
+            }
+            else {
+                $r = affiliate_wp ()->tracking->get_referral_var () . '=' . affwp_get_affiliate_id ();
+            }
+        }
+        
+        return $r;
+    }
 }

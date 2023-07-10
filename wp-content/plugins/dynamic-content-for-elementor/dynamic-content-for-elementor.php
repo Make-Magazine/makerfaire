@@ -8,7 +8,7 @@
  * Plugin Name: Dynamic.ooo - Dynamic Content for Elementor
  * Plugin URI: https://www.dynamic.ooo/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Description: Building powerful websites by extending Elementor. We give you over 150 features that will save you time and money on achieving complex results. The only limit is your imagination.
- * Version: 2.10.3
+ * Version: 2.10.4
  * Requires at least: 5.2
  * Requires PHP: 7.2
  * Author: Dynamic.ooo
@@ -17,8 +17,8 @@
  * Domain Path: /languages
  * License: GPL-3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.txt
- * Elementor tested up to: 3.13.4
- * Elementor Pro tested up to: 3.13.2
+ * Elementor tested up to: 3.14.0
+ * Elementor Pro tested up to: 3.14.0
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

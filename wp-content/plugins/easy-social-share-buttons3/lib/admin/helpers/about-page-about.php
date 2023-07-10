@@ -23,6 +23,10 @@ $activated_class = $is_activated ? 'activated' : 'not-activated';
 				<a href="https://socialsharingplugin.com/getting-started/" target="_blank" class="essb-btn essb-btn-purple">Getting Started<i class="fa fa-play"></i></a>
 			</div>
 			
+			<div class="essb-welcome-button-container">
+						<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/6WvGcToLmQM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			</div>
+			
 		</div> <!-- left-col -->
 		<div class="right-col">
 			<img class="essb-right-logo" src="<?php echo ESSB3_PLUGIN_URL;?>/assets/images/welcome-svg.svg" />
@@ -42,7 +46,7 @@ $activated_class = $is_activated ? 'activated' : 'not-activated';
 				</div>			
 			</div>
 		</div>
-		
+				
 		<!-- premium features -->
 		<div class="about-page-panel <?php echo esc_attr($activated_class); ?>">		
 			<div class="panel-content">

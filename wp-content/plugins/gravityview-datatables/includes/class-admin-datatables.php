@@ -154,6 +154,9 @@ class GV_Extension_DataTables_Admin {
 
 		wp_enqueue_style( 'gravityview_datatables_admin', plugins_url( 'assets/css/datatables-admin.css', GV_DT_FILE ), array(), GV_Extension_DataTables::version );
 
+		wp_localize_script( 'gravityview_datatables_admin', 'GV_DataTables_Admin', [
+			'internal_fields' => wp_list_pluck( GravityView_Fields::get_all( 'gravityview' ), 'name' ),
+		] );
 	}
 
 	/**

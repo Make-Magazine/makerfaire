@@ -47,7 +47,7 @@ class GravityView_Inline_Edit_Field_Product extends GravityView_Inline_Edit_Fiel
 	 *
 	 * @return bool|WP_Error|array Returns original result, if not a number field. Otherwise, returns a response array. Empty if no calculation fields, otherwise multi-dimensional array with `data` and `selector` keys
 	 */
-	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field ) {
+	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field = null ) {
 		$display_value = \GFCommon::get_lead_field_display( $gf_field, $entry[$gf_field->id], $entry['currency'], false, 'html' );
 
 		if ( ! is_bool( $update_result ) ) {

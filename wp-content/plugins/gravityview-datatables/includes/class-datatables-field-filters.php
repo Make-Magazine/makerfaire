@@ -130,6 +130,7 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 			'type'        => 'search',
 			'class'       => 'gv-dt-field-filter',
 			'uid'         => preg_replace( '/[^a-z\d]/i', '', $field->UID ),
+            // translators: %s is replaced by the field label
 			'placeholder' => esc_attr_x( 'Filter by %s', '%s is replaced by the field label', 'gv-datatables' ),
 		);
 

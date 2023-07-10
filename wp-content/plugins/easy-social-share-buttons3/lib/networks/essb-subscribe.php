@@ -13,17 +13,39 @@ class ESSBNetworks_Subscribe {
 	private static $version = "1.0";	
 	public static $assets_registered = false;
 	
+	public static $recaptcha_loaded = false;
+	
 	
 	public static function register_assets() { 
 		if (!self::$assets_registered) {
 			self::$assets_registered = true;
 			
-			/**
-			 * Register the reCaptcha if enabled on display
-			 */			
-			if (self::should_add_recaptcha()) {
-				self::prepare_include_recaptha();
+			if (!self::$recaptcha_loaded) {
+			    /**
+			     * Register the reCaptcha if enabled on display
+			     */
+			    if (self::should_add_recaptcha()) {
+			        self::prepare_include_recaptha();
+			    }
+			    
+			    if (self::should_add_turnstile()) {
+			        self::prepare_include_turnstile();
+			    }
 			}
+		}
+		else {
+		    if (!self::$recaptcha_loaded) {
+		        /**
+		         * Register the reCaptcha if enabled on display
+		         */
+		        if (self::should_add_recaptcha()) {
+		            self::prepare_include_recaptha();
+		        }
+		        
+		        if (self::should_add_turnstile()) {
+		            self::prepare_include_turnstile();
+		        }
+		    }
 		}
 	}
 	
@@ -60,6 +82,10 @@ class ESSBNetworks_Subscribe {
 		if (self::should_add_recaptcha()) {
 			$code .= self::generate_recaptcha_field();
 		}
+
+		if (self::should_add_turnstile()) {
+		    $code .= self::generate_recaptcha_field();
+		}
 		
 		return $code;
 	}
@@ -73,6 +99,7 @@ class ESSBNetworks_Subscribe {
 	 */
 	public static function draw_popup_subscribe_form($design = '', $salt = '') {
 	    $mode = "mailchimp";
+	    	    
 	    $output = '';
 	    	    
 	    $output .= '<div class="essb-subscribe-form essb-subscribe-form-'.esc_attr($salt).' essb-subscribe-form-popup" data-salt="'.esc_attr($salt).'" style="display:none;" data-popup="1">';
@@ -84,7 +111,7 @@ class ESSBNetworks_Subscribe {
 	        $output .= self::draw_integrated_subscribe_form($salt, false, $design, false, '');
 	    }
 	    
-	    $output .= '<button type="button" class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');"><i class="essb_icon_close"></i></button>';
+	    $output .= '<div class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');">'.essb_svg_replace_font_icon('close').'</div>';
 	    $output .= '</div>';
 	    $output .= '<div class="essb-subscribe-form-overlay essb-subscribe-form-overlay-'.esc_attr($salt).'" onclick="essb.subscribe_popup_close(\''.$salt.'\');"></div>';
 	    
@@ -109,7 +136,7 @@ class ESSBNetworks_Subscribe {
 		}
 		
 		if ($popup_mode) {
-			$output .= '<button type="button" class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');"><i class="essb_icon_close"></i></button>';
+		    $output .= '<div class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');">'.essb_svg_replace_font_icon('close').'</div>';
 		}
 		
 		$output .= '</div>';
@@ -150,7 +177,7 @@ class ESSBNetworks_Subscribe {
 	
 	public static function draw_aftershare_popup_subscribe_form($design = '', $position = '') {
 		$mode = "mailchimp";
-	
+		$output = '';
 		$salt = mt_rand();
 	
 		$output .= '<div class="essb-subscribe-form essb-aftershare-subscribe-form essb-subscribe-form-'.esc_attr($salt).' essb-subscribe-form-popup" data-salt="'.esc_attr($salt).'" style="display:none;" data-popup="1">';
@@ -162,7 +189,7 @@ class ESSBNetworks_Subscribe {
 			$output .= self::draw_integrated_subscribe_form($salt, false, $design, false, $position);
 		}
 	
-		$output .= '<button type="button" class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');"><i class="essb_icon_close"></i></button>';
+		$output .= '<div class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');">'.essb_svg_replace_font_icon('close').'</div>';
 		$output .= '</div>';
 		$output .= '<div class="essb-subscribe-form-overlay essb-subscribe-form-overlay-'.esc_attr($salt).'" onclick="essb.subscribe_popup_close(\''.$salt.'\');"></div>';
 	
@@ -186,7 +213,7 @@ class ESSBNetworks_Subscribe {
 	 * @since 3.7
 	 */
 	public static function draw_inline_subscribe_form_twostep($mode = '', $design = '', $open_link_content = '', $two_step_inline = '', $is_widget = false) {
-		
+
 		// if we have not link content to act like regular inline subscribe form
 		if ($open_link_content == '') {
 			return ESSBNetworks_Subscribe::draw_inline_subscribe_form($mode, $design);
@@ -205,7 +232,7 @@ class ESSBNetworks_Subscribe {
 			$output .= self::draw_integrated_subscribe_form($salt, false, $design, $is_widget, 'twostep');
 		}
 	
-		$output .= '<button type="button" class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');"><i class="essb_icon_close"></i></button>';
+		$output .= '<div class="essb-subscribe-form-close" onclick="essb.subscribe_popup_close(\''.$salt.'\');">'.essb_svg_replace_font_icon('close').'</div>';
 		$output .= '</div>';
 		$output .= '<div class="essb-subscribe-form-overlay essb-subscribe-form-overlay-'.esc_attr($salt).'" onclick="essb.subscribe_popup_close(\''.$salt.'\');"></div>';
 
@@ -361,12 +388,18 @@ class ESSBNetworks_Subscribe {
 		return $recaptcha;
 	}
 	
+	public static function should_add_turnstile() {
+	    $recaptcha = essb_option_bool_value('subscribe_turnstile') && ! empty( essb_sanitize_option_value('subscribe_turnstile_site') ) && ! empty( essb_sanitize_option_value('subscribe_turnstile_secret') );
+	    
+	    return $recaptcha;
+	}
+	
 	public static function prepare_include_recaptha() {
 		$recaptcha = essb_option_bool_value('subscribe_recaptcha') && ! empty( essb_sanitize_option_value('subscribe_recaptcha_site') ) && ! empty( essb_sanitize_option_value('subscribe_recaptcha_secret') );
 		if ( $recaptcha ) {
 			wp_enqueue_script(
 				'recaptcha',
-				'https://www.google.com/recaptcha/api.js',
+				'https://www.google.com/recaptcha/api.js?hl=en&render=explicit',
 				array(),
 				'2.0',
 				true
@@ -378,9 +411,31 @@ class ESSBNetworks_Subscribe {
 		}
 	}
 	
+	public static function prepare_include_turnstile() {
+	    $recaptcha = self::should_add_turnstile();
+	    if ( $recaptcha ) {
+	        wp_enqueue_script(
+	            'recaptcha',
+	            'https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha',
+	            array(),
+	            '1.0',
+	            true
+	            );
+	        
+	        $args = array();
+	        $args['recaptchaSitekey'] = sanitize_text_field( essb_sanitize_option_value('subscribe_turnstile_site') );
+	        $args['turnstile'] = true;
+	        wp_localize_script( 'recaptcha', 'essb_subscribe_recaptcha', $args );
+	    }
+	}
+	
 	public static function generate_recaptcha_field() {
 		$recaptcha = essb_option_bool_value('subscribe_recaptcha') && ! empty( essb_sanitize_option_value('subscribe_recaptcha_site') ) && ! empty( essb_sanitize_option_value('subscribe_recaptcha_secret') );
 		$code = '';
+		
+		if (self::should_add_turnstile()) {
+		    $recaptcha = true;
+		}
 		
 		if ($recaptcha) {
 			$code = '<div id="essb-subscribe-captcha-'.mt_rand().'" class="essb-subscribe-captcha"></div>';
@@ -446,5 +501,25 @@ class ESSBNetworks_Subscribe {
 	
 	public static function sanitize_html($value) {
 	    return wp_kses($value, self::safe_html_tags());
+	}
+	
+	public static function generate_custom_fields() {
+	    $output = '';
+	    if (has_filter('essb_custom_subscribe_form_fields')) {
+	        
+	        $custom_fields = array();
+	        $custom_fields = apply_filters('essb_custom_subscribe_form_fields', $custom_fields);
+	        
+	        foreach ($custom_fields as $key => $data) {
+	            $type = isset($data['type']) ? $data['type'] : 'input';
+	            $required = isset($data['required']) ? $data['required'] : false;
+	            
+	            if ($type == 'input') {
+	                $output .= '<input type="text" class="essb-subscribe-custom'.($required ? ' essb-subscribe-required': '').'" placeholder="'.esc_attr($data['display']).'" data-field="'.$key.'" />';
+	            }
+	        }
+	    }
+	    
+	    return $output;
 	}
 }

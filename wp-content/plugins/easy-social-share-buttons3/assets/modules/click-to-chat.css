@@ -1,10 +1,16 @@
-.essb-click2chat { position: fixed; bottom: 20px; right: 20px; background-color: #00b0ff; color: #fff; cursor: pointer; font-size: 14px; padding: 7px 20px; border-radius: 4px; z-index: 100010; }
+.essb-click2chat { position: fixed; bottom: 20px; right: 20px; background-color: #00b0ff; color: #fff; cursor: pointer; font-size: 14px; padding: 7px 20px; border-radius: 4px; z-index: 100010; display: flex; align-items: center; }
 .essb-click2chat.essb-click2chat-left, .essb-click2chat-window.essb-click2chat-left { right: auto; left: 20px; }
-.essb-click2chat i { margin-right: 5px; }
+.essb-click2chat i { margin-right: 5px; line-height: 1; }
 .essb-click2chat span { font-size: 14px; }
 .essb-click2chat-window { display: none; border-radius: 4px;
 	box-shadow: 0 0 15px 0 rgba(0,0,0,0.2); position: fixed; right: 20px; bottom: 70px; background-color: #fff; width: 340px; z-index: 10002; }
 .essb-click2chat-window.active { display: block; }
+
+.essb-click2chat i svg {
+	fill: #fff;
+	width: 16px;
+	height: 16px;
+}
 
 .essb-click2chat-inline { position: static; bottom: auto; right: auto; display: inline-block; width: auto;}
 .essb-click2chat-button { margin: 1em 0; }
@@ -16,6 +22,7 @@
 }
 
 .essb-click2chat-window .window-header .chat-close { float: right; font-size: 18px; margin-left: 5px; margin-right: 5px; cursor: pointer; }
+.essb-click2chat-window .window-header .chat-close svg { width: 14px; height: 14px; fill: #fff; }
 .essb-click2chat-window .window-header .welcome-text { padding: 10px; }
 
 .essb-click2chat-window .operator-list { padding: 10px; }

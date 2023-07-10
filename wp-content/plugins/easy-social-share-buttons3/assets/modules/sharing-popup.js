@@ -45,6 +45,22 @@ jQuery(document).ready(function($){
 		};
 	}
 	
+	var essb_responsiveEventsCanRun = function(element) {
+			var hideOnMobile = $(element).hasClass('essb_mobile_hidden'),
+			hideOnDesktop = $(element).hasClass('essb_desktop_hidden'),
+			hideOnTablet = $(element).hasClass('essb_tablet_hidden'),
+			windowWidth = $(window).width(),
+			canRun = true;
+	
+		if (windowWidth <= 768 && hideOnMobile) canRun = false;
+		if (windowWidth > 768 && windowWidth <= 1100 && hideOnTablet) canRun = false;
+		if (windowWidth > 1100 && hideOnDesktop) canRun = false;
+		
+		if (!$(element).length) canRun = false;
+	
+		return canRun;
+	};
+	
 	var essb_int_value = function(value) {
 		value = parseInt(value);
 		
@@ -52,6 +68,33 @@ jQuery(document).ready(function($){
 		return value;
 	};
 	
+	var essb_setCookie = function(cname, cvalue, exdays) {
+	    var d = new Date();
+	    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+	    var expires = "expires="+d.toGMTString();
+	    document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
+	};
+
+	var essb_getCookie = function(cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i=0; i<ca.length; i++) {
+	        var c = ca[i].trim();
+	        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+	    }
+	    return "";
+	};
+	
+	var essb_popup_close = function() {
+		$(".essb-popup").fadeOut(200);
+		$(".essb-popup-shadow").fadeOut(400);
+	};
+	
+	var essb_is_after_comment = function() {
+		var addr = window.location.href;
+
+		return addr.indexOf('#comment') > -1 ? true : false;
+	};
 
 	/**
 	 * Display Method: Pop up
@@ -113,6 +156,11 @@ jQuery(document).ready(function($){
 			}
 		};
 		
+		var essb_manual_popup_show = window.essb_manual_popup_show = function() {
+			popupShown = false;			
+			essb_popup_show();
+		}
+		
 		var essb_popup_show = window.essb_popup_show = function() {
 
 			if (popupShown) return;
@@ -133,16 +181,16 @@ jQuery(document).ready(function($){
 				if (popHideOnClose == "1") {
 					cookie_name = base_cookie_name + popPostId;
 
-					var cookieSet = essb.getCookie(cookie_name);
+					var cookieSet = essb_getCookie(cookie_name);
 					if (cookieSet == "yes")  return;
-					essb.setCookie(cookie_name, "yes", 7);
+					essb_setCookie(cookie_name, "yes", 7);
 				}
 				if (popHideOnCloseAll == "1") {
 					cookie_name = base_cookie_name + "all";
 
-					var cookieSet = essb.getCookie(cookie_name);
+					var cookieSet = essb_getCookie(cookie_name);
 					if (cookieSet == "yes") return;
-					essb.setCookie(cookie_name, "yes", 7);
+					essb_setCookie(cookie_name, "yes", 7);
 				}
 			}
 
@@ -162,7 +210,7 @@ jQuery(document).ready(function($){
 
 				optin_time = Number(popAutoCloseAfter) * 1000;
 				setTimeout(function(){
-					essb.popup_close();
+					essb_popup_close();
 				}, optin_time);
 
 			}
@@ -176,9 +224,9 @@ jQuery(document).ready(function($){
 			popupShown = true;
 		};			
 
-		if (essb.responsiveEventsCanRun($('.essb-popup'))) {
+		if (essb_responsiveEventsCanRun($('.essb-popup'))) {
 			var element = $('.essb-popup');
-			if (essb.is_after_comment()) {
+			if (essb_is_after_comment()) {
 				if (element.hasClass("essb-popup-oncomment")) {
 					essb_popup_show();
 					return;

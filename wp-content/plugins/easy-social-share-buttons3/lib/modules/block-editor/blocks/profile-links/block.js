@@ -60,6 +60,9 @@ registerBlockType('essb/essb-socialprofiles', {
         'cta_vertical': {
             type: 'boolean',
         },
+        'cta_number': {
+            type: 'boolean',
+        },
     },
 
 
@@ -70,19 +73,20 @@ registerBlockType('essb/essb-socialprofiles', {
         }
         ;
 
+        var displayText = "This block will generate social profile links on the frontend of the website. You can customize the design settings using the block options. The networks that will show are configured in the Easy Social Share Buttons for WordPress plugin options.";
+        
         return [
             /**
              * Server side render
              */
             el("div", {
-                    className: "essb-editor-container",
-                    style: {textAlign: "left"}
-                },
-                el(ServerSideRender, {
-                    block: 'essb/essb-socialprofiles',
-                    attributes: props.attributes
-                })
-            ),
+	            	className: "essb-block-editor-container",
+	            	style: {}
+	            },
+	            el("div", { className: "essb-block-editor-icon"}),
+	            el("div", { className: "essb-block-editor-command-tag essb-block-editor-command-tag-subscribe"}, "Social Profile Links"),
+	            el("div", { className: "essb-block-editor-profiles essb-block-editor-content"}, displayText)
+	        ),
 
             /**
              * Inspector
@@ -158,6 +162,14 @@ registerBlockType('essb/essb-socialprofiles', {
                             checked: props.attributes.cta_vertical,
                             onChange: (value) => {
                                 props.setAttributes({cta_vertical: value});
+                            }
+                        }),
+                        
+                        el(ToggleControl, {
+                            label: 'Show numbers',
+                            checked: props.attributes.cta_number,
+                            onChange: (value) => {
+                                props.setAttributes({cta_number: value});
                             }
                         }),
                         // end elements

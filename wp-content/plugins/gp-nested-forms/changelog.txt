@@ -1,6 +1,20 @@
 
 # Changelog
 
+## 1.1.30
+
+	- Fixed issue where responsive styles were not correctly applied for the Nested Entries Detail Simple template.
+
+## 1.1.29
+
+	- Improved styling of Nested Form fields inside parent forms when using the Gravity Forms Theme Framework.
+	- Updated references to `String.prototype.format()` to use `String.prototype.gformFormat()` as the former will be removed in Gravity Forms 2.8.
+
+## 1.1.28
+
+	- Added support for including the Nested Form fields context in AJAX requests.
+	- Fixed issue where the modal height would sometimes be incorrectly set after opening. This fixes an issue if using GP Limit Date's Inline Datepicker in Nested Forms.
+
 ## 1.1.27
 
 	- Fixed PHP 8 warnings that could show when importing forms with forward slashes in the form names.

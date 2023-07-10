@@ -11,7 +11,6 @@
  * @since 1.0
  */
 abstract class GravityView_Inline_Edit_Field {
-
 	/**
 	 * @var string The name of the field type in Gravity Forms (GF_Field->type)
 	 *
@@ -129,7 +128,7 @@ abstract class GravityView_Inline_Edit_Field {
 	 *
 	 * @return bool|WP_Error|array Returns original result, if not a number field. Otherwise, returns a response array. Empty if no calculation fields, otherwise multi-dimensional array with `data` and `selector` keys
 	 */
-	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field ) {
+	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field = null ) {
 		$return = $update_result;
 
 		if ( $this->standard_live_update ) {
@@ -180,7 +179,6 @@ abstract class GravityView_Inline_Edit_Field {
 	 * @return array $wrapper_attributes, with `data-type` and `data-value` atts added
 	 */
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
-
 		if ( $this->set_value ) {
 			$wrapper_attributes['data-value'] = rgar( $entry, $field_id );
 		}
@@ -194,5 +192,4 @@ abstract class GravityView_Inline_Edit_Field {
 
 		return $wrapper_attributes;
 	}
-
 }

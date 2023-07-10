@@ -564,6 +564,13 @@ class ESSB_Plugin_Assets {
             $cache_key .= ESSBPrecompiledResources::get_unique_identifier();
         }
         
+        if (essb_option_bool_value('precompiled_post')) {
+            $post_key = essb_get_page_id();
+            if ($post_key) {
+                $cache_key .= '-' . $post_key;
+            }
+        }
+        
         $cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'css');
         
         if ($cached_data != '') {
@@ -800,6 +807,13 @@ class ESSB_Plugin_Assets {
             $cache_key .= ESSBPrecompiledResources::get_unique_identifier();
         }
         
+        if (essb_option_bool_value('precompiled_post')) {
+            $post_key = essb_get_page_id();
+            if ($post_key) {
+                $cache_key .= '-' . $post_key;
+            }
+        }
+        
         $cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'css');
         
         if ($cached_data != '') {
@@ -813,8 +827,13 @@ class ESSB_Plugin_Assets {
             }
         }
         
-        $static_content = array();
+        /**
+         * @since 8.7
+         * @var array $loaded_urls Prevent loading duplicated files in the cache
+         */
+        $loaded_urls = array();
         
+        $static_content = array();        
         $styles = array();
                
         $css_code = '';
@@ -823,10 +842,15 @@ class ESSB_Plugin_Assets {
         
         $css_code = trim ( preg_replace ( '/\s+/', ' ', $css_code ) );
         $styles[] = $css_code;
-        
+                
         // parsing inlinde enqueue styles
         $current_site_url = get_site_url();
         foreach ($this->precompiled_css_queue as $key => $file) {
+            
+            if (in_array($file, $loaded_urls)) {
+                continue;
+            }
+            
             $relative_path = ESSBPrecompiledResources::get_asset_relative_path($current_site_url, $file);
             $css_code = file_get_contents( ABSPATH . $relative_path );
             $css_code = trim(preg_replace('/\s+/', ' ', $css_code));
@@ -844,9 +868,14 @@ class ESSB_Plugin_Assets {
             $styles[] = $css_code;
             
             $static_content[$key] = $file;
+            $loaded_urls[] = $file;
         }
         
         foreach (ESSB_Static_CSS_Loader::get('footer') as $key => $file) {
+            if (in_array($file, $loaded_urls)) {
+                continue;
+            }            
+            
             $relative_path = ESSBPrecompiledResources::get_asset_relative_path($current_site_url, $file);
             $css_code = file_get_contents( ABSPATH . $relative_path );
             $css_code = trim(preg_replace('/\s+/', ' ', $css_code));
@@ -864,6 +893,7 @@ class ESSB_Plugin_Assets {
             $styles[] = $css_code;
             
             $static_content[$key] = $file;
+            $loaded_urls[] = $file;
         }
         
         $css_code = '';
@@ -878,6 +908,12 @@ class ESSB_Plugin_Assets {
         
         foreach ( $static_content as $handle => $item_content )
             $toc[] = sprintf( ' - %s', $handle.'-'.$item_content );
+            if (essb_option_bool_value('precompiled_post')) {
+                $post_key = essb_get_page_id();
+                if ($post_key) {
+                    $toc[] = ' - Post ID: ' . $post_key;
+                }
+            }
             
             $styles[] = sprintf( "\n\n\n/* TOC:\n%s\n*/", implode( "\n", $toc ) );
             
@@ -931,6 +967,13 @@ class ESSB_Plugin_Assets {
             $cache_key .= ESSBPrecompiledResources::get_unique_identifier();
         }
         
+        if (essb_option_bool_value('precompiled_post')) {
+            $post_key = essb_get_page_id();
+            if ($post_key) {
+                $cache_key .= '-' . $post_key;
+            }
+        }
+        
         $cached_data = ESSBPrecompiledResources::get_resource($cache_key, 'js');
         
         /**
@@ -978,6 +1021,13 @@ class ESSB_Plugin_Assets {
         
         foreach ( $static_content as $handle => $item_content )
             $toc[] = sprintf( ' - %s', $handle.'-'.$item_content );
+        
+            if (essb_option_bool_value('precompiled_post')) {
+                $post_key = essb_get_page_id();
+                if ($post_key) {
+                    $toc[] = ' - Post ID: ' . $post_key;
+                }
+            }
             
             $scripts[] = sprintf( "\n\n\n/* TOC:\n%s\n*/", implode( "\n", $toc ) );
             

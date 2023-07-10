@@ -248,7 +248,7 @@ if (!function_exists('essb_wpml_translatable_fields')) {
 		return $result;
 	}
 	
-	function essb_wpml_subscribe_forms_translate($field_index, $group, $title = '', $result) {
+	function essb_wpml_subscribe_forms_translate($field_index, $group, $title = '', $result = '') {
 		$result['subscribe_heading_'.$field_index] = array('type' => 'heading', 'group' => $group, 'title' => $title);
 
 		$result['subscribe_mc_title'.$field_index] = array('type' => 'input', 'group' => $group, 'title' => esc_html__('Title', 'essb'));

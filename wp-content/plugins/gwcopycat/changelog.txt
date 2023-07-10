@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.64
+
+	- Updated references to `String.prototype.format()` to use `String.prototype.gformFormat()` as the former will be removed in Gravity Forms 2.8.
+
 ## 1.4.63
 
 	- Fixed issue where numbers using decimal comma format could get converted incorrectly. For example, `1.000` (one thousand) could become just `1` in some situations.

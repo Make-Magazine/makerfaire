@@ -113,7 +113,7 @@ class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Fiel
 			return array();
 		}
 
-		$map_link = gravityview_get_map_link( $formatted_address );
+		$map_link = function_exists( 'gravityview_get_map_link' ) ? gravityview_get_map_link( $formatted_address ) : '';
 
 		$formatted_address = str_replace( "\n", '<br />', $formatted_address );
 

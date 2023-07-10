@@ -465,7 +465,7 @@ class DynamicEmail extends \ElementorPro\Modules\Forms\Classes\Action_Base
         $email_content = \str_replace($all_fields_shortcode, $text, $email_content);
         $all_valued_fields_shortcode = '[all-fields|!empty]';
         $text = $this->get_shortcode_value($all_valued_fields_shortcode, $email_content, $record, $line_break, \false);
-        $email_content = \str_replace($all_fields_shortcode, $text, $email_content);
+        $email_content = \str_replace($all_valued_fields_shortcode, $text, $email_content);
         return $email_content;
     }
     /**

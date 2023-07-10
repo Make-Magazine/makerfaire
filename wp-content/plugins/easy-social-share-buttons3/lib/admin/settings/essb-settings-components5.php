@@ -28,6 +28,9 @@ function essb_component_network_selection($position = '', $options_group = 'essb
 	foreach ($active_networks as $network) {
 	
 		$current_network_name = isset($essb_networks[$network]) ? $essb_networks[$network]["name"] : $network;
+		if (isset($essb_networks[$network]["label"])) {
+		    $current_network_name = $essb_networks[$network]["label"];
+		}
 		
 		if ($position == '') {
 			$user_network_name = essb_option_value('user_network_name_'.$network);
@@ -1406,6 +1409,11 @@ function essb5_advanced_settings_notrunning_checks($ao_option = '') {
         $switch_checks[] = 'affwp_active';
     }
     
+    if ($ao_option == 'integration-slicewp') {
+        $has_settings = true;
+        $switch_checks[] = 'slicewp_active';
+    }
+    
     if ($ao_option == 'integration-affiliates') {
         $has_settings = true;
         $switch_checks[] = 'affs_active';
@@ -1512,6 +1520,11 @@ function essb5_advanced_settings_running_checks($ao_option = '') {
 	if ($ao_option == 'integration-affiliatewp') {
 		$has_settings = true;
 		$switch_checks[] = 'affwp_active';
+	}
+	
+	if ($ao_option == 'integration-slicewp') {
+	    $has_settings = true;
+	    $switch_checks[] = 'slicewp_active';
 	}
 	
 	if ($ao_option == 'integration-affiliates') {
@@ -1629,4 +1642,24 @@ function essb_heading_with_related_section_open($tab, $menu_id, $heading = '', $
 
 function essb_heading_with_related_section_close($tab, $menu_id) {
     ESSBOptionsStructureHelper::holder_end($tab, $menu_id);
+}
+
+function essb_options_function_output_missing_addon_message() {
+    //
+    echo '<div class="essb-options-hint essb-options-hint-missing-addon">';
+    echo '<div class="essb-options-hint-desc">';
+    echo 'This function requires a free plugin add-on. You can install all free add-ons from the plugin. <a href="'.esc_url(admin_url('admin.php?page=essb_redirect_addons')).'">Click here to visit the add-ons list.</a>';
+    echo '</div>';
+    echo '</div>';
+}
+
+
+function essb_options_function_output_custom_content($options = array()) {
+    if (isset($options['element_options']) && isset($options['element_options']['notification'])) {
+        echo '<div class="essb-options-hint">';
+        echo '<div class="essb-options-hint-desc">';
+        echo $options['element_options']['notification'];
+        echo '</div>';
+        echo '</div>';
+    }
 }

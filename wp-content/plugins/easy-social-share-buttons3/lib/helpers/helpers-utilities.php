@@ -152,6 +152,21 @@ function essb_svg_icon($icon = '', $fill = '') {
 }
 
 /**
+ * Get a SVG icon from the plugin database
+ *
+ * @param string $icon
+ * @param string $fill
+ * @return NULL|string
+ */
+function essb_svg_replace_font_icon($icon = '', $additional_classes = '') {
+    if (!class_exists('ESSB_SVG_Icons')) {
+        include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+    }
+    
+    return ESSB_SVG_Icons::replace_font_icon($icon, $additional_classes);
+}
+
+/**
  * Define constant if not set with the proper value
  * 
  * @param unknown $name

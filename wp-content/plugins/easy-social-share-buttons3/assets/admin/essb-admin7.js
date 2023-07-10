@@ -263,6 +263,7 @@ jQuery(document).ready(function( $ ){
 				$('.settings-panel-precompiled_mode').show();
 				$('.settings-panel-precompiled_folder').show();
 				$('.ao-panel-precompiled_unique').show();
+				$('.ao-panel-precompiled_post').show();
 				$('.ao-panel-precompiled_footer').show();
 				$('.ao-panel-precompiled_preload_css').show();
 			}
@@ -272,6 +273,7 @@ jQuery(document).ready(function( $ ){
 				$('.ao-panel-precompiled_unique').hide();
 				$('.ao-panel-precompiled_footer').hide();
 				$('.ao-panel-precompiled_preload_css').hide();
+				$('.ao-panel-precompiled_post').hide();
 			}
 		});
 		

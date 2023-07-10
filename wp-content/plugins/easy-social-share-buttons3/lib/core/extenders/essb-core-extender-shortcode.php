@@ -77,6 +77,15 @@ if (!function_exists('essb_shortcode_map_shareoptions')) {
 			$post_share_details['url'] = essb_generate_affiliatewp_referral_link($post_share_details['url']);
 		}
 		
+		$slicewp_active_shortcode = essb_option_bool_value('slicewp_active_shortcode');
+		if ($noaffiliate == 'true' || $noaffiliate == 'yes') {
+		    $slicewp_active_shortcode = false;
+		}
+		if ($slicewp_active_shortcode) {
+		    essb_helper_maybe_load_feature('integration-slicewp');
+		    $post_share_details['url'] = essb_generate_slicewp_referral_link($post_share_details['url']);
+		}
+		
 		$affs_active_shortcode = essb_option_bool_value('affs_active_shortcode');
 		if ($noaffiliate == 'true' || $noaffiliate == 'yes') {
 			$affs_active_shortcode = false;

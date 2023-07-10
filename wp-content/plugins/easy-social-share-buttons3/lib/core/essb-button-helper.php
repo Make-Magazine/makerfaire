@@ -288,6 +288,10 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 
 			if ($single == 'sidebar-close') {
 				$api_command = '';
+				/**
+				 * @since 8.8.2 Fixing Google Page Speed Insights error
+				 */
+				$url = '#';			
 			}
 
 			if ($single == 'comments') {
@@ -428,6 +432,17 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 			    $additional_a_class = apply_filters('essb_draw_button_additional_a_class', $single, $style);
 			}
 			
+			/**
+			 * @since 8.6
+			 */			
+			if (class_exists('ESSB_Share_Button_Styles')) {
+			    $custom_a_class = ESSB_Share_Button_Styles::get_network_element_classes($style['template'], $single);
+			    
+			    if (!empty($custom_a_class)) {
+			        $additional_a_class .= ($additional_a_class != '' ? ' ' : '') . $custom_a_class;
+			    }
+			}
+			
 			if (!empty($additional_a_class)) {
 			    $additional_a_class = ' ' . $additional_a_class;
 			}
@@ -437,6 +452,17 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 			 */
 			if (has_filter('essb_draw_button_additional_icon_class')) {
 			    $additional_icon_class = apply_filters('essb_draw_button_additional_icon_class', $single, $style);
+			}
+			
+			/**
+			 * @since 8.6
+			 */
+			if (class_exists('ESSB_Share_Button_Styles')) {
+			    $custom_icon_class = ESSB_Share_Button_Styles::get_network_icon_classes($style['template'], $single);
+			    
+			    if (!empty($custom_icon_class)) {
+			        $additional_icon_class .= ($additional_icon_class != '' ? ' ' : '') . $custom_icon_class;
+			    }
 			}
 			
 			if (!empty($additional_icon_class)) {
@@ -466,6 +492,50 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 		$url = $share_details['url'];
 		$api_command = $share_details['api_command'];
 		
+		/**
+		 * @since 8.3 Include an extra class for the link
+		 */
+		if (has_filter('essb_draw_button_additional_a_class')) {
+		    $additional_a_class = apply_filters('essb_draw_button_additional_a_class', $single, $style);
+		}
+		
+		/**
+		 * @since 8.6
+		 */
+		if (class_exists('ESSB_Share_Button_Styles')) {
+		    $custom_a_class = ESSB_Share_Button_Styles::get_network_element_classes($style['template'], $single);
+		    
+		    if (!empty($custom_a_class)) {
+		        $additional_a_class .= ($additional_a_class != '' ? ' ' : '') . $custom_a_class;
+		    }
+		}
+		
+		if (!empty($additional_a_class)) {
+		    $additional_a_class = ' ' . $additional_a_class;
+		}
+		
+		/**
+		 * @since 8.3 Include an extra class for the icon
+		 */
+		if (has_filter('essb_draw_button_additional_icon_class')) {
+		    $additional_icon_class = apply_filters('essb_draw_button_additional_icon_class', $single, $style);
+		}
+		
+		/**
+		 * @since 8.6
+		 */
+		if (class_exists('ESSB_Share_Button_Styles')) {
+		    $custom_icon_class = ESSB_Share_Button_Styles::get_network_icon_classes($style['template'], $single);
+		    
+		    if (!empty($custom_icon_class)) {
+		        $additional_icon_class .= ($additional_icon_class != '' ? ' ' : '') . $custom_icon_class;
+		    }
+		}
+		
+		if (!empty($additional_icon_class)) {
+		    $additional_icon_class = ' ' . $additional_icon_class;
+		}
+		
 		if (defined('ESSB_SVG_SHARE_ICONS')) {
 		    if (!class_exists('ESSB_SVG_Icons')) {
 		        include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
@@ -475,8 +545,8 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 		}
 
 		$content .= sprintf('<li class="essb_item essb_link_%1$s nolightbox%2$s">
-				<a href="%3$s" title="%4$s" onclick="%5$s" target="_blank" rel="nofollow"><span class="essb_icon essb_icon_%1$s">%7$s</span><span class="essb_network_name">%6$s</span></a></li>',
-		    "less", $more_after_class, esc_url($url), "", $api_command, "", $custom_svg_icon);
+				<a href="%3$s" title="%4$s" onclick="%5$s" target="_blank" rel="nofollow" class="%8$s"><span class="essb_icon essb_icon_%1$s%9$s">%7$s</span><span class="essb_network_name">%6$s</span></a></li>',
+		    "less", $more_after_class, esc_url($url), "", $api_command, "", $custom_svg_icon, $additional_a_class, $additional_icon_class);
 
 	}
 
@@ -553,7 +623,22 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 	    }
 	    $share = essb_sharing_prepare_mail($share);
 	}
-
+	
+    /**
+     * @since 8.4 Fix entities double encoded
+     */
+	if (!empty($share['twitter_tweet'])) {
+	    $share['twitter_tweet'] = html_entity_decode($share['twitter_tweet']);
+	}
+	
+	if (!empty($share['title'])) {
+	    $share['title'] = html_entity_decode($share['title']);
+	}
+	
+	if (!empty($share['title_plain'])) {
+	    $share['title_plain'] = html_entity_decode($share['title_plain']);
+	}
+	
 	$share['url'] = rawurlencode(esc_url($share['url']));		
 	$share['short_url'] = rawurlencode(esc_url($share['short_url']));
 	$share['short_url_twitter'] = rawurlencode(esc_url($share['short_url_twitter']));
@@ -561,7 +646,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 	$share['title'] = urlencode(esc_attr($share['title']));
 	$share['image'] = esc_attr($share['image']);
 	$share['description'] = urlencode(esc_attr($share['description']));		
-
+	
 	/**
 	 * 7.2.2 Fix the wrong encoded URLs in UTM options
 	 */
@@ -706,7 +791,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			$url = sprintf ( 'https://www.linkedin.com/shareArticle?mini=true&amp;ro=true&amp;trk=EasySocialShareButtons&amp;title=%1$s&amp;url=%2$s', $use_message, $share ['url'] );
 			break;
 		case 'digg' :
-			$url = sprintf ( 'http://digg.com/submit?phase=2%20&amp;url=%1$s&amp;title=%2$s', $share ['url'], essb_core_helper_textencode($share ['title']) );
+			$url = sprintf ( 'http://digg.com/submit?url=%1$s&amp;title=%2$s', $share ['url'], essb_core_helper_textencode($share ['title']) );
 			break;
 		case 'reddit' :
 			$url = sprintf ( 'http://reddit.com/submit?url=%1$s&amp;title=%2$s', $share ['url'], $share ['title'] );
@@ -965,6 +1050,13 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			if (has_filter("essb4_shareapi_url_{$network}")) {
 				$url = apply_filters("essb4_shareapi_url_{$network}", $share);
 			}
+			
+			if (has_filter("essb_network_shareapi_api_command_{$network}")) {
+			    $api_command = apply_filters("essb_network_shareapi_api_command_{$network}", $share);
+			}
+			if (has_filter("essb_network_shareapi_url_{$network}")) {
+			    $url = apply_filters("essb_network_shareapi_url_{$network}", $share);
+			}
 			break;
 	}
 	
@@ -1019,6 +1111,16 @@ function essb_draw_buttons_start($style = array(), $position = '', $salt = '', $
 	$instance_template = $template;
 	if ($template != '') {
 		$template = ' essb_template_' . $template;
+	}
+	
+	/**
+	 * @since 8.6
+	 */	
+	if (class_exists('ESSB_Share_Button_Styles')) {
+	    $additional_template_classes = ESSB_Share_Button_Styles::get_root_template_classes($style['template']);
+	    if (!empty($additional_template_classes)) {
+	        $template .= ' ' . $additional_template_classes;
+	    }
 	}
 
 	$css_class_width = '';
@@ -1250,6 +1352,14 @@ function essb_draw_buttons_start($style = array(), $position = '', $salt = '', $
 	}
 
 	$links_start = '';
+	
+	if (has_filter('essb_sharebuttons_before_root_element')) {
+	    $custom_before_root_content = apply_filters('essb_sharebuttons_before_root_element', $salt, $position, $style, $share);
+	    
+	    if (!empty($custom_before_root_content)) {
+	        $links_start .= $custom_before_root_content;
+	    }
+	}
 
 	/**
 	 * Apply the custom code that is set inside settings for the position

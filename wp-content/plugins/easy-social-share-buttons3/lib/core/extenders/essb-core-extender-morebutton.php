@@ -106,6 +106,10 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			}
 		
 			$button_style['button_style'] = "button";
+			/**
+			 * @since 9.1 Fix the stretch alignment
+			 */
+			$button_style['button_align'] = 'left';
 			$button_style['show_counter'] = false;
 			$button_style['button_width'] = "column";
 			$button_style['button_width_columns'] = (essb_is_mobile() ? "1" : "3");
@@ -155,7 +159,7 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			else {
 			}
 			
-			$user_message_inpop = apply_filters('essb_morepopup_message', $user_message_inpop);			
+			$user_message_inpop = apply_filters('essb_morepopup_message', $user_message_inpop);					
 			
 			$add_pointer = '';
 			if ($user_set_morebutton_func == '4' || $user_set_morebutton_func == '5') {

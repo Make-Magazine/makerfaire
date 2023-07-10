@@ -64,11 +64,11 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	/**
 	 * Attach all the hooks into the Actions and Filters used by the maps system.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 */
 	self.hook = () => {
-		self.hooks.addAction( 'gravitykit_maps_after_process_map_markers', 'gravitykit/maps', self.processCluster );
-		self.hooks.addAction( 'gravitykit_maps_after_process_map_markers', 'gravitykit/maps', self.processSpider );
+		self.hooks.addAction( 'gk.maps.after_process_map_markers', 'gravitykit/maps', self.processCluster );
+		self.hooks.addAction( 'gk.maps.after_process_map_markers', 'gravitykit/maps', self.processSpider );
 	};
 
 	/**
@@ -86,7 +86,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 		//check if it is a single entry view
 		self.is_single_entry = $( '.gv-map-single-container' ).length > 0;
 
-		self.hooks.doAction( 'gravitykit_maps_beforeInit', self );
+		self.hooks.doAction( 'gk.maps.before_maps_init', self );
 
 		// make sure map canvas is less than 50% of the window height (default 400px)
 		self.sticky_canvas_prepare();
@@ -102,7 +102,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 		// bind markers animations
 		self.markers_animate_init();
 
-		self.hooks.doAction( 'gravitykit_maps_afterInit', self );
+		self.hooks.doAction( 'gk.maps.after_maps_init', self );
 	};
 
 	/**
@@ -132,7 +132,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	/**
 	 * The storage for the scroll observer, used for loading maps conditionally.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @type {null|IntersectionObserver}
 	 */
@@ -162,14 +162,14 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	/**
 	 * Initiate the map object, stored in map
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return {void}
 	 */
 	self.initMaps = ( $container ) => {
 		const $maps = self.getMaps( $container );
 
-		self.hooks.doAction( 'gravitykit_maps_init_maps', $maps, $container );
+		self.hooks.doAction( 'gk.maps.init_maps', $maps, $container );
 
 		$maps.each( ( key, map ) => self.getObserver().observe( map ) );
 	};
@@ -177,7 +177,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	/**
 	 * Gets the observer stored for this page, if not set it will create a new one.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @returns {IntersectionObserver}
 	 */
@@ -215,7 +215,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 
 		data = $map.data( 'gkMap' );
 
-		self.hooks.doAction( 'gravitykit_maps_before_init_map', $map );
+		self.hooks.doAction( 'gk.maps.before_init_map', $map );
 
 		const options = $.extend( {}, self.MapOptions, {
 			_index: index,
@@ -246,7 +246,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 
 		$map.addClass( 'gk-map-generated' );
 
-		self.hooks.doAction( 'gravitykit_maps_after_init_map', $map );
+		self.hooks.doAction( 'gk.maps.after_init_map', $map );
 	};
 
 	/**
@@ -282,7 +282,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	 *
 	 * It will use the DOM element to determine which map we need to process the markers for.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {Element} map
 	 */
@@ -290,11 +290,11 @@ function gvMapsDisplayErrorNotice( error_text ) {
 		const $map = $( map );
 		const data = $map.data( 'gkMap' );
 
-		self.hooks.doAction( 'gravitykit_maps_before_process_map_markers', $map, data, self );
+		self.hooks.doAction( 'gk.maps.before_process_map_markers', $map, data, self );
 
 		data.markers_data.forEach( ( marker ) => self.addMarker( $map, data, marker ) );
 
-		self.hooks.doAction( 'gravitykit_maps_after_process_map_markers', $map, data, self );
+		self.hooks.doAction( 'gk.maps.after_process_map_markers', $map, data, self );
 
 		$map.addClass( 'gk-map-markers-generated' );
 
@@ -308,7 +308,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	 *
 	 * Note: This is not native to Google Maps, it uses a Google Supported API but not native.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @link https://developers.google.com/maps/documentation/javascript/marker-clustering
 	 *
@@ -350,7 +350,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	 *
 	 * Note: This uses a third party API, not default to Google API.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @link https://github.com/jawj/OverlappingMarkerSpiderfier
 	 *
@@ -376,7 +376,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	/**
 	 * Given a Container gets all maps.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {jQuery} $container
 	 * @param {boolean} filterByGenerated
@@ -394,13 +394,13 @@ function gvMapsDisplayErrorNotice( error_text ) {
 			$maps = $maps.filter( '.gk-map-generated' );
 		}
 
-		return self.hooks.applyFilters( 'gravitykit_maps_getMaps', $maps, filterByGenerated );
+		return self.hooks.applyFilters( 'gk.maps.get_maps', $maps, filterByGenerated );
 	};
 
 	/**
 	 * Given a Container gets all Search enabled Maps.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {jQuery} $container
 	 * @param {boolean} filterByGenerated
@@ -410,14 +410,14 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	self.getSearchMaps = ( $container, filterByGenerated = false ) => {
 		const $maps = self.getMaps( $container, filterByGenerated );
 
-		return self.hooks.applyFilters( 'gravitykit_maps_getSearchMaps', $maps.filter( '.gk-multi-entry-map' ), filterByGenerated );
+		return self.hooks.applyFilters( 'gk.maps.get_search_maps', $maps.filter( '.gk-multi-entry-map' ), filterByGenerated );
 	};
 
 	/**
 	 * Adds an individual marker to a particular map, it will use the jQuery/DOM element of the map.
 	 * Will also store that given marker into the `gkMap` data object.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {jQuery} $map
 	 * @param {object} data
@@ -470,7 +470,17 @@ function gvMapsDisplayErrorNotice( error_text ) {
 				}
 			}
 
-			marker = new google.maps.Marker( {
+			/**
+			 * Enables the ability to filter the options used to build a marker.
+			 *
+			 * @since 2.2
+			 *
+			 * @param {jQuery} $map
+			 * @param {object} data
+			 * @param {object} markerData
+			 *
+			 */
+			const markerOptions = self.hooks.applyFilters( 'gk.maps.marker_options', {
 				map: data.map,
 				icon: icon,
 				url: markerData.url,
@@ -478,7 +488,9 @@ function gvMapsDisplayErrorNotice( error_text ) {
 				gkVisible: true,
 				entryId: markerData.entry_id,
 				content: markerData.content,
-			} );
+			}, $map, data, markerData );
+
+			marker = new google.maps.Marker( markerOptions );
 
 			data.markers.push( marker );
 			self.bindMarkerEvents( marker, data.map );
@@ -507,12 +519,25 @@ function gvMapsDisplayErrorNotice( error_text ) {
 				$searchMap.data( 'gkMap', searchMapData );
 			} );
 		}
+
+		/**
+		 * Enables the ability to hook into the add marker event.
+		 *
+		 * @since 2.2
+		 *
+		 * @param {jQuery} $map
+		 * @param {object} data
+		 * @param {window.google.maps.Marker} marker
+		 * @param {object} markerData
+		 *
+		 */
+		self.hooks.doAction( 'gk.maps.after_add_marker', $map, data, marker, markerData );
 	};
 
 	/**
 	 * Given a Map jQuery object test to see if we have a particular marker already set, uses the entryId for check.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {jQuery} $map
 	 * @param {object} checkMarker
@@ -540,7 +565,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	 *
 	 * Marker data is used before the marker is configured with Google Maps API.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {jQuery} $map
 	 * @param {object} checkMarker
@@ -566,7 +591,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	/**
 	 * Add event listeners to Markers.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {object} marker google.maps.Marker
 	 * @param {object} map google.maps.Map
@@ -592,7 +617,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	/**
 	 * Open infowindow or go to entry link when marker has been clicked
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {object} marker google.maps.Marker Google maps marker object
 	 * @param {string} marker.content Infowindow markup string
@@ -652,7 +677,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	/**
 	 * Highlights the assigned entry on mouse over a Marker
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param marker google.maps.Marker Google maps marker object
 	 *
@@ -663,7 +688,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	/**
 	 * Remove the highlight of the assigned entry on mouse out a Marker
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param marker google.maps.Marker Google maps marker object
 	 *
@@ -839,13 +864,9 @@ function gvMapsDisplayErrorNotice( error_text ) {
 	}
 
 	/**
-	 * Creates a local WP hooks variable.
-	 *
-	 * @since TBD
-	 *
-	 * @var {Object}
+	 * @inheritDoc
 	 */
-	self.hooks = wp.hooks.createHooks();
+	self.hooks = window.GravityKit.GravityMaps.hooks;
 
 	// Update global variable reference
 	window.GV_MAPS = self;

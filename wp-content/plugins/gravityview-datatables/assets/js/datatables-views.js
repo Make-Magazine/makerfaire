@@ -251,6 +251,41 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 					}
 				}
 
+				// init rowGroup extension.
+				if( options.rowGroupSettings && options.rowGroupSettings.status && options.rowGroupSettings.status * 1 === 1 ) {
+
+					// Disable incompatible extensions.
+					options.fixedColumns = false;
+
+					var rowGroup = {
+						dataSrc: function ( row ) {
+							var row_field = row[ options.rowGroupSettings.index * 1 ];
+							if ( $( row_field ).attr( 'href' ) !== undefined ) {
+								return $( row_field ).text();
+							}
+
+							return row_field;
+						},
+						startRender: null,
+						endRender: null
+					};
+
+					if ( options.rowGroupSettings.startRender === true ) {
+						rowGroup.startRender = function ( rows, group ) {
+							return group;
+						};
+					}
+
+					if ( options.rowGroupSettings.endRender === true ) {
+						rowGroup.endRender = function ( rows, group ) {
+							return group;
+						};
+					}
+
+					options.rowGroup = rowGroup;
+				}
+
+
 				var table = $( this ).DataTable( options );
 
 				// Init Auto Update

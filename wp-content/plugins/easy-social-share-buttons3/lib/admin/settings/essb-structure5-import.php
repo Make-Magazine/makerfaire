@@ -360,6 +360,37 @@ function essb5_reset_settings_actions() {
 		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="instagramtransients" data-title="<?php esc_html_e('Clear Instagram Data', 'essb'); ?>"><i class="fa fa-times"></i><?php esc_html_e('Reset Data', 'essb'); ?></a>
 	</div>
 </div>
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon">
+		<i class="ti-dashboard"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php esc_html_e('Sharing Conversions Data', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php esc_html_e('Only if the Conversions Pro module for share buttons is used (or was used in the past). Reset and clear stored conversions data from the share buttons.', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="conversionsshare" data-title="<?php esc_html_e('Sharing Conversions Data', 'essb'); ?>"><i class="fa fa-times"></i><?php esc_html_e('Reset Data', 'essb'); ?></a>
+	</div>
+</div>
+
+<div class="advancedoptions-tile advancedoptions-smalltile center-c">
+	<div class="advnacedoptions-tile-icon">
+		<i class="ti-dashboard"></i>
+	</div>
+	<div class="advnacedoptions-tile-subtitle">
+		<h3><?php esc_html_e('Subscribe Conversions Data', 'essb'); ?></h3>
+	</div>
+	<div class="advancedoptions-tile-body">
+		<?php esc_html_e('Only if the Conversions Pro module for subscribe forms is used (or was used in the past). Reset and clear stored conversions data from the subscribe froms.', 'essb'); ?>
+	</div>
+	<div class="advancedoptions-tile-foot">
+		<a href="#" class="essb-btn tile-deactivate essb-reset-settings" data-clear="conversionssubscribe" data-title="<?php esc_html_e('Subscribe Conversions Data', 'essb'); ?>"><i class="fa fa-times"></i><?php esc_html_e('Reset Data', 'essb'); ?></a>
+	</div>
+</div>
+
 	
 </div>
 	<?php 

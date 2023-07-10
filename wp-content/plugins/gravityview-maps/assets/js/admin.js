@@ -78,7 +78,7 @@
 	 * Will trigger the `self.confirmModifyModal` method inside a 500millisecond timout to avoid problems with
 	 * details from the view still loading.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return void
 	 */
@@ -101,7 +101,7 @@
 	/**
 	 * Confirm the user wants to enable the REST API when a map is added to the view. It will use a default text and a window.confirm by default.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {string} text The text to display in the confirmation modal.
 	 *
@@ -122,7 +122,7 @@
 	/**
 	 * Determines if the REST API permissions fields can be modified.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return {boolean}
 	 */
@@ -138,7 +138,7 @@
 	/**
 	 * Modify the REST API permissions fields to enable the REST API for this View.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return {void}
 	 */
@@ -172,7 +172,7 @@
 	 * Trigger the `self.confirmModifyRest` method, bound to the `gravityview/field-added` event.
 	 * Will only trigger if the field added is a map field.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {Event} event Browser Event.
 	 * @param {HTMLElement} field The field that was added.
@@ -191,7 +191,7 @@
 	 * Bind the `self.onTemplateChangeModifyRest` method to the `#gravityview_directory_template` change event.
 	 * Bind the `self.onFieldAddedChangeModifyRest` method to the `gravityview/field-added` event.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return {void}
 	 */

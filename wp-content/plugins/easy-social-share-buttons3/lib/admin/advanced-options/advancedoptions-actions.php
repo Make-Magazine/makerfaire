@@ -79,6 +79,14 @@ class ESSBAdvancedOptions {
 			$this->remove_form_design();
 		}
 		
+		if ($cmd == 'import_profiles_network') {
+		    $this->import_profiles_network();
+		}
+		
+		if ($cmd == 'import_share_network') {
+		    $this->import_share_network();
+		}
+		
 		if ($cmd == 'remove_instagram_account') {
 		    $this->remove_instagram_account();
 		}
@@ -101,6 +109,14 @@ class ESSBAdvancedOptions {
 		
 		if ($cmd == 'remove_custom_profile_button') {
 		    $this->remove_custom_profile_button();
+		}
+		
+		if ($cmd == 'remove_all_custom_profile_buttons') {
+		    $this->remove_all_custom_profile_buttons();
+		}
+		
+		if ($cmd == 'remove_all_custom_share_buttons') {
+		    $this->remove_all_custom_share_buttons();
 		}
 
 		if ($cmd == 'reset_command') {
@@ -457,6 +473,10 @@ class ESSBAdvancedOptions {
 			$this->load_settings('integration-affiliatewp');
 		}
 		
+		if ($current_tab == 'integration-slicewp') {
+		    $this->load_settings('integration-slicewp');
+		}
+		
 		if ($current_tab == 'integration-affiliates') {
 			$this->load_settings('integration-affiliates');
 		}
@@ -493,6 +513,10 @@ class ESSBAdvancedOptions {
 			$this->load_settings('instagramfeed-shortcode');
 		}
 		
+		if ($current_tab == 'easy-profiles-shortcode') {
+		    $this->load_settings('easy-profiles-shortcode');
+		}
+		
 		if ($current_tab == 'shortcode-ctt') {
 		    $this->load_settings('shortcode-ctt');
 		}
@@ -511,6 +535,14 @@ class ESSBAdvancedOptions {
 		
 		if ($current_tab == 'manage-follow-buttons') {
 		    $this->load_settings('button-designer-profile');
+		}
+		
+		if ($current_tab == 'export-follow-buttons') {
+		    $this->load_settings('button-designer-profile-export');
+		}
+		
+		if ($current_tab == 'export-share-buttons') {
+		    $this->load_settings('button-designer-export');
 		}
 		
 		if ($current_tab == 'boarding') {
@@ -575,11 +607,41 @@ class ESSBAdvancedOptions {
 		}
 	}
 	
+	public function remove_all_custom_profile_buttons() {
+	    essb_remove_all_custom_profile_buttons();
+	}
+	
+	public function remove_all_custom_share_buttons() {
+	    essb_remove_all_custom_buttons();
+	}
+	
 	public function remove_custom_profile_button() {
 	    $network_id = isset($_REQUEST['network_id']) ? $_REQUEST['network_id'] : '';
 	    
 	    if ($network_id != '') {
 	        essb_remove_custom_profile_button($network_id);
+	    }
+	}
+	
+	public function import_profiles_network() {
+	    $code = isset($_REQUEST['network_code']) ? $_REQUEST['network_code'] : '';
+	    
+	    if (!empty($code)) {
+	        $code = base64_decode($code);
+	        $code = stripslashes($code);
+	        $codeObj = json_decode($code, true);
+	        essb_create_custom_profile_button($codeObj);
+	    }
+	}
+	
+	public function import_share_network() {
+	    $code = isset($_REQUEST['network_code']) ? $_REQUEST['network_code'] : '';
+	    
+	    if (!empty($code)) {
+	        $code = base64_decode($code);
+	        $code = stripslashes($code);
+	        $codeObj = json_decode($code, true);
+	        essb_create_custom_button($codeObj);
 	    }
 	}
 	
@@ -951,6 +1013,7 @@ class ESSBAdvancedOptions {
 	    $current_options['essb_cache_static'] = 'false';
 	    $current_options['essb_cache_static_js'] = 'false';
 	    $current_options['precompiled_unique'] = 'false';
+	    $current_options['precompiled_post'] = 'false';
 	    $current_options['precompiled_preload_css'] = 'false';
 	    $current_options['use_stylebuilder'] = 'false';
 	    
@@ -1613,6 +1676,12 @@ class ESSBAdvancedOptions {
 			
 			ESSB_Subscribe_Conversions_Pro::uninstall();
 			
+			if (!class_exists('ESSB_Share_Conversions_Pro')) {
+			    include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-pro/class-share-conversions.php');
+			}
+			
+			ESSB_Share_Conversions_Pro::uninstall();
+			
 			if (!class_exists('ESSB_Logger_ShareCounter_Update')) {
 			    include_once (ESSB3_CLASS_PATH . 'loggers/class-sharecounter-update.php');
 			}
@@ -1665,6 +1734,25 @@ class ESSBAdvancedOptions {
 		            delete_transient( $name );		            
 		        }	
 		    }
+		}
+		
+		/**
+		 * 11. Share Conversions
+		 */
+		if ($function == 'conversionsshare') {
+		    if (!class_exists('ESSB_Share_Conversions_Pro')) {
+		        include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-pro/class-share-conversions.php');
+		    }
+		    
+		    ESSB_Share_Conversions_Pro::clear_data();
+		}
+		
+		if ($function == 'conversionssubscribe') {
+		    if (!class_exists('ESSB_Subscribe_Conversions_Pro')) {
+		        include_once (ESSB3_PLUGIN_ROOT . 'lib/modules/conversions-pro/class-subscribe-conversions.php');
+		    }
+		    
+		    ESSB_Subscribe_Conversions_Pro::clear_data();
 		}
 	}
 	

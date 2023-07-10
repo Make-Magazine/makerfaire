@@ -8,6 +8,17 @@ class GP_Field_Nested_Form extends GF_Field {
 		return esc_attr__( 'Nested Form', 'gp-nested-forms' );
 	}
 
+	/**
+	 * Get field CSS class.
+	 *
+	 * @since GF 2.7
+	 *
+	 * @return string
+	 */
+	public function get_field_css_class() {
+		return 'gform-theme__no-reset--children';
+	}
+
 	public function get_form_editor_button() {
 		return array(
 			'group' => 'advanced_fields',

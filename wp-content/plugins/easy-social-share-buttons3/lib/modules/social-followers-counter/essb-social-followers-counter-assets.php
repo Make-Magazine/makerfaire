@@ -100,7 +100,7 @@ class ESSBSocialFollowersCounterAssets {
         }
         
         essb_resource_builder()->add_static_resource(ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/social-profiles'.(!self::$debug_mode ? '.min': '').'.css', 'essb-social-profiles', 'css');
-        
+        essb_resource_builder()->activate_resource('social-profiles');
         /**
          * May be load the customizer of colors if enabled
          */
@@ -116,7 +116,7 @@ class ESSBSocialFollowersCounterAssets {
         }
                 
         essb_resource_builder()->add_static_resource(ESSB3_PLUGIN_URL . '/lib/modules/social-followers-counter/assets/social-profiles'.(!self::$debug_mode ? '.min': '').'.css', 'essb-social-profiles', 'css');
-                
+        essb_resource_builder()->activate_resource('social-profiles');
         /**
          * May be load the customizer of colors if enabled
          */
@@ -256,15 +256,7 @@ class ESSBSocialFollowersCounterAssets {
             }
         }
         
-        $output .= '}';        
-        
-        /*foreach ($networks as $network) {
-            if ($network == 'instgram') { $network = 'instagram'; }
-            
-            $output .= '.essb-fc-bg-'.$network.', .essb-fc-hbg-'.$network.':hover{ background-color: var( '.self::network_color_variable($network). ' );}'."\n";
-            $output .= '.essb-fc-c-'.$network.', .essb-fc-hc-'.$network.':hover { color: var( '.self::network_color_variable($network). ' ); fill: var( '.self::network_color_variable($network). ' );}'."\n";
-            $output .= '.essb-fc-border-'.$network.', .essb-fc-hborder-'.$network.':hover{ border-color: var( '.self::network_color_variable($network). ' );}'."\n";
-        }*/
+        $output .= '}';                
         
         return $output;
     }

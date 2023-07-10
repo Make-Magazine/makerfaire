@@ -9,6 +9,15 @@
  */
 
 /**
+ * @since 8.6
+ * Do not load the control center render in case of add-on installation
+ * essb-tgmpa-install=install-plugin
+ */
+if (isset($_REQUEST['essb-tgmpa-install']) && $_REQUEST['essb-tgmpa-install'] == 'install-plugin') {
+    return;
+}
+
+/**
  * Loading the form designer functions but only inside the setup
  */
 if (! function_exists ( 'essb5_get_form_designs' )) {
@@ -187,7 +196,7 @@ if ($drawing_tab == 'update' || $drawing_tab == 'status') { $drawing_tab = 'abou
 			include_once ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-about.php';
 			
 		}
-		else if ($current_tab == 'extensions') {
+		else if ($current_tab == 'extensions' || $current_tab == 'addons') {
 			ESSBControlCenter::draw_blank_content_start();
 			include_once ESSB3_PLUGIN_ROOT . 'lib/admin/settings/essb-structure5-addons.php';
 			ESSBControlCenter::draw_blank_content_end();
@@ -337,21 +346,70 @@ if ($drawing_tab == 'update' || $drawing_tab == 'status') { $drawing_tab = 'abou
  */
 ?>
 
+<?php 
+/**
+ * @since 8.7
+ */
+if (class_exists('ESSB_MyAPI')) {
+    ESSB_MyAPI::should_validate_code();
+    
+    if (ESSB_MyAPI::news_update_required()) {
+        ESSB_MyAPI::refresh_news();
+    }
+}
+
+?>
+
 <?php
 
 $template_list = essb_available_tempaltes4();
 $templates = array();
+$template_classes = array();
+
+$network_svg_icons = array();
 
 foreach ($template_list as $key => $name) {
 	$templates[$key] = essb_template_folder($key);
+	$template_classes[$key] = array(
+	    'root' => ESSB_Share_Button_Styles::get_root_template_classes($key),
+	    'element' => ESSB_Share_Button_Styles::get_network_element_classes($key, '{network}'),
+	    'icon' => ESSB_Share_Button_Styles::get_network_icon_classes($key, '{network}')
+	);
 }
+
+foreach (essb_available_social_networks() as $single => $data) {
+    /**
+     * Development integration for the SVG icons
+     */
+    $custom_svg_icon = '';
+    if (defined('ESSB_SVG_SHARE_ICONS')) {
+        if (!class_exists('ESSB_SVG_Icons')) {
+            include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+        }                
+        $custom_svg_icon = ESSB_SVG_Icons::get_icon($single);        
+        // @param $additional_icon defines the additional icon class
+        // @param $more_after_class defines the additional class on the parent
+        // @param $additional_a_class defines the additional link class
+    }
+    
+    if (has_filter("essb_network_svg_icon_{$single}")) {
+        $custom_svg_icon = apply_filters("essb_network_svg_icon_{$single}", $custom_svg_icon);
+    }
+    
+    if (!empty($custom_svg_icon)) {
+        $network_svg_icons[$single] = $custom_svg_icon;
+    }
+}
+
 
 ?>
 
 <script type="text/javascript">
 var essbAdminSettings = {
 		'networks': <?php echo json_encode(essb_available_social_networks()); ?>,
-		'templates': <?php echo json_encode($templates); ?>
+		'templates': <?php echo json_encode($templates); ?>,
+		'template_classes': <?php echo json_encode($template_classes); ?>,
+		'svg': <?php echo json_encode($network_svg_icons); ?>
 };
 
 function essbCloseStatusMessage(sender) {
@@ -365,6 +423,10 @@ function essbCloseStatusMessage(sender) {
 function essb_settings5_status_notifications() {
 	global $essb_admin_options, $current_tab;
 
+	if (class_exists('ESSB_MyAPI') && !essb_option_bool_value('deactivate_appscreo')) {
+	    ESSB_MyAPI::has_promotion();
+	}
+	
 	$purge_cache = isset ( $_REQUEST ['purge-cache'] ) ? $_REQUEST ['purge-cache'] : '';
 	$rebuild_resource = isset ( $_REQUEST ['rebuild-resource'] ) ? $_REQUEST ['rebuild-resource'] : '';
 
@@ -450,7 +512,7 @@ function essb_settings5_status_notifications() {
 
 	if ($general_precompiled_resources) {
 		$cache_clear_address = esc_url_raw ( add_query_arg ( array ('rebuild-resource' => 'true' ), essb_get_current_page_url () ) );
-		$dismiss_addons_button = '<a href="' . $cache_clear_address . '"  text="' . esc_html__ ( 'Rebuild Resources', 'essb' ) . '" class="status_button float_right" style="margin-right: 5px;"><i class="fa ti-cloud-down"></i>&nbsp;' . esc_html__ ( 'Rebuild Resources', 'essb' ) . '</a>';
+		$dismiss_addons_button = '<a href="' . $cache_clear_address . '"  text="' . esc_html__ ( 'Rebuild Resources', 'essb' ) . '" class="status_button essb-btn float_right" style="margin-right: 5px;"><i class="fa ti-close"></i>&nbsp;' . esc_html__ ( 'Clear Cache', 'essb' ) . '</a>';
 		essb_display_static_header_message(esc_html__('Combine CSS and Javascript files (Pre-compiled Mode)', 'essb') . essb_generate_running_badge(), $dismiss_addons_button, 'ti-server');
 	}
 

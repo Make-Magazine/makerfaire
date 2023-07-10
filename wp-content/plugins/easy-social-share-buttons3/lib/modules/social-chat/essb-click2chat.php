@@ -32,15 +32,17 @@ if (!function_exists('essb_click2chat_register')) {
 			}
 		}
 		
-		if (essb_option_bool_value('click2chat_posttypes')) {
-			$posttypes = $this->option_value('posttypes');
+		if (essb_option_value('click2chat_posttypes')) {
+		    $posttypes = essb_option_value('click2chat_posttypes');
 			if (!is_array($posttypes)) {
 				$posttypes = array();
 			}
-		
+			
 			if (!is_singular($posttypes)) {
 				$is_deactivated = true;
 			}
+			
+			
 		}
 		
 		// deactivate display of the functions
@@ -59,14 +61,16 @@ if (!function_exists('essb_click2chat_register')) {
 	
 	function essb_click2chat_register_styles() {
 		if (essb_click2chat_can_run()) {		    
-		    
 		    /**
 		     * Activate the module main CSS styles
 		     */
 		    if (class_exists('ESSB_Module_Assets')) {
-		        ESSB_Module_Assets::regsiter_click2chat();
+		        if (!ESSB_Module_Assets::is_registered('click2chat-css')) {
+		            ESSB_Module_Assets::load_css_resource('click2chat-cond-css', ESSB_Module_Assets::get_modules_base_folder() . 'click-to-chat' . ESSB_Module_Assets::is_optimized('css') . '.css', 'css');
+		            ESSB_Module_Assets::load_js_resource('click2chat-cond-js', ESSB_Module_Assets::get_modules_base_folder() . 'click-to-chat' . ESSB_Module_Assets::is_optimized('js') . '.js', 'js');
+		        }		        
 		    }
-		    
+		    		    
 			$styles = '';
 			
 			$click2chat_text = essb_sanitize_option_value('click2chat_text');
@@ -81,10 +85,10 @@ if (!function_exists('essb_click2chat_register')) {
 				if ($click2chat_color != '') {
 					$styles .= '.essb-click2chat, .essb-click2chat-window .window-header { color: '.esc_attr($click2chat_color).';}';
 				}
-			}
+			}			
 			
 			if ($styles != '') {
-				essb_resource_builder()->add_css($styles, 'click2chat');
+				essb_resource_builder()->add_css($styles, 'click2chat-user', 'footer');
 			}
 		}
 	}
@@ -157,7 +161,7 @@ if (!function_exists('essb_click2chat_register')) {
 			echo '<div class="essb-click2chat-button position-'.esc_attr($button_align).'">';
 		}
 		echo '<div class="essb-click2chat essb-click2chat-'.esc_attr($click2chat_location).($shortcode_call ? ' essb-click2chat-inline': '').'">';
-		echo '<i class="essb_icon_'.esc_attr($click2chat_icon).'"></i><span>'.$click2chat_text.'</span>';
+		echo essb_svg_replace_font_icon($click2chat_icon) . '<span>'.$click2chat_text.'</span>';
 		echo '</div>';
 		
 		if ($shortcode_call) {
@@ -167,7 +171,7 @@ if (!function_exists('essb_click2chat_register')) {
 		echo '<div class="essb-click2chat-window essb-click2chat-'.esc_attr($click2chat_location).'">';
 		
 		echo '<div class="window-header">';
-		echo '<i class="essb_icon_close chat-close"></i>';
+		echo '<i class="essb_svg_icon_close chat-close">'.essb_svg_icon('close').'</i>';
 		
 		if ($click2chat_welcome_text != '') {
 			echo '<div class="welcome-text">';

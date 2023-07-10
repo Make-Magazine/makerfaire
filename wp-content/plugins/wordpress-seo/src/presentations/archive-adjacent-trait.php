@@ -10,11 +10,16 @@ use Yoast\WP\SEO\Models\Indexable;
  *
  * Presentation object for indexables.
  *
- * @property Indexable         $model      The indexable.
- * @property Pagination_Helper $pagination The pagination helper. Should be defined in the parent
- *                                         class because of trait issues in PHP 5.6.
+ * @property Indexable $model The indexable.
  */
 trait Archive_Adjacent {
+
+	/**
+	 * Holds the Pagination_Helper instance.
+	 *
+	 * @var Pagination_Helper
+	 */
+	protected $pagination;
 
 	/**
 	 * Sets the helpers for the trait.
@@ -46,10 +51,10 @@ trait Archive_Adjacent {
 		}
 		// Check if the previous page is the first page.
 		if ( $current_page === 2 ) {
-			return $this->get_permalink();
+			return $this->permalink;
 		}
 
-		return $this->pagination->get_paginated_url( $this->get_permalink(), ( $current_page - 1 ) );
+		return $this->pagination->get_paginated_url( $this->permalink, ( $current_page - 1 ) );
 	}
 
 	/**
@@ -67,6 +72,6 @@ trait Archive_Adjacent {
 			return '';
 		}
 
-		return $this->pagination->get_paginated_url( $this->get_permalink(), ( $current_page + 1 ) );
+		return $this->pagination->get_paginated_url( $this->permalink, ( $current_page + 1 ) );
 	}
 }

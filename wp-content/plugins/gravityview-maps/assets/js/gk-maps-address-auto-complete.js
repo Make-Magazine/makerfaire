@@ -1,9 +1,9 @@
-window.gravitykit = window.gravitykit || {};
-window.gravitykit.maps = window.gravitykit.maps || {};
-window.gravitykit.maps.searchAddressAutocomplete = window.gravitykit.maps.searchAddressAutocomplete || {};
-
-( ( $, obj, wp ) => {
+( ( $, obj, GravityMaps ) => {
 	"use strict";
+
+	// Create a global Reference for this globally.
+	GravityMaps.searchAddressAutocomplete = obj;
+
 	// Run some magic to allow a better handling of class names for jQuery.hasClass type of methods
 	obj.className = ( value ) => {
 		// Prevent Non Strings to be included
@@ -32,18 +32,14 @@ window.gravitykit.maps.searchAddressAutocomplete = window.gravitykit.maps.search
 	obj.$fields = null;
 
 	/**
-	 * Creates a local WP hooks variable.
-	 *
-	 * @since TBD
-	 *
-	 * @var {Object}
+	 * @inheritDoc
 	 */
-	obj.hooks = wp.hooks.createHooks();
+	obj.hooks = GravityMaps.hooks;
 
 	/**
 	 * Triggers when Ready of the document.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return {void}
 	 */
@@ -54,7 +50,7 @@ window.gravitykit.maps.searchAddressAutocomplete = window.gravitykit.maps.search
 	/**
 	 * Initializes all the Autocomplete fields in the screen.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return {void}
 	 */
@@ -73,7 +69,7 @@ window.gravitykit.maps.searchAddressAutocomplete = window.gravitykit.maps.search
 	/**
 	 * Initializes one field.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {Object} field
 	 *
@@ -83,7 +79,7 @@ window.gravitykit.maps.searchAddressAutocomplete = window.gravitykit.maps.search
 		/**
 		 * Allows third-party inclusion of actions on initializing the field for auto complete
 		 *
-		 * @since TBD
+		 * @since 2.2
 		 */
 		obj.hooks.doAction( 'gravitykit/maps/view_search/autocomplete_init', $field );
 
@@ -184,7 +180,7 @@ window.gravitykit.maps.searchAddressAutocomplete = window.gravitykit.maps.search
 	 *
 	 * @todo Untangle this method from GoogleMaps so we use on third-party maps.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param {Object} field
 	 */
@@ -267,5 +263,5 @@ window.gravitykit.maps.searchAddressAutocomplete = window.gravitykit.maps.search
 	};
 
 	$( document ).ready( obj.ready );
-} )( window.jQuery, window.gravitykit.maps.searchAddressAutocomplete, window.wp );
+} )( window.jQuery, {}, window.GravityKit.GravityMaps );
 

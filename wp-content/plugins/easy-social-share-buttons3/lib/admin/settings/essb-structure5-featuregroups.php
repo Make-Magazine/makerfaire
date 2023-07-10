@@ -73,7 +73,7 @@ if (class_exists('ESSBControlCenter')) {
 	ESSBControlCenter::register_feature_details('share-optimize', esc_html__('Share Optimizations', 'essb'), esc_html__('Add social share optimization tags for easy tune of the shared information', 'essb'), 'ti-receipt');
 	ESSBControlCenter::register_feature_details('after-share', esc_html__('After Share Events', 'essb'), esc_html__('Show additional actions to user after sharing content', 'essb'), 'ti-share');
 	ESSBControlCenter::register_feature_details('share-recovery', esc_html__('Social Shares Recovery', 'essb'), esc_html__('Recover number of shares from specific URL changes (example: migrate your site to https (SSL). Options will appear inside the Share Counter Setup menu.', 'essb'), 'ti-reload');
-	ESSBControlCenter::register_feature_details('affiliate', esc_html__('Affiliate & Point Integration', 'essb'), esc_html__('Integrate plugin work with myCred, AffiliateWP', 'essb'), 'ti-money');
+	ESSBControlCenter::register_feature_details('affiliate', esc_html__('Affiliate & Point Integration', 'essb'), esc_html__('Integrate plugin work with myCred, AffiliateWP, SliceWP', 'essb'), 'ti-money');
 	ESSBControlCenter::register_feature_details('short-url', esc_html__('Short URL', 'essb'), esc_html__('Generate short URLs for sharing on social networks', 'essb'), 'ti-new-window');
 	ESSBControlCenter::register_feature_details('custom-share', esc_html__('Custom Share', 'essb'), esc_html__('Custom share feature makes possible to change the share URL that plugin will use', 'essb'), 'ti-share-alt');
 	ESSBControlCenter::register_feature_details('share-message', esc_html__('Message Before Buttons', 'essb'), esc_html__('Add a custom message before or above share buttons "ex: Share this"', 'essb'), 'fa fa-comment');

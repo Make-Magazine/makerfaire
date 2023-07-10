@@ -446,3 +446,42 @@ if (!function_exists('essb_is_responsive_mobile')) {
         return $mode == '' && count($mobile_positions) > 0;
     }
 }
+
+if (!function_exists('essb_get_page_id')) {
+    /**
+     * Gets the current page/post/archive ID
+     * @return boolean|int
+     */
+    function essb_get_page_id() {        
+        global $wp_query;
+        if ( get_option( 'show_on_front' ) && get_option( 'page_for_posts' ) && is_home() ) {
+            return get_option( 'page_for_posts' );
+        }
+        
+        if ( ! $wp_query ) {
+            return false;
+        }
+        
+        $c_page_id = get_queried_object_id();
+        
+        // The WooCommerce shop page.
+        if ( ! is_admin() && class_exists( 'WooCommerce' ) && is_shop() ) {
+            return (int) get_option( 'woocommerce_shop_page_id' );
+        }
+        // The WooCommerce product_cat taxonomy page.
+        if ( ! is_admin() && class_exists( 'WooCommerce' ) && ( ! is_shop() && ( is_tax( 'product_cat' ) || is_tax( 'product_tag' ) ) ) ) {
+            return $c_page_id . '-archive'; // So that other POs do not apply to arhives if post ID matches.
+        }
+        // The homepage.
+        if ( 'posts' === get_option( 'show_on_front' ) && is_home() ) {
+            return $c_page_id;
+        }
+        if ( ! is_singular() && is_archive() ) {
+            return $c_page_id . '-archive'; // So that other POs do not apply to arhives if post ID matches.
+        }
+        if ( ! is_singular() ) {
+            return false;
+        }
+        return $c_page_id;
+    }
+}

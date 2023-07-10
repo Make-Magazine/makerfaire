@@ -16,9 +16,13 @@ if (class_exists('ESSB_Ajax')) { ESSB_Ajax::init_frontend(); }
 
 
 include_once (ESSB3_CLASS_PATH . 'class-activation-manager.php');
-
 include_once (ESSB3_HELPERS_PATH . 'helpers-tools.php');
 include_once (ESSB3_HELPERS_PATH . 'helpers-url.php');
+
+/**
+ * @since 8.7
+ */
+include_once (ESSB3_CLASS_PATH . 'utilities/class-my-api.php');
 
 // if module is not deactivated
 if (!essb_option_bool_value('deactivate_module_shorturl')) {
@@ -37,6 +41,12 @@ if (essb_option_bool_value('followers_log_update')) {
 
 // include options helper functions
 include_once (ESSB3_PLUGIN_ROOT . 'lib/core/essb-global-settings.php');
+
+/**
+ * @since 8.6
+ * Generating share buttons' template classes for the root, single element, or the icon
+ */
+include_once (ESSB3_CLASS_PATH . 'assets/class-share-button-styles.php');
 
 
 // @since 4.0 - activation of widget and shortcodes require to activate widget display method
@@ -81,7 +91,7 @@ if (essb_option_bool_value('essb_cache')) {
 }
 
 if (essb_options_bool_value('precompiled_resources')) {
-	include_once (ESSB3_PLUGIN_ROOT . 'lib/core/cache/essb-precompiled.php');
+    include_once (ESSB3_CLASS_PATH . 'assets/class-plugin-assets-cache.php');
 	ESSBPrecompiledResources::activate();
 }
 

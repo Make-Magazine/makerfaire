@@ -34,7 +34,7 @@ class ESSBOptinFlyout {
 		
 		global $essb3ofof_options;
 		
-		$essb3ofof_options = get_option ( ESSB3_OFOF_OPTIONS_NAME );
+		$essb3ofof_options = get_option ( ESSB3_OFOF_OPTIONS_NAME );		
 		
 		$demo_mode = isset($_REQUEST['optin_flyout']) ? $_REQUEST['optin_flyout'] : '';
 		if ($demo_mode == 'true') {
@@ -221,7 +221,7 @@ class ESSBOptinFlyout {
 		$output .= '<div class="essb-optinflyout essb-optinflyout-' . esc_attr($position) . ' essb-optinflyout-' . esc_attr($event) . ($ofof_deactivate_mobile ? ' essb-subscribe-mobile-hidden' : '') . '" ' . $event_fire . ' ' . ($overlay_color != '' ? ' style="background-color:' . esc_attr($overlay_color) . '!important;"' : '') . '>';
 		
 		if ($close_type == 'icon') {
-			$output .= '<div class="essb-optinflyout-close essb-optinflyout-closeicon" ' . $css_color . '><i class="essb_icon_close" ' . $css_color . '></i></div>';
+		    $output .= '<div class="essb-optinflyout-close essb-optinflyout-closeicon" ' . $css_color . '>'.essb_svg_replace_font_icon('close').'</div>';
 		}
 		
 		$output .= do_shortcode ( '[easy-subscribe design="' . $design . '" mode="mailchimp" conversion="flyout-'.$event.'"]' );

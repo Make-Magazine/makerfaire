@@ -73,20 +73,22 @@ registerBlockType('essb/essb-instagram', {
             // console.debug(props.attributes);
         }
         ;
+        
+        var displayText = 'This block will show an Instagram feed on the front of the website.';
+        if (props.attributes.username) displayText += ' @' + props.attributes.username;
 
         return [
             /**
              * Server side render
              */
             el("div", {
-                    className: "essb-editor-container",
-                    style: {textAlign: "left"}
-                },
-                el(ServerSideRender, {
-                    block: 'essb/essb-instagram',
-                    attributes: props.attributes
-                })
-            ),
+	            	className: "essb-block-editor-container",
+	            	style: {}
+	            },
+	            el("div", { className: "essb-block-editor-icon"}),
+	            el("div", { className: "essb-block-editor-command-tag essb-block-editor-command-tag-subscribe"}, "Instagram Feed"),
+	            el("div", { className: "essb-block-editor-instagram essb-block-editor-content"}, displayText)
+	        ),
 
             /**
              * Inspector

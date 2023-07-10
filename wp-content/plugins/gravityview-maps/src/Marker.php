@@ -5,8 +5,37 @@ namespace GravityKit\GravityMaps;
 use Exception;
 use GFCommon;
 use GFFormsModel;
+use GF_Field_Address;
+use GF_Field;
 
 class Marker {
+	/**
+	 * Store the address mode slug.
+	 *
+	 * @since 2.2
+	 *
+	 * @var string
+	 */
+	public const MODE_ADDRESS = 'address';
+
+	/**
+	 * Store the coordinates mode slug.
+	 *
+	 * @since 2.2
+	 *
+	 * @var string
+	 */
+	public const MODE_COORDINATES = 'coordinates';
+
+	/**
+	 * Marker mode. Can be 'address' or 'coordinates'.
+	 *
+	 * @since 2.2
+	 *
+	 * @var string
+	 */
+	protected $mode = self::MODE_ADDRESS;
+
 	/**
 	 * @var null|Icon
 	 */
@@ -14,37 +43,65 @@ class Marker {
 
 	/**
 	 * Gravity Forms entry array
+	 *
 	 * @var array
 	 */
-	protected $entry = array();
+	protected $entry = [];
 
 	/**
-	 * Gravity Forms address field object
-	 * @var array
+	 * Which field is used to calculate the address.
+	 *
+	 * @since 2.2
+	 *
+	 * @var ?GF_Field_Address
 	 */
-	protected $field = null;
+	protected $address_field = null;
+
+	/**
+	 * Which field is used to get the latitude.
+	 *
+	 * @since 2.2
+	 *
+	 * @var ?GF_Field
+	 */
+	protected $lat_field = null;
+
+	/**
+	 * Which field is used to get the longitude.
+	 *
+	 * @since 2.2
+	 *
+	 * @var ?GF_Field
+	 */
+	protected $long_field = null;
 
 	/**
 	 * Full address without any line breaks or spaces
+	 *
 	 * @var string
 	 */
 	protected $address = null;
 
 	/**
 	 * Marker position - set of Latitude / Longitude
-	 * @var array 0 => Latitude / 1 => Longitude
+	 *
+	 * @var ?array 0 => Latitude / 1 => Longitude
 	 */
 	protected $position = null;
 
 	/**
 	 * Marker Entry URL
+	 *
 	 * @var array
 	 */
 	protected $entry_url = null;
 
 	/**
 	 * Marker Info Window content
-	 * @var array
+	 *
+	 * @since 1.6
+	 *
+	 * @var string
 	 */
 	protected $infowindow = null;
 
@@ -52,47 +109,191 @@ class Marker {
 	 *
 	 * @var Cache_Markers instance
 	 */
-	private $cache = null;
+	protected $cache = null;
 
 	/**
-	 * @param array                       $entry
-	 * @param GF_Field_Address|GF_Field[] $field      GF Field used to calculate the address, or array of fields with position data, used when $mode is 'coordinates'
-	 * @param array                       $icon       {
-	 *                                                Optional. Define custom icon data.
+	 * Gravity Forms address field object
 	 *
-	 * @param string                      $url        URL of the icon
-	 * @param array                       $size       Array of the size of the icon in pixels. Example: [20,30]
-	 * @param array                       $origin     If using an image sprite, the start of the icon from top-left.
-	 * @param array                       $anchor     Where the "pin" of the icon should be, example [0,32] for the bottom of a 32px icon
-	 * @param array                       $scaledSize How large should the icon appear in px (scaling down image for Retina)
-	 *                                                }
-	 * @param string                      $mode       Marker position mode: 'address' or 'coordinates'
+	 * @deprecated TBD
 	 *
-	 * @link https://developers.google.com/maps/documentation/javascript/markers Read more on Markers
+	 * @var array
 	 */
-	function __construct( $entry, $position_field, $icon = array(), $mode = 'address' ) {
-		// get the cache markers class instance
-		$this->cache = $GLOBALS['gravityview_maps']->component_instances['Cache_Markers'];
+	protected $field = null;
 
-		$this->entry = $entry;
-
-		$this->entry_url = $this->set_entry_url( $entry );
-
-		$this->field = $position_field;
-
-		// generate the marker position (lat/long)
-
-		if ( 'address' === $mode ) {
-			$this->address = $this->generate_address( $entry, $position_field );
-
-			$this->position = $this->generate_position_from_address( $entry, $position_field );
-		} else {
-			$this->position = $this->generate_position_from_coordinates( $entry, $position_field );
+	/**
+	 * @link https://developers.google.com/maps/documentation/javascript/markers Read more on Markers
+	 *
+	 * @param array                       $entry
+	 * @param GF_Field_Address|GF_Field[] $position_field GF Field used to calculate the address, or array of fields with position data, used when $mode is 'coordinates'
+	 * @param array                       $icon           {
+	 *                                                    Optional. Define custom icon data.
+	 *
+	 * @type string                       $url            URL of the icon
+	 * @type array                        $size           Array of the size of the icon in pixels. Example: [20,30]
+	 * @type array                        $origin         If using an image sprite, the start of the icon from top-left.
+	 * @type array                        $anchor         Where the "pin" of the icon should be, example [0,32] for the bottom of a 32px icon
+	 * @type array                        $scaledSize     How large should the icon appear in px (scaling down image for Retina)
+	 *                                                    }
+	 *
+	 *
+	 */
+	public function __construct( $__deprecated_one = null, $__deprecated_two = null, $__deprecated_three = null, $__deprecated_four = null ) {
+		if ( ! empty( $__deprecated_one ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
+
+		if ( ! empty( $__deprecated_two ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$position_field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+		}
+
+		if ( ! empty( $__deprecated_three ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$icon was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+		}
+
+		if ( ! empty( $__deprecated_four ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$mode was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+		}
+		// Here just to prevent backwards compatibility issues. No longer used.
+	}
+
+	/**
+	 * Create a new Marker instance from an address field.
+	 *
+	 * @since 2.2
+	 *
+	 * @param array    $entry
+	 * @param GF_Field_Address $field
+	 * @param array    $icon
+	 *
+	 * @return self
+	 */
+	public static function from_address_field( $entry, GF_Field_Address $field, array $icon = [] ): self {
+		$marker       = new self;
+		$marker->mode = static::MODE_ADDRESS;
+
+		$marker->set_cache();
+		$marker->set_entry( $entry );
+		$marker->set_address_field( $field );
+		$marker->generate_address();
+		$marker->generate_position_from_address();
 
 		if ( ! empty( $icon ) ) {
-			$this->icon = new Icon( $icon[0] );
+			$marker->set_icon( new Icon( $icon[0] ) );
 		}
+
+		return $marker;
+	}
+
+	/**
+	 * Create a new Marker instance from a set of coordinates fields.
+	 *
+	 * @since 2.2
+	 *
+	 * @param array    $entry
+	 * @param GF_Field $lat_field
+	 * @param GF_Field $long_field
+	 * @param array    $icon
+	 *
+	 * @return self
+	 */
+	public static function from_coordinate_fields( $entry, GF_Field $lat_field, GF_Field $long_field, array $icon = [] ): self {
+		$marker       = new self;
+		$marker->mode = static::MODE_COORDINATES;
+
+		$marker->set_cache();
+		$marker->set_entry( $entry );
+		$marker->set_lat_field( $lat_field );
+		$marker->set_long_field( $long_field );
+
+		$marker->generate_position_from_coordinates();
+
+		if ( ! empty( $icon ) ) {
+			$marker->set_icon( new Icon( $icon[0] ) );
+		}
+
+		return $marker;
+	}
+
+	/**
+	 * Configures the Cache for this marker.
+	 *
+	 * @since 2.2
+	 *
+	 * @param mixed $cache
+	 */
+	protected function set_cache( $cache = null ): void {
+		if ( null === $cache ) {
+			$cache = $GLOBALS['gravityview_maps']->component_instances['Cache_Markers'];
+		}
+
+		// get the cache markers class instance
+		$this->cache = $cache;
+	}
+
+	/**
+	 * Configure the address field used to calculate the coordinates of this marker.
+	 *
+	 * @since 2.2
+	 *
+	 * @param GF_Field_Address $field
+	 */
+	public function set_address_field( GF_Field_Address $field ): void {
+		$this->address_field = $field;
+	}
+
+	/**
+	 * Get the address field used to calculate the coordinates of this marker.
+	 *
+	 * @since 2.2
+	 *
+	 * @return GF_Field_Address
+	 */
+	public function get_address_field(): GF_Field_Address {
+		return $this->address_field;
+	}
+
+	/**
+	 * Set the Latitude field used to calculate the coordinates of this marker.
+	 *
+	 * @since 2.2
+	 *
+	 * @param GF_Field $field
+	 */
+	public function set_lat_field( GF_Field $field ): void {
+		$this->lat_field = $field;
+	}
+
+	/**
+	 * Gets the Latitude field used to calculate the coordinates of this marker.
+	 *
+	 * @since 2.2
+	 *
+	 * @return GF_Field
+	 */
+	public function get_lat_field(): GF_Field {
+		return $this->lat_field;
+	}
+
+	/**
+	 * Set the Longitude field used to calculate the coordinates of this marker.
+	 *
+	 * @since 2.2
+	 *
+	 * @param GF_Field $field
+	 */
+	public function set_long_field( GF_Field $field ): void {
+		$this->long_field = $field;
+	}
+
+	/**
+	 * Gets the Longitude field used to calculate the coordinates of this marker.
+	 *
+	 * @since 2.2
+	 *
+	 * @return GF_Field
+	 */
+	public function get_long_field(): GF_Field {
+		return $this->long_field;
 	}
 
 	/**
@@ -102,21 +303,35 @@ class Marker {
 	 *
 	 * @return ?array
 	 */
-	public function to_array() {
+	public function to_array(): ?array {
 		if ( ! $this->is_valid() ) {
 			return null;
 		}
 		$position = $this->get_position();
 
-		return [
+		$data = [
+			'mode' => $this->mode,
 			'entry_id' => $this->get_entry_id(),
-			'field_id' => $this->get_field_id(),
-			'lat'      => $position[0],
-			'long'     => $position[1],
-			'icon'     => $this->get_icon( true ),
-			'url'      => $this->get_entry_url(),
-			'content'  => $this->get_infowindow_content()
+			'address_field_id' => null,
+			'lat_field_id' => null,
+			'long_field_id' => null,
+			'lat' => $position[0],
+			'long' => $position[1],
+			'icon' => $this->get_icon( true ),
+			'url' => $this->get_entry_url(),
+			'content' => $this->get_infowindow_content(),
 		];
+
+		if ( static::MODE_ADDRESS === $this->mode ) {
+			$data['address_field_id'] = $this->get_address_field()->id;
+		}
+
+		if ( static::MODE_COORDINATES === $this->mode ) {
+			$data['lat_field_id']  = $this->get_lat_field()->id;
+			$data['long_field_id'] = $this->get_long_field()->id;
+		}
+
+		return $data;
 	}
 
 	/**
@@ -124,18 +339,16 @@ class Marker {
 	 * To be valid it needs to have a field, entry and valid position.
 	 * Position 0,0 is also invalid, Null Island.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @return bool
 	 */
 	public function is_valid(): bool {
-		if ( empty( $this->field ) ) {
-			return false;
-		}
+		if ( in_array( $this->mode, [] ) )
 
-		if ( empty( $this->entry ) ) {
-			return false;
-		}
+			if ( empty( $this->entry ) ) {
+				return false;
+			}
 
 		$position = $this->get_position();
 
@@ -147,7 +360,7 @@ class Marker {
 			return false;
 		}
 
-		if (  empty( $position[0] ) ) {
+		if ( empty( $position[0] ) ) {
 			return false;
 		}
 
@@ -156,6 +369,24 @@ class Marker {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Gets a unique ID for this marker.
+	 *
+	 * @since 2.2
+	 *
+	 * @return string
+	 */
+	public function get_id(): string {
+		if ( $this->mode === static::MODE_ADDRESS ) {
+			$id = $this->get_address_field()->id;
+		} elseif ( $this->mode === static::MODE_COORDINATES ) {
+			$id = $this->get_lat_field()->id . '-' . $this->get_long_field()->id;
+		} else {
+			$id = substr( md5( wp_generate_uuid4() ), 0, 8 );
+		}
+		return sprintf( '%s-%s', $this->get_entry_id(), $id );
 	}
 
 	/**
@@ -190,6 +421,18 @@ class Marker {
 	 */
 	public function set_entry( $entry ) {
 		$this->entry = $entry;
+		$this->set_entry_url();
+	}
+
+	/**
+	 * Gets the Entry ID of the marker.
+	 *
+	 * @since 2.2
+	 *
+	 * @return mixed
+	 */
+	public function get_entry_id() {
+		return $this->entry['id'] ?? null;
 	}
 
 	/**
@@ -200,23 +443,39 @@ class Marker {
 	}
 
 	/**
+	 *
+	 * @since 1.0.4
+	 * @since 2.2 Actually being used and now uses the filter.
+	 *
 	 * @param string $address
 	 */
-	public function set_address( $address ) {
-		$this->address = $address;
+	public function set_address( string $address ): void {
+		/**
+		 * @filter `gravityview/maps/marker/address` Filter the address value.
+		 *
+		 * @since  1.0.4
+		 * @since  1.6
+		 * @since  TBD Pass $marker object as the fourth parameter.
+		 *
+		 * @param string           $address Address value.
+		 * @param array            $entry   Gravity Forms entry object.
+		 * @param GF_Field_Address $field   GF Field array.
+		 * @param Marker           $marker  Marker object.
+		 */
+		$this->address = apply_filters( 'gravityview/maps/marker/address', $address, $this->get_entry(), $this->get_address_field(), $this );
 	}
 
 	/**
-	 * @return array
+	 * @return ?array
 	 */
-	public function get_position() {
+	public function get_position(): ?array {
 		return $this->position;
 	}
 
 	/**
-	 * @param string $address
+	 * @param ?array $position
 	 */
-	public function set_position( $position ) {
+	public function set_position( ?array $position ): void {
 		$this->position = $position;
 	}
 
@@ -228,65 +487,78 @@ class Marker {
 	}
 
 	/**
-	 * @param $entry
+	 * Set the entry url.
 	 *
-	 * @return string
+	 * @since 2.2 Removed $entry parameter, uses the current entry.
+	 *
+	 * @param null $__deprecated Deprecated parameter.
+	 *
+	 * @return void
 	 */
-	public function set_entry_url( $entry ) {
+	public function set_entry_url( $__deprecated = null ): void {
+		if ( ! empty( $__deprecated ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', 'The entry url is now based on the current entry.' );
+		}
+
 		if ( ! function_exists( 'gv_entry_link' ) ) {
 			$url = '';
 		} else {
-			$url = gv_entry_link( $entry );
+			$url = gv_entry_link( $this->get_entry() );
 		}
 
 		/**
 		 * @filter `gravityview/maps/marker/url` Filter the marker single entry view url
-		 * @since  1.4
 		 *
-		 * @param string $url   Single entry view url
-		 * @param array  $entry Gravity Forms entry object
+		 * @since  1.4
+		 * @since  TBD Added `$marker` parameter.
+		 *
+		 * @param string $url    Single entry view url
+		 * @param array  $entry  Gravity Forms entry object
+		 * @param Marker $marker Marker object
 		 */
-		$url = apply_filters( 'gravityview/maps/marker/url', $url, $entry );
+		$url = apply_filters( 'gravityview/maps/marker/url', $url, $this->get_entry(), $this );
 
-		return $url;
+		if ( is_array( $url ) ) {
+			$url = reset( $url );
+		}
+
+		// Cast as string to avoid possible errors.
+		$this->entry_url = (string) $url;
 	}
 
 	/**
 	 * Return ID of the field that's used to generate the marker
 	 *
-	 * @since 1.6
+	 * @since      1.6
+	 * @deprecated TBD Deprecated in favor of `get_id()`
 	 *
 	 * @return integer
 	 */
 	public function get_field_id() {
-		if ( empty( $this->field ) ) {
-			return null;
-		}
-
-		if ( is_array( $this->field ) && ! empty( $this->field['id'] ) ) {
-			return $this->field['id'];
-		}
-
-		if ( ! is_object( $this->field ) ) {
-			return null;
-		}
-
-		return $this->field->id;
+		return $this->get_id();
 	}
 
 	/**
-	 * @return mixed
+	 * Sets the infowindow HTML Content to be used by this marker.
+	 *
+	 * @since 1.6
+	 *
+	 * @param ?string $content
+	 *
+	 * @return void
 	 */
-	public function get_entry_id() {
-		return $this->entry['id'];
-	}
-
-
-	public function set_infowindow_content( $content ) {
+	public function set_infowindow_content( ?string $content ): void {
 		$this->infowindow = $content;
 	}
 
-	public function get_infowindow_content() {
+	/**
+	 * Gets the infowindow HTML Content to be used by this marker.
+	 *
+	 * @since 1.6
+	 *
+	 * @return ?string
+	 */
+	public function get_infowindow_content(): ?string {
 		return $this->infowindow;
 	}
 
@@ -303,10 +575,10 @@ class Marker {
 	private function remove_default_address_inputs( $field_value, $field ) {
 		$return_value = (array) $field_value;
 
-		$available_defaults = array(
-			$field->id . '.4' => array( rgobj( $field, 'defaultState' ), rgobj( $field, 'defaultProvince' ) ),
-			$field->id . '.6' => array( rgobj( $field, 'defaultCountry' ) ),
-		);
+		$available_defaults = [
+			$field->id . '.4' => [ rgobj( $field, 'defaultState' ), rgobj( $field, 'defaultProvince' ) ],
+			$field->id . '.6' => [ rgobj( $field, 'defaultCountry' ) ],
+		];
 
 		foreach ( $available_defaults as $input_id => $defaults ) {
 
@@ -326,12 +598,25 @@ class Marker {
 	/**
 	 * Generate a string address with no line breaks from field
 	 *
-	 * @param array            $entry GF Entry array
-	 * @param GF_Field_Address $field GF Field array
+	 * @since 2.2 Deprecated both params;
 	 *
-	 * @return string|array|null Null if field value is empty. Single line address otherwise (Eg: "123 Pleasant Street Example NM 12345 USA"). Could be array if users use non-Address fields to override output.
+	 * @param null $__deprecated_one Deprecated.
+	 * @param null $__deprecated_two Deprecated.
+	 *
+	 * @return void
 	 */
-	protected function generate_address( $entry, $field ) {
+	protected function generate_address( $__deprecated_one = null, $__deprecated_two = null ): void {
+		if ( ! empty( $__deprecated_one ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+		}
+
+		if ( ! empty( $__deprecated_two ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$position_field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+		}
+
+		$entry = $this->get_entry();
+		$field = $this->get_address_field();
+
 		// Get the address fields as an array (1.3, 1.6, etc.)
 		$field_value = GFFormsModel::get_lead_field_value( $entry, $field );
 
@@ -352,18 +637,20 @@ class Marker {
 		 * @filter `gravityview/maps/marker/field-value` Modify the address field value before processing
 		 * Useful if you want to prevent
 		 *
-		 * @param array $entry Gravity Forms entry used for the marker
-		 * @param GF_Field_Address Gravity Forms Address field object used for the marker
+		 * @param mixed            $field_value The address field value.
+		 * @param array            $entry       Gravity Forms entry used for the marker
+		 * @param GF_Field_Address $field       Gravity Forms Address field object used for the marker
 		 */
 		$field_value = apply_filters( 'gravityview/maps/marker/field-value', $field_value, $entry, $field );
 
 		if ( empty( $field_value ) ) {
-			return null;
+			return;
 		}
 
 		// Further processing is only required for fields with address type
 		if ( 'address' !== $field->type ) {
-			return $field_value;
+			$this->set_address( $field_value );
+			return;
 		}
 
 		// Get the text output (without map link)
@@ -388,31 +675,34 @@ class Marker {
 
 		$address = trim( $address );
 
-		/**
-		 * @filter `gravityview/maps/marker/address` Filter the address value
-		 * @since  1.0.4
-		 * @since  1.6
-		 *
-		 * @param string           $address Address value
-		 * @param array            $entry   Gravity Forms entry object
-		 * @param GF_Field_Address $field   GF Field array
-		 */
-		$address = apply_filters( 'gravityview/maps/marker/address', $address, $entry, $field );
-
-		return $address;
+		$this->set_address( $address );
 	}
 
 	/**
 	 * Generate the marker position (Lat & Long) based on an address field
 	 *
-	 * @param array $entry GF Entry array
-	 * @param array $field GF Field array
+	 * @since 2.2 Deprecated both params;
 	 *
-	 * @return array|\Geocoder\Exception\ExceptionInterface 0 => Latitude / 1 => Longitude or Exception, if failure
+	 * @param null $__deprecated_one Deprecated.
+	 * @param null $__deprecated_two Deprecated.
+	 *
+	 * @return void
 	 */
-	protected function generate_position_from_address( $entry, $field ) {
-		if ( empty( $this->address ) ) {
-			return array();
+	protected function generate_position_from_address( $__deprecated_one = null, $__deprecated_two = null ): void {
+		if ( ! empty( $__deprecated_one ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+		}
+
+		if ( ! empty( $__deprecated_two ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+		}
+
+		$entry   = $this->get_entry();
+		$field   = $this->get_address_field();
+		$address = $this->get_address();
+
+		if ( empty( $address ) ) {
+			return;
 		}
 
 		$position = $this->cache->get_cache_position( $entry['id'], $field->id );
@@ -421,21 +711,20 @@ class Marker {
 		if ( empty( $position ) ) {
 
 			if ( $has_error = $this->cache->get_cache_error( $entry['id'], $field['id'] ) ) {
-				return array();
+				return;
 			}
 
-			$position = $this->fetch_position( $this->address );
+			$position = $this->fetch_position( $address );
 
 			if ( $position instanceof \GravityKit\GravityMaps\Geocoder\Exception\ExceptionInterface ) {
 				$this->cache->set_cache_error( $entry['id'], $field['id'], $position, $entry['form_id'] );
-
-				return array();
+				return;
 			}
 
 			$this->cache->set_cache_position( $entry['id'], $field['id'], $position, $entry['form_id'] );
 		}
 
-		return $position;
+		$this->set_position( $position );
 	}
 
 	/**
@@ -462,21 +751,28 @@ class Marker {
 
 	/**
 	 * Generate the marker position (Lat & Long) based on form fields
+	 * E.g.: $position = [ 0 => Latitude, 1 => Longitude ];
 	 *
-	 * @param array $entry GF Entry array
-	 * @param array $field GF Field array
 	 *
-	 * @return array 0 => Latitude / 1 => Longitude
+	 * @since 2.2 Deprecated both params, use the entry object instead and the get_lat_field() and get_long_field() methods.
+	 *
+	 * @param null $__deprecated_one Deprecated.
+	 * @param null $__deprecated_two Deprecated.
+	 *
+	 * @return void
 	 */
-	protected function generate_position_from_coordinates( $entry, $fields ) {
-		$position = array();
-
-		if ( ! empty( $fields ) && is_array( $fields ) ) {
-			foreach ( $fields as $field ) {
-				$position[] = GFFormsModel::get_lead_field_value( $entry, $field );
-			}
+	protected function generate_position_from_coordinates( $__deprecated_one = null, $__deprecated_two = null ): void {
+		if ( ! empty( $__deprecated_one ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
-		return $position;
+		if ( ! empty( $__deprecated_two ) ) {
+			_deprecated_argument( __METHOD__, 'TBD', '$field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+		}
+
+		$this->position = [
+			GFFormsModel::get_lead_field_value( $this->get_entry(), $this->get_lat_field() ),
+			GFFormsModel::get_lead_field_value( $this->get_entry(), $this->get_long_field() ),
+		];
 	}
 }

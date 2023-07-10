@@ -45,11 +45,27 @@ function essb_get_custom_profile_button_settings($network_id = '') {
 }
 
 function essb_remove_custom_profile_button($network_id = '') {
-	$buttons = essb_get_custom_buttons();
+    $buttons = essb_get_custom_profile_buttons();
 
 	if (isset($buttons[$network_id])) {
 		unset ($buttons[$network_id]);
 	}
 
-	essb_save_custom_buttons($buttons);
+	essb_save_custom_profile_buttons($buttons);
+}
+
+function essb_remove_all_custom_profile_buttons() {
+    delete_option(ESSB_CUSTOM_PROFILE_BUTTONS);    
+}
+
+
+function essb_create_custom_profile_button($obj) {
+    $network_id = isset($obj['network_id']) ? $obj['network_id'] : '';
+    
+    if (!empty($network_id)) {
+        $buttons = essb_get_custom_profile_buttons();
+        $buttons[$network_id] = $obj;
+        
+        essb_save_custom_profile_buttons($buttons);
+    }
 }

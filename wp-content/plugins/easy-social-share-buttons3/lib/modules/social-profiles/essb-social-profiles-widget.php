@@ -39,6 +39,7 @@ class ESSBSocialProfilesWidget extends WP_Widget {
 				'nospace' => 0,
 				'show_title' => 1,
 				'cta' => 0,
+		        'cta_number' => 0,
 				'cta_vertical' => 0,
 				'custom_list' => 0
 		);
@@ -152,6 +153,11 @@ foreach ($columns as $key => $text) {
 </p>
 
 <p>
+  <label for="<?php echo $this->get_field_id( 'cta_number' ); ?>"><?php echo esc_html__( 'Show numbers with the buttons' , 'essb' ); ?>:</label>
+  <input type="checkbox" name="<?php echo $this->get_field_name( 'cta_number' ); ?>" id="<?php echo $this->get_field_id( 'cta_number' ); ?>" value="1" <?php if ( 1 == $instance['cta_number'] ) { echo ' checked="checked"'; } ?> />
+</p>
+
+<p>
   <label for="<?php echo $this->get_field_id( 'cta' ); ?>"><?php echo esc_html__( 'Show texts with the buttons' , 'essb' ); ?>:</label>
   <input type="checkbox" name="<?php echo $this->get_field_name( 'cta' ); ?>" id="<?php echo $this->get_field_id( 'cta' ); ?>" value="1" <?php if ( 1 == $instance['cta'] ) { echo ' checked="checked"'; } ?> />
 </p>
@@ -172,6 +178,7 @@ foreach ($columns as $key => $text) {
 		foreach (essb_available_social_profiles() as $network => $display) {
 			$network_value = $instance['profile_'.$network];
 			$network_text = $instance['profile_text_'.$network];
+			$network_number = isset($instance['profile_count_' . $network]) ? $instance['profile_count_' . $network] : '';
 			?>
 <p>
   <label for="<?php echo $this->get_field_id('profile_'.$network ); ?>"><?php echo esc_html__( $display , 'essb' ); ?>:</label>
@@ -180,6 +187,11 @@ foreach ($columns as $key => $text) {
 <p>
   <label for="<?php echo $this->get_field_id('profile_text_'.$network ); ?>"><?php echo $display . esc_html__( ' custom text' , 'essb' ); ?>:</label>
   <input type="text" name="<?php echo $this->get_field_name( 'profile_text_'.$network ); ?>" id="<?php echo $this->get_field_id( 'profile_text_'.$network ); ?>" class="widefat" value="<?php echo $network_text ?>" />
+</p>
+
+<p>
+  <label for="<?php echo $this->get_field_id('profile_count_'.$network ); ?>"><?php echo $display . esc_html__( ' custom number' , 'essb' ); ?>:</label>
+  <input type="text" name="<?php echo $this->get_field_name( 'profile_count_'.$network ); ?>" id="<?php echo $this->get_field_id( 'profile_count_'.$network ); ?>" class="widefat" value="<?php echo $network_number ?>" />
 </p>
 
 
@@ -211,10 +223,12 @@ foreach ($columns as $key => $text) {
 		$instance['cta'] = $new_instance['cta'];
 		$instance['cta_vertical'] = $new_instance['cta_vertical'];
 		$instance['custom_list'] = $new_instance['custom_list'];		
+		$instance['cta_number'] = $new_instance['cta_number'];
 		
 		foreach ($profile_networks as $network) {
 			$instance['profile_'.$network] = $new_instance['profile_'.$network];
 			$instance['profile_text_'.$network] = $new_instance['profile_text_'.$network];
+			$instance['profile_count_'.$network] = $new_instance['profile_count_'.$network];
 		}
 
 		
@@ -246,6 +260,7 @@ foreach ($columns as $key => $text) {
 		$sc_nospace = $instance['nospace'];
 		
 		$sc_cta = $instance['cta'];
+		$sc_cta_number = $instance['cta_number'];
 		$sc_cta_vertical = $instance['cta_vertical'];
 		
 		if (!empty($sc_nospace) && $sc_nospace != '0') {
@@ -262,6 +277,13 @@ foreach ($columns as $key => $text) {
 		}
 		else {
 			$sc_cta = "no";
+		}
+		
+		if (!empty($sc_cta_number) && $sc_cta_number != '0') {
+		    $sc_cta_number = "yes";
+		}
+		else {
+		    $sc_cta_number = "no";
 		}
 		
 		if (!empty($sc_cta_vertical) && $sc_cta_vertical != '0') {
@@ -303,6 +325,13 @@ foreach ($columns as $key => $text) {
 			}
 			
 			$profile_networks = $profiles_order;
+		}
+		
+		/**
+		 * @since 8.5 Prevent showing in the Profiles widget a warning message if there are no active networks
+		 */
+		if (!is_array($profile_active_networks)) {
+		    $profile_active_networks = array();
 		}
 		
 		$sc_network_address = array();
@@ -358,6 +387,7 @@ foreach ($columns as $key => $text) {
 				'columns' => $sc_columns,
 				'cta' => $sc_cta,
 				'cta_vertical' => $sc_cta_vertical,
+				'cta_number' => $sc_cta_number,
 				'size' => $sc_size,
 				'align' => $sc_align
 		);

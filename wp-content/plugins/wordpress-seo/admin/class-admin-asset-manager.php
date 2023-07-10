@@ -236,46 +236,62 @@ class WPSEO_Admin_Asset_Manager {
 			'classic-editor',
 			'post-edit',
 			'help-scout-beacon',
+			'redirect-old-features-tab',
 		];
 		$additional_dependencies = [
-			'analysis-worker'    => [ self::PREFIX . 'analysis-package' ],
-			'api-client'         => [ 'wp-api' ],
-			'dashboard-widget'   => [ self::PREFIX . 'api-client' ],
-			'elementor'          => [
+			'analysis-worker'          => [ self::PREFIX . 'analysis-package' ],
+			'api-client'               => [ 'wp-api' ],
+			'crawl-settings'           => [ 'jquery' ],
+			'dashboard-widget'         => [ self::PREFIX . 'api-client' ],
+			'wincher-dashboard-widget' => [ self::PREFIX . 'api-client' ],
+			'editor-modules'           => [ 'jquery' ],
+			'elementor'                => [
 				self::PREFIX . 'api-client',
 				self::PREFIX . 'externals-components',
 				self::PREFIX . 'externals-contexts',
 				self::PREFIX . 'externals-redux',
 			],
-			'indexation'         => [
+			'indexation'               => [
 				'jquery-ui-core',
 				'jquery-ui-progressbar',
 			],
-			'post-edit'          => [
+			'first-time-configuration' => [
+				self::PREFIX . 'api-client',
+				self::PREFIX . 'externals-components',
+				self::PREFIX . 'externals-contexts',
+				self::PREFIX . 'externals-redux',
+			],
+			'integrations-page'        => [
+				self::PREFIX . 'api-client',
+				self::PREFIX . 'externals-components',
+				self::PREFIX . 'externals-contexts',
+				self::PREFIX . 'externals-redux',
+			],
+			'post-edit'                => [
 				self::PREFIX . 'api-client',
 				self::PREFIX . 'block-editor',
 				self::PREFIX . 'externals-components',
 				self::PREFIX . 'externals-contexts',
 				self::PREFIX . 'externals-redux',
-				self::PREFIX . 'select2',
 			],
-			'reindex-links'      => [
+			'reindex-links'            => [
 				'jquery-ui-core',
 				'jquery-ui-progressbar',
 			],
-			'settings'           => [
+			'settings'                 => [
 				'jquery-ui-core',
 				'jquery-ui-progressbar',
 				self::PREFIX . 'api-client',
-				self::PREFIX . 'select2',
+				self::PREFIX . 'externals-components',
+				self::PREFIX . 'externals-contexts',
+				self::PREFIX . 'externals-redux',
 			],
-			'term-edit'          => [
+			'term-edit'                => [
 				self::PREFIX . 'api-client',
 				self::PREFIX . 'classic-editor',
 				self::PREFIX . 'externals-components',
 				self::PREFIX . 'externals-contexts',
 				self::PREFIX . 'externals-redux',
-				self::PREFIX . 'select2',
 			],
 		];
 
@@ -307,14 +323,12 @@ class WPSEO_Admin_Asset_Manager {
 				'header_scripts'  => $header_scripts,
 			]
 		);
-		$select2_scripts  = $this->load_select2_scripts();
 		$renamed_scripts  = $this->load_renamed_scripts();
 
 		$scripts = array_merge(
 			$plugin_scripts,
 			$external_scripts,
 			$language_scripts,
-			$select2_scripts,
 			$renamed_scripts
 		);
 
@@ -444,60 +458,6 @@ class WPSEO_Admin_Asset_Manager {
 	}
 
 	/**
-	 * Loads the select2 scripts.
-	 *
-	 * @return array {
-	 *     The scripts to be registered.
-	 *
-	 *     @type string   $name      The name of the asset.
-	 *     @type string   $src       The src of the asset.
-	 *     @type string[] $deps      The dependenies of the asset.
-	 *     @type bool     $in_footer Whether or not the asset should be in the footer.
-	 * }
-	 */
-	protected function load_select2_scripts() {
-		$scripts          = [];
-		$select2_language = 'en';
-		$user_locale      = \get_user_locale();
-		$language         = WPSEO_Language_Utils::get_language( $user_locale );
-
-		if ( file_exists( WPSEO_PATH . "js/dist/select2/i18n/{$user_locale}.js" ) ) {
-			$select2_language = $user_locale; // Chinese and some others use full locale.
-		}
-		elseif ( file_exists( WPSEO_PATH . "js/dist/select2/i18n/{$language}.js" ) ) {
-			$select2_language = $language;
-		}
-
-		$scripts['select2']              = [
-			'name'    => 'select2',
-			'src'     => false,
-			'deps'    => [
-				self::PREFIX . 'select2-translations',
-				self::PREFIX . 'select2-core',
-			],
-		];
-		$scripts['select2-core']         = [
-			'name'    => 'select2-core',
-			'src'     => 'select2/select2.full.min.js',
-			'deps'    => [
-				'jquery',
-			],
-			'version' => '4.0.13',
-		];
-		$scripts['select2-translations'] = [
-			'name'    => 'select2-translations',
-			'src'     => 'select2/i18n/' . $select2_language . '.js',
-			'deps'    => [
-				'jquery',
-				self::PREFIX . 'select2-core',
-			],
-			'version' => '4.0.13',
-		];
-
-		return $scripts;
-	}
-
-	/**
 	 * Loads the scripts that should be renamed for BC.
 	 *
 	 * @return array {
@@ -588,7 +548,6 @@ class WPSEO_Admin_Asset_Manager {
 				'name' => 'metabox-css',
 				'src'  => 'metabox-' . $flat_version,
 				'deps' => [
-					self::PREFIX . 'select2',
 					self::PREFIX . 'admin-css',
 					'wp-components',
 				],
@@ -613,19 +572,8 @@ class WPSEO_Admin_Asset_Manager {
 				'src'  => 'metabox-primary-category-' . $flat_version,
 			],
 			[
-				'name'    => 'select2',
-				'src'     => 'select2/select2',
-				'suffix'  => '.min',
-				'version' => '4.0.13',
-				'rtl'     => false,
-			],
-			[
 				'name' => 'admin-global',
 				'src'  => 'admin-global-' . $flat_version,
-			],
-			[
-				'name' => 'yoast-components',
-				'src'  => 'yoast-components-' . $flat_version,
 			],
 			[
 				'name' => 'extensions',
@@ -639,13 +587,6 @@ class WPSEO_Admin_Asset_Manager {
 				'src'  => 'filter-explanation-' . $flat_version,
 			],
 			[
-				'name' => 'search-appearance',
-				'src'  => 'search-appearance-' . $flat_version,
-				'deps' => [
-					self::PREFIX . 'monorepo',
-				],
-			],
-			[
 				'name' => 'monorepo',
 				'src'  => 'monorepo-' . $flat_version,
 			],
@@ -655,22 +596,39 @@ class WPSEO_Admin_Asset_Manager {
 				'deps' => [ 'wp-edit-blocks' ],
 			],
 			[
-				'name' => 'schema-blocks',
-				'src'  => 'schema-blocks-' . $flat_version,
-			],
-			[
 				'name' => 'elementor',
 				'src'  => 'elementor-' . $flat_version,
 			],
 			[
-				'name' => 'workouts',
-				'src'  => 'workouts-' . $flat_version,
-				'deps' => [ self::PREFIX . 'monorepo' ],
+				'name' => 'tailwind',
+				'src'  => 'tailwind-' . $flat_version,
 			],
 			[
-				'name' => 'installation-success',
-				'src'  => 'installation-success-' . $flat_version,
-				'deps' => [ self::PREFIX . 'monorepo' ],
+				'name' => 'new-settings',
+				'src'  => 'new-settings-' . $flat_version,
+			],
+			[
+				'name' => 'academy',
+				'src'  => 'academy-' . $flat_version,
+			],
+			[
+				'name' => 'support',
+				'src'  => 'support-' . $flat_version,
+			],
+			[
+				'name' => 'workouts',
+				'src'  => 'workouts-' . $flat_version,
+				'deps' => [
+					self::PREFIX . 'monorepo',
+				],
+			],
+			[
+				'name' => 'inside-editor',
+				'src'  => 'inside-editor-' . $flat_version,
+			],
+			[
+				'name' => 'editor',
+				'src'  => 'editor-' . $flat_version,
 			],
 		];
 	}

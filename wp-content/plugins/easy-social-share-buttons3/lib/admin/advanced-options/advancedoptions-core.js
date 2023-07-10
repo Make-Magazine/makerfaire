@@ -488,6 +488,130 @@ jQuery(document).ready(function($){
 				} // type == 'value'
 			}
 		}
+		
+		/**
+		 * SVG Upload
+		 */
+		$('.ao-import-svg-icon').on('click', function(e) {
+			e.preventDefault();
+			
+			var filePicker = $(this).data('picker') || '',
+				contentFor = $(this).data('for') || '';		
+			
+			if (document.querySelector('#' + filePicker)) {
+				
+				document.querySelector('#' + filePicker).addEventListener('change', function (e) {
+					var sender = e.target,
+						contentFor = sender.getAttribute('data-for') || '',
+						reader = new FileReader(),
+						file = sender.files[0];
+					
+					reader.onload = function (e) {
+	                    if (contentFor != '' && document.querySelector('#' + contentFor))
+	                    	document.querySelector('#' + contentFor).value = reader.result;
+	                }
+
+	                reader.readAsText(file);
+	                sender.value = '';				
+	
+	            });
+				
+				document.querySelector('#' + filePicker).setAttribute('data-for', contentFor);
+				document.querySelector('#' + filePicker).click();
+			}
+		});
+		
+		/**
+		 * NetworkID generation
+		 */
+		if ($('#essb_options_network_id').length && $('#essb_options_name').length) {
+			$('#essb_options_name').on('change', function() {
+				var name = $(this).val(),
+					allowed = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0','1','2', '3', '4', '5', '6', '7','8', '9', '_'];
+				if (name != '' && $('#essb_options_network_id').val() == '') {
+					name = name.toLowerCase().replace(/ /g, '');
+					var networkID = '', keys = name.split('');
+					
+					for (let i=0;i<keys.length;i++) {
+						if (allowed.indexOf(keys[i]) > -1) networkID += keys[i];
+					}
+					
+					$('#essb_options_network_id').val(networkID);
+				}
+			});
+		}
+		
+		/**
+		 * Import custom network button
+		 */
+		$('.ao-save-import-followcustom-button').on('click', function(e) {
+			var network_code = $('#essb_options_input_profiles_network_code').val();
+			if (!network_code || network_code == '') {
+				swal("Error", "You did not provide a network import code!", "error");
+				return;
+			}
+			
+			var remotePost = { 'network_code': network_code};
+
+			essbAdvancedOptions.post('import_profiles_network', remotePost, function(data) {
+				$.toast({
+				    heading: 'Finished importing the network code. Settings screen will reload. If everything is OK you will see the new network in the list.',
+				    showHideTransition: 'fade',
+				    icon: 'success',
+				    position: 'bottom-right',
+				    hideAfter: 5000
+				});
+
+				setTimeout(function(){
+					if (!essb_advancedopts_reloadurl) return;
+					var reload = essb_advancedopts_reloadurl,
+						section = $('#section').val(),
+						subsection = $('#subsection').val();
+
+					window.location.href = reload + (section != '' ? '&section='+section : '') + (subsection != '' ? '&subsection='+subsection : '');
+				}, 2000);
+			});
+		});
+		
+		$('.ao-save-import-sharecustom-button').on('click', function(e) {
+			var network_code = $('#essb_options_input_share_network_code').val();
+			if (!network_code || network_code == '') {
+				swal("Error", "You did not provide a network import code!", "error");
+				return;
+			}
+			
+			var remotePost = { 'network_code': network_code};
+
+			essbAdvancedOptions.post('import_share_network', remotePost, function(data) {
+				$.toast({
+				    heading: 'Finished importing the network code. Settings screen will reload. If everything is OK you will see the new network in the list.',
+				    showHideTransition: 'fade',
+				    icon: 'success',
+				    position: 'bottom-right',
+				    hideAfter: 5000
+				});
+
+				setTimeout(function(){
+					if (!essb_advancedopts_reloadurl) return;
+					var reload = essb_advancedopts_reloadurl,
+						section = $('#section').val(),
+						subsection = $('#subsection').val();
+
+					window.location.href = reload + (section != '' ? '&section='+section : '') + (subsection != '' ? '&subsection='+subsection : '');
+				}, 2000);
+			});
+		});		
+		
+		if ($('#essb_options_export_profiles_output_code').length) {
+			$('#essb_options_export_profiles_output_code').focus();
+			$('#essb_options_export_profiles_output_code').select();
+		}
+		
+		if ($('#essb_options_export_share_output_code').length) {
+			$('#essb_options_export_share_output_code').focus();
+			$('#essb_options_export_share_output_code').select();
+		}
+		
 		// end conditions
 	}
 
@@ -615,6 +739,50 @@ jQuery(document).ready(function($){
 		essbAdvancedOptions.post('remove_custom_profile_button', remotePost, function(data) {
 			$.toast({
 			    heading: 'Custom button is removed! The settings screen will reload to update the values.',
+			    showHideTransition: 'fade',
+			    icon: 'success',
+			    position: 'bottom-right',
+			    hideAfter: 5000
+			});
+
+			setTimeout(function(){
+				if (!essb_advancedopts_reloadurl) return;
+				var reload = essb_advancedopts_reloadurl,
+					section = $('#section').val(),
+					subsection = $('#subsection').val();
+
+				window.location.href = reload + (section != '' ? '&section='+section : '') + (subsection != '' ? '&subsection='+subsection : '');
+			}, 2000);
+		});
+	}
+	
+	essbAdvancedOptions.removeAllCustomShareButtons = function() {
+		var remotePost = { };
+		essbAdvancedOptions.post('remove_all_custom_share_buttons', remotePost, function(data) {
+			$.toast({
+			    heading: 'All custom networks are removed. The settings screen will reload.',
+			    showHideTransition: 'fade',
+			    icon: 'success',
+			    position: 'bottom-right',
+			    hideAfter: 5000
+			});
+
+			setTimeout(function(){
+				if (!essb_advancedopts_reloadurl) return;
+				var reload = essb_advancedopts_reloadurl,
+					section = $('#section').val(),
+					subsection = $('#subsection').val();
+
+				window.location.href = reload + (section != '' ? '&section='+section : '') + (subsection != '' ? '&subsection='+subsection : '');
+			}, 2000);
+		});
+	}
+	
+	essbAdvancedOptions.removeAllCustomFollowButtons = function() {
+		var remotePost = { };
+		essbAdvancedOptions.post('remove_all_custom_profile_buttons', remotePost, function(data) {
+			$.toast({
+			    heading: 'All custom networks are removed. The settings screen will reload.',
 			    showHideTransition: 'fade',
 			    icon: 'success',
 			    position: 'bottom-right',
@@ -1139,6 +1307,42 @@ jQuery(document).ready(function($){
 		essbAdvancedOptions.show('manage-follow-buttons', true, title, false, { 'network': network });
 
 	});
+	
+	//ao-import-followcustom-button
+	$('.ao-import-followcustom-button').on('click', function(e){
+		e.preventDefault();
+
+		var network = $(this).data('network') || '',
+			title = $(this).data('title') || '';
+		essbAdvancedOptions.show('export-follow-buttons', false, title, true, { 'network': network, 'network_mode': 'import' }, 500);
+
+	});
+	$('.ao-export-followcustom-button').on('click', function(e){
+		e.preventDefault();
+
+		var network = $(this).data('network') || '',
+			title = $(this).data('title') || '';
+		essbAdvancedOptions.show('export-follow-buttons', false, title, true, { 'network': network, 'network_mode': 'export' }, 500);
+
+	});
+	
+	$('.ao-export-sharecustom-button').on('click', function(e){
+		e.preventDefault();
+
+		var network = $(this).data('network') || '',
+			title = $(this).data('title') || '';
+		essbAdvancedOptions.show('export-share-buttons', false, title, true, { 'network': network, 'network_mode': 'export' }, 500);
+
+	});
+	
+	$('.ao-import-sharecustom-button').on('click', function(e){
+		e.preventDefault();
+
+		var network = $(this).data('network') || '',
+			title = $(this).data('title') || '';
+		essbAdvancedOptions.show('export-share-buttons', false, title, true, { 'network': network, 'network_mode': 'import' }, 500);
+
+	});
 
 	$('.ao-remove-sharecustom-button').on('click', function(e) {
 		e.preventDefault();
@@ -1177,6 +1381,42 @@ jQuery(document).ready(function($){
 			});
 
 	});
+	
+	$('.ao-deleteall-followcustom-button').on('click', function(e) {
+		e.preventDefault();
+
+		var title = $(this).data('title') || '';
+
+		swal({ title: "Are you sure?",
+			  text: "You are about to delete all custom profile networks. This action can't be undone and the only way to recover a network is to create it again.",
+			  icon: "warning",
+			  buttons: true,
+			  dangerMode: true,
+			}).then((willDelete) => {
+			  if (willDelete) {
+				essbAdvancedOptions.removeAllCustomFollowButtons();
+			  }
+			});
+
+	});
+	
+	$('.ao-deleteall-sharecustom-button').on('click', function(e) {
+		e.preventDefault();
+
+		var title = $(this).data('title') || '';
+
+		swal({ title: "Are you sure?",
+			  text: "You are about to delete all custom profile networks. This action can't be undone and the only way to recover a network is to create it again.",
+			  icon: "warning",
+			  buttons: true,
+			  dangerMode: true,
+			}).then((willDelete) => {
+			  if (willDelete) {
+				essbAdvancedOptions.removeAllCustomShareButtons();
+			  }
+			});
+
+	});	
 	
 	$('.ao-clear-conversion-data-subscribe').on('click', function(e) {
 		e.preventDefault();
@@ -1322,6 +1562,7 @@ jQuery(document).ready(function($){
 		$('#essb_field_precompiled_resources').attr('checked', true);
 		$('#essb_options_precompiled_folder').val('uploads');
 		$('#essb_field_precompiled_unique').attr('checked', true);
+		$('#essb_field_precompiled_post').attr('checked', true);
 		$('#essb_field_load_js_async').attr('checked', true);
 		
 		if ($('.essb-control-btn-save').length) $('.essb-control-btn-save').trigger('click');
@@ -1511,7 +1752,7 @@ jQuery(document).ready(function($){
 				}
 				
 				if (!$('.ao-helpbeacon-frame').length) {
-					$('body').append('<div class="ao-helpbeacon-frame ao-helpbeacon-frame--opened"><div class="header"><div class="left col1-2"><a href="#" class="open-blank" title="Open in a new browser window"><i class="fa fa-external-link"></i> Open</a><a href="#" class="open-support" title="Get Support"><i class="fa fa-comment-o"></i> Support</a></div><div class="col1-2 right"><a href="https://docs.socialsharingplugin.com" target="_blank" class="open-docs" title="Browse documentation"><i class="fa fa-sticky-note-o"></i> Documentation</a></div></div><iframe class="" src="'+url+'"></iframe><div class="support"></div></div>')
+					$('body').append('<div class="ao-helpbeacon-frame ao-helpbeacon-frame--opened"><div class="header"><div class="left col1-2"><a href="#" class="open-blank" title="Open in a new browser window"><i class="fa fa-external-link"></i> Open</a><a href="https://my.socialsharingplugin.com" target="_blank" class="open-support" title="Get Support"><i class="fa fa-comment-o"></i> Support</a></div><div class="col1-2 right"><a href="https://docs.socialsharingplugin.com" target="_blank" class="open-docs" title="Browse documentation"><i class="fa fa-sticky-note-o"></i> Documentation</a></div></div><iframe class="" src="'+url+'"></iframe><div class="support"></div></div>')
 					
 					$('.ao-helpbeacon-frame .open-blank').on('click', function(e) {
 						e.preventDefault();
@@ -1528,14 +1769,14 @@ jQuery(document).ready(function($){
 					});
 					
 					$('.ao-helpbeacon-frame .open-support').on('click', function(e) {
-						e.preventDefault();
+						/*e.preventDefault();
 						
 						$('.ao-helpbeacon-frame iframe').hide();
 						$('.ao-helpbeacon-frame .support').show();
 						$('.ao-helpbeacon-frame .support').addClass('active');
 						$('.ao-helpbeacon-frame .support').html($('.ao-help-holder').html());
 						
-						$('.ao-helpbeacon-frame .support .support-inline').css({'width': ($('.ao-helpbeacon-frame .support').width() - 60) + 'px'});
+						$('.ao-helpbeacon-frame .support .support-inline').css({'width': ($('.ao-helpbeacon-frame .support').width() - 60) + 'px'});*/
 					});
 				}
 				else {
@@ -1646,6 +1887,8 @@ jQuery(document).ready(function($){
 					}
 				});
 			});
+			
+			
 			
 		}
 	}

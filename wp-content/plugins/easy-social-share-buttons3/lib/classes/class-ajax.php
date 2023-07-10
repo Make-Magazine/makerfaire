@@ -43,20 +43,22 @@ class ESSB_Ajax {
     }
     
     public static function do_ajax() {
-        global $wp_query;
-        
-        // phpcs:disable WordPress.Security.NonceVerification.Recommended
         if ( ! empty( $_REQUEST['essb-ajax'] ) ) {
-            $wp_query->set( 'essb-ajax', sanitize_text_field( wp_unslash( $_REQUEST['essb-ajax'] ) ) );
-        }
-        
-        $action = $wp_query->get( 'essb-ajax' );
-        
-        if ( $action ) {
-            self::ajax_headers();
-            $action = sanitize_text_field( $action );
-            do_action( 'essb_ajax_' . $action );
-            wp_die();
+            global $wp_query;
+            
+            // phpcs:disable WordPress.Security.NonceVerification.Recommended
+            if ( ! empty( $_REQUEST['essb-ajax'] ) ) {
+                $wp_query->set( 'essb-ajax', sanitize_text_field( wp_unslash( $_REQUEST['essb-ajax'] ) ) );
+            }
+            
+            $action = $wp_query->get( 'essb-ajax' );
+            
+            if ( $action ) {
+                self::ajax_headers();
+                $action = sanitize_text_field( $action );
+                do_action( 'essb_ajax_' . $action );
+                wp_die();
+            }
         }
     }
     

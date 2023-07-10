@@ -103,6 +103,11 @@
 
 						$el.attr( 'data-display', displayValue );
 
+                        // Change 'total' field that has calculation.
+                        if ( response.has_calculation ) {
+                            $el.text( displayValue );
+                        }
+
 						if ( typeof value === 'object' ) {
 						    $el.editable( 'setValue', value );
 						}
@@ -141,6 +146,9 @@
                     break;
                 case 'ymd_dot' :
                     $formatName = 'yyyy.mm.dd';
+                    break;
+                case 'fdy' :
+                    $formatName = 'MM d, yyyy';
                     break;
             }
             return $formatName;
@@ -188,6 +196,7 @@
                 savenochange: true,
             };
 
+
             // This is a datepicker field
             if ( $field.data( 'dateformat' ) ) {
                 editableOptions.format = 'yyyy-mm-dd';
@@ -196,6 +205,7 @@
                     firstDay: 1,
                     showOn: 'focus',
                 };
+                editableOptions.mode = 'popup';
             }
 
             // Set templates
@@ -249,7 +259,6 @@
 
                 // Make sure that we're passing the actual "Other" Text input value and not "gf_other_choice" that's detected by Editable
                 if ( field_type === 'radiolist' ) {
-
                     // "Other" Text input element is located multiple locations based on whether we're editing inline (there's also difference between Entries and View screens) or inside a popup
                     var popupId = $( '#' + fieldParms.name ).attr( 'aria-describedby' );
                     var $input;
@@ -274,6 +283,40 @@
                 return Object.assign( {}, defaultParams, fieldParms );
             };
 
+
+            if(field_id === 'created_by' && field_type === 'select2'){
+                editableOptions.select2 = {
+                    allowClear: true,
+                    placeholder: gv_inline_x.searchforuserstext,
+                    dropdownParent:'.editable-container',
+                    minimumInputLength: 1,
+                    width:'200px',
+                    dropdownAutoWidth: true,
+                    ajax: {
+                        url: gv_inline_x.url,
+                        dataType: 'json',
+                        type: 'POST',
+                        delay: 250,
+                        cache: true,
+                        data: function( params ) {
+                            var query = {
+                                search: params.term,
+                                action: 'gv_inline_edit_get_users',
+                                nonce: gv_inline_x.nonce
+                            }
+                            return query;
+                        },
+                    },
+                };
+    
+                editableOptions.tpl= '<select></select>';
+                editableOptions.ajaxOptions= {
+                    type: 'POST'
+                };
+            
+            }
+
+
             $field.editable( editableOptions )
 
             // For textarea fields
@@ -288,6 +331,11 @@
                 self.setGvListEmpty( $field );
             }
 
+            // File upload fields should have "{#} files" text. If not, the field is empty.
+            if( 'file' === field_type && $field.attr('multiple') && '' === $field.text() ) {
+                $field.editable( 'setValue', '' );
+            }
+
             $field.on( 'shown', self.inlineEditFieldsOnShown );
         };
 
@@ -295,6 +343,16 @@
          * Runs after all inline edit fields are shown
          */
         self.inlineEditFieldsOnShown = function ( e, editable ) {
+            
+            if($(editable.$element).hasClass('gv-inline-edit-user-select2')){
+                $(editable.input.$input).on('select2:select', function (e) {
+                    var data = e.params.data;
+                    editable.options.display = function(value,source){
+                        $(this).html(data.text);
+                    };
+                });
+            }
+
             // We're in Entries. The first column has a link, so we need to move the form up one level.
             if ( 'inline' === editable.options.mode ) {
                 if ( editable.container.$element.parents( '.column-primary' ).length ) {
@@ -308,6 +366,14 @@
             if ( 'number' === editable.input.type ) {
                 editable.input.$input.attr( 'step', 'any' );
             }
+  
+            // Prevent column editing submitting at once.
+            if(editable.input.$input.length > 0){
+                editable.input.$input[0].addEventListener("input", function() {
+                    $(this).addClass('edited-input');
+                });
+            }
+
         };
 
         /**
@@ -389,7 +455,7 @@
 
                     if ( $.isArray( hiddenFields ) ) {
                         $.each( hiddenFields, function ( i, val ) { // $.inArray does strict comparison so it'll fail
-                            if ( inputNumber == val ) {
+                            if ( parseInt( inputNumber, 10 ) === parseInt( val, 10 ) ) {
                                 disableField = true;
                             }
                         } );
@@ -617,9 +683,9 @@
                     .find( '[class^=gv-inline-editable-field]' );
 
                 $editables
-                    .editable( 'option', 'showbuttons', gv_inline_x.showbuttons )
+                    .editable( 'option', 'showbuttons', false )
                     .editable( 'option', 'mode', is_column_on ? 'inline' : gv_inline_x.mode )
-                    .editable( 'option', 'onblur', is_column_on ? 'ignore' : gv_inline_x.onblur );
+                    .editable( 'option', 'onblur', is_column_on ? 'submit' : gv_inline_x.onblur );
 
                 $( 'html, body' ).css( { overflow: 'hidden', height: '100%' } );
 
@@ -658,6 +724,13 @@
         };
 
         /**
+         * Fix select2 issue focus in 'created_by' field.
+         */
+        $(window).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
+
+        /**
          * Trigger to extend global gv_inline_x object's templates data
          */
         $( window ).on( 'gravityview-inline-edit/extend-template-data', function ( e, data ) {
@@ -670,6 +743,12 @@
         $( window ).on( 'gravityview-inline-edit/init', function () {
             $( self.init );
         } );
+
+        /**
+         * Trigger to initialize plugin on Datatables responsive mode.
+         * @since 1.4.4
+         */
+        $( window ).on( 'gravityview-datatables/event/responsive', self.init );
 
         /**
          * Initialize plugin on load if disableInitOnLoad parameter is not set

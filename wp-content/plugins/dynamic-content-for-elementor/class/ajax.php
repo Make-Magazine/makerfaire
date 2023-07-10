@@ -60,6 +60,9 @@ class Ajax
     }
     public function wpa_update_postmetas()
     {
+        if (!current_user_can('administrator')) {
+            wp_die();
+        }
         // The $_REQUEST contains all the data sent via ajax
         $post_id = 0;
         if (isset($_REQUEST['post_id'])) {
@@ -91,6 +94,9 @@ class Ajax
     }
     public function wpa_update_options()
     {
+        if (!current_user_can('administrator')) {
+            wp_die();
+        }
         // The $_REQUEST contains all the data sent via ajax
         foreach ($_REQUEST as $key => $value) {
             if ($key != 'action') {

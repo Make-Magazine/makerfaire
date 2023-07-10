@@ -57,8 +57,7 @@ class ESSBDisplayMethodPoint {
 		$point_style = "";
 		$total_style = "";
 		
-		if ($point_bgcolor != '') $point_style .= 'background-color:'.$point_bgcolor.';';
-		if ($point_color != '') $point_style .= 'color:'.$point_color.';';
+
 
 		if ($point_accentcolor != '') $total_style .= 'background-color:'.$point_accentcolor.';';
 		if ($point_altcolor != '') $total_style .= 'color:'.$point_altcolor.';';
@@ -79,7 +78,8 @@ class ESSBDisplayMethodPoint {
 		}
 		
 		$output .= '<div class="essb-point essb-point-'.esc_attr($point_position).' essb-point-'.esc_attr($point_shape).' '.esc_attr($point_animation).esc_attr($responsive_class).'" id="essb-point" data-trigger-scroll="'.esc_attr($point_open_end).'" data-point-type="'.esc_attr($point_display_style).'" data-autoclose="'.esc_attr($point_autoclose).'">';
-		$output .= '<i class="essbpb-share essb_icon_share"'.$point_style.'></i>';
+		
+		$output .= '<i class="essbpb-share essb_svg_icon_share"'.$point_style.'>'.essb_svg_icon('share').'</i>';
 		
 		if ($point_display_total) {
 			$output .= '<div class="essb-point-total"'.$total_style.'>'.$total_shares_code.'</div>';

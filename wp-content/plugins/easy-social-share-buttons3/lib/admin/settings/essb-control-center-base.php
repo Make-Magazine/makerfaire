@@ -615,7 +615,7 @@ if (!class_exists('ESSBControlCenter')) {
 		 * @return string
 		 */
 		public static function help_url() {
-			return admin_url('admin.php?page=essb_redirect_about&tab=about&about_tab=help');
+			return 'https://my.socialsharingplugin.com';
 		}
 		
 		public static function getting_started_url() {
@@ -1018,8 +1018,13 @@ if (!class_exists('ESSBControlCenter')) {
 			echo '<div class="essb-control-content">';
 		}
 		
+		public static function draw_blank_content_start_no_sidebar() {
+		    echo '<!-- Options Content -->';
+		    echo '<div class="essb-control-content essb-control-content-fullwidth">';
+		}
+		
 		public static function draw_blank_content_end() {
-			print '</div>';
+			echo '</div>';
 		}
 
 		/**
@@ -1048,7 +1053,7 @@ if (!class_exists('ESSBControlCenter')) {
 				echo '<a href="#" class="essb-control-btn essb-head-featuresbtn" id="essb-head-featuresbtn"><i class="fa fa-cog"></i><span>'.esc_html__('Activate/Deactivate Features', 'essb').'</span><span class="small-tag">'.esc_html(self::features_count()).'</span></a>';
 				
 				// Help button
-				echo '<a href="'.esc_url(self::help_url()).'" class="essb-control-btn essb-control-btn-help"><i class="fa fa-life-ring"></i><span>'.esc_html__('Get Support', 'essb').'</span></a>';
+				echo '<a href="'.esc_url(self::help_url()).'" target="_blank" class="essb-control-btn essb-control-btn-help"><i class="fa fa-life-ring"></i><span>'.esc_html__('Get Support', 'essb').'</span></a>';
 
 				// Onboarding button
 				echo '<a href="'.esc_url(self::getting_started_url()).'" class="essb-control-btn essb-control-btn-onboarding" target="_blank"><i class="fa fa-info-circle"></i><span>'.esc_html__('Getting Started', 'essb').'</span></a>';
@@ -1161,7 +1166,7 @@ if (!class_exists('ESSBControlCenter')) {
 		        echo '<a href="#" class="essb-control-btn essb-head-featuresbtn" id="essb-head-featuresbtn"><i class="fa fa-cog"></i><span>'.esc_html__('Activate/Deactivate Features', 'essb').'</span><span class="small-tag">'.esc_html(self::features_count()).'</span></a>';
 		        
 		        // Help button
-		        echo '<a href="'.esc_url(self::help_url()).'" class="essb-control-btn essb-control-btn-help"><i class="fa fa-life-ring"></i><span>'.esc_html__('Get Support', 'essb').'</span></a>';
+		        echo '<a href="'.esc_url(self::help_url()).'" target="_blank" class="essb-control-btn essb-control-btn-help"><i class="fa fa-life-ring"></i><span>'.esc_html__('Get Support', 'essb').'</span></a>';
 		        
 		        // Onboarding button
 		        echo '<a href="'.esc_url(self::getting_started_url()).'" class="essb-control-btn essb-control-btn-onboarding" target="_blank"><i class="fa fa-info-circle"></i><span>'.esc_html__('Getting Started', 'essb').'</span></a>';

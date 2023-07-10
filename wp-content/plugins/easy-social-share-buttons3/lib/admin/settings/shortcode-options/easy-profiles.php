@@ -32,20 +32,22 @@ if (!function_exists('essb_get_shortcode_options_easy_profiles')) {
 		
 		$r['cta'] = array('type' => 'checkbox', 'title' => esc_html__('Show texts with the buttons', 'essb'));
 		$r['cta_vertical'] = array('type' => 'checkbox', 'title' => esc_html__('Vertical text layout', 'essb'));
+		$r['cta_number'] = array('type' => 'checkbox', 'title' => esc_html__('Show numbers with the buttons', 'essb'));
 		
 		$r['profiles_all_networks'] = array('type' => 'checkbox', 'title' => esc_html__('Custom list of networks', 'essb'));
 		
 		$r['networks_list_start'] = array('type' => 'section-open', 'title' => 'shortcode-all-profile-networks');
 		
-		$r['networks'] = array('type' => 'networks', 'title' => esc_html__('Networks', 'essb'), 'description' => esc_html__('Change network order using the drag and drop. You should also fill the network profile links below that list.', 'essb'),
+		$r['spacer1'] = array('type' => 'separator', 'title' => esc_html__('Profile links', 'essb'), 'description' => 'Only when custom list of networks is "Yes"');
+		
+		$r['networks'] = array('type' => 'text', 'title' => esc_html__('Networks', 'essb'), 'description' => esc_html__('Setup custom network list appearance (order and used networks). Enter the network IDs (example: facebook), separated with comma (",")', 'essb'),
 				'options' => essb_available_social_profiles());
-
-		$r['spacer1'] = array('type' => 'separator', 'title' => esc_html__('Profile links', 'essb'));
 		
 		foreach (essb_available_social_profiles() as $key => $value) {
-			$r['spacer1_'.$key] = array('type' => 'separator-small', 'title' => $value);
+			$r['spacer1_'.$key] = array('type' => 'separator-small', 'title' => $value . ' (id: ' . $key . ')');
 			$r['profile_'.$key] = array('type' => 'text', 'title' => $value . esc_html__(' URL', 'essb'));
 			$r['profile_text_'.$key] = array('type' => 'text', 'title' => $value . esc_html__(' custom follow text', 'essb'));
+			$r['profile_count_'.$key] = array('type' => 'text', 'title' => $value . esc_html__(' custom number value', 'essb'));
 		}
 
 		$r['networks_list_close'] = array('type' => 'section-close');

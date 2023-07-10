@@ -109,7 +109,7 @@ if (! class_exists('ESSB_Admin_Topbar_Menu')) {
             
             $this->add_sub_menu(esc_html__('Shortcode Generator', 'essb'), esc_url(get_admin_url() . 'admin.php?page=essb_redirect_shortcode&tab=shortcode'), "essb", "essb_top_shortcodegen");
             
-            $this->add_sub_menu(esc_html__('Need help?', 'essb'), esc_url(get_admin_url() . 'admin.php?page=essb_redirect_about&tab=about&about_tab=help'), "essb", "essb_p6");
+            $this->add_sub_menu(esc_html__('Need help?', 'essb'), 'https://my.socialsharingplugin.com', "essb", "essb_p6");
             $this->add_sub_menu(esc_html__('About', 'essb'), esc_url(get_admin_url() . 'admin.php?page=essb_redirect_about&tab=about'), "essb", "essb_p101");
             
             if (! ESSBActivationManager::isActivated() && ! ESSBActivationManager::isThemeIntegrated()) {
@@ -118,7 +118,7 @@ if (! class_exists('ESSB_Admin_Topbar_Menu')) {
             }
             
             if (ESSB3_ADDONS_ACTIVE) {
-                $this->add_sub_menu(esc_html__('Extensions', 'essb'), esc_url(get_admin_url() . 'admin.php?page=essb_redirect_extensions&tab=extensions'), "essb", "essb_p7");
+                $this->add_sub_menu(esc_html__('Add-Ons', 'essb'), esc_url(get_admin_url() . 'admin.php?page=essb_redirect_addons'), "essb", "essb_p7");
             }
         }
 

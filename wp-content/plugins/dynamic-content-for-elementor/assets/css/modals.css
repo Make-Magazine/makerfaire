@@ -138,6 +138,12 @@ body.dce-modal-open, html.dce-modal-open{
 .dce-modal .close-right {
     right: 0;
 }
+
+/* button should occupy no space at all in case it's closed with X */
+.dce-modal .close-x {
+    padding: 0
+}
+
 .dce-modal .close-center {
     left: 0;
     right: 0;

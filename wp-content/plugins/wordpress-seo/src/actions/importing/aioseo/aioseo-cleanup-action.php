@@ -9,8 +9,6 @@ use Yoast\WP\SEO\Helpers\Options_Helper;
 
 /**
  * Importing action for cleaning up AIOSEO data.
- *
- * @phpcs:disable Yoast.NamingConventions.ObjectNameDepth.MaxExceeded
  */
 class Aioseo_Cleanup_Action extends Abstract_Aioseo_Importing_Action {
 
@@ -48,8 +46,8 @@ class Aioseo_Cleanup_Action extends Abstract_Aioseo_Importing_Action {
 	/**
 	 * Class constructor.
 	 *
-	 * @param wpdb           $wpdb        The WordPress database instance.
-	 * @param Options_Helper $options     The options helper.
+	 * @param wpdb           $wpdb    The WordPress database instance.
+	 * @param Options_Helper $options The options helper.
 	 */
 	public function __construct(
 		wpdb $wpdb,
@@ -110,7 +108,6 @@ class Aioseo_Cleanup_Action extends Abstract_Aioseo_Importing_Action {
 		$meta_data                  = $this->wpdb->query( $this->cleanup_postmeta_query() );
 		$aioseo_table_truncate_done = $this->wpdb->query( $this->truncate_query() );
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
-
 
 		if ( $meta_data === false && $aioseo_table_truncate_done === false ) {
 			return false;

@@ -6,6 +6,7 @@ use RGFormsModel;
 use GravityView_View;
 use GV\View;
 use GVCommon;
+use GF_Field;
 
 /**
  * Holds map markers and generates the output for the Maps
@@ -16,10 +17,11 @@ class Data {
 	/**
 	 * @var Marker[] array of Marker
 	 */
-	var $markers = array();
+	var $markers = [];
 
 	/**
 	 * Whether the marker position is defined by an address field or a pair of fields with the 'coordinates' (lat/long)
+	 *
 	 * @var string
 	 */
 	var $position_mode = 'address';
@@ -66,31 +68,26 @@ class Data {
 			return;
 		}
 
-		// $position_fields will be looped, so add an additional array level to pass long/lat fields to Marker together
-		if ( 'coordinates' === $this->position_mode ) {
-			$position_fields = [ $position_fields ];
-		}
-
 		Markers::prime_cache( $view->entries, $position_fields );
 
 		// Prepare marker info window if enabled
 		$infowindow = empty( $ms['map_info_enable'] ) ? false : new InfoWindow( $ms );
 
 		// get icon picker field
-		$icon_field_id      = $this->get_icon_field( $view );
-		$icon_field         = empty( $icon_field_id ) ? false : RGFormsModel::get_field( $view->getForm(), $icon_field_id );
+		$icon_field_id     = $this->get_icon_field( $view );
+		$icon_field        = empty( $icon_field_id ) ? false : RGFormsModel::get_field( $view->getForm(), $icon_field_id );
 		$custom_icon_field = Custom_Map_Icons::get_icon_options_field( $view );
 
 		foreach ( (array) $view->entries as $entry ) {
-			$icon_url = empty( $icon_field ) ? null : RGFormsModel::get_lead_field_value( $entry, $icon_field );
-			$icon_data = empty( $icon_url ) ? array() : array( $icon_url );
+			$icon_url  = empty( $icon_field ) ? null : RGFormsModel::get_lead_field_value( $entry, $icon_field );
+			$icon_data = empty( $icon_url ) ? [] : [ $icon_url ];
 
 			if ( $custom_icon_field ) {
 				$entry_custom_icon = Custom_Map_Icons::get_selected_icon( $custom_icon_field, $entry );
 			}
 
-			foreach ( $position_fields as $position_field ) {
-				$marker = new Marker( $entry, $position_field, $icon_data, $this->position_mode );
+			if ( 'coordinates' === $this->position_mode ) {
+				$marker = Marker::from_coordinate_fields( $entry, $position_fields[0], $position_fields[1], $icon_data );
 
 				if ( ! empty( $custom_icon_field ) && empty( $icon_data ) ) {
 					$marker->set_icon( $entry_custom_icon );
@@ -105,7 +102,7 @@ class Data {
 				 *
 				 * @since  1.7.2
 				 *
-				 * @param Marker  $marker The marker about to be added.
+				 * @param Marker   $marker The marker about to be added.
 				 * @param \GV\View $view   The View.
 				 */
 				$marker = apply_filters( 'gravityview/maps/marker/add', $marker, View::by_id( $view->view_id ) );
@@ -119,9 +116,55 @@ class Data {
 				}
 
 				$this->add_marker( $marker );
+			} else {
+				foreach ( $position_fields as $position_field ) {
+					$marker = Marker::from_address_field( $entry, $position_field, $icon_data );
+
+					if ( ! empty( $custom_icon_field ) && empty( $icon_data ) ) {
+						$marker->set_icon( $entry_custom_icon );
+					}
+
+					if ( $infowindow ) {
+						$marker->set_infowindow_content( $infowindow->get_marker_content( $view, $entry, $marker->get_entry_url() ) );
+					}
+
+					/**
+					 * @filter `gravityview/maps/marker/add` Modify the marker before it gets added to a map.
+					 *
+					 * @since  1.7.2
+					 *
+					 * @param Marker   $marker The marker about to be added.
+					 * @param \GV\View $view   The View.
+					 */
+					$marker = apply_filters( 'gravityview/maps/marker/add', $marker, View::by_id( $view->view_id ) );
+
+					if ( ! $marker instanceof Marker ) {
+						gravityview()->log->debug(
+							'A marker was not added to the map because it was not a valid Marker object.',
+							[
+								'marker' => $marker,
+								'view' => $view,
+							]
+						);
+						continue;
+					}
+
+					if ( ! $marker->is_valid() ) {
+						gravityview()->log->debug(
+							'A marker was not added to the map because it was not a valid Marker.',
+							[
+								'marker' => $marker,
+								'view' => $view,
+							]
+						);
+
+						continue;
+					}
+
+					$this->add_marker( $marker );
+				}
 			}
 		}
-
 	}
 
 	/**
@@ -130,19 +173,19 @@ class Data {
 	 *
 	 * @return array|GF_Field
 	 */
-	function get_position_fields( $map_settings, $view ) {
+	public function get_position_fields( $map_settings, $view ) {
 		/**
 		 * @filter `gravityview/maps/markers/lat_long/fields_id` Enable marker position by feeding the latitude and longitude coordinates from form fields ids
 		 * @since  1.2
 		 *
-		 * @param array $lat_long_fields Array of latitude/longitude of Gravity Forms field IDs
-		 * @param GravityView_View object $view Current View object
+		 * @param array            $lat_long_fields Array of latitude/longitude of Gravity Forms field IDs
+		 * @param GravityView_View $view            Current View object
 		 */
-		$lat_long_field_ids = apply_filters( 'gravityview/maps/markers/lat_long/fields_id', array(), $view );
+		$lat_long_field_ids = apply_filters( 'gravityview/maps/markers/lat_long/fields_id', [], $view );
 
 		$this->position_mode = empty( $lat_long_field_ids ) || ! is_array( $lat_long_field_ids ) ? 'address' : 'coordinates';
 
-		$position_fields = array();
+		$position_fields = [];
 
 		if ( 'coordinates' === $this->position_mode ) {
 			foreach ( $lat_long_field_ids as $field_id ) {
@@ -150,8 +193,8 @@ class Data {
 			}
 		} else {
 			// Address mode
-			$address_fields_ids = ! empty( $map_settings['map_address_field'] ) ? $map_settings['map_address_field'] : array();
-			$address_fields_ids = ( is_array( $address_fields_ids ) ) ? $address_fields_ids : array( $address_fields_ids );
+			$address_fields_ids = ! empty( $map_settings['map_address_field'] ) ? $map_settings['map_address_field'] : [];
+			$address_fields_ids = ( is_array( $address_fields_ids ) ) ? $address_fields_ids : [ $address_fields_ids ];
 
 			if ( ! empty( $address_fields_ids ) ) {
 
@@ -160,8 +203,8 @@ class Data {
 					 * @filter `gravityview/maps/markers/address/field_id` Customise the Address Field ID (to be used when address is in a different field than the GF Address field)
 					 * @since  1.2
 					 *
-					 * @param mixed $address_field_id Gravity Forms field ID
-					 * @param GravityView_View object $view Current View object
+					 * @param mixed            $address_field_id Gravity Forms field ID
+					 * @param GravityView_View $view             Current View object
 					 */
 					$field_id = apply_filters( 'gravityview/maps/markers/address/field_id', $field_id, $view );
 
@@ -174,7 +217,7 @@ class Data {
 			do_action( 'gravityview_log_error', __METHOD__ . ': No position fields were set', $map_settings );
 		}
 
-		return $position_fields;
+		return array_filter( $position_fields );
 	}
 
 	/**
@@ -189,8 +232,7 @@ class Data {
 		// If the method has been defined (like get_markers_google ), return it.
 		if ( method_exists( __CLASS__, "get_markers_{$service}" ) ) {
 			/** @see get_markers_google */
-			return call_user_func( array( __CLASS__, "get_markers_{$service}" ) );
-
+			return call_user_func( [ __CLASS__, "get_markers_{$service}" ] );
 		} else {
 			_doing_it_wrong( 'get_markers', 'The service you requested has not been implemented: ' . $service, '1.0.0' );
 		}
@@ -206,7 +248,7 @@ class Data {
 	protected static function get_markers_google() {
 		$markers = self::get_instance()->markers;
 
-		$markers_array = array();
+		$markers_array = [];
 
 		/** @var Marker $marker */
 		foreach ( $markers as $marker ) {
@@ -242,7 +284,7 @@ class Data {
 		$markers = &self::get_instance()->markers;
 
 		// Do not add marker if one already exists with the same entry ID and field ID
-		$unique_id = sprintf( '%s-%s', $marker->get_entry_id(), $marker->get_field_id() );
+		$unique_id = $marker->get_id();
 
 		if ( empty( $markers[ $unique_id ] ) ) {
 			$markers[ $unique_id ] = $marker;
@@ -276,7 +318,7 @@ class Data {
 
 		if ( ! empty( $fields ) ) {
 			foreach ( $fields as $id => $field ) {
-				if ( in_array( $field['type'], array( 'gvmaps_icon_picker' ) ) ) {
+				if ( in_array( $field['type'], [ 'gvmaps_icon_picker' ] ) ) {
 					return $id;
 				}
 			}
@@ -286,7 +328,7 @@ class Data {
 	}
 
 	public function get_markers_by_entry( $entry_id ) {
-		return array_filter( $this->markers, static function( $marker ) use ( $entry_id ) {
+		return array_filter( $this->markers, static function ( $marker ) use ( $entry_id ) {
 			return $entry_id == $marker->get_entry_id();
 		} );
 	}

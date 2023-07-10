@@ -1,7 +1,6 @@
 <?php
 
 final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edit_Render {
-
 	/**
 	 * @return bool Whether to load the hooks
 	 *
@@ -40,6 +39,9 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 		add_filter( 'gform_pre_form_settings_save', array( $this, 'pre_form_settings_save' ) );
 		add_filter( 'gform_tooltips', array( $this, 'tooltips' ) );
 		add_filter( 'gform_form_settings', array( $this, 'form_settings' ), 10, 2 );
+
+		// Set priority to 19 so it runs before the "Inline Edit Behavior" settings added by Entry Revisions 1.1
+		add_filter( 'gform_form_settings_fields', array( $this, 'add_settings_field' ), 19, 2 );
 	}
 
 	/**
@@ -54,10 +56,10 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	public function tooltips( $tooltips ) {
 
 		$image   = GRAVITYVIEW_INLINE_URL . 'assets/images/gf-inline-edit-toggle.png';
-		$content = sprintf( '<h3>%s</h3><p>%s</p><p>%s</p>',
-			esc_html__( 'An Inline Edit button will be added', 'gravityview-inline-edit' ),
-			'<img src="' . $image . '" class="alignright" width="300" style="max-width: 100%;" />',
-			esc_html__( 'If enabled, a button to toggle on and off inline editing will be added to the Gravity Forms Entries screen. If disabled, the button will not be added.', 'gravityview-inline-edit' )
+		$content = sprintf( '<h4>%s</h4><p>%s</p><p>%s</p>',
+			esc_html__( 'An Inline Edit button will be added', 'gk-gravityedit' ),
+			'<img src="' . esc_url( $image ) . '" class="alignright" width="300" style="max-width: 100%;" />',
+			esc_html__( 'If enabled, a button to toggle on and off inline editing will be added to the Gravity Forms Entries screen. If disabled, the button will not be added.', 'gk-gravityedit' )
 		);
 
 		$tooltips['gv_inline_edit_enable'] = $content;
@@ -76,9 +78,48 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 */
 	function filter_inline_edit_mode( $mode = '' ) {
 
-		$inline_edit_mode = GravityView_Inline_Edit_GFAddon::get_instance()->get_plugin_setting('inline-edit-mode');
+		if ( ! class_exists( 'GravityKitFoundation' ) ) {
+			return $mode;
+		}
+
+		$inline_edit_mode = GravityKitFoundation::settings()->get_plugin_setting( 'gravityedit', 'inline-edit-mode' );
 
 		return ( empty( $inline_edit_mode ) ? $mode : $inline_edit_mode );
+	}
+
+	/**
+	 * Check whether Gravity Forms is v2.5-beta or newer
+	 *
+	 * @since 1.5
+	 *
+	 * @return bool
+	 */
+	public static function is_GF_25() {
+		return version_compare( '2.5-beta', \GFForms::$version, '<=' );
+	}
+
+	/**
+	 * Adds the Enable Inline Edit field to the "Form Options" settings group in GF 2.5+
+	 *
+	 * @see https://docs.gravityforms.com/gform_form_settings_fields/
+	 *
+	 * @param array $fields Form Settings fields.
+	 * @param array $form The current form
+	 *
+	 * @return array
+	 */
+	function add_settings_field( $fields, $form = array() ) {
+
+		$fields['form_options']['fields'][] = array(
+			'name' => 'gv_inline_edit_enable',
+			'type' => 'toggle',
+			'label' => esc_html__( 'Enable Inline Edit', 'gk-gravityedit' ),
+			'description' => esc_html__( 'Allow Inline Edit when viewing this form\'s entries in Gravity Forms', 'gk-gravityedit' ),
+			'tooltip' => gform_tooltip( 'gv_inline_edit_enable', '', true ),
+			'default_value' => false,
+		);
+
+		return $fields;
 	}
 
 	/**
@@ -91,6 +132,11 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 * @return array Form object, with our `gv_inline_edit_enable` setting added
 	 */
 	public function pre_form_settings_save( $updated_form = array() ) {
+
+		// If running GF 2.5, no need to modify the form settings
+		if ( self::is_GF_25() ) {
+			return $updated_form;
+		}
 
 		$updated_form['gv_inline_edit_enable'] = rgempty( 'gv_inline_edit_enable' ) ? 0 : 1;
 
@@ -109,19 +155,24 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 */
 	public function form_settings( $form_settings, $form = array() ) {
 
+		/** If running GF 2.5, no need to modify the form settings. Instead, we use {@see add_settings_field()}. */
+		if ( self::is_GF_25() ) {
+			return $form_settings;
+		}
+
 		$tr_enable_inline_edit = '
         <tr>
             <th>
-                ' . esc_html__( 'Enable Inline Edit', 'gravityview-inline-edit' ) . ' ' . gform_tooltip( 'gv_inline_edit_enable', '', true ) . '
+                ' . esc_html__( 'Enable Inline Edit', 'gk-gravityedit' ) . ' ' . gform_tooltip( 'gv_inline_edit_enable', '', true ) . '
             </th>
             <td>
             	<input type="hidden" name="gv_inline_edit_enable" value="0" />
                 <input type="checkbox" id="gv_inline_edit_enable" name="gv_inline_edit_enable" value="1" ' . checked( true, ! rgempty( 'gv_inline_edit_enable', $form ), false ) . ' />
-                <label for="gv_inline_edit_enable">' . esc_html__( 'Allow Inline Edit when viewing this form\'s entries in Gravity Forms', 'gravityview-inline-edit' ) . '</label>
+                <label for="gv_inline_edit_enable">' . esc_html__( 'Allow Inline Edit when viewing this form\'s entries in Gravity Forms', 'gk-gravityedit' ) . '</label>
             </td>
         </tr>';
 
-		$label = esc_html__( 'Inline Edit', 'gravityview-inline-edit' );
+		$label = esc_html__( 'Inline Edit', 'gk-gravityedit' );
 
 		$form_settings[ $label ] = array(
 			'enable' => $tr_enable_inline_edit,
@@ -269,16 +320,22 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 			return $value;
 		}
 
-		static $forms = array();
+		$forms = parent::get_cached_forms();
 
-		if( isset( $forms[ $form_id ] ) ) {
-			$form = $forms[ $form_id ];
+		if ( ! isset( $forms[ $form_id ] ) ) {
+			$form = parent::cache_form( GFAPI::get_form( $form_id ) );
 		} else {
-			$form = GFAPI::get_form( $form_id );
-			$forms[ $form_id ] = $form;
+			$form = $forms[ $form_id ];
 		}
 
 		$gf_field = GFFormsModel::get_field( $form, $field_id );
+
+		// This is a nasty hack to make sure that the file icons are wrapped in <div>s instead of <span>s;
+		// if wrapped in spans, the value is shown as "Empty" and the file icon isn't clickable for editing.
+		// This works because we're adding a block-level element to the output.
+		if( $gf_field instanceof GF_Field_FileUpload ) {
+			$value .= '<div style="display: none;"></div>';
+		}
 
 		return parent::wrap_field_value( $value, $entry, $field_id, $gf_field, $form );
 	}

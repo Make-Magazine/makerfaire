@@ -219,6 +219,8 @@
 
 .essb-control-content { width: calc(100% - 300px); background: #fff;  }
 
+.essb-control-content-fullwidth { width: 100%; }
+
 .essb-parent-options {
 	box-shadow: none;
 	padding: 5px !important;
@@ -352,6 +354,10 @@
  	border-color: #2271b1;
  }
  
+ .essb-options textarea.input-element {
+	min-height: 128px;
+ }
+ 
  .essb-options .input-element.input_icon_right,
  .advancedoptions-tile.advancedoptions-panel .advancedoptions-tile-control .input60.input_icon_right {
 	width: 90px;
@@ -457,6 +463,11 @@
 }
 
 .essb-portlet .essb-portlet-heading-icon { margin-right: 10px; }
+
+.essb-portlet .essb-portlet-heading-icon svg {
+	width: 24px;
+	height: 24px;
+}
 
 .essb-usefull-hint-positions {
 	background-color: #eff3fc;
@@ -922,6 +933,26 @@
 .essb-static-header-status .essb-options-hint-status .essb-options-hint-withicon .essb-options-hint-desc a:hover {
 	color: #02b1ff;
 }
+
+.essb-static-header-status .essb-options-hint-promo {
+	background-color: #eff3fc !important;
+	border: 0;
+	box-shadow: none; 
+}
+
+.essb-options-hint-promo .essb-options-hint-icon i {
+	color: #2b4b80;
+}
+
+.essb-static-header-status .essb-options-hint-promo .essb-options-hint-withicon .essb-options-hint-desc a {
+	background-color: #2b4b80;
+	box-shadow: none;
+}
+
+.essb-static-header-status .essb-options-hint-promo .essb-options-hint-withicon .essb-options-hint-desc a:hover {
+	background-color: #02b1ff;
+}
+
 
 .essb-options-helprow .help-details .desc.noButton {
 	margin-bottom: 0;

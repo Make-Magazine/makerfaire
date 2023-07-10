@@ -4,7 +4,6 @@ namespace Yoast\WP\SEO\Actions\Wincher;
 
 use Exception;
 use WP_Post;
-use WPSEO_Meta;
 use WPSEO_Utils;
 use Yoast\WP\SEO\Config\Wincher_Client;
 use Yoast\WP\SEO\Helpers\Options_Helper;
@@ -261,13 +260,13 @@ class Wincher_Keyphrases_Action {
 			$keyphrases[] = $primary_keyphrase->primary_focus_keyword;
 		}
 
-		if ( \YoastSEO()->helpers->product->is_premium() ) {
-			$additional_keywords = \json_decode( WPSEO_Meta::get_value( 'focuskeywords', $post->ID ), true );
-
-			$keyphrases = \array_merge( $keyphrases, $additional_keywords );
-		}
-
-		return $keyphrases;
+		/**
+		 * Filters the keyphrases collected by the Wincher integration from the post.
+		 *
+		 * @param array $keyphrases The keyphrases array.
+		 * @param int   $post_id    The ID of the post.
+		 */
+		return \apply_filters( 'wpseo_wincher_keyphrases_from_post', $keyphrases, $post->ID );
 	}
 
 	/**
@@ -276,8 +275,6 @@ class Wincher_Keyphrases_Action {
 	 * @return array
 	 */
 	protected function collect_all_keyphrases() {
-		global $wpdb;
-
 		// Collect primary keyphrases first.
 		$keyphrases = \array_column(
 			$this->indexable_repository
@@ -291,30 +288,12 @@ class Wincher_Keyphrases_Action {
 			'primary_focus_keyword'
 		);
 
-		if ( \YoastSEO()->helpers->product->is_premium() ) {
-			// Collect all related keyphrases.
-			$meta_key = WPSEO_Meta::$meta_prefix . 'focuskeywords';
-
-			$query = "
-				SELECT meta_value
-				FROM $wpdb->postmeta
-				JOIN $wpdb->posts ON {$wpdb->posts}.id = {$wpdb->postmeta}.post_id
-				WHERE meta_key = '$meta_key' AND post_status != 'trash'
-			";
-
-			// phpcs:ignore -- ignoring since it's complaining about not using prepare when it's perfectly safe here.
-			$results = $wpdb->get_results( $query );
-
-			if ( $results ) {
-				foreach ( $results as $row ) {
-					$additional_keywords = \json_decode( $row->meta_value, true );
-					if ( $additional_keywords !== null ) {
-						$additional_keywords = \array_column( $additional_keywords, 'keyword' );
-						$keyphrases          = \array_merge( $keyphrases, $additional_keywords );
-					}
-				}
-			}
-		}
+		/**
+		 * Filters the keyphrases collected by the Wincher integration from all the posts.
+		 *
+		 * @param array $keyphrases The keyphrases array.
+		 */
+		$keyphrases = \apply_filters( 'wpseo_wincher_all_keyphrases', $keyphrases );
 
 		// Filter out empty entries.
 		return \array_filter( $keyphrases );
@@ -366,7 +345,7 @@ class Wincher_Keyphrases_Action {
 	 */
 	protected function to_result_object( $result ) {
 		if ( \array_key_exists( 'data', $result ) ) {
-			$result['results'] = $result['data'];
+			$result['results'] = (object) $result['data'];
 
 			unset( $result['data'] );
 		}

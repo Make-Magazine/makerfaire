@@ -270,6 +270,15 @@ class ESSB_Site_Share_Information {
             $url = essb_generate_affiliatewp_referral_link($url);
         }
         
+        /**
+         * Slice WP integration 
+         * @since 9.1
+         */
+        if (essb_option_bool_value('slicewp_active')) {
+            essb_helper_maybe_load_feature('integration-slicewp');
+            $url = essb_generate_slicewp_referral_link($url);
+        }
+        
         if (essb_option_bool_value('affs_active')) {
             $url = do_shortcode('[affiliates_url]'.$url.'[/affiliates_url]');
         }

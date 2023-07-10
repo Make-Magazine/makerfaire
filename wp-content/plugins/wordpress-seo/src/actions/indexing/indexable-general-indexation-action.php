@@ -7,8 +7,6 @@ use Yoast\WP\SEO\Repositories\Indexable_Repository;
 
 /**
  * General reindexing action for indexables.
- *
- * @phpcs:disable Yoast.NamingConventions.ObjectNameDepth.MaxExceeded
  */
 class Indexable_General_Indexation_Action implements Indexation_Action_Interface, Limited_Indexing_Action_Interface {
 
@@ -49,6 +47,13 @@ class Indexable_General_Indexation_Action implements Indexation_Action_Interface
 		$result = \count( $indexables_to_create );
 
 		\set_transient( static::UNINDEXED_COUNT_TRANSIENT, $result, \DAY_IN_SECONDS );
+
+		/**
+		 * Action: 'wpseo_indexables_unindexed_calculated' - sets an option to timestamp when there are no unindexed indexables left.
+		 *
+		 * @internal
+		 */
+		\do_action( 'wpseo_indexables_unindexed_calculated', static::UNINDEXED_COUNT_TRANSIENT, $result );
 
 		return $result;
 	}

@@ -79,6 +79,10 @@ if (class_exists('ESSBControlCenter')) {
 	   $position_setup_list['display-17'] = esc_html__('Excerpt', 'essb');
 	}
 	
+	if (function_exists('wc_get_product') && !essb_option_bool_value('deactivate_method_woocommerce')) {
+	    $position_setup_list['display-22'] = esc_html__('WooCommerce Content', 'essb');
+	}
+	
 	// @since 4.1 allow usage of external display methods
 	$essb_custom_methods = array();
 	$essb_custom_methods = apply_filters('essb4_custom_method_list', $essb_custom_methods);
@@ -354,10 +358,55 @@ ESSBOptionsStructureHelper::tab_end($where_to_display, 'positions|positions');
 if ( function_exists('wc_get_product') ) {
     if (!essb_option_bool_value('deactivate_method_woocommerce')) {
         ESSBOptionsStructureHelper::tab_start($where_to_display, 'positions|positions', 'positions-3');
-        ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommece_share', esc_html__('Default WooCommerce hook for share buttons (after product brief description)', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
-        ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommerce_after_add_to_cart_form', esc_html__('After add to cart button', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
-        ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommece_beforeprod', esc_html__('Display buttons on top of product (before product)', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
-        ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommece_afterprod', esc_html__('Display buttons at the bottom of product (after product)', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+        
+        ESSBOptionsStructureHelper::field_heading($where_to_display, 'positions|positions', 'heading7', 'WooCommerce Content', '', 'pb0', '<i class="ti-shopping-cart"></i>');
+        ESSBOptionsStructureHelper::holder_start($where_to_display, 'positions|positions', 'essb-related-heading7', '');
+
+        ESSBOptionsStructureHelper::hint($where_to_display, 'positions|positions', '', esc_html__('Below you can activate a list of specific WooCommerce product hooks for displaying share buttons. Using those hooks does not require to set up the Products post type for showing share buttons. You can also use all of the other integrated display methods too as long as you choose the "Products" post type.', 'essb'), '', 'glowhint');        
+        
+        ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommece_share', esc_html__('After the product short description (recommended location)', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+        ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommerce_after_add_to_cart_form', esc_html__('After adding to cart button (only on the single product page)', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+        ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommece_beforeprod', esc_html__('Display before the product (before starting the product block)', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+        ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommece_afterprod', esc_html__('Display after the product (after finishing the product block)', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+        
+        ESSBOptionsStructureHelper::holder_end($where_to_display, 'positions|positions');
+
+        
+        ESSBOptionsStructureHelper::field_heading($where_to_display, 'positions|positions', 'heading7', 'WooCommerce Enhanced', '', 'pb0', '<i class="ti-shopping-cart-full"></i>');
+        ESSBOptionsStructureHelper::holder_start($where_to_display, 'positions|positions', 'essb-related-heading7', '');
+        
+        if (defined('ESSB_DM_WSB_PLUGIN_ROOT')) {
+            ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommece_sharebar', esc_html__('WooCommerce share bar', 'essb'), esc_html__('Display a bottom sticky bar with the product information, purchase button, and the share buttons', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));            
+        }
+        else {
+            ESSBOptionsStructureHelper::field_func($where_to_display, 'positions|positions', 
+                'essb_options_function_output_missing_addon_message', 
+                esc_html__('WooCommerce share bar', 'essb'), 
+                esc_html__('Display a bottom sticky bar with the product information, purchase button, and the share buttons', 'essb'));            
+        }
+        
+        if (defined('ESSB_DM_WTB_PLUGIN_ROOT')) {
+            ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommece_thankyou', esc_html__('Add share buttons on the WooCommerce thank you page', 'essb'), esc_html__('Include a list of purchased products with share buttons next to each on the order thank you page. The function may not work if you are using a thank you page customizer/builder.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+        }
+        else {
+            ESSBOptionsStructureHelper::field_func($where_to_display, 'positions|positions',
+                'essb_options_function_output_missing_addon_message',
+                esc_html__('Add share buttons on the WooCommerce thank you page', 'essb'), 
+                esc_html__('Include a list of purchased products with share buttons next to each on the order thank you page. The function may not work if you are using a thank you page customizer/builder.', 'essb'));
+        }
+        
+        if (defined('ESSB_DM_WSC_PLUGIN_ROOT')) {
+            ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|positions', 'woocommece_index', esc_html__('Product list share buttons', 'essb'), esc_html__('Include share buttons in the list of products (category, promotions, etc.)', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+        }
+        else {
+            ESSBOptionsStructureHelper::field_func($where_to_display, 'positions|positions',
+                'essb_options_function_output_missing_addon_message',
+                esc_html__('Product list share buttons', 'essb'),
+                esc_html__('Include share buttons in the list of products (category, promotions, etc.)', 'essb'));
+        }
+        
+        ESSBOptionsStructureHelper::holder_end($where_to_display, 'positions|positions');
+        
         ESSBOptionsStructureHelper::tab_end($where_to_display, 'positions|positions');
     }
 }
@@ -479,7 +528,9 @@ if (!essb_options_bool_value('deactivate_method_topbar')) {
 	ESSBOptionsStructureHelper::field_textbox($where_to_display, 'positions|display-9', 'topbar_contentarea_width', esc_html__('Custom content area % width', 'essb'), esc_html__('Provide custom width of content area (default value if nothing is filled is 30 which means 30%). Fill number value without % mark - example 40.', 'essb'), '', 'input60', 'fa-arrows-h', 'right');
 	ESSBOptionsStructureHelper::field_select($where_to_display, 'positions|display-9', 'topbar_contentarea_pos', esc_html__('Custom content area position', 'essb'), esc_html__('Choose your content area alignment', 'essb'), $listOfOptions);
 	ESSBOptionsStructureHelper::field_section_end_full_panels($where_to_display, 'positions|display-9');
-	ESSBOptionsStructureHelper::field_wpeditor($where_to_display, 'positions|display-9', 'topbar_usercontent', esc_html__('Custom content', 'essb'), '', 'htmlmixed');
+	
+	ESSBControlCenter::set_description_inline('topbar_usercontent');
+	ESSBOptionsStructureHelper::field_wpeditor($where_to_display, 'positions|display-9', 'topbar_usercontent', esc_html__('Custom content', 'essb'), 'The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)', 'htmlmixed');
 	ESSBOptionsStructureHelper::panel_end($where_to_display, 'positions|display-9');
 	essb_prepare_location_advanced_customization($where_to_display, 'positions|display-9', 'topbar');
 }
@@ -511,16 +562,21 @@ if (!essb_options_bool_value('deactivate_method_bottombar')) {
 	ESSBOptionsStructureHelper::field_textbox($where_to_display, 'positions|display-10', 'bottombar_contentarea_width', esc_html__('Custom content area % width', 'essb'), esc_html__('Provide custom width of content area (default value if nothing is filled is 30 which means 30%). Fill number value without % mark - example 40.', 'essb'), '', 'input60', 'fa-arrows-h', 'right');
 	ESSBOptionsStructureHelper::field_select($where_to_display, 'positions|display-10', 'bottombar_contentarea_pos', esc_html__('Custom content area position', 'essb'), esc_html__('Choose your button alignment', 'essb'), $listOfOptions);
 	ESSBOptionsStructureHelper::field_section_end_full_panels($where_to_display, 'positions|display-10');
-	ESSBOptionsStructureHelper::field_wpeditor($where_to_display, 'positions|display-10', 'bottombar_usercontent', esc_html__('Custom content', 'essb'), '', 'htmlmixed');
+	
+	ESSBControlCenter::set_description_inline('bottombar_usercontent');
+	ESSBOptionsStructureHelper::field_wpeditor($where_to_display, 'positions|display-10', 'bottombar_usercontent', esc_html__('Custom content', 'essb'), 'The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)', 'htmlmixed');
 	ESSBOptionsStructureHelper::panel_end($where_to_display, 'positions|display-10');
 
 	essb_prepare_location_advanced_customization($where_to_display, 'positions|display-10', 'bottombar');
 }
 
 if (!essb_options_bool_value('deactivate_method_popup')) {
+    ESSBControlCenter::set_description_inline('popup_window_title');
+    ESSBControlCenter::set_description_inline('popup_user_message');
+    
 	ESSBOptionsStructureHelper::panel_start($where_to_display, 'positions|display-11', esc_html__('Pop Up Content', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
-	ESSBOptionsStructureHelper::field_textbox_stretched($where_to_display, 'positions|display-11', 'popup_window_title', esc_html__('Pop up window title', 'essb'), esc_html__('Set your custom pop up window title.', 'essb'));
-	ESSBOptionsStructureHelper::field_editor($where_to_display, 'positions|display-11', 'popup_user_message', esc_html__('Pop up window message', 'essb'), esc_html__('Set your custom message that will appear above buttons', 'essb'), "htmlmixed");
+	ESSBOptionsStructureHelper::field_textbox_stretched($where_to_display, 'positions|display-11', 'popup_window_title', esc_html__('Pop up window title', 'essb'), esc_html__('The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)', 'essb'));
+	ESSBOptionsStructureHelper::field_editor($where_to_display, 'positions|display-11', 'popup_user_message', esc_html__('Pop up window message', 'essb'), esc_html__('The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)', 'essb'), "htmlmixed");
 	ESSBOptionsStructureHelper::field_textbox($where_to_display, 'positions|display-11', 'popup_user_width', esc_html__('Pop up window width', 'essb'), esc_html__('Set your custom window width (default is 800 or window width - 60). Value if provided should be numeric without px symbols.', 'essb'), '', 'input60', 'fa-arrows-h', 'right');
 	ESSBOptionsStructureHelper::panel_end($where_to_display, 'positions|display-11');
 
@@ -553,8 +609,12 @@ if (!essb_options_bool_value('deactivate_method_popup')) {
 if (!essb_options_bool_value('deactivate_method_flyin')) {
 
 	ESSBOptionsStructureHelper::panel_start($where_to_display, 'positions|display-12', esc_html__('Fly in Custom content and Position', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
-	ESSBOptionsStructureHelper::field_textbox_stretched($where_to_display, 'positions|display-12', 'flyin_window_title', esc_html__('Fly in window title', 'essb'), esc_html__('Set your custom fly in window title.', 'essb'));
-	ESSBOptionsStructureHelper::field_editor($where_to_display, 'positions|display-12', 'flyin_user_message', esc_html__('Fly in window message', 'essb'), esc_html__('Set your custom message that will appear above buttons', 'essb'), "htmlmixed");
+	
+	ESSBControlCenter::set_description_inline('flyin_window_title');
+	ESSBControlCenter::set_description_inline('flyin_user_message');
+	
+	ESSBOptionsStructureHelper::field_textbox_stretched($where_to_display, 'positions|display-12', 'flyin_window_title', esc_html__('Fly in window title', 'essb'), 'The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)');
+	ESSBOptionsStructureHelper::field_editor($where_to_display, 'positions|display-12', 'flyin_user_message', esc_html__('Fly in window message', 'essb'), 'The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)', "htmlmixed");
 	ESSBOptionsStructureHelper::field_textbox($where_to_display, 'positions|display-12', 'flyin_user_width', esc_html__('Fly in window width', 'essb'), esc_html__('Set your custom window width (default is 400 or window width - 60). If value is provided should be numeric without px symbols.', 'essb'), '', 'input60', 'fa-arrows-h', 'right');
 	$listOfOptions = array("right" => "Right", "left" => "Left");
 	ESSBOptionsStructureHelper::field_select($where_to_display, 'positions|display-12', 'flyin_position', esc_html__('Choose fly in display position', 'essb'), '', $listOfOptions);
@@ -742,10 +802,12 @@ if (!essb_options_bool_value('deactivate_method_point')) {
 
 	ESSBOptionsStructureHelper::panel_start($where_to_display, 'positions|display-16', esc_html__('Personalize Colors', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
 	ESSBOptionsStructureHelper::field_section_start_full_panels($where_to_display, 'positions|display-16');
-	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_bgcolor', esc_html__('Change default background color', 'essb'), esc_html__('Customize the default point background color', 'essb'));
-	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_color', esc_html__('Change default text color', 'essb'), esc_html__('Customize the default point text color', 'essb'));
-	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_accentcolor', esc_html__('Change default total background color', 'essb'), esc_html__('Customize the default total background color', 'essb'));
-	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_altcolor', esc_html__('Change default total text color', 'essb'), esc_html__('Customize the default total text color', 'essb'));
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_bgcolor', esc_html__('Background color', 'essb'), '');
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_color', esc_html__('Text color', 'essb'), '');
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_bgcolor_hover', esc_html__('Background color on hover', 'essb'), '');
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_color_hover', esc_html__('Text color on hover', 'essb'), '');
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_accentcolor', esc_html__('Total background color', 'essb'), '');
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-16', 'point_altcolor', esc_html__('Total text color', 'essb'), '');
 	ESSBOptionsStructureHelper::field_section_end_full_panels($where_to_display, 'positions|display-16');
 	ESSBOptionsStructureHelper::panel_end($where_to_display, 'positions|display-16');
 
@@ -768,8 +830,12 @@ if (!essb_options_bool_value('deactivate_method_point')) {
 	ESSBOptionsStructureHelper::panel_end($where_to_display, 'positions|display-16');
 
 	ESSBOptionsStructureHelper::panel_start($where_to_display, 'positions|display-16', esc_html__('Custom Content for Advanced Point Display', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
-	ESSBOptionsStructureHelper::field_wpeditor($where_to_display, 'positions|display-16', 'point_top_content', esc_html__('Custom content above share buttons', 'essb'), esc_html__('Optional: Provide custom content that will appear above share buttons. You can use the variables to display post related content: %%title%%, %%url%%, %%image%%, %%permalink%%', 'essb'), 'htmlmixed');
-	ESSBOptionsStructureHelper::field_wpeditor($where_to_display, 'positions|display-16', 'point_bottom_content', esc_html__('Custom content below share buttons', 'essb'), esc_html__('Optional: Provide custom content that will appear below share buttons. You can use the variables to display post related content: %%title%%, %%url%%, %%image%%, %%permalink%%', 'essb'), 'htmlmixed');
+	
+	ESSBControlCenter::set_description_inline('point_top_content');
+	ESSBControlCenter::set_description_inline('point_bottom_content');
+	
+	ESSBOptionsStructureHelper::field_wpeditor($where_to_display, 'positions|display-16', 'point_top_content', esc_html__('Custom content above share buttons', 'essb'), 'The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)', 'htmlmixed');
+	ESSBOptionsStructureHelper::field_wpeditor($where_to_display, 'positions|display-16', 'point_bottom_content', esc_html__('Custom content below share buttons', 'essb'), 'The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)', 'htmlmixed');
 	ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|display-16', 'point_articles', esc_html__('Display prev/next article', 'essb'), esc_html__('Activate this option to display prev/next article from same category', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 
 	ESSBOptionsStructureHelper::panel_end($where_to_display, 'positions|display-16');
@@ -878,18 +944,26 @@ if (!essb_options_bool_value('deactivate_method_sharebutton')) {
 	ESSBOptionsStructureHelper::field_toggle($where_to_display, 'positions|display-21', 'sharebutton_icon', esc_html__('Button icon', 'essb'), esc_html__('Modify the default used icon.', 'essb'), $select_values);
 	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-21', 'sharebutton_bg', esc_html__('Button background color', 'essb'), esc_html__('Customize button background color.', 'essb'), '', 'true');
 	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-21', 'sharebutton_color', esc_html__('Button text color', 'essb'), esc_html__('Customize button text color (also applies on icons that are not SVG).', 'essb'), '', 'true');
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-21', 'sharebutton_bg_hover', esc_html__('Button background color on hover', 'essb'), '', '', 'true');
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-21', 'sharebutton_color_hover', esc_html__('Button text color on hover', 'essb'), '', '', 'true');
 	ESSBOptionsStructureHelper::field_select($where_to_display, 'positions|display-21', 'sharebutton_style', esc_html__('Button style', 'essb'), '', array('' => 'Button with background color', 'outline' => 'Outline button', 'modern' => 'Modern button'));
 	$point_positions = array("" => esc_html__('Bottom Right', 'essb'), 'bottomleft' => esc_html__('Bottom Left', 'essb'), 'topright' => esc_html__('Top Right', 'essb'), 'topleft' => esc_html__('Top Left', 'essb'), 'manual' => esc_html__('Manual window open with function call', 'essb'));
 	ESSBOptionsStructureHelper::field_select($where_to_display, 'positions|display-21', 'sharebutton_position', esc_html__('Button appearance', 'essb'), esc_html__('Position of the share button on the screen.', 'essb'), $point_positions);
 	ESSBOptionsStructureHelper::field_switch($where_to_display, 'positions|display-21', 'sharebutton_total', esc_html__('Display total counter', 'essb'), esc_html__('Include the total counter as a badge to the share button.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
-
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-21', 'sharebutton_bg_total', esc_html__('Total block background color', 'essb'), '', '', 'true');
+	ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-21', 'sharebutton_color_total', esc_html__('Total block text color', 'essb'), '', '', 'true');
+	
 	ESSBOptionsStructureHelper::field_section_end_panels($where_to_display, 'positions|display-21');
 	ESSBOptionsStructureHelper::panel_end($where_to_display, 'positions|display-21');
 
 	ESSBOptionsStructureHelper::panel_start($where_to_display, 'positions|display-21', esc_html__('Personalize Pop-up Share Window Content', 'essb'), '', '', array("mode" => "toggle", "state" => "closed", "css_class" => "essb-auto-open"));
 	ESSBOptionsStructureHelper::field_section_start_full_panels($where_to_display, 'positions|display-21');
-	ESSBOptionsStructureHelper::field_textbox_stretched($where_to_display, 'positions|display-21', 'sharebutton_window_title', esc_html__('Title', 'essb'), esc_html__('Set your custom pop up window title.', 'essb'));
-	ESSBOptionsStructureHelper::field_editor($where_to_display, 'positions|display-21', 'sharebutton_user_message', esc_html__('Message', 'essb'), esc_html__('Set your custom message that will appear above buttons', 'essb'), "htmlmixed");
+	
+	ESSBControlCenter::set_description_inline('sharebutton_window_title');
+	ESSBControlCenter::set_description_inline('sharebutton_user_message');
+	
+	ESSBOptionsStructureHelper::field_textbox_stretched($where_to_display, 'positions|display-21', 'sharebutton_window_title', esc_html__('Title', 'essb'), 'The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)');
+	ESSBOptionsStructureHelper::field_editor($where_to_display, 'positions|display-21', 'sharebutton_user_message', 'The following variables can be used to display the current post details: %%title%% (post title), %%url%% (post URL - link only), %%image%% (featured image  - URL only), %%excerpt%% (post excerpt), %%picture%% (featured image HTML code)', "htmlmixed");
 	ESSBOptionsStructureHelper::field_textbox($where_to_display, 'positions|display-21', 'sharebutton_win_width', esc_html__('Custom window width', 'essb'), esc_html__('Provide a custom value in case you wish to modify the full-screen appearance. The only numeric value accepted in the field.', 'essb'), '', 'input60', 'fa-arrows-h', 'right');
 	ESSBOptionsStructureHelper::field_textbox($where_to_display, 'positions|display-21', 'sharebutton_win_height', esc_html__('Custom window height', 'essb'), esc_html__('Provide a custom value in case you wish to modify the full-screen appearance. The only numeric value accepted in the field.', 'essb'), '', 'input60', 'fa-arrows-v', 'right');
 	
@@ -899,12 +973,20 @@ if (!essb_options_bool_value('deactivate_method_sharebutton')) {
 	essb_prepare_location_advanced_customization($where_to_display, 'positions|display-21', 'sharebutton');
 }
 
+/** 
+ * WooCommerce Standard Integration
+ */
+if (function_exists('wc_get_product') && !essb_option_bool_value('deactivate_method_woocommerce')) {
+    essb_prepare_location_advanced_customization($where_to_display, 'positions|display-22', 'woocommerce_content');
+}
+
 /**
  * Mobile Share Bar
  */
 ESSBOptionsStructureHelper::holder_start($where_to_display, 'positions|display-91', 'essb-panel-sharebar91', 'essb-panel-sharebar91');
 ESSBOptionsStructureHelper::field_textbox_stretched($where_to_display, 'positions|display-91', 'mobile_sharebar_text', esc_html__('Text on share bar', 'essb'), esc_html__('Customize the default share bar text (default is Share).', 'essb'));
 ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-91', 'mobile_sharebar_bg', esc_html__('Background color', 'essb'), '', '', 'true');
+ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-91', 'mobile_sharebar_color', esc_html__('Text/icon color', 'essb'), '', '', 'true');
 ESSBOptionsStructureHelper::holder_end($where_to_display, 'positions|display-91');
 
 essb_prepare_location_advanced_customization_mobile($where_to_display, 'positions|display-91', 'sharebar');
@@ -912,6 +994,9 @@ essb_prepare_location_advanced_customization_mobile($where_to_display, 'position
 /**
  * Mobile Share Point
  */
+ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-92', 'sharepoint_bg', esc_html__('Customize background color', 'essb'), '', '', 'true');
+ESSBOptionsStructureHelper::field_color($where_to_display, 'positions|display-92', 'sharepoint_icon_color', esc_html__('Customize icon color', 'essb'), '', '', 'true');
+
 essb_prepare_location_advanced_customization_mobile($where_to_display, 'positions|display-92', 'sharepoint');
 
 /**

@@ -28,11 +28,9 @@ class GravityView_Inline_Edit_Field_Radio extends GravityView_Inline_Edit_Field 
 	 * @return array $wrapper_attributes with additional `data-` attributes
 	 */
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
-
 		$radio_field_value = rgar( $entry, $field_id );
 
 		if ( $gf_field->enableOtherChoice ) {
-
 			$is_other_choice = true;
 
 			foreach ( $gf_field->choices as $choice ) {
@@ -52,10 +50,12 @@ class GravityView_Inline_Edit_Field_Radio extends GravityView_Inline_Edit_Field 
 			$radio_field_value = GFCommon::get_other_choice_value( $gf_field );
 		}
 
+		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );
+
 		parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $radio_field_value, $entry ), $current_form['id'], $field_id );
 
 		return parent::modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field );
 	}
 }
 
-new GravityView_Inline_Edit_Field_Radio;
+new GravityView_Inline_Edit_Field_Radio();

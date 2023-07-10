@@ -25,7 +25,12 @@ echo '<input type="hidden" name="network_button_id" id="network_button_id" value
  * Button parameters
  */
 
-essb5_draw_input_option('network_id', esc_html__('Network ID', 'essb'), esc_html__('Fill a custom unique ID for the network button. Use only lowercase Latin symbols (a-z) and numbers (0-9). No spaces are allowed - use underscore.', 'essb'), true, true, essb_array_value('network_id', $network_setup));
-essb5_draw_input_option('name', esc_html__('Name', 'essb'), esc_html__('The name of the button. This is the name you will see in the list of social networks for selection.', 'essb'), true, true, essb_array_value('name', $network_setup));
-essb5_draw_editor_option('icon', esc_html__('SVG Icon', 'essb'), esc_html__('Place the content of the SVG icon you wish to use with this button. Use single color flat SVG files.', 'essb'), 'htmlmixed', true, essb_array_value('icon', $network_setup));
+$button = '<br/><span class="ao-new-subscribe-design ao-import-svg-icon" data-for="essb_options_icon" data-picker="ao-svg-file"><span class="essb_icon fa fa-upload"></span><span>Upload</span></span>';
+$button .= '<input type="file" name="ao-svg-file" id="ao-svg-file" class="ao-hidden" accept=".svg"/>';
+
+essb5_draw_input_option('name', esc_html__('Name', 'essb'), esc_html__('The name of the social network you will see in the list (ex: Facebook)', 'essb'), true, true, essb_array_value('name', $network_setup));
+essb5_draw_input_option('network_id', esc_html__('Network ID', 'essb'), esc_html__('Unique network ID. Only lower case Latin symbols (a-z), numbers (0-9), and underscore (_) - example: facebook, my_network', 'essb'), true, true, essb_array_value('network_id', $network_setup));
+essb5_draw_editor_option('icon', esc_html__('SVG Icon', 'essb'), esc_html__('Use the upload button to select an SVG icon or manually put the SVG content in the text field. Use a single-color SVG file to ensure icons will render correctly with all templates.', 'essb') . $button, 'htmlmixed', true, essb_array_value('icon', $network_setup));
+
+
 essb5_draw_color_option('accent_color', esc_html__('Color', 'essb'), '', false, true, essb_array_value('accent_color', $network_setup));

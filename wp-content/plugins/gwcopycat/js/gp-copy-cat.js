@@ -3,6 +3,20 @@
  */
 (function ($) {
 
+	/*
+	 * String.format was deprecated in GF 2.7.1 and will be removed in GF 2.8 in favor of String.prototype.gformFormat.
+	 *
+	 * As we support older versions of GF, we need to add String.prototype.gformFormat if it doesn't exist.
+	 */
+	if (!String.prototype.gformFormat) {
+		String.prototype.gformFormat = function () {
+			var args = arguments;
+			return this.replace(/{(\d+)}/g, function (match, number) {
+				return typeof args[number] !== 'undefined' ? args[number] : match;
+			});
+		};
+	}
+
 	window.gwCopyObj = function (args) {
 
 		var self = this;
@@ -26,7 +40,7 @@
 			 */
 			gform.addFilter('gpcc_copied_value', function(value, $targetElem, field) {
 				if (
-					$( '#input_{0}_{1}'.format( self.formId, field.source ) ).hasClass( 'ginput_total' )
+					$( '#input_{0}_{1}'.gformFormat( self.formId, field.source ) ).hasClass( 'ginput_total' )
 					|| $targetElem.hasClass( 'ginput_quantity' )
 				) {
 					var numberFormat = gf_get_field_number_format( field.source, self.formId );
@@ -43,7 +57,7 @@
 				return value;
 			});
 
-			var $formWrapper = $( '#gform_wrapper_{0}'.format( self.formId ) );
+			var $formWrapper = $( '#gform_wrapper_{0}'.gformFormat( self.formId ) );
 
 			$formWrapper.off( 'click.gpcopycat' );
 			$formWrapper.on(
@@ -161,7 +175,7 @@
 
 					triggerIds.push( fieldSettings[i].trigger );
 
-					var $trigger = $( '#field_{0}_{1}'.format( formId, fieldSettings[i].trigger ) ).find( 'input, textarea, select' );
+					var $trigger = $( '#field_{0}_{1}'.gformFormat( formId, fieldSettings[i].trigger ) ).find( 'input, textarea, select' );
 
 					/**
 					 * This resolves an issue where copied values that were edited were overwritten unexpectedly when
@@ -658,7 +672,7 @@
 
 			// Many 3rd parties add additional non-capturable inputs to the List field. Let's filter those out.
 			if (isListField) {
-				group = group.filter( '[name="input_{0}[]"]'.format( fieldId ) );
+				group = group.filter( '[name="input_{0}[]"]'.gformFormat( fieldId ) );
 			}
 
 			// Handle input-specific fields (excluding List fields).
@@ -856,7 +870,7 @@
 			if (typeof $input == 'object') {
 				var fieldId = $input.attr( 'name' ).match( /(\d+)/ )[0], // returns '34' from 'input_34[]'
 					$group  = $input.parents( '.gfield_list_group' ),
-					$inputs = $group.find( '[name="input_{0}[]"]'.format( fieldId ) ),
+					$inputs = $group.find( '[name="input_{0}[]"]'.gformFormat( fieldId ) ),
 					$groups = $input.parents( '.gfield_list_container' ).find( '.gfield_list_group' ),
 					column  = $inputs.index( $input ) + 1,
 					row     = $groups.index( $group ) + 1;

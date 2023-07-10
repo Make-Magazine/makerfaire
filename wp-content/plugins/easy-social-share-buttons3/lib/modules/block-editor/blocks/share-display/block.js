@@ -57,22 +57,23 @@ registerBlockType('essb/essb-share-display', {
 
         if (props.isSelected) {
             // console.debug(props.attributes);
-        }
-        ;
+        };
+        
+        var displayText = 'Choose the custom display position from the block settings. If you need to add additional displays you can do this from Where to Display -> Custom Position/Displays and create as many as you need.';
+        if (props.attributes.display) displayText = 'Display: ' + (essb_block_share_display[props.attributes.display] || prop.attributes.display);
 
         return [
             /**
              * Server side render
              */
             el("div", {
-                    className: "essb-editor-container",
-                    style: {textAlign: "left"}
-                },
-                el(ServerSideRender, {
-                    block: 'essb/essb-share-display',
-                    attributes: props.attributes
-                })
-            ),
+	            	className: "essb-block-editor-container",
+	            	style: {}
+	            },
+	            el("div", { className: "essb-block-editor-icon"}),
+	            el("div", { className: "essb-block-editor-command-tag essb-block-editor-command-tag-subscribe"}, "Share Buttons"),
+	            el("div", { className: "essb-block-editor-share essb-block-editor-content"}, displayText)
+	        ),
 
             /**
              * Inspector

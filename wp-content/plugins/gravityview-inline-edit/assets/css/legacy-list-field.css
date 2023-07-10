@@ -1,0 +1,177 @@
+/*
+----------------------------------------------------------------
+
+Legacy GF List Field Styles
+----------------------------------------------------------------
+*/
+
+/* From GF 2.4 formsmain.css */
+.gv-editable-container table.gfield_list,
+.gv-editable-container table.gfield_list caption,
+.gv-editable-container table.gfield_list tbody,
+.gv-editable-container table.gfield_list tfoot,
+.gv-editable-container table.gfield_list thead,
+.gv-editable-container table.gfield_list tr,
+.gv-editable-container table.gfield_list th,
+.gv-editable-container table.gfield_list td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.gv-editable-container table.gfield_list {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.gfield_repeater_buttons{
+    padding-top: 15px;
+}
+
+/* fix for twentyfifteen theme table layout issue */
+.gv-editable-container table.gfield_list {
+    table-layout: auto !important ;
+}
+
+.gv-editable-container table.gfield_list thead th {
+    font-weight: 700;
+    text-align: left;
+}
+
+.gv-editable-container table.gfield_list colgroup {
+    width: 100%;
+    display: block;
+}
+
+.gv-editable-container li.gfield.gfield_error table.gfield_list thead th {
+    color: #790000;
+}
+
+.gv-editable-container table.gfield_list thead,
+.gv-editable-container table.gfield_list tr {
+    padding: 0;
+    margin: 0;
+}
+
+.gv-editable-container table.gfield_list th,
+.gv-editable-container table.gfield_list td {
+    padding: 4px 0 4px 0;
+}
+
+.gv-editable-container ul.gform_fields:not(.top_label) table.gfield_list th {
+    padding: 0 0 4px 0;
+}
+
+.gv-editable-container table.gfield_list th + th,
+.gv-editable-container table.gfield_list td + td {
+    padding: 0 0 0 16px;
+}
+
+.gv-editable-container .gfield_list {
+    width: 100%;
+}
+
+.gv-editable-container .gfield_list td.gfield_list_cell input {
+    width: 100%;
+}
+
+.gfield_icon_disabled {
+    cursor: default !important;
+    filter: alpha(opacity=60);
+    -moz-opacity: .6;
+    -khtml-opacity: .6;
+    opacity: .6;
+}
+
+.gv-editable-container table.gfield_list tr td.gfield_list_icons {
+    width: 48px !important;
+    padding: 0 0 0 4px  !important;
+    box-sizing: border-box;
+}
+
+.gv-editable-container table.gfield_list td.gfield_list_icons img {
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* From GF 2.5+ main.css */
+.gv-editable-container table.gfield_list.gfield_list_container {
+    width: 100%;
+}
+
+.gv-editable-container table.gfield_list.gfield_list_container thead tr {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.gv-editable-container table.gfield_list.gfield_list_container thead tr th, .gv-editable-container table.gfield_list.gfield_list_container thead tr td {
+    flex-grow: 1;
+    white-space: normal;
+    width: 0;
+    word-break: break-word;
+}
+
+.gv-editable-container table.gfield_list.gfield_list_container thead tr td:last-child {
+    flex-grow: unset;
+    width: 48px;
+}
+
+.gv-editable-container table.gfield_list.gfield_list_container tbody th, .gv-editable-container table.gfield_list.gfield_list_container tbody td {
+    flex-grow: 1;
+    white-space: normal;
+    width: 0;
+    word-break: break-word;
+}
+
+.gv-editable-container table.gfield_list.gfield_list_container tbody td.gfield_list_icons {
+    flex-grow: unset;
+    width: 48px;
+}
+
+.gv-editable-container table.gfield_list.gfield_list_container tbody tr {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.gv-editable-container table.gfield_list.gfield_list_container tbody tr .gfield_list_cell {
+    flex-grow: 1;
+}
+
+.gv-editable-container table.gfield_list.gfield_list_container tbody tr .gfield_list_cell input {
+    width: 95%;
+}
+
+@media screen and (max-width: 640px) {
+    .gv-editable-container table.gfield_list th + th,
+    .gv-editable-container table.gfield_list td + td {
+        padding: 0;
+    }
+
+    .gv-editable-container table.gfield_list.gfield_list_container th {
+        display: none;
+    }
+
+    .gv-editable-container table.gfield_list.gfield_list_container tbody tr {
+        flex-flow: column;
+    }
+
+    .gv-editable-container table.gfield_list.gfield_list_container tbody tr td::before {
+        content: attr(data-label);
+        font-size: 14.992px;
+    }
+
+    .gv-editable-container table.gfield_list.gfield_list_container tbody tr td {
+        flex-grow: unset;
+        width: auto;
+    }
+
+    .gv-editable-container table.gfield_list.gfield_list_container tbody tr .gfield_list_icons {
+        height: 35px;
+        width: auto;
+    }
+}

@@ -124,6 +124,14 @@ function essb_ctt_shortcode($atts) {
 	
 	$rel = $atts['nofollow'] != 'no' ? 'rel="nofollow"' : '';	
 	
+	$link_short = urlencode ( $link_short );
+	
+	/**
+	 * @since 8.5 Adding support for new lines
+	 */
+	$link_short = str_replace('{nl}', '%0a', $link_short);
+	$link_short = str_replace('%7Bnl%7D', '%0a', $link_short);
+	
 	/**
 	 * SVG Icons Loader
 	 */
@@ -136,16 +144,16 @@ function essb_ctt_shortcode($atts) {
 	    if ($preview_mode == 'true') {
 	        return "<div class='essb-ctt".esc_attr($template)."' >
     			<span class='essb-ctt-quote'>
-    			" . $text . "
+    			" . str_replace('{nl}', '<br/>', $text) . "
     			</span>
     			<span class='essb-ctt-button'><span>" . $bcttBttn . "</span><i class='essb_svg_icon_twitter'>".ESSB_SVG_Icons::get_icon('twitter')."</i>
     		</div>";
 	        
 	    }
 	    else {
-    		return "<div class='essb-ctt".esc_attr($template)."' onclick=\"window.open('https://twitter.com/intent/tweet?text=" . urlencode ( $link_short ) . $handle_code . $bcttURL . "', 'essb_share_window', 'height=300,width=500,resizable=1,scrollbars=yes');\">
+    		return "<div class='essb-ctt".esc_attr($template)."' onclick=\"window.open('https://twitter.com/intent/tweet?text=" . $link_short . $handle_code . $bcttURL . "', 'essb_share_window', 'height=300,width=500,resizable=1,scrollbars=yes');\">
     			<span class='essb-ctt-quote'>
-    			" . $text . "
+    			" . str_replace('{nl}', '<br/>', $text) . "
     			</span>
     			<span class='essb-ctt-button'><span>" . $bcttBttn . "</span><i class='essb_svg_icon_twitter'>".ESSB_SVG_Icons::get_icon('twitter')."</i>
     		</div>";

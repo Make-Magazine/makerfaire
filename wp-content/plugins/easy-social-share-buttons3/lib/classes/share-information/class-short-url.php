@@ -123,7 +123,7 @@ class ESSB_Short_URL {
                     return self::generate_wp($url, $post_id);
                 }
                 if (self::$service == 'bit.ly') {
-                    return self::generate_bitly($url, $post_id, $network);
+                    return self::generate_bitly_api4($url, $post_id, $network);
                 }
                 if (self::$service == 'rebrand.ly') {
                     return self::generate_rebrandly($url, $post_id, $network);
@@ -231,6 +231,15 @@ class ESSB_Short_URL {
         if (essb_option_bool_value('affwp_active') && essb_option_bool_value('affwp_bridge_short')) {
             if (function_exists('affwp_is_affiliate') && is_user_logged_in () && affwp_is_affiliate ()) {
                 $key .= '_' . 'affiliatewp_' . affwp_get_affiliate_id();
+            }
+        }
+        
+        /**
+         * SliceWP integration - store short URL with affiliate ID
+         */
+        if (essb_option_bool_value('slicewp_active') && essb_option_bool_value('slicewp_bridge_short')) {
+            if (function_exists('slicewp_is_user_affiliate') && is_user_logged_in () && slicewp_is_user_affiliate ()) {
+                $key .= '_' . 'affiliatewp_' . slicewp_get_current_affiliate_id();
             }
         }
         
@@ -345,6 +354,71 @@ class ESSB_Short_URL {
         
         return $short_url;
     }
+    
+    public static function generate_bitly_api4($url = '', $post_id = '', $network = '') {
+        $api_key = essb_sanitize_option_value('shorturl_bitlyapi');
+        // pending further implementation
+        $shorten_domain = essb_sanitize_option_value('shorturl_bitlydomain');
+        $group_guid = '';
+        
+        // without short url it is impossible to generate short URL
+        if (empty($api_key)) {
+            return $url;
+        }
+        
+        $cache_key = self::post_short_cache_id('bitly', $network);
+        
+        // short URL exist
+        $result = self::has_saved_url($post_id, $cache_key);
+        if (!empty($result)) {
+            return $result;
+        }
+        
+        $encoded_url = $url;
+        
+        if(!$shorten_domain || empty($shorten_domain)){
+            $payload = array(
+                "group_guid" =>"".$group_guid."",
+                "long_url"   =>"".$encoded_url.""
+            );
+        }else{
+            $payload = array(
+                "group_guid" =>"".$group_guid."",
+                "domain"     =>"".$shorten_domain."",
+                "long_url"   =>"".$encoded_url.""
+            );
+        }
+        
+        
+        $json_payload = json_encode($payload);
+        
+        $headers = array (
+            "Host"          => "api-ssl.bitly.com",
+            "Authorization" => "Bearer ".$api_key ,
+            "Content-Type"  => "application/json"
+        );
+        
+        
+        $result = $url;
+        
+        $response = wp_remote_post( "https://api-ssl.bitly.com/v4/shorten" , array(
+            'method'      => 'POST',
+            'headers'     => $headers,
+            'body'        => $json_payload
+        )
+            );       
+        
+        
+        if ( is_wp_error( $response ) ) {
+            return $result;
+        } else {
+            $response_array = json_decode($response['body']);
+            $result = isset($response_array->link) ? $response_array->link : $url;
+            self::save_url($post_id, $cache_key, $result);            
+        }       
+        
+        return $result;
+    }
         
     /**
      * Generate short URL using bit.ly
@@ -445,6 +519,8 @@ class ESSB_Short_URL {
                 )
             ));
         }
+        
+        
         
         // Return the URL if the request got an error.
         if (is_wp_error($result)) {

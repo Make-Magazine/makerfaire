@@ -27,7 +27,7 @@ class GravityView_Inline_Edit_Field_Date extends GravityView_Inline_Edit_Field {
 
 		$wrapper_attributes['data-dateformat'] = ( empty( $gf_field->dateFormat ) ? 'mdy' : $gf_field->dateFormat );
 
-		wp_enqueue_style( 'gv-inline-edit-datepicker-css' );
+		wp_enqueue_style( 'gv-inline-edit-datepicker' );
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 
 		return parent::modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field );

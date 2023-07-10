@@ -93,6 +93,22 @@ class Form_Fields extends Component {
 					return sprintf( 'gpaa_lng_%s', $id );
 				},
 			],
+			'manual_coordinates' => [
+				'lat' => static function( $fields ) {
+					if ( ! is_object( $fields ) ) {
+						return null;
+					}
+
+					return $fields->lat ?: null;
+				},
+				'long' => static function( $fields ) {
+					if ( ! is_object( $fields ) ) {
+						return null;
+					}
+
+					return $fields->long ?: null;
+				},
+			],
 		];
 
 		if ( ! isset( $map[ $type ] ) ) {
@@ -264,7 +280,7 @@ class Form_Fields extends Component {
 		$maps_object->determine_google_script_handle();
 		wp_register_script( $maps_object->get_google_script_handle(), $maps_object->get_google_script_url(), [], null );
 
-		wp_register_script( 'gk-maps-iso-3166-1-alpha-2', plugins_url( '/assets/lib/iso-3166-1-alpha-2.js', $this->loader->path ), [ 'underscore' ], null );
+		wp_register_script( 'gk-maps-iso-3166-1-alpha-2', plugins_url( '/assets/lib/iso-3166-1-alpha-2.js', $this->loader->path ), [ 'underscore', 'gk-maps-base' ], null );
 
 		wp_register_style( 'gvmaps-icon-picker-style', plugins_url( 'assets/css/gv-maps-fields.css', $this->loader->path ), null, $this->loader->plugin_version );
 
@@ -272,7 +288,7 @@ class Form_Fields extends Component {
 
 		wp_register_script( 'gvmaps-icon-picker', plugins_url( 'assets/js/gv-maps-fields' . $script_debug . '.js', $this->loader->path ), [ 'jquery' ], $this->loader->plugin_version );
 
-		wp_register_script( 'gk-maps-admin-form-fields', plugins_url( 'assets/js/gk-maps-admin-form-fields' . $script_debug . '.js', $this->loader->path ), [ 'jquery' ], $this->loader->plugin_version );
+		wp_register_script( 'gk-maps-admin-form-fields', plugins_url( 'assets/js/gk-maps-admin-form-fields' . $script_debug . '.js', $this->loader->path ), [ 'jquery', 'gk-maps-base' ], $this->loader->plugin_version );
 
 		wp_register_script(
 			'gk-maps-form-address-auto-complete',
@@ -281,7 +297,7 @@ class Form_Fields extends Component {
 				'jquery',
 				'gk-maps-iso-3166-1-alpha-2',
 				$maps_object->get_google_script_handle(),
-				'wp-hooks',
+				'gk-maps-base',
 			],
 			$this->loader->plugin_version
 		);

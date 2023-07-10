@@ -4,6 +4,7 @@ namespace GravityKit\GravityMaps;
 
 use GF_Query_Condition;
 use GF_Query_Column;
+use GravityView_View;
 
 /**
  * Register and launch search filters component.
@@ -154,10 +155,10 @@ class Search_Filter extends Component {
 		// Force a base value early on, so we can replace.
 		$search_criteria['field_filters'] = [
 			[
-				'form_id'  => $form_id,
-				'key'      => 'geolocation',
+				'form_id' => $form_id,
+				'key' => 'geolocation',
 				'operator' => 'contains',
-				'value'    => '1',
+				'value' => '1',
 			],
 			'mode' => 'any',
 		];
@@ -187,15 +188,14 @@ class Search_Filter extends Component {
 		$minutes = $miles / 1.15 / 100;
 
 		$settings = [
-			'latitude_max'  => (float) $latitude + $degrees,
-			'latitude_min'  => (float) $latitude - $degrees,
+			'latitude_max' => (float) $latitude + $degrees,
+			'latitude_min' => (float) $latitude - $degrees,
 			'longitude_max' => (float) $longitude + $minutes,
 			'longitude_min' => (float) $longitude - $minutes,
 		];
 
 		return $settings;
 	}
-
 
 	/**
 	 * Quick dirty method of converting Miles to KM.
@@ -271,8 +271,8 @@ class Search_Filter extends Component {
 		}
 
 		$default_options = [
-			'value'    => 0, // int|float|string
-			'label'    => esc_attr__( '%1$s', 'gk-gravitymaps' ),
+			'value' => 0, // int|float|string
+			'label' => esc_attr__( '%1$s', 'gk-gravitymaps' ),
 			'selected' => false,
 		];
 
@@ -364,6 +364,77 @@ class Search_Filter extends Component {
 	}
 
 	/**
+	 * Get the Latitude and Longitude from a view, for Manual Coordinates fields.
+	 *
+	 * @since 2.2
+	 *
+	 * @param $view
+	 *
+	 * @return ?object {
+	 *                     lat: string|int,
+	 *                     long: string|int,
+	 *                 }
+	 */
+	public static function get_manual_coordinates_object( $view ): ?object {
+		/**
+		 * We specifically are mocking a GravityView_View object to get the form, because of backwards compatibility related
+		 * to how the filter was used in the past. Eventually we should deprecate this filter below, so we can use a normal
+		 * view instead of the Template Bound one.
+		 *
+		 *
+		 * @see GravityView_View::getForm()
+		 */
+		$mock_view = new class( $view ) {
+			private $view;
+
+			public function __construct( $view ) {
+				$this->view = $view;
+			}
+
+			public function getForm() {
+				return $this->view->form->form;
+			}
+		};
+
+		/**
+		 * @filter `gravityview/maps/markers/lat_long/fields_id` Enable marker position by feeding the latitude and longitude coordinates from form fields ids
+		 * @since  1.2
+		 *
+		 * @param array  $lat_long_fields Array of latitude/longitude of Gravity Forms field IDs
+		 * @param object $view            Current View object
+		 */
+		$lat_long_field_ids = apply_filters( 'gravityview/maps/markers/lat_long/fields_id', [], $mock_view );
+
+		// When empty means there are no fields being filtered.
+		if ( empty( $lat_long_field_ids ) ) {
+			return null;
+		}
+
+		if ( ! is_array( $lat_long_field_ids ) ) {
+			gravityview()->log->error(
+				'[GravityView Maps] Invalid Marker Coordinates fields. Expected an array with two field ids.',
+				[ 'ids' => $lat_long_field_ids, 'view' => $view ]
+			);
+
+			return null;
+		}
+
+		// If it changed but not 2, means we have an invalid configuration.
+		if ( 2 !== count( $lat_long_field_ids ) ) {
+			gravityview()->log->error(
+				'[GravityView Maps] Invalid Marker Coordinates fields. Expected two items in the array.',
+				[ 'ids' => $lat_long_field_ids, 'view' => $view ]
+			);
+			return null;
+		}
+
+		return (object) [
+			'lat' => reset( $lat_long_field_ids ),
+			'long' => end( $lat_long_field_ids ),
+		];
+	}
+
+	/**
 	 * Filters the \GF_Query with advanced logic.
 	 *
 	 * @param \GF_Query   $query   The current query object reference
@@ -380,9 +451,11 @@ class Search_Filter extends Component {
 			return;
 		}
 
-		$settings = Admin::get_map_settings( $view->settings->get( 'id' ), false );
+		$settings              = Admin::get_map_settings( $view->settings->get( 'id' ), false );
 		$gf_geolocation_fields = Form_Fields::get_gf_geolocation_form_fields( $view->form->ID );
-		if ( empty( $settings['map_address_field'] ) && empty( $gf_geolocation_fields ) ) {
+		$lat_long_field        = static::get_manual_coordinates_object( $view );
+
+		if ( empty( $settings['map_address_field'] ) && empty( $gf_geolocation_fields ) && empty( $lat_long_field ) ) {
 			return;
 		}
 
@@ -402,19 +475,26 @@ class Search_Filter extends Component {
 		$bounds_condition = new Search_GF_Query_Bounds_Condition();
 
 		if ( ! empty( $settings['map_address_field'] ) ) {
-			$bounds_condition->set_fields( $settings['map_address_field'] );
+			$bounds_condition->set_fields( $settings['map_address_field'], 'internal' );
 		}
 
 		if ( ! empty( $gf_geolocation_fields ) ) {
 			$bounds_condition->set_fields( $gf_geolocation_fields, 'gravityforms' );
 		}
+
+		if ( ! empty( $lat_long_field ) ) {
+			$bounds_condition->set_fields( [ $lat_long_field ], 'manual_coordinates' );
+		}
 		$bounds_condition->set_bounds( $bounds );
 
-		$query_parts = $query->_introspect();
+		$query_parts   = $query->_introspect();
+		$expressions   = $query_parts['where']->expressions;
+		$expressions[] = $bounds_condition;
 
-		$where = static::replace_condition( $query_parts['where'], 'geolocation', $bounds_condition );
-
+		$where = GF_Query_Condition::_and( ...$expressions );
 		$query->where( $where );
+
+		static::replace_geolocation_with_empty( $query );
 
 		$this->set_has_geolocation_condition( true );
 	}
@@ -461,10 +541,11 @@ class Search_Filter extends Component {
 			return;
 		}
 
-		$settings = Admin::get_map_settings( $view->settings->get( 'id' ), false );
+		$settings              = Admin::get_map_settings( $view->settings->get( 'id' ), false );
 		$gf_geolocation_fields = Form_Fields::get_gf_geolocation_form_fields( $view->form->ID );
+		$lat_long_field        = static::get_manual_coordinates_object( $view );
 
-		if ( empty( $settings['map_address_field'] ) && empty( $gf_geolocation_fields ) ) {
+		if ( empty( $settings['map_address_field'] ) && empty( $gf_geolocation_fields ) && empty( $lat_long_field ) ) {
 			return;
 		}
 
@@ -483,15 +564,23 @@ class Search_Filter extends Component {
 		if ( ! empty( $gf_geolocation_fields ) ) {
 			$radius_condition->set_fields( $gf_geolocation_fields, 'gravityforms' );
 		}
+
+		if ( ! empty( $lat_long_field ) ) {
+			$radius_condition->set_fields( [ $lat_long_field ], 'manual_coordinates' );
+		}
+
 		$radius_condition->set_latitude( $lat );
 		$radius_condition->set_longitude( $long );
 		$radius_condition->set_radius( $radius );
 
-		$query_parts = $query->_introspect();
+		$query_parts   = $query->_introspect();
+		$expressions   = $query_parts['where']->expressions;
+		$expressions[] = $radius_condition;
 
-		$where = static::replace_condition( $query_parts['where'], 'geolocation', $radius_condition );
-
+		$where = GF_Query_Condition::_and( ...$expressions );
 		$query->where( $where );
+
+		static::replace_geolocation_with_empty( $query );
 
 		$this->set_has_geolocation_condition( true );
 	}
@@ -514,14 +603,7 @@ class Search_Filter extends Component {
 			return;
 		}
 
-		$condition   = new GF_Query_Condition(
-			1,
-			GF_Query_Condition::EQ,
-			1
-		);
-		$query_parts = $query->_introspect();
-		$where       = static::replace_condition( $query_parts['where'], 'geolocation', $condition );
-		$query->where( $where );
+		static::replace_geolocation_with_empty( $query );
 	}
 
 	/**
@@ -586,6 +668,24 @@ class Search_Filter extends Component {
 		}
 
 		return $condition;
+	}
+
+	/**
+	 * Given a GF Query, we introspect and replace the geolocation condition with an empty one.
+	 *
+	 * @since 2.2
+	 *
+	 * @param \GF_Query $query The current query object reference.
+	 */
+	public static function replace_geolocation_with_empty( &$query ) {
+		$empty_condition = new GF_Query_Condition(
+			1,
+			GF_Query_Condition::EQ,
+			1
+		);
+		$query_parts     = $query->_introspect();
+		$where           = static::replace_condition( $query_parts['where'], 'geolocation', $empty_condition );
+		$query->where( $where );
 	}
 
 }

@@ -158,7 +158,7 @@ class InfoWindow {
 	 * @param array            $entry     Gravity Forms entry array
 	 * @param string           $entry_url URL to the current entry
 	 *
-	 * @return mixed|string
+	 * @return string
 	 */
 	function get_marker_content( $view, $entry, $entry_url = '' ) {
 		$content = GravityView_Merge_Tags::replace_variables( $this->template_html, $view->getForm(), $entry );

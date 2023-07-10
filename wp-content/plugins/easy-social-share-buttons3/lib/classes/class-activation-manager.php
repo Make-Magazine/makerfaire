@@ -15,7 +15,7 @@ class ESSBActivationManager {
     private static $option_data;
     private static $option_latest_version = 'essb4-latest-version';
     private static $latest_version;
-    private static $benefit_url = "https://socialsharingplugin.com/direct-customer-benefits/";
+    private static $benefit_url = "https://socialsharingplugin.com/direct-customer-benefits/";   
     
     private static function load() {
         $activation_data = get_option(self::$option);

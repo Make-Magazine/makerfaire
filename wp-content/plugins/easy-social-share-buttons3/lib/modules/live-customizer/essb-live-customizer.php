@@ -49,8 +49,6 @@ class ESSBLiveCustomizer {
 		wp_enqueue_style ( 'essb-themifyicons', ESSB3_PLUGIN_URL . '/assets/admin/themify-icons.css', array (), ESSB3_VERSION );	
 		wp_enqueue_style ( 'essb-live-customizer', ESSB3_PLUGIN_URL . '/lib/modules/live-customizer/assets/essb-live-customizer.css', array (), ESSB3_VERSION );	
 		wp_enqueue_script ( 'essb-live-customizer', ESSB3_PLUGIN_URL . '/lib/modules/live-customizer/assets/essb-live-customizer.js', array ('jquery'), false, true);	
-		wp_enqueue_style ( 'essb-live-customizer-animations', ESSB3_PLUGIN_URL.'/assets/css/essb-animations.min.css', array (), ESSB3_VERSION );
-		wp_enqueue_style ( 'essb-live-customizer-display-methods', ESSB3_PLUGIN_URL.'/assets/css/essb-display-methods.min.css', array (), ESSB3_VERSION );
 		
 		wp_localize_script ('essb-live-customizer', 'essb_live_customizer_positions', $this->generate_positions_map());
 		wp_add_inline_script ('essb-live-customizer', $this->prepare_position_setup_link());

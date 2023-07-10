@@ -3,6 +3,7 @@
 namespace GravityKit\GravityMaps;
 
 use \GFFormsModel;
+use GF_Query;
 
 /**
  * Class Search_GF_Query_Bounds_Condition
@@ -11,6 +12,15 @@ use \GFFormsModel;
  *
  */
 class Search_GF_Query_Bounds_Condition extends \GF_Query_Condition {
+	/**
+	 * The mode we handle fields.
+	 *
+	 * @since 2.2
+	 *
+	 * @var string
+	 */
+	protected $mode = 'internal';
+
 	/**
 	 * Sets the fields that need to be used based on the GF forms array of IDs provided.
 	 *
@@ -39,12 +49,14 @@ class Search_GF_Query_Bounds_Condition extends \GF_Query_Condition {
 	 *
 	 * @return $this
 	 */
-	public function set_fields( $fields, $type = 'internal' ) {
+	public function set_fields( $fields, string $type = 'internal' ): self {
 		$callbacks = Form_Fields::get_geolocation_fields_meta_key_callback( $type );
 		// Don't set fields when there are no callbacks.
 		if ( ! $callbacks ) {
 			return $this;
 		}
+
+		$this->mode = $type;
 
 		$this->fields = array_map( static function ( $id ) use ( $callbacks ) {
 			return [
@@ -61,7 +73,7 @@ class Search_GF_Query_Bounds_Condition extends \GF_Query_Condition {
 	 *
 	 * @since 2.0
 	 *
-	 * @param array $radius
+	 * @param array $bounds
 	 *
 	 * @return $this
 	 */

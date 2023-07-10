@@ -282,12 +282,33 @@ class ESSBCore {
 		    essb_resource_builder()->add_static_resource($script_url, 'essb-module-sharing-bar', 'js', true);
 		    essb_resource_builder()->activate_resource('essb-module-sharing-bar');
 		}
+		
+		/**
+		 * @since 8.5 The post bar styles are moved to a separate file
+		 */
+		if (in_array('postbar', $this->general_options['button_position'])) {
+		    $asset_url = ESSB3_PLUGIN_URL .'/assets/modules/sharing-postbar'.$use_minifed_css.'.css';
+		    $script_url = ESSB3_PLUGIN_URL .'/assets/modules/sharing-postbar'.$use_minifed_js.'.js';
+		    essb_resource_builder()->add_static_resource($asset_url, 'essb-module-sharing-postbar', 'css');
+		    essb_resource_builder()->add_static_resource($script_url, 'essb-module-sharing-postbar', 'js', true);
+		    essb_resource_builder()->activate_resource('essb-module-sharing-postbar');
+		    essb_resource_builder()->activate_resource('postbar');
+		}
+		
+		/**
+		 * @since 8.7 The point styles are moved to a separate file
+		 */
+		if (in_array('point', $this->general_options['button_position'])) {
+		    $asset_url = ESSB3_PLUGIN_URL .'/assets/modules/sharing-point'.$use_minifed_css.'.css';
+		    essb_resource_builder()->add_static_resource($asset_url, 'essb-module-sharing-point', 'css');
+		    essb_resource_builder()->activate_resource('essb-module-sharing-point');
+		}
 
 		// @since 3.5
 		// changed in 3.6 to add share point
-		if (in_array('postbar', $this->general_options['button_position']) || in_array('point', $this->general_options['button_position'])) {
+		if (in_array('point', $this->general_options['button_position'])) {
 			$display_locations_style = true;
-			essb_resource_builder()->activate_resource('postbar');
+			essb_resource_builder()->activate_resource('point');
 			$display_locations_script = true;			
 		}
 		

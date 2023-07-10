@@ -37,7 +37,7 @@ if (!function_exists('essb_sidebar_extender')) {
 	
 	if (essb_option_bool_value('sidebar_adaptive_style')) {
 		
-		function essb_sidebar_apply_adaptive_styles($style = array()) {
+	    function essb_sidebar_apply_adaptive_styles($style = array(), $position = 'sidebar') {
 			
 			$style['button_width'] = '';
 			$style['button_align'] = 'center';

@@ -432,6 +432,10 @@ class ESSBSocialFollowersCounter {
 				$count = apply_filters("essb4_followers_{$social}_counter", $social);
 			}
 			
+			if (has_filter("essb_get_followers_{$social}_counter")) {
+			    $count = apply_filters("essb_get_followers_{$social}_counter", $social);
+			}
+			
 			$counters[$social] = $count;
 			
 			if (empty($count)) {
@@ -502,7 +506,7 @@ class ESSBSocialFollowersCounter {
 					$result [] = $social;
 				}
 			}
-		}
+		}		
 		
 		/**
 		 * @since 7.7 / Filter integrated
@@ -572,7 +576,15 @@ class ESSBSocialFollowersCounter {
 				return ESSBSocialFollowersCounterHelper::get_option ( $social . '_url' );
 				break;
 			default :
-				return ESSBSocialFollowersCounterHelper::get_option ( $social . '_id' );
+			    /**
+			     * @since 8.8.2 Compatibility with custom networks (they support URL)
+			     */			    
+			    $network_value = ESSBSocialFollowersCounterHelper::get_option ( $social . '_id' );
+			    if (empty($network_value)) {
+			        $network_value = ESSBSocialFollowersCounterHelper::get_option ( $social . '_url' );
+			    }
+			    
+			    return $network_value;
 				break;
 		}
 	}

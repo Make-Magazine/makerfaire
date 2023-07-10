@@ -32,7 +32,8 @@ function essb_helper_source_map ($feature = '') {
         'short-url' => array('function' => 'essb_apply_shorturl', 'source' => ESSB3_HELPERS_PATH . 'helpers-short-url.php'),
         'litemode-helper' => array('class' => 'ESSB_LightMode_Helper', 'source' => ESSB3_CORE_PATH . 'classes/class-lightmode-helper.php'),
         // integrations with additional plugins
-        'integration-affiliatewp' => array('function' => 'essb_generate_affiliatewp_referral_link', 'source' => ESSB3_INTEGRATIONS_PATH . 'affiliatewp.php')
+        'integration-affiliatewp' => array('function' => 'essb_generate_affiliatewp_referral_link', 'source' => ESSB3_INTEGRATIONS_PATH . 'affiliatewp.php'),
+        'integration-slicewp' => array('function' => 'essb_generate_slicewp_referral_link', 'source' => ESSB3_INTEGRATIONS_PATH . 'slicewp.php')
     );
     
     return isset($map[$feature]) ? $map[$feature] : null;

@@ -308,7 +308,7 @@ class LicenseManager {
 			'license'     => $license
 		];
 
-		if ( 'check_license' === $edd_action ) {
+		if ( self::EDD_ACTION_CHECK_LICENSE === $edd_action ) {
 			$payload['site_data'] = $this->get_site_data();
 		}
 
@@ -685,6 +685,18 @@ class LicenseManager {
 			return;
 		}
 
+		$cache_id      = Framework::ID . '/hardcoded-licenses-check';
+		$check_timeout = defined( 'GRAVITYKIT_HARDCODED_LICENSES_CHECK_TIMEOUT' ) ? GRAVITYKIT_HARDCODED_LICENSES_CHECK_TIMEOUT : 5 * MINUTE_IN_SECONDS;
+		$last_check    = get_site_transient( $cache_id );
+
+		if ( $last_check ) {
+			return;
+		}
+
+		set_site_transient( $cache_id, current_time( 'timestamp' ), $check_timeout );
+
+		LoggerFramework::get_instance()->notice( "Checking hardcoded licenses and pausing for ${check_timeout} seconds." );
+
 		try {
 			$checked_licenses = $this->check_licenses( $license_keys_to_check );
 		} catch ( Exception $e ) {
@@ -694,10 +706,20 @@ class LicenseManager {
 		}
 
 		foreach ( $checked_licenses as $key => $license ) {
-			if ( ! $license['_raw']['success'] ) {
+			if ( ! Arr::get( $license, '_raw.success' ) ) {
 				LoggerFramework::get_instance()->warning( "Hardcoded license {$key} is invalid." );
 
 				continue;
+			}
+
+			if ( 'inactive' === Arr::get( $license, '_raw.license' ) ) {
+				try {
+					$this->activate_license( Arr::get( $license, 'key' ) );
+				} catch ( Exception $e ) {
+					LoggerFramework::get_instance()->warning( "Unable to activate hardcoded license {$key}:" . $e->getMessage() );
+
+					continue;
+				}
 			}
 
 			unset( $license['_raw'] );

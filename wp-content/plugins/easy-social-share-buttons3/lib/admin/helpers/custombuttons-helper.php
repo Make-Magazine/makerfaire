@@ -26,6 +26,9 @@ function essb_save_custom_buttons($buttons = array()) {
 	update_option(ESSB_CUSTOM_BUTTONS, $buttons, 'no', 'no');
 }
 
+function essb_remove_all_custom_buttons() {
+    delete_option(ESSB_CUSTOM_BUTTONS);
+}
 
 /**
  * Read the design settings for a new design
@@ -52,4 +55,15 @@ function essb_remove_custom_button($network_id = '') {
 	}
 
 	essb_save_custom_buttons($buttons);
+}
+
+function essb_create_custom_button($obj) {
+    $network_id = isset($obj['network_id']) ? $obj['network_id'] : '';
+    
+    if (!empty($network_id)) {
+        $buttons = essb_get_custom_buttons();
+        $buttons[$network_id] = $obj;
+        
+        essb_save_custom_buttons($buttons);
+    }
 }

@@ -24,11 +24,12 @@ class GravityView_Inline_Edit_Field_Multiselect extends GravityView_Inline_Edit_
 	 * @param $current_form
 	 * @param GF_Field_MultiSelect $gf_field
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
-
 		$field_value = rgar( $entry, $field_id );
+
+		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );
 
 		parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $field_value, $entry ), $current_form['id'], $field_id );
 
@@ -37,4 +38,4 @@ class GravityView_Inline_Edit_Field_Multiselect extends GravityView_Inline_Edit_
 
 }
 
-new GravityView_Inline_Edit_Field_Multiselect;
+new GravityView_Inline_Edit_Field_Multiselect();

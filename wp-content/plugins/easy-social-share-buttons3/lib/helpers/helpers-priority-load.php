@@ -10,6 +10,7 @@ include_once (ESSB3_HELPERS_PATH . 'helpers-source-map.php');
 include_once (ESSB3_HELPERS_PATH . 'helpers-utilities.php');
 include_once (ESSB3_HELPERS_PATH . 'helpers-disabled-modules.php');
 include_once (ESSB3_HELPERS_PATH . 'share-counters/helpers-sharecounters.php'); 
+include_once (ESSB3_HELPERS_PATH . 'helpers-deprecated.php');
 
 // Classes
 include_once (ESSB3_CLASS_PATH . 'class-factory-loader.php');

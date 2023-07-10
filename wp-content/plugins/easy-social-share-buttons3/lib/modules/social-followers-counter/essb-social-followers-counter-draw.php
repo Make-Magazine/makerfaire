@@ -407,8 +407,9 @@ class ESSBSocialFollowersCounterDraw {
 	        $options = apply_filters('essb_followers_draw_options', $options);
 	    }
 	    
-	    $hide_title = isset ( $options ['hide_title'] ) ? $options ['hide_title'] : 0;
-	    if (intval ( $hide_title ) == 1) {
+	    $hide_title = isset ( $options ['hide_title'] ) ? $options ['hide_title'] : '';
+	    // fixed in 8.5
+	    if (essb_unified_true($hide_title)) {
 	        $draw_title = false;
 	    }
 
@@ -550,8 +551,7 @@ class ESSBSocialFollowersCounterDraw {
 	     * Generate list of all social networks
 	     */
 	    $display_networks = $instance_show_user_networks && count($instance_user_networks) > 0 ? $instance_user_networks : essb_followers_counter ()->active_social_networks ();
-	    
-	    
+	    	    	    
 	    /**
 	     * Get all available social networks for the alt tags
 	     */
@@ -576,8 +576,10 @@ class ESSBSocialFollowersCounterDraw {
 	        $custom_li_class = '';
 	        
 	        $alt_text = '';
+	        $label_text = '';
 	        if ($follow_alt_text) {
 	            $alt_text = ' alt="'. esc_attr(isset($all_networks[$social]) ? $all_networks[$social] : $social) . '"';
+	            $label_text = ' aria-label="'. esc_attr(isset($all_networks[$social]) ? $all_networks[$social] : $social) . '"';
 	        }
 	        
 	        if ($layout_builder) {
@@ -598,7 +600,7 @@ class ESSBSocialFollowersCounterDraw {
 	            'block_classes' => 'essb-fc-network-'.$social_display .' '. self::block_template_class($instance_template, $social_display).$custom_li_class,
 	            'block_atts' => '',
 	            'icon_classes' => self::icon_template_class($instance_template, $social_display),
-	            'url_atts' => $link_nofollow.$link_newwindow.$alt_text,
+	            'url_atts' => $link_nofollow.$link_newwindow.$alt_text.$label_text,
 	            'network_name' => isset($all_networks[$social]) ? $all_networks[$social] : $social
 	        );
 	        

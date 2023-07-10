@@ -43,14 +43,15 @@ class Markers {
 	 *
 	 */
 	public static function prime_cache( array $entries, array $fields ) {
-		$entries = wp_list_pluck( $entries, 'id' );
-		$entries = array_filter( $entries, 'is_numeric' );
+		$entries_ids = wp_list_pluck( $entries, 'id' );
+		$entries_ids = array_filter( $entries_ids, 'is_numeric' );
 
-		$entries = array_filter( $entries, function ( $entry_id ) {
+		$entries_ids = array_filter( $entries_ids, static function ( $entry_id ) {
 			return false === Markers::get( $entry_id );
 		} );
 
 		$meta_keys = [];
+		$field_values = [];
 
 		foreach( $fields as $field ) {
 			$id = Arr::get( (array) $field, 'id' );
@@ -58,21 +59,43 @@ class Markers {
 				continue;
 			}
 
-			$meta_keys[] = Form_Fields::get_meta_key( 'lat', $id );
-			$meta_keys[] = Form_Fields::get_meta_key( 'long', $id );
+			if ( $field instanceof \GF_Field_Address ) {
+				$meta_keys[] = Form_Fields::get_meta_key( 'lat', $id );
+				$meta_keys[] = Form_Fields::get_meta_key( 'long', $id );
+			} elseif ( $field instanceof \GF_Field ) {
+				$field_values[] = $id;
+			}
 		}
 
-		$values = gform_get_meta_values_for_entries( $entries, $meta_keys );
+		if ( ! empty( $meta_keys ) ) {
+			$values = gform_get_meta_values_for_entries( $entries_ids, $meta_keys );
 
-		foreach ( $values as $value ) {
-			static::$items[ (int) $value->entry_id ] = $value;
+			foreach ( $values as $value ) {
+				static::$items[ (int) $value->entry_id ] = $value;
+			}
+		}
+
+		if ( ! empty( $field_values ) ) {
+			foreach ( $entries as $entry ) {
+				foreach ( $field_values as $field_id ) {
+					if ( ! isset( $entry[ $field_id ] ) ) {
+						continue;
+					}
+
+					$values[] = $entry[ $field_id ];
+				}
+
+				if ( ! empty( $values ) ) {
+					static::$items[ (int) $entry['id'] ] = $values;
+				}
+			}
 		}
 	}
 
 	/**
 	 * Filters the markers to only keep valid ones.
 	 *
-	 * @since TBD
+	 * @since 2.2
 	 *
 	 * @param mixed $marker
 	 *

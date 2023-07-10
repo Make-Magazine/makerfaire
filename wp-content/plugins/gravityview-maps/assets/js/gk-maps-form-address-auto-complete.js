@@ -1,32 +1,27 @@
-window.gravitykit = window.gravitykit || {};
-window.gravitykit.maps = window.gravitykit.maps || {};
-window.gravitykit.maps.formAddressAutocomplete = window.gravitykit.maps.formAddressAutocomplete || {};
-
-( ( $, obj, wp ) => {
+( ( $, obj, wp, GravityMaps ) => {
     "use strict";
+
+	// Create a global Reference for this globally.
+	GravityMaps.formAddressAutocomplete = obj;
 
     /**
      * Pull the data from the PHP localize variable.
      *
-     * @since TBD
+     * @since 2.2
      *
      * @var {Object}
      */
     obj.data = window.GKMapsFormAddressAutocompleteData;
 
     /**
-     * Creates a local WP hooks variable.
-     *
-     * @since TBD
-     *
-     * @var {Object}
+     * @inheritDoc
      */
-    obj.hooks = wp.hooks.createHooks();
+    obj.hooks = GravityMaps.hooks;
 
     /**
      * Triggers when Ready of the document.
      *
-     * @since TBD
+     * @since 2.2
      *
      * @return {void}
      */
@@ -37,7 +32,7 @@ window.gravitykit.maps.formAddressAutocomplete = window.gravitykit.maps.formAddr
     /**
      * Initializes all the Autocomplete fields, pulling from the localized data.
      *
-     * @since TBD
+     * @since 2.2
      *
      * @return {void}
      */
@@ -52,7 +47,7 @@ window.gravitykit.maps.formAddressAutocomplete = window.gravitykit.maps.formAddr
     /**
      * Builds the field ID given a field object.
      *
-     * @since TBD
+     * @since 2.2
      *
      * @param {Object} field
      *
@@ -60,13 +55,13 @@ window.gravitykit.maps.formAddressAutocomplete = window.gravitykit.maps.formAddr
      */
     obj.getFieldId = ( field ) => {
         // For now, we only trigger on the street name part of the address.
-        return  obj.hooks.applyFilters( 'gravitykit/maps/autocomplete_field_id', `#input_${field.formId}_${field.id}`, field );
+        return  obj.hooks.applyFilters( 'gk.maps.autocomplete_field_id', `#input_${field.formId}_${field.id}`, field );
     };
 
     /**
      * Builds the Individual input ID.
      *
-     * @since TBD
+     * @since 2.2
      *
      * @param {Object} field
      * @param {string} inputId
@@ -80,13 +75,13 @@ window.gravitykit.maps.formAddressAutocomplete = window.gravitykit.maps.formAddr
         const fieldId = obj.getFieldId( field );
 
         // For now, we only trigger on the street name part of the address.
-        return obj.hooks.applyFilters( 'gravitykit/maps/autocomplete_input_id', `${fieldId}_${inputId}`, field, inputId );
+        return obj.hooks.applyFilters( 'gk.maps.autocomplete_input_id', `${fieldId}_${inputId}`, field, inputId );
     };
 
     /**
      * Initializes one field.
      *
-     * @since TBD
+     * @since 2.2
      *
      * @param {Object} field
      *
@@ -101,9 +96,9 @@ window.gravitykit.maps.formAddressAutocomplete = window.gravitykit.maps.formAddr
         /**
          * Allows third-party inclusion of actions on initializing the field for auto complete
          *
-         * @since TBD
+         * @since 2.2
          */
-        obj.hooks.doAction( 'gravitykit/maps/autocomplete_field_init', field, $input );
+        obj.hooks.doAction( 'gk.maps.autocomplete_field_init', field, $input );
 
         // @todo move the items below to a separate file and use the action above.
         const options = {
@@ -148,7 +143,7 @@ window.gravitykit.maps.formAddressAutocomplete = window.gravitykit.maps.formAddr
      *
      * @todo Untangle this method from GoogleMaps so we use on third-party maps.
      *
-     * @since TBD
+     * @since 2.2
      *
      * @param {Object} field
      */
@@ -283,5 +278,5 @@ window.gravitykit.maps.formAddressAutocomplete = window.gravitykit.maps.formAddr
     };
 
     $( document ).ready( obj.ready );
-} )( window.jQuery, window.gravitykit.maps.formAddressAutocomplete, window.wp );
+} )( window.jQuery, {}, window.wp, window.GravityKit.GravityMaps );
 

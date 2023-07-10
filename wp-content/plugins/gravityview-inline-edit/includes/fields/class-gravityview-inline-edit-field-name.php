@@ -36,7 +36,7 @@ class GravityView_Inline_Edit_Field_Name extends GravityView_Inline_Edit_Field {
 	 * @param $current_form
 	 * @param GF_Field_Name $gf_field
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
 
@@ -44,11 +44,13 @@ class GravityView_Inline_Edit_Field_Name extends GravityView_Inline_Edit_Field {
 
 		parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $wrapper_attributes['data-value'], $entry ), $current_form['id'], $field_id );
 
-		$prefix_input    = GFFormsModel::get_input( $gf_field, $field_id . '.2' );
-		$prefix_tabindex = GFCommon::get_tabindex();
+		$prefix_input = GFFormsModel::get_input( $gf_field, $field_id . '.2' );
 
-		parent::add_field_template( $this->inline_edit_type . 'prefixes', $gf_field->get_name_prefix_field( $prefix_input, $field_id, $field_id, '', '', $prefix_tabindex ) );
-		parent::add_field_template( $this->inline_edit_type . 'prefixes', $gf_field->get_name_prefix_field( $prefix_input, $field_id, $field_id, '', '', $prefix_tabindex ), $current_form['id'], $field_id );
+		if( $prefix_input ) {
+			$prefix_tabindex = GFCommon::get_tabindex();
+			parent::add_field_template( $this->inline_edit_type . 'prefixes', $gf_field->get_name_prefix_field( (array) $prefix_input, $field_id, $field_id, '', '', $prefix_tabindex ) );
+			parent::add_field_template( $this->inline_edit_type . 'prefixes', $gf_field->get_name_prefix_field( (array) $prefix_input, $field_id, $field_id, '', '', $prefix_tabindex ), $current_form['id'], $field_id );
+		}
 
 		return parent::modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field );
 	}

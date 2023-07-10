@@ -10,6 +10,20 @@ const ko = window.ko;
 
 ( function( $ ) {
 
+	/*
+	 * String.format was deprecated in GF 2.7.1 and will be removed in GF 2.8 in favor of String.prototype.gformFormat.
+	 *
+	 * As we support older versions of GF, we need to add String.prototype.gformFormat if it doesn't exist.
+	 */
+	if (!String.prototype.gformFormat) {
+		String.prototype.gformFormat = function () {
+			var args = arguments;
+			return this.replace(/{(\d+)}/g, function (match, number) {
+				return typeof args[number] != 'undefined' ? args[number] : match;
+			});
+		};
+	}
+
 	window.GPNestedForms = function( args ) {
 
 		var self = this;
@@ -23,10 +37,10 @@ const ko = window.ko;
 
 		self.destroy = function() {
 			self.modal?.destroy();
-			$( document ).off( '.{0}'.format( self.getNamespace() ) );
+			$( document ).off( '.{0}'.gformFormat( self.getNamespace() ) );
 			window.gform.removeHook( 'action', 'gform_list_post_item_add', 10, self.getNamespace() );
 			window.gform.removeHook( 'action', 'gform_list_post_item_delete', 10, self.getNamespace() );
-			gform.removeFilter( 'gform_calculation_formula', 10, 'gpnf_{0}_{1}'.format( self.formId, self.fieldId ) );
+			gform.removeFilter( 'gform_calculation_formula', 10, 'gpnf_{0}_{1}'.gformFormat( self.formId, self.fieldId ) );
 
 			/*
 			 * Important placeholder! Knockout is not destroyed in this function as rebinding to an already-bound
@@ -40,15 +54,15 @@ const ko = window.ko;
 		self.init = function() {
 
 			self.id 				  = self.getDebugId();
-			self.$fieldContainer      = $( '#field_{0}_{1}'.format( self.formId, self.fieldId ) );
+			self.$fieldContainer      = $( '#field_{0}_{1}'.gformFormat( self.formId, self.fieldId ) );
 			self.$parentFormContainer = self.$fieldContainer.parents('form').first();
-			self.$modalSource         = $( '.gpnf-nested-form-{0}-{1}'.format( self.formId, self.fieldId ) );
+			self.$modalSource         = $( '.gpnf-nested-form-{0}-{1}'.gformFormat( self.formId, self.fieldId ) );
 			self.isActive             = false;
 			self.initialized          = false;
 
 			// Handle init when form is reloaded via AJAX.
-			if ( typeof window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] !== 'undefined' ) {
-				var oldGPNF  = window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ];
+			if ( typeof window[ 'GPNestedForms_{0}_{1}'.gformFormat( self.formId, self.fieldId ) ] !== 'undefined' ) {
+				var oldGPNF  = window[ 'GPNestedForms_{0}_{1}'.gformFormat( self.formId, self.fieldId ) ];
 				self.entries = oldGPNF.entries;
 
 				oldGPNF.destroy();
@@ -63,14 +77,14 @@ const ko = window.ko;
 			self.initKnockout();
 			self.initCalculations();
 
-			window[ 'GPNestedForms_{0}_{1}'.format( self.formId, self.fieldId ) ] = self;
+			window[ 'GPNestedForms_{0}_{1}'.gformFormat( self.formId, self.fieldId ) ] = self;
 
 			self.finalizeInit();
 		};
 
 		self.inHiddenPage = function() {
-			var currentPageNumber = $( '#gform_source_page_number_{0}'.format( self.formId ) ).val();
-			var $currentPage = self.$parentFormContainer.find('#gform_page_{0}_{1}'.format( self.formId, currentPageNumber ) );
+			var currentPageNumber = $( '#gform_source_page_number_{0}'.gformFormat( self.formId ) ).val();
+			var $currentPage = self.$parentFormContainer.find('#gform_page_{0}_{1}'.gformFormat( self.formId, currentPageNumber ) );
 
 			return !!($currentPage.length &&
 				!$currentPage.find(self.$fieldContainer).length);
@@ -96,7 +110,7 @@ const ko = window.ko;
 			var sessionPromise = self.initSession();
 
 			// Click handler for add entry button.
-			$( document ).on( 'click.{0}'.format( self.getNamespace() ), '#field_{0}_{1} .gpnf-add-entry'.format( self.formId, self.fieldId ), self.openAddModal );
+			$( document ).on( 'click.{0}'.gformFormat( self.getNamespace() ), '#field_{0}_{1} .gpnf-add-entry'.gformFormat( self.formId, self.fieldId ), self.openAddModal );
 
 			self.initModal();
 			self.addColorStyles();
@@ -151,7 +165,7 @@ const ko = window.ko;
 				footer: true,
 				stickyFooter: self.modalStickyFooter,
 				closeMethods: [ 'button' ],
-				cssClass: [ self.modalClass, 'gpnf-modal', 'gpnf-modal-{0}-{1}'.format( self.formId, self.fieldId ) ],
+				cssClass: [ self.modalClass, 'gpnf-modal', 'gpnf-modal-{0}-{1}'.gformFormat( self.formId, self.fieldId ) ],
 				onOpen: function() {
 					self.isActive = true;
 
@@ -199,7 +213,7 @@ const ko = window.ko;
 
 			// Re-init modaled forms; 'gpnf_post_render' triggered on any nested form's first load every time a nested
 			// form is retrieved via ajax (aka editing, first load and each page load).
-			$( document ).on( 'gpnf_post_render.{0}'.format( self.getNamespace() ), function( event, formId, currentPage ) {
+			$( document ).on( 'gpnf_post_render.{0}'.gformFormat( self.getNamespace() ), function( event, formId, currentPage ) {
 
 				var $nestedForm = $( '#gform_wrapper_' + formId );
 
@@ -266,7 +280,7 @@ const ko = window.ko;
 
 		self.initCalculations = function() {
 
-			gform.addFilter( 'gform_calculation_formula', self.parseCalcs, 10, 'gpnf_{0}_{1}'.format( self.formId, self.fieldId ) );
+			gform.addFilter( 'gform_calculation_formula', self.parseCalcs, 10, 'gpnf_{0}_{1}'.gformFormat( self.formId, self.fieldId ) );
 			self.runCalc( self.formId );
 
 		};
@@ -402,7 +416,7 @@ const ko = window.ko;
 
 			$( self.modal.modalBoxContent )
 				.html( typeof html !== 'undefined' ? html : self.formHtml )
-				.prepend( '<div class="gpnf-modal-header" style="background-color:{1}">{0}</div>'.format( self.getModalTitle(), self.modalHeaderColor ) );
+				.prepend( '<div class="gpnf-modal-header" style="background-color:{1}">{0}</div>'.gformFormat( self.getModalTitle(), self.modalHeaderColor ) );
 
 			self.$modal.find( 'input[name="gpnf_nested_form_field_id"]' ).val( self.fieldId );
 
@@ -575,7 +589,7 @@ const ko = window.ko;
 					.gpnf-modal-{0}-{1} .tingle-btn--primary { background-color: {2}; } \
 					.gpnf-modal-{0}-{1} .tingle-btn--default { background-color: {3}; } \
 					.gpnf-modal-{0}-{1} .tingle-btn--danger { background-color: {4}; } \
-				</style>'.format( self.formId, self.fieldId, self.modalArgs.colors.primary, self.modalArgs.colors.secondary, self.modalArgs.colors.danger );
+				</style>'.gformFormat( self.formId, self.fieldId, self.modalArgs.colors.primary, self.modalArgs.colors.secondary, self.modalArgs.colors.danger );
 
 			$( 'head' ).append( self.$style );
 
@@ -601,7 +615,7 @@ const ko = window.ko;
 			 * The .first() call here is used in the event that the parent form markup is on the page more than one time. This can happen with
 			 * third-party plugins such as wpDataTables.
 			 */
-			return $( '#gform_page_{0}_{1} .gform_page_footer, #gform_{0} .gform_footer, #gform_{0} .gfield--type-submit'.format( self.nestedFormId, self.getCurrentPage() ) ).first().find( 'input[type="button"], input[type="submit"], input[type="image"], button' );
+			return $( '#gform_page_{0}_{1} .gform_page_footer, #gform_{0} .gform_footer, #gform_{0} .gfield--type-submit'.gformFormat( self.nestedFormId, self.getCurrentPage() ) ).first().find( 'input[type="button"], input[type="submit"], input[type="image"], button' );
 		};
 
 		self.handleCancelClick = function( $button ) {
@@ -651,11 +665,17 @@ const ko = window.ko;
 
 		self.bindResizeEvents = function() {
 
-			$( document ).on( 'gpnf_post_render.{0}'.format( self.getNamespace() ), function() {
-				self.modal.checkOverflow();
+			$( document ).on( 'gpnf_post_render.{0}'.gformFormat( self.getNamespace() ), function() {
+				/*
+				 * Move handler to the bottom of the stack to ensure that everything in this event has finished such as
+				 * GPLD inline datepicker.
+				 */
+				setTimeout(() => {
+					self.modal.checkOverflow();
+				}, 0);
 			} );
 
-			$( document ).on( 'gform_post_conditional_logic.{0}'.format( self.getNamespace() ), function( event, formId ) {
+			$( document ).on( 'gform_post_conditional_logic.{0}'.gformFormat( self.getNamespace() ), function( event, formId ) {
 				if ( self.nestedFormId == formId ) {
 					self.modal.checkOverflow();
 				}
@@ -747,7 +767,8 @@ const ko = window.ko;
 				action: 'gpnf_refresh_markup',
 				nonce: GPNFData.nonces.refreshMarkup,
 				gpnf_parent_form_id: self.formId,
-				gpnf_nested_form_field_id: self.fieldId
+				gpnf_nested_form_field_id: self.fieldId,
+				gpnf_context: self.ajaxContext
 			}, function( response ) {
 				self.formHtml = response;
 			} );
@@ -764,7 +785,8 @@ const ko = window.ko;
 				nonce: GPNFData.nonces.editEntry,
 				gpnf_entry_id: entryId,
 				gpnf_parent_form_id: self.formId,
-				gpnf_nested_form_field_id: self.fieldId
+				gpnf_nested_form_field_id: self.fieldId,
+				gpnf_context: self.ajaxContext
 				}, function( response ) {
 
 					$spinner.destroy();
@@ -1080,7 +1102,7 @@ const ko = window.ko;
 			if ( typeof fieldIds !== 'undefined' ) {
 				var selectors = [];
 				$.each( fieldIds, function( index, fieldId ) {
-					selectors.push( '#field_{0}_{1}'.format( self.nestedFormId, fieldId ) );
+					selectors.push( '#field_{0}_{1}'.gformFormat( self.nestedFormId, fieldId ) );
 				} );
 				$inputs = self.$modal.find( selectors.join( ',' ) ).find( ':input' );
 			} else {
@@ -1242,7 +1264,7 @@ const ko = window.ko;
 		};
 
 		self.getCurrentPage = function() {
-			var currentPage = $( '#gform_source_page_number_{0}'.format( self.nestedFormId ) ).val();
+			var currentPage = $( '#gform_source_page_number_{0}'.gformFormat( self.nestedFormId ) ).val();
 			return Math.max( 1, parseInt( currentPage ) );
 		};
 
@@ -1262,7 +1284,7 @@ const ko = window.ko;
 		};
 
 		self.getNamespace = function() {
-			return 'gpnf-{0}-{1}'.format( self.formId, self.fieldId );
+			return 'gpnf-{0}-{1}'.gformFormat( self.formId, self.fieldId );
 		};
 
 		/**
@@ -1272,7 +1294,7 @@ const ko = window.ko;
 		 * @param {int} formId
 		 */
 		self.initIframe = function( formId ) {
-			$( '#gform_ajax_frame_{0}'.format( formId ) )
+			$( '#gform_ajax_frame_{0}'.gformFormat( formId ) )
 				// This hasn't been proven to be necessary but added this to make it as bulletproof as possible given
 				// that < GF 2.5 will still bind its own event to the iframe's load.
 				.off( 'load' )
@@ -1282,11 +1304,11 @@ const ko = window.ko;
 					if ( ! is_postback ) {
 						return;
 					}
-					var form_content    = $( this ).contents().find( '#gform_wrapper_{0}'.format( formId ) );
-					var is_confirmation = $( this ).contents().find( '#gform_confirmation_wrapper_{0}'.format( formId ) ).length > 0;
+					var form_content    = $( this ).contents().find( '#gform_wrapper_{0}'.gformFormat( formId ) );
+					var is_confirmation = $( this ).contents().find( '#gform_confirmation_wrapper_{0}'.gformFormat( formId ) ).length > 0;
 					var is_redirect     = contents.indexOf( 'gformRedirect(){' ) >= 0;
 					var is_form         = form_content.length > 0 && ! is_redirect && ! is_confirmation;
-					var $formWrapper    = $( '#gform_wrapper_{0}'.format( formId ) );
+					var $formWrapper    = $( '#gform_wrapper_{0}'.gformFormat( formId ) );
 					if ( is_form ) {
 						$formWrapper.html( form_content.html() );
 						if (form_content.hasClass( 'gform_validation_error' )) {
@@ -1298,9 +1320,9 @@ const ko = window.ko;
 						if ( window['gformInitPriceFields']) {
 							gformInitPriceFields();
 						}
-						var current_page = $( '#gform_source_page_number_{0}'.format( formId ) ).val();
+						var current_page = $( '#gform_source_page_number_{0}'.gformFormat( formId ) ).val();
 						$( document ).trigger( 'gform_page_loaded', [ formId, current_page] );
-						window[ 'gf_submitting_{0}'.format( formId ) ] = false;
+						window[ 'gf_submitting_{0}'.gformFormat( formId ) ] = false;
 					} else if ( ! is_redirect) {
 						var confirmation_content = $( this ).contents().find( '.GF_AJAX_POSTBACK' ).html();
 						if ( ! confirmation_content) {
@@ -1309,7 +1331,7 @@ const ko = window.ko;
 						setTimeout( function() {
 							$formWrapper.replaceWith( confirmation_content );
 							$( document ).trigger( 'gform_confirmation_loaded', [ formId ] );
-							window[ 'gf_submitting_{0}'.format( formId ) ] = false;
+							window[ 'gf_submitting_{0}'.gformFormat( formId ) ] = false;
 						}, 50 );
 					}
 					$( document ).trigger( 'gpnf_post_render', [ formId, current_page] );
@@ -1329,7 +1351,7 @@ const ko = window.ko;
 		GPNestedForms.loadEntry = function( args ) {
 
 			/** @var \GPNestedForms gpnf */
-			var gpnf          = window[ 'GPNestedForms_{0}_{1}'.format( args.formId, args.fieldId ) ];
+			var gpnf          = window[ 'GPNestedForms_{0}_{1}'.gformFormat( args.formId, args.fieldId ) ];
 			var refreshMarkup = true;
 
 			const entry = gpnf.prepareEntryForKnockout( args.fieldValues );

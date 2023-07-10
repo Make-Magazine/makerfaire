@@ -70,7 +70,10 @@
 				}
 
 				if ( stepNumber != self.getCurrentPage() ) {
-					$( this ).html( self.getPageLinkMarkup( stepNumber, $( this ).html() ) ).addClass( 'gpmpn-step-linked' );
+					var existingLink = $( 'a[href="#' + stepNumber + '"]' );
+					if ( !existingLink.length ) {
+						$( this ).html( self.getPageLinkMarkup( stepNumber, $( this ).html() ) ).addClass( 'gpmpn-step-linked' );
+					}
 				} else {
 					// If this step was changed to a link, remove the link.
 					$( this )

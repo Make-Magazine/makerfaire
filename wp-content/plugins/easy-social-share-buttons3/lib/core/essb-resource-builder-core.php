@@ -167,6 +167,27 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 		$pin_options['visibility'] = essb_sanitize_option_value('pinterest_visibility');
 		$pin_options['reposition'] = essb_option_bool_value('pinterest_reposition');
 		$pin_options['selector'] = essb_sanitize_option_value('pinterest_selector');
+		$pin_options['optimize_load'] = essb_option_bool_value('pinterest_optimized_load');
+		
+		/**
+		 * @since 8.6.1 Adding classes for the Pinterest Button
+		 */
+		if (class_exists('ESSB_Share_Button_Styles')) {
+		    $pin_options['template_a_class'] = ESSB_Share_Button_Styles::get_network_element_classes(essb_option_value('pinterest_template'), 'pinterest');
+		    $pin_options['template_icon_class'] = ESSB_Share_Button_Styles::get_network_icon_classes(essb_option_value('pinterest_template'), 'pinterest');
+		    
+		    $additional_template_classes = ESSB_Share_Button_Styles::get_root_template_classes(essb_option_value('pinterest_template'));
+		    if (!empty($additional_template_classes)) {
+		        $pin_options['template'] .= ' ' . $additional_template_classes;
+		    }
+		}
+		
+		/**
+		 * @since 8.4.1 Changing the custom image selector to .post img
+		 */
+		if (empty($pin_options['selector'])) {
+		    $pin_options['selector'] = '.post img';
+		}
 		
 		if (essb_option_bool_value('pinterest_alwayscustom') && essb_option_bool_value('pinterest_images')) {
 			$pin_options['custompin'] = esc_attr(get_post_meta( get_the_ID(), 'essb_post_pin_desc', true));
@@ -175,6 +196,14 @@ function essb_js_build_admin_ajax_access_code($buffer) {
 		
 		if (essb_option_bool_value('pinterest_using_api')) {
 		    $pin_options['legacy_share_cmd'] = true;
+		}
+		
+		/**
+		 * @since 8.7
+		 */
+		$pin_options['svgIcon'] = essb_svg_icon('pinterest');
+		if (has_filter('essb_pinterest_pro_replace_svg_icon')) {
+		    $pin_options['svgIcon'] = apply_filters('essb_pinterest_pro_replace_svg_icon', $pin_options['svgIcon']);
 		}
 		
 		$output .= 'var essbPinImages = '.json_encode($pin_options).';';

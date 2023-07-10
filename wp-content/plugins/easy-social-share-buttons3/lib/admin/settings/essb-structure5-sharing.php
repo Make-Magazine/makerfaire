@@ -581,6 +581,7 @@ if (!essb_option_bool_value('deactivate_module_pinterestpro')) {
 	ESSBOptionsStructureHelper::field_switch('social', 'pinpro', 'pinterest_lazyload', esc_html__('My images have lazy loading', 'essb'), esc_html__('Enable if you are using lazyloading optimization or infinite content loading. Otherwise, the Pin button may not register on all images.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
 	ESSBOptionsStructureHelper::field_switch('social', 'pinpro', 'pinterest_alwayscustom', esc_html__('Use the post custom Pinterest message for all images', 'essb'), esc_html__('Enable the option to let the plugin always use the custom Pinterest message you have set. If there is no custom message the plugin will use the default settings (post/page title).', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
 	ESSBOptionsStructureHelper::field_switch('social', 'pinpro', 'pinterest_reposition', esc_html__('Correct button position', 'essb'), esc_html__('Set to Yes if your Pin button appear outside the image (on images with smaller width than the content area).', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
+	ESSBOptionsStructureHelper::field_switch('social', 'pinpro', 'pinterest_optimized_load', esc_html__('Optimize the initial image detection scan', 'essb'), esc_html__('Set Yes to delay the initial images scan only after the user does an interaction with the page - touch, move, scroll, type.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'), '', '');
 	
 	ESSBOptionsStructureHelper::tab_end('social', 'pinpro');
 	
@@ -722,6 +723,7 @@ if (!essb_option_bool_value('deactivate_module_shorturl')) {
 	
 	essb_heading_with_related_section_open('social', 'shorturl', 'bit.ly', '<i class="fa fa-cog"></i>', '');
 	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'shorturl', 'shorturl_bitlyapi', esc_html__('bit.ly Access token key', 'essb'), '');
+	ESSBOptionsStructureHelper::field_textbox_stretched('social', 'shorturl', 'shorturl_bitlydomain', esc_html__('bit.ly branded short URL domain (example: shrt.to)', 'essb'), '');
 	essb_heading_with_related_section_close('social', 'shorturl');
 	
 	ESSBOptionsStructureHelper::holder_end('social', 'shorturl');
@@ -1349,6 +1351,12 @@ function essb5_advanced_affiliate_options() {
 			esc_html__('Configure integration with the AffiliateWP plugin to share links that contain an affiliate (referral parameter).', 'essb'),
 			'integration-affiliatewp', '', esc_html__('Configure', 'essb'), 'ti-settings', 'no', '500');
 
+    echo essb5_generate_code_advanced_settings_panel(
+			    esc_html__('SliceWP Integration', 'essb'),
+			    esc_html__('Configure integration with the SliceWP plugin to share links that contain an affiliate (referral parameter).', 'essb'),
+			    'integration-slicewp', '', esc_html__('Configure', 'essb'), 'ti-settings', 'no', '500');
+			    
+	
 	echo essb5_generate_code_advanced_settings_panel(
 			esc_html__('WP Affiliates Integration', 'essb'),
 			esc_html__('Configure integration with the WP Affiliates plugin to share links that contain an affiliate (referral parameter).', 'essb'),
@@ -1483,6 +1491,11 @@ function essb_create_custombuttons($options = array()) {
 	
 	echo '<div class="essb-flex-grid-r">';
 	echo '<a href="#" class="ao-new-subscribe-design ao-new-sharecustom-button" data-title="'.esc_html__('New Custom Button', 'essb').'"><span class="essb_icon fa fa-plus-square"></span><span>'.esc_html__('Create new custom button', 'essb').'</span></a>';
+	if (ESSBActivationManager::isActivated()) {
+	    echo '<a href="#" class="ao-new-subscribe-design ao-import-sharecustom-button" data-title="'.esc_html__('Import Custom Button', 'essb').'"><span class="essb_icon fa fa-cloud-upload"></span><span>'.esc_html__('Import', 'essb').'</span></a>';
+	}
+	echo '<a href="#" class="ao-new-subscribe-design ao-deleteall-sharecustom-button" data-title="'.esc_html__('Delete All', 'essb').'"><span class="essb_icon fa fa-close"></span><span>'.esc_html__('Remove All', 'essb').'</span></a>';
+	
 	echo '</div>';
 	
 	if (! function_exists ( 'essb_get_custom_buttons' )) {
@@ -1496,9 +1509,14 @@ function essb_create_custombuttons($options = array()) {
 		$icon = isset($data['icon']) ? $data['icon'] : '';
 		$bgcolor = isset($data['bgcolor']) ? $data['bgcolor'] : '';
 		$iconcolor = isset($data['iconcolor']) ? $data['iconcolor'] : '';
+		$network_color = isset($data['network_color']) ? $data['network_color'] : '';
 		
 		if ($icon != '') {
 			$icon = base64_decode($icon);
+		}
+		
+		if (empty($iconcolor)) {
+		    $iconcolor = '#ffffff';
 		}
 		
 		$description = '';
@@ -1506,9 +1524,12 @@ function essb_create_custombuttons($options = array()) {
 		if ($icon != '') {
 			$description = '<div class="icon custom-network-'.$id.'">'.stripslashes($icon).'</div>';
 			
-			if ($bgcolor != '' || $iconcolor != '') {
+			if ($bgcolor != '' || $iconcolor != '' || $network_color != '') {
 				$description .= '<style>';
-				if ($bgcolor != '') {
+				if ($network_color != '') {
+				    $description .= '.custom-network-'.$id.' {background-color: '.esc_attr($network_color).';}';
+				}
+				else if ($bgcolor != '') {
 					$description .= '.custom-network-'.$id.' {background-color: '.esc_attr($bgcolor).';}';
 				}
 				
@@ -1521,7 +1542,9 @@ function essb_create_custombuttons($options = array()) {
 
 		$custom_buttons = '<a href="#" class="essb-btn tile-config ao-new-sharecustom-button" data-network="'.$id.'" data-title="Manage Existing Button"><i class="fa fa-cog"></i>'.esc_html__('Edit', 'essb').'</a>';
 		$custom_buttons .= '<a href="#" class="essb-btn tile-deactivate ao-remove-sharecustom-button" data-network="'.$id.'" data-title="Remove Existing Button"><i class="fa fa-close"></i>'.esc_html__('Remove', 'essb').'</a>';
-
+		if (ESSBActivationManager::isActivated()) {
+		    $custom_buttons .= '<a href="#" class="essb-btn tile-general ao-export-sharecustom-button" data-network="'.$id.'" data-title="Export Existing Button"><i class="fa fa-cloud-download"></i>'.esc_html__('Export', 'essb').'</a>';
+		}
 		$options_load = array();
 		$options_load['title'] = $name;
 		$options_load['description'] = $description;

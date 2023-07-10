@@ -4,7 +4,7 @@
 * Plugin Name: Easy Social Share Buttons for WordPress
 * Description: The first true all in one social media plugin for WordPress, including social share buttons, social followers counter, social profile links, click to tweet, Pinnable images, after share events, subscribe forms, Instagram feed, social proof notifications and much more.
 * Plugin URI: https://codecanyon.net/item/easy-social-share-buttons-for-wordpress/6394476?ref=appscreo
-* Version: 8.4
+* Version: 9.1
 * Author: CreoApps
 * Author URI: https://codecanyon.net/user/appscreo/portfolio?ref=appscreo
 * Text Domain: essb
@@ -21,7 +21,7 @@ if (defined('ESSB3_VERSION')) {
     return;
 }
 
-define ( 'ESSB3_VERSION', '8.4' );
+define ( 'ESSB3_VERSION', '9.1' );
 define ( 'ESSB3_PLUGIN_ROOT', dirname ( __FILE__ ) . '/' );
 define ( 'ESSB3_PLUGIN_URL', plugins_url () . '/' . basename ( dirname ( __FILE__ ) ) );
 define ( 'ESSB3_PLUGIN_BASE_NAME', plugin_basename ( __FILE__ ) );
@@ -115,6 +115,7 @@ class ESSB_Manager {
 		register_activation_hook ( __FILE__, array ('ESSB_Manager', 'activate' ) );
 		register_deactivation_hook ( __FILE__, array ('ESSB_Manager', 'deactivate' ) );
 		register_uninstall_hook ( __FILE__, array ('ESSB_Manager', 'uninstall' ) );
+		add_action( 'upgrader_process_complete', array ('ESSB_Manager', 'updated' ), 10, 2 );
 
 		// initialize plugin
 		add_action( 'plugins_loaded', array( &$this, 'load_widgets' ), 9);		
@@ -465,6 +466,36 @@ class ESSB_Manager {
 			$this->factory[$module] = new $class_name;
 		}
 	}
+	
+	public static function updated($upgrader_object, $options) {
+	    try {	        
+	        $our_plugin = plugin_basename( __FILE__ );
+	        if( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
+	            foreach( $options['plugins'] as $plugin ) {
+	                if( $plugin == $our_plugin ) {
+	                    set_transient( 'essb-pending-code-validate', true, 30 );
+	                    
+	                    /**
+	                     * Adding additional checks for components upgrade when migrating from old versions
+	                     */
+	                    if (!class_exists('ESSB_Post_Meta')) {
+	                        include_once (ESSB3_PLUGIN_ROOT . 'lib/classes/class-post-meta.php');
+	                    }
+	                    
+	                    if (!function_exists('essb_active_install_or_update')) {
+	                        include_once(ESSB3_PLUGIN_ROOT . 'activate.php');
+	                    }
+	                    
+	                    // custom databables or updates
+	                    essb_active_install_or_update();
+	                }
+	            }
+	        }
+    	}
+    	catch (Exception $e) {
+    	}
+
+	}
 
 	/*
 	 * Static activation/deactivation hooks
@@ -476,7 +507,9 @@ class ESSB_Manager {
 	        include_once (ESSB3_PLUGIN_ROOT . 'lib/classes/class-post-meta.php');
 	    }
 	    
-		include_once(ESSB3_PLUGIN_ROOT . 'activate.php');
+	    if (!function_exists('essb_active_install_or_update')) {
+            include_once(ESSB3_PLUGIN_ROOT . 'activate.php');
+	    }
 		
 		// custom databables or updates
 		essb_active_install_or_update();
@@ -487,6 +520,8 @@ class ESSB_Manager {
 		// activate redirection hook
 		if ( ! is_network_admin() ) {
 			set_transient( '_essb_page_welcome_redirect', 1, 30 );
+			// set verification of the plugin code each time plugin is activated
+			set_transient( 'essb-pending-code-validate', true, 30 );
 		}
 	}
 

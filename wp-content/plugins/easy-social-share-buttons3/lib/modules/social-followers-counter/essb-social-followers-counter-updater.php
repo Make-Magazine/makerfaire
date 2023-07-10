@@ -162,12 +162,13 @@ class ESSBSocialFollowersCounterUpdater {
 		
 		$pattern = '/_1drq[^>]+>(.*?)<\/a/s';
 		preg_match( $pattern, $the_request, $matches );
-				
+		
 		$counter = 0;
 						
 		if ( ! empty( $matches[1] ) ) {
 			$number  = strip_tags( $matches[1] );
 			$counter = '';
+			
 			
 			$this->log('facebook', "https://www.facebook.com/plugins/likebox.php?href=https://facebook.com/$social_id&show_faces=true&header=false&stream=false&show_border=false&locale=en_US", $number);			
 								
@@ -177,8 +178,8 @@ class ESSBSocialFollowersCounterUpdater {
 				}
 			}
 		}
-		else {
-		    $this->log('facebook', "https://www.facebook.com/plugins/likebox.php?href=https://facebook.com/$social_id&show_faces=true&header=false&stream=false&show_border=false&locale=en_US", '');
+		else {		    		    
+		    $this->log('facebook', "https://www.facebook.com/plugins/likebox.php?href=https://facebook.com/$social_id&show_faces=true&header=false&stream=false&show_border=false&locale=en_US", $counter);
 		}
 		
 		return $counter;

@@ -18,6 +18,22 @@ if (!function_exists('essb_admin_ajax_helper_post_actions')) {
             }
         }
         
+        if (isset($_REQUEST['cmd']) && $_REQUEST['cmd'] == 'clear_share_counters') {
+            $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : '';
+            
+            if (!empty($post_id) && class_exists('ESSB_Short_URL')) {
+                delete_post_meta($post_id, 'essb_cache_expire');
+                $networks = essb_available_social_networks();
+                
+                foreach ($networks as $key => $data) {
+                    delete_post_meta($post_id, 'essb_c_'.$key);
+                }
+                
+                delete_post_meta($post_id, 'essb_c_total');
+                $status['code'] = 200;
+            }
+        }
+        
         wp_send_json($status);
         die();        
     }

@@ -52,6 +52,7 @@ function ao_generate_feature_block($title = '', $desc = '', $icon = '', $field =
 		<a href="#" data-tab="display">Share Display Methods <span class="small-tag">2/12</span></a>
 		<a href="#" data-tab="social">Social Features <span class="small-tag">2/12</span></a>
 		<a href="#" data-tab="advanced">Advanced Features <span class="small-tag">2/12</span></a>
+		<a href="#" data-tab="addons">Add-Ons</a>
 		<a href="https://docs.socialsharingplugin.com/knowledgebase/how-to-enable-or-disable-additional-plugin-features-using-the-activate-deactivate-features-function/" target="_blank" class="help-link"><i class="ti-help-alt"></i>Need Help?</a>			
 	</div>
 	<div class="content">
@@ -69,7 +70,7 @@ function ao_generate_feature_block($title = '', $desc = '', $icon = '', $field =
 		ao_generate_feature_block(esc_html__('Google Analytics Tracking', 'essb'), esc_html__('Generate UTM tracking code to the outgoing shared URLs or track events of sharing in Google Analytics.', 'essb'), 'ti-google', 'deactivate_module_google_analytics', true);
 		ao_generate_feature_block(esc_html__('Pinterest Pro', 'essb'), esc_html__('Automatically add Pin button over images in content, include Pinterest sharing images or galleries', 'essb'), 'ti-pinterest', 'deactivate_module_pinterestpro', true);
 		ao_generate_feature_block(esc_html__('Short URL', 'essb'), esc_html__('Generate short URLs for sharing on social networks', 'essb'), 'ti-new-window', 'deactivate_module_shorturl', true);
-		ao_generate_feature_block(esc_html__('Affiliate & Point Integration', 'essb'), esc_html__('Integrate plugin work with myCred, AffiliateWP', 'essb'), 'ti-money', 'deactivate_module_affiliate', true);
+		ao_generate_feature_block(esc_html__('Affiliate & Point Integration', 'essb'), esc_html__('Integrate plugin work with myCred, AffiliateWP, SliceWP', 'essb'), 'ti-money', 'deactivate_module_affiliate', true);
 		ao_generate_feature_block(esc_html__('Custom Share', 'essb'), esc_html__('Custom share feature makes possible to change the share URL that plugin will use', 'essb'), 'ti-share-alt', 'deactivate_module_customshare', true);
 		ao_generate_feature_block(esc_html__('Message Before Buttons', 'essb'), esc_html__('Add a custom message before or above share buttons "ex: Share this"', 'essb'), 'fa fa-comment', 'deactivate_module_message', true);
 		ao_generate_feature_block(esc_html__('Social Metrics Lite', 'essb'), esc_html__('Log the official share values into a dashboard to see the most popular posts', 'essb'), 'ti-dashboard', 'deactivate_module_metrics', true);
@@ -130,7 +131,7 @@ function ao_generate_feature_block($title = '', $desc = '', $icon = '', $field =
 		ao_generate_feature_block(esc_html__('Conversion Tracking', 'essb'), esc_html__('Enable the tracking of share or subscribe conversions', 'essb'), 'ti-dashboard', 'deactivate_module_conversions', true);
 		ao_generate_feature_block(esc_html__('Automatic Mobile Setup', 'essb'), esc_html__('Activate automatic responsive mobile setup of share buttons', 'essb'), 'ti-mobile', 'activate_mobile_auto');
 		ao_generate_feature_block(esc_html__('WooCommerce', 'essb'), esc_html__('WooCommerce specific locations to show share buttons.', 'essb'), 'ti-shopping-cart', 'deactivate_method_woocommerce', true);
-		ao_generate_feature_block(esc_html__('Integrations With Plugins', 'essb'), esc_html__('Additional integrations available with WooCommerce, bbPress and etc.', 'essb'), 'fa fa-plug', 'deactivate_method_integrations', true);
+		ao_generate_feature_block(esc_html__('Integrations With Plugins', 'essb'), esc_html__('Additional integrations available with BuddyPress, bbPress and etc.', 'essb'), 'fa fa-plug', 'deactivate_method_integrations', true);
 		ao_generate_feature_block(esc_html__('Settings by Post Type', 'essb'), esc_html__('Allow additional settings for different post types', 'essb'), 'ti-pencil-alt', 'deactivate_settings_post_type', true);
 		
 		ao_generate_feature_block(esc_html__('Internal Share Counters', 'essb'), esc_html__('The internal share counter option allows to change the generated counters on site and track them internally for all networks.', 'essb'), 'fa fa-retweet', 'activate_fake');
@@ -138,6 +139,75 @@ function ao_generate_feature_block($title = '', $desc = '', $icon = '', $field =
 		ao_generate_feature_block(esc_html__('Minimal Share Counters', 'essb'), esc_html__('Set a minimal share value that will be shown till the official value become greater', 'essb'), 'fa fa-sort-numeric-desc', 'activate_minimal');
 		?>
 		</div>
+		</div>
+		
+		<div class="content-tab tab-addons">
+		<?php 
+		if (!class_exists ( 'ESSBAddonsHelper' )) {
+		    include_once (ESSB3_PLUGIN_ROOT . 'lib/admin/addons/essb-addons-helper4.php');
+		}
+		
+		if ( ! function_exists( 'get_plugins' ) ) {
+		    require_once wp_normalize_path( ABSPATH . 'wp-admin/includes/plugin.php' );
+		}
+		
+        $current_addon_list = ESSBAddonsHelper::get_instance ()->get_addons ();
+        $current_plugin_list = essb_get_site_plugins();
+        
+        foreach ($current_addon_list as $key => $data) {
+            $price = isset($data['price']) ? $data['price'] : '';
+            $is_free = ($price == 'free' || $price == 'Free' || $price == 'FREE');
+            
+            if ($is_free) {
+                $url_install = wp_nonce_url(
+                    add_query_arg(
+                        array(
+                            'plugin'           => urlencode( $key ),
+                            'essb-tgmpa-install' => 'install-plugin',
+                        ),
+                        admin_url('admin.php?page=essb_redirect_addons')
+                        ),
+                    'essb-tgmpa-install',
+                    'essb-tgmpa-nonce'
+                    );
+                
+                
+                $url_command = $url_install;
+                $command_text = 'Install';
+                $command_class = 'button-primary';
+                
+                if (isset($current_plugin_list[$key])) {
+                    $addon_slug = $current_plugin_list[$key]['path'];
+                    $url_activate = wp_nonce_url( "plugins.php?action=activate&plugin={$addon_slug}", "activate-plugin_{$addon_slug}" );
+                    $url_deactivate = wp_nonce_url( "plugins.php?action=deactivate&plugin={$addon_slug}", "deactivate-plugin_{$addon_slug}" );
+                    
+                    $url_command = $current_plugin_list[$key]['active'] ? $url_deactivate : $url_activate;
+                    $command_text = $current_plugin_list[$key]['active'] ? 'Deactivate' : 'Activate';
+                    $command_class = $current_plugin_list[$key]['active'] ? 'button-deactivate' : 'button-activate';
+                }		    
+                
+                
+                echo '<div class="features-addon">';
+                echo '<div class="features-addon-image"><img src="'.esc_url(ESSB3_PLUGIN_URL .'/assets/images/'.$data['icon'].'.svg' ).'"/></div>';
+                echo '<div class="features-addon-data">';
+                echo '<div class="details">';
+                echo '<div class="title">'.$data['name'].'</div>';
+                echo '<div class="desc">'.$data['description'].'</div>';	
+                if (!ESSBActivationManager::isActivated()) {
+                    echo '<span class="not-activated">'.ESSBAdminActivate::activateToUnlock(esc_html__('Activate plugin to download', 'essb')).'</span>';
+                }
+                echo '</div>'; // details
+                if (ESSBActivationManager::isActivated()) {
+                    echo '<div class="commands">';
+                    echo '<a class="button '.esc_attr($command_class).'" href="'.esc_url($url_command).'">' . $command_text . '</a>';
+                    echo '</div>';                
+                }
+                echo '</div>'; // features-addon-data
+                echo '</div>';
+            }
+        }
+		
+		?>
 		</div>
 	</div>
 

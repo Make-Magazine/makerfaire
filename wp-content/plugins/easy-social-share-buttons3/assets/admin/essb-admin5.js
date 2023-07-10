@@ -906,7 +906,7 @@ jQuery(document).ready(function($){
 		for (var i=0;i<networksIndex.length;i++) {
 			var network = networksIndex[i],
 				networkDetails = essbAdminSettings.networks[network] || {},
-				name = networkDetails['name'] || '',
+				name = networkDetails['label'] || networkDetails['name'] || '',
 				isActive = activeNetworks[network] ? true: false;
 
 			output.push('<div class="essb-admin-networkselect essb-admin-network-' + network+' essb-network-color-' + network + ' '+(isActive ? 'active' : '')+'" data-filter-value="'+name+'" data-network="'+network+'">');
@@ -1049,6 +1049,7 @@ jQuery(document).ready(function($){
 				name_hidde_class = 'essb_vertical_name';
 
 			var template = drawSettings['template'] || '5';
+			var templateID = Number(template);
 
 			if (essbAdminSettings) {
 				template = Number(template);
@@ -1056,6 +1057,10 @@ jQuery(document).ready(function($){
 					template = essbAdminSettings.templates[template];
 			}
 			additional_classes += ' essb_template_' + template;
+			
+			if (essbAdminSettings && essbAdminSettings.template_classes && essbAdminSettings.template_classes[templateID]) {
+				if (essbAdminSettings.template_classes[templateID].root != '') additional_classes += ' ' + essbAdminSettings.template_classes[templateID].root;
+			}
 
 			if (drawSettings['nospace'])
 				additional_classes += ' essb_nospace';
@@ -1294,12 +1299,27 @@ jQuery(document).ready(function($){
 					useDrawingStyles = fullwidth_first;
 				if (drawSettings['width'] == 'full' && i == 1)
 					useDrawingStyles = fullwidth_second;
+				
+				var element_a_classes = '', element_icon_classes = '';
+				var svg_icon = '', network_id = networkDetails['key'];
+				if (essbAdminSettings && essbAdminSettings.svg && essbAdminSettings.svg[network_id])
+					svg_icon = essbAdminSettings.svg[network_id];
+				
+				//
 
-				output.push('<li class="essb_item essb_link_' + networkDetails['key']+'" style="'+useDrawingStyles+'">');
+				if (essbAdminSettings && essbAdminSettings.template_classes && essbAdminSettings.template_classes[templateID]) {
+					element_a_classes = essbAdminSettings.template_classes[templateID].element;
+					element_icon_classes = essbAdminSettings.template_classes[templateID].icon;
+					
+					element_a_classes = element_a_classes.replace(/{network}/g, networkDetails['key']);
+					element_icon_classes = element_icon_classes.replace(/{network}/g, networkDetails['key']);
+				}
+
+				output.push('<li class="essb_item essb_link_' + networkDetails['key']+(svg_icon != '' ? ' essb_link_svg_icon': '')+'" style="'+useDrawingStyles+'">');
 				output.push(cached_code_left);
-				output.push('<a href="#" style="'+additional_full_width_correction+'">');
+				output.push('<a href="#" style="'+additional_full_width_correction+'" class="'+element_a_classes+'">');
 				output.push(cached_code_before);
-				output.push('<span class="essb_icon essb_icon_'+networkDetails['key']+'"></span>');
+				output.push('<span class="essb_icon essb_icon_'+networkDetails['key']+' '+element_icon_classes+'">'+svg_icon+'</span>');
 				output.push('<span class="essb_network_name">' + cached_code_insidebefore + nameDisplay+ cached_code_insideafter +'</span>');
 				output.push(cached_code_after);
 				output.push('</a>');
@@ -1866,6 +1886,7 @@ jQuery(document).ready(function($){
 			$('#essb_field_essb_cache_static').attr('checked', false);
 			$('#essb_field_essb_cache_static_js').attr('checked', false);
 			$('#essb_field_precompiled_unique').attr('checked', false);
+			$('#essb_field_precompiled_post').attr('checked', false);
 			$('#essb_field_precompiled_preload_css').attr('checked', false);
 
 			$('#essb_field_use_stylebuilder').attr('checked', true);
@@ -1884,7 +1905,7 @@ jQuery(document).ready(function($){
 				$('#essb_options_precompiled_mode').val('');
 				$('#essb_field_precompiled_resources').attr('checked', true);
 				$('#essb_options_precompiled_folder').val('');
-				$('#essb_field_precompiled_unique').attr('checked', true);
+				$('#essb_field_precompiled_unique').attr('checked', true);				
 				$('#essb_field_precompiled_preload_css').attr('checked', true);
 			}
 

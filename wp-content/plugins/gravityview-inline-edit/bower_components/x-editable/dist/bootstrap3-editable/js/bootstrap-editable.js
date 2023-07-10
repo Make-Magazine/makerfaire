@@ -1261,6 +1261,8 @@ Applied as jQuery method.
         Other containers can be cancelled or submitted (depends on onblur option)
         */
         closeOthers: function(element) {
+            var one_element = $(this);
+
             $('.editable-open').each(function(i, el){
                 //do nothing with passed element and it's children
                 if(el === element || $(el).find(element).length) {
@@ -1278,7 +1280,11 @@ Applied as jQuery method.
                 if(ec.options.onblur === 'cancel') {
                     $el.data('editableContainer').hide('onblur');
                 } else if(ec.options.onblur === 'submit') {
-                    $el.data('editableContainer').tip().find('form').submit();
+                    // Only submit the current edited input.
+                    if($el.data('editableContainer').tip().find('.edited-input').length){
+                        $el.data('editableContainer').tip().find('form').submit();
+                        $el.data('editableContainer').tip().find('.edited-input').removeClass('edited-input');
+                    }
                 }
             });
 

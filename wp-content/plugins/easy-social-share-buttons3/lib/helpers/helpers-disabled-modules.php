@@ -54,6 +54,8 @@ if (!function_exists('essb_control_running_disabled_modules')) {
             $options['mycred_activate_custom'] = 'false';
             $options['mycred_referral_activate'] = 'false';
             $options['mycred_referral_activate_shortcode'] = 'false';
+            $options['slicewp_active'] = 'false';
+            $options['slicewp_active_shortcode'] = 'false';
         }
         
         if (essb_option_bool_value('deactivate_module_customshare')) {
@@ -96,6 +98,13 @@ if (!function_exists('essb_control_running_disabled_modules')) {
         $currentLanguage = get_bloginfo('language');
         if (strpos($currentLanguage, 'en-') === false) {
             $options['deactivate_module_translate'] = 'false';
+        }
+        
+        /**
+         * Disable the speedup counter if PHP is >= 8
+         */
+        if ( version_compare( PHP_VERSION, '8.0', '>=' ) ) {
+            $options['cache_counter_refresh_async'] = 'false';
         }
         
         return $options;

@@ -36,7 +36,7 @@ class ESSB_Elementor_Social_Profiles_Widget extends Widget_Base {
 		);
 		
 		// setting just the option parameters from the shortode
-		$general_options = array('template', 'animation', 'align', 'size', 'nospace', 'columns', 'cta', 'cta_vertical');
+		$general_options = array('template', 'animation', 'align', 'size', 'nospace', 'columns', 'cta', 'cta_vertical', 'cta_number');
 		$shortcode_settings = essb_get_shortcode_options_easy_profiles();
 		
 		foreach ($shortcode_settings as $field => $options) {

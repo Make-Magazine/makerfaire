@@ -1,0 +1,110 @@
+# Copyright (C) 2023 GravityView
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView - DIY Layout 2.4\n"
+"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
+"POT-Creation-Date: 2018-05-09 02:13:27+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
+"Last-Translator: GravityView <hello@gravityview.co>\n"
+"Language-Team: GravityView <hello@gravityview.co>\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
+"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-Bookmarks: \n"
+"X-Textdomain-Support: yes\n"
+
+#: class-gravityview-diy-template.php:23
+msgid "A flexible, powerful layout for designers & developers."
+msgstr ""
+
+#: class-gravityview-diy-template.php:33
+msgid "Link to single entry"
+msgstr ""
+
+#: class-gravityview-diy-template.php:39
+msgid "Wrapper"
+msgstr ""
+
+#: class-gravityview-diy-template.php:49
+msgid "Fields to Display"
+msgstr ""
+
+#: class-gravityview-diy-template.php:50
+msgid "The field values will need to be styled using CSS."
+msgstr ""
+
+#: class-gravityview-diy-template.php:100
+msgid "Custom Label"
+msgstr ""
+
+#: class-gravityview-diy-template.php:101
+msgid ""
+"This label is to make it easier to organize your fields. It is not visible "
+"on the front-end."
+msgstr ""
+
+#: class-gravityview-diy-template.php:109
+msgid "Before Output"
+msgstr ""
+
+#: class-gravityview-diy-template.php:110
+msgid "before"
+msgstr ""
+
+#: class-gravityview-diy-template.php:121
+msgid "Container Tag"
+msgstr ""
+
+#: class-gravityview-diy-template.php:122
+msgid "This HTML tag will be used to wrap the field value."
+msgstr ""
+
+#: class-gravityview-diy-template.php:135
+msgid "After Output"
+msgstr ""
+
+#: class-gravityview-diy-template.php:136
+msgid "after"
+msgstr ""
+
+#: class-gravityview-diy-template.php:146
+msgid "Show Label"
+msgstr ""
+
+#: class-gravityview-diy-template.php:154
+msgid "Custom Label:"
+msgstr ""
+
+#: class-gravityview-diy-template.php:185
+msgid "None"
+msgstr ""
+
+#: class-gravityview-diy-template.php:22
+msgctxt "DIY means \"Do It Yourself\""
+msgid "DIY"
+msgstr ""
+
+#: class-gravityview-diy-template.php:90
+msgctxt ""
+"Same description for before and after areas. %s replaced by \"before\" and "
+"\"after\""
+msgid "Display HTML %s the field output. Supports Merge Tags."
+msgstr ""
+
+#: gravityview-diy.php:47
+msgctxt ""
+"First placeholder: Name of the Extension. Second: Version of GravityView "
+"not found"
+msgid "%s was not loaded: GravityView %s was not found!"
+msgstr ""

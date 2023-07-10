@@ -29,7 +29,7 @@ class GravityView_Inline_Edit_Field_Checkbox extends GravityView_Inline_Edit_Fie
 	 */
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
 
-		$checklist_value = $this->_get_inline_edit_value( $gf_field, $entry, false );
+		$checklist_value = self::_get_inline_edit_value( $gf_field, $entry, false );
 
 		parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $checklist_value, $entry ), $current_form['id'], $field_id );
 
@@ -49,7 +49,7 @@ class GravityView_Inline_Edit_Field_Checkbox extends GravityView_Inline_Edit_Fie
 	 *
 	 * @return array|string JSON-encoded array, or array (depending on $as_string)
 	 */
-	public function _get_inline_edit_value( $gf_field, $entry, $as_json = true ) {
+	public static function _get_inline_edit_value( $gf_field, $entry, $as_json = true ) {
 
 		$field_id = $gf_field->id;
 
@@ -61,6 +61,7 @@ class GravityView_Inline_Edit_Field_Checkbox extends GravityView_Inline_Edit_Fie
 				$choice_number ++;
 			}
 			$input_id                = $field_id . '.' . $choice_number;
+			
 			$current_checklist_entry = rgar( $entry, $input_id, false );
 
 			if ( $current_checklist_entry ) {

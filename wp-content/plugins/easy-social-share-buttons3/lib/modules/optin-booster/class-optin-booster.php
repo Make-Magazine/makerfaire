@@ -222,6 +222,8 @@ class ESSBOptinBooster {
 		    $ofob_deactivate_mobile = true;
 		}
 		
+		$ofob_deactivate_desktop = $this->option_bool_value('ofob_deactivate_desktop');
+		
 		$close_type = $this->option_value('of_'.$event.'_close');
 		$close_color = $this->option_value('of_'.$event.'_closecolor');
 		$close_text = $this->option_value('of_'.$event.'_closetext');
@@ -239,10 +241,10 @@ class ESSBOptinBooster {
 			$close_text = esc_html__("No thanks. I don't want.", 'essb');
 		}
 		
-		$output .= '<div class="essb-optinbooster essb-optinbooster-'.esc_attr($event).($ofob_deactivate_mobile ? ' essb-subscribe-mobile-hidden' : '').'" '.$event_fire.'>';
+		$output .= '<div class="essb-optinbooster essb-optinbooster-'.esc_attr($event).($ofob_deactivate_mobile ? ' essb-subscribe-mobile-hidden' : '').($ofob_deactivate_desktop ? ' essb-subscribe-desktop-hidden' : '').'" '.$event_fire.'>';
 		
 		if ($close_type == 'icon') {
-			$output .= '<div class="essb-optinbooster-close essb-optinbooster-closeicon" '.esc_attr($css_color).'><i class="essb_icon_close"></i></div>';
+			$output .= '<div class="essb-optinbooster-close essb-optinbooster-closeicon" '.$css_color.'>'.essb_svg_replace_font_icon('close').'</div>';
 		}
 		
 		$output .= do_shortcode('[easy-subscribe design="'.$design.'" mode="mailchimp" conversion="booster-'.esc_attr($event).'"]');
@@ -251,7 +253,7 @@ class ESSBOptinBooster {
 		}
 		
 		$output .= '</div>';
-		$output .= '<div class="essb-optinbooster-overlay essb-optinbooster-overlay-'.esc_attr($event).($ofob_deactivate_mobile ? ' essb-subscribe-mobile-hidden' : '').'"'.($overlay_color != '' ? ' style="background-color:'.esc_attr($overlay_color).'!important;"' : '').'>';
+		$output .= '<div class="essb-optinbooster-overlay essb-optinbooster-overlay-'.esc_attr($event).($ofob_deactivate_mobile ? ' essb-subscribe-mobile-hidden' : '').($ofob_deactivate_desktop ? ' essb-subscribe-desktop-hidden' : '').'"'.($overlay_color != '' ? ' style="background-color:'.esc_attr($overlay_color).'!important;"' : '').'>';
 		
 		$output .= '</div>';
 		
