@@ -1817,6 +1817,9 @@
 					margin-right: 0px;
 				}
 			}
+         @media screen and (max-width: 900px) {
+            min-height: auto;
+         }
 			a {
 				color: #333;
 				&:hover, &:focus, &:active, &:visited {
@@ -1827,45 +1830,36 @@
 				.p-title {
 					font-size: 18px;
 					line-height: 1.3em;
-					overflow: visible;
+					display: -webkit-box;
+               -webkit-box-orient: vertical;
+               -webkit-line-clamp: 2;
+               overflow: hidden;
 					font-weight: bold;
+               min-height: 45px;
+               @media screen and (min-width: 767px) {
+                  min-height: auto;
+               }
 				}
 				@media screen and (min-width: 767px) {
 					margin-bottom: 5px;
-					.p-title { height: auto; }
 				}
 				@media screen and (min-width: 982px) {
 					margin-bottom: 20px;
-					.p-title { height: 35px; }
 				}
 			}
 			.content {
 				display: flex;
 				align-items: start;
-				overflow: hidden;
 				position: relative;
-				&::after {
-					content: "...";
-					width: 30px;
-					background: rgb(255,255,255);
-					background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 100%);
-					position: absolute;
-					bottom: 0px;
-					right: 0px;
-					text-align: right;
-				}
-				@media screen and (min-width: 500px) {
-					max-height: 200px;
-				}
-				@media screen and (min-width: 991px) {
-					max-height: 140px;
-				}
-				@media screen and (min-width: 1200px) {
-					max-height: 120px;
-				}
+            max-height: 100px;
+            overflow: hidden;
 				p {
 					line-height: 1.3em;
 					font-size: .97em;
+               display: -webkit-box;
+               -webkit-box-orient: vertical;
+               -webkit-line-clamp: 5;
+               overflow: hidden;;
 				}
 				img {
 					margin-right: 15px;
