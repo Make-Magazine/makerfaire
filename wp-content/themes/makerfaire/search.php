@@ -20,17 +20,6 @@
 
 			<form action="<?php echo home_url( '/' ); ?>">
 				<input type="text" value="<?php echo get_search_query( true ); ?>" name="s" id="s" class="input-medium search-query" />
-				<?php if ( ! isset( $_GET['faire'] ) || empty( $_GET['faire'] ) ) : ?>
-					<?php $all_terms = get_terms( 'faire', array( 'hide_empty' => false ) ); ?>
-					<select name="faire" id="faire-dropdown-search">';
-						<option value="">All Faires</option>';
-
-						<?php foreach ( $all_terms as $term ) : ?>
-							<option value="<?php echo sanitize_text_field( $term->slug ); ?>"><?php echo esc_html( $term->name ); ?></option>
-						<?php endforeach; ?>
-
-					</select>
-				<?php endif; ?>
 				<input type="hidden" name="post_type" value="mf_form" />
 				<?php if ( isset( $_GET['faire'] ) ) : ?>
 					<input type="hidden" name="faire" value="<?php echo esc_attr( $_GET['faire'] ); ?>" />
