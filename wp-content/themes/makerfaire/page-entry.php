@@ -108,20 +108,20 @@ if (isset($entry->errors)) {
     if (isset($entry['287'])) {
         $field_287 = $entry['287']; //What are the problems you aim to help solve with this project?
         $field = GFFormsModel::get_field($form, 287);
-        $label_287 = $field->label;
+        $label_287 = (is_object($field)) ? $field->label : "";
     }
     //for VMF2020 we used field 123 instead of 887
     if (strpos($faireShort, "VMF") === 0) {
         if (isset($entry['123'])) {
             $field_887 = $entry['123']; //What are some of the major challenges you have encountered and how did you address them?
             $field = GFFormsModel::get_field($form, 123);
-            $label_887 = $field->label;
+            $label_887 = (is_object($field)) ? $field->label : "";
         }
     } else {
         if (isset($entry['877'])) {
             $field_877 = $entry['877']; //What are some of the major challenges you have encountered and how did you address them?
             $field = GFFormsModel::get_field($form, 877);
-            $label_877 = $field->label;
+            $label_877 = (is_object($field)) ? $field->label : "";
         }
     }
 
