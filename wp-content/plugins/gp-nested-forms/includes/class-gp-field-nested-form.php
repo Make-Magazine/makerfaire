@@ -390,7 +390,15 @@ class GP_Field_Nested_Form extends GF_Field {
 		$is_gravityview = $this->is_gravityview();
 		$is_print_page  = rgget( 'gf_page' ) == 'print-entry';
 
-		return $is_woocommerce || $is_print_page || $is_gravityview;
+		/**
+		 * Filter whether the simple detail template should be used. By default, it is used on
+		 * WooCommerce pages (Cart, Checkout, and View Order), GravityView, and when printing entries.
+		 *
+		 * @param bool $should_use_simple_detail_template Whether the simple detail template should be used.
+		 *
+		 * @since 1.1.31
+		 */
+		return apply_filters( 'gpnf_should_use_simple_details_template', $is_woocommerce || $is_print_page || $is_gravityview );
 
 	}
 

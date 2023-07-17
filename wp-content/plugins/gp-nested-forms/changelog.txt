@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.1.31
+
+	- Added `gpnf_should_use_simple_details_template` PHP filter hook.
+	- Fixed issue where child entries could be removed when adding items to a cart using WooCommerce Gravity Forms Product Add-ons 3.5.0 or newer.
+
 ## 1.1.30
 
 	- Fixed issue where responsive styles were not correctly applied for the Nested Entries Detail Simple template.

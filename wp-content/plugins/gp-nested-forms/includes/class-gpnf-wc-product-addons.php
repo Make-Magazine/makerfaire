@@ -13,6 +13,8 @@ class GPNF_WC_Product_Addons {
 	}
 
 	private function __construct() {
+		// Check if a parent entry is being added to the cart. If so, we need to prevent child entries from being deleted.
+		add_filter( 'woocommerce_add_cart_item_data', array( $this, 'prevent_child_entry_deletion' ), 5, 3 );
 
 		add_action( 'woocommerce_gravityforms_entry_created', array( $this, 'update_child_entries_parent' ), 5, 5 );
 
@@ -27,7 +29,21 @@ class GPNF_WC_Product_Addons {
 			remove_filter( 'gform_entry_post_save', array( gpnf_feed_processing(), 'process_feeds' ), 11 );
 			remove_filter( 'gform_entry_post_save', array( gpnf_notification_processing(), 'maybe_send_child_notifications' ), 11 );
 		}
+	}
 
+	/**
+	 * As of WCGFPA 3.5.0, gform_delete_entry is now called when entries are deleted when being added to the cart.
+	 *
+	 * Because of this, it can cause child entries to be deleted when they shouldn't be.
+	 */
+	public function prevent_child_entry_deletion( $cart_item_meta, $product_id, $variation_id = null ) {
+		if ( ! isset( $_POST['gform_old_submit'] ) ) {
+			return $cart_item_meta;
+		}
+
+		remove_action( 'gform_delete_entry', array( gp_nested_forms(), 'child_entry_delete' ), 10 );
+
+		return $cart_item_meta;
 	}
 
 	public function process_feeds( $entry_id, $order_id, $order_item, $form_data, $lead_data ) {

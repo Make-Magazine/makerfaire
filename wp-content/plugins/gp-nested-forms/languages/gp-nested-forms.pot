@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP Nested Forms 1.1.30\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-ey-3-g2rS\n"
+"Project-Id-Version: GP Nested Forms 1.1.31\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-mBJnmct18\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-07-05T22:29:33+00:00\n"
+"POT-Creation-Date: 2023-07-11T21:00:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: gp-nested-forms\n"
@@ -208,39 +208,39 @@ msgstr ""
 #. Translators: %s is replaced by singular item label.
 #. translators: placeholder is a singular item label such as "Item" or "Player"
 #. translators: placeholder is a singlular item label such as "Item" or "Player"
-#: class-gp-nested-forms.php:2226
-#: class-gp-nested-forms.php:2250
-#: class-gp-nested-forms.php:2263
+#: class-gp-nested-forms.php:2225
+#: class-gp-nested-forms.php:2249
+#: class-gp-nested-forms.php:2262
 #: includes/class-gp-field-nested-form.php:100
 msgid "Add %s"
 msgstr ""
 
 #. Translators: %s is replaced by singular item label.
 #. translators: placeholder is a singular item label such as "Item" or "Player"
-#: class-gp-nested-forms.php:2228
-#: class-gp-nested-forms.php:2252
-#: class-gp-nested-forms.php:2269
+#: class-gp-nested-forms.php:2227
+#: class-gp-nested-forms.php:2251
+#: class-gp-nested-forms.php:2268
 msgid "Edit %s"
 msgstr ""
 
-#: class-gp-nested-forms.php:2231
+#: class-gp-nested-forms.php:2230
 msgid "Cancel"
 msgstr ""
 
-#: class-gp-nested-forms.php:2232
+#: class-gp-nested-forms.php:2231
 #: includes/class-gp-field-nested-form.php:132
 msgid "Delete"
 msgstr ""
 
-#: class-gp-nested-forms.php:2233
+#: class-gp-nested-forms.php:2232
 msgid "Are you sure?"
 msgstr ""
 
-#: class-gp-nested-forms.php:2234
+#: class-gp-nested-forms.php:2233
 msgid "Close"
 msgstr ""
 
-#: class-gp-nested-forms.php:3377
+#: class-gp-nested-forms.php:3376
 msgid "Row ID"
 msgstr ""
 
@@ -298,21 +298,21 @@ msgstr ""
 msgid "View Entry"
 msgstr ""
 
-#: includes/class-gp-field-nested-form.php:422
+#: includes/class-gp-field-nested-form.php:430
 msgid "Entry"
 msgstr ""
 
-#: includes/class-gp-field-nested-form.php:423
+#: includes/class-gp-field-nested-form.php:431
 msgid "Entries"
 msgstr ""
 
 #. Translators: %1$d is replaced with the minimum. %2$s is replaced with the label for an individual entry.
-#: includes/class-gp-field-nested-form.php:488
+#: includes/class-gp-field-nested-form.php:496
 msgid "Please enter a minimum of %1$d %2$s"
 msgstr ""
 
 #. Translators: %1$d is replaced with the maximum. %2$s is replaced with the label for an individual entry.
-#: includes/class-gp-field-nested-form.php:506
+#: includes/class-gp-field-nested-form.php:514
 msgid "Please enter a maximum of %1$d %2$s"
 msgstr ""
 

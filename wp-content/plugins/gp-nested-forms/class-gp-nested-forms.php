@@ -1450,9 +1450,7 @@ class GP_Nested_Forms extends GP_Plugin {
 			'format'               => $format,
 		);
 
-		/**
-		 * See GP_Field_Nested_Form::get_value_entry_detail().
-		 */
+		/** Documented in GP_Field_Nested_Form::get_value_entry_detail(). */
 		$args = gf_apply_filters( array( 'gpnf_template_args', $field->formId, $field->id ), $args, $this );
 
 		if ( ! $args['entries'] ) {
@@ -1576,7 +1574,8 @@ class GP_Nested_Forms extends GP_Plugin {
 		$nested_form = $this->get_nested_form( rgar( $field, 'gpnfForm' ) );
 
 		$values = array();
-		$args   = gf_apply_filters(
+		/** Documented in GP_Field_Nested_Form::get_value_entry_detail(). */
+		$args = gf_apply_filters(
 			array( 'gpnf_template_args', $field->formId, $field->id ),
 			array(
 				'template'        => 'nested-entry',
