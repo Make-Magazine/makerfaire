@@ -1,6 +1,4 @@
 <?php
-
-
 //MF custom merge tags
 add_filter('gform_custom_merge_tags', 'mf_custom_merge_tags', 10, 4);
 add_filter('gform_replace_merge_tags', 'mf_replace_merge_tags', 10, 7);
@@ -22,6 +20,7 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Faire ID', 'tag' => '{faire_id}');
     $merge_tags[] = array('label' => 'Resource Category Lock Ind', 'tag' => '{rmt_res_cat_lock}');
     $merge_tags[] = array('label' => 'Attribute Lock Ind', 'tag' => '{rmt_att_lock}');
+    $merge_tags[] = array('label' => 'Supplemental Form Token', 'tag' => '{supp_form_token}');
 
     //add merge tag for Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
@@ -188,6 +187,24 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
       $text = str_replace($mergeTag, ($lockBit==1?'Yes':'No'), $text);
     }
   }
+
+  //Supplemental Form Token
+  if (strpos($text, '{supp_form_token') !== false) {
+    //pull form information for this entry
+    $form = GFAPI::get_form($lead['form_id']);
+    
+    //If this form was supposed to create a master entry, we need to pull the supplemental form token from the master entry
+    if(isset($form['master_form_id']) && $form['master_form_id']!=''){
+      $master_entryID = $lead['master_entry_id'];
+      $master_entry = GFAPI::get_entry($master_entryID);
+      $mf_supplemental_token = (isset($master_entry['fg_easypassthrough_token'])?$master_entry['fg_easypassthrough_token']:'');      
+    }else{
+      $mf_supplemental_token = (isset($lead['fg_easypassthrough_token'])? $lead['fg_easypassthrough_token']:'');
+    }
+    
+    if($mf_supplemental_token !='')    
+      $text = $mf_supplemental_token;
+  }  
 
   return $text;
 }

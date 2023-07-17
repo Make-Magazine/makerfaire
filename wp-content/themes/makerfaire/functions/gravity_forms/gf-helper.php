@@ -350,4 +350,3 @@ function wpm_load_script_for_template( $template ){
 }
 
 add_filter('template_include', 'wpm_load_script_for_template', 1000);
-

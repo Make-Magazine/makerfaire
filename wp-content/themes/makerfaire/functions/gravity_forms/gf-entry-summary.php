@@ -281,11 +281,14 @@ function gf_collapsible_sections($form, $lead) {
     $makerfirstname7 = (isset($lead['154.3']) ? $lead['154.3'] : '');
     $makerlastname7 = (isset($lead['154.6']) ? $lead['154.6'] : '');
 
+    $contactFirstName = (isset($lead['96.3']) ? $lead['96.3'] : '');
+    $contactLastName  = (isset($lead['96.6']) ? $lead['96.6'] : '');
+
     //email fields
     $emailArray = array();
 
     if (isset($lead['98']) && $lead['98'] != '')
-        $emailArray[$lead['98']]['Contact'] = $lead['96.3'] . ' ' . $lead['96.6'];
+        $emailArray[$lead['98']]['Contact'] = $contactFirstName . ' ' . $contactLastName;
     if (isset($lead['161']) && $lead['161'] != '')
         $emailArray[$lead['161']]['Maker 1'] = $makerfirstname1 . ' ' . $makerlastname1;
     if (isset($lead['162']) && $lead['162'] != '')
@@ -629,15 +632,17 @@ function getmetaData($entry_id, $type = '') {
                 }
 
                 //display any payment notes
-                $notes = RGFormsModel::get_lead_notes($data->lead_id);
-                foreach ($notes as $note) {
-                    if ($note->user_name == 'PayPal') {
-                        $formTable .= '<tr><td colspan="2" class="entry-view-field-name">PayPal</td></tr>';
-                        $formTable .= '<tr><td colspan="2" class="entry-view-field-value">' .
-                                esc_html(GFCommon::format_date($note->date_created, false)) . '<br/>' .
-                                $note->value . '</td>' .
-                                '</tr>';
-                    }
+                if(isset($data->lead_id)){
+                  $notes = RGFormsModel::get_lead_notes($data->lead_id);
+                  foreach ($notes as $note) {
+                      if ($note->user_name == 'PayPal') {
+                          $formTable .= '<tr><td colspan="2" class="entry-view-field-name">PayPal</td></tr>';
+                          $formTable .= '<tr><td colspan="2" class="entry-view-field-value">' .
+                                  esc_html(GFCommon::format_date($note->date_created, false)) . '<br/>' .
+                                  $note->value . '</td>' .
+                                  '</tr>';
+                      }
+                  }
                 }
                 $formTable .= '</table>';
 

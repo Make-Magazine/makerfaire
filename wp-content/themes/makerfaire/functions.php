@@ -8,7 +8,6 @@ include_once dirname(__FILE__) . '/api/admin-settings.php';
 // Load the functions for the Applications API
 include_once dirname(__FILE__) . '/api/v2/functions.php';
 
-include_once TEMPLATEPATH . '/classes/gf-helper.php';
 include_once TEMPLATEPATH . '/classes/makerfaire-helper.php';
 include_once TEMPLATEPATH . '/classes/gf-rmt-helper.php';
 include_once TEMPLATEPATH . '/classes/mf-sharing-cards.php';

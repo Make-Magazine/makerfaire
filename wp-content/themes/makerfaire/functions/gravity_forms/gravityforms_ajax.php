@@ -323,6 +323,9 @@ function set_entry_status($lead,$form){
 			//Handle acceptance status changes
 			if ($is_acceptance_status_changed ){
         if($acceptance_status_change == 'Accepted'){
+          //trigger an action
+          do_action('entry-accepted', $lead);
+
           /*
            * If the status is accepted, trigger a cron job to generate EventBrite Tickets.
            * The cron job will trigger action sidebar_entry_update

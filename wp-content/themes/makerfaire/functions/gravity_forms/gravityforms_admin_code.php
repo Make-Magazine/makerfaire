@@ -19,9 +19,12 @@ function my_custom_form_setting($settings, $form) {
    }
    $select .= '</select>';
 
-   $settings['Form Basics']['form_type'] = '
-    <tr><th>Form Type</th>
-      <td>' . $select . '</td></tr>';
+   $settings['Form Basics']['form_type'] = '<tr><th>Form Type</th><td>' . $select . '</td></tr>';
+   
+   $master_form_id = rgar($form, 'master_form_id');
+   $settings['Form Basics']['master_form_id'] = '<tr><th>Master Form ID</th>
+   <td><input type="text" name="master_form_id" value="' . $master_form_id . '" /></td></tr>
+   <tr><th></th><td><small><i>Use this to create a master entry upon acceptance of entry.</i></small></td></tr>';
 
    // Add option to create invoice from form
    $create_invoice = rgar($form, 'create_invoice');
@@ -74,6 +77,7 @@ add_filter('gform_pre_form_settings_save', 'save_form_type_form_setting');
 
 function save_form_type_form_setting($form) {
    $form['form_type'] = rgpost('form_type');
+   $form['master_form_id'] = rgpost('master_form_id');
    $form['mat_message'] = rgpost('mat_message');
    $form['create_invoice'] = rgpost('create_invoice');
    $form['mat_disp_res_link'] = rgpost('mat_disp_res_link');
