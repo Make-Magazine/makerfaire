@@ -4,34 +4,33 @@ add_action("gform_entry_detail_sidebar_before", "add_sidebar_sections", 10,2);
 function add_sidebar_sections($form, $lead) {
   $mode = empty( $_POST['screen_mode'] ) ? 'view' : $_POST['screen_mode'];
   //the form is being pulled from the &id parameter in the url.  if they change the lid parameter in the url but not the id, the form object will be wrong here
-  $formObj = GFAPI::get_form( $lead['form_id'] );
+  $form = GFAPI::get_form( $lead['form_id'] );
   $sidebar  = '<div id="side-sortables" class="meta-box-sortables ui-sortable">';
-  $sidebar .= display_entry_info_box($formObj, $lead);
+  $sidebar .= display_entry_info_box($form, $lead);
   if ($mode == 'view') {
-    $sidebar .= display_entry_rating_box($formObj, $lead);
-    if(isset($formObj['form_type']) && $formObj['form_type']!='Default'){
-      $sidebar .= display_entry_fee_mgmt_box($formObj, $lead);
+    $sidebar .= display_entry_rating_box($form, $lead);
+    if(isset($form['form_type']) && $form['form_type']!='Default'){
+      $sidebar .= display_entry_fee_mgmt_box($form, $lead);
     }
     
-    $sidebar .= display_entry_notes_box($formObj, $lead);
-    if(isset($formObj['form_type']) && $formObj['form_type']!='Default'){
-      $sidebar .= display_flags_prelim_locs($formObj, $lead);
-      $sidebar .= display_sched_loc_box($formObj, $lead);
+    $sidebar .= display_entry_notes_box($form, $lead);
+    if(isset($form['form_type']) && $form['form_type']!='Default'){
+      $sidebar .= display_flags_prelim_locs($form, $lead);
+      $sidebar .= display_sched_loc_box($form, $lead);
     }
-    
+
     //get list of forms
     global $wpdb;
     $results = $wpdb->get_results("SELECT * FROM `wp_gf_form` where is_active = 1 and is_trash = 0");
     $formList = array();
-    foreach($results as $form){
-      $formList[] = array('id'=>$form->id,'title'=>$form->title);
+    foreach($results as $formObj){
+      $formList[] = array('id'=>$formObj->id,'title'=>$formObj->title);
     }
 
-    if(isset($formObj['form_type']) && $formObj['form_type']!='Default'){
+    if(isset($form['form_type']) && $form['form_type']!='Default'){
       $sidebar .= display_form_change_box($form, $lead, $formList);
       $sidebar .= display_dupCopy_entry_box($form, $lead, $formList);
     }
-    
     $sidebar .= display_send_conf_box($form, $lead);
   }
   $sidebar .= '</div>';
