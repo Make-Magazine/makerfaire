@@ -9,7 +9,7 @@ function add_sidebar_sections($form, $lead) {
   $sidebar .= display_entry_info_box($formObj, $lead);
   if ($mode == 'view') {
     $sidebar .= display_entry_rating_box($formObj, $lead);
-    if(isset($form['form_type']) && $formObj['form_type']!='Default'){
+    if(isset($formObj['form_type']) && $formObj['form_type']!='Default'){
       $sidebar .= display_entry_fee_mgmt_box($formObj, $lead);
     }
     
