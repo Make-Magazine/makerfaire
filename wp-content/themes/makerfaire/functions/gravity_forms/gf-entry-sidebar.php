@@ -9,10 +9,15 @@ function add_sidebar_sections($form, $lead) {
   $sidebar .= display_entry_info_box($form, $lead);
   if ($mode == 'view') {
     $sidebar .= display_entry_rating_box($form, $lead);
-    $sidebar .= display_entry_fee_mgmt_box($form, $lead);
+    if(isset($form['form_type']) && $form['form_type']!='Default'){
+      $sidebar .= display_entry_fee_mgmt_box($form, $lead);
+    }
+    
     $sidebar .= display_entry_notes_box($form, $lead);
-    $sidebar .= display_flags_prelim_locs($form, $lead);
-    $sidebar .= display_sched_loc_box($form, $lead);
+    if(isset($form['form_type']) && $form['form_type']!='Default'){
+      $sidebar .= display_flags_prelim_locs($form, $lead);
+      $sidebar .= display_sched_loc_box($form, $lead);
+    }
     //get list of forms
     global $wpdb;
     $results = $wpdb->get_results("SELECT * FROM `wp_gf_form` where is_active = 1 and is_trash = 0");
@@ -21,8 +26,10 @@ function add_sidebar_sections($form, $lead) {
       $formList[] = array('id'=>$form->id,'title'=>$form->title);
     }
 
-    $sidebar .= display_form_change_box($form, $lead, $formList);
-    $sidebar .= display_dupCopy_entry_box($form, $lead, $formList);
+    if(isset($form['form_type']) && $form['form_type']!='Default'){
+      $sidebar .= display_form_change_box($form, $lead, $formList);
+      $sidebar .= display_dupCopy_entry_box($form, $lead, $formList);
+    }
     $sidebar .= display_send_conf_box($form, $lead);
   }
   $sidebar .= '</div>';
