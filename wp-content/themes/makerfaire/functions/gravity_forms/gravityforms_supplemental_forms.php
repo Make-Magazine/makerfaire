@@ -10,16 +10,29 @@ function entry_accepted_cb( $entry ) {
   //check if a master entry needs to be created
   if(isset($form['master_form_id']) && $form['master_form_id']!=''){    
     $master_data = copy_entry_to_new_form($entry, $form['master_form_id']);
-    $master_data['form_id'] = $form['master_form_id'];
+      
+    //move multi images from maker interest form to master form
+    if($entry['form_id']==258){
+      $master_data[855] =  $entry[21];      
+    }        
 
-    //create master entry
-    $master_entry_id = GFAPI::add_entry($master_data);
-    $master_entry = GFAPI::get_entry($master_entry_id);
+    //first check if we've already created a master entry. if we have, update it
+    if(isset($entry['entry_id'])) {
+      GFAPI::update_entry( $master_data, $entry['entry_id'] );
+    }else{        
+      //set the master form id
+      $master_data['form_id'] = $form['master_form_id'];
+      
+      //otherwise, create master entry
+      $master_entry_id = GFAPI::add_entry($master_data);
+      $master_entry = GFAPI::get_entry($master_entry_id);
+      $master_form = GFAPI::get_form($form['master_form_id']);
+      gform_update_meta( $entry['id'], 'entry_id', $master_entry_id);
+      
+      // this filter triggers the easy pass through plugin to generate a token
+      apply_filters( 'gform_entry_post_save', $master_entry, $form );
+    }
     
-    $master_form = GFAPI::get_form($form['master_form_id']);
-    
-    // this filter triggers the easy pass through plugin to generate a token
-    apply_filters( 'gform_entry_post_save', $master_entry, $form );
   }    
 }
 
@@ -68,7 +81,7 @@ function copy_entry_to_new_form ($fromEntry){
           }
         }        
         break;         
-
+      
       default:
         if($field->inputName!=''){
           $parmsArray[] =  array('from_id' => $field->id, 'to_param'=>$field->inputName);        
@@ -95,6 +108,7 @@ function copy_entry_to_new_form ($fromEntry){
       }else{
         error_log('unknown parameter name');
         error_log(print_r($fieldInfo,TRUE));
+        continue;
       }      
     }
 
@@ -107,13 +121,44 @@ function copy_entry_to_new_form ($fromEntry){
       $toEntry[$toFieldID] = '';      
     }
       
-  }    
+  }
   
   return $toEntry;
 }
 
+/* We will copy over all supplemental fields into original entry */
+function update_original_entry($form,$origEntryID){
+  //Loop thru form fields 
+  foreach ($form['fields'] as $field) {
+     //  Do not update values from read only fields
+     if(!$field->gwreadonly_enable){
+      // If the field type is checkbox, name or address, we need to ensure we blank out data for previously submitted information
+      switch($field->type) {
+        case 'checkbox':                  
+        case 'name':
+        case 'address':
+          foreach($field->inputs as $input){
+            $updField = $input['id'];
+            $inputID  = str_replace(".", "_", $updField);
+            /*
+             * if the field is set, update with submitted value, else, update with blanks
+             */
+            $updValue =  (isset($_POST['input_'.$inputID]) ? $_POST['input_'.$inputID] : '');
+            GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );          
+          }
+          break;
+        default:
+          //find submitted value
+          $updValue =  (isset($_POST['input_'.$field['id']])?$_POST['input_'.$field['id']]:'');
+          GFAPI::update_entry_field( $origEntryID, $field['id'], stripslashes($updValue) );
+          break;
+      }           
+    }
+  }
+}
 
-/* Used to update linked fields back to original entry */
+/* DO NOT USE - OLD function - replaced with update_original_entry 
+Used to update linked fields back to original entry */
 function updLinked_fields($form,$origEntryID){
   //Loop thru form fields and look for parameter names of 'field-*'
   //  These are set to update original entry fields
@@ -173,24 +218,22 @@ function updLinked_fields($form,$origEntryID){
   } //end foreach loop
 }
 
-//when a linked form is submitted, find the initial formid based on entry id
-// and add the fields from the linked form to that original entry
-
-add_action('gform_after_update_entry', 'update_linked_data_pre', 10, 3 );  // $form,$entry_id,$orig_entry=array()
-function update_linked_data_pre($form,$entry_id,$orig_entry=array()){
+//when a supplemental form is submitted, find the initial formid based on entry id
+// and add the fields from the supplemental form to that original entry
+add_action('gform_after_update_entry', 'update_original_data_pre', 10, 3 );  // $form,$entry_id,$orig_entry=array()
+function update_original_data_pre($form,$entry_id,$orig_entry=array()){
   $entry = GFAPI::get_entry(esc_attr($entry_id));
-  update_linked_data($entry, $form);
+  update_original_data($entry, $form);
 }
 
-add_action('gform_after_submission', 'update_linked_data', 10, 2 ); //$entry, $form
-function update_linked_data($entry, $form ){  
+add_action('gform_after_submission', 'update_original_data', 10, 2 ); //$entry, $form
+function update_original_data($entry, $form ){  
   // update meta
   $updateEntryID = get_value_by_label('entry-id', $form, $entry);
-  error_log('entry to update');
-  error_log(print_r($updateEntryID,TRUE));
+  
   if(isset($updateEntryID['value'])){
     gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
-    updLinked_fields($form,$updateEntryID['value']);
+    update_original_entry($form,$updateEntryID['value']);
   }
 }
 

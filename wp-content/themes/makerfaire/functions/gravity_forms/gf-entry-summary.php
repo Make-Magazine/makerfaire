@@ -1,7 +1,6 @@
 <?php
 
 // Adding Entry Detail and checking for Processing Posts
-
 add_action("gform_entry_detail_content_before", "add_main_text_before", 10, 2);
 
 function add_main_text_before($form, $lead) {
@@ -10,8 +9,13 @@ function add_main_text_before($form, $lead) {
         return;
     if (is_null($form['fields']))
         return;
-    echo gf_summary_metabox($form, $lead);
-    echo gf_collapsible_sections($form, $lead);
+
+
+    if(isset($form['form_type']) && $form['form_type']!='Default'){
+      echo gf_summary_metabox($form, $lead);
+      echo gf_collapsible_sections($form, $lead);
+    }    
+    return;
 }
 
 // Summary Metabox
