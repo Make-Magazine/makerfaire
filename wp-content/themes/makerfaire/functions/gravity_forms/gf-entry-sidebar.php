@@ -62,8 +62,8 @@ function addExpandBox($data, $title, $boxID, $boxClass=''){
 }
 
 function display_entry_info_box($form, $lead) {
-  	$mode       = empty( $_POST['screen_mode'] )  ? 'view' : $_POST['screen_mode'];
-  	$street     = (isset($lead['101.1'])          ? $lead['101.1']:'');
+  $mode       = empty( $_POST['screen_mode'] )  ? 'view' : $_POST['screen_mode'];
+  $street     = (isset($lead['101.1'])          ? $lead['101.1']:'');
 	$street2    = (!empty($lead["101.2"]))        ? $lead["101.2"].'<br />' : '' ;
 	$city       = (isset($lead["101.3"])          ? $lead["101.3"]:'');
 	$state      = (isset($lead["101.4"])          ? $lead["101.4"]:'');
@@ -72,14 +72,19 @@ function display_entry_info_box($form, $lead) {
 	$email      = (isset($lead["98"])             ? $lead["98"]:'');
 	$phone      = (isset($lead["99"])             ? $lead["99"]:'');
 	$phonetype  = (isset($lead["148"])            ? $lead["148"]:'');
-	$return =
-   	  '<table width="100%" class="entry-status">'.
+  $resource_display = '';
+  $resource_displayText = '';
+  if($mode == 'view' && (isset($form['form_type']) && $form['form_type']!='Default')) {
+    $resource_display = mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ) . mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' );
+    $resource_displayText = '<small>Change a selection above to update entry</small><hr /> ';
+  }
+
+  $return =
+   	  '<table width="100%" class="entry-status">'.  
           mf_sidebar_entry_status( $form, $lead ) .
-          '<tr><td colspan="2"><hr /></td></tr>'.
-          ($mode == 'view' ? mf_sidebar_disp_meta_field($form['id'], $lead, 'res_status' ) .
-                             mf_sidebar_disp_meta_field($form['id'], $lead, 'res_assign' ):'') .
+          '<tr><td colspan="2"><hr /></td></tr>'. $resource_display .
        '</table>' .
-        ($mode == 'view' ? '<small>Change a selection above to update entry</small><hr /> ': '').
+       $resource_displayText .
        'Contact: 
 		<div style="padding:5px">'. (isset($lead['96.3'])?$lead['96.3']:'').' '. (isset($lead['96.6'])?$lead['96.6']:'').'<br />'.
         	$street  .'<br />'.
